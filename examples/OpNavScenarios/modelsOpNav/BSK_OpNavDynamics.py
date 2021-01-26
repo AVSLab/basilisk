@@ -128,7 +128,7 @@ class BSKDynamicModels():
         self.cameraMod.renderRate = int(mc.sec2nano(self.cameraRate))  # in
         self.cameraMRP_CB = [0., 0., 0.]  # Arbitrary camera orientation
         self.cameraMod.sigma_CB = self.cameraMRP_CB
-        self.cameraMod.cameraPos_B = [0., 0.2, 0.2]  # in meters
+        self.cameraMod.cameraPos_B = [0., 0.2, 2.2]  # in meters
         self.cameraRez = [512, 512]  # [1024,1024] # in pixels
         self.cameraSize = [10.*1E-3, self.cameraRez[1]/self.cameraRez[0]*10.*1E-3]  # in m
         self.cameraMod.resolution = self.cameraRez

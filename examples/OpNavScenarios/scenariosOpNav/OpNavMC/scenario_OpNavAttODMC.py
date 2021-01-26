@@ -24,11 +24,10 @@ This script is called by OpNavScenarios/OpNavMC/MonteCarlo.py in order to make M
 """
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
-from Basilisk.utilities import RigidBodyKinematics as rbk
 
 
 # Get current file path
-import sys, os, inspect, time, signal, subprocess
+import sys, os, inspect, subprocess
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
@@ -53,13 +52,15 @@ class scenario_OpNav(BSKSim):
         self.dynRate = 0.5
         self.set_DynModel(BSK_OpNavDynamics)
         self.set_FswModel(BSK_OpNavFsw)
-        self.initInterfaces()
         self.name = 'scenario_opnav'
         self.configure_initial_conditions()
 
-    def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
+        self.msgRecList = {}
+        self.retainedMessageNameSc = "scMsg"
+        self.retainedMessageNameFilt = "filtMsg"
+        self.retainedMessageNameOpNav = "opnavMsg"
 
+    def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
         oe.a = 18000 * 1E3  # meters
@@ -68,7 +69,7 @@ class scenario_OpNav(BSKSim):
         oe.Omega = 25. * macros.D2R
         oe.omega = 190. * macros.D2R
         oe.f = 80. * macros.D2R  # 90 good
-        mu = self.get_DynModel().marsGravBody.mu
+        mu = self.get_DynModel().gravFactory.gravBodies['mars barycenter'].mu
 
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
@@ -91,20 +92,22 @@ class scenario_OpNav(BSKSim):
         self.get_FswModel().relativeODData.noiseSF = 5#7.5
 
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
-
         # Dynamics process outputs: log messages below if desired.
+        FswModel = self.get_FswModel()
+        DynModel = self.get_DynModel()
 
         # FSW process outputs
         samplingTime = self.get_FswModel().processTasksTimeStep
-        # self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorCamData.outputDataName, samplingTime)
-        # self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
 
-        self.TotalSim.logThisMessage(self.get_FswModel().relativeODData.filtDataOutMsgName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().pixelLineData.opNavOutMsgName, samplingTime)
+        self.msgRecList[self.retainedMessageNameSc] = DynModel.scObject.scStateOutMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageNameSc])
 
-        self.TotalSim.logThisMessage(self.get_DynModel().scObject.scStateOutMsgName,samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().imageProcessing.opnavCirclesOutMsgName, samplingTime)
+        self.msgRecList[self.retainedMessageNameFilt] = FswModel.relativeODData.filtDataOutMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageNameFilt])
+
+        self.msgRecList[self.retainedMessageNameOpNav] = FswModel.opnavMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageNameOpNav])
+
         return
 
 
@@ -117,15 +120,9 @@ def run(TheScenario):
     TheScenario.get_DynModel().vizInterface.opNavMode = 1
 
     mode = ["None", "-directComm", "-opNavMode"]
-    # The following code spawns the Vizard application from python as a function of the mode selected above, and the platform.
-    if platform != "darwin":
-        child = subprocess.Popen([TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode],
-                                  "tcp://localhost:5556"])
-    else:
-        child = subprocess.Popen(
-            ["open", TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode],
-             "tcp://localhost:5556"])
-    print("Vizard spawned with PID = " + str(child.pid))
+    vizard = subprocess.Popen(
+        [TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode], "tcp://localhost:5556"], stdout=subprocess.DEVNULL)
+    print("Vizard spawned with PID = " + str(vizard.pid))
 
     # Configure FSW mode
     TheScenario.modeRequest = 'prepOpNav'
@@ -137,15 +134,17 @@ def run(TheScenario):
     TheScenario.ExecuteSimulation()
     TheScenario.modeRequest = 'OpNavAttOD'
     # TheBSKSim.get_DynModel().SetLocalConfigData(TheBSKSim, 60, True)
-    simulationTime = macros.min2nano(600.)
+    simulationTime = macros.min2nano(100.)
     TheScenario.ConfigureStopTime(simulationTime)
     TheScenario.ExecuteSimulation()
 
-    TheScenario.get_DynModel().SpiceObject.unloadSpiceKernel(TheScenario.get_DynModel().SpiceObject.SPICEDataPath, 'de430.bsp')
-    TheScenario.get_DynModel().SpiceObject.unloadSpiceKernel(TheScenario.get_DynModel().SpiceObject.SPICEDataPath, 'naif0012.tls')
-    TheScenario.get_DynModel().SpiceObject.unloadSpiceKernel(TheScenario.get_DynModel().SpiceObject.SPICEDataPath,
-                                                      'de-403-masses.tpc')
-    TheScenario.get_DynModel().SpiceObject.unloadSpiceKernel(TheScenario.get_DynModel().SpiceObject.SPICEDataPath, 'pck00010.tpc')
+    vizard.kill()
+
+    spice = TheScenario.get_DynModel().gravFactory.spiceObject
+    spice.unloadSpiceKernel(spice.SPICEDataPath, 'de430.bsp')
+    spice.unloadSpiceKernel(spice.SPICEDataPath, 'naif0012.tls')
+    spice.unloadSpiceKernel(spice.SPICEDataPath, 'de-403-masses.tpc')
+    spice.unloadSpiceKernel(spice.SPICEDataPath, 'pck00010.tpc')
 
     return
 
@@ -155,3 +154,4 @@ if __name__ == "__main__":
     # Configure a scenario in the base simulation
     TheScenario = scenario_OpNav()
     run(TheScenario)
+

@@ -53,13 +53,16 @@ class scenario_OpNav(BSKSim):
         self.dynRate = 0.5
         self.set_DynModel(BSK_OpNavDynamics)
         self.set_FswModel(BSK_OpNavFsw)
-        self.initInterfaces()
         self.name = 'scenario_opnav'
         self.configure_initial_conditions()
 
-    def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
+        self.msgRecList = {}
+        self.retainedMessageNameSc = "scMsg"
+        self.retainedMessageNameFilt = "filtMsg"
+        self.retainedMessageNameOpNav = "opnavMsg"
+        self.retainedMessageNameLimb = "limbMsg"
 
+    def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
         oe.a = 18000 * 1E3  # meters
@@ -68,7 +71,7 @@ class scenario_OpNav(BSKSim):
         oe.Omega = 25. * macros.D2R
         oe.omega = 190. * macros.D2R
         oe.f = 80. * macros.D2R  # 90 good
-        mu = self.get_DynModel().marsGravBody.mu
+        mu = self.get_DynModel().gravFactory.gravBodies['mars barycenter'].mu
 
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
@@ -90,59 +93,56 @@ class scenario_OpNav(BSKSim):
         self.get_FswModel().horizonNavData.noiseSF = 20
 
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
-
         # Dynamics process outputs: log messages below if desired.
+        FswModel = self.get_FswModel()
+        DynModel = self.get_DynModel()
 
         # FSW process outputs
         samplingTime = self.get_FswModel().processTasksTimeStep
-        # self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorCamData.outputDataName, samplingTime)
-        # self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorData.outputDataName, samplingTime)
 
-        self.TotalSim.logThisMessage(self.get_FswModel().relativeODData.filtDataOutMsgName, samplingTime)
+        self.msgRecList[self.retainedMessageNameSc] = DynModel.scObject.scStateOutMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageNameSc])
 
-        self.TotalSim.logThisMessage(self.get_DynModel().scObject.scStateOutMsgName,samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().horizonNavData.opNavOutMsgName, samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().limbFinding.opnavLimbOutMsgName, samplingTime)
+        self.msgRecList[self.retainedMessageNameFilt] = FswModel.relativeODData.filtDataOutMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageNameFilt])
+
+        self.msgRecList[self.retainedMessageNameOpNav] = FswModel.opnavMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageNameOpNav])
+
+        self.msgRecList[self.retainedMessageNameLimb] = FswModel.limbFinding.opnavLimbOutMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageNameLimb])
+
         return
 
     def pull_outputs(self, showPlots):
-        print('%s: pull_outputs' % self.name)
-
         # Dynamics process outputs: pull log messages below if any
         ## Spacecraft true states
-        position_N = self.pullMessageLogData(
-            self.get_DynModel().scObject.scStateOutMsgName + ".r_BN_N", range(3))
-        velocity_N = self.pullMessageLogData(
-            self.get_DynModel().scObject.scStateOutMsgName + ".v_BN_N", range(3))
+        scRec = self.msgRecList[self.retainedMessageNameSc]
+        position_N = unitTestSupport.addTimeColumn(scRec.times(), scRec.r_BN_N)
+        velocity_N = unitTestSupport.addTimeColumn(scRec.times(), scRec.v_BN_N)
+
         ## Attitude
-        sigma_BN = self.pullMessageLogData(
-            self.get_DynModel().scObject.scStateOutMsgName + ".sigma_BN", range(3))
+        sigma_BN = unitTestSupport.addTimeColumn(scRec.times(), scRec.sigma_BN)
+
         ## Image processing
-        limb = self.pullMessageLogData(
-            self.get_FswModel().limbFinding.opnavLimbOutMsgName + ".limbPoints", range(2*2000))
-        numLimbPoints = self.pullMessageLogData(
-            self.get_FswModel().limbFinding.opnavLimbOutMsgName + ".numLimbPoints", range(1))
-        validLimb = self.pullMessageLogData(
-            self.get_FswModel().limbFinding.opnavLimbOutMsgName + ".valid", range(1))
+        limbRec = self.msgRecList[self.retainedMessageNameLimb]
+        limb = unitTestSupport.addTimeColumn(limbRec.times(), limbRec.limbPoints)
+        numLimbPoints = unitTestSupport.addTimeColumn(limbRec.times(), limbRec.numLimbPoints)
+        validLimb = unitTestSupport.addTimeColumn(limbRec.times(), limbRec.valid)
+
         ## OpNav Out
-        measPos = self.pullMessageLogData(
-            self.get_FswModel().horizonNavData.opNavOutMsgName + ".r_BN_N", range(3))
-        r_C = self.pullMessageLogData(
-            self.get_FswModel().horizonNavData.opNavOutMsgName + ".r_BN_C", range(3))
-        measCovar = self.pullMessageLogData(
-            self.get_FswModel().horizonNavData.opNavOutMsgName + ".covar_N", range(3 * 3))
-        covar_C = self.pullMessageLogData(
-        self.get_FswModel().horizonNavData.opNavOutMsgName + ".covar_C", range(3 * 3))
+        opNavRec = self.msgRecList[self.retainedMessageNameOpNav]
+        measPos = unitTestSupport.addTimeColumn(opNavRec.times(), opNavRec.r_BN_N)
+        r_C = unitTestSupport.addTimeColumn(opNavRec.times(), opNavRec.r_BN_C)
+        measCovar = unitTestSupport.addTimeColumn(opNavRec.times(), opNavRec.covar_N)
+        covar_C = unitTestSupport.addTimeColumn(opNavRec.times(), opNavRec.covar_C)
+
         NUM_STATES = 6
         ## Navigation results
-        navState = self.pullMessageLogData(
-            self.get_FswModel().relativeODData.filtDataOutMsgName + ".state", range(NUM_STATES))
-        navCovar = self.pullMessageLogData(
-            self.get_FswModel().relativeODData.filtDataOutMsgName + ".covar",
-            range(NUM_STATES * NUM_STATES))
-        navPostFits = self.pullMessageLogData(
-            self.get_FswModel().relativeODData.filtDataOutMsgName + ".postFitRes", range(NUM_STATES - 3))
+        filtRec = self.msgRecList[self.retainedMessageNameFilt]
+        navState = unitTestSupport.addTimeColumn(filtRec.times(), filtRec.state)
+        navCovar = unitTestSupport.addTimeColumn(filtRec.times(), filtRec.covar)
+        navPostFits = unitTestSupport.addTimeColumn(filtRec.times(), filtRec.postFitRes)
 
         sigma_CB = self.get_DynModel().cameraMRP_CB
         sizeMM = self.get_DynModel().cameraSize
@@ -229,15 +229,10 @@ def run(TheScenario):
     TheScenario.get_DynModel().vizInterface.opNavMode = 1
 
     mode = ["None", "-directComm", "-opNavMode"]
-    # The following code spawns the Vizard application from python as a function of the mode selected above, and the platform.
-    if platform != "darwin":
-        child = subprocess.Popen([TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode],
-                                  "tcp://localhost:5556"])
-    else:
-        child = subprocess.Popen(
-            ["open", TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode],
-             "tcp://localhost:5556"])
-    print("Vizard spawned with PID = " + str(child.pid))
+    vizard = subprocess.Popen(
+        [TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode],
+         "tcp://localhost:5556"], stdout=subprocess.DEVNULL)
+    print("Vizard spawned with PID = " + str(vizard.pid))
 
     # Configure FSW mode
     TheScenario.modeRequest = 'prepOpNav'
@@ -249,15 +244,18 @@ def run(TheScenario):
     TheScenario.ExecuteSimulation()
     TheScenario.modeRequest = 'OpNavAttODLimb'
     # TheBSKSim.get_DynModel().SetLocalConfigData(TheBSKSim, 60, True)
-    simulationTime = macros.min2nano(600.)
+    simulationTime = macros.min2nano(100.)
     TheScenario.ConfigureStopTime(simulationTime)
     TheScenario.ExecuteSimulation()
 
-    TheScenario.get_DynModel().SpiceObject.unloadSpiceKernel(TheScenario.get_DynModel().SpiceObject.SPICEDataPath, 'de430.bsp')
-    TheScenario.get_DynModel().SpiceObject.unloadSpiceKernel(TheScenario.get_DynModel().SpiceObject.SPICEDataPath, 'naif0012.tls')
-    TheScenario.get_DynModel().SpiceObject.unloadSpiceKernel(TheScenario.get_DynModel().SpiceObject.SPICEDataPath,
-                                                      'de-403-masses.tpc')
-    TheScenario.get_DynModel().SpiceObject.unloadSpiceKernel(TheScenario.get_DynModel().SpiceObject.SPICEDataPath, 'pck00010.tpc')
+    vizard.kill()
+
+    spice = TheScenario.get_DynModel().gravFactory.spiceObject
+    spice.unloadSpiceKernel(spice.SPICEDataPath, 'de430.bsp')
+    spice.unloadSpiceKernel(spice.SPICEDataPath, 'naif0012.tls')
+    spice.unloadSpiceKernel(spice.SPICEDataPath, 'de-403-masses.tpc')
+    spice.unloadSpiceKernel(spice.SPICEDataPath, 'pck00010.tpc')
+
     return
 
 

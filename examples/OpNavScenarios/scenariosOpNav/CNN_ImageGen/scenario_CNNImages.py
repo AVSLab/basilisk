@@ -107,7 +107,7 @@ class scenario_OpNav(BSKSim):
 
     def pull_outputs(self, showPlots):
         ## Spacecraft true states
-        scStates = self.scRecmsgRecList[self.retainedMessageName1]
+        scStates = self.msgRecList[self.retainedMessageName1]
         position_N = unitTestSupport.addTimeColumn(scStates.times(), scStates.r_BN_N)
         sigma_BN = unitTestSupport.addTimeColumn(scStates.times(), scStates.sigma_BN)
 

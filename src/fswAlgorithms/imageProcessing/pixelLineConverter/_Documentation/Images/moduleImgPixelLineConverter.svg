@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="997 577.8503 441.0625 108.14972" width="441.0625" height="108.14972">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="997 577.8503 441.0625 108.14972" width="441.0625" height="108.14972">
   <defs>
     <font-face font-family="Courier" font-size="9" units-per-em="1000" underline-position="-178.22266" underline-thickness="57.61719" slope="0" x-height="456.54297" cap-height="586.91406" ascent="753.90625" descent="-246.09375" font-weight="400">
       <font-face-src>
@@ -23,8 +23,8 @@
       </font-face-src>
     </font-face>
   </defs>
-  <metadata> Produced by OmniGraffle 7.18\n2020-11-26 23:51:35 +0000</metadata>
-  <g id="Canvas_1" stroke-opacity="1" fill-opacity="1" stroke="none" stroke-dasharray="none" fill="none">
+  <metadata> Produced by OmniGraffle 7.18.1\n2021-01-26 19:40:35 +0000</metadata>
+  <g id="Canvas_1" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
       <title>Layer 1</title>
@@ -37,7 +37,7 @@
         <path d="M 1159.5 583.5 L 1297.5 583.5 C 1300.2614 583.5 1302.5 585.7386 1302.5 588.5 L 1302.5 677 C 1302.5 679.7614 1300.2614 682 1297.5 682 L 1159.5 682 C 1156.7386 682 1154.5 679.7614 1154.5 677 L 1154.5 588.5 C 1154.5 585.7386 1156.7386 583.5 1159.5 583.5 Z" fill="#ffff80"/>
         <path d="M 1159.5 583.5 L 1297.5 583.5 C 1300.2614 583.5 1302.5 585.7386 1302.5 588.5 L 1302.5 677 C 1302.5 679.7614 1300.2614 682 1297.5 682 L 1159.5 682 C 1156.7386 682 1154.5 679.7614 1154.5 677 L 1154.5 588.5 C 1154.5 585.7386 1156.7386 583.5 1159.5 583.5 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(1159.5 625.75)" fill="black">
-          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="7.790039" y="11">ephemNavConverter</tspan>
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="4.189453" y="11">pixelLineConverter</tspan>
         </text>
       </g>
       <g id="Line_4">
