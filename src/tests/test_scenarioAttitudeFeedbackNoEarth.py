@@ -61,13 +61,15 @@ def test_bskAttitudeFeedbackNoEarth(show_plots, useUnmodeledTorque, useIntGain, 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    # each test method requires a single assert method to be called
-    figureList  \
-        = scenarioAttitudeFeedbackNoEarth.run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
+    try:
+        figureList = scenarioAttitudeFeedbackNoEarth.run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
+        # save the figures to the Doxygen scenario images folder
+        for pltName, plt in list(figureList.items()):
+            unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
-    # save the figures to the Doxygen scenario images folder
-    for pltName, plt in list(figureList.items()):
-        unitTestSupport.saveScenarioFigure(pltName, plt, path)
+    except OSError as err:
+        testFailCount += 1
+        testMessages.append("scenarioAttitudeFeedbackNoEarth  test are failed.")
 
     #   print out success message if no error were found
     if testFailCount == 0:

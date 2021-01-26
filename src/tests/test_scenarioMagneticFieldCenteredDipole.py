@@ -61,11 +61,15 @@ def test_scenarioMagneticField(show_plots, orbitCase, planetCase):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    figureList = scenarioMagneticFieldCenteredDipole.run(show_plots, orbitCase, planetCase)
+    try:
+        figureList = scenarioMagneticFieldCenteredDipole.run(show_plots, orbitCase, planetCase)
+        # save the figures to the Doxygen scenario images folder
+        for pltName, plt in list(figureList.items()):
+            unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
-    # save the figures to the Doxygen scenario images folder
-    for pltName, plt in list(figureList.items()):
-        unitTestSupport.saveScenarioFigure(pltName, plt, path)
+    except OSError as err:
+        testFailCount += 1
+        testMessages.append("scenarioMagneticFieldCenteredDipole  test are failed.")
 
     #   print out success message if no error were found
     if testFailCount == 0:

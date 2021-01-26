@@ -112,7 +112,6 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
         planetCase (str): {'Earth', 'Mars'}
     """
 
-
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -322,7 +321,7 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return posData, figureList
+    return figureList
 
 #
 # This statement below ensures that the unit test scrip can be run as a
@@ -330,7 +329,7 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
 #
 if __name__ == "__main__":
     run(
-        False,        # show_plots
+        True,        # show_plots
         True,        # liveStream
         1.0,         # time step (s)
         'LEO',       # orbit Case (LEO, GTO, GEO)

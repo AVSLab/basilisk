@@ -65,23 +65,22 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    posData, figureList = scenarioBasicOrbit.run(show_plots, orbitCase, useSphericalHarmonics, planetCase)
+    try:
+        posData, figureList = scenarioBasicOrbit.run(show_plots, orbitCase, useSphericalHarmonics, planetCase)
+        # save the figures to the Doxygen scenario images folder
+        for pltName, plt in list(figureList.items()):
+            unitTestSupport.saveScenarioFigure(pltName, plt, path)
+
+    except OSError as err:
+        testFailCount += 1
+        testMessages.append("scenarioBasicOrbit  test are failed.")
 
     # compare the results to the truth values
     accuracy = 1.0  # meters
 
-    # testFailCount, testMessages = unitTestSupport.compareArray(
-    #     truePos, dataPosRed, accuracy, "r_BN_N Vector",
-    #     testFailCount, testMessages)
-    # testFailCount, testMessages = unitTestSupport.isDoubleEqual(0.0, posData, "r_BN_N Norm",
-    #                                                             accuracy, testFailCount, testMessages)
     if posData > accuracy:
         testFailCount += 1
-        testMessages += "FAILED: r_BN_N Norm test"
-
-    # save the figures to the Doxygen scenario images folder
-    for pltName, plt in list(figureList.items()):
-        unitTestSupport.saveScenarioFigure(pltName, plt, path)
+        testMessages += "FAILED: scenarioBasicOrbit r_BN_N Norm test"
 
     #   print out success message if no error were found
     if testFailCount == 0:

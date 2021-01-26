@@ -52,9 +52,15 @@ def test_scenarioPatchedConics(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    # each test method requires a single assert method to be called
-    dataPos, figureList = scenarioPatchedConics.run(show_plots)
+    try:
+        dataPos, figureList = scenarioPatchedConics.run(show_plots)
+        # save the figures to the Doxygen scenario images folder
+        for pltName, plt in list(figureList.items()):
+            unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
+    except OSError as err:
+        testFailCount += 1
+        testMessages.append("scenarioPatchedConics  test are failed.")
 
     # setup truth data for unit test
     truePos = [
@@ -66,10 +72,6 @@ def test_scenarioPatchedConics(show_plots):
     accuracy = 1000.0 # meters
     testFailCount, testMessages = unitTestSupport.compareArray(
         truePos, dataPos, accuracy, "r_BN_N Vector",testFailCount, testMessages)
-
-    # save the figures to the Doxygen scenario images folder
-    for pltName, plt in list(figureList.items()):
-        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:

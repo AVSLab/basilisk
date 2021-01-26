@@ -57,12 +57,15 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    # each test method requires a single assert method to be called
-    figureList = scenarioOrbitManeuver.run(show_plots, maneuverCase)
+    try:
+        figureList = scenarioOrbitManeuver.run(show_plots, maneuverCase)
+        # save the figures to the Doxygen scenario images folder
+        for pltName, plt in list(figureList.items()):
+            unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
-    # save the figures to the Doxygen scenario images folder
-    for pltName, plt in list(figureList.items()):
-        unitTestSupport.saveScenarioFigure(pltName, plt, path)
+    except OSError as err:
+        testFailCount += 1
+        testMessages.append("scenarioAttitudeSteering  test are failed.")
 
     #   print out success message if no error were found
     if testFailCount == 0:

@@ -49,6 +49,7 @@ import scenarioMagneticFieldWMM
 @pytest.mark.parametrize("orbitCase", ['circular', 'elliptical'])
 @pytest.mark.scenarioTest
 
+
 def test_scenarioMagneticField(show_plots, orbitCase):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
@@ -57,11 +58,15 @@ def test_scenarioMagneticField(show_plots, orbitCase):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    figureList = scenarioMagneticFieldWMM.run(show_plots, orbitCase)
+    try:
+        figureList = scenarioMagneticFieldWMM.run(show_plots, orbitCase)
+        # save the figures to the Doxygen scenario images folder
+        for pltName, plt in list(figureList.items()):
+            unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
-    # save the figures to the Doxygen scenario images folder
-    for pltName, plt in list(figureList.items()):
-        unitTestSupport.saveScenarioFigure(pltName, plt, path)
+    except OSError as err:
+        testFailCount += 1
+        testMessages.append("scenarioMagneticFieldWMM test are failed.")
 
     #   print out success message if no error were found
     if testFailCount == 0:
