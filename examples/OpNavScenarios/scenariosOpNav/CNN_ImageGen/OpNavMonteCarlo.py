@@ -34,7 +34,7 @@ The script can be called by running::
 import os
 import inspect
 import scenario_CNNImages as scenario
-import csv, subprocess, signal
+import csv
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -43,24 +43,22 @@ from Basilisk import __path__
 bskPath = __path__[0]
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
-from Basilisk.utilities.MonteCarlo.Dispersions import OrbitalElementDispersion, MRPDispersionPerAxis, UniformDispersion, NormalVectorCartDispersion
+from Basilisk.utilities.MonteCarlo.Dispersions import OrbitalElementDispersion, MRPDispersionPerAxis, UniformDispersion
+
 # import simulation related support
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-retainedMessageName1 = "inertial_state_output"
-retainedMessageName2 = "circles_data"
+retainedMessageName1 = "scMsg"
+retainedMessageName2 = "circlesMsg"
 retainedRate = macros.sec2nano(10)
 var1 = "r_BN_N"
 var2 = "sigma_BN"
 var3 = "valid"
-dataType1 = range(3)
-dataType2 = range(3)
-dataType3 = range(1)
-
 
 def run(show_plots):
     """Main Simulation Method"""
@@ -113,8 +111,8 @@ def run(show_plots):
 
         # Add retention policy
         retentionPolicy = RetentionPolicy()
-        retentionPolicy.addMessageLog(retainedMessageName1, [(var1, dataType1), (var2, dataType2)], retainedRate)
-        retentionPolicy.addMessageLog(retainedMessageName2, [(var3, dataType3)], retainedRate)
+        retentionPolicy.addMessageLog(retainedMessageName1, [var1, var2])
+        retentionPolicy.addMessageLog(retainedMessageName2, [var3])
         monteCarlo.addRetentionPolicy(retentionPolicy)
 
         failures = monteCarlo.executeSimulations()
@@ -132,9 +130,13 @@ def run(show_plots):
         writer = csv.writer(csvfile)
         writer.writerow(['Filename', 'Valid', 'X_p', 'Y_p', 'rho_p', 'r_BN_N_1', 'r_BN_N_2', 'r_BN_N_3'])
 
-        position_N = np.array(monteCarloData["messages"]["inertial_state_output.r_BN_N"])
-        sigma_BN = np.array(monteCarloData["messages"]["inertial_state_output.sigma_BN"])
-        validCircle = np.array(monteCarloData["messages"]["circles_data.valid"])
+        timeAxis = monteCarloData["messages"][retainedMessageName1 + ".times"]
+        position_N = unitTestSupport.addTimeColumn(timeAxis,
+                                                   monteCarloData["messages"][retainedMessageName1 + "." + var1])
+        sigma_BN = unitTestSupport.addTimeColumn(timeAxis,
+                                                 monteCarloData["messages"][retainedMessageName1 + "." + var2])
+        validCircle = unitTestSupport.addTimeColumn(timeAxis,
+                                                    monteCarloData["messages"][retainedMessageName2 + "." + var3])
 
         renderRate = 60*1E9
         sigma_CB = [0., 0., 0.]  # Arbitrary camera orientation

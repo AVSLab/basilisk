@@ -28,7 +28,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 
 
 # Get current file path
-import sys, os, inspect, time, subprocess, signal
+import sys, os, inspect, subprocess
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
@@ -40,7 +40,7 @@ import numpy as np
 from sys import platform
 
 # Import plotting file for your scenario
-sys.path.append(path + '/../../plotting')
+sys.path.append(path + '/../../plottingOpNav')
 import OpNav_Plotting as BSK_plt
 
 # Create your own scenario child class
@@ -52,14 +52,19 @@ class scenario_OpNav(BSKSim):
         self.dynRate = 0.5
         self.set_DynModel(BSK_OpNavDynamics)
         self.set_FswModel(BSK_OpNavFsw)
-        self.initInterfaces()
         self.name = 'scenario_opnav'
         self.filterUse = "bias" #"relOD"
         self.configure_initial_conditions()
 
-    def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
+        # set recorded message information
+        self.msgRecList = {}
+        self.retainedMessageName1 = "scMsg"
+        self.retainedMessageName2 = "circlesMsg"
+        self.var1 = "r_BN_N"
+        self.var2 = "sigma_BN"
+        self.var3 = "valid"
 
+    def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
         oe.a = 18000*1E3 # meters
@@ -68,7 +73,7 @@ class scenario_OpNav(BSKSim):
         oe.Omega = 25. * macros.D2R
         oe.omega = 190. * macros.D2R
         oe.f = 100. * macros.D2R #90 good
-        mu = self.get_DynModel().marsGravBody.mu
+        mu = self.get_DynModel().gravFactory.gravBodies['mars barycenter'].mu
 
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
@@ -86,33 +91,29 @@ class scenario_OpNav(BSKSim):
         self.get_DynModel().cameraMod.fieldOfView = np.deg2rad(55)
 
     def log_outputs(self):
-        print('%s: log_outputs' % self.name)
-
         # Dynamics process outputs: log messages below if desired.
-
+        FswModel = self.get_FswModel()
+        DynModel = self.get_DynModel()
         # FSW process outputs
         samplingTime = self.get_FswModel().processTasksTimeStep
-        # self.TotalSim.logThisMessage(self.get_FswModel().trackingErrorCamData.outputDataName, samplingTime)
 
-        self.TotalSim.logThisMessage(self.get_DynModel().scObject.scStateOutMsgName,samplingTime)
-        self.TotalSim.logThisMessage(self.get_FswModel().imageProcessing.opnavCirclesOutMsgName, samplingTime)
+        self.msgRecList[self.retainedMessageName1] = DynModel.scObject.scStateOutMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageName1])
+
+        self.msgRecList[self.retainedMessageName2] = FswModel.opnavCirclesMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageName2])
+
         return
 
     def pull_outputs(self, showPlots):
-        print('%s: pull_outputs' % self.name)
-
-        # Dynamics process outputs: pull log messages below if any
-        # Lr = self.pullMessageLogData(self.get_FswModel().mrpFeedbackControlData.outputDataName + ".torqueRequestBody", range(3))
-
         ## Spacecraft true states
-        position_N = self.pullMessageLogData(
-            self.get_DynModel().scObject.scStateOutMsgName + ".r_BN_N", range(3))
-        ## Attitude
-        sigma_BN = self.pullMessageLogData(
-            self.get_DynModel().scObject.scStateOutMsgName + ".sigma_BN", range(3))
+        scStates = self.scRecmsgRecList[self.retainedMessageName1]
+        position_N = unitTestSupport.addTimeColumn(scStates.times(), scStates.r_BN_N)
+        sigma_BN = unitTestSupport.addTimeColumn(scStates.times(), scStates.sigma_BN)
+
         ## Image processing
-        validCircle = self.pullMessageLogData(
-            self.get_FswModel().imageProcessing.opnavCirclesOutMsgName+ ".valid", range(1))
+        circleStates = self.scRecmsgRecList[self.retainedMessageName2]
+        validCircle = unitTestSupport.addTimeColumn(circleStates.times(), circleStates.valid)
 
         sigma_CB = self.get_DynModel().cameraMRP_CB
         sizeMM = self.get_DynModel().cameraSize
@@ -150,7 +151,7 @@ class scenario_OpNav(BSKSim):
 
 
 def run(TheScenario, runLog):
-
+    TheBskScenario = BSKScenario
     TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
 
@@ -165,13 +166,9 @@ def run(TheScenario, runLog):
 
     mode = ["None", "-directComm", "-opNavMode"]
     # The following code spawns the Vizard application from python as a function of the mode selected above, and the platform.
-    if platform != "darwin":
-        child = subprocess.Popen([TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode],
-             "tcp://localhost:5556"])
-    else:
-        child = subprocess.Popen(["open", TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode],
-                                  "tcp://localhost:5556"])
-    print("Vizard spawned with PID = " + str(child.pid))
+    TheScenario.vizard = subprocess.Popen(
+        [TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode], "tcp://localhost:5556"], stdout=subprocess.DEVNULL)
+    print("Vizard spawned with PID = " + str(TheScenario.vizard.pid))
 
     # Configure FSW mode
     TheScenario.modeRequest = 'imageGen'
@@ -183,10 +180,13 @@ def run(TheScenario, runLog):
     print('Starting Execution')
     TheScenario.ExecuteSimulation()
 
-    TheScenario.get_DynModel().SpiceObject.unloadSpiceKernel(TheScenario.get_DynModel().SpiceObject.SPICEDataPath, 'de430.bsp')
-    TheScenario.get_DynModel().SpiceObject.unloadSpiceKernel(TheScenario.get_DynModel().SpiceObject.SPICEDataPath, 'naif0012.tls')
-    TheScenario.get_DynModel().SpiceObject.unloadSpiceKernel(TheScenario.get_DynModel().SpiceObject.SPICEDataPath, 'de-403-masses.tpc')
-    TheScenario.get_DynModel().SpiceObject.unloadSpiceKernel(TheScenario.get_DynModel().SpiceObject.SPICEDataPath, 'pck00010.tpc')
+    TheScenario.vizard.kill()
+
+    spice = TheScenario.get_DynModel().gravFactory.spiceObject
+    spice.unloadSpiceKernel(spice.SPICEDataPath, 'de430.bsp')
+    spice.unloadSpiceKernel(spice.SPICEDataPath, 'naif0012.tls')
+    spice.unloadSpiceKernel(spice.SPICEDataPath, 'de-403-masses.tpc')
+    spice.unloadSpiceKernel(spice.SPICEDataPath, 'pck00010.tpc')
 
     return
 
@@ -196,4 +196,4 @@ if __name__ == "__main__":
 
     # Configure a scenario in the base simulation
     TheScenario = scenario_OpNav()
-    run(TheScenario)
+    run(TheScenario, os.path.abspath(os.path.dirname(__file__)) + "/cnn_MC_data")

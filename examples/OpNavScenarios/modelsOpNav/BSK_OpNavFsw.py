@@ -184,7 +184,7 @@ class BSKFswModels():
         SimBase.AddModelToTask("opNavODTaskB", self.imageProcessing, None, 15)
         SimBase.AddModelToTask("opNavODTaskB", self.pixelLineFilterWrap, self.pixelLineFilterData, 13)
 
-        # SimBase.AddModelToTask("imageProcTask", self.imageProcessing, None, 15)
+        SimBase.AddModelToTask("imageProcTask", self.imageProcessing, None, 15)
 
         SimBase.AddModelToTask("opNavAttODTask", self.imageProcessing, None, 15)
         SimBase.AddModelToTask("opNavAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
