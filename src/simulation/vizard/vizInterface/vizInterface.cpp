@@ -177,11 +177,11 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         spiceStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
         this->spiceInMsgStatus.clear();
         this->spiceMessage.clear();
-        for (int c = 0; c< (int) this->planetNames.size(); c++) {
+        for (int c = 0; c< (int) this->gravBodyInformation.size(); c++) {
             /* set default zero translation and rotation states */
             SpicePlanetStateMsgPayload logMsg = {};
             m33SetIdentity(logMsg.J20002Pfix);
-            strcpy(logMsg.PlanetName, this->planetNames.at(c).c_str());
+            strcpy(logMsg.PlanetName, this->gravBodyInformation.at(c).bodyName.c_str());
 
             this->spiceInMsgStatus.push_back(spiceStatus);
             this->spiceMessage.push_back(logMsg);
@@ -713,11 +713,14 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     /*! Write spice output msgs */
-    for(size_t k=0; k<this->planetNames.size(); k++)
+    for(size_t k=0; k<this->gravBodyInformation.size(); k++)
     {
         if (this->spiceInMsgStatus[k].dataFresh){
             vizProtobufferMessage::VizMessage::CelestialBody* spice = message->add_celestialbodies();
-            spice->set_bodyname(this->planetNames.at(k));
+            spice->set_bodyname(this->gravBodyInformation.at(k).bodyName);
+            spice->set_mu(this->gravBodyInformation.at(k).mu);
+            spice->set_radiuseq(this->gravBodyInformation.at(k).radEquator);
+            spice->set_radiusratio(this->gravBodyInformation.at(k).radiusRatio);
             for (int i=0; i<3; i++){
                 spice->add_position(this->spiceMessage[k].PositionVector[i]);
                 spice->add_velocity(this->spiceMessage[k].VelocityVector[i]);

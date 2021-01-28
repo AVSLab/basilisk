@@ -938,6 +938,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
 
     # loop over all spacecraft to associated states and msg information
     planetNameList = []
+    planetInfoList = []
     spiceMsgList = []
     vizMessenger.scData.clear()
     c = 0
@@ -956,6 +957,12 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             # check if the celestial object has already been added
             if gravBody.planetName not in planetNameList:
                 planetNameList.append(gravBody.planetName)
+                planetInfo = vizInterface.GravBodyInfo()
+                planetInfo.bodyName = gravBody.planetName
+                planetInfo.mu = gravBody.mu
+                planetInfo.radEquator = gravBody.radEquator
+                planetInfo.radiusRatio = gravBody.radiusRatio
+                planetInfoList.append(planetInfo)
                 spiceMsgList.append(gravBody.planetBodyInMsg)
 
         # process RW effectors
@@ -997,7 +1004,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         vizMessenger.scData.push_back(scData)
         c += 1
 
-    vizMessenger.planetNames = vizInterface.StringVector(planetNameList)
+    vizMessenger.gravBodyInformation = vizInterface.GravBodyInfoVector(planetInfoList)
     vizMessenger.spiceInMsgs = messaging.SpicePlanetStateInMsgsVector(spiceMsgList)
 
     # note that the following logic can receive a single file name, or a full path + file name.

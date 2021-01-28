@@ -82,14 +82,14 @@ class gravBodyFactory(object):
                 print("gravBody " + name + " not found in gravBodyUtilities.py")
         return self.gravBodies
 
+    # Note, in the `create` functions below the `isCentralBody` and `useSphericalHarmParams` are
+    # all set to False in teh `GravGodyData()` constructor.
 
     def createSun(self):
         sun = gravityEffector.GravBodyData()
         sun.planetName = "sun_planet_data"
         sun.mu = 1.32712440018E20  # meters^3/s^2
         sun.radEquator = 695508000.0  # meters
-        sun.isCentralBody = False
-        sun.useSphericalHarmParams = False
         self.gravBodies['sun'] = sun
         sun.this.disown()
         return sun
@@ -99,8 +99,6 @@ class gravBodyFactory(object):
         mercury.planetName = "mercury_planet_data"
         mercury.mu = 4.28283100e13  # meters^3/s^2
         mercury.radEquator = 2439700.0  # meters
-        mercury.isCentralBody = False
-        mercury.useSphericalHarmParams = False
         self.gravBodies['mercury'] = mercury
         mercury.this.disown()
         return mercury
@@ -110,8 +108,6 @@ class gravBodyFactory(object):
         venus.planetName = "venus_planet_data"
         venus.mu = 3.24858599e14  # meters^3/s^2
         venus.radEquator = 6051800.0  # meters
-        venus.isCentralBody = False
-        venus.useSphericalHarmParams = False
         self.gravBodies['venus'] = venus
         venus.this.disown()
         return venus
@@ -121,8 +117,6 @@ class gravBodyFactory(object):
         earth.planetName = "earth_planet_data"
         earth.mu = 0.3986004415E+15  # meters^3/s^2
         earth.radEquator = 6378136.6  # meters
-        earth.isCentralBody = False
-        earth.useSphericalHarmParams = False
         self.gravBodies['earth'] = earth
         earth.this.disown()
         return earth
@@ -132,8 +126,6 @@ class gravBodyFactory(object):
         moon.planetName = "moon_planet_data"
         moon.mu = 4.902799E12  # meters^3/s^2
         moon.radEquator = 1738100.0  # meters
-        moon.isCentralBody = False
-        moon.useSphericalHarmParams = False
         self.gravBodies['moon'] = moon
         moon.this.disown()
         return moon
@@ -143,8 +135,6 @@ class gravBodyFactory(object):
         mars.planetName = "mars_planet_data"
         mars.mu = 4.28283100e13  # meters^3/s^2
         mars.radEquator = 3396190  # meters
-        mars.isCentralBody = False
-        mars.useSphericalHarmParams = False
         self.gravBodies['mars'] = mars
         mars.this.disown()
         return mars
@@ -154,8 +144,6 @@ class gravBodyFactory(object):
         mars_barycenter.planetName = "mars barycenter_planet_data"
         mars_barycenter.mu = 4.28283100e13  # meters^3/s^2
         mars_barycenter.radEquator = 3396190  # meters
-        mars_barycenter.isCentralBody = False
-        mars_barycenter.useSphericalHarmParams = False
         self.gravBodies['mars barycenter'] = mars_barycenter
         mars_barycenter.this.disown()
         return mars_barycenter
@@ -165,8 +153,6 @@ class gravBodyFactory(object):
         jupiter.planetName = "jupiter barycenter_planet_data"
         jupiter.mu = 1.266865349093058E17  # meters^3/s^2
         jupiter.radEquator = 71492000.0  # meters
-        jupiter.isCentralBody = False
-        jupiter.useSphericalHarmParams = False
         self.gravBodies['jupiter barycenter'] = jupiter
         jupiter.this.disown()
         return jupiter
@@ -176,8 +162,6 @@ class gravBodyFactory(object):
         saturn.planetName = "saturn barycenter_planet_data"
         saturn.mu = 3.79395000E16  # meters^3/s^2
         saturn.radEquator = 60268000.0  # meters
-        saturn.isCentralBody = False
-        saturn.useSphericalHarmParams = False
         self.gravBodies['saturn'] = saturn
         saturn.this.disown()
         return saturn
@@ -187,8 +171,6 @@ class gravBodyFactory(object):
         uranus.planetName = "uranus barycenter_planet_data"
         uranus.mu = 5.79396566E15  # meters^3/s^2
         uranus.radEquator = 25559000.0  # meters
-        uranus.isCentralBody = False
-        uranus.useSphericalHarmParams = False
         self.gravBodies['uranus'] = uranus
         uranus.this.disown()
         return uranus
@@ -198,11 +180,30 @@ class gravBodyFactory(object):
         neptune.planetName = "neptune barycenter_planet_data"
         neptune.mu = 6.83509920E15  # meters^3/s^2
         neptune.radEquator = 24764000.0  # meters
-        neptune.isCentralBody = False
-        neptune.useSphericalHarmParams = False
         self.gravBodies['neptune'] = neptune
         neptune.this.disown()
         return neptune
+
+    def createCustomGravObject(self, label, mu, **kwargs):
+
+        unitTestSupport.checkMethodKeyword(
+            ['radEquator', 'radiusRatio'],
+            kwargs)
+
+        if not isinstance(label, str):
+            print('ERROR: label must be a string')
+            exit(1)
+
+        gravBody = gravityEffector.GravBodyData()
+        gravBody.planetName = label
+        gravBody.mu = mu
+        if 'radEquator' in kwargs:
+            gravBody.radEquator = kwargs['radEquator']
+        if 'radiusRatio' in kwargs:
+            gravBody.radiusRatio = kwargs['radiusRatio']
+        self.gravBodies[label] = gravBody
+        gravBody.this.disown()
+        return gravBody
 
     def createSpiceInterface(self, path, time, **kwargs):
         """

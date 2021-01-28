@@ -84,14 +84,14 @@ public:
     ReadFunctor<SpicePlanetStateMsgPayload> planetBodyInMsg;       //!< planet spice ephemeris input message
 
 public:
-    bool isCentralBody;             //!<          Flag indicating that object is center
-    bool isDisplayBody;             //!<          Flag indicating that body is display
-    bool useSphericalHarmParams;    //!<          Flag indicating to use spherical harmonics perturbations
+    bool isCentralBody=0;           //!<          Flag indicating that object is center
+    bool useSphericalHarmParams=0;  //!<          Flag indicating to use spherical harmonics perturbations
 
-    double mu;                      //!< [m3/s^2] central body gravitational param
+    double mu=0;                    //!< [m3/s^2] central body gravitational param
     double ephemTime;               //!< [s]      Ephemeris time for the body in question
     double ephIntTime;              //!< [s]      Integration time associated with the ephem data
-    double radEquator;              //!< [m]      Equatorial radius for the body
+    double radEquator=0;            //!< [m]      Equatorial radius for the body
+    double radiusRatio=0;           //!< []       ratio of polar over equatorial radius
     SpicePlanetStateMsgPayload localPlanet = {};  //!< [-]   Class storage of ephemeris info from scheduled portion
     uint64_t timeWritten = 0;       //!< [ns]     time the input planet state message was written
     std::string planetName;         //!<          Gravitational body name

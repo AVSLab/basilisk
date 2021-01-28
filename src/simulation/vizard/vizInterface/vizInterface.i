@@ -42,6 +42,7 @@ namespace std {
     %template(StdCameraConfig) vector<StdCameraSettings>;
     %template(VizSCVector) vector<VizSpacecraftData>;
     %template(ThrClusterVector) vector<ThrClusterMap>;
+    %template(GravBodyInfoVector) vector<GravBodyInfo>;
 }
 
 %include "vizInterface.h"

@@ -264,11 +264,8 @@ GravBodyData::GravBodyData()
 {
     this->useSphericalHarmParams = false;
     this->isCentralBody = false;
-    this->isDisplayBody = false;
-    this->mu = 0;                      //!< [m3/s^2] central body gravitational param
     this->ephemTime = 0;               //!< [s]      Ephemeris time for the body in question
     this->ephIntTime = 0;              //!< [s]      Integration time associated with the ephem data
-    this->radEquator = 0;              //!< [m]      Equatorial radius for the body
     this->spherHarm.maxDeg = 0;
     // Default these values to zero just in case they don't get populated
     this->localPlanet = this->planetBodyInMsg.zeroMsgPayload();

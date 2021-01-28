@@ -197,4 +197,11 @@ typedef struct {
 }VizSettings;
 
 
+typedef struct{
+    std::string bodyName;               //!< [-] celestial body name
+    double mu;                          //!< [m^3/s^2] celestial body gravity constant
+    double radEquator;                  //!< [m] celestial body radius at equator
+    double radiusRatio;                 //!< [] radiusPolar/radiusEq
+}GravBodyInfo;
+
 #endif /* vizStructures_h */

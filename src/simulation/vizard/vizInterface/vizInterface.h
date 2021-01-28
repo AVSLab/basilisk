@@ -56,7 +56,7 @@ public:
 public:
     std::vector<VizSpacecraftData> scData;      //!< [-] vector of spacecraft data containers
     std::vector <ReadFunctor<SpicePlanetStateMsgPayload>> spiceInMsgs;   //!< [-] vector of input messages of planet Spice data
-    std::vector<std::string> planetNames;       //!< [-] planet names
+    std::vector<GravBodyInfo> gravBodyInformation; //!< [-] vector of gravitational body info
     Message<CameraImageMsgPayload> opnavImageOutMsg;  //!< Image output message
     int opNavMode;                              /*!< [int] Set non-zero positive value  if Unity/Viz couple in direct
                                                  communication. (1 - regular opNav, 2 - performance opNav) */
