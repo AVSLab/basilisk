@@ -61,6 +61,11 @@ void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t
         }
     }
 
+    // check that the required message has not been connected
+    if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mrpfeedback.guidInMsg wasn't connected.");
+    }
+
     /*! - zero and read in vehicle configuration message */
     VehicleConfigMsgPayload sc;
     sc = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
