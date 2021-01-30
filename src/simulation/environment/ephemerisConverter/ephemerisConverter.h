@@ -43,7 +43,7 @@ public:
     void addSpiceInputMsg(Message<SpicePlanetStateMsgPayload> *msg);
 
 public:
-    std::vector<Message<EphemerisMsgPayload>> ephemOutMsgs; //!< vector of planet ephemeris output messages
+    std::vector<Message<EphemerisMsgPayload>*> ephemOutMsgs; //!< vector of planet ephemeris output messages
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> spiceInMsgs;    //!< vector of planet spice state input messages
 
     BSKLogger bskLogger;                      //!< -- BSK Logging

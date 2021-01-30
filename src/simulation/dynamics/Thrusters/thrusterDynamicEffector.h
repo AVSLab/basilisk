@@ -61,7 +61,7 @@ public:
 
 public:
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
-    std::vector<Message<THROutputMsgPayload>> thrusterOutMsgs;  //!< -- output message vector for thruster data
+    std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
 
     int stepsInRamp;                               //!< class variable
     std::vector<THRSimConfigMsgPayload> thrusterData; //!< -- Thruster information

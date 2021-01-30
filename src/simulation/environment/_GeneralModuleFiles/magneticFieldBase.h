@@ -57,7 +57,7 @@ protected:
 
 public:
     std::vector<ReadFunctor<SCPlusStatesMsgPayload>> scStateInMsgs; //!< Vector of the spacecraft position/velocity input message
-    std::vector<Message<MagneticFieldMsgPayload>> envOutMsgs;       //!< Vector of message names to be written out by the environment
+    std::vector<Message<MagneticFieldMsgPayload>*> envOutMsgs;       //!< Vector of message names to be written out by the environment
     ReadFunctor<SpicePlanetStateMsgPayload> planetPosInMsg;         //!< Message name for the planet's SPICE position message
     ReadFunctor<EpochMsgPayload> epochInMsg;                        //!< (optional) epoch date/time input message
 

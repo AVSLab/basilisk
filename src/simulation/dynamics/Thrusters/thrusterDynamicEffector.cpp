@@ -49,7 +49,9 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
 /*! The destructor. */
 ThrusterDynamicEffector::~ThrusterDynamicEffector()
 {
-    
+    for (int c=0; c<this->thrusterOutMsgs.size(); c++) {
+        free(this->thrusterOutMsgs.at(c));
+    }
     return;
 }
 
@@ -80,7 +82,7 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
     THROutputMsgPayload tmpThruster;
     for (it = this->thrusterData.begin(); it != this->thrusterData.end(); ++it)
     {
-        tmpThruster = this->thrusterOutMsgs[idx].zeroMsgPayload();
+        tmpThruster = this->thrusterOutMsgs[idx]->zeroMsgPayload();
         eigenVector3d2CArray(it->thrLoc_B, tmpThruster.thrusterLocation);
         eigenVector3d2CArray(it->thrDir_B, tmpThruster.thrusterDirection);
         tmpThruster.maxThrust = it->MaxThrust;
@@ -89,7 +91,7 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
         v3Copy(it->ThrustOps.opThrustForce_B, tmpThruster.thrustForce_B);
         v3Copy(it->ThrustOps.opThrustTorquePntB_B, tmpThruster.thrustTorquePntB_B);
         
-        this->thrusterOutMsgs[idx].write(&tmpThruster, this->moduleID, CurrentClock);
+        this->thrusterOutMsgs[idx]->write(&tmpThruster, this->moduleID, CurrentClock);
 
         idx ++;
     }
@@ -270,7 +272,7 @@ void ThrusterDynamicEffector::addThruster(THRSimConfigMsgPayload *newThruster)
     /* create corresponding output message */
     Message<THROutputMsgPayload> *msg;
     msg = new Message<THROutputMsgPayload>;
-    this->thrusterOutMsgs.push_back(*msg);
+    this->thrusterOutMsgs.push_back(msg);
 }
 
 

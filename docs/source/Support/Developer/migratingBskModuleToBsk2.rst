@@ -254,11 +254,11 @@ Updating a C++ Module
 
          ReadFunctor<InputMsgPayload>   moduleInMsg;     //!< sensor input message
 
-    - It is possible to create a vector of output messages of type ``SomeMsgPayload`` using
+    - It is possible to create a vector of output message pointers of type ``SomeMsgPayload`` using
 
       .. code:: cpp
 
-         std::vector<Message<SomeMsgPayload>> descriptionOutMsgs;
+         std::vector<Message<SomeMsgPayload>*> descriptionOutMsgs;
 
 #. Updating the ``module.cpp`` file:
 
@@ -274,14 +274,16 @@ Updating a C++ Module
 
       The new message object is automatically created through the above process in the ``module.h`` file.
 
-    - If a ``std::vector`` of output messages of type ``SomeMsgPayload`` was created in the module ``*.h`` file
+    - If a ``std::vector`` of output message pointers of type ``SomeMsgPayload`` was created in the module ``*.h`` file
       then these message objects must be created dynamically in the ``*.cpp`` code using
 
       .. code:: cpp
 
          Message<SomeMsgPayload> *msg;
          msg = new Message<SomeMsgPayload>;
-         this->descriptionOutMsgs.push_back(*msg);
+         this->descriptionOutMsgs.push_back(msg);
+
+      Don't forget to delete these message allocation in the module deconstructor.
 
     - To check is an output message has been connected to, check the value of ``this->moduleOutMsg.isLinked()``
 
@@ -383,10 +385,10 @@ Updating a C++ Module
       file instead.  These interfaces can now be used by any module by importing ``messaging`` in the
       Basilisk python script.
 
-    - To create the swig interface to a vector of messages of type ``SomeMsgPayload``,
+    - To create the swig interface to a vector of output message pointers of type ``SomeMsgPayload``,
       near the bottom of the ``messaging.i`` file add this line::
 
-        %template(SomeMsgsVector) std::vector<Message<SomeMsgPayload>>;
+        %template(SomeOutMsgsVector) std::vector<Message<SomeMsgPayload>*>;
 
 #. Updating the ``module.rst`` documentation file:
 

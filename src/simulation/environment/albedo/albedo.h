@@ -79,7 +79,7 @@ private:
     double computeEclipseAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen::Vector3d r_SP_N); //!< computes the shadow factor at dA
 
 public:
-    std::vector<Message<AlbedoMsgPayload>> albOutMsgs;          //!< vector of output messages for albedo data
+    std::vector<Message<AlbedoMsgPayload>*> albOutMsgs;         //!< vector of output messages for albedo data
     ReadFunctor<SpicePlanetStateMsgPayload> sunPositionInMsg;   //!< input message name for sun data
     ReadFunctor<SCPlusStatesMsgPayload> spacecraftStateInMsg;   //!< input message name for spacecraft data
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> planetInMsgs; //!< vector of planet data input data

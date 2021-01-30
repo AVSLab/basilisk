@@ -44,7 +44,7 @@ public:
     void setPlanetNames(std::vector<std::string> planetNames);
     
 public:
-    std::vector<Message<SpicePlanetStateMsgPayload>> planetOutMsgs; //!< -- vector of planet state output messages
+    std::vector<Message<SpicePlanetStateMsgPayload>*> planetOutMsgs; //!< -- vector of planet state output messages
 
     std::vector<classicElements>planetElements; //!< -- Vector of planet classical orbit elements
 

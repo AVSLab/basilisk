@@ -59,7 +59,7 @@ public:
 
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;            //!< planet state input message
     Message<GroundStateMsgPayload> currentGroundStateOutMsg;    //!< ground location output message
-    std::vector<Message<AccessMsgPayload>> accessOutMsgs;           //!< vector of ground location access messages
+    std::vector<Message<AccessMsgPayload>*> accessOutMsgs;           //!< vector of ground location access messages
     std::vector<ReadFunctor<SCPlusStatesMsgPayload>> scStateInMsgs; //!< vector of sc state input messages
     Eigen::Vector3d r_LP_P_Init; //!< [m] Initial position of the location in planet-centric coordinates; can also be set using setGroundLocation.
     BSKLogger bskLogger;         //!< -- BSK Logging

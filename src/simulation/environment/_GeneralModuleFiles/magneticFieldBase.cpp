@@ -59,6 +59,9 @@ MagneticFieldBase::MagneticFieldBase()
  */
 MagneticFieldBase::~MagneticFieldBase()
 {
+    for (int c=0; c<this->envOutMsgs.size(); c++) {
+        delete this->envOutMsgs.at(c);
+    }
     return;
 }
 
@@ -74,7 +77,7 @@ void MagneticFieldBase::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tm
     /* create output message */
     Message<MagneticFieldMsgPayload> *msg;
     msg = new Message<MagneticFieldMsgPayload>;
-    this->envOutMsgs.push_back(*msg);
+    this->envOutMsgs.push_back(msg);
 
     /* create buffer message copies*/
     MagneticFieldMsgPayload msgMagBuffer;
@@ -136,7 +139,7 @@ void MagneticFieldBase::customSetEpochFromVariable()
 void MagneticFieldBase::writeMessages(uint64_t CurrentClock)
 {
     for (int c=0; c<this->envOutMsgs.size(); c++) {
-        this->envOutMsgs.at(c).write(&this->magFieldOutBuffer.at(c), this->moduleID, CurrentClock);
+        this->envOutMsgs.at(c)->write(&this->magFieldOutBuffer.at(c), this->moduleID, CurrentClock);
     }
 
     //! - call the custom method to perform additional output message writing
@@ -220,7 +223,7 @@ void MagneticFieldBase::updateLocalMagField(double currentTime)
         this->updateRelativePos(&(this->planetState), &(*it));
 
         //! - zero the output message for each spacecraft by default
-        *magMsgIt = this->envOutMsgs[0].zeroMsgPayload();
+        *magMsgIt = this->envOutMsgs[0]->zeroMsgPayload();
 
         //! - check if radius is in permissible range
         if(this->orbitRadius > this->envMinReach &&
@@ -262,7 +265,7 @@ void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
     std::vector<MagneticFieldMsgPayload>::iterator it;
     for(it = this->magFieldOutBuffer.begin(); it!= this->magFieldOutBuffer.end(); it++){
         memset(&(*it), 0x0, sizeof(MagneticFieldMsgPayload));
-        *it = this->envOutMsgs[0].zeroMsgPayload();
+        *it = this->envOutMsgs[0]->zeroMsgPayload();
     }
     //! - update local neutral density information
     if(this->readMessages())

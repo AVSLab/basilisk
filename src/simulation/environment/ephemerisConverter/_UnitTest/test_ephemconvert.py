@@ -31,6 +31,7 @@ from Basilisk.utilities import macros
 from Basilisk import __path__
 bskPath = __path__[0]
 
+from Basilisk.architecture import messaging
 
 # provide a unique test method name, starting with test_
 def test_ephemConvert(show_plots):

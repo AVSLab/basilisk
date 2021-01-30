@@ -45,6 +45,9 @@ VSCMGStateEffector::VSCMGStateEffector()
 
 VSCMGStateEffector::~VSCMGStateEffector()
 {
+    for (int c=0; c<this->vscmgOutMsgs.size(); c++) {
+        free(this->vscmgOutMsgs.at(c));
+    }
     return;
 }
 
@@ -544,7 +547,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 	std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
-        tmpVSCMG = this->vscmgOutMsgs[0].zeroMsgPayload();
+        tmpVSCMG = this->vscmgOutMsgs[0]->zeroMsgPayload();
         if (numVSCMGJitter > 0) {
             double thetaCurrent = this->thetasState->getState()(it - VSCMGData.begin(), 0);
             it->theta = thetaCurrent;
@@ -578,7 +581,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		tmpVSCMG.U_d = it->U_d;
 		tmpVSCMG.VSCMGModel = it->VSCMGModel;
 		// Write out config data for each VSCMG
-        this->vscmgOutMsgs.at(it - VSCMGData.begin()).write(&tmpVSCMG, this->moduleID, CurrentClock);
+        this->vscmgOutMsgs.at(it - VSCMGData.begin())->write(&tmpVSCMG, this->moduleID, CurrentClock);
 	}
 
 	// Write this message once for all VSCMGs
@@ -767,6 +770,6 @@ void VSCMGStateEffector::AddVSCMG(VSCMGConfigMsgPayload *NewVSCMG)
     /* add a VSCMG output message for this device */
     Message<VSCMGConfigMsgPayload> *msg;
     msg = new Message<VSCMGConfigMsgPayload>;
-    this->vscmgOutMsgs.push_back(*msg);
+    this->vscmgOutMsgs.push_back(msg);
 }
 

@@ -65,6 +65,9 @@ AtmosphereBase::AtmosphereBase()
  */
 AtmosphereBase::~AtmosphereBase()
 {
+    for (int c=0; c<this->envOutMsgs.size(); c++) {
+        delete this->envOutMsgs.at(c);
+    }
     return;
 }
 
@@ -80,7 +83,7 @@ void AtmosphereBase::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpSc
     /* create output message */
     Message<AtmoPropsMsgPayload> *msg;
     msg = new Message<AtmoPropsMsgPayload>;
-    this->envOutMsgs.push_back(*msg);
+    this->envOutMsgs.push_back(msg);
 
     /* create buffer message copies*/
     AtmoPropsMsgPayload msgAtmoBuffer;
@@ -151,7 +154,7 @@ void AtmosphereBase::writeMessages(uint64_t CurrentClock)
 
     //! - write density output messages for each spacecaft's locations
     for(c = 0; c < this->envOutMsgs.size(); c++){
-        this->envOutMsgs.at(c).write(&this->envOutBuffer.at(c), this->moduleID, CurrentClock);
+        this->envOutMsgs.at(c)->write(&this->envOutBuffer.at(c), this->moduleID, CurrentClock);
     }
 
     //! - call the custom method to perform additional output message writing
@@ -255,7 +258,7 @@ void AtmosphereBase::updateLocalAtmosphere(double currentTime)
         this->updateRelativePos(&(this->planetState), &(*scIt));
 
         //! - zero the output message for each spacecraft by default
-        *envMsgIt = this->envOutMsgs[0].zeroMsgPayload();
+        *envMsgIt = this->envOutMsgs[0]->zeroMsgPayload();
 
         //! - check if radius is in permissible range
         if(this->orbitAltitude > this->envMinReach &&
@@ -278,7 +281,7 @@ void AtmosphereBase::UpdateState(uint64_t CurrentSimNanos)
     //! - clear the output buffer
     std::vector<AtmoPropsMsgPayload>::iterator it;
     for(it = this->envOutBuffer.begin(); it!= this->envOutBuffer.end(); it++){
-        *it = this->envOutMsgs[0].zeroMsgPayload();
+        *it = this->envOutMsgs[0]->zeroMsgPayload();
     }
     //! - update local neutral density information
     if(this->readMessages())

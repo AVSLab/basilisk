@@ -141,20 +141,20 @@ typedef struct messageType;
 %array_functions(THRConfigMsgPayload, ThrustConfigArray);
 %array_functions(RWConfigElementMsgPayload, RWConfigArray);
 
-%template(RWConfigLogOutMsgsVector) std::vector<Message<RWConfigLogMsgPayload>>;
-%template(SpicePlanetStateOutMsgsVector) std::vector<Message<SpicePlanetStateMsgPayload>>;
-%template(AtmoPropsOutMsgsVector) std::vector<Message<AtmoPropsMsgPayload>>;
-%template(SCPlusStatesOutMsgsVector) std::vector<Message<SCPlusStatesMsgPayload>>;
-%template(HingedRigidBodyOutMsgsVector) std::vector<Message<HingedRigidBodyMsgPayload>>;
-%template(THROutputOutMsgsVector) std::vector<Message<THROutputMsgPayload>>;
-%template(VSCMGConfigOutMsgsVector) std::vector<Message<VSCMGConfigMsgPayload>>;
-%template(EclipseOutMsgsVector) std::vector<Message<EclipseMsgPayload>>;
-%template(EphemerisOutMsgsVector) std::vector<Message<EphemerisMsgPayload>>;
-%template(AccessOutMsgsVector) std::vector<Message<AccessMsgPayload>>;
-%template(MagneticFieldOutMsgsVector) std::vector<Message<MagneticFieldMsgPayload>>;
-%template(AlbedoOutMsgsVector) std::vector<Message<AlbedoMsgPayload>>;
-%template(THROutputOutMsgsVectorVector) std::vector <std::vector <Message<THROutputMsgPayload>>>;
-%template(RWConfigLogOutMsgsVectorVector) std::vector <std::vector <Message<RWConfigLogMsgPayload>>>;
+%template(RWConfigLogOutMsgsVector) std::vector<Message<RWConfigLogMsgPayload>*>;
+%template(SpicePlanetStateOutMsgsVector) std::vector<Message<SpicePlanetStateMsgPayload>*>;
+%template(AtmoPropsOutMsgsVector) std::vector<Message<AtmoPropsMsgPayload>*>;
+%template(SCPlusStatesOutMsgsVector) std::vector<Message<SCPlusStatesMsgPayload>*>;
+%template(HingedRigidBodyOutMsgsVector) std::vector<Message<HingedRigidBodyMsgPayload>*>;
+%template(THROutputOutMsgsVector) std::vector<Message<THROutputMsgPayload>*>;
+%template(VSCMGConfigOutMsgsVector) std::vector<Message<VSCMGConfigMsgPayload>*>;
+%template(EclipseOutMsgsVector) std::vector<Message<EclipseMsgPayload>*>;
+%template(EphemerisOutMsgsVector) std::vector<Message<EphemerisMsgPayload>*>;
+%template(AccessOutMsgsVector) std::vector<Message<AccessMsgPayload>*>;
+%template(MagneticFieldOutMsgsVector) std::vector<Message<MagneticFieldMsgPayload>*>;
+%template(AlbedoOutMsgsVector) std::vector<Message<AlbedoMsgPayload>*>;
+%template(THROutputOutMsgsVectorVector) std::vector <std::vector <Message<THROutputMsgPayload>*>>;
+%template(RWConfigLogOutMsgsVectorVector) std::vector <std::vector <Message<RWConfigLogMsgPayload>*>>;
 
 
 %template(SCPlusStatesInMsgsVector) std::vector<ReadFunctor<SCPlusStatesMsgPayload>>;

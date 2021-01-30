@@ -45,6 +45,9 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
 
 ReactionWheelStateEffector::~ReactionWheelStateEffector()
 {
+    for (int c=0; c<this->rwOutMsgs.size(); c++) {
+        free(this->rwOutMsgs.at(c));
+    }
     return;
 }
 
@@ -364,7 +367,7 @@ void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload *NewRW)
     /* add a RW state log output message for this wheel */
     Message<RWConfigLogMsgPayload> *msg;
     msg = new Message<RWConfigLogMsgPayload>;
-    this->rwOutMsgs.push_back(*msg);
+    this->rwOutMsgs.push_back(msg);
 }
 
 
@@ -422,7 +425,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         }
         it->Omega = this->OmegasState->getState()(itp - ReactionWheelData.begin(), 0);
 
-        tmpRW = this->rwOutMsgs[c].zeroMsgPayload();
+        tmpRW = this->rwOutMsgs[c]->zeroMsgPayload();
 		tmpRW.theta = it->theta;
 		tmpRW.u_current = it->u_current;
         tmpRW.frictionTorque = it->frictionTorque;
@@ -438,7 +441,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         eigenVector3d2CArray(it->gsHat_B, tmpRW.gsHat_B);
         eigenVector3d2CArray(it->rWB_B, tmpRW.rWB_B);
 		// Write out config data for eachreaction wheel
-        this->rwOutMsgs[c].write(&tmpRW, this->moduleID, CurrentClock);
+        this->rwOutMsgs[c]->write(&tmpRW, this->moduleID, CurrentClock);
         c++;
 	}
 

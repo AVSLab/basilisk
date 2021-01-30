@@ -65,6 +65,9 @@ Albedo::Albedo()
  */
 Albedo::~Albedo()
 {
+    for (int c=0; c<this->albOutMsgs.size(); c++) {
+        delete this->albOutMsgs.at(c);
+    }
     return;
 }
 
@@ -86,7 +89,7 @@ void Albedo::addInstrumentConfig(instConfig_t configMsg) {
     // add a albedo output message for this instrument
     Message<AlbedoMsgPayload> *msg;
     msg = new Message<AlbedoMsgPayload>;
-    this->albOutMsgs.push_back(*msg);
+    this->albOutMsgs.push_back(msg);
 
     // Do a sanity check and push fov back to the vector (if not defined, use the default value.)
     if (configMsg.fov < 0.0) {
@@ -118,7 +121,7 @@ void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vect
     // add a albedo output message for this instrument
     Message<AlbedoMsgPayload> *msg;
     msg = new Message<AlbedoMsgPayload>;
-    this->albOutMsgs.push_back(*msg);
+    this->albOutMsgs.push_back(msg);
 
     // Do a sanity check and push fov back to the vector (if not defined, use the default value.)
     if (fov < 0.0) {
@@ -307,7 +310,7 @@ void Albedo::writeMessages(uint64_t CurrentSimNanos) {
         localMessage.albedoAtInstrument = this->albOutData.at(idx)[1];
         localMessage.AfluxAtInstrumentMax = this->albOutData.at(idx)[2];
         localMessage.AfluxAtInstrument = this->albOutData.at(idx)[3];
-        this->albOutMsgs.at(idx).write(&localMessage, this->moduleID, CurrentSimNanos);
+        this->albOutMsgs.at(idx)->write(&localMessage, this->moduleID, CurrentSimNanos);
     }
 }
 

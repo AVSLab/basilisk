@@ -66,9 +66,9 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     Message<SCPlusStatesMsgPayload> *scMsg;
     for (int c = 0; c < 2; c++) {
         panelMsg = new Message<HingedRigidBodyMsgPayload>;
-        this->dualHingedRigidBodyOutMsgs.push_back(*panelMsg);
+        this->dualHingedRigidBodyOutMsgs.push_back(panelMsg);
         scMsg = new Message<SCPlusStatesMsgPayload>;
-        this->dualHingedRigidBodyConfigLogOutMsgs.push_back(*scMsg);
+        this->dualHingedRigidBodyConfigLogOutMsgs.push_back(scMsg);
     }
 
     this->ModelTag = "";
@@ -79,6 +79,10 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
 
 DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 {
+    for (int c=0; c<2; c++) {
+        free(this->dualHingedRigidBodyOutMsgs.at(c));
+        free(this->dualHingedRigidBodyConfigLogOutMsgs.at(c));
+    }
     return;
 }
 
@@ -360,23 +364,23 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
     // panel 1 states
     panelOutputStates.theta = this->theta1;
     panelOutputStates.thetaDot = this->theta1Dot;
-    this->dualHingedRigidBodyOutMsgs[0].write(&panelOutputStates, this->moduleID, CurrentClock);
+    this->dualHingedRigidBodyOutMsgs[0]->write(&panelOutputStates, this->moduleID, CurrentClock);
     // panel 2 states
     panelOutputStates.theta = this->theta2;
     panelOutputStates.thetaDot = this->theta2Dot;
-    this->dualHingedRigidBodyOutMsgs[1].write(&panelOutputStates, this->moduleID, CurrentClock);
+    this->dualHingedRigidBodyOutMsgs[1]->write(&panelOutputStates, this->moduleID, CurrentClock);
 
 
     // write out the panel state config log message
     SCPlusStatesMsgPayload configLogMsg;
     // Note, logging the hinge frame S is the body frame B of that object
     for (int i=0; i<2; i++) {
-        configLogMsg = this->dualHingedRigidBodyConfigLogOutMsgs[i].zeroMsgPayload();
+        configLogMsg = this->dualHingedRigidBodyConfigLogOutMsgs[i]->zeroMsgPayload();
         eigenVector3d2CArray(this->r_SN_N[i], configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_SN_N[i], configLogMsg.v_BN_N);
         eigenVector3d2CArray(this->sigma_SN[i], configLogMsg.sigma_BN);
         eigenVector3d2CArray(this->omega_SN_S[i], configLogMsg.omega_BN_B);
-        this->dualHingedRigidBodyConfigLogOutMsgs[i].write(&configLogMsg, this->moduleID, CurrentClock);
+        this->dualHingedRigidBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 }
 

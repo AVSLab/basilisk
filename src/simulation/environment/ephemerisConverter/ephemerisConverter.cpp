@@ -19,7 +19,6 @@
 #include "simulation/environment/ephemerisConverter/ephemerisConverter.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
-#include <iostream>
 
 EphemerisConverter::EphemerisConverter()
 {
@@ -27,6 +26,9 @@ EphemerisConverter::EphemerisConverter()
 
 EphemerisConverter::~EphemerisConverter()
 {
+    for (int c=0; c<this->ephemOutMsgs.size(); c++) {
+        free(this->ephemOutMsgs.at(c));
+    }
 }
 
 
@@ -40,7 +42,7 @@ void EphemerisConverter::addSpiceInputMsg(Message<SpicePlanetStateMsgPayload> *t
     /* setup output corresponding message */
     Message<EphemerisMsgPayload> *msg;
     msg = new Message<EphemerisMsgPayload>;
-    this->ephemOutMsgs.push_back(*msg);
+    this->ephemOutMsgs.push_back(msg);
 
 
     /* update input and output buffers*/
@@ -80,7 +82,7 @@ void EphemerisConverter::readInputMessages()
 void EphemerisConverter::writeOutputMessages(uint64_t CurrentSimNanos)
 {
     for (int c=0; c < this->ephemOutMsgs.size(); c++) {
-        this->ephemOutMsgs.at(c).write(&this->ephemOutBuffers.at(c), this->moduleID, CurrentSimNanos);
+        this->ephemOutMsgs.at(c)->write(&this->ephemOutBuffers.at(c), this->moduleID, CurrentSimNanos);
     }
 }
 

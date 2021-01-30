@@ -49,7 +49,7 @@ public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< sun ephemeris input message name
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> planetInMsgs;  //!< A vector of planet incoming state message names ordered by the sequence in which planet are added to the module
     std::vector<ReadFunctor<SCPlusStatesMsgPayload>> positionInMsgs;  //!< vector of msgs for each spacecraft position state for which to evaluate eclipse conditions.
-    std::vector<Message<EclipseMsgPayload>> eclipseOutMsgs;//!< vector of eclispe output msg names
+    std::vector<Message<EclipseMsgPayload>*> eclipseOutMsgs;//!< vector of eclispe output msg names
     BSKLogger bskLogger;                        //!< BSK Logging
 
 private:

@@ -69,7 +69,7 @@ public:
 
 	ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorCmdInMsg;    //!< -- RW motor torque array cmd input message
 	Message<RWSpeedMsgPayload> rwSpeedOutMsg;                   //!< -- RW speed array output message
-    std::vector<Message<RWConfigLogMsgPayload>> rwOutMsgs;      //!< -- vector of RW log output messages
+    std::vector<Message<RWConfigLogMsgPayload>*> rwOutMsgs;      //!< -- vector of RW log output messages
 
     std::vector<RWCmdMsgPayload> NewRWCmds;                     //!< -- Incoming attitude commands
     RWSpeedMsgPayload rwSpeedMsgBuffer = {};                    //!< (-) Output data from the reaction wheels

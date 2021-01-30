@@ -30,6 +30,9 @@ Eclipse::Eclipse()
 
 Eclipse::~Eclipse()
 {
+    for (int c=0; c<this->eclipseOutMsgs.size(); c++) {
+        delete this->eclipseOutMsgs.at(c);
+    }
     return;
 }
 
@@ -80,7 +83,7 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock)
     for (int c = 0; c < this->eclipseOutMsgs.size(); c++) {
         EclipseMsgPayload tmpEclipseMsg = {};
         tmpEclipseMsg.shadowFactor = this->eclipseShadowFactors.at(c);
-        this->eclipseOutMsgs.at(c).write(&tmpEclipseMsg, this->moduleID, CurrentClock);
+        this->eclipseOutMsgs.at(c)->write(&tmpEclipseMsg, this->moduleID, CurrentClock);
     }
 }
 
@@ -229,7 +232,7 @@ void Eclipse::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg)
     /* create output message */
     Message<EclipseMsgPayload> *msg;
     msg = new Message<EclipseMsgPayload>;
-    this->eclipseOutMsgs.push_back(*msg);
+    this->eclipseOutMsgs.push_back(msg);
 
     /* expand the sc state buffer vector */
     SCPlusStatesMsgPayload scMsg;

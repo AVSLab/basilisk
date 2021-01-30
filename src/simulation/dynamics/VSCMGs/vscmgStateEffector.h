@@ -66,7 +66,7 @@ public:
 
     ReadFunctor<VSCMGArrayTorqueMsgPayload> cmdsInMsg;  //!< -- motor torque command input message
 	Message<VSCMGSpeedMsgPayload> speedOutMsg; 	        //!< -- VSCMG speed output message
-    std::vector<Message<VSCMGConfigMsgPayload>> vscmgOutMsgs;   //!< -- vector of VSCMG output messages
+    std::vector<Message<VSCMGConfigMsgPayload>*> vscmgOutMsgs;   //!< -- vector of VSCMG output messages
 
     std::vector<VSCMGCmdMsgPayload> newVSCMGCmds; 	//!< -- Incoming torque commands
 	VSCMGSpeedMsgPayload outputStates; 				//!< (-) Output data from the VSCMGs

@@ -17,7 +17,7 @@
 
  */
 
-#include "groundLocation.h"
+#include "simulation/environment/groundLocation/groundLocation.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
@@ -51,6 +51,9 @@ GroundLocation::GroundLocation()
  */
 GroundLocation::~GroundLocation()
 {
+    for (int c=0; c<this->accessOutMsgs.size(); c++) {
+        delete this->accessOutMsgs.at(c);
+    }
     return;
 }
 
@@ -84,7 +87,7 @@ void GroundLocation::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpSc
     /* create output message */
     Message<AccessMsgPayload> *msg;
     msg = new Message<AccessMsgPayload>;
-    this->accessOutMsgs.push_back(*msg);
+    this->accessOutMsgs.push_back(msg);
 
     /* expand the buffer vector */
     AccessMsgPayload accMsg;
@@ -132,7 +135,7 @@ void GroundLocation::WriteMessages(uint64_t CurrentClock)
 {
     //! - write access message for each spacecraft
     for (int c=0; c< this->accessMsgBuffer.size(); c++) {
-        this->accessOutMsgs.at(c).write(&this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
+        this->accessOutMsgs.at(c)->write(&this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
     }
     this->currentGroundStateOutMsg.write(&this->currentGroundStateBuffer, this->moduleID, CurrentClock);
 }

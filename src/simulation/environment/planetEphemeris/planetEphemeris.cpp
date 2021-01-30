@@ -36,6 +36,9 @@ PlanetEphemeris::PlanetEphemeris()
 /*! Module deconstructor */
 PlanetEphemeris::~PlanetEphemeris()
 {
+    for (int c=0; c<this->planetOutMsgs.size(); c++) {
+        delete this->planetOutMsgs.at(c);
+    }
     return;
 }
 
@@ -48,7 +51,7 @@ void PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
     for (int c=0; c<this->planetNames.size(); c++) {
         Message<SpicePlanetStateMsgPayload> *spMsg;
         spMsg = new Message<SpicePlanetStateMsgPayload>;
-        this->planetOutMsgs.push_back(*spMsg);
+        this->planetOutMsgs.push_back(spMsg);
     }
 }
 
@@ -154,7 +157,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
     {
         //! - Create new planet output message copy
         SpicePlanetStateMsgPayload newPlanet;
-        newPlanet = this->planetOutMsgs.at(c).zeroMsgPayload();
+        newPlanet = this->planetOutMsgs.at(c)->zeroMsgPayload();
         //! - specify planet name in output message
         strcpy(newPlanet.PlanetName, it->c_str());
 
@@ -192,7 +195,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
         }
 
         //! - write output message
-        this->planetOutMsgs.at(c).write(&newPlanet, this->moduleID, CurrentSimNanos);
+        this->planetOutMsgs.at(c)->write(&newPlanet, this->moduleID, CurrentSimNanos);
 
     }
     return;
