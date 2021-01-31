@@ -36,4 +36,4 @@ provides information on what this message is used for.
       - spacecraft state input msg
     * - sunStateInMsg
       - :ref:`SpicePlanetStateMsgPayload`
-      - sun state input input msg
+      - sun state input input msg (optional)
