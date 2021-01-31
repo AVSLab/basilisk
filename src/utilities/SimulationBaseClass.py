@@ -395,14 +395,9 @@ class SimBaseClass:
                     minNextTime = CurrSimTime + LogValue.Period
         return minNextTime
 
-    def ExecuteSimulation(self, showPlots=None, livePlots=None, simComm=None, plottingFunc=None, plotArgs=None):
+    def ExecuteSimulation(self):
         self.initializeEventChecks()
 
-        #Live Plotting Thread
-        if livePlots:
-            shareDataThread = threading.Thread(target=self.shareData, args=(simComm,))
-            shareDataThread.daemon = True
-            shareDataThread.start()
         nextStopTime = self.TotalSim.NextTaskTime
         nextPriority = -1
         pyProcPresent = False
@@ -440,32 +435,6 @@ class SimBaseClass:
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
         progressBar.markComplete()
         progressBar.close()
-        if simComm is not None:
-            simComm.send("TERM")
-        if showPlots:
-            plottingFunc(*plotArgs)
-
-    def shareData(self, simComm):
-        while True:
-            inComm = simComm.recv()
-            outData = []
-            outComm = {}
-            for req in inComm["dataReq"]:
-                outData.append(self.pullMessageLogData(req, list(range(3))))
-            if len(outData) != 0:
-                outComm["plotID"] = inComm["plotID"]; outComm["dataResp"] = outData; outComm["plotFun"] = inComm["plotFun"]
-                simComm.send(outComm)
-
-    def shareDataTest(self, simComm):
-        while True:
-            inComm = simComm.recv()
-            outData = []
-            outComm = {}
-            for req in inComm["dataReq"]:
-                outData.append(self.pullMessageLogData(req, list(range(3))))
-            if len(outData) != 0:
-                outComm["dataResp"] = outData
-                simComm.send(outComm)
 
     def GetLogVariableData(self, LogName):
         TheArray = np.array(self.VarLogList[LogName].TimeValuePairs)

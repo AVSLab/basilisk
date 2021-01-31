@@ -48,7 +48,6 @@ sys.path.append(path + '/../../examples/BskSim/scenarios')
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("bskSimCase", [
                                         'scenario_BasicOrbit'
-                                        , 'scenario_BasicOrbit_LivePlot'
                                         , 'scenario_AttEclipse'
                                         , 'scenario_AttGuidance'
                                         , 'scenario_AttGuidHyperbolic'

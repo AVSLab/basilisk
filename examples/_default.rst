@@ -248,16 +248,6 @@ Advanced Simulation Options
 Advanced Visualizations
 -----------------------
 
-Live Plotting
-^^^^^^^^^^^^^
-
-.. toctree::
-   :maxdepth: 1
-
-   Regular Basilisk simulation using Live Plotting  <scenarioBasicOrbitLivePlot>
-   bskSim Basilisk simulation using Live Plotting <BskSim/scenarios/scenario_BasicOrbit_LivePlot>
-
-
 Interfacing with Vizard
 ^^^^^^^^^^^^^^^^^^^^^^^
 
