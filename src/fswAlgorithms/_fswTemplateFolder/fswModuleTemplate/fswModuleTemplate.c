@@ -82,8 +82,10 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t call
     outMsgBuffer = FswModuleTemplateMsg_C_zeroMsgPayload();
     
     /*! - Read the input messages */
-    inMsgBuffer = FswModuleTemplateMsg_C_read(&configData->dataInMsg);
-    v3Copy(inMsgBuffer.outputVector, configData->inputVector);
+    if (FswModuleTemplateMsg_C_isLinked(&configData->dataInMsg)) {
+        inMsgBuffer = FswModuleTemplateMsg_C_read(&configData->dataInMsg);
+        v3Copy(inMsgBuffer.outputVector, configData->inputVector);
+    }
 
 
     /*! - Add the module specific code */
@@ -91,11 +93,17 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t call
     configData->dummy += 1.0;
     Lr[0] += configData->dummy;
 
-    /*! - store the output message */
-    v3Copy(Lr, outMsgBuffer.outputVector);
+    if (FswModuleTemplateMsg_C_isLinked(&configData->dataInMsg)) {
+        /*! - store the output message */
+        v3Copy(Lr, outMsgBuffer.outputVector);
 
-    /*! - write the module output message */
-    FswModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);
+        /*! - write the module output message */
+        FswModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);
+    }
+    
+    char info[MAX_LOGGING_LENGTH];
+    sprintf(info, "Module ID %lld ran Update.", moduleID);
+    _bskLog(configData->bskLogger, BSK_INFORMATION, info);
 
     return;
 }
