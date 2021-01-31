@@ -62,6 +62,22 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
         }
     }
 
+    // check if essential messages are connected
+    if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rateServoFullNonlinear.guidInMsg wasn't connected.");
+    }
+
+    if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rateServoFullNonlinear.vehConfigInMsg wasn't connected.");
+    }
+
+
+    if (!RateCmdMsg_C_isLinked(&configData->rateSteeringInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rateServoFullNonlinear.rateSteeringInMsg wasn't connected.");
+    }
+
+
+
     sc = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
     for (i=0; i < 9; i++){
         configData->ISCPntB_B[i] = sc.ISCPntB_B[i];

@@ -51,6 +51,11 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int
  */
 void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input messages are included
+    if (!RWArrayConfigMsg_C_isLinked(&configData->rwConfigDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumManagement.rwConfigDataInMsg wasn't connected.");
+    }
+
     /*! - read in the RW configuration message */
     configData->rwConfigParams = RWArrayConfigMsg_C_read(&configData->rwConfigDataInMsg);
 
@@ -78,6 +83,11 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint6
 
     /*! - check if a momentum dumping check has been requested */
     if (configData->initRequest == 1) {
+
+        // check if the required input messages are included
+        if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
+            _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumManagement.rwSpeedsInMsg wasn't connected.");
+        }
 
         /*! - Read the input messages */
         rwSpeedMsg = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);

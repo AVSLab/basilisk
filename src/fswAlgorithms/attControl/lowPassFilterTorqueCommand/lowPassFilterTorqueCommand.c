@@ -57,6 +57,11 @@ void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configDa
 
     configData->reset  = BOOL_TRUE;         /* reset the first run flag */
 
+    // check if the required input message is included
+    if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: lowPassFilterTorqueCommand.cmdTorqueInMsg wasn't connected.");
+    }
+
     for (i=0;i<NUM_LPF;i++) {
         v3SetZero(configData->Lr[i]);
         v3SetZero(configData->LrF[i]);

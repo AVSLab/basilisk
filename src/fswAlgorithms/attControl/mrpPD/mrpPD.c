@@ -52,6 +52,16 @@ void Reset_mrpPD(MrpPDConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     VehicleConfigMsgPayload   sc;               /*!< spacecraft configuration message */
 
+    // check if the required input messages are included
+    if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mrpPD.guidInMsg wasn't connected.");
+    }
+
+    if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mrpPD.vehConfigInMsg wasn't connected.");
+    }
+
+
     /*! - read in spacecraft configuration message */
     VehicleConfigMsgPayload vcInMsg = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
     mCopy(vcInMsg.ISCPntB_B, 1, 9, configData->ISCPntB_B);

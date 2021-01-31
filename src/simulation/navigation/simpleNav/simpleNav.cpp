@@ -62,6 +62,11 @@ SimpleNav::~SimpleNav()
  */
 void SimpleNav::Reset(uint64_t CurrentSimNanos)
 {
+    // add message check here
+    if (!this->scStateInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "SimpleNav.scStateInMsg was not linked.");
+    }
+
     int64_t numStates = 18;
 
     //! - Initialize the propagation matrix to default values for use in update
