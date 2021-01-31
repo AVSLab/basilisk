@@ -47,6 +47,10 @@ NUMBER_OF_RUNS = 4
 VERBOSE = True
 PROCESSES = 2
 
+retainedMessageName = "spacecraftStateMsg"
+retainedRate = macros.sec2nano(10)
+var1 = "v_BN_N"
+var2 = "r_BN_N"
 
 def myCreationFunction():
     """ function that returns a simulation """
@@ -67,7 +71,7 @@ def myCreationFunction():
     # Setup the simulation modules
     # Initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bsk-Sat"
     # Add spacecraftPlus object to the simulation process
     sim.AddModelToTask(simTaskName, scObject)
 
@@ -103,6 +107,10 @@ def myCreationFunction():
     period = 2. * np.pi / mean_motion
     simulationTime = macros.sec2nano(period / 4)
 
+    sim.msgRecList = {}
+    sim.msgRecList[retainedMessageName] = scObject.scStateOutMsg.recorder(retainedRate)
+    sim.AddModelToTask(simTaskName, sim.msgRecList[retainedMessageName])
+
     #   configure a simulation stop time time and execute the simulation run
     sim.ConfigureStopTime(simulationTime)
 
@@ -114,19 +122,11 @@ def myExecutionFunction(sim):
     sim.InitializeSimulation()
     sim.ExecuteSimulation()
 
-
-retainedMessageName = "inertial_state_output"
-retainedRate = macros.sec2nano(10)
-var1 = "v_BN_N"
-var2 = "r_BN_N"
-dataType1 = list(range(3))
-dataType2 = list(range(3))
-
 colorList = ['b', 'r', 'g', 'k']
 
 def myDataCallback(monteCarloData, retentionPolicy):
-    data = np.array(monteCarloData["messages"]["inertial_state_output.r_BN_N"])
-    plt.plot(data[:, 1], data[:, 2], colorList[monteCarloData["index"]], label="run " + str(monteCarloData["index"]))
+    data = np.array(monteCarloData["messages"][retainedMessageName + ".r_BN_N"])
+    plt.plot(data[:, 0], data[:, 1], colorList[monteCarloData["index"]], label="run " + str(monteCarloData["index"]))
     plt.xlabel('X-coordinate')
     plt.ylabel('Y-coordinate')
     plt.legend()
@@ -170,7 +170,7 @@ def test_MonteCarloSimulation(show_plots):
 
     # Add retention policy
     retentionPolicy = RetentionPolicy()
-    retentionPolicy.addMessageLog(retainedMessageName, [(var1, dataType1), (var2, dataType2)], retainedRate)
+    retentionPolicy.addMessageLog(retainedMessageName, [var1, var2])
     retentionPolicy.setDataCallback(myDataCallback)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
@@ -184,17 +184,17 @@ def test_MonteCarloSimulation(show_plots):
     retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
     assert retainedData is not None, "Retained data should be available after execution"
     assert "messages" in retainedData, "Retained data should retain messages"
-    assert "inertial_state_output.r_BN_N" in retainedData["messages"], "Retained messages should exist"
-    assert "inertial_state_output.v_BN_N" in retainedData["messages"], "Retained messages should exist"
+    assert retainedMessageName + ".r_BN_N" in retainedData["messages"], "Retained messages should exist"
+    assert retainedMessageName + ".v_BN_N" in retainedData["messages"], "Retained messages should exist"
 
     # rerun the case and it should be the same, because we dispersed random seeds
-    oldOutput = retainedData["messages"]["inertial_state_output.r_BN_N"]
+    oldOutput = retainedData["messages"][retainedMessageName + ".r_BN_N"]
 
     failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
     assert len(failed) == 0, "Should rerun case successfully"
 
     retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
-    newOutput = retainedData["messages"]["inertial_state_output.r_BN_N"]
+    newOutput = retainedData["messages"][retainedMessageName + ".r_BN_N"]
     for k1, v1 in enumerate(oldOutput):
         for k2, v2 in enumerate(v1):
             assert np.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
