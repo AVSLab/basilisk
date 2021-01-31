@@ -19,6 +19,8 @@
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 
+from Basilisk.fswAlgorithms import fswModuleTemplate
+from Basilisk.architecture import messaging
 
 def run():
     """
@@ -33,9 +35,20 @@ def run():
     fswProcess = scSim.CreateNewProcess("fswProcess")
 
     # create the dynamics task and specify the integration update time
-    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(5.)))
+    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(10.)))
     dynProcess.addTask(scSim.CreateNewTask("sensorTask", macros.sec2nano(10.)))
     fswProcess.addTask(scSim.CreateNewTask("fswTask", macros.sec2nano(10.)))
+
+    mod1 = fswModuleTemplate.fswModuleTemplateConfig()
+    mod1Wrap = scSim.setModelDataWrap(mod1)
+    mod2 = fswModuleTemplate.fswModuleTemplateConfig()
+    mod2Wrap = scSim.setModelDataWrap(mod1)
+    mod3 = fswModuleTemplate.fswModuleTemplateConfig()
+    mod3Wrap = scSim.setModelDataWrap(mod3)
+
+    scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1)
+    scSim.AddModelToTask("sensorTask", mod2Wrap, mod2)
+    scSim.AddModelToTask("fswTask", mod3Wrap, mod3)
 
     #  initialize Simulation:
     scSim.InitializeSimulation()

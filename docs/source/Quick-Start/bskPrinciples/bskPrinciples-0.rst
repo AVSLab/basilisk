@@ -1,0 +1,32 @@
+What is Basilisk
+================
+
+The purpose of the Basilisk astrodynamics simulation framework is to enable sophisticated spacecraft simulations to be rapidly created from a series of pre-built modules.  Consider a deep space mission where the spacecraft must perform a series of science, communication, station keeping and orbit maneuver tasks.  Such operations not only the spacecraft orbital and attitude dynamics to be modeled, but also sub-components such as reaction wheels, thruster, flexible panels, fuel slosh.  Beyond the mechanical components the spacecraft also contains algorithms that determine the orientation, perform closed loop maneuvers, process sensor data etc.  Further, depending on the analysis being performed the battery, data storage or communication devices might have to be modeled.
+
+.. image:: ../../_images/static/qs-spacecraft.jpg
+   :align: center
+   :scale: 50 %
+
+The purpose of Basilisk, or BSK for short, is to provide an open-source modular spacecraft simulation environment that allows for a wide range of numerical simulations to be performed.  The atomic spacecraft behaviors and components are encapsulated into modules which have a message passing interface to interface with othter components.
+
+.. image:: ../../_images/static/qs-bsk-lego.jpg
+   :align: center
+   :scale: 50 %
+
+In essence, think of BSK providing lots of spacecraft lego blocks where the user gets to assemble them into the desired spacecraft behavior.  The benefits of this approach include:
+
+- Reuse of spacecraft simulation code that avoid re-creating common features.
+- Complex components are encapsulated into a self-contained module, allowing the user to only need to know how to use the module, not necessarily all the math contained within the module.
+- Ability to exchange a particular component with another without impacting the rest of the numerical simulation.
+- All BSK modules are already coded up, thus the user does not have to auto-generate code and validate a partiuclar simulation implementation.
+
+
+.. image:: ../../_images/static/qs-bsk-concept.svg
+   :align: center
+   :scale: 50 %
+
+The BSK modules contains a series of input and output message connections as illustrated above.  This provides a method to control how information is shared across the simulation.  A module may have one more more input message connections. Some input messages are optional and change the behavior of the module if they are connected.  For example, a feedback control module provides a standard control solution if the reaction wheel message is not connected, but will incorporate the reaction wheel data in the control if such a message is connected.
+
+The content of a message is stored in the output message object.  These message objects are typically embedded within a BSK module, but can also be a stand-alone message object.  This allows for objects to be run and tested individually, or inter-connected with other module.  In each BSK module folder there is a ``_UnitTest`` folder which contains pythons script(s) which test the functionality of this given module.  This assures that each module is working as planned.  The ``src/examples`` folder contains many integrated tests where the modules are assembled into sample spacecraft simulations.  These scripts are also tested to ensure the integrated simulation is working.  Thus, unit test ensure a module is working individually, and integrated tests ensure that the module connections and interfaces are still working.  As a result of this integrated testing developing and enhancing Basilisk can be done readily while being confident that other code has not been broken.
+
+
