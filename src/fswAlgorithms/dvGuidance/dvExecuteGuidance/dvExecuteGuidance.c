@@ -59,6 +59,15 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
     DvExecutionDataMsgPayload localExeData;
     THRArrayOnTimeCmdMsgPayload effCmd;
 
+    // check if the required input messages are included
+    if (!NavTransMsg_C_isLinked(&configData->navDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvExecuteGuidance.navDataInMsg wasn't connected.");
+    }
+    if (!DvBurnCmdMsg_C_isLinked(&configData->burnDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvExecuteGuidance.burnDataInMsg wasn't connected.");
+    }
+
+    // read in messages
     navData = NavTransMsg_C_read(&configData->navDataInMsg);
     localBurnData = DvBurnCmdMsg_C_read(&configData->burnDataInMsg);
 
