@@ -153,6 +153,11 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     v3SetZero(configData->obs);
     v3SetZero(configData->postFits);
 
+    // check if the required input messages are included
+    if (!OpNavMsg_C_isLinked(&configData->opnavDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: headingSuKF.opnavDataInMsg wasn't connected.");
+    }
+
     configData->opnavInBuffer = OpNavMsg_C_read(&configData->opnavDataInMsg);
     ClockTime = OpNavMsg_C_timeWritten(&configData->opnavDataInMsg);
     isWritten = OpNavMsg_C_isWritten(&configData->opnavDataInMsg);

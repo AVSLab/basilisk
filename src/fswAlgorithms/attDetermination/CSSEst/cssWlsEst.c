@@ -46,6 +46,12 @@ void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
  */
 void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+
+    // check that cssConfigInMsg has been included
+    if (!CSSConfigMsg_C_isLinked(&configData->cssConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: cssWIsEst.cssConfigInMsg wasn't connected.");
+    }
+
     configData->cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
 
     configData->priorSignalAvailable = 0;
@@ -169,6 +175,12 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     sunlineOutBuffer = NavAttMsg_C_zeroMsgPayload();
 
     /*! Message Read and Setup*/
+
+    // check that cssDataInMsg has been included
+    if (!CSSArraySensorMsg_C_isLinked(&configData->cssDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: cssWIsEst.cssDataInMsg wasn't connected.");
+    }
+
     /*! - Read the input parsed CSS sensor data message*/
     InputBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);
 
