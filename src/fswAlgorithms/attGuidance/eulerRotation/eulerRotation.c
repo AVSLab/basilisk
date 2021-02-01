@@ -75,6 +75,11 @@ void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, in
     AttRefMsgPayload inputRef;
     AttRefMsgPayload attRefOut;
 
+    // check if the required input messages are included
+    if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: eulerRotation.attRefInMsg wasn't connected.");
+    }
+
     /* - Read input messages */
     inputRef = AttRefMsg_C_read(&configData->attRefInMsg);
 

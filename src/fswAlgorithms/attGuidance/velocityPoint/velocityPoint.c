@@ -80,6 +80,11 @@ void Update_velocityPoint(velocityPointConfig *configData, uint64_t callTime, in
     if (configData->planetMsgIsLinked) {
         primPlanet = EphemerisMsg_C_read(&configData->celBodyInMsg);
     }
+
+    // check if the required input messages are included
+    if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: velocityPoint.transNavInMsg wasn't connected.");
+    }
     navData = NavTransMsg_C_read(&configData->transNavInMsg);
 
     
