@@ -85,6 +85,15 @@ void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleI
     double platAngDiff;             /* Angle between r_P1 and r_P2 */
     double dotProduct;              /* Temporary scalar variable */
     
+    // check if required input messages have been included
+    if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: celestialTwoBodyPoint.transNavInMsg wasn't connected.");
+    }
+    if (!EphemerisMsg_C_isLinked(&configData->celBodyInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: celestialTwoBodyPoint.celBodyInMsg wasn't connected.");
+    }
+
+    // read input messages
     navData = NavTransMsg_C_read(&configData->transNavInMsg);
     primPlanet = EphemerisMsg_C_read(&configData->celBodyInMsg);
 

@@ -63,6 +63,14 @@ void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTi
     /*! - Read the input messages */
     attGuidOut = AttGuidMsg_C_zeroMsgPayload();
 
+    // check if the required input messages are included
+    if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: attTrackingError.attRefInMsg wasn't connected.");
+    }
+    if (!NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: attTrackingError.attNavInMsg wasn't connected.");
+    }
+
     ref = AttRefMsg_C_read(&configData->attRefInMsg);
     nav = NavAttMsg_C_read(&configData->attNavInMsg);
 

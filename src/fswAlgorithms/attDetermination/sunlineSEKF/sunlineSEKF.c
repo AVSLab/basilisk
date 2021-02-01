@@ -56,6 +56,11 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
     configData->outputSunline = NavAttMsg_C_zeroMsgPayload();
     mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
 
+    // check input messages are included
+    if (!CSSConfigMsg_C_isLinked(&configData->cssConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineSEKF.cssConfigInMsg wasn't connected.");
+    }
+
     /*! - Read coarse sun sensor configuration information.*/
     cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
 
@@ -114,6 +119,11 @@ void Update_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
     uint64_t timeOfMsgWritten;
     int isWritten;
     SunlineFilterMsgPayload sunlineDataOutBuffer;
+
+    // check input messages are included
+    if (!CSSArraySensorMsg_C_isLinked(&configData->cssDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineSEKF.cssDataInMsg wasn't connected.");
+    }
 
     /*! - Read the input parsed CSS sensor data message*/
     configData->cssSensorInBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);
