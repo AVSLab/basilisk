@@ -56,6 +56,11 @@ void Reset_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
     configData->outputSunline = NavAttMsg_C_zeroMsgPayload();
     mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
 
+    // check if the required input messages are included
+    if (!CSSConfigMsg_C_isLinked(&configData->cssConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: okeefeEKF.cssConfigInMsg wasn't connected.");
+    }
+
     /*! - Read in coarse sun sensor configuration information.*/
     cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
     
@@ -110,6 +115,11 @@ void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
     int isWritten;
     SunlineFilterMsgPayload sunlineDataOutBuffer;
     
+    // check if the required input messages are included
+    if (!CSSArraySensorMsg_C_isLinked(&configData->cssDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: okeefeEKF.cssDataInMsg wasn't connected.");
+    }
+
     /*! - Read the input parsed CSS sensor data message*/
     configData->cssSensorInBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);
     timeOfMsgWritten = CSSArraySensorMsg_C_timeWritten(&configData->cssDataInMsg);
