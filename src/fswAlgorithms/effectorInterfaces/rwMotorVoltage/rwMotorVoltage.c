@@ -48,6 +48,11 @@ void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
  */
 void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input messages are included
+    if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwMotorVoltage.rwParamsInMsg wasn't connected.");
+    }
+
     /*! - Read static RW config data message and store it in module variables*/
     configData->rwConfigParams = RWArrayConfigMsg_C_read(&configData->rwParamsInMsg);
 
@@ -75,6 +80,11 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
     uint32_t i;
 
     voltageOut = RWArrayVoltageMsg_C_zeroMsgPayload();
+
+    // check if the required input messages are included
+    if (!ArrayMotorTorqueMsg_C_isLinked(&configData->torqueInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwMotorVoltage.torqueInMsg wasn't connected.");
+    }
 
     torqueCmd = ArrayMotorTorqueMsg_C_read(&configData->torqueInMsg);
 

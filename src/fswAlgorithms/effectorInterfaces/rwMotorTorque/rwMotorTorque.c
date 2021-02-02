@@ -63,6 +63,11 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int
         _bskLog(configData->bskLogger, BSK_INFORMATION,"rwMotorTorque() is not setup to control any axes!");
     }
     
+    // check if the required input messages are included
+    if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwMotorTorque.rwParamsInMsg wasn't connected.");
+    }
+
     /*! - Read static RW config data message and store it in module variables */
     configData->rwConfigParams = RWArrayConfigMsg_C_read(&configData->rwParamsInMsg);
     
@@ -99,6 +104,11 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
     // wheelAvailability set to 0 (AVAILABLE) by default
     wheelsAvailability = RWAvailabilityMsg_C_zeroMsgPayload();
     
+    // check if the required input messages are included
+    if (!CmdTorqueBodyMsg_C_isLinked(&configData->vehControlInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwMotorTorque.vehControlInMsg wasn't connected.");
+    }
+
     /*! - Read the input messages */
     LrInputMsg = CmdTorqueBodyMsg_C_read(&configData->vehControlInMsg);
     v3Copy(LrInputMsg.torqueRequestBody, Lr_B);

@@ -70,6 +70,13 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
         _bskLog(configData->bskLogger, BSK_ERROR,"thrForceMapping() must have thrForceSign set to either +1 or -1");
     }
 
+    // check if the required input messages are included
+    if (!THRArrayConfigMsg_C_isLinked(&configData->thrConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrForceMapping.thrConfigInMsg wasn't connected.");
+    }
+    if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrForceMapping.vehConfigInMsg wasn't connected.");
+    }
 
     /*! - read in the support thruster and vehicle configuration messages */
     localThrusterData = THRArrayConfigMsg_C_read(&configData->thrConfigInMsg);
@@ -126,6 +133,14 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     mSetZero(Dbar, 3, MAX_EFF_CNT);
     mSetZero(C, 3, 3);
     
+    // check if the required input messages are included
+    if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrForceMapping.cmdTorqueInMsg wasn't connected.");
+    }
+    if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrForceMapping.vehConfigInMsg wasn't connected.");
+    }
+
     /*! - Read the input messages */
     LrInputMsg = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueInMsg);
     configData->sc = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);

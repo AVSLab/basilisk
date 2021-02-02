@@ -60,6 +60,11 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTim
 
 	configData->prevCallTime = 0;
 
+	// check if the required input messages are included
+	if (!THRArrayConfigMsg_C_isLinked(&configData->thrConfInMsg)) {
+		_bskLog(configData->bskLogger, BSK_ERROR, "Error: thrFiringSchmitt.thrConfInMsg wasn't connected.");
+	}
+
 	/*! - Zero and read in the support messages */
     localThrusterData = THRArrayConfigMsg_C_read(&configData->thrConfInMsg);
 
@@ -107,6 +112,11 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTi
     /*! - compute control time period Delta_t */
 	controlPeriod = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;
 	configData->prevCallTime = callTime;
+
+	// check if the required input messages are included
+	if (!THRArrayCmdForceMsg_C_isLinked(&configData->thrForceInMsg)) {
+		_bskLog(configData->bskLogger, BSK_ERROR, "Error: thrFiringSchmitt.thrForceInMsg wasn't connected.");
+	}
 
     /*! - read the input thruster force message */
     thrForceIn = THRArrayCmdForceMsg_C_read(&configData->thrForceInMsg);

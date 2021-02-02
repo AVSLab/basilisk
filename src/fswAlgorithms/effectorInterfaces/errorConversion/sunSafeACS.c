@@ -48,6 +48,11 @@ void Update_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
 {
     CmdTorqueBodyMsgPayload cntrRequest;
     
+    // check if the required input messages are included
+    if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueBodyInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunSafeACS.cmdTorqueBodyInMsg wasn't connected.");
+    }
+
     /*! - Read the input parsed CSS sensor data message*/
     cntrRequest = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueBodyInMsg);
     computeSingleThrustBlock(&(configData->thrData), callTime,

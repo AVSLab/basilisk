@@ -59,6 +59,11 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
      first function call */
     configData->priorTime = 0;
 
+    // check if the required input messages are included
+    if (!THRArrayConfigMsg_C_isLinked(&configData->thrusterConfInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumDumping.thrusterConfInMsg wasn't connected.");
+    }
+
     /*! - read in number of thrusters installed and maximum thrust values */
     localThrusterData = THRArrayConfigMsg_C_read(&configData->thrusterConfInMsg);
     configData->numThrusters = localThrusterData.numThrusters;
@@ -71,6 +76,11 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
 
     /*! - zero out thruster on time array */
     mSetZero(configData->thrOnTimeRemaining, 1, MAX_EFF_CNT);
+
+    // check if the required input messages are included
+    if (!CmdTorqueBodyMsg_C_isLinked(&configData->deltaHInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumDumping.deltaHInMsg wasn't connected.");
+    }
 
     /*! - set the time tag of the last Delta_p message */
     DeltaHInMsg = CmdTorqueBodyMsg_C_read(&configData->deltaHInMsg);
@@ -118,6 +128,11 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
         /* - compute control update time */
         dt = (callTime - configData->priorTime)*NANO2SEC;
         if (dt < 0.0) {dt = 0.0;}             /* ensure no negative numbers are used */
+
+        // check if the required input messages are included
+        if (!THRArrayCmdForceMsg_C_isLinked(&configData->thrusterImpulseInMsg)) {
+            _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumDumping.thrusterImpulseInMsg wasn't connected.");
+        }
 
         /*! - Read the requester thruster impulse input message */
         thrusterImpulseInMsg = THRArrayCmdForceMsg_C_read(&configData->thrusterImpulseInMsg);

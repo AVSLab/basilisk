@@ -70,6 +70,11 @@ void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
     uint32_t i;
     CmdTorqueBodyMsgPayload cntrRequest;
     
+    // check if the required input messages are included
+    if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueBodyInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvAttEffect.cmdTorqueBodyInMsg wasn't connected.");
+    }
+
     /*! - Read the input requested torque from the feedback controller*/
     cntrRequest = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueBodyInMsg);
     
