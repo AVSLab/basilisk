@@ -83,6 +83,14 @@ void Update_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, 
     // out
     CmdForceInertialMsgPayload forceMsg;
 
+    // check if the required input messages are included
+    if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: meanOEFeedback.chiefTransInMsg wasn't connected.");
+    }
+    if (!NavTransMsg_C_isLinked(&configData->deputyTransInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: meanOEFeedback.deputyTransInMsg wasn't connected.");
+    }
+
     /*! - Read the input messages */
     chiefTransMsg = NavTransMsg_C_read(&configData->chiefTransInMsg);
     deputyTransMsg = NavTransMsg_C_read(&configData->deputyTransInMsg);

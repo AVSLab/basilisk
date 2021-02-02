@@ -118,6 +118,14 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
     double domega_RN_N[3];                          /*!< ---  Angular acceleration of vector pointing from deputy to chief */
     double sigma_R1N[3];                            /*!< ---  MRP of R1-frame with respect to N-frame */
 
+    // check if the required input messages are included
+    if (!NavTransMsg_C_isLinked(&configData->chiefPositionInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftPointing.chiefPositionInMsg wasn't connected.");
+    }
+    if (!NavTransMsg_C_isLinked(&configData->deputyPositionInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftPointing.deputyPositionInMsg wasn't connected.");
+    }
+
     /* read in messages */
     chiefTransMsg = NavTransMsg_C_read(&configData->chiefPositionInMsg);
     deputyTransMsg = NavTransMsg_C_read(&configData->deputyPositionInMsg);
