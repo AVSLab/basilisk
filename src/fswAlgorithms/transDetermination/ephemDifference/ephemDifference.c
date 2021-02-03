@@ -79,6 +79,12 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
     EphemerisMsgPayload tmpBaseEphem;
     EphemerisMsgPayload tmpEphStore;
 
+    // check if the required message has not been connected
+    if (!EphemerisMsg_C_isLinked(&configData->ephBaseInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: ephemDifference.ephBaseInMsg wasn't connected.");
+    }
+
+    // read input msg
     tmpBaseEphem = EphemerisMsg_C_read(&configData->ephBaseInMsg);
 
     for(i = 0; i < configData->ephBdyCount; i++)

@@ -64,6 +64,12 @@ void Update_tamProcessTelem(tamConfigData *configData, uint64_t callTime, int64_
 {
     TAMSensorMsgPayload localInput;
 
+    // check if the required message has not been connected
+    if (!TAMSensorMsg_C_isLinked(&configData->tamInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: tamComm.tamInMsg wasn't connected.");
+    }
+
+    // read input msg
     localInput = TAMSensorMsg_C_read(&configData->tamInMsg);
 
     m33MultV3(RECAST3X3 configData->dcm_BS, localInput.tam_S,

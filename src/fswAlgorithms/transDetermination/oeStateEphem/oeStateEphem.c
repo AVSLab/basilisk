@@ -75,6 +75,11 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_
 
     tmpOutputState = EphemerisMsg_C_zeroMsgPayload();
 
+    // check if the required message has not been connected
+    if (!TDBVehicleClockCorrelationMsg_C_isLinked(&configData->clockCorrInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: oeStateEphem.clockCorrInMsg wasn't connected.");
+    }
+
     /*! - read in the input message */
     localCorr = TDBVehicleClockCorrelationMsg_C_read(&configData->clockCorrInMsg);
 

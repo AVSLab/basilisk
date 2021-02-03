@@ -58,6 +58,12 @@ void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_
 {
     IMUSensorMsgPayload LocalInput;
 
+    // check if the required message has not been connected
+    if (!IMUSensorMsg_C_isLinked(&configData->imuComInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: imuComm.imuComInMsg wasn't connected.");
+    }
+
+    // read imu com msg
     LocalInput = IMUSensorMsg_C_read(&configData->imuComInMsg);
     m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.DVFramePlatform,
               configData->outMsgBuffer.DVFrameBody);

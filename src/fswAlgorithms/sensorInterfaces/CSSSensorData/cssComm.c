@@ -86,6 +86,12 @@ void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
 
     outputBuffer = CSSArraySensorMsg_C_zeroMsgPayload();
 
+    // check if the required message has not been connected
+    if (!CSSArraySensorMsg_C_isLinked(&configData->sensorListInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: cssComm.sensorListInMsg wasn't connected.");
+    }
+
+    // read sensor list input msg
     inMsgBuffer = CSSArraySensorMsg_C_read(&configData->sensorListInMsg);
     vCopy(inMsgBuffer.CosValue, MAX_NUM_CSS_SENSORS, inputValues);
 

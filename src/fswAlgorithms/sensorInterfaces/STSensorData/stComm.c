@@ -57,6 +57,13 @@ void Update_stProcessTelem(STConfigData *configData, uint64_t callTime, int64_t 
     double dcm_CN[3][3];            /* dcm, inertial to case frame */
     double dcm_BN[3][3];            /* dcm, inertial to body frame */
     STSensorMsgPayload localInput;
+
+    // check if the required message has not been connected
+    if (!STSensorMsg_C_isLinked(&configData->stSensorInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: stComm.stSensorInMsg wasn't connected.");
+    }
+
+    // read input msg
     localInput = STSensorMsg_C_read(&configData->stSensorInMsg);
 
     EP2C(localInput.qInrtl2Case, dcm_CN);

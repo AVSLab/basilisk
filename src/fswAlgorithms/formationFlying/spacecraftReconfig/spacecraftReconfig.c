@@ -79,6 +79,11 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
     AttRefMsgPayload attRefMsg;
     THRArrayOnTimeCmdMsgPayload thrustOnMsg;
 
+    // check if the required input messages are included
+    if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.chiefTransInMsg wasn't connected.");
+    }
+
     /*! - Read the input messages */
     chiefTransMsg = NavTransMsg_C_read(&configData->chiefTransInMsg);
     deputyTransMsg = NavTransMsg_C_read(&configData->deputyTransInMsg);

@@ -60,6 +60,11 @@ void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTi
     NavTransMsgPayload tmpOutputState;
     tmpOutputState = NavTransMsg_C_zeroMsgPayload();
 
+    // check if the required message has not been connected
+    if (!EphemerisMsg_C_isLinked(&configData->ephInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: ephemNavConverter.ephInMsg wasn't connected.");
+    }
+
     /*! - read input ephemeris message */
     tmpEphemeris = EphemerisMsg_C_read(&configData->ephInMsg);
 

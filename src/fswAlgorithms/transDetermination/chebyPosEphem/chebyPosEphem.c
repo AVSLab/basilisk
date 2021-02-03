@@ -95,6 +95,12 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
     int i;
     TDBVehicleClockCorrelationMsgPayload localCorr;
 
+    // check if the required message has not been connected
+    if (!TDBVehicleClockCorrelationMsg_C_isLinked(&configData->clockCorrInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: chebyPosEphem.clockCorrInMsg wasn't connected.");
+    }
+
+    // read input msg
     localCorr = TDBVehicleClockCorrelationMsg_C_read(&configData->clockCorrInMsg);
     configData->outputState = EphemerisMsg_C_zeroMsgPayload();
 

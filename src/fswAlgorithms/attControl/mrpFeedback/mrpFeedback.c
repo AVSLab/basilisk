@@ -61,7 +61,7 @@ void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t
         }
     }
 
-    // check that the required message has not been connected
+    // check if the required message has not been connected
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: mrpfeedback.guidInMsg wasn't connected.");
     }
