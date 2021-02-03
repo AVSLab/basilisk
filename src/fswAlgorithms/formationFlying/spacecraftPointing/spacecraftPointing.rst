@@ -29,8 +29,4 @@ provides information on what this message is used for.
     * - thrusterConfInMsg
       - :ref:`THRArrayConfigMsgPayload`
       - Thruster array configuration input message
-      NOT INCLUDED:
-    * - deltaHInMsg
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - requested momentum change input message
 
