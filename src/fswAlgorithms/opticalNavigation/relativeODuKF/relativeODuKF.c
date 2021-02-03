@@ -145,6 +145,12 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     outputRelOD = NavTransMsg_C_zeroMsgPayload();
     opNavOutBuffer = OpNavFilterMsg_C_zeroMsgPayload();
 
+    // check if the required message has not been connected
+    if (!OpNavMsg_C_isLinked(&configData->opNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: relativeODuKF.opNavInMsg wasn't connected.");
+    }
+
+    // read input message
     inputRelOD = OpNavMsg_C_read(&configData->opNavInMsg);
     v3Scale(1E-3, inputRelOD.r_BN_N, inputRelOD.r_BN_N);
     vScale(1E-6, inputRelOD.covar_N, ODUKF_N_MEAS*ODUKF_N_MEAS,inputRelOD.covar_N);
