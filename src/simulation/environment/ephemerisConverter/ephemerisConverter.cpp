@@ -70,6 +70,7 @@ void EphemerisConverter::convertEphemData(uint64_t clockNow)
 
 void EphemerisConverter::readInputMessages()
 {
+    // check if the spiceInMsgs is empty or not
     if (this->spiceInMsgs.size() == 0) {
         bskLogger.bskLog(BSK_ERROR, "ephemerisConverter.spiceInMsgs is empty.");
     }

@@ -89,6 +89,10 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
 
     for(i = 0; i < configData->ephBdyCount; i++)
     {
+        if (!EphemerisMsg_C_isLinked(&configData->changeBodies[i].ephInMsg)) {
+            _bskLog(configData->bskLogger, BSK_ERROR, "An ephemeris input message name was not linked.  Be sure that ephInMsg is set properly.");
+        }
+
         tmpEphStore = EphemerisMsg_C_read(&configData->changeBodies[i].ephInMsg);
 
         v3Subtract(tmpEphStore.r_BdyZero_N,
