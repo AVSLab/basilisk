@@ -61,6 +61,9 @@ typedef struct {
     uint8_t thrustOnFlag; //!< thrust control
     int    attRefInIsLinked;        //!< flag if the attitude reference input message is linked
     spacecraftReconfigConfigBurnInfo dvArray[3];    //!< array of burns
+
+
+    BSKLogger* bskLogger;                             //!< BSK Logging
 }spacecraftReconfigConfig;
 
 #ifdef __cplusplus
