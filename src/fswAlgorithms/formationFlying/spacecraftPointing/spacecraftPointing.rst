@@ -20,13 +20,13 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - thrusterOnTimeOutMsg
-      - :ref:`THRArrayOnTimeCmdMsgPayload`
-      - thruster on time output message
-    * - thrusterImpulseInMsg
-      - :ref:`THRArrayCmdForceMsgPayload`
-      - commanded thruster impulse input message
-    * - thrusterConfInMsg
-      - :ref:`THRArrayConfigMsgPayload`
-      - Thruster array configuration input message
+    * - chiefPositionInMsg
+      - :ref:`NavTransMsg_C`
+      - primary position input message
+    * - deputyPositionInMsg
+      - :ref:`NavTransMsg_C`
+      - secondary position input message
+    * - attReferenceOutMsg
+      - :ref:`AttRefMsg_C`
+      - attitude reference output message
 
