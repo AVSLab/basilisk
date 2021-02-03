@@ -610,6 +610,7 @@ void VSCMGStateEffector::ReadInputs()
     //! - If the input message ID is invalid, return without touching states
 	if(!this->cmdsInMsg.isLinked() || !this->cmdsInMsg.isWritten())
 	{
+		bskLogger.bskLog(BSK_ERROR, "vscmgStateEffector.cmdsInMsg was not linked or written.");
 		return;
 	}
 

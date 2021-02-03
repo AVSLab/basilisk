@@ -66,6 +66,12 @@ void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos)
     NewThrustCmds.insert(this->NewThrustCmds.begin(), this->thrusterData.size(), 0.0);
     mDotTotal = 0.0;
 
+    // check if input message has not been included
+    if (!this->cmdsInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "thrusterDynamicEffector.cmdsInMsg was not linked.");
+    }
+
+
     return;
 }
 

@@ -48,6 +48,11 @@ DragDynamicEffector::~DragDynamicEffector()
  */
 void DragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
+    // check if input message has not been included
+    if (!this->atmoDensInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "dragDynamicEffector.atmoDensInMsg was not linked.");
+    }
+
 }
 
 /*! The DragEffector does not write output messages to the rest of the sim.

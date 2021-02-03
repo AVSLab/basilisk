@@ -485,6 +485,7 @@ void ReactionWheelStateEffector::ReadInputs()
     //! - If the input message is not linked, return without touching states
 	if(!this->rwMotorCmdInMsg.isLinked())
 	{
+		bskLogger.bskLog(BSK_ERROR, "reactionWheelStateEffector.rwMotorCmdInMsg was not linked.");
 		return;
 	}
 

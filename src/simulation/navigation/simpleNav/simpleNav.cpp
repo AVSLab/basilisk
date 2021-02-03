@@ -62,7 +62,7 @@ SimpleNav::~SimpleNav()
  */
 void SimpleNav::Reset(uint64_t CurrentSimNanos)
 {
-    // add message check here
+    // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "SimpleNav.scStateInMsg was not linked.");
     }

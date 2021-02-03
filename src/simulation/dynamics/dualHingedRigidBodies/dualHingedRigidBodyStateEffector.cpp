@@ -92,6 +92,7 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
  */
 void DualHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos)
 {
+
     return;
 }
 

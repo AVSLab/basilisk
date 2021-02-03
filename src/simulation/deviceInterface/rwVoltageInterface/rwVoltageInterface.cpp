@@ -48,7 +48,7 @@ void RWVoltageInterface::readInputMessages()
 {
     if(!this->rwVoltageInMsg.isLinked())
     {
-        bskLogger.bskLog(BSK_WARNING, "rwVoltageInMsg is not linked.");
+        bskLogger.bskLog(BSK_WARNING, "rwVoltageInterface.rwVoltageInMsg is not linked.");
         return;
     }
 
