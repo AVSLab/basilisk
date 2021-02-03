@@ -83,6 +83,12 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
     if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.chiefTransInMsg wasn't connected.");
     }
+    if (!NavTransMsg_C_isLinked(&configData->deputyTransInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.deputyTransInMsg wasn't connected.");
+    }
+    if (!THRArrayConfigMsg_C_isLinked(&configData->thrustConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.thrustConfigInMsg wasn't connected.");
+    }
 
     /*! - Read the input messages */
     chiefTransMsg = NavTransMsg_C_read(&configData->chiefTransInMsg);
