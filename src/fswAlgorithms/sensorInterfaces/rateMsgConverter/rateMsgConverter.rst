@@ -22,9 +22,6 @@ provides information on what this message is used for.
     * - imuRateInMsg
       - :ref:`IMUSensorBodyMsgPayload`
       - attitude input message
-    * - opNavInMsg
-      - :ref:`OpNavMsgPayload`
-      - opnav input message
 
 
 

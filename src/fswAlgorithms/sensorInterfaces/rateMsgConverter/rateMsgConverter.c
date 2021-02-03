@@ -66,6 +66,11 @@ void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTi
     IMUSensorBodyMsgPayload inMsg;
     NavAttMsgPayload outMsg;
     
+    // check if the required message has not been connected
+    if (!IMUSensorBodyMsg_C_isLinked(&configData->imuRateInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rateMsgConverter.imuRateInMsg wasn't connected.");
+    }
+
     /*! - read in the message of type IMUSensorBodyMsgPayload */
     inMsg = IMUSensorBodyMsg_C_read(&configData->imuRateInMsg);
     
