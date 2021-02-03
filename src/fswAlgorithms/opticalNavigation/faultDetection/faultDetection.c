@@ -68,9 +68,26 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
     /* zero the output message */
     opNavMsgOut = OpNavMsg_C_zeroMsgPayload();
 
+    // check that the opnave messages are linked
+    if (!OpNavMsg_C_isLinked(&configData->navMeasPrimaryInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: faultDetection.navMeasPrimaryInMsg wasn't connected.");
+    }
+    if (!OpNavMsg_C_isLinked(&configData->navMeasSecondaryInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: faultDetection.navMeasSecondaryInMsg wasn't connected.");
+    }
+
     /*! - read input opnav messages */
     opNavIn1 = OpNavMsg_C_read(&configData->navMeasPrimaryInMsg);
     opNavIn2 = OpNavMsg_C_read(&configData->navMeasSecondaryInMsg);
+
+    // check that the dcm messages are linked
+    if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: faultDetection.cameraConfigInMsg wasn't connected.");
+    }
+    if (!NavAttMsg_C_isLinked(&configData->attInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: faultDetection.attInMsg wasn't connected.");
+    }
+
     /*! - read dcm messages */
     cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
     attInfo = NavAttMsg_C_read(&configData->attInMsg);

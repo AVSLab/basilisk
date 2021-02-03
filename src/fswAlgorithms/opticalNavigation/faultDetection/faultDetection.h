@@ -41,6 +41,9 @@ typedef struct {
     double faultMode; //!< What fault mode to go in: 0 is dissimilar (use the primary measurement and compare with secondary), 1 merges the measurements if they are both valid and similar. 
     double sigmaFault; //!< What is the sigma multiplication factor when comparing measurements
     
+    // added for bsk
+    BSKLogger* bskLogger;                               //!< BSK Logging
+
 }FaultDetectionData;
 
 #ifdef __cplusplus
