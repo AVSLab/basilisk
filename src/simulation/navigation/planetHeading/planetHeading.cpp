@@ -77,5 +77,14 @@ void PlanetHeading::writeMessages(uint64_t CurrentSimNanos) {
  */
 void PlanetHeading::Reset(uint64_t CurrentSimNanos)
 {
+
+    // check if input message has not been included
+    if (!this->planetPositionInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "planetHeading.planetPositionInMsg was not linked.");
+    }
+    if (!this->spacecraftStateInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "planetHeading.spacecraftStateInMsg was not linked.");
+    }
+
     return;
 }

@@ -47,6 +47,11 @@ StarTracker::~StarTracker()
  @return void */
 void StarTracker::Reset(uint64_t CurrentSimNanos)
 {
+    // check if input message has not been included
+    if (!this->scStateInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "starTracker.scStateInMsg was not linked.");
+    }
+
     int numStates = 3;
 
     this->AMatrix.setIdentity(numStates, numStates);

@@ -50,6 +50,13 @@ void SimpleSolarPanel::customReset(uint64_t CurrentClock) {
     } else {
         bskLogger.bskLog(BSK_ERROR, "The nHat_B must be set to a non-zero vector");
     }
+    // check if required input messages are connected
+    if (!this->sunInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "simpleSolarPanel.sunInMsg was not linked.");
+    }
+    if (!this->stateInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "simpleSolarPanel.stateInMsg was not linked.");
+    }
 
     return;
 }

@@ -103,6 +103,11 @@ ImuSensor::~ImuSensor()
  */
 void ImuSensor::Reset(uint64_t CurrentSimNanos)
 {
+    // check if input message has not been included
+    if (!this->scStateInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "imuSensor.scStateInMsg was not linked.");
+    }
+
     this->AMatrixAccel.setIdentity(this->numStates,this->numStates);
 
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
