@@ -20,10 +20,10 @@
 #
 # Integrated tests
 #
-# Purpose:  This script calls a series of bskSim related simulation tutorials to ensure
+# Purpose:  This script calls a series of quick start guide demonstration scripts to ensure
 # that they complete properly.
 # Author:   Hanspeter Schaub
-# Creation Date:  May 10, 2018
+# Creation Date:  Feb. 3, 2021
 #
 
 
@@ -31,11 +31,14 @@ import sys, os, inspect
 import pytest
 import importlib
 from Basilisk.utilities import unitTestSupport
+import fnmatch
+from Basilisk.architecture import bskLogging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples/BskSim/scenarios')
+sys.path.append(path + '/../../docs/source/codeSamples')
+files = fnmatch.filter(os.listdir(path + '/../../docs/source/codeSamples'), "*.py")
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -45,33 +48,23 @@ sys.path.append(path + '/../../examples/BskSim/scenarios')
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("bskSimCase", [
-                                        'scenario_BasicOrbit'
-                                        , 'scenario_AttEclipse'
-                                        , 'scenario_AttGuidance'
-                                        , 'scenario_AttGuidHyperbolic'
-                                        , 'scenario_AttSteering'
-                                        , 'scenario_FeedbackRW'
-                                        , 'scenario_BasicOrbitFormation'
-                                        , 'scenario_RelativePointingFormation'
-                                        ])
+@pytest.mark.parametrize("bskScript", files)
 @pytest.mark.scenarioTest
-def test_scenarioBskScenarios(show_plots, bskSimCase):
+def test_scenarioBskPrinciples(show_plots, bskScript):
 
+    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     # import the bskSim script to be tested
-    scene_plt = importlib.import_module(bskSimCase)
+    scene_plt = importlib.import_module(os.path.splitext(bskScript)[0])
 
     try:
-        figureList = scene_plt.run(False)
+        figureList = scene_plt.run()
 
-        # save the figures to the Doxygen scenario images folder
-
-        if(figureList != {}):
+        # save the figures to the RST scenario images folder
+        if(figureList and figureList != {}):
             for pltName, plt in list(figureList.items()):
                 unitTestSupport.saveScenarioFigure(pltName, plt, path)
-
     except OSError as err:
         testFailCount = testFailCount + 1
         testMessages.append("OS error: {0}".format(err))
@@ -81,3 +74,9 @@ def test_scenarioBskScenarios(show_plots, bskSimCase):
 
     assert testFailCount < 1, testMessages
 
+
+if __name__ == "__main__":
+    test_scenarioBskPrinciples(
+        False,        # show_plots
+        'bsk-4'
+    )

@@ -64,7 +64,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
     def set_FswModel(self, fswModel):
         self.fsw_added = True
         self.FSWProcessName = "FSWProcess"  # Create simulation process name
-        self.fswProc = self.CreateNewProcess(self.FSWProcessName)  # Create processe
+        self.fswProc = self.CreateNewProcess(self.FSWProcessName)  # Create process
         self.FSWModels = fswModel.BSKFswModels(self, self.fswRate)  # Create Dynamics and FSW classes
 
 

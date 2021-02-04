@@ -1,0 +1,60 @@
+Recording Messages
+==================
+
+
+.. sidebar:: Source Code
+
+    The python code shown below can be downloaded :download:`here </../../codeSamples/bsk-4.py>`.
+
+Great, now that we have a functioning simulation where Basilisk modules are setup and their message connected, how do we get access to the simulation data?  This is done by creating recorder modules that will store a time history of the connected message.
+
+
+.. image:: ../../_images/static/qs-bsk-record.svg
+   :align: center
+   :scale: 50 %
+
+
+The figure above illustrates the Basilisk simulation being simulated.  The single test module has it's output message connected to itself.  This creates a feedback loop that will cause the output message to change.  See the module code to understand the underlying simple math.  To record the message state at various time steps, recorder modules will be created that perform this task.
+
+The simulation code is included below.  As the recorded message data will be plotted in this script, the ``matplotlib`` library is included at the top, as well as the helper package ``unitTestSupport`` from ``Basilisk.utilities``.
+
+
+.. literalinclude:: ../../codeSamples/bsk-4.py
+   :language: python
+   :linenos:
+   :lines: 18-
+
+Adding a Message Recorder
+-------------------------
+After the single BSK module is created and added to the task list, new code is provided to setup the message recorders.  The general syntax is as follows.  Assume you want to record ``module.someOutMsg``.  Note that this message can be either an output or input message.  The corresponding recorder module is created using::
+
+    someMsgRec = module.someOutMsg.recorder()
+    scSim.AddModelToTask("taskName", someMsgRec)
+
+The first step creates the BSK message recorder object which is setup to record ``someOutMsg``.  As with any Basilisk module, it next needs to be added to task to be executed each update cycle.  As is, the recorder is setup to record the message at the same frequency as the task list update frequency.  If you want to reduce the number of data points being recorded, you can provide an option argument::
+
+    someMsgRec = module.someOutMsg.recorder(minUpdateTime)
+
+Here ``minUpdateTime`` is the minimum time interval that must pass before this recorder object will record the message.
+
+In the code above the recorder module ``msgRec`` is setup to record the message at the ``dynamicsTask`` update rate.  In contrasts the module ``msgRec20`` is setup to record the message only after 20s have passed.  Note that the ``minUpdateTime`` argument must be provided again in nano-seconds.
+
+That is all that is required to setup message recording.  Next the code initializes the simulation and executes it.
+
+
+Pulling the Recorded Message Data
+---------------------------------
+After the simulation completes the recorded data is stored inside the ``msgRec`` and ``msgRec20`` recorders.  To access the variables of the message, simply use ``msgRec.variable`` where ``variable`` is the message structure variable you seek to access.  To access the array of time values where the message was recorded use ``msgRec.times()``.    A second time array is available that stored the times where the message was written with ``msgRec.timesWritten()``.  Why to time arrays?  Consider an output message that is only updated every 3s, but the message is being read and recorded every second.  The ``.timesWritten()`` values will repeat until a new output message is created.
+
+:ref:`fswModuleTemplate` output message only contains an array ``outputVector``.  In this simulation it is recorded at the rate of 1Hz in ``msgRec``, and every 20s in the recorder ``msgRec20``.  The simulation will create the following plot:
+
+.. image:: /_images/Scenarios/bsk-4.svg
+   :align: center
+
+
+
+.. ** Tutorial Review Video **
+
+    .. raw:: html
+
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/6YmZyu0f-qI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

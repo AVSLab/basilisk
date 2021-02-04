@@ -18,6 +18,7 @@
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.fswAlgorithms import fswModuleTemplate
 
 
 def run():
@@ -30,18 +31,33 @@ def run():
 
     #  create the simulation process
     dynProcess = scSim.CreateNewProcess("dynamicsProcess")
-    fswProcess = scSim.CreateNewProcess("fswProcess")
 
     # create the dynamics task and specify the integration update time
     dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(5.)))
-    dynProcess.addTask(scSim.CreateNewTask("sensorTask", macros.sec2nano(10.)))
-    fswProcess.addTask(scSim.CreateNewTask("fswTask", macros.sec2nano(10.)))
+
+    # create copies of the Basilisk modules
+    mod1 = fswModuleTemplate.fswModuleTemplateConfig()
+    mod1Wrap = scSim.setModelDataWrap(mod1)
+    mod1Wrap.ModelTag = "Module1"
+
+    mod2 = fswModuleTemplate.fswModuleTemplateConfig()
+    mod2Wrap = scSim.setModelDataWrap(mod1)
+    mod2Wrap.ModelTag = "Module2"
+
+    mod3 = fswModuleTemplate.fswModuleTemplateConfig()
+    mod3Wrap = scSim.setModelDataWrap(mod3)
+    mod3Wrap.ModelTag = "Module3"
+
+    scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1)
+    scSim.AddModelToTask("dynamicsTask", mod2Wrap, mod2, 10)
+    scSim.AddModelToTask("dynamicsTask", mod3Wrap, mod3, 5)
 
     #  initialize Simulation:
     scSim.InitializeSimulation()
+    print("InitializeSimulation() completed...")
 
     #   configure a simulation stop time time and execute the simulation run
-    scSim.ConfigureStopTime(macros.sec2nano(20.0))
+    scSim.ConfigureStopTime(macros.sec2nano(5.0))
     scSim.ExecuteSimulation()
 
     return

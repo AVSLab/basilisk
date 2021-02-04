@@ -2,17 +2,22 @@ Basilisk Process and Task Creation
 ==================================
 
 
+.. sidebar:: Source Code
+
+    The python code shown below can be downloaded :download:`here </../../codeSamples/bsk-1.py>`.
+
+
 To execute modules within the simulation, their evaluation is controlled through the Basilisk ``Process`` and ``Task`` features.  The BSK ``Task`` contain a series of modules which are all executed with the same update rate.  A ``Process`` is essentially a task group which can contain several related tasks.  For example, in a multi-satellite simulation you could create a ``Process`` for each satellite to keep the associates tasks and embedded module organized. The illustration below shows a sample layout where a the dynamics of ``bskSat`` satellite is added to a separate process from the flight software (FSW) algorithms being executed on this satellite.  Within each process there are several tasks setup which are evaluated at specified rates.  The dynamics process contains a ``Dynamics`` task to evaluate the spacecraft translational and rotational motion, as well as a ``Sensors`` task to create sensor output messages.
 
 .. image:: ../../_images/static/qs-bsk-process.svg
    :align: center
    :scale: 50 %
 
-The python code example below illustrates a prototypical BSK simulation setup.  The ``Process`` and ``Task`` creation are controlled through the utililty package ``SimualtionBaseClass``.  This is loaded to provide the core Basilisk task creation capability.  The ``macros`` utility is loaded to provide some convenient helper functions.
+The python code example below illustrates a prototypical BSK simulation setup.  The ``Process`` and ``Task`` creation are controlled through the utility package ``SimulationBaseClass``.  This is loaded to provide the core Basilisk task creation capability.  The ``macros`` utility is loaded to provide some convenient helper functions.
 
 Next, a method ``run()`` is created that will execute the BSK simulation.  The name of this method is arbitrary.  The core Basilisk simulation framework ``scSim`` is created as an instance of ``SimBaseClass()``.  Now a process is created using the ``CreateNewProcess(name)`` method where ``name`` is a string containing the process name.
 
-.. literalinclude:: ../../codeSamples/bsk-0.py
+.. literalinclude:: ../../codeSamples/bsk-1.py
    :language: python
    :linenos:
    :lines: 18-
@@ -35,8 +40,8 @@ To execute process and tasks, we call the ``InitializeSimulation()`` method whic
 Next, the simulation length is set through ``ConfigureStopTime(stopTime)`` where again the stop time must be provided in nano-seconds.  Not that this is the absolute stop time.  If you run the simulation for 5 seconds, then change some parameters, and then want to resume the simulation for an additional 5 seconds, the second stop time must be the accumulated simulation time of 10 seconds.
 
 
-Instructional Video
--------------------
+** Tutorial Review Video **
+
 .. raw:: html
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/6YmZyu0f-qI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
