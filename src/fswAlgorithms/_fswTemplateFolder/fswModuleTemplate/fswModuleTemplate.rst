@@ -26,7 +26,7 @@ provides information on what this message is used for.
       - Description
     * - dataInMsg
       - :ref:`FswModuleTemplateMsgPayload`
-      - Input message description.  Note here if this message is optional, and what the default behavior
+      - (optional) Input message description.  Note here if this message is optional, and what the default behavior
         is if this message is not provided.
     * - dataOutMsg
       - :ref:`FswModuleTemplateMsgPayload`

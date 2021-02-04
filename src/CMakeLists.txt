@@ -521,13 +521,14 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/navigation" NAV_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sensors" SENSORS_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simSynch" SIM_SYNCH_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizard" VIZ_INTERFACE_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/cppModuleTemplate" CPP_MODULE_TEMPLATE_TARGETS)
 
 
 
 
 
 generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation") # The quotations around DYN_TARGETS informs function that it is a list
-generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation") # TODO: include cspice for just spice_interface, not all packages
+generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation") # TODO: include cspice for just spiceInterface, not all packages
 generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${DEVICE_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${POWER_TARGETS}" "powerLib;${ARCHITECTURE_LIBS};" "simulation")
@@ -535,6 +536,7 @@ generate_package_targets("${NAV_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${SENSORS_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${SIM_SYNCH_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${VIZ_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${CPP_MODULE_TEMPLATE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
 
 
