@@ -21,7 +21,7 @@ Overview
 --------
 
 This script sets up a 6-DOF spacecraft orbiting Earth. The goal of this tutorial is to demonstrate
-how to configure and use the :ref:`MRP_Steering` module with a rate sub-servo system
+how to configure and use the :ref:`mrpSteering` module with a rate sub-servo system
 the new BSK_Sim architecture.
 
 The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::

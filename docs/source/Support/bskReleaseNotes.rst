@@ -111,7 +111,7 @@ Version 1.8.6
     - updated document to make use of RST format and specify module input and output messages
 - updated ``avsEigenSupport.h`` to add new methods ``eigenMRPd2Vector3d()`` and ``eigenC2MRP()``
 - updated :ref:`spacecraftPlus` to allow the attitude motion to be prescribed through
-  an optional input message of type :ref:`attRefFswMsg`.
+  an optional input message of type :ref:`attRefMsg`.
 - fixed sign issue in :ref:`simpleSolarPanel`
 - support Vizard 1.6.0 scripting  
 
@@ -175,7 +175,7 @@ Version 1.8.5
 
 **Version 1.8.0**
 
-- updated :ref:`imu_sensor` to initialize all class variables in the constructor
+- updated :ref:`imuSensor` to initialize all class variables in the constructor
 - fixed a data frame issue in :ref:`groundLocation`
 - first iteration of the CMake refactor completed. The refactor updates the project CMakeList to
 
@@ -209,7 +209,7 @@ Version 1.8.5
 - fixed an issues in :ref:`simIncludeGravBody` where the method ``unloadSpiceKernels`` had the order of the spice package name and the spice path reversed 😟
 - New :ref:`dataFileToViz` that reads in spacecraft simulation states from a text file and converts them into
   BSK messages.  For example, this allows :ref:`vizInterface` store the simulation data into a Vizard compatible manner.
-- Updated :ref:`spice_interface` to allow for optional overriding the IAU planet frame with custom values
+- Updated :ref:`spiceInterface` to allow for optional overriding the IAU planet frame with custom values
 - Updated :ref:`vizInterface` to allow setting ``show24hrClock`` and ``showDataRateDisplay`` flags for Vizard files
   supported in Vizard v1.3.0 
 
@@ -259,7 +259,7 @@ Version 1.7.4
 - Removed unneeded instances of using ``unitTestSupport.np2EigenVectorXd()`` when setting the spacecraft states
 - Many new Basilisk scenarios illustration interfacing with :ref:`Vizard <Vizard>` to simulate opNav cases:
 
-    - :ref:`scenario_DoubleOpNavOD` uses the two OpNav methods at once
+    - scenario_DoubleOpNavOD uses the two OpNav methods at once
     - :ref:`scenario_faultDetOpNav` implements two OpNav methods and employs a fault detection
     - :ref:`scenario_OpNavAttOD` uses the OpNav FSW stack to perform both pointing towards the target planet
     - :ref:`scenario_OpNavAttODLimb` uses a Canny transform to extract limb points
@@ -288,8 +288,8 @@ Version 1.7.4
 - temporary fix for opencv not finding conan gflags for opencv sfm lib on windows.  See the discussion
   at `<https://github.com/conan-community/community/issues/210>`_
 - Updated :ref:`fswModuleTemplate` to include a message I/O figure and move it's message definition to ``simMessages``
-- Updated the documentation of :ref:`Folder_MRP_PD` to the RST format
-- Updated the documentation of :ref:`Folder_MRP_Steering` to the RST format
+- Updated the documentation of :ref:`Folder_mrpPD` to the RST format
+- Updated the documentation of :ref:`Folder_mrpSteering` to the RST format
 - At long last, 🍾, created :ref:`GravityGradientEffector`  which can simulate the gravity gradient torque acting on a
   spacecraft due to the gravitational influence from one or more planets.
 - Create a new example script :ref:`scenarioAttitudeGG` that illustrates the use of the gravity gradient effector

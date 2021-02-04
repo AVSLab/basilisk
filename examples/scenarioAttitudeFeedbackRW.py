@@ -140,7 +140,7 @@ Flight Algorithm Changes to Control RWs
 
 The general flight algorithm setup is the same as in the earlier simulation script. Here we
 use again the :ref:`inertial3D` guidance module, the :ref:`attTrackingError` module to evaluate the
-tracking error states, and the :ref:`MRP_Feedback` module to provide the desired :math:`{\mathbf L}_r`
+tracking error states, and the :ref:`mrpFeedback` module to provide the desired :math:`{\mathbf L}_r`
 control torque vector.  In this simulation we want the MRP attitude control module to take
 advantage of the RW spin information.  This is achieved by adding the 2 extra lines::
 

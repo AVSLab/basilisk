@@ -29,7 +29,7 @@ This script is found in the folder ``basilisk/examples`` and executed by using::
 
 The simulation layout is shown in the following illustration. 
 Two spacecraft are orbiting the earth at close distance. No perturbation in assumed. 
-Each spacecraft sends a :ref:`simpleNav` output message of type :ref:`NavAttIntMsg` message at a certain period
+Each spacecraft sends a :ref:`simpleNav` output message of type :ref:`NavAttMsg` message at a certain period
 to :ref:`spacecraftReconfig`,
 where burn scheduling is executed to achieve reconfiguration.
 

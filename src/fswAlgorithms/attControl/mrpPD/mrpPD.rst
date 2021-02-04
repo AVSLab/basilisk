@@ -8,7 +8,7 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_MRP_PD:
+.. _ModuleIO_MRPPD:
 .. figure:: /../../src/fswAlgorithms/attControl/mrpPD/_Documentation/Images/moduleIOMrpPd.svg
     :align: center
 

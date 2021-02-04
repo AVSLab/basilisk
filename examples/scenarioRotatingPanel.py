@@ -21,7 +21,7 @@ Overview
 --------
 
 This scenario demonstrates how to set up a spacecraft spacecraft with rotating panel.  A
-:ref:`coarse_sun_sensor` is then
+:ref:`coarseSunSensor` is then
 attached onto this panel such that it's bore-sight axis rotates with the panel.  Further, the panel state
 message is connected to :ref:`simpleSolarPanel`.
 

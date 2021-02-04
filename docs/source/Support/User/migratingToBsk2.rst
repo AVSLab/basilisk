@@ -21,7 +21,7 @@ However, nothing is for free.  Making these changes was not possible without bre
 help page outlines all the user-facing changes that have occurred.  This facilities the process of upgrading legacy
 Basilisk python scripts to function with the new message system, etc.
 
-For changes related to updating Basilisk C and C++ module code, see :ref:`migratingBskModuleToBsk2`.
+For changes related to updating Basilisk C and C++ module code, see :ref:`migratingModuleToBsk`.
 
 Message Names
 -------------

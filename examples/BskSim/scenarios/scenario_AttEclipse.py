@@ -73,7 +73,7 @@ Custom FSW Configurations Instructions
 
 The general flight algorithm setup is different than the earlier simulation scripts. Here we
 use the :ref:`sunSafePoint` guidance module, the :ref:`CSSWlsEst` module to evaluate the
-sun pointing vector, and the :ref:`MRP_Feedback` module to provide the desired :math:`{\mathbf L}_r`
+sun pointing vector, and the :ref:`mrpFeedback` module to provide the desired :math:`{\mathbf L}_r`
 control torque vector.
 
 The :ref:`sunSafePoint` guidance module is used to steer the spacecraft to point towards the sun direction vector.

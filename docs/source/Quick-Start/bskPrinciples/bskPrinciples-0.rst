@@ -23,7 +23,6 @@ In essence, think of BSK providing lots of spacecraft lego blocks where the user
 
 .. image:: ../../_images/static/qs-bsk-0.svg
    :align: center
-   :scale: 50 %
 
 The BSK modules contains a series of input and output message connections as illustrated above.  This provides a method to control how information is shared across the simulation.  A module may have one more more input message connections. Some input messages are optional and change the behavior of the module if they are connected.  For example, a feedback control module provides a standard control solution if the reaction wheel message is not connected, but will incorporate the reaction wheel data in the control if such a message is connected.
 

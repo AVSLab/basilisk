@@ -20,10 +20,10 @@ r"""
 Overview
 --------
 
-Demonstrates how to use the :ref:`MRP_Steering` module to stabilize the attiude relative to the Hill Frame.
+Demonstrates how to use the :ref:`mrpSteering` module to stabilize the attiude relative to the Hill Frame.
 Details on the math of this module can be found in this `paper <http://doi.org/10.1016/j.actaastro.2018.03.022>`__.
 This script sets up a spacecraft with 3 RWs which is orbiting the Earth.  The goal is to
-illustrate how to use the :ref:`MRP_Steering` module with a rate sub-servo system to control
+illustrate how to use the :ref:`mrpSteering` module with a rate sub-servo system to control
 the attitude.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::

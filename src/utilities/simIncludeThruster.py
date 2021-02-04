@@ -30,6 +30,7 @@ try:
 except ImportError:
     from collections import OrderedDict
 
+
 class thrusterFactory(object):
     """Simulation Thruster Factory Class"""
     def __init__(self):
@@ -44,13 +45,13 @@ class thrusterFactory(object):
 
         Parameters
         ----------
-        :param thrusterType : string
+        thrusterType : string
                 thruster manufacturing name.:
-        :param r_B : list
+        r_B : list
                 vector with thruster location in B-frame components:
-        :param tHat_B : list
+        tHat_B : list
                 vector with thruster force direction unit vector:
-        :param kwargs:
+        kwargs:
             useMinPulseTime: BOOL
                 flag if the thruster model should use a minimum impulse time
             areaNozzle: float
@@ -63,9 +64,9 @@ class thrusterFactory(object):
                 thruster dispersion percentage
             MinOnTime: float
                 thruster minimum on time
-        :return:
-            thrConfigSimMsg : message structure
-                A handle to the thruster configuration message
+
+        :return: thrConfigSimMsg
+
         """
         # create the blank thruster object
         TH = messaging.THRSimConfigMsgPayload()
@@ -167,15 +168,17 @@ class thrusterFactory(object):
 
     def addToSpacecraft(self, modelTag, thDynamicEffector, scPlus):
         """
-            This function should be called after all Thurster devices are created with create()
+            This function should be called after all Thruster devices are created with create()
             It creates the C-class container for the array of TH devices, and attaches
             this container to the spacecraft object
 
             Parameters
             ----------
-            :param modelTag:  string with the model tag
-            :param thDynamicEffector: thruster dynamic effector handle
-            :param scPlus: spacecraftPlus handle
+            modelTag:  string
+                module model tag string
+            thDynamicEffector: thrusterDynamicEffector
+                thruster dynamic effector handle
+            scPlus: spacecraftPlus
         """
 
         thDynamicEffector.ModelTag = modelTag
@@ -191,16 +194,16 @@ class thrusterFactory(object):
         """
             Returns the number of RW devices setup.
 
-            Returns
-            -------
-            :return: int
+        :return: number of thruster devices
+
         """
         return len(self.thrusterList)
 
     def getConfigMessage(self):
         """
             Returns a FSW THRArrayConfigMsg reflecting the current thruster setup.
-        :return: thrMessage: THRArrayConfigMsg instance
+
+        :return: thrMessage
         """
 
         thrMessage = messaging.THRArrayConfigMsgPayload()

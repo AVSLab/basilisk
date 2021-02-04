@@ -105,7 +105,7 @@ Flight Algorithm Changes to Control Thrusters
 
 The general flight algorithm setup is the same as in the earlier simulation scripts. Here we
 use again the :ref:`inertial3D` guidance module, the :ref:`attTrackingError` module to evaluate the
-tracking error states, and the :ref:`MRP_Feedback` module to provide the desired :math:`{\mathbf L}_r`
+tracking error states, and the :ref:`mrpFeedback` module to provide the desired :math:`{\mathbf L}_r`
 control torque vector.  In addition, this time, we have to add two more modules: :ref:`thrForceMapping`
 and :ref:`thrFiringSchmitt`.
 
@@ -114,7 +114,7 @@ thruster force values to implement this torque. It is assumed that the nominal t
 pure torque solutions are possible. The module supports both on- and off-pulsing solutions, including
 cases where the thruster solutions are saturated due to a large commanded attitude control torque.
 The module set up is done in an analogous way as the previous ones. It can be noted that one of the inputs
-corresponds to the output of the :ref:`MRP_Feedback`, being the commanded control torque. The other ones are the
+corresponds to the output of the :ref:`mrpFeedback`, being the commanded control torque. The other ones are the
 information on the thrusters configuration and spacecraft inertia, whose messages will be created later in the script.
 In addition, the control axes are specified using the full identity matrix for ACS thrusters, and its first
 two rows for the DV ones, since in the latter case we are not able to control one axis (z in our case),

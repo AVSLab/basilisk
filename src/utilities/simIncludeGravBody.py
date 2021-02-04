@@ -220,20 +220,16 @@ class gravBodyFactory(object):
             Other Parameters
             ----------------
             kwargs :
-                spiceKernalFileNames : array_like
+                spiceKernalFileNames :
                     A list of spice kernel file names including file extension.
-                spicePlanetNames : array_like
+                spicePlanetNames :
                     A list of planet names whose Spice data is loaded, overriding the gravBodies list.
-                spicePlanetFrames : array_like
+                spicePlanetFrames :
                     A list of strings for the planet frame names.  If left empty for a planet, then
-                    "IAU_" + planetName is assumed for the planet frame.
+                    IAU_ + planetName is assumed for the planet frame.
                 epochInMsg: bool
                     Flag to set an epoch input message for the spice interface
 
-            Returns
-            -------
-            spiceObject : Basilisk spice module
-                A configured Basilisk spice module.
         """
 
         if 'spiceKernalFileNames' in kwargs:

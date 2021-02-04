@@ -27,7 +27,10 @@ def Honeywell_HR16(maxMomentum_level):
     http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
 
     There are 3 momentum capacity options for this RW type.  The maximum momentum
-    capacity must be set prior to creating the HR16 RW type using maxMomentum = [100, 75 or 50]
+    capacity must be set prior to creating the HR16 RW type using::
+
+        maxMomentum = 100, 75 or 50
+
     :param maxMomentum_level:
     :return:
     """
@@ -71,8 +74,9 @@ def Honeywell_HR14(maxMomentum):
     http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
 
     There are 3 momentum capacity options for this RW type.  The maximum momentum
-    capacity must be set prior to creating the HR14 RW type using
-    options.maxMomentum = 75, 50 or 25
+    capacity must be set prior to creating the HR14 RW type using::
+
+        options.maxMomentum = 75, 50 or 25
 
     :param maxMomentum:
     :return:
@@ -115,7 +119,8 @@ def Honeywell_HR12(maxMomentum):
     http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
 
     There are 3 momentum capacity options for this RW type.  The maximum momentum
-    capacity must be set prior to creating the HR12 RW type using
+    capacity must be set prior to creating the HR12 RW type using::
+
         options.maxMomentum = 12, 25 or 50
 
     :param maxMomentum:
