@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -22,7 +22,7 @@ from Basilisk.utilities import macros
 
 def run():
     """
-    Sample method description
+    Illustration of Basilisk process and task creation
     """
 
     #  Create a sim module as an empty container

@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 
 def run():
     """
-    Sample method description
+    Illustration of recording messages
     """
 
     #  Create a sim module as an empty container
@@ -43,7 +43,7 @@ def run():
     # create modules
     mod1 = fswModuleTemplate.fswModuleTemplateConfig()
     mod1Wrap = scSim.setModelDataWrap(mod1)
-    mod1Wrap.ModelTag = "TestModule1"
+    mod1Wrap.ModelTag = "Module1"
     scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1)
     mod1.dataInMsg.subscribeTo(mod1.dataOutMsg)
 
