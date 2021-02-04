@@ -56,7 +56,7 @@ def test_module(show_plots):     # update "module" in this function name to refl
     variables
 
     - ``dummy``
-    - ``outputVector[3]``
+    - ``dataVector[3]``
 
     **General Documentation Comments**
     
@@ -107,7 +107,7 @@ def fswModuleTestFunction(show_plots):
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = messaging.FswModuleTemplateMsgPayload()  # Create a structure for the input message
-    inputMessageData.outputVector = [1.0, -0.5, 0.7]             # Set up a list as a 3-vector
+    inputMessageData.dataVector = [1.0, -0.5, 0.7]             # Set up a list as a 3-vector
     inputMsg = messaging.FswModuleTemplateMsg().write(inputMessageData)
 
     # Setup logging on the test module output message so that we get all the writes to it
@@ -159,9 +159,9 @@ def fswModuleTestFunction(show_plots):
     variableStateNoTime = np.transpose(variableState)[1]
     for i in range(0, len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(dataLog.outputVector[i], trueVector[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(dataLog.dataVector[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed outputVector" +
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed dataVector" +
                                 " unit test at t=" +
                                 str(dataLog.times()[i]*macros.NANO2SEC) +
                                 "sec\n")
@@ -196,7 +196,7 @@ def fswModuleTestFunction(show_plots):
 
     plt.figure(2)
     for idx in range(3):
-        plt.plot(dataLog.times() * macros.NANO2MIN, dataLog.outputVector[:, idx],
+        plt.plot(dataLog.times() * macros.NANO2MIN, dataLog.dataVector[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$s_' + str(idx) + '$')
     plt.legend(loc='lower right')

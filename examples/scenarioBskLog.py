@@ -84,7 +84,7 @@ def run(case):
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = messaging.FswModuleTemplateMsgPayload()  # Create a structure for the input message
-    inputMessageData.outputVector = [1.0, 1.0, 0.7]  # Set up a list as a 3-vector
+    inputMessageData.dataVector = [1.0, 1.0, 0.7]  # Set up a list as a 3-vector
     dataMsg = messaging.FswModuleTemplateMsg().write(inputMessageData)
 
     # Construct algorithm and associated C++ container

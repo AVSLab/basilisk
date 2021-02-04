@@ -85,7 +85,7 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t call
     /*! - Read the input messages */
     if (FswModuleTemplateMsg_C_isLinked(&configData->dataInMsg)) {
         inMsgBuffer = FswModuleTemplateMsg_C_read(&configData->dataInMsg);
-        v3Copy(inMsgBuffer.outputVector, configData->inputVector);
+        v3Copy(inMsgBuffer.dataVector, configData->inputVector);
     }
 
     /*! - Add the module specific code */
@@ -94,7 +94,7 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t call
     Lr[0] += configData->dummy;
 
     /*! - store the output message */
-    v3Copy(Lr, outMsgBuffer.outputVector);
+    v3Copy(Lr, outMsgBuffer.dataVector);
 
     /*! - write the module output message */
     FswModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);
@@ -102,7 +102,7 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t call
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */
     char info[MAX_LOGGING_LENGTH];
-    sprintf(info, "Module ID %lld ran Update at %fs", moduleID, (double) callTime/(1e9));
+    sprintf(info, "C Module ID %lld ran Update at %fs", moduleID, (double) callTime/(1e9));
     _bskLog(configData->bskLogger, BSK_INFORMATION, info);
 
     return;

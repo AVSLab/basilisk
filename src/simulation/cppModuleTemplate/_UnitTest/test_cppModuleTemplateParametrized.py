@@ -96,7 +96,7 @@ def test_module(show_plots, param1, param2, accuracy):
     variables
 
     - ``dummy``
-    - ``outputVector[3]``
+    - ``dataVector[3]``
 
     **Figure Discussion**
 
@@ -149,7 +149,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = messaging.FswModuleTemplateMsgPayload() # Create a structure for the input message
-    inputMessageData.outputVector = [param1, param2, 0.7]       # Set up a list as a 3-vector
+    inputMessageData.dataVector = [param1, param2, 0.7]       # Set up a list as a 3-vector
     inputMsg = messaging.FswModuleTemplateMsg().write(inputMessageData)
     module.dataInMsg.subscribeTo(inputMsg)
 
@@ -224,7 +224,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     # compare the module results to the truth values
     dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
 
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.outputVector,
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.dataVector,
                                                                accuracy, "Output Vector",
                                                                testFailCount, testMessages)
     variableState = np.transpose(variableState)[1]
@@ -251,7 +251,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
 
     plt.figure(2)
     for idx in range(3):
-        plt.plot(dataLog.times() * macros.NANO2MIN, dataLog.outputVector[:, idx],
+        plt.plot(dataLog.times() * macros.NANO2MIN, dataLog.dataVector[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$s_' + str(idx) + '$')
     plt.legend(loc='lower right')
