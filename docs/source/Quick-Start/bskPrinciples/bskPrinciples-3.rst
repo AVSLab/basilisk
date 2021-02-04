@@ -4,13 +4,12 @@ Connecting Messages
 
 .. sidebar:: Source Code
 
-    The python code shown below can be downloaded :download:`here </../../codeSamples/bsk-3.py>`.
+    The python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/bsk-3.py>`.
 
 Having learned how to add C or C++ Basilisk modules to a task and setting priorities, next we will look at how to connect the module messages.  Again we use :ref:`fswModuleTemplate` as the stand-in module to illustrate setting message connections.  Note that the input and output message connections of this module are of the same type.  The the following simulation script again a single process and task are setup.  The modules are created and their input and output messages are connected as illustrated below.
 
 .. image:: ../../_images/static/qs-bsk-connectMsg.svg
    :align: center
-   :scale: 50 %
 
 The source code is shown below.  As we are going to be using the Basilisk messaging system now, it is important to import the ``messing`` package from ``Basilisk.architecture``.  Without this the python code will not know how to subscribe to any message type, or how to create a stand-alone message.
 

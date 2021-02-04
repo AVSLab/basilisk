@@ -4,14 +4,13 @@ Recording Messages
 
 .. sidebar:: Source Code
 
-    The python code shown below can be downloaded :download:`here </../../codeSamples/bsk-4.py>`.
+    The python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/bsk-4.py>`.
 
 Great, now that we have a functioning simulation where Basilisk modules are setup and their message connected, how do we get access to the simulation data?  This is done by creating recorder modules that will store a time history of the connected message.
 
 
 .. image:: ../../_images/static/qs-bsk-record.svg
    :align: center
-   :scale: 50 %
 
 
 The figure above illustrates the Basilisk simulation being simulated.  The single test module has it's output message connected to itself.  This creates a feedback loop that will cause the output message to change.  See the module code to understand the underlying simple math.  To record the message state at various time steps, recorder modules will be created that perform this task.

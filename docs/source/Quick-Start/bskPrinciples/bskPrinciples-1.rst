@@ -4,14 +4,13 @@ Basilisk Process and Task Creation
 
 .. sidebar:: Source Code
 
-    The python code shown below can be downloaded :download:`here </../../codeSamples/bsk-1.py>`.
+    The python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/bsk-1.py>`.
 
 
 To execute modules within the simulation, their evaluation is controlled through the Basilisk ``Process`` and ``Task`` features.  The BSK ``Task`` contain a series of modules which are all executed with the same update rate.  A ``Process`` is essentially a task group which can contain several related tasks.  For example, in a multi-satellite simulation you could create a ``Process`` for each satellite to keep the associates tasks and embedded module organized. The illustration below shows a sample layout where a the dynamics of ``bskSat`` satellite is added to a separate process from the flight software (FSW) algorithms being executed on this satellite.  Within each process there are several tasks setup which are evaluated at specified rates.  The dynamics process contains a ``Dynamics`` task to evaluate the spacecraft translational and rotational motion, as well as a ``Sensors`` task to create sensor output messages.
 
 .. image:: ../../_images/static/qs-bsk-process.svg
    :align: center
-   :scale: 50 %
 
 The python code example below illustrates a prototypical BSK simulation setup.  The ``Process`` and ``Task`` creation are controlled through the utility package ``SimulationBaseClass``.  This is loaded to provide the core Basilisk task creation capability.  The ``macros`` utility is loaded to provide some convenient helper functions.
 

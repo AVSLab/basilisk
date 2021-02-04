@@ -4,7 +4,7 @@ Adding Basilisk Modules
 
 .. sidebar:: Source Code
 
-    The python code shown below can be downloaded :download:`here </../../codeSamples/bsk-2.py>`.
+    The python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/bsk-2.py>`.
 
 Adding C-Modules
 ----------------
@@ -12,7 +12,6 @@ Understanding now what a Basilisk process (Task Group) and a task list is, we ca
 
 .. image:: ../../_images/static/qs-bsk-addModules.svg
    :align: center
-   :scale: 50 %
 
 The following simulation creates a single process called ``dynamicsProcess`` and single 0.2Hz task called ``dynamicsTask``. As illustrated above, 3 copies of :ref:`fswModuleTemplate` are created where they are called ``Module1``, ``Module2`` and ``Module3``.  However, note that in this example we seek to executes modules 2 and 3 first and 1 last.
 
