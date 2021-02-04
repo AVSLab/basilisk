@@ -43,7 +43,7 @@ def run():
     # create modules
     mod1 = fswModuleTemplate.fswModuleTemplateConfig()
     mod1Wrap = scSim.setModelDataWrap(mod1)
-    mod1Wrap.ModelTag = "Module1"
+    mod1Wrap.ModelTag = "cModule1"
     scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1)
     mod1.dataInMsg.subscribeTo(mod1.dataOutMsg)
 
@@ -65,10 +65,10 @@ def run():
     plt.figure(1)
     figureList = {}
     for idx in range(3):
-        plt.plot(msgRec.times() * macros.NANO2SEC, msgRec.outputVector[:, idx],
+        plt.plot(msgRec.times() * macros.NANO2SEC, msgRec.dataVector[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$x_{' + str(idx) + '}$')
-        plt.plot(msgRec2.times() * macros.NANO2SEC, msgRec2.outputVector[:, idx],
+        plt.plot(msgRec2.times() * macros.NANO2SEC, msgRec2.dataVector[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\hat x_{' + str(idx) + '}$')

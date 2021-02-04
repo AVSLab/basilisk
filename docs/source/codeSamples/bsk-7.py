@@ -19,12 +19,13 @@
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import fswModuleTemplate
+from Basilisk.simulation import cppModuleTemplate
 from Basilisk.architecture import messaging
 from Basilisk.architecture import cMsgCInterfacePy as cMsgPy
 
 def run():
     """
-    Illustration of re-directing module output message to stand-alone message with a C interface
+    Illustration of re-directing module output message to stand-alone messages
     """
 
     #  Create a sim module as an empty container
@@ -39,14 +40,22 @@ def run():
     # create modules
     mod1 = fswModuleTemplate.fswModuleTemplateConfig()
     mod1Wrap = scSim.setModelDataWrap(mod1)
-    mod1Wrap.ModelTag = "Module1"
+    mod1Wrap.ModelTag = "cModule1"
     scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1)
 
-    # create stand-alone message with a C-interface
-    msg = cMsgPy.FswModuleTemplateMsg_C()
+    mod2 = cppModuleTemplate.CppModuleTemplate()
+    mod2.ModelTag = "cppModule2"
+    scSim.AddModelToTask("dynamicsTask", mod2)
 
-    # re-direct the module output message writing to the stand-alone message
-    cMsgPy.FswModuleTemplateMsg_C_addAuthor(mod1.dataOutMsg, msg)
+    # create stand-alone message with a C interface and re-direct
+    # the C module output message writing to this stand-alone message
+    cMsg = cMsgPy.FswModuleTemplateMsg_C()
+    cMsgPy.FswModuleTemplateMsg_C_addAuthor(mod1.dataOutMsg, cMsg)
+
+    # create stand-along message with a C++ interface and re-direct
+    # the C++ module output message writing to this stand-alone message
+    cppMsg = messaging.FswModuleTemplateMsg()
+    mod2.dataOutMsg = cppMsg
 
     #  initialize Simulation:
     scSim.InitializeSimulation()
@@ -57,9 +66,13 @@ def run():
 
     # read the message values and print them to the terminal
     print("mod1.dataOutMsg:")
-    print(mod1.dataOutMsg.read().outputVector)
-    print("msg:")
-    print(msg.read().outputVector)
+    print(mod1.dataOutMsg.read().dataVector)
+    print("cMsg:")
+    print(cMsg.read().dataVector)
+    print("mod2.dataOutMsg:")
+    print(mod2.dataOutMsg.read().dataVector)
+    print("cppMsg:")
+    print(cppMsg.read().dataVector)
 
     return
 

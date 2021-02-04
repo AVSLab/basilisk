@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="98.32573 210.43784 590.0205 255.97994" width="590.0205" height="255.97994">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="98.32573 210.43784 590.0205 303.74122" width="590.0205" height="303.74122">
   <defs>
     <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-3 -2 5 4" markerWidth="5" markerHeight="4" color="black">
       <g>
         <path d="M -1.44148 0 L .864888 .864888 L 0 0 L 0 0 L .864888 -.864888 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
       </g>
     </marker>
+    <font-face font-family="Helvetica Neue" font-size="10" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
   </defs>
-  <metadata> Produced by OmniGraffle 7.18.2\n2021-01-31 14:45:28 +0000</metadata>
+  <metadata> Produced by OmniGraffle 7.18.2\n2021-02-04 16:59:42 +0000</metadata>
   <g id="Canvas_1" stroke-dasharray="none" stroke="none" fill="none" fill-opacity="1" stroke-opacity="1">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
@@ -117,6 +122,33 @@
         <g id="Line_35">
           <line x1="535.69494" y1="445.06843" x2="416.04684" y2="445.06843" marker-start="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width="2.1243149"/>
         </g>
+      </g>
+      <g id="Graphic_40">
+        <rect x="183.5" y="497.14" width="11.950615" height="11" fill="#3382be"/>
+        <rect x="183.5" y="497.14" width="11.950615" height="11" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".6790121"/>
+      </g>
+      <g id="Graphic_39">
+        <text transform="translate(200.45062 496.57617)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="10" font-weight="400" fill="black" x="0" y="10">output message</tspan>
+        </text>
+      </g>
+      <g id="Graphic_38">
+        <rect x="304.5" y="497.21617" width="11.950615" height="11" fill="#ff7f00"/>
+        <rect x="304.5" y="497.21617" width="11.950615" height="11" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".6790121"/>
+      </g>
+      <g id="Graphic_37">
+        <text transform="translate(323.15466 496.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="10" font-weight="400" fill="black" x="8739676e-19" y="10">input message</tspan>
+        </text>
+      </g>
+      <g id="Graphic_41">
+        <rect x="417" y="491.57617" width="36.487534" height="22.28" fill="#ccc"/>
+        <rect x="417" y="491.57617" width="36.487534" height="22.28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".6457971"/>
+      </g>
+      <g id="Graphic_42">
+        <text transform="translate(461.19 496.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="10" font-weight="400" fill="black" x="3623768e-19" y="10">Basilisk module</tspan>
+        </text>
       </g>
     </g>
   </g>

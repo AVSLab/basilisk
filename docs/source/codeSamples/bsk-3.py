@@ -19,6 +19,7 @@
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import fswModuleTemplate
+from Basilisk.simulation import cppModuleTemplate
 from Basilisk.architecture import messaging
 
 
@@ -39,15 +40,14 @@ def run():
     # create modules
     mod1 = fswModuleTemplate.fswModuleTemplateConfig()
     mod1Wrap = scSim.setModelDataWrap(mod1)
-    mod1Wrap.ModelTag = "Module1"
+    mod1Wrap.ModelTag = "cModule1"
 
-    mod2 = fswModuleTemplate.fswModuleTemplateConfig()
-    mod2Wrap = scSim.setModelDataWrap(mod2)
-    mod2Wrap.ModelTag = "Module2"
+    mod2 = cppModuleTemplate.CppModuleTemplate()
+    mod2.ModelTag = "cppModule2"
 
     # add modules to task list
     scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1)
-    scSim.AddModelToTask("dynamicsTask", mod2Wrap, mod2)
+    scSim.AddModelToTask("dynamicsTask", mod2)
 
     # connect messages
     mod2.dataInMsg.subscribeTo(mod1.dataOutMsg)

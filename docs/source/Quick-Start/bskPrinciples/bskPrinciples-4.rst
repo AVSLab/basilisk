@@ -9,11 +9,15 @@ Recording Messages
 Great, now that we have a functioning simulation where Basilisk modules are setup and their message connected, how do we get access to the simulation data?  This is done by creating recorder modules that will store a time history of the connected message.
 
 
-.. image:: ../../_images/static/qs-bsk-record.svg
+.. image:: ../../_images/static/qs-bsk-4.svg
    :align: center
 
 
 The figure above illustrates the Basilisk simulation being simulated.  The single test module has it's output message connected to itself.  This creates a feedback loop that will cause the output message to change.  See the module code to understand the underlying simple math.  To record the message state at various time steps, recorder modules will be created that perform this task.
+
+.. note::
+
+    The method of recording a message is the same, regardless if it is a C or C++ module, or the message has a C or C++ interface.
 
 The simulation code is included below.  As the recorded message data will be plotted in this script, the ``matplotlib`` library is included at the top, as well as the helper package ``unitTestSupport`` from ``Basilisk.utilities``.
 
@@ -45,7 +49,7 @@ Pulling the Recorded Message Data
 ---------------------------------
 After the simulation completes the recorded data is stored inside the ``msgRec`` and ``msgRec20`` recorders.  To access the variables of the message, simply use ``msgRec.variable`` where ``variable`` is the message structure variable you seek to access.  To access the array of time values where the message was recorded use ``msgRec.times()``.    A second time array is available that stored the times where the message was written with ``msgRec.timesWritten()``.  Why to time arrays?  Consider an output message that is only updated every 3s, but the message is being read and recorded every second.  The ``.timesWritten()`` values will repeat until a new output message is created.
 
-:ref:`fswModuleTemplate` output message only contains an array ``outputVector``.  In this simulation it is recorded at the rate of 1Hz in ``msgRec``, and every 20s in the recorder ``msgRec20``.  The simulation will create the following plot:
+:ref:`fswModuleTemplate` output message only contains an array ``dataVector``.  In this simulation it is recorded at the rate of 1Hz in ``msgRec``, and every 20s in the recorder ``msgRec20``.  The simulation will create the following plot:
 
 .. image:: /_images/Scenarios/bsk-4.svg
    :align: center

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="48.413 22.5 264.587 165.5" width="264.587" height="165.5">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="48.413 22.5 264.587 186.21617" width="264.587" height="186.21617">
   <defs>
     <font-face font-family="Helvetica Neue" font-size="11" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
       <font-face-src>
@@ -17,8 +17,13 @@
         <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
       </g>
     </marker>
+    <font-face font-family="Helvetica Neue" font-size="10" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
   </defs>
-  <metadata> Produced by OmniGraffle 7.18.2\n2021-02-03 23:12:01 +0000</metadata>
+  <metadata> Produced by OmniGraffle 7.18.2\n2021-02-04 16:58:51 +0000</metadata>
   <g id="Canvas_2" stroke-dasharray="none" stroke="none" fill="none" fill-opacity="1" stroke-opacity="1">
     <title>Canvas 2</title>
     <g id="Canvas_2_Layer_1">
@@ -83,7 +88,7 @@
           <path d="M 87 86 L 163.7277 86 C 165.93684 86 167.7277 87.79086 167.7277 90 L 167.7277 119 C 167.7277 121.20914 165.93684 123 163.7277 123 L 87 123 C 84.79086 123 83 121.20914 83 119 L 83 90 C 83 87.79086 84.79086 86 87 86 Z" fill="#d6d6d6"/>
           <path d="M 87 86 L 163.7277 86 C 165.93684 86 167.7277 87.79086 167.7277 90 L 167.7277 119 C 167.7277 121.20914 165.93684 123 163.7277 123 L 87 123 C 84.79086 123 83 121.20914 83 119 L 83 90 C 83 87.79086 84.79086 86 87 86 Z" stroke="#797979" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
           <text transform="translate(89.78487 98.346)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="11" font-weight="400" fill="black" x="14.07948" y="10">Module1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="11" font-weight="400" fill="black" x="11.12598" y="10">cModule1</tspan>
           </text>
         </g>
         <g id="Graphic_26">
@@ -103,6 +108,24 @@
       </g>
       <g id="Line_36">
         <path d="M 165.17831 104.5 L 175.17831 104.5 L 175.17831 131.73195 L 73.12187 131.73195 L 73.12187 104.5 L 77.8277 104.5" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_42">
+        <rect x="65" y="192" width="11.950615" height="11" fill="#3382be"/>
+        <rect x="65" y="192" width="11.950615" height="11" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".6790121"/>
+      </g>
+      <g id="Graphic_43">
+        <text transform="translate(81.95062 191.43617)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="10" font-weight="400" fill="black" x="0" y="10">output message</tspan>
+        </text>
+      </g>
+      <g id="Graphic_44">
+        <rect x="186" y="192.07617" width="11.950615" height="11" fill="#ff7f00"/>
+        <rect x="186" y="192.07617" width="11.950615" height="11" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".6790121"/>
+      </g>
+      <g id="Graphic_45">
+        <text transform="translate(204.65466 191.36)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="10" font-weight="400" fill="black" x="8739676e-19" y="10">input message</tspan>
+        </text>
       </g>
     </g>
   </g>

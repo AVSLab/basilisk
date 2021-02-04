@@ -21,7 +21,7 @@ In essence, think of BSK providing lots of spacecraft lego blocks where the user
 - All BSK modules are already coded up, thus the user does not have to auto-generate code and validate a partiuclar simulation implementation.
 
 
-.. image:: ../../_images/static/qs-bsk-concept.svg
+.. image:: ../../_images/static/qs-bsk-0.svg
    :align: center
    :scale: 50 %
 

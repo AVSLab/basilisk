@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="48.413 22.5 372.25316 288" width="372.25316" height="288">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="48.413 22.5 372.25316 288" width="372.25316" height="288">
   <defs>
     <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
       <font-face-src>
@@ -17,7 +17,7 @@
         <font-face-name name="HelveticaNeue"/>
       </font-face-src>
     </font-face>
-    <font-face font-family="Helvetica Neue" font-size="12.711158" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+    <font-face font-family="Helvetica Neue" font-size="12.711" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
       <font-face-src>
         <font-face-name name="HelveticaNeue"/>
       </font-face-src>
@@ -37,7 +37,7 @@
       <g id="Graphic_3">
         <path d="M 63.20836 52.17494 L 125.09252 52.17494 C 127.30166 52.17494 129.09252 53.9658 129.09252 56.17494 L 129.09252 66.49409 C 129.09252 68.70323 127.30166 70.49409 125.09252 70.49409 L 63.20836 70.49409 C 60.99922 70.49409 59.20836 68.70323 59.20836 66.49409 L 59.20836 56.17494 C 59.20836 53.9658 60.99922 52.17494 63.20836 52.17494 Z" fill="#a6edf1"/>
         <text transform="translate(65.99323 54.166516)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="1.7032113" y="11">Dynamics</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="1.7032094" y="11">Dynamics</tspan>
         </text>
       </g>
       <g id="Graphic_5">
@@ -77,7 +77,7 @@
       <g id="Graphic_15">
         <path d="M 63.20836 180.24072 L 125.09252 180.24072 C 127.30166 180.24072 129.09252 182.03158 129.09252 184.24072 L 129.09252 194.55987 C 129.09252 196.769 127.30166 198.55987 125.09252 198.55987 L 63.20836 198.55987 C 60.99922 198.55987 59.20836 196.769 59.20836 194.55987 L 59.20836 184.24072 C 59.20836 182.03158 60.99922 180.24072 63.20836 180.24072 Z" fill="#a6edf1"/>
         <text transform="translate(65.99323 182.2323)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="6.269211" y="11">Sensors</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="6.2692094" y="11">Sensors</tspan>
         </text>
       </g>
       <g id="Graphic_14">
@@ -126,7 +126,7 @@
       <g id="Graphic_32">
         <path d="M 285.19167 52.17494 L 347.07583 52.17494 C 349.28497 52.17494 351.07583 53.9658 351.07583 56.17494 L 351.07583 66.49409 C 351.07583 68.70323 349.28497 70.49409 347.07583 70.49409 L 285.19167 70.49409 C 282.98253 70.49409 281.19167 68.70323 281.19167 66.49409 L 281.19167 56.17494 C 281.19167 53.9658 282.98253 52.17494 285.19167 52.17494 Z" fill="#a6edf1"/>
         <text transform="translate(287.97654 54.166516)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="6.269211" y="11">Sensors</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="6.2692094" y="11">Sensors</tspan>
         </text>
       </g>
       <g id="Graphic_31">
@@ -166,7 +166,7 @@
       <g id="Graphic_25">
         <path d="M 285.19167 180.24072 L 347.07583 180.24072 C 349.28497 180.24072 351.07583 182.03158 351.07583 184.24072 L 351.07583 194.55987 C 351.07583 196.769 349.28497 198.55987 347.07583 198.55987 L 285.19167 198.55987 C 282.98253 198.55987 281.19167 196.769 281.19167 194.55987 L 281.19167 184.24072 C 281.19167 182.03158 282.98253 180.24072 285.19167 180.24072 Z" fill="#a6edf1"/>
         <text transform="translate(287.97654 182.2323)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="8.489211" y="11">Control</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="8.489209" y="11">Control</tspan>
         </text>
       </g>
       <g id="Graphic_24">
@@ -196,13 +196,13 @@
         </text>
       </g>
       <g id="Graphic_20">
-        <text transform="translate(355.8704 255.38907) rotate(90)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12.711158" font-weight="400" fill="black" x="4813927e-19" y="12">…</tspan>
+        <text transform="translate(355.8704 255.38915) rotate(90)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12.711" font-weight="400" fill="black" x="0" y="12">…</tspan>
         </text>
       </g>
       <g id="Graphic_19">
         <path d="M 274.8963 23 L 416.16616 23 C 418.3753 23 420.16616 24.79086 420.16616 27 L 420.16616 37.31915 C 420.16616 39.52829 418.3753 41.31915 416.16616 41.31915 L 274.8963 41.31915 C 272.68717 41.31915 270.8963 39.52829 270.8963 37.31915 L 270.8963 27 C 270.8963 24.79086 272.68717 23 274.8963 23 Z" fill="#3382be"/>
-        <text transform="translate(277.68117 24.991575)" fill="white">
+        <text transform="translate(277.68118 24.991575)" fill="white">
           <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="white" x="29.96006" y="11">Process: FSW</tspan>
         </text>
       </g>

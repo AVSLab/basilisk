@@ -19,7 +19,7 @@
 import sys
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import fswModuleTemplate
+from Basilisk.simulation import cppModuleTemplate
 from Basilisk.architecture import messaging
 from Basilisk.utilities import unitTestSupport
 import matplotlib.pyplot as plt
@@ -40,14 +40,13 @@ def run():
     dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.)))
 
     # create modules
-    mod1 = fswModuleTemplate.fswModuleTemplateConfig()
-    mod1Wrap = scSim.setModelDataWrap(mod1)
-    mod1Wrap.ModelTag = "Module1"
-    scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1)
+    mod1 = cppModuleTemplate.CppModuleTemplate()
+    mod1.ModelTag = "cppModule1"
+    scSim.AddModelToTask("dynamicsTask", mod1)
 
     # create stand-alone input message
     msgData = messaging.FswModuleTemplateMsgPayload()
-    msgData.outputVector = [1., 2., 3.]
+    msgData.dataVector = [1., 2., 3.]
     msg = messaging.FswModuleTemplateMsg().write(msgData)
 
     # connect to stand-alone msg
@@ -65,7 +64,7 @@ def run():
     scSim.ExecuteSimulation()
 
     # change input message and continue simulation
-    msgData.outputVector = [-1., -2., -3.]
+    msgData.dataVector = [-1., -2., -3.]
     msg.write(msgData)
     scSim.ConfigureStopTime(macros.sec2nano(20.0))
     scSim.ExecuteSimulation()
@@ -75,7 +74,7 @@ def run():
     figureList = {}
     plt.figure(1)
     for idx in range(3):
-        plt.plot(msgRec.times() * macros.NANO2SEC, msgRec.outputVector[:, idx],
+        plt.plot(msgRec.times() * macros.NANO2SEC, msgRec.dataVector[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')

@@ -6,11 +6,9 @@ Adding Basilisk Modules
 
     The python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/bsk-2.py>`.
 
-Adding C-Modules
-----------------
-Understanding now what a Basilisk process (Task Group) and a task list is, we can now move forward to adding Basilisk modules to a task.  :ref:`fswModuleTemplate` will be the basic module that we use in this discussion.  It is a very simple module used to illustrate how to make a C-based Basilisk module.  It is convenient for this discusion as it is setup as a tutorial module and prints out the module ID value when the module is executed.  This will make it simple in the simulation below that the desired module execution order is achieved.
+Understanding now what a Basilisk process (Task Group) and a task list is, we can now move forward to adding Basilisk modules to a task.  :ref:`fswModuleTemplate` and ref:`cppModuleTemplate` will be the basic module C and C++ BSK modules that we use in this discussion.  They are a very simple modules used to illustrate how to make a prototypical Basilisk module.  The functionality and messages used are the same across both modules. They are convenient for this discusion as they are setup as a tutorial module and print out the module ID value when the module is executed.  This makes it simple in the simulation below to see that the desired module execution order is achieved.
 
-.. image:: ../../_images/static/qs-bsk-addModules.svg
+.. image:: ../../_images/static/qs-bsk-2.svg
    :align: center
 
 The following simulation creates a single process called ``dynamicsProcess`` and single 0.2Hz task called ``dynamicsTask``. As illustrated above, 3 copies of :ref:`fswModuleTemplate` are created where they are called ``Module1``, ``Module2`` and ``Module3``.  However, note that in this example we seek to executes modules 2 and 3 first and 1 last.
@@ -46,29 +44,6 @@ Looking at the above simulation code, note that ``Module1`` is added to the task
 
     Basilisk assigns unique positive ID numbers to C/C++ modules upon their creation.  Thus, in the above simulation code the modules 1, 2 and 3 will have the corresponding ID numbers 1, 2 and 3 because that is the order in which they are created.
 
-If you execute this python code you should see the following terminal output:
-
-.. code-block::
-
-    source/codeSamples % python3 bsk-2.py
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    InitializeSimulation() completed...
-    BSK_INFORMATION: Module ID 2 ran Update at 0.000000s
-    BSK_INFORMATION: Module ID 3 ran Update at 0.000000s
-    BSK_INFORMATION: Module ID 1 ran Update at 0.000000s
-    BSK_INFORMATION: Module ID 2 ran Update at 5.000000s
-    BSK_INFORMATION: Module ID 3 ran Update at 5.000000s
-    BSK_INFORMATION: Module ID 1 ran Update at 5.000000s
-
-
-:ref:`fswModuleTemplate` logs in the ``Reset()`` method that a variable has been set to 0.  As we have 3 copies of this module, notice that this reset statement is seen 3 times.  This reset step occurs when we run ``scSim.InitializeSimulation()``.
-
-After the initialization Basilisk starts the time loop evaluating the modules at the specified rate.  The ``Update()`` routine in :ref:`fswModuleTemplate` prints out the module I and the simulation time where the module is called.  Note that thanks to the module evaluation priorties we set the desired module execution order is achieved.
-
-Adding C++ Modules
-------------------
 If the BSK module being added is a C++ module, then the above steps are simplified to the following.  Let the module be called ``someCppModule``.  As this is a C++ class, we don't need to create a data structure and wrap it as we do with a C module.  Rather, we can get a instance of the C++ module using::
 
     mod = someCppModule.SomeCppModule()
@@ -81,6 +56,33 @@ To add this to a task use::
 The 3rd argument is ``None`` as the module data is already contained in the module class.  To add a module without specifiying the priority you can use this shorter version as well::
 
     scSim.AddModelToTask("taskName", mod)
+
+In the above python script the tutorial C++ :ref:`cppModuleTemplate` is imported from ``Basilisk.simulation``. Next, while the 1st and 3rd module are instances of the C module, the 2nd module is an instance of the equivalent C++ module.
+
+.. note::
+
+    The task list can contain both C and C++ based Basilisk modules at the same time.
+
+If you execute this python code you should see the following terminal output:
+
+.. code-block::
+
+    source/codeSamples % python3 bsk-2.py
+    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
+    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
+    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
+    InitializeSimulation() completed...
+    BSK_INFORMATION: C++ Module ID 2 ran Update at 0.000000s
+    BSK_INFORMATION: C Module ID 3 ran Update at 0.000000s
+    BSK_INFORMATION: C Module ID 1 ran Update at 0.000000s
+    BSK_INFORMATION: C++ Module ID 2 ran Update at 5.000000s
+    BSK_INFORMATION: C Module ID 3 ran Update at 5.000000s
+    BSK_INFORMATION: C Module ID 1 ran Update at 5.000000s
+
+
+:ref:`fswModuleTemplate` and :ref:`cppModuleTemplate` log in the ``Reset()`` method that a variable has been set to 0.  As we have 3 such modules, notice that this reset statement is seen 3 times.  This reset step occurs when we run ``scSim.InitializeSimulation()``.
+
+After the initialization Basilisk starts the time loop evaluating the modules at the specified rate.  The ``Update()`` routine in both :ref:`fswModuleTemplate` and :ref:`cppModuleTemplate` print out the module ID and the simulation time where the module is called.  Note that thanks to the module evaluation priorities we set the desired module execution order is achieved.
 
 
 .. ** Tutorial Review Video **

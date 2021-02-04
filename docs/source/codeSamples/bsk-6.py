@@ -16,13 +16,11 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import sys
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import fswModuleTemplate
+from Basilisk.simulation import cppModuleTemplate
 from Basilisk.architecture import messaging
-from Basilisk.utilities import unitTestSupport
-import matplotlib.pyplot as plt
 
 
 def run():
@@ -42,16 +40,24 @@ def run():
     # create modules
     mod1 = fswModuleTemplate.fswModuleTemplateConfig()
     mod1Wrap = scSim.setModelDataWrap(mod1)
-    mod1Wrap.ModelTag = "Module1"
+    mod1Wrap.ModelTag = "cModule1"
     scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1)
+
+    mod2 = cppModuleTemplate.CppModuleTemplate()
+    mod2.ModelTag = "cppModule2"
+    scSim.AddModelToTask("dynamicsTask", mod2)
 
     # set module variables
     mod1.dummy = 1
     mod1.dumVector = [1., 2., 3.]
+    mod2.dummy = 1
+    mod2.dumVector = [1., 2., 3.]
 
     # request these module variables to be recorded
     scSim.AddVariableForLogging(mod1Wrap.ModelTag + ".dummy", macros.sec2nano(1.))
     scSim.AddVariableForLogging(mod1Wrap.ModelTag + ".dumVector", macros.sec2nano(1.), 0, 2)
+    scSim.AddVariableForLogging(mod2.ModelTag + ".dummy", macros.sec2nano(1.))
+    scSim.AddVariableForLogging(mod2.ModelTag + ".dumVector", macros.sec2nano(1.), 0, 2)
 
     #  initialize Simulation:
     scSim.InitializeSimulation()
@@ -64,6 +70,10 @@ def run():
     print(scSim.GetLogVariableData(mod1Wrap.ModelTag + ".dummy"))
     print("mod1.dumVector:")
     print(scSim.GetLogVariableData(mod1Wrap.ModelTag + ".dumVector"))
+    print("mod2.dummy:")
+    print(scSim.GetLogVariableData(mod2.ModelTag + ".dummy"))
+    print("mod2.dumVector:")
+    print(scSim.GetLogVariableData(mod2.ModelTag + ".dumVector"))
 
     return
 
