@@ -47,6 +47,7 @@ from Basilisk.fswAlgorithms import fswModuleTemplate                # import the
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging                      # import the message definitions
 from Basilisk.utilities import vizSupport
+from Basilisk.architecture import bskLogging
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -124,6 +125,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
