@@ -74,7 +74,7 @@ void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callT
 */
 void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    double              Lr[3];                      /*!< [unit] variable description */
+    double Lr[3];                                   /*!< [unit] variable description */
     FswModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
     FswModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
 
@@ -93,13 +93,11 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t call
     configData->dummy += 1.0;
     Lr[0] += configData->dummy;
 
-    if (FswModuleTemplateMsg_C_isLinked(&configData->dataOutMsg)) {
-        /*! - store the output message */
-        v3Copy(Lr, outMsgBuffer.outputVector);
+    /*! - store the output message */
+    v3Copy(Lr, outMsgBuffer.outputVector);
 
-        /*! - write the module output message */
-        FswModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);
-    }
+    /*! - write the module output message */
+    FswModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);
 
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */
