@@ -6,7 +6,7 @@ Connecting Messages
 
     The python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/bsk-3.py>`.
 
-Having learned how to add C or C++ Basilisk modules to a task and setting priorities, next we will look at how to connect the module messages.  Again we use both :ref:`fswModuleTemplate` and :ref:`cppModuleTempalte` as the stand-in modules to illustrate setting message connections.  Note that the input and output message connections of these modules are of the same type.  The following simulation script again uses a single process and task.  The modules are created and their input and output messages are connected as illustrated below.
+Having learned how to add C or C++ Basilisk modules to a task and setting priorities, next we will look at how to connect the module messages.  Again we use both :ref:`fswModuleTemplate` and :ref:`cppModuleTemplate` as the stand-in modules to illustrate setting message connections.  Note that the input and output message connections of these modules are of the same type.  The following simulation script again uses a single process and task.  The modules are created and their input and output messages are connected as illustrated below.
 
 .. image:: ../../_images/static/qs-bsk-3.svg
    :align: center
@@ -18,15 +18,16 @@ The source code is shown below.  As we are going to be using the Basilisk messag
    :linenos:
    :lines: 18-
 
-The method connect an input message (variable name ending with ``InMsg``) to an output message (varible name ending with ``OutMsg``) is the ``.subscribeTo()`` method.  While C modules contain message objects with a C interface, and C++ modules contain C++ message objects, the ``.subscribeTo()`` method is setup such that the user doesn't have to worry about this distinction.  Rather, this method connects C-C, C-C++, C++-C++ and C++-C message connections.
+The method connect an input message (variable name ending with ``InMsg``) to an output message (varible name ending with ``OutMsg``) is the ``.subscribeTo()`` method.  While C modules contain message objects with a C interface, and C++ modules contain C++ message objects, the ``.subscribeTo()`` method is setup such that the user doesn't have to worry about this distinction.  Rather, this method connects C to C, C to C++, C++ to C++ and C++ to C message connections.
 
 Thus, given a module input message ``someModule.xxxInMsg`` and a module output message ``anotherModule.xxxOutMsg``, these are connected using::
 
     someModule.xxxInMsg.subscribeTo(anotherModule.xxxOutMsg)
 
+The input and output message names are arbitrary.  However, the messages being connected must be of the same type.
 In the above simulation code we use this protocol to connect the output message of the C module 1 to the input message of C++ module 2.  Next the output of C++ module 2 is connected to the input of C module 1 to create a sample closed-loop messaging setup.
 
-.. note::
+.. warning::
 
     You can only subscribe an input message to an output message that already exists!  Don't try to subscribe to the message before it has been created.  In this simulation the subscriptions are all occurring after the modules are created.
 

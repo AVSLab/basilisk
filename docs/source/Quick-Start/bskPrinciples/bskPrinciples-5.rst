@@ -17,7 +17,7 @@ To create a stand-alone message first the message payload (i.e. data) container 
 
     msgData = messaging.someMsgPayload()
 
-Essentially this is a python instance of the message structure definition found in ``architecture/msgPayloadDefC/SomeMsg.h``.  The content of the message payload is zero'd on creating.  If there is a ``variable`` in the structure that we can to change, this is done simply with::
+Essentially this is a python instance of the message structure definition found in ``architecture/msgPayloadDefC/SomeMsg.h``.  The content of the message payload is zero'd on creating.  If there is a ``variable`` in the structure that we want to change, this is done simply with::
 
     msgData.variable = .....
 

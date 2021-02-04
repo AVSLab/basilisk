@@ -20,7 +20,7 @@ The sample code is shown below.  The C and C++ modules are setup as before.  The
    :linenos:
    :lines: 18-
 
-The ``SimulationBaseClass.SimBaseClass`` method to record a module variable is::
+The :ref:`SimulationBaseClass` method to record a module variable is::
 
     scSim.AddVariableForLogging( variableString, recordingTime, indexStart==0, indexStop==0)
 
@@ -28,9 +28,9 @@ Here ``variableString`` must be composed of the module tag string, a period and 
 
 The ``recordingTime`` variable is the minimum time that must pass, in nano-seconds again, before the module variable is recorded.
 
-The optional integer arguments ``indexStart`` and ``indexStop`` are default to zero, resulting in a single value being recorded.  As this example is also recording a 3-dimensional array ``dumVector``, it is recorded by setting the start and end index to 0 and 2 respectively.
+The optional integer arguments ``indexStart`` and ``indexStop`` are defaulted to zero, resulting in a single value being recorded.  As this example is also recording a 3-dimensional array ``dumVector``, it is recorded by setting the start and end index to 0 and 2 respectively.
 
-After executing the script the recorded variables are retrieved in general using the ``SimulationBaseClass.SimBaseClass`` method::
+After executing the script the recorded variables are retrieved in general using the :ref:`SimulationBaseClass` method::
 
     scSim.GetLogVariableData(variableString)
 

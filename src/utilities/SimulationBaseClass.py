@@ -198,6 +198,9 @@ class SimBaseClass:
         self.allModules = set()
 
     def SetProgressBar(self, value):
+        """
+        Shows a dynamic progress in the terminal while the simulation is executing.
+        """
         self.showProgressBar = value
 
     def AddModelToTask(self, TaskName, NewModel, ModelData=None, ModelPriority=-1):
@@ -283,10 +286,10 @@ class SimBaseClass:
     def AddVariableForLogging(self, VarName, LogPeriod=0, StartIndex=0, StopIndex=0, VarType=None):
         """
         Informs the sim to log a particular variable within a message
-        :param VarName:
-        :param LogPeriod:
-        :param StartIndex:
-        :param StopIndex:
+        :param VarName:   must be module tag string + period + variable name
+        :param LogPeriod: update rate at which to record the variable [ns]
+        :param StartIndex: starting index if the variable is an array
+        :param StopIndex: end index if the variable is an idea
         :param VarType:
         :return:
         """
@@ -354,6 +357,9 @@ class SimBaseClass:
                 Task.resetTask(self.TotalSim.CurrentNanos)
 
     def InitializeSimulation(self):
+        """
+        Initialize the BSK simulation.  This runs the SelfInit() and Reset() methods on each module.
+        """
         self.TotalSim.ResetSimulation()
         self.TotalSim.selfInitSimulation()
         for proc in self.pyProcList:
@@ -367,6 +373,9 @@ class SimBaseClass:
 
 
     def ConfigureStopTime(self, TimeStop):
+        """
+        Set the simulation stop time in nano-seconds.
+        """
         self.StopTime = TimeStop
 
     def RecordLogVars(self):
@@ -396,6 +405,9 @@ class SimBaseClass:
         return minNextTime
 
     def ExecuteSimulation(self):
+        """
+        run the simulation until the prescribed stop time.
+        """
         self.initializeEventChecks()
 
         nextStopTime = self.TotalSim.NextTaskTime
@@ -437,17 +449,27 @@ class SimBaseClass:
         progressBar.close()
 
     def GetLogVariableData(self, LogName):
+        """
+        Pull the recorded module recorded variable.  The first column is the variable recording time in
+        nano-seconds, the additional column(s) are the message data columns.
+        """
         TheArray = np.array(self.VarLogList[LogName].TimeValuePairs)
         ArrayDim = self.VarLogList[LogName].ArrayDim
         TheArray = np.reshape(TheArray, (TheArray.shape[0] // ArrayDim, ArrayDim))
         return TheArray
 
     def disableTask(self, TaskName):
+        """
+        Disable this particular task from being executed.
+        """
         for Task in self.TaskList:
             if Task.Name == TaskName:
                 Task.disable()
 
     def enableTask(self, TaskName):
+        """
+        Enable this particular task to be executed.
+        """
         for Task in self.TaskList:
             if Task.Name == TaskName:
                 Task.enable()
@@ -468,6 +490,9 @@ class SimBaseClass:
 
     def createNewEvent(self, eventName, eventRate=int(1E9), eventActive=False,
                        conditionList=[], actionList=[]):
+        """
+        Create an event sequence that contains a series of tasks to be executed.
+        """
         if (eventName in list(self.eventMap.keys())):
             return
         newEvent = EventHandlerClass(eventName, eventRate, eventActive,
