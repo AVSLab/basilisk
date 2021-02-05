@@ -55,7 +55,7 @@ sys.path.append(path + '/../../examples/MonteCarloExamples')
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True, reason="Previously set sim parameters are not consistent with new formulation\n")
 
-@pytest.mark.skip(reason="MC can have issues completing.")
+# @pytest.mark.skip(reason="MC can have issues completing.")
 
 
 @pytest.mark.skipif(not FOUND_DATESHADER, reason = "Datashader not found")
