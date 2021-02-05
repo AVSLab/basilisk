@@ -1,7 +1,7 @@
 What is Basilisk
 ================
 
-The purpose of the Basilisk astrodynamics simulation framework is to enable sophisticated spacecraft simulations to be rapidly created from a series of pre-built modules.  Consider a deep space mission where the spacecraft must perform a series of science, communication, station keeping and orbit maneuver tasks.  Such operations not only the spacecraft orbital and attitude dynamics to be modeled, but also sub-components such as reaction wheels, thruster, flexible panels, fuel slosh.  Beyond the mechanical components the spacecraft also contains algorithms that determine the orientation, perform closed loop maneuvers, process sensor data etc.  Further, depending on the analysis being performed the battery, data storage or communication devices might have to be modeled.
+The purpose of the Basilisk astrodynamics simulation framework is to enable sophisticated spacecraft simulations to be rapidly created from a series of pre-built modules.  Consider a deep space mission where the spacecraft must perform a series of science, communication, station keeping and orbit maneuver tasks.  Such operations require not only the spacecraft orbital and attitude dynamics to be modeled, but also sub-components such as reaction wheels, thruster, flexible panels, fuel slosh.  Beyond the mechanical components the spacecraft also contains algorithms that determine the orientation, perform closed loop maneuvers, process sensor data etc.  Further, depending on the analysis being performed the battery, data storage or communication devices might have to be modeled.
 
 .. image:: ../../_images/static/qs-spacecraft.jpg
    :align: center
