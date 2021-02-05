@@ -52,6 +52,10 @@ void SelfInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
  */
 void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input message is included
+    if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillPoint.transNavInMsg wasn't connected.");
+    }
     configData->planetMsgIsLinked = EphemerisMsg_C_isLinked(&configData->celBodyInMsg);
 }
 
@@ -78,12 +82,6 @@ void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t mo
     if (configData->planetMsgIsLinked) {
         primPlanet = EphemerisMsg_C_read(&configData->celBodyInMsg);
     }
-
-    // check if the required input messages are included
-    if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillPoint.transNavInMsg wasn't connected.");
-    }
-
     navData = NavTransMsg_C_read(&configData->transNavInMsg);
 
     /*! - Compute and store output message */

@@ -46,7 +46,8 @@ extern "C" {
     void SelfInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID);
     void Update_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
         int64_t moduleID);
-    
+    void Reset_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime, int64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif

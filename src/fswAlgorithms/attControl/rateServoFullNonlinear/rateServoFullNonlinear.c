@@ -71,11 +71,9 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: rateServoFullNonlinear.vehConfigInMsg wasn't connected.");
     }
 
-
     if (!RateCmdMsg_C_isLinked(&configData->rateSteeringInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: rateServoFullNonlinear.rateSteeringInMsg wasn't connected.");
     }
-
 
 
     sc = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);

@@ -62,7 +62,7 @@ public:
     BSKLogger bskLogger;              //!< -- BSK Logging
 
     ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg;      //!< spacecraft state input msg
-    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg; //!< sun state input input msg
+    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg; //!< (optional) sun state input input msg
 
 private:
     Eigen::MatrixXd AMatrix;           //!< -- The matrix used to propagate the state

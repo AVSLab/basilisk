@@ -61,6 +61,9 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     if (!CSSConfigMsg_C_isLinked(&configData->cssConfigInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineSuKF.cssConfigInMsg wasn't connected.");
     }
+    if (!CSSArraySensorMsg_C_isLinked(&configData->cssDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineSuKF.cssDataInMsg wasn't connected.");
+    }
 
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
     cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
@@ -129,11 +132,6 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
                   configData->numStates, configData->sQnoise);
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
-    
-    // check if the required input messages are included
-    if (!CSSArraySensorMsg_C_isLinked(&configData->cssDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineSuKF.cssDataInMsg wasn't connected.");
-    }
 
     configData->cssSensorInBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);
 
@@ -162,11 +160,6 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     int isWritten;
     SunlineFilterMsgPayload sunlineDataOutBuffer;
     double maxSens;
-    
-    // check if the required input messages are included
-    if (!CSSArraySensorMsg_C_isLinked(&configData->cssDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineSuKF.cssDataInMsg wasn't connected.");
-    }
 
     /*! - Read the input parsed CSS sensor data message*/
     configData->cssSensorInBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);

@@ -56,6 +56,9 @@ void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int
 	if (!THRArrayConfigMsg_C_isLinked(&configData->thrConfigInMsg)) {
 		_bskLog(configData->bskLogger, BSK_ERROR, "Error: thrustRWDesat.thrConfigInMsg wasn't connected.");
 	}
+    if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrustRWDesat.rwSpeedInMsg wasn't connected.");
+    }
 
     /*! - Read input messages */
     localRWData = RWConstellationMsg_C_read(&configData->rwConfigInMsg);
@@ -109,11 +112,6 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 		configData->thrFiringPeriod)
 	{
 		return;
-	}
-
-	// check if the required input messages are included
-	if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedInMsg)) {
-		_bskLog(configData->bskLogger, BSK_ERROR, "Error: thrustRWDesat.rwSpeedInMsg wasn't connected.");
 	}
 
     /*! - Read the input rwheel speeds from the reaction wheels*/

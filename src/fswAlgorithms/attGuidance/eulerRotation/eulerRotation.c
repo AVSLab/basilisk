@@ -57,6 +57,11 @@ void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID)
  */
 void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input message is included
+    if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: eulerRotation.attRefInMsg wasn't connected.");
+    }
+
     configData->priorTime = 0;
     v3SetZero(configData->priorCmdSet);
     v3SetZero(configData->priorCmdRates);
@@ -74,11 +79,6 @@ void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, in
 {
     AttRefMsgPayload inputRef;
     AttRefMsgPayload attRefOut;
-
-    // check if the required input messages are included
-    if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: eulerRotation.attRefInMsg wasn't connected.");
-    }
 
     /* - Read input messages */
     inputRef = AttRefMsg_C_read(&configData->attRefInMsg);

@@ -54,6 +54,11 @@ CenterRadiusCNN::~CenterRadiusCNN()
  */
 void CenterRadiusCNN::Reset(uint64_t CurrentSimNanos)
 {
+    // check that the required message has not been connected
+    if (!this->imageInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "CenterRadiusCNN.imageInMsg wasn't connected.");
+    }
+
     /*! - Read in the CNN */
     std::ifstream test(this->pathToNetwork);
     if (!test)

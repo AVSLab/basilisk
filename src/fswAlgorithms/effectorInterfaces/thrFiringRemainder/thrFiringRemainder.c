@@ -61,6 +61,9 @@ void Reset_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t cal
 	if (!THRArrayConfigMsg_C_isLinked(&configData->thrConfInMsg)) {
 		_bskLog(configData->bskLogger, BSK_ERROR, "Error: thrFiringRemainder.thrConfInMsg wasn't connected.");
 	}
+    if (!THRArrayCmdForceMsg_C_isLinked(&configData->thrForceInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrFiringRemainder.thrForceInMsg wasn't connected.");
+    }
 
 	/*! - read in the support messages */
     localThrusterData = THRArrayConfigMsg_C_read(&configData->thrConfInMsg);
@@ -111,11 +114,6 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t ca
     /*! - compute control time period Delta_t */
 	controlPeriod = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;
 	configData->prevCallTime = callTime;
-
-	// check if the required input messages are included
-	if (!THRArrayCmdForceMsg_C_isLinked(&configData->thrForceInMsg)) {
-		_bskLog(configData->bskLogger, BSK_ERROR, "Error: thrFiringRemainder.thrForceInMsg wasn't connected.");
-	}
 
 	/*! - Read the input thruster force message */
     thrForceIn = THRArrayCmdForceMsg_C_read(&configData->thrForceInMsg);

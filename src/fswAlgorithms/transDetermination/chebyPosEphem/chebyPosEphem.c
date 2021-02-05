@@ -48,6 +48,10 @@ void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
                          int64_t moduleID)
 {
+    // check if the required message has not been connected
+    if (!TDBVehicleClockCorrelationMsg_C_isLinked(&configData->clockCorrInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: chebyPosEphem.clockCorrInMsg wasn't connected.");
+    }
 
     int i, j, k, n;
     ChebyEphemRecord *currRec;
@@ -94,11 +98,6 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
     ChebyEphemRecord *currRec;
     int i;
     TDBVehicleClockCorrelationMsgPayload localCorr;
-
-    // check if the required message has not been connected
-    if (!TDBVehicleClockCorrelationMsg_C_isLinked(&configData->clockCorrInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: chebyPosEphem.clockCorrInMsg wasn't connected.");
-    }
 
     // read input msg
     localCorr = TDBVehicleClockCorrelationMsg_C_read(&configData->clockCorrInMsg);

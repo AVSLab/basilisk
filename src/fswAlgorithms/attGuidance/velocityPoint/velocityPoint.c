@@ -55,6 +55,10 @@ void SelfInit_velocityPoint(velocityPointConfig *configData, int64_t moduleID)
  */
 void Reset_velocityPoint(velocityPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input messages are included
+    if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: velocityPoint.transNavInMsg wasn't connected.");
+    }
     configData->planetMsgIsLinked = EphemerisMsg_C_isLinked(&configData->celBodyInMsg);
 }
 
@@ -79,11 +83,6 @@ void Update_velocityPoint(velocityPointConfig *configData, uint64_t callTime, in
     primPlanet = EphemerisMsg_C_zeroMsgPayload();       /* zero'd as default, even if not connected */
     if (configData->planetMsgIsLinked) {
         primPlanet = EphemerisMsg_C_read(&configData->celBodyInMsg);
-    }
-
-    // check if the required input messages are included
-    if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: velocityPoint.transNavInMsg wasn't connected.");
     }
     navData = NavTransMsg_C_read(&configData->transNavInMsg);
 

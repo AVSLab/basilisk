@@ -61,7 +61,10 @@ HoughCircles::~HoughCircles()
  */
 void HoughCircles::Reset(uint64_t CurrentSimNanos)
 {
-    return;
+    // check that the required message has not been connected
+    if (!this->imageInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "HoughCircles.imageInMsg wasn't connected.");
+    }
 }
 
 /*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding. 

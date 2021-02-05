@@ -63,6 +63,10 @@ void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID)
  */
 void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input messages are included
+    if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: intertial3DSpin.attRefInMsg wasn't connected.");
+    }
 
     configData->priorTime = 0;              /* reset the prior time flag state.  If set
                                              to zero, the control time step is not evaluated on the
@@ -79,11 +83,6 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
 {
     /*! - Read input message */
     AttRefMsgPayload attRefInMsgBuffer;
-
-    // check if the required input messages are included
-    if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: intertial3DSpin.attRefInMsg wasn't connected.");
-    }
 
     attRefInMsgBuffer = AttRefMsg_C_read(&configData->attRefInMsg);
 

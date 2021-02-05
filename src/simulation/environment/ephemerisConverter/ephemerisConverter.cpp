@@ -31,6 +31,16 @@ EphemerisConverter::~EphemerisConverter()
     }
 }
 
+/*! Reset the module to origina configuration values.
+ @return void
+ */
+void EphemerisConverter::Reset(uint64_t CurrenSimNanos)
+{
+    // check if the spiceInMsgs is empty or not
+    if (this->spiceInMsgs.size() == 0) {
+        bskLogger.bskLog(BSK_ERROR, "ephemerisConverter.spiceInMsgs is empty.");
+    }
+}
 
 /*!
  add a planet spice input message
@@ -70,11 +80,6 @@ void EphemerisConverter::convertEphemData(uint64_t clockNow)
 
 void EphemerisConverter::readInputMessages()
 {
-    // check if the spiceInMsgs is empty or not
-    if (this->spiceInMsgs.size() == 0) {
-        bskLogger.bskLog(BSK_ERROR, "ephemerisConverter.spiceInMsgs is empty.");
-    }
-
     for (int c=0; c < this->spiceInMsgs.size(); c++) {
         this->spiceInBuffers.at(c) = this->spiceInMsgs.at(c)();
     }

@@ -59,6 +59,12 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     if (!RWConstellationMsg_C_isLinked(&configData->rwConfigInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwNullSpace.rwConfigInMsg wasn't connected.");
     }
+    if (!ArrayMotorTorqueMsg_C_isLinked(&configData->rwMotorTorqueInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwNullSpace.rwMotorTorqueInMsg wasn't connected.");
+    }
+    if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwNullSpace.rwSpeedsInMsg wasn't connected.");
+    }
 
     /*! -# read in the RW spin axis headings */
     localRWData = RWConstellationMsg_C_read(&configData->rwConfigInMsg);
@@ -107,14 +113,6 @@ void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     
     /*! - zero all outut message containers prior to evaluation */
     finalControl = ArrayMotorTorqueMsg_C_zeroMsgPayload();
-
-    // check if the required input messages are included
-    if (!ArrayMotorTorqueMsg_C_isLinked(&configData->rwMotorTorqueInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwNullSpace.rwMotorTorqueInMsg wasn't connected.");
-    }
-    if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwNullSpace.rwSpeedsInMsg wasn't connected.");
-    }
 
     /*! - Read the input RW commands to get the raw RW requests*/
     cntrRequest = ArrayMotorTorqueMsg_C_read(&configData->rwMotorTorqueInMsg);

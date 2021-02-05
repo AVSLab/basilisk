@@ -61,6 +61,10 @@ void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID)
  */
 void Reset_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input messages are included
+    if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: simpleDeadband.guidInMsg wasn't connected.");
+    }
     configData->wasControlOff = 1;
 }
 
@@ -73,11 +77,6 @@ void Reset_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, i
  */
 void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    // check if the required input messages are included
-    if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: simpleDeadband.guidInMsg wasn't connected.");
-    }
-
     /*! - Read the input message and set it as the output by default */
     configData->attGuidOut = AttGuidMsg_C_read(&configData->guidInMsg);
 

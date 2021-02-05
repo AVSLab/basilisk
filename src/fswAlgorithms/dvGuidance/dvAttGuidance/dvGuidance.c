@@ -46,6 +46,10 @@ void SelfInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID)
 void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
                        int64_t moduleID)
 {
+    // check if the required input messages are included
+    if (!DvBurnCmdMsg_C_isLinked(&configData->burnDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvGuidance.burnDataInMsg wasn't connected.");
+    }
     return;
 }
 
@@ -72,11 +76,6 @@ void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
 
     /*! - zero the output message containers */
     attCmd = AttRefMsg_C_zeroMsgPayload();
-
-    // check if the required input messages are included
-    if (!DvBurnCmdMsg_C_isLinked(&configData->burnDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvGuidance.burnDataInMsg wasn't connected.");
-    }
 
     /*! - read in DV burn command input message */
     localBurnData = DvBurnCmdMsg_C_read(&configData->burnDataInMsg);

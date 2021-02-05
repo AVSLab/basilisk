@@ -56,6 +56,13 @@ void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID)
  @param moduleID The Basilisk module identifier
  */
 void Reset_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, int64_t moduleID) {
+    // check if the required input messages are included
+    if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: meanOEFeedback.chiefTransInMsg wasn't connected.");
+    }
+    if (!NavTransMsg_C_isLinked(&configData->deputyTransInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: meanOEFeedback.deputyTransInMsg wasn't connected.");
+    }
 
     if (configData->mu <= 0.0) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error in meanOEFeedback: mu must be set to a positive value.");
@@ -82,14 +89,6 @@ void Update_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, 
     NavTransMsgPayload deputyTransMsg;
     // out
     CmdForceInertialMsgPayload forceMsg;
-
-    // check if the required input messages are included
-    if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: meanOEFeedback.chiefTransInMsg wasn't connected.");
-    }
-    if (!NavTransMsg_C_isLinked(&configData->deputyTransInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: meanOEFeedback.deputyTransInMsg wasn't connected.");
-    }
 
     /*! - Read the input messages */
     chiefTransMsg = NavTransMsg_C_read(&configData->chiefTransInMsg);

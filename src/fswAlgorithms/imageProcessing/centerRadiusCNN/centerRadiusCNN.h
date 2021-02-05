@@ -34,6 +34,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief The CNN based center radius visual tracking module. */
 class CenterRadiusCNN: public SysModel {
@@ -55,6 +56,7 @@ public:
     /* OpenCV specific arguments needed for HoughCircle finding*/
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
     double pixelNoise[3];                 //!< [-] Pixel Noise for the estimate
+    BSKLogger bskLogger;                //!< -- BSK Logging
 
 private:
     cv::dnn::Net positionNet2;           //!< Network for evaluation of centers

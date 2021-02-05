@@ -43,13 +43,21 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
     
 }
 
-
+/*! This method resets the module.
+ @return void
+ @param configData The configuration data associated with the sun safe ACS control
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
+ */
 void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
                         int64_t moduleID)
 {
-    uint32_t i;
+    // check if the required input messages are included
+    if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueBodyInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvAttEffect.cmdTorqueBodyInMsg wasn't connected.");
+    }
 
-    for(i=0; i<configData->numThrGroups; i=i+1)
+    for(int i=0; i<configData->numThrGroups; i=i+1)
     {
         configData->thrGroups[i].cmdRequests = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
         THRArrayOnTimeCmdMsg_C_write(&configData->thrGroups[i].cmdRequests, &configData->thrGroups[i].thrOnTimeOutMsg, moduleID, callTime);
@@ -69,11 +77,6 @@ void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
 {
     uint32_t i;
     CmdTorqueBodyMsgPayload cntrRequest;
-    
-    // check if the required input messages are included
-    if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueBodyInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvAttEffect.cmdTorqueBodyInMsg wasn't connected.");
-    }
 
     /*! - Read the input requested torque from the feedback controller*/
     cntrRequest = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueBodyInMsg);

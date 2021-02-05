@@ -49,7 +49,10 @@ void SelfInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
 void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
                          int64_t moduleID)
 {
-
+    // check if the required message has not been connected
+    if (!TDBVehicleClockCorrelationMsg_C_isLinked(&configData->clockCorrInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: oeStateEphem.clockCorrInMsg wasn't connected.");
+    }
 }
 
 /*! This method takes the current time and computes the state of the object
@@ -74,11 +77,6 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_
     classicElements orbEl;
 
     tmpOutputState = EphemerisMsg_C_zeroMsgPayload();
-
-    // check if the required message has not been connected
-    if (!TDBVehicleClockCorrelationMsg_C_isLinked(&configData->clockCorrInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: oeStateEphem.clockCorrInMsg wasn't connected.");
-    }
 
     /*! - read in the input message */
     localCorr = TDBVehicleClockCorrelationMsg_C_read(&configData->clockCorrInMsg);

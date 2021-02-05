@@ -56,7 +56,10 @@ LimbFinding::~LimbFinding()
  */
 void LimbFinding::Reset(uint64_t CurrentSimNanos)
 {
-    return;
+    // check that the required message has not been connected
+    if (!this->imageInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "LimbFinding.imageInMsg wasn't connected.");
+    }
 }
 
 /*! This module reads an OpNav image and extracts limb points from its content using OpenCV's Canny Transform. It performs a greyscale, and blur on the image to facilitate edge-detection.

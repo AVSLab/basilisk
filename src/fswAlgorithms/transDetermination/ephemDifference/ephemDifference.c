@@ -49,9 +49,13 @@ void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
 void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
                          int64_t moduleID)
 {
-    uint32_t i;
+    // check if the required message has not been connected
+    if (!EphemerisMsg_C_isLinked(&configData->ephBaseInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: ephemDifference.ephBaseInMsg wasn't connected.");
+    }
+
     configData->ephBdyCount = 0;
-    for(i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
+    for(int i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
     {
         if (EphemerisMsg_C_isLinked(&configData->changeBodies[i].ephInMsg)) {
             configData->ephBdyCount++;
@@ -79,20 +83,11 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
     EphemerisMsgPayload tmpBaseEphem;
     EphemerisMsgPayload tmpEphStore;
 
-    // check if the required message has not been connected
-    if (!EphemerisMsg_C_isLinked(&configData->ephBaseInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: ephemDifference.ephBaseInMsg wasn't connected.");
-    }
-
     // read input msg
     tmpBaseEphem = EphemerisMsg_C_read(&configData->ephBaseInMsg);
 
     for(i = 0; i < configData->ephBdyCount; i++)
     {
-        if (!EphemerisMsg_C_isLinked(&configData->changeBodies[i].ephInMsg)) {
-            _bskLog(configData->bskLogger, BSK_ERROR, "An ephemeris input message name was not linked.  Be sure that ephInMsg is set properly.");
-        }
-
         tmpEphStore = EphemerisMsg_C_read(&configData->changeBodies[i].ephInMsg);
 
         v3Subtract(tmpEphStore.r_BdyZero_N,

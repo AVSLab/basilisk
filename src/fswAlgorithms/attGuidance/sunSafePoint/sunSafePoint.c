@@ -49,6 +49,14 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64
 {
     double v1[3];
 
+    // check if the required input messages are included
+    if (!NavAttMsg_C_isLinked(&configData->sunDirectionInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunSafePoint.sunDirectionInMsg wasn't connected.");
+    }
+    if (!NavAttMsg_C_isLinked(&configData->imuInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunSafePoint.imuInMsg wasn't connected.");
+    }
+
     /* compute an Eigen axis orthogonal to sHatBdyCmd */
     if (v3Norm(configData->sHatBdyCmd)  < 0.1) {
       char info[MAX_LOGGING_LENGTH];
@@ -90,14 +98,6 @@ void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
 
     NavAttMsgPayload localImuDataInBuffer;
     configData->attGuidanceOutBuffer = AttGuidMsg_C_zeroMsgPayload();
-
-    // check if the required input messages are included
-    if (!NavAttMsg_C_isLinked(&configData->sunDirectionInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunSafePoint.sunDirectionInMsg wasn't connected.");
-    }
-    if (!NavAttMsg_C_isLinked(&configData->imuInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunSafePoint.imuInMsg wasn't connected.");
-    }
 
     /*! - Read the current sun body vector estimate*/
     navMsg = NavAttMsg_C_read(&configData->sunDirectionInMsg);

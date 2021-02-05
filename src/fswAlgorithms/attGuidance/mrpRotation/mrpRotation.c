@@ -53,6 +53,11 @@ void SelfInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID)
  */
 void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input messages are included
+    if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mrpRotation.attRefInMsg wasn't connected.");
+    }
+
     configData->priorTime = 0;
 
     v3SetZero(configData->priorCmdSet);
@@ -72,11 +77,6 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_
     /* - Read input messages */
     AttRefMsgPayload inputRef;                                /* [-] read in the [R_0N] input reference message */
     AttRefMsgPayload attRefOut;                               /* [-] structure for the Reference frame output data */
-
-    // check if the required input messages are included
-    if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mrpRotation.attRefInMsg wasn't connected.");
-    }
 
     /*!- read in input reference frame message */
     inputRef = AttRefMsg_C_read(&configData->attRefInMsg);

@@ -47,12 +47,10 @@ BoreAngCalc::~BoreAngCalc()
  */
 void BoreAngCalc::Reset(uint64_t CurrentSimNanos)
 {
-    // check if input message has not been included
+    // check if required input messages have not been included
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "boreAngCalc.scStateInMsg was not linked.");
     }
-
-    // check if input message has not been included
     if (!this->celBodyInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "boreAngCalc.celBodyInMsg was not linked.");
     }

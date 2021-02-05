@@ -50,6 +50,17 @@ void SelfInit_spacecraftReconfig(spacecraftReconfigConfig *configData, int64_t m
  */
 void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input messages are included
+    if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.chiefTransInMsg wasn't connected.");
+    }
+    if (!NavTransMsg_C_isLinked(&configData->deputyTransInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.deputyTransInMsg wasn't connected.");
+    }
+    if (!THRArrayConfigMsg_C_isLinked(&configData->thrustConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.thrustConfigInMsg wasn't connected.");
+    }
+
     configData->prevCallTime    = 0;
     configData->tCurrent        = 0.0;
     configData->thrustOnFlag    = 0;
@@ -78,17 +89,6 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
     // out
     AttRefMsgPayload attRefMsg;
     THRArrayOnTimeCmdMsgPayload thrustOnMsg;
-
-    // check if the required input messages are included
-    if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.chiefTransInMsg wasn't connected.");
-    }
-    if (!NavTransMsg_C_isLinked(&configData->deputyTransInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.deputyTransInMsg wasn't connected.");
-    }
-    if (!THRArrayConfigMsg_C_isLinked(&configData->thrustConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.thrustConfigInMsg wasn't connected.");
-    }
 
     /*! - Read the input messages */
     chiefTransMsg = NavTransMsg_C_read(&configData->chiefTransInMsg);

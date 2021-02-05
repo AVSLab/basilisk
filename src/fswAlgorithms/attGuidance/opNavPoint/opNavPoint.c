@@ -48,6 +48,17 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t m
 {
     double v1[3];
 
+    // check if the required input messages are included
+    if (!OpNavMsg_C_isLinked(&configData->opnavDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: opNavPoint.opnavDataInMsg wasn't connected.");
+    }
+    if (!NavAttMsg_C_isLinked(&configData->imuInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: opNavPoint.imuInMsg wasn't connected.");
+    }
+    if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: opNavPoint.cameraConfigInMsg wasn't connected.");
+    }
+
     /* compute an Eigen axis orthogonal to alignAxis_C */
     if (v3Norm(configData->alignAxis_C)  < 0.1) {
         char info[MAX_LOGGING_LENGTH];
@@ -92,17 +103,6 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     double dcm_BN[3][3], dcm_CB[3][3], dcm_CN[3][3];
     NavAttMsgPayload localImuDataInBuffer;
     CameraConfigMsgPayload cameraSpecs;
-
-    // check if the required input messages are included
-    if (!OpNavMsg_C_isLinked(&configData->opnavDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: opNavPoint.opnavDataInMsg wasn't connected.");
-    }
-    if (!NavAttMsg_C_isLinked(&configData->imuInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: opNavPoint.imuInMsg wasn't connected.");
-    }
-    if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: opNavPoint.cameraConfigInMsg wasn't connected.");
-    }
 
     /*! - Read the current target vector estimate*/
     opNavMsg = OpNavMsg_C_read(&configData->opnavDataInMsg);

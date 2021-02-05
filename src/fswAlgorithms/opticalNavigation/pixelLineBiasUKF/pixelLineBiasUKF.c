@@ -45,7 +45,17 @@ void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t modul
 void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,
                        int64_t moduleId)
 {
-    
+    // check if the required message has not been connected
+    if (!CirclesOpNavMsg_C_isLinked(&configData->circlesInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineBiasUKF.circlesInMsg wasn't connected.");
+    }
+    if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineBiasUKF.cameraConfigInMsg wasn't connected.");
+    }
+    if (!NavAttMsg_C_isLinked(&configData->attInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineBiasUKF.attInMsg wasn't connected.");
+    }
+
     int32_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
     double tempMatrix[PIXLINE_N_STATES*PIXLINE_N_STATES];
@@ -142,16 +152,6 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     opNavOutBuffer = PixelLineFilterMsg_C_zeroMsgPayload();
     outputRelOD = NavTransMsg_C_zeroMsgPayload();
 
-    // check if the required message has not been connected
-    if (!CirclesOpNavMsg_C_isLinked(&configData->circlesInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineBiasUKF.circlesInMsg wasn't connected.");
-    }
-    if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineBiasUKF.cameraConfigInMsg wasn't connected.");
-    }
-    if (!NavAttMsg_C_isLinked(&configData->attInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineBiasUKF.attInMsg wasn't connected.");
-    }
 
     /*! - read input messages */
     inputCircles = CirclesOpNavMsg_C_read(&configData->circlesInMsg);

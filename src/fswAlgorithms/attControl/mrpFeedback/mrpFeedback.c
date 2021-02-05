@@ -57,13 +57,17 @@ void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t
     /* check that optional messages are correct connected */
     if(RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
         if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
-            _bskLog(configData->bskLogger, BSK_ERROR, "Error: the rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
+            _bskLog(configData->bskLogger, BSK_ERROR, "Error: the mrpFeedback.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
         }
+
     }
 
     // check if the required message has not been connected
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mrpfeedback.guidInMsg wasn't connected.");
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mrpFeedback.guidInMsg wasn't connected.");
+    }
+    if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: the mrpFeedback.vehConfigInMsg wasn't connected.");
     }
 
     /*! - zero and read in vehicle configuration message */

@@ -59,6 +59,12 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     if (!VehicleConfigMsg_C_isLinked(&configData->massPropsInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.massPropsInMsg wasn't connected.");
     }
+    if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.rwSpeedsInMsg wasn't connected.");
+    }
+    if (!AccDataMsg_C_isLinked(&configData->gyrBuffInMsgName)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.gyrBuffInMsgName wasn't connected.");
+    }
 
     /*! - Read static RW config data message and store it in module variables */
     configData->rwConfigParams = RWArrayConfigMsg_C_read(&configData->rwParamsInMsg);
@@ -200,15 +206,6 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 
     /* zero output buffer */
     outputInertial = NavAttMsg_C_zeroMsgPayload();
-
-    // check that rwSpeedsInMsg and gyrBuffInMsgName are included
-    if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.rwSpeedsInMsg wasn't connected.");
-    }
-    if (!AccDataMsg_C_isLinked(&configData->gyrBuffInMsgName)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.gyrBuffInMsgName wasn't connected.");
-    }
-
 
     /* read input messages */
     configData->localConfigData = VehicleConfigMsg_C_read(&configData->massPropsInMsg);

@@ -44,7 +44,10 @@ void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
  */
 void Reset_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
-
+    // check if the required message has not been connected
+    if (!IMUSensorMsg_C_isLinked(&configData->imuComInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: imuComm.imuComInMsg wasn't connected.");
+    }
 }
 
 /*! This method takes the raw sensor data from the coarse sun sensors and
@@ -57,11 +60,6 @@ void Reset_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t
 void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
     IMUSensorMsgPayload LocalInput;
-
-    // check if the required message has not been connected
-    if (!IMUSensorMsg_C_isLinked(&configData->imuComInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: imuComm.imuComInMsg wasn't connected.");
-    }
 
     // read imu com msg
     LocalInput = IMUSensorMsg_C_read(&configData->imuComInMsg);

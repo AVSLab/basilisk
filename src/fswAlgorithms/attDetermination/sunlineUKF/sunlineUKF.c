@@ -62,6 +62,9 @@ void Reset_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
     if (!CSSConfigMsg_C_isLinked(&configData->cssConfigInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineUKF.cssConfigInMsg wasn't connected.");
     }
+    if (!CSSArraySensorMsg_C_isLinked(&configData->cssDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineUKF.cssDataInMsg wasn't connected.");
+    }
 
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
     cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
@@ -143,11 +146,6 @@ void Update_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
     uint64_t timeOfMsgWritten;
     int isWritten;
     SunlineFilterMsgPayload sunlineDataOutBuffer;
-
-    // check if the required input messages are included
-    if (!CSSArraySensorMsg_C_isLinked(&configData->cssDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineUKF.cssDataInMsg wasn't connected.");
-    }
 
     /*! - Read the input parsed CSS sensor data message*/
     configData->cssSensorInBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);

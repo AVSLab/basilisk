@@ -38,6 +38,27 @@ void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t mod
 }
 
 
+/*! @brief This resets the module.
+ @return void
+ @param configData The configuration data associated with this module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The unique module identifier
+ */
+void Reset_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callTime,
+                       int64_t moduleID)
+{
+    // check if the required input messages are included
+    if (!NavTransMsg_C_isLinked(&configData->navDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvExecuteGuidance.navDataInMsg wasn't connected.");
+    }
+    if (!DvBurnCmdMsg_C_isLinked(&configData->burnDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvExecuteGuidance.burnDataInMsg wasn't connected.");
+    }
+}
+
+
+
+
 /*! This method takes its own internal variables and creates an output attitude 
     command to use for burn execution.  It also flags whether the burn should 
     be happening or not.
@@ -58,14 +79,6 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
     DvBurnCmdMsgPayload localBurnData;
     DvExecutionDataMsgPayload localExeData;
     THRArrayOnTimeCmdMsgPayload effCmd;
-
-    // check if the required input messages are included
-    if (!NavTransMsg_C_isLinked(&configData->navDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvExecuteGuidance.navDataInMsg wasn't connected.");
-    }
-    if (!DvBurnCmdMsg_C_isLinked(&configData->burnDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvExecuteGuidance.burnDataInMsg wasn't connected.");
-    }
 
     // read in messages
     navData = NavTransMsg_C_read(&configData->navDataInMsg);

@@ -52,7 +52,10 @@ void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t modul
  */
 void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    return;
+    // check if the required message has not been connected
+    if (!IMUSensorBodyMsg_C_isLinked(&configData->imuRateInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rateMsgConverter.imuRateInMsg wasn't connected.");
+    }
 }
 
 /*! This method performs a time step update of the module.
@@ -66,11 +69,6 @@ void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTi
     IMUSensorBodyMsgPayload inMsg;
     NavAttMsgPayload outMsg;
     
-    // check if the required message has not been connected
-    if (!IMUSensorBodyMsg_C_isLinked(&configData->imuRateInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rateMsgConverter.imuRateInMsg wasn't connected.");
-    }
-
     /*! - read in the message of type IMUSensorBodyMsgPayload */
     inMsg = IMUSensorBodyMsg_C_read(&configData->imuRateInMsg);
     

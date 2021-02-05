@@ -45,7 +45,11 @@ void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
 void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                        int64_t moduleId)
 {
-    
+    // check if the required message has not been connected
+    if (!OpNavMsg_C_isLinked(&configData->opNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: relativeODuKF.opNavInMsg wasn't connected.");
+    }
+
     int32_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
     double tempMatrix[ODUKF_N_STATES*ODUKF_N_STATES];
@@ -144,11 +148,6 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     v3SetZero(configData->postFits);
     outputRelOD = NavTransMsg_C_zeroMsgPayload();
     opNavOutBuffer = OpNavFilterMsg_C_zeroMsgPayload();
-
-    // check if the required message has not been connected
-    if (!OpNavMsg_C_isLinked(&configData->opNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: relativeODuKF.opNavInMsg wasn't connected.");
-    }
 
     // read input message
     inputRelOD = OpNavMsg_C_read(&configData->opNavInMsg);

@@ -47,6 +47,14 @@ void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t m
  */
 void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input messages are included
+    if (!NavTransMsg_C_isLinked(&configData->chiefPositionInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftPointing.chiefPositionInMsg wasn't connected.");
+    }
+    if (!NavTransMsg_C_isLinked(&configData->deputyPositionInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftPointing.deputyPositionInMsg wasn't connected.");
+    }
+
     /* Build a coordinate system around the vector within the body frame that points towards the antenna and write the orientation
      of the B-frame with respect to the A-frame. */
     double dcm_AB[3][3];                            /*!< ---  dcm [AB] */
@@ -117,14 +125,6 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
     double delta_omega_RN_N[3];                     /*!< ---  Difference between omega at t-1 and t */
     double domega_RN_N[3];                          /*!< ---  Angular acceleration of vector pointing from deputy to chief */
     double sigma_R1N[3];                            /*!< ---  MRP of R1-frame with respect to N-frame */
-
-    // check if the required input messages are included
-    if (!NavTransMsg_C_isLinked(&configData->chiefPositionInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftPointing.chiefPositionInMsg wasn't connected.");
-    }
-    if (!NavTransMsg_C_isLinked(&configData->deputyPositionInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftPointing.deputyPositionInMsg wasn't connected.");
-    }
 
     /* read in messages */
     chiefTransMsg = NavTransMsg_C_read(&configData->chiefPositionInMsg);
