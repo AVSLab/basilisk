@@ -34,8 +34,8 @@ This facilitates the migration to 2.0 as it requires some commands to be changed
 none of the code logic should have to change.  As before, the message interfaces vary between
 C and C++ modules.
 
-Moved Support Files
-^^^^^^^^^^^^^^^^^^^
+Changed Importing of Some Files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 If your module uses::
 
     #include "simulation/simFswInterfaceMessages/macroDefinitions.h"
@@ -44,6 +44,13 @@ this file has now moved to::
 
     #include "simulation/utilities/macroDefinitions.h"
 
+Further, all includes should be done relative to the ``Basilisk/src`` directory.  This means::
+
+    #include "sensors/magnetometer/magnetometer.h"
+
+should be changed to::
+
+    #include "simulation/sensors/magnetometer/magnetometer.h"
 
 
 Updating a C Module
@@ -85,10 +92,14 @@ Updating a C Module
 
          SomeMsg_C descriptionOutMsgs[10];
 
+    - Remove the ``CrossInit_xxxx()`` method, it is no longer used.  If you initialized any code in this function, move that code to the module ``Reset_xxxx()`` function.
+
+    - Clean up the ``SelfInit_xxxx()`` method to only initialize the output messages.  All other code and setup should be moved to the ``Reset_xxxx()`` function.
+
 
 #. Updating the ``module.c`` file:
 
-    - To initialize the module output message, replace
+    - To initialize the module output message in ``SelfInit_xxxx()``, replace
 
       .. code:: cpp
 
@@ -115,7 +126,10 @@ Updating a C Module
                                                  sizeof(ModuleFswMsg), moduleID);
 
       The input messages are connected when then Basilisk simulation is scripted in python.  No
-      additional code is required in your C code.
+      additional code is required in your C code.  Remove the ``CrossInit_xxxx()`` method,
+      it is no longer used.  If you initialized any code in this function, move that code
+      to the module ``Reset_xxxx()`` function.
+
 
     - To create a local variable of the message content structure (payload) itself, use
 
@@ -190,7 +204,7 @@ Updating a C Module
 
          ARRAYASLIST(FSWdeviceAvailability)
 
-      should be removed the ``module.i`` file and moved to ``src/architecture/messaging/messaging.i``
+      should be removed from the ``module.i`` file and moved to ``src/architecture/messaging/messaging.i``
       file instead.  These interfaces can now be used by any module by importing ``messages2`` in the
       Basilisk python script.
 
@@ -200,6 +214,14 @@ Updating a C Module
       .. code:: cpp
 
          STRUCTASLIST(SomeMsg_C)
+
+    - The location of ``swig_common_model`` has moved to ``architecture``.  Thus, replace::
+
+         from Basilisk.simulation.swig_common_model import *
+
+      with::
+
+         from Basilisk.architecture.swig_common_model import *
 
 #. Updating the ``module.rst`` documentation file:
 
@@ -235,6 +257,8 @@ Updating a C++ Module
       .. code:: cpp
 
          #include "architecture/messaging/messaging.h"
+
+    - Remove both the ``SelfInit()`` and ``CrossInit()`` methods, they are longer used.  If you initialized any code in these functions, move that code to the module ``Reset()`` method.
 
     - For output messages, replace the ``std::string`` message name variable
       ``moduleOutMsgName`` and associated
@@ -273,6 +297,9 @@ Updating a C++ Module
                                                                              "ModuleSimMsg", this->moduleID);
 
       The new message object is automatically created through the above process in the ``module.h`` file.
+      In fact, deleted the ``SelfInit()`` method as it is no longer needed with C++ modules.  The output
+      message object automatically connect to themselves in their constructors.  Any other code in
+      the ``SelfInit()`` method should be moved to the ``Reset()`` method.
 
     - If a ``std::vector`` of output message pointers of type ``SomeMsgPayload`` was created in the module ``*.h`` file
       then these message objects must be created dynamically in the ``*.cpp`` code using
@@ -295,6 +322,9 @@ Updating a C++ Module
 
          this->moduleInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->moduleInMsgName,
                                                                                 sizeof(ModuleFswMsg), moduleID);
+
+      Remove the ``CrossInit()`` method, it is longer used.  If you initialized any code in this method,
+      move that code to the module ``Reset()`` method.
 
     - To read an input message, replace old code such as:
 
@@ -351,6 +381,14 @@ Updating a C++ Module
       Again, stop and marvel.
 
 #. Updating the ``module.i`` file:
+
+    - The location of ``swig_common_model`` has moved to ``architecture``.  Thus, replace::
+
+            from Basilisk.simulation.swig_common_model import *
+
+       with::
+
+            from Basilisk.architecture.swig_common_model import *
 
     - In the ``GEN_SIZEOF()`` commands used to be used to get the size of a message in Python.  This is no longer
       required with the new message system.  Thus, these ``GEN_SIZEOF()`` commands can be removed.  To create and access

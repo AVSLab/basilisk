@@ -6,7 +6,7 @@ Adding Basilisk Modules
 
     The python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/bsk-2.py>`.
 
-Understanding now what a Basilisk process (Task Group) and a task list is, we can now move forward to adding Basilisk modules to a task.  :ref:`fswModuleTemplate` and `ref:`cppModuleTemplate` will be the basic module C and C++ BSK modules that we use in this discussion.  They are a very simple modules used to illustrate how to make a prototypical Basilisk module.  The functionality and messages used are the same across both modules. They are convenient for this discusion as they are setup as a tutorial module and print out the module ID value when the module is executed.  This makes it simple in the simulation below to see that the desired module execution order is achieved.
+Understanding now what a Basilisk process (Task Group) and a task list is, we can now move forward to adding Basilisk modules to a task.  :ref:`fswModuleTemplate` and :ref:`cppModuleTemplate` will be the basic module C and C++ BSK modules that we use in this discussion.  They are a very simple modules used to illustrate how to make a prototypical Basilisk module.  The functionality and messages used are the same across both modules. They are convenient for this discusion as they are setup as a tutorial module and print out the module ID value when the module is executed.  This makes it simple in the simulation below to see that the desired module execution order is achieved.
 
 .. image:: ../../_images/static/qs-bsk-2.svg
    :align: center
@@ -86,8 +86,7 @@ If you execute this python code you should see the following terminal output:
 After the initialization Basilisk starts the time loop evaluating the modules at the specified rate.  The ``Update()`` routine in both :ref:`fswModuleTemplate` and :ref:`cppModuleTemplate` print out the module ID and the simulation time where the module is called.  Note that thanks to the module evaluation priorities we set the desired module execution order is achieved.
 
 
-.. ** Tutorial Review Video **
 
-    .. raw:: html
+.. raw:: html
 
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/6YmZyu0f-qI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/JykP4zMAaBg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

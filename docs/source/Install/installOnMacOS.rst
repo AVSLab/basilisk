@@ -207,7 +207,7 @@ When all the prerequisite installations are complete, the project can be built a
          :align: center
          :scale: 40%
    -  Ensure that the target scheme is set to ``ALL_BUILD`` as shown in figure above
-   -  You can now build the project within the Xcode IDE
+   -  Within Xcode now go under `Product/Build For/Profiling` to build for Release.
 
 #. To test your setup you can run one of the :ref:`examples`:
 

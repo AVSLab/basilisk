@@ -360,7 +360,7 @@ to it at a later time you simply use::
 
     msg.write(msgData, time)
 
-Note that stand-alone messages written in Python don't have a module ID.  The message module ID is thus set to -1.
+Note that stand-alone messages written in Python don't have a module ID.  The message module ID is thus set to 0.
 If you want to specify another module ID, this can be done with::
 
     msg.write(msgData, time, moduleID)
@@ -534,3 +534,9 @@ If from Python you access ``#define`` values of ``macroDefinitions.h``, such as:
 then you can now access these definitions using  ``messaging.i`` using::
 
     messaging.MAX_EFF_CNT
+
+
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/JykP4zMAaBg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
