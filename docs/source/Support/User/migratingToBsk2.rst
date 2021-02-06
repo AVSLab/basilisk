@@ -21,7 +21,7 @@ However, nothing is for free.  Making these changes was not possible without bre
 help page outlines all the user-facing changes that have occurred.  This facilities the process of upgrading legacy
 Basilisk python scripts to function with the new message system, etc.
 
-For changes related to updating Basilisk C and C++ module code, see :ref:`migratingModuleToBsk`.
+For changes related to updating Basilisk C and C++ module code, see :ref:`migratingModuleToBsk2`.
 
 Message Names
 -------------
@@ -539,4 +539,4 @@ then you can now access these definitions using  ``messaging.i`` using::
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/JykP4zMAaBg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/7psCHvvrf4Q" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

@@ -426,7 +426,7 @@ Updating a C++ Module
     - To create the swig interface to a vector of output message pointers of type ``SomeMsgPayload``,
       near the bottom of the ``messaging.i`` file add this line::
 
-        %template(SomeOutMsgsVector) std::vector<Message<SomeMsgPayload>*>;
+         %template(SomeOutMsgsVector) std::vector<Message<SomeMsgPayload>*>;
 
 #. Updating the ``module.rst`` documentation file:
 
@@ -435,3 +435,8 @@ Updating a C++ Module
     - If applicable, update the module msg I/O illustration
     - If there are links to message types in the source method descriptions, update these
       to use the new message payload declaration.
+
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/vAJ7G-ELDWA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
