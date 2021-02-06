@@ -116,10 +116,10 @@ void Magnetometer::computeMagData()
 /*! This method computes the true sensed values for the sensor. */
 void Magnetometer::computeTrueOutput()
 {
-    this->trueValue = this->tam_S;
+    this->tamTrue_S = this->tam_S;
 }
 
-/*! This method takes the true values (trueValue) and converts
+/*! This method takes the true values (tamTrue_S) and converts
  it over to an errored value.  It applies Gaussian noise, constant bias and scale factor to the truth. */
 void Magnetometer::applySensorErrors()
 {
@@ -128,33 +128,33 @@ void Magnetometer::applySensorErrors()
     for (unsigned i = 0; i < this->senNoiseStd.size(); i++){
         if ((this->senNoiseStd(i) <= 0.0)) {n0++;}
     }    
-    if (n0 == this->senNoiseStd.size()) {this->sensedValue = this->trueValue;}
+    if (n0 == this->senNoiseStd.size()) {this->tamSensed_S = this->tamTrue_S;}
     else {
         //! - Get current error from random number generator
         this->noiseModel.computeNextState();
         Eigen::Vector3d currentError = this->noiseModel.getCurrentState();
         //! - Sensed value with noise
-        this->sensedValue = this->trueValue + currentError;
+        this->tamSensed_S = this->tamTrue_S + currentError;
     }
     //! - Sensed value with bias
-    this->sensedValue = this->sensedValue + this->senBias;
+    this->tamSensed_S = this->tamSensed_S + this->senBias;
     //! - Multiplying the sensed value with a scale factor
-    this->sensedValue *= this->scaleFactor;
+    this->tamSensed_S *= this->scaleFactor;
 }
 
 /*! This method applies saturation using the given bounds. */
 void Magnetometer::applySaturation()
 {
-    this->sensedValue = this->saturateUtility.saturate(this->sensedValue);
+    this->tamSensed_S = this->saturateUtility.saturate(this->tamSensed_S);
 }
 
 /*! This method writes the output messages. */
 void Magnetometer::writeOutputMessages(uint64_t Clock)
 {
-    TAMDataMsgPayload localMessage;
+    TAMSensorMsgPayload localMessage;
     //! - Zero the output message
     localMessage = this->tamDataOutMsg.zeroMsgPayload();
-    eigenVector3d2CArray(this->sensedValue, localMessage.OutputData);
+    eigenVector3d2CArray(this->tamSensed_S, localMessage.tam_S);
     //! - Write the outgoing message to the architecture
     this->tamDataOutMsg.write(&localMessage, this->moduleID, Clock);
 }

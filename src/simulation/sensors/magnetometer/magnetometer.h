@@ -25,7 +25,7 @@
 
 #include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/MagneticFieldMsgPayload.h"
-#include "architecture/msgPayloadDefC/TAMDataMsgPayload.h"
+#include "architecture/msgPayloadDefC/TAMSensorMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/gauss_markov.h"
@@ -49,13 +49,13 @@ public:
     Eigen::Matrix3d setBodyToSensorDCM(double yaw, double pitch, double roll); //!< Utility method to configure the sensor DCM
 
 public:
-    ReadFunctor<SCPlusStatesMsgPayload> stateInMsg;        //!< [-] input message name for spacecraft state
-    ReadFunctor<MagneticFieldMsgPayload> magInMsg;          //!< [-] input essage name for magnetic field data
-    Message<TAMDataMsgPayload> tamDataOutMsg;   //!< [-] Message name for TAM output data
+    ReadFunctor<SCPlusStatesMsgPayload> stateInMsg;        //!< [-] input message for spacecraft states
+    ReadFunctor<MagneticFieldMsgPayload> magInMsg;          //!< [-] input message for magnetic field data in inertial frame N
+    Message<TAMSensorMsgPayload> tamDataOutMsg;   //!< [-] Message for TAM output data in sensor frame S
     Eigen::Matrix3d     dcm_SB;                 //!< [-] DCM from body frame to sensor frame
     Eigen::Vector3d     tam_S;                  //!< [T] Magnetic field vector in sensor frame
-    Eigen::Vector3d     sensedValue;            //!< [T] Measurement including perturbations
-    Eigen::Vector3d     trueValue;              //!< [T] Measurement without perturbations
+    Eigen::Vector3d     tamSensed_S;            //!< [T] Measurement including perturbations
+    Eigen::Vector3d     tamTrue_S;              //!< [T] Measurement without perturbations
     double              scaleFactor;            //!< [-] Scale factor applied to sensor
     Eigen::Vector3d     senBias;                //!< [T] Sensor bias vector
     Eigen::Vector3d     senNoiseStd;            //!< [T] Sensor noise standard deviation vector
@@ -66,7 +66,7 @@ public:
     BSKLogger bskLogger;                          //!< -- BSK Logging
 
 private:
-    MagneticFieldMsgPayload magData;             //!< [-] Magnetic field model data
+    MagneticFieldMsgPayload magData;             //!< [-] Magnetic field in inertial N frame
     SCPlusStatesMsgPayload stateCurrent;         //!< [-] Current spacecraft state
     uint64_t numStates;                          //!< [-] Number of States for Gauss Markov Models
     GaussMarkov noiseModel;                      //!< [-] Gauss Markov noise generation model

@@ -167,7 +167,7 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     unitTestSim.TotalSim.SingleStepProcesses()
 
     # This pulls the actual data log from the simulation run.
-    tamData = dataLog.OutputData
+    tamData = dataLog.tam_S
     print(tamData)
     print(trueTam_S)
 

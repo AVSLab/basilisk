@@ -64,6 +64,9 @@ Version 2.0.0
 - :ref:`reactionWheelStateEffector` is updated where the list of RW configuration parameters are now linked
   from python, not copied.  As a result it is now possible to stop the simulation and change RW parameters on
   the fly, emulating a failure with a physical change in the RW mechanics.
+- changed the output message type of :ref:`magnetometer` to be compatible with :ref:`tamComm`
+- Created several instructional pages in the Quick-Start documentation folder.  The examples folder
+  has moved to the Quick-Start guide as well
 
 
 Version |release|

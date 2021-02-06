@@ -25,13 +25,13 @@ The following table lists all the module input and output messages.  The module 
       - Description
     * - stateInMsg
       - :ref:`SCPlusStatesMsgPayload`
-      - input message name for spacecraft state
+      - input message for spacecraft states
     * - magInMsg
       - :ref:`MagneticFieldMsgPayload`
-      - input essage name for magnetic field data
+      - input message for magnetic field data in inertial N frame
     * - tamDataOutMsg
-      - :ref:`TAMDataMsgPayload`
-      - output message name for sensor output data
+      - :ref:`TAMSensorMsgPayload`
+      - magnetic field sensor output message in the sensor frame S
 
 
 

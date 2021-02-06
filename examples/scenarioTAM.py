@@ -288,7 +288,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     #   retrieve the logged data
     #
     magData = magLog.magField_N
-    tamData = tamLog.OutputData
+    tamData = tamLog.tam_S
     posData = dataLog.r_BN_N
 
     np.set_printoptions(precision=16)

@@ -35,8 +35,8 @@ from Basilisk.architecture.swig_common_model import *
 struct SCPlusStatesMsg_C;
 %include "architecture/msgPayloadDefC/MagneticFieldMsgPayload.h"
 struct MagneticFieldMsg_C;
-%include "architecture/msgPayloadDefC/TAMDataMsgPayload.h"
-struct TAMDataMsg_C;
+%include "architecture/msgPayloadDefC/TAMSensorMsgPayload.h"
+struct TAMSensorMsg_C;
 
 %pythoncode %{
 import sys
