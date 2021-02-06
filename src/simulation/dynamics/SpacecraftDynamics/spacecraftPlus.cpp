@@ -437,7 +437,7 @@ void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
 void SpacecraftPlus::integrateState(double integrateToThisTime)
 {
     // - Find the time step
-	double localTimeStep = integrateToThisTime - timePrevious;
+	double localTimeStep = integrateToThisTime - this->timePrevious;
 
     // - Find v_CN_N before integration for accumulated DV
     Eigen::Vector3d oldV_BN_N = this->hubV_N->getState();  // - V_BN_N before integration
@@ -498,7 +498,11 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
     // - angular acceleration in the body frame
     Eigen::Vector3d newOmega_BN_B;
     newOmega_BN_B = this->hubOmega_BN_B->getState();
-    this->omegaDot_BN_B = (newOmega_BN_B - oldOmega_BN_B)/localTimeStep; //angular acceleration of B wrt N in the Body frame
+    if (fabs(localTimeStep) > 1e-10) {
+        this->omegaDot_BN_B = (newOmega_BN_B - oldOmega_BN_B)/localTimeStep; //angular acceleration of B wrt N in the Body frame
+    } else {
+        this->omegaDot_BN_B = {0., 0., .0};
+    }
 
     // - Compute Energy and Momentum
     this->computeEnergyMomentum(integrateToThisTime);
