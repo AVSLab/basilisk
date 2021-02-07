@@ -228,7 +228,7 @@ def trueColorAdjust(image, corrupted, HSV, BGR):
                 expected[i] = 0
 
         for i in range(3):
-            if abs(int(output[px, py][i]) - expected[i]) > 0:
+            if abs(int(output[px, py][i]) - expected[i]) > 3:
                 print("Failed HSV at point: px=" + str(px) + " py= + " + str(py))
                 return False
     print("Passed Color Check")
@@ -240,6 +240,6 @@ def trueColorAdjust(image, corrupted, HSV, BGR):
 # stand-along python script
 #
 if __name__ == "__main__":
-    hsvAdjust = [0, 0, 0.0]
+    hsvAdjust = [1.0, +20.0, -30.0]
     bgrAdjust = [-100, 0, 0]
     cameraColorTest("tv_test.png", hsvAdjust, bgrAdjust)
