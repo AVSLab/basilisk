@@ -87,7 +87,7 @@ code, .rst-content tt, .rst-content code {
 	.rst-content code {
 		background: #0004;
 	}
-	.rst-content .note {
+	html.writer-html4 .rst-content dl:not(.docutils)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple)>dt, .rst-content .note {
 		background: #2D4151;
 	}
 	
@@ -153,7 +153,7 @@ code, .rst-content tt, .rst-content code {
 		color:  #ccc;
 	}
 	
-	.rst-content dl:not(.docutils) dl dt {
+	html.writer-html4 .rst-content dl:not(.docutils) dl:not(.field-list)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list)>dt, .rst-content dl:not(.docutils) dl dt {
 		background-color: #333;
 		color: #ccc;
 	}

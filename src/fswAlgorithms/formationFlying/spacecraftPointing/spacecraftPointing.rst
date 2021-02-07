@@ -21,12 +21,12 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - chiefPositionInMsg
-      - :ref:`NavTransMsg_C`
+      - :ref:`NavTransMsgPayload`
       - primary position input message
     * - deputyPositionInMsg
-      - :ref:`NavTransMsg_C`
+      - :ref:`NavTransMsgPayload`
       - secondary position input message
     * - attReferenceOutMsg
-      - :ref:`AttRefMsg_C`
+      - :ref:`AttRefMsgPayload`
       - attitude reference output message
 

@@ -44,7 +44,7 @@
 
 #include "architecture/utilities/macroDefinitions.h"
 
-/*!< albedo instrument configuration class */
+/*! albedo instrument configuration class */
 typedef class Config {
 public:
     Config();

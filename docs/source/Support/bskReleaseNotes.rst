@@ -114,7 +114,7 @@ Version 1.8.6
     - updated document to make use of RST format and specify module input and output messages
 - updated ``avsEigenSupport.h`` to add new methods ``eigenMRPd2Vector3d()`` and ``eigenC2MRP()``
 - updated :ref:`spacecraftPlus` to allow the attitude motion to be prescribed through
-  an optional input message of type :ref:`attRefMsg`.
+  an optional input message of type ``attRefMsg``.
 - fixed sign issue in :ref:`simpleSolarPanel`
 - support Vizard 1.6.0 scripting  
 

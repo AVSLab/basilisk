@@ -540,7 +540,6 @@ def plotOrbits(timeAxis, posData, velData, oe, mu, P, orbitCase, useSphericalHar
         plt.legend(loc='lower right')
         plt.xlabel('Time [orbits]')
         plt.ylabel('Trajectory Differences [m]')
-        figureList = {}
         pltName = fileName + "3" + orbitCase + str(int(useSphericalHarmonics)) + planetCase
         figureList[pltName] = plt.figure(3)
 
