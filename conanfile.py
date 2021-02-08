@@ -19,7 +19,8 @@ bskModuleOptionsBool = {
     "vizInterface": True
 }
 bskModuleOptionsString = {
-    "autoKey": ""
+    "autoKey": "",
+    "pathToExternalModule":""
 }
 bskModuleOptionsFlag = {
     "clean": False,
@@ -72,7 +73,7 @@ class BasiliskConan(ConanFile):
     # make sure conan is configured to use the libstdc++11 by default
     if platform.system() != "Darwin":
         try:
-            subprocess.check_output(["conan", "profile", "new", "default", "--detect"], stdout=DEVNULL)
+            subprocess.check_output(["conan", "profile", "new", "default", "--detect"], stdout=subprocess.DEVNULL)
         except:
             pass
 
@@ -178,7 +179,6 @@ class BasiliskConan(ConanFile):
             distPath = os.path.join(root, "dist3")
             if os.path.exists(distPath):
                 shutil.rmtree(distPath, ignore_errors=True)
-
         if self.settings.build_type == "Debug":
             print(warningColor + "Build type is set to Debug. Performance will be significantly lower." + endColor)
 
@@ -210,20 +210,25 @@ class BasiliskConan(ConanFile):
             self.keep_imports = True
             self.copy("*.dll", "../Basilisk", "bin")
 
-    def build(self):
-        # auto-generate C message definition files
-        print(statusColor + "Auto-generating message definitions:" + endColor, end=" ")
-        bskPath = os.getcwd()
-        os.chdir(os.path.join(bskPath, "src/architecture/messaging/msgAutoSource"))
+    def generateMessageModules(self, originalWorkingDirectory):
         cmdString = list()
         if platform.system() == "Windows":
             cmdString.append("python")
         else:
             cmdString.append("python3")
         cmdString.append("GenCMessages.py")
+        if self.options.pathToExternalModule:
+            cmdString.extend(["--pathToExternalModule", str(self.options.pathToExternalModule)])
         subprocess.check_call(cmdString)
-        os.chdir(bskPath)
+        os.chdir(originalWorkingDirectory)
         print("Done")
+
+    def build(self):
+        # auto-generate C message definition files
+        print(statusColor + "Auto-generating message definitions:" + endColor, end=" ")
+        bskPath = os.getcwd()
+        os.chdir(os.path.join(bskPath, "src/architecture/messaging/msgAutoSource"))
+        self.generateMessageModules(bskPath)
         if self.options.vizInterface:
             # build the protobuffer support files
             bskPath = os.getcwd()
@@ -241,6 +246,7 @@ class BasiliskConan(ConanFile):
         cmake = CMake(self, set_cmake_flags=True, generator=self.generator)
         cmake.definitions["BUILD_OPNAV"] = self.options.opNav
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
+        cmake.definitions["EXTERNAL_MODULE_PATH"] = self.options.pathToExternalModule
         cmake.parallel = True
         cmake.configure()
         add_basilisk_to_sys_path()
@@ -324,5 +330,5 @@ if __name__ == "__main__":
     print(cmakeCmdString)
     os.system(cmakeCmdString)
 
-    add_basilisk_to_sys_path()
+
 

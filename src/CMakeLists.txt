@@ -523,9 +523,12 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simSynch" SIM_SYNCH_TARGETS
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizard" VIZ_INTERFACE_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/cppModuleTemplate" CPP_MODULE_TEMPLATE_TARGETS)
 
-
-
-
+if(NOT "${EXTERNAL_MODULE_PATH}" STREQUAL "")
+	string(REPLACE "\\" "/" EXTERNAL_MODULE_PATH "${EXTERNAL_MODULE_PATH}")
+	find_package_targets("${EXTERNAL_MODULE_PATH}" EXTERNAL_MODULE_TARGETS)
+	generate_package_targets("${EXTERNAL_MODULE_TARGETS}" "${ARCHITECTURE_LIBS};" "Modules")
+	
+endif(NOT "${EXTERNAL_MODULE_PATH}" STREQUAL "")
 
 generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation") # The quotations around DYN_TARGETS informs function that it is a list
 generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation") # TODO: include cspice for just spiceInterface, not all packages

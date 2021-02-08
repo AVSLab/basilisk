@@ -2,96 +2,140 @@
 import parse
 import os,errno
 import shutil
+import argparse
 from sys import platform
 
-with open("../../../../LICENSE", 'r') as f:
-    license = "/*"
-    license += f.read()
-    license += "*/\n\n"
-messaging_template = license
-header_template = license
 
-# clear out an old folder and create a fresh folder of wrapped C message interfaces
-autoSourceDestDir = '../../../../dist3/autoSource/'
-if os.path.exists(autoSourceDestDir):
-    shutil.rmtree(autoSourceDestDir, ignore_errors=True)
-try:
-    os.makedirs(os.path.dirname(autoSourceDestDir))
-except OSError as exc:  # Guard against race condition
-    if exc.errno != errno.EEXIST:
-        raise
+class GenerateMessages:
 
-destination_dir = autoSourceDestDir + 'cMsgCInterface/'
-os.makedirs(os.path.dirname(destination_dir))
+    def __init__(self, pathToExternalModule):
+        self.messageTemplate = ""
+        self.headerTemplate = ""
+        self.autoSourceDestDir = '../../../../dist3/autoSource/'
+        self.destinationDir = os.path.join(self.autoSourceDestDir, 'cMsgCInterface/')
+        self.pathToExternalModule = pathToExternalModule
+        with open('./cMsgCInterfacePy.i.in', 'r') as f:
+            self.swig_template_block = f.read()
+        self.swigTemplate = ""
+        self.messagingAutoData = list()
 
 
-# create swig file for C-msg C interface methods
-swig_template = open(autoSourceDestDir + 'cMsgCInterfacePy.auto.i', 'w')
+    def __createMessageAndHeaderTemplate(self):
+        licenseREADME = list()
+        with open("../../../../LICENSE", 'r') as f:
+            licenseREADME.extend(["/*", f.read(),"*/\n\n"])
+        with open('./README.in', 'r') as r:
+            licenseREADME.append(r.read())
+        self.messageTemplate = ''.join(licenseREADME)
+        self.headerTemplate = ''.join(licenseREADME)
+        with open('./msg_C.cpp.in', 'r') as f:
+            self.messageTemplate += f.read()
+        with open('./msg_C.h.in', 'r') as f:
+            self.headerTemplate += f.read()
+
+    def __recreateDestinationDirectory(self):
+        if os.path.exists(self.autoSourceDestDir):
+            shutil.rmtree(self.autoSourceDestDir, ignore_errors=True)
+        try:
+            os.makedirs(os.path.dirname(self.autoSourceDestDir))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+        print(self.destinationDir)
+        os.makedirs(os.path.dirname(self.destinationDir))
+
+    def __generateMessagingHeaderInterface(self):
+        messaging_header_i_template = ""
+        if platform == "linux" or platform == "linux2":
+            messaging_header_i_template = "#define SWIGWORDSIZE64\n"
+        with open(self.autoSourceDestDir + 'messaging.header.auto.i', 'w') as w:
+            w.write(messaging_header_i_template)
+
+    def __createMessageC(self,parentPath, external=False):
+        if not external:
+            messaging_i_template = "//C messages:"
+        else:
+            messaging_i_template = ""
+        for file in os.listdir(f"{parentPath}/msgPayloadDefC"):
+            if file.endswith(".h"):
+                msgName = (os.path.splitext(file)[0])[:-7]
+                if external:
+                    relativePath = os.path.relpath(self.pathToExternalModule, "../../../architecture").replace("\\",
+                                                                                                               "/")
+                    messaging_i_template += f"\nINSTANTIATE_TEMPLATES({msgName}, {msgName}Payload, {relativePath}/msgPayloadDefC)"
+                else:
+                    messaging_i_template += f"\nINSTANTIATE_TEMPLATES({msgName}, {msgName}Payload, msgPayloadDefC)"
+        with open(self.autoSourceDestDir + 'messaging.auto.i', 'a') as w:
+            w.write(messaging_i_template)
+
+    def __createMessageCpp(self,parentPath, external=False):
+        if external:
+            messaging_i_template = ""
+        else:
+            messaging_i_template = "\n\n//C++ messages:"
+        for file in os.listdir(f"{parentPath}/msgPayloadDefCpp"):
+            if file.endswith(".h"):
+                msgName = (os.path.splitext(file)[0])[:-7]
+                if external:
+                    relativePath = os.path.relpath(self.pathToExternalModule, "../../../architecture").replace("\\",
+                                                                                                               "/")
+                    messaging_i_template += f"\nINSTANTIATE_TEMPLATES({msgName}, {msgName}Payload, {relativePath}/msgPayloadDefCpp)"
+                else:
+                    messaging_i_template += f"\nINSTANTIATE_TEMPLATES({msgName}, {msgName}Payload, msgPayloadDefCpp)"
+        with open(self.autoSourceDestDir + 'messaging.auto.i', 'a') as w:
+            w.write(messaging_i_template)
+
+    def __generateMessages(self):
+        # append all C msg definitions to the dist3/autoSource/messaging.auto.i file that is imported into messaging.auto.i
+        self.__createMessageC("../..")
+        if self.pathToExternalModule and os.path.exists(os.path.join(self.pathToExternalModule,"msgPayloadDefC")):
+            self.__createMessageC(self.pathToExternalModule,True)
+
+        with open(self.autoSourceDestDir + 'messaging.auto.i', 'r') as fb:
+            self.messagingAutoData = fb.readlines()
+        # The following cpp message definitions must be included after the `self.messagingAutoData` variable is set above.
+        # We only need to create Python interfaces to C++ messages, not C wrappers.
+        self.__createMessageCpp("../..")
+        if self.pathToExternalModule and os.path.exists(
+                os.path.join(self.pathToExternalModule, "msgPayloadDefCpp")):
+            self.__createMessageC(self.pathToExternalModule, True)
+
+    def __toMessage(self, structData):
+        if structData:
+            structData = structData.replace(' ', '').split(',')
+            structName = structData[0]
+            sourceHeaderFile = f"{structData[2]}/{structName}Payload.h"
+            definitions = self.messageTemplate.format(type=structName)
+            header = self.headerTemplate.format(type=structName, structHeader=sourceHeaderFile)
+            self.swigTemplate.write(self.swig_template_block.format(type=structName))
+            file_name = os.path.join(self.destinationDir, structName + '_C')
+            definitionsFile = file_name + '.cpp'
+            header_file = file_name + '.h'
+            with open(definitionsFile, 'w') as w:
+                w.write(definitions)
+            with open(header_file, 'w') as w:
+                w.write(header)
+    def initialize(self):
+        self.__createMessageAndHeaderTemplate()
+        self.__recreateDestinationDirectory()
+        self.__generateMessagingHeaderInterface()
+
+    def run(self):
+
+        self.__generateMessages()
+        # create swig file for C-msg C interface methods
+        self.swigTemplate = open(self.autoSourceDestDir + 'cMsgCInterfacePy.auto.i', 'w')
+        templateCall = 'INSTANTIATE_TEMPLATES({:dat})'
+        for line in self.messagingAutoData:
+            parse.parse(templateCall, line.strip(), dict(dat=self.__toMessage))
+        self.swigTemplate.close()
 
 
-# append all C msg definitions to the dist3/autoSource/messaging.auto.i file that is imported into messaging.i
-messaging_header_i_template = ""
-if platform == "linux" or platform == "linux2":
-    messaging_header_i_template = "#define SWIGWORDSIZE64\n"
-with open(autoSourceDestDir + 'messaging.header.auto.i', 'w') as w:
-    w.write(messaging_header_i_template)
-
-messaging_i_template = "//C messages:"
-for file in os.listdir("../../msgPayloadDefC"):
-    if file.endswith(".h"):
-        msgName = (os.path.splitext(file)[0])[:-7]
-        messaging_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " \
-                                 + msgName + "Payload, msgPayloadDefC)"
-with open(autoSourceDestDir + 'messaging.auto.i', 'w') as w:
-    w.write(messaging_i_template)
-
-
-with open('./README.in', 'r') as r:
-    README = r.read()
-messaging_template += README
-header_template += README
-
-with open('./msg_C.cpp.in', 'r') as f:
-    messaging_template += f.read()
-
-with open('./msg_C.h.in', 'r') as f:
-    header_template += f.read()
-
-with open('./cMsgCInterfacePy.i.in', 'r') as f:
-    swig_template_block = f.read()
-
-with open(autoSourceDestDir + 'messaging.auto.i', 'r') as fb:
-    lines = fb.readlines()
-
-# The following cpp message definitions must be included after the `lines` variable is set above.
-# We only need to create Python interfaces to C++ messages, not C wrappers.
-messaging_i_template = "\n\n//C++ messages:"
-for file in os.listdir("../../msgPayloadDefCpp"):
-    if file.endswith(".h"):
-        msgName = (os.path.splitext(file)[0])[:-7]
-        messaging_i_template += "\nINSTANTIATE_TEMPLATES(" + msgName + ", " \
-                                 + msgName + "Payload, msgPayloadDefCpp)"
-with open(autoSourceDestDir + 'messaging.auto.i', 'a') as w:
-    w.write(messaging_i_template)
-
-
-def to_message(struct_data):
-    if struct_data:
-        struct_data = struct_data.replace(' ', '').split(',')
-        struct_name = struct_data[0]
-        source_header_file = 'msgPayloadDefC/' + struct_name + 'Payload.h'
-        definitions = messaging_template.format(type=struct_name)
-        header = header_template.format(type=struct_name, structHeader=source_header_file)
-        swig_template.write(swig_template_block.format(type=struct_name))
-        file_name = destination_dir + struct_name + '_C'
-        definitions_file = file_name + '.cpp'
-        header_file = file_name + '.h'
-        with open(definitions_file, 'w') as w:
-            w.write(definitions)
-        with open(header_file, 'w') as w:
-            w.write(header)
-    return
-
-template_call = 'INSTANTIATE_TEMPLATES({:dat})'
-for line in lines:
-    it = parse.parse(template_call, line.strip(), dict(dat=to_message))
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Configure generated Messages")
+    # define the optional arguments
+    parser.add_argument("--pathToExternalModule", help="External Module path", default="")
+    args = parser.parse_args()
+    generateMessages = GenerateMessages(args.pathToExternalModule)
+    generateMessages.initialize()
+    generateMessages.run()
