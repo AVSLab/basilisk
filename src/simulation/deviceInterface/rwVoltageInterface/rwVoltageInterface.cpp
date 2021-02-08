@@ -41,16 +41,22 @@ RWVoltageInterface::~RWVoltageInterface()
     return;
 }
 
-
-/*! This method reads the RW voltage input messages
+/*! Reset the module to original configuration values.
+ @return void
  */
-void RWVoltageInterface::readInputMessages()
+void RWVoltageInterface::Reset(uint64_t CurrenSimNanos)
 {
     if(!this->rwVoltageInMsg.isLinked())
     {
         bskLogger.bskLog(BSK_WARNING, "rwVoltageInterface.rwVoltageInMsg is not linked.");
         return;
     }
+}
+
+/*! This method reads the RW voltage input messages
+ */
+void RWVoltageInterface::readInputMessages()
+{
 
     // read the incoming array of voltages
     this->inputVoltageBuffer = this->rwVoltageInMsg();

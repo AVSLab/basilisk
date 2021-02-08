@@ -38,6 +38,7 @@ public:
     ~RWVoltageInterface();
    
     void computeRWMotorTorque();
+    void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
