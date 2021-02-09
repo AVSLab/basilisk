@@ -39,9 +39,8 @@ as well as sophisticated mission-specific vehicle simulations that
 include hardware-in-the-loop scenarios.
 
 
-.. image:: _images/static/bskImg1.png
+.. image:: _images/static/bsk2-concept.svg
    :align: center
-   :scale: 50 %
 
 A companion Visualization program is called :ref:`Vizard <vizard>`.  This stand-alone program is based on the Unity rendering engine and can display the Basilisk simulation states in an interactive manner. The following image links to a video showing the basic features.
 
