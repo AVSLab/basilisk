@@ -67,6 +67,7 @@ Version 2.0.0
 - changed the output message type of :ref:`magnetometer` to be compatible with :ref:`tamComm`
 - Created several instructional pages in the Quick-Start documentation folder.  The examples folder
   has moved to the Quick-Start guide as well
+- Added installation instructions to run Basilisk on a computer with the Apple M1 processor
 
 
 Version |release|
