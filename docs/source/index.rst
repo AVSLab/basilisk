@@ -42,8 +42,19 @@ include hardware-in-the-loop scenarios.
 .. image:: _images/static/bsk2-concept.svg
    :align: center
 
-A companion Visualization program is called :ref:`Vizard <vizard>`.  This stand-alone program is based on the Unity rendering engine and can display the Basilisk simulation states in an interactive manner. The following image links to a video showing the basic features.
+A companion Visualization program is called :ref:`Vizard <vizard>`.  This stand-alone program is based on the Unity rendering engine and can display the Basilisk simulation states in an interactive manner.
 
+What is Basilisk Used For?
+--------------------------
+This software is being actively used for:
+
+- astrodynamics research to model complex spacecraft dynamical behaviors
+- developing new guidance, estimation and control solutions
+- supporting mission concept development
+- supporting flight software development
+- supporting hardware in the loop testing by simulating in realtime the spacecraft states
+- analysis of flight data and compare against expected behavior
+- supporting spacecraft AI based autonomy development
 
 Name/Logo Description
 ----------------------
