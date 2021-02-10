@@ -56,10 +56,3 @@ After the simulation completes, the recorded data is stored inside the ``msgRec`
 
 
 
-.. ** Tutorial Review Video **
-
-    .. raw:: html
-
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/6YmZyu0f-qI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-..
-I don't see this video on the live website.

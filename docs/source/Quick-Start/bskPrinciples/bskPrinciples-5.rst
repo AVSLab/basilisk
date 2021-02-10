@@ -6,7 +6,7 @@ Creating Stand-Alone Messages
 
     The python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/bsk-5.py>`.
 
-The prior example showed how to connect messages that are embedded within the Basilisk modules.  However, there are times where you might need to create a stand-alone copy of such a message.  Some flight algorithm modules require the input of a stand-alone message that provides information about the spacecraft mass and inertia properties, or thruster or reaction wheel configuration information.  Further, the module unit test ideally just run the module being tested and all input messages are well-controlled stand-alone messages. .. I don't understand the last sentence.
+The prior example showed how to connect messages that are embedded within the Basilisk modules.  However, there are times where you might need to create a stand-alone copy of such a message.  Some flight algorithm modules require the input of a stand-alone message that provides information about the spacecraft mass and inertia properties, or thruster or reaction wheel configuration information.  For example, the module unit test ideally just runs the module being tested. Any input messages that this module needs should be created as stand-alone messages.  This avoids the unit test script depending on other modules output messages, but makes the module test function on its own.
 
 This tutorial shows you how to create a stand-alone message and connect the :ref:`cppModuleTemplate` input message to it.  The syntax is identical to connect a stand-alone message to a C module.  Further, this example illustrates how the simulation can be started and stopped multiple times while the message or module variables are changed between runs.
 
@@ -50,9 +50,3 @@ Next, the simulation stop time is extended for an additional 10s to 20s total an
 
 
 
-.. ** Tutorial Review Video **
-
-    .. raw:: html
-
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/6YmZyu0f-qI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-.. Video not shown in the live site.

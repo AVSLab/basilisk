@@ -18,7 +18,7 @@ The source code is shown below.  As we are going to be using the Basilisk messag
    :linenos:
    :lines: 18-
 
-The method ``.subscribeTo()`` connects an output message (varible name ending with ``OutMsg``) to an input message (variable name ending with ``InMsg``), as shown in lines 36-37 above.  While C modules contain message objects with a C interface, and C++ modules contain C++ message objects, the ``.subscribeTo()`` method is set up such that the user doesn't have to worry about this distinction.  Rather, this method connects C to C, C to C++, C++ to C++ and C++ to C message connections.
+The method ``.subscribeTo()`` connects an output message (variable name ending with ``OutMsg``) to an input message (variable name ending with ``InMsg``), as shown in lines 36-37 above.  While C modules contain message objects with a C interface, and C++ modules contain C++ message objects, the ``.subscribeTo()`` method is set up such that the user doesn't have to worry about this distinction.  Rather, this method connects C to C, C to C++, C++ to C++ and C++ to C message connections.
 
 Thus, a module output message ``anotherModule.xxxOutMsg`` is connected to a module input message ``someModule.xxxInMsg`` using the ``.subscribeTo()`` method as follows::
 
@@ -45,12 +45,3 @@ If you execute this python code you should see the following terminal output:
 
 Note that here the two modules are added without setting a priority.  Thus, they are executed in the order that they were added to the Basilisk task.
 
-
-
-.. ** Tutorial Review Video **
-
-    .. raw:: html
-
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/6YmZyu0f-qI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-..
-I don't see this video on the server site. Is this a newer .rst?

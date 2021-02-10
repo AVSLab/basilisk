@@ -27,7 +27,7 @@ The next step is the creation of three BSK processes: two processes for dynamics
 
 The integer priority defaults to -1 which means that this process is executed after all processes with a specified priority, and in the order that the non-priority processes were created.
 
-The next steps create task lists that are contained in a process or task group.  The first argument is the string name that identifies the task being created.  The second argument is the task update rate in nano-seconds.  Here the ``macros.sec2nano()`` method is a convenient tool to convert seconds to nano-seconds.  When the BSK simulation increments its time variable, it does so in nano-second time steps, the smallest time unit in Basilisk.  It is chosen to be small enough such that no dynamics, sensor or algorithm module should require a smaller time step.  However, it is still large such that with a 64-bit unsigned integer we can still simulated a mission lifetime of 584 years.  .. I thought this line was a little extra.
+The next steps create task lists that are contained in a process or task group.  The first argument is the string name that identifies the task being created.  The second argument is the task update rate in nano-seconds.  Here the ``macros.sec2nano()`` method is a convenient tool to convert seconds to nano-seconds.  When the BSK simulation increments its time variable, it does so in nano-second time steps, the smallest time unit in Basilisk.  It is chosen to be small enough such that no dynamics, sensor or algorithm module should require a smaller time step.  However, it is still large such that with a 64-bit unsigned integer we can still simulated a mission lifetime of 584 years.
 
 As with the ``Process`` creation, the ``Task`` creation by default has a priority of -1. This means that the task lists are evaluated after any prioritized task lists within the process and in the order they are created.  To set a positive priority value to a task use::
 
@@ -36,10 +36,13 @@ As with the ``Process`` creation, the ``Task`` creation by default has a priorit
 
 To execute processes and tasks, call the ``InitializeSimulation()`` method which initializes the simulation module ``scSim`` and the modules within it.
 
-Next, the simulation length is set through ``ConfigureStopTime(stopTime)`` where again the stop time must be provided in nano-seconds.  Note that this is the absolute stop time.  If you run the simulation for 5 seconds, then change some parameters, and then want to resume the simulation for an additional 5 seconds, the second stop time must be the accumulated simulation time of 10 seconds. .. I don't understand this. What do you mean by "resume" the simulation? Maybe I'm not understanding something more fundamental here.
+Next, the simulation length is set through ``ConfigureStopTime(stopTime)`` where again the stop time must be provided in nano-seconds.  Note that this is the absolute stop time.  If you run the simulation for 5 seconds, then change some parameters, and then want to continue the simulation for an additional 5 seconds, the second stop time must be the accumulated simulation time of 10 seconds.  This is illustrated below::
 
+    scSim.ConfigureStopTime(macros.sec2nano(5.0))
+    scSim.ExecuteSimulation()
+    scSim.ConfigureStopTime(macros.sec2nano(10.0))
+    scSim.ExecuteSimulation()
 
-** Tutorial Review Video **
 
 .. raw:: html
 

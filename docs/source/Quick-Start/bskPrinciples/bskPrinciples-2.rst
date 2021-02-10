@@ -11,7 +11,7 @@ Understanding now what a Basilisk process (Task Group) and a task is, we can now
 .. image:: ../../_images/static/qs-bsk-2.svg
    :align: center
 
-The following simulation creates a single process called ``dynamicsProcess`` and single 0.2Hz task called ``dynamicsTask``. As illustrated above, two copies of :ref:`fswModuleTemplate` (cModule) and one of :ref:`cppModuleTemplate` are created where they are called ``Module1``, ``Module3`` and ``Module2`` respectively.  However, note that in this example we seek to execute modules 2 and 3 first and 1 last.
+The following simulation creates a single process called ``dynamicsProcess`` and single 0.2Hz task called ``dynamicsTask``. As illustrated above, two copies of :ref:`fswModuleTemplate` (cModule) and one of :ref:`cppModuleTemplate` are created where they are called ``cModule1``, ``cModule3`` and ``cppModule2`` respectively.  However, note that in this example we seek to execute modules 2 and 3 first and 1 last.
 
 .. literalinclude:: ../../codeSamples/bsk-2.py
    :language: python
@@ -20,10 +20,11 @@ The following simulation creates a single process called ``dynamicsProcess`` and
 
 The resulting demonstration code is shown above.  Note that the C-based :ref:`fswModuleTemplate` must be imported from ``Basilisk.fswAlgorithm`` at the top of the file.
 
-Next we create a copy of the C-based Basilisk module.  Let's discuss this process considering a generic module name ``someCModule``.  As C code doesn't know about class objects, in Basilisk we have to recreate some of the basic features of an object oriented language like C++.  Instead of having class variables, the data of the C module is stored in the ``someCModuleConfig`` data structure.  For :ref:`fswModuleTemplate` you find this module configuration structure listed at the bottom of that web page, or you can see the structure definition in the ``someCModule.h`` header file.  Thus, to create a python copy of this module configuration structure use:: ..
-I'm not completely understanding this section. I think matching up the module names in the explanation with the code would be very helpful to follow along or at least some line numbers.
+Next we create a copy of the C-based Basilisk module.  Let's discuss this process considering a generic module name ``someCModule``.  As C code doesn't know about class objects, in Basilisk we have to recreate some of the basic features of an object oriented language like C++.  Instead of having class variables, the data of the C module is stored in the ``someCModuleConfig`` data structure.  For :ref:`fswModuleTemplate` you find this module configuration structure listed at the bottom of that web page, or you can see the structure definition in the ``someCModule.h`` header file.  Thus, to create a python copy of this module configuration structure use::
 
     moduleData = someCModule.someCModuleConfig()
+
+In the code example above this step is done on lines 22 and 29.
 
 Next, for Basilisk to be able to execute this module, we need to wrap this module data structure with a C++ interface.  These steps make it possible to have multiple C module copies be created that don't conflict with each other.  The module wrapped is done with::
 

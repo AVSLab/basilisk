@@ -60,9 +60,3 @@ Here ``variableString`` is again composed of the ``ModelTag`` and variable name 
 
 Note that both the C and C++ module variables are correctly being recorded.
 
-.. ** Tutorial Review Video **
-
-    .. raw:: html
-
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/6YmZyu0f-qI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-.. I do not see this video in the live site.
