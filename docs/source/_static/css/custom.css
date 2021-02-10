@@ -146,7 +146,7 @@ code, .rst-content tt, .rst-content code {
 	}
 	
 	.rst-content dl:not(.docutils) {
-		padding-top: 1em;;
+		padding-top: 1em;
 	}
 	
 	.rst-content dl:not(.docutils) code.descclassname, .rst-content dl:not(.docutils) code.descname {
@@ -161,5 +161,12 @@ code, .rst-content tt, .rst-content code {
 	.wy-table caption, .rst-content table.docutils caption, .rst-content table.field-list caption {
 		color: inherit;
 	}
-	
+
+	span.vm, span.nf, span.nn {
+	    color:#66f !important;
+	}
+
+	td.linenos pre {
+	    background: #ccc !important;
+	}
 }
