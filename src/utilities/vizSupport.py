@@ -926,7 +926,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if not isinstance(val, bool):
             print('ERROR: vizSupport: liveStream must True or False')
             exit(1)
-        vizMessenger.liveStream = True
+        vizMessenger.liveStream = val
         if 'opNavMode' in kwargs:
             if kwargs['opNavMode'] > 0:
                 print('ERROR: vizSupport: do not use liveStream and opNavMode flags at the same time.')
