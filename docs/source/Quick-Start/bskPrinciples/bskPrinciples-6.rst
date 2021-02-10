@@ -13,7 +13,7 @@ The simulation setup is shown in the figure below.  Both a C and C++ module are 
 .. image:: ../../_images/static/qs-bsk-6.svg
    :align: center
 
-The sample code is shown below.  The C and C++ modules are setup as before.  The variable ``someVariable`` of module ``someModule`` is set in python using ``someModule.someVariable = ...``.
+The sample code is shown below.  The C and C++ modules are set up as before.  The variable ``someVariable`` of module ``someModule`` is set in python using ``someModule.someVariable = ...``.
 
 .. literalinclude:: ../../codeSamples/bsk-6.py
    :language: python
@@ -30,7 +30,7 @@ The ``recordingTime`` variable is the minimum time that must pass, in nano-secon
 
 The optional integer arguments ``indexStart`` and ``indexStop`` are defaulted to zero, resulting in a single value being recorded.  As this example is also recording a 3-dimensional array ``dumVector``, it is recorded by setting the start and end index to 0 and 2 respectively.
 
-After executing the script the recorded variables are retrieved in general using the :ref:`SimulationBaseClass` method::
+After executing the script, the recorded variables are retrieved in general using the :ref:`SimulationBaseClass` method::
 
     scSim.GetLogVariableData(variableString)
 
@@ -65,3 +65,4 @@ Note that both the C and C++ module variables are correctly being recorded.
     .. raw:: html
 
         <iframe width="560" height="315" src="https://www.youtube.com/embed/6YmZyu0f-qI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+.. I do not see this video in the live site.
