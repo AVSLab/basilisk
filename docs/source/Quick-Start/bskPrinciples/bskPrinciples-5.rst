@@ -48,5 +48,8 @@ Next, the simulation stop time is extended for an additional 10s to 20s total an
 .. image:: /_images/Scenarios/bsk-5.svg
    :align: center
 
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/XzimNVJm8t8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
