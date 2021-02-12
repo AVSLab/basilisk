@@ -169,4 +169,8 @@ code, .rst-content tt, .rst-content code {
 	td.linenos pre {
 	    background: #ccc !important;
 	}
+	
+	.rst-content .highlighted {
+		background-color: #333;
+	}
 }
