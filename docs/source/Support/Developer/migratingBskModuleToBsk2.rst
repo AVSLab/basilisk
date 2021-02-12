@@ -42,7 +42,7 @@ If your module uses::
 
 this file has now moved to::
 
-    #include "simulation/utilities/macroDefinitions.h"
+    #include "architecture/utilities/macroDefinitions.h"
 
 Further, all includes should be done relative to the ``Basilisk/src`` directory.  This means::
 
