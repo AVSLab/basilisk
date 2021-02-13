@@ -40,9 +40,12 @@ splitPath = path.split(bskName)
 def test_spacecraftLocation(show_plots, defaultPolarRadius, defaultPlanet, latitude, maxRange, cone):
     """
     Tests whether spacecraftLocation:
-        1. defaults planet polar radius to equatorial radius if the polar radius is not set
-        2. checks that the zero default planet states are used if the planet is not provided
-        3. checks that the planet oblateness is accounted for
+
+    1. defaults planet polar radius to equatorial radius if the polar radius is not set
+    2. checks that the zero default planet states are used if the planet is not provided
+    3. checks that the planet oblateness is accounted for
+    4. checks if the optional sensor boresight axis is properly accounted for
+
     :return:
     """
 

@@ -20,55 +20,16 @@ r"""
 Overview
 --------
 
-Demonstrates a basic method to simulate 3 satellites with 6-DOF motion and how to visualize the simulation
-data in :ref:`Vizard <vizard>`.  One satellite is a 3-axis attitude controlled
-satellite, while the second satellite is a tumbling space debris object.  The controlled satellite simulation components
-are taken from :ref:`scenarioAttitudeFeedbackRW`. The purpose of this script is to show an explicit method to
-setup multiple satellites, and also show how to store the Basilisk simulation data to be able to visualize
-both satellite's motions within the :ref:`Vizard <vizard>` application.
+Demonstrates using :ref:`spacecraftLocation` to check for times where the antenna axis on the primary spacecraft
+has access to another spacecraft.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
-      python3 scenarioFormationBasic.py
+      python3 scenarioSpacecraftLocation.py
 
-The simulation layout is shown in the following illustration.  A single simulation process is created
-which contains both the servicer spacecraft and associated the Flight Software (FSW) algorithm
-modules, as well as the first debris object that has 2 free-spinning RWs, and another debris object that
-is an inert rigid body.
+When the simulation completes a plot is shown with the access times illustrated.
 
-.. image:: /_images/static/test_scenarioFormationBasic.svg
-   :align: center
-
-When the simulation completes several plots are shown for the servicer MRP attitude history, the rate
-tracking errors, the RW motor torque components, as well as the RW wheel speeds.
-
-The simulation setups the spacecraft with 3 RW devices similar to :ref:`scenarioAttitudeFeedbackRW`.  One difference
-is that here :ref:`hillPoint` is used to align the spacecraft with the Hill frame.  The two debris objects are
-in a 2:1 centered ellipse and a lead-follower configuration with the servicer respectively.  The servicer camera
-has a camera instrument attached that is pointing in the 3rd body axis direction.
-
-This simulation scripts illustrates how to use the :ref:`vizSupport` methods to record the simulation data such
-that it can be viewed in the Vizard visualization.
-
-
-Illustration of Simulation Results
-----------------------------------
-
-::
-
-    show_plots = True
-
-Note that in the RW motor torque plot both the required control torque :math:`\hat u_B` and the true
-motor torque :math:`u_B` are shown.  This illustrates that with this maneuver the RW devices are being
-saturated, and the attitude still eventually stabilizes.
-
-.. image:: /_images/Scenarios/scenarioFormationBasic1.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioFormationBasic2.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioFormationBasic3.svg
+.. image:: /_images/Scenarios/scenarioSpacecraftLocation1.svg
    :align: center
 
 
@@ -307,13 +268,17 @@ def run(show_plots):
     plt.xlabel('Time [min]')
     plt.ylabel('Sat-Sat Access')
 
+    figureList = {}
+    pltName = fileName + "1"
+    figureList[pltName] = plt.figure(1)
+
     if show_plots:
         plt.show()
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return
+    return figureList
 
 
 #

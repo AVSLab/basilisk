@@ -11,6 +11,13 @@ Basilisk Release Notes
     folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``basilisk/examples``
     folder.  More documentation and tutorial scripts are in development.
 
+.. Warning::
+
+   This next generation of Basilisk introduces a new messaging system and file architecture.  As a result
+   using BSK2 will required upgrading existing Basilisk simulation scripts (see :ref:`migratingToBsk2`) and C/C++ modules
+   (see :ref:`migratingModuleToBsk2`) will need to be upgraded to use 2.0.  All unit test and example scenario scripts
+   have been updated and form a good source for examples on how to use the new software framework.
+
 .. sidebar:: In Progress Features
 
     - ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
@@ -23,8 +30,9 @@ Basilisk Release Notes
         - support for multi-threading when simulating multiple satellite systems
         - more flexible manner to build Basilisk with custom external modules and messages
 
-Version 2.0.0
--------------
+Version |release|
+-----------------
+
 .. Warning::
 
    This next generation of Basilisk introduces a new messaging syste and file architecture.  As a result
@@ -70,9 +78,6 @@ Version 2.0.0
 - Added installation instructions to run Basilisk on a computer with the Apple M1 processor
 - added :ref:`spacecraftLocation` module to allow checking for satellite to satellite line-of-sight access
 
-
-Version |release|
------------------
 
 
 Version 1.8.10

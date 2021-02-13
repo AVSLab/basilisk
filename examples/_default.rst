@@ -99,7 +99,7 @@ Access to Communication Locations
    :maxdepth: 1
 
    Satellite communicating to Earth ground station <scenarioGroundDownlink>
-   Satellite hecking communication access to another satellite <scenarioSpacecraftLocation>
+   Satellite checking communication access to another satellite <scenarioSpacecraftLocation>
 
 Planet Albedo
 ^^^^^^^^^^^^^
