@@ -167,8 +167,6 @@ bool MsisAtmosphere::customReadMessages(){
 void MsisAtmosphere::updateInputParams()
 {
     this->msisInput.ap = this->ap;
-    //std::cout<<this->aph.a[0]<<std::endl;
-    //std::cout<<this->msisInput.ap_a->a[0]<<std::endl;
     this->msisInput.ap_a->a[0] = this->aph.a[0];
     this->msisInput.ap_a->a[1] = this->aph.a[1];
     this->msisInput.ap_a->a[2] = this->aph.a[2];

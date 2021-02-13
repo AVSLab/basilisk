@@ -61,6 +61,13 @@ GroundLocation::~GroundLocation()
 void GroundLocation::Reset(uint64_t CurrentSimNanos)
 {
     this->r_LP_P = this->r_LP_P_Init;
+    
+    if (this->planetRadius < 0) {
+        bskLogger.bskLog(BSK_ERROR, "GroundLocation module must have planetRadius set.");
+    }
+    if (this->maximumRange < 0) {
+        bskLogger.bskLog(BSK_ERROR, "GroundLocation module must have maximumRange set.");
+    }
 }
 
 /*! Specifies the ground location from planet-centered latitude, longitude, altitude position.

@@ -78,5 +78,5 @@ The names below are only special in that they are useful defaults and are actual
     sf.eclipseInMsg.subscribeTo(eclMsg)
     sim.AddModelToTask(task.Name, sf)
 
-    dataLog = sf.solarFluxOutMsg.log()
+    dataLog = sf.solarFluxOutMsg.recorder()
 

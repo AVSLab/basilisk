@@ -82,8 +82,8 @@ Spacecraft can be added to the model by calling:
 
     groundTarget.addSpacecraftToModel(sc1.scStateOutMsg)
     groundTarget.addSpacecraftToModel(sc2.scStateOutMsg)
-    groundTarget.addSpacecraftToModel(sc2.scStateOutMsg)
 
     #   log code
-    dataLog0 = groundTarget.currentGroundStateOutMsg.log()
-    dataLog1 = groundTarget.accessOutMsgs[0].log()
+    dataLog0 = groundTarget.currentGroundStateOutMsg.recorder()
+    dataLog1 = groundTarget.accessOutMsgs[0].recorder()
+    dataLog2 = groundTarget.accessOutMsgs[1].recorder()
