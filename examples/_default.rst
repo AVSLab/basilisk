@@ -93,12 +93,13 @@ Gravity Gradient Torque
 
    Gravity  Gradient Perturbed Hill Pointing <scenarioAttitudeGG>
 
-Ground Station on Planet Surface
+Access to Communication Locations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. toctree::
    :maxdepth: 1
 
-   Satellite Communicating to Earth Ground Station <scenarioGroundDownlink>
+   Satellite communicating to Earth ground station <scenarioGroundDownlink>
+   Satellite hecking communication access to another satellite <scenarioSpacecraftLocation>
 
 Planet Albedo
 ^^^^^^^^^^^^^

@@ -68,6 +68,7 @@ Version 2.0.0
 - Created several instructional pages in the Quick-Start documentation folder.  The examples folder
   has moved to the Quick-Start guide as well
 - Added installation instructions to run Basilisk on a computer with the Apple M1 processor
+- added :ref:`spacecraftLocation` module to allow checking for satellite to satellite line-of-sight access
 
 
 Version |release|
