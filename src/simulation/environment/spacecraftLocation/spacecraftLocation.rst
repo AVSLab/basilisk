@@ -3,7 +3,7 @@ Executive Summary
 -----------------
 This module determines if one satellite has a line of sight vector to another satellite.  An oblate planet is modeled through the equatorial and the polar radius. If the line of sight vector between two satellites is above this surface, then the output access message is set to true.  The module has a primary spacecraft which determines access to `N` other spacecraft orbiting the same planet.
 
-Further, the module tracks a body-fixed location `L` on the primary spacecraft (i.e. location where an antenna is attached), and you can specify an optional sensor/communication bore sight axis :math:`\hat{\bf a}` and an edge-to-edge sensor/communication cone angle :math:`\theta`.  In this case the access message is true if teh line of sight vector between spacecraft is above the surface and the relative position vector to the other spacecraft is within this cone.
+Further, the module tracks a body-fixed location `L` on the primary spacecraft (i.e. location where an antenna is attached), and you can specify an optional sensor/communication bore sight axis :math:`\hat{\bf a}` and an center-to-edge sensor/communication cone angle :math:`\theta`.  In this case the access message is true if teh line of sight vector between spacecraft is above the surface and the relative position vector to the other spacecraft is within this cone.
 
 Finaly, if the other spacecraft is accessable, the range to the other satellite is stored in the output message.
 
