@@ -33,6 +33,8 @@ SpacecraftLocation::SpacecraftLocation()
     this->maximumRange = -1.0;
 
     this->r_LB_B.fill(0.0);
+    this->aHat_B.fill(0.0);
+    this->theta = -1.0;
 
     this->planetState = this->planetInMsg.zeroMsgPayload();
     this->planetState.J20002Pfix[0][0] = 1;
@@ -71,6 +73,13 @@ void SpacecraftLocation::Reset(uint64_t CurrentSimNanos)
         this->rPolar = rEquator;
     }
     this->zScale = this->rEquator / this->rPolar;
+    
+    if (this->aHat_B.norm() > 0.1 ) {
+        if (this->theta < 0.0) {
+            bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation must set theta if you specify aHat_B");
+        }
+        this->aHat_B.normalize();
+    }
 }
 
 
@@ -181,10 +190,26 @@ void SpacecraftLocation::computeAccess()
         this->accessMsgBuffer.at(c) = this->accessOutMsgs.at(c)->zeroMsgPayload();
         if (rClose.norm() > this->rEquator) {
             r_SL_P[2] = r_SL_P[2] / this->zScale;
-            this->accessMsgBuffer.at(c).slantRange = r_SL_P.norm();
-            if ((this->maximumRange > 0 && r_SL_P.norm() < this->maximumRange)
-                || this->maximumRange < 0) {
-                this->accessMsgBuffer.at(c).hasAccess = 1;
+            double range = r_SL_P.norm();
+            this->accessMsgBuffer.at(c).slantRange = range;
+            this->accessMsgBuffer.at(c).hasAccess = 1;
+            
+            // check for out of range condition
+            if (this->maximumRange > 0 && range > this->maximumRange) {
+                this->accessMsgBuffer.at(c).hasAccess = 0;
+            }
+            
+            // check if other spacecraft is within sensor/communication boresight axis
+            if (this->theta > 0.0) {
+                Eigen::Vector3d aHat_P;     // sensor axis in planet frame components
+                double phi;                 // angle between relative positin vector and aHat
+                aHat_P = this->dcm_PN * dcm_NB * this->aHat_B;
+                phi = acos(r_SL_P.dot(aHat_P) / range);
+                this->accessMsgBuffer.at(c).elevation = M_PI_2 - phi;
+                if (phi > this->theta) {
+                    // other spacecraft is outside the cone field of view
+                    this->accessMsgBuffer.at(c).hasAccess = 0;
+                }
             }
         }
     }

@@ -408,7 +408,7 @@ def np2EigenMatrix3d(mat):
 
 
 def np2EigenVectorXd(vec):
-    """Convert numpty to Eigen vector"""
+    """Convert numpy to Eigen vector"""
     npVec = []
     for item in vec:
         npVec.extend([[item]])

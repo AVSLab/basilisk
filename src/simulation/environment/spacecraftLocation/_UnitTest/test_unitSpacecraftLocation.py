@@ -36,7 +36,8 @@ splitPath = path.split(bskName)
 @pytest.mark.parametrize("defaultPlanet", [False, True])
 @pytest.mark.parametrize("latitude", [55, 65, 115])
 @pytest.mark.parametrize("maxRange", [-1, 3000.*1000])
-def test_spacecraftLocation(show_plots, defaultPolarRadius, defaultPlanet, latitude, maxRange):
+@pytest.mark.parametrize("cone", [0, 1, -1])
+def test_spacecraftLocation(show_plots, defaultPolarRadius, defaultPlanet, latitude, maxRange, cone):
     """
     Tests whether spacecraftLocation:
         1. defaults planet polar radius to equatorial radius if the polar radius is not set
@@ -46,11 +47,11 @@ def test_spacecraftLocation(show_plots, defaultPolarRadius, defaultPlanet, latit
     """
 
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, defaultPolarRadius, defaultPlanet, latitude, maxRange)
+    [testResults, testMessage] = run(show_plots, defaultPolarRadius, defaultPlanet, latitude, maxRange, cone)
     assert testResults < 1, testMessage
 
 
-def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange):
+def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange, cone):
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -70,6 +71,9 @@ def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange):
         module.rPolar = orbitalMotion.REQ_EARTH * 1000. * 0.5
     if maxRange:
         module.maximumRange = maxRange
+    if cone != 0:
+        module.aHat_B = unitTestSupport.np2EigenVectorXd([0, 0, cone])
+        module.theta = 80. * macros.D2R
 
     scSim.AddModelToTask(simTaskName, module)
 
@@ -111,17 +115,16 @@ def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange):
     accessMsg = module.accessOutMsgs[0].read()
 
     if latitude == 55 or (latitude == 65 and not defaultPolarRadius):
+        trueAccess = 1
         if maxRange > 0:
-            if accessMsg.slantRange < maxRange:
-                # should have access
-                if accessMsg.hasAccess != 1:
-                    testFailCount += 1
-                    testMessages.append("FAILED: " + module.ModelTag + " Module failed positive have access test.")
-            else:
-                # should not have access
-                if accessMsg.hasAccess != 0:
-                    testFailCount += 1
-                    testMessages.append("FAILED: " + module.ModelTag + " Module failed max range have access test.")
+            if accessMsg.slantRange > maxRange:
+                trueAccess = 0
+        if cone == 1:
+            trueAccess = 0
+
+        if accessMsg.hasAccess != trueAccess:
+            testFailCount += 1
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed access test.")
 
         if accessMsg.slantRange <= 1e-6:
             testFailCount += 1
@@ -131,6 +134,7 @@ def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange):
         if accessMsg.hasAccess != 0:
             testFailCount += 1
             testMessages.append("FAILED: " + module.ModelTag + " Module failed negative have access test.")
+
         if np.abs(accessMsg.slantRange) > 1e-6:
             testFailCount += 1
             testMessages.append("FAILED: " + module.ModelTag + " Module failed negative slant range test.")
@@ -147,7 +151,8 @@ if __name__ == '__main__':
     run(False
         , False      # defaultPolarRadius
         , True     # defaultPlanet
-        , 65        # true latitude angle (deg)
+        , 55        # true latitude angle (deg)
         , -7000.*1000 # max range
+        , 1            # cone case, 0-> no cone, 1 -> [0, 1, 0], -1 -> [0, -1, 0]
         )
 

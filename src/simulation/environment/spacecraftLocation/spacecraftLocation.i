@@ -27,11 +27,12 @@
 from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
-%include "sys_model.h"
+%include "swig_eigen.i"
 %include "swig_conly_data.i"
-%include "spacecraftLocation.h"
 %include "std_vector.i"
 
+%include "sys_model.h"
+%include "spacecraftLocation.h"
 
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;

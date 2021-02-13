@@ -51,6 +51,8 @@ public:
     double rEquator;            //!< [m] equatorial planet radius
     double rPolar;              //!< [m] polar planet radius
     double maximumRange;        //!< [m] Maximum slant range to compute access for; defaults to -1, which represents no maximum range.
+    Eigen::Vector3d aHat_B;     //!< [] (optional) unit direction vector vector of the senor/communication boresight axis
+    double theta;               //!< [r] (optional) sensor/communication half-cone angle, must be set if shat_B is specified
 
     ReadFunctor<SCPlusStatesMsgPayload> primaryScStateInMsg;        //!< primary spacecraft input message
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;            //!< planet state input message

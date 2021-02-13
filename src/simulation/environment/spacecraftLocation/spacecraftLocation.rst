@@ -89,6 +89,21 @@ Thus, the point of closed approach is determined through:
 If :math:`|{\bf r}^\ast| > r_{eq}` then the other spacecraft is visible relative to the primary spacecraft.
 
 
+Determining Sensor Cone Inclusion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If the line of sight property is established, then the module can also take into consideration a sensor or communication boresight axis :math:`\hat {\bf a}` which is fixed relative to the primary spacecraft body frame.  The angle :math:`\phi` between the relative position vector and this body fixed unit direction vector is found through:
+
+.. math::
+    \phi = \arccos \left( \frac{ {\bf r}_{S/B} \cdot \hat{\bf a}}{|{\bf r}_{S/B} |} \right)
+
+The module sets the sensor cone half-angle :math:`\theta`.  If :math:`\phi > \theta` then the sensor or communication axis does not have access to the other spacecraft.
+
+This :math:`\hat{\bf a}` is considered, then the access output message sets the message elevation angle as
+
+.. math::
+
+    \text{elevation} = \frac{\pi}{2} - \phi
+
 
 
 User Guide
@@ -113,6 +128,13 @@ A optional planet emphemeris is connected via the``planetInMsg`` input message:
     location.planetInMsg.subscribeTo(planetMsg)
 
 It this message is not connected, then zero planet position and attitude orientation are set.
+
+
+To set a primary spacecraft body fixed sensor or communication axis :math:`\hat{\bf a}` and half-cone angle :math:`\theta`, use::
+
+    module.aHat_B = unitTestSupport.np2EigenVectorXd([xxx, xxx, xxx])
+    module.theta = xxx * macros.D2R
+
 
 Spacecraft can be added to the model by calling::
 
