@@ -4,6 +4,9 @@
 Welcome to the Basilisk Astrodynamics Framework Documentation
 =============================================================
 
+.. image:: _images/static/bannerImage.jpg
+       :align: center
+       :width: 100%
 
 Architecture
 ------------
