@@ -77,6 +77,7 @@ Version |release|
   has moved to the Quick-Start guide as well
 - Added installation instructions to run Basilisk on a computer with the Apple M1 processor
 - added :ref:`spacecraftLocation` module to allow checking for satellite to satellite line-of-sight access
+- made ``maximumRange`` an optional variable in :ref:`groundLocation`
 
 
 

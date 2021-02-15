@@ -65,9 +65,6 @@ void GroundLocation::Reset(uint64_t CurrentSimNanos)
     if (this->planetRadius < 0) {
         bskLogger.bskLog(BSK_ERROR, "GroundLocation module must have planetRadius set.");
     }
-    if (this->maximumRange < 0) {
-        bskLogger.bskLog(BSK_ERROR, "GroundLocation module must have maximumRange set.");
-    }
 }
 
 /*! Specifies the ground location from planet-centered latitude, longitude, altitude position.
@@ -178,7 +175,7 @@ void GroundLocation::computeAccess()
 
         double viewAngle = (M_PI_2-acos(this->rhat_LP_N.dot(relativeHeading_N)));
 
-        if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange)){
+        if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0)){
             accessMsgIt->hasAccess = 1;
             accessMsgIt->slantRange = r_BL_N.norm();
             accessMsgIt->elevation = viewAngle;

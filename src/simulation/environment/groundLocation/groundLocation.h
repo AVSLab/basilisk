@@ -55,7 +55,7 @@ private:
 public:
     double planetRadius; //!< [m] Planet radius in meters.
     double minimumElevation; //!< [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees equivalent.
-    double maximumRange; //!< [m] Maximum slant range to compute access for; defaults to -1, which represents no maximum range.
+    double maximumRange; //!< [m] (optional) Maximum slant range to compute access for; defaults to -1, which represents no maximum range.
 
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;            //!< planet state input message
     Message<GroundStateMsgPayload> currentGroundStateOutMsg;    //!< ground location output message

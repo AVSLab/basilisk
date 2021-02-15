@@ -69,6 +69,7 @@ A new instance of groundLocation, alongside necessary user-supplied parameters, 
     groundTarget.specifyLocation(np.radians(0.), np.radians(0.), 0.) #  Sets location in latitude, longitude, altitude coordinates
     scSim.AddModelToTask(simTaskName, groundTarget)
 
+The ``maximumRange`` variable is optional and defaults to -1.  This means by default no maximum range is considered.  Set it to a positive value to have ``hasAccess`` output message variable depend on range.
 
 A groundLocation can be affixed to a specific planet by setting its ``planetInMsg`` input message:
 
