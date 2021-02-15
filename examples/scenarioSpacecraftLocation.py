@@ -233,7 +233,7 @@ def run(show_plots):
     # to save the BSK data to a file, uncomment the saveFile line below
     if vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
-                                                  , saveFile=fileName,
+                                                  # , saveFile=fileName,
                                                   )
         vizSupport.addLocation(viz, stationName="antenna"
                                , parentBodyName='Servicer'
