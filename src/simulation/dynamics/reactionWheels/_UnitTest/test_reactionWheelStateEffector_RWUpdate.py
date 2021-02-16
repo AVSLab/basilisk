@@ -48,7 +48,25 @@ from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("accuracy", [1e-8])
 def test_RWUpdate(show_plots, accuracy):
-    """Module Unit Test"""
+    r"""
+    **Validation Test Description**
+
+    The objective of this script is to test the functionality of changing the reaction wheel (RW) characteristics while
+    the simulation is running. It starts by testing the initial setup, and then does three additional tests: the first
+    two change the maximum allowed torque and the final one changes the current wheel speeds and maximum allowed wheel
+    speeds. All these tests rely on the fact that, when a maximum or minimum value is surpassed, the applied torque is
+    capped accordingly.
+
+    As this test script is not parameterized, only one version of this script will run.
+
+    **Description of Variables Being Tested**
+
+    As discussed, in this file we check the values of the applied torque for each reaction wheel ``i``:
+
+    - ``rwStateEffector.rwOutMsgs[i].u_current``
+
+    For ease of use, this data is stored in ``dataRW``, which is then used to check if the tests are being passed.
+    """
     [testResults, testMessage] = RWUpdateTest(show_plots, accuracy)
     assert testResults < 1, testMessage
 
