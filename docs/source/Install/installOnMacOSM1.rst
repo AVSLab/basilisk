@@ -37,9 +37,14 @@ Running a Virtual Environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Follow the :ref:`installMacOS` instructions to setup and activate the virtual environment.  This way you install the Intel python packages just for using Basilisk.  This won't interfere with other projects that might be running M1 python packages.
 
+Be sure to update `pip` inside the virtual environmnent to the latest version using::
+
+    python3 -m pip install -U pip
+
+
 Install Packages
 ~~~~~~~~~~~~~~~~
-The first step is still to install ``conan``.  However, in this setup you also need to install the wheel package using::
+The first step is still to install ``conan``.  However, in this setup you also need to install the ``wheel`` package using::
 
     (.venv) $ pip3 install conan wheel
 
