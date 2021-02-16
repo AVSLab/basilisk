@@ -37,7 +37,7 @@ Simulation Scenario Setup Details
 ---------------------------------
 A simulation process is created which contains both the spacecraft simulation module,
 as well as one albedo module from :ref:`albedo` module using CSS configuration.
-The dynamics simulation is setup using :ref:`SpacecraftPlus`.
+The dynamics simulation is setup using :ref:`Spacecraft`.
 The CSS module is created using :ref:`coarseSunSensor`.
 The input message ``sunPositionInMsg`` specifies an input message that contains the sun's position.
 
@@ -147,7 +147,7 @@ from Basilisk.simulation import eclipse
 from Basilisk.utilities import orbitalMotion as om
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 
 # import message declarations
 from Basilisk.architecture import messaging
@@ -214,10 +214,10 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         pl2Msg = messaging.SpicePlanetStateMsg().write(planetPositionMsg2)
 
     #
-    # Initialize spacecraftPlus object and set properties
+    # Initialize spacecraft object and set properties
     #
     oe = om.ClassicElements()
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     rLEO = req1 + 500 * 1000  # m
     # Define the simulation inertia
@@ -252,9 +252,9 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         scObject.hub.v_CN_NInit = vN  # m - v_CN_N
         scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_BN_B
         scObject.hub.omega_BN_BInit = [[0.0], [0.0], [.5 * macros.D2R]]  # rad/s - omega_BN_B
-        scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+        scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
-    # Add spacecraftPlus object to the simulation process
+    # Add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     #

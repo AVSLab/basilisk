@@ -42,7 +42,7 @@ and the segment of that trajectory flown during the simulation.
 
 The basic simulation setup is the same as the one used in
 :ref:`scenarioAttitudeGuidance`.
-The dynamics simulation is setup using a :ref:`SpacecraftPlus` module to which a gravity
+The dynamics simulation is setup using a :ref:`Spacecraft` module to which a gravity
 effector is attached.  Note that both the rotational and translational degrees of
 freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.  For more
 information on how to setup an orbit, see :ref:`scenarioBasicOrbit`.
@@ -108,7 +108,7 @@ to point the correct face of the spacecraft along the negative V-bar.
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus(), extForceTorque, simpleNav(),
+# Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(),
 #           MRP_Feedback() with attitude navigation modules.  This script is a
 #           spinoff from the attitude guidance tutorial, it implements a hyperbolic
 #           trajectory and uses the velocityPoint module.
@@ -121,7 +121,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint
-from Basilisk.simulation import extForceTorque, simpleNav, spacecraftPlus
+from Basilisk.simulation import extForceTorque, simpleNav, spacecraft
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
 from Basilisk.utilities import vizSupport
 from Basilisk.architecture import messaging
@@ -239,8 +239,8 @@ def run(show_plots, useAltBodyFrame):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
@@ -250,7 +250,7 @@ def run(show_plots, useAltBodyFrame):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
@@ -262,7 +262,7 @@ def run(show_plots, useAltBodyFrame):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   initialize Spacecraft States with initialization variables

@@ -78,7 +78,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
 from Basilisk.architecture import sim_model
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
 from Basilisk.fswAlgorithms import meanOEFeedback
@@ -108,8 +108,8 @@ def run(show_plots, useClassicElem, numOrbits):
     dynProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
 
     # sc
-    scObject = spacecraftPlus.SpacecraftPlus()
-    scObject2 = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
+    scObject2 = spacecraft.Spacecraft()
     scObject.ModelTag = "scObject"
     scObject2.ModelTag = "scObject2"
 
@@ -133,9 +133,9 @@ def run(show_plots, useClassicElem, numOrbits):
     gravBodies['earth'].useSphericalHarmParams = True
     simIncludeGravBody.loadGravFromFile(
         bskPath + '/supportData/LocalGravData/GGM03S.txt', gravBodies['earth'].spherHarm, 2)
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
         list(gravFactory.gravBodies.values()))
-    scObject2.gravField.gravBodies = spacecraftPlus.GravBodyVector(
+    scObject2.gravField.gravBodies = spacecraft.GravBodyVector(
         list(gravFactory.gravBodies.values()))
 
     # extObj

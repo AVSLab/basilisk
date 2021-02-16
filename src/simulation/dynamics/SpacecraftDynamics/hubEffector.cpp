@@ -80,7 +80,7 @@ void HubEffector::registerStates(DynParamManager& states)
     this->velocityState = states.registerState(3, 1, this->nameOfHubVelocity);
     this->sigmaState = states.registerState(3, 1, this->nameOfHubSigma);
     this->omegaState = states.registerState(3, 1, this->nameOfHubOmega);
-    /* - r_BN_N and v_BN_N of the hub is first set to r_CN_N and v_CN_N and then is corrected in spacecraftPlus
+    /* - r_BN_N and v_BN_N of the hub is first set to r_CN_N and v_CN_N and then is corrected in spacecraft
      initializeDynamics to incorporate the fact that point B and point C are not necessarily coincident */
     this->posState->setState(this->r_CN_NInit);
     this->velocityState->setState(this->v_CN_NInit);

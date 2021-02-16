@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import messaging
 
@@ -62,7 +62,7 @@ def test_singleGravityBody(show_plots):
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     DynUnitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -83,7 +83,7 @@ def test_singleGravityBody(show_plots):
     gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', stringCurrent)
     gravFactory.spiceObject.zeroBase = 'Earth'
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     unitTestSim.AddModelToTask(unitTaskName, gravFactory.spiceObject, None, 10)
 
@@ -192,7 +192,7 @@ def test_multiBodyGravity(show_plots):
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     DynUnitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -208,7 +208,7 @@ def test_multiBodyGravity(show_plots):
     gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', stringCurrent)
     gravFactory.spiceObject.zeroBase = 'Earth'
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     unitTestSim.AddModelToTask(unitTaskName, gravFactory.spiceObject, None, 10)
 

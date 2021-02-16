@@ -20,7 +20,7 @@
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus(), extForceTorque, simpleNav(),
+# Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(),
 #           MRP_Feedback() with attitude navigation modules.  This script is a
 #           spinoff from the attitude guidance tutorial, it implements a hyperbolic
 #           trajectory and uses the velocityPoint module.

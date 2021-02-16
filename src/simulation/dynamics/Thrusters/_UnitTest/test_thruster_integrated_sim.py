@@ -20,7 +20,7 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spiceInterface
 from Basilisk.utilities import simIncludeThruster
@@ -47,7 +47,7 @@ def test_thrusterIntegratedTest(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -103,7 +103,7 @@ def test_thrusterIntegratedTest(show_plots):
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
 
     # Define initial conditions of the spacecraft
     scObject.hub.mHub = 750.0

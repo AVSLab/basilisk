@@ -87,7 +87,7 @@ from Basilisk.simulation import simplePowerSink
 from Basilisk.simulation import simpleBattery
 from Basilisk.simulation import simpleSolarPanel
 from Basilisk.simulation import eclipse
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
@@ -119,8 +119,8 @@ def run(show_plots):
     testProc.addTask(scenarioSim.CreateNewTask(taskName, testProcessRate))
 
     # Create a spacecraft around Earth
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
 
     # clear prior gravitational body and SPICE setup definitions
@@ -131,7 +131,7 @@ def run(show_plots):
     mu = planet.mu
     sun = gravFactory.createSun()
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup Spice interface for some solar system bodies
     timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'

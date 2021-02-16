@@ -22,7 +22,7 @@ Overview
 
 Demonstrates how to use RWs to stabilize the tumble of a spacecraft orbiting the Earth.
 This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal is to
-illustrate how the Reaction Wheel (RW) state effector can be added to the rigid :ref:`spacecraftPlus` hub,
+illustrate how the Reaction Wheel (RW) state effector can be added to the rigid :ref:`spacecraft` hub,
 and what flight algorithm module is used to control these RWs.
 
 The first setup runs the RW control to produce a desired set of RW motor torques
@@ -45,7 +45,7 @@ tracking errors, as well as the RW motor torque components, as well as the RW wh
 
 The fundamental simulation setup is the same as the one used in
 :ref:`scenarioAttitudeFeedback`.
-The dynamics simulation is setup using a :ref:`SpacecraftPlus` module to which an Earth gravity
+The dynamics simulation is setup using a :ref:`Spacecraft` module to which an Earth gravity
 effector is attached.  The simple navigation module is still used to output the inertial attitude,
 angular rate, as well as position and velocity message. The simulation is setup to run in a single
 process again.  If the flight algorithms and simulation tasks are to run at different rates, then see
@@ -57,7 +57,7 @@ How to Add RW Devices to the Spacecraft Simulation
 For the spacecraft simulation side of this script, the new element is adding RW effectors to the
 the rigid spacecraft hub.  The support macro ``simIncludeRW.py`` provides several convenient tools to facilitate
 this simulated RW setup process.  This script allows the user to readily create RWs from a database of
-public RW specifications, customize them if needed, and add them to the :ref:`spacecraftPlus` module.
+public RW specifications, customize them if needed, and add them to the :ref:`spacecraft` module.
 
 The first task is to create a fresh instance of the RW factory class ``rwFactory()``.  This factory is able
 to create a list of RW devices, and return copies that can easily be manipulated and customized if needed.
@@ -114,9 +114,9 @@ command.  This table list the arguments, default values, as well as expected uni
 |                     |       |          | starting with 1.                       |                    |
 +---------------------+-------+----------+----------------------------------------+--------------------+
 
-The command ``addToSpacecraft()`` adds all the created RWs to the :ref:`spacecraftPlus` module.  The final step
+The command ``addToSpacecraft()`` adds all the created RWs to the :ref:`spacecraft` module.  The final step
 is as always to add the vector of RW effectors (called ``rwStateEffector`` above) to the list of simulation
-tasks.  However, note that the dynamic effector should be evaluated before the :ref:`spacecraftPlus` module,
+tasks.  However, note that the dynamic effector should be evaluated before the :ref:`spacecraft` module,
 which is why it is being added with a higher priority than the ``scObject`` task.  Generally speaking
 we should have the execution order::
 
@@ -263,7 +263,7 @@ the balanced RW case.  But there is a distinct numerical difference.
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus(), RWs, simpleNav() and
+# Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and
 #           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
 #           while using the RWs to do the attitude control actuation.
 # Author:   Hanspeter Schaub
@@ -276,7 +276,7 @@ import os
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     inertial3D, rwMotorTorque, rwMotorVoltage)
-from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, simpleNav, spacecraftPlus
+from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, simpleNav, spacecraft
 from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
@@ -396,8 +396,8 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
@@ -407,7 +407,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
     # clear prior gravitational body and SPICE setup definitions
@@ -419,7 +419,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     # add RW devices

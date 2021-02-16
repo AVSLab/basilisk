@@ -43,7 +43,7 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import radiationPressure
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.architecture import messaging
 
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -82,7 +82,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     testProc = unitTestSim.CreateNewProcess(testProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraft"
     unitTestSim.AddModelToTask(testTaskName, scObject)
 

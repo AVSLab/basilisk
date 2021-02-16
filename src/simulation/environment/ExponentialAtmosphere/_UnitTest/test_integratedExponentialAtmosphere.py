@@ -31,7 +31,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import messaging
@@ -76,12 +76,12 @@ def AddSpacecraftToModel(atmoModel):
     testMessages = []
 
     # create the dynamics task and specify the integration update time
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
-    scObject2 = spacecraftPlus.SpacecraftPlus()
+    scObject2 = spacecraft.Spacecraft()
     scObject2.ModelTag = "spacecraftBody"
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     atmoModel.addSpacecraftToModel(scObject.scStateOutMsg)
     atmoModel.addSpacecraftToModel(scObject2.scStateOutMsg)
 
@@ -129,8 +129,8 @@ def TestExponentialAtmosphere():
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     # clear prior gravitational body and SPICE setup definitions
@@ -142,7 +142,7 @@ def TestExponentialAtmosphere():
     planet.isCentralBody = True          # ensure this is the central gravitational body
     mu = planet.mu
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time

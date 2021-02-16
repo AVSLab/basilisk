@@ -24,7 +24,7 @@ ambient lighting the following code is used:
 	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
 	viz.settings.ambient = 0.5
 
-Here ``scObject`` is a :ref:`SpacecraftPlus` instance.  This can also be a list of spacecraft objects
+Here ``scObject`` is a :ref:`spacecraft` instance.  This can also be a list of spacecraft objects
 for a multi-satellite simulation.
 The spacecraft names are pulled from `scObject.ModelTag`.
 If a setting is not provided, then the Vizard

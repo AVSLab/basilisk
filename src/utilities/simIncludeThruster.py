@@ -178,7 +178,7 @@ class thrusterFactory(object):
                 module model tag string
             thDynamicEffector: thrusterDynamicEffector
                 thruster dynamic effector handle
-            scPlus: spacecraftPlus
+            scPlus: spacecraft
         """
 
         thDynamicEffector.ModelTag = modelTag

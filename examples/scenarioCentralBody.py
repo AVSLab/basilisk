@@ -33,7 +33,7 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 
 .. note:: This script is a good reference for configuring the following modules:
 
-          * :ref:`spacecraftPlus`
+          * :ref:`spacecraft`
           * :ref:`gravityEffector`
 
 
@@ -84,7 +84,7 @@ import matplotlib.pyplot as plt
 from Basilisk import __path__
 bskPath = __path__[0]
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
@@ -129,11 +129,11 @@ def run(show_plots, useCentral):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup Gravity Body
@@ -153,7 +153,7 @@ def run(show_plots, useCentral):
     scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time

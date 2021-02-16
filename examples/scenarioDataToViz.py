@@ -75,7 +75,7 @@ import numpy as np
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import dataFileToViz
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 
 try:
     from Basilisk.simulation import vizInterface
@@ -139,10 +139,10 @@ def run(show_plots, attType):
 
     # create SC dummy objects to setup basic Vizard settings.  Only one has to have the Grav Bodies attached
     # to show up in Vizard
-    scObject1 = spacecraftPlus.SpacecraftPlus()
+    scObject1 = spacecraft.Spacecraft()
     scObject1.ModelTag = "servicer"
-    scObject1.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
-    scObject2 = spacecraftPlus.SpacecraftPlus()
+    scObject1.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject2 = spacecraft.Spacecraft()
     scObject2.ModelTag = "target"
     scList = [scObject1, scObject2]
 

@@ -87,7 +87,7 @@ The second control scenario points the spacecraft towards Mars on a Mars orbit.
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the vizInterface, spacecraftPlus, simpleNav, mrpFeedback. and inertial3D modules.
+# Purpose:  Integrated test of the vizInterface, spacecraft, simpleNav, mrpFeedback. and inertial3D modules.
 # Illustrates a spacecraft pointing with visualization.
 # Author:   Thibaud Teil
 # Creation Date:  Nov. 01, 2018
@@ -109,7 +109,7 @@ from Basilisk.utilities import macros, orbitalMotion
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import simpleNav
@@ -209,8 +209,8 @@ def run(show_plots, missionType, saveVizardFile):
     #
     #   setup the simulation tasks/objects
     #
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     # define the simulation inertia
     I = [900., 0., 0.,
@@ -220,9 +220,9 @@ def run(show_plots, missionType, saveVizardFile):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup extForceTorque module

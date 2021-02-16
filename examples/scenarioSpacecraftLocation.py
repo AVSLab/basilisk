@@ -47,7 +47,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, hillPoint)
-from Basilisk.simulation import simpleNav, spacecraftPlus
+from Basilisk.simulation import simpleNav, spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 unitTestSupport, vizSupport)
@@ -101,7 +101,7 @@ def run(show_plots):
     #
 
     # initialize servicer spacecraft object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "Servicer"
     # define the simulation inertia
     I = [900., 0., 0.,
@@ -111,7 +111,7 @@ def run(show_plots):
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # create the debris object states
-    scObject2 = spacecraftPlus.SpacecraftPlus()
+    scObject2 = spacecraft.Spacecraft()
     scObject2.ModelTag = "Debris"
     I2 = [600., 0., 0.,
           0., 650., 0.,
@@ -119,7 +119,7 @@ def run(show_plots):
     scObject2.hub.mHub = 350.0  # kg
     scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I2)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
     scSim.AddModelToTask(simTaskName, scObject2)
 
@@ -132,8 +132,8 @@ def run(show_plots):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
-    scObject2.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject2.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # add external control torque to scObject
     extFTObject = extForceTorque.ExtForceTorque()

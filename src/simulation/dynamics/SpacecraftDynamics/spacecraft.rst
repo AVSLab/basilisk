@@ -3,14 +3,14 @@ Executive Summary
 -----------------
 This module provides the spacecraft rigid body translational and rotation motion.
 This is an instantiation of the :ref:`dynamicObject` abstract class that is a spacecraft with :ref:`stateEffector`'s and
-:ref:`dynamicEffector`'s attached to it. The spacecraftPlus allows for both translation and
+:ref:`dynamicEffector`'s attached to it. The ``spacecraft`` module allows for both translation and
 rotation. :ref:`stateEffector`'s such as RWs, flexible solar panel, fuel slosh etc can be added to the spacecraft by attaching
 stateEffectors. :ref:`dynamicEffector`'s such as thrusters, external force and torque, SRP etc can be added to the spacecraft
 by attaching dynamicEffectors. This class performs all of this interaction between stateEffectors, dynamicEffectors and
 the hub.
 
 The module
-:download:`PDF Description </../../src/simulation/dynamics/SpacecraftDynamics/_Documentation/SpacecraftPlus/Basilisk-SPACECRAFTPLUS-20170808.pdf>`
+:download:`PDF Description </../../src/simulation/dynamics/SpacecraftDynamics/_Documentation/SpacecraftSystem/Basilisk-SPACECRAFT-20170808.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 
@@ -22,10 +22,10 @@ user from python.  The msg type contains a link to the message structure definit
 provides information on what this message is used for.
 
 .. _ModuleIO_SPACECRAFT_PLUS:
-.. figure:: /../../src/simulation/dynamics/SpacecraftDynamics/_Documentation/SpacecraftPlus/Images/moduleSpacecraftPlus.svg
+.. figure:: /../../src/simulation/dynamics/SpacecraftDynamics/_Documentation/Spacecraft/Images/moduleSpacecraft.svg
     :align: center
 
-    Figure 1: ``SpacecraftPlus()`` Module I/O Illustration
+    Figure 1: ``Spacecraft()`` Module I/O Illustration
 
 
 .. list-table:: Module I/O Messages
@@ -47,15 +47,15 @@ provides information on what this message is used for.
 
 User Guide
 ----------
-This section is to outline the steps needed to setup a SpacecraftPlus module in python using Basilisk.
+This section is to outline the steps needed to setup a Spacecraft module in python using Basilisk.
 
-#.  Import the spacecraftPlus class::
+#.  Import the spacecraft class::
 
-        import spacecraftPlus
+        import spacecraft
 
 #.  Create an instantiation of a spacecraft::
 
-        scObject = spacecraftPlus.SpacecraftPlus()
+        scObject = spacecraft.Spacecraft()
 
 #.  Define all physical parameters for the hub. For example::
 

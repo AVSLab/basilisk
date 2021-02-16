@@ -34,7 +34,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import exponentialAtmosphere, simpleNav
 from Basilisk.utilities import unitTestSupport, RigidBodyKinematics
@@ -141,8 +141,8 @@ def run(show_plots, orbitCase, planetCase):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
@@ -152,7 +152,7 @@ def run(show_plots, orbitCase, planetCase):
 
     scObject.addDynamicEffector(dragEffector)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
     scSim.AddModelToTask(dragEffectorTaskName, dragEffector)
     # clear prior gravitational body and SPICE setup definitions
@@ -167,7 +167,7 @@ def run(show_plots, orbitCase, planetCase):
         planet.isCentralBody = True          # ensure this is the central gravitational body
     mu = planet.mu
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time

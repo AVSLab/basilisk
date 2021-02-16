@@ -19,7 +19,7 @@
 import numpy as np
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
-from Basilisk.simulation import (spacecraftPlus, extForceTorque, simpleNav,
+from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
                                  reactionWheelStateEffector, coarseSunSensor, eclipse)
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.simulation import ephemerisConverter
@@ -54,7 +54,7 @@ class BSKDynamicModels():
         SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep))
 
         # Instantiate Dyn modules as objects
-        self.scObject = spacecraftPlus.SpacecraftPlus()
+        self.scObject = spacecraft.Spacecraft()
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
         self.rwFactory = simIncludeRW.rwFactory()
         self.extForceTorqueObject = extForceTorque.ExtForceTorque()
@@ -105,7 +105,7 @@ class BSKDynamicModels():
         self.earth = 1
         self.moon = 2
 
-        self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(self.gravFactory.gravBodies.values()))
+        self.scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(self.gravFactory.gravBodies.values()))
         self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
                                               timeInitString,
                                               epochInMsg=True)

@@ -83,7 +83,7 @@ resulting position coordinates and trajectories differences are shown below.
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus() and gravity modules.  Illustrates
+# Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
 # how to setup an orbital simulation that uses multiple gravitational bodies.
 # Author:   Hanspeter Schaub
 # Creation Date:  Dec. 8, 2016
@@ -104,7 +104,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import astroFunctions
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import messaging
 
@@ -157,18 +157,18 @@ def run(show_plots, scCase):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
 
-    # The spacecraftPlus() module is setup as before, except that we need to specify a priority to this task.
+    # The spacecraft() module is setup as before, except that we need to specify a priority to this task.
     # If BSK modules are added to the simulation task process, they are executed in the order that they are added
     # However, we the execution order needs to be control, a priority can be assigned.  The model with a higher priority
     # number is executed first.  Modules with unset priorities will be given a priority of -1 which
     # puts them at the
     # very end of the execution frame.  They will get executed in the order in which they were added.
     # For this scenario scripts, it is critical that the Spice object task is evaluated
-    # before the spacecraftPlus() model.  Thus, below the Spice object is added with a higher priority task.
+    # before the spacecraft() model.  Thus, below the Spice object is added with a higher priority task.
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
     # The first step to create a fresh gravity body factor class through
@@ -190,7 +190,7 @@ def run(show_plots, scCase):
                                      , 100
                                      )
     # The configured gravitational bodies are added to the spacecraft dynamics with the usual command:
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # Next, the default SPICE support module is created and configured.  The first step is to store
     # the date and time of the start of the simulation.
@@ -207,12 +207,12 @@ def run(show_plots, scCase):
                                      epochInMsg=True)
 
     # By default the SPICE object will use the solar system barycenter as the inertial origin
-    # If the spacecraftPlus() output is desired relative to another celestial object, the zeroBase string
+    # If the spacecraft() output is desired relative to another celestial object, the zeroBase string
     # name of the SPICE object needs to be changed.
     # Next the SPICE module is customized.  The first step is to specify the zeroBase.  This is the inertial
     # origin relative to which all spacecraft message states are taken.  The simulation defaults to all
     # planet or spacecraft ephemeris being given in the SPICE object default frame, which is the solar system barycenter
-    # or SSB for short.  The spacecraftPlus() state output message is relative to this SBB frame by default.  To change
+    # or SSB for short.  The spacecraft() state output message is relative to this SBB frame by default.  To change
     # this behavior, the zero based point must be redefined from SBB to another body.
     # In this simulation we use the Earth.
     gravFactory.spiceObject.zeroBase = 'Earth'
@@ -249,13 +249,13 @@ def run(show_plots, scCase):
     rN = scInitialState[0:3]  # meters
     vN = scInitialState[3:6]  # m/s
 
-    # Note that these vectors are given here relative to the Earth frame.  When we set the spacecraftPlus()
+    # Note that these vectors are given here relative to the Earth frame.  When we set the spacecraft()
     # initial position and velocity vectors through before initialization
     scObject.hub.r_CN_NInit = rN  # m - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m - v_CN_N
     # the natural question arises, how does Basilisk know relative to what frame these states are defined?  This is
     # actually setup above where we set `.isCentralBody = True` and mark the Earth as are central body.
-    # Without this statement, the code would assume the spacecraftPlus() states are
+    # Without this statement, the code would assume the spacecraft() states are
     # relative to the default zeroBase frame.
     # In the earlier basic orbital motion script (@ref scenarioBasicOrbit) this subtleties were not discussed.
     # This is because there

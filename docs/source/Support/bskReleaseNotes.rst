@@ -121,7 +121,7 @@ Version 1.8.6
     - write the panel inertial and position states as an output message
     - updated document to make use of RST format and specify module input and output messages
 - updated ``avsEigenSupport.h`` to add new methods ``eigenMRPd2Vector3d()`` and ``eigenC2MRP()``
-- updated :ref:`spacecraftPlus` to allow the attitude motion to be prescribed through
+- updated ``spacecraftPlus`` to allow the attitude motion to be prescribed through
   an optional input message of type ``attRefMsg``.
 - fixed sign issue in :ref:`simpleSolarPanel`
 - support Vizard 1.6.0 scripting  
@@ -2184,7 +2184,7 @@ from 0011 to 0012.
 
 Added a force and torque calculation method in the stateEffector
 abstract class, and provided the necessary method calls in
-spacecraftPlus. This allows for stateEffectors to calculate the force
+``spacecraft``. This allows for stateEffectors to calculate the force
 and torque that they are imparting on the rigid body hub. The
 hingedRigidBodyStateEffector and the linearSpringMassDamper classes
 provide their implementation of these calculations.

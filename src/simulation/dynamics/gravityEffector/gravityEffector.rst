@@ -52,7 +52,7 @@ User Guide
 ----------
 The user must provide a list of :ref:`GravBodyData` objects to the spacecraft using::
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravBodyList)
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(gravBodyList)
 
 Each gravity body data object can be created using::
 

@@ -272,7 +272,8 @@ This list makes it simple to see what naming will need to be changed.
     +                           +---------------------------------+-----------------------------------+
     |                           | ``inputSunName``                | ``sunStateInMsg``                 |
     +---------------------------+---------------------------------+-----------------------------------+
-    | spacecraftPlus            | ``scMassStateOutMsgName``       | ``scMassOutMsg``                  |
+    | spacecraftPlus →          | ``scMassStateOutMsgName``       | ``scMassOutMsg``                  |
+    |  ``spacecraft``           |                                 |                                   |
     +---------------------------+---------------------------------+-----------------------------------+
     | spaceToGroundTransmitter  | ``storageUnitMsgNames``         | ``storageUnitInMsgs``             |
     +                           +---------------------------------+-----------------------------------+

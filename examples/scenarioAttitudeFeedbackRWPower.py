@@ -85,7 +85,7 @@ import os
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     inertial3D, rwMotorTorque)
-from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraftPlus
+from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
@@ -172,8 +172,8 @@ def run(show_plots, useRwPowerGeneration):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
@@ -183,7 +183,7 @@ def run(show_plots, useRwPowerGeneration):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
     # clear prior gravitational body and SPICE setup definitions
@@ -195,7 +195,7 @@ def run(show_plots, useRwPowerGeneration):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     # add RW devices

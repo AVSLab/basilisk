@@ -37,7 +37,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
 from Basilisk.architecture import messaging
@@ -90,8 +90,8 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     #   setup the simulation tasks/objects
     #
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     # default case, RK4 is automatically setup, no extra code is needed
@@ -102,7 +102,7 @@ def run(doUnitTests, show_plots, integratorCase):
         integratorObject = svIntegrators.svIntegratorRK2(scObject)
         scObject.setIntegrator(integratorObject)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
@@ -113,7 +113,7 @@ def run(doUnitTests, show_plots, integratorCase):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time

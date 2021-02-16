@@ -17,7 +17,7 @@
 
  */
 
-#include "spacecraftDynamics.h"
+#include "spacecraftSystem.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "../_GeneralModuleFiles/svIntegratorRK4.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -25,7 +25,7 @@
 #include "../../../architecture/utilities/rigidBodyKinematics.h"
 #include <iostream>
 
-Spacecraft::Spacecraft()
+SpacecraftUnit::SpacecraftUnit()
 {
     // - Set default names
     this->spacecraftName = "spacecraft";
@@ -37,12 +37,12 @@ Spacecraft::Spacecraft()
     return;
 }
 
-Spacecraft::~Spacecraft()
+SpacecraftUnit::~SpacecraftUnit()
 {
     return;
 }
 
-void Spacecraft::addStateEffector(StateEffector *newStateEffector)
+void SpacecraftUnit::addStateEffector(StateEffector *newStateEffector)
 {
     this->states.push_back(newStateEffector);
 
@@ -52,21 +52,21 @@ void Spacecraft::addStateEffector(StateEffector *newStateEffector)
     return;
 }
 
-void Spacecraft::addDynamicEffector(DynamicEffector *newDynamicEffector)
+void SpacecraftUnit::addDynamicEffector(DynamicEffector *newDynamicEffector)
 {
     this->dynEffectors.push_back(newDynamicEffector);
 
     return;
 }
 
-void Spacecraft::addDockingPort(DockingData *newDockingPort)
+void SpacecraftUnit::addDockingPort(DockingData *newDockingPort)
 {
     this->dockingPoints.push_back(newDockingPort);
 
     return;
 }
 
-void Spacecraft::SelfInitSC(int64_t moduleID)
+void SpacecraftUnit::SelfInitSC(int64_t moduleID)
 {
 }
 
@@ -74,12 +74,12 @@ void Spacecraft::SelfInitSC(int64_t moduleID)
 /*! This method is used to reset the module.
  @return void
  */
-void Spacecraft::ResetSC(uint64_t CurrentSimNanos)
+void SpacecraftUnit::ResetSC(uint64_t CurrentSimNanos)
 {
     this->gravField.Reset(CurrentSimNanos);
 }
 
-void Spacecraft::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
+void SpacecraftUnit::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
 {
     // - Write output messages for each spacecraft
     // - Populate state output message
@@ -121,7 +121,7 @@ void Spacecraft::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
     this->scEnergyMomentumOutMsg.write(&energyMomentumOut, moduleID, clockTime);
     return;
 }
-void Spacecraft::linkInStatesSC(DynParamManager& statesIn)
+void SpacecraftUnit::linkInStatesSC(DynParamManager& statesIn)
 {
     // - Get access to all spacecraft hub states
     this->hubR_N = statesIn.getStateObject(this->hub.nameOfHubPosition);
@@ -137,9 +137,9 @@ void Spacecraft::linkInStatesSC(DynParamManager& statesIn)
     return;
 }
 
-void Spacecraft::initializeDynamicsSC(DynParamManager& statesIn)
+void SpacecraftUnit::initializeDynamicsSC(DynParamManager& statesIn)
 {
-    // - SpacecraftPlus initiates all of the spaceCraft mass properties
+    // - Spacecraft() initiates all of the spaceCraft mass properties
     Eigen::MatrixXd initM_SC(1,1);
     Eigen::MatrixXd initMDot_SC(1,1);
     Eigen::MatrixXd initC_B(3,1);
@@ -191,7 +191,7 @@ void Spacecraft::initializeDynamicsSC(DynParamManager& statesIn)
         (*stateIt)->registerStates(statesIn);
     }
 
-    // - Link in states for the spaceCraftPlus, gravity and the hub
+    // - Link in states for the spacecraft, gravity and the hub
     this->linkInStatesSC(statesIn);
     this->gravField.linkInStates(statesIn);
     this->hub.linkInStates(statesIn);
@@ -213,7 +213,7 @@ void Spacecraft::initializeDynamicsSC(DynParamManager& statesIn)
 }
 
 /*! This is the constructor, setting variables to default values */
-SpacecraftDynamics::SpacecraftDynamics()
+SpacecraftSystem::SpacecraftSystem()
 {
     // - Set default names
     this->sysTimePropertyName = "systemTime";
@@ -232,13 +232,13 @@ SpacecraftDynamics::SpacecraftDynamics()
 }
 
 /*! This is the destructor, nothing to report here */
-SpacecraftDynamics::~SpacecraftDynamics()
+SpacecraftSystem::~SpacecraftSystem()
 {
     return;
 }
 
 /*! This method adds a spacecraft to the simulation as a free floating spacecraft */
-void SpacecraftDynamics::addSpacecraftUndocked(Spacecraft *newSpacecraft)
+void SpacecraftSystem::addSpacecraftUndocked(SpacecraftUnit *newSpacecraft)
 {
     this->unDockedSpacecraft.push_back(newSpacecraft);
 
@@ -246,7 +246,7 @@ void SpacecraftDynamics::addSpacecraftUndocked(Spacecraft *newSpacecraft)
 }
 
 /*! This method attaches a spacecraft to the chain of spacecraft attached to the primary spacecraft */
-void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName)
+void SpacecraftSystem::attachSpacecraftToPrimary(SpacecraftUnit *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName)
 {
     // Create chain of docked spacecraft
     std::vector<DockingData*>::iterator dockingItPrimary;
@@ -274,7 +274,7 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, st
     }
 
     if (checkDock < 1) {
-        std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+        std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
         for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
         {
             std::vector<DockingData*>::iterator dockingItConnected;
@@ -322,43 +322,43 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, st
 /*! This method is used to reset the module.
  @return void
  */
-void SpacecraftDynamics::Reset(uint64_t CurrentSimNanos)
+void SpacecraftSystem::Reset(uint64_t CurrentSimNanos)
 {
     this->primaryCentralSpacecraft.ResetSC(CurrentSimNanos);
 
     // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         (*spacecraftConnectedIt)->ResetSC(CurrentSimNanos);
     }
 
     // - Call this for all of the unconnected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
         (*spacecraftUnConnectedIt)->ResetSC(CurrentSimNanos);
     }
 
-    // - Call method for initializing the dynamics of spacecraftPlus
+    // - Call method for initializing the dynamics of spacecraft
     this->initializeDynamics();
 }
 
 /*! This is the method where the messages of the state of vehicle are written */
-void SpacecraftDynamics::writeOutputMessages(uint64_t clockTime)
+void SpacecraftSystem::writeOutputMessages(uint64_t clockTime)
 {
     // - Call writeOutputMessages for primary spacecraft
     this->primaryCentralSpacecraft.writeOutputMessagesSC(clockTime, this->moduleID);
 
     // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         (*spacecraftConnectedIt)->writeOutputMessagesSC(clockTime, this->moduleID);
     }
 
     // - Call this for all of the unconnected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
         (*spacecraftUnConnectedIt)->writeOutputMessagesSC(clockTime, this->moduleID);
@@ -368,7 +368,7 @@ void SpacecraftDynamics::writeOutputMessages(uint64_t clockTime)
 }
 
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
-void SpacecraftDynamics::UpdateState(uint64_t CurrentSimNanos)
+void SpacecraftSystem::UpdateState(uint64_t CurrentSimNanos)
 {
     // - Convert current time to seconds
     double newTime = CurrentSimNanos*NANO2SEC;
@@ -377,14 +377,14 @@ void SpacecraftDynamics::UpdateState(uint64_t CurrentSimNanos)
     this->primaryCentralSpacecraft.gravField.UpdateState(CurrentSimNanos);
 
     // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         (*spacecraftConnectedIt)->gravField.UpdateState(CurrentSimNanos);
     }
 
     // - Call this for all of the unconnected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
         (*spacecraftUnConnectedIt)->gravField.UpdateState(CurrentSimNanos);
@@ -424,7 +424,7 @@ void SpacecraftDynamics::UpdateState(uint64_t CurrentSimNanos)
 /*! This method is used to initialize the simulation by registering all of the states, linking the dynamicEffectors,
  stateEffectors, and the hub, initialize gravity, and initialize the sim with the initial conditions specified in python
  for the simulation */
-void SpacecraftDynamics::initializeDynamics()
+void SpacecraftSystem::initializeDynamics()
 {
     Eigen::MatrixXd systemTime(2,1);
     systemTime.setZero();
@@ -434,14 +434,14 @@ void SpacecraftDynamics::initializeDynamics()
     this->primaryCentralSpacecraft.initializeDynamicsSC(this->dynManager);
 
     // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         (*spacecraftConnectedIt)->initializeDynamicsSC(this->dynManager);
     }
 
     // - Call this for all of the unconnected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
         (*spacecraftUnConnectedIt)->initializeDynamicsSC(this->dynManager);
@@ -470,7 +470,7 @@ void SpacecraftDynamics::initializeDynamics()
     }
 
     // - Call all stateEffectors in each spacecraft to give them body frame information
-    std::vector<Spacecraft*>::iterator spacecraftIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftIt;
     for(spacecraftIt = this->spacecraftDockedToPrimary.begin(); spacecraftIt != this->spacecraftDockedToPrimary.end(); spacecraftIt++)
     {
         std::vector<StateEffector*>::iterator stateIt;
@@ -487,7 +487,7 @@ void SpacecraftDynamics::initializeDynamics()
 }
 
 /*! This method is used to update the mass properties of the entire spacecraft using contributions from stateEffectors */
-void SpacecraftDynamics::updateSpacecraftMassProps(double time, Spacecraft& spacecraft)
+void SpacecraftSystem::updateSpacecraftMassProps(double time, SpacecraftUnit& spacecraft)
 {
     // - Zero the properties which will get populated in this method
     (*spacecraft.m_SC).setZero();
@@ -530,7 +530,7 @@ void SpacecraftDynamics::updateSpacecraftMassProps(double time, Spacecraft& spac
     return;
 }
 
-void SpacecraftDynamics::updateSystemMassProps(double time)
+void SpacecraftSystem::updateSystemMassProps(double time)
 {
     // - Zero the properties which will get populated in this method
     (*this->primaryCentralSpacecraft.m_SC).setZero();
@@ -563,7 +563,7 @@ void SpacecraftDynamics::updateSystemMassProps(double time)
     }
 
     // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         // Add in hubs mass props to the spacecraft mass props
@@ -599,7 +599,7 @@ void SpacecraftDynamics::updateSystemMassProps(double time)
     return;
 }
 
-void SpacecraftDynamics::initializeSCPosVelocity(Spacecraft &spacecraft)
+void SpacecraftSystem::initializeSCPosVelocity(SpacecraftUnit &spacecraft)
 {
     Eigen::Vector3d rInit_BN_N = spacecraft.hubR_N->getState();
     Eigen::MRPd sigma_BN;
@@ -621,7 +621,7 @@ void SpacecraftDynamics::initializeSCPosVelocity(Spacecraft &spacecraft)
  the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled 
  in this method. At the end of this method all of the states will have their corresponding state derivatives set in the 
  dynParam Manager thus solving for Xdot*/
-void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
+void SpacecraftSystem::equationsOfMotion(double integTimeSeconds)
 {
     // - Update time to the current time
     uint64_t integTimeNanos = this->simTimePrevious + (integTimeSeconds-this->timePrevious)/NANO2SEC;
@@ -630,7 +630,7 @@ void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
     this->equationsOfMotionSystem(integTimeSeconds);
     // Call this for all unconnected spacecraft:
     // - Call this for all of the unconnected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
         this->equationsOfMotionSC(integTimeSeconds, (*(*spacecraftUnConnectedIt)));
@@ -639,7 +639,7 @@ void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
     return;
 }
 
-void SpacecraftDynamics::equationsOfMotionSC(double integTimeSeconds, Spacecraft& spacecraft)
+void SpacecraftSystem::equationsOfMotionSC(double integTimeSeconds, SpacecraftUnit& spacecraft)
 {
     // - Zero all Matrices and vectors for back-sub and the dynamics
     spacecraft.hub.hubBackSubMatrices.matrixA.setZero();
@@ -752,7 +752,7 @@ void SpacecraftDynamics::equationsOfMotionSC(double integTimeSeconds, Spacecraft
     return;
 }
 
-void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
+void SpacecraftSystem::equationsOfMotionSystem(double integTimeSeconds)
 {
     // - Zero all Matrices and vectors for back-sub and the dynamics
     this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA.setZero();
@@ -793,7 +793,7 @@ void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
     }
 
     // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         // - Loop through dynEffectors to compute force and torque on the s/c
@@ -919,7 +919,7 @@ void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
 
 /*! This method is used to integrate the state forward in time, switch MRPs, calculate energy and momentum, and 
  calculate the accumulated deltaV */
-void SpacecraftDynamics::integrateState(double integrateToThisTime)
+void SpacecraftSystem::integrateState(double integrateToThisTime)
 {
     // - Find the time step
     double localTimeStep = integrateToThisTime - timePrevious;
@@ -927,7 +927,7 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
     this->findPriorStateInformation(this->primaryCentralSpacecraft);
 
     // - Call this for all of the unconnected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
         this->findPriorStateInformation((*(*spacecraftUnConnectedIt)));
@@ -945,7 +945,7 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
     this->primaryCentralSpacecraft.hub.modifyStates(integrateToThisTime);
 
     // - Just in case the MRPs of the attached hubs need to be switched
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         (*spacecraftConnectedIt)->hub.modifyStates(integrateToThisTime);
@@ -1008,7 +1008,7 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
     return;
 }
 
-void SpacecraftDynamics::findPriorStateInformation(Spacecraft &spacecraft)
+void SpacecraftSystem::findPriorStateInformation(SpacecraftUnit &spacecraft)
 {
     // - Find v_CN_N before integration for accumulated DV
     spacecraft.oldV_BN_N = spacecraft.hubV_N->getState();  // - V_BN_N before integration
@@ -1026,7 +1026,7 @@ void SpacecraftDynamics::findPriorStateInformation(Spacecraft &spacecraft)
     return;
 }
 
-void SpacecraftDynamics::determineAttachedSCStates()
+void SpacecraftSystem::determineAttachedSCStates()
 {
     // Pull out primary spacecraft states
     Eigen::MRPd sigmaPNLoc;
@@ -1039,7 +1039,7 @@ void SpacecraftDynamics::determineAttachedSCStates()
 
     // Loop over connected spacecraft to edit the hub states
     // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         Eigen::Matrix3d dcm_BN = (*spacecraftConnectedIt)->hub.dcm_BP*dcm_NP.transpose();
@@ -1066,7 +1066,7 @@ void SpacecraftDynamics::determineAttachedSCStates()
     return;
 }
 
-void SpacecraftDynamics::calculateDeltaVandAcceleration(Spacecraft &spacecraft, double localTimeStep)
+void SpacecraftSystem::calculateDeltaVandAcceleration(SpacecraftUnit &spacecraft, double localTimeStep)
 {
     // - Find v_CN_N after the integration for accumulated DV
     Eigen::Vector3d newV_BN_N = spacecraft.hubV_N->getState(); // - V_BN_N after integration
@@ -1112,12 +1112,12 @@ void SpacecraftDynamics::calculateDeltaVandAcceleration(Spacecraft &spacecraft, 
 /*! This method is used to find the total energy and momentum of the spacecraft. It finds the total orbital energy,
  total orbital angular momentum, total rotational energy and total rotational angular momentum. These values are used 
  for validation purposes. */
-void SpacecraftDynamics::computeEnergyMomentum(double time)
+void SpacecraftSystem::computeEnergyMomentum(double time)
 {
     this->computeEnergyMomentumSystem(time);
 
     // - Call this for all of the unconnected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
         this->computeEnergyMomentumSC(time, (*(*spacecraftUnConnectedIt)));
@@ -1126,7 +1126,7 @@ void SpacecraftDynamics::computeEnergyMomentum(double time)
     return;
 }
 
-void SpacecraftDynamics::computeEnergyMomentumSC(double time, Spacecraft &spacecraft)
+void SpacecraftSystem::computeEnergyMomentumSC(double time, SpacecraftUnit &spacecraft)
 {
     // - Grab values from state Manager
     Eigen::Vector3d rLocal_BN_N = spacecraft.hubR_N->getState();
@@ -1205,7 +1205,7 @@ void SpacecraftDynamics::computeEnergyMomentumSC(double time, Spacecraft &spacec
     return;
 }
 
-void SpacecraftDynamics::computeEnergyMomentumSystem(double time)
+void SpacecraftSystem::computeEnergyMomentumSystem(double time)
 {
     // - Grab values from state Manager
     Eigen::Vector3d rLocal_BN_N = this->primaryCentralSpacecraft.hubR_N->getState();
@@ -1255,7 +1255,7 @@ void SpacecraftDynamics::computeEnergyMomentumSystem(double time)
     }
 
     // - Get all of the attached hubs and stateEffectors contributions
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         // - Get the hubs contribution

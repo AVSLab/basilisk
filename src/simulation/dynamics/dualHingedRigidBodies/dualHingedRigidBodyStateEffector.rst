@@ -81,7 +81,7 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 #. The module creates two output messages with each panel inertial position and attitude states.
    The messages are stored in the vector ``dualHingedRigidBodyConfigLogOutMsgs``.
 
-#. Add the panel to your spacecraftPlus::
+#. Add the panel to your spacecraft::
 
     scObject.addStateEffector(panel1)
 

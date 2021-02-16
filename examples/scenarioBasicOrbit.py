@@ -184,7 +184,7 @@ In this simulation setup the planet's spherical harmonics are turned on.
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus() and gravity modules.  Illustrates
+# Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
 #           a 3-DOV spacecraft on a range of orbit types.
 # Author:   Hanspeter Schaub
 # Creation Date:  Nov. 26, 2016
@@ -211,7 +211,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
@@ -262,12 +262,12 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # which should come last.  Higher priority tasks are evaluated first.
 
     # setup the simulation tasks/objects
-    # initialize spacecraftPlus object and set properties
-    # The dynamics simulation is setup using a SpacecraftPlus() module.
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    # The dynamics simulation is setup using a Spacecraft() module.
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup Gravity Body
@@ -305,7 +305,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     mu = planet.mu
 
     # Finally, the gravitational body must be connected to the spacecraft object.  This is done with
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
     # Here the complete list of gravitational bodies is automatically assigned to the spacecraft, regardless if
     # it is only one body like Earth or Mars, or a list of multiple bodies.
 

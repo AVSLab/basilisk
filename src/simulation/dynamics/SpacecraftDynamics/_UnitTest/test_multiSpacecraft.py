@@ -26,7 +26,7 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.simulation import spacecraftDynamics
+from Basilisk.simulation import spacecraftSystem
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import hingedRigidBodyStateEffector
@@ -41,7 +41,7 @@ def addTimeColumn(time, data):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def spacecraftDynamicsAllTest(show_plots):
+def spacecraftSystemAllTest(show_plots):
     [testResults, testMessage] = test_SCConnected(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_SCConnectedAndUnconnected(show_plots)
@@ -57,7 +57,7 @@ def test_SCConnected(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scSystem = spacecraftDynamics.SpacecraftDynamics()
+    scSystem = spacecraftSystem.SpacecraftSystem()
     scSystem.ModelTag = "spacecraftSystem"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -84,7 +84,7 @@ def test_SCConnected(show_plots):
     scSystem.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
 
     # Define docking information
-    dock1SC1 = spacecraftDynamics.DockingData()
+    dock1SC1 = spacecraftSystem.DockingData()
     dock1SC1.r_DB_B = [[1.0], [0.0], [0.0]]
     dock1SC1.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     dock1SC1.portName = "sc1port1"
@@ -113,39 +113,39 @@ def test_SCConnected(show_plots):
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    scSystem.primaryCentralSpacecraft.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
+    scSystem.primaryCentralSpacecraft.gravField.gravBodies = spacecraftSystem.GravBodyVector([unitTestSim.earthGravBody])
 
-    sc2 = spacecraftDynamics.Spacecraft()
+    sc2 = spacecraftSystem.SpacecraftUnit()
     sc2.hub.mHub = 100
     sc2.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     sc2.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
     sc2.spacecraftName = "spacecraft2"
 
     # Define docking information
-    dock1SC2 = spacecraftDynamics.DockingData()
+    dock1SC2 = spacecraftSystem.DockingData()
     dock1SC2.r_DB_B = [[-1.0], [0.0], [0.0]]
     dock1SC2.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     dock1SC2.portName = "sc2port1"
     sc2.addDockingPort(dock1SC2)
 
     # Define docking information
-    dock2SC2 = spacecraftDynamics.DockingData()
+    dock2SC2 = spacecraftSystem.DockingData()
     dock2SC2.r_DB_B = [[1.0], [0.0], [0.0]]
     dock2SC2.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     dock2SC2.portName = "sc2port2"
     sc2.addDockingPort(dock2SC2)
 
     # Define gravity for sc2
-    sc2.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
+    sc2.gravField.gravBodies = spacecraftSystem.GravBodyVector([unitTestSim.earthGravBody])
 
-    sc3 = spacecraftDynamics.Spacecraft()
+    sc3 = spacecraftSystem.SpacecraftUnit()
     sc3.hub.mHub = 100
     sc3.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     sc3.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
     sc3.spacecraftName = "spacecraft3"
 
     # Define docking information
-    dock1SC3 = spacecraftDynamics.DockingData()
+    dock1SC3 = spacecraftSystem.DockingData()
     dock1SC3.r_DB_B = [[-1.0], [0.0], [0.0]]
     dock1SC3.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     dock1SC3.portName = "sc3port1"
@@ -169,7 +169,7 @@ def test_SCConnected(show_plots):
     sc3.addStateEffector(unitTestSim.panel2)
 
     # Define gravity for sc2
-    sc3.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
+    sc3.gravField.gravBodies = spacecraftSystem.GravBodyVector([unitTestSim.earthGravBody])
 
     # Attach spacecraft2 to spacecraft
     scSystem.attachSpacecraftToPrimary(sc2, dock1SC2.portName, dock1SC1.portName)
@@ -335,7 +335,7 @@ def test_SCConnectedAndUnconnected(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scSystem = spacecraftDynamics.SpacecraftDynamics()
+    scSystem = spacecraftSystem.SpacecraftSystem()
     scSystem.ModelTag = "spacecraftSystem"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -362,7 +362,7 @@ def test_SCConnectedAndUnconnected(show_plots):
     scSystem.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
 
     # Define docking information
-    dock1SC1 = spacecraftDynamics.DockingData()
+    dock1SC1 = spacecraftSystem.DockingData()
     dock1SC1.r_DB_B = [[1.0], [0.0], [0.0]]
     dock1SC1.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     dock1SC1.portName = "sc1port1"
@@ -391,39 +391,39 @@ def test_SCConnectedAndUnconnected(show_plots):
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    scSystem.primaryCentralSpacecraft.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
+    scSystem.primaryCentralSpacecraft.gravField.gravBodies = spacecraftSystem.GravBodyVector([unitTestSim.earthGravBody])
 
-    sc2 = spacecraftDynamics.Spacecraft()
+    sc2 = spacecraftSystem.SpacecraftUnit()
     sc2.hub.mHub = 100
     sc2.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     sc2.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
     sc2.spacecraftName = "spacecraft2"
 
     # Define docking information
-    dock1SC2 = spacecraftDynamics.DockingData()
+    dock1SC2 = spacecraftSystem.DockingData()
     dock1SC2.r_DB_B = [[-1.0], [0.0], [0.0]]
     dock1SC2.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     dock1SC2.portName = "sc2port1"
     sc2.addDockingPort(dock1SC2)
 
     # Define docking information
-    dock2SC2 = spacecraftDynamics.DockingData()
+    dock2SC2 = spacecraftSystem.DockingData()
     dock2SC2.r_DB_B = [[1.0], [0.0], [0.0]]
     dock2SC2.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     dock2SC2.portName = "sc2port2"
     sc2.addDockingPort(dock2SC2)
 
     # Define gravity for sc2
-    sc2.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
+    sc2.gravField.gravBodies = spacecraftSystem.GravBodyVector([unitTestSim.earthGravBody])
 
-    sc3 = spacecraftDynamics.Spacecraft()
+    sc3 = spacecraftSystem.SpacecraftUnit()
     sc3.hub.mHub = 100
     sc3.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     sc3.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
     sc3.spacecraftName = "spacecraft3"
 
     # Define docking information
-    dock1SC3 = spacecraftDynamics.DockingData()
+    dock1SC3 = spacecraftSystem.DockingData()
     dock1SC3.r_DB_B = [[-1.0], [0.0], [0.0]]
     dock1SC3.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     dock1SC3.portName = "sc3port1"
@@ -447,7 +447,7 @@ def test_SCConnectedAndUnconnected(show_plots):
     sc3.addStateEffector(unitTestSim.panel2)
 
     # Define gravity for sc2
-    sc3.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
+    sc3.gravField.gravBodies = spacecraftSystem.GravBodyVector([unitTestSim.earthGravBody])
 
     # Attach spacecraft2 to spacecraft
     scSystem.attachSpacecraftToPrimary(sc2, dock1SC2.portName, dock1SC1.portName)
@@ -456,7 +456,7 @@ def test_SCConnectedAndUnconnected(show_plots):
     scSystem.attachSpacecraftToPrimary(sc3, dock1SC3.portName, dock2SC2.portName)
 
     # Define two independent spacecraft
-    sc4 = spacecraftDynamics.Spacecraft()
+    sc4 = spacecraftSystem.SpacecraftUnit()
     sc4.hub.mHub = 100
     sc4.hub.r_BcB_B = [[0.0], [0.0], [0.1]]
     sc4.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
@@ -467,7 +467,7 @@ def test_SCConnectedAndUnconnected(show_plots):
     sc4.spacecraftName = "spacecraft4"
 
     # Define gravity for sc4
-    sc4.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
+    sc4.gravField.gravBodies = spacecraftSystem.GravBodyVector([unitTestSim.earthGravBody])
 
     unitTestSim.panel3 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 
@@ -488,7 +488,7 @@ def test_SCConnectedAndUnconnected(show_plots):
 
     scSystem.addSpacecraftUndocked(sc4)
 
-    sc5 = spacecraftDynamics.Spacecraft()
+    sc5 = spacecraftSystem.SpacecraftUnit()
     sc5.hub.mHub = 100
     sc5.hub.r_BcB_B = [[0.1], [0.0], [0.0]]
     sc5.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
@@ -499,7 +499,7 @@ def test_SCConnectedAndUnconnected(show_plots):
     sc5.spacecraftName = "spacecraft5"
 
     # Define gravity for sc4
-    sc5.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
+    sc5.gravField.gravBodies = spacecraftSystem.GravBodyVector([unitTestSim.earthGravBody])
 
     scSystem.addSpacecraftUndocked(sc5)
 

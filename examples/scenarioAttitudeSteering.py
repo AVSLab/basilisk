@@ -127,7 +127,7 @@ similar in performance to a standard proportional-derivative or PD feedback cont
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus(), RWs, simpleNav() and
+# Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and
 #           MRP_Steering() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
 #           while using the RWs to do the attitude control actuation.
 # Author:   Hanspeter Schaub
@@ -145,7 +145,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeRW
 from Basilisk.simulation import simpleNav
 from Basilisk.simulation import reactionWheelStateEffector
@@ -294,8 +294,8 @@ def run(show_plots, simCase):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     # define the simulation inertia
     I = [500., 0., 0.,
@@ -314,7 +314,7 @@ def run(show_plots, simCase):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # add RW devices
     rwFactory = simIncludeRW.rwFactory()
@@ -345,7 +345,7 @@ def run(show_plots, simCase):
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position

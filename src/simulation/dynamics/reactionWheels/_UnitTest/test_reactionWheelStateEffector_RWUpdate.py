@@ -34,7 +34,7 @@ splitPath = path.split('simulation')
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeRW
 from Basilisk.simulation import reactionWheelStateEffector
@@ -80,7 +80,7 @@ def RWUpdateTest(show_plots, accuracy):
     #
 
     # create the spacecraft object
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     #

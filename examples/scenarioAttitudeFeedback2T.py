@@ -104,7 +104,7 @@ to settle on a value that matches the un-modeled external torque.
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus(), extForceTorque, simpleNav() and
+# Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
 #           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit.
 #           This scenario is the same as scenarioAttitudeControl, but with the
 #           difference that here the control and dynamics are executed at different
@@ -125,7 +125,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import simpleNav
@@ -187,8 +187,8 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     # define the simulation inertia
     I = [900., 0., 0.,
@@ -198,7 +198,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(dynTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
@@ -210,7 +210,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup extForceTorque module
     # the control torque is read in through the messaging system

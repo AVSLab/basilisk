@@ -34,7 +34,7 @@ The simulation reads the Sun's position from :ref:`SpiceInterface`. By creating 
 spice object and adding it to the task, the spice object automatically writes out
 the ephemeris messages.
 
-The dynamics simulation is setup using a :ref:`SpacecraftPlus` module where a specific
+The dynamics simulation is setup using a :ref:`Spacecraft` module where a specific
 spacecraft location is specified.  Note that both the rotational and translational
 degrees of freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.
 The position vector is required when computing the relative heading between the sun
@@ -271,7 +271,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
-from Basilisk.simulation import spacecraftPlus, spiceInterface, coarseSunSensor
+from Basilisk.simulation import spacecraft, spiceInterface, coarseSunSensor
 from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, sunlineSuKF
 from Basilisk.architecture import messaging
 
@@ -411,8 +411,8 @@ def run(saveFigures, show_plots, FilterType, simTime):
     sunLog = sunMsg.recorder()
     scSim.AddModelToTask(simTaskName, sunLog)
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
@@ -430,7 +430,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.]]               # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[-0.1*macros.D2R], [0.5*macros.D2R], [0.5*macros.D2R]]   # rad/s - omega_BN_B
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
     dataLog = scObject.scStateOutMsg.recorder()
     scSim.AddModelToTask(simTaskName, dataLog)

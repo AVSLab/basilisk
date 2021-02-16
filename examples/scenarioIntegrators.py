@@ -34,7 +34,7 @@ module needs to perform the time integration.
 .. image:: /_images/static/test_scenarioIntegrators.svg
    :align: center
 
-If :ref:`spacecraftPlus`, or any other dynamics module, is created without specifying a particular
+If :ref:`spacecraft`, or any other dynamics module, is created without specifying a particular
 integration type, the fixed time step 4th order Runge-Kutta method is used by default.  To invoke a
 different integration scheme, the following code is used before the dynamics module is added to the
 python task list:
@@ -45,7 +45,7 @@ python task list:
    scObject.setIntegrator(integratorObject)
 
 The first line invokes an instance of the desired state vector integration module, and provides
-the dynamics module (spacecraftPlus() in this case) as the input.  This specifies to the integrator
+the dynamics module (spacecraft() in this case) as the input.  This specifies to the integrator
 module which other module will provide the ``equationOfMotion()`` function to evaluate the derivatives of
 the state vector.  The send line ties the integration module to the dynamics module.  After that we are
 done.
@@ -107,7 +107,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
 from Basilisk.architecture import messaging
@@ -160,8 +160,8 @@ def run(show_plots, integratorCase):
     #
     #   setup the simulation tasks/objects
     #
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
 
     # default case, RK4 is automatically setup, no extra code is needed
@@ -172,7 +172,7 @@ def run(show_plots, integratorCase):
         integratorObject = svIntegrators.svIntegratorRK2(scObject)
         scObject.setIntegrator(integratorObject)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
@@ -183,7 +183,7 @@ def run(show_plots, integratorCase):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time

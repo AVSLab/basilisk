@@ -36,7 +36,7 @@ The simulation layout options (A) and (B) are shown in the following illustratio
 .. image:: /_images/static/test_scenarioCSS.svg
    :align: center
 
-The dynamics simulation is setup using a :ref:`SpacecraftPlus` module where a specific
+The dynamics simulation is setup using a :ref:`Spacecraft` module where a specific
 spacecraft location is specified.  Note that both the rotational and translational
 degrees of freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.
 The position  vector is required when computing the relative heading between the sun
@@ -173,7 +173,7 @@ from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import vizSupport
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 
 # import message declarations
 from Basilisk.architecture import messaging
@@ -221,8 +221,8 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     # define the simulation inertia
     I = [900., 0., 0.,
@@ -240,7 +240,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]               # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [1.*macros.D2R]]   # rad/s - omega_BN_B
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     #

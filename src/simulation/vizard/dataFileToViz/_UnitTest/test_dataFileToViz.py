@@ -38,7 +38,7 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import vizSupport
 from Basilisk.architecture import bskLogging
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.architecture import messaging
 
 try:
@@ -280,9 +280,9 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
 
     # create SC dummy objects to setup basic Vizard settings.  Only one has to have the Grav Bodies attached
     # to show up in Vizard
-    scObject1 = spacecraftPlus.SpacecraftPlus()
-    scObject1.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
-    scObject2 = spacecraftPlus.SpacecraftPlus()
+    scObject1 = spacecraft.Spacecraft()
+    scObject1.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject2 = spacecraft.Spacecraft()
 
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, [scObject1, scObject2]
                                               # , saveFile=__file__

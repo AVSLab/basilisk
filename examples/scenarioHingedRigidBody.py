@@ -133,7 +133,7 @@ similar to a weight hanging from a spring on Earth.
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated tutorial of the spacecraftPlus(), gravity, and hinged rigid body modules illustrating
+# Purpose:  Integrated tutorial of the spacecraft(), gravity, and hinged rigid body modules illustrating
 #           how Delta_v maneuver from scenarioOrbitManeuver.py affects the motion of the hinged rigid bodies.
 #           Rotational motion is allowed on the spacecraft to simulate the full interaction of the hinged rigid
 #           bodies and the spacecraft.
@@ -151,7 +151,7 @@ from Basilisk.utilities import macros  # Some unit conversions
 from Basilisk.utilities import orbitalMotion
 # import simulation related support
 from Basilisk.simulation import \
-    spacecraftPlus  # The base of any spacecraft simulation which deals with spacecraft dynamics
+    spacecraft  # The base of any spacecraft simulation which deals with spacecraft dynamics
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import hingedRigidBodyStateEffector
 # Allows for forces to act on the spacecraft without adding an effector like a thruster
@@ -197,11 +197,11 @@ def run(show_plots):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup Gravity Body
@@ -210,8 +210,8 @@ def run(show_plots):
     earth.isCentralBody = True
     mu = earth.mu
 
-    # Attach gravity model to spacecraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    # Attach gravity model to spacecraft
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # Adding the HingedRigidBody State Effector
     scSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()

@@ -77,7 +77,7 @@ found with the predicted times when the rotating panel will yield CSS signals an
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus() and gravity modules.  Illustrates
+# Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
 #           connected the hingedRigidBody panel state message to a CSS and solar power module
 # Author:   Hanspeter Schaub
 # Creation Date:  Oct. 6, 2020
@@ -100,7 +100,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
@@ -136,7 +136,7 @@ def run(show_plots):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # create the spacecraft hub
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
     scObject.hub.mHub = 750.0
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
@@ -146,7 +146,7 @@ def run(show_plots):
     planet = gravFactory.createEarth()
     planet.isCentralBody = True
     mu = planet.mu
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # create sun position message
     sunMessage = messaging.SpicePlanetStateMsgPayload()

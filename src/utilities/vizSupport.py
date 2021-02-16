@@ -750,7 +750,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     simTaskName:
         task to which to add the vizInterface module
     scList:
-        :ref:`spacecraftPlus` objects.  Can be a single object or list of objects
+        :ref:`spacecraft` objects.  Can be a single object or list of objects
 
     Keyword Args
     ------------

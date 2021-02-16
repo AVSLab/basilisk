@@ -87,7 +87,7 @@ import os
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     rwMotorTorque, hillPoint)
-from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraftPlus
+from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
@@ -207,7 +207,7 @@ def run(show_plots):
     #
 
     # initialize servicer spacecraft object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "Servicer"
     # define the simulation inertia
     I = [900., 0., 0.,
@@ -217,7 +217,7 @@ def run(show_plots):
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # create the debris object states
-    scObject2 = spacecraftPlus.SpacecraftPlus()
+    scObject2 = spacecraft.Spacecraft()
     scObject2.ModelTag = "Debris"
     I2 = [600., 0., 0.,
           0., 650., 0.,
@@ -226,7 +226,7 @@ def run(show_plots):
     scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I2)
 
     # make another debris object */
-    scObject3 = spacecraftPlus.SpacecraftPlus()
+    scObject3 = spacecraft.Spacecraft()
     scObject3.ModelTag = "DebrisSat"
     I3 = [600., 0., 0.,
           0., 650., 0.,
@@ -234,7 +234,7 @@ def run(show_plots):
     scObject3.hub.mHub = 350.0  # kg
     scObject3.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I3)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
     scSim.AddModelToTask(simTaskName, scObject2, None, 2)
     scSim.AddModelToTask(simTaskName, scObject3, None, 3)
@@ -248,9 +248,9 @@ def run(show_plots):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
-    scObject2.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
-    scObject3.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject2.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject3.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     # add RW devices

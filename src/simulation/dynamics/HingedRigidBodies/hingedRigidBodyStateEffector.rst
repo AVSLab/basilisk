@@ -94,11 +94,11 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 
 #. The panel config log state output message is ``hingedRigidBodyConfigLogOutMsg``.
 
-#. Add the panel to your spacecraftPlus::
+#. Add the panel to your spacecraft::
 
     scObject.addStateEffector(panel1)
 
-   See :ref:`spacecraftPlus` documentation on how to set up a spacecraftPlus object.
+   See :ref:`spacecraft` documentation on how to set up a spacecraft object.
 
 #. Add the module to the task list::
 

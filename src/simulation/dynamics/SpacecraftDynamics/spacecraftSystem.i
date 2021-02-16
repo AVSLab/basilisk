@@ -17,9 +17,9 @@
 
  */
 
-%module spacecraftDynamics
+%module spacecraftSystem
 %{
-    #include "spacecraftDynamics.h"
+    #include "spacecraftSystem.h"
     #include "hubEffector.h"
 %}
 
@@ -43,7 +43,7 @@ namespace std {
 %include "../_GeneralModuleFiles/gravityEffector.h"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
-%include "spacecraftDynamics.h"
+%include "spacecraftSystem.h"
 %include "hubEffector.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"

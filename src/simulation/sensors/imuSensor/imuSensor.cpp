@@ -339,10 +339,10 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 }
 
 /*!
-    This function gathers actual spacecraft attitude from the spacecraftPlus output message.
+    This function gathers actual spacecraft attitude from the spacecraft output message.
     It then differences the state attitude between this time and the last time the IMU was called
     to get a DR (delta radians or delta rotation) The angular rate is retrieved directly from the
-    spacecraftPlus output message and passed through to theother IMU functions which add noise, etc.
+    spacecraft output message and passed through to theother IMU functions which add noise, etc.
  */
 void ImuSensor::computePlatformDR()
 {
@@ -363,9 +363,9 @@ void ImuSensor::computePlatformDR()
 }
 
 /*!
-    This functions gathers actual spacecraft velocity from the spacecraftPlus output message.
+    This functions gathers actual spacecraft velocity from the spacecraft output message.
     It then differences the velocity between this time and the last time the IMU was called to get a
-    DV (delta velocity). The acceleration of the spacecraft in the body frame is gathered directly from the spacecraftPlus
+    DV (delta velocity). The acceleration of the spacecraft in the body frame is gathered directly from the spacecraft
     output message. Then, it is converted to the platform frame and rotational terms are added to it
     to account for CoM offset of the platform frame.
     @param CurrentTime

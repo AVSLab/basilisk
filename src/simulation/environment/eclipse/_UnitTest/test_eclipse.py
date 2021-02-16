@@ -29,7 +29,7 @@ import pytest
 import os
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
 from Basilisk.simulation import eclipse
 from Basilisk.utilities import orbitalMotion
@@ -62,7 +62,7 @@ These orbital elements vary for each eclipse type since the Sun and planet state
 made using the orbitalMotion elem2rv function, where the inputs are six orbital elements (a, e, i, Omega, omega, f) \
 and the outputs are Cartesian position and velocity vectors. For the annular eclipse case, the conversion is \
 avoided and a Cartesian position vector is initially provided instead. The vectors are then passed into \
-spacecraftPlus and, subsequently, the eclipse module through the Basilisk messaging system.
+spacecraft and, subsequently, the eclipse module through the Basilisk messaging system.
 
 Testing the no eclipse case with Mars as the occulting body is the same as the Earth no eclipse test, except \
 Mars is set as the zero base. The Mars full, partial, and annular eclipse cases, however, are like the Earth \
@@ -114,7 +114,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 
     # Set up first spacecraft
-    scObject_0 = spacecraftPlus.SpacecraftPlus()
+    scObject_0 = spacecraft.Spacecraft()
     scObject_0.ModelTag = "spacecraft"
     unitTestSim.AddModelToTask(testTaskName, scObject_0)
 
@@ -126,7 +126,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
         earth.isCentralBody = True
     elif planet == "mars":
         mars.isCentralBody = True
-    scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject_0.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup Spice interface for some solar system bodies
     timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'

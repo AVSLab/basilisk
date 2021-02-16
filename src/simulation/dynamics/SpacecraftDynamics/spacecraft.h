@@ -40,8 +40,8 @@
 
 
 
-/*! @brief spacecraftPlus dynamic effector */
-class SpacecraftPlus : public DynamicObject{
+/*! @brief spacecraft dynamic effector */
+class Spacecraft : public DynamicObject{
 public:
     uint64_t simTimePrevious;            //!< -- Previous simulation time
     uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
@@ -82,8 +82,8 @@ public:
     Message<SCPlusMassPropsMsgPayload> scMassOutMsg;    //!< spacecraft mass properties output message
 
 public:
-    SpacecraftPlus();                    //!< -- Constructor
-    ~SpacecraftPlus();                   //!< -- Destructor
+    Spacecraft();                    //!< -- Constructor
+    ~Spacecraft();                   //!< -- Destructor
     void initializeDynamics();           //!< -- This method initializes all of the dynamics and variables for the s/c
     void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c
     void updateSCMassProps(double time);  //!< -- This method computes the total mass properties of the s/c

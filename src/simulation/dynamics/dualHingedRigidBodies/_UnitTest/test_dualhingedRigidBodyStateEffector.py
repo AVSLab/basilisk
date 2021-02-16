@@ -27,11 +27,11 @@ splitPath = path.split('simulation')
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import dualHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
-from Basilisk.simulation import spacecraftDynamics
+from Basilisk.simulation import spacecraftSystem
 from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("useFlag, testCase", [
@@ -58,7 +58,7 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -147,7 +147,7 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
         unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
         unitTestSim.earthGravBody.isCentralBody = True
         unitTestSim.earthGravBody.useSphericalHarmParams = False
-        scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+        scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
         scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
         scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
 
@@ -278,10 +278,10 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     testMessages = []  # create empty list to store test log messages
 
     if useScPlus:
-        scObject = spacecraftPlus.SpacecraftPlus()
+        scObject = spacecraft.Spacecraft()
         scObject.ModelTag = "spacecraftBody"
     else:
-        scObject = spacecraftDynamics.SpacecraftDynamics()
+        scObject = spacecraftSystem.SpacecraftSystem()
         scObject.ModelTag = "spacecraftBody"
         scObject.primaryCentralSpacecraft.spacecraftName = scObject.ModelTag
 

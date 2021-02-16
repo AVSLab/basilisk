@@ -98,7 +98,7 @@ hovering in deep space.
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus(), extForceTorque, simpleNav() and
+# Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
 #           MRP_Feedback() modules.  Illustrates spacecraft attitude control in deep
 #           space without a planet or gravity body setup.
 # Author:   Hanspeter Schaub
@@ -115,7 +115,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
 
@@ -174,8 +174,8 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
@@ -185,7 +185,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup extForceTorque module

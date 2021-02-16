@@ -34,7 +34,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody, orbitalMotion, RigidBodyKinematics
 from Basilisk.simulation import GravityGradientEffector
 from Basilisk.utilities import unitTestSupport
@@ -163,8 +163,8 @@ def run(show_plots, cmOffset, planetCase, simTime):
     oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
                                                 # with circular or equatorial orbit, some angles are arbitrary
 
-    # setup basic spacecraftPlus module
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # setup basic spacecraft module
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskTestSat"
     IIC = [[500., 0., 0.]
            , [0., 800., 0.]
@@ -179,7 +179,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
 
     scSim.AddModelToTask(simTaskName, scObject)
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # add gravity gradient effector
     ggEff = GravityGradientEffector.GravityGradientEffector()

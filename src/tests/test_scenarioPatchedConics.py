@@ -20,7 +20,7 @@
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus() and gravity modules illustrating
+# Purpose:  Integrated test of the spacecraft() and gravity modules illustrating
 #           a four body system, for a Patched Conics analysis of an interplanetary transfer
 #           between Earth and Jupiter
 #

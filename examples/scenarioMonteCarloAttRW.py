@@ -24,7 +24,7 @@ Demonstrates how to run basic Monte-Carlo (MC) RW-based attitude simulations.
 This script duplicates the scenario in :ref:`scenarioAttitudeFeedbackRW` where a
 6-DOF spacecraft  is orbiting the Earth.  Here some simulation parameters are dispersed randomly
 using a multi threaded Monte-Carlo setup. Reaction Wheel (RW) state effector are added
-to the rigid spacecraftPlus() hub, and what flight
+to the rigid spacecraft() hub, and what flight
 algorithm module is used to control these RWs. The scenario is run in a single configuration:
 by not using the Jitter model and by using the RW Voltage IO. Given this scenario we can add dispersions
 to the variables in between each MC run.
@@ -248,7 +248,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeRW
 from Basilisk.simulation import simpleNav
@@ -526,8 +526,8 @@ def createScenarioAttitudeFeedbackRW():
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     # define the simulation inertia
     I = [900., 0., 0.,
@@ -538,7 +538,7 @@ def createScenarioAttitudeFeedbackRW():
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scSim.hubref = scObject.hub
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
     rwVoltageIO = rwVoltageInterface.RWVoltageInterface()
@@ -561,7 +561,7 @@ def createScenarioAttitudeFeedbackRW():
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
     #
     # add RW devices
     #

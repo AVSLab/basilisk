@@ -37,7 +37,7 @@
         <path d="M 818.4825 261 L 989.2413 261 C 992.0027 261 994.2413 263.23858 994.2413 266 L 994.2413 342.1818 C 994.2413 344.94324 992.0027 347.1818 989.2413 347.1818 L 818.4825 347.1818 C 815.7211 347.1818 813.4825 344.94324 813.4825 342.1818 L 813.4825 266 C 813.4825 263.23858 815.7211 261 818.4825 261 Z" fill="#ffc0ff"/>
         <path d="M 818.4825 261 L 989.2413 261 C 992.0027 261 994.2413 263.23858 994.2413 266 L 994.2413 342.1818 C 994.2413 344.94324 992.0027 347.1818 989.2413 347.1818 L 818.4825 347.1818 C 815.7211 347.1818 813.4825 344.94324 813.4825 342.1818 L 813.4825 266 C 813.4825 263.23858 815.7211 261 818.4825 261 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(818.4825 296.9229)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="44.603364" y="11">SpacecraftPlus</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="44.603364" y="11">Spacecraft</tspan>
         </text>
       </g>
       <g id="Line_9">

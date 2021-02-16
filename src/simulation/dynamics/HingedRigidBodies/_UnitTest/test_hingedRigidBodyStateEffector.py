@@ -29,12 +29,12 @@ splitPath = path.split('simulation')
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import spacecraftDynamics
+from Basilisk.simulation import spacecraftSystem
 from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -72,7 +72,7 @@ def test_hingedRigidBodyGravity(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftDynamics.SpacecraftDynamics()
+    scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -144,7 +144,7 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
-    scObject.primaryCentralSpacecraft.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+    scObject.primaryCentralSpacecraft.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
 
     # Log the spacecraft state message
     datLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
@@ -302,7 +302,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
     testFailCount = 0  # zero unit test result counter  
     testMessages = []  # create empty list to store test log messages
     
-    scObject = spacecraftDynamics.SpacecraftDynamics()
+    scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
     
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -534,7 +534,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftDynamics.SpacecraftDynamics()
+    scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -724,7 +724,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftDynamics.SpacecraftDynamics()
+    scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -917,7 +917,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftDynamics.SpacecraftDynamics()
+    scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -1202,10 +1202,10 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     testMessages = []  # create empty list to store test log messages
 
     if useScPlus:
-        scObject = spacecraftPlus.SpacecraftPlus()
+        scObject = spacecraft.Spacecraft()
         scObject.ModelTag = "spacecraftBody"
     else:
-        scObject = spacecraftDynamics.SpacecraftDynamics()
+        scObject = spacecraftSystem.SpacecraftSystem()
         scObject.ModelTag = "spacecraftBody"
         scObject.primaryCentralSpacecraft.spacecraftName = scObject.ModelTag
 
@@ -1445,7 +1445,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftDynamics.SpacecraftDynamics()
+    scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)

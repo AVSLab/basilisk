@@ -66,7 +66,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import simpleInstrument, simpleStorageUnit, partitionedStorageUnit, spaceToGroundTransmitter
 from Basilisk.simulation import groundLocation
 
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
@@ -91,8 +91,8 @@ def run(show_plots):
     testProc.addTask(scenarioSim.CreateNewTask(taskName, testProcessRate))
 
     # Create a spacecraft around Earth
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
 
     # clear prior gravitational body and SPICE setup definitions
@@ -134,7 +134,7 @@ def run(show_plots):
     scenarioSim.AddModelToTask(taskName, scObject)
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # Create the ground location
     groundStation = groundLocation.GroundLocation()

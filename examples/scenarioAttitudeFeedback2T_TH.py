@@ -23,7 +23,7 @@ Overview
 This example script demonstrates how to use thrusters to stabilize the tumble of a spacecraft orbiting the
 Earth, using two separate threads.
 This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal is to
-illustrate how a set of thrusters can be added to the rigid :ref:`SpacecraftPlus` hub, and what
+illustrate how a set of thrusters can be added to the rigid :ref:`spacecraft` hub, and what
 FSW modules are needed to control these thrusters. The simulation setup is performed with two
 processes, similarly to :ref:`scenarioAttitudeFeedback2T`,
 in which the dynamics and the FSW algorithms are run at different time steps.  The control setup is the same
@@ -51,7 +51,7 @@ Setup Changes to Simulate Thrusters Dynamic Effectors
 
 At the beginning of the script all the plot functions are declared. Then the fundamental simulation setup is the same
 as the one used in :ref:`scenarioAttitudeFeedback2T`.
-The dynamics simulation is setup using a :ref:`SpacecraftPlus` module to which an Earth gravity
+The dynamics simulation is setup using a :ref:`pacecraft` module to which an Earth gravity
 effector is attached.  The simple navigation module is still used to output the inertial attitude,
 angular rate, as well as position and velocity messages.
 
@@ -59,7 +59,7 @@ The Thruster Dynamic Effector is added to the the rigid spacecraft hub, similarl
 :ref:`scenarioAttitudeFeedbackRW`.  The support macro ``simIncludeThruster.py``
 provides several convenient tools to facilitate the setup process.  This script allows the user to
 readily create thrusters from a database of public specifications, customize them if needed, and add
-them to the :ref:`SpacecraftPlus` module.
+them to the :ref:`spacecraft` module.
 
 The first thing to do is to create the (empty) set of thrusters that will later contain all the devices. Then
 a fresh instance of the thruster factory class ``thrusterFactory()`` is created.  This factory is able
@@ -96,7 +96,7 @@ command.  This table list the arguments, default values, as well as expected uni
 +---------------------+-------+----------+----------------------------------------+--------------------+
 
 
-The command ``addToSpacecraft()`` adds all the created thrusters to the :ref:`spacecraftPlus` module.  The final step
+The command ``addToSpacecraft()`` adds all the created thrusters to the :ref:`spacecraft` module.  The final step
 is to add the :ref:`thrusterDynamicEffector` to the list of simulation tasks.
 
 
@@ -197,7 +197,7 @@ is 'on', the requested thruster force is always negative, as it can be seen in t
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus(), extForceTorque, simpleNav(), thrusterDynamicEffector() and
+# Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(), thrusterDynamicEffector() and
 #           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit, while using thrusters
 #           to do the attitude control actuation.
 # Author: Giulio Napolitano
@@ -218,7 +218,7 @@ from Basilisk.utilities import fswSetupThrusters
 from Basilisk.utilities import simIncludeThruster
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import simpleNav
@@ -339,8 +339,8 @@ def run(show_plots, useDVThrusters):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
@@ -350,7 +350,7 @@ def run(show_plots, useDVThrusters):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(dynTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
@@ -362,7 +362,7 @@ def run(show_plots, useDVThrusters):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup extForceTorque module
     # the control torque is read in through the messaging system

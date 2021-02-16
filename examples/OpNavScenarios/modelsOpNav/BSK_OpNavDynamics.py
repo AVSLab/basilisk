@@ -31,7 +31,7 @@ import numpy as np
 import math, os, inspect
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import (spacecraftPlus, extForceTorque, simpleNav,
+from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
                                  reactionWheelStateEffector, coarseSunSensor, eclipse,
                                  thrusterDynamicEffector, ephemerisConverter, vizInterface,
                                  camera)
@@ -77,7 +77,7 @@ class BSKDynamicModels():
         self.cameraRez = []
 
         self.rwFactory = simIncludeRW.rwFactory()
-        self.scObject = spacecraftPlus.SpacecraftPlus()
+        self.scObject = spacecraft.Spacecraft()
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
         self.extForceTorqueObject = extForceTorque.ExtForceTorque()
         self.SimpleNavObject = simpleNav.SimpleNav()
@@ -175,7 +175,7 @@ class BSKDynamicModels():
                                             , 2
                                             )
 
-        self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(self.gravFactory.gravBodies.values()))
+        self.scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(self.gravFactory.gravBodies.values()))
         self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
                                               timeInitString,
                                               epochInMsg=True)
@@ -329,7 +329,7 @@ class BSKDynamicModels():
         planet = self.gravFactory.createMarsBarycenter()
         planet.isCentralBody = True
         self.scObject.gravField.gravBodies = \
-            spacecraftPlus.GravBodyVector(list(self.gravFactory.gravBodies.values()))
+            spacecraft.GravBodyVector(list(self.gravFactory.gravBodies.values()))
 
     # Global call to initialize every module
     def InitAllDynObjects(self, SimBase):

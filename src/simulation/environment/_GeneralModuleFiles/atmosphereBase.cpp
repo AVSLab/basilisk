@@ -225,7 +225,7 @@ bool AtmosphereBase::customReadMessages()
 
 /*! This method is used to determine the spacecraft position vector relative to the planet.
  @param planetState A space planetstate message struct.
- @param scState A spacecraftPlusStates message struct.
+ @param scState A spacecraft states message struct.
  @return void
  */
 void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCPlusStatesMsgPayload *scState)

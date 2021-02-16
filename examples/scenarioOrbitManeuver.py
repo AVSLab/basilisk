@@ -81,7 +81,7 @@ in textbooks such as `Analytical Mechanics of Space Systems
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus() and gravity modules illustrating
+# Purpose:  Integrated test of the spacecraft() and gravity modules illustrating
 #           how impulsive Delta_v maneuver can be simulated with stopping and starting the
 #           simulation.
 # Author:   Hanspeter Schaub
@@ -98,7 +98,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import messaging
 
@@ -149,11 +149,11 @@ def run(show_plots, maneuverCase):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup Gravity Body
@@ -162,7 +162,7 @@ def run(show_plots, maneuverCase):
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time
@@ -210,7 +210,7 @@ def run(show_plots, maneuverCase):
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
 
-    # The dynamics simulation is setup using a SpacecraftPlus() module with the Earth's
+    # The dynamics simulation is setup using a Spacecraft() module with the Earth's
     # gravity module attached.  Note that the rotational motion simulation is turned off to leave
     # pure 3-DOF translation motion simulation.  After running the simulation for 1/4 of a period
     # the simulation is stopped to apply impulsive changes to the inertial velocity vector.

@@ -69,7 +69,7 @@ through the optional input message ``planetPosInMsgName``.
 
 The magnetic field module can produce the magnetic field for a vector of
 spacecraft locations, not just for a
-single spacecraft.  Let ``scObject`` be an instance of :ref:`SpacecraftPlus`,
+single spacecraft.  Let ``scObject`` be an instance of :ref:`Spacecraft`,
 then the spacecraft state output message
 is added to the magnetic field module through::
 
@@ -157,7 +157,7 @@ import matplotlib.pyplot as plt
 from Basilisk import __path__
 bskPath = __path__[0]
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import magneticFieldCenteredDipole
 # general support file with common unit test functions
 # import general simulation support files
@@ -203,11 +203,11 @@ def run(show_plots, orbitCase, planetCase):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup Gravity Body
@@ -222,7 +222,7 @@ def run(show_plots, orbitCase, planetCase):
     req = planet.radEquator
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
 
     # create the magnetic field

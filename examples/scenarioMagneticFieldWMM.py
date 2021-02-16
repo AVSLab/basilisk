@@ -135,7 +135,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import magneticFieldWMM
 # general support file with common unit test functions
 # import general simulation support files
@@ -178,11 +178,11 @@ def run(show_plots, orbitCase):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup Gravity Body
@@ -193,7 +193,7 @@ def run(show_plots, orbitCase):
     req = planet.radEquator
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # create the magnetic field
     magModule = magneticFieldWMM.MagneticFieldWMM()

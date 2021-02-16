@@ -20,7 +20,7 @@ import numpy as np
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
 
-from Basilisk.simulation import (spacecraftPlus, extForceTorque, simpleNav,
+from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
                                  reactionWheelStateEffector)
 from Basilisk.utilities import simIncludeRW, simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -45,12 +45,12 @@ class BSKDynamicModels():
         SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName2, self.processTasksTimeStep))
 
         # Instantiate Dyn modules as objects
-        self.scObject = spacecraftPlus.SpacecraftPlus()
+        self.scObject = spacecraft.Spacecraft()
         self.simpleNavObject = simpleNav.SimpleNav()
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
         self.rwFactory = simIncludeRW.rwFactory()
 
-        self.scObject2 = spacecraftPlus.SpacecraftPlus()
+        self.scObject2 = spacecraft.Spacecraft()
         self.simpleNavObject2 = simpleNav.SimpleNav()
         self.rwStateEffector2 = reactionWheelStateEffector.ReactionWheelStateEffector()
         self.extForceTorqueObject2 = extForceTorque.ExtForceTorque()
@@ -60,8 +60,8 @@ class BSKDynamicModels():
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
         planet = self.gravFactory.createEarth()
         planet.isCentralBody = True          # ensure this is the central gravitational body
-        self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(self.gravFactory.gravBodies.values()))
-        self.scObject2.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(self.gravFactory.gravBodies.values()))
+        self.scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(self.gravFactory.gravBodies.values()))
+        self.scObject2.gravField.gravBodies = spacecraft.GravBodyVector(list(self.gravFactory.gravBodies.values()))
 
         # Initialize all modules and write init one-time messages
         self.InitAllDynObjects()

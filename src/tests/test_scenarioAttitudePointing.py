@@ -20,7 +20,7 @@
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus(), extForceTorque, simpleNav() and
+# Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
 #           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in deep space.
 # Author:   Hanspeter Schaub
 # Creation Date:  Nov. 19, 2016

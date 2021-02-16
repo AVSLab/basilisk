@@ -57,7 +57,7 @@ struct DockingData {
 };
 
 /*! @brief spacecraft dynamic effector */
-class Spacecraft {
+class SpacecraftUnit {
 public:
     bool docked;                         //!< class variable
     std::string spacecraftName;          //!< -- Name of the spacecraft so that multiple spacecraft can be distinguished
@@ -115,8 +115,8 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 public:
-    Spacecraft();
-    ~Spacecraft();
+    SpacecraftUnit();
+    ~SpacecraftUnit();
 
     void addStateEffector(StateEffector *newStateEffector);  //!< -- Attaches a stateEffector to the system
     void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
@@ -134,7 +134,7 @@ private:
 
 
 /*! @brief spacecraft dynamic effector */
-class SpacecraftDynamics : public DynamicObject{
+class SpacecraftSystem : public DynamicObject{
 public:
     uint64_t simTimePrevious;            //!< -- Previous simulation time
     uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
@@ -142,34 +142,34 @@ public:
     double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
     double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
     Eigen::MatrixXd *sysTime;            //!< [s] System time
-    Spacecraft primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacecraft can attach/detach to/from
-    std::vector<Spacecraft*> spacecraftDockedToPrimary; //!< -- vector of spacecraft currently docked with primary spacecraft
-    std::vector<Spacecraft*> unDockedSpacecraft; //!< -- vector of spacecraft currently detached from all other spacecraft
+    SpacecraftUnit primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacecraft can attach/detach to/from
+    std::vector<SpacecraftUnit*> spacecraftDockedToPrimary; //!< -- vector of spacecraft currently docked with primary spacecraft
+    std::vector<SpacecraftUnit*> unDockedSpacecraft; //!< -- vector of spacecraft currently detached from all other spacecraft
     int numberOfSCAttachedToPrimary;          //!< class variable 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 
 public:
-    SpacecraftDynamics();                    //!< -- Constructor
-    ~SpacecraftDynamics();                   //!< -- Destructor
+    SpacecraftSystem();                    //!< -- Constructor
+    ~SpacecraftSystem();                   //!< -- Destructor
     void initializeDynamics();           //!< -- This method initializes all of the dynamics and variables for the s/c
     void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c
-    void computeEnergyMomentumSC(double time, Spacecraft& spacecraft);  //!< -- This method computes the total energy and momentum of the s/c
+    void computeEnergyMomentumSC(double time, SpacecraftUnit& spacecraft);  //!< -- This method computes the total energy and momentum of the s/c
     void computeEnergyMomentumSystem(double time);  //!< -- This method computes the total energy and momentum of the s/c
-    void updateSpacecraftMassProps(double time, Spacecraft& spacecraft);  //!< -- This method computes the total mass properties of the s/c
+    void updateSpacecraftMassProps(double time, SpacecraftUnit& spacecraft);  //!< -- This method computes the total mass properties of the s/c
     void updateSystemMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
-    void initializeSCPosVelocity(Spacecraft& spacecraft); //!< class method
+    void initializeSCPosVelocity(SpacecraftUnit& spacecraft); //!< class method
     void Reset(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void equationsOfMotion(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
-    void equationsOfMotionSC(double integTimeSeconds, Spacecraft& spacecraft);    //!< -- This method computes the equations of motion for the whole system
+    void equationsOfMotionSC(double integTimeSeconds, SpacecraftUnit& spacecraft);    //!< -- This method computes the equations of motion for the whole system
     void equationsOfMotionSystem(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
-    void findPriorStateInformation(Spacecraft& spacecraft);  //!< class method
-    void calculateDeltaVandAcceleration(Spacecraft& spacecraft, double localTimeStep); //!< class method
+    void findPriorStateInformation(SpacecraftUnit& spacecraft);  //!< class method
+    void calculateDeltaVandAcceleration(SpacecraftUnit& spacecraft, double localTimeStep); //!< class method
     void integrateState(double time);       //!< -- This method steps the state forward one step in time
-    void attachSpacecraftToPrimary(Spacecraft *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName);  //!< -- Attaches a spacecraft to the primary spacecraft chain
-    void addSpacecraftUndocked(Spacecraft *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
+    void attachSpacecraftToPrimary(SpacecraftUnit *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName);  //!< -- Attaches a spacecraft to the primary spacecraft chain
+    void addSpacecraftUndocked(SpacecraftUnit *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
     void determineAttachedSCStates();  //!< class method
 
 private:

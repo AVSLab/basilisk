@@ -41,7 +41,7 @@ the :ref:`magnetometer` module which outputs the local magnetic field measuremen
 When the simulation completes 2 plots are shown for each case. One plot shows the radius in km,
 while the second plot shows the magnetic field measurement vector components with respect to the sensor frame.
 
-The dynamics simulation is setup using a :ref:`SpacecraftPlus` module.
+The dynamics simulation is setup using a :ref:`Spacecraft` module.
 The magnetic field module is created using one of the magnetic field models, e.g.
 :ref:`scenarioMagneticFieldCenteredDipole`
 which requires setting appropriate parameters for the specific planet,
@@ -124,7 +124,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 from Basilisk.utilities import simSetPlanetEnvironment
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.architecture import messaging
 
 #attempt to import vizard
@@ -164,11 +164,11 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup Gravity Body
@@ -183,7 +183,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     req = planet.radEquator
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     if planetCase == 'Jupiter':
         magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module

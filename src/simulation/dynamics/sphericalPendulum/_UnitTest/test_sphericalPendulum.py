@@ -28,7 +28,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import sphericalPendulum
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import orbitalMotion
@@ -72,7 +72,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #  create spacecraft object
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     scSim.AddModelToTask(simTaskName, scObject)
@@ -175,7 +175,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     mu = planet.mu
 
     # attach gravity to the spacecraft
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # initialize orbital elements
     oe = orbitalMotion.ClassicElements()

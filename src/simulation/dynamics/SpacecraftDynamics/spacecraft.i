@@ -17,9 +17,9 @@
 
  */
 
-%module spacecraftPlus
+%module spacecraft
 %{
-   #include "spacecraftPlus.h"
+   #include "spacecraft.h"
    #include "hubEffector.h"
 %}
 
@@ -42,7 +42,7 @@ namespace std {
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 %include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
-%include "spacecraftPlus.h"
+%include "spacecraft.h"
 
 %include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;

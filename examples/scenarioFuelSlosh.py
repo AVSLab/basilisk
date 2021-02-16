@@ -184,7 +184,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import messaging
 
@@ -215,7 +215,7 @@ def run(show_plots, damping_parameter, timeStep):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #  create spacecraft object
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
 
     scSim.AddModelToTask(simTaskName, scObject)
@@ -301,7 +301,7 @@ def run(show_plots, damping_parameter, timeStep):
     mu = planet.mu
 
     # attach gravity to the spacecraft
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # initialize orbital elements
     oe = orbitalMotion.ClassicElements()

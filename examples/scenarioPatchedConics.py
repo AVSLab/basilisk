@@ -104,7 +104,7 @@ import matplotlib.pyplot as plt
 from Basilisk import __path__
 
 bskPath = __path__[0]
-from Basilisk.simulation import spacecraftPlus, gravityEffector
+from Basilisk.simulation import spacecraft, gravityEffector
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
 from Basilisk.architecture import messaging
 from Basilisk.utilities import vizSupport
@@ -130,7 +130,7 @@ def run(show_plots):
 
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -140,7 +140,7 @@ def run(show_plots):
     sun = gravFactory.createSun()
 
     # by default the SPICE object will use the solar system barycenter as the inertial origin
-    # If the spacecraftPlus() output is desired relative to another celestial object, the zeroBase string
+    # If the spacecraft() output is desired relative to another celestial object, the zeroBase string
     # name of the SPICE object needs to be changed.
     # In order to specify which body the spacecraft position and velocities are integrated relative to, the `isCentralBody`
     # flag is used.
@@ -178,7 +178,7 @@ def run(show_plots):
     gravFactory.gravBodies['sun'].planetBodyInMsg.subscribeTo(sunMsg)
 
     #  Earth Centered Circular orbit and hyperbolic departure
-    # initialize spacecraftPlus object and set properties
+    # initialize spacecraft object and set properties
     #   setup orbit and simulation time
     #
     # setup the orbit using classical orbit elements

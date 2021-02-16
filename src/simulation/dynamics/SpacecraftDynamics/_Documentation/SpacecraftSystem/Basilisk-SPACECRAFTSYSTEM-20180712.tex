@@ -44,11 +44,11 @@
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 
-\newcommand{\ModuleName}{spacecraftDynamics}
-\newcommand{\subject}{Multi-Spacecraft Equations of Motion Model}
+\newcommand{\ModuleName}{spacecraftSystem}
+\newcommand{\subject}{System of Spacecraft Equations of Motion Model}
 \newcommand{\status}{To be Reviewed}
 \newcommand{\preparer}{C. Allard}
-\newcommand{\summary}{SpacecraftDynamics is an instantiation of the dynamicObject abstract class. This abstract class is representing systems that have equations of motion that need to be integrated and therefore the main goal of this dynamic object is finding the state derivatives and interfacing with the integrator to integrate the state forward in time. The spacecraftDynamics is specifically geared towards simulating multiple spacecraft at a time that will allow for docking and detaching of spacecraft. If spacecraftPlus is ever removed then this will be the sole dynamicObject that will control the spacecraft dynamics of the system. This current module is IN PROGRESS and burning edge development in its current state.}
+\newcommand{\summary}{SpacecraftSystem is an instantiation of the dynamicObject abstract class. This abstract class is representing systems that have equations of motion that need to be integrated and therefore the main goal of this dynamic object is finding the state derivatives and interfacing with the integrator to integrate the state forward in time. The spacecraftSystem is specifically geared towards simulating multiple spacecraft at a time that will allow for docking and detaching of spacecraft. If spacecraftPlus is ever removed then this will be the sole dynamicObject that will control the spacecraft dynamics of the system. This current module is IN PROGRESS and burning edge development in its current state.}
 
 \begin{document}
 
@@ -66,6 +66,8 @@
 {\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 \hline
 1.0 & Initial Draft (Module is still IN PROGRESS) & C. Allard & 20180613\\
+\hline
+1.1 & Renamed classes to {\tt spacecraftSystem} and {\tt spacecraftUnit} & H. Schaub & 2020-02-15\\
 \hline
 \end{longtable}
 }

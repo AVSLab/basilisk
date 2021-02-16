@@ -45,7 +45,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.simulation import stateArchitecture
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
@@ -177,7 +177,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     testProc = TotalSim.CreateNewProcess(unitProcessName)
     testProc.addTask(TotalSim.CreateNewTask(unitTaskName, testRate))
     TotalSim.AddModelToTask(unitTaskName, thrusterSet)
-    TotalSim.scObject = spacecraftPlus.SpacecraftPlus()
+    TotalSim.scObject = spacecraft.Spacecraft()
     TotalSim.scObject.ModelTag = "spacecraftBody"
 
     #  Create a task manager

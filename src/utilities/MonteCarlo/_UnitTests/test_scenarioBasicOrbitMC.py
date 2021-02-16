@@ -32,7 +32,7 @@ bskPath = __path__[0]
 from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion, OrbitalElementDispersion
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import macros
@@ -69,10 +69,10 @@ def myCreationFunction():
     dynProcess.addTask(sim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # Setup the simulation modules
-    # Initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # Initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
-    # Add spacecraftPlus object to the simulation process
+    # Add spacecraft object to the simulation process
     sim.AddModelToTask(simTaskName, scObject)
 
     # Setup Earth gravity body and attach gravity model to spaceCraftPlus
@@ -84,7 +84,7 @@ def myCreationFunction():
                                         , planet.spherHarm
                                         , 2
                                         )
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([planet])
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector([planet])
 
     # Setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
