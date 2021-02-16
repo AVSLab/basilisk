@@ -94,7 +94,7 @@ Gravity Gradient Torque
    Gravity  Gradient Perturbed Hill Pointing <scenarioAttitudeGG>
 
 Access to Communication Locations
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. toctree::
    :maxdepth: 1
 

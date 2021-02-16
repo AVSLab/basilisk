@@ -106,7 +106,7 @@ Version 1.8.8
 Version 1.8.7
 -------------
 - Updated ``orbitalMotion`` python and C libraries to include the new methods ``hillFrame()``, ``hill2rv()`` and ``rv2hill()``
-- Updated :ref:`dualHingedRigidBodyStateEffector` to support an output message of the panel angular states, an output message of the panel inertial position and attitude states, as well as upgrading the module to support :ref:`spacecraftDynamics`.
+- Updated :ref:`dualHingedRigidBodyStateEffector` to support an output message of the panel angular states, an output message of the panel inertial position and attitude states, as well as upgrading the module to support ``spacecraftDynamics``.
 - Updated :ref:`vizInterface` to support scripting of new Vizard 1.6.1 features
 
 Version 1.8.6

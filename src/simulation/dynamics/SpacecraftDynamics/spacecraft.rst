@@ -51,7 +51,7 @@ This section is to outline the steps needed to setup a Spacecraft module in pyth
 
 #.  Import the spacecraft class::
 
-        import spacecraft
+        from Basilisk.simulation import spacecraft
 
 #.  Create an instantiation of a spacecraft::
 

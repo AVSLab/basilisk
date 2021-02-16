@@ -51,7 +51,7 @@ Setup Changes to Simulate Thrusters Dynamic Effectors
 
 At the beginning of the script all the plot functions are declared. Then the fundamental simulation setup is the same
 as the one used in :ref:`scenarioAttitudeFeedback2T`.
-The dynamics simulation is setup using a :ref:`pacecraft` module to which an Earth gravity
+The dynamics simulation is setup using a :ref:`spacecraft` module to which an Earth gravity
 effector is attached.  The simple navigation module is still used to output the inertial attitude,
 angular rate, as well as position and velocity messages.
 
