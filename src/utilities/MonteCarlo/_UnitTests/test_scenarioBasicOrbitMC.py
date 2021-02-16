@@ -75,7 +75,7 @@ def myCreationFunction():
     # Add spacecraft object to the simulation process
     sim.AddModelToTask(simTaskName, scObject)
 
-    # Setup Earth gravity body and attach gravity model to spaceCraftPlus
+    # Setup Earth gravity body and attach gravity model to spacecraft
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
     planet.isCentralBody = True

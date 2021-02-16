@@ -152,7 +152,7 @@ def run(show_plots, useCentral):
                                      epochInMsg=True)
     scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
 
-    # attach gravity model to spaceCraftPlus
+    # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #

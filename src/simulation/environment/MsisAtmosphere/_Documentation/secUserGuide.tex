@@ -29,7 +29,7 @@ The model can then be added to a task like other simModels. Each Atmosphere calc
 
 To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addSpacecraftToModel| method common to environmental models:
 \begin{verbatim}
-scObject = spacecraftPlus.SpacecraftPlus()
+scObject = spacecraft.Spacecraft()
 scObject.ModelTag = "spacecraftBody"
 newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 \end{verbatim}

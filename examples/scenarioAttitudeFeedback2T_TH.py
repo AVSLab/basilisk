@@ -361,7 +361,7 @@ def run(show_plots, useDVThrusters):
     earth.isCentralBody = True  # ensure this is the central gravitational body
     mu = earth.mu
 
-    # attach gravity model to spaceCraftPlus
+    # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup extForceTorque module

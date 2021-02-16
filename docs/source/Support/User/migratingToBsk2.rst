@@ -60,7 +60,9 @@ Some early Basilisk modules and message names never complied with the naming gui
 The following list outlines any module or message naming changes that occurred in this upgrade process.  That is,
 message naming is listed if it is outside the standard adjusted (see :ref:`codingGuidelines`) where
 ``descriptionOutMsgName`` becomes ``descriptionOutMsg``.    
-This list makes it simple to see what naming will need to be changed.
+This list makes it simple to see what naming will need to be changed.  Further, some modules have now a new name.
+For example, the module ``spacecraftPlus`` is now called simply ``spacecraft``.  These module name changes are
+also listed in this table below.
 
 .. table:: Table of Module Message and Name Changes
     :widths: 40 30 30
@@ -271,6 +273,9 @@ This list makes it simple to see what naming will need to be changed.
     |                           | ``inputStateName``              | ``scStateInMsg``                  |
     +                           +---------------------------------+-----------------------------------+
     |                           | ``inputSunName``                | ``sunStateInMsg``                 |
+    +---------------------------+---------------------------------+-----------------------------------+
+    | spacecraftDynamics →      |                                 |                                   |
+    |  ``spacecraftSystem``     |                                 |                                   |
     +---------------------------+---------------------------------+-----------------------------------+
     | spacecraftPlus →          | ``scMassStateOutMsgName``       | ``scMassOutMsg``                  |
     |  ``spacecraft``           |                                 |                                   |

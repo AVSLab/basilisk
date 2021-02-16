@@ -29,9 +29,9 @@ for ind in range(0,len(scAreas)):
 \end{verbatim}
 
 
-Finally, add the module to a spacecraftPlus object using the \verb|addDynamicEffector| method:
+Finally, add the module to a spacecraft object using the \verb|addDynamicEffector| method:
 \begin{verbatim}
-scObject = spacecraftPlus.SpacecraftPlus()
+scObject = spacecraft.Spacecraft()
 scObject.ModelTag = "spacecraftBody"
 scObject.addDynamicEffector(newDrag)
 \end{verbatim}

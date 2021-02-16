@@ -29,7 +29,7 @@
       <rect x="92.5" y="90" width="83" height="28" fill="#c0ffc0"/>
       <rect x="92.5" y="90" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <text transform="translate(97.5 98.36947)" fill="black">
-        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="5.7425" y="9" textLength="61.515">spacecraftPlus()</tspan>
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="5.7425" y="9" textLength="61.515">spacecraft()</tspan>
       </text>
       <rect x="218" y="90" width="83" height="28" fill="#c0ffc0"/>
       <rect x="218" y="90" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>

@@ -133,7 +133,7 @@ def run(show_plots):
     scObject.hub.omega_BN_BInit = [[0.000], [-0.000], [0.000]]
     scenarioSim.AddModelToTask(taskName, scObject)
 
-    # attach gravity model to spaceCraftPlus
+    # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # Create the ground location

@@ -1,29 +1,29 @@
-%!TEX root = ./Basilisk-SPACECRAFTPLUS-20170808.tex
+%!TEX root = ./Basilisk-spacecraft-20170808.tex
 
 
 \section{Model Description}
 
 \subsection{Introduction}
 
-SpacecraftPlus is an instantiation of the dynamicObject abstract class. This abstract class is representing systems that have equations of motion that need to be integrated and therefore the main goal of this dynamic object is finding the state derivatives and interfacing with the integrator to integrate the state forward in time. SpacecraftPlus is representing a spacecraft that can be simulating only the translational movement which would mean the spacecraft only has mass (for gravity only simulations, setting the mass is not necessary), it could be simulating only rotational dynamics which would result in the spacecraft only having inertia, and finally both translational and rotational dynamics can be simulated at a time which results in the spacecraft having mass, inertia and center of mass offset.
+spacecraft is an instantiation of the dynamicObject abstract class. This abstract class is representing systems that have equations of motion that need to be integrated and therefore the main goal of this dynamic object is finding the state derivatives and interfacing with the integrator to integrate the state forward in time. spacecraft is representing a spacecraft that can be simulating only the translational movement which would mean the spacecraft only has mass (for gravity only simulations, setting the mass is not necessary), it could be simulating only rotational dynamics which would result in the spacecraft only having inertia, and finally both translational and rotational dynamics can be simulated at a time which results in the spacecraft having mass, inertia and center of mass offset.
 
-SpacecraftPlus is the module where the equations of motion of the spacecraft are computed including the interaction between the hubEffector, stateEffectors and dynamicEffectors. The hubEffector is where the translational and rotational state derivatives are computed, the stateEffectors give contributions to spacecraftPlus and computes their own derivatives and the dynamcEffectors provide force and torque contributions to spacecraftPlus.
+spacecraft is the module where the equations of motion of the spacecraft are computed including the interaction between the hubEffector, stateEffectors and dynamicEffectors. The hubEffector is where the translational and rotational state derivatives are computed, the stateEffectors give contributions to spacecraft and computes their own derivatives and the dynamcEffectors provide force and torque contributions to spacecraft.
 
-To give more description on this complex relationship, Figure~\ref{fig:FlexSloshFigure} shows an example of a spacecraft with a fuel slosh particle and two hinged rigid bodies connected to it. From a spacecraftPlus perspective there are some important variables and frame definitions needed to be defined. The body frame, \frameDefinition{B}, is a Cartesian reference frame that is fixed to the hub (the rigid body of the spacecraft) with no constraints on its orientation with respect to the hub. Additionally its origin, $B$, can be placed anywhere on the hub. The inertial frame, \frameDefinition{N}, is the inertial reference frame used in the formulation of the dynamics. The hub has some remaining variables needed to be defined which are the mass of the hub, $m_{\textnormal{hub}}$, center of mass of the hub location, $B_c$, and the inertia of the hub about its center of mass, $[I_{\textnormal{hub},B_c}]$. 
+To give more description on this complex relationship, Figure~\ref{fig:FlexSloshFigure} shows an example of a spacecraft with a fuel slosh particle and two hinged rigid bodies connected to it. From a spacecraft perspective there are some important variables and frame definitions needed to be defined. The body frame, \frameDefinition{B}, is a Cartesian reference frame that is fixed to the hub (the rigid body of the spacecraft) with no constraints on its orientation with respect to the hub. Additionally its origin, $B$, can be placed anywhere on the hub. The inertial frame, \frameDefinition{N}, is the inertial reference frame used in the formulation of the dynamics. The hub has some remaining variables needed to be defined which are the mass of the hub, $m_{\textnormal{hub}}$, center of mass of the hub location, $B_c$, and the inertia of the hub about its center of mass, $[I_{\textnormal{hub},B_c}]$.
 
-More variables needed to be defined for the spacecraftPlus, are the total mass of the spacecraft, $m_{\textnormal{sc}}$, the total inertia of the spacecraft about point $B$,  $[I_{\textnormal{sc},B}]$, the center of mass location of the total spacecraft, point $C$, and the vector $\bm c$ which points from point $B$ to point $C$. Additionally, the state variables for the hub are $\bm r_{B/N}$, $\dot{\bm r}_{B/N}$, $\bm \sigma_{\cal{B}/\cal{N}}$ and $\bm \omega_{\cal{B}/\cal{N}}$, which are the position and velocity of point $B$ with respect to $N$ which describes the translational motion of the spacecraft, the MRP set for the orientation of $\cal{B}$ with respect to $\cal{N}$, and the angular velocity of the $\cal{B}$ with respect to $\cal{N}$ with describes the rotation of the spacecraft, respectively. 
+More variables needed to be defined for the spacecraft, are the total mass of the spacecraft, $m_{\textnormal{sc}}$, the total inertia of the spacecraft about point $B$,  $[I_{\textnormal{sc},B}]$, the center of mass location of the total spacecraft, point $C$, and the vector $\bm c$ which points from point $B$ to point $C$. Additionally, the state variables for the hub are $\bm r_{B/N}$, $\dot{\bm r}_{B/N}$, $\bm \sigma_{\cal{B}/\cal{N}}$ and $\bm \omega_{\cal{B}/\cal{N}}$, which are the position and velocity of point $B$ with respect to $N$ which describes the translational motion of the spacecraft, the MRP set for the orientation of $\cal{B}$ with respect to $\cal{N}$, and the angular velocity of the $\cal{B}$ with respect to $\cal{N}$ with describes the rotation of the spacecraft, respectively.
 
 
 \begin{figure}[htbp]
 	\centerline{
 		\includegraphics[width=0.8\textwidth]{Figures/Flex_Slosh_Figure}}
-	\caption{Complex spacecraft that can be simulated using spacecraftPlus}
+	\caption{Complex spacecraft that can be simulated using spacecraft}
 	\label{fig:FlexSloshFigure}
 \end{figure}
 
 \subsection{Equations of Motion}
 
-The main description that is needed for spacecraftPlus are the equations of motion (EOMs). The following equation describes the translational EOM if only translation is enabled. This is Newton's Second Law on the center of mass of the spacecraft but when translation only is enabled the center of mass of the spacecraft is coincident with point $B$. 
+The main description that is needed for spacecraft are the equations of motion (EOMs). The following equation describes the translational EOM if only translation is enabled. This is Newton's Second Law on the center of mass of the spacecraft but when translation only is enabled the center of mass of the spacecraft is coincident with point $B$.
 
 \begin{equation}
 m_{\text{sc}} \ddot{\bm r}_{B/N} = m_{\text{sc}} \ddot{\bm r}_{C/N} =  \bm F_{\textnormal{ext}}
@@ -87,7 +87,7 @@ Where the full definition of $[B(\bm \sigma)]$ can be seen in Reference~\cite{sc
 
 \subsection{Energy and Momentum Calculations}
 
-A key part of spacecraftPlus is finding the total energy and momentum of the spacecraft for validation purposes. This section describes how the energy and momentum is calculated in spacecraftPlus.
+A key part of spacecraft is finding the total energy and momentum of the spacecraft for validation purposes. This section describes how the energy and momentum is calculated in spacecraft.
 
 \subsubsection{Total Orbital Kinetic Energy}
 
@@ -216,4 +216,4 @@ Simplifying this result yields the final equation
 \end{multline}
 
 \subsubsection{Contributions from Hub and State Effectors}
-During the integrate state method (after the integrator call), the spaceCraftPlus will ask both the hubEffector and stateEffectors for their contributions to $\bm c$, $\dot{\bm c}$, $T_{\text{orb}}$, $E_{\text{rot}}$, $\bm H_{\text{orb},N}$ and $\bm H_{\text{rot},C}$. The spaceCraftPlus will then manage the addition of these values and the modfying factors seen in the equations above. 
+During the integrate state method (after the integrator call), the spacecraft will ask both the hubEffector and stateEffectors for their contributions to $\bm c$, $\dot{\bm c}$, $T_{\text{orb}}$, $E_{\text{rot}}$, $\bm H_{\text{orb},N}$ and $\bm H_{\text{rot},C}$. The spacecraft will then manage the addition of these values and the modfying factors seen in the equations above.

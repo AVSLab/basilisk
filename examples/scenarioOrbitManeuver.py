@@ -161,7 +161,7 @@ def run(show_plots, maneuverCase):
     earth = gravFactory.createEarth()
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
-    # attach gravity model to spaceCraftPlus
+    # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #

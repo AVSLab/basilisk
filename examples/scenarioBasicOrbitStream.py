@@ -157,7 +157,7 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
                                                 planet.spherHarm, 2)
     mu = planet.mu
 
-    # attach gravity model to spaceCraftPlus
+    # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #

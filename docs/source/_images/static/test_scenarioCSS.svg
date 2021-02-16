@@ -35,7 +35,7 @@
       <rect x="92.5" y="90" width="83" height="28" fill="#c0ffc0"/>
       <rect x="92.5" y="90" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <text transform="translate(97.5 98.36947)" fill="black">
-        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="5.7425" y="9" textLength="61.515">spacecraftPlus()</tspan>
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="5.7425" y="9" textLength="61.515">spacecraft()</tspan>
       </text>
       <rect x="92.5" y="139.5" width="83" height="28" fill="#c0ffc0"/>
       <rect x="92.5" y="139.5" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
@@ -75,7 +75,7 @@
       <rect x="212.5" y="89.27273" width="83" height="28" fill="#c0ffc0"/>
       <rect x="212.5" y="89.27273" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <text transform="translate(217.5 97.6422)" fill="black">
-        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="5.7425" y="9" textLength="61.515">spacecraftPlus()</tspan>
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="5.7425" y="9" textLength="61.515">spacecraft()</tspan>
       </text>
       <rect x="219.0625" y="140.98658" width="69.875" height="23.57229" fill="#c0ffc0"/>
       <rect x="219.0625" y="140.98658" width="69.875" height="23.57229" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>

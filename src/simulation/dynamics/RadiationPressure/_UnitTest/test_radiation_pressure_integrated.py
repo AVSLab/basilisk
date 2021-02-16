@@ -83,7 +83,7 @@ def radiationPressureIntegratedTest(show_plots):
     sim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
     srp.sunEphmInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
 
-    # attach gravity model to spaceCraftPlus
+    # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup the orbit using classical orbit elements

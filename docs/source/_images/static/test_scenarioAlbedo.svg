@@ -134,14 +134,14 @@
 			<text x="11.39" y="510.52" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Simulation Task</text>		</g>
 		<g id="shape9-25" v:mID="9" v:groupContext="shape" transform="translate(153.765,-417.937)">
 			<title>Rectangle.31</title>
-			<desc>spacecraftPlus()</desc>
+			<desc>spacecraft()</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="44.3049" cy="507.517" width="88.61" height="33.5091"/>
 			<rect x="0" y="490.763" width="88.6098" height="33.5091" class="st8"/>
-			<text x="12.1" y="510.52" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>spacecraftPlus()</text>		</g>
+			<text x="12.1" y="510.52" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>spacecraft()</text>		</g>
 		<g id="shape10-28" v:mID="10" v:groupContext="shape" v:layerMember="0" transform="translate(190.967,-467.484)">
 			<title>Dynamic connector.32</title>
 			<path d="M7.07 524.27 L7.07 529.59 L7.1 529.59 L7.1 533.27" class="st4"/>
@@ -246,14 +246,14 @@
 			<text x="11.39" y="510.52" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Simulation Task</text>		</g>
 		<g id="shape22-73" v:mID="22" v:groupContext="shape" transform="translate(481.89,-421.176)">
 			<title>Rectangle.22</title>
-			<desc>spacecraftPlus()</desc>
+			<desc>spacecraft()</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="44.3049" cy="507.517" width="88.61" height="33.5091"/>
 			<rect x="0" y="490.763" width="88.6098" height="33.5091" class="st8"/>
-			<text x="12.1" y="510.52" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>spacecraftPlus()</text>		</g>
+			<text x="12.1" y="510.52" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>spacecraft()</text>		</g>
 		<g id="shape23-76" v:mID="23" v:groupContext="shape" v:layerMember="0" transform="translate(519.108,-470.484)">
 			<title>Dynamic connector.23</title>
 			<path d="M7.09 524.27 L7.09 533.03" class="st4"/>
@@ -388,14 +388,14 @@
 						v:langID="1055">Start</tspan></text>		</g>
 		<g id="shape38-131" v:mID="38" v:groupContext="shape" transform="translate(481.89,-257.271)">
 			<title>Rectangle.38</title>
-			<desc>spacecraftPlus()</desc>
+			<desc>spacecraft()</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="44.3049" cy="507.517" width="88.61" height="33.5091"/>
 			<rect x="0" y="490.763" width="88.6098" height="33.5091" class="st8"/>
-			<text x="12.1" y="510.52" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>spacecraftPlus()</text>		</g>
+			<text x="12.1" y="510.52" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>spacecraft()</text>		</g>
 		<g id="shape39-134" v:mID="39" v:groupContext="shape" transform="translate(593.07,-299.791)">
 			<title>Rectangle.39</title>
 			<desc>CSS1()</desc>
@@ -530,14 +530,14 @@
 						v:langID="1055">Start</tspan></text>		</g>
 		<g id="shape52-189" v:mID="52" v:groupContext="shape" transform="translate(481.89,-89.6637)">
 			<title>Rectangle.52</title>
-			<desc>spacecraftPlus()</desc>
+			<desc>spacecraft()</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="44.3049" cy="507.517" width="88.61" height="33.5091"/>
 			<rect x="0" y="490.763" width="88.6098" height="33.5091" class="st8"/>
-			<text x="12.1" y="510.52" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>spacecraftPlus()</text>		</g>
+			<text x="12.1" y="510.52" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>spacecraft()</text>		</g>
 		<g id="shape53-192" v:mID="53" v:groupContext="shape" transform="translate(593.07,-132.183)">
 			<title>Rectangle.53</title>
 			<desc>CSS1()</desc>

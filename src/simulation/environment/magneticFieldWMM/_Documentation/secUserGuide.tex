@@ -38,7 +38,7 @@ unitTestSim.AddModelToTask(unitTaskName, testModule)
 Each {\tt MagneticField} module calculates the magnetic field based on the output state messages for a set of spacecraft.
 To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method:
 \begin{verbatim}
-scObject = spacecraftPlus.SpacecraftPlus()
+scObject = spacecraft.Spacecraft()
 scObject.ModelTag = "spacecraftBody"
 magModule.addSpacecraftToModel(scObject.scStateOutMsg)
 \end{verbatim}

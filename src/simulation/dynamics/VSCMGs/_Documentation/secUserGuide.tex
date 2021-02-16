@@ -3,7 +3,7 @@
 This section is to outline the steps needed to setup a reaction wheel state effector in python using Basilisk.
 
 \begin{enumerate}
-	\item Import the vscmgStateEffector class and the spacecraftPlus class: \newline \textit{import vscmgStateEffector} and \textit{import spacecraftPlus}
+	\item Import the vscmgStateEffector class and the spacecraft class: \newline \textit{import vscmgStateEffector} and \textit{import spacecraft}
 	\item Define an instantiation of a vscmgObject: \newline
 	\textit{vscmgObject = vscmgStateEffector.vscmgStateEffector()}
 	\item Set parameters for vscmgObject. A common set up might include: \newline
@@ -26,8 +26,8 @@ This section is to outline the steps needed to setup a reaction wheel state effe
          \textit{VSCMG.massW = 6.} \newline
          \textit{'VSCMG.massG = 6.} \newline
          \textit{VSCMG.VSCMGModel = 0} 
-	\item Create an instantiation of a spacecraftPlus: \newline
-	\textit{scObject = spacecraftPlus.SpacecraftPlus()}
-	\item Finally, add the VSCMG object to your spacecraftPlus:\newline
-	\textit{rwFactory.addToSpacecraft("VSCMG", vscmgStateEffector, scObject)}. See spacecraftPlus documentation on how to set up a spacecraftPlus object.
+	\item Create an instantiation of a spacecraft: \newline
+	\textit{scObject = spacecraft.Spacecraft()}
+	\item Finally, add the VSCMG object to your spacecraft:\newline
+	\textit{rwFactory.addToSpacecraft("VSCMG", vscmgStateEffector, scObject)}. See spacecraft documentation on how to set up a spacecraft object.
 \end{enumerate}

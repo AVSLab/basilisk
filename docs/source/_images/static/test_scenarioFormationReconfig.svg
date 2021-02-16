@@ -29,14 +29,14 @@
         <rect x="428.33" y="-170.416" width="110" height="22.28" fill="#c0ffc0"/>
         <rect x="428.33" y="-170.416" width="110" height="22.28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(433.33 -165.416)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="10" font-weight="400" fill="black" x="10.65" y="10">SpacecraftPlus1()</tspan>
+          <tspan font-family="Helvetica Neue" font-size="10" font-weight="400" fill="black" x="10.65" y="10">spacecraft1()</tspan>
         </text>
       </g>
       <g id="Graphic_5">
         <rect x="269.293" y="-170.416" width="118" height="22.28" fill="#c0ffc0"/>
         <rect x="269.293" y="-170.416" width="118" height="22.28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(274.293 -165.416)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="10" font-weight="400" fill="black" x="14.65" y="10">SpacecraftPlus2()</tspan>
+          <tspan font-family="Helvetica Neue" font-size="10" font-weight="400" fill="black" x="14.65" y="10">spacecraft2()</tspan>
         </text>
       </g>
       <g id="Graphic_6">

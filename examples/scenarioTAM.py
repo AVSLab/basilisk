@@ -182,7 +182,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     mu = planet.mu
     req = planet.radEquator
 
-    # attach gravity model to spaceCraftPlus
+    # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     if planetCase == 'Jupiter':
