@@ -36,10 +36,12 @@ splitPath = path.split(bskName)
 def test_range(show_plots):
     """
     Tests whether groundLocation:
-        1. Computes range correctly by evaluating slantRange;
-        2. Tests whether elevation is correctly evaluated;
-        3. Tests whether range limits impact access.
-        4. Tests whether multiple spacecraft are supported in parallel
+
+    1. Computes range correctly by evaluating slantRange;
+    2. Tests whether elevation is correctly evaluated;
+    3. Tests whether range limits impact access.
+    4. Tests whether multiple spacecraft are supported in parallel
+
     :return:
     """
 
@@ -127,8 +129,10 @@ def test_range(show_plots):
 def test_rotation(show_plots):
     """
     Tests whether groundLocation:
-        1. Computes the current location based on the initial position and the rotation rate of the planet
-        it is attached to.
+
+    1. Computes the current location based on the initial position and the rotation rate of the planet
+       it is attached to.
+
     :return:
     """
     simTime = 1.

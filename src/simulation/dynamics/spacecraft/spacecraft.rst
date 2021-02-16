@@ -1,7 +1,9 @@
 
 Executive Summary
 -----------------
-This module provides the spacecraft rigid body translational and rotation motion.
+This module provides the spacecraft rigid body translational and rotation motion.  It is the typical module used to simulate the 6-DOF spacecraft motion.  This ``spacecraft`` module is setup such that additional spacecraft effectors can be added such as :ref:`reactionWheelStateEffector`, :ref:`thrusterDynamicEffector`, etc.  See `Dr. Cody Allard's dissertation <http://hanspeterschaub.info/Papers/grads/CodyAllard.pdf>`__ for more information.
+
+
 This is an instantiation of the :ref:`dynamicObject` abstract class that is a spacecraft with :ref:`stateEffector`'s and
 :ref:`dynamicEffector`'s attached to it. The ``spacecraft`` module allows for both translation and
 rotation. :ref:`stateEffector`'s such as RWs, flexible solar panel, fuel slosh etc can be added to the spacecraft by attaching
@@ -10,7 +12,7 @@ by attaching dynamicEffectors. This class performs all of this interaction betwe
 the hub.
 
 The module
-:download:`PDF Description </../../src/simulation/dynamics/SpacecraftDynamics/_Documentation/SpacecraftSystem/Basilisk-SPACECRAFT-20170808.pdf>`
+:download:`PDF Description </../../src/simulation/dynamics/spacecraft/_Documentation/Spacecraft/Basilisk-SPACECRAFT-20170808.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 

@@ -17,10 +17,10 @@
 
  */
 
-%module spacecraft
+%module spacecraftSystem
 %{
-   #include "spacecraft.h"
-   #include "hubEffector.h"
+    #include "spacecraftSystem.h"
+    #include "../_GeneralModuleFiles/hubEffector.h"
 %}
 
 %pythoncode %{
@@ -29,6 +29,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
+
 %include "std_vector.i"
 
 namespace std {
@@ -36,22 +37,21 @@ namespace std {
 }
 
 %include "sys_model.h"
-%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-%include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
-%include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
-%include "spacecraft.h"
+%include "../_GeneralModuleFiles/stateData.h"
+%include "../_GeneralModuleFiles/dynParamManager.h"
+%include "../_GeneralModuleFiles/dynamicObject.h"
+%include "../_GeneralModuleFiles/gravityEffector.h"
+%include "../_GeneralModuleFiles/stateEffector.h"
+%include "../_GeneralModuleFiles/dynamicEffector.h"
+%include "spacecraftSystem.h"
+%include "../_GeneralModuleFiles/hubEffector.h"
 
-%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
-struct SCPlusStatesMsg_C;
-%include "architecture/msgPayloadDefC/SCPlusMassPropsMsgPayload.h"
-struct SCPlusMassPropsMsg_C;
-%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
-struct AttRefMsg_C;
-
-%include "hubEffector.h"
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
+struct SCMassPropsMsg_C;
+%include "architecture/msgPayloadDefC/SCEnergyMomentumMsgPayload.h"
+struct SCEnergyMomentumMsg_C;
 
 %pythoncode %{
 import sys

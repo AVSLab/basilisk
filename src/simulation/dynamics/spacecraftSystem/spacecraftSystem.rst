@@ -1,4 +1,7 @@
 
+.. warning::
+    This module allows for multiple spacecraft units (mother craft and a docked daughter craft, etc.) to be simulated as an integrated dynamical system.  See `Dr. Cody Allard's dissertation <http://hanspeterschaub.info/Papers/grads/CodyAllard.pdf>`__ for more information.  However, this is still work in progress and not all effectors are compatible with this manner of doing the dynamics.  Use :ref:`spacecraft` to create a spacecraft simulation object unless you are familiar what this expanded spacecraft dynamics module provides.
+    
 Executive Summary
 -----------------
 
@@ -10,7 +13,7 @@ by attaching dynamicEffectors. This class performs all of this interaction betwe
 the hub.  In contrast to :ref:`spacecraft`, this class allows for several complex spacecraft components to form a system.  This hubs can be rigidly connected or free-flying.
 
 The module
-:download:`PDF Description </../../src/simulation/dynamics/SpacecraftDynamics/_Documentation/SpacecraftSystem/Basilisk-SPACECRAFTSYSTEM-20180712.pdf>`
+:download:`PDF Description </../../src/simulation/dynamics/spacecraftSystem/_Documentation/SpacecraftSystem/Basilisk-SPACECRAFTSYSTEM-20180712.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 

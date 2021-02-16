@@ -78,6 +78,8 @@ Version |release|
 - Added installation instructions to run Basilisk on a computer with the Apple M1 processor
 - added :ref:`spacecraftLocation` module to allow checking for satellite to satellite line-of-sight access
 - made ``maximumRange`` an optional variable in :ref:`groundLocation`
+- renamed ``spacecraftDynamics`` to :ref:`spacecraftSystem`, and renamed the associated ``spacecraft`` to ``spacecraftUnit()``.
+- renamed ``spacecraftPlus()`` to be now simply :ref:`spacecraft`
 
 
 

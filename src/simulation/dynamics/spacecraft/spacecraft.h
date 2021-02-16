@@ -34,7 +34,7 @@
 #include "architecture/msgPayloadDefC/SCPlusMassPropsMsgPayload.h"
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 
-#include "hubEffector.h"
+#include "../_GeneralModuleFiles/hubEffector.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 

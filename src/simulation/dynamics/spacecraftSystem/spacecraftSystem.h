@@ -29,7 +29,7 @@
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "../_GeneralModuleFiles/sys_model.h"
-#include "hubEffector.h"
+#include "../_GeneralModuleFiles/hubEffector.h"
 
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
