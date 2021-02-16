@@ -37,9 +37,9 @@ Running a Virtual Environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Follow the :ref:`installMacOS` instructions to setup and activate the virtual environment.  This way you install the Intel python packages just for using Basilisk.  This won't interfere with other projects that might be running M1 python packages.
 
-Be sure to update `pip` inside the virtual environmnent to the latest version using::
+Be sure to update `pip` inside the virtual environment to the latest version using::
 
-    python3 -m pip install -U pip
+    pip3 install -U pip
 
 
 Install Packages
