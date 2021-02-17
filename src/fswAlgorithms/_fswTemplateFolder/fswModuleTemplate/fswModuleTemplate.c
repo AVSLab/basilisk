@@ -82,7 +82,7 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t call
     outMsgBuffer = FswModuleTemplateMsg_C_zeroMsgPayload();
     v3SetZero(configData->inputVector);
     
-    /*! - Read the input messages */
+    /*! - Read the optional input messages */
     if (FswModuleTemplateMsg_C_isLinked(&configData->dataInMsg)) {
         inMsgBuffer = FswModuleTemplateMsg_C_read(&configData->dataInMsg);
         v3Copy(inMsgBuffer.dataVector, configData->inputVector);

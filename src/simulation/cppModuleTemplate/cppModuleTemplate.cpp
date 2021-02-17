@@ -57,7 +57,7 @@ void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
     outMsgBuffer = this->dataOutMsg.zeroMsgPayload();
     v3SetZero(inputVector);
 
-    /*! - Read the input messages */
+    /*! - Read the optional input messages */
     if (this->dataInMsg.isLinked()) {
         inMsgBuffer = this->dataInMsg();
         v3Copy(inMsgBuffer.dataVector, inputVector);
