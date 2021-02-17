@@ -44,7 +44,7 @@ Eclipse::~Eclipse()
 void Eclipse::Reset(uint64_t CurrenSimNanos)
 {
     if (!this->sunInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Eclipse: sunInMsg must be linked to a spacecraft state output message.");
+        bskLogger.bskLog(BSK_ERROR, "Eclipse: sunInMsg must be linked to sun Spice state message.");
     }
 
     if (this->positionInMsgs.size() == 0) {
