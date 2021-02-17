@@ -745,4 +745,4 @@ The following table lists all required and optional arguments that can be provid
       - double
       - m
       - No
-      - range of the location station, use 0 (protobuffer default) to use viz default
+      - range of the location station, use 0 or negative value (protobuffer default) to use viz default

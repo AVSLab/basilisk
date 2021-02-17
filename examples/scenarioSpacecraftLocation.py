@@ -240,7 +240,7 @@ def run(show_plots):
                                , r_GP_P=[0, 2, 0]
                                , gHat_P=[0, 1, 0]
                                , fieldOfView=2*scLocation.theta
-                               , range=1000.
+                               , range=50.
                                , color='pink'
                                )
         viz.settings.showLocationCommLines = 1
