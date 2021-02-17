@@ -22,7 +22,10 @@ Basilisk Release Notes
 
     - ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
     - GPU based methods to evaluate solar radiation pressure forces and torques
-    - atmospheric drag evaluation using multi-faceted spacecraft model
+    - magnetic torque bar effector
+    - magnetic FSW control module to dump reaction wheel angular momentum
+    - new tutorial example scripts
+    - new FSW planet location pointing guidance module
     - Basilisk 2.0 that includes:
 
         - working on a new messaging system that is much faster to log,
