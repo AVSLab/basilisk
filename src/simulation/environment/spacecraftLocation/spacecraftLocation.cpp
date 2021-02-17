@@ -20,6 +20,7 @@
 #include "simulation/environment/spacecraftLocation/spacecraftLocation.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include <math.h>
 
 #include <iostream>
 
