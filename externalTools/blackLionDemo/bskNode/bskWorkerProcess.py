@@ -7,6 +7,7 @@ from Basilisk.utilities import SimulationBaseClass
 path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(path + '/../')
 from blackLion import workerProcess
+from blackLion.message_processing import convert_str_list_into_bytes
 
 
 class BskSim(workerProcess.WorkerProcess):
@@ -37,19 +38,21 @@ class BskSim(workerProcess.WorkerProcess):
         self.scSim.configure_initial_conditions()
 
     def match_published_msgs(self, message_names):
-        localPublications = self.scSim.RouterClass.router.match_externalRouteMessages(message_names)
+        localPublications = list(self.scSim.RouterClass.router.match_externalRouteMessages(message_names))
         return localPublications
 
     def get_unpublished_msgs(self):
-        localSubscriptions = self.scSim.RouterClass.router.collect_localRouteMessages()
+        localSubscriptions = list(self.scSim.RouterClass.router.collect_localRouteMessages())
         return localSubscriptions
 
     def next_pub_update(self):
-        return self.scSim.RouterClass.router.currentDataExchangeOut.keys()
+        return list(self.scSim.RouterClass.router.currentDataExchangeOut.keys())
 
     def publish(self):
         for msg_name, exchange_obj in self.scSim.RouterClass.router.currentDataExchangeOut.items():
-            zmq_message = [msg_name, exchange_obj.packet_type, str(exchange_obj.payload_size), exchange_obj.payload]
+            zmq_message = [msg_name, exchange_obj.packet_type, str(exchange_obj.payload_size)]
+            zmq_message = convert_str_list_into_bytes(zmq_message)
+            zmq_message.append(exchange_obj.payload)
             self.pub_socket.send_multipart(zmq_message)
             #print 'BSK node just published zmq_message = %s' % msg_name
 

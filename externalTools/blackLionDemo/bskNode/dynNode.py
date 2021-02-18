@@ -1,10 +1,10 @@
 import warnings
 import argparse
 from Basilisk.utilities import SimulationBaseClass, orbitalMotion, macros, unitTestSupport
-from bskWorkerProcess import BskSim
-import dynModels
-import bskRouter
-import simPlotting as BSK_plt
+from .bskWorkerProcess import BskSim
+from . import dynModels
+from . import bskRouter
+from . import simPlotting as BSK_plt
 
 
 class BSK_DynSim(SimulationBaseClass.SimBaseClass):
@@ -78,6 +78,21 @@ def add_arg_definitions(parser):
                         help='Address string to connect to the controller')
     parser.add_argument('--verbosity_level', nargs='?', default="",
                         help='Verbosity level of the BSK sim logger')
+
+def run_dyn_node(dyn_node_args):
+    node_name = dyn_node_args.get('node_name', "BSK_DynSim")
+    verbosity_level = dyn_node_args.get('verbosity_level', "DEBUG")
+    if dyn_node_args.get('master_address'):
+        master_address = dyn_node_args['master_address']
+    else:
+        print("Node %s needs to know the master address", node_name)
+    BSKSim_process = BskSim(name=node_name,
+                            proc_args=[BSK_DynSim(plot_results=True)],
+                            master_address=master_address,
+                            verbosity_level=verbosity_level)
+    print("Node %s: STARTING " % node_name)
+    BSKSim_process.run()
+
 
 
 if __name__ == "__main__":

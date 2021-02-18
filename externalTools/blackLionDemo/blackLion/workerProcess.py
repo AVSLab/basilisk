@@ -3,7 +3,7 @@ import zmq
 import time
 import signal
 from zmq.eventloop import ioloop, zmqstream
-
+from .message_processing import convert_str_list_into_bytes, convert_bytes_list_into_str
 try:
     import constants, blLogging
 except:
@@ -76,7 +76,7 @@ class WorkerProcess(multiprocessing.Process):
         # self.logger.info('Sub socket closing.')
 
     def handshake_frontend(self):
-        self.pub_socket.send(constants.HANDSHAKE)
+        self.pub_socket.send(constants.HANDSHAKE.encode("utf-8"))
         self.logger.info('Node has published msg = %s' % constants.HANDSHAKE)
         return
 
@@ -84,13 +84,13 @@ class WorkerProcess(multiprocessing.Process):
         # self.sub_socket.setsockopt(zmq.SUBSCRIBE, constants.HANDSHAKE)
         for msg_name in sub_list:
             # self.logger.info('Process %s subscribing to msg = %s.' % (self.process_name, msg_name))
-            self.sub_socket.setsockopt(zmq.SUBSCRIBE, msg_name)
+            self.sub_socket.setsockopt(zmq.SUBSCRIBE, msg_name.encode("utf-8"))
         return
 
     def parse_incoming_packet(self, subscribed_zmq_msg):
         # self.logger.info('Receiving zmq_msg = %s' % subscribed_zmq_msg)
-        msg_name = subscribed_zmq_msg[0]
-        packet_type = subscribed_zmq_msg[1]
+        msg_name = subscribed_zmq_msg[0].decode("utf-8")
+        packet_type = subscribed_zmq_msg[1].decode("utf-8")
         payload_size = int(subscribed_zmq_msg[2])
         payload = subscribed_zmq_msg[3]
         self.route_message_in(msg_name, packet_type, payload_size, payload)
@@ -112,6 +112,9 @@ class WorkerProcess(multiprocessing.Process):
 
     def parse_command(self, msg):
         # self.logger.info("Received command: %s" % msg[0])
+        for i in range(len(msg)):
+            msg[i] = msg[i].decode("utf-8")
+
         if msg[0] == constants.TICK:
             self.parse_tick_message(msg)
             self.publish()
@@ -120,38 +123,41 @@ class WorkerProcess(multiprocessing.Process):
             self.step_process()
             next_pub_list = self.next_pub_update()
             #self.logger.info('Next pub list = %s. ' % next_pub_list)
-            self.stream_rep.send_multipart([constants.TOCK] + next_pub_list)
+            self.stream_rep.send_multipart(convert_str_list_into_bytes([constants.TOCK] + next_pub_list))
 
         elif msg[0] == constants.UNKNOWN_MSGS:
             sub_list = self.get_unpublished_msgs()
             #self.logger.info('sub_list = %s' % sub_list)
             self.subscribe_all_messages(sub_list)
             zmq_list = [msg[0]] + sub_list
-            self.stream_rep.send_multipart(zmq_list)
+            self.stream_rep.send_multipart(convert_str_list_into_bytes(zmq_list))
             # self.stream_rep.send_multipart(self.convert_list_py2zmq(sub_list))
 
         elif msg[0] == constants.MATCH_MSGS:
             pub_list = self.match_published_msgs(msg[1:])
             zmq_list = [msg[0]] + pub_list
             # self.stream_rep.send_multipart(self.convert_list_py2zmq(pub_list))
-            self.stream_rep.send_multipart(zmq_list)
+            self.stream_rep.send_multipart(convert_str_list_into_bytes(zmq_list))
 
         elif msg[0] == constants.START:
             self.parse_start_message(msg)
             self.initialize()
-            self.stream_rep.send_multipart([constants.STARTED, self.logger_protocol.get_connect_address()])
+            started_command = [constants.STARTED,
+                               self.logger_protocol.get_connect_address()]
+            self.stream_rep.send_multipart(convert_str_list_into_bytes(started_command))
 
         elif msg[0] == constants.FINISH:
             self.finish_process()
-            self.stream_rep.send(constants.FINISHED)
+            self.stream_rep.send(constants.FINISHED.encode("utf-8"))
             self.shutdown_process()
 
         elif msg[0] == constants.HANDSHAKE:
-            self.stream_rep.send(constants.HANDSHAKEN)
+            self.stream_rep.send(constants.HANDSHAKEN.encode("utf-8"))
             self.handshake_frontend()
 
         else:
             raise ValueError("Unrecognized command: %s" % msg[0])
+
 
     def shutdown_process(self):
         instance = ioloop.IOLoop.instance()

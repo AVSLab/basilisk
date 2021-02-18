@@ -1,10 +1,22 @@
 from __future__ import print_function
 from subprocess import Popen
+from multiprocessing import Process, set_start_method, Pipe
+
+try:
+    set_start_method("spawn")
+except RuntimeError:
+    pass
+from .controller import run_controller
 import os
 import sys
 import io
 import random
 import socket
+from .protocol import TcpProtocol, IpcProtocol
+
+sys.path.append("..")
+from bskNode.node_factory import NodeFactory
+
 try:
     from Queue import Queue, Empty
 except ImportError:
@@ -24,11 +36,13 @@ class ApplicationSettings():
         self.scenarioClass = None
         self.path = "/"
 
+
 class BlacklionBash(object):
     def __init__(self, file_name, path, exec_type='bash'):
         self.exec_type = exec_type
         self.file_name = file_name
         self.path = path
+
 
 class BlacklionNode(object):
     """
@@ -44,6 +58,7 @@ class BlacklionNode(object):
             a config file or script to pass the executable such as a python script
         path : string
     """
+
     def __init__(self, name, protocol):
         self.name = name
         self.exec_name = None
@@ -51,113 +66,16 @@ class BlacklionNode(object):
         self.path = None
         self.protocol = protocol
         self.should_auto_execute = True
-        self._argsOrd = list()
+        self._argsOrd = dict()
 
-    def add_argsOrd(self, new_args):
-        for arg in new_args:
-            self._argsOrd.append(arg)
+    def add_argsOrd(self, key, value):
+        self._argsOrd[key] = value
 
     def get_argsOrd(self):
         return self._argsOrd
 
     def get_port(self):
         return self.protocol.port
-
-
-class NetworkProtocol(object):
-    """
-        Base class to manage zmq network transport, ip, port and zmq address string
-
-        Parameters
-        ----------
-        port : string
-            tcp port number or ipc port name
-        transport_type : string
-            the transport type
-    """
-
-    def __init__(self, port=None, transport_type="tcp"):
-        self._transport_type = transport_type
-        self.port = port
-
-    def get_bind_address(self):
-        pass
-
-    def get_connect_address(self):
-        pass
-
-
-class IpcProtocol(NetworkProtocol):
-    """
-        A class to manage zmq IPC network transport
-
-        Parameters
-        ----------
-        port : string
-            ipc port name
-        address : string
-            the zmq formatted ipc address string e.g. "ipc://port"
-    """
-    def __init__(self, port=None, address=None, absolute=False):
-        if address:
-            parts = address.split(":")
-            port = parts[1].lstrip("/")
-        super(IpcProtocol, self).__init__(port, "ipc")
-        self.absolute = absolute
-
-    def get_connect_address(self):
-        if self.absolute:
-            return '{0}:///{1}'.format(self._transport_type, self.port)
-        else:
-            return '{0}://{1}'.format(self._transport_type, self.port)
-
-    def get_bind_address(self):
-        if self.absolute:
-            return '{0}:///{1}'.format(self._transport_type, self.port)
-        else:
-            return '{0}://{1}'.format(self._transport_type, self.port)
-
-
-class TcpProtocol(NetworkProtocol):
-    """
-        A class to manage zmq TCP network transport
-
-        Parameters
-        ----------
-        host_name : string
-            ip address
-        port : string
-            tcp port number
-        address : string
-            the zmq formatted tcp address string e.g. "tcp://127.0.0.1:port"
-    """
-
-    def __init__(self, host_name="127.0.0.1", port="", address=None):
-        super(TcpProtocol, self).__init__(port, "tcp")
-        self.ip_address = host_name
-        self.port = port
-        if address:
-            parts = self.parse_address_parts(address)
-            self.ip_address = parts["ip_address"]
-            self.port = parts["port"]
-
-    def parse_address_parts(self, address):
-        parts = address.split(":")
-        res = {'ip_address': None, 'port': None}
-        for i in range(0, len(parts)):
-            if i == 1:
-                res['ip_address'] = parts[1].lstrip('/')
-            elif i == 2:
-                res['port'] = parts[2]
-        return res
-
-    def get_connect_address(self):
-        return '{0}://{1}:{2}'.format(self._transport_type, self.ip_address, str(self.port))
-
-    def get_bind_address(self):
-        address = "{0}://{1}".format(self._transport_type, self.ip_address)
-        if self.port: address += ":" + str(self.port)
-        return address
 
 
 class TcpPortHandler(object):
@@ -183,52 +101,51 @@ class TcpPortHandler(object):
 class Launcher(object):
     def __init__(self):
         self.ON_POSIX = 'posix' in sys.builtin_module_names
-        self.input_fd, self.output_fd = os.pipe()  # create a pipe to get data
+        self.input_fd, self.output_fd = Pipe()  # create a pipe to get data
         self.file_address_record = {}
         self.exec_nodes = []
         self.controller_process = None
+        self.processes = list()
 
     def launch_controller(self, controller_args):
         print("\nLAUNCHER: launch_controller")
-        path = os.path.dirname(os.path.abspath(__file__))
         try:
-            self.controller_process = Popen(["python", path + "/controller.py"] + controller_args,
-                                            stdout=sys.stdout,
-                                            close_fds=self.ON_POSIX)  # close input_fd in children
+            self.controller_process = Process(target=run_controller, args=(controller_args,))
+            self.controller_process.start()
         except:
             print("Controller Failed to Launch")
-
 
     def execute_all_processes(self, nodes, bashes):
         print("\nLAUNCHER: execute_all_processes")
         # start several subprocesses
-        processes = []
+
+
         for (name, node) in nodes.items():
-            print("Spawning new node")
-            params = [node.exec_name]
-            if node.config_file is not None:
-                params.append(node.config_file)
-            #print("params = ", params)
-            #print("args = ", node.get_argsOrd())
-            #print("node.path = ", node.path)
-            processes.append(
-                Popen(params + node.get_argsOrd(), stdout=self.output_fd,
-                      close_fds=self.ON_POSIX, cwd=node.path))  # close input_fd in children
+            print("Spawning %s node" % node.name)
+            process = NodeFactory.create(name, node, self.output_fd)
+            process.start()
+            print("%s is running as process %s " % (name, process.name))
+            self.processes.append(process)
 
         for bash in bashes:
             print("Spawning new bash")
             params = [bash.exec_type, bash.path + bash.file_name]
-            #print("bash_params = ", params)
-            processes.append(
-                Popen(params, stdout=self.output_fd, close_fds=self.ON_POSIX, cwd=bash.path)) 
-        
+            # print("bash_params = ", params)
+            self.processes.append(
+                Popen(params, stdout=self.output_fd, close_fds=self.ON_POSIX, cwd=bash.path))
+
         #os.close(self.output_fd)  # close unused end of the pipe
         # read output line by line as soon as it is available
-        with io.open(self.input_fd, 'r', buffering=1) as file:
+
+        with io.open(self.input_fd.fileno(), 'r', buffering=1) as file:
             for line in file:
                 print(line, end='')
-        for p in processes:
-            p.wait()
+
+    def wait_for_child_process(self):
+        print("All the process are running , waiting for them to terminate")
+        for process in self.processes:
+            process.join()
+        self.controller_process.join()
 
 
 class Bootstrapper(object):
@@ -260,7 +177,8 @@ class Bootstrapper(object):
     def add_python_node(self, name, file_name, path, protocol_type="tcp", port=None, ip_address=None):
         self.add_executable_node("python", name, path, protocol_type, port, ip_address, file_name=file_name)
 
-    def add_executable_node(self, exec_name, name, path, protocol_type="tcp", port=None, ip_address=None, file_name=None):
+    def add_executable_node(self, exec_name, name, path, protocol_type="tcp", port=None, ip_address=None,
+                            file_name=None):
         if protocol_type == "tcp":
             node = self.create_tcp_node(name)
             if ip_address is not None:
@@ -291,18 +209,33 @@ class Bootstrapper(object):
         return node
 
     def package_controller_args(self):
-        controller_args = []
+        controller_args = dict()
+
+        controller_args['hostname'] = self.host_name
+        controller_args['nodes'] = self.nodes
+        controller_args['sim_time'] = self.sim_time
+        controller_args['sim_frame_time'] = self.sim_frame_time
+
+        nodes = list()
+        for node_name, node in self.nodes.items():
+            nodes.append([node_name, node.protocol.get_bind_address()])
+        controller_args['nodes'] = nodes
+        """
         node_list = ""
         for node_name, node in self.nodes.items():
             node_list += "%s %s " % (node_name, node.protocol.get_bind_address())
+    
         controller_args.append("--nodes=%s" % node_list)
         controller_args.append("--host_name=%s" % self.host_name)
         controller_args.append("--sim_time=%s" % self.sim_time)
         controller_args.append("--sim_frame_time=%s" % self.sim_frame_time)
+        """
         if self.logs_path:
-            controller_args.append("--logging_path=%s" % self.logs_path)
+            controller_args['logging_path'] = self.logs_path
+            # controller_args.append("--logging_path=%s" % self.logs_path)
         if self.verbosity_level:
-            controller_args.append("--verbosity_level=%s" % self.verbosity_level)
+            controller_args['verbosity'] = self.verbosity_level
+            # controller_args.append("--verbosity_level=%s" % self.verbosity_level)
         return controller_args
 
     def run(self):
@@ -312,4 +245,4 @@ class Bootstrapper(object):
             if node.should_auto_execute is True:
                 launcher_nodes[node_name] = node
         self.multi_launcher.execute_all_processes(launcher_nodes, self.bashes)
-
+        self.multi_launcher.wait_for_child_process()

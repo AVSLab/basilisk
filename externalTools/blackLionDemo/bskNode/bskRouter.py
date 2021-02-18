@@ -132,9 +132,8 @@ class PyRouter(simulationArchTypes.PythonModelClass):
         @param: msg_buffer: SWIG new_cByteArray filled with data as read from the BSK internal msg system.
         @return: hex_payload: hex encoded string.
         """
-        cdata_payload = sim_model.cdata(msg_buffer, payload_size)
-        hex_payload = binascii.hexlify(cdata_payload)
-        return hex_payload
+        cdata_payload = sim_model.cdata(msg_buffer, payload_size).encode("utf-16", "surrogatepass")
+        return cdata_payload
 
     def deserialize_payload(self, payload_size, payload):
         """
@@ -144,19 +143,19 @@ class PyRouter(simulationArchTypes.PythonModelClass):
         @return: msg_buffer: SWIG new_cByteArray filled with data to be written down into  the BSK internal msg system.
         """
         msg_buffer = sim_model.new_cByteArray(payload_size)
-        cdata = binascii.unhexlify(payload)
+        cdata = payload.decode("iso-8859-1").encode("utf-8").decode("utf-8")
         dataOrd = [ord(x) for x in cdata]
         for i in range(0, payload_size):
-            sim_model.cByteArray_setitem(msg_buffer, i, int(dataOrd[i]))
+                sim_model.cByteArray_setitem(msg_buffer, i, int(dataOrd[i]))
         def print_stuff():
-            print ('\nDESERIALIZATION: UNHEXLIFY')
-            print 'payload = %s' % payload
-            print 'payload_type = %s' % type(payload)
-            print 'cdata =%s' % cdata
-            print 'cdata_type = %s' % type(cdata)
-            print 'dataOrd = %s' % dataOrd
-            print 'dataOrd_type = %s' % type(dataOrd)
-            print 'msg_buffer = %s\n' % msg_buffer
+            print('\nDESERIALIZATION: UNHEXLIFY')
+            print('payload = %s' % payload)
+            print('payload_type = %s' % type(payload))
+            print('cdata =%s' % cdata)
+            print('cdata_type = %s' % type(cdata))
+            print('dataOrd = %s' % dataOrd)
+            print('dataOrd_type = %s' % type(dataOrd))
+            print('msg_buffer = %s\n' % msg_buffer)
         # print_stuff()
         return msg_buffer
 

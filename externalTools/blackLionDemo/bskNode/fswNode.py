@@ -1,18 +1,22 @@
 import warnings
 import argparse
-from Basilisk.utilities import SimulationBaseClass
-from bskWorkerProcess import BskSim
-import fswModels
-import bskRouter
-import simPlotting as BSK_plt
+import sys, os
+from . import fswModels, bskRouter
+from . import simPlotting as BSK_plt
+path = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(path + '/../../../dist3/Basilisk/utilities')
+sys.path.append(path + '/../../../dist3/')
+from SimulationBaseClass import SimBaseClass
+from .bskWorkerProcess import BskSim
 
 
-class BSK_FSWSim(SimulationBaseClass.SimBaseClass):
+
+class BSK_FSWSim(SimBaseClass):
     def __init__(self, plot_results=True, mode_request=None):
         self.plot_results = plot_results
         self.modeRequest = mode_request
         # Create a sim module as an empty container
-        SimulationBaseClass.SimBaseClass.__init__(self)
+        SimBaseClass.__init__(self)
         # FSW process
         self.FSWProcessName = "FSWProcess"
         self.fswProc = self.CreateNewProcess(self.FSWProcessName)
@@ -67,33 +71,35 @@ def add_arg_definitions(parser):
                         help='Verbosity level of the BSK sim logger')
 
 
-if __name__ == "__main__":
-    arg_parser = argparse.ArgumentParser(description='EMM Simulation Standalone Test.')
-    add_arg_definitions(arg_parser)
-    parsed_args, unknown_args = arg_parser.parse_known_args()
-
-    if unknown_args:
-        warnings.warn("Unrecognised args parsed: %s" % unknown_args, RuntimeWarning)
-
-    node_name = "BSK_FSWSim"
-    if parsed_args.node_name:
-        node_name = parsed_args.node_name
-    verbosity_level = "DEBUG"
-    if parsed_args.verbosity_level:
-        verbosity_level = parsed_args.verbosity_level
-
-    master_address = ""
-    try:
-        master_address = parsed_args.master_address
-    except ValueError('Node %s needs to know the master address' % node_name):
-        print("FAULT")
-
-    # Execute
+def run_fsw_node(fsw_node_args, out_pipe):
+    os.dup2(out_pipe.fileno(), 1)
+    node_name = fsw_node_args.get('node_name', "BSK_FSWSim")
+    verbosity_level = fsw_node_args.get('verbosity_level', "DEBUG")
+    if fsw_node_args.get('master_address'):
+        master_address = fsw_node_args['master_address']
+    else:
+        print("Node %s needs to know the master address", node_name)
     BSKFsw_process = BskSim(name=node_name,
                             proc_args=[BSK_FSWSim(plot_results=True)],
                             master_address=master_address,
                             verbosity_level=verbosity_level)
-
     print("Node %s: STARTING " % node_name)
     BSKFsw_process.run()
 
+
+if __name__ == "__main__":
+    arg_parser = argparse.ArgumentParser(description='EMM Simulation Standalone Test.')
+    add_arg_definitions(arg_parser)
+    parsed_args, unknown_args = arg_parser.parse_known_args()
+    fsk_node_args = dict()
+    if unknown_args:
+        warnings.warn("Unrecognised args parsed: %s" % unknown_args, RuntimeWarning)
+    if parsed_args.node_name:
+        fsk_node_args['node_name'] = parsed_args.node_name
+
+    if parsed_args.verbosity_level:
+        fsk_node_args['verbosity_level'] = parsed_args.verbosity_level
+    fsk_node_args['master_address'] = parsed_args.master_address
+
+    # Execute
+    run_fsw_node(fsk_node_args)

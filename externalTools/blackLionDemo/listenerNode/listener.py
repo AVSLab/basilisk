@@ -1,8 +1,6 @@
 import sys, os
-path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(path + '/../')
+sys.path.append('..')
 from blackLion import workerProcess, constants
-
 import zmq
 from zmq.eventloop import ioloop
 import binascii
@@ -120,33 +118,37 @@ def add_arg_definitions(parser):
                         help='Verbosity level of the PyListener logger')
 
 
-if __name__ == "__main__":
-    arg_parser = argparse.ArgumentParser(description='EMM Simulation Standalone Test.')
-    add_arg_definitions(arg_parser)
-    parsed_args, unknown_args = arg_parser.parse_known_args()
-
-    if unknown_args:
-        warnings.warn("PyListener unrecognised args parsed: %s" % unknown_args, RuntimeWarning)
-
-    node_name = "PyListner"
-    if parsed_args.node_name:
-        node_name = parsed_args.node_name
-    verbosity_level = "DEBUG"
-    if parsed_args.verbosity_level:
-        verbosity_level = parsed_args.verbosity_level
-
-    master_address = None
-    try:
-        master_address = parsed_args.master_address
-    except ValueError('Node %s needs to know the master address' % node_name):
-        print("FAULT")
-
-    PyListener_process = Listener(
+def run_listener_node(listener_args):
+    node_name = listener_args.get('node_name', "PyListener")
+    verbosity_level = listener_args.get('verbosity_level', "DEBUG")
+    if listener_args.get('master_address'):
+        master_address = listener_args['master_address']
+    else:
+        print("Node %s needs to know the master address", node_name)
+    py_listener_process = Listener(
         name=node_name,
         proc_args=[ListenerRouter()],
         master_address=master_address,
         verbosity_level=verbosity_level)
 
     print("Node %s: STARTING " % node_name)
-    PyListener_process.run()
+    py_listener_process.run()
+
+
+if __name__ == "__main__":
+    arg_parser = argparse.ArgumentParser(description='EMM Simulation Standalone Test.')
+    add_arg_definitions(arg_parser)
+    parsed_args, unknown_args = arg_parser.parse_known_args()
+    listener_args = dict()
+    if unknown_args:
+        warnings.warn("PyListener unrecognised args parsed: %s" % unknown_args, RuntimeWarning)
+
+    if parsed_args.node_name:
+        listener_args['node_name'] = parsed_args.node_name
+        node_name = parsed_args.node_name
+    if parsed_args.verbosity_level:
+        listener_args['verbosity_level'] = parsed_args.verbosity_level
+
+    listener_args['master_address'] = parsed_args.master_address
+    run_listener_node(listener_args)
 

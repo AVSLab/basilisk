@@ -17,18 +17,21 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import sys, os
+from . import constants
+from . import protocol
+from .blLogging import createLogger
+import sys
+import os
 import zmq
-import constants
-import utilities
-import blLogging
-
+import traceback
+import time
 
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 import time
 import warnings
 import argparse
+from .message_processing import convert_bytes_list_into_str, convert_str_list_into_bytes
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -37,6 +40,7 @@ class CentralDataExchangeObject(object):
     """
     Central data exchange object class
     """
+
     def __init__(self):
         self.msg_subscribers = set()
         self.msg_publishers = set()
@@ -68,7 +72,7 @@ class MasterController(object):
         self.backend = self.context.socket(zmq.XPUB)
         self.frontend = self.context.socket(zmq.SUB)
 
-        self.logger = blLogging.createLogger(name=__name__, verbosity_level=verbosity_level)
+        self.logger = createLogger(name=__name__, verbosity_level=verbosity_level)
         tmp_uid = str(time.time())
         self.run_uid = tmp_uid.replace(".", "")
         self.log_file_name = "black_lion_logs_%s.txt" % self.run_uid
@@ -80,8 +84,8 @@ class MasterController(object):
         self.frame_length = 0
         self.dataExchangeRecord = {}  # dictionary with keys= msg_name, values = CentralDataExchangeObject's
 
-        self.backend_protocol = utilities.TcpProtocol(host_name=self.host_name)
-        self.frontend_protocol = utilities.TcpProtocol(host_name=self.host_name)
+        self.backend_protocol = protocol.TcpProtocol(host_name=self.host_name)
+        self.frontend_protocol = protocol.TcpProtocol(host_name=self.host_name)
         self.bind_backend()
         self.bind_frontend()
 
@@ -103,7 +107,6 @@ class MasterController(object):
             self.logger.debug("Creating new '../plots' directory")
             os.makedirs(plot_path)
 
-
     def bind_frontend(self):
         self.frontend_protocol.port = self.frontend.bind_to_random_port(self.frontend_protocol.get_bind_address())
         self.logger.debug('Controller binding to frontend address: %s' % self.frontend_protocol.get_bind_address())
@@ -114,14 +117,14 @@ class MasterController(object):
 
     def subscribe_frontend_to_all_messages(self):
         self.logger.info('Frontend subscribing to msg = %s' % constants.HANDSHAKE)
-        self.frontend.setsockopt(zmq.SUBSCRIBE, constants.HANDSHAKE)
+        self.frontend.setsockopt(zmq.SUBSCRIBE, constants.HANDSHAKE.encode("utf-8"))
         for msg_name in self.dataExchangeRecord.keys():
             self.logger.warn('Frontend subscribing to msg = %s. '
                              'Current publishers = %s. Current subscribers = %s' %
                              (msg_name,
                               self.dataExchangeRecord[msg_name].msg_publishers,
                               self.dataExchangeRecord[msg_name].msg_subscribers))
-            self.frontend.setsockopt(zmq.SUBSCRIBE, msg_name)
+            self.frontend.setsockopt(zmq.SUBSCRIBE, msg_name.encode("utf-8"))
 
     def publish_at_backend(self):
         # self.logger.info("Backend publishing")
@@ -161,7 +164,7 @@ class MasterController(object):
         if len(reply) >= 2:
             try:
                 self.logs_socket.connect(reply[1])
-                self.logs_socket.setsockopt(zmq.SUBSCRIBE, constants.LOGS)
+                self.logs_socket.setsockopt(zmq.SUBSCRIBE, constants.LOGS.encode("utf-8"))
                 self.logger.info("Connected to log %s node data: %s" % (node_name, reply[1]))
             except:
                 self.logger.warn("Logs will not be saved for node  %s in  %s. "
@@ -206,23 +209,22 @@ class MasterController(object):
         self.shutdown_controller()
 
     def handshake_all_nodes(self):
-        nodeHandshakes = self.nodeReqSockets.copy()
         self.frontend.RCVTIMEO = 2000  # [milliseconds]
-        while any(nodeHandshakes):
-            for nodeName, socket in nodeHandshakes.items():
-                self.logger.info("Sending HANDSHAKE to node %s." % (nodeName))
-                socket.send(constants.HANDSHAKE)
-                try:
-                    handshake_msg = self.frontend.recv()
-                    nodeHandshakes.pop(nodeName)
-                    self.logger.info("Received publication %s message from node %s." % (handshake_msg, nodeName))
-                except:
-                    self.logger.info('Will try handshaking again node: %s' % nodeName)
-                reply = socket.recv_multipart()
-                self.logger.info("Received reply %s message from node %s." % (reply, nodeName))
+        nodeHandshakes = list()
+        while len(nodeHandshakes) != len(self.nodeReqSockets):
+            for nodeName, socket in self.nodeReqSockets.items():
+                if nodeName not in nodeHandshakes:
+                    self.logger.info("Sending HANDSHAKE to node %s." % (nodeName))
+                    socket.send(constants.HANDSHAKE.encode("utf-8"))
+                    try:
+                        handshake_msg = self.frontend.recv().decode("utf-8")
+                        nodeHandshakes.append(nodeName)
+                        self.logger.info("Received publication %s message from node %s." % (handshake_msg, nodeName))
+                    except:
+                        self.logger.info('Will try handshaking again node: %s' % nodeName)
+                    reply = convert_bytes_list_into_str(socket.recv_multipart())
+                    self.logger.info("Received reply %s message from node %s." % (reply, nodeName))
         self.frontend.RCVTIMEO = -1
-
-
 
     def collectPublishers(self):
         """
@@ -234,11 +236,11 @@ class MasterController(object):
             for msg_name, exchange_obj in self.dataExchangeRecord.items():
                 if not (exchange_obj.is_node_subscribed(nodeName)):
                     local_record.append(msg_name)
-            socket.send_multipart(local_record)
+            socket.send_multipart(convert_str_list_into_bytes(local_record))
             self.logger.warning("Sending match list to node %s." % nodeName)
 
         for nodeName, socket in self.nodeReqSockets.items():
-            reply = socket.recv_multipart()
+            reply = convert_bytes_list_into_str(socket.recv_multipart())
             self.logger.warning("Received from node %s matched list = %s" % (nodeName, reply))
             py_list = self.convert_list_zmq2py(reply)
             for msg_name in py_list:
@@ -246,7 +248,7 @@ class MasterController(object):
                     self.dataExchangeRecord[msg_name].add_publisher(nodeName)
                 else:
                     self.logger.warning('Node %s is trying to publish message_name = %s, which nobody has asked for. '
-                                        'Controller will ignore this msg.' % (nodeName,msg_name))
+                                        'Controller will ignore this msg.' % (nodeName, msg_name))
 
         return
 
@@ -278,11 +280,10 @@ class MasterController(object):
         return start_command
 
     def advanceClock(self):
-        for nodeName, socket in self.nodeReqSockets.iteritems():
+        for nodeName, socket in self.nodeReqSockets.items():
             node_tick_command = self.prepare_tick_command(nodeName)
-            socket.send_multipart([constants.TICK] + node_tick_command)
+            socket.send_multipart(convert_str_list_into_bytes([constants.TICK] + node_tick_command))
         # self.logger.debug('Sent all ticks')
-
         self.listen_at_frontend()
         self.publish_at_backend()
 
@@ -291,8 +292,8 @@ class MasterController(object):
 
         self.receive_logs()
 
-        for nodeName, socket in self.nodeReqSockets.iteritems():
-            reply = socket.recv_multipart()
+        for nodeName, socket in self.nodeReqSockets.items():
+            reply = convert_bytes_list_into_str(socket.recv_multipart())
             self.parse_tock_reply(reply)
             # self.logger.debug("Received reply %s message" % reply)
         # self.logger.debug("Received all TOCKS.")
@@ -313,10 +314,10 @@ class MasterController(object):
         """
         for nodeName, socket in self.nodeReqSockets.items():
             self.logger.warning('Sending collectSubscribers message to node %s' % nodeName)
-            socket.send(constants.UNKNOWN_MSGS)
+            socket.send(constants.UNKNOWN_MSGS.encode("utf-8"))
 
         for nodeName, socket in self.nodeReqSockets.items():
-            reply = socket.recv_multipart()
+            reply = convert_bytes_list_into_str(socket.recv_multipart())
             self.logger.warning("Received reply from node %s. Message = %s." % (nodeName, reply))
             py_list = self.convert_list_zmq2py(reply)
             for msg_name in py_list:
@@ -329,11 +330,11 @@ class MasterController(object):
             Request all nodes to initialize their simulation.
         """
         start_command = self.prepare_start_command()
-        for node_name, socket in self.nodeReqSockets.iteritems():
+        for node_name, socket in self.nodeReqSockets.items():
             self.logger.info("Sending %s command to node %s." % (constants.START, node_name))
-            socket.send_multipart([constants.START] + start_command)
-        for node_name, socket in self.nodeReqSockets.iteritems():
-            reply = socket.recv_multipart()
+            socket.send_multipart(convert_str_list_into_bytes([constants.START]+start_command))
+        for node_name, socket in self.nodeReqSockets.items():
+            reply = convert_bytes_list_into_str(socket.recv_multipart())
             self.parse_started_reply(reply, node_name)
 
     def stopAllProcesses(self):
@@ -341,10 +342,15 @@ class MasterController(object):
             Request internal result plots from all nodes.
         """
         for nodeName, socket in self.nodeReqSockets.items():
-            socket.send(constants.FINISH)
-        for nodeName, socket in self.nodeReqSockets.items():
-            reply = socket.recv()
-            self.logger.info("Received reply %s message" % reply)
+            socket.send(constants.FINISH.encode("utf-8"))
+
+        try:
+            for nodeName, socket in self.nodeReqSockets.items():
+                reply = socket.recv()
+                reply = reply.decode("utf-8")
+                self.logger.info("Received reply %s message" % reply)
+        except:
+            traceback.print_exc()
 
     def restartChildProcess(self):
         self.logger.info('restartChildProcess(self)')
@@ -366,10 +372,26 @@ def add_arg_definitions(parser):
     parser.add_argument('--nodes', nargs="*", default="",
                         help='Order list of N number of BL nodes '
                              '[node_1_name node_1_address ... node_N_name node_N_address ]')
-    parser.add_argument('--verbosity_level', nargs='?', default="",
+    parser.add_argument('--verbosity_level', nargs='?', default="DEBUG",
                         help='Verbosity level of the Central Controller logger')
     parser.add_argument('--logging_path', nargs='?', default="",
                         help='Path to directory in to which BL logging files are written')
+
+
+def run_controller(controller_args):
+    controller = MasterController(host_name=controller_args.get('host_name', "127.0.0.1"),
+                                  verbosity_level=controller_args.get('verbosity', "DEBUG"))
+    controller.set_frames(controller_args.get('sim_time', 0.0), controller_args.get('sim_frame_time', 0.1))
+    if controller_args.get('logging_path'):
+        controller.set_log_path(controller_args.get('logging_path'))
+    if controller_args.get('nodes'):
+        nodes = controller_args.get('nodes')
+        for i in range(0, len(nodes)):
+            node_name = nodes[i][0]
+            bind_address = nodes[i][1]
+            controller.create_node_request_socket(node_name, bind_address)
+    print("Controller:STARTING")
+    controller.run()
 
 
 if __name__ == "__main__":
@@ -379,33 +401,14 @@ if __name__ == "__main__":
 
     if unknown_args:
         warnings.warn("Unrecognised args parsed: %s" % unknown_args, RuntimeWarning)
-
+    controller_args = dict()
     # controller requirements: host address & sim times
-    host_name = "127.0.0.1"
-    sim_time = 0.0
-    sim_frame_time = 0.1
-    verbosity_level = "DEBUG"
-    if parsed_args.host_name:
-        host_name = parsed_args.host_name
-    if parsed_args.sim_time:
-        sim_time = float(parsed_args.sim_time)
-        print("controller sim_time = ", sim_time)
-    if parsed_args.sim_frame_time:
-        sim_frame_time = float(parsed_args.sim_frame_time)
-        print("controller sim_frame_time = ", sim_frame_time)
-    if parsed_args.verbosity_level:
-        verbosity_level = parsed_args.verbosity_level
-        print("controller logger verbosity_level = ", parsed_args.verbosity_level)
-
-    controller = MasterController(host_name=host_name, verbosity_level=verbosity_level)
-    controller.set_frames(sim_time, sim_frame_time)
-
-    # controller additional options:
+    controller_args['host_name'] = parsed_args.host_name
+    controller_args['sim_time'] = float(parsed_args.sim_time)
+    controller_args['sim_frame_time'] = float(parsed_args.sim_frame_time)
+    controller_args['verbosity_level'] = parsed_args.verbosity_level
     if parsed_args.logging_path:
-        logging_path = parsed_args.logging_path
-        print("controller logging_path = ", logging_path)
-        controller.set_log_path(logging_path)
-
+        controller_args['logging_path'] = parsed_args.logging_path
     nodes = []
     if parsed_args.nodes:
         tmp = parsed_args.nodes
@@ -418,11 +421,5 @@ if __name__ == "__main__":
         for i in range(0, len(pieces), 2):
             chunk = pieces[i:i + 2]
             nodes.append(chunk)
-
-    for i in range(0, len(nodes)):
-        node_name = nodes[i][0]
-        bind_address = nodes[i][1]
-        controller.create_node_request_socket(node_name, bind_address)
-
-    print("Controller:STARTING")
-    controller.run()
+        controller_args['nodes'] = nodes
+    run_controller(controller_args)

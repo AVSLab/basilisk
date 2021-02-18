@@ -4,10 +4,7 @@ import logging.handlers
 import zmq
 from zmq.log.handlers import PUBHandler
 import socket
-try:
-    from utilities import TcpProtocol, IpcProtocol
-except:
-    from blackLion.utilities import TcpProtocol, IpcProtocol
+from .protocol import TcpProtocol, IpcProtocol
 
 
 def add_logger_pub(name, transport_type, port=""):

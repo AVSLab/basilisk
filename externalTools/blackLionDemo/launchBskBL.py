@@ -7,19 +7,19 @@ class BSK_Bootstrapper(Bootstrapper):
         super(BSK_Bootstrapper, self).__init__(sim_time=sim_time, frame_time=frame_time, enable_logs=enable_logs,
                                                verbosity_level=verbosity_level)
 
-    def add_external_node(boot_strap, node_name):
-        node = boot_strap.create_tcp_node(node_name)
+    def add_external_node(self, node_name):
+        node = self.create_tcp_node(node_name)
         node.should_auto_execute = False
-        node.add_argsOrd(["--master_address=%s" % node.protocol.get_connect_address()])
-        boot_strap.nodes[node_name] = node
+        node.add_argsOrd("master_address", node.protocol.get_connect_address())
+        self.nodes[node_name] = node
         print('Launch %s. connect_address = %s' % (node.name, node.protocol.get_connect_address()))
 
-    def add_local_node(boot_strap, node_name, file_name, path):
-        boot_strap.add_python_node(name=node_name, file_name=file_name, path=path)
-        node = boot_strap.nodes[node_name]
-        node.add_argsOrd(["--node_name=%s" % node.name])
-        node.add_argsOrd(["--master_address=%s" % node.protocol.get_connect_address()])
-        node.add_argsOrd({"--verbosity_level": boot_strap.verbosity_level})
+    def add_local_node(self, node_name, file_name, path):
+        self.add_python_node(name=node_name, file_name=file_name, path=path)
+        node = self.nodes[node_name]
+        node.add_argsOrd("node_name", node.name)
+        node.add_argsOrd("master_address", node.protocol.get_connect_address())
+        node.add_argsOrd("verbosity_level", boot_strap.verbosity_level)
 
 
 def launch_bsk_sims(boot_strap, local_path):
