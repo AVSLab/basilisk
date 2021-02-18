@@ -87,7 +87,7 @@ several different (often competing) requirements.
    interface, the underlying simulation executes entirely in C/C++ which
    allows for maximum execution speed. For example, a goal is to
    simulate a mission year with sufficiently accurate vehicle 6-DOF
-   dynamics with at least a 365x speed-up (i.e. *a year in a day*).
+   dynamics with at least a 365x speed-up (i.e. *a year in a day*).
 
 -  **Reconfiguration:** The user interface executes natively in Python
    which allows the user to change task-rates, model/algorithm
@@ -143,10 +143,10 @@ several different (often competing) requirements.
    and Unity visualization are active cross-platform developments.
 
 -  **Validation and Verification:** Each simulation or FSW algorithm
-   module has unit test that can be run automatically using py.test.
+   module has unit test that can be run automatically using ``pytest``.
    Integrated scenario test validated coupled behavior between modules.
    Each dynamics modules has associated momentum, energy and power
-   validation tests. This ensures the integrity of the valdiated modules
+   validation tests. This ensures the integrity of the validated modules
    as new simulation capabilities are added.
 
 -  **Monte-Carlo Capability:** The simulation framework is capable of

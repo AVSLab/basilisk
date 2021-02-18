@@ -284,6 +284,14 @@ Updating a C++ Module
 
          std::vector<Message<SomeMsgPayload>*> descriptionOutMsgs;
 
+    - Similarly, you can create a vector of input message reader objects of type ``SomeMsgPayload``
+      using the following statement.  Note that you can directly create message reader instances,
+      and not pointers to such objects as with a vector of output messages.
+
+      .. code:: cpp
+
+        std::vector<ReadFunctor<SomeMsgPayload>> descriptionInMsgs;
+
 #. Updating the ``module.cpp`` file:
 
     - There is no need for additional code to create an output connector.  Thus, delete old message
@@ -311,6 +319,29 @@ Updating a C++ Module
          this->descriptionOutMsgs.push_back(msg);
 
       Don't forget to delete these message allocation in the module deconstructor.
+
+    - If you have a ``std::vector`` of input message objects, these are typically provided
+      to the BSK module in Python through
+      a support function.  For example, consider the case where the module has a vector of planet state input messages
+      that can be configured.  The method ``addPlanet()`` then receives the message object pointer as shown below.
+      Next, the vector ``planetInMsgs`` must have a reader to the provided message object added.  The message
+      method ``.addSubscriber()`` returns a reader object, essentially an input message linked to this output
+      message.  The code below assumes the module also has a ``std::vector`` of the planet state payload structure
+      to act as the input buffer variables.  This ``addPlanet`` routine below creates such buffer variables and adds
+      them to the ``planetMsgData`` vector each time a planet is added.
+
+      .. code:: cpp
+
+         void BskModuleName::addPlanet(Message<SpicePlanetStateMsgPayload> *planetSpiceMsg)
+        {
+            /* add a message reader to the vector of input messages */
+            this->planetInMsgs.push_back(planetSpiceMsg->addSubscriber());
+
+            /* expand the planet state input buffer vector */
+            SpicePlanetStateMsgPayload plMsg;
+            this->planetMsgData.push_back(plMsg);
+        }
+
 
     - To check is an output message has been connected to, check the value of ``this->moduleOutMsg.isLinked()``
 
