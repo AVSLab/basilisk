@@ -68,10 +68,10 @@ Eclipse Conditions
 
 When analyzing the conical shadow model, there are critical distances and conical dimensions that must be considered. These parameters are determined by first knowing the planet's equatorial radius :math:`r_P`, which is used to solve for the angles of the shadow cones. Angles :math:`f_1` and :math:`f_2` are computed as shown below, where the subscript 1 relates to the cone of the penumbra and 2 relates to the umbra.
 
-.. math:: f_1 = \frac{\arcsin(r_H + r_P)}{| \mathbf{s}_{P/H}|}
+.. math:: f_1 = \arcsin\left(\frac{r_H + r_P}{| \mathbf{s}_{P/H}|} \right)
     :label: eq:elipse:7
 
-.. math:: f_2 = \frac{\arcsin(r_H - r_P)}{| \mathbf{s}_{P/H}|}
+.. math:: f_2 = \arcsin\left(\frac{r_H - r_P}{| \mathbf{s}_{P/H}|} \right)
     :label: eq:elipse:8
 
 Here :math:`r_H` indicates the equatorial radius of the sun, which is 695000 km. Both the sun and planet radii must be input in terms of meters.
