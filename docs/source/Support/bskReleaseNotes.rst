@@ -26,12 +26,9 @@ Basilisk Release Notes
     - magnetic FSW control module to dump reaction wheel angular momentum
     - new tutorial example scripts
     - new FSW planet location pointing guidance module
-    - Basilisk 2.0 that includes:
+    - Basilisk 2.1 that includes:
 
-        - working on a new messaging system that is much faster to log,
-        - has strong type checking in C/C++ and Python to avoid ever connecting to the wrong message type, etc.
         - support for multi-threading when simulating multiple satellite systems
-        - more flexible manner to build Basilisk with custom external modules and messages
 
 Version |release|
 -----------------
