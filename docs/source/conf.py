@@ -488,7 +488,7 @@ if rebuild:
     # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/environment")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/_fswTemplateFolder")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizard")
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/utilities")
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/architecture/utilities")
     breathe_projects_source = fileCrawler.run("../../examples")
     breathe_projects_source = fileCrawler.run("../../externalTools")
     with open("breathe.data", 'wb') as f:

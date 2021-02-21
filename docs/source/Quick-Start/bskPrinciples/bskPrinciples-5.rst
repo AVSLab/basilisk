@@ -1,3 +1,5 @@
+.. _bskPrinciples-5:
+
 Creating Stand-Alone Messages
 =============================
 

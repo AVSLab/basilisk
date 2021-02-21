@@ -25,5 +25,6 @@ to run, jump directly to :ref:`examples` section.
    :caption: Contents:
 
    Quick-Start/bskPrinciples
+   Quick-Start/makingModules
    examples/index
 

@@ -34,11 +34,7 @@
 
 
 /*!
- \verbatim embed:rst
-    This method initializes the configData for this module.
-    It checks to ensure that the inputs are sane and then creates the
-    output message of type :ref:`FswModuleTemplateMsgPayload`.
- \endverbatim
+    This method initializes the output messages for this module.
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
@@ -50,8 +46,7 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t mod
 
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.  The local copy of the
- message output buffer should be cleared.
+ time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the module
  @param callTime [ns] time the method is called
@@ -59,7 +54,7 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t mod
 */
 void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    /*! - reset any required variables */
+    /*! reset any required variables */
     configData->dummy = 0.0;
     char info[MAX_LOGGING_LENGTH];
     sprintf(info, "Variable dummy set to %f in reset.",configData->dummy);

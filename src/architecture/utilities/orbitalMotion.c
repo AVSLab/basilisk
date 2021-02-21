@@ -29,8 +29,7 @@
 #include "rigidBodyKinematics.h"
 
 
-/*
- * Function hillFrame
+/*!
  * Purpose: maps inertial position and velocity vectors in the Hill frame DCM HN
  * Inputs:
  *   rc_N: inertial position vector
@@ -56,8 +55,7 @@ void hillFrame(double *rc_N, double *vc_N, double HN[3][3])
     return;
 }
 
-/*
- * Function hill2rv
+/*!
  * Purpose: maps Hill frame deputy states to inertial inertial position and velocity vectors
  * Inputs:
  *   rc_N: chief inertial position vector
@@ -99,8 +97,7 @@ void  hill2rv(double *rc_N, double *vc_N, double *rho_H, double *rhoPrime_H, dou
 }
 
 
-/*
- * Function rv2hill
+/*!
  * Purpose: maps inertial frame deputy states to Hill inertial position and velocity vectors
  * Inputs:
  *   rc_N: chief inertial position vector
@@ -142,8 +139,7 @@ void    rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *
 }
 
 
-/*
- * Function: E2f
+/*!
  * Purpose: Maps eccentric anomaly angles into true anomaly angles.
  *   This function requires the orbit to be either circular or
  *   non-rectilinar elliptic orbit.
@@ -167,8 +163,7 @@ double E2f(double Ecc, double e)
     return f;
 }
 
-/*
- * Function: E2M
+/*!
  * Purpose: Maps the eccentric anomaly angle into the corresponding
  *   mean elliptic anomaly angle.  Both 2D and 1D elliptic
  *   orbit are allowed.
@@ -192,8 +187,7 @@ double E2M(double Ecc, double e)
     return M;
 }
 
-/*
- * Function: f2E
+/*!
  * Purpose: Maps true anomaly angles into eccentric anomaly angles.
  *   This function requires the orbit to be either circular or
  *   non-rectilinar elliptic orbit.
@@ -217,8 +211,7 @@ double f2E(double f, double e)
     return Ecc;
 }
 
-/*
- * Function: f2H
+/*!
  * Purpose: Maps true anomaly angles into hyperbolic anomaly angles.
  *   This function requires the orbit to be hyperbolic
  * Inputs:
@@ -241,8 +234,7 @@ double f2H(double f, double e)
     return H;
 }
 
-/*
- * Function: H2f
+/*!
  * Purpose: Maps hyperbolic anomaly angles into true anomaly angles.
  *   This function requires the orbit to be hyperbolic
  * Inputs:
@@ -265,8 +257,7 @@ double H2f(double H, double e)
     return f;
 }
 
-/*
- * Function: H2N
+/*!
  * Purpose: Maps the hyperbolic anomaly angle H into the corresponding
  *   mean hyperbolic anomaly angle N.
  * Inputs:
@@ -289,8 +280,7 @@ double H2N(double H, double e)
     return N;
 }
 
-/*
- * Function: M2E
+/*!
  * Purpose: Maps the mean elliptic anomaly angle into the corresponding
  *   eccentric anomaly angle.  Both 2D and 1D elliptic
  *   orbit are allowed.
@@ -325,8 +315,7 @@ double M2E(double M, double e)
     return E1;
 }
 
-/*
- * Function: N2H
+/*!
  * Purpose: Maps the mean hyperbolic anomaly angle N into the corresponding
  *   hyperbolic anomaly angle H.
  * Inputs:
@@ -364,8 +353,7 @@ double N2H(double N, double e)
     return H1;
 }
 
-/*
- * Function: elem2rv
+/*!
  * Purpose: Translates the orbit elements
  *           a   - semi-major axis           (km)
  *           e   - eccentricity
@@ -469,8 +457,7 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
 }
 
 
-/*
- * Function: rv2elem
+/*!
  * Purpose: Translates the orbit elements inertial Cartesian position
  *   vector rVec and velocity vector vVec into the corresponding
  *   classical orbit elements where
@@ -593,8 +580,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     return;
 }
 
-/*
- * Function: atmosphericDensity
+/*!
  * Purpose: This program computes the atmospheric density based on altitude
  *   supplied by user.  This function uses a curve fit based on
  *   atmospheric data from the Standard Atmosphere 1976 Data. This
@@ -630,8 +616,7 @@ double atmosphericDensity(double alt)
     return density;
 }
 
-/*
- * Function: debyeLength
+/*!
  * Purpose: This program computes the Debye Length length for a given
  *   altitude and is valid for altitudes ranging
  *   from 200 km to GEO (35000km).  However, all values above
@@ -683,8 +668,7 @@ double debyeLength(double alt)
     return debyedist;
 }
 
-/*
- * Function: atmosphericDrag
+/*!
  * Purpose: This program computes the atmospheric drag acceleration
  *   vector acting on a spacecraft.
  *   Note the acceleration vector output is inertial, and is
@@ -731,8 +715,7 @@ void atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec,
     v3Scale(ad / v, vvec, advec);
 }
 
-/*
- * Function: jPerturb
+/*!
  * Purpose: Computes the J2_EARTH-J6_EARTH zonal graviational perturbation
  *   accelerations.
  * Inputs:
@@ -902,8 +885,7 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
     }
 }
 
-/*
- * Function: solarRad
+/*!
  * Purpose: Computes the inertial solar radiation force vectors
  *   based on cross-sectional Area and mass of the spacecraft
  *   and the position vector of the planet to the sun.
@@ -947,6 +929,7 @@ void solarRad(double A, double m, double *sunvec, double *arvec)
     v3Scale((-Cr * A * flux) / (m * c * pow(sundist, 3)) / 1000., sunvec, arvec);
 }
 
+/*! maps classical mean orbit elements to Osculating elements */
 void clMeanOscMap(double req, double J2, classicElements *elements, classicElements *elements_p, double sgn) {
     // Classical orbital elements = (a,e,i,Omega,omega,f)
     // First-order J2 Mapping Between Mean and Osculating Orbital Elements
@@ -1028,6 +1011,7 @@ void clMeanOscMap(double req, double J2, classicElements *elements, classicEleme
     return;
 }
 
+/*! maps from classical orbit elements to equinoctial elements */
 void clElem2eqElem(classicElements *elements_cl, equinoctialElements *elements_eq) {
     // conversion
     // from classical orbital elements (a,e,i,Omega,omega,f)

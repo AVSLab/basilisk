@@ -1,3 +1,5 @@
+.. _bskPrinciples-6:
+
 Setting and Recording Module Variables
 ======================================
 

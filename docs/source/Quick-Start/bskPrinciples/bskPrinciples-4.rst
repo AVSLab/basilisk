@@ -1,3 +1,5 @@
+.. _bskPrinciples-4:
+
 Recording Messages
 ==================
 

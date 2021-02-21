@@ -1,0 +1,40 @@
+.. _cModules-4:
+
+Swig Interface File
+===================
+
+The swig interface file makes it possible to create, setup and manipulate the Basilisk module from python.  This file ``*.i`` file is in the module folder with the ``*.h`` and ``*.c`` files.
+
+The basic swig interface file looks like this:
+
+.. code-block:: cpp
+    :linenos:
+
+    %module someModule
+    %{
+       #include "someModule.h"
+    %}
+
+    %include "swig_conly_data.i"
+
+    %constant void Update_fswModuleTemplate(void*, uint64_t, uint64_t);
+    %ignore Update_fswModuleTemplate;
+    %constant void SelfInit_fswModuleTemplate(void*, uint64_t);
+    %ignore SelfInit_fswModuleTemplate;
+    %constant void Reset_fswModuleTemplate(void*, uint64_t, uint64_t);
+    %ignore Reset_fswModuleTemplate;
+
+    %include "someModule.h"
+
+    %include "architecture/msgPayloadDefC/SomeMsgPayload.h"
+    struct SomeMsg_C;
+
+    %pythoncode %{
+    import sys
+    protectAllClasses(sys.modules[__name__])
+    %}
+
+In contrast to the C++ swig interface files, note that here extra lines are required regarding the ``Update``, ``SelfInit`` and ``Reset`` methods.
+
+Regarding what swig interfaces to include, see C++ :ref:`cppModules-4` for additional options.
+

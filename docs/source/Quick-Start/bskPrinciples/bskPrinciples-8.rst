@@ -1,3 +1,5 @@
+.. _bskPrinciples-8:
+
 Enabling and Disabling Tasks
 ============================
 

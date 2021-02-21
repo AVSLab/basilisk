@@ -24,10 +24,7 @@
 #include <Eigen/Dense>
 
 
-/*! @brief This module is used to apply a second-order bounded Gauss-Markov random walk 
-    on top of an upper level process.  The intent is that the caller will perform 
-    the set methods (setUpperBounds, setNoiseMatrix, setPropMatrix) as often as 
-    they need to, call computeNextState, and then call getCurrentState cyclically
+/*! @brief This class is used to saturate an output variable
 */
 class Saturate
 {

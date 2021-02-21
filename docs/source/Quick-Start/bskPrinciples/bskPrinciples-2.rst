@@ -1,3 +1,5 @@
+.. _bskPrinciples-2:
+
 Adding Basilisk Modules
 =======================
 

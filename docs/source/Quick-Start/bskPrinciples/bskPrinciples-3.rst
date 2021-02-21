@@ -1,3 +1,5 @@
+.. _bskPrinciples-3:
+
 Connecting Messages
 ===================
 

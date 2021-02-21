@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _FSW_MODULE_TEMPLATE_FSW_MSG_H_
-#define _FSW_MODULE_TEMPLATE_FSW_MSG_H_
+#ifndef _FSW_MODULE_TEMPLATE_H_
+#define _FSW_MODULE_TEMPLATE_H_
 
 #include <stdint.h>
 #include "architecture/utilities/bskLogging.h"

@@ -1,3 +1,5 @@
+.. _bskPrinciples-7:
+
 Redirecting Module Output to Stand-Alone Message
 ================================================
 
