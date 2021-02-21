@@ -27,7 +27,7 @@
 
 /*! @brief Structure used to define the message format of the motor voltage input  */
 typedef struct {
-    double voltage[MAX_EFF_CNT]; //!< [V]     RW voltage input value
+    double voltage[MAX_EFF_CNT]; //!< [V]     Motor voltage input value
 }ArrayMotorVoltageMsgPayload;
 
 

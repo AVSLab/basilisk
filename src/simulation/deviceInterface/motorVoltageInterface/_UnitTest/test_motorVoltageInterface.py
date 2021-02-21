@@ -61,7 +61,32 @@ from Basilisk.architecture import messaging
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, voltage):
-    """Module Unit Test"""
+    r"""
+    **Test Parameters**
+
+    Three base voltages are tested where :math:`V_0\in(5.0,-7.5,0.0)`. The input voltages are then setup as
+
+    .. math::
+
+        {\bf V}=V_0 \begin{bmatrix}
+        1\\
+        1\\
+        1
+        \end{bmatrix} + \begin{bmatrix}
+        0.0\\
+        1.0\\
+        1.5
+        \end{bmatrix}
+
+    Other inputs to the module are:
+
+    .. code-block:: python
+        :linenos:
+
+        testModule.voltage2TorqueGain =[ 1.32, 0.99, 1.31] # [Nm/V] conversion gain
+        testModule.scaleFactor =[ 1.01, 1.00, 1.02] #[unitless] scale factor
+        testModule.bias =[0.01, 0.02, 0.04] # [Nm] bias
+    """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(show_plots, voltage)
     assert testResults < 1, testMessage
