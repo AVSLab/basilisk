@@ -89,11 +89,15 @@ endfunction(create_symlinks)
 
 
 function(add_message_headers)
+
+
 	file(GLOB CMESSAGE_HEADER_FILES
 	            "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefC/*.h"
+	            "${CMAKE_SOURCE_DIR}/../../External/msgPayloadDefC/*.h"
 	        )
 	file(GLOB CPPMESSAGE_HEADER_FILES
 	            "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefCpp/*.h"
+	            "{EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/*.h"
 	        )
 	add_custom_target(msgPayloadDefC SOURCES ${CMESSAGE_HEADER_FILES})
 	add_custom_target(msgPayloadDefCpp SOURCES ${CPPMESSAGE_HEADER_FILES})
@@ -140,14 +144,14 @@ function(generate_package_libraries INIT_DIRECTORY)
 
         # Set the library name (ex. dynamicsLib, environmentLib, etc)
         set(LIB_NAME "${PARENT_DIR_NAME}Lib")
-
+        #Added to build ExternalModulesLib 
+        file(GLOB LIB_DIR RELATIVE ${CMAKE_SOURCE_DIR} "${INIT_DIRECTORY}/${LIB_DIR}")
         # Grab the library source files
         file(GLOB C_FILES
                 "${LIB_DIR}/*.cpp"
                 "${LIB_DIR}/*.c" 
                 "${LIB_DIR}/*.h"
             )
-
         # Grab the framework source files
         file(GLOB BSK_FWK_FILES
             "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp" #Might not be needed
@@ -254,13 +258,22 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
             "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
             "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.i"
         )
-    
-        file(GLOB GEN_FILES_LOCAL
+    	if(${MODULE_DIR} STREQUAL "ExternalModules")
+    		 file(GLOB GEN_FILES_LOCAL
+                    "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.c"
+                    "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.cpp"
+                    "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.h"
+                    "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.i"
+                    )
+    	
+        else()
+        	file(GLOB GEN_FILES_LOCAL
                     "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.c"
                     "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.cpp"
                     "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.h"
                     "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.i"
                     )
+        endif()
     
     endif()
     foreach(TARGET_FILE ${TARGET_LIST})
@@ -330,9 +343,11 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
             target_link_libraries(${TARGET_NAME} ${LIB}) 
         endforeach()
 
-        
-        set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${PARENT_DIR}) # define folder in IDE
-
+        if(${MODULE_DIR} STREQUAL "ExternalModules")
+        	set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${MODULE_DIR})
+        else()
+        	set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${PARENT_DIR}) # define folder in IDE
+        endif()
         # Define the location for the .so / .dylib file
         set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}") 
         set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
@@ -523,11 +538,15 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simSynch" SIM_SYNCH_TARGETS
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizard" VIZ_INTERFACE_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/cppModuleTemplate" CPP_MODULE_TEMPLATE_TARGETS)
 
-if(NOT "${EXTERNAL_MODULE_PATH}" STREQUAL "")
-	string(REPLACE "\\" "/" EXTERNAL_MODULE_PATH "${EXTERNAL_MODULE_PATH}")
-	find_package_targets("${EXTERNAL_MODULE_PATH}" EXTERNAL_MODULE_TARGETS)
-	generate_package_targets("${EXTERNAL_MODULE_TARGETS}" "${ARCHITECTURE_LIBS};" "Modules")
-	
+if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
+	string(REPLACE "\\" "/" EXTERNAL_MODULES_PATH "${EXTERNAL_MODULES_PATH}")
+	find_package_targets("${EXTERNAL_MODULES_PATH}" EXTERNAL_MODULE_TARGETS)
+	if(EXISTS "${EXTERNAL_MODULES_PATH}/ExternalModules/_GeneralModuleFiles")
+		generate_package_libraries("${EXTERNAL_MODULES_PATH}")
+		generate_package_targets("${EXTERNAL_MODULE_TARGETS}" "ExternalModulesLib;${ARCHITECTURE_LIBS};" "ExternalModules")
+	else()
+		generate_package_targets("${EXTERNAL_MODULE_TARGETS}" "${ARCHITECTURE_LIBS};" "ExternalModules")
+	endif()
 endif(NOT "${EXTERNAL_MODULE_PATH}" STREQUAL "")
 
 generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation") # The quotations around DYN_TARGETS informs function that it is a list

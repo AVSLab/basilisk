@@ -20,7 +20,7 @@ bskModuleOptionsBool = {
 }
 bskModuleOptionsString = {
     "autoKey": "",
-    "pathToExternalModule":""
+    "pathToExternalModules":""
 }
 bskModuleOptionsFlag = {
     "clean": False,
@@ -217,8 +217,8 @@ class BasiliskConan(ConanFile):
         else:
             cmdString.append("python3")
         cmdString.append("GenCMessages.py")
-        if self.options.pathToExternalModule:
-            cmdString.extend(["--pathToExternalModule", str(self.options.pathToExternalModule)])
+        if self.options.pathToExternalModules:
+            cmdString.extend(["--pathToExternalModules", str(self.options.pathToExternalModules)])
         subprocess.check_call(cmdString)
         os.chdir(originalWorkingDirectory)
         print("Done")
@@ -246,7 +246,8 @@ class BasiliskConan(ConanFile):
         cmake = CMake(self, set_cmake_flags=True, generator=self.generator)
         cmake.definitions["BUILD_OPNAV"] = self.options.opNav
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
-        cmake.definitions["EXTERNAL_MODULE_PATH"] = self.options.pathToExternalModule
+        print("This is external path", self.options.pathToExternalModules)
+        cmake.definitions["EXTERNAL_MODULES_PATH"] = self.options.pathToExternalModules
         cmake.parallel = True
         cmake.configure()
         add_basilisk_to_sys_path()
@@ -315,7 +316,10 @@ if __name__ == "__main__":
         conanCmdString.append(' -o ' + opt + '=' + str(vars(args)[opt]))
     for opt, value in bskModuleOptionsString.items():
         if str(vars(args)[opt]):
-            conanCmdString.append(' -o ' + opt + '=' + str(vars(args)[opt]))
+            if opt=="pathToExternalModules":
+                conanCmdString.append(' -o ' + opt + '=' + os.path.abspath(str(vars(args)[opt]).rstrip(os.path.sep)))
+            else:
+                conanCmdString.append(' -o ' + opt + '=' + str(vars(args)[opt]))
     for opt, value in bskModuleOptionsFlag.items():
         if vars(args)[opt]:
             conanCmdString.append(' -o ' + opt + '=True')

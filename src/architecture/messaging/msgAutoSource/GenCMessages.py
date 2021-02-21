@@ -8,12 +8,12 @@ from sys import platform
 
 class GenerateMessages:
 
-    def __init__(self, pathToExternalModule):
+    def __init__(self, pathToExternalModules):
         self.messageTemplate = ""
         self.headerTemplate = ""
         self.autoSourceDestDir = '../../../../dist3/autoSource/'
         self.destinationDir = os.path.join(self.autoSourceDestDir, 'cMsgCInterface/')
-        self.pathToExternalModule = pathToExternalModule
+        self.pathToExternalModules = pathToExternalModules
         with open('./cMsgCInterfacePy.i.in', 'r') as f:
             self.swig_template_block = f.read()
         self.swigTemplate = ""
@@ -52,16 +52,17 @@ class GenerateMessages:
             w.write(messaging_header_i_template)
 
     def __createMessageC(self,parentPath, external=False):
-        if not external:
-            messaging_i_template = "//C messages:"
-        else:
+
+        if external:
             messaging_i_template = ""
+            relativePath = os.path.relpath(self.pathToExternalModules, "../../../architecture").replace("\\",
+                                                                                                        "/")
+        else:
+            messaging_i_template = "//C messages:"
         for file in os.listdir(f"{parentPath}/msgPayloadDefC"):
             if file.endswith(".h"):
                 msgName = (os.path.splitext(file)[0])[:-7]
                 if external:
-                    relativePath = os.path.relpath(self.pathToExternalModule, "../../../architecture").replace("\\",
-                                                                                                               "/")
                     messaging_i_template += f"\nINSTANTIATE_TEMPLATES({msgName}, {msgName}Payload, {relativePath}/msgPayloadDefC)"
                 else:
                     messaging_i_template += f"\nINSTANTIATE_TEMPLATES({msgName}, {msgName}Payload, msgPayloadDefC)"
@@ -77,7 +78,7 @@ class GenerateMessages:
             if file.endswith(".h"):
                 msgName = (os.path.splitext(file)[0])[:-7]
                 if external:
-                    relativePath = os.path.relpath(self.pathToExternalModule, "../../../architecture").replace("\\",
+                    relativePath = os.path.relpath(self.pathToExternalModules, "../../../architecture").replace("\\",
                                                                                                                "/")
                     messaging_i_template += f"\nINSTANTIATE_TEMPLATES({msgName}, {msgName}Payload, {relativePath}/msgPayloadDefCpp)"
                 else:
@@ -88,17 +89,18 @@ class GenerateMessages:
     def __generateMessages(self):
         # append all C msg definitions to the dist3/autoSource/messaging.auto.i file that is imported into messaging.auto.i
         self.__createMessageC("../..")
-        if self.pathToExternalModule and os.path.exists(os.path.join(self.pathToExternalModule,"msgPayloadDefC")):
-            self.__createMessageC(self.pathToExternalModule,True)
+        if self.pathToExternalModules and os.path.exists(os.path.join(self.pathToExternalModules,"msgPayloadDefC")):
+            self.__createMessageC(self.pathToExternalModules,True)
 
         with open(self.autoSourceDestDir + 'messaging.auto.i', 'r') as fb:
             self.messagingAutoData = fb.readlines()
         # The following cpp message definitions must be included after the `self.messagingAutoData` variable is set above.
         # We only need to create Python interfaces to C++ messages, not C wrappers.
         self.__createMessageCpp("../..")
-        if self.pathToExternalModule and os.path.exists(
-                os.path.join(self.pathToExternalModule, "msgPayloadDefCpp")):
-            self.__createMessageC(self.pathToExternalModule, True)
+        if self.pathToExternalModules and os.path.exists(
+                os.path.join(self.pathToExternalModules, "msgPayloadDefCpp")):
+
+            self.__createMessageCpp(self.pathToExternalModules, True)
 
     def __toMessage(self, structData):
         if structData:
@@ -134,8 +136,8 @@ class GenerateMessages:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Configure generated Messages")
     # define the optional arguments
-    parser.add_argument("--pathToExternalModule", help="External Module path", default="")
+    parser.add_argument("--pathToExternalModules", help="External Module path", default="")
     args = parser.parse_args()
-    generateMessages = GenerateMessages(args.pathToExternalModule)
+    generateMessages = GenerateMessages(args.pathToExternalModules)
     generateMessages.initialize()
     generateMessages.run()
