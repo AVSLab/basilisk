@@ -77,7 +77,11 @@ Version |release|
   the fly, emulating a failure with a physical change in the RW mechanics.
 - changed the output message type of :ref:`magnetometer` to be compatible with :ref:`tamComm`
 - Created several instructional pages in the Quick-Start documentation folder.  The examples folder
-  has moved to the Quick-Start guide as well
+  has moved to the Quick-Start guide as well.  The new quick start guide now discusses
+
+  - how to write Basilisk python simulation scripts
+  - how to write C++, C and Python modules
+
 - Added installation instructions to run Basilisk on a computer with the Apple M1 processor
 - added :ref:`spacecraftLocation` module to allow checking for satellite to satellite line-of-sight access
 - made ``maximumRange`` an optional variable in :ref:`groundLocation`
