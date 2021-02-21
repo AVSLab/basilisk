@@ -27,7 +27,7 @@
 #include "cMsgCInterface/RWAvailabilityMsg_C.h"
 #include "cMsgCInterface/RWArrayConfigMsg_C.h"
 #include "cMsgCInterface/RWSpeedMsg_C.h"
-#include "cMsgCInterface/RWArrayVoltageMsg_C.h"
+#include "cMsgCInterface/ArrayMotorVoltageMsg_C.h"
 
 #include "architecture/utilities/bskLogging.h"
 
@@ -45,7 +45,7 @@ typedef struct {
     int    resetFlag;                               /*!< []     Flag indicating that a module reset occured */
 
     /* declare module IO interfaces */
-    RWArrayVoltageMsg_C voltageOutMsg;      /*!< voltage output message*/
+    ArrayMotorVoltageMsg_C voltageOutMsg;      /*!< voltage output message*/
     ArrayMotorTorqueMsg_C torqueInMsg;      /*!< Input torque message*/
     RWArrayConfigMsg_C rwParamsInMsg;       /*!< RW array input message*/
     RWSpeedMsg_C rwSpeedInMsg;              /*!< [] The name for the reaction wheel speeds message. Must be provided to enable speed tracking loop */

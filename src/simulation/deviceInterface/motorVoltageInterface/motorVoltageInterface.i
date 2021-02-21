@@ -16,19 +16,29 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+%module motorVoltageInterface
+%{
+   #include "motorVoltageInterface.h"
+%}
 
-#ifndef SIM_RW_VOLTAGE_INPUT_H
-#define SIM_RW_VOLTAGE_INPUT_H
+%pythoncode %{
+from Basilisk.architecture.swig_common_model import *
+%}
 
+%include "std_string.i"
+%include "swig_eigen.i"
+%include "swig_conly_data.i"
+%include "sys_model.h"
+%include "motorVoltageInterface.h"
 
-#include "architecture/utilities/macroDefinitions.h"
+%include "architecture/msgPayloadDefC/ArrayMotorVoltageMsgPayload.h"
+struct ArrayMotorVoltageMsg_C;
+%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+struct ArrayMotorTorqueMsg_C;
 
+%include "architecture/utilities/macroDefinitions.h"
 
-
-/*! @brief Structure used to define the message format of the RW voltage input  */
-typedef struct {
-    double voltage[MAX_EFF_CNT]; //!< [V]     RW voltage input value
-}RWArrayVoltageMsgPayload;
-
-
-#endif
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

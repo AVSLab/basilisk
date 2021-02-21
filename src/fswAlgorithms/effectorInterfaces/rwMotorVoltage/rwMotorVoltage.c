@@ -35,7 +35,7 @@
  */
 void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
 {
-    RWArrayVoltageMsg_C_init(&configData->voltageOutMsg);
+    ArrayMotorVoltageMsg_C_init(&configData->voltageOutMsg);
 }
 
 
@@ -76,10 +76,10 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
     /* - Read the input messages */
 //    double              torqueCmd[MAX_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */
     ArrayMotorTorqueMsgPayload torqueCmd;           /*!< copy of RW motor torque input message*/
-    RWArrayVoltageMsgPayload voltageOut;            /*!< -- copy of the output message */
+    ArrayMotorVoltageMsgPayload voltageOut;            /*!< -- copy of the output message */
     uint32_t i;
 
-    voltageOut = RWArrayVoltageMsg_C_zeroMsgPayload();
+    voltageOut = ArrayMotorVoltageMsg_C_zeroMsgPayload();
 
     // check if the required input messages are included
     if (!ArrayMotorTorqueMsg_C_isLinked(&configData->torqueInMsg)) {
@@ -148,7 +148,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
     /*
      store the output message 
      */
-    RWArrayVoltageMsg_C_write(&voltageOut, &configData->voltageOutMsg, moduleID, callTime);
+    ArrayMotorVoltageMsg_C_write(&voltageOut, &configData->voltageOutMsg, moduleID, callTime);
 
     return;
 }

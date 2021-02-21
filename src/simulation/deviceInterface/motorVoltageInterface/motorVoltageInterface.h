@@ -17,14 +17,14 @@
 
  */
 
-#ifndef RW_VOLTAGE_INTERFACE_H
-#define RW_VOLTAGE_INTERFACE_H
+#ifndef MOTOR_VOLTAGE_INTERFACE_H
+#define MOTOR_VOLTAGE_INTERFACE_H
 
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 
-#include "architecture/msgPayloadDefC/RWArrayVoltageMsgPayload.h"
+#include "architecture/msgPayloadDefC/ArrayMotorVoltageMsgPayload.h"
 #include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 
 #include "../../../architecture/utilities/macroDefinitions.h"
@@ -32,12 +32,12 @@
 #include <Eigen/Dense>
 
 /*! @brief RW voltage interface class */
-class RWVoltageInterface: public SysModel {
+class MotorVoltageInterface: public SysModel {
 public:
-    RWVoltageInterface();
-    ~RWVoltageInterface();
+    MotorVoltageInterface();
+    ~MotorVoltageInterface();
    
-    void computeRWMotorTorque();
+    void computeMotorTorque();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void readInputMessages();
@@ -47,17 +47,17 @@ public:
     void setBiases(Eigen::VectorXd biases); //!< --     Takes in an array of biases to set for rws and sets them, leaving blanks up to MAX_EFF_COUNT
     
 public:
-    ReadFunctor<RWArrayVoltageMsgPayload> rwVoltageInMsg;     //!< --     Message that contains RW voltage input states
-    Message<ArrayMotorTorqueMsgPayload> rwMotorTorqueOutMsg;//!< --     Output Message for RW motor torques
+    ReadFunctor<ArrayMotorVoltageMsgPayload> motorVoltageInMsg;     //!< --     Message that contains motor voltage input states
+    Message<ArrayMotorTorqueMsgPayload> motorTorqueOutMsg;//!< --     Output Message for motor torques
     Eigen::VectorXd voltage2TorqueGain;          //!< Nm/V   gain to convert voltage to motor torque
     Eigen::VectorXd scaleFactor;                 //!<        scale the output - like a constant gain error
     Eigen::VectorXd bias;                        //!< Nm     A bias to add to the torque output
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    ArrayMotorTorqueMsgPayload outputRWTorqueBuffer;//!< [Nm] copy of module output buffer
+    ArrayMotorTorqueMsgPayload outputTorqueBuffer;//!< [Nm] copy of module output buffer
     uint64_t prevTime;                  //!< -- Previous simulation time observed
-    RWArrayVoltageMsgPayload inputVoltageBuffer;//!< [V] One-time allocation for time savings
+    ArrayMotorVoltageMsgPayload inputVoltageBuffer;//!< [V] One-time allocation for time savings
 };
 
 

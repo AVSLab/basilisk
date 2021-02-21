@@ -16,14 +16,14 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/deviceInterface/rwVoltageInterface/rwVoltageInterface.h"
+#include "simulation/deviceInterface/motorVoltageInterface/motorVoltageInterface.h"
 
 #include <iostream>
 #include <cstring>
 
-/*! This is the constructor for the RW voltgage interface.  It sets default variable
+/*! This is the constructor for the motor voltgage interface.  It sets default variable
     values and initializes the various parts of the model */
-RWVoltageInterface::RWVoltageInterface()
+MotorVoltageInterface::MotorVoltageInterface()
 {
     this->prevTime = 0;
     this->bias.resize(MAX_EFF_CNT);
@@ -36,7 +36,7 @@ RWVoltageInterface::RWVoltageInterface()
 }
 
 /*! Destructor.  Nothing here. */
-RWVoltageInterface::~RWVoltageInterface()
+MotorVoltageInterface::~MotorVoltageInterface()
 {
     return;
 }
@@ -44,34 +44,34 @@ RWVoltageInterface::~RWVoltageInterface()
 /*! Reset the module to original configuration values.
  @return void
  */
-void RWVoltageInterface::Reset(uint64_t CurrenSimNanos)
+void MotorVoltageInterface::Reset(uint64_t CurrenSimNanos)
 {
-    if(!this->rwVoltageInMsg.isLinked())
+    if(!this->motorVoltageInMsg.isLinked())
     {
-        bskLogger.bskLog(BSK_WARNING, "rwVoltageInterface.rwVoltageInMsg is not linked.");
+        bskLogger.bskLog(BSK_WARNING, "motorVoltageInterface.motorVoltageInMsg is not linked.");
         return;
     }
 }
 
-/*! This method reads the RW voltage input messages
+/*! This method reads the motor voltage input messages
  */
-void RWVoltageInterface::readInputMessages()
+void MotorVoltageInterface::readInputMessages()
 {
 
     // read the incoming array of voltages
-    this->inputVoltageBuffer = this->rwVoltageInMsg();
+    this->inputVoltageBuffer = this->motorVoltageInMsg();
     
     return;
 }
 
-/*! This method evaluates the RW Motor torque output states.
+/*! This method evaluates the motor torque output states.
  @return void
  */
-void RWVoltageInterface::computeRWMotorTorque()
+void MotorVoltageInterface::computeMotorTorque()
 {
-    this->outputRWTorqueBuffer = this->rwMotorTorqueOutMsg.zeroMsgPayload();
+    this->outputTorqueBuffer = this->motorTorqueOutMsg.zeroMsgPayload();
     for (uint64_t i=0; i < MAX_EFF_CNT; i++) {
-        this->outputRWTorqueBuffer.motorTorque[i] = this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain(i) * this->scaleFactor(i) + this->bias(i);
+        this->outputTorqueBuffer.motorTorque[i] = this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain(i) * this->scaleFactor(i) + this->bias(i);
     }
     return;
 }
@@ -79,7 +79,7 @@ void RWVoltageInterface::computeRWMotorTorque()
 /*! This method sets (per motor) voltage to torque scale factors (linear proportional error)
  @return void
  */
-void RWVoltageInterface::setScaleFactors(Eigen::VectorXd scaleFactors){
+void MotorVoltageInterface::setScaleFactors(Eigen::VectorXd scaleFactors){
     for (int i = 0; i < this->scaleFactor.rows(); i++)
     {
         if (i < scaleFactors.rows()){
@@ -94,7 +94,7 @@ void RWVoltageInterface::setScaleFactors(Eigen::VectorXd scaleFactors){
 /*! This method sets the list of motor voltage to torque gains.
  @return void
  */
-void RWVoltageInterface::setGains(Eigen::VectorXd gains)
+void MotorVoltageInterface::setGains(Eigen::VectorXd gains)
 {
     for (int i = 0; i < this->voltage2TorqueGain.rows(); i++)
     {
@@ -110,7 +110,7 @@ void RWVoltageInterface::setGains(Eigen::VectorXd gains)
 /*! This method sets the list of voltage to torque biases (per rw)
  @return void
  */
-void RWVoltageInterface::setBiases(Eigen::VectorXd biases)
+void MotorVoltageInterface::setBiases(Eigen::VectorXd biases)
 {
     for (int i = 0; i < this->bias.rows(); i++)
     {
@@ -123,25 +123,25 @@ void RWVoltageInterface::setBiases(Eigen::VectorXd biases)
     return;
 }
 
-/*! This method writes the RW Motor torque output state message.
+/*! This method writes the Motor torque output state message.
  @return void
  @param CurrentClock The clock time associated with the model call
  */
-void RWVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
+void MotorVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
 {
-    this->rwMotorTorqueOutMsg.write(&this->outputRWTorqueBuffer, this->moduleID, CurrentClock);
+    this->motorTorqueOutMsg.write(&this->outputTorqueBuffer, this->moduleID, CurrentClock);
 
     return;
 }
 
-/*! This method calls all of the run-time operations for the RW voltage interface module.
+/*! This method calls all of the run-time operations for the motor voltage interface module.
     @return void
     @param CurrentSimNanos The clock time associated with the model call
 */
-void RWVoltageInterface::UpdateState(uint64_t CurrentSimNanos)
+void MotorVoltageInterface::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
-    computeRWMotorTorque();
+    computeMotorTorque();
     writeOutputMessages(CurrentSimNanos);
 
     this->prevTime = CurrentSimNanos;

@@ -39,8 +39,8 @@ struct RWAvailabilityMsg_C;
 struct RWArrayConfigMsg_C;
 %include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 struct RWSpeedMsg_C;
-%include "architecture/msgPayloadDefC/RWArrayVoltageMsgPayload.h"
-struct RWArrayVoltageMsg_C;
+%include "architecture/msgPayloadDefC/ArrayMotorVoltageMsgPayload.h"
+struct ArrayMotorVoltageMsg_C;
 
 %include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 %include "architecture/utilities/macroDefinitions.h"

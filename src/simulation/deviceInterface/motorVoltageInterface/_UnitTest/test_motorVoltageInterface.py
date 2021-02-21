@@ -18,9 +18,9 @@
 
 #
 #   Unit Test Script
-#   Module Name:        rwVoltageInterface
-#   Author:             Hanspeter Schaub
-#   Creation Date:      January 29, 2017
+#   Module Name:        motorVoltageInterface
+#   Author:             João Vaz Carneiro
+#   Creation Date:      February 13, 2021
 #
 
 import pytest
@@ -39,12 +39,10 @@ def addTimeColumn(time, data):
 
 
 
-
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import rwVoltageInterface               # import the module that is to be tested
+from Basilisk.simulation import motorVoltageInterface           # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
@@ -84,8 +82,8 @@ def run(show_plots, voltage):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    testModule = rwVoltageInterface.RWVoltageInterface()
-    testModule.ModelTag = "rwVoltageInterface"
+    testModule = motorVoltageInterface.MotorVoltageInterface()
+    testModule.ModelTag = "motorVoltageInterface"
 
     # set module parameters(s)
     testModule.setGains(np.array([1.32, 0.99, 1.31]))      # [Nm/V] conversion gain
@@ -97,13 +95,13 @@ def run(show_plots, voltage):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    voltageData = messaging.RWArrayVoltageMsgPayload()
+    voltageData = messaging.ArrayMotorVoltageMsgPayload()
     voltageData.voltage = [voltage, voltage+1.0, voltage+1.5]
-    voltageMsg = messaging.RWArrayVoltageMsg().write(voltageData)
-    testModule.rwVoltageInMsg.subscribeTo(voltageMsg)
+    voltageMsg = messaging.ArrayMotorVoltageMsg().write(voltageData)
+    testModule.motorVoltageInMsg.subscribeTo(voltageMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = testModule.rwMotorTorqueOutMsg.recorder()
+    dataLog = testModule.motorTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
