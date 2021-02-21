@@ -17,12 +17,12 @@ The basic swig interface file looks like this:
 
     %include "swig_conly_data.i"
 
-    %constant void Update_fswModuleTemplate(void*, uint64_t, uint64_t);
-    %ignore Update_fswModuleTemplate;
-    %constant void SelfInit_fswModuleTemplate(void*, uint64_t);
-    %ignore SelfInit_fswModuleTemplate;
-    %constant void Reset_fswModuleTemplate(void*, uint64_t, uint64_t);
-    %ignore Reset_fswModuleTemplate;
+    %constant void Update_someModule(void*, uint64_t, uint64_t);
+    %ignore Update_someModule;
+    %constant void SelfInit_someModule(void*, uint64_t);
+    %ignore SelfInit_someModule;
+    %constant void Reset_someModule(void*, uint64_t, uint64_t);
+    %ignore Reset_someModule;
 
     %include "someModule.h"
 

@@ -544,7 +544,7 @@ generate_package_targets("${CPP_MODULE_TEMPLATE_TARGETS}" "${ARCHITECTURE_LIBS};
 ##################
 # FSW ALGORITHMS #
 ##################
-find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/_fswTemplateFolder" FSW_TEMPLATE_MODULE_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/_cModuleTemplateFolder" C_TEMPLATE_MODULE_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attControl" ATT_CONTROL_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attDetermination" ATT_DET_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attGuidance" ATT_GUID_TARGETS)
@@ -560,7 +560,7 @@ find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/transDetermination" TRAN
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/vehicleConfigData" VEH_CONFIG_TARGETS)
 
 
-generate_package_targets("${FSW_TEMPLATE_MODULE_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${C_TEMPLATE_MODULE_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_CONTROL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_DET_TARGETS}" "attDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_GUID_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")

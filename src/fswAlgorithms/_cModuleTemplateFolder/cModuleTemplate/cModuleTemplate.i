@@ -16,16 +16,25 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+%module cModuleTemplate
+%{
+   #include "cModuleTemplate.h"
+%}
 
-#ifndef _FSW_MODULE_TEMPLATE_OUT_H_
-#define _FSW_MODULE_TEMPLATE_OUT_H_
+%include "swig_conly_data.i"
+%constant void Update_cModuleTemplate(void*, uint64_t, uint64_t);
+%ignore Update_cModuleTemplate;
+%constant void SelfInit_cModuleTemplate(void*, uint64_t);
+%ignore SelfInit_cModuleTemplate;
+%constant void Reset_cModuleTemplate(void*, uint64_t, uint64_t);
+%ignore Reset_cModuleTemplate;
 
+%include "cModuleTemplate.h"
 
-/*! @brief Structure used to define the output of the sub-module.  This is the same
-    output message that is used by all sub-modules in the module folder. */
-typedef struct {
-    double dataVector[3];     //!< [units] sample message vector
-}FswModuleTemplateMsgPayload;
+%include "architecture/msgPayloadDefC/CModuleTemplateMsgPayload.h"
+struct CModuleTemplateMsg_C;
 
-
-#endif
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

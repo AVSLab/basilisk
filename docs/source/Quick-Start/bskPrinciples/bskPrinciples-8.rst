@@ -13,7 +13,7 @@ Next we study how the Basilisk tasks can be both disabled and enabled.  Why woul
 .. image:: ../../_images/static/qs-bsk-8.svg
    :align: center
 
-The sample script below sets up a single process which contains 2 tasks called ``cTask`` and ``cppTask``.  The :ref:`fswModuleTemplate` and :ref:`cppModuleTemplate` are added to these tasks respectively.
+The sample script below sets up a single process which contains 2 tasks called ``cTask`` and ``cppTask``.  The :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` are added to these tasks respectively.
 
 
 .. literalinclude:: ../../codeSamples/bsk-8.py

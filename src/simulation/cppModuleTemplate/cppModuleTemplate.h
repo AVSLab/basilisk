@@ -21,7 +21,7 @@
 #define CPP_MODULE_TEMPLATE_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/FswModuleTemplateMsgPayload.h"
+#include "architecture/msgPayloadDefC/CModuleTemplateMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 
@@ -39,8 +39,8 @@ public:
     double dummy;                                   //!< [units] sample module variable declaration
     double dumVector[3];                            //!< [units] sample vector variable
 
-    Message<FswModuleTemplateMsgPayload> dataOutMsg;     //!< attitude navigation output msg
-    ReadFunctor<FswModuleTemplateMsgPayload> dataInMsg;  //!< translation navigation output msg
+    Message<CModuleTemplateMsgPayload> dataOutMsg;     //!< attitude navigation output msg
+    ReadFunctor<CModuleTemplateMsgPayload> dataInMsg;  //!< translation navigation output msg
 
     BSKLogger bskLogger;              //!< -- BSK Logging
 

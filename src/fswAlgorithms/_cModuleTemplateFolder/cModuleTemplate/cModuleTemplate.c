@@ -22,7 +22,7 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "fswModuleTemplate.h"
+#include "cModuleTemplate.h"
 #include "string.h"
 
 
@@ -39,9 +39,9 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID)
+void SelfInit_cModuleTemplate(cModuleTemplateConfig *configData, int64_t moduleID)
 {
-    FswModuleTemplateMsg_C_init(&configData->dataOutMsg);
+    CModuleTemplateMsg_C_init(&configData->dataOutMsg);
 }
 
 
@@ -52,7 +52,7 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t mod
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
+void Reset_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! reset any required variables */
     configData->dummy = 0.0;
@@ -67,19 +67,19 @@ void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callT
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
+void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     double Lr[3];                                   /*!< [unit] variable description */
-    FswModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
-    FswModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
+    CModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
+    CModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
 
     // always zero the output buffer first
-    outMsgBuffer = FswModuleTemplateMsg_C_zeroMsgPayload();
+    outMsgBuffer = CModuleTemplateMsg_C_zeroMsgPayload();
     v3SetZero(configData->inputVector);
     
     /*! - Read the optional input messages */
-    if (FswModuleTemplateMsg_C_isLinked(&configData->dataInMsg)) {
-        inMsgBuffer = FswModuleTemplateMsg_C_read(&configData->dataInMsg);
+    if (CModuleTemplateMsg_C_isLinked(&configData->dataInMsg)) {
+        inMsgBuffer = CModuleTemplateMsg_C_read(&configData->dataInMsg);
         v3Copy(inMsgBuffer.dataVector, configData->inputVector);
     }
 
@@ -92,7 +92,7 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t call
     v3Copy(Lr, outMsgBuffer.dataVector);
 
     /*! - write the module output message */
-    FswModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);
+    CModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);
 
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */

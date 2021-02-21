@@ -10,7 +10,7 @@ Setting and Recording Module Variables
 
 Sometimes it is convenient to record a Basilisk module variable, not just the input or output message.  This can be done via a python command as shown below.  However, note that such module variable recording will slow down the simulation as this is done in the python layer.
 
-The simulation setup is shown in the figure below.  Both a C and C++ module are created and added to the single task.  However, no messages are connected here.  Rather, this sample code illustrates how to record module internal variables.  The variables are either public C++ class variables, or they are variables with the C module configuration structure.  Both :ref:`fswModuleTemplate` and :ref:`cppModuleTemplate` have the exact same public variables for easy comparison.
+The simulation setup is shown in the figure below.  Both a C and C++ module are created and added to the single task.  However, no messages are connected here.  Rather, this sample code illustrates how to record module internal variables.  The variables are either public C++ class variables, or they are variables with the C module configuration structure.  Both :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` have the exact same public variables for easy comparison.
 
 .. image:: ../../_images/static/qs-bsk-6.svg
    :align: center

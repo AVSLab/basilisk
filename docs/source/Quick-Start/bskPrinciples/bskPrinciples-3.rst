@@ -8,7 +8,7 @@ Connecting Messages
 
     The python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/bsk-3.py>`.
 
-So far we have learned how to add C or C++ Basilisk modules to a task, setting priorities to execute those modules, and specifying update rates; next we will look at how to connect module messages to one another. Messages are anything that a module outputs after it is executed, such as spacecraft state information, battery power, etc.  Again we use both :ref:`fswModuleTemplate` and :ref:`cppModuleTemplate` as the stand-in modules to illustrate setting message connections.  Note that the input and output message connections of these modules are of the same type.  The following simulation script again uses a single process and task.  The modules are created and their input and output messages are connected as illustrated below.
+So far we have learned how to add C or C++ Basilisk modules to a task, setting priorities to execute those modules, and specifying update rates; next we will look at how to connect module messages to one another. Messages are anything that a module outputs after it is executed, such as spacecraft state information, battery power, etc.  Again we use both :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` as the stand-in modules to illustrate setting message connections.  Note that the input and output message connections of these modules are of the same type.  The following simulation script again uses a single process and task.  The modules are created and their input and output messages are connected as illustrated below.
 
 .. image:: ../../_images/static/qs-bsk-3.svg
    :align: center

@@ -19,7 +19,7 @@
 
 #
 #   Unit Test Script
-#   Module Name:        fswModuleTemplate
+#   Module Name:        cModuleTemplate
 #   Author:             (First Name) (Last Name)
 #   Creation Date:      Month Day, Year
 #
@@ -31,7 +31,7 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import fswModuleTemplate                 # import the module that is to be tested
+from Basilisk.fswAlgorithms import cModuleTemplate                 # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging                      # import the message definitions
 import numpy as np
@@ -93,9 +93,9 @@ def fswModuleTestFunction(show_plots):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = fswModuleTemplate.fswModuleTemplateConfig()  # update with current values
+    moduleConfig = cModuleTemplate.cModuleTemplateConfig()  # update with current values
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "fswModuleTemplate"           # update python name of test module
+    moduleWrap.ModelTag = "cModuleTemplate"           # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -106,9 +106,9 @@ def fswModuleTestFunction(show_plots):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = messaging.FswModuleTemplateMsgPayload()  # Create a structure for the input message
+    inputMessageData = messaging.CModuleTemplateMsgPayload()  # Create a structure for the input message
     inputMessageData.dataVector = [1.0, -0.5, 0.7]             # Set up a list as a 3-vector
-    inputMsg = messaging.FswModuleTemplateMsg().write(inputMessageData)
+    inputMsg = messaging.CModuleTemplateMsg().write(inputMessageData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.dataOutMsg.recorder()

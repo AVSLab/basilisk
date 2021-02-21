@@ -30,8 +30,8 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "cppModuleTemplate.h"
 
-%include "architecture/msgPayloadDefC/FswModuleTemplateMsgPayload.h"
-struct FswModuleTemplateMsg_C;
+%include "architecture/msgPayloadDefC/CModuleTemplateMsgPayload.h"
+struct CModuleTemplateMsg_C;
 
 %pythoncode %{
 import sys

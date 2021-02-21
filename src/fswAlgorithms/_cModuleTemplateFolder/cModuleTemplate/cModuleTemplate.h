@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include "architecture/utilities/bskLogging.h"
-#include "cMsgCInterface/FswModuleTemplateMsg_C.h"
+#include "cMsgCInterface/CModuleTemplateMsg_C.h"
 
 
 
@@ -33,20 +33,20 @@ typedef struct {
     double dumVector[3];                            //!< [units] sample vector variable
 
     /* declare module IO interfaces */
-    FswModuleTemplateMsg_C dataOutMsg;              //!< sample output message
-    FswModuleTemplateMsg_C dataInMsg;               //!< sample input message
+    CModuleTemplateMsg_C dataOutMsg;              //!< sample output message
+    CModuleTemplateMsg_C dataInMsg;               //!< sample input message
 
     double  inputVector[3];                         //!< [units]  vector description
     BSKLogger *bskLogger;                           //!< BSK Logging
-}fswModuleTemplateConfig;
+}cModuleTemplateConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, int64_t moduleID);
-    void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_cModuleTemplate(cModuleTemplateConfig *configData, int64_t moduleID);
+    void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }

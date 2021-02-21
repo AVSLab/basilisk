@@ -51,7 +51,7 @@ Pulling the Recorded Message Data
 ---------------------------------
 After the simulation completes, the recorded data is stored inside the ``msgRec`` and ``msgRec20`` recorders.  To access the variables of the message, simply use ``msgRec.variable`` where ``variable`` is the message structure variable you seek to access.  To access the array of time values where the message was recorded use ``msgRec.times()``.    A second time array is available that stores the times where the messages are written with ``msgRec.timesWritten()``.  Why two time arrays?  Consider an output message that is only updated every 3s, but the message is being read and recorded every second.  The ``.timesWritten()`` values will repeat until a new output message is created.
 
-:ref:`fswModuleTemplate` output message only contains the array ``dataVector``.  In this simulation it is recorded at the rate of 1Hz in ``msgRec``, and every 20s in the recorder ``msgRec20``.  The simulation creates the following plot:
+:ref:`cModuleTemplate` output message only contains the array ``dataVector``.  In this simulation it is recorded at the rate of 1Hz in ``msgRec``, and every 20s in the recorder ``msgRec20``.  The simulation creates the following plot:
 
 .. image:: /_images/Scenarios/bsk-4.svg
    :align: center

@@ -90,11 +90,11 @@ Version 1.8.4
 
   - In BSK python simulation scripts, BSK modules should be included using the indirect method.  Thus::
 
-        from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate
+        from Basilisk.fswAlgorithms.cModuleTemplate import cModuleTemplate
 
     becomes::
 
-        from Basilisk.fswAlgorithms import fswModuleTemplate
+        from Basilisk.fswAlgorithms import cModuleTemplate
 
   - The ``pyswice`` package is now imported from ``topLevelModule``.  Thus::
 

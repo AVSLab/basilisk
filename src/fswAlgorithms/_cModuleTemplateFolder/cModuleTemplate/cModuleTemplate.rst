@@ -11,10 +11,10 @@ user from python.  The msg type contains a link to the message structure definit
 provides information on what this message is used for.
 
 .. _ModuleIO_FSW_MODULE_TEMPLATE:
-.. figure:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/moduleIOFswModuleTemplate.svg
+.. figure:: /../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Images/moduleIOcModuleTemplate.svg
     :align: center
 
-    Figure 1: ``fswModuleTemplate()`` Module I/O Illustration
+    Figure 1: ``cModuleTemplate()`` Module I/O Illustration
 
 
 .. list-table:: Module I/O Messages
@@ -25,11 +25,11 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - dataInMsg
-      - :ref:`FswModuleTemplateMsgPayload`
+      - :ref:`CModuleTemplateMsgPayload`
       - (optional) Input message description.  Note here if this message is optional, and what the default behavior
         is if this message is not provided.
     * - dataOutMsg
-      - :ref:`FswModuleTemplateMsgPayload`
+      - :ref:`CModuleTemplateMsgPayload`
       - Output message description.
 
 Detailed Module Description
@@ -90,10 +90,10 @@ More details on how to typeset TeX math in Sphinx can be found `here <https://do
 
 If the module description requires extensive math discussion, this can be TeX'd up using the technical note
 template inside the ``_Documentation`` folder. A link should be included in the HTML documentation to
-the :download:`Detailed PDF Documentation </../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`
+the :download:`Detailed PDF Documentation </../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`
 using the code::
 
-    :download:`Detailed PDF Documentation </../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`
+    :download:`Detailed PDF Documentation </../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`
 
 The PDF technical should only be used as a last resort effort if the math is simply too complex and long to
 include in the `spinx` documentation.  Another option is to link to a web site, conference paper, journal
@@ -110,7 +110,7 @@ creates `The link text <http://example.net/>`__.
 Images and Figures
 ^^^^^^^^^^^^^^^^^^
 To include static, non-``pytest`` generated images and figures, you must copy the web compatible image (svg, jpg, png)
-to a local sub-folder ``fswModuleTemplate/_Documentation/Images/``.   This keeps the modules images grouped
+to a local sub-folder ``cModuleTemplate/_Documentation/Images/``.   This keeps the modules images grouped
 within this sub-folder and contained within the main module folder.  The SVG image format is preferred as it is
 a vectorized format that renders in a higher quality.  Further, when viewed in dark mode the svg will
 automatically convert to a dark image (preserving colors).  Pixelated formats such as jpg and png remain the same
@@ -118,12 +118,12 @@ in light and dark mode of the documentation web page.
 
 For example, to include an image (has no caption) you can use code such as::
 
-    .. image:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
+    .. image:: /../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Images/Fig1.svg
         :align: center
 
 to generate the following image.
 
-.. image:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
+.. image:: /../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Images/Fig1.svg
      :align: center
 
 Note that with pixelated images such as ``jpg`` and ``png`` format save the file at twice the resolution
@@ -133,7 +133,7 @@ enough resolution to look good on high-resolution displays.
 To include a figure (has a caption and you can add label), use the following code::
 
     .. _figLabel:
-    .. figure:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
+    .. figure:: /../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Images/Fig1.svg
         :align: center
 
         Figure 2: Concept Illustration of the Math used in this Module
@@ -141,7 +141,7 @@ To include a figure (has a caption and you can add label), use the following cod
 This yields
 
 .. _figLabel:
-.. figure:: /../../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Images/Fig1.svg
+.. figure:: /../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Images/Fig1.svg
     :align: center
 
     Figure 2: Concept Illustration of the Math used in this Module

@@ -1,4 +1,4 @@
-.. _cppModules-3:
+.. _cppModules-2:
 
 C++ Message Object
 ==================

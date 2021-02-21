@@ -18,7 +18,7 @@
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import fswModuleTemplate
+from Basilisk.fswAlgorithms import cModuleTemplate
 from Basilisk.simulation import cppModuleTemplate
 
 def run():
@@ -36,14 +36,14 @@ def run():
     dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(5.)))
 
     # create copies of the Basilisk modules
-    mod1 = fswModuleTemplate.fswModuleTemplateConfig()
+    mod1 = cModuleTemplate.cModuleTemplateConfig()
     mod1Wrap = scSim.setModelDataWrap(mod1)
     mod1Wrap.ModelTag = "cModule1"
 
     mod2 = cppModuleTemplate.CppModuleTemplate()
     mod2.ModelTag = "cppModule2"
 
-    mod3 = fswModuleTemplate.fswModuleTemplateConfig()
+    mod3 = cModuleTemplate.cModuleTemplateConfig()
     mod3Wrap = scSim.setModelDataWrap(mod3)
     mod3Wrap.ModelTag = "cModule3"
 

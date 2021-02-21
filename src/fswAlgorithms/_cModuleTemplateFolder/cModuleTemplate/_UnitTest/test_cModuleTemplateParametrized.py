@@ -19,7 +19,7 @@
 
 #
 #   Unit Test Script
-#   Module Name:        fswModuleTemplateParametrized
+#   Module Name:        cModuleTemplateParametrized
 #   Author:             (First Name) (Last Name)
 #   Creation Date:      Month Day, Year
 #
@@ -43,7 +43,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import fswModuleTemplate                # import the module that is to be tested
+from Basilisk.fswAlgorithms import cModuleTemplate                # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging                      # import the message definitions
 from Basilisk.utilities import vizSupport
@@ -137,9 +137,9 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = fswModuleTemplate.fswModuleTemplateConfig()                          # update with current values
+    moduleConfig = cModuleTemplate.cModuleTemplateConfig()                          # update with current values
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "fswModuleTemplate"                                        # update python name of test module
+    moduleWrap.ModelTag = "cModuleTemplate"                                        # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -150,9 +150,9 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = messaging.FswModuleTemplateMsgPayload() # Create a structure for the input message
+    inputMessageData = messaging.CModuleTemplateMsgPayload() # Create a structure for the input message
     inputMessageData.dataVector = [param1, param2, 0.7]       # Set up a list as a 3-vector
-    inputMsg = messaging.FswModuleTemplateMsg().write(inputMessageData)
+    inputMsg = messaging.CModuleTemplateMsg().write(inputMessageData)
     moduleConfig.dataInMsg.subscribeTo(inputMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it

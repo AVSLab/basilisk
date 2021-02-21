@@ -18,7 +18,7 @@
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import fswModuleTemplate
+from Basilisk.fswAlgorithms import cModuleTemplate
 from Basilisk.simulation import cppModuleTemplate
 from Basilisk.architecture import messaging
 from Basilisk.architecture import cMsgCInterfacePy as cMsgPy
@@ -38,7 +38,7 @@ def run():
     dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.)))
 
     # create modules
-    mod1 = fswModuleTemplate.fswModuleTemplateConfig()
+    mod1 = cModuleTemplate.cModuleTemplateConfig()
     mod1Wrap = scSim.setModelDataWrap(mod1)
     mod1Wrap.ModelTag = "cModule1"
     scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1)
@@ -49,12 +49,12 @@ def run():
 
     # create stand-alone message with a C interface and re-direct
     # the C module output message writing to this stand-alone message
-    cMsg = cMsgPy.FswModuleTemplateMsg_C()
-    cMsgPy.FswModuleTemplateMsg_C_addAuthor(mod1.dataOutMsg, cMsg)
+    cMsg = cMsgPy.CModuleTemplateMsg_C()
+    cMsgPy.CModuleTemplateMsg_C_addAuthor(mod1.dataOutMsg, cMsg)
 
     # create stand-along message with a C++ interface and re-direct
     # the C++ module output message writing to this stand-alone message
-    cppMsg = messaging.FswModuleTemplateMsg()
+    cppMsg = messaging.CModuleTemplateMsg()
     mod2.dataOutMsg = cppMsg
 
     #  initialize Simulation:

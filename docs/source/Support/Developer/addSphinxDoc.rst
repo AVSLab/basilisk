@@ -20,7 +20,7 @@ Assuming you want to document a Basilisk module called `genericModule`.  This me
 - ``genericModule.h``
 - ``genericModule.i``
 
-Simply add the the desired module documentation as ``genericModule.rst`` to this folder.  The :ref:`fswModuleTemplate` has a sample module documentation file that you can copy into your folder.  This content will be parsed ahead of the module function descriptions.  When running ``cmake`` the ``genericModule.rst`` file should be included in the IDE such as Xcode if the module is a C++ module.  The ``*.rst`` is not shown in the IDE if it is a C-module.
+Simply add the the desired module documentation as ``genericModule.rst`` to this folder.  The :ref:`cModuleTemplate` has a sample module documentation file that you can copy into your folder.  This content will be parsed ahead of the module function descriptions.  When running ``cmake`` the ``genericModule.rst`` file should be included in the IDE such as Xcode if the module is a C++ module.  The ``*.rst`` is not shown in the IDE if it is a C-module.
 
 
 Adding Documentation to a Basilisk Folder

@@ -8,21 +8,21 @@ Adding Basilisk Modules
 
     The python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/bsk-2.py>`.
 
-Understanding now what a Basilisk process (Task Group) and a task is, we can now move forward to adding Basilisk modules to a task.  :ref:`fswModuleTemplate` and :ref:`cppModuleTemplate` will be the basic module C and C++ BSK modules that we use in this discussion.  These simple modules are used to illustrate how to make a prototypical Basilisk module.  The functionality and messages used are the same across both modules. These modules are convenient for this discussion as they are set up as a tutorial module and print out the module ID value when the module is executed.  This makes it simple in the simulation below to see that the desired module execution order is achieved.
+Understanding now what a Basilisk process (Task Group) and a task is, we can now move forward to adding Basilisk modules to a task.  :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` will be the basic module C and C++ BSK modules that we use in this discussion.  These simple modules are used to illustrate how to make a prototypical Basilisk module.  The functionality and messages used are the same across both modules. These modules are convenient for this discussion as they are set up as a tutorial module and print out the module ID value when the module is executed.  This makes it simple in the simulation below to see that the desired module execution order is achieved.
 
 .. image:: ../../_images/static/qs-bsk-2.svg
    :align: center
 
-The following simulation creates a single process called ``dynamicsProcess`` and single 0.2Hz task called ``dynamicsTask``. As illustrated above, two copies of :ref:`fswModuleTemplate` (cModule) and one of :ref:`cppModuleTemplate` are created where they are called ``cModule1``, ``cModule3`` and ``cppModule2`` respectively.  However, note that in this example we seek to execute modules 2 and 3 first and 1 last.
+The following simulation creates a single process called ``dynamicsProcess`` and single 0.2Hz task called ``dynamicsTask``. As illustrated above, two copies of :ref:`cModuleTemplate` and one of :ref:`cppModuleTemplate` are created where they are called ``cModule1``, ``cModule3`` and ``cppModule2`` respectively.  However, note that in this example we seek to execute modules 2 and 3 first and 1 last.
 
 .. literalinclude:: ../../codeSamples/bsk-2.py
    :language: python
    :linenos:
    :lines: 18-
 
-The resulting demonstration code is shown above.  Note that the C-based :ref:`fswModuleTemplate` must be imported from ``Basilisk.fswAlgorithm`` at the top of the file.
+The resulting demonstration code is shown above.  Note that the C-based :ref:`cModuleTemplate` must be imported from ``Basilisk.fswAlgorithm`` at the top of the file.
 
-Next we create a copy of the C-based Basilisk module.  Let's discuss this process considering a generic module name ``someCModule``.  As C code doesn't know about class objects, in Basilisk we have to recreate some of the basic features of an object oriented language like C++.  Instead of having class variables, the data of the C module is stored in the ``someCModuleConfig`` data structure.  For :ref:`fswModuleTemplate` you find this module configuration structure listed at the bottom of that web page, or you can see the structure definition in the ``someCModule.h`` header file.  Thus, to create a python copy of this module configuration structure use::
+Next we create a copy of the C-based Basilisk module.  Let's discuss this process considering a generic module name ``someCModule``.  As C code doesn't know about class objects, in Basilisk we have to recreate some of the basic features of an object oriented language like C++.  Instead of having class variables, the data of the C module is stored in the ``someCModuleConfig`` data structure.  For :ref:`cModuleTemplate` you find this module configuration structure listed at the bottom of that web page, or you can see the structure definition in the ``someCModule.h`` header file.  Thus, to create a python copy of this module configuration structure use::
 
     moduleData = someCModule.someCModuleConfig()
 
@@ -36,7 +36,7 @@ Each Basilisk module should have a unique name.  This is set using::
 
     moduleWrap.ModelTag = "someModuleName"
 
-In the code above you see these steps repeated two times to create two distinct copies of :ref:`fswModuleTemplate`.  The next step is to add these modules to the task list to execute them in the desired order.  The general command to add a C-based module to a task is::
+In the code above you see these steps repeated two times to create two distinct copies of :ref:`cModuleTemplate`.  The next step is to add these modules to the task list to execute them in the desired order.  The general command to add a C-based module to a task is::
 
     scSim.AddModelToTask("taskName", moduleWrap, moduleData, priority)
 
@@ -85,9 +85,9 @@ If you execute this python code you should see the following terminal output:
     BSK_INFORMATION: C Module ID 1 ran Update at 5.000000s
 
 
-:ref:`fswModuleTemplate` and :ref:`cppModuleTemplate` log in the ``Reset()`` method that a variable has been set to 0.  As we have three such modules, notice that this reset statement is seen three times.  This reset step occurs when we run ``scSim.InitializeSimulation()``.
+:ref:`cModuleTemplate` and :ref:`cppModuleTemplate` log in the ``Reset()`` method that a variable has been set to 0.  As we have three such modules, notice that this reset statement is seen three times.  This reset step occurs when we run ``scSim.InitializeSimulation()``.
 
-After the initialization, Basilisk starts the time loop evaluating the modules at the specified rate.  The ``Update()`` routine in both :ref:`fswModuleTemplate` and :ref:`cppModuleTemplate` print out the module ID and the simulation time where the module is called.  Note that thanks to the module evaluation priorities we set, the desired module execution order is achieved.
+After the initialization, Basilisk starts the time loop evaluating the modules at the specified rate.  The ``Update()`` routine in both :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` print out the module ID and the simulation time where the module is called.  Note that thanks to the module evaluation priorities we set, the desired module execution order is achieved.
 
 
 

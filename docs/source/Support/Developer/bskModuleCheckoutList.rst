@@ -46,7 +46,7 @@ Module Programming
 Module Documentation
 --------------------
 
-Does the module contain a restructured text documentation file ``xxxx.rst``, where ``xxxx`` should be the same name as the module C or C++ file name.  The :ref:`fswModuleTemplate` module contains a sample documentation set for a Basilisk module.   The required sections include:
+Does the module contain a restructured text documentation file ``xxxx.rst``, where ``xxxx`` should be the same name as the module C or C++ file name.  The :ref:`cModuleTemplate` module contains a sample documentation set for a Basilisk module.   The required sections include:
 
 -   Executive Summary
 -   Module Assumptions and Limitations
@@ -79,7 +79,7 @@ Is a ``_UnitTest`` folder included that:
 
 Module Integrated Test
 ----------------------
-If an integrated test is provided as a ``test_XXX.py`` file.  Does this test method have a complete description of what is being tested?  The :ref:`test_fswModuleTemplateParametrized.py <test_fswModuleTemplateParametrized>` file contains a template illustrating the expected information.  Required sections include
+If an integrated test is provided as a ``test_XXX.py`` file.  Does this test method have a complete description of what is being tested?  The :ref:`test_cModuleTemplateParametrized.py <test_cModuleTemplateParametrized>` file contains a template illustrating the expected information.  Required sections include
 
     -   Validation Test Description
     -   Test Parameter Discussion

@@ -30,14 +30,14 @@
       <title>Layer 1</title>
       <g id="Graphic_9">
         <text transform="translate(1324.5922 621.86885)" fill="black">
-          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">FswModuleTemplateMsg</tspan>
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">CModuleTemplateMsg</tspan>
         </text>
       </g>
       <g id="Graphic_2">
         <path d="M 1150.4942 594.8182 L 1307.7413 594.8182 C 1310.5027 594.8182 1312.7413 597.05676 1312.7413 599.8182 L 1312.7413 648.9325 C 1312.7413 651.6939 1310.5027 653.9325 1307.7413 653.9325 L 1150.4942 653.9325 C 1147.7328 653.9325 1145.4942 651.6939 1145.4942 648.9325 L 1145.4942 599.8182 C 1145.4942 597.05676 1147.7328 594.8182 1150.4942 594.8182 Z" fill="#ffc0ff"/>
         <path d="M 1150.4942 594.8182 L 1307.7413 594.8182 C 1310.5027 594.8182 1312.7413 597.05676 1312.7413 599.8182 L 1312.7413 648.9325 C 1312.7413 651.6939 1310.5027 653.9325 1307.7413 653.9325 L 1150.4942 653.9325 C 1147.7328 653.9325 1145.4942 651.6939 1145.4942 648.9325 L 1145.4942 599.8182 C 1145.4942 597.05676 1147.7328 594.8182 1150.4942 594.8182 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(1150.4942 617.20734)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="24.839543" y="11">fswModuleTemplate</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="24.839543" y="11">cModuleTemplate</tspan>
         </text>
       </g>
       <g id="Line_4">
@@ -53,7 +53,7 @@
       </g>
       <g id="Graphic_10">
         <text transform="translate(959 621.5074)" fill="black">
-          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="26.73529" y="11">FswModuleTemplateMsg</tspan>
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="26.73529" y="11">CModuleTemplateMsg</tspan>
         </text>
       </g>
       <g id="Graphic_11">

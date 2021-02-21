@@ -29,7 +29,7 @@ can be found in :ref:`bskLogging`.
 
 #
 #   Unit Test Script
-#   Module Name:        fswModuleTemplateParametrized
+#   Module Name:        cModuleTemplateParametrized
 #   Author:             (First Name) (Last Name)
 #   Creation Date:      Month Day, Year
 #
@@ -43,7 +43,7 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms import fswModuleTemplate
+from Basilisk.fswAlgorithms import cModuleTemplate
 from Basilisk.utilities import macros
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
@@ -83,14 +83,14 @@ def run(case):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = messaging.FswModuleTemplateMsgPayload()  # Create a structure for the input message
+    inputMessageData = messaging.CModuleTemplateMsgPayload()  # Create a structure for the input message
     inputMessageData.dataVector = [1.0, 1.0, 0.7]  # Set up a list as a 3-vector
-    dataMsg = messaging.FswModuleTemplateMsg().write(inputMessageData)
+    dataMsg = messaging.CModuleTemplateMsg().write(inputMessageData)
 
     # Construct algorithm and associated C++ container
-    moduleConfig = fswModuleTemplate.fswModuleTemplateConfig()
+    moduleConfig = cModuleTemplate.cModuleTemplateConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "fswModuleTemplate"
+    moduleWrap.ModelTag = "cModuleTemplate"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)

@@ -16,16 +16,16 @@ To use this template:
 - make a copy of this sub-folder
 - rename the sub-folder name
 - rename the ``*.c``, ``*.h``, ``*.i`` and ``*.rst`` files inside this sub-folder with the same module name
-- rerun Cmake on the Basilisk project to create an updated Xcode or MS Studio Project file
+- rerun ``python3 conanfile.py`` to create an updated Xcode or MS Studio Project file
 - edit the ``*.i`` file first
 
-    - replace ``fswModuleTemplate`` text inside this ``*.i`` file with the new sub-module name
+    - replace ``cModuleTemplate`` text inside this ``*.i`` file with the new sub-module name
     - include the proper module output message definition ``*.h`` file
 
 - edit the ``*.h`` file next
 
     - provide a unique sub-module MACRO name at the top of the file
-    - replace ``fswModuleTemplate`` text inside this ``*.h`` file
+    - replace ``cModuleTemplate`` text inside this ``*.h`` file
     - add any needed Module configuration data states and remove the dummy variable
     - add any needed output or input message interface variables
     - add any needed sub-module specific support subroutine interface definitions
@@ -33,7 +33,7 @@ To use this template:
 - edit the ``*.c`` file last
 
     - update comment with the module name and description
-    - replace ``fswModuleTemplate`` text inside this ``*.c`` file
+    - replace ``cModuleTemplate`` text inside this ``*.c`` file
     - add any needed ``*.h`` inclusions at the top.
     - edit the  Update() routine introductory comment to describe what this module does
 
@@ -41,7 +41,7 @@ To use this template:
 
 - in the ``_UnitTest`` folder,
 
-    - replace ``fswModuleTemplate`` text inside ``test_xxx.py`` files
+    - replace ``cModuleTemplate`` text inside ``test_xxx.py`` files
     - update the unit test to provide an I/O unit test of this module
     - update the test method doc-string to report on what is being tested
 

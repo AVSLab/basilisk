@@ -87,6 +87,7 @@ Version |release|
 - made ``maximumRange`` an optional variable in :ref:`groundLocation`
 - renamed ``spacecraftDynamics`` to :ref:`spacecraftSystem`, and renamed the associated ``spacecraft`` to ``spacecraftUnit()``.
 - renamed ``spacecraftPlus()`` to be now simply :ref:`spacecraft`
+- renamed ``fswModuleTemplate()`` to be :ref:`cModuleTemplate`.  This makes this naming consistent with the new :ref:`cppModuleTemplate`.
 
 
 
@@ -254,7 +255,7 @@ Version 1.7.4
 - new spacecraft formation flying control :ref:`meanOEFeedback` that implements a mean orbit element feedback
   control law
 - new relative orbit control tutorial example :ref:`scenarioFormationMeanOEFeedback` that uses :ref:`meanOEFeedback`
-- updated documentation of :ref:`fswModuleTemplate` to show how to make much simpler lists of module messages
+- updated documentation of :ref:`cModuleTemplate` to show how to make much simpler lists of module messages
   using the ``list-table`` RST command
 - new spaceraft relative motion control :ref:`spacecraftReconfig` that implements an orbit element based
   impulsive feedback control strategy.  The control is implemented with a thruster model and an
@@ -307,7 +308,7 @@ Version 1.7.4
   using ``pytest-xdist``.
 - temporary fix for opencv not finding conan gflags for opencv sfm lib on windows.  See the discussion
   at `<https://github.com/conan-community/community/issues/210>`_
-- Updated :ref:`fswModuleTemplate` to include a message I/O figure and move it's message definition to ``simMessages``
+- Updated :ref:`cModuleTemplate` to include a message I/O figure and move it's message definition to ``simMessages``
 - Updated the documentation of :ref:`Folder_mrpPD` to the RST format
 - Updated the documentation of :ref:`Folder_mrpSteering` to the RST format
 - At long last, 🍾, created :ref:`GravityGradientEffector`  which can simulate the gravity gradient torque acting on a
@@ -330,7 +331,7 @@ Version 1.7.4
 **Version 1.5.0**
 
 - Updated documentation for :ref:`eclipse` module with new RST format
-- Updated :ref:`fswModuleTemplate` documentation to show how to add equation numbers, cite equations, do bold math variables and cite a figure caption.
+- Updated :ref:`cModuleTemplate` documentation to show how to add equation numbers, cite equations, do bold math variables and cite a figure caption.
 - Updated :ref:`reactionWheelStateEffector` and :ref:`vscmgStateEffector` such that max speed and max torque are consistently initialized to -1.  A negative value was supposed to turn of speed and torque saturation, but this wasn't consistenly applied.
 - Updated :ref:`reactionWheelStateEffector` such that the RW state output message was not hard-coded and un-changeable.  Otherwise a BSK process could never have multiple spacecraft being simulated.  Now, the rw effector ``ModelTag`` is added to the beginning of the output message.  This auto-generate method of message output names is avoided if the user sets the vector of output names from Python during the simulation setup.  **Note:** Any prior BSK script that was logging the old auto-generated RW state messages will need to update the msg name now to work again.  See :ref:`bskKnownIssues` for more information.
 - Major enhancement to :ref:`vizInterface` where now multiple spacecraft can be added.  You can create a list of spacecraft where :ref:`vizInterface` relies on common naming rules to find the right messages, or specify the messages for each spacecraft directly.  This is demonstrated in :ref:`scenarioFormationBasic`.  For now multiple craft with RW actuators are supported.  Multi craft with thrusters will need to be added later.

@@ -24,7 +24,7 @@ provides information on what this message is used for.
 .. figure:: /../../src/simulation/power/ReactionWheelPower/_Documentation/Images/PowerRW.svg
     :align: center
 
-    Figure 1: ``fswModuleTemplate()`` Module I/O Illustration
+    Figure 1: ``ReactionWheelPower()`` Module I/O Illustration
 
 
 .. table:: Module I/O Messages

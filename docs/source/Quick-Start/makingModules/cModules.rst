@@ -2,7 +2,7 @@
 
 Making C Modules
 ================
-This section covers how to write a C Basilisk Module.  A sample C Basilisk module is found in :ref:`fswModuleTemplate`.
+This section covers how to write a C Basilisk Module.  A sample C Basilisk module is found in :ref:`cModuleTemplate`.
 
 
 .. toctree::

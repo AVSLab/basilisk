@@ -49,8 +49,8 @@ void CppModuleTemplate::Reset(uint64_t CurrentSimNanos)
 void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
 {
     double Lr[3];                                   /*!< [unit] variable description */
-    FswModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
-    FswModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
+    CModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
+    CModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
     double  inputVector[3];
 
     // always zero the output buffer first

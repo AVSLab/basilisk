@@ -24,7 +24,7 @@
         <rect x="84.5" y="90" width="99" height="28" fill="#c0ffc0"/>
         <rect x="84.5" y="90" width="99" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(89.5 98.36947)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" fill="black" x="3.298" y="9">fswTemplateModule()</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" fill="black" x="3.298" y="9">cTemplateModule()</tspan>
         </text>
       </g>
       <g id="Graphic_4">

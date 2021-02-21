@@ -5,7 +5,7 @@ Module RST Documentation
 
 Creating the Documentation Page
 -------------------------------
-Each module should have a plain text RST file in the module folder, along with the ``*.h``, ``*.cpp`` and ``*.i`` files.  This documentation file should provide a description of what the module does, have a table of the input and output messages used, and provide a user guide.  See :ref:`fswModuleTemplate` for a sample RST module description file that contains a lot of information on how to document a module.
+Each module should have a plain text RST file in the module folder, along with the ``*.h``, ``*.cpp`` and ``*.i`` files.  This documentation file should provide a description of what the module does, have a table of the input and output messages used, and provide a user guide.  See :ref:`cModuleTemplate` for a sample RST module description file that contains a lot of information on how to document a module.
 
 Testing the Documentation
 -------------------------
