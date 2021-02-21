@@ -276,7 +276,8 @@ import os
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     inertial3D, rwMotorTorque, rwMotorVoltage)
-from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, simpleNav, spacecraft
+
+from Basilisk.simulation import reactionWheelStateEffector, motorVoltageInterface, simpleNav, spacecraft
 from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
@@ -459,7 +460,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
 
     if useRWVoltageIO:
-        rwVoltageIO = rwVoltageInterface.RWVoltageInterface()
+        rwVoltageIO = motorVoltageInterface.MotorVoltageInterface()
         rwVoltageIO.ModelTag = "rwVoltageInterface"
 
         # set module parameters(s)
@@ -615,8 +616,8 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     if useRWVoltageIO:
         fswRWVoltageConfig.torqueInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
         fswRWVoltageConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-        rwVoltageIO.rwVoltageInMsg.subscribeTo(fswRWVoltageConfig.voltageOutMsg)
-        rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwVoltageIO.rwMotorTorqueOutMsg)
+        rwVoltageIO.motorVoltageInMsg.subscribeTo(fswRWVoltageConfig.voltageOutMsg)
+        rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwVoltageIO.motorTorqueOutMsg)
     else:
         rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
 
@@ -689,5 +690,5 @@ if __name__ == "__main__":
     run(
         True,  # show_plots
         False,  # useJitterSimple
-        False  # useRWVoltageIO
+        True  # useRWVoltageIO
     )

@@ -253,7 +253,7 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeRW
 from Basilisk.simulation import simpleNav
 from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.simulation import rwVoltageInterface
+from Basilisk.simulation import motorVoltageInterface
 
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import mrpFeedback
@@ -541,7 +541,7 @@ def createScenarioAttitudeFeedbackRW():
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
-    rwVoltageIO = rwVoltageInterface.RWVoltageInterface()
+    rwVoltageIO = motorVoltageInterface.MotorVoltageInterface()
     rwVoltageIO.ModelTag = "rwVoltageInterface"
 
     # set module parameters(s)
@@ -595,7 +595,7 @@ def createScenarioAttitudeFeedbackRW():
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
     rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwVoltageIO.rwMotorTorqueOutMsg)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwVoltageIO.motorTorqueOutMsg)
 
     # Add RWs to sim for dispersion
     scSim.RW1 = RW1
@@ -682,7 +682,7 @@ def createScenarioAttitudeFeedbackRW():
     # Initialize the test module configuration data
     fswRWVoltageConfig.torqueInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
     fswRWVoltageConfig.rwParamsInMsg.subscribeTo(fswRwConfMsg)
-    rwVoltageIO.rwVoltageInMsg.subscribeTo(fswRWVoltageConfig.voltageOutMsg)
+    rwVoltageIO.motorVoltageInMsg.subscribeTo(fswRWVoltageConfig.voltageOutMsg)
     # set module parameters
     fswRWVoltageConfig.VMin = 0.0  # Volts
     fswRWVoltageConfig.VMax = 10.0  # Volts
