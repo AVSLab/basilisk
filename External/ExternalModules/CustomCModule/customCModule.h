@@ -17,13 +17,13 @@
 
  */
 
-#ifndef _CUSTOM_MODULE_MSG_H_
-#define _CUSTOM_MODULE_MSG_H_
+#ifndef _CUSTOM_C_MODULE_MSG_H_
+#define _CUSTOM_C_MODULE_MSG_H_
 
 #include <stdint.h>
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/CustomModuleMsg_C.h"
-
+#include "../_GeneralModuleFiles/customGeneralModule.h"
 
 #define TESTHMM 10
 /*! @brief Top level structure for the sub-module routines. */
@@ -38,15 +38,15 @@ typedef struct {
 
     double  inputVector[3];                         //!< [units]  vector description
     BSKLogger *bskLogger;                           //!< BSK Logging
-} customModuleConfig;
+} customCModuleConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    void SelfInit_customModule(customModuleConfig *configData, int64_t moduleID);
-    void Update_customModule(customModuleConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_customModule(customModuleConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_customCModule(customCModuleConfig *configData, int64_t moduleID);
+    void Update_customCModule(customCModuleConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_customCModule(customCModuleConfig *configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }

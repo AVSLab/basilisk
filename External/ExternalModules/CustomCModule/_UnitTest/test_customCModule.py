@@ -31,7 +31,7 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.ExternalModules import customModule                 # import the module that is to be tested
+from Basilisk.ExternalModules import customCModule                 # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging                      # import the message definitions
 import numpy as np
@@ -93,9 +93,9 @@ def customModuleTestFunction():
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = customModule.customModuleConfig()  # update with current values
+    moduleConfig = customCModule.customCModuleConfig()  # update with current values
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "customModule"           # update python name of test module
+    moduleWrap.ModelTag = "customCModule"           # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)

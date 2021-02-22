@@ -22,8 +22,7 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "customModule.h"
-#include "../_GeneralModuleFiles/customGeneralModule.h"
+#include "customCModule.h"
 #include "string.h"
 
 
@@ -44,7 +43,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_customModule(customModuleConfig *configData, int64_t moduleID)
+void SelfInit_customCModule(customCModuleConfig *configData, int64_t moduleID)
 {
     CustomModuleMsg_C_init(&configData->dataOutMsg);
 }
@@ -58,7 +57,7 @@ void SelfInit_customModule(customModuleConfig *configData, int64_t moduleID)
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_customModule(customModuleConfig *configData, uint64_t callTime, int64_t moduleID)
+void Reset_customCModule(customCModuleConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - reset any required variables */
     configData->dummy = 0.0;
@@ -74,7 +73,7 @@ void Reset_customModule(customModuleConfig *configData, uint64_t callTime, int64
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_customModule(customModuleConfig *configData, uint64_t callTime, int64_t moduleID)
+void Update_customCModule(customCModuleConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     double Lr[3];                              /*!< [unit] variable description */
     CustomModuleMsgPayload outMsgBuffer;       /*!< local output message copy */

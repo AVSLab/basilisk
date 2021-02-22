@@ -16,20 +16,20 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module customModule
+%module customCModule
 %{
-   #include "customModule.h"
+   #include "customCModule.h"
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_customModule(void*, uint64_t, uint64_t);
+%constant void Update_customCModule(void*, uint64_t, uint64_t);
 %ignore Update_customModule;
-%constant void SelfInit_customModule(void*, uint64_t);
+%constant void SelfInit_customCModule(void*, uint64_t);
 %ignore SelfInit_customModule;
-%constant void Reset_customModule(void*, uint64_t, uint64_t);
-%ignore Reset_customModule;
+%constant void Reset_customCModule(void*, uint64_t, uint64_t);
+%ignore Reset_customCModule;
 
-%include "customModule.h"
+%include "customCModule.h"
 
 // sample Module support file to be included in this sub-module
 %include "msgPayloadDefC/CustomModuleMsgPayload.h"
