@@ -1,7 +1,7 @@
 Executive Summary
 -----------------
 
-Interface module to convert motor input voltage to a motor torque output.
+Interface module to convert an array of motor input voltages to an array of motor torques.
 
 Message Connection Descriptions
 -------------------------------
@@ -69,11 +69,13 @@ The interface module is created in python using:
     testModule = motorVoltageInterface.MotorVoltageInterface()
     testModule.ModelTag = "motorVoltageInterface"
 
-The only parameter that must be set is the voltage to torque conversion gain :math:`\gamma`. This is done using:
+If you have :math:`N` motors being modeled, the module parameters are set as `N`-dimensional lists of values.  The only parameter that must be set is the voltage to torque conversion gain :math:`\gamma` called ``voltage2TorqueGain``.  The scale factor :math:`SF` is called ``scaleFactor`` and defaults to 1.  The bias :math:`b_i` is called ``bias`` and defaults to zero.
+
+A sample setup is done using:
 
 .. code-block:: python
     :linenos:
 
     testModule.voltage2TorqueGain =[ 1.32, 0.99, 1.31] # [Nm/V] conversion gain
-    testModule.scaleFactor =[ 1.01, 1.00, 1.02] #[unitless] scale factor
+    testModule.scaleFactor =[ 1.01, 1.00, 1.02] # [unitless] scale factor
     testModule.bias =[0.01, 0.02, 0.04] # [Nm] bias
