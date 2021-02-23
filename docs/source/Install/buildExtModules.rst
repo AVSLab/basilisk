@@ -43,13 +43,13 @@ The external module feature follows a strict directory structure resembling exis
 
 #. ``External``:  This is the parent folder that holds all the custom Basilisk modules, support files and messages.  Note that this folder can have any name, `External` is just a sample name here.
 
-#. ``ExternalModules``: This folder contains sub-folders for each custom Basilisk module. This folder contains the typcial source code required to build and test a module.
+#. ``ExternalModules``: (required, must have this name) This folder contains sub-folders for each custom Basilisk module. This folder contains the typical source code required to build and test a module.  The sub-folders have the individual module names.
 
-#. ``ExternalModules/_GeneralModuleFiles``: (optional) This is useful for source code which is shared between the multiple modules. If the answer to the question “Will this code need to be included in more than one module?” is yes. Then, that support code belongs to this folder. While building external modules the Basilisk build system links _GeneralModuleFiles to these external modules. The files should be located directly inside _GeneralModulesFiles, no sub folders are supported in this module.
+#. ``ExternalModules/_GeneralModuleFiles``: (optional, but must have this name) This is useful for source code which is shared between the multiple modules. If the answer to the question “Will this code need to be included in more than one module?” is yes. Then, that support code belongs to this folder. While building external modules the Basilisk build system links _GeneralModuleFiles to these external modules. The files should be located directly inside _GeneralModulesFiles, no sub folders are supported in this module.
 
-#. ``msgPayloadDefC``: (optional) This folder contains the definition of all the custom C Message header files. The naming should follow this convention ``<Message-type>MsgPayload.h`` as discussed in :ref:`makingModules-2`.
+#. ``msgPayloadDefC``: (optional, must have this name) This folder contains the definition of all the custom C Message header files. The naming should follow this convention ``<Message-type>MsgPayload.h`` as discussed in :ref:`makingModules-2`.
 
-#. ``msgPayloadDefCpp``: (optional) This folder contains the definition of all the C++ message header files. It follows the same naming convention as C header files.
+#. ``msgPayloadDefCpp``: (optional, must have this name) This folder contains the definition of all the C++ message header files. It follows the same naming convention as C header files.
 
 
 Frequently Asked Questions
