@@ -92,9 +92,9 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
     for (scIt = this->scData.begin(); scIt != this->scData.end(); scIt++)
     {
         /* Check SCPlus input message */
-        if (scIt->scPlusInMsg.isLinked()) {
-            scIt->scPlusInMsgStatus.dataFresh = false;
-            scIt->scPlusInMsgStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+        if (scIt->scStateInMsg.isLinked()) {
+            scIt->scStateInMsgStatus.dataFresh = false;
+            scIt->scStateInMsgStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
         } else {
             bskLogger.bskLog(BSK_ERROR, "vizInterface: spacecraft msg not linked.");
         }
@@ -215,12 +215,12 @@ void VizInterface::ReadBSKMessages()
     for (scIt = this->scData.begin(); scIt != this->scData.end(); scIt++)
     {
         /* Read BSK SCPlus msg */
-        if (scIt->scPlusInMsg.isLinked()){
+        if (scIt->scStateInMsg.isLinked()){
             SCStatesMsgPayload localSCPlusArray;
-            localSCPlusArray = scIt->scPlusInMsg();
-            if(scIt->scPlusInMsg.isWritten() && scIt->scPlusInMsg.timeWritten() != scIt->scPlusInMsgStatus.lastTimeTag){
-                scIt->scPlusInMsgStatus.lastTimeTag = scIt->scPlusInMsg.timeWritten();
-                scIt->scPlusInMsgStatus.dataFresh = true;
+            localSCPlusArray = scIt->scStateInMsg();
+            if(scIt->scStateInMsg.isWritten() && scIt->scStateInMsg.timeWritten() != scIt->scStateInMsgStatus.lastTimeTag){
+                scIt->scStateInMsgStatus.lastTimeTag = scIt->scStateInMsg.timeWritten();
+                scIt->scStateInMsgStatus.dataFresh = true;
             }
             scIt->scPlusMessage = localSCPlusArray;
         }
@@ -606,7 +606,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     for (scIt = scData.begin(); scIt != scData.end(); scIt++)
     {
         /*! Write SCPlus output msg */
-        if (scIt->scPlusInMsg.isLinked() && scIt->scPlusInMsgStatus.dataFresh){
+        if (scIt->scStateInMsg.isLinked() && scIt->scStateInMsgStatus.dataFresh){
             vizProtobufferMessage::VizMessage::Spacecraft* scp = message->add_spacecraft();
             scp->set_spacecraftname(scIt->spacecraftName);
             for (int i=0; i<3; i++){
@@ -614,7 +614,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 scp->add_velocity(scIt->scPlusMessage.v_BN_N[i]);
                 scp->add_rotation(scIt->scPlusMessage.sigma_BN[i]);
             }
-//            scIt->scPlusInMsgID.dataFresh = false;
+//            scIt->scStateInMsgID.dataFresh = false;
 
             /* Write the SC sprite string */
             scp->set_spacecraftsprite(scIt->spacecraftSprite);

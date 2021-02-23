@@ -123,17 +123,17 @@ typedef struct {
  */
 typedef struct {
     std::string spacecraftName = "bsk-Sat";                     //!< [-] Name of the spacecraft.
-    ReadFunctor<SCStatesMsgPayload> scPlusInMsg;            //!< [-] msg of incoming SCPlus data
-    MsgCurrStatus scPlusInMsgStatus;                            //!< [-] (Private) status of the incoming SCPlus data message
-    SCStatesMsgPayload scPlusMessage;                       //!< [-] (Private) s/c plus message data
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;               //!< [-] msg of incoming spacecraft data
+    MsgCurrStatus scStateInMsgStatus;                           //!< [-] (Private) status of the incoming spacecraft  data message
+    SCStatesMsgPayload scPlusMessage;                           //!< [-] (Private) s/c plus message data
 
-    std::vector<ReadFunctor<RWConfigLogMsgPayload>> rwInMsgs;  //!< [-] (Optional) Vector of incoming RW state messages.
+    std::vector<ReadFunctor<RWConfigLogMsgPayload>> rwInMsgs;   //!< [-] (Optional) Vector of incoming RW state messages.
     std::vector<MsgCurrStatus> rwInMsgStatus;                   //!< [-] (Private) RW msg status vector
-    std::vector<RWConfigLogMsgPayload> rwInMessage;            //!< [-] (Private) RW message data vector
+    std::vector<RWConfigLogMsgPayload> rwInMessage;             //!< [-] (Private) RW message data vector
 
-    std::vector<ReadFunctor<CSSConfigLogMsgPayload>> cssInMsgs;//!< [-] (Optional) Vector of CSS config log messages
+    std::vector<ReadFunctor<CSSConfigLogMsgPayload>> cssInMsgs; //!< [-] (Optional) Vector of CSS config log messages
     std::vector<MsgCurrStatus> cssConfLogInMsgStatus;           //!< [-] (Private) status of the incoming array of css configuration log messages
-    std::vector<CSSConfigLogMsgPayload> cssInMessage;          //!< [-] (Private) CSS message data vector
+    std::vector<CSSConfigLogMsgPayload> cssInMessage;           //!< [-] (Private) CSS message data vector
 
     ReadFunctor<STSensorMsgPayload> starTrackerInMsg;           //!< [-] (Optional) input message for Star Tracker data
     MsgCurrStatus starTrackerInMsgStatus;                       //!< [-] (Private) status of the incoming Star Tracker data message

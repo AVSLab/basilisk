@@ -195,7 +195,7 @@ def run(show_plots, attType):
         for c in range(len(scList)):
             scData = vizInterface.VizSpacecraftData()
             scData.spacecraftName = scList[c].ModelTag
-            scData.scPlusInMsg.subscribeTo(dataModule.scStateOutMsgs[c])
+            scData.scStateInMsg.subscribeTo(dataModule.scStateOutMsgs[c])
 
             viz.scData.push_back(scData)
 

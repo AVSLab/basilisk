@@ -950,7 +950,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         scData.spacecraftName = sc.ModelTag
 
         # link to spacecraft state message
-        scData.scPlusInMsg.subscribeTo(sc.scStateOutMsg)
+        scData.scStateInMsg.subscribeTo(sc.scStateOutMsg)
 
         # link to celestial bodies information
         for gravBody in sc.gravField.gravBodies:

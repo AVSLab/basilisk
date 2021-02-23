@@ -294,7 +294,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
         for c in range(len(scNames)):
             scData = vizInterface.VizSpacecraftData()
             scData.spacecraftName = scNames[c]
-            scData.scPlusInMsg.subscribeTo(testModule.scStateOutMsgs[c])
+            scData.scStateInMsg.subscribeTo(testModule.scStateOutMsgs[c])
 
             if checkThruster:
                 thrList = []
