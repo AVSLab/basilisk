@@ -36,7 +36,7 @@ provides information on what this message is used for.
       - :ref:`SpicePlanetStateMsgPayload`
       - input message for sun data
     * - stateInMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - input message for spacecraft state
     * - cssDataOutMsg
       - :ref:`CSSRawDataMsgPayload`

@@ -24,7 +24,7 @@
 #include <Eigen/Dense>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 #include "architecture/messaging/messaging.h"
@@ -42,19 +42,19 @@ public:
     void Reset(uint64_t CurrenSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
-    void addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg);
+    void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void addPlanetToModel(Message<SpicePlanetStateMsgPayload> *tmpSpMsg);
     
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< sun ephemeris input message name
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> planetInMsgs;  //!< A vector of planet incoming state message names ordered by the sequence in which planet are added to the module
-    std::vector<ReadFunctor<SCPlusStatesMsgPayload>> positionInMsgs;  //!< vector of msgs for each spacecraft position state for which to evaluate eclipse conditions.
+    std::vector<ReadFunctor<SCStatesMsgPayload>> positionInMsgs;  //!< vector of msgs for each spacecraft position state for which to evaluate eclipse conditions.
     std::vector<Message<EclipseMsgPayload>*> eclipseOutMsgs;//!< vector of eclispe output msg names
     BSKLogger bskLogger;                        //!< BSK Logging
 
 private:
     std::vector<float> planetRadii; //!< [m] A vector of planet radii ordered by the sequence in which planet names are added to the module
-    std::vector<SCPlusStatesMsgPayload> scStateBuffer;      //!< buffer of the spacecraft state input messages
+    std::vector<SCStatesMsgPayload> scStateBuffer;      //!< buffer of the spacecraft state input messages
     std::vector<SpicePlanetStateMsgPayload> planetBuffer;   //!< buffer of the spacecraft state input messages
     SpicePlanetStateMsgPayload sunInMsgState;               //!< copy of sun input msg
     std::vector<double> eclipseShadowFactors;               //!< vector of shadow factor output values

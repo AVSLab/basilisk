@@ -18,7 +18,7 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - spacecraftStateInMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - input message with thruster commands
     * - sunPositionInMsg
       - :ref:`SpicePlanetStateMsgPayload`

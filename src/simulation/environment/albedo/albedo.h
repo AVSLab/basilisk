@@ -37,7 +37,7 @@
 #include "architecture/utilities/geodeticConversion.h"
 #include "architecture/utilities/linearAlgebra.h"
 // Sim Messages
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/AlbedoMsgPayload.h"
 #include "architecture/messaging/messaging.h"
@@ -81,7 +81,7 @@ private:
 public:
     std::vector<Message<AlbedoMsgPayload>*> albOutMsgs;         //!< vector of output messages for albedo data
     ReadFunctor<SpicePlanetStateMsgPayload> sunPositionInMsg;   //!< input message name for sun data
-    ReadFunctor<SCPlusStatesMsgPayload> spacecraftStateInMsg;   //!< input message name for spacecraft data
+    ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;   //!< input message name for spacecraft data
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> planetInMsgs; //!< vector of planet data input data
 
     BSKLogger bskLogger;                        //!< BSK Logging    
@@ -127,7 +127,7 @@ private:
 
     std::vector<SpicePlanetStateMsgPayload> planetMsgData; //!< vector of incoming planet message states
     SpicePlanetStateMsgPayload sunMsgData;      //!< sun message data
-    SCPlusStatesMsgPayload scStatesMsgData;     //!< spacecraft message data
+    SCStatesMsgPayload scStatesMsgData;     //!< spacecraft message data
 };
 
 #endif /* ALBEDO_BASE_H */

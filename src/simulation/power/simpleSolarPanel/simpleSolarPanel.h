@@ -25,7 +25,7 @@
 #include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
 #include "architecture/messaging/messaging.h"
 
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 
@@ -48,7 +48,7 @@ private:
     void computeSunData();
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< [-] sun data input message
-    ReadFunctor<SCPlusStatesMsgPayload> stateInMsg;     //!< [-] spacecraft state input message
+    ReadFunctor<SCStatesMsgPayload> stateInMsg;     //!< [-] spacecraft state input message
     ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;     //!< [-] Messun eclipse state input message
     double panelArea;                           //!< [m^2] Panel area in meters squared.
     double panelEfficiency;                     //!< [W/W] Panel efficiency in converting solar energy to electrical energy.
@@ -59,7 +59,7 @@ private:
     double projectedArea;                        //!< [m^2] Area of the panel projected along the sun vector.
     double sunDistanceFactor;                   //!< [-] Scale factor on the base solar power computed using the true s/c-sun distance.
     SpicePlanetStateMsgPayload sunData;            //!< [-] Unused for now, but including it for future
-    SCPlusStatesMsgPayload stateCurrent;           //!< [-] Current SSBI-relative state
+    SCStatesMsgPayload stateCurrent;           //!< [-] Current SSBI-relative state
     double shadowFactor;                        //!< [-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible)
 
 

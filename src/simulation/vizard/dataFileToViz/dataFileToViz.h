@@ -57,7 +57,7 @@ private:
 public:
     std::string dataFileName;                   //!< Name of the simulation data file
 
-    std::vector<Message<SCPlusStatesMsgPayload>*> scStateOutMsgs;//!< vector of spacecraft state messages
+    std::vector<Message<SCStatesMsgPayload>*> scStateOutMsgs;//!< vector of spacecraft state messages
     std::string delimiter;                      //!< delimiter string that separates data on a line
     double convertPosToMeters;                  //!< conversion factor to meters
     bool headerLine;                            //!< [bool] flag to mark first line as a header

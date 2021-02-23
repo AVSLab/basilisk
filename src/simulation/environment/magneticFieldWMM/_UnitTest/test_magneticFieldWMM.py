@@ -137,8 +137,8 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
         testModule.planetPosInMsg.subscribeTo(plMsg)
 
     # add spacecraft to environment model
-    sc0StateMsg = messaging.SCPlusStatesMsg()
-    sc1StateMsg = messaging.SCPlusStatesMsg()
+    sc0StateMsg = messaging.SCStatesMsg()
+    sc1StateMsg = messaging.SCStatesMsg()
     testModule.addSpacecraftToModel(sc0StateMsg)
     testModule.addSpacecraftToModel(sc1StateMsg)
 
@@ -152,11 +152,11 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     r0N = np.dot(refPlanetDCM.transpose(),r0P)
 
     # create the input messages
-    sc0StateMsgData = messaging.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc0StateMsgData = messaging.SCStatesMsgPayload()  # Create a structure for the input message
     sc0StateMsgData.r_BN_N = np.array(r0N) + np.array(planetPosition)
     sc0StateMsg.write(sc0StateMsgData)
 
-    sc1StateMsgData = messaging.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc1StateMsgData = messaging.SCStatesMsgPayload()  # Create a structure for the input message
     sc1StateMsgData.r_BN_N = np.array(r0N) + np.array(planetPosition)
     sc1StateMsg.write(sc1StateMsgData)
 

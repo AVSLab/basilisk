@@ -29,8 +29,8 @@
 %include "architecture/_GeneralModuleFiles/sys_model.h"
 %include "coarseSunSensor.h"
 
-%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
-struct SCPlusStatesMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
 %include "architecture/msgPayloadDefC/CSSRawDataMsgPayload.h"

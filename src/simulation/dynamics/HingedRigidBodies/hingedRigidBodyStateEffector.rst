@@ -33,7 +33,7 @@ provides information on what this message is used for.
       - :ref:`HingedRigidBodyMsgPayload`
       - Output message containing the panel hinge state angle and angle rate
     * - hingedRigidBodyConfigLogOutMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - Output message containing the panel inertial position and attitude states
 
 

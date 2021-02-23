@@ -25,7 +25,7 @@
 
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/SolarFluxMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
@@ -43,7 +43,7 @@ public:
 
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunPositionInMsg;       //!< sun state input message
-    ReadFunctor<SCPlusStatesMsgPayload> spacecraftStateInMsg;       //!< spacecraft state input message
+    ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;       //!< spacecraft state input message
     Message<SolarFluxMsgPayload> solarFluxOutMsg;                   //!< solar flux output message
     ReadFunctor<EclipseMsgPayload> eclipseInMsg;                    //!< (optional) eclipse input message
 

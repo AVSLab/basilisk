@@ -48,8 +48,8 @@ The ``VizSpacecraftData`` structure contains a range of input messages for each 
       - Default
       - Description
     * - scPlusInMsg
-      - :ref:`SCPlusStatesMsgPayload`
-      - msg of incoming SCPlus data
+      - :ref:`SCStatesMsgPayload`
+      - msg of incoming spacecraft state data
     * - rwInMsgs
       - :ref:`RWConfigLogMsgPayload`
       - (optional) Vector of incoming RW state messages

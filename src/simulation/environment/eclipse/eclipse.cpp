@@ -107,7 +107,7 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
     Eigen::Vector3d s_BP_N(0.0, 0.0, 0.0); // s_sc wrt planet
     Eigen::Vector3d s_HP_N(0.0, 0.0, 0.0); // s_sun wrt planet
     Eigen::Vector3d r_HB_N(0.0, 0.0, 0.0); // r_sun wrt sc
-    std::vector<SCPlusStatesMsgPayload>::iterator scIt;
+    std::vector<SCStatesMsgPayload>::iterator scIt;
     std::vector<SpicePlanetStateMsgPayload>::iterator planetIt;
 
     
@@ -225,7 +225,7 @@ double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N
     @param tmpScMsg The state output message for the spacecraft for which to compute the eclipse data.
     @return void
  */
-void Eclipse::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg)
+void Eclipse::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
 {
     this->positionInMsgs.push_back(tmpScMsg->addSubscriber());
 
@@ -235,7 +235,7 @@ void Eclipse::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg)
     this->eclipseOutMsgs.push_back(msg);
 
     /* expand the sc state buffer vector */
-    SCPlusStatesMsgPayload scMsg;
+    SCStatesMsgPayload scMsg;
     this->scStateBuffer.push_back(scMsg);
 
     // Now that we know the number of output messages we can size and zero

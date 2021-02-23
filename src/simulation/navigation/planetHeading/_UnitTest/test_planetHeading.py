@@ -51,9 +51,9 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
     earthPositionMessage.PositionVector = [0., 0., 0.]
     plMsg = messaging.SpicePlanetStateMsg().write(earthPositionMessage)
 
-    scPositionMessage = messaging.SCPlusStatesMsgPayload()
+    scPositionMessage = messaging.SCStatesMsgPayload()
     scPositionMessage.r_BN_N = [0., 0., om.AU*1000]
-    scMsg = messaging.SCPlusStatesMsg().write(scPositionMessage)
+    scMsg = messaging.SCStatesMsg().write(scPositionMessage)
 
     ph = planetHeading.PlanetHeading()
     ph.ModelTag = "planetHeading"

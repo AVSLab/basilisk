@@ -27,7 +27,7 @@
 #include "architecture/utilities/avsEigenMRP.h"
 
 #include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
@@ -51,7 +51,7 @@ public:
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
     Message<HingedRigidBodyMsgPayload> hingedRigidBodyOutMsg; //!< -- state output message name
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< -- (optional) motor torque input message name
-    Message<SCPlusStatesMsgPayload> hingedRigidBodyConfigLogOutMsg; //!< panel state config log message name
+    Message<SCStatesMsgPayload> hingedRigidBodyConfigLogOutMsg; //!< panel state config log message name
     HingedRigidBodyMsgPayload HRBoutputStates;  //!< instance of messaging system message struct
     BSKLogger bskLogger;                      //!< -- BSK Logging
 

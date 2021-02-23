@@ -36,8 +36,8 @@ from Basilisk.architecture.swig_common_model import *
 struct BoreAngleMsg_C;
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
-%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
-struct SCPlusStatesMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
 
 
 %pythoncode %{

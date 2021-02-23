@@ -12,7 +12,7 @@
 
 #include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 
 #include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
@@ -123,9 +123,9 @@ typedef struct {
  */
 typedef struct {
     std::string spacecraftName = "bsk-Sat";                     //!< [-] Name of the spacecraft.
-    ReadFunctor<SCPlusStatesMsgPayload> scPlusInMsg;            //!< [-] msg of incoming SCPlus data
+    ReadFunctor<SCStatesMsgPayload> scPlusInMsg;            //!< [-] msg of incoming SCPlus data
     MsgCurrStatus scPlusInMsgStatus;                            //!< [-] (Private) status of the incoming SCPlus data message
-    SCPlusStatesMsgPayload scPlusMessage;                       //!< [-] (Private) s/c plus message data
+    SCStatesMsgPayload scPlusMessage;                       //!< [-] (Private) s/c plus message data
 
     std::vector<ReadFunctor<RWConfigLogMsgPayload>> rwInMsgs;  //!< [-] (Optional) Vector of incoming RW state messages.
     std::vector<MsgCurrStatus> rwInMsgStatus;                   //!< [-] (Private) RW msg status vector

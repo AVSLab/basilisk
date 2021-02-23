@@ -31,7 +31,7 @@ provides information on what this message is used for.
       - :ref:`HingedRigidBodyMsgPayload`
       - vector of output message containing the panel 1 and 2 hinge state angle and angle rate
     * - dualHingedRigidBodyConfigLogOutMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - vector of output messages containing the panel 1 and 2 inertial position and attitude states
 
 

@@ -82,7 +82,7 @@ void Spacecraft::addDynamicEffector(DynamicEffector *newDynamicEffector)
 void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
 {
     // - Populate state output message
-    SCPlusStatesMsgPayload stateOut;
+    SCStatesMsgPayload stateOut;
     stateOut = this->scStateOutMsg.zeroMsgPayload();
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);

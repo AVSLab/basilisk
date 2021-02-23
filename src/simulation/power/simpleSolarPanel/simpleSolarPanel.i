@@ -39,8 +39,8 @@ from Basilisk.architecture.swig_common_model import *
 struct PowerNodeUsageMsg_C;
 %include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
 struct DeviceStatusMsg_C;
-%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
-struct SCPlusStatesMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
 %include "architecture/msgPayloadDefC/EclipseMsgPayload.h"

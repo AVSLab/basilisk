@@ -216,7 +216,7 @@ void VizInterface::ReadBSKMessages()
     {
         /* Read BSK SCPlus msg */
         if (scIt->scPlusInMsg.isLinked()){
-            SCPlusStatesMsgPayload localSCPlusArray;
+            SCStatesMsgPayload localSCPlusArray;
             localSCPlusArray = scIt->scPlusInMsg();
             if(scIt->scPlusInMsg.isWritten() && scIt->scPlusInMsg.timeWritten() != scIt->scPlusInMsgStatus.lastTimeTag){
                 scIt->scPlusInMsgStatus.lastTimeTag = scIt->scPlusInMsg.timeWritten();

@@ -130,13 +130,13 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     r1N, v1N = orbitalMotion.elem2rv(mu, oe)
 
     # create the input messages
-    sc0StateMsg = messaging.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc0StateMsg = messaging.SCStatesMsgPayload()  # Create a structure for the input message
     sc0StateMsg.r_BN_N = np.array(r0N) + np.array(planetPosition)
-    sc0InMsg = messaging.SCPlusStatesMsg().write(sc0StateMsg)
+    sc0InMsg = messaging.SCStatesMsg().write(sc0StateMsg)
 
-    sc1StateMsg = messaging.SCPlusStatesMsgPayload()  # Create a structure for the input message
+    sc1StateMsg = messaging.SCStatesMsgPayload()  # Create a structure for the input message
     sc1StateMsg.r_BN_N = np.array(r1N) + np.array(planetPosition)
-    sc1InMsg = messaging.SCPlusStatesMsg().write(sc1StateMsg)
+    sc1InMsg = messaging.SCStatesMsg().write(sc1StateMsg)
 
     # add spacecraft to environment model
     testModule.addSpacecraftToModel(sc0InMsg)

@@ -69,7 +69,7 @@ MagneticFieldBase::~MagneticFieldBase()
  @return void
  @param tmpScMsg A spacecraft state message name.
  */
-void MagneticFieldBase::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg){
+void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg){
 
     /* add input message */
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
@@ -162,7 +162,7 @@ void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock)
  */
 bool MagneticFieldBase::readMessages()
 {
-    SCPlusStatesMsgPayload scMsg;
+    SCStatesMsgPayload scMsg;
 
     this->scStates.clear();
 
@@ -212,7 +212,7 @@ bool MagneticFieldBase::customReadMessages()
  */
 void MagneticFieldBase::updateLocalMagField(double currentTime)
 {
-    std::vector<SCPlusStatesMsgPayload>::iterator it;
+    std::vector<SCStatesMsgPayload>::iterator it;
     uint64_t atmoInd = 0;
 
     //! - loop over all the spacecraft
@@ -241,7 +241,7 @@ void MagneticFieldBase::updateLocalMagField(double currentTime)
  @param scState A spacecraft states message struct.
  @return void
  */
-void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCPlusStatesMsgPayload *scState)
+void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCStatesMsgPayload *scState)
 {
     //! - compute spacecraft position vector relative to planet
     v3Subtract(scState->r_BN_N, planetState->PositionVector, this->r_BP_N.data());

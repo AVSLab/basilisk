@@ -18,7 +18,7 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - scStateInMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - spacecraft state input message
     * - celBodyInMsg
       - :ref:`SpicePlanetStateMsgPayload`

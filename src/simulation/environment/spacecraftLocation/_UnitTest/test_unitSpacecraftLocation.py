@@ -92,17 +92,17 @@ def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange, cone):
 
     # create primary spacecraft state message
     alt = 1000. * 1000      # meters
-    scMsgData = messaging.SCPlusStatesMsgPayload()
+    scMsgData = messaging.SCStatesMsgPayload()
     r = orbitalMotion.REQ_EARTH * 1000. + alt
     scMsgData.r_BN_N = planetPos + np.array([r, 0.0, 0.0])
     scMsgData.sigma_BN = [1.0, 0.0, 0.0]
-    scMsg = messaging.SCPlusStatesMsg().write(scMsgData)
+    scMsg = messaging.SCStatesMsg().write(scMsgData)
     module.primaryScStateInMsg.subscribeTo(scMsg)
 
-    sc1MsgData = messaging.SCPlusStatesMsgPayload()
+    sc1MsgData = messaging.SCStatesMsgPayload()
     angle = np.radians(latitude)
     sc1MsgData.r_BN_N = planetPos + np.array([r * np.cos(angle), 0.0, r * np.sin(angle)])
-    sc1Msg = messaging.SCPlusStatesMsg().write(sc1MsgData)
+    sc1Msg = messaging.SCStatesMsg().write(sc1MsgData)
     module.addSpacecraftToModel(sc1Msg)
 
     # Run the sim

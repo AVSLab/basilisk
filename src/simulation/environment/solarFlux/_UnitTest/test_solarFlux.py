@@ -54,9 +54,9 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     sunPositionMessage.PositionVector = [0., 0., 0.]
     sunMsg = messaging.SpicePlanetStateMsg().write(sunPositionMessage)
 
-    scPositionMessage = messaging.SCPlusStatesMsgPayload()
+    scPositionMessage = messaging.SCStatesMsgPayload()
     scPositionMessage.r_BN_N = [0., 0., om.AU*1000]
-    scMsg = messaging.SCPlusStatesMsg().write(scPositionMessage)
+    scMsg = messaging.SCStatesMsg().write(scPositionMessage)
 
     eclipseMessage = messaging.EclipseMsgPayload()
     eclipseMessage.shadowFactor = shadowFactor

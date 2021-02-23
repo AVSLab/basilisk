@@ -32,7 +32,7 @@ provides information on what this message is used for.
       - :ref:`NavTransMsgPayload`
       - translation navigation output msg
     * - scStateInMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - spacecraft state input msg
     * - sunStateInMsg
       - :ref:`SpicePlanetStateMsgPayload`

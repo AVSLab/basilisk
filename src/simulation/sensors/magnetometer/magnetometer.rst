@@ -24,7 +24,7 @@ The following table lists all the module input and output messages.  The module 
       - Msg Type
       - Description
     * - stateInMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - input message for spacecraft states
     * - magInMsg
       - :ref:`MagneticFieldMsgPayload`

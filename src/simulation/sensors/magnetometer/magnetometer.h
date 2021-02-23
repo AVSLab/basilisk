@@ -23,7 +23,7 @@
 #include <random>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/MagneticFieldMsgPayload.h"
 #include "architecture/msgPayloadDefC/TAMSensorMsgPayload.h"
 #include "architecture/messaging/messaging.h"
@@ -49,7 +49,7 @@ public:
     Eigen::Matrix3d setBodyToSensorDCM(double yaw, double pitch, double roll); //!< Utility method to configure the sensor DCM
 
 public:
-    ReadFunctor<SCPlusStatesMsgPayload> stateInMsg;        //!< [-] input message for spacecraft states
+    ReadFunctor<SCStatesMsgPayload> stateInMsg;        //!< [-] input message for spacecraft states
     ReadFunctor<MagneticFieldMsgPayload> magInMsg;          //!< [-] input message for magnetic field data in inertial frame N
     Message<TAMSensorMsgPayload> tamDataOutMsg;   //!< [-] Message for TAM output data in sensor frame S
     Eigen::Matrix3d     dcm_SB;                 //!< [-] DCM from body frame to sensor frame
@@ -67,7 +67,7 @@ public:
 
 private:
     MagneticFieldMsgPayload magData;             //!< [-] Magnetic field in inertial N frame
-    SCPlusStatesMsgPayload stateCurrent;         //!< [-] Current spacecraft state
+    SCStatesMsgPayload stateCurrent;         //!< [-] Current spacecraft state
     uint64_t numStates;                          //!< [-] Number of States for Gauss Markov Models
     GaussMarkov noiseModel;                      //!< [-] Gauss Markov noise generation model
     Saturate saturateUtility;                    //!< [-] Saturation utility

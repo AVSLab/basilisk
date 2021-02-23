@@ -34,8 +34,8 @@ from Basilisk.architecture.swig_common_model import *
 struct SpicePlanetStateMsg_C;
 %include "architecture/msgPayloadDefC/SolarFluxMsgPayload.h"
 struct SolarFluxMsg_C;
-%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
-struct SCPlusStatesMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 struct EclipseMsg_C;
 

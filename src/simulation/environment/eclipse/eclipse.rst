@@ -25,7 +25,7 @@ provides information on what this message is used for.
       - :ref:`SpicePlanetStateMsgPayload`
       - A vector of planet incoming state message names ordered by the sequence in which planet are added to the module
     * - positionInMsgs
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - vector of msgs for each spacecraft position state for which to evaluate eclipse conditions
     * - eclipseOutMsgs
       - :ref:`EclipseMsgPayload`
@@ -194,7 +194,7 @@ The spacecrat state messages are read in by the ``eclipse`` module to determine 
 
     addSpacecraftToModel(scObject.scStateOutMsg)
 
-The spacecraft state message is of type :ref:`SCPlusStatesMsgPayload`.
+The spacecraft state message is of type :ref:`SCStatesMsgPayload`.
 
 Setting The Planet State Input Messages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -25,7 +25,7 @@
 #include "architecture/utilities/bskLogging.h"
 
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/BodyHeadingMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
@@ -43,7 +43,7 @@ public:
 
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> planetPositionInMsg;    //!< planet state input message
-    ReadFunctor<SCPlusStatesMsgPayload> spacecraftStateInMsg;       //!< spacecraft state input message
+    ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;       //!< spacecraft state input message
     Message<BodyHeadingMsgPayload> planetHeadingOutMsg;             //!< body heading output message
 
     BSKLogger bskLogger;                        //!< -- BSK Logging

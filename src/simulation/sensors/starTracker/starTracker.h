@@ -24,7 +24,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/gauss_markov.h"
 
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
@@ -51,7 +51,7 @@ public:
 public:
     
     uint64_t sensorTimeTag;            //!< [ns] Current time tag for sensor out
-    ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg;    //!< [-] sc input state message
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;    //!< [-] sc input state message
     Message<STSensorMsgPayload> sensorOutMsg;   //!< [-] sensor output state message
 
     Eigen::Matrix3d PMatrix;      //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
@@ -62,7 +62,7 @@ public:
     STSensorMsgPayload trueValues;  //!< [-] total measurement without perturbations
     STSensorMsgPayload sensedValues;//!< [-] total measurement including perturbations
     double mrpErrors[3];              //!< [-] Errors to be applied to the input MRP set indicating whether
-    SCPlusStatesMsgPayload scState;      //!< [-] Module variable where the input State Data message is stored
+    SCStatesMsgPayload scState;      //!< [-] Module variable where the input State Data message is stored
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 

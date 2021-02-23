@@ -23,7 +23,7 @@
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"
 #include "architecture/messaging/messaging.h"
@@ -51,12 +51,12 @@ public:
     double v_N[3];                    //!< m/s Current velocity vector (inertial)
     double mu;                        //!< -- Current grav param (inertial)
     ClassicElementsMsgPayload CurrentElem;                      //!< -- Current orbital elements
-    SCPlusStatesMsgPayload statesIn;                            //!< -- spacecraft state message
+    SCStatesMsgPayload statesIn;                            //!< -- spacecraft state message
     SpicePlanetStateMsgPayload planetIn;                        //!< -- planet state message
-    ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg;           //!< -- sc state input message
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;           //!< -- sc state input message
     ReadFunctor<SpicePlanetStateMsgPayload> spiceStateInMsg;    //!< -- spice state input message
     ReadFunctor<ClassicElementsMsgPayload> elemInMsg;           //!< -- orbit element input message
-    Message<SCPlusStatesMsgPayload> scStateOutMsg;              //!< -- sc state output message
+    Message<SCStatesMsgPayload> scStateOutMsg;              //!< -- sc state output message
     Message<SpicePlanetStateMsgPayload> spiceStateOutMsg;       //!< -- spice state input message
     Message<ClassicElementsMsgPayload> elemOutMsg;              //!< -- orbit element output message
 

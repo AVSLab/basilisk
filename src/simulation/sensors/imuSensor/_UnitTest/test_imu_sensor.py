@@ -215,7 +215,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     omega_PN_P[0][:] = np.dot(dcm_PN, omega_BN_N[0][:])
 
     # configure spacecraft dummy message - Need to convert to B frame here first
-    StateCurrent = messaging.SCPlusStatesMsgPayload()
+    StateCurrent = messaging.SCStatesMsgPayload()
     StateCurrent.sigma_BN = sigma_BN[0][:]
     StateCurrent.omega_BN_B = np.dot(dcm_BN, omega_BN_N[0][:]) #1 rpm around each axis
     StateCurrent.nonConservativeAccelpntB_B = np.dot(dcm_BN, rDotDot_BN_N[0][:])
@@ -226,7 +226,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     unitSim.AddModelToTask(unitTaskName, ImuSensor)
 
     # configure inertial_state_output message
-    scStateMsg = messaging.SCPlusStatesMsg().write(StateCurrent)
+    scStateMsg = messaging.SCStatesMsg().write(StateCurrent)
     ImuSensor.scStateInMsg.subscribeTo(scStateMsg)
 
     # log module output message
@@ -324,7 +324,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
                 DVAccum_SN_P[i][k] = rDotDot_SN_P[i][k] * dt
 
         #Now update spacecraft states for the IMU:
-        StateCurrent = messaging.SCPlusStatesMsgPayload()
+        StateCurrent = messaging.SCStatesMsgPayload()
         StateCurrent.sigma_BN = sigma_BN[i][:]
         StateCurrent.omega_BN_B = np.dot(dcm_BN_2, omega_BN_N[i][:])
         StateCurrent.nonConservativeAccelpntB_B = np.dot(dcm_BN_2, rDotDot_BN_N[i][:])

@@ -16,7 +16,7 @@ This document describes how Coarse Sun Sensor (CSS) devices are modeled in the B
 
 \subsection{Single CSS module}
 \subsubsection{I/O Messages}
-First, let us discuss the input and output messages of the individual CSS sensor module.  The two required input messages are of the type {\tt SpicePlanetStateMsgPayload} and {\tt SCPlusStatesMsgPayload}.  The first message is used to determine the sun's location relative to the inertial frame $\leftexp{N}{\bm r}_{\sun/\mathcal{N}}$.  The second message is used to read in the spacecraft inertial position vector relative to the same inertial frame $\leftexp{N}{\bm r}_{\cal B/N}$.  Finally, the last message is optional.  If it is connected, it provides the sun shadow parameter indicating if the spacecraft is in a planet's shadow.  
+First, let us discuss the input and output messages of the individual CSS sensor module.  The two required input messages are of the type {\tt SpicePlanetStateMsgPayload} and {\tt SCStatesMsgPayload}.  The first message is used to determine the sun's location relative to the inertial frame $\leftexp{N}{\bm r}_{\sun/\mathcal{N}}$.  The second message is used to read in the spacecraft inertial position vector relative to the same inertial frame $\leftexp{N}{\bm r}_{\cal B/N}$.  Finally, the last message is optional.  If it is connected, it provides the sun shadow parameter indicating if the spacecraft is in a planet's shadow.
 
 One output message of an individual CSS unit creates a message containing the simulated CSS sensor.  The second output message is of type {\tt CSSConfigLogMsgPayload} that logs the CSS configuration states.  
 

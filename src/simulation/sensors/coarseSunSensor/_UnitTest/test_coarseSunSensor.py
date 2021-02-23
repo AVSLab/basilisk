@@ -99,7 +99,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     sunMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsg)
 
     # Create dummy spacecraft message
-    satelliteStateMsg = messaging.SCPlusStatesMsgPayload()
+    satelliteStateMsg = messaging.SCStatesMsgPayload()
     satelliteStateMsg.r_BN_N = [0.0, 0.0, 0.0]
     angles = np.linspace(0., 2 * np.pi, 360)
     sigmas = np.zeros(len(angles))
@@ -107,7 +107,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     for i in range(len(sigmas)):  # convert rotation angle about 3rd axis to MRP
         sigmas[i] = np.tan(angles[i] / 4.)  # This is iterated through in the execution for loop
     satelliteStateMsg.sigma_BN = [0., 0., sigmas[0]]
-    scMsg = messaging.SCPlusStatesMsg().write(satelliteStateMsg)
+    scMsg = messaging.SCStatesMsg().write(satelliteStateMsg)
 
     # Calculate sun distance factor
     r_Sun_Sc = [0.0, 0.0, 0.0]

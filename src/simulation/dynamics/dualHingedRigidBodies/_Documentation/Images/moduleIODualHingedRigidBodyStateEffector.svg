@@ -66,7 +66,7 @@
       <g id="Group_30">
         <g id="Graphic_14">
           <text transform="translate(1088.0922 432.5101)" fill="black">
-            <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">SCPlusStatesMsgPayload</tspan>
+            <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">SCStatesMsgPayload</tspan>
           </text>
         </g>
         <g id="Line_13">

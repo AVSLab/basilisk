@@ -23,7 +23,7 @@ The following messages are set directly within ``vizInterface``.  Additional mes
       - Msg Type
       - Description
     * - scStateOutMsgs
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - Vector of spacecraft output messages
     * - thrScOutMsgs
       - :ref:`THROutputMsgPayload`

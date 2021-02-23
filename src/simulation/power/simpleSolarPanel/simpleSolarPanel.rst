@@ -36,7 +36,7 @@ The following table lists additional module input messages beyond those specifie
       - :ref:`SpicePlanetStateMsgPayload`
       - Describes sun position
     * - stateInMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - Describes spacecraft position, attitude.
     * - sunEclipseInMsg
       - :ref:`EclipseMsgPayload`

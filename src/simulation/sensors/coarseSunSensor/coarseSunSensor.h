@@ -23,7 +23,7 @@
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefC/CSSRawDataMsgPayload.h"
@@ -69,7 +69,7 @@ public:
     
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg; //!< [-] input message for sun data
-    ReadFunctor<SCPlusStatesMsgPayload> stateInMsg;   //!< [-] input message for spacecraft state
+    ReadFunctor<SCStatesMsgPayload> stateInMsg;   //!< [-] input message for spacecraft state
     Message<CSSRawDataMsgPayload> cssDataOutMsg;      //!< [-] output message for CSS output data
     Message<CSSConfigLogMsgPayload> cssConfigLogOutMsg;  //!< [-] output message for CSS configuration log data
     ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;   //!< [-] (optional) input message for sun eclipse state message
@@ -103,7 +103,7 @@ public:
 
 private:
     SpicePlanetStateMsgPayload sunData;             //!< [-] Unused for now, but including it for future
-    SCPlusStatesMsgPayload stateCurrent;            //!< [-] Current SSBI-relative state
+    SCStatesMsgPayload stateCurrent;            //!< [-] Current SSBI-relative state
     EclipseMsgPayload sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
     double              sunDistanceFactor;      //! [-] Factor to scale cosine curve magnitude based on solar flux at location
     GaussMarkov noiseModel;                     //! [-] Gauss Markov noise generation model

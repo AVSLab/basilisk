@@ -27,7 +27,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/AccessMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
@@ -42,7 +42,7 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     bool ReadMessages();
     void WriteMessages(uint64_t CurrentClock);
-    void addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg);
+    void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     
 private:
     void computeAccess();
@@ -54,18 +54,18 @@ public:
     Eigen::Vector3d aHat_B;     //!< [] (optional) unit direction vector vector of the senor/communication boresight axis
     double theta;               //!< [r] (optional) sensor/communication half-cone angle, must be set if shat_B is specified
 
-    ReadFunctor<SCPlusStatesMsgPayload> primaryScStateInMsg;        //!< primary spacecraft input message
+    ReadFunctor<SCStatesMsgPayload> primaryScStateInMsg;        //!< primary spacecraft input message
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;            //!< planet state input message
     std::vector<Message<AccessMsgPayload>*> accessOutMsgs;           //!< vector of ground location access messages
-    std::vector<ReadFunctor<SCPlusStatesMsgPayload>> scStateInMsgs; //!< vector of other sc state input messages
+    std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of other sc state input messages
     Eigen::Vector3d r_LB_B;      //!< [m]  position of the location relative to the spacecraft frame origin B, in B frame components
     
     BSKLogger bskLogger;         //!< -- BSK Logging
 
 private:
     std::vector<AccessMsgPayload> accessMsgBuffer;                  //!< buffer of access output data
-    std::vector<SCPlusStatesMsgPayload> scStatesBuffer;             //!< buffer of other spacecraft states
-    SCPlusStatesMsgPayload primaryScStatesBuffer;                   //!< buffer of primary spacecraft states
+    std::vector<SCStatesMsgPayload> scStatesBuffer;             //!< buffer of other spacecraft states
+    SCStatesMsgPayload primaryScStatesBuffer;                   //!< buffer of primary spacecraft states
     SpicePlanetStateMsgPayload planetState;                         //!< buffer of planet data
 
     Eigen::Matrix3d dcm_PN; //!< Rotation matrix from inertial frame N to planet-centered to planet-fixed frame P

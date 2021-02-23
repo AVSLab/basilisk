@@ -39,9 +39,9 @@ message VizMessage{
     //Spacecraft message carry spacecraft position, velocity, and rotation data and proto messages for actuators and sensors
     message Spacecraft{
         string spacecraftName = 1;
-        repeated double position = 2;  //SCPlusStatesSimMsg.r_BN_N
-        repeated double velocity = 3;  //SCPlusStatesSimMsg.v_BN_N
-        repeated double rotation = 4;  //SCPlusStatesSimMsg.sigma_B
+        repeated double position = 2;  //SCStatesSimMsg.r_BN_N
+        repeated double velocity = 3;  //SCStatesSimMsg.v_BN_N
+        repeated double rotation = 4;  //SCStatesSimMsg.sigma_B
       
         repeated ReactionWheel reactionWheels = 5;
         repeated Thruster thrusters = 6;

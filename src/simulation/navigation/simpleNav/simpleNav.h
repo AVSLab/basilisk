@@ -23,7 +23,7 @@
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/gauss_markov.h"
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
@@ -57,11 +57,11 @@ public:
     NavAttMsgPayload estAttState;         //!< -- attitude nav state including errors
     NavTransMsgPayload trueTransState;    //!< -- translation nav state without errors
     NavTransMsgPayload estTransState;     //!< -- translation nav state including errors
-    SCPlusStatesMsgPayload inertialState; //!< -- input inertial state from Star Tracker
+    SCStatesMsgPayload inertialState; //!< -- input inertial state from Star Tracker
     SpicePlanetStateMsgPayload sunState;  //!< -- input Sun state
     BSKLogger bskLogger;              //!< -- BSK Logging
 
-    ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg;      //!< spacecraft state input msg
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;      //!< spacecraft state input msg
     ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg; //!< (optional) sun state input input msg
 
 private:

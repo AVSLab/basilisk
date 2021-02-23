@@ -87,7 +87,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     setRandomWalk(StarTracker)
 
     # configure module input message
-    OutputStateData = messaging.SCPlusStatesMsgPayload()
+    OutputStateData = messaging.SCStatesMsgPayload()
     OutputStateData.r_BN_N = [0,0,0]
     OutputStateData.v_BN_N = [0,0,0]
     OutputStateData.sigma_BN = [0,0,0]
@@ -138,7 +138,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     unitSim.AddModelToTask(unitTaskName, dataLog)
 
     # configure spacecraft state message
-    scMsg = messaging.SCPlusStatesMsg().write(OutputStateData)
+    scMsg = messaging.SCStatesMsg().write(OutputStateData)
     StarTracker.scStateInMsg.subscribeTo(scMsg)
 
     unitSim.InitializeSimulation()

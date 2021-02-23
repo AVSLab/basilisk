@@ -136,8 +136,8 @@ void DataFileToViz::setNumOfSatellites(int numSat)
 {
     for (int i=0; i<numSat; i++) {
         /* create output message */
-        Message<SCPlusStatesMsgPayload> *msg;
-        msg = new Message<SCPlusStatesMsgPayload>;
+        Message<SCStatesMsgPayload> *msg;
+        msg = new Message<SCStatesMsgPayload>;
         this->scStateOutMsgs.push_back(msg);
     }
 }
@@ -267,7 +267,7 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
 
             // create all the state output messages for each spacecraft
             for (int scCounter=0; scCounter<this->scStateOutMsgs.size(); scCounter++) {
-                SCPlusStatesMsgPayload scMsg;
+                SCStatesMsgPayload scMsg;
 
                 /* zero output message */
                 scMsg = this->scStateOutMsgs.at(scCounter)->zeroMsgPayload();

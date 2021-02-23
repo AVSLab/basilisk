@@ -63,11 +63,11 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->nameOfTheta2DotState = "hingedRigidBodyTheta2Dot";
 
     Message<HingedRigidBodyMsgPayload> *panelMsg;
-    Message<SCPlusStatesMsgPayload> *scMsg;
+    Message<SCStatesMsgPayload> *scMsg;
     for (int c = 0; c < 2; c++) {
         panelMsg = new Message<HingedRigidBodyMsgPayload>;
         this->dualHingedRigidBodyOutMsgs.push_back(panelMsg);
-        scMsg = new Message<SCPlusStatesMsgPayload>;
+        scMsg = new Message<SCStatesMsgPayload>;
         this->dualHingedRigidBodyConfigLogOutMsgs.push_back(scMsg);
     }
 
@@ -373,7 +373,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
 
 
     // write out the panel state config log message
-    SCPlusStatesMsgPayload configLogMsg;
+    SCStatesMsgPayload configLogMsg;
     // Note, logging the hinge frame S is the body frame B of that object
     for (int i=0; i<2; i++) {
         configLogMsg = this->dualHingedRigidBodyConfigLogOutMsgs[i]->zeroMsgPayload();

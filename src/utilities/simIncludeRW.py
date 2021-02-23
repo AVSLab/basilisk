@@ -262,7 +262,7 @@ class rwFactory(object):
 
         return
 
-    def addToSpacecraft(self, modelTag, rwStateEffector, scPlus):
+    def addToSpacecraft(self, modelTag, rwStateEffector, sc):
         """
             This function should be called after all RW devices are created with createRW()
             It creates the C-class container for the array of RW devices, and attaches
@@ -272,7 +272,7 @@ class rwFactory(object):
             ----------
             :param modelTag:  string with the model tag
             :param rwStateEffector:
-            :param scPlus:
+            :param sc: spacecraft object
         """
 
         rwStateEffector.ModelTag = modelTag
@@ -280,7 +280,7 @@ class rwFactory(object):
         for key, rw in list(self.rwList.items()):
             rwStateEffector.addReactionWheel(rw)
 
-        scPlus.addStateEffector(rwStateEffector)
+        sc.addStateEffector(rwStateEffector)
 
         return
 

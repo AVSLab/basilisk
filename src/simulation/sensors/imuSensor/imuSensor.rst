@@ -25,7 +25,7 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - scStateInMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - input essage name for spacecraft state
     * - sensorOutMsg
       - :ref:`IMUSensorMsgPayload`

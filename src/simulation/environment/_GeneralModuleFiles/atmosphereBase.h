@@ -25,7 +25,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
 #include "architecture/msgPayloadDefC/EpochMsgPayload.h"
 #include "architecture/messaging/messaging.h"
@@ -38,14 +38,14 @@ public:
     AtmosphereBase();
     ~AtmosphereBase();
     void Reset(uint64_t CurrentSimNanos);
-    void addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg);
+    void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void UpdateState(uint64_t CurrentSimNanos);
 
 protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     void updateLocalAtmosphere(double currentTime);
-    void updateRelativePos(SpicePlanetStateMsgPayload  *planetState, SCPlusStatesMsgPayload *scState);
+    void updateRelativePos(SpicePlanetStateMsgPayload  *planetState, SCStatesMsgPayload *scState);
     virtual void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime) = 0;     //!< class method
     virtual void customReset(uint64_t CurrentClock);
     virtual void customWriteMessages(uint64_t CurrentClock);
@@ -53,7 +53,7 @@ protected:
     virtual void customSetEpochFromVariable();
 
 public:
-    std::vector<ReadFunctor<SCPlusStatesMsgPayload>> scStateInMsgs; //!< Vector of the spacecraft position/velocity input message
+    std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< Vector of the spacecraft position/velocity input message
     std::vector<Message<AtmoPropsMsgPayload>*> envOutMsgs;          //!< Vector of message names to be written out by the environment
     ReadFunctor<SpicePlanetStateMsgPayload> planetPosInMsg;         //!< Message name for the planet's SPICE position message
     ReadFunctor<EpochMsgPayload> epochInMsg;                        //!< (optional) epoch date/time input message
@@ -68,7 +68,7 @@ protected:
     double orbitRadius;                     //!< [m] sc orbit radius about planet
     double orbitAltitude;                   //!< [m] sc altitude above planetRadius
     std::vector<AtmoPropsMsgPayload> envOutBuffer; //!< -- Message buffer for magnetic field messages
-    std::vector<SCPlusStatesMsgPayload> scStates;  //!< vector of the spacecraft state messages
+    std::vector<SCStatesMsgPayload> scStates;  //!< vector of the spacecraft state messages
     SpicePlanetStateMsgPayload planetState; //!< planet state message
     struct tm epochDateTime;                //!< time/date structure containing the epoch information using a Gregorian calendar
 };

@@ -339,10 +339,10 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         orb_elemObject.mu = mu
 
         if g == 0:
-            CartMessage = messaging.SCPlusStatesMsgPayload()
+            CartMessage = messaging.SCStatesMsgPayload()
             CartMessage.r_BN_N = rSim
             CartMessage.v_BN_N = vSim
-            stateScMsg = messaging.SCPlusStatesMsg().write(CartMessage)
+            stateScMsg = messaging.SCStatesMsg().write(CartMessage)
             orb_elemObject.scStateInMsg.subscribeTo(stateScMsg)
         else:
             CartMessage = messaging.SpicePlanetStateMsgPayload()

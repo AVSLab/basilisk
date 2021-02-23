@@ -53,7 +53,7 @@ void PlanetHeading::readMessages() {
     planetPositionMsgData = this->planetPositionInMsg();
     this->r_PN_N = Eigen::Vector3d(planetPositionMsgData.PositionVector);
 
-    SCPlusStatesMsgPayload scStatesMsgData;
+    SCStatesMsgPayload scStatesMsgData;
     /*! - read in spacecraft state message (required) */
     scStatesMsgData = this->spacecraftStateInMsg();
     this->r_BN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);

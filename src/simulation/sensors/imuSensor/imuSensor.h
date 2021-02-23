@@ -27,7 +27,7 @@
 #include "architecture/utilities/discretize.h"
 #include "architecture/utilities/saturate.h"
 
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/IMUSensorMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
@@ -61,7 +61,7 @@ public:
     void set_aSatBounds(Eigen::MatrixXd aSatBounds);
 
 public:
-    ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg; /*!< input essage name for spacecraft state */
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg; /*!< input essage name for spacecraft state */
     Message<IMUSensorMsgPayload> sensorOutMsg;        /*!< output message name for IMU output data */
     Eigen::Vector3d sensorPos_B;              /*!< [m] IMU sensor location in body */
     Eigen::Matrix3d dcm_PB;                //!< -- Transform from body to platform
@@ -96,8 +96,8 @@ public:
 private:
     uint64_t PreviousTime;              //!< -- Timestamp from previous frame
     int64_t numStates;                  //!< -- Number of States for Gauss Markov Models
-    SCPlusStatesMsgPayload StatePrevious;   //!< -- Previous state to delta in IMU
-    SCPlusStatesMsgPayload StateCurrent;    //!< -- Current SSBI-relative state
+    SCStatesMsgPayload StatePrevious;   //!< -- Previous state to delta in IMU
+    SCStatesMsgPayload StateCurrent;    //!< -- Current SSBI-relative state
     GaussMarkov errorModelAccel;        //!< [-] Gauss-markov error states
     GaussMarkov errorModelGyro;         //!< [-] Gauss-markov error states
     

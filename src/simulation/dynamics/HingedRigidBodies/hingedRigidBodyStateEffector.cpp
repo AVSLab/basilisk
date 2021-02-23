@@ -75,7 +75,7 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
 
     // write out the panel state config log message
     if (this->hingedRigidBodyConfigLogOutMsg.isLinked()) {
-        SCPlusStatesMsgPayload configLogMsg;
+        SCStatesMsgPayload configLogMsg;
         configLogMsg = this->hingedRigidBodyConfigLogOutMsg.zeroMsgPayload();
         // Note, logging the hinge frame S is the body frame B of that object
         eigenVector3d2CArray(this->r_SN_N, configLogMsg.r_BN_N);

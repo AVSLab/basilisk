@@ -21,7 +21,7 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - scStateInMsgs
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - vector of spacecraft state input messages
     * - envOutMsgs
       - :ref:`MagneticFieldMsgPayload`

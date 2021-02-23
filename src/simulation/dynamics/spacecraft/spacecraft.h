@@ -30,7 +30,7 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 
@@ -78,7 +78,7 @@ public:
     std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     BSKLogger bskLogger;                      //!< -- BSK Logging
-    Message<SCPlusStatesMsgPayload> scStateOutMsg;      //!< spacecraft state output message
+    Message<SCStatesMsgPayload> scStateOutMsg;      //!< spacecraft state output message
     Message<SCMassPropsMsgPayload> scMassOutMsg;    //!< spacecraft mass properties output message
 
 public:

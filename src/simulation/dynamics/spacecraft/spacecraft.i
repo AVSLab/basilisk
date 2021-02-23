@@ -44,10 +44,10 @@ namespace std {
 %include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 %include "spacecraft.h"
 
-%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
-struct SCPlusStatesMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
-struct SCPlusMassPropsMsg_C;
+struct SCMassPropsMsg_C;
 %include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;
 

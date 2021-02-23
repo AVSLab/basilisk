@@ -53,8 +53,8 @@ struct CameraConfigMsg_C;
 struct RWConfigLogMsg_C;
 %include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
 struct STSensorMsg_C;
-%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
-struct SCPlusStatesMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
 struct CameraImageMsg_C;
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"

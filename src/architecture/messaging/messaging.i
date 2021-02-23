@@ -144,7 +144,7 @@ typedef struct messageType;
 %template(RWConfigLogOutMsgsVector) std::vector<Message<RWConfigLogMsgPayload>*>;
 %template(SpicePlanetStateOutMsgsVector) std::vector<Message<SpicePlanetStateMsgPayload>*>;
 %template(AtmoPropsOutMsgsVector) std::vector<Message<AtmoPropsMsgPayload>*>;
-%template(SCPlusStatesOutMsgsVector) std::vector<Message<SCPlusStatesMsgPayload>*>;
+%template(SCStatesOutMsgsVector) std::vector<Message<SCStatesMsgPayload>*>;
 %template(HingedRigidBodyOutMsgsVector) std::vector<Message<HingedRigidBodyMsgPayload>*>;
 %template(THROutputOutMsgsVector) std::vector<Message<THROutputMsgPayload>*>;
 %template(VSCMGConfigOutMsgsVector) std::vector<Message<VSCMGConfigMsgPayload>*>;
@@ -157,7 +157,7 @@ typedef struct messageType;
 %template(RWConfigLogOutMsgsVectorVector) std::vector <std::vector <Message<RWConfigLogMsgPayload>*>>;
 
 
-%template(SCPlusStatesInMsgsVector) std::vector<ReadFunctor<SCPlusStatesMsgPayload>>;
+%template(SCStatesInMsgsVector) std::vector<ReadFunctor<SCStatesMsgPayload>>;
 %template(SpicePlanetStateInMsgsVector) std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>;
 %template(SwDataInMsgsVector) std::vector<ReadFunctor<SwDataMsgPayload>>;
 %template(DataNodeUsageInMsgsVector) std::vector<ReadFunctor<DataNodeUsageMsgPayload>>;

@@ -38,7 +38,7 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - scStateOutMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - Spacecraft state output message
     * - scMassStateOutMsg
       - :ref:`SCMassPropsMsgPayload`

@@ -23,7 +23,7 @@
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/BoreAngleMsgPayload.h"
 #include "architecture/messaging/messaging.h"
@@ -46,7 +46,7 @@ public:
     void ReadInputs();
     
 public:
-    ReadFunctor<SCPlusStatesMsgPayload> scStateInMsg;       //!< (-) spacecraft state input message
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;       //!< (-) spacecraft state input message
     ReadFunctor<SpicePlanetStateMsgPayload> celBodyInMsg;   //!< (-) celestial body state msg at which we pointing at
     Message<BoreAngleMsgPayload> angOutMsg;                 //!< (-) bore sight output message
 
@@ -58,7 +58,7 @@ public:
 
 private:
     SpicePlanetStateMsgPayload localPlanet;//!< (-) planet that we are pointing at
-    SCPlusStatesMsgPayload localState;   //!< (-) observed state of the spacecraft
+    SCStatesMsgPayload localState;   //!< (-) observed state of the spacecraft
 };
 
 

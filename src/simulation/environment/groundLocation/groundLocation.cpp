@@ -84,7 +84,7 @@ void GroundLocation::specifyLocation(double lat, double longitude, double alt)
 
 /*! Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message output name.
 */
-void GroundLocation::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg)
+void GroundLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
 {
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
@@ -103,7 +103,7 @@ void GroundLocation::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpSc
 */
 bool GroundLocation::ReadMessages()
 {
-    SCPlusStatesMsgPayload scMsg;
+    SCStatesMsgPayload scMsg;
 
     /* clear out the vector of spacecraft states.  This is created freshly below. */
     this->scStatesBuffer.clear();
@@ -165,7 +165,7 @@ void GroundLocation::computeAccess()
 
     // Iterate over spacecraft position messages and compute the access for each one
     std::vector<AccessMsgPayload>::iterator accessMsgIt;
-    std::vector<SCPlusStatesMsgPayload>::iterator scStatesMsgIt;
+    std::vector<SCStatesMsgPayload>::iterator scStatesMsgIt;
     for(scStatesMsgIt = this->scStatesBuffer.begin(), accessMsgIt = accessMsgBuffer.begin(); scStatesMsgIt != scStatesBuffer.end(); scStatesMsgIt++, accessMsgIt++){
         //! Compute the relative position of each spacecraft to the site in the planet-centered inertial frame
         Eigen::Vector3d r_BP_N = cArray2EigenVector3d(scStatesMsgIt->r_BN_N) - this->r_PN_N;

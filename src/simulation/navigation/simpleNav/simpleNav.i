@@ -31,8 +31,8 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "simpleNav.h"
 
-%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
-struct SCPlusStatesMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"

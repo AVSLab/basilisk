@@ -29,10 +29,10 @@ provides information on what this message is used for.
       - :ref:`SpicePlanetStateMsgPayload`
       - (optional) planet state input message. Default is a zero state for the planet.
     * - primaryScStateInMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - primary spacecraft state message relative to which to evaluate access to other spacecraft in ``scStateInMsgs``
     * - scStateInMsgs
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - vector of other spacecraft state input messages.  These are set through ``addSpacecraftToModel()``
     * - accessOutMsgs
       - :ref:`AccessMsgPayload`

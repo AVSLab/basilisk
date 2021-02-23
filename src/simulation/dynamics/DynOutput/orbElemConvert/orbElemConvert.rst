@@ -19,7 +19,7 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - scStateInMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - Spacecraft state input message
     * - spiceStateInMsg
       - :ref:`SpicePlanetStateMsgPayload`
@@ -28,7 +28,7 @@ provides information on what this message is used for.
       - :ref:`ClassicElementsMsgPayload`
       - classical orbit elements input message
     * - scStateOutMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - Spacecraft state output message
     * - spiceStateOutMsg
       - :ref:`SpicePlanetStateMsgPayload`

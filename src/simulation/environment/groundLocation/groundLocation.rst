@@ -9,7 +9,7 @@ To use this module, instantiate the class and provide it with a body-fixed locat
 via the specifyLocation method, or in
 planet-centered planet-fixed coordinates directly via the ``r_LP_P_Init`` attribute) and a planet position/attitude
 message (i.e., an instance of :ref:`SpicePlanetStateMsgPayload`);
-to compute access, at least one :ref:`scPlusStatesMsgPayload` message must be added to the module using the ``addSpacecraftToModel()`` method.
+to compute access, at least one :ref:`SCStatesMsgPayload` message must be added to the module using the ``addSpacecraftToModel()`` method.
 The first spacecraft is 0, the second is 1, and so on.
 
 Module Assumptions and Limitations
@@ -34,7 +34,7 @@ provides information on what this message is used for.
       - :ref:`SpicePlanetStateMsgPayload`
       - (optional) planet state input message. Default is a zero state for the planet.
     * - scStateInMsgs
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - vector of sc state input messages.  These are set through ``addSpacecraftToModel()``
     * - currentGroundStateOutMsg
       - :ref:`GroundStateMsgPayload`

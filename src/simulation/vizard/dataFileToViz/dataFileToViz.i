@@ -33,8 +33,8 @@ from Basilisk.architecture.swig_common_model import *
 %include "dataFileToViz.h"
 %include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
-%include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
-struct SCPlusStatesMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
 %include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"

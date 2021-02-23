@@ -24,7 +24,7 @@ The following table lists all the module input and output messages.  The module 
       - :ref:`SpicePlanetStateMsgPayload`
       - sun state input message
     * - spacecraftStateInMsg
-      - :ref:`SCPlusStatesMsgPayload`
+      - :ref:`SCStatesMsgPayload`
       - spacecraft state input message
     * - eclipseInMsg
       - :ref:`EclipseMsgPayload`

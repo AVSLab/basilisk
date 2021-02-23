@@ -73,7 +73,7 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
         this->elemOutMsg.write(&this->CurrentElem, this->moduleID, CurrentClock);
     }
     if (this->scStateOutMsg.isLinked() && this->inputsGood) {
-        SCPlusStatesMsgPayload scMsg;
+        SCStatesMsgPayload scMsg;
         scMsg = this->scStateOutMsg.zeroMsgPayload();
         v3Copy(this->r_N, scMsg.r_BN_N);
         v3Copy(this->v_N, scMsg.v_BN_N);

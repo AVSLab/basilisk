@@ -129,7 +129,7 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     req = planet.radEquator
     sunMessage = "sun_message"
     # Create dummy spacecraft message
-    scStateMsg = messaging.SCPlusStatesMsgPayload()
+    scStateMsg = messaging.SCStatesMsgPayload()
     rSC = req + 6000 * 1000  # meters
     alpha = 71. * macros.D2R
     scStateMsg.r_BN_N = np.dot(rSC, [np.cos(alpha), np.sin(alpha), 0.0])
@@ -147,7 +147,7 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
 
     planetInMsg.write(planetPositionMsg)
 
-    scInMsg = messaging.SCPlusStatesMsg().write(scStateMsg)
+    scInMsg = messaging.SCStatesMsg().write(scStateMsg)
     albModule.spacecraftStateInMsg.subscribeTo(scInMsg)
 
     unitTestSim.AddModelToTask(testTaskName, albModule)

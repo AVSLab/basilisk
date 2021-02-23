@@ -105,10 +105,10 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     sunMessage.PositionVector = [0, 0, 0]
     sunMsg = messaging.SpicePlanetStateMsg().write(sunMessage)
 
-    scMessage = messaging.SCPlusStatesMsgPayload()
+    scMessage = messaging.SCStatesMsgPayload()
     scMessage.r_BN_N = [-orbitDistance, 0, 0]
     scMessage.sigma_BN = scAttitude
-    scMsg = messaging.SCPlusStatesMsg().write(scMessage)
+    scMsg = messaging.SCStatesMsg().write(scMessage)
 
     #   Module set-up
     panel = simpleSolarPanel.SimpleSolarPanel()

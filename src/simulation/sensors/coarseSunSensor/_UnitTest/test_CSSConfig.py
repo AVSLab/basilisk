@@ -100,10 +100,10 @@ def run(show_plots, accuracy):
     CSS2.sunInMsg.subscribeTo(sunMsg)
 
     # create spacecraft state message
-    scStateMsg = messaging.SCPlusStatesMsgPayload()
+    scStateMsg = messaging.SCStatesMsgPayload()
     scStateMsg.r_BN_N = [-10.0, 0.0, 0.0]
     scStateMsg.sigma_BN = [0.0, 0.0, 0.0]
-    scMsg = messaging.SCPlusStatesMsg().write(scStateMsg)
+    scMsg = messaging.SCStatesMsg().write(scStateMsg)
     CSS1.stateInMsg.subscribeTo(scMsg)
     CSS2.stateInMsg.subscribeTo(scMsg)
 

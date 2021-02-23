@@ -106,7 +106,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(1.0)))
 
     spiceMessage = messaging.SpicePlanetStateMsgPayload()
-    stateMessage = messaging.SCPlusStatesMsgPayload()
+    stateMessage = messaging.SCStatesMsgPayload()
     angMessage = messaging.BoreAngleMsgPayload()
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
@@ -119,7 +119,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     spiceMessage.PositionVector = sunPosition
     spiceMessage.PlanetName = "sun"
     # Inertial State output Message
-    scMsg = messaging.SCPlusStatesMsg().write(stateMessage)
+    scMsg = messaging.SCStatesMsg().write(stateMessage)
 
     # Sun Planet Data Message
     sunMsg = messaging.SpicePlanetStateMsg().write(spiceMessage)

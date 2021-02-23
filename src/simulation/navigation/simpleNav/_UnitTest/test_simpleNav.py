@@ -69,7 +69,7 @@ def unitSimpleNav(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, sNavObject)
 
     spiceMessage = messaging.SpicePlanetStateMsgPayload()
-    stateMessage = messaging.SCPlusStatesMsgPayload()
+    stateMessage = messaging.SCStatesMsgPayload()
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
 
@@ -78,7 +78,7 @@ def unitSimpleNav(show_plots):
     spiceMessage.PlanetName = "sun"
 
     # Inertial State output Message
-    scStateMsg = messaging.SCPlusStatesMsg().write(stateMessage)
+    scStateMsg = messaging.SCStatesMsg().write(stateMessage)
     sNavObject.scStateInMsg.subscribeTo(scStateMsg)
 
     # Sun Planet Data Message

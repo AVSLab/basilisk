@@ -75,7 +75,7 @@ AtmosphereBase::~AtmosphereBase()
  @return void
  @param tmpScMsg A spacecraft state message name.
  */
-void AtmosphereBase::addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg){
+void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg){
 
     /* add input message */
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
@@ -177,7 +177,7 @@ void AtmosphereBase::customWriteMessages(uint64_t CurrentClock)
  */
 bool AtmosphereBase::readMessages()
 {
-    SCPlusStatesMsgPayload scMsg;
+    SCStatesMsgPayload scMsg;
 
     this->scStates.clear();
 
@@ -228,7 +228,7 @@ bool AtmosphereBase::customReadMessages()
  @param scState A spacecraft states message struct.
  @return void
  */
-void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCPlusStatesMsgPayload *scState)
+void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCStatesMsgPayload *scState)
 {
     //! - compute spacecraft position vector relative to planet
     v3Subtract(scState->r_BN_N, planetState->PositionVector, this->r_BP_N.data());
@@ -248,7 +248,7 @@ void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, 
  */
 void AtmosphereBase::updateLocalAtmosphere(double currentTime)
 {
-    std::vector<SCPlusStatesMsgPayload>::iterator scIt;
+    std::vector<SCStatesMsgPayload>::iterator scIt;
 
     //! - loop over all the spacecraft
     std::vector<AtmoPropsMsgPayload>::iterator envMsgIt;

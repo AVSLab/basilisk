@@ -67,7 +67,7 @@ void SolarFlux::readMessages()
     this->r_SN_N = Eigen::Vector3d(sunPositionMsgData.PositionVector);
 
     /*! - read in spacecraft state message (required) */
-    SCPlusStatesMsgPayload scStatesMsgData;
+    SCStatesMsgPayload scStatesMsgData;
     scStatesMsgData = this->spacecraftStateInMsg();
     this->r_ScN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
 

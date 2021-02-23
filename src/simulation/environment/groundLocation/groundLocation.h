@@ -27,7 +27,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/AccessMsgPayload.h"
 #include "architecture/msgPayloadDefC/GroundStateMsgPayload.h"
 #include "architecture/messaging/messaging.h"
@@ -45,7 +45,7 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     bool ReadMessages();
     void WriteMessages(uint64_t CurrentClock);
-    void addSpacecraftToModel(Message<SCPlusStatesMsgPayload> *tmpScMsg);
+    void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void specifyLocation(double lat, double longitude, double alt);
     
 private:
@@ -60,13 +60,13 @@ public:
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;            //!< planet state input message
     Message<GroundStateMsgPayload> currentGroundStateOutMsg;    //!< ground location output message
     std::vector<Message<AccessMsgPayload>*> accessOutMsgs;           //!< vector of ground location access messages
-    std::vector<ReadFunctor<SCPlusStatesMsgPayload>> scStateInMsgs; //!< vector of sc state input messages
+    std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of sc state input messages
     Eigen::Vector3d r_LP_P_Init; //!< [m] Initial position of the location in planet-centric coordinates; can also be set using setGroundLocation.
     BSKLogger bskLogger;         //!< -- BSK Logging
 
 private:
     std::vector<AccessMsgPayload> accessMsgBuffer;                  //!< buffer of access output data
-    std::vector<SCPlusStatesMsgPayload> scStatesBuffer;             //!< buffer of spacecraft states
+    std::vector<SCStatesMsgPayload> scStatesBuffer;             //!< buffer of spacecraft states
     SpicePlanetStateMsgPayload planetState;                         //!< buffer of planet data
     GroundStateMsgPayload currentGroundStateBuffer;                 //!< buffer of ground station output data
 

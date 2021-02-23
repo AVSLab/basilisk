@@ -126,13 +126,13 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     testModule.magInMsg.subscribeTo(magMsg)
 
     # Set-up fake attitude
-    satelliteStateMsg = messaging.SCPlusStatesMsgPayload()
+    satelliteStateMsg = messaging.SCStatesMsgPayload()
     angles = np.linspace(0., 2 * np.pi, 59000)
     sigmas = np.zeros(len(angles))
     for i in range(len(sigmas)):  # convert rotation angle about 3rd axis to MRP
         sigmas[i] = np.tan(angles[i] / 4.)  # This is iterated through in the execution for loop
         satelliteStateMsg.sigma_BN = [0.3, 0.2, sigmas[i]]
-    scMsg = messaging.SCPlusStatesMsg().write(satelliteStateMsg)
+    scMsg = messaging.SCStatesMsg().write(satelliteStateMsg)
     testModule.stateInMsg.subscribeTo(scMsg)
     dcm_BN = rbk.MRP2C(satelliteStateMsg.sigma_BN)
 
