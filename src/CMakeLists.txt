@@ -579,11 +579,6 @@ generate_package_targets("${VEH_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlg
 ##################
 # MESSAGES #
 ##################
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simMessages" SIM_MESSAGES_TARGETS)
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simFswInterfaceMessages" SIM_FSW_INTERFACE_TARGETS)
-
-generate_package_targets("${SIM_MESSAGES_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-generate_package_targets("${SIM_FSW_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 add_message_headers()
 
 
