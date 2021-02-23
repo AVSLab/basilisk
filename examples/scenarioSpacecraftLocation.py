@@ -157,6 +157,7 @@ def run(show_plots):
     scLocation.rPolar = earth.radEquator*0.98
     scLocation.aHat_B = unitTestSupport.np2EigenVectorXd([0, 1, 0])
     scLocation.theta = np.radians(10.)
+    scLocation.maximumRange = 55.
     scSim.AddModelToTask(simTaskName, scLocation)
 
     #
@@ -240,7 +241,7 @@ def run(show_plots):
                                , r_GP_P=[0, 2, 0]
                                , gHat_P=[0, 1, 0]
                                , fieldOfView=2*scLocation.theta
-                               , range=50.
+                               , range=scLocation.maximumRange
                                , color='pink'
                                )
         viz.settings.showLocationCommLines = 1
