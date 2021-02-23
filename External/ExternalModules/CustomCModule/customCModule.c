@@ -24,6 +24,7 @@
 /* modify the path to reflect the new module names */
 #include "customCModule.h"
 #include "string.h"
+#include "../_GeneralModuleFiles/customGeneralModule.h"
 
 
 
@@ -34,11 +35,7 @@
 
 
 /*!
- \verbatim embed:rst
-    This method initializes the configData for this module.
-    It checks to ensure that the inputs are sane and then creates the
-    output message of type :ref:`FswModuleTemplateMsgPayload`.
- \endverbatim
+    This method initializes the output messages of the module
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
@@ -50,8 +47,7 @@ void SelfInit_customCModule(customCModuleConfig *configData, int64_t moduleID)
 
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.  The local copy of the
- message output buffer should be cleared.
+ time varying states between function calls are reset to their default values.  It also checks that all required input messages are connected.
  @return void
  @param configData The configuration data associated with the module
  @param callTime [ns] time the method is called

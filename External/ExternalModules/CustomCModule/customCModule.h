@@ -23,7 +23,6 @@
 #include <stdint.h>
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/CustomModuleMsg_C.h"
-#include "../_GeneralModuleFiles/customGeneralModule.h"
 
 #define TESTHMM 10
 /*! @brief Top level structure for the sub-module routines. */

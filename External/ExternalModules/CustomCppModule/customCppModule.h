@@ -18,7 +18,7 @@
  */
 
 #ifndef _CUSTOM_CPP_MODULE_H
-#define _CUSTOM_CPP_MODULE__H
+#define _CUSTOM_CPP_MODULE_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "../../msgPayloadDefCpp/CustomModuleCppMsgPayload.h"
