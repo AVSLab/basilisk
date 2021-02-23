@@ -85,6 +85,8 @@ Version |release|
 - renamed ``spacecraftDynamics`` to :ref:`spacecraftSystem`, and renamed the associated ``spacecraft`` to ``spacecraftUnit()``.
 - renamed ``spacecraftPlus()`` to be now simply :ref:`spacecraft`
 - renamed ``fswModuleTemplate()`` to be :ref:`cModuleTemplate`.  This makes this naming consistent with the new :ref:`cppModuleTemplate`.
+- renamed `rwMotorVoltageInterface` to :ref:`motorVoltageInterface`.  This motor model can be used for both RW and hinged panel devices.
+
 
 
 
