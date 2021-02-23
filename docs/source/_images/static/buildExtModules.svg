@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="71 109 1000.4931 443.13956" width="1000.4931" height="443.13956">
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="14" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.18.3\n2021-02-23 02:04:21 +0000</metadata>
+  <g id="Canvas_1" stroke="none" stroke-dasharray="none" fill="none" stroke-opacity="1" fill-opacity="1">
+    <title>Canvas 1</title>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_35">
+        <title>Insert Drive File</title>
+        <path d="M 691.88255 378.56124 C 689.87554 378.56124 688.2517 380.20334 688.2517 382.21035 L 688.23345 411.4032 C 688.23345 413.41023 689.8573 415.05233 691.8643 415.05233 L 713.7772 415.05233 C 715.7842 415.05233 717.4263 413.41023 717.4263 411.4032 L 717.4263 389.50856 L 706.479 378.56124 L 691.88255 378.56124 Z M 704.6544 391.3331 L 704.6544 381.29807 L 714.6895 391.3331 L 704.6544 391.3331 Z" fill="#3382be"/>
+      </g>
+      <g id="Graphic_24">
+        <title>Insert Drive File</title>
+        <path d="M 690.9925 333.6149 C 688.9855 333.6149 687.3617 335.257 687.3617 337.264 L 687.3434 366.45687 C 687.3434 368.4639 688.9673 370.106 690.9743 370.106 L 712.8872 370.106 C 714.8942 370.106 716.5363 368.4639 716.5363 366.45687 L 716.5363 344.5622 L 705.589 333.6149 L 690.9925 333.6149 Z M 703.7644 346.38678 L 703.7644 336.35173 L 713.7995 346.38678 L 703.7644 346.38678 Z" fill="#3382be"/>
+      </g>
+      <g id="Graphic_26">
+        <text transform="translate(119.34321 273.5517)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="4476419e-19" y="13">External</tspan>
+        </text>
+      </g>
+      <g id="Graphic_27">
+        <title>Folder Open</title>
+        <path d="M 413.1262 250.54114 L 354.02846 250.54114 L 339.254 241.474 L 294.9307 241.474 C 286.80475 241.474 280.23012 245.55421 280.23012 250.54114 L 280.15625 304.94402 C 280.15625 309.93095 286.80475 314.01117 294.9307 314.01117 L 413.1262 314.01117 C 421.25217 314.01117 427.90067 309.93095 427.90067 304.94402 L 427.90067 259.6083 C 427.90067 254.62136 421.25217 250.54114 413.1262 250.54114 Z M 413.1262 304.94402 L 294.9307 304.94402 L 294.9307 259.6083 L 413.1262 259.6083 L 413.1262 304.94402 Z" fill="#d4c08e"/>
+      </g>
+      <g id="Graphic_28">
+        <text transform="translate(301.52846 273.5517)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">ExternalModules</tspan>
+        </text>
+      </g>
+      <g id="Graphic_29">
+        <title>Folder Open</title>
+        <path d="M 622.2825 250.54114 L 563.1847 250.54114 L 548.41027 241.474 L 504.08694 241.474 C 495.961 241.474 489.3864 245.55421 489.3864 250.54114 L 489.3125 304.94402 C 489.3125 309.93095 495.961 314.01117 504.08694 314.01117 L 622.2825 314.01117 C 630.4084 314.01117 637.0569 309.93095 637.0569 304.94402 L 637.0569 259.6083 C 637.0569 254.62136 630.4084 250.54114 622.2825 250.54114 Z M 622.2825 304.94402 L 504.08694 304.94402 L 504.08694 259.6083 L 622.2825 259.6083 L 622.2825 304.94402 Z" fill="#d4c08e"/>
+      </g>
+      <g id="Graphic_30">
+        <text transform="translate(515.0737 273.5517)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="781597e-18" y="13">CustomModule</tspan>
+        </text>
+      </g>
+      <g id="Graphic_31">
+        <title>Folder Open</title>
+        <path d="M 820.3134 250.54114 L 761.2156 250.54114 L 746.4412 241.474 L 702.1179 241.474 C 693.9919 241.474 687.4173 245.55421 687.4173 250.54114 L 687.3434 304.94402 C 687.3434 309.93095 693.9919 314.01117 702.1179 314.01117 L 820.3134 314.01117 C 828.4393 314.01117 835.0878 309.93095 835.0878 304.94402 L 835.0878 259.6083 C 835.0878 254.62136 828.4393 250.54114 820.3134 250.54114 Z M 820.3134 304.94402 L 702.1179 304.94402 L 702.1179 259.6083 L 820.3134 259.6083 L 820.3134 304.94402 Z" fill="#d4c08e"/>
+      </g>
+      <g id="Graphic_32">
+        <text transform="translate(732.3056 273.5517)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">_UnitTest</tspan>
+        </text>
+      </g>
+      <g id="Graphic_33">
+        <text transform="translate(731.80915 343.66444)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">customModule.c/cpp</tspan>
+        </text>
+      </g>
+      <g id="Line_38">
+        <line x1="218.74442" y1="277.74258" x2="280.1932" y2="277.74258" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_39">
+        <line x1="427.90067" y1="277.74258" x2="489.34944" y2="277.74258" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_41">
+        <line x1="637.0569" y1="277.74258" x2="687.38035" y2="277.74258" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_42">
+        <title>Folder Open</title>
+        <path d="M 203.96997 250.54114 L 144.8722 250.54114 L 130.09777 241.474 L 85.77444 241.474 C 77.6485 241.474 71.07387 245.55421 71.07387 250.54114 L 71 304.94402 C 71 309.93095 77.6485 314.01117 85.77444 314.01117 L 203.96997 314.01117 C 212.09592 314.01117 218.74442 309.93095 218.74442 304.94402 L 218.74442 259.6083 C 218.74442 254.62136 212.09592 250.54114 203.96997 250.54114 Z M 203.96997 304.94402 L 85.77444 304.94402 L 85.77444 259.6083 L 203.96997 259.6083 L 203.96997 304.94402 Z" fill="#d4c08e"/>
+      </g>
+      <g id="Graphic_43">
+        <text transform="translate(731.80915 387.72076)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">customModule.h</tspan>
+        </text>
+      </g>
+      <g id="Graphic_44">
+        <title>Insert Drive File</title>
+        <path d="M 691.88255 423.5076 C 689.87554 423.5076 688.2517 425.1497 688.2517 427.1567 L 688.23345 456.34956 C 688.23345 458.35657 689.8573 459.99867 691.8643 459.99867 L 713.7772 459.99867 C 715.7842 459.99867 717.4263 458.35657 717.4263 456.34956 L 717.4263 434.4549 L 706.479 423.5076 L 691.88255 423.5076 Z M 704.6544 436.27946 L 704.6544 426.2444 L 714.6895 436.27946 L 704.6544 436.27946 Z" fill="#3382be"/>
+      </g>
+      <g id="Graphic_45">
+        <title>Insert Drive File</title>
+        <path d="M 691.88255 468.0089 C 689.87554 468.0089 688.2517 469.651 688.2517 471.658 L 688.23345 500.8509 C 688.23345 502.8579 689.8573 504.5 691.8643 504.5 L 713.7772 504.5 C 715.7842 504.5 717.4263 502.8579 717.4263 500.8509 L 717.4263 478.95624 L 706.479 468.0089 L 691.88255 468.0089 Z M 704.6544 480.7808 L 704.6544 470.74574 L 714.6895 480.7808 L 704.6544 480.7808 Z" fill="#3382be"/>
+      </g>
+      <g id="Graphic_46">
+        <text transform="translate(731.80915 433.5571)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">customModule.i</tspan>
+        </text>
+      </g>
+      <g id="Graphic_47">
+        <text transform="translate(731.80915 478.05846)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">customModule.rst</tspan>
+        </text>
+      </g>
+      <g id="Graphic_48">
+        <title>Insert Drive File</title>
+        <path d="M 882.7933 259.49704 C 880.7862 259.49704 879.1624 261.13914 879.1624 263.14615 L 879.1442 292.33902 C 879.1442 294.34603 880.768 295.98813 882.775 295.98813 L 904.6879 295.98813 C 906.6949 295.98813 908.337 294.34603 908.337 292.33902 L 908.337 270.44436 L 897.3897 259.49704 L 882.7933 259.49704 Z M 895.5651 272.26892 L 895.5651 262.23387 L 905.6002 272.26892 L 895.5651 272.26892 Z" fill="#3382be"/>
+      </g>
+      <g id="Graphic_49">
+        <text transform="translate(921.4204 269.54658)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">test_customModule.py</tspan>
+        </text>
+      </g>
+      <g id="Line_54">
+        <path d="M 637.0569 277.74258 L 662.2186 277.74258 L 662.2186 351.86044 L 687.35254 351.86044" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_55">
+        <path d="M 637.0569 277.74258 L 662.2186 277.74258 L 662.2186 396.8068 L 688.2426 396.8068" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_56">
+        <path d="M 637.0569 277.74258 L 662.2186 277.74258 L 662.2186 441.7531 L 688.2426 441.7531" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_57">
+        <path d="M 637.0569 277.74258 L 662.2186 277.74258 L 662.2186 486.25445 L 688.2426 486.25445" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_58">
+        <line x1="835.0878" y1="277.74258" x2="879.1533" y2="277.74258" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_60">
+        <title>Folder Open</title>
+        <path d="M 413.1262 369.60534 L 354.02846 369.60534 L 339.254 360.5382 L 294.9307 360.5382 C 286.80475 360.5382 280.23012 364.6184 280.23012 369.60534 L 280.15625 424.0082 C 280.15625 428.99515 286.80475 433.07537 294.9307 433.07537 L 413.1262 433.07537 C 421.25217 433.07537 427.90067 428.99515 427.90067 424.0082 L 427.90067 378.6725 C 427.90067 373.68556 421.25217 369.60534 413.1262 369.60534 Z M 413.1262 424.0082 L 294.9307 424.0082 L 294.9307 378.6725 L 413.1262 378.6725 L 413.1262 424.0082 Z" fill="#d4c08e"/>
+      </g>
+      <g id="Graphic_61">
+        <title>Insert Drive File</title>
+        <path d="M 452.6491 378.56124 C 450.6421 378.56124 449.01825 380.20334 449.01825 382.21035 L 449 411.4032 C 449 413.41023 450.62385 415.05233 452.63086 415.05233 L 474.54376 415.05233 C 476.5508 415.05233 478.1929 413.41023 478.1929 411.4032 L 478.1929 389.50856 L 467.24555 378.56124 L 452.6491 378.56124 Z M 465.421 391.3331 L 465.421 381.29807 L 475.45604 391.3331 L 465.421 391.3331 Z" fill="#3382be"/>
+      </g>
+      <g id="Line_62">
+        <line x1="427.90067" y1="396.8068" x2="449.0091" y2="396.8068" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_63">
+        <path d="M 218.74442 277.74258 L 249.4688 277.74258 L 249.4688 396.8068 L 280.1932 396.8068" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_64">
+        <text transform="translate(299.44946 394.1966)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">msgPayloadDefC</tspan>
+        </text>
+      </g>
+      <g id="Graphic_68">
+        <text transform="translate(489.48255 387.72076)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">CustomCMsgPayload.h</tspan>
+        </text>
+      </g>
+      <g id="Graphic_69">
+        <title>Folder Open</title>
+        <path d="M 432.1156 488.66954 L 364.57813 488.66954 L 347.69375 479.6024 L 297.04063 479.6024 C 287.75422 479.6024 280.24067 483.6826 280.24067 488.66954 L 280.15625 543.0724 C 280.15625 548.05935 287.75422 552.13956 297.04063 552.13956 L 432.1156 552.13956 C 441.40203 552.13956 449 548.05935 449 543.0724 L 449 497.7367 C 449 492.74976 441.40203 488.66954 432.1156 488.66954 Z M 432.1156 543.0724 L 297.04063 543.0724 L 297.04063 497.7367 L 432.1156 497.7367 L 432.1156 543.0724 Z" fill="#d4c08e"/>
+      </g>
+      <g id="Line_70">
+        <path d="M 218.74442 277.74258 L 249.4688 277.74258 L 249.4688 515.871 L 280.1932 515.871" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_71">
+        <text transform="translate(302.99083 512.46374)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">msgPayloadDefCpp</tspan>
+        </text>
+      </g>
+      <g id="Graphic_72">
+        <title>Insert Drive File</title>
+        <path d="M 472.6491 497.62544 C 470.6421 497.62544 469.01825 499.26753 469.01825 501.27454 L 469 530.4674 C 469 532.4744 470.62385 534.1165 472.63086 534.1165 L 494.54376 534.1165 C 496.5508 534.1165 498.1929 532.4744 498.1929 530.4674 L 498.1929 508.57276 L 487.24555 497.62544 L 472.6491 497.62544 Z M 485.421 510.3973 L 485.421 500.36227 L 495.45604 510.3973 L 485.421 510.3973 Z" fill="#3382be"/>
+      </g>
+      <g id="Line_73">
+        <line x1="449" y1="515.871" x2="469.0091" y2="515.871" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_74">
+        <text transform="translate(509.48255 507.675)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">CustomCppMsgPayload.h</tspan>
+        </text>
+      </g>
+      <g id="Graphic_75">
+        <title>Folder Open</title>
+        <path d="M 413.2962 250.71114 L 354.19846 250.71114 L 339.424 241.644 L 295.1007 241.644 C 286.97475 241.644 280.40012 245.72421 280.40012 250.71114 L 280.32625 305.11402 C 280.32625 310.10095 286.97475 314.18117 295.1007 314.18117 L 413.2962 314.18117 C 421.42217 314.18117 428.07067 310.10095 428.07067 305.11402 L 428.07067 259.7783 C 428.07067 254.79136 421.42217 250.71114 413.2962 250.71114 Z M 413.2962 305.11402 L 295.1007 305.11402 L 295.1007 259.7783 L 413.2962 259.7783 L 413.2962 305.11402 Z" fill="#d4c08e"/>
+      </g>
+      <g id="Graphic_76">
+        <title>Folder Open</title>
+        <path d="M 640.53694 131.06715 L 566.6847 131.06715 L 548.22165 122 L 492.8325 122 C 482.6778 122 474.46173 126.08022 474.46173 131.06715 L 474.3694 185.47002 C 474.3694 190.45695 482.6778 194.53717 492.8325 194.53717 L 640.53694 194.53717 C 650.6916 194.53717 659 190.45695 659 185.47002 L 659 140.1343 C 659 135.14736 650.6916 131.06715 640.53694 131.06715 Z M 640.53694 185.47002 L 492.8325 185.47002 L 492.8325 140.1343 L 640.53694 140.1343 L 640.53694 185.47002 Z" fill="#d4c08e"/>
+      </g>
+      <g id="Graphic_77">
+        <text transform="translate(500.7932 153.35855)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">_GeneralModuleFiles</tspan>
+        </text>
+      </g>
+      <g id="Line_78">
+        <path d="M 428.07067 277.91258 L 451.2431 277.91258 L 451.2431 158.26858 L 474.4156 158.26858" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_79">
+        <title>Insert Drive File</title>
+        <path d="M 714.6491 109 C 712.6421 109 711.01825 110.6421 711.01825 112.64911 L 711 141.84198 C 711 143.84899 712.62385 145.49109 714.6309 145.49109 L 736.5438 145.49109 C 738.5508 145.49109 740.1929 143.84899 740.1929 141.84198 L 740.1929 119.94733 L 729.24555 109 L 714.6491 109 Z M 727.421 121.77188 L 727.421 111.73683 L 737.456 121.77188 L 727.421 121.77188 Z" fill="#3382be"/>
+      </g>
+      <g id="Graphic_80">
+        <title>Insert Drive File</title>
+        <path d="M 714.6491 158.04608 C 712.6421 158.04608 711.01825 159.68818 711.01825 161.69519 L 711 190.88806 C 711 192.89507 712.62385 194.53717 714.6309 194.53717 L 736.5438 194.53717 C 738.5508 194.53717 740.1929 192.89507 740.1929 190.88806 L 740.1929 168.9934 L 729.24555 158.04608 L 714.6491 158.04608 Z M 727.421 170.81796 L 727.421 160.7829 L 737.456 170.81796 L 727.421 170.81796 Z" fill="#3382be"/>
+      </g>
+      <g id="Line_81">
+        <path d="M 659 158.26858 L 685.0046 158.26858 L 685.0046 127.24555 L 711.0091 127.24555" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_82">
+        <path d="M 659 158.26858 L 685.0046 158.26858 L 685.0046 176.29162 L 711.0091 176.29162" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_83">
+        <text transform="translate(758.2643 141.46374)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">support files</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>
