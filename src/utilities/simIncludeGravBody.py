@@ -83,7 +83,7 @@ class gravBodyFactory(object):
         return self.gravBodies
 
     # Note, in the `create` functions below the `isCentralBody` and `useSphericalHarmParams` are
-    # all set to False in teh `GravGodyData()` constructor.
+    # all set to False in the `GravGodyData()` constructor.
 
     def createSun(self):
         sun = gravityEffector.GravBodyData()

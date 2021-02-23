@@ -29,6 +29,7 @@ Orbital Simulations
    Multiple Gravitational Bodies <scenarioOrbitMultiBody>
    Defining Motion Relative to Planet <scenarioCentralBody>
    Simulating Trajectory about Multiple Celestial Bodies <scenarioPatchedConics>
+   Including Custom Gravitational Bodies <scenarioCustomGravBody>
 
 
 Attitude Simulations

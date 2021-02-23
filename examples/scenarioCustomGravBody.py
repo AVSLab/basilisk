@@ -20,30 +20,35 @@ r"""
 Overview
 --------
 
-Demonstrates how to convert spacecraft states, stored in a text file from another program, into Basilisk
-messages using :ref:`dataFileToViz`.  These messages are red by :ref:`vizInterface` to save a :ref:`Vizard <vizard>`
-compatible data play for offline playback and analysis.  In this simulation a servicer is holding a relative
-position with respect to an uncontrolled satellite.  Custom spacecraft models are specified for Vizard
-in the folder :ref:`Folder_data`.
+Demonstrates how to setup a custom gravity object in Basilisk that is not directly supported by
+the ``simIncludeGravBody.py`` file.  In this simulation the sun is created using standard values, the Earth
+is created using custom values, and the asteroid Itokawa is created with custom values.
+Further, the Vizard binary file is setup to load up a custom CAD model for the asteroid.  The spacecraft
+orbit is defined relative to the asteroid.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
-      python3 scenarioDataToViz.py
+      python3 scenarioCustomGravBody.py
 
 The simulation layout is shown in the following illustration.  A single simulation process is created
 which contains both modules.
 
-.. image:: /_images/static/test_scenarioDataToViz.svg
+.. image:: /_images/static/test_scenarioCustomGravBody.svg
    :align: center
 
-When the simulation completes several plots are shown for the MRP norm attitude history and the
-inertial relative position vector components.  A servicer spacecraft approaches a target and holds a specific
-target-frame fixed location even while the target itself is slowly rotating.  The servicer and target orientations
-are controlled to be the same to prepare for a final docking maneuver.  If the data is saved to a Vizard file,
-then the visualization should look like:
+:ref:`planetEphemeris` is used to create the planet ephemeris states. The sun is assumed to be stationary,
+while Earth is on a circular orbit and Itokawa is on its elliptical heliocentric orbit.
 
-.. image:: /_images/static/vizard-DataFile.jpg
-   :align: center
+The method ``createCustomGravObject()`` is used to create the BSK grav bodies for both earth and Itokawa.
+The earth body is already supported in :ref:`simIncludeGravBody`, but in this script we show how this could
+be customized.  The gravity body ephemeris states are connected to the :ref:`planetEphemeris` planet
+state output messages.
+
+Finally, the recorded states will all be relative to the inertial origin at the sun.  :ref:`planetEphemeris` does not
+have the ``zeroBase`` capability as :ref:`spiceInterface` has.  This script also records the asteroid
+states so that the plot is done of the spacecraft motion relative to the asteroid.
+
+The simulation executes and shows a plot of the spacecraft motion relative to the asteroid.
 
 Illustration of Simulation Results
 ----------------------------------
@@ -52,10 +57,7 @@ Illustration of Simulation Results
 
     show_plots = True
 
-.. image:: /_images/Scenarios/scenarioDataToViz1.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioDataToViz2.svg
+.. image:: /_images/Scenarios/scenarioCustomGravBody1.svg
    :align: center
 
 """
@@ -63,9 +65,9 @@ Illustration of Simulation Results
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Basic simulation showing a servicer (3-axis attitude controlled) and a tumbling debris object.
+# Purpose:  Basic simulation showing how to setup a custom gravity object
 # Author:   Hanspeter Schaub
-# Creation Date:  Dec. 29, 2019
+# Creation Date:  Feb. 23, 2021
 #
 
 import os
@@ -74,7 +76,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import orbitalMotion
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import planetEphemeris
 
 try:
@@ -117,11 +119,13 @@ def run(show_plots):
     simulationTime = macros.min2nano(120.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # setup grav body orbit
+    # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
     gravBodyEphem.ModelTag = 'planetEphemeris'
     scSim.AddModelToTask(simTaskName, gravBodyEphem)
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["Itokawa", "earth"]))
+
+    # specify orbits of gravitational bodies
     oeAsteroid = planetEphemeris.ClassicElementsMsgPayload()
     oeAsteroid.a = 1.3241 * orbitalMotion.AU * 1000  # meters
     oeAsteroid.e = 0.2801
@@ -151,14 +155,13 @@ def run(show_plots):
     earth = gravFactory.createCustomGravObject("earth", 0.3986004415E+15, radEquator=6378136.6)
     earth.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[1])
 
-    # create SC dummy objects to setup basic Vizard settings.  Only one has to have the Grav Bodies attached
-    # to show up in Vizard
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # create SC object
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
     scSim.AddModelToTask(simTaskName, scObject)
 
-    # setup orbit initial conditions
+    # setup orbit initial conditions about the asteroid
     oe = orbitalMotion.ClassicElements()
     oe.a = 500.0  # meters
     oe.e = 0.0001
@@ -179,13 +182,17 @@ def run(show_plots):
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     scRec = scObject.scStateOutMsg.recorder(samplingTime)
+    astRec = gravBodyEphem.planetOutMsgs[0].recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scRec)
+    scSim.AddModelToTask(simTaskName, astRec)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
+    # Note that the gravitational body information is pulled automatically from the spacecraft object(s)
+    # Even if custom gravitational bodies are added, this information is pulled by the method below
     if vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                  , saveFile=fileName
+                                                  # , saveFile=fileName
                                                   )
         viz.settings.showSpacecraftLabels = 1
         # load CAD for target spacecraft
@@ -195,7 +202,6 @@ def run(show_plots):
                                      simBodiesToModify=['Itokawa'],
                                      scale=[962, 962, 962])
 
-
     #   initialize Simulation
     scSim.InitializeSimulation()
 
@@ -203,8 +209,8 @@ def run(show_plots):
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
-    # retrieve logged data
-    posData = scRec.r_BN_N
+    # retrieve logged spacecraft position relative to asteroid
+    posData = scRec.r_BN_N - astRec.PositionVector
 
     #
     #   plot the results
@@ -216,12 +222,12 @@ def run(show_plots):
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
     for idx in range(3):
-        plt.plot(timeAxis, posData[:, idx] / 1000.,
+        plt.plot(timeAxis, posData[:, idx] ,
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
+                 label='$r_{BI,' + str(idx) + '}$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Inertial Position [km]')
+    plt.xlabel('Time [h]')
+    plt.ylabel('Itokawa Relative Position [m]')
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
@@ -241,5 +247,5 @@ def run(show_plots):
 #
 if __name__ == "__main__":
     run(
-        False  # show_plots
+        True  # show_plots
     )
