@@ -208,6 +208,22 @@ def run(show_plots):
     scenarioSim.AddModelToTask(taskName, gsLog)
     scenarioSim.AddModelToTask(taskName, gsAccessLog)
 
+    # setup Vizard support
+    viz = vizSupport.enableUnityVisualization(scenarioSim, taskName, scObject
+                                              # , saveFile=__file__
+                                              )
+    vizSupport.addLocation(viz, stationName="Boulder Station"
+                           , parentBodyName='earth'
+                           , r_GP_P=groundStation.r_LP_P_Init
+                           , fieldOfView=np.radians(160.)
+                           , color='pink'
+                           , range=1000.0*1000  # meters
+                           )
+    viz.settings.spacecraftSizeMultiplier = 1.5
+    viz.settings.showLocationCommLines = 1
+    viz.settings.showLocationCones = 1
+    viz.settings.showLocationLabels = 1
+
     # Need to call the self-init and cross-init methods
     scenarioSim.InitializeSimulation()
 
