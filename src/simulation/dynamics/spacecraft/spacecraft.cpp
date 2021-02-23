@@ -103,7 +103,7 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
     this->scStateOutMsg.write(&stateOut, this->moduleID, clockTime);
 
     // - Populate mass state output message
-    SCPlusMassPropsMsgPayload massStateOut;
+    SCMassPropsMsgPayload massStateOut;
     massStateOut = this->scMassOutMsg.zeroMsgPayload();
     massStateOut.massSC = (*this->m_SC)(0,0);
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);

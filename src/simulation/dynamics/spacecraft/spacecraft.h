@@ -31,7 +31,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCPlusMassPropsMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 
 #include "../_GeneralModuleFiles/hubEffector.h"
@@ -79,7 +79,7 @@ public:
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     BSKLogger bskLogger;                      //!< -- BSK Logging
     Message<SCPlusStatesMsgPayload> scStateOutMsg;      //!< spacecraft state output message
-    Message<SCPlusMassPropsMsgPayload> scMassOutMsg;    //!< spacecraft mass properties output message
+    Message<SCMassPropsMsgPayload> scMassOutMsg;    //!< spacecraft mass properties output message
 
 public:
     Spacecraft();                    //!< -- Constructor

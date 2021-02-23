@@ -41,7 +41,7 @@ provides information on what this message is used for.
       - :ref:`SCPlusStatesMsgPayload`
       - Spacecraft state output message
     * - scMassStateOutMsg
-      - :ref:`SCPlusMassPropsMsgPayload`
+      - :ref:`SCMassPropsMsgPayload`
       - Output message containing the spacecraft mass properties
     * - attRefInMsg
       - :ref:`AttRefMsgPayload`

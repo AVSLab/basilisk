@@ -46,7 +46,7 @@ namespace std {
 
 %include "architecture/msgPayloadDefC/SCPlusStatesMsgPayload.h"
 struct SCPlusStatesMsg_C;
-%include "architecture/msgPayloadDefC/SCPlusMassPropsMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
 struct SCPlusMassPropsMsg_C;
 %include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;
