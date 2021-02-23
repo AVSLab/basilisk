@@ -317,7 +317,12 @@ if __name__ == "__main__":
     for opt, value in bskModuleOptionsString.items():
         if str(vars(args)[opt]):
             if opt=="pathToExternalModules":
-                conanCmdString.append(' -o ' + opt + '=' + os.path.abspath(str(vars(args)[opt]).rstrip(os.path.sep)))
+                externalPath = os.path.abspath(str(vars(args)[opt]).rstrip(os.path.sep))
+                if os.path.exists(externalPath):
+                    conanCmdString.append(' -o ' + opt + '=' + externalPath)
+                else:
+                    print(f"{failColor}Error: path {str(vars(args)[opt])} does not exist{endColor}")
+                    sys.exit(1)
             else:
                 conanCmdString.append(' -o ' + opt + '=' + str(vars(args)[opt]))
     for opt, value in bskModuleOptionsFlag.items():

@@ -540,6 +540,7 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/cppModuleTemplate" CPP_MODU
 
 if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 	string(REPLACE "\\" "/" EXTERNAL_MODULES_PATH "${EXTERNAL_MODULES_PATH}")
+	include_directories("${EXTERNAL_MODULES_PATH}")
 	find_package_targets("${EXTERNAL_MODULES_PATH}" EXTERNAL_MODULE_TARGETS)
 	if(EXISTS "${EXTERNAL_MODULES_PATH}/ExternalModules/_GeneralModuleFiles")
 		generate_package_libraries("${EXTERNAL_MODULES_PATH}")

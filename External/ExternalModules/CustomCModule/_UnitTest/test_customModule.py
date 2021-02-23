@@ -19,7 +19,7 @@
 
 #
 #   Unit Test Script
-#   Module Name:        fswModuleTemplate
+#   Module Name:        customModule
 #   Author:             (First Name) (Last Name)
 #   Creation Date:      Month Day, Year
 #
@@ -42,7 +42,7 @@ from Basilisk.architecture import bskLogging
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_module(show_plots):     # update "module" in this function name to reflect the module name
+def test_module():     # update "module" in this function name to reflect the module name
     r"""
     **Validation Test Description**
 
@@ -72,11 +72,11 @@ def test_module(show_plots):     # update "module" in this function name to refl
     """
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
-    [testResults, testMessage] = fswModuleTestFunction(show_plots)
+    [testResults, testMessage] = customModuleTestFunction()
     assert testResults < 1, testMessage
 
 
-def fswModuleTestFunction(show_plots):
+def customModuleTestFunction():
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -204,8 +204,6 @@ def fswModuleTestFunction(show_plots):
     plt.xlabel('Time [min]')
     plt.ylabel(r'Msg Output Vector States')
 
-    if show_plots:
-        plt.show()
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -217,6 +215,4 @@ def fswModuleTestFunction(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    fswModuleTestFunction(
-               True        # show_plots
-    )
+    test_module()

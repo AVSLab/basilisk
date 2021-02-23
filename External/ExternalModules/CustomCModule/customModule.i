@@ -32,7 +32,7 @@
 %include "customModule.h"
 
 // sample Module support file to be included in this sub-module
-%include "../../msgPayloadDefC/CustomModuleMsgPayload.h"
+%include "msgPayloadDefC/CustomModuleMsgPayload.h"
 struct CustomModuleMsg_C;
 
 %pythoncode %{

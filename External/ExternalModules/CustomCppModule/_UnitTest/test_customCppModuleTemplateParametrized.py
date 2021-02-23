@@ -66,7 +66,7 @@ from Basilisk.architecture import bskLogging
 ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, param1, param2, accuracy):
+def test_module(param1, param2, accuracy):
     r"""
     **Validation Test Description**
 
@@ -115,11 +115,11 @@ def test_module(show_plots, param1, param2, accuracy):
     contained within this HTML ``pytest`` report.
     """
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = fswModuleTestFunction(show_plots, param1, param2, accuracy)
+    [testResults, testMessage] = customCppModuleTestFunction( param1, param2, accuracy)
     assert testResults < 1, testMessage
 
 
-def fswModuleTestFunction(show_plots, param1, param2, accuracy):
+def customCppModuleTestFunction( param1, param2, accuracy):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -237,9 +237,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
     unitTestSim.ExecuteSimulation()
 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    # plot a sample variable.
+
     plt.close("all")    # close all prior figures so we start with a clean slate
     plt.figure(1)
     plt.plot(dataLog.times()*macros.NANO2SEC, variableState,
@@ -258,8 +256,6 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     plt.xlabel('Time [min]')
     plt.ylabel(r'Msg Output Vector States')
 
-    if show_plots:
-        plt.show()
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -276,7 +272,6 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
 #
 if __name__ == "__main__":
     test_module(              # update "module" in function name
-                 False,
                  1,           # param1 value
                  1,           # param2 value
                  1e-12        # accuracy
