@@ -1,8 +1,8 @@
 .. _examples:
 
 
-Example Scripts
-===============
+Integrated Example Scripts
+==========================
 
 To learn how to use Basilisk it is often convenient to study sample scripts and see how they were implemented.  Below are a series of example Basilisk scripts grouped by topics and complexity.  In each script the primary simulation is executed by the ``run`` method.  The reader can learn from this implementation and the numerous associated in-line comments.  The first sections illustrate how to setup simple spacecraft simulations and then the following sections begin to add more complexity.
 

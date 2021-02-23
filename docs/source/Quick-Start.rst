@@ -1,7 +1,3 @@
-.. Basilisk documentation master file, created by
-   sphinx-quickstart on Mon Sep 23 13:52:19 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
 Quick-Start
 ===========
@@ -25,6 +21,6 @@ to run, jump directly to :ref:`examples` section.
    :caption: Contents:
 
    Quick-Start/bskPrinciples
-   Quick-Start/makingModules
    examples/index
+   Quick-Start/makingModules
 
