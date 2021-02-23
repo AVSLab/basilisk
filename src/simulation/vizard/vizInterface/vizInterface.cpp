@@ -91,7 +91,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
     std::vector<VizSpacecraftData>::iterator scIt;
     for (scIt = this->scData.begin(); scIt != this->scData.end(); scIt++)
     {
-        /* Check SCPlus input message */
+        /* Check spacecraft input message */
         if (scIt->scStateInMsg.isLinked()) {
             scIt->scStateInMsgStatus.dataFresh = false;
             scIt->scStateInMsgStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
@@ -214,15 +214,15 @@ void VizInterface::ReadBSKMessages()
 
     for (scIt = this->scData.begin(); scIt != this->scData.end(); scIt++)
     {
-        /* Read BSK SCPlus msg */
+        /* Read BSK spacecraft state msg */
         if (scIt->scStateInMsg.isLinked()){
-            SCStatesMsgPayload localSCPlusArray;
-            localSCPlusArray = scIt->scStateInMsg();
+            SCStatesMsgPayload localSCStateArray;
+            localSCStateArray = scIt->scStateInMsg();
             if(scIt->scStateInMsg.isWritten() && scIt->scStateInMsg.timeWritten() != scIt->scStateInMsgStatus.lastTimeTag){
                 scIt->scStateInMsgStatus.lastTimeTag = scIt->scStateInMsg.timeWritten();
                 scIt->scStateInMsgStatus.dataFresh = true;
             }
-            scIt->scPlusMessage = localSCPlusArray;
+            scIt->scStateMsgBuffer = localSCStateArray;
         }
 
         /* Read BSK RW constellation msg */
@@ -605,14 +605,14 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     std::vector<VizSpacecraftData>::iterator scIt;
     for (scIt = scData.begin(); scIt != scData.end(); scIt++)
     {
-        /*! Write SCPlus output msg */
+        /*! Write spacecraft state output msg */
         if (scIt->scStateInMsg.isLinked() && scIt->scStateInMsgStatus.dataFresh){
             vizProtobufferMessage::VizMessage::Spacecraft* scp = message->add_spacecraft();
             scp->set_spacecraftname(scIt->spacecraftName);
             for (int i=0; i<3; i++){
-                scp->add_position(scIt->scPlusMessage.r_BN_N[i]);
-                scp->add_velocity(scIt->scPlusMessage.v_BN_N[i]);
-                scp->add_rotation(scIt->scPlusMessage.sigma_BN[i]);
+                scp->add_position(scIt->scStateMsgBuffer.r_BN_N[i]);
+                scp->add_velocity(scIt->scStateMsgBuffer.v_BN_N[i]);
+                scp->add_rotation(scIt->scStateMsgBuffer.sigma_BN[i]);
             }
 //            scIt->scStateInMsgID.dataFresh = false;
 
