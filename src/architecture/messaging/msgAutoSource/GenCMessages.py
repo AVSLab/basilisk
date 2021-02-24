@@ -5,9 +5,16 @@ import shutil
 import argparse
 from sys import platform
 
-
 class GenerateMessages:
 
+    """
+    A class to generate C and C++ messages using a defined template before the build.
+
+    Attributes:
+        pathToExternalModules: string
+                path to add messages for external module (default empty string)
+
+    """
     def __init__(self, pathToExternalModules):
         self.messageTemplate = ""
         self.headerTemplate = ""
@@ -21,6 +28,9 @@ class GenerateMessages:
 
 
     def __createMessageAndHeaderTemplate(self):
+        """
+        A method which reads the license and README add create messageTemplate and headerTemplate
+        """
         licenseREADME = list()
         with open("../../../../LICENSE", 'r') as f:
             licenseREADME.extend(["/*", f.read(),"*/\n\n"])
@@ -34,6 +44,9 @@ class GenerateMessages:
             self.headerTemplate += f.read()
 
     def __recreateDestinationDirectory(self):
+        """
+        Method to delete the existing destination directory and recreate it.
+        """
         if os.path.exists(self.autoSourceDestDir):
             shutil.rmtree(self.autoSourceDestDir, ignore_errors=True)
         try:
@@ -45,6 +58,9 @@ class GenerateMessages:
         os.makedirs(os.path.dirname(self.destinationDir))
 
     def __generateMessagingHeaderInterface(self):
+        """
+        Method to generate message header interface. It is empty for windows.
+        """
         messaging_header_i_template = ""
         if platform == "linux" or platform == "linux2":
             messaging_header_i_template = "#define SWIGWORDSIZE64\n"
@@ -52,7 +68,9 @@ class GenerateMessages:
             w.write(messaging_header_i_template)
 
     def __createMessageC(self,parentPath, external=False):
-
+        """
+        Method to add C messages to messaging.auto.i file which will be used to create swig interface for messaging
+        """
         if external:
             messaging_i_template = ""
             relativePath = os.path.relpath(self.pathToExternalModules, "../../../architecture").replace("\\",
@@ -70,6 +88,9 @@ class GenerateMessages:
             w.write(messaging_i_template)
 
     def __createMessageCpp(self,parentPath, external=False):
+        """
+        Method to add Cpp messages to messaging.auto.i file which will be used to create swig interface for messaging
+        """
         if external:
             messaging_i_template = ""
         else:
@@ -87,6 +108,9 @@ class GenerateMessages:
             w.write(messaging_i_template)
 
     def __generateMessages(self):
+        """
+        Method which call create messages methods for c and Cpp messages for basilisk as well as external messages
+        """
         # append all C msg definitions to the dist3/autoSource/messaging.auto.i file that is imported into messaging.auto.i
         self.__createMessageC("../..")
         if self.pathToExternalModules and os.path.exists(os.path.join(self.pathToExternalModules,"msgPayloadDefC")):
@@ -103,6 +127,9 @@ class GenerateMessages:
             self.__createMessageCpp(self.pathToExternalModules, True)
 
     def __toMessage(self, structData):
+        """
+        Method to generate Cpp wrapper for C messages.
+        """
         if structData:
             structData = structData.replace(' ', '').split(',')
             structName = structData[0]
@@ -117,13 +144,19 @@ class GenerateMessages:
                 w.write(definitions)
             with open(header_file, 'w') as w:
                 w.write(header)
+
     def initialize(self):
+        """
+        Method to initialize class members.
+        """
         self.__createMessageAndHeaderTemplate()
         self.__recreateDestinationDirectory()
         self.__generateMessagingHeaderInterface()
 
     def run(self):
-
+        """
+        Method to run the generation workflow
+        """
         self.__generateMessages()
         # create swig file for C-msg C interface methods
         self.swigTemplate = open(self.autoSourceDestDir + 'cMsgCInterfacePy.auto.i', 'w')

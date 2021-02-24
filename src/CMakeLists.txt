@@ -93,11 +93,9 @@ function(add_message_headers)
 
 	file(GLOB CMESSAGE_HEADER_FILES
 	            "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefC/*.h"
-	            "${CMAKE_SOURCE_DIR}/../../External/msgPayloadDefC/*.h"
 	        )
 	file(GLOB CPPMESSAGE_HEADER_FILES
 	            "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefCpp/*.h"
-	            "{EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/*.h"
 	        )
 	add_custom_target(msgPayloadDefC SOURCES ${CMESSAGE_HEADER_FILES})
 	add_custom_target(msgPayloadDefCpp SOURCES ${CPPMESSAGE_HEADER_FILES})

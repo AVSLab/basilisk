@@ -246,7 +246,6 @@ class BasiliskConan(ConanFile):
         cmake = CMake(self, set_cmake_flags=True, generator=self.generator)
         cmake.definitions["BUILD_OPNAV"] = self.options.opNav
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
-        print("This is external path", self.options.pathToExternalModules)
         cmake.definitions["EXTERNAL_MODULES_PATH"] = self.options.pathToExternalModules
         cmake.parallel = True
         cmake.configure()
