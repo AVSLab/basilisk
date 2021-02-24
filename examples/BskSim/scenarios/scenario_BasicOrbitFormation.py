@@ -178,7 +178,7 @@ class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
             viz = vizSupport.enableUnityVisualization(self, self.DynModels.taskName
                                                       , [self.get_DynModel().scObject, self.get_DynModel().scObject2]
                                                       , rwEffectorList=[self.DynModels.rwStateEffector, self.DynModels.rwStateEffector2]
-                                                      , saveFile=__file__
+                                                      # , saveFile=__file__
                                                       )
 
     def configure_initial_conditions(self):

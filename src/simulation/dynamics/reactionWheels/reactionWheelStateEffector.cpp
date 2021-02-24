@@ -482,21 +482,13 @@ void ReactionWheelStateEffector::ReadInputs()
 	std::vector<double>::iterator CmdIt;
 	uint64_t i;
 
-    //! - If the input message is not linked, return without touching states
-	if(!this->rwMotorCmdInMsg.isLinked())
-	{
-		bskLogger.bskLog(BSK_ERROR, "reactionWheelStateEffector.rwMotorCmdInMsg was not linked.");
-		return;
-	}
-
-	//! - Zero the command buffer and read the incoming command array
-    this->incomingCmdBuffer = this->rwMotorCmdInMsg();
-
-	//! - Check if message has already been read, if stale return
-	//    if(prevCommandTime==LocalHeader.WriteClockNanos) {
-	//        return;
-	//    }
-	this->prevCommandTime = this->rwMotorCmdInMsg.timeWritten();
+	//! read the incoming command array, or zero if not connected
+    if (this->rwMotorCmdInMsg.isLinked()) {
+        this->incomingCmdBuffer = this->rwMotorCmdInMsg();
+        this->prevCommandTime = this->rwMotorCmdInMsg.timeWritten();
+    } else {
+        this->incomingCmdBuffer = this->rwMotorCmdInMsg.zeroMsgPayload();
+    }
 
 	//! - Set the NewRWCmds vector.  Using the data() method for raw speed
 	RWCmdMsgPayload *CmdPtr;

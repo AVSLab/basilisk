@@ -26,7 +26,7 @@ provides information on what this message is used for.
       - Description
     * - rwMotorCmdInMsg
       - :ref:`ArrayMotorTorqueMsgPayload`
-      - RW motor torque array cmd input message
+      - (optional) RW motor torque array cmd input message.  If not connected the motor torques are set to zero.
     * - rwSpeedOutMsg
       - :ref:`RWSpeedMsgPayload`
       - RW speed array output message
