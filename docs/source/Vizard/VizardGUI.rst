@@ -11,20 +11,7 @@ User Guide
 Startup Panel
 -------------
 
-When starting up the Vizard software the user is presented with a resolution and graphics setting option panel as shown above.  On some platforms the Option key must be pressed when launching the program
-to show this panel.  There is a toggle on the lower portion of this panel to turn off this plane on start-up and only show it if the program is started while pressing the option key. Note that the Vizard screen size can be dynamically changed after startup as well.
-
-.. image:: ../_images/static/vizard-img0.jpg
-   :align: center
-   :scale: 40 %
-
-Note the 3 quality settings that you can choose.  `Fast` mode does not render shadows but does basic shading.  It is
-convenient on older computers or when render speed is essential.  `Good` mode
-casts good quality shadows, but does not do any full-screen anti-aliasing.  `Beautiful` mode casts the best
-shadows and includes 2x anti-aliasing.
-
-	
-Next Vizard presents a panel where the user can select which simulation to visualize. To play back a previously recorded BSK simulation press the `Select` button and navigate to the binary BSK recording file. After a file has been selected press the `Start Visualization` button.
+When starting up the Vizard software a panel is presented where the user can select which simulation to visualize. To play back a previously recorded BSK simulation press the `Select` button and navigate to the binary BSK recording file. After a file has been selected press the `Start Visualization` button.
 
 .. image:: ../_images/static/vizard-img2.jpg
    :align: center
