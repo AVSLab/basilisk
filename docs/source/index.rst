@@ -1,8 +1,8 @@
 
 .. _aboutBSK:
 
-Welcome to the Basilisk Astrodynamics Framework Documentation
-=============================================================
+Welcome to Basilisk: an Astrodynamics Simulation Framework
+==========================================================
 
 .. image:: _images/static/bannerImage.jpg
        :align: center
@@ -26,8 +26,8 @@ Architecture
 
     **Status:** |version|
 
-The Basilisk astrodynamics software architecture is being designed to be
-capable of both faster-than realtime simulations, including repeatable
+Basilisk, or BSK for short, is a software framework
+capable of both faster-than realtime spacecraft simulations, including repeatable
 Monte-Carlo simulation options, as well as providing real-time options
 for hardware-in-the-loop simulations. The Basilisk package is designed
 as a set of Python modules written in C/C++ which allows for the ease of
@@ -193,7 +193,7 @@ Related Publications
 
    About
    Install
-   Quick-Start
+   Learn
    Support
    Documentation/index
    externalTools/index

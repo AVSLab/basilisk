@@ -1,7 +1,7 @@
 .. _bskPrinciples-8:
 
-Enabling and Disabling Tasks
-============================
+Advanced: Enabling and Disabling Tasks
+======================================
 
 
 .. sidebar:: Source Code

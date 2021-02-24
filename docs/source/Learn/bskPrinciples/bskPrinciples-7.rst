@@ -1,7 +1,7 @@
 .. _bskPrinciples-7:
 
-Redirecting Module Output to Stand-Alone Message
-================================================
+Advanced: Redirecting Module Output to Stand-Alone Message
+==========================================================
 
 
 .. sidebar:: Source Code
