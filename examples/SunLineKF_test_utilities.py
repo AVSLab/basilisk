@@ -21,7 +21,7 @@ from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-path = path + "/test"
+path = path + "/Support"
 
 import matplotlib.pyplot as plt
 
