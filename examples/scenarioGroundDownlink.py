@@ -19,7 +19,10 @@ Overview
 --------
 
 This scenario demonstrates how the on-board power system can be used to simulate data down-link that is dependent on access
-to specific geographic locations (i.e., ground stations). 
+to specific geographic locations (i.e., ground stations).
+
+.. image:: /_images/static/scenarioGroundDownlink.jpg
+   :align: center
 
 This scenario is intended to provide both an overview and a concrete demonstration of the features and interface of
 :ref:`GroundLocation`, which represents a specific ground location and computes visibility from that location to spacecraft,
