@@ -20,7 +20,7 @@ bskModuleOptionsBool = {
 }
 bskModuleOptionsString = {
     "autoKey": "",
-    "pathToExternalModules":""
+    "pathToExternalModules": ""
 }
 bskModuleOptionsFlag = {
     "clean": False,
@@ -238,6 +238,10 @@ class BasiliskConan(ConanFile):
             subprocess.check_call(cmdString)
             os.chdir(bskPath)
 
+        if self.options.pathToExternalModules:
+            print(statusColor + "Including External Folder: " + endColor + str(self.options.pathToExternalModules))
+
+
         root = os.path.abspath(os.path.curdir)
 
         self.source_folder = os.path.join(root, "src")
@@ -315,7 +319,7 @@ if __name__ == "__main__":
         conanCmdString.append(' -o ' + opt + '=' + str(vars(args)[opt]))
     for opt, value in bskModuleOptionsString.items():
         if str(vars(args)[opt]):
-            if opt=="pathToExternalModules":
+            if opt == "pathToExternalModules":
                 externalPath = os.path.abspath(str(vars(args)[opt]).rstrip(os.path.sep))
                 if os.path.exists(externalPath):
                     conanCmdString.append(' -o ' + opt + '=' + externalPath)
