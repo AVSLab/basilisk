@@ -31,7 +31,7 @@ Both absolute or relative paths to the external module folder are acceptable.  L
 
     python3 conanfile.py --clean --pathToExternalModules ../External
 
-
+By calling the above command a project file (Xcode, MS Visual Studio or makefile) is created that integrates both the core Basilisk components as well as the modules from this external folder.  The IDE shows these under a folder called ``ExternalModules``.  The custom messages are grouped with the core BSK messages under ``architecture/msgPayloadDefC`` and ``architecture/msgPayloadDefCpp``.
 
 
 Directory Structure
