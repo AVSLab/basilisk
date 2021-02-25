@@ -233,9 +233,10 @@ class BasiliskConan(ConanFile):
             # build the protobuffer support files
             bskPath = os.getcwd()
             os.chdir(os.path.join(bskPath, 'src', 'utilities', 'vizProtobuffer'))
-            print(statusColor + "Building protobuffer interface files..." + endColor)
+            print(statusColor + "Building protobuffer interface files:" + endColor, end=" ")
             cmdString = ["protoc", "--cpp_out=./", "vizMessage.proto"]
             subprocess.check_call(cmdString)
+            print("Done")
             os.chdir(bskPath)
 
         if self.options.pathToExternalModules:
@@ -252,6 +253,7 @@ class BasiliskConan(ConanFile):
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
         cmake.definitions["EXTERNAL_MODULES_PATH"] = self.options.pathToExternalModules
         cmake.parallel = True
+        print(statusColor + "Configuring cmake..." + endColor)
         cmake.configure()
         add_basilisk_to_sys_path()
         if self.options.buildProject: 
