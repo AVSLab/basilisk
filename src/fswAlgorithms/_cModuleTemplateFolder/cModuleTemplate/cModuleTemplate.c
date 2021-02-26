@@ -97,7 +97,7 @@ void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */
     char info[MAX_LOGGING_LENGTH];
-    sprintf(info, "C Module ID %lld ran Update at %fs", moduleID, (double) callTime/(1e9));
+    sprintf(info, "C Module ID %lld ran Update at %fs", (long long int) moduleID, (double) callTime/(1e9));
     _bskLog(configData->bskLogger, BSK_INFORMATION, info);
 
     return;

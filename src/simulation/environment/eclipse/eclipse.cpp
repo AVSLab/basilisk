@@ -62,13 +62,13 @@ void Eclipse::Reset(uint64_t CurrenSimNanos)
  */
 void Eclipse::readInputMessages()
 {
-    for(int c = 0; c<this->positionInMsgs.size(); c++){
+    for (long unsigned int c = 0; c<this->positionInMsgs.size(); c++){
         this->scStateBuffer.at(c) = this->positionInMsgs.at(c)();
     }
 
     this->sunInMsgState = this->sunInMsg();
 
-    for(int c = 0; c<this->planetInMsgs.size(); c++){
+    for (long unsigned int c = 0; c<this->planetInMsgs.size(); c++){
         this->planetBuffer[c] = this->planetInMsgs[c]();
     }
 }
