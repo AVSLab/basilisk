@@ -61,7 +61,7 @@ SpiceInterface::SpiceInterface()
  that was allocated in the constructor*/
 SpiceInterface::~SpiceInterface()
 {
-    for (int c=0; c<this->planetStateOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->planetStateOutMsgs.size(); c++) {
         delete this->planetStateOutMsgs.at(c);
     }
     delete [] this->spiceBuffer;
@@ -190,7 +190,7 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
     this->spiceTimeOutMsg.write(&OutputData, this->moduleID, CurrentClock);
     
     //! - Iterate through all of the planets that are on and write their outputs
-    for (int c=0; c<this->planetStateOutMsgs.size(); c++)
+    for (long unsigned int c=0; c<this->planetStateOutMsgs.size(); c++)
     {
         this->planetStateOutMsgs[c]->write(&this->planetData[c], this->moduleID, CurrentClock);
     }
@@ -227,7 +227,7 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     SpiceInt frmCode;
 
     /* clear the planet state message and payload vectors */
-    for (int c=0; c<this->planetStateOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->planetStateOutMsgs.size(); c++) {
         delete this->planetStateOutMsgs.at(c);
     }
     this->planetStateOutMsgs.clear();

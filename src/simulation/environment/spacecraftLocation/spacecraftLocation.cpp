@@ -49,7 +49,7 @@ SpacecraftLocation::SpacecraftLocation()
  */
 SpacecraftLocation::~SpacecraftLocation()
 {
-    for (int c=0; c<this->accessOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->accessOutMsgs.size(); c++) {
         delete this->accessOutMsgs.at(c);
     }
     return;
@@ -119,7 +119,7 @@ bool SpacecraftLocation::ReadMessages()
     if(!this->scStateInMsgs.empty())
     {
         scRead = true;
-        for (int c = 0; c < this->scStateInMsgs.size(); c++) {
+        for (long unsigned int c = 0; c < this->scStateInMsgs.size(); c++) {
             scMsg = this->scStateInMsgs.at(c)();
             scRead = scRead && this->scStateInMsgs.at(c).isWritten();
             this->scStatesBuffer.push_back(scMsg);
@@ -144,7 +144,7 @@ bool SpacecraftLocation::ReadMessages()
 void SpacecraftLocation::WriteMessages(uint64_t CurrentClock)
 {
     //! - write access message for each spacecraft
-    for (int c=0; c< this->accessMsgBuffer.size(); c++) {
+    for (long unsigned int c=0; c< this->accessMsgBuffer.size(); c++) {
         this->accessOutMsgs.at(c)->write(&this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
     }
 }
@@ -169,7 +169,7 @@ void SpacecraftLocation::computeAccess()
     r_LP_P[2] = r_LP_P[2] * this->zScale;
     
     // compute other spacecraft positions relative to planet
-    for (int c=0; c < this->scStateInMsgs.size(); c++) {
+    for (long unsigned int c=0; c < this->scStateInMsgs.size(); c++) {
         Eigen::Vector3d r_SN_N;     // other satellite position relative to inertial
         Eigen::Vector3d r_SP_P;     // other satellite position relative to planet
         Eigen::Vector3d r_SL_P;     // other satellite position relative to primary spacecraft location L

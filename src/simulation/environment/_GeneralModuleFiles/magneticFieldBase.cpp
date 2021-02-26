@@ -59,7 +59,7 @@ MagneticFieldBase::MagneticFieldBase()
  */
 MagneticFieldBase::~MagneticFieldBase()
 {
-    for (int c=0; c<this->envOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->envOutMsgs.size(); c++) {
         delete this->envOutMsgs.at(c);
     }
     return;
@@ -138,7 +138,7 @@ void MagneticFieldBase::customSetEpochFromVariable()
  */
 void MagneticFieldBase::writeMessages(uint64_t CurrentClock)
 {
-    for (int c=0; c<this->envOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->envOutMsgs.size(); c++) {
         this->envOutMsgs.at(c)->write(&this->magFieldOutBuffer.at(c), this->moduleID, CurrentClock);
     }
 
@@ -171,7 +171,7 @@ bool MagneticFieldBase::readMessages()
     if(this->scStateInMsgs.size() > 0)
     {
         scRead = true;
-        for (int c=0; c<this->scStateInMsgs.size(); c++) {
+        for (long unsigned int c=0; c<this->scStateInMsgs.size(); c++) {
             bool tmpScRead;
             scMsg = this->scStateInMsgs.at(c)();
             tmpScRead = this->scStateInMsgs.at(c).isWritten();

@@ -47,7 +47,7 @@ DataFileToViz::~DataFileToViz()
         bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz:\nclosed the file: %s.", this->dataFileName.c_str());
     }
 
-    for (int c=0; c<this->scStateOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->scStateOutMsgs.size(); c++) {
         delete this->scStateOutMsgs.at(c);
     }
 
@@ -178,7 +178,7 @@ void DataFileToViz::appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData, 
     // loop over the number of thruster clusters for this spacecraft
     if (thrMsgData.size()>0) {
         this->numThrPerCluster.push_back(numThrPerCluster);
-        for (int thrClusterCount=0; thrClusterCount<thrMsgData.size(); thrClusterCount++) {
+        for (long unsigned int thrClusterCount=0; thrClusterCount<thrMsgData.size(); thrClusterCount++) {
             // loop over the number of thrusters in this cluster and create an output message
             for (int i=0; i<numThrPerCluster[thrClusterCount]; i++) {
                 /* create output message */
@@ -266,7 +266,7 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
             pullScalar(&iss);
 
             // create all the state output messages for each spacecraft
-            for (int scCounter=0; scCounter<this->scStateOutMsgs.size(); scCounter++) {
+            for (long unsigned int scCounter=0; scCounter<this->scStateOutMsgs.size(); scCounter++) {
                 SCStatesMsgPayload scMsg;
 
                 /* zero output message */
@@ -342,7 +342,7 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                 if (this->rwScOutMsgs.size() > 0) {
                     if (this->rwScOutMsgs[scCounter].size() > 0) {
                         std::vector<std::string>::iterator rwDevice;
-                        for( int rwCounter = 0; rwCounter < this->rwScOutMsgs[scCounter].size(); rwCounter++) {
+                        for (long unsigned int rwCounter = 0; rwCounter < this->rwScOutMsgs[scCounter].size(); rwCounter++) {
 
                             RWConfigLogMsgPayload rwOutMsg;
                             rwOutMsg = this->rwScOutMsgs[scCounter].at(rwCounter)->zeroMsgPayload;

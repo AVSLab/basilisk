@@ -51,7 +51,7 @@ GroundLocation::GroundLocation()
  */
 GroundLocation::~GroundLocation()
 {
-    for (int c=0; c<this->accessOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->accessOutMsgs.size(); c++) {
         delete this->accessOutMsgs.at(c);
     }
     return;
@@ -113,7 +113,7 @@ bool GroundLocation::ReadMessages()
     if(!this->scStateInMsgs.empty())
     {
         scRead = true;
-        for (int c = 0; c < this->scStateInMsgs.size(); c++) {
+        for (long unsigned int c = 0; c < this->scStateInMsgs.size(); c++) {
             scMsg = this->scStateInMsgs.at(c)();
             scRead = scRead && this->scStateInMsgs.at(c).isWritten();
             this->scStatesBuffer.push_back(scMsg);
@@ -138,7 +138,7 @@ bool GroundLocation::ReadMessages()
 void GroundLocation::WriteMessages(uint64_t CurrentClock)
 {
     //! - write access message for each spacecraft
-    for (int c=0; c< this->accessMsgBuffer.size(); c++) {
+    for (long unsigned int c=0; c< this->accessMsgBuffer.size(); c++) {
         this->accessOutMsgs.at(c)->write(&this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
     }
     this->currentGroundStateOutMsg.write(&this->currentGroundStateBuffer, this->moduleID, CurrentClock);

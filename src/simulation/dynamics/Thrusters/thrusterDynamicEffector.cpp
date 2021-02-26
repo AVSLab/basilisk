@@ -49,7 +49,7 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
 /*! The destructor. */
 ThrusterDynamicEffector::~ThrusterDynamicEffector()
 {
-    for (int c=0; c<this->thrusterOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->thrusterOutMsgs.size(); c++) {
         free(this->thrusterOutMsgs.at(c));
     }
     return;

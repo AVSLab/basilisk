@@ -36,7 +36,7 @@ PlanetEphemeris::PlanetEphemeris()
 /*! Module deconstructor */
 PlanetEphemeris::~PlanetEphemeris()
 {
-    for (int c=0; c<this->planetOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->planetOutMsgs.size(); c++) {
         delete this->planetOutMsgs.at(c);
     }
     return;
@@ -48,7 +48,7 @@ void PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
     this->planetNames = names;
 
     /* create corresponding output messages */
-    for (int c=0; c<this->planetNames.size(); c++) {
+    for (long unsigned int c=0; c<this->planetNames.size(); c++) {
         Message<SpicePlanetStateMsgPayload> *spMsg;
         spMsg = new Message<SpicePlanetStateMsgPayload>;
         this->planetOutMsgs.push_back(spMsg);

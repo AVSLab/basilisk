@@ -102,7 +102,7 @@ bool PowerStorageBase::readMessages()
     bool tmpPowerRead;
     if(this->nodePowerUseInMsgs.size() > 0)
     {
-        for(int c=0; c<this->nodePowerUseInMsgs.size(); c++)
+        for(long unsigned int c=0; c<this->nodePowerUseInMsgs.size(); c++)
         {
             nodeMsg = this->nodePowerUseInMsgs.at(c)();
             tmpPowerRead = this->nodePowerUseInMsgs.at(c).isWritten();

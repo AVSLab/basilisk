@@ -65,7 +65,7 @@ Albedo::Albedo()
  */
 Albedo::~Albedo()
 {
-    for (int c=0; c<this->albOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->albOutMsgs.size(); c++) {
         delete this->albOutMsgs.at(c);
     }
     return;
@@ -221,9 +221,8 @@ void Albedo::UpdateState(uint64_t CurrentSimNanos)
     this->readMessages();
     this->albOutData.clear();
     std::vector<SpicePlanetStateMsgPayload>::iterator planetIt;
-    int instIdx = 0;
     int idx;
-    for (instIdx = 0; instIdx < this->albOutMsgs.size(); instIdx++)
+    for (long unsigned int instIdx = 0; instIdx < this->albOutMsgs.size(); instIdx++)
     {
         idx = 0;
         double tmpTot[4] = {};
@@ -281,7 +280,7 @@ void Albedo::Reset(uint64_t CurrentSimNanos)
  */
 void Albedo::readMessages() {
     //! - Read in planet state message (required)
-    for (int c=0; c<this->planetInMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->planetInMsgs.size(); c++) {
         this->planetMsgData.at(c) = this->planetInMsgs.at(c)();
         if (m33Determinant(this->planetMsgData.at(c).J20002Pfix) == 0.0) {
             m33SetIdentity(this->planetMsgData.at(c).J20002Pfix);
@@ -305,7 +304,7 @@ void Albedo::writeMessages(uint64_t CurrentSimNanos) {
     std::vector<AlbedoMsgPayload>::iterator albedoIt;
 
     //! - Write albedo output messages for each instrument
-    for (int idx=0; idx<this->albOutMsgs.size(); idx++) {
+    for (long unsigned int idx=0; idx<this->albOutMsgs.size(); idx++) {
         localMessage.albedoAtInstrumentMax = this->albOutData.at(idx)[0];
         localMessage.albedoAtInstrument = this->albOutData.at(idx)[1];
         localMessage.AfluxAtInstrumentMax = this->albOutData.at(idx)[2];

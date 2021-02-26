@@ -101,7 +101,7 @@ bool DataStorageUnitBase::readMessages()
     bool tmpDataRead;
     if(this->nodeDataUseInMsgs.size() > 0)
     {
-        for(int c=0; c<this->nodeDataUseInMsgs.size(); c++)
+        for(long unsigned int c=0; c<this->nodeDataUseInMsgs.size(); c++)
         {
             nodeMsg = this->nodeDataUseInMsgs.at(c)();
             tmpDataRead = this->nodeDataUseInMsgs.at(c).isWritten();

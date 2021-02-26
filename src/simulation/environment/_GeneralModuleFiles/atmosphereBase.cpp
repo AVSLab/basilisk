@@ -65,7 +65,7 @@ AtmosphereBase::AtmosphereBase()
  */
 AtmosphereBase::~AtmosphereBase()
 {
-    for (int c=0; c<this->envOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->envOutMsgs.size(); c++) {
         delete this->envOutMsgs.at(c);
     }
     return;
@@ -150,10 +150,8 @@ void AtmosphereBase::customReset(uint64_t CurrentClock)
  */
 void AtmosphereBase::writeMessages(uint64_t CurrentClock)
 {
-    int c = 0;
-
     //! - write density output messages for each spacecaft's locations
-    for(c = 0; c < this->envOutMsgs.size(); c++){
+    for(long unsigned int c = 0; c < this->envOutMsgs.size(); c++){
         this->envOutMsgs.at(c)->write(&this->envOutBuffer.at(c), this->moduleID, CurrentClock);
     }
 
@@ -186,8 +184,7 @@ bool AtmosphereBase::readMessages()
     if(this->scStateInMsgs.size() > 0)
     {
         scRead = true;
-        int c;
-        for(c = 0; c<this->scStateInMsgs.size(); c++){
+        for(long unsigned int c = 0; c<this->scStateInMsgs.size(); c++){
             bool tmpScRead;
             scMsg = this->scStateInMsgs.at(c)();
             tmpScRead = this->scStateInMsgs.at(c).isWritten();

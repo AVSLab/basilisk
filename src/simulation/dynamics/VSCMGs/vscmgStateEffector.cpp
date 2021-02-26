@@ -45,7 +45,7 @@ VSCMGStateEffector::VSCMGStateEffector()
 
 VSCMGStateEffector::~VSCMGStateEffector()
 {
-    for (int c=0; c<this->vscmgOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->vscmgOutMsgs.size(); c++) {
         free(this->vscmgOutMsgs.at(c));
     }
     return;

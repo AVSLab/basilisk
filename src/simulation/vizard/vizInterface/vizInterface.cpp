@@ -177,7 +177,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         spiceStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
         this->spiceInMsgStatus.clear();
         this->spiceMessage.clear();
-        for (int c = 0; c< (int) this->gravBodyInformation.size(); c++) {
+        for (long unsigned int c = 0; c< (int) this->gravBodyInformation.size(); c++) {
             /* set default zero translation and rotation states */
             SpicePlanetStateMsgPayload logMsg = {};
             m33SetIdentity(logMsg.J20002Pfix);

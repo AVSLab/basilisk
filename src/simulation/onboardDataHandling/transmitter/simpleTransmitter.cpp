@@ -59,7 +59,7 @@ bool SimpleTransmitter::customReadMessages(){
 
     if(this->storageUnitInMsgs.size() > 0)
     {
-        for(int c=0; c<storageUnitInMsgs.size(); c++)
+        for(long unsigned int c=0; c<storageUnitInMsgs.size(); c++)
         {
             tmpDataRead = this->storageUnitInMsgs.at(c).isWritten();
             nodeMsg = this->storageUnitInMsgs.at(c)();

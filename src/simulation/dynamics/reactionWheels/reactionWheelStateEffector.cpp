@@ -45,7 +45,7 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
 
 ReactionWheelStateEffector::~ReactionWheelStateEffector()
 {
-    for (int c=0; c<this->rwOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->rwOutMsgs.size(); c++) {
         free(this->rwOutMsgs.at(c));
     }
     return;
@@ -381,7 +381,7 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos)
 
     //! - Clear out any currently firing RWs and re-init cmd array
     this->NewRWCmds.clear();
-    for (int i=0; i<this->ReactionWheelData.size(); i++) {
+    for (long unsigned int i=0; i<this->ReactionWheelData.size(); i++) {
         this->NewRWCmds.push_back(RWCmdInitializer);
     }
 

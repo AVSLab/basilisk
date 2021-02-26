@@ -26,7 +26,7 @@ EphemerisConverter::EphemerisConverter()
 
 EphemerisConverter::~EphemerisConverter()
 {
-    for (int c=0; c<this->ephemOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c<this->ephemOutMsgs.size(); c++) {
         free(this->ephemOutMsgs.at(c));
     }
 }
@@ -69,7 +69,7 @@ void EphemerisConverter::addSpiceInputMsg(Message<SpicePlanetStateMsgPayload> *t
  */
 void EphemerisConverter::convertEphemData(uint64_t clockNow)
 {
-    for (int c=0; c < this->spiceInMsgs.size(); c++) {
+    for (long unsigned int c=0; c < this->spiceInMsgs.size(); c++) {
         v3Copy(this->spiceInBuffers.at(c).PositionVector,
                this->ephemOutBuffers.at(c).r_BdyZero_N);
         v3Copy(this->spiceInBuffers.at(c).VelocityVector,
@@ -80,7 +80,7 @@ void EphemerisConverter::convertEphemData(uint64_t clockNow)
 
 void EphemerisConverter::readInputMessages()
 {
-    for (int c=0; c < this->spiceInMsgs.size(); c++) {
+    for (long unsigned int c=0; c < this->spiceInMsgs.size(); c++) {
         this->spiceInBuffers.at(c) = this->spiceInMsgs.at(c)();
     }
 }
@@ -91,7 +91,7 @@ void EphemerisConverter::readInputMessages()
  */
 void EphemerisConverter::writeOutputMessages(uint64_t CurrentSimNanos)
 {
-    for (int c=0; c < this->ephemOutMsgs.size(); c++) {
+    for (long unsigned int c=0; c < this->ephemOutMsgs.size(); c++) {
         this->ephemOutMsgs.at(c)->write(&this->ephemOutBuffers.at(c), this->moduleID, CurrentSimNanos);
     }
 }

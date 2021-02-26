@@ -73,7 +73,7 @@ bool SpaceToGroundTransmitter::customReadMessages(){
 
     if(this->storageUnitInMsgs.size() > 0)
     {
-        for(int c=0; c<this->storageUnitInMsgs.size(); c++)
+        for(long unsigned int c=0; c<this->storageUnitInMsgs.size(); c++)
         {
             tmpDataRead = this->storageUnitInMsgs.at(c).isWritten();
             nodeMsg = this->storageUnitInMsgs.at(c)();
@@ -90,7 +90,7 @@ bool SpaceToGroundTransmitter::customReadMessages(){
     if(this->groundLocationAccessInMsgs.size() > 0)
     {
         std::vector<int64_t>::iterator it;
-        for(int c=0; c<this->groundLocationAccessInMsgs.size(); c++)
+        for(long unsigned int c=0; c<this->groundLocationAccessInMsgs.size(); c++)
         {
             tmpDataRead = this->groundLocationAccessInMsgs.at(c).isWritten();
             accessMsg = this->groundLocationAccessInMsgs.at(c)();
