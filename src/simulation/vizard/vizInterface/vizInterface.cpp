@@ -718,8 +718,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         if (this->spiceInMsgStatus[k].dataFresh){
             vizProtobufferMessage::VizMessage::CelestialBody* spice = message->add_celestialbodies();
             spice->set_bodyname(this->gravBodyInformation.at(k).bodyName);
-            spice->set_mu(this->gravBodyInformation.at(k).mu);
-            spice->set_radiuseq(this->gravBodyInformation.at(k).radEquator);
+            spice->set_mu(this->gravBodyInformation.at(k).mu/1e9);  /* must be in km^3/s^2 */
+            spice->set_radiuseq(this->gravBodyInformation.at(k).radEquator/1000.);  /* must be in km */
             spice->set_radiusratio(this->gravBodyInformation.at(k).radiusRatio);
             for (int i=0; i<3; i++){
                 spice->add_position(this->spiceMessage[k].PositionVector[i]);
