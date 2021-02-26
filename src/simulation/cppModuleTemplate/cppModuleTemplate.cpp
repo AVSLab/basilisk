@@ -54,7 +54,7 @@ void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
     double  inputVector[3];
 
     // always zero the output buffer first
-    outMsgBuffer = this->dataOutMsg.zeroMsgPayload();
+    outMsgBuffer = this->dataOutMsg.zeroMsgPayload;
     v3SetZero(inputVector);
 
     /*! - Read the optional input messages */

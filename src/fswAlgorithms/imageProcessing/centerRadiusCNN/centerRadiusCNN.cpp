@@ -87,8 +87,8 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     /*! - Load in the trained CNN model*/
 
     /*! - Read in the bitmap*/
-    imageBuffer = this->imageInMsg.zeroMsgPayload();
-    circleBuffer = this->opnavCirclesOutMsg.zeroMsgPayload();
+    imageBuffer = this->imageInMsg.zeroMsgPayload;
+    circleBuffer = this->opnavCirclesOutMsg.zeroMsgPayload;
     if (this->imageInMsg.isLinked())
     {
         imageBuffer = this->imageInMsg();

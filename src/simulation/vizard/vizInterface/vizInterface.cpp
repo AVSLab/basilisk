@@ -38,7 +38,7 @@ VizInterface::VizInterface()
     this->liveStream = false;
     this->FrameNumber= -1;
 
-    this->cameraConfigBuffer = this->cameraConfInMsg.zeroMsgPayload();
+    this->cameraConfigBuffer = this->cameraConfInMsg.zeroMsgPayload;
     this->cameraConfigBuffer.cameraID = -1;
     strcpy(this->cameraConfigBuffer.skyBox, "");
     this->cameraConfigBuffer.renderRate = 0;

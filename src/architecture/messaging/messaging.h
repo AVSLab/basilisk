@@ -38,9 +38,11 @@ private:
     messageType* payloadPointer;    //! -- pointer to the incoming msg data
     Msg2Header *headerPointer;      //! -- pointer to the incoming msg header
     bool initialized;               //! -- flag indicating if the input message is connect to another message
-
+    
 public:
-    BSKLogger bskLogger;                          //!< -- BSK Logging
+    BSKLogger bskLogger;            //!< -- BSK Logging
+    messageType zeroMsgPayload ={}; //! -- zero'd copy of the message payload type
+
 
     //! constructor
     ReadFunctor() : initialized(false) {};
@@ -56,13 +58,6 @@ public:
         }
         return *this->payloadPointer;
 
-    };
-
-    //! return a zero'd copy of the message payload structure
-    messageType zeroMsgPayload(){
-        messageType zeroMsg;
-        memset(&zeroMsg, 0x0, sizeof(messageType));
-        return zeroMsg;
     };
 
     //! check if this msg has been connected to
@@ -173,19 +168,13 @@ public:
     messageType* subscribeRaw(Msg2Header **msgPtr);
     //! Recorder object
     Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
-    //! - returns a zero'd copy of the message payload structure
-    messageType zeroMsgPayload();
+    
+    messageType zeroMsgPayload = {};    //! - zero'd copy of the message payload structure
 
     //! check if this msg has been connected to
     bool isLinked(){return this->header.isLinked;};
 };
 
-template<typename messageType>
-messageType Message<messageType>::zeroMsgPayload(){
-    messageType zeroMsg;
-    memset(&zeroMsg, 0x0, sizeof(messageType));
-    return zeroMsg;
-}
 
 template<typename messageType>
 ReadFunctor<messageType> Message<messageType>::addSubscriber(){

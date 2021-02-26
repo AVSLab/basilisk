@@ -37,7 +37,7 @@ SpacecraftLocation::SpacecraftLocation()
     this->aHat_B.fill(0.0);
     this->theta = -1.0;
 
-    this->planetState = this->planetInMsg.zeroMsgPayload();
+    this->planetState = this->planetInMsg.zeroMsgPayload;
     this->planetState.J20002Pfix[0][0] = 1;
     this->planetState.J20002Pfix[1][1] = 1;
     this->planetState.J20002Pfix[2][2] = 1;
@@ -188,7 +188,7 @@ void SpacecraftLocation::computeAccess()
         Eigen::Vector3d rClose = r_LP_P + param * r_SL_P;
         
         // determine access output message
-        this->accessMsgBuffer.at(c) = this->accessOutMsgs.at(c)->zeroMsgPayload();
+        this->accessMsgBuffer.at(c) = this->accessOutMsgs.at(c)->zeroMsgPayload;
         if (rClose.norm() > this->rEquator) {
             r_SL_P[2] = r_SL_P[2] / this->zScale;
             double range = r_SL_P.norm();

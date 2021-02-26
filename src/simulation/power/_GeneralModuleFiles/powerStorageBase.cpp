@@ -163,7 +163,7 @@ void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
         this->integratePowerStatus(currentSimNanos*NANO2SEC);
     } else {
         /* zero the output message if no input messages were received. */
-        this->storageStatusMsg = this->batPowerOutMsg.zeroMsgPayload();
+        this->storageStatusMsg = this->batPowerOutMsg.zeroMsgPayload;
     }
 
     //! - write out neutral density message

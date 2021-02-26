@@ -56,7 +56,7 @@ The ``UpdateState()`` is the method that is called each time the Basilisk simula
         SomeMsgPayload inMsgBuffer;        /*!< local copy of input message */
 
         // always zero the output buffer first
-        outMsgBuffer = this->dataOutMsg.zeroMsgPayload();
+        outMsgBuffer = this->dataOutMsg.zeroMsgPayload;
 
         /*! - Read the input messages */
         inMsgBuffer = this->dataInMsg();

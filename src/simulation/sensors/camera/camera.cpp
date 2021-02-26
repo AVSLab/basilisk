@@ -329,8 +329,8 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     CameraConfigMsgPayload cameraMsg;
 
     /* zero output messages */
-    imageOut = this->imageOutMsg.zeroMsgPayload();
-    cameraMsg = this->cameraConfigOutMsg.zeroMsgPayload();
+    imageOut = this->imageOutMsg.zeroMsgPayload;
+    cameraMsg = this->cameraConfigOutMsg.zeroMsgPayload;
     
     /*! - Populate the camera message */
     cameraMsg.cameraID = this->cameraID;

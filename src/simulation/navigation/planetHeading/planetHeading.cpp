@@ -65,7 +65,7 @@ void PlanetHeading::readMessages() {
  */
 void PlanetHeading::writeMessages(uint64_t CurrentSimNanos) {
     BodyHeadingMsgPayload planetHeadingOutMsgData;
-    planetHeadingOutMsgData = this->planetHeadingOutMsg.zeroMsgPayload();
+    planetHeadingOutMsgData = this->planetHeadingOutMsg.zeroMsgPayload;
     eigenVector3d2CArray(this->rHat_PB_B, planetHeadingOutMsgData.rHat_XB_B);
 
     /*! - write the output message */

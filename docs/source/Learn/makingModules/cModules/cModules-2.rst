@@ -57,7 +57,7 @@ The message function  ``..._C_write()`` is used to write message data to the mes
 .. code:: cpp
 
     SomeMsgPayload localMsgOutBuffer;
-    localMsgOutBuffer = this->someOutMsg.zeroMsgPayload();
+    localMsgOutBuffer = this->someOutMsg.zeroMsgPayload;
     ...
     SomeMsg_C_write(&localMsgOutBuffer, &configData->someOutMsg, moduleID, callTime);
 

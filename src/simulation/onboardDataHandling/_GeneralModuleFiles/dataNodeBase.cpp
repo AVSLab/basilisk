@@ -27,7 +27,7 @@
 DataNodeBase::DataNodeBase()
 {
     this->dataStatus = 1; //!< Node defaults to on unless overwritten.
-    this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload();
+    this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload;
 
     return;
 }
@@ -102,7 +102,7 @@ void DataNodeBase::computeDataStatus(double CurrentTime)
     }
     else
     {
-        this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload();
+        this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload;
     }
     return;
 }
@@ -119,7 +119,7 @@ void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
         this->computeDataStatus(CurrentSimNanos*NANO2SEC);
     } else {
         //! - If the read was not successful then zero the output message
-        this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload();
+        this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload;
     }
 
     this->writeMessages(CurrentSimNanos);

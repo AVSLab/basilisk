@@ -390,7 +390,7 @@ Updating a C++ Module
       .. code:: cpp
 
          SomeMsgPayload someMsgBuffer;
-         someMsgBuffer = this->someOutMsg.zeroMsgPayload();
+         someMsgBuffer = this->someOutMsg.zeroMsgPayload;
 
       If the buffer is related to an input message ``someInMsg``, the same basic syntax works.
       Just replace ``someOutMsg`` with ``someInMsg`` above.  This ensures the correct message type is zero'd

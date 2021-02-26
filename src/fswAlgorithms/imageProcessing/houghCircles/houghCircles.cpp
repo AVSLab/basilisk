@@ -77,8 +77,8 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     CameraImageMsgPayload imageBuffer;
     CirclesOpNavMsgPayload circleBuffer;
 
-    imageBuffer = this->imageInMsg.zeroMsgPayload();
-    circleBuffer = this->opnavCirclesOutMsg.zeroMsgPayload();
+    imageBuffer = this->imageInMsg.zeroMsgPayload;
+    circleBuffer = this->opnavCirclesOutMsg.zeroMsgPayload;
 
     cv::Mat imageCV, blurred;
     int circlesFound=0;

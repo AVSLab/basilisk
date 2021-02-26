@@ -30,8 +30,8 @@ BoreAngCalc::BoreAngCalc()
 {
     CallCounts = 0;
     boreVecPoint[0] = boreVecPoint[1] = boreVecPoint[2]  = 0.0;
-    this->localPlanet = this->celBodyInMsg.zeroMsgPayload();
-    this->localState = this->scStateInMsg.zeroMsgPayload();
+    this->localPlanet = this->celBodyInMsg.zeroMsgPayload;
+    this->localState = this->scStateInMsg.zeroMsgPayload;
     return;
 }
 

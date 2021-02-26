@@ -48,7 +48,7 @@ MagneticFieldBase::MagneticFieldBase()
 
 
     //! - zero the planet message, and set the DCM to an identity matrix
-    this->planetState = planetPosInMsg.zeroMsgPayload();
+    this->planetState = planetPosInMsg.zeroMsgPayload;
     m33SetIdentity(this->planetState.J20002Pfix);
 
     return;
@@ -223,7 +223,7 @@ void MagneticFieldBase::updateLocalMagField(double currentTime)
         this->updateRelativePos(&(this->planetState), &(*it));
 
         //! - zero the output message for each spacecraft by default
-        *magMsgIt = this->envOutMsgs[0]->zeroMsgPayload();
+        *magMsgIt = this->envOutMsgs[0]->zeroMsgPayload;
 
         //! - check if radius is in permissible range
         if(this->orbitRadius > this->envMinReach &&
@@ -265,7 +265,7 @@ void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
     std::vector<MagneticFieldMsgPayload>::iterator it;
     for(it = this->magFieldOutBuffer.begin(); it!= this->magFieldOutBuffer.end(); it++){
         memset(&(*it), 0x0, sizeof(MagneticFieldMsgPayload));
-        *it = this->envOutMsgs[0]->zeroMsgPayload();
+        *it = this->envOutMsgs[0]->zeroMsgPayload;
     }
     //! - update local neutral density information
     if(this->readMessages())

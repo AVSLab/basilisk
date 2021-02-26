@@ -40,8 +40,8 @@ The input message object has the following support methods:
 ``moduleID()``
     Returns the ``int64_t`` ID value of the module which wrote the message.  Note that C/C++ module ID's are strictly positive, while Python module ID's are strictly negative.
 
-``zeroMsgPayload()``
-    Returns a zero'd structure copy of the message type associated with this input message.
+``zeroMsgPayload``
+    Zero'd structure copy of the message type associated with this input message.
 
 These methods are called using standard C++ class syntax, such as
 
@@ -64,7 +64,7 @@ The message class contains a write functor called ``write`` that allows the mess
 .. code:: cpp
 
     SomeMsgPayload localMsgOutBuffer;
-    localMsgOutBuffer = this->someOutMsg.zeroMsgPayload();
+    localMsgOutBuffer = this->someOutMsg.zeroMsgPayload;
     ...
     this->someOutMsg.write(&localMsbOutBuffer, this->moduleID, CurrentTime);
 
@@ -79,8 +79,8 @@ The output message object has the following support methods:
 ``isLinked()``
     Returns a ``bool`` value depending if the output message object has been connected to an input message.  This includes being connected to a ``recorder()`` module.
 
-``zeroMsgPayload()``
-    Returns a zero'd structure copy of the message type associated with this output message.
+``zeroMsgPayload``
+    Zero'd structure copy of the message type associated with this output message.
 
 ``addSubscriber()``
     Returns an input message (i.e. read functor) that is able to read this output message.

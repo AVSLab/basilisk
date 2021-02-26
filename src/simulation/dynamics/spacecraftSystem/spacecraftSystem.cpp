@@ -84,7 +84,7 @@ void SpacecraftUnit::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
     // - Write output messages for each spacecraft
     // - Populate state output message
     SCStatesMsgPayload stateOut;
-    stateOut = this->scStateOutMsg.zeroMsgPayload();
+    stateOut = this->scStateOutMsg.zeroMsgPayload;
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     Eigen::MRPd sigmaLocal_BN;
@@ -105,7 +105,7 @@ void SpacecraftUnit::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
 
     // - Populate mass state output message
     SCMassPropsMsgPayload massStateOut;
-    massStateOut = this->scMassStateOutMsg.zeroMsgPayload();
+    massStateOut = this->scMassStateOutMsg.zeroMsgPayload;
     massStateOut.massSC = (*this->m_SC)(0,0);
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
     eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
@@ -113,7 +113,7 @@ void SpacecraftUnit::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
 
     // - Populate energy momentum output message
     SCEnergyMomentumMsgPayload energyMomentumOut;
-    energyMomentumOut = this->scEnergyMomentumOutMsg.zeroMsgPayload();
+    energyMomentumOut = this->scEnergyMomentumOutMsg.zeroMsgPayload;
     energyMomentumOut.spacecraftRotEnergy = this->totRotEnergy;
     energyMomentumOut.spacecraftOrbEnergy = this->totOrbEnergy;
     eigenVector3d2CArray(this->totRotAngMomPntC_N, energyMomentumOut.spacecraftRotAngMomPntC_N);

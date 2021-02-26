@@ -376,7 +376,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
     SCStatesMsgPayload configLogMsg;
     // Note, logging the hinge frame S is the body frame B of that object
     for (int i=0; i<2; i++) {
-        configLogMsg = this->dualHingedRigidBodyConfigLogOutMsgs[i]->zeroMsgPayload();
+        configLogMsg = this->dualHingedRigidBodyConfigLogOutMsgs[i]->zeroMsgPayload;
         eigenVector3d2CArray(this->r_SN_N[i], configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_SN_N[i], configLogMsg.v_BN_N);
         eigenVector3d2CArray(this->sigma_SN[i], configLogMsg.sigma_BN);

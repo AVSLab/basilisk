@@ -244,7 +244,7 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
             bskLogger.bskLog(BSK_WARNING, "Warning, your planet name is too long for me.  Ignoring: %s", (*it).c_str());
             continue;
         }
-        newPlanet = spiceOutMsg->zeroMsgPayload();
+        newPlanet = spiceOutMsg->zeroMsgPayload;
         strcpy(newPlanet.PlanetName, it->c_str());
 
         std::string planetFrame = *it;

@@ -268,7 +268,7 @@ GravBodyData::GravBodyData()
     this->ephIntTime = 0;              //!< [s]      Integration time associated with the ephem data
     this->spherHarm.maxDeg = 0;
     // Default these values to zero just in case they don't get populated
-    this->localPlanet = this->planetBodyInMsg.zeroMsgPayload();
+    this->localPlanet = this->planetBodyInMsg.zeroMsgPayload;
     m33SetIdentity(this->localPlanet.J20002Pfix);
     return;
 }
@@ -372,7 +372,7 @@ void GravBodyData::loadEphemeris(int64_t moduleID)
         this->timeWritten = this->planetBodyInMsg.timeWritten();
     } else {
         /* use default zero planet state information, including a zero orientation */
-        this->localPlanet = this->planetBodyInMsg.zeroMsgPayload();
+        this->localPlanet = this->planetBodyInMsg.zeroMsgPayload;
         m33SetIdentity(this->localPlanet.J20002Pfix);
         this->timeWritten = 0;
     }

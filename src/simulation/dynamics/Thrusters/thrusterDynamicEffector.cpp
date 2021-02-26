@@ -88,7 +88,7 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
     THROutputMsgPayload tmpThruster;
     for (it = this->thrusterData.begin(); it != this->thrusterData.end(); ++it)
     {
-        tmpThruster = this->thrusterOutMsgs[idx]->zeroMsgPayload();
+        tmpThruster = this->thrusterOutMsgs[idx]->zeroMsgPayload;
         eigenVector3d2CArray(it->thrLoc_B, tmpThruster.thrusterLocation);
         eigenVector3d2CArray(it->thrDir_B, tmpThruster.thrusterDirection);
         tmpThruster.maxThrust = it->MaxThrust;

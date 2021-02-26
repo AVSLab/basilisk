@@ -31,14 +31,14 @@ GroundLocation::GroundLocation()
     this->minimumElevation = 10.*D2R; // [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees
     this->maximumRange = -1; // [m] Maximum range for the groundLocation to compute access.
 
-    this->currentGroundStateBuffer = this->currentGroundStateOutMsg.zeroMsgPayload();
+    this->currentGroundStateBuffer = this->currentGroundStateOutMsg.zeroMsgPayload;
 
     this->planetRadius = REQ_EARTH*1e3;
 
     this->r_LP_P.fill(0.0);
     this->r_LP_P_Init.fill(0.0);
 
-    this->planetState = this->planetInMsg.zeroMsgPayload();
+    this->planetState = this->planetInMsg.zeroMsgPayload;
     this->planetState.J20002Pfix[0][0] = 1;
     this->planetState.J20002Pfix[1][1] = 1;
     this->planetState.J20002Pfix[2][2] = 1;

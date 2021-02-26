@@ -67,7 +67,7 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
 {
 
     if (this->hingedRigidBodyOutMsg.isLinked()) {
-        this->HRBoutputStates = this->hingedRigidBodyOutMsg.zeroMsgPayload();
+        this->HRBoutputStates = this->hingedRigidBodyOutMsg.zeroMsgPayload;
         this->HRBoutputStates.theta = this->theta;
         this->HRBoutputStates.thetaDot = this->thetaDot;
         this->hingedRigidBodyOutMsg.write(&this->HRBoutputStates, this->moduleID, CurrentClock);
@@ -76,7 +76,7 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
     // write out the panel state config log message
     if (this->hingedRigidBodyConfigLogOutMsg.isLinked()) {
         SCStatesMsgPayload configLogMsg;
-        configLogMsg = this->hingedRigidBodyConfigLogOutMsg.zeroMsgPayload();
+        configLogMsg = this->hingedRigidBodyConfigLogOutMsg.zeroMsgPayload;
         // Note, logging the hinge frame S is the body frame B of that object
         eigenVector3d2CArray(this->r_SN_N, configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_SN_N, configLogMsg.v_BN_N);

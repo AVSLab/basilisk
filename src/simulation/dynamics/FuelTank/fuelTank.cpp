@@ -218,7 +218,7 @@ void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & 
  */
 void FuelTank::WriteOutputMessages(uint64_t CurrentClock)
 {
-    this->fuelTankMassPropMsg = this->fuelTankOutMsg.zeroMsgPayload();
+    this->fuelTankMassPropMsg = this->fuelTankOutMsg.zeroMsgPayload;
     this->fuelTankMassPropMsg.fuelMass = this->effProps.mEff;
     this->fuelTankMassPropMsg.fuelMassDot = this->effProps.mEffDot;
     this->fuelTankOutMsg.write(&this->fuelTankMassPropMsg, this->moduleID, CurrentClock);

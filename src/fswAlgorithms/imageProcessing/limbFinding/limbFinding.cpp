@@ -72,8 +72,8 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     CameraImageMsgPayload imageBuffer;
     LimbOpNavMsgPayload limbMsg;
 
-    imageBuffer = this->imageInMsg.zeroMsgPayload();
-    limbMsg = this->opnavLimbOutMsg.zeroMsgPayload();
+    imageBuffer = this->imageInMsg.zeroMsgPayload;
+    limbMsg = this->opnavLimbOutMsg.zeroMsgPayload;
 
     cv::Mat imageCV, blurred, edgeImage;
     if (this->saveDir != ""){
