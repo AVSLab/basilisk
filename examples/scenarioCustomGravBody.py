@@ -23,8 +23,12 @@ Overview
 Demonstrates how to setup a custom gravity object in Basilisk that is not directly supported by
 the ``simIncludeGravBody.py`` file.  In this simulation the sun is created using standard values, the Earth
 is created using custom values, and the asteroid Itokawa is created with custom values.
-Further, the Vizard binary file is setup to load up a custom CAD model for the asteroid.  The spacecraft
-orbit is defined relative to the asteroid.
+
+.. image:: /_images/static/scenarioCustomGravObject.jpg
+   :align: center
+
+Further, the Vizard binary file is setup to load up a custom CAD model for the asteroid. The spacecraft
+orbit is defined relative to the asteroid.  Note, this feature requires :ref:`Vizard <vizard>` version 1.8 or higher.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
@@ -116,7 +120,7 @@ def run(show_plots):
 
     # create the dynamics task and specify the simulation time step information
     simulationTimeStep = macros.sec2nano(10.0)
-    simulationTime = macros.min2nano(120.0)
+    simulationTime = macros.min2nano(1120.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # setup celestial object ephemeris module
@@ -142,13 +146,21 @@ def run(show_plots):
     oeEarth.omega = 288.1 * macros.D2R
     oeEarth.f = 270.0 * macros.D2R
 
+    # specify celestial object orbit
     gravBodyEphem.planetElements = planetEphemeris.classicElementVector([oeAsteroid, oeEarth])
+    # specify celestial object orientation
+    gravBodyEphem.rightAscension = planetEphemeris.DoubleVector([0.0 * macros.D2R, 0.0 * macros.D2R])
+    gravBodyEphem.declination = planetEphemeris.DoubleVector([0.0 * macros.D2R, 0.0 * macros.D2R])
+    gravBodyEphem.lst0 = planetEphemeris.DoubleVector([0.0 * macros.D2R, 0.0 * macros.D2R])
+    gravBodyEphem.rotRate = planetEphemeris.DoubleVector(
+        [360 * macros.D2R / (12.132 * 3600.), 360 * macros.D2R / (24. * 3600.)])
 
     # setup Earth Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravFactory.createSun()
     mu = 2.34268    # meters^3/s^2
     asteroid = gravFactory.createCustomGravObject("Itokawa", mu)
+
     asteroid.isCentralBody = True  # ensure this is the central gravitational body
     asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])
 
@@ -195,7 +207,7 @@ def run(show_plots):
                                                   # , saveFile=fileName
                                                   )
         viz.settings.showSpacecraftLabels = 1
-        # load CAD for target spacecraft
+        # load CAD for custom gravity model
         vizSupport.createCustomModel(viz,
                                      modelPath=os.path.join(path, "data", "Itokawa", "ItokawaHayabusa.obj"),
                                      shader=1,
