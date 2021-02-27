@@ -86,6 +86,7 @@ class gravBodyFactory(object):
     # all set to False in the `GravGodyData()` constructor.
 
     def createSun(self):
+        """Create gravity body with sun mass properties."""
         sun = gravityEffector.GravBodyData()
         sun.planetName = "sun_planet_data"
         sun.mu = 1.32712440018E20  # meters^3/s^2
@@ -95,6 +96,7 @@ class gravBodyFactory(object):
         return sun
 
     def createMercury(self):
+        """Create gravity body with Mercury mass properties."""
         mercury = gravityEffector.GravBodyData()
         mercury.planetName = "mercury_planet_data"
         mercury.mu = 4.28283100e13  # meters^3/s^2
@@ -104,6 +106,7 @@ class gravBodyFactory(object):
         return mercury
 
     def createVenus(self):
+        """Create gravity body with Venus mass properties."""
         venus = gravityEffector.GravBodyData()
         venus.planetName = "venus_planet_data"
         venus.mu = 3.24858599e14  # meters^3/s^2
@@ -113,6 +116,7 @@ class gravBodyFactory(object):
         return venus
 
     def createEarth(self):
+        """Create gravity body with Earth mass properties."""
         earth = gravityEffector.GravBodyData()
         earth.planetName = "earth_planet_data"
         earth.mu = 0.3986004415E+15  # meters^3/s^2
@@ -122,6 +126,7 @@ class gravBodyFactory(object):
         return earth
 
     def createMoon(self):
+        """Create gravity body with Moon mass properties."""
         moon = gravityEffector.GravBodyData()
         moon.planetName = "moon_planet_data"
         moon.mu = 4.902799E12  # meters^3/s^2
@@ -131,6 +136,7 @@ class gravBodyFactory(object):
         return moon
 
     def createMars(self):
+        """Create gravity body with Mars mass properties."""
         mars = gravityEffector.GravBodyData()
         mars.planetName = "mars_planet_data"
         mars.mu = 4.28283100e13  # meters^3/s^2
@@ -140,6 +146,7 @@ class gravBodyFactory(object):
         return mars
 
     def createMarsBarycenter(self):
+        """Create gravity body with Mars mass properties."""
         mars_barycenter = gravityEffector.GravBodyData()
         mars_barycenter.planetName = "mars barycenter_planet_data"
         mars_barycenter.mu = 4.28283100e13  # meters^3/s^2
@@ -149,6 +156,7 @@ class gravBodyFactory(object):
         return mars_barycenter
 
     def createJupiter(self):
+        """Create gravity body with Jupiter mass properties."""
         jupiter = gravityEffector.GravBodyData()
         jupiter.planetName = "jupiter barycenter_planet_data"
         jupiter.mu = 1.266865349093058E17  # meters^3/s^2
@@ -158,6 +166,7 @@ class gravBodyFactory(object):
         return jupiter
 
     def createSaturn(self):
+        """Create gravity body with Saturn mass properties."""
         saturn = gravityEffector.GravBodyData()
         saturn.planetName = "saturn barycenter_planet_data"
         saturn.mu = 3.79395000E16  # meters^3/s^2
@@ -167,6 +176,7 @@ class gravBodyFactory(object):
         return saturn
 
     def createUranus(self):
+        """Create gravity body with Uranus mass properties."""
         uranus = gravityEffector.GravBodyData()
         uranus.planetName = "uranus barycenter_planet_data"
         uranus.mu = 5.79396566E15  # meters^3/s^2
@@ -176,6 +186,7 @@ class gravBodyFactory(object):
         return uranus
 
     def createNeptune(self):
+        """Create gravity body with Neptune mass properties."""
         neptune = gravityEffector.GravBodyData()
         neptune.planetName = "neptune barycenter_planet_data"
         neptune.mu = 6.83509920E15  # meters^3/s^2
@@ -185,7 +196,25 @@ class gravBodyFactory(object):
         return neptune
 
     def createCustomGravObject(self, label, mu, **kwargs):
+        """
+            Create a custom gravity body object.
 
+            Parameters
+            ----------
+            label : string
+                Gravity body name
+            mu : double
+                Gravity constant
+
+            Other Parameters
+            ----------------
+            kwargs :
+                radEquator : double
+                    Equatorial radius in meters
+                radiusRatio : double
+                    Ratio of the polar radius to the equatorial radius.
+
+        """
         unitTestSupport.checkMethodKeyword(
             ['radEquator', 'radiusRatio'],
             kwargs)
@@ -290,6 +319,7 @@ class gravBodyFactory(object):
         return
 
     def unloadSpiceKernels(self):
+        """Method to unload spice kernals at the end of a simulation."""
         for fileName in self.spiceKernelFileNames:
             self.spiceObject.unloadSpiceKernel(fileName, self.spiceObject.SPICEDataPath)
         return

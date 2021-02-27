@@ -26,6 +26,7 @@ Basilisk Release Notes
     - magnetic FSW control module to dump reaction wheel angular momentum
     - new tutorial example scripts
     - new FSW planet location pointing guidance module
+    - new Multi-Sphere-Method module to account for electrostatic force and torque interactions between neighboring spacecraft.
     - Basilisk 2.1 that includes:
 
         - support for multi-threading when simulating multiple satellite systems
@@ -87,7 +88,7 @@ Version |release|
 - renamed ``spacecraftPlus()`` to be now simply :ref:`spacecraft`
 - renamed ``fswModuleTemplate()`` to be :ref:`cModuleTemplate`.  This makes this naming consistent with the new :ref:`cppModuleTemplate`.
 - renamed `rwMotorVoltageInterface` to :ref:`motorVoltageInterface`.  This motor model can be used for both RW and hinged panel devices.
--
+- added support to creating custom gravity bodies to :ref:`simIncludeGravBody`.  Including support to have custom gravity bodies shown in :ref:`Vizard <vizard>` as well.  The example script :ref:`scenarioCustomGravBody` provides an illustration of this functionality.
 
 
 
