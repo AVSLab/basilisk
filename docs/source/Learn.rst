@@ -1,4 +1,6 @@
 
+.. _learningBasilisk:
+
 Learning Basilisk
 =================
 

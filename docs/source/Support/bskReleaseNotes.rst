@@ -9,13 +9,13 @@ Basilisk Release Notes
     software regularly.  There is some documentation in terms of Sphinx generated HTML documentation, but also
     documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation
     folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``basilisk/examples``
-    folder.  More documentation and tutorial scripts are in development.
+    folder, described in :ref:`examples`.  To learn how to use and program Basilisk, see :ref:`learningBasilisk`.
 
-.. Warning::
+.. Danger::
 
    This next generation of Basilisk introduces a new messaging system and file architecture.  As a result
-   using BSK2 will required upgrading existing Basilisk simulation scripts (see :ref:`migratingToBsk2`) and C/C++ modules
-   (see :ref:`migratingModuleToBsk2`) will need to be upgraded to use 2.0.  All unit test and example scenario scripts
+   using BSK2 will require upgrading existing Basilisk simulation scripts (see :ref:`migratingToBsk2`) and C/C++ modules
+   (see :ref:`migratingModuleToBsk2`) to be used with 2.0 and onwards.  All unit test and example scenario scripts
    have been updated and form a good source for examples on how to use the new software framework.
 
 .. sidebar:: In Progress Features
@@ -84,8 +84,8 @@ Version |release|
 - added :ref:`spacecraftLocation` module to allow checking for satellite to satellite line-of-sight access
 - made ``maximumRange`` an optional variable in :ref:`groundLocation`
 - renamed ``spacecraftDynamics`` to :ref:`spacecraftSystem`, and renamed the associated ``spacecraft`` to ``spacecraftUnit()``.
-- renamed the `spacecraftPlus` associated messages to :ref:`SCStatesMsgPayload` and :ref:`SCMassPropsMsgPayload`
 - renamed ``spacecraftPlus()`` to be now simply :ref:`spacecraft`
+- renamed the `spacecraftPlus` associated messages to :ref:`SCStatesMsgPayload` and :ref:`SCMassPropsMsgPayload`
 - renamed ``fswModuleTemplate()`` to be :ref:`cModuleTemplate`.  This makes this naming consistent with the new :ref:`cppModuleTemplate`.
 - renamed `rwMotorVoltageInterface` to :ref:`motorVoltageInterface`.  This motor model can be used for both RW and hinged panel devices.
 - added support to creating custom gravity bodies to :ref:`simIncludeGravBody`.  Including support to have custom gravity bodies shown in :ref:`Vizard <vizard>` as well.  The example script :ref:`scenarioCustomGravBody` provides an illustration of this functionality.
