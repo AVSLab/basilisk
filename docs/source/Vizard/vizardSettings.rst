@@ -657,8 +657,8 @@ as demonstrated in :ref:`test_dataFileToViz`.
 
 Adding Location or Communication Stations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The :ref:`Location` is able to simulate a location on a celestial body like Earth.
-The location can also be on a satellite.  Vizard will show a line between a satellite
+The :ref:`groundLocation` is able to simulate a location on a celestial body like Earth.
+The location can also be on a satellite position.  Vizard will show a line between a satellite
 and this location including if the satellite is within the
 field of view of this location.  Vizard can illustrate this ground location using the
 ``addLocation()`` method, such as::
