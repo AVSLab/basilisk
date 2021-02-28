@@ -68,6 +68,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import simpleInstrument, simpleStorageUnit, partitionedStorageUnit, spaceToGroundTransmitter
 from Basilisk.simulation import groundLocation
+from Basilisk.utilities import vizSupport
 
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
