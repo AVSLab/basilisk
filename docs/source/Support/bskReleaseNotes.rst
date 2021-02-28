@@ -25,6 +25,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+
+
+Version 1.8.10
+-------------
 - Added support and expanded installation instructions making use of virtual environments
 
 Version 1.8.9
