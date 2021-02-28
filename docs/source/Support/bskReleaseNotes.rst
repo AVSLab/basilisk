@@ -33,6 +33,12 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text goes here
+
+
+
+Version 2.0.0
+-------------
 
 .. Warning::
 
@@ -94,7 +100,7 @@ Version |release|
 
 
 Version 1.8.10
--------------
+--------------
 - Added support and expanded installation instructions making use of virtual environments
 
 Version 1.8.9
