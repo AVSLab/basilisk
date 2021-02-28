@@ -19,11 +19,11 @@
 
 #include <string.h>
 #include <math.h>
-#include "attDetermination/InertialUKF/inertialUKF.h"
-#include "attDetermination/_GeneralModuleFiles/ukfUtilities.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "fswAlgorithms/attDetermination/InertialUKF/inertialUKF.h"
+#include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! This method creates the two moduel output messages.
  @return void
@@ -32,41 +32,10 @@
  */
 void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 {
-    /*! - Create output message for module */
-	configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
-		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleId);
-    /*! - Create filter states output message which is mostly for debug*/
-    configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
-        sizeof(InertialFilterFswMsg), "InertialFilterFswMsg", moduleId);
-    
+    NavAttMsg_C_init(&configData->navStateOutMsg);
+    InertialFilterMsg_C_init(&configData->filtDataOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the inertial filter.  It's primary function is to link the input messages that were created elsewhere.
- @return void
- @param configData The configuration data associated with the CSS interface
- @param moduleId The module identifier
- */
-void CrossInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
-{
-    /*! - Find the message ID for the coarse sun sensor data message */
-    int i;
-    for (i = 0; i < configData->STDatasStruct.numST; i++)
-    {
-        configData->STDatasStruct.STMessages[i].stInMsgId = subscribeToMessage(configData->STDatasStruct.STMessages[i].stInMsgName, sizeof(STAttFswMsg), moduleId);
-    }
-	configData->massPropsInMsgId = subscribeToMessage(configData->massPropsInMsgName,
-		sizeof(VehicleConfigFswMsg), moduleId);
-    /*! - Find the message Id for the vehicle mass properties configuration message */
-    configData->rwParamsInMsgId = subscribeToMessage(configData->rwParamsInMsgName,
-                                                     sizeof(RWArrayConfigFswMsg), moduleId);
-    configData->rwSpeedsInMsgId = subscribeToMessage(configData->rwSpeedsInMsgName,
-        sizeof(RWSpeedIntMsg), moduleId);
-    
-    configData->gyrBuffInMsgId = subscribeToMessage(configData->gyrBuffInMsgName,
-                                                   sizeof(AccDataFswMsg), moduleId);
-    
-    
-}
 
 /*! This method resets the inertial inertial filter to an initial state and
  initializes the internal estimation matrices.
@@ -81,20 +50,26 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     
     int32_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     double tempMatrix[AKF_N_STATES*AKF_N_STATES];
-    
-    /*! - Zero the local configuration data structures and outputs */
-    memset(&(configData->rwConfigParams), 0x0, sizeof(RWArrayConfigFswMsg));
-    memset(&(configData->localConfigData), 0x0, sizeof(VehicleConfigFswMsg));
+
+    // check if the required input messages are included
+    if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.rwParamsInMsg wasn't connected.");
+    }
+    if (!VehicleConfigMsg_C_isLinked(&configData->massPropsInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.massPropsInMsg wasn't connected.");
+    }
+    if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.rwSpeedsInMsg wasn't connected.");
+    }
+    if (!AccDataMsg_C_isLinked(&configData->gyrBuffInMsgName)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.gyrBuffInMsgName wasn't connected.");
+    }
 
     /*! - Read static RW config data message and store it in module variables */
-    ReadMessage(configData->rwParamsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleId);
-    ReadMessage(configData->massPropsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-        sizeof(VehicleConfigFswMsg), &(configData->localConfigData), moduleId);
-    
+    configData->rwConfigParams = RWArrayConfigMsg_C_read(&configData->rwParamsInMsg);
+    configData->localConfigData = VehicleConfigMsg_C_read(&configData->massPropsInMsg);
+
     /*! - Initialize filter parameters to max values */
     configData->timeTag = callTime*NANO2SEC;
     configData->dt = 0.0;
@@ -154,7 +129,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     v3Copy(configData->state, configData->sigma_BNOut);
     v3Copy(&(configData->state[3]), configData->omega_BN_BOut);
     configData->timeTagOut = configData->timeTag;
-    Read_STMessages(configData, moduleId);
+    Read_STMessages(configData);
 
     if (badUpdate <0){
         _bskLog(configData->bskLogger, BSK_WARNING, "Reset method contained bad update");
@@ -165,12 +140,11 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 /*! This method reads in the messages from all available star trackers and orders them with respect to time of measurement
  @return void
  @param configData The configuration data associated with the CSS estimator
- @param moduleId The module identifier
  */
-void Read_STMessages(InertialUKFConfig *configData, int64_t moduleId)
+void Read_STMessages(InertialUKFConfig *configData)
 {
     uint64_t timeOfMsgWritten; /* [ns] Read time when the message was written*/
-    uint32_t sizeOfMsgWritten;  /* [-] Non-zero size indicates we received ST msg*/
+    int isWritten;      /* has the message been written */
     int bufferSTIndice; /* Local ST message to copy and organize  */
     int i;
     int j;
@@ -178,16 +152,14 @@ void Read_STMessages(InertialUKFConfig *configData, int64_t moduleId)
     for (i = 0; i < configData->STDatasStruct.numST; i++)
     {
         /*! - Read the input parsed CSS sensor data message*/
-        timeOfMsgWritten = 0;
-        sizeOfMsgWritten = 0;
-        memset(&(configData->stSensorIn[i]), 0x0, sizeof(STAttFswMsg));
-        ReadMessage(configData->STDatasStruct.STMessages[i].stInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(STAttFswMsg), (void*) (&(configData->stSensorIn[i])), moduleId);
-        
+        configData->stSensorIn[i] = STAttMsg_C_read(&configData->STDatasStruct.STMessages[i].stInMsg);
+        timeOfMsgWritten = STAttMsg_C_timeWritten(&configData->STDatasStruct.STMessages[i].stInMsg);
+
         /*! - Only mark valid size if message isn't stale*/
-        configData->ReadSizeST[i] = timeOfMsgWritten != configData->ClockTimeST[i] ?
-            sizeOfMsgWritten : 0;
+        isWritten = STAttMsg_C_isWritten(&configData->STDatasStruct.STMessages[i].stInMsg);
+        configData->isFreshST[i] = timeOfMsgWritten != configData->ClockTimeST[i] ? isWritten : 0;
         configData->ClockTimeST[i] = timeOfMsgWritten;
-        
+
         /*! - If the time tag from the measured data is new compared to previous step,
          propagate and update the filter*/
         configData->stSensorOrder[i] = i;
@@ -211,21 +183,19 @@ void Read_STMessages(InertialUKFConfig *configData, int64_t moduleId)
  @return void
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
- @param moduleId The module identifier
+ @param moduleID The module identifier
  */
 void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
-    int64_t moduleId)
+    int64_t moduleID)
 {
     double newTimeTag;  /* [s] Local Time-tag variable*/
     uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/
     uint64_t timeOfRWSpeeds; /* [ns] Read time for the RWs*/
-    uint32_t sizeOfMsgWritten;  /* [-] Non-zero size indicates we received ST msg*/
-    uint32_t otherSize; /* [-] Size of messages that are assumed to be good*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
     double sigma_BNSum[3]; /* [-] Local MRP for propagated state*/
-    InertialFilterFswMsg inertialDataOutBuffer; /* [-] Output filter info*/
-    AccDataFswMsg gyrBuffer; /* [-] Buffer of IMU messages for gyro prop*/
-    NavAttIntMsg outputInertial;
+    InertialFilterMsgPayload inertialDataOutBuffer; /* [-] Output filter info*/
+    AccDataMsgPayload gyrBuffer; /* [-] Buffer of IMU messages for gyro prop*/
+    NavAttMsgPayload outputInertial;
     int i;
     
     // Reset update check to zero
@@ -233,32 +203,31 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     {
         MRPswitch(configData->state, configData->switchMag, configData->state);
     }
-    memset(&(outputInertial), 0x0, sizeof(NavAttIntMsg));
-    memset(&gyrBuffer, 0x0, sizeof(AccDataFswMsg));
-    memset(&(configData->rwSpeeds), 0x0, sizeof(RWSpeedIntMsg));
-    memset(&(configData->localConfigData), 0x0, sizeof(VehicleConfigFswMsg));
-    ReadMessage(configData->massPropsInMsgId, &timeOfMsgWritten, &otherSize,
-                sizeof(VehicleConfigFswMsg), &(configData->localConfigData), moduleId);
-    ReadMessage(configData->gyrBuffInMsgId, &timeOfMsgWritten, &otherSize,
-                sizeof(AccDataFswMsg), &gyrBuffer, moduleId);
-    ReadMessage(configData->rwSpeedsInMsgId, &timeOfRWSpeeds, &otherSize,
-                sizeof(RWSpeedIntMsg), &(configData->rwSpeeds), moduleId);
-    Read_STMessages(configData, moduleId);
+
+    /* zero output buffer */
+    outputInertial = NavAttMsg_C_zeroMsgPayload();
+
+    /* read input messages */
+    configData->localConfigData = VehicleConfigMsg_C_read(&configData->massPropsInMsg);
+    gyrBuffer = AccDataMsg_C_read(&configData->gyrBuffInMsgName);
+    configData->rwSpeeds = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
+    timeOfRWSpeeds = RWSpeedMsg_C_timeWritten(&configData->rwSpeedsInMsg);
+    Read_STMessages(configData);
 
     m33Inverse(RECAST3X3 configData->localConfigData.ISCPntB_B, configData->IInv);
     /*! - Handle initializing time in filter and discard initial messages*/
     if(configData->firstPassComplete == 0)
     {
         /*! - Set wheel speeds so that acceleration can be safely computed*/
-        memcpy(&(configData->rwSpeedPrev), &(configData->rwSpeeds), sizeof(RWSpeedIntMsg));
+        configData->rwSpeedPrev = configData->rwSpeeds;
         configData->timeWheelPrev = timeOfRWSpeeds;
 
         /*! - Loop through ordered time-tags and select largest valid one*/
         newTimeTag = 0.0;
         for (i=0; i<configData->STDatasStruct.numST; i++)
         {
-            if(configData->ReadSizeST[configData->stSensorOrder[i]] == sizeof(STAttFswMsg) &&
-            configData->stSensorIn[configData->stSensorOrder[i]].timeTag*NANO2SEC > newTimeTag)
+            if(configData->isFreshST[configData->stSensorOrder[i]] &&
+               configData->stSensorIn[configData->stSensorOrder[i]].timeTag*NANO2SEC > newTimeTag)
             {
                 newTimeTag = configData->stSensorIn[configData->stSensorOrder[i]].timeTag*NANO2SEC;
                 /*! - If any ST message is valid mark initialization complete*/
@@ -272,7 +241,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
         }
         configData->timeTag = newTimeTag;
     }
-    
+
     configData->speedDt = (timeOfRWSpeeds - configData->timeWheelPrev)*NANO2SEC;
     configData->timeWheelPrev = timeOfRWSpeeds;
     
@@ -281,12 +250,11 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     for (i = 0; i < configData->STDatasStruct.numST; i++)
     {
         newTimeTag = configData->stSensorIn[configData->stSensorOrder[i]].timeTag * NANO2SEC;
-        timeOfMsgWritten = configData->ClockTimeST[configData->stSensorOrder[i]];
-        sizeOfMsgWritten =  configData->ReadSizeST[configData->stSensorOrder[i]];
-        
+        int isFresh = configData->isFreshST[configData->stSensorOrder[i]];
+
         /*! - If the star tracker has provided a new message compared to last time,
               update the filter to the new measurement*/
-        if(newTimeTag >= configData->timeTag && sizeOfMsgWritten == sizeof(STAttFswMsg))
+        if(newTimeTag >= configData->timeTag && isFresh)
         {
             trackerValid = 1;
             if((newTimeTag - configData->timeTag) > configData->maxTimeJump
@@ -345,18 +313,15 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     v3Copy(configData->omega_BN_BOut, outputInertial.omega_BN_B);
     outputInertial.timeTag = configData->timeTagOut;
 	
-	WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
-		&(outputInertial), moduleId);
+    NavAttMsg_C_write(&outputInertial, &configData->navStateOutMsg, moduleID, callTime);
     
     /*! - Populate the filter states output buffer and write the output message*/
     inertialDataOutBuffer.timeTag = configData->timeTag;
     memmove(inertialDataOutBuffer.covar, configData->covar,
             AKF_N_STATES*AKF_N_STATES*sizeof(double));
     memmove(inertialDataOutBuffer.state, configData->state, AKF_N_STATES*sizeof(double));
-    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(InertialFilterFswMsg),
-                 &inertialDataOutBuffer, moduleId);
-    memcpy(&(configData->rwSpeedPrev), &(configData->rwSpeeds), sizeof(RWSpeedIntMsg));
-    
+    InertialFilterMsg_C_write(&inertialDataOutBuffer, &configData->filtDataOutMsg, moduleID, callTime);
+    configData->rwSpeedPrev = configData->rwSpeeds;
     return;
 }
 
@@ -586,7 +551,7 @@ void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST)
  @param gyrData The gyro measurements that we are going to accumulate forward into time
  */
 void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
-    double propTime, AccDataFswMsg *gyrData)
+    double propTime, AccDataMsgPayload *gyrData)
 {
     uint32_t minFutInd;  /* [-] Index in buffer that is the oldest new meas*/
     int i, j;

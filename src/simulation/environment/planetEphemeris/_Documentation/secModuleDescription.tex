@@ -11,11 +11,11 @@
 
 
 \section{Model Description}
-The purpose of this module is to create planetary ephemeris messages where the planetary motion is modeled through classical orbit elements.  The module output messages are illustrated in Figure~\ref{fig:moduleImg}.  Note that there are not input messages.  The planetary translational motion, and optionally the rotational motion, are specified through the module parameters directly.  
+The purpose of this module is to create planetary ephemeris messages where the planetary motion is modeled through classical orbit elements.  The module output messages are illustrated in Figure~\ref{fig:moduleImg}.  Note that there are no input messages.  The planetary translational motion, and optionally the rotational motion, are specified through the module parameters directly.  
 
 
 \subsection{Specifying the required planetary translational information}
-The first step is to specify the planet names that are to be modeled.  This is done by creating a C++ vector of strings and storing it in the module {\tt planetNames} variable.  The length of this vector determines how many output messages are created.  The planet name string provided is used to fill the output message {\tt PlanetName} variable.
+The first step is to specify the planet names that are to be modeled.  This is done by creating a C++ vector of strings and setting them using the module {\tt setPlanetNames()} method.  The length of this vector determines how many output messages are created in the vector {\tt planetOutMsgs}.  The planet name string provided is used to fill the output message {\tt PlanetName} variable.
 
 Next the translational planetary motion is specified through a C++ vector of classical orbit element structures called {\tt planetElements}.  The true anomaly provided is assumes to be the anomaly angle at epoch.  This is the same time as the zero'th simulation time step. 
 

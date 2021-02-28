@@ -24,14 +24,14 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
-#include "../../_GeneralModuleFiles/sys_model.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/atmoPropsSimMsg.h"
-#include "../_GeneralModuleFiles/atmosphereBase.h"
-#include "simMessages/swDataSimMsg.h"
-#include "simMessages/epochSimMsg.h"
-#include "utilities/bskLogging.h"
+#include<time.h>
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+
+#include "simulation/environment/_GeneralModuleFiles/atmosphereBase.h"
+
+#include "architecture/msgPayloadDefC/SwDataMsgPayload.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 extern "C" {
   #include "nrlmsise-00.h"
@@ -45,16 +45,17 @@ public:
     ~MsisAtmosphere();
 
 private:
-    void customCrossInit();
     void customWriteMessages(uint64_t CurrentClock);
     bool customReadMessages();
+    void customReset(uint64_t CurrentClock);
     bool ReadInputs();
     void updateInputParams();
     void updateSwIndices();
-    void evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime);
+    void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime);
     void customSetEpochFromVariable();
 
 public:
+    std::vector<ReadFunctor<SwDataMsgPayload>> swDataInMsgs; //!< Vector of space weather input message names
     int epochDoy;                               //!< [day] Day-of-Year at epoch
     std::string epochInMsgName;                 //!< epoch input msg name
     BSKLogger bskLogger;                        //!< -- BSK Logging
@@ -62,9 +63,7 @@ public:
 
 private:
     Eigen::Vector3d currentLLA; //!< [-] Container for local Latitude, Longitude, Altitude geodetic position; units are rad and km respectively.
-    std::vector<SwDataSimMsg> swDataList; //!< Vector of space weather messages
-    std::vector<std::string> swDataInMsgNames; //!< Vector of space weather message names
-    int64_t swDataInMsgIds[23];
+    std::vector<SwDataMsgPayload> swDataList; //!< Vector of space weather messages
 
     // NRLMSISE-00 Specific attributes
     nrlmsise_input msisInput; //!< Struct containing NRLMSISE-00 input values; see their doc for details.

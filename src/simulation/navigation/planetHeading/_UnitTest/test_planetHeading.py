@@ -18,12 +18,10 @@
 
 import pytest
 
-from Basilisk.simulation.simMessages import SpicePlanetStateSimMsg
-from Basilisk.simulation.simMessages import SCPlusStatesSimMsg
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import planetHeading
+from Basilisk.architecture import messaging
 
 
 def test_planetHeading(show_plots=False, relTol=1e-8):
@@ -45,27 +43,31 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
 
 """
     sim = SimulationBaseClass.SimBaseClass()
-    sim.TotalSim.terminateSimulation()
     proc = sim.CreateNewProcess("proc")
     task = sim.CreateNewTask("task", int(1e9))
     proc.addTask(task)
 
-    earthPositionMessage = SpicePlanetStateSimMsg()
+    earthPositionMessage = messaging.SpicePlanetStateMsgPayload()
     earthPositionMessage.PositionVector = [0., 0., 0.]
-    unitTestSupport.setMessage(sim.TotalSim, proc.Name, "earth_planet_data", earthPositionMessage, "SpicePlanetStateSimMsg")
+    plMsg = messaging.SpicePlanetStateMsg().write(earthPositionMessage)
 
-    scPositionMessage = SCPlusStatesSimMsg()
+    scPositionMessage = messaging.SCStatesMsgPayload()
     scPositionMessage.r_BN_N = [0., 0., om.AU*1000]
-    unitTestSupport.setMessage(sim.TotalSim, proc.Name, "inertial_state_output", scPositionMessage, "SCPlusStatesSimMsg")
+    scMsg = messaging.SCStatesMsg().write(scPositionMessage)
 
     ph = planetHeading.PlanetHeading()
-    ph.planetPositionInMsgName = "earth_planet_data"
-    ph.planetHeadingOutMsgName = "planet_heading"
+    ph.ModelTag = "planetHeading"
     sim.AddModelToTask(task.Name, ph)
-    sim.TotalSim.logThisMessage("planet_heading")
-    sim.InitializeSimulationAndDiscover()
+
+    ph.planetPositionInMsg.subscribeTo(plMsg)
+    ph.spacecraftStateInMsg.subscribeTo(scMsg)
+
+    dataLog = ph.planetHeadingOutMsg.recorder()
+    sim.AddModelToTask(task.Name, dataLog)
+
+    sim.InitializeSimulation()
     sim.TotalSim.SingleStepProcesses()
-    headingOut = sim.pullMessageLogData("planet_heading.rHat_XB_B", list(range(3)))[0][1:]
+    headingOut = dataLog.rHat_XB_B[-1]
 
     assert headingOut == pytest.approx([0., 0., -1.], rel=relTol)
 

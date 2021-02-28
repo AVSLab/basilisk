@@ -24,7 +24,7 @@
 
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
 %include "swig_eigen.i"
@@ -35,16 +35,14 @@ from Basilisk.simulation.swig_common_model import *
 namespace std {
     %template(storedDataVector) std::vector<dataInstance>;
 }
-%include "../_GeneralModuleFiles/dataStorageUnitBase.h"
+%include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
 struct dataInstance;
 %include "partitionedStorageUnit.h"
 
-%include "../../simMessages/dataNodeUsageSimMsg.h"
-%include "../../simMessages/dataStorageStatusSimMsg.h"
-
-GEN_SIZEOF(DataNodeUsageSimMsg)
-GEN_SIZEOF(DataStorageStatusSimMsg)
-GEN_SIZEOF(dataInstance)
+%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+struct DataNodeUsageMsg_C;
+%include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
+struct DataStorageStatusMsg_C;
 
 %pythoncode %{
 import sys

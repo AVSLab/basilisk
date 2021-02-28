@@ -21,16 +21,16 @@
  
  */
 
-#include "effectorInterfaces/thrMomentumDumping/thrMomentumDumping.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simulation/utilities/linearAlgebra.h"
+#include "fswAlgorithms/effectorInterfaces/thrMomentumDumping/thrMomentumDumping.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 #include <stdio.h>
 
 
 /*!
  \verbatim embed:rst
-    This method initializes the configData for this module.  It creates a single output message of type :ref:`THRArrayOnTimeCmdIntMsg`.
+    This method initializes the configData for this module.  It creates a single output message of type :ref:`THRArrayOnTimeCmdMsgPayload`.
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
@@ -38,39 +38,9 @@
  */
 void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->thrusterOnTimeOutMsgId = CreateNewMessage(configData->thrusterOnTimeOutMsgName,
-                                               sizeof(THRArrayOnTimeCmdIntMsg),
-                                               "THRArrayOnTimeCmdIntMsg",
-                                               moduleID);
+    THRArrayOnTimeCmdMsg_C_init(&configData->thrusterOnTimeOutMsg);
 }
 
-/*!
- \verbatim embed:rst
-    This method performs the second stage of initialization for this module.
-    It links to 3 required input messages of type :ref:`THRArrayCmdForceFswMsg`, :ref:`THRArrayConfigFswMsg` and :ref:`CmdTorqueBodyIntMsg`.
- \endverbatim
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The ID associated with the configData
- */
-void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID)
-{
-    /*! - Get the message ID for the requested thruster impulse message */
-    configData->thrusterImpulseInMsgId = subscribeToMessage(configData->thrusterImpulseInMsgName,
-                                                sizeof(THRArrayCmdForceFswMsg),
-                                                moduleID);
-
-    /*! - Get the message ID for the thruster configuration message */
-    configData->thrusterConfInMsgId = subscribeToMessage(configData->thrusterConfInMsgName,
-                                                         sizeof(THRArrayConfigFswMsg),
-                                                         moduleID);
-
-    /*! - Get the message ID for the thrMomentumManagement message */
-    configData->deltaHInMsgId = subscribeToMessage(configData->deltaHInMsgName,
-                                                         sizeof(CmdTorqueBodyIntMsg),
-                                                         moduleID);
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -81,20 +51,27 @@ void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t 
  */
 void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    THRArrayConfigFswMsg   localThrusterData;     /* local copy of the thruster data message */
-    CmdTorqueBodyIntMsg    DeltaHInMsg;
-    uint64_t            timeOfMsgWritten;
-    uint32_t            sizeOfMsgWritten;
-    int                 i;
+    THRArrayConfigMsgPayload    localThrusterData;     /* local copy of the thruster data message */
+    CmdTorqueBodyMsgPayload     DeltaHInMsg;
+    int                         i;
 
     /*! - reset the prior time flag state.  If set to zero, the control time step is not evaluated on the
      first function call */
     configData->priorTime = 0;
 
+    // check if the required input messages are included
+    if (!THRArrayConfigMsg_C_isLinked(&configData->thrusterConfInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumDumping.thrusterConfInMsg wasn't connected.");
+    }
+    if (!CmdTorqueBodyMsg_C_isLinked(&configData->deltaHInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumDumping.deltaHInMsg wasn't connected.");
+    }
+    if (!THRArrayCmdForceMsg_C_isLinked(&configData->thrusterImpulseInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumDumping.thrusterImpulseInMsg wasn't connected.");
+    }
+
     /*! - read in number of thrusters installed and maximum thrust values */
-    memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
-    ReadMessage(configData->thrusterConfInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(THRArrayConfigFswMsg), (void *) &localThrusterData, moduleID);
+    localThrusterData = THRArrayConfigMsg_C_read(&configData->thrusterConfInMsg);
     configData->numThrusters = localThrusterData.numThrusters;
     for (i=0;i<configData->numThrusters;i++) {
         configData->thrMaxForce[i] = localThrusterData.thrusters[i].maxThrust;
@@ -107,12 +84,10 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
     mSetZero(configData->thrOnTimeRemaining, 1, MAX_EFF_CNT);
 
     /*! - set the time tag of the last Delta_p message */
-    memset(&DeltaHInMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
-    ReadMessage(configData->deltaHInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CmdTorqueBodyIntMsg), (void *) &DeltaHInMsg, moduleID);
-    if (sizeOfMsgWritten > 0) {
+    DeltaHInMsg = CmdTorqueBodyMsg_C_read(&configData->deltaHInMsg);
+    if (CmdTorqueBodyMsg_C_isWritten(&configData->deltaHInMsg)) {
         /* prior message has been written, copy its time tag as the last prior message */
-        configData->lastDeltaHInMsgTime = timeOfMsgWritten;
+        configData->lastDeltaHInMsgTime = CmdTorqueBodyMsg_C_timeWritten(&configData->deltaHInMsg);
     } else {
         configData->lastDeltaHInMsgTime = 0;
     }
@@ -135,21 +110,18 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
  */
 void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t            timeOfMsgWritten;
-    uint32_t            sizeOfMsgWritten;
     double              dt;                             /* [s]    control update period */
     double              *Delta_P_input;                 /* []     pointer to vector of requested net thruster impulses */
     double              *tOnOut;                        /*        pointer to vector of requested thruster on times per dumping cycle */
-    THRArrayOnTimeCmdIntMsg thrOnTimeOut;               /* []     output message container */
-    THRArrayCmdForceFswMsg thrusterImpulseInMsg;        /* []     thruster inpulse input message */
-    CmdTorqueBodyIntMsg  DeltaHInMsg;                   /* []     commanded Delta_H input message */
+    THRArrayOnTimeCmdMsgPayload thrOnTimeOut;           /* []     output message container */
+    THRArrayCmdForceMsgPayload thrusterImpulseInMsg;    /* []     thruster inpulse input message */
+    CmdTorqueBodyMsgPayload  DeltaHInMsg;               /* []     commanded Delta_H input message */
     uint64_t            timeOfDeltaHMsg;
-    uint32_t            sizeOfDeltaHMsg;
     int                 i;
 
     /*! - zero the output array of on-time values */
     tOnOut = thrOnTimeOut.OnTimeRequest;
-    memset(&thrOnTimeOut, 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
+    thrOnTimeOut = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
 
     /*! - check if this is the first call after reset.  If yes, write zero output message and exit */
     if (configData->priorTime != 0) {       /* don't compute dt if this is the first call after a reset */
@@ -159,16 +131,13 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
         if (dt < 0.0) {dt = 0.0;}             /* ensure no negative numbers are used */
 
         /*! - Read the requester thruster impulse input message */
-        memset(&thrusterImpulseInMsg, 0x0, sizeof(THRArrayCmdForceFswMsg));
-        ReadMessage(configData->thrusterImpulseInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(THRArrayCmdForceFswMsg), (void*) &thrusterImpulseInMsg, moduleID);
+        thrusterImpulseInMsg = THRArrayCmdForceMsg_C_read(&configData->thrusterImpulseInMsg);
         Delta_P_input = thrusterImpulseInMsg.thrForce;
 
         /*! - check if the thruster impulse input message time tag is identical to current values (continue
          with current momentum dumping) */
-        memset(&DeltaHInMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
-        ReadMessage(configData->deltaHInMsgId, &timeOfDeltaHMsg, &sizeOfDeltaHMsg,
-                    sizeof(CmdTorqueBodyIntMsg), (void *) &DeltaHInMsg, moduleID);
+        DeltaHInMsg = CmdTorqueBodyMsg_C_read(&configData->deltaHInMsg);
+        timeOfDeltaHMsg = CmdTorqueBodyMsg_C_timeWritten(&configData->deltaHInMsg);
         if (configData->lastDeltaHInMsgTime == timeOfDeltaHMsg){
             /* identical net thruster impulse request case, continue with existing RW momentum dumping */
             if (configData->thrDumpingCounter <= 0) {
@@ -226,8 +195,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
     configData->priorTime = callTime;
 
     /*! - write out the output message */
-    WriteMessage(configData->thrusterOnTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
-                 (void*) &thrOnTimeOut, moduleID);
+    THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->thrusterOnTimeOutMsg, moduleID, callTime);
 
     return;
 }

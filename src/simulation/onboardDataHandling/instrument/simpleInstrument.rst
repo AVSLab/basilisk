@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-This module provides first-order modeling of data generation from a simple instrument at a fixed baud rate. Specifically, it writes out a :ref:`DataNodeUsageSimMsg` describing its data name and baud rate at each time step.
+This module provides first-order modeling of data generation from a simple instrument at a fixed baud rate. Specifically, it writes out a :ref:`DataNodeUsageMsgPayload` describing its data name and baud rate at each time step.
 
 For more information on how to set up and use this module, see the simple data system example: :ref:`scenarioDataDemo`
 
@@ -24,9 +24,8 @@ Set the `nodeBaudRate` and `nodeDataName` variables::
    instrument.nodeBaudRate = 1200. # baud
    instrument.nodeDataName = "Instrument 1" # baud
 
-The final step is to specify the output message name and add the model to task::
+The final step is to add the model to task::
 
-    instrument.nodeDataOutMsgName = "Instrument1Msg"
     scenarioSim.AddModelToTask(taskName, instrument)
 
 Follow the :ref:`partitionedStorageUnit` or :ref:`simpleStorageUnit` instructions to add the instrument to a storage unit.

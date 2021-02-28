@@ -20,33 +20,26 @@
 #ifndef _DV_EXECUTE_GUIDANCE_H_
 #define _DV_EXECUTE_GUIDANCE_H_
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-#include "fswMessages/dvBurnCmdFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+#include "cMsgCInterface/DvBurnCmdMsg_C.h"
+#include "cMsgCInterface/DvExecutionDataMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
 
-/*! @brief DV executation data structure */
-typedef struct {
-    uint32_t burnExecuting;    /*!< [-] Flag indicating whether burn is executing*/
-    uint32_t burnComplete;     /*!< [-] Flag indicating whether the burn is complete */
-}dvExecutionData;
 
 /*! @brief Top level structure for the nominal delta-V guidance */
 typedef struct {
-    char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the output message*/
-    char inputNavDataName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the incoming attitude command*/
-    char inputBurnDataName[MAX_STAT_MSG_LENGTH];/*!< [-] Input message that configures the vehicle burn*/
-    char outputThrName[MAX_STAT_MSG_LENGTH]; /*!< [-] Output thruster message name */
+    DvExecutionDataMsg_C burnExecOutMsg; /*!< [-] The name of burn execution output message*/
+    NavTransMsg_C navDataInMsg; /*!< [-] The name of the incoming attitude command */
+    DvBurnCmdMsg_C burnDataInMsg;/*!< [-] Input message that configures the vehicle burn*/
+    THRArrayOnTimeCmdMsg_C thrCmdOutMsg; /*!< [-] Output thruster message name */
     double dvInit[3];        /*!< (m/s) DV reading off the accelerometers at burn start*/
     uint32_t burnExecuting;  /*!< (-) Flag indicating whether the burn is in progress or not*/
     uint32_t burnComplete;   /*!< (-) Flag indicating that burn has completed successfully*/
-    int32_t outputMsgID;     /*!< (-) ID for the outgoing body estimate message*/
-    int32_t outputThrID;     /*!< [-] ID for the outgoing thruster command message*/
-    int32_t inputNavID;      /*!< (-) ID for the incoming IMU data message*/
-    int32_t inputBurnCmdID;  /*!< [-] ID for the incoming burn command data*/
+
     BSKLogger *bskLogger;   //!< BSK Logging
 }dvExecuteGuidanceConfig;
 
@@ -55,10 +48,11 @@ extern "C" {
 #endif
     
     void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID);
-    void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID);
     void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callTime,
         int64_t moduleID);
-    
+    void Reset_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callTime,
+                       int64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif

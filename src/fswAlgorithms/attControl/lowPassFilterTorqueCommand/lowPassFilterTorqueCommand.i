@@ -26,16 +26,14 @@
 %ignore Update_lowPassFilterTorqueCommand;
 %constant void SelfInit_lowPassFilterTorqueCommand(void*, uint64_t);
 %ignore SelfInit_lowPassFilterTorqueCommand;
-%constant void CrossInit_lowPassFilterTorqueCommand(void*, uint64_t);
-%ignore CrossInit_lowPassFilterTorqueCommand;
 %constant void Reset_lowPassFilterTorqueCommand(void*, uint64_t, uint64_t);
 %ignore Reset_lowPassFilterTorqueCommand;
-GEN_SIZEOF(lowPassFilterTorqueCommandConfig);
+
 %include "lowPassFilterTorqueCommand.h"
 
-// sample Module supportfile to be included in this sub-module
-%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-GEN_SIZEOF(CmdTorqueBodyIntMsg);
+// sample Module support file to be included in this sub-module
+%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+struct CmdTorqueBodyMsg_C;
 
 %pythoncode %{
 import sys

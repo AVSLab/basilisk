@@ -20,14 +20,14 @@
 #ifndef _HILL_POINT_
 #define _HILL_POINT_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
 
 /* Required module input messages */
-#include "simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "fswMessages/attRefFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "cMsgCInterface/EphemerisMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 
@@ -37,12 +37,12 @@
 typedef struct {
     
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];       //!<        The name of the output message
-    int32_t outputMsgID;                            //!< (-)    ID for the outgoing message
-    char inputNavDataName[MAX_STAT_MSG_LENGTH];     //!<        The name of the incoming attitude command
-    int32_t inputNavID;                             //!< (-)    ID for the incoming IMU data message
-    char inputCelMessName[MAX_STAT_MSG_LENGTH];     //!<        The name of the celestial body message
-    int32_t inputCelID;                             //!< (-)    ID for the planet input message
+    AttRefMsg_C attRefOutMsg;               //!<        The name of the output message
+    NavTransMsg_C transNavInMsg;            //!<        The name of the incoming attitude command
+    EphemerisMsg_C celBodyInMsg;            //!<        The name of the celestial body message
+
+    int planetMsgIsLinked;                  //!<        flag if the planet message is linked
+
     BSKLogger *bskLogger;                             //!< BSK Logging
 
 }hillPointConfig;
@@ -52,7 +52,6 @@ extern "C" {
 #endif
     
     void SelfInit_hillPoint(hillPointConfig *configData, int64_t moduleID);
-    void CrossInit_hillPoint(hillPointConfig *configData, int64_t moduleID);
     void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID);
 
@@ -61,7 +60,7 @@ extern "C" {
                                       double v_BN_N[3],
                                       double celBdyPositonVector[3],
                                       double celBdyVelocityVector[3],
-                                      AttRefFswMsg *attRefOut);
+                                      AttRefMsgPayload *attRefOut);
 
 #ifdef __cplusplus
 }

@@ -27,15 +27,13 @@
 %ignore Update_vehicleConfigData;
 %constant void SelfInit_vehicleConfigData(void*, uint64_t);
 %ignore SelfInit_vehicleConfigData;
-%constant void CrossInit_vehicleConfigData(void*, uint64_t);
-%ignore CrossInit_vehicleConfigData;
 %constant void Reset_vehicleConfigData(void*, uint64_t, uint64_t);
 %ignore Reset_vehicleConfigData;
-GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(VehConfigInputData);
 
 %include "vehicleConfigData.h"
-%include "../fswMessages/vehicleConfigFswMsg.h"
+
+%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
+struct VehicleConfigMsg_C;
 
 %pythoncode %{
 import sys

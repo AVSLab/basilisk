@@ -1,23 +1,20 @@
-''' '''
-'''
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
-import sys, os, inspect
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 import numpy
 import pytest
 import math
@@ -31,18 +28,13 @@ import math
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import sunlineUKF
-from Basilisk.fswAlgorithms import fswMessages
-from Basilisk.fswAlgorithms import cssComm
-from Basilisk.simulation import coarse_sun_sensor
+from Basilisk.architecture import messaging
 import SunLineuKF_test_utilities as FilterPlots
 
+def addTimeColumn(time, data):
+    return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))
 
 def setupFilterData(filterObject):
-    filterObject.navStateOutMsgName = "sunline_state_estimate"
-    filterObject.filtDataOutMsgName = "sunline_filter_data"
-    filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfigInMsgName = "css_config_data"
-
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
@@ -333,6 +325,8 @@ def sunline_utilities_test(show_plots):
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + " UKF utilities")
+    else:
+        print(testMessages)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -368,7 +362,7 @@ def testStateUpdateSunLine(show_plots):
 
     setupFilterData(moduleConfig)
 
-    cssConstelation = fswMessages.CSSConfigFswMsg()
+    cssConstelation = messaging.CSSConfigMsgPayload()
 
     CSSOrientationList = [
        [0.70710678118654746, -0.5, 0.5],
@@ -382,51 +376,46 @@ def testStateUpdateSunLine(show_plots):
     ]
     totalCSSList = []
     for CSSHat in CSSOrientationList:
-        newCSS = fswMessages.CSSUnitConfigFswMsg()
+        newCSS = messaging.CSSUnitConfigMsgPayload()
         newCSS.CBias = 1.0
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.cssConfigInMsgName,
-                               cssConstelation)
+    cssConstInMsg = messaging.CSSConfigMsg().write(cssConstelation)
 
 
     testVector = numpy.array([-0.7, 0.7, 0.0])
-    inputData = cssComm.CSSArraySensorIntMsg()
+    inputData = messaging.CSSArraySensorMsgPayload()
     dotList = []
     for element in CSSOrientationList:
         dotProd = numpy.dot(numpy.array(element), testVector)
         dotList.append(dotProd)
     inputData.CosValue = dotList
-    inputMessageSize = inputData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                      moduleConfig.cssDataInMsgName,
-                                      inputMessageSize,
-                                      2)  # number of buffers (leave at 2 as default, don't make zero)
+    cssDataInMsg = messaging.CSSArraySensorMsg()
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
     moduleConfig.state = [0.7, 0.7, 0.0]
-    unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
 
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
+    moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
     unitTestSim.InitializeSimulation()
 
     for i in range(400):
         if i > 20:
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
-                                      inputMessageSize,
-                                      unitTestSim.TotalSim.CurrentNanos,
-                                      inputData)
+            cssDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(6)))
-    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(6*6)))
+    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
+    postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
+    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     for i in range(6):
         if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]/100):
@@ -438,7 +427,7 @@ def testStateUpdateSunLine(show_plots):
             testMessages.append("State update failure")
 
     testVector = numpy.array([-0.8, -0.9, 0.0])
-    inputData = cssComm.CSSArraySensorIntMsg()
+    inputData = messaging.CSSArraySensorMsgPayload()
     dotList = []
     for element in CSSOrientationList:
         dotProd = numpy.dot(numpy.array(element), testVector)
@@ -447,17 +436,13 @@ def testStateUpdateSunLine(show_plots):
 
     for i in range(400):
         if i > 20:
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
-                                      inputMessageSize,
-                                      unitTestSim.TotalSim.CurrentNanos,
-                                      inputData)
+            cssDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+401)*0.5))
         unitTestSim.ExecuteSimulation()
 
-
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(6)))
-    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(6*6)))
+    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
+    postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
+    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
@@ -475,6 +460,8 @@ def testStateUpdateSunLine(show_plots):
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + moduleWrap.ModelTag + " state update")
+    else:
+        print(testMessages)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -509,16 +496,23 @@ def testStatePropSunLine(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
-    unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
 
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    cssConstInMsg = messaging.CSSConfigMsg()
+    cssDataInMsg = messaging.CSSArraySensorMsg()
+    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
+    moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(6)))
-    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(6*6)))
+    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
+    postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
+    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'prop', show_plots)
     FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'prop', show_plots)
@@ -535,10 +529,12 @@ def testStatePropSunLine(show_plots):
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + moduleWrap.ModelTag + " state propagation")
+    else:
+        print(testMessages)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_all_sunline_kf(False)
+    test_all_sunline_kf(True)

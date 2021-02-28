@@ -17,26 +17,19 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import sys, os, inspect
 import numpy
 import pytest
-import math
 
 from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
-from Basilisk.simulation import coarse_sun_sensor
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import sunlineSuKF  # import the module that is to be tested
-from Basilisk.fswAlgorithms import cssComm
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging
 
 import SunLineSuKF_test_utilities as FilterPlots
 
-def setupFilterData(filterObject, initialized):
-    filterObject.navStateOutMsgName = "sunline_state_estimate"
-    filterObject.filtDataOutMsgName = "sunline_filter_data"
-    filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfigInMsgName = "css_config_data"
+def addTimeColumn(time, data):
+    return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))
 
+def setupFilterData(filterObject, initialized):
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
@@ -257,7 +250,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig, False)
-    cssConstelation = fswMessages.CSSConfigFswMsg()
+    cssConstelation = messaging.CSSConfigMsgPayload()
 
     CSSOrientationList = [
        [0.70710678118654746, -0.5, 0.5],
@@ -271,17 +264,16 @@ def StateUpdateSunLine(show_plots, kellyOn):
     ]
     totalCSSList = []
     for CSSHat in CSSOrientationList:
-        newCSS = fswMessages.CSSUnitConfigFswMsg()
+        newCSS = messaging.CSSUnitConfigMsgPayload()
         newCSS.CBias = 1.0
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.cssConfigInMsgName,
-                               cssConstelation)
-    unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
+    cssConstInMsg = messaging.CSSConfigMsg().write(cssConstelation)
+
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Add the kelly curve coefficients
     if kellyOn:
@@ -296,22 +288,22 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     testVector = numpy.array([-0.7, 0.7, 0.0])
     testVector/=numpy.linalg.norm(testVector)
-    inputData = cssComm.CSSArraySensorIntMsg()
+    inputData = messaging.CSSArraySensorMsgPayload()
     dotList = []
     for element in CSSOrientationList:
         dotProd = numpy.dot(numpy.array(element), testVector)/(numpy.linalg.norm(element)*numpy.linalg.norm(testVector))
         dotList.append(dotProd)
 
     inputData.CosValue = dotList
-    inputMessageSize = inputData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                      moduleConfig.cssDataInMsgName,
-                                      inputMessageSize,
-                                      2)  # number of buffers (leave at 2 as default, don't make zero)
+    cssDataInMsg = messaging.CSSArraySensorMsg()
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 1.])
     # moduleConfig.stateInit = [0.7, 0.7, 0.0, 0.01, 0.001, 1.]
+
+    # connect messages
+    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
+    moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
     numStates = len(moduleConfig.stateInit)
     unitTestSim.InitializeSimulation()
@@ -320,16 +312,13 @@ def StateUpdateSunLine(show_plots, kellyOn):
     else:
         time =  500
     for i in range(time):
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
-                                  inputMessageSize,
-                                  unitTestSim.TotalSim.CurrentNanos,
-                                  inputData)
+        cssDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(numStates)))
-    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(numStates*numStates)))
+    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
+    postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
+    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     accuracy = 1.0E-3
     if kellyOn:
@@ -353,7 +342,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     testVector = numpy.array([-0.7, 0.75, 0.0])
     testVector /= numpy.linalg.norm(testVector)
-    inputData = cssComm.CSSArraySensorIntMsg()
+    inputData = messaging.CSSArraySensorMsgPayload()
     dotList = []
     for element in CSSOrientationList:
         dotProd = numpy.dot(numpy.array(element), testVector)
@@ -362,16 +351,13 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     for i in range(time):
         if i > 20:
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
-                                      inputMessageSize,
-                                      unitTestSim.TotalSim.CurrentNanos,
-                                      inputData)
+            cssDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+time+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(numStates)))
-    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(numStates*numStates)))
+    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
+    postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
+    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 1.0])
@@ -437,15 +423,23 @@ def StatePropSunLine(show_plots):
 
     setupFilterData(moduleConfig, True)
     numStates = 6
-    unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    cssConstInMsg = messaging.CSSConfigMsg()
+    cssDataInMsg = messaging.CSSArraySensorMsg()
+
+    # connect messages
+    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
+    moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(numStates)))
-    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(numStates*numStates)))
+    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
+    postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
+    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     FilterPlots.StateCovarPlot(stateLog, covarLog, show_plots)
     FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
@@ -529,10 +523,12 @@ def FaultScenarios():
         testFailCount += 1
         testMessages.append("sunlineSuKFClean sBar failed")
 
-    moduleConfigClean1.navStateOutMsgName = "sunline_state_estimate"
-    moduleConfigClean1.filtDataOutMsgName = "sunline_filter_data"
-    moduleConfigClean1.cssDataInMsgName = "css_sensors_data"
-    moduleConfigClean1.cssConfigInMsgName = "css_config_data"
+    cssConstInMsg = messaging.CSSConfigMsg()
+    cssDataInMsg = messaging.CSSArraySensorMsg()
+
+    # connect messages
+    moduleConfigClean1.cssDataInMsg.subscribeTo(cssDataInMsg)
+    moduleConfigClean1.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
     moduleConfigClean1.alpha = 0.02
     moduleConfigClean1.beta = 2.0

@@ -5,9 +5,9 @@ The SimpleBattery class is a minimal model of battery functionality that conside
 
 1. Integrated net input power of the attached modules
 2. The battery's maximum storage capacity as defined by the ``storageCapacity`` attribute.
-Integration of the net input power is performed with a simple Euler method.
+   Integration of the net input power is performed with a simple Euler method.
 
-    :math:`W_{stored} = \dot{W}_{net} (t_{current} - t_{previous})`
+     :math:`W_{stored} = \dot{W}_{net} (t_{current} - t_{previous})`
 
 
 Module Assumptions and Limitations
@@ -30,13 +30,9 @@ In addition to the variables that must be set for the :ref:`PowerStorageBase` ba
 
    battery.storageCapacity = 10.0 # Given in Joules or Watt-seconds
 
-The next step is to attach one or more :ref:`PowerNodeUsageSimMsg` instances to it using the ``addNodeToStorage()`` method::
+The next step is to attach one or more :ref:`PowerNodeUsageMsgPayload` instances to it using the ``addNodeToStorage()`` method::
 
-   battery.addPowerNodeToModel("msg name")
-
-The final step is to specify the output message name::
-
-   battery.batPowerOutMsgName= "outMsgName"
+   battery.addPowerNodeToModel(powerMsg)
 
 
 For more information on how to set up and use this module, see the simple power system example :ref:`scenarioPowerDemo`.

@@ -37,11 +37,3 @@ In order for the filter to run, the user must set a few parameters:
   \texttt{     filterObject.qNoise = qNoiseIn.reshape(36).tolist()}
 \end{itemize}
 
-The messages must also be set as such:
-
-\begin{itemize}
-\item    \texttt{    filterObject.navStateOutMsgName = "relod\_state\_estimate"}
- \item    \texttt{   filterObject.filtDataOutMsgName = "relod\_filter\_data"}
- \item    \texttt{   filterObject.opNavInMsgName = "reold\_opnav\_meas"}
-\end{itemize}
-

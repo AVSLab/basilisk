@@ -20,11 +20,10 @@
 #ifndef _RW_CONFIG_DATA_H_
 #define _RW_CONFIG_DATA_H_
 
-#include "messaging/static_messaging.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
-#include "fswMessages/rwArrayConfigFswMsg.h"
-#include "fswMessages/rwConstellationFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "cMsgCInterface/RWArrayConfigMsg_C.h"
+#include "cMsgCInterface/RWConstellationMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
 
@@ -32,15 +31,11 @@
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    RWConstellationFswMsg rwConstellation; /*!< struct to populate input RW config parameters in structural S frame */
-    RWArrayConfigFswMsg  rwConfigParamsOut; /*!< struct to populate ouput RW config parameters in body B frame */
+    RWConstellationMsgPayload rwConstellation; /*!< struct to populate input RW config parameters in structural S frame */
+    RWArrayConfigMsgPayload  rwConfigParamsOut; /*!< struct to populate ouput RW config parameters in body B frame */
     /* declare module IO interfaces */
-    char rwConstellationInMsgName[MAX_STAT_MSG_LENGTH];  /*!< The name of the RWConstellationFswMsg input message*/
-    int32_t rwConstellationInMsgID;                      /*!< [-] ID for the RWConstellationFswMsg incoming message */
-    char rwParamsOutMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWArrayConfigFswMsg output message*/
-    int32_t rwParamsOutMsgID;                            /*!< [-] ID for the RWArrayConfigFswMsg outgoing message */
-    char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the vehicle config data input message*/
-    int32_t vehConfigInMsgID;                            /*!< [-] ID for the vehicle config data incoming message */
+    RWConstellationMsg_C rwConstellationInMsg;          /*!< RW array input message */
+    RWArrayConfigMsg_C rwParamsOutMsg;                  /*!< RW array output message */
 
     BSKLogger *bskLogger;   //!< BSK Logging
 
@@ -51,7 +46,6 @@ extern "C" {
 #endif
     
     void SelfInit_rwConfigData(rwConfigData_Config*configData, int64_t moduleID);
-    void CrossInit_rwConfigData(rwConfigData_Config *configData, int64_t moduleID);
     void Update_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, int64_t moduleID);
     void Reset_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, int64_t moduleID);
     

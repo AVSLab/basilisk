@@ -17,9 +17,9 @@
 
  */
 
-#include "attDetermination/CSSEst/cssWlsEst.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "fswAlgorithms/attDetermination/CSSEst/cssWlsEst.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
 
@@ -30,30 +30,12 @@
  */
 void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName, sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
-    if(strlen(configData->cssWLSFiltResOutMsgName) > 0) {
-        configData->cssWlsFiltResOutMsgId = CreateNewMessage(configData->cssWLSFiltResOutMsgName,
-                                                             sizeof(SunlineFilterFswMsg), "SunlineFilterFswMsg", moduleID);
+    NavAttMsg_C_init(&configData->navStateOutMsg);
+    if (SunlineFilterMsg_C_isLinked(&configData->cssWLSFiltResOutMsg)) {
+        SunlineFilterMsg_C_init(&configData->cssWLSFiltResOutMsg);
     }
 }
 
-/*! This method performs the second stage of initialization for the CSS sensor
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
- @return void
- @param configData The configuration data associated with the CSS interface
- @param moduleID The module identifier
- */
-void CrossInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
-{
-    /*! - Subscribe to css measurements */
-    configData->cssDataInMsgID = subscribeToMessage(configData->cssDataInMsgName,
-        sizeof(CSSArraySensorIntMsg), moduleID);
-    /*! - Subscribe to css configuration message for normals */
-    configData->cssConfigInMsgID = subscribeToMessage(configData->cssConfigInMsgName,
-                                                      sizeof(CSSConfigFswMsg), moduleID);
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -64,13 +46,16 @@ void CrossInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
  */
 void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
 
-    memset(&(configData->cssConfigInBuffer), 0x0, sizeof(CSSConfigFswMsg));
-    ReadMessage(configData->cssConfigInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CSSConfigFswMsg),
-                (void *) &(configData->cssConfigInBuffer), moduleID);
+    // check that required messages have been included
+    if (!CSSConfigMsg_C_isLinked(&configData->cssConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: cssWIsEst.cssConfigInMsg wasn't connected.");
+    }
+    if (!CSSArraySensorMsg_C_isLinked(&configData->cssDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: cssWIsEst.cssDataInMsg wasn't connected.");
+    }
+
+    configData->cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
 
     configData->priorSignalAvailable = 0;
     v3SetZero(configData->dOld);
@@ -97,7 +82,7 @@ void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t module
     @param wlsEst The WLS estimate computed for the CSS measurements
     @param cssResiduals The measurement residuals output by this function
 */
-void computeWlsResiduals(double *cssMeas, CSSConfigFswMsg *cssConfig,
+void computeWlsResiduals(double *cssMeas, CSSConfigMsgPayload *cssConfig,
                          double *wlsEst, double *cssResiduals)
 {
     int i;
@@ -177,10 +162,7 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
 void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    CSSArraySensorIntMsg InputBuffer;            /* CSS measurements */
+    CSSArraySensorMsgPayload InputBuffer;        /* CSS measurements */
     double H[MAX_NUM_CSS_SENSORS*3];             /* The predicted pointing vector for each measurement */
     double y[MAX_NUM_CSS_SENSORS];               /* Measurements */
     double W[MAX_NUM_CSS_SENSORS*MAX_NUM_CSS_SENSORS];  /* Matrix of measurement weights */
@@ -190,17 +172,14 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     double dHatNew[3];                           /* New normalized sun heading estimate */
     double dHatOld[3];                           /* Prior normalized sun heading estimate */
     double  dt;                                  /* [s] Control update period */
-    NavAttIntMsg sunlineOutBuffer;               /* Output Nav message*/
+    NavAttMsgPayload sunlineOutBuffer;               /* Output Nav message*/
     
     /* Zero output message*/
-    memset(&sunlineOutBuffer, 0x0, sizeof(NavAttIntMsg));
-    
+    sunlineOutBuffer = NavAttMsg_C_zeroMsgPayload();
+
     /*! Message Read and Setup*/
     /*! - Read the input parsed CSS sensor data message*/
-    memset(&InputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(configData->cssDataInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CSSArraySensorIntMsg),
-                (void*) (&InputBuffer), moduleID);
+    InputBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);
 
     /*! - Compute control update time */
     if (configData->priorTime == 0) {
@@ -233,7 +212,8 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     }
     
     /*! Estimation Steps*/
-    memset(&configData->filtStatus, 0x0, sizeof(SunlineFilterFswMsg));
+    configData->filtStatus = SunlineFilterMsg_C_zeroMsgPayload();
+
     if(configData->numActiveCss == 0) /*! - If there is no sun, just quit*/
     {
         /*! + If no CSS got a strong enough signal.  Sun estimation is not possible.  Return the zero vector instead */
@@ -282,12 +262,11 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
 
     /*! Residual Computation */
     /*! - If the residual fit output message is set, then compute the residuals and stor them in the output message */
-    if(strlen(configData->cssWLSFiltResOutMsgName) > 0) {
+    if (SunlineFilterMsg_C_isLinked(&configData->cssWLSFiltResOutMsg)) {
         configData->filtStatus.numObs = (int) configData->numActiveCss;
         configData->filtStatus.timeTag = (double) (callTime*NANO2SEC);
         v3Copy(sunlineOutBuffer.vehSunPntBdy, configData->filtStatus.state);
-        WriteMessage(configData->cssWlsFiltResOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
-                     &configData->filtStatus, moduleID);
+        SunlineFilterMsg_C_write(&configData->filtStatus, &configData->cssWLSFiltResOutMsg, moduleID, callTime);
 
     }
     /*! Writing Outputs */
@@ -299,8 +278,6 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
         configData->priorSignalAvailable = 0;                       /* reset the prior heading estimate flag */
     }
     /*! - If the status from the WLS computation good, populate the output messages with the computed data*/
-    WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
-                 &(sunlineOutBuffer), moduleID);
-    
+    NavAttMsg_C_write(&sunlineOutBuffer, &configData->navStateOutMsg, moduleID, callTime);
     return;
 }

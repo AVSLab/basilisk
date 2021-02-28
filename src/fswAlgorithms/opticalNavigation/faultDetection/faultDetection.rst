@@ -19,15 +19,15 @@ The following table lists all the module input and output messages.  The module 
         +------------------------+---------------------------------+---------------------------------------------------+
         | Msg Variable Name      | Msg Type                        | Description                                       |
         +========================+=================================+===================================================+
-        | navMeasPrimaryMsgName  | :ref:`OpNavFswMsg`              | Input primary nav message                         |
+        | navMeasPrimaryInMsg    | :ref:`OpNavMsgPayload`          | Input primary nav message                         |
         +------------------------+---------------------------------+---------------------------------------------------+
-        | navMeasSecondaryMsgName| :ref:`OpNavFswMsg`              | Input secondary nav message                       |
+        | navMeasSecondaryInMsg  | :ref:`OpNavMsgPayload`          | Input secondary nav message                       |
         +------------------------+---------------------------------+---------------------------------------------------+
-        | cameraConfigMsgName    | :ref:`CameraConfigMsg`          | Input camera message                              |
+        | cameraConfigInMsg      | :ref:`CameraConfigMsgPayload`   | Input camera message                              |
         +------------------------+---------------------------------+---------------------------------------------------+
-        | attInMsgName           | :ref:`NavAttIntMsg`             | Input attitude message                            |
+        | attInMsg               | :ref:`NavAttMsgPayload`         | Input attitude message                            |
         +------------------------+---------------------------------+---------------------------------------------------+
-        | opNavOutMsgName        | :ref:`OpNavFswMsg`              | Ouput navigation message given the two inputs     |
+        | opNavOutMsg            | :ref:`OpNavMsgPayload`          | Ouput navigation message given the two inputs     |
         +------------------------+---------------------------------+---------------------------------------------------+
 
 
@@ -61,11 +61,6 @@ An example setup is provided here:
     :linenos:
 
     faults = faultDetection.FaultDetectionData()
-    faults.navMeasPrimaryMsgName = "primary_opnav"
-    faults.navMeasSecondaryMsgName = "secondary_opnav"
-    faults.cameraConfigMsgName = "camera_config_name"
-    faults.attInMsgName = "nav_att_name"
-    faults.opNavOutMsgName = "output_nav_msg"
     faults.sigmaFault = 3
     faults.faultMode = 1
 

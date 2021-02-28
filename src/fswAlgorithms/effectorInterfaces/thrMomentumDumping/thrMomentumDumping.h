@@ -20,14 +20,14 @@
 #ifndef _THR_MOMENTUM_DUMPING_H_
 #define _THR_MOMENTUM_DUMPING_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/vehicleConfigFswMsg.h"
-#include "fswMessages/thrArrayConfigFswMsg.h"
-#include "fswMessages/thrArrayCmdForceFswMsg.h"
-#include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-#include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simulation/utilities/bskLogging.h"
+
+#include "cMsgCInterface/THRArrayConfigMsg_C.h"
+#include "cMsgCInterface/THRArrayCmdForceMsg_C.h"
+#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 
@@ -48,14 +48,11 @@ typedef struct {
     double      thrMinFireTime;                         //!< [s]    smallest thruster firing time
 
     /* declare module IO interfaces */
-    char thrusterOnTimeOutMsgName[MAX_STAT_MSG_LENGTH]; //!< thruster on time output message name
-    int32_t thrusterOnTimeOutMsgId;                     //!< ID of module output message
-    char thrusterImpulseInMsgName[MAX_STAT_MSG_LENGTH]; //!< desired thruster impulse input message name
-    int32_t thrusterImpulseInMsgId;                     //!< ID of thruster impulse input message
-    char thrusterConfInMsgName[MAX_STAT_MSG_LENGTH];    //!< The name of the thruster configuration Input message
-    int32_t  thrusterConfInMsgId;                       //!< [-] ID for the incoming Thruster configuration data
-    char deltaHInMsgName[MAX_STAT_MSG_LENGTH];          //!< The name of the requested momentum change input message
-    int32_t  deltaHInMsgId;                             //!< [-] ID for the incoming Thruster configuration data
+    THRArrayOnTimeCmdMsg_C thrusterOnTimeOutMsg;        //!< thruster on time output message name
+    THRArrayCmdForceMsg_C thrusterImpulseInMsg;         //!< desired thruster impulse input message name
+    THRArrayConfigMsg_C thrusterConfInMsg;              //!< The name of the thruster configuration Input message
+    CmdTorqueBodyMsg_C deltaHInMsg;                     //!< The name of the requested momentum change input message
+
     BSKLogger *bskLogger;                             //!< BSK Logging
 }thrMomentumDumpingConfig;
 
@@ -64,7 +61,6 @@ extern "C" {
 #endif
     
     void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID);
-    void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID);
     void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID);
     

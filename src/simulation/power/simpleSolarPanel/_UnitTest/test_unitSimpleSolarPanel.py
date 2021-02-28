@@ -36,7 +36,7 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import simMessages
+from Basilisk.architecture import messaging
 from Basilisk.simulation import simpleSolarPanel
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -83,10 +83,10 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     unitProcessName = "TestProcess"
 
     #   Specify test-against parameter
-    referencePower = astroFunctions.solarFluxEarth #    W/m^2 at Earth
+    referencePower = astroFunctions.solarFluxEarth  # W/m^2 at Earth
     sunDistanceMult = pow(astroFunctions.AU*1000., 2.)/pow(orbitDistance, 2.)
-    scAttMult = np.cos(abs(np.arccos(0.5 * (np.trace(rbk.MRP2C(scAttitude))-1.)))) # extract cos(prv) to determine the attitude angle vs the sun
-    referenceMultiplier = 1.0 * eclipseValue * sunDistanceMult * scAttMult  #     Nominally set to 1.0; modified by other vals
+    scAttMult = np.cos(abs(np.arccos(0.5 * (np.trace(rbk.MRP2C(scAttitude))-1.))))  # extract cos(prv) to determine the attitude angle vs the sun
+    referenceMultiplier = 1.0 * eclipseValue * sunDistanceMult * scAttMult  # Nominally set to 1.0; modified by other vals
 
     #   Simulation set-up
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -95,44 +95,44 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     #   Input message set-up
-    eclipseMessage = simMessages.EclipseSimMsg()
-    eclipseMessage.shadowFactor = eclipseValue # Set it to be totally in shadow
+    eclipseMessage = messaging.EclipseMsgPayload()
+    eclipseMessage.shadowFactor = eclipseValue  # Set it to be totally in shadow
+    eclipseMsg = messaging.EclipseMsg().write(eclipseMessage)
 
-    sunMessage = simMessages.SpicePlanetStateSimMsg()
+
+    sunMessage = messaging.SpicePlanetStateMsgPayload()
     sunMessage.PlanetName = "Sun"
     sunMessage.PositionVector = [0, 0, 0]
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunMessage)
 
-    scMessage = simMessages.SCPlusStatesSimMsg()
+    scMessage = messaging.SCStatesMsgPayload()
     scMessage.r_BN_N = [-orbitDistance, 0, 0]
     scMessage.sigma_BN = scAttitude
-
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, "EclipseMsg", eclipseMessage)
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, "SunMsg", sunMessage)
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, "scMsg", scMessage)
+    scMsg = messaging.SCStatesMsg().write(scMessage)
 
     #   Module set-up
     panel = simpleSolarPanel.SimpleSolarPanel()
     panel.setPanelParameters(np.array([1, 0, 0]), 1.0, 1.0)
-    panel.stateInMsgName = "scMsg"
-    panel.sunEclipseInMsgName = "EclipseMsg"
-    panel.sunInMsgName = "SunMsg"
-    panel.nodePowerOutMsgName = "panelMsg"
+    panel.stateInMsg.subscribeTo(scMsg)
+    panel.sunEclipseInMsg.subscribeTo(eclipseMsg)
+    panel.sunInMsg.subscribeTo(sunMsg)
 
     unitTestSim.AddModelToTask(unitTaskName, panel)
     
-    unitTestSim.TotalSim.logThisMessage(panel.nodePowerOutMsgName, testProcessRate)
+    dataLog = panel.nodePowerOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     #   Execute the sim for 1 second.
-    unitTestSim.InitializeSimulationAndDiscover()
+    unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
     
     unitTestSim.ExecuteSimulation()
 
-    powerData = unitTestSim.pullMessageLogData("panelMsg.netPower")
+    powerData = dataLog.netPower
 
-    tol=1e-7
+    tol = 1e-7
 
-    if not unitTestSupport.isDoubleEqual(powerData[1, :], referencePower*referenceMultiplier, tol):
+    if not unitTestSupport.isDoubleEqual(powerData[1], referencePower*referenceMultiplier, tol):
         testFailCount += 1
         testMessages.append('Error: simpleSolarPanel did not compute power correctly.')
     

@@ -17,10 +17,9 @@
 
  */
 
-#include "architecture/messaging/system_messaging.h"
-#include "utilities/astroConstants.h"
-#include "utilities/linearAlgebra.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "powerStorageBase.h"
 
 
@@ -29,9 +28,8 @@
  */
 PowerStorageBase::PowerStorageBase()
 {
-    this->outputBufferCount = 2;
     this->previousTime = 0;
-    this->nodePowerUseMsgNames.clear();
+    this->nodePowerUseInMsgs.clear();
 
     this->storedCharge = 0.0;
     this->storedCharge_Init = 0.0;
@@ -48,45 +46,15 @@ PowerStorageBase::~PowerStorageBase()
 }
 
 
-/*! Adds a simPowerNodeMsg name to be iterated over.
+/*! Adds a PowerNodeUsageMsgPayload input message to iterate over
  @return void
- @param tmpNodeMsgName Message name corresponding to a PowerNodeUsageSimMsg.
+ @param tmpNodeMsg Message name corresponding to a PowerNodeUsageMsgPayload.
  */
-void PowerStorageBase::addPowerNodeToModel(std::string tmpNodeMsgName){
-    this->nodePowerUseMsgNames.push_back(tmpNodeMsgName);
+void PowerStorageBase::addPowerNodeToModel(Message<PowerNodeUsageMsgPayload> *tmpNodeMsg){
+    this->nodePowerUseInMsgs.push_back(tmpNodeMsg->addSubscriber());
     return;
 }
 
-/*! SelfInit creates one PowerStorageSimMsg for the simPowerStorageBase instance.
-  @return void
-*/
-void PowerStorageBase::SelfInit()
-{
-
-    this->batPowerOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->batPowerOutMsgName, sizeof(PowerStorageStatusSimMsg),this->outputBufferCount, "PowerStorageStatusSimMsg",this->moduleID);
-
-    //! - call the custom SelfInit() method to add addtional self initialization steps
-    customSelfInit();
-
-    return;
-}
-
-/*! Subscribes to messages with the names provided by addPowerNodeToModel. Also calls customCrossInit.
- @return void
- */
-void PowerStorageBase::CrossInit()
-{
-    //! - subscribe to the spacecraft messages and create associated output message buffer
-    std::vector<std::string>::iterator it;
-    for(it = this->nodePowerUseMsgNames.begin(); it != this->nodePowerUseMsgNames.end(); it++){
-        this->nodePowerUseMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(PowerNodeUsageSimMsg), moduleID));
-    }
-
-    //!- call the custom CrossInit() method to all additional cross initialization steps
-    customCrossInit();
-
-    return;
-}
 
 /*! This method is used to reset the module.
  @return void
@@ -106,17 +74,13 @@ void PowerStorageBase::Reset(uint64_t CurrentSimNanos)
     return;
 }
 
-/*! Writes out one PowerStorageStatusSimMsg
+/*! Writes out one PowerStorageStatusMsgPayload
  @param CurrentClock The current time used for time-stamping the message
  @return void
  */
 void PowerStorageBase::writeMessages(uint64_t CurrentClock)
 {
-    SystemMessaging::GetInstance()->WriteMessage(this->batPowerOutMsgId,
-                                                     CurrentClock,
-                                                     sizeof(PowerStorageStatusSimMsg),
-                                                     reinterpret_cast<uint8_t*> (&(this->storageStatusMsg)),
-                                                     moduleID);
+    this->batPowerOutMsg.write(&this->storageStatusMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);
@@ -129,24 +93,19 @@ void PowerStorageBase::writeMessages(uint64_t CurrentClock)
  */
 bool PowerStorageBase::readMessages()
 {
-    PowerNodeUsageSimMsg nodeMsg;
-    SingleMessageHeader localHeader;
+    PowerNodeUsageMsgPayload nodeMsg;
 
     this->nodeWattMsgs.clear();
 
     //! - read in the power node use/supply messages
     bool powerRead = true;
     bool tmpPowerRead;
-    if(this->nodePowerUseMsgIds.size() > 0)
+    if(this->nodePowerUseInMsgs.size() > 0)
     {
-        std::vector<int64_t>::iterator it;
-        for(it = nodePowerUseMsgIds.begin(); it!= nodePowerUseMsgIds.end(); it++)
+        for(long unsigned int c=0; c<this->nodePowerUseInMsgs.size(); c++)
         {
-            memset(&nodeMsg, 0x0, sizeof(PowerNodeUsageSimMsg));
-            tmpPowerRead = SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
-                                                                    sizeof(PowerNodeUsageSimMsg),
-                                                                    reinterpret_cast<uint8_t*>(&nodeMsg),
-                                                                    moduleID);
+            nodeMsg = this->nodePowerUseInMsgs.at(c)();
+            tmpPowerRead = this->nodePowerUseInMsgs.at(c).isWritten();
             powerRead = powerRead && tmpPowerRead;
 
             this->nodeWattMsgs.push_back(nodeMsg);
@@ -169,7 +128,7 @@ bool PowerStorageBase::readMessages()
 double PowerStorageBase::sumAllInputs(){
     double currentSum = 0.0;
 
-    std::vector<PowerNodeUsageSimMsg>::iterator it;
+    std::vector<PowerNodeUsageMsgPayload>::iterator it;
     for(it = nodeWattMsgs.begin(); it != nodeWattMsgs.end(); it++) {
 
         currentSum += (*it).netPower;
@@ -204,7 +163,7 @@ void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
         this->integratePowerStatus(currentSimNanos*NANO2SEC);
     } else {
         /* zero the output message if no input messages were received. */
-        memset(&(this->storageStatusMsg), 0x0, sizeof(PowerStorageStatusSimMsg));
+        this->storageStatusMsg = this->batPowerOutMsg.zeroMsgPayload;
     }
 
     //! - write out neutral density message
@@ -213,22 +172,6 @@ void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
     return;
 }
 
-
-/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
- @return void
- */
-void PowerStorageBase::customSelfInit()
-{
-    return;
-}
-
-/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
- @return void
- */
-void PowerStorageBase::customCrossInit()
-{
-    return;
-}
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
  @return void

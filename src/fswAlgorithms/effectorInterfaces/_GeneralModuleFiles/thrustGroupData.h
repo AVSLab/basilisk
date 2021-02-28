@@ -20,8 +20,8 @@
 #ifndef _THRUST_GROUP_DATA_
 #define _THRUST_GROUP_DATA_
 
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 
 
 
@@ -35,9 +35,8 @@ typedef struct {
     uint32_t numEffectors;       /*!< - The number of effectors we have access to*/
     double minThrustRequest;     /*!< - The minimum allowable on-time for a thruster*/
     double thrOnMap[3*MAX_EFF_CNT]; /*!< - Mapping between on-times and torque requests*/
-    char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< - The name of the output message*/
-    int32_t outputMsgID;            /*!< - ID for the outgoing command messages*/
-    THRArrayOnTimeCmdIntMsg cmdRequests; /*!< - The array of on-time command requests sent to thrusters*/
+    THRArrayOnTimeCmdMsg_C thrOnTimeOutMsg; /*!< - The name of the output message*/
+    THRArrayOnTimeCmdMsgPayload cmdRequests; /*!< - The array of on-time command requests sent to thrusters*/
 }ThrustGroupData;
 
 

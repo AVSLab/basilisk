@@ -23,7 +23,7 @@
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
 %include "sys_model.h"
@@ -31,12 +31,12 @@ from Basilisk.simulation.swig_common_model import *
 %include "simpleInstrument.h"
 %include "swig_conly_data.i"
 
-
-%include "../../simMessages/dataNodeUsageSimMsg.h"
-%include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"
-
-GEN_SIZEOF(DataNodeUsageSimMsg)
-GEN_SIZEOF(DeviceStatusIntMsg)
+%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+struct DataNodeUsageMsg_C;
+%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
+struct DeviceStatusMsg_C;
+%include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
+struct DataStorageStatusMsg_C;
 
 %pythoncode %{
 import sys

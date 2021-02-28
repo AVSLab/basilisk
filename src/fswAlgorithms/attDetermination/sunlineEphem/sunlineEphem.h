@@ -20,11 +20,11 @@
 #ifndef _SUNLINE_EPHEM_FSW_MSG_H_
 #define _SUNLINE_EPHEM_FSW_MSG_H_
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/EphemerisMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
 
@@ -33,16 +33,11 @@
 typedef struct {
 
     /* declare module IO interfaces */
-    char navStateOutMsgName[MAX_STAT_MSG_LENGTH];   //!< The name of the output message
-    char sunPositionInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the sun ephemeris input message
-    char scPositionInMsgName[MAX_STAT_MSG_LENGTH];  //!< The name of the spacecraft ephemeris input message
-    char scAttitudeInMsgName[MAX_STAT_MSG_LENGTH];  //!< The name of the spacecraft attitude input message
+    NavAttMsg_C navStateOutMsg;                     /*!< The name of the output message*/
+    EphemerisMsg_C sunPositionInMsg;           //!< The name of the sun ephemeris input message
+    NavTransMsg_C scPositionInMsg;             //!< The name of the spacecraft ephemeris input message
+    NavAttMsg_C scAttitudeInMsg;               //!< The name of the spacecraft attitude input message
     
-    int32_t navStateOutMsgId;   //!<  [-]  ID for the outgoing body estimate message
-    int32_t sunPositionInMsgId; //!<  [-]  ID for the incoming CSS sensor message
-    int32_t scPositionInMsgId;  //!<  [-]  ID for the incoming spacecraft position message
-    int32_t scAttitudeInMsgId;  //!<  [-]  ID for the incoming spacecraft attitude message
-
     BSKLogger *bskLogger; //!< BSK Logging
 
 }sunlineEphemConfig;
@@ -52,7 +47,6 @@ extern "C" {
 #endif
     
     void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID);
-    void CrossInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID);
     void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID);
     

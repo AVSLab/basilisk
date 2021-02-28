@@ -20,14 +20,12 @@
 #ifndef _INERTIAL3D_SPIN_
 #define _INERTIAL3D_SPIN_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/attRefFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
+#include "cMsgCInterface/AttRefMsg_C.h"
 
-
-/*!@brief module configurate structure definition.
+/*!@brief module configuration structure definition.
  */
 typedef struct {
     /* declare module private variables */
@@ -35,11 +33,10 @@ typedef struct {
     double omega_spin[3];                            /*!< angular velocity spin vector */
     uint64_t priorTime;                              /*!< [ns] last time the guidance module is called */
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];        /*!< Name of the outgoing guidance reference message */
-    int32_t outputMsgID;                             /*!< [-] ID for the outgoing guidance reference message */
-    char inputRefName[MAX_STAT_MSG_LENGTH];          /*!< The name of the input guidance reference message */
-    int32_t inputRefID;                              /*!< [-] ID for the incoming guidance reference message */
-    AttRefFswMsg attRefOut;                             /*!< [-] structure for the output data */
+    AttRefMsg_C attRefOutMsg;                     //!< reference attitude output message
+    AttRefMsg_C attRefInMsg;                      //!< reference attitude input message
+    
+    AttRefMsgPayload attRefOutBuffer;                    //!< [-] structure for the output data
     BSKLogger *bskLogger;                             //!< BSK Logging
 }inertial3DSpinConfig;
 
@@ -48,7 +45,6 @@ extern "C" {
 #endif
     
     void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID);
-    void CrossInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID);
     void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID);
     void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,

@@ -26,15 +26,18 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include <Eigen/Dense>
-#include "_GeneralModuleFiles/sys_model.h"
-#include "simFswInterfaceMessages/vscmgSpeedIntMsg.h"
-#include "simMessages/vscmgCmdSimMsg.h"
-#include "simMessages/vscmgConfigSimMsg.h"
-#include "simFswInterfaceMessages/vscmgArrayTorqueIntMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/bskLogging.h"
-#include "utilities/avsEigenMRP.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+
+#include "architecture/msgPayloadDefC/VSCMGSpeedMsgPayload.h"
+#include "architecture/msgPayloadDefC/VSCMGCmdMsgPayload.h"
+#include "architecture/msgPayloadDefC/VSCMGArrayTorqueMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/VSCMGConfigMsgPayload.h"
+#include "architecture/messaging/messaging.h"
+
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 
 
@@ -46,9 +49,8 @@ public:
 	void registerStates(DynParamManager& states);
 	void linkInStates(DynParamManager& states);
     void updateEffectorMassProps(double integTime);
-	void SelfInit();
-	void CrossInit();
-	void AddVSCMG(VSCMGConfigSimMsg *NewVSCMG) {VSCMGData.push_back(*NewVSCMG);} //!< class method
+    void Reset(uint64_t CurrentSimNanos);
+    void AddVSCMG(VSCMGConfigMsgPayload *NewVSCMG); 
 	void UpdateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
@@ -59,13 +61,15 @@ public:
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
 
 public:
-	std::vector<VSCMGConfigSimMsg> VSCMGData; 	//!< -- VSCMG data structure
+	std::vector<VSCMGConfigMsgPayload> VSCMGData; //!< -- VSCMG data structure
     Eigen::MatrixXd *g_N; 						//!< [m/s^2] Gravitational acceleration in N frame components
-	std::string InputCmds; 						//!< -- message used to read command inputs
-	std::string OutputDataString; 				//!< -- port to use for output data
-    uint64_t OutputBufferCount; 				//!< -- Count on number of buffers to output
-	std::vector<VSCMGCmdSimMsg> NewVSCMGCmds; 	//!< -- Incoming torque commands
-	VSCMGSpeedIntMsg outputStates; 				//!< (-) Output data from the VSCMGs
+
+    ReadFunctor<VSCMGArrayTorqueMsgPayload> cmdsInMsg;  //!< -- motor torque command input message
+	Message<VSCMGSpeedMsgPayload> speedOutMsg; 	        //!< -- VSCMG speed output message
+    std::vector<Message<VSCMGConfigMsgPayload>*> vscmgOutMsgs;   //!< -- vector of VSCMG output messages
+
+    std::vector<VSCMGCmdMsgPayload> newVSCMGCmds; 	//!< -- Incoming torque commands
+	VSCMGSpeedMsgPayload outputStates; 				//!< (-) Output data from the VSCMGs
     std::string nameOfVSCMGOmegasState;         //!< class variable
     std::string nameOfVSCMGThetasState;         //!< class variable
 	std::string nameOfVSCMGGammasState;         //!< class variable
@@ -75,11 +79,7 @@ public:
   BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-	std::vector<std::string> vscmgOutMsgNames;		//!< -- vector with the message names of each VSCMG
-	std::vector<uint64_t> vscmgOutMsgIds;          //!< -- vector with the ID of each VSCMG
-	int64_t CmdsInMsgID;                      	//!< -- Message ID for incoming data
-	int64_t StateOutMsgID;                    	//!< -- Message ID for outgoing data
-	VSCMGArrayTorqueIntMsg IncomingCmdBuffer; 	//!< -- One-time allocation for savings
+    VSCMGArrayTorqueMsgPayload incomingCmdBuffer; 	//!< -- One-time allocation for savings
 	uint64_t prevCommandTime;                  	//!< -- Time for previous valid thruster firing
 
 	StateData *hubSigma;                        //!< class variable

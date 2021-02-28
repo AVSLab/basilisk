@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 import os, inspect
 import math
 import numpy as np
@@ -31,12 +30,12 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spice_interface
+from Basilisk.simulation import spiceInterface
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk.simulation import stateArchitecture
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.simulation import simMessages
+from Basilisk.architecture import messaging
 from Basilisk.simulation.gravityEffector import loadGravFromFileToList
 
 #script to check spherical harmonics calcs out to 20th degree
@@ -302,23 +301,21 @@ def singleGravityBody(show_plots):
     DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
 
     # Initialize the modules that we are using.
-    SpiceObject = spice_interface.SpiceInterface()
+    SpiceObject = spiceInterface.SpiceInterface()
 
     SpiceObject.ModelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    SpiceObject.outputBufferCount = 10000
-    SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
+    SpiceObject.addPlanetNames(spiceInterface.StringVector(["earth", "mars barycenter", "sun"]))
     SpiceObject.UTCCalInit = DateSpice
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
     SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
 
-
     gravBody1 = gravityEffector.GravBodyData()
-    gravBody1.bodyInMsgName = "earth_planet_data"
-    gravBody1.outputMsgName = "earth_display_frame_data"
+    gravBody1.planetName = "earth_planet_data"
     gravBody1.isCentralBody = False
     gravBody1.useSphericalHarmParams = True
     gravityEffector.loadGravFromFile(path + '/GGM03S.txt', gravBody1.spherHarm, 60)
+    gravBody1.planetBodyInMsg.subscribeTo(SpiceObject.planetStateOutMsgs[0])
 
     # Use the python spice utility to load in spacecraft SPICE ephemeris data
     # Note: this following SPICE data only lives in the Python environment, and is
@@ -468,14 +465,13 @@ def multiBodyGravity(show_plots):
 
 
     #Create a message struct to place gravBody1 where it is wanted
-    localPlanetEditor = simMessages.SpicePlanetStateSimMsg()
+    localPlanetEditor = messaging.SpicePlanetStateMsgPayload()
     localPlanetEditor.PositionVector = [om.AU/10., 0., 0.]
     localPlanetEditor.VelocityVector = [0., 0., 0.]
 
     #Grav Body 1 is twice the size of the other two
     gravBody1 = gravityEffector.GravBodyData()
-    gravBody1.bodyInMsgName = "gravBody1_planet_data"
-    gravBody1.outputMsgName = "gravBody1_display_frame_data"
+    gravBody1.planetName = "gravBody1_planet_data"
     gravBody1.mu = 1000000.
     gravBody1.radEquator = 6500.
     gravBody1.isCentralBody = False
@@ -498,8 +494,7 @@ def multiBodyGravity(show_plots):
 
     #grav Body 2 and 3 are coincident with each other, half the mass of gravBody1 and are in the opposite direction of gravBody1
     gravBody2 = gravityEffector.GravBodyData()
-    gravBody2.bodyInMsgName = "gravBody2_planet_data"
-    gravBody2.outputMsgName = "gravBody2_display_frame_data"
+    gravBody2.planetName = "gravBody2_planet_data"
     gravBody2.mu = gravBody1.mu/2.
     gravBody2.radEquator = 6500.
     gravBody2.isCentralBody = False
@@ -518,8 +513,7 @@ def multiBodyGravity(show_plots):
     step2 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
     # grav Body 2 and 3 are coincident with each other, half the mass of gravBody1 and are in the opposite direction of gravBody1
     gravBody3 = gravityEffector.GravBodyData()
-    gravBody3.bodyInMsgName = "gravBody3_planet_data"
-    gravBody3.outputMsgName = "gravBody3_display_frame_data"
+    gravBody3.planetName = "gravBody3_planet_data"
     gravBody3.mu = gravBody2.mu
     gravBody3.radEquator = 6500.
     gravBody3.isCentralBody = False
@@ -577,4 +571,8 @@ def multiBodyGravity(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_gravityEffectorAllTest(False)
+    # test_gravityEffectorAllTest(False)
+    # independentSphericalHarmonics(False)
+    # sphericalHarmonics(False)
+    # singleGravityBody(True)
+    multiBodyGravity(True)

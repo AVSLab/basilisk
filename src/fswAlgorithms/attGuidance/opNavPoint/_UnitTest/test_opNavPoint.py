@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
+#
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Copy of the unit test for sunSafe Point adapted to any heading
 #   Module Name:        opNavPoint
@@ -25,9 +24,8 @@
 #
 
 import pytest
-import sys, os, inspect
+import os, inspect
 import numpy as np
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -37,10 +35,8 @@ path = os.path.dirname(os.path.abspath(filename))
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import opNavPoint                   # import the module that is to be tested
-from Basilisk.fswAlgorithms.fswMessages import OpNavFswMsg
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros as mc
 
 
@@ -74,9 +70,6 @@ def opNavPointTestFunction(show_plots, case):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = mc.sec2nano(0.5)     # update process rate update time
@@ -93,10 +86,6 @@ def opNavPointTestFunction(show_plots, case):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.attGuidanceOutMsgName = "outputName"
-    moduleConfig.opnavDataInMsgName = "inputOpNavName"
-    moduleConfig.imuInMsgName = "inputIMUDataName"
-    moduleConfig.cameraConfigMsgName = "camera_config_data"
     camera_Z = [0.,0.,1.]
     moduleConfig.alignAxis_C = camera_Z
     moduleConfig.minUnitMag = 0.01
@@ -106,7 +95,7 @@ def opNavPointTestFunction(show_plots, case):
     # Create input messages
     #
     planet_B = [1.,1.,0.]
-    inputOpNavData = OpNavFswMsg()  # Create a structure for the input message
+    inputOpNavData = messaging.OpNavMsgPayload()  # Create a structure for the input message
     inputOpNavData.r_BN_C = planet_B
     inputOpNavData.valid = 1
     if (case == 2): #No valid measurement
@@ -115,32 +104,30 @@ def opNavPointTestFunction(show_plots, case):
         inputOpNavData.r_BN_C = [0.,0.,-1.]
     if (case == 4): #No valid measurement
         inputOpNavData.valid = 0
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.opnavDataInMsgName,
-                               inputOpNavData)
+    opnavInMsg = messaging.OpNavMsg().write(inputOpNavData)
 
-    inputIMUData = simFswInterfaceMessages.NavAttIntMsg()  # Create a structure for the input message
+    inputIMUData = messaging.NavAttMsgPayload()  # Create a structure for the input message
     omega_BN_B = np.array([0.01, 0.50, -0.2])
     inputIMUData.omega_BN_B = omega_BN_B
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.imuInMsgName,
-                               inputIMUData)
+    imuInMsg = messaging.NavAttMsg().write(inputIMUData)
     omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
     if (case ==2 or case==4):
         moduleConfig.omega_RN_B = omega_RN_B_Search
 
-    cam = simFswInterfaceMessages.CameraConfigMsg()  # Create a structure for the input message
+    cam = messaging.CameraConfigMsgPayload()  # Create a structure for the input message
     cam.sigma_CB = [0.,0.,0]
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.cameraConfigMsgName,
-                               cam)
+    camInMsg = messaging.CameraConfigMsg().write(cam)
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.attGuidanceOutMsgName, testProcessRate)
+    dataLog = moduleConfig.attGuidanceOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.opnavDataInMsg.subscribeTo(opnavInMsg)
+    moduleConfig.imuInMsg.subscribeTo(imuInMsg)
+    moduleConfig.cameraConfigInMsg.subscribeTo(camInMsg)
+
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -152,9 +139,6 @@ def opNavPointTestFunction(show_plots, case):
     #
     # check sigma_BR
     #
-    moduleOutputName = "sigma_BR"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
     # set the filtered output truth states
 
     eHat = np.cross(-np.array(planet_B), np.array(camera_Z))
@@ -178,19 +162,15 @@ def opNavPointTestFunction(show_plots, case):
 
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+        if not unitTestSupport.isArrayEqual(dataLog.sigma_BR[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0] * mc.NANO2SEC) +
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_BR unit test at t=" +
+                                str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
     #
     # check omega_BR_B
     #
-    moduleOutputName = "omega_BR_B"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         omega_BN_B.tolist(),
@@ -206,18 +186,14 @@ def opNavPointTestFunction(show_plots, case):
     # compare the module results to the truth values
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+        if not unitTestSupport.isArrayEqual(dataLog.omega_BR_B[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0] * mc.NANO2SEC) +
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_BR_B unit test at t=" +
+                                str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
     #
     # check omega_RN_B
     #
-    moduleOutputName = "omega_RN_B"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [0.0, 0.0, 0.0],
@@ -233,19 +209,15 @@ def opNavPointTestFunction(show_plots, case):
     # compare the module results to the truth values
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+        if not unitTestSupport.isArrayEqual(dataLog.omega_RN_B[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0] * mc.NANO2SEC) +
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_B unit test at t=" +
+                                str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
     #
     # check domega_RN_B
     #
-    moduleOutputName = "domega_RN_B"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
                [0.0, 0.0, 0.0],
@@ -256,25 +228,11 @@ def opNavPointTestFunction(show_plots, case):
     # compare the module results to the truth values
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+        if not unitTestSupport.isArrayEqual(dataLog.domega_RN_B[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0] * mc.NANO2SEC) +
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed domega_RN_B unit test at t=" +
+                                str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
-
-
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-   # if show_plots:
-   #     # plot a sample variable.
-   #     plt.figure(1)
-   #     plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-   #     plt.legend(loc='upper left')
-   #     plt.xlabel('Time [s]')
-   #     plt.ylabel('Variable Description [unit]')
-   #     plt.show()
-
 
     #   print out success message if no error were found
     snippentName = "passFail" + str(case)

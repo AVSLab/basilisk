@@ -26,19 +26,17 @@
 %ignore Update_sunlineEphem;
 %constant void SelfInit_sunlineEphem(void*, uint64_t);
 %ignore SelfInit_sunlineEphem;
-%constant void CrossInit_sunlineEphem(void*, uint64_t);
-%ignore CrossInit_sunlineEphem;
 %constant void Reset_sunlineEphem(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineEphem;
-%include "sunlineEphem.h"
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-%include "simFswInterfaceMessages/ephemerisIntMsg.h"
-GEN_SIZEOF(sunlineEphemConfig);
-GEN_SIZEOF(NavAttIntMsg);
-GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(EphemerisIntMsg);
 
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+struct EphemerisMsg_C;
+
+%include "sunlineEphem.h"
 
 %pythoncode %{
 import sys

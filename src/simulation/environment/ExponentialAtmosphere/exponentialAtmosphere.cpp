@@ -18,7 +18,7 @@
  */
 
 #include "exponentialAtmosphere.h"
-#include "utilities/linearAlgebra.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 /*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
  @return void
@@ -47,7 +47,7 @@ ExponentialAtmosphere::~ExponentialAtmosphere()
  @param currentTime current time (s)
  @return void
  */
-void ExponentialAtmosphere::evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime)
+void ExponentialAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
 {
     msg->neutralDensity = this->baseDensity * exp(-(this->orbitAltitude) / this->scaleHeight);
     msg->localTemp = this->localTemp;

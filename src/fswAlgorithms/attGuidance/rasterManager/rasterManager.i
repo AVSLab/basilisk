@@ -27,13 +27,13 @@
 %ignore Update_rasterManager;
 %constant void SelfInit_rasterManager(void*, uint64_t);
 %ignore SelfInit_rasterManager;
-%constant void CrossInit_rasterManager(void*, uint64_t);
-%ignore CrossInit_rasterManager;
 %constant void Reset_rasterManager(void*, uint64_t, uint64_t);
 %ignore Reset_rasterManager;
-GEN_SIZEOF(rasterManagerConfig);
+
 %include "rasterManager.h"
 
+%include "architecture/msgPayloadDefC/AttStateMsgPayload.h"
+struct AttStateMsg_C;
 
 %pythoncode %{
 import sys

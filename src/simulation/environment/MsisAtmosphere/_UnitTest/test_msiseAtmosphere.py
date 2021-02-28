@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -38,8 +37,9 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import msisAtmosphere
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.architecture import messaging
 
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -58,9 +58,10 @@ splitPath = path.split(bskName)
 @pytest.mark.parametrize("orbitType", ["LPO", "LTO"])
 @pytest.mark.parametrize("setEpoch", ["Default", "Direct", "Msg"])
 
+
 # provide a unique test method name, starting with test_
 def test_scenarioMsisAtmosphereOrbit(show_plots, orbitType, setEpoch):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     showVal = False
 
@@ -68,8 +69,9 @@ def test_scenarioMsisAtmosphereOrbit(show_plots, orbitType, setEpoch):
 
     assert testResults < 1, testMessage
 
+
 def run(show_plots, orbitCase, setEpoch):
-    '''Call this routine directly to run the script.'''
+    """Call this routine directly to run the script."""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -98,12 +100,9 @@ def run(show_plots, orbitCase, setEpoch):
     newAtmo.ModelTag = "MsisAtmo"
 
     if setEpoch == "Msg":
-        newAtmo.epochInMsgName = "simEpoch"
         epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 Jan 01 00:00:00.00 (UTC)')
-        unitTestSupport.setMessage(scSim.TotalSim,
-                                   simProcessName,
-                                   newAtmo.epochInMsgName,
-                                   epochMsg)
+        newAtmo.epochInMsg.subscribeTo(epochMsg)
+
         # setting epoch day of year info deliberately to a false value.  The epoch msg info should be used
         newAtmo.epochDoy = 10
 
@@ -113,22 +112,22 @@ def run(show_plots, orbitCase, setEpoch):
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, newAtmo)
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
+    newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
     planet = gravFactory.createEarth()
     planet.isCentralBody = True          # ensure this is the central gravitational body
     mu = planet.mu
 
-    # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    # attach gravity model to spacecraft
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #   setup orbit and simulation time
     oe = orbitalMotion.ClassicElements()
@@ -158,7 +157,7 @@ def run(show_plots, orbitCase, setEpoch):
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
     P = 2.*np.pi/n
 
-    simulationTime = macros.sec2nano(0.001*P)
+    simulationTime = macros.sec2nano(0.002*P)
 
     #
     #   Setup data logging before the simulation is initialized
@@ -171,17 +170,17 @@ def run(show_plots, orbitCase, setEpoch):
         "ap_3_-57","f107_1944_0","f107_24_-24"
     ]
 
+    swMsgList = []
+    for c in range(len(sw_msg_names)):
+        swMsgData = messaging.SwDataMsgPayload()
+        swMsgData.dataValue = 0
+        swMsgList.append(messaging.SwDataMsg().write(swMsgData))
+        newAtmo.swDataInMsgs[c].subscribeTo(swMsgList[-1])
 
-    for swName in sw_msg_names:
-        msgName = swName
-        msgData = msisAtmosphere.SwDataSimMsg()
-        msgData.dataValue = 0.
-        unitTestSupport.setMessage(scSim.TotalSim, simProcessName, msgName, msgData)
-
-    numDataPoints = 2
-    samplingTime = int(simulationTime / (numDataPoints-1))
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(newAtmo.envOutMsgNames[-1], samplingTime)
+    dataLog = scObject.scStateOutMsg.recorder()
+    denLog = newAtmo.envOutMsgs[0].recorder()
+    scSim.AddModelToTask(simTaskName, dataLog)
+    scSim.AddModelToTask(simTaskName, denLog)
 
     #
     #   initialize Spacecraft States with the initialization variables
@@ -203,11 +202,11 @@ def run(show_plots, orbitCase, setEpoch):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
-    densData = scSim.pullMessageLogData(newAtmo.envOutMsgNames[-1]+'.neutralDensity')
-    tempData = scSim.pullMessageLogData(newAtmo.envOutMsgNames[-1]+'.localTemp')
-    #relPosData = scSim.GetLogVariableData('MsisAtmo.relativePos')
+    posData = dataLog.r_BN_N
+    velData = dataLog.v_BN_N
+    densData = denLog.neutralDensity
+    tempData = denLog.localTemp
+
     np.set_printoptions(precision=16)
 
     #   Compare to expected values
@@ -218,16 +217,17 @@ def run(show_plots, orbitCase, setEpoch):
 
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
-    #   Test atmospheric density calculation; note that refAtmoData is in g/cm^3, and must be adjusted by a factor of 1e-3 to match kg/m^3 
-    if not unitTestSupport.isDoubleEqualRelative(densData[0,1], refAtmoData[5]*1000., accuracy):
+    #   Test atmospheric density calculation; note that refAtmoData is in g/cm^3,
+    #   and must be adjusted by a factor of 1e-3 to match kg/m^3
+    if not unitTestSupport.isDoubleEqualRelative(densData[-1], refAtmoData[5]*1000., accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED:  NRLMSISE-00 failed density unit test at t=" + str(densData[0, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[0,1]-refAtmoData[5]))
+                "FAILED:  NRLMSISE-00 failed density unit test with a value difference of "+str(densData[0]-refAtmoData[5]))
 
-    if not unitTestSupport.isDoubleEqualRelative(tempData[0,1], refAtmoData[-1], accuracy):
+    if not unitTestSupport.isDoubleEqualRelative(tempData[-1], refAtmoData[-1], accuracy):
         testFailCount += 1
         testMessages.append(
-        "FAILED:  NRLMSISE-00 failed temperature unit test at t=" + str(densData[0, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(tempData[0,1]-refAtmoData[-1]))
+        "FAILED:  NRLMSISE-00 failed temperature unit test with a value difference of "+str(tempData[0]-refAtmoData[-1]))
 
 
     snippentName = "unitTestPassFail" + str(orbitCase) + str(setEpoch)
@@ -246,4 +246,4 @@ def run(show_plots, orbitCase, setEpoch):
 if __name__ == '__main__':
     run(True,
         "LPO",          # orbitCase
-        "Direct")          # setEpoch
+        "Msg")          # setEpoch

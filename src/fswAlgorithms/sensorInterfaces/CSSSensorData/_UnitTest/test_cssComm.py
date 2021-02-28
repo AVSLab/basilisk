@@ -10,7 +10,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import cssComm
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.architecture import messaging
 
 import os, inspect
 
@@ -20,7 +20,7 @@ path = os.path.dirname(os.path.abspath(filename))
 @pytest.mark.parametrize("numSensors, sensorData", [
     (4, [-100e-6, 200e-6, 600e-6, 300e-6, 200e-6]),  # Five data inputs used despite four sensors to ensure all reset conditions are tested.
     pytest.param(0, [-100e-6, 200e-6, 600e-6, 300e-6]), # Zero sensor number to ensure all reset conditions are tested
-    pytest.param(simFswInterfaceMessages.MAX_NUM_CSS_SENSORS+1, [200e-6]*simFswInterfaceMessages.MAX_NUM_CSS_SENSORS)  # Indicate more sensor devices than is allowed.  The output should be clipped to the allowed length
+    pytest.param(messaging.MAX_NUM_CSS_SENSORS+1, [200e-6]*messaging.MAX_NUM_CSS_SENSORS)  # Indicate more sensor devices than is allowed.  The output should be clipped to the allowed length
 ])
 
 
@@ -52,9 +52,9 @@ def cssCommTestFunction(numSensors, sensorData):
     # Construct the cssComm module
     moduleConfig = cssComm.CSSConfigData() # Create a config struct
     # Populate the config
-    moduleConfig.NumSensors = numSensors
-    moduleConfig.MaxSensorValue = 500e-6
-    moduleConfig.OutputDataName = "css_data_aggregate"
+    moduleConfig.numSensors = numSensors
+    moduleConfig.maxSensorValue = 500e-6
+
     ChebyList =  [-1.734963346951471e+06, 3.294117146099591e+06,
                      -2.816333294617512e+06, 2.163709942144332e+06,
                      -1.488025993860025e+06, 9.107359382775769e+05,
@@ -62,34 +62,26 @@ def cssCommTestFunction(numSensors, sensorData):
                      -9.376105045529010e+04, 3.177536873430168e+04,
                      -8.704033370738143e+03, 1.816188108176300e+03,
                      -2.581556805090373e+02, 1.888418924282780e+01]
-    moduleConfig.ChebyCount = len(ChebyList)
-    moduleConfig.KellyCheby = ChebyList
-    moduleConfig.SensorListName = "css_sensors_data_pass"
+    moduleConfig.chebyCount = len(ChebyList)
+    moduleConfig.kellyCheby = ChebyList
 
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig) # This calls the algContain to setup the selfInit, crossInit, and update
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "cssComm"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # The cssComm module reads in from the sensor list, so create that message here
-    cssArrayMsg = simFswInterfaceMessages.CSSArraySensorIntMsg()
+    cssArrayMsg = messaging.CSSArraySensorMsgPayload()
 
     # NOTE: This is nonsense. These are more or less random numbers
     cssArrayMsg.CosValue = sensorData
-    # Write this message
-    msgSize = cssArrayMsg.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.SensorListName,
-                                          msgSize,
-                                          2)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.SensorListName,
-                                          msgSize,
-                                          0,
-                                          cssArrayMsg)
+    cssInMsg = messaging.CSSArraySensorMsg().write(cssArrayMsg)
+    moduleConfig.sensorListInMsg.subscribeTo(cssInMsg)
 
     # Log the output message
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.OutputDataName, testProcessRate)
+    dataLog = moduleConfig.cssArrayOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -98,14 +90,14 @@ def cssCommTestFunction(numSensors, sensorData):
     unitTestSim.ExecuteSimulation()
 
     # Get the output from this simulation
-    MAX_NUM_CSS_SENSORS = simFswInterfaceMessages.MAX_NUM_CSS_SENSORS
-    outputData = unitTestSim.pullMessageLogData(moduleConfig.OutputDataName+".CosValue", list(range(MAX_NUM_CSS_SENSORS)))
+    MAX_NUM_CSS_SENSORS = messaging.MAX_NUM_CSS_SENSORS
+    outputData = dataLog.CosValue
+
     trueCssList= [0]*MAX_NUM_CSS_SENSORS
     if numSensors==4:
         trueCssList[0:4] = [0.0, 0.45791653042, 1.0, 0.615444781018]
     if numSensors==MAX_NUM_CSS_SENSORS+1:
         trueCssList = [0.45791653042]*32
-
 
     # Create the true array
     trueCss = [
@@ -113,14 +105,10 @@ def cssCommTestFunction(numSensors, sensorData):
         trueCssList
     ]
 
-
     accuracy = 1e-6
 
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueCss, outputData, accuracy, "cosValues",
                                                                  MAX_NUM_CSS_SENSORS, testFailCount, testMessages)
-
-
-
 
     #   print out success message if no error were found
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
@@ -135,8 +123,6 @@ def cssCommTestFunction(numSensors, sensorData):
         print("Failed: " + moduleWrap.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
-
 
     return [testFailCount, ''.join(testMessages)]
 

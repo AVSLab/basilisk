@@ -5,6 +5,10 @@ a.reference, a.internal, a.current {
 	font-weight: bold;
 }
 
+a.icon-home, a.icon-home:visited {
+	color: #666;
+}
+
 div.wy-menu > p.caption > span.caption-text {
 	color: white;
 	font-weight: bold;
@@ -38,6 +42,9 @@ tr td p, th.head p {
 	font-size: small;
 }
 
+img.logo {
+	filter: drop-shadow(0px 0px 8px #fff);
+}
 /* override table no-wrap */
 .wy-table-responsive table td, .wy-table-responsive table th {
     white-space: normal;
@@ -73,12 +80,14 @@ code, .rst-content tt, .rst-content code {
 		color:  #ccc;
 	}
 	
-	
+	img.logo {
+		filter: drop-shadow(0px 0px 8px #000);
+	}
 	
 	.rst-content code {
 		background: #0004;
 	}
-	.rst-content .note {
+	html.writer-html4 .rst-content dl:not(.docutils)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple)>dt, .rst-content .note {
 		background: #2D4151;
 	}
 	
@@ -137,14 +146,14 @@ code, .rst-content tt, .rst-content code {
 	}
 	
 	.rst-content dl:not(.docutils) {
-		padding-top: 1em;;
+		padding-top: 1em;
 	}
 	
 	.rst-content dl:not(.docutils) code.descclassname, .rst-content dl:not(.docutils) code.descname {
 		color:  #ccc;
 	}
 	
-	.rst-content dl:not(.docutils) dl dt {
+	html.writer-html4 .rst-content dl:not(.docutils) dl:not(.field-list)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list)>dt, .rst-content dl:not(.docutils) dl dt {
 		background-color: #333;
 		color: #ccc;
 	}
@@ -152,5 +161,20 @@ code, .rst-content tt, .rst-content code {
 	.wy-table caption, .rst-content table.docutils caption, .rst-content table.field-list caption {
 		color: inherit;
 	}
+
+	span.vm, span.nf, span.nn {
+	    color:#66f !important;
+	}
 	
+	span.normal {
+		color: #333 !important;
+	}
+
+	td.linenos pre {
+	    background: #ccc !important;
+	}
+	
+	.rst-content .highlighted {
+		background-color: #333;
+	}
 }

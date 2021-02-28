@@ -20,24 +20,23 @@
 #ifndef _DV_ACCUMULATION_H_
 #define _DV_ACCUMULATION_H_
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "fswMessages/AccDataFswMsg.h"
-#include "fswMessages/AccPktDataFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/AccDataMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
 typedef struct {
-    char outputNavName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
-    char accPktInMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the input accelerometer message
+    NavTransMsg_C dvAcumOutMsg; //!< accumulated DV output message
+    AccDataMsg_C accPktInMsg; //!< [-] input accelerometer message
+    
     uint32_t msgCount;      //!< [-] The total number of messages read from inputs
     uint32_t dvInitialized; //!< [-] Flag indicating whether DV has been started completely
     uint64_t previousTime;  //!< [ns] The clock time associated with the previous run of algorithm
-    int32_t outputNavMsgID;    //!< [-] The ID associated with the outgoing message
-    int32_t accPktInMsgID;     //!< [-] The ID associated with the incoming accelerometer buffer
     double vehAccumDV_B[3];    //!< [m/s] The accumulated Delta_V in body frame components
+
     BSKLogger *bskLogger;   //!< BSK Logging
 }DVAccumulationData;
 
@@ -46,14 +45,13 @@ extern "C" {
 #endif
     
     void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID);
-    void CrossInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID);
     void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
                                int64_t moduleID);
-    void dvAccumulation_swap(AccPktDataFswMsg *p, AccPktDataFswMsg *q);
-    int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end);
-    void dvAccumulation_QuickSort(AccPktDataFswMsg *A, int start, int end);
+    void dvAccumulation_swap(AccPktDataMsgPayload *p, AccPktDataMsgPayload *q);
+    int dvAccumulation_partition(AccPktDataMsgPayload *A, int start, int end);
+    void dvAccumulation_QuickSort(AccPktDataMsgPayload *A, int start, int end);
     
 #ifdef __cplusplus
 }

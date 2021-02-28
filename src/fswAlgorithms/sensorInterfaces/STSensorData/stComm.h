@@ -20,24 +20,19 @@
 #ifndef _ST_COMM_H_
 #define _ST_COMM_H_
 
-#include "messaging/static_messaging.h"
+#include "cMsgCInterface/STSensorMsg_C.h"
+#include "cMsgCInterface/STAttMsg_C.h"
 
-#include "simFswInterfaceMessages/stSensorIntMsg.h"
-#include "fswMessages/stAttFswMsg.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief Module configuration message.  */
 typedef struct {
     double dcm_BP[9];                /*!< Row major platform 2 body DCM*/
-    char InputDataName[MAX_STAT_MSG_LENGTH];  /*!< The name of the input message*/
-    char InputPropsName[MAX_STAT_MSG_LENGTH]; /*!< The name of the ADCS config data message*/
-    char OutputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    int32_t SensorMsgID; /*!< Sensor IDs tied to the input name*/
-    int32_t PropsMsgID;  /*!< Sensor ID tied to the ADCS config data message*/
-    int32_t OutputMsgID; /*!< Message ID for the output port*/
-    STAttFswMsg LocalOutput; /*!< Output data structure*/
+    STSensorMsg_C stSensorInMsg;  /*!< star tracker sensor input message*/
+    STAttMsg_C stAttOutMsg; /*!< star tracker attitude output message */
+
+    STAttMsgPayload attOutBuffer; /*!< Output data structure*/
     BSKLogger *bskLogger;   //!< BSK Logging
 }STConfigData;
 
@@ -46,7 +41,7 @@ extern "C" {
 #endif
     
     void SelfInit_stProcessTelem(STConfigData *configData, int64_t moduleID);
-    void CrossInit_stProcessTelem(STConfigData *configData, int64_t moduleID);
+    void Reset_stProcessTelem(STConfigData *configData, uint64_t callTime, int64_t moduleID);
     void Update_stProcessTelem(STConfigData *configData, uint64_t callTime,
         int64_t moduleID);
     

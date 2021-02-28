@@ -243,6 +243,7 @@ class fileCrawler():
                     "cmake" in dirs_in_dir[i] or \
                     "topLevelModules" in dirs_in_dir[i] or \
                     "outputFiles" in dirs_in_dir[i] or \
+                    "msgAutoSource" in dirs_in_dir[i] or \
                     "tests" in dirs_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
@@ -377,6 +378,7 @@ class fileCrawler():
                 if "fswMessages" in src_path \
                         or "simFswInterfaceMessages" in src_path \
                         or "simMessages" in src_path\
+                        or "architecture" in src_path\
                         or "utilities" in src_path:
                     lines += c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
                 else:
@@ -446,8 +448,10 @@ class fileCrawler():
         if index_path == ".":
             index_path = "/"
 
-        if not os.path.exists(officialDoc+"/"+index_path):
-            os.makedirs(officialDoc + "/" + index_path)
+        try:
+            os.makedirs(officialDoc + index_path)
+        except:
+            pass
 
         # Populate the index.rst file of the local directory
         self.populateDocIndex(officialDoc+"/"+index_path, file_paths, dir_paths)
@@ -481,11 +485,11 @@ if rebuild:
     breathe_projects_source = fileCrawler.run(officialSrc)
     # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/fswMessages")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms")
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/simFswInterfaceMessages")
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/_fswTemplateFolder")
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/environment")
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/_cModuleTemplateFolder")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizard")
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/examples")
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/utilities")
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/architecture/utilities")
+    breathe_projects_source = fileCrawler.run("../../examples")
     breathe_projects_source = fileCrawler.run("../../externalTools")
     with open("breathe.data", 'wb') as f:
         pickle.dump(breathe_projects_source, f)

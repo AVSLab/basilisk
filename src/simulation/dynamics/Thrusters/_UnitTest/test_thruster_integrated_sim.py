@@ -1,45 +1,32 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
-import sys, os, inspect
-import numpy
 import pytest
-import math
-
-
-
-
-
-
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import sim_model
-import ctypes
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spice_interface
+from Basilisk.simulation import spiceInterface
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.simulation import fuelTank
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -60,13 +47,12 @@ def test_thrusterIntegratedTest(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    thrusterCommandName = "acs_thruster_cmds"
-    
+
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     
@@ -102,39 +88,22 @@ def test_thrusterIntegratedTest(show_plots):
     scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
 
     # set thruster commands
-    ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
-    msgSize = ThrustMessage.getStructSize()
+    ThrustMessage = messaging.THRArrayOnTimeCmdMsgPayload()
     ThrustMessage.OnTimeRequest = [9.9]
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, msgSize, 2)
-    unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
+    thrCmdMsg = messaging.THRArrayOnTimeCmdMsg().write(ThrustMessage)
+    thrustersDynamicEffector.cmdsInMsg.subscribeTo(thrCmdMsg)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, thrustersDynamicEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetStateSimMsg()
-    earthEphemData.J2000Current = 0.0
-    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
-    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
-    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    earthEphemData.PlanetName = "earth"
-
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
-
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
-
-    msgSize = earthEphemData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
 
     # Define initial conditions of the spacecraft
     scObject.hub.mHub = 750.0
@@ -158,8 +127,8 @@ def test_thrusterIntegratedTest(show_plots):
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
-    dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
-    dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
+    dataPos = [[dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    dataSigma = [[dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     truePos = [
                 [-6.7815933935338277e+06, 4.9468685979815889e+06, 5.4867416696776701e+06]
@@ -168,11 +137,6 @@ def test_thrusterIntegratedTest(show_plots):
     trueSigma = [
                 [1.4401781243854264e-01, -6.4168702021364002e-02, 3.0166086824900967e-01]
                 ]
-
-    moduleOutputr_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  list(range(3)))
-    moduleOutputSigma = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  list(range(3)))
 
     accuracy = 1e-8
     for i in range(0,len(truePos)):
@@ -186,7 +150,6 @@ def test_thrusterIntegratedTest(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
-            print(dataSigma[i])
             testMessages.append("FAILED: Thruster Integrated Test failed attitude unit test")
 
     if testFailCount == 0:

@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
 import pytest
 import os
@@ -28,7 +26,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples')
+sys.path.append(path + '/../../examples')
 import scenarioFormationReconfig
 
 
@@ -44,7 +42,7 @@ import scenarioFormationReconfig
 
 # provide a unique test method name, starting with test_
 def test_scenarioFormationReconfig(show_plots, useRefAttitude):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
     testFailCount = 0  # zero unit test result counter
@@ -63,66 +61,74 @@ def test_scenarioFormationReconfig(show_plots, useRefAttitude):
 
     # setup truth data for unit test
     truePos = [
-        [-2.66855044e+06, -6.98089811e+06, 4.62206494e+06]
-        , [ 4.10060709e+06, -1.19138745e+07, -7.10245983e+06]
-        , [ 7.29007364e+06, -3.37655699e+06, -1.26267779e+07]
-        , [ 3.48198922e+06,  7.41168323e+06, -6.03098225e+06]
-        , [ -3.14587454e+06, -5.05638958e+06,  5.44881453e+06]
+        [-2668550.43581724,  -6980898.10827464,   4622064.93739554]
+        ,[  3239719.11900864, -12361691.80735476,  -5611358.11637523]
+        ,[  6956886.21097725,  -6512028.87881183, -12049680.37988781]
+        ,[  6203357.9456249,    3386315.3204033,  -10744531.13935835]
+        ,[  -904077.16857348,   6986198.37448257,   1565907.58993232]
+        ,[ -1497223.74594733,  -9688096.70685282,   2593267.5982793]
     ]
     trueVel = [
-        [1.95209236e+03, -6.26436922e+03, -3.38112316e+03]
-        , [ 2.04824699e+03,  1.44895265e+03, -3.54766786e+03]
-        , [ 8.41191317e+01,  4.12343024e+03, -1.45698610e+02]
-        , [-3.05009556e+03,  2.22223576e+03,  5.28292047e+03]
-        , [ 1.40039612e+03, -7.39482598e+03, -2.42555722e+03]
+        [1952.09236395, -6264.36921517, -3381.12315544]
+        , [ 2251.85678459,   773.95089899, -3900.33036227]
+        , [  735.27848237,  3673.48086541, -1273.53968917]
+        , [-1521.51022886,  4060.99888361,  2635.33302062]
+        , [-3836.04015487, -3920.91042533,  6644.21644811]
+        , [ 2480.74592749, -4214.7585866,  -4296.77798709]
     ]
     truePos2 = trueVel2 = []
-    if(useRefAttitude):
+    if useRefAttitude:
         truePos2 = [
-            [-2.66750797e+06, -6.98345483e+06,  4.62616555e+06]
-            , [ 4.10190373e+06, -1.19176629e+07, -7.09808744e+06]
-            , [ 7.29028788e+06, -3.38327054e+06, -1.26277120e+07]
-            , [ 3.48508705e+06,  7.40732516e+06, -6.03779734e+06]
-            , [-3.14599627e+06, -5.05151074e+06,  5.45063092e+06]
+            [-2667507.97243685,  -6983454.82971912,   4626165.55303272]
+            , [  3241108.94387093, -12365029.53882338,  -5606492.86033854]
+            , [  6957594.00740821,  -6517924.48451533, -12049169.67128781]
+            , [  6203604.90565029,   3379408.49215067, -10749322.78076205]
+            , [  -899274.80454994,   6988633.22340264,   1559582.60590812]
+            , [ -1499288.94036976,  -9685672.95831528,   2596285.54475707]
         ]
         trueVel2 = [
-            [ 1.95340294e+03, -6.26233384e+03, -3.37983470e+03]
-            , [ 2.04800676e+03,  1.44783320e+03, -3.54907414e+03]
-            , [ 8.36446804e+01,  4.12260778e+03, -1.47760433e+02]
-            , [-3.04767120e+03,  2.22595358e+03,  5.28157214e+03]
-            , [ 1.39739658e+03, -7.39779282e+03, -2.42282925e+03]
+            [ 1953.40294294, -6262.33384039, -3379.83469644]
+            , [ 2251.63426593,   772.82266533, -3901.38099724]
+            , [  734.53359595,  3672.29757633, -1275.08087935]
+            , [-1519.3712049,   4061.85725527,  2633.58633737]
+            , [-3836.64595382, -3914.06736883,  6647.63278995]
+            , [ 2478.79370247, -4217.73758483, -4296.15323074]
         ]
     else:
         truePos2 = [
-            [-2.66750797e+06, -6.98345483e+06, 4.62616555e+06]
-            , [ 4.10190373e+06, -1.19176629e+07, -7.09808744e+06]
-            , [ 7.29028565e+06, -3.38327733e+06, -1.26277156e+07]
-            , [ 3.48508338e+06,  7.40729862e+06, -6.03780781e+06]
-            , [-3.14593170e+06, -5.05164020e+06,  5.45053219e+06]
+            [-2667507.97243685,  -6983454.82971912,   4626165.55303272]
+            , [  3241108.94387093, -12365029.53882338,  -5606492.86033854]
+            , [  6957593.3006838,   -6517926.49084233, -12049170.68096033]
+            , [  6203601.49094786,   3379393.02430127, -10749332.43260227]
+            , [  -899283.12085206,   6988580.86462193,   1559588.28436277]
+            , [ -1499187.38519734,  -9685744.8647062,    2596126.83315495]
         ]
         trueVel2 = [
-            [1.95340294e+03, -6.26233384e+03, -3.37983470e+03]
-            , [ 2.04800676e+03,  1.44783320e+03, -3.54907414e+03]
-            , [ 8.36430570e+01,  4.12260193e+03, -1.47763855e+02]
-            , [-3.04767240e+03,  2.22594581e+03,  5.28157616e+03]
-            , [ 1.39746091e+03, -7.39774973e+03, -2.42293199e+03]
+            [1953.40294294, -6262.33384039, -3379.83469644]
+            , [ 2251.63426593,   772.82266533, -3901.38099724]
+            , [  734.53150821,  3672.2915335,  -1275.08394125]
+            , [-1519.37151914,  4061.84582195,  2633.58351375]
+            , [-3836.64758968, -3914.12259276,  6647.64791968]
+            , [ 2478.82196216, -4217.65022651, -4296.20016979]
         ]
     trueAttErr = []
-    if(useRefAttitude):
+    if useRefAttitude:
         trueAttErr = [
-            [-1,0,0]
-            , [1.11022302e-16, 0.00000000e+00, 0.00000000e+00]
-            , [ 7.35112600e-08,  6.38971464e-08, -4.49913751e-08]
-            , [ 1.02484475e-08,  1.77691147e-09,  1.12311917e-09]
-            , [ 7.20644592e-08,  1.83206367e-07,  2.97356826e-07]
+            [0.00000000e+00,  0.00000000e+00,  0.00000000e+00]
+            , [ 5.21804822e-15,  0.00000000e+00,  0.00000000e+00]
+            , [ 2.73188701e-03,  2.42888055e-03, -1.85264053e-03]
+            , [ 1.50892109e-01,  1.31129690e-02,  1.99974845e-02]
+            , [ 1.66533454e-15,  2.49085251e-16,  1.43583255e-16]
+            , [ 2.01960670e-12,  4.98741819e-12,  7.61317659e-12]
         ]
     else:
         trueAttErr = [
-            [-1.68285300e-01, 3.48843815e-01, 4.23586373e-01]
-            , [ 3.92603788e-17, -1.09929061e-16, -3.14083031e-17]
-            , [-2.93932037e-08,  7.50468882e-08, 2.42035010e-08]
-            , [ 6.99759143e-09,  4.14940045e-09, -2.94105715e-09]
-            , [-4.67398483e-17, -6.54357876e-17,  6.07618028e-17]
+            [0.00000000e+00,  0.00000000e+00,  0.00000000e+00]
+            , [ 1.01291777e-15, -2.81104312e-15, -2.10435630e-15]
+            , [-1.09830506e-03,  2.86489461e-03,  9.96740835e-04]
+            , [ 9.08383514e-02,  6.71564082e-02, -3.21870531e-02]
+            , [ 1.35545560e-15,  1.02827666e-15, -6.35661937e-16]
+            , [-5.65881607e-05,  3.19108458e-04, -1.34177223e-04]
         ]
 
     # compare the results to the truth values
@@ -137,11 +143,11 @@ def test_scenarioFormationReconfig(show_plots, useRefAttitude):
         testFailCount, testMessages)
 
     testFailCount, testMessages = unitTestSupport.compareArrayRelative(
-        truePos2, dataPos2, accuracy, "deputy r_BN_N Vector",
+        truePos2, dataPos2, accuracy, "deputy r2_BN_N Vector",
         testFailCount, testMessages)
 
     testFailCount, testMessages = unitTestSupport.compareArrayRelative(
-        trueVel2, dataVel2, accuracy, "deputy v_BN_N Vector",
+        trueVel2, dataVel2, accuracy, "deputy v2_BN_N Vector",
         testFailCount, testMessages)
     
     testFailCount, testMessages = unitTestSupport.compareArray(

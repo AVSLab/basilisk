@@ -21,11 +21,14 @@
 #define planetEphemeris_H
 
 #include <vector>
-#include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/orbitalMotion.h"
-#include "utilities/bskLogging.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/messaging/messaging.h"
+
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/orbitalMotion.h"
+#include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 
 
@@ -35,14 +38,15 @@ public:
     PlanetEphemeris();
     ~PlanetEphemeris();
     
-    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
+
+    void setPlanetNames(std::vector<std::string> planetNames);
     
 public:
-    uint64_t outputBufferCount;                 //!< -- Number of output buffers to use
-    std::vector<std::string>planetNames;        //!< -- Array of planet names
-    std::vector<classicElements>planetElements; //!< -- Array of planet classical orbit elements
+    std::vector<Message<SpicePlanetStateMsgPayload>*> planetOutMsgs; //!< -- vector of planet state output messages
+
+    std::vector<classicElements>planetElements; //!< -- Vector of planet classical orbit elements
 
     std::vector<double> rightAscension;         //!< [r] right ascension of the north pole rotation axis (3-axis)
     std::vector<double> declination;            //!< [r] Declination of the north pole rotation axis (neg. 2-axis)
@@ -53,7 +57,7 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    std::vector<std::uint64_t>planetOutMsgId;   //!< -- array of output message IDs
+    std::vector<std::string> planetNames;       //!< -- Vector of planet names
     double epochTime;                           //!< [s] time of provided planet ephemeris epoch
     int computeAttitudeFlag;                    //!< -- flag indicating if the planet orienation information is provided
     std::vector<Eigen::Vector3d> eHat_N;        //!< -- planet north pole rotation axis

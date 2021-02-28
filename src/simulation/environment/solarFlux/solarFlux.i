@@ -19,21 +19,25 @@
 %module solarFlux
 %{
    #include "solarFlux.h"
-   #include "simMessages/solarFluxSimMsg.h"
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
 %include "sys_model.h"
 %include "solarFlux.h"
-%include "simMessages/solarFluxSimMsg.h"
 %include "swig_conly_data.i"
 
-
-GEN_SIZEOF(SolarFluxSimMsg)
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "architecture/msgPayloadDefC/SolarFluxMsgPayload.h"
+struct SolarFluxMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
+struct EclipseMsg_C;
 
 %pythoncode %{
 import sys

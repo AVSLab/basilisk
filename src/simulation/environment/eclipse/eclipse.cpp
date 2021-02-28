@@ -19,62 +19,42 @@
 
 #include "eclipse.h"
 #include <iostream>
-#include "architecture/messaging/system_messaging.h"
-#include "utilities/astroConstants.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 
-Eclipse::Eclipse() :
-    outputBufferCount(2)
-{
-    this->CallCounts = 0;
-        return;
-}
-
-Eclipse::~Eclipse()
+Eclipse::Eclipse()
 {
     return;
 }
 
-/*! This method initializes the object. It creates the module's output messages auto-named ``eclipse_data_0`` etc.
- @return void*/
-void Eclipse::SelfInit()
+Eclipse::~Eclipse()
 {
-    std::vector<std::string>::iterator it;
-    for(it = this->eclipseOutMsgNames.begin(); it != this->eclipseOutMsgNames.end(); it++)
-    {
-        uint64_t msgId =  SystemMessaging::GetInstance()->CreateNewMessage((*it), sizeof(EclipseSimMsg), 2, "EclipseSimMsg", this->moduleID);
-        this->eclipseOutMsgId.push_back(msgId);
+    for (long unsigned int c=0; c<this->eclipseOutMsgs.size(); c++) {
+        delete this->eclipseOutMsgs.at(c);
     }
-
-    // Now that we know the number of output messages we can size and zero
-    // the eclipse data vector
-    this->eclipseShadowFactors.resize(this->eclipseOutMsgId.size());
+    return;
 }
 
-/*! This method subscribes to the spice planet states, the spacecraft state messages and the sun state message.
- @return void*/
-void Eclipse::CrossInit()
+
+
+/*! Reset the module to origina configuration values.
+ @return void
+ */
+void Eclipse::Reset(uint64_t CurrenSimNanos)
 {
-    std::vector<std::string>::iterator it;
-    for(it = this->planetInMsgNames.begin(); it != this->planetInMsgNames.end(); it++)
-    {
-        int64_t msgID = SystemMessaging::GetInstance()->subscribeToMessage((*it), sizeof(SpicePlanetStateSimMsg), this->moduleID);
-        this->planetInMsgIdAndStates[msgID] = SpicePlanetStateSimMsg();
+    if (!this->sunInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "Eclipse: sunInMsg must be linked to sun Spice state message.");
     }
-    
-    // If the user didn't set a custom sun meesage name then use
-    // the default system name of sun_planet_data
-    if (this->sunInMsgName.empty()) {
-        this->sunInMsgName = "sun_planet_data";
+
+    if (this->positionInMsgs.size() == 0) {
+        bskLogger.bskLog(BSK_ERROR, "Eclipse: positionInMsgs is empty.  Must use addSpacecraftToModel() to add at least one spacecraft.");
     }
-    this->sunInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunInMsgName, sizeof(SpicePlanetStateSimMsg), this->moduleID);
-    
-    std::vector<std::string>::iterator posIt;
-    for(posIt = this->positionInMsgNames.begin(); posIt != this->positionInMsgNames.end(); posIt++)
-    {
-        int64_t msgID = SystemMessaging::GetInstance()->subscribeToMessage((*posIt), sizeof(SCPlusStatesSimMsg), this->moduleID);
-        this->positionInMsgIdAndState[msgID] = SCPlusStatesSimMsg();
+
+    if (this->planetInMsgs.size() == 0) {
+        bskLogger.bskLog(BSK_ERROR, "Eclipse: planetInMsgs is empty.  Must use addPlanetToModel() to add at least one planet.");
     }
+
 }
 
 /*! This method reads the spacecraft state, spice planet states and the sun position from the messaging system.
@@ -82,27 +62,14 @@ void Eclipse::CrossInit()
  */
 void Eclipse::readInputMessages()
 {
-    SingleMessageHeader tmpHeader;
-    SystemMessaging *messageSys = SystemMessaging::GetInstance();
-    
-    //! - Iterate through all of the position Msgs
-    memset(&tmpHeader, 0x0, sizeof(tmpHeader));
-    std::map<int64_t, SCPlusStatesSimMsg>::iterator stateIt;
-    
-    for(stateIt = this->positionInMsgIdAndState.begin(); stateIt != this->positionInMsgIdAndState.end(); stateIt++)
-    {
-        messageSys->ReadMessage(stateIt->first, &tmpHeader, sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&stateIt->second), this->moduleID);
+    for (long unsigned int c = 0; c<this->positionInMsgs.size(); c++){
+        this->scStateBuffer.at(c) = this->positionInMsgs.at(c)();
     }
-    
-    memset(&tmpHeader, 0x0, sizeof(tmpHeader));
-    messageSys->ReadMessage(this->sunInMsgId, &tmpHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->sunInMsgState));
-    
-    //! - Iterate through all of the spice planet Msgs
-    memset(&tmpHeader, 0x0, sizeof(tmpHeader));
-    std::map<int64_t, SpicePlanetStateSimMsg>::iterator planetIt;
-    for(planetIt = this->planetInMsgIdAndStates.begin(); planetIt != this->planetInMsgIdAndStates.end(); planetIt++)
-    {
-       messageSys->ReadMessage(planetIt->first, &tmpHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&planetIt->second), this->moduleID);
+
+    this->sunInMsgState = this->sunInMsg();
+
+    for (long unsigned int c = 0; c<this->planetInMsgs.size(); c++){
+        this->planetBuffer[c] = this->planetInMsgs[c]();
     }
 }
 
@@ -113,14 +80,10 @@ void Eclipse::readInputMessages()
  */
 void Eclipse::writeOutputMessages(uint64_t CurrentClock)
 {
-    //! - Iterate through all of the planets that are on and write their outputs
-    std::vector<int64_t>::iterator msgIt;
-    for(msgIt = this->eclipseOutMsgId.begin(); msgIt != this->eclipseOutMsgId.end(); msgIt++)
-    {
-        EclipseSimMsg tmpEclipseSimMsg;
-        tmpEclipseSimMsg.shadowFactor = this->eclipseShadowFactors.at(msgIt - this->eclipseOutMsgId.begin());
-        SystemMessaging::GetInstance()->WriteMessage((*msgIt), CurrentClock,
-                                                     sizeof(EclipseSimMsg), reinterpret_cast<uint8_t*>(&tmpEclipseSimMsg), this->moduleID);
+    for (long unsigned int c = 0; c < this->eclipseOutMsgs.size(); c++) {
+        EclipseMsgPayload tmpEclipseMsg = {};
+        tmpEclipseMsg.shadowFactor = this->eclipseShadowFactors.at(c);
+        this->eclipseOutMsgs.at(c)->write(&tmpEclipseMsg, this->moduleID, CurrentClock);
     }
 }
 
@@ -144,25 +107,26 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
     Eigen::Vector3d s_BP_N(0.0, 0.0, 0.0); // s_sc wrt planet
     Eigen::Vector3d s_HP_N(0.0, 0.0, 0.0); // s_sun wrt planet
     Eigen::Vector3d r_HB_N(0.0, 0.0, 0.0); // r_sun wrt sc
-    std::map<int64_t, SpicePlanetStateSimMsg>::iterator planetIt;
-    std::map<int64_t, SCPlusStatesSimMsg>::iterator scIt;
+    std::vector<SCStatesMsgPayload>::iterator scIt;
+    std::vector<SpicePlanetStateMsgPayload>::iterator planetIt;
+
     
     // Index to assign the shadowFactor for each body position (S/C)
     // being tracked
     int scIdx = 0;
     
-    for(scIt = this->positionInMsgIdAndState.begin(); scIt != this->positionInMsgIdAndState.end(); scIt++)
+    for(scIt = this->scStateBuffer.begin(); scIt != this->scStateBuffer.end(); scIt++)
     {
         double tmpShadowFactor = 1.0; // 1.0 means 100% illumination (no eclipse)
-        int idx = 0;
         double eclipsePlanetDistance = 0.0;
         int64_t eclipsePlanetKey = -1;
-        r_BN_N = Eigen::Map<Eigen::Vector3d>(&(scIt->second.r_BN_N[0]), 3, 1);
+        r_BN_N = cArray2EigenVector3d(scIt->r_BN_N);
         
         // Find the closest planet if there is one
-        for(planetIt = this->planetInMsgIdAndStates.begin(); planetIt != this->planetInMsgIdAndStates.end(); planetIt++)
+        int idx = 0;
+        for(planetIt = this->planetBuffer.begin(); planetIt != this->planetBuffer.end(); planetIt++)
         {
-            r_PN_N = Eigen::Map<Eigen::Vector3d>(&(planetIt->second.PositionVector[0]), 3, 1);
+            r_PN_N = cArray2EigenVector3d(planetIt->PositionVector);
             s_HP_N = r_HN_N - r_PN_N;
             r_HB_N = r_HN_N - r_BN_N;
             s_BP_N = r_BN_N - r_PN_N;
@@ -173,13 +137,13 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
                 break;
             }
             
-            // Find the closest planet and save its distance and std::map key
+            // Find the closest planet and save its distance and vector index slot
             if (idx == 0) {
                 eclipsePlanetDistance = s_BP_N.norm();
-                eclipsePlanetKey = planetIt->first;
+                eclipsePlanetKey = idx;
             } else if (s_BP_N.norm() < eclipsePlanetDistance) {
                 eclipsePlanetDistance = s_BP_N.norm();
-                eclipsePlanetKey = planetIt->first;
+                eclipsePlanetKey = idx;
             }
             idx++;
         }
@@ -187,13 +151,14 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
         // If planetkey is not -1 then we have a planet for which
         // we compute the eclipse conditions
         if (eclipsePlanetKey >= 0) {
-            r_PN_N = Eigen::Map<Eigen::Vector3d>(&(this->planetInMsgIdAndStates[eclipsePlanetKey].PositionVector[0]), 3, 1);
+            r_PN_N = cArray2EigenVector3d(this->planetBuffer[eclipsePlanetKey].PositionVector);
             s_BP_N = r_BN_N - r_PN_N;
             r_HB_N = r_HN_N - r_BN_N;
             s_HP_N = r_HN_N - r_PN_N;
             
             double s = s_BP_N.norm();
-            double planetRadius = this->getPlanetEquatorialRadius(this->planetInMsgIdAndStates[eclipsePlanetKey].PlanetName);
+            std::string plName(this->planetBuffer[eclipsePlanetKey].PlanetName);
+            double planetRadius = this->getPlanetEquatorialRadius(plName);
             double f_1 = asin((REQ_SUN*1000 + planetRadius)/s_HP_N.norm());
             double f_2 = asin((REQ_SUN*1000 - planetRadius)/s_HP_N.norm());
             double s_0 = (-s_BP_N.dot(s_HP_N))/s_HP_N.norm();
@@ -256,58 +221,39 @@ double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N
 
 /*!
     This method adds spacecraft state data message names to a vector, creates
-    a new unique output message name for the eclipse data message and returns
-    this to the user so that they may assign the eclipse message name to other
-    modules requiring eclipse data.
-    @param msgName The message name for the spacecraft state data for which to compute the eclipse data.
-    @return std::string newEclipseMsgName The unique eclipse data msg name associated with the given input state message name.
+    a new unique output message for the eclipse data message.
+    @param tmpScMsg The state output message for the spacecraft for which to compute the eclipse data.
+    @return void
  */
-std::string Eclipse::addPositionMsgName(std::string msgName)
+void Eclipse::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
 {
-    this->positionInMsgNames.push_back(msgName);
-    
-    std::string newEclipseMsgName = "eclipse_data_" + std::to_string(this->positionInMsgNames.size()-1);
-    this->eclipseOutMsgNames.push_back(newEclipseMsgName);
-    return newEclipseMsgName;
+    this->positionInMsgs.push_back(tmpScMsg->addSubscriber());
+
+    /* create output message */
+    Message<EclipseMsgPayload> *msg;
+    msg = new Message<EclipseMsgPayload>;
+    this->eclipseOutMsgs.push_back(msg);
+
+    /* expand the sc state buffer vector */
+    SCStatesMsgPayload scMsg;
+    this->scStateBuffer.push_back(scMsg);
+
+    // Now that we know the number of output messages we can size and zero
+    // the eclipse data vector
+    this->eclipseShadowFactors.resize(this->eclipseOutMsgs.size());
+
 }
 
 /*! This method adds planet state data message names to a vector.
- @param planetName The planet name
+ @param tmpSpMsg The planet name
  @return void
  */
-void Eclipse::addPlanetName(std::string planetName)
+void Eclipse::addPlanetToModel(Message<SpicePlanetStateMsgPayload> *tmpSpMsg)
 {
-    if (planetName == "mercury") {
-        this->planetNames.push_back(planetName);
-        this->planetInMsgNames.push_back(planetName + "_planet_data");
-    } else if (planetName == "venus") {
-        this->planetNames.push_back(planetName);
-        this->planetInMsgNames.push_back(planetName + "_planet_data");
-    } else if (planetName == "earth") {
-        this->planetNames.push_back(planetName);
-        this->planetInMsgNames.push_back(planetName + "_planet_data");
-    } else if (planetName == "mars") {
-        this->planetNames.push_back(planetName);
-        this->planetInMsgNames.push_back(planetName + "_planet_data");
-    } else if (planetName == "mars barycenter") {
-        this->planetNames.push_back(planetName);
-        this->planetInMsgNames.push_back(planetName + "_planet_data");
-    } else if (planetName == "jupiter barycenter") {
-        this->planetNames.push_back(planetName);
-        this->planetInMsgNames.push_back(planetName + "_planet_data");
-    } else if (planetName == "saturn") {
-        this->planetNames.push_back(planetName);
-        this->planetInMsgNames.push_back(planetName + "_planet_data");
-    } else if (planetName == "uranus") {
-        this->planetNames.push_back(planetName);
-        this->planetInMsgNames.push_back(planetName + "_planet_data");
-    } else if (planetName == "neptune") {
-        this->planetNames.push_back(planetName);
-        this->planetInMsgNames.push_back(planetName + "_planet_data");
-    } else {
-        bskLogger.bskLog(BSK_WARNING, "Planet name %s not found. %s will not be used to compute eclipse conditions.", planetName.c_str(), planetName.c_str());
-    }
-    
+    this->planetInMsgs.push_back(tmpSpMsg->addSubscriber());
+
+    SpicePlanetStateMsgPayload tmpMsg;
+    this->planetBuffer.push_back(tmpMsg);
     return;
 }
 

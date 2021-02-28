@@ -1,0 +1,11 @@
+\section{User Guide}
+
+The nominal set-up for the ephemeris converter is done as follows:
+
+\begin{itemize}
+\item[-]     \texttt{sNavObject = simpleNav.SimpleNav()}: Construct simple nav
+\item[-]     \texttt{sNavObject.walkBounds = sim\_model.DoubleVector(errorBounds)}: add desired error bounds for the position, attitude....
+\item[-]     \texttt{sNavObject.PMatrix = sim\_model.DoubleVector(pMatrix)}: Add the matrix of standard deviation values
+\item[-]    \texttt{sNavObject.crossTrans = True}
+\item[-]    \texttt{sNavObject.crossAtt = False}
+\end{itemize}

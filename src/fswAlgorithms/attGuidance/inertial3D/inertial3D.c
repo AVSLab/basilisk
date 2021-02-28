@@ -18,50 +18,34 @@
  */
 /*
     Inertial 3D Spin Module
- 
+
  */
 
 /* modify the path to reflect the new module names */
-#include "attGuidance/inertial3D/inertial3D.h"
+#include "fswAlgorithms/attGuidance/inertial3D/inertial3D.h"
 #include <string.h>
-#include "fswUtilities/fswDefinitions.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 
 
 
 /* Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory. */
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 
 /*!
- \verbatim embed:rst
-    This method creates the module output message of type :ref:`AttRefFswMsg`.
- \endverbatim
+ Constructs the module
  @return void
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData
  */
 void SelfInit_inertial3D(inertial3DConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
-                                               sizeof(AttRefFswMsg),
-                                               "AttRefFswMsg",
-                                               moduleID);
+    AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
-/*! This method performs the second stage of initialization
- interface.  This module has no messages to subscribe to.
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The ID associated with the configData
- */
-void CrossInit_inertial3D(inertial3DConfig *configData, int64_t moduleID)
-{
-
-}
 
 /*! This method performs the module reset capability.  This module has no actions.
  @return void
@@ -83,14 +67,13 @@ void Reset_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t m
  */
 void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    AttRefFswMsg attRefOut;         /* output message structure */
+    AttRefMsgPayload attRefOut;         /* output message structure */
 
     /*! - Compute and store output message */
     computeInertialPointingReference(configData, &attRefOut);
-    
+
     /*! - Write output message */
-    WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
-                 &attRefOut, moduleID);
+    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, moduleID, callTime);
 
     return;
 }
@@ -104,7 +87,7 @@ void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t 
  @param configData The configuration data associated with the null space control
  @param attRefOut Output message 
  */
-void computeInertialPointingReference(inertial3DConfig *configData, AttRefFswMsg *attRefOut)
+void computeInertialPointingReference(inertial3DConfig *configData, AttRefMsgPayload *attRefOut)
 {
     v3Copy(configData->sigma_R0N, attRefOut->sigma_RN);
     v3SetZero(attRefOut->omega_RN_N);

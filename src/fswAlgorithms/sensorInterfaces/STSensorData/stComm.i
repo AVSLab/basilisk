@@ -26,16 +26,14 @@
 %ignore Update_stProcessTelem;
 %constant void SelfInit_stProcessTelem(void*, uint64_t);
 %ignore SelfInit_stProcessTelem;
-%constant void CrossInit_stProcessTelem(void*, uint64_t);
-%ignore CrossInit_stProcessTelem;
-%include "simFswInterfaceMessages/stSensorIntMsg.h"
-%include "../../fswMessages/stAttFswMsg.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-GEN_SIZEOF(STAttFswMsg);
-GEN_SIZEOF(STConfigData);
-GEN_SIZEOF(STSensorIntMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
+
+%include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
+struct STSensorMsg_C;
+%include "architecture/msgPayloadDefC/STAttMsgPayload.h"
+struct STAttMsg_C;
+
 %include "stComm.h"
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

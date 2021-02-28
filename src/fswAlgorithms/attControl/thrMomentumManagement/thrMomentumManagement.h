@@ -20,12 +20,13 @@
 #ifndef _THR_MOMENTUM_MANAGEMENT_H_
 #define _THR_MOMENTUM_MANAGEMENT_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/rwArrayConfigFswMsg.h"
-#include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simulation/utilities/bskLogging.h"
+
+#include "cMsgCInterface/RWArrayConfigMsg_C.h"
+#include "cMsgCInterface/RWSpeedMsg_C.h"
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 
@@ -36,18 +37,15 @@
 typedef struct {
     /* declare module private variables */
     int initRequest;                                    //!< [-] status flag of the momentum dumping management
-    RWArrayConfigFswMsg rwConfigParams;                 //!< [-] struct to store message containing RW config parameters in body B frame
+    RWArrayConfigMsgPayload rwConfigParams;             //!< [-] struct to store message containing RW config parameters in body B frame
 
     /* declare module public variables */
     double hs_min;                                      //!< [Nms]  minimum RW cluster momentum for dumping
-    
+
     /* declare module IO interfaces */
-    char deltaHOutMsgName[MAX_STAT_MSG_LENGTH];         //!< The name of the output message
-    int32_t deltaHOutMsgId;                             //!< ID for the outgoing message
-    char rwSpeedsInMsgName[MAX_STAT_MSG_LENGTH];        //!< [] The name for the reaction wheel speeds message
-    int32_t rwSpeedsInMsgId;                            //!< [] The ID for the reaction wheel speeds message
-    char rwConfigDataInMsgName[MAX_STAT_MSG_LENGTH];    //!< [-] The name of the RWA configuration message
-    int32_t rwConfInMsgId;                              //!< [-] ID for the incoming RWA configuration data
+    CmdTorqueBodyMsg_C deltaHOutMsg;                    //!< The name of the output message
+    RWSpeedMsg_C rwSpeedsInMsg;                         //!< [] The name for the reaction wheel speeds message
+    RWArrayConfigMsg_C rwConfigDataInMsg;               //!< [-] The name of the RWA configuration message
 
     BSKLogger *bskLogger;                             //!< BSK Logging
 
@@ -58,7 +56,6 @@ extern "C" {
 #endif
     
     void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID);
-    void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID);
     void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID);
     

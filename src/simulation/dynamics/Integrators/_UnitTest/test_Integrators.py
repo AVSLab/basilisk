@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 
 
 #
@@ -39,9 +37,10 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
+from Basilisk.architecture import messaging
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -56,7 +55,7 @@ path = os.path.dirname(os.path.abspath(filename))
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("integratorCase", ["rk4", "euler", "rk2"])
 def test_scenarioIntegrators(show_plots, integratorCase):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run( True,
             show_plots, integratorCase)
@@ -65,7 +64,7 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 
 
 def run(doUnitTests, show_plots, integratorCase):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """Call this routine directly to run the tutorial scenario."""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -91,8 +90,8 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     #   setup the simulation tasks/objects
     #
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     # default case, RK4 is automatically setup, no extra code is needed
@@ -103,7 +102,7 @@ def run(doUnitTests, show_plots, integratorCase):
         integratorObject = svIntegrators.svIntegratorRK2(scObject)
         scObject.setIntegrator(integratorObject)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
@@ -113,8 +112,8 @@ def run(doUnitTests, show_plots, integratorCase):
     earth.isCentralBody = True  # ensure this is the central gravitational body
     mu = earth.mu
 
-    # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    # attach gravity model to spacecraft
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time
@@ -145,14 +144,14 @@ def run(doUnitTests, show_plots, integratorCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime // numDataPoints
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
 
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulationAndDiscover()
+    scSim.InitializeSimulation()
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -163,8 +162,8 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N', list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N', list(range(3)))
+    posData = dataLog.r_BN_N
+    velData = dataLog.v_BN_N
 
     #
     #   plot the results
@@ -191,7 +190,7 @@ def run(doUnitTests, show_plots, integratorCase):
     fData = []
     labelStrings = ("rk4", "euler", "rk2")
     for idx in range(0, len(posData)):
-        oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
+        oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
     plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000

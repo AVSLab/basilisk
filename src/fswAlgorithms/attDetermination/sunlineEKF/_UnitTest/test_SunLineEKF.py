@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
 #   This test validates the EKF module by running several
 #   scenarios on both individual functions and the full module.
@@ -26,19 +24,17 @@ import numpy as np
 import pytest
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.fswAlgorithms import sunlineEKF
-from Basilisk.fswAlgorithms import cssComm
 from Basilisk.utilities import macros
 import SunLineEKF_test_utilities as FilterPlots
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging
+
+
+def addTimeColumn(time, data):
+    return np.transpose(np.vstack([[time], np.transpose(data)]))
 
 
 def setupFilterData(filterObject):
-    filterObject.navStateOutMsgName = "sunline_state_estimate"
-    filterObject.filtDataOutMsgName = "sunline_filter_data"
-    filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.sensorUseThresh = 0.
     filterObject.state = [1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
@@ -400,6 +396,8 @@ def sunline_individual_test():
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + " EKF individual tests")
+    else:
+        print(testMessages)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -430,11 +428,7 @@ def StatePropStatic():
 
     # Construct algorithm and associated C++ container
     moduleConfig = sunlineEKF.sunlineEKFConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineEKF.Update_sunlineEKF,
-                                        sunlineEKF.SelfInit_sunlineEKF,
-                                        sunlineEKF.CrossInit_sunlineEKF,
-                                        sunlineEKF.Reset_sunlineEKF)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "SunlineEKF"
 
     # Add test module to runtime call list
@@ -443,6 +437,13 @@ def StatePropStatic():
     setupFilterData(moduleConfig)
     unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate * 10, 0, 35)
     unitTestSim.AddVariableForLogging('SunlineEKF.state', testProcessRate * 10, 0, 5)
+
+    # connect messages
+    cssDataInMsg = messaging.CSSArraySensorMsg()
+    cssConfigInMsg = messaging.CSSConfigMsg()
+    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
+    moduleConfig.cssConfigInMsg.subscribeTo(cssConfigInMsg)
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
@@ -454,11 +455,11 @@ def StatePropStatic():
             testFailCount += 1
             testMessages.append("State propagation failure \n")
 
-    unitTestSim.terminateSimulation()
-
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + "EKF static state propagation")
+    else:
+        print(testMessages)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -490,11 +491,7 @@ def StatePropVariable(show_plots):
 
     # Construct algorithm and associated C++ container
     moduleConfig = sunlineEKF.sunlineEKFConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineEKF.Update_sunlineEKF,
-                                        sunlineEKF.SelfInit_sunlineEKF,
-                                        sunlineEKF.CrossInit_sunlineEKF,
-                                        sunlineEKF.Reset_sunlineEKF)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "SunlineEKF"
 
 
@@ -514,6 +511,13 @@ def StatePropVariable(show_plots):
     unitTestSim.AddVariableForLogging('SunlineEKF.stateTransition', testProcessRate, 0, 35)
     unitTestSim.AddVariableForLogging('SunlineEKF.state', testProcessRate , 0, 5)
     unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5)
+
+    # connect messages
+    cssDataInMsg = messaging.CSSArraySensorMsg()
+    cssConfigInMsg = messaging.CSSConfigMsg()
+    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
+    moduleConfig.cssConfigInMsg.subscribeTo(cssConfigInMsg)
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1000.0))
     unitTestSim.ExecuteSimulation()
@@ -590,6 +594,8 @@ def StatePropVariable(show_plots):
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + "EKF general state propagation")
+    else:
+        print(testMessages)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -630,7 +636,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # Set up some test parameters
 
-    cssConstelation = fswMessages.CSSConfigFswMsg()
+    cssConstelation = messaging.CSSConfigMsgPayload()
 
     CSSOrientationList = [
         [0.70710678118654746, -0.5, 0.5],
@@ -649,33 +655,30 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     # layer between the above list and the actual C variables.
     i = 0
     for CSSHat in CSSOrientationList:
-        newCSS = fswMessages.CSSUnitConfigFswMsg()
+        newCSS = messaging.CSSUnitConfigMsgPayload()
         newCSS.CBias = CSSBias[i]
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
         i = i+1
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
-    msgSize = cssConstelation.getStructSize()
-    inputData = cssComm.CSSArraySensorIntMsg()
 
+    inputData = messaging.CSSArraySensorMsgPayload()
 
-    inputMessageSize = inputData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.cssConfigInMsgName,
-                                          msgSize, 2, "CSSConstellation")
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.cssDataInMsgName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssConfigInMsgName, msgSize, 0, cssConstelation)
+    cssConstInMsg = messaging.CSSConfigMsg().write(cssConstelation)
+    cssDataInMsg = messaging.CSSArraySensorMsg()
 
+    # connect messages
+    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
+    moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
     stateTarget1 = testVector1
     stateTarget1 += [0.0, 0.0, 0.0]
     moduleConfig.state = stateGuess
     moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
-    unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
     unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5, 'double')
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
 
@@ -689,17 +692,13 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
                     dotProd = np.dot(np.array(element), np.array(testVector1)[0:3])
                 dotList.append(dotProd)
             inputData.CosValue = dotList
+            cssDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
 
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
-                                                  inputMessageSize,
-                                                  unitTestSim.TotalSim.CurrentNanos,
-                                                  inputData)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(6)))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(6*6)))
-
+    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
+    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     for i in range(6):
         if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
@@ -713,7 +712,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     stateTarget2 = testVector2
     stateTarget2 = stateTarget2+[0.,0.,0.]
 
-    inputData = cssComm.CSSArraySensorIntMsg()
+    inputData = messaging.CSSArraySensorMsgPayload()
     for i in range(SimHalfLength):
         if i > 20:
             dotList = []
@@ -724,19 +723,15 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
                     dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])
                 dotList.append(dotProd)
             inputData.CosValue = dotList
+            cssDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
 
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
-                                                  inputMessageSize,
-                                                  unitTestSim.TotalSim.CurrentNanos,
-                                                  inputData)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(6)))
-    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(6*6)))
     stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
-
+    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
+    postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
+    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     for i in range(6):
         if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
@@ -764,4 +759,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 if __name__ == "__main__":
     # test_all_sunline_ekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0])
-    StatePropVariable(True)
+    # StatePropVariable(True)
+    # StatePropStatic()
+    StateUpdateSunLine(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0])

@@ -81,14 +81,14 @@
 			<text x="11.39" y="212.96" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Simulation Task</text>		</g>
 		<g id="shape3-7" v:mID="3" v:groupContext="shape" transform="translate(225.804,-122.471)">
 			<title>Rectangle.3</title>
-			<desc>spacecraftPlus()</desc>
+			<desc>spacecraft()</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="44.3049" cy="209.96" width="88.61" height="33.5091"/>
 			<rect x="0" y="193.206" width="88.6098" height="33.5091" class="st1"/>
-			<text x="12.1" y="212.96" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>spacecraftPlus()</text>		</g>
+			<text x="12.1" y="212.96" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>spacecraft()</text>		</g>
 		<g id="shape4-10" v:mID="4" v:groupContext="shape" transform="translate(225.804,-19)">
 			<title>Rectangle.4</title>
 			<desc>magnetometer()</desc>

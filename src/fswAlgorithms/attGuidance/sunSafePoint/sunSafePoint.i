@@ -27,16 +27,14 @@
 %ignore Update_sunSafePoint;
 %constant void SelfInit_sunSafePoint(void*, uint64_t);
 %ignore SelfInit_sunSafePoint;
-%constant void CrossInit_sunSafePoint(void*, uint64_t);
-%ignore CrossInit_sunSafePoint;
 %constant void Reset_sunSafePoint(void*, uint64_t, uint64_t);
 %ignore Reset_sunSafePoint;
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "../../fswMessages/attGuidFswMsg.h"
 
-GEN_SIZEOF(sunSafePointConfig);
-GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(NavAttIntMsg);
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
+struct AttGuidMsg_C;
+
 %include "sunSafePoint.h"
 
 %pythoncode %{

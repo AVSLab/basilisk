@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
 
 import numpy as np
@@ -71,6 +69,7 @@ solarFluxEarth = 1372.5398
 #                                           Normalize vector
 #
 def normalize(v):
+    """normalize a vector"""
     norm=np.linalg.norm(v)
     if norm==0:
        return v
@@ -80,10 +79,12 @@ def normalize(v):
 #                                           Orbital Period
 #
 def orbitalPeriod(a, mu):
+    """Return the orbit period"""
     P = 2*PI * np.sqrt(a*a*a / mu)
     return P
 
 def orbitalSMA(P, mu):
+    """Return the semi-major axis"""
     a3 = mu * np.power(P / (2 * PI) , 2)
     exp = 1./3
     a = np.power(a3, exp)
@@ -93,31 +94,40 @@ def orbitalSMA(P, mu):
 #                                           FROM OE 2 RV
 #
 def Earth_RV(JDE):
+    """return Earth (r,v)"""
     (a, e, i, Omega, w, nu) = ephemeridesMeeus(JDE, 'EARTH')
     return OE2RV(mu_S, a, e, i, Omega, w, nu)
 def Mars_RV(JDE):
+    """return Mars (r,v)"""
     (a, e, i, Omega, w, nu) = ephemeridesMeeus(JDE, 'MARS')
     return OE2RV(mu_S, a, e, i, Omega, w, nu)
 def Jupiter_RV(JDE):
+    """return Jupiter (r,v)"""
     (a, e, i, Omega, w, nu) = ephemeridesMeeus(JDE, 'JUPITER')
     return OE2RV(mu_S, a, e, i, Omega, w, nu)
 def Venus_RV(JDE):
+    """return Venus (r,v)"""
     (a, e, i, Omega, w, nu) = ephemeridesMeeus(JDE, 'VENUS')
     return OE2RV(mu_S, a, e, i, Omega, w, nu)
 def Pluto_RV(JDE):
+    """return Pluto (r,v)"""
     (a, e, i, Omega, w, nu) = ephemeridesMeeus(JDE, 'PLUTO')
     return OE2RV(mu_S, a, e, i, Omega, w, nu)
 def Uranus_RV(JDE):
+    """return Uranus (r,v)"""
     (a, e, i, Omega, w, nu) = ephemeridesMeeus(JDE, 'URANUS')
     return OE2RV(mu_S, a, e, i, Omega, w, nu)
 def Neptune_RV(JDE):
+    """return Neptune (r,v)"""
     (a, e, i, Omega, w, nu) = ephemeridesMeeus(JDE, 'NEPTUNE')
     return OE2RV(mu_S, a, e, i, Omega, w, nu)
 def Saturn_RV(JDE):
+    """return Saturn (r,v)"""
     (a, e, i, Omega, w, nu) = ephemeridesMeeus(JDE, 'SATURN')
     return OE2RV(mu_S, a, e, i, Omega, w, nu)
 
 def OE2RV(mu, a, e, i, Omega, w, nu):
+    """OE to (r,v) conversion"""
     if e!=1:
         p = a*(1-e*e)
     else:
@@ -134,6 +144,7 @@ def quadrant4(x):
     return 2*PI - x
 
 def RV2OE(mu, r_IJK, v_IJK):
+    """(r,v) to OE conversion"""
     r = r_IJK
     v = v_IJK
     K = np.array([0, 0, 1])

@@ -20,12 +20,15 @@
 #ifndef EXT_FORCE_TORQUE_H
 #define EXT_FORCE_TORQUE_H
 
-#include "_GeneralModuleFiles/sys_model.h"
-#include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../../simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "../../simFswInterfaceMessages/cmdForceBodyIntMsg.h"
-#include "../../simFswInterfaceMessages/cmdForceInertialIntMsg.h"
-#include "utilities/bskLogging.h"
+#include "architecture/messaging/messaging.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+
+#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 
@@ -35,8 +38,7 @@ public:
     ExtForceTorque();
     ~ExtForceTorque();
 
-    void SelfInit();
-    void CrossInit();
+    void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);         //!< class method
     void linkInStates(DynParamManager& statesIn);       //!< class method
     void writeOutputMessages(uint64_t currentClock);    //!< class method
@@ -44,25 +46,20 @@ public:
     void computeForceTorque(double integTime);
 
 private:
-    int64_t cmdTorqueInMsgID;           //!< -- Message ID for incoming data
-    int64_t cmdForceInertialInMsgID;    //!< -- Message ID for incoming data
-    int64_t cmdForceBodyInMsgID;        //!< -- Message ID for incoming data
-    CmdTorqueBodyIntMsg incomingCmdTorqueBuffer;            //!< -- One-time allocation for savings
-    CmdForceInertialIntMsg incomingCmdForceInertialBuffer;  //!< -- One-time allocation for savings
-    CmdForceBodyIntMsg incomingCmdForceBodyBuffer;          //!< -- One-time allocation for savings
-    bool goodTorqueCmdMsg;              //!< -- flag indicating if a torque command message was read
-    bool goodForceBCmdMsg;              //!< -- flag indicating if a inertial force command message was read
-    bool goodForceNCmdMsg;              //!< -- flag indicating if a body-relative force command message was read
+    CmdTorqueBodyMsgPayload incomingCmdTorqueBuffer;            //!< -- One-time allocation for savings
+    CmdForceInertialMsgPayload incomingCmdForceInertialBuffer;  //!< -- One-time allocation for savings
+    CmdForceBodyMsgPayload incomingCmdForceBodyBuffer;          //!< -- One-time allocation for savings
 
 
 public:
     Eigen::Vector3d extForce_N;         //!< [N]  external force in inertial  frame components
     Eigen::Vector3d extForce_B;         //!< [N]  external force in body frame components
     Eigen::Vector3d extTorquePntB_B;    //!< [Nm] external torque in body frame components
-    std::string cmdTorqueInMsgName;     //!< -- message used to read torque command inputs
-    std::string cmdForceInertialInMsgName; //!< -- message used to read force command inputs
-    std::string cmdForceBodyInMsgName;  //!< -- message used to read force command inputs
+
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueInMsg;           //!< commanded torque input msg
+    ReadFunctor<CmdForceBodyMsgPayload> cmdForceBodyInMsg;         //!< commanded force input msg in B frame
+    ReadFunctor<CmdForceInertialMsgPayload>cmdForceInertialInMsg;  //!< commanded force input msg in N frame
 
 };
 

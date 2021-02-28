@@ -22,17 +22,17 @@
 
 #include <stdint.h>
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simFswInterfaceMessages/circlesOpNavMsg.h"
-#include "simFswInterfaceMessages/cameraConfigMsg.h"
-#include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "fswMessages/pixelLineFilterFswMsg.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
-#include "simulation/utilities/bskLogging.h"
-#include "utilities/astroConstants.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/CameraConfigMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/CirclesOpNavMsg_C.h"
+#include "cMsgCInterface/PixelLineFilterMsg_C.h"
+
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/astroConstants.h"
 
 
 
@@ -41,11 +41,11 @@
  Used to estimate the spacecraft's inertial position relative to a body.
  */
 typedef struct {
-    char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
-    char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the output filter data message
-    char circlesInMsgName[MAX_STAT_MSG_LENGTH];  //!< [-] The name of the input RW speeds message
-    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
-    char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message
+    NavTransMsg_C navStateOutMsg; //!< navigation translation output message
+    PixelLineFilterMsg_C filtDataOutMsg; //!< output filter data message
+    CirclesOpNavMsg_C circlesInMsg;  //!< [-] input messages with circles information
+    CameraConfigMsg_C cameraConfigInMsg; //!< camera config input message
+    NavAttMsg_C attInMsg; //!< attitude input message
     
     int moduleId; //!< module ID
     
@@ -93,14 +93,9 @@ typedef struct {
     double timeTagOut;       //!< [s] Output time-tag information
     double maxTimeJump;      //!< [s] Maximum time jump to allow in propagation
     
-    CirclesOpNavMsg cirlcesInMsg; //!< [-] ST sensor data read in from message bus
-    CameraConfigMsg cameraSpecs;  //!< [-] Camera specs for nav
-    NavAttIntMsg attInfo;         //!< [-] Att info for frame transformation
-    int32_t navStateOutMsgId;     //!< -- Id for the outgoing body estimate message
-    int32_t filtDataOutMsgId;     //!< [-] Id for the filter data output message
-    int32_t circlesInMsgId;     //!< [-] Id for the incoming mass properties message
-    int32_t attInMsgID;    //!< [-] The ID associated with the outgoing message
-    int32_t cameraConfigMsgID;  //!< [-] The ID associated with the incoming camera config
+    CirclesOpNavMsgPayload circlesInBuffer; //!< [-] ST sensor data read in from message bus
+    CameraConfigMsgPayload cameraSpecs;  //!< [-] Camera specs for nav
+    NavAttMsgPayload attInfo;         //!< [-] Att info for frame transformation
 
     BSKLogger *bskLogger;  //!< BSK Logging
 
@@ -112,7 +107,6 @@ extern "C" {
 #endif
     
     void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId);
-    void CrossInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId);
     void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,
                             int64_t moduleId);
     void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,

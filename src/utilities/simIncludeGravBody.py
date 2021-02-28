@@ -1,36 +1,43 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 
 from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spice_interface
+from Basilisk.simulation import spiceInterface
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation.gravityEffector import loadGravFromFile as loadGravFromFile_python
+from Basilisk.architecture import messaging
+
+try:
+    from collections.abc import OrderedDict
+except ImportError:
+    from collections import OrderedDict
 
 
 class gravBodyFactory(object):
+    """Factory cass to create gravitational bodies."""
     def __init__(self, bodyNames=None):
         self.spicePlanetNames = []
         self.spicePlanetFrames = []
-        self.gravBodies = {}
+        self.gravBodies = OrderedDict()
         self.spiceObject = None
         self.spiceKernelFileNames = []
+        self.epochMsg = None
         if bodyNames:
             self.createBodies(bodyNames)
 
@@ -75,142 +82,163 @@ class gravBodyFactory(object):
                 print("gravBody " + name + " not found in gravBodyUtilities.py")
         return self.gravBodies
 
+    # Note, in the `create` functions below the `isCentralBody` and `useSphericalHarmParams` are
+    # all set to False in the `GravGodyData()` constructor.
 
     def createSun(self):
+        """Create gravity body with sun mass properties."""
         sun = gravityEffector.GravBodyData()
-        sun.bodyInMsgName = "sun_planet_data"
-        sun.outputMsgName = "sun_display_frame_data"
+        sun.planetName = "sun_planet_data"
         sun.mu = 1.32712440018E20  # meters^3/s^2
         sun.radEquator = 695508000.0  # meters
-        sun.isCentralBody = False
-        sun.useSphericalHarmParams = False
         self.gravBodies['sun'] = sun
         sun.this.disown()
         return sun
 
     def createMercury(self):
+        """Create gravity body with Mercury mass properties."""
         mercury = gravityEffector.GravBodyData()
-        mercury.bodyInMsgName = "mercury_planet_data"
-        mercury.outputMsgName = "mercury_display_frame_data"
+        mercury.planetName = "mercury_planet_data"
         mercury.mu = 4.28283100e13  # meters^3/s^2
         mercury.radEquator = 2439700.0  # meters
-        mercury.isCentralBody = False
-        mercury.useSphericalHarmParams = False
         self.gravBodies['mercury'] = mercury
         mercury.this.disown()
         return mercury
 
     def createVenus(self):
+        """Create gravity body with Venus mass properties."""
         venus = gravityEffector.GravBodyData()
-        venus.bodyInMsgName = "venus_planet_data"
-        venus.outputMsgName = "venus_display_frame_data"
+        venus.planetName = "venus_planet_data"
         venus.mu = 3.24858599e14  # meters^3/s^2
         venus.radEquator = 6051800.0  # meters
-        venus.isCentralBody = False
-        venus.useSphericalHarmParams = False
         self.gravBodies['venus'] = venus
         venus.this.disown()
         return venus
 
     def createEarth(self):
+        """Create gravity body with Earth mass properties."""
         earth = gravityEffector.GravBodyData()
-        earth.bodyInMsgName = "earth_planet_data"
-        earth.outputMsgName = "earth_display_frame_data"
+        earth.planetName = "earth_planet_data"
         earth.mu = 0.3986004415E+15  # meters^3/s^2
         earth.radEquator = 6378136.6  # meters
-        earth.isCentralBody = False
-        earth.useSphericalHarmParams = False
         self.gravBodies['earth'] = earth
         earth.this.disown()
         return earth
 
     def createMoon(self):
+        """Create gravity body with Moon mass properties."""
         moon = gravityEffector.GravBodyData()
-        moon.bodyInMsgName = "moon_planet_data"
-        moon.outputMsgName = "moon_display_frame_data"
+        moon.planetName = "moon_planet_data"
         moon.mu = 4.902799E12  # meters^3/s^2
         moon.radEquator = 1738100.0  # meters
-        moon.isCentralBody = False
-        moon.useSphericalHarmParams = False
         self.gravBodies['moon'] = moon
         moon.this.disown()
         return moon
 
     def createMars(self):
+        """Create gravity body with Mars mass properties."""
         mars = gravityEffector.GravBodyData()
-        mars.bodyInMsgName = "mars_planet_data"
-        mars.outputMsgName = "mars_display_frame_data"
+        mars.planetName = "mars_planet_data"
         mars.mu = 4.28283100e13  # meters^3/s^2
         mars.radEquator = 3396190  # meters
-        mars.isCentralBody = False
-        mars.useSphericalHarmParams = False
         self.gravBodies['mars'] = mars
         mars.this.disown()
         return mars
 
     def createMarsBarycenter(self):
+        """Create gravity body with Mars mass properties."""
         mars_barycenter = gravityEffector.GravBodyData()
-        mars_barycenter.bodyInMsgName = "mars barycenter_planet_data"
-        mars_barycenter.outputMsgName = "mars_barycenter_display_frame_data"
+        mars_barycenter.planetName = "mars barycenter_planet_data"
         mars_barycenter.mu = 4.28283100e13  # meters^3/s^2
         mars_barycenter.radEquator = 3396190  # meters
-        mars_barycenter.isCentralBody = False
-        mars_barycenter.useSphericalHarmParams = False
         self.gravBodies['mars barycenter'] = mars_barycenter
         mars_barycenter.this.disown()
         return mars_barycenter
 
     def createJupiter(self):
+        """Create gravity body with Jupiter mass properties."""
         jupiter = gravityEffector.GravBodyData()
-        jupiter.bodyInMsgName = "jupiter barycenter_planet_data"
-        jupiter.outputMsgName = "jupiter_display_frame_data"
+        jupiter.planetName = "jupiter barycenter_planet_data"
         jupiter.mu = 1.266865349093058E17  # meters^3/s^2
         jupiter.radEquator = 71492000.0  # meters
-        jupiter.isCentralBody = False
-        jupiter.useSphericalHarmParams = False
         self.gravBodies['jupiter barycenter'] = jupiter
         jupiter.this.disown()
         return jupiter
 
     def createSaturn(self):
+        """Create gravity body with Saturn mass properties."""
         saturn = gravityEffector.GravBodyData()
-        saturn.bodyInMsgName = "saturn barycenter_planet_data"
-        saturn.outputMsgName = "saturn_display_frame_data"
+        saturn.planetName = "saturn barycenter_planet_data"
         saturn.mu = 3.79395000E16  # meters^3/s^2
         saturn.radEquator = 60268000.0  # meters
-        saturn.isCentralBody = False
-        saturn.useSphericalHarmParams = False
         self.gravBodies['saturn'] = saturn
         saturn.this.disown()
         return saturn
 
     def createUranus(self):
+        """Create gravity body with Uranus mass properties."""
         uranus = gravityEffector.GravBodyData()
-        uranus.bodyInMsgName = "uranus barycenter_planet_data"
-        uranus.outputMsgName = "uranus_display_frame_data"
+        uranus.planetName = "uranus barycenter_planet_data"
         uranus.mu = 5.79396566E15  # meters^3/s^2
         uranus.radEquator = 25559000.0  # meters
-        uranus.isCentralBody = False
-        uranus.useSphericalHarmParams = False
         self.gravBodies['uranus'] = uranus
         uranus.this.disown()
         return uranus
 
     def createNeptune(self):
+        """Create gravity body with Neptune mass properties."""
         neptune = gravityEffector.GravBodyData()
-        neptune.bodyInMsgName = "neptune barycenter_planet_data"
-        neptune.outputMsgName = "neptune_display_frame_data"
+        neptune.planetName = "neptune barycenter_planet_data"
         neptune.mu = 6.83509920E15  # meters^3/s^2
         neptune.radEquator = 24764000.0  # meters
-        neptune.isCentralBody = False
-        neptune.useSphericalHarmParams = False
         self.gravBodies['neptune'] = neptune
         neptune.this.disown()
         return neptune
 
+    def createCustomGravObject(self, label, mu, **kwargs):
+        """
+            Create a custom gravity body object.
+
+            Parameters
+            ----------
+            label : string
+                Gravity body name
+            mu : double
+                Gravity constant
+
+            Other Parameters
+            ----------------
+            kwargs :
+                radEquator : double
+                    Equatorial radius in meters
+                radiusRatio : double
+                    Ratio of the polar radius to the equatorial radius.
+
+        """
+        unitTestSupport.checkMethodKeyword(
+            ['radEquator', 'radiusRatio'],
+            kwargs)
+
+        if not isinstance(label, str):
+            print('ERROR: label must be a string')
+            exit(1)
+
+        gravBody = gravityEffector.GravBodyData()
+        gravBody.planetName = label
+        gravBody.mu = mu
+        if 'radEquator' in kwargs:
+            gravBody.radEquator = kwargs['radEquator']
+        if 'radiusRatio' in kwargs:
+            gravBody.radiusRatio = kwargs['radiusRatio']
+        self.gravBodies[label] = gravBody
+        gravBody.this.disown()
+        return gravBody
+
     def createSpiceInterface(self, path, time, **kwargs):
         """
             A convenience function to configure a NAIF Spice module for the simulation.
+            It connect the gravBodyData objects to the spice planet state messages.  Thus,
+            it must be run after the gravBodyData objects are created.
 
             Parameters
             ----------
@@ -222,18 +250,16 @@ class gravBodyFactory(object):
             Other Parameters
             ----------------
             kwargs :
-                spiceKernalFileNames : array_like
+                spiceKernalFileNames :
                     A list of spice kernel file names including file extension.
-                spicePlanetNames : array_like
+                spicePlanetNames :
                     A list of planet names whose Spice data is loaded, overriding the gravBodies list.
-                spicePlanetFrames : array_like
+                spicePlanetFrames :
                     A list of strings for the planet frame names.  If left empty for a planet, then
-                    "IAU_" + planetName is assumed for the planet frame.
+                    IAU_ + planetName is assumed for the planet frame.
+                epochInMsg: bool
+                    Flag to set an epoch input message for the spice interface
 
-            Returns
-            -------
-            spiceObject : Basilisk spice module
-                A configured Basilisk spice module.
         """
 
         if 'spiceKernalFileNames' in kwargs:
@@ -263,34 +289,37 @@ class gravBodyFactory(object):
             except TypeError:
                 raise TypeError('spicePlanetFrames expects a list')
 
-        self.spiceObject = spice_interface.SpiceInterface()
+        self.spiceObject = spiceInterface.SpiceInterface()
         self.spiceObject.ModelTag = "SpiceInterfaceData"
         self.spiceObject.SPICEDataPath = path
-        self.spiceObject.outputBufferCount = 10000
-        self.spiceObject.planetNames = spice_interface.StringVector(self.spicePlanetNames)
+        self.spiceObject.addPlanetNames(spiceInterface.StringVector(self.spicePlanetNames))
         self.spiceObject.UTCCalInit = time
         if len(self.spicePlanetFrames) > 0:
             if len(self.spicePlanetFrames) != len(self.spicePlanetNames):
                 print("List arguments spicePlanetFrames and spicePlanetNames must contain the same number of strings.")
                 exit(0)
-            self.spiceObject.planetFrames = spice_interface.StringVector(self.spicePlanetFrames)
+            self.spiceObject.planetFrames = spiceInterface.StringVector(self.spicePlanetFrames)
 
         for fileName in self.spiceKernelFileNames:
             self.spiceObject.loadSpiceKernel(fileName, path)
         self.spiceObject.SPICELoaded = True
 
-        if 'epochInMsgName' in kwargs:
-            epMsgName = kwargs['epochInMsgName']
-            if not isinstance(epMsgName, str):
-                print('ERROR: epochInMsgName must be a string argument')
-                exit(1)
-            self.spiceObject.epochInMsgName = epMsgName
-            epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(time, dataPath = path)
-            return self.spiceObject, epochMsg
+        # subscribe Grav Body data to the spice state message
+        c = 0
+        for key, gravBodyDataItem in self.gravBodies.items():
+            gravBodyDataItem.planetBodyInMsg.subscribeTo(self.spiceObject.planetStateOutMsgs[c])
+            c += 1
 
-        return self.spiceObject
+        # create and connect to an epoch input message
+        if 'epochInMsg' in kwargs:
+            if kwargs['epochInMsg']:
+                self.epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(time, dataPath=path)
+                self.spiceObject.epochInMsg.subscribeTo(self.epochMsg)
+
+        return
 
     def unloadSpiceKernels(self):
+        """Method to unload spice kernals at the end of a simulation."""
         for fileName in self.spiceKernelFileNames:
             self.spiceObject.unloadSpiceKernel(fileName, self.spiceObject.SPICEDataPath)
         return

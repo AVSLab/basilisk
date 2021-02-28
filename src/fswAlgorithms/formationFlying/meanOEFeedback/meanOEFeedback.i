@@ -26,17 +26,15 @@
 %ignore Update_meanOEFeedback;
 %constant void SelfInit_meanOEFeedback(void*, uint64_t);
 %ignore SelfInit_meanOEFeedback;
-%constant void CrossInit_meanOEFeedback(void*, uint64_t);
-%ignore CrossInit_meanOEFeedback;
 %constant void Reset_meanOEFeedback(void*, uint64_t, uint64_t);
 %ignore Reset_meanOEFeedback;
 
 %include "meanOEFeedback.h"
-GEN_SIZEOF(meanOEFeedbackConfig);
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-GEN_SIZEOF(NavTransIntMsg);
-%include "simFswInterfaceMessages/cmdForceInertialIntMsg.h"
-GEN_SIZEOF(CmdForceInertialIntMsg);
+
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
+struct CmdForceInertialMsg_C;
 
 %pythoncode %{
 import sys

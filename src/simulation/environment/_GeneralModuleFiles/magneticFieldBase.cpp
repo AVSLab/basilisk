@@ -18,34 +18,25 @@
  */
 
 #include "magneticFieldBase.h"
-#include "architecture/messaging/system_messaging.h"
-#include "utilities/astroConstants.h"
-#include "utilities/linearAlgebra.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/simDefinitions.h"
-#include "simMessages/epochSimMsg.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/simDefinitions.h"
 
 /*! This method initializes some basic parameters for the module.
  @return void
  */
 MagneticFieldBase::MagneticFieldBase()
 {
-    this->planetPosInMsgName = "";
-    this->OutputBufferCount = 2;
-
     //! - zero class variables
     this->planetRadius = 0.0;
     this->r_BP_N.fill(0.0);
     this->r_BP_P.fill(0.0);
-    this->scStateInMsgNames.clear();
-    this->planetPosInMsgId = -1;
+    this->scStateInMsgs.clear();
 
     //! - turn off minimum and maximum reach features
     this->envMinReach = -1;
     this->envMaxReach = -1;
-
-    //! - turn off the epoch message ID
-    this->epochInMsgId = -1;
 
     //! - set the default epoch information
     this->epochDateTime.tm_year = EPOCH_YEAR - 1900;
@@ -57,7 +48,7 @@ MagneticFieldBase::MagneticFieldBase()
 
 
     //! - zero the planet message, and set the DCM to an identity matrix
-    memset(&this->planetState, 0x0, sizeof(SpicePlanetStateSimMsg));
+    this->planetState = planetPosInMsg.zeroMsgPayload;
     m33SetIdentity(this->planetState.J20002Pfix);
 
     return;
@@ -68,71 +59,33 @@ MagneticFieldBase::MagneticFieldBase()
  */
 MagneticFieldBase::~MagneticFieldBase()
 {
+    for (long unsigned int c=0; c<this->envOutMsgs.size(); c++) {
+        delete this->envOutMsgs.at(c);
+    }
     return;
 }
 
 /*! Adds the spacecraft message name to a vector of sc message names and automatically creates an output message name.
  @return void
- @param tmpScMsgName A spacecraft state message name.
+ @param tmpScMsg A spacecraft state message name.
  */
-void MagneticFieldBase::addSpacecraftToModel(std::string tmpScMsgName){
-    std::string tmpEnvMsgName;
-    this->scStateInMsgNames.push_back(tmpScMsgName);
-        tmpEnvMsgName = this->ModelTag + "_" + std::to_string(this->scStateInMsgNames.size()-1) + "_data";
-    this->envOutMsgNames.push_back(tmpEnvMsgName);
-    return;
-}
+void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg){
 
-/*! SelfInit for this method creates a seperate magnetic field message for each of the spacecraft
-that were added using AddSpacecraftToModel. Additional model outputs are also initialized per-spacecraft.
- @return void
-*/
-void MagneticFieldBase::SelfInit()
-{
-    int64_t tmpMagFieldMsgId;
-    std::vector<std::string>::iterator it;
+    /* add input message */
+    this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
-    //! - create all the environment output messages for each spacecraft
-    for (it = this->envOutMsgNames.begin(); it!=this->envOutMsgNames.end(); it++) {
-        tmpMagFieldMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it,
-                                                                            sizeof(MagneticFieldSimMsg),
-                                                                            this->OutputBufferCount,
-                                                                            "MagneticFieldSimMsg",
-                                                                            moduleID);
-        this->envOutMsgIds.push_back(tmpMagFieldMsgId);
-    }
+    /* create output message */
+    Message<MagneticFieldMsgPayload> *msg;
+    msg = new Message<MagneticFieldMsgPayload>;
+    this->envOutMsgs.push_back(msg);
 
-    //! - call the custom SelfInit() method to add addtional self initialization steps
-    customSelfInit();
+    /* create buffer message copies*/
+    MagneticFieldMsgPayload msgMagBuffer;
+    this->magFieldOutBuffer.push_back(msgMagBuffer);
 
     return;
 }
 
-/*! This method is used to connect the input position message from the spacecraft. Additonal model-specific cross inits are also conducted.
- @return void
- */
-void MagneticFieldBase::CrossInit()
-{
-    //! - if a planet message name is specified, subscribe to this message. If not, then a zero planet position and orientation is assumed
-    if (this->planetPosInMsgName.length() > 0) {
-        this->planetPosInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->planetPosInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
-    }
-
-    //! - subscribe to the spacecraft messages and create associated output message buffer
-    std::vector<std::string>::iterator it;
-    this->magFieldOutBuffer.clear();
-    MagneticFieldSimMsg tmpMagField;
-    memset(&tmpMagField, 0x0, sizeof(MagneticFieldSimMsg));
-    for(it = this->scStateInMsgNames.begin(); it != this->scStateInMsgNames.end(); it++){
-        this->scStateInMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(SCPlusStatesSimMsg), moduleID));
-        this->magFieldOutBuffer.push_back(tmpMagField);
-    }
-
-    //!- call the custom CrossInit() method to all additional cross initialization steps
-    customCrossInit();
-
-    return;
-}
 
 /*! This method is used to reset the module.
  @return void
@@ -143,47 +96,24 @@ void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
     customReset(CurrentSimNanos);
 
     /* set epoch information.  If provided, then the epoch message information should be used.  */
-    if (this->epochInMsgId >= 0) {
-        if (this->epochInMsgId>=0) {
-            // Read in the epoch message and set the internal time structure
-            EpochSimMsg epochMsg;
-            SingleMessageHeader LocalHeader;
-            memset(&epochMsg, 0x0, sizeof(EpochSimMsg));
-            SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &LocalHeader,
-                                                        sizeof(EpochSimMsg),
-                                                        reinterpret_cast<uint8_t*> (&epochMsg), moduleID);
-            this->epochDateTime.tm_year = epochMsg.year - 1900;
-            this->epochDateTime.tm_mon = epochMsg.month - 1;
-            this->epochDateTime.tm_mday = epochMsg.day;
-            this->epochDateTime.tm_hour = epochMsg.hours;
-            this->epochDateTime.tm_min = epochMsg.minutes;
-            this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
-            this->epochDateTime.tm_isdst = 0;
-            mktime(&this->epochDateTime);
-        }
+    if (this->epochInMsg.isLinked()) {
+        // Read in the epoch message and set the internal time structure
+        EpochMsgPayload epochMsg;
+        epochMsg = this->epochInMsg();
+        this->epochDateTime.tm_year = epochMsg.year - 1900;
+        this->epochDateTime.tm_mon = epochMsg.month - 1;
+        this->epochDateTime.tm_mday = epochMsg.day;
+        this->epochDateTime.tm_hour = epochMsg.hours;
+        this->epochDateTime.tm_min = epochMsg.minutes;
+        this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
+        this->epochDateTime.tm_isdst = 0;
+        mktime(&this->epochDateTime);
     } else {
         customSetEpochFromVariable();
     }
     return;
 }
 
-
-
-/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
- @return void
- */
-void MagneticFieldBase::customSelfInit()
-{
-    return;
-}
-
-/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
- @return void
- */
-void MagneticFieldBase::customCrossInit()
-{
-    return;
-}
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
  @return void
@@ -208,18 +138,8 @@ void MagneticFieldBase::customSetEpochFromVariable()
  */
 void MagneticFieldBase::writeMessages(uint64_t CurrentClock)
 {
-    MagneticFieldSimMsg tmpMagFieldOutMsg;
-    std::vector<int64_t>::iterator it;
-    std::vector<MagneticFieldSimMsg>::iterator magFieldIt;
-    magFieldIt = this->magFieldOutBuffer.begin();
-    //! - write magnetic field output messages for each spacecaft's locations
-    for(it = this->envOutMsgIds.begin(); it != this->envOutMsgIds.end(); it++, magFieldIt++){
-        tmpMagFieldOutMsg = *magFieldIt;
-        SystemMessaging::GetInstance()->WriteMessage(*it,
-                                                  CurrentClock,
-                                                  sizeof(MagneticFieldSimMsg),
-                                                  reinterpret_cast<uint8_t*>(&tmpMagFieldOutMsg),
-                                                  moduleID);
+    for (long unsigned int c=0; c<this->envOutMsgs.size(); c++) {
+        this->envOutMsgs.at(c)->write(&this->magFieldOutBuffer.at(c), this->moduleID, CurrentClock);
     }
 
     //! - call the custom method to perform additional output message writing
@@ -242,28 +162,23 @@ void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock)
  */
 bool MagneticFieldBase::readMessages()
 {
-    SCPlusStatesSimMsg scMsg;
-    SingleMessageHeader localHeader;
+    SCStatesMsgPayload scMsg;
 
     this->scStates.clear();
 
     //! - read in the spacecraft state messages
     bool scRead;
-    if(this->scStateInMsgIds.size() > 0)
+    if(this->scStateInMsgs.size() > 0)
     {
         scRead = true;
-        std::vector<int64_t>::iterator it;
-            for(it = scStateInMsgIds.begin(); it!= scStateInMsgIds.end(); it++){
-                bool tmpScRead;
-                memset(&scMsg, 0x0, sizeof(SCPlusStatesSimMsg));
-                tmpScRead = SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
-                                                      sizeof(SCPlusStatesSimMsg),
-                                                      reinterpret_cast<uint8_t*>(&scMsg),
-                                                      moduleID);
-                scRead = scRead && tmpScRead;
+        for (long unsigned int c=0; c<this->scStateInMsgs.size(); c++) {
+            bool tmpScRead;
+            scMsg = this->scStateInMsgs.at(c)();
+            tmpScRead = this->scStateInMsgs.at(c).isWritten();
+            scRead = scRead && tmpScRead;
 
-                this->scStates.push_back(scMsg);
-            }
+            this->scStates.push_back(scMsg);
+        }
     } else {
         bskLogger.bskLog(BSK_ERROR, "Atmosphere model has no spacecraft added to it.");
         scRead = false;
@@ -271,12 +186,10 @@ bool MagneticFieldBase::readMessages()
 
     //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and orientation is assumed
     bool planetRead = true;
-    if(planetPosInMsgId >= 0)
+    if(this->planetPosInMsg.isLinked())
     {
-        planetRead = SystemMessaging::GetInstance()->ReadMessage(this->planetPosInMsgId , &localHeader,
-                                                                 sizeof(SpicePlanetStateSimMsg),
-                                                                 reinterpret_cast<uint8_t*>(&this->planetState),
-                                                                 moduleID);
+        this->planetState = this->planetPosInMsg();
+        planetRead = this->planetPosInMsg.isWritten();
     }
 
     //! - call the custom method to perform additional input reading
@@ -299,18 +212,18 @@ bool MagneticFieldBase::customReadMessages()
  */
 void MagneticFieldBase::updateLocalMagField(double currentTime)
 {
-    std::vector<SCPlusStatesSimMsg>::iterator it;
+    std::vector<SCStatesMsgPayload>::iterator it;
     uint64_t atmoInd = 0;
 
     //! - loop over all the spacecraft
-    std::vector<MagneticFieldSimMsg>::iterator magMsgIt;
+    std::vector<MagneticFieldMsgPayload>::iterator magMsgIt;
     magMsgIt = this->magFieldOutBuffer.begin();
     for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++, magMsgIt++){
         //! - Computes planet relative state vector
         this->updateRelativePos(&(this->planetState), &(*it));
 
         //! - zero the output message for each spacecraft by default
-        memset(&(*magMsgIt), 0x0, sizeof(MagneticFieldSimMsg));
+        *magMsgIt = this->envOutMsgs[0]->zeroMsgPayload;
 
         //! - check if radius is in permissible range
         if(this->orbitRadius > this->envMinReach &&
@@ -325,10 +238,10 @@ void MagneticFieldBase::updateLocalMagField(double currentTime)
 
 /*! This method is used to determine the spacecraft position vector relative to the planet.
  @param planetState A space planetstate message struct.
- @param scState A spacecraftPlusStates message struct.
+ @param scState A spacecraft states message struct.
  @return void
  */
-void MagneticFieldBase::updateRelativePos(SpicePlanetStateSimMsg *planetState, SCPlusStatesSimMsg *scState)
+void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCStatesMsgPayload *scState)
 {
     //! - compute spacecraft position vector relative to planet
     v3Subtract(scState->r_BN_N, planetState->PositionVector, this->r_BP_N.data());
@@ -349,9 +262,10 @@ void MagneticFieldBase::updateRelativePos(SpicePlanetStateSimMsg *planetState, S
 void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - clear the output buffer
-    std::vector<MagneticFieldSimMsg>::iterator it;
+    std::vector<MagneticFieldMsgPayload>::iterator it;
     for(it = this->magFieldOutBuffer.begin(); it!= this->magFieldOutBuffer.end(); it++){
-        memset(&(*it), 0x0, sizeof(MagneticFieldSimMsg));
+        memset(&(*it), 0x0, sizeof(MagneticFieldMsgPayload));
+        *it = this->envOutMsgs[0]->zeroMsgPayload;
     }
     //! - update local neutral density information
     if(this->readMessages())

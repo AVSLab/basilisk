@@ -24,9 +24,8 @@ import six
 # Point the path to the module storage area
 
 
-from Basilisk.simulation import sim_model
-from Basilisk.simulation import alg_contain
-from Basilisk.utilities import MessagingAccess
+from Basilisk.architecture import sim_model
+from Basilisk.architecture import alg_contain
 import numpy as np
 import array
 import xml.etree.ElementTree as ET
@@ -39,13 +38,13 @@ except NameError:
    from sets import Set as set
 
 from Basilisk.utilities import simulationArchTypes
-from Basilisk.simulation import simMessages
-from Basilisk.simulation import bskLogging
+from Basilisk.architecture import bskLogging
 from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
 import warnings
 
 
 class LogBaseClass:
+    """Logging Base class"""
     def __init__(self, ReplaceName, LogPeriod, RefFunction, DataCols=1):
         self.Period = LogPeriod
         self.Name = ReplaceName
@@ -62,6 +61,7 @@ class LogBaseClass:
 
 
 class EventHandlerClass:
+    """Event Handler Class"""
     def __init__(self, eventName, eventRate=int(1E9), eventActive=False,
                  conditionList=[], actionList=[]):
         self.eventName = eventName
@@ -112,6 +112,7 @@ class EventHandlerClass:
 
 
 class StructDocData:
+    """Structure data documentation class"""
     class StructElementDef:
         def __init__(self, type, name, argstring, desc=''):
             self.type = type
@@ -175,9 +176,9 @@ class DataPairClass:
         self.outputDict = {}
 
 class SimBaseClass:
+    """Simulation Base Class"""
     def __init__(self):
         self.TotalSim = sim_model.SimModel()
-        self.TotalSim.terminateSimulation()
         self.TaskList = []
         self.procList = []
         self.pyProcList = []
@@ -197,19 +198,22 @@ class SimBaseClass:
         self.allModules = set()
 
     def SetProgressBar(self, value):
+        """
+        Shows a dynamic progress in the terminal while the simulation is executing.
+        """
         self.showProgressBar = value
 
     def AddModelToTask(self, TaskName, NewModel, ModelData=None, ModelPriority=-1):
-        '''
+        """
         This function is responsible for passing on the logger to a module instance (model), adding the
         model to a particular task, and defining
         the order/priority that the model gets updated within the task.
         :param TaskName (str): Name of the task
         :param NewModel (obj): Model to add to the task
-        :param ModelData: None or struct containing
+        :param ModelData: None or struct containing, only used for C BSK modules
         :param ModelPriority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return:
-        '''
+        """
         i = 0
         for Task in self.TaskList:
             if Task.Name == TaskName:
@@ -237,24 +241,24 @@ class SimBaseClass:
               {"TaskName": TaskName})
 
     def CreateNewProcess(self, procName, priority = -1):
-        '''
+        """
         Creates a process and adds it to the sim
         :param procName (str): Name of process
         :param priority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return: simulationArchTypes.ProcessBaseClass object
-        '''
+        """
         proc = simulationArchTypes.ProcessBaseClass(procName, priority)
         self.procList.append(proc)
         self.TotalSim.addNewProcess(proc.processData)
         return proc
 
     def CreateNewPythonProcess(self, procName, priority = -1):
-        '''
+        """
         Creates the python analog of a sim-level process, that exists only on the python level in self.pyProcList
         :param procName (str): Name of process
         :param priority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return: simulationArchTypes.PythonProcessClass object
-        '''
+        """
         proc = simulationArchTypes.PythonProcessClass(procName, priority)
         i=0;
         for procLoc in self.pyProcList:
@@ -266,7 +270,7 @@ class SimBaseClass:
         return proc
 
     def CreateNewTask(self, TaskName, TaskRate, InputDelay=0, FirstStart=0):
-        '''
+        """
         Creates a simulation task on the C-level with a specific update-frequency (TaskRate), an optional delay, and
         an optional start time.
         :param TaskName (str): Name of Task
@@ -274,21 +278,21 @@ class SimBaseClass:
         :param InputDelay (int): Number of nanoseconds simulating a lag of the particular task# TODO: Check that this is [ns]
         :param FirstStart (int): Number of nanoseconds to elapse before task is officially enabled
         :return: simulationArchTypes.TaskBaseClass object
-        '''
+        """
         Task = simulationArchTypes.TaskBaseClass(TaskName, TaskRate, InputDelay, FirstStart)
         self.TaskList.append(Task)
         return Task
 
     def AddVariableForLogging(self, VarName, LogPeriod=0, StartIndex=0, StopIndex=0, VarType=None):
-        '''
+        """
         Informs the sim to log a particular variable within a message
-        :param VarName:
-        :param LogPeriod:
-        :param StartIndex:
-        :param StopIndex:
+        :param VarName:   must be module tag string + period + variable name
+        :param LogPeriod: update rate at which to record the variable [ns]
+        :param StartIndex: starting index if the variable is an array
+        :param StopIndex: end index if the variable is an idea
         :param VarType:
         :return:
-        '''
+        """
         SplitName = VarName.split('.')
         Subname = '.'
         Subname = Subname.join(SplitName[1:])
@@ -353,13 +357,13 @@ class SimBaseClass:
                 Task.resetTask(self.TotalSim.CurrentNanos)
 
     def InitializeSimulation(self):
+        """
+        Initialize the BSK simulation.  This runs the SelfInit() and Reset() methods on each module.
+        """
         self.TotalSim.ResetSimulation()
         self.TotalSim.selfInitSimulation()
         for proc in self.pyProcList:
             proc.selfInitProcess()
-        self.TotalSim.crossInitSimulation()
-        for proc in self.pyProcList:
-            proc.crossInitProcess()
         self.TotalSim.resetInitSimulation()
         for proc in self.pyProcList:
             proc.resetProcess(0)
@@ -367,24 +371,11 @@ class SimBaseClass:
             LogValue.clearItem()
         self.simulationInitialized = True
 
-    def InitializeSimulationAndDiscover(self):
-        self.InitializeSimulation()
-        for process in self.procList:
-            for interface in process.processData.intRefs:
-                interface.discoverAllMessages()
-        for process in self.pyProcList:
-            for interface in process.intRefs:
-                interface.discoverAllMessages()
-
-        # Create a new set into which we add the SWIG'd simMessages definitions
-        # and union it with the simulation's modules set. We do this so that
-        # python modules can have message structs resolved
-        self.allModules = set()
-        self.allModules.add(simMessages)
-        self.allModules = self.allModules | self.simModules
-
 
     def ConfigureStopTime(self, TimeStop):
+        """
+        Set the simulation stop time in nano-seconds.
+        """
         self.StopTime = TimeStop
 
     def RecordLogVars(self):
@@ -413,14 +404,12 @@ class SimBaseClass:
                     minNextTime = CurrSimTime + LogValue.Period
         return minNextTime
 
-    def ExecuteSimulation(self, showPlots=None, livePlots=None, simComm=None, plottingFunc=None, plotArgs=None):
+    def ExecuteSimulation(self):
+        """
+        run the simulation until the prescribed stop time.
+        """
         self.initializeEventChecks()
 
-        #Live Plotting Thread
-        if livePlots:
-            shareDataThread = threading.Thread(target=self.shareData, args=(simComm,))
-            shareDataThread.daemon = True
-            shareDataThread.start()
         nextStopTime = self.TotalSim.NextTaskTime
         nextPriority = -1
         pyProcPresent = False
@@ -444,59 +433,43 @@ class SimBaseClass:
             procStopTimes = []
             for pyProc in self.pyProcList:
                 nextCallTime = pyProc.nextCallTime()
-                if(nextCallTime<=self.TotalSim.CurrentNanos):
+                if nextCallTime<=self.TotalSim.CurrentNanos:
                     pyProc.executeTaskList(self.TotalSim.CurrentNanos)
                 nextCallTime = pyProc.nextCallTime()
                 procStopTimes.append(nextCallTime)
 
-            if(pyProcPresent and nextStopTime >= min(procStopTimes)):
+            if pyProcPresent and nextStopTime >= min(procStopTimes):
                 nextStopTime = min(procStopTimes)
                 nextPriority = self.pyProcList[procStopTimes.index(nextStopTime)].pyProcPriority
-            if(nextLogTime >= 0 and nextLogTime < nextStopTime):
+            if nextLogTime >= 0 and nextLogTime < nextStopTime:
                 nextStopTime = nextLogTime
                 nextPriority = -1
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
         progressBar.markComplete()
         progressBar.close()
-        if simComm is not None:
-            simComm.send("TERM")
-        if showPlots:
-            plottingFunc(*plotArgs)
-
-    def shareData(self, simComm):
-        while True:
-            inComm = simComm.recv()
-            outData = []
-            outComm = {}
-            for req in inComm["dataReq"]:
-                outData.append(self.pullMessageLogData(req, list(range(3))))
-            if len(outData) != 0:
-                outComm["plotID"] = inComm["plotID"]; outComm["dataResp"] = outData; outComm["plotFun"] = inComm["plotFun"]
-                simComm.send(outComm)
-
-    def shareDataTest(self, simComm):
-        while True:
-            inComm = simComm.recv()
-            outData = []
-            outComm = {}
-            for req in inComm["dataReq"]:
-                outData.append(self.pullMessageLogData(req, list(range(3))))
-            if len(outData) != 0:
-                outComm["dataResp"] = outData
-                simComm.send(outComm)
 
     def GetLogVariableData(self, LogName):
+        """
+        Pull the recorded module recorded variable.  The first column is the variable recording time in
+        nano-seconds, the additional column(s) are the message data columns.
+        """
         TheArray = np.array(self.VarLogList[LogName].TimeValuePairs)
         ArrayDim = self.VarLogList[LogName].ArrayDim
         TheArray = np.reshape(TheArray, (TheArray.shape[0] // ArrayDim, ArrayDim))
         return TheArray
 
     def disableTask(self, TaskName):
+        """
+        Disable this particular task from being executed.
+        """
         for Task in self.TaskList:
             if Task.Name == TaskName:
                 Task.disable()
 
     def enableTask(self, TaskName):
+        """
+        Enable this particular task to be executed.
+        """
         for Task in self.TaskList:
             if Task.Name == TaskName:
                 Task.enable()
@@ -515,208 +488,11 @@ class SimBaseClass:
                                                      newStruct})
         self.indexParsed = True
 
-    def findSimulationMessage(self, searchString):
-        searchComplete = False
-        msgMatchList = MessagingAccess.findMessageMatches(searchString,
-                                                          self.TotalSim)
-        exactMessage = -1
-        for message in msgMatchList:
-            if message == searchString:
-                exactMessage = message
-                continue
-            print(message)
-
-        if (exactMessage == searchString):
-            searchComplete = True
-            headerData = sim_model.MessageHeaderData()
-            self.TotalSim.populateMessageHeader(exactMessage, headerData)
-            print(headerData.MessageName + ": " + headerData.messageStruct)
-            if self.indexParsed == False:
-                self.parseDataIndex()
-            if headerData.messageStruct in self.dataStructureDictionary:
-                xmlDataPath = os.path.dirname(self.dataStructIndex)
-                self.dataStructureDictionary[
-                    headerData.messageStruct].populateElem(xmlDataPath)
-                self.dataStructureDictionary[
-                    headerData.messageStruct].printElem()
-        return searchComplete
-
-    def pullMessageLogData(self, varName, indices=[], numRecords=-1, varType='double'):
-        """
-        Retrieves logged message data from TotalSim by querying over message and variable names.
-
-        :param varName: string: A message name with the variable specified (i.e., 'scMessage.r_BN_N')
-        :param indices: list: For multidimensional message attributes, this specifies how many columns to pull from (ex. a 3 vector should be called with list(range(3)))
-        :param numRecords: The number of messages to pull from the history. Defaults to -1, which pulls all logged message values.
-        """
-        splitName = varName.split('.')
-        messageID = self.TotalSim.getMessageID(splitName[0])
-        if not (messageID.itemFound):
-            print("Failed to pull log due to invalid ID for this message: " + splitName[0])
-            return []
-        headerData = sim_model.MessageHeaderData()
-        self.TotalSim.populateMessageHeader(splitName[0], headerData)
-        moduleFound = ''
-
-        if len(self.allModules) == 0:
-            # Create a new set into which we add the SWIG'd simMessages definitions
-            # and union it with the simulation's modules set. We do this so that
-            # python modules can have message structs resolved
-            self.allModules = set()
-            self.allModules.add(simMessages)
-            self.allModules = self.allModules | self.simModules
-
-        #   Search for the specific module
-        for moduleData in self.allModules:
-            if moduleFound != '':
-                break
-            for name, obj in inspect.getmembers(moduleData):
-                if inspect.isclass(obj):
-                    if obj.__name__ == headerData.messageStruct:
-                        moduleFound = moduleData.__name__
-                        break
-        if moduleFound == '':
-            print("Failed to find valid message structure for: " + headerData.messageStruct)
-            return []
-        messageCount = self.TotalSim.messageLogs.getLogCount(messageID.processBuffer, messageID.itemID)
-        resplit = varName.split(splitName[0] + '.')
-        bufferUse = sim_model.logBuffer if messageCount > 0 else sim_model.messageBuffer
-        maxCountMessager = headerData.UpdateCounter if headerData.UpdateCounter < headerData.MaxNumberBuffers else headerData.MaxNumberBuffers
-        messageCount = messageCount if messageCount > 0 else maxCountMessager
-        messageCount = messageCount if numRecords < 0 else numRecords
-        if (len(indices) <= 0):
-            indices_use = [0]
-        else:
-            indices_use = indices
-
-        dataUse = MessagingAccess.obtainMessageVector(splitName[0], moduleFound,
-                                                      headerData.messageStruct, messageCount, self.TotalSim, resplit[1],
-                                                      varType,
-                                                      indices_use[0], indices_use[-1], bufferUse)
-
-        indicesLocal = [0]
-        if (len(dataUse) == 0):
-            return dataUse
-        for indexUse in indices_use:
-            indicesLocal.append(indexUse + 1)
-        return (dataUse[:, indicesLocal])
-
-    def pullMultiMessageLogData(self, varNames, indices, types, numRecords = -1):
-        """
-        Pulls the log data from multiple messages at the same time. When pulling multiple messages, or start/stopping the sim often,
-        produces faster performance than pullMessageLogData.
-
-        Inputs:
-        @param varNames: list : list of message names and parameters.
-        @param indices: list : list of message indices to be pulled.
-        @param types: list: list of strings describing types of data to be pulled (i.e. "bool" or "double").
-        @param numRecords : int : number of logged messages to pull. Defaults to -1, which returns all logged messages.
-
-        Outputs:
-        @param pullDict : dict : dict using names from varNames as keys and the corresponding pulled message data as the values.
-        """
-
-        attributeDict = {}
-        structToName = {}
-        indexDict = {}
-        typeDict = {}
-        headerDict = {}
-        foundDict = {}
-        pullDict = {}
-
-        #   Create entrices in header/index/id/foundDict corresponding to each varName
-        for idx, varName in enumerate(varNames):
-            #   Work out the message, attribute names:
-            splitName = varName.split('.')
-            msgName = splitName[0]
-            msgAttribute = splitName[1]
-
-            if msgName in attributeDict.keys():
-                attributeDict[msgName].append(msgAttribute)
-            else:
-                attributeDict[msgName] = [msgAttribute]
-
-            #   Find some identifying information we'll need to pull it
-            messageID = self.TotalSim.getMessageID(splitName[0])
-            if not (messageID.itemFound):
-                print("Failed to pull log due to invalid ID for this message: " + splitName[0])
-                return []
-            #   Populate a header for the message
-            headerData = sim_model.MessageHeaderData()
-            self.TotalSim.populateMessageHeader(splitName[0], headerData)
-
-            if headerData.messageStruct in headerDict.keys():
-                headerDict[headerData.messageStruct].append(headerData)
-                structToName[headerData.messageStruct].append(msgName)
-            else:
-                headerDict[headerData.messageStruct] = [headerData]
-                structToName[headerData.messageStruct] = [msgName]
-
-            foundDict[varName] = False
-            indexDict[varName] = indices[idx]
-            typeDict[varName] = types[idx]
-
-
-        headerList = list(headerDict.keys())
-
-        if len(self.allModules) == 0:
-            # Create a new set into which we add the SWIG'd simMessages definitions
-            # and union it with the simulation's modules set. We do this so that
-            # python modules can have message structs resolved
-            self.allModules = set()
-            self.allModules.add(simMessages)
-            self.allModules = self.allModules | self.simModules
-
-        #   Search for any of the modules in the list:
-        for module in self.allModules:
-            #   If all the values are "true", we found everything. Kill it
-            if all(value == True for value in foundDict.values()):
-                break
-            for name, obj in inspect.getmembers(module):
-                if inspect.isclass(obj):
-                    #   Check to see if the module has a
-                    if obj.__name__ in headerList:
-                        #   Get all the local variables corresponding to this module, since we aren't garunteed what order
-                        #   we'll find this header name:
-                        structName = obj.__name__
-                        moduleFound = module.__name__
-                        msgNames = structToName[structName]
-                        headerDatas = headerDict[obj.__name__]
-
-                        for idx,msgName in enumerate(msgNames):
-                            headerData = headerDatas[idx]
-                            msgAttributes = attributeDict[msgName]
-                            messageID = self.TotalSim.getMessageID(msgName)
-                            messageCount = self.TotalSim.messageLogs.getLogCount(messageID.processBuffer, messageID.itemID)
-                            bufferUse = sim_model.logBuffer if messageCount > 0 else sim_model.messageBuffer
-
-                            maxCountMessager = headerData.UpdateCounter if headerData.UpdateCounter < headerData.MaxNumberBuffers else headerData.MaxNumberBuffers
-                            messageCount = messageCount if messageCount > 0 else maxCountMessager
-                            messageCount = messageCount if numRecords < 0 else numRecords
-
-                            #   Opportunistically grab all the attributes we can before we clear this message struct:
-                            for attr in msgAttributes:
-                                indices = indexDict[msgName+'.'+attr]
-                                type = typeDict[msgName+'.'+attr]
-                                if (len(indices) <= 0):
-                                    indices_use = [0]
-                                else:
-                                    indices_use = indices
-
-                                dataUse = MessagingAccess.obtainMessageVector(msgName, moduleFound,
-                                                                              structName, messageCount,
-                                                                              self.TotalSim,
-                                                                              attr,
-                                                                              type,
-                                                                              indices_use[0], indices_use[-1], bufferUse)
-                                pullDict.update({msgName+'.'+attr:dataUse})
-
-                                foundDict.update({msgName+'.'+attr:True})
-
-        return pullDict
-
     def createNewEvent(self, eventName, eventRate=int(1E9), eventActive=False,
                        conditionList=[], actionList=[]):
+        """
+        Create an event sequence that contains a series of tasks to be executed.
+        """
         if (eventName in list(self.eventMap.keys())):
             return
         newEvent = EventHandlerClass(eventName, eventRate, eventActive,
@@ -738,124 +514,31 @@ class SimBaseClass:
                 nextTime = localNextTime
         return nextTime
 
-
     def setEventActivity(self, eventName, activityCommand):
         if eventName not in list(self.eventMap.keys()):
             print("You asked me to set the status of an event that I don't have.")
             return
         self.eventMap[eventName].eventActive = activityCommand
-    def terminateSimulation(self):
-        self.TotalSim.terminateSimulation()
-
-
-    # Only instances of following three functions is within SimBaseClass
-    # TODO: Investigate origin and need for these functions
-    def findMessagePairs(self, messageName, processList):
-        dataPairs = self.TotalSim.getMessageExchangeData(messageName, processList)
-        outputDataPairs = []
-        for messagePair in dataPairs:
-            namePairs = [None, None]
-            for proc in self.procList:
-                for intDef in proc.processData.intRefs:
-                    for singInt in intDef.interfaceDef:
-                        for i in range(2):
-                            if singInt.moduleID == messagePair[i]:
-                                if singInt.ModelTag != "":
-                                    namePairs[i] = singInt.ModelTag
-                                else:
-                                    namePairs[i] = singInt.moduleID
-            for task in self.TaskList:
-                for module in task.TaskData.TaskModels:
-                    for i in range(2):
-                        if module.ModelPtr.moduleID == messagePair[i]:
-                            if namePairs[i] == None:
-                                if module.ModelPtr.ModelTag != "":
-                                    namePairs[i] = module.ModelPtr.ModelTag
-                                else:
-                                    namePairs[i] = module.ModelPtr.moduleID
-            outputDataPairs.append(namePairs)
-        return(outputDataPairs)
-    def getDataMap(self, processList):
-        mapDict = {}
-        messNames = self.TotalSim.getUniqueMessageNames()
-        for name in messNames:
-            dataPairs = self.findMessagePairs(name, processList)
-            for transPair in dataPairs:
-                if transPair[0] in mapDict:
-                    if name not in mapDict[transPair[0]].outputMessages and name is not None:
-                        mapDict[transPair[0]].outputDict[name] = [transPair[1]]
-                    elif name is not None:
-                        mapDict[transPair[0]].outputDict[name].append(transPair[1])
-                    mapDict[transPair[0]].outputMessages.add(name)
-                else:
-                    newElem = DataPairClass()
-                    newElem.outputMessages.add(name)
-                    newElem.name = transPair[0]
-                    newElem.outputDict[name] = [transPair[1]]
-                    mapDict[transPair[0]] = newElem
-                if transPair[1] in mapDict:
-                    mapDict[transPair[1]].inputMessages.add(name)
-                else:
-                    newElem = DataPairClass()
-                    newElem.inputMessages.add(name)
-                    newElem.name = transPair[1]
-                    mapDict[transPair[1]] = newElem
-        return(mapDict)
-    def writeDataMapDot(self, processList = [], outputFileName='SimDataMap.dot'):
-        fDesc = open(outputFileName, 'w')
-        messageDataMap = self.getDataMap(processList)
-        fDesc.write('digraph messages {\n')
-        fDesc.write('node [shape=record];\n')
-        for key, value in messageDataMap.items():
-            if(str(key) == 'None'):
-                continue
-            fDesc.write('    ' + str(key))
-            fDesc.write('[shape=record,label="{')
-            i=1
-            for input in value.inputMessages:
-                fDesc.write('{<' + input + 'In> ' + input + '}')
-                if i < len(value.inputMessages):
-                    fDesc.write(' | ')
-                i += 1
-            fDesc.write('} | ' + str(key) + ' | {')
-            i=1
-            for output in value.outputMessages:
-                fDesc.write('{<' + output + 'Out> ' + output + '}')
-                if i < len(value.outputMessages):
-                    fDesc.write(' | ')
-                i += 1
-            fDesc.write('}"];\n')
-            for outputConn, ConnValue in value.outputDict.items():
-                for outputModule in ConnValue:
-                    if(outputModule == None):
-                        continue
-                    fDesc.write('    ' + str(key) + ':' + outputConn + 'Out')
-                    fDesc.write(' -> ' + str(outputModule) + ':' + outputConn +'In;\n')
-
-
-        fDesc.write('\n}')
-        fDesc.close()
 
     def setModelDataWrap(self, modelData):
-        '''
-        Takes a module and returns an object that provides access to said module's SelfInit, CrossInit, Update, and Reset
+        """
+        Takes a module and returns an object that provides access to said module's SelfInit, Update, and Reset
         methods.
 
-        Takes the module instance, collects all SwigPyObjects generated from the .i file (SelfInit, CrossInit,
+        Takes the module instance, collects all SwigPyObjects generated from the .i file (SelfInit,
         Update and Reset), and attaches it to a alg_contain model instance so the modules standard functions can be
         run at the python level.
 
         :param modelData: model to gather functions for
         :return: An alg_contain model that provides access to the original model's core functions
-        '''
+        """
         algDict = {}
         STR_SELFINIT = 'SelfInit'
-        STR_CROSSINIT = 'CrossInit'
         STR_UPDATE = 'Update'
         STR_RESET = 'Reset'
 
         # SwigPyObject's Parsing:
-        # Collect all the SwigPyObjects present in the list. Only the methods SelfInit, CrossInit, Update and Restart
+        # Collect all the SwigPyObjects present in the list. Only the methods SelfInit, Update and Restart
         # are wrapped by Swig in the .i files. Therefore they are the only SwigPyObjects
         def parseDirList(dirList):
             algNames = []
@@ -864,20 +547,19 @@ class SimBaseClass:
                 if type(methodObject).__name__ == "SwigPyObject":
                     algNames.append(methodName)
             return algNames
-        # Check the type of the algorithm, i.e. SelfInit, CrossInit, Update or Reset,
+
+        # Check the type of the algorithm, i.e. SelfInit, Update or Reset,
         # and return the key to create a new dictionary D[str_method] = method
         def checkMethodType(methodName):
             if methodName[0:len(STR_SELFINIT)] == STR_SELFINIT:
                 return STR_SELFINIT
-            elif methodName[0:len(STR_CROSSINIT)] == STR_CROSSINIT:
-                return STR_CROSSINIT
             elif methodName[0:len(STR_UPDATE)] == STR_UPDATE:
                 return STR_UPDATE
             elif methodName[0:len(STR_RESET)] == STR_RESET:
                 return STR_RESET
             else:
                 raise ValueError('Cannot recognize the method'
-                                 '(I only assess SelfInit, CrossInit, Update and Reset methods). '
+                                 '(I only assess SelfInit, Update and Reset methods). '
                                  'Parse better.')
 
         module = modelData.__module__
@@ -903,13 +585,12 @@ class SimBaseClass:
 
         update = eval(moduleString + algDict[STR_UPDATE])
         selfInit = eval(moduleString + algDict[STR_SELFINIT])
-        crossInit = eval(moduleString + algDict[STR_CROSSINIT])
         try:
             resetArg = algDict[STR_RESET]
             reset = eval(moduleString + resetArg)
-            modelWrap = alg_contain.AlgContain(modelData, update, selfInit, crossInit, reset)
+            modelWrap = alg_contain.AlgContain(modelData, update, selfInit, reset)
         except:
-            modelWrap = alg_contain.AlgContain(modelData, update, selfInit, crossInit)
+            modelWrap = alg_contain.AlgContain(modelData, update, selfInit)
         return modelWrap
 
 

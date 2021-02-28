@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-This module provides first-order modeling of data downlinking from a simple transmitter at a fixed baud rate. Specifically, the transmitter reads a :ref:`DataStorageStatusSimMsg` from the storage unit it is subscribed to, searches for the data buffer with the maximum amount of data, and downlinks a packet of data at a fixed baud rate. The transmitter writes out a :ref:`DataNodeUsageSimMsg` describing the data name and baud rate of the data it wants to downlink.
+This module provides first-order modeling of data downlinking from a simple transmitter at a fixed baud rate. Specifically, the transmitter reads a :ref:`DataStorageStatusMsgPayload` from the storage unit it is subscribed to, searches for the data buffer with the maximum amount of data, and downlinks a packet of data at a fixed baud rate. The transmitter writes out a :ref:`DataNodeUsageMsgPayload` describing the data name and baud rate of the data it wants to downlink.
 
 For more information on how to set up and use this module, see the simple data system example: :ref:`scenarioDataDemo`
 
@@ -8,27 +8,23 @@ Module Assumptions and Limitations
 ----------------------------------
 This module makes no additional assumptions outside of those already made in the :ref:`DataNodeBase` base class.
 
+
 Message Connection Descriptions
 -------------------------------
-This module uses the input and output messages of the :ref:`DataNodeBase` base class, plus an additional :ref:`DataStorageStatusSimMsg` input message subscribed to and read in `customCrossInit()` and `customRead()` methods, respectively.
+This module uses the input and output messages of the :ref:`DataNodeBase` base class, plus an additional
+:ref:`DataStorageStatusMsgPayload` input message subscribed to and read in `customRead()` method.
 
-.. table:: Module I/O Messages
-    :widths: 25 25 100
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-    +-----------------------+---------------------------------+---------------------------------------------------+
-    | Msg Variable Name     | Msg Type                        | Description                                       |
-    +=======================+=================================+===================================================+
-    | nodeDataOutMsgName    | :ref:`DataNodeUsageSimMsg`      | Writes out the data name and amount used/generated|
-    |                       |                                 | by a DataNodeBase instance.                       |
-    +-----------------------+---------------------------------+---------------------------------------------------+
-    | deviceStatusInMsgName | :ref:`DeviceStatusIntMsg`       | (optional). If dataStatus is 0,                   |
-    |                       |                                 | the node is disabled; other values indicate       |
-    |                       |                                 | various data modes depending on the module.       |
-    +-----------------------+---------------------------------+---------------------------------------------------+
-    | storageUnitMsgNames   | :ref:`DataStorageStatusSimMsg`  | Vector of storage units that are connected        |
-    |                       |                                 | to the transmitter. Add storage unit with the     |
-    |                       |                                 | ``addStorageUnitToTransmitter`` method.           |
-    +-----------------------+---------------------------------+---------------------------------------------------+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - storageUnitInMsgs
+      - :ref:`DataStorageStatusMsgPayload`
+      - vector of data storage input messages.  These are set using the ``addStorageUnitToTransmitter`` method
+
 
 User Guide
 ----------
@@ -51,7 +47,7 @@ Set the `nodeBaudRate`, `packetSize`, and numBuffers variables::
    transmitter.packetSize = -1E6 # bits
    transmitter.numBuffers = 2
 
-The next step is to attach one or more :ref:`DataStorageStatusSimMsg` instances to it using the ``addStorageUnitToTransmitter()`` method::
+The next step is to attach one or more :ref:`DataStorageStatusMsgPayload` instances to it using the ``addStorageUnitToTransmitter()`` method::
 
    transmitter.addStorageUnitToTransmitter("msg name")
 

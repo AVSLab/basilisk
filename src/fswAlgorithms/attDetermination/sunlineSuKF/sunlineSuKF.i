@@ -27,20 +27,21 @@
 %ignore Update_sunlineSuKF;
 %constant void SelfInit_sunlineSuKF(void*, uint64_t);
 %ignore SelfInit_sunlineSuKF;
-%constant void CrossInit_sunlineSuKF(void*, uint64_t);
-%ignore CrossInit_sunlineSuKF;
 %constant void Reset_sunlineSuKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineSuKF;
 STRUCTASLIST(SunlineSuKFCFit)
-GEN_SIZEOF(SunlineFilterFswMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(CSSConfigFswMsg);
-GEN_SIZEOF(SunlineSuKFConfig);
+
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
+struct CSSArraySensorMsg_C;
+%include "architecture/msgPayloadDefC/SunlineFilterMsgPayload.h"
+struct SunlineFilterMsg_C;
+%include "architecture/msgPayloadDefC/CSSConfigMsgPayload.h"
+struct CSSConfigMsg_C;
+
 %include "sunlineSuKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-%include "../../fswMessages/sunlineFilterFswMsg.h"
-%include "../../fswMessages/cssConfigFswMsg.h"
 
 %pythoncode %{
 import sys

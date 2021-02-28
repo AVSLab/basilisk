@@ -1,23 +1,22 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
-import sys, os, inspect
+import os, inspect
 import numpy
 import pytest
 import math
@@ -29,12 +28,11 @@ bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import cheby_pos_ephem
-from Basilisk.simulation import sim_model
-import ctypes
+from Basilisk.fswAlgorithms import chebyPosEphem
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
+from Basilisk.architecture import messaging
 
 orbitPosAccuracy = 1.0
 orbitVelAccuracy = 0.01
@@ -93,13 +91,10 @@ def test_sineCosine(show_plots):
     # create the dynamics task and specify the integration update time
     FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(8640.0)))
 
-    chebyFitModel = cheby_pos_ephem.ChebyPosEphemData()
+    chebyFitModel = chebyPosEphem.ChebyPosEphemData()
     chebyFitModelWrap = TotalSim.setModelDataWrap(chebyFitModel)
     chebyFitModelWrap.ModelTag = "chebyFitModel"
     TotalSim.AddModelToTask(unitTaskName, chebyFitModelWrap, chebyFitModel)
-
-    chebyFitModel.posFitOutMsgName = "cheb_pos_est"
-    chebyFitModel.clockCorrInMsgName = "vehicle_clock_ephem_corr"
 
     totalList = numpy.array(chebCosCoeff).tolist()
     totalList.extend(numpy.array(chebSinCoeff).tolist())
@@ -110,25 +105,23 @@ def test_sineCosine(show_plots):
     chebyFitModel.ephArray[0].ephemTimeMid = pyswice.doubleArray_getitem(et, 0)
     chebyFitModel.ephArray[0].ephemTimeRad = curveDurationDays/2.0*86400.0
 
-    clockCorrData = cheby_pos_ephem.TDBVehicleClockCorrelationFswMsg()
+    clockCorrData = messaging.TDBVehicleClockCorrelationMsgPayload()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = chebyFitModel.ephArray[0].ephemTimeMid  - \
         chebyFitModel.ephArray[0].ephemTimeRad
-
-    TotalSim.TotalSim.CreateNewMessage(unitProcessName, chebyFitModel.clockCorrInMsgName,
-        clockCorrData.getStructSize(), 2, "TDBVehicleClockCorrelationMessage")
-    TotalSim.TotalSim.WriteMessageData(chebyFitModel.clockCorrInMsgName,
-        clockCorrData.getStructSize(), 0, clockCorrData)
+    clockInMsg = messaging.TDBVehicleClockCorrelationMsg().write(clockCorrData)
+    chebyFitModel.clockCorrInMsg.subscribeTo(clockInMsg)
 
     xFitData = numpy.polynomial.chebyshev.chebval(fitTimes, chebCosCoeff)
-    TotalSim.TotalSim.logThisMessage(chebyFitModel.posFitOutMsgName)
+
+    dataLog = chebyFitModel.posFitOutMsg.recorder()
+    TotalSim.AddModelToTask(unitTaskName, dataLog)
 
     TotalSim.InitializeSimulation()
     TotalSim.ConfigureStopTime(int(curveDurationDays*86400.0*1.0E9))
     TotalSim.ExecuteSimulation()
 
-    posChebData = TotalSim.pullMessageLogData(chebyFitModel.posFitOutMsgName + ".r_BdyZero_N",
-        list(range(3)))
+    posChebData = dataLog.r_BdyZero_N
 
     angleSpaceFine = numpy.linspace(-3*math.pi, 3*math.pi, numCurvePoints*10-9)
 
@@ -136,9 +129,9 @@ def test_sineCosine(show_plots):
     sineValuesFine = numpy.sin(angleSpaceFine)*orbitRadius
     oopValuesFine = numpy.sin(angleSpaceFine) + orbitRadius
 
-    maxErrVec = [max(abs(posChebData[:,1] - cosineValuesFine)),
-        max(abs(posChebData[:,2] - sineValuesFine)),
-        max(abs(posChebData[:,3] - oopValuesFine))]
+    maxErrVec = [max(abs(posChebData[:,0] - cosineValuesFine)),
+        max(abs(posChebData[:,1] - sineValuesFine)),
+        max(abs(posChebData[:,2] - oopValuesFine))]
 
     print("Sine Wave error: " +  str(max(maxErrVec)))
     assert max(maxErrVec) < orbitPosAccuracy
@@ -203,13 +196,10 @@ def test_earthOrbitFit(show_plots):
     # create the dynamics task and specify the integration update time
     FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(curveDurationSeconds/(numCurvePoints-1))))
 
-    chebyFitModel = cheby_pos_ephem.ChebyPosEphemData()
+    chebyFitModel = chebyPosEphem.ChebyPosEphemData()
     chebyFitModelWrap = TotalSim.setModelDataWrap(chebyFitModel)
     chebyFitModelWrap.ModelTag = "chebyFitModel"
     TotalSim.AddModelToTask(unitTaskName, chebyFitModelWrap, chebyFitModel)
-
-    chebyFitModel.posFitOutMsgName = "cheb_pos_est"
-    chebyFitModel.clockCorrInMsgName = "vehicle_clock_ephem_corr"
 
     totalList = chebCoeff[:,0].tolist()
     totalList.extend(chebCoeff[:,1].tolist())
@@ -220,38 +210,35 @@ def test_earthOrbitFit(show_plots):
     chebyFitModel.ephArray[0].ephemTimeMid = etStart + curveDurationSeconds/2.0
     chebyFitModel.ephArray[0].ephemTimeRad = curveDurationSeconds/2.0
 
-    clockCorrData = cheby_pos_ephem.TDBVehicleClockCorrelationFswMsg()
+    clockCorrData = messaging.TDBVehicleClockCorrelationMsgPayload()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = chebyFitModel.ephArray[0].ephemTimeMid  - \
         chebyFitModel.ephArray[0].ephemTimeRad
+    clockInMsg = messaging.TDBVehicleClockCorrelationMsg().write(clockCorrData)
+    chebyFitModel.clockCorrInMsg.subscribeTo(clockInMsg)
 
-    TotalSim.TotalSim.CreateNewMessage(unitProcessName, chebyFitModel.clockCorrInMsgName,
-                                       clockCorrData.getStructSize(), 2, "TDBVehicleClockCorrelationMessage")
-    TotalSim.TotalSim.WriteMessageData(chebyFitModel.clockCorrInMsgName,
-                                   clockCorrData.getStructSize(), 0, clockCorrData)
-
-    TotalSim.TotalSim.logThisMessage(chebyFitModel.posFitOutMsgName)
+    dataLog = chebyFitModel.posFitOutMsg.recorder()
+    TotalSim.AddModelToTask(unitTaskName, dataLog)
 
     TotalSim.InitializeSimulation()
     TotalSim.ConfigureStopTime(int(curveDurationSeconds*1.0E9))
     TotalSim.ExecuteSimulation()
 
-    posChebData = TotalSim.pullMessageLogData(chebyFitModel.posFitOutMsgName + ".r_BdyZero_N",
-                                              list(range(3)))
-    velChebData = TotalSim.pullMessageLogData(chebyFitModel.posFitOutMsgName + ".v_BdyZero_N",
-                                                  list(range(3)))
-    maxErrVec = [abs(max(posChebData[:,1] - hubblePosList[:,0])),
-        abs(max(posChebData[:,2] - hubblePosList[:,1])),
-        abs(max(posChebData[:,3] - hubblePosList[:,2]))]
-    maxVelErrVec = [abs(max(velChebData[:,1] - hubbleVelList[:,0])),
-             abs(max(velChebData[:,2] - hubbleVelList[:,1])),
-             abs(max(velChebData[:,3] - hubbleVelList[:,2]))]
+    posChebData = dataLog.r_BdyZero_N
+    velChebData = dataLog.v_BdyZero_N
+
+    maxErrVec = [abs(max(posChebData[:,0] - hubblePosList[:,0])),
+        abs(max(posChebData[:,1] - hubblePosList[:,1])),
+        abs(max(posChebData[:,2] - hubblePosList[:,2]))]
+    maxVelErrVec = [abs(max(velChebData[:,0] - hubbleVelList[:,0])),
+             abs(max(velChebData[:,1] - hubbleVelList[:,1])),
+             abs(max(velChebData[:,2] - hubbleVelList[:,2]))]
     print("Hubble Orbit Accuracy: " + str(max(maxErrVec)))
     print("Hubble Velocity Accuracy: " + str(max(maxVelErrVec)))
     assert (max(maxErrVec)) < orbitPosAccuracy
     assert (max(maxVelErrVec)) < orbitVelAccuracy
     plt.figure()
-    plt.plot(velChebData[:,0]*1.0E-9, velChebData[:,1], velChebData[:,0]*1.0E-9, hubbleVelList[:,0])
+    plt.plot(dataLog.times()*1.0E-9, velChebData[:,0], dataLog.times()*1.0E-9, hubbleVelList[:,0])
 
     if(show_plots):
         plt.show()
@@ -264,4 +251,4 @@ def test_earthOrbitFit(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    chebyPosFitAllTest(False)
+    chebyPosFitAllTest(True)

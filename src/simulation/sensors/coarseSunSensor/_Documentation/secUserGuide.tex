@@ -1,0 +1,113 @@
+% !TEX root = ./Basilisk-CoarseSunSensor-20170803.tex
+
+\section{User Guide}
+
+\subsection{Setting the CSS Unit Direction Vector}
+\subsubsection{Direct Method}
+The unit normal vector of each CSS sensor is set through the $\cal B$ frame vector representation
+\begin{equation}
+		{\tt nHat\_B} \equiv \leftexp{B}{\hat{\bm n}}
+\end{equation}
+It is possible to set these vectors directly.  However, there are some convenience functions that make this process easier.  
+
+\subsubsection{Via a Common Sensor Platform}
+Multiple CSS devices are often arranged together on a single CSS platform.  The orientation of the body-fixed platform frame $\frameDefinition{P}$ relative to the body frame $\frameDefinition{B}$ is given through $[PB]$.  In the CSS module, the DCM is specified through the variable {\tt dcm\_PB}.
+
+Assume the DCM  {\tt dcm\_PB} is set directly via Python.  Two angles then define the orientation of the sensor normal axis $\hat{\bm n}$.  The elevation angle is $\phi$ and the azimuth angle is $\theta$.  These are an Euler angle sequence with the order 3-(-2).  The elevation angle is a positive 3-axis rotation, while the azimuth is a minus 2-axis rotation.  The helper function
+$$
+{\tt setUnitDirectionVectorWithPerturbation}(\theta_{p}, \phi_{p}) 
+$$
+where $\theta_{p}$ and $\phi_{p}$ are CSS heading perturbation can can be specified.  The Euler angles implemented are then
+\begin{align}
+		\phi_{\text{actual}} &= \phi_{\text{true}} + \phi_{p} \\
+		\theta_{\text{actual}} &= \theta_{\text{true}} + \theta_{p} 
+\end{align}
+To setup un-perturbed CSS sensor axes simple set these perturbation angles to zero.  
+
+Instead of setting the DCM {\tt dcm\_PB} variable directly, this can also be set via the helper function
+$$
+	{\tt setBodyToPlatformDCM}(\psi, \theta, \phi)
+$$
+where $(\psi, \theta, \phi)$ are classical $3-2-1$ Euler angles that map from the body frame $\cal B$ to the platform frame $\cal P$.  
+
+
+
+
+\subsection{CSS Field-of-View}
+The CSS sensor field of view is set by specifying the class variable
+$$
+	{\tt fov}
+$$
+This angle is the angle from the bore-sight axis to the edge of the field of view, and is expressed in terms of radians.  
+It defaults to a value of 60 degrees.
+
+
+
+
+
+\subsection{CSS Output Scale}
+The general CSS signal computation is performed in a normalized manner yielding an unperturbed output between 0 and 1.  The CSS module variable
+$$
+	{\tt scaleFactor}
+$$
+is the scale factor $\alpha$ which scales the output to the desired range of values, as well as the desired units.  For example, if the maximum sun signal ($\hat{\bm n}$ points directly at sun) should yield 1 mA, then the scale factor is set to this value.    
+
+If not set by the user, this parameter has a default value of 1.0.
+
+
+
+\subsection{Specifying CSS Sensor Noise}
+Three types of CSS signal corruptions can be simulated.  If not specified, all these corruptions are zeroed.  
+
+The Kelly corruption parameter $\kappa$ is set by specifying the variable
+$$
+	{\tt KellyFactor}
+$$
+
+Second, to add a gaussian noise component to the normalized output the variable, the variable
+$$
+	{\tt SenNoiseStd}
+$$
+is set to a non-zero value.  This is the standard deviation of normalized gaussian noise.  Note that this noise magnitude is in terms of normalized units as it is added to the 0-1 nominal signal.  
+
+Next, to simulate a signal bias, the variable
+$$
+	{\tt SenBias}
+$$
+is set to a non-zero value.   This constant bias of the normalized gaussian noise.  
+
+Finally, to set saturation values, the variables
+$$
+	\mathrm{maxOutput}
+	$$
+	$$
+	\mathrm{minOutput}
+$$
+are used. minOutput is  0 by default and maxOutput is 1,000,000 by default.
+
+\subsection{Connecting Messages}
+If the {\tt EclipseSimMsg} is connected, then the solar eclipse information is taking into account.  The eclipse info provides 0 if the spacecraft is fully in a planet's shadow, 1 if in free space fully exposed to the, and a value between (0,1) if in the penumbra region.  The cosine sensor value $\hat\gamma$ is scaled by this eclipse value.  If the message is not connected, then this value default to 1, thus simulating a spacecraft that is fully exposed to the sun.  
+
+If the optional albedo message is connected, then its information is included in the CSS sensor data evaluation.
+
+\subsection{Auxiliary Parameters}
+The following module variables can be set, but they are not currently used by the CSS module itself.  These are used however in the Vizard visualization.  
+\begin{itemize}
+	\item {\tt r\_B} -- position vector of the sensor relative to the body frame $\cal B$.  If not set, this defaults to a zero vector.
+	\item {\tt CSSGroupID} -- positive integer ID number if the CSS unit belongs to a group of CSS units.  If not set, this defaults to group 0.
+\end{itemize}
+
+
+\subsection{Setting Up CSS Modules}
+\subsubsection{Individual CSS Units}
+It is possible to add Individual CSS units to the Basilisk simulation.   This is done by invoking instances of the {\tt CoarseSunSensor()} class from python, configuring the required states, and then adding each to the BSK evaluation stack.  Each {\tt CoarseSunSensor} class has it's own {\tt UpdateState()} method that get's evaluated each update period.  
+
+This setup is convenient if only 1-2 CSS units have to be modeled, but can be cumbersome if a larger cluster of CSS units must be administered.  When setup this way, each CSS unit will output an individual CSS output message.
+
+\subsubsection{Array or Constellation of CSS Units}
+An alternate method to setup a series of CSS units is to use the {\tt CSSConstellation()} class.  This class is able to store a series of CSS {\tt CoarseSunSensor} objects, and engage the update routine on all of them at once.  This way only the {\tt CSSConstellation} module needs to be added to the BSK update stack.  In this method the 
+{\tt CSSConstellation} module outputs a single CSS sensor message which contains an array of doubles with the CSS sensor signal.  Here the individual CSS units {\tt CSS1}, {\tt CSS2}, etc. are setup and configured first.  Next, they are added to the {\tt CSSConstellation} through the python command
+$$
+	{\tt cssConstellation.sensorList = coarse\_sun\_sensor.CSSVector([CSS1, CSS2, ..., CSS8])}
+$$
+

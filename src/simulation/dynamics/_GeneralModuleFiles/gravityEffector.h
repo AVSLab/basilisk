@@ -22,12 +22,12 @@
 #define GRAVITY_DYN_EFFECTOR_H
 
 #include "dynamicEffector.h"
-#include "_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/system_messaging.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include <Eigen/Dense>
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "utilities/bskLogging.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/messaging/messaging.h"
 
 /*! @brief spherical harmonics class */
 class SphericalHarmonics
@@ -75,29 +75,27 @@ public:
     // Default constructor
     GravBodyData();
     ~GravBodyData();
-    
+
     void initBody(int64_t moduleID); //!<        Method to initialize the gravity body
     Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
     double computePotentialEnergy(Eigen::Vector3d r_I);
     void loadEphemeris(int64_t moduleID); //!< Command to load the ephemeris data
     void registerProperties(DynParamManager& statesIn);  //!< class method
+    ReadFunctor<SpicePlanetStateMsgPayload> planetBodyInMsg;       //!< planet spice ephemeris input message
 
 public:
-    bool isCentralBody;             //!<          Flag indicating that object is center
-    bool isDisplayBody;             //!<          Flag indicating that body is display
-    bool useSphericalHarmParams;    //!<          Flag indicating to use spherical harmonics perturbations
-    
-    double mu;                      //!< [m3/s^2] central body gravitational param
+    bool isCentralBody=0;           //!<          Flag indicating that object is center
+    bool useSphericalHarmParams=0;  //!<          Flag indicating to use spherical harmonics perturbations
+
+    double mu=0;                    //!< [m3/s^2] central body gravitational param
     double ephemTime;               //!< [s]      Ephemeris time for the body in question
     double ephIntTime;              //!< [s]      Integration time associated with the ephem data
-    double radEquator;              //!< [m]      Equatorial radius for the body
-    SpicePlanetStateSimMsg localPlanet;//!< [-]   Class storage of ephemeris info from scheduled portion
-    SingleMessageHeader localHeader;//!< [-]      Header information for ephemeris storage
-    std::string bodyInMsgName;      //!<          Gravitational body name
-    std::string outputMsgName;      //!<          Ephemeris information relative to display frame
-    std::string planetEphemName;    //!<          Ephemeris name for the planet
-    int64_t outputMsgID;            //!<          ID for output message data
-    int64_t bodyMsgID;              //!<          ID for ephemeris data message
+    double radEquator=0;            //!< [m]      Equatorial radius for the body
+    double radiusRatio=0;           //!< []       ratio of polar over equatorial radius
+    SpicePlanetStateMsgPayload localPlanet = {};  //!< [-]   Class storage of ephemeris info from scheduled portion
+    uint64_t timeWritten = 0;       //!< [ns]     time the input planet state message was written
+    std::string planetName;         //!<          Gravitational body name
+
     SphericalHarmonics spherHarm;   //!<          Object that computes the spherical harmonics gravity field
     BSKLogger bskLogger;            //!< -- BSK Logging
     Eigen::MatrixXd *r_PN_N;        //!< [m]      (state engine property) planet inertial position vector
@@ -114,8 +112,7 @@ class GravityEffector : public SysModel {
 public:
     GravityEffector();
     ~GravityEffector();
-    void SelfInit(); //!< class method
-    void CrossInit(); //!< class method
+    void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void linkInStates(DynParamManager& statesIn); //!< class method
     void registerProperties(DynParamManager& statesIn);
@@ -129,7 +126,7 @@ public:
 private:
     Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData); //!< class method
     void writeOutputMessages(uint64_t currentSimNanos); //!< class method
-    
+
 public:
     std::string vehicleGravityPropName;            //!< [-] Name of the vehicle mass state
     std::string systemTimeCorrPropName;            //!< [-] Name of the correlation between times
@@ -139,14 +136,13 @@ public:
     std::string inertialVelocityPropName;           //!< [-] Name of the inertial velocity property
     std::string nameOfSpacecraftAttachedTo;         //!< [-] Name of the s/c this gravity model is attached to
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    Message<SpicePlanetStateMsgPayload> centralBodyOutMsg;  //!< central planet body state output message
 
 private:
     Eigen::MatrixXd *gravProperty;                  //!< [-] g_N property for output
     Eigen::MatrixXd *timeCorr;                      //!< [-] Time correlation property
-    int64_t centralBodyOutMsgId;                //!< [-] Id for the central body spice data output message
-    std::string centralBodyOutMsgName;              //!< [-] Unique name for the central body spice data output message
-    Eigen::MatrixXd *inertialPositionProperty;             //!< [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
-    Eigen::MatrixXd *inertialVelocityProperty;             //!< [m/s] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output.
+    Eigen::MatrixXd *inertialPositionProperty;      //!< [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
+    Eigen::MatrixXd *inertialVelocityProperty;      //!< [m/s] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output.
 
 };
 

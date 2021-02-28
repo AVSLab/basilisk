@@ -3,10 +3,6 @@ Executive Summary
 This module implements any convolutional neural for image processing. More precisely, the module uploads a trained model
 and reads it using the OpenCV library. This module is then used on an image in order to extract a radius and center.
 
-.. note::
-
-    This module currently is set to only compile on a macOS system because of lack of testing ability on other
-    platforms.
 
 Module Assumptions and Limitations
 ----------------------------------
@@ -26,11 +22,11 @@ The following table lists all the module input and output messages.  The module 
     +-----------------------+---------------------------------+---------------------------------------------------+
     | Msg Variable Name     | Msg Type                        | Description                                       |
     +=======================+=================================+===================================================+
-    | imageInMsgName        | :ref:`CameraImageMsg`           | Input image message.                              |
+    | imageInMsg            | :ref:`CameraImageMsgPayload`    | (optional) Input image message.                   |
     |                       |                                 | This message either comes from the camera module  |
     |                       |                                 | or the viz interface if no noise is added.        |
     +-----------------------+---------------------------------+---------------------------------------------------+
-    | opnavCirclesOutMsgName| :ref:`CirclesOpNavMsg`          | Circle found in the image.                        |
+    | opnavCirclesOutMsg    | :ref:`CirclesOpNavMsgPayload`   | Circle found in the image.                        |
     +-----------------------+---------------------------------+---------------------------------------------------+
 
 
@@ -42,7 +38,6 @@ The module is set easily using the path to the module and message names:
 .. code-block:: python
     :linenos:
 
-    moduleConfig.opnavCirclesOutMsgName = "circles"
     moduleConfig.pathToNetwork = path + "/../position_net2_trained_11-14.onnx"
     moduleConfig.pixelNoise = [5,5,5]
 

@@ -25,16 +25,15 @@
 
 %include "swig_common_model.i"
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/powerNodeBase.h"
+%include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
 %include "ReactionWheelPower.h"
 
-%include "../../simMessages/powerNodeUsageSimMsg.h"
-%include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"
-%include "../../simMessages/rwConfigLogSimMsg.h"
-
-GEN_SIZEOF(PowerNodeUsageSimMsg)
-GEN_SIZEOF(DeviceStatusIntMsg)
-GEN_SIZEOF(RWConfigLogSimMsg)
+%include "architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.h"
+struct PowerNodeUsageMsg_C;
+%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
+struct DeviceStatusMsg_C;
+%include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+struct RWConfigLogMsg_C;
 
 %pythoncode %{
 import sys

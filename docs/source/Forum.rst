@@ -14,3 +14,8 @@ News and Discussions
 
     - `<http://facebook.com/basiliskAstro>`__
 
+.. note::
+
+    A YouTube channel is setup where all the Basilisk related tutorial and instructional videos can be found:
+
+    - `<https://www.youtube.com/playlist?list=PLi0t2uvz2LtgCSYTsqz1gxRJU4YD0Yqjk>`__

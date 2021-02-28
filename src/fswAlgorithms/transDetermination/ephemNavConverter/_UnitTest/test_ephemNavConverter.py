@@ -5,14 +5,15 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms import ephem_nav_converter
+from Basilisk.fswAlgorithms import ephemNavConverter
 from Basilisk.utilities import astroFunctions
+from Basilisk.architecture import messaging
 
 import os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-def test_ephem_nav_converter():
+def test_ephemNavConverter():
     """ Test ephemNavConverter. """
     [testResults, testMessage] = ephemNavConverterTestFunction()
     assert testResults < 1, testMessage
@@ -28,9 +29,6 @@ def ephemNavConverterTestFunction():
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    # This is needed if multiple unit test scripts are run
-    # This create a fresh and consistent simulation environment for each test run
-
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -38,12 +36,9 @@ def ephemNavConverterTestFunction():
 
     # Construct the ephemNavConverter module
     # Set the names for the input messages
-    ephemNavConfig = ephem_nav_converter.EphemNavConverterData()  # Create a config struct
-    ephemNavConfig.ephInMsgName = "input_eph_name"
-    ephemNavConfig.stateOutMsgName = "output_state_name"
-    # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
+    ephemNavConfig = ephemNavConverter.EphemNavConverterData()  # Create a config struct
 
-    # This calls the algContain to setup the selfInit, crossInit, update, and reset
+    # This calls the algContain to setup the selfInit, update, and reset
     ephemNavWrap = unitTestSim.setModelDataWrap(ephemNavConfig)
     ephemNavWrap.ModelTag = "ephemNavConverter"
 
@@ -51,16 +46,18 @@ def ephemNavConverterTestFunction():
     unitTestSim.AddModelToTask(unitTaskName, ephemNavWrap, ephemNavConfig)
 
     # Create the input message.
-    inputEphem = ephem_nav_converter.EphemerisIntMsg()
+    inputEphem = messaging.EphemerisMsgPayload()
 
     # Get the Earth's position and velocity
     position, velocity = astroFunctions.Earth_RV(astroFunctions.JulianDate([2018, 10, 16]))
     inputEphem.r_BdyZero_N = position
     inputEphem.v_BdyZero_N = velocity
     inputEphem.timeTag = 1.0  # sec
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, ephemNavConfig.ephInMsgName, inputEphem)
+    inMsg = messaging.EphemerisMsg().write(inputEphem)
+    ephemNavConfig.ephInMsg.subscribeTo(inMsg)
 
-    unitTestSim.TotalSim.logThisMessage(ephemNavConfig.stateOutMsgName)
+    dataLog = ephemNavConfig.stateOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -71,12 +68,10 @@ def ephemNavConverterTestFunction():
 
     posAcc = 1e1
     velAcc = 1e-4
-    unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posAcc), path)
-    unitTestSupport.writeTeXSnippet("toleranceValueVel", str(velAcc), path)
 
-    outputR = unitTestSim.pullMessageLogData(ephemNavConfig.stateOutMsgName + '.r_BN_N',  list(range(3)))
-    outputV = unitTestSim.pullMessageLogData(ephemNavConfig.stateOutMsgName + '.v_BN_N',  list(range(3)))
-    outputTime = unitTestSim.pullMessageLogData(ephemNavConfig.stateOutMsgName + '.timeTag')
+    outputR = dataLog.r_BN_N
+    outputV = dataLog.v_BN_N
+    outputTime = dataLog.timeTag
 
     trueR = [position, position]
     trueV = [velocity, velocity]
@@ -113,4 +108,4 @@ def ephemNavConverterTestFunction():
 
 
 if __name__ == '__main__':
-    test_ephem_nav_converter()
+    test_ephemNavConverter()

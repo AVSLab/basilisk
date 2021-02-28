@@ -26,15 +26,17 @@
 %ignore Update_dvExecuteGuidance;
 %constant void SelfInit_dvExecuteGuidance(void*, uint64_t);
 %ignore SelfInit_dvExecuteGuidance;
-%constant void CrossInit_dvExecuteGuidance(void*, uint64_t);
-%ignore CrossInit_dvExecuteGuidance;
-GEN_SIZEOF(dvExecutionData);
-GEN_SIZEOF(dvExecuteGuidanceConfig);
-GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(DvBurnCmdFswMsg);
+
 %include "dvExecuteGuidance.h"
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-%include "../../fswMessages/dvBurnCmdFswMsg.h"
+
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+struct THRArrayOnTimeCmdMsg_C;
+%include "architecture/msgPayloadDefC/DvBurnCmdMsgPayload.h"
+struct DvBurnCmdMsg_C;
+%include "architecture/msgPayloadDefC/DvExecutionDataMsgPayload.h"
+struct DvExecutionDataMsg_C;
 
 %pythoncode %{
 import sys

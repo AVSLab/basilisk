@@ -21,7 +21,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "swig_conly_data.i"
@@ -31,13 +31,20 @@ from Basilisk.simulation.swig_common_model import *
 
 
 %include "dataFileToViz.h"
-%include "../_GeneralModuleFiles//vizStructures.h"
+%include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
+
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+struct RWConfigLogMsg_C;
+%include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
+
 
 // Instantiate templates used by example
 namespace std {
     %template(VizThrConfig) vector<ThrClusterMap>;
+    %template(ThrClusterMapVectorVector) std::vector <std::vector <ThrClusterMap>>;
 }
-
 
 %pythoncode %{
 import sys

@@ -25,16 +25,16 @@
 
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/stateData.h"
-%include "../_GeneralModuleFiles/fuelSlosh.h"
-%include "../_GeneralModuleFiles/stateEffector.h"
-%include "../_GeneralModuleFiles/dynParamManager.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 %include "linearSpringMassDamper.h"
 
 %pythoncode %{

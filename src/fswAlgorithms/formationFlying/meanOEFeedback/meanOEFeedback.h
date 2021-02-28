@@ -22,20 +22,18 @@
 
 #include <stdint.h>
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/cmdForceInertialIntMsg.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "simulation/utilities/bskLogging.h"
-#include "simulation/utilities/orbitalMotion.h"
+#include "cMsgCInterface/CmdForceInertialMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/orbitalMotion.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
-    char chiefTransInMsgName[MAX_STAT_MSG_LENGTH];  //!< msg name
-    int32_t chiefTransInMsgID;                      //!< msg ID
-    char deputyTransInMsgName[MAX_STAT_MSG_LENGTH]; //!< msg name
-    int32_t deputyTransInMsgID;                     //!< msg ID
-    char forceOutMsgName[MAX_STAT_MSG_LENGTH];      //!< msg name
-    int32_t forceOutMsgID;                          //!< msg ID
+    NavTransMsg_C chiefTransInMsg;      //!< chief orbit input message
+    NavTransMsg_C deputyTransInMsg;     //!< deputy orbit input message
+    CmdForceInertialMsg_C forceOutMsg;  //!< deputy control force output message
+
     double K[36];               //!< Lyapunov Gain (6*6)
     double targetDiffOeMean[6];   //!< target mean orbital element difference
     uint8_t oeType;            //!< 0: classic (default), 1: equinoctial
@@ -49,7 +47,6 @@ typedef struct {
 extern "C" {
 #endif
 void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID);
-void CrossInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID);
 void Update_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, int64_t moduleID);
 void Reset_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, int64_t moduleID);
 #ifdef __cplusplus

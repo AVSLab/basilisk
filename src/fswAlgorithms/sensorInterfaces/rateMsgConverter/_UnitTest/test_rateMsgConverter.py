@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        rateMsgConverter
@@ -25,7 +24,7 @@
 #
 
 import pytest
-import sys, os, inspect
+import os, inspect
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -38,7 +37,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import rateMsgConverter
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -63,9 +62,6 @@ def rateMsgConvertFunction(show_plots):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
@@ -80,21 +76,16 @@ def rateMsgConvertFunction(show_plots):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
-    # Initialize the test module configuration data
-    moduleConfig.navRateOutMsgName = "sampleOutput"
-    moduleConfig.imuRateInMsgName = "sampleInput"
-
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = fswMessages.IMUSensorBodyFswMsg()
+    inputMessageData = messaging.IMUSensorBodyMsgPayload()
     inputMessageData.AngVelBody = [-0.1, 0.2, -0.3]
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.imuRateInMsgName,
-                               inputMessageData)
+    inMsg = messaging.IMUSensorBodyMsg().write(inputMessageData)
+    moduleConfig.imuRateInMsg.subscribeTo(inMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.navRateOutMsgName, testProcessRate)
+    dataLog = moduleConfig.navRateOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -110,14 +101,10 @@ def rateMsgConvertFunction(show_plots):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    print("accuracy = " + str(accuracy))
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "omega_BN_B"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.navRateOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
-
+    moduleOutput = dataLog.omega_BN_B
     # set the filtered output truth states
     trueVector = [
         [-0.1, 0.2, -0.3],
@@ -128,55 +115,7 @@ def rateMsgConvertFunction(show_plots):
                                                                accuracy, "Output Vector",
                                                                testFailCount, testMessages)
 
-    # write TeX Tables for documentation
-    resultTable = moduleOutput
-    resultTable[:,0] = macros.NANO2SEC*resultTable[:,0]
-    diff = np.delete(moduleOutput,0,1) - trueVector
-    resultTable = np.insert(resultTable,list(range(2,2+len(diff.transpose()))), diff, axis=1)
-
-    tableName = "testRateMsgConverter"       # make this a unique name
-    tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm r$", "Error"]
-    caption = 'Unit test output table.'
-    unitTestSupport.writeTableLaTeX(
-        tableName,
-        tableHeaders,
-        caption,
-        resultTable,
-        path)
-
-    moduleOutputName = "omega_BN_B"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.navRateOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
-
-    # set the filtered output truth states
-    trueVector = [
-        [-0.1, 0.2, -0.3],
-        [-0.1, 0.2, -0.3],
-        [-0.1, 0.2, -0.3]
-    ]
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
-                                                               accuracy, "Output Rate Vector",
-                                                               testFailCount, testMessages)
-
-    # write TeX Tables for documentation
-    resultTable = moduleOutput
-    resultTable[:,0] = macros.NANO2SEC*resultTable[:,0]
-    diff = np.delete(moduleOutput,0,1) - trueVector
-    resultTable = np.insert(resultTable,list(range(2,2+len(diff.transpose()))), diff, axis=1)
-
-    tableName = "testRate"       # make this a unique name
-    tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm \\omega_{B/N}$", "Error"]
-    caption = 'Unit test output table for rate values.'
-    unitTestSupport.writeTableLaTeX(
-        tableName,
-        tableHeaders,
-        caption,
-        resultTable,
-        path)
-
-    moduleOutputName = "sigma_BN"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.navRateOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
+    moduleOutput = dataLog.sigma_BN
 
     # set the filtered output truth states
     trueVector = [
@@ -188,25 +127,7 @@ def rateMsgConvertFunction(show_plots):
                                                                accuracy, "Output MRP Vector",
                                                                testFailCount, testMessages)
 
-    # write TeX Tables for documentation
-    resultTable = moduleOutput
-    resultTable[:,0] = macros.NANO2SEC*resultTable[:,0]
-    diff = np.delete(moduleOutput,0,1) - trueVector
-    resultTable = np.insert(resultTable,list(range(2,2+len(diff.transpose()))), diff, axis=1)
-
-    tableName = "testMRP"       # make this a unique name
-    tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm \\sigma$", "Error"]
-    caption = 'Unit test output table for MRPs.'
-    unitTestSupport.writeTableLaTeX(
-        tableName,
-        tableHeaders,
-        caption,
-        resultTable,
-        path)
-
-    moduleOutputName = "vehSunPntBdy"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.navRateOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
+    moduleOutput = dataLog.vehSunPntBdy
 
     # set the filtered output truth states
     trueVector = [
@@ -218,34 +139,11 @@ def rateMsgConvertFunction(show_plots):
                                                                accuracy, "Output sun heading Vector",
                                                                testFailCount, testMessages)
 
-    # write TeX Tables for documentation
-    resultTable = moduleOutput
-    resultTable[:,0] = macros.NANO2SEC*resultTable[:,0]
-    diff = np.delete(moduleOutput,0,1) - trueVector
-    resultTable = np.insert(resultTable,list(range(2,2+len(diff.transpose()))), diff, axis=1)
-
-    tableName = "testSunHeading"       # make this a unique name
-    tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm d$", "Error"]
-    caption = 'Unit test output table for sun heading vector.'
-    unitTestSupport.writeTableLaTeX(
-        tableName,
-        tableHeaders,
-        caption,
-        resultTable,
-        path)
-
     #   print out success message if no error were found
-    snippentName = "passFail"
     if testFailCount == 0:
-        colorText = 'ForestGreen'
         print("PASSED: " + moduleWrap.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
-        colorText = 'Red'
         print("Failed: " + moduleWrap.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

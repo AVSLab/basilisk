@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 import os
 import inspect  # Don't worry about this, standard stuff plus file discovery
 
@@ -34,7 +32,7 @@ bskPath = __path__[0]
 from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion, OrbitalElementDispersion
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import macros
@@ -49,9 +47,13 @@ NUMBER_OF_RUNS = 4
 VERBOSE = True
 PROCESSES = 2
 
+retainedMessageName = "spacecraftStateMsg"
+retainedRate = macros.sec2nano(10)
+var1 = "v_BN_N"
+var2 = "r_BN_N"
 
 def myCreationFunction():
-    ''' function that returns a simulation '''
+    """ function that returns a simulation """
     #  Create a sim module as an empty container
     sim = SimulationBaseClass.SimBaseClass()
 
@@ -67,13 +69,13 @@ def myCreationFunction():
     dynProcess.addTask(sim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # Setup the simulation modules
-    # Initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
-    # Add spacecraftPlus object to the simulation process
+    # Initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "bsk-Sat"
+    # Add spacecraft object to the simulation process
     sim.AddModelToTask(simTaskName, scObject)
 
-    # Setup Earth gravity body and attach gravity model to spaceCraftPlus
+    # Setup Earth gravity body and attach gravity model to spacecraft
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
     planet.isCentralBody = True
@@ -82,7 +84,7 @@ def myCreationFunction():
                                         , planet.spherHarm
                                         , 2
                                         )
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([planet])
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector([planet])
 
     # Setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -105,6 +107,10 @@ def myCreationFunction():
     period = 2. * np.pi / mean_motion
     simulationTime = macros.sec2nano(period / 4)
 
+    sim.msgRecList = {}
+    sim.msgRecList[retainedMessageName] = scObject.scStateOutMsg.recorder(retainedRate)
+    sim.AddModelToTask(simTaskName, sim.msgRecList[retainedMessageName])
+
     #   configure a simulation stop time time and execute the simulation run
     sim.ConfigureStopTime(simulationTime)
 
@@ -112,23 +118,15 @@ def myCreationFunction():
 
 
 def myExecutionFunction(sim):
-    ''' function that executes a simulation '''
-    sim.InitializeSimulationAndDiscover()
+    """ function that executes a simulation """
+    sim.InitializeSimulation()
     sim.ExecuteSimulation()
-
-
-retainedMessageName = "inertial_state_output"
-retainedRate = macros.sec2nano(10)
-var1 = "v_BN_N"
-var2 = "r_BN_N"
-dataType1 = list(range(3))
-dataType2 = list(range(3))
 
 colorList = ['b', 'r', 'g', 'k']
 
 def myDataCallback(monteCarloData, retentionPolicy):
-    data = np.array(monteCarloData["messages"]["inertial_state_output.r_BN_N"])
-    plt.plot(data[:, 1], data[:, 2], colorList[monteCarloData["index"]], label="run " + str(monteCarloData["index"]))
+    data = np.array(monteCarloData["messages"][retainedMessageName + ".r_BN_N"])
+    plt.plot(data[:, 0], data[:, 1], colorList[monteCarloData["index"]], label="run " + str(monteCarloData["index"]))
     plt.xlabel('X-coordinate')
     plt.ylabel('Y-coordinate')
     plt.legend()
@@ -172,7 +170,7 @@ def test_MonteCarloSimulation(show_plots):
 
     # Add retention policy
     retentionPolicy = RetentionPolicy()
-    retentionPolicy.addMessageLog(retainedMessageName, [(var1, dataType1), (var2, dataType2)], retainedRate)
+    retentionPolicy.addMessageLog(retainedMessageName, [var1, var2])
     retentionPolicy.setDataCallback(myDataCallback)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
@@ -186,17 +184,17 @@ def test_MonteCarloSimulation(show_plots):
     retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
     assert retainedData is not None, "Retained data should be available after execution"
     assert "messages" in retainedData, "Retained data should retain messages"
-    assert "inertial_state_output.r_BN_N" in retainedData["messages"], "Retained messages should exist"
-    assert "inertial_state_output.v_BN_N" in retainedData["messages"], "Retained messages should exist"
+    assert retainedMessageName + ".r_BN_N" in retainedData["messages"], "Retained messages should exist"
+    assert retainedMessageName + ".v_BN_N" in retainedData["messages"], "Retained messages should exist"
 
     # rerun the case and it should be the same, because we dispersed random seeds
-    oldOutput = retainedData["messages"]["inertial_state_output.r_BN_N"]
+    oldOutput = retainedData["messages"][retainedMessageName + ".r_BN_N"]
 
     failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
     assert len(failed) == 0, "Should rerun case successfully"
 
     retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
-    newOutput = retainedData["messages"]["inertial_state_output.r_BN_N"]
+    newOutput = retainedData["messages"][retainedMessageName + ".r_BN_N"]
     for k1, v1 in enumerate(oldOutput):
         for k2, v2 in enumerate(v1):
             assert np.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \

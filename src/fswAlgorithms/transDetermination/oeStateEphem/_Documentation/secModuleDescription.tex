@@ -1,14 +1,6 @@
 % !TEX root = ./Basilisk-oeStateEphem-20190426.tex
 
 
-\begin{figure}[h]
-	\centerline{
-		\includegraphics{Figures/moduleImg}
-	}
-	\caption{Illustration of the module input and output messages.}
-	\label{fig:moduleImg}
-\end{figure}
-
 
 \section{Model Description}
 The purpose of this module is to model a trajectory in space using a fitted set of Chebyshev coefficients.  As illustrated in Figure~\ref{fig:moduleImg}, there is a single input message which provides the ephemeris time associated with the vehicle on the trajectory, as well as vehicle time code information.  This is used to compute a corrected mission time used to compute the location on a given trajectory.

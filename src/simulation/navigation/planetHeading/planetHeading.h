@@ -19,10 +19,15 @@
 
 #pragma once
 
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
-#include "../simulation/utilities/avsEigenMRP.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/bskLogging.h"
+
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/BodyHeadingMsgPayload.h"
+#include "architecture/messaging/messaging.h"
 
 
 /*! @brief planet heading class */
@@ -31,17 +36,16 @@ public:
     PlanetHeading();
     ~PlanetHeading(){};
     
-    void SelfInit() override;
-    void CrossInit() override;
     void UpdateState(uint64_t CurrentSimNanos) override;
     void Reset(uint64_t CurrentSimNanos) override;
     void writeMessages(uint64_t CurrentSimNanos);
     void readMessages();
 
 public:
-    std::string planetPositionInMsgName;        //!< msg name
-    std::string spacecraftStateInMsgName;       //!< msg name
-    std::string planetHeadingOutMsgName;        //!< msg name
+    ReadFunctor<SpicePlanetStateMsgPayload> planetPositionInMsg;    //!< planet state input message
+    ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;       //!< spacecraft state input message
+    Message<BodyHeadingMsgPayload> planetHeadingOutMsg;             //!< body heading output message
+
     BSKLogger bskLogger;                        //!< -- BSK Logging
 
 private:
@@ -49,7 +53,4 @@ private:
     Eigen::Vector3d r_BN_N;  //!< [m] s/c position
     Eigen::Vector3d rHat_PB_B;  //!< [] planet heading in s/c body frame (unit mag)
     Eigen::MRPd sigma_BN;  //!< [] s/c body att wrt inertial
-    int64_t planetPositionInMsgId = -1;         //!< msg ID
-    int64_t spacecraftStateInMsgId = -1;        //!< msg ID
-    int64_t planetHeadingOutMsgId = -1;         //!< msg ID
 };

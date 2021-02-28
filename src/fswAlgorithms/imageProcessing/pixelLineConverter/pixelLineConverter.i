@@ -24,21 +24,21 @@
 %include "swig_conly_data.i"
 %constant void SelfInit_pixelLineConverter(void*, uint64_t);
 %ignore SelfInit_pixelLineConverter;
-%constant void CrossInit_pixelLineConverter(void*, uint64_t);
-%ignore CrossInit_pixelLineConverter;
 %constant void Reset_pixelLineConverter(void*, uint64_t, uint64_t);
 %ignore Reset_pixelLineConverter;
 %constant void Update_pixelLineConverter(void*, uint64_t, uint64_t);
 %ignore Update_pixelLineConverter;
 STRUCTASLIST(PixelLineConvertData)
-GEN_SIZEOF(CirclesOpNavMsg)
-GEN_SIZEOF(CameraConfigMsg)
-GEN_SIZEOF(NavAttIntMsg)
-GEN_SIZEOF(OpNavFswMsg)
-%include "simFswInterfaceMessages/circlesOpNavMsg.h"
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "../fswAlgorithms/fswMessages/opNavFswMsg.h"
+
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
+struct CirclesOpNavMsg_C;
+%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
+%include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
+struct OpNavMsg_C;
+
 %include "pixelLineConverter.h"
 
 

@@ -39,35 +39,9 @@ LimbFinding::LimbFinding()
     this->blurrSize = 3;
     this->cannyThreshHigh = 200;
     this->cannyThreshLow = 100;
-    this->OutputBufferCount = 2;
     this->limbNumThresh = 50;
-
 }
 
-
-/*! @brief
- \verbatim embed:rst
-    This method creates the module output message of type :ref:`LimbOpNavMsg`.
- \endverbatim
- @return void
- */
-
-void LimbFinding::SelfInit()
-{
-    /*! - Create output message for module */
-    this->opnavLimbOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavLimbOutMsgName,sizeof(LimbOpNavMsg),this->OutputBufferCount,"LimbOpNavMsg",moduleID);
-}
-
-
-/*! CrossInit performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- */
-void LimbFinding::CrossInit()
-{
-    /*! - Get the image data message ID*/
-    this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), moduleID);
-}
 
 /*! This is the destructor */
 LimbFinding::~LimbFinding()
@@ -82,7 +56,10 @@ LimbFinding::~LimbFinding()
  */
 void LimbFinding::Reset(uint64_t CurrentSimNanos)
 {
-    return;
+    // check that the required message has not been connected
+    if (!this->imageInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "LimbFinding.imageInMsg wasn't connected.");
+    }
 }
 
 /*! This module reads an OpNav image and extracts limb points from its content using OpenCV's Canny Transform. It performs a greyscale, and blur on the image to facilitate edge-detection.
@@ -92,10 +69,11 @@ void LimbFinding::Reset(uint64_t CurrentSimNanos)
 void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 {
     std::string dirName;
-    CameraImageMsg imageBuffer;
-    LimbOpNavMsg limbMsg;
-    memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
-    memset(&limbMsg, 0x0, sizeof(LimbOpNavMsg));
+    CameraImageMsgPayload imageBuffer;
+    LimbOpNavMsgPayload limbMsg;
+
+    imageBuffer = this->imageInMsg.zeroMsgPayload;
+    limbMsg = this->opnavLimbOutMsg.zeroMsgPayload;
 
     cv::Mat imageCV, blurred, edgeImage;
     if (this->saveDir != ""){
@@ -104,12 +82,10 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     else{dirName = "./"+ std::to_string(CurrentSimNanos*1E-9) + ".jpg";}
     
     /*! - Read in the bitmap*/
-    SingleMessageHeader localHeader;
-    if(this->imageInMsgName != "")
+    if(this->imageInMsg.isLinked())
     {
-        SystemMessaging::GetInstance()->ReadMessage(this->imageInMsgID, &localHeader,
-                                                    sizeof(CameraImageMsg), reinterpret_cast<uint8_t*>(&imageBuffer), this->moduleID);
-        this->sensorTimeTag = localHeader.WriteClockNanos;
+        imageBuffer = this->imageInMsg();
+        this->sensorTimeTag = this->imageInMsg.timeWritten();
     }
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
@@ -125,7 +101,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     }
     else{
         /*! - If no image is present, write zeros in message */
-        SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint8_t *>(&limbMsg), this->moduleID);
+        this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, CurrentSimNanos);
         return;}
     /*! - Greyscale the image */
     cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
@@ -151,7 +127,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     limbMsg.timeTag = this->sensorTimeTag;
     limbMsg.cameraID = imageBuffer.cameraID;
 
-    SystemMessaging::GetInstance()->WriteMessage(this->opnavLimbOutMsgID, CurrentSimNanos, sizeof(LimbOpNavMsg), reinterpret_cast<uint16_t *>(&limbMsg), this->moduleID);
+    this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, CurrentSimNanos);
 
     return;
 }

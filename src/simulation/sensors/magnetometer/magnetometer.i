@@ -22,7 +22,7 @@
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 %include "swig_conly_data.i"
 %include "std_string.i"
@@ -30,14 +30,13 @@ from Basilisk.simulation.swig_common_model import *
 
 %include "sys_model.h"
 %include "magnetometer.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/magneticFieldSimMsg.h"
-%include "../../simMessages/tamDataSimMsg.h"
-%include "../../simFswInterfaceMessages/tamSensorIntMsg.h"
-GEN_SIZEOF(TAMDataSimMsg);
-GEN_SIZEOF(TAMSensorIntMsg);
-GEN_SIZEOF(SCPlusStatesSimMsg);
-GEN_SIZEOF(MagneticFieldSimMsg);
+
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/MagneticFieldMsgPayload.h"
+struct MagneticFieldMsg_C;
+%include "architecture/msgPayloadDefC/TAMSensorMsgPayload.h"
+struct TAMSensorMsg_C;
 
 %pythoncode %{
 import sys

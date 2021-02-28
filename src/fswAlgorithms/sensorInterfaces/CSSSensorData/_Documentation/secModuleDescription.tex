@@ -12,10 +12,10 @@
 
 This module 
 \begin{itemize}
-\item Reads in raw CSS measurement from the \verb.CSSArraySensorIntMsg. message type.
+\item Reads in raw CSS measurement from the \verb.CSSArraySensorMsgPayload. message type.
 \item Iterates through each raw CSS measurement, normalizing the measurement and checking that the input is within sensible bounds.
 \item Corrects the measurement based on calibrated residual function based on Chebyshev polynomials. 
-\item Outputs a \verb.CSSArraySensorIntMsg. with the corrected CSS Measurements.
+\item Outputs a \verb.CSSArraySensorMsgPayload. with the corrected CSS Measurements.
 \end{itemize}
 
 

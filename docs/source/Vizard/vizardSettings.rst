@@ -21,9 +21,12 @@ ambient lighting the following code is used:
 
 .. code-block:: python
 
-	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName) 
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
 	viz.settings.ambient = 0.5
 
+Here ``scObject`` is a :ref:`spacecraft` instance.  This can also be a list of spacecraft objects
+for a multi-satellite simulation.
+The spacecraft names are pulled from `scObject.ModelTag`.
 If a setting is not provided, then the Vizard
 defaults are used. This allows the user to specify just a few or a lot
 of settings, as is appropriate.
@@ -215,7 +218,7 @@ The following table includes the keyword options for this method.
         the ``viz.spacecraftName`` is used.
 
 Setting Instrument GUI Options
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To specify the instrument GUI settings use the ``setInstrumentGuiSetting``
 helper method in Python. An example is::
@@ -266,8 +269,9 @@ Basilisk as well using using a helper function ``createPointLine()``:
 
 .. code-block::
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
-    vizSupport.createPointLine(viz, toBodyName='earth', lineColor=[0, 0, 255, 255]) vizSupport.createPointLine(viz, toBodyName=“sun”, lineColor=“yellow”)]
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
+    vizSupport.createPointLine(viz, toBodyName='earth', lineColor=[0, 0, 255, 255])
+    vizSupport.createPointLine(viz, toBodyName=“sun”, lineColor=“yellow”)]
 
 The ``createPointLine`` support macro requires the parameters ``toBodyName`` and ``lineColor`` to be
 defined. The parameter ``fromBodyName`` is optional. If it is not
@@ -312,9 +316,12 @@ using the helper function ``createConeInOut``:
 
 .. code-block::
 	
-	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
-	vizSupport.createConeInOut(viz, toBodyName='earth', coneColor='teal', normalVector_B=[1, 0, 0], incidenceAngle=30\ macros.D2R, isKeepIn=True, coneHeight=5.0, coneName=‘sensorCone’)
-	vizSupport.createConeInOut(viz,toBodyName='earth', coneColor='blue', normalVector_B=[0, 1, 0], incidenceAngle=30\ macros.D2R, isKeepIn=False, coneHeight=5.0, coneName=‘comCone’)]
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
+	vizSupport.createConeInOut(viz, toBodyName='earth', coneColor='teal',
+                               normalVector_B=[1, 0, 0], incidenceAngle=30\ macros.D2R, isKeepIn=True,
+                               coneHeight=5.0, coneName=‘sensorCone’)
+	vizSupport.createConeInOut(viz,toBodyName='earth', coneColor='blue', normalVector_B=[0, 1, 0],
+                               incidenceAngle=30\ macros.D2R, isKeepIn=False, coneHeight=5.0, coneName=‘comCone’)]
 	
 The following table illustrates the
 arguments for the ``createConeInOut`` method:
@@ -386,8 +393,7 @@ they can be attached to different spacecraft through the ``spacecraftName`` argu
 
 .. code-block:: python
 
-	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
-	gravBodies=gravFactory, saveFile=fileName)
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
 	vizSupport.createStandardCamera(viz, setMode=0, bodyTarget='earth', setView=0)
 	vizSupport.createStandardCamera(viz, setMode=1, fieldOfView=60.*macros.D2R, pointingVector_B=[0.0, -1.0, 0.0])
 
@@ -536,8 +542,7 @@ This functionality can be controlled by using the ‘createCustomModel’ helper
 
 .. code-block::
 
-	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName,
-	gravBodies=gravFactory, saveFile=fileName)
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
 	vizSupport.createCustomModel(viz,
 	                            modelPath="/Users/hp/Downloads/Topex-Posidon/Topex-Posidon-composite.obj",
 	                            scale=[2, 2, 10])
@@ -618,10 +623,10 @@ Specifying the Simulation Epoch Date and Time Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Vizard can show the both the simulation time that has elapsed, or the mission time.  If now epoch message has been
 set then Basilisk assumes a default January 1, 2019, 00:00:00 epoch time and date.  The simulation time elapsed is
-thus the time since epoch.  To specify a different simulation epoch data and time the :ref:`EpochSimMsg` can be
-setup as discussed in :ref:`scenarioMagneticFieldWMM`.  To tell ref:`vizInterface` what epoch message to read use::
+thus the time since epoch.  To specify a different simulation epoch data and time the :ref:`EpochMsgPayload` can be
+setup as discussed in :ref:`scenarioMagneticFieldWMM`.  To tell :ref:`vizInterface` what epoch message to read use::
 
-	viz.epochMsgName = "Epoch_Msg_Name_Used"
+	viz.epochInMsg.subscribe(epochMsg)
 
 An example of the use of this epoch message is shown in :ref:`scenarioMagneticFieldWMM`.
 
@@ -629,36 +634,60 @@ An example of the use of this epoch message is shown in :ref:`scenarioMagneticFi
 Specifying Reaction Wheel (RW) Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The simplest method to include the RW states of a one more spacecraft in the Vizard data file is to
-call ``vizSupport.enableUnityVisualization``
-with the ``numRW`` specified to be the number of RW being modeled.  This can be a single integer if each spacecraft
-contains the same number of RW devices, or a list of integers with the number of RW specified for each spacecraft.
-:ref:`vizInterface` will seek the RW messages
-assuming default RW state message naming.  This method is illustrated in the :ref:`scenarioAttitudeFeedbackRW` script.
+call ``vizSupport.enableUnityVisualization()`` with the additional argument::
 
-If custom RW state output messages are used, then the ``scData.rwInMsgName`` can be specified directly.  This case
+    rwEffectorList=rwStateEffector
+
+Here ``rwStateEffector`` is an instance of a single :ref:`ReactionWheelStateEffector` which already has all
+the spacecraft's RW devices added to it.  If you have multiple spacecraft, then use a list of RW effectors,
+one effector per spacecraft::
+
+    rwEffectorList=[rwStateEffector1, rwStateEffector2]
+
+This method is illustrated in the :ref:`scenarioAttitudeFeedbackRW` script.  Note that this list must contain
+one entry per spacecraft.  If a spacecraft has no RW devices, then add ``None`` instead of an effector instance.
+
+If custom RW state output messages are used, then the ``scData.rwInMsgs`` can be specified directly.  This case
 is employed in the test script :ref:`test_dataFileToViz`.
 
 Specifying Thruster Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Using default names the thruster states can be included in the Vizard data by calling
-``vizSupport.enableUnityVisualization`` with the ``thrDevices`` argument.  This is a list of ``ThrClusterMap`` states
-needed by :ref:`vizInterface`.  Each list entry should contain:
+The simplest method to include the clusters of thrusters of a one more spacecraft in the Vizard data file is to
+call ``vizSupport.enableUnityVisualization()`` with the additional argument::
 
-- number of thrusters in a group
-- thruster group tag string
-- (optional) color value to be used by the thruster plume illustration
+    thrEffectorList=thrusterSet
 
+Here ``thrusterSet`` is an instance of a single :ref:`ThrusterDynamicEffector` which already has all
+the spacecraft's THR devices added to this one THR cluster.  If you have multiple spacecraft, or a spacecraft
+has multiple clusters of THR devices such as ACS and DV thrusters, then use a double list of THR effectors.
+The outer list has one entry per spacecraft, and the inner list has one entry per spacecraft THR cluster::
+
+    thrEffectorList=[[thrusterSet1Sc1, thrusterSet2Sc1], [thrusterSet1Sc2]]
+
+The outer list must have one THR cluster list per spacecraft.  If a spacecraft has no THR devices, then
+add ``None`` instead of this cluster list.
 The illustration of thrusters is shown in the example script :ref:`scenarioAttitudeFeedback2T_TH`.
 
-Note that if the maximum force of a thruster is less than 0.01N (i.e. a micro-thruster), then the plume length is held the same as with a 0.01N thruster.  Otherwise the micro-thruster plumes would not be visible.
+Note that if the maximum force of a thruster is less than 0.01N (i.e. a micro-thruster),
+then the plume length is held the same as with a 0.01N thruster.
+Otherwise the micro-thruster plumes would not be visible.
 
-The thruster information for each spacecraft can also be set directly by specifying the ``sc.thrMsgData``
-as demonstrated in :ref:`test_dataFileToViz`.
+If you want to change the thruster plume illustration color, then you can use the optional argument::
+
+    thrColors=vizSupport.toRGBA255("red")
+
+This example is for a single spacecraft.  If you have multiple spacecraft this must again be wrapped in a list
+of lists as above.  The inner list is the color you want to for each cluster.  Thus, its dimension must match the
+``thrEffectorList`` double list dimension.  If you want to keep the default color for a spacecraft then
+add ``None`` as the cluster color.
+
+The thruster information for each spacecraft can also be set directly by specifying ``sc.thrInMsgs`` and
+``sc.thrInfo`` directly as demonstrated in :ref:`test_dataFileToViz`.
 
 Adding Location or Communication Stations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The :ref:`groundLocation` is able to simulate a location on a celestial body like Earth.
-The location can also be on a satellite position.  Vizard will show a line between a satellite
+The location can also be fixed to a satellite.  Vizard will show a line between a satellite
 and this location including if the satellite is within the
 field of view of this location.  Vizard can illustrate this ground location using the
 ``addLocation()`` method, such as::
@@ -716,4 +745,4 @@ The following table lists all required and optional arguments that can be provid
       - double
       - m
       - No
-      - range of the location station, use 0 (protobuffer default) to use viz default
+      - range of the location station, use 0 or negative value (protobuffer default) to use viz default

@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 #
 #   Unit Test Script
 #   Module Name:        sunlineEphem()
@@ -25,19 +23,15 @@
 #
 
 import pytest
-import sys, os, inspect
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import sunlineEphem  # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.simulation import simFswInterfaceMessages
-from Basilisk.simulation import simMessages
-from Basilisk.utilities import RigidBodyKinematics
+from Basilisk.architecture import messaging
 import numpy as np
 
 
@@ -92,9 +86,6 @@ def sunlineEphemTestFunction(show_plots):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
@@ -109,26 +100,17 @@ def sunlineEphemTestFunction(show_plots):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, sunlineEphemWrap, sunlineEphemConfig)
 
-    # Initialize the test module configuration data
-    sunlineEphemConfig.scPositionInMsgName = "simple_trans_nav_output"
-    sunlineEphemConfig.scAttitudeInMsgName = "simple_att_nav_output"
-    sunlineEphemConfig.sunPositionInMsgName = "sun_position_output"
-    sunlineEphemConfig.navStateOutMsgName = "sunline_ephem_output"        # update with current values
-
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
 
-    vehAttData = sunlineEphem.NavAttIntMsg()
-    vehPosData = sunlineEphem.NavTransIntMsg()
-    sunData = sunlineEphem.EphemerisIntMsg()
+    vehAttData = messaging.NavAttMsgPayload()
+    vehPosData = messaging.NavTransMsgPayload()
+    sunData = messaging.EphemerisMsgPayload()
 
 
     # Artificially put sun at the origin.
     sunData.r_BdyZero_N = [0.0, 0.0, 0.0]
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               sunlineEphemConfig.scAttitudeInMsgName,
-                               vehAttData)
+    vehAttInMsg = messaging.NavAttMsg().write(vehAttData)
 
 
     # Place spacecraft unit length away on each coordinate axis
@@ -140,28 +122,27 @@ def sunlineEphemTestFunction(show_plots):
                    [0.0, 1.0, 0.0],
                    [0.0, 0.0, 1.0]]
 
-    estVector = np.zeros((6,4))
+    estVector = np.zeros((6, 3))
+
+    vehPosInMsg = messaging.NavTransMsg()
+    sunDataInMsg = messaging.EphemerisMsg().write(sunData)
+    sunlineEphemConfig.sunPositionInMsg.subscribeTo(sunDataInMsg)
+    sunlineEphemConfig.scPositionInMsg.subscribeTo(vehPosInMsg)
+    sunlineEphemConfig.scAttitudeInMsg.subscribeTo(vehAttInMsg)
+
+    dataLog = sunlineEphemConfig.navStateOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     for i in range(len(TestVectors)):
         testVec = TestVectors[i]
         vehPosData.r_BN_N = testVec
-        unitTestSupport.setMessage(unitTestSim.TotalSim,
-                                   unitProcessName,
-                                   sunlineEphemConfig.scPositionInMsgName,
-                                   vehPosData)
-
-        unitTestSim.TotalSim.logThisMessage(sunlineEphemConfig.navStateOutMsgName, testProcessRate)
+        vehPosInMsg.write(vehPosData)
 
         # Need to call the self-init and cross-init methods
         unitTestSim.InitializeSimulation()
         unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
         unitTestSim.ExecuteSimulation()
-
-        moduleOutputName = "vehSunPntBdy"
-        moduleOutput = unitTestSim.pullMessageLogData(sunlineEphemConfig.navStateOutMsgName + '.' + moduleOutputName,
-                                                      list(range(3)))
-
-        estVector[i] = moduleOutput[0,:]
+        estVector[i] = dataLog.vehSunPntBdy[-1]
 
         # reset the module to test this functionality
         sunlineEphemWrap.Reset(1)
@@ -181,12 +162,10 @@ def sunlineEphemTestFunction(show_plots):
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(estVector[i],trueVector[i],3,accuracy):
+        if not unitTestSupport.isArrayEqual(estVector[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + sunlineEphemWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(estVector[i,0]*macros.NANO2SEC) +
-                                "sec\n")
+            testMessages.append("FAILED: " + sunlineEphemWrap.ModelTag + " Module failed sunlineEphem " +
+                                " unit test at t=" + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
 
 
@@ -194,6 +173,8 @@ def sunlineEphemTestFunction(show_plots):
     #   print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + sunlineEphemWrap.ModelTag)
+    else:
+        print(testMessages)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

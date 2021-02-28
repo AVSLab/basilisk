@@ -19,7 +19,7 @@
 %module okeefeEKF
 %{
    #include "okeefeEKF.h"
-   #include "../_GeneralModuleFiles/ukfUtilities.h"
+   #include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -27,16 +27,20 @@
 %ignore Update_okeefeEKF;
 %constant void SelfInit_okeefeEKF(void*, uint64_t);
 %ignore SelfInit_okeefeEKF;
-%constant void CrossInit_okeefeEKF(void*, uint64_t);
-%ignore CrossInit_okeefeEKF;
 %constant void Reset_okeefeEKF(void*, uint64_t, uint64_t);
 %ignore Reset_okeefeEKF;
-GEN_SIZEOF(SunlineFilterFswMsg);
-GEN_SIZEOF(CSSConfigFswMsg);
-GEN_SIZEOF(okeefeEKFConfig);
-%include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/sunlineFilterFswMsg.h"
-%include "../../fswMessages/cssConfigFswMsg.h"
+
+%include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
+
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
+struct CSSArraySensorMsg_C;
+%include "architecture/msgPayloadDefC/SunlineFilterMsgPayload.h"
+struct SunlineFilterMsg_C;
+%include "architecture/msgPayloadDefC/CSSConfigMsgPayload.h"
+struct CSSConfigMsg_C;
+
 %include "okeefeEKF.h"
 
 %pythoncode %{

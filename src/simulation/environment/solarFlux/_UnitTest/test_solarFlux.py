@@ -21,10 +21,7 @@ import numpy as np
 import pytest
 
 from Basilisk.simulation import solarFlux
-from Basilisk.simulation.simMessages import SpicePlanetStateSimMsg
-from Basilisk.simulation.simMessages import SCPlusStatesSimMsg
-from Basilisk.simulation.simMessages import EclipseSimMsg
-
+from Basilisk.architecture import messaging
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
@@ -45,49 +42,46 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
             a factor by which to multiply the original s/c position to check flux at a new position
         shadowFactor (float): between 0 and 1,
             the eclipse factor by which to multiple the solar flux at a position
-        eclipseMsgName (string): name of the eclipse message to read.
-            It is an empty string if not to read a message
         relTol (float): positive, the relative tolerance to which the result is checked.
     """
 
     sim = SimulationBaseClass.SimBaseClass()
-    sim.terminateSimulation()
     proc = sim.CreateNewProcess("proc")
     task = sim.CreateNewTask("task", int(1e9))
     proc.addTask(task)
 
-    sunPositionMessage = SpicePlanetStateSimMsg()
+    sunPositionMessage = messaging.SpicePlanetStateMsgPayload()
     sunPositionMessage.PositionVector = [0., 0., 0.]
-    unitTestSupport.setMessage(sim.TotalSim, proc.Name, "sun_planet_data", sunPositionMessage, "SpicePlanetStateSimMsg")
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunPositionMessage)
 
-    scPositionMessage = SCPlusStatesSimMsg()
+    scPositionMessage = messaging.SCStatesMsgPayload()
     scPositionMessage.r_BN_N = [0., 0., om.AU*1000]
-    unitTestSupport.setMessage(sim.TotalSim, proc.Name, "inertial_state_output", scPositionMessage, "SCPlusStatesSimMsg")
+    scMsg = messaging.SCStatesMsg().write(scPositionMessage)
 
-    eclipseMessage = EclipseSimMsg()
+    eclipseMessage = messaging.EclipseMsgPayload()
     eclipseMessage.shadowFactor = shadowFactor
-    unitTestSupport.setMessage(sim.TotalSim, proc.Name, "eclipse_data_0", eclipseMessage, "EclipseSimMsg")
+    eclMsg = messaging.EclipseMsg().write(eclipseMessage)
 
     sf = solarFlux.SolarFlux()
     sim.AddModelToTask(task.Name, sf)
-    sf.eclipseInMsgName = eclipseMsgName
-    sim.TotalSim.logThisMessage("solar_flux")
-    sim.InitializeSimulationAndDiscover()
+    sf.sunPositionInMsg.subscribeTo(sunMsg)
+    sf.spacecraftStateInMsg.subscribeTo(scMsg)
+    sf.eclipseInMsg.subscribeTo(eclMsg)
+
+    dataLog = sf.solarFluxOutMsg.recorder()
+    sim.AddModelToTask(task.Name, dataLog)
+
+    sim.InitializeSimulation()
     sim.TotalSim.SingleStepProcesses()
-    fluxOutEarth = sim.pullMessageLogData("solar_flux.flux")
+
+    fluxOutEarth = dataLog.flux
     scPositionMessage.r_BN_N = [0., 0., positionFactor * om.AU*1000]
-    sim.TotalSim.WriteMessageData("inertial_state_output",
-                               scPositionMessage.getStructSize(),
-                               0,
-                               scPositionMessage)
-    sf.Reset(1)
+    scMsg.write(scPositionMessage)
+
     sim.TotalSim.SingleStepProcesses()
-    fluxOutFurther = sim.pullMessageLogData("solar_flux.flux")
+    fluxOutFurther = dataLog.flux
 
-    if len(eclipseMsgName) == 0:
-        shadowFactor = 1.0
-
-    assert fluxOutFurther[1][1] == pytest.approx(fluxOutEarth[0][1] / shadowFactor / (positionFactor**2) * shadowFactor, rel=relTol)
+    assert fluxOutFurther[1] == pytest.approx(fluxOutEarth[0] / shadowFactor / (positionFactor**2) * shadowFactor, rel=relTol)
 
 
 if __name__ == "__main__":

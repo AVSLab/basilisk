@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        thrFiringSchmitt
@@ -43,6 +42,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import thrFiringSchmitt            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
+from Basilisk.architecture import messaging
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -75,9 +75,6 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
@@ -102,13 +99,6 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
     moduleConfig.level_on = .75
     moduleConfig.level_off = .25
-
-    # Create input message and size it because the regular creator of that message
-    # is not part of the test.
-    moduleConfig.thrConfInMsgName = "rcs_config_data"
-    moduleConfig.thrForceInMsgName = "thr_config_data"
-    moduleConfig.onTimeOutMsgName = "outputName"
-
 
     # setup thruster cluster message
     fswSetupThrusters.clearSetup()
@@ -135,22 +125,18 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
     for i in range(len(rcsLocationData)):
         fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 0.5)
-    fswSetupThrusters.writeConfigMessage(  moduleConfig.thrConfInMsgName,
-                                           unitTestSim.TotalSim,
-                                           unitProcessName)
+    thrConfMsg = fswSetupThrusters.writeConfigMessage()
     numThrusters = fswSetupThrusters.getNumOfDevices()
+    moduleConfig.thrConfInMsg.subscribeTo(thrConfMsg)
 
     # setup thruster impulse request message
-    inputMessageData = thrFiringSchmitt.THRArrayCmdForceFswMsg()
-    messageSize = inputMessageData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.thrForceInMsgName,
-                                          messageSize,
-                                          2)
-
+    inputMessageData = messaging.THRArrayCmdForceMsgPayload()
+    thrCmdMsg = messaging.THRArrayCmdForceMsg()
+    moduleConfig.thrForceInMsg.subscribeTo(thrCmdMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.onTimeOutMsgName, testProcessRate)
+    dataLog = moduleConfig.onTimeOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -172,39 +158,26 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
         effReq3 = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.01]
         effReq4 = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.11]
 
-
     inputMessageData.thrForce = effReq1
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
-                                          messageSize,
-                                          0,
-                                          inputMessageData)
+    thrCmdMsg.write(inputMessageData)
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
 
     inputMessageData.thrForce = effReq2
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
-                                          messageSize,
-                                          0,
-                                          inputMessageData)
+    thrCmdMsg.write(inputMessageData)
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
 
     inputMessageData.thrForce = effReq3
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
-                                          messageSize,
-                                          0,
-                                          inputMessageData)
+    thrCmdMsg.write(inputMessageData)
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.5))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
 
     inputMessageData.thrForce = effReq4
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
-                                          messageSize,
-                                          0,
-                                          inputMessageData)
+    thrCmdMsg.write(inputMessageData)
     unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
@@ -218,10 +191,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "OnTimeRequest"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.onTimeOutMsgName + '.' + moduleOutputName,
-                                                  list(range(numThrusters)))
+    moduleOutput = dataLog.OnTimeRequest[:, :numThrusters]
     # print moduleOutput
 
     # set the filtered output truth states

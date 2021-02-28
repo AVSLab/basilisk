@@ -24,25 +24,23 @@
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "swig_conly_data.i"
 %include "std_vector.i"
 %include "std_string.i"
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/magneticFieldBase.h"
+%include "simulation/environment/_GeneralModuleFiles/magneticFieldBase.h"
 %include "magneticFieldCenteredDipole.h"
 
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/MagneticFieldMsgPayload.h"
+struct MagneticFieldMsg_C;
 
-
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/magneticFieldSimMsg.h"
-
-GEN_SIZEOF(MagneticFieldSimMsg)
-GEN_SIZEOF(SpicePlanetStateSimMsg)
-GEN_SIZEOF(SCPlusStatesSimMsg)
 
 %pythoncode %{
 import sys

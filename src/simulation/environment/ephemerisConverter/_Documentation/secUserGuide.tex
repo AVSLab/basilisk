@@ -1,0 +1,10 @@
+\section{User Guide}
+
+The nominal set-up for the ephemeris converter is done as follows:
+
+\begin{itemize}
+\item[-]     \texttt{EphemObject = ephemeris\_converter.EphemerisConverter()}
+\item[-]     \texttt{EphemObject.ModelTag = 'EphemData'}
+\item[-]     \texttt{EphemObject.addSpiceInputMsg(spiceInMsg)}
+\end{itemize}
+The output messages are then stored in the vector of output messages called {\tt ephemOutMsgs}.

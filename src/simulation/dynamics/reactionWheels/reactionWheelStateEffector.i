@@ -22,36 +22,39 @@
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/stateData.h"
-%include "../_GeneralModuleFiles/stateEffector.h"
-%include "../_GeneralModuleFiles/dynamicEffector.h"
-%include "../_GeneralModuleFiles/dynParamManager.h"
-%include "../_GeneralModuleFiles/dynamicObject.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
+%include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 %include "reactionWheelStateEffector.h"
-%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "simMessages/rwCmdSimMsg.h"
-%include "simMessages/rwConfigSimMsg.h"
-%include "simMessages/rwConfigLogSimMsg.h"
-%include "simFswInterfaceMessages/macroDefinitions.h"
-%include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
+%include "architecture/utilities/macroDefinitions.h"
 
-//%include "spacecraftPlus.h"
-//%include "hubEffector.h"
+%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+struct RWSpeedMsg_C;
+%include "architecture/msgPayloadDefC/RWCmdMsgPayload.h"
+struct RWCmdMsg_C;
+%include "architecture/msgPayloadDefCpp/RWConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+struct RWConfigLogMsg_C;
+%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+struct ArrayMotorTorqueMsg_C;
 
 %include "std_vector.i"
 namespace std {
-    %template(RWConfigVector) vector<RWConfigSimMsg>;
-	%template(RWCmdVector) vector<RWCmdSimMsg>;
+    %template(RWConfigVector) vector<RWConfigMsgPayload>;
+    %template(RWConfigPointerVector) vector<RWConfigMsgPayload *>;
+	%template(RWCmdVector) vector<RWCmdMsgPayload>;
 }
-GEN_SIZEOF(ArrayMotorTorqueIntMsg);
-GEN_SIZEOF(RWConfigLogSimMsg);
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

@@ -27,16 +27,20 @@
 %ignore Update_sunlineEKF;
 %constant void SelfInit_sunlineEKF(void*, uint64_t);
 %ignore SelfInit_sunlineEKF;
-%constant void CrossInit_sunlineEKF(void*, uint64_t);
-%ignore CrossInit_sunlineEKF;
 %constant void Reset_sunlineEKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineEKF;
-GEN_SIZEOF(SunlineFilterFswMsg);
-GEN_SIZEOF(CSSConfigFswMsg);
-GEN_SIZEOF(sunlineEKFConfig);
+
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/sunlineFilterFswMsg.h"
-%include "../../fswMessages/cssConfigFswMsg.h"
+
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
+struct CSSArraySensorMsg_C;
+%include "architecture/msgPayloadDefC/SunlineFilterMsgPayload.h"
+struct SunlineFilterMsg_C;
+%include "architecture/msgPayloadDefC/CSSConfigMsgPayload.h"
+struct CSSConfigMsg_C;
+
 %include "sunlineEKF.h"
 
 %pythoncode %{

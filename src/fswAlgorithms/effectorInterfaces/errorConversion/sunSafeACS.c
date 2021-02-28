@@ -17,9 +17,9 @@
 
  */
 
-#include "effectorInterfaces/errorConversion/sunSafeACS.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
+#include "fswAlgorithms/effectorInterfaces/errorConversion/sunSafeACS.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include <string.h>
 #include <math.h>
 
@@ -32,27 +32,24 @@
  */
 void SelfInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->thrData.outputMsgID = CreateNewMessage(
-        configData->thrData.outputDataName, sizeof(THRArrayOnTimeCmdIntMsg),
-        "THRArrayOnTimeCmdIntMsg", moduleID);
-    
+    THRArrayOnTimeCmdMsg_C_init(&configData->thrData.thrOnTimeOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the sun safe ACS
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
+/*! This method resets the module.
  @return void
  @param configData The configuration data associated with the sun safe ACS control
+ @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void CrossInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
+void Reset_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
+                        int64_t moduleID)
 {
-    /*! - Get the control data message ID*/
-    configData->inputMsgID = subscribeToMessage(configData->inputControlName,
-        sizeof(CmdTorqueBodyIntMsg), moduleID);
-    
+    // check if the required input messages are included
+    if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueBodyInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunSafeACS.cmdTorqueBodyInMsg wasn't connected.");
+    }
 }
+
 
 /*! This method takes the estimated body-observed sun vector and computes the
  current attitude/attitude rate errors to pass on to control.
@@ -64,13 +61,10 @@ void CrossInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
 void Update_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    CmdTorqueBodyIntMsg cntrRequest;
-    
+    CmdTorqueBodyMsgPayload cntrRequest;
+
     /*! - Read the input parsed CSS sensor data message*/
-    ReadMessage(configData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CmdTorqueBodyIntMsg), (void*) &(cntrRequest), moduleID);
+    cntrRequest = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueBodyInMsg);
     computeSingleThrustBlock(&(configData->thrData), callTime,
                              &cntrRequest, moduleID);
     

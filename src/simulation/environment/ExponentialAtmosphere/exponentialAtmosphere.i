@@ -24,25 +24,22 @@
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 %include "swig_conly_data.i"
 %include "std_vector.i"
 %include "std_string.i"
 
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/atmosphereBase.h"
+%include "simulation/environment/_GeneralModuleFiles/atmosphereBase.h"
 %include "exponentialAtmosphere.h"
 
-
-
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/atmoPropsSimMsg.h"
-
-GEN_SIZEOF(AtmoPropsSimMsg)
-GEN_SIZEOF(SpicePlanetStateSimMsg)
-GEN_SIZEOF(SCPlusStatesSimMsg)
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
+struct AtmoPropsMsg_C;
 
 %pythoncode %{
 import sys

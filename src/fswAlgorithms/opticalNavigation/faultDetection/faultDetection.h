@@ -20,31 +20,30 @@
 #ifndef _FAULT_DETECTION_H_
 #define _FAULT_DETECTION_H_
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/cameraConfigMsg.h"
-#include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "fswMessages/opNavFswMsg.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
-#include "utilities/rigidBodyKinematics.h"
+#include "cMsgCInterface/OpNavMsg_C.h"
+#include "cMsgCInterface/CameraConfigMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 /*! @brief Module data structure */
 typedef struct {
-    char opNavOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for relative position
-    char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message
-    char navMeasPrimaryMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the first meas message
-    char navMeasSecondaryMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the second meas message
-    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
+    OpNavMsg_C opNavOutMsg; //!< [-] output navigation message for relative position
+    NavAttMsg_C attInMsg; //!< attitude input message
+    OpNavMsg_C navMeasPrimaryInMsg; //!< first measurement input message
+    OpNavMsg_C navMeasSecondaryInMsg; //!< second measurement input message
+    CameraConfigMsg_C cameraConfigInMsg; //!< camera config inut message
+
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
     double faultMode; //!< What fault mode to go in: 0 is dissimilar (use the primary measurement and compare with secondary), 1 merges the measurements if they are both valid and similar. 
     double sigmaFault; //!< What is the sigma multiplication factor when comparing measurements
     
-    int32_t stateOutMsgID;    //!< [-] The ID associated with the outgoing message
-    int32_t navMeas1MsgID;    //!< [-] The ID associated with the first incoming measurements
-    int32_t navMeas2MsgID;    //!< [-] The ID associated with the second incoming measurements
-    int32_t attInMsgID;    //!< [-] The ID associated with the incoming attitude message
-    int32_t cameraMsgID;    //!< [-] The ID associated with the second incoming measurements
+    // added for bsk
+    BSKLogger* bskLogger;                               //!< BSK Logging
+
 }FaultDetectionData;
 
 #ifdef __cplusplus
@@ -52,7 +51,6 @@ extern "C" {
 #endif
     
     void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID);
-    void CrossInit_faultDetection(FaultDetectionData *configData, int64_t moduleID);
     void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_faultDetection(FaultDetectionData *configData, uint64_t callTime, int64_t moduleID);

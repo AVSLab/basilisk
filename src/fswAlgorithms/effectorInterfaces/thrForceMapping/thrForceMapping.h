@@ -20,14 +20,14 @@
 #ifndef _THRUSTER_FORCE_MAPPING_H_
 #define _THRUSTER_FORCE_MAPPING_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/vehicleConfigFswMsg.h"
-#include "fswMessages/thrArrayConfigFswMsg.h"
-#include "fswMessages/thrArrayCmdForceFswMsg.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
-#include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simulation/utilities/bskLogging.h"
+
+#include "cMsgCInterface/THRArrayConfigMsg_C.h"
+#include "cMsgCInterface/VehicleConfigMsg_C.h"
+#include "cMsgCInterface/THRArrayCmdForceMsg_C.h"
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 /*!@brief Data structure for module to map a command torque onto thruster forces. */
@@ -48,15 +48,11 @@ typedef struct {
     double thrForcMag[MAX_EFF_CNT];                 //!<         vector of thruster force magnitudes
 
     /* declare module IO interfaces */
-    char     outputDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the output thruster force message
-    int32_t  thrusterForceOutMsgId;                           //!< ID for the outgoing message
-    char inputVehControlName[MAX_STAT_MSG_LENGTH];  //!< The name of the vehicle control (Lr) Input message
-    int32_t  controlTorqueInMsgId;                  //!< ID for the incoming Lr control message
-    char inputThrusterConfName[MAX_STAT_MSG_LENGTH];//!< The name of the thruster cluster Input message
-    int32_t  thrusterConfigInMsgId;                 //!< [-] ID for the incoming Thruster configuration data
-    char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; //!< The name of the Input message
-    int32_t vehicleConfigDataInMsgId;               //!< [] ID for the incoming static vehicle data
-    VehicleConfigFswMsg   sc;                       //!< spacecraft configuration message
+    THRArrayCmdForceMsg_C thrForceCmdOutMsg;        //!< The name of the output thruster force message
+    CmdTorqueBodyMsg_C cmdTorqueInMsg;              //!< The name of the vehicle control (Lr) Input message
+    THRArrayConfigMsg_C thrConfigInMsg;             //!< The name of the thruster cluster Input message
+    VehicleConfigMsg_C vehConfigInMsg;              //!< The name of the Input message
+    VehicleConfigMsgPayload   sc;                   //!< spacecraft configuration message
 
     BSKLogger *bskLogger;                             //!< BSK Logging
 
@@ -67,7 +63,6 @@ extern "C" {
 #endif
     
     void SelfInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleID);
-    void CrossInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleID);
     void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID);
 

@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 import sys, os, inspect
 import numpy as np
 import pytest
@@ -30,19 +28,11 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SunLineOEKF_test_utilities as FilterPlots
 from Basilisk.fswAlgorithms import okeefeEKF
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
-from Basilisk.fswAlgorithms import cssComm
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging
 
 
 def setupFilterData(filterObject):
-    filterObject.navStateOutMsgName = "sunline_state_estimate"
-    filterObject.filtDataOutMsgName = "sunline_filter_data"
-    filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfigInMsgName = "css_config_data"
-
     filterObject.sensorUseThresh = 0.
     filterObject.state = [1.0, 1.0, 1.0]
     filterObject.omega = [0.1, 0.2, 0.1]
@@ -451,11 +441,7 @@ def StatePropStatic():
 
     # Construct algorithm and associated C++ container
     moduleConfig = okeefeEKF.okeefeEKFConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        okeefeEKF.Update_okeefeEKF,
-                                        okeefeEKF.SelfInit_okeefeEKF,
-                                        okeefeEKF.CrossInit_okeefeEKF,
-                                        okeefeEKF.Reset_okeefeEKF)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "okeefeEKF"
 
     # Add test module to runtime call list
@@ -463,8 +449,17 @@ def StatePropStatic():
 
     setupFilterData(moduleConfig)
     moduleConfig.omega = [0.,0.,0.]
+
     unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate * 10, 0, 8)
     unitTestSim.AddVariableForLogging('okeefeEKF.state', testProcessRate * 10, 0, 2)
+
+    # connect messages
+    cssDataInMsg = messaging.CSSArraySensorMsg()
+    cssConfigInMsg = messaging.CSSConfigMsg()
+    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
+    moduleConfig.cssConfigInMsg.subscribeTo(cssConfigInMsg)
+
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
@@ -477,8 +472,6 @@ def StatePropStatic():
             print(abs(stateLog[-1, i + 1] - stateLog[0, i + 1]))
             testFailCount += 1
             testMessages.append("Static state propagation failure \n")
-
-    unitTestSim.terminateSimulation()
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -516,14 +509,8 @@ def StatePropVariable(show_plots):
 
     # Construct algorithm and associated C++ container
     moduleConfig = okeefeEKF.okeefeEKFConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        okeefeEKF.Update_okeefeEKF,
-                                        okeefeEKF.SelfInit_okeefeEKF,
-                                        okeefeEKF.CrossInit_okeefeEKF,
-                                        okeefeEKF.Reset_okeefeEKF)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "okeefeEKF"
-
-
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -541,6 +528,13 @@ def StatePropVariable(show_plots):
     unitTestSim.AddVariableForLogging('okeefeEKF.state', testProcessRate , 0, 2)
     unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 2)
     unitTestSim.AddVariableForLogging('okeefeEKF.omega', testProcessRate , 0, 2)
+
+    # connect messages
+    cssDataInMsg = messaging.CSSArraySensorMsg()
+    cssConfigInMsg = messaging.CSSConfigMsg()
+    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
+    moduleConfig.cssConfigInMsg.subscribeTo(cssConfigInMsg)
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1000.0))
     unitTestSim.ExecuteSimulation()
@@ -633,6 +627,8 @@ def StatePropVariable(show_plots):
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + "EKF general state propagation")
+    else:
+        print(testMessages)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -665,11 +661,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # Construct algorithm and associated C++ container
     moduleConfig = okeefeEKF.okeefeEKFConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        okeefeEKF.Update_okeefeEKF,
-                                        okeefeEKF.SelfInit_okeefeEKF,
-                                        okeefeEKF.CrossInit_okeefeEKF,
-                                        okeefeEKF.Reset_okeefeEKF)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "okeefeEKF"
 
     # Add test module to runtime call list
@@ -679,7 +671,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # Set up some test parameters
 
-    cssConstelation = fswMessages.CSSConfigFswMsg()
+    cssConstelation = messaging.CSSConfigMsgPayload()
 
     CSSOrientationList = [
         [0.70710678118654746, -0.5, 0.5],
@@ -695,34 +687,29 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     totalCSSList = []
     i=0
     for CSSHat in CSSOrientationList:
-        newCSS = fswMessages.CSSUnitConfigFswMsg()
+        newCSS = messaging.CSSUnitConfigMsgPayload()
         newCSS.CBias = CSSBias[i]
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
         i = i + 1
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
-    msgSize = cssConstelation.getStructSize()
-    inputData = cssComm.CSSArraySensorIntMsg()
+    inputData = messaging.CSSArraySensorMsgPayload()
 
+    cssConstInMsg = messaging.CSSConfigMsg().write(cssConstelation)
+    cssDataInMsg = messaging.CSSArraySensorMsg()
 
-    inputMessageSize = inputData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage("TestProcess", "css_config_data",
-                                          msgSize, 2, "CSSConstellation")
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.cssDataInMsgName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
-
-
+    # connect messages
+    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
+    moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
     dt =0.5
     stateTarget1 = testVector1
     moduleConfig.state = stateGuess
     moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
-    unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
     unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 2, 'double')
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
 
@@ -738,90 +725,85 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
                     dotProd = np.dot(np.array(element), np.array(testVector1)[0:3])
                 dotList.append(dotProd)
             inputData.CosValue = dotList
+            cssDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
 
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
-                                                  inputMessageSize,
-                                                  unitTestSim.TotalSim.CurrentNanos,
-                                                  inputData)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(3)))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(3*3)))
-
+    stateLog = dataLog.state
+    covarLog = dataLog.covar
 
     if not AddMeasNoise:
         for i in range(NUMSTATES):
-            if (abs(covarLog[-1, i * NUMSTATES + 1 + i] - covarLog[0, i * NUMSTATES + 1 + i] / 100.) > 1E-1):
+            if (abs(covarLog[-1, i * NUMSTATES + i] - covarLog[0, i * NUMSTATES  + i] / 100.) > 1E-1):
                 testFailCount += 1
                 testMessages.append("Covariance update failure")
-            if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-10):
+            if (abs(stateLog[-1, i] - stateTarget1[i]) > 1.0E-10):
                 testFailCount += 1
                 testMessages.append("State update failure")
     else:
         for i in range(NUMSTATES):
-            if (abs(covarLog[-1, i * NUMSTATES + 1 + i] - covarLog[0, i * NUMSTATES + 1 + i] / 100.) > 1E-1):
+            if (abs(covarLog[-1, i * NUMSTATES + i] - covarLog[0, i * NUMSTATES + i] / 100.) > 1E-1):
                 testFailCount += 1
                 testMessages.append("Covariance update failure with noise")
-            if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-2):
+            if (abs(stateLog[-1, i] - stateTarget1[i]) > 1.0E-2):
                 testFailCount += 1
                 testMessages.append("State update failure with noise")
 
 
     stateTarget2 = testVector2
 
-    inputData = cssComm.CSSArraySensorIntMsg()
+    inputData = messaging.CSSArraySensorMsgPayload()
     for i in range(SimHalfLength):
         if i > 20:
             dotList = []
             for element in CSSOrientationList:
                 if AddMeasNoise:
-                    dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])  + np.random.normal(0., moduleConfig.qObsVal)
+                    dotProd = np.dot(np.array(element), np.array(testVector2)[0:3]) + np.random.normal(0., moduleConfig.qObsVal)
                 else:
                     dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])
                 dotList.append(dotProd)
             inputData.CosValue = dotList
+            cssDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
 
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
-                                                  inputMessageSize,
-                                                  unitTestSim.TotalSim.CurrentNanos,
-                                                  inputData)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(3)))
-    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(3*3)))
     stateErrorLog = unitTestSim.GetLogVariableData('okeefeEKF.x')
+    stateLog = dataLog.state
+    postFitLog = dataLog.postFitRes
+    covarLog = dataLog.covar
 
 
     if not AddMeasNoise:
         for i in range(NUMSTATES):
-            if (abs(covarLog[-1, i * NUMSTATES + 1 + i] - covarLog[0, i * NUMSTATES + 1 + i] / 100.) > 1E-1):
+            if (abs(covarLog[-1, i * NUMSTATES + i] - covarLog[0, i * NUMSTATES + i] / 100.) > 1E-1):
                 testFailCount += 1
                 testMessages.append("Covariance update failure")
-            if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-10):
+            if (abs(stateLog[-1, i] - stateTarget2[i]) > 1.0E-10):
                 testFailCount += 1
                 testMessages.append("State update failure")
     else:
         for i in range(NUMSTATES):
-            if (abs(covarLog[-1, i * NUMSTATES + 1 + i] - covarLog[0, i * NUMSTATES + 1 + i] / 100.) > 1E-1):
+            if (abs(covarLog[-1, i * NUMSTATES + i] - covarLog[0, i * NUMSTATES + i] / 100.) > 1E-1):
                 testFailCount += 1
                 testMessages.append("Covariance update failure")
-            if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-2):
+            if (abs(stateLog[-1, i] - stateTarget2[i]) > 1.0E-2):
                 testFailCount += 1
                 testMessages.append("State update failure")
 
 
     target1 = np.array(testVector1)
     target2 = np.array(testVector2)
-    FilterPlots.StatesPlot(stateErrorLog, covarLog, show_plots)
-    FilterPlots.StatesVsTargets(target1, target2, stateLog, show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
+    FilterPlots.StatesPlot(dataLog.times(), stateErrorLog, covarLog, show_plots)
+    FilterPlots.StatesVsTargets(dataLog.times(), target1, target2, stateLog, show_plots)
+    FilterPlots.PostFitResiduals(dataLog.times(), postFitLog, moduleConfig.qObsVal, show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + "EKF full test")
+    else:
+        print((testMessages))
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -830,7 +812,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    # StateUpdateSunLine(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0])
+    StateUpdateSunLine(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0])
     # sunline_individual_test()
-    #StatePropStatic()
-    StatePropVariable(True)
+    # StatePropStatic()
+    # StatePropVariable(True)

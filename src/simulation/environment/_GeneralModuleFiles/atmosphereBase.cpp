@@ -19,30 +19,22 @@
  */
 
 #include "atmosphereBase.h"
-#include "architecture/messaging/system_messaging.h"
-#include "utilities/astroConstants.h"
-#include "utilities/linearAlgebra.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/simDefinitions.h"
-#include "simMessages/epochSimMsg.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/simDefinitions.h"
 
 /*! This method initializes some basic parameters for the module.
  @return void
  */
 AtmosphereBase::AtmosphereBase()
 {
-    this->planetPosInMsgName = "";
-    this->OutputBufferCount = 2;
-
     //! - zero class variables
     this->planetRadius = 0.0; // [m] Earth magnetic spherical reference radius (see p. 404 in doi:10.1007/978-1-4939-0802-8)
     this->r_BP_N.fill(0.0);
     this->r_BP_P.fill(0.0);
-    this->scStateInMsgNames.clear();
-    this->planetPosInMsgId = -1;
-
-    //! - turn off the epoch message ID
-    this->epochInMsgId = -1;
+    this->scStateInMsgs.clear();
+    this->envOutMsgs.clear();
 
     //! - set the default epoch information
     this->epochDateTime.tm_year = EPOCH_YEAR - 1900;
@@ -58,8 +50,12 @@ AtmosphereBase::AtmosphereBase()
     this->envMaxReach = -1;
 
     //! - zero the planet message, and set the DCM to an identity matrix
-    memset(&this->planetState, 0x0, sizeof(SpicePlanetStateSimMsg));
+    this->planetState = planetPosInMsg.zeroMsgPayload;
     m33SetIdentity(this->planetState.J20002Pfix);
+
+    this->scStateInMsgs.clear();
+    this->envOutMsgs.clear();
+    this->envOutBuffer.clear();
 
     return;
 }
@@ -69,71 +65,35 @@ AtmosphereBase::AtmosphereBase()
  */
 AtmosphereBase::~AtmosphereBase()
 {
+    for (long unsigned int c=0; c<this->envOutMsgs.size(); c++) {
+        delete this->envOutMsgs.at(c);
+    }
     return;
 }
 
-/*! Adds the spacecraft message name to a vector of sc message names and automatically creates an output message name.
+/*! Adds the spacecraft message to a vector of sc messages and automatically creates the corresponding output message.
  @return void
- @param tmpScMsgName A spacecraft state message name.
+ @param tmpScMsg A spacecraft state message name.
  */
-void AtmosphereBase::addSpacecraftToModel(std::string tmpScMsgName){
-    std::string tmpEnvMsgName;
-    this->scStateInMsgNames.push_back(tmpScMsgName);
-        tmpEnvMsgName = this->ModelTag + "_" + std::to_string(this->scStateInMsgNames.size()-1) + "_data";
-    this->envOutMsgNames.push_back(tmpEnvMsgName);
-    return;
-}
+void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg){
 
-/*! SelfInit for this method creates a seperate magnetic field message for each of the spacecraft
-that were added using AddSpacecraftToModel. Additional model outputs are also initialized per-spacecraft.
- @return void
-*/
-void AtmosphereBase::SelfInit()
-{
-    int64_t tmpMagFieldMsgId;
-    std::vector<std::string>::iterator it;
+    /* add input message */
+    this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
-    //! - create all the environment output messages for each spacecraft
-    for (it = this->envOutMsgNames.begin(); it!=this->envOutMsgNames.end(); it++) {
-        tmpMagFieldMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it,
-                                                                            sizeof(AtmoPropsSimMsg),
-                                                                            this->OutputBufferCount,
-                                                                            "AtmoPropsSimMsg",
-                                                                            moduleID);
-        this->envOutMsgIds.push_back(tmpMagFieldMsgId);
-    }
+    /* create output message */
+    Message<AtmoPropsMsgPayload> *msg;
+    msg = new Message<AtmoPropsMsgPayload>;
+    this->envOutMsgs.push_back(msg);
 
-    //! - call the custom SelfInit() method to add addtional self initialization steps
-    customSelfInit();
+    /* create buffer message copies*/
+    AtmoPropsMsgPayload msgAtmoBuffer;
+    this->envOutBuffer.push_back(msgAtmoBuffer);
+
 
     return;
 }
 
-/*! This method is used to connect the input position message from the spacecraft. Additonal model-specific cross inits are also conducted.
- @return void
- */
-void AtmosphereBase::CrossInit()
-{
-    //! - if a planet message name is specified, subscribe to this message. If not, then a zero planet position and orientation is assumed
-    if (this->planetPosInMsgName.length() > 0) {
-        this->planetPosInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->planetPosInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
-    }
 
-    //! - subscribe to the spacecraft messages and create associated output message buffer
-    std::vector<std::string>::iterator it;
-    this->envOutBuffer.clear();
-    AtmoPropsSimMsg tmpAtmoProps;
-    memset(&tmpAtmoProps, 0x0, sizeof(AtmoPropsSimMsg));
-    for(it = this->scStateInMsgNames.begin(); it != this->scStateInMsgNames.end(); it++){
-        this->scStateInMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(SCPlusStatesSimMsg), moduleID));
-        this->envOutBuffer.push_back(tmpAtmoProps);
-    }
-
-    //!- call the custom CrossInit() method to all additional cross initialization steps
-    customCrossInit();
-
-    return;
-}
 
 /*! This method is used to reset the module.
  @return void
@@ -144,24 +104,21 @@ void AtmosphereBase::Reset(uint64_t CurrentSimNanos)
     customReset(CurrentSimNanos);
 
     /* set epoch information.  If provided, then the epoch message information should be used.  */
-    if (this->epochInMsgId >= 0) {
-        if (this->epochInMsgId>=0) {
-            // Read in the epoch message and set the internal time structure
-            EpochSimMsg epochMsg;
-            SingleMessageHeader LocalHeader;
-            memset(&epochMsg, 0x0, sizeof(EpochSimMsg));
-            SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &LocalHeader,
-                                                        sizeof(EpochSimMsg),
-                                                        reinterpret_cast<uint8_t*> (&epochMsg), moduleID);
-            this->epochDateTime.tm_year = epochMsg.year - 1900;
-            this->epochDateTime.tm_mon = epochMsg.month - 1;
-            this->epochDateTime.tm_mday = epochMsg.day;
-            this->epochDateTime.tm_hour = epochMsg.hours;
-            this->epochDateTime.tm_min = epochMsg.minutes;
-            this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
-            this->epochDateTime.tm_isdst = 0;
-            mktime(&this->epochDateTime);
+    if (this->epochInMsg.isLinked()) {
+        // Read in the epoch message and set the internal time structure
+        EpochMsgPayload epochMsg;
+        if (!this->epochInMsg.isWritten()) {
+            bskLogger.bskLog(BSK_ERROR, "An un-written epoch msg was linked in!");
         }
+        epochMsg = this->epochInMsg();
+        this->epochDateTime.tm_year = epochMsg.year - 1900;
+        this->epochDateTime.tm_mon = epochMsg.month - 1;
+        this->epochDateTime.tm_mday = epochMsg.day;
+        this->epochDateTime.tm_hour = epochMsg.hours;
+        this->epochDateTime.tm_min = epochMsg.minutes;
+        this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
+        this->epochDateTime.tm_isdst = 0;
+        mktime(&this->epochDateTime);
     } else {
         customSetEpochFromVariable();
     }
@@ -179,22 +136,6 @@ void AtmosphereBase::customSetEpochFromVariable()
 }
 
 
-/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
- @return void
- */
-void AtmosphereBase::customSelfInit()
-{
-    return;
-}
-
-/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
- @return void
- */
-void AtmosphereBase::customCrossInit()
-{
-    return;
-}
-
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
  @return void
  */
@@ -209,18 +150,9 @@ void AtmosphereBase::customReset(uint64_t CurrentClock)
  */
 void AtmosphereBase::writeMessages(uint64_t CurrentClock)
 {
-    AtmoPropsSimMsg tmpAtmoPropsSimMsg;
-    std::vector<int64_t>::iterator it;
-    std::vector<AtmoPropsSimMsg>::iterator atmoIt;
-    atmoIt = this->envOutBuffer.begin();
-    //! - write magnetic field output messages for each spacecaft's locations
-    for(it = this->envOutMsgIds.begin(); it != this->envOutMsgIds.end(); it++, atmoIt++){
-        tmpAtmoPropsSimMsg = *atmoIt;
-        SystemMessaging::GetInstance()->WriteMessage(*it,
-                                                  CurrentClock,
-                                                  sizeof(AtmoPropsSimMsg),
-                                                  reinterpret_cast<uint8_t*>(&tmpAtmoPropsSimMsg),
-                                                  moduleID);
+    //! - write density output messages for each spacecaft's locations
+    for(long unsigned int c = 0; c < this->envOutMsgs.size(); c++){
+        this->envOutMsgs.at(c)->write(&this->envOutBuffer.at(c), this->moduleID, CurrentClock);
     }
 
     //! - call the custom method to perform additional output message writing
@@ -243,28 +175,23 @@ void AtmosphereBase::customWriteMessages(uint64_t CurrentClock)
  */
 bool AtmosphereBase::readMessages()
 {
-    SCPlusStatesSimMsg scMsg;
-    SingleMessageHeader localHeader;
+    SCStatesMsgPayload scMsg;
 
     this->scStates.clear();
 
     //! - read in the spacecraft state messages
     bool scRead;
-    if(this->scStateInMsgIds.size() > 0)
+    if(this->scStateInMsgs.size() > 0)
     {
         scRead = true;
-        std::vector<int64_t>::iterator it;
-            for(it = scStateInMsgIds.begin(); it!= scStateInMsgIds.end(); it++){
-                bool tmpScRead;
-                memset(&scMsg, 0x0, sizeof(SCPlusStatesSimMsg));
-                tmpScRead = SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
-                                                      sizeof(SCPlusStatesSimMsg),
-                                                      reinterpret_cast<uint8_t*>(&scMsg),
-                                                      moduleID);
-                scRead = scRead && tmpScRead;
+        for(long unsigned int c = 0; c<this->scStateInMsgs.size(); c++){
+            bool tmpScRead;
+            scMsg = this->scStateInMsgs.at(c)();
+            tmpScRead = this->scStateInMsgs.at(c).isWritten();
+            scRead = scRead && tmpScRead;
 
-                this->scStates.push_back(scMsg);
-            }
+            this->scStates.push_back(scMsg);
+        }
     } else {
         bskLogger.bskLog(BSK_ERROR, "Atmosphere model has no spacecraft added to it.");
         scRead = false;
@@ -272,12 +199,10 @@ bool AtmosphereBase::readMessages()
 
     //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and orientation is assumed
     bool planetRead = true;
-    if(planetPosInMsgId >= 0)
+    if(this->planetPosInMsg.isLinked())
     {
-        planetRead = SystemMessaging::GetInstance()->ReadMessage(this->planetPosInMsgId , &localHeader,
-                                                                 sizeof(SpicePlanetStateSimMsg),
-                                                                 reinterpret_cast<uint8_t*>(&this->planetState),
-                                                                 moduleID);
+        this->planetState = this->planetPosInMsg();
+        planetRead = this->planetPosInMsg.isWritten();
     }
 
     //! - call the custom method to perform additional input reading
@@ -297,10 +222,10 @@ bool AtmosphereBase::customReadMessages()
 
 /*! This method is used to determine the spacecraft position vector relative to the planet.
  @param planetState A space planetstate message struct.
- @param scState A spacecraftPlusStates message struct.
+ @param scState A spacecraft states message struct.
  @return void
  */
-void AtmosphereBase::updateRelativePos(SpicePlanetStateSimMsg *planetState, SCPlusStatesSimMsg *scState)
+void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCStatesMsgPayload *scState)
 {
     //! - compute spacecraft position vector relative to planet
     v3Subtract(scState->r_BN_N, planetState->PositionVector, this->r_BP_N.data());
@@ -320,23 +245,22 @@ void AtmosphereBase::updateRelativePos(SpicePlanetStateSimMsg *planetState, SCPl
  */
 void AtmosphereBase::updateLocalAtmosphere(double currentTime)
 {
-    std::vector<SCPlusStatesSimMsg>::iterator it;
-    uint64_t atmoInd = 0;
+    std::vector<SCStatesMsgPayload>::iterator scIt;
 
     //! - loop over all the spacecraft
-    std::vector<AtmoPropsSimMsg>::iterator envMsgIt;
+    std::vector<AtmoPropsMsgPayload>::iterator envMsgIt;
     envMsgIt = this->envOutBuffer.begin();
-    for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++, envMsgIt++){
+    for(scIt = scStates.begin(); scIt != scStates.end(); scIt++, envMsgIt++){
         //! - Computes planet relative state vector
-        this->updateRelativePos(&(this->planetState), &(*it));
+        this->updateRelativePos(&(this->planetState), &(*scIt));
 
         //! - zero the output message for each spacecraft by default
-        memset(&(*envMsgIt), 0x0, sizeof(AtmoPropsSimMsg));
+        *envMsgIt = this->envOutMsgs[0]->zeroMsgPayload;
 
         //! - check if radius is in permissible range
         if(this->orbitAltitude > this->envMinReach &&
            (this->orbitAltitude < this->envMaxReach || this->envMaxReach < 0)) {
-            //! - compute the local magnetic field.  The evaluateMageticFieldModel() method must be implement for each model
+            //! - compute the local atmosphere data.  The evaluateMageticFieldModel() method must be implement for each model
             evaluateAtmosphereModel(&(*envMsgIt), currentTime);
         }
     }
@@ -352,9 +276,9 @@ void AtmosphereBase::updateLocalAtmosphere(double currentTime)
 void AtmosphereBase::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - clear the output buffer
-    std::vector<AtmoPropsSimMsg>::iterator it;
+    std::vector<AtmoPropsMsgPayload>::iterator it;
     for(it = this->envOutBuffer.begin(); it!= this->envOutBuffer.end(); it++){
-        memset(&(*it), 0x0, sizeof(AtmoPropsSimMsg));
+        *it = this->envOutMsgs[0]->zeroMsgPayload;
     }
     //! - update local neutral density information
     if(this->readMessages())

@@ -1,18 +1,18 @@
-'''
-Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-'''
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -22,27 +22,25 @@ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Bo
 # Creation Date:  Jan 18, 2017
 #
 
-import sys, os, inspect
+import os, inspect
 import numpy as np
 import math
-import csv
-import logging
 
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import exponentialAtmosphere, simple_nav
+from Basilisk.simulation import exponentialAtmosphere, simpleNav
 from Basilisk.utilities import unitTestSupport, RigidBodyKinematics
 #print dir(exponentialAtmosphere)
 from Basilisk.simulation import dragDynamicEffector
+from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -58,7 +56,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # provide a unique test method name, starting with test_
 def test_scenarioDragOrbit():
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     earthCase = "Earth"
     marsCase = "Mars"
@@ -98,7 +96,7 @@ def cannonballDragComp(dragCoeff, dens, area, vel, att):
 
 
 def run(show_plots, orbitCase, planetCase):
-    '''Call this routine directly to run the tutorial scenario.'''
+    """Call this routine directly to run the tutorial scenario."""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -124,8 +122,8 @@ def run(show_plots, orbitCase, planetCase):
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
 
-    projArea = 10.0 #   Set drag area in m^2
-    dragCoeff = 2.2 #   Set drag ceofficient
+    projArea = 10.0  # Set drag area in m^2
+    dragCoeff = 2.2  # Set drag ceofficient
 
     dragEffector = dragDynamicEffector.DragDynamicEffector()
     dragEffector.ModelTag = "DragEff"
@@ -133,37 +131,34 @@ def run(show_plots, orbitCase, planetCase):
     dragEffectorTaskName = "drag"
     dragEffector.coreParams.projectedArea = projArea
     dragEffector.coreParams.dragCoeff = dragCoeff
-    dragEffector.coreParams.comOffset =  [1., 0., 0.]
-    dragEffector.navAttInMsgName = 'nav_att_out'
+    dragEffector.coreParams.comOffset = [1., 0., 0.]
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, newAtmo)
 
-
     #
     #   setup the simulation tasks/objects
     #
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
+    # initialize spacecraft object and set properties
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
+    newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
-    simpleNavObj = simple_nav.SimpleNav()
-    simpleNavObj.inputStateName = scObject.scStateOutMsgName
-    simpleNavObj.outputAttName = 'nav_att_out'
+    simpleNavObj = simpleNav.SimpleNav()
     scSim.AddModelToTask(simTaskName, simpleNavObj)
+    simpleNavObj.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     scObject.addDynamicEffector(dragEffector)
 
-    # add spacecraftPlus object to the simulation process
+    # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
     scSim.AddModelToTask(dragEffectorTaskName, dragEffector)
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
-    newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
-    dragEffector.setDensityMessage(newAtmo.envOutMsgNames[-1])
+    dragEffector.atmoDensInMsg.subscribeTo(newAtmo.envOutMsgs[0])
 
     if planetCase == "Earth":
         planet = gravFactory.createEarth()
@@ -171,8 +166,8 @@ def run(show_plots, orbitCase, planetCase):
         planet = gravFactory.createMars()
         planet.isCentralBody = True          # ensure this is the central gravitational body
     mu = planet.mu
-    # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    # attach gravity model to spacecraft
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time
@@ -224,12 +219,13 @@ def run(show_plots, orbitCase, planetCase):
     #   Setup data logging before the simulation is initialized
     #
 
-
     numDataPoints = 100
-    samplingTime = simulationTime // (numDataPoints-1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage(newAtmo.envOutMsgNames[-1], samplingTime)
-    scSim.TotalSim.logThisMessage(simpleNavObj.outputAttName, samplingTime)
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
+    dataNewAtmoLog = newAtmo.envOutMsgs[0].recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
+    scSim.AddModelToTask(simTaskName, dataNewAtmoLog)
+
     scSim.AddVariableForLogging('DragEff.forceExternal_B', samplingTime, StartIndex=0, StopIndex=2)
     #
     #   initialize Spacecraft States with initialization variables
@@ -251,11 +247,11 @@ def run(show_plots, orbitCase, planetCase):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',list(range(3)))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',list(range(3)))
-    attData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN', list(range(3)))
+    posData = dataLog.r_BN_N
+    velData = dataLog.v_BN_N
+    attData = dataLog.sigma_BN
     dragForce = scSim.GetLogVariableData('DragEff.forceExternal_B')
-    densData = scSim.pullMessageLogData(newAtmo.envOutMsgNames[-1]+'.neutralDensity')
+    densData = dataNewAtmoLog.neutralDensity
     np.set_printoptions(precision=16)
 
     #   Compare to expected values
@@ -271,16 +267,17 @@ def run(show_plots, orbitCase, planetCase):
         # print "Position data:", posData[ind,1:]
         # print "Velocity data:", velData[ind,1:]
         # print "Density data:", densData[ind,1]
-        refDragForce[ind,:] = cannonballDragComp(dragCoeff,densData[ind,1],projArea,velData[ind,1:], attData[ind,1:])
+        refDragForce[ind] = cannonballDragComp(dragCoeff,densData[ind],projArea,velData[ind], attData[ind])
         # print "Reference drag data:", refDragForce[ind,:]
         # print "Drag Data:", dragForce[ind,1:]
         # print ""
         # check a vector values
     for ind in range(1,endInd-1):
-        if not unitTestSupport.isArrayEqual(dragForce[ind,:], refDragForce[ind,:],3,accuracy):
+        if not unitTestSupport.isArrayEqual(dragForce[ind,1:4], refDragForce[ind],3,accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED:  DragEffector failed force unit test at =" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(np.linalg.norm(dragForce[ind,1:]-refDragForce[ind,:])))
+                "FAILED:  DragEffector failed force unit test with a value difference of "
+                + str(np.linalg.norm(dragForce[ind,1:4]-refDragForce[ind])))
 
     #
     #   plot the results
@@ -293,8 +290,8 @@ def run(show_plots, orbitCase, planetCase):
         fig = plt.gcf()
         ax = fig.gca()
         ax.ticklabel_format(useOffset=False, style='plain')
-        for idx in range(1,4):
-            plt.plot(posData[:, 0]*macros.NANO2SEC/P, posData[:, idx]/1000.,
+        for idx in range(0,3):
+            plt.plot(dataLog.times()*macros.NANO2SEC/P, posData[:, idx]/1000.,
                      color=unitTestSupport.getLineColor(idx,3),
                      label='$r_{BN,'+str(idx)+'}$')
         plt.legend(loc='lower right')
@@ -317,7 +314,7 @@ def run(show_plots, orbitCase, planetCase):
         rData=[]
         fData=[]
         for idx in range(0,len(posData)):
-            oeData = orbitalMotion.rv2elem(mu,posData[idx,1:4],velData[idx,1:4])
+            oeData = orbitalMotion.rv2elem(mu,posData[idx,0:3],velData[idx,0:3])
             rData.append(oeData.rmag)
             fData.append(oeData.f + oeData.omega - oe.omega)
         plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
@@ -343,7 +340,7 @@ def run(show_plots, orbitCase, planetCase):
         ax.ticklabel_format(useOffset=False, style='plain')
         smaData = []
         for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
+            oeData = orbitalMotion.rv2elem(mu, posData[idx, 0:3], velData[idx, 0:3])
             smaData.append(oeData.a/1000.)
         plt.plot(posData[:, 0]*macros.NANO2SEC/P, smaData
                  ,color='#aa0000',
@@ -356,7 +353,7 @@ def run(show_plots, orbitCase, planetCase):
         fig = plt.gcf()
         ax = fig.gca()
         ax.ticklabel_format(useOffset=False, style='sci')
-        plt.plot( densData[:,0]*macros.NANO2SEC, densData[:,1])
+        plt.plot( dataNewAtmoLog.times()*macros.NANO2SEC, densData)
         plt.title('Density Data vs. Time')
         plt.xlabel('Time')
         plt.ylabel('Density in kg/m^3')

@@ -20,11 +20,9 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
-#include "transDetermination/ephemNavConverter/ephemNavConverter.h"
-#include "simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/linearAlgebra.h"
+#include "fswAlgorithms/transDetermination/ephemNavConverter/ephemNavConverter.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 /*! This method creates the output navigation message (translation only) for
     the ephemeris model
@@ -34,23 +32,9 @@
  */
 void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID)
 {
-    configData->stateOutMsgID = CreateNewMessage(configData->stateOutMsgName,
-                                                 sizeof(NavTransIntMsg),
-                                                 "NavTransIntMsg",
-                                                 moduleID);
+    NavTransMsg_C_init(&configData->stateOutMsg);
 }
 
-/*! This method subscribes to the ephemeris interface message
- @return void
- @param configData The configuration data associated with the ephemeris model
- @param moduleID The module identification integer
- */
-void CrossInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID)
-{
-    configData->ephInMsgID = subscribeToMessage(configData->ephInMsgName,
-                                                sizeof(EphemerisIntMsg),
-                                                moduleID);
-}
 
 /*! This resets the module to original states.
  @return void
@@ -60,7 +44,10 @@ void CrossInit_ephemNavConverter(EphemNavConverterData *configData, int64_t modu
  */
 void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime, int64_t moduleID)
 {
-
+    // check if the required message has not been connected
+    if (!EphemerisMsg_C_isLinked(&configData->ephInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: ephemNavConverter.ephInMsg wasn't connected.");
+    }
 }
 
 /*! This method reads in the ephemeris messages and copies the translation
@@ -72,16 +59,12 @@ void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTim
  */
 void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    EphemerisIntMsg tmpEphemeris;
-    NavTransIntMsg tmpOutputState;
-    memset(&tmpEphemeris, 0x0, sizeof(EphemerisIntMsg));
-    memset(&tmpOutputState, 0x0, sizeof(NavTransIntMsg));
+    EphemerisMsgPayload tmpEphemeris;
+    NavTransMsgPayload tmpOutputState;
+    tmpOutputState = NavTransMsg_C_zeroMsgPayload();
 
     /*! - read input ephemeris message */
-    ReadMessage(configData->ephInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(EphemerisIntMsg), &tmpEphemeris, moduleID);
+    tmpEphemeris = EphemerisMsg_C_read(&configData->ephInMsg);
 
     /*! - map timeTag, position and velocity vector to output message */
 	tmpOutputState.timeTag = tmpEphemeris.timeTag;
@@ -89,8 +72,7 @@ void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTi
 	v3Copy(tmpEphemeris.v_BdyZero_N, tmpOutputState.v_BN_N);
 
     /*! - write output message */
-    WriteMessage(configData->stateOutMsgID, callTime, sizeof(NavTransIntMsg),
-                 &tmpOutputState, moduleID);
+    NavTransMsg_C_write(&tmpOutputState, &configData->stateOutMsg, moduleID, callTime);
 
     return;
 }

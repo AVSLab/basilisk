@@ -21,7 +21,7 @@
 #ifndef BASILISK_SIMPLEPOWERSINK_H
 #define BASILISK_SIMPLEPOWERSINK_H
 
-#include "power/_GeneralModuleFiles/powerNodeBase.h"
+#include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
 
 
 
@@ -33,7 +33,7 @@ public:
     ~SimplePowerSink();
 
 private:
-    void evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg);
+    void evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageMsg);
 
 };
 

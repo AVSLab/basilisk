@@ -20,11 +20,12 @@
 #ifndef _EULER_ROTATION_
 #define _EULER_ROTATION_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/attStateFswMsg.h"
-#include "fswMessages/attRefFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+
+#include "cMsgCInterface/AttStateMsg_C.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 
@@ -42,13 +43,9 @@ typedef struct {
     double dt;                                  //!< [s] integration time-step
     
     /* Declare module IO interfaces */
-    char        attRefOutMsgName[MAX_STAT_MSG_LENGTH];      //!< The name of the output message containing the Reference
-    int32_t     attRefOutMsgID;                             //!< [-] ID for the outgoing Reference message
-    char        attRefInMsgName[MAX_STAT_MSG_LENGTH];       //!< The name of the guidance reference Input message
-    int32_t     attRefInMsgID;                              //!< [-] ID for the incoming guidance reference message
-    
-    char        desiredAttInMsgName[MAX_STAT_MSG_LENGTH];   //!< The name of the incoming message containing the desired EA set
-    int32_t     desiredAttInMsgID;                          //!< [-] ID for the incoming EA set message
+    AttRefMsg_C attRefOutMsg;                   //!< The name of the output message containing the Reference
+    AttRefMsg_C attRefInMsg;                    //!< The name of the guidance reference input message
+    AttStateMsg_C  desiredAttInMsg;             //!< The name of the incoming message containing the desired EA set
 
     BSKLogger *bskLogger;                             //!< BSK Logging
 }eulerRotationConfig;
@@ -58,7 +55,6 @@ extern "C" {
 #endif
     
     void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID);
-    void CrossInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID);
     void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID);
     void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID);
     
@@ -69,7 +65,7 @@ extern "C" {
                                        double sigma_R0N[3],
                                        double omega_R0N_N[3],
                                        double domega_R0N_N[3],
-                                       AttRefFswMsg *attRefOut);
+                                       AttRefMsgPayload *attRefOut);
     
 #ifdef __cplusplus
 }

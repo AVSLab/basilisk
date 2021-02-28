@@ -20,10 +20,10 @@
 #ifndef _CHEBY_POS_EPHEM_H_
 #define _CHEBY_POS_EPHEM_H_
 
-#include "messaging/static_messaging.h"
-#include "fswMessages/TDBVehicleClockCorrelationFswMsg.h"
-#include "simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "cMsgCInterface/TDBVehicleClockCorrelationMsg_C.h"
+#include "cMsgCInterface/EphemerisMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 #define MAX_CHEB_COEFF 40
 #define MAX_CHEB_RECORDS 4
@@ -45,15 +45,13 @@ typedef struct {
            fit system. e
 */
 typedef struct {
-    char posFitOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the output navigation message for pos/vel*/
-    char clockCorrInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the clock correlation message*/
+    EphemerisMsg_C posFitOutMsg; /*!< [-] output navigation message for pos/vel*/
+    TDBVehicleClockCorrelationMsg_C clockCorrInMsg; /*!< clock correlation input message*/
     ChebyEphemRecord ephArray[MAX_CHEB_RECORDS]; /*!< [-] Array of Chebyshev records for ephemeris*/
 
-    int32_t posFitOutMsgID;    /*!< [-] The ID associated with the outgoing message*/
-    int32_t clockCorrInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/
     uint32_t coeffSelector;    /*!< [-] Index in the ephArray that we are currently using*/
 
-    EphemerisIntMsg outputState; /*!< [-] The local storage of the outgoing message data*/
+    EphemerisMsgPayload outputState; /*!< [-] The local storage of the outgoing message data*/
 
     BSKLogger *bskLogger;   //!< BSK Logging
 }ChebyPosEphemData;
@@ -63,7 +61,6 @@ extern "C" {
 #endif
     
     void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID);
-    void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID);
     void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,

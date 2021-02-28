@@ -24,23 +24,22 @@
 %include "swig_conly_data.i"
 %constant void SelfInit_horizonOpNav(void*, uint64_t);
 %ignore SelfInit_horizonOpNav;
-%constant void CrossInit_horizonOpNav(void*, uint64_t);
-%ignore CrossInit_horizonOpNav;
 %constant void Reset_horizonOpNav(void*, uint64_t, uint64_t);
 %ignore Reset_horizonOpNav;
 %constant void Update_horizonOpNav(void*, uint64_t, uint64_t);
 %ignore Update_horizonOpNav;
 STRUCTASLIST(HorizonOpNavData)
-GEN_SIZEOF(LimbOpNavMsg)
-GEN_SIZEOF(CameraConfigMsg)
-GEN_SIZEOF(NavAttIntMsg)
-GEN_SIZEOF(OpNavFswMsg)
-%include "simFswInterfaceMessages/limbOpNavMsg.h"
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "../fswAlgorithms/fswMessages/opNavFswMsg.h"
-%include "horizonOpNav.h"
 
+%include "architecture/msgPayloadDefC/LimbOpNavMsgPayload.h"
+struct LimbOpNavMsg_C;
+%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
+struct OpNavMsg_C;
+
+%include "horizonOpNav.h"
 
 %pythoncode %{
 import sys

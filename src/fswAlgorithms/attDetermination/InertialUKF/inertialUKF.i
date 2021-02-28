@@ -19,7 +19,7 @@
 %module inertialUKF
 %{
    #include "inertialUKF.h"
-   #include "../_GeneralModuleFiles/ukfUtilities.h"
+   #include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -27,28 +27,34 @@
 %ignore Update_inertialUKF;
 %constant void SelfInit_inertialUKF(void*, uint64_t);
 %ignore SelfInit_inertialUKF;
-%constant void CrossInit_inertialUKF(void*, uint64_t);
-%ignore CrossInit_inertialUKF;
 %constant void Reset_inertialUKF(void*, uint64_t, uint64_t);
 %ignore Reset_inertialUKF;
+
 STRUCTASLIST(LowPassFilterData)
-STRUCTASLIST(AccPktDataFswMsg)
 STRUCTASLIST(STMessage)
+
 %include "inertialUKF.h"
-%include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/inertialFilterFswMsg.h"
-%include "../../fswMessages/stAttFswMsg.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-%include "../../fswMessages/rwArrayConfigFswMsg.h"
-%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "../../fswMessages/AccDataFswMsg.h"
-%include "../../fswMessages/AccPktDataFswMsg.h"
-%include "utilities/signalCondition.h"
-GEN_SIZEOF(STAttFswMsg);
-GEN_SIZEOF(RWArrayConfigFswMsg);
-GEN_SIZEOF(RWSpeedIntMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(AccDataFswMsg);
+
+
+%include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
+
+%include "architecture/msgPayloadDefC/InertialFilterMsgPayload.h"
+struct InertialFilterMsg_C;
+%include "architecture/msgPayloadDefC/STAttMsgPayload.h"
+struct STAttMsg_C;
+%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
+struct VehicleConfigMsg_C;
+%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
+struct RWArrayConfigMsg_C;
+%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+struct RWSpeedMsg_C;
+%include "architecture/msgPayloadDefC/AccDataMsgPayload.h"
+struct AccDataMsg_C;
+%include "architecture/msgPayloadDefC/AccPktDataMsgPayload.h"
+struct AccPktDataMsg_C;
+
+%include "architecture/utilities/signalCondition.h"
+struct LowPassFilterData;
 
 
 %pythoncode %{

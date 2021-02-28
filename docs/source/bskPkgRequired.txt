@@ -4,3 +4,4 @@
 ``pytest``
 ``Pillow``
 ``conan>=1.29.2``
+``parse>=1.18.0``

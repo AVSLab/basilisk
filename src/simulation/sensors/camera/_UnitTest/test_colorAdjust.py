@@ -42,12 +42,13 @@ except ImportError:
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
+from Basilisk.architecture import messaging
 
 try:
     from Basilisk.simulation import camera
 except ImportError:
     importErr = True
-    reasonErr = "Camera not built---check OpenCV option"
+    reasonErr += "\nCamera not built---check OpenCV option"
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -136,9 +137,6 @@ def cameraColorTest(image, HSV, BGR):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
-    moduleConfig.imageInMsgName = "sample_image"
-    moduleConfig.cameraOutMsgName = "cameraOut"
-    moduleConfig.imageOutMsgName = "out_image"
     moduleConfig.filename = imagePath
     moduleConfig.saveImages = True
     # make each image saved have a unique name for this test case
@@ -146,13 +144,11 @@ def cameraColorTest(image, HSV, BGR):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = camera.CameraImageMsg()
+    inputMessageData = messaging.CameraImageMsgPayload()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.imageInMsgName,
-                               inputMessageData)
+    inCamMsg = messaging.CameraImageMsg().write(inputMessageData)
+    moduleConfig.imageInMsg.subscribeTo(inCamMsg)
     moduleConfig.cameraIsOn = 1
     moduleConfig.sigma_CB = [0, 0, 1]
 
@@ -162,7 +158,9 @@ def cameraColorTest(image, HSV, BGR):
     moduleConfig.hsv = camera.DoubleVector(HSV)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.cameraOutMsgName, testProcessRate)
+    dataLog = moduleConfig.cameraConfigOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
     unitTestSim.InitializeSimulation()
     unitTestSim.TotalSim.SingleStepProcesses()
 
@@ -230,7 +228,7 @@ def trueColorAdjust(image, corrupted, HSV, BGR):
                 expected[i] = 0
 
         for i in range(3):
-            if abs(int(output[px, py][i]) - expected[i]) > 0:
+            if abs(int(output[px, py][i]) - expected[i]) > 3:
                 print("Failed HSV at point: px=" + str(px) + " py= + " + str(py))
                 return False
     print("Passed Color Check")
@@ -242,6 +240,6 @@ def trueColorAdjust(image, corrupted, HSV, BGR):
 # stand-along python script
 #
 if __name__ == "__main__":
-    hsvAdjust = [0, 0, 0.0]
+    hsvAdjust = [1.0, +20.0, -30.0]
     bgrAdjust = [-100, 0, 0]
     cameraColorTest("tv_test.png", hsvAdjust, bgrAdjust)

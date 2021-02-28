@@ -17,11 +17,11 @@
 
  */
 
-#include "attDetermination/headingSuKF/headingSuKF.h"
-#include "attDetermination/_GeneralModuleFiles/ukfUtilities.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "fswAlgorithms/attDetermination/headingSuKF/headingSuKF.h"
+#include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
 
@@ -34,34 +34,11 @@
  */
 void SelfInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-	configData->opnavDataOutMsgId = CreateNewMessage(configData->opnavOutMsgName,
-		sizeof(OpNavFswMsg), "OpNavFswMsg", moduleID);
+    OpNavMsg_C_init(&configData->opnavDataOutMsg);
     /*! - Create filter states output message which is mostly for debug*/
-    configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
-        sizeof(HeadingFilterFswMsg), "HeadingFilterFswMsg", moduleID);
-    
+    HeadingFilterMsg_C_init(&configData->filtDataOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the heading filter.  It's primary function is to link the input messages that were
- created elsewhere.
- @return void
- @param configData The configuration data associated with the heading filter
- @param moduleID The module identifier
- */
-void CrossInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
-{
-    /*! - Find the message ID for the coarse sun sensor data message */
-    configData->opnavDataInMsgId = subscribeToMessage(configData->opnavDataInMsgName,
-        sizeof(OpNavFswMsg), moduleID);
-    /*! - Find the message ID for the camera message if non zero name*/
-    if (strcmp(configData->cameraConfigMsgName, "")){
-        configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,
-                                                           sizeof(CameraConfigMsg), moduleID);
-        configData->putInCameraFrame = 1;
-    }
-    
-}
 
 /*! This method resets the heading attitude filter to an initial state and
  initializes the internal estimation matrices.
@@ -76,9 +53,21 @@ void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     
     int32_t i;
     double tempMatrix[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];
-    
+
+    // check if the required input message is included
+    if (!OpNavMsg_C_isLinked(&configData->opnavDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: headingSuKF.opnavDataInMsg wasn't connected.");
+    }
+
+    /*! - Check input message connections */
+    if (CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)){
+        configData->putInCameraFrame = 1;
+    } else {
+        configData->putInCameraFrame = 0;
+    }
+
     /*! - Zero the local configuration data structures and outputs */
-    memset(&(configData->outputHeading), 0x0, sizeof(NavAttIntMsg));
+    configData->outputHeading = NavAttMsg_C_zeroMsgPayload();
 
     
     /*! - Initialize filter parameters to max values */
@@ -155,24 +144,25 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     double states_BN[HEAD_N_STATES_SWITCH];
     int i;
     uint64_t ClockTime;
-    uint32_t ReadSize;
-    HeadingFilterFswMsg headingDataOutBuffer;
-    OpNavFswMsg opnavOutputBuffer;
-    CameraConfigMsg cameraConfig;
+    int isWritten;
+
+    HeadingFilterMsgPayload headingDataOutBuffer;
+    OpNavMsgPayload opnavOutputBuffer;
+    CameraConfigMsgPayload cameraConfig;
     /*! - Read the input parsed heading sensor data message*/
     ClockTime = 0;
-    ReadSize = 0;
-    memset(&(configData->opnavInBuffer), 0x0, sizeof(OpNavFswMsg));
-    memset(&cameraConfig, 0x0, sizeof(CameraConfigMsg));
+
+    /* zero variables */
+    cameraConfig = CameraConfigMsg_C_zeroMsgPayload();
+    opnavOutputBuffer = OpNavMsg_C_zeroMsgPayload();
     v3SetZero(configData->obs);
     v3SetZero(configData->postFits);
-    ReadMessage(configData->opnavDataInMsgId, &ClockTime, &ReadSize,
-        sizeof(OpNavFswMsg), (void*) (&(configData->opnavInBuffer)), moduleID);
+
+    configData->opnavInBuffer = OpNavMsg_C_read(&configData->opnavDataInMsg);
+    ClockTime = OpNavMsg_C_timeWritten(&configData->opnavDataInMsg);
+    isWritten = OpNavMsg_C_isWritten(&configData->opnavDataInMsg);
     if (configData->putInCameraFrame == 1){
-        uint64_t ClockTimeCam;
-        uint32_t ReadSizeCam;
-        ReadMessage(configData->cameraConfigMsgID, &ClockTimeCam, &ReadSizeCam,
-                    sizeof(CameraConfigMsg), (void*) (&cameraConfig), moduleID);
+        cameraConfig = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
     }
     v3Normalize(&configData->state[0], heading_hat);
     
@@ -189,7 +179,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     /*! - If the time tag from the measured data is new compared to previous step,
           propagate and update the filter*/
     newTimeTag = ClockTime * NANO2SEC;
-    if(newTimeTag >= configData->timeTag && ReadSize > 0 && configData->opnavInBuffer.valid ==1)
+    if(newTimeTag >= configData->timeTag && isWritten && configData->opnavInBuffer.valid ==1)
     {
         headingSuKFTimeUpdate(configData, newTimeTag);
         headingSuKFMeasUpdate(configData, newTimeTag);
@@ -227,8 +217,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     mCopy(configData->covar, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, headingDataOutBuffer.covar);
     vCopy(states_BN, HEAD_N_STATES_SWITCH, headingDataOutBuffer.state);
     v3Copy(configData->postFits, headingDataOutBuffer.postFitRes);
-    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(HeadingFilterFswMsg),
-                 &headingDataOutBuffer, moduleID);
+    HeadingFilterMsg_C_write(&headingDataOutBuffer, &configData->filtDataOutMsg, moduleID, callTime);
     
     /*! - Write the heading estimate into the copy of the OpNav message structure*/
     opnavOutputBuffer.timeTag = configData->timeTag;
@@ -245,8 +234,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     }
     opnavOutputBuffer.valid = configData->opnavInBuffer.valid;
     opnavOutputBuffer.timeTag = configData->opnavInBuffer.timeTag;
-    WriteMessage(configData->opnavDataOutMsgId, callTime, sizeof(OpNavFswMsg),
-                 &opnavOutputBuffer, moduleID);
+    OpNavMsg_C_write(&opnavOutputBuffer, &configData->opnavDataOutMsg, moduleID, callTime);
     
     return;
 }

@@ -22,15 +22,19 @@
 
 #include <stdint.h>
 #include <Eigen/Dense>
-#include "architecture/messaging/system_messaging.h"
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
-#include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
-#include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
-#include "../simulation/_GeneralModuleFiles/sys_model.h"
-#include "../simulation/utilities/avsEigenMRP.h"
+
+#include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+#include "architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
+#include "architecture/messaging/messaging.h"
+
+
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief The CNN based center radius visual tracking module. */
 class CenterRadiusCNN: public SysModel {
@@ -39,24 +43,22 @@ public:
     ~CenterRadiusCNN();
     
     void UpdateState(uint64_t CurrentSimNanos);
-    void SelfInit();
-    void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
     
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    std::string opnavCirclesOutMsgName;  //!< The name of the CirclesOpnavMsg output message
-    std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
+    Message<CirclesOpNavMsgPayload> opnavCirclesOutMsg;  //!< The name of the CirclesOpnavMsg output message
+    
+    ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the camera output message
+    
     std::string pathToNetwork;                  //!< Path to the trained CNN
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for HoughCircle finding*/
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
     double pixelNoise[3];                 //!< [-] Pixel Noise for the estimate
+    BSKLogger bskLogger;                //!< -- BSK Logging
 
 private:
-    uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
-    int32_t opnavCirclesOutMsgID;        //!< ID for the outgoing message
-    int32_t imageInMsgID;                //!< ID for the outgoing message
     cv::dnn::Net positionNet2;           //!< Network for evaluation of centers
 };
 

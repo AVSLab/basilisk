@@ -25,14 +25,17 @@
 #define FUEL_TANK_H
 
 #include <vector>
-#include "../_GeneralModuleFiles/stateEffector.h"
-#include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "_GeneralModuleFiles/sys_model.h"
-#include "../simulation/utilities/avsEigenMRP.h"
-#include "../simulation/utilities/avsEigenSupport.h"
-#include "simMessages/fuelTankSimMsg.h"
-#include "../_GeneralModuleFiles/fuelSlosh.h"
-#include "utilities/bskLogging.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
+
+#include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"
+#include "architecture/messaging/messaging.h"
+
+#include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
+#include "architecture/utilities/bskLogging.h"
 #include <math.h>
 
 
@@ -249,14 +252,14 @@ class FuelTank :
 {
 public:
 	std::string nameOfMassState;                       //!< -- name of mass state
-    std::vector<FuelSlosh*> fuelSloshParticles;         //!< -- vector of fuel slosh particles
+    std::vector<FuelSlosh*> fuelSloshParticles;        //!< -- vector of fuel slosh particles
     std::vector<DynamicEffector*> dynEffectors;        //!< -- Vector of dynamic effectors for thrusters
 	Eigen::Matrix3d dcm_TB;							   //!< -- DCM from body frame to tank frame
 	Eigen::Vector3d r_TB_B;							   //!< [m] position of tank in B frame
 	bool updateOnly;								   //!< -- Sets whether to use update only mass depletion
-    std::string FuelTankOutMsgName;                    //!< -- fuel tank output message name
-    FuelTankSimMsg FuelTankMassPropMsg;                //!< instance of messaging system message struct
-		BSKLogger bskLogger;                      //!< -- BSK Logging
+    Message<FuelTankMsgPayload> fuelTankOutMsg;        //!< -- fuel tank output message name
+    FuelTankMsgPayload fuelTankMassPropMsg;            //!< instance of messaging system message struct
+    BSKLogger bskLogger;                               //!< -- BSK Logging
 
 private:
 	StateData *omegaState;                             //!< -- state data for omega_BN of the hub
@@ -266,13 +269,10 @@ private:
 	FuelTankModel* fuelTankModel;					   //!< -- style of tank to simulate
 	Eigen::Matrix3d ITankPntT_B;
 	Eigen::Vector3d r_TcB_B;
-    int64_t FuelTankOutMsgId;                          //!< -- state output message ID
 
 public:
 	FuelTank();                                        //!< -- Contructor
 	~FuelTank();                                       //!< -- Destructor
-    void SelfInit();
-    void CrossInit();
     void WriteOutputMessages(uint64_t CurrentClock);
     void UpdateState(uint64_t CurrentSimNanos);
 	void setTankModel(FuelTankModelTypes model);

@@ -26,14 +26,15 @@
 %ignore Update_dvGuidance;
 %constant void SelfInit_dvGuidance(void*, uint64_t);
 %ignore SelfInit_dvGuidance;
-%constant void CrossInit_dvGuidance(void*, uint64_t);
-%ignore CrossInit_dvGuidance;
-GEN_SIZEOF(DvBurnCmdFswMsg);
-GEN_SIZEOF(dvGuidanceConfig);
+%constant void Reset_dvGuidance(void*, uint64_t, uint64_t);
+%ignore Reset_dvGuidance;
+
 %include "dvGuidance.h"
-%include "../../fswMessages/dvBurnCmdFswMsg.h"
-%include "../../fswMessages/attRefFswMsg.h"
-GEN_SIZEOF(AttRefFswMsg);
+
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+struct AttRefMsg_C;
+%include "architecture/msgPayloadDefC/DvBurnCmdMsgPayload.h"
+struct DvBurnCmdMsg_C;
 
 %pythoncode %{
 import sys

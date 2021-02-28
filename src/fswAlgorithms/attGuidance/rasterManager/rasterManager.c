@@ -24,36 +24,25 @@
  
  */
 
-#include "attGuidance/rasterManager/rasterManager.h"
+#include "fswAlgorithms/attGuidance/rasterManager/rasterManager.h"
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
-#include "fswUtilities/fswDefinitions.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 
 
 
 void SelfInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->AttStateOutMsgID = CreateNewMessage(configData->AttStateOutMsgName,
-                                                 sizeof(AttStateFswMsg),
-                                                 "AttStateFswMsg",
-                                                 moduleID);
-    configData->mnvrActive = 0;
-    configData->scanSelector = 0;
-    
+    AttStateMsg_C_init(&configData->attStateOutMsg);
 }
 
-void CrossInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID)
-{
-    /*! - Get the control data message ID*/
-}
 
 void Reset_rasterManager(rasterManagerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
@@ -91,9 +80,8 @@ void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, in
         _bskLog(configData->bskLogger, BSK_INFORMATION, info);
     }
     
-    
-    WriteMessage(configData->AttStateOutMsgID, callTime, sizeof(AttStateFswMsg),
-                 (void*) &(configData->attOutSet), moduleID);
+    AttStateMsg_C_write(&configData->attOutSet, &configData->attStateOutMsg, moduleID, callTime);
+
     return;
 }
 

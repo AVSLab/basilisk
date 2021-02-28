@@ -1,0 +1,38 @@
+\section{Test Description and Success Criteria}
+
+This test sets up an appropriate simulation by creating a Spice Object, which will write messages containing ephemerides. A ephemeris converter object is also created with the map between the message names. This test guarantees that the data is properly copied.
+
+This test is located in: \\
+{\tt simulation/environment/ephemerisConverter/$\_$UnitTest/test$\_$ephemerisconvert.py}. \par
+
+\subsection{Validation success criteria }
+
+The criteria for a successful testing of this module is driven by the correct copy of the spice messages. This is done simply by comparing the messages before the copy with the outcome of the copied message. The error tolerance is at $\epsilon =10^{-5}$ which corresponds to 12 significant digits. This gives a healthy margin from machine precision all the while getting all of the physical information from the ephemerides. 
+
+\section{Test Parameters}
+
+A spice object was created in order to write the messages that need to be copied.
+The spice object was set on the following date: 2015 February 10, 00:00:00.0 TDB, and the planets that were loaded where the Earth, Mars Barycenter, and the Sun.
+
+\subsubsection*{Successful link test}
+
+A boolean variable is added for logging and is verified to have successfully linked the desired messages. This is done by comparing the variables down to $\epsilon =10^{-12}$, since we are looking for a value of 1.
+
+\subsubsection*{Successful copy test}
+
+For each of the celestial bodies who get a message output, we log the two messages that contain their position and velocities in the inertial frames. For mars the first message is the Spice message is $\texttt{mars$\_$planet$\_$data}$
+and the second message is the ephemeris converted data $\texttt{mars$\_$ephemeris$\_$data}$. If the norm of their relative difference (including the time component of the vector), at any time, is greater than our error tolerance $\epsilon =10^{-12}$, then the test fails.
+
+\section{Test Results}
+\subsection{Pass/Fail results}
+
+\begin{center}
+	\begin{tabular}{c|c|c}
+		Test & Link Test & Copy Test \\ \hline
+		Result &  \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed} \\ \hline
+		Tolerance & $10^{-12}$ & $10^{-12}$
+	\end{tabular}
+\end{center}
+
+Both components of the test pass. The copy is therefore a properly executed.
+

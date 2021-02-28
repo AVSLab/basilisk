@@ -19,7 +19,7 @@
 %module pixelLineBiasUKF
 %{
    #include "pixelLineBiasUKF.h"
-   #include "../_GeneralModuleFiles/ukfUtilities.h"
+   #include "fswAlgorithms/opticalNavigation/_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -27,23 +27,22 @@
 %ignore Update_pixelLineBiasUKF;
 %constant void SelfInit_pixelLineBiasUKF(void*, uint64_t);
 %ignore SelfInit_pixelLineBiasUKF;
-%constant void CrossInit_pixelLineBiasUKF(void*, uint64_t);
-%ignore CrossInit_pixelLineBiasUKF;
 %constant void Reset_pixelLineBiasUKF(void*, uint64_t, uint64_t);
 %ignore Reset_pixelLineBiasUKF;
-GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(PixelLineFilterFswMsg);
-GEN_SIZEOF(PixelLineBiasUKFConfig);
-GEN_SIZEOF(CirclesOpNavMsg);
-GEN_SIZEOF(CameraConfigMsg);
-GEN_SIZEOF(NavAttIntMsg);
+
 %include "pixelLineBiasUKF.h"
-%include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/pixelLineFilterFswMsg.h"
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-%include "simFswInterfaceMessages/circlesOpNavMsg.h"
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
-%include "simFswInterfaceMessages/navAttIntMsg.h"
+%include "fswAlgorithms/opticalNavigation/_GeneralModuleFiles/ukfUtilities.h"
+
+%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "architecture/msgPayloadDefC/PixelLineFilterMsgPayload.h"
+struct PixelLineFilterMsg_C;
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
+struct CirclesOpNavMsg_C;
 
 %pythoncode %{
 import sys

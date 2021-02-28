@@ -32,7 +32,6 @@
 /*! The constructor for the CenterRadiusCNN module. It also sets some default values at its creation.  */
 CenterRadiusCNN::CenterRadiusCNN()
 {
-    this->OutputBufferCount = 2;
     this->filename = "";
     this->saveImages = 0;
     for (int i=0; i<3; i++){
@@ -41,38 +40,6 @@ CenterRadiusCNN::CenterRadiusCNN()
     this->pathToNetwork = "./position_net2_trained_11-14.onnx";
 }
 
-/*! Selfinit performs the first stage of initialization for this module.
- It's primary function is to create messages that will be written to.
- @return void
- */
-void CenterRadiusCNN::SelfInit()
-{
-    /*! - Read in the CNN */
-    std::ifstream test(this->pathToNetwork);
-    if (!test)
-    {
-        std::cout << "The CNN file was not found" << std::endl;
-    }
-    this->positionNet2 = cv::dnn::readNetFromONNX(this->pathToNetwork);
-    this->positionNet2.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
-    this->positionNet2.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
-    
-    /*! - Create output message for module */
-    this->opnavCirclesOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavCirclesOutMsgName,sizeof(CirclesOpNavMsg),this->OutputBufferCount,"CirclesOpNavMsg",moduleID);
-}
-
-
-/*! CrossInit performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- */
-void CenterRadiusCNN::CrossInit()
-{
-    /*! - Get the image data message ID*/
-    if(this->imageInMsgName != ""){
-        this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), moduleID);
-    }
-}
 
 /*! This is the destructor */
 CenterRadiusCNN::~CenterRadiusCNN()
@@ -87,6 +54,21 @@ CenterRadiusCNN::~CenterRadiusCNN()
  */
 void CenterRadiusCNN::Reset(uint64_t CurrentSimNanos)
 {
+    // check that the required message has not been connected
+    if (!this->imageInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "CenterRadiusCNN.imageInMsg wasn't connected.");
+    }
+
+    /*! - Read in the CNN */
+    std::ifstream test(this->pathToNetwork);
+    if (!test)
+    {
+        std::cout << "The CNN file was not found" << std::endl;
+    }
+    this->positionNet2 = cv::dnn::readNetFromONNX(this->pathToNetwork);
+    this->positionNet2.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
+    this->positionNet2.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+
     return;
 }
 
@@ -97,22 +79,20 @@ void CenterRadiusCNN::Reset(uint64_t CurrentSimNanos)
 void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
 {
     std::string filenamePre;
-    CameraImageMsg imageBuffer;
-    CirclesOpNavMsg circleBuffer;
+    CameraImageMsgPayload imageBuffer;
+    CirclesOpNavMsgPayload circleBuffer;
     cv::Mat imageCV, blurred;
     filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
 
     /*! - Load in the trained CNN model*/
 
     /*! - Read in the bitmap*/
-    SingleMessageHeader localHeader;
-    memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
-    memset(&circleBuffer, 0x0, sizeof(CirclesOpNavMsg));
-    if(this->imageInMsgName != "")
+    imageBuffer = this->imageInMsg.zeroMsgPayload;
+    circleBuffer = this->opnavCirclesOutMsg.zeroMsgPayload;
+    if (this->imageInMsg.isLinked())
     {
-        SystemMessaging::GetInstance()->ReadMessage(this->imageInMsgID, &localHeader,
-                                                    sizeof(CameraImageMsg), reinterpret_cast<uint8_t*>(&imageBuffer), this->moduleID);
-        this->sensorTimeTag = localHeader.WriteClockNanos;
+        imageBuffer = this->imageInMsg();
+        this->sensorTimeTag = this->imageInMsg.timeWritten();
     }
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
@@ -128,7 +108,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     }
     else{
         /*! - If no image is present, write zeros in message */
-        SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
+        this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
         return;
     }
     /*!-  evaluate CNN on image */
@@ -153,7 +133,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
         }
     }
 
-    SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
+    this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
     
     return;
 }

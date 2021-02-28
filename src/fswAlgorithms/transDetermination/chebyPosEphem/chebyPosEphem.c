@@ -17,10 +17,10 @@
 
  */
 
-#include "transDetermination/chebyPosEphem/chebyPosEphem.h"
-#include "transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/linearAlgebra.h"
+#include "fswAlgorithms/transDetermination/chebyPosEphem/chebyPosEphem.h"
+#include "fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -33,22 +33,9 @@
  */
 void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 {
-    configData->posFitOutMsgID = CreateNewMessage(configData->posFitOutMsgName,
-        sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
+    EphemerisMsg_C_init(&configData->posFitOutMsg);
 }
 
-/*! This method initializes the input time correlation factor structure
- @return void
- @param configData The configuration data associated with the ephemeris model
- @param moduleID The Basilisk module identifier
- */
-void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
-{
-
-    configData->clockCorrInMsgID = subscribeToMessage(
-        configData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelationFswMsg), moduleID);
-
-}
 
 /*! This method takes the chebyshev coefficients loaded for the position
     estimator and computes the coefficients needed to estimate the time
@@ -61,6 +48,10 @@ void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
                          int64_t moduleID)
 {
+    // check if the required message has not been connected
+    if (!TDBVehicleClockCorrelationMsg_C_isLinked(&configData->clockCorrInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: chebyPosEphem.clockCorrInMsg wasn't connected.");
+    }
 
     int i, j, k, n;
     ChebyEphemRecord *currRec;
@@ -103,18 +94,15 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
 {
 
     double currentEphTime;
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     double currentScaledValue;
     ChebyEphemRecord *currRec;
     int i;
-    TDBVehicleClockCorrelationFswMsg localCorr;
-    
-    ReadMessage(configData->clockCorrInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
-    
-    memset(&configData->outputState, 0x0, sizeof(EphemerisIntMsg));
-    
+    TDBVehicleClockCorrelationMsgPayload localCorr;
+
+    // read input msg
+    localCorr = TDBVehicleClockCorrelationMsg_C_read(&configData->clockCorrInMsg);
+    configData->outputState = EphemerisMsg_C_zeroMsgPayload();
+
     currentEphTime = callTime*NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
     
@@ -150,9 +138,8 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
         
     }
     
-    WriteMessage(configData->posFitOutMsgID, callTime,
-                 sizeof(EphemerisIntMsg), &configData->outputState, moduleID);
-
+    EphemerisMsg_C_write(&configData->outputState, &configData->posFitOutMsg, moduleID, callTime);
+    
     return;
 
 }

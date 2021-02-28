@@ -1,11 +1,17 @@
 import os, sys
 import platform
 from datetime import datetime
-from conans import ConanFile, CMake, tools
+
 import shutil
 import argparse
 import pkg_resources
 import subprocess
+
+try:
+	from conans import ConanFile, CMake, tools
+except ModuleNotFoundError:
+	print("Please make sure you install python conan package\nRun command `pip install conan` for Windows\nRun command `pip3 install conan` for Linux/MacOS")
+	sys.exit(1)
 
 # define BSK module option list (option name and default value)
 bskModuleOptionsBool = {
@@ -13,7 +19,8 @@ bskModuleOptionsBool = {
     "vizInterface": True
 }
 bskModuleOptionsString = {
-    "autoKey": ""
+    "autoKey": "",
+    "pathToExternalModules": ""
 }
 bskModuleOptionsFlag = {
     "clean": False,
@@ -64,10 +71,9 @@ class BasiliskConan(ConanFile):
     generator = None
 
     # make sure conan is configured to use the libstdc++11 by default
-    print(statusColor + "Checking conan configuration:" + endColor)
     if platform.system() != "Darwin":
         try:
-            subprocess.check_output(["conan", "profile", "new", "default", "--detect"], stdout=DEVNULL)
+            subprocess.check_output(["conan", "profile", "new", "default", "--detect"], stdout=subprocess.DEVNULL)
         except:
             pass
 
@@ -75,7 +81,7 @@ class BasiliskConan(ConanFile):
             try:
                 subprocess.check_output(["conan", "profile", "update",
                                          "settings.compiler.libcxx=libstdc++11", "default"])
-                print("Configuring: " + statusColor + "use libstdc++11 by default" + endColor)
+                print("\nConfiguring: " + statusColor + "use libstdc++11 by default" + endColor)
 
             except:
                 pass
@@ -91,7 +97,9 @@ class BasiliskConan(ConanFile):
                 subprocess.check_call(cmdString)
     except:
         print("conan: " + failColor + "Error configuring conan repo information." + endColor)
-    print("\n")
+    print(statusColor + "Checking conan configuration:" + endColor + " Done")
+
+
 
     def system_requirements(self):
         reqFile = open('docs/source/bskPkgRequired.txt', 'r')
@@ -141,7 +149,7 @@ class BasiliskConan(ConanFile):
         # check the version of Python
         print("\nChecking Python version:")
         if not (sys.version_info.major == 3 and sys.version_info.minor >= 7):
-            print(warningColor + "Python 3.7 should be used with Basilisk." + endColor)
+            print(warningColor + "Python 3.7 or newer should be used with Basilisk." + endColor)
             print("You are using Python {}.{}.{}".format(sys.version_info.major,
                                                          sys.version_info.minor,sys.version_info.micro))
         else:
@@ -171,7 +179,6 @@ class BasiliskConan(ConanFile):
             distPath = os.path.join(root, "dist3")
             if os.path.exists(distPath):
                 shutil.rmtree(distPath, ignore_errors=True)
-
         if self.settings.build_type == "Debug":
             print(warningColor + "Build type is set to Debug. Performance will be significantly lower." + endColor)
 
@@ -203,15 +210,38 @@ class BasiliskConan(ConanFile):
             self.keep_imports = True
             self.copy("*.dll", "../Basilisk", "bin")
 
+    def generateMessageModules(self, originalWorkingDirectory):
+        cmdString = list()
+        if platform.system() == "Windows":
+            cmdString.append("python")
+        else:
+            cmdString.append("python3")
+        cmdString.append("GenCMessages.py")
+        if self.options.pathToExternalModules:
+            cmdString.extend(["--pathToExternalModules", str(self.options.pathToExternalModules)])
+        subprocess.check_call(cmdString)
+        os.chdir(originalWorkingDirectory)
+        print("Done")
+
     def build(self):
+        # auto-generate C message definition files
+        print(statusColor + "Auto-generating message definitions:" + endColor, end=" ")
+        bskPath = os.getcwd()
+        os.chdir(os.path.join(bskPath, "src/architecture/messaging/msgAutoSource"))
+        self.generateMessageModules(bskPath)
         if self.options.vizInterface:
             # build the protobuffer support files
             bskPath = os.getcwd()
             os.chdir(os.path.join(bskPath, 'src', 'utilities', 'vizProtobuffer'))
-            print(statusColor + "Building protobuffer interface files..." + endColor)
+            print(statusColor + "Building protobuffer interface files:" + endColor, end=" ")
             cmdString = ["protoc", "--cpp_out=./", "vizMessage.proto"]
             subprocess.check_call(cmdString)
+            print("Done")
             os.chdir(bskPath)
+
+        if self.options.pathToExternalModules:
+            print(statusColor + "Including External Folder: " + endColor + str(self.options.pathToExternalModules))
+
 
         root = os.path.abspath(os.path.curdir)
 
@@ -221,7 +251,9 @@ class BasiliskConan(ConanFile):
         cmake = CMake(self, set_cmake_flags=True, generator=self.generator)
         cmake.definitions["BUILD_OPNAV"] = self.options.opNav
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
+        cmake.definitions["EXTERNAL_MODULES_PATH"] = self.options.pathToExternalModules
         cmake.parallel = True
+        print(statusColor + "Configuring cmake..." + endColor)
         cmake.configure()
         add_basilisk_to_sys_path()
         if self.options.buildProject: 
@@ -233,6 +265,19 @@ class BasiliskConan(ConanFile):
                 cmake.build()
             print("Total Build Time: " + str(datetime.now()-start))
         return
+
+def add_basilisk_to_sys_path():
+    print("Adding Basilisk module to python\n")
+    add_basilisk_module_command = [sys.executable, "setup.py", "develop"]
+    if not is_running_virtual_env():
+        add_basilisk_module_command.append("--user")
+
+    process = subprocess.Popen(add_basilisk_module_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, err = process.communicate()
+    if err:
+        print("Error %s while running %s" % (err, add_basilisk_module_command))
+    else:
+        print("This resulted in the output: \n%s" % output.decode())
 
 def add_basilisk_to_sys_path():
     print("Adding Basilisk module to python\n")
@@ -276,7 +321,15 @@ if __name__ == "__main__":
         conanCmdString.append(' -o ' + opt + '=' + str(vars(args)[opt]))
     for opt, value in bskModuleOptionsString.items():
         if str(vars(args)[opt]):
-            conanCmdString.append(' -o ' + opt + '=' + str(vars(args)[opt]))
+            if opt == "pathToExternalModules":
+                externalPath = os.path.abspath(str(vars(args)[opt]).rstrip(os.path.sep))
+                if os.path.exists(externalPath):
+                    conanCmdString.append(' -o ' + opt + '=' + externalPath)
+                else:
+                    print(f"{failColor}Error: path {str(vars(args)[opt])} does not exist{endColor}")
+                    sys.exit(1)
+            else:
+                conanCmdString.append(' -o ' + opt + '=' + str(vars(args)[opt]))
     for opt, value in bskModuleOptionsFlag.items():
         if vars(args)[opt]:
             conanCmdString.append(' -o ' + opt + '=True')
@@ -290,3 +343,6 @@ if __name__ == "__main__":
     print(statusColor + "Running cmake:" + endColor)
     print(cmakeCmdString)
     os.system(cmakeCmdString)
+
+
+

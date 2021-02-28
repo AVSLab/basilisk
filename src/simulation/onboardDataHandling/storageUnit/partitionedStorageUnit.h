@@ -20,8 +20,8 @@
 #ifndef BASILISK_PARTITIONEDSTORAGEUNIT_H
 #define BASILISK_PARTITIONEDSTORAGEUNIT_H
 
-#include "onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief partioned storage unit class */
 class PartitionedStorageUnit: public DataStorageUnitBase {

@@ -21,18 +21,19 @@
 #define _VEHICLE_CONFIG_DATA_H_
 
 #include <stdint.h>
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/macroDefinitions.h"
+
+#include "cMsgCInterface/VehicleConfigMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {
     double ISCPntB_B[9];          /*!< [kg m^2] Spacecraft Inertia */
     double CoM_B[3];              /*!< [m] Center of mass of spacecraft in body*/
-    char outputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] Name of the output properties message*/
-    int32_t outputPropsID;       /*!< [-] Message ID associated with the output properties message*/
+    VehicleConfigMsg_C vecConfigOutMsg; /*!< [-] Name of the output properties message*/
+
     BSKLogger *bskLogger;                             //!< BSK Logging
 }VehConfigInputData;
 
@@ -42,7 +43,6 @@ extern "C" {
 void Update_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID);
 void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID);
 void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID);
-void CrossInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID);
 #ifdef __cplusplus
 }
 #endif

@@ -487,7 +487,7 @@ class Controller:
         return failed
 
     def generateICSims(self, caseList):
-        '''
+        """
         Generator function to clone a baseSimulation for IC run
 
         Args:
@@ -498,7 +498,7 @@ class Controller:
         Returns:
             generator<SimulationParams>
                 A generator that yields that number of cloned simulations
-        '''
+        """
 
         # make a list of simulations to execute by cloning the base-simulation and
         # changing each clone's index and filename to make a list of
@@ -525,7 +525,7 @@ class Controller:
             yield simParams
 
     def generateSims(self, simNumList):
-        '''
+        """
         Generator function to clone a baseSimulation
 
         Args:
@@ -536,7 +536,7 @@ class Controller:
         Returns:
             generator<SimulationParams>
                 A generator that yields that number of cloned simulations
-        '''
+        """
 
         # make a list of simulations to execute by cloning the base-simulation and
         # changing each clone's index and filename to make a list of
@@ -695,7 +695,7 @@ class Controller:
 
 
 class SimulationParameters():
-    '''
+    """
     This class represents the run parameters for a simulation, with information including
 
      - a function that creates the simulation
@@ -704,7 +704,7 @@ class SimulationParameters():
      - parameters describing the data to be retained for a simulation
      - whether randomized seeds should be applied to the simulation
      - whether data should be archived
-    '''
+    """
 
     def __init__(self, creationFunction, executionFunction, configureFunction,
                  retentionPolicies, dispersions, shouldDisperseSeeds,
@@ -743,7 +743,7 @@ class SimulationExecutor:
 
     @classmethod
     def __call__(cls, params):
-        '''
+        """
         In each worker process, we execute this function (by calling this object)
 
         Args:
@@ -754,7 +754,7 @@ class SimulationExecutor:
             success: bool
                 (True, simParams.index) if simulation run was successful
                 (False, simParams.index) if simulation run was unsuccessful
-        '''
+        """
         simParams = params[0]
         dataOutQueue = params[1]
 
@@ -775,11 +775,13 @@ class SimulationExecutor:
             # we may want to disperse random seeds
             if simParams.shouldDisperseSeeds:
                 # generate the random seeds for the model (but don't apply them yet)
-                randomSeedDispersions = cls.disperseSeeds(simInstance) #Note: This sets the RNGSeeds before all other modifications
+                # Note: This sets the RNGSeeds before all other modifications
+                randomSeedDispersions = cls.disperseSeeds(simInstance)
                 for name, value in randomSeedDispersions.items():
                     modifications[name] = value
 
-            # used if rerunning ICs from a .json file, modifications will contain the RNGSeeds that need to be set before selfInit()
+            # used if rerunning ICs from a .json file, modifications will contain the
+            # RNGSeeds that need to be set before selfInit()
             cls.populateSeeds(simInstance, modifications)
 
             # we may want to disperse parameters
@@ -840,7 +842,6 @@ class SimulationExecutor:
             except TypeError:
                 simParams.executionFunction(simInstance, simParams.filename)
 
-
             if len(simParams.retentionPolicies) > 0:
                 if simParams.icfilename != "":
                     retentionFile = simParams.icfilename + ".data"
@@ -860,9 +861,6 @@ class SimulationExecutor:
 
             if simParams.verbose:
                 print("Terminating simulation")
-
-            # terminate the simulation
-            simInstance.terminateSimulation()
 
             if simParams.verbose:
                 print("Thread", os.getpid(), "Job", simParams.index, "finished successfully")

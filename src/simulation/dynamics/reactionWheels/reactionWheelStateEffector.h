@@ -21,23 +21,25 @@
 #ifndef REACTIONWHEELSTATEEFFECTOR_H
 #define REACTIONWHEELSTATEEFFECTOR_H
 
-#include "../_GeneralModuleFiles/stateEffector.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
-#include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../_GeneralModuleFiles/dynamicObject.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 #include <Eigen/Dense>
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "_GeneralModuleFiles/sys_model.h"
-#include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "../../simMessages/rwCmdSimMsg.h"
-#include "../../simMessages/rwConfigSimMsg.h"
-#include "../../simMessages/rwConfigLogSimMsg.h"
-#include "../../simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
-#include "../../simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "utilities/avsEigenMRP.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDefC/RWCmdMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/RWConfigMsgPayload.h"
+#include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+
+#include "architecture/messaging/messaging.h"
+#include "architecture/utilities/bskLogging.h"
+
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 
 
@@ -54,22 +56,23 @@ public:
     void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
-	void SelfInit();
-	void CrossInit();
-	void addReactionWheel(RWConfigSimMsg *NewRW) {ReactionWheelData.push_back(*NewRW);}  //!< class method
+    void Reset(uint64_t CurrentSimNanos);
+    void addReactionWheel(RWConfigMsgPayload *NewRW);
 	void UpdateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureRWRequests(double CurrentTime);
     
 public:
-	std::vector<RWConfigSimMsg> ReactionWheelData;  //!< -- RW information2
+	std::vector<RWConfigMsgPayload *> ReactionWheelData;          //!< -- RW information
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
-	std::string InputCmds;                                      //!< -- message used to read command inputs
-	std::string OutputDataString;                               //!< -- port to use for output data
-    uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
-	std::vector<RWCmdSimMsg> NewRWCmds;                         //!< -- Incoming attitude commands
-	RWSpeedIntMsg outputStates;                                 //!< (-) Output data from the reaction wheels
+
+	ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorCmdInMsg;    //!< -- RW motor torque array cmd input message
+	Message<RWSpeedMsgPayload> rwSpeedOutMsg;                   //!< -- RW speed array output message
+    std::vector<Message<RWConfigLogMsgPayload>*> rwOutMsgs;      //!< -- vector of RW log output messages
+
+    std::vector<RWCmdMsgPayload> NewRWCmds;                     //!< -- Incoming attitude commands
+    RWSpeedMsgPayload rwSpeedMsgBuffer = {};                    //!< (-) Output data from the reaction wheels
     std::string nameOfReactionWheelOmegasState;                 //!< class variable
     std::string nameOfReactionWheelThetasState;                 //!< class variable
 	size_t numRW;                                               //!< number of reaction wheels
@@ -77,11 +80,7 @@ public:
     BSKLogger bskLogger;                                        //!< -- BSK Logging
 
 private:
-	std::vector<std::string> rwOutMsgNames;                     //!< -- vector with the message names of each RW
-	std::vector<int64_t> rwOutMsgIds;                          //!< -- vector with the ID of each RW
-	int64_t CmdsInMsgID;                                        //!< -- Message ID for incoming data
-	int64_t StateOutMsgID;                                      //!< -- Message ID for outgoing data
-	ArrayMotorTorqueIntMsg IncomingCmdBuffer;                     //!< -- One-time allocation for savings
+    ArrayMotorTorqueMsgPayload incomingCmdBuffer = {};          //!< -- One-time allocation for savings
 	uint64_t prevCommandTime;                                   //!< -- Time for previous valid thruster firing
 
 	StateData *hubSigma;                                        //!< class variable

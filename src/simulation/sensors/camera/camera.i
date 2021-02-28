@@ -22,7 +22,7 @@
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 %include "swig_conly_data.i"
 
@@ -31,11 +31,11 @@ from Basilisk.simulation.swig_common_model import *
 %include "std_vector.i"
 %include "sys_model.h"
 %include "camera.h"
-%include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
-%include "../simulation/simFswInterfaceMessages/cameraConfigMsg.h"
-GEN_SIZEOF(CameraImageMsg)
-GEN_SIZEOF(CameraConfigMsg)
 
+%include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+struct CameraImageMsg_C;
+%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
 
 %pythoncode %{
 import sys

@@ -17,6 +17,7 @@ Install
    Install/installOnMacOS
    Install/installOnWindows
    Install/installBuild
+   Install/buildExtModules
    Install/installOptionalPackages
    Install/customPython
 

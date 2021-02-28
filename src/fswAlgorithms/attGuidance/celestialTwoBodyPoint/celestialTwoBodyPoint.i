@@ -27,17 +27,16 @@
 %ignore Update_celestialTwoBodyPoint;
 %constant void SelfInit_celestialTwoBodyPoint(void*, uint64_t);
 %ignore SelfInit_celestialTwoBodyPoint;
-%constant void CrossInit_celestialTwoBodyPoint(void*, uint64_t);
-%ignore CrossInit_celestialTwoBodyPoint;
 %constant void Reset_celestialTwoBodyPoint(void*, uint64_t, uint64_t);
 %ignore Reset_celestialTwoBodyPoint;
-%include "../simFswInterfaceMessages/ephemerisIntMsg.h"
-%include "../simFswInterfaceMessages/navTransIntMsg.h"
-%include "../../fswMessages/attRefFswMsg.h"
-GEN_SIZEOF(celestialTwoBodyPointConfig);
-GEN_SIZEOF(EphemerisIntMsg);
-GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(AttRefFswMsg);
+
+%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+struct EphemerisMsg_C;
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+struct AttRefMsg_C;
+
 %include "celestialTwoBodyPoint.h"
 
 %pythoncode %{

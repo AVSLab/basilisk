@@ -20,10 +20,12 @@
 #ifndef _RASTER_MANAGER_
 #define _RASTER_MANAGER_
 
-#include "messaging/static_messaging.h"
+
 #include <stdint.h>
-#include "fswMessages/attStateFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+
+#include "cMsgCInterface/AttStateMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 
@@ -45,11 +47,11 @@ typedef struct {
     //uint64_t currentMnvrTime;
     uint64_t mnvrStartTime;                         /*!< maneuver start time */
     /* Declare module IO interfaces */
-    char        AttStateOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< The name of the output message containing the
-                                                                 commanded attitude references states  */
-    int32_t     AttStateOutMsgID;                           /*!< [-] ID for the outgoing attitude state message */
+    AttStateMsg_C attStateOutMsg;                   /*!< The name of the output message containing the
+                                                         commanded attitude references states  */
+
     /* Output attitude reference data to send */
-    AttStateFswMsg attOutSet;                         //!< output message copy
+    AttStateMsgPayload attOutSet;                   //!< output message copy
     BSKLogger *bskLogger;                             //!< BSK Logging
 }rasterManagerConfig;
 
@@ -58,7 +60,6 @@ extern "C" {
 #endif
     
     void SelfInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID);
-    void CrossInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID);
     void Reset_rasterManager(rasterManagerConfig *configData, uint64_t callTime, int64_t moduleID);
     void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, int64_t moduleID);
     

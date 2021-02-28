@@ -17,9 +17,9 @@
 
  */
 
-#include "attDetermination/_GeneralModuleFiles/ukfUtilities.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "utilities/bsk_Print.h"
+#include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/bsk_Print.h"
 #include <math.h>
 
 void ukfQRDJustR(

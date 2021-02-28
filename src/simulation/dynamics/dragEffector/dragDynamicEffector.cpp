@@ -19,23 +19,21 @@
 
 #include <iostream>
 #include "dragDynamicEffector.h"
-#include "architecture/messaging/system_messaging.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
 
 DragDynamicEffector::DragDynamicEffector()
 {
 	this->coreParams.projectedArea = 0.0;
 	this->coreParams.dragCoeff = 0.0;
     this->coreParams.comOffset.setZero();
-	this->atmoDensInMsgName = "atmo_dens_0_data";
 	this->modelType = "cannonball";
 	this->forceExternal_B.fill(0.0);
 	this->torqueExternalPntB_B.fill(0.0);
 	this->v_B.fill(0.0);
 	this->v_hat_B.fill(0.0);
-	this->densInMsgId = -1;
-	return;
+
+    return;
 }
 
 /*! The destructor.*/
@@ -44,32 +42,17 @@ DragDynamicEffector::~DragDynamicEffector()
 	return;
 }
 
-/*! This method currently does very little.
+
+/*! This method is used to reset the module.
  @return void
  */
-void DragDynamicEffector::SelfInit()
+void DragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
-  return;
-}
+    // check if input message has not been included
+    if (!this->atmoDensInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "dragDynamicEffector.atmoDensInMsg was not linked.");
+    }
 
-/*! This method is used to connect the input density message to the drag effector.
- It sets the message ID based on what it finds for the input string.
- @return void
- */
-void DragDynamicEffector::CrossInit()
-{
-	//! - Find the message ID associated with the atmoDensInMsgName string.
-	this->densInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->atmoDensInMsgName,
-																	 sizeof(AtmoPropsSimMsg), moduleID);
-}
-
-/*! This method is used to set the input density message produced by some atmospheric model.
-@return void
-*/
-void DragDynamicEffector::setDensityMessage(std::string newDensMessage)
-{
-	this->atmoDensInMsgName = newDensMessage;
-	return;
 }
 
 /*! The DragEffector does not write output messages to the rest of the sim.
@@ -88,15 +71,9 @@ atmospheric data.
 bool DragDynamicEffector::ReadInputs()
 {
 	bool dataGood;
-	//! - Zero the command buffer and read the incoming command array
-	SingleMessageHeader localHeader;
-    memset(&this->atmoInData, 0x0, sizeof(AtmoPropsSimMsg));
-	memset(&localHeader, 0x0, sizeof(localHeader));
-	dataGood = SystemMessaging::GetInstance()->ReadMessage(this->densInMsgId, &localHeader,
-														  sizeof(AtmoPropsSimMsg),
-														   reinterpret_cast<uint8_t*> (&this->atmoInData), moduleID);
+    this->atmoInData = this->atmoDensInMsg();
+    dataGood = this->atmoDensInMsg.isWritten();
 	return(dataGood);
-
 }
 
 /*!

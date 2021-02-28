@@ -26,14 +26,17 @@
 %ignore Update_dvAccumulation;
 %constant void SelfInit_dvAccumulation(void*, uint64_t);
 %ignore SelfInit_dvAccumulation;
-%constant void CrossInit_dvAccumulation(void*, uint64_t);
-%ignore CrossInit_dvAccumulation;
 %constant void Reset_dvAccumulation(void*, uint64_t, uint64_t);
 %ignore Reset_dvAccumulation;
+
 %include "dvAccumulation.h"
 
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-GEN_SIZEOF(NavTransIntMsg);
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "architecture/msgPayloadDefC/AccDataMsgPayload.h"
+struct AccDataMsg_C;
+%include "architecture/msgPayloadDefC/AccPktDataMsgPayload.h"
+struct AccPktDataMsg_C;
 
 %pythoncode %{
 import sys

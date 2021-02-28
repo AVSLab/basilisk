@@ -24,7 +24,7 @@
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "swig_conly_data.i"
@@ -35,19 +35,16 @@ from Basilisk.simulation.swig_common_model import *
 %include "../_GeneralModuleFiles/powerNodeBase.h"
 %include "simpleSolarPanel.h"
 
-
-
-%include "../../simMessages/powerNodeUsageSimMsg.h"
-%include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-%include "../../simMessages/eclipseSimMsg.h"
-
-GEN_SIZEOF(PowerNodeUsageSimMsg)
-GEN_SIZEOF(DeviceStatusIntMsg)
-GEN_SIZEOF(EclipseSimMsg);
-GEN_SIZEOF(SpicePlanetStateSimMsg);
-GEN_SIZEOF(SCPlusStatesSimMsg);
+%include "architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.h"
+struct PowerNodeUsageMsg_C;
+%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
+struct DeviceStatusMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
+struct EclipseMsg_C;
 
 %pythoncode %{
 import sys

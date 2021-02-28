@@ -7,6 +7,7 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import faultDetection
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.architecture import messaging
 
 import os, inspect, pytest
 import numpy as np
@@ -92,16 +93,11 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     # Construct the ephemNavConverter module
     # Set the names for the input messages
     faults = faultDetection.FaultDetectionData()  # Create a config struct
-    faults.navMeasPrimaryMsgName = "primary_opnav"
-    faults.navMeasSecondaryMsgName = "secondary_opnav"
-    faults.cameraConfigMsgName = "camera_config_name"
-    faults.attInMsgName = "nav_att_name"
-    faults.opNavOutMsgName = "output_nav_msg"
     faults.sigmaFault = 3
     faults.faultMode = faultMode
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
-    # This calls the algContain to setup the selfInit, crossInit, update, and reset
+    # This calls the algContain to setup the selfInit, update, and reset
     faultsWrap = unitTestSim.setModelDataWrap(faults)
     faultsWrap.ModelTag = "faultDet"
 
@@ -109,20 +105,22 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     unitTestSim.AddModelToTask(unitTaskName, faultsWrap, faults)
 
     # Create the input messages.
-    inputPrimary = faultDetection.OpNavFswMsg()
-    inputSecondary = faultDetection.OpNavFswMsg()
-    inputCamera = faultDetection.CameraConfigMsg()
-    inputAtt = faultDetection.NavAttIntMsg()
+    inputPrimary = messaging.OpNavMsgPayload()
+    inputSecondary = messaging.OpNavMsgPayload()
+    inputCamera = messaging.CameraConfigMsgPayload()
+    inputAtt = messaging.NavAttMsgPayload()
 
     # Set camera
     inputCamera.fieldOfView = 2.0 * np.arctan(10*1e-3 / 2.0 / (1.*1e-3) )  # 2*arctan(s/2 / f)
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1.,0.3,0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, faults.cameraConfigMsgName, inputCamera)
+    camInMsg = messaging.CameraConfigMsg().write(inputCamera)
+    faults.cameraConfigInMsg.subscribeTo(camInMsg)
 
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, faults.attInMsgName, inputAtt)
+    attInMsg = messaging.NavAttMsg().write(inputAtt)
+    faults.attInMsg.subscribeTo(attInMsg)
 
     BN = rbk.MRP2C(inputAtt.sigma_BN)
     CB = rbk.MRP2C(inputCamera.sigma_CB)
@@ -134,7 +132,8 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     inputPrimary.covar_C = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
     inputPrimary.covar_N = np.dot(np.dot(NC, np.array([0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]).reshape([3,3])), NC.T).flatten().tolist()
     inputPrimary.timeTag = 12345
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, faults.navMeasPrimaryMsgName, inputPrimary)
+    op1InMsg = messaging.OpNavMsg().write(inputPrimary)
+    faults.navMeasPrimaryInMsg.subscribeTo(op1InMsg)
 
     # Set secondary
     inputSecondary.r_BN_C = r_c2
@@ -143,10 +142,13 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     inputSecondary.covar_C = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
     inputSecondary.covar_N = np.dot(np.dot(NC, np.array([0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]).reshape([3,3])), NC.T).flatten().tolist()
     inputSecondary.timeTag = 12345
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, faults.navMeasSecondaryMsgName, inputSecondary)
+    op2InMsg = messaging.OpNavMsg().write(inputSecondary)
+    faults.navMeasSecondaryInMsg.subscribeTo(op2InMsg)
+
+    dataLog = faults.opNavOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation
-    unitTestSim.TotalSim.logThisMessage(faults.opNavOutMsgName)
     unitTestSim.InitializeSimulation()
     # The result isn't going to change with more time. The module will continue to produce the same result
     unitTestSim.ConfigureStopTime(testProcessRate)  # seconds to stop simulation
@@ -198,27 +200,28 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     posErr = 1e-10
     print(posErr)
 
-    outputR = unitTestSim.pullMessageLogData(faults.opNavOutMsgName + '.r_BN_C',  list(range(3)))
-    outputCovar = unitTestSim.pullMessageLogData(faults.opNavOutMsgName + '.covar_C',  list(range(9)))
-    outputTime = unitTestSim.pullMessageLogData(faults.opNavOutMsgName + '.timeTag')
-    detected = unitTestSim.pullMessageLogData(faults.opNavOutMsgName + '.faultDetected')
+    outputR = dataLog.r_BN_C
+    outputCovar = dataLog.covar_C
+    outputTime = dataLog.timeTag
+    detected = dataLog.faultDetected
+
     #
     #
     for i in range(len(outputR[-1, 1:])):
-        if np.abs(r_Cexp[i] - outputR[-1, i+1]) > 1E-10 or np.isnan(outputR.any()):
+        if np.abs(r_Cexp[i] - outputR[-1, i]) > 1E-10 or np.isnan(outputR.any()):
             testFailCount += 1
             testMessages.append("FAILED: Position Check in pixelLine")
 
-    for i in range(len(outputCovar[-1, 1:])):
-        if np.abs((covar_Cexp[i] - outputCovar[-1, i+1])) > 1E-10 or np.isnan(outputTime.any()):
+    for i in range(len(outputCovar[-1, 0:])):
+        if np.abs((covar_Cexp[i] - outputCovar[-1, i])) > 1E-10 or np.isnan(outputTime.any()):
             testFailCount += 1
             testMessages.append("FAILED: Covar Check in pixelLine")
 
-    if np.abs((timTagExp - outputTime[-1, 1])) > 1E-10 or np.isnan(outputTime.any()):
+    if np.abs((timTagExp - outputTime[-1])) > 1E-10 or np.isnan(outputTime.any()):
         testFailCount += 1
         testMessages.append("FAILED: Time Check in pixelLine")
 
-    if np.abs(faultDetectedTrue - detected[-1, 1]) > 1E-10 or np.isnan(outputTime.any()):
+    if np.abs(faultDetectedTrue - detected[-1]) > 1E-10 or np.isnan(outputTime.any()):
         testFailCount += 1
         testMessages.append("FAILED: Time Check in pixelLine")
     #

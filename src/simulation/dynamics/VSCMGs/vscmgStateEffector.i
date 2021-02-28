@@ -22,7 +22,7 @@
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
 %include "swig_eigen.i"
@@ -35,25 +35,23 @@ from Basilisk.simulation.swig_common_model import *
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "vscmgStateEffector.h"
-%include "simMessages/vscmgCmdSimMsg.h"
-%include "simMessages/vscmgConfigSimMsg.h"
-%include "simFswInterfaceMessages/vscmgSpeedIntMsg.h"
-%include "simFswInterfaceMessages/vscmgArrayTorqueIntMsg.h"
-%include "simFswInterfaceMessages/macroDefinitions.h"
 
-//%include "spacecraftPlus.h"
-//%include "hubEffector.h"
+%include "architecture/msgPayloadDefC/VSCMGCmdMsgPayload.h"
+struct VSCMGCmdMsg_C;
+%include "architecture/msgPayloadDefC/VSCMGSpeedMsgPayload.h"
+struct VSCMGSpeedMsg_C;
+%include "architecture/msgPayloadDefC/VSCMGArrayTorqueMsgPayload.h"
+struct VSCMGArrayTorqueMsg_C;
+%include "architecture/msgPayloadDefCpp/VSCMGConfigMsgPayload.h"
+
+%include "architecture/utilities/macroDefinitions.h"
 
 %include "std_vector.i"
 namespace std {
-    %template(VSCMGConfigVector) vector<VSCMGConfigSimMsg>;
-	%template(VSCMGCmdVector) vector<VSCMGCmdSimMsg>;
+    %template(VSCMGConfigVector) vector<VSCMGConfigMsgPayload>;
+	%template(VSCMGCmdVector) vector<VSCMGCmdMsgPayload>;
 }
 
-
-
-
-GEN_SIZEOF(VSCMGArrayTorqueIntMsg);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

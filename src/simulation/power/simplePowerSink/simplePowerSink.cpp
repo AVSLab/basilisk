@@ -18,7 +18,6 @@
  */
 
 #include "simplePowerSink.h"
-#include "../../simMessages/powerNodeUsageSimMsg.h"
 
 /*! Constructor, which sets the default nodePowerOut to zero.
 */
@@ -36,7 +35,7 @@ SimplePowerSink::~SimplePowerSink(){
 
 /*! Loads the nodePowerOut attribute into the powerUsageSimMessage instance.
 */
-void SimplePowerSink::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg){
+void SimplePowerSink::evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageSimMsg){
 
 
     powerUsageSimMsg->netPower = this->nodePowerOut;

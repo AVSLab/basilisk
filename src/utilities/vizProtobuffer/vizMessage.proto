@@ -34,14 +34,17 @@ message VizMessage{
         repeated double position = 2;   //SpicePlanetStateSimMsg.PositionVector
         repeated double velocity = 3;   //SpicePlanetStateSimMsg.VelocityVector
         repeated double rotation = 4;  //SpicePlanetStateSimMsg.J20002Pfix
+        double mu = 5; // [km^3/s^2] Gravitational parameter must be provided if body name is not in the basic Vizard body dictionary
+        double radiusEq = 6; //[km] Equatorial radius must be provided if body name is not in the basic Vizard body dictionary
+        double radiusRatio = 7; //[radiusPolar/radiusEq] Used to compute ellipticity. It is optional and is provided for bodies in the basic Vizard body dictionary.  Default is 1.
     }
   
     //Spacecraft message carry spacecraft position, velocity, and rotation data and proto messages for actuators and sensors
     message Spacecraft{
         string spacecraftName = 1;
-        repeated double position = 2;  //SCPlusStatesSimMsg.r_BN_N
-        repeated double velocity = 3;  //SCPlusStatesSimMsg.v_BN_N
-        repeated double rotation = 4;  //SCPlusStatesSimMsg.sigma_B
+        repeated double position = 2;  //SCStatesSimMsg.r_BN_N
+        repeated double velocity = 3;  //SCStatesSimMsg.v_BN_N
+        repeated double rotation = 4;  //SCStatesSimMsg.sigma_B
       
         repeated ReactionWheel reactionWheels = 5;
         repeated Thruster thrusters = 6;

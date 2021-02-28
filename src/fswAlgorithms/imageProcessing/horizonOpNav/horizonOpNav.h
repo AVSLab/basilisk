@@ -20,30 +20,28 @@
 #ifndef _HORIZON_OPNAV_H_
 #define _HORIZON_OPNAV_H_
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/limbOpNavMsg.h"
-#include "simFswInterfaceMessages/cameraConfigMsg.h"
-#include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "fswMessages/opNavFswMsg.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
-#include "utilities/rigidBodyKinematics.h"
-#include "simulation/utilities/bskLogging.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/LimbOpNavMsg_C.h"
+#include "cMsgCInterface/CameraConfigMsg_C.h"
+#include "cMsgCInterface/OpNavMsg_C.h"
+
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief The configuration structure for the horizon OpNav module.*/
 typedef struct {
-    char opNavOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for relative position
-    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
-    char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message
-    char limbInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the limb message
+    OpNavMsg_C opNavOutMsg; //!< [-] output navigation message for relative position
+    CameraConfigMsg_C cameraConfigInMsg; //!< camera config input message
+    NavAttMsg_C attInMsg; //!< attitude input message
+    LimbOpNavMsg_C limbInMsg; //!< limb input message
+    
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
     double noiseSF;   //!< A scale factor to control measurement noise
-    int32_t stateOutMsgID;    //!< [-] The ID associated with the outgoing message
-    int32_t attInMsgID;    //!< [-] The ID associated with the outgoing message
-    int32_t limbInMsgID;    //!< [-] The ID associated with the incoming circle message
-    int32_t cameraConfigMsgID;  //!< [-] The ID associated with the incoming camera config message
+
     BSKLogger *bskLogger;                             //!< BSK Logging
 }HorizonOpNavData;
 
@@ -52,7 +50,6 @@ extern "C" {
 #endif
     
     void SelfInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID);
-    void CrossInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID);
     void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime,
         uint64_t moduleID);
     void Reset_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64_t moduleID);

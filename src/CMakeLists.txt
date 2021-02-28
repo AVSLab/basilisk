@@ -88,6 +88,22 @@ function(create_symlinks destinationPath)
 endfunction(create_symlinks)
 
 
+function(add_message_headers)
+
+
+	file(GLOB CMESSAGE_HEADER_FILES
+	            "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefC/*.h"
+	            "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/*.h"
+	        )
+	file(GLOB CPPMESSAGE_HEADER_FILES
+	            "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefCpp/*.h"
+	            "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/*.h"
+	        )
+	add_custom_target(msgPayloadDefC SOURCES ${CMESSAGE_HEADER_FILES})
+	add_custom_target(msgPayloadDefCpp SOURCES ${CPPMESSAGE_HEADER_FILES})
+	set_target_properties(msgPayloadDefC PROPERTIES FOLDER architecture)
+	set_target_properties(msgPayloadDefCpp PROPERTIES FOLDER  architecture)
+endfunction(add_message_headers)
 
 
 
@@ -108,6 +124,10 @@ function(sub_dir_list result curdir)
   SET(${result} ${dirlist} PARENT_SCOPE)
 endfunction(sub_dir_list)
 
+# add header search directories
+include_directories("${CMAKE_SOURCE_DIR}/../dist3/autoSource")
+include_directories("${CMAKE_SOURCE_DIR}")
+
 
 function(generate_package_libraries INIT_DIRECTORY)
     # Find all _GeneralModuleFiles and put them into library targets so they aren't rewrapped, built with every module.
@@ -124,28 +144,28 @@ function(generate_package_libraries INIT_DIRECTORY)
 
         # Set the library name (ex. dynamicsLib, environmentLib, etc)
         set(LIB_NAME "${PARENT_DIR_NAME}Lib")
-
+        #Added to build ExternalModulesLib 
+        file(GLOB LIB_DIR RELATIVE ${CMAKE_SOURCE_DIR} "${INIT_DIRECTORY}/${LIB_DIR}")
         # Grab the library source files
         file(GLOB C_FILES
                 "${LIB_DIR}/*.cpp"
                 "${LIB_DIR}/*.c" 
                 "${LIB_DIR}/*.h"
             )
-
         # Grab the framework source files
         file(GLOB BSK_FWK_FILES
-            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.cpp" #Might not be needed
-            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.h"
-            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.c"
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp" #Might not be needed
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.c"
             )
 
         # Add Target
         add_library(${LIB_NAME} SHARED ${C_FILES} ${BSK_FWK_FILES})
 
         # Link all necessary libraries
-        target_link_libraries(${LIB_NAME} SimUtilities)
-        target_link_libraries(${LIB_NAME} SimMessaging)
-        target_link_libraries(${LIB_NAME} AlgorithmMessaging)
+        target_link_libraries(${LIB_NAME} ArchitectureUtilities)
+        target_link_libraries(${LIB_NAME} ModuleIdGenerator)
+        target_link_libraries(${LIB_NAME} cMsgCInterface)
         target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
         target_link_libraries(${LIB_NAME} Eigen3::Eigen3)
 
@@ -229,23 +249,32 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     if(TARGET_LIST)
         string(REPLACE "/" ";" DirList "${TARGET_LIST}")
         list(GET DirList 1 SUBMODULE)
-
+    
         #It is redundant to compute simulation modules for each target.
         #This should be fixed when modules' directories are restructured.
         file(GLOB GEN_FILES
-            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.c"
-            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.cpp"
-            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.h"
-            "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.i"
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.c"
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp"
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
+            "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.i"
         )
-        
-        file(GLOB GEN_FILES_LOCAL
+    	if(${MODULE_DIR} STREQUAL "ExternalModules")
+    		 file(GLOB GEN_FILES_LOCAL
+                    "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.c"
+                    "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.cpp"
+                    "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.h"
+                    "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.i"
+                    )
+    	
+        else()
+        	file(GLOB GEN_FILES_LOCAL
                     "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.c"
                     "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.cpp"
                     "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.h"
                     "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.i"
                     )
-
+        endif()
+    
     endif()
     foreach(TARGET_FILE ${TARGET_LIST})
         get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
@@ -270,7 +299,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
                 "${PARENT_DIR}/*.h"
                 "${PARENT_DIR}/*.cmake"
                 "${PARENT_DIR}/*.rst")
-         file(GLOB SWIG_DEP
+        file(GLOB SWIG_DEP
                 "${PARENT_DIR}/*.c"
                 "${PARENT_DIR}/*.cpp"
                 "${PARENT_DIR}/*.h")
@@ -306,10 +335,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         target_include_directories(${TARGET_NAME} PRIVATE ${PYTHON_INCLUDE_PATH}) # Exposes python.h to wrap.c(xx) file
         target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/${PARENT_DIR}) # Exposes module .h files to the PYTHON_wrap.c(xx) file (not located in src)
 
-        #TODO: V2 change recommended -- messages should be in there own messaging folder at same level as sim/fsw/framework.
-        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/simulation") # Exposes simMessages, simFswInterfaceMessages for easy includes
-        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/fswAlgorithms") # Exposes fswMessages for easy includes
-        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles") # Exposes framework files for easy includes
+        target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles") # Exposes framework files for easy includes
         target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/../libs") # Exposes third party library include folders
 
         # Link all necessary libraries
@@ -317,12 +343,11 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
             target_link_libraries(${TARGET_NAME} ${LIB}) 
         endforeach()
 
-        # TODO: This is a better way to organize the dist olders, but it doesn't adhere to current python import structure
-        # Would make (from Basilisk.simulation import SpacecraftPlus) --> (from Basilisk.simulation.dynamics.SpacecraftDynamics import SpacecraftPlus)
-        # to do this, set the output directories to ${CMAKE_BINARY_DIR}/Basilisk/${PARENT_DIR}) 
-        
-        set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${PARENT_DIR}) # define folder in IDE
-
+        if(${MODULE_DIR} STREQUAL "ExternalModules")
+        	set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${MODULE_DIR})
+        else()
+        	set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${PARENT_DIR}) # define folder in IDE
+        endif()
         # Define the location for the .so / .dylib file
         set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}") 
         set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
@@ -404,6 +429,7 @@ if(MSVC)
     add_definitions(/W3)
     add_definitions(/wd"4913")
     add_definitions(/wd"4251")
+    add_definitions(/bigobj)
     # Make sure we are using Multi-Threaded run time library
     foreach(flag
         CMAKE_C_FLAGS
@@ -475,24 +501,22 @@ else()
 	set(CMAKE_INSTALL_RPATH "\$ORIGIN/../../")
 endif()
 
-set_property(GLOBAL PROPERTY BUILT_LIB_LIST "SimUtilities;SimMessaging")
-set_property(GLOBAL PROPERTY ALG_LIB_LIST "AlgorithmMessaging")
+set_property(GLOBAL PROPERTY BUILT_LIB_LIST "ArchitectureUtilities")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 
 # Targets that must be built first
-add_subdirectory("simulation/utilities")
+add_subdirectory("architecture/utilities")
 add_subdirectory("utilities") # has protobuffers included
-add_subdirectory("simulation/architecture/messaging")
-add_subdirectory("fswAlgorithms/messaging")
+add_subdirectory("architecture/messaging/cMsgCInterface")
 
 
-# TODO: Currently the libraries generated works well except for the simulationLib which really is the architectureLib -- I'd like for these files to be moved.
+
 # TODO: I'd call this generate_libraries(), because it really does find all of them.
 # TODO: I'd like for all generated libraries to end up in a dist/Basilisk/lib folder rather than the /dist/Basilisk folder; however haven't found a way to use target_link_libraries() in a cross platform way to support this (needs full path and custom extensions --.dylib, .lib, .a, etc -- which gets messy in CMake).
 generate_package_libraries("${CMAKE_SOURCE_DIR}") # This finds GeneralModuleFiles and generates a library of the parentDirectory name
 
-set(ARCHITECTURE_LIBS simulationLib SimUtilities SimMessaging)
+set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities ModuleIdGenerator cMsgCInterface)
 
 ##############
 # SIMULATION #
@@ -510,28 +534,32 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/deviceInterface" DEVICE_INT
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/power" POWER_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/navigation" NAV_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sensors" SENSORS_TARGETS)
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sim_synch" SIM_SYNCH_TARGETS)
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/utilities" UTILITIES_TARGETS)
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/utilitiesSelfCheck" UTILITIES_SELF_CHECK_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simSynch" SIM_SYNCH_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizard" VIZ_INTERFACE_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/cppModuleTemplate" CPP_MODULE_TEMPLATE_TARGETS)
 
-
-
-
+if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
+	string(REPLACE "\\" "/" EXTERNAL_MODULES_PATH "${EXTERNAL_MODULES_PATH}")
+	include_directories("${EXTERNAL_MODULES_PATH}")
+	find_package_targets("${EXTERNAL_MODULES_PATH}" EXTERNAL_MODULE_TARGETS)
+	if(EXISTS "${EXTERNAL_MODULES_PATH}/ExternalModules/_GeneralModuleFiles")
+		generate_package_libraries("${EXTERNAL_MODULES_PATH}")
+		generate_package_targets("${EXTERNAL_MODULE_TARGETS}" "ExternalModulesLib;${ARCHITECTURE_LIBS};" "ExternalModules")
+	else()
+		generate_package_targets("${EXTERNAL_MODULE_TARGETS}" "${ARCHITECTURE_LIBS};" "ExternalModules")
+	endif()
+endif(NOT "${EXTERNAL_MODULE_PATH}" STREQUAL "")
 
 generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation") # The quotations around DYN_TARGETS informs function that it is a list
-generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation") # TODO: include cspice for just spice_interface, not all packages
+generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation") # TODO: include cspice for just spiceInterface, not all packages
 generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${DEVICE_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${POWER_TARGETS}" "powerLib;${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${NAV_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${SENSORS_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${SIM_SYNCH_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-generate_package_targets("${UTILITIES_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-generate_package_targets("${UTILITIES_SELF_CHECK_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${VIZ_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-
-
+generate_package_targets("${CPP_MODULE_TEMPLATE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
 
 
@@ -539,7 +567,7 @@ generate_package_targets("${VIZ_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "sim
 ##################
 # FSW ALGORITHMS #
 ##################
-find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/_fswTemplateFolder" FSW_TEMPLATE_MODULE_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/_cModuleTemplateFolder" C_TEMPLATE_MODULE_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attControl" ATT_CONTROL_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attDetermination" ATT_DET_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attGuidance" ATT_GUID_TARGETS)
@@ -555,7 +583,7 @@ find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/transDetermination" TRAN
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/vehicleConfigData" VEH_CONFIG_TARGETS)
 
 
-generate_package_targets("${FSW_TEMPLATE_MODULE_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${C_TEMPLATE_MODULE_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_CONTROL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_DET_TARGETS}" "attDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_GUID_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
@@ -574,25 +602,15 @@ generate_package_targets("${VEH_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlg
 ##################
 # MESSAGES #
 ##################
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simMessages" SIM_MESSAGES_TARGETS)
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simFswInterfaceMessages" SIM_FSW_INTERFACE_TARGETS)
-
-generate_package_targets("${SIM_MESSAGES_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-generate_package_targets("${SIM_FSW_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-
-find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/fswMessages" FSW_MESSAGES_TARGETS)
-generate_package_targets("${FSW_MESSAGES_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
-
+add_message_headers()
 
 
 ##################
 # ARCHITECTURE #
 ##################
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/architecture" ARCHITECTURE_TARGETS)
-generate_package_targets("${ARCHITECTURE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+find_package_targets("${CMAKE_SOURCE_DIR}/architecture" ARCHITECTURE_TARGETS)
+generate_package_targets("${ARCHITECTURE_TARGETS}" "${ARCHITECTURE_LIBS};" "architecture")
 
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" SIM_TARGETS)
-generate_package_targets("${SIM_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
 ###########
 # Pyswice #
@@ -608,6 +626,7 @@ generate_package_targets("${PYSWICE_TARGETS}" "${ARCHITECTURE_LIBS};${library_de
 
 # Must make the build directories first, so that cmake can insert empty init files before build (linux specific need)
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/simulation")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
 

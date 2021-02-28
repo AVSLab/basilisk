@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        spacecraftPointing
@@ -31,22 +30,18 @@
 # to the expected outcome of the module.
 
 import pytest
-import sys, os, inspect
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
+import os, inspect
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import spacecraftPointing           # import the module that is to be tested
-from Basilisk.fswAlgorithms import cheby_pos_ephem
 from Basilisk.utilities import macros
 import numpy as np
-from Basilisk.utilities import astroFunctions as af
+from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("case", [
      (1)        # Regular alignment vector
@@ -73,9 +68,6 @@ def spacecraftPointingTestFunction(show_plots, case):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)     # update process rate update time
@@ -91,9 +83,6 @@ def spacecraftPointingTestFunction(show_plots, case):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.chiefPositionInMsgName = "chiefInMsg"
-    moduleConfig.deputyPositionInMsgName = "deputyInMsg"
-    moduleConfig.attReferenceOutMsgName = "attRefOutMsg"
     moduleConfig.alignmentVector_B = [1.0, 0.0, 0.0]
     if (case == 2):
         moduleConfig.alignmentVector_B = [0.0, 0.0, 1.0]
@@ -116,43 +105,27 @@ def spacecraftPointingTestFunction(show_plots, case):
     #
     #   Chief Input Message
     #
-    chiefInputData = spacecraftPointing.NavTransIntMsg()  # Create a structure for the input message
-    chiefInputMsgSize = chiefInputData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.chiefPositionInMsgName,
-                                          chiefInputMsgSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
+    chiefInputData = messaging.NavTransMsgPayload()  # Create a structure for the input message
+    chiefInputData.r_BN_N = r_BN_N[0]
+    chiefInMsg = messaging.NavTransMsg().write(chiefInputData)
 
     #
     #   Deputy Input Message
     #
-    deputyInputData = spacecraftPointing.NavTransIntMsg()  # Create a structure for the input message
-    deputyInputMsgSize = deputyInputData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.deputyPositionInMsgName,
-                                          deputyInputMsgSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
-
-    chiefInputData.r_BN_N = r_BN_N[0]
+    deputyInputData = messaging.NavTransMsgPayload()  # Create a structure for the input message
     deputyInputData.r_BN_N = r_BN_N2[0]
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.chiefPositionInMsgName,
-                                          chiefInputMsgSize,
-                                          0,
-                                          chiefInputData)
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.deputyPositionInMsgName,
-                                          deputyInputMsgSize,
-                                          0,
-                                          deputyInputData)
+    deputyInMsg = messaging.NavTransMsg().write(deputyInputData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.attReferenceOutMsgName, testProcessRate)
+    dataLog = moduleConfig.attReferenceOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.chiefPositionInMsg.subscribeTo(chiefInMsg)
+    moduleConfig.deputyPositionInMsg.subscribeTo(deputyInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
-
-
 
     # Set the simulation time.
     # NOTE: the total simulation time may be longer than this value. The
@@ -168,72 +141,40 @@ def spacecraftPointingTestFunction(show_plots, case):
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.2))
 
     chiefInputData.r_BN_N = r_BN_N[1]
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.chiefPositionInMsgName,
-                                          chiefInputMsgSize,
-                                          0,
-                                          chiefInputData)
+    chiefInMsg.write(chiefInputData)
 
     deputyInputData.r_BN_N = r_BN_N2[1]
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.deputyPositionInMsgName,
-                                          deputyInputMsgSize,
-                                          0,
-                                          deputyInputData)
+    deputyInMsg.write(deputyInputData)
 
     unitTestSim.ExecuteSimulation()
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.3))
 
     chiefInputData.r_BN_N = r_BN_N[2]
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.chiefPositionInMsgName,
-                                          chiefInputMsgSize,
-                                          0,
-                                          chiefInputData)
+    chiefInMsg.write(chiefInputData)
 
     deputyInputData.r_BN_N = r_BN_N2[2]
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.deputyPositionInMsgName,
-                                          deputyInputMsgSize,
-                                          0,
-                                          deputyInputData)
+    deputyInMsg.write(deputyInputData)
 
     unitTestSim.ExecuteSimulation()
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.4))
 
     chiefInputData.r_BN_N = r_BN_N[3]
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.chiefPositionInMsgName,
-                                          chiefInputMsgSize,
-                                          0,
-                                          chiefInputData)
+    chiefInMsg.write(chiefInputData)
 
     deputyInputData.r_BN_N = r_BN_N2[3]
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.deputyPositionInMsgName,
-                                          deputyInputMsgSize,
-                                          0,
-                                          deputyInputData)
+    deputyInMsg.write(deputyInputData)
 
     unitTestSim.ExecuteSimulation()
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))
 
     chiefInputData.r_BN_N = r_BN_N[4]
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.chiefPositionInMsgName,
-                                          chiefInputMsgSize,
-                                          0,
-                                          chiefInputData)
+    chiefInMsg.write(chiefInputData)
 
     deputyInputData.r_BN_N = r_BN_N2[4]
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.deputyPositionInMsgName,
-                                          deputyInputMsgSize,
-                                          0,
-                                          deputyInputData)
+    deputyInMsg.write(deputyInputData)
 
     unitTestSim.ExecuteSimulation()
 
@@ -243,9 +184,8 @@ def spacecraftPointingTestFunction(show_plots, case):
         #
         # check sigma_RN
         #
-        moduleOutputName = "sigma_RN"
-        moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
-                                                      list(range(3)))
+
+        moduleOutput = dataLog.sigma_RN
         # set the filtered output truth states
         trueVector = [
                    [0.,              0.,              0.0],
@@ -262,17 +202,14 @@ def spacecraftPointingTestFunction(show_plots, case):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                    moduleOutputName + " unit test at t=" +
-                                    str(moduleOutput[i,0]*macros.NANO2SEC) +
+                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_RN unit test at t=" +
+                                    str(dataLog.times()[i]*macros.NANO2SEC) +
                                     "sec\n")
 
         #
         # check omega_RN_N
         #
-        moduleOutputName = "omega_RN_N"
-        moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
-                                                      list(range(3)))
+        moduleOutput = dataLog.omega_RN_N
 
         # set the filtered output truth states
         trueVector = [
@@ -292,17 +229,15 @@ def spacecraftPointingTestFunction(show_plots, case):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                    moduleOutputName + " unit test at t=" +
-                                    str(moduleOutput[i,0]*macros.NANO2SEC) +
+                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_N unit test at t=" +
+                                    str(dataLog.times()[i]*macros.NANO2SEC) +
                                     "sec\n")
 
         #
         # check domega_RN_N
         #
-        moduleOutputName = "domega_RN_N"
-        moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
-                                                      list(range(3)))
+        moduleOutput = dataLog.domega_RN_N
+
         # set the filtered output truth states
         trueVector = [
                       [0.0, 0.0, 0.0],
@@ -320,9 +255,8 @@ def spacecraftPointingTestFunction(show_plots, case):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                    moduleOutputName + " unit test at t=" +
-                                    str(moduleOutput[i,0]*macros.NANO2SEC) +
+                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed domega_RN_N unit test at t=" +
+                                    str(dataLog.times()[i]*macros.NANO2SEC) +
                                     "sec\n")
     elif (case == 2):
         trueVector = [-1.0/3.0, 1.0/3.0, -1.0/3.0]
@@ -356,4 +290,4 @@ def spacecraftPointingTestFunction(show_plots, case):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_spacecraftPointing(False)
+    test_spacecraftPointing(False, 1)

@@ -24,21 +24,20 @@
 %include "swig_conly_data.i"
 %constant void SelfInit_faultDetection(void*, uint64_t);
 %ignore SelfInit_faultDetection;
-%constant void CrossInit_faultDetection(void*, uint64_t);
-%ignore CrossInit_faultDetection;
 %constant void Reset_faultDetection(void*, uint64_t, uint64_t);
 %ignore Reset_faultDetection;
 %constant void Update_faultDetection(void*, uint64_t, uint64_t);
 %ignore Update_faultDetection;
 STRUCTASLIST(FaultDetectionData)
-GEN_SIZEOF(CameraConfigMsg)
-GEN_SIZEOF(OpNavFswMsg)
-GEN_SIZEOF(NavAttIntMsg)
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "../fswAlgorithms/fswMessages/opNavFswMsg.h"
-%include "faultDetection.h"
 
+%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
+struct OpNavMsg_C;
+
+%include "faultDetection.h"
 
 %pythoncode %{
 import sys

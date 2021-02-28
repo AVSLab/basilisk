@@ -27,13 +27,14 @@
 
 // Instantiate templates used by example
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/stateData.h"
-%include "../_GeneralModuleFiles/dynamicEffector.h"
-%include "../_GeneralModuleFiles/dynParamManager.h"
-%include "simMessages/gravityGradientSimMsg.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+
 %include "GravityGradientEffector.h"
 
-GEN_SIZEOF(GravityGradientSimMsg)
+%include "architecture/msgPayloadDefC/GravityGradientMsgPayload.h"
+struct GravityGradientMsg_C;
 
 %pythoncode %{
 import sys

@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
+#
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        thrMomentumDumping
@@ -29,20 +28,13 @@ import os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-
-
-
-
-
-
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import thrMomentumDumping            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-
+from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -73,9 +65,6 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
@@ -97,14 +86,6 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
         moduleConfig.thrMinFireTime = 0.200         # seconds
     else:
         moduleConfig.thrMinFireTime = 0.020         # seconds
-
-    # Create input message and size it because the regular creator of that message
-    # is not part of the test.
-    moduleConfig.thrusterImpulseInMsgName = "thrImpulseMomentumManagement"
-    moduleConfig.thrusterConfInMsgName = "thr_config_data"
-    moduleConfig.thrusterOnTimeOutMsgName = "outputName"
-    moduleConfig.deltaHInMsgName = "cmd_delta_H"
-
 
     # setup thruster cluster message
     fswSetupThrusters.clearSetup()
@@ -131,29 +112,27 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 
     for i in range(len(rcsLocationData)):
         fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 2.0)
-    fswSetupThrusters.writeConfigMessage(  moduleConfig.thrusterConfInMsgName,
-                                           unitTestSim.TotalSim,
-                                           unitProcessName)
+    thrConfInMsg = fswSetupThrusters.writeConfigMessage()
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message
-    DeltaPInMsgData = thrMomentumDumping.THRArrayCmdForceFswMsg()
+    DeltaPInMsgData = messaging.THRArrayCmdForceMsgPayload()
     DeltaPInMsgData.thrForce = [1.2, 0.2, 0.0, 1.6, 1.2, 0.2, 1.6, 0.0]
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.thrusterImpulseInMsgName,
-                               DeltaPInMsgData)
+    deltaPInMsg = messaging.THRArrayCmdForceMsg().write(DeltaPInMsgData)
 
     # setup the commanded angular momentum change message
-    DeltaHInMsgData = thrMomentumDumping.CmdTorqueBodyIntMsg()
+    DeltaHInMsgData = messaging.CmdTorqueBodyMsgPayload()
     DeltaHInMsgData.torqueRequestBody = [0., 0., 0.]
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.deltaHInMsgName,
-                                          DeltaHInMsgData.getStructSize(),
-                                          2)
+    deltaHInMsg = messaging.CmdTorqueBodyMsg()
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.thrusterOnTimeOutMsgName, testProcessRate)
+    dataLog = moduleConfig.thrusterOnTimeOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.thrusterImpulseInMsg.subscribeTo(deltaPInMsg)
+    moduleConfig.thrusterConfInMsg.subscribeTo(thrConfInMsg)
+    moduleConfig.deltaHInMsg.subscribeTo(deltaHInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -166,10 +145,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     unitTestSim.ExecuteSimulation()
 
     # write the input Delta_H message
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.deltaHInMsgName,
-                               DeltaHInMsgData.getStructSize(),
-                               macros.sec2nano(0.5),
-                               DeltaHInMsgData)
+    deltaHInMsg.write(DeltaHInMsgData, macros.sec2nano(0.5))
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
 
@@ -185,20 +161,13 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
         unitTestSim.ExecuteSimulation()
 
         # re-write the input Delta_H message so that it checks for a new message
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.deltaHInMsgName,
-                                              DeltaHInMsgData.getStructSize(),
-                                              macros.sec2nano(3.5),
-                                              DeltaHInMsgData)
+        deltaHInMsg.write(DeltaHInMsgData, macros.sec2nano(3.5))
 
         unitTestSim.ConfigureStopTime(macros.sec2nano(5.5))        # seconds to stop simulation
         unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "OnTimeRequest"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.thrusterOnTimeOutMsgName + '.' + moduleOutputName,
-                                                  list(range(numThrusters)))
-
+    moduleOutput = dataLog.OnTimeRequest[:, :numThrusters]
     # set the filtered output truth states
     if resetCheck==1:
         trueVector = [

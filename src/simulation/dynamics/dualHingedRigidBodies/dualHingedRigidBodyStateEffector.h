@@ -21,14 +21,18 @@
 #ifndef DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 #define DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
-#include "../_GeneralModuleFiles/stateEffector.h"
-#include "../_GeneralModuleFiles/stateData.h"
-#include "_GeneralModuleFiles/sys_model.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
-#include "../simulation/utilities/avsEigenMRP.h"
-#include "../simulation/utilities/avsEigenSupport.h"
-#include "utilities/bskLogging.h"
-#include "simMessages/hingedRigidBodySimMsg.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/bskLogging.h"
+
+#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+#include "architecture/messaging/messaging.h"
 
 
 
@@ -45,8 +49,7 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
-    void SelfInit();
-    void CrossInit();
+    void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputStateMessages(uint64_t CurrentClock);
 
@@ -79,9 +82,9 @@ public:
     std::string nameOfTheta2DotState; //!< [-] Identifier for the thetaDot state data container
     Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
     BSKLogger bskLogger;                      //!< -- BSK Logging
-    std::string motorTorqueInMsgName; //!< -- (optional) motor torque input message name
-    std::string dualHingedRigidBodyOutMsgName; //!< -- state output message base name for all panels
-    std::string dualHingedRigidBodyConfigLogOutMsgName; //!< panel state config log message base name for all panels
+    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< -- (optional) motor torque input message
+    std::vector<Message<HingedRigidBodyMsgPayload>*> dualHingedRigidBodyOutMsgs; //!< -- state output message vector for all panels
+    std::vector<Message<SCStatesMsgPayload>*> dualHingedRigidBodyConfigLogOutMsgs; //!< panel state config log message vector for all panels
 
 private:
     Eigen::Vector3d r_H1P_P;          //!< [m] vector pointing from primary body frame P origin to Hinge 1 location.  If a single spacecraft body is modeled than P is the same as B
@@ -124,9 +127,6 @@ private:
     StateData *theta1DotState;        //!< [-] state manager of thetaDot for hinged rigid body
     StateData *theta2State;           //!< [-] state manager of theta for hinged rigid body
     StateData *theta2DotState;        //!< [-] state manager of thetaDot for hinged rigid body
-    int64_t motorTorqueInMsgId;       //!< -- motor torque message ID
-    int64_t dualHingedRigidBodyOutMsgId[2];  //!< -- state output message ID of all panels
-    int64_t dualHingedRigidBodyConfigLogOutMsgId[2]; //!< -- panel state config log msg ID of all panels
     Eigen::Vector3d r_SN_N[2];        //!< [m] position vector of hinge CM S relative to inertial frame
     Eigen::Vector3d v_SN_N[2];        //!< [m/s] inertial velocity vector of S relative to inertial frame
     Eigen::Vector3d sigma_SN[2];      //!< -- MRP attitude of panel frame S relative to inertial frame

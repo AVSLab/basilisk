@@ -19,7 +19,7 @@
 %module headingSuKF
 %{
    #include "headingSuKF.h"
-   #include "../_GeneralModuleFiles/ukfUtilities.h"
+   #include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -27,21 +27,20 @@
 %ignore Update_headingSuKF;
 %constant void SelfInit_headingSuKF(void*, uint64_t);
 %ignore SelfInit_headingSuKF;
-%constant void CrossInit_headingSuKF(void*, uint64_t);
-%ignore CrossInit_headingSuKF;
 %constant void Reset_headingSuKF(void*, uint64_t, uint64_t);
 %ignore Reset_headingSuKF;
-GEN_SIZEOF(HeadingFilterFswMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(OpNavFswMsg);
-GEN_SIZEOF(CameraConfigMsg)
-GEN_SIZEOF(HeadingSuKFConfig);
+
 %include "headingSuKF.h"
-%include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-%include "../../fswMessages/headingFilterFswMsg.h"
-%include "../../fswMessages/opNavFswMsg.h"
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
+%include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
+
+%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
+struct VehicleConfigMsg_C;
+%include "architecture/msgPayloadDefC/HeadingFilterMsgPayload.h"
+struct HeadingFilterMsg_C;
+%include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
+struct OpNavMsg_C;
+%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
 
 %pythoncode %{
 import sys

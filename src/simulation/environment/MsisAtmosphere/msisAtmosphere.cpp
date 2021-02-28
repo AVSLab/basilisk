@@ -18,13 +18,12 @@
  */
 
 #include "msisAtmosphere.h"
-#include "architecture/messaging/system_messaging.h"
-#include "utilities/astroConstants.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/geodeticConversion.h"
-#include "../../dynamics/_GeneralModuleFiles/stateData.h"
-#include "../../_GeneralModuleFiles/sys_model.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/geodeticConversion.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! This method initializes some basic parameters for the module.
  @return void
@@ -53,32 +52,37 @@ MsisAtmosphere::MsisAtmosphere()
     }
 
     // Set other required interface values
-    this->swDataInMsgNames.push_back("ap_24_0");
-    this->swDataInMsgNames.push_back("ap_3_0");
-    this->swDataInMsgNames.push_back("ap_3_-3");
-    this->swDataInMsgNames.push_back("ap_3_-6");
-    this->swDataInMsgNames.push_back("ap_3_-9");
+    for (int c = 0; c < 23; c++) {
+        ReadFunctor<SwDataMsgPayload> *msgIn;
+        msgIn = new ReadFunctor<SwDataMsgPayload>;
+        this->swDataInMsgs.push_back(*msgIn);
+    }
+    /* the above message order is
+         0 - ap_24_0
+         1 - ap_3_0
+         2 - ap_3_-3
+         3 - ap_3_-6
+         4 - ap_3_-9
+         5 - ap_3_-12
+         6 - ap_3_-15
+         7 - ap_3_-18
+         8 - ap_3_-21
+         9 - ap_3_-24
+        10 - ap_3_-27
+        11 - ap_3_-30
+        12 - ap_3_-33
+        13 - ap_3_-36
+        14 - ap_3_-39
+        15 - ap_3_-42
+        16 - ap_3_-45
+        17 - ap_3_-48
+        18 - ap_3_-51
+        19 - ap_3_-54
+        20 - ap_3_-57
+        21 - f107_1944_0
+        22 - f107_24_-24
 
-    this->swDataInMsgNames.push_back("ap_3_-12");
-    this->swDataInMsgNames.push_back("ap_3_-15");
-    this->swDataInMsgNames.push_back("ap_3_-18");
-    this->swDataInMsgNames.push_back("ap_3_-21");
-    this->swDataInMsgNames.push_back("ap_3_-24");
-    this->swDataInMsgNames.push_back("ap_3_-27");
-    this->swDataInMsgNames.push_back("ap_3_-30");
-    this->swDataInMsgNames.push_back("ap_3_-33");
-
-    this->swDataInMsgNames.push_back("ap_3_-36");
-    this->swDataInMsgNames.push_back("ap_3_-39");
-    this->swDataInMsgNames.push_back("ap_3_-42");
-    this->swDataInMsgNames.push_back("ap_3_-45");
-    this->swDataInMsgNames.push_back("ap_3_-48");
-    this->swDataInMsgNames.push_back("ap_3_-51");
-    this->swDataInMsgNames.push_back("ap_3_-54");
-    this->swDataInMsgNames.push_back("ap_3_-57");
-
-    this->swDataInMsgNames.push_back("f107_1944_0");
-    this->swDataInMsgNames.push_back("f107_24_-24");
+     */
 
     return;
 }
@@ -92,26 +96,18 @@ MsisAtmosphere::~MsisAtmosphere()
 }
 
 
-
-
-/*! This method is used to connect the input position message from the spacecraft. Additonal model-specific cross inits are also conducted.
+/*! This method is used to reset the module.
  @return void
  */
-void MsisAtmosphere::customCrossInit()
+void MsisAtmosphere::customReset(uint64_t CurrentSimNanos)
 {
-        //* [WIP] Also do MSISE messaging setup*//
-    for(int ind=0; ind < 23; ind++){
-        this->swDataInMsgIds[ind] = SystemMessaging::GetInstance()->subscribeToMessage(this->swDataInMsgNames[ind], sizeof(SwDataSimMsg), moduleID);
+    for(int ind = 0; ind < 23; ind++) {
+        if (!this->swDataInMsgs[ind].isLinked()) {
+            bskLogger.bskLog(BSK_ERROR, "Required MSIS input messages No. %d are not connected.", ind);
+        }
     }
-
-    //! - Subscribe to the optional Epoch Date/Time message
-    this->epochInMsgId = -1;
-    if (this->epochInMsgName.length() > 0) {
-        this->epochInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->epochInMsgName, sizeof(EpochSimMsg), moduleID);
-    }
-
-    return;
 }
+
 
 /*! Custom customSetEpochFromVariable() method.  This allows specifying epochDoy directly from Python.  If an epoch message is set then this variable is not used.
  @return void
@@ -147,21 +143,17 @@ void MsisAtmosphere::customWriteMessages(uint64_t CurrentClock)
 bool MsisAtmosphere::customReadMessages(){
     bool swRead = false;
     int failCount = 0;
-    SingleMessageHeader localHeader;
-    SwDataSimMsg tmpSwData;
+    SwDataMsgPayload tmpSwData;
+    this->swDataList.clear();
 
     //! Iterate over swData message ids
     for(int ind = 0; ind < 23; ind++) {
-        if (this->swDataInMsgIds[ind] >= 0) {
-            swRead = SystemMessaging::GetInstance()->ReadMessage(this->swDataInMsgIds[ind], &localHeader,
-                                                                    sizeof(SwDataSimMsg),
-                                                                    reinterpret_cast<uint8_t *>(&tmpSwData),
-                                                                    moduleID);
-            if (swRead) {
-                this->swDataList.push_back(tmpSwData);
-            } else {
-                failCount = failCount + 1;
-            }
+        tmpSwData = this->swDataInMsgs.at(ind)();
+        swRead = this->swDataInMsgs.at(ind).isWritten();
+        if (swRead) {
+            this->swDataList.push_back(tmpSwData);
+        } else {
+            failCount = failCount + 1;
         }
     }
 
@@ -175,8 +167,6 @@ bool MsisAtmosphere::customReadMessages(){
 void MsisAtmosphere::updateInputParams()
 {
     this->msisInput.ap = this->ap;
-    //std::cout<<this->aph.a[0]<<std::endl;
-    //std::cout<<this->msisInput.ap_a->a[0]<<std::endl;
     this->msisInput.ap_a->a[0] = this->aph.a[0];
     this->msisInput.ap_a->a[1] = this->aph.a[1];
     this->msisInput.ap_a->a[2] = this->aph.a[2];
@@ -218,7 +208,7 @@ void MsisAtmosphere::updateSwIndices()
 
 }
 
-void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime)
+void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
 {
     this->updateSwIndices();
     this->updateInputParams();

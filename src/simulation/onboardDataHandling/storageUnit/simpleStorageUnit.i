@@ -24,7 +24,7 @@
 
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
 %include "swig_conly_data.i"
@@ -37,11 +37,10 @@ namespace std {
 %include "../_GeneralModuleFiles/dataStorageUnitBase.h"
 %include "simpleStorageUnit.h"
 
-%include "../../simMessages/dataNodeUsageSimMsg.h"
-%include "../../simMessages/dataStorageStatusSimMsg.h"
-
-GEN_SIZEOF(DataNodeUsageSimMsg)
-GEN_SIZEOF(DataStorageStatusSimMsg)
+%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+struct DataNodeUsageMsg_C;
+%include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
+struct DataStorageStatusMsg_C;
 
 %pythoncode %{
 import sys

@@ -18,19 +18,47 @@ The following messages are set directly within ``vizInterface``.  Additional mes
 ``VizSpacecraftData`` data structures for each spacecraft.
 
 
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-.. table:: Module I/O Messages
-    :widths: 25 25 100
+    * - Parameter
+      - Default
+      - Description
+    * - opnavImageOutMsg
+      - :ref:`CameraImageMsgPayload`
+      - (optional) Image output message
+    * - cameraConfInMsg
+      - :ref:`CameraConfigMsgPayload`
+      - (optional) msg of incoming camera data
+    * - epochInMsg
+      - :ref:`EpochMsgPayload`
+      - (optional) simulation epoch date/time input msg
+    * - spiceInMsgs
+      - :ref:`SpicePlanetStateMsgPayload`
+      - (optional) vector of input messages of planet Spice data
 
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | Msg Variable Name     | Msg Type                          | Description                                       |
-    +=======================+===================================+===================================================+
-    | opnavImageOutMsgName  | :ref:`CameraImageMsg`             | If Vizard is used as a camera sensor, this is the |
-    |                       |                                   | the name of the output message of the camera      |
-    |                       |                                   | image.                                            |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | cameraConfInMsgName   | :ref:`CameraConfigMsg`            | Name of the incoming camera data                  |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
+The ``VizSpacecraftData`` structure contains a range of input messages for each spacecraft added.
+
+.. list-table:: ``VizSpacecraftData`` input messages per spacecraft
+    :widths: 25 25 50
+    :header-rows: 1
+
+    * - Parameter
+      - Default
+      - Description
+    * - scStateInMsg
+      - :ref:`SCStatesMsgPayload`
+      - msg of incoming spacecraft state data
+    * - rwInMsgs
+      - :ref:`RWConfigLogMsgPayload`
+      - (optional) Vector of incoming RW state messages
+    * - thrInMsgs
+      - :ref:`THROutputMsgPayload`
+      - (optional) vector of thruster input messages
+    * - cssInMsgs
+      - :ref:`CSSConfigLogMsgPayload`
+      - (optional) Vector of CSS config log messages
 
 
 User Guide

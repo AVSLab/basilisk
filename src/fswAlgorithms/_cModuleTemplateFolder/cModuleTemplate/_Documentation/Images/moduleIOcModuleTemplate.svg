@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="954 594.3182 555 60.11431" width="555" height="60.11431">
+  <defs>
+    <font-face font-family="Courier" font-size="12" units-per-em="1000" underline-position="-178.22266" underline-thickness="57.61719" slope="0" x-height="456.54297" cap-height="586.91406" ascent="753.90625" descent="-246.09375" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Courier"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-3 -3 7 6" markerWidth="7" markerHeight="6" color="black">
+      <g>
+        <path d="M 3 0 L -1.8 -1.8 L 0 0 L 0 0 L -1.8 1.8 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="Helvetica" font-size="12" units-per-em="1000" underline-position="-75.68359" underline-thickness="49.316406" slope="0" x-height="522.9492" cap-height="717.28516" ascent="770.0195" descent="-229.98047" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Helvetica"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.18\n2020-11-14 20:06:09 +0000</metadata>
+  <g id="Canvas_1" stroke-opacity="1" fill-opacity="1" stroke="none" fill="none" stroke-dasharray="none">
+    <title>Canvas 1</title>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_9">
+        <text transform="translate(1324.5922 621.86885)" fill="black">
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">CModuleTemplateMsg</tspan>
+        </text>
+      </g>
+      <g id="Graphic_2">
+        <path d="M 1150.4942 594.8182 L 1307.7413 594.8182 C 1310.5027 594.8182 1312.7413 597.05676 1312.7413 599.8182 L 1312.7413 648.9325 C 1312.7413 651.6939 1310.5027 653.9325 1307.7413 653.9325 L 1150.4942 653.9325 C 1147.7328 653.9325 1145.4942 651.6939 1145.4942 648.9325 L 1145.4942 599.8182 C 1145.4942 597.05676 1147.7328 594.8182 1150.4942 594.8182 Z" fill="#ffc0ff"/>
+        <path d="M 1150.4942 594.8182 L 1307.7413 594.8182 C 1310.5027 594.8182 1312.7413 597.05676 1312.7413 599.8182 L 1312.7413 648.9325 C 1312.7413 651.6939 1310.5027 653.9325 1307.7413 653.9325 L 1150.4942 653.9325 C 1147.7328 653.9325 1145.4942 651.6939 1145.4942 648.9325 L 1145.4942 599.8182 C 1145.4942 597.05676 1147.7328 594.8182 1150.4942 594.8182 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(1150.4942 617.20734)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="24.839543" y="11">cModuleTemplate</tspan>
+        </text>
+      </g>
+      <g id="Line_4">
+        <line x1="1003.1082" y1="622.00556" x2="1136.1942" y2="622.00556" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_7">
+        <line x1="1313.3063" y1="620.3664" x2="1446.3923" y2="620.3664" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_8">
+        <text transform="translate(1324.5922 604.5023)" fill="black">
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">dataOutMsg</tspan>
+        </text>
+      </g>
+      <g id="Graphic_10">
+        <text transform="translate(959 621.5074)" fill="black">
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="26.73529" y="11">CModuleTemplateMsg</tspan>
+        </text>
+      </g>
+      <g id="Graphic_11">
+        <text transform="translate(972.5116 607.0033)" fill="black">
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="101.21388" y="11">dataInMsg</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

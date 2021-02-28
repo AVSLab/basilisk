@@ -23,11 +23,11 @@
    #include "../_GeneralModuleFiles/svIntegratorRK4.h"
    #include "svIntegratorEuler.h"
    #include "svIntegratorRK2.h"
-   #include "_GeneralModuleFiles/sys_model.h"
+   #include "architecture/_GeneralModuleFiles/sys_model.h"
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 
 

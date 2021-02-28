@@ -20,14 +20,14 @@
 #ifndef _RW_MOTOR_TORQUE_H_
 #define _RW_MOTOR_TORQUE_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
-#include "fswMessages/rwAvailabilityFswMsg.h"
-#include "fswMessages/rwArrayConfigFswMsg.h"
-#include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simulation/utilities/bskLogging.h"
+
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
+#include "cMsgCInterface/ArrayMotorTorqueMsg_C.h"
+#include "cMsgCInterface/RWAvailabilityMsg_C.h"
+#include "cMsgCInterface/RWArrayConfigMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief Top level structure for the sub-module routines. */
@@ -36,20 +36,16 @@ typedef struct {
     double   controlAxes_B[3*3];        //!< [-] array of the control unit axes
     uint32_t numControlAxes;            //!< [-] counter indicating how many orthogonal axes are controlled
     int      numAvailRW;                //!< [-] number of reaction wheels available
-    RWArrayConfigFswMsg rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
+    RWArrayConfigMsgPayload rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
     double GsMatrix_B[3*MAX_EFF_CNT];   //!< [-] The RW spin axis matrix in body frame components
     double CGs[3][MAX_EFF_CNT];         //!< [-] Projection matrix that defines the controlled body axes
 
     /* declare module IO interfaces */
-    char     outputDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the output message
-    int32_t  outputMsgID;                           //!< ID for the outgoing message
-    char inputVehControlName[MAX_STAT_MSG_LENGTH];  //!< The name of the vehicle control (Lr) Input message
-    int32_t  controlTorqueInMsgID;                     //!< ID for the incoming Lr control message
-    
-    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];    //!< The name of the RWArrayConfigFswMsg input message
-    int32_t rwParamsInMsgID;                        //!< [-] ID for the RWArrayConfigFswMsg ingoing message
-    char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];     //!< The name of the RWs availability message
-    int32_t rwAvailInMsgID;                         //!< [-] ID for the incoming  RWs availability data
+    ArrayMotorTorqueMsg_C rwMotorTorqueOutMsg;   //!< RW motor torque output message
+    CmdTorqueBodyMsg_C vehControlInMsg;  //!<  vehicle control (Lr) Input message
+
+    RWArrayConfigMsg_C rwParamsInMsg;    //!<  RW Array input message
+    RWAvailabilityMsg_C rwAvailInMsg;     //!< optional RWs availability input message
 
     BSKLogger *bskLogger;                             //!< BSK Logging
 
@@ -60,7 +56,6 @@ extern "C" {
 #endif
     
     void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID);
-    void CrossInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID);
     void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID);
     

@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 
 
 #
@@ -29,8 +27,6 @@
 # Creation Date:  Feb. 9, 2017
 #
 
-# @cond DOXYGEN_IGNORE
-import sys
 import os
 import numpy as np
 import pytest
@@ -40,16 +36,15 @@ path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
 
-# @endcond
 
 #Import all of the modules that we are going to call in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import radiation_pressure
+from Basilisk.simulation import radiationPressure
 from Basilisk.utilities import macros
-from Basilisk.simulation import spice_interface
 from Basilisk.utilities import orbitalMotion as om
+from Basilisk.simulation import spacecraft
+from Basilisk.architecture import messaging
 
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
@@ -87,10 +82,17 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     testProc = unitTestSim.CreateNewProcess(testProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 
-    srpDynEffector = radiation_pressure.RadiationPressure()
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraft"
+    unitTestSim.AddModelToTask(testTaskName, scObject)
+
+
+    srpDynEffector = radiationPressure.RadiationPressure()
     srpDynEffector.ModelTag = "RadiationPressure"
-    srpDynEffector2 = radiation_pressure.RadiationPressure()
+    srpDynEffector2 = radiationPressure.RadiationPressure()
     srpDynEffector2.ModelTag = "RadiationPressure2"
+    scObject.addDynamicEffector(srpDynEffector)
+    scObject.addDynamicEffector(srpDynEffector2)
 
     if modelType == "cannonball":
         srpDynEffector.setUseCannonballModel()
@@ -98,7 +100,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         srpDynEffector.coefficientReflection = 1.2
     elif modelType == "lookup":
         srpDynEffector.setUseFacetedCPUModel()
-        handler = radiation_pressure.SRPLookupTableHandler()
+        handler = radiationPressure.SRPLookupTableHandler()
         handler.parseAndLoadXML(os.path.dirname(__file__) + "/cube_lookup.xml")
         for i in range(0, len(handler.forceBLookup)):
             srpDynEffector.addForceLookupBEntry(handler.forceBLookup[i, :])
@@ -106,7 +108,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
             srpDynEffector.addSHatLookupBEntry(handler.sHatBLookup[i, :])
     elif modelType == "cannonballLookup":
         srpDynEffector.setUseFacetedCPUModel()
-        handler = radiation_pressure.SRPLookupTableHandler()
+        handler = radiationPressure.SRPLookupTableHandler()
         handler.parseAndLoadXML(os.path.dirname(__file__) + "/cannonballLookup.xml")
         for i in range(0, len(handler.forceBLookup)):
             srpDynEffector.addForceLookupBEntry(handler.forceBLookup[i, :])
@@ -120,28 +122,24 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         sigma_BN = [0., 0., 0.]
 
     if eclipseOn:
-        sunEclipseInMsgName = "sun_eclipse"
-        sunEclipseMsgData = radiation_pressure.EclipseSimMsg()
+        sunEclipseMsgData = messaging.EclipseMsgPayload()
         sunEclipseMsgData.shadowFactor = 0.5
-        unitTestSupport.setMessage(unitTestSim.TotalSim, testProcessName, sunEclipseInMsgName, sunEclipseMsgData)
-        srpDynEffector.sunEclipseInMsgName = sunEclipseInMsgName
-        srpDynEffector2.sunEclipseInMsgName = sunEclipseInMsgName
+        sunEclMsg = messaging.EclipseMsg().write(sunEclipseMsgData)
+        srpDynEffector.sunEclipseInMsg.subscribeTo(sunEclMsg)
+        srpDynEffector2.sunEclipseInMsg.subscribeTo(sunEclMsg)
 
     unitTestSim.AddModelToTask(testTaskName, srpDynEffector, None, 3)
     unitTestSim.AddModelToTask(testTaskName, srpDynEffector2, None, 3)
 
-    scPlusStateMsg = spacecraftPlus.SCPlusStatesSimMsg()
-    scPlusStateMsgName = "inertial_state_output"
-    unitTestSim.TotalSim.CreateNewMessage(testProcessName, scPlusStateMsgName, scPlusStateMsg.getStructSize(), 2)
-    scPlusStateMsg.r_BN_N = r_N
-    scPlusStateMsg.sigma_BN = sigma_BN
-    unitTestSim.TotalSim.WriteMessageData(scPlusStateMsgName, scPlusStateMsg.getStructSize(), 1, scPlusStateMsg)
+    scObject.hub.r_CN_NInit = r_N
+    scObject.hub.sigma_BNInit = sigma_BN
 
-    sunSpiceMsg = spice_interface.SpicePlanetStateSimMsg()
-    sunSpiceMsgName = "sun_planet_data"
-    unitTestSim.TotalSim.CreateNewMessage(testProcessName, sunSpiceMsgName, sunSpiceMsg.getStructSize(), 2)
+
+    sunSpiceMsg = messaging.SpicePlanetStateMsgPayload()
     sunSpiceMsg.PositionVector = sun_r_N
-    unitTestSim.TotalSim.WriteMessageData(sunSpiceMsgName, sunSpiceMsg.getStructSize(), 1, sunSpiceMsg)
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunSpiceMsg)
+    srpDynEffector.sunEphmInMsg.subscribeTo(sunMsg)
+    srpDynEffector2.sunEphmInMsg.subscribeTo(sunMsg)
 
     unitTestSim.AddVariableForLogging(srpDynEffector.ModelTag + ".forceExternal_B",
                                       simulationTime, 0, 2, 'double')
@@ -277,6 +275,11 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         snippetContent = '{:1.1e}'.format(errTolTorque)  # write formatted LATEX string to file to be used by auto-documentation.
         unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
                                         path)  # write formatted LATEX string to file to be used by auto-documentation.
+
+    if testFailCount:
+        print(testMessages)
+    else:
+        print("PASSED")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

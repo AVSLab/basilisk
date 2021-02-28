@@ -27,21 +27,18 @@
 %ignore Update_relODuKF;
 %constant void SelfInit_relODuKF(void*, uint64_t);
 %ignore SelfInit_relODuKF;
-%constant void CrossInit_relODuKF(void*, uint64_t);
-%ignore CrossInit_relODuKF;
 %constant void Reset_relODuKF(void*, uint64_t, uint64_t);
 %ignore Reset_relODuKF;
-STRUCTASLIST(OpNavMeas);
-GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(OpNavFilterFswMsg);
-GEN_SIZEOF(OpNavFswMsg);
-GEN_SIZEOF(RelODuKFConfig);
+
 %include "relativeODuKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/opNavFswMsg.h"
-%include "../../fswMessages/opNavFilterFswMsg.h"
-%include "simFswInterfaceMessages/navTransIntMsg.h"
 
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
+struct OpNavMsg_C;
+%include "architecture/msgPayloadDefC/OpNavFilterMsgPayload.h"
+struct OpNavFilterMsg_C;
 
 %pythoncode %{
 import sys

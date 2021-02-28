@@ -18,8 +18,7 @@
  */
 
 #include "spaceToGroundTransmitter.h"
-#include "architecture/messaging/system_messaging.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include <array>
 
 /*! Constructor, which sets the default nodeDataOut to zero.
@@ -38,78 +37,63 @@ SpaceToGroundTransmitter::~SpaceToGroundTransmitter(){
     return;
 }
 
-/*! Adds a dataStorageStatusSimMsg name to be accessed by transmitter.
+/*! Adds a dataStorageStatusMsgPayload name to be accessed by transmitter.
  @return void
- @param tmpStorageUnitMsgName A spacecraft state message name.
+ @param tmpStorageUnitMsg A spacecraft state message name.
  */
-void SpaceToGroundTransmitter::addStorageUnitToTransmitter(std::string tmpStorageUnitMsgName){
-    this->storageUnitMsgNames.push_back(tmpStorageUnitMsgName);
+void SpaceToGroundTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload> *tmpStorageUnitMsg)
+{
+    this->storageUnitInMsgs.push_back(tmpStorageUnitMsg->addSubscriber());
+
     return;
 }
 
 /*! Adds a msg name to ground location access list
     @return void
-    @param tmpAccessMsgName input name.
+    @param tmpAccessMsg input name.
 */
-void SpaceToGroundTransmitter::addAccessMsgToTransmitter(std::string tmpAccessMsgName){
-    this->groundLocationAccessMsgNames.push_back(tmpAccessMsgName);
+void SpaceToGroundTransmitter::addAccessMsgToTransmitter(Message<AccessMsgPayload> *tmpAccessMsg)
+{
+    this->groundLocationAccessInMsgs.push_back(tmpAccessMsg->addSubscriber());
     return;
 }
 
-void SpaceToGroundTransmitter::customCrossInit(){
-    //! - subscribe to the spacecraft messages and create associated output message buffer
-    std::vector<std::string>::iterator it;
-    for(it = this->storageUnitMsgNames.begin(); it != this->storageUnitMsgNames.end(); it++){
-        this->storageUnitMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(DataStorageStatusSimMsg), moduleID));
-    }
-
-    for(it = this->groundLocationAccessMsgNames.begin(); it != this->groundLocationAccessMsgNames.end(); it++){
-        this->groundLocationAccessMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(AccessSimMsg), moduleID));
-    }
-
-    return;
-}
 
 bool SpaceToGroundTransmitter::customReadMessages(){
 
-    DataStorageStatusSimMsg nodeMsg;
-    AccessSimMsg accessMsg;
-    SingleMessageHeader localHeader;
+    DataStorageStatusMsgPayload nodeMsg;
+    AccessMsgPayload accessMsg;
 
-    this->storageUnitMsgs.clear();
+    this->storageUnitMsgsBuffer.clear();
     this->groundLocationAccessMsgs.clear();
 
     //! - read in the data node use/supply messages
     bool dataRead = true;
     bool tmpDataRead;
 
-    if(this->storageUnitMsgIds.size() > 0)
+    if(this->storageUnitInMsgs.size() > 0)
     {
-        std::vector<int64_t>::iterator it;
-        for(it = storageUnitMsgIds.begin(); it!= storageUnitMsgIds.end(); it++)
+        for(long unsigned int c=0; c<this->storageUnitInMsgs.size(); c++)
         {
-            tmpDataRead = SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
-                                                                      sizeof(DataStorageStatusSimMsg),
-                                                                      reinterpret_cast<uint8_t*>(&nodeMsg),
-                                                                      moduleID);
+            tmpDataRead = this->storageUnitInMsgs.at(c).isWritten();
+            nodeMsg = this->storageUnitInMsgs.at(c)();
+
             dataRead = dataRead && tmpDataRead;
 
-            this->storageUnitMsgs.push_back(nodeMsg);
+            this->storageUnitMsgsBuffer.push_back(nodeMsg);
         }
     }
     else {
         bskLogger.bskLog(BSK_INFORMATION, "Data storage has no data node messages to read.");
         dataRead = false;
     }
-    if(this->groundLocationAccessMsgIds.size() > 0)
+    if(this->groundLocationAccessInMsgs.size() > 0)
     {
         std::vector<int64_t>::iterator it;
-        for(it = groundLocationAccessMsgIds.begin(); it!= groundLocationAccessMsgIds.end(); it++)
+        for(long unsigned int c=0; c<this->groundLocationAccessInMsgs.size(); c++)
         {
-            tmpDataRead = SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
-                                                                      sizeof(AccessSimMsg),
-                                                                      reinterpret_cast<uint8_t*>(&accessMsg),
-                                                                      moduleID);
+            tmpDataRead = this->groundLocationAccessInMsgs.at(c).isWritten();
+            accessMsg = this->groundLocationAccessInMsgs.at(c)();
             dataRead = dataRead && tmpDataRead;
 
             this->groundLocationAccessMsgs.push_back(accessMsg);
@@ -124,18 +108,18 @@ bool SpaceToGroundTransmitter::customReadMessages(){
     return true;
 }
 
-/*! Loads the nodeDataOut attribute into the dataUsageSimMessage instance.
+/*! Loads the nodeDataOut attribute into the dataUsageMessagePayload instance.
  @param dataUsageSimMsg
  @param currentTime
 */
-void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageSimMsg *dataUsageSimMsg, double currentTime){
+void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimMsg, double currentTime){
 
     this->currentTimestep = currentTime - this->previousTime;
 
     dataUsageSimMsg->baudRate = this->nodeBaudRate;
 
     //! - If we have access to any ground location, do the transmission logic
-    if (std::any_of(this->groundLocationAccessMsgs.begin(), this->groundLocationAccessMsgs.end(), [](AccessSimMsg msg){return msg.hasAccess>0;})){
+    if (std::any_of(this->groundLocationAccessMsgs.begin(), this->groundLocationAccessMsgs.end(), [](AccessMsgPayload msg){return msg.hasAccess>0;})){
         //! - If we have no transmitted any of the packet, we select a new type of data to downlink
         if (this->packetTransmitted == 0.0) {
 
@@ -143,14 +127,14 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageSimMsg *dataUsageS
             double maxVal = 0.0;
             int maxIndex = 0;
             for (int i = 0; i < this->numBuffers; i++) {
-                if (this->storageUnitMsgs.back().storedData[i] > maxVal) {
-                    maxVal = this->storageUnitMsgs.back().storedData[i];
+                if (this->storageUnitMsgsBuffer.back().storedData[i] > maxVal) {
+                    maxVal = this->storageUnitMsgsBuffer.back().storedData[i];
                     maxIndex = i;
                 }
             }
 
             // Set nodeDataName to the maximum data name
-            strncpy(this->nodeDataName, this->storageUnitMsgs.back().storedDataName[maxIndex],
+            strncpy(this->nodeDataName, this->storageUnitMsgsBuffer.back().storedDataName[maxIndex],
                     sizeof(this->nodeDataName));
 
             // strncpy nodeDataName to the name of the output message

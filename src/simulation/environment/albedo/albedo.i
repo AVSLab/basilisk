@@ -22,7 +22,7 @@
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
@@ -32,13 +32,12 @@ from Basilisk.simulation.swig_common_model import *
 %include "sys_model.h"
 %include "albedo.h"
 
-%include "../../simMessages/albedoSimMsg.h"
-%include "../../simMessages/scPlusStatesSimMsg.h"
-%include "../../simMessages/spicePlanetStateSimMsg.h"
-
-GEN_SIZEOF(AlbedoSimMsg)
-GEN_SIZEOF(SpicePlanetStateSimMsg)
-GEN_SIZEOF(SCPlusStatesSimMsg)
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "architecture/msgPayloadDefC/AlbedoMsgPayload.h"
+struct AlbedoMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
 
 %pythoncode %{
 import sys

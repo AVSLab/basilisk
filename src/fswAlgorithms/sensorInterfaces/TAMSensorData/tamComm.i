@@ -26,14 +26,14 @@
 %ignore Update_tamProcessTelem;
 %constant void SelfInit_tamProcessTelem(void*, uint64_t);
 %ignore SelfInit_tamProcessTelem;
-%constant void CrossInit_tamProcessTelem(void*, uint64_t);
-%ignore CrossInit_tamProcessTelem;
-GEN_SIZEOF(TAMSensorIntMsg);
-GEN_SIZEOF(tamConfigData);
-GEN_SIZEOF(TAMSensorBodyFswMsg);
+
 %include "tamComm.h"
-%include "../../fswMessages/tamSensorBodyFswMsg.h"
-%include "simFswInterfaceMessages/tamSensorIntMsg.h"
+
+%include "architecture/msgPayloadDefC/TAMSensorBodyMsgPayload.h"
+struct TAMSensorBodyMsg_C;
+%include "architecture/msgPayloadDefC/TAMSensorMsgPayload.h"
+struct TAMSensorMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

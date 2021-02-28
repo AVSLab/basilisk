@@ -20,14 +20,15 @@
 #ifndef _SUNLINE_EKF_H_
 #define _SUNLINE_EKF_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
 #include <string.h>
-#include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
-#include "fswMessages/sunlineFilterFswMsg.h"
-#include "fswMessages/cssConfigFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/CSSArraySensorMsg_C.h"
+#include "cMsgCInterface/SunlineFilterMsg_C.h"
+#include "cMsgCInterface/CSSConfigMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 
@@ -37,11 +38,11 @@
  Used to estimate the sun state in the vehicle body frame. */
 
 typedef struct {
-    char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
-    char cssDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    char cssConfigInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
-    
+    NavAttMsg_C navStateOutMsg;                     /*!< The name of the output message*/
+    SunlineFilterMsg_C filtDataOutMsg;              /*!< The name of the output filter data message*/
+    CSSArraySensorMsg_C cssDataInMsg;               /*!< The name of the Input message*/
+    CSSConfigMsg_C cssConfigInMsg;                  /*!< [-] The name of the CSS configuration message*/
+
     double qObsVal;               /*!< [-] CSS instrument noise parameter*/
     double qProcVal;               /*!< [-] Process noise parameter*/
 
@@ -75,12 +76,9 @@ typedef struct {
     size_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
     double eKFSwitch;       /*!< -- Max covariance element after which the filter switches to an EKF update*/
-	NavAttIntMsg outputSunline;   /*!< -- Output sunline estimate data */
-    CSSArraySensorIntMsg cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
-    int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
-    int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
-    int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
-    int32_t cssConfigInMsgId;   /*!< [-] ID associated with the CSS configuration data*/
+	NavAttMsgPayload outputSunline;   /*!< -- Output sunline estimate data */
+    CSSArraySensorMsgPayload cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
+
     BSKLogger *bskLogger;   //!< BSK Logging
 }sunlineEKFConfig;
 
@@ -89,7 +87,6 @@ extern "C" {
 #endif
     
     void SelfInit_sunlineEKF(sunlineEKFConfig *configData, int64_t moduleID);
-    void CrossInit_sunlineEKF(sunlineEKFConfig *configData, int64_t moduleID);
 	void Reset_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
 		int64_t moduleID);
     void Update_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,

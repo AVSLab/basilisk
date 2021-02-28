@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        planetEphemeris
@@ -33,12 +31,6 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
-
-
-
-
-
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import orbitalMotion
@@ -46,6 +38,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import planetEphemeris
 from Basilisk.utilities import macros
+from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -64,11 +57,11 @@ from Basilisk.utilities import macros
 def test_module(show_plots, setRAN, setDEC, setLST, setRate):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate)
+    [testResults, testMessage] = planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate)
     assert testResults < 1, testMessage
 
 
-def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
+def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -77,15 +70,11 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     # Construct algorithm and associated C++ container
     moduleConfig = planetEphemeris.PlanetEphemeris()
@@ -96,13 +85,13 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
 
     # Initialize the test module configuration data
     planetNames = ["earth", "venus"]
-    moduleConfig.planetNames = planetEphemeris.StringVector(planetNames)
+    moduleConfig.setPlanetNames(planetEphemeris.StringVector(planetNames))
 
     # set gravitational constant of the sun
 
     mu = orbitalMotion.MU_SUN*1000.*1000.*1000  # m^3/s^2
     # setup planet ephemeris states
-    oeEarth = planetEphemeris.classicElements()
+    oeEarth = planetEphemeris.ClassicElementsMsgPayload()
     oeEarth.a = planetEphemeris.SMA_EARTH*1000  # meters
     oeEarth.e = 0.001
     oeEarth.i = 10.0*macros.D2R
@@ -110,7 +99,7 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
     oeEarth.omega = 20.0*macros.D2R
     oeEarth.f = 90.0*macros.D2R
 
-    oeVenus = planetEphemeris.classicElements()
+    oeVenus = planetEphemeris.ClassicElementsMsgPayload()
     oeVenus.a = planetEphemeris.SMA_VENUS*1000  # meters
     oeVenus.e = 0.001
     oeVenus.i = 5.0*macros.D2R
@@ -150,8 +139,10 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
         evalAttitude = 0
 
     # Setup logging on the test module output message so that we get all the writes to it
-    for planet in planetNames:
-        unitTestSim.TotalSim.logThisMessage(planet + "_planet_data", testProcessRate)
+    dataLog = []
+    for c in range(0, len(planetNames)):
+        dataLog.append(moduleConfig.planetOutMsgs[c].recorder())
+        unitTestSim.AddModelToTask(unitTaskName, dataLog[-1])
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -171,17 +162,17 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     c = 0
-    for planet in planetNames:
-        J2000Current = unitTestSim.pullMessageLogData(planet + '_planet_data.J2000Current')
-        PositionVector = unitTestSim.pullMessageLogData(planet + '_planet_data.PositionVector', list(range(3)))
-        VelocityVector = unitTestSim.pullMessageLogData(planet + '_planet_data.VelocityVector', list(range(3)))
-        J20002Pfix = unitTestSim.pullMessageLogData(planet + '_planet_data.J20002Pfix', list(range(9)))
-        J20002Pfix_dot = unitTestSim.pullMessageLogData(planet + '_planet_data.J20002Pfix_dot', list(range(9)))
-        computeOrient = unitTestSim.pullMessageLogData(planet + '_planet_data.computeOrient')
+    for c in range(0, len(planetNames)):
+        planet = planetNames[c]
+        J2000Current = dataLog[c].J2000Current
+        PositionVector = dataLog[c].PositionVector
+        VelocityVector = dataLog[c].VelocityVector
+        J20002Pfix = dataLog[c].J20002Pfix
+        J20002Pfix_dot = dataLog[c].J20002Pfix_dot
+        computeOrient = dataLog[c].computeOrient
 
         # check that the proper planet name string is set
-        FinalPlanetMessage = planetEphemeris.SpicePlanetStateSimMsg()
-        unitTestSim.TotalSim.GetWriteData(planet + '_planet_data', FinalPlanetMessage.getStructSize(), FinalPlanetMessage, 0)
+        FinalPlanetMessage = moduleConfig.planetOutMsgs[c].read()
 
         if planet != FinalPlanetMessage.PlanetName:
             testFailCount += 1
@@ -231,13 +222,14 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
                 lst = lst0 + omegaList[c]*time[0]
                 gamma = eHat_N*lst
                 DCM = rbk.PRV2C(gamma)
-                dcmTrue.append(np.ravel(DCM))
+                dcmTrue.append(DCM)
                 dDCMdt = np.matmul(tilde, DCM)
-                dcmRateTrue.append(np.ravel(dDCMdt))
+                dcmRateTrue.append(dDCMdt)
         else:
             for time in timeTrue:
-                dcmTrue.append(np.ravel(np.identity(3)))
+                dcmTrue.append(np.identity(3))
                 dcmRateTrue.append([0.0]*9)
+
         testFailCount, testMessages = unitTestSupport.compareArrayND(dcmTrue, J20002Pfix,
                                                                    accuracy, "DCM", 9,
                                                                    testFailCount, testMessages)
@@ -276,7 +268,7 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
 if __name__ == "__main__":
     test_module(
                  False,           # show plots flag
-                 True,           # setRAN
+                 False,           # setRAN
                  True,           # setDEC
                  True,           # setLST
                  True            # setRate

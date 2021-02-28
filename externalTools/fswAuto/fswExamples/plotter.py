@@ -34,7 +34,7 @@ class Plotter(object):
 
     def plot3components(self, vec):
         time = vec[:, 0] * macros.NANO2MIN
-        for i in range(1, 4):
+        for i in range(3):
             plt.plot(time, vec[:, i], self.color_list[i])
         # plt.plot(time, vec[:, 1], self.color_list[0])
         # plt.plot(time, vec[:, 2], self.color_list[1])

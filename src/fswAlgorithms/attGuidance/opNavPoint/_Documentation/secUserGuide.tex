@@ -4,10 +4,10 @@
 \subsection{Input/Output Messages}
 The module has 2 required input messages, and 1 output message:
 \begin{itemize}
-	\item {\tt attGuidanceOutMsgName} -- This output message, of type {\tt AttGuidFswMsg}, provide the attitude tracking errors and the reference frame states.
-	\item {\tt opnavDataInMsgName} -- This input message, of type {\tt OpNavFswMsg}, receives the planet heading vector $\bm h$
-	\item {\tt imuInMsgName} -- This input message, of type {\tt NavAttIntMsg}, receives the inertial angular body rates $\bm \omega_{B/N}$
-	\item {\tt cameraConfigMsgName} -- This input message, of type {\tt CameraConfigMsg}, receives the camera specs, notably the DCM: $[CB]$
+	\item {\tt attGuidanceOutMsg} -- This output message, of type {\tt AttGuidMsgPayload}, provide the attitude tracking errors and the reference frame states.
+	\item {\tt opnavDataInMsg} -- This input message, of type {\tt OpNavMsgPayload}, receives the planet heading vector $\bm h$
+	\item {\tt imuInMsg} -- This input message, of type {\tt NavAttMsgPayload}, receives the inertial angular body rates $\bm \omega_{B/N}$
+	\item {\tt cameraConfigInMsg} -- This input message, of type {\tt CameraConfigMsgPayload}, receives the camera specs, notably the DCM: $[CB]$
 \end{itemize}
 
 \subsection{Module Parameters and States}

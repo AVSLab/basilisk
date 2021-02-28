@@ -26,20 +26,20 @@
 %ignore Update_thrForceMapping;
 %constant void SelfInit_thrForceMapping(void*, uint64_t);
 %ignore SelfInit_thrForceMapping;
-%constant void CrossInit_thrForceMapping(void*, uint64_t);
-%ignore CrossInit_thrForceMapping;
 %constant void Reset_thrForceMapping(void*, uint64_t, uint64_t);
 %ignore Reset_thrForceMapping;
 
 %include "thrForceMapping.h"
-GEN_SIZEOF(thrForceMappingConfig);
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-GEN_SIZEOF(VehicleConfigFswMsg);
-%include "../../fswMessages/thrArrayConfigFswMsg.h"
-GEN_SIZEOF(THRArrayConfigFswMsg);
-%include "../../fswMessages/thrArrayCmdForceFswMsg.h"
-%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-GEN_SIZEOF(CmdTorqueBodyIntMsg);
+
+%include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
+struct THRArrayCmdForceMsg_C;
+%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
+struct VehicleConfigMsg_C;
+%include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
+struct THRArrayConfigMsg_C;
+%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+struct CmdTorqueBodyMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

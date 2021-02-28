@@ -26,15 +26,14 @@
 %ignore Update_imuProcessTelem;
 %constant void SelfInit_imuProcessTelem(void*, uint64_t);
 %ignore SelfInit_imuProcessTelem;
-%constant void CrossInit_imuProcessTelem(void*, uint64_t);
-%ignore CrossInit_imuProcessTelem;
-GEN_SIZEOF(IMUConfigData);
-GEN_SIZEOF(IMUSensorIntMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
+
 %include "imuComm.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-%include "../../fswMessages/imuSensorBodyFswMsg.h"
-%include "simFswInterfaceMessages/imuSensorIntMsg.h"
+
+%include "architecture/msgPayloadDefC/IMUSensorBodyMsgPayload.h"
+struct IMUSensorBodyMsg_C;
+%include "architecture/msgPayloadDefC/IMUSensorMsgPayload.h"
+struct IMUSensorMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

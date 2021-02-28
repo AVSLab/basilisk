@@ -28,14 +28,14 @@
 %include "../_GeneralModuleFiles/dataNodeBase.h"
 %include "spaceToGroundTransmitter.h"
 
-%include "../../simMessages/dataNodeUsageSimMsg.h"
-%include "../../simFswInterfaceMessages/deviceStatusIntMsg.h"
-%include "../../simMessages/accessSimMsg.h"
-
-GEN_SIZEOF(DataNodeUsageSimMsg)
-GEN_SIZEOF(DeviceStatusIntMsg)
-GEN_SIZEOF(DataStorageStatusSimMsg)
-GEN_SIZEOF(AccessSimMsg)
+%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+struct DataNodeUsageMsg_C;
+%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
+struct DeviceStatusMsg_C;
+%include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
+struct DataStorageStatusMsg_C;
+%include "architecture/msgPayloadDefC/AccessMsgPayload.h"
+struct AccessMsg_C;
 
 %pythoncode %{
 import sys

@@ -41,12 +41,12 @@ except ImportError:
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
-
+from Basilisk.architecture import messaging
 try:
     from Basilisk.simulation import camera
 except ImportError:
     importErr = True
-    reasonErr = "Camera not built---check OpenCV option"
+    reasonErr += "\nCamera not built---check OpenCV option"
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -142,9 +142,6 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
-    moduleConfig.imageInMsgName = "sample_image"
-    moduleConfig.cameraOutMsgName = "cameraOut"
-    moduleConfig.imageOutMsgName = "out_image"
     moduleConfig.filename = imagePath
     moduleConfig.saveImages = True
     # make each image saved have a unique name for this test case
@@ -153,13 +150,11 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = camera.CameraImageMsg()
+    inputMessageData = messaging.CameraImageMsgPayload()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.imageInMsgName,
-                               inputMessageData)
+    inCamMsg = messaging.CameraImageMsg().write(inputMessageData)
+    moduleConfig.imageInMsg.subscribeTo(inCamMsg)
 
     moduleConfig.cameraIsOn = 1
     moduleConfig.sigma_CB = [0, 0, 1]
@@ -172,7 +167,8 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     moduleConfig.blurParam = blurSize
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.cameraOutMsgName, testProcessRate)
+    dataLog = moduleConfig.cameraConfigOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -193,8 +189,8 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
         corruptedPath = moduleConfig.saveDir + '0.500000.png'
     output_image = Image.open(corruptedPath)
 
-    isOnValues = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".isOn")
-    pos = unitTestSim.pullMessageLogData(moduleConfig.cameraOutMsgName + ".sigma_CB", list(range(3)))
+    isOnValues = dataLog.isOn
+    pos = dataLog.sigma_CB
 
     #  Error check for corruption
     err = np.linalg.norm(np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2)) / np.linalg.norm(
@@ -210,13 +206,18 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
 
     #   print out success message if no error were found
     for i in range(3):
-        if np.abs(pos[-1, i + 1] - moduleConfig.sigma_CB[i]) > 1E-10:
+        if np.abs(pos[-1, i] - moduleConfig.sigma_CB[i]) > 1E-10:
             testFailCount += 1
             testMessages.append("Test failed position " + image)
 
-    if np.abs(isOnValues[-1, 1] - moduleConfig.cameraIsOn) > 1E-10:
+    if np.abs(isOnValues[-1] - moduleConfig.cameraIsOn) > 1E-10:
         testFailCount += 1
         testMessages.append("Test failed isOn " + image)
+
+    if testFailCount:
+        print(testMessages)
+    else:
+        print("Passed")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

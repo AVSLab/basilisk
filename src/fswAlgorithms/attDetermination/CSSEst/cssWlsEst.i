@@ -19,7 +19,6 @@
 %module cssWlsEst
 %{
    #include "cssWlsEst.h"
-   #include "fswMessages/sunlineFilterFswMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -27,20 +26,21 @@
 %ignore Update_cssWlsEst;
 %constant void SelfInit_cssWlsEst(void*, uint64_t);
 %ignore SelfInit_cssWlsEst;
-%constant void CrossInit_cssWlsEst(void*, uint64_t);
-%ignore CrossInit_cssWlsEst;
 %constant void Reset_cssWlsEst(void*, uint64_t, uint64_t);
 %ignore Reset_cssWlsEst;
 
-STRUCTASLIST(CSSUnitConfigFswMsg)
-GEN_SIZEOF(CSSConfigFswMsg);
-GEN_SIZEOF(CSSUnitConfigFswMsg);
-GEN_SIZEOF(CSSWLSConfig);
 %include "cssWlsEst.h"
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "../../fswMessages/cssConfigFswMsg.h"
-%include "../../fswMessages/cssUnitConfigFswMsg.h"
-%include "../../fswMessages/sunlineFilterFswMsg.h"
+
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "architecture/msgPayloadDefC/CSSConfigMsgPayload.h"
+struct CSSConfigMsg_C;
+%include "architecture/msgPayloadDefC/CSSUnitConfigMsgPayload.h"
+struct CSSUnitConfigMsg_C;
+%include "architecture/msgPayloadDefC/SunlineFilterMsgPayload.h"
+struct SunlineFilterMsg_C;
+%include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
+struct CSSArraySensorMsg_C;
 
 %pythoncode %{
 import sys

@@ -20,10 +20,9 @@
 #ifndef _LOW_PASS_FILTER_TORQUE_COMMAND_
 #define _LOW_PASS_FILTER_TORQUE_COMMAND_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 
@@ -46,12 +45,8 @@ typedef struct {
     int      reset;                                 /*!<          flag indicating the filter being started up */
 
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
-    char inputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the Input message*/
-    int32_t outputMsgID;                            /*!< [] ID for the outgoing filtered torque message */
-    int32_t inputMsgID;                             /*!< [] ID for the commanded torque message */
-
-    CmdTorqueBodyIntMsg controlOut;                /*!< -- Control output message */
+    CmdTorqueBodyMsg_C cmdTorqueOutMsg;             //!< commanded torque output message
+    CmdTorqueBodyMsg_C cmdTorqueInMsg;              //!< commanded torque input message
 
     BSKLogger *bskLogger;                             //!< BSK Logging
 
@@ -62,7 +57,6 @@ extern "C" {
 #endif
     
     void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, int64_t moduleID);
-    void CrossInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, int64_t moduleID);
     void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, uint64_t callTime, int64_t moduleID);
     

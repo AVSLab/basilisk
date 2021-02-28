@@ -21,7 +21,7 @@
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus() and gravity modules.  Illustrates
+# Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
 #           a 3-DOV spacecraft on a range of orbit types.
 # Author:   Hanspeter Schaub
 # Creation Date:  Nov. 26, 2016
@@ -35,7 +35,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples')
+sys.path.append(path + '/../../examples')
 import scenarioBskLog
 
 
@@ -56,7 +56,7 @@ import scenarioBskLog
 @pytest.mark.scenarioTest
 
 def test_scenarioBskLog(show_plots, case):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 

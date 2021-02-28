@@ -18,17 +18,14 @@
 #include <fstream>
 #include <iostream>
 #include <cstdio>
-#include <architecture/messaging/system_messaging.h>
 
 #include "vizInterface.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "architecture/messaging/system_messaging.h"
-#include "sensors/sun_sensor/coarse_sun_sensor.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
-#include "utilities/astroConstants.h"
+#include "architecture/utilities/astroConstants.h"
 
 void message_buffer_deallocate(void *data, void *hint);
 
@@ -40,14 +37,11 @@ VizInterface::VizInterface()
     this->saveFile = false;
     this->liveStream = false;
     this->FrameNumber= -1;
-    this->numOutputBuffers = 2;
 
-    memset(&this->cameraConfigMessage, 0x0, sizeof(CameraConfigMsg));
-    this->cameraConfigMessage.cameraID = -1;
-    strcpy(this->cameraConfigMessage.skyBox, "");
-    this->cameraConfigMessage.renderRate = 0;
-
-    this->planetNames = {};
+    this->cameraConfigBuffer = this->cameraConfInMsg.zeroMsgPayload;
+    this->cameraConfigBuffer.cameraID = -1;
+    strcpy(this->cameraConfigBuffer.skyBox, "");
+    this->cameraConfigBuffer.renderRate = 0;
 
     this->firstPass = 0;
     
@@ -65,9 +59,11 @@ VizInterface::~VizInterface()
     return;
 }
 
-/*! Initialization method for subscription to messages. This module does not output messages, but files containing the protobuffers for Vizard
+
+/*! A Reset method to put the module back into a clean state
+ @param CurrentSimNanos The current sim time in nanoseconds
  */
-void VizInterface::SelfInit()
+void VizInterface::Reset(uint64_t CurrentSimNanos)
 {
     if (this->opNavMode > 0 || this->liveStream){
         /* setup zeroMQ */
@@ -79,209 +75,133 @@ void VizInterface::SelfInit()
         void* message = malloc(4 * sizeof(char));
         memcpy(message, "PING", 4);
         zmq_msg_t request;
-        
-        std::cout << "Waiting for Vizard at " + this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber << std::endl;
-        
+
+        std::string text;
+        text = "Waiting for Vizard at " + this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber;
+        bskLogger.bskLog(BSK_INFORMATION, text.c_str());
+
         zmq_msg_init_data(&request, message, 4, message_buffer_deallocate, NULL);
         zmq_msg_send(&request, this->requester_socket, 0);
         char buffer[4];
         zmq_recv (this->requester_socket, buffer, 4, 0);
         zmq_send (this->requester_socket, "PING", 4, 0);
-        std::cout << "Basilisk-Vizard connection made" << std::endl;
-        
-        /* Create output message for module in opNav mode */
-        if (this->opNavMode > 0) {
-            uint64_t imageBufferCount = 2;
-            this->imageOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavImageOutMsgName,sizeof(CameraImageMsg),imageBufferCount,"CameraImageMsg", moduleID);
-        }
+        bskLogger.bskLog(BSK_INFORMATION, "Basilisk-Vizard connection made");
     }
 
-    return;
-}
-
-/*! Cross initialization. Module subscribes to other messages. In viz interface, many messages are subscribed to in order to extract information from the viz and give it to the visualization tool.
- */
-void VizInterface::CrossInit()
-{
-    MessageIdentData msgInfo;
     std::vector<VizSpacecraftData>::iterator scIt;
     for (scIt = this->scData.begin(); scIt != this->scData.end(); scIt++)
     {
-        /* Define CSS data input messages */
+        /* Check spacecraft input message */
+        if (scIt->scStateInMsg.isLinked()) {
+            scIt->scStateInMsgStatus.dataFresh = false;
+            scIt->scStateInMsgStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+        } else {
+            bskLogger.bskLog(BSK_ERROR, "vizInterface: spacecraft msg not linked.");
+        }
+
+        /* Check CSS data input messages */
         {
             MsgCurrStatus cssStatus;
             cssStatus.dataFresh = false;
             cssStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-
-            scIt->numCSS = (int) scIt->cssInMsgNames.size();
-            if (scIt->numCSS > 0) {
-                for (size_t idx = 0; idx < (size_t) scIt->numCSS; idx++)
-                {
-                    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(scIt->cssInMsgNames[idx]);
-                    if (msgInfo.itemFound) {
-                        cssStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(scIt->cssInMsgNames[idx],sizeof(CSSConfigLogSimMsg), moduleID);
-                    } else {
-                        cssStatus.msgID = -1;
-                        bskLogger.bskLog(BSK_WARNING, "vizInterface: CSS(%zu) msg %s requested but not found.", idx, scIt->cssInMsgNames[idx].c_str());
-                    }
-                    scIt->cssConfLogInMsgId.push_back(cssStatus);
+            scIt->cssConfLogInMsgStatus.clear();
+            scIt->cssInMessage.clear();
+            for (size_t idx = 0; idx < (size_t) scIt->cssInMsgs.size(); idx++)
+            {
+                if (!scIt->cssInMsgs.at(idx).isLinked()) {
+                    bskLogger.bskLog(BSK_ERROR, "vizInterface: CSS(%zu) msg not linked.", idx);
                 }
-                scIt->cssInMessage.resize(scIt->cssConfLogInMsgId.size());
+                scIt->cssConfLogInMsgStatus.push_back(cssStatus);
+                CSSConfigLogMsgPayload logMsg = {};
+                scIt->cssInMessage.push_back(logMsg);
             }
         }
 
-        /* Define SCPlus input message */
-        msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(scIt->scPlusInMsgName);
-        if (msgInfo.itemFound) {
-            scIt->scPlusInMsgID.msgID = SystemMessaging::GetInstance()->subscribeToMessage(scIt->scPlusInMsgName,
-                    sizeof(SCPlusStatesSimMsg), moduleID);
-            scIt->scPlusInMsgID.dataFresh = false;
-            scIt->scPlusInMsgID.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-        } else {
-            scIt->scPlusInMsgID.msgID = -1;
+        /* Check StarTracker input message */
+        if (scIt->starTrackerInMsg.isLinked()) {
+            scIt->starTrackerInMsgStatus.dataFresh = false;
+            scIt->starTrackerInMsgStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
         }
 
-        /* Define StarTracker input message */
-        msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(scIt->starTrackerInMsgName);
-        if (msgInfo.itemFound) {
-            scIt->starTrackerInMsgID.msgID = SystemMessaging::GetInstance()->subscribeToMessage(scIt->starTrackerInMsgName,
-                    sizeof(STSensorIntMsg), moduleID);
-            scIt->starTrackerInMsgID.dataFresh = false;
-            scIt->starTrackerInMsgID.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-        } else {
-            scIt->starTrackerInMsgID.msgID = -1;
-        }
-
-        /* Define RW input message */
+        /* Check RW input message */
         {
             MsgCurrStatus rwStatus;
             rwStatus.dataFresh = false;
             rwStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-            bool rwMsgNameSet = scIt->rwInMsgName.size();
-            for (size_t idx = 0; idx < (size_t) scIt->numRW; idx++)
+            scIt->rwInMsgStatus.clear();
+            scIt->rwInMessage.clear();
+            for (size_t idx = 0; idx < (size_t) scIt->rwInMsgs.size(); idx++)
             {
-                std::string tmpWheelMsgName;
-                if (rwMsgNameSet == false) {
-                    tmpWheelMsgName= scIt->spacecraftName + "_rw_config_" + std::to_string(idx) + "_data";
-                    scIt->rwInMsgName.push_back(tmpWheelMsgName);
-                } else {
-                    tmpWheelMsgName = scIt->rwInMsgName[idx];
+                if (!scIt->rwInMsgs.at(idx).isLinked()) {
+                    bskLogger.bskLog(BSK_ERROR, "vizInterface: RW(%zu) msg not linked.", idx);
                 }
-                msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(tmpWheelMsgName);
-                if (msgInfo.itemFound) {
-                    rwStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(scIt->rwInMsgName[idx],sizeof(RWConfigLogSimMsg), moduleID);
-                } else {
-                    rwStatus.msgID = -1;
-                    bskLogger.bskLog(BSK_WARNING, "vizInterface: RW(%zu) msg %s requested but not found.", idx, scIt->rwInMsgName[idx].c_str());
-                }
-                scIt->rwInMsgID.push_back(rwStatus);
+                scIt->rwInMsgStatus.push_back(rwStatus);
+                RWConfigLogMsgPayload logMsg = {};
+                scIt->rwInMessage.push_back(logMsg);
             }
-            scIt->rwInMessage.resize(scIt->rwInMsgID.size());
         }
 
-        /* Define Thr input message */
+        /* Check Thr input message */
         {
             MsgCurrStatus thrStatus;
             thrStatus.dataFresh = false;
             thrStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-            std::vector<ThrClusterMap>::iterator thrIt;
-            scIt->numThr = 0;
-            for (thrIt= scIt->thrMsgData.begin(); thrIt != scIt->thrMsgData.end(); thrIt++)
-            {
-                for(uint32_t idx=0; idx < thrIt->thrCount; idx++) {
-                    std::string tmpThrustMsgName = "thruster_" + thrIt->thrTag + "_" + std::to_string(idx) + "_data";
-                    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(tmpThrustMsgName);
-                    if (msgInfo.itemFound) {
-                        thrStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(tmpThrustMsgName, sizeof(THROutputSimMsg), moduleID);
-                        scIt->thrMsgID.push_back(thrStatus);
-                        ThrClusterMap thrInfo;
-                        thrInfo.thrTag = thrIt->thrTag;
-                        for (int k=0; k<4; k++){
-                            thrInfo.color[k] = thrIt->color[k];
-                        }
-                        scIt->thrInfo.push_back(thrInfo);
-                        scIt->numThr++;
-                    } else {
-                        thrStatus.msgID = -1;
-                        bskLogger.bskLog(BSK_WARNING, "vizInterface: TH(%d) msg %s of tag %s requested but not found.", idx, tmpThrustMsgName.c_str(), thrIt->thrTag.c_str());
-                    }
+            int thrCounter = 0;
+
+            for (thrCounter = 0; thrCounter < (int) scIt->thrInMsgs.size(); thrCounter++) {
+                if (scIt->thrInMsgs.at(thrCounter).isLinked()) {
+                    scIt->thrMsgStatus.push_back(thrStatus);
+                    THROutputMsgPayload logMsg;
+                    scIt->thrOutputMessage.push_back(logMsg);
+                } else {
+                    bskLogger.bskLog(BSK_ERROR, "vizInterface: TH(%d) msg requested but not found.", thrCounter);
                 }
             }
-            scIt->thrOutputMessage.resize(scIt->thrMsgID.size());
-        }
-    }
-
-    /* Define Camera input messages */
-    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->cameraConfInMsgName);
-    if (msgInfo.itemFound) {
-        this->cameraConfMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cameraConfInMsgName,
-                                                                                    sizeof(CameraConfigMsg), moduleID);
-        this->cameraConfMsgId.dataFresh = false;
-        this->cameraConfMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-    } else {
-        this->cameraConfMsgId.msgID = -1;
-    }
-
-    if (this->epochMsgName.length() > 0) {
-        msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->epochMsgName);
-        if (msgInfo.itemFound) {
-            this->epochMsgID.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->epochMsgName,
-                                                                                        sizeof(EpochSimMsg), moduleID);
-        } else {
-            bskLogger.bskLog(BSK_ERROR, "vizInterface: can't find epoch msg %s.", this->epochMsgName.c_str());
-        }
-    }
-
-    /* Define Spice input message */
-    {
-        size_t i=0;
-        MsgCurrStatus spiceStatus;
-        spiceStatus.dataFresh = false;
-        spiceStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-        std::vector<std::string>::iterator spice_it;
-        for(spice_it = this->planetNames.begin(); spice_it != this->planetNames.end(); spice_it++){
-            std::string planetMsgName = *spice_it + "_planet_data";
-            msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(planetMsgName);
-            if (msgInfo.itemFound) {
-                this->spiceInMsgName.push_back(planetMsgName);
-                //! Subscribe to messages
-                spiceStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->spiceInMsgName[i], sizeof(SpicePlanetStateSimMsg), moduleID);
-            } else {
-                spiceStatus.msgID = -1;
+            if (scIt->thrInfo.size() != scIt->thrInMsgs.size()) {
+                bskLogger.bskLog(BSK_ERROR, "vizInterface: thrInfo vector (%d) must be the same size as thrInMsgs (%d)"
+                                 , (int) scIt->thrInfo.size(), (int) scIt->thrInMsgs.size());
             }
-            this->spiceInMsgID.push_back(spiceStatus);
-            i++;
         }
-        this->spiceMessage.resize(this->spiceInMsgID.size());
     }
 
-    return;
-}
+    /* Check Camera input messages */
+    if (this->cameraConfInMsg.isLinked()) {
+        this->cameraConfMsgStatus.dataFresh = false;
+        this->cameraConfMsgStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    }
 
-/*! A Reset method to put the module back into a clean state
- @param CurrentSimNanos The current sim time in nanoseconds
- */
-void VizInterface::Reset(uint64_t CurrentSimNanos)
-{
+    /* Check Spice input message */
+    {
+        MsgCurrStatus spiceStatus;
+        spiceStatus.dataFresh = true;  // this ensures that default planet states are also used
+        spiceStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+        this->spiceInMsgStatus.clear();
+        this->spiceMessage.clear();
+        for (long unsigned int c = 0; c<this->gravBodyInformation.size(); c++) {
+            /* set default zero translation and rotation states */
+            SpicePlanetStateMsgPayload logMsg = {};
+            m33SetIdentity(logMsg.J20002Pfix);
+            strcpy(logMsg.PlanetName, this->gravBodyInformation.at(c).bodyName.c_str());
+
+            this->spiceInMsgStatus.push_back(spiceStatus);
+            this->spiceMessage.push_back(logMsg);
+        }
+    }
+
     this->FrameNumber=-1;
     if (this->saveFile) {
-//        if(this->outputStream && this->outputStream->is_open())
-//        {
-//            this->outputStream->close();
-//            delete this->outputStream;
-//        }
         this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
     }
 
     this->settings.dataFresh = true;        // reset flag to transmit Vizard settings
 
-    this->epochMsg.year = EPOCH_YEAR;
-    this->epochMsg.month = EPOCH_MONTH;
-    this->epochMsg.day = EPOCH_DAY;
-    this->epochMsg.hours = EPOCH_HOUR;
-    this->epochMsg.minutes = EPOCH_MIN;
-    this->epochMsg.seconds = EPOCH_SEC;
-    this->epochMsgID.dataFresh = true;
+    this->epochMsgBuffer.year = EPOCH_YEAR;
+    this->epochMsgBuffer.month = EPOCH_MONTH;
+    this->epochMsgBuffer.day = EPOCH_DAY;
+    this->epochMsgBuffer.hours = EPOCH_HOUR;
+    this->epochMsgBuffer.minutes = EPOCH_MIN;
+    this->epochMsgBuffer.seconds = EPOCH_SEC;
+    this->epochMsgStatus.dataFresh = true;
 
     return;
 }
@@ -294,30 +214,28 @@ void VizInterface::ReadBSKMessages()
 
     for (scIt = this->scData.begin(); scIt != this->scData.end(); scIt++)
     {
-        /* Read BSK SCPlus msg */
-        if (scIt->scPlusInMsgID.msgID >= 0){
-            SCPlusStatesSimMsg localSCPlusArray;
-            SingleMessageHeader localSCPlusHeader;
-            SystemMessaging::GetInstance()->ReadMessage(scIt->scPlusInMsgID.msgID, &localSCPlusHeader,
-                                                        sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&localSCPlusArray));
-            if(localSCPlusHeader.WriteSize > 0 && localSCPlusHeader.WriteClockNanos != scIt->scPlusInMsgID.lastTimeTag){
-                scIt->scPlusInMsgID.lastTimeTag = localSCPlusHeader.WriteClockNanos;
-                scIt->scPlusInMsgID.dataFresh = true;
+        /* Read BSK spacecraft state msg */
+        if (scIt->scStateInMsg.isLinked()){
+            SCStatesMsgPayload localSCStateArray;
+            localSCStateArray = scIt->scStateInMsg();
+            if(scIt->scStateInMsg.isWritten() && scIt->scStateInMsg.timeWritten() != scIt->scStateInMsgStatus.lastTimeTag){
+                scIt->scStateInMsgStatus.lastTimeTag = scIt->scStateInMsg.timeWritten();
+                scIt->scStateInMsgStatus.dataFresh = true;
             }
-            scIt->scPlusMessage = localSCPlusArray;
+            scIt->scStateMsgBuffer = localSCStateArray;
         }
 
         /* Read BSK RW constellation msg */
         {
-        for (size_t idx=0;idx< (size_t) scIt->numRW; idx++)
-        {
-            if (scIt->rwInMsgID[idx].msgID != -1){
-            RWConfigLogSimMsg localRWArray;
-            SingleMessageHeader localRWHeader;
-            SystemMessaging::GetInstance()->ReadMessage(scIt->rwInMsgID[idx].msgID, &localRWHeader, sizeof(RWConfigLogSimMsg), reinterpret_cast<uint8_t*>(&localRWArray));
-                if(localRWHeader.WriteSize > 0 && localRWHeader.WriteClockNanos != scIt->rwInMsgID[idx].lastTimeTag){
-                    scIt->rwInMsgID[idx].lastTimeTag = localRWHeader.WriteClockNanos;
-                    scIt->rwInMsgID[idx].dataFresh = true;
+        for (size_t idx=0;idx< (size_t) scIt->rwInMsgs.size(); idx++) {
+            if (scIt->rwInMsgs[idx].isLinked()){
+                RWConfigLogMsgPayload localRWArray;
+                localRWArray = scIt->rwInMsgs.at(idx)();
+
+                if(scIt->rwInMsgs.at(idx).isWritten() &&
+                   scIt->rwInMsgs.at(idx).timeWritten() != scIt->rwInMsgStatus[idx].lastTimeTag) {
+                    scIt->rwInMsgStatus[idx].lastTimeTag = scIt->rwInMsgs.at(idx).timeWritten();
+                    scIt->rwInMsgStatus[idx].dataFresh = true;
                     scIt->rwInMessage[idx] = localRWArray;
                 }
             }
@@ -326,14 +244,14 @@ void VizInterface::ReadBSKMessages()
 
         /* Read incoming Thruster constellation msg */
         {
-        for (size_t idx=0;idx< (size_t) scIt->numThr; idx++){
-            if (scIt->thrMsgID[idx].msgID != -1){
-                THROutputSimMsg localThrusterArray;
-                SingleMessageHeader localThrusterHeader;
-                SystemMessaging::GetInstance()->ReadMessage(scIt->thrMsgID[idx].msgID, &localThrusterHeader, sizeof(THROutputSimMsg), reinterpret_cast<uint8_t*>(&localThrusterArray));
-                if(localThrusterHeader.WriteSize > 0 && localThrusterHeader.WriteClockNanos != scIt->thrMsgID[idx].lastTimeTag){
-                    scIt->thrMsgID[idx].lastTimeTag = localThrusterHeader.WriteClockNanos;
-                    scIt->thrMsgID[idx].dataFresh = true;
+        for (size_t idx=0;idx< (size_t) scIt->thrInMsgs.size(); idx++){
+            if (scIt->thrInMsgs[idx].isLinked()){
+                THROutputMsgPayload localThrusterArray;
+                localThrusterArray = scIt->thrInMsgs.at(idx)();
+                if(scIt->thrInMsgs.at(idx).isWritten() &&
+                   scIt->thrInMsgs.at(idx).timeWritten() != scIt->thrMsgStatus[idx].lastTimeTag){
+                    scIt->thrMsgStatus[idx].lastTimeTag = scIt->thrInMsgs.at(idx).timeWritten();
+                    scIt->thrMsgStatus[idx].dataFresh = true;
                     scIt->thrOutputMessage[idx] = localThrusterArray;
                 }
             }
@@ -342,77 +260,75 @@ void VizInterface::ReadBSKMessages()
 
         /* Read CSS constellation log msg */
         {
-        for (size_t idx=0;idx< (size_t) scIt->numCSS; idx++) {
-            if (scIt->cssConfLogInMsgId[idx].msgID != -1){
-                CSSConfigLogSimMsg localCSSMsg;
-                SingleMessageHeader localCSSHeader;
-                SystemMessaging::GetInstance()->ReadMessage(scIt->cssConfLogInMsgId[idx].msgID, &localCSSHeader, sizeof(CSSConfigLogSimMsg), reinterpret_cast<uint8_t*>(&localCSSMsg));
-                if(localCSSHeader.WriteSize > 0 && localCSSHeader.WriteClockNanos != scIt->cssConfLogInMsgId[idx].lastTimeTag){
-                    scIt->cssConfLogInMsgId[idx].lastTimeTag = localCSSHeader.WriteClockNanos;
-                    scIt->cssConfLogInMsgId[idx].dataFresh = true;
+        for (size_t idx=0;idx< (size_t) scIt->cssInMsgs.size(); idx++) {
+            if (scIt->cssInMsgs[idx].isLinked()){
+                CSSConfigLogMsgPayload localCSSMsg;
+                localCSSMsg = scIt->cssInMsgs.at(idx)();
+                if(scIt->cssInMsgs.at(idx).isWritten() &&
+                   scIt->cssInMsgs.at(idx).timeWritten() != scIt->cssConfLogInMsgStatus[idx].lastTimeTag){
+                    scIt->cssConfLogInMsgStatus[idx].lastTimeTag = scIt->cssInMsgs.at(idx).timeWritten();
+                    scIt->cssConfLogInMsgStatus[idx].dataFresh = true;
                     scIt->cssInMessage[idx] = localCSSMsg;
                 }
             }
         }
         }
 
-
         /* Read incoming ST constellation msg */
-        if (scIt->starTrackerInMsgID.msgID != -1){
-            STSensorIntMsg localSTArray;
-            SingleMessageHeader localSTHeader;
-            SystemMessaging::GetInstance()->ReadMessage(scIt->starTrackerInMsgID.msgID, &localSTHeader, sizeof(STSensorIntMsg), reinterpret_cast<uint8_t*>(&localSTArray));
-            if(localSTHeader.WriteSize > 0 && localSTHeader.WriteClockNanos != scIt->starTrackerInMsgID.lastTimeTag){
-                scIt->starTrackerInMsgID.lastTimeTag = localSTHeader.WriteClockNanos;
-                scIt->starTrackerInMsgID.dataFresh = true;
+        {
+        if (scIt->starTrackerInMsg.isLinked()){
+            STSensorMsgPayload localSTArray;
+            localSTArray = scIt->starTrackerInMsg();
+            if(scIt->starTrackerInMsg.isWritten() &&
+               scIt->starTrackerInMsg.timeWritten() != scIt->starTrackerInMsgStatus.lastTimeTag){
+                scIt->starTrackerInMsgStatus.lastTimeTag = scIt->starTrackerInMsg.timeWritten();
+                scIt->starTrackerInMsgStatus.dataFresh = true;
             }
             scIt->STMessage = localSTArray;
+        }
         }
     } /* end of scIt loop */
 
     /*! Read incoming camera config msg */
-    if (this->cameraConfMsgId.msgID != -1){
-        CameraConfigMsg localCameraConfigArray;
-        SingleMessageHeader localCameraConfigHeader;
-        SystemMessaging::GetInstance()->ReadMessage(this->cameraConfMsgId.msgID, &localCameraConfigHeader, sizeof(CameraConfigMsg), reinterpret_cast<uint8_t*>(&localCameraConfigArray));
-        if(localCameraConfigHeader.WriteSize > 0 && localCameraConfigHeader.WriteClockNanos != this->cameraConfMsgId.lastTimeTag){
-            this->cameraConfMsgId.lastTimeTag = localCameraConfigHeader.WriteClockNanos;
-            this->cameraConfMsgId.dataFresh = true;
+    if (this->cameraConfInMsg.isLinked()){
+        CameraConfigMsgPayload localCameraConfigArray;
+        localCameraConfigArray = this->cameraConfInMsg();
+        if(this->cameraConfInMsg.isWritten() &&
+           this->cameraConfInMsg.timeWritten() != this->cameraConfMsgStatus.lastTimeTag){
+            this->cameraConfMsgStatus.lastTimeTag = this->cameraConfInMsg.timeWritten();
+            this->cameraConfMsgStatus.dataFresh = true;
         }
-        this->cameraConfigMessage = localCameraConfigArray;
+        this->cameraConfigBuffer = localCameraConfigArray;
     }
 
     /*! Read incoming epoch msg */
-    if (this->epochMsgID.msgID != -1) {
-        EpochSimMsg epochMsg_Buffer;
-        SingleMessageHeader epochMsgHeader;
-        SystemMessaging::GetInstance()->ReadMessage(this->epochMsgID.msgID, &epochMsgHeader, sizeof(EpochSimMsg), reinterpret_cast<uint8_t*>(&epochMsg_Buffer));
-        if(epochMsgHeader.WriteSize > 0 && epochMsgHeader.WriteClockNanos != this->epochMsgID.lastTimeTag){
-            this->epochMsgID.lastTimeTag = epochMsgHeader.WriteClockNanos;
-            this->epochMsgID.dataFresh = true;
-            this->epochMsg = epochMsg_Buffer;
+    if (this->epochInMsg.isLinked()) {
+        EpochMsgPayload epochMsg_Buffer;
+        epochMsg_Buffer = this->epochInMsg();
+        if(this->epochInMsg.isWritten() &&
+           this->epochInMsg.timeWritten() != this->epochMsgStatus.lastTimeTag){
+            this->epochMsgStatus.lastTimeTag = this->epochInMsg.timeWritten();
+            this->epochMsgStatus.dataFresh = true;
+            this->epochMsgBuffer = epochMsg_Buffer;
         }
     }
 
     /*! Read BSK Spice constellation msg */
     {
-        size_t i=0;
-        std::vector<std::string>::iterator it;
-        for(it = this->planetNames.begin(); it != this->planetNames.end(); it++)
-        {
-            if (this->spiceInMsgID[i].msgID != -1){
-                SpicePlanetStateSimMsg localSpiceArray;
-                SingleMessageHeader localSpiceHeader;
-                memset(&localSpiceHeader, 0x0, sizeof(SingleMessageHeader));
-                SystemMessaging::GetInstance()->ReadMessage(this->spiceInMsgID[i].msgID, &localSpiceHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&localSpiceArray));
-                if(localSpiceHeader.WriteSize > 0 && localSpiceHeader.WriteClockNanos != this->spiceInMsgID[i].lastTimeTag){
-                    this->spiceInMsgID[i].lastTimeTag = localSpiceHeader.WriteClockNanos;
-                    this->spiceInMsgID[i].dataFresh = true;
-                    this->spiceMessage[i] = localSpiceArray;
-                }
+    for(size_t i=0; i < this->spiceInMsgs.size(); i++)
+    {
+        if (this->spiceInMsgs.at(i).isLinked()){
+            // If the spice msg is not linked then the default zero planet emphemeris is used
+            SpicePlanetStateMsgPayload localSpiceArray;
+            localSpiceArray = this->spiceInMsgs.at(i)();
+            if(this->spiceInMsgs.at(i).isWritten() &&
+               this->spiceInMsgs.at(i).timeWritten() != this->spiceInMsgStatus[i].lastTimeTag){
+                this->spiceInMsgStatus[i].lastTimeTag = this->spiceInMsgs.at(i).timeWritten();
+                this->spiceInMsgStatus[i].dataFresh = true;
+                this->spiceMessage[i] = localSpiceArray;
             }
-            i+=1;
         }
+    }
     }
 
     return;
@@ -657,16 +573,16 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     message->set_allocated_currenttime(time);
 
     /*! write epoch msg */
-    if (this->epochMsgID.dataFresh) {
+    if (this->epochMsgStatus.dataFresh) {
         vizProtobufferMessage::VizMessage::EpochDateTime* epoch = new vizProtobufferMessage::VizMessage::EpochDateTime;
-        epoch->set_year(this->epochMsg.year);
-        epoch->set_month(this->epochMsg.month);
-        epoch->set_day(this->epochMsg.day);
-        epoch->set_hours(this->epochMsg.hours);
-        epoch->set_minutes(this->epochMsg.minutes);
-        epoch->set_seconds(this->epochMsg.seconds);
+        epoch->set_year(this->epochMsgBuffer.year);
+        epoch->set_month(this->epochMsgBuffer.month);
+        epoch->set_day(this->epochMsgBuffer.day);
+        epoch->set_hours(this->epochMsgBuffer.hours);
+        epoch->set_minutes(this->epochMsgBuffer.minutes);
+        epoch->set_seconds(this->epochMsgBuffer.seconds);
         message->set_allocated_epoch(epoch);
-        this->epochMsgID.dataFresh = false;
+        this->epochMsgStatus.dataFresh = false;
     }
 
     /*! write the Locations protobuffer messages */
@@ -689,24 +605,24 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     std::vector<VizSpacecraftData>::iterator scIt;
     for (scIt = scData.begin(); scIt != scData.end(); scIt++)
     {
-        /*! Write SCPlus output msg */
-        if (scIt->scPlusInMsgID.msgID != -1 && scIt->scPlusInMsgID.dataFresh){
+        /*! Write spacecraft state output msg */
+        if (scIt->scStateInMsg.isLinked() && scIt->scStateInMsgStatus.dataFresh){
             vizProtobufferMessage::VizMessage::Spacecraft* scp = message->add_spacecraft();
             scp->set_spacecraftname(scIt->spacecraftName);
             for (int i=0; i<3; i++){
-                scp->add_position(scIt->scPlusMessage.r_BN_N[i]);
-                scp->add_velocity(scIt->scPlusMessage.v_BN_N[i]);
-                scp->add_rotation(scIt->scPlusMessage.sigma_BN[i]);
+                scp->add_position(scIt->scStateMsgBuffer.r_BN_N[i]);
+                scp->add_velocity(scIt->scStateMsgBuffer.v_BN_N[i]);
+                scp->add_rotation(scIt->scStateMsgBuffer.sigma_BN[i]);
             }
-//            scIt->scPlusInMsgID.dataFresh = false;
+//            scIt->scStateInMsgID.dataFresh = false;
 
             /* Write the SC sprite string */
             scp->set_spacecraftsprite(scIt->spacecraftSprite);
 
             /*! Write RW output msg */
-            for (size_t idx =0; idx < (size_t) scIt->numRW; idx++)
+            for (size_t idx =0; idx < (size_t) scIt->rwInMsgs.size(); idx++)
             {
-                if (scIt->rwInMsgID[idx].msgID != -1 && scIt->rwInMsgID[idx].dataFresh){
+                if (scIt->rwInMsgs[idx].isLinked() && scIt->rwInMsgStatus[idx].dataFresh){
                     vizProtobufferMessage::VizMessage::ReactionWheel* rwheel = scp->add_reactionwheels();
                     rwheel->set_wheelspeed(scIt->rwInMessage[idx].Omega);
                     rwheel->set_maxspeed(scIt->rwInMessage[idx].Omega_max);
@@ -721,9 +637,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             }
 
             /*! Write Thr output msg */
-            for (size_t idx =0; idx < (size_t) scIt->numThr; idx++)
+            for (size_t idx =0; idx < (size_t) scIt->thrInMsgs.size(); idx++)
             {
-                if (scIt->thrMsgID[idx].msgID != -1 && scIt->thrMsgID[idx].dataFresh){
+                if (scIt->thrInMsgs[idx].isLinked() && scIt->thrMsgStatus[idx].dataFresh){
                     vizProtobufferMessage::VizMessage::Thruster* thr = scp->add_thrusters();
                     thr->set_maxthrust(scIt->thrOutputMessage[idx].maxThrust);
                     thr->set_currentthrust(scIt->thrOutputMessage[idx].thrustForce);
@@ -742,9 +658,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             }
 
             // Write CSS output msg
-            for (size_t idx =0; idx < (size_t) scIt->numCSS; idx++)
+            for (size_t idx =0; idx < (size_t) scIt->cssInMsgs.size(); idx++)
             {
-                if (scIt->cssConfLogInMsgId[idx].msgID != -1 && scIt->cssConfLogInMsgId[idx].dataFresh){
+                if (scIt->cssInMsgs[idx].isLinked() && scIt->cssConfLogInMsgStatus[idx].dataFresh){
                     vizProtobufferMessage::VizMessage::CoarseSunSensor* css = scp->add_css();
                     for (int j=0; j<3; j++){
                         css->add_normalvector(scIt->cssInMessage[idx].nHat_B[j]);
@@ -776,34 +692,35 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     /*! Write camera output msg */
-    if ((this->cameraConfMsgId.msgID != -1 && this->cameraConfMsgId.dataFresh)
-        || this->cameraConfigMessage.cameraID >= 0){
+    if ((this->cameraConfInMsg.isLinked() && this->cameraConfMsgStatus.dataFresh)
+        || this->cameraConfigBuffer.cameraID >= 0){
         /*! This corrective rotation allows unity to place the camera as is expected by the python setting. Unity has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame: z point, x horizontal, y vertical (down) */
         double sigma_CuC[3], unityCameraMRP[3]; /*! Cu is the unity Camera frame */
         v3Set(1./3, 1./3, -1./3, sigma_CuC);
-        addMRP(this->cameraConfigMessage.sigma_CB, sigma_CuC, unityCameraMRP);
+        addMRP(this->cameraConfigBuffer.sigma_CB, sigma_CuC, unityCameraMRP);
         vizProtobufferMessage::VizMessage::CameraConfig* camera = message->add_cameras();
         for (int j=0; j<3; j++){
             if (j < 2){
-            camera->add_resolution(this->cameraConfigMessage.resolution[j]);
+            camera->add_resolution(this->cameraConfigBuffer.resolution[j]);
             }
             camera->add_cameradir_b(unityCameraMRP[j]);
-            camera->add_camerapos_b(this->cameraConfigMessage.cameraPos_B[j]);            }
-        camera->set_renderrate(this->cameraConfigMessage.renderRate);        // Unity expects nano-seconds between images 
-        camera->set_cameraid(this->cameraConfigMessage.cameraID);
-        camera->set_fieldofview(this->cameraConfigMessage.fieldOfView*R2D);  // Unity expects degrees
-        camera->set_skybox(this->cameraConfigMessage.skyBox);
-        camera->set_parentname(this->cameraConfigMessage.parentName);
+            camera->add_camerapos_b(this->cameraConfigBuffer.cameraPos_B[j]);            }
+        camera->set_renderrate(this->cameraConfigBuffer.renderRate);        // Unity expects nano-seconds between images
+        camera->set_cameraid(this->cameraConfigBuffer.cameraID);
+        camera->set_fieldofview(this->cameraConfigBuffer.fieldOfView*R2D);  // Unity expects degrees
+        camera->set_skybox(this->cameraConfigBuffer.skyBox);
+        camera->set_parentname(this->cameraConfigBuffer.parentName);
     }
 
     /*! Write spice output msgs */
-    size_t k=0;
-    std::vector<std::string>::iterator plIt;
-    for(plIt = this->planetNames.begin(); plIt != this->planetNames.end(); plIt++)
+    for(size_t k=0; k<this->gravBodyInformation.size(); k++)
     {
-        if (spiceInMsgID[k].msgID != -1 && spiceInMsgID[k].dataFresh){
+        if (this->spiceInMsgStatus[k].dataFresh){
             vizProtobufferMessage::VizMessage::CelestialBody* spice = message->add_celestialbodies();
-            spice->set_bodyname(*plIt);
+            spice->set_bodyname(this->gravBodyInformation.at(k).bodyName);
+            spice->set_mu(this->gravBodyInformation.at(k).mu/1e9);  /* must be in km^3/s^2 */
+            spice->set_radiuseq(this->gravBodyInformation.at(k).radEquator/1000.);  /* must be in km */
+            spice->set_radiusratio(this->gravBodyInformation.at(k).radiusRatio);
             for (int i=0; i<3; i++){
                 spice->add_position(this->spiceMessage[k].PositionVector[i]);
                 spice->add_velocity(this->spiceMessage[k].VelocityVector[i]);
@@ -813,7 +730,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             }
 //                spiceInMsgID[k].dataFresh = false;
         }
-        k++;
     }
 
     {
@@ -829,7 +745,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         /*!--OpNavMode set to 1 is to stay in lock-step with the viz at all time steps. It is a slower run, but provides visual capabilities during OpNav */
         /*!--OpNavMode set to 2 is a faster mode in which the viz only steps forward to the BSK time step if an image is requested. This is a faster run but nothing can be visualized post-run */
         if (this->opNavMode == 1
-            ||(this->opNavMode == 2 && ((CurrentSimNanos%this->cameraConfigMessage.renderRate == 0 && this->cameraConfigMessage.isOn == 1) ||this->firstPass < 11))
+            ||(this->opNavMode == 2 && ((CurrentSimNanos%this->cameraConfigBuffer.renderRate == 0 && this->cameraConfigBuffer.isOn == 1) ||this->firstPass < 11))
             || this->liveStream
             ){
             // Receive pong
@@ -866,8 +782,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             
             /*! - If the camera is requesting periodic images, request them */
             if (this->opNavMode > 0 &&
-                CurrentSimNanos%this->cameraConfigMessage.renderRate == 0 &&
-                this->cameraConfigMessage.isOn == 1)
+                CurrentSimNanos%this->cameraConfigBuffer.renderRate == 0 &&
+                this->cameraConfigBuffer.isOn == 1)
             {
                 char buffer[10];
                 zmq_recv(requester_socket, buffer, 10, 0);
@@ -904,15 +820,15 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 memcpy(this->bskImagePtr, imagePoint, imageBufferLength*sizeof(char));
                 
                 /*! -- Write out the image information to the Image message */
-                CameraImageMsg imageData;
+                CameraImageMsgPayload imageData;
                 imageData.timeTag = CurrentSimNanos;
                 imageData.valid = 0;
                 imageData.imagePointer = this->bskImagePtr;
                 imageData.imageBufferLength = imageBufferLength;
-                imageData.cameraID = this->cameraConfigMessage.cameraID;
+                imageData.cameraID = this->cameraConfigBuffer.cameraID;
                 imageData.imageType = 4;
                 if (imageBufferLength>0){imageData.valid = 1;}
-                SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageData), this->moduleID);
+                this->opnavImageOutMsg.write(&imageData, this->moduleID, CurrentSimNanos);
 
                 /*! -- Clean the messages to avoid memory leaks */
                 zmq_msg_close(&length);
@@ -953,6 +869,7 @@ void VizInterface::UpdateState(uint64_t CurrentSimNanos)
     }
 
 }
+
 
 /*! A cleaning method to ensure the message buffers are wiped clean.
  @param data The current sim time in nanoseconds

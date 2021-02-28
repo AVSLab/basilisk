@@ -17,10 +17,10 @@
 
  */
 
-#include "sensorInterfaces/TAMSensorData/tamComm.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/linearAlgebra.h"
+#include "fswAlgorithms/sensorInterfaces/TAMSensorData/tamComm.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 #include <math.h>
 
@@ -33,24 +33,9 @@
  */
 void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->tamOutMsgID = CreateNewMessage(configData->tamOutMsgName,
-        sizeof(TAMSensorBodyFswMsg), "TAMSensorBodyFswMsg", moduleID);
+    TAMSensorBodyMsg_C_init(&configData->tamOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the TAM sensor
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
- @return void
- @param configData The configuration data associated with the TAM interface
- @param moduleID The ID associated with the configData
- */
-void CrossInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
-{
-    /*! - Link the message ID for the incoming sensor data message to here */
-    configData->tamSensorMsgID = subscribeToMessage(configData->tamInMsgName,
-        sizeof(TAMSensorIntMsg), moduleID);
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -61,6 +46,11 @@ void CrossInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
  */
 void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required message has not been connected
+    if (!TAMSensorMsg_C_isLinked(&configData->tamInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: tamComm.tamInMsg wasn't connected.");
+    }
+
     if (fabs(m33Determinant(RECAST3X3 configData->dcm_BS) - 1.0) > 1e-10) {
         _bskLog(configData->bskLogger, BSK_WARNING, "dcm_BS is set to zero values.");
     }
@@ -77,21 +67,16 @@ void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t
  */
 void Update_tamProcessTelem(tamConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    TAMSensorIntMsg LocalInput;
+    TAMSensorMsgPayload localInput;
 
-    memset(&LocalInput, 0x0, sizeof(TAMSensorIntMsg));
+    // read input msg
+    localInput = TAMSensorMsg_C_read(&configData->tamInMsg);
 
-    ReadMessage(configData->tamSensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(TAMSensorIntMsg), (void*) &LocalInput, moduleID);
-
-    m33MultV3(RECAST3X3 configData->dcm_BS, LocalInput.tam_S,
+    m33MultV3(RECAST3X3 configData->dcm_BS, localInput.tam_S,
               configData->tamLocalOutput.tam_B);
 
     /*! - Write aggregate output into output message */
-    WriteMessage(configData->tamOutMsgID, callTime,    sizeof(TAMSensorBodyFswMsg),
-                (void*) & (configData->tamLocalOutput), moduleID);
+    TAMSensorBodyMsg_C_write(&configData->tamLocalOutput, &configData->tamOutMsg, moduleID, callTime);
     
     return;
 }

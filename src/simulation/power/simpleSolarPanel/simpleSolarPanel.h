@@ -22,11 +22,14 @@
 
 #include <Eigen/Dense>
 #include <vector>
-#include "power/_GeneralModuleFiles/powerNodeBase.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/eclipseSimMsg.h"
-#include "utilities/bskLogging.h"
+#include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
+#include "architecture/messaging/messaging.h"
+
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 
@@ -36,18 +39,17 @@ class SimpleSolarPanel: public PowerNodeBase {
 public:
     SimpleSolarPanel();
     ~SimpleSolarPanel();
-    void customCrossInit();
     bool customReadMessages();
     void customReset(uint64_t CurrentClock);
     void setPanelParameters(Eigen::Vector3d nHat_B, double panelArea, double panelEfficiency);
 
 private:
-    void evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg);
+    void evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageMsg);
     void computeSunData();
 public:
-    std::string sunInMsgName;                    //!< [-] Message name for sun data
-    std::string stateInMsgName;                  //!< [-] Message name for spacecraft state
-    std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message
+    ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< [-] sun data input message
+    ReadFunctor<SCStatesMsgPayload> stateInMsg;     //!< [-] spacecraft state input message
+    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;     //!< [-] Messun eclipse state input message
     double panelArea;                           //!< [m^2] Panel area in meters squared.
     double panelEfficiency;                     //!< [W/W] Panel efficiency in converting solar energy to electrical energy.
     Eigen::Vector3d nHat_B;                     //!< [-] Panel normal unit vector relative to the spacecraft body frame.
@@ -56,11 +58,8 @@ public:
 private:
     double projectedArea;                        //!< [m^2] Area of the panel projected along the sun vector.
     double sunDistanceFactor;                   //!< [-] Scale factor on the base solar power computed using the true s/c-sun distance.
-    int64_t sunInMsgID;                         //!< [-] Connect to input time message
-    int64_t stateInMsgID;                       //!< [-] Connect to input time message
-    int64_t sunEclipseInMsgID;                  //!< [-] Connect to input sun eclipse message
-    SpicePlanetStateSimMsg sunData;            //!< [-] Unused for now, but including it for future
-    SCPlusStatesSimMsg stateCurrent;           //!< [-] Current SSBI-relative state
+    SpicePlanetStateMsgPayload sunData;            //!< [-] Unused for now, but including it for future
+    SCStatesMsgPayload stateCurrent;           //!< [-] Current SSBI-relative state
     double shadowFactor;                        //!< [-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible)
 
 

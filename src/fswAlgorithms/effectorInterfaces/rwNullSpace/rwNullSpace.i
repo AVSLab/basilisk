@@ -26,17 +26,18 @@
 %ignore Update_rwNullSpace;
 %constant void SelfInit_rwNullSpace(void*, uint64_t);
 %ignore SelfInit_rwNullSpace;
-%constant void CrossInit_rwNullSpace(void*, uint64_t);
-%ignore CrossInit_rwNullSpace;
 %constant void Reset_rwNullSpace(void*, uint64_t, uint64_t);
 %ignore Reset_rwNullSpace;
-GEN_SIZEOF(rwNullSpaceConfig);
-GEN_SIZEOF(RWSpeedIntMsg);
-GEN_SIZEOF(ArrayMotorTorqueIntMsg);
+
 %include "rwNullSpace.h"
-%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "../../fswMessages/rwAvailabilityFswMsg.h"
-%include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
+
+%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+struct ArrayMotorTorqueMsg_C;
+%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+struct RWSpeedMsg_C;
+%include "architecture/msgPayloadDefC/RWConstellationMsgPayload.h"
+struct RWConstellationMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

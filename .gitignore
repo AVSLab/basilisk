@@ -12,6 +12,7 @@ docs/source/Documentation/*
 docs/source/_images/Scenarios/*
 docs/source/breathe.data
 docs/source/externalTools/*
+docs/source/examples/*
 src/tests/scenarios/data
 xml/*
 *.swp

@@ -36,10 +36,9 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import ReactionWheelPower
-from Basilisk.simulation import simMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
-from Basilisk.simulation import bskLogging
+from Basilisk.architecture import bskLogging
 
 
 @pytest.mark.parametrize("accuracy", [1e-12])
@@ -48,7 +47,6 @@ from Basilisk.simulation import bskLogging
 @pytest.mark.parametrize("setEta_m2c", [0, 1, 2])
 @pytest.mark.parametrize("OmegaValue", [100.0, -100.0])
 @pytest.mark.parametrize("setDeviceStatusMsg", [0, 1, 2])
-
 
 
 # update "module" in this function name to reflect the module name
@@ -120,7 +118,9 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     testModule = ReactionWheelPower.ReactionWheelPower()
     testModule.ModelTag = "bskSat"
     testModule.basePowerNeed = 10.   # baseline power draw, Watts
-    testModule.rwStateInMsgName = testModule.ModelTag + "_rw_config_0_data"
+    rwMsg = messaging.RWConfigLogMsg()
+    testModule.rwStateInMsg.subscribeTo(rwMsg)
+
     if setEta_e2m:
         testModule.elecToMechEfficiency = 0.9
         eta_e2m = testModule.elecToMechEfficiency
@@ -137,21 +137,20 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     # set the RW status input message
     OmegaValue = OmegaValue * macros.RPM        # convert to rad/sec
     if setRwMsg:
-        rwStatusMsg = simMessages.RWConfigLogSimMsg()
+        rwStatusMsg = messaging.RWConfigLogMsgPayload()
         rwStatusMsg.Omega = OmegaValue          # rad/sec
         rwStatusMsg.u_current = 0.010           # Nm
-        unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, testModule.rwStateInMsgName, rwStatusMsg)
+        rwMsg.write(rwStatusMsg)
 
     # set device status message
     if setDeviceStatusMsg > 0:
-        testModule.nodeStatusInMsgName = "rw_0_status"
-        deviceStatusMsg = simFswInterfaceMessages.DeviceStatusIntMsg()
+        deviceStatusMsg = messaging.DeviceStatusMsgPayload()
         deviceStatusMsg.deviceStatus = setDeviceStatusMsg - 1
-        unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName,
-                                   testModule.nodeStatusInMsgName, deviceStatusMsg)
+        statusMsg = messaging.DeviceStatusMsg().write(deviceStatusMsg)
+        testModule.nodeStatusInMsg.subscribeTo(statusMsg)
 
-
-    unitTestSim.TotalSim.logThisMessage(testModule.nodePowerOutMsgName, testProcessRate)
+    dataLog = testModule.nodePowerOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
@@ -160,7 +159,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     unitTestSim.ExecuteSimulation()
 
     # pull logged data
-    drawData = unitTestSim.pullMessageLogData(testModule.nodePowerOutMsgName + ".netPower")
+    drawData = dataLog.netPower
     print(drawData)
 
     # compare the module results to the truth values
@@ -176,6 +175,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     else:
         truePower = 0.0
 
+    print([truePower]*3)
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
         [truePower]*3, drawData, accuracy, "powerRW",
         testFailCount, testMessages)
@@ -199,10 +199,10 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
 if __name__ == "__main__":
     powerRW(
         False,      # showplots, not used in this test
-        True,      # setRwMsg
+        False,      # setRwMsg
         0,          # setDeviceStatusMsg (0 - don't set msg, 1 - set msg to OFF, 2 - set msg to ON
-        False,      # setEta_e2m
-        -100.0,      # OmegaValue
-        2,       # m2cCase (0 - use default (off), 1 - use 0.0, 2 - use 0.5
+        True,      # setEta_e2m
+        100.0,      # OmegaValue
+        0,       # m2cCase (0 - use default (off), 1 - use 0.0, 2 - use 0.5
         1e-12       # accuracy
     )

@@ -7,9 +7,9 @@ that accounts for the electrical power required for the RW device just to be on.
 
 This module is a sub-class of :ref:`PowerNodeBase` class.  As such it has the common properties:
 
-1. Writes out a :ref:`PowerNodeUsageSimMsg` describing its power consumption at each sim update based on its power
+1. Writes out a :ref:`PowerNodeUsageMsgPayload` describing its power consumption at each sim update based on its power
    consumption attribute
-2. Can be switched on or off using an optional message of type :ref:`DeviceStatusIntMsg`
+2. Can be switched on or off using an optional message of type :ref:`DeviceStatusMsgPayload`
 
 
 Message Connection Descriptions
@@ -20,11 +20,11 @@ The module message variable name is set by the
 user from python.  The message type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_MRP_PD:
+.. _ModuleIO_RW_POWER:
 .. figure:: /../../src/simulation/power/ReactionWheelPower/_Documentation/Images/PowerRW.svg
     :align: center
 
-    Figure 1: ``fswModuleTemplate()`` Module I/O Illustration
+    Figure 1: ``ReactionWheelPower()`` Module I/O Illustration
 
 
 .. table:: Module I/O Messages
@@ -33,7 +33,7 @@ provides information on what this message is used for.
     +-----------------------+-----------------------------------+---------------------------------------------------+
     | Msg Variable Name     | Msg Type                          | Description                                       |
     +=======================+===================================+===================================================+
-    | rwStateInMsgName      | :ref:`RWConfigLogSimMsg`          | RW state input message to provide the reaction    |
+    | rwStateInMsg          | :ref:`RWConfigLogMsgPayload`      | RW state input message to provide the reaction    |
     |                       |                                   | wheel speed and motor torque information.         |
     +-----------------------+-----------------------------------+---------------------------------------------------+
 
@@ -129,14 +129,13 @@ connected to the first RW (thus the ``0`` label)::
     testModule = PowerRW.PowerRW()
     testModule.ModelTag = "bskSat"
     testModule.basePowerNeed = 10.   # baseline power draw, Watts
-    testModule.rwStateInMsgName = testModule.ModelTag + "_rw_config_0_data"
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
 The user needs to specify a base power consumption :math:`p_{\text{base}}` through the variable ``basePowerNeed``.
 This should be a positive value to reflect the power required just to turn on the RW device, even without
 any motor torque commands being applied.
 
-You also need to specify the RW state message with the module variable ``rwStateInMsgName``.
+You also need to subscribe to the RW state message with the module variable ``rwStateInMsg``.
 
 This setup will evaluate the RW power using Eq. :eq:`eq:prw:2` where 100% efficiency is assumed in converting
 electrical to mechanical energy  with ``elecToMechEfficiency`` = :math:`\eta_{e2m}` = 1, and no electrical energy is recovered

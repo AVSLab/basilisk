@@ -21,9 +21,8 @@
  
  */
 
-#include "effectorInterfaces/thrFiringSchmitt/thrFiringSchmitt.h"
-#include "fswUtilities/fswDefinitions.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "fswAlgorithms/effectorInterfaces/thrFiringSchmitt/thrFiringSchmitt.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -35,7 +34,7 @@
 /*!
  \verbatim embed:rst
     This method initializes the configData for this module.  It creates a single output message of type
-    :ref:`THRArrayOnTimeCmdIntMsg`.
+    :ref:`THRArrayOnTimeCmdMsgPayload`.
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
@@ -43,33 +42,9 @@
  */
 void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->onTimeOutMsgId = CreateNewMessage(configData->onTimeOutMsgName,
-                                               sizeof(THRArrayOnTimeCmdIntMsg),
-                                               "THRArrayOnTimeCmdIntMsg",          /* add the output structure name */
-                                               moduleID);
+    THRArrayOnTimeCmdMsg_C_init(&configData->onTimeOutMsg);
 }
 
-/*!
- \verbatim embed:rst
-    This method performs the second stage of initialization for this module.
-    It links to 2 required input messages of type :ref:`THRArrayCmdForceFswMsg`
-    and :ref:`THRArrayConfigFswMsg`.
- \endverbatim
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The ID associated with the configData
- */
-void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID)
-{
-	/*! - Get the input message ID's */
-	configData->thrForceInMsgId = subscribeToMessage(configData->thrForceInMsgName,
-														 sizeof(THRArrayCmdForceFswMsg),
-														 moduleID);
-	configData->thrConfInMsgId = subscribeToMessage(configData->thrConfInMsgName,
-												sizeof(THRArrayConfigFswMsg),
-												moduleID);
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -80,17 +55,21 @@ void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t modu
  */
 void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-	THRArrayConfigFswMsg   localThrusterData;     /* local copy of the thruster data message */
-	uint64_t            timeOfMsgWritten;
-	uint32_t            sizeOfMsgWritten;
+	THRArrayConfigMsgPayload   localThrusterData;     /* local copy of the thruster data message */
 	int 				i;
 
 	configData->prevCallTime = 0;
 
+	// check if the required input messages are included
+	if (!THRArrayConfigMsg_C_isLinked(&configData->thrConfInMsg)) {
+		_bskLog(configData->bskLogger, BSK_ERROR, "Error: thrFiringSchmitt.thrConfInMsg wasn't connected.");
+	}
+    if (!THRArrayCmdForceMsg_C_isLinked(&configData->thrForceInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrFiringSchmitt.thrForceInMsg wasn't connected.");
+    }
+
 	/*! - Zero and read in the support messages */
-    memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
-	ReadMessage(configData->thrConfInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-				sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
+    localThrusterData = THRArrayConfigMsg_C_read(&configData->thrConfInMsg);
 
     /*! - store the number of installed thrusters */
 	configData->numThrusters = localThrusterData.numThrusters;
@@ -110,18 +89,15 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTim
  */
 void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-
-	uint64_t            timeOfMsgWritten;
-	uint32_t            sizeOfMsgWritten;
 	int 				i;
 	double 				level;					/* [-] duty cycle fraction */
 	double				controlPeriod;			/* [s] control period */
 	double				onTime[MAX_EFF_CNT];	/* [s] array of commanded on time for thrusters */
-    THRArrayCmdForceFswMsg thrForceIn;          /* -- copy of the thruster force input message */
-    THRArrayOnTimeCmdIntMsg thrOnTimeOut;       /* -- copy of the thruster on-time output message */
+    THRArrayCmdForceMsgPayload thrForceIn;          /* -- copy of the thruster force input message */
+    THRArrayOnTimeCmdMsgPayload thrOnTimeOut;       /* -- copy of the thruster on-time output message */
 
     /*! - zero the output message */
-    memset(&thrOnTimeOut, 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
+    thrOnTimeOut = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
 
     /*! - the first time update() is called there is no information on the time step.  Here
      return either all thrusters off or on depending on the baseThrustState state */
@@ -132,8 +108,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTi
 			thrOnTimeOut.OnTimeRequest[i] = (double)(configData->baseThrustState) * 2.0;
 		}
 
-		WriteMessage(configData->onTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
-					 (void*) &(thrOnTimeOut), moduleID);
+        THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, moduleID, callTime);
 		return;
 	}
 
@@ -141,10 +116,8 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTi
 	controlPeriod = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;
 	configData->prevCallTime = callTime;
 
-    /*! - Zero and read the input thruster force message */
-    memset(&thrForceIn, 0x0, sizeof(THRArrayCmdForceFswMsg));
-	ReadMessage(configData->thrForceInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-				sizeof(THRArrayCmdForceFswMsg), (void*) &thrForceIn, moduleID);
+    /*! - read the input thruster force message */
+    thrForceIn = THRArrayCmdForceMsg_C_read(&configData->thrForceInMsg);
 
     /*! - Loop through thrusters */
 	for(i = 0; i < configData->numThrusters; i++) {
@@ -191,8 +164,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTi
 		thrOnTimeOut.OnTimeRequest[i] = onTime[i];
 	}
 
-	WriteMessage(configData->onTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
-				 (void*) &thrOnTimeOut, moduleID);
+    THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, moduleID, callTime);
 
 	return;
 

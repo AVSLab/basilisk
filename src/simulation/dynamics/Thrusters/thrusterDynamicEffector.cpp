@@ -22,11 +22,10 @@
 #include <cmath>
 
 #include "thrusterDynamicEffector.h"
-#include "architecture/messaging/system_messaging.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include <cstring>
 #include <iostream>
 #include <cmath>
@@ -34,10 +33,7 @@
 /*! The Constructor.*/
 ThrusterDynamicEffector::ThrusterDynamicEffector()
 : stepsInRamp(30)
-, InputCmds("acs_thruster_cmds")
-, thrusterOutMsgNameBufferCount(2)
 , prevFireTime(0.0)
-, CmdsInMsgID(-1)
 , prevCommandTime(0xFFFFFFFFFFFFFFFF)
 {
     CallCounts = 0;
@@ -53,51 +49,31 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
 /*! The destructor. */
 ThrusterDynamicEffector::~ThrusterDynamicEffector()
 {
-    
+    for (long unsigned int c=0; c<this->thrusterOutMsgs.size(); c++) {
+        free(this->thrusterOutMsgs.at(c));
+    }
     return;
 }
 
-/*! This method is used to clear out the current thruster states and make sure
- that the overall model is ready for firing
+
+/*! This method is used to reset the module.
  @return void
  */
-void ThrusterDynamicEffector::SelfInit()
+void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
     //! - Clear out any currently firing thrusters and re-init cmd array
     NewThrustCmds.clear();
     NewThrustCmds.insert(this->NewThrustCmds.begin(), this->thrusterData.size(), 0.0);
-    
-    std::vector<THRConfigSimMsg>::iterator it;
-    uint64_t tmpThrustMsgId;
-    std::string tmpThrustMsgName;
-    int thrustIdx = 0;
     mDotTotal = 0.0;
-    for (it = this->thrusterData.begin(); it != this->thrusterData.end(); ++it)
-    {
-        tmpThrustMsgName = "thruster_" + this->ModelTag + "_" + std::to_string(thrustIdx) + "_data";
-        tmpThrustMsgId = SystemMessaging::GetInstance()->
-        CreateNewMessage(tmpThrustMsgName, sizeof(THROutputSimMsg), this->thrusterOutMsgNameBufferCount, "THROutputSimMsg", moduleID);
-        
-        this->thrusterOutMsgNames.push_back(tmpThrustMsgName);
-        this->thrusterOutMsgIds.push_back(tmpThrustMsgId);
-        
-        thrustIdx++;
+
+    // check if input message has not been included
+    if (!this->cmdsInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "thrusterDynamicEffector.cmdsInMsg was not linked.");
     }
-}
 
-/*! This method is used to connect the input command message to the thrusters.
- It sets the message ID based on what it finds for the input string.  If the
- message is not successfully linked, it will warn the user.
- @return void
- */
-void ThrusterDynamicEffector::CrossInit()
-{
-        //! - Find the message ID associated with the InputCmds string.
-    //! - Warn the user if the message is not successfully linked.
-    CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-                                                                     sizeof(THRArrayOnTimeCmdIntMsg), moduleID);
-}
 
+    return;
+}
 
 /*! This method is here to write the output message structure into the specified
  message.
@@ -107,11 +83,12 @@ void ThrusterDynamicEffector::CrossInit()
 void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
 {
     int idx = 0;
-    std::vector<THRConfigSimMsg>::iterator it;
-    //    std::vector<THROutputSimMsg>acsThrusters;
-    THROutputSimMsg tmpThruster;
+    std::vector<THRSimConfigMsgPayload>::iterator it;
+
+    THROutputMsgPayload tmpThruster;
     for (it = this->thrusterData.begin(); it != this->thrusterData.end(); ++it)
     {
+        tmpThruster = this->thrusterOutMsgs[idx]->zeroMsgPayload;
         eigenVector3d2CArray(it->thrLoc_B, tmpThruster.thrusterLocation);
         eigenVector3d2CArray(it->thrDir_B, tmpThruster.thrusterDirection);
         tmpThruster.maxThrust = it->MaxThrust;
@@ -120,11 +97,8 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
         v3Copy(it->ThrustOps.opThrustForce_B, tmpThruster.thrustForce_B);
         v3Copy(it->ThrustOps.opThrustTorquePntB_B, tmpThruster.thrustTorquePntB_B);
         
-        SystemMessaging::GetInstance()->WriteMessage(this->thrusterOutMsgIds.at(idx),
-                                                     CurrentClock,
-                                                     sizeof(THROutputSimMsg),
-                                                     reinterpret_cast<uint8_t*>(&tmpThruster),
-                                                     moduleID);
+        this->thrusterOutMsgs[idx]->write(&tmpThruster, this->moduleID, CurrentClock);
+
         idx ++;
     }
 }
@@ -141,26 +115,22 @@ bool ThrusterDynamicEffector::ReadInputs()
     uint64_t i;
     bool dataGood;
 
-    //! - Zero the command buffer and read the incoming command array
-    SingleMessageHeader LocalHeader;
-    memset(&IncomingCmdBuffer, 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
-    memset(&LocalHeader, 0x0, sizeof(LocalHeader));
-    dataGood = SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
-                                                           sizeof(THRArrayOnTimeCmdIntMsg),
-                                                           reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
-    
+    //! - read the incoming command array
+    this->incomingCmdBuffer = this->cmdsInMsg();
+    dataGood = this->cmdsInMsg.isWritten();
+
     //! - Check if message has already been read, if stale return
-    if(prevCommandTime==LocalHeader.WriteClockNanos || !dataGood) {
+    if(prevCommandTime==this->cmdsInMsg.timeWritten() || !dataGood) {
         return(false);
     }
-    prevCommandTime = LocalHeader.WriteClockNanos;
+    prevCommandTime = this->cmdsInMsg.timeWritten();
     
     //! - Set the NewThrustCmds vector.  Using the data() method for raw speed
     double *CmdPtr;
     for(i=0, CmdPtr = NewThrustCmds.data(); i < this->thrusterData.size();
         CmdPtr++, i++)
     {
-        *CmdPtr = IncomingCmdBuffer.OnTimeRequest[i];
+        *CmdPtr = this->incomingCmdBuffer.OnTimeRequest[i];
     }
     return(true);
     
@@ -176,9 +146,9 @@ bool ThrusterDynamicEffector::ReadInputs()
  */
 void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 {
-    std::vector<THRConfigSimMsg>::iterator it;
+    std::vector<THRSimConfigMsgPayload>::iterator it;
     std::vector<double>::iterator CmdIt;
-    std::vector<THRTimePairSimMsg>::iterator PairIt;
+    std::vector<THRTimePairMsgPayload>::iterator PairIt;
     //! - Iterate through the list of thruster commands that we read in.
     for(CmdIt = NewThrustCmds.begin(), it = this->thrusterData.begin();
         it != this->thrusterData.end(); it++, CmdIt++)
@@ -222,8 +192,8 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
  */
 void ThrusterDynamicEffector::computeForceTorque(double integTime){
     
-    std::vector<THRConfigSimMsg>::iterator it;
-    THROperationSimMsg *ops;
+    std::vector<THRSimConfigMsgPayload>::iterator it;
+    THROperationMsgPayload *ops;
     Eigen::Vector3d SingleThrusterForce;
     Eigen::Vector3d SingleThrusterTorque;
     Eigen::Vector3d CoMRelPos;
@@ -301,16 +271,21 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime){
     prevFireTime = integTime;
 }
 
-void ThrusterDynamicEffector::addThruster(THRConfigSimMsg *newThruster)
+void ThrusterDynamicEffector::addThruster(THRSimConfigMsgPayload *newThruster)
 {
     this->thrusterData.push_back(*newThruster);
+
+    /* create corresponding output message */
+    Message<THROutputMsgPayload> *msg;
+    msg = new Message<THROutputMsgPayload>;
+    this->thrusterOutMsgs.push_back(msg);
 }
 
 
 void ThrusterDynamicEffector::computeStateContribution(double integTime){
     
-    std::vector<THRConfigSimMsg>::iterator it;
-    THROperationSimMsg *ops;
+    std::vector<THRSimConfigMsgPayload>::iterator it;
+    THROperationMsgPayload *ops;
     double mDotSingle=0.0;
     this->mDotTotal = 0.0;
 	this->stateDerivContribution.setZero();
@@ -342,11 +317,11 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param currentTime The current simulation clock time converted to a double
  */
-void ThrusterDynamicEffector::ComputeThrusterFire(THRConfigSimMsg *CurrentThruster,
+void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfigMsgPayload *CurrentThruster,
                                                   double currentTime)
 {
-    std::vector<THRTimePairSimMsg>::iterator it;
-    THROperationSimMsg *ops = &(CurrentThruster->ThrustOps);
+    std::vector<THRTimePairMsgPayload>::iterator it;
+    THROperationMsgPayload *ops = &(CurrentThruster->ThrustOps);
     //! - Set the current ramp time for the thruster firing
     if(ops->ThrustOnRampTime == 0.0 &&
        CurrentThruster->ThrusterOnRamp.size() > 0)
@@ -401,11 +376,11 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRConfigSimMsg *CurrentThrust
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param currentTime The current simulation clock time converted to a double
  */
-void ThrusterDynamicEffector::ComputeThrusterShut(THRConfigSimMsg *CurrentThruster,
+void ThrusterDynamicEffector::ComputeThrusterShut(THRSimConfigMsgPayload *CurrentThruster,
                                                   double currentTime)
 {
-    std::vector<THRTimePairSimMsg>::iterator it;
-    THROperationSimMsg *ops = &(CurrentThruster->ThrustOps);
+    std::vector<THRTimePairMsgPayload>::iterator it;
+    THROperationMsgPayload *ops = &(CurrentThruster->ThrustOps);
     
     //! - Set the current off-ramp time based on the previous clock time and now
     if(ops->ThrustOffRampTime == 0.0 &&
@@ -454,10 +429,10 @@ void ThrusterDynamicEffector::ComputeThrusterShut(THRConfigSimMsg *CurrentThrust
  @param thrData The data for the thruster that we are currently firing
  @param thrRamp This just allows us to avoid switching to figure out which ramp
  */
-double ThrusterDynamicEffector::thrFactorToTime(THRConfigSimMsg *thrData,
-                                                std::vector<THRTimePairSimMsg> *thrRamp)
+double ThrusterDynamicEffector::thrFactorToTime(THRSimConfigMsgPayload *thrData,
+                                                std::vector<THRTimePairMsgPayload> *thrRamp)
 {
-    std::vector<THRTimePairSimMsg>::iterator it;
+    std::vector<THRTimePairMsgPayload>::iterator it;
     //! - Grab the last element in the ramp and determine if it goes up or down
     it = thrRamp->end();
     it--;

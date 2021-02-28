@@ -26,18 +26,16 @@
 %ignore Update_velocityPoint;
 %constant void SelfInit_velocityPoint(void*, uint64_t);
 %ignore SelfInit_velocityPoint;
-%constant void CrossInit_velocityPoint(void*, uint64_t);
-%ignore CrossInit_velocityPoint;
 %constant void Reset_velocityPoint(void*, uint64_t, uint64_t);
 %ignore Reset_velocityPoint;
 %include "velocityPoint.h"
-%include "simFswInterfaceMessages/ephemerisIntMsg.h"
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-%include "../../fswMessages/attRefFswMsg.h"
-GEN_SIZEOF(velocityPointConfig);
-GEN_SIZEOF(EphemerisIntMsg);
-GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(AttRefFswMsg);
+
+%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+struct EphemerisMsg_C;
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+struct AttRefMsg_C;
 
 %pythoncode %{
 import sys

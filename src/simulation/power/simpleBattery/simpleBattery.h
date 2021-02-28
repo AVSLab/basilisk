@@ -21,10 +21,9 @@
 #define BASILISK_SIMPLEBATTERY_H
 
 
-#include "power/_GeneralModuleFiles/powerStorageBase.h"
-#include "../../simMessages/powerStorageStatusSimMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/bskLogging.h"
+#include "simulation/power/_GeneralModuleFiles/powerStorageBase.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief simple battery class */
@@ -36,7 +35,7 @@ public:
 
 private:
     void customReset(uint64_t CurrentClock);
-    void evaluateBatteryModel(PowerStorageStatusSimMsg *msg);
+    void evaluateBatteryModel(PowerStorageStatusMsgPayload *msg);
 
 public:
     double storageCapacity; //!< [W-s] Battery capacity in Watt-seconds (Joules).

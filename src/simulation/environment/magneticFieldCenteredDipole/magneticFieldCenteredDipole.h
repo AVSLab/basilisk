@@ -24,12 +24,11 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
-#include "../../_GeneralModuleFiles/sys_model.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/magneticFieldSimMsg.h"
-#include "../_GeneralModuleFiles/magneticFieldBase.h"
-#include "utilities/bskLogging.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+
+#include "simulation/environment/_GeneralModuleFiles/magneticFieldBase.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief magnetic field centered dipole class */
 class MagneticFieldCenteredDipole:  public MagneticFieldBase {
@@ -38,7 +37,7 @@ public:
     ~MagneticFieldCenteredDipole();
 
 private:
-    void evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, double currentTime);
+    void evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime);
 
 
 public:

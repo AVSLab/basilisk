@@ -6,8 +6,7 @@
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import rwNullSpace
-from Basilisk.fswAlgorithms import fswMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.architecture import messaging
 import pytest
 import numpy as np
 import os, inspect
@@ -56,15 +55,11 @@ def rwNullSpaceTestFunction(numWheels):
     # Construct the rwNullSpace module
     # Set the names for the input messages
     moduleConfig = rwNullSpace.rwNullSpaceConfig()  # Create a config struct
-    moduleConfig.inputRWSpeeds = "input_rw_speeds"
-    moduleConfig.inputRWConfigData = "input_rw_constellation"
-    moduleConfig.inputRWCommands = "input_rw_commands"
-    moduleConfig.outputControlName = "output_rw_cmd"
 
     # Set the necessary data in the module. NOTE: This information is more or less random
     moduleConfig.OmegaGain = .5 # The feedback gain value applied for the RW despin control law
 
-    # This calls the algContain to setup the selfInit, crossInit, update, and reset
+    # This calls the algContain to setup the selfInit, update, and reset
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "rwNullSpace"
 
@@ -73,11 +68,11 @@ def rwNullSpaceTestFunction(numWheels):
 
     numRW = numWheels
 
-    inputRWConstellationMsg = fswMessages.RWConstellationFswMsg()
+    inputRWConstellationMsg = messaging.RWConstellationMsgPayload()
     inputRWConstellationMsg.numRW = numRW
 
     # Initialize the msg that gives the speed of the reaction wheels
-    inputSpeedMsg = rwNullSpace.RWSpeedIntMsg()
+    inputSpeedMsg = messaging.RWSpeedMsgPayload()
 
     gsHat = [[1, 0, 0], [0,1,0], [0, 0, 1]]
     if numWheels == 4:
@@ -88,7 +83,7 @@ def rwNullSpaceTestFunction(numWheels):
     # Iterate over all of the reaction wheels, create a rwConfigElementFswMsg, and add them to the rwConstellationFswMsg
     rwConfigElementList = list()
     for rw in range(numRW):
-        rwConfigElementMsg = fswMessages.RWConfigElementFswMsg()
+        rwConfigElementMsg = messaging.RWConfigElementMsgPayload()
         rwConfigElementMsg.gsHat_B = gsHat[rw] # Spin axis unit vector of the wheel in structure
         rwConfigElementMsg.Js = 0.08 # Spin axis inertia of wheel [kgm2]
         rwConfigElementMsg.uMax = 0.2 # maximum RW motor torque [Nm]
@@ -104,7 +99,7 @@ def rwNullSpaceTestFunction(numWheels):
     # Set the array of the reaction wheels in RWConstellationFswMsg to the list created above
     inputRWConstellationMsg.reactionWheels = rwConfigElementList
 
-    inputRWCmdMsg = simFswInterfaceMessages.ArrayMotorTorqueIntMsg()
+    inputRWCmdMsg = messaging.ArrayMotorTorqueMsgPayload()
     usControl = [0.1, 0.2, 0.15] # [Nm] RW motor torque array
     if numWheels == 4:
         usControl.append(-0.2) # [Nm]
@@ -112,11 +107,17 @@ def rwNullSpaceTestFunction(numWheels):
 
 
     # Set these messages
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.inputRWSpeeds, inputSpeedMsg)
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.inputRWConfigData, inputRWConstellationMsg)
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.inputRWCommands, inputRWCmdMsg)
+    rwSpeedMsg = messaging.RWSpeedMsg().write(inputSpeedMsg)
+    rwConfigMsg = messaging.RWConstellationMsg().write(inputRWConstellationMsg)
+    rwCmdMsg = messaging.ArrayMotorTorqueMsg().write(inputRWCmdMsg)
 
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputControlName, testProcessRate)
+    dataLog = moduleConfig.rwMotorTorqueOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.rwMotorTorqueInMsg.subscribeTo(rwCmdMsg)
+    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedMsg)
+    moduleConfig.rwConfigInMsg.subscribeTo(rwConfigMsg)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -125,7 +126,7 @@ def rwNullSpaceTestFunction(numWheels):
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    outputCrtlData = unitTestSim.pullMessageLogData(moduleConfig.outputControlName+'.motorTorque', list(range(3)))
+    outputCrtlData = dataLog.motorTorque[:, :numRW]
     print(outputCrtlData)
 
     if numWheels == 3:
@@ -180,4 +181,4 @@ def rwNullSpaceTestFunction(numWheels):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == '__main__':
-    test_rwNullSpace()
+    test_rwNullSpace(4)

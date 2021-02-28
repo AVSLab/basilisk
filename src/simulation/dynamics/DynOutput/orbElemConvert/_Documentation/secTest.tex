@@ -109,16 +109,16 @@ All checks within test\_orb\_elem\_convert.py passed as expected with a toleranc
 	\begin{enumerate}
 		\item \underline{Inclined Elliptic Orbit ($0<e<1.0$,\quad $a>0$)}\\
 		To test elliptic orbtits, a range of semimajor axis inputs from $10-10^7$km is used. The eccentricity is also varied with inputs from $0.01-0.75$. As $a$ changes, $e=0.5$ and as $e$ changes, $a=10^7$km. All parameter sets passed for this case since the difference when comparing simulated and calculated results was always zero, as shown by Fig. \ref{fig:2} and \ref{fig:3}.
-		\begin{figure}[H] 
+\begin{figure}[H] 
 	\centering
-	\subfloat[$e=0.01$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncEllip_e_1.pdf}}
-	\subfloat[$e=0.75$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncEllip_e_2.pdf}}
+	\subfigure[$e=0.01$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncEllip_e_1.pdf}}
+	\subfigure[$e=0.75$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncEllip_e_2.pdf}}
 	\caption{Inclined Elliptical Orbit Varying $e$}\label{fig:2}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\subfloat[$e=0.5$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncEllip_a_1.pdf}}
-	\subfloat[$e=0.5$ and $a=10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncEllip_a_2.pdf}}
+	\subfigure[$e=0.5$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncEllip_a_1.pdf}}
+	\subfigure[$e=0.5$ and $a=10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncEllip_a_2.pdf}}
 	\caption{Inclined Elliptical Orbit Varying $a$}\label{fig:3}
 \end{figure}
 \pagebreak
@@ -126,14 +126,14 @@ All checks within test\_orb\_elem\_convert.py passed as expected with a toleranc
 		The equatorial elliptic orbit is tested with the same range of $e$ and $a$ inputs as the inclined case. All variations also passed this test with a tolerance of zero, as shown in the following set of figures:
 		\begin{figure}[H] \label{fig:4}
 	\centering
-	\subfloat[$e=0.01$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquEllip_e_1.pdf}}
-	\subfloat[$e=0.75$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquEllip_e_2.pdf}}
+	\subfigure[$e=0.01$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquEllip_e_1.pdf}}
+	\subfigure[$e=0.75$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquEllip_e_2.pdf}}
 	\caption{Equatorial Elliptical Orbit Varying $e$}
 \end{figure}
 \begin{figure}[H] \label{fig:5}
 	\centering
-	\subfloat[$e=0.5$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquEllip_a_1.pdf}}
-	\subfloat[$e=0.5$ and $a=10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquEllip_a_2.pdf}}
+	\subfigure[$e=0.5$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquEllip_a_1.pdf}}
+	\subfigure[$e=0.5$ and $a=10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquEllip_a_2.pdf}}
 	\caption{Equatorial Elliptical Orbit Varying $a$}
 \end{figure}
 		\pagebreak
@@ -141,16 +141,16 @@ All checks within test\_orb\_elem\_convert.py passed as expected with a toleranc
 		Since $e=0$ for a circular orbit, the only varied input is $a$, which is limited to the same range as in the elliptical cases. All variations passed for the inclined circular orbit, again, with no discrepancy.
 		\begin{figure}[H] \label{fig:6}
 	\centering
-	\subfloat[$a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncCirc_1.pdf}}
-	\subfloat[$a=10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncCirc_2.pdf}}
+	\subfigure[$a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncCirc_1.pdf}}
+	\subfigure[$a=10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncCirc_2.pdf}}
 	\caption{Inclined Circular Orbit Varying $a$}
 \end{figure}
 \item \underline{Equatorial Circular Orbit ($e=0$,\quad $a>0$, \quad $\omega=0$, \quad $i=0$, \quad $\Omega=0$)}\\
 Like the inclined case, the only input varied for equatorial circular orbits is $a$. Also, all variations passed with no discrepancy, as shown in Fig. \ref{fig:7}.
 \begin{figure}[H]
 	\centering
-	\subfloat[$a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquCirc_1.pdf}}
-	\subfloat[$a=10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquCirc_2.pdf}}
+	\subfigure[$a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquCirc_1.pdf}}
+	\subfigure[$a=10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquCirc_2.pdf}}
 	\caption{Equatorial Circular Orbit Varying $a$}\label{fig:7}
 \end{figure}
 		\pagebreak
@@ -158,16 +158,16 @@ Like the inclined case, the only input varied for equatorial circular orbits is 
 		For the parabolic orbit, the input is varied with $-10^5$km $<a < -10$km. As discussed in the model description, it is crucial that $a$ remains negative in the parabolic case. All variations passed for this case with discrepancies equal to zero displayed below.
 		\begin{figure}[H] \label{fig:8}
 	\centering
-	\subfloat[$a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncPara_1.pdf}}
-	\subfloat[$a=10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncPara_2.pdf}}
+	\subfigure[$a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncPara_1.pdf}}
+	\subfigure[$a=10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncPara_2.pdf}}
 	\caption{Inclined Parabolic Orbit Varying $a$}
 \end{figure}
 \item \underline{Equatorial Parabolic Orbit ($e=1.0$, \quad $a=-r_p$, \quad $i=0$, \quad $\Omega=0$)}\\
 The equatorial parabolic orbit is tested with the same range of $a$ as the inclined case. This orbit also passed for all variations and the results are shown in Fig. \ref{fig:9}.
 \begin{figure}[H]
 	\centering
-	\subfloat[$a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquPara_1.pdf}}
-	\subfloat[$a=10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquPara_2.pdf}}
+	\subfigure[$a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquPara_1.pdf}}
+	\subfigure[$a=10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquPara_2.pdf}}
 	\caption{Equatorial Parabolic Orbit Varying $a$}\label{fig:9}
 \end{figure}
 		\pagebreak
@@ -175,14 +175,14 @@ The equatorial parabolic orbit is tested with the same range of $a$ as the incli
 		When testing hyperbolic orbits, $e$ and $a$ are both varied. While changing $e$ within the range $1.1<e<1.5$, $a=-10^4$km. While changing $a$ in the range $-10^5$km $<a < -10$km, $e=1.3$. All variations passed the tests, still with no discrepancies. The plots below compare the simulated and calculated results.
 		\begin{figure}[H] \label{fig:10}
 	\centering
-	\subfloat[$e=1.1$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncHyp_e_1.pdf}}
-	\subfloat[$e=1.5$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncHyp_e_2.pdf}}
+	\subfigure[$e=1.1$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncHyp_e_1.pdf}}
+	\subfigure[$e=1.5$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncHyp_e_2.pdf}}
 	\caption{Inclined Hyperbolic Orbit Varying $e$}
 \end{figure}
 \begin{figure}[H] \label{fig:11}
 	\centering
-	\subfloat[$e=1.3$, $a=-10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncHyp_a_1.pdf}}
-	\subfloat[$e=1.3$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncHyp_a_2.pdf}}
+	\subfigure[$e=1.3$, $a=-10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncHyp_a_1.pdf}}
+	\subfigure[$e=1.3$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncHyp_a_2.pdf}}
 	\caption{Inclined Hyperbolic Orbit Varying $a$}
 \end{figure}
 		\pagebreak
@@ -190,14 +190,14 @@ The equatorial parabolic orbit is tested with the same range of $a$ as the incli
 		Equatorial hyperbolic orbits are tested with the same range of $e$ and $a$ inputs as the inclined case. Also, all variations passed without discrepancy, as shown in the following Fig. \ref{fig:12} and \ref{fig:13}:
 		\begin{figure}[H]
 	\centering
-	\subfloat[$e=1.1$,$a=-10^5$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquHyp_e_1.pdf}}
-	\subfloat[$e=1.5$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquHyp_e_2.pdf}}
+	\subfigure[$e=1.1$,$a=-10^5$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquHyp_e_1.pdf}}
+	\subfigure[$e=1.5$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquHyp_e_2.pdf}}
 	\caption{Equatorial Hyperbolic Orbit Varying $e$}\label{fig:12}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\subfloat[$e=1.3$, $a=-10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquHyp_a_1.pdf}}
-	\subfloat[$e=1.3$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquHyp_a_2.pdf}}
+	\subfigure[$e=1.3$, $a=-10$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquHyp_a_1.pdf}}
+	\subfigure[$e=1.3$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{AutoTex/EquHyp_a_2.pdf}}
 	\caption{Equatorial Hyperbolic Orbit Varying $a$}\label{fig:13}
 \end{figure}
 	\end{enumerate}
@@ -235,14 +235,14 @@ The equatorial parabolic orbit is tested with the same range of $a$ as the incli
 		\end{figure}
 		%		\begin{figure}[H]
 		%			\centering
-		%			\subfloat[$e=0.01$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/IncEllipElem_e_1.png}}
-		%			\subfloat[$e=0.75$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/IncEllipElem_e_2.png}}
+		%			\subfigure[$e=0.01$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/IncEllipElem_e_1.png}}
+		%			\subfigure[$e=0.75$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/IncEllipElem_e_2.png}}
 		%			\caption{Inclined Elliptical Orbit Varying $e$}\label{fig:14}
 		%		\end{figure}
 		%		\begin{figure}[H]
 		%			\centering
-		%			\subfloat[$e=0.5$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/IncEllipElem_a_1.png}}
-		%			\subfloat[$e=0.5$ and $a=10$km]{\includegraphics[width=0.5\textwidth]{Figures/IncEllipElem_a_2.png}}
+		%			\subfigure[$e=0.5$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/IncEllipElem_a_1.png}}
+		%			\subfigure[$e=0.5$ and $a=10$km]{\includegraphics[width=0.5\textwidth]{Figures/IncEllipElem_a_2.png}}
 		%			\caption{Inclined Elliptical Orbit Varying $a$}\label{fig:15}
 		%		\end{figure}
 		%\pagebreak
@@ -250,14 +250,14 @@ The equatorial parabolic orbit is tested with the same range of $a$ as the incli
 		All variations also passed for this case with much lower discrepancies than the previous one, due to the initial input $e=0.5$. The largest difference still occurs when comparing the semimajor axis, but this time it only reaches $10^{-15}$km. %The figures below display the output parameters.
 		%		\begin{figure}[H] \label{fig:16}
 		%			\centering
-		%			\subfloat[$e=0.01$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/EquEllipElem_e_1.png}}
-		%			\subfloat[$e=0.75$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/EquEllipElem_e_2.png}}
+		%			\subfigure[$e=0.01$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/EquEllipElem_e_1.png}}
+		%			\subfigure[$e=0.75$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/EquEllipElem_e_2.png}}
 		%			\caption{Equatorial Elliptical Orbit Varying $e$}
 		%		\end{figure}
 		%		\begin{figure}[H] \label{fig:17}
 		%			\centering
-		%			\subfloat[$e=0.5$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/EquEllipElem_a_1.png}}
-		%			\subfloat[$e=0.5$ and $a=10$km]{\includegraphics[width=0.5\textwidth]{Figures/EquEllipElem_a_2.png}}
+		%			\subfigure[$e=0.5$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/EquEllipElem_a_1.png}}
+		%			\subfigure[$e=0.5$ and $a=10$km]{\includegraphics[width=0.5\textwidth]{Figures/EquEllipElem_a_2.png}}
 		%			\caption{Equatorial Elliptical Orbit Varying $a$}
 		%		\end{figure}
 		%		\pagebreak
@@ -265,16 +265,16 @@ The equatorial parabolic orbit is tested with the same range of $a$ as the incli
 		All variations passed in the inclined circular orbit tests with the maximum tolerance at about $10^{-9}$. As initial input $a$ decreases, so does the tolerance, resulting in no discrepancy when $a=10$km. %The comparisons are shown below.
 		%		\begin{figure}[H]
 		%			\centering
-		%			\subfloat[$a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/IncCircElem_1.png}}
-		%			\subfloat[$a=10$km]{\includegraphics[width=0.5\textwidth]{Figures/IncCircElem_2.png}}
+		%			\subfigure[$a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/IncCircElem_1.png}}
+		%			\subfigure[$a=10$km]{\includegraphics[width=0.5\textwidth]{Figures/IncCircElem_2.png}}
 		%			\caption{Inclined Circular Orbit Varying $a$}
 		%		\end{figure}
 		\item \underline{Equatorial Circular Orbit ($e=0$,\quad $a>0$, \quad $\omega=0$, \quad $i=0$, \quad $\Omega=0$)}\\
 		All variations passed as well, this time resulting in a tolerance of zero for almost all parameters. The only non-zero discrepancy is eccentricity with a difference of $10^{-17}$ between input and output. %Figure \ref{fig:19}  compares the orbital elements for the equatorial circular orbit.
 		%		\begin{figure}[H]
 		%			\centering
-		%			\subfloat[$a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/EquCircElem_1.png}}
-		%			\subfloat[$a=10$km]{\includegraphics[width=0.5\textwidth]{Figures/EquCircElem_2.png}}
+		%			\subfigure[$a=10^7$km]{\includegraphics[width=0.5\textwidth]{Figures/EquCircElem_1.png}}
+		%			\subfigure[$a=10$km]{\includegraphics[width=0.5\textwidth]{Figures/EquCircElem_2.png}}
 		%			\caption{Equatorial Circular Orbit Varying $a$}\label{fig:19}
 		%		\end{figure}
 		%		\pagebreak
@@ -282,16 +282,16 @@ The equatorial parabolic orbit is tested with the same range of $a$ as the incli
 		All variations passed for this orbit with tolerances well below the maximum allowed and decreasing as initial input $a$ becomes more negative. %The following figure shows the parameter comparisons.
 		%		\begin{figure}[H]
 		%			\centering
-		%			\subfloat[$a=-10$km]{\includegraphics[width=0.5\textwidth]{Figures/IncParaElem_1.png}}
-		%			\subfloat[$a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/IncParaElem_2.png}}
+		%			\subfigure[$a=-10$km]{\includegraphics[width=0.5\textwidth]{Figures/IncParaElem_1.png}}
+		%			\subfigure[$a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/IncParaElem_2.png}}
 		%			\caption{Inclined Parabolic Orbit Varying $a$}
 		%		\end{figure}
 		\item \underline{Equatorial Parabolic Orbit ($e=1.0$, \quad $a=-r_p$, \quad $i=0$, \quad $\Omega=0$)}\\
 		This orbit also passed for all variations with discrepancies similar to those seen in the inclined case. %Figure \ref{fig:21} illustrates these results:
 		%		\begin{figure}[H]
 		%			\centering
-		%			\subfloat[$a=-10$km]{\includegraphics[width=0.5\textwidth]{Figures/EquParaElem_1.png}}
-		%			\subfloat[$a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/EquParaElem_2.png}}
+		%			\subfigure[$a=-10$km]{\includegraphics[width=0.5\textwidth]{Figures/EquParaElem_1.png}}
+		%			\subfigure[$a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/EquParaElem_2.png}}
 		%			\caption{Equatorial Parabolic Orbit Varying $a$}\label{fig:21}
 		%		\end{figure}
 		%		\pagebreak
@@ -299,14 +299,14 @@ The equatorial parabolic orbit is tested with the same range of $a$ as the incli
 		All tests passed with discrepancies well below the maximum limit. %as shown in the figures below.
 		%		\begin{figure}[H]
 		%			\centering
-		%			\subfloat[$e=1.1$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/IncHypElem_e_1.png}}
-		%			\subfloat[$e=1.5$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/IncHypElem_e_2.png}}
+		%			\subfigure[$e=1.1$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/IncHypElem_e_1.png}}
+		%			\subfigure[$e=1.5$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/IncHypElem_e_2.png}}
 		%			\caption{Inclined Hyperbolic Orbit Varying $e$}
 		%		\end{figure}
 		%		\begin{figure}[H]
 		%			\centering
-		%			\subfloat[$e=1.3$, $a=-10$km]{\includegraphics[width=0.5\textwidth]{Figures/IncHypElem_a_1.png}}
-		%			\subfloat[$e=1.3$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/IncHypElem_a_2.png}}
+		%			\subfigure[$e=1.3$, $a=-10$km]{\includegraphics[width=0.5\textwidth]{Figures/IncHypElem_a_1.png}}
+		%			\subfigure[$e=1.3$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/IncHypElem_a_2.png}}
 		%			\caption{Inclined Hyperbolic Orbit Varying $a$}
 		%		\end{figure}
 		%		\pagebreak
@@ -314,14 +314,14 @@ The equatorial parabolic orbit is tested with the same range of $a$ as the incli
 		Each variation passed when tested, satisfying the tolerance limitation. The equatorial case exhibits lesser discrepancies than the inclined. %and the results are shown in figures \ref{fig:24} and \ref{fig:25}.
 		%		\begin{figure}[H]
 		%			\centering
-		%			\subfloat[$a=-10$km]{\includegraphics[width=0.5\textwidth]{Figures/EquHypElem_e_1.png}}
-		%			\subfloat[$a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/EquHypElem_e_2.png}}
+		%			\subfigure[$a=-10$km]{\includegraphics[width=0.5\textwidth]{Figures/EquHypElem_e_1.png}}
+		%			\subfigure[$a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/EquHypElem_e_2.png}}
 		%			\caption{Equatorial Hyperbolic Orbit Varying $a$}\label{fig:24}
 		%		\end{figure}
 		%		\begin{figure}[H]
 		%			\centering
-		%			\subfloat[$e=1.3$, $a=-10$km]{\includegraphics[width=0.5\textwidth]{Figures/EquHypElem_a_1.png}}
-		%			\subfloat[$e=1.3$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/EquHypElem_a_2.png}}
+		%			\subfigure[$e=1.3$, $a=-10$km]{\includegraphics[width=0.5\textwidth]{Figures/EquHypElem_a_1.png}}
+		%			\subfigure[$e=1.3$, $a=-10^5$km]{\includegraphics[width=0.5\textwidth]{Figures/EquHypElem_a_2.png}}
 		%			\caption{Equatorial Hyperbolic Orbit Varying $e$}\label{fig:25}
 		%		\end{figure}
 	\end{enumerate}

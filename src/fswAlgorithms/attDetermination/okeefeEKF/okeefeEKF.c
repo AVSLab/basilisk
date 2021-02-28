@@ -17,10 +17,10 @@
 
  */
 
-#include "attDetermination/okeefeEKF/okeefeEKF.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "fswAlgorithms/attDetermination/okeefeEKF/okeefeEKF.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
 
@@ -33,33 +33,10 @@
  */
 void SelfInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID)
 {
-    mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
-    
-    /*! - Create output message for module */
-	configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
-		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
-    /*! - Create filter states output message which is mostly for debug*/
-    configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
-        sizeof(SunlineFilterFswMsg), "SunlineFilterFswMsg", moduleID);
-    
+    NavAttMsg_C_init(&configData->navStateOutMsg);
+    SunlineFilterMsg_C_init(&configData->filtDataOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the CSS sensor
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
- @return void
- @param configData The configuration data associated with the CSS interface
- @param moduleID The module identifier
- */
-void CrossInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID)
-{
-    /*! - Find the message ID for the coarse sun sensor data message */
-    configData->cssDataInMsgId = subscribeToMessage(configData->cssDataInMsgName,
-        sizeof(CSSArraySensorIntMsg), moduleID);
-    /*! - Find the message ID for the coarse sun sensor configuration message */
-    configData->cssConfigInMsgId = subscribeToMessage(configData->cssConfigInMsgName,
-                                                   sizeof(CSSConfigFswMsg), moduleID);
-}
 
 /*! This method resets the sunline attitude filter to an initial state and
  initializes the internal estimation matrices.
@@ -73,17 +50,22 @@ void Reset_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
 {
     
     int32_t i;
-    CSSConfigFswMsg cssConfigInBuffer;
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    
+    CSSConfigMsgPayload cssConfigInBuffer;
+
     /*! - Zero the local configuration data structures and outputs */
-    memset(&cssConfigInBuffer, 0x0, sizeof(CSSConfigFswMsg));
-    memset(&(configData->outputSunline), 0x0, sizeof(NavAttIntMsg));
-    
+    configData->outputSunline = NavAttMsg_C_zeroMsgPayload();
+    mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
+
+    // check if the required input messages are included
+    if (!CSSConfigMsg_C_isLinked(&configData->cssConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: okeefeEKF.cssConfigInMsg wasn't connected.");
+    }
+    if (!CSSArraySensorMsg_C_isLinked(&configData->cssDataInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: okeefeEKF.cssDataInMsg wasn't connected.");
+    }
+
     /*! - Read in coarse sun sensor configuration information.*/
-    ReadMessage(configData->cssConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CSSConfigFswMsg), &cssConfigInBuffer, moduleID);
+    cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
     for(i=0; i<cssConfigInBuffer.nCSS; i++)
@@ -133,20 +115,18 @@ void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
     double newTimeTag;
     double Hx[MAX_N_CSS_MEAS];
     uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    SunlineFilterFswMsg sunlineDataOutBuffer;
-    
+    int isWritten;
+    SunlineFilterMsgPayload sunlineDataOutBuffer;
+
     /*! - Read the input parsed CSS sensor data message*/
-    timeOfMsgWritten = 0;
-    sizeOfMsgWritten = 0;
-    memset(&(configData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-        sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
-    
+    configData->cssSensorInBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);
+    timeOfMsgWritten = CSSArraySensorMsg_C_timeWritten(&configData->cssDataInMsg);
+    isWritten = CSSArraySensorMsg_C_isWritten(&configData->cssDataInMsg);
+
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
     newTimeTag = timeOfMsgWritten * NANO2SEC;
-    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten > 0)
+    if(newTimeTag >= configData->timeTag && isWritten)
     {
         sunlineTimeUpdate(configData, newTimeTag);
         sunlineMeasUpdate(configData, newTimeTag);
@@ -171,8 +151,7 @@ void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
     v3Normalize(configData->outputSunline.vehSunPntBdy,
         configData->outputSunline.vehSunPntBdy);
     configData->outputSunline.timeTag = configData->timeTag;
-	WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
-		&(configData->outputSunline), moduleID);
+    NavAttMsg_C_write(&configData->outputSunline, &configData->navStateOutMsg, moduleID, callTime);
     
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = configData->timeTag;
@@ -182,8 +161,7 @@ void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
     memmove(sunlineDataOutBuffer.state, configData->state, SKF_N_STATES*sizeof(double));
     memmove(sunlineDataOutBuffer.stateError, configData->x, SKF_N_STATES*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, configData->postFits, MAX_N_CSS_MEAS*sizeof(double));
-    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
-                 &sunlineDataOutBuffer, moduleID);
+    SunlineFilterMsg_C_write(&sunlineDataOutBuffer, &configData->filtDataOutMsg, moduleID, callTime);
     
     return;
 }

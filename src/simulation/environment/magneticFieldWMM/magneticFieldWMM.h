@@ -24,14 +24,11 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
-#include "../../_GeneralModuleFiles/sys_model.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/magneticFieldSimMsg.h"
-#include "simMessages/epochSimMsg.h"
-#include "../_GeneralModuleFiles/magneticFieldBase.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "simulation/environment/_GeneralModuleFiles/magneticFieldBase.h"
+
 #include "GeomagnetismHeader.h"
-#include "utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 #include <time.h>
 
 /*! @brief magnetic field WMM class */
@@ -41,17 +38,15 @@ public:
     ~MagneticFieldWMM();
 
 private:
-    void evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, double currentTime);
+    void evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime);
     void initializeWmm(const char *dataPath);
     void cleanupEarthMagFieldModel();
     void computeWmmField(double decimalYear, double phi, double lambda, double h, double B_M[3]);
     void customReset(uint64_t CurrentClock);
-    void customCrossInit();
     void customSetEpochFromVariable();
     void decimalYear2Gregorian(double fractionalYear, struct tm *gregorian);
     double gregorian2DecimalYear(double currentTime);
 public:
-    std::string epochInMsgName;             //!< -- Message name of the epoch message
     std::string dataPath;                   //!< -- String with the path to the WMM coefficient file
     double      epochDateFractionalYear;    //!< Specified epoch date as a fractional year
     BSKLogger bskLogger;                      //!< -- BSK Logging

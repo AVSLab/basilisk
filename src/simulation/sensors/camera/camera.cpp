@@ -29,19 +29,16 @@
 #include <Eigen/Dense>
 #include <string.h>
 #include "camera.h"
-#include "architecture/messaging/system_messaging.h"
-#include "utilities/rigidBodyKinematics.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
 
 /*! The constructor for the Camera module. It also sets some default values at its creation.  */
 Camera::Camera()
 {
-    this->OutputBufferCount = 2;
     this->pointImageOut = NULL;
     
     /*! Default values for the camera.  */
-    strcpy(this->parentName, "spacecraft");
     this->cameraID = 1;
     this->resolution[0] = 512;
     this->resolution[1] = 512;
@@ -52,6 +49,8 @@ Camera::Camera()
     this->filename = "";
     this->fieldOfView = 0.7;
     strcpy(this->skyBox, "black");
+    this->saveImages = 0;
+    this->saveDir = "";
 
     /*! Default values for the perturbations.  */
     this->gaussian = 0;
@@ -65,28 +64,6 @@ Camera::Camera()
     return;
 }
 
-/*! Selfinit performs the first stage of initialization for this module.
- It's primary function is to create messages that will be written to.
- @return void
- */
-void Camera::SelfInit()
-{
-    /*! - Create output message of image */
-    this->imageOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->imageOutMsgName,sizeof(CameraImageMsg),this->OutputBufferCount,"CameraImageMsg",this->moduleID);
-    /*! - Create output message for camera */
-    this->cameraOutID = SystemMessaging::GetInstance()->CreateNewMessage(this->cameraOutMsgName,sizeof(CameraConfigMsg),this->OutputBufferCount,"CameraConfigMsg",this->moduleID);
-}
-
-
-/*! CrossInit performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- */
-void Camera::CrossInit()
-{
-    /*! - Get the image data message ID*/
-    this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), this->moduleID);
-}
 
 /*! This is the destructor */
 Camera::~Camera()
@@ -347,12 +324,13 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
 {
     this->CurrentSimNanos = CurrentSimNanos;
     std::string localPath;
-    CameraImageMsg imageBuffer;
-    CameraImageMsg imageOut;
-    CameraConfigMsg cameraMsg;
-    memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
-    memset(&imageOut, 0x0, sizeof(CameraImageMsg));
-    memset(&cameraMsg, 0x0, sizeof(CameraConfigMsg));
+    CameraImageMsgPayload imageBuffer;
+    CameraImageMsgPayload imageOut;
+    CameraConfigMsgPayload cameraMsg;
+
+    /* zero output messages */
+    imageOut = this->imageOutMsg.zeroMsgPayload;
+    cameraMsg = this->cameraConfigOutMsg.zeroMsgPayload;
     
     /*! - Populate the camera message */
     cameraMsg.cameraID = this->cameraID;
@@ -367,26 +345,26 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     strcpy(cameraMsg.skyBox, this->skyBox);
     
     /*! - Update the camera config data no matter if an image is present*/
-    SystemMessaging::GetInstance()->WriteMessage(this->cameraOutID, CurrentSimNanos, sizeof(CameraConfigMsg), reinterpret_cast<uint8_t *>(&cameraMsg), this->moduleID);
+    this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, CurrentSimNanos);
     
     cv::Mat imageCV, blurred;
     if (this->saveDir !=""){
         localPath = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".png";
     }
     /*! - Read in the bitmap*/
-    SingleMessageHeader localHeader;
-    if(this->imageInMsgName != "")
+    if(this->imageInMsg.isLinked())
     {
-        SystemMessaging::GetInstance()->ReadMessage(this->imageInMsgID, &localHeader,
-                                                    sizeof(CameraImageMsg), reinterpret_cast<uint8_t*>(&imageBuffer), this->moduleID);
-        this->sensorTimeTag = localHeader.WriteClockNanos;
+        imageBuffer = this->imageInMsg();
+        this->sensorTimeTag = this->imageInMsg.timeWritten();
     }
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
         ApplyFilters(imageCV, blurred, this->gaussian, this->darkCurrent, this->saltPepper, this->cosmicRays, this->blurParam);
         if (this->saveImages == 1){
-            cv::imwrite(localPath, blurred);
+            if (!cv::imwrite(localPath, blurred)) {
+                bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
+            }
         }
     }
     else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos){
@@ -396,7 +374,9 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         
         ApplyFilters(imageCV, blurred, this->gaussian, this->darkCurrent, this->saltPepper, this->cosmicRays, this->blurParam);
         if (this->saveImages == 1){
-            cv::imwrite(localPath, blurred);
+            if (!cv::imwrite(localPath, blurred)) {
+                bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
+            }
         }
         /*! If the permanent image buffer is not populated, it will be equal to null*/
         if (this->pointImageOut != NULL) {
@@ -418,13 +398,13 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength*sizeof(char));
         imageOut.imagePointer = this->pointImageOut;
         
-        SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageOut), this->moduleID);
+        this->imageOutMsg.write(&imageOut, this->moduleID, CurrentSimNanos);
         
         return;
     }
     else{
         /*! - If no image is present, write zeros in message */
-        SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageBuffer), this->moduleID);
+        this->imageOutMsg.write(&imageOut, this->moduleID, CurrentSimNanos);
         return;}
  
 }

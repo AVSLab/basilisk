@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 import sys, os, inspect
 import numpy
 import pytest
@@ -30,7 +29,7 @@ import math
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
@@ -56,7 +55,7 @@ def test_extForceBodyAndTorque():
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -74,15 +73,12 @@ def test_extForceBodyAndTorque():
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
-
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
 
     # Define initial conditions
     scObject.hub.mHub = 750.0
@@ -111,8 +107,8 @@ def test_extForceBodyAndTorque():
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
-    dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
-    dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
+    dataPos = [[dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    dataSigma = [[dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     truePos = [
                 [-6.78136423e+06, 4.94628599e+06, 5.48655395e+06]
@@ -153,7 +149,7 @@ def test_extForceInertialAndTorque():
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -171,13 +167,12 @@ def test_extForceInertialAndTorque():
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
+    unitTestSim.earthGravBody.planetName = "earth_planet_data"
+    unitTestSim.earthGravBody.mu = 0.3986004415E+15  # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
 
     # Define initial conditions of the spacecraft
     scObject.hub.mHub = 750.0
@@ -206,8 +201,8 @@ def test_extForceInertialAndTorque():
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
-    dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
-    dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
+    dataPos = [[dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    dataSigma = [[dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     truePos = [
                 [-6.78183900e+06, 4.94674963e+06, 5.48686274e+06]

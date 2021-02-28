@@ -18,7 +18,6 @@
  */
 
 #include "simpleInstrument.h"
-#include "../../simMessages/dataNodeUsageSimMsg.h"
 
 /*! Constructor, which sets the default nodeDataOut to zero.
  @return void
@@ -38,7 +37,7 @@ SimpleInstrument::~SimpleInstrument(){
 /*! Sets the name and baud rate for the data in the output message.
  @return void
 */
-void SimpleInstrument::evaluateDataModel(DataNodeUsageSimMsg *dataUsageSimMsg, double currentTime){
+void SimpleInstrument::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimMsg, double currentTime){
     dataUsageSimMsg->baudRate = this->nodeBaudRate;
     strncpy (dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
     return;

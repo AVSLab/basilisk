@@ -22,10 +22,10 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "attControl/lowPassFilterTorqueCommand/lowPassFilterTorqueCommand.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "fswUtilities/fswDefinitions.h"
+#include "fswAlgorithms/attControl/lowPassFilterTorqueCommand/lowPassFilterTorqueCommand.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "math.h"
 
 
@@ -39,26 +39,10 @@
  */
 void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
-                                               sizeof(CmdTorqueBodyIntMsg),
-                                                "CmdTorqueBodyIntMsg",
-                                                moduleID);
+    /*! - Initialize output message for module */
+    CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
 }
 
-/*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The module identifier
- */
-void CrossInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, int64_t moduleID)
-{
-    /*! - Get the control data message ID*/
-    configData->inputMsgID = subscribeToMessage(configData->inputDataName,
-                                                sizeof(CmdTorqueBodyIntMsg),
-                                                moduleID);
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -72,6 +56,11 @@ void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configDa
     int i;
 
     configData->reset  = BOOL_TRUE;         /* reset the first run flag */
+
+    // check if the required input message is included
+    if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: lowPassFilterTorqueCommand.cmdTorqueInMsg wasn't connected.");
+    }
 
     for (i=0;i<NUM_LPF;i++) {
         v3SetZero(configData->Lr[i]);
@@ -93,10 +82,14 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
     uint32_t    sizeOfMsgWritten;
     double      v3[3];                      /*!<      3d vector sub-result */
     int         i;
+    CmdTorqueBodyMsgPayload controlOut;             /*!< -- Control output message */
 
-    /*! - Read the input messages */
-    ReadMessage(configData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CmdTorqueBodyIntMsg), (void*) &(configData->Lr[0]), moduleID);
+    /* zero the output message */
+    controlOut = CmdTorqueBodyMsg_C_zeroMsgPayload();
+
+    /* - Read the input messages */
+    CmdTorqueBodyMsgPayload msgBuffer = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueInMsg);
+    v3Copy(msgBuffer.torqueRequestBody, configData->Lr[0]);
 
     /*
         check if the filter states must be reset
@@ -151,10 +144,8 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
     /*
         store the output message 
      */
-    v3Copy(configData->LrF[0], configData->controlOut.torqueRequestBody);
+    v3Copy(configData->LrF[0], controlOut.torqueRequestBody);
+    CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg, moduleID, callTime);
     
-    WriteMessage(configData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
-                 (void*) &(configData->controlOut), moduleID);
-
     return;
 }

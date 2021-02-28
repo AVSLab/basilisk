@@ -16,11 +16,10 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "dynamics/ExtPulsedTorque/ExtPulsedTorque.h"
-#include "architecture/messaging/system_messaging.h"
+#include "simulation/dynamics/ExtPulsedTorque/ExtPulsedTorque.h"
 #include <iostream>
-#include "utilities/avsEigenSupport.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
@@ -38,23 +37,6 @@ ExtPulsedTorque::~ExtPulsedTorque()
     return;
 }
 
-/*! No Action is performed in this function.
- @return void
- */
-void ExtPulsedTorque::SelfInit()
-{
-    return;
-}
-
-/*! This method is used to connect the input message.
- It sets the message ID based on what it finds for the input string.  If the
- message is not successfully linked, it will warn the user.
- @return void
- */
-void ExtPulsedTorque::CrossInit()
-{
-    return;
-}
 
 /*! link the states */
 void ExtPulsedTorque::linkInStates(DynParamManager& statesIn)

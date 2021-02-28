@@ -20,10 +20,10 @@
 #ifndef _DV_GUIDANCE_POINT_H_
 #define _DV_GUIDANCE_POINT_H_
 
-#include "messaging/static_messaging.h"
-#include "fswMessages/attRefFswMsg.h"
-#include "fswMessages/dvBurnCmdFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
+#include "cMsgCInterface/DvBurnCmdMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
 
@@ -32,10 +32,9 @@
 /*! @brief Top level structure for the nominal delta-V guidance
  */
 typedef struct {
-    char outputDataName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
-    char inputBurnDataName[MAX_STAT_MSG_LENGTH]; //!< Input message that configures the vehicle burn
-    int32_t outputMsgID;     //!< (-) ID for the outgoing body estimate message
-    int32_t inputBurnCmdID;  //!< [-] ID for the incoming burn command data
+    AttRefMsg_C attRefOutMsg;           //!< The name of the output message
+    DvBurnCmdMsg_C burnDataInMsg;       //!< Input message that configures the vehicle burn
+
     BSKLogger *bskLogger;   //!< BSK Logging
 }dvGuidanceConfig;
 
@@ -44,7 +43,6 @@ extern "C" {
 #endif
 
     void SelfInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID);
-    void CrossInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID);
     void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,

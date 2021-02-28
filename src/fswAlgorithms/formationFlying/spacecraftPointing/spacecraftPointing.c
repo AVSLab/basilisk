@@ -19,11 +19,11 @@
 
 #include <string.h>
 #include <math.h>
-#include "formationFlying/spacecraftPointing/spacecraftPointing.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simulation/utilities/astroConstants.h"
+#include "fswAlgorithms/formationFlying/spacecraftPointing/spacecraftPointing.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/astroConstants.h"
 
 /*! This method initializes the configData for the spacecraft pointing module
  It checks to ensure that the inputs are sane and then creates the
@@ -34,29 +34,9 @@
  */
 void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->attReferenceOutMsgID = CreateNewMessage(configData->attReferenceOutMsgName,
-                                               sizeof(AttRefFswMsg),
-                                               "AttRefFswMsg",
-                                               moduleID);
-    
+    AttRefMsg_C_init(&configData->attReferenceOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the spacecraft pointing
- module interface. It's primary function is to link the input messages that were
- created elsewhere.
- @return void
- @param configData The configuration data associated with the spacecraft pointing module
- @param moduleID The Basilisk module identifier
- */
-void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID)
-{
-    configData->chiefPositionInMsgID = subscribeToMessage(configData->chiefPositionInMsgName,
-                                                          sizeof(NavTransIntMsg), moduleID);
-    configData->deputyPositionInMsgID = subscribeToMessage(configData->deputyPositionInMsgName,
-                                                           sizeof(NavTransIntMsg), moduleID);
-    
-}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -67,6 +47,14 @@ void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t 
  */
 void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input messages are included
+    if (!NavTransMsg_C_isLinked(&configData->chiefPositionInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftPointing.chiefPositionInMsg wasn't connected.");
+    }
+    if (!NavTransMsg_C_isLinked(&configData->deputyPositionInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftPointing.deputyPositionInMsg wasn't connected.");
+    }
+
     /* Build a coordinate system around the vector within the body frame that points towards the antenna and write the orientation
      of the B-frame with respect to the A-frame. */
     double dcm_AB[3][3];                            /*!< ---  dcm [AB] */
@@ -109,10 +97,8 @@ void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t cal
 void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    NavTransIntMsg chiefTransMsg;                   /*!< ---  Input message that consists of the position and velocity of the chief */
-    NavTransIntMsg deputyTransMsg;                  /*!< ---  Input message that consists of the position and velocity of the deputy */
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
+    NavTransMsgPayload chiefTransMsg;                   /*!< ---  Input message that consists of the position and velocity of the chief */
+    NavTransMsgPayload deputyTransMsg;                  /*!< ---  Input message that consists of the position and velocity of the deputy */
     double rho_N[3];                                /*!< ---  Vector pointing from deputy to chief in inertial frame components */
     double dcm_RN[3][3];                            /*!< ---  DCM from R-frame to N-frame */
     double temp_z[3] = {0.0, 0.0, 1.0};             /*!< ---  z-axis used for cross-product */
@@ -139,14 +125,10 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
     double delta_omega_RN_N[3];                     /*!< ---  Difference between omega at t-1 and t */
     double domega_RN_N[3];                          /*!< ---  Angular acceleration of vector pointing from deputy to chief */
     double sigma_R1N[3];                            /*!< ---  MRP of R1-frame with respect to N-frame */
-    
-    memset(&(chiefTransMsg), 0x0, sizeof(NavTransIntMsg));
-    memset(&(deputyTransMsg), 0x0, sizeof(NavTransIntMsg));
-    
-    ReadMessage(configData->chiefPositionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavTransIntMsg), (void*) &(chiefTransMsg), moduleID);
-    ReadMessage(configData->deputyPositionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavTransIntMsg), (void*) &(deputyTransMsg), moduleID);
+
+    /* read in messages */
+    chiefTransMsg = NavTransMsg_C_read(&configData->chiefPositionInMsg);
+    deputyTransMsg = NavTransMsg_C_read(&configData->deputyPositionInMsg);
 
     /* Find the vector that points from the deputy spacecraft to the chief spacecraft. */
     v3Subtract(chiefTransMsg.r_BN_N, deputyTransMsg.r_BN_N, rho_N);
@@ -250,7 +232,6 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
     v3Copy(domega_RN_N, configData->attReferenceOutBuffer.domega_RN_N);
     
     /* write the Guidance output message */
-    WriteMessage(configData->attReferenceOutMsgID, callTime, sizeof(AttRefFswMsg),
-                 (void*) &(configData->attReferenceOutBuffer), moduleID);
+    AttRefMsg_C_write(&configData->attReferenceOutBuffer, &configData->attReferenceOutMsg, moduleID, callTime);
     return;
 }

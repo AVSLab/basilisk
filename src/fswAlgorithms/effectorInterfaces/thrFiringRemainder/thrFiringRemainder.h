@@ -20,20 +20,20 @@
 #ifndef _THR_FIRING_REMAINDER_
 #define _THR_FIRING_REMAINDER_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswUtilities/fswDefinitions.h"
-#include "fswMessages/thrArrayConfigFswMsg.h"
-#include "fswMessages/thrArrayCmdForceFswMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+
+#include "cMsgCInterface/THRArrayConfigMsg_C.h"
+#include "cMsgCInterface/THRArrayCmdForceMsg_C.h"
+#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
-    /* declare module private variables */
 	double              pulseRemainder[MAX_EFF_CNT];            //!< [-] Unimplemented thrust pulses (number of minimum pulses)
 	double              thrMinFireTime;              			//!< [s] Minimum fire time
 	int      			numThrusters;							//!< [-] The number of thrusters available on vehicle
@@ -44,12 +44,9 @@ typedef struct {
 	
 
 	/* declare module IO interfaces */
-	char 				thrForceInMsgName[MAX_STAT_MSG_LENGTH];        	//!< The name of the Input message
-	int32_t 			thrForceInMsgId;                             	//!< ID for the incoming message
-	char 				onTimeOutMsgName[MAX_STAT_MSG_LENGTH];       	//!< The name of the output message, onTimeOutMsgName
-	int32_t 			onTimeOutMsgId;                            		//!< ID for the outgoing message
-	char 				thrConfInMsgName[MAX_STAT_MSG_LENGTH];			//!< The name of the thruster cluster Input message
-	int32_t  			thrConfInMsgId;                   				//!< ID for the incoming Thruster configuration data
+    THRArrayCmdForceMsg_C thrForceInMsg;        	            //!< The name of the Input message
+    THRArrayOnTimeCmdMsg_C onTimeOutMsg;       	                //!< The name of the output message, onTimeOutMsgName
+    THRArrayConfigMsg_C thrConfInMsg;			                //!< The name of the thruster cluster Input message
 
 	BSKLogger *bskLogger;                             //!< BSK Logging
 
@@ -60,7 +57,6 @@ extern "C" {
 #endif
     
     void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID);
-    void CrossInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID);
     void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, int64_t moduleID);
     

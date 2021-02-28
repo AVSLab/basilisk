@@ -26,19 +26,16 @@
 %ignore Update_attTrackingError;
 %constant void SelfInit_attTrackingError(void*, uint64_t);
 %ignore SelfInit_attTrackingError;
-%constant void CrossInit_attTrackingError(void*, uint64_t);
-%ignore CrossInit_attTrackingError;
 %constant void Reset_attTrackingError(void*, uint64_t, uint64_t);
 %ignore Reset_attTrackingError;
 %include "attTrackingError.h"
-%include "../../../simulation/simFswInterfaceMessages/navAttIntMsg.h"
-%include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/attRefFswMsg.h"
-GEN_SIZEOF(NavAttIntMsg);
-GEN_SIZEOF(attTrackingErrorConfig);
-GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(AttRefFswMsg);
 
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
+%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
+struct AttGuidMsg_C;
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+struct AttRefMsg_C;
 
 %pythoncode %{
     import sys

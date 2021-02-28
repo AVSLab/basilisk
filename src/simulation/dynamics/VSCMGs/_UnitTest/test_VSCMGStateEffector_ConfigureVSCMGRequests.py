@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Integrated Unit Test Script
 #   Purpose:  Run a test of the VSCMG sim module
@@ -25,28 +24,12 @@
 #
 
 import pytest
-import sys, os, inspect
 import numpy as np
-import ctypes
-import math
-import csv
-import logging
 
 
-
-
-
-
-
-from Basilisk.utilities import MessagingAccess
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.simulation import vscmgStateEffector
-from Basilisk.simulation import sim_model
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.architecture import messaging
 
 # methods
 def listStack(vec,simStopTime,unitProcRate):
@@ -54,16 +37,16 @@ def listStack(vec,simStopTime,unitProcRate):
     return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
 
 def writeNewVSCMGCmds(self,u_s_cmd,u_g_cmd,numVSCMG):
-    NewVSCMGCmdsVec = vscmgStateEffector.VSCMGCmdVector(numVSCMG) # create standard vector from SWIG template (see .i file)
-    cmds = vscmgStateEffector.VSCMGCmdSimMsg()
+    NewVSCMGCmdsVec = vscmgStateEffector.VSCMGCmdVector(numVSCMG)
+    cmds = messaging.VSCMGCmdMsgPayload()
     for i in range(0,numVSCMG):
         cmds.u_s_cmd = u_s_cmd[i]
         cmds.u_g_cmd = u_g_cmd[i]
-        NewVSCMGCmdsVec[i] = cmds # set the data
-        self.NewVSCMGCmds = NewVSCMGCmdsVec # set in module (should this be indented?)
+        NewVSCMGCmdsVec[i] = cmds  # set the data
+    self.newVSCMGCmds = NewVSCMGCmdsVec  # set in module
 
 def defaultVSCMG():
-    VSCMG = vscmgStateEffector.VSCMGConfigSimMsg()
+    VSCMG = messaging.VSCMGConfigMsgPayload()
     VSCMG.rGB_B = [[0.],[0.],[0.]]
     VSCMG.gsHat0_B = [[1.],[0.],[0.]]
     VSCMG.gtHat0_B = [[1.],[0.],[0.]]
@@ -136,7 +119,6 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
     for i in range(0,numVSCMG):
         VSCMGs.append(defaultVSCMG())
 
-
     expOut = dict() # expected output
 
     print(testCase)
@@ -197,8 +179,6 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
     VSCMG.ConfigureVSCMGRequests(0.)
 
-
-
     if not 'accuracy' in vars():
         accuracy = 1e-10
 
@@ -212,8 +192,6 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
         if testFail:
             break
 
-
-
     if testFail:
         testFailCount += 1
         testMessages.append("FAILED: " + VSCMG.ModelTag + " Module failed " +
@@ -224,6 +202,8 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
     # print out success message if no errors were found
     if testFailCount == 0:
         print("PASSED ")
+    else:
+        print(testMessages)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

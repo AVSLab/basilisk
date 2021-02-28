@@ -17,23 +17,18 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import sys, os, inspect
 import numpy as np
 import pytest
 import math
 
-from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
-from Basilisk.simulation import coarse_sun_sensor
+from Basilisk.utilities import SimulationBaseClass, macros
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import headingSuKF, cssComm, fswMessages  # import the module that is to be tested
+from Basilisk.fswAlgorithms import headingSuKF
+from Basilisk.architecture import messaging
 
 import headingSuKF_test_utilities as FilterPlots
 
 def setupFilterData(filterObject):
-    filterObject.opnavOutMsgName = "opnav_state_estimate"
-    filterObject.filtDataOutMsgName = "heading_filter_data"
-    filterObject.opnavDataInMsgName = "opnav_sensor_data"
-    filterObject.cameraConfigMsgName = "camera_config_data"
 
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
@@ -92,7 +87,8 @@ def test_all_heading_kf(show_plots):
 
     **Description of Variables Being Tested**
 
-    For the propagation: The state output by the filter is tested compared to the commanded target, and the covariance is ensured to converge.
+    For the propagation: The state output by the filter is tested compared to the commanded target,
+    and the covariance is ensured to converge.
     These are both tested to 1E-1 because of noise introduced in the measurements.
 
     The measurement updated state output by the filter is tested compared to the expected target.
@@ -393,21 +389,22 @@ def StateUpdateSunLine(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
-    unitTestSim.TotalSim.logThisMessage('heading_filter_data', testProcessRate)
+
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     testVector = np.array([0.9, 0.1, 0.02])
     testOmega = np.array([0.01, 0.05, 0.001])
-    inputData = headingSuKF.OpNavFswMsg()
-    inputMessageSize = inputData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                      moduleConfig.opnavDataInMsgName,
-                                      inputMessageSize,
-                                      2)  # number of buffers (leave at 2 as default, don't make zero)
+    inputData = messaging.OpNavMsgPayload()
+    opnavDataInMsg = messaging.OpNavMsg()
 
     stateTarget = testVector.tolist()
     inputData.r_BN_B = stateTarget
     stateTarget.extend([0.0, 0.0])
     moduleConfig.stateInit = [1., 0.2, 0.1, 0.01, 0.001]
+
+    # setup message connections
+    moduleConfig.opnavDataInMsg.subscribeTo(opnavDataInMsg)
 
     unitTestSim.InitializeSimulation()
     t1 = 1000
@@ -416,27 +413,24 @@ def StateUpdateSunLine(show_plots):
             inputData.timeTag = macros.sec2nano(i * 0.5)
             inputData.valid = 1
             inputData.r_BN_B += np.random.normal(0, 0.001, 3)
-            inputData.covar_B = [0.0001**2,0,0,0,0.0001**2,0,0,0,0.0001**2]
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
-                                      inputMessageSize,
-                                      unitTestSim.TotalSim.CurrentNanos,
-                                      inputData)
+            inputData.covar_B = [0.0001**2, 0, 0, 0, 0.0001**2, 0, 0, 0, 0.0001**2]
+            opnavDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", list(range(5)))
-    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
-    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
+    stateLog = dataLog.state
+    postFitLog = dataLog.postFitRes
+    covarLog = dataLog.covar
     stateTarget[:3] = (-testVector[:3]/np.linalg.norm(testVector[:3])).tolist()
 
     for i in range(5):
         # check covariance immediately after measurement is taken,
         # ensure order of magnitude less than initial covariance.
-        if(np.abs(covarLog[t1-10, i*5+1+i] - covarLog[0, i*5+1+i]/10)>1E-1):
+        if(np.abs(covarLog[t1-10, i*5+i] - covarLog[0, i*5+i]/10) > 1E-1):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
-            print(abs(stateLog[-1, i+1] - stateTarget[i]))
+        if(abs(stateLog[-1, i] - stateTarget[i-1]) > 1.0E-1):
+            print(abs(stateLog[-1, i] - stateTarget[i-1]))
             testFailCount += 1
             testMessages.append("State update failure")
 
@@ -451,31 +445,28 @@ def StateUpdateSunLine(show_plots):
             inputData.r_BN_B += np.random.normal(0, 0.001, 3)
             inputData.valid = 1
             inputData.covar_B = [0.0001**2,0,0,0,0.0001**2,0,0,0,0.0001**2]
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
-                                      inputMessageSize,
-                                      unitTestSim.TotalSim.CurrentNanos,
-                                      inputData)
+            opnavDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+t1 +1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", list(range(5)))
-    stateErrorLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".stateError", list(range(5)))
-    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
-    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
+    stateLog = dataLog.state
+    stateErrorLog = dataLog.stateError
+    postFitLog = dataLog.postFitRes
+    covarLog = dataLog.covar
     stateTarget[:3] = (-testVector[:3]/np.linalg.norm(testVector[:3])).tolist()
 
     for i in range(5):
-        if(np.abs(covarLog[2*t1-10, i*5+1+i] - covarLog[0, i*5+1+i]/10)>1E-1):
+        if(np.abs(covarLog[2*t1-10, i*5+i] - covarLog[0, i*5+i]/10)>1E-1):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
-            print(abs(stateLog[-1, i+1] - stateTarget[i]))
+        if(abs(stateLog[-1, i] - stateTarget[i-1]) > 1.0E-1):
+            print(abs(stateLog[-1, i] - stateTarget[i-1]))
             testFailCount += 1
             testMessages.append("State update failure")
 
-    FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
-    FilterPlots.StateCovarPlot(stateErrorLog, covarLog, 'Update_Error', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, 0.001,  'Update', show_plots)
+    FilterPlots.StateCovarPlot(dataLog.times(), stateLog, covarLog, 'Update', show_plots)
+    FilterPlots.StateCovarPlot(dataLog.times(),stateErrorLog, covarLog, 'Update_Error', show_plots)
+    FilterPlots.PostFitResiduals(dataLog.times(), postFitLog, 0.001,  'Update', show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -511,22 +502,30 @@ def StatePropSunLine(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
-    unitTestSim.TotalSim.logThisMessage('heading_filter_data', testProcessRate)
+
+    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    inData = messaging.OpNavMsgPayload()
+    inDataMsg = messaging.OpNavMsg().write(inData)
+
+    # setup message connections
+    moduleConfig.opnavDataInMsg.subscribeTo(inDataMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", list(range(5)))
-    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
-    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
+    stateLog = dataLog.state
+    postFitLog = dataLog.postFitRes
+    covarLog = dataLog.covar
 
-    FilterPlots.StateCovarPlot(stateLog, covarLog, 'Prop', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'Prop', show_plots)
+    FilterPlots.StateCovarPlot(dataLog.times(), stateLog, covarLog, 'Prop', show_plots)
+    FilterPlots.PostFitResiduals(dataLog.times(), postFitLog, moduleConfig.qObsVal, 'Prop', show_plots)
 
     for i in range(5):
-        if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
-            print(abs(stateLog[-1, i+1] - stateLog[0, i+1]))
+        if(abs(stateLog[-1, i] - stateLog[0, i]) > 1.0E-10):
+            print(abs(stateLog[-1, i] - stateLog[0, i]))
             testFailCount += 1
             testMessages.append("State propagation failure")
 
@@ -543,3 +542,4 @@ def StatePropSunLine(show_plots):
 if __name__ == "__main__":
     # test_all_heading_kf(True)
     StateUpdateSunLine(True)
+    # StatePropSunLine(True)

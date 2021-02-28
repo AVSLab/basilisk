@@ -6,20 +6,21 @@ apply gravity gradients torque near the Earth, the moon and onwards to Mars.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg variable name can be set by the
+The following table lists all the module input and output messages.  The module msg connection is set by the
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. table:: Module I/O Messages
-    :widths: 25 25 100
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-    +---------------------------+-------------------------------+---------------------------------------------------+
-    | Msg Variable Name         | Msg Type                      | Description                                       |
-    +===========================+===============================+===================================================+
-    | gravityGradientOutMsgName | :ref:`GravityGradientSimMsg`  | Optional output message name.  The default ouput  |
-    |                           |                               | message name is                                   |
-    |                           |                               | ``this->ModelTag + "_gravityGradient"``           |
-    +---------------------------+-------------------------------+---------------------------------------------------+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - gravityGradientOutMsg
+      - :ref:`GravityGradientMsgPayload`
+      - gravity gradient output message
+
 
 
 Detailed Module Description
@@ -95,13 +96,5 @@ information::
 Module Output Message Name
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 The effector write an output message with the current gravity gradient torque information at each ``update`` cycle.
-The output name ``gravityGradientOutMsgName`` of this effector can be set using 2 methods.
-
-The default name is auto-created using::
-
-    gravityGradientOutMsgName = ``this->ModelTag + "_gravityGradient"``
-
-If the user wishes to use a custom output name, then this can be specified within the python script using::
-
-    ggEff.gravityGradientOutMsgName = "custom_gravity_gradient_output_msg_name"
+The output message is ``gravityGradientOutMsg``.
 

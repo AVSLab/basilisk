@@ -2775,8 +2775,8 @@ def subMRP(q1, q2):
     num = (1 - q2m * q2m) * q1 - (1 - q1m * q1m) * q2 + 2 * np.cross(q1, q2)
 
     q = num / den
-    if np.dot(q,q)>1:
-        q = -q/np.dot(q,q)
+    if np.dot(q,q) > 1:
+        q = -q/np.dot(q, q)
 
     return q
 

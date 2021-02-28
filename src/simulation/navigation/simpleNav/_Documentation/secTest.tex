@@ -1,0 +1,173 @@
+\section{Test Description and Success Criteria}
+
+
+\subsection{Test location}
+
+The unit test for the simple\_nav module is located in:\\
+
+\noindent
+{\tt simulation/navigation/simpleNav/UnitTest/test\_simpleNav.py} \\
+\\
+
+\subsection{Subtests}
+
+\noindent This unit test is designed to functionally test the simulation model 
+outputs as well as get complete code path coverage.  The test design is broken 
+up into three main parts:\\
+\begin{enumerate}
+\item{\underline{Error Bound Enforcement}: The simulation is run for 2.4 hours and the 
+   error bounds for all of the signals are tested. This test length is long enough to see both
+   the walk in the signal and the noise, all the while not being so long as to slow down the test.
+   The test ensures that the bounds are crossed no more than 30\% of the time.}
+\item{\underline{Error Bound Usage}: The error signals are checked for all of the model 
+   parameters over the course of the simulation to ensure that the error gets 
+   to at least 80\% of its maximum error bound at least once, ensuring that noise is indeed
+   properly introduced.}
+\item{\underline{Corner Case Check}: The simulation is intentionally given bad inputs to 
+   ensure that it alerts the user and does not crash.}
+\end{enumerate}
+
+\subsection{Test success criteria}
+
+These tests are considered to pass if during the whole simulation time of 144 minutes,
+all the variables need to say within an allowable statistical error. This means that they
+must stay within their bounds $30\%$ of the time.
+
+At the same time, we want each of the errors to get to $80\%$ of their respective error bounds
+at least once during the run.
+
+These sigma bounds are defined in Table~\ref{tab:sigmas}. These are chosen in regard to
+the simulation's parameters and their orders of magnitude, while the bounds are defined in
+Table~\ref{tab:bounds}
+
+\begin{table}[htbp]
+    \caption{Sigma Values}
+\label{tab:sigmas}
+    \centering \fontsize{10}{10}\selectfont
+\begin{tabular}{|c||c|c|c|c|c|c|}
+\hline
+Variable & Position & Velocity & Attitude & Rates & $\Delta$ V & Sun Position \\ \hline \hline
+Associated $\sigma$ & 5 (m)& 0.035 (m/s)& $\frac{1}{360}$ (deg) & 0.05 (deg/s) & 1 (deg) & 0.1 (deg) \\ \hline 
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+    \caption{Upper bound Values}
+\label{tab:bounds}
+    \centering \fontsize{10}{10}\selectfont
+\begin{tabular}{|c||c|c|c|c|c|c|}
+\hline
+Variable & Position & Velocity & Attitude & Rates & $\Delta$ V & Sun Position \\ \hline \hline
+Associated bounds & 1000 (m)& 1 (m/s)& 0.29 (deg) & 1.15 (deg/s) & 5 (deg) & 3.03 (deg) \\ \hline 
+\end{tabular}
+\end{table}
+
+These values were set to make the statistics visible in one test. They are also sometimes set as radians which explains why some values are not round.
+
+
+
+\section{Test Parameters}
+
+The test used for the simple navigation tests the statistics of the Gauss Markov process, making sure that we are getting the variability we want. In order to do so, no specific scenario is necessary. Therefore the position of the spacecraft and the sun were set generically:
+
+\begin{itemize}
+	\item[-] The vehicle position is $\begin{bmatrix}10000 & 0 & 0 \end{bmatrix}^T$
+	\item[-] The Sun position is  $\begin{bmatrix}10000 & 10000 & 0 \end{bmatrix}^T$
+\end{itemize}
+
+\section{Test Results}
+
+\subsection{Pass/Fail}
+The test results are explained below and summarized in Table~\ref{tab:results}.
+
+\begin{enumerate}
+	\item{Error Bound Enforcement: We only want to violate the error bound a 
+		statistically small number of times as most bounds are specified 3-sigma.  
+		All signals remained inside their bounds more than 1-sigma (~70\%) of the time.  }
+	\item{Error Bound Usage: As stated above, we want to ensure that the random 
+		walk process is effectively utilizing the error bound that it has been 
+		given and not remaining mired near zero.  All error signals cross up above 
+		80\% of their error bound at least once.}
+\end{enumerate}
+
+\subsection{Corner case test} 
+
+Corner Case Usage: All errors/warnings were stimulated and the simulation still ran without incident.
+The expected error message is not automatically validated within pytest, but the test can not pass
+if the corner case test did break the simulation. In that way it is a partially automated test. 
+
+\subsection{Summary of Test Results}
+
+\begin{table}[htbp]
+	\caption{Test Results}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{|c||c|}
+		\hline
+		SubTest & Result \\ \hline \hline
+		Bound Enforcement& \textcolor{ForestGreen}{Passed} \\ \hline
+		Bound Usage &  \textcolor{ForestGreen}{Passed}\\ \hline
+		Corner Case &  \textcolor{ForestGreen}{Passed}\\ \hline
+	\end{tabular}
+\end{table}
+
+As said in the previous part, the expected error message of the corner case is not tested automatically,
+but the test passes, meaning that the corner case does not break the simulation. It is therefore said to
+pass.
+
+
+
+\subsection{Test Coverage}
+The method coverage for all of the methods included in the simple\_nav 
+module are tabulated in Tables~\ref{tab:cov_met} and \ref{tab:cov_met2}.
+
+\begin{table}[htbp]
+	\caption{Simple Navigation Test Analysis Results}
+	\label{tab:cov_met}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | r | r | r} % Column formatting, 
+		\hline
+		Method Name    & Unit Test Coverage (\%) & Runtime Self (\%) & Runtime Children (\%) \\
+		\hline
+		UpdateState & 100.0 & 0.08 & 15.0 \\
+		SelfInit & 100.0 & 0.0 & 0.0 \\
+		computeOutput & 100.0 & 0.0 & 0.0 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{GaussMarkov Test Analysis Results}
+	\label{tab:cov_met2}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | r | r | r} % Column formatting, 
+		\hline
+		Method Name    & Unit Test Coverage (\%) & Runtime Self (\%) & Runtime Children (\%) \\
+		\hline
+		computeNextState & 100.0 & 0.71 & 12.4 \\
+		setRNGSeed & 100.0 & 0.0 & 0.0 \\
+		setPropMatrix & 100.0 & 0.0 & 0.0 \\
+		getCurrentState & 100.0 & 0.0 & 0.0 \\
+		setUpperBounds & 100.0 & 0.0 & 0.0 \\
+		setNoiseMatrix & 100.0 & 0.0 & 0.0 \\
+		setPropMatrix & 100.0 & 0.0 & 0.0 \\
+		\hline
+	\end{tabular}
+\end{table}
+For all of the code this test was designed for, the coverage percentage is 
+100\%.  The CPU usage of the model is higher than would be ideal although this 
+might just be a symptom of the level of simplicity present in the overall 
+simulation.  The majority of the computations are coming from two pieces of the 
+GaussMarkov code.  
+
+The first is the random number generator.  The model is using 
+one of the simplest random number generators in the standard template library.  
+That is still a relatively expensive operation as random numbers are costly and 
+we generate a new random number for each state.  The second factor is in the 
+state and noise propagation.  Those are being performed with a matrix 
+multiplication that is an $n^2$ operation.  We could save some computations 
+here in the future if we took away the cross-correlation capability from some 
+of the states which would definitely be easy and accurate.  It would just take 
+some more code.
+
+

@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
 
 #
@@ -37,24 +35,23 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../examples/OpNavScenarios/scenariosOpNav')
-sys.path.append(path + '/../examples/OpNavScenarios/')
+sys.path.append(path + '/../../examples/OpNavScenarios/scenariosOpNav')
+sys.path.append(path + '/../../examples/OpNavScenarios/')
 
 r"""
 Skip the following tests if all necessary modules do not exist
 Requirements:
-    - Vizard downloaded and app path set properly (in src/examples/OpNavScenarios/BSK_masters)
+    - Vizard downloaded and app path set properly (in basilisk/examples/OpNavScenarios/BSK_masters)
     - Basilisk built with ZMQ, protobuffers, and OpenCV 
 """
 
 import BSK_OpNav
 SimBase = BSK_OpNav.BSKSim(1, 1)
-if os.path.exists(SimBase.vizPath) == False:
-    pytestmark = pytest.mark.skip(reason="Vizard App not found: modify app in examples/OpNavScenarios/BSK_masters")
+if not os.path.exists(SimBase.vizPath):
+    pytestmark = pytest.mark.skip(reason="Vizard App not found: modify app in examples/OpNavScenarios/BSK_OpNav.py")
 
 testScripts = [
-    'scenario_DoubleOpNavOD'
-    , 'scenario_faultDetOpNav'
+      'scenario_faultDetOpNav'
     , 'scenario_OpNavAttOD'
     , 'scenario_OpNavAttODLimb'
     , 'scenario_OpNavHeading'
@@ -100,9 +97,8 @@ def test_opnavBskScenarios(show_plots, bskSimCase):
     try:
         figureList = scene_plt.run(False, 10)
 
-        # save the figures to the Doxygen scenario images folder
-
-        if(figureList != {}):
+        # save the figures to the RST scenario images folder
+        if figureList != {} and figureList is not None:
             for pltName, plt in list(figureList.items()):
                 unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
@@ -115,3 +111,5 @@ def test_opnavBskScenarios(show_plots, bskSimCase):
 
     assert testFailCount < 1, testMessages
 
+if __name__ == "__main__":
+    test_opnavBskScenarios(True, 'scenario_OpNavAttODLimb')

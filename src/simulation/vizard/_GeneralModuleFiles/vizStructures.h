@@ -9,16 +9,19 @@
 #define vizStructures_h
 
 #include <vector>
-#include "simMessages/rwConfigLogSimMsg.h"
-#include "simFswInterfaceMessages/stSensorIntMsg.h"
-#include "simMessages/thrOutputSimMsg.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/cssConfigLogSimMsg.h"
+
+#include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+#include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+
+#include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
+
+#include "architecture/messaging/messaging.h"
 
 
 /*! Structure to store that status of a Basilisk message being read in by ``vizInterface``. */
 typedef struct {
-    int64_t msgID = -1;                         //!< [-] message ID associated with source
     uint64_t lastTimeTag = 0xFFFFFFFFFFFFFFFF;  //!< [ns] The previous read time-tag for msg
     bool dataFresh = false;                     //!< [-] Flag indicating that new data has been read
 }MsgCurrStatus;
@@ -26,7 +29,6 @@ typedef struct {
 /*! Structure to store a thruster group information. */
 typedef struct {
     std::string thrTag;   //!< [-] ModelTag associated with the thruster grouping
-    uint32_t    thrCount; //!< [-] Number of thrusters used in this thruster group
     int color[4] = {-1};  //!< [-] RGBA thruster plume color for all thrusters in this group
 }ThrClusterMap;
 
@@ -121,30 +123,27 @@ typedef struct {
  */
 typedef struct {
     std::string spacecraftName = "bsk-Sat";                     //!< [-] Name of the spacecraft.
-    std::string scPlusInMsgName = "inertial_state_output";      //!< [-] Name of the incoming SCPlus data message
-    std::vector <std::string> rwInMsgName;                      /*!< [-] Vector of names of the incoming RW state messages.  If this is not
-                                                                        set directly, then it is auto-generated using the spacecraft name
-                                                                        as the prefix. This is required if ``numRW`` is greater than 0.
-                                                                 */
-    std::vector <std::string> cssInMsgNames;                    /*!< [-] Vector of CSS config log message names */
-    std::vector <ThrClusterMap> thrMsgData;                     /*!< [-] (Optional) Name of the incoming thruster data.  This is
-                                                                         required if ``numThr`` is greater than 0. */
-    std::string starTrackerInMsgName = "star_tracker_state";    //!< [-] (Optional) Name of the incoming Star Tracker data
-    int numRW = 0;                                              //!< [-] (Optional) Number of RW
-    int numThr = 0;                                             //!< [-] (Optional) Number of Thrusters
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;               //!< [-] msg of incoming spacecraft data
+    MsgCurrStatus scStateInMsgStatus;                           //!< [-] (Private) status of the incoming spacecraft  data message
+    SCStatesMsgPayload scStateMsgBuffer;                          //!< [-] (Private) s/c state message data
 
-    int numCSS = 0;                                             //!< [-] (Private) Number of CCS sensors
-    std::vector<MsgCurrStatus> rwInMsgID;                       //!< [-] (Private) ID of the incoming rw data
-    std::vector<MsgCurrStatus> thrMsgID;                        //!< [-] (Private) ID of the incoming thruster data
-    std::vector<ThrClusterMap> thrInfo;                         //!< [-] (Private) thruster tagging info
-    MsgCurrStatus starTrackerInMsgID;                           //!< [-] (Private) ID of the incoming Star Tracker data
-    MsgCurrStatus scPlusInMsgID;                                //!< [-] (Private) ID of the incoming SCPlus data
-    std::vector<MsgCurrStatus> cssConfLogInMsgId;               //!< [-] (Private) ID of the incoming array of css configuration log
-    std::vector <RWConfigLogSimMsg> rwInMessage;                //!< [-] (Private) RW message data
-    std::vector <CSSConfigLogSimMsg> cssInMessage;              //!< [-] (Private) CSS message data
-    STSensorIntMsg STMessage;                                   //!< [-] (Private) ST message data
-    std::vector <THROutputSimMsg> thrOutputMessage;             //!< [-] (Private) Thr message data
-    SCPlusStatesSimMsg scPlusMessage;                           //!< [-] (Private) s/c plus message data
+    std::vector<ReadFunctor<RWConfigLogMsgPayload>> rwInMsgs;   //!< [-] (Optional) Vector of incoming RW state messages.
+    std::vector<MsgCurrStatus> rwInMsgStatus;                   //!< [-] (Private) RW msg status vector
+    std::vector<RWConfigLogMsgPayload> rwInMessage;             //!< [-] (Private) RW message data vector
+
+    std::vector<ReadFunctor<CSSConfigLogMsgPayload>> cssInMsgs; //!< [-] (Optional) Vector of CSS config log messages
+    std::vector<MsgCurrStatus> cssConfLogInMsgStatus;           //!< [-] (Private) status of the incoming array of css configuration log messages
+    std::vector<CSSConfigLogMsgPayload> cssInMessage;           //!< [-] (Private) CSS message data vector
+
+    ReadFunctor<STSensorMsgPayload> starTrackerInMsg;           //!< [-] (Optional) input message for Star Tracker data
+    MsgCurrStatus starTrackerInMsgStatus;                       //!< [-] (Private) status of the incoming Star Tracker data message
+    STSensorMsgPayload STMessage;                               //!< [-] (Private) ST message data
+
+    std::vector<ReadFunctor<THROutputMsgPayload>> thrInMsgs;    //!< [-] (Optional) vector of thruster input messages
+    std::vector<MsgCurrStatus> thrMsgStatus;                    //!< [-] (Private) THR msg status vector
+    std::vector<THROutputMsgPayload> thrOutputMessage;          //!< [-] (Private) Thr message data vector
+
+    std::vector<ThrClusterMap> thrInfo;                         //!< [-] thruster tagging info
 
     std::string spacecraftSprite = "";                          //!< Set sprite for this spacecraft only through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
 
@@ -197,5 +196,12 @@ typedef struct {
     int32_t showLocationLabels = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }VizSettings;
 
+
+typedef struct{
+    std::string bodyName;               //!< [-] celestial body name
+    double mu;                          //!< [m^3/s^2] celestial body gravity constant
+    double radEquator;                  //!< [m] celestial body radius at equator
+    double radiusRatio;                 //!< [] radiusPolar/radiusEq
+}GravBodyInfo;
 
 #endif /* vizStructures_h */

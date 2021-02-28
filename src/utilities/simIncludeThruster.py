@@ -1,39 +1,38 @@
-''' '''
-'''
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
 
 #
 #   Simulation Setup Utilities for Thruster devices
 #
 
-import sys, os, inspect
+import sys
 import numpy
 
-from Basilisk.simulation import simMessages
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging
 try:
     from collections.abc import OrderedDict
 except ImportError:
     from collections import OrderedDict
 
+
 class thrusterFactory(object):
+    """Simulation Thruster Factory Class"""
     def __init__(self):
         self.useMinPulseTime = True
         self.thrusterList = OrderedDict()
@@ -46,13 +45,13 @@ class thrusterFactory(object):
 
         Parameters
         ----------
-        :param thrusterType : string
+        thrusterType : string
                 thruster manufacturing name.:
-        :param r_B : list
+        r_B : list
                 vector with thruster location in B-frame components:
-        :param tHat_B : list
+        tHat_B : list
                 vector with thruster force direction unit vector:
-        :param kwargs:
+        kwargs:
             useMinPulseTime: BOOL
                 flag if the thruster model should use a minimum impulse time
             areaNozzle: float
@@ -65,12 +64,12 @@ class thrusterFactory(object):
                 thruster dispersion percentage
             MinOnTime: float
                 thruster minimum on time
-        :return:
-            thrConfigSimMsg : message structure
-                A handle to the thruster configuration message
+
+        :return: thrConfigSimMsg
+
         """
         # create the blank thruster object
-        TH = simMessages.THRConfigSimMsg()
+        TH = messaging.THRSimConfigMsgPayload()
 
         # set default thruster values
         TH.areaNozzle = 0.1         # [m^2]
@@ -132,7 +131,7 @@ class thrusterFactory(object):
         if 'useMinPulseTime' in kwargs:
             varUseMinPulseTime = kwargs['useMinPulseTime']
             if not isinstance(varUseMinPulseTime, (bool)):
-                print('ERROR: useMinTorque must be a BOOL argument')
+                print('ERROR: useMinPulseTime must be a BOOL argument')
                 exit(1)
         else:
             varUseMinPulseTime = False  # default value
@@ -167,17 +166,19 @@ class thrusterFactory(object):
         self.thrusterList[varLabel] = TH
         return TH
 
-    def addToSpacecraft(self, modelTag, thDynamicEffector, scPlus):
+    def addToSpacecraft(self, modelTag, thDynamicEffector, sc):
         """
-            This function should be called after all Thurster devices are created with create()
+            This function should be called after all Thruster devices are created with create()
             It creates the C-class container for the array of TH devices, and attaches
             this container to the spacecraft object
 
             Parameters
             ----------
-            :param modelTag:  string with the model tag
-            :param thDynamicEffector: thruster dynamic effector handle
-            :param scPlus: spacecraftPlus handle
+            modelTag:  string
+                module model tag string
+            thDynamicEffector: thrusterDynamicEffector
+                thruster dynamic effector handle
+            sc: spacecraft
         """
 
         thDynamicEffector.ModelTag = modelTag
@@ -185,7 +186,7 @@ class thrusterFactory(object):
         for key, th in list(self.thrusterList.items()):
             thDynamicEffector.addThruster(th)
 
-        scPlus.addDynamicEffector(thDynamicEffector)
+        sc.addDynamicEffector(thDynamicEffector)
 
         return
 
@@ -193,33 +194,36 @@ class thrusterFactory(object):
         """
             Returns the number of RW devices setup.
 
-            Returns
-            -------
-            :return: int
+        :return: number of thruster devices
+
         """
         return len(self.thrusterList)
 
     def getConfigMessage(self):
         """
-            Returns a THRArrayConfigFswMsg reflecting the current thruster setup.
-        :return: thrMessage: THRArrayConfigFswMsg instance
+            Returns a FSW THRArrayConfigMsg reflecting the current thruster setup.
+
+        :return: thrMessage
         """
 
-        thrMessage = fswMessages.THRArrayConfigFswMsg()
+        thrMessage = messaging.THRArrayConfigMsgPayload()
 
         i = 0
         for simThruster in self.thrusterList.values():
             #   Converts from THRConfigSimMsg to THRConfigFswMsg
-            fswThruster = fswMessages.THRConfigFswMsg()
+            fswThruster = messaging.THRConfigMsgPayload()
             fswThruster.maxThrust = simThruster.MaxThrust
             fswThruster.rThrust_B = [val for sublist in simThruster.thrLoc_B for val in sublist]
             fswThruster.tHatThrust_B = [val for sublist in simThruster.thrDir_B for val in sublist]
-            fswMessages.ThrustConfigArray_setitem(thrMessage.thrusters, i, fswThruster)
+            messaging.ThrustConfigArray_setitem(thrMessage.thrusters, i, fswThruster)
             i += 1
 
         thrMessage.numThrusters = len(self.thrusterList.values())
 
-        return thrMessage
+        thrConfigMsg = messaging.THRArrayConfigMsg().write(thrMessage)
+        thrConfigMsg.this.disown()
+
+        return thrConfigMsg
 
     #
     #   MOOG Monarc-1

@@ -17,27 +17,22 @@
 
 
 #include "dataFileToViz.h"
-#include "architecture/messaging/system_messaging.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/rigidBodyKinematics.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include <sstream>
 #include <string>
 #include <string.h>
-#include <vector>
 
 /*! DataFileToViz Constructor
  */
 DataFileToViz::DataFileToViz()
 {
     this->dataFileName = "";
-    this->numSatellites = 1;
     this->delimiter = " ";
     this->convertPosToMeters = 1000.;       /* convert km to meters */
     this->headerLine = true;
     this->attitudeType = 0;
-    this->OutputBufferCount = 2;
 
     return;
 }
@@ -52,143 +47,68 @@ DataFileToViz::~DataFileToViz()
         bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz:\nclosed the file: %s.", this->dataFileName.c_str());
     }
 
-    return;
-}
-
-/*! Initialization method
- */
-void DataFileToViz::SelfInit()
-{
-    int64_t msgId;
-
-    // create all the environment output messages for each spacecraft
-    std::vector<std::string>::iterator it;
-    for (it = this->scStateOutMsgNames.begin(); it!=this->scStateOutMsgNames.end(); it++) {
-        msgId = SystemMessaging::GetInstance()->CreateNewMessage(*it,
-                                                                sizeof(SCPlusStatesSimMsg),
-                                                                this->OutputBufferCount,
-                                                                "SCPlusStatesSimMsg",
-                                                                moduleID);
-        this->scStateOutMsgIds.push_back(msgId);
-
-    }
-
-    // create thruster output messages
-    if (this->thrMsgDataSC.size() > 0) {
-        std::vector <std::vector <ThrClusterMap>>::iterator thrMsgData;
-        for (thrMsgData = this->thrMsgDataSC.begin(); thrMsgData!=this->thrMsgDataSC.end(); thrMsgData++) {
-
-            std::vector<ThrClusterMap>::iterator thrSet;
-            for (thrSet = (*thrMsgData).begin(); thrSet!=(*thrMsgData).end(); thrSet++) {
-
-                for (uint32_t idx = 0; idx<thrSet->thrCount; idx++) {
-                    std::string thrMsgName = "thruster_" + thrSet->thrTag + "_" + std::to_string(idx) + "_data";
-                    msgId = SystemMessaging::GetInstance()->CreateNewMessage(thrMsgName,
-                                                                            sizeof(THROutputSimMsg),
-                                                                            this->OutputBufferCount,
-                                                                            "THROutputSimMsg",
-                                                                            moduleID);
-                    this->thrMsgIds.push_back(msgId);
-                }
-            }
-        }
-    }
-
-    // create RW output messages
-    if (this->rwMsgOutNamesSC.size() > 0) {
-        std::vector <std::vector <std::string>>::iterator sc;
-        for (sc = this->rwMsgOutNamesSC.begin(); sc!=this->rwMsgOutNamesSC.end(); sc++) {
-            std::vector <std::string>::iterator name;
-            for (name = (*sc).begin(); name!=(*sc).end(); name++) {
-                msgId = SystemMessaging::GetInstance()->CreateNewMessage(*name,
-                                                                        sizeof(RWConfigLogSimMsg),
-                                                                        this->OutputBufferCount,
-                                                                        "RWConfigLogSimMsg",
-                                                                        moduleID);
-                this->rwMsgIds.push_back(msgId);
-            }
-        }
+    for (long unsigned int c=0; c<this->scStateOutMsgs.size(); c++) {
+        delete this->scStateOutMsgs.at(c);
     }
 
     return;
 }
 
-/*! Cross initialization. This module does not subscribe to any other messages.
- */
-void DataFileToViz::CrossInit()
-{
-    return;
-}
 
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds
  */
 void DataFileToViz::Reset(uint64_t CurrentSimNanos)
 {
-    if (this->numSatellites < 1) {
-        bskLogger.bskLog(BSK_ERROR, "DataFileToViz: numSatellites must be 1 or larger, not %d.", this->numSatellites);
-    }
     if (this->dataFileName.length() == 0) {
         bskLogger.bskLog(BSK_ERROR, "DataFileToViz: dataFileName must be an non-empty string.");
     }
-    if (this->numSatellites != (int) this->scStateOutMsgNames.size()) {
-        bskLogger.bskLog(BSK_ERROR, "DataFileToViz: numSatellites must the same size as scStateOutMsgNames vector.");
+    if (this->scStateOutMsgs.size() < 1) {
+        bskLogger.bskLog(BSK_ERROR, "DataFileToViz: spacecraft list must have at least one element in it.");
     }
 
     /* check thruster states */
     if (this->thrMsgDataSC.size() > 0) {
 
-        /* evaluate total number of thrusters */
-        int numThr = 0;
-        std::vector <std::vector <ThrClusterMap>>::iterator thrMsgData;
-        for (thrMsgData = this->thrMsgDataSC.begin(); thrMsgData!=this->thrMsgDataSC.end(); thrMsgData++) {
-            std::vector<ThrClusterMap>::iterator thrSet;
-            for (thrSet = (*thrMsgData).begin(); thrSet!=(*thrMsgData).end(); thrSet++) {
-                numThr += thrSet->thrCount;
-            }
+        if (this->scStateOutMsgs.size() != this->thrMsgDataSC.size()) {
+            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: you set appendThrClusterMap() %d times, but set number of spacecraft to %d", (int) this->thrMsgDataSC.size(), (int) this->scStateOutMsgs.size());
         }
 
         /* check vector dimensions */
-        if (numThr != (int) this->thrPosList.size()) {
+        if (this->numThr != (int) this->thrPosList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrPosList must the same size as the number of thrusters.");
         }
 
-        if (numThr != (int) this->thrDirList.size()) {
+        if (this->numThr != (int) this->thrDirList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrDirList must the same size as the number of thrusters.");
         }
 
-        if (numThr != (int) this->thrForceMaxList.size()) {
+        if (this->numThr != (int) this->thrForceMaxList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrForceMaxList must the same size as the number of thrusters.");
         }
     }
 
     /* check RW states */
-    if (this->rwMsgOutNamesSC.size() > 0) {
+    if (this->rwScOutMsgs.size() > 0) {
 
-        if (this->numSatellites != (int) this->rwMsgOutNamesSC.size()) {
-            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwMsgOutNamesSC size must be equal to numSatellites");
-        }
-
-        int numRW = 0;
-        std::vector <std::vector <std::string>>::iterator nameList;
-        for (nameList = this->rwMsgOutNamesSC.begin(); nameList != this->rwMsgOutNamesSC.end(); nameList++) {
-            numRW += (int) (*nameList).size();
+        if (this->scStateOutMsgs.size() != this->rwScOutMsgs.size()) {
+            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: you set appendRwMsgNames %d times, but set number of spacecraft to %d", (int) this->rwScOutMsgs.size(), (int) this->scStateOutMsgs.size());
         }
 
         /* check vector dimensions */
-        if (numRW != (int) this->rwPosList.size()) {
+        if (this->numRW != (int) this->rwPosList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwPosList must the same size as the total number of RWs.");
         }
 
-        if (numRW != (int) this->rwDirList.size()) {
+        if (this->numRW != (int) this->rwDirList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwDirList must the same size as the total number of RWs.");
         }
 
-        if (numRW != (int) this->rwOmegaMaxList.size()) {
+        if (this->numRW != (int) this->rwOmegaMaxList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwOmegaMaxList must the same size as the total number of RWs.");
         }
 
-        if (numRW != (int) this->rwUMaxList.size()) {
+        if (this->numRW != (int) this->rwUMaxList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwUMaxList must the same size as the total number of RWs.");
         }
     }
@@ -207,6 +127,19 @@ void DataFileToViz::Reset(uint64_t CurrentSimNanos)
 
 
     return;
+}
+
+/*!
+ set the number of satellites being read in
+ */
+void DataFileToViz::setNumOfSatellites(int numSat)
+{
+    for (int i=0; i<numSat; i++) {
+        /* create output message */
+        Message<SCStatesMsgPayload> *msg;
+        msg = new Message<SCStatesMsgPayload>;
+        this->scStateOutMsgs.push_back(msg);
+    }
 }
 
 /*!
@@ -237,17 +170,48 @@ void DataFileToViz::appendThrForceMax(double forceMax)
 /*!
  Add a thruster cluster map for each spacecraft
 */
-void DataFileToViz::appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData)
+void DataFileToViz::appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData, std::vector<int> numThrPerCluster)
 {
     this->thrMsgDataSC.push_back(thrMsgData);
+
+    std::vector <Message<THROutputMsgPayload> *> vecMsgs;
+    // loop over the number of thruster clusters for this spacecraft
+    if (thrMsgData.size()>0) {
+        this->numThrPerCluster.push_back(numThrPerCluster);
+        for (long unsigned int thrClusterCount=0; thrClusterCount<thrMsgData.size(); thrClusterCount++) {
+            // loop over the number of thrusters in this cluster and create an output message
+            for (int i=0; i<numThrPerCluster[thrClusterCount]; i++) {
+                /* create output message */
+                Message<THROutputMsgPayload> *msg;
+                msg = new Message<THROutputMsgPayload>;
+                vecMsgs.push_back(msg);
+            }
+            this->numThr += numThrPerCluster[thrClusterCount];
+        }
+    }
+
+    // add vector of thruster output messages
+    this->thrScOutMsgs.push_back(vecMsgs);
+
 }
 
 /*!
  Add a RW output msg list for each spacecraft
 */
-void DataFileToViz::appendRwMsgNames(std::vector <std::string> rwMsgNameList)
+void DataFileToViz::appendNumOfRWs(int numRW)
 {
-    this->rwMsgOutNamesSC.push_back(rwMsgNameList);
+    std::vector <Message<RWConfigLogMsgPayload>*> vecMsgs;
+    for (int i=0; i<numRW; i++) {
+        /* create output message */
+        Message<RWConfigLogMsgPayload> *msg;
+        msg = new Message<RWConfigLogMsgPayload>;
+        vecMsgs.push_back(msg);
+    }
+    // update total number of RWs
+    this->numRW += numRW;
+
+    // add vector to RW output messages
+    this->rwScOutMsgs.push_back(vecMsgs);
 }
 
 
@@ -292,10 +256,6 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
 {
     /* ensure that a file was opened */
     if (this->fileHandle->is_open()) {
-        int thrCounter = 0;
-        int rwCounter = 0;
-        int scCounter = 0;
-
         /* read in next line*/
         std::string line;
         if (getline(*this->fileHandle, line)) {
@@ -306,12 +266,11 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
             pullScalar(&iss);
 
             // create all the state output messages for each spacecraft
-            std::vector<int64_t>::iterator it;
-            for (it = this->scStateOutMsgIds.begin(); it!=this->scStateOutMsgIds.end(); it++) {
-                SCPlusStatesSimMsg scMsg;
+            for (long unsigned int scCounter=0; scCounter<this->scStateOutMsgs.size(); scCounter++) {
+                SCStatesMsgPayload scMsg;
 
                 /* zero output message */
-                memset(&scMsg, 0x0, sizeof(SCPlusStatesSimMsg));
+                scMsg = this->scStateOutMsgs.at(scCounter)->zeroMsgPayload;
 
                 /* get inertial position */
                 pullVector(&iss, scMsg.r_CN_N);
@@ -352,44 +311,41 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                 pullVector(&iss, scMsg.omega_BN_B);
 
                 /* write spacecraft state message */
-                SystemMessaging::GetInstance()->WriteMessage(*it,
-                                                          CurrentSimNanos,
-                                                          sizeof(SCPlusStatesSimMsg),
-                                                          reinterpret_cast<uint8_t*>(&scMsg),
-                                                          moduleID);
+                this->scStateOutMsgs.at(scCounter)->write(&scMsg, this->moduleID, CurrentSimNanos);
 
                 /* check if thruster states are provided */
                 if (this->thrMsgDataSC.size() > 0) {
+                    if (this->thrMsgDataSC[scCounter].size() > 0) {
+                        int thrCounter = 0;
+                        std::vector<ThrClusterMap>::iterator thrSet;
+                        int thrClusterCounter = 0;
+                        for (thrSet = this->thrMsgDataSC[scCounter].begin(); thrSet!=this->thrMsgDataSC[scCounter].end(); thrSet++) {
+                            for (uint32_t idx = 0; idx< (uint32_t)this->numThrPerCluster[scCounter][thrClusterCounter]; idx++) {
+                                THROutputMsgPayload thrMsg;
+                                thrMsg = this->thrScOutMsgs[scCounter].at(thrCounter)->zeroMsgPayload;
 
-                    std::vector<ThrClusterMap>::iterator thrSet;
-                    for (thrSet = this->thrMsgDataSC[scCounter].begin(); thrSet!=this->thrMsgDataSC[scCounter].end(); thrSet++) {
-                        for (uint32_t idx = 0; idx<thrSet->thrCount; idx++) {
-                            THROutputSimMsg thrMsg;
+                                /* fill out the thruster state message */
+                                thrMsg.maxThrust = this->thrForceMaxList[thrCounter];
+                                thrMsg.thrustForce = pullScalar(&iss);
+                                eigenVector3d2CArray(this->thrPosList[thrCounter], thrMsg.thrusterLocation);
+                                eigenVector3d2CArray(this->thrDirList[thrCounter], thrMsg.thrusterDirection);
 
-                            /* fill out the thruster state message */
-                            thrMsg.maxThrust = this->thrForceMaxList[thrCounter];
-                            thrMsg.thrustForce = pullScalar(&iss);
-                            eigenVector3d2CArray(this->thrPosList[thrCounter], thrMsg.thrusterLocation);
-                            eigenVector3d2CArray(this->thrDirList[thrCounter], thrMsg.thrusterDirection);
-
-                            SystemMessaging::GetInstance()->WriteMessage(this->thrMsgIds[thrCounter],
-                                                                        CurrentSimNanos,
-                                                                        sizeof(THROutputSimMsg),
-                                                                        reinterpret_cast<uint8_t*>(&thrMsg),
-                                                                        moduleID);
-                            thrCounter++;
+                                this->thrScOutMsgs[scCounter].at(thrCounter)->write(&thrMsg, this->moduleID, CurrentSimNanos);
+                                thrCounter++;
+                            }
+                            thrClusterCounter++;
                         }
                     }
                 }
 
                 /* check if RW states are provided */
-                if (this->rwMsgOutNamesSC.size() > 0) {
-                    if (this->rwMsgOutNamesSC[scCounter].size() > 0) {
+                if (this->rwScOutMsgs.size() > 0) {
+                    if (this->rwScOutMsgs[scCounter].size() > 0) {
                         std::vector<std::string>::iterator rwDevice;
-                        for( rwDevice =this->rwMsgOutNamesSC[scCounter].begin(); rwDevice != this->rwMsgOutNamesSC[scCounter].end(); rwDevice++) {
+                        for (long unsigned int rwCounter = 0; rwCounter < this->rwScOutMsgs[scCounter].size(); rwCounter++) {
 
-                            RWConfigLogSimMsg rwOutMsg;
-                            memset(&rwOutMsg, 0x0, sizeof(RWConfigLogSimMsg));
+                            RWConfigLogMsgPayload rwOutMsg;
+                            rwOutMsg = this->rwScOutMsgs[scCounter].at(rwCounter)->zeroMsgPayload;
 
                             /* create RW message */
                             rwOutMsg.Omega = pullScalar(&iss);
@@ -399,18 +355,11 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                             eigenVector3d2CArray(this->rwPosList[rwCounter], rwOutMsg.rWB_B);
                             eigenVector3d2CArray(this->rwDirList[rwCounter], rwOutMsg.gsHat_B);
 
-                            SystemMessaging::GetInstance()->WriteMessage(this->rwMsgIds[rwCounter],
-                                                                        CurrentSimNanos,
-                                                                        sizeof(RWConfigLogSimMsg),
-                                                                        reinterpret_cast<uint8_t*>(&rwOutMsg),
-                                                                        moduleID);
+                            this->rwScOutMsgs[scCounter].at(rwCounter)->write(&rwOutMsg, this->moduleID, CurrentSimNanos);
 
-                            rwCounter++;
                         }
                     }
                 }
-
-                scCounter++;
             }
         } else {
             bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz: reached end of file.");

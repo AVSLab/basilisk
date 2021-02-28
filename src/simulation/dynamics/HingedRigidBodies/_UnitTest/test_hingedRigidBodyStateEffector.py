@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 import os, inspect
 import numpy
 import pytest
@@ -30,13 +29,13 @@ splitPath = path.split('simulation')
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import spacecraftDynamics
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation import spacecraftSystem
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -73,7 +72,7 @@ def test_hingedRigidBodyGravity(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftDynamics.SpacecraftDynamics()
+    scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -141,15 +140,15 @@ def test_hingedRigidBodyGravity(show_plots):
 
     # Add Earth gravity to the sim
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
-    scObject.primaryCentralSpacecraft.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+    scObject.primaryCentralSpacecraft.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
 
     # Log the spacecraft state message
-    unitTestSim.TotalSim.logThisMessage("spacecraftinertial_state_output", testProcessRate)
+    datLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -166,7 +165,7 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    sigmaOut = unitTestSim.pullMessageLogData("spacecraftinertial_state_output"+'.sigma_BN',list(range(3)))
+    sigmaOut = datLog.sigma_BN
 
     forcePanel1 = unitTestSim.GetLogVariableData(unitTestSim.panel1.ModelTag + ".forceOnBody_B")
     forcePanel2 = unitTestSim.GetLogVariableData(unitTestSim.panel2.ModelTag + ".forceOnBody_B")
@@ -256,6 +255,11 @@ def test_hingedRigidBodyGravity(show_plots):
             testFailCount += 1
             testMessages.append("FAILED:  Hinged Rigid Body integrated test failed gravity attitude test")
 
+    finalOrbAngMom = numpy.delete(finalOrbAngMom, 0, axis=1)  # remove time column
+    finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
+    finalRotEnergy = numpy.delete(finalRotEnergy, 0, axis=1)  # remove time column
+    finalOrbEnergy = numpy.delete(finalOrbEnergy, 0, axis=1)  # remove time column
+
     for i in range(0,len(initialOrbAngMom_N)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
@@ -298,7 +302,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
     testFailCount = 0  # zero unit test result counter  
     testMessages = []  # create empty list to store test log messages
     
-    scObject = spacecraftDynamics.SpacecraftDynamics()
+    scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
     
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -361,7 +365,8 @@ def test_hingedRigidBodyNoGravity(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    unitTestSim.TotalSim.logThisMessage("spacecraftinertial_state_output", testProcessRate)
+    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
     
     unitTestSim.InitializeSimulation()
 
@@ -374,9 +379,9 @@ def test_hingedRigidBodyNoGravity(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    sigmaOut = unitTestSim.pullMessageLogData("spacecraftinertial_state_output"+'.sigma_BN',list(range(3)))
-    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraftinertial_state_output"+'.r_BN_N',list(range(3)))
-    vOut_CN_N = unitTestSim.pullMessageLogData("spacecraftinertial_state_output"+'.v_CN_N',list(range(3)))
+    sigmaOut = dataLog.sigma_BN
+    rOut_BN_N = dataLog.r_BN_N
+    vOut_CN_N = dataLog.v_CN_N
 
     orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
@@ -447,7 +452,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,1], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,2], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,3])
+    plt.plot(dataLog.times()*1e-9, vOut_CN_N[:,0], dataLog.times()*1e-9, vOut_CN_N[:,1], dataLog.times()*1e-9, vOut_CN_N[:,2])
     plt.xlabel('time (s)')
     plt.ylabel('m/s')
     PlotName = "VelocityOfCenterOfMassNoGravity"
@@ -456,7 +461,9 @@ def test_hingedRigidBodyNoGravity(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,1] - vOut_CN_N[0,1])/vOut_CN_N[0,1], vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,2] - vOut_CN_N[0,2])/vOut_CN_N[0,2], vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,3] - vOut_CN_N[0,3])/vOut_CN_N[0,3])
+    plt.plot(dataLog.times()*1e-9, (vOut_CN_N[:,0] - vOut_CN_N[:,0])/vOut_CN_N[:,0], dataLog.times()*1e-9,
+             (vOut_CN_N[:,1] - vOut_CN_N[:,1])/vOut_CN_N[:,1], dataLog.times()*1e-9,
+             (vOut_CN_N[:,2] - vOut_CN_N[:,2])/vOut_CN_N[:,2])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
     PlotName = "ChangeInVelocityOfCenterOfMassNoGravity"
@@ -479,6 +486,11 @@ def test_hingedRigidBodyNoGravity(show_plots):
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED:  Hinged Rigid Body integrated test failed attitude test")
+
+    finalOrbAngMom = numpy.delete(finalOrbAngMom, 0, axis=1)  # remove time column
+    finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
+    finalRotEnergy = numpy.delete(finalRotEnergy, 0, axis=1)  # remove time column
+    finalOrbEnergy = numpy.delete(finalOrbEnergy, 0, axis=1)  # remove time column
 
     for i in range(0,len(initialOrbAngMom_N)):
         # check a vector values
@@ -522,7 +534,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftDynamics.SpacecraftDynamics()
+    scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -585,7 +597,8 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    unitTestSim.TotalSim.logThisMessage("spacecraftinertial_state_output", testProcessRate)
+    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
 
@@ -597,7 +610,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    vOut_CN_N = unitTestSim.pullMessageLogData("spacecraftinertial_state_output"+'.v_CN_N',list(range(3)))
+    vOut_CN_N = dataLog.v_CN_N
 
     orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
@@ -646,7 +659,9 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,1], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,2], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,3])
+    plt.plot(dataLog.times()*1e-9, vOut_CN_N[:, 0],
+             dataLog.times()*1e-9, vOut_CN_N[:, 1],
+             dataLog.times()*1e-9, vOut_CN_N[:, 2])
     plt.xlabel('time (s)')
     plt.ylabel('m/s')
     PlotName = "VelocityOfCenterOfMassNoGravityDamping"
@@ -655,7 +670,9 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,1] - vOut_CN_N[0,1])/vOut_CN_N[0,1], vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,2] - vOut_CN_N[0,2])/vOut_CN_N[0,2], vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,3] - vOut_CN_N[0,3])/vOut_CN_N[0,3])
+    plt.plot(dataLog.times()*1e-9, (vOut_CN_N[:, 0] - vOut_CN_N[:, 0])/vOut_CN_N[:, 0],
+             dataLog.times()*1e-9, (vOut_CN_N[:, 1] - vOut_CN_N[:, 1])/vOut_CN_N[:, 1],
+             dataLog.times()*1e-9, (vOut_CN_N[:, 2] - vOut_CN_N[:, 2])/vOut_CN_N[:, 2])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
     PlotName = "ChangeInVelocityOfCenterOfMassNoGravityDamping"
@@ -665,6 +682,10 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     if show_plots:
         plt.show()
     plt.close("all")
+
+    finalOrbAngMom = numpy.delete(finalOrbAngMom, 0, axis=1)  # remove time column
+    finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
+    finalOrbEnergy = numpy.delete(finalOrbEnergy, 0, axis=1)  # remove time column
 
     accuracy = 1e-10
     for i in range(0,len(initialOrbAngMom_N)):
@@ -703,7 +724,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftDynamics.SpacecraftDynamics()
+    scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -896,7 +917,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftDynamics.SpacecraftDynamics()
+    scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -969,7 +990,8 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    unitTestSim.TotalSim.logThisMessage("spacecraftinertial_state_output", testProcessRate)
+    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
 
@@ -986,9 +1008,9 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraftinertial_state_output"+'.r_BN_N',list(range(3)))
-    sigmaOut_BN = unitTestSim.pullMessageLogData("spacecraftinertial_state_output"+'.sigma_BN',list(range(3)))
-    thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,3])
+    rOut_BN_N = dataLog.r_BN_N
+    sigmaOut_BN = dataLog.sigma_BN
+    thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,2])
 
     theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
     theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()")
@@ -1180,10 +1202,10 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     testMessages = []  # create empty list to store test log messages
 
     if useScPlus:
-        scObject = spacecraftPlus.SpacecraftPlus()
+        scObject = spacecraft.Spacecraft()
         scObject.ModelTag = "spacecraftBody"
     else:
-        scObject = spacecraftDynamics.SpacecraftDynamics()
+        scObject = spacecraftSystem.SpacecraftSystem()
         scObject.ModelTag = "spacecraftBody"
         scObject.primaryCentralSpacecraft.spacecraftName = scObject.ModelTag
 
@@ -1213,18 +1235,13 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 0 * numpy.pi / 180.0
     unitTestSim.panel1.thetaDotInit = 0.0
-    unitTestSim.panel1.hingedRigidBodyOutMsgName = "panel1Msg"
     unitTestSim.panel1.ModelTag = "panel1"
-    unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName = "panel1Log"
 
     # set a fixed motor torque message
-    unitTestSim.panel1.motorTorqueInMsgName = "motorTorque"
-    motorMsg = simFswInterfaceMessages.ArrayMotorTorqueIntMsg()
-    motorMsg.motorTorque = [2.0]
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               unitTestSim.panel1.motorTorqueInMsgName,
-                               motorMsg)
+    motorMsgData = messaging.ArrayMotorTorqueMsgPayload()
+    motorMsgData.motorTorque = [2.0]
+    motorMsg = messaging.ArrayMotorTorqueMsg().write(motorMsgData)
+    unitTestSim.panel1.motorTorqueInMsg.subscribeTo(motorMsg)
 
     # Define Variables for panel 2
     unitTestSim.panel2.mass = 100.0
@@ -1238,9 +1255,7 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0 * macros.D2R
     unitTestSim.panel2.thetaDotInit = 0.0
-    unitTestSim.panel2.hingedRigidBodyOutMsgName = "panel2Msg"
     unitTestSim.panel2.ModelTag = "panel2"
-    unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName = "panel2Log"
 
     # Add panels to spaceCraft
     scObjectPrimary = scObject
@@ -1266,14 +1281,20 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    scStateLogName = "inertial_state_output"
     if not useScPlus:
-        scStateLogName = scObject.primaryCentralSpacecraft.spacecraftName + scStateLogName
-    unitTestSim.TotalSim.logThisMessage(scStateLogName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.hingedRigidBodyOutMsgName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyOutMsgName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName, testProcessRate)
+        scStateMsg = scObject.primaryCentralSpacecraft.scStateOutMsg
+    else:
+        scStateMsg = scObject.scStateOutMsg
+    dataLog = scStateMsg.recorder()
+    dataPanel1 = unitTestSim.panel1.hingedRigidBodyOutMsg.recorder()
+    dataPanel2 = unitTestSim.panel2.hingedRigidBodyOutMsg.recorder()
+    dataPanel1Log = unitTestSim.panel1.hingedRigidBodyConfigLogOutMsg.recorder()
+    dataPanel2Log = unitTestSim.panel2.hingedRigidBodyConfigLogOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    unitTestSim.AddModelToTask(unitTaskName, dataPanel1)
+    unitTestSim.AddModelToTask(unitTaskName, dataPanel2)
+    unitTestSim.AddModelToTask(unitTaskName, dataPanel1Log)
+    unitTestSim.AddModelToTask(unitTaskName, dataPanel2Log)
 
     unitTestSim.InitializeSimulation()
 
@@ -1288,20 +1309,20 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    rOut_CN_N = unitTestSim.pullMessageLogData(scStateLogName + '.r_CN_N', list(range(3)))
-    vOut_CN_N = unitTestSim.pullMessageLogData(scStateLogName + '.v_CN_N', list(range(3)))
-    sigma_BN = unitTestSim.pullMessageLogData(scStateLogName + '.sigma_BN', list(range(3)))
-    theta1 = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyOutMsgName+'.theta')
-    theta2 = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyOutMsgName+'.theta')
+    rOut_CN_N = dataLog.r_CN_N
+    vOut_CN_N = dataLog.v_CN_N
+    sigma_BN = dataLog.sigma_BN
+    theta1 = dataPanel1.theta
+    theta2 = dataPanel2.theta
 
-    rB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.r_BN_N', list(range(3)))[0]
-    vB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.v_BN_N', list(range(3)))[0]
-    sB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.sigma_BN', list(range(3)))[0]
-    oB1N = unitTestSim.pullMessageLogData(unitTestSim.panel1.hingedRigidBodyConfigLogOutMsgName + '.omega_BN_B', list(range(3)))[0]
-    rB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.r_BN_N', list(range(3)))[0]
-    vB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.v_BN_N', list(range(3)))[0]
-    sB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.sigma_BN', list(range(3)))[0]
-    oB2N = unitTestSim.pullMessageLogData(unitTestSim.panel2.hingedRigidBodyConfigLogOutMsgName + '.omega_BN_B', list(range(3)))[0]
+    rB1N = dataPanel1Log.r_BN_N[0]
+    vB1N = dataPanel1Log.v_BN_N[0]
+    sB1N = dataPanel1Log.sigma_BN[0]
+    oB1N = dataPanel1Log.omega_BN_B[0]
+    rB2N = dataPanel2Log.r_BN_N[0]
+    vB2N = dataPanel2Log.v_BN_N[0]
+    sB2N = dataPanel2Log.sigma_BN[0]
+    oB2N = dataPanel2Log.omega_BN_B[0]
 
     rotAngMom_N = unitTestSim.GetLogVariableData(
         variableLogTag + ".totRotAngMomPntC_N")
@@ -1327,21 +1348,22 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
 
     plt.figure()
     plt.clf()
-    plt.plot(vOut_CN_N[:, 0] * 1e-9, vOut_CN_N[:, 1], vOut_CN_N[:, 0] * 1e-9, vOut_CN_N[:, 2], vOut_CN_N[:, 0] * 1e-9,
-             vOut_CN_N[:, 3])
+    plt.plot(dataLog.times() * 1e-9, vOut_CN_N[:, 0],
+             dataLog.times() * 1e-9, vOut_CN_N[:, 1],
+             dataLog.times() * 1e-9, vOut_CN_N[:, 2])
     plt.xlabel('time (s)')
     plt.ylabel('m/s')
 
     plt.figure()
     plt.clf()
-    plt.plot(sigma_BN[:, 0] * macros.NANO2SEC, sigma_BN[:, 1],
-             color=unitTestSupport.getLineColor(1, 3),
+    plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 0],
+             color=unitTestSupport.getLineColor(0, 3),
              label=r'$\sigma_{1}$')
-    plt.plot(sigma_BN[:, 0] * macros.NANO2SEC, sigma_BN[:, 2],
-             color=unitTestSupport.getLineColor(2, 3),
+    plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 1],
+             color=unitTestSupport.getLineColor(1, 3),
              label=r'$\sigma_{2}$')
-    plt.plot(sigma_BN[:, 0] * macros.NANO2SEC, sigma_BN[:, 3],
-             color=unitTestSupport.getLineColor(3, 3),
+    plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 2],
+             color=unitTestSupport.getLineColor(2, 3),
              label=r'$\sigma_{3}$')
     plt.legend(loc='lower right')
     plt.xlabel('time (s)')
@@ -1349,11 +1371,11 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
 
     plt.figure()
     plt.clf()
-    plt.plot(theta1[:, 0] * macros.NANO2SEC, theta1[:, 1]*macros.R2D,
-             color=unitTestSupport.getLineColor(1, 3),
+    plt.plot(dataPanel1.times() * macros.NANO2SEC, theta1*macros.R2D,
+             color=unitTestSupport.getLineColor(0, 3),
              label=r'$\theta_{1}$')
-    plt.plot(theta2[:, 0] * macros.NANO2SEC, theta2[:, 1]*macros.R2D,
-             color=unitTestSupport.getLineColor(2, 3),
+    plt.plot(dataPanel2.times() * macros.NANO2SEC, theta2*macros.R2D,
+             color=unitTestSupport.getLineColor(1, 3),
              label=r'$\theta_{2}$')
     plt.legend(loc='lower right')
     plt.xlabel('time (s)')
@@ -1370,6 +1392,7 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
             testFailCount += 1
             testMessages.append("FAILED:  Hinged Rigid Body integrated test failed position test")
 
+    finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
     for i in range(0, len(initialRotAngMom_N)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy):
@@ -1422,7 +1445,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftDynamics.SpacecraftDynamics()
+    scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -1502,7 +1525,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    unitTestSim.TotalSim.logThisMessage("spacecraftinertial_state_output", testProcessRate)
+    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
 
@@ -1541,9 +1565,9 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
     theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()")
 
-    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraftinertial_state_output"+'.r_BN_N',list(range(3)))
-    sigmaOut_BN = unitTestSim.pullMessageLogData("spacecraftinertial_state_output"+'.sigma_BN',list(range(3)))
-    thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,3])
+    rOut_BN_N = dataLog.r_BN_N
+    sigmaOut_BN = dataLog.sigma_BN
+    thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,2])
 
     # Developing the lagrangian result
     # Define initial values
@@ -1595,7 +1619,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.figure()
     plt.clf()
     plt.plot(time, X[0,:],'-b',label = "Lagrangian")
-    plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[0,1]),'-r',label = "Basilisk")
+    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,0]-rOut_BN_N[:,0]),'-r',label = "Basilisk")
     plt.plot([time[25], time[75], time[125], time[175]], [X[0,25], X[0,75], X[0,125], X[0,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('x position (m)')
@@ -1608,7 +1632,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.figure()
     plt.clf()
     plt.plot(time, X[1,:],'-b',label = "Lagrangian")
-    plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,2]-rOut_BN_N[0,2]),'r',label = "Basilisk")
+    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[:,1]),'r',label = "Basilisk")
     plt.plot([time[25], time[75], time[125], time[175]], [X[1,25], X[1,75], X[1,125], X[1,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('y position (m)')
@@ -1621,7 +1645,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.figure()
     plt.clf()
     plt.plot(time, X[2,:],'-b',label = "Lagrangian")
-    plt.plot(sigmaOut_BN[:,0]*1e-9, thetaOut,'-r',label = "Basilisk")
+    plt.plot(dataLog.times()*1e-9, thetaOut,'-r',label = "Basilisk")
     plt.plot([time[25], time[75], time[125], time[175]], [X[2,25], X[2,75], X[2,125], X[2,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('theta (rad)')
@@ -1663,12 +1687,13 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     accuracy = 1e-10
     timeList = [25, 75, 125, 175]
+
     for i in timeList:
-        if abs(X[0,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1])) > accuracy:
-            print(abs(X[0,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1])))
+        if abs(X[0,i] - (rOut_BN_N[i,0]-rOut_BN_N[0,0])) > accuracy:
+            print(abs(X[0,i] - (rOut_BN_N[i,0]-rOut_BN_N[0,0])))
             testFailCount += 1
             testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed x position comparison ")
-        if abs(X[1,i] - (rOut_BN_N[i,2]-rOut_BN_N[0,2])) > accuracy:
+        if abs(X[1,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1])) > accuracy:
             testFailCount += 1
             testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed y position comparison ")
         if abs(X[2,i] - thetaOut[i]) > accuracy:
@@ -1860,4 +1885,10 @@ class boxAndWingParameters:
     d = 0
 
 if __name__ == "__main__":
-    test_hingedRigidBodyMotorTorque(True, True)
+    # test_hingedRigidBodyGravity(True)
+    # test_hingedRigidBodyNoGravity(True)
+    # test_hingedRigidBodyNoGravityDamping(True)
+    # test_hingedRigidBodyThetaSS(True)
+    # test_hingedRigidBodyFrequencyAmp(True)
+    # test_hingedRigidBodyMotorTorque(True, True)
+    test_hingedRigidBodyLagrangVsBasilisk(True)

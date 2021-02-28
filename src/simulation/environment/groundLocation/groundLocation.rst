@@ -8,12 +8,9 @@ location (set to 10 deg by default).
 To use this module, instantiate the class and provide it with a body-fixed location (in either lat/long/altitude,
 via the specifyLocation method, or in
 planet-centered planet-fixed coordinates directly via the ``r_LP_P_Init`` attribute) and a planet position/attitude
-message (i.e., an instance of :ref:`SpicePlanetStateSimMsg`);
-to compute access, at least one :ref:`scPlusStatesSimMsg` must be added to the class using the ``addSpacecraftToModel`` method,
-which operates on the message's name. By default,
-output messages are named ``ModelTag_#_access``, where ``ModelTag`` is the ModelTag associated with that
-groundLocation instance and # is the index of the spacecraft state
-message as they were added to the class; the first spacecraft is 0, the second is 1, and so on.
+message (i.e., an instance of :ref:`SpicePlanetStateMsgPayload`);
+to compute access, at least one :ref:`SCStatesMsgPayload` message must be added to the module using the ``addSpacecraftToModel()`` method.
+The first spacecraft is 0, the second is 1, and so on.
 
 Module Assumptions and Limitations
 ----------------------------------
@@ -26,21 +23,26 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. table:: Module I/O Messages
-    :widths: 25 25 100
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-    +-----------------------+---------------------------------+-----------------------------------------------------+
-    | Msg Variable Name     | Msg Type                        | Description                                         |
-    +=======================+=================================+=====================================================+
-    |  scStateInMsgName     | :ref:`PowerNodeUsageSimMsg`     | Provides inertial position of spacecraft. Set       |
-    |                       |                                 | using the addSpacecraftToModel method.              |
-    +-----------------------+---------------------------------+-----------------------------------------------------+
-    | planetInMsgName       | :ref:`PowerNodeStatusIntMsg`    | Provides inertial planet location and orientation.  |
-    +-----------------------+---------------------------------+-----------------------------------------------------+
-    | accessOutMsgNames     | :ref:`AccessSimMsg`             | List of access message names; defaults to           |
-    |                       |                                 | ``modelTag_scNumber_access``; created during        |
-    |                       |                                 | addSpacecraftToModel calls.                         |
-    +-----------------------+---------------------------------+-----------------------------------------------------+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - planetInMsg
+      - :ref:`SpicePlanetStateMsgPayload`
+      - (optional) planet state input message. Default is a zero state for the planet.
+    * - scStateInMsgs
+      - :ref:`SCStatesMsgPayload`
+      - vector of sc state input messages.  These are set through ``addSpacecraftToModel()``
+    * - currentGroundStateOutMsg
+      - :ref:`GroundStateMsgPayload`
+      - ground location output message
+    * - accessOutMsgs
+      - :ref:`AccessMsgPayload`
+      - vector of ground location access messages
+
 
 Detailed Module Description
 ---------------------------
@@ -48,7 +50,7 @@ The ``groundLocation`` module handles the following behavior:
 
 #. Body-fixed location representation: a single groundLocation instance represents one body-fixed location on a
    body, including translation and rotation due to the motion of that body as computed by a module that
-   writes a SPICEPlanetStateSimMsg.
+   writes a SPICEPlanetStateMsgPayload.
 #. Conversion of latitude, longitude, altitude coordinates to planet-centered, planet-fixed coordinates
 #. Computation of spacecraft visibility (i.e. access) considering range and ground location field-of-view constraints
 #. Support for multiple spacecraft given one groundLocation instance
@@ -67,22 +69,22 @@ A new instance of groundLocation, alongside necessary user-supplied parameters, 
     groundTarget.specifyLocation(np.radians(0.), np.radians(0.), 0.) #  Sets location in latitude, longitude, altitude coordinates
     scSim.AddModelToTask(simTaskName, groundTarget)
 
+The ``maximumRange`` variable is optional and defaults to -1.  This means by default no maximum range is considered.  Set it to a positive value to have ``hasAccess`` output message variable depend on range.
 
-A groundLocation can be affixed to a specific planet by setting its planetInMsgName attribute:
+A groundLocation can be affixed to a specific planet by setting its ``planetInMsg`` input message:
 
 .. code-block:: python
 
-    groundTarget.planetInMsgName = planet_message_name
+    groundTarget.planetInMsg.subscribeTo(planetMsg)
 
 Spacecraft can be added to the model by calling:
 
 .. code-block:: python
 
-    groundTarget.addSpacecraftToModel(sc1_message_name)
-    groundTarget.addSpacecraftToModel(sc2_message_name)
-    groundTarget.addSpacecraftToModel(sc3_message_name)
+    groundTarget.addSpacecraftToModel(sc1.scStateOutMsg)
+    groundTarget.addSpacecraftToModel(sc2.scStateOutMsg)
 
-    #   Sim code
-    sc1_access = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.hasAccess',range(1))
-    sc1_slant = scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.slantRange',range(1))
-    sc1_elevation =scSim.pullMessageLogData(groundTarget.accessOutMsgNames[0] + '.elevation',range(1))
+    #   log code
+    dataLog0 = groundTarget.currentGroundStateOutMsg.recorder()
+    dataLog1 = groundTarget.accessOutMsgs[0].recorder()
+    dataLog2 = groundTarget.accessOutMsgs[1].recorder()

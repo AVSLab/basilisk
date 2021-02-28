@@ -5,9 +5,9 @@ If the modules outputting the messages needed are in place, the message names ju
 
 \begin{itemize}
 \item Create the input messages: \\
-\texttt{inputCamera = horizonOpNav.CameraConfigMsg()} \\
-\texttt{inputLimb = horizonOpNav.LimbOpNavMsg()}\\
-\texttt{inputAtt = horizonOpNav.NavAttIntMsg()}\\
+\texttt{inputCamera = messaging.CameraConfigMsgPayload()} \\
+\texttt{inputLimb = messaging.LimbOpNavMsgPayload()}\\
+\texttt{inputAtt = messaging2.NavAttMsgPayload()}\\
 \item Set camera: \\
 \texttt{inputCamera.focalLength = 1.}\\
 \texttt{inputCamera.sensorSize = [10, 10]}\\
@@ -23,6 +23,4 @@ If the modules outputting the messages needed are in place, the message names ju
 \texttt{inputAtt.sigma$\_$BN = [0., 1., 0.]}\\
 \item Set module for Mars: \\
 \texttt{pixelLine.planetTarget = 2}\\
-\texttt{pixelLine.opNavOutMsgName = "output$\_$nav$\_$msg"}\\
-\texttt{unitTestSim.TotalSim.logThisMessage(pixelLine.opNavOutMsgName)}\\
   \end{itemize}

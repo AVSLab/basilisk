@@ -11,36 +11,32 @@ user from python.  The msg type contains a link to the message structure definit
 provides information on what this message is used for.
 
 
-.. table:: Module I/O Messages
-    :widths: 25 25 100
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-    +------------------------+-----------------------------------+---------------------------------------------------+
-    | Msg Variable Name      | Msg Type                          | Description                                       |
-    +========================+===================================+===================================================+
-    | sunInMsgName           | :ref:`SpicePlanetStateSimMsg`     | (Optional) sun state input message name.  If not  |
-    |                        |                                   | set, then this is set to ``sun_planet_data``.     |
-    |                        |                                   | If this message does not exist, then the sun      |
-    |                        |                                   | location is set to (0,0,0).                       |
-    +------------------------+-----------------------------------+---------------------------------------------------+
-    | vec:planetInMsgNames   | :ref:`SpicePlanetStateSimMsg`     | The planet state input msg names are not set      |
-    |                        |                                   | directly, but rather using the ``addPlanetName()``|
-    |                        |                                   | method.                                           |
-    +------------------------+-----------------------------------+---------------------------------------------------+
-    | vec:positionInMsgNames | :ref:`SCPlusStatesSimMsg`         | The spacecraft state input msg names are not set  |
-    |                        |                                   | directly, but rather using the                    |
-    |                        |                                   | ``addPositionMsgName()`` method.                  |
-    +------------------------+-----------------------------------+---------------------------------------------------+
-    | vec:eclipseOutMsgNames | :ref:`EclipseSimMsg`              | The eclipse output message names are set          |
-    |                        |                                   | automatically using                               |
-    |                        |                                   | ``eclipse_data_ + positionInMsgNames``.           |
-    +------------------------+-----------------------------------+---------------------------------------------------+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - sunInMsg
+      - :ref:`SpicePlanetStateMsgPayload`
+      - sun ephemeris input message name
+    * - planetInMsgs
+      - :ref:`SpicePlanetStateMsgPayload`
+      - A vector of planet incoming state message names ordered by the sequence in which planet are added to the module
+    * - positionInMsgs
+      - :ref:`SCStatesMsgPayload`
+      - vector of msgs for each spacecraft position state for which to evaluate eclipse conditions
+    * - eclipseOutMsgs
+      - :ref:`EclipseMsgPayload`
+      - vector of eclipse output msg names
 
 
 Detailed Module Description
 ---------------------------
 The eclipse module is responsible for determining whether or not a spacecraft is within the shadow of a solar eclipse and if so, how much. The module finds the states of the sun, spacecraft and planets of interest, allowing each body's position to be related and the construction of the conical shadow model. This provides the means for computing what percent of the spacecraft is illuminated where a shadow factor of 0.0 represents a total eclipse and 1.0 represents no eclipse.
 
-To determine the states of the bodies in question, messages are passed into the code. For the spacecraft, Cartesian vectors provide the position and velocity of its center of mass. For the sun and planets their ephemeris messages are read in. The planets desired to be used in the module are specified through the python method ``addPlanetName()``, where corresponding strings (e.g. ``venus``, ``earth``, ``mars barycenter``, etc.) are input.  If given multiple planets, the code iterates through the planet list and determines which is the closest to the spacecraft.  The figure below illustrates how the states are represented and will be identified in the mathematical model. Calculations in this model are taken from Montenbruck and Gill's text `Satellite Orbits Models, Methods and Applications <http://doi.org/10.1007/978-3-642-58351-3>`__.
+To determine the states of the bodies in question, messages are passed into the code. For the spacecraft, Cartesian vectors provide the position and velocity of its center of mass. For the sun and planets their ephemeris messages are read in. The planets desired to be used in the module are specified through the python method ``addPlanetToModel()``, where the planet spice state message is the input.  If given multiple planets, the code iterates through the planet list and determines which is the closest to the spacecraft.  The figure below illustrates how the states are represented and will be identified in the mathematical model. Calculations in this model are taken from Montenbruck and Gill's text `Satellite Orbits Models, Methods and Applications <http://doi.org/10.1007/978-3-642-58351-3>`__.
 
 .. _ConShad:
 .. figure:: /../../src/simulation/environment/eclipse/_Documentation/Images/conical_shadow.svg
@@ -72,10 +68,10 @@ Eclipse Conditions
 
 When analyzing the conical shadow model, there are critical distances and conical dimensions that must be considered. These parameters are determined by first knowing the planet's equatorial radius :math:`r_P`, which is used to solve for the angles of the shadow cones. Angles :math:`f_1` and :math:`f_2` are computed as shown below, where the subscript 1 relates to the cone of the penumbra and 2 relates to the umbra.
 
-.. math:: f_1 = \frac{\arcsin(r_H + r_P)}{| \mathbf{s}_{P/H}|}
+.. math:: f_1 = \arcsin\left(\frac{r_H + r_P}{| \mathbf{s}_{P/H}|} \right)
     :label: eq:elipse:7
 
-.. math:: f_2 = \frac{\arcsin(r_H - r_P)}{| \mathbf{s}_{P/H}|}
+.. math:: f_2 = \arcsin\left(\frac{r_H - r_P}{| \mathbf{s}_{P/H}|} \right)
     :label: eq:elipse:8
 
 Here :math:`r_H` indicates the equatorial radius of the sun, which is 695000 km. Both the sun and planet radii must be input in terms of meters.
@@ -196,33 +192,30 @@ Setting The Spacecraft State Input Messages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The spacecrat state messages are read in by the ``eclipse`` module to determine where the spacecraft is relative to the sun and the planet(s).  The module can handle a list of input messages, however, these are not set directly.  Rather, use the method::
 
-    addPositionMsgName(std::string msgName)
+    addSpacecraftToModel(scObject.scStateOutMsg)
 
-The spacecraft state message is of type :ref:`SCPlusStatesSimMsg`.  Note that this method returns the corresponding spacecraft shadow factor output messages name.  This is convenient if the script is to log this message.
+The spacecraft state message is of type :ref:`SCStatesMsgPayload`.
 
 Setting The Planet State Input Messages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The planet state input message is of type :ref:`SpicePlanetStateSimMsg`.  To add this as an input connection to ``eclipse``, use the method::
+The planet state input message is of type :ref:`SpicePlanetStateMsgPayload`.  To add this as an input connection to ``eclipse``, use the method::
 
-    addPlanetName(std::string planetName)
+    addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[0])
 
 At least one planet must be specified.  If there are multiple planets, then the shadow factor is only computed relative to the closest planet.
 
 Setting the Sun State Input Message (Optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-If the ``eclipse`` module input message name ``sunInMsgName`` is not specified, then the module assumes the sun state input message name is the default ``sun_planet_data``.  If this message is never created, then the module sets the sun position to (0, 0, 0) be default.
+To connect to a sun state input message use::
 
-To specify a desired ``sunInMsgName``, use::
-
-    eclipseObject = eclipse.Eclipse()
-    eclipseObject.sunInMsgName = "sun_state_message"
+    eclipseObject.sunInMsg.subscribeTo(sunMsg)
 
 Eclipse Output Messages
 ~~~~~~~~~~~~~~~~~~~~~~~
-The ``eclipse`` module will output a series of messages of type :ref:`EclipseSimMsg` corresponding to the number of spacecraft provided.  The names of these output messages are auto-generated as follows::
+The ``eclipse`` module will output a series of messages of type :ref:`EclipseMsgPayload` corresponding to the number of spacecraft provided.  The names of these output messages are auto-generated as follows::
 
-    eclipse_data_0
-    eclipse_data_1
-    eclipse_data_2
+    eclipseObject.eclipseOutMsgs[0]
+    eclipseObject.eclipseOutMsgs[1]
+    eclipseObject.eclipseOutMsgs[2]
 
-where ``eclipse_data_0`` indicates the first spacecraft shadow factor messages, etc.
+where ``0`` indicates the first spacecraft shadow factor messages, etc.

@@ -8,23 +8,89 @@ Basilisk Release Notes
     We are very excited by the great capabilities that this software already has, and plan to be updating this
     software regularly.  There is some documentation in terms of Sphinx generated HTML documentation, but also
     documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation
-    folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``src/examples``
-    folder.  More documentation and tutorial scripts are in development.
+    folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``basilisk/examples``
+    folder, described in :ref:`examples`.  To learn how to use and program Basilisk, see :ref:`learningBasilisk`.
+
+.. Danger::
+
+   This next generation of Basilisk introduces a new messaging system and file architecture.  As a result
+   using BSK2 will require upgrading existing Basilisk simulation scripts (see :ref:`migratingToBsk2`) and C/C++ modules
+   (see :ref:`migratingModuleToBsk2`) to be used with 2.0 and onwards.  All unit test and example scenario scripts
+   have been updated and form a good source for examples on how to use the new software framework.
 
 .. sidebar:: In Progress Features
 
     - ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
     - GPU based methods to evaluate solar radiation pressure forces and torques
-    - atmospheric drag evaluation using multi-faceted spacecraft model
-    - Basilisk 2.0 that includes:
+    - magnetic torque bar effector
+    - magnetic FSW control module to dump reaction wheel angular momentum
+    - new tutorial example scripts
+    - new FSW planet location pointing guidance module
+    - new Multi-Sphere-Method module to account for electrostatic force and torque interactions between neighboring spacecraft.
+    - Basilisk 2.1 that includes:
 
-        - working on a new messaging system that is much faster to log,
-        - has strong type checking in C/C++ and Python to avoid ever connecting to the wrong message type, etc.
         - support for multi-threading when simulating multiple satellite systems
-        - more flexible manner to build Basilisk with custom external modules and messages
 
 Version |release|
 -----------------
+
+.. Warning::
+
+   This next generation of Basilisk introduces a new messaging syste and file architecture.  As a result
+   using BSK2 will required upgrading existing Basilisk simulation scripts (see :ref:`migratingToBsk2`) and C/C++ modules
+   (see :ref:`migratingModuleToBsk2`) will need to be upgraded to use 2.0.  All unit test and example scenario scripts
+   have been updated and form a good source for examples on how to use the new software framework.
+
+- New message system with strong type checking.  You now get a much simpler method to create message objects,
+  how to connect them within python, create stand-alone messages in python, etc.  If you engage with a message
+  of the wrong type you get immediate compiler warnings.
+- New C++ based message recording system that is much faster than the older python based message logging
+- New messaging recording now stores the message data separately from the time a message was recorded
+  and the time the message was written
+- Removed the arbitrary distinction between ``FSW``, ``SIM`` and ``INT`` messages.  All messages are now
+  available to all modules
+- Both C and C++ based message interfaces are now auto-generated when running ``python3 conanfile.py`` command
+- New ability to create zero'd message structures in the modules
+- Seamless message subscribing in Python across all modules types (C, C++ or Python)
+- New generic RW device type in :ref:`simIncludeRW` and updated the support library to work with BSK2
+- Updated :ref:`simIncludeGravBody` to work with BSK2.  If needed the :ref:`spiceInterface` and
+  :ref:`EpochMsgPayload` message is created within the gravity factory class.
+- Updated :ref:`simIncludeThruster` to work with BSK2
+- Updated :ref:`fswSetupRW` to work with BSK2
+- Updated :ref:`fswSetupThrusters` to work with BSK2
+- Update Basilisk module documentation that shows all input and output message variables, their
+  type and explanation
+- Cleaned up the Basilisk `src` folder layout by moving all Basilisk architecture support files
+  to `src/architecture`.  This impacts some include statements
+- Made the C/C++ ``#include`` statements all relative to `src` to make it easier to find the associated
+  files in the source code
+- Updated message names to now all comply with the Basilisk message naming convention.  See
+  :ref:`migratingToBsk2` for a table of how some message names have changed
+- Updated :ref:`vizSupport` to work with BSK2.  It is now much easier to include RW, thruster and CSS devices.
+  Further, the simulation gravity bodies don't have to be explicitly provided to the
+  ``vizSupport.enableUnityVisualization()`` method.  Rather, these are pulled from the spacecraft object
+  directly.
+- :ref:`reactionWheelStateEffector` is updated where the list of RW configuration parameters are now linked
+  from python, not copied.  As a result it is now possible to stop the simulation and change RW parameters on
+  the fly, emulating a failure with a physical change in the RW mechanics.
+- changed the output message type of :ref:`magnetometer` to be compatible with :ref:`tamComm`
+- Created several instructional pages in the Quick-Start documentation folder.  The examples folder
+  has moved to the Quick-Start guide as well.  The new quick start guide now discusses
+
+  - how to write Basilisk python simulation scripts
+  - how to write C++, C and Python modules
+
+- Added installation instructions to run Basilisk on a computer with the Apple M1 processor
+- added :ref:`spacecraftLocation` module to allow checking for satellite to satellite line-of-sight access
+- made ``maximumRange`` an optional variable in :ref:`groundLocation`
+- renamed ``spacecraftDynamics`` to :ref:`spacecraftSystem`, and renamed the associated ``spacecraft`` to ``spacecraftUnit()``.
+- renamed ``spacecraftPlus()`` to be now simply :ref:`spacecraft`
+- renamed the `spacecraftPlus` associated messages to :ref:`SCStatesMsgPayload` and :ref:`SCMassPropsMsgPayload`
+- renamed ``fswModuleTemplate()`` to be :ref:`cModuleTemplate`.  This makes this naming consistent with the new :ref:`cppModuleTemplate`.
+- renamed `rwMotorVoltageInterface` to :ref:`motorVoltageInterface`.  This motor model can be used for both RW and hinged panel devices.
+- added support to creating custom gravity bodies to :ref:`simIncludeGravBody`.  Including support to have custom gravity bodies shown in :ref:`Vizard <vizard>` as well.  The example script :ref:`scenarioCustomGravBody` provides an illustration of this functionality.
+
+
 
 
 Version 1.8.10
@@ -52,7 +118,7 @@ Version 1.8.8
 Version 1.8.7
 -------------
 - Updated ``orbitalMotion`` python and C libraries to include the new methods ``hillFrame()``, ``hill2rv()`` and ``rv2hill()``
-- Updated :ref:`dualHingedRigidBodyStateEffector` to support an output message of the panel angular states, an output message of the panel inertial position and attitude states, as well as upgrading the module to support :ref:`spacecraftDynamics`.
+- Updated :ref:`dualHingedRigidBodyStateEffector` to support an output message of the panel angular states, an output message of the panel inertial position and attitude states, as well as upgrading the module to support ``spacecraftDynamics``.
 - Updated :ref:`vizInterface` to support scripting of new Vizard 1.6.1 features
 
 Version 1.8.6
@@ -60,15 +126,15 @@ Version 1.8.6
 - Fixed an issue where some Sim-FSW interface messages could not be written to from the Python layer
 - Fixed an issue that prevented the ``opNav`` build mode to compile the OpenCV related libraries
   on macOS with Xcode 12 installed
-- renamed ``RWArraytorqueIntMsg`` to :ref:`arrayMotorTorqueIntMsg`
+- renamed ``RWArraytorqueIntMsg`` to ``arrayMotorTorqueIntMsg``
 - updated :ref:`hingedRigidBodyStateEffector` to
 
     - write the panel angle and angle rate output message
     - write the panel inertial and position states as an output message
     - updated document to make use of RST format and specify module input and output messages
 - updated ``avsEigenSupport.h`` to add new methods ``eigenMRPd2Vector3d()`` and ``eigenC2MRP()``
-- updated :ref:`spacecraftPlus` to allow the attitude motion to be prescribed through
-  an optional input message of type :ref:`attRefFswMsg`.
+- updated ``spacecraftPlus`` to allow the attitude motion to be prescribed through
+  an optional input message of type ``attRefMsg``.
 - fixed sign issue in :ref:`simpleSolarPanel`
 - support Vizard 1.6.0 scripting  
 
@@ -132,7 +198,7 @@ Version 1.8.5
 
 **Version 1.8.0**
 
-- updated :ref:`imu_sensor` to initialize all class variables in the constructor
+- updated :ref:`imuSensor` to initialize all class variables in the constructor
 - fixed a data frame issue in :ref:`groundLocation`
 - first iteration of the CMake refactor completed. The refactor updates the project CMakeList to
 
@@ -166,7 +232,7 @@ Version 1.8.5
 - fixed an issues in :ref:`simIncludeGravBody` where the method ``unloadSpiceKernels`` had the order of the spice package name and the spice path reversed 😟
 - New :ref:`dataFileToViz` that reads in spacecraft simulation states from a text file and converts them into
   BSK messages.  For example, this allows :ref:`vizInterface` store the simulation data into a Vizard compatible manner.
-- Updated :ref:`spice_interface` to allow for optional overriding the IAU planet frame with custom values
+- Updated :ref:`spiceInterface` to allow for optional overriding the IAU planet frame with custom values
 - Updated :ref:`vizInterface` to allow setting ``show24hrClock`` and ``showDataRateDisplay`` flags for Vizard files
   supported in Vizard v1.3.0 
 
@@ -191,7 +257,7 @@ Version 1.7.4
 - new spacecraft formation flying control :ref:`meanOEFeedback` that implements a mean orbit element feedback
   control law
 - new relative orbit control tutorial example :ref:`scenarioFormationMeanOEFeedback` that uses :ref:`meanOEFeedback`
-- updated documentation of :ref:`fswModuleTemplate` to show how to make much simpler lists of module messages
+- updated documentation of :ref:`cModuleTemplate` to show how to make much simpler lists of module messages
   using the ``list-table`` RST command
 - new spaceraft relative motion control :ref:`spacecraftReconfig` that implements an orbit element based
   impulsive feedback control strategy.  The control is implemented with a thruster model and an
@@ -216,7 +282,7 @@ Version 1.7.4
 - Removed unneeded instances of using ``unitTestSupport.np2EigenVectorXd()`` when setting the spacecraft states
 - Many new Basilisk scenarios illustration interfacing with :ref:`Vizard <Vizard>` to simulate opNav cases:
 
-    - :ref:`scenario_DoubleOpNavOD` uses the two OpNav methods at once
+    - scenario_DoubleOpNavOD uses the two OpNav methods at once
     - :ref:`scenario_faultDetOpNav` implements two OpNav methods and employs a fault detection
     - :ref:`scenario_OpNavAttOD` uses the OpNav FSW stack to perform both pointing towards the target planet
     - :ref:`scenario_OpNavAttODLimb` uses a Canny transform to extract limb points
@@ -244,9 +310,9 @@ Version 1.7.4
   using ``pytest-xdist``.
 - temporary fix for opencv not finding conan gflags for opencv sfm lib on windows.  See the discussion
   at `<https://github.com/conan-community/community/issues/210>`_
-- Updated :ref:`fswModuleTemplate` to include a message I/O figure and move it's message definition to ``simMessages``
-- Updated the documentation of :ref:`Folder_MRP_PD` to the RST format
-- Updated the documentation of :ref:`Folder_MRP_Steering` to the RST format
+- Updated :ref:`cModuleTemplate` to include a message I/O figure and move it's message definition to ``simMessages``
+- Updated the documentation of :ref:`Folder_mrpPD` to the RST format
+- Updated the documentation of :ref:`Folder_mrpSteering` to the RST format
 - At long last, 🍾, created :ref:`GravityGradientEffector`  which can simulate the gravity gradient torque acting on a
   spacecraft due to the gravitational influence from one or more planets.
 - Create a new example script :ref:`scenarioAttitudeGG` that illustrates the use of the gravity gradient effector
@@ -267,7 +333,7 @@ Version 1.7.4
 **Version 1.5.0**
 
 - Updated documentation for :ref:`eclipse` module with new RST format
-- Updated :ref:`fswModuleTemplate` documentation to show how to add equation numbers, cite equations, do bold math variables and cite a figure caption.
+- Updated :ref:`cModuleTemplate` documentation to show how to add equation numbers, cite equations, do bold math variables and cite a figure caption.
 - Updated :ref:`reactionWheelStateEffector` and :ref:`vscmgStateEffector` such that max speed and max torque are consistently initialized to -1.  A negative value was supposed to turn of speed and torque saturation, but this wasn't consistenly applied.
 - Updated :ref:`reactionWheelStateEffector` such that the RW state output message was not hard-coded and un-changeable.  Otherwise a BSK process could never have multiple spacecraft being simulated.  Now, the rw effector ``ModelTag`` is added to the beginning of the output message.  This auto-generate method of message output names is avoided if the user sets the vector of output names from Python during the simulation setup.  **Note:** Any prior BSK script that was logging the old auto-generated RW state messages will need to update the msg name now to work again.  See :ref:`bskKnownIssues` for more information.
 - Major enhancement to :ref:`vizInterface` where now multiple spacecraft can be added.  You can create a list of spacecraft where :ref:`vizInterface` relies on common naming rules to find the right messages, or specify the messages for each spacecraft directly.  This is demonstrated in :ref:`scenarioFormationBasic`.  For now multiple craft with RW actuators are supported.  Multi craft with thrusters will need to be added later.
@@ -2130,7 +2196,7 @@ from 0011 to 0012.
 
 Added a force and torque calculation method in the stateEffector
 abstract class, and provided the necessary method calls in
-spacecraftPlus. This allows for stateEffectors to calculate the force
+``spacecraft``. This allows for stateEffectors to calculate the force
 and torque that they are imparting on the rigid body hub. The
 hingedRigidBodyStateEffector and the linearSpringMassDamper classes
 provide their implementation of these calculations.

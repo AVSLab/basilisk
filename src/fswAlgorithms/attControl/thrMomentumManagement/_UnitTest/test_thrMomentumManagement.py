@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 #
 #   Unit Test Script
 #   Module Name:        thrMomentumManagement
@@ -38,11 +36,11 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import thrMomentumManagement            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupRW
+from Basilisk.architecture import messaging
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -73,9 +71,6 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
@@ -98,16 +93,10 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
         moduleConfig.hs_min = 100./6000.*100.               # Nms
 
 
-    # Create input message and size it because the regular creator of that message
-    # is not part of the test.
-    moduleConfig.rwSpeedsInMsgName = "reactionwheel_speeds"
-    moduleConfig.rwConfigDataInMsgName = "rwa_config_data"
-    moduleConfig.deltaHOutMsgName = "outputName"
-
     # wheelSpeeds Message
-    rwSpeedMessage = thrMomentumManagement.RWSpeedIntMsg()
+    rwSpeedMessage = messaging.RWSpeedMsgPayload()
     rwSpeedMessage.wheelSpeeds = [10.0, -25.0, 50.0, 100.]
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.rwSpeedsInMsgName, rwSpeedMessage)
+    rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
 
 
     # wheelConfigData Message
@@ -117,14 +106,17 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     fswSetupRW.create([0.0, 1.0, 0.0], Js)
     fswSetupRW.create([0.0, 0.0, 1.0], Js)
     fswSetupRW.create([0.5773502691896258, 0.5773502691896258, 0.5773502691896258], Js)
-    fswSetupRW.writeConfigMessage(moduleConfig.rwConfigDataInMsgName,
-                                  unitTestSim.TotalSim,
-                                  unitProcessName)
+    rwConfigInMsg = fswSetupRW.writeConfigMessage()
 
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.deltaHOutMsgName, testProcessRate)
+    dataLog = moduleConfig.deltaHOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # setup message connections
+    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
+    moduleConfig.rwConfigDataInMsg.subscribeTo(rwConfigInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -138,34 +130,23 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-
-    # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "torqueRequestBody"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.deltaHOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
-
-    # print moduleOutput
-
     # set the filtered output truth states
     if hsMinCheck == 1:
         trueVector = [
                    [0.0, 0.0, 0.0]
-                   ]
+                   ]*2
     else:
         trueVector = [
                    [-5.914369484146579, -2.858300248464629, -9.407020039211664]
-                   ]
+                   ]*2
 
     # compare the module results to the truth values
     accuracy = 1e-12
     unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
-
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.torqueRequestBody, accuracy,
                                                                "torqueRequestBody", testFailCount, testMessages)
 
-
-    snippentName = "passFail" + str(hsMinCheck)
+    snippetName = "passFail" + str(hsMinCheck)
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print("PASSED: " + moduleWrap.ModelTag)
@@ -174,7 +155,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
         colorText = 'Red'
         print("Failed: " + moduleWrap.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
 
     # each test method requires a single assert method to be called

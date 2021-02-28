@@ -22,16 +22,18 @@
 
 #include <stdint.h>
 #include <Eigen/Dense>
-#include "architecture/messaging/system_messaging.h"
+#include "architecture/messaging/messaging.h"
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
-#include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
-#include "../simulation/simFswInterfaceMessages/limbOpNavMsg.h"
-#include "../simulation/_GeneralModuleFiles/sys_model.h"
-#include "../simulation/utilities/avsEigenMRP.h"
-#include "../simulation/utilities/bskLogging.h"
+
+#include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+#include "architecture/msgPayloadDefC/LimbOpNavMsgPayload.h"
+
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 
@@ -42,14 +44,12 @@ public:
     ~LimbFinding();
     
     void UpdateState(uint64_t CurrentSimNanos);
-    void SelfInit();
-    void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
     
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    std::string opnavLimbOutMsgName;  //!< The name of the Limb output message
-    std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
+    Message<LimbOpNavMsgPayload> opnavLimbOutMsg;  //!< The name of the Limb output message
+    ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the camera output message
     std::string saveDir;                //!< Directory to save images to
 
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
@@ -61,10 +61,7 @@ public:
     int32_t limbNumThresh;                  //!< [-] Threshold for when a limb is detected
     
     BSKLogger bskLogger;                //!< -- BSK Logging
-private:
-    uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
-    int32_t opnavLimbOutMsgID;        //!< ID for the outgoing message
-    int32_t imageInMsgID;                //!< ID for the outgoing message
+
 };
 
 

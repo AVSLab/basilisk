@@ -55,8 +55,8 @@ Version 1.8.4
 
 - On Linux and Windows the ``vizInterface`` and all ``opNav`` related modules is not properly linking.
   Thus, all associated modules, including saving to Vizard binaries, is not working in this version.
-- In Xcode, when editing ``vizInterface.c/h` files, the protobuffer library is not properly found.  The code compiles,
-  but auto-completion etc. doesn't work in that module.
+- In Xcode, when editing ``vizInterface.c/h` files, the protobuffer library is not properly found.
+  The code compiles, but auto-completion etc. doesn't work in that module.
 
 **Version 1.8.1**
 
@@ -65,8 +65,8 @@ Version 1.8.4
   properly on the first try.
 - If ``openCV`` is conan installed for Release only the Xcode would give false error messages that it can't
   find the library.  This is now fixed in the current release.
-- In Xcode, when editing ``vizInterface.c/h` files, the protobuffer library is not properly found.  The code compiles,
-  but auto-completion etc. doesn't work in that module.
+- In Xcode, when editing ``vizInterface.c/h` files, the protobuffer library is not properly found.
+  The code compiles, but auto-completion etc. doesn't work in that module.
 - On Linux and Windows the ``vizInterface`` and all ``opNav`` related modules is not properly linking.
   Thus, all associated modules, including saving to Vizard binaries, is not working in this version.
 
@@ -90,11 +90,11 @@ Version 1.8.4
 
   - In BSK python simulation scripts, BSK modules should be included using the indirect method.  Thus::
 
-        from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate
+        from Basilisk.fswAlgorithms.cModuleTemplate import cModuleTemplate
 
     becomes::
 
-        from Basilisk.fswAlgorithms import fswModuleTemplate
+        from Basilisk.fswAlgorithms import cModuleTemplate
 
   - The ``pyswice`` package is now imported from ``topLevelModule``.  Thus::
 

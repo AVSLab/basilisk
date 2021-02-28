@@ -27,18 +27,15 @@
 %ignore Update_eulerRotation;
 %constant void SelfInit_eulerRotation(void*, uint64_t);
 %ignore SelfInit_eulerRotation;
-%constant void CrossInit_eulerRotation(void*, uint64_t);
-%ignore CrossInit_eulerRotation;
 %constant void Reset_eulerRotation(void*, uint64_t, uint64_t);
 %ignore Reset_eulerRotation;
-GEN_SIZEOF(eulerRotationConfig);
-GEN_SIZEOF(AttRefFswMsg);
-GEN_SIZEOF(AttStateFswMsg);
+
 %include "eulerRotation.h"
 
-// supportfile to be included in this sub-module
-%include "../../fswMessages/attRefFswMsg.h"
-%include "../../fswMessages/attStateFswMsg.h"
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+struct AttRefMsg_C;
+%include "architecture/msgPayloadDefC/AttStateMsgPayload.h"
+struct AttStateMsg_C;
 
 %pythoncode %{
 import sys

@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 #
 #   Unit Test Script
 #   Module Name:        atmosphere
@@ -34,17 +33,11 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
-
-
-
-
-
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import exponentialAtmosphere
-from Basilisk.simulation import simMessages
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simSetPlanetEnvironment
@@ -79,15 +72,11 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     # Construct algorithm and associated C++ container
     testModule = exponentialAtmosphere.ExponentialAtmosphere()
@@ -115,26 +104,13 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
         testModule.planetRadius =  6378136.6
     planetPosition = [0.0, 0.0, 0.0]
     if usePlanetEphemeris:
-        planetStateMsg = simMessages.SpicePlanetStateSimMsg()
+        planetStateMsg = messaging.SpicePlanetStateMsgPayload()
         planetPosition = [1000.0, 2000.0, -1000.0]
         planetStateMsg.PositionVector = planetPosition
-        planetStateMsgName = "planet_ephemeris"
-        unitTestSupport.setMessage(unitTestSim.TotalSim,
-                                   unitProcessName,
-                                   planetStateMsgName,
-                                   planetStateMsg)
-        testModule.planetPosInMsgName = planetStateMsgName
-
-
-    # add spacecraft to environment model
-    sc0StateMsgName = "sc0_state"
-    sc1StateMsgName = "sc1_state"
-    testModule.addSpacecraftToModel(sc0StateMsgName)
-    testModule.addSpacecraftToModel(sc1StateMsgName)
+        plMsg = messaging.SpicePlanetStateMsg().write(planetStateMsg)
+        testModule.planetPosInMsg.subscribeTo(plMsg)
 
     unitTestSim.AddModelToTask(unitTaskName, testModule)
-
-
 
     # define the spacecraft locations
     r0 = 6571 * 1000.0  # meters
@@ -153,26 +129,24 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     oe.a = r1
     r1N, v1N = orbitalMotion.elem2rv(mu, oe)
 
-
     # create the input messages
-    sc0StateMsg = simMessages.SCPlusStatesSimMsg()  # Create a structure for the input message
+    sc0StateMsg = messaging.SCStatesMsgPayload()  # Create a structure for the input message
     sc0StateMsg.r_BN_N = np.array(r0N) + np.array(planetPosition)
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               sc0StateMsgName,
-                               sc0StateMsg)
-    sc1StateMsg = simMessages.SCPlusStatesSimMsg()  # Create a structure for the input message
+    sc0InMsg = messaging.SCStatesMsg().write(sc0StateMsg)
+
+    sc1StateMsg = messaging.SCStatesMsgPayload()  # Create a structure for the input message
     sc1StateMsg.r_BN_N = np.array(r1N) + np.array(planetPosition)
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               sc1StateMsgName,
-                               sc1StateMsg)
+    sc1InMsg = messaging.SCStatesMsg().write(sc1StateMsg)
+
+    # add spacecraft to environment model
+    testModule.addSpacecraftToModel(sc0InMsg)
+    testModule.addSpacecraftToModel(sc1InMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    moduleOutputSc0MsgName = "exponential_0_data"
-    unitTestSim.TotalSim.logThisMessage(moduleOutputSc0MsgName, testProcessRate)
-    moduleOutputSc1MsgName = "exponential_1_data"
-    unitTestSim.TotalSim.logThisMessage(moduleOutputSc1MsgName, testProcessRate)
+    dataLog0 = testModule.envOutMsgs[0].recorder()
+    dataLog1 = testModule.envOutMsgs[1].recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog0)
+    unitTestSim.AddModelToTask(unitTaskName, dataLog1)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -186,13 +160,9 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-
-
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    dens0Data = unitTestSim.pullMessageLogData(moduleOutputSc0MsgName + ".neutralDensity")
-    dens1Data = unitTestSim.pullMessageLogData(moduleOutputSc1MsgName + ".neutralDensity")
-
+    dens0Data = dataLog0.neutralDensity
+    dens1Data = dataLog1.neutralDensity
 
     def expAtmoComp(alt, baseDens, scaleHeight, minReach, maxReach):
         density = baseDens * math.exp(-alt/scaleHeight)
@@ -202,11 +172,9 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
             density = 0.0
         return density
 
-
     # compare the module results to the truth values
     accuracy = 1e-5
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
-
 
     # check the exponential atmosphere results
     #
@@ -245,7 +213,6 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
         print("Failed: " + testModule.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

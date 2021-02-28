@@ -18,8 +18,7 @@
  */
 
 #include "nHingedRigidBodyStateEffector.h"
-#include "utilities/avsEigenSupport.h"
-#include "architecture/messaging/system_messaging.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include <iostream>
 
 /*! This is the constructor, setting variables to default values */
@@ -45,19 +44,6 @@ NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector()
     return;
 }
 
-/*! This method initializes the object. It creates the module's output messages.
- @return void*/
-void NHingedRigidBodyStateEffector::SelfInit()
-{
-    return;
-}
-
-/*! This method subscribes to messages the HRB needs.
- @return void*/
-void NHingedRigidBodyStateEffector::CrossInit()
-{
-    return;
-}
 
 /*! This method reads necessary input messages
  @return void */

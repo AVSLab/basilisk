@@ -17,61 +17,32 @@
 
  */
 /*
-    Inertial 3D Spin Module
+    Hill Point Module
  
  */
 
 
-#include "attGuidance/hillPoint/hillPoint.h"
+#include "fswAlgorithms/attGuidance/hillPoint/hillPoint.h"
 #include <string.h>
-#include "fswUtilities/fswDefinitions.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 
 
-/*!
- \verbatim embed:rst
-    This method creates the module output message of type :ref:`AttRefFswMsg`.
- \endverbatim
+/*! self init method
  @return void
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData
  */
 void SelfInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
 {
-    /*! - Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
-                                               sizeof(AttRefFswMsg),
-                                               "AttRefFswMsg",
-                                               moduleID);
+    AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
-/*!
- \verbatim embed:rst
-    This method performs the second stage of initialization
-    interface.  This module has two messages to subscribe to of type :ref:`EphemerisIntMsg` and :ref:`NavTransIntMsg`.
- \endverbatim
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The ID associated with the configData
- */
-void CrossInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
-{
-    /*! - subscribe to other message*/
-    /*! - inputCelID provides the planet ephemeris message.  Note that if this message does
-          not exist, this subscribe function will create an empty planet message.  This behavior
-          is by design such that if a planet doesn't have a message, default (0,0,0) position
-          and velocity vectors are assumed. */
-    configData->inputCelID = subscribeToMessage(configData->inputCelMessName,
-                                                sizeof(EphemerisIntMsg), moduleID);
-    /*! - inputNavID provides the current spacecraft location and velocity */
-    configData->inputNavID = subscribeToMessage(configData->inputNavDataName,
-                                                sizeof(NavTransIntMsg), moduleID);
-}
 
 /*! This method performs the module reset capability.  This module has no actions.
  @return void
@@ -81,7 +52,11 @@ void CrossInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
  */
 void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    
+    // check if the required input message is included
+    if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillPoint.transNavInMsg wasn't connected.");
+    }
+    configData->planetMsgIsLinked = EphemerisMsg_C_isLinked(&configData->celBodyInMsg);
 }
 
 
@@ -95,22 +70,19 @@ void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t mod
 void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read input message */
-    uint64_t            timeOfMsgWritten;
-    uint32_t            sizeOfMsgWritten;
-    NavTransIntMsg      navData;
-    EphemerisIntMsg     primPlanet;
-    AttRefFswMsg        attRefOut;
+    NavTransMsgPayload      navData;
+    EphemerisMsgPayload     primPlanet;
+    AttRefMsgPayload        attRefOut;
 
     /*! - zero the output message */
-    memset(&attRefOut, 0x0, sizeof(AttRefFswMsg));
+    attRefOut = AttRefMsg_C_zeroMsgPayload();
 
     /* zero the local planet ephemeris message */
-    memset(&primPlanet, 0x0, sizeof(EphemerisIntMsg));
-    ReadMessage(configData->inputCelID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(EphemerisIntMsg), &primPlanet, moduleID);
-    memset(&navData, 0x0, sizeof(NavTransIntMsg));
-    ReadMessage(configData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavTransIntMsg), &navData, moduleID);
+    primPlanet = EphemerisMsg_C_zeroMsgPayload();       /* zero'd as default, even if not connected */
+    if (configData->planetMsgIsLinked) {
+        primPlanet = EphemerisMsg_C_read(&configData->celBodyInMsg);
+    }
+    navData = NavTransMsg_C_read(&configData->transNavInMsg);
 
     /*! - Compute and store output message */
     computeHillPointingReference(configData,
@@ -119,10 +91,9 @@ void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t mo
                                  primPlanet.r_BdyZero_N,
                                  primPlanet.v_BdyZero_N,
                                  &attRefOut);
-    
-    WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),   /* update module name */
-                 (void*) &(attRefOut), moduleID);
-    
+
+    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, moduleID, callTime);
+
     return;
 }
 
@@ -132,7 +103,7 @@ void computeHillPointingReference(hillPointConfig *configData,
                                   double v_BN_N[3],
                                   double celBdyPositonVector[3],
                                   double celBdyVelocityVector[3],
-                                  AttRefFswMsg *attRefOut)
+                                  AttRefMsgPayload *attRefOut)
 {
     
     double  relPosVector[3];

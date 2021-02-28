@@ -39,14 +39,15 @@ This converter module processes the output of a circle finding method to extract
 Messages read:
 
 \begin{itemize}
-\item CameraConfigMsg: containing focal length, resolution, and sensor size. These values are needed for the following computations. Notably the camera frame relative to the body frame is used.
-\item CirclesInMsg: Circle radius, center pixel and line, and uncertainty around these values in pixels. 
-\item NavAttInMsg: Used for the spacecraft attitude. This allows to move from the body frame to the inertial frame.
+\item cameraConfigInMsg: containing focal length, resolution, and sensor size. These values are needed for the following computations. Notably the camera frame relative to the body frame is used.
+\item circlesInMsg: Circle radius, center pixel and line, and uncertainty around these values in pixels. 
+\item attInMsg: Used for the spacecraft attitude. This allows to move from the body frame to the inertial frame.
 \end{itemize}
 
 Message written:
 \begin{itemize}
-\item OpNavFswMsg: Message containing $\leftexp{N}{\bm r}$ and it's covariance.
+\item navStateOutMsg: Message containing $\leftexp{N}{\bm r}$ 
+\item filtDataOutMsg: covariance output message
 \end{itemize}
 
 \subsection{Position computation}

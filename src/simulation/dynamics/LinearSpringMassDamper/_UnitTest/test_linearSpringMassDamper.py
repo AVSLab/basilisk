@@ -1,23 +1,22 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
-import sys, os, inspect
+import os, inspect
 import pytest
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,13 +26,14 @@ path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.simulation import linearSpringMassDamper
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.utilities import simIncludeThruster
+from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'NoGravity'),
@@ -61,7 +61,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -143,16 +143,16 @@ def fuelSloshTest(show_plots,useFlag,testCase):
         unitTestSim.fuelTankStateEffector.addThrusterSet(thrustersDynamicEffector)
 
         # set thruster commands
-        ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
-        msgSize = ThrustMessage.getStructSize()
+        ThrustMessage = messaging.THRArrayOnTimeCmdMsgPayload()
         ThrustMessage.OnTimeRequest = [5.0]
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, msgSize, 2)
-        unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
+        thrInMsg = messaging.THRArrayOnTimeCmdMsg().write(ThrustMessage)
+        thrustersDynamicEffector.cmdsInMsg.subscribeTo(thrInMsg)
 
         # Add test module to runtime call list
         unitTestSim.AddModelToTask(unitTaskName, unitTestSim.fuelTankStateEffector)
         unitTestSim.AddModelToTask(unitTaskName, thrustersDynamicEffector)
-        unitTestSim.TotalSim.logThisMessage(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName, testProcessRate)
+        dataTank = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.recorder()
+        unitTestSim.AddModelToTask(unitTaskName, dataTank)
 
         # Add particles to tank to activate mass depletion
         unitTestSim.fuelTankStateEffector.pushFuelSloshParticle(unitTestSim.particle1)
@@ -182,16 +182,16 @@ def fuelSloshTest(show_plots,useFlag,testCase):
 
     if testCase == 'Gravity':
         unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-        unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-        unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+        unitTestSim.earthGravBody.planetName = "earth_planet_data"
         unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
         unitTestSim.earthGravBody.isCentralBody = True
         unitTestSim.earthGravBody.useSphericalHarmParams = False
-        scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+        scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
         scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
         scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    dataLog = scObject.scStateOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
 
@@ -219,10 +219,8 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.ExecuteSimulation()
 
     if testCase == 'MassDepletion':
-        fuelMass = unitTestSim.pullMessageLogData(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMass',
-                                                  list(range(1)))
-        fuelMassDot = unitTestSim.pullMessageLogData(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMassDot',
-                                                  list(range(1)))
+        fuelMass = dataTank.fuelMass
+        fuelMassDot = dataTank.fuelMassDot
         mass1Out = unitTestSim.GetLogVariableData(
             "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperMass1').getState()")
         mass2Out = unitTestSim.GetLogVariableData(
@@ -240,7 +238,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
                 ]
 
     finalOrbAngMom = [
-                [orbAngMom_N[-1,0], orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
+                [orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
                  ]
 
     initialRotAngMom_N = [
@@ -248,7 +246,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
                 ]
 
     finalRotAngMom = [
-                [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
+                [rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
                  ]
 
     initialOrbEnergy = [
@@ -256,7 +254,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
                 ]
 
     finalOrbEnergy = [
-                [orbEnergy[-1,0], orbEnergy[-1,1]]
+                [orbEnergy[-1,1]]
                  ]
 
     initialRotEnergy = [
@@ -264,7 +262,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
                 ]
 
     finalRotEnergy = [
-                [rotEnergy[-1,0], rotEnergy[-1,1]]
+                [rotEnergy[-1,1]]
                  ]
 
     plt.close('all')
@@ -296,10 +294,10 @@ def fuelSloshTest(show_plots,useFlag,testCase):
         unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, r"width=0.8\textwidth", path)
     if testCase == 'MassDepletion':
         plt.figure()
-        plt.plot(fuelMass[:,0]*1e-9, fuelMass[:,1])
+        plt.plot(dataTank.times()*1e-9, fuelMass)
         plt.title("Tank Fuel Mass")
         plt.figure()
-        plt.plot(fuelMassDot[:,0]*1e-9, fuelMassDot[:,1])
+        plt.plot(dataTank.times()*1e-9, fuelMassDot)
         plt.title("Tank Fuel Mass Dot")
         plt.figure()
         plt.plot(mass1Out[:,0]*1e-9, mass1Out[:,1])
@@ -314,9 +312,9 @@ def fuelSloshTest(show_plots,useFlag,testCase):
         mDotParicle1True = mDotFuel*(10./85.)
         mDotParicle2True = mDotFuel*(20./85.)
         mDotParicle3True = mDotFuel*(15./85.)
-        mDotParicle1Data = [0,(mass1Out[2,1] - mass1Out[1,1])/((mass1Out[2,0] - mass1Out[1,0])*1e-9)]
-        mDotParicle2Data = [0,(mass2Out[2,1] - mass2Out[1,1])/((mass2Out[2,0] - mass2Out[1,0])*1e-9)]
-        mDotParicle3Data = [0,(mass3Out[2,1] - mass3Out[1,1])/((mass3Out[2,0] - mass3Out[1,0])*1e-9)]
+        mDotParicle1Data = (mass1Out[2,1] - mass1Out[1,1])/((mass1Out[2,0] - mass1Out[1,0])*1e-9)
+        mDotParicle2Data = (mass2Out[2,1] - mass2Out[1,1])/((mass2Out[2,0] - mass2Out[1,0])*1e-9)
+        mDotParicle3Data = (mass3Out[2,1] - mass3Out[1,1])/((mass3Out[2,0] - mass3Out[1,0])*1e-9)
 
     if show_plots:
         plt.show()
@@ -370,4 +368,4 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    fuelSloshTest(True,False,'MassDepletion')
+    fuelSloshTest(True,False,'Gravity')

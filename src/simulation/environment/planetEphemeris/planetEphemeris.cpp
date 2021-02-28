@@ -16,57 +16,46 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "environment/planetEphemeris/planetEphemeris.h"
+#include "simulation/environment/planetEphemeris/planetEphemeris.h"
 #include <iostream>
 #include <sstream>
-#include "architecture/messaging/system_messaging.h"
 #include <string.h>
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/astroConstants.h"
-#include "utilities/rigidBodyKinematics.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 
 /*! This constructor initializes the variables.
  */
 PlanetEphemeris::PlanetEphemeris()
 {
-    CallCounts = 0;
-    outputBufferCount = 2;
     return;
 }
 
 /*! Module deconstructor */
 PlanetEphemeris::~PlanetEphemeris()
 {
+    for (long unsigned int c=0; c<this->planetOutMsgs.size(); c++) {
+        delete this->planetOutMsgs.at(c);
+    }
     return;
 }
 
-/*! This method initializes the object.
- @return void
- */
-void PlanetEphemeris::SelfInit()
+/*! add list of planet names */
+void PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
 {
-    std::vector<std::string>::iterator it;
-    int c;
-    //! - Loop over the planet names and create new data
-    for(it = this->planetNames.begin(), c=0; it != this->planetNames.end(); it++, c++)
-    {
-        //! - Set the new planet name
-        std::string planetMsgName = *it + "_planet_data";
-        if(planetMsgName.size() >= MAX_BODY_NAME_LENGTH)
-        {
-            bskLogger.bskLog(BSK_ERROR, "Warning, your planet name %s is too long.", (*it).c_str());
-            continue;
-        }
+    this->planetNames = names;
 
-        //! - Create the planet message ID
-        uint64_t msgId = (uint32_t)SystemMessaging::GetInstance()->
-                        CreateNewMessage(planetMsgName, sizeof(SpicePlanetStateSimMsg),
-                                         this->outputBufferCount, "SpicePlanetStateSimMsg", this->moduleID);
-        this->planetOutMsgId.push_back(msgId);
+    /* create corresponding output messages */
+    for (long unsigned int c=0; c<this->planetNames.size(); c++) {
+        Message<SpicePlanetStateMsgPayload> *spMsg;
+        spMsg = new Message<SpicePlanetStateMsgPayload>;
+        this->planetOutMsgs.push_back(spMsg);
     }
 }
+
+
 
 void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
 {
@@ -87,32 +76,34 @@ void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
         this->computeAttitudeFlag = 1;
     }
 
-    /*! - check that the right number of planet local sideral time angles are provided */
-    if (this->lst0.size() != this->planetNames.size()) {
-        bskLogger.bskLog(BSK_ERROR, "Only %lu planet initial principal rotation angles provided, but %lu plane names are present.",
-                  this->lst0.size(), this->planetNames.size());
-        this->computeAttitudeFlag = 0;
-    }
+    if (computeAttitudeFlag) {
+        /*! - check that the right number of planet local sideral time angles are provided */
+        if (this->lst0.size() != this->planetNames.size()) {
+            bskLogger.bskLog(BSK_ERROR, "Only %lu planet initial principal rotation angles provided, but %lu planet names are present.",
+                      this->lst0.size(), this->planetNames.size());
+            this->computeAttitudeFlag = 0;
+        }
 
-    /*! - check that the right number of planet polar axis right ascension angles are provided */
-    if (this->rightAscension.size() != this->planetNames.size()) {
-        bskLogger.bskLog(BSK_ERROR, "Only %lu planet right ascension angles provided, but %lu plane names are present.",
-                  this->rotRate.size(), this->planetNames.size());
-        this->computeAttitudeFlag = 0;
-    }
+        /*! - check that the right number of planet polar axis right ascension angles are provided */
+        if (this->rightAscension.size() != this->planetNames.size()) {
+            bskLogger.bskLog(BSK_ERROR, "Only %lu planet right ascension angles provided, but %lu planet names are present.",
+                      this->rightAscension.size(), this->planetNames.size());
+            this->computeAttitudeFlag = 0;
+        }
 
-    /*! - check that the right number of planet polar axis declination angles are provided */
-    if (this->declination.size() != this->planetNames.size()) {
-        bskLogger.bskLog(BSK_ERROR, "Only %lu planet declination angles provided, but %lu plane names are present.",
-                  this->rotRate.size(), this->planetNames.size());
-        this->computeAttitudeFlag = 0;
-    }
+        /*! - check that the right number of planet polar axis declination angles are provided */
+        if (this->declination.size() != this->planetNames.size()) {
+            bskLogger.bskLog(BSK_ERROR, "Only %lu planet declination angles provided, but %lu planet names are present.",
+                      this->declination.size(), this->planetNames.size());
+            this->computeAttitudeFlag = 0;
+        }
 
-    /*! - check that the right number of planet polar rotation rates are provided */
-    if (this->rotRate.size() != this->planetNames.size()) {
-        bskLogger.bskLog(BSK_ERROR, "Only %lu planet rotation rates provided, but %lu plane names are present.",
-                  this->rotRate.size(), this->planetNames.size());
-        this->computeAttitudeFlag = 0;
+        /*! - check that the right number of planet polar rotation rates are provided */
+        if (this->rotRate.size() != this->planetNames.size()) {
+            bskLogger.bskLog(BSK_ERROR, "Only %lu planet rotation rates provided, but %lu planet names are present.",
+                      this->rotRate.size(), this->planetNames.size());
+            this->computeAttitudeFlag = 0;
+        }
     }
 
     /*! - compute the polar rotation axis unit vector for each planet */
@@ -165,8 +156,8 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
     for(it = this->planetNames.begin(), c=0; it != this->planetNames.end(); it++, c++)
     {
         //! - Create new planet output message copy
-        SpicePlanetStateSimMsg newPlanet;
-        memset(&newPlanet, 0x0, sizeof(SpicePlanetStateSimMsg));
+        SpicePlanetStateMsgPayload newPlanet;
+        newPlanet = this->planetOutMsgs.at(c)->zeroMsgPayload;
         //! - specify planet name in output message
         strcpy(newPlanet.PlanetName, it->c_str());
 
@@ -184,7 +175,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
         //! - retain planet epoch information
         this->planetElements[c].f = f0;
 
-        if (computeAttitudeFlag == 1) {
+        if (this->computeAttitudeFlag == 1) {
             //! - compute current planet principal rotation parameter vector */
             lst = this->lst0[c] + this->rotRate[c]*(time - this->epochTime);
 
@@ -204,8 +195,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
         }
 
         //! - write output message
-        SystemMessaging::GetInstance()->WriteMessage(this->planetOutMsgId[c], CurrentSimNanos,
-                                                     sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&newPlanet), this->moduleID);
+        this->planetOutMsgs.at(c)->write(&newPlanet, this->moduleID, CurrentSimNanos);
 
     }
     return;

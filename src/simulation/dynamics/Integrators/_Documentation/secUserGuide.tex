@@ -7,9 +7,9 @@ If a Python BSK simulation is setup without specifying an integration method, th
 
 
 \subsection{Selecting Alternate Integration Methods}
-Assume the {\tt DynamicObject} class is the {\tt SpacecraftPlus()} object, declared through
+Assume the {\tt DynamicObject} class is the {\tt spacecraft()} object, declared through
 \begin{verbatim}
-	scObject = spacecraftPlus.SpacecraftPlus()
+	scObject = spacecraft.spacecraft()
 \end{verbatim}
 To invoke the Euler's  integration scheme, the corresponding integration module is created using
 \begin{verbatim}
@@ -24,7 +24,7 @@ To force the default RK4 method, use
 	integratorObject = svIntegrators.svIntegratorRK4(scObject)
 \end{verbatim}
 
-Next, to connect this integrator module to the {\tt DynamicObject} instance (i.e. {\tt SpacecraftPlus()} called {\tt scObject}, use the following code
+Next, to connect this integrator module to the {\tt DynamicObject} instance (i.e. {\tt spacecraft()} called {\tt scObject}, use the following code
 \begin{verbatim}
 	scObject.setIntegrator(integratorObject)
 \end{verbatim}

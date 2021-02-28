@@ -18,11 +18,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %module vizInterface
 %{
    #include "vizInterface.h"
-   #include "../_GeneralModuleFiles/vizStructures.h"
+   #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
 %include "swig_conly_data.i"
@@ -33,7 +33,6 @@ from Basilisk.simulation.swig_common_model import *
 
 // Instantiate templates used by example
 namespace std {
-    %template(VizThrConfig) vector<ThrClusterMap>;
     %template(PointLineConfig) vector<PointLine>;
     %template(LocationConfig) vector<LocationPbMsg>;
     %template(CustomModelConfig) vector<CustomModel>;
@@ -42,12 +41,32 @@ namespace std {
     %template(KeepOutInConeConfig) vector<KeepOutInCone>;
     %template(StdCameraConfig) vector<StdCameraSettings>;
     %template(VizSCVector) vector<VizSpacecraftData>;
+    %template(ThrClusterVector) vector<ThrClusterMap>;
+    %template(GravBodyInfoVector) vector<GravBodyInfo>;
 }
 
 %include "vizInterface.h"
-%include "../_GeneralModuleFiles/vizStructures.h"
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
-GEN_SIZEOF(ThrClusterMap);
+%include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
+
+%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
+%include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+struct RWConfigLogMsg_C;
+%include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
+struct STSensorMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+struct CameraImageMsg_C;
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+struct RWSpeedMsg_C;
+%include "architecture/msgPayloadDefC/EpochMsgPayload.h"
+struct EpochMsg_C;
+
+%include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 
 %pythoncode %{
 import sys

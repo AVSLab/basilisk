@@ -17,11 +17,11 @@
  */
 
 #include <string.h>
-#include "attGuidance/attTrackingError/attTrackingError.h"
-#include "fswUtilities/fswDefinitions.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
+#include "fswAlgorithms/attGuidance/attTrackingError/attTrackingError.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 
 /*! This method initializes the configData for this module.
@@ -33,30 +33,9 @@
  */
 void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
-    /*! Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
-                                               sizeof(AttGuidFswMsg),
-                                               "AttGuidFswMsg",
-                                               moduleID);
+    AttGuidMsg_C_init(&configData->attGuidOutMsg);
 }
 
-/*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- @param configData The configuration data associated with the attitude tracking error module
- @param moduleID The ID associated with the configData
- */
-void CrossInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
-{
-    /*! - Get the reference and navigation data message ID*/
-    configData->inputRefID = subscribeToMessage(configData->inputRefName,
-                                                sizeof(AttRefFswMsg),
-                                                moduleID);
-    configData->inputNavID = subscribeToMessage(configData->inputNavName,
-                                                sizeof(NavAttIntMsg),
-                                                moduleID);
-
-}
 
 /*! This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
@@ -66,6 +45,14 @@ void CrossInit_attTrackingError(attTrackingErrorConfig *configData, int64_t modu
  */
 void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input messages are included
+    if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: attTrackingError.attRefInMsg wasn't connected.");
+    }
+    if (!NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: attTrackingError.attNavInMsg wasn't connected.");
+    }
+
     return;
 }
 
@@ -77,25 +64,19 @@ void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTim
  */
 void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t    timeOfMsgWritten;
-    uint32_t    sizeOfMsgWritten;
-    AttRefFswMsg ref;                      /* reference guidance message */
-    NavAttIntMsg nav;                      /* navigation message */
-    AttGuidFswMsg attGuidOut;              /* Guidance message */
+    AttRefMsgPayload ref;                      /* reference guidance message */
+    NavAttMsgPayload nav;                      /* navigation message */
+    AttGuidMsgPayload attGuidOut;              /* Guidance message */
 
     /*! - Read the input messages */
-    memset(&ref, 0x0, sizeof(AttRefFswMsg));
-    memset(&nav, 0x0, sizeof(NavAttIntMsg));
-    memset(&attGuidOut, 0x0, sizeof(AttGuidFswMsg));
-    ReadMessage(configData->inputRefID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttRefFswMsg), (void*) &(ref), moduleID);
-    ReadMessage(configData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavAttIntMsg), (void*) &(nav), moduleID);
+    attGuidOut = AttGuidMsg_C_zeroMsgPayload();
+
+    ref = AttRefMsg_C_read(&configData->attRefInMsg);
+    nav = NavAttMsg_C_read(&configData->attNavInMsg);
 
     computeAttitudeError(configData->sigma_R0R, nav, ref, &attGuidOut);
 
-    WriteMessage(configData->outputMsgID, callTime, sizeof(AttGuidFswMsg),   /*! - Write guidance message */
-                 (void*) &(attGuidOut), moduleID);
+    AttGuidMsg_C_write(&attGuidOut, &configData->attGuidOutMsg, moduleID, callTime);
 
     return;
 }
@@ -107,23 +88,22 @@ void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTi
  @param ref The reference attitude
  @param attGuidOut Output attitude guidance message
  */
-void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefFswMsg ref, AttGuidFswMsg *attGuidOut){
+void computeAttitudeError(double sigma_R0R[3], NavAttMsgPayload nav, AttRefMsgPayload ref, AttGuidMsgPayload *attGuidOut){
     double      sigma_RR0[3];               /* MRP from the original reference frame R0 to the corrected reference frame R */
     double      sigma_RN[3];                /* MRP from inertial to updated reference frame */
     double      dcm_BN[3][3];               /* DCM from inertial to body frame */
-    
+
     /*! - compute the initial reference frame orientation that takes the corrected body frame into account */
     v3Scale(-1.0, sigma_R0R, sigma_RR0);
     addMRP(ref.sigma_RN, sigma_RR0, sigma_RN);
-    
+
     subMRP(nav.sigma_BN, sigma_RN, attGuidOut->sigma_BR);               /*! - compute attitude error */
-    
+
     MRP2C(nav.sigma_BN, dcm_BN);                                /* [BN] */
     m33MultV3(dcm_BN, ref.omega_RN_N, attGuidOut->omega_RN_B);              /*! - compute reference omega in body frame components */
-    
-    v3Subtract(nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B);     /*! - delta_omega = omega_B - [BR].omega.r */
-    
-    m33MultV3(dcm_BN, ref.domega_RN_N, attGuidOut->domega_RN_B);            /*! - compute reference d(omega)/dt in body frame components */
-    
-}
 
+    v3Subtract(nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B);     /*! - delta_omega = omega_B - [BR].omega.r */
+
+    m33MultV3(dcm_BN, ref.domega_RN_N, attGuidOut->domega_RN_B);            /*! - compute reference d(omega)/dt in body frame components */
+
+}

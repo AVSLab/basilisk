@@ -3,7 +3,7 @@
 This section is to outline the steps needed to setup a reaction wheel state effector in python using Basilisk.
 
 \begin{enumerate}
-	\item Import the reactionWheelStateEffector class, the spacecraftPlus class, and the simIncludeRW python module: \newline \textit{import reactionWheelStateEffector}, \textit{import spacecraftPlus} and \textit{import simIncludeRW}
+	\item Import the reactionWheelStateEffector class, the spacecraft class, and the simIncludeRW python module: \newline \textit{import reactionWheelStateEffector}, \textit{import spacecraft} and \textit{import simIncludeRW}
 	\item Define an instantiation of a rwFactory: \newline
 	\textit{rwFactory = simIncludeRW.rwFactory()}
 	\item Create a reaction wheel (Honeywell HR16 as an example): \newline 
@@ -16,8 +16,8 @@ This section is to outline the steps needed to setup a reaction wheel state effe
 		\textit{,RWModel= varRWModel})
 	\item To include stribeck friction effects, include \textit{ betaStatic } within the rwFactory.create() and assign it a non-zero value. By default, betaStatic is set to -1 and stribeck friction is ignored. 
 	\item Create an instantiation of a reaction wheel state effector: \newline \textit{rws = reactionWheelStateEffector.ReactionWheelStateEffector()}
-	\item Create an instantiation of a spacecraftPlus: \newline
-	\textit{scObject = spacecraftPlus.SpacecraftPlus()}
-	\item Finally, add the reaction wheel object to your spacecraftPlus:\newline
-	\textit{rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)}. See spacecraftPlus documentation on how to set up a spacecraftPlus object. 
+	\item Create an instantiation of a spacecraft: \newline
+	\textit{scObject = spacecraft.Spacecraft()}
+	\item Finally, add the reaction wheel object to your spacecraft:\newline
+	\textit{rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)}. See spacecraft documentation on how to set up a spacecraft object.
 \end{enumerate}

@@ -26,14 +26,14 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - motorTorqueInMsgName
-      - :ref:`ArrayMotorTorqueIntMsg`
+    * - motorTorqueInMsg
+      - :ref:`ArrayMotorTorqueMsgPayload`
       - (Optional) Input message of the hinge motor torque value
-    * - hingedRigidBodyOutMsgName
-      - :ref:`HingedRigidBodySimMsg`
+    * - hingedRigidBodyOutMsg
+      - :ref:`HingedRigidBodyMsgPayload`
       - Output message containing the panel hinge state angle and angle rate
-    * - hingedRigidBodyConfigLogOutMsgName
-      - :ref:`SCPlusStatesSimMsg`
+    * - hingedRigidBodyConfigLogOutMsg
+      - :ref:`SCStatesMsgPayload`
       - Output message containing the panel inertial position and attitude states
 
 
@@ -88,22 +88,17 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 
 #. Define an optional motor torque input message::
 
-    panel1.motorTorqueInMsgName = "motorTorque"
+    panel1.motorTorqueInMsg.subscribeTo(msg)
 
-#. The angular states of the panel are created using an output message with the name
-   ``hingedRigidBodyOutMsgName``.  The default value of this string is ``hingedRigidBody_OutputStates``::
+#. The angular states of the panel are created using an output message ``hingedRigidBodyOutMsg``.
 
-    panel1.hingedRigidBodyOutMsgName = "panel1Angles"
+#. The panel config log state output message is ``hingedRigidBodyConfigLogOutMsg``.
 
-#. If multiple panels are used, update the default config log state message to be unique::
-
-    panel1.hingedRigidBodyConfigLogOutMsgName = "panel1Log"
-
-#. Add the panel to your spacecraftPlus::
+#. Add the panel to your spacecraft::
 
     scObject.addStateEffector(panel1)
 
-   See :ref:`spacecraftPlus` documentation on how to set up a spacecraftPlus object.
+   See :ref:`spacecraft` documentation on how to set up a spacecraft object.
 
 #. Add the module to the task list::
 

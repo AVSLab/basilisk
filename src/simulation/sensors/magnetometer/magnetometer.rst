@@ -16,19 +16,23 @@ Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
 
-.. table:: Module I/O Messages
-        :widths: 25 25 100
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | Msg Variable Name     | Msg Type                        | Description                                       |
-        +=======================+=================================+===================================================+
-        | magIntMsgName         | :ref:`MagneticFieldSimMsg`      | Magnetic field input messager from one of the     |
-        |                       |                                 | magnetic field models                             |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | stateIntMsgName       | :ref:`SCPlusStatesSimMsg`       | Spacecraft state input message                    |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | tamDataOutMsgName     | :ref:`TAMDataSimMsg`            | TAM sensor output message                         |
-        +-----------------------+---------------------------------+---------------------------------------------------+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - stateInMsg
+      - :ref:`SCStatesMsgPayload`
+      - input message for spacecraft states
+    * - magInMsg
+      - :ref:`MagneticFieldMsgPayload`
+      - input message for magnetic field data in inertial N frame
+    * - tamDataOutMsg
+      - :ref:`TAMSensorMsgPayload`
+      - magnetic field sensor output message in the sensor frame S
+
 
 
 Detailed Module Description
@@ -118,15 +122,11 @@ The model can  be added to a task like other simModels.
 
       unitTestSim.AddModelToTask(unitTaskName, testModule)
 
-Each Magnetometer module calculates the magnetic field based on the magnetic field and output state messages of a spacecraft.  To add spacecraft to the magnetic field model the spacecraft state output message name is sent to the \f$\mbox{addSpacecraftToModel}\f$ method:
+Each Magnetometer module calculates the magnetic field based on the magnetic field and output state messages
+of a spacecraft. The spacecraft states are read in through the spacecraft state input message shown above.
 
-.. code-block:: python
-
-      scObject = spacecraftPlus.SpacecraftPlus()
-      scObject.ModelTag = "spacecraftBody"
-      magModule.addSpacecraftToModel(scObject.scStateOutMsgName)
-
-Magnetic field data is transformed from inertial to body, then to the sensor frame. The transformation from :math:`\cal B` to :math:`\cal S` can be set via ``dcm_SB`` using the helper function::
+Magnetic field data is transformed from inertial to body, then to the sensor frame. The transformation
+from :math:`\cal B` to :math:`\cal S` can be set via ``dcm_SB`` using the helper function::
 
     setBodyToSensorDCM(psi, theta, phi)
 

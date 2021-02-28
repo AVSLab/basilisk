@@ -20,21 +20,22 @@
 #ifndef _OPNAV_POINT_H_
 #define _OPNAV_POINT_H_
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "simFswInterfaceMessages/cameraConfigMsg.h"
-#include "fswMessages/attGuidFswMsg.h"
-#include "fswMessages/opNavFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/CameraConfigMsg_C.h"
+#include "cMsgCInterface/AttGuidMsg_C.h"
+#include "cMsgCInterface/OpNavMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
-/*! @brief module configuratino message definition
+/*! @brief module configuration message definition
  */
 typedef struct {
-    char attGuidanceOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    char opnavDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    char imuInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the incoming IMU message*/
-    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
+    AttGuidMsg_C attGuidanceOutMsg;                 /*!< The name of the output message*/
+    OpNavMsg_C opnavDataInMsg;                      /*!< The name of the Input message*/
+    NavAttMsg_C imuInMsg;                           /*!< The name of the incoming IMU message*/
+    CameraConfigMsg_C cameraConfigInMsg;            //!< The name of the camera config message
 
     double minUnitMag;       /*!< -- The minimally acceptable norm of opNav body vector*/
     double opNavAngleErr;      /*!< -- rad The current error between cmd and obs opNav angle*/
@@ -47,11 +48,8 @@ typedef struct {
     double currentHeading_N[3];   /*!< -- Previous heading command in intertial Frame*/
     double omega_RN_B[3];    /*!< -- Desired body rate vector if no opNav direction is available */
     double opNavAxisSpinRate;  /*!< -- r/s Desired constant spin rate about opNav vector */
-    int32_t attGuidanceOutMsgID;/*!< -- ID for the outgoing body estimate message*/
-    int32_t opnavDataInMsgId;/*!< -- ID for the incoming CSS sensor message*/
-    int32_t imuInMsgID;        /*!< -- ID for the incoming IMU sensor message*/
-    int32_t cameraConfigMsgID;  //!< [-] -- The ID associated with the incoming camera config message
-    AttGuidFswMsg attGuidanceOutBuffer;   /*!< -- The output data that we compute*/
+
+    AttGuidMsgPayload attGuidanceOutBuffer;   /*!< -- The output data that we compute*/
     BSKLogger *bskLogger;                             //!< BSK Logging
 }OpNavPointConfig;
 
@@ -60,7 +58,6 @@ extern "C" {
 #endif
     
     void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID);
-    void CrossInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID);
     void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t moduleID);

@@ -17,11 +17,10 @@
 
  */
 
-#include "effectorInterfaces/thrustRWDesat/thrustRWDesat.h"
-#include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "fswAlgorithms/effectorInterfaces/thrustRWDesat/thrustRWDesat.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
 
@@ -34,54 +33,45 @@
  */
 void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
 {
-    /*! - Loop over number of thruster blocks and create output messages */
-    configData->outputThrID = CreateNewMessage(
-        configData->outputThrName, sizeof(THRArrayOnTimeCmdIntMsg),
-        "THRArrayOnTimeCmdIntMsg", moduleID);
+    THRArrayOnTimeCmdMsg_C_init(&configData->thrCmdOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the thruster RW desat
- interface.  It's primary function is to link the input messages that were
- created elsewhere.
- @return void
- @param configData The configuration data associated with the RW desat logic
- @param moduleID The module ID associated with configData
- */
-void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
+
+void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    RWConstellationFswMsg localRWData;
-    THRArrayConfigFswMsg localThrustData;
-    VehicleConfigFswMsg localConfigData;
+    RWConstellationMsgPayload localRWData;
+    THRArrayConfigMsgPayload localThrustData;
+    VehicleConfigMsgPayload localConfigData;
     int i;
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     double momentArm[3];
     double thrustDat_B[3];
-    
-    /*! - Get the control data message ID*/
-    configData->inputSpeedID = subscribeToMessage(configData->inputSpeedName,
-        sizeof(RWSpeedIntMsg), moduleID);
-    configData->inputRWConfID = subscribeToMessage(configData->inputRWConfigData,
-                                                   sizeof(RWConstellationFswMsg), moduleID);
-    configData->inputMassPropID = subscribeToMessage(
-        configData->inputMassPropsName, sizeof(VehicleConfigFswMsg), moduleID);
-    configData->inputThrConID = subscribeToMessage(configData->inputThrConfigName,
-                                                   sizeof(THRArrayConfigFswMsg), moduleID);
+
+	// check if the required input messages are included
+	if (!RWConstellationMsg_C_isLinked(&configData->rwConfigInMsg)) {
+		_bskLog(configData->bskLogger, BSK_ERROR, "Error: thrustRWDesat.rwConfigInMsg wasn't connected.");
+	}
+	if (!VehicleConfigMsg_C_isLinked(&configData->vecConfigInMsg)) {
+		_bskLog(configData->bskLogger, BSK_ERROR, "Error: thrustRWDesat.vecConfigInMsg wasn't connected.");
+	}
+	if (!THRArrayConfigMsg_C_isLinked(&configData->thrConfigInMsg)) {
+		_bskLog(configData->bskLogger, BSK_ERROR, "Error: thrustRWDesat.thrConfigInMsg wasn't connected.");
+	}
+    if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrustRWDesat.rwSpeedInMsg wasn't connected.");
+    }
+
     /*! - Read input messages */
-    ReadMessage(configData->inputRWConfID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(RWConstellationFswMsg), &localRWData, moduleID);
-    ReadMessage(configData->inputMassPropID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(VehicleConfigFswMsg), &localConfigData, moduleID);
-    ReadMessage(configData->inputThrConID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(THRArrayConfigFswMsg), &localThrustData, moduleID);
-    
+    localRWData = RWConstellationMsg_C_read(&configData->rwConfigInMsg);
+    localConfigData = VehicleConfigMsg_C_read(&configData->vecConfigInMsg);
+    localThrustData = THRArrayConfigMsg_C_read(&configData->thrConfigInMsg);
+
     /*! - Transform from structure S to body B frame */
     configData->numRWAs = localRWData.numRW;
     for(i=0; i<configData->numRWAs; i=i+1)
     {
         v3Copy(localRWData.reactionWheels[i].gsHat_B, &configData->rwAlignMap[i*3]);
     }
-    
+
     configData->numThrusters = localThrustData.numThrusters;
     for(i=0; i<configData->numThrusters; i=i+1)
     {
@@ -91,8 +81,11 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
         v3Copy(localThrustData.thrusters[i].tHatThrust_B, thrustDat_B);
         v3Cross(momentArm, thrustDat_B, &(configData->thrTorqueMap[i*3]));
     }
-    
-    
+
+    configData->previousFiring = 0;
+    v3SetZero(configData->accumulatedImp);
+    configData->totalAccumFiring = 0.0;
+
 }
 
 /*! This method takes in the current oberved reaction wheel angular velocities.
@@ -104,18 +97,15 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
 void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     int32_t i;
 	int32_t selectedThruster;     /* Thruster index to fire */
-    RWSpeedIntMsg rwSpeeds;      /* Local reaction wheel speeds */
+    RWSpeedMsgPayload rwSpeeds;   /* Local reaction wheel speeds */
 	double observedSpeedVec[3];   /* The total summed speed of RWAs*/
 	double singleSpeedVec[3];     /* The speed vector for a single wheel*/
 	double bestMatch;             /* The current best thruster/wheel matching*/
 	double currentMatch;          /* Assessment of the current match */
     double fireValue;             /* Amount of time to fire the jet for */
-	THRArrayOnTimeCmdIntMsg outputData;    /* Local output firings */
+	THRArrayOnTimeCmdMsgPayload outputData;    /* Local output firings */
   
     /*! - If we haven't met the cooldown threshold, do nothing */
 	if ((callTime - configData->previousFiring)*1.0E-9 <
@@ -125,8 +115,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 	}
 
     /*! - Read the input rwheel speeds from the reaction wheels*/
-    ReadMessage(configData->inputSpeedID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(RWSpeedIntMsg), (void*) &(rwSpeeds), moduleID);
+    rwSpeeds = RWSpeedMsg_C_read(&configData->rwSpeedInMsg);
     
     /*! - Accumulate the total momentum vector we want to apply (subtract speed vectors)*/
 	v3SetZero(observedSpeedVec);
@@ -175,7 +164,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
           Only apply thruster firing if the best match is non-zero.  Find the thruster 
 		  that best matches the current specified direction.
     */
-	memset(&outputData, 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
+    outputData = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
 	selectedThruster = -1;
 	bestMatch = 0.0;
 	for (i = 0; i < configData->numThrusters; i++)
@@ -210,24 +199,10 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
         v3Add(configData->accumulatedImp, singleSpeedVec,
             configData->accumulatedImp);
 	}
-   
+
     /*! - Write the output message to the thruster system */
-	WriteMessage(configData->outputThrID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
-		&(outputData), moduleID);
+    THRArrayOnTimeCmdMsg_C_write(&outputData, &configData->thrCmdOutMsg, moduleID, callTime);
 
     return;
-}
-
-/*! This method resets the configData for the thruster-based RW desat module.
-@return void
-@param configData The configuration data associated with the thruster desat
-@param callTime The clock time at which the function was called (nanoseconds)
-@param moduleID The module ID associated with configData
-*/
-void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int64_t moduleID)
-{
-	configData->previousFiring = 0;
-	v3SetZero(configData->accumulatedImp);
-	configData->totalAccumFiring = 0.0;
 }
 

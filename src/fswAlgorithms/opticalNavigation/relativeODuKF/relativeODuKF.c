@@ -30,27 +30,10 @@
 */
 void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
 {
-    /*! - Create a navigation message to be used for control */
-    configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
-                                                    sizeof(NavTransIntMsg), "NavTransIntMsg", moduleId);
-    /*! - Create filter states output message for filter states, covariance, postfits, and debugging*/
-    configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
-                                                    sizeof(OpNavFilterFswMsg), "OpNavFilterFswMsg", moduleId);
-    
+    NavTransMsg_C_init(&configData->navStateOutMsg);
+    OpNavFilterMsg_C_init(&configData->filtDataOutMsg);
 }
 
-/*! This method performs the second stage of initialization for the OD filter.  It's primary function is to link the input messages that were created elsewhere.
- @return void
- @param configData The configuration data associated with the OD filter
- @param moduleId The ID associated with the configData
- */
-void CrossInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
-{
-    /*! Read in the treated position measurement from pixelLineConverter */
-    configData->opNavInMsgId = subscribeToMessage(configData->opNavInMsgName,
-                                                      sizeof(OpNavFswMsg), moduleId);
-    
-}
 
 /*! This method resets the relative OD filter to an initial state and
  initializes the internal estimation matrices.
@@ -62,7 +45,11 @@ void CrossInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
 void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                        int64_t moduleId)
 {
-    
+    // check if the required message has not been connected
+    if (!OpNavMsg_C_isLinked(&configData->opNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: relativeODuKF.opNavInMsg wasn't connected.");
+    }
+
     int32_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
     double tempMatrix[ODUKF_N_STATES*ODUKF_N_STATES];
@@ -128,7 +115,12 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     configData->timeTagOut = configData->timeTag;
     
     if (badUpdate <0){
-        _bskLog(configData->bskLogger, BSK_WARNING, "Reset method contained bad update");
+        _bskLog(configData->bskLogger, BSK_WARNING, "relODuKF: Reset method contained bad update");
+    }
+
+    /* check that required input messages are linked */
+    if (!OpNavMsg_C_isLinked(&configData->opNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "relODuKF: required opNavInMsg is not linked");
     }
     return;
 }
@@ -144,33 +136,31 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                         int64_t moduleId)
 {
     double newTimeTag = 0.0;  /* [s] Local Time-tag variable*/
-    uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/
-    uint32_t sizeOfMsgWritten = 0;  /* [-] Non-zero size indicates we received ST msg*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
     double yBar[3], tempYVec[3];
     uint32_t i;
     int computePostFits;
-    OpNavFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
-    NavTransIntMsg outputRelOD;
-    OpNavFswMsg inputRelOD;
+    OpNavFilterMsgPayload opNavOutBuffer; /* [-] Output filter info*/
+    NavTransMsgPayload outputRelOD;
+    OpNavMsgPayload inputRelOD;
     
     computePostFits = 0;
     v3SetZero(configData->postFits);
-    memset(&(outputRelOD), 0x0, sizeof(NavTransIntMsg));
-    memset(&opNavOutBuffer, 0x0, sizeof(OpNavFswMsg));
-    memset(&inputRelOD, 0x0, sizeof(OpNavFswMsg));
-    ReadMessage(configData->opNavInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(OpNavFswMsg), &inputRelOD, moduleId);
+    outputRelOD = NavTransMsg_C_zeroMsgPayload();
+    opNavOutBuffer = OpNavFilterMsg_C_zeroMsgPayload();
+
+    // read input message
+    inputRelOD = OpNavMsg_C_read(&configData->opNavInMsg);
     v3Scale(1E-3, inputRelOD.r_BN_N, inputRelOD.r_BN_N);
     vScale(1E-6, inputRelOD.covar_N, ODUKF_N_MEAS*ODUKF_N_MEAS,inputRelOD.covar_N);
     /*! - Handle initializing time in filter and discard initial messages*/
     trackerValid = 0;
     /*! - If the time tag from the measured data is new compared to previous step,
      propagate and update the filter*/
-    newTimeTag = timeOfMsgWritten * NANO2SEC;
-    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten > 0 && inputRelOD.valid ==1)
+    newTimeTag = OpNavMsg_C_timeWritten(&configData->opNavInMsg) * NANO2SEC;
+    if(newTimeTag >= configData->timeTag && OpNavMsg_C_isWritten(&configData->opNavInMsg) && inputRelOD.valid ==1)
     {
-        configData->opNavInMsg = inputRelOD;
+        configData->opNavInBuffer = inputRelOD;
         configData->planetId = inputRelOD.planetID;
         relODuKFTimeUpdate(configData, newTimeTag);
         relODuKFMeasUpdate(configData);
@@ -211,8 +201,7 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N); // Convert to m
     outputRelOD.timeTag = configData->timeTagOut;
     
-    WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavTransIntMsg),
-                 &(outputRelOD), moduleId);
+    NavTransMsg_C_write(&outputRelOD, &configData->navStateOutMsg, moduleId, callTime);
     
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = configData->timeTag;
@@ -223,8 +212,8 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     v6Scale(1E3, opNavOutBuffer.state, opNavOutBuffer.state); // Convert to m
     v3Scale(1E3, opNavOutBuffer.postFitRes, opNavOutBuffer.postFitRes); // Convert to m
     vScale(1E6, opNavOutBuffer.covar, ODUKF_N_STATES*ODUKF_N_STATES, opNavOutBuffer.covar); // Convert to m
-    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(OpNavFilterFswMsg),
-                 &opNavOutBuffer, moduleId);
+
+    OpNavFilterMsg_C_write(&opNavOutBuffer, &configData->filtDataOutMsg, moduleId, callTime);
     
     return;
 }
@@ -320,7 +309,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
     /*! - Read the planet ID from the message*/
     if(configData->planetId == 0)
     {
-      _bskLog(configData->bskLogger, BSK_ERROR, "Need a planet to navigate");
+      _bskLog(configData->bskLogger, BSK_ERROR, "relODuKF: Need a planet to navigate");
     }
 
     mCopy(configData->sQnoise, ODUKF_N_STATES, ODUKF_N_STATES, procNoise);
@@ -424,7 +413,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
 void relODuKFMeasModel(RelODuKFConfig *configData)
 {
     int i, j;
-    v3Copy(configData->opNavInMsg.r_BN_N, configData->obs);
+    v3Copy(configData->opNavInBuffer.r_BN_N, configData->obs);
     for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
         for(i=0; i<3; i++)
@@ -493,7 +482,7 @@ int relODuKFMeasUpdate(RelODuKFConfig *configData)
      decomposition of the observation variance matrix constructed for our number
      of observations*/
     mSetIdentity(configData->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS);
-    mCopy(configData->opNavInMsg.covar_N, ODUKF_N_MEAS, ODUKF_N_MEAS, configData->measNoise);
+    mCopy(configData->opNavInBuffer.covar_N, ODUKF_N_MEAS, ODUKF_N_MEAS, configData->measNoise);
     mScale(configData->noiseSF, &AT, 2*configData->countHalfSPs, configData->numObs, &AT);
     badUpdate += ukfCholDecomp(configData->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS, cholNoise);
     memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),

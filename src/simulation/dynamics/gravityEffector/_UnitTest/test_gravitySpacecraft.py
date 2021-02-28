@@ -1,22 +1,21 @@
-''' '''
-'''
- ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# ISC License
+#
+# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
 import os, inspect
 import numpy
 
@@ -31,8 +30,9 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -62,7 +62,7 @@ def test_singleGravityBody(show_plots):
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     DynUnitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -83,7 +83,7 @@ def test_singleGravityBody(show_plots):
     gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', stringCurrent)
     gravFactory.spiceObject.zeroBase = 'Earth'
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     unitTestSim.AddModelToTask(unitTaskName, gravFactory.spiceObject, None, 10)
 
@@ -91,7 +91,7 @@ def test_singleGravityBody(show_plots):
     # Note: this following SPICE data only lives in the Python environment, and is
     #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
     #       all required SPICE libraries must be included when setting up and loading
-    #       SPICE kernals in Python.
+    #       SPICE kernels in Python.
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
@@ -159,11 +159,14 @@ def test_singleGravityBody(show_plots):
 
     print(numpy.max(abs(posError[:,1:4])))
 
-    plt.close("all")
-    plt.figure()
-    plt.plot(posError[:,0], posError[:,1:4])
-    plt.xlabel('Time (s)')
-    plt.ylabel('Position Difference (m)')
+    if show_plots:
+        plt.close("all")
+        plt.figure()
+        plt.plot(posError[:, 0], posError[:, 1:4])
+        plt.xlabel('Time (s)')
+        plt.ylabel('Position Difference (m)')
+        plt.show()
+        plt.close("all")
 
 
     if testFailCount == 0:
@@ -189,7 +192,7 @@ def test_multiBodyGravity(show_plots):
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     DynUnitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -205,7 +208,7 @@ def test_multiBodyGravity(show_plots):
     gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', stringCurrent)
     gravFactory.spiceObject.zeroBase = 'Earth'
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     unitTestSim.AddModelToTask(unitTaskName, gravFactory.spiceObject, None, 10)
 
@@ -213,7 +216,7 @@ def test_multiBodyGravity(show_plots):
     # Note: this following SPICE data only lives in the Python environment, and is
     #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
     #       all required SPICE libraries must be included when setting up and loading
-    #       SPICE kernals in Python.
+    #       SPICE kernels in Python.
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
@@ -297,4 +300,6 @@ def test_multiBodyGravity(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    gravityEffectorAllTest(False)
+    # gravityEffectorAllTest(False)
+    test_singleGravityBody(True)
+    # test_multiBodyGravity(True)

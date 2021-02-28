@@ -30,11 +30,11 @@ provides information on what this message is used for.
     +-----------------------+-----------------------------------+---------------------------------------------------------------+
     | Msg Variable Name     | Msg Type                          | Description                                                   |
     +=======================+===================================+===============================================================+
-    | chiefTransInMsgName   | :ref:`NavTransIntMsg`             | The name of the chief's position and velocity input message   |
+    | chiefTransInMsg       | :ref:`NavTransMsgPayload`         | The name of the chief's position and velocity input message   |
     +-----------------------+-----------------------------------+---------------------------------------------------------------+
-    | deputyTransInMsgName  | :ref:`NavTransIntMsg`             | The name of the deputy's position and velocity input message  |
+    | deputyTransInMsg      | :ref:`NavTransMsgPayload`         | The name of the deputy's position and velocity input message  |
     +-----------------------+-----------------------------------+---------------------------------------------------------------+
-    | forceOutMsgName       | :ref:`CmdForceInertialIntMsg`     | Calculated Force to control orbital element difference        |
+    | forceOutMsg           | :ref:`CmdForceInertialMsgPayload` | Calculated Force to control orbital element difference        |
     |                       |                                   | output message                                                |
     +-----------------------+-----------------------------------+---------------------------------------------------------------+
 

@@ -22,7 +22,7 @@
 #endif
 
 #include "sphericalPendulum.h"
-#include "utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include <math.h>
 #include <iostream>
 

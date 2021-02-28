@@ -14,25 +14,29 @@ re-encodes the images that are corrupted. Outside of this design choice, the lim
 corruption methods used to replicate real camera physics. A Gaussian Dark Current might not always be a good
 model to represent such a phenomenon.
 
+
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for
+The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
 
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-.. table:: Module I/O Messages
-        :widths: 25 25 100
-
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | Msg Variable Name     | Msg Type                        | Description                                       |
-        +=======================+=================================+===================================================+
-        | imageInMsgName        | :ref:`CameraImageMsg`           | Input image message                               |
-        |                       |                                 | This image is theoretically uncorrupted           |
-        |                       |                                 | though this module can also add additional errors.|
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | cameraOutMsgName      | :ref:`CameraConfigMsg`          | Camera parameters message.                        |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | imageOutMsgName       | :ref:`CameraImageMsg`           | Output image with corruptions.                    |
-        +-----------------------+---------------------------------+---------------------------------------------------+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - imageInMsg
+      - :ref:`CameraImageMsgPayload`
+      - camera input message
+    * - cameraConfigOutMsg
+      - :ref:`CameraConfigMsgPayload`
+      - camera parameters output message
+    * - imageOutMsg
+      - :ref:`CameraImageMsgPayload`
+      - camera output message
 
 
 Detailed Module Description
@@ -132,9 +136,8 @@ The test and these few lines show an example setup for the module.
 .. code-block:: python
     :linenos:
 
-    moduleConfig.imageInMsgName = "sample_image"
-    moduleConfig.cameraOutMsgName = "cameraOut"
-    moduleConfig.imageOutMsgName = "out_image"
+    moduleConfig.imageInMsg.subscribeTo(inputCamMsg)
+
     moduleConfig.filename = ""
     moduleConfig.saveImages = 0
     # If images are to be saved, add the directory to which they

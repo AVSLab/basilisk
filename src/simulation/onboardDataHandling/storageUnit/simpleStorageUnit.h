@@ -21,8 +21,8 @@
 #define BASILISK_SIMPLESTORAGEUNIT_H
 
 
-#include "onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief simple storage unit class */
 class SimpleStorageUnit: public DataStorageUnitBase {

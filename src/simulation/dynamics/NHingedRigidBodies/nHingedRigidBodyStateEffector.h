@@ -21,11 +21,11 @@
 #define N_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
 #include <Eigen/Dense>
-#include "../_GeneralModuleFiles/stateEffector.h"
-#include "../_GeneralModuleFiles/stateData.h"
-#include "_GeneralModuleFiles/sys_model.h"
-#include "../simulation/utilities/avsEigenMRP.h"
-#include "utilities/bskLogging.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 
@@ -95,8 +95,6 @@ public:
     NHingedRigidBodyStateEffector();  //!< -- Contructor
     ~NHingedRigidBodyStateEffector();  //!< -- Destructor
     double HeaviFunc(double cond); //!< -- Heaviside function used for matrix contributions
-    void SelfInit();
-    void CrossInit();
     void WriteOutputMessages(uint64_t CurrentClock);
 	void UpdateState(uint64_t CurrentSimNanos);
     void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states

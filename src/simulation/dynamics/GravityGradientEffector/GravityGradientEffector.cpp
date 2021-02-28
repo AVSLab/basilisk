@@ -19,15 +19,11 @@
 
 #include <iostream>
 #include "GravityGradientEffector.h"
-#include "architecture/messaging/system_messaging.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
 
 GravityGradientEffector::GravityGradientEffector()
 {
-	this->gravityGradientOutMsgId = -1;
-    this->OutputBufferCount = 2;
-
 	return;
 }
 
@@ -37,36 +33,6 @@ GravityGradientEffector::~GravityGradientEffector()
 	return;
 }
 
-/*! Create the outgoing gravity gradient torque message.
- @return void
- */
-void GravityGradientEffector::SelfInit()
-{
-    std::string outMsgName;         /* output msg name */
-
-    if (this->gravityGradientOutMsgName.length() > 0) {
-        /* use the user specified msg name */
-        outMsgName = this->gravityGradientOutMsgName;
-    } else {
-        /* auto-generate a default output msg name */
-        outMsgName = this->ModelTag + "_gravityGradient";
-    }
-    this->gravityGradientOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(outMsgName,
-                                                                sizeof(GravityGradientSimMsg),
-                                                                this->OutputBufferCount,
-                                                                "GravityGradientSimMsg",
-                                                                moduleID);
-    
-    return;
-}
-
-/*! This method is used to connect to incoming message.  For this module there are none.
- @return void
- */
-void GravityGradientEffector::CrossInit()
-{
-    return;
-}
 
 /*! This method is used to set the effector, and check same module variables
 @return void
@@ -106,10 +72,9 @@ void GravityGradientEffector::addPlanetName(std::string planetName)
  */
 void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
-    GravityGradientSimMsg outMsg;
+    GravityGradientMsgPayload outMsg;
     eigenVector3d2CArray(this->torqueExternalPntB_B, outMsg.gravityGradientTorque_B);
-    SystemMessaging::GetInstance()->WriteMessage(this->gravityGradientOutMsgId, CurrentClock,
-                                                 sizeof(GravityGradientSimMsg), reinterpret_cast<uint8_t*>(&outMsg), this->moduleID);
+    this->gravityGradientOutMsg.write(&outMsg, this->moduleID, CurrentClock);
 
 	return;
 }

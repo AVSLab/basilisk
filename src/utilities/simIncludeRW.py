@@ -23,19 +23,19 @@
 import sys
 import numpy
 
-from . import macros
-from Basilisk.simulation import simMessages
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.utilities import macros
+from Basilisk.architecture import messaging
+
 try:
     from collections.abc import OrderedDict
 except ImportError:
     from collections import OrderedDict
 
 class rwFactory(object):
+    """
+    Reaction Wheel Factory Class
+    """
     def __init__(self):
-        self.BalancedWheels = 0
-        self.JitterSimple = 1
-        self.JitterFullyCoupled = 2
         self.rwList = OrderedDict()
         self.maxMomentum = 0.0
 
@@ -53,6 +53,7 @@ class rwFactory(object):
                 Spin axis unit vector gsHat in B-frame components
             kwargs :
                 Omega : initial RW speed in RPM
+                Omega_max : maximum RW speed in RPM
                 rWB_B : 3x1 list of RW center of mass position coordinates
                 RWModel : RW model type such as BalancedWheels, JitterSimple and JitterFullyCoupled
                 useRWfriction : BOOL to turn on RW internal wheel friction
@@ -71,20 +72,20 @@ class rwFactory(object):
         """
 
         # create the blank RW object
-        RW = simMessages.RWConfigSimMsg()
+        RW = messaging.RWConfigMsgPayload()
 
         # process optional input arguments
         if 'RWModel' in kwargs:
             varRWModel =  kwargs['RWModel']
-            if not isinstance(varRWModel, (int)):
+            if not isinstance(varRWModel, int):
                 print('ERROR: RWModel must be a INT argument')
                 exit(1)
         else:
-            varRWModel = self.BalancedWheels    # default value
+            varRWModel = messaging.BalancedWheels    # default value
 
         if 'useRWfriction' in kwargs:
             varUseRWfriction = kwargs['useRWfriction']
-            if not isinstance(varUseRWfriction, (bool)):
+            if not isinstance(varUseRWfriction, bool):
                 print('ERROR: useRWfriction must be a BOOL argument')
                 exit(1)
         else:
@@ -92,23 +93,23 @@ class rwFactory(object):
 
         if 'useMinTorque' in kwargs:
             varUseMinTorque =  kwargs['useMinTorque']
-            if not isinstance(varUseMinTorque, (bool)):
+            if not isinstance(varUseMinTorque, bool):
                 print('ERROR: useMinTorque must be a BOOL argument')
                 exit(1)
         else:
             varUseMinTorque = False             # default value
 
         if 'useMaxTorque' in kwargs:
-            varUseMaxTorque =  kwargs['useMaxTorque']
-            if not isinstance(varUseMaxTorque, (bool)):
+            varUseMaxTorque = kwargs['useMaxTorque']
+            if not isinstance(varUseMaxTorque, bool):
                 print('ERROR: useMaxTorque must be a BOOL argument')
                 exit(1)
         else:
             varUseMaxTorque = True              # default value
 
         if 'maxMomentum' in kwargs:
-            varMaxMomentum =  kwargs['maxMomentum']
-            if not isinstance(varMaxMomentum, (float)):
+            varMaxMomentum = kwargs['maxMomentum']
+            if not isinstance(varMaxMomentum, float):
                 print('ERROR: maxMomentum must be a FLOAT argument')
                 exit(1)
         else:
@@ -116,8 +117,8 @@ class rwFactory(object):
         self.maxMomentum = varMaxMomentum
 
         if 'fCoulomb' in kwargs:
-            varfCoulomb =  kwargs['fCoulomb']
-            if not isinstance(varfCoulomb, (float)):
+            varfCoulomb = kwargs['fCoulomb']
+            if not isinstance(varfCoulomb, float):
                 print('ERROR: fCoulomb must be a FLOAT argument')
                 exit(1)
         else:
@@ -125,8 +126,8 @@ class rwFactory(object):
         RW.fCoulomb = varfCoulomb
 
         if 'fStatic' in kwargs:
-            varfStatic =  kwargs['fStatic']
-            if not isinstance(varfStatic, (float)):
+            varfStatic = kwargs['fStatic']
+            if not isinstance(varfStatic, float):
                 print('ERROR: fStatic must be a FLOAT argument')
                 exit(1)
         else:
@@ -134,8 +135,8 @@ class rwFactory(object):
         RW.fStatic = varfStatic
 
         if 'betaStatic' in kwargs:
-            varbetaStatic =  kwargs['betaStatic']
-            if not isinstance(varbetaStatic, (float)):
+            varbetaStatic = kwargs['betaStatic']
+            if not isinstance(varbetaStatic, float):
                 print('ERROR: betaStatic must be a FLOAT argument')
                 exit(1)
             if varbetaStatic == 0:
@@ -147,18 +148,17 @@ class rwFactory(object):
 
         if 'cViscous' in kwargs:
             varcViscous =  kwargs['cViscous']
-            if not isinstance(varcViscous, (float)):
+            if not isinstance(varcViscous, float):
                 print('ERROR: cViscous must be a FLOAT argument')
                 exit(1)
         else:
             varcViscous = 0.0       # default value
         RW.cViscous = varcViscous
 
-
         # set device label name
         if 'label' in kwargs:
             varLabel = kwargs['label']
-            if not isinstance(varLabel, (str)):
+            if not isinstance(varLabel, str):
                 print('ERROR: label must be a string')
                 exit(1)
             if len(varLabel) > 5:
@@ -175,13 +175,24 @@ class rwFactory(object):
             print('ERROR: RW type ' + rwType + ' is not implemented')
             exit(1)
 
+        # set initial RW states
+        if 'Omega_max' in kwargs:
+            varOmega_max = kwargs['Omega_max']
+            if not isinstance(varOmega_max, (float)):
+                print('ERROR: Omega_max must be a FLOAT argument')
+                exit(1)
+            RW.Omega_max = varOmega_max * macros.RPM
+        if RW.Omega_max <= 0.0:
+            print('ERROR: RW is being setup with non-positive Omega_max value')
+            exit(1)
+
         # spin axis gs inertia [kg*m^2]
-        RW.Js = self.maxMomentum / (RW.Omega_max)
+        RW.Js = self.maxMomentum / RW.Omega_max
         RW.Jt = 0.5 * RW.Js
         RW.Jg = RW.Jt
 
         # set RW axes
-        self.setGsHat(RW,gsHat_B)
+        self.setGsHat(RW, gsHat_B)
 
         # set RW position vector
         if 'rWB_B' in kwargs:
@@ -251,7 +262,7 @@ class rwFactory(object):
 
         return
 
-    def addToSpacecraft(self, modelTag, rwStateEffector, scPlus):
+    def addToSpacecraft(self, modelTag, rwStateEffector, sc):
         """
             This function should be called after all RW devices are created with createRW()
             It creates the C-class container for the array of RW devices, and attaches
@@ -261,7 +272,7 @@ class rwFactory(object):
             ----------
             :param modelTag:  string with the model tag
             :param rwStateEffector:
-            :param scPlus:
+            :param sc: spacecraft object
         """
 
         rwStateEffector.ModelTag = modelTag
@@ -269,11 +280,9 @@ class rwFactory(object):
         for key, rw in list(self.rwList.items()):
             rwStateEffector.addReactionWheel(rw)
 
-        scPlus.addStateEffector(rwStateEffector)
+        sc.addStateEffector(rwStateEffector)
 
         return
-
-
 
     def getNumOfDevices(self):
         """
@@ -287,9 +296,9 @@ class rwFactory(object):
 
     def getConfigMessage(self):
         """
-        Returns a RWArrayConfigFswMsg instance based on the current setup.
+        Returns a FSW reaction wheel configuration message based on the current setup.
 
-        :return: rwConfigParams
+        :return: RWArrayConfigMsg
         """
 
         GsMatrix_B = []
@@ -303,13 +312,16 @@ class rwFactory(object):
             JsList.extend([rw.Js])
             uMaxList.extend([rw.u_max])
 
-        rwConfigParams = fswMessages.RWArrayConfigFswMsg()
+        rwConfigParams = messaging.RWArrayConfigMsgPayload()
         rwConfigParams.GsMatrix_B = GsMatrix_B
         rwConfigParams.JsList = JsList
         rwConfigParams.uMax = uMaxList
         rwConfigParams.numRW = len(self.rwList)
 
-        return rwConfigParams
+        rwConfigMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
+        rwConfigMsg.this.disown()
+
+        return rwConfigMsg
 
     #
     #   Honeywell HR16 (100Nm, 75Nm, 50Nm)
@@ -464,15 +476,18 @@ class rwFactory(object):
         return
 
 
-    #
-    #   BCT RWP015
-    #
-    #   RW Information Source:
-    #   https://storage.googleapis.com/blue-canyon-tech-news/1/2019/10/BCT_DataSheet_Components_ReactionWheels_F2.pdf
-    #
-    #   Not complete; fields not listed are estimates.
-
     def BCT_RWP015(self, RW):
+        """
+        BCT RWP015
+
+        RW Information Source:
+        https://storage.googleapis.com/blue-canyon-tech-news/1/2019/10/BCT_DataSheet_Components_ReactionWheels_F2.pdf
+
+        Not complete; fields not listed are estimates.
+
+        :param RW: reaction wheel configuration message
+        :return:
+        """
 
         # maximum allowable wheel speed
         RW.Omega_max = 6000.0*macros.RPM
@@ -494,5 +509,21 @@ class rwFactory(object):
         RW.mass = 0.130
         RW.U_s = 1E-7 # Guestimate
         RW.U_d = 1E-8 # Guestimate
+
+        return
+
+    def custom(self, RW):
+        """
+        Creates an empty reaction wheel configuration message.  This assumes the user provided the
+        RW maximum speed and maximum angular momentum information.
+
+        :param RW: reaction wheel configuration message
+        :return:
+        """
+        if self.Omega_max == 0.0:
+            print("ERROR: simIncludeRW.create() custom RW must have a non-zero Omega_max specified.")
+
+        if self.maxMomentum == 0.0:
+            print("ERROR: simIncludeRW.create() custom RW must have a non-zero maxMomentum specified.")
 
         return

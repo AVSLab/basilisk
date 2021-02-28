@@ -20,12 +20,12 @@
 #ifndef _ATT_TRACKING_ERROR_
 #define _ATT_TRACKING_ERROR_
 
-#include "messaging/static_messaging.h"
+#include "cMsgCInterface/AttGuidMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
+
 #include <stdint.h>
-#include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "fswMessages/attGuidFswMsg.h"
-#include "fswMessages/attRefFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 
@@ -33,25 +33,21 @@
  */
 typedef struct {
     /* declare module private variables */
-    double sigma_R0R[3];                            //!< MRP from corrected reference frame to original reference frame R0. This is the same as [BcB] going from primary body frame B to the corrected body frame Bc
-    char outputDataName[MAX_STAT_MSG_LENGTH];       //!< The name of the output message
-    char inputRefName[MAX_STAT_MSG_LENGTH];         //!< The name of the guidance reference Input message
-    char inputNavName[MAX_STAT_MSG_LENGTH];         //!< The name of the navigation Input message
-    int32_t outputMsgID;                            //!< ID for the outgoing message
-    int32_t inputRefID;                             //!< ID for the incoming guidance reference message
-    int32_t inputNavID;                             //!< ID for the incoming navigation message
-    BSKLogger *bskLogger;                             //!< BSK Logging
+    double sigma_R0R[3];                        //!< MRP from corrected reference frame to original reference frame R0. This is the same as [BcB] going from primary body frame B to the corrected body frame Bc
+    AttGuidMsg_C attGuidOutMsg;              //!< output msg of attitude guidance
+    NavAttMsg_C attNavInMsg;                 //!< input msg measured attitude
+    AttRefMsg_C attRefInMsg;                 //!< input msg of reference attitude
+    BSKLogger *bskLogger;                       //!< BSK Logging
 }attTrackingErrorConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID);
-    void CrossInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID);
     void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID);
-    void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefFswMsg ref, AttGuidFswMsg *attGuidOut);
+    void computeAttitudeError(double sigma_R0R[3], NavAttMsgPayload nav, AttRefMsgPayload ref, AttGuidMsgPayload *attGuidOut);
 
 #ifdef __cplusplus
 }

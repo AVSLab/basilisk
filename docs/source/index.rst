@@ -1,9 +1,12 @@
 
 .. _aboutBSK:
 
-Welcome to the Basilisk Astrodynamics Framework Documentation
-=============================================================
+Welcome to Basilisk: an Astrodynamics Simulation Framework
+==========================================================
 
+.. image:: _images/static/bannerImage.jpg
+       :align: center
+       :width: 100%
 
 Architecture
 ------------
@@ -23,8 +26,8 @@ Architecture
 
     **Status:** |version|
 
-The Basilisk astrodynamics software architecture is being designed to be
-capable of both faster-than realtime simulations, including repeatable
+Basilisk, or BSK for short, is a software framework
+capable of both faster-than realtime spacecraft simulations, including repeatable
 Monte-Carlo simulation options, as well as providing real-time options
 for hardware-in-the-loop simulations. The Basilisk package is designed
 as a set of Python modules written in C/C++ which allows for the ease of
@@ -39,12 +42,22 @@ as well as sophisticated mission-specific vehicle simulations that
 include hardware-in-the-loop scenarios.
 
 
-.. image:: _images/static/bskImg1.png
+.. image:: _images/static/bsk2-concept.svg
    :align: center
-   :scale: 50 %
 
-A companion Visualization program is called :ref:`Vizard <vizard>`.  This stand-alone program is based on the Unity rendering engine and can display the Basilisk simulation states in an interactive manner. The following image links to a video showing the basic features.
+A companion Visualization program is called :ref:`Vizard <vizard>`.  This stand-alone program is based on the Unity rendering engine and can display the Basilisk simulation states in an interactive manner.
 
+What is Basilisk Used For?
+--------------------------
+This software is being actively used for:
+
+- astrodynamics research to model complex spacecraft dynamical behaviors
+- developing new guidance, estimation and control solutions
+- supporting mission concept development
+- supporting flight software development
+- supporting hardware in the loop testing by simulating in realtime the spacecraft states
+- analysis of flight data and compare against expected behavior
+- supporting spacecraft AI based autonomy development
 
 Name/Logo Description
 ----------------------
@@ -74,7 +87,7 @@ several different (often competing) requirements.
    interface, the underlying simulation executes entirely in C/C++ which
    allows for maximum execution speed. For example, a goal is to
    simulate a mission year with sufficiently accurate vehicle 6-DOF
-   dynamics with at least a 365x speed-up (i.e. *a year in a day*).
+   dynamics with at least a 365x speed-up (i.e. *a year in a day*).
 
 -  **Reconfiguration:** The user interface executes natively in Python
    which allows the user to change task-rates, model/algorithm
@@ -130,10 +143,10 @@ several different (often competing) requirements.
    and Unity visualization are active cross-platform developments.
 
 -  **Validation and Verification:** Each simulation or FSW algorithm
-   module has unit test that can be run automatically using py.test.
+   module has unit test that can be run automatically using ``pytest``.
    Integrated scenario test validated coupled behavior between modules.
    Each dynamics modules has associated momentum, energy and power
-   validation tests. This ensures the integrity of the valdiated modules
+   validation tests. This ensures the integrity of the validated modules
    as new simulation capabilities are added.
 
 -  **Monte-Carlo Capability:** The simulation framework is capable of
@@ -180,7 +193,7 @@ Related Publications
 
    About
    Install
-   Quick-Start
+   Learn
    Support
    Documentation/index
    externalTools/index

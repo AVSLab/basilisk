@@ -20,9 +20,9 @@
 #ifndef EXT_PULSED_TORQUE_H
 #define EXT_PULSED_TORQUE_H
 
-#include "_GeneralModuleFiles/sys_model.h"
-#include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "utilities/bskLogging.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "architecture/utilities/bskLogging.h"
 
 
 /*! @brief external pulsed torque module class */
@@ -31,8 +31,6 @@ public:
     ExtPulsedTorque();
     ~ExtPulsedTorque();
 
-    void SelfInit();
-    void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
     void linkInStates(DynParamManager& statesIn);
     void writeOutputMessages(uint64_t currentClock);

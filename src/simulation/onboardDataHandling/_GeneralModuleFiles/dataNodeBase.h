@@ -23,18 +23,19 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
-#include "_GeneralModuleFiles/sys_model.h"
-#include <simMessages/dataNodeUsageSimMsg.h>
-#include "simFswInterfaceMessages/deviceStatusIntMsg.h"
-#include "simMessages/dataStorageStatusSimMsg.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+
+#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+#include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
+#include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
+#include "architecture/messaging/messaging.h"
+
 
 /*! @brief data node base class */
 class DataNodeBase: public SysModel {
 public:
     DataNodeBase();
     ~DataNodeBase();
-    void SelfInit();
-    void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
     void computeDataStatus(double currentTime);
     void UpdateState(uint64_t CurrentSimNanos);
@@ -42,28 +43,21 @@ public:
 protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
-    virtual void evaluateDataModel(DataNodeUsageSimMsg *dataUsageMsg, double currentTime)=0; //!< Virtual void method used to compute module-wise data usage/generation.
-    virtual void customSelfInit();
-    virtual void customCrossInit();   
+    virtual void evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, double currentTime)=0; //!< Virtual void method used to compute module-wise data usage/generation.
     virtual void customReset(uint64_t CurrentClock); //!< Custom Reset method, similar to customSelfInit.
     virtual void customWriteMessages(uint64_t CurrentClock);//!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.
 
 public:
-    std::string nodeDataOutMsgName; //!< Message name for the node's output message
-    std::string nodeStatusInMsgName; //!< String for the message name that tells the node it's status
+    Message<DataNodeUsageMsgPayload> nodeDataOutMsg; //!< Message name for the node's output message
+    ReadFunctor<DeviceStatusMsgPayload> nodeStatusInMsg; //!< String for the message name that tells the node it's status
     double nodeBaudRate; //!< [baud] Data provided (+) or consumed (-).
     char nodeDataName[128]; //!< Name of the data node consuming or generating data.
     uint64_t dataStatus; //!< Device data mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
 
 protected:
-    int64_t nodeDataOutMsgId;           //!< class variable
-    int64_t nodeStatusInMsgId;          //!< class variable
-    DataNodeUsageSimMsg nodeDataMsg;    //!< class variable
-    DeviceStatusIntMsg nodeStatusMsg;   //!< class variable
-
-private:
-    uint64_t outputBufferCount;         //!< class variable
+    DataNodeUsageMsgPayload nodeDataMsg;    //!< class variable
+    DeviceStatusMsgPayload nodeStatusMsg;   //!< class variable
 };
 
 #endif //BASILISK_DATANODEBASE_H

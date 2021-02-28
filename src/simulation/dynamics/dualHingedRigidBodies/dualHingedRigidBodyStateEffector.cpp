@@ -19,12 +19,9 @@
 
 
 #include "dualHingedRigidBodyStateEffector.h"
-#include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "architecture/messaging/system_messaging.h"
-#include "../../utilities/rigidBodyKinematics.h"
-#include "../../utilities/avsEigenSupport.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <iostream>
 
 DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
@@ -65,14 +62,13 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->nameOfTheta2State = "hingedRigidBodyTheta2";
     this->nameOfTheta2DotState = "hingedRigidBodyTheta2Dot";
 
-    this->motorTorqueInMsgName = "";
-    this->motorTorqueInMsgId = -1;
-
-    this->dualHingedRigidBodyOutMsgName = "";
-    this->dualHingedRigidBodyConfigLogOutMsgName = "";
-    for (int i=0; i<2; i++) {
-        this->dualHingedRigidBodyOutMsgId[i] = -1;
-        this->dualHingedRigidBodyConfigLogOutMsgId[i] = -1;
+    Message<HingedRigidBodyMsgPayload> *panelMsg;
+    Message<SCStatesMsgPayload> *scMsg;
+    for (int c = 0; c < 2; c++) {
+        panelMsg = new Message<HingedRigidBodyMsgPayload>;
+        this->dualHingedRigidBodyOutMsgs.push_back(panelMsg);
+        scMsg = new Message<SCStatesMsgPayload>;
+        this->dualHingedRigidBodyConfigLogOutMsgs.push_back(scMsg);
     }
 
     this->ModelTag = "";
@@ -83,53 +79,19 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
 
 DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 {
+    for (int c=0; c<2; c++) {
+        free(this->dualHingedRigidBodyOutMsgs.at(c));
+        free(this->dualHingedRigidBodyConfigLogOutMsgs.at(c));
+    }
     return;
 }
 
-/*! This method initializes the object. It creates the module's output
- messages.
- @return void*/
-void DualHingedRigidBodyStateEffector::SelfInit()
+
+/*! This method is used to reset the module.
+ @return void
+ */
+void DualHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos)
 {
-    SystemMessaging *messageSys = SystemMessaging::GetInstance();
-
-    /* create panel angular state output messages */
-    if (this->dualHingedRigidBodyOutMsgName.length() == 0) {
-        if (this->ModelTag.length() > 0) {
-            this->dualHingedRigidBodyOutMsgName = this->ModelTag;
-        } else {
-            /* make sure this has a unique output name in case the user didn't set ModelTag */
-            this->dualHingedRigidBodyOutMsgName = "panel" + std::to_string(rand());
-        }
-    }
-    for (int i=0; i<2;i++) {
-        this->dualHingedRigidBodyOutMsgId[i] =  messageSys->CreateNewMessage(this->dualHingedRigidBodyOutMsgName + "_OutputStates" + std::to_string(i),
-                                                 sizeof(HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
-    }
-
-    /* create panel inertial position/attitude output message */
-    if (this->dualHingedRigidBodyConfigLogOutMsgName.length() == 0) {
-        this->dualHingedRigidBodyConfigLogOutMsgName = this->ModelTag;
-    }
-    for (int i=0; i<2;i++) {
-        this->dualHingedRigidBodyConfigLogOutMsgId[i] =  messageSys->CreateNewMessage(this->dualHingedRigidBodyConfigLogOutMsgName
-                                                                                      + "_InertialStates" + std::to_string(i),
-                                                                                      sizeof(SCPlusStatesSimMsg), 2, "SCPlusStatesSimMsg", this->moduleID);
-    }
-
-    return;
-}
-
-/*! This method subscribes to messages the HRB needs.
- @return void*/
-void DualHingedRigidBodyStateEffector::CrossInit()
-{
-    /* check if the optional motor torque input message name has been set */
-    if (this->motorTorqueInMsgName.length() > 0) {
-        this->motorTorqueInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->motorTorqueInMsgName,
-                                                                                     sizeof(ArrayMotorTorqueIntMsg),
-                                                                                     moduleID);
-    }
 
     return;
 }
@@ -397,43 +359,29 @@ void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integ
  */
 void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
-    SystemMessaging *messageSys = SystemMessaging::GetInstance();
 
-    HingedRigidBodySimMsg panelOutputStates;  //!< instance of messaging system message struct
+    HingedRigidBodyMsgPayload panelOutputStates;  //!< instance of messaging system message struct
+
     // panel 1 states
-    if (this->dualHingedRigidBodyOutMsgId[0] >= 0) {
-        memset(&panelOutputStates, 0x0, sizeof(HingedRigidBodySimMsg));
-        panelOutputStates.theta = this->theta1;
-        panelOutputStates.thetaDot = this->theta1Dot;
-        messageSys->WriteMessage(this->dualHingedRigidBodyOutMsgId[0], CurrentClock,
-                             sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&panelOutputStates),
-                                 this->moduleID);
-    }
+    panelOutputStates.theta = this->theta1;
+    panelOutputStates.thetaDot = this->theta1Dot;
+    this->dualHingedRigidBodyOutMsgs[0]->write(&panelOutputStates, this->moduleID, CurrentClock);
     // panel 2 states
-    if (this->dualHingedRigidBodyOutMsgId[1] >= 0) {
-        memset(&panelOutputStates, 0x0, sizeof(HingedRigidBodySimMsg));
-        panelOutputStates.theta = this->theta2;
-        panelOutputStates.thetaDot = this->theta2Dot;
-        messageSys->WriteMessage(this->dualHingedRigidBodyOutMsgId[1], CurrentClock,
-                             sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&panelOutputStates),
-                                 this->moduleID);
-    }
+    panelOutputStates.theta = this->theta2;
+    panelOutputStates.thetaDot = this->theta2Dot;
+    this->dualHingedRigidBodyOutMsgs[1]->write(&panelOutputStates, this->moduleID, CurrentClock);
 
 
     // write out the panel state config log message
-    SCPlusStatesSimMsg configLogMsg;
+    SCStatesMsgPayload configLogMsg;
     // Note, logging the hinge frame S is the body frame B of that object
     for (int i=0; i<2; i++) {
-        if (this->dualHingedRigidBodyConfigLogOutMsgId[i] >= 0) {
-            memset(&configLogMsg, 0x0, sizeof(SCPlusStatesSimMsg));
-            eigenVector3d2CArray(this->r_SN_N[i], configLogMsg.r_BN_N);
-            eigenVector3d2CArray(this->v_SN_N[i], configLogMsg.v_BN_N);
-            eigenVector3d2CArray(this->sigma_SN[i], configLogMsg.sigma_BN);
-            eigenVector3d2CArray(this->omega_SN_S[i], configLogMsg.omega_BN_B);
-            messageSys->WriteMessage(this->dualHingedRigidBodyConfigLogOutMsgId[i], CurrentClock,
-                                 sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&configLogMsg),
-                                     this->moduleID);
-        }
+        configLogMsg = this->dualHingedRigidBodyConfigLogOutMsgs[i]->zeroMsgPayload;
+        eigenVector3d2CArray(this->r_SN_N[i], configLogMsg.r_BN_N);
+        eigenVector3d2CArray(this->v_SN_N[i], configLogMsg.v_BN_N);
+        eigenVector3d2CArray(this->sigma_SN[i], configLogMsg.sigma_BN);
+        eigenVector3d2CArray(this->omega_SN_S[i], configLogMsg.omega_BN_B);
+        this->dualHingedRigidBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 }
 
@@ -445,15 +393,11 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
 void DualHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Zero the command buffer and read the incoming command array
-    if (this->motorTorqueInMsgId >= 0) {
-        SingleMessageHeader LocalHeader;
-        ArrayMotorTorqueIntMsg IncomingCmdBuffer;
-        memset(&IncomingCmdBuffer, 0x0, sizeof(ArrayMotorTorqueIntMsg));
-        SystemMessaging::GetInstance()->ReadMessage(this->motorTorqueInMsgId, &LocalHeader,
-                                                    sizeof(ArrayMotorTorqueIntMsg),
-                                                    reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
-        this->u1 = IncomingCmdBuffer.motorTorque[0];
-        this->u2 = IncomingCmdBuffer.motorTorque[1];
+    if (this->motorTorqueInMsg.isLinked()) {
+        ArrayMotorTorqueMsgPayload incomingCmdBuffer;
+        incomingCmdBuffer = this->motorTorqueInMsg();
+        this->u1 = incomingCmdBuffer.motorTorque[0];
+        this->u2 = incomingCmdBuffer.motorTorque[1];
     }
 
     /* compute panel inertial states */

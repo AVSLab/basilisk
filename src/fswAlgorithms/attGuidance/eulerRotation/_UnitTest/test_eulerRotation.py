@@ -1,22 +1,20 @@
-''' '''
-'''
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-'''
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 #
 #   Unit Test Script
 #   Module Name:        eulerRotation
@@ -31,22 +29,22 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import eulerRotation                    # import the module that is to be tested
 from Basilisk.utilities import macros as mc
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_eulerRotation(show_plots):
+def all_test_eulerRotation(show_plots):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots)
+    [testResults, testMessage] = test_run(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = run2(show_plots)
+    [testResults, testMessage] = test_run2(show_plots)
     assert testResults < 1, testMessage
 
-def run(show_plots):
+def test_run(show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -54,9 +52,6 @@ def run(show_plots):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Test times
     updateTime = 0.5     # update process rate update time
@@ -77,8 +72,6 @@ def run(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.attRefInMsgName = "inputRefName"
-    moduleConfig.attRefOutMsgName = "outputName"
     angleSet = np.array([0.0, 90.0, 0.0]) * mc.D2R
     moduleConfig.angleSet = angleSet
     angleRates = np.array([0.1, 0.0, 0.0]) * mc.D2R
@@ -90,20 +83,21 @@ def run(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = fswMessages.AttRefFswMsg()  # Create a structure for the input message
+    RefStateOutData = messaging.AttRefMsgPayload()  # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
     RefStateOutData.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.1, 0.0, 0.0])
     RefStateOutData.omega_RN_N = omega_R0N_N
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
     RefStateOutData.domega_RN_N = domega_R0N_N
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.attRefInMsgName,
-                               RefStateOutData)
+    attRefInMsg = messaging.AttRefMsg().write(RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.attRefOutMsgName, testProcessRate)
+    dataLog = moduleConfig.attRefOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.attRefInMsg.subscribeTo(attRefInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -123,9 +117,8 @@ def run(show_plots):
     #
     # check sigma_RN
     #
-    moduleOutputName = "sigma_RN"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
+    moduleOutput = dataLog.sigma_RN
+
     # set the filtered output truth states
     trueVector = [
         [-0.193031238249, 0.608048400483, 0.386062476497],
@@ -140,9 +133,7 @@ def run(show_plots):
     #
     # check omega_RN_N
     #
-    moduleOutputName = "omega_RN_N"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
+    moduleOutput = dataLog.omega_RN_N
     # set the filtered output truth states
     trueVector = [
         [0.101246280045,  0.000182644489,  0.001208139578],
@@ -157,9 +148,7 @@ def run(show_plots):
     #
     # check domega_RN_N
     #
-    moduleOutputName = "domega_RN_N"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
+    moduleOutput = dataLog.domega_RN_N
     # set the filtered output truth states
     trueVector = [
         [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05],
@@ -187,7 +176,7 @@ def run(show_plots):
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
-def run2(show_plots):
+def test_run2(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -195,9 +184,6 @@ def run2(show_plots):
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    # terminateSimulation() is needed if multiple unit test scripts are run
-    # that run a simulation for the test. This creates a fresh and
-    # consistent simulation environment for each test run.
 
     # Test times
     updateTime = 0.5  # update process rate update time
@@ -217,9 +203,6 @@ def run2(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.attRefInMsgName = "inputRefName"
-    moduleConfig.attRefOutMsgName = "outputRefName"
-    moduleConfig.desiredAttInMsgName = "desiredName"
     angleSet = np.array([0.0, 90.0, 0.0]) * mc.D2R
     moduleConfig.angleSet = angleSet
     angleRates = np.array([0.1, 0.0, 0.0]) * mc.D2R
@@ -231,35 +214,30 @@ def run2(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = fswMessages.AttRefFswMsg()  # Create a structure for the input message
+    RefStateOutData = messaging.AttRefMsgPayload()  # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
     RefStateOutData.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.1, 0.0, 0.0])
     RefStateOutData.omega_RN_N = omega_R0N_N
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
     RefStateOutData.domega_RN_N = domega_R0N_N
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.attRefInMsgName,
-                               RefStateOutData)
+    attRefMsg = messaging.AttRefMsg().write(RefStateOutData)
 
     # Set the desired state and rate to 0.
-    desiredAtt = fswMessages.AttStateFswMsg()
-    inputMsgSize = desiredAtt.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.desiredAttInMsgName,
-                                          inputMsgSize, 2)
+    desiredAtt = messaging.AttStateMsgPayload()
     desiredState = np.array([0, 0, 0])
     desiredAtt.state = desiredState
     desiredRate = np.array([0, 0, 0])
     desiredAtt.rate = desiredRate
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.desiredAttInMsgName,
-                                          inputMsgSize,
-                                          0, desiredAtt)
+    desInMsg = messaging.AttStateMsg().write(desiredAtt)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.attRefOutMsgName, testProcessRate)
+    dataLog = moduleConfig.attRefOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # connect messages
+    moduleConfig.attRefInMsg.subscribeTo(attRefMsg)
+    moduleConfig.desiredAttInMsg.subscribeTo(desInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -279,9 +257,7 @@ def run2(show_plots):
     #
     # check sigma_RN
     #
-    moduleOutputName = "sigma_RN"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
+    moduleOutput = dataLog.sigma_RN
     # set the filtered output truth states
     trueVector = [
         [-0.193031238249, 0.608048400483, 0.386062476497],
@@ -296,9 +272,7 @@ def run2(show_plots):
     #
     # check omega_RN_N
     #
-    moduleOutputName = "omega_RN_N"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
+    moduleOutput = dataLog.omega_RN_N
     # set the filtered output truth states
     trueVector = [
         [0.101246280045, 0.000182644489, 0.001208139578],
@@ -313,9 +287,7 @@ def run2(show_plots):
     #
     # check domega_RN_N
     #
-    moduleOutputName = "domega_RN_N"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  list(range(3)))
+    moduleOutput = dataLog.domega_RN_N
     # set the filtered output truth states
     trueVector = [
         [0.000000000000e+00, -1.208139577635e-04, 1.826444892823e-05],
@@ -338,5 +310,5 @@ def run2(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    # run(False)
-    test_eulerRotation(False)
+    all_test_eulerRotation(False)
+    # test_run(False)

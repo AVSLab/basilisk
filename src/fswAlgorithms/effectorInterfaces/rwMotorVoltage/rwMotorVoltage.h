@@ -20,14 +20,16 @@
 #ifndef _RW_MOTOR_VOLTAGE_H_
 #define _RW_MOTOR_VOLTAGE_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/rwAvailabilityFswMsg.h"
-#include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "simFswInterfaceMessages/arrayMotorTorqueIntMsg.h"
-#include "simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
-#include "fswMessages/rwArrayConfigFswMsg.h"
-#include "simulation/utilities/bskLogging.h"
+
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
+#include "cMsgCInterface/ArrayMotorTorqueMsg_C.h"
+#include "cMsgCInterface/RWAvailabilityMsg_C.h"
+#include "cMsgCInterface/RWArrayConfigMsg_C.h"
+#include "cMsgCInterface/RWSpeedMsg_C.h"
+#include "cMsgCInterface/ArrayMotorVoltageMsg_C.h"
+
+#include "architecture/utilities/bskLogging.h"
 
 
 /*!@brief module configuration message
@@ -43,20 +45,13 @@ typedef struct {
     int    resetFlag;                               /*!< []     Flag indicating that a module reset occured */
 
     /* declare module IO interfaces */
-    char voltageOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< The name of the voltage output message*/
-    int32_t voltageOutMsgID;                        /*!< ID for the outgoing voltage message */
-    
-    char torqueInMsgName[MAX_STAT_MSG_LENGTH];      /*!< The name of the Input torque message*/
-    int32_t torqueInMsgID;                          /*!< ID for the incoming torque message */
-    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];     /*!< The name of the RWArrayConfigFswMsg input message*/
-    int32_t rwParamsInMsgID;                         /*!< [-] ID for the RWArrayConfigFswMsg ingoing message */
-    char inputRWSpeedsInMsgName[MAX_STAT_MSG_LENGTH];/*!< [] The name for the reaction wheel speeds message. Must be provided to enable speed tracking loop */
-    int32_t inputRWSpeedsInMsgID;                    /*!< [] The ID for the reaction wheel speeds message. If negative, no speed tracking*/
-    char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];      /*!< [-] The name of the RWs availability message*/
-    int32_t rwAvailInMsgID;                          /*!< [-] ID for the incoming  RWs availability data*/
+    ArrayMotorVoltageMsg_C voltageOutMsg;      /*!< voltage output message*/
+    ArrayMotorTorqueMsg_C torqueInMsg;      /*!< Input torque message*/
+    RWArrayConfigMsg_C rwParamsInMsg;       /*!< RW array input message*/
+    RWSpeedMsg_C rwSpeedInMsg;              /*!< [] The name for the reaction wheel speeds message. Must be provided to enable speed tracking loop */
+    RWAvailabilityMsg_C rwAvailInMsg;       /*!< [-] The name of the RWs availability message*/
 
-    RWArrayConfigFswMsg rwConfigParams;                  /*!< [-] struct to store message containing RW config parameters in body B frame */
-    RWArrayVoltageIntMsg voltageOut;                /*!< -- copy of the output message */
+    RWArrayConfigMsgPayload rwConfigParams;         /*!< [-] struct to store message containing RW config parameters in body B frame */
 
     BSKLogger *bskLogger;                             //!< BSK Logging
 
@@ -67,7 +62,6 @@ extern "C" {
 #endif
     
     void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID);
-    void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID);
     void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID);
     

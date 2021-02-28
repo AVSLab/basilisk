@@ -21,11 +21,11 @@
 %module stateArchitecture
 %{
    #include "../_GeneralModuleFiles/dynParamManager.h"
-   #include "../../utilities/avsEigenSupport.h"
+   #include "../../../architecture/utilities/avsEigenSupport.h"
 %}
 
 %pythoncode %{
-from Basilisk.simulation.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
 %include "swig_eigen.i"
@@ -33,7 +33,7 @@ from Basilisk.simulation.swig_common_model import *
 
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/stateData.h"
-%include "../../utilities/avsEigenSupport.h"
+%include "../../../architecture/utilities/avsEigenSupport.h"
 
 %pythoncode %{
 import sys

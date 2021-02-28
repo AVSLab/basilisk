@@ -26,15 +26,14 @@
 %ignore Update_cssProcessTelem;
 %constant void SelfInit_cssProcessTelem(void*, uint64_t);
 %ignore SelfInit_cssProcessTelem;
-%constant void CrossInit_cssProcessTelem(void*, uint64_t);
-%ignore CrossInit_cssProcessTelem;
 %constant void Reset_cssProcessTelem(void*, uint64_t, uint64_t);
 %ignore Reset_cssProcessTelem;
-STRUCTASLIST(CSSArraySensorIntMsg)
-GEN_SIZEOF(CSSArraySensorIntMsg);
-GEN_SIZEOF(CSSConfigData);
+
 %include "cssComm.h"
-%include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
+
+%include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
+struct CSSArraySensorMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

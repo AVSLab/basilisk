@@ -20,11 +20,11 @@
 #ifndef _DV_ATT_EFFECT_H_
 #define _DV_ATT_EFFECT_H_
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-#include "../_GeneralModuleFiles/thrustGroupData.h"
-#include "simulation/utilities/bskLogging.h"
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
+#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+
+#include "fswAlgorithms/effectorInterfaces/_GeneralModuleFiles/thrustGroupData.h"
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -43,8 +43,8 @@ typedef struct {
 
 /*! @brief module configuration message */
 typedef struct {
-    char inputControlName[MAX_STAT_MSG_LENGTH]; /*!< - The name of the Input message*/
-    int32_t inputMsgID;      /*!< - ID for the incoming guidance errors*/
+    CmdTorqueBodyMsg_C cmdTorqueBodyInMsg; /*!< - The name of the Input message*/
+
     uint32_t numThrGroups;   /*!< - Count on the number of thrusters groups available*/
     ThrustGroupData thrGroups[MAX_NUM_THR_GROUPS]; /*!< - Thruster grouping container*/
     BSKLogger *bskLogger;   //!< BSK Logging
@@ -55,14 +55,13 @@ extern "C" {
 #endif
     
     void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID);
-    void CrossInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID);
     void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
                            int64_t moduleID);
     void effectorVSort(effPairs *Input, effPairs *Output, size_t dim);
     void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
-                                  CmdTorqueBodyIntMsg *contrReq, int64_t moduleID);
+                                  CmdTorqueBodyMsgPayload *contrReq, int64_t moduleID);
     
 #ifdef __cplusplus
 }

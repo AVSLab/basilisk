@@ -28,22 +28,23 @@
 #include <inttypes.h>
 #include <vector>
 #include <string>
-#include "architecture/messaging/system_messaging.h"
-#include "_GeneralModuleFiles/sys_model.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 // Utilities
-#include "utilities/astroConstants.h"
-#include "utilities/rigidBodyKinematics.h"
-#include "utilities/avsEigenSupport.h"
-#include "utilities/avsEigenMRP.h"
-#include "utilities/geodeticConversion.h"
-#include "utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/geodeticConversion.h"
+#include "architecture/utilities/linearAlgebra.h"
 // Sim Messages
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/albedoSimMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/AlbedoMsgPayload.h"
+#include "architecture/messaging/messaging.h"
 
-/*!< albedo instrument configuration class */
+#include "architecture/utilities/macroDefinitions.h"
+
+/*! albedo instrument configuration class */
 typedef class Config {
 public:
     Config();
@@ -59,15 +60,14 @@ public:
     Albedo();
     ~Albedo();
 
-    void SelfInit();                                          //!< @brief initializes its own message
-    void CrossInit();                                         //!< @brief initializes the cross dependencies
     void UpdateState(uint64_t CurrentSimNanos);               //!< @brief updates the state
     void Reset(uint64_t CurrentSimNanos);                     //!< @brief resets the module
-    void addInstrumentConfig(std::string instInMsgName, instConfig_t configMsg);  //!< @brief adds instrument configuration (overloaded function)
-    void addInstrumentConfig(std::string instInMsgName, double fov, Eigen::Vector3d nHat_B, Eigen::Vector3d r_IB_B);  //!< @brief adds instrument configuration (overloaded function)
-    void addPlanetandAlbedoAverageModel(std::string planetSpiceName); //!< @brief This method adds planet name and albedo average model name (overloaded function)
-    void addPlanetandAlbedoAverageModel(std::string planetSpiceName, double ALB_avg, int numLat, int numLon);  //!< @brief This method adds planet name and albedo average model name (overloaded function)
-    void addPlanetandAlbedoDataModel(std::string planetSpiceName, std::string dataPath, std::string fileName); //!< @brief This method adds planet name and albedo data model
+
+    void addInstrumentConfig(instConfig_t configMsg);  //!< @brief adds instrument configuration (overloaded function)
+    void addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vector3d r_IB_B);  //!< @brief adds instrument configuration (overloaded function)
+    void addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> *msg); //!< @brief This method adds planet msg and albedo average model name (overloaded function)
+    void addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> *msg, double ALB_avg, int numLat, int numLon);  //!< @brief This method adds planet name and albedo average model name (overloaded function)
+    void addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload> *msg, std::string dataPath, std::string fileName); //!< @brief This method adds planet name and albedo data model
     double getAlbedoAverage(std::string planetSpiceName);     //!< @brief gets the average albedo value of the specified planet
 
 private:
@@ -75,16 +75,18 @@ private:
     void writeMessages(uint64_t CurrentSimNanos);             //!< writes the outpus messages
     void getPlanetRadius(std::string planetSpiceName);        //!< gets the planet's radius
     void evaluateAlbedoModel(int idx);                        //!< evaluates the ALB model
-    void computeAlbedo(int idx, int instIdx, SpicePlanetStateSimMsg planetMsg, bool AlbArray, double outData[]); //!< computes the albedo at instrument's location
+    void computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload planetMsg, bool AlbArray, double outData[]); //!< computes the albedo at instrument's location
     double computeEclipseAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen::Vector3d r_SP_N); //!< computes the shadow factor at dA
 
 public:
-    std::vector < std::string > albOutMsgNames; //!< message names for albedo output data
-    std::string sunPositionInMsgName;           //!< message name for sun data
-    std::string spacecraftStateInMsgName;       //!< message name for spacecraft data
+    std::vector<Message<AlbedoMsgPayload>*> albOutMsgs;         //!< vector of output messages for albedo data
+    ReadFunctor<SpicePlanetStateMsgPayload> sunPositionInMsg;   //!< input message name for sun data
+    ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;   //!< input message name for spacecraft data
+    std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> planetInMsgs; //!< vector of planet data input data
+
     BSKLogger bskLogger;                        //!< BSK Logging    
-    int numLat;                                 //!< [-] number of latitude grid points
-    int numLon;                                 //!< [-] number of longitude grid points
+    int defaultNumLat;                                 //!< [-] default number of latitude grid points
+    int defaultNumLon;                                 //!< [-] default number of longitude grid points
     Eigen::Vector3d nHat_B_default;             //!< [-] default value for unit normal of the instrument (spacecraft body)
     double fov_default;                         //!< [rad] default value for instrument's field of view half angle
     bool eclipseCase;                           //!< consider eclipse at dA, if true
@@ -92,8 +94,6 @@ public:
     double altitudeRateLimit;                   //!< [-] rate limit of the instrument's altitude to the planet's radius for albedo calculations
 
 private:
-    std::vector < std::string > planetInMsgNames; //!< message names for planet data
-    std::vector < std::string > instInMsgNames;   //!< message names for instrument config data
     std::vector<std::string> dataPaths;           //!< string with the path to the ALB coefficient folder
     std::vector<std::string> fileNames;           //!< file names containing the ALB coefficients
     std::vector<std::string> modelNames;          //!< albedo model names
@@ -124,13 +124,10 @@ private:
     Eigen::Vector3d r_BN_N;                 //!< [m] s/c position (inertial)
     Eigen::Vector3d nHat_N;                 //!< [-] Unit normal vector of the instrument (inertial)
     Eigen::Vector3d rHat_PI_N;              //!< [-] direction vector from instrument to planet
-    uint64_t OutputBufferCount;             //!< number of output buffers for messaging system
-    int64_t sunPositionInMsgId;             //!< connect to input sun message
-    int64_t spacecraftStateInMsgId;         //!< connect to input spacecraft message
-    std::vector<int64_t> albOutMsgIds;      //!< connect to output albedo messages
-    std::map<int64_t, SpicePlanetStateSimMsg> planetMsgData; //!< A map of incoming planet message IDs and msg states
-    SpicePlanetStateSimMsg sunMsgData;      //!< sun message data
-    SCPlusStatesSimMsg scStatesMsgData;     //!< spacecraft message data    
+
+    std::vector<SpicePlanetStateMsgPayload> planetMsgData; //!< vector of incoming planet message states
+    SpicePlanetStateMsgPayload sunMsgData;      //!< sun message data
+    SCStatesMsgPayload scStatesMsgData;     //!< spacecraft message data
 };
 
 #endif /* ALBEDO_BASE_H */

@@ -1,14 +1,6 @@
 % !TEX root = ./Basilisk-MRPROTATION-20180522.tex
 
 
-\begin{figure}[htb]
-	\centerline{
-	\includegraphics[]{Figures/moduleIO}
-	}
-	\caption{Illustration of the mrpRotation() input and output messages.  Required messages are shown with a solid line, while optional message have a dashed line.}
-	\label{fig:moduleIO}
-\end{figure}
-
 \section{Model Description}
 The purpose of this {\tt mrpRotation} module is to add a constant rotation relative to the input frame $\mathcal{R}_{0}$.  The output reference frame is called $\mathcal{R}$.  The initial orientation is specified through an MRP\cite{schaub} set $\bm\sigma_{R/R0}$, while the  $\mathcal{R}$-frame angular velocity vector $\leftexp{R}{\bm\omega}_{R/R0}$ is held constant in this module.  
 

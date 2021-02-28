@@ -23,13 +23,15 @@
 
 #include <Eigen/Dense>
 #include <vector>
-#include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../_GeneralModuleFiles/stateData.h"
-#include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/avsEigenMRP.h"
-#include "utilities/avsEigenSupport.h"
-#include "utilities/bskLogging.h"
-#include "simMessages/gravityGradientSimMsg.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/bskLogging.h"
+
+#include "architecture/msgPayloadDefC/GravityGradientMsgPayload.h"
+#include "architecture/messaging/messaging.h"
 
 
 
@@ -40,8 +42,6 @@ public:
     ~GravityGradientEffector();
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime);
-    void SelfInit();
-    void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
@@ -49,7 +49,7 @@ public:
 
 
 public:
-    std::string gravityGradientOutMsgName;          //!< message used to read command inputs
+    Message<GravityGradientMsgPayload> gravityGradientOutMsg; //!< output message containing the gravity gradient 
     StateData *hubSigma;                            //!< Hub/Inertial attitude represented by MRP
     StateData *r_BN_N;                              //!< Hub/Inertial position vector in inertial frame components
     Eigen::MatrixXd *ISCPntB_B;                     //!< [kg m^2] current spacecraft inertia about point B, B-frame components
@@ -57,11 +57,10 @@ public:
     Eigen::MatrixXd *m_SC;                          //!< [kg] mass of spacecraft
     std::vector<Eigen::MatrixXd *> r_PN_N;          //!< [kg] mass of spacecraft
     std::vector<Eigen::MatrixXd *> muPlanet;        //!< [m^3/s^-2] gravitational constant of planet
-    uint64_t OutputBufferCount;                     //!< number of output buffers for messaging system
+
     BSKLogger bskLogger;                            //!< BSK Logging
 
 private:
-    int64_t gravityGradientOutMsgId;                //!< Message ID for outgoing data
     std::vector<std::string> planetPropertyNames;   //!< Names of planets we want to track
 
 };
