@@ -375,13 +375,6 @@ class BSKFswModels():
         self.headingUKFData.qNoise = qNoiseIn.reshape(25).tolist()
         self.headingUKFData.qObsVal = 0.001
 
-    ## Celestial point to Mars
-    def SetCelTwoBodyMarsPoint(self):
-        self.celTwoBodyMarsData.inputNavDataName = "simple_trans_nav_output"
-        self.celTwoBodyMarsData.inputCelMessName = "mars barycenter_ephemeris_data"
-        self.celTwoBodyMarsData.outputDataName = "att_ref_output"
-        self.celTwoBodyMarsData.singularityThresh = 1.0 * math.pi / 180.0
-
     def SetAttTrackingErrorCam(self, SimBase):
         self.trackingErrorCamData.attRefInMsg.subscribeTo(self.hillPointData.attRefOutMsg)
         self.trackingErrorCamData.attNavInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
