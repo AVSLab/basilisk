@@ -749,15 +749,15 @@ def executeScenario(sim):
 # It is called once for each run of the simulation, overlapping the plots
 def plotSim(data, retentionPolicy):
     #   retrieve the logged data
-    dataUsReq = data["messages"][rwMotorTorqueMsgName + ".motorTorque"]
-    dataSigmaBR = data["messages"][guidMsgName + ".sigma_BR"]
-    dataOmegaBR = data["messages"][guidMsgName + ".omega_BR_B"]
-    dataPos = data["messages"][transMsgName + ".r_BN_N"]
-    dataOmegaRW = data["messages"][rwSpeedMsgName + ".wheelSpeeds"]
-    dataVolt = data["messages"][voltMsgName + ".voltage"]
+    dataUsReq = data["messages"][rwMotorTorqueMsgName + ".motorTorque"][:,1:]
+    dataSigmaBR = data["messages"][guidMsgName + ".sigma_BR"][:,1:]
+    dataOmegaBR = data["messages"][guidMsgName + ".omega_BR_B"][:,1:]
+    dataPos = data["messages"][transMsgName + ".r_BN_N"][:,1:]
+    dataOmegaRW = data["messages"][rwSpeedMsgName + ".wheelSpeeds"][:,1:]
+    dataVolt = data["messages"][voltMsgName + ".voltage"][:,1:]
     dataRW = []
     for msgName in rwOutName:
-        dataRW.append(data["messages"][msgName+".u_current"])
+        dataRW.append(data["messages"][msgName+".u_current"][:,1:])
     np.set_printoptions(precision=16)
 
     #
@@ -921,7 +921,7 @@ def configureDatashader():
 #
 if __name__ == "__main__":
     run(  saveFigures=False        # save figures to file
-        , case=1            # Case 1 is normal MC, case 2 is initial condition run
+        , case=2            # Case 1 is normal MC, case 2 is initial condition run
         , show_plots=True         # show_plots.
           # THIS MUST BE FALSE BY DEFAULT
         , useDatashader=False         # use datashading library - matplotlib will not be used
