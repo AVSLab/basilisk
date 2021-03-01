@@ -13,7 +13,7 @@ This guide provides a convenient location to learn about the fundamentals of the
 
 Further, complete simulation examples are presented in the :ref:`examples` section.  They are a convenient source to see how particular modules are used in an integrated manner.  Next, most modules contain a ``_UnitTest`` sub-folder which contains one or more test scripts to check the functions of a module.  This too can be a good source of information on how to setup and use a particular module.
 
-Information about the various modules or architecture files are found in :ref:`Documentation`. Here the basic module functionality is summarized and all input and output messages are listed.
+Information about the various modules or architecture files are found in :ref:`Folder_Documentation`. Here the basic module functionality is summarized and all input and output messages are listed.
 
 Finally, there is the source-code itself.  That is always the ultimate guide to see what a module is doing.
 

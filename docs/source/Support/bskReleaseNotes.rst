@@ -13,10 +13,10 @@ Basilisk Release Notes
 
 .. Danger::
 
-   This next generation of Basilisk introduces a new messaging system and file architecture.  As a result
-   using BSK2 will require upgrading existing Basilisk simulation scripts (see :ref:`migratingToBsk2`) and C/C++ modules
+   This next generation of Basilisk 2.0+ introduces a new messaging system and file architecture.  As a result
+   using BSK2 requires upgrading existing Basilisk simulation scripts (see :ref:`migratingToBsk2`) and C/C++ modules
    (see :ref:`migratingModuleToBsk2`) to be used with 2.0 and onwards.  All unit test and example scenario scripts
-   have been updated and form a good source for examples on how to use the new software framework.
+   are updated and form a good source for examples on how to use the new software framework.
 
 .. sidebar:: In Progress Features
 
@@ -36,16 +36,8 @@ Version |release|
 - text goes here
 
 
-
 Version 2.0.0
 -------------
-
-.. Warning::
-
-   This next generation of Basilisk introduces a new messaging syste and file architecture.  As a result
-   using BSK2 will required upgrading existing Basilisk simulation scripts (see :ref:`migratingToBsk2`) and C/C++ modules
-   (see :ref:`migratingModuleToBsk2`) will need to be upgraded to use 2.0.  All unit test and example scenario scripts
-   have been updated and form a good source for examples on how to use the new software framework.
 
 - New message system with strong type checking.  You now get a much simpler method to create message objects,
   how to connect them within python, create stand-alone messages in python, etc.  If you engage with a message
