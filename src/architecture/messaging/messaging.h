@@ -35,13 +35,14 @@ class Recorder;
 template<typename messageType>
 class ReadFunctor{
 private:
-    messageType* payloadPointer;    //! -- pointer to the incoming msg data
-    Msg2Header *headerPointer;      //! -- pointer to the incoming msg header
-    bool initialized;               //! -- flag indicating if the input message is connect to another message
+    messageType* payloadPointer;    //!< -- pointer to the incoming msg data
+    Msg2Header *headerPointer;      //!< -- pointer to the incoming msg header
+    bool initialized;               //!< -- flag indicating if the input message is connect to another message
     
 public:
-    BSKLogger bskLogger;            //!< -- BSK Logging
-    messageType zeroMsgPayload ={}; //! -- zero'd copy of the message payload type
+    //!< -- BSK Logging
+    BSKLogger bskLogger;            //!< -- bsk logging instance
+    messageType zeroMsgPayload ={}; //!< -- zero'd copy of the message payload type
 
 
     //! constructor
@@ -128,14 +129,14 @@ public:
 template<typename messageType>
 class WriteFunctor{
 private:
-    messageType* payloadPointer;
-    Msg2Header* headerPointer;
+    messageType* payloadPointer;    //!< pointer to the message payload
+    Msg2Header* headerPointer;      //!< pointer to the message header
 public:
-    //! method description
+    //! write functor constructor
     WriteFunctor(){};
-    //! method description
+    //! write functor constructor
     WriteFunctor(messageType* payloadPointer, Msg2Header *headerPointer) : payloadPointer(payloadPointer), headerPointer(headerPointer){};
-    //! method description
+    //! write functor constructor
     void operator()(messageType *payload, int64_t moduleID, uint64_t callTime){
         *this->payloadPointer = *payload;
         this->headerPointer->isWritten = 1;
@@ -154,13 +155,13 @@ class Recorder;
 template<typename messageType>
 class Message{
 private:
-    messageType payload = {};   //! struct defining message payload, zero'd on creation
-    Msg2Header header = {};     //! struct defining the message header, zero'd on creation
-    ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload, &header);
+    messageType payload = {};   //!< struct defining message payload, zero'd on creation
+    Msg2Header header = {};     //!< struct defining the message header, zero'd on creation
+    ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload, &header);  //!< read functor instance
 public:
     //! write functor to this message
     WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload, &header);
-    //! -- request read rights. returns ref to this->read
+    //! -- request read rights. returns reference to class ``read`` variable
     ReadFunctor<messageType> addSubscriber();
     //! -- request write rights.
     WriteFunctor<messageType> addAuthor();
@@ -169,7 +170,7 @@ public:
     //! Recorder object
     Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
     
-    messageType zeroMsgPayload = {};    //! - zero'd copy of the message payload structure
+    messageType zeroMsgPayload = {};    //!< zero'd copy of the message payload structure
 
     //! check if this msg has been connected to
     bool isLinked(){return this->header.isLinked;};

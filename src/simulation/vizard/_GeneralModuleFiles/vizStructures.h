@@ -196,7 +196,7 @@ typedef struct {
     int32_t showLocationLabels = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }VizSettings;
 
-
+/*! Structure defining vizard gravity body values */
 typedef struct{
     std::string bodyName;               //!< [-] celestial body name
     double mu;                          //!< [m^3/s^2] celestial body gravity constant
