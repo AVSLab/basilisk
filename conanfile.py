@@ -170,6 +170,8 @@ class BasiliskConan(ConanFile):
             self.requires.add("protobuf/3.5.2@bincrafters/stable")
             self.requires.add("cppzmq/4.3.0@bincrafters/stable")
             self.requires.add("protoc_installer/3.5.2@bincrafters/stable")
+        
+        self.requires.add("tinyobjloader/1.0.6@_/_")
 
     def configure(self):
         if self.options.clean:
