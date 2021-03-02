@@ -33,7 +33,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text goes here
+- Added the ability to clear the data of a message recorder using `.clear()`
+- Fixed a rare issue where RW data didn't stick
 
 
 Version 2.0.0

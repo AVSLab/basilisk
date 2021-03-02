@@ -248,6 +248,13 @@ public:
     //! record method
     std::vector<messageType>& record(){return this->msgRecord;};
 
+    //! clear the recorded messages, i.e. purge the history
+    void clear(){
+        this->msgRecord.clear();
+        this->msgRecordTimes.clear();
+        this->msgWrittenTimes.clear();
+    };
+
     BSKLogger bskLogger;                          //!< -- BSK Logging
 
     //! method to update the minimum time interval before recording the next message
