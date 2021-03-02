@@ -228,6 +228,7 @@ class rwFactory(object):
             RW.u_min = 0.0
 
         # add RW to the list of RW devices
+        RW.this.disown()
         self.rwList[varLabel] = RW
         return RW
 
