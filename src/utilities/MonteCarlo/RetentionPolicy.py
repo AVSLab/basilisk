@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from Basilisk.utilities import unitTestSupport
 
 class VariableRetentionParameters:
     """
@@ -98,17 +99,15 @@ class RetentionPolicy:
 
                 # record the message recording times
                 msgTimes = simInstance.msgRecList[msgParam.msgRecName].times()
-                data["messages"][msgParam.msgRecName + ".times"] = msgTimes
-                
+
                 # record the message variables
                 for varName in msgParam.retainedVars:
+                    # To ensure the current datashaders utilities continue to work, the
+                    # retained data is combined with the time information as it was in
+                    # BSK1.x releases.
                     msgData = getattr(simInstance.msgRecList[msgParam.msgRecName], varName)
-
-                    # TODO: This is a temporary fix. MC datawriter backend needs to be rewritten to account for new message structure with separate
-                    # time and variable construct. The datashaders utilities will also need to change once this is properly accounted for. 
-                    if len(msgData.shape) == 1:
-                        msgData = msgData.reshape(-1,1)
-                    data["messages"][msgParam.msgRecName + "." + varName] = np.concatenate((np.array(msgTimes).reshape((-1,1)), msgData),1)
+                    msgData = unitTestSupport.addTimeColumn(msgTimes, msgData)
+                    data["messages"][msgParam.msgRecName + "." + varName] = msgData
 
             for variable in retentionPolicy.varLogList:
                 data["variables"][variable.varName] = simInstance.GetLogVariableData(variable.varName)

@@ -650,7 +650,7 @@ def plotSim(data, retentionPolicy):
     #   plot the results
     #
 
-    timeData = data["messages"][rwMotorTorqueMsgName + ".times"] * macros.NANO2MIN
+    timeData = data["messages"][rwMotorTorqueMsgName + ".motorTorque"][:,0] * macros.NANO2MIN
 
     figureList = {}
     plt.figure(1)

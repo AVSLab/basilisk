@@ -74,12 +74,11 @@ retainedRate = macros.sec2nano(10)
 def displayPlots(data, retentionPolicy):
     mpl.rcParams['image.cmap'] = 'inferno'
 
-    timeAxis = data["messages"][retainedMessageNameSc + ".times"]
-    position_N = unitTestSupport.addTimeColumn(timeAxis, data["messages"][retainedMessageNameSc + ".r_BN_N"])
-    vel_N = unitTestSupport.addTimeColumn(timeAxis, data["messages"][retainedMessageNameSc + ".v_BN_N"])
-    states = unitTestSupport.addTimeColumn(timeAxis, data["messages"][retainedMessageNameFilt + ".state"])
-    covar = unitTestSupport.addTimeColumn(timeAxis, data["messages"][retainedMessageNameFilt + ".covar"])
-    valid = unitTestSupport.addTimeColumn(timeAxis, data["messages"][retainedMessageNameOpNav + ".valid"])
+    position_N = data["messages"][retainedMessageNameSc + ".r_BN_N"]
+    vel_N = data["messages"][retainedMessageNameSc + ".v_BN_N"]
+    states = data["messages"][retainedMessageNameFilt + ".state"]
+    covar = data["messages"][retainedMessageNameFilt + ".covar"]
+    valid = data["messages"][retainedMessageNameOpNav + ".valid"]
 
     truth = np.zeros([len(position_N[:, 0]), 7])
     truth[:, 0:4] = np.copy(position_N)

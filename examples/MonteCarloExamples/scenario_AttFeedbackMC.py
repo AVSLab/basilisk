@@ -104,7 +104,7 @@ def run(show_plots):
 
 def displayPlots(data, retentionPolicy):
     states = data["messages"][attGuidName + ".sigma_BR"]
-    time = data["messages"][attGuidName + ".times"]
+    time = states[:, 0]
     plt.figure(1)
     plt.plot(time, states[:,1],
              time, states[:,2],
@@ -113,4 +113,4 @@ def displayPlots(data, retentionPolicy):
 
 
 if __name__ == "__main__":
-    run(False)
+    run(True)

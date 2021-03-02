@@ -126,7 +126,7 @@ colorList = ['b', 'r', 'g', 'k']
 
 def myDataCallback(monteCarloData, retentionPolicy):
     data = np.array(monteCarloData["messages"][retainedMessageName + ".r_BN_N"])
-    plt.plot(data[:, 0], data[:, 1], colorList[monteCarloData["index"]], label="run " + str(monteCarloData["index"]))
+    plt.plot(data[:, 1], data[:, 2], colorList[monteCarloData["index"]], label="run " + str(monteCarloData["index"]))
     plt.xlabel('X-coordinate')
     plt.ylabel('Y-coordinate')
     plt.legend()

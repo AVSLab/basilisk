@@ -32,7 +32,7 @@ bokeh and datashaders.
         run this script automatically.
 
    3.   This script must be called from command line using
-        ``/usr/local/bin/bokeh serve --show /$path2script/scenarioAnalyzeMonteCarlo.py``
+        ``/$path2bin/bokeh serve --show /$path2script/scenarioAnalyzeMonteCarlo.py``
 
 """
 
@@ -110,7 +110,7 @@ def run(show_plots):
     analysis.dataDir = path + "/scenario_AttFeedbackMC/"
 
     # save_as_static: save off static .html files of the plots generated into the staticDir directory (Note: This inhibits dynamic plotting!
-    analysis.save_as_static = False
+    analysis.save_as_static = True
     analysis.staticDir = "/plots/"
 
     if show_all_data:
@@ -145,7 +145,7 @@ def run(show_plots):
 # The following name guard must be removed before this script can run.  It is provided here
 # to ensure that the sphinx documentation generation process does not run this script
 # automatically.
-if __name__ == "__main__":
-    run(False)
+# if __name__ == "__main__":
+#     run(False)
 
 
