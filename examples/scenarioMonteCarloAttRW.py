@@ -104,6 +104,11 @@ It returns the failed jobs, which should not occur.  When the MC have been execu
 the data can be accessed and tested in different ways.
 This is explained in the example python code comments.
 
+.. note::
+
+    In these Monte Carlo simulations the retained data is stored as the data array with the time
+    information added as the first column.  This is the same retained data format as used
+    with BSK 1.x.
 
 Illustration of Simulation Results
 ----------------------------------

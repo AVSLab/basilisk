@@ -25,6 +25,12 @@ Overview
 This script is a basic demonstration of how to run Monte Carlo simulations. Look at the source code for
 further discussion and instructions.
 
+.. note::
+
+    In these Monte Carlo simulations the retained data is stored as the data array with the time
+    information added as the first column.  This is the same retained data format as used
+    with BSK 1.x.
+
 """
 
 import inspect

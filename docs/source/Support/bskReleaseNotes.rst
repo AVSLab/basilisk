@@ -33,8 +33,11 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- Added the ability to clear the data of a message recorder using `.clear()`
+- Added the ability to clear the data of a message recorder using ``.clear()``
 - Fixed a rare issue where RW data didn't stick
+- Cleaned up documentation on using datashaders and bokeh to interactively plot large simulation data sets.
+  The script :ref:`scenarioAnalyzeMonteCarlo` is updated to discuss the particular challenges in running this
+  datashader example of plotting data.
 
 
 Version 2.0.0

@@ -29,6 +29,10 @@ class MessageRetentionParameters:
 
 
 class RetentionPolicy:
+    """
+    This policy controls what simulation data is saved and how it is stored.  Note that the simulation data
+    array will have the message time prepended as the first column.
+    """
 
     def __init__(self, rate=int(1E10)):
         self.logRate = rate
