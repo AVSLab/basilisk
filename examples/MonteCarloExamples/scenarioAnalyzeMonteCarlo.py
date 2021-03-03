@@ -107,14 +107,13 @@ import inspect
 import os
 try:
     from Basilisk.utilities.datashader_utilities import DS_Plot, curve_per_df_component, pull_and_format_df
+    from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import mcAnalysisBaseClass
+    from bokeh.palettes import Blues9, Reds9, Greens9, \
+        Blues3, Reds3, Greens3, Oranges3, RdYlBu9
 except:
-    print("Wasn't able to include the datashader_utilities.  "
-          "Be sure to carefully read the above scenario requirements and how to run this script.")
+    print("Wasn't able to include the datashader_utilities.")
 
-from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import mcAnalysisBaseClass
 import Basilisk.utilities.macros as macros
-from bokeh.palettes import Blues9, Reds9, Greens9, \
-    Blues3, Reds3, Greens3, Oranges3, RdYlBu9
 
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
