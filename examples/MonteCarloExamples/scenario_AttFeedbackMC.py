@@ -59,16 +59,16 @@ def run(show_plots):
     # This module is used to execute monte carlo simulations, and access
     # retained data from previously executed MonteCarlo runs.
     monteCarlo = Controller()
-    monteCarlo.setSimulationFunction(scenario_AttFeedback.scenario_AttFeedback)# Required: function that configures the base scenario
+    monteCarlo.setSimulationFunction(scenario_AttFeedback.scenario_AttFeedback)  # Required: function that configures the base scenario
     monteCarlo.setExecutionFunction(scenario_AttFeedback.runScenario)  # Required: function that runs the scenario
-    monteCarlo.setExecutionCount(4) # Required: Number of MCs to run
+    monteCarlo.setExecutionCount(4)  # Required: Number of MCs to run
 
     monteCarlo.setArchiveDir(path + "/scenario_AttFeedbackMC")  # Optional: If/where to save retained data.
-    monteCarlo.setShouldDisperseSeeds(True)# Optional: Randomize the seed for each module
-    monteCarlo.setThreadCount(2) # Optional: Number of processes to spawn MCs on
-    monteCarlo.setVerbose(True) # Optional: Produce supplemental text output in console describing status
-    monteCarlo.setVarCast('float') # Optional: Downcast the retained numbers to float32 to save on storage space
-    monteCarlo.setDispMagnitudeFile(True) # Optional: Produce a .txt file that shows dispersion in std dev units
+    monteCarlo.setShouldDisperseSeeds(True)  # Optional: Randomize the seed for each module
+    monteCarlo.setThreadCount(2)  # Optional: Number of processes to spawn MCs on
+    monteCarlo.setVerbose(True)  # Optional: Produce supplemental text output in console describing status
+    monteCarlo.setVarCast('float')  # Optional: Downcast the retained numbers to float32 to save on storage space
+    monteCarlo.setDispMagnitudeFile(True)  # Optional: Produce a .txt file that shows dispersion in std dev units
 
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
     dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'

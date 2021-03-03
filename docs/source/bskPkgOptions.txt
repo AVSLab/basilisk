@@ -4,6 +4,3 @@
 ``recommonmark``
 ``pytest-xdist``
 ``pytest-html``
-``datashader``
-``holoviews==1.12.3``
-``bokeh==1.2.0``
