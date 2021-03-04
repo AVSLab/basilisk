@@ -53,7 +53,7 @@ Running OpNav Simulations
     This is not turned on by default as it will install the large OpenCL library.
 
 In order to call Vizard from python simulations, the path to the downloaded Vizard app must be properly set.
-If needed, adjust the following line illustrated below to relect the path to the Vizard binary::
+If needed, adjust the following line illustrated below to reflect the path to the Vizard binary::
 
     # TODO : Modify the path to the viz here
     appPath = '/Applications/Vizard.app/Contents/MacOS/Basilisk Vizard' #If on Mac
