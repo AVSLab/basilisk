@@ -191,7 +191,6 @@ Related Publications
    :maxdepth: 1
    :caption: Basilisk:
 
-   About
    Install
    Learn
    Support

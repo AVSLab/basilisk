@@ -26,23 +26,10 @@
 #
 
 
-import sys, os, inspect
+import sys, os, inspect, platform
 import pytest
 import shutil
 import importlib
-import warnings
-FOUND_DATESHADER = True
-try:
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", category=DeprecationWarning)
-        import pandas
-        import datashader
-        import holoviews
-    import bokeh
-except ImportError:
-    FOUND_DATESHADER = False
-
-from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -57,8 +44,9 @@ sys.path.append(path + '/../../examples/MonteCarloExamples')
 
 # @pytest.mark.skip(reason="MC can have issues completing.")
 
+@pytest.mark.skipif(sys.version_info < (3, 9) and platform.system() == 'Darwin',
+                    reason="Test has issues with Controller class and older python.")
 
-@pytest.mark.skipif(not FOUND_DATESHADER, reason = "Datashader not found")
 @pytest.mark.slowtest
 @pytest.mark.scenarioTest
 def test_scenarioBskMcScenarios(show_plots):

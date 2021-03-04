@@ -4,5 +4,3 @@
 ``recommonmark``
 ``pytest-xdist``
 ``pytest-html``
-``datashader``
-``holoviews``

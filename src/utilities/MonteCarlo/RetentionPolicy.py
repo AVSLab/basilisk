@@ -1,5 +1,6 @@
 import pandas as pd
-
+import numpy as np
+from Basilisk.utilities import unitTestSupport
 
 class VariableRetentionParameters:
     """
@@ -28,6 +29,10 @@ class MessageRetentionParameters:
 
 
 class RetentionPolicy:
+    """
+    This policy controls what simulation data is saved and how it is stored.  Note that the simulation data
+    array will have the message time prepended as the first column.
+    """
 
     def __init__(self, rate=int(1E10)):
         self.logRate = rate
@@ -95,13 +100,18 @@ class RetentionPolicy:
         dataFrames = []
         for retentionPolicy in retentionPolicies:
             for msgParam in retentionPolicy.messageLogList:
-                # record the message variables
-                for varName in msgParam.retainedVars:
-                    msgData = getattr(simInstance.msgRecList[msgParam.msgRecName], varName)
-                    data["messages"][msgParam.msgRecName + "." + varName] = msgData
+
                 # record the message recording times
                 msgTimes = simInstance.msgRecList[msgParam.msgRecName].times()
-                data["messages"][msgParam.msgRecName + ".times"] = msgTimes
+
+                # record the message variables
+                for varName in msgParam.retainedVars:
+                    # To ensure the current datashaders utilities continue to work, the
+                    # retained data is combined with the time information as it was in
+                    # BSK1.x releases.
+                    msgData = getattr(simInstance.msgRecList[msgParam.msgRecName], varName)
+                    msgData = unitTestSupport.addTimeColumn(msgTimes, msgData)
+                    data["messages"][msgParam.msgRecName + "." + varName] = msgData
 
             for variable in retentionPolicy.varLogList:
                 data["variables"][variable.varName] = simInstance.GetLogVariableData(variable.varName)

@@ -31,6 +31,7 @@ import sys, os, inspect
 import pytest
 import importlib
 from Basilisk.utilities import unitTestSupport
+from Basilisk.architecture import bskLogging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -41,7 +42,7 @@ sys.path.append(path + '/../../examples/OpNavScenarios/')
 r"""
 Skip the following tests if all necessary modules do not exist
 Requirements:
-    - Vizard downloaded and app path set properly (in basilisk/examples/OpNavScenarios/BSK_masters)
+    - Vizard downloaded and app path set properly (in basilisk/examples/OpNavScenarios/BSK_OpNav.py)
     - Basilisk built with ZMQ, protobuffers, and OpenCV 
 """
 
@@ -59,6 +60,7 @@ testScripts = [
     , 'scenario_OpNavODLimb'
     , 'scenario_OpNavPoint'
     , 'scenario_OpNavPointLimb'
+    , 'scenario_CNNAttOD'
 ]
 
 
@@ -68,43 +70,29 @@ try:
 except ImportError:
     pytestmark = pytest.mark.skip(reason="OpNav Algorithms not built: use opNav behavior in build")
 
-try:
-    from Basilisk.fswAlgorithms import centerRadiusCNN
-    testScripts.append('scenario_CNNAttOD')
-except ImportError:
-    pass
 
-
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("bskSimCase", testScripts)
-
+@pytest.mark.slowtest
 @pytest.mark.scenarioTest
-
-# if this script is run, it requires Vizard to be installed, and the pytest must be run single-threaded
-# not with "-n 8" etc.
-@pytest.mark.skip(reason="This test has special requirements to run.  See note in the script.")
-
-
-def test_opnavBskScenarios(show_plots, bskSimCase):
+def test_opnavBskScenarios(show_plots):
+    bskLogging.setDefaultLogLevel(bskLogging.BSK_SILENT)
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     # import the bskSim script to be tested
-    scene_plt = importlib.import_module(bskSimCase)
+    for bskSimCase in testScripts:
+        scene_plt = importlib.import_module(bskSimCase)
 
-    try:
-        figureList = scene_plt.run(False, 10)
+        try:
+            figureList = scene_plt.run(False, 10)
 
-        # save the figures to the RST scenario images folder
-        if figureList != {} and figureList is not None:
-            for pltName, plt in list(figureList.items()):
-                unitTestSupport.saveScenarioFigure(pltName, plt, path)
+            # save the figures to the RST scenario images folder
+            if figureList != {} and figureList is not None:
+                for pltName, plt in list(figureList.items()):
+                    unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
-    except OSError as err:
-        testFailCount = testFailCount + 1
-        testMessages.append("OS error: {0}".format(err))
+        except OSError as err:
+            testFailCount = testFailCount + 1
+            testMessages.append("OS error: {0}".format(err))
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

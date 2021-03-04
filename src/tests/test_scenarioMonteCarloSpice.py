@@ -22,7 +22,7 @@
 # Purpose:  Integrated test of the MonteCarlo module with Spice usage.
 #
 
-import sys, os, inspect
+import sys, os, inspect, platform
 import pytest
 
 # Get current file path
@@ -32,7 +32,8 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../../examples/')
 import scenarioMonteCarloSpice
 
-@pytest.mark.skip(reason="This test is having issues right now passing with the new Controller class.")
+@pytest.mark.skipif(sys.version_info < (3, 9)  and platform.system() == 'Darwin',
+                    reason="Test has issues with Controller class and older python.")
 @pytest.mark.scenarioTest
 def test_MonteCarloSimulationDatashader(show_plots):
     """This function is called by the py.test environment."""
