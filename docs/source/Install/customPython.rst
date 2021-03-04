@@ -10,20 +10,12 @@ Using a Custom Python Installation
 ==================================
 
 The following instructions are guidelines on how to run Basilisk with a
-computer that is not using a system installed version of Python. First
-some general notes:
+computer that is not using a system installed version of Python.
 
 -  Basilisk must be built and run with the same Python binary.
--  For Unix platforms Cmake should select the default installed version
-   of Python.
-
-To run cmake with the custom python installation that is not found by
-the system by default, the path to the python installation can be
-provided as a command line argument. Using a BASH shell and from within
-``dist3`` folder, to compile with Python 3 you can use::
-
-   cmake ../src -G "Xcode" -DPYTHON_LIBRARY=$(python3-config --prefix)/lib/libpython3.7.dylib -DPYTHON_INCLUDE_DIR=$(python3-config --prefix)/include/python3.7m -DPYTHON_EXECUTABLE=$(python3-config --exec-prefix)/bin/python3.7
-
-Note that the above command didn’t work from a ``tcsh`` shell
-environment. The ``python3-config`` command and package allows for easy
-configuring of what python to use.
+   For example, you cannot build for Python 3.7 and run against Python 3.9.
+-  The best way to work with different versions of python installed on your computer is to setup
+   a virtual python environment, such as with `venv`.  In this case only that python used to create the
+   virtual environment is available and conflicts with other versions are avoided.
+-  If you use a virtual environment, but sure to build Basilisk in that virtual environment for the simulation
+   script to function.
