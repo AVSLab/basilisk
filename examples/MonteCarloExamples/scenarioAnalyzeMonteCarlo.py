@@ -105,6 +105,7 @@ bokeh server will keep running until stopped.
 
 import inspect
 import os
+FOUND_DATESHADER = True
 try:
     from Basilisk.utilities.datashader_utilities import DS_Plot, curve_per_df_component, pull_and_format_df
     from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import mcAnalysisBaseClass
@@ -112,6 +113,7 @@ try:
         Blues3, Reds3, Greens3, Oranges3, RdYlBu9
 except:
     print("Wasn't able to include the datashader_utilities.")
+    FOUND_DATESHADER = False
 
 import Basilisk.utilities.macros as macros
 
@@ -171,6 +173,9 @@ def run(show_plots):
     :param show_extreme_data: call plotSuite method for user-defined number of extrema MC runs
     :param optional_plots: plots additional user-defined plots
     """
+
+    if not FOUND_DATESHADER:
+        return
 
     show_all_data = True
     show_extreme_data = False

@@ -38,6 +38,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import planetEphemeris
 from Basilisk.utilities import macros
+from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -62,6 +63,8 @@ def test_module(show_plots, setRAN, setDEC, setLST, setRate):
 
 
 def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
+    bskLogging.setDefaultLogLevel(bskLogging.BSK_SILENT)
+
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)

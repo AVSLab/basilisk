@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.patches import Ellipse
 import numpy as np
-import scipy.optimize
+# import scipy.optimize
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport
 
@@ -51,25 +51,25 @@ try:
 except:
     pass
 
-def fit_sin(tt, yy):
-    """
-    Fit sin to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"
-    """
-    tt = np.array(tt)
-    yy = np.array(yy)
-    ff = np.fft.fftfreq(len(tt), (tt[1]-tt[0]))   # assume uniform spacing
-    Fyy = abs(np.fft.fft(yy))
-    guess_freq = abs(ff[np.argmax(Fyy[1:])+1])   # excluding the zero frequency "peak", which is related to offset
-    guess_amp = np.std(yy) * 2.**0.5
-    guess_offset = np.mean(yy)
-    guess = np.array([guess_amp, 2.*np.pi*guess_freq, 0., guess_offset])
-
-    def sinfunc(t, A, w, p, c):  return A * np.sin(w*t + p) + c
-    popt, pcov = scipy.optimize.curve_fit(sinfunc, tt, yy, p0=guess)
-    A, w, p, c = popt
-    f = w/(2.*np.pi)
-    fitfunc = lambda t: A * np.sin(w*t + p) + c
-    return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "fitfunc": fitfunc, "maxcov": np.max(pcov), "rawres": (guess,popt,pcov)}
+# def fit_sin(tt, yy):
+#     """
+#     Fit sin to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"
+#     """
+#     tt = np.array(tt)
+#     yy = np.array(yy)
+#     ff = np.fft.fftfreq(len(tt), (tt[1]-tt[0]))   # assume uniform spacing
+#     Fyy = abs(np.fft.fft(yy))
+#     guess_freq = abs(ff[np.argmax(Fyy[1:])+1])   # excluding the zero frequency "peak", which is related to offset
+#     guess_amp = np.std(yy) * 2.**0.5
+#     guess_offset = np.mean(yy)
+#     guess = np.array([guess_amp, 2.*np.pi*guess_freq, 0., guess_offset])
+#
+#     def sinfunc(t, A, w, p, c):  return A * np.sin(w*t + p) + c
+#     popt, pcov = scipy.optimize.curve_fit(sinfunc, tt, yy, p0=guess)
+#     A, w, p, c = popt
+#     f = w/(2.*np.pi)
+#     fitfunc = lambda t: A * np.sin(w*t + p) + c
+#     return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "fitfunc": fitfunc, "maxcov": np.max(pcov), "rawres": (guess,popt,pcov)}
 
 def show_all_plots():
     plt.show()
@@ -87,10 +87,10 @@ def omegaTrack(rError, covar):
 
     plt.figure(num=2210101, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.plot(t , rError[:, 1]*180./np.pi, color = colorList[2] , label= 'Error')
-    plt.plot(t, 3*np.sqrt(covar[:, 0,0])*180./np.pi, color=colorList[8], linestyle = '--', label = 'Covar (3-$\sigma$)')
+    plt.plot(t, 3*np.sqrt(covar[:, 0,0])*180./np.pi, color=colorList[8], linestyle = '--', label=r'Covar (3-$\sigma$)')
     plt.plot(t, -3*np.sqrt(covar[:, 0,0])*180./np.pi, color=colorList[8], linestyle = '--')
     plt.legend(loc='best')
-    plt.ylabel('$\mathbf{\omega}_{' + str(2) +'}$ Error in $\mathcal{C}$ ($^\circ$/s)')
+    plt.ylabel(r'$\mathbf{\omega}_{' + str(2) +r'}$ Error in $\mathcal{C}$ ($^\circ$/s)')
     plt.ylim([-0.07,0.07])
     plt.xlabel('Time (min)')
     # plt.savefig('RateCam1.pdf')
@@ -99,7 +99,7 @@ def omegaTrack(rError, covar):
     plt.plot(t , rError[:, 2]*180./np.pi, color = colorList[2])
     plt.plot(t, 3*np.sqrt(covar[:, 1,1])*180./np.pi, color=colorList[8], linestyle = '--')
     plt.plot(t, -3*np.sqrt(covar[:, 1,1])*180./np.pi, color=colorList[8], linestyle = '--')
-    plt.ylabel('$\mathbf{\omega}_{' + str(3) +'}$ Error in $\mathcal{C}$ ($^\circ$/s)')
+    plt.ylabel(r'$\mathbf{\omega}_{' + str(3) +r'}$ Error in $\mathcal{C}$ ($^\circ$/s)')
     plt.ylim([-0.07,0.07])
     plt.xlabel('Time (min)')
     # plt.savefig('RateCam2.pdf')
@@ -131,19 +131,19 @@ def vecTrack(ref, track, covar):
     t = ref[:, 0] * ns2min
     plt.figure(num=101011, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.plot(t , errorDeg[:, 1], color = colorList[1] , label= "Off-point")
-    plt.plot(t, covDeg[:,1], color=colorList[5], linestyle = '--', label = 'Covar (3-$\sigma$)')
+    plt.plot(t, covDeg[:,1], color=colorList[5], linestyle = '--', label=r'Covar (3-$\sigma$)')
     plt.legend(loc='upper right')
-    plt.ylabel('Mean $\hat{\mathbf{h}}$ Error in $\mathcal{C}$ ($^\circ$)')
+    plt.ylabel(r'Mean $\hat{\mathbf{h}}$ Error in $\mathcal{C}$ ($^\circ$)')
     plt.xlabel('Time (min)')
     plt.ylim([0,2])
     # plt.savefig('HeadingDeg.pdf')
 
     plt.figure(num=10101, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.plot(t , rError[:, 1], color = colorList[2] , label= 'Error')
-    plt.plot(t, 3*np.sqrt(covar[:, 0,0]), color=colorList[8], linestyle = '--', label = 'Covar (3-$\sigma$)')
+    plt.plot(t, 3*np.sqrt(covar[:, 0,0]), color=colorList[8], linestyle = '--', label=r'Covar (3-$\sigma$)')
     plt.plot(t, -3*np.sqrt(covar[:, 0,0]), color=colorList[8], linestyle = '--')
     plt.legend()
-    plt.ylabel('$\hat{\mathbf{h}}_{' + str(1) +'}$ Error in $\mathcal{C}$ (-)')
+    plt.ylabel(r'$\hat{\mathbf{h}}_{' + str(1) +r'}$ Error in $\mathcal{C}$ (-)')
     plt.ylim([-0.04,0.04])
     plt.xlabel('Time (min)')
     # plt.savefig('HeadingCam1.pdf')
@@ -152,7 +152,7 @@ def vecTrack(ref, track, covar):
     plt.plot(t , rError[:, 2], color = colorList[2] )
     plt.plot(t, 3*np.sqrt(covar[:, 1,1]), color=colorList[8], linestyle = '--')
     plt.plot(t, -3*np.sqrt(covar[:, 1,1]), color=colorList[8], linestyle = '--')
-    plt.ylabel('$\hat{\mathbf{h}}_{' + str(2) +'}$ Error in $\mathcal{C}$ (-)')
+    plt.ylabel(r'$\hat{\mathbf{h}}_{' + str(2) +r'}$ Error in $\mathcal{C}$ (-)')
     plt.ylim([-0.04,0.04])
     plt.xlabel('Time (min)')
     # plt.savefig('HeadingCam2.pdf')
@@ -161,7 +161,7 @@ def vecTrack(ref, track, covar):
     plt.plot(t , rError[:, 3], color = colorList[2])
     plt.plot(t, 3*np.sqrt(covar[:, 2,2]), color=colorList[8], linestyle = '--')
     plt.plot(t, -3*np.sqrt(covar[:, 2,2]), color=colorList[8], linestyle = '--')
-    plt.ylabel(r'$\hat{\mathbf{h}}_{' + str(3) +'}$ Error in $\mathcal{C}$ (-)')
+    plt.ylabel(r'$\hat{\mathbf{h}}_{' + str(3) +r'}$ Error in $\mathcal{C}$ (-)')
     plt.ylim([-0.04,0.04])
     plt.xlabel('Time (min)')
     # plt.savefig('HeadingCam3.pdf')
@@ -219,14 +219,14 @@ def diff_methods(vec1, meth1, meth2, val1, val2):
         diffNorms2[i,1] = np.linalg.norm(vec1[validIdx2[i],1:]) - np.linalg.norm(meth2[validIdx2[i],1:])
     plt.figure(1, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.xlabel('Time')
-    plt.plot(diff1[:, 0] * ns2min, diff1[:, 1] * m2km, color = colorList[1], label="$\mathbf{r}_\mathrm{Limb}$")
+    plt.plot(diff1[:, 0] * ns2min, diff1[:, 1] * m2km, color = colorList[1], label=r"$\mathbf{r}_\mathrm{Limb}$")
     plt.plot(diff1[:, 0] * ns2min, diff1[:, 2] * m2km, color = colorList[5])
     plt.plot(diff1[:, 0] * ns2min, diff1[:, 3] * m2km, color = colorList[8])
-    plt.plot(diff2[:, 0] * ns2min, diff2[:, 1] * m2km, color=colorList[1], label="$\mathbf{r}_\mathrm{Circ}$", linestyle ='--', linewidth=2)
+    plt.plot(diff2[:, 0] * ns2min, diff2[:, 1] * m2km, color=colorList[1], label=r"$\mathbf{r}_\mathrm{Circ}$", linestyle ='--', linewidth=2)
     plt.plot(diff2[:, 0] * ns2min, diff2[:, 2] * m2km, color=colorList[5], linestyle ='--', linewidth=2)
     plt.plot(diff2[:, 0] * ns2min, diff2[:, 3] * m2km, color=colorList[8], linestyle ='--', linewidth=2)
     plt.legend()
-    plt.ylabel("$\mathbf{r}_{\mathrm{true}} - \mathbf{r}_{\mathrm{opnav}}$ (km)")
+    plt.ylabel(r"$\mathbf{r}_{\mathrm{true}} - \mathbf{r}_{\mathrm{opnav}}$ (km)")
     plt.xlabel("Time (min)")
     # plt.savefig('MeasErrorComponents.pdf')
 
@@ -234,7 +234,7 @@ def diff_methods(vec1, meth1, meth2, val1, val2):
     plt.xlabel('Time')
     plt.plot(diff1[:, 0] * ns2min, diffNorms1[:,1] * m2km, color = colorList[1])
     plt.plot(diff2[:, 0] * ns2min, diffNorms2[:,1] * m2km,  color = colorList[1], linestyle="--", linewidth=2)
-    plt.ylabel("$|\mathbf{r}_{\mathrm{true}}|$ - $|\mathbf{r}_{\mathrm{opnav}}|$ (km)")
+    plt.ylabel(r"$|\mathbf{r}_{\mathrm{true}}|$ - $|\mathbf{r}_{\mathrm{opnav}}|$ (km)")
     plt.xlabel("Time (min)")
     # plt.savefig('MeasErrorNorm.pdf')
 
@@ -261,14 +261,14 @@ def diff_vectors(vec1, vec2, valid, string):
     # plt.figure(1, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     plt.figure(1, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
     plt.xlabel('Time')
-    plt.plot(diff[:, 0] * ns2min, diff[:, 1] * m2km2, color = colorList[1], label="$x_\mathrm{"+string+"}$")
+    plt.plot(diff[:, 0] * ns2min, diff[:, 1] * m2km2, color = colorList[1], label=r"$x_\mathrm{"+string+"}$")
     plt.plot(diff[:, 0] * ns2min, np.mean(diff[:, 1]) * m2km2 * np.ones(len(diff[:, 0])), color = colorList[1], linestyle = '--')
-    plt.plot(diff[:, 0] * ns2min, diff[:, 2] * m2km2, color = colorList[5], label="$y_\mathrm{"+string+"}$")
+    plt.plot(diff[:, 0] * ns2min, diff[:, 2] * m2km2, color = colorList[5], label=r"$y_\mathrm{"+string+"}$")
     plt.plot(diff[:, 0] * ns2min, np.mean(diff[:, 2]) * m2km2 * np.ones(len(diff[:, 0])), color = colorList[5], linestyle = '--')
-    plt.plot(diff[:, 0] * ns2min, diff[:, 3] * m2km2, color = colorList[8], label="$z_\mathrm{"+string+"}$")
+    plt.plot(diff[:, 0] * ns2min, diff[:, 3] * m2km2, color = colorList[8], label=r"$z_\mathrm{"+string+"}$")
     plt.plot(diff[:, 0] * ns2min, np.mean(diff[:, 3]) * m2km2 * np.ones(len(diff[:, 0])), color = colorList[8], linestyle = '--')
     plt.legend()
-    plt.ylabel("$\mathbf{r}_{\mathrm{true}} - \mathbf{r}_{\mathrm{opnav}}$ (km)")
+    plt.ylabel(r"$\mathbf{r}_{\mathrm{true}} - \mathbf{r}_{\mathrm{opnav}}$ (km)")
     plt.xlabel("Time (min)")
     ##plt.savefig('MeasErrorComponents.pdf')
 
@@ -277,7 +277,7 @@ def diff_vectors(vec1, vec2, valid, string):
     plt.xlabel('Time')
     plt.plot(diff[:, 0] * ns2min, diffNorms[:,1] * m2km2, color = colorList[1])
     plt.plot(diff[:, 0] * ns2min, np.mean(diffNorms[:,1]) * m2km2 * np.ones(len(diff[:, 0])),  color = colorList[1], linestyle="--")
-    plt.ylabel("$|\mathbf{r}_{\mathrm{true}}|$ - $|\mathbf{r}_{\mathrm{opnav}}|$ (km)")
+    plt.ylabel(r"$|\mathbf{r}_{\mathrm{true}}|$ - $|\mathbf{r}_{\mathrm{opnav}}|$ (km)")
     plt.xlabel("Time (min)")
     #plt.savefig('MeasErrorNorm.pdf')
     return
@@ -313,9 +313,9 @@ def nav_percentages(truth, states, covar, valid, string):
     plt.figure(101, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     # plt.figure(101, figsize=(3.5, 2), facecolor='w', edgecolor='k')
     plt.plot(diffPos[:, 0] * ns2min, diffPos[:, 1] , color = colorList[1], label = "Error")
-    plt.plot(covarPos[:, 0] * ns2min, covarPos[:,1], color = colorList[8], linestyle = '--', label='Covar ($3\sigma$)')
+    plt.plot(covarPos[:, 0] * ns2min, covarPos[:,1], color = colorList[8], linestyle = '--', label=r'Covar ($3\sigma$)')
     plt.legend(loc='upper right')
-    plt.ylabel("$\mathbf{r}_\mathrm{"+string+"}$ errors ($\%$)")
+    plt.ylabel(r"$\mathbf{r}_\mathrm{"+string+r"}$ errors ($\%$)")
     plt.xlabel("Time (min)")
     # plt.ylim([0,3.5])
     #plt.savefig('PercentErrorPos.pdf')
@@ -324,7 +324,7 @@ def nav_percentages(truth, states, covar, valid, string):
     # plt.figure(102, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
     plt.plot(diffVel[:, 0] * ns2min, diffVel[:, 1], color = colorList[1])
     plt.plot(covarVel[:, 0] * ns2min, covarVel[:,1], color = colorList[8], linestyle = '--')
-    plt.ylabel("$\dot{\mathbf{r}}_\mathrm{"+string+ "}$ errors ($\%$)")
+    plt.ylabel(r"$\dot{\mathbf{r}}_\mathrm{"+string+ r"}$ errors ($\%$)")
     plt.xlabel("Time (min)")
     # plt.ylim([0,15])
     #plt.savefig('PercentErrorVel.pdf')
@@ -388,9 +388,9 @@ def plot_TwoOrbits(r_BN, r_BN2):
     # fig = plt.figure(5, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     fig = plt.figure(5, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
     ax = fig.gca(projection='3d')
-    ax.set_xlabel('$R_x$, km')
-    ax.set_ylabel('$R_y$, km')
-    ax.set_zlabel('$R_z$, km')
+    ax.set_xlabel(r'$R_x$, km')
+    ax.set_ylabel(r'$R_y$, km')
+    ax.set_zlabel(r'$R_z$, km')
     ax.plot(r_BN[:, 1] * m2km, r_BN[:, 2] * m2km, r_BN[:, 3] * m2km, color=colorList[1], label="True")
     for i in range(len(r_BN2[:,0])):
         if np.abs(r_BN2[i, 1])>0 or np.abs(r_BN2[i, 2])>0:
@@ -416,7 +416,7 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
              )
     plt.xlabel('Time (min)')
     plt.xlim([40, 100])
-    plt.ylabel('Attitude Error Norm $|\sigma_{C/R}|$')
+    plt.ylabel(r'Attitude Error Norm $|\sigma_{C/R}|$')
     #plt.savefig('AttErrorNorm.pdf')
     ax.set_yscale('log')
 
@@ -432,7 +432,7 @@ def plot_rate_error(timeLineSet, dataOmegaBR):
     for idx in range(1, 4):
         plt.plot(timeLineSet, dataOmegaBR[:, idx],
                  color=colorList[idx*2],
-                 label='$\omega_{BR,' + str(idx) + '}$',
+                 label=r'$\omega_{BR,' + str(idx) + '}$',
                  linestyle= styleList[idx-1] )
     plt.legend(loc='lower right')
     plt.xlim([40, 100])
@@ -448,7 +448,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\hat u_{s,' + str(idx) + '}$')
+                 label=r'$\hat u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time (min)')
     #plt.savefig('RWMotorTorque.pdf')
@@ -459,7 +459,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     for idx in range(1, numRW + 1):
         plt.plot(timeData, dataOmegaRW[:, idx] / mc.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\Omega_{' + str(idx) + '}$')
+                 label=r'$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
@@ -488,7 +488,7 @@ def plotStateCovarPlot(x, Pflat):
     if numStates == 9 :
         plt.figure(10, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
         plt.plot(t , x[:, 1]*m2km, label='$r_1$', color = colorList[1])
-        plt.plot(t , 3 * np.sqrt(P[:, 0, 0])*m2km, '--',  label='Covar (3-$\sigma$)', color = colorList[8])
+        plt.plot(t , 3 * np.sqrt(P[:, 0, 0])*m2km, '--',  label=r'Covar (3-$\sigma$)', color = colorList[8])
         plt.plot(t ,- 3 * np.sqrt(P[:, 0, 0])*m2km, '--', color = colorList[8])
         plt.legend(loc='best')
         plt.ylabel('Position Error (km)')
@@ -556,10 +556,10 @@ def plotStateCovarPlot(x, Pflat):
     if numStates == 6 or numStates ==3:
         plt.figure(20, figsize=(2.4, 1.4), facecolor='w', edgecolor='k')
         plt.plot(t , x[:, 1]*m2km, label='State Error', color = colorList[1])
-        plt.plot(t , 3 * np.sqrt(P[:, 0, 0])*m2km, '--',  label='Covar (3-$\sigma$)', color = colorList[8])
+        plt.plot(t , 3 * np.sqrt(P[:, 0, 0])*m2km, '--',  label=r'Covar (3-$\sigma$)', color = colorList[8])
         plt.plot(t ,- 3 * np.sqrt(P[:, 0, 0])*m2km, '--', color = colorList[8])
         plt.legend(loc='best')
-        plt.ylabel('$r_1$ Error (km)')
+        plt.ylabel(r'$r_1$ Error (km)')
         #plt.savefig('Filterpos1.pdf')
 
     if numStates == 6:
@@ -567,7 +567,7 @@ def plotStateCovarPlot(x, Pflat):
         plt.plot(t , x[:, 4]*m2km, color = colorList[1])
         plt.plot(t , 3 * np.sqrt(P[:, 3, 3])*m2km, '--', color = colorList[8])
         plt.plot(t ,- 3 * np.sqrt(P[:, 3, 3])*m2km, '--', color = colorList[8])
-        plt.ylabel('$v_1$ Error (km/s)')
+        plt.ylabel(r'$v_1$ Error (km/s)')
         #plt.savefig('Filtervel1.pdf')
 
     if numStates == 6 or numStates ==3:
@@ -575,7 +575,7 @@ def plotStateCovarPlot(x, Pflat):
         plt.plot(t , x[:, 2]*m2km, color = colorList[1])
         plt.plot(t , 3 * np.sqrt(P[:, 1, 1])*m2km, '--', color = colorList[8])
         plt.plot(t ,- 3 * np.sqrt(P[:, 1, 1])*m2km, '--', color = colorList[8])
-        plt.ylabel('$r_2$ Error (km)')
+        plt.ylabel(r'$r_2$ Error (km)')
         #plt.savefig('Filterpos2.pdf')
 
     if numStates == 6:
@@ -583,7 +583,7 @@ def plotStateCovarPlot(x, Pflat):
         plt.plot(t , x[:, 5]*m2km, color = colorList[1])
         plt.plot(t , 3 * np.sqrt(P[:, 4, 4])*m2km, '--', color = colorList[8])
         plt.plot(t ,- 3 * np.sqrt(P[:, 4, 4])*m2km, '--', color = colorList[8])
-        plt.ylabel('$v_2$ Error (km/s)')
+        plt.ylabel(r'$v_2$ Error (km/s)')
         #plt.savefig('Filtervel2.pdf')
 
     if numStates == 6 or numStates ==3:
@@ -592,7 +592,7 @@ def plotStateCovarPlot(x, Pflat):
         plt.plot(t , 3 * np.sqrt(P[:, 2, 2])*m2km, '--', color = colorList[8])
         plt.plot(t ,-3 * np.sqrt(P[:, 2, 2])*m2km, '--', color = colorList[8])
         plt.xlabel('Time (min)')
-        plt.ylabel('$r_3$ Error (km)')
+        plt.ylabel(r'$r_3$ Error (km)')
         #plt.savefig('Filterpos3.pdf')
 
     if numStates == 6:
@@ -601,7 +601,7 @@ def plotStateCovarPlot(x, Pflat):
         plt.plot(t , 3 * np.sqrt(P[:, 5, 5])*m2km, '--', color = colorList[8])
         plt.plot(t , -3 * np.sqrt(P[:, 5, 5])*m2km, '--', color = colorList[8])
         plt.xlabel('Time (min)')
-        plt.ylabel('$v_3$ Error (km/s)')
+        plt.ylabel(r'$v_3$ Error (km/s)')
         #plt.savefig('Filtervel3.pdf')
 
 
@@ -766,10 +766,10 @@ def imgProcVsExp(true, centers, radii, size):
 
     plt.figure(312, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     # plt.figure(312, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
-    plt.plot(t, true[:, 3], "+", label='Truth $\\rho$', color = colorList[1])
-    plt.plot(t, radii[:, 1],'.',  label = "ImagProc $\\rho$", color = colorList[5], alpha=0.7)
+    plt.plot(t, true[:, 3], "+", label=r'Truth $\\rho$', color = colorList[1])
+    plt.plot(t, radii[:, 1],'.',  label = r"ImagProc $\\rho$", color = colorList[5], alpha=0.7)
     plt.legend(loc='best')
-    plt.ylabel('$\\rho$ (px)')
+    plt.ylabel(r'$\\rho$ (px)')
     plt.xlabel('Time (min)')
     plt.grid(b=None, which='minor', axis='y')
     #plt.savefig('Rhopix.pdf')
@@ -777,7 +777,7 @@ def imgProcVsExp(true, centers, radii, size):
 
     plt.figure(303, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     # plt.figure(303, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
-    plt.plot(t, true[:, 1] - centers[:, 1], ".", label='$\mathrm{X}_\mathrm{true} - \mathrm{X}_\mathrm{hough}$', color = colorList[1])
+    plt.plot(t, true[:, 1] - centers[:, 1], ".", label=r'$\mathrm{X}_\mathrm{true} - \mathrm{X}_\mathrm{hough}$', color = colorList[1])
     plt.legend(loc='best')
     plt.ylabel('X error (px)')
     plt.grid()
@@ -785,7 +785,7 @@ def imgProcVsExp(true, centers, radii, size):
 
     plt.figure(304, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     # plt.figure(304, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
-    plt.plot(t, true[:, 2] - centers[:, 2], ".", label='$\mathrm{Y}_\mathrm{true} - \mathrm{Y}_\mathrm{hough}$', color = colorList[1])
+    plt.plot(t, true[:, 2] - centers[:, 2], ".", label=r'$\mathrm{Y}_\mathrm{true} - \mathrm{Y}_\mathrm{hough}$', color = colorList[1])
     plt.legend(loc='best')
     plt.ylabel('Y error (px)')
     plt.grid()
@@ -793,7 +793,7 @@ def imgProcVsExp(true, centers, radii, size):
 
     plt.figure(305, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     # plt.figure(305, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
-    plt.plot(t, true[:, 3] - radii[:, 1], ".", label='$\mathrm{\\rho}_\mathrm{true} - \mathrm{\\rho}_\mathrm{hough}$', color = colorList[1])
+    plt.plot(t, true[:, 3] - radii[:, 1], ".", label=r'$\mathrm{\\rho}_\mathrm{true} - \mathrm{\\rho}_\mathrm{hough}$', color = colorList[1])
     plt.legend(loc='best')
     plt.ylabel('Radius error (px)')
     plt.xlabel("Time (min)")
@@ -829,13 +829,13 @@ def plotPostFitResiduals(Res, noise):
     if len(Res[0,:])-1 == 3:
         plt.figure(401, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
         plt.plot(t , Res[:, 1]*m2km, ".", label='Residual', color = colorList[1])
-        plt.plot(t , MeasNoise[:,0]*m2km, '--', label='Noise ($3\sigma$)', color = colorList[8])
+        plt.plot(t , MeasNoise[:,0]*m2km, '--', label=r'Noise ($3\sigma$)', color = colorList[8])
         plt.plot(t , -MeasNoise[:,0]*m2km, '--', color = colorList[8])
         plt.legend(loc=2)
         max = np.amax(MeasNoise[:,0])
         if max >1E-15:
             plt.ylim([-2*max*m2km, 2*max*m2km])
-        plt.ylabel('$r_1$ Measured (km)')
+        plt.ylabel(r'$r_1$ Measured (km)')
         plt.xlabel("Time (min)")
         plt.grid()
         #plt.savefig('Res1.pdf')
@@ -847,7 +847,7 @@ def plotPostFitResiduals(Res, noise):
         max = np.amax(MeasNoise[:,1])
         if max >1E-15:
             plt.ylim([-2*max*m2km, 2*max*m2km])
-        plt.ylabel('$r_2$ Measured (km)')
+        plt.ylabel(r'$r_2$ Measured (km)')
         plt.xlabel("Time (min)")
         plt.grid()
         #plt.savefig('Res2.pdf')
@@ -860,7 +860,7 @@ def plotPostFitResiduals(Res, noise):
         max = np.amax(MeasNoise[:,2])
         if max >1E-15:
             plt.ylim([-2*max*m2km, 2*max*m2km])
-        plt.ylabel('$r_3$ Measured (km)')
+        plt.ylabel(r'$r_3$ Measured (km)')
         plt.xlabel("Time (min)")
         plt.grid()
         #plt.savefig('Res3.pdf')
@@ -1069,7 +1069,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
         if i ==0:
             plt.figure(num=None, facecolor='w', edgecolor='k')
             plt.plot(t , x[:, i+1], color = colorList[0], label='Error')
-            plt.plot(t , 3 * P[:, i, i],color = colorList[-1], linestyle = '--',  label='Covar (3-$\sigma$)')
+            plt.plot(t , 3 * P[:, i, i],color = colorList[-1], linestyle = '--',  label=r'Covar (3-$\sigma$)')
             plt.plot(t , -3 * P[:, i, i], color = colorList[-1], linestyle = '--')
             plt.legend(loc='best')
             plt.ylabel('$d_' + str(i+1) + '$ Error (-)')
@@ -1097,14 +1097,14 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
             if i == 3:
                 plt.figure(num=None, facecolor='w', edgecolor='k')
                 plt.plot(t, x[:, i + 1], color = colorList[0], label='Error')
-                plt.plot(t, 3 * P[:, i, i], color = colorList[-1],linestyle = '--', label='Covar (3-$\sigma$)')
+                plt.plot(t, 3 * P[:, i, i], color = colorList[-1],linestyle = '--', label=r'Covar (3-$\sigma$)')
                 plt.plot(t, -3 * P[:, i, i], color = colorList[-1],linestyle = '--')
                 plt.ylim([-0.0007,0.0007])
                 # plt.legend(loc='best')
                 if nstates == 5:
-                    plt.ylabel('$\omega_' + str(i - 1) + '$ Error (-)')
+                    plt.ylabel(r'$\omega_' + str(i - 1) + r'$ Error (-)')
                 else:
-                    plt.ylabel('$d\'_' + str(i-2) + '$ Error (-)')
+                    plt.ylabel(r'$d\'_' + str(i-2) + r'$ Error (-)')
                 plt.xlabel('Time (min)')
                 unitTestSupport.saveFigurePDF('StateCovarRate' + FilterType + str(i), plt, './')
                 if show_plots:
@@ -1117,9 +1117,9 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
                 plt.plot(t, -3 * P[:, i, i], color = colorList[-1],linestyle = '--')
                 plt.ylim([-0.0007,0.0007])
                 if nstates == 5:
-                    plt.ylabel('$\omega_' + str(i - 1) + '$ Error (-)')
+                    plt.ylabel(r'$\omega_' + str(i - 1) + r'$ Error (-)')
                 else:
-                    plt.ylabel('$d\'_' + str(i-2) + '$ Error (-)')
+                    plt.ylabel(r'$d\'_' + str(i-2) + r'$ Error (-)')
                 plt.xlabel('Time (min)')
                 unitTestSupport.saveFigurePDF('StateCovarRate' + FilterType + str(i), plt, './')
                 if show_plots:
@@ -1164,7 +1164,7 @@ def PostFitResiduals(Res, covar_B, FilterType, show_plots):
         if i == 0:
             plt.figure(num=None, dpi=80, facecolor='w', edgecolor='k')
             plt.plot(t, Res[:, i + 1], color=colorList[0], linestyle='', marker='.', label='Residual')
-            plt.plot(t, MeasNoise[:,i], color=colorList[-1], linestyle="--", label='Noise (3-$\sigma$)')
+            plt.plot(t, MeasNoise[:,i], color=colorList[-1], linestyle="--", label=r'Noise (3-$\sigma$)')
             plt.plot(t, -MeasNoise[:,i], color=colorList[-1], linestyle="--", )
             plt.legend(loc='best')
             plt.ylabel('$r_' + str(i + 1) + '$ (-)')
