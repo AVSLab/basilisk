@@ -77,6 +77,7 @@ except ImportError:
 
 
 
+@pytest.mark.slowtest
 @pytest.mark.scenarioTest
 
 # if this script is run, it requires Vizard to be installed, and the pytest must be run single-threaded
