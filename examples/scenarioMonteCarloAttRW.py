@@ -394,7 +394,6 @@ def run(saveFigures, case, show_plots):
         plt.close("all")
 
 # This function creates the simulation to be executed in parallel.
-# It is copied directly from src/tests/scenarios.
 def createScenarioAttitudeFeedbackRW():
 
     # Create simulation variable names
@@ -720,7 +719,7 @@ def plotSimAndSave(data, retentionPolicy):
         # plt.subplots_adjust(top = 0.6, bottom = 0.4)
         unitTestSupport.saveScenarioFigure(
             fileNameString + "_" + pltName
-            , plt, path + "/test")
+            , plt, path + "/data")
 
     return
 
