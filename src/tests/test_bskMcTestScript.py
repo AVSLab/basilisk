@@ -26,7 +26,7 @@
 #
 
 
-import sys, os, inspect
+import sys, os, inspect, platform
 import pytest
 import shutil
 import importlib
@@ -44,6 +44,8 @@ sys.path.append(path + '/../../examples/MonteCarloExamples')
 
 # @pytest.mark.skip(reason="MC can have issues completing.")
 
+@pytest.mark.skipif(sys.version_info < (3, 9) and platform.system() == 'Darwin',
+                    reason="Test has issues with Controller class and older python.")
 
 @pytest.mark.slowtest
 @pytest.mark.scenarioTest
