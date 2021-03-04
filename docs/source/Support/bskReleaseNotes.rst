@@ -38,6 +38,9 @@ Version |release|
 - Cleaned up documentation on using datashaders and bokeh to interactively plot large simulation data sets.
   The script :ref:`scenarioAnalyzeMonteCarlo` is updated to discuss the particular challenges in running this
   datashader example of plotting data.
+- enable Monte Carlo ``pytest`` test scripts to run on macOS if Python 3.9 or higher is used
+- enable opNav scenario ``pytest`` test scripts to be tested by ``pytest`` if the build flag ``--opNav``
+  is set to true and the path to :ref:`Vizard <vizard>` application is set in :ref:`BSK_OpNav`.
 
 
 Version 2.0.0

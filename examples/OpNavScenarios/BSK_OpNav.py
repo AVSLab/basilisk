@@ -28,8 +28,9 @@ limbs are circles from the images, the spacecraft can point to the planet, and e
 
 This Basilisk Simulation, which inherits ``SimulationBaseClass``, provides the backbone for all the OpNav simulations
 provided in ``basilisk/examples/OpNavScenarios``.
-These simulations spawn the Basilisk :ref:`Vizard <Vizard>` visualization in order to provide images for processing. These images are
-handled by the vizInterface module found in ``src/simulation/viz_interface``. A figure illustrating the architecture
+These simulations spawn the Basilisk :ref:`Vizard <Vizard>` visualization in order to provide images for processing.
+These images are
+handled by the vizInterface module found in ``src/simulation/vizInterface``. A figure illustrating the architecture
 is found here:
 
 .. image:: /_images/static/OpNavInterfaceOverview.png
@@ -47,12 +48,15 @@ in more detail:
 
 Running OpNav Simulations
 -------------------------
+.. important::
+    Make sure Basilisk is built to include the OpNav modules by using ``--opNav True`` when running ``conanfile.py``.
+    This is not turned on by default as it will install the large OpenCL library.
 
 In order to call Vizard from python simulations, the path to the downloaded Vizard app must be properly set.
-This is marked with a "TO DO" in this file::
+If needed, adjust the following line illustrated below to relect the path to the Vizard binary::
 
     # TODO : Modify the path to the viz here
-    appPath = '/Applications/Vizard.app' #If on Mac
+    appPath = '/Applications/Vizard.app/Contents/MacOS/Basilisk Vizard' #If on Mac
 
 The Vizard app must therefore me downloaded, and this path must reflect it's position in the file structure, and its
 name. If the path is not properly set, the OpNav simulations will hang (printing that it is waiting for the

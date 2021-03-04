@@ -42,7 +42,7 @@ sys.path.append(path + '/../../examples/OpNavScenarios/')
 r"""
 Skip the following tests if all necessary modules do not exist
 Requirements:
-    - Vizard downloaded and app path set properly (in basilisk/examples/OpNavScenarios/BSK_OpNav)
+    - Vizard downloaded and app path set properly (in basilisk/examples/OpNavScenarios/BSK_OpNav.py)
     - Basilisk built with ZMQ, protobuffers, and OpenCV 
 """
 
@@ -60,6 +60,7 @@ testScripts = [
     , 'scenario_OpNavODLimb'
     , 'scenario_OpNavPoint'
     , 'scenario_OpNavPointLimb'
+    , 'scenario_CNNAttOD'
 ]
 
 
@@ -68,13 +69,6 @@ try:
     from Basilisk.fswAlgorithms import houghCircles, limbFinding
 except ImportError:
     pytestmark = pytest.mark.skip(reason="OpNav Algorithms not built: use opNav behavior in build")
-
-try:
-    from Basilisk.fswAlgorithms import centerRadiusCNN
-    testScripts.append('scenario_CNNAttOD')
-except ImportError:
-    pass
-
 
 
 @pytest.mark.slowtest
