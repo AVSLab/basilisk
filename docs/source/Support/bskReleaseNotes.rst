@@ -41,6 +41,7 @@ Version |release|
 - enable Monte Carlo ``pytest`` test scripts to run on macOS if Python 3.9 or higher is used
 - enable opNav scenario ``pytest`` test scripts to be tested by ``pytest`` if the build flag ``--opNav``
   is set to true and the path to :ref:`Vizard <vizard>` application is set in :ref:`BSK_OpNav`.
+- fixed an issue that prevented subscribing to a C++ msg from python
 
 
 Version 2.0.0
