@@ -45,8 +45,7 @@ def writeNewVSCMGCmds(self,u_s_cmd,u_g_cmd,numVSCMG):
         NewVSCMGCmdsVec[i] = cmds  # set the data
     self.newVSCMGCmds = NewVSCMGCmdsVec  # set in module
 
-def defaultVSCMG():
-    VSCMG = messaging.VSCMGConfigMsgPayload()
+def defaultVSCMG(VSCMG):
     VSCMG.rGB_B = [[0.],[0.],[0.]]
     VSCMG.gsHat0_B = [[1.],[0.],[0.]]
     VSCMG.gtHat0_B = [[1.],[0.],[0.]]
@@ -76,7 +75,7 @@ def defaultVSCMG():
     VSCMG.massG = 0.
     VSCMG.wheelLinearFrictionRatio = 0.
     VSCMG.VSCMGModel = 0
-    return VSCMG
+    return
 
 def asEigen(v):
     out = []
@@ -117,9 +116,12 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
     VSCMGs = []
     for i in range(0,numVSCMG):
-        VSCMGs.append(defaultVSCMG())
+        msg = messaging.VSCMGConfigMsgPayload()
+        defaultVSCMG(msg)
+        msg.theta = i
+        VSCMGs.append(msg)
 
-    expOut = dict() # expected output
+    expOut = dict()  # expected output
 
     print(testCase)
     if testCase == 'basic':
@@ -181,12 +183,15 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
     if not 'accuracy' in vars():
         accuracy = 1e-10
-
+    print("HPS")
+    print(VSCMG.VSCMGData[0].theta)
     for outputName in list(expOut.keys()):
+        print(outputName)
         for i in range(0,numVSCMG):
-            if expOut[outputName][i] != getattr(VSCMG.VSCMGData[i],outputName):
+            print("HPS: " + str(i))
+            if expOut[outputName][i] != getattr(VSCMG.VSCMGData[i], outputName):
                 print("expected: " + str(expOut[outputName][i]))
-                print("got :" + str(getattr(VSCMG.VSCMGData[i],outputName)))
+                print("got :" + str(getattr(VSCMG.VSCMGData[i], outputName)))
                 testFail = 1
                 break
         if testFail:
