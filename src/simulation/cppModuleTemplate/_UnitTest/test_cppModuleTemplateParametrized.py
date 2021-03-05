@@ -115,11 +115,11 @@ def test_module(show_plots, param1, param2, accuracy):
     contained within this HTML ``pytest`` report.
     """
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = fswModuleTestFunction(show_plots, param1, param2, accuracy)
+    [testResults, testMessage] = cppModuleTestFunction(show_plots, param1, param2, accuracy)
     assert testResults < 1, testMessage
 
 
-def fswModuleTestFunction(show_plots, param1, param2, accuracy):
+def cppModuleTestFunction(show_plots, param1, param2, accuracy):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
