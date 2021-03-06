@@ -7,6 +7,9 @@ import argparse
 import pkg_resources
 import subprocess
 
+sys.path.insert(1, './src/utilities/')
+import makeDraftModule
+
 try:
 	from conans import ConanFile, CMake, tools
 except ModuleNotFoundError:
@@ -309,6 +312,19 @@ if __name__ == "__main__":
 
     # set the build destination folder
     buildFolderName = 'dist3/conan'
+
+    # run the auto-module generation script
+    # this ensures that this script is up to date with the latest BSK code base
+    # and that the associated unit test draft file runs
+    print(statusColor + "Auto-Generating Draft Modules... " + endColor, end=" ")
+    genMod = makeDraftModule.moduleGenerator()
+    genMod.cleanBuild = True
+    makeDraftModule.fillCppInfo(genMod)
+    genMod.createCppModule()
+    makeDraftModule.fillCInfo(genMod)
+    genMod.createCModule()
+    print("Done")
+
 
     # run conan install
     conanCmdString = list()

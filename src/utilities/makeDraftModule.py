@@ -30,7 +30,8 @@ from datetime import datetime
 import re
 
 # assumes this script is in .../basilisk/src/utilities
-pathToSrc = os.path.dirname(os.path.dirname(__file__))
+pathToSrc = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+initialCwd = os.getcwd()
 
 statusColor = '\033[92m'
 failColor = '\033[91m'
@@ -94,7 +95,7 @@ class moduleGenerator:
     def readLicense(self):
         """Read the Basilisk license file"""
         print(statusColor + "Importing License:" + endColor, end=" ")
-        with open("../../LICENSE", 'r') as f:
+        with open(pathToSrc + "/../LICENSE", 'r') as f:
             self._licenseText = f.read()
             self._licenseText = self._licenseText.replace("2016", str(datetime.now().year))
             self._licenseText = self._licenseText.replace(
@@ -441,7 +442,7 @@ class moduleGenerator:
         self.createTestFile("C++")
 
         # restore current working directory
-        os.chdir(os.path.join(pathToSrc, 'utilities'))
+        os.chdir(initialCwd)
 
     def createCModule(self):
         """
@@ -649,6 +650,8 @@ class moduleGenerator:
 
         # make module unit test file
         self.createTestFile("C")
+
+        os.chdir(initialCwd)
 
 
 def fillCppInfo(module):
