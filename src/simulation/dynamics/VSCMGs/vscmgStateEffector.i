@@ -47,10 +47,6 @@ struct VSCMGArrayTorqueMsg_C;
 %include "architecture/utilities/macroDefinitions.h"
 
 %include "std_vector.i"
-namespace std {
-    %template(VSCMGConfigVector) vector<VSCMGConfigMsgPayload>;
-	%template(VSCMGCmdVector) vector<VSCMGCmdMsgPayload>;
-}
 
 %pythoncode %{
 import sys
