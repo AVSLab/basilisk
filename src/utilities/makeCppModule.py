@@ -121,6 +121,119 @@ class moduleGenerator:
             w.write(rstFile)
         print("Done")
 
+    def createTestFile(self, type):
+        os.mkdir('_UnitTest')
+        os.chdir('_UnitTest')
+        testFileName = "test_" + self.moduleName + ".py"
+        print(statusColor + "Creating Python Init Test File " + testFileName + ":" + endColor, end=" ")
+        testFile = ""
+        for line in self._licenseText.split('\n'):
+            testFile += '# ' + line + '\n'
+        testFile += '\n'
+        testFile += 'import pytest\n'
+        testFile += '\n'
+        testFile += 'from Basilisk.utilities import SimulationBaseClass\n'
+        testFile += 'from Basilisk.utilities import unitTestSupport\n'
+        testFile += 'from Basilisk.architecture import messaging\n'
+        testFile += 'from Basilisk.utilities import macros\n'
+        testFile += 'from Basilisk.' + os.path.split(self.modulePathRelSrc)[0] + ' import ' + self.moduleName + '\n'
+        testFile += '\n'
+        testFile += '@pytest.mark.parametrize("accuracy", [1e-12])\n'
+        testFile += '@pytest.mark.parametrize("param1, param2", [\n'
+        testFile += '     (1, 1)\n'
+        testFile += '    ,(1, 3)\n'
+        testFile += '])\n'
+        testFile += '\n'
+        testFile += 'def test_' + self.moduleName + '(show_plots, param1, param2, accuracy):\n'
+        testFile += '    r"""\n'
+        testFile += '    **Validation Test Description**\n'
+        testFile += '\n'
+        testFile += '    Compose a general description of what is being tested in this unit test script.\n'
+        testFile += '\n'
+        testFile += '    **Test Parameters**\n'
+        testFile += '\n'
+        testFile += '    Discuss the test parameters used.\n'
+        testFile += '\n'
+        testFile += '    Args:\n'
+        testFile += '        param1 (int): Dummy test parameter for this parameterized unit test\n'
+        testFile += '        param2 (int): Dummy test parameter for this parameterized unit test\n'
+        testFile += '        accuracy (float): absolute accuracy value used in the validation tests\n'
+        testFile += '\n'
+        testFile += '    **Description of Variables Being Tested**\n'
+        testFile += '\n'
+        testFile += '    Here discuss what variables and states are being checked. \n'
+        testFile += '    """\n'
+        testFile += '    [testResults, testMessage] = ' + self.moduleName + 'TestFunction(show_plots, param1, param2, accuracy)\n'
+        testFile += '    assert testResults < 1, testMessage\n'
+        testFile += '\n'
+        testFile += '\n'
+        testFile += 'def ' + self.moduleName + 'TestFunction(show_plots, param1, param2, accuracy):\n'
+        testFile += '    """Test method"""\n'
+        testFile += '    testFailCount = 0\n'
+        testFile += '    testMessages = []\n'
+        testFile += '    unitTaskName = "unitTask"\n'
+        testFile += '    unitProcessName = "TestProcess"\n'
+        testFile += '\n'
+        testFile += '    unitTestSim = SimulationBaseClass.SimBaseClass()\n'
+        testFile += '    testProcessRate = macros.sec2nano(0.5)\n'
+        testFile += '    testProc = unitTestSim.CreateNewProcess(unitProcessName)\n'
+        testFile += '    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))\n'
+        testFile += '\n'
+        testFile += '    # setup module to be tested\n'
+        if type == "C++":
+            testFile += '    module = ' + self.moduleName + '.' + self._className + '()\n'
+            testFile += '    module.ModelTag = "' + self.moduleName + 'Tag"\n'
+            testFile += '    unitTestSim.AddModelToTask(unitTaskName, module)\n'
+            moduleLabel1 = "module"
+            moduleLabel2 = "module"
+        elif type == "C":
+            moduleLabel1 = "moduleConfig"
+            moduleLabel2 = "moduleWrap"
+            testFile += '    moduleConfig = ' + self.moduleName + '.' + self.moduleName + 'Config()\n'
+            testFile += '    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)\n'
+            testFile += '    moduleWrap.ModelTag = "' + self.moduleName + 'Tag"\n'
+            testFile += '    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)\n'
+        else:
+            print(failColor + "ERROR: " + endColor + "Wrong module type provided to test file method.")
+            exit(0)
+        testFile += '\n'
+        testFile += '    # Configure blank module input messages\n'
+        for msg in self.inMsgList:
+            testFile += '    ' + msg['var'] + 'Data = messaging.' + msg['type'] + 'Payload()\n'
+            testFile += '    ' + msg['var'] + ' = messaging.' + msg['type'] + '().write(' + msg['var'] + 'Data)' + '\n'
+            testFile += '\n'
+        testFile += '    # subscribe input messages to module\n'
+        for msg in self.inMsgList:
+            testFile += '    ' + moduleLabel1 + '.' + msg['var'] + '.subscribeTo(' + msg['var'] + ')\n'
+        testFile += '\n'
+        testFile += '    # setup output message recorder objects\n'
+        for msg in self.outMsgList:
+            testFile += '    ' + msg['var'] + 'Rec = ' + moduleLabel1 + '.' + msg['var'] + '.recorder()\n'
+            testFile += '    unitTestSim.AddModelToTask(unitTaskName, ' + msg['var'] + 'Rec)\n'
+        testFile += '\n'
+        testFile += '    unitTestSim.InitializeSimulation()\n'
+        testFile += '    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))\n'
+        testFile += '    unitTestSim.ExecuteSimulation()\n'
+        testFile += '\n'
+        testFile += '    # pull module data and make sure it is correct\n'
+        testFile += '\n'
+        testFile += '    if testFailCount == 0:\n'
+        testFile += '        print("PASSED: " + ' + moduleLabel2 + '.ModelTag)\n'
+        testFile += '    else:\n'
+        testFile += '        print(testMessages)\n'
+        testFile += '\n'
+        testFile += '    return [testFailCount, "".join(testMessages)]\n'
+        testFile += '\n'
+        testFile += '\n'
+        testFile += 'if __name__ == "__main__":\n'
+        testFile += '    test_' + self.moduleName + '(False, 1, 1, 1e-12)\n'
+        testFile += '\n'
+        testFile += '\n'
+
+        with open(testFileName, 'w') as w:
+            w.write(testFile)
+        print("Done")
+
     def createCppModule(self):
         """
         Create a C++ Basilisk module
@@ -131,7 +244,7 @@ class moduleGenerator:
         inMsgList = self.inMsgList
         outMsgList = self.outMsgList
 
-        print(statusColor + "Creating C++ Module: " + endColor + name)
+        print(statusColor + "\nCreating C++ Module: " + endColor + name)
         self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, 1)
 
         # read in the license information
@@ -308,120 +421,229 @@ class moduleGenerator:
         self.createRstFile()
 
         # make module unit test file
-        self.createTestFile()
+        self.createTestFile("C++")
 
-    def createTestFile(self):
-        os.mkdir('_UnitTest')
-        os.chdir('_UnitTest')
-        testFileName = "test_" + self.moduleName + ".py"
-        print(statusColor + "Creating Python Init Test File " + testFileName + ":" + endColor, end=" ")
-        testFile = ""
-        for line in self._licenseText.split('\n'):
-            testFile += '# ' + line + '\n'
-        testFile += '\n'
-        testFile += 'import pytest\n'
-        testFile += '\n'
-        testFile += 'from Basilisk.utilities import SimulationBaseClass\n'
-        testFile += 'from Basilisk.utilities import unitTestSupport\n'
-        testFile += 'from Basilisk.architecture import messaging\n'
-        testFile += 'from Basilisk.utilities import macros\n'
-        testFile += 'from Basilisk.' + os.path.split(self.modulePathRelSrc)[0] + ' import ' + self.moduleName + '\n'
-        testFile += '\n'
-        testFile += '@pytest.mark.parametrize("accuracy", [1e-12])\n'
-        testFile += '@pytest.mark.parametrize("param1, param2", [\n'
-        testFile += '     (1, 1)\n'
-        testFile += '    ,(1, 3)\n'
-        testFile += '])\n'
-        testFile += '\n'
-        testFile += 'def test_' + self.moduleName + '(show_plots, param1, param2, accuracy):\n'
-        testFile += '    r"""\n'
-        testFile += '    **Validation Test Description**\n'
-        testFile += '\n'
-        testFile += '    Compose a general description of what is being tested in this unit test script.\n'
-        testFile += '\n'
-        testFile += '    **Test Parameters**\n'
-        testFile += '\n'
-        testFile += '    Discuss the test parameters used.\n'
-        testFile += '\n'
-        testFile += '    Args:\n'
-        testFile += '        param1 (int): Dummy test parameter for this parameterized unit test\n'
-        testFile += '        param2 (int): Dummy test parameter for this parameterized unit test\n'
-        testFile += '        accuracy (float): absolute accuracy value used in the validation tests\n'
-        testFile += '\n'
-        testFile += '    **Description of Variables Being Tested**\n'
-        testFile += '\n'
-        testFile += '    Here discuss what variables and states are being checked. \n'
-        testFile += '    """\n'
-        testFile += '    [testResults, testMessage] = ' + self.moduleName + 'TestFunction(show_plots, param1, param2, accuracy)\n'
-        testFile += '    assert testResults < 1, testMessage\n'
-        testFile += '\n'
-        testFile += '\n'
-        testFile += 'def ' + self.moduleName + 'TestFunction(show_plots, param1, param2, accuracy):\n'
-        testFile += '    """Test method"""\n'
-        testFile += '    testFailCount = 0\n'
-        testFile += '    testMessages = []\n'
-        testFile += '    unitTaskName = "unitTask"\n'
-        testFile += '    unitProcessName = "TestProcess"\n'
-        testFile += '\n'
-        testFile += '    unitTestSim = SimulationBaseClass.SimBaseClass()\n'
-        testFile += '    testProcessRate = macros.sec2nano(0.5)\n'
-        testFile += '    testProc = unitTestSim.CreateNewProcess(unitProcessName)\n'
-        testFile += '    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))\n'
-        testFile += '\n'
-        testFile += '    # setup module to be tested\n'
-        testFile += '    module = ' + self.moduleName + '.' + self._className + '()\n'
-        testFile += '    module.ModelTag = "' + self.moduleName + 'Tag"\n'
-        testFile += '    unitTestSim.AddModelToTask(unitTaskName, module)\n'
-        testFile += '\n'
-        testFile += '    # Configure blank module input messages\n'
-        for msg in self.inMsgList:
-            testFile += '    ' + msg['var'] + 'Data = messaging.' + msg['type'] + 'Payload()\n'
-            testFile += '    ' + msg['var'] + ' = messaging.' + msg['type'] + '().write(' + msg['var'] + 'Data)' + '\n'
-            testFile += '\n'
-        testFile += '    # subscribe input messages to module\n'
-        for msg in self.inMsgList:
-            testFile += '    module.' + msg['var'] + '.subscribeTo(' + msg['var'] + ')\n'
-        testFile += '\n'
-        testFile += '    # setup output message recorder objects\n'
-        for msg in self.outMsgList:
-            testFile += '    ' + msg['var'] + 'Rec = module.' + msg['var'] + '.recorder()\n'
-            testFile += '    unitTestSim.AddModelToTask(unitTaskName, ' + msg['var'] + 'Rec)\n'
-        testFile += '\n'
-        testFile += '    unitTestSim.InitializeSimulation()\n'
-        testFile += '    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))\n'
-        testFile += '    unitTestSim.ExecuteSimulation()\n'
-        testFile += '\n'
-        testFile += '    # pull module data and make sure it is correct\n'
-        testFile += '\n'
-        testFile += '    if testFailCount == 0:\n'
-        testFile += '        print("PASSED: " + module.ModelTag)\n'
-        testFile += '    else:\n'
-        testFile += '        print(testMessages)\n'
-        testFile += '\n'
-        testFile += '    return [testFailCount, "".join(testMessages)]\n'
-        testFile += '\n'
-        testFile += '\n'
-        testFile += 'if __name__ == "__main__":\n'
-        testFile += '    test_' + self.moduleName + '(False, 1, 1, 1e-12)\n'
-        testFile += '\n'
-        testFile += '\n'
+        # restore current working directory
+        os.chdir(os.path.join(pathToSrc, 'utilities'))
+        print(os.getcwd())
 
-        with open(testFileName, 'w') as w:
-            w.write(testFile)
+    def createCModule(self):
+        """
+        Create a C Basilisk module
+        """
+        modulePath = self.modulePathRelSrc
+        name = self.moduleName
+        briefDescription = self.briefDescription
+        inMsgList = self.inMsgList
+        outMsgList = self.outMsgList
+
+        print(statusColor + "\nCreating C Module: " + endColor + name)
+        self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, 1)
+
+        # read in the license information
+        self.readLicense()
+        licenseC = "/*" + self._licenseText + "*/\n\n"
+
+        # make sure the path, specified relative to basilisk/src, to the new module location is correct
+        self._absPath = os.path.join(pathToSrc, modulePath)
+        self.checkPathToNewFolderLocation()
+
+        # create new Module folder
+        self._newModuleLocation = os.path.join(self._absPath, name)
+        self.createNewModuleFolder()
+
+        #
+        # make module header file
+        #
+        headerFileName = name + ".h"
+        print(statusColor + "Creating Header File " + headerFileName + ":" + endColor, end=" ")
+        headerFile = licenseC
+        headerFile += '\n'
+        headerFile += '#ifndef ' + name.upper() + '_H\n'
+        headerFile += '#define ' + name.upper() + '_H\n'
+        headerFile += '\n'
+        headerFile += '#include <stdint.h>\n'
+        # loop over message definition includes
+        includedMsgs = []
+        for msg in inMsgList + outMsgList:
+            # ensure we don't include message definition files multiple times
+            if msg['type'] not in includedMsgs:
+                if msg['wrap'] == 'C':
+                    headerFile += '#include "cMsgCInterface/' + msg['type'] + '_C.h"\n'
+                if msg['wrap'] == 'C++':
+                    print(failColor + "Error: " + endColor + "You can't include C++ messages in a C module.")
+                    exit()
+                includedMsgs.append(msg['type'])
+        headerFile += '#include "architecture/utilities/bskLogging.h"\n'
+        headerFile += '\n'
+        headerFile += '/*! @brief ' + briefDescription + '\n */\n'
+        headerFile += 'typedef struct {\n'
+        headerFile += '\n'
+        headerFile += '    /* declare module IO interfaces */\n'
+        for msg in inMsgList:
+            headerFile += '    ' + msg['type'] + '_C ' + msg['var'] \
+                          + ';  //!< ' + msg['desc'] + '\n'
+        for msg in outMsgList:
+            headerFile += '    ' + msg['type'] + '_C ' + msg['var'] \
+                          + ';  //!< ' + msg['desc'] + '\n'
+        headerFile += '\n'
+        headerFile += '    BSKLogger *bskLogger;  //!< BSK Logging\n'
+        headerFile += '}' + name + 'Config;\n'
+        headerFile += '\n'
+        headerFile += '#ifdef __cplusplus\n'
+        headerFile += 'extern "C" {\n'
+        headerFile += '#endif\n'
+        headerFile += '    void SelfInit_' + name + '(' + name + 'Config *configData, int64_t moduleID);\n'
+        headerFile += '    void Update_' + name + '(' + name + 'Config *configData, uint64_t callTime, int64_t moduleID);\n'
+        headerFile += '    void Reset_' + name + '(' + name + 'Config *configData, uint64_t callTime, int64_t moduleID);\n'
+        headerFile += '\n'
+        headerFile += '#ifdef __cplusplus\n'
+        headerFile += '}\n'
+        headerFile += '#endif\n'
+        headerFile += '\n'
+        headerFile += '#endif\n'
+
+        with open(headerFileName, 'w') as w:
+            w.write(headerFile)
         print("Done")
 
+        #
+        # make module definition file
+        #
+        defFileName = name + ".c"
+        print(statusColor + "Creating Definition File " + defFileName + ":" + endColor, end=" ")
+        defFile = licenseC
+        defFile += '\n'
+        defFile += '#include "' + modulePath + '/' + name + '/' + name + '.h"\n'
+        defFile += '#include "string.h"\n'
+        defFile += '\n'
+        defFile += '/*!\n'
+        defFile += '    This method initializes the output messages for this module.\n'
+        defFile += ' @return void\n'
+        defFile += ' @param configData The configuration data associated with this module\n'
+        defFile += ' @param moduleID The module identifier\n'
+        defFile += ' */\n'
+        defFile += 'void SelfInit_' + name + '(' + name + 'Config  *configData, int64_t moduleID)\n'
+        defFile += '{\n'
+        for msg in outMsgList:
+            defFile += '    ' + msg['type'] + '_C_init(&configData->' + msg['var'] + ');\n'
+        defFile += '}\n'
+        defFile += '\n'
+        defFile += '\n'
+        defFile += '/*! This method performs a complete reset of the module.  Local module variables that retain\n'
+        defFile += '    time varying states between function calls are reset to their default values.\n'
+        defFile += '    Check if required input messages are connected.\n'
+        defFile += ' @return void\n'
+        defFile += ' @param configData The configuration data associated with the module\n'
+        defFile += ' @param callTime [ns] time the method is called\n'
+        defFile += ' @param moduleID The module identifier\n'
+        defFile += '*/\n'
+        defFile += 'void Reset_' + name + '(' + name + 'Config *configData, uint64_t callTime, int64_t moduleID)\n'
+        defFile += '{\n'
+        defFile += '    // check if the required message has not been connected\n'
+        for msg in inMsgList:
+            defFile += '    if (!' + msg['type'] + '_C_isLinked(&configData->' + msg['var'] + ')) {\n'
+            defFile += '        _bskLog(configData->bskLogger, BSK_ERROR, "Error: ' + name + '.' + msg['var'] \
+                       + ' was not connected.");\n'
+            defFile += '    }\n'
 
-if __name__ == "__main__":
-    makeModule = moduleGenerator()
+        defFile += '}\n'
+        defFile += '\n'
+        defFile += '\n'
+        defFile += '/*! Add a description of what this main Update() routine does for this module\n'
+        defFile += ' @return void\n'
+        defFile += ' @param configData The configuration data associated with the module\n'
+        defFile += ' @param callTime The clock time at which the function was called (nanoseconds)\n'
+        defFile += ' @param moduleID The module identifier\n'
+        defFile += '*/\n'
+        defFile += 'void Update_' + name + '(' + name + 'Config *configData, uint64_t callTime, int64_t moduleID)\n'
+        defFile += '{\n'
+        for msg in inMsgList + outMsgList:
+            defFile += '    ' + msg['type'] + 'Payload ' + msg['var'] + 'Buffer;  //!< local copy of message buffer\n'
+        defFile += '\n'
+        defFile += '    // always zero the output message buffers before assigning values\n'
+        for msg in outMsgList:
+            defFile += '    ' + msg['var'] + 'Buffer = ' + msg['type'] + '_C_zeroMsgPayload();\n'
+        defFile += '\n'
+        defFile += '    // read in the input messages\n'
+        for msg in inMsgList:
+            defFile += '    ' + msg['var'] + 'Buffer = ' + msg['type'] + '_C_read(&configData->' + msg['var'] + ');\n'
+        defFile += '\n'
+        defFile += '    // do some math and stuff to populate the output messages\n'
+        defFile += '\n'
+        defFile += '    // write to the output messages\n'
+        for msg in outMsgList:
+            defFile += '    ' + msg['type'] + '_C_write(&' + msg['var'] + 'Buffer, &configData->' + msg[
+                'var'] + ', moduleID, callTime);\n'
+        defFile += '}\n'
+        defFile += '\n'
 
+
+        with open(defFileName, 'w') as w:
+            w.write(defFile)
+        print("Done")
+
+        #
+        # make module definition file
+        #
+        swigFileName = name + ".i"
+        print(statusColor + "Creating Swig Interface File " + swigFileName + ":" + endColor, end=" ")
+        swigFile = licenseC
+        swigFile += '%module ' + name + '\n'
+        swigFile += '%{\n'
+        swigFile += '    #include "' + name + '.h"\n'
+        swigFile += '%}\n'
+        swigFile += '\n'
+        swigFile += '%pythoncode %{\n'
+        swigFile += '    from Basilisk.architecture.swig_common_model import *\n'
+        swigFile += '%}\n'
+        swigFile += '%include "swig_conly_data.i"\n'
+        swigFile += '%constant void Update_' + name + '(void*, uint64_t, uint64_t);\n'
+        swigFile += '%ignore Update_' + name + ';\n'
+        swigFile += '%constant void SelfInit_' + name + '(void*, uint64_t);\n'
+        swigFile += '%ignore SelfInit_' + name + ';\n'
+        swigFile += '%constant void Reset_' + name + '(void*, uint64_t, uint64_t);\n'
+        swigFile += '%ignore Reset_' + name + ';\n'
+        swigFile += '\n'
+        swigFile += '%include "' + name + '.h"\n'
+        swigFile += '\n'
+        includedMsgs = []
+        for msg in inMsgList + outMsgList:
+            # ensure we don't include message definition files multiple times
+            if msg['type'] not in includedMsgs:
+                if msg['wrap'] == 'C':
+                    swigFile += '%include "architecture/msgPayloadDefC/' + msg['type'] + 'Payload.h"\n'
+                    swigFile += 'struct ' + msg['type'] + '_C;\n'
+                if msg['wrap'] == 'C++':
+                    print(failColor + "ERROR: " + endColor + 'you cannot swig a C++ message in a C module.')
+                includedMsgs.append(msg['type'])
+        swigFile += '\n'
+        swigFile += '%pythoncode %{\n'
+        swigFile += 'import sys\n'
+        swigFile += 'protectAllClasses(sys.modules[__name__])\n'
+        swigFile += '%}\n'
+        swigFile += '\n'
+
+        with open(swigFileName, 'w') as w:
+            w.write(swigFile)
+        print("Done")
+
+        # make module definition file
+        self.createRstFile()
+
+        # make module unit test file
+        self.createTestFile("C")
+
+
+def fillCppInfo(module):
     # define the path where the Basilisk module folder will be
-    makeModule.modulePathRelSrc = os.path.join("simulation", "dynamics")
+    module.modulePathRelSrc = os.path.join("simulation", "dynamics")
 
     # define module name and brief description
-    makeModule.moduleName = "aaaModule"        # should be lower camel case
-    makeModule.briefDescription = "This is an auto-created sample C++ module.  The description is included with " \
+    module.moduleName = "aaaModule"        # should be lower camel case
+    module.briefDescription = "This is an auto-created sample C++ module.  The description is included with " \
         "the module class definition"
-    makeModule.copyrightHolder = "Autonomous Vehicle Systems Lab, University of Colorado Boulder"
+    module.copyrightHolder = "Autonomous Vehicle Systems Lab, University of Colorado Boulder"
 
     # provide list of input messages
     # leave list empty if there are no input messages
@@ -429,17 +651,50 @@ if __name__ == "__main__":
     inMsgList.append({'type': 'AttRefMsg', 'var': 'someInMsg', 'desc': 'input msg description', 'wrap': 'C'})
     inMsgList.append({'type': 'AttRefMsg', 'var': 'some2InMsg', 'desc': 'input msg description', 'wrap': 'C'})
     inMsgList.append({'type': 'CSSConfigMsg', 'var': 'anotherInMsg', 'desc': 'input msg description', 'wrap': 'C'})
-    inMsgList.append({'type': 'VSCMGConfigMsg', 'var': 'someCppInMsg', 'desc': 'input msg description', 'wrap': 'C++'})
+    inMsgList.append({'type': 'THROperationMsg', 'var': 'someCppInMsg', 'desc': 'input msg description', 'wrap': 'C++'})
     inMsgList.append({'type': 'CSSConfigLogMsg', 'var': 'anotherCppInMsg', 'desc': 'input msg description', 'wrap': 'C++'})
-    makeModule.inMsgList = inMsgList
+    module.inMsgList = inMsgList
 
     # provide list of output messages
     # leave list empty if there are no input messages
     outMsgList = list()
     outMsgList.append({'type': 'AttRefMsg', 'var': 'some2OutMsg', 'desc': 'output msg description', 'wrap': 'C'})
     outMsgList.append({'type': 'SCStatesMsg', 'var': 'someOutMsg', 'desc': 'output msg description', 'wrap': 'C'})
-    outMsgList.append({'type': 'VSCMGConfigMsg', 'var': 'someCppOutMsg', 'desc': 'output msg description', 'wrap': 'C++'})
+    outMsgList.append({'type': 'THROperationMsg', 'var': 'someCppOutMsg', 'desc': 'output msg description', 'wrap': 'C++'})
     outMsgList.append({'type': 'RWConfigMsg', 'var': 'anotherCppOutMsg', 'desc': 'output msg description', 'wrap': 'C++'})
-    makeModule.outMsgList = outMsgList
+    module.outMsgList = outMsgList
 
+def fillCInfo(module):
+    # define the path where the Basilisk module folder will be
+    module.modulePathRelSrc = os.path.join("fswAlgorithms", "_cModuleTemplateFolder")
+
+    # define module name and brief description
+    module.moduleName = "aaaCModule"        # should be lower camel case
+    module.briefDescription = "This is an auto-created sample C module.  The description is included with " \
+        "the module class definition"
+    module.copyrightHolder = "Autonomous Vehicle Systems Lab, University of Colorado Boulder"
+
+    # provide list of input messages
+    # leave list empty if there are no input messages
+    inMsgList = list()
+    inMsgList.append({'type': 'AttRefMsg', 'var': 'someInMsg', 'desc': 'input msg description', 'wrap': 'C'})
+    inMsgList.append({'type': 'AttRefMsg', 'var': 'some2InMsg', 'desc': 'input msg description', 'wrap': 'C'})
+    inMsgList.append({'type': 'CSSConfigMsg', 'var': 'anotherInMsg', 'desc': 'input msg description', 'wrap': 'C'})
+    module.inMsgList = inMsgList
+
+    # provide list of output messages
+    # leave list empty if there are no input messages
+    outMsgList = list()
+    outMsgList.append({'type': 'AttRefMsg', 'var': 'some2OutMsg', 'desc': 'output msg description', 'wrap': 'C'})
+    outMsgList.append({'type': 'SCStatesMsg', 'var': 'someOutMsg', 'desc': 'output msg description', 'wrap': 'C'})
+    module.outMsgList = outMsgList
+
+
+if __name__ == "__main__":
+    makeModule = moduleGenerator()
+
+    fillCppInfo(makeModule)
     makeModule.createCppModule()
+
+    fillCInfo(makeModule)
+    makeModule.createCModule()
