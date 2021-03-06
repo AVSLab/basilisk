@@ -14,6 +14,16 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+"""
+This script is used to create a Basilisk module folder given the basic I/O and naming information.
+
+- Modify either ``fillCppInfo()`` or ``fillCInfo()`` to contain the desired information for the new BSK module.
+- edit the ``__main__`` routine at the end of the file to call the desired module type with
+  ``createCppModule()`` or ``createCModule``.
+- run the script from the command line using ``python3 makeDraftModule.py``
+
+"""
+
 import os
 import shutil
 from datetime import datetime
@@ -22,17 +32,15 @@ import re
 # assumes this script is in .../basilisk/src/utilities
 pathToSrc = os.path.dirname(os.path.dirname(__file__))
 
-"""
-This script is used to create a Basilisk module folder given the basic I/O and naming information.
-
-"""
-
 statusColor = '\033[92m'
 failColor = '\033[91m'
 warningColor = '\033[93m'
 endColor = '\033[0m'
 
 class moduleGenerator:
+    """
+    class to generate draft Basilisk modules
+    """
     def __init__(self):
         # the following variables must be set for this module generator to function
         self.modulePathRelSrc = None  # path to the new module folder relative to basilisk/src
@@ -41,6 +49,9 @@ class moduleGenerator:
         self.copyrightHolder = None  # holder of open source copyright
         self.inMsgList = []  # list of input message dictionary list
         self.outMsgList = []  # list of input message dictionary list
+
+        # module behavior flags
+        self.cleanBuild = False  # flag if any prior directories should be deleted automatically
 
         # private class variables
         self._absPath = None  # absolute path to the folder which will contain the module folder
@@ -59,6 +70,7 @@ class moduleGenerator:
             print(self._absPath)
             exit()
         print("Done")
+        print(self._absPath)
 
     def createNewModuleFolder(self):
         """
@@ -66,14 +78,14 @@ class moduleGenerator:
         """
         print(statusColor + "Creating Module Folder:" + endColor, end=" ")
         if os.path.isdir(self._newModuleLocation):
-            print("\n" + warningColor + "WARNING: " + endColor + "The new module destination already exists." )
-            ans = input("Do you want to delete this folder and recreate? (y or n): ")
-            if ans == "y":
-                print("Cleared the old folder.")
-                shutil.rmtree(self._newModuleLocation)
-            else:
-                print(failColor + "Aborting module creation." + endColor)
-                exit()
+            print("\n" + warningColor + "WARNING: " + endColor + "The new module destination already exists.")
+            if not self.cleanBuild:
+                ans = input("Do you want to delete this folder and recreate? (y or n): ")
+                if ans != "y":
+                    print(failColor + "Aborting module creation." + endColor)
+                    exit()
+            print("Cleared the old folder.")
+            shutil.rmtree(self._newModuleLocation)
         else:
             print("Done")
         os.mkdir(self._newModuleLocation)
@@ -91,6 +103,7 @@ class moduleGenerator:
         print("Done")
 
     def createRstFile(self):
+        """Create the Module RST documentation draft."""
         rstFileName = self.moduleName + ".rst"
         print(statusColor + "Creating RST Documentation File " + rstFileName + ":" + endColor, end=" ")
         rstFile = 'Executive Summary\n'
@@ -122,6 +135,10 @@ class moduleGenerator:
         print("Done")
 
     def createTestFile(self, type):
+        """
+            Create a functioning python unit test file that loads the new module, creates and connect blank
+            input messages, and sets up recorder modules for each output message.
+        """
         os.mkdir('_UnitTest')
         os.chdir('_UnitTest')
         testFileName = "test_" + self.moduleName + ".py"
@@ -244,7 +261,7 @@ class moduleGenerator:
         inMsgList = self.inMsgList
         outMsgList = self.outMsgList
 
-        print(statusColor + "\nCreating C++ Module: " + endColor + name)
+        print(statusColor + '\nCreating C++ Module: ' + endColor + name)
         self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, 1)
 
         # read in the license information
@@ -425,7 +442,6 @@ class moduleGenerator:
 
         # restore current working directory
         os.chdir(os.path.join(pathToSrc, 'utilities'))
-        print(os.getcwd())
 
     def createCModule(self):
         """
@@ -636,11 +652,12 @@ class moduleGenerator:
 
 
 def fillCppInfo(module):
+    """Fill in the C++ module information.  This should be edited before running to meet the new module needs."""
     # define the path where the Basilisk module folder will be
-    module.modulePathRelSrc = os.path.join("simulation", "dynamics")
+    module.modulePathRelSrc = os.path.join("moduleTemplates", "")
 
     # define module name and brief description
-    module.moduleName = "aaaModule"        # should be lower camel case
+    module.moduleName = "autoCppModule"        # should be lower camel case
     module.briefDescription = "This is an auto-created sample C++ module.  The description is included with " \
         "the module class definition"
     module.copyrightHolder = "Autonomous Vehicle Systems Lab, University of Colorado Boulder"
@@ -664,12 +681,14 @@ def fillCppInfo(module):
     outMsgList.append({'type': 'RWConfigMsg', 'var': 'anotherCppOutMsg', 'desc': 'output msg description', 'wrap': 'C++'})
     module.outMsgList = outMsgList
 
+
 def fillCInfo(module):
+    """Fill in the C module information.  This should be edited before running to meet the new module needs."""
     # define the path where the Basilisk module folder will be
-    module.modulePathRelSrc = os.path.join("fswAlgorithms", "_cModuleTemplateFolder")
+    module.modulePathRelSrc = os.path.join("moduleTemplates", "")
 
     # define module name and brief description
-    module.moduleName = "aaaCModule"        # should be lower camel case
+    module.moduleName = "autoCModule"        # should be lower camel case
     module.briefDescription = "This is an auto-created sample C module.  The description is included with " \
         "the module class definition"
     module.copyrightHolder = "Autonomous Vehicle Systems Lab, University of Colorado Boulder"
@@ -692,6 +711,8 @@ def fillCInfo(module):
 
 if __name__ == "__main__":
     makeModule = moduleGenerator()
+
+    makeModule.cleanBuild = True
 
     fillCppInfo(makeModule)
     makeModule.createCppModule()

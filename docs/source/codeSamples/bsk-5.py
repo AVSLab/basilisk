@@ -19,7 +19,7 @@
 import sys
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.simulation import cppModuleTemplate
+from Basilisk.moduleTemplates import cppModuleTemplate
 from Basilisk.architecture import messaging
 from Basilisk.utilities import unitTestSupport
 import matplotlib.pyplot as plt

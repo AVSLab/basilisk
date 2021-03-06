@@ -36,6 +36,8 @@ src/utilities/vizProtobuffer/vizMessage.pb.h
 externalTools/fswAuto/autosetter/sets/*
 externalTools/fswAuto/autowrapper/wraps/*
 **/outputFiles/*
+src/moduleTemplates/autoCModule/*
+src/moduleTemplates/autoCppModule/*
 
 *.fdb_latexmk
 *.fls

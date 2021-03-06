@@ -18,8 +18,8 @@
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import cModuleTemplate
-from Basilisk.simulation import cppModuleTemplate
+from Basilisk.moduleTemplates import cModuleTemplate
+from Basilisk.moduleTemplates import cppModuleTemplate
 from Basilisk.architecture import messaging
 
 

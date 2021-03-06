@@ -43,7 +43,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.simulation import cppModuleTemplate                # import the module that is to be tested
+from Basilisk.moduleTemplates import cppModuleTemplate                # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging                      # import the message definitions
 from Basilisk.architecture import bskLogging

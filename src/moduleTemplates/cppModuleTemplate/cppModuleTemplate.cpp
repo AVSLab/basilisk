@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/cppModuleTemplate/cppModuleTemplate.h"
+#include "moduleTemplates/cppModuleTemplate/cppModuleTemplate.h"
 #include <iostream>
 #include <cstring>
 #include "architecture/utilities/avsEigenSupport.h"

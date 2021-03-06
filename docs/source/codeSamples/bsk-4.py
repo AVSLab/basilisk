@@ -19,7 +19,7 @@
 import sys
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import cModuleTemplate
+from Basilisk.moduleTemplates import cModuleTemplate
 from Basilisk.architecture import messaging
 
 from Basilisk.utilities import unitTestSupport

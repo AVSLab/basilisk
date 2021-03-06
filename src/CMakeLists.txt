@@ -536,7 +536,6 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/navigation" NAV_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sensors" SENSORS_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simSynch" SIM_SYNCH_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizard" VIZ_INTERFACE_TARGETS)
-find_package_targets("${CMAKE_SOURCE_DIR}/simulation/cppModuleTemplate" CPP_MODULE_TEMPLATE_TARGETS)
 
 if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 	string(REPLACE "\\" "/" EXTERNAL_MODULES_PATH "${EXTERNAL_MODULES_PATH}")
@@ -559,7 +558,6 @@ generate_package_targets("${NAV_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${SENSORS_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${SIM_SYNCH_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${VIZ_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-generate_package_targets("${CPP_MODULE_TEMPLATE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
 
 
@@ -567,7 +565,6 @@ generate_package_targets("${CPP_MODULE_TEMPLATE_TARGETS}" "${ARCHITECTURE_LIBS};
 ##################
 # FSW ALGORITHMS #
 ##################
-find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/_cModuleTemplateFolder" C_TEMPLATE_MODULE_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attControl" ATT_CONTROL_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attDetermination" ATT_DET_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attGuidance" ATT_GUID_TARGETS)
@@ -583,7 +580,6 @@ find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/transDetermination" TRAN
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/vehicleConfigData" VEH_CONFIG_TARGETS)
 
 
-generate_package_targets("${C_TEMPLATE_MODULE_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_CONTROL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_DET_TARGETS}" "attDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_GUID_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
@@ -597,6 +593,14 @@ generate_package_targets("${RW_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgo
 generate_package_targets("${SENSOR_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${TRANS_DET_TARGETS}" "transDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${VEH_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+
+
+####################
+# TEMPLATE MODULES #
+####################
+find_package_targets("${CMAKE_SOURCE_DIR}/moduleTemplates" TEMPLATE_MODULES_TARGETS)
+
+generate_package_targets("${TEMPLATE_MODULES_TARGETS}" "${ARCHITECTURE_LIBS};" "moduleTemplates")
 
 
 ##################
