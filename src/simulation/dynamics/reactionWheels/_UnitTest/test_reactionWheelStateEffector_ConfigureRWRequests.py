@@ -44,7 +44,8 @@ def listStack(vec,simStopTime,unitProcRate):
 
 def writeNewRWCmds(self, u_cmd, numRW):
     # create standard vector from SWIG template (see .i file)
-    NewRWCmdsVec = reactionWheelStateEffector.RWCmdVector(numRW)
+    NewRWCmdsVec = messaging.RWCmdMsgPayloadVector(numRW)
+
     cmds = messaging.RWCmdMsgPayload()
     for i in range(0, numRW):
         cmds.u_cmd = u_cmd[i]
