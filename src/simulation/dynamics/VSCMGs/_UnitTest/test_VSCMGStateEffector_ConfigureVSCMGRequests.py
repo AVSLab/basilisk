@@ -37,7 +37,7 @@ def listStack(vec,simStopTime,unitProcRate):
     return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
 
 def writeNewVSCMGCmds(self,u_s_cmd,u_g_cmd,numVSCMG):
-    NewVSCMGCmdsVec = vscmgStateEffector.VSCMGCmdVector(numVSCMG)
+    NewVSCMGCmdsVec = messaging.VSCMGCmdMsgPayloadVector(numVSCMG)
     cmds = messaging.VSCMGCmdMsgPayload()
     for i in range(0,numVSCMG):
         cmds.u_s_cmd = u_s_cmd[i]
@@ -118,12 +118,10 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
     for i in range(0,numVSCMG):
         msg = messaging.VSCMGConfigMsgPayload()
         defaultVSCMG(msg)
-        msg.theta = i
         VSCMGs.append(msg)
 
     expOut = dict()  # expected output
 
-    print(testCase)
     if testCase == 'basic':
         pass
 
@@ -183,12 +181,9 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
     if not 'accuracy' in vars():
         accuracy = 1e-10
-    print("HPS")
-    print(VSCMG.VSCMGData[0].theta)
+
     for outputName in list(expOut.keys()):
-        print(outputName)
         for i in range(0,numVSCMG):
-            print("HPS: " + str(i))
             if expOut[outputName][i] != getattr(VSCMG.VSCMGData[i], outputName):
                 print("expected: " + str(expOut[outputName][i]))
                 print("got :" + str(getattr(VSCMG.VSCMGData[i], outputName)))
