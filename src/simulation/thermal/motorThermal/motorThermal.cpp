@@ -78,7 +78,7 @@ void MotorThermal::Reset(uint64_t CurrentSimNanos)
     }
 
     //!< reset the previous time
-    this->prevTime = CurrrentSimNanos;
+    this->prevTime = CurrentSimNanos;
 
     //!< zero the incoming message buffer
     this->rwStateBuffer = this->rwStateInMsg.zeroMsgPayload;
