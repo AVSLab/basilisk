@@ -35,6 +35,7 @@ Version |release|
 -----------------
 - Added the ability to clear the data of a message recorder using ``.clear()``
 - Fixed a rare issue where RW data didn't stick
+- Fixed an issue subscribing to a C++ wrapped message object from python
 - Cleaned up documentation on using datashaders and bokeh to interactively plot large simulation data sets.
   The script :ref:`scenarioAnalyzeMonteCarlo` is updated to discuss the particular challenges in running this
   datashader example of plotting data.
@@ -63,6 +64,8 @@ Version |release|
   output message recorders.  The coder can then take this draft module code and modify to achieve the desired
   functionality.  The page :ref:`Folder_moduleTemplates` discusses how to use it and provides to 2 sample
   auto-generated modules that get created inside ``src/moduleTemplates`` with ``python conanfile.py``.
+
+
 
 Version 2.0.0
 -------------
