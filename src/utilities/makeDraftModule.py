@@ -53,60 +53,69 @@ class moduleGenerator:
 
         # module behavior flags
         self.cleanBuild = False  # flag if any prior directories should be deleted automatically
+        self.verbose = True  # flag if the status messages should be printed
 
         # private class variables
         self._absPath = None  # absolute path to the folder which will contain the module folder
         self._newModuleLocation = None  # absolute path to the auto-generated Basilisk module folder
         self._licenseText = None  # BSK open-source license statement
 
+    def log(self, statement, **kwargs):
+        if self.verbose:
+            if 'end' in kwargs:
+                endString = kwargs['end']
+                print(statement, end=endString)
+            else:
+                print(statement)
+
     def checkPathToNewFolderLocation(self):
         """
         Make sure the supplied module destination path is correct
         """
-        print(statusColor + "Checking Module location:" + endColor, end=" ")
+        self.log(statusColor + "Checking Module location:" + endColor, end=" ")
         if os.path.isdir(self._absPath):
             os.chdir(self._absPath)
         else:
-            print(failColor + "\nERROR: " + endColor + "Incorrect path to the new folder:")
-            print(self._absPath)
+            self.log(failColor + "\nERROR: " + endColor + "Incorrect path to the new folder:")
+            self.log(self._absPath)
             exit()
-        print("Done")
-        print(self._absPath)
+        self.log("Done")
+        self.log(self._absPath)
 
     def createNewModuleFolder(self):
         """
         Create the new module folder
         """
-        print(statusColor + "Creating Module Folder:" + endColor, end=" ")
+        self.log(statusColor + "Creating Module Folder:" + endColor, end=" ")
         if os.path.isdir(self._newModuleLocation):
-            print("\n" + warningColor + "WARNING: " + endColor + "The new module destination already exists.")
+            self.log("\n" + warningColor + "WARNING: " + endColor + "The new module destination already exists.")
             if not self.cleanBuild:
                 ans = input("Do you want to delete this folder and recreate? (y or n): ")
                 if ans != "y":
-                    print(failColor + "Aborting module creation." + endColor)
+                    self.log(failColor + "Aborting module creation." + endColor)
                     exit()
-            print("Cleared the old folder.")
+            self.log("Cleared the old folder.")
             shutil.rmtree(self._newModuleLocation)
         else:
-            print("Done")
+            self.log("Done")
         os.mkdir(self._newModuleLocation)
         os.chdir(self._newModuleLocation)
 
     def readLicense(self):
         """Read the Basilisk license file"""
-        print(statusColor + "Importing License:" + endColor, end=" ")
+        self.log(statusColor + "Importing License:" + endColor, end=" ")
         with open(pathToSrc + "/../LICENSE", 'r') as f:
             self._licenseText = f.read()
             self._licenseText = self._licenseText.replace("2016", str(datetime.now().year))
             self._licenseText = self._licenseText.replace(
                 "Autonomous Vehicle Systems Lab, University of Colorado at Boulder",
                 self.copyrightHolder)
-        print("Done")
+        self.log("Done")
 
     def createRstFile(self):
         """Create the Module RST documentation draft."""
         rstFileName = self.moduleName + ".rst"
-        print(statusColor + "Creating RST Documentation File " + rstFileName + ":" + endColor, end=" ")
+        self.log(statusColor + "Creating RST Documentation File " + rstFileName + ":" + endColor, end=" ")
         rstFile = 'Executive Summary\n'
         rstFile += '-----------------\n'
         rstFile += self.briefDescription + '\n'
@@ -133,7 +142,7 @@ class moduleGenerator:
 
         with open(rstFileName, 'w') as w:
             w.write(rstFile)
-        print("Done")
+        self.log("Done")
 
     def createTestFile(self, type):
         """
@@ -143,7 +152,7 @@ class moduleGenerator:
         os.mkdir('_UnitTest')
         os.chdir('_UnitTest')
         testFileName = "test_" + self.moduleName + ".py"
-        print(statusColor + "Creating Python Init Test File " + testFileName + ":" + endColor, end=" ")
+        self.log(statusColor + "Creating Python Init Test File " + testFileName + ":" + endColor, end=" ")
         testFile = ""
         for line in self._licenseText.split('\n'):
             testFile += '# ' + line + '\n'
@@ -212,7 +221,7 @@ class moduleGenerator:
             testFile += '    moduleWrap.ModelTag = "' + self.moduleName + 'Tag"\n'
             testFile += '    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)\n'
         else:
-            print(failColor + "ERROR: " + endColor + "Wrong module type provided to test file method.")
+            self.log(failColor + "ERROR: " + endColor + "Wrong module type provided to test file method.")
             exit(0)
         testFile += '\n'
         testFile += '    # Configure blank module input messages\n'
@@ -250,7 +259,7 @@ class moduleGenerator:
 
         with open(testFileName, 'w') as w:
             w.write(testFile)
-        print("Done")
+        self.log("Done")
 
     def createCppModule(self):
         """
@@ -262,7 +271,7 @@ class moduleGenerator:
         inMsgList = self.inMsgList
         outMsgList = self.outMsgList
 
-        print(statusColor + '\nCreating C++ Module: ' + endColor + name)
+        self.log(statusColor + '\nCreating C++ Module: ' + endColor + name)
         self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, 1)
 
         # read in the license information
@@ -281,7 +290,7 @@ class moduleGenerator:
         # make module header file
         #
         headerFileName = name + ".h"
-        print(statusColor + "Creating Header File " + headerFileName + ":" + endColor, end=" ")
+        self.log(statusColor + "Creating Header File " + headerFileName + ":" + endColor, end=" ")
         headerFile = licenseC
         headerFile += '\n'
         headerFile += '#ifndef ' + name.upper() + '_H\n'
@@ -327,13 +336,13 @@ class moduleGenerator:
 
         with open(headerFileName, 'w') as w:
             w.write(headerFile)
-        print("Done")
+        self.log("Done")
 
         #
         # make module definition file
         #
         defFileName = name + ".cpp"
-        print(statusColor + "Creating Definition File " + defFileName + ":" + endColor, end=" ")
+        self.log(statusColor + "Creating Definition File " + defFileName + ":" + endColor, end=" ")
         defFile = licenseC
         defFile += '\n'
         defFile += '#include "' + modulePath + '/' + name + '/' + name + '.h"\n'
@@ -392,13 +401,13 @@ class moduleGenerator:
 
         with open(defFileName, 'w') as w:
             w.write(defFile)
-        print("Done")
+        self.log("Done")
 
         #
-        # make module definition file
+        # make module swig interface file
         #
         swigFileName = name + ".i"
-        print(statusColor + "Creating Swig Interface File " + swigFileName + ":" + endColor, end=" ")
+        self.log(statusColor + "Creating Swig Interface File " + swigFileName + ":" + endColor, end=" ")
         swigFile = licenseC
         swigFile += '%module ' + name + '\n'
         swigFile += '%{\n'
@@ -433,7 +442,7 @@ class moduleGenerator:
 
         with open(swigFileName, 'w') as w:
             w.write(swigFile)
-        print("Done")
+        self.log("Done")
 
         # make module definition file
         self.createRstFile()
@@ -454,7 +463,7 @@ class moduleGenerator:
         inMsgList = self.inMsgList
         outMsgList = self.outMsgList
 
-        print(statusColor + "\nCreating C Module: " + endColor + name)
+        self.log(statusColor + "\nCreating C Module: " + endColor + name)
         self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, 1)
 
         # read in the license information
@@ -473,7 +482,7 @@ class moduleGenerator:
         # make module header file
         #
         headerFileName = name + ".h"
-        print(statusColor + "Creating Header File " + headerFileName + ":" + endColor, end=" ")
+        self.log(statusColor + "Creating Header File " + headerFileName + ":" + endColor, end=" ")
         headerFile = licenseC
         headerFile += '\n'
         headerFile += '#ifndef ' + name.upper() + '_H\n'
@@ -488,7 +497,7 @@ class moduleGenerator:
                 if msg['wrap'] == 'C':
                     headerFile += '#include "cMsgCInterface/' + msg['type'] + '_C.h"\n'
                 if msg['wrap'] == 'C++':
-                    print(failColor + "Error: " + endColor + "You can't include C++ messages in a C module.")
+                    self.log(failColor + "Error: " + endColor + "You can't include C++ messages in a C module.")
                     exit()
                 includedMsgs.append(msg['type'])
         headerFile += '#include "architecture/utilities/bskLogging.h"\n'
@@ -522,13 +531,13 @@ class moduleGenerator:
 
         with open(headerFileName, 'w') as w:
             w.write(headerFile)
-        print("Done")
+        self.log("Done")
 
         #
         # make module definition file
         #
         defFileName = name + ".c"
-        print(statusColor + "Creating Definition File " + defFileName + ":" + endColor, end=" ")
+        self.log(statusColor + "Creating Definition File " + defFileName + ":" + endColor, end=" ")
         defFile = licenseC
         defFile += '\n'
         defFile += '#include "' + modulePath + '/' + name + '/' + name + '.h"\n'
@@ -598,13 +607,13 @@ class moduleGenerator:
 
         with open(defFileName, 'w') as w:
             w.write(defFile)
-        print("Done")
+        self.log("Done")
 
         #
-        # make module definition file
+        # make module swig interface file
         #
         swigFileName = name + ".i"
-        print(statusColor + "Creating Swig Interface File " + swigFileName + ":" + endColor, end=" ")
+        self.log(statusColor + "Creating Swig Interface File " + swigFileName + ":" + endColor, end=" ")
         swigFile = licenseC
         swigFile += '%module ' + name + '\n'
         swigFile += '%{\n'
@@ -632,7 +641,7 @@ class moduleGenerator:
                     swigFile += '%include "architecture/msgPayloadDefC/' + msg['type'] + 'Payload.h"\n'
                     swigFile += 'struct ' + msg['type'] + '_C;\n'
                 if msg['wrap'] == 'C++':
-                    print(failColor + "ERROR: " + endColor + 'you cannot swig a C++ message in a C module.')
+                    self.log(failColor + "ERROR: " + endColor + 'you cannot swig a C++ message in a C module.')
                 includedMsgs.append(msg['type'])
         swigFile += '\n'
         swigFile += '%pythoncode %{\n'
@@ -643,7 +652,7 @@ class moduleGenerator:
 
         with open(swigFileName, 'w') as w:
             w.write(swigFile)
-        print("Done")
+        self.log("Done")
 
         # make module definition file
         self.createRstFile()
@@ -714,8 +723,6 @@ def fillCInfo(module):
 
 if __name__ == "__main__":
     makeModule = moduleGenerator()
-
-    makeModule.cleanBuild = True
 
     fillCppInfo(makeModule)
     makeModule.createCppModule()

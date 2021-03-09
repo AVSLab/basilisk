@@ -319,12 +319,12 @@ if __name__ == "__main__":
     print(statusColor + "Auto-Generating Draft Modules... " + endColor, end=" ")
     genMod = makeDraftModule.moduleGenerator()
     genMod.cleanBuild = True
+    genMod.verbose = False
     makeDraftModule.fillCppInfo(genMod)
     genMod.createCppModule()
     makeDraftModule.fillCInfo(genMod)
     genMod.createCModule()
     print("Done")
-
 
     # run conan install
     conanCmdString = list()
