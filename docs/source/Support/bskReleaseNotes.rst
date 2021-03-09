@@ -42,7 +42,27 @@ Version |release|
 - enable opNav scenario ``pytest`` test scripts to be tested by ``pytest`` if the build flag ``--opNav``
   is set to true and the path to :ref:`Vizard <vizard>` application is set in :ref:`BSK_OpNav`.
 - fixed an issue that prevented subscribing to a C++ msg from python
+- moved :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` to a common folder ``src/moduleTemplates``.  The
+  associated HTML documentation now appears inside the ``Documentation`` tab under ``moduleTemplates``.
+- added the ``src/utilities/makeDraftModule.py`` script that is able to create a draft module template given
 
+    - module name
+    - module description
+    - module location
+    - list of module input or output messages containing
+
+      - message variable name
+      - message payload definition
+      - message description
+      - message type (ie. ``C`` or ``C++``)
+
+  The script then generates either a C or C++ module folder that contains the elemental ``*.c/cpp``, ``*.h``, ``*.i``
+  code which compiles into a functioning prototype module.  Also included are the module ``*.rst`` file which provides
+  the basic description and message table (including hyperlinks to message payload type and message description),
+  as well as a functioning python unit test that loads the module, connects zero'd input messages and sets up
+  output message recorders.  The coder can then take this draft module code and modify to achieve the desired
+  functionality.  The page :ref:`Folder_moduleTemplates` discusses how to use it and provides to 2 sample
+  auto-generated modules that get created inside ``src/moduleTemplates`` with ``python conanfile.py``.
 
 Version 2.0.0
 -------------

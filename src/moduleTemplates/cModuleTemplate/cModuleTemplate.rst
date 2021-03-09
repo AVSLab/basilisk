@@ -11,7 +11,7 @@ user from python.  The msg type contains a link to the message structure definit
 provides information on what this message is used for.
 
 .. _ModuleIO_FSW_MODULE_TEMPLATE:
-.. figure:: /../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Images/moduleIOcModuleTemplate.svg
+.. figure:: /../../src/moduleTemplates/cModuleTemplate/_Documentation/Images/moduleIOcModuleTemplate.svg
     :align: center
 
     Figure 1: ``cModuleTemplate()`` Module I/O Illustration
@@ -90,10 +90,10 @@ More details on how to typeset TeX math in Sphinx can be found `here <https://do
 
 If the module description requires extensive math discussion, this can be TeX'd up using the technical note
 template inside the ``_Documentation`` folder. A link should be included in the HTML documentation to
-the :download:`Detailed PDF Documentation </../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`
+the :download:`Detailed PDF Documentation </../../src/moduleTemplates/cModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`
 using the code::
 
-    :download:`Detailed PDF Documentation </../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`
+    :download:`Detailed PDF Documentation </../../src/moduleTemplates/cModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`
 
 The PDF technical should only be used as a last resort effort if the math is simply too complex and long to
 include in the `spinx` documentation.  Another option is to link to a web site, conference paper, journal
