@@ -39,13 +39,13 @@ public:
     void computeTemperature(uint64_t CurrentSimNanos);
 
 public:
-    Message<TemperatureMsgPayload> temperatureOutMsg;   //!< [ºC] temperature output message
+    Message<TemperatureMsgPayload> temperatureOutMsg;   //!< [Celsius] temperature output message
     ReadFunctor<RWConfigLogMsgPayload> rwStateInMsg;   //!< reaction wheel state input message
     double efficiency;                  //!< efficiency factor to convert power into mechanical power
-    double currentTemperature;          //!< [ºC] stored temperature
-    double ambientTemperature;          //!< [ºC] ambient temperature for heat dissipation
-    double ambientThermalResistance;    //!< [W/ºC] ambient thermal resistance to convert heat into temperature
-    double motorHeatCapacity;           //!< [J/ºC] motor heat caapcity to convert heat into temperature
+    double currentTemperature;          //!< [Celsius] stored temperature
+    double ambientTemperature;          //!< [Celsius] ambient temperature for heat dissipation
+    double ambientThermalResistance;    //!< [W/Celsius] ambient thermal resistance to convert heat into temperature
+    double motorHeatCapacity;           //!< [J/Celsius] motor heat caapcity to convert heat into temperature
     BSKLogger bskLogger;                //!< -- BSK Logging
 
 private:

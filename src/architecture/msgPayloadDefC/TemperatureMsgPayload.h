@@ -24,7 +24,9 @@
 
  /*! @brief Message for reporting the power consumed produced or consumed by a module.*/
 typedef struct {
-    double temperature;               //!< [ºC] current temperature
+    double temperature;               //!< [Celsius] current temperature
 }TemperatureMsgPayload;
+
+
 #endif //TEMPERATURE_H
 
