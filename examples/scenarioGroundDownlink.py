@@ -217,7 +217,7 @@ def run(show_plots):
                                               # , saveFile=__file__
                                               )
     vizSupport.addLocation(viz, stationName="Boulder Station"
-                           , parentBodyName='earth'
+                           , parentBodyName='earth_planet_data'
                            , r_GP_P=groundStation.r_LP_P_Init
                            , fieldOfView=np.radians(160.)
                            , color='pink'
