@@ -142,6 +142,8 @@ typedef struct messageType;
 %array_functions(THRConfigMsgPayload, ThrustConfigArray);
 %array_functions(RWConfigElementMsgPayload, RWConfigArray);
 
+%template(Eigen3dVector) std::vector<Eigen::Vector3d>;
+
 %template(RWConfigLogOutMsgsVector) std::vector<Message<RWConfigLogMsgPayload>*>;
 %template(SpicePlanetStateOutMsgsVector) std::vector<Message<SpicePlanetStateMsgPayload>*>;
 %template(AtmoPropsOutMsgsVector) std::vector<Message<AtmoPropsMsgPayload>*>;
@@ -154,6 +156,8 @@ typedef struct messageType;
 %template(AccessOutMsgsVector) std::vector<Message<AccessMsgPayload>*>;
 %template(MagneticFieldOutMsgsVector) std::vector<Message<MagneticFieldMsgPayload>*>;
 %template(AlbedoOutMsgsVector) std::vector<Message<AlbedoMsgPayload>*>;
+%template(ExtTorqueOutMsgsVector) std::vector<Message<CmdTorqueBodyMsgPayload>*>;
+%template(ExtBodyForceOutMsgsVector) std::vector<Message<CmdForceBodyMsgPayload>*>;
 %template(THROutputOutMsgsVectorVector) std::vector <std::vector <Message<THROutputMsgPayload>*>>;
 %template(RWConfigLogOutMsgsVectorVector) std::vector <std::vector <Message<RWConfigLogMsgPayload>*>>;
 
@@ -167,6 +171,8 @@ typedef struct messageType;
 %template(RWConfigLogInMsgsVector) std::vector<ReadFunctor<RWConfigLogMsgPayload>>;
 %template(THROutputInMsgsVector) std::vector<ReadFunctor<THROutputMsgPayload>>;
 %template(CSSConfigLogInMsgsVector) std::vector<ReadFunctor<CSSConfigLogMsgPayload>>;
+%template(VolgateInMsgsVector) std::vector<ReadFunctor<VoltageMsgPayload>>;
+
 
 %include "messaging.h"
 

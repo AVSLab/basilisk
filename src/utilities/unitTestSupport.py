@@ -415,6 +415,14 @@ def np2EigenVectorXd(vec):
 
     return npVec
 
+def npList2EigenXdVector(list):
+    """Conver a list of arrays to a list of eigen values"""
+    eigenList = messaging.Eigen3dVector(len(list))
+    c = 0
+    for pos in list:
+        eigenList[c] = np2EigenVectorXd(pos)
+        c += 1
+    return eigenList
 
 def EigenVector3d2np(eig):
     """convert Eigen vector3d to numpy"""

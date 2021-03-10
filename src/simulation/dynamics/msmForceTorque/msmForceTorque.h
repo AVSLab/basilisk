@@ -1,0 +1,66 @@
+/*
+ ISC License
+
+ Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
+
+ Permission to use, copy, modify, and/or distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+*/
+
+
+#ifndef MSMFORCETORQUE_H
+#define MSMFORCETORQUE_H
+
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/VoltageMsgPayload.h"
+#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/messaging/messaging.h"
+#include <vector>
+#include <Eigen/Dense>
+
+/*! @brief This module uses the Multi-Sphere-Method (MSM) to evaluate the mutual electrostatic force and torque interactions between a series of spacecraft object.  The charging is specified through a voltage where the object is assumed to have aconstant voltaged across the surface.  The MSM model for each space object is given through a list of body-fixed sphere locations and sphere radii.  See `Multi-Sphere Method for Modeling Electrostatic Forces and Torques <http://dx.doi.org/10.2514/1.52185>`__ for more information on the MSM method.
+ */
+class MsmForceTorque: public SysModel {
+public:
+    MsmForceTorque();
+    ~MsmForceTorque();
+
+    void Reset(uint64_t CurrentSimNanos);
+    void UpdateState(uint64_t CurrentSimNanos);
+    void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg, std::vector<double> radii, std::vector<Eigen::Vector3d> r_SB_B);
+
+private:
+    void readMessages();
+    
+public:
+    std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs;  //!< vector of spacecraft state input messages
+    std::vector<ReadFunctor<VoltageMsgPayload>> voltInMsgs;  //!< vector of voltage input messages
+
+    std::vector<Message<CmdTorqueBodyMsgPayload>*> eTorqueOutMsgs;  //!< vector of E-torques in body frame components
+    std::vector<Message<CmdForceBodyMsgPayload>*> eForceOutMsgs;  //!< vector of E-forces in body frame components
+
+    BSKLogger bskLogger;              //!< -- BSK Logging
+
+private:
+    std::vector<std::vector<double>> radiiList;              //!< vector of MSM sphere radii
+    std::vector<std::vector<Eigen::Vector3d>> r_SB_BList;    //!< vector of body-fixed MSM sphere locations
+    long unsigned int numSat;                                //!< number of satellites
+    std::vector<double> volt;                                //!< [V] input voltage for each spacecrat object
+    std::vector<Eigen::Vector3d> r_BN_N;                     //!< [m] vector of inertial satellite position vectors
+};
+
+
+#endif
