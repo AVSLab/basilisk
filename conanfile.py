@@ -127,22 +127,17 @@ class BasiliskConan(ConanFile):
             except (pkg_resources.DistributionNotFound, pkg_resources.VersionConflict):
                 installCmd = [sys.executable, "-m", "pip", "install"]
 
-                if is_running_virtual_env():
-                    choice = input(warningColor + "Required python package " + elem + " is missing" + endColor +
-                                   "\nInstall (i) or cancel(c)? ")
-                else:
+                if not is_running_virtual_env():
                     if self.options.autoKey:
                         choice = self.options.autoKey
                     else:
                         choice = input(warningColor + "Required python package " + elem + " is missing" + endColor +
                                        "\nInstall for user (u), system (s) or cancel(c)? ")
-                    if choice in ['s', 'u']:
-                        if choice == 'u':
-                            installCmd.append("--user")
-                        installCmd.append(elem)
-                if choice == 'c':
-                    print(warningColor + "Skipping inst Addingalling " + elem + endColor)
-                    continue
+                    if choice == 'c':
+                        print(warningColor + "Skipping inst Addingalling " + elem + endColor)
+                        continue
+                    elif choice == 'u':
+                        installCmd.append("--user")
                 installCmd.append(elem)
                 try:
                     subprocess.check_call(installCmd)
