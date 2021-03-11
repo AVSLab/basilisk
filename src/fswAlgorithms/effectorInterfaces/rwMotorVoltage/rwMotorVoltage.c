@@ -77,7 +77,6 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
 //    double              torqueCmd[MAX_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */
     ArrayMotorTorqueMsgPayload torqueCmd;           /*!< copy of RW motor torque input message*/
     ArrayMotorVoltageMsgPayload voltageOut;            /*!< -- copy of the output message */
-    uint32_t i;
 
     voltageOut = ArrayMotorVoltageMsg_C_zeroMsgPayload();
 
@@ -112,7 +111,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
         if (configData->priorTime != 0) {
             double dt = (callTime - configData->priorTime) * NANO2SEC; /*!< [s]   control update period */
             double              OmegaDot[MAX_EFF_CNT];     /*!< [r/s^2] RW angular acceleration */
-            for (i=0; i<configData->rwConfigParams.numRW; i++) {
+            for (int i=0; i<configData->rwConfigParams.numRW; i++) {
                 if (rwAvailability.wheelAvailability[i] == AVAILABLE && configData->resetFlag == BOOL_FALSE) {
                     OmegaDot[i] = (rwSpeed.wheelSpeeds[i] - configData->rwSpeedOld[i])/dt;
                     torqueCmd.motorTorque[i] -= configData->K * (configData->rwConfigParams.JsList[i] * OmegaDot[i] - torqueCmd.motorTorque[i]);
@@ -125,7 +124,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
     }
 
     /* evaluate the feedforward mapping of torque into voltage */
-    for (i=0; i<configData->rwConfigParams.numRW; i++) {
+    for (int i=0; i<configData->rwConfigParams.numRW; i++) {
         if (rwAvailability.wheelAvailability[i] == AVAILABLE) {
             voltage[i] = (configData->VMax - configData->VMin)/configData->rwConfigParams.uMax[i]
                         * torqueCmd.motorTorque[i];
@@ -135,7 +134,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
     }
 
     /* check for voltage saturation */
-    for (i=0; i<configData->rwConfigParams.numRW; i++) {
+    for (int i=0; i<configData->rwConfigParams.numRW; i++) {
         if (voltage[i] > configData->VMax) {
             voltage[i] = configData->VMax;
         }

@@ -50,8 +50,6 @@ void SelfInit_mrpPD(MrpPDConfig *configData, int64_t moduleID)
 */
 void Reset_mrpPD(MrpPDConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    VehicleConfigMsgPayload   sc;               /*!< spacecraft configuration message */
-
     // check if the required input messages are included
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: mrpPD.guidInMsg wasn't connected.");

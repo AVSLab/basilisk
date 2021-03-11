@@ -53,7 +53,6 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     double identMatrix[MAX_EFF_CNT*MAX_EFF_CNT];    /* [-]  [I_NxN] identity matrix */
     double GsTemp[MAX_EFF_CNT*MAX_EFF_CNT];         /* [-]  temp matrix */
     RWConstellationMsgPayload localRWData;          /*      local copy of RW configuration data */
-    int i, j;
 
     // check if the required input messages are included
     if (!RWConstellationMsg_C_isLinked(&configData->rwConfigInMsg)) {
@@ -71,9 +70,9 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
 
     /*! -# create the 3xN [Gs] RW spin axis projection matrix */
     configData->numWheels = (uint32_t) localRWData.numRW;
-    for(i=0; i<configData->numWheels; i=i+1)
+    for(uint32_t i=0; i<configData->numWheels; i=i+1)
     {
-        for(j=0; j<3; j=j+1)
+        for(int j=0; j<3; j=j+1)
         {
             GsMatrix[j*(int) configData->numWheels+i] = localRWData.reactionWheels[i].gsHat_B[j];
         }

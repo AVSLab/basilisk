@@ -569,7 +569,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     /*! Write timestamp output msg */
     vizProtobufferMessage::VizMessage::TimeStamp* time = new vizProtobufferMessage::VizMessage::TimeStamp;
     time->set_framenumber(this->FrameNumber);
-    time->set_simtimeelapsed(CurrentSimNanos);
+    time->set_simtimeelapsed((double) CurrentSimNanos);
     message->set_allocated_currenttime(time);
 
     /*! write epoch msg */
@@ -734,7 +734,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
     {
         google::protobuf::uint8 varIntBuffer[4];
-        uint32_t byteCount = message->ByteSizeLong();
+        uint32_t byteCount = (uint32_t) message->ByteSizeLong();
         google::protobuf::uint8 *end = google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
         unsigned long varIntBytes = (unsigned long) (end - varIntBuffer);
         if (this->saveFile) {

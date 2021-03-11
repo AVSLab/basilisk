@@ -2015,8 +2015,8 @@ void MAG_PrintSHDFFormat(char *filename, MAGtype_MagneticModel *(*MagneticModel)
 	/*lines = (int)(UFM_DEGREE / 2.0 * (UFM_DEGREE + 3));*/
 	for(i = 0; i < epochs; i++)
 	{
-            if(i < epochs - 1) epochRange = (*MagneticModel)[i+1]->epoch - (*MagneticModel)[i]->epoch;
-            else epochRange = (*MagneticModel)[i]->epoch - (*MagneticModel)[i-1]->epoch;
+            if(i < epochs - 1) epochRange =(int) ((*MagneticModel)[i+1]->epoch - (*MagneticModel)[i]->epoch);
+            else epochRange = (int) ((*MagneticModel)[i]->epoch - (*MagneticModel)[i-1]->epoch);
             fprintf(SHDF_file, "%%SHDF 16695 Definitive Geomagnetic Reference Field Model Coefficient File\n");
 		fprintf(SHDF_file, "%%ModelName: %s\n", (*MagneticModel)[i]->ModelName);
 		fprintf(SHDF_file, "%%Publisher: International Association of Geomagnetism and Aeronomy (IAGA), Working Group V-Mod\n");
@@ -3351,7 +3351,7 @@ CALLS : none
     if((CalendarDate->Year % 4 == 0 && CalendarDate->Year % 100 != 0) || CalendarDate->Year % 400 == 0)
         ExtraDay = 1;
 
-    DayOfTheYear = floor((CalendarDate->DecimalYear - (double) CalendarDate->Year) * (365.0 + (double) ExtraDay)+0.5) + 1;
+    DayOfTheYear = (int) (floor((CalendarDate->DecimalYear - (double) CalendarDate->Year) * (365.0 + (double) ExtraDay)+0.5) + 1);
     /*The above floor is used for rounding, this only works for positive integers*/
 
 
@@ -4470,7 +4470,7 @@ void MAG_GetDeg(char* Query_String, double* latitude, double bounds[2]) {
         }
         if(buffer[i] == ',')
         {
-            if(MAG_ValidateDMSstring(buffer, bounds[0], bounds[1], Error_Message))
+            if(MAG_ValidateDMSstring(buffer, (int) bounds[0], (int) bounds[1], Error_Message))
             {
                 MAG_DMSstringToDegree(buffer, latitude);
                 done = 1;
@@ -4480,7 +4480,7 @@ void MAG_GetDeg(char* Query_String, double* latitude, double bounds[2]) {
         if(buffer[i] == ' ')/* This detects if there is a ' ' somewhere in the string,
 		if there is the program tries to interpret the input as Degrees Minutes Seconds.*/
         {
-            if(MAG_ValidateDMSstring(buffer, bounds[0], bounds[1], Error_Message))
+            if(MAG_ValidateDMSstring(buffer, (int)bounds[0], (int)bounds[1], Error_Message))
             {
                 MAG_DMSstringToDegree(buffer, latitude);
                 done = 1;
@@ -4489,7 +4489,7 @@ void MAG_GetDeg(char* Query_String, double* latitude, double bounds[2]) {
         }
         if(buffer[i] == '\0' || done == -1)
         {
-            if(MAG_ValidateDMSstring(buffer, bounds[0], bounds[1], Error_Message) && done != -1)
+            if(MAG_ValidateDMSstring(buffer, (int) bounds[0], (int) bounds[1], Error_Message) && done != -1)
             {
                 sscanf(buffer, "%lf", latitude);
                 done = 1;

@@ -49,7 +49,7 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
 {
     
-    int32_t i;
+    uint32_t i;
     CSSConfigMsgPayload cssConfigInBuffer;
 
     /*! - Zero the local configuration data structures and outputs */

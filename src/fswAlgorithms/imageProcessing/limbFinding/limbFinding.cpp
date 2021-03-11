@@ -124,7 +124,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         limbMsg.planetIds = 2;
     }
     
-    limbMsg.timeTag = this->sensorTimeTag;
+    limbMsg.timeTag = (double) this->sensorTimeTag;
     limbMsg.cameraID = imageBuffer.cameraID;
 
     this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, CurrentSimNanos);

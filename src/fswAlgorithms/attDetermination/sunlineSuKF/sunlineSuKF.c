@@ -49,7 +49,7 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
 {
     
     CSSConfigMsgPayload cssConfigInBuffer;
-    int32_t i, badUpdate;
+    int32_t badUpdate;
     double tempMatrix[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
     badUpdate = 0;
 
@@ -69,7 +69,7 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
-    for(i=0; i<cssConfigInBuffer.nCSS; i = i+1)
+    for(uint32_t i=0; i<cssConfigInBuffer.nCSS; i++)
     {
         v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(configData->cssNHat_B[i*3]));
         configData->CBias[i] = cssConfigInBuffer.cssVals[i].CBias;
@@ -108,7 +108,7 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
                                                  configData->lambdaVal);
     configData->wC[0] = configData->lambdaVal / (configData->numStates +
                                                  configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);
-    for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
+    for (uint32_t i = 1; i<configData->countHalfSPs * 2 + 1; i++)
     {
         configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
                                              configData->lambdaVal);
@@ -124,11 +124,11 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     vSetZero(configData->statePrev, configData->numStates);
     mCopy(configData->covar, configData->numStates, configData->numStates,
           configData->sBar);
-    badUpdate += ukfCholDecomp(configData->sBar, configData->numStates,
+    badUpdate += ukfCholDecomp(configData->sBar, (int32_t) configData->numStates,
                   configData->numStates, tempMatrix);
     mCopy(tempMatrix, configData->numStates, configData->numStates,
           configData->sBar);
-    badUpdate += ukfCholDecomp(configData->qNoise, configData->numStates,
+    badUpdate += ukfCholDecomp(configData->qNoise, (int32_t)configData->numStates,
                   configData->numStates, configData->sQnoise);
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
@@ -304,7 +304,6 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
 */
 int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 {
-    int64_t i;
     int Index, badUpdate;
 	double sBarT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
 	double xComp[SKF_N_STATES_SWITCH], AT[(2 * SKF_N_STATES_SWITCH + SKF_N_STATES_SWITCH)*SKF_N_STATES_SWITCH];
@@ -332,9 +331,9 @@ int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
                sBarT);
     /*! - For each Sigma point, apply sBar-based error, propagate forward, and scale by Wm just like 0th.
           Note that we perform +/- sigma points simultaneously in loop to save loop values.*/
-	for (i = 0; i<configData->countHalfSPs; i++)
+	for (uint64_t i = 0; i<configData->countHalfSPs; i++)
 	{
-		Index = i + 1;
+		Index = (int) i + 1;
 		spPtr = &(configData->SP[Index*(int)configData->numStates]);
 		vCopy(&sBarT[i*(int)configData->numStates], configData->numStates, spPtr);
 		vScale(configData->gamma, spPtr, configData->numStates, spPtr);
@@ -343,7 +342,7 @@ int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 		vScale(configData->wM[Index], spPtr, configData->numStates, xComp);
 		vAdd(xComp, configData->numStates, configData->xBar, configData->xBar);
 		
-		Index = i + 1 + (int) configData->countHalfSPs;
+		Index = (int) i + 1 + (int) configData->countHalfSPs;
         spPtr = &(configData->SP[Index*(int)configData->numStates]);
         vCopy(&sBarT[i*(int) configData->numStates], configData->numStates, spPtr);
         vScale(-configData->gamma, spPtr, configData->numStates, spPtr);
@@ -358,7 +357,7 @@ int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 	/*! - Assemble the AT matrix.  Note that this matrix is the internals of 
           the qr decomposition call in the source design documentation.  It is 
           the inside of equation 20 in that document*/
-	for (i = 0; i<2 * configData->countHalfSPs; i++)
+	for (uint64_t i = 0; i<2 * configData->countHalfSPs; i++)
 	{
 		
         vScale(-1.0, configData->xBar, configData->numStates, aRow);

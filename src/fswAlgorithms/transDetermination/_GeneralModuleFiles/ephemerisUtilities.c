@@ -27,7 +27,7 @@ double calculateChebyValue(double *chebyCoeff, uint32_t nCoeff,
     double chebyLocalPrev;
     double valueMult;
     double estValue;
-    int i;
+    uint32_t i;
     
     chebyPrev = 1.0;
     chebyNow = evalValue;

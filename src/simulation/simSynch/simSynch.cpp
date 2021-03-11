@@ -84,7 +84,7 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
 	realTimeNano = (int64_t) (std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - this->startTime)).count();
     
     //! - Save off the observed time-delta for analysis and flag any unexpected overruns
-    this->outputData.initTimeDelta = simTimeNano - realTimeNano;
+    this->outputData.initTimeDelta = (double) (simTimeNano - realTimeNano);
    
     if(this->outputData.initTimeDelta < -this->accuracyNanos)
     {
@@ -109,7 +109,7 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
 	}
     
     //! - Save off the output message information for analysis
-    this->outputData.finalTimeDelta = simTimeNano - realTimeNano - sleepAmountNano;
+    this->outputData.finalTimeDelta = (double) (simTimeNano - realTimeNano - sleepAmountNano);
     this->outputData.finalTimeDelta *= NANO2SEC;
     
     //! - Write the composite information into the output synch message.

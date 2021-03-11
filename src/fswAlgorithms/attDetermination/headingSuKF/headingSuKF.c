@@ -406,7 +406,6 @@ void headingSuKFMeasModel(HeadingSuKFConfig *configData)
  */
 void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
 {
-    uint32_t i;
     double yBar[OPNAV_MEAS], syInv[OPNAV_MEAS*OPNAV_MEAS];
     double kMat[HEAD_N_STATES_SWITCH*OPNAV_MEAS];
     double xHat[HEAD_N_STATES_SWITCH], sBarT[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH], tempYVec[OPNAV_MEAS];
@@ -421,7 +420,7 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the 
           time update section of the reference document*/
     vSetZero(yBar, OPNAV_MEAS);
-    for(i=0; i<configData->countHalfSPs*2+1; i++)
+    for(int i=0; i<configData->countHalfSPs*2+1; i++)
     {
         vCopy(&(configData->yMeas[i*OPNAV_MEAS]), OPNAV_MEAS,
               tempYVec);
@@ -434,7 +433,7 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
           parameter and the calculated measurement models.  Equation 24 in driving doc. */
     mSetZero(AT, (size_t) configData->countHalfSPs*2+OPNAV_MEAS,
         OPNAV_MEAS);
-    for(i=0; i<configData->countHalfSPs*2; i++)
+    for(int i=0; i<configData->countHalfSPs*2; i++)
     {
         vScale(-1.0, yBar, OPNAV_MEAS, tempYVec);
         vAdd(tempYVec, OPNAV_MEAS,
@@ -472,7 +471,7 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
     /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud 
           by the measurement model cloud (weighted) to get the total Pxy matrix*/
     mSetZero(pXY, (size_t) configData->numStates, OPNAV_MEAS);
-    for(i=0; i<2*configData->countHalfSPs+1; i++)
+    for(int i=0; i<2*configData->countHalfSPs+1; i++)
     {
         vScale(-1.0, yBar, OPNAV_MEAS, tempYVec);
         vAdd(tempYVec, OPNAV_MEAS,
@@ -511,7 +510,7 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
     mTranspose(pXY, (size_t) configData->numStates, OPNAV_MEAS, pXY);
     /*! - For each column in the update matrix, perform a cholesky down-date on it to 
           get the total shifted S matrix (called sBar in internal parameters*/
-    for(i=0; i<OPNAV_MEAS; i++)
+    for(int i=0; i<OPNAV_MEAS; i++)
     {
         vCopy(&(pXY[i* (size_t) configData->numStates]), (size_t) configData->numStates, tempYVec);
         ukfCholDownDate(configData->sBar, tempYVec, -1.0, configData->numStates, sBarT);

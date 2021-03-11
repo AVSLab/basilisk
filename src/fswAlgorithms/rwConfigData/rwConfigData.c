@@ -55,8 +55,6 @@ void SelfInit_rwConfigData(rwConfigData_Config *configData, int64_t moduleID)
  */
 void Reset_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     int i;
 
     configData->rwConstellation = RWConstellationMsg_C_zeroMsgPayload();

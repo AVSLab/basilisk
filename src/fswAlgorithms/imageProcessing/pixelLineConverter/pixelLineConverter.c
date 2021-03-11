@@ -85,7 +85,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     }
     reCentered[0] = circlesIn.circlesCenters[0] - cameraSpecs.resolution[0]/2 + 0.5;
     reCentered[1] = circlesIn.circlesCenters[1] - cameraSpecs.resolution[1]/2 + 0.5;
-    configData->planetTarget = circlesIn.planetIds[0];
+    configData->planetTarget = (int32_t) circlesIn.planetIds[0];
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     MRP2C(attInfo.sigma_BN, dcm_BN);
     m33MultM33(dcm_CB, dcm_BN, dcm_NC);
@@ -163,7 +163,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     vScale(1E6, opNavMsgOut.covar_C, 3*3, opNavMsgOut.covar_C);//in m
     mCopy(covar_In_B, 3, 3, opNavMsgOut.covar_B);
     vScale(1E6, opNavMsgOut.covar_B, 3*3, opNavMsgOut.covar_B);//in m
-    opNavMsgOut.timeTag = circlesIn.timeTag;
+    opNavMsgOut.timeTag = (double) circlesIn.timeTag;
     opNavMsgOut.valid =1;
 
     OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);

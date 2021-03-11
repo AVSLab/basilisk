@@ -49,8 +49,8 @@ void GravityGradientEffector::Reset(uint64_t CurrentSimNanos)
     }
 
     /* empty the vector of planet state pointers */
-    this->r_PN_N.empty();
-    this->muPlanet.empty();
+    static_cast<void>(this->r_PN_N.empty());
+    static_cast<void>(this->muPlanet.empty());
 
     return;
 }

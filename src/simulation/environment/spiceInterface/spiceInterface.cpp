@@ -161,13 +161,13 @@ void SpiceInterface::computeGPSData()
     //! - The difference between the epochs in julian date terms is the total
     JDDifference = this->J2000Current - this->JDGPSEpoch;
     //! - Scale the elapsed by a week's worth of seconds to get week
-    this->GPSWeek = JDDifference/(7*86400);
+    this->GPSWeek = (uint16_t) (JDDifference/(7*86400));
     //! - Subtract out the GPS week scaled up to seconds to get time in week
     this->GPSSeconds = JDDifference - this->GPSWeek*7*86400;
     
     //! - Maximum GPS week is 1024 so get rollovers and subtract out those weeks
     this->GPSRollovers = this->GPSWeek/1024;
-    this->GPSWeek -= this->GPSRollovers*1024;
+    this->GPSWeek = (uint16_t)(this->GPSWeek-this->GPSRollovers*1024);
 }
 
 /*! This method takes the values computed in the model and outputs them.

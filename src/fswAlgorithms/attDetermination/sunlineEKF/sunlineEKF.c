@@ -49,10 +49,8 @@ void Reset_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
 {
     
-    int32_t i;
     CSSConfigMsgPayload cssConfigInBuffer;
-    int32_t ReadTest;
-
+   
     /*! - Zero the local configuration data structures and outputs */
     configData->outputSunline = NavAttMsg_C_zeroMsgPayload();
     mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
@@ -69,7 +67,7 @@ void Reset_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
     cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
 
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
-    for(i=0; i<cssConfigInBuffer.nCSS; i++)
+    for(uint32_t i=0; i<cssConfigInBuffer.nCSS; i++)
     {
         v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(configData->cssNHat_B[i*3]));
         configData->CBias[i] = cssConfigInBuffer.cssVals[i].CBias;
@@ -481,7 +479,7 @@ void sunlineEKFUpdate(double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double cov
 
 void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double CBias[MAX_NUM_CSS_SENSORS], double *obs, double *yMeas, int *numObs, double *measMat)
 {
-    uint32_t i, obsCounter;
+    int i, obsCounter;
     double sensorNormal[3];
     
     v3SetZero(sensorNormal);

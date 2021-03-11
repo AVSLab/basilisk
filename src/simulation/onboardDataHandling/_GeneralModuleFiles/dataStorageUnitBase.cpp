@@ -200,7 +200,7 @@ int DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload *tmpNodeMsg
     // Loop through storedData. If dataName is found, set index = i
     for (uint64_t i = 0; i < this->storedData.size(); i++){
         if (strcmp(this->storedData[i].dataInstanceName, tmpNodeMsg->dataName) == 0){
-            index = i;
+            index = (int) i;
         }
     }
 

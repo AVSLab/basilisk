@@ -210,8 +210,8 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
         }
     }
     
-    this->forceExternal_B = this->lookupForce_B[currentIdx]*pow(AU*1000/sunDist, 2);
-    this->torqueExternalPntB_B = this->lookupTorque_B[currentIdx]*pow(AU*1000/sunDist, 2);
+    this->forceExternal_B = this->lookupForce_B[(uint64_t) currentIdx]*pow(AU*1000/sunDist, 2);
+    this->torqueExternalPntB_B = this->lookupTorque_B[(uint64_t) currentIdx]*pow(AU*1000/sunDist, 2);
 }
 
 /*! Add force vector in the body frame to lookup table.

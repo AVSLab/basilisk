@@ -41,8 +41,8 @@ ImuSensor::ImuSensor()
     this->errorModelGyro =  GaussMarkov(this->numStates, this->RNGSeed);
     this->errorModelAccel = GaussMarkov(this->numStates, this->RNGSeed);
     
-    this->aDisc = Discretize(this->numStates);
-    this->oDisc = Discretize(this->numStates);
+    this->aDisc = Discretize((uint8_t) this->numStates);
+    this->oDisc = Discretize((uint8_t) this->numStates);
     
     this->aSat = Saturate(this->numStates);
     this->oSat = Saturate(this->numStates);
@@ -233,13 +233,13 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
 
     double dt = (CurrentTime - this->PreviousTime)*1.0E-9;
     
-    if(this->aDisc.LSB.any() > 0.0) //If aLSB has been set.
+    if(this->aDisc.LSB.any()) //If aLSB has been set.
     {
         this->accel_SN_P_out = this->aDisc.discretize(this->accel_SN_P_out);
         this->DV_SN_P_out -= this->aDisc.getDiscretizationErrors() * dt;
     }
 
-    if(this->oDisc.LSB.any() > 0.0) // If oLSB has been set.
+    if(this->oDisc.LSB.any()) // If oLSB has been set.
     {
         this->omega_PN_P_out = this->oDisc.discretize(this->omega_PN_P_out);
         this->prv_PN_out -= this->oDisc.getDiscretizationErrors() * dt;

@@ -85,12 +85,11 @@ void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t module
 void computeWlsResiduals(double *cssMeas, CSSConfigMsgPayload *cssConfig,
                          double *wlsEst, double *cssResiduals)
 {
-    int i;
     double cssDotProd;
     
     memset(cssResiduals, 0x0, cssConfig->nCSS*sizeof(double));
     /*! The method loops through the sensors and performs: */
-    for(i=0; i<cssConfig->nCSS; i++)
+    for(uint32_t i=0; i<cssConfig->nCSS; i++)
     {
         /*! -# A dot product between the computed estimate with each sensor normal */
         cssDotProd = v3Dot(wlsEst, cssConfig->cssVals[i].nHat_B);
@@ -166,7 +165,6 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     double H[MAX_NUM_CSS_SENSORS*3];             /* The predicted pointing vector for each measurement */
     double y[MAX_NUM_CSS_SENSORS];               /* Measurements */
     double W[MAX_NUM_CSS_SENSORS*MAX_NUM_CSS_SENSORS];  /* Matrix of measurement weights */
-    int i;
     int status = 0;                              /* Quality of the module estimate */
     double dOldDotNew;                           /* Intermediate value for dot product between new and old estimates for rate estimation */
     double dHatNew[3];                           /* New normalized sun heading estimate */
@@ -199,7 +197,7 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     /*! -# Set inverse noise matrix */
     /*! -# increase the number of valid observations */
     /*! -# Otherwise just continue */
-    for(i=0; i<configData->cssConfigInBuffer.nCSS; i = i+1)
+    for(uint32_t i=0; i<configData->cssConfigInBuffer.nCSS; i = i+1)
     {
         if(InputBuffer.CosValue[i] > configData->sensorUseThresh)
         {

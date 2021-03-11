@@ -43,7 +43,6 @@ void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
  */
 void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t moduleID)
 {
-    int i;
 
     /*! - ensure incoming message counters are not larger than MAX_AGG_NAV_MSG */
     if (configData->attMsgCount > MAX_AGG_NAV_MSG) {
@@ -64,14 +63,14 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
     }
 
     /*! - loop over the number of attitude input messages and make sure they are linked */
-    for(i=0; i<configData->attMsgCount; i=i+1)
+    for(uint32_t i=0; i<configData->attMsgCount; i=i+1)
     {
         if (!NavAttMsg_C_isLinked(&configData->attMsgs[i].navAttInMsg)) {
             _bskLog(configData->bskLogger, BSK_ERROR, "An attitude input message name was not linked.  Be sure that attMsgCount is set properly.");
         }
     }
     /*! - loop over the number of translational input messages and make sure they are linked */
-    for(i=0; i<configData->transMsgCount; i=i+1)
+    for(uint32_t i=0; i<configData->transMsgCount; i=i+1)
     {
         if (!NavTransMsg_C_isLinked(&configData->transMsgs[i].navTransInMsg)) {
             _bskLog(configData->bskLogger, BSK_ERROR, "A translation input message name was not specified.  Be sure that transMsgCount is set properly.");
@@ -147,7 +146,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
     }
 
     //! - zero the arrays of input messages
-    for (i=0; i< MAX_AGG_NAV_MSG; i++) {
+    for (uint32_t i=0; i< MAX_AGG_NAV_MSG; i++) {
         configData->attMsgs[i].msgStorage = NavAttMsg_C_zeroMsgPayload();
         configData->transMsgs[i].msgStorage = NavTransMsg_C_zeroMsgPayload();
     }

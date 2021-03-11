@@ -42,7 +42,7 @@ Camera::Camera()
     this->cameraID = 1;
     this->resolution[0] = 512;
     this->resolution[1] = 512;
-    this->renderRate = 60*1E9;
+    this->renderRate = (uint64_t) (60*1E9);
     v3SetZero(this->cameraPos_B);
     v3SetZero(this->sigma_CB);
     this->cameraIsOn = 0;
@@ -101,14 +101,14 @@ void Camera::HSVAdjust(const cv::Mat mSrc, cv::Mat &mDst){
             // user assumes range hue range is 0-2pi and not 0-180
             int input_degrees = (int) (this->hsv[0] * R2D);
             int h_360 = (hsv.at<cv::Vec3b>(j, i)[0] * 2) + input_degrees;
-            h_360 -= 360 * std::floor(h_360 * (1. / 360.));
+            h_360 = (int) (h_360 -  360 * std::floor(h_360 * (1. / 360.)));
             h_360 = h_360/2;
             if(h_360 == 180){ h_360 = 0; }
             hsv.at<cv::Vec3b>(j, i)[0] = h_360;
 
             int values[3];
             for(int k = 1; k < 3; k++){
-                values[k] = hsv.at<cv::Vec3b>(j, i)[k] * (this->hsv[k]/100. + 1.);
+                values[k] = (int) (hsv.at<cv::Vec3b>(j, i)[k] * (this->hsv[k]/100. + 1.));
                 // saturate S and V values to [0,255]
                 if(values[k] < 0){ values[k] = 0; }
                 if(values[k] > 255){ values[k] = 255; }
@@ -188,8 +188,8 @@ void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb
     cv::RNG rng;
     
     /*!  Determines the amount of hot/dead pixels based on the input probabilities.*/
-    int amount1 = mSrc.rows * mSrc.cols * pa;
-    int amount2 = mSrc.rows * mSrc.cols * pb;
+    int amount1 = (int) (mSrc.rows * mSrc.cols * pa);
+    int amount2 = (int) (mSrc.rows * mSrc.cols * pb);
     
     cv::Mat mSaltPepper = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mSaltPepper, mSrc.type());
@@ -228,9 +228,9 @@ void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb
 void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
     /*! Uses the current sim time and the random offset to ensure a different ray every time.*/
     uint64 initValue = CurrentSimNanos;
-    cv::RNG rng(initValue + time(0) + randOffset);
+    cv::RNG rng((uint64) (initValue + time(0) + randOffset));
     
-    float prob = rng.uniform(0.0, 1.0);
+    float prob = (float) (rng.uniform(0.0, 1.0));
     if (prob > probThreshhold) {
         cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
         mSrc.convertTo(mCosmic, mSrc.type());
@@ -263,7 +263,7 @@ void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
     for(int i = 0; i < std::round(num); i++){
         /*! Threshold defined such that 1 provides a 1/50 chance of getting a ray, and 10 will get about 5 rays per image*/
         /*! Currently length is limited to 50 pixels*/
-        AddCosmicRay(mCosmic, mCosmic, 1/(std::pow(num,2)), i+1, 50);
+        AddCosmicRay(mCosmic, mCosmic, (float) (1/(std::pow(num,2))), i+1, 50);
     }
     mCosmic.convertTo(mDst, mSrc.type());
 }
@@ -291,7 +291,7 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, doubl
         cv::threshold(mFilters, mFilters, gaussian*6, 255, cv::THRESH_TOZERO);
     }
     if(blurparam > 0){
-        int blurSize = std::round(blurparam);
+        int blurSize = (int) std::round(blurparam);
         if (blurSize%2 == 0){blurSize+=1;}
         blur(mFilters, mFilters, cv::Size(blurSize, blurSize), cv::Point(-1 , -1));
     }
@@ -306,8 +306,8 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, doubl
         BGRAdjustPercent(mFilters, mFilters);
     }
     if (saltPepper > 0){
-        float scale = 0.00002;
-        AddSaltPepper(mFilters, mFilters, saltPepper * scale, saltPepper * scale);
+        float scale = 0.00002f;
+        AddSaltPepper(mFilters, mFilters, (float) (saltPepper * scale), (float) (saltPepper * scale));
     }
     if(cosmicRays > 0){
         AddCosmicRayBurst(mFilters, mFilters, std::round(cosmicRays));

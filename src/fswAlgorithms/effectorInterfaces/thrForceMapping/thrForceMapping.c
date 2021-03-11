@@ -48,7 +48,7 @@ void SelfInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleI
 void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     double             *pAxis;                  /* pointer to the current control axis */
-    int                 i;
+    uint32_t                 i;
     THRArrayConfigMsgPayload   localThrusterData;   /* local copy of the thruster data message */
 
     /*! - configure the number of axes that are controlled */
@@ -107,9 +107,6 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
  */
 void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t    timeOfMsgWritten;
-    uint32_t    sizeOfMsgWritten;
-    int         i,j,c;
     int         counterPosForces;             /* []      counter for number of positive thruster forces */
     double      F[MAX_EFF_CNT];               /* [N]     vector of commanded thruster forces */
     double      Fbar[MAX_EFF_CNT];            /* [N]     vector of intermediate thruster forces */
@@ -144,17 +141,17 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     v3Copy(LrInputMsg.torqueRequestBody, Lr_B);
 
     /*! - compute thruster locations relative to COM */
-    for (i=0;i<configData->numThrusters;i++) {
+    for (uint32_t i=0;i<configData->numThrusters;i++) {
         v3Subtract(configData->rThruster_B[i], configData->sc.CoM_B, rThrusterRelCOM_B[i]); /* Part 1 of Eq. 4 */
     }
    
     /*! - compute general thruster force mapping matrix */
     v3SetZero(Lr_offset);
 
-    for(i=0; i<configData->numThrusters; i=i+1)
+    for(uint32_t i=0; i<configData->numThrusters; i=i+1)
     {
         v3Cross(rThrusterRelCOM_B[i], configData->gtThruster_B[i], rCrossGt); /* Eq. 6 */
-        for(j=0; j<3; j++)
+        for(uint32_t j=0; j<3; j++)
         {
             D[j][i] = rCrossGt[j];
         }
@@ -168,7 +165,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     v3Add(Lr_offset, Lr_B, Lr_B);
     
     /*! - copy the control axes into [C] */
-    for (i=0;i<configData->numControlAxes;i++) {
+    for (uint32_t i=0;i<configData->numControlAxes;i++) {
         v3Copy(&configData->controlAxes_B[3*i], C[i]);
     }
     
@@ -188,10 +185,10 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     {
         counterPosForces = 0;
         memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
-        for (i=0;i<configData->numThrusters;i++) {
+        for (uint32_t i=0;i<configData->numThrusters;i++) {
             if (F[i]*configData->thrForceSign > 0) {
                 thrusterUsed[i] = 1; /* Eq. 11 */
-                for(j=0; j<3; j++)
+                for(uint32_t j=0; j<3; j++)
                 {
                     Dbar[j][counterPosForces] = D[j][i]; /* Eq. 12 */
                 }
@@ -204,8 +201,8 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         {
             substractMin(Fbar, counterPosForces);
         }
-        c = 0;
-        for (i=0;i<configData->numThrusters;i++) {
+        uint32_t c = 0;
+        for (uint32_t i=0;i<configData->numThrusters;i++) {
             if (thrusterUsed[i]) {
                 F[i] = Fbar[c];
                 c += 1;
@@ -223,7 +220,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         If the angle threshold is negative, then this scaling is bypassed.*/
     if(configData->outTorqAngErr > configData->angErrThresh)
     {
-        for(i=0; i<configData->numThrusters; i++)
+        for(uint32_t i=0; i<configData->numThrusters; i++)
         {
             if(configData->thrForcMag[i] > 0.0 && fabs(F[i])/configData->thrForcMag[i] > maxFractUse) /* confirming that maxThrust > 0 */
             {
@@ -253,7 +250,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
  */
 void substractMin(double *F, uint32_t size)
 {
-    int    i;
+    uint32_t    i;
     double minValue = 0.0;
     for (i=0; i < size;i++){
         if(F[i] < minValue){
@@ -275,7 +272,7 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
                           double D[3][MAX_EFF_CNT], double Lr_B_Bar[3], uint32_t numForces, double F[MAX_EFF_CNT])
 {
     
-    int         i,j,k;                          /* []     counters */
+    uint32_t         i,j,k;                          /* []     counters */
     double      C[3][3];                        /* [m^2]  (C) matrix */
     double      CD[3][MAX_EFF_CNT];             /* [m^2]  [C].[D] matrix -- Thrusters in body frame mapped on control axes */
     double      CDCDT[3][3];                    /* [m^2]  [CD].[CD]^T matrix */
@@ -328,14 +325,14 @@ double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr_B[3], uint32_t n
         double BLr_hat_B[3];            /* []     normalized BLr_B vector */
         double LrEffector_B[3];         /* [Nm]   torque of an individual thruster effector */
         double thrusterForce;           /* [N]    saturation constrained thruster force */
-        int i;
+        
         double DT[MAX_EFF_CNT][3];
         mTranspose(D, 3, MAX_EFF_CNT, DT);
         v3Normalize(BLr_B, BLr_hat_B);
         v3SetZero(tauActual_B);
 
         /*! - loop over all thrusters and compute the actual torque to be applied */
-        for(i=0; i<numForces; i++)
+        for(uint32_t i=0; i<numForces; i++)
         {
             thrusterForce = fabs(F[i]) < FMag[i] ? F[i] : FMag[i]*fabs(F[i])/F[i]; /* This could produce inf's as F[i] approaches 0 if FMag[i] is 0, as such we check if FMag[i] is equal to zero in reset() */
             v3Scale(thrusterForce, DT[i], LrEffector_B);

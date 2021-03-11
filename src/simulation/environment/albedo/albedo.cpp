@@ -156,8 +156,8 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> 
     this->modelNames.push_back(modelName);
     this->fileNames.push_back("");
     this->dataPaths.push_back("");
-    this->numLats.push_back(-1.0);
-    this->numLons.push_back(-1.0);
+    this->numLats.push_back(-1);
+    this->numLons.push_back(-1);
     double ALB_avg = -1;    // value will be set in Reset() when we can determine the planet name
     this->ALB_avgs.push_back(ALB_avg);
     this->albArray.push_back(false);
@@ -199,9 +199,9 @@ void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload> *pl
     this->modelNames.push_back(modelName);
     this->fileNames.push_back(fileName);
     this->dataPaths.push_back(dataPath);
-    this->numLats.push_back(-1.0);
-    this->numLons.push_back(-1.0);
-    this->ALB_avgs.push_back(-1.0);
+    this->numLats.push_back(-1);
+    this->numLons.push_back(-1);
+    this->ALB_avgs.push_back(-1);
     this->albArray.push_back(true);
 
     this->planetInMsgs.push_back(planetSpiceMsg->addSubscriber());
@@ -489,10 +489,10 @@ void Albedo::evaluateAlbedoModel(int idx)
     this->latDiff[idx] = (180.0 / numLat) * M_PI / 180.0;
     this->lonDiff[idx] = (360.0 / numLon) * M_PI / 180.0;
     for (ilat = -halfLat; ilat < halfLat; ilat++) {
-        this->gdlat[idx][ilat + halfLat] = (ilat + 0.5) * this->latDiff[idx];
+        this->gdlat[idx][(int64_t) (ilat + halfLat)] = (ilat + 0.5) * this->latDiff[idx];
     }
     for (ilon = -halfLon; ilon < halfLon; ilon++) {
-        this->gdlon[idx][ilon + halfLon] = (ilon + 0.5) * this->lonDiff[idx];
+        this->gdlon[idx][(int64_t)(ilon + halfLon)] = (ilon + 0.5) * this->lonDiff[idx];
     }
     this->numLons.at(idx) = numLon;
     this->numLats.at(idx) = numLat;

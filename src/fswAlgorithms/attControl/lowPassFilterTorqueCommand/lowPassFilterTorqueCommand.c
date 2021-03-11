@@ -78,8 +78,6 @@ void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configDa
 void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
-    uint64_t    timeOfMsgWritten;
-    uint32_t    sizeOfMsgWritten;
     double      v3[3];                      /*!<      3d vector sub-result */
     int         i;
     CmdTorqueBodyMsgPayload controlOut;             /*!< -- Control output message */

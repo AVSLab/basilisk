@@ -19,7 +19,6 @@
 
 #include "magneticFieldWMM.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "EGM9615.h"
 

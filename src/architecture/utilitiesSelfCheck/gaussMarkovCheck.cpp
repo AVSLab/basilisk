@@ -81,7 +81,7 @@ uint64_t testGaussMarkov()
     Eigen::Vector2d minOut;
     minOut.fill(0.0);
     
-    numPts = 1e6;
+    numPts = (int64_t) 1e6;
     
     noiseOut.resize(2,numPts);
     

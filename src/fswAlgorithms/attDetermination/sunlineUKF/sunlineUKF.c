@@ -50,7 +50,6 @@ void Reset_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
 {
     
-    int32_t i;
     CSSConfigMsgPayload cssConfigInBuffer;
     double tempMatrix[SKF_N_STATES*SKF_N_STATES];
     
@@ -70,7 +69,7 @@ void Reset_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
     cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
 
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
-    for(i=0; i<cssConfigInBuffer.nCSS; i = i+1)
+    for(uint32_t i=0; i<cssConfigInBuffer.nCSS; i = i+1)
     {
         v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(configData->cssNHat_B[i*3]));
         configData->CBias[i] = cssConfigInBuffer.cssVals[i].CBias;
@@ -105,7 +104,7 @@ void Reset_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
                                                  configData->lambdaVal);
     configData->wC[0] = configData->lambdaVal / (configData->numStates +
                                                  configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);
-    for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
+    for (int i = 1; i<configData->countHalfSPs * 2 + 1; i++)
     {
         configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
                                              configData->lambdaVal);
@@ -338,12 +337,12 @@ void sunlineUKFTimeUpdate(SunlineUKFConfig *configData, double updateTime)
  */
 void sunlineUKFMeasModel(SunlineUKFConfig *configData)
 {
-    uint32_t i, j, obsCounter;
+    
     double sensorNormal[3];
 
-    obsCounter = 0;
+    int obsCounter = 0;
     /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
-    for(i=0; i<configData->numCSSTotal; i++)
+    for(uint32_t i=0; i<configData->numCSSTotal; i++)
     {
         if(configData->cssSensorInBuffer.CosValue[i] > configData->sensorUseThresh)
         {
@@ -351,7 +350,7 @@ void sunlineUKFMeasModel(SunlineUKFConfig *configData)
                   on a per sigma-point basis.*/
             v3Scale(configData->CBias[i], &(configData->cssNHat_B[i*3]), sensorNormal);
             configData->obs[obsCounter] = configData->cssSensorInBuffer.CosValue[i];
-            for(j=0; j<configData->countHalfSPs*2+1; j++)
+            for(int j=0; j<configData->countHalfSPs*2+1; j++)
             {
                 configData->yMeas[obsCounter*(configData->countHalfSPs*2+1) + j] =
                     v3Dot(&(configData->SP[j*SKF_N_STATES]), sensorNormal);
@@ -375,7 +374,6 @@ void sunlineUKFMeasModel(SunlineUKFConfig *configData)
  */
 void sunlineUKFMeasUpdate(SunlineUKFConfig *configData, double updateTime)
 {
-    uint32_t i;
     double yBar[MAX_N_CSS_MEAS], syInv[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double kMat[SKF_N_STATES*MAX_N_CSS_MEAS];
     double xHat[SKF_N_STATES], sBarT[SKF_N_STATES*SKF_N_STATES], tempYVec[MAX_N_CSS_MEAS];
@@ -390,7 +388,7 @@ void sunlineUKFMeasUpdate(SunlineUKFConfig *configData, double updateTime)
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the 
           time update section of the reference document*/
     vSetZero(yBar, configData->numObs);
-    for(i=0; i<configData->countHalfSPs*2+1; i++)
+    for(int i=0; i<configData->countHalfSPs*2+1; i++)
     {
         vCopy(&(configData->yMeas[i*configData->numObs]), configData->numObs,
               tempYVec);
@@ -403,7 +401,7 @@ void sunlineUKFMeasUpdate(SunlineUKFConfig *configData, double updateTime)
           parameter and the calculated measurement models.  Equation 24 in driving doc. */
     mSetZero(AT, configData->countHalfSPs*2+configData->numObs,
         configData->numObs);
-    for(i=0; i<configData->countHalfSPs*2; i++)
+    for(int i=0; i<configData->countHalfSPs*2; i++)
     {
         vScale(-1.0, yBar, configData->numObs, tempYVec);
         vAdd(tempYVec, configData->numObs,
@@ -442,7 +440,7 @@ void sunlineUKFMeasUpdate(SunlineUKFConfig *configData, double updateTime)
     /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud 
           by the measurement model cloud (weighted) to get the total Pxy matrix*/
     mSetZero(pXY, configData->numStates, configData->numObs);
-    for(i=0; i<2*configData->countHalfSPs+1; i++)
+    for(int i=0; i<2*configData->countHalfSPs+1; i++)
     {
         vScale(-1.0, yBar, configData->numObs, tempYVec);
         vAdd(tempYVec, configData->numObs,
@@ -482,7 +480,7 @@ void sunlineUKFMeasUpdate(SunlineUKFConfig *configData, double updateTime)
     mTranspose(pXY, configData->numStates, configData->numObs, pXY);
     /*! - For each column in the update matrix, perform a cholesky down-date on it to 
           get the total shifted S matrix (called sBar in internal parameters*/
-    for(i=0; i<configData->numObs; i++)
+    for(int i=0; i<configData->numObs; i++)
     {
         vCopy(&(pXY[i*configData->numStates]), configData->numStates, tempYVec);
         ukfCholDownDate(configData->sBar, tempYVec, -1.0, configData->numStates, sBarT);

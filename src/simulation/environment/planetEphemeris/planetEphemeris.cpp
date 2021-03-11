@@ -134,7 +134,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
     std::vector<std::string>::iterator it;
     double time;                            // [s] time since epoch
     double mu;                              // [m^3/s^2] gravity constant of the sun
-    double c;                               // [] counter
+    uint64_t c;                               // [] counter
     double f0;                              // [r] true anomaly at epoch
     double e;                               // []  orbit eccentricity
     double M0;                              // [r] mean anomaly at epoch

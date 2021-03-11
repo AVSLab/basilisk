@@ -318,8 +318,8 @@ void Spacecraft::updateSCMassProps(double time)
 void Spacecraft::equationsOfMotion(double integTimeSeconds)
 {
     // - Update time to the current time
-    uint64_t integTimeNanos = this->simTimePrevious + (integTimeSeconds-this->timePrevious)/NANO2SEC;
-    (*this->sysTime) << integTimeNanos, integTimeSeconds;
+    uint64_t integTimeNanos = (uint64_t) (this->simTimePrevious + (integTimeSeconds-this->timePrevious)/NANO2SEC);
+    (*this->sysTime) << (double) integTimeNanos, integTimeSeconds;
 
     // - Zero all Matrices and vectors for back-sub and the dynamics
     this->hub.hubBackSubMatrices.matrixA.setZero();

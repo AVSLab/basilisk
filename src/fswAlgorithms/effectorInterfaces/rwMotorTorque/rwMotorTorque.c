@@ -92,7 +92,6 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
     RWAvailabilityMsgPayload wheelsAvailability;    /*!< Msg containing RW availability */
     CmdTorqueBodyMsgPayload LrInputMsg;             /*!< Msg containing Lr control torque */
     ArrayMotorTorqueMsgPayload rwMotorTorques;      /*!< Msg struct to store the output message */
-    int i,j,k;
     double Lr_B[3];                             /*!< [Nm]    commanded ADCS control torque in body frame*/
     double Lr_C[3];                             /*!< [Nm]    commanded ADCS control torque projected onto control axes */
     double us[MAX_EFF_CNT];                     /*!< [Nm]    commanded ADCS control torque projected onto RWs g_s-Frames */
@@ -121,7 +120,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
         /*! - Read in current RW availabilit Msg */
         wheelsAvailability = RWAvailabilityMsg_C_read(&configData->rwAvailInMsg);
         /*! - create the current [Gs] projection matrix with the available RWs */
-        for (i = 0; i < configData->rwConfigParams.numRW; i++) {
+        for (int i = 0; i < configData->rwConfigParams.numRW; i++) {
             if (wheelsAvailability.wheelAvailability[i] == AVAILABLE)
             {
                 v3Copy(&configData->rwConfigParams.GsMatrix_B[i * 3], &configData->GsMatrix_B[numAvailRW * 3]);
@@ -140,24 +139,24 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
 
     /*! - compute [CGs] */
     mSetZero(CGs, 3, MAX_EFF_CNT);
-    for (i=0; i<configData->numControlAxes; i++) {
-        for (j=0; j<configData->numAvailRW; j++) {
+    for (uint32_t i=0; i<configData->numControlAxes; i++) {
+        for (int j=0; j<configData->numAvailRW; j++) {
             CGs[i][j] = v3Dot(&configData->GsMatrix_B[j * 3], &configData->controlAxes_B[3 * i]);
         }
     }
     /*! - Compute minimum norm inverse for us = [CGs].T inv([CGs][CGs].T) [Lr_C]
      Having at least the same # of RW as # of control axes is necessary condition to guarantee inverse matrix exists. If matrix to invert it not full rank, the control torque output is zero. */
-    if (configData->numAvailRW >= configData->numControlAxes){
+    if (configData->numAvailRW >= (int) configData->numControlAxes){
         double v3_temp[3]; /* inv([M]) [Lr_C] */
         double M33[3][3]; /* [M] = [CGs][CGs].T */
         double us_avail[MAX_EFF_CNT];   /* matrix of available RW motor torques */
         
         v3SetZero(v3_temp);
         mSetIdentity(M33, 3, 3);
-        for (i=0; i<configData->numControlAxes; i++) {
-            for (j=0; j<configData->numControlAxes; j++) {
+        for (uint32_t i=0; i<configData->numControlAxes; i++) {
+            for (uint32_t j=0; j<configData->numControlAxes; j++) {
                 M33[i][j] = 0.0;
-                for (k=0; k < configData->numAvailRW; k++) {
+                for (int k=0; k < configData->numAvailRW; k++) {
                     M33[i][j] += CGs[i][k]*CGs[j][k];
                 }
             }
@@ -168,15 +167,15 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
         /*! - compute the desired RW motor torques */
         /* us = [CGs].T v3_temp */
         vSetZero(us_avail, MAX_EFF_CNT);
-        for (i=0; i<configData->numAvailRW; i++) {
-            for (j=0; j<configData->numControlAxes; j++) {
+        for (int i=0; i<configData->numAvailRW; i++) {
+            for (uint32_t j=0; j<configData->numControlAxes; j++) {
                 us_avail[i] += CGs[j][i] * v3_temp[j];
             }
         }
         
         /*! - map the desired RW motor torques to the available RWs */
-        j = 0;
-        for (i = 0; i < configData->rwConfigParams.numRW; i++) {
+        int j = 0;
+        for (int i = 0; i < configData->rwConfigParams.numRW; i++) {
             if (wheelsAvailability.wheelAvailability[i] == AVAILABLE)
             {
                 us[i] = us_avail[j];

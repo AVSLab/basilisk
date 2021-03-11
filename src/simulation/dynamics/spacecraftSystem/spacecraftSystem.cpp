@@ -624,8 +624,8 @@ void SpacecraftSystem::initializeSCPosVelocity(SpacecraftUnit &spacecraft)
 void SpacecraftSystem::equationsOfMotion(double integTimeSeconds)
 {
     // - Update time to the current time
-    uint64_t integTimeNanos = this->simTimePrevious + (integTimeSeconds-this->timePrevious)/NANO2SEC;
-    (*this->sysTime) << integTimeNanos, integTimeSeconds;
+    uint64_t integTimeNanos = (uint64_t) (this->simTimePrevious + (integTimeSeconds-this->timePrevious)/NANO2SEC);
+    (*this->sysTime) << (double)integTimeNanos, integTimeSeconds;
 
     this->equationsOfMotionSystem(integTimeSeconds);
     // Call this for all unconnected spacecraft:

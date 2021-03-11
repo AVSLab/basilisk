@@ -144,7 +144,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     PixelLineFilterMsgPayload opNavOutBuffer; /* [-] Output filter info*/
     NavTransMsgPayload outputRelOD;
     CirclesOpNavMsgPayload inputCircles;
-    configData->moduleId = moduleId;
+    configData->moduleId = (int) moduleId;
     
     computePostFits = 0;
     v3SetZero(configData->postFits);
@@ -166,7 +166,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     if(newTimeTag >= configData->timeTag && NavAttMsg_C_isWritten(&configData->attInMsg) && inputCircles.valid ==1)
     {
         configData->circlesInBuffer = inputCircles;
-        configData->planetId = inputCircles.planetIds[0];
+        configData->planetId = (int) inputCircles.planetIds[0];
         pixelLineBiasUKFTimeUpdate(configData, newTimeTag);
         pixelLineBiasUKFMeasUpdate(configData);
         computePostFits = 1;

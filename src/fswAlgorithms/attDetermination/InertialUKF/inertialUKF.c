@@ -115,7 +115,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->covar);
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
-    badUpdate += ukfCholDecomp(configData->sBar, configData->numStates,
+    badUpdate += ukfCholDecomp(configData->sBar, (int32_t) configData->numStates,
                   configData->numStates, tempMatrix);
     
     badUpdate += ukfCholDecomp(configData->qNoise, configData->numStates,
@@ -189,7 +189,6 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
     double newTimeTag;  /* [s] Local Time-tag variable*/
-    uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/
     uint64_t timeOfRWSpeeds; /* [ns] Read time for the RWs*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
     double sigma_BNSum[3]; /* [-] Local MRP for propagated state*/

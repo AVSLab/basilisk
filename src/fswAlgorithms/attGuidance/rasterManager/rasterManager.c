@@ -53,7 +53,7 @@ void Reset_rasterManager(rasterManagerConfig *configData, uint64_t callTime, int
 
 void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t currentMnvrTime;
+    double currentMnvrTime;
     configData->scanSelector = configData->scanSelector % configData->numRasters;
     if (configData->mnvrActive == 0)
     {
@@ -66,7 +66,7 @@ void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, in
         v3Copy(&configData->scanningAngles[3 * configData->scanSelector], configData->attOutSet.state);
         v3Copy(&configData->scanningRates[3 * configData->scanSelector], configData->attOutSet.rate);
     } else {
-        configData->mnvrActive = 0.0;
+        configData->mnvrActive = 0;
         configData->scanSelector += 1;
 
         char info[MAX_LOGGING_LENGTH];

@@ -111,7 +111,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     sigma_pix = configData->noiseSF*cameraSpecs.resolution[0]/(numPoints);
     
     /*! Build DCMs */
-    configData->planetTarget = limbIn.planetIds;
+    configData->planetTarget = (int32_t) limbIn.planetIds;
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     MRP2C(attInfo.sigma_BN, dcm_BN);
     m33MultM33(dcm_CB, dcm_BN, dcm_NC);

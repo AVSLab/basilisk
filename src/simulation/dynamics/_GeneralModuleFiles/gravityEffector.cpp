@@ -135,7 +135,7 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
 
     // maximum degree!
     if (degree > maxDeg)
-        degree = maxDeg;
+        degree = (unsigned int) maxDeg;
 
     order = degree;
 
@@ -344,7 +344,7 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
         dcm_PfixN.transposeInPlace();
         Eigen::Vector3d r_Pfix = dcm_PfixN*r_I;
         Eigen::Vector3d gravPert_Pfix = this->spherHarm.computeField(r_Pfix,
-            this->spherHarm.maxDeg, false);
+           (unsigned int) this->spherHarm.maxDeg, false);
         gravOut += dcm_PfixN.transpose() * gravPert_Pfix;
     }
 
@@ -486,7 +486,7 @@ void GravityEffector::linkInStates(DynParamManager& statesIn)
 void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N)
 {
     std::vector<GravBodyData *>::iterator it;
-    uint64_t systemClock = this->timeCorr->data()[0];
+    uint64_t systemClock = (uint64_t) this->timeCorr->data()[0];
     Eigen::Vector3d r_cN_N;          //position of s/c CoM wrt N
     Eigen::Vector3d r_CN_N;          //inertial position of central body if there is one. Big C is central body. Little c is CoM of s/c
     Eigen::Vector3d r_PN_N;          //position of Planet being queried wrt N
@@ -549,7 +549,7 @@ void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vec
  */
 Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(GravBodyData *bodyData)
 {
-    uint64_t systemClock = this->timeCorr->data()[0];
+    uint64_t systemClock = (uint64_t) this->timeCorr->data()[0];
     double dt = (systemClock - bodyData->timeWritten)*NANO2SEC;
     Eigen::Vector3d r_PN_N = Eigen::Map<Eigen::MatrixXd>
     (&(bodyData->localPlanet.PositionVector[0]), 3, 1);
