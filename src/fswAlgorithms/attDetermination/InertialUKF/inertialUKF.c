@@ -48,7 +48,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
                       int64_t moduleId)
 {
     
-    int32_t i;
+    size_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
     double tempMatrix[AKF_N_STATES*AKF_N_STATES];
 
@@ -381,7 +381,8 @@ void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double
 */
 int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 {
-	int i, Index, k;
+    size_t i;
+    int Index, k;
 	double sBarT[AKF_N_STATES*AKF_N_STATES];
 	double xComp[AKF_N_STATES], AT[(2 * AKF_N_STATES + AKF_N_STATES)*AKF_N_STATES];
 	double aRow[AKF_N_STATES], rAT[AKF_N_STATES*AKF_N_STATES], xErr[AKF_N_STATES]; 
@@ -509,7 +510,7 @@ void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST)
     double quatMeas[4];
     double EPSum[4];
     double mrpSum[3];
-    int i;
+    size_t i;
     
     /*! This math seems more difficult than it should be, but there is a method.
         The input MRP may or may not be in the same "shadow" set as the state estimate.
@@ -764,7 +765,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
  @param configData The configuration data associated with the CSS estimator
  */
 void inertialUKFCleanUpdate(InertialUKFConfig *configData){
-    int i;
+    size_t i;
     /*! - Reset the observations, state, and covariannces to a previous safe value*/
     vSetZero(configData->obs, configData->numObs);
     vCopy(configData->statePrev, configData->numStates, configData->state);

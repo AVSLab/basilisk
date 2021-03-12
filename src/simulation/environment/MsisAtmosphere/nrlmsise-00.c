@@ -690,7 +690,7 @@ double globe7(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 	t[5] =    p[37]*plg[0][1]*cd39;
 
         /* DIURNAL */
-	if (flags->sw[7]) {
+	if ((int) flags->sw[7]) {
 		double t71, t72;
 		t71 = (p[11]*plg[1][2])*cd14*flags->swc[5];
 		t72 = (p[12]*plg[1][2])*cd14*flags->swc[5];
@@ -700,7 +700,7 @@ double globe7(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 }
 
 	/* SEMIDIURNAL */
-	if (flags->sw[8]) {
+	if ((int) flags->sw[8]) {
 		double t81, t82;
 		t81 = (p[23]*plg[2][3]+p[35]*plg[2][5])*cd14*flags->swc[5];
 		t82 = (p[33]*plg[2][3]+p[36]*plg[2][5])*cd14*flags->swc[5];
@@ -708,12 +708,12 @@ double globe7(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 	}
 
 	/* TERDIURNAL */
-	if (flags->sw[14]) {
+	if ((int) flags->sw[14]) {
 		t[13] = f2 * ((p[39]*plg[3][3]+(p[93]*plg[3][4]+p[46]*plg[3][6])*cd14*flags->swc[5])* s3tloc +(p[40]*plg[3][3]+(p[94]*plg[3][4]+p[48]*plg[3][6])*cd14*flags->swc[5])* c3tloc);
 }
 
 	/* magnetic activity based on daily ap */
-	if (flags->sw[9]==-1) {
+	if ((int) flags->sw[9]==-1) {
 		ap = input->ap_a;
 		if (p[51]!=0) {
 			double exp1;
@@ -727,7 +727,7 @@ double globe7(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 			   apt[2]=sg0(exp2,p,ap->a);
 			   apt[3]=sg2(exp2,p,ap->a);
 			*/
-			if (flags->sw[9]) {
+			if ((int) flags->sw[9]) {
 				t[8] = apt[0]*(p[50]+p[96]*plg[0][2]+p[54]*plg[0][4]+ \
      (p[125]*plg[0][1]+p[126]*plg[0][3]+p[127]*plg[0][5])*cd14*flags->swc[5]+ \
      (p[128]*plg[1][1]+p[129]*plg[1][3]+p[130]*plg[1][5])*flags->swc[7]* \
@@ -742,7 +742,7 @@ double globe7(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 		if (p44<0)
 			p44 = 1.0E-5;
 		apdf = apd + (p45-1.0)*(apd + (exp(-p44 * apd) - 1.0)/p44);
-		if (flags->sw[9]) {
+		if ((int) flags->sw[9]) {
 			t[8]=apdf*(p[32]+p[45]*plg[0][2]+p[34]*plg[0][4]+ \
      (p[100]*plg[0][1]+p[101]*plg[0][3]+p[102]*plg[0][5])*cd14*flags->swc[5]+
      (p[121]*plg[1][1]+p[122]*plg[1][3]+p[123]*plg[1][5])*flags->swc[7]*
@@ -750,10 +750,10 @@ double globe7(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 		}
 	}
 
-	if ((flags->sw[10])&&(input->g_long>-1000.0)) {
+	if (((int) flags->sw[10])&&(input->g_long>-1000.0)) {
 
 		/* longitudinal */
-		if (flags->sw[11]) {
+		if ((int) flags->sw[11]) {
 			t[10] = (1.0 + p[80]*dfa*flags->swc[1])* \
      ((p[64]*plg[1][2]+p[65]*plg[1][4]+p[66]*plg[1][6]\
       +p[103]*plg[1][1]+p[104]*plg[1][3]+p[105]*plg[1][5]\
@@ -766,7 +766,7 @@ double globe7(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 		}
 
 		/* ut and mixed ut, longitude */
-		if (flags->sw[12]){
+		if ((int) flags->sw[12]){
 			t[11]=(1.0+p[95]*plg[0][1])*(1.0+p[81]*dfa*flags->swc[1])*\
 				(1.0+p[119]*plg[0][1]*flags->swc[5]*cd14)*\
 				((p[68]*plg[0][1]+p[69]*plg[0][3]+p[70]*plg[0][5])*\
@@ -777,9 +777,9 @@ double globe7(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 		}
 
 		/* ut, longitude magnetic activity */
-		if (flags->sw[13]) {
+		if ((int) flags->sw[13]) {
 			if (flags->sw[9]==-1) {
-				if (p[51]) {
+				if ((int) p[51]) {
 					t[12]=apt[0]*flags->swc[11]*(1.+p[132]*plg[0][1])*\
 						((p[52]*plg[1][2]+p[98]*plg[1][4]+p[67]*plg[1][6])*\
 						 cos(dgtr*(input->g_long-p[97])))\
@@ -860,7 +860,7 @@ double glob7s(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 	t[5]=(p[37]*plg[0][1])*cd39;
 
         /* DIURNAL */
-	if (flags->sw[7]) {
+	if ((int) flags->sw[7]) {
 		double t71, t72;
 		t71 = p[11]*plg[1][2]*cd14*flags->swc[5];
 		t72 = p[12]*plg[1][2]*cd14*flags->swc[5];
@@ -868,7 +868,7 @@ double glob7s(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 	}
 
 	/* SEMIDIURNAL */
-	if (flags->sw[8]) {
+	if ((int) flags->sw[8]) {
 		double t81, t82;
 		t81 = (p[23]*plg[2][3]+p[35]*plg[2][5])*cd14*flags->swc[5];
 		t82 = (p[33]*plg[2][3]+p[36]*plg[2][5])*cd14*flags->swc[5];
@@ -876,12 +876,12 @@ double glob7s(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 	}
 
 	/* TERDIURNAL */
-	if (flags->sw[14]) {
+	if ((int) flags->sw[14]) {
 		t[13] = p[39] * plg[3][3] * s3tloc + p[40] * plg[3][3] * c3tloc;
 	}
 
 	/* MAGNETIC ACTIVITY */
-	if (flags->sw[9]) {
+	if ((int) flags->sw[9]) {
 		if (flags->sw[9]==1)
 			t[8] = apdf * (p[32] + p[45] * plg[0][2] * flags->swc[2]);
 		if (flags->sw[9]==-1)	
@@ -952,7 +952,7 @@ void gtd7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 	gts7(input, flags, &soutput);
 	altt=input->alt;
 	input->alt=tmp;
-	if (flags->sw[0])   /* metric adjustment */
+	if ((int) flags->sw[0])   /* metric adjustment */
 		dm28m=dm28*1.0E6;
 	else
 		dm28m=dm28;
@@ -1026,7 +1026,7 @@ void gtd7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 	/**** Total mass density */
 	output->d[5] = 1.66E-24 * (4.0 * output->d[0] + 16.0 * output->d[1] + 28.0 * output->d[2] + 32.0 * output->d[3] + 40.0 * output->d[4] + output->d[6] + 14.0 * output->d[7]);
 
-	if (flags->sw[0])
+	if ((int) flags->sw[0])
 		output->d[5]=output->d[5]/1000;
 
 	/**** temperature at altitude ****/
@@ -1044,7 +1044,7 @@ void gtd7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 void gtd7d(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrlmsise_output *output) {
 	gtd7(input, flags, output);
 	output->d[5] = 1.66E-24 * (4.0 * output->d[0] + 16.0 * output->d[1] + 28.0 * output->d[2] + 32.0 * output->d[3] + 40.0 * output->d[4] + output->d[6] + 14.0 * output->d[7] + 16.0 * output->d[8]);
-	if (flags->sw[0])
+	if ((int) flags->sw[0])
 		output->d[5]=output->d[5]/1000;
 }
  
@@ -1107,7 +1107,7 @@ void ghp7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 		z = input->alt;
 		xn = output->d[0] + output->d[1] + output->d[2] + output->d[3] + output->d[4] + output->d[6] + output->d[7];
 		p = bm * xn * output->t[1];
-		if (flags->sw[0])
+		if ((int) flags->sw[0])
 			p = p*1.0E-6;
 		diff = pl - log10(p);
 		if (sqrt(diff*diff)<test)
@@ -1117,7 +1117,7 @@ void ghp7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 			return;
 		}
 		xm = output->d[5] / xn / 1.66E-24;
-		if (flags->sw[0])
+		if ((int) flags->sw[0])
 			xm = xm * 1.0E3;
 		g = gsurf / (pow((1.0 + z/re),2.0));
 		sh = rgas * output->t[1] / (xm * g);
@@ -1232,7 +1232,7 @@ void gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 	xmd=28.0-xmm;
 	/* Mixed density at Zlb */
 	b28=densu(zh28,db28,tinf,tlb,xmd,(alpha[2]-1.0),&tz,ptm[5],s,mn1, zn1,meso_tn1,meso_tgn1);
-	if ((flags->sw[15])&&(z<=altl[2])) {
+	if (((int) flags->sw[15])&&(z<=altl[2])) {
 		/*  Mixed density at Alt */
 		dm28=densu(z,b28,tinf,tlb,xmm,alpha[2],&tz,ptm[5],s,mn1,zn1,meso_tn1,meso_tgn1);
 		/*  Net density at Alt */
@@ -1249,7 +1249,7 @@ void gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
         /*  Diffusive density at Alt */
 	output->d[0]=densu(z,db04,tinf,tlb, 4.,alpha[0],&output->t[1],ptm[5],s,mn1,zn1,meso_tn1,meso_tgn1);
 	dd=output->d[0];
-	if ((flags->sw[15]) && (z<altl[0])) {
+	if (((int) flags->sw[15]) && (z<altl[0])) {
 		/*  Turbopause */
 		zh04=pdm[0][2];
 		/*  Mixed density at Zlb */
@@ -1277,7 +1277,7 @@ void gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
         /*   Diffusive density at Alt */
 	output->d[1]=densu(z,db16,tinf,tlb, 16.,alpha[1],&output->t[1],ptm[5],s,mn1, zn1,meso_tn1,meso_tgn1);
 	dd=output->d[1];
-	if ((flags->sw[15]) && (z<=altl[1])) {
+	if (((int) flags->sw[15]) && (z<=altl[1])) {
 		/*   Turbopause */
 		zh16=pdm[1][2];
 		/*  Mixed density at Zlb */
@@ -1310,7 +1310,7 @@ void gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
         /*   Diffusive density at Alt */
 	output->d[3]=densu(z,db32,tinf,tlb, 32.,alpha[3],&output->t[1],ptm[5],s,mn1, zn1,meso_tn1,meso_tgn1);
 	dd=output->d[3];
-	if (flags->sw[15]) {
+	if ((int) flags->sw[15]) {
 		if (z<=altl[3]) {
 			/*   Turbopause */
 			zh32=pdm[3][2];
@@ -1346,7 +1346,7 @@ void gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 	/*   Diffusive density at Alt */
 	output->d[4]=densu(z,db40,tinf,tlb, 40.,alpha[4],&output->t[1],ptm[5],s,mn1,zn1,meso_tn1,meso_tgn1);
 	dd=output->d[4];
-	if ((flags->sw[15]) && (z<=altl[4])) {
+	if (((int) flags->sw[15]) && (z<=altl[4])) {
 		/*   Turbopause */
 		zh40=pdm[4][2];
 		/*  Mixed density at Zlb */
@@ -1374,7 +1374,7 @@ void gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
         /*   Diffusive density at Alt */
 	output->d[6]=densu(z,db01,tinf,tlb,1.,alpha[6],&output->t[1],ptm[5],s,mn1,zn1,meso_tn1,meso_tgn1);
 	dd=output->d[6];
-	if ((flags->sw[15]) && (z<=altl[6])) {
+	if (((int) flags->sw[15]) && (z<=altl[6])) {
 		/*   Turbopause */
 		zh01=pdm[5][2];
 		/*  Mixed density at Zlb */
@@ -1407,7 +1407,7 @@ void gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
         /*   Diffusive density at Alt */
 	output->d[7]=densu(z,db14,tinf,tlb,14.,alpha[7],&output->t[1],ptm[5],s,mn1,zn1,meso_tn1,meso_tgn1);
 	dd=output->d[7];
-	if ((flags->sw[15]) && (z<=altl[7])) {
+	if (((int) flags->sw[15]) && (z<=altl[7])) {
 		/*   Turbopause */
 		zh14=pdm[6][2];
 		/*  Mixed density at Zlb */
@@ -1451,7 +1451,7 @@ void gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 	z = sqrt(input->alt*input->alt);
 	ddum = densu(z,1.0, tinf, tlb, 0.0, 0.0, &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
 	(void) ddum; /* silence gcc */
-	if (flags->sw[0]) {
+	if ((int) flags->sw[0]) {
 		for(i=0;i<9;i++)
 			output->d[i]=output->d[i]*1.0E6;
 		output->d[5]=output->d[5]/1000;

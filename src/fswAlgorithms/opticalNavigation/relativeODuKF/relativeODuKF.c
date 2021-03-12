@@ -50,7 +50,7 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: relativeODuKF.opNavInMsg wasn't connected.");
     }
 
-    int32_t i;
+    size_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
     double tempMatrix[ODUKF_N_STATES*ODUKF_N_STATES];
     
@@ -412,7 +412,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
  */
 void relODuKFMeasModel(RelODuKFConfig *configData)
 {
-    int i, j;
+    size_t i, j;
     v3Copy(configData->opNavInBuffer.r_BN_N, configData->obs);
     for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
@@ -576,7 +576,7 @@ int relODuKFMeasUpdate(RelODuKFConfig *configData)
  @param configData The configuration data associated with the OD filter
  */
 void relODuKFCleanUpdate(RelODuKFConfig *configData){
-    int i;
+    size_t i;
     /*! - Reset the observations, state, and covariannces to a previous safe value*/
     vSetZero(configData->obs, configData->numObs);
     vCopy(configData->statePrev, configData->numStates, configData->state);

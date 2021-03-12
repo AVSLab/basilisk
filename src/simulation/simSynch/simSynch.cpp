@@ -67,6 +67,7 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
 	int64_t sleepAmountNano;                    // [ns] time for module to sleep
     int64_t simTimeNano;                        // [ns] simTimeNano simulation time since reset
     int64_t realTimeNano;                       // [ns] real time elapsed since reset
+    int64_t initTimeDeltaNano;                  // [ns] time difference
 
     //! - If we haven't initialized the timers yet, initialize the start times and flag it as initialized
 	if (!timeInitialized)
@@ -84,13 +85,13 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
 	realTimeNano = (int64_t) (std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - this->startTime)).count();
     
     //! - Save off the observed time-delta for analysis and flag any unexpected overruns
-    this->outputData.initTimeDelta = (double) (simTimeNano - realTimeNano);
+    initTimeDeltaNano = simTimeNano - realTimeNano;
    
-    if(this->outputData.initTimeDelta < -this->accuracyNanos)
+    if(initTimeDeltaNano < -this->accuracyNanos)
     {
         this->outputData.overrunCounter++;
     }
-	this->outputData.initTimeDelta *= NANO2SEC;
+	this->outputData.initTimeDelta = initTimeDeltaNano * NANO2SEC;
     
     /*! - Loop behavior is fairly straightforward.  While we haven't reached the specified accuracy:
             -# Compute the current time

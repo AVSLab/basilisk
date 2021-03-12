@@ -201,7 +201,7 @@ void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload> *pl
     this->dataPaths.push_back(dataPath);
     this->numLats.push_back(-1);
     this->numLons.push_back(-1);
-    this->ALB_avgs.push_back(-1);
+    this->ALB_avgs.push_back(-1.0);
     this->albArray.push_back(true);
 
     this->planetInMsgs.push_back(planetSpiceMsg->addSubscriber());

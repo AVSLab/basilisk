@@ -183,7 +183,7 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
 {
     double tmpDotProduct = 0;
     double currentDotProduct = 0;
-    double currentIdx = 0;
+    int currentIdx = 0;
     double sunDist = s_B.norm();
     Eigen::Vector3d sHat_B = s_B/sunDist;
     Eigen::Vector3d tmpLookupSHat_B(0,0,0);
@@ -210,8 +210,8 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
         }
     }
     
-    this->forceExternal_B = this->lookupForce_B[(uint64_t) currentIdx]*pow(AU*1000/sunDist, 2);
-    this->torqueExternalPntB_B = this->lookupTorque_B[(uint64_t) currentIdx]*pow(AU*1000/sunDist, 2);
+    this->forceExternal_B = this->lookupForce_B[currentIdx]*pow(AU*1000/sunDist, 2);
+    this->torqueExternalPntB_B = this->lookupTorque_B[currentIdx]*pow(AU*1000/sunDist, 2);
 }
 
 /*! Add force vector in the body frame to lookup table.

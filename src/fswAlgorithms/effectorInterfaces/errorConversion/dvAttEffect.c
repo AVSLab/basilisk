@@ -133,7 +133,7 @@ CmdTorqueBodyMsgPayload *contrReq, int64_t moduleID)
 
 void effectorVSort(effPairs *Input, effPairs *Output, size_t dim)
 {
-    int i, j;
+    size_t i, j;
     int Swapped;
     Swapped = 1;
     memcpy(Output, Input, dim*sizeof(effPairs));

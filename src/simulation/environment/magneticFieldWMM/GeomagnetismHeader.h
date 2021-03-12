@@ -64,8 +64,8 @@ extern "C" {
 #define M_PI    ((2)*(acos(0.0)))
 #endif
 
-#define RAD2DEG(rad)    ((rad)*(180.0L/M_PI))
-#define DEG2RAD(deg)    ((deg)*(M_PI/180.0L))
+#define RAD2DEG(rad)    ((rad)*(180.0/M_PI))
+#define DEG2RAD(deg)    ((deg)*(M_PI/180.0))
 #define ATanH(x)	    (0.5 * log((1 + x) / (1 - x)))
 
 #ifndef TRUE

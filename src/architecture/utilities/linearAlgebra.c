@@ -267,7 +267,7 @@ void vPrint(FILE *pFile, const char *name, double *v, size_t dim)
 /*I hope you allocated the output prior to calling this!*/
 void vSort(double *Input, double *Output, size_t dim)
 {
-    int i, j;
+    size_t i, j;
     memcpy(Output, Input, dim*sizeof(double));
     for(i=0; i<dim; i++)
     {

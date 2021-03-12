@@ -55,7 +55,7 @@ public:
     Eigen::MatrixXd *ISCPntB_B;                     //!< [kg m^2] current spacecraft inertia about point B, B-frame components
     Eigen::MatrixXd *c_B;                           //!< [m] Vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd *m_SC;                          //!< [kg] mass of spacecraft
-    std::vector<Eigen::MatrixXd *> r_PN_N;          //!< [kg] mass of spacecraft
+    std::vector<Eigen::MatrixXd *> r_PN_N;          //!< [m] vector of inertial planet positions
     std::vector<Eigen::MatrixXd *> muPlanet;        //!< [m^3/s^-2] gravitational constant of planet
 
     BSKLogger bskLogger;                            //!< BSK Logging

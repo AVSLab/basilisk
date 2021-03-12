@@ -56,7 +56,7 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineBiasUKF.attInMsg wasn't connected.");
     }
 
-    int32_t i;
+    size_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
     double tempMatrix[PIXLINE_N_STATES*PIXLINE_N_STATES];
     
@@ -414,7 +414,7 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
  */
 void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
 {
-    int i, j;
+    size_t i, j;
     double dcm_CN[3][3], dcm_CB[3][3], dcm_BN[3][3];
     double reCentered[2], rNorm, denom, planetRad;
     double r_C[3];
@@ -638,7 +638,7 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
  @param configData The configuration data associated with the OD filter
  */
 void pixelLineBiasUKFCleanUpdate(PixelLineBiasUKFConfig *configData){
-    int i;
+    size_t i;
     /*! - Reset the observations, state, and covariannces to a previous safe value*/
     vSetZero(configData->obs, configData->numObs);
     vCopy(configData->statePrev, configData->numStates, configData->state);

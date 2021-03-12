@@ -723,7 +723,7 @@ void sunlineSuKFCleanUpdate(SunlineSuKFConfig *configData){
                                                  configData->lambdaVal);
     configData->wC[0] = configData->lambdaVal / (configData->numStates +
                                                  configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);
-    for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
+    for (i = 1; i< ((int)configData->countHalfSPs) * 2 + 1; i++)
     {
         configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
                                              configData->lambdaVal);

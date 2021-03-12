@@ -102,9 +102,6 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
     double  voltage[MAX_EFF_CNT];       /*!< [V]   RW voltage output commands */
     memset(voltage, 0, sizeof(double)*MAX_EFF_CNT);
 
-    /* compute the often used double array size of RW double values */
-    uint32_t rwArrayMemorySize = configData->rwConfigParams.numRW*sizeof(double);
-
     /* if the torque closed-loop is on, evaluate the feedback term */
     if (RWSpeedMsg_C_isLinked(&configData->rwSpeedInMsg)) {
         /* make sure the clock didn't just initialize, or the module was recently reset */

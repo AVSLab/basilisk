@@ -104,7 +104,7 @@ void Camera::HSVAdjust(const cv::Mat mSrc, cv::Mat &mDst){
             h_360 = (int) (h_360 -  360 * std::floor(h_360 * (1. / 360.)));
             h_360 = h_360/2;
             if(h_360 == 180){ h_360 = 0; }
-            hsv.at<cv::Vec3b>(j, i)[0] = h_360;
+            hsv.at<cv::Vec3b>(j, i)[0] = (unsigned char) h_360;
 
             int values[3];
             for(int k = 1; k < 3; k++){
@@ -112,7 +112,7 @@ void Camera::HSVAdjust(const cv::Mat mSrc, cv::Mat &mDst){
                 // saturate S and V values to [0,255]
                 if(values[k] < 0){ values[k] = 0; }
                 if(values[k] > 255){ values[k] = 255; }
-                hsv.at<cv::Vec3b>(j, i)[k] = values[k];
+                hsv.at<cv::Vec3b>(j, i)[k] = (unsigned char) values[k];
             }
         }
     }
@@ -141,7 +141,7 @@ void Camera::BGRAdjustPercent(const cv::Mat mSrc, cv::Mat &mDst){
                 // deal with overflow
                 if(values[k] < 0){ values[k] = 0; }
                 if(values[k] > 255){ values[k] = 255; }
-                mBGR.at<cv::Vec3b>(j,i)[k] = values[k];
+                mBGR.at<cv::Vec3b>(j,i)[k] = (unsigned char) values[k];
             }
         }
     }

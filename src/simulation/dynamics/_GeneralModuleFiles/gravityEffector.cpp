@@ -55,7 +55,7 @@ bool SphericalHarmonics::initializeParameters()
         return paramsDone;
     }
 
-    for(unsigned int i = 0; i <= maxDeg + 1; i++)
+    for(unsigned int i = 0; i <= this->maxDeg + 1; i++)
     {
         std::vector<double> aRow, n1Row, n2Row;
         aRow.resize(i+1, 0.0);
@@ -84,7 +84,7 @@ bool SphericalHarmonics::initializeParameters()
         aBar.push_back(aRow);
     }
 
-    for (unsigned int l = 0; l <= maxDeg; l++) // up to _maxDegree-1
+    for (unsigned int l = 0; l <= this->maxDeg; l++) // up to _maxDegree-1
     {
         std::vector<double> nq1Row, nq2Row;
         nq1Row.resize(l+1, 0.0);
@@ -134,8 +134,8 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
     u = z/r;
 
     // maximum degree!
-    if (degree > maxDeg)
-        degree = (unsigned int) maxDeg;
+    if (degree > this->maxDeg)
+        degree = this->maxDeg;
 
     order = degree;
 
@@ -344,7 +344,7 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
         dcm_PfixN.transposeInPlace();
         Eigen::Vector3d r_Pfix = dcm_PfixN*r_I;
         Eigen::Vector3d gravPert_Pfix = this->spherHarm.computeField(r_Pfix,
-           (unsigned int) this->spherHarm.maxDeg, false);
+           this->spherHarm.maxDeg, false);
         gravOut += dcm_PfixN.transpose() * gravPert_Pfix;
     }
 

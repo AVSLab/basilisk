@@ -7,6 +7,9 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import dvAccumulation
 from Basilisk.architecture import messaging
+from Basilisk.utilities import macros
+import numpy as np
+
 from numpy import random
 import os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -130,7 +133,7 @@ def dvAccumulationTestFunction():
                  [ 4.82820079e-03,   7.81971465e-03,   2.29605663e-03],
                  [ 6.44596343e-03,   9.00203561e-03,   2.60580728e-03],
                  [ 6.44596343e-03,   9.00203561e-03,   2.60580728e-03]]
-    trueTime = [ 7.2123026e+07, 7.2123026e+07, 7.2123026e+07, 7.6667436e+07, 7.6667436e+07]
+    trueTime = np.array([7.2123026e+07, 7.2123026e+07, 7.2123026e+07, 7.6667436e+07, 7.6667436e+07]) * macros.NANO2SEC
 
     accuracy = 1e-6
     unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)

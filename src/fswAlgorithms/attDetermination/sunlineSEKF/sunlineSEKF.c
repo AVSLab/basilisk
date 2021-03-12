@@ -48,8 +48,6 @@ void SelfInit_sunlineSEKF(sunlineSEKFConfig *configData, int64_t moduleID)
 void Reset_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
 {
-    
-    uint32_t i;
     CSSConfigMsgPayload cssConfigInBuffer;
 
     /*! - Zero the local configuration data structures and outputs */
@@ -68,7 +66,7 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
     cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
 
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
-    for(i=0; i<cssConfigInBuffer.nCSS; i++)
+    for(uint32_t i=0; i<cssConfigInBuffer.nCSS; i++)
     {
         v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(configData->cssNHat_B[i*3]));
     }

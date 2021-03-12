@@ -33,7 +33,7 @@
 class SphericalHarmonics
 {
 public:
-    double maxDeg;        //!< [-] Maximum degree of the spherical harmonics
+    unsigned int maxDeg;  //!< [-] Maximum degree of the spherical harmonics
     double radEquator;    //!< [-] Reference radius for the planet
     double muBody;        //!< [-] Gravitation parameter for the planet
     

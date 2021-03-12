@@ -86,7 +86,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
     configData->sc = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
-    configData->numThrusters = localThrusterData.numThrusters;
+    configData->numThrusters = (uint32_t) localThrusterData.numThrusters;
     for(i=0; i<configData->numThrusters; i=i+1)
     {
         v3Copy(localThrusterData.thrusters[i].rThrust_B, configData->rThruster_B[i]);

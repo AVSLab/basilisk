@@ -256,7 +256,7 @@ int32_t ukfLUBckSlv(double *sourceMat, int32_t nRow, int32_t nCol,
 				sum -= sourceMat[i*nRow + j] * destMat[j];
 			}
 		}
-		else if (sum)
+		else if ((int) sum)
 		{
 			ii = i;
 		}
