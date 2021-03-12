@@ -134,7 +134,7 @@ class BasiliskConan(ConanFile):
                         choice = input(warningColor + "Required python package " + elem + " is missing" + endColor +
                                        "\nInstall for user (u), system (s) or cancel(c)? ")
                     if choice == 'c':
-                        print(warningColor + "Skipping inst Addingalling " + elem + endColor)
+                        print(warningColor + "Skipping installing " + elem + endColor)
                         continue
                     elif choice == 'u':
                         installCmd.append("--user")
