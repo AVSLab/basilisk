@@ -21,12 +21,13 @@ Release Notes
 **Version 1.8.0**
 
 - user can create bodies that are not in the internal viz support dictionary. Bodies included in the internal dictionary: Sun, Mercury, Venus, Earth, Moon, Mars, Phobos, Deimos, Jupiter, Saturn, Uranus, Neptune, and Pluto
-- added mu, equatorial radius, and radiusRatio to CelestialBody submessage to support creation of custom bodies and also allow modification to those properties for previously supported bodies
+- added mu, equatorial radius, and radiusRatio to CelestialBody sub-message to support creation of custom bodies and also allow modification to those properties for previously supported bodies
 - added support for intermediate sized bodies (like asteroids or small moons)
 - improved the sphere of influence calculations used to choose the parent body for a spacecraft or custom celestial body (parent body needed when calculating osculating orbit lines)
 - added support for custom models for celestial bodies to OpNav mode
 - fixed bugs with sprite mode that would cause spacecraft to be incorrectly determined to be in contact
 - fixed bugs with custom location range and added a hemisphere to range cone to better indicate the location range when custom range is enabled
+- improved the custom shape importing GUI to allow an object to return to the default shape and texture
 
 
 **Version 1.7.1**
