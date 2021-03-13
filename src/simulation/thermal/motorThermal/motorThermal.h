@@ -26,7 +26,7 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 
-/*! @brief Motor temperature module */
+/*! @brief Motor temperature module.  It simulates the heating and cooling of a motor based on ambient temperature, as well as heat generated during spin-up or breaking. */
 class MotorThermal: public SysModel {
 public:
     MotorThermal();
