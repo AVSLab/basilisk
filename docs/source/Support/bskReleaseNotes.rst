@@ -33,6 +33,11 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+
+- text here
+
+Version 2.0.1
+-------------
 - Added the ability to clear the data of a message recorder using ``.clear()``
 - Fixed a rare issue where RW data didn't stick
 - Fixed an issue subscribing to a C++ wrapped message object from python
