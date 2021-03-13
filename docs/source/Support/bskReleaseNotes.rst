@@ -64,7 +64,7 @@ Version |release|
   output message recorders.  The coder can then take this draft module code and modify to achieve the desired
   functionality.  The page :ref:`Folder_moduleTemplates` discusses how to use it and provides to 2 sample
   auto-generated modules that get created inside ``src/moduleTemplates`` with ``python conanfile.py``.
-
+- new thermal motor module in :ref:`motorThermal`.  It it be used to simulate the temperature of a RW motor.
 
 
 Version 2.0.0
