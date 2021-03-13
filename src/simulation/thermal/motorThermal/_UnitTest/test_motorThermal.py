@@ -37,11 +37,8 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.simulation import motorThermal                    # import the module that is to be tested
-from Basilisk.utilities import macros
 from Basilisk.architecture import messaging                      # import the message definitions
-from Basilisk.architecture import bskLogging
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeRW
@@ -83,8 +80,6 @@ def test_motorThermal(show_plots, accuracy):
 
     **Test Parameters**
 
-    The only input parameter used is the accuracy, which is set at 1e-08.
-
     Args:
         accuracy (float): absolute accuracy value used in the validation tests
 
@@ -95,7 +90,7 @@ def test_motorThermal(show_plots, accuracy):
     - ``rwTemp``
 
     which represents the array of motor temperatures. This array is compared to the ``truthTemp`` array, which contains
-    the true values of the temperature up to a precision of 1e-08.
+    the true values of the temperature.
     """
     [testResults, testMessage] = motorThermalTest(show_plots, accuracy)
     assert testResults < 1, testMessage
@@ -143,12 +138,12 @@ def motorThermalTest(show_plots, accuracy):
 
     # create the reaction wheels
     RW = rwFactory.create('Honeywell_HR16',
-                           [1, 0, 0],  # gsHat_B
-                           Omega=4000.,  # RPM
-                           maxMomentum=50.,
-                           RWModel=varRWModel,
-                           useRWfriction=True
-                           )
+                          [1, 0, 0],  # gsHat_B
+                          Omega=4000.,  # RPM
+                          maxMomentum=50.,
+                          RWModel=varRWModel,
+                          useRWfriction=True
+                          )
     numRW = rwFactory.getNumOfDevices()
 
     # set maximum values for RW speed
@@ -231,8 +226,6 @@ def motorThermalTest(show_plots, accuracy):
     unitTestSim.ExecuteSimulation()
     numTests += 1
 
-
-
     #
     # retrieve the logged data
     #
@@ -250,7 +243,6 @@ def motorThermalTest(show_plots, accuracy):
                          23.32139167, 24.15102935, 24.9803835, 25.8094544, 26.63824235, 27.46674761,
                          28.29497048, 20.83623573, 21.67218133, 22.50783709, 23.34320331, 24.17828028,
                          25.01306827, 25.84756759, 26.68177852, 27.51570134, 28.34933636])
-
 
     #
     # compare the module results to the true values
