@@ -115,7 +115,7 @@ void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
 			    this->attRefMsg_a = this->attRefMsg_b;
 				pullDataLine(&this->t_b, &this->attRefMsg_b);
 			}
-			/* if t_0 <= CurrentTime <= t_b interpolate between attRefMsg_0 and attRefMsg_b */
+			/* if t_a <= CurrentTime <= t_b interpolate between attRefMsg_a and attRefMsg_b */
 			if (t >= this->t_a && t <= this->t_b) {
 			    linearInterpolation(this->t_a, this->attRefMsg_a.sigma_RN, this->t_b, this->attRefMsg_b.sigma_RN, t, &attMsgBuffer.sigma_RN[0]);
                 linearInterpolation(this->t_a, this->attRefMsg_a.omega_RN_N, this->t_b, this->attRefMsg_b.omega_RN_N, t, &attMsgBuffer.omega_RN_N[0]);

@@ -260,7 +260,7 @@ def waypointReferenceTestFunction(attType, useReferenceFrame, accuracy):
     if testFailCount == 0:
         print("PASSED: " + testModule.ModelTag)
     else:
-        print("Failed: " + testModule.ModelTag)
+        print("FAILED: " + testModule.ModelTag)
         print(testMessages)
 
     return [testFailCount, ''.join(testMessages)]
