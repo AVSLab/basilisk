@@ -74,6 +74,7 @@ def msmForceTorqueTestFunction(show_plots, param1, param2, accuracy):
     # Configure blank module input messages
     scStateInMsgsData = messaging.SCStatesMsgPayload()
     scStateInMsgsData.r_BN_N = [10., 20., 30.]
+    scStateInMsgsData.sigma_BN = [0.1, 0.2, 0.3]
     scStateInMsgs = messaging.SCStatesMsg().write(scStateInMsgsData)
 
     voltInMsgData = messaging.VoltageMsgPayload()

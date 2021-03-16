@@ -19,9 +19,9 @@
 
 
 #include "simulation/dynamics/msmForceTorque/msmForceTorque.h"
-#include "architecture/utilities/avsEigenSupport.h"
 #include <iostream>
 #include <cstring>
+#include "architecture/utilities/linearAlgebra.h"
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -56,6 +56,17 @@ void MsmForceTorque::Reset(uint64_t CurrentSimNanos)
     if (this->numSat < 2) {
         bskLogger.bskLog(BSK_ERROR, "MsmForceTorque must have 2 or more spacecraft components added. You added %lu.", this->numSat);
     }
+    
+    /* determine number of spheres being modeled */
+    this->numSpheres = 0;
+    for (long unsigned int c=0; c < this->numSat; c++) {
+        this->numSpheres += this->radiiList.at(c).size();
+    }
+    if (this->numSpheres == 0) {
+        bskLogger.bskLog(BSK_ERROR, "MsmForceTorque does not have any spheres added?");
+    }
+    
+    return;
 }
 
 /*!   Subscribe to the spacecraft state message and store the corresponding MSM radii and sphere positions
@@ -80,7 +91,10 @@ void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg
     this->volt.push_back(0);
     Eigen::Vector3d zero;
     zero << 0.0, 0.0, 0.0;
-    this->r_BN_N.push_back(zero);
+    this->r_BN_NList.push_back(zero);
+    Eigen::MRPd zeroMRP;
+    zeroMRP = zero;
+    this->sigma_BNList.push_back(zeroMRP);
         
     /* create output message objects */
     Message<CmdTorqueBodyMsgPayload> *msgTorque;
@@ -105,9 +119,68 @@ void MsmForceTorque::readMessages()
         this->volt.at(c) = voltInMsgBuffer.voltage;
         
         scStateInMsgsBuffer = this->scStateInMsgs.at(c)();
-        this->r_BN_N.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.r_BN_N);
+        this->r_BN_NList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.r_BN_N);
+        this->sigma_BNList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.sigma_BN);
     }
 }
+
+
+/*! Compute the E-forces and torques using the MSM model
+    @return void
+*/
+void MsmForceTorque::computeElectrostaticForcesTorques()
+{
+    Eigen::MatrixXd S;                          //!< [1/m] Elastance matrix divided by kc
+    Eigen::VectorXd V;                          //!< [V] vector of sphere voltages
+    Eigen::VectorXd q;                          //!< [C] vector of sphere charges
+    double kc;                                  //!< [Nm^2/C^2] Coulomb's constant
+    std::vector<Eigen::Vector3d> r_SN_NList;    //!< list of inertial sphere locations
+    Eigen::Matrix3d dcm_NB;                     //!< [] DCM from body B to inertial frame N
+    Eigen::Vector3d r_BN_N;                     //!< [m] spacecraft inertial position vector
+    Eigen::Vector3d r_ij_N;                     //!< [m] relative position vector between ith and jth spheres
+    long unsigned int counter;                  //!< [] loop counter
+
+    kc = 8.99e9;
+    
+    /* size matrices */
+    S.resize(this->numSpheres, this->numSpheres);
+    V.resize(this->numSpheres);
+    q.resize(this->numSpheres);
+
+    /* determine inertial sphere locations */
+    for (long unsigned int c=0; c < this->numSat; c++) {
+        dcm_NB = this->sigma_BNList.at(c).toRotationMatrix();
+        r_BN_N = this->r_BN_NList.at(c);
+        for (long unsigned int k=0; k < this->radiiList.at(c).size(); k++) {
+            r_SN_NList.push_back(r_BN_N + dcm_NB * this->r_SB_BList.at(c).at(k));
+        }
+    }
+    
+    /*
+     setup elastance matrix
+     */
+    /* setup diagonal S matrix and voltage components */
+    counter = 0;
+    for (long unsigned int c=0; c < this->numSat; c++) {
+        for (long unsigned int k=0; k < this->radiiList.at(c).size(); k++) {
+            S(counter, counter) = kc/this->radiiList.at(c).at(k);
+            V(counter) = this->volt.at(c);
+            counter++;
+        }
+    }
+    /* setup off-diagonal components */
+    for (long unsigned int i=0; i < this->numSpheres; i++) {
+        for (long unsigned int j=0; j < this->numSpheres; j++) {
+            if (i != j) {
+                r_ij_N = r_SN_NList.at(i) - r_SN_NList.at(j);
+                S(i,j) = kc / r_ij_N.norm();
+                S(j,i) = S(i,j);
+            }
+        }
+    }
+    
+}
+
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @return void
@@ -128,8 +201,11 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
 //    eTorqueOutMsgsBuffer = this->eTorqueOutMsgs.zeroMsgPayload;
 //    eForceOutMsgsBuffer = this->eForceOutMsgs.zeroMsgPayload;
 //
-    // read in the input messages
+    // read the input messages
     this->readMessages();
+    
+    // Evaluate the electrostatic forces and torques acting on each body
+    this->computeElectrostaticForcesTorques();
 
 //    // do some math and stuff to populate the output messages
 //
