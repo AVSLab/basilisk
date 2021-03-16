@@ -36,7 +36,6 @@ from Basilisk.fswAlgorithms import waypointReference
 from Basilisk.utilities import macros
 from Basilisk.architecture import bskLogging
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -103,6 +102,8 @@ def test_waypointReference(show_plots, attType, useReferenceFrame, accuracy):
     assert testResults < 1, testMessage
 
 def waypointReferenceTestFunction(attType, useReferenceFrame, accuracy):
+
+    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
