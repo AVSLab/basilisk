@@ -34,7 +34,7 @@ Basilisk Release Notes
 Version |release|
 -----------------
 
-- text new waypoint reference module in :ref:`waypointReference`. It can be used to read an attitude maneuver from a set of waypoints on a text file,
+- new waypoint reference module in :ref:`waypointReference`. It can be used to read an attitude maneuver from a set of waypoints on a text file,
   likely generated outside Basilisk.
 
 Version 2.0.1
