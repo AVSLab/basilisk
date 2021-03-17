@@ -158,6 +158,7 @@ typedef struct messageType;
 %template(AlbedoOutMsgsVector) std::vector<Message<AlbedoMsgPayload>*>;
 %template(ExtTorqueOutMsgsVector) std::vector<Message<CmdTorqueBodyMsgPayload>*>;
 %template(ExtBodyForceOutMsgsVector) std::vector<Message<CmdForceBodyMsgPayload>*>;
+%template(ExtInertialForceOutMsgsVector) std::vector<Message<CmdForceInertialMsgPayload>*>;
 %template(THROutputOutMsgsVectorVector) std::vector <std::vector <Message<THROutputMsgPayload>*>>;
 %template(RWConfigLogOutMsgsVectorVector) std::vector <std::vector <Message<RWConfigLogMsgPayload>*>>;
 

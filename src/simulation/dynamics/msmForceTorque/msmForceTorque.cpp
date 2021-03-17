@@ -101,8 +101,8 @@ void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg
     msgTorque = new Message<CmdTorqueBodyMsgPayload>;
     this->eTorqueOutMsgs.push_back(msgTorque);
     
-    Message<CmdForceBodyMsgPayload> *msgForce;
-    msgForce = new Message<CmdForceBodyMsgPayload>;
+    Message<CmdForceInertialMsgPayload> *msgForce;
+    msgForce = new Message<CmdForceInertialMsgPayload>;
     this->eForceOutMsgs.push_back(msgForce);
 }
 
@@ -125,11 +125,15 @@ void MsmForceTorque::readMessages()
 }
 
 
-/*! Compute the E-forces and torques using the MSM model
+/*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @return void
 */
-void MsmForceTorque::computeElectrostaticForcesTorques()
+void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
 {
+    // read the input messages
+    this->readMessages();
+    
+    // compute the electrostatic forces and torques
     Eigen::MatrixXd S;                          //!< [1/m] Elastance matrix divided by kc
     Eigen::VectorXd V;                          //!< [V] vector of sphere voltages
     Eigen::VectorXd q;                          //!< [C] vector of sphere charges
@@ -138,7 +142,10 @@ void MsmForceTorque::computeElectrostaticForcesTorques()
     Eigen::Matrix3d dcm_NB;                     //!< [] DCM from body B to inertial frame N
     Eigen::Vector3d r_BN_N;                     //!< [m] spacecraft inertial position vector
     Eigen::Vector3d r_ij_N;                     //!< [m] relative position vector between ith and jth spheres
+    double r_ij;                                //!< [m] norm of r_ij_N
     long unsigned int counter;                  //!< [] loop counter
+    CmdForceInertialMsgPayload forceMsgBuffer;  //!< [] force out message buffer
+    CmdTorqueBodyMsgPayload torqueMsgBuffer;    //!< [] torque out message buffer
 
     kc = 8.99e9;
     
@@ -179,38 +186,58 @@ void MsmForceTorque::computeElectrostaticForcesTorques()
         }
     }
     
-}
+    /* solve for sphere charges */
+    q = S.llt().solve(V);
 
+    /* find forces and torques acting on each space object */
+    counter = 0;
+    long unsigned int i0 = 0;
+    long unsigned int i1;
+    // loop over all satellites
+    for (long unsigned int c=0; c < this->numSat; c++) {
+        Eigen::Vector3d netForce_N;     // net force acting on spacecraft
+        Eigen::Vector3d netTorque_B;    // net torque acting on spacecraft in B frame
+        Eigen::Vector3d force_N;        // force acting on a sphere
+        Eigen::Matrix3d dcm_BN;         // DCM from inertial frame N to body B
 
-/*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
-    @return void
-*/
-void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
-{
-//    CmdTorqueBodyMsgPayload eTorqueOutMsgsBuffer;  //!< local copy of e-torque output message buffer
-//    CmdForceBodyMsgPayload eForceOutMsgsBuffer;  //!< local copy of e-force output message buffer
-
-    printf("HPS: num of sc: %lu\n", this->numSat);
-    for (long unsigned int c = 0; c<numSat; c++) {
-        for (long unsigned int i = 0; i<this->radiiList.at(c).size(); i++) {
-            printf("HPS: radius[%lu, %lu] = %f\n", c, i, this->radiiList.at(c).at(i));
-            std::cout << this->r_SB_BList.at(c).at(i) << std::endl;
+        netForce_N.setZero();
+        netTorque_B.setZero();
+        
+        dcm_BN = this->sigma_BNList.at(c).toRotationMatrix().transpose();
+        
+        // set the body sphere end counter
+        i1 = i0 + this->radiiList.at(c).size();
+        
+        // zero output message buffer
+        forceMsgBuffer = this->eForceOutMsgs.at(c)->zeroMsgPayload;
+        torqueMsgBuffer = this->eTorqueOutMsgs.at(c)->zeroMsgPayload;
+        
+        // loop over current body spheres
+        for (long unsigned int j=i0; j<i1; j++) {
+            force_N.setZero();
+            // loop over all other spheres
+            for (long unsigned int i=0; i<this->numSpheres; i++) {
+                if (i<i0 || i>=i1) {
+                    r_ij_N = r_SN_NList.at(i) - r_SN_NList.at(j);
+                    r_ij = r_ij_N.norm();
+                    force_N -= kc * q(j)*q(i) * r_ij_N/r_ij/r_ij/r_ij;
+                }
+            }
+            // add to total force acting on spacecraft
+            netForce_N += force_N;
+            
+            // add to total torque acting on spacecraft
+            netTorque_B += this->r_SB_BList.at(c).at(j-i0).cross(dcm_BN * force_N);
         }
+        
+        // store net force and torque acting on body
+        eigenVector3d2CArray(netForce_N, forceMsgBuffer.forceRequestInertial);
+        this->eForceOutMsgs.at(c)->write(&forceMsgBuffer, this->moduleID, CurrentSimNanos);
+        eigenVector3d2CArray(netTorque_B, torqueMsgBuffer.torqueRequestBody);
+        this->eTorqueOutMsgs.at(c)->write(&torqueMsgBuffer, this->moduleID, CurrentSimNanos);
+
+        // set the body sphere start counter
+        i0 = i1;
     }
-    // always zero the output message buffers before assigning values
-//    eTorqueOutMsgsBuffer = this->eTorqueOutMsgs.zeroMsgPayload;
-//    eForceOutMsgsBuffer = this->eForceOutMsgs.zeroMsgPayload;
-//
-    // read the input messages
-    this->readMessages();
     
-    // Evaluate the electrostatic forces and torques acting on each body
-    this->computeElectrostaticForcesTorques();
-
-//    // do some math and stuff to populate the output messages
-//
-//    // write to the output messages
-//    this->eTorqueOutMsgs.write(&eTorqueOutMsgsBuffer, this->moduleID, CurrentSimNanos);
-//    this->eForceOutMsgs.write(&eForceOutMsgsBuffer, this->moduleID, CurrentSimNanos);
 }
-

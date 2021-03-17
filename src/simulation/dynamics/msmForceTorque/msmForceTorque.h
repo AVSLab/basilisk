@@ -25,7 +25,7 @@
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/VoltageMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -50,8 +50,8 @@ public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of spacecraft state input messages
     std::vector<ReadFunctor<VoltageMsgPayload>> voltInMsgs;     //!< vector of voltage input messages
 
-    std::vector<Message<CmdTorqueBodyMsgPayload>*> eTorqueOutMsgs;  //!< vector of E-torques in body frame components
-    std::vector<Message<CmdForceBodyMsgPayload>*> eForceOutMsgs;  //!< vector of E-forces in body frame components
+    std::vector<Message<CmdTorqueBodyMsgPayload>*> eTorqueOutMsgs;      //!< vector of E-torques in body frame components
+    std::vector<Message<CmdForceInertialMsgPayload>*> eForceOutMsgs;    //!< vector of E-forces in inertial frame components
 
     BSKLogger bskLogger;                                        //!< -- BSK Logging
 
@@ -63,8 +63,6 @@ private:
     std::vector<double> volt;                                   //!< [V] input voltage for each spacecrat object
     std::vector<Eigen::Vector3d> r_BN_NList;                    //!< [m] list of inertial satellite position vectors
     std::vector<Eigen::MRPd> sigma_BNList;                      //!< [m] list of satellite MRP orientations
-
-    void computeElectrostaticForcesTorques();
 };
 
 
