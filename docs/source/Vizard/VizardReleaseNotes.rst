@@ -18,6 +18,14 @@ Release Notes
     - Add the rate gyro visualization
 
 
+**Version 1.8.1**
+
+- Keep Out cone bug fix to restore cone detection of Sun impingement (even when the Sun is named “sun_planet_data”)
+- Improved utility of the Adjust Model panel:
+
+    - "Create Custom Texture" button renamed “Preview Custom Texture”
+    - when user selects the Apply button, the custom texture and normal map will be automatically loaded into a texture, even if the user has not pressed the Preview button
+
 **Version 1.8.0**
 
 - user can create bodies that are not in the internal viz support dictionary. Bodies included in the internal dictionary: Sun, Mercury, Venus, Earth, Moon, Mars, Phobos, Deimos, Jupiter, Saturn, Uranus, Neptune, and Pluto
