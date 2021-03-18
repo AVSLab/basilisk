@@ -16,19 +16,6 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-/*
-    
-
-*/
-
-
-/* Device condition/health state State */
-typedef enum {
-    NOMINAL,
-    OVER_RATING,
-    MAX_DEVICE_CONDITION_STATE
-} DeviceConditionState_t;
-
 
 #define EPOCH_YEAR        2019
 #define EPOCH_MONTH       01
@@ -37,3 +24,6 @@ typedef enum {
 #define EPOCH_MIN         00
 #define EPOCH_SEC          0.00
 
+#define SIGNAL_NOMINAL	  0
+#define SIGNAL_OFF		  1
+#define SIGNAL_STUCK	  2
