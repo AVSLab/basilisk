@@ -68,10 +68,10 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure space object state and voltage input messages
-    scStateInMsgsData = messaging.SCStatesMsgPayload()
-    scStateInMsgsData.r_BN_N = [10., 2., 3.]
-    scStateInMsgsData.sigma_BN = [0.1, 0.2, 0.3]
-    scStateInMsg = messaging.SCStatesMsg().write(scStateInMsgsData)
+    sc0StateInMsgsData = messaging.SCStatesMsgPayload()
+    sc0StateInMsgsData.r_BN_N = [10., 2., 3.]
+    sc0StateInMsgsData.sigma_BN = [0.1, 0.2, 0.3]
+    sc0StateInMsg = messaging.SCStatesMsg().write(sc0StateInMsgsData)
 
     sc1StateInMsgsData = messaging.SCStatesMsgPayload()
     sc1StateInMsgsData.r_BN_N = [-10., -2., 3.]
@@ -83,9 +83,9 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
     sc2StateInMsgsData.sigma_BN = [0.1, 0.2, -0.3]
     sc2StateInMsg = messaging.SCStatesMsg().write(sc2StateInMsgsData)
 
-    voltInMsgData = messaging.VoltageMsgPayload()
-    voltInMsgData.voltage = 30000.
-    voltInMsg = messaging.VoltageMsg().write(voltInMsgData)
+    volt0InMsgData = messaging.VoltageMsgPayload()
+    volt0InMsgData.voltage = 30000.
+    volt0InMsg = messaging.VoltageMsg().write(volt0InMsgData)
 
     volt1InMsgData = messaging.VoltageMsgPayload()
     volt1InMsgData.voltage = -10000.
@@ -104,7 +104,7 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
     rList = [1., 2., 1.5]
 
     # add spacecraft to state
-    module.addSpacecraftToModel(scStateInMsg
+    module.addSpacecraftToModel(sc0StateInMsg
                                 , messaging.DoubleVector(rList[:-1])
                                 , unitTestSupport.npList2EigenXdVector(spPosList[:-1]))
     module.addSpacecraftToModel(sc1StateInMsg
@@ -115,15 +115,9 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
                                 , unitTestSupport.npList2EigenXdVector(spPosList[:-1]))
 
     # subscribe input messages to module
-    module.voltInMsgs[0].subscribeTo(voltInMsg)
+    module.voltInMsgs[0].subscribeTo(volt0InMsg)
     module.voltInMsgs[1].subscribeTo(volt1InMsg)
     module.voltInMsgs[2].subscribeTo(volt2InMsg)
-
-    # setup output message recorder objects
-    eTorqueOutMsgsRec = module.eTorqueOutMsgs[0].recorder()
-    unitTestSim.AddModelToTask(unitTaskName, eTorqueOutMsgsRec)
-    eForceOutMsgsRec = module.eForceOutMsgs[0].recorder()
-    unitTestSim.AddModelToTask(unitTaskName, eForceOutMsgsRec)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.TotalSim.SingleStepProcesses()

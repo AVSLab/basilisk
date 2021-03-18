@@ -106,7 +106,7 @@ Note that with the ``new`` call above the memory associated with this output mes
 
     SomeModule::~SomeModule()
     {
-        for (int c=0; c<this->moreOutMsgs.size(); c++) {
+        for (long unsigned int c=0; c<this->moreOutMsgs.size(); c++) {
             delete this->moreOutMsgs.at(c);
         }
     }

@@ -58,8 +58,8 @@ public:
 private:
     std::vector<std::vector<double>> radiiList;                 //!< vector of MSM sphere radii
     std::vector<std::vector<Eigen::Vector3d>> r_SB_BList;       //!< vector of body-fixed MSM sphere locations
-    long unsigned int numSat;                                   //!< number of satellites
-    long unsigned int numSpheres;                               //!< numer of spheres being modeled
+    unsigned int numSat;                                        //!< number of satellites
+    unsigned int numSpheres;                                    //!< numer of spheres being modeled
     std::vector<double> volt;                                   //!< [V] input voltage for each spacecrat object
     std::vector<Eigen::Vector3d> r_BN_NList;                    //!< [m] list of inertial satellite position vectors
     std::vector<Eigen::MRPd> sigma_BNList;                      //!< [m] list of satellite MRP orientations

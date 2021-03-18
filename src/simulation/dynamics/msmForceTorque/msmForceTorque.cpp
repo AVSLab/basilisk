@@ -21,7 +21,6 @@
 #include "simulation/dynamics/msmForceTorque/msmForceTorque.h"
 #include <iostream>
 #include <cstring>
-#include "architecture/utilities/linearAlgebra.h"
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -32,6 +31,13 @@ MsmForceTorque::MsmForceTorque()
 /*! Module Destructor */
 MsmForceTorque::~MsmForceTorque()
 {
+    /* free up output message objects */
+    for (long unsigned int c=0; c<this->eTorqueOutMsgs.size(); c++) {
+        delete this->eTorqueOutMsgs.at(c);
+    }
+    for (long unsigned int c=0; c<this->eForceOutMsgs.size(); c++) {
+        delete this->eForceOutMsgs.at(c);
+    }
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
@@ -88,6 +94,7 @@ void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg
     }
     this->radiiList.push_back(radii);
     this->r_SB_BList.push_back(r_SB_B);
+    
     this->volt.push_back(0);
     Eigen::Vector3d zero;
     zero << 0.0, 0.0, 0.0;
@@ -138,7 +145,7 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
     Eigen::VectorXd V;                          //!< [V] vector of sphere voltages
     Eigen::VectorXd q;                          //!< [C] vector of sphere charges
     double kc;                                  //!< [Nm^2/C^2] Coulomb's constant
-    std::vector<Eigen::Vector3d> r_SN_NList;    //!< list of inertial sphere locations
+    std::vector<Eigen::Vector3d> r_SN_NList;    //!< [m] list of inertial sphere locations
     Eigen::Matrix3d dcm_NB;                     //!< [] DCM from body B to inertial frame N
     Eigen::Vector3d r_BN_N;                     //!< [m] spacecraft inertial position vector
     Eigen::Vector3d r_ij_N;                     //!< [m] relative position vector between ith and jth spheres
@@ -220,7 +227,12 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
                 if (i<i0 || i>=i1) {
                     r_ij_N = r_SN_NList.at(i) - r_SN_NList.at(j);
                     r_ij = r_ij_N.norm();
-                    force_N -= kc * q(j)*q(i) * r_ij_N/r_ij/r_ij/r_ij;
+                    // check if separation is larger then current MSM sphere radius
+                    if (r_ij > this->radiiList.at(c).at(j-i0)) {
+                        force_N -= kc * q(j)*q(i) * r_ij_N/r_ij/r_ij/r_ij;
+                    } else {
+                        bskLogger.bskLog(BSK_WARNING, "MsmForceTorque: spacecraft %lu, sphere $lu is too close to another sphere.", c, j-i0);
+                    }
                 }
             }
             // add to total force acting on spacecraft

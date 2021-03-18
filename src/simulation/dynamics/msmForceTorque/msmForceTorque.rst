@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-This module uses the Multi-Sphere-Method (MSM) to evaluate the mutual electrostatic force and torque interactions between a series of spacecraft object.  The charging is specified through a voltage where the object is assumed to have a constant voltage across the surface.  The MSM model for each space object is given through a list of body-fixed sphere locations and sphere radii.  See `Multi-Sphere Method for Modeling Electrostatic Forces and Torques <http://dx.doi.org/10.2514/1.52185>`__ for more information on the MSM method.  The goal of this module is to simulate charged astrodynamics and include the influence of charging on relative motion.
+This module uses the Multi-Sphere-Method (MSM) to evaluate the mutual electrostatic force and torque interactions between a series of spacecraft object.  The charging is specified through a voltage where the object is assumed to have a constant voltage across the surface.  The MSM model for each space object is given through a list of body-fixed sphere locations and sphere radii.  See `Multi-Sphere Method for Modeling Electrostatic Forces and Torques <http://dx.doi.org/10.1016/j.asr.2012.08.014>`__ for more information on the MSM method.  The goal of this module is to simulate charged astrodynamics and include the influence of charging on relative motion.
 
 Message Connection Descriptions
 -------------------------------
@@ -66,4 +66,8 @@ This command creates the corresponding output messages in the message vectors ``
 The ``addSpacecraftToModel`` also creates a corresponding voltage input message in ``module.voltInMsgs[i]``
 where ``i`` is the number in which the spacecraft object was added.
 
+.. note::
 
+   If MSM spheres of one spacecraft become too close to spheres of another spacecraft (i.e.
+   center-to-center distance less than the sphere radius), then a warning statement is provided.  In such
+   situations the MSM accuracy is beginning to break down.
