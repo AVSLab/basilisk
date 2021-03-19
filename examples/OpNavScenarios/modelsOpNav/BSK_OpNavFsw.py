@@ -591,7 +591,7 @@ class BSKFswModels():
         self.opnavSecondaryMsg = cMsgPy.OpNavMsg_C()
 
         # C++ wrapped gateway messages
-        self.opnavCirclesMsg = messaging.CirclesOpNavMsg()
+        self.opnavCirclesMsg = messaging.OpNavCirclesMsg()
 
         self.zeroGateWayMsgs()
 
@@ -602,6 +602,6 @@ class BSKFswModels():
         self.opnavPrimaryMsg.write(messaging.OpNavMsgPayload())
         self.opnavSecondaryMsg.write(messaging.OpNavMsgPayload())
 
-        self.opnavCirclesMsg.write(messaging.CirclesOpNavMsgPayload())
+        self.opnavCirclesMsg.write(messaging.OpNavCirclesMsgPayload())
 
 # BSKFswModels()

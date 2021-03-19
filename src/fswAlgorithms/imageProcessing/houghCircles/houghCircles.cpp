@@ -75,7 +75,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
 {
     std::string dirName;
     CameraImageMsgPayload imageBuffer;
-    CirclesOpNavMsgPayload circleBuffer;
+    OpNavCirclesMsgPayload circleBuffer;
 
     imageBuffer = this->imageInMsg.zeroMsgPayload;
     circleBuffer = this->opnavCirclesOutMsg.zeroMsgPayload;

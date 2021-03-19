@@ -21,7 +21,7 @@
 #define _PIXEL_LINE_CONVERTER_H_
 
 #include "cMsgCInterface/NavAttMsg_C.h"
-#include "cMsgCInterface/CirclesOpNavMsg_C.h"
+#include "cMsgCInterface/OpNavCirclesMsg_C.h"
 #include "cMsgCInterface/CameraConfigMsg_C.h"
 #include "cMsgCInterface/OpNavMsg_C.h"
 
@@ -37,7 +37,7 @@ typedef struct {
     OpNavMsg_C opNavOutMsg; //!< [-] output navigation message for relative position
     CameraConfigMsg_C cameraConfigInMsg; //!< camera config input message
     NavAttMsg_C attInMsg; //!< attitude input message
-    CirclesOpNavMsg_C circlesInMsg; //!< circles input message
+    OpNavCirclesMsg_C circlesInMsg; //!< circles input message
 
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
 

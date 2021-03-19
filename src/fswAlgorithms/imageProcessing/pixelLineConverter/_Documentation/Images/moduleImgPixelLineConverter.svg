@@ -79,7 +79,7 @@
       </g>
       <g id="Graphic_16">
         <text transform="translate(1014 670)" fill="black">
-          <tspan font-family="Courier" font-size="9" font-weight="400" fill="black" x="7.180664" y="9">CirclesOpNavMsgPayload</tspan>
+          <tspan font-family="Courier" font-size="9" font-weight="400" fill="black" x="7.180664" y="9">OpNavCirclesMsgPayload</tspan>
         </text>
       </g>
       <g id="Graphic_15">

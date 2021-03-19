@@ -81,7 +81,7 @@ def pixelLineConverterTestFunction():
 
     # Create the input messages.
     inputCamera = messaging.CameraConfigMsgPayload()
-    inputCircles = messaging.CirclesOpNavMsgPayload()
+    inputCircles = messaging.OpNavCirclesMsgPayload()
     inputAtt = messaging.NavAttMsgPayload()
 
     # Set camera
@@ -96,7 +96,7 @@ def pixelLineConverterTestFunction():
     inputCircles.circlesRadii = [75]
     inputCircles.uncertainty = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
     inputCircles.timeTag = 12345
-    circlesInMsg = messaging.CirclesOpNavMsg().write(inputCircles)
+    circlesInMsg = messaging.OpNavCirclesMsg().write(inputCircles)
     pixelLine.circlesInMsg.subscribeTo(circlesInMsg)
 
     # Set attitude

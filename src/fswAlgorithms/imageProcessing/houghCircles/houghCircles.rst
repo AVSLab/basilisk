@@ -24,7 +24,7 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - opnavCirclesOutMsg
-      - :ref:`CirclesOpNavMsgPayload`
+      - :ref:`OpNavCirclesMsgPayload`
       - output navigation message for relative position
     * - imageInMsg
       - :ref:`CameraImageMsgPayload`

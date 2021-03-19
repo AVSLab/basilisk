@@ -31,7 +31,7 @@
 #include "opencv2/dnn.hpp"
 
 #include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
+#include "architecture/msgPayloadDefC/OpNavCirclesMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
@@ -49,7 +49,7 @@ public:
     
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    Message<CirclesOpNavMsgPayload> opnavCirclesOutMsg;  //!< The name of the CirclesOpnavMsg output message
+    Message<OpNavCirclesMsgPayload> opnavCirclesOutMsg;  //!< The name of the OpNavCirclesMsg output message
     ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the camera output message
     std::string saveDir;                //!< The name of the directory to save images
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out

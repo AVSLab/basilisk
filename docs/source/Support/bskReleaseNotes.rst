@@ -34,8 +34,10 @@ Basilisk Release Notes
 Version |release|
 -----------------
 
-- new waypoint reference module in :ref:`waypointReference`. It can be used to read an attitude maneuver from a set of waypoints on a text file,
-  likely generated outside Basilisk.
+- new waypoint reference module in :ref:`waypointReference`. It can be used to read an attitude maneuver from a set of waypoints on a text file, likely generated outside Basilisk.
+- Fix a range of HTML Documentation build warnings and issues
+- Renamed the message ``CirclesOpNavMsgPayload`` to ``OpNavCirclesMsgPayload`` to avoid sphinx naming conflicts
+
 
 Version 2.0.1
 -------------

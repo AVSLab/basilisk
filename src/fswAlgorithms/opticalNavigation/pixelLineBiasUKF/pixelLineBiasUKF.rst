@@ -28,7 +28,7 @@ provides information on what this message is used for.
       - :ref:`PixelLineFilterMsgPayload`
       - output filter data message
     * - circlesInMsg
-      - :ref:`CirclesOpNavMsgPayload`
+      - :ref:`OpNavCirclesMsgPayload`
       - input messages with circles information
     * - cameraConfigInMsg
       - :ref:`CameraConfigMsgPayload`

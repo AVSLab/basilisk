@@ -37,6 +37,6 @@ provides information on what this message is used for.
       - :ref:`NavAttMsgPayload`
       - attitude input message
     * - circlesInMsg
-      - :ref:`CirclesOpNavMsgPayload`
+      - :ref:`OpNavCirclesMsgPayload`
       - circles input message
 

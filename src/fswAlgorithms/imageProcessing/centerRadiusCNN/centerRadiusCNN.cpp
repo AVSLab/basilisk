@@ -80,7 +80,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
 {
     std::string filenamePre;
     CameraImageMsgPayload imageBuffer;
-    CirclesOpNavMsgPayload circleBuffer;
+    OpNavCirclesMsgPayload circleBuffer;
     cv::Mat imageCV, blurred;
     filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
 

@@ -41,8 +41,8 @@ struct NavAttMsg_C;
 struct PixelLineFilterMsg_C;
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
-struct CirclesOpNavMsg_C;
+%include "architecture/msgPayloadDefC/OpNavCirclesMsgPayload.h"
+struct OpNavCirclesMsg_C;
 
 %pythoncode %{
 import sys

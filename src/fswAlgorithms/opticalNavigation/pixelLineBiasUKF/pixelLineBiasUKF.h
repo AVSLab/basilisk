@@ -25,7 +25,7 @@
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/CameraConfigMsg_C.h"
 #include "cMsgCInterface/NavAttMsg_C.h"
-#include "cMsgCInterface/CirclesOpNavMsg_C.h"
+#include "cMsgCInterface/OpNavCirclesMsg_C.h"
 #include "cMsgCInterface/PixelLineFilterMsg_C.h"
 
 #include "architecture/utilities/macroDefinitions.h"
@@ -43,7 +43,7 @@
 typedef struct {
     NavTransMsg_C navStateOutMsg; //!< navigation translation output message
     PixelLineFilterMsg_C filtDataOutMsg; //!< output filter data message
-    CirclesOpNavMsg_C circlesInMsg;  //!< [-] input messages with circles information
+    OpNavCirclesMsg_C circlesInMsg;  //!< [-] input messages with circles information
     CameraConfigMsg_C cameraConfigInMsg; //!< camera config input message
     NavAttMsg_C attInMsg; //!< attitude input message
     
@@ -93,7 +93,7 @@ typedef struct {
     double timeTagOut;       //!< [s] Output time-tag information
     double maxTimeJump;      //!< [s] Maximum time jump to allow in propagation
     
-    CirclesOpNavMsgPayload circlesInBuffer; //!< [-] ST sensor data read in from message bus
+    OpNavCirclesMsgPayload circlesInBuffer; //!< [-] ST sensor data read in from message bus
     CameraConfigMsgPayload cameraSpecs;  //!< [-] Camera specs for nav
     NavAttMsgPayload attInfo;         //!< [-] Att info for frame transformation
 

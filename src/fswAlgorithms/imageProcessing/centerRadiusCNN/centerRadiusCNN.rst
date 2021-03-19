@@ -26,7 +26,7 @@ The following table lists all the module input and output messages.  The module 
     |                       |                                 | This message either comes from the camera module  |
     |                       |                                 | or the viz interface if no noise is added.        |
     +-----------------------+---------------------------------+---------------------------------------------------+
-    | opnavCirclesOutMsg    | :ref:`CirclesOpNavMsgPayload`   | Circle found in the image.                        |
+    | opnavCirclesOutMsg    | :ref:`OpNavCirclesMsgPayload`   | Circle found in the image.                        |
     +-----------------------+---------------------------------+---------------------------------------------------+
 
 

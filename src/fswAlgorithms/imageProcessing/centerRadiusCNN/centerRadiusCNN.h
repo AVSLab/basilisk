@@ -28,7 +28,7 @@
 #include "opencv2/imgcodecs.hpp"
 
 #include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDefC/CirclesOpNavMsgPayload.h"
+#include "architecture/msgPayloadDefC/OpNavCirclesMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 
@@ -47,7 +47,7 @@ public:
     
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    Message<CirclesOpNavMsgPayload> opnavCirclesOutMsg;  //!< The name of the CirclesOpnavMsg output message
+    Message<OpNavCirclesMsgPayload> opnavCirclesOutMsg;  //!< The name of the OpNavCirclesMsg output message
     
     ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the camera output message
     

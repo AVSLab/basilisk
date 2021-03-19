@@ -118,7 +118,7 @@ def relOD_method_test(show_plots):
     mu = 42828.314
     # Measurement Model Test
     data = pixelLineBiasUKF.PixelLineBiasUKFConfig()
-    msg = messaging.CirclesOpNavMsgPayload()
+    msg = messaging.OpNavCirclesMsgPayload()
     msg.circlesCenters = [100, 200]
     msg.circlesRadii = [100]
     msg.planetIds = [2]
@@ -148,7 +148,7 @@ def relOD_method_test(show_plots):
     # Set up a measurement test
     data = pixelLineBiasUKF.PixelLineBiasUKFConfig()
     # Set up a circle input message
-    msg = messaging.CirclesOpNavMsgPayload()
+    msg = messaging.OpNavCirclesMsgPayload()
     msg.circlesCenters = [100, 200]
     msg.circlesRadii = [100]
     msg.planetIds = [2]
@@ -281,7 +281,7 @@ def StatePropRelOD(show_plots, dt):
     attInMsg = messaging.NavAttMsg().write(inputAtt)
     moduleConfig.attInMsg.subscribeTo(attInMsg)
 
-    circlesInMsg = messaging.CirclesOpNavMsg()
+    circlesInMsg = messaging.OpNavCirclesMsg()
     moduleConfig.circlesInMsg.subscribeTo(circlesInMsg)
 
     dataLog = moduleConfig.filtDataOutMsg.recorder()
