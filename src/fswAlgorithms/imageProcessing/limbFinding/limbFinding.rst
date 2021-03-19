@@ -23,7 +23,7 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - opnavLimbOutMsg
-      - :ref:`LimbOpNavMsgPayload`
+      - :ref:`OpNavLimbMsgPayload`
       - output navigation message for relative position
     * - imageInMsg
       - :ref:`CameraImageMsgPayload`

@@ -32,7 +32,7 @@ provides information on what this message is used for.
       - :ref:`NavAttMsgPayload`
       - attitude input message
     * - limbInMsg
-      - :ref:`LimbOpNavMsgPayload`
+      - :ref:`OpNavLimbMsgPayload`
       - limb input message
 
 

@@ -29,7 +29,7 @@
 #include "opencv2/imgcodecs.hpp"
 
 #include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDefC/LimbOpNavMsgPayload.h"
+#include "architecture/msgPayloadDefC/OpNavLimbMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
@@ -48,7 +48,7 @@ public:
     
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    Message<LimbOpNavMsgPayload> opnavLimbOutMsg;  //!< The name of the Limb output message
+    Message<OpNavLimbMsgPayload> opnavLimbOutMsg;  //!< The name of the Limb output message
     ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the camera output message
     std::string saveDir;                //!< Directory to save images to
 

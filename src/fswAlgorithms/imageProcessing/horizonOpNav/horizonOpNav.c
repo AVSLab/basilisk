@@ -47,7 +47,7 @@ void Reset_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64_
     if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: horizonOpNav.cameraConfigInMsg wasn't connected.");
     }
-    if (!LimbOpNavMsg_C_isLinked(&configData->limbInMsg)) {
+    if (!OpNavLimbMsg_C_isLinked(&configData->limbInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: horizonOpNav.limbInMsg wasn't connected.");
     }
     if (!NavAttMsg_C_isLinked(&configData->attInMsg)) {
@@ -68,7 +68,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
     double planetRad_Eq, planetRad_Pol;
     double covar_In_C[3][3], covar_In_B[3][3], covar_In_N[3][3];
     CameraConfigMsgPayload cameraSpecs;
-    LimbOpNavMsgPayload limbIn;
+    OpNavLimbMsgPayload limbIn;
     OpNavMsgPayload opNavMsgOut;
     NavAttMsgPayload attInfo;
 
@@ -77,7 +77,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64
 
     /*! - read input messages */
     cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
-    limbIn = LimbOpNavMsg_C_read(&configData->limbInMsg);
+    limbIn = OpNavLimbMsg_C_read(&configData->limbInMsg);
     attInfo = NavAttMsg_C_read(&configData->attInMsg);
     
     /*! Check the validity of the image*/

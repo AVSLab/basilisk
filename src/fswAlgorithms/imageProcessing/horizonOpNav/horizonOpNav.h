@@ -21,7 +21,7 @@
 #define _HORIZON_OPNAV_H_
 
 #include "cMsgCInterface/NavAttMsg_C.h"
-#include "cMsgCInterface/LimbOpNavMsg_C.h"
+#include "cMsgCInterface/OpNavLimbMsg_C.h"
 #include "cMsgCInterface/CameraConfigMsg_C.h"
 #include "cMsgCInterface/OpNavMsg_C.h"
 
@@ -37,7 +37,7 @@ typedef struct {
     OpNavMsg_C opNavOutMsg; //!< [-] output navigation message for relative position
     CameraConfigMsg_C cameraConfigInMsg; //!< camera config input message
     NavAttMsg_C attInMsg; //!< attitude input message
-    LimbOpNavMsg_C limbInMsg; //!< limb input message
+    OpNavLimbMsg_C limbInMsg; //!< limb input message
     
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
     double noiseSF;   //!< A scale factor to control measurement noise

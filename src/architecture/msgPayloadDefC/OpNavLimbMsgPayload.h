@@ -31,7 +31,7 @@ typedef struct {
     int64_t cameraID;          //!< -- [-]   ID of the camera that took the snapshot
     double planetIds;          //!< -- [-]   ID for identified celestial body
     double limbPoints[2*MAX_LIMB_PNTS];          //!< -- [-] (x, y) in pixels of the limb points
-}LimbOpNavMsgPayload;
+}OpNavLimbMsgPayload;
 
 
 #endif

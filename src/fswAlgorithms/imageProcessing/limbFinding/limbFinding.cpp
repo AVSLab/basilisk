@@ -70,7 +70,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 {
     std::string dirName;
     CameraImageMsgPayload imageBuffer;
-    LimbOpNavMsgPayload limbMsg;
+    OpNavLimbMsgPayload limbMsg;
 
     imageBuffer = this->imageInMsg.zeroMsgPayload;
     limbMsg = this->opnavLimbOutMsg.zeroMsgPayload;

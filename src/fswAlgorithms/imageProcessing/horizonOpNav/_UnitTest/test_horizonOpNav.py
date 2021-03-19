@@ -246,7 +246,7 @@ def horizonOpNav_update():
 
     # Create the input messages.
     inputCamera = messaging.CameraConfigMsgPayload()
-    inputLimbMsg = messaging.LimbOpNavMsgPayload()
+    inputLimbMsg = messaging.OpNavLimbMsgPayload()
     inputAtt = messaging.NavAttMsgPayload()
 
     # Set camera
@@ -261,7 +261,7 @@ def horizonOpNav_update():
     inputLimbMsg.limbPoints = inputPoints
     inputLimbMsg.numLimbPoints = int(len(inputPoints)/2)
     inputLimbMsg.timeTag = 12345
-    limbInMsg = messaging.LimbOpNavMsg().write(inputLimbMsg)
+    limbInMsg = messaging.OpNavLimbMsg().write(inputLimbMsg)
     opNav.limbInMsg.subscribeTo(limbInMsg)
 
 
