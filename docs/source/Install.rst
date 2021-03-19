@@ -15,6 +15,7 @@ Install
    Install/pullCloneBSK
    Install/installOnLinux
    Install/installOnMacOS
+   Install/installOnMacOSM1
    Install/installOnWindows
    Install/installBuild
    Install/buildExtModules

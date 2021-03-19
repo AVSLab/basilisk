@@ -170,12 +170,14 @@ bskSim()-Based Simulation
 .. toctree::
    :maxdepth: 1
 
+
    Basic Orbital Simulation  <BskSim/scenarios/scenario_BasicOrbit>
    Attitude Detumble Control  <BskSim/scenarios/scenario_FeedbackRW>
    Hill Pointing Attitude Control  <BskSim/scenarios/scenario_AttGuidance>
    Velocity Frame Pointing Control  <BskSim/scenarios/scenario_AttGuidHyperbolic>
    MRP Steering Attitude Control  <BskSim/scenarios/scenario_AttSteering>
    Sun Pointing Mode Include Eclipse Evaluation  <BskSim/scenarios/scenario_AttEclipse>
+   bskSim Scenarios Folder <BskSim/index>
 
 Optical Navigation Simulations
 ------------------------------
@@ -193,6 +195,7 @@ Optical Navigation Simulations
    Pointing with Hough Circles  <OpNavScenarios/scenariosOpNav/scenario_OpNavPoint>
    Pointing with Limb-based method   <OpNavScenarios/scenariosOpNav/scenario_OpNavPointLimb>
    Filter Heading measurements  <OpNavScenarios/scenariosOpNav/scenario_OpNavHeading>
+   OpNav Scenarios Folder <OpNavScenarios/index>
 
 
 
@@ -207,6 +210,7 @@ Monte Carlo Simulations
    MC run using BSK Sim Framework  <MonteCarloExamples/scenario_AttFeedbackMC>
    MC rerun using prior MC run parameters  <MonteCarloExamples/scenarioRerunMonteCarlo>
    MC Plotting using datashaders and bokeh  <MonteCarloExamples/scenarioAnalyzeMonteCarlo>
+   MC example Folder <MonteCarloExamples/index>
 
 
 

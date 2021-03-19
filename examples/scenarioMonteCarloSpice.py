@@ -17,8 +17,6 @@
 #
 
 r"""
-Overview
---------
 
 This script illustrates how to run a Monte Carlo simulation where the Spice is used within the Python
 setup.  Note that the Python Spice setup is separate from the BSK c++ Spice module setup.  In this tutorial

@@ -19,9 +19,6 @@
 
 
 r"""
-Overview
---------
-
 This script is a basic demonstration of how to run Monte Carlo simulations. Look at the source code for
 further discussion and instructions.
 

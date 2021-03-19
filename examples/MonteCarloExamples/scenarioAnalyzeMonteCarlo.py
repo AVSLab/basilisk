@@ -18,11 +18,8 @@
 
 
 r"""
-Overview
---------
-
 Motivation
-~~~~~~~~~~
+----------
 This script is a basic demonstration of a script that can be used to plot Monte Carlo data with 
 bokeh and datashaders.   These tools are very efficient to plot large amounts of simulation data
 that is likely to occur with Monte Carlo sensitivity analysis studies.  For example, running this script will
@@ -56,7 +53,7 @@ The next plot illustrates the output if you run ``scenario_AttFeedbackMC.py`` wi
     Figure 3: Larger simulation run with 40 simulation cases shown
 
 Configuring a Python Environment For this Script
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------------------
 .. danger::
 
     Running this script is different from running other BSK scripts.  There are very particular python
@@ -78,7 +75,7 @@ The setup steps are as follows:
         pip3 install --upgrade bokeh==1.2.0 holoviews==1.12.3 param==1.9.3 hvplot==0.6.0
 
 How to Run the Script
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 .. important::
 
     Read all three steps before advancing.

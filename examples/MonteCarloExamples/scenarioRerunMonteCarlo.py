@@ -17,8 +17,6 @@
 #
 
 r"""
-Overview
---------
 
 This script is a basic demonstration of a script that can be used to rerun a set or subset of Monte Carlo simulations.
 

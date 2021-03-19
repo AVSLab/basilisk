@@ -209,7 +209,7 @@ def run(show_plots):
         viz.settings.showSpacecraftLabels = 1
         # load CAD for custom gravity model
         vizSupport.createCustomModel(viz,
-                                     modelPath=os.path.join(path, "data", "Itokawa", "ItokawaHayabusa.obj"),
+                                     modelPath=os.path.join(path, "dataForExamples", "Itokawa", "ItokawaHayabusa.obj"),
                                      shader=1,
                                      simBodiesToModify=['Itokawa'],
                                      scale=[962, 962, 962])

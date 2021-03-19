@@ -244,6 +244,8 @@ class fileCrawler():
                     "topLevelModules" in dirs_in_dir[i] or \
                     "outputFiles" in dirs_in_dir[i] or \
                     "msgAutoSource" in dirs_in_dir[i] or \
+                    "alg_contain" in dirs_in_dir[i] or \
+                    "dataForExamples" in dirs_in_dir[i] or \
                     "tests" in dirs_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
@@ -259,6 +261,8 @@ class fileCrawler():
                     "vizMessage.pb.h" in files_in_dir[i] or \
                     "vizMessage.proto" in files_in_dir[i] or \
                     "EGM9615.h" in files_in_dir[i] or \
+                    "SunLineKF_test_utilities.py" in files_in_dir[i] or \
+                    "datashader_utilities.py" in files_in_dir[i] or \
                     "reportconf.py" in files_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
@@ -488,7 +492,7 @@ if rebuild:
     # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/environment")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/moduleTemplates")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizard")
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/architecture/utilities")
+    # breathe_projects_source = fileCrawler.run(officialSrc+"/architecture")
     breathe_projects_source = fileCrawler.run("../../examples")
     breathe_projects_source = fileCrawler.run("../../externalTools")
     with open("breathe.data", 'wb') as f:

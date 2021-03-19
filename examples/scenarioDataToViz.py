@@ -24,7 +24,7 @@ Demonstrates how to convert spacecraft states, stored in a text file from anothe
 messages using :ref:`dataFileToViz`.  These messages are red by :ref:`vizInterface` to save a :ref:`Vizard <vizard>`
 compatible data play for offline playback and analysis.  In this simulation a servicer is holding a relative
 position with respect to an uncontrolled satellite.  Custom spacecraft models are specified for Vizard
-in the folder :ref:`Folder_data`.
+in the folder ``dataForExamples``.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
@@ -100,9 +100,9 @@ def run(show_plots, attType):
 
     path = os.path.dirname(os.path.abspath(__file__))
     if attType == 0:
-        dataFileName = os.path.join(path, "data", "scHoldTraj_rotating_MRP.csv")
+        dataFileName = os.path.join(path, "dataForExamples", "scHoldTraj_rotating_MRP.csv")
     elif attType == 1:
-        dataFileName = os.path.join(path, "data", "scHoldTraj_rotating_EP.csv")
+        dataFileName = os.path.join(path, "dataForExamples", "scHoldTraj_rotating_EP.csv")
     else:
         print("unknown attType variable")
         exit()
@@ -177,14 +177,14 @@ def run(show_plots, attType):
         viz.settings.spacecraftShadowBrightness = 0.2
         # load CAD for target spacecraft
         vizSupport.createCustomModel(viz,
-                                     modelPath=os.path.join(path, "data", "Aura_27.obj"),
+                                     modelPath=os.path.join(path, "dataForExamples", "Aura_27.obj"),
                                      shader=1,
                                      simBodiesToModify=[scList[1].ModelTag],
                                      rotation=[180. * macros.D2R, 0.0 * macros.D2R, -90. * macros.D2R],
                                      scale=[1, 1, 1])
         # load CAD for servicer spacecraft
         vizSupport.createCustomModel(viz,
-                                     modelPath=os.path.join(path, "data", "Loral-1300Com-main.obj"),
+                                     modelPath=os.path.join(path, "dataForExamples", "Loral-1300Com-main.obj"),
                                      simBodiesToModify=[scList[0].ModelTag],
                                      rotation=[0. * macros.D2R, -90.0 * macros.D2R, 0. * macros.D2R],
                                      scale=[0.09, 0.09, 0.09])
