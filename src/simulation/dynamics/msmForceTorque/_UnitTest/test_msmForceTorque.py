@@ -83,15 +83,15 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
     sc2StateInMsgsData.sigma_BN = [0.1, 0.2, -0.3]
     sc2StateInMsg = messaging.SCStatesMsg().write(sc2StateInMsgsData)
 
-    volt0InMsgData = messaging.VoltageMsgPayload()
+    volt0InMsgData = messaging.VoltMsgPayload()
     volt0InMsgData.voltage = 30000.
     volt0InMsg = messaging.VoltageMsg().write(volt0InMsgData)
 
-    volt1InMsgData = messaging.VoltageMsgPayload()
+    volt1InMsgData = messaging.VoltMsgPayload()
     volt1InMsgData.voltage = -10000.
     volt1InMsg = messaging.VoltageMsg().write(volt1InMsgData)
 
-    volt2InMsgData = messaging.VoltageMsgPayload()
+    volt2InMsgData = messaging.VoltMsgPayload()
     volt2InMsgData.voltage = 20000.
     volt2InMsg = messaging.VoltageMsg().write(volt2InMsgData)
 

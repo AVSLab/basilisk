@@ -85,7 +85,7 @@ void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
     
     /* increase the vector of voltage input message readers */
-    ReadFunctor<VoltageMsgPayload> inVoltMsg;
+    ReadFunctor<VoltMsgPayload> inVoltMsg;
     this->voltInMsgs.push_back(inVoltMsg);
     
     /* store MSM sphere radii and location information */
@@ -117,7 +117,7 @@ void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg
  */
 void MsmForceTorque::readMessages()
 {
-    VoltageMsgPayload voltInMsgBuffer;          //!< local copy of voltage input message buffer
+    VoltMsgPayload voltInMsgBuffer;          //!< local copy of voltage input message buffer
     SCStatesMsgPayload scStateInMsgsBuffer;     //!< local copy of spacecraft state input message buffer
     long unsigned int c;                        //!< spacecraft loop counter
     

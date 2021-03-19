@@ -23,7 +23,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/VoltageMsgPayload.h"
+#include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
@@ -48,7 +48,7 @@ private:
     
 public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of spacecraft state input messages
-    std::vector<ReadFunctor<VoltageMsgPayload>> voltInMsgs;     //!< vector of voltage input messages
+    std::vector<ReadFunctor<VoltMsgPayload>> voltInMsgs;     //!< vector of voltage input messages
 
     std::vector<Message<CmdTorqueBodyMsgPayload>*> eTorqueOutMsgs;      //!< vector of E-torques in body frame components
     std::vector<Message<CmdForceInertialMsgPayload>*> eForceOutMsgs;    //!< vector of E-forces in inertial frame components

@@ -26,7 +26,7 @@ provides information on what this message is used for.
       - :ref:`SCStatesMsgPayload`
       - vector of spacecraft state input messages
     * - voltInMsgs
-      - :ref:`VoltageMsgPayload`
+      - :ref:`VoltMsgPayload`
       - vector of voltage input messages
     * - eTorqueOutMsgs
       - :ref:`CmdTorqueBodyMsgPayload`

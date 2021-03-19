@@ -17,13 +17,13 @@
 
  */
 
-#ifndef VOLTAGE_MESSAGE2_H
-#define VOLTAGE_MESSAGE2_H
+#ifndef VOLT_MESSAGE2_H
+#define VOLT_MESSAGE2_H
 
 /*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {
     double voltage;         //!<   [V] space object potential
-}VoltageMsgPayload;
+}VoltMsgPayload;
 
 
 #endif
