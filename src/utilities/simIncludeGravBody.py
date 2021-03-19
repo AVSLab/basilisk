@@ -256,7 +256,7 @@ class gravBodyFactory(object):
                     A list of planet names whose Spice data is loaded, overriding the gravBodies list.
                 spicePlanetFrames :
                     A list of strings for the planet frame names.  If left empty for a planet, then
-                    IAU_ + planetName is assumed for the planet frame.
+                    ``IAU_`` + planetName is assumed for the planet frame.
                 epochInMsg: bool
                     Flag to set an epoch input message for the spice interface
 

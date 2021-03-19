@@ -23,9 +23,10 @@ import numpy as np
 def exponentialAtmosphere(atmosModule, name):
     """
     Sets the exponential atmosphere model parameters for a particular planet.
+
     :param atmosModule: atmospheric environment module
     :param name: planet name string
-    :return:
+
     """
     if name == "earth":
         atmosModule.planetRadius = 6378136.6   # meters
@@ -45,9 +46,10 @@ def exponentialAtmosphere(atmosModule, name):
 def centeredDipoleMagField(magFieldModule, name):
     """
     Sets the centered dipole magnetic field model parameters for a particular planet
+
     :param magFieldModule: magnetic field environment module
     :param name: planet name string
-    :return:
+
     """
     if name == "earth":
         # The following parameters are from the 2020 IGRF model
@@ -113,11 +115,11 @@ def convertToIgrfDipoleCoefficients(nominalField, tilt, longitudeOfTilt, magFiel
     """
     Converts the NASA Magnetosphere parameters from https://nssdc.gsfc.nasa.gov/planetary/planetfact.html
     to IGRF compatible dipole coefficients.
+
     :param nominalField: nominal magnetic field parameter given in Tesla
     :param tilt: Dipole tilt to rotational axis in radians
     :param longitudeOfTilt: Longitude of tilt in radians
     :param magFieldModule: magnetic field environment module
-    :return:
     """
 
     # the following conversion is taken from Appendix D of doi:10.1007/978-1-4939-0802-8

@@ -208,6 +208,7 @@ class SimBaseClass:
         This function is responsible for passing on the logger to a module instance (model), adding the
         model to a particular task, and defining
         the order/priority that the model gets updated within the task.
+
         :param TaskName (str): Name of the task
         :param NewModel (obj): Model to add to the task
         :param ModelData: None or struct containing, only used for C BSK modules
@@ -243,6 +244,7 @@ class SimBaseClass:
     def CreateNewProcess(self, procName, priority = -1):
         """
         Creates a process and adds it to the sim
+
         :param procName (str): Name of process
         :param priority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return: simulationArchTypes.ProcessBaseClass object
@@ -255,6 +257,7 @@ class SimBaseClass:
     def CreateNewPythonProcess(self, procName, priority = -1):
         """
         Creates the python analog of a sim-level process, that exists only on the python level in self.pyProcList
+
         :param procName (str): Name of process
         :param priority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return: simulationArchTypes.PythonProcessClass object
@@ -273,6 +276,7 @@ class SimBaseClass:
         """
         Creates a simulation task on the C-level with a specific update-frequency (TaskRate), an optional delay, and
         an optional start time.
+
         :param TaskName (str): Name of Task
         :param TaskRate (int): Number of nanoseconds to elapse before update() is called
         :param InputDelay (int): Number of nanoseconds simulating a lag of the particular task# TODO: Check that this is [ns]
@@ -286,6 +290,7 @@ class SimBaseClass:
     def AddVariableForLogging(self, VarName, LogPeriod=0, StartIndex=0, StopIndex=0, VarType=None):
         """
         Informs the sim to log a particular variable within a message
+
         :param VarName:   must be module tag string + period + variable name
         :param LogPeriod: update rate at which to record the variable [ns]
         :param StartIndex: starting index if the variable is an array

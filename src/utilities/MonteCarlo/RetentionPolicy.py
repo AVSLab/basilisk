@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from Basilisk.utilities import unitTestSupport
 
+
 class VariableRetentionParameters:
     """
     Represents a variable's logging parameters.
@@ -81,19 +82,22 @@ class RetentionPolicy:
     @staticmethod
     def getDataForRetention(simInstance, retentionPolicies):
         """ Returns the data that should be retained given a simInstance and the retentionPolicies
+
         Args:
             simInstance: The simulation instance to retrieve data from
             retentionPolicies: A list of RetentionPolicy objects defining the data to retain
+
         Returns:
-            Retained Data: In the form of a dictionary with two sub-dictionaries for messages and variables:
-            {
-                "messages": {
-                    "messageName": [value1,value2,value3]
-                },
-                "variables": {
-                    "variableName": [value1,value2,value3]
+            Retained Data in the form of a dictionary with two sub-dictionaries for messages and variables::
+
+                {
+                    "messages": {
+                        "messageName": [value1,value2,value3]
+                    },
+                    "variables": {
+                        "variableName": [value1,value2,value3]
+                    }
                 }
-            }
         """
         data = {"messages": {}, "variables": {}, "custom": {}}
         df = pd.DataFrame()

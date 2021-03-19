@@ -40,8 +40,11 @@ def test_module(show_plots):
 def test_storage_limits(show_plots):
     """
     Tests:
+
     1. Whether the partitionedStorageUnit can add multiple nodes (core base class functionality);
-    2. That the partitionedStorageUnit correctly evaluates how much stored data it should have given a pair of 1200 baud input messages.
+    2. That the partitionedStorageUnit correctly evaluates how much stored data it should have given a pair of
+       1200 baud input messages.
+
     :param show_plots: Not used; no plots to be shown.
     :return:
     """

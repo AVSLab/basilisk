@@ -22,6 +22,7 @@ def pull_and_format_df(path, varIdxLen):
 def curve_per_df_component(df):
     """
     Make a curve per component in the message dataframe (i.e. omega_BR_B[2] across all runs as a single curve)
+
     :param df:
     :return:
     """

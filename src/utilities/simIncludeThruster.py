@@ -23,8 +23,8 @@
 
 import sys
 import numpy
-
 from Basilisk.architecture import messaging
+
 try:
     from collections.abc import OrderedDict
 except ImportError:
@@ -40,7 +40,7 @@ class thrusterFactory(object):
     def create(self, thrusterType, r_B, tHat_B, **kwargs):
         """
         This function is called to setup a thruster device in python, and adds it to the of thruster
-        factory in thrusterList{}.  The function returns a copy of the device that can be changed if needed.
+        factory in ``thrusterList{}``.  The function returns a copy of the device that can be changed if needed.
         The first 3 arguments are required, the remaining arguments are optional with:
 
         Parameters
@@ -64,8 +64,6 @@ class thrusterFactory(object):
                 thruster dispersion percentage
             MinOnTime: float
                 thruster minimum on time
-
-        :return: thrConfigSimMsg
 
         """
         # create the blank thruster object

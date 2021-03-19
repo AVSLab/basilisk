@@ -53,9 +53,13 @@ import scenarioAttitudeFeedbackRWPower
 def test_bskAttitudeFeedbackRW(show_plots, useRwPowerGeneration):
     """
     This function is called by the py.test environment.
-    :param show_plots: flag to show the plots
-    :param useRwPowerGeneration: flag to use the RW breaking power use
-    :return: void
+
+    Args:
+        show_plots: flag to show the plots
+        useRwPowerGeneration: flag to use the RW breaking power use
+
+    Returns: void
+
     """
     # each test method requires a single assert method to be called
 

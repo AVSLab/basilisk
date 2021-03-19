@@ -24,7 +24,7 @@ user from python.  The msg type contains a link to the message structure definit
 provides information on what this message is used for.
 
 .. _ModuleIO_SPACECRAFT_PLUS:
-.. figure:: /../../src/simulation/dynamics/SpacecraftDynamics/_Documentation/Spacecraft/Images/moduleSpacecraft.svg
+.. figure:: /../../src/simulation/dynamics/spacecraft/_Documentation/Spacecraft/Images/moduleSpacecraft.svg
     :align: center
 
     Figure 1: ``Spacecraft()`` Module I/O Illustration

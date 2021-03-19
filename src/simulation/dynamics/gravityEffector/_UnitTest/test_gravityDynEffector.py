@@ -412,6 +412,7 @@ def singleGravityBody(show_plots):
 def register(manager):
     """
     populates the state engines dynParamManager with nominal values
+
     :param manager:
     :return: posVelSig, posVelSig
     """

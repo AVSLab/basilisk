@@ -6,6 +6,7 @@ The PartitionedStorageUnit class is a model of storage unit functionality that a
 1. Integrated net input data of the attached dataNodes at a partitioned level.
 2. The sum of the data inside of the partitioned storage unit.
 3. The storage unit's maximum storage capacity as defined by the ``storageCapacity`` attribute.
+
 Integration of the net input data is performed with a simple Euler method for each partition.
 
     :math:`Data_{stored} = (baudRate) (t_{current} - t_{previous})`

@@ -45,23 +45,25 @@ from Basilisk import __path__
 
 bskPath = __path__[0]
 
-from Basilisk.utilities import tabulate as T
+try:
+    from Basilisk.utilities import tabulate as T
 
-'''
-del(T.LATEX_ESCAPE_RULES['$'])
-del(T.LATEX_ESCAPE_RULES['\\'])
-del(T.LATEX_ESCAPE_RULES['_'])
-del(T.LATEX_ESCAPE_RULES['{'])
-del(T.LATEX_ESCAPE_RULES['}'])
-'''
+    # '''
+    # del(T.LATEX_ESCAPE_RULES['$'])
+    # del(T.LATEX_ESCAPE_RULES['\\'])
+    # del(T.LATEX_ESCAPE_RULES['_'])
+    # del(T.LATEX_ESCAPE_RULES['{'])
+    # del(T.LATEX_ESCAPE_RULES['}'])
+    # '''
 
-del (T.LATEX_ESCAPE_RULES[u'$'])
-del (T.LATEX_ESCAPE_RULES[u'\\'])
-del (T.LATEX_ESCAPE_RULES[u'_'])
-del (T.LATEX_ESCAPE_RULES[u'{'])
-del (T.LATEX_ESCAPE_RULES[u'}'])
-from Basilisk.utilities.tabulate import *
-
+    del (T.LATEX_ESCAPE_RULES[u'$'])
+    del (T.LATEX_ESCAPE_RULES[u'\\'])
+    del (T.LATEX_ESCAPE_RULES[u'_'])
+    del (T.LATEX_ESCAPE_RULES[u'{'])
+    del (T.LATEX_ESCAPE_RULES[u'}'])
+    from Basilisk.utilities.tabulate import *
+except:
+    pass
 
 def isVectorEqual(result, truth, accuracy):
     """function to check if a 3D vector is the same as the truth values"""
@@ -204,18 +206,20 @@ def compareArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, t
     """
     Checks whether the relative distance between elements of a pullMessageLogData-derived array and a
     truth array is below a provided accuracy, and return an error if not.
-    :param trueStates: iterable of size (m,n);
-    :param dataStates: iterable of size (m,n)
-    :param accuracy: Relative accuracy boundary
-    :param msg:
-    :param testFailCount:
-    :param testMessages:
-    :return:
+
+    Args:
+        trueStates: iterable of size (m,n);
+        dataStates: iterable of size (m,n)
+        accuracy: Relative accuracy boundary
+        msg:
+        testFailCount:
+        testMessages:
+
     """
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
         testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
-    elif (len(trueStates) == 0 or len(dataStates) == 0):
+    elif len(trueStates) == 0 or len(dataStates) == 0:
         testFailCount += 1
         testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
     else:
@@ -231,7 +235,7 @@ def isDoubleEqual(result, truth, accuracy):
     """function to check if a double equals a truth value"""
     if foundNAN(result): return 0
 
-    if (math.fabs(result - truth) > accuracy):
+    if math.fabs(result - truth) > accuracy:
         return 0  # return 0 to indicate the doubles are not equal
 
     return 1  # return 1 to indicate the doubles are equal
@@ -246,7 +250,7 @@ def isDoubleEqualRelative(result, truth, accuracy):
         print("truth is zero, cannot compare")
         return 0
 
-    if (math.fabs((truth - result) / truth) > accuracy):
+    if math.fabs((truth - result) / truth) > accuracy:
         return 0  # return 0 to indicate the doubles are not equal
 
     return 1  # return 1 to indicate the doubles are equal
@@ -504,10 +508,12 @@ def samplingTime(simTime, baseTimeStep, numDataPoints):
     """
     Given a simulation duration, this routine returns
     a sampling time that yields the closest integer match to a desired number of sampling points
-    :param simTime: [ns] total simulation duration
-    :param baseTimeStep: [ns] baseline sampling period
-    :param numDataPoints: nominal desired number of data points over the simulation duration
-    :return:
+
+    Args:
+        simTime: [ns] total simulation duration
+        baseTimeStep: [ns] baseline sampling period
+        numDataPoints: nominal desired number of data points over the simulation duration
+
     """
     deltaTime = math.floor(simTime / baseTimeStep / (numDataPoints - 1)) * baseTimeStep
     if deltaTime < 1:

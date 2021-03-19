@@ -41,10 +41,12 @@ def create(
     devices in rwList[].  This list is accessible from the parent python script that
     imported this rw library script, and thus any particular value can be over-ridden
     by the user.
-    :param rThrust_B:
-    :param tHatThrust_B:
-    :param Fmax:
-    :return:
+
+    Args:
+        rThrust_B: position of thruster in spacecraft body frame
+        tHatThrust_B: direction of thrust vector in B frame
+        Fmax: maximum thrust force value
+
     """
     global thrList
 

@@ -5,6 +5,7 @@ The SimpleStorageUnit class is a model of storage unit functionality that keeps 
 
 1. Integrated net input data of the attached dataNodes in one partition.
 2. The storage unit's maximum storage capacity as defined by the ``storageCapacity`` attribute.
+
 Integration of the net input data is performed with a simple Euler method for each partition.
 
     :math:`Data_{stored} = (baudRate) (t_{current} - t_{previous})`

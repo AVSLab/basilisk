@@ -32,6 +32,7 @@ from Basilisk.fswAlgorithms import inertialUKF
 @pytest.mark.parametrize("filterModule", [('inertialUKF'), ('sunlineSuKF')])
 
 def test_all_utilities_ukf(show_plots, filterModule):
+    """Test the filter utilities"""
     [testResults, testMessage] = utilities_nominal(filterModule)
     assert testResults < 1, testMessage
     [testResults, testMessage] = utilities_fault(filterModule)

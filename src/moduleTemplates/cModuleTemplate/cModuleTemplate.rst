@@ -118,12 +118,12 @@ in light and dark mode of the documentation web page.
 
 For example, to include an image (has no caption) you can use code such as::
 
-    .. image:: /../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Images/Fig1.svg
+    .. image:: /../../src/moduleTemplates/cModuleTemplate/_Documentation/Images/fig1.svg
         :align: center
 
 to generate the following image.
 
-.. image:: /../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Images/Fig1.svg
+.. image:: /../../src/moduleTemplates/cModuleTemplate/_Documentation/Images/fig1.svg
      :align: center
 
 Note that with pixelated images such as ``jpg`` and ``png`` format save the file at twice the resolution
@@ -133,7 +133,7 @@ enough resolution to look good on high-resolution displays.
 To include a figure (has a caption and you can add label), use the following code::
 
     .. _figLabel:
-    .. figure:: /../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Images/Fig1.svg
+    .. figure:: /../../src/moduleTemplates/cModuleTemplate/_Documentation/Images/fig1.svg
         :align: center
 
         Figure 2: Concept Illustration of the Math used in this Module
@@ -141,7 +141,7 @@ To include a figure (has a caption and you can add label), use the following cod
 This yields
 
 .. _figLabel:
-.. figure:: /../../src/fswAlgorithms/_cModuleTemplateFolder/cModuleTemplate/_Documentation/Images/Fig1.svg
+.. figure:: /../../src/moduleTemplates/cModuleTemplate/_Documentation/Images/fig1.svg
     :align: center
 
     Figure 2: Concept Illustration of the Math used in this Module

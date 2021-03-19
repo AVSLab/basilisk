@@ -202,6 +202,7 @@ def plot_geometry(groundLocation, scLocations, minimumElevation):
     """
     Plots the location of a ground station, its field of view,  and the positions of two spacecraft to verify whether
     the spacecraft have access to the ground station.
+
     :param groundLocation: [3,] : an ECI ground position.
     :param scLocations: [3,2] : two spacecraft position vectors
     :param minimumElevation: double : minimum view elevation angle in degrees.

@@ -42,7 +42,8 @@ def test_storage_limits(show_plots):
     **Validation Test Description**
 
     1. Whether the simpleBattery can add multiple nodes (core base class functionality);
-    2. That the battery correctly evaluates how much stored power it should have given a pair of five-watt input messages.
+    2. That the battery correctly evaluates how much stored power it should have given a pair of five-watt
+       input messages.
 
     :param show_plots: Not used; no plots to be shown.
 
