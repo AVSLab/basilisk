@@ -719,7 +719,7 @@ def plotSimAndSave(data, retentionPolicy):
         # plt.subplots_adjust(top = 0.6, bottom = 0.4)
         unitTestSupport.saveScenarioFigure(
             fileNameString + "_" + pltName
-            , plt, path + "/data")
+            , plt, path + "/dataForExamples")
 
     return
 
