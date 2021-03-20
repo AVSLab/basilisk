@@ -85,15 +85,15 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
 
     volt0InMsgData = messaging.VoltMsgPayload()
     volt0InMsgData.voltage = 30000.
-    volt0InMsg = messaging.VoltageMsg().write(volt0InMsgData)
+    volt0InMsg = messaging.VoltMsg().write(volt0InMsgData)
 
     volt1InMsgData = messaging.VoltMsgPayload()
     volt1InMsgData.voltage = -10000.
-    volt1InMsg = messaging.VoltageMsg().write(volt1InMsgData)
+    volt1InMsg = messaging.VoltMsg().write(volt1InMsgData)
 
     volt2InMsgData = messaging.VoltMsgPayload()
     volt2InMsgData.voltage = 20000.
-    volt2InMsg = messaging.VoltageMsg().write(volt2InMsgData)
+    volt2InMsg = messaging.VoltMsg().write(volt2InMsgData)
 
     # create a list of sphere body-fixed locations and associated radii
     spPosList = [
