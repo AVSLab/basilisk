@@ -303,6 +303,9 @@ class fileCrawler():
             if name.startswith("_"):
                 pathToFolder = index_path.split("/"+name)[0]
                 lines += ".. " + name + pathToFolder.split("/")[-1] + ":\n\n"
+            elif name == 'utilities':
+                pathToFolder = index_path.split("/" + name)[0]
+                lines += ".. _Folder_" + name + pathToFolder.split("/")[-1] + ":\n\n"
             else:
                 lines += ".. _Folder_" + name + ":\n\n"
 
@@ -340,9 +343,7 @@ class fileCrawler():
             with open(os.path.join(index_path, "index.rst"), "w") as f:
                 f.write(lines)
 
-
-
-    def generateAutoDoc(self,path, files_paths):
+    def generateAutoDoc(self, path, files_paths):
         if "/" in path:
             name = os.path.basename(path)
         sources = {}
@@ -378,7 +379,11 @@ class fileCrawler():
 
                 module_files_temp = []
                 lines = ""
-                lines += ".. _" + c_file_basename + ":\n\n"
+                if c_file_basename == 'orbitalMotion' or c_file_basename == 'rigidBodyKinematics':
+                    pathToFolder = src_path.split("/" + c_file_basename)[0]
+                    lines += ".. _" + c_file_basename + pathToFolder.split("/")[-1] + ":\n\n"
+                else:
+                    lines += ".. _" + c_file_basename + ":\n\n"
                 if "fswMessages" in src_path \
                         or "simFswInterfaceMessages" in src_path \
                         or "simMessages" in src_path\
@@ -399,8 +404,6 @@ class fileCrawler():
                 # Link the path with the modules for Breathe
                 module_files.extend([s for s in c_file_local_paths if c_file_basename in s])
                 module_files_temp.extend([s for s in c_file_local_paths if c_file_basename in s])
-
-
 
                 # Populate the module's .rst
                 for module_file in module_files_temp:

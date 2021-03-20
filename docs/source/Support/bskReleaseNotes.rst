@@ -35,7 +35,7 @@ Version |release|
 -----------------
 
 - new waypoint reference module in :ref:`waypointReference`. It can be used to read an attitude maneuver from a set of waypoints on a text file, likely generated outside Basilisk.
-- Fix a range of HTML Documentation build warnings and issues
+- Fix a range of long-standing HTML Documentation build warnings and issues
 - Renamed the messages ``CirclesOpNavMsgPayload`` to ``OpNavCirclesMsgPayload`` and
   ``OpNavLimbMsgPayload`` to ``OpNavLimbMsgPayload`` to avoid sphinx naming conflicts
 - unified the identical ``ukfUtilities.c/h`` files in ``attDetermination`` and ``opticalNavigation`` folders

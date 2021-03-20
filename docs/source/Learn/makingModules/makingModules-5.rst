@@ -3,7 +3,7 @@
 Common Basilisk Support Files
 =============================
 
-The folder ``src/architecture/utilities`` (see :ref:`Folder_utilities`) contains a number of C code support libraries that simplify the mathematics of writing Basilisk modules.  This page highlights some common libraries used.
+The folder ``src/architecture/utilities`` contains a number of C code support libraries that simplify the mathematics of writing Basilisk modules.  This page highlights some common libraries used.
 
 
 `astroConstants.h`

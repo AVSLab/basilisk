@@ -21,7 +21,7 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, unitTestSupport
 from Basilisk.fswAlgorithms import pixelLineBiasUKF  # import the module that is to be tested
 from Basilisk.utilities import RigidBodyKinematics as rbk
-import relativeODuKF_test_utilities as FilterPlots
+import pixelLineBias_test_utilities as FilterPlots
 import numpy as np
 from Basilisk.architecture import messaging
 
