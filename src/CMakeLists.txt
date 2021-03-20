@@ -584,14 +584,14 @@ find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/vehicleConfigData" VEH_C
 
 
 generate_package_targets("${ATT_CONTROL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
-generate_package_targets("${ATT_DET_TARGETS}" "attDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${ATT_DET_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_GUID_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${DV_GUID_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${EFF_INTERFACES_TARGETS}" "effectorInterfacesLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${FORM_FLYING_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${FSW_UTIL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${IMAGE_PROC_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
-generate_package_targets("${OPT_NAV_TARGETS}" "opticalNavigationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${OPT_NAV_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${RW_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${SENSOR_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${TRANS_DET_TARGETS}" "transDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")

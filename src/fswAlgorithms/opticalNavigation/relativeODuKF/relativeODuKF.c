@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "relativeODuKF.h"
-#include "../_GeneralModuleFiles/ukfUtilities.h"
+#include "architecture/utilities/ukfUtilities.h"
 
 /*! This method creates the two moduel output messages.
  @return void

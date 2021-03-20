@@ -19,7 +19,7 @@
 %module sunlineUKF
 %{
    #include "sunlineUKF.h"
-   #include "../_GeneralModuleFiles/ukfUtilities.h"
+   #include "architecture/utilities/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -40,7 +40,7 @@ struct SunlineFilterMsg_C;
 struct CSSConfigMsg_C;
 
 %include "sunlineUKF.h"
-%include "../_GeneralModuleFiles/ukfUtilities.h"
+%include "architecture/utilities/ukfUtilities.h"
 
 %pythoncode %{
 import sys

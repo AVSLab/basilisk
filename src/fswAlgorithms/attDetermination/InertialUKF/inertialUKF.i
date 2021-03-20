@@ -19,7 +19,7 @@
 %module inertialUKF
 %{
    #include "inertialUKF.h"
-   #include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
+   #include "architecture/utilities/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -36,7 +36,7 @@ STRUCTASLIST(STMessage)
 %include "inertialUKF.h"
 
 
-%include "fswAlgorithms/attDetermination/_GeneralModuleFiles/ukfUtilities.h"
+%include "architecture/utilities/ukfUtilities.h"
 
 %include "architecture/msgPayloadDefC/InertialFilterMsgPayload.h"
 struct InertialFilterMsg_C;

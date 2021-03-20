@@ -19,7 +19,7 @@
 %module sunlineEKF
 %{
    #include "sunlineEKF.h"
-   #include "../_GeneralModuleFiles/ukfUtilities.h"
+   #include "architecture/utilities/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -30,7 +30,7 @@
 %constant void Reset_sunlineEKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineEKF;
 
-%include "../_GeneralModuleFiles/ukfUtilities.h"
+%include "architecture/utilities/ukfUtilities.h"
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;

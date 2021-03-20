@@ -19,7 +19,7 @@
 %module relativeODuKF
 %{
    #include "relativeODuKF.h"
-   #include "../_GeneralModuleFiles/ukfUtilities.h"
+   #include "architecture/utilities/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -31,7 +31,7 @@
 %ignore Reset_relODuKF;
 
 %include "relativeODuKF.h"
-%include "../_GeneralModuleFiles/ukfUtilities.h"
+%include "architecture/utilities/ukfUtilities.h"
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;

@@ -20,7 +20,7 @@ import numpy
 import pytest
 import math
 
-from Basilisk.fswAlgorithms import sunlineSuKF  # import the module that is to be tested
+from Basilisk.fswAlgorithms import sunlineSuKF
 from Basilisk.fswAlgorithms import inertialUKF
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -55,8 +55,12 @@ def utilities_nominal(filterModule):
                0.293871, -2.94428, -0.102242, -0.164879,
                -0.787283, 1.43838, -0.241447, 0.627707]
 
-    RVector = eval(filterModule + '.new_doubleArray(len(AMatrix))')
-    AVector = eval(filterModule + '.new_doubleArray(len(AMatrix))')
+
+    RVector = inertialUKF.new_doubleArray(len(AMatrix))
+    AVector = inertialUKF.new_doubleArray(len(AMatrix))
+
+    #RVector = eval(filterModule + '.new_doubleArray(len(AMatrix))')
+    #AVector = eval(filterModule + '.new_doubleArray(len(AMatrix))')
     for i in range(len(AMatrix)):
         eval(filterModule + '.doubleArray_setitem(AVector, i, AMatrix[i])')
         eval(filterModule + '.doubleArray_setitem(RVector, i, 0.0)')

@@ -19,7 +19,7 @@
 %module sunlineSEKF
 %{
    #include "sunlineSEKF.h"
-   #include "../_GeneralModuleFiles/ukfUtilities.h"
+   #include "architecture/utilities/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
