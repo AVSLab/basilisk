@@ -23,6 +23,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -102,7 +103,7 @@ void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
         attMsgBuffer = this->attRefOutMsg.zeroMsgPayload;
 		
 		/* current time */
-		double t = (double) (CurrentSimNanos);
+		uint64_t t =  CurrentSimNanos;
 		
 		/* for CurrentTime < t_0 hold initial attitude with zero angular rates and accelerations */
 		if (t < this->t_a) {
@@ -136,7 +137,7 @@ void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
 
 
 /*! Pull one line of dataFileName and stores time t and relative attitude in attRefMsg_t */
-void WaypointReference::pullDataLine(double *t, AttRefMsgPayload *attRefMsg_t)
+void WaypointReference::pullDataLine(uint64_t *t, AttRefMsgPayload *attRefMsg_t)
 {   
     std::string line;
 	
@@ -148,7 +149,7 @@ void WaypointReference::pullDataLine(double *t, AttRefMsgPayload *attRefMsg_t)
 		*attRefMsg_t = this->attRefOutMsg.zeroMsgPayload;
 
         /* pull time, this is not used in the BSK msg */
-        *t = pullScalar(&iss) * 1e9;
+        *t = (uint64_t) (pullScalar(&iss) * SEC2NANO);
 		
 		/* get inertial attitude of reference frame R with respect to N and store in msg */
 		double att3[3];
@@ -245,7 +246,7 @@ double WaypointReference::pullScalar(std::istringstream *iss) {
 
 /*! linearly interpolate between two vectors v_a and v_b
 */
-void WaypointReference::linearInterpolation(double t_a, double v_a[3], double t_b, double v_b[3], double t, double *v) {
+void WaypointReference::linearInterpolation(uint64_t t_a, double v_a[3], uint64_t t_b, double v_b[3], uint64_t t, double *v) {
 	for (int i = 0; i < 3; i++) {
         *(v+i) = v_a[i] + (v_b[i] - v_a[i]) / (t_b - t_a) * (t - t_a);
     }
