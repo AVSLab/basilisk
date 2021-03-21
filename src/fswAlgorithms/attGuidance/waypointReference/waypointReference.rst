@@ -43,6 +43,7 @@ Basilisk simulation that is equal or higher than the frequency of the waypoints.
 trustworthy representation of the maneuver.
 
 
+
 Detailed Module Description
 ---------------------------
 The module reads a sequence of time-tagged waypoints. Defining :math:`t=[t_0,...,t_N]` the times of the N+1 waypoints, and :math:`t_{sim}` the simulation time, we have that:
@@ -56,7 +57,7 @@ User Guide
 ----------
 The module assumes the data file is in plain text form and the following format:
 
-- time
+- time (seconds)
 - attitude parameters (MRPs or EPs)
 - angular rates (rad/s) either expressed in inertial frame or reference frame
 - angular accelerations (rad/s^2) either expressed in inertial frame or reference frame
