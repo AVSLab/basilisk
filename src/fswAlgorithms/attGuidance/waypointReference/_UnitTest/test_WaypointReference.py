@@ -38,7 +38,7 @@ from Basilisk.architecture import bskLogging
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 path = os.path.dirname(os.path.abspath(__file__))
-
+dataFileName = None
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("attType", [0, 1, 2])
@@ -98,7 +98,9 @@ def test_waypointReference(show_plots, attType, useReferenceFrame, accuracy):
 
     # each test method requires a single assert method to be called
     [testResults, testMessage] = waypointReferenceTestFunction(attType, useReferenceFrame, accuracy)
-    
+    global dataFileName
+    if os.path.exists(dataFileName):
+        os.remove(dataFileName)
     assert testResults < 1, testMessage
 
 def waypointReferenceTestFunction(attType, useReferenceFrame, accuracy):
@@ -123,12 +125,13 @@ def waypointReferenceTestFunction(attType, useReferenceFrame, accuracy):
 
     # create the simulation data file
     # dataFileName
+    global dataFileName
     dataFileName = "data" + str(attType)
     if useReferenceFrame == True:
         dataFileName += "R.txt"
     else:
         dataFileName += "N.txt"
-    
+
     dataFileName = os.path.join(path, dataFileName)
     delimiter = ","
     fDataFile = open(dataFileName, "w+")
@@ -252,9 +255,7 @@ def waypointReferenceTestFunction(attType, useReferenceFrame, accuracy):
             if not unitTestSupport.isVectorEqual(dataLog.domega_RN_N[i], [0.0, 0.0, 0.0], accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
-     
-	# delete the data file created
-    os.remove(dataFileName)
+
 
     # print out success or failure message
     if testFailCount == 0:

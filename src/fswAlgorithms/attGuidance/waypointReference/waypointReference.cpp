@@ -102,7 +102,7 @@ void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
         attMsgBuffer = this->attRefOutMsg.zeroMsgPayload;
 		
 		/* current time */
-		double t = CurrentSimNanos;
+		double t = (double) (CurrentSimNanos);
 		
 		/* for CurrentTime < t_0 hold initial attitude with zero angular rates and accelerations */
 		if (t < this->t_a) {
