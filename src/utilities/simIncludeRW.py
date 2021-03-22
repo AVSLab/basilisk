@@ -462,7 +462,7 @@ class rwFactory(object):
             RW.U_s = 2.4E-6
             RW.U_d = 4.6E-7
         elif self.maxMomentum == small:
-            RW.maxx = 6.0
+            RW.mass = 6.0
             RW.U_s = 1.5E-6
             RW.U_d = 2.2E-7
         else:
