@@ -26,10 +26,10 @@ provides information on what this message is used for.
 Detailed Module Description
 ---------------------------
 
-This module simulates two different encoder features: discretization and signal status. Discretization truncates the output reaction wheel speed to a set resolution. As for the signal status, it can be set as SIGNAL_NOMINAL for normal working conditions, but can also simulate failures
-of the type SIGNAL_OFF (output wheel speed is 0) and SIGNAL_STUCK (output wheel speed is constant and equal to the one given at the previous iteration).
+This module simulates two different encoder features: discretization and signal status. Discretization truncates the output reaction wheel speed to a set resolution. As for the signal status, it can be set as ``SIGNAL_NOMINAL`` for normal working conditions, but can also simulate failures
+of the type ``SIGNAL_OFF`` (output wheel speed is 0) and ``SIGNAL_STUCK`` (output wheel speed is constant and equal to the one given at the previous iteration).
 
-This module applies each of its features to each wheel individually, and so it is extremely important to set the number of reaction wheels in use. It is also important to note that, because
+This module applies each of its features to each wheel individually, and so it is important to set the number of reaction wheels in use. It is also important to note that, because
 for the first iteration the time step is set at 0, the wheel speeds will not be discretized for the first time step and the encoder will output the true wheel speeds.
 
 Discretization
@@ -42,7 +42,7 @@ clicks per rotation that the sensor can handle. Let :math:`N` be the number of c
     N = \texttt{trunc}(\Omega_{\text{in}}\Delta t \frac{n}{2\pi} + \Delta N)
 
 where :math:`\Omega_{\text{in}}` is the input wheel speed, :math:`\Delta t` is the time step, :math:`n` is the number of clicks per rotation and :math:`\Delta N` is the remaining clicks that were not accounted for
-in the previous iteration. The trunc() function truncates the result, effectively rounding down to the nearest integer. The output wheel speed :math:`\Omega_{\text{out}}` is computed using the
+in the previous iteration. The ``trunc()`` function truncates the result, effectively rounding down to the nearest integer. The output wheel speed :math:`\Omega_{\text{out}}` is computed using the
 following equation:
 
 .. math::
@@ -58,7 +58,7 @@ As expected, the smaller the value of :math:`n`, the greater the discretization 
 Signal Status
 ~~~~~~~~~~~~~
 
-The module accepts three different signal status, which are SIGNAL_NOMINAL, SIGNAL_OFF and SIGNAL_STUCK. When the signal is nominal, all the previous features apply and the wheel 
+The module accepts three different signal status, which are ``SIGNAL_NOMINAL``, ``SIGNAL_OFF`` and ``SIGNAL_STUCK``. When the signal is nominal, all the previous features apply and the wheel
 speeds are only affected by the discretization. When the signal is off, both the wheel speed and the remaining clicks are set to zero, which models a shutdown of the encoder.
 Finally, when the signal is stuck, all the variables remain constant from the previous iteration, including the wheel speeds and the remaining clicks.
 

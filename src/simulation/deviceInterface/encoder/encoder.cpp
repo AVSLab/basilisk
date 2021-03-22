@@ -21,21 +21,14 @@
 #include <cstring>
 #include <math.h>
 #include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
 Encoder::Encoder()
 {
     this->numRW = -1;       // set the number of reaction wheels to -1 to throw a warning if not set
-
-    // Loop through the RW to set some internal parameters to default
-    for (int i = 0; i < MAX_EFF_CNT; i++)
-    {
-        // set all reaction wheels signal to nominal
-        this->rwSignalState[i] = SIGNAL_NOMINAL;
-        // set the remaining clicks to zero
-        this->remainingClicks[i] = 0.0;
-    }
+    this->clicksPerRotation = -1;
 
     return;
 }
@@ -76,6 +69,15 @@ void Encoder::Reset(uint64_t CurrentSimNanos)
     // zero the RW wheel output message buffer //
     this->rwSpeedConverted = this->rwSpeedOutMsg.zeroMsgPayload;
     
+    // Loop through the RW to set some internal parameters to default
+    for (int i = 0; i < MAX_EFF_CNT; i++)
+    {
+        // set all reaction wheels signal to nominal
+        this->rwSignalState[i] = SIGNAL_NOMINAL;
+        // set the remaining clicks to zero
+        this->remainingClicks[i] = 0.0;
+    }
+    
     return;
 }
 
@@ -113,7 +115,7 @@ void Encoder::encode(uint64_t CurrentSimNanos)
     clicksPerRadian = this->clicksPerRotation / (2 * M_PI);
 
     // set the time step
-    timeStep = (CurrentSimNanos - this->prevTime) * 1.0E-9;
+    timeStep = (CurrentSimNanos - this->prevTime) * NANO2SEC;
 
     // at the beginning of the simulation, the encoder simply outputs the true RW speeds
     if (timeStep == 0.0)
@@ -148,9 +150,11 @@ void Encoder::encode(uint64_t CurrentSimNanos)
 
                 // reset the remaining clicks
                 this->remainingClicks[i] = 0;
+            } else if (this->rwSignalState[i] == SIGNAL_STUCK) {
+                // if the encoder is stuck, it will output the previous results
+            } else {
+                bskLogger.bskLog(BSK_ERROR, "encoder: un-modeled encoder signal mode %d selected.", this->rwSignalState[i]);
             }
-
-            // if the encoder is stuck, it will output the previous results
         }
     }
     return;
