@@ -19,7 +19,8 @@ except ModuleNotFoundError:
 # define BSK module option list (option name and default value)
 bskModuleOptionsBool = {
     "opNav": False,
-    "vizInterface": True
+    "vizInterface": True,
+    "buildProject": True
 }
 bskModuleOptionsString = {
     "autoKey": "",
@@ -27,8 +28,7 @@ bskModuleOptionsString = {
 }
 bskModuleOptionsFlag = {
     "clean": False,
-    "allOptPkg": False,
-    "buildProject": False
+    "allOptPkg": False
 }
 
 # this statement is needed to enable Windows to print ANSI codes in the Terminal
@@ -256,11 +256,13 @@ class BasiliskConan(ConanFile):
         add_basilisk_to_sys_path()
         if self.options.buildProject: 
             start = datetime.now()
-            if self.generator == "Xcode":
-                # Xcode multi-threaded needs specialized arguments
-                cmake.build(['--', '-jobs', str(tools.cpu_count()), '-parallelizeTargets'])
+            if self.settings.os == "Windows":
+                cmake.build(['--', f"/maxcpucount:{str(tools.cpu_count())}"])
             else:
-                cmake.build()
+                # Xcode multi-threaded needs specialized arguments
+                cmake.build(['--', '-j',  str(tools.cpu_count())])
+            #else:
+                #cmake.build()
             print("Total Build Time: " + str(datetime.now()-start))
         return
 
