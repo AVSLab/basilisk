@@ -262,6 +262,8 @@ class BasiliskConan(ConanFile):
             else:
                 cmake.build(['--', '-j',  str(tools.cpu_count())])
             print("Total Build Time: " + str(datetime.now()-start))
+        else:
+            print(statusColor + "\nNext, be sure to compile Basilisk..." + endColor)
         return
 
 def add_basilisk_to_sys_path():
