@@ -254,15 +254,13 @@ class BasiliskConan(ConanFile):
         print(statusColor + "Configuring cmake..." + endColor)
         cmake.configure()
         add_basilisk_to_sys_path()
-        if self.options.buildProject: 
+        if self.options.buildProject:
+            print(statusColor + "\nCompiling Basilisk..." + endColor)
             start = datetime.now()
             if self.settings.os == "Windows":
                 cmake.build(['--', f"/maxcpucount:{str(tools.cpu_count())}"])
             else:
-                # Xcode multi-threaded needs specialized arguments
                 cmake.build(['--', '-j',  str(tools.cpu_count())])
-            #else:
-                #cmake.build()
             print("Total Build Time: " + str(datetime.now()-start))
         return
 
