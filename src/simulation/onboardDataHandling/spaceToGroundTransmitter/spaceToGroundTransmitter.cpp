@@ -20,6 +20,7 @@
 #include "spaceToGroundTransmitter.h"
 #include "architecture/utilities/bskLogging.h"
 #include <array>
+#include <iostream>
 
 /*! Constructor, which sets the default nodeDataOut to zero.
 */
@@ -120,18 +121,18 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUs
 
     //! - If we have access to any ground location, do the transmission logic
     if (std::any_of(this->groundLocationAccessMsgs.begin(), this->groundLocationAccessMsgs.end(), [](AccessMsgPayload msg){return msg.hasAccess>0;})){
-        //! - If we have no transmitted any of the packet, we select a new type of data to downlink
-        if (this->packetTransmitted == 0.0) {
-
-            //! - Loop through storedData, select index w/ largest amt
-            double maxVal = 0.0;
-            int maxIndex = 0;
-            for (int i = 0; i < this->numBuffers; i++) {
-                if (this->storageUnitMsgsBuffer.back().storedData[i] > maxVal) {
-                    maxVal = this->storageUnitMsgsBuffer.back().storedData[i];
-                    maxIndex = i;
-                }
+        // Moved logic
+        double maxVal = 0.0;
+        int maxIndex = 0;
+        for (int i = 0; i < this->numBuffers; i++) {
+            if (this->storageUnitMsgsBuffer.back().storedData[i] > maxVal) {
+                maxVal = this->storageUnitMsgsBuffer.back().storedData[i];
+                maxIndex = i;
             }
+        }
+
+        //! - If we have not transmitted any of the packet, we select a new type of data to downlink
+        if (this->packetTransmitted == 0.0) {
 
             // Set nodeDataName to the maximum data name
             strncpy(this->nodeDataName, this->storageUnitMsgsBuffer.back().storedDataName[maxIndex],
@@ -141,10 +142,10 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUs
             strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
             this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
 
-            // Check to see if maxVal is less than packet size.
+            // Check to see if maxVal is less than packet size or if it will downlink more data than is available
             // If so, set the output message baudRate to zero
             // We do not want to start downlinking until we have enough data for one packet
-            if (maxVal < (-1*(this->packetSize))) {
+            if ((maxVal < (-1*(this->packetSize))) || ((maxVal + this->nodeBaudRate * (this->currentTimestep)) < 0)) {
                 dataUsageSimMsg->baudRate = 0;
                 this->packetTransmitted = 0;
             }
@@ -152,6 +153,16 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUs
         else {
             strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
             this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
+
+            // New logic (copied from above)
+            // Check to see if maxVal is less than packet size.
+            // If so, set the output message baudRate to zero
+            // We do not want to start downlinking until we have enough data for one packet
+            if ((maxVal < (-1*(this->packetSize))) || ((maxVal + this->nodeBaudRate * (this->currentTimestep)) < 0)) {
+                dataUsageSimMsg->baudRate = 0;
+                this->packetTransmitted = 0;
+            }
+
             // If the transmitted packet size has exceeded the packet size, set packetTransmitted to zero
             if (this->packetTransmitted <= this->packetSize) {
                 this->packetTransmitted = 0.0;
