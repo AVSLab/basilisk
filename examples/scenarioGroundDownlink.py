@@ -135,7 +135,7 @@ def run(show_plots):
 
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.000], [-0.000], [0.000]]
-    scenarioSim.AddModelToTask(taskName, scObject)
+    scenarioSim.AddModelToTask(taskName, scObject, None, 1)
 
     # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
@@ -162,7 +162,7 @@ def run(show_plots):
     instrument2 = simpleInstrument.SimpleInstrument()
     instrument2.ModelTag = "instrument2"
     instrument2.nodeBaudRate = 2400. # baud
-    instrument2.nodeDataName = "Instrument 2" # baud
+    instrument2.nodeDataName = "Instrument 2"  # baud
     scenarioSim.AddModelToTask(taskName, instrument2)
 
     # Create a "transmitter"
@@ -188,7 +188,7 @@ def run(show_plots):
     # Create a simpleStorageUnit and attach the instrument to it
     dataMonitor2 = simpleStorageUnit.SimpleStorageUnit()
     dataMonitor2.ModelTag = "dataMonitor2"
-    dataMonitor2.storageCapacity = 1E5 # bits
+    dataMonitor2.storageCapacity = 1E5  # bits
     dataMonitor2.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor2.addDataNodeToModel(instrument2.nodeDataOutMsg)
     dataMonitor2.addDataNodeToModel(transmitter.nodeDataOutMsg)
@@ -217,7 +217,7 @@ def run(show_plots):
                                               # , saveFile=__file__
                                               )
     vizSupport.addLocation(viz, stationName="Boulder Station"
-                           , parentBodyName='earth_planet_data'
+                           , parentBodyName=planet.planetName
                            , r_GP_P=groundStation.r_LP_P_Init
                            , fieldOfView=np.radians(160.)
                            , color='pink'
