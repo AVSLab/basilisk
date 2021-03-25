@@ -356,7 +356,7 @@ def singleGravityBody(show_plots):
 
         stateOut*=1000.0
         SpiceObject.J2000Current = etCurr;SpiceObject.UpdateState(0)
-        gravBody1.loadEphemeris(0)
+        gravBody1.loadEphemeris()
         gravOut = gravBody1.computeGravityInertial(stateOut[0:3].reshape(3,1).tolist(), 0)
         gravErrNorm.append(np.linalg.norm(gravVec*1000.0 - np.array(gravOut).reshape(3))/
             np.linalg.norm(gravVec*1000.0))
