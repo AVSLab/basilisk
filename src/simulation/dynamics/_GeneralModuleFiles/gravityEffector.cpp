@@ -365,7 +365,7 @@ double GravBodyData::computePotentialEnergy(Eigen::Vector3d r_I)
  load ephemeris information
  @param moduleID
  */
-void GravBodyData::loadEphemeris(int64_t moduleID)
+void GravBodyData::loadEphemeris()
 {
     if(this->planetBodyInMsg.isLinked()){
         this->localPlanet = this->planetBodyInMsg();
@@ -423,7 +423,7 @@ void GravityEffector::UpdateState(uint64_t currentSimNanos)
     std::vector<GravBodyData *>::iterator it;
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
-        (*it)->loadEphemeris(this->moduleID);
+        (*it)->loadEphemeris();
         if((*it)->isCentralBody){
             this->centralBody = (*it);
         }
@@ -550,7 +550,7 @@ void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vec
 Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(GravBodyData *bodyData)
 {
     uint64_t systemClock = (uint64_t) this->timeCorr->data()[0];
-    double dt = (systemClock - bodyData->timeWritten)*NANO2SEC;
+    double dt = ((int64_t)(systemClock - bodyData->timeWritten))*NANO2SEC;
     Eigen::Vector3d r_PN_N = Eigen::Map<Eigen::MatrixXd>
     (&(bodyData->localPlanet.PositionVector[0]), 3, 1);
     r_PN_N += Eigen::Map<Eigen::Vector3d>
