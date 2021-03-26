@@ -43,6 +43,7 @@ Version |release|
 - unified the identical ``ukfUtilities.c/h`` files in ``attDetermination`` and ``opticalNavigation`` folders
   into ``architecture/utilities``
 - added a new RW encoder simulation module :ref:`encoder`
+- Fixed a bug in the onboardDataHandling module that allowed for data that did not exist to be downlinked
 
 
 Version 2.0.1
