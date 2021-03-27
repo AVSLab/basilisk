@@ -148,13 +148,13 @@ def isArrayZero(result, dim, accuracy):
     return 1  # return 1 to indicate the two array's are equal
 
 
-def compareVector(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
+def compareVector(trueStates, dataStates, accuracy, msg, testFailCount, testMessages, ExpectedResult=1):
     """Compare two vector size and values and check absolute accuracy"""
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
         testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
     else:
-        if not isVectorEqual(dataStates, trueStates, accuracy):
+        if isVectorEqual(dataStates, trueStates, accuracy) != ExpectedResult:
             testFailCount += 1
             testMessages.append("FAILED: " + msg + r"\n")
     return testFailCount, testMessages
