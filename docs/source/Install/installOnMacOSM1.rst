@@ -50,7 +50,17 @@ The first step is still to install ``conan``.  However, in this setup you also n
 
 After this you can run the regular ``python3 conanfile.py`` command as discussed in :ref:`installMacOS`.  This will prompt you to install the remaining required packages for Basilisk.
 
-When you open the Xcode project, select ``ALL_BUILD`` again and build for Profile (i.e. Release) as normal.  It will build an Intel binary to run under Rosetta.
+Building with IDE
+~~~~~~~~~~~~~~~~~
+
+Conan file will build the project by default. To change this behavior, you need to disable the build.
+
+#. Run this command to disable the build::
+
+    (venv) $ python3 conanfile.py --buildProject False
+
+
+When you open the Xcode project, select ``ALL_BUILD`` and build for Profile (i.e. Release) as normal.  It will build an Intel binary to run under Rosetta.
 
 Installing Optional Packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -121,7 +121,7 @@ Dependencies
 Build Process via Terminal
 --------------------------
 
-#. The ``conanfile.py`` will setup and configure the Basilisk build.  For a basic installation,
+#. The ``conanfile.py`` will setup, configure and run the Basilisk build.  For a basic installation,
    from the root Basilisk folder use::
 
         (venv) $ python3 conanfile.py
@@ -131,14 +131,6 @@ Build Process via Terminal
    the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
    folder.
 
-#. Next, move to the distribution folder to build using a makefile::
-
-        (venv) $ cd dist3
-
-#. Can do a multi core make by running ``make -j<number of cores +1>`` such as::
-
-       (venv) $ make -j5
-
 #. To test your setup you can run one of the :ref:`examples`:
 
    -  For example, in the terminal window, switch ``/basilisk/examples/`` to the
@@ -146,4 +138,22 @@ Build Process via Terminal
    -  Run one of the example scripts, such as::
 
        (venv) $ python3 scenarioBasicOrbit.py
+
+
+Building the project Manually
+-----------------------------
+
+#. Run this command to disable the build::
+
+    python conanfile.py --buildProject False
+
+This will disable the build workflow so that you can build the project manually.
+
+#. Next, move to the distribution folder to build using a makefile::
+
+        (venv) $ cd dist3
+
+#. Can do a multi core make by running ``make -j<number of cores +1>`` such as::
+
+       (venv) $ make -j5
 

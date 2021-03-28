@@ -121,24 +121,22 @@ Installing required python support packages
 
 -  `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability, including ``pytest`` to run an automated test suite of unit and integrated tests.
 
-Build Project Process via Terminal
-----------------------------------
+Build Project Process via Command line
+--------------------------------------
 
 When all the prerequisite installations are complete, the project can be built as follows.
 
-#. The ``conanfile.py`` will setup and configure the Basilisk build.  For a basic installation,
+#. The ``conanfile.py`` will setup, configure and run the Basilisk build.  For a basic installation,
    from the root Basilisk folder use::
 
     (venv) $ python conanfile.py
 
-   This creates the Visual Studio 16 2019 IDE project in ``dist3``.
+   This creates the Visual Studio 16 2019 IDE project in ``dist3`` and build the project.
    You can also specify the generator directly in this build process and select other versions of Visual Studio.
    For other configure and build options, including running ``cmake`` directly, see :ref:`configureBuild`.
    This process will verify that the minimum required Basilisk python packages are installed, and that
    the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
    folder.
-
-#. Open the Visual Studio project and build the code for Release the default setting for `conanfile.py`.  For debug option see  :ref:`configureBuild`.
 
 #. To test your setup you can run one of the :ref:`examples`:
 
@@ -147,4 +145,29 @@ When all the prerequisite installations are complete, the project can be built a
    -  Run one of the tutorial scenarios, such as::
 
        (venv) $ python scenarioBasicOrbit.py
+
+
+
+Building with IDE
+-----------------
+Conan file will build the project by default. To change this behavior, you need to disable the build.
+
+#. Run this command to disable the build::
+
+    python conanfile.py --buildProject False
+
+   This will disable the build workflow so that you can build the project from the IDE.
+
+#. Open the Visual Studio project file inside ``dist3``.This is ``basilisk.sln`` on Windows.
+
+     -  The source code should appear and be ready for use
+
+      .. image:: /_images/static/visual-studio.png
+         :align: center
+         :scale: 40%
+
+   -  Change the active config to Release instead of debug for solution properties.
+   -  Within Xcode now go under `Build menu/Build Solution` to build.
+
+
 

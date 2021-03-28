@@ -170,7 +170,7 @@ Build Project Process via Terminal
 
 When all the prerequisite installations are complete, the project can be built as follows.
 
-#. The ``conanfile.py`` will setup and configure the Basilisk build.  For a basic installation,
+#. The ``conanfile.py`` will setup, configure and run the Basilisk build.  For a basic installation,
    from the root Basilisk folder use::
 
         (.venv) $ python3 conanfile.py
@@ -202,17 +202,6 @@ When all the prerequisite installations are complete, the project can be built a
 
       Now clear the Cmake cache and try running the configure and build process again.
 
-
-#. Open the Xcode project  file  inside ``dist3``.  This is ``basilisk.xcodeproj`` on macOS.
-
-   -  The source code should appear and be ready for use
-
-      .. image:: /_images/static/256564102-xcode.png
-         :align: center
-         :scale: 40%
-   -  Ensure that the target scheme is set to ``ALL_BUILD`` as shown in figure above
-   -  Within Xcode now go under `Product/Build For/Profiling` to build for Release.
-
 #. To test your setup you can run one of the :ref:`examples`:
 
    -  For example, in the terminal window, make ``basilisk/examples/`` the
@@ -221,6 +210,24 @@ When all the prerequisite installations are complete, the project can be built a
 
        (.venv) $ python3 scenarioBasicOrbit.py
 
+
+Building with IDE
+-----------------
+Conan file will build the project by default. To change this behavior, you need to disable the build.
+
+#. Run this command to disable the build::
+
+    (venv) $ python3 conanfile.py --buildProject False
+
+#. Open the Xcode project file inside ``dist3``.This is ``basilisk.xcodeproj`` on macOS.
+
+   -  The source code should appear and be ready for use
+
+      .. image:: /_images/static/256564102-xcode.png
+         :align: center
+         :scale: 40%
+   -  Ensure that the target scheme is set to ``ALL_BUILD`` as shown in figure above
+   -  Within Xcode now go under `Product/Build For/Profiling` to build for Release.
 
 FAQs
 ----

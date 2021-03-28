@@ -26,7 +26,7 @@ code.  From the Basilisk root directory, this is done simply using::
 
 This one-line step will use ``conan`` to pull and compile any resource dependencies such a protobuffer, etc. and
 configure the Xcode (macOS) or Visual Studio (Windows) IDE project in the ``dist3`` folder,
-or create the makefile for Linux systems.  By default the build is for Python3 with the support for :ref:`vizInterface`
+or create the makefile for Linux systems and build the project.  By default the build is for Python3 with the support for :ref:`vizInterface`
 included to enable recording data for or live-streaming to :ref:`Vizard <Vizard>`.
 
 The script accepts the following options to customize this process.
@@ -58,8 +58,8 @@ The script accepts the following options to customize this process.
       - None
       - If flag is set, this forces the distribution folder ``dist3`` to be deleted to create a fresh setup and build
     * - ``buildProject``
-      -
-      - Not Set
+      - Boolean
+      - True
       - If flag is set, this option will compile the project right away after creating the IDE or make file
     * - ``buildType``
       - Release, Debug
@@ -87,7 +87,7 @@ The script accepts the following options to customize this process.
 Thus, for example, to create a build with ``opNav`` modes enabled, but no :ref:`vizInterface`, and using a
 clean distribution folder, and that is built right away, you could use::
 
-    python3 conanfile.py --clean --buildProject --opNav True --vizInterface False
+    python3 conanfile.py --clean --opNav True --vizInterface False
 
 .. warning::
 
@@ -141,7 +141,7 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - Delete the distribution folder before configuring to yield a fresh build
     * - ``-o buildProject``
       - Boolean
-      - False
+      - True
       - Will build the project executable after the configuration step
     * - ``-s build_type``
       - Release, Debug

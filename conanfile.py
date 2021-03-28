@@ -257,27 +257,19 @@ class BasiliskConan(ConanFile):
         if self.options.buildProject:
             print(statusColor + "\nCompiling Basilisk..." + endColor)
             start = datetime.now()
-            if self.settings.os == "Windows":
-                cmake.build(['--', f"/maxcpucount:{str(tools.cpu_count())}"])
+            if self.generator == "Xcode":
+                # Xcode multi-threaded needs specialized arguments
+                cmake.build(['--', '-jobs', str(tools.cpu_count()), '-parallelizeTargets'])
             else:
-                cmake.build(['--', '-j',  str(tools.cpu_count())])
-            print("Total Build Time: " + str(datetime.now()-start))
+                cmake.build()
+            print("Total Build Time: " + str(datetime.now() - start))
+            print(f"{statusColor}The build is successful and the scripts are ready to run{endColor}")
         else:
-            print(statusColor + "\nNext, be sure to compile Basilisk..." + endColor)
+            if self.settings.os != "Linux":
+                print(f"{statusColor}Please open project file inside dist3 with {self.generator} IDE and build the project for {self.settings.build_type}{endColor}")
+            else:
+                print(f"{statusColor}Please go to dist3 folder and run command `make -j <number of threads to use>`{endColor}")
         return
-
-def add_basilisk_to_sys_path():
-    print("Adding Basilisk module to python\n")
-    add_basilisk_module_command = [sys.executable, "setup.py", "develop"]
-    if not is_running_virtual_env():
-        add_basilisk_module_command.append("--user")
-
-    process = subprocess.Popen(add_basilisk_module_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output, err = process.communicate()
-    if err:
-        print("Error %s while running %s" % (err, add_basilisk_module_command))
-    else:
-        print("This resulted in the output: \n%s" % output.decode())
 
 def add_basilisk_to_sys_path():
     print("Adding Basilisk module to python\n")
