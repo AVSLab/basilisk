@@ -213,13 +213,16 @@ When all the prerequisite installations are complete, the project can be built a
 
 Building with IDE
 -----------------
-Conan file will build the project by default. To change this behavior, you need to disable the build.
+Conan file will build the project by default.  However, this can take longer to compile than building the
+Basilisk project in Xcode directly.  Further, if you are developing for Basilisk you often just want to configure
+the Basilisk Xcode project file and not build right away. To change the default behavior disable the automatic build
+using:
 
-#. Run this command to disable the build::
+#. Set the ``buildProject`` argument to ``False`` using::
 
     (venv) $ python3 conanfile.py --buildProject False
 
-#. Open the Xcode project file inside ``dist3``.This is ``basilisk.xcodeproj`` on macOS.
+#. Open the Xcode project file inside ``dist3``.  This is ``basilisk.xcodeproj`` on macOS.
 
    -  The source code should appear and be ready for use
 

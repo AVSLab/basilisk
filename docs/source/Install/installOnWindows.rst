@@ -131,7 +131,7 @@ When all the prerequisite installations are complete, the project can be built a
 
     (venv) $ python conanfile.py
 
-   This creates the Visual Studio 16 2019 IDE project in ``dist3`` and build the project.
+   This creates the Visual Studio 16 2019 IDE project in ``dist3`` and builds the project.
    You can also specify the generator directly in this build process and select other versions of Visual Studio.
    For other configure and build options, including running ``cmake`` directly, see :ref:`configureBuild`.
    This process will verify that the minimum required Basilisk python packages are installed, and that
@@ -150,7 +150,10 @@ When all the prerequisite installations are complete, the project can be built a
 
 Building with IDE
 -----------------
-Conan file will build the project by default. To change this behavior, you need to disable the build.
+Conan file will build the project by default.  However, this can take longer to compile than building the
+Basilisk project in the IDE directly.  Further, if you are developing for Basilisk you often just want to configure
+the Basilisk Xcode project file and not build right away. To change the default behavior disable the automatic build
+using:
 
 #. Run this command to disable the build::
 
@@ -158,16 +161,16 @@ Conan file will build the project by default. To change this behavior, you need 
 
    This will disable the build workflow so that you can build the project from the IDE.
 
-#. Open the Visual Studio project file inside ``dist3``.This is ``basilisk.sln`` on Windows.
+#. Open the Visual Studio project file inside ``dist3``.  This is ``basilisk.sln`` on Windows.
 
      -  The source code should appear and be ready for use
 
       .. image:: /_images/static/visual-studio.png
          :align: center
-         :scale: 40%
+         :scale: 50%
 
    -  Change the active config to Release instead of debug for solution properties.
-   -  Within Xcode now go under `Build menu/Build Solution` to build.
+   -  Within Visual Studio now go under `Build menu/Build Solution` to build.
 
 
 

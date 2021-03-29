@@ -263,12 +263,15 @@ class BasiliskConan(ConanFile):
             else:
                 cmake.build()
             print("Total Build Time: " + str(datetime.now() - start))
-            print(f"{statusColor}The build is successful and the scripts are ready to run{endColor}")
+            print(f"{statusColor}The Basilisk build is successful and the scripts are ready to run{endColor}")
         else:
+            print(f"{statusColor}Finished configuring the Basilisk project.{endColor}")
             if self.settings.os != "Linux":
-                print(f"{statusColor}Please open project file inside dist3 with {self.generator} IDE and build the project for {self.settings.build_type}{endColor}")
+                print(f"{statusColor}Please open project file inside dist3 with {self.generator} IDE "
+                      f"and build the project for {self.settings.build_type}{endColor}")
             else:
-                print(f"{statusColor}Please go to dist3 folder and run command `make -j <number of threads to use>`{endColor}")
+                print(f"{statusColor}Please go to dist3 folder and run command "
+                      f"`make -j <number of threads to use>`{endColor}")
         return
 
 def add_basilisk_to_sys_path():

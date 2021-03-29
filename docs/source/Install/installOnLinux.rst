@@ -140,20 +140,21 @@ Build Process via Terminal
        (venv) $ python3 scenarioBasicOrbit.py
 
 
-Building the project Manually
------------------------------
+Building the Project Separately
+-------------------------------
+If you are developing new modules you often just want to configure the Basilisk project file without compiling.
 
-#. Run this command to disable the build::
+#. Run this command to only configure and not build the Basilisk project::
 
-    python conanfile.py --buildProject False
+      python conanfile.py --buildProject False
 
-This will disable the build workflow so that you can build the project manually.
+   This will disable the build workflow so that you can build the project separately.
 
 #. Next, move to the distribution folder to build using a makefile::
 
         (venv) $ cd dist3
 
-#. Can do a multi core make by running ``make -j<number of cores +1>`` such as::
+#. You can do a multi core make by running ``make -j<number of cores +1>`` such as::
 
        (venv) $ make -j5
 

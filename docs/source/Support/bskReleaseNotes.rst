@@ -44,6 +44,10 @@ Version |release|
   into ``architecture/utilities``
 - added a new RW encoder simulation module :ref:`encoder`
 - Fixed a bug in the onboardDataHandling module that allowed for data that did not exist to be downlinked
+- changed default behavior of ``python3 conanfile.py`` to automatically compile the Basilisk project.  This was
+  a common stumbling point for new users.  The build flag ``--buildProject`` can be used to enable automatic
+  compiling or not.  For developers making new code this should likely be set to ``False`` when configuring
+  the project.
 
 
 Version 2.0.1
