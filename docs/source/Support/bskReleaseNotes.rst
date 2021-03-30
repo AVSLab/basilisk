@@ -48,6 +48,7 @@ Version |release|
   a common stumbling point for new users.  The build flag ``--buildProject`` can be used to enable automatic
   compiling or not.  For developers making new code this should likely be set to ``False`` when configuring
   the project.
+- Fixed a bug in :ref:`SimulationBaseClass` that prevented creating an event with multiple conditions
 
 
 Version 2.0.1

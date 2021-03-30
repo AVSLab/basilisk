@@ -81,7 +81,7 @@ class EventHandlerClass:
         funcString += '    if('
         for condValue in self.conditionList:
             funcString += ' ' + condValue + ' and'
-            funcString = funcString[:-3] + '):\n'
+        funcString = funcString[:-3] + '):\n'
         funcString += '        return 1\n'
         funcString += '    return 0'
 
