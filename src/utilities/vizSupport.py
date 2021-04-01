@@ -892,6 +892,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
 
     # setup the Vizard interface module
     vizMessenger = vizInterface.VizInterface()
+    vizMessenger.ModelTag = "vizMessenger"
     scSim.AddModelToTask(simTaskName, vizMessenger)
 
     # ensure the spacecraft object list is a list
