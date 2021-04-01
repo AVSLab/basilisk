@@ -43,6 +43,12 @@ from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
 import warnings
 
 
+# define ASCI color codes
+processColor = '\u001b[32m'
+taskColor = '\u001b[33m'
+moduleColor = '\u001b[36m'
+endColor = '\u001b[0m'
+
 class LogBaseClass:
     """Logging Base class"""
     def __init__(self, ReplaceName, LogPeriod, RefFunction, DataCols=1):
@@ -202,6 +208,33 @@ class SimBaseClass:
         Shows a dynamic progress in the terminal while the simulation is executing.
         """
         self.showProgressBar = value
+
+    def ShowExecutionOrder(self):
+        """
+        Shows in what order the Basilisk processes, task lists and modules are executed
+        """
+
+        for processData in self. TotalSim.processList:
+            print(f"{processColor}Process Name: {endColor}" + processData.processName +
+                  " , " + processColor + "priority: " + endColor + str(processData.processPriority))
+            for task in processData.processTasks:
+                print(f"{taskColor}Task Name: {endColor}" + task.TaskPtr.TaskName +
+                      ", " + taskColor + "priority: " + endColor + str(task.taskPriority))
+                for module in task.TaskPtr.TaskModels:
+                    print(moduleColor + "ModuleTag: " + endColor + module.ModelPtr.ModelTag +
+                          ", " + moduleColor + "priority: " + endColor + str(module.CurrentModelPriority))
+            print("")
+
+        for pyProc in self.pyProcList:
+            print(f"{processColor}PyProcess Name: {endColor}" + pyProc.Name +
+                  " , " + processColor + "priority: " + endColor + str(pyProc.pyProcPriority))
+            for task in pyProc.taskList:
+                print(f"{taskColor}PyTask Name: {endColor}" + task.name +
+                      ", " + taskColor + "priority: " + endColor + str(task.priority))
+                for module in task.modelList:
+                    print(moduleColor + "PyModuleTag: " + endColor + module.modelName +
+                          ", " + moduleColor + "priority: " + endColor + str(module.modelPriority))
+            print("")
 
     def AddModelToTask(self, TaskName, NewModel, ModelData=None, ModelPriority=-1):
         """
