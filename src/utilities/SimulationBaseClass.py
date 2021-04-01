@@ -255,7 +255,7 @@ class SimBaseClass:
                 TaskReplaceTag = 'self.TaskList[' + str(i) + ']'
                 TaskReplaceTag += '.TaskModels[' + str(len(Task.TaskModels)) + ']'
                 self.NameReplace[TaskReplaceTag] = NewModel.ModelTag
-                if (ModelData != None):
+                if ModelData is not None:
                     try:
                         ModelData.bskLogger = self.bskLogger
                     except:
@@ -451,16 +451,16 @@ class SimBaseClass:
         nextStopTime = self.TotalSim.NextTaskTime
         nextPriority = -1
         pyProcPresent = False
-        if(len(self.pyProcList) > 0):
+        if len(self.pyProcList) > 0:
             nextPriority = self.pyProcList[0].pyProcPriority
             pyProcPresent = True
             nextStopTime = self.pyProcList[0].nextCallTime()
         progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
-        while (self.TotalSim.NextTaskTime <= self.StopTime):
-            if(self.nextEventTime <= self.TotalSim.CurrentNanos and self.nextEventTime >= 0):
+        while self.TotalSim.NextTaskTime <= self.StopTime:
+            if self.TotalSim.CurrentNanos >= self.nextEventTime >= 0:
                 self.nextEventTime = self.checkEvents()
                 self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
-            if(self.nextEventTime >= 0 and self.nextEventTime < nextStopTime):
+            if 0 <= self.nextEventTime < nextStopTime:
                 nextStopTime = self.nextEventTime
                 nextPriority = -1
             self.TotalSim.StepUntilStop(nextStopTime, nextPriority)
@@ -471,7 +471,7 @@ class SimBaseClass:
             procStopTimes = []
             for pyProc in self.pyProcList:
                 nextCallTime = pyProc.nextCallTime()
-                if nextCallTime<=self.TotalSim.CurrentNanos:
+                if nextCallTime <= self.TotalSim.CurrentNanos:
                     pyProc.executeTaskList(self.TotalSim.CurrentNanos)
                 nextCallTime = pyProc.nextCallTime()
                 procStopTimes.append(nextCallTime)
@@ -479,7 +479,7 @@ class SimBaseClass:
             if pyProcPresent and nextStopTime >= min(procStopTimes):
                 nextStopTime = min(procStopTimes)
                 nextPriority = self.pyProcList[procStopTimes.index(nextStopTime)].pyProcPriority
-            if nextLogTime >= 0 and nextLogTime < nextStopTime:
+            if 0 <= nextLogTime < nextStopTime:
                 nextStopTime = nextLogTime
                 nextPriority = -1
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
