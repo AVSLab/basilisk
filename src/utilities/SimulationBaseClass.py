@@ -219,7 +219,8 @@ class SimBaseClass:
                   " , " + processColor + "priority: " + endColor + str(processData.processPriority))
             for task in processData.processTasks:
                 print(f"{taskColor}Task Name: {endColor}" + task.TaskPtr.TaskName +
-                      ", " + taskColor + "priority: " + endColor + str(task.taskPriority))
+                      ", " + taskColor + "priority: " + endColor + str(task.taskPriority) +
+                      ", " + taskColor + "TaskPeriod: " + endColor + str(task.TaskPtr.TaskPeriod/1.0e9) + "s")
                 for module in task.TaskPtr.TaskModels:
                     print(moduleColor + "ModuleTag: " + endColor + module.ModelPtr.ModelTag +
                           ", " + moduleColor + "priority: " + endColor + str(module.CurrentModelPriority))

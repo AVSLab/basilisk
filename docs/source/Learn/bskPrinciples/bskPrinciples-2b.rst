@@ -35,24 +35,24 @@ If you execute this python code you should see the following terminal output:
 
     $ python3 bsk-2b.py
     Process Name: fswProcess , priority: 10
-    Task Name: fswTask3, priority: 10
+    Task Name: fswTask3, priority: 10, TaskPeriod: 3.0s
     ModuleTag: cModule1, priority: -1
     ModuleTag: cModule2, priority: -1
-    Task Name: fswTask1, priority: -1
+    Task Name: fswTask1, priority: -1, TaskPeriod: 1.0s
     ModuleTag: cModule2, priority: 2
     ModuleTag: cModule1, priority: -1
-    Task Name: fswTask2, priority: -1
+    Task Name: fswTask2, priority: -1, TaskPeriod: 2.0s
     ModuleTag: cModule2, priority: -1
     ModuleTag: cModule1, priority: -1
 
     Process Name: dynamicsProcess , priority: -1
-    Task Name: dynamicsTask2, priority: 10
+    Task Name: dynamicsTask2, priority: 10, TaskPeriod: 5.0s
     ModuleTag: cModule2, priority: -1
     ModuleTag: cModule1, priority: -1
-    Task Name: dynamicsTask1, priority: -1
+    Task Name: dynamicsTask1, priority: -1, TaskPeriod: 1.0s
     ModuleTag: cModule2, priority: 5
     ModuleTag: cModule1, priority: 4
-    Task Name: dynamicsTask3, priority: -1
+    Task Name: dynamicsTask3, priority: -1, TaskPeriod: 10.0s
     ModuleTag: cModule1, priority: -1
     ModuleTag: cModule2, priority: -1
 
