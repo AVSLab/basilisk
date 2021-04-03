@@ -231,7 +231,8 @@ class SimBaseClass:
                   " , " + processColor + "priority: " + endColor + str(pyProc.pyProcPriority))
             for task in pyProc.taskList:
                 print(f"{taskColor}PyTask Name: {endColor}" + task.name +
-                      ", " + taskColor + "priority: " + endColor + str(task.priority))
+                      ", " + taskColor + "priority: " + endColor + str(task.priority) +
+                      ", " + taskColor + "TaskPeriod: " + endColor + str(task.rate / 1.0e9) + "s")
                 for module in task.modelList:
                     print(moduleColor + "PyModuleTag: " + endColor + module.modelName +
                           ", " + moduleColor + "priority: " + endColor + str(module.modelPriority))
