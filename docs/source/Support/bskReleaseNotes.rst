@@ -49,6 +49,11 @@ Version |release|
   compiling or not.  For developers making new code this should likely be set to ``False`` when configuring
   the project.
 - Fixed a bug in :ref:`SimulationBaseClass` that prevented creating an event with multiple conditions
+- added ``ShowExecutionOrder()`` method to :ref:`SimulationBaseClass` to print to the terminal the order that the
+  process, tasks and modules are executed.
+- added ``ShowExecutionFigure()`` method to :ref:`SimulationBaseClass` to create a figure illustration the
+  execution order.
+- added a new :ref:`bskPrinciples-2b` web page on how to visualize the BSK process, task and module execution
 
 
 Version 2.0.1
