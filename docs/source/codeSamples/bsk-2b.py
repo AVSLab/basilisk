@@ -67,9 +67,9 @@ def run():
     # print to the terminal window the execution order of the processes, task lists and modules
     scSim.ShowExecutionOrder()
 
-    # uncomment this code to show teh execution order figure and save it off
+    # uncomment this code to show the execution order figure and save it off
     # fig = scSim.ShowExecutionFigure(False)
-    # fig.savefig("bsk-2b-order2.svg", transparent=True, bbox_inches = 'tight', pad_inches = 0)
+    # fig.savefig("qs-bsk-2b-order.svg", transparent=True, bbox_inches = 'tight', pad_inches = 0)
 
     return
 
