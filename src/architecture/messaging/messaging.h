@@ -204,16 +204,17 @@ public:
     Recorder(Message<messageType>* message, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
         this->readMessage = message->addSubscriber();
-        this->ModelTag = "Recorder-" + std::string(typeid(*message).name());
+        this->ModelTag = "Rec:" + findMsgName(std::string(typeid(*message).name()));
     }
     //! -- Use this to record C messages
     Recorder(void* message, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
         Msg2Header msgHeader;
         this->readMessage = ReadFunctor<messageType>((messageType*) message, &msgHeader);
-        this->ModelTag = "Recorder-";
+        this->ModelTag = "Rec:";
         Message<messageType> tempMsg;
-        this->ModelTag += std::string(typeid(tempMsg).name());
+        std::string msgName = typeid(tempMsg).name();
+        this->ModelTag += findMsgName(msgName);
     }
     //! -- Use this to keep track of what someone is reading
     Recorder(ReadFunctor<messageType>* messageReader, uint64_t timeDiff = 0){
@@ -223,7 +224,7 @@ public:
             messageType var;
             bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting to record an un-connected input message of type %s.", typeid(var).name());
         }
-        this->ModelTag = "Recorder-" + std::string(typeid(*messageReader).name());
+        this->ModelTag = "Rec:" + findMsgName(std::string(typeid(*messageReader).name()));
     }
     ~Recorder(){};
 
@@ -253,6 +254,25 @@ public:
     std::vector<uint64_t>& timesWritten(){return this->msgWrittenTimes;}
     //! record method
     std::vector<messageType>& record(){return this->msgRecord;};
+    
+    //! determine message name
+    std::string findMsgName(std::string msgName) {
+        size_t locMsg = msgName.find("Payload");
+        if (locMsg != std::string::npos) {
+            msgName.erase(locMsg, std::string::npos);
+        }
+        locMsg = msgName.find("Message");
+        if (locMsg != std::string::npos) {
+           msgName.replace(locMsg, 7, "");
+        }
+        for (int c = 0; c<10; c++) {
+            locMsg = msgName.rfind(std::to_string(c));
+            if (locMsg != std::string::npos) {
+                msgName.erase(0, locMsg+1);
+            }
+        }
+        return msgName;
+    };
 
     //! clear the recorded messages, i.e. purge the history
     void clear(){
