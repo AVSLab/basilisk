@@ -57,3 +57,11 @@ If you execute this python code you should see the following terminal output:
     ModuleTag: cModule2, priority: -1
 
 
+The method ``ShowExecutionFigure(True)`` will perform the same Basilisk process, task and module order extraction process,
+but display is as a figure.  The method returns a copy of the figure so it can be used in auto-documentation features
+or saved off for future use.  For example, adding this command to this sample script will yields the following figure.
+
+.. image:: ../../_images/static/qs-bsk-2b-order.svg
+   :align: center
+
+
