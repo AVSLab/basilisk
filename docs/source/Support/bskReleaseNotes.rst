@@ -54,6 +54,7 @@ Version |release|
 - added ``ShowExecutionFigure()`` method to :ref:`SimulationBaseClass` to create a figure illustration the
   execution order.
 - added a new :ref:`bskPrinciples-2b` web page on how to visualize the BSK process, task and module execution
+- provide scripting support for Vizard 1.8.2 release
 
 
 Version 2.0.1
