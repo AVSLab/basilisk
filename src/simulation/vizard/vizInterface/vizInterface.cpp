@@ -353,10 +353,16 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard ambient light value must be within [0,8].  A value of %f was received.", this->settings.ambient);
         }
 
-        // define if orbit lines should be shown
+        // define if osculating orbit lines should be shown
         vizSettings->set_orbitlineson(this->settings.orbitLinesOn);
-        if (abs(this->settings.orbitLinesOn)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard orbitLinesOn flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.orbitLinesOn);
+        if (abs(this->settings.orbitLinesOn)>2) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard orbitLinesOn flag must be either -1, 0, 1 or 2.  A value of %d was received.", this->settings.orbitLinesOn);
+        }
+
+        // define if true orbit lines should be shown
+        vizSettings->set_truetrajectorylineson(this->settings.trueTrajectoryLinesOn);
+        if (abs(this->settings.trueTrajectoryLinesOn)>2) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard trueTrajectoryLinesOn flag must be either -1, 0, 1 or 2.  A value of %d was received.", this->settings.trueTrajectoryLinesOn);
         }
 
         // define if spacecraft axes should be shown

@@ -42,9 +42,9 @@ message VizMessage{
     //Spacecraft message carry spacecraft position, velocity, and rotation data and proto messages for actuators and sensors
     message Spacecraft{
         string spacecraftName = 1;
-        repeated double position = 2;  //SCStatesSimMsg.r_BN_N
-        repeated double velocity = 3;  //SCStatesSimMsg.v_BN_N
-        repeated double rotation = 4;  //SCStatesSimMsg.sigma_B
+        repeated double position = 2;  //SCStatesMsg.r_BN_N
+        repeated double velocity = 3;  //SCStatesMsg.v_BN_N
+        repeated double rotation = 4;  //SCStatesMsg.sigma_BN
       
         repeated ReactionWheel reactionWheels = 5;
         repeated Thruster thrusters = 6;
@@ -153,7 +153,7 @@ message VizMessage{
     }
     
     message CustomModel{
-        string modelPath = 1; //Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape
+        string modelPath = 1; //Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape or "HI_DEF_SPHERE" to use the high vertex count icosphere
         repeated string simBodiesToModify = 2; //Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" in the first string to apply custom model to all spacecraft in simulation
         repeated double offset = 3; //meters
         repeated double rotation = 4; // degrees, euler rotation about x, y, z axes in spacecraft CS
@@ -166,7 +166,7 @@ message VizMessage{
 
     message VizSettingsPb{
         double ambient = 1; //Value of -1 to use viz default or specify value between 0 and 1
-        int32 orbitLinesOn = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 orbitLinesOn = 2; // Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
         int32 spacecraftCSon = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 planetCSon = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         repeated PointLine pointLines = 5;
@@ -205,6 +205,7 @@ message VizMessage{
         int32 showLocationCommLines = 37; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showLocationCones = 38; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showLocationLabels = 39; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 trueTrajectoryLinesOn = 40; // Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body
     }
     
     message Location{
