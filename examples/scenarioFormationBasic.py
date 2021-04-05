@@ -419,13 +419,15 @@ def run(show_plots):
     if vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2, scObject3]
                                                   , rwEffectorList=[rwStateEffector, rwStateEffector2, None]
-                                                  # , saveFile=fileName,
+                                                  , saveFile=fileName,
                                                   )
         vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
                                          cameraID=1, fieldOfView=40 * macros.D2R,
                                          resolution=[1024, 1024], renderRate=0.,
                                          cameraPos_B=[0., 0., 2.0], sigma_CB=[0., 0., 0.]
                                          )
+        viz.settings.trueTrajectoryLinesOn = 1
+        viz.settings.orbitLinesOn = 2
 
     #
     #   initialize Simulation
