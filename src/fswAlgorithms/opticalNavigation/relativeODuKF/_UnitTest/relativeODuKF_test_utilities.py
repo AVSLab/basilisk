@@ -214,7 +214,7 @@ def PostFitResiduals(Res, noise, testName, show_plots):
 
 def plot_TwoOrbits(r_BN, r_BN2):
     fig = plt.figure()
-    ax = fig.gca(projection='3d')
+    ax = fig.add_subplot(projection='3d')
     ax.set_xlabel('$R_x$, km')
     ax.set_ylabel('$R_y$, km')
     ax.set_zlabel('$R_z$, km')

@@ -209,7 +209,7 @@ def plot_geometry(groundLocation, scLocations, minimumElevation):
     :return:
     """
     fig = plt.figure()
-    ax = fig.gca(projection='3d')
+    ax = fig.add_subplot(projection='3d')
 
     # draw sphere
     u, v = np.mgrid[0:2 * np.pi:20j, 0:np.pi:20j]

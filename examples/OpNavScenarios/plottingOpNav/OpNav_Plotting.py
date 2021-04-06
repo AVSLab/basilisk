@@ -387,7 +387,7 @@ def plot_TwoOrbits(r_BN, r_BN2):
 
     # fig = plt.figure(5, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     fig = plt.figure(5, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
-    ax = fig.gca(projection='3d')
+    ax = fig.add_subplot(projection='3d')
     ax.set_xlabel(r'$R_x$, km')
     ax.set_ylabel(r'$R_y$, km')
     ax.set_zlabel(r'$R_z$, km')
