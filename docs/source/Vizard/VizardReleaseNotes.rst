@@ -12,11 +12,19 @@ Release Notes
     - dynamic texture rendering
     - articulating CAD models
     - fuel tank visualization
-    - trajectory history visualization
     - show the battery and power state
     - show the hard drive state
     - Add the rate gyro visualization
 
+**Version 1.8.2**
+
+- added ability to show true orbital trajectory.  This works both for trajectory relative to planet or another
+  spacecraft
+- added ability to show local osculating orbit in spacecraft-centric view
+- added toggle to ``View`` menu to specify if osculating or true orbit should be show relative to
+  planet or another spacecraft
+- improved the custom shape import panel
+- on macOS the Vizard binary is now a Universal binary supporting both the Intel and Apple M1 processors
 
 **Version 1.8.1**
 
