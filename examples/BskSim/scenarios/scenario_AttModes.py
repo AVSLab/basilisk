@@ -19,7 +19,21 @@ r"""
 Overview
 --------
 
-This script is base BSK Sim script used for the MC examples.
+This script demonstrates how to alternate between two different FSW modes
+``inertia3D`` and ``hillPoint``.
+
+Illustration of Simulation Results
+----------------------------------
+
+::
+
+    showPlots = True
+
+.. image:: /_images/Scenarios/scenario_AttModes_rateError.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenario_AttModes_attitudeErrorNorm.svg
+   :align: center
 
 """
 
@@ -41,10 +55,10 @@ import BSK_Plotting as BSK_plt
 
 
 # Create your own scenario child class
-class scenario_AttFeedback(BSKSim, BSKScenario):
+class scenario_AttModes(BSKSim, BSKScenario):
     def __init__(self):
-        super(scenario_AttFeedback, self).__init__()
-        self.name = 'scenario_AttFeedbackMC'
+        super(scenario_AttModes, self).__init__()
+        self.name = 'scenario_AttModes'
 
         # declare additional class variables
         self.msgRecList = {}
@@ -152,7 +166,7 @@ def run(showPlots):
             showPlots (bool): Determines if the script should display plots
 
     """
-    scenario = scenario_AttFeedback()
+    scenario = scenario_AttModes()
     runScenario(scenario)
     figureList = scenario.pull_outputs(showPlots)
     return figureList

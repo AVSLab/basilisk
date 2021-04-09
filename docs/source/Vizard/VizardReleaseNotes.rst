@@ -25,6 +25,7 @@ Release Notes
   planet or another spacecraft
 - improved the custom shape import panel
 - on macOS the Vizard binary is now a Universal binary supporting both the Intel and Apple M1 processors
+- new ``Display Console Log`` under ``View`` menu to show any Vizard error or warning messages
 
 **Version 1.8.1**
 
