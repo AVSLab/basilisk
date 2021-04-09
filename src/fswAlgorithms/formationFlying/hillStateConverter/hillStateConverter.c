@@ -74,16 +74,19 @@ void Update_hillStateConverter(HillStateConverterConfig *configData, uint64_t ca
     uint32_t            sizeOfMsgWritten;
 
     /*! - Read the input messages */
-    NavTransMsg_C_read(&configdata->chiefStateInMsg);
-    NavTransMsg_C_read(&configData->depStateInMsg);
+    NavTransMsgPayload chiefStateIn;
+    NavTransMsgPayload depStateIn;
+    HillRelStateMsgPayload hillStateOut;
+    chiefStateIn = NavTransMsg_C_read(&configData->chiefStateInMsg);
+    depStateIn = NavTransMsg_C_read(&configData->depStateInMsg);
 
     /*! - Add the module specific code */
-    rv2hill(configData->chiefStateInMsg.r_BN_N, configData->chiefStateInMsg.v_BN_N,
-            configData->depStateInMsg.r_BN_N,  configData->depStateInMsg.v_BN_N,
-            configData->hillStateOutMsg.r_DC_H, configData->hillStateOutMsg.v_DC_H);
+    rv2hill(chiefStateIn.r_BN_N, chiefStateIn.v_BN_N,
+            depStateIn.r_BN_N,  depStateIn.v_BN_N,
+            hillStateOut.r_DC_H, hillStateOut.v_DC_H);
 
     /*! - write the module output message */
-    HillRelStateMsg_C_write(&configData->hillRelStateOutMsg);
+    HillRelStateMsg_C_write(&hillStateOut, &configData->hillStateOutMsg, moduleID, callTime);
 
     return;
 }

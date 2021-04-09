@@ -28,10 +28,10 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
-#include "cMsgCInterface/HillRelStateMsg_C.h"
-#include "cMsgCInterface/AttRefMsg_C.h"
-#include "cMsgCInterface/NavAttMsg_C.h"
-
+#include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDefC/HillRelStateMsgPayload.h"
 
 /*! @brief Hill state to attitude reference for differential-drag control. */
 class HillToAttRef: public SysModel {
@@ -42,12 +42,12 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
-    void RelativeToInertialMRP(double relativeAtt[3]);
+    AttRefMsgPayload RelativeToInertialMRP(double relativeAtt[3], NavAttMsgPayload attStateIn);
     
 public:
-    HillRelStateMsg_C hillStateInMsg;
-    NavAttMsg_C attStateInMsg;
-    AttRefMsg_C attRefOutMsg;
+    ReadFunctor<HillRelStateMsgPayload> hillStateInMsg;
+    ReadFunctor<NavAttMsgPayload> attStateInMsg;
+    Message<AttRefMsgPayload> attRefOutMsg;
 
     std::vector<std::vector<std::vector<double>>> gainMatrixVec; //!< Arbitrary dimension gain matrix, stored as a vector (varible length) of double,6 arrays
     BSKLogger bskLogger;                //!< -- BSK Logging

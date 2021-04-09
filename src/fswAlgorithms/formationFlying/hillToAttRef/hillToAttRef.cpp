@@ -25,24 +25,11 @@ HillToAttRef::HillToAttRef()
 {
 }
 
-/*! Selfinit performs the first stage of initialization for this module.
- It's primary function is to create messages that will be written to.
- @return void
- */
-void HillToAttRef::SelfInit()
-{
-    AttRefMsg_C_init(&this->attRefOutMsg);
-    /*! - Create output message for module */
-    this->matrixIndex = 0;
-    this->gainMatrixVecLen = this->gainMatrixVec.size();
-}
-
 /*! This is the destructor */
 HillToAttRef::~HillToAttRef()
 {
     return;
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
@@ -55,8 +42,9 @@ void HillToAttRef::Reset(uint64_t CurrentSimNanos)
     return;
 }
 
-void HillToAttRef::RelativeToInertialMRP(double relativeAtt[3]){
-
+AttRefMsgPayload HillToAttRef::RelativeToInertialMRP(double relativeAtt[3], NavAttMsgPayload attStateIn){
+    
+    AttRefMsgPayload attRefOut;
     //  Check to see if the relative attitude components exceed specified bounds (by default these are non-physical and should never be reached)
     for(int ind=0; ind<3; ++ind){
         relativeAtt[ind] = std::max(relativeAtt[ind], this->relMRPMin);
@@ -64,12 +52,12 @@ void HillToAttRef::RelativeToInertialMRP(double relativeAtt[3]){
     }
 
     //  Combine the relative attitude with the chief inertial attitude to get the reference attitude
-    addMRP(this->attStateInMsg.sigma_BN, relativeAtt, this->attRefOutMsg.sigma_RN);
+    addMRP(attStateIn.sigma_BN, relativeAtt, attRefOut.sigma_RN);
     for(int ind=0; ind<3; ++ind){
-        this->attRefOutMsg.omega_RN_N[ind] = 0;
-        this->attRefOutMsg.domega_RN_N[ind] = 0;
+        attRefOut.omega_RN_N[ind] = 0;
+        attRefOut.domega_RN_N[ind] = 0;
     }
-
+    return(attRefOut);
 }
 
 /*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding. 
@@ -78,8 +66,11 @@ void HillToAttRef::RelativeToInertialMRP(double relativeAtt[3]){
  */
 void HillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
 
-    HillRelStateMsg_C_read(&this->hillStateInMsg);
-    NavAttMsg_C_init(&this->attStateInMsg);
+    HillRelStateMsgPayload hillStateInPayload;
+    NavAttMsgPayload attStateInPayload;
+    AttRefMsgPayload attRefOutPayload;
+    hillStateInPayload = this->hillStateInMsg();
+    attStateInPayload = this->attStateInMsg();
 
     double relativeAtt[3];
     double hillState[6];
@@ -88,8 +79,8 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
 
     //  Create a state vector based on the current Hill positions
     for(int ind=0; ind<3; ind++){
-        hillState[ind] = this->hillStateInMsg.r_DC_H[ind];
-        hillState[ind+3] = this->hillStateInMsg.v_DC_H[ind];
+        hillState[ind] = hillStateInPayload.r_DC_H[ind];
+        hillState[ind+3] = hillStateInPayload.v_DC_H[ind];
     }
 
     // Check overrun condition; if user supplied insufficient gain matrices, fix at last supplied matrix.
@@ -116,8 +107,9 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
                    relativeAtt);
 
     //  Convert that to an inertial attitude and write the attRef msg
-    this->RelativeToInertialMRP(relativeAtt);
-    AttRefMsg_C_write(&this->attRefOutMsg);
+    attRefOutPayload = this->RelativeToInertialMRP(relativeAtt, attStateInPayload);
+    this->attRefOutMsg.write(&attRefOutPayload, this->moduleID, CurrentSimNanos);
+
     this->matrixIndex += 1;
 }
 
