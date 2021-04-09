@@ -19,7 +19,6 @@
 %module hillStateConverter
 %{
    #include "hillStateConverter.h"
-
 %}
 
 %include "swig_conly_data.i"
@@ -27,19 +26,15 @@
 %ignore Update_hillStateConverter;
 %constant void SelfInit_hillStateConverter(void*, uint64_t);
 %ignore SelfInit_hillStateConverter;
-%constant void CrossInit_hillStateConverter(void*, uint64_t);
-%ignore CrossInit_hillStateConverter;
 %constant void Reset_hillStateConverter(void*, uint64_t, uint64_t);
 %ignore Reset_hillStateConverter;
-GEN_SIZEOF(HillStateConverterConfig);
+
+%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+struct NavTransMsg_C;
+%include "architecture/msgPayloadDefC/HillRelStateMsgPayload.h"
+struct HillRelStateMsg_C;
+
 %include "hillStateConverter.h"
-
-// sample Module support file to be included in this sub-module
-%include "../../fswMessages/hillRelStateFswMsg.h"
-GEN_SIZEOF(HillRelStateFswMsg);
-%include "../../../simulation/simFswInterfaceMessages/navTransIntMsg.h"
-GEN_SIZEOF(NavTransIntMsg);
-
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

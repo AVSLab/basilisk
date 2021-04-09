@@ -21,6 +21,8 @@
    #include "hillToAttRef.h"
 %}
 
+%include "swig_conly_data.i"
+
 %pythoncode %{
 from Basilisk.simulation.swig_common_model import *
 %}
@@ -30,18 +32,17 @@ from Basilisk.simulation.swig_common_model import *
 %include "std_vector.i"
 
 namespace std {
-
 };
 
 %include "sys_model.h"
-%include "../../../simulation/simFswInterfaceMessages/navAttIntMsg.h"
-%include "../../fswMessages/hillRelStateFswMsg.h"
-%include "../../fswMessages/attRefFswMsg.h"
-%include "hillToAttRef.h"
-GEN_SIZEOF(AttRefFswMsg);
-GEN_SIZEOF(NavAttIntMsg);
-GEN_SIZEOF(HillRelStateFswMsg);
+%include "architecture/msgPayloadDefC/HillRelStateMsgPayload.h"
+struct HillRelStateMsg_C;
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+struct AttRefMsg_C;
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
 
+%include "hillToAttRef.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

@@ -16,22 +16,16 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-/*
-    FSW MODULE Template
- 
- */
 
 /* modify the path to reflect the new module names */
 #include "hillStateConverter.h"
 #include "string.h"
 
-
-
 /*
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/orbitalMotion.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/orbitalMotion.h"
 
 
 /*!
@@ -46,35 +40,7 @@
  */
 void SelfInit_hillStateConverter(HillStateConverterConfig *configData, int64_t moduleID)
 {
-    
-    /*! - Create output message for module */
-    configData->hillStateOutMsgID = CreateNewMessage(configData->hillStateOutMsgName,
-                                               sizeof(HillRelStateFswMsg),
-                                               "HillRelStateFswMsg",          /* add the output structure name */
-                                               moduleID);
-}
-
-/*!
- \verbatim embed:rst
-    This method performs the second stage of initialization for this module.
-    It's primary function is to link the input messages that were created elsewhere.
-    Nothing else should be happening in this function.  The subscribed message is
-    of type :ref:`hillStateConverterFswMsg`.
- \endverbatim
- @return void
- @param configData The configuration data associated with this module
- @param moduleID The module identifier
-*/
-void CrossInit_hillStateConverter(HillStateConverterConfig *configData, int64_t moduleID)
-{
-    /*! - Get the ID of the subscribed input message */
-    configData->chiefStateInMsgID = subscribeToMessage(configData->chiefStateInMsgName,
-                                                sizeof(NavTransIntMsg),
-                                                moduleID);
-    configData->depStateInMsgID = subscribeToMessage(configData->depStateInMsgName,
-                                                       sizeof(NavTransIntMsg),
-                                                       moduleID);
-
+    HillRelStateMsg_C_init(&configData->hillStateOutMsg);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -87,6 +53,13 @@ void CrossInit_hillStateConverter(HillStateConverterConfig *configData, int64_t 
 */
 void Reset_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required input messages are included
+    if (!NavTransMsg_C_isLinked(&configData->chiefStateInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillStateConverter.chiefStateInMsg wasn't connected.");
+    }
+        if (!NavTransMsg_C_isLinked(&configData->depStateInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillStateConverter.depStateInMsg wasn't connected.");
+    }
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -101,10 +74,8 @@ void Update_hillStateConverter(HillStateConverterConfig *configData, uint64_t ca
     uint32_t            sizeOfMsgWritten;
 
     /*! - Read the input messages */
-    ReadMessage(configData->chiefStateInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavTransIntMsg), (void*) &(configData->chiefStateInMsg), moduleID);
-    ReadMessage(configData->depStateInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(NavTransIntMsg), (void*) &(configData->depStateInMsg), moduleID);
+    NavTransMsg_C_read(&configdata->chiefStateInMsg);
+    NavTransMsg_C_read(&configData->depStateInMsg);
 
     /*! - Add the module specific code */
     rv2hill(configData->chiefStateInMsg.r_BN_N, configData->chiefStateInMsg.v_BN_N,
@@ -112,8 +83,7 @@ void Update_hillStateConverter(HillStateConverterConfig *configData, uint64_t ca
             configData->hillStateOutMsg.r_DC_H, configData->hillStateOutMsg.v_DC_H);
 
     /*! - write the module output message */
-    WriteMessage(configData->hillStateOutMsgID, callTime, sizeof(HillRelStateFswMsg),
-                 (void*) &(configData->hillStateOutMsg), moduleID);
+    HillRelStateMsg_C_write(&configData->hillRelStateOutMsg);
 
     return;
 }

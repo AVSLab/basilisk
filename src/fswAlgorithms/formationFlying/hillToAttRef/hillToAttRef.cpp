@@ -17,22 +17,12 @@
 
 /* modify the path to reflect the new module names */
 #include "hillToAttRef.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include <iostream>
 /*! The constructor for the HoughCircles module. It also sets some default values at its creation.  */
 HillToAttRef::HillToAttRef()
 {
-    this->hillStateInMsgName="";
-    this->attStateInMsgName="";
-    this->attRefOutMsgName="";
-    for(int ind=0; ind<3; ++ind){
-        this->attRefOutMsg.sigma_RN[ind] =0;
-        this->attRefOutMsg.omega_RN_N[ind] = 0;
-        this->attRefOutMsg.domega_RN_N[ind] = 0;
-    }
-    this->relMRPMax = 2;
-    this->relMRPMin = -2;
 }
 
 /*! Selfinit performs the first stage of initialization for this module.
@@ -41,24 +31,10 @@ HillToAttRef::HillToAttRef()
  */
 void HillToAttRef::SelfInit()
 {
+    AttRefMsg_C_init(&this->attRefOutMsg);
     /*! - Create output message for module */
-    this->attRefOutMsgId= SystemMessaging::GetInstance()->CreateNewMessage(this->attRefOutMsgName,sizeof(AttRefFswMsg),2,"AttRefFswMsg",this->moduleID);
     this->matrixIndex = 0;
     this->gainMatrixVecLen = this->gainMatrixVec.size();
-}
-
-
-/*! CrossInit performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- */
-void HillToAttRef::CrossInit()
-{
-    /*! - Get the image data message ID*/
-    this->hillStateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->hillStateInMsgName,sizeof(HillRelStateFswMsg), moduleID);
-
-    /*! - Get the image data message ID*/
-    this->attStateInMsgId  = SystemMessaging::GetInstance()->subscribeToMessage(this->attStateInMsgName,sizeof(NavAttIntMsg), moduleID);
 }
 
 /*! This is the destructor */
@@ -77,27 +53,6 @@ void HillToAttRef::Reset(uint64_t CurrentSimNanos)
     this->matrixIndex = 0;//    Start back at the initial gain matrix
     this->gainMatrixVecLen = this->gainMatrixVec.size(); // Update this in case gainMatrixVec changed size
     return;
-}
-
-void HillToAttRef::ReadMessages(uint64_t CurrentSimNanos){
-    SingleMessageHeader localHeader;
-    //  Read in the relative state and chief attitude messages
-    SystemMessaging::GetInstance()->ReadMessage(this->hillStateInMsgId, &localHeader,
-                                                sizeof(HillRelStateFswMsg),
-                                                reinterpret_cast<uint8_t*>(&this->hillStateInMsg),
-                                                this->moduleID);
-    SystemMessaging::GetInstance()->ReadMessage(this->attStateInMsgId, &localHeader,
-                                                sizeof(NavAttIntMsg),
-                                                reinterpret_cast<uint8_t*>(&this->attStateInMsg),
-                                                this->moduleID);
-}
-
-void HillToAttRef::WriteMessages(uint64_t CurrentSimNanos){
-    //  Write the reference message
-    SystemMessaging::GetInstance()->WriteMessage(this->attRefOutMsgId,
-                                                 CurrentSimNanos, sizeof(AttRefFswMsg),
-                                                 reinterpret_cast<uint8_t *>(&this->attRefOutMsg),
-                                                 this->moduleID);
 }
 
 void HillToAttRef::RelativeToInertialMRP(double relativeAtt[3]){
@@ -123,7 +78,8 @@ void HillToAttRef::RelativeToInertialMRP(double relativeAtt[3]){
  */
 void HillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
 
-    this->ReadMessages(CurrentSimNanos);
+    HillRelStateMsg_C_read(&this->hillStateInMsg);
+    NavAttMsg_C_init(&this->attStateInMsg);
 
     double relativeAtt[3];
     double hillState[6];
@@ -161,8 +117,7 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
 
     //  Convert that to an inertial attitude and write the attRef msg
     this->RelativeToInertialMRP(relativeAtt);
-    this->WriteMessages(CurrentSimNanos);
-
+    AttRefMsg_C_write(&this->attRefOutMsg);
     this->matrixIndex += 1;
 }
 

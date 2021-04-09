@@ -24,28 +24,20 @@
 #include <stdint.h>
 
 //  Support imports
-#include "messaging/static_messaging.h"
-#include "simulation/utilities/bskLogging.h"
-#include "utilities/orbitalMotion.h"
+#include "architecture/utilities/bskLogging.h"
 
 //  Message type imports
-#include "simulation/simFswInterfaceMessages/navTransIntMsg.h"
-#include "fswMessages/hillRelStateFswMsg.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/HillRelStateMsg_C.h"
 
 
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module IO interfaces */
-    char hillStateOutMsgName[MAX_STAT_MSG_LENGTH];       //!< The name of the output message
-    int32_t hillStateOutMsgID;                           //!< ID for the outgoing message
-    HillRelStateFswMsg hillStateOutMsg;
-    char chiefStateInMsgName[MAX_STAT_MSG_LENGTH];        //!< The name of the Input message
-    int32_t chiefStateInMsgID;                            //!< ID for the incoming message
-    NavTransIntMsg chiefStateInMsg;
-    char depStateInMsgName[MAX_STAT_MSG_LENGTH];        //!< The name of the Input message
-    int32_t depStateInMsgID;                            //!< ID for the incoming message
-    NavTransIntMsg depStateInMsg;
+    HillRelStateMsg_C hillStateOutMsg;
+    NavTransMsg_C chiefStateInMsg;
+    NavTransMsg_C depStateInMsg;
 
     BSKLogger *bskLogger;                           //!< BSK Logging
 }HillStateConverterConfig;
@@ -55,7 +47,6 @@ extern "C" {
 #endif
 
     void SelfInit_hillStateConverter(HillStateConverterConfig *configData, int64_t moduleID);
-    void CrossInit_hillStateConverter(HillStateConverterConfig *configData, int64_t moduleID);
     void Update_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID);
 

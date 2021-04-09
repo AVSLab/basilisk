@@ -20,19 +20,20 @@
 #ifndef _HILL_TO_ATT_H
 #define _HILL_TO_ATT_H
 
-#include <stdint.h>
+#include <vector>
 #include <Eigen/Dense>
+#include <stdint.h>
 #include <string.h>
-#include "architecture/messaging/system_messaging.h"
-#include "../simulation/_GeneralModuleFiles/sys_model.h"
-#include "../simulation/utilities/avsEigenMRP.h"
-#include "../simulation/utilities/bskLogging.h"
-#include "fswMessages/hillRelStateFswMsg.h"
-#include "fswMessages/attRefFswMsg.h"
-#include "../simulation/simFswInterfaceMessages/navAttIntMsg.h"
+
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/bskLogging.h"
+#include "cMsgCInterface/HillRelStateMsg_C.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
 
 
-/*! @brief visual planet tracking with Hough circles */
+/*! @brief Hill state to attitude reference for differential-drag control. */
 class HillToAttRef: public SysModel {
 public:
     HillToAttRef();
@@ -40,17 +41,14 @@ public:
 
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
-    void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-
-    void WriteMessages(uint64_t CurrentSimNanos);
-    void ReadMessages(uint64_t CurrentSimNanos);
     void RelativeToInertialMRP(double relativeAtt[3]);
     
 public:
-    std::string hillStateInMsgName;                //!< Message name for the hill-frame relative position message.
-    std::string attStateInMsgName;                //!< Message name for the target spacecraft's attitude nav message.
-    std::string attRefOutMsgName;  //!< Attitude reference message generated after the control law is applied.
+    HillRelStateMsg_C hillStateInMsg;
+    NavAttMsg_C attStateInMsg;
+    AttRefMsg_C attRefOutMsg;
+
     std::vector<std::vector<std::vector<double>>> gainMatrixVec; //!< Arbitrary dimension gain matrix, stored as a vector (varible length) of double,6 arrays
     BSKLogger bskLogger;                //!< -- BSK Logging
     double relMRPMax; //!< Optional maximum bound on MRP element magnitudes
@@ -58,17 +56,8 @@ public:
 
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
-
     uint64_t matrixIndex;
     uint64_t gainMatrixVecLen;
-    int32_t hillStateInMsgId;        //!< ID for the outgoing message
-    int32_t attStateInMsgId;
-    int32_t attRefOutMsgId;                //!< ID for the outgoing message
-
-    HillRelStateFswMsg hillStateInMsg;
-    NavAttIntMsg attStateInMsg;
-    AttRefFswMsg attRefOutMsg;
-
 };
 
 #endif

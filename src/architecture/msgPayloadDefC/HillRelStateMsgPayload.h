@@ -26,7 +26,7 @@
 typedef struct {
     double r_DC_H[3];         //!< [m]  Relative position of the deputy to the chief in Hill-frame components
     double v_DC_H[3];       //!< [m/s]  Relative velocity of the deputy to the chief in Hill-frame components
-}HillRelStateFswMsg;
+}HillRelStateMsgPayload;
 
 
 #endif
