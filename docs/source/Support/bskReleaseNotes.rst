@@ -33,7 +33,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
 
+Version 2.0.2
+-------------
 - new waypoint reference module in :ref:`waypointReference`. It can be used to read an attitude maneuver from a set of waypoints on a text file, likely generated outside Basilisk.
 - updated :ref:`gravityEffector` to allow the planet message module (``spiceInterface`` or ``planetEphemeris``) to
   be called either before or after the ``spacecraft`` module update is called
@@ -178,7 +181,7 @@ Version 1.8.7
 - Updated :ref:`vizInterface` to support scripting of new Vizard 1.6.1 features
 
 Version 1.8.6
--------------
+
 - Fixed an issue where some Sim-FSW interface messages could not be written to from the Python layer
 - Fixed an issue that prevented the ``opNav`` build mode to compile the OpenCV related libraries
   on macOS with Xcode 12 installed
