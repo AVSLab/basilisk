@@ -177,6 +177,7 @@ bskSim()-Based Simulation
    Velocity Frame Pointing Control  <BskSim/scenarios/scenario_AttGuidHyperbolic>
    MRP Steering Attitude Control  <BskSim/scenarios/scenario_AttSteering>
    Sun Pointing Mode Include Eclipse Evaluation  <BskSim/scenarios/scenario_AttEclipse>
+   Alternating FSW Attitude Pointing Modes <BskSim/scenarios/scenario_AttModes>
    bskSim Scenarios Folder <BskSim/index>
 
 Optical Navigation Simulations

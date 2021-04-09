@@ -645,6 +645,12 @@ class SimBaseClass:
             return
         self.eventMap[eventName].eventActive = activityCommand
 
+    def setAllButCurrentEventActivity(self, currentEventName, activityCommand):
+        """Set all event activity variables except for the currentEventName event"""
+        for eventName in list(self.eventMap.keys()):
+            if currentEventName != eventName:
+                self.eventMap[eventName].eventActive = activityCommand
+
     def setModelDataWrap(self, modelData):
         """
         Takes a module and returns an object that provides access to said module's SelfInit, Update, and Reset

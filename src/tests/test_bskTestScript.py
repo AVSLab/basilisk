@@ -52,6 +52,7 @@ sys.path.append(path + '/../../examples/BskSim/scenarios')
                                         , 'scenario_AttGuidHyperbolic'
                                         , 'scenario_AttSteering'
                                         , 'scenario_FeedbackRW'
+                                        , 'scenario_AttModes'
                                         , 'scenario_BasicOrbitFormation'
                                         , 'scenario_RelativePointingFormation'
                                         ])

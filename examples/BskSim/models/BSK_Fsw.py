@@ -137,7 +137,8 @@ class BSKFswModels:
         SimBase.createNewEvent("initiateStandby", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'standby'"],
                                ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()"
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.setAllButCurrentEventActivity('initiateStandby', True)"
                                 ])
 
         SimBase.createNewEvent("initiateAttitudeGuidance", self.processTasksTimeStep, True,
@@ -145,42 +146,52 @@ class BSKFswModels:
                                ["self.fswProc.disableAllTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('inertial3DPointTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
+                                "self.enableTask('mrpFeedbackRWsTask')",
+                                "self.setAllButCurrentEventActivity('initiateAttitudeGuidance', True)"
+                                ])
 
         SimBase.createNewEvent("initiateAttitudeGuidanceDirect", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'directInertial3D'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('inertial3DPointTask')",
-                                "self.enableTask('mrpFeedbackTask')"])
+                                "self.enableTask('mrpFeedbackTask')",
+                                "self.setAllButCurrentEventActivity('initiateAttitudeGuidanceDirect', True)"
+                                ])
 
         SimBase.createNewEvent("initiateHillPoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'hillPoint'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('hillPointTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
+                                "self.enableTask('mrpFeedbackRWsTask')",
+                                "self.setAllButCurrentEventActivity('initiateHillPoint', True)"
+                                ])
 
         SimBase.createNewEvent("initiateSunSafePoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'sunSafePoint'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('sunSafePointTask')",
-                                "self.enableTask('mrpSteeringRWsTask')"])
+                                "self.enableTask('mrpSteeringRWsTask')",
+                                "self.setAllButCurrentEventActivity('initiateSunSafePoint', True)"
+                                ])
 
         SimBase.createNewEvent("initiateVelocityPoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'velocityPoint'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('velocityPointTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
+                                "self.enableTask('mrpFeedbackRWsTask')",
+                                "self.setAllButCurrentEventActivity('initiateVelocityPoint', True)"])
 
         SimBase.createNewEvent("initiateSteeringRW", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'steeringRW'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('hillPointTask')",
-                                "self.enableTask('mrpSteeringRWsTask')"])
+                                "self.enableTask('mrpSteeringRWsTask')",
+                                "self.setAllButCurrentEventActivity('initiateSteeringRW', True)"])
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
