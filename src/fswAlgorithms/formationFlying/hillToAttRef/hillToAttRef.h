@@ -38,26 +38,23 @@ class HillToAttRef: public SysModel {
 public:
     HillToAttRef();
     ~HillToAttRef();
-
     void UpdateState(uint64_t CurrentSimNanos);
-    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
-    AttRefMsgPayload RelativeToInertialMRP(double relativeAtt[3], NavAttMsgPayload attStateIn);
+    AttRefMsgPayload RelativeToInertialMRP(double relativeAtt[3], double sigma_XN[3]);
     
 public:
     ReadFunctor<HillRelStateMsgPayload> hillStateInMsg;
     ReadFunctor<NavAttMsgPayload> attStateInMsg;
+    ReadFunctor<AttRefMsgPayload> attRefInMsg;
     Message<AttRefMsgPayload> attRefOutMsg;
 
-    std::vector<std::vector<std::vector<double>>> gainMatrixVec; //!< Arbitrary dimension gain matrix, stored as a vector (varible length) of double,6 arrays
+    std::vector<std::vector<double>> gainMatrix; //!< Arbitrary dimension gain matrix, stored as a vector (varible length) of double,6 arrays
     BSKLogger bskLogger;                //!< -- BSK Logging
     double relMRPMax; //!< Optional maximum bound on MRP element magnitudes
     double relMRPMin; //!< Optional minimum bound on MRP element magnitudes
 
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
-    uint64_t matrixIndex;
-    uint64_t gainMatrixVecLen;
 };
 
 #endif

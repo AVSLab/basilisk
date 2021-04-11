@@ -37,12 +37,12 @@ HillToAttRef::~HillToAttRef()
  */
 void HillToAttRef::Reset(uint64_t CurrentSimNanos)
 {
-    this->matrixIndex = 0;//    Start back at the initial gain matrix
-    this->gainMatrixVecLen = this->gainMatrixVec.size(); // Update this in case gainMatrixVec changed size
+    // this->matrixIndex = 0;//    Start back at the initial gain matrix
+    // this->gainMatrixVecLen = this->gainMatrixVec.size(); // Update this in case gainMatrixVec changed size
     return;
 }
 
-AttRefMsgPayload HillToAttRef::RelativeToInertialMRP(double relativeAtt[3], NavAttMsgPayload attStateIn){
+AttRefMsgPayload HillToAttRef::RelativeToInertialMRP(double relativeAtt[3], double sigma_XN[3]){
     
     AttRefMsgPayload attRefOut;
     //  Check to see if the relative attitude components exceed specified bounds (by default these are non-physical and should never be reached)
@@ -52,7 +52,7 @@ AttRefMsgPayload HillToAttRef::RelativeToInertialMRP(double relativeAtt[3], NavA
     }
 
     //  Combine the relative attitude with the chief inertial attitude to get the reference attitude
-    addMRP(attStateIn.sigma_BN, relativeAtt, attRefOut.sigma_RN);
+    addMRP(sigma_XN, relativeAtt, attRefOut.sigma_RN);
     for(int ind=0; ind<3; ++ind){
         attRefOut.omega_RN_N[ind] = 0;
         attRefOut.domega_RN_N[ind] = 0;
@@ -68,14 +68,25 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
 
     HillRelStateMsgPayload hillStateInPayload;
     NavAttMsgPayload attStateInPayload;
+    AttRefMsgPayload attRefInPayload;
     AttRefMsgPayload attRefOutPayload;
-    hillStateInPayload = this->hillStateInMsg();
-    attStateInPayload = this->attStateInMsg();
-
+    
+    double baseSigma[3];
     double relativeAtt[3];
     double hillState[6];
     double gainMat[3][6];
     std::vector<std::vector<double>> currentMat;
+
+    // Do message reads
+    hillStateInPayload = this->hillStateInMsg();
+    if(this->attRefInMsg.isLinked()){
+        attRefInPayload = this->attRefInMsg();
+        v3Copy(attRefInPayload.sigma_RN, baseSigma);
+    }
+    else if(this->attStateInMsg.isLinked()){
+        attStateInPayload = this->attStateInMsg();
+        v3Copy(attStateInPayload.sigma_BN, baseSigma);
+    }
 
     //  Create a state vector based on the current Hill positions
     for(int ind=0; ind<3; ind++){
@@ -83,33 +94,35 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
         hillState[ind+3] = hillStateInPayload.v_DC_H[ind];
     }
 
-    // Check overrun condition; if user supplied insufficient gain matrices, fix at last supplied matrix.
-    if(this->matrixIndex >= this->gainMatrixVecLen){
-        this->matrixIndex = this->gainMatrixVecLen-1;   //  Hold at the last value if we've overrun the vector
-    }
-
     //  Get the current matrix (assume 1 per update) and convert it to a standard C matrix
-    currentMat = this->gainMatrixVec[this->matrixIndex];
+    //currentMat = this->gainMatrix;
     std::vector<std::vector<double>>::const_iterator row;
     std::vector<double>::const_iterator col;
 
     int row_ind = 0;
     int col_ind = 0;
-    for(row = currentMat.begin(); row != currentMat.end(); ++row, ++row_ind){
+    for(row = this->gainMatrix.begin(); row != this->gainMatrix.end(); ++row, ++row_ind){
         col_ind = 0;
         for (col = row->begin(); col!= row->end(); ++col, ++col_ind){
             gainMat[row_ind][col_ind] = *col;
             }
     }
+    // std::cout<<"Current relative state: "<<hillState[0]<<" "<<hillState[1]<<" "<<hillState[2]<<" "<<hillState[3]<<" "<<hillState[4]<<" "<<hillState[5]<<std::endl;
+    // std::cout<<"Printing current gain matrix:"<<std::endl;
+    // std::cout<<gainMat[0][0]<<" "<<gainMat[0][1]<<" "<<gainMat[0][2]<<" "<<gainMat[0][3]<<" "<<gainMat[0][4]<<" "<<gainMat[0][5]<<std::endl;
+    // std::cout<<gainMat[1][0]<<" "<<gainMat[1][1]<<" "<<gainMat[1][2]<<" "<<gainMat[1][3]<<" "<<gainMat[1][4]<<" "<<gainMat[1][5]<<std::endl;
+    // std::cout<<gainMat[2][0]<<" "<<gainMat[2][1]<<" "<<gainMat[2][2]<<" "<<gainMat[2][3]<<" "<<gainMat[2][4]<<" "<<gainMat[2][5]<<std::endl;
+
     //  Apply the gainMat to the relative state to produce a chief-relative attitude
     mMultV(gainMat, 3, 6,
                    hillState,
                    relativeAtt);
-
+                   
+    // std::cout<<"Relative att components: "<<relativeAtt[0]<<" "<<relativeAtt[1]<<" "<<relativeAtt[2]<<std::endl;
     //  Convert that to an inertial attitude and write the attRef msg
-    attRefOutPayload = this->RelativeToInertialMRP(relativeAtt, attStateInPayload);
+    attRefOutPayload = this->RelativeToInertialMRP(relativeAtt, baseSigma);
     this->attRefOutMsg.write(&attRefOutPayload, this->moduleID, CurrentSimNanos);
 
-    this->matrixIndex += 1;
+    // this->matrixIndex += 1;
 }
 
