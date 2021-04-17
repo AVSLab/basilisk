@@ -766,10 +766,10 @@ def imgProcVsExp(true, centers, radii, size):
 
     plt.figure(312, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     # plt.figure(312, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
-    plt.plot(t, true[:, 3], "+", label=r'Truth $\\rho$', color = colorList[1])
-    plt.plot(t, radii[:, 1],'.',  label = r"ImagProc $\\rho$", color = colorList[5], alpha=0.7)
+    plt.plot(t, true[:, 3], "+", label=r'Truth $\rho$', color = colorList[1])
+    plt.plot(t, radii[:, 1],'.',  label = r"ImagProc $\rho$", color = colorList[5], alpha=0.7)
     plt.legend(loc='best')
-    plt.ylabel(r'$\\rho$ (px)')
+    plt.ylabel(r'$\rho$ (px)')
     plt.xlabel('Time (min)')
     plt.grid(b=None, which='minor', axis='y')
     #plt.savefig('Rhopix.pdf')
@@ -793,7 +793,7 @@ def imgProcVsExp(true, centers, radii, size):
 
     plt.figure(305, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     # plt.figure(305, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
-    plt.plot(t, true[:, 3] - radii[:, 1], ".", label=r'$\mathrm{\\rho}_\mathrm{true} - \mathrm{\\rho}_\mathrm{hough}$', color = colorList[1])
+    plt.plot(t, true[:, 3] - radii[:, 1], ".", label=r'$\mathrm{\rho}_\mathrm{true} - \mathrm{\rho}_\mathrm{hough}$', color = colorList[1])
     plt.legend(loc='best')
     plt.ylabel('Radius error (px)')
     plt.xlabel("Time (min)")
