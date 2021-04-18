@@ -233,7 +233,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     oe = orbitalMotion.rv2elem(mu, rN, vN)
 	
-	# sets of initial and final attitudes that yield the desired constraint violations:
+	# sets of initial and final attitudes that yield the desired constraint violations (attitudeSetCase)
     sigma_BN = [ [[0.522, -0.065,  0.539], [0.342,  0.223, -0.432]],     # to violate one keepIn only
                  [[0.314, -0.251,  0.228], [0.326, -0.206, -0.823]],     # to violate two keepIn and not keepOut
                  [[-0.378, 0.119, -0.176], [0.350,  0.220, -0.440]],     # to violate keepOut and both keepIn 
@@ -614,7 +614,7 @@ if __name__ == "__main__":
     run(
         True,           # show_plots
         True,           # use2SunSensors
-        30,             # starTrackerFov
+        20,             # starTrackerFov
         70,             # sunSensorFov
-        0               # attitudeSetCase
+        2               # attitudeSetCase
     )
