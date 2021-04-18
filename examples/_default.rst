@@ -45,6 +45,7 @@ Attitude Regulation Control
    Using Separate Task Group for Control <scenarioAttitudeFeedback2T>
    Basic Attitude Pointing in Deep Space <scenarioAttitudePointing>
    Complex Attitude Pointing in Deep Space <scenarioAttitudeFeedbackNoEarth>
+   Constraint Violation in Deep Space <scenarioAttitudeConstraintViolation>
 
 
 Attitude Guidance
@@ -177,7 +178,6 @@ bskSim()-Based Simulation
    Velocity Frame Pointing Control  <BskSim/scenarios/scenario_AttGuidHyperbolic>
    MRP Steering Attitude Control  <BskSim/scenarios/scenario_AttSteering>
    Sun Pointing Mode Include Eclipse Evaluation  <BskSim/scenarios/scenario_AttEclipse>
-   Alternating FSW Attitude Pointing Modes <BskSim/scenarios/scenario_AttModes>
    bskSim Scenarios Folder <BskSim/index>
 
 Optical Navigation Simulations
