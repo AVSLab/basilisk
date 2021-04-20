@@ -170,7 +170,7 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     dynTaskName = "dynTask"
     fswTaskName = "fswTask"
     simProcess = scSim.CreateNewProcess(simProcessName, 2)
-    dynTimeStep = macros.sec2nano(0.1) #   Timestep to evaluate dynamics at
+    dynTimeStep = macros.sec2nano(10.0) #   Timestep to evaluate dynamics at
     fswTimeStep = macros.sec2nano(1.0) #   Timestep to evaluate FSW at
     simProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
     simProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
@@ -554,7 +554,7 @@ if __name__ == "__main__":
     run(
         True,  # show_plots
         0.0, #   altitude offset (m)
-        0.005, #  True anomaly offset (deg)
+        0.1, #  True anomaly offset (deg)
         1, #    Density multiplier (nondimensional)
         ctrlType='lqr'
     )
