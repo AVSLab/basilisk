@@ -17,38 +17,30 @@
 
 /* modify the path to reflect the new module names */
 #include "hillToAttRef.h"
+#include "string.h"
+#include "math.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include <iostream>
-/*! The constructor for the HoughCircles module. It also sets some default values at its creation.  */
-HillToAttRef::HillToAttRef()
-{
-}
 
-/*! This is the destructor */
-HillToAttRef::~HillToAttRef()
-{
-    return;
+void SelfInit_hillToAttRef(HillToAttRefConfig *configData, int64_t moduleID){
+    AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void HillToAttRef::Reset(uint64_t CurrentSimNanos)
+void Reset_hillToAttRef(HillToAttRefConfig *configData,  uint64_t callTime, int64_t moduleID)
 {
-    // this->matrixIndex = 0;//    Start back at the initial gain matrix
-    // this->gainMatrixVecLen = this->gainMatrixVec.size(); // Update this in case gainMatrixVec changed size
     return;
 }
 
-AttRefMsgPayload HillToAttRef::RelativeToInertialMRP(double relativeAtt[3], double sigma_XN[3]){
-    
+AttRefMsgPayload RelativeToInertialMRP(HillToAttRefConfig *configData, double relativeAtt[3], double sigma_XN[3]){
     AttRefMsgPayload attRefOut;
     //  Check to see if the relative attitude components exceed specified bounds (by default these are non-physical and should never be reached)
     for(int ind=0; ind<3; ++ind){
-        relativeAtt[ind] = std::max(relativeAtt[ind], this->relMRPMin);
-        relativeAtt[ind] = std::min(relativeAtt[ind], this->relMRPMax);
+        relativeAtt[ind] = fmax(relativeAtt[ind], configData->relMRPMin);
+        relativeAtt[ind] = fmin(relativeAtt[ind], configData->relMRPMax);
     }
 
     //  Combine the relative attitude with the chief inertial attitude to get the reference attitude
@@ -64,7 +56,7 @@ AttRefMsgPayload HillToAttRef::RelativeToInertialMRP(double relativeAtt[3], doub
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void HillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
+void Update_hillToAttRef(HillToAttRefConfig *configData, uint64_t callTime, int64_t moduleID) {
 
     HillRelStateMsgPayload hillStateInPayload;
     NavAttMsgPayload attStateInPayload;
@@ -74,17 +66,15 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
     double baseSigma[3];
     double relativeAtt[3];
     double hillState[6];
-    double gainMat[3][6];
-    std::vector<std::vector<double>> currentMat;
 
     // Do message reads
-    hillStateInPayload = this->hillStateInMsg();
-    if(this->attRefInMsg.isLinked()){
-        attRefInPayload = this->attRefInMsg();
+    hillStateInPayload = HillRelStateMsg_C_read(&configData->hillStateInMsg);
+    if(AttRefMsg_C_isLinked(&configData->attRefInMsg)){
+        attRefInPayload = AttRefMsg_C_read(&configData->attRefInMsg);
         v3Copy(attRefInPayload.sigma_RN, baseSigma);
     }
-    else if(this->attStateInMsg.isLinked()){
-        attStateInPayload = this->attStateInMsg();
+    else if(NavAttMsg_C_isLinked(&configData->attNavInMsg)){
+        attStateInPayload = NavAttMsg_C_read(&configData->attNavInMsg);
         v3Copy(attStateInPayload.sigma_BN, baseSigma);
     }
 
@@ -94,19 +84,6 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
         hillState[ind+3] = hillStateInPayload.v_DC_H[ind];
     }
 
-    //  Get the current matrix (assume 1 per update) and convert it to a standard C matrix
-    //currentMat = this->gainMatrix;
-    std::vector<std::vector<double>>::const_iterator row;
-    std::vector<double>::const_iterator col;
-
-    int row_ind = 0;
-    int col_ind = 0;
-    for(row = this->gainMatrix.begin(); row != this->gainMatrix.end(); ++row, ++row_ind){
-        col_ind = 0;
-        for (col = row->begin(); col!= row->end(); ++col, ++col_ind){
-            gainMat[row_ind][col_ind] = *col;
-            }
-    }
     // std::cout<<"Current relative state: "<<hillState[0]<<" "<<hillState[1]<<" "<<hillState[2]<<" "<<hillState[3]<<" "<<hillState[4]<<" "<<hillState[5]<<std::endl;
     // std::cout<<"Printing current gain matrix:"<<std::endl;
     // std::cout<<gainMat[0][0]<<" "<<gainMat[0][1]<<" "<<gainMat[0][2]<<" "<<gainMat[0][3]<<" "<<gainMat[0][4]<<" "<<gainMat[0][5]<<std::endl;
@@ -114,14 +91,14 @@ void HillToAttRef::UpdateState(uint64_t CurrentSimNanos) {
     // std::cout<<gainMat[2][0]<<" "<<gainMat[2][1]<<" "<<gainMat[2][2]<<" "<<gainMat[2][3]<<" "<<gainMat[2][4]<<" "<<gainMat[2][5]<<std::endl;
 
     //  Apply the gainMat to the relative state to produce a chief-relative attitude
-    mMultV(gainMat, 3, 6,
+    mMultV(&configData->gainMatrix, 3, 6,
                    hillState,
                    relativeAtt);
                    
     // std::cout<<"Relative att components: "<<relativeAtt[0]<<" "<<relativeAtt[1]<<" "<<relativeAtt[2]<<std::endl;
     //  Convert that to an inertial attitude and write the attRef msg
-    attRefOutPayload = this->RelativeToInertialMRP(relativeAtt, baseSigma);
-    this->attRefOutMsg.write(&attRefOutPayload, this->moduleID, CurrentSimNanos);
+    attRefOutPayload = RelativeToInertialMRP(configData, relativeAtt, baseSigma);
+    AttRefMsg_C_write(&attRefOutPayload, &configData->attRefOutMsg, moduleID, callTime);
 
     // this->matrixIndex += 1;
 }

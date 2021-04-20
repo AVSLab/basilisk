@@ -22,19 +22,20 @@
 %}
 
 %include "swig_conly_data.i"
+%constant void Update_hillToAttRef(void*, uint64_t, uint64_t);
+%ignore Update_hillToAttRef;
+%constant void SelfInit_hillToAttRef(void*, uint64_t);
+%ignore SelfInit_hillToAttRef;
+%constant void Reset_hillToAttRef(void*, uint64_t, uint64_t);
+%ignore Reset_hillToAttRef;
+%constant struct RelativeToInertialMRP(double*, double*);
+%ignore RelativeToInertialMRP;
 
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
 %}
 
-%include "stdint.i"
-%include "std_string.i"
-%include "std_vector.i"
 
-namespace std {
-};
-
-%include "sys_model.h"
 %include "architecture/msgPayloadDefC/HillRelStateMsgPayload.h"
 struct HillRelStateMsg_C;
 %include "architecture/msgPayloadDefC/AttRefMsgPayload.h"

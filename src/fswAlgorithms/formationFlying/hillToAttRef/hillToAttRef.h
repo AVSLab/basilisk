@@ -20,42 +20,43 @@
 #ifndef _HILL_TO_ATT_H
 #define _HILL_TO_ATT_H
 
-#include <vector>
-#include <Eigen/Dense>
 #include <stdint.h>
 #include <string.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/HillRelStateMsgPayload.h"
+#include "cMsgCInterface/HillRelStateMsg_C.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
 
-/*! @brief Hill state to attitude reference for differential-drag control. */
-class HillToAttRef: public SysModel {
-public:
-    HillToAttRef();
-    ~HillToAttRef();
-    void UpdateState(uint64_t CurrentSimNanos);
-    void Reset(uint64_t CurrentSimNanos);
-    AttRefMsgPayload RelativeToInertialMRP(double relativeAtt[3], double sigma_XN[3]);
-    
-public:
-    ReadFunctor<HillRelStateMsgPayload> hillStateInMsg;
-    ReadFunctor<NavAttMsgPayload> attStateInMsg;
-    ReadFunctor<AttRefMsgPayload> attRefInMsg;
-    Message<AttRefMsgPayload> attRefOutMsg;
 
-    std::vector<std::vector<double>> gainMatrix; //!< Arbitrary dimension gain matrix, stored as a vector (varible length) of double,6 arrays
-    BSKLogger bskLogger;                //!< -- BSK Logging
-    double relMRPMax; //!< Optional maximum bound on MRP element magnitudes
-    double relMRPMin; //!< Optional minimum bound on MRP element magnitudes
 
-private:
-    uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
-};
+
+/*! @brief Top level structure for the sub-module routines. */
+typedef struct {
+    /* declare module IO interfaces */
+    HillRelStateMsg_C hillStateInMsg;
+    AttRefMsg_C attRefInMsg;
+    NavAttMsg_C attNavInMsg;
+    AttRefMsg_C attRefOutMsg;
+    BSKLogger *bskLogger;                           //!< BSK Logging
+
+    double gainMatrix[3][6];
+    double relMRPMin;
+    double relMRPMax;
+}HillToAttRefConfig;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    void SelfInit_hillToAttRef(HillToAttRefConfig *configData, int64_t moduleID);
+    void Update_hillToAttRef(HillToAttRefConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Reset_hillToAttRef(HillToAttRefConfig *configData, uint64_t callTime, int64_t moduleID);
+    AttRefMsgPayload RelativeToInertialMRP(HillToAttRefConfig *configData, double relativeAtt[3], double sigma_XN[3]);
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif
 

@@ -276,23 +276,24 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     hillStateNavData.chiefStateInMsg.subscribeTo(chiefNav.transOutMsg)
 
     # hillToAtt guidance law w/ static gain
-    depAttRef = hillToAttRef.HillToAttRef()
-    depAttRef.ModelTag = 'dep_att_ref'
-    depAttRef.gainMatrix = hillToAttRef.MultiArray(lqr_gain_set)
+    depAttRefData = hillToAttRef.HillToAttRefConfig()
+    depAttRefWrap = scSim.setModelDataWrap(depAttRefData)
+    depAttRefData.ModelTag = 'dep_att_ref'
+    depAttRefData.gainMatrix = hillToAttRef.MultiArray(lqr_gain_set)
     #   Configure parameters common to relative attitude guidance modules
-    depAttRef.hillStateInMsg.subscribeTo(hillStateNavData.hillStateOutMsg)
+    depAttRefData.hillStateInMsg.subscribeTo(hillStateNavData.hillStateOutMsg)
     # depAttRef.attStateInMsg.subscribeTo(chiefNav.attOutMsg)
-    depAttRef.attRefInMsg.subscribeTo(depHillRefData.attRefOutMsg)
-    depAttRef.relMRPMin = -0.2
-    depAttRef.relMRPMax = 0.2
+    depAttRefData.attRefInMsg.subscribeTo(depHillRefData.attRefOutMsg)
+    depAttRefData.relMRPMin = -0.2
+    depAttRefData.relMRPMax = 0.2
     #   Set the deputy spacecraft to directly follow the attRefMessage
-    depSc.attRefInMsg.subscribeTo(depAttRef.attRefOutMsg)
+    depSc.attRefInMsg.subscribeTo(depAttRefData.attRefOutMsg)
 
 
     scSim.AddModelToTask(dynTaskName, chiefAttRefWrap, chiefAttRefData, 710)
     scSim.AddModelToTask(dynTaskName, hillStateNavWrap, hillStateNavData,790)
     scSim.AddModelToTask(dynTaskName, depHillRefWrap, depHillRefData,789)
-    scSim.AddModelToTask(dynTaskName, depAttRef,None,700)
+    scSim.AddModelToTask(dynTaskName, depAttRefWrap, depAttRefData, 700)
     # ----- log ----- #
     orbit_period = 2*np.pi/np.sqrt(mu/chief_oe.a**3)
     simulationTime = 40*orbit_period#106920.14366466808 
@@ -304,7 +305,7 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     chiefStateRec = chiefSc.scStateOutMsg.recorder()
     depStateRec = depSc.scStateOutMsg.recorder()
     hillStateRec = hillStateNavData.hillStateOutMsg.recorder()
-    depAttRec = depAttRef.attRefOutMsg.recorder()
+    depAttRec = depAttRefData.attRefOutMsg.recorder()
     chiefAttRec = chiefAttRefData.attRefOutMsg.recorder()
     atmoRecs = []
     for msg in atmosphere.envOutMsgs:
