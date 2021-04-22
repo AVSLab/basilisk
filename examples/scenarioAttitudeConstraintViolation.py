@@ -177,7 +177,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # create the dynamics task and specify the simulation time and integration update time
     simulationTime = macros.min2nano(1.5)
-    simulationTimeStep = macros.sec2nano(0.1)
+    simulationTimeStep = macros.sec2nano(0.5)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
     
     #
@@ -233,17 +233,17 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     oe = orbitalMotion.rv2elem(mu, rN, vN)
 	
-	# sets of initial and final attitudes that yield the desired constraint violations (attitudeSetCase)
-    sigma_BN = [ [[0.522, -0.065,  0.539], [0.342,  0.223, -0.432]],     # to violate one keepIn only
-                 [[0.314, -0.251,  0.228], [0.326, -0.206, -0.823]],     # to violate two keepIn and not keepOut
-                 [[-0.378, 0.119, -0.176], [0.350,  0.220, -0.440]],     # to violate keepOut and both keepIn 
-                 [[-0.412, 0.044, -0.264], [0.350,  0.220, -0.440]] ]    # to violate keepOut only
+	# sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
+    sigma_BN_start = [ [0.522, -0.065,  0.539],     # to violate one keepIn only
+                       [0.314, -0.251,  0.228],     # to violate two keepIn and not keepOut
+                       [-0.378, 0.119, -0.176],     # to violate keepOut and both keepIn 
+                       [-0.412, 0.044, -0.264] ]    # to violate keepOut only
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
-    scObject.hub.sigma_BNInit = sigma_BN[attitudeSetCase][0]   # change this MRP set to customize initial inertial attitude        
-    scObject.hub.omega_BN_BInit = [[0.], [0.], [0.]]           # rad/s - omega_CN_B
+    scObject.hub.sigma_BNInit = sigma_BN_start[attitudeSetCase]   # change this MRP set to customize initial inertial attitude        
+    scObject.hub.omega_BN_BInit = [[0.], [0.], [0.]]              # rad/s - omega_CN_B
     
     # define the simulation inertia
     I = [0.02 / 3,  0.,         0.,
@@ -300,12 +300,18 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     #   setup the FSW algorithm tasks
     #
 
+  	# sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
+    sigma_BN_target = [ [0.342,  0.223, -0.432],     # to violate one keepIn only
+                        [0.326, -0.206, -0.823],     # to violate two keepIn and not keepOut
+                        [0.350,  0.220, -0.440],     # to violate keepOut and both keepIn 
+                        [0.350,  0.220, -0.440] ]    # to violate keepOut only
+	
     # setup inertial3D guidance module
     inertial3DConfig = inertial3D.inertial3DConfig()
     inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = sigma_BN[attitudeSetCase][1]   # change this MRP set to customize final inertial attitude
+    inertial3DConfig.sigma_R0N = sigma_BN_target[attitudeSetCase]     # change this MRP set to customize final inertial attitude
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.attTrackingErrorConfig()
@@ -338,18 +344,18 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # Boresight vector modules.
     stBACObject = boreAngCalc.BoreAngCalc()
     stBACObject.ModelTag = "starTrackerBoresight"
-    stBACObject.boreVec_B = np.array([1., 0., 0.])  # boresight in body frame
+    stBACObject.boreVec_B = [1., 0., 0.]  # boresight in body frame
     scSim.AddModelToTask(simTaskName, stBACObject)
 
     ssyBACObject = boreAngCalc.BoreAngCalc()
     ssyBACObject.ModelTag = "SunSensorBoresight"
-    ssyBACObject.boreVec_B = np.array([0., 1., 0.])  # boresight in body frame
+    ssyBACObject.boreVec_B = [0., 1., 0.]  # boresight in body frame
     scSim.AddModelToTask(simTaskName, ssyBACObject)
     
     if use2SunSensors:
         sszBACObject = boreAngCalc.BoreAngCalc()
         sszBACObject.ModelTag = "SunSensorBoresight"
-        sszBACObject.boreVec_B = np.array([0., 0., 1.])  # boresight in body frame
+        sszBACObject.boreVec_B = [0., 0., 1.]  # boresight in body frame
         scSim.AddModelToTask(simTaskName, sszBACObject)
 
     #

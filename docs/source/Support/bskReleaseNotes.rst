@@ -34,11 +34,11 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - text here
+- new integrated scenario in :ref:`scenarioAttitudeConstraintViolation`. Shows how to use the :ref:`boreAngCalc` to display keep-in and keep-out constraint violations while
+  performing slew maneuvers.
 
 Version 2.0.2
 -------------
-- new integrated scenario in :ref:`scenarioAttitudeConstraintViolation`. Shows how to use the :ref:`boreAngCalc` to display keep-in and keep-out constraint violations while
-  performing slew maneuvers.
 - new waypoint reference module in :ref:`waypointReference`. It can be used to read an attitude maneuver from a set of waypoints on a text file, likely generated outside Basilisk.
 - updated :ref:`gravityEffector` to allow the planet message module (``spiceInterface`` or ``planetEphemeris``) to
   be called either before or after the ``spacecraft`` module update is called
