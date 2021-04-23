@@ -33,7 +33,6 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
 - new integrated scenario in :ref:`scenarioAttitudeConstraintViolation`. Shows how to use the :ref:`boreAngCalc` to display keep-in and keep-out constraint violations while
   performing slew maneuvers.
 
