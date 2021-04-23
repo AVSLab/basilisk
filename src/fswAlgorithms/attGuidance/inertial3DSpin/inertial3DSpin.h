@@ -30,11 +30,11 @@
 typedef struct {
     /* declare module private variables */
     double sigma_RN[3];                              /*!< MPR of reference frame relative to inertial N frame */
-    double omega_spin[3];                            /*!< angular velocity spin vector */
+    double omega_RR0_R0[3];                          /*!< [r/s] constant angular velocity spin vector of the spinning R frame relative to the input frame R0 */
     uint64_t priorTime;                              /*!< [ns] last time the guidance module is called */
     /* declare module IO interfaces */
     AttRefMsg_C attRefOutMsg;                     //!< reference attitude output message
-    AttRefMsg_C attRefInMsg;                      //!< reference attitude input message
+    AttRefMsg_C attRefInMsg;                      //!< (optional) reference attitude input message
     
     AttRefMsgPayload attRefOutBuffer;                    //!< [-] structure for the output data
     BSKLogger *bskLogger;                             //!< BSK Logging
