@@ -35,6 +35,8 @@ Version |release|
 -----------------
 - new integrated scenario in :ref:`scenarioAttitudeConstraintViolation`. Shows how to use the :ref:`boreAngCalc` to display keep-in and keep-out constraint violations while
   performing slew maneuvers.
+- updated :ref:`inertial3DSpin` to make the attitude input message optional, updated documentation to be RST only
+  and more descriptive of the associated math, and changed the module variable ``omega_spin`` to ``omega_RR0_R0``
 
 Version 2.0.2
 -------------

@@ -63,10 +63,6 @@ void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID)
  */
 void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    // check if the required input messages are included
-    if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: intertial3DSpin.attRefInMsg wasn't connected.");
-    }
 
     configData->priorTime = 0;              /* reset the prior time flag state.  If set
                                              to zero, the control time step is not evaluated on the
@@ -83,8 +79,12 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
 {
     /*! - Read input message */
     AttRefMsgPayload attRefInMsgBuffer;
-
-    attRefInMsgBuffer = AttRefMsg_C_read(&configData->attRefInMsg);
+    
+    if (AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
+        attRefInMsgBuffer = AttRefMsg_C_read(&configData->attRefInMsg);
+    } else {
+        attRefInMsgBuffer = AttRefMsg_C_zeroMsgPayload();
+    }
 
     /*! - Get input reference and compute integration time step to use downstream */
     double dt; /* integration time step [s] */
@@ -101,7 +101,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
     computeReference_inertial3DSpin(configData,
                                     attRefInMsgBuffer.omega_RN_N,
                                     attRefInMsgBuffer.domega_RN_N,
-                                    configData->omega_spin,
+                                    configData->omega_RR0_R0,
                                     dt);
     /*! - Write output message */
     AttRefMsg_C_write(&configData->attRefOutBuffer, &configData->attRefOutMsg, moduleID, callTime);
@@ -113,7 +113,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
 void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
                                      double omega_R0N_N[3],
                                      double domega_R0N_N[3],
-                                     double omega_RR0_R[3],
+                                     double omega_RR0_R0[3],
                                      double dt)
 {
     double omega_RN_N[3];
@@ -123,7 +123,7 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
     double dcm_RN[3][3];   /* DCM from inertial frame N to generated ref frame R */
     double omega_RR0_N[3]; /* angular rate of the generated ref R wrt the base ref R0 in inertial N components */
     MRP2C(configData->sigma_RN, dcm_RN);
-    m33tMultV3(dcm_RN, omega_RR0_R, omega_RR0_N);
+    m33tMultV3(dcm_RN, omega_RR0_R0, omega_RR0_N);
     v3Add(omega_R0N_N, omega_RR0_N, omega_RN_N);
     
     /*! Compute angular acceleration */
