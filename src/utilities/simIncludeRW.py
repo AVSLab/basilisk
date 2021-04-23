@@ -59,6 +59,7 @@ class rwFactory(object):
                 useRWfriction : BOOL to turn on RW internal wheel friction
                 useMinTorque : BOOL to clip any torque below a minimum torque value
                 useMaxTorque : BOOL to clip any torque value above a maximum torque value
+                u_max: double with the maximum RW motor torque
                 maxMomentum : maximum RW wheel momentum in Nms.  This is a required variable for some wheels.
                 label : string with the unique device name, must be 5 characters or less
                 fCoulomb: double for the Coulomb friction torque model
@@ -173,6 +174,16 @@ class rwFactory(object):
             eval('self.' + rwType + '(RW)')
         except:
             print('ERROR: RW type ' + rwType + ' is not implemented')
+            exit(1)
+
+        if 'u_max' in kwargs:
+            varu_max = kwargs['u_max']
+            if not isinstance(varu_max, (float)):
+                print('ERROR: u_max must be a FLOAT argument')
+                exit(1)
+            RW.u_max = varu_max
+        if RW.u_max <= 0.0 and varUseMaxTorque:
+            print('ERROR: RW is being setup with non-positive u_max value with varUseMaxTorque set to True')
             exit(1)
 
         # set initial RW states
@@ -521,8 +532,6 @@ class rwFactory(object):
         :param RW: reaction wheel configuration message
         :return:
         """
-        if self.Omega_max == 0.0:
-            print("ERROR: simIncludeRW.create() custom RW must have a non-zero Omega_max specified.")
 
         if self.maxMomentum == 0.0:
             print("ERROR: simIncludeRW.create() custom RW must have a non-zero maxMomentum specified.")

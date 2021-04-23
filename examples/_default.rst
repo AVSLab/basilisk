@@ -45,6 +45,7 @@ Attitude Regulation Control
    Using Separate Task Group for Control <scenarioAttitudeFeedback2T>
    Basic Attitude Pointing in Deep Space <scenarioAttitudePointing>
    Complex Attitude Pointing in Deep Space <scenarioAttitudeFeedbackNoEarth>
+   Sun-Pointing Constraint Violation in Space <scenarioAttitudeConstraintViolation>
 
 
 Attitude Guidance
