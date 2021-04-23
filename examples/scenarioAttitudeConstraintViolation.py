@@ -265,21 +265,21 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     maxMomentum = 0.01
     maxSpeed = 6000 * macros.RPM
-    Js = maxMomentum/maxSpeed
-    RW1 = rwFactory.create('BCT_RWP015', [1, 0, 0], Omega=0.  # RPM
+    RW1 = rwFactory.create('custom', [1, 0, 0], Omega=0.  # RPM
+                           , Omega_max=maxSpeed
+                           , maxMomentum=maxMomentum
+                           , u_max=0.001
                            , RWModel=varRWModel)
-    RW1.Js = Js
-    RW1.u_max = 0.001
-
-    RW2 = rwFactory.create('BCT_RWP015', [0, 1, 0], Omega=0.  # RPM
+    RW2 = rwFactory.create('custom', [0, 1, 0], Omega=0.  # RPM
+                           , Omega_max=maxSpeed
+                           , maxMomentum=maxMomentum
+                           , u_max=0.001
                            , RWModel=varRWModel)
-    RW2.Js = Js
-    RW2.u_max = 0.001
-
-    RW3 = rwFactory.create('BCT_RWP015', [0, 0, 1], Omega=0.  # RPM
+    RW3 = rwFactory.create('custom', [0, 0, 1], Omega=0.  # RPM
+                           , Omega_max=maxSpeed
+                           , maxMomentum=maxMomentum
+                           , u_max=0.001
                            , RWModel=varRWModel)
-    RW3.Js = Js
-    RW3.u_max = 0.001
 
     numRW = rwFactory.getNumOfDevices()
 
