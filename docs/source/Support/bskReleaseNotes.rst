@@ -20,13 +20,13 @@ Basilisk Release Notes
 
 .. sidebar:: In Progress Features
 
-    - ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
     - GPU based methods to evaluate solar radiation pressure forces and torques
     - magnetic torque bar effector
     - magnetic FSW control module to dump reaction wheel angular momentum
     - new tutorial example scripts
     - new FSW planet location pointing guidance module
-    - new Multi-Sphere-Method module to account for electrostatic force and torque interactions between neighboring spacecraft.
+    - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
+      CAD asteroid or lunar surface terrain.
     - Basilisk 2.1 that includes:
 
         - support for multi-threading when simulating multiple satellite systems
