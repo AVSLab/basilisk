@@ -37,6 +37,7 @@ Version |release|
   performing slew maneuvers.
 - updated :ref:`inertial3DSpin` to make the attitude input message optional, updated documentation to be RST only
   and more descriptive of the associated math, and changed the module variable ``omega_spin`` to ``omega_RR0_R0``
+- enables the message ``recorder()`` module to function if the message structure contains structures itself.
 
 Version 2.0.2
 -------------
