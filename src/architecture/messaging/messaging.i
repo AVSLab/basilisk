@@ -107,13 +107,36 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
         def timesWritten(self):
             return np.array(self.__timeWritten_vector())
 
+        def explore_and_find_subattr(self,attr,attr_name,content):
+            if isinstance(attr,list):
+                if len(attr) > 0:
+                    if "Basilisk" in str(type(attr[0])):
+                        for el,k in zip(attr,range(len(attr))):
+                            explore_and_find_subattr(el,attr_name + "[" + str(k) + "]",content)
+                    else:
+                        content.append({ attr_name : attr})
+            elif "Basilisk" in str(type(attr)):
+                    for subattr_name in  dir(attr):
+                        if not subattr_name.startswith("__") and subattr_name != "this":
+                            explore_and_find_subattr(getattr(attr,subattr_name),attr_name + "." + subattr_name,content)
+            else:
+                content.append({attr_name : attr})
+
+
         # This __getattr__ is written in message.i.
         # It lets us return message struct attribute record as lists for plotting, etc.
         def __getattr__(self, name):
             data = self.__record_vector()
             data_record = []
             for rec in data.iterator():
-                data_record.append(rec.__getattribute__(name))
+                content = []
+                self.explore_and_find_subattr(rec.__getattribute__(name),name,content)
+                if len(content) == 1 and "." not in str(list(content[0].keys())[0]):
+                    data_record.append(content[0][list(content[0].keys())[0]])
+                else:
+                    data_record.append(content)
+
+
             return np.array(data_record)
 
         def record(self):
@@ -144,6 +167,7 @@ typedef struct messageType;
 
 %template(Eigen3dVector) std::vector<Eigen::Vector3d>;
 
+%template(AccDataMsgPayloadVector) std::vector<Message<AccDataMsgPayload>*>;
 %template(RWConfigLogOutMsgsVector) std::vector<Message<RWConfigLogMsgPayload>*>;
 %template(SpicePlanetStateOutMsgsVector) std::vector<Message<SpicePlanetStateMsgPayload>*>;
 %template(AtmoPropsOutMsgsVector) std::vector<Message<AtmoPropsMsgPayload>*>;
