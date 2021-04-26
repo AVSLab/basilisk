@@ -71,8 +71,8 @@ def test_subModuleTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    omega_spin = np.array([1., -1., 0.5]) * mc.D2R
-    moduleConfig.omega_spin = omega_spin
+    omega_RR0_R0 = np.array([1., -1., 0.5]) * mc.D2R
+    moduleConfig.omega_RR0_R0 = omega_RR0_R0
 
     #
     # Reference Frame Message
@@ -200,8 +200,8 @@ def test_subModuleTestFunction2(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    omega_spin = np.array([1., -1., 0.5]) * mc.D2R
-    moduleConfig.omega_spin = omega_spin
+    omega_RR0_R0 = np.array([1., -1., 0.5]) * mc.D2R
+    moduleConfig.omega_RR0_R0 = omega_RR0_R0
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     #
