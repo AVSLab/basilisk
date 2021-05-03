@@ -25,7 +25,7 @@
 /*! This message is the outpout of each CSS device to log all the configuration and
     measurement states.
  */
-typedef struct {
+typedef struct CSSConfigLogMsgPayload {
     double r_B[3] = {0};    //!< [m] sensor position vector in the spacecraft, "B", body frame
     double nHat_B[3];       //!< [] sensor unit direction vector in the spacecraft, "B", body frame
     double fov;             //!< [rad] field of view (boresight to edge)
