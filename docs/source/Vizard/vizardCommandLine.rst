@@ -38,3 +38,11 @@ The `Vizard <vizard>`_ application supports the following command line arguments
    file name that `Vizard <vizard>`_ will name the saved message file on exit::
 
 	open /Applications/Vizard.app --args -saveMsgFile filenameToUse
+
+#. To launch `Vizard <vizard>`_ application and safe the rendering and image transmission times (in ``opNav`` mode)
+   to the file ``~/VizardData/opNavMetrics.txt``, use::
+
+     open /Applications/Vizard.app --args -saveMetrics -opNav tcp://xxx.xxx.x.xx.xxxxx
+
+
+

@@ -16,6 +16,15 @@ Release Notes
     - show the hard drive state
     - Add the rate gyro visualization
 
+
+**Version 1.8.3**
+
+- added ability to show FPS under ``Time`` menu
+- added command line argument ``-saveMetrics`` to record the rendering times to the file
+  ``~/VizardData/opNavMetrics.txt``
+- the Apple M1 version of Vizard is now able to cast shadows like the other versions of Vizard did
+
+
 **Version 1.8.2**
 
 - added ability to show true orbital trajectory.  This works both for trajectory relative to planet or another

@@ -253,9 +253,10 @@ a keyboard short-cut assigned.
 - **Show Mission/Sim Time:** This toggles the time bar to show either the simulation elapsed time or the mission
   date and time.  Note that if the Basilisk simulation doesn't set an epoch date than January 1st, 2019, 00:00am
   is assumed by the simulation.
-- **Show Data Rate**:** This toggle shows the data frame rate.  If this is 1, then every data rate is being shown.
+- **Show Data Rate**: This toggle shows the data frame rate.  If this is 1, then every data rate is being shown.
   If the rate is 2, then only every 2nd data frame is shown.  A data rate of 1/2 means a frame is held for
   one rendering cycle to slow down the simulation.
+- **Show FPS**: This toggles on the frames-per-second on the lower right of the screen
 
 	
 ``Camera`` Menu Item
