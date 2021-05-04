@@ -640,7 +640,16 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/simulation")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
 
-file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#empty init file written by the build")
+if(WIN32 AND (PYTHON_MAJOR GREATER 3 OR PYTHON_MINOR GREATER 7))
+	file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#init file written by the build\n"
+                                                           "import sys, os\n"
+                                                           "from Basilisk import __path__\n"
+                                                           "bskPath = __path__[0]\n"
+                                                           "os.add_dll_directory(bskPath)\n")
+else()
+	file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#empty init file written by the build")
+endif()
+
 
 #TODO: Iterate through all dist directories and add __init__.py's where they don't exist
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")
