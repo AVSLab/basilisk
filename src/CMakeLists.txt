@@ -640,7 +640,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/simulation")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
 
-if(WIN32 AND (PYTHON_MAJOR GREATER 3 OR PYTHON_MINOR GREATER 7))
+if(WIN32 AND (PYTHON_VERSION GREATER 3.7))
 	file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#init file written by the build\n"
                                                            "import sys, os\n"
                                                            "from Basilisk import __path__\n"
