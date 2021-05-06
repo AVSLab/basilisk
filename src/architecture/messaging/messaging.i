@@ -108,19 +108,27 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
             return np.array(self.__timeWritten_vector())
 
         def explore_and_find_subattr(self,attr,attr_name,content):
-            if isinstance(attr,list):
+            if "method" in str(type(attr)):
+                # The attribute is a method, nothing to do here
+                pass
+            elif isinstance(attr,list):
+                # The attribute is a list of yet to be determined types
                 if len(attr) > 0:
                     if "Basilisk" in str(type(attr[0])):
+                        # The attribute is a list of swigged BSK objects
                         for el,k in zip(attr,range(len(attr))):
-                            explore_and_find_subattr(el,attr_name + "[" + str(k) + "]",content)
+                            self.explore_and_find_subattr(el,attr_name + "[" + str(k) + "]",content)
                     else:
-                        content.append({ attr_name : attr})
+                        # The attribute is a list of common types 
+                        content[attr_name] = attr
             elif "Basilisk" in str(type(attr)):
-                    for subattr_name in  dir(attr):
-                        if not subattr_name.startswith("__") and subattr_name != "this":
-                            explore_and_find_subattr(getattr(attr,subattr_name),attr_name + "." + subattr_name,content)
+                # The attribute is a swigged BSK object
+                for subattr_name in  dir(attr):
+                    if not subattr_name.startswith("__") and subattr_name != "this":
+                        self.explore_and_find_subattr(getattr(attr,subattr_name),attr_name + "." + subattr_name,content)
             else:
-                content.append({attr_name : attr})
+                # The attribute has a common type
+                content[attr_name] = attr
 
 
         # This __getattr__ is written in message.i.
@@ -129,10 +137,10 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
             data = self.__record_vector()
             data_record = []
             for rec in data.iterator():
-                content = []
+                content = {}
                 self.explore_and_find_subattr(rec.__getattribute__(name),name,content)
-                if len(content) == 1 and "." not in str(list(content[0].keys())[0]):
-                    data_record.append(content[0][list(content[0].keys())[0]])
+                if len(content) == 1 and "." not in str(list(content.keys())[0]):
+                    data_record.append(next(iter(content.values())))
                 else:
                     data_record.append(content)
 
