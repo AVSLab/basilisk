@@ -19,6 +19,10 @@ Release Notes
 
 **Version 1.8.3**
 
+- When a spacecraft is the target of the Main Camera, the Main Camera will track the spacecraft in that
+  spacecraft’s Hill Frame provided that there is a parent body in the sim. If there is only a spacecraft
+  in the messages or if the camera target is a celestial body, the default inertial frame tracking and
+  offset of the target by the Main Camera will occur.
 - added ability to show FPS under ``Time`` menu
 - added command line argument ``-saveMetrics`` to record the rendering times to the file
   ``~/VizardData/opNavMetrics.txt``
