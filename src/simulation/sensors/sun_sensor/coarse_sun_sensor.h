@@ -26,6 +26,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/cssRawDataSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
+#include "simMessages/albedoSimMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "utilities/gauss_markov.h"
 #include "utilities/saturate.h"
@@ -82,6 +83,7 @@ public:
     std::string stateInMsgName;                  //!< [-] Message name for spacecraft state */
     std::string cssDataOutMsgName;                  //!< [-] Message name for CSS output data */
     std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message
+    std::string albedoInMsgName;                //!< [-] Message name for albedo message */
     CSSFaultState_t     faultState;             //!< [-] Specification used if state is set to COMPONENT_FAULT */
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
     double              phi;                    //!< [rad] css elevation angle, measured positive toward the body +z axis from the x-y plane
@@ -90,7 +92,7 @@ public:
     Eigen::Vector3d     nHat_B;              //!< [-] css unit direction vector in body frame components
     Eigen::Vector3d     sHat_B;              //!< [-] unit vector to sun in B
     double              directValue;            //!< [-] direct solar irradiance measurement
-    double              albedoValue;            //!< [-] albedo irradiance measurement
+    double              albedoValue = -1.0;     //!< [-] albedo irradiance measurement
     double              scaleFactor;            //!< [-] scale factor applied to sensor (common + individual multipliers)
     double              sensedValue;            //!< [-] total measurement including perturbations
     double              trueValue;              //!< [-] total measurement without perturbations
@@ -110,6 +112,7 @@ private:
     int64_t stateInMsgID;                       //!< [-] Connect to input time message
     int64_t cssDataOutMsgID;                       //!< [-] Connect to output CSS data
     int64_t sunEclipseInMsgId;                  //!< [-] Connect to input sun eclipse message
+    int64_t albedoInMsgId;                      //!< [-] Connect to input albedo message
     SpicePlanetStateSimMsg sunData;            //!< [-] Unused for now, but including it for future
     SCPlusStatesSimMsg stateCurrent;           //!< [-] Current SSBI-relative state
     EclipseSimMsg sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)

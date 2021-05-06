@@ -38,6 +38,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->sunInMsgID = -1;
     this->stateInMsgID = -1;
     this->sunEclipseInMsgId = -1;
+    this->albedoInMsgId = -1;
     this->stateInMsgName = "inertial_state_output";
     this->sunInMsgName = "sun_planet_data";
     this->cssDataOutMsgName = "";
@@ -170,6 +171,13 @@ void CoarseSunSensor::CrossInit()
                                                                                      moduleID);
     }
     
+    /* reading in the albedo message is optional.  It only gets used if this message is successfully suscribed.  */
+    if (this->albedoInMsgName.length() > 0) {
+        this->albedoInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->albedoInMsgName,
+                                                                                sizeof(AlbedoSimMsg),
+                                                                                moduleID);
+    }
+    
     //! - If either messages is not valid, send a warning message
     if(this->sunInMsgID < 0 || this->stateInMsgID < 0) {
         BSK_PRINT(MSG_WARNING, "Failed to link a sun sensor input message: Sun: %lld", this->sunInMsgID);
@@ -205,6 +213,13 @@ void CoarseSunSensor::readInputMessages()
                                                     sizeof(EclipseSimMsg),
                                                     reinterpret_cast<uint8_t*> (&this->sunVisibilityFactor),
                                                     this->moduleID);
+    }
+    //! - If we have a valid albedo ID, read albedo message
+    if (this->albedoInMsgId >= 0) {
+        AlbedoSimMsg albMsgData;
+        SystemMessaging::GetInstance()->ReadMessage(this->albedoInMsgId, &localHeader, sizeof(AlbedoSimMsg),
+            reinterpret_cast<uint8_t*> (&albMsgData), this->moduleID);
+        this->albedoValue = albMsgData.albedoAtInstrument;
     }
 }
 
@@ -258,13 +273,11 @@ void CoarseSunSensor::computeTrueOutput()
     // apply sun distance factor (adjust based on flux at current distance from sun)
     // Also apply shadow factor. Basically, correct the intensity of the light.
     this->directValue = this->directValue*this->sunDistanceFactor*this->sunVisibilityFactor.shadowFactor;
+    // Adding albedo value (if defined by the user)
+    if (this->albedoValue > 0.0){
+        this->directValue = this->directValue + this->albedoValue;}
     this->trueValue = this->directValue;
     
-    //! - Albedo is forced to zero for now. Note that "albedo value" must be the cosine response due to albedo intensity and direction. It can then be stacked on top of the
-    //! - sun cosine curve
-    //this->albedoValue = 0.0;
-    //this->directValue = this->directValue + this->albedoValue
-    //this->trueValue = this->directValue
 }
 
 /*! This method takes the true observed cosine value (directValue) and converts 
