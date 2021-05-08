@@ -25,27 +25,29 @@
 #include "cMsgCInterface/SCStatesMsg_C.h"
 #include "cMsgCInterface/GroundStateMsg_C.h"
 #include "cMsgCInterface/AttGuidMsg_C.h"
+#include "cMsgCInterface/EphemerisMsg_C.h"
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief This module is used to generate the attitude reference message in order to have a spacecraft point at a location on the ground
  */
 typedef struct {
 
-    /* variables */
-    double counter;         /*!< counter for numerical integration*/
-    double sigma_RB_new;    /*< Newest sigma_BR value, stored for finite diff*/
-    double sigma_RB_old;    /*< Older sigma_BR value, stored for finite diff*/
-    double omega_RN_B_new;
-    double omega_RN_B_old;
-    double time_new;
-    double time_old;
-    double pHat;
+    /* user configurable variables */
+    double pHat_B[3];           /*!< body fixed vector that is to be aimed at a location */
+
+    /* private variables */
+    double sigma_RB_new[3];     /*!< Newest sigma_BR value, stored for finite diff*/
+    double sigma_RB_old[3];     /*!< Older sigma_BR value, stored for finite diff*/
+    double omega_RN_B_new[3];   /*!< current inertial reference frame angular velocity vector */
+    double omega_RN_B_old[3];   /*!< prior inertial reference frame angular velocity vector*/
+    double time_new;            /*!< current time value */
+    double time_old;            /*!< prior time value */
+    double counter;             /*!< counter for numerical differentiation */
 
     /* declare module IO interfaces */
-    SCStatesMsg_C SCInMsg;  //!< describe space craft states
-    GroundStateMsg_C LocationInMsg;  //!< ground state info
-    AttGuidMsg_C AttGuidOutMsg;  //!< output msg description
-    
+    SCStatesMsg_C scInMsg;                  //!< input msg with inertial spacecraft states
+    GroundStateMsg_C locationInMsg;         //!< input msg with location relative to planet
+    AttGuidMsg_C attGuidOutMsg;             //!< attitude guidance output message
 
     BSKLogger *bskLogger;  //!< BSK Logging
 }locationPointingConfig;

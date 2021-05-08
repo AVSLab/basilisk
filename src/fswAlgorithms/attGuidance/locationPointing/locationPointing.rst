@@ -1,6 +1,7 @@
 Executive Summary
 -----------------
-This module generates an attitude guidance message to make a specified spacecraft pointing vector target a location on a planet given the spacecraft and ground states.
+This module generates an attitude guidance message to make a specified spacecraft pointing vector target an inertial location.
+This location could be on a planet if this module is connected with :ref:`groundLocation` for example.  
 
 Message Connection Descriptions
 -------------------------------
@@ -16,15 +17,17 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - SCInMsg
+    * - scInMsg
       - :ref:`SCStatesMsgPayload`
-      - describe space craft states
+      - input msg with inertial spacecraft states 
     * - LocationInMsg
       - :ref:`GroundStateMsgPayload`
-      - ground state info
+      - input msg containing the inertial point location of interest
     * - AttGuidOutMsg
       - :ref:`AttGuidMsgPayload`
-      - attitude guidance data for control modules
+      - output message with the attitude guidance
+
+
 
 Detailed Module Description
 -------------------------------
