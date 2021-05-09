@@ -60,10 +60,9 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.locationInMsg was not connected.");
     }
 
-    configData->init = 2;
+    configData->init = 1;
 
     v3SetZero(configData->sigma_BR_old);
-    v3SetZero(configData->omega_RN_N_old);
     configData->time_old = callTime;
     
     /* compute an Eigen axis orthogonal to sHatBdyCmd */
@@ -107,8 +106,6 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     double phi;                         /*!< principal angle between pHat and heading to location */
     double sigmaDot_BR[3];              /*!< time derivative of sigma_BR*/
     double sigma_BR[3];                 /*!< MRP of B relative to R */
-    double omega_RN_N[3];               /*!< reference frame angular velocity relative to inertial frame, in N frame components */
-    double omegaDot_RN_N[3];            /*!< inertial derivative of inertial reference frame angular velocity */
     double difference[3];
     double time_diff;                   /*!< module update time */
     double Binv[3][3];                  /*!< BinvMRP for dsigma_RB_R calculations*/
@@ -152,17 +149,12 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     v3Copy(sigma_BR, attGuidOutMsgBuffer.sigma_BR);
     
     /* use sigma_BR to compute d(sigma_BR)/dt if at least two data points */
-    if (configData->init < 2) {
+    if (configData->init < 1) {
         // module update time
         time_diff = (callTime - configData->time_old)*NANO2SEC;
 
         // calculate d(sigma_BR)/dt
         v3Subtract(sigma_BR, configData->sigma_BR_old, difference);
-        /* check for MRP switching */
-        if (v3Norm(difference) > 0.3) {
-            MRPshadow(configData->sigma_BR_old, configData->sigma_BR_old);
-            v3Subtract(sigma_BR, configData->sigma_BR_old, difference);
-        }
         v3Scale(1.0/(time_diff), difference, sigmaDot_BR);
 
         // calculate BinvMRP
@@ -172,30 +164,13 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
         v3Scale(4.0, sigmaDot_BR, sigmaDot_BR);
         m33MultV3(Binv, sigmaDot_BR, attGuidOutMsgBuffer.omega_BR_B);
 
-        /* compute omega_BR_B (subtract as need omega_RB not omega_BR)*/
-        v3Subtract(scInMsgBuffer.omega_BN_B, attGuidOutMsgBuffer.omega_BR_B, attGuidOutMsgBuffer.omega_RN_B);
-           
-        // if performed finite diff twice, then have enough for domega
-        m33tMultV3(dcmBN, attGuidOutMsgBuffer.omega_RN_B, omega_RN_N);
-        if (configData->init < 1) {
-            // perform difference and compute reference angular acceleration
-            v3Subtract(omega_RN_N, configData->omega_RN_N_old, difference);
-            v3Scale(1. / (time_diff), difference, omegaDot_RN_N);
-            m33MultV3(dcmBN, omegaDot_RN_N, attGuidOutMsgBuffer.domega_RN_B);
-        } else {
-            configData->init -= 1;
-        }
-
-        // copy current reference angular rate
-        v3Copy(omega_RN_N, configData->omega_RN_N_old);
-
     } else {
         configData->init -= 1;
     }
 
     // copy current attitude states into prior state buffers
     v3Copy(sigma_BR, configData->sigma_BR_old);
-    
+
     // update former module call time
     configData->time_old = callTime;
 

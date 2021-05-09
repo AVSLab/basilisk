@@ -68,18 +68,6 @@ The tracking error rates :math:`{\pmb\omega}_{B/R}` are obtained through numeric
 MRP values.  During the first module ``Update`` evaluation the numerical differencing is not possible and
 this value is thus set to zero.
 
-The inertial reference frame rate is then given by
-
-.. math::
-
-    {\pmb\omega}_{R/N} = {\pmb\omega}_{B/N} - {\pmb\omega}_{B/R}
-
-The inertial reference frame is found by doing an numerical derivative of :math:`{\pmb\omega}_{R/N}`.
-The the first 2 ``Update`` evaluations the inertial acceleration cannot be determined and thus is
-set to zero.
-
-
-
 .. note::
 
     The module checks for several conditions such as heading vectors

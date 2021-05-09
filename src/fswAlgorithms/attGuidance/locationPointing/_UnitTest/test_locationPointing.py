@@ -55,6 +55,7 @@ def test_locationPointing(show_plots, r_LS_N, accuracy):
     Discuss the test parameters used.
 
     Args:
+        r_LS_N (float): position vector of location relative to spacecraft
         accuracy (float): absolute accuracy value used in the validation tests
 
     **Description of Variables Being Tested**
@@ -73,7 +74,8 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, accuracy):
     unitProcessName = "TestProcess"
 
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    testProcessRate = macros.sec2nano(0.5)
+    timeStep = 0.1
+    testProcessRate = macros.sec2nano(timeStep)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -124,14 +126,14 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, accuracy):
     unitTestSim.InitializeSimulation()
     counter = 0
     while counter < 3:
-        scAttInMsgData.sigma_BN = sigma_BN + omega_BN_B * 0.5 * counter * counter
+        scAttInMsgData.sigma_BN = sigma_BN + omega_BN_B * timeStep * counter
         scAttInMsg.write(scAttInMsgData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano(counter*0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano(counter*timeStep))
         unitTestSim.ExecuteSimulation()
         counter += 1
 
-    truthSigmaBR, truthOmegaBR, truthOmegaRN, truthdOmegaRN = \
-        truthValues(pHat_B, r_LN_N, r_SN_N, scAttRec.sigma_BN, scAttRec.omega_BN_B, eps)
+    truthSigmaBR, truthOmegaBR = \
+        truthValues(pHat_B, r_LN_N, r_SN_N, scAttRec.sigma_BN, eps, timeStep)
 
     # compare the module results to the truth values
     for i in range(0, len(truthSigmaBR)):
@@ -141,28 +143,13 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, accuracy):
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_BR unit test at t=" +
                                 str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
-
+    print(truthOmegaBR)
+    print(attGuidOutMsgRec.omega_BR_B)
     for i in range(0, len(truthOmegaBR)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(attGuidOutMsgRec.omega_BR_B[i], truthOmegaBR[i], 3, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_BR_B unit test at t=" +
-                                str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC) +
-                                "sec\n")
-    # moduleOutput = AttGuidOutMsgRec.omega_RN_B
-    for i in range(0, len(truthOmegaRN)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(attGuidOutMsgRec.omega_RN_B[i], truthOmegaRN[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_B unit test at t=" +
-                                str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC) +
-                                "sec\n")
-
-    for i in range(0, len(truthdOmegaRN)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(attGuidOutMsgRec.domega_RN_B[i], truthdOmegaRN[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed domega_RN_B unit test at t=" +
                                 str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
@@ -174,7 +161,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, accuracy):
     return [testFailCount, "".join(testMessages)]
 
 
-def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, omega_BN_BList, smallAngle):
+def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, smallAngle, dt):
     # setup eHat180_B
     eHat180_B = np.cross(pHat_B, np.array([1., 0., 0.]))
     if np.linalg.norm(eHat180_B) < 0.1:
@@ -185,15 +172,10 @@ def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, omega_BN_BList, smallAngle
 
     counter = 0
     omega_BR_B = np.array([0., 0., 0.])
-    omega_RN_B = np.array([0., 0., 0.])
-    domega_RN_B = np.array([0., 0., 0.])
     sigma_BR_Out = []
     omega_BR_B_Out = []
-    omega_RN_B_Out = []
-    domega_RN_B_Out = []
     while counter <= 2:
         sigma_BN = sigma_BNList[counter]
-        omega_BN_B = omega_BN_BList[counter]
         dcmBN = RigidBodyKinematics.MRP2C(sigma_BN)
         r_LS_B = dcmBN.dot(r_LS_N)
         phi = math.acos(pHat_B.dot(r_LS_B)/np.linalg.norm(r_LS_B))
@@ -208,31 +190,20 @@ def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, omega_BN_BList, smallAngle
             sigma_BR = - math.tan(phi / 4.) * eHat_B
 
         if counter >= 1:
-            dt = 0.5
             dsigma = (sigma_BR - sigma_BR_Out[counter-1]) / dt
+            print("dsigma: ", dsigma)
             Binv = RigidBodyKinematics.BinvMRP(sigma_BR)
             omega_BR_B = Binv.dot(dsigma) * 4
-
-            omega_RN_B = omega_BN_B - omega_BR_B
-
-            if counter >= 2:
-                omega_RN_N = dcmBN.transpose().dot(omega_RN_B)
-                domega_N = (omega_RN_N - omega_RN_N_old) / dt
-                domega_RN_B = dcmBN.dot(domega_N)
-
-            omega_RN_N_old = dcmBN.transpose().dot(omega_RN_B)
 
         # store truth results
         sigma_BR_Out.append(sigma_BR)
         omega_BR_B_Out.append(omega_BR_B)
-        omega_RN_B_Out.append(omega_RN_B)
-        domega_RN_B_Out.append(domega_RN_B)
 
         counter += 1
 
-    return sigma_BR_Out, omega_BR_B_Out, omega_RN_B_Out, domega_RN_B_Out
+    return sigma_BR_Out, omega_BR_B_Out
 
 if __name__ == "__main__":
-    locationPointingTestFunction(False, [0,-1,0], 1e-12)
+    locationPointingTestFunction(False, [0, 1, 0], 1e-12)
 
 

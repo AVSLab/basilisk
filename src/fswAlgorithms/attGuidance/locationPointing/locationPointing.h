@@ -39,7 +39,6 @@ typedef struct {
 
     /* private variables */
     double sigma_BR_old[3];     /*!< Older sigma_BR value, stored for finite diff*/
-    double omega_RN_N_old[3];   /*!< prior inertial reference frame angular velocity vector*/
     double time_old;            /*!< prior time value */
     double init;                /*!< moudle initialization counter */
     double eHat180_B[3];        /*!< -- Eigen axis to use if commanded axis is 180 from pHat */
