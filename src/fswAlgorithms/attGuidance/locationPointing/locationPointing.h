@@ -36,13 +36,12 @@ typedef struct {
     double pHat_B[3];           /*!< body fixed vector that is to be aimed at a location */
 
     /* private variables */
-    double sigma_RB_new[3];     /*!< Newest sigma_BR value, stored for finite diff*/
-    double sigma_RB_old[3];     /*!< Older sigma_BR value, stored for finite diff*/
-    double omega_RN_B_new[3];   /*!< current inertial reference frame angular velocity vector */
-    double omega_RN_B_old[3];   /*!< prior inertial reference frame angular velocity vector*/
-    double time_new;            /*!< current time value */
+    double sigma_BR_old[3];     /*!< Older sigma_BR value, stored for finite diff*/
+    double omega_RN_N_old[3];   /*!< prior inertial reference frame angular velocity vector*/
     double time_old;            /*!< prior time value */
-    double counter;             /*!< counter for numerical differentiation */
+    double init;                /*!< moudle initialization counter */
+    double smallAngle;          /*!< rad An angle value that specifies what is near 0 or 180 degrees */
+    double eHat180_B[3];        /*!< -- Eigen axis to use if commanded axis is 180 from pHat */
 
     /* declare module IO interfaces */
     SCStatesMsg_C scInMsg;                  //!< input msg with inertial spacecraft states

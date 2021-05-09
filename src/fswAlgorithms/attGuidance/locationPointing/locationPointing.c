@@ -23,6 +23,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <math.h>
 
 /*!
@@ -56,11 +57,29 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.LocationInMsg was not connected.");
     }
 
-    configData->counter = 1;
+    configData->init = 2;
 
-    v3SetZero(configData->sigma_RB_old);
-    v3SetZero(configData->omega_RN_B_old);
+    v3SetZero(configData->sigma_BR_old);
+    v3SetZero(configData->omega_RN_N_old);
     configData->time_old = callTime;
+    
+    /* compute an Eigen axis orthogonal to sHatBdyCmd */
+    if (v3Norm(configData->pHat_B)  < 0.1) {
+      char info[MAX_LOGGING_LENGTH];
+      sprintf(info, "locationPoint: vector pHat_B is not setup as a unit vector [%f, %f %f]",
+                configData->pHat_B[0], configData->pHat_B[1], configData->pHat_B[2]);
+      _bskLog(configData->bskLogger, BSK_ERROR, info);
+    } else {
+        double v1[3];
+        v3Set(1., 0., 0., v1);
+        v3Normalize(configData->pHat_B, configData->pHat_B);    /* ensure that this vector is a unit vector */
+        v3Cross(configData->pHat_B, v1, configData->eHat180_B);
+        if (v3Norm(configData->eHat180_B) < 0.1) {
+            v3Set(0., 1., 0., v1);
+            v3Cross(configData->pHat_B, v1, configData->eHat180_B);
+        }
+        v3Normalize(configData->eHat180_B, configData->eHat180_B);
+    }
 }
 
 
@@ -73,8 +92,8 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
 void Update_locationPointing(locationPointingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /* Local copies*/
-    SCStatesMsgPayload scInMsgBuffer;  //!< local copy of message buffer
-    GroundStateMsgPayload locationInMsgBuffer;  //!< local copy of message buffer
+    SCStatesMsgPayload scInMsgBuffer;  //!< local copy of input message buffer
+    GroundStateMsgPayload locationInMsgBuffer;  //!< local copy of input message buffer
     AttGuidMsgPayload attGuidOutMsgBuffer;  //!< local copy of output message buffer
 
     double r_LS_N[3];                   /*!< Position vector of location w.r.t spacecraft CoM in inertial frame */
@@ -82,11 +101,14 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     double eHat_B[3];                   /*!< --- Eigen Axis */
     double dcmBN[3][3];                 /*!< inertial spacecraft orientation DCM */
     double phi;                         /*!< principal angle between pHat and heading to location */
-    double sigma_RB_Dot[3];             /*!< time derivative of sigma_BR*/
-    double sigma_RB[3];                 /*!< MRP of R relative to B */
+    double sigma_BR_Dot[3];             /*!< time derivative of sigma_BR*/
+    double sigma_BR[3];                 /*!< MRP of B relative to R */
+    double omega_RN_N[3];               /*!< reference frame angular velocity relative to inertial frame, in N frame components */
+    double omegaDot_RN_N[3];            /*!< inertial derivative of inertial reference frame angular velocity */
     double difference[3];
     double time_diff;                   /*!< module update time */
-    double Bmat[3][3];                  /*!< BinvMRP for dsigma_RB_R calculations*/
+    double Binv[3][3];                  /*!< BinvMRP for dsigma_RB_R calculations*/
+    double dum1;
 
     // zero output buffer
     attGuidOutMsgBuffer = AttGuidMsg_C_zeroMsgPayload();
@@ -101,62 +123,76 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     /* principle rotation angle to point pHat at location */
     MRP2C(scInMsgBuffer.sigma_BN, dcmBN);
     m33MultV3(dcmBN, r_LS_N, r_LS_B);
-    phi = acos(v3Dot(configData->pHat_B, r_LS_N)/v3Norm(r_LS_N));
+    dum1 = v3Dot(configData->pHat_B, r_LS_B)/v3Norm(r_LS_B);
+    if (fabs(dum1) > 1.0) {
+        dum1 = dum1 / fabs(dum1);
+    }
+    phi = acos(dum1);
 
-    /* calculate eHat*/
-    v3Cross(configData->pHat_B, r_LS_N, eHat_B);
-    v3Normalize(eHat_B, eHat_B);
+    /* calculate sigma_BR */
+    if (phi < configData->smallAngle) {
+        /* sun heading and desired body axis are essentially aligned.  Set attitude error to zero. */
+         v3SetZero(sigma_BR);
+    } else {
+        if (M_PI - phi < configData->smallAngle) {
+            /* the commanded body vector nearly is opposite the sun heading */
+            v3Copy(configData->eHat180_B, eHat_B);
+        } else {
+            /* normal case where sun and commanded body vectors are not aligned */
+            v3Cross(configData->pHat_B, r_LS_B, eHat_B);
+        }
+        v3Normalize(eHat_B, eHat_B);
+        v3Scale(-tan(phi / 4.), eHat_B, sigma_BR);
+    }
+    v3Copy(sigma_BR, attGuidOutMsgBuffer.sigma_BR);
+    
+    /* use sigma_BR to compute d(sigma_BR)/dt if at least two data points */
+    if (configData->init < 2) {
+        // module update time
+        time_diff = (callTime - configData->time_old)*NANO2SEC;
 
-
-    /* can calculate sigma now*/
-    v3Scale(tan(phi / 4), eHat_B, sigma_RB);
-    v3Scale(-1, sigma_RB, attGuidOutMsgBuffer.sigma_BR);
-
-    /* use sigma_BR to compute dsigma_BR if at least two data points*/
-        /* counter keeps track of how many update cycles have run, need 2 for dsigma_BR and 4 for domega_RN_B*/
-    if (configData->counter >= 2) {
-        // update values for accurate finite diff
-        v3Copy(configData->sigma_RB_new, configData->sigma_RB_old);
-        v3Copy(sigma_RB, configData->sigma_RB_new);
-
-        // get time data
-        configData->time_old = configData->time_new;
-        configData->time_new = callTime;
-            // converted to seconds
-        time_diff = (configData->time_new - configData->time_old)*1.0e-9;
-
-        // assume difference is known - calculate dsigma_BR
-        v3Subtract(configData->sigma_RB_new, configData->sigma_RB_old, difference);
-        v3Scale(1/(time_diff), difference, sigma_RB_Dot);
+        // calculate d(sigma_BR)/dt
+        v3Subtract(sigma_BR, configData->sigma_BR_old, difference);
+        /* check for MRP switching */
+        if (v3Norm(difference) > 0.3) {
+            MRPswitch(configData->sigma_BR_old, 1.0, configData->sigma_BR_old);
+            v3Subtract(sigma_BR, configData->sigma_BR_old, difference);
+        }
+        v3Scale(1.0/(time_diff), difference, sigma_BR_Dot);
 
         // calculate BinvMRP
-        BinvMRP(sigma_RB, Bmat);
+        BinvMRP(sigma_BR, Binv);
         
-        // compute omega_BR_R
-        v3Scale(4, sigma_RB_Dot, sigma_RB_Dot);
-        m33MultV3(Bmat, sigma_RB_Dot, attGuidOutMsgBuffer.omega_BR_B);
+        // compute omega_BR_B
+        v3Scale(4.0, sigma_BR_Dot, sigma_BR_Dot);
+        m33MultV3(Binv, sigma_BR_Dot, attGuidOutMsgBuffer.omega_BR_B);
 
-        /* compute omega_RN_B (subtract as need omega_RB not omega_BR)*/
+        /* compute omega_BR_B (subtract as need omega_RB not omega_BR)*/
         v3Subtract(scInMsgBuffer.omega_BN_B, attGuidOutMsgBuffer.omega_BR_B, attGuidOutMsgBuffer.omega_RN_B);
            
         // if performed finite diff twice, then have enough for domega
-        if (configData->counter >= 4) {
-            // update time dependent data
-//            configData->omega_RN_B_old = configData->omega_RN_B_new;
-//            configData->omega_RN_B_new = attGuidOutMsgBuffer.omega_RN_B;
-//
-//            // perform difference and compute finite diff
-//            v3Subtract(omega_RN_B_new, omega_RN_B_old, difference);
-//            v3Scale(1. / (time_diff), difference, attGuidOutMsgBuffer.domega_RN_B);
-
+        m33tMultV3(dcmBN, attGuidOutMsgBuffer.omega_RN_B, omega_RN_N);
+        if (configData->init < 1) {
+            // perform difference and compute reference angular acceleration
+            v3Subtract(omega_RN_N, configData->omega_RN_N_old, difference);
+            v3Scale(1. / (time_diff), difference, omegaDot_RN_N);
+            m33MultV3(dcmBN, omegaDot_RN_N, attGuidOutMsgBuffer.domega_RN_B);
+        } else {
+            configData->init -= 1;
         }
+
+        // copy current reference angular rate
+        v3Copy(omega_RN_N, configData->omega_RN_N_old);
+
+    } else {
+        configData->init -= 1;
     }
 
-    // update counter and data buffers
-    configData->counter++;
-    v3Copy(configData->sigma_RB_old, attGuidOutMsgBuffer.sigma_BR);
-    v3Copy(configData->omega_RN_B_old, attGuidOutMsgBuffer.omega_RN_B);
-    configData->time_new = callTime;
+    // copy current attitude states into prior state buffers
+    v3Copy(sigma_BR, configData->sigma_BR_old);
+    
+    // update former module call time
+    configData->time_old = callTime;
 
     // write to the output messages
     AttGuidMsg_C_write(&attGuidOutMsgBuffer, &configData->attGuidOutMsg, moduleID, callTime);
