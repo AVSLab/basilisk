@@ -143,8 +143,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, accuracy):
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_BR unit test at t=" +
                                 str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
-    print(truthOmegaBR)
-    print(attGuidOutMsgRec.omega_BR_B)
+
     for i in range(0, len(truthOmegaBR)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(attGuidOutMsgRec.omega_BR_B[i], truthOmegaBR[i], 3, accuracy):
@@ -191,7 +190,6 @@ def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, smallAngle, dt):
 
         if counter >= 1:
             dsigma = (sigma_BR - sigma_BR_Out[counter-1]) / dt
-            print("dsigma: ", dsigma)
             Binv = RigidBodyKinematics.BinvMRP(sigma_BR)
             omega_BR_B = Binv.dot(dsigma) * 4
 
