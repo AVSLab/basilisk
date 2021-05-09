@@ -50,11 +50,14 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
 {
 
     // check if the required message has not been connected
-    if (!SCStatesMsg_C_isLinked(&configData->scInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.SCInMsg was not connected.");
+    if (!NavAttMsg_C_isLinked(&configData->scAttInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.scAttInMsg was not connected.");
+    }
+    if (!NavTransMsg_C_isLinked(&configData->scTransInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.scTransInMsg was not connected.");
     }
     if (!GroundStateMsg_C_isLinked(&configData->locationInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.LocationInMsg was not connected.");
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.locationInMsg was not connected.");
     }
 
     configData->init = 2;
@@ -92,7 +95,8 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
 void Update_locationPointing(locationPointingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /* Local copies*/
-    SCStatesMsgPayload scInMsgBuffer;  //!< local copy of input message buffer
+    NavAttMsgPayload scAttInMsgBuffer;  //!< local copy of input message buffer
+    NavTransMsgPayload scTransInMsgBuffer;  //!< local copy of input message buffer
     GroundStateMsgPayload locationInMsgBuffer;  //!< local copy of input message buffer
     AttGuidMsgPayload attGuidOutMsgBuffer;  //!< local copy of output message buffer
 
@@ -101,7 +105,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     double eHat_B[3];                   /*!< --- Eigen Axis */
     double dcmBN[3][3];                 /*!< inertial spacecraft orientation DCM */
     double phi;                         /*!< principal angle between pHat and heading to location */
-    double sigma_BR_Dot[3];             /*!< time derivative of sigma_BR*/
+    double sigmaDot_BR[3];              /*!< time derivative of sigma_BR*/
     double sigma_BR[3];                 /*!< MRP of B relative to R */
     double omega_RN_N[3];               /*!< reference frame angular velocity relative to inertial frame, in N frame components */
     double omegaDot_RN_N[3];            /*!< inertial derivative of inertial reference frame angular velocity */
@@ -114,14 +118,15 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     attGuidOutMsgBuffer = AttGuidMsg_C_zeroMsgPayload();
 
     // read in the input messages
-    scInMsgBuffer = SCStatesMsg_C_read(&configData->scInMsg);
+    scAttInMsgBuffer = NavAttMsg_C_read(&configData->scAttInMsg);
+    scTransInMsgBuffer = NavTransMsg_C_read(&configData->scTransInMsg);
     locationInMsgBuffer = GroundStateMsg_C_read(&configData->locationInMsg);
 
     /* calculate r_LS_N*/
-    v3Subtract(locationInMsgBuffer.r_LN_N, scInMsgBuffer.r_CN_N, r_LS_N);
+    v3Subtract(locationInMsgBuffer.r_LN_N, scTransInMsgBuffer.r_BN_N, r_LS_N);
 
     /* principle rotation angle to point pHat at location */
-    MRP2C(scInMsgBuffer.sigma_BN, dcmBN);
+    MRP2C(scAttInMsgBuffer.sigma_BN, dcmBN);
     m33MultV3(dcmBN, r_LS_N, r_LS_B);
     dum1 = v3Dot(configData->pHat_B, r_LS_B)/v3Norm(r_LS_B);
     if (fabs(dum1) > 1.0) {
@@ -155,17 +160,17 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
         v3Subtract(sigma_BR, configData->sigma_BR_old, difference);
         /* check for MRP switching */
         if (v3Norm(difference) > 0.3) {
-            MRPswitch(configData->sigma_BR_old, 1.0, configData->sigma_BR_old);
+            MRPshadow(configData->sigma_BR_old, configData->sigma_BR_old);
             v3Subtract(sigma_BR, configData->sigma_BR_old, difference);
         }
-        v3Scale(1.0/(time_diff), difference, sigma_BR_Dot);
+        v3Scale(1.0/(time_diff), difference, sigmaDot_BR);
 
         // calculate BinvMRP
         BinvMRP(sigma_BR, Binv);
         
         // compute omega_BR_B
-        v3Scale(4.0, sigma_BR_Dot, sigma_BR_Dot);
-        m33MultV3(Binv, sigma_BR_Dot, attGuidOutMsgBuffer.omega_BR_B);
+        v3Scale(4.0, sigmaDot_BR, sigmaDot_BR);
+        m33MultV3(Binv, sigmaDot_BR, attGuidOutMsgBuffer.omega_BR_B);
 
         /* compute omega_BR_B (subtract as need omega_RB not omega_BR)*/
         v3Subtract(scInMsgBuffer.omega_BN_B, attGuidOutMsgBuffer.omega_BR_B, attGuidOutMsgBuffer.omega_RN_B);

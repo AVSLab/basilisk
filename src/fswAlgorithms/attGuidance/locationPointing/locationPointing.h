@@ -22,7 +22,8 @@
 #define LOCATIONPOINTING_H
 
 #include <stdint.h>
-#include "cMsgCInterface/SCStatesMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/GroundStateMsg_C.h"
 #include "cMsgCInterface/AttGuidMsg_C.h"
 #include "cMsgCInterface/EphemerisMsg_C.h"
@@ -44,7 +45,8 @@ typedef struct {
     double eHat180_B[3];        /*!< -- Eigen axis to use if commanded axis is 180 from pHat */
 
     /* declare module IO interfaces */
-    SCStatesMsg_C scInMsg;                  //!< input msg with inertial spacecraft states
+    NavAttMsg_C scAttInMsg;                 //!< input msg with inertial spacecraft attitude states
+    NavTransMsg_C scTransInMsg;                 //!< input msg with inertial spacecraft attitude states
     GroundStateMsg_C locationInMsg;         //!< input msg with location relative to planet
     AttGuidMsg_C attGuidOutMsg;             //!< attitude guidance output message
 

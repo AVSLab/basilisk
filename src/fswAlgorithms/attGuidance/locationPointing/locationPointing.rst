@@ -17,9 +17,12 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - scInMsg
-      - :ref:`SCStatesMsgPayload`
-      - input msg with inertial spacecraft states 
+    * - scAttInMsg
+      - :ref:`NavAttMsgPayload`
+      - input msg with inertial spacecraft attitude states
+    * - scTransInMsg
+      - :ref:`NavTransMsgPayload`
+      - input msg with inertial spacecraft translational states
     * - LocationInMsg
       - :ref:`GroundStateMsgPayload`
       - input msg containing the inertial point location of interest

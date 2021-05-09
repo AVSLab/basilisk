@@ -95,39 +95,43 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, accuracy):
     moduleConfig.smallAngle = eps
 
     # Configure input messages
-    scInMsgData = messaging.SCStatesMsgPayload()
-    scInMsgData.r_CN_N = r_SN_N
-    scInMsgData.omega_BN_B = omega_BN_B
-    scInMsgData.sigma_BN = sigma_BN
-    scInMsg = messaging.SCStatesMsg().write(scInMsgData)
+    scTransInMsgData = messaging.NavTransMsgPayload()
+    scTransInMsgData.r_BN_N = r_SN_N
+    scTransInMsg = messaging.NavTransMsg().write(scTransInMsgData)
+    scAttInMsgData = messaging.NavAttMsgPayload()
+    scAttInMsgData.omega_BN_B = omega_BN_B
+    scAttInMsgData.sigma_BN = sigma_BN
+    scAttInMsg = messaging.NavAttMsg().write(scAttInMsgData)
 
     locationInMsgData = messaging.GroundStateMsgPayload()
     locationInMsgData.r_LN_N = r_LN_N
     locationInMsg = messaging.GroundStateMsg().write(locationInMsgData)
 
     # subscribe input messages to module
-    moduleConfig.scInMsg.subscribeTo(scInMsg)
+    moduleConfig.scTransInMsg.subscribeTo(scTransInMsg)
+    moduleConfig.scAttInMsg.subscribeTo(scAttInMsg)
     moduleConfig.locationInMsg.subscribeTo(locationInMsg)
 
     # setup output message recorder objects
     attGuidOutMsgRec = moduleConfig.attGuidOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, attGuidOutMsgRec)
-    scRec = scInMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, scRec)
-
+    scTransRec = scTransInMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, scTransRec)
+    scAttRec = scAttInMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, scAttRec)
 
     # setup and execute simulation
     unitTestSim.InitializeSimulation()
     counter = 0
     while counter < 3:
-        scInMsgData.sigma_BN = sigma_BN + omega_BN_B * 0.5 * counter * counter
-        scInMsg.write(scInMsgData)
+        scAttInMsgData.sigma_BN = sigma_BN + omega_BN_B * 0.5 * counter * counter
+        scAttInMsg.write(scAttInMsgData)
         unitTestSim.ConfigureStopTime(macros.sec2nano(counter*0.5))
         unitTestSim.ExecuteSimulation()
         counter += 1
 
     truthSigmaBR, truthOmegaBR, truthOmegaRN, truthdOmegaRN = \
-        truthValues(pHat_B, r_LN_N, r_SN_N, scRec.sigma_BN, scRec.omega_BN_B, eps)
+        truthValues(pHat_B, r_LN_N, r_SN_N, scAttRec.sigma_BN, scAttRec.omega_BN_B, eps)
 
     # compare the module results to the truth values
     for i in range(0, len(truthSigmaBR)):

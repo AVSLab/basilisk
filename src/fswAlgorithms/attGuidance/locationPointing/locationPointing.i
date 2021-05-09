@@ -35,8 +35,10 @@
 
 %include "locationPointing.h"
 
-%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavTransMsg_C;
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
 %include "architecture/msgPayloadDefC/GroundStateMsgPayload.h"
 struct GroundStateMsg_C;
 %include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
