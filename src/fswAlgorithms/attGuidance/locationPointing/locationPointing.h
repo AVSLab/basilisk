@@ -34,13 +34,13 @@ typedef struct {
 
     /* user configurable variables */
     double pHat_B[3];           /*!< body fixed vector that is to be aimed at a location */
+    double smallAngle;          /*!< rad An angle value that specifies what is near 0 or 180 degrees */
 
     /* private variables */
     double sigma_BR_old[3];     /*!< Older sigma_BR value, stored for finite diff*/
     double omega_RN_N_old[3];   /*!< prior inertial reference frame angular velocity vector*/
     double time_old;            /*!< prior time value */
     double init;                /*!< moudle initialization counter */
-    double smallAngle;          /*!< rad An angle value that specifies what is near 0 or 180 degrees */
     double eHat180_B[3];        /*!< -- Eigen axis to use if commanded axis is 180 from pHat */
 
     /* declare module IO interfaces */
