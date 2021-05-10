@@ -38,9 +38,14 @@ Version |release|
 - new :ref:`locationPointing` module to do 2-axis attitude control which aligns a body-fixed vector to a
   desired inertial location
 - new :ref:`scenarioAttLocPoint` example script how to point a spacecraft body axis towards Boulder
+- new integrated scenario in :ref:`scenarioAttitudeConstraintViolation`. Shows how to use the :ref:`boreAngCalc` to
+  display keep-in and keep-out constraint violations while performing slew maneuvers.
 - updated :ref:`inertial3DSpin` to make the attitude input message optional, updated documentation to be RST only
   and more descriptive of the associated math, and changed the module variable ``omega_spin`` to ``omega_RR0_R0``
 - enables the message ``recorder()`` module to function if the message structure contains structures itself.
+- make the build system compatible with Python 3.8 and higher on Windows
+- fixed custom RW support method in ``simIncludeRW.py``
+- fixed new C++20 related compiler warnings
 
 Version 2.0.2
 -------------
@@ -164,13 +169,13 @@ Version 1.8.10
 - Added support and expanded installation instructions making use of virtual environments
 
 Version 1.8.9
--------------
+
 - Added support for ``Location`` scripting in Vizard 1.7.1
 - Added a new documentation page discussing how to launch Vizard from the command line
   and what optional arguments are available
 
 Version 1.8.8
--------------
+
 - The protobuffer interface files are now automatically created from
   ``src/utilities/vizProtobuffer/vizMessage.proto`` without having to manually run the
   ``protoc`` command each time the protobuffer message definitions changed.
@@ -182,7 +187,7 @@ Version 1.8.8
 - Added scripting support for Vizard 1.7.0
 
 Version 1.8.7
--------------
+
 - Updated ``orbitalMotion`` python and C libraries to include the new methods ``hillFrame()``, ``hill2rv()`` and ``rv2hill()``
 - Updated :ref:`dualHingedRigidBodyStateEffector` to support an output message of the panel angular states, an output message of the panel inertial position and attitude states, as well as upgrading the module to support ``spacecraftDynamics``.
 - Updated :ref:`vizInterface` to support scripting of new Vizard 1.6.1 features
