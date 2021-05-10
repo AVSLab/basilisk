@@ -133,14 +133,14 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
 
     /* calculate sigma_BR */
     if (phi < configData->smallAngle) {
-        /* sun heading and desired body axis are essentially aligned.  Set attitude error to zero. */
+        /* body axis and desired inertial pointing direction are essentially aligned.  Set attitude error to zero. */
          v3SetZero(sigma_BR);
     } else {
         if (M_PI - phi < configData->smallAngle) {
-            /* the commanded body vector nearly is opposite the sun heading */
+            /* the commanded body vector nearly is opposite the desired inertial heading */
             v3Copy(configData->eHat180_B, eHat_B);
         } else {
-            /* normal case where sun and commanded body vectors are not aligned */
+            /* normal case where body and inertial heading vectors are not aligned */
             v3Cross(configData->pHat_B, r_LS_B, eHat_B);
         }
         v3Normalize(eHat_B, eHat_B);
