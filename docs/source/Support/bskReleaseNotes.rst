@@ -33,6 +33,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 2.0.3
+-------------
 - new integrated scenario in :ref:`scenarioAttitudeConstraintViolation`. Shows how to use the :ref:`boreAngCalc` to display keep-in and keep-out constraint violations while
   performing slew maneuvers.
 - new :ref:`locationPointing` module to do 2-axis attitude control which aligns a body-fixed vector to a
