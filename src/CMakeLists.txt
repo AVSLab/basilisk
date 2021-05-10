@@ -129,7 +129,7 @@ include_directories("${CMAKE_SOURCE_DIR}/../dist3/autoSource")
 include_directories("${CMAKE_SOURCE_DIR}")
 
 
-function(generate_package_libraries INIT_DIRECTORY)
+function(generate_package_libraries INIT_DIRECTORY AllLibs)
     # Find all _GeneralModuleFiles and put them into library targets so they aren't rewrapped, built with every module.
 
     # Find all _GeneralModuleFiles directories
@@ -162,6 +162,9 @@ function(generate_package_libraries INIT_DIRECTORY)
         # Add Target
         add_library(${LIB_NAME} SHARED ${C_FILES} ${BSK_FWK_FILES})
 
+        #Add to list of library
+        list(APPEND AllLibs ${LIB_NAME})
+
         # Link all necessary libraries
         target_link_libraries(${LIB_NAME} ArchitectureUtilities)
         target_link_libraries(${LIB_NAME} ModuleIdGenerator)
@@ -186,6 +189,7 @@ function(generate_package_libraries INIT_DIRECTORY)
         set_target_properties(${LIB_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
         set_target_properties(${LIB_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
     endforeach()
+    set(AllLibs ${AllLibs} PARENT_SCOPE) 
 endfunction(generate_package_libraries)
 
 function(find_package_targets PKG_DIR ALL_TARGET_LIST)
@@ -516,7 +520,8 @@ add_subdirectory("architecture/messaging/cMsgCInterface")
 
 # TODO: I'd call this generate_libraries(), because it really does find all of them.
 # TODO: I'd like for all generated libraries to end up in a dist/Basilisk/lib folder rather than the /dist/Basilisk folder; however haven't found a way to use target_link_libraries() in a cross platform way to support this (needs full path and custom extensions --.dylib, .lib, .a, etc -- which gets messy in CMake).
-generate_package_libraries("${CMAKE_SOURCE_DIR}") # This finds GeneralModuleFiles and generates a library of the parentDirectory name
+set(AllLibs "")
+generate_package_libraries("${CMAKE_SOURCE_DIR}" "${AllLibs}") # This finds GeneralModuleFiles and generates a library of the parentDirectory name
 
 set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities ModuleIdGenerator cMsgCInterface)
 
@@ -545,11 +550,9 @@ if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 	include_directories("${EXTERNAL_MODULES_PATH}")
 	find_package_targets("${EXTERNAL_MODULES_PATH}" EXTERNAL_MODULE_TARGETS)
 	if(EXISTS "${EXTERNAL_MODULES_PATH}/ExternalModules/_GeneralModuleFiles")
-		generate_package_libraries("${EXTERNAL_MODULES_PATH}")
-		generate_package_targets("${EXTERNAL_MODULE_TARGETS}" "ExternalModulesLib;${ARCHITECTURE_LIBS};" "ExternalModules")
-	else()
-		generate_package_targets("${EXTERNAL_MODULE_TARGETS}" "${ARCHITECTURE_LIBS};" "ExternalModules")
+		generate_package_libraries("${EXTERNAL_MODULES_PATH}" "${AllLibs}")
 	endif()
+	generate_package_targets("${EXTERNAL_MODULE_TARGETS}" "${AllLibs}" "ExternalModules")
 endif(NOT "${EXTERNAL_MODULE_PATH}" STREQUAL "")
 
 generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation") # The quotations around DYN_TARGETS informs function that it is a list
@@ -637,7 +640,16 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/simulation")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
 
-file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#empty init file written by the build")
+if(WIN32 AND (PYTHON_VERSION GREATER 3.7))
+	file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#init file written by the build\n"
+                                                           "import sys, os\n"
+                                                           "from Basilisk import __path__\n"
+                                                           "bskPath = __path__[0]\n"
+                                                           "os.add_dll_directory(bskPath)\n")
+else()
+	file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#empty init file written by the build")
+endif()
+
 
 #TODO: Iterate through all dist directories and add __init__.py's where they don't exist
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")

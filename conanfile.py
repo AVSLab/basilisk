@@ -209,12 +209,7 @@ class BasiliskConan(ConanFile):
             self.copy("*.dll", "../Basilisk", "bin")
 
     def generateMessageModules(self, originalWorkingDirectory):
-        cmdString = list()
-        if platform.system() == "Windows":
-            cmdString.append("python")
-        else:
-            cmdString.append("python3")
-        cmdString.append("GenCMessages.py")
+        cmdString = [sys.executable, "GenCMessages.py"]
         if self.options.pathToExternalModules:
             cmdString.extend(["--pathToExternalModules", str(self.options.pathToExternalModules)])
         subprocess.check_call(cmdString)
@@ -250,10 +245,11 @@ class BasiliskConan(ConanFile):
         cmake.definitions["BUILD_OPNAV"] = self.options.opNav
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
         cmake.definitions["EXTERNAL_MODULES_PATH"] = self.options.pathToExternalModules
+        cmake.definitions["PYTHON_VERSION"] = sys.version_info.major + 0.1*sys.version_info.minor
         cmake.parallel = True
         print(statusColor + "Configuring cmake..." + endColor)
         cmake.configure()
-        add_basilisk_to_sys_path()
+        self.add_basilisk_to_sys_path()
         if self.options.buildProject:
             print(statusColor + "\nCompiling Basilisk..." + endColor)
             start = datetime.now()
@@ -274,18 +270,19 @@ class BasiliskConan(ConanFile):
                       f"`make -j <number of threads to use>`{endColor}")
         return
 
-def add_basilisk_to_sys_path():
-    print("Adding Basilisk module to python\n")
-    add_basilisk_module_command = [sys.executable, "setup.py", "develop"]
-    if not is_running_virtual_env():
-        add_basilisk_module_command.append("--user")
+    def add_basilisk_to_sys_path(self):
+        print("Adding Basilisk module to python\n")
+        add_basilisk_module_command = [sys.executable, "setup.py", "develop"]
+        if not is_running_virtual_env() and self.options.autoKey != 's':
+            add_basilisk_module_command.append("--user")
 
-    process = subprocess.Popen(add_basilisk_module_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output, err = process.communicate()
-    if err:
-        print("Error %s while running %s" % (err, add_basilisk_module_command))
-    else:
-        print("This resulted in the output: \n%s" % output.decode())
+        process = subprocess.Popen(add_basilisk_module_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, err = process.communicate()
+        if err:
+            print("Error %s while running %s" % (err.decode(), add_basilisk_module_command))
+            sys.exit(1)
+        else:
+            print("This resulted in the output: \n%s" % output.decode())
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Configure the Basilisk framework.")
