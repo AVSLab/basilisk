@@ -31,7 +31,7 @@
  thruster.  It holds the current operational data for the thruster, the
  ramp/max/min configuration data, and the physical location/orientation data for
  a thruster.*/
-typedef struct THRSimConfigMsgPayload_Def {
+typedef struct THRSimConfigMsgPayload {
     Eigen::Vector3d thrLoc_B;                       //!< [m] Thruster location expressed in body
     Eigen::Vector3d thrDir_B;                       //!< [-] Thruster force direction unit vector in body
     std::vector<THRTimePairMsgPayload> ThrusterOnRamp;  //!< -- Percentage of max thrust for ramp up

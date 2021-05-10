@@ -24,7 +24,7 @@
 
 /*! This structure is used in the messaging system to communicate what the
  state of the vehicle is currently.*/
-typedef struct THROutputMsgPayload_Def {
+typedef struct THROutputMsgPayload {
     double maxThrust;                    //!< N  Steady state thrust of thruster
     double thrustFactor;                 //!< -- Current Thrust Percentage
     double thrustForce = 0;              //!< N Thrust force magnitude

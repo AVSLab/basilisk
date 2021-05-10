@@ -21,13 +21,13 @@
 
 
 /*! Structure to store that status of a Basilisk message being read in by ``vizInterface``. */
-typedef struct MsgCurrStatus_Def {
+typedef struct MsgCurrStatus {
     uint64_t lastTimeTag = 0xFFFFFFFFFFFFFFFF;  //!< [ns] The previous read time-tag for msg
     bool dataFresh = false;                     //!< [-] Flag indicating that new data has been read
 }MsgCurrStatus;
 
 /*! Structure to store a thruster group information. */
-typedef struct ThrClusterMap_Def {
+typedef struct ThrClusterMap {
     std::string thrTag;   //!< [-] ModelTag associated with the thruster grouping
     int color[4] = {-1};  //!< [-] RGBA thruster plume color for all thrusters in this group
 }ThrClusterMap;
@@ -60,7 +60,7 @@ typedef struct {
 /*! Vizard setting structure to define a standard Vizard camera.  These can be assigned to
     any spacecraft and set to point at either another object, or to point in a body-fixed direction.
 */
-typedef struct StdCameraSettings_Def {
+typedef struct StdCameraSettings {
     std::string spacecraftName; //!< name of spacecraft onto which to place a camera
     int setMode=1;              //!< 0 -> body targeting, 1 -> pointing vector (default)
     double fieldOfView=-1;      //!< [rad], field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
@@ -72,7 +72,7 @@ typedef struct StdCameraSettings_Def {
 
 /*! Vizard User Interface structure specifying what actuator visualizations to show.
 */
-typedef struct ActuatorGuiSettings_Def {
+typedef struct ActuatorGuiSettings {
     std::string spacecraftName;     /*!< Specify which spacecraft should show actuator information.
                                          If not provided then the ``viz.spacecraftName`` is used. */
     int viewThrusterPanel=0;       //!< [bool] should thruster panel illustration be shown, -1 (off), 0 (default), 1 (on)
@@ -85,7 +85,7 @@ typedef struct ActuatorGuiSettings_Def {
 
 /*! Vizard User Interface structure InstrumentGuiSettings InstrumentGuiSettings specify what instrument visualizations to show
  */
-typedef struct InstrumentGuiSettings_Def {
+typedef struct InstrumentGuiSettings {
     std::string spacecraftName;     /*!< Specify which spacecraft should show actuator information.
                                          If not provided then the ``viz.spacecraftName`` is used. */
     int viewCSSPanel=0;             //!< [bool] should CSS panel illustration be shown, -1 (off), 0 (default), 1 (on)
@@ -96,7 +96,7 @@ typedef struct InstrumentGuiSettings_Def {
 
 /*! Structure defining a custom CAD model to load to represent a simulation object.
 */
-typedef struct CustomModel_Def {
+typedef struct CustomModel {
     std::string modelPath;                  //!< Path to model obj -OR- ``CUBE``, ``CYLINDER``, or ``SPHERE`` to use a primitive shape
     std::vector<std::string> simBodiesToModify; //!< Which bodies in scene to replace with this model, use ``ALL_SPACECRAFT`` to apply custom model to all spacecraft in simulation
     double offset[3];                       //!< [m] offset to use to draw the model
@@ -109,7 +109,7 @@ typedef struct CustomModel_Def {
 
 /*! Structure defining ground location information
  */
-typedef struct LocationPbMsg_Def {
+typedef struct LocationPbMsg {
     std::string stationName;                   //!< ground location text label
     std::string parentBodyName;         //!< name of the parent planet body P on which the ground location G is positioned
     double r_GP_P[3];                   //!< [m] Position of location G relative to planet frame P
@@ -121,7 +121,7 @@ typedef struct LocationPbMsg_Def {
 
 /*! Defines a data structure for the spacecraft state messages and ID's.
  */
-typedef struct VizSpacecraftData_Def {
+typedef struct VizSpacecraftData {
     std::string spacecraftName = "bsk-Sat";                     //!< [-] Name of the spacecraft.
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;               //!< [-] msg of incoming spacecraft data
     MsgCurrStatus scStateInMsgStatus;                           //!< [-] (Private) status of the incoming spacecraft  data message
@@ -151,7 +151,7 @@ typedef struct VizSpacecraftData_Def {
 
 /*! Structure defining various Vizard options
 */
-typedef struct VizSettings_Def {
+typedef struct VizSettings {
     double      ambient = -1.0;                     /*!< [-] Ambient background lighting. Should be a value between 0 and 8.
                                                              A value of -1 means it is not set. */
     int32_t     orbitLinesOn = 0;                  //!< Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
