@@ -13,7 +13,8 @@ Version 2.0.2
 -------------
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
   The code compiles, but auto-completion etc. doesn't work in that module.
-- On Windows, using Python 3.8 or higher resulting in Basilisk path not be recognized.
+- On Windows, using Python 3.8 or higher resulted in Basilisk paths not being recognized due to a chance with how
+  Python resolves paths on Windows.  This is fixed in the next release.
 
 Version 2.0.1
 -------------
