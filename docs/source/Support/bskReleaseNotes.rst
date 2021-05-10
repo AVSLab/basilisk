@@ -169,13 +169,13 @@ Version 1.8.10
 - Added support and expanded installation instructions making use of virtual environments
 
 Version 1.8.9
--------------
+
 - Added support for ``Location`` scripting in Vizard 1.7.1
 - Added a new documentation page discussing how to launch Vizard from the command line
   and what optional arguments are available
 
 Version 1.8.8
--------------
+
 - The protobuffer interface files are now automatically created from
   ``src/utilities/vizProtobuffer/vizMessage.proto`` without having to manually run the
   ``protoc`` command each time the protobuffer message definitions changed.
@@ -187,7 +187,7 @@ Version 1.8.8
 - Added scripting support for Vizard 1.7.0
 
 Version 1.8.7
--------------
+
 - Updated ``orbitalMotion`` python and C libraries to include the new methods ``hillFrame()``, ``hill2rv()`` and ``rv2hill()``
 - Updated :ref:`dualHingedRigidBodyStateEffector` to support an output message of the panel angular states, an output message of the panel inertial position and attitude states, as well as upgrading the module to support ``spacecraftDynamics``.
 - Updated :ref:`vizInterface` to support scripting of new Vizard 1.6.1 features
