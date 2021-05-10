@@ -29,7 +29,11 @@ enum VSCMGModels { vscmgBalancedWheels, vscmgJitterSimple, vscmgJitterFullyCoupl
 
 
 /*! @brief Structure used to define the individual VSCMG configuration data message*/
-typedef struct VSCMGConfigMsgPayload {
+typedef struct
+//@cond DOXYGEN_IGNORE
+VSCMGConfigMsgPayload
+//@endcond
+{
 	VSCMGModels VSCMGModel;     //!< [-], Type of imbalance model to use
 	Eigen::Vector3d rGB_B;		//!< [m], position vector of the VSCMG relative to the spacecraft body frame
 	Eigen::Vector3d gsHat0_B;   //!< module variable

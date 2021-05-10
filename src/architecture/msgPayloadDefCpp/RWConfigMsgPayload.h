@@ -25,7 +25,11 @@
 
 
 /*! @brief Structure used to define the individual RW configuration data message*/
-typedef struct RWConfigMsgPayload {
+typedef struct
+//@cond DOXYGEN_IGNORE
+RWConfigMsgPayload
+//@endcond
+{
     Eigen::Vector3d rWB_B;      //!< [m], position vector of the RW relative to the spacecraft body frame
     Eigen::Vector3d gsHat_B;    //!< [-] spin axis unit vector in body frame
     Eigen::Vector3d w2Hat0_B;   //!< [-] initial torque axis unit vector in body frame

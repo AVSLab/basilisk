@@ -27,7 +27,11 @@
 /*! This structure is used to determine the current state of a given thruster.
  It defines where in the cycle the thruster is and how much longer it should be
  on for.  It is intended to have the previous firing remain resident for logging*/
-typedef struct THROperationMsgPayload {
+typedef struct
+//@cond DOXYGEN_IGNORE
+THROperationMsgPayload
+//@endcond
+{
     uint64_t fireCounter;                //!< (-) Number of times thruster fired
     double ThrustFactor;                 //!< -- Current Thrust Percentage
     double IspFactor;                    //!< -- Current fractional ISP
