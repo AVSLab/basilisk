@@ -116,6 +116,7 @@ def update_shapes(frame, cube1, cube2, shapes):
     cubes.extend(cube2[frame])
     for shape, cube in zip(shapes, cubes):
         shape.set_verts(cube)
+        shape.set_edgecolor('k')
     return shapes
 
 
@@ -138,7 +139,7 @@ def run():
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(.1)
+    simulationTimeStep = macros.sec2nano(.001)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # initialize object and set properties
@@ -162,16 +163,18 @@ def run():
     scContact.scMassStateInMsg.subscribeTo(scObject.scMassOutMsg)
     scContact.mainBody.boundingRadius = 1.5
     scContact.maxPosError = 0.0001
-    scContact.simTimeStep = 0.1
+    scContact.simTimeStep = 0.001
+    scContact.slipTolerance = 1e-9
+    scContact.collisionIntegrationStep = 1e-3
 
     staticObjectMsg = messaging.SpicePlanetStateMsgPayload()
-    staticObjectMsg.PositionVector = [3.5, 2.0, 2.0]
+    staticObjectMsg.PositionVector = [3.5, 2.01, 2.01]
     staticObjectMsg.VelocityVector = [0., 0., 0.]
     staticObjectMsg.J20002Pfix = np.identity(3)
     stObMsg = messaging.SpicePlanetStateMsg().write(staticObjectMsg)
 
 
-    scContact.AddOtherBody("cube2.obj", stObMsg, 0.0, 0.8)
+    scContact.AddOtherBody("cube2.obj", stObMsg, 0.0, 1.0, 0.5)
     # scContact.externalBodies[0].states.r_BN_N = [[3.5], [2.0], [2.0]]  # m   - r_CN_N
     # scContact.externalBodies[0].states.v_BN_N = [[0.0], [0.0], [0.0]]  # m/s - v_CN_N
     # scContact.externalBodies[0].states.sigma_BN = [[0.0], [0.0], [0.0]]  # sigma_CN_B
@@ -194,10 +197,25 @@ def run():
     scStateRec = scObject.scStateOutMsg.recorder()
     scSim.AddModelToTask(simTaskName, scStateRec)
 
-    scObject.hub.r_CN_NInit = [[1.51], [1.5], [1.5]]  # m   - r_CN_N
-    scObject.hub.v_CN_NInit = [[0.2], [0.0], [0.0]]  # m/s - v_CN_N
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_CN_B
+    # scObject.hub.r_CN_NInit = [[1.51], [1.5], [1.5]]  # m   - r_CN_N
+    # scObject.hub.v_CN_NInit = [[0.2], [0.0], [0.0]]  # m/s - v_CN_N
+    # scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_CN_B
+    # scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
+
+    # scObject.hub.r_CN_NInit = [[1.51], [1.7], [1.7]]  # m   - r_CN_N
+    # scObject.hub.v_CN_NInit = [[0.2], [0.0], [0.0]]  # m/s - v_CN_N
+    # scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_CN_B
+    # scObject.hub.omega_BN_BInit = [[0.0], [0.1], [0.0]]  # rad/s - omega_CN_B
+
+    scObject.hub.r_CN_NInit = [[1.01], [1.7], [1.7]]  # m   - r_CN_N
+    scObject.hub.v_CN_NInit = [[3.5], [0.0], [0.0]]  # m/s - v_CN_N
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.3]]  # sigma_CN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
+
+    # scObject.hub.r_CN_NInit = [[1.51], [1.7], [1.7]]  # m   - r_CN_N
+    # scObject.hub.v_CN_NInit = [[0.2], [0.0], [0.0]]  # m/s - v_CN_N
+    # scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_CN_B
+    # scObject.hub.omega_BN_BInit = [[0.1], [0.1], [0.1]]  # rad/s - omega_CN_B
 
 
     scSim.InitializeSimulation()

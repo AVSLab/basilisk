@@ -63,6 +63,14 @@ typedef struct{
     Eigen::Vector3d mainContactPoint;           //!< -- Point of contact on main body
     Eigen::Vector3d otherContactPoint;          //!< -- Point of contact of external body
     Eigen::Vector3d contactNormal;              //!< -- Normal vector of collision (from main body)
+    Eigen::Matrix3d dcm_CB;
+    Eigen::Matrix3d MSCPntC_B;
+    double critSlideDir;
+    double critCoeffFric;
+    double slipReverseDir;
+    bool slipHitZero;
+    Eigen::Vector3d force_N;
+    Eigen::Vector3d torque_B;
 }contactDetail;
 
 /*! Struct for holding information about a penetration.*/
@@ -98,6 +106,7 @@ typedef struct{
     Eigen::Vector3d v_BN_N;                     //!< [m/s] Velocity of body wrt to base
     double m_SC;                                //!< [kg] Mass of body
     Eigen::MatrixXd ISCPntB_B;                  //!<  [kg m^2] Inertia of body about point B in that body's frame
+    Eigen::MatrixXd ISCPntB_B_inv;
     Eigen::Vector3d c_B;                        //!< [m] Vector from point B to CoM of body in body's frame
     Eigen::Vector3d omega_BN_B;                 //!< [r/s] Attitude rate of the body wrt base
     Eigen::Matrix3d omegaTilde_BN_B;
@@ -125,6 +134,7 @@ typedef struct{
 typedef struct{
     double boundingRadius;                      //!< [m] Radius of body bounding sphere
     double coefRestitution;                     //!< -- Coefficient of Restitution between external body and main body
+    double coefFriction;
     double springConstant;                      //!< -- Spring constant between external body and main body
     double dampingConstant;                     //!< -- Damping constant between external body and main body
     std::string objFile;                        //!< -- File name for the .obj file pertaining to body
@@ -151,7 +161,7 @@ public:
     
     void Reset();
     void LoadMainBody(const char *objFile);
-    void AddOtherBody(const char *objFile, Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double boundingRadius, double coefRestitution);
+    void AddOtherBody(const char *objFile, Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double boundingRadius, double coefRestitution, double coefFriction);
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime);
     void computeStateContribution(double integTime);
@@ -177,10 +187,14 @@ public:
     bool overlapFace2;
     bool overlapEdge;
     double maxPosError;
+    double slipTolerance;
     double simTimeStep;
+    double collisionIntegrationStep;
     
     
 private:
+    Eigen::VectorXd CollisionStateDerivative( Eigen::VectorXd X_c, double totalSlip);
+    void CalcCollisionProps();
     bool IsMinkowskiFace(Eigen::Vector3d edgeA, Eigen::Vector3d edgeB, Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d c, Eigen::Vector3d d);
     std::vector<halfEdge> ComputeHalfEdge(std::vector<Eigen::Vector3d> vertices, std::vector<tinyobj::shape_t> shapes);
     edgeQuery QueryEdgeDirection(std::vector<Eigen::Vector3d> verticesA, halfEdge polyA, dynamicData stateA, std::vector<Eigen::Vector3d> verticesB, halfEdge polyB, dynamicData stateB);

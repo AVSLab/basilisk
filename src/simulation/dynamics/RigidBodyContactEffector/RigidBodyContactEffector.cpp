@@ -81,11 +81,12 @@ void RigidBodyContactEffector::LoadMainBody(const char *objFile)
 @param boundingRadius The radius of this body's bounding sphere, for primary collision detection
 @param coefRestitution The Coefficient of Restitution between this body and the primary body
 */
-void RigidBodyContactEffector::AddOtherBody(const char *objFile, Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double boundingRadius, double coefRestitution)
+void RigidBodyContactEffector::AddOtherBody(const char *objFile, Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double boundingRadius, double coefRestitution, double coefFriction)
 {
     geometry externalBody;
     externalBody.boundingRadius = boundingRadius;
     externalBody.coefRestitution = coefRestitution;
+    externalBody.coefFriction = coefFriction;
     externalBody.planetInMsg = planetSpiceMsg->addSubscriber();
 //    externalBody.modelTag = modelTag;
     std::vector<tinyobj::material_t> materials;
@@ -222,163 +223,100 @@ void RigidBodyContactEffector::computeForceTorque(double integTime)
     this->torqueExternalPntB_B.setZero();
     
 //     - Get all necessary state information
-//    this->mainBody.states.r_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubPosition->getState();
-//    this->mainBody.states.v_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubVelocity->getState();
-//    this->mainBody.states.m_SC = (double)(*this->mainBody.hubState.m_SC)(0,0);
-//    this->mainBody.states.c_B = (Eigen::Vector3d )*this->mainBody.hubState.c_B;
-//    this->mainBody.states.omega_BN_B = (Eigen::Vector3d )this->mainBody.hubState.hubOmega_BN_N->getState();
-//    this->mainBody.states.ISCPntB_B = *this->mainBody.hubState.ISCPntB_B;
-//    this->mainBody.states.sigma_BN = (Eigen::Vector3d )this->mainBody.hubState.hubSigma->getState();
-//    this->mainBody.states.dcm_NB = this->mainBody.states.sigma_BN.toRotationMatrix();
-//    this->mainBody.states.dcm_BN = this->mainBody.states.dcm_NB.transpose();
+    this->mainBody.states.r_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubPosition->getState();
+    this->mainBody.states.v_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubVelocity->getState();
+    this->mainBody.states.m_SC = (double)(*this->mainBody.hubState.m_SC)(0,0);
+    this->mainBody.states.c_B = (Eigen::Vector3d )*this->mainBody.hubState.c_B;
+    this->mainBody.states.omega_BN_B = (Eigen::Vector3d )this->mainBody.hubState.hubOmega_BN_N->getState();
+    this->mainBody.states.ISCPntB_B = *this->mainBody.hubState.ISCPntB_B;
+    this->mainBody.states.sigma_BN = (Eigen::Vector3d )this->mainBody.hubState.hubSigma->getState();
+    this->mainBody.states.dcm_NB = this->mainBody.states.sigma_BN.toRotationMatrix();
+    this->mainBody.states.dcm_BN = this->mainBody.states.dcm_NB.transpose();
+    
+    int numStateVar = 9 + (4 * this->mainBody.collisionPoints.size());
+    Eigen::VectorXd collisionStateVec = Eigen::VectorXd::Zero(numStateVar);
+    Eigen::Vector3d v_CT_C = Eigen::Vector3d::Zero();
+    Eigen::VectorXd compressionEnergy = Eigen::VectorXd::Zero(this->mainBody.collisionPoints.size());
+    Eigen::VectorXd restitutionEnergy = Eigen::VectorXd::Zero(this->mainBody.collisionPoints.size());
+    double totalSlip;
+    Eigen::VectorXd k1;
+    Eigen::VectorXd k2;
+    Eigen::VectorXd k3;
+    Eigen::VectorXd k4;
 
-    Eigen::Vector3d J_N;
-    Eigen::Vector3d faceContactPoint_N;
-    Eigen::Vector3d mainEdgeContact_N;
-    Eigen::Vector3d otherEdgeContact_N;
-    Eigen::Vector3d contactVelMain_N;
-    Eigen::Vector3d contactVelOther_N;
-    Eigen::Vector3d springDisplacement_N;
-    Eigen::Vector3d springVelocity_N;
     
     // - Check if any new collisions will happen during this time step, and calculate the resulting forces and torques
-        if (this->mainBody.collisionPoints.empty() == false)
+    if (this->mainBody.collisionPoints.empty() == false)
+    {
+        if (this->mainBody.collisionPoints[0].empty() == false)
         {
-    //        if ( integTime - this->currentSimSeconds < this->simTimeStep / 4.0){
-    //            return;
-    //        }
-            if (this->mainBody.collisionPoints[0].empty() == false)
+            if ( integTime - this->currentSimSeconds < this->simTimeStep / 5.0)
             {
+            // - Loop through every collision point
+            for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
+            {
+                v_CT_C = this->mainBody.collisionPoints[bodyIt].back().dcm_CB * (this->mainBody.states.dcm_BN * (this->mainBody.states.v_BN_N - this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.v_BN_N) + eigenTilde(this->mainBody.states.omega_BN_B) * this->mainBody.collisionPoints[bodyIt].back().mainContactPoint - ((this->mainBody.states.dcm_BN * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB) * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.omegaTilde_BN_B *  (this->mainBody.states.dcm_BN * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB).transpose()) * this->mainBody.collisionPoints[bodyIt].back().mainContactPoint);
+                
+                collisionStateVec[bodyIt * 3] = sqrt(pow(v_CT_C[0], 2.0) + pow(v_CT_C[1], 2.0));
+                collisionStateVec[bodyIt * 3 + 1] = atan2(v_CT_C[1], v_CT_C[0]);
+                collisionStateVec[bodyIt * 3 + 2] = v_CT_C[2];
+            }
+            
+            collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) = this->mainBody.states.v_BN_N;
+            collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = this->mainBody.states.omega_BN_B;
+            
+            do
+            {
+//                std::cout << collisionStateVec << '\n' << '\n';
+                totalSlip = 0;
                 // - Loop through every collision point
                 for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
                 {
-                    // - Calculate the impulse due to the collision
-                    J_N =   this->CalcImpluse(this->mainBody.collisionPoints[bodyIt].back(), this->externalBodies[this->mainBody.collisionPoints[bodyIt].back().otherBodyIndex].states, this->externalBodies[this->mainBody.collisionPoints[bodyIt].back().otherBodyIndex].coefRestitution);
-                    
-//                    this->forceExternal_B =  this->forceExternal_B + (this->mainBody.states.dcm_BN *  J_N) / (this->simTimeStep);// -  this->mainBody.collisionPoints[bodyIt].back().timeToContact) ;
-
-//                    this->torqueExternalPntB_B = this->torqueExternalPntB_B + (eigenTilde(this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * (this->mainBody.states.dcm_BN * J_N / (this->simTimeStep)));// -  this->mainBody.collisionPoints[bodyIt].back().timeToContact);
-                    
-    //                this->forceExternal_B =  this->forceExternal_B + (this->mainBody.states.dcm_BN *  J_N) / ( integTime - this->currentSimSeconds ) ;
-    //
-    //                this->torqueExternalPntB_B = this->torqueExternalPntB_B + (eigenTilde(this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * (this->mainBody.states.dcm_BN * J_N)) / ( integTime - this->currentSimSeconds);
+                    totalSlip = totalSlip + collisionStateVec[bodyIt * 3];
                 }
-            }
-        }
-    
-    // - Check if there is any current penetration, and calculate the restoring forces and torques
-    if ((this->mainBody.penetrationData.empty() == false))
-    {
-//        this->mainBody.states.r_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubPosition->getState();
-//        this->mainBody.states.v_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubVelocity->getState();
-//        this->mainBody.states.m_SC = (double)(*this->mainBody.hubState.m_SC)(0,0);
-//        this->mainBody.states.c_B = (Eigen::Vector3d )*this->mainBody.hubState.c_B;
-//        this->mainBody.states.omega_BN_B = (Eigen::Vector3d )this->mainBody.hubState.hubOmega_BN_N->getState();
-//        this->mainBody.states.ISCPntB_B = *this->mainBody.hubState.ISCPntB_B;
-//        this->mainBody.states.sigma_BN = (Eigen::Vector3d )this->mainBody.hubState.hubSigma->getState();
-//        this->mainBody.states.dcm_NB = this->mainBody.states.sigma_BN.toRotationMatrix();
-//        this->mainBody.states.dcm_BN = this->mainBody.states.dcm_NB.transpose();
-        // - Loop through every penetration point
-        for ( int bodyIt = 0; bodyIt < this->mainBody.penetrationData.size(); ++bodyIt)
-        {
-            // - If penetration is a vertex from the external body on the face of the main body
-            if (this->mainBody.penetrationData[bodyIt].contactCase == 0)
-            {
-                faceContactPoint_N = (this->mainBody.states.dcm_NB * this->mainBody.penetrationData[bodyIt].mainContactPoint) + this->mainBody.states.r_BN_N;
                 
-                springDisplacement_N = ((this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_NB * this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].vertices[this->mainBody.penetrationData[bodyIt].faceData.supportIndex]) + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.r_BN_N) - faceContactPoint_N;
+                k1 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec, totalSlip);
+                k2 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec + 0.5 * k1, totalSlip);
+                k3 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec + 0.5 * k2, totalSlip);
+                k4 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec + k3, totalSlip);
+                collisionStateVec = collisionStateVec + (1.0 / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
                 
                 
-                
-                contactVelMain_N = this->mainBody.states.v_BN_N + eigenTilde(this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) * ((faceContactPoint_N - this->mainBody.states.r_BN_N) - this->mainBody.states.dcm_NB * this->mainBody.states.c_B);
-                
-                contactVelOther_N = this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.v_BN_N + (this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_NB * this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.omegaTilde_BN_B * this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_BN) * ((this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_NB * this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].vertices[this->mainBody.penetrationData[bodyIt].faceData.supportIndex]));// - this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_NB * this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.c_B );
-                
-                springVelocity_N = (springDisplacement_N.normalized()).dot(contactVelOther_N - contactVelMain_N ) * springDisplacement_N.normalized();
-                
-                if (springDisplacement_N.dot(this->mainBody.penetrationData[bodyIt].springLine_N) > 0.0)
+                for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
                 {
-                    springDisplacement_N = springDisplacement_N * 0.0;
+                    if (collisionStateVec[bodyIt * 3] < this->slipTolerance)
+                    {
+                        this->mainBody.collisionPoints[bodyIt].back().slipHitZero = true;
+                    }
+                    if (collisionStateVec[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] < compressionEnergy[bodyIt])
+                    {
+                        compressionEnergy[bodyIt] = collisionStateVec[ this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt];
+                        restitutionEnergy[bodyIt] = - pow(this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefRestitution, 2.0) * compressionEnergy[bodyIt];
+                    }
                 }
+//                std::cout << collisionStateVec[this->mainBody.collisionPoints.size() * 3 + 9] << '\n' << '\n';
+            } while ((collisionStateVec.segment( this->mainBody.collisionPoints.size() * 3 + 9, this->mainBody.collisionPoints.size()).array() < (compressionEnergy + restitutionEnergy).array()).any());
+            
+                std::cout << collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) << '\n' << '\n';
+//                std::cout << collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) << '\n' << '\n';
+            this->forceExternal_N = this->mainBody.states.m_SC * (collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) - this->mainBody.states.v_BN_N) / (this->simTimeStep );
+            
+            this->torqueExternalPntB_B = this->mainBody.states.ISCPntB_B * ((collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) - this->mainBody.states.omega_BN_B) / (this->simTimeStep));
+            
+                this->mainBody.collisionPoints[0].back().force_N = this->mainBody.states.m_SC * (collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) - this->mainBody.states.v_BN_N) / (this->simTimeStep);
 //
-                if (springVelocity_N.dot(this->mainBody.penetrationData[bodyIt].springLine_N) > 0.0)
-                {
-                    springVelocity_N = springVelocity_N * 0.0;
-                }
-                
-//                this->forceExternal_B =  this->forceExternal_B + this->mainBody.states.dcm_BN * ( this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].springConstant * springDisplacement_N + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].dampingConstant * springVelocity_N);
-//
-//                this->torqueExternalPntB_B = this->torqueExternalPntB_B + eigenTilde(this->mainBody.penetrationData[bodyIt].mainContactPoint) * (this->mainBody.states.dcm_BN * ( this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].springConstant * springDisplacement_N + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].dampingConstant * springVelocity_N));
-                
-                this->forceExternal_B =  this->forceExternal_B + this->mainBody.states.dcm_BN * ( this->mainBody.states.m_SC * (springDisplacement_N / pow(this->simTimeStep, 2.0)) + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].dampingConstant * springVelocity_N);
-                
-                this->torqueExternalPntB_B = this->torqueExternalPntB_B + eigenTilde(this->mainBody.penetrationData[bodyIt].mainContactPoint) * (this->mainBody.states.dcm_BN * ( this->mainBody.states.m_SC * (springDisplacement_N / pow(this->simTimeStep, 2.0)) + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].dampingConstant * springVelocity_N));
-                
-            // - If penetration is a vertex from the main body on the face of the external body
-            }else if (this->mainBody.penetrationData[bodyIt].contactCase == 1)
-            {
-                faceContactPoint_N = (this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_NB * this->mainBody.penetrationData[bodyIt].otherContactPoint) + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.r_BN_N;
-                
-                springDisplacement_N = faceContactPoint_N - ((this->mainBody.states.dcm_NB * this->mainBody.vertices[this->mainBody.penetrationData[bodyIt].faceData.supportIndex]) + this->mainBody.states.r_BN_N);
-                
-                contactVelMain_N = this->mainBody.states.v_BN_N + eigenTilde(this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) * ((this->mainBody.states.dcm_NB * this->mainBody.vertices[this->mainBody.penetrationData[bodyIt].faceData.supportIndex]) - this->mainBody.states.dcm_NB * this->mainBody.states.c_B);
-                
-                contactVelOther_N = this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.v_BN_N + (this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_NB * this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.omegaTilde_BN_B * this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_BN) * ((faceContactPoint_N - this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.r_BN_N));// - this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_NB * this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.c_B );
-                
-                springVelocity_N = (springDisplacement_N.normalized()).dot(contactVelOther_N - contactVelMain_N ) * springDisplacement_N.normalized();
-                
-                if (springDisplacement_N.dot(this->mainBody.penetrationData[bodyIt].springLine_N) > 0.0)
-                {
-                    springDisplacement_N = springDisplacement_N * 0.0;
-                }
-//
-                if (springVelocity_N.dot(this->mainBody.penetrationData[bodyIt].springLine_N) > 0.0)
-                {
-                    springVelocity_N = springVelocity_N * 0.0;
-                }
-                
-//                this->forceExternal_B =  this->forceExternal_B + this->mainBody.states.dcm_BN * ( this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].springConstant * springDisplacement_N + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].dampingConstant * springVelocity_N);
-//
-//                this->torqueExternalPntB_B = this->torqueExternalPntB_B + eigenTilde(this->mainBody.vertices[this->mainBody.penetrationData[bodyIt].faceData.supportIndex]) * (this->mainBody.states.dcm_BN * ( this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].springConstant * springDisplacement_N + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].dampingConstant * springVelocity_N));
-                
-                this->forceExternal_B =  this->forceExternal_B + this->mainBody.states.dcm_BN * ( this->mainBody.states.m_SC * (springDisplacement_N / pow(this->simTimeStep, 2.0)) + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].dampingConstant * springVelocity_N);
-                
-                this->torqueExternalPntB_B = this->torqueExternalPntB_B + eigenTilde(this->mainBody.penetrationData[bodyIt].mainContactPoint) * (this->mainBody.states.dcm_BN * ( this->mainBody.states.m_SC * (springDisplacement_N / pow(this->simTimeStep, 2.0)) + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].dampingConstant * springVelocity_N));
-                
-            // - If penetration is an edge from both bodies
+                this->mainBody.collisionPoints[0].back().torque_B =  this->mainBody.states.ISCPntB_B * ((collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) - this->mainBody.states.omega_BN_B) / (this->simTimeStep));
+//                this->mainBody.collisionPoints[0].back().force_N = collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3);
+            
+//                this->mainBody.collisionPoints[0].back().torque_B =  collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3);
             }else
             {
-                mainEdgeContact_N = (this->mainBody.states.dcm_NB * this->mainBody.penetrationData[bodyIt].mainContactPoint) + this->mainBody.states.r_BN_N;
-                
-                otherEdgeContact_N = (this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_NB * this->mainBody.penetrationData[bodyIt].otherContactPoint) + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.r_BN_N;
-                
-                springDisplacement_N = otherEdgeContact_N - mainEdgeContact_N;
-                
-                springDisplacement_N = (this->mainBody.penetrationData[bodyIt].springLine_N).dot(springDisplacement_N) * ( this->mainBody.penetrationData[bodyIt].springLine_N);
-                
-                
-                contactVelMain_N = this->mainBody.states.v_BN_N + eigenTilde(this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) * ((mainEdgeContact_N - this->mainBody.states.r_BN_N) - this->mainBody.states.dcm_NB * this->mainBody.states.c_B);
-                
-                contactVelOther_N = this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.v_BN_N + (this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_NB * this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.omegaTilde_BN_B * this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_BN) * ((otherEdgeContact_N - this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.r_BN_N));// - this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.dcm_NB * this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].states.c_B );
-                
-                springVelocity_N = (this->mainBody.penetrationData[bodyIt].springLine_N).dot(contactVelOther_N - contactVelMain_N) * this->mainBody.penetrationData[bodyIt].springLine_N;
-                
-                if (springDisplacement_N.dot(this->mainBody.penetrationData[bodyIt].springLine_N) > 0.0)
-                {
-                    springDisplacement_N = springDisplacement_N * 0.0;
-                }
+                this->forceExternal_N = this->mainBody.collisionPoints[0].back().force_N;
 //
-                if (springVelocity_N.dot(this->mainBody.penetrationData[bodyIt].springLine_N) > 0.0)
-                {
-                    springVelocity_N = springVelocity_N * 0.0;
-                }
-                
-//                this->forceExternal_B =  this->forceExternal_B + this->mainBody.states.dcm_BN * ( this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].springConstant * springDisplacement_N + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].dampingConstant * springVelocity_N);
-//
-//                this->torqueExternalPntB_B = this->torqueExternalPntB_B + eigenTilde(this->mainBody.penetrationData[bodyIt].mainContactPoint) * (this->mainBody.states.dcm_BN * ( this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].springConstant * springDisplacement_N + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].dampingConstant * springVelocity_N));
-                this->forceExternal_B =  this->forceExternal_B + this->mainBody.states.dcm_BN * ( this->mainBody.states.m_SC * (springDisplacement_N / pow(this->simTimeStep, 2.0)) + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].dampingConstant * springVelocity_N);
-                
-                this->torqueExternalPntB_B = this->torqueExternalPntB_B + eigenTilde(this->mainBody.penetrationData[bodyIt].mainContactPoint) * (this->mainBody.states.dcm_BN * ( this->mainBody.states.m_SC * (springDisplacement_N / pow(this->simTimeStep, 2.0)) + this->externalBodies[this->mainBody.penetrationData[bodyIt].otherBodyIndex].dampingConstant * springVelocity_N));
+                this->torqueExternalPntB_B = this->mainBody.collisionPoints[0].back().torque_B;
+//                this->forceExternal_N = this->mainBody.states.m_SC * (this->mainBody.collisionPoints[0].back().force_N - this->mainBody.states.v_BN_N) / (this->simTimeStep );
+
+//                this->torqueExternalPntB_B = this->mainBody.states.ISCPntB_B * ((this->mainBody.collisionPoints[0].back().torque_B - this->mainBody.states.omega_BN_B) / (this->simTimeStep));
             }
         }
     }
@@ -386,6 +324,147 @@ void RigidBodyContactEffector::computeForceTorque(double integTime)
     
 }
 
+Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::VectorXd X_c, double totalSlip)
+{
+    Eigen::VectorXd Xdot_c = Eigen::VectorXd::Zero(X_c.size());
+    Eigen::Vector3d dPcont;
+    Eigen::Vector3d dPdp = Eigen::Vector3d::Zero();
+    Eigen::Vector3d dv;
+    double eta;
+    
+    // - Loop through every collision point
+    for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
+    {
+        if ((totalSlip < this->slipTolerance) && (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric <= this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction))
+        {
+            dPcont << - this->mainBody.collisionPoints[bodyIt].back().critCoeffFric * cos(this->mainBody.collisionPoints[bodyIt].back().critSlideDir), - this->mainBody.collisionPoints[bodyIt].back().critCoeffFric * sin(this->mainBody.collisionPoints[bodyIt].back().critSlideDir), 1.0;
+            dPcont = this->mainBody.collisionPoints[bodyIt].back().dcm_CB.transpose() * dPcont;
+            
+            Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) + eigenTilde( this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * dPcont;
+            
+            dPcont = this->mainBody.states.dcm_BN.transpose() * dPcont;
+            
+            Xdot_c[this->mainBody.collisionPoints.size() * 3] = Xdot_c[this->mainBody.collisionPoints.size() * 3] + dPcont[0];
+            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] + dPcont[1];
+            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] + dPcont[2];
+//            std::cout << Xdot_c << '\n';
+        } else
+        {
+            eta = X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction;
+            
+            if ((this->mainBody.collisionPoints[bodyIt].back().slipHitZero) && (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric > this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction))
+            {
+                dPcont << -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir), -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir), 1.0;
+            }else
+            {
+                dPcont << -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(X_c[bodyIt * 3 + 1]), -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(X_c[bodyIt * 3 + 1]), 1.0;
+            }
+            dPcont = this->mainBody.collisionPoints[bodyIt].back().dcm_CB.transpose() * dPcont;
+            
+            Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) + eigenTilde( this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * (eta * dPcont);
+            
+            dPcont = this->mainBody.states.dcm_BN.transpose() * dPcont;
+            
+            Xdot_c[this->mainBody.collisionPoints.size() * 3] = Xdot_c[this->mainBody.collisionPoints.size() * 3] + (eta * dPcont[0]);
+            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] + (eta * dPcont[1]);
+            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] + (eta * dPcont[2]);
+            
+            dPdp = dPdp + dPcont;
+        }
+    }
+    for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
+    {
+        
+        if (totalSlip < this->slipTolerance)
+        {
+            dv << this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B * this->mainBody.states.dcm_BN * Xdot_c.segment(this->mainBody.collisionPoints.size() * 3, 3);
+//            dv[0] = ceil(dv[0] * pow(10.0, 14)) / pow(10.0, 14);
+//            dv[1] = ceil(dv[1] * pow(10.0, 14)) / pow(10.0, 14);
+            Xdot_c[bodyIt * 3] = cos(X_c[bodyIt * 3 + 1]) * dv[0] + sin(X_c[bodyIt * 3 + 1]) * dv[1];
+            Xdot_c[bodyIt * 3 + 1] = (cos(X_c[bodyIt * 3 + 1]) / X_c[bodyIt * 3]) * dv[1] - (sin(X_c[bodyIt * 3 + 1]) / X_c[bodyIt * 3]) * dv[0];
+            if (std::isnan(Xdot_c[bodyIt * 3 + 1]))
+            {
+                Xdot_c[bodyIt * 3 + 1] = 0;
+            }
+            Xdot_c[bodyIt * 3 + 2] = dv[2];
+            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] = X_c[bodyIt * 3 + 2];
+//            std::cout << Xdot_c << '\n';
+        }else
+        {
+            dv << this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B * this->mainBody.states.dcm_BN * dPdp;
+            Xdot_c[bodyIt * 3] = (X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * (cos(X_c[bodyIt * 3 + 1]) * dv[0] + sin(X_c[bodyIt * 3 + 1]) * dv[1]);
+            Xdot_c[bodyIt * 3 + 1] = (cos(X_c[bodyIt * 3 + 1]) * dv[1] - sin(X_c[bodyIt * 3 + 1]) * dv[0]) / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction;
+            Xdot_c[bodyIt * 3 + 2] = (X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * dv[2];
+            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] = (X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * X_c[bodyIt * 3 + 2];
+        }
+    }
+    
+    Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) = (1.0 / this->mainBody.states.m_SC) * Xdot_c.segment(this->mainBody.collisionPoints.size() * 3, 3);
+    Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = this->mainBody.states.ISCPntB_B_inv * Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3);
+//    std::cout << Xdot_c << '\n';
+    
+    return Xdot_c;
+}
+
+
+void RigidBodyContactEffector::CalcCollisionProps()
+{
+    Eigen::Vector3d cHat_1;
+    Eigen::Vector3d cHat_2;
+    Eigen::Vector3d cHat_3;
+    Eigen::Vector3d zDirection;
+    zDirection << 0, 0, 1;
+    Eigen::Matrix3d MSCPntC_C;
+    Eigen::Matrix3d dcm_CN;
+    double slipReverseDirp1;
+    double h;
+    double hp;
+    double hpp;
+    double hppp;
+    // - Check if any new collisions will happen during this time step, and calculate the resulting forces and torques
+    if (this->mainBody.collisionPoints.empty() == false)
+    {
+        if (this->mainBody.collisionPoints[0].empty() == false)
+        {
+            // - Loop through every collision point
+            for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
+            {
+                cHat_3 = - this->mainBody.collisionPoints[bodyIt].back().contactNormal;
+                cHat_1 = cHat_3.cross( this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB * zDirection);
+                cHat_1.normalize();
+                cHat_2 = cHat_3.cross(cHat_1);
+                cHat_2.normalize();
+                dcm_CN << cHat_1[0], cHat_1[1], cHat_1[2], cHat_2[0], cHat_2[1], cHat_2[2], cHat_3[0], cHat_3[1], cHat_3[2];
+                this->mainBody.collisionPoints[bodyIt].back().dcm_CB = dcm_CN * this->mainBody.states.dcm_NB;
+                this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B = ((1.0 / this->mainBody.states.m_SC) * Eigen::Matrix3d::Identity()) - (eigenTilde(this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * this->mainBody.states.ISCPntB_B_inv * eigenTilde(this->mainBody.collisionPoints[bodyIt].back().mainContactPoint));
+                MSCPntC_C = (this->mainBody.collisionPoints[bodyIt].back().dcm_CB) * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B * (this->mainBody.collisionPoints[bodyIt].back().dcm_CB).transpose();
+                this->mainBody.collisionPoints[bodyIt].back().critSlideDir = atan2((MSCPntC_C(0,0) * MSCPntC_C(1,2) - MSCPntC_C(1,0) * MSCPntC_C(0,2)) , (MSCPntC_C(1,1) * MSCPntC_C(0,2) - MSCPntC_C(0,1) * MSCPntC_C(1,2)));
+                this->mainBody.collisionPoints[bodyIt].back().critCoeffFric = sqrt((pow(MSCPntC_C(0,1) * MSCPntC_C(1,2) - MSCPntC_C(1,1) * MSCPntC_C(0,2), 2.0) + pow(MSCPntC_C(1,0) * MSCPntC_C(0,2) - MSCPntC_C(0,0) * MSCPntC_C(1,2), 2.0)) / pow(MSCPntC_C(0,0) * MSCPntC_C(1,1) - MSCPntC_C(0,1) * MSCPntC_C(1,0), 2.0));
+                
+                if (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric > this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction)
+                {
+                    slipReverseDirp1 = this->mainBody.collisionPoints[bodyIt].back().critSlideDir;
+                    do
+                    {
+                        this->mainBody.collisionPoints[bodyIt].back().slipReverseDir = slipReverseDirp1;
+                        h = -MSCPntC_C(0,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + MSCPntC_C(1,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + 0.5 *  this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
+                        hp = -MSCPntC_C(0,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - MSCPntC_C(1,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + 2.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
+                        
+                        hpp = MSCPntC_C(0,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - MSCPntC_C(1,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - 2.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + 4.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
+                        
+                        hppp = MSCPntC_C(0,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + MSCPntC_C(1,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - 4.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - 8.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
+                        
+                        slipReverseDirp1 = this->mainBody.collisionPoints[bodyIt].back().slipReverseDir - (6.0 * h * pow(hpp, 2.0) -3.0 * pow(h, 2.0) * hpp) / (6.0 * pow(hp, 3.0) - 6.0 * h * hp * hpp + pow(h, 2.0) * hppp);
+                    }
+                    while (abs(slipReverseDirp1 - this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) > 1e-6);
+                    this->mainBody.collisionPoints[bodyIt].back().slipReverseDir = slipReverseDirp1;
+                }
+            }
+            
+        }
+    }
+    return;
+}
 
 void RigidBodyContactEffector::computeStateContribution(double integTime)
 {
@@ -405,6 +484,7 @@ void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
     this->mainBody.states.c_B = (Eigen::Vector3d )*this->mainBody.hubState.c_B;
     this->mainBody.states.omega_BN_B = (Eigen::Vector3d )this->mainBody.hubState.hubOmega_BN_N->getState();
     this->mainBody.states.ISCPntB_B = *this->mainBody.hubState.ISCPntB_B;
+    this->mainBody.states.ISCPntB_B_inv = this->mainBody.states.ISCPntB_B.inverse();
     this->mainBody.states.sigma_BN = (Eigen::Vector3d )this->mainBody.hubState.hubSigma->getState();
     this->mainBody.states.dcm_NB = this->mainBody.states.sigma_BN.toRotationMatrix();
     this->mainBody.states.dcm_BN = this->mainBody.states.dcm_NB.transpose();
@@ -423,6 +503,7 @@ void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
     for ( std::vector<int>::iterator bodyIt = this->closeBodies.begin(); bodyIt != this->closeBodies.end(); ++bodyIt){
         this->isOverlap = this->Overlap(this->externalBodies[*bodyIt], *bodyIt);
     }
+    this->CalcCollisionProps();
     
     return;
 }
@@ -601,7 +682,10 @@ bool RigidBodyContactEffector::Overlap(geometry foriegnBody, int bodyIndex)
                             newCollisionPoint.mainContactPoint = this->mainBody.vertices[this->mainBody.polyhedron[mainShapeIt].uniqueVertIndices[mainVertIt]];
                             newCollisionPoint.otherContactPoint = foriegnBody.states.dcm_BN  * (faceContactPoint_N  - foriegnBody.states.r_BN_N);
                             newCollisionPoint.contactNormal = foriegnBody.states.dcm_NB * foriegnBody.polyhedron[otherShapeIt].faceNormals[otherFaceIt];
+                            if ((this->mainBody.states.dcm_NB * newCollisionPoint.mainContactPoint - faceContactPoint_N).dot(newCollisionPoint.contactNormal) > 0.0)
+                            {
                             newCollisionPoint.contactNormal = -newCollisionPoint.contactNormal.normalized();
+                            }
                             currentCollisionList.push_back(newCollisionPoint);
                         }
                     }
@@ -634,6 +718,7 @@ bool RigidBodyContactEffector::Overlap(geometry foriegnBody, int bodyIndex)
                             {
                                 newCollisionPoint.contactNormal = (foriegnBody.states.dcm_BN * foriegnBody.polyhedron[otherShapeIt].centroid + foriegnBody.states.r_BN_N) - (this->mainBody.states.dcm_NB * this->mainBody.polyhedron[mainShapeIt].centroid + this->mainBody.states.r_BN_N);
                                 newCollisionPoint.contactNormal.normalize();
+                                
                             }
                             currentCollisionList.push_back(newCollisionPoint);
                         }
@@ -1463,7 +1548,7 @@ double RigidBodyContactEffector::WhenEdgeContact(std::vector<std::vector<int>> e
     if (contactInterval[0] > 0.0 || contactInterval[1] < 0.0 )
     {
         return -1;
-    } else if ((contactInterval[0] > -0.00001) && (contactInterval[1] < 0.00001))
+    } else if ((contactInterval[0] > -0.0001f) && (contactInterval[1] < 0.0001f))
     {
         *coLin = this->LineLineDistance(vertexIntervalA0.lower, vertexIntervalA1.lower, vertexIntervalB0.lower, vertexIntervalB1.lower, edgeAContact_N, edgeBContact_N);
         if (*coLin == -1)
@@ -1482,7 +1567,7 @@ double RigidBodyContactEffector::WhenEdgeContact(std::vector<std::vector<int>> e
         }
     }
 
-        intervalThreshold = this->FindEdgeIntervalThresholds(edgeVertexA0, edgeVertexA1, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, edgeVertexB0, edgeVertexB1, dynamicsB, screwAngleB, screwRotB, screwOffsetB, screwDistanceB, this->maxPosError / 10.0);
+        intervalThreshold = this->FindEdgeIntervalThresholds(edgeVertexA0, edgeVertexA1, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, edgeVertexB0, edgeVertexB1, dynamicsB, screwAngleB, screwRotB, screwOffsetB, screwDistanceB, this->maxPosError / 100.0f);
 
         while (timeSearch > 0)
         {
@@ -1531,7 +1616,7 @@ double RigidBodyContactEffector::WhenEdgeContact(std::vector<std::vector<int>> e
                     edgeConnect = *edgeBContact_N - *edgeAContact_N;
                     if ( edgeConnect.norm() <= this->maxPosError)
                     {
-                        return dt * (timeInterval[1] + timeInterval[0]) / 2;
+                        return dt * (timeInterval[1] + timeInterval[0]) / 2.0f;
                     }
                 }
                 timeInterval[0] = timeInterval[1];
@@ -1607,12 +1692,12 @@ double RigidBodyContactEffector::WhenFaceContact(std::vector<int> trianglePoints
     
     contactInterval = this->IntervalDotProduct(supportInterval,this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
     
-    if (contactInterval[0] > 0.0f || contactInterval[1] < 0.0f)
+    if (contactInterval[0] > 0.0000001f || contactInterval[1] < 0.0000001f)
     {
         return -1;
     } else
     {
-        intervalThreshold = this->FindFaceIntervalThresholds( faceVertex0, faceVertex1, faceVertex2, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, supportVertex, dynamicsB,  screwAngleB, screwRotB, screwOffsetB, screwDistanceB, this->maxPosError / 10.0);
+        intervalThreshold = this->FindFaceIntervalThresholds( faceVertex0, faceVertex1, faceVertex2, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, supportVertex, dynamicsB,  screwAngleB, screwRotB, screwOffsetB, screwDistanceB, this->maxPosError / 100.0f);
         while (timeSearch > 0)
         {
             timeIntervalChain.push_back(timeInterval[1]);
@@ -1657,7 +1742,7 @@ double RigidBodyContactEffector::WhenFaceContact(std::vector<int> trianglePoints
                 {
                     if ( (*faceContactPoint_N - vertexIntervalB0.lower).norm() <= this->maxPosError)
                     {
-                        return dt * (timeInterval[1] + timeInterval[0]) / 2;
+                        return dt * (timeInterval[1] + timeInterval[0]) / 2.0f;
                     }
                 }
                 
@@ -1681,28 +1766,31 @@ double RigidBodyContactEffector::WhenFaceContact(std::vector<int> trianglePoints
 Eigen::Vector3d RigidBodyContactEffector::CalcImpluse(contactDetail collisionData, dynamicData otherDynamics, double coefRestitution)
 {
     Eigen::MatrixXd invIMainPntB_N = this->mainBody.states.dcm_NB *  this->mainBody.states.ISCPntB_B.inverse() * this->mainBody.states.dcm_BN;
-//    Eigen::MatrixXd invIOtherPntB_N = otherDynamics.dcm_NB *  otherDynamics.ISCPntB_B.inverse() * otherDynamics.dcm_BN;
-    
+////    Eigen::MatrixXd invIOtherPntB_N = otherDynamics.dcm_NB *  otherDynamics.ISCPntB_B.inverse() * otherDynamics.dcm_BN;
+//
     Eigen::Vector3d contactPosMain_N = this->mainBody.states.dcm_NB * (collisionData.mainContactPoint - this->mainBody.states.c_B);
     Eigen::Vector3d contactPosOther_N = otherDynamics.dcm_NB * (collisionData.otherContactPoint);// - otherDynamics.c_B);
-    
+//
     Eigen::Vector3d contactVelMain_N = this->mainBody.states.v_BN_N + eigenTilde(this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) * contactPosMain_N;
     Eigen::Vector3d contactVelOther_N = otherDynamics.v_BN_N + (otherDynamics.dcm_NB * otherDynamics.omegaTilde_BN_B * otherDynamics.dcm_BN) * contactPosOther_N;
-    
+//
     double v_rel_N = collisionData.contactNormal.dot(contactVelMain_N - contactVelOther_N);
     if (v_rel_N < 0.0)
     {
         return 0.0 * collisionData.contactNormal;
     }
+//
+//    Eigen::Vector3d interDenom1 = eigenTilde(contactPosMain_N) * collisionData.contactNormal;
+//
+////    Eigen::Vector3d interDenom2 = invIOtherPntB_N * eigenTilde(contactPosOther_N) * collisionData.contactNormal;
+//
+////    double j = (-(1 + coefRestitution) * v_rel_N) / ( 1/this->mainBody.states.m_SC + 1/otherDynamics.m_SC + collisionData.contactNormal.dot(eigenTilde(interDenom1) * contactPosMain_N) + collisionData.contactNormal.dot(eigenTilde(interDenom2) * contactPosOther_N));
+//
+//    double j = (-(1.0 + coefRestitution) * v_rel_N) / ( (1.0 / this->mainBody.states.m_SC) + collisionData.contactNormal.dot(invIMainPntB_N * eigenTilde(interDenom1) * contactPosMain_N));
     
-    Eigen::Vector3d interDenom1 = eigenTilde(contactPosMain_N) * collisionData.contactNormal;
-//    Eigen::Vector3d interDenom2 = invIOtherPntB_N * eigenTilde(contactPosOther_N) * collisionData.contactNormal;
+    double j = (((1.0 / this->mainBody.states.m_SC ) * Eigen::Matrix3d::Identity() - eigenTilde(this->mainBody.states.dcm_NB * collisionData.mainContactPoint) * invIMainPntB_N * eigenTilde(this->mainBody.states.dcm_NB * collisionData.mainContactPoint)).inverse() * (eigenTilde(this->mainBody.states.dcm_NB * collisionData.mainContactPoint) * (this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) - this->mainBody.states.v_BN_N + contactVelOther_N)).norm();
     
-//    double j = (-(1 + coefRestitution) * v_rel_N) / ( 1/this->mainBody.states.m_SC + 1/otherDynamics.m_SC + collisionData.contactNormal.dot(eigenTilde(interDenom1) * contactPosMain_N) + collisionData.contactNormal.dot(eigenTilde(interDenom2) * contactPosOther_N));
-    
-    double j = (-(1.0 + coefRestitution) * v_rel_N) / ( (1.0 / this->mainBody.states.m_SC) + collisionData.contactNormal.dot(invIMainPntB_N * eigenTilde(interDenom1) * contactPosMain_N));
-    
-    return j * collisionData.contactNormal;
+    return (j + coefRestitution * j) * -collisionData.contactNormal;
 }
     
 void RigidBodyContactEffector::C2Screw(Eigen::Matrix3d DCM, Eigen::Vector3d displacement, double *screwAngle, Eigen::Matrix3d *screwRot, Eigen::Vector3d *screwOffset, double *screwDistance)
