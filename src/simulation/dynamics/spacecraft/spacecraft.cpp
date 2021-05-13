@@ -60,6 +60,17 @@ void Spacecraft::Reset(uint64_t CurrentSimNanos)
     this->gravField.Reset(CurrentSimNanos);
     // - Call method for initializing the dynamics of spacecraft
     this->initializeDynamics();
+
+    // compute initial spacecraft states relative to inertial frame, taking into account initial sc states might be defined relative to a planet
+    this->gravField.updateInertialPosAndVel(this->hubR_N->getState(), this->hubV_N->getState());
+    this->writeOutputStateMessages(CurrentSimNanos);
+    // - Loop over stateEffectors to call writeOutputStateMessages and write initial state output messages
+    std::vector<StateEffector*>::iterator it;
+    for(it = this->states.begin(); it != this->states.end(); it++)
+    {
+        // - Call writeOutputStateMessages for stateEffectors
+        (*it)->writeOutputStateMessages(CurrentSimNanos);
+    }
 }
 
 /*! This method attaches a stateEffector to the dynamicObject */

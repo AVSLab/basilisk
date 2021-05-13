@@ -101,6 +101,18 @@ def test_SCTranslation(show_plots):
     scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
 
     unitTestSim.InitializeSimulation()
+    accuracy = 1e-3
+    if not unitTestSupport.isArrayEqual(scObject.scStateOutMsg.read().r_BN_N,
+                                        [item for sublist in scObject.hub.r_CN_NInit for item in sublist],
+                                        3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: SCHub Translation test failed init pos msg unit test")
+    if not unitTestSupport.isArrayEqual(scObject.scStateOutMsg.read().v_BN_N,
+                                        [item for sublist in scObject.hub.v_CN_NInit for item in sublist],
+                                        3, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: SCHub Translation test failed init pos msg unit test")
+
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
@@ -985,9 +997,9 @@ def test_scAttRef(show_plots, accuracy):
 
 if __name__ == "__main__":
     # test_scAttRef(True, 1e-3)
-    # test_SCTranslation(True)
+    test_SCTranslation(True)
     # test_SCTransAndRotation(True)
     # test_SCRotation(True)
     # test_SCTransBOE(True)
     # test_SCPointBVsPointC(True)
-    test_scAttRef(True, 0.001)
+    # test_scAttRef(True, 0.001)
