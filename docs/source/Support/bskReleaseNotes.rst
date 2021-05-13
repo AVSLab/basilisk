@@ -33,7 +33,11 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- updated :ref:`spacecraft` ``Reset()`` method to write all spacecraft and effector state output messages
+  with their initial values.  This way these output messages are correct as already as calling the
+  ``InitializeSimulation()`` method.
+
+
 
 Version 2.0.3
 -------------
