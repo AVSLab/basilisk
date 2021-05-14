@@ -417,7 +417,7 @@ Updating a C++ Module
 
             from Basilisk.simulation.swig_common_model import *
 
-       with::
+      with::
 
             from Basilisk.architecture.swig_common_model import *
 
