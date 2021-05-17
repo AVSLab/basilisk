@@ -32,7 +32,7 @@ provides information on what this message is used for.
       - :ref:`CmdTorqueBodyMsgPayload`
       - vector of E-torques in body frame components
     * - eForceOutMsgs
-      - :ref:`CmdForceBodyMsgPayload`
+      - :ref:`CmdForceInertialMsgPayload`
       - vector of E-forces in inertial frame components
 
 
