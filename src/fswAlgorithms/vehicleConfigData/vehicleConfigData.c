@@ -42,11 +42,14 @@ void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, 
     /*! - Zero the output message data */
     localConfigData = VehicleConfigMsg_C_zeroMsgPayload();
 
-    /*! - Convert over the center of mass location */
+    /*! - Copy over the center of mass location */
     v3Copy(configData->CoM_B, localConfigData.CoM_B);
 
     /*! - Copy over the inertia */
     m33Copy(RECAST3X3 configData->ISCPntB_B, RECAST3X3 localConfigData.ISCPntB_B);
+    
+    /*! - Copy over the mass */
+    localConfigData.massSC = configData->massSC;
 
     /*! - Write output properties to the messaging system*/
     VehicleConfigMsg_C_write(&localConfigData, &configData->vecConfigOutMsg, moduleID, callTime);

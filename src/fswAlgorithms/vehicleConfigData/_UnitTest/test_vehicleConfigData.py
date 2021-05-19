@@ -39,6 +39,8 @@ def vehicleConfigDataTestFunction():
     moduleConfig.ISCPntB_B = I
     initialCoM = [1, 1, 1]
     moduleConfig.CoM_B = initialCoM
+    mass = 300.
+    moduleConfig.massSC = mass
 
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "vehicleConfigData"
@@ -59,6 +61,7 @@ def vehicleConfigDataTestFunction():
     # Get the output from this simulation
     Ilog = dataLog.ISCPntB_B
     CoMLog = dataLog.CoM_B
+    MassLog = dataLog.massSC
 
     accuracy = 1e-6
 
@@ -69,9 +72,14 @@ def vehicleConfigDataTestFunction():
     testFailCount, testMessages = unitTestSupport.compareArrayND([I for _ in range(len(Ilog))], Ilog, accuracy,
                                                                  "VehicleConfigData I",
                                                                  3, testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareDoubleArray([mass for _ in range(len(MassLog))], MassLog, accuracy,
+                                                                 "VehicleConfigData Mass",
+                                                                 testFailCount, testMessages)
 
     if testFailCount == 0:
         print("PASSED: " + moduleWrap.ModelTag)
+    else:
+        print(testMessages)
 
     return [testFailCount, ''.join(testMessages)]
 
