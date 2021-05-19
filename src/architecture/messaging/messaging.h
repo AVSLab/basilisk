@@ -211,7 +211,12 @@ public:
     Recorder(void* message, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
         Msg2Header msgHeader;
-        this->readMessage = ReadFunctor<messageType>((messageType*) message, &msgHeader);
+
+        Msg2Header* pt = (Msg2Header *) message;
+        messageType* payloadPointer;
+        payloadPointer = (messageType *) (++pt);
+
+        this->readMessage = ReadFunctor<messageType>(payloadPointer, &msgHeader);
         this->ModelTag = "Rec:";
         Message<messageType> tempMsg;
         std::string msgName = typeid(tempMsg).name();
