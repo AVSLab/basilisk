@@ -231,7 +231,7 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
                     if (r_ij > this->radiiList.at(c).at(j-i0)) {
                         force_N -= kc * q(j)*q(i) * r_ij_N/r_ij/r_ij/r_ij;
                     } else {
-                        bskLogger.bskLog(BSK_WARNING, "MsmForceTorque: spacecraft %lu, sphere $lu is too close to another sphere.", c, j-i0);
+                        bskLogger.bskLog(BSK_WARNING, "MsmForceTorque: spacecraft %lu, sphere %lu is too close to another sphere.", c, j-i0);
                     }
                 }
             }
