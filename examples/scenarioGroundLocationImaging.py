@@ -17,6 +17,44 @@
 #
 
 r"""
+Overview
+--------
+
+This scenario demonstrates imaging a target on the surface of the Earth based on access and attitude error requirements.
+Simulated data generated from this image is stored in an on-board storage device and then downlinked to a ground
+station.
+
+The script is found in the folder ``basilisk/examples`` and executed by using::
+
+    python3 scenarioGroundLocationImaging.py
+
+The simulation uses :ref:`groundLocation` to create an output message with the desired ground target's inertial
+position.  This is fed to the 2D pointing module :ref:`locationPointing` which directs the 3rd body axis to point
+towards the target. Once the target is accessible per the :ref:`groundLocation` class' ``accessOutMsg`` and below the
+prescribed attitude error from the :ref:`locationPointing` class' ``attGuidOutMsg``, the
+:ref:`simpleInstrumentController` sends a ``deviceStatusOutMsg`` to the :ref:`simpleInstrument` to turn the imager on
+for a single time step. The :ref:`simpleInstrument` sends this data to a :ref:`partitionedStorageUnit`. The data is
+then downlinked using a :ref:`spaceToGroundTransmitter` once a ground station represented by another
+:ref:`groundLocation` class is accessible.
+
+A reset of the :ref:`groundLocation` and :ref:`simpleInstrumentController` for the purposes of switching to a new target
+after the first one is imaged is also demonstrated.
+
+Illustration of Simulation Results
+----------------------------------
+
+::
+
+    show_plots = True
+
+The following plots illustrate the 2D pointing error, access data, image commands, level of the storage unit, and
+total data downlinked to the ground station.
+
+.. image:: /_images/Scenarios/scenarioAttLocPoint1.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttLocPoint2.svg
+   :align: center
 
 """
 
@@ -117,9 +155,6 @@ def plot_data_levels(timeLineSet, storageLevel, storedData):
     plt.ylabel('Data Stored (KB)')
     plt.grid(True)
     plt.legend()
-
-    # for idx in range(32):
-    #     print(np.sum(storedData[:,idx]))
 
     return
 
@@ -284,9 +319,6 @@ def run(show_plots):
     locPointConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
     locPointConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
     locPointConfig.locationInMsg.subscribeTo(imagingTarget.currentGroundStateOutMsg)
-    # grMsgData = messaging.GroundStateMsgPayload()
-    # grMsg = messaging.GroundStateMsg().write(grMsgData)
-    # locPointConfig.locationInMsg.subscribeTo(grMsg)
 
     # setup the MRP Feedback control module
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
@@ -312,13 +344,11 @@ def run(show_plots):
     simpleInsControlConfig.attGuidInMsg.subscribeTo(locPointConfig.attGuidOutMsg)
     simpleInsControlConfig.locationAccessInMsg.subscribeTo(imagingTarget.accessOutMsgs[-1])
 
-    # instrument.nodeStatusInMsg.subscribeTo(simpleInsControlConfig.deviceStatusOutMsg)
+    instrument.nodeStatusInMsg.subscribeTo(simpleInsControlConfig.deviceStatusOutMsg)
 
     #
     #   Setup data logging before the simulation is initialized
     #
-    # numDataPoints = 10
-    # samplingTime = unitTestSupport.samplingTime(4*simulationTime, simulationTimeStep, numDataPoints)
     deviceLog = simpleInsControlConfig.deviceStatusOutMsg.recorder()
     mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder()
     attErrLog = locPointConfig.attGuidOutMsg.recorder()
@@ -413,8 +443,6 @@ def run(show_plots):
     storageNetBaud = dataMonLog.currentNetBaud
     storedData = dataMonLog.storedData[:, range(32)]
     deviceStatus = deviceLog.deviceStatus
-    # print(dataMonLog.storedData)
-    # print(dataMonLog.storedDataName)
 
     np.set_printoptions(precision=16)
 

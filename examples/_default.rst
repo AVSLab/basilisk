@@ -154,6 +154,7 @@ Data Sub-System
   :maxdepth: 1
 
   Basic Data Generation and Transmission  <scenarioDataDemo>
+  Ground Target Imaging and Downlink <scenarioGroundLocationImaging>
 
 Complex Spacecraft Dynamics Simulations
 ---------------------------------------

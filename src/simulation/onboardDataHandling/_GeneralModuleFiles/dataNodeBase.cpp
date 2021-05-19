@@ -20,9 +20,6 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "dataNodeBase.h"
 #include "string.h"
-#include <iostream>
-
-using namespace std;
 
 /*! Constructor.
  @return void
@@ -62,14 +59,11 @@ void DataNodeBase::Reset(uint64_t CurrentSimNanos)
  */
 void DataNodeBase::writeMessages(uint64_t CurrentClock)
 {
-    cout << this->ModelTag << " write messages started\n";
     //! - write dataNode output messages - baud rate and name
     this->nodeDataOutMsg.write(&this->nodeDataMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);
-
-    cout << this->ModelTag << " write messages started\n";
 
     return;
 }
@@ -79,7 +73,6 @@ void DataNodeBase::writeMessages(uint64_t CurrentClock)
  */
 bool DataNodeBase::readMessages()
 {
-    cout << this->ModelTag << " read messages started\n";
     //! - read in the data node use/supply messages
     bool dataRead = true;
     bool tmpStatusRead = true;
@@ -87,18 +80,13 @@ bool DataNodeBase::readMessages()
     {
 
         this->nodeStatusMsg = this->nodeStatusInMsg();
-        // cout << "this->nodeStatusMsg = this->nodeStatusInMsg()\n";
         this->dataStatus = this->nodeStatusMsg.deviceStatus;
-        // cout << "this->nodeStatusMsg.deviceStatus\n";
         tmpStatusRead = this->nodeStatusInMsg.isWritten();
-        // cout << "tmpStatusRead = this->nodeStatusInMsg.isWritten()\n";
         dataRead = dataRead && tmpStatusRead;
     }
 
     //! - call the custom method to perform additional input reading
     bool customRead = this->customReadMessages();
-
-    cout << this->ModelTag << " read messages ended\n";
 
     return(dataRead && customRead);
 }
@@ -109,7 +97,6 @@ bool DataNodeBase::readMessages()
  */
 void DataNodeBase::computeDataStatus(double CurrentTime)
 {
-    cout << this->ModelTag << " computeDataStatus started\n";
     if(this->dataStatus > 0)
     {
         this->evaluateDataModel(&this->nodeDataMsg, CurrentTime);
@@ -118,7 +105,6 @@ void DataNodeBase::computeDataStatus(double CurrentTime)
     {
         this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload;
     }
-    cout << this->ModelTag << " computeDataStatus ended\n";
     return;
 }
 
@@ -128,7 +114,6 @@ void DataNodeBase::computeDataStatus(double CurrentTime)
  */
 void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
 {
-    cout << this->ModelTag << " UpdateState started\n";
     //! - Only update the data status if we were able to read in messages.
     if(this->readMessages())
     {
@@ -139,7 +124,6 @@ void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
     }
 
     this->writeMessages(CurrentSimNanos);
-    cout << this->ModelTag << " UpdateState ended\n";
     return;
 }
 

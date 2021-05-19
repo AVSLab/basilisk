@@ -35,10 +35,8 @@
  */
 void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig *configData, int64_t moduleID)
 {
-    printf("simpleInstrumentController selfInit started\n");
     configData->imaged = 0;
     DeviceStatusMsg_C_init(&configData->deviceStatusOutMsg);
-    printf("simpleInstrumentController selfInit started\n");
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -50,6 +48,15 @@ void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig *confi
 */
 void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // check if the required message has not been connected
+    if (!AccessMsg_C_isLinked(&configData->locationAccessInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: simpleInstrumentController.locationAccessInMsg wasn't connected.");
+    }
+    if (!AttGuidMsg_C_isLinked(&configData->attGuidInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: simpleInstrumentController.attGuidInMsg wasn't connected.");
+    }
+
+    // reset the imaged variable to zero
     configData->imaged = 0;
 }
 
@@ -61,7 +68,6 @@ void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configDa
 */
 void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    printf("simpleInstrumentController update started\n");
     unsigned int status; //!< Data status to be written to deviceStatus msg
     double sigma_BR_norm; //!< Norm of sigma_BR
 
@@ -76,8 +82,6 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configD
     // read in the input messages
     accessInMsgBuffer = AccessMsg_C_read(&configData->locationAccessInMsg);
     attGuidInMsgBuffer = AttGuidMsg_C_read(&configData->attGuidInMsg);
-
-    printf("1\n");
 
     // Compute the norm of the attitude error
     sigma_BR_norm = v3Norm(attGuidInMsgBuffer.sigma_BR);
@@ -98,18 +102,8 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configD
         deviceStatusOutMsgBuffer.deviceStatus = 0;
     }
 
-    printf("2\n");
-
-    printf("%s\n", configData->deviceStatusOutMsg);
-    printf("%i\n", deviceStatusOutMsgBuffer.deviceStatus);
-
-//    printf("%p\n", &configData->deviceStatusOutMsg);
-//    printf("%p\n", &deviceStatusOutMsgBuffer);
-
     // write to the output messages
     DeviceStatusMsg_C_write(&deviceStatusOutMsgBuffer, &(configData->deviceStatusOutMsg), moduleID, callTime);
-
-    printf("simpleInstrumentController update ended\n");
 
     return;
 }

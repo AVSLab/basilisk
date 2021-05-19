@@ -20,8 +20,6 @@
 #include "dataStorageUnitBase.h"
 #include "architecture/utilities/macroDefinitions.h"
 
-#include <iostream>
-
 /*! This method initializes some basic parameters for the module.
  @return void
  */
@@ -180,11 +178,6 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
                strncpy(tmpDataInstance.dataInstanceName, it->dataName, sizeof(tmpDataInstance.dataInstanceName));
                tmpDataInstance.dataInstanceSum = it->baudRate * (this->currentTimestep);
                this->storedData.push_back(tmpDataInstance);
-               // Debugging
-//               std::cout << "Looping through storedData vector, \n";
-//               std::cout<< "Current iterator message name: " << it->dataName << std::endl;
-//               for(int i=0; i < this->storedData.size(); i++)
-//                   std::cout << currentTime << " " << this->storedData[i].dataInstanceName << " " << it->baudRate << "\n";
            }
        }
         this->netBaud += it->baudRate;
