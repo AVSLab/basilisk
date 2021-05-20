@@ -7,9 +7,9 @@
 
 //! structure definition
 typedef struct {{
+    Msg2Header header;              //!< message header, zero'd on construction
     {type}Payload payload;		        //!< message copy, zero'd on construction
     {type}Payload *payloadPointer;	    //!< pointer to message
-    Msg2Header header;              //!< message header, zero'd on construction
     Msg2Header *headerPointer;      //!< pointer to message header
 }} {type}_C;
 

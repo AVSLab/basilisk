@@ -102,13 +102,14 @@ public:
 
     //! subscribe to a C message
     void subscribeToC(void* source){
-        // this method works by knowing that the first member of a C message is the payload.
-        this->payloadPointer = (messageType*) source;
+        // this method works by knowing that the first member of a C message is the header.
+        this->headerPointer = (Msg2Header*) source;
 
-        // advance the address to connect to C message header
-        messageType* pt = this->payloadPointer;
-        messageType** pt2 = (messageType **) (++pt);
-        this->headerPointer = (Msg2Header *) (++pt2);
+        // advance the address to connect to C-wrapped message payload
+        // this assumes the header memory is aligned with 0 additional padding
+        Msg2Header* pt = this->headerPointer;
+        this->payloadPointer = (messageType *) (++pt);
+
 
         // set flag that this input message is connected to another message
         this->initialized = true;           // set input message as linked
@@ -210,7 +211,12 @@ public:
     Recorder(void* message, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
         Msg2Header msgHeader;
-        this->readMessage = ReadFunctor<messageType>((messageType*) message, &msgHeader);
+
+        Msg2Header* pt = (Msg2Header *) message;
+        messageType* payloadPointer;
+        payloadPointer = (messageType *) (++pt);
+
+        this->readMessage = ReadFunctor<messageType>(payloadPointer, &msgHeader);
         this->ModelTag = "Rec:";
         Message<messageType> tempMsg;
         std::string msgName = typeid(tempMsg).name();
