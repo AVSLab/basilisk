@@ -271,10 +271,10 @@ def run(showPlots, simTime=None):
 
     TheBSKSim.get_DynModel().cameraMod.saveImages = 0
     # opNavMode 1 is used for viewing the spacecraft as it navigates, opNavMode 2 is for headless camera simulation
-    TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
+    TheBSKSim.get_DynModel().vizInterface.opNavMode = 1
 
     # The following code spawns the Vizard application from python
-    mode = ["None", "-directComm", "-opNavMode"]
+    mode = ["None", "-directComm", "-noDisplay"]
     TheScenario.run_vizard(mode[TheBSKSim.get_DynModel().vizInterface.opNavMode])
     # Configure FSW mode
     TheScenario.masterSim.modeRequest = 'prepOpNav'
@@ -293,7 +293,7 @@ def run(showPlots, simTime=None):
     if simTime != None:
         simulationTime = macros.min2nano(simTime)
     else:
-        simulationTime = macros.min2nano(600)
+        simulationTime = macros.min2nano(60)
     TheBSKSim.ConfigureStopTime(simulationTime)
     TheBSKSim.ExecuteSimulation()
     t2 = time.time()
