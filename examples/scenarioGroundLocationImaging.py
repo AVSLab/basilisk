@@ -47,13 +47,18 @@ Illustration of Simulation Results
 
     show_plots = True
 
-The following plots illustrate the 2D pointing error, access data, image commands, level of the storage unit, and
-total data downlinked to the ground station.
+The following plots illustrate the 2D pointing error, access data, image commands, and level of the storage unit.
 
-.. image:: /_images/Scenarios/scenarioAttLocPoint1.svg
+.. image:: /_images/Scenarios/scenarioGroundLocationImaging1.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttLocPoint2.svg
+.. image:: /_images/Scenarios/scenarioGroundLocationImaging2.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioGroundLocationImaging3.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioGroundLocationImaging4.svg
    :align: center
 
 """
@@ -106,6 +111,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
+
 # Plotting functions
 def plot_attitude_error(timeLineSet, dataSigmaBR):
     """Plot the attitude result."""
@@ -121,28 +127,6 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
     plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
     ax.set_yscale('log')
 
-def plot_control_torque(timeLineSet, dataLr):
-    """Plot the control torque response."""
-    plt.figure(2)
-    for idx in range(3):
-        plt.plot(timeLineSet, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Control Torque $L_r$ [Nm]')
-
-
-def plot_rate_error(timeLineSet, dataOmegaBR):
-    """Plot the body angular velocity tracking error."""
-    plt.figure(3)
-    for idx in range(3):
-        plt.plot(timeLineSet, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
     return
 
 
@@ -160,12 +144,21 @@ def plot_data_levels(timeLineSet, storageLevel, storedData):
 
 
 def plot_device_status(timeLineSet, deviceStatus):
-    plt.figure(5)
+    plt.figure(3)
     plt.plot(timeLineSet, deviceStatus)
     plt.xlabel('Time [min]')
     plt.ylabel('Device Status')
+
     return
 
+
+def plot_access(timeLineSet, hasAccess):
+    plt.figure(2)
+    plt.plot(timeLineSet, hasAccess)
+    plt.xlabel('Time [min]')
+    plt.ylabel('Imaging Target Access')
+
+    return
 
 
 def run(show_plots):
@@ -282,7 +275,7 @@ def run(show_plots):
     # Create a "transmitter"
     transmitter = spaceToGroundTransmitter.SpaceToGroundTransmitter()
     transmitter.ModelTag = "transmitter"
-    transmitter.nodeBaudRate = -9600.   # baud
+    transmitter.nodeBaudRate = -1E6   # baud
     transmitter.packetSize = -8E6   # bits
     transmitter.numBuffers = 2
     transmitter.addAccessMsgToTransmitter(singaporeStation.accessOutMsgs[-1])
@@ -295,7 +288,6 @@ def run(show_plots):
     instrument.nodeDataName = "boulder"
     scSim.AddModelToTask(simTaskName, instrument, ModelPriority=101)
 
-
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
@@ -303,7 +295,6 @@ def run(show_plots):
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(transmitter.nodeDataOutMsg)
     scSim.AddModelToTask(simTaskName, dataMonitor, ModelPriority=100)
-
     transmitter.addStorageUnitToTransmitter(dataMonitor.storageUnitDataOutMsg)
 
     #
@@ -339,11 +330,9 @@ def run(show_plots):
     simpleInsControlConfig.attErrTolerance = 0.1
     simpleInsControlWrap = scSim.setModelDataWrap(simpleInsControlConfig)
     simpleInsControlWrap.ModelTag = "instrumentController"
-
-    scSim.AddModelToTask(simTaskName, simpleInsControlWrap, simpleInsControlConfig, ModelPriority=900)
     simpleInsControlConfig.attGuidInMsg.subscribeTo(locPointConfig.attGuidOutMsg)
     simpleInsControlConfig.locationAccessInMsg.subscribeTo(imagingTarget.accessOutMsgs[-1])
-
+    scSim.AddModelToTask(simTaskName, simpleInsControlWrap, simpleInsControlConfig, ModelPriority=900)
     instrument.nodeStatusInMsg.subscribeTo(simpleInsControlConfig.deviceStatusOutMsg)
 
     #
@@ -355,6 +344,8 @@ def run(show_plots):
     snAttLog = sNavObject.attOutMsg.recorder()
     snTransLog = sNavObject.transOutMsg.recorder()
     dataMonLog = dataMonitor.storageUnitDataOutMsg.recorder()
+    transmitterLog = transmitter.nodeDataOutMsg.recorder()
+    locationLog = imagingTarget.accessOutMsgs[-1].recorder()
 
     scSim.AddModelToTask(simTaskName, dataMonLog)
     scSim.AddModelToTask(simTaskName, mrpLog)
@@ -362,6 +353,8 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, snAttLog)
     scSim.AddModelToTask(simTaskName, snTransLog)
     scSim.AddModelToTask(simTaskName, deviceLog)
+    scSim.AddModelToTask(simTaskName, transmitterLog)
+    scSim.AddModelToTask(simTaskName, locationLog)
 
     #
     # create simulation messages
@@ -436,13 +429,11 @@ def run(show_plots):
     #
     #   retrieve the logged data
     #
-    dataLr = mrpLog.torqueRequestBody
     dataSigmaBR = attErrLog.sigma_BR
-    dataOmegaBR = attErrLog.omega_BR_B
     storageLevel = dataMonLog.storageLevel
-    storageNetBaud = dataMonLog.currentNetBaud
     storedData = dataMonLog.storedData[:, range(32)]
     deviceStatus = deviceLog.deviceStatus
+    hasAccess = locationLog.hasAccess
 
     np.set_printoptions(precision=16)
 
@@ -457,11 +448,12 @@ def run(show_plots):
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
 
-    plot_control_torque(timeLineSet, dataLr)
+    plot_access(timeLineSet, hasAccess)
+    figureList = {}
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
-    plot_rate_error(timeLineSet, dataOmegaBR)
+    plot_device_status(timeLineSet, deviceStatus)
     pltName = fileName + "3"
     figureList[pltName] = plt.figure(3)
 
@@ -469,9 +461,7 @@ def run(show_plots):
     pltName = fileName + "4"
     figureList[pltName] = plt.figure(4)
 
-    plot_device_status(timeLineSet, deviceStatus)
-    pltName = fileName + "5"
-    figureList[pltName] = plt.figure(5)
+
 
     if show_plots:
         plt.show()

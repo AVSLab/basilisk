@@ -238,10 +238,6 @@ double DataStorageUnitBase::sumAllData(){
     return dataSum;
 }
 
-
-
-
-
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
  @return void
  */

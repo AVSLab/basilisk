@@ -32,14 +32,14 @@
 typedef struct {
     /* User configurable variables */
     double attErrTolerance; //!< Normalized MRP attitude error tolerance
-    unsigned int imaged; //!< Indicator for whether or not the image has already been captured
+    unsigned int imaged;    //!< Indicator for whether or not the image has already been captured
 
     /* declare module IO interfaces */
     AccessMsg_C locationAccessInMsg;                   //!< Ground location access input message
-    AttGuidMsg_C attGuidInMsg;                            //!< attitude guidance input message
+    AttGuidMsg_C attGuidInMsg;                         //!< attitude guidance input message
     DeviceStatusMsg_C deviceStatusOutMsg;              //!< device status output message
 
-    BSKLogger *bskLogger;                               //!< BSK Logging
+    BSKLogger *bskLogger;                              //!< BSK Logging
 }simpleInstrumentControllerConfig;
 
 #ifdef __cplusplus

@@ -38,9 +38,10 @@ Version |release|
   ``InitializeSimulation()`` method.
 - fixed an issue that could prevent ``.subscribeTo`` from a C++ to C wrapped message object to not function
   properly.
-
-
-
+- new :ref:`simpleInstrumentController` that sends an imaging command to a :ref:`simpleInstrument` if the attitude error
+  and access to a :ref:`groundLocation` module are within requirements.
+- new :ref:`scenarioGroundLocationImaging` example script that demonstrates the aforementioned module integrated into a
+  full on-board data system.
 
 Version 2.0.3
 -------------
