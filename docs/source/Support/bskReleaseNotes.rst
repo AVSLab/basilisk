@@ -36,6 +36,9 @@ Version |release|
 - updated :ref:`spacecraft` ``Reset()`` method to write all spacecraft and effector state output messages
   with their initial values.  This way these output messages are correct as already as calling the
   ``InitializeSimulation()`` method.
+- fixed an issue that could prevent ``.subscribeTo`` from a C++ to C wrapped message object to not function
+  properly.
+
 
 
 
