@@ -226,7 +226,7 @@ def run(show_plots):
     fswProcessName = "fswProcess"
     fswTaskName = "fswTask"
     fswProcess = scSim.CreateNewProcess(fswProcessName, 1)
-    fswTimeStep = macros.sec2nano(1.0)
+    fswTimeStep = macros.sec2nano(300.0)
     fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
     # setup ET Relative Motion Control module
