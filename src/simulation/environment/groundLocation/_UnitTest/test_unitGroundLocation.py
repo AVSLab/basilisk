@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -74,7 +73,8 @@ def test_range(show_plots):
 
     sc3_message = messaging.SCStatesMsgPayload()
     #   SC3 is inside the altitude limit,  but outside the visibility cone
-    sc3_message.r_BN_N = rbk.euler3(np.radians(11.)).dot(np.array([orbitalMotion.REQ_EARTH * 1e3 + 100e3, 0, 0]))
+    sc3_message.r_BN_N = rbk.euler3(np.radians(11.)).dot(np.array([100e3, 0, 0])) + np.array(
+        [orbitalMotion.REQ_EARTH * 1e3, 0, 0])
     sc3Msg = messaging.SCStatesMsg().write(sc3_message)
 
     groundTarget.addSpacecraftToModel(sc1Msg)
@@ -111,11 +111,11 @@ def test_range(show_plots):
 
     #   Compare to expected values
     accuracy = 1e-8
-    ref_ranges = [100e3, 0, 0]
-    ref_elevation = [np.radians(90.),0, 0]
+    ref_ranges = [100e3, 101e3, 100e3]
+    ref_elevation = [np.radians(90.), np.radians(90.), np.radians(79.)]
     ref_access = [1, 0, 0]
 
-    test_ranges = [sc1_slant[1], sc2_slant[1], sc3_slant[1]*2]
+    test_ranges = [sc1_slant[1], sc2_slant[1], sc3_slant[1]]
     test_elevation = [sc1_elevation[1],sc2_elevation[1],sc3_elevation[1]]
     test_access = [sc1_access[1],sc2_access[1],sc3_access[1]]
 
