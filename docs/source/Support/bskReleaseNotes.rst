@@ -42,6 +42,9 @@ Version |release|
   and access to a :ref:`groundLocation` module are within requirements.
 - new :ref:`scenarioGroundLocationImaging` example script that demonstrates the aforementioned module integrated into a
   full on-board data system.
+- new :ref:`etSphericalControl` module that controls the relative motion of the Electrostatic Tug
+- new :ref:`scenarioDebrisReorbitET` example script that demonstrates using the Electrostatic Tug and the
+  Multi-Sphere Method
 
 Version 2.0.3
 -------------
