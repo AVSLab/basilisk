@@ -37,8 +37,7 @@
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
-static void calc_RelativeMotionControl(etSphericalControlConfig *configData, NavTransMsgPayload servicerTransInMsgBuffer,
-                                        NavTransMsgPayload debrisTransInMsgBuffer, NavAttMsgPayload servicerAttInMsgBuffer, VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer, VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer, CmdForceInertialMsgPayload eForceInMsgBuffer, CmdForceInertialMsgPayload *forceInertialOutMsgBuffer, CmdForceBodyMsgPayload *forceBodyOutMsgBuffer);
+
 
 /*!
     This method initializes the output messages for this module.
@@ -166,8 +165,13 @@ void Update_etSphericalControl(etSphericalControlConfig *configData, uint64_t ca
  @param forceInertialOutMsgBuffer inertial force output (3-axis)
  @param forceBodyOutMsgBuffer body force output (3-axis)
  */
-static void calc_RelativeMotionControl(etSphericalControlConfig *configData, NavTransMsgPayload servicerTransInMsgBuffer,
-                                        NavTransMsgPayload debrisTransInMsgBuffer, NavAttMsgPayload servicerAttInMsgBuffer, VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer, VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer, CmdForceInertialMsgPayload eForceInMsgBuffer, CmdForceInertialMsgPayload *forceInertialOutMsgBuffer, CmdForceBodyMsgPayload *forceBodyOutMsgBuffer)
+void calc_RelativeMotionControl(etSphericalControlConfig *configData, NavTransMsgPayload servicerTransInMsgBuffer,
+                                NavTransMsgPayload debrisTransInMsgBuffer, NavAttMsgPayload servicerAttInMsgBuffer,
+                                VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer,
+                                VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer,
+                                CmdForceInertialMsgPayload eForceInMsgBuffer,
+                                CmdForceInertialMsgPayload *forceInertialOutMsgBuffer,
+                                CmdForceBodyMsgPayload *forceBodyOutMsgBuffer)
 {
     // relative motion control according to "Relative Motion Control For Two-Spacecraft Electrostatic Orbit Corrections" https://doi.org/10.2514/1.56118
     

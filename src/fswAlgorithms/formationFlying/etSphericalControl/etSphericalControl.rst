@@ -10,7 +10,7 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_FSW_MODULE_TEMPLATE:
+.. _ModuleIO_ET_spherical_control:
 .. figure:: /../../src/fswAlgorithms/formationFlying/etSphericalControl/_Documentation/Images/moduleEtSphericalControl.svg
     :align: center
 
@@ -72,5 +72,11 @@ The ETcontrol module is created using:
     etSphericalControlWrap.ModelTag = "etSphericalControl"
     scSim.AddModelToTask(fswTaskName, etSphericalControlWrap, etSphericalControlData)
 
-The reference position variables in the spherical frame L_r, theta_r, phi_r, the feedback gains K and P, and the
-gravitational parameter mu must be added to etSphericalControlData.
+The reference position variables in the spherical frame :math:`L_r`, :math:`theta_r`, :math:`phi_r`,
+the feedback gains :math:`K` and :math:`P`, and the gravitational parameter mu must
+be added to etSphericalControlData.
+
+The module computes the control force vector both with respect to the inertial and body frame as
+separate output messages.  Depending on the needs of the developer, the control force can be connected
+in either frame to down-stream modules.  However, don't connect both output messages because
+this would result in the control force being applied twice.

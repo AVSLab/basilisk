@@ -35,22 +35,22 @@
 typedef struct {
 
     // declare module IO interfaces
-    NavTransMsg_C servicerTransInMsg;      //!< servicer orbit input message
-    NavTransMsg_C debrisTransInMsg;     //!< debris orbit input message
-    NavAttMsg_C servicerAttInMsg;       //!< servicer attitude input message
+    NavTransMsg_C servicerTransInMsg;                   //!< servicer orbit input message
+    NavTransMsg_C debrisTransInMsg;                     //!< debris orbit input message
+    NavAttMsg_C servicerAttInMsg;                       //!< servicer attitude input message
     VehicleConfigMsg_C servicerVehicleConfigInMsg;      //!< servicer vehicle configuration (mass) input message
-    VehicleConfigMsg_C debrisVehicleConfigInMsg;      //!< debris vehicle configuration (mass) input message
-    CmdForceInertialMsg_C eForceInMsg;  //!< servicer electrostatic force input message
-    CmdForceInertialMsg_C forceInertialOutMsg;  //!< servicer inertial frame control force output message
-    CmdForceBodyMsg_C forceBodyOutMsg;  //!< servicer body frame control force output message
+    VehicleConfigMsg_C debrisVehicleConfigInMsg;        //!< debris vehicle configuration (mass) input message
+    CmdForceInertialMsg_C eForceInMsg;                  //!< servicer electrostatic force input message
+    CmdForceInertialMsg_C forceInertialOutMsg;          //!< servicer inertial frame control force output message
+    CmdForceBodyMsg_C forceBodyOutMsg;                  //!< servicer body frame control force output message
     
-    double mu;                          //!< [m^3/s^2]  gravitational parameter
-    double L_r;                         //!< [m]  reference separation distance
-    double theta_r;                         //!< [rad]  reference in-plane rotation angle
-    double phi_r;                         //!< [rad]  reference out-of-plane rotation angle
-    double K[9];                      //!< 3x3 feedback gain matrix [K]
-    double P[9];                      //!< 3x3 feedback gain matrix [P]
-    BSKLogger *bskLogger;                           //!< BSK Logging
+    double mu;                                          //!< [m^3/s^2]  gravitational parameter
+    double L_r;                                         //!< [m]  reference separation distance
+    double theta_r;                                     //!< [rad]  reference in-plane rotation angle
+    double phi_r;                                       //!< [rad]  reference out-of-plane rotation angle
+    double K[9];                                        //!< 3x3 symmetric positive definite feedback gain matrix [K]
+    double P[9];                                        //!< 3x3 symmetric positive definite feedback gain matrix [P]
+    BSKLogger *bskLogger;                               //!< BSK Logging
 } etSphericalControlConfig;
 
 #ifdef __cplusplus
@@ -60,7 +60,13 @@ extern "C" {
 void SelfInit_etSphericalControl(etSphericalControlConfig *configData, int64_t moduleID);
 void Update_etSphericalControl(etSphericalControlConfig *configData, uint64_t callTime, int64_t moduleID);
 void Reset_etSphericalControl(etSphericalControlConfig *configData, uint64_t callTime, int64_t moduleID);
-
+void calc_RelativeMotionControl(etSphericalControlConfig *configData, NavTransMsgPayload servicerTransInMsgBuffer,
+                                NavTransMsgPayload debrisTransInMsgBuffer, NavAttMsgPayload servicerAttInMsgBuffer,
+                                VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer,
+                                VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer,
+                                CmdForceInertialMsgPayload eForceInMsgBuffer,
+                                CmdForceInertialMsgPayload *forceInertialOutMsgBuffer,
+                                CmdForceBodyMsgPayload *forceBodyOutMsgBuffer);
 #ifdef __cplusplus
 }
 #endif
