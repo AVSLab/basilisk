@@ -449,7 +449,6 @@ def run(show_plots):
     figureList[pltName] = plt.figure(1)
 
     plot_access(timeLineSet, hasAccess)
-    figureList = {}
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
@@ -460,8 +459,6 @@ def run(show_plots):
     plot_data_levels(timeLineSet, storageLevel, storedData)
     pltName = fileName + "4"
     figureList[pltName] = plt.figure(4)
-
-
 
     if show_plots:
         plt.show()
