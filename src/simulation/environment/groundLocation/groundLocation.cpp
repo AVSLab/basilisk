@@ -21,7 +21,6 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
-
 /*! @brief Creates an instance of the GroundLocation class with a minimum elevation of 10 degrees,
  @return void
  */
@@ -148,11 +147,15 @@ void GroundLocation::updateInertialPositions()
 {
     // First, get the rotation matrix from the inertial to planet frame from SPICE:
     this->dcm_PN = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
+    this->dcm_PN_dot = cArray2EigenMatrix3d(*this->planetState.J20002Pfix_dot);
     this->r_PN_N = cArray2EigenVector3d(this->planetState.PositionVector);
     // Then, transpose it to get the planet to inertial frame
     this->r_LP_N = this->dcm_PN.transpose() * this->r_LP_P_Init;
     this->rhat_LP_N = this->r_LP_N/this->r_LP_N.norm();
     this->r_LN_N = this->r_PN_N + this->r_LP_N;
+    // Get planet frame angular velocity vector
+    Eigen::Matrix3d w_tilde_PN = - this->dcm_PN_dot * this->dcm_PN.transpose();
+    this->w_PN << w_tilde_PN(2,1), w_tilde_PN(0,3), w_tilde_PN(1,0);
     //  Stash updated position in the groundState message
     eigenVector3d2CArray(this->r_LN_N, this->currentGroundStateBuffer.r_LN_N);
     eigenVector3d2CArray(this->r_LP_N, this->currentGroundStateBuffer.r_LP_N);
@@ -181,6 +184,17 @@ void GroundLocation::computeAccess()
         double cos_az = -sezPosition[0]/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
         double sin_az = sezPosition[1]/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
         accessMsgIt->azimuth = atan2(sin_az, cos_az);
+        
+        Eigen::Vector3d v_BL_L = this->dcm_LP * this->dcm_PN * (cArray2EigenVector3d(scStatesMsgIt->v_BN_N) - this->w_PN.cross(r_BP_N)); // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
+        Eigen::Vector3d rHat_BL_L = sezPosition.normalized();
+        accessMsgIt->range_dot = v_BL_L.dot(rHat_BL_L);
+        Eigen::Vector3d zenith_L;
+        zenith_L << 0., 0., 1.;
+        Eigen::Vector3d qHat_BL_L = rHat_BL_L.cross(zenith_L);
+        Eigen::Vector3d eldotHat_BL_L = qHat_BL_L.cross(rHat_BL_L);
+        accessMsgIt->el_dot = v_BL_L.dot(eldotHat_BL_L)/sezPosition.norm();
+        Eigen::Vector3d azdotComp_BL_L = (v_BL_L - v_BL_L.dot(rHat_BL_L)*rHat_BL_L - v_BL_L.dot(eldotHat_BL_L)*eldotHat_BL_L);
+        accessMsgIt->az_dot = azdotComp_BL_L.norm()/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
         
         if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0)){
             accessMsgIt->hasAccess = 1;
