@@ -51,6 +51,8 @@ The ``groundLocation`` module handles the following behavior:
 #. Body-fixed location representation: a single groundLocation instance represents one body-fixed location on a
    body, including translation and rotation due to the motion of that body as computed by a module that
    writes a SPICEPlanetStateMsgPayload.
+#. Body-fixed velocity representation: using a single groundLocation as a reference point in the body-fixed frame, the spacecraft velocity
+   in the body-fixed frame is converted to range rate, elevation rate, and azimuth rate.
 #. Conversion of latitude, longitude, altitude coordinates to planet-centered, planet-fixed coordinates
 #. Computation of spacecraft visibility (i.e. access) considering range and ground location field-of-view constraints
 #. Support for multiple spacecraft given one groundLocation instance

@@ -28,9 +28,9 @@ typedef struct {
     double slantRange;//!< [m] Range from a location to the spacecraft.
     double elevation;//!< [rad] Elevation angle for a given spacecraft.
     double azimuth; //!< [rad] Azimuth angle for a spacecraft.
-    double range_dot;
-    double el_dot;
-    double az_dot;
+    double range_dot; //!< [m/s] Range rate of a given spacecraft relative to a location in the SEZ rotating frame.
+    double el_dot; //!< [rad/s] Elevation angle rate for a given spacecraft in the SEZ rotating frame.
+    double az_dot; //!< [rad/s] Azimuth angle rate for a given spacecraft in the SEZ rotating frame.
 }AccessMsgPayload;
 
 
