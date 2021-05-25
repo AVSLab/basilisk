@@ -12,7 +12,8 @@ from Basilisk.utilities import orbitalMotion as om
 
 #   Modules to test
 from Basilisk.fswAlgorithms import hillStateConverter
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.architecture import messaging
+#from Basilisk.simulation import simFswInterfaceMessages
 
 def test_hillStateConverter(show_plots):
     """
@@ -33,42 +34,41 @@ def test_hillStateConverter(show_plots):
     dep_r = [7101, 0, 0]
     dep_v = [0,7.010,0]
 
-    chiefNavMsg = simFswInterfaceMessages.NavTransIntMsg()
-    chiefNavMsg.r_BN_N = chief_r
-    chiefNavMsg.v_BN_N = chief_v
-    chiefMsgName = "chief_nav"
-    unitTestSupport.setMessage(sim.TotalSim, procName, chiefMsgName, chiefNavMsg, "NavTransIntMsg")
+    chiefNavMsgData = messaging.NavTransMsgPayload()
+    chiefNavMsgData.r_BN_N = chief_r
+    chiefNavMsgData.v_BN_N = chief_v
+    chiefNavMsg = messaging.NavTransMsg().write(chiefNavMsgData)
 
-    depNavMsg = simFswInterfaceMessages.NavTransIntMsg()
-    depNavMsg.r_BN_N = dep_r 
-    depNavMsg.v_BN_N = dep_v
-    depMsgName = "dep_nav"
-    unitTestSupport.setMessage(sim.TotalSim, procName, depMsgName, depNavMsg, "NavTransIntMsg")
+    depNavMsgData = messaging.NavTransMsgPayload()
+    depNavMsgData.r_BN_N = dep_r 
+    depNavMsgData.v_BN_N = dep_v
+    depNavMsg = messaging.NavTransMsg().write(depNavMsgData)
 
     #   Set up the hillStateConverter
     hillStateNavData = hillStateConverter.HillStateConverterConfig()
     hillStateNavWrap = sim.setModelDataWrap(hillStateNavData)
     hillStateNavWrap.ModelTag = "dep_hillStateNav"
-    hillStateNavData.chiefStateInMsgName = chiefMsgName
-    hillStateNavData.depStateInMsgName = depMsgName
-    hillStateNavData.hillStateOutMsgName = 'dep_hill_nav'
+    hillStateNavData.chiefStateInMsg.subscribeTo(chiefNavMsg)
+    hillStateNavData.depStateInMsg.subscribeTo(depNavMsg)
+    hillRecorder = hillStateNavData.hillStateOutMsg.recorder()
     
     sim.AddModelToTask(taskName, hillStateNavWrap, hillStateNavData)
-    sim.TotalSim.logThisMessage(hillStateNavData.hillStateOutMsgName, macros.sec2nano(1.0))
+    sim.AddModelToTask(taskName, hillRecorder)
 
     sim.ConfigureStopTime(macros.sec2nano(1.0))
-    sim.InitializeSimulationAndDiscover()
+    sim.InitializeSimulation()
     sim.ExecuteSimulation()
-    hill_positions = sim.pullMessageLogData(hillStateNavData.hillStateOutMsgName+".r_DC_H",list(range(3)))
-    hill_velocities = sim.pullMessageLogData(hillStateNavData.hillStateOutMsgName+".v_DC_H",list(range(3)))
+
+    hill_positions = hillRecorder.r_DC_H
+    hill_velocities = hillRecorder.v_DC_H
 
     ref_pos = [1,0,0]
     ref_vel = [0,0.00901408,0]
     #   Test the position calculation:
-    for val1, val2 in zip(hill_positions[1,1:4], ref_pos):
+    for val1, val2 in zip(hill_positions, ref_pos):
         assert pytest.approx(val1, val2)
 
-    for val1, val2  in zip(hill_velocities[1,1:4], ref_vel):
+    for val1, val2  in zip(hill_velocities, ref_vel):
         assert pytest.approx(val1, val2)
 
 if __name__=="__main__":
