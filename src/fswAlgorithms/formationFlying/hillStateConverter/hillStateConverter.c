@@ -21,18 +21,14 @@
 #include "hillStateConverter.h"
 #include "string.h"
 
-/*
- Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
- */
+// Internal utilities
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/orbitalMotion.h"
 
 
 /*!
  \verbatim embed:rst
-    This method initializes the configData for this module.
-    It checks to ensure that the inputs are sane and then creates the
-    output message of type :ref:`hillStateConverterFswMsg`.
+    This method initializes the module's hillStateOutMsg.
  \endverbatim
  @return void
  @param configData The configuration data associated with this module
@@ -43,9 +39,7 @@ void SelfInit_hillStateConverter(HillStateConverterConfig *configData, int64_t m
     HillRelStateMsg_C_init(&configData->hillStateOutMsg);
 }
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.  The local copy of the
- message output buffer should be cleared.
+/*! This message checks to see that both of the input translational state messages were connected; if not, it errors.
  @return void
  @param configData The configuration data associated with the module
  @param callTime [ns] time the method is called
@@ -62,7 +56,7 @@ void Reset_hillStateConverter(HillStateConverterConfig *configData, uint64_t cal
     }
 }
 
-/*! Add a description of what this main Update() routine does for this module
+/*! Computes the relative state of the deputy vs the chief in chief Hill-frame coordinates and writes an output message.
  @return void
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
