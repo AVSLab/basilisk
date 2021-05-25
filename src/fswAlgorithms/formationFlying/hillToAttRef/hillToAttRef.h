@@ -40,9 +40,9 @@ typedef struct {
     AttRefMsg_C attRefOutMsg;
     BSKLogger *bskLogger;                           //!< BSK Logging
 
-    double gainMatrix[3][6];
-    double relMRPMin;
-    double relMRPMax;
+    double gainMatrix[3][6]; //!< User-configured gain matrix that maps from hill states to relative attitudes.
+    double relMRPMin;        //!< Minimum value for the relative MRP components; user-configurable.
+    double relMRPMax;        //!< Maximum value for the relative MRP components; user-configurable.
 }HillToAttRefConfig;
 
 #ifdef __cplusplus
