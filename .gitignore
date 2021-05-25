@@ -14,6 +14,9 @@ docs/source/breathe.data
 docs/source/externalTools/*
 docs/source/examples/*
 src/tests/scenarios/data
+bsk-dev-env/
+bin/
+.vscode/
 xml/*
 *.swp
 *.pyc
