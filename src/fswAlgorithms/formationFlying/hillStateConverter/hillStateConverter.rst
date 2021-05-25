@@ -47,7 +47,7 @@ These unit vectors are used to compute the final direction used to define the fr
 Finally, these unit vectors are composed into a DCM that rotates from the inertial to Hill frames:
 
     .. math:: 
-        [HN] = {\hat{h}_r, \hat{h}_v, \hat{h}_h}
+        [HN] = \{\hat{h}_r, \hat{h}_v, \hat{h}_h\}
 
 The relative position is computed using the difference of the inertial deputy and chief positions and this DCM:
 
