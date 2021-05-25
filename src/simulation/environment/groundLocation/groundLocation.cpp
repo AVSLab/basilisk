@@ -175,22 +175,19 @@ void GroundLocation::computeAccess()
 
         double viewAngle = (M_PI_2-acos(this->rhat_LP_N.dot(relativeHeading_N)));
 
+        accessMsgIt->slantRange = r_BL_N.norm();
+        accessMsgIt->elevation = viewAngle;
+        Eigen::Vector3d sezPosition = this->dcm_LP * this->dcm_PN * r_BL_N;
+        double cos_az = -sezPosition[0]/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
+        double sin_az = sezPosition[1]/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
+        accessMsgIt->azimuth = atan2(sin_az, cos_az);
+        
         if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0)){
             accessMsgIt->hasAccess = 1;
-            accessMsgIt->slantRange = r_BL_N.norm();
-            accessMsgIt->elevation = viewAngle;
-
-            Eigen::Vector3d sezPosition = this->dcm_LP * this->dcm_PN * r_BL_N;
-            double cos_az = -sezPosition[0]/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
-            double sin_az = sezPosition[1]/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
-            accessMsgIt->azimuth = atan2(sin_az, cos_az);
         }
         else
         {
             accessMsgIt->hasAccess = 0;
-            accessMsgIt->slantRange = 0.0;
-            accessMsgIt->elevation = 0.0;
-            accessMsgIt->azimuth = 0.0;
         }
     }
 }
