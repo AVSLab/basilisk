@@ -45,6 +45,11 @@ Version |release|
 - new :ref:`etSphericalControl` module that controls the relative motion of the Electrostatic Tug
 - new :ref:`scenarioDebrisReorbitET` example script that demonstrates using the Electrostatic Tug and the
   Multi-Sphere Method
+- updated :ref:`groundLocation` to always compute the elevation, range and azimuth information, even if
+  the satellite does not have access.  The output message variable ``hasAccess`` provides access information.
+
+
+
 
 Version 2.0.3
 -------------
