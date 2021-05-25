@@ -61,17 +61,6 @@ To compute the relative velocities, the transport theorem is additionally used d
     .. math::
         \dot{\rho} = [HN](\dot{r}_{dep} - \dot{r}_{chief}) + (\omega_{HN} \times (\dot{r}_{dep} - \dot{r}_{chief}))
 
-
-
-Citations
-^^^^^^^^^
-If you want to cite other papers or text, provide a web link to a paper.  For example::
-
-    `The link text <http://example.net/>`__
-
-creates `The link text <http://example.net/>`__.
-
-
 Module Assumptions and Limitations
 ----------------------------------
 This module makes use of the rv2hill function provided by the orbitalMotion library included with BSK, which works for arbitrary
