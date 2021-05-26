@@ -22,19 +22,20 @@ Overview
 --------
 
 This script sets up a formation flying scenario with two spacecraft. The deputy spacecraft attempts to rendezvous with the
-chief using attitude-driven differential drag.
+chief using attitude-driven differential drag using the strategy outlined in `this paper <https://arc.aiaa.org/doi/10.2514/1.G004521>`_.
 
 This script is found in the folder ``src/examples`` and executed by using::
 
       python3 scenarioDragRenzesvous
 
 The simulation layout is shown in the following illustration. Two spacecraft are orbiting the earth at
-close distance. Only :math:`J_2` gravity perturbation is included. Each spacecraft sends a :ref:`simple_nav`
-output message of type :ref:`NavAttIntMsg` message at a certain period
-to :ref:`meanOEFeedback`, where mean orbital element difference is calculated and necessary control force is output to
-extForceTorque module.
+close distance. Perturbations from atmospheric drag, provided by :ref:`exponentialAtmosphere` and :ref:`facetDragDynamicEffector`, 
+are implemented by default; the :math:`J_2` gravity perturbation can also be included. Each spacecraft sends a :ref:`simple_nav`
+output message of type :ref:`NavAttIntMsg` continuously to a :ref:`hillStateConverter` module, which is assumed to be a part of the deputy (maneuvering) 
+spacecraft's flight software stack. The :ref:`hillStateConverter` module then writes a :ref:`hillRelStateMsg`, which is read by the :ref:`hillToAttRef` module implementing
+the differential drag attitude guidance law. 
 
-.. image:: /_images/static/test_scenarioFormationMeanOEFeedback.svg
+.. image:: /_images/static/scenarioDragRendezvous.png
    :align: center
 
 
@@ -149,7 +150,7 @@ def setup_spacecraft_plant(rN, vN, modelName,):
     return scObject, dragEffector, scNav
 
 
-def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', makeViz=False):
+def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', makeViz=False, useJ2=False):
     """
     Basilisk simulation of a two-spacecraft rendezvous using relative-attitude driven differential drag. Includes
     both static gain and desensitized time-varying gain options and the option to use simulated attitude control or
@@ -180,8 +181,9 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravBodies = gravFactory.createBodies(['earth'])
     gravBodies['earth'].isCentralBody = True
-    #simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S.txt', gravBodies['earth'].spherHarm, 2)
-    gravBodies['earth'].useSphericalHarmParams = False
+    simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S.txt', gravBodies['earth'].spherHarm, 2)
+
+    gravBodies['earth'].useSphericalHarmParams = useJ2
     # timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
     # gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
     #                                           , timeInitString
@@ -364,8 +366,8 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     return results_dict
 
 
-def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr'):
-    results = drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType=ctrlType, makeViz=True,)
+def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', useJ2=False, makeViz=False):
+    results = drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType=ctrlType, makeViz=makeViz,useJ2=useJ2)
 
     timeData = results['dynTimeData']
     fswTimeData = results['fswTimeData']
@@ -388,86 +390,6 @@ def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr'):
 
     for ind in range(0,numDataPoints):
         rel_mrp_hist[ind,:] = rbk.subMRP(depAtt[ind,:], chiefAtt[ind,:])
-
-    #swTimeData, pos, vel, chiefAtt, pos2, vel2, depAtt, hillPos, hillVel, hillPosSens, hillVelSens, numDataPoints, mu,
-    # ----- plot ----- #
-    # classical oe (figure1)
-    # plt.figure(1)
-    # oed_cl = np.empty((len(pos[:, 0]), 6))
-    # for i in range(0, len(pos[:, 0])):
-    #     # spacecraft 1 (chief)
-    #     oe_cl_osc = orbitalMotion.rv2elem(mu, pos[i, :], vel[i, :])
-    #     oe_cl_mean = orbitalMotion.ClassicElements()
-    #     orbitalMotion.clMeanOscMap(orbitalMotion.REQ_EARTH*1e3, orbitalMotion.J2_EARTH, oe_cl_osc, oe_cl_mean, -1)
-    #     # spacecraft 2 (deputy)
-    #     oe2_cl_osc = orbitalMotion.rv2elem(mu, pos2[i, :], vel2[i, :])
-    #     oe2_cl_mean = orbitalMotion.ClassicElements()
-    #     orbitalMotion.clMeanOscMap(orbitalMotion.REQ_EARTH*1e3, orbitalMotion.J2_EARTH, oe2_cl_osc, oe2_cl_mean, -1)
-    #     # calculate oed
-    #     oed_cl[i, 0] = (oe2_cl_mean.a - oe_cl_mean.a)/oe_cl_mean.a  # delta a (normalized)
-    #     oed_cl[i, 1] = oe2_cl_mean.e - oe_cl_mean.e  # delta e
-    #     oed_cl[i, 2] = oe2_cl_mean.i - oe_cl_mean.i  # delta i
-    #     oed_cl[i, 3] = oe2_cl_mean.Omega - oe_cl_mean.Omega  # delta Omega
-    #     oed_cl[i, 4] = oe2_cl_mean.omega - oe_cl_mean.omega  # delta omega
-    #     E_tmp = orbitalMotion.f2E(oe_cl_mean.f, oe_cl_mean.e)
-    #     E2_tmp = orbitalMotion.f2E(oe2_cl_mean.f, oe2_cl_mean.e)
-    #     oed_cl[i, 5] = orbitalMotion.E2M(
-    #         E2_tmp, oe2_cl_mean.e) - orbitalMotion.E2M(E_tmp, oe_cl_mean.e)  # delta M
-    #     for j in range(3, 6):
-    #         while(oed_cl[i, j] > np.pi):
-    #             oed_cl[i, j] = oed_cl[i, j] - 2*np.pi
-    #         while(oed_cl[i, j] < -np.pi):
-    #             oed_cl[i, j] = oed_cl[i, j] + 2*np.pi
-    # plt.plot(timeData, oed_cl[:, 0], label="da")
-    # plt.plot(timeData, oed_cl[:, 1], label="de")
-    # plt.plot(timeData, oed_cl[:, 2], label="di")
-    # plt.plot(timeData, oed_cl[:, 3], label="dOmega")
-    # plt.plot(timeData, oed_cl[:, 4], label="domega")
-    # plt.plot(timeData, oed_cl[:, 5], label="dM")
-    # plt.legend()
-    # plt.xlabel("time [orbit]")
-    # plt.ylabel("mean orbital element difference")
-    # figureList = {}
-    # pltName = fileName + "1"
-    # figureList[pltName] = plt.figure(1)
-    # # equinoctial oe (figure2)
-    # plt.figure(2)
-    # oed_eq = np.empty((len(pos[:, 0]), 6))
-    # for i in range(0, len(pos[:, 0])):
-    #     # spacecraft 1 (chief)
-    #     oe_cl_osc = orbitalMotion.rv2elem(mu, pos[i, :], vel[i, :])
-    #     oe_cl_mean = orbitalMotion.ClassicElements()
-    #     orbitalMotion.clMeanOscMap(orbitalMotion.REQ_EARTH*1e3, orbitalMotion.J2_EARTH, oe_cl_osc, oe_cl_mean, -1)
-    #     oe_eq_mean = orbitalMotion.EquinoctialElements()
-    #     orbitalMotion.clElem2eqElem(oe_cl_mean, oe_eq_mean)
-    #     # spacecraft 2 (deputy)
-    #     oe2_cl_osc = orbitalMotion.rv2elem(mu, pos2[i, :], vel2[i, :])
-    #     oe2_cl_mean = orbitalMotion.ClassicElements()
-    #     orbitalMotion.clMeanOscMap(orbitalMotion.REQ_EARTH*1e3, orbitalMotion.J2_EARTH, oe2_cl_osc, oe2_cl_mean, -1)
-    #     oe2_eq_mean = orbitalMotion.EquinoctialElements()
-    #     orbitalMotion.clElem2eqElem(oe2_cl_mean, oe2_eq_mean)
-    #     # calculate oed
-    #     oed_eq[i, 0] = (oe2_eq_mean.a - oe_eq_mean.a)/oe_eq_mean.a  # delta a (normalized)
-    #     oed_eq[i, 1] = oe2_eq_mean.P1 - oe_eq_mean.P1  # delta P1
-    #     oed_eq[i, 2] = oe2_eq_mean.P2 - oe_eq_mean.P2  # delta P2
-    #     oed_eq[i, 3] = oe2_eq_mean.Q1 - oe_eq_mean.Q1  # delta Q1
-    #     oed_eq[i, 4] = oe2_eq_mean.Q2 - oe_eq_mean.Q2  # delta Q2
-    #     oed_eq[i, 5] = oe2_eq_mean.l - oe_eq_mean.l  # delta l
-    #     while(oed_eq[i, 5] > np.pi):
-    #         oed_eq[i, 5] = oed_eq[i, 5] - 2*np.pi
-    #     while(oed_eq[i, 5] < -np.pi):
-    #         oed_eq[i, 5] = oed_eq[i, 5] + 2*np.pi
-    # plt.plot(timeData, oed_eq[:, 0], label="da")
-    # plt.plot(timeData, oed_eq[:, 1], label="dP1")
-    # plt.plot(timeData, oed_eq[:, 2], label="dP2")
-    # plt.plot(timeData, oed_eq[:, 3], label="dQ1")
-    # plt.plot(timeData, oed_eq[:, 4], label="dQ2")
-    # plt.plot(timeData, oed_eq[:, 5], label="dl")
-    # plt.legend()
-    # plt.xlabel("time [orbit]")
-    # plt.ylabel("mean orbital element difference")
-    # pltName = fileName + "2"
-    # figureList[pltName] = plt.figure(2)
 
     plt.figure()
     plt.plot(timeData, chiefAtt,label='Chief $\sigma_{BN}$')
@@ -557,5 +479,6 @@ if __name__ == "__main__":
         0.0, #   altitude offset (m)
         0.1, #  True anomaly offset (deg)
         1, #    Density multiplier (nondimensional)
-        ctrlType='lqr'
+        ctrlType='lqr',
+        useJ2=False
     )
