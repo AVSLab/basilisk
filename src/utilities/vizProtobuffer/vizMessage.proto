@@ -105,8 +105,8 @@ message VizMessage{
 
     
     message PointLine{
-        string fromBodyName = 1;
-        string toBodyName = 2;
+        string fromBodyName = 1; //Can be spacecraft, celestial body, or ground location
+        string toBodyName = 2; //Can be spacecraft, celestial body, or ground location
         repeated int32 lineColor = 3; //Send desired RGBA as values between 0 and 255
     }
     
@@ -163,6 +163,9 @@ message VizMessage{
         int32 shader = 8; //(Optional) Value of -1 (protobuffer default) or 0 to use the viz default: Unity Specular Standard Shader, 1 for Unity Standard Shader
     }
 
+    message LiveVizSettingsPb{
+        repeated PointLine targetLines = 1;     // list of lines between 2 scenario targets.  This list is redrawn on each update step, so the line properties can change with time.
+    }
 
     message VizSettingsPb{
         double ambient = 1; //Value of -1 to use viz default or specify value between 0 and 1
@@ -227,4 +230,5 @@ message VizMessage{
     VizSettingsPb settings = 7;
     EpochDateTime epoch = 8;
     repeated Location locations = 9;
+    LiveVizSettingsPb liveSettings = 10;
 }

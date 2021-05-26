@@ -230,10 +230,51 @@ def createPointLine(viz, **kwargs):
         exit(1)
 
     pointLineList.append(vizElement)
-    del viz.settings.pointLineList[:] # clear settings list to replace it with updated list
+    del viz.settings.pointLineList[:]  # clear settings list to replace it with updated list
     viz.settings.pointLineList = vizInterface.PointLineConfig(pointLineList)
     return
 
+targetLineList = []
+def createTargetLine(viz, **kwargs):
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
+    global firstSpacecraftName
+    vizElement = vizInterface.PointLine()
+
+    unitTestSupport.checkMethodKeyword(
+        ['fromBodyName', 'toBodyName', 'lineColor'],
+        kwargs)
+
+    if 'fromBodyName' in kwargs:
+        fromName = kwargs['fromBodyName']
+        if not isinstance(fromName, basestring):
+            print('ERROR: vizSupport: fromBodyName must be a string')
+            exit(1)
+        vizElement.fromBodyName = fromName
+    else:
+        vizElement.fromBodyName = firstSpacecraftName
+
+    if 'toBodyName' in kwargs:
+        toName = kwargs['toBodyName']
+        if not isinstance(toName, basestring):
+            print('ERROR: vizSupport: toBodyName must be a string')
+            exit(1)
+        vizElement.toBodyName = toName
+    else:
+        print('ERROR: vizSupport: toBodyName must be a specified')
+        exit(1)
+
+    if 'lineColor' in kwargs:
+        vizElement.lineColor = toRGBA255(kwargs['lineColor'])
+    else:
+        print('ERROR: vizSupport: lineColor must be a specified')
+        exit(1)
+
+    targetLineList.append(vizElement)
+    del viz.liveSettings.targetLineList[:]  # clear settings list to replace it with updated list
+    viz.liveSettings.targetLineList = vizInterface.PointLineConfig(targetLineList)
+    return
 
 customModelList = []
 def createCustomModel(viz, **kwargs):
