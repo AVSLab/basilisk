@@ -47,7 +47,8 @@ Version |release|
   Multi-Sphere Method
 - updated :ref:`groundLocation` to always compute the elevation, range and azimuth information, even if
   the satellite does not have access.  The output message variable ``hasAccess`` provides access information.
-
+- added scripting support for Vizard 1.8.4
+- updated :ref:`senarioGroundLocationImaging` to demonstrate the use of the new ``createTargetLine`` method
 
 
 
