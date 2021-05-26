@@ -380,6 +380,9 @@ def run(show_plots):
                            , range=2000.0*1000  # meters
                            )
 
+    # Add target line to first Boulder
+    vizSupport.createTargetLine(viz, toBodyName="Boulder Target", lineColor="red")
+
     # Add the Santiago target
     vizSupport.addLocation(viz, stationName="Santiago Target"
                            , parentBodyName=earth.planetName
@@ -419,6 +422,11 @@ def run(show_plots):
     imagingTarget.specifyLocation(np.radians(-33.4489), np.radians(-70.6693), 570)
     instrument.nodeDataName = "santiago"
     simpleInsControlConfig.imaged = 0
+
+    # update targeting line to point to Santiago and be blue
+    vizSupport.targetLineList[0].lineColor = vizSupport.toRGBA255('blue')
+    vizSupport.targetLineList[0].toBodyName = "Santiago Target"
+    vizSupport.updateTargetLineList(viz)
 
     #
     #   configure the new simulation stop time and execute sim

@@ -241,7 +241,7 @@ typedef struct
 LiveVizSettings
 //@endcond
 {
-    std::vector<PointLine> targetLineList;           //!< vector of lines between 2 scenario targets.  This list is redrawn on each update step, so the line properties can change with time.
+    std::vector<PointLine> targetLineList;           //!< vector of lines between 2 scenario targets.  This list is redrawn on each update step, thus the line properties can change with time.
 }LiveVizSettings;
 
 

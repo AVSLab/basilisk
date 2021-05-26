@@ -272,6 +272,11 @@ def createTargetLine(viz, **kwargs):
         exit(1)
 
     targetLineList.append(vizElement)
+    updateTargetLineList(viz)
+    return
+
+
+def updateTargetLineList(viz):
     del viz.liveSettings.targetLineList[:]  # clear settings list to replace it with updated list
     viz.liveSettings.targetLineList = vizInterface.PointLineConfig(targetLineList)
     return

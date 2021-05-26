@@ -585,6 +585,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             pl->add_linecolor(this->liveSettings.targetLineList[idx].lineColor[i]);
         }
     }
+    message->set_allocated_livesettings(liveVizSettings);
 
     /*! Write timestamp output msg */
     vizProtobufferMessage::VizMessage::TimeStamp* time = new vizProtobufferMessage::VizMessage::TimeStamp;
