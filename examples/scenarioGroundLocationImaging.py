@@ -368,7 +368,7 @@ def run(show_plots):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              , saveFile=fileName
+                                              # , saveFile=fileName
                                               )
 
     # Add the Boulder target
