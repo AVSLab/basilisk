@@ -44,26 +44,30 @@ Illustration of Simulation Results
 
 ::
 
-    show_plots = True, useClassicElem = True
+        0.0, #   altitude offset (m)
+        0.1, #  True anomaly offset (deg)
+        1, #    Density multiplier (nondimensional)
+        ctrlType='lqr',
+        useJ2=False
 
-In this case, target orbital element difference is set based on classical orbital element.
-This resulting feedback control error is shown below.
+In this case, the deputy spacecraft attempts to `catch up' to a reference set ten kilometers ahead of it along-track using a
+static LQR control law, without considering the impact of J2 perturbations. The resulting relative attitude and in-plane Hill
+trajectory are shown below.
 
 
-.. image:: /_images/Scenarios/scenarioFormationMeanOEFeedback11.svg
+.. image:: /_images/Scenarios/scenarioDragRendezvous_relativeAtt.svg
    :align: center
 
-::
-
-    show_plots = True, useClassicElem = False
-
-In this case, target orbital element difference is set based on equinoctial orbital element.
-This resulting feedback control error is shown below.
-
-.. image:: /_images/Scenarios/scenarioFormationMeanOEFeedback20.svg
+.. image:: /_images/Scenarios/scenarioDragRendezvous_hillTraj.svg
    :align: center
 
+Time trajectories of the in-plane Hill components of the Deputy are shown here:
 
+.. image:: /_images/Scenarios/scenarioDragRendezvous_hillX.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioDragRendezvous_hillY.svg
+   :align: center
 """
 
 import os
@@ -87,6 +91,7 @@ from Basilisk.fswAlgorithms import hillStateConverter, hillToAttRef, hillPoint
 from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 #   Declare some linearized drag HCW dynamics
 drag_state_dynamics = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
@@ -112,8 +117,11 @@ drag_R_inv = [[1e-8,0,0],
               [0,1e-8,0],
               [0,0,1e-8]]
 #   Static LQR gain
-lqr_gain_set = np.load('./data/static_lqr_controlGain.npz')['arr_0.npy']
-# lqr_gain_set = np.reshape(lqr_gain_set, [3,6])
+path = os.path.dirname(os.path.abspath(__file__))
+dataFileName = os.path.join(path, "dataForExamples", "static_lqr_controlGain.npz")
+lqr_gain_set = np.load(dataFileName)['arr_0.npy']
+
+fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 def setup_spacecraft_plant(rN, vN, modelName,):
     """
@@ -391,35 +399,67 @@ def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', u
     for ind in range(0,numDataPoints):
         rel_mrp_hist[ind,:] = rbk.subMRP(depAtt[ind,:], chiefAtt[ind,:])
 
-    plt.figure()
-    plt.plot(timeData, chiefAtt,label='Chief $\sigma_{BN}$')
-    plt.plot(timeData, depAtt,label='Deputy $\sigma_{BN}$')
-    plt.grid()
-    plt.legend()
-    plt.ylim([-1,1])
-    plt.xlabel('Time')
-    plt.ylabel('MRP Value')
-
+    figureList = {}
+    
+    #   Plots for general consumption
     plt.figure() 
     plt.plot(timeData[1:], hillPos[1:,0],label="r_1")
     plt.grid()
     plt.xlabel('Time')   
     plt.ylabel('Hill X Position (m)')
+    pltName = fileName + "_hillX"
+    figureList[pltName] = plt.figure(1)
     plt.figure()
     plt.plot(timeData[1:], hillPos[1:,1],label="r_2")
     plt.grid()
     plt.xlabel('Time')   
     plt.ylabel('Hill Y Position (m)')
+    pltName = fileName + "_hillY"
+    figureList[pltName] = plt.figure(2)
+    
 
     plt.figure()
     plt.plot(timeData[1:], hillVel[1:,0],label="v_1")
     plt.grid()
     plt.xlabel('Time')   
     plt.ylabel('Hill X Velocity (m/s)')
+    pltName = fileName + "_hilldX"
+    figureList[pltName] = plt.figure(3)
     plt.figure()
     plt.plot(timeData[1:], hillVel[1:,1],label="v_2")
     plt.ylabel('Hill Y Velocity (m/s)')
+    pltName = fileName + "_hilldy"
+    figureList[pltName] = plt.figure(4)
 
+    plt.figure()
+    plt.semilogy(timeData[1:], chiefDensity[1:],label=r'Chief $\rho$')
+    plt.semilogy(timeData[1:], depDensity[1:],label=r'Deputy $\rho$')
+    plt.grid()
+    plt.legend()
+    plt.ylim([-1,1])
+    plt.xlabel('Time')
+    plt.ylabel('Density (kg/m3)')
+    pltName = fileName + "_densities"
+    figureList[pltName] = plt.figure(5)
+
+    plt.figure()
+    plt.plot(hillPos[1:,0],hillPos[1:,1])
+    plt.grid()
+    plt.legend()
+    plt.xlabel('Hill X (m)')
+    plt.ylabel('Hill Y (m)')
+    pltName = fileName + "_hillTraj"
+    figureList[pltName] = plt.figure(6)
+
+    plt.figure()
+    plt.plot(timeData, rel_mrp_hist)
+    plt.grid()
+    plt.xlabel('Time')
+    plt.ylabel('Relative MRP Value')
+    pltName = fileName + "_relativeAtt"
+    figureList[pltName] = plt.figure(7)
+
+    #   Debug plots
     plt.figure()
     plt.plot(timeData[1:], depDrag[1:,1]-chiefDrag[1:,1],label="delta a_1")
     plt.plot(timeData[1:], depDrag[1:,2]-chiefDrag[1:,2],label="delta a_2")
@@ -446,32 +486,13 @@ def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', u
     plt.legend()
     plt.xlabel('Time')   
     plt.ylabel('Relative acceleration due to drag, body frame (m/s)')
-
-    plt.figure()
-    plt.semilogy(timeData[1:], chiefDensity[1:],label=r'Chief $\rho$')
-    plt.semilogy(timeData[1:], depDensity[1:],label=r'Deputy $\rho$')
-    plt.grid()
-    plt.legend()
-    plt.ylim([-1,1])
-    plt.xlabel('Time')
-    plt.ylabel('Density (kg/m3)')
-
-    plt.figure()
-    plt.plot(hillPos[1:,0],hillPos[1:,1])
-    plt.grid()
-    plt.legend()
-    plt.xlabel('Hill X (m)')
-    plt.ylabel('Hill Y (m)')
-
-    plt.figure()
-    plt.plot(timeData, rel_mrp_hist)
-    plt.grid()
-    plt.xlabel('Time')
-    plt.ylabel('Relative MRP Value')
+    
 
     if(show_plots):
         plt.show()
     plt.close("all")
+
+    return figureList
 
 if __name__ == "__main__":
     run(

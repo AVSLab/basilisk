@@ -241,7 +241,7 @@ Formation Flying Control
    Mean orbit element based relative motion control <scenarioFormationMeanOEFeedback>
    Impulsive feedback control of relative motion <scenarioFormationReconfig>
    Electrostatic Tractor Debris Reorbiting <scenarioDebrisReorbitET>
-
+   Attitude-Driven differential drag control <scenarioDragRendezvous>
 
 
 Advanced Simulation Options
