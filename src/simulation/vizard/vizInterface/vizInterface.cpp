@@ -572,6 +572,21 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         this->settings.dataFresh = false;
     }
 
+    /*! Send the Vizard live settings */
+    vizProtobufferMessage::VizMessage::LiveVizSettingsPb* liveVizSettings;
+    liveVizSettings = new vizProtobufferMessage::VizMessage::LiveVizSettingsPb;
+
+    // define any pointing lines for Vizard
+    for (size_t idx = 0; idx < this->liveSettings.targetLineList.size(); idx++) {
+        vizProtobufferMessage::VizMessage::PointLine* pl = liveVizSettings->add_targetlines();
+        pl->set_tobodyname(this->liveSettings.targetLineList[idx].toBodyName);
+        pl->set_frombodyname(this->liveSettings.targetLineList[idx].fromBodyName);
+        for (int i=0; i<4; i++){
+            pl->add_linecolor(this->liveSettings.targetLineList[idx].lineColor[i]);
+        }
+    }
+    message->set_allocated_livesettings(liveVizSettings);
+
     /*! Write timestamp output msg */
     vizProtobufferMessage::VizMessage::TimeStamp* time = new vizProtobufferMessage::VizMessage::TimeStamp;
     time->set_framenumber(this->FrameNumber);

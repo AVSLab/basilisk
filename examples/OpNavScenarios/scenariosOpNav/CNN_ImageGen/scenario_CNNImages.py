@@ -164,7 +164,7 @@ def run(TheScenario, runLog):
     TheScenario.get_DynModel().cameraMod.saveDir = runLog.split('/')[-2] +'/' +runLog.split('/')[-1] + '/'
     TheScenario.get_DynModel().vizInterface.opNavMode = 2
 
-    mode = ["None", "-directComm", "-opNavMode"]
+    mode = ["None", "-directComm", "-noDisplay"]
     # The following code spawns the Vizard application from python as a function of the mode selected above, and the platform.
     TheScenario.vizard = subprocess.Popen(
         [TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode], "tcp://localhost:5556"], stdout=subprocess.DEVNULL)

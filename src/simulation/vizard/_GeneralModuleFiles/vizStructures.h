@@ -194,7 +194,7 @@ VizSettings
     int32_t     trueTrajectoryLinesOn = 0;         //!< Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body
     int32_t     spacecraftCSon = 0;                //!< toogle for showing spacecraft CS with values -1 (off), 0 (default), 1 (on)
     int32_t     planetCSon = 0;                    //!< toogle for showing planet CS with values -1 (off), 0 (default), 1 (on)
-    std::vector<PointLine> pointLineList;           //!< vector of powerLine structures
+    std::vector<PointLine> pointLineList;           //!< vector of lines pointing from the spacecraft towards another scene object
     std::vector<KeepOutInCone> coneList;            //!< vector of keep in/out cones
     std::vector<StdCameraSettings> stdCameraList;   //!< vector of spacecraft cameras
     std::vector<CustomModel> customModelList;       //!< vector of custom object models
@@ -232,6 +232,18 @@ VizSettings
     int32_t showLocationCones = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int32_t showLocationLabels = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }VizSettings;
+
+
+/*! Structure defining various Vizard options
+*/
+typedef struct
+//@cond DOXYGEN_IGNORE
+LiveVizSettings
+//@endcond
+{
+    std::vector<PointLine> targetLineList;           //!< vector of lines between 2 scenario targets.  This list is redrawn on each update step, thus the line properties can change with time.
+}LiveVizSettings;
+
 
 /*! Structure defining vizard gravity body values */
 typedef struct{

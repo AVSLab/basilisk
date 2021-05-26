@@ -377,7 +377,7 @@ def run(showPlots, simTime = None):
     TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
 
     # The following code spawns the Vizard application from python
-    mode = ["None", "-directComm", "-opNavMode"]
+    mode = ["None", "-directComm", "-noDisplay"]
     TheScenario.run_vizard(mode[TheBSKSim.get_DynModel().vizInterface.opNavMode])
 
     # Configure FSW mode

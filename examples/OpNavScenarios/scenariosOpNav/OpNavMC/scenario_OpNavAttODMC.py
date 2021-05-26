@@ -119,7 +119,7 @@ def run(TheScenario):
     TheScenario.get_FswModel().imageProcessing.saveImages = 0
     TheScenario.get_DynModel().vizInterface.opNavMode = 1
 
-    mode = ["None", "-directComm", "-opNavMode"]
+    mode = ["None", "-directComm", "-noDisplay"]
     vizard = subprocess.Popen(
         [TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode], "tcp://localhost:5556"], stdout=subprocess.DEVNULL)
     print("Vizard spawned with PID = " + str(vizard.pid))

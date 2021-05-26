@@ -15,6 +15,28 @@ Release Notes
     - show the battery and power state
     - show the hard drive state
     - Add the rate gyro visualization
+    - using Unity HD Rendering pipeline
+
+**Version 1.8.4**
+
+- reflective solar panels(!) on the default spacecraft model
+- removed dedicated scene for OpNav mode and added support in Main scene for OpNav mode functionality.
+  This change will improve maintainability of the code base going forward
+- changed names of directComm mode toggles to ``LiveDisplay`` and ``NoDisplay``. ``NoDisplay`` mode will result in
+  the OpNav functionality wherein no image is rendered to the window and the camera is only refreshed when a
+  new image is requested by the sim, ``LiveDisplay`` will take the user to the interactive screen where the
+  messages will be rendered to the screen as they come in or at the user specified rate
+- added command line argument support for ``-noDisplay`` to launch into OpNav functionality and clearly link
+  the startup screen options with the command line arguments. The old arguments ``-opNav`` or ``-opNavMode`` will
+  continue to be supported to launch into OpNav function.
+- added console message to inform user the file path they are currently playing back or the tcp
+  address they are connected using
+- added a ``LiveSettings`` sub message to allow user to continuously update the supported fields.
+- added ``TargetLines`` to the ``LiveSettings`` message. All PointLines in this field can be
+  updated with every message, added, modified, or removed, and only the current message’s array of lines
+  will be drawn to the screen.
+- added support to the VizMessage Logging panel to show the contents of the LiveSettings sub message
+- increased the opacity of the menu bar and menu panels to improve user experience
 
 
 **Version 1.8.3**
