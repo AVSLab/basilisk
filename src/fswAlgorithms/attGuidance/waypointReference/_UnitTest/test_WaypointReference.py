@@ -37,16 +37,19 @@ from Basilisk.utilities import macros
 from Basilisk.architecture import bskLogging
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
+import matplotlib.pyplot as plt
+
 path = os.path.dirname(os.path.abspath(__file__))
 dataFileName = None
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("attType", [0, 1, 2])
+@pytest.mark.parametrize("MRPswitching", [True, False])
 @pytest.mark.parametrize("useReferenceFrame", [True, False])
 @pytest.mark.parametrize("accuracy", [1e-12])
 
 # provide a unique test method name, starting with test_
-def test_waypointReference(show_plots, attType, useReferenceFrame, accuracy):
+def test_waypointReference(show_plots, attType, MRPswitching, useReferenceFrame, accuracy):
     r"""
     **Validation Test Description**
 
@@ -73,6 +76,7 @@ def test_waypointReference(show_plots, attType, useReferenceFrame, accuracy):
 
     Args:
         attType (int): 0 - MRPs; 1 - EP [q0, q1, q2, q3]; 2 - [q1, q2, q3, qs]
+        MRPswitching : False: every waypoint is within 180 deg from the inertial frame; True: some waipoints exceed 180 deg rotation from the inertial frame and ``attRefOutMsg.sigma_RN`` presents a discontinuity in correspondence of MRP switching;
         useReferenceFrame (bool): False: ang. rates and accelerations expressed in inertial frame; True: ang. rates and accelerations expressed in reference frame;
         accuracy (float): absolute accuracy value used in the validation tests
 
@@ -97,13 +101,13 @@ def test_waypointReference(show_plots, attType, useReferenceFrame, accuracy):
     """
 
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = waypointReferenceTestFunction(attType, useReferenceFrame, accuracy)
+    [testResults, testMessage] = waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accuracy)
     global dataFileName
     if os.path.exists(dataFileName):
         os.remove(dataFileName)
     assert testResults < 1, testMessage
 
-def waypointReferenceTestFunction(attType, useReferenceFrame, accuracy):
+def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accuracy):
 
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
@@ -126,7 +130,7 @@ def waypointReferenceTestFunction(attType, useReferenceFrame, accuracy):
     # create the simulation data file
     # dataFileName
     global dataFileName
-    dataFileName = "data" + str(attType)
+    dataFileName = "data" + str(attType) + str(int(MRPswitching))
     if useReferenceFrame == True:
         dataFileName += "R.txt"
     else:
@@ -143,7 +147,15 @@ def waypointReferenceTestFunction(attType, useReferenceFrame, accuracy):
     omegaDotReal_RN_N = []
     for i in range(0, 5):
         t.append(i + 1)
-        attReal_RN.append(np.array([0.1 + 0.05*i, 0.2 + 0.05*i, 0.3 + 0.05*i]))
+        if MRPswitching:
+            s = 0.8
+        else:
+            s = 0.1
+        attRealMRP = np.array([s + 0.05*i, 0.2 + 0.05*i, 0.3 + 0.05*i])
+        if np.linalg.norm(attRealMRP) <= 1:
+            attReal_RN.append(attRealMRP)
+        else:
+            attReal_RN.append(-attRealMRP / (np.linalg.norm(attRealMRP))**2 )
         omegaReal_RN_N.append(np.array([0.4 + 0.05*i, 0.5 + 0.05*i, 0.6 + 0.05*i]))
         omegaDotReal_RN_N.append(np.array([0.7 + 0.05*i, 0.8 + 0.05*i, 0.9 + 0.05*i]))
 
@@ -206,9 +218,14 @@ def waypointReferenceTestFunction(attType, useReferenceFrame, accuracy):
     
     # Check if logged data matches the real attitude, rates and accelerations
     j = 0
-
+    
+    sigma_RN = [[], [], []]
     # checking attitude msg for t < t_min
     for i in range(len(timeData)-1):
+
+        for n in range(3):
+            sigma_RN[n].append(dataLog.sigma_RN[i][n])
+
         if timeData[i] < t[0]:
             if not unitTestSupport.isVectorEqual(dataLog.sigma_RN[i], attReal_RN[0], accuracy):
                 testFailCount += 1
@@ -229,10 +246,13 @@ def waypointReferenceTestFunction(attType, useReferenceFrame, accuracy):
             omegaDot_RN_N_int = np.array([0.0, 0.0, 0.0])
 
             # interpolating between attitudes for times t = timeData[i]
-            for k in range(0,3):
-                sigma_RN_int[k] = attReal_RN[j][k] + (attReal_RN[j+1][k] - attReal_RN[j][k]) / (t[j+1] - t[j]) * (timeData[i] - t[j])
-                omega_RN_N_int[k] = omegaReal_RN_N[j][k] + (omegaReal_RN_N[j+1][k] - omegaReal_RN_N[j][k]) / (t[j+1] - t[j]) * (timeData[i] - t[j])
-                omegaDot_RN_N_int[k] = omegaDotReal_RN_N[j][k] + (omegaDotReal_RN_N[j+1][k] - omegaDotReal_RN_N[j][k]) / (t[j+1] - t[j]) * (timeData[i] - t[j])
+            if np.linalg.norm( attReal_RN[j+1] - attReal_RN[j] ) <= 1:
+                sigma_RN_int = attReal_RN[j] + (attReal_RN[j+1] - attReal_RN[j]) / (t[j+1] - t[j]) * (timeData[i] - t[j])
+            else:
+                attReal_RN_SS = -attReal_RN[j+1] / (np.linalg.norm(attReal_RN[j+1]))**2
+                sigma_RN_int = attReal_RN[j] + (attReal_RN_SS - attReal_RN[j]) / (t[j+1] - t[j]) * (timeData[i] - t[j])
+            omega_RN_N_int = omegaReal_RN_N[j] + (omegaReal_RN_N[j+1] - omegaReal_RN_N[j]) / (t[j+1] - t[j]) * (timeData[i] - t[j])
+            omegaDot_RN_N_int = omegaDotReal_RN_N[j] + (omegaDotReal_RN_N[j+1] - omegaDotReal_RN_N[j]) / (t[j+1] - t[j]) * (timeData[i] - t[j])
             if not unitTestSupport.isVectorEqual(dataLog.sigma_RN[i], sigma_RN_int, accuracy):
                 print(timeData[i], dataLog.sigma_RN[i], sigma_RN_int)
                 testFailCount += 1
@@ -256,7 +276,6 @@ def waypointReferenceTestFunction(attType, useReferenceFrame, accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
 
-
     # print out success or failure message
     if testFailCount == 0:
         print("PASSED: " + testModule.ModelTag)
@@ -272,7 +291,10 @@ def waypointReferenceTestFunction(attType, useReferenceFrame, accuracy):
 #
 if __name__ == "__main__":
     waypointReferenceTestFunction(
-        1,        # attType (0 -> MRP, 1 -> quaternion [q0, q1, q2, q3], 2 -> quaternion [q1, q2, q3, qs])
-        False,     # useReferenceFrame
+        2,        # attType (0 -> MRP, 1 -> quaternion [q0, q1, q2, q3], 2 -> quaternion [q1, q2, q3, qs])
+        False,    # MRPswitching
+        False,    # useReferenceFrame
         1e-12)
+    if os.path.exists(dataFileName):
+        os.remove(dataFileName)
 	   
