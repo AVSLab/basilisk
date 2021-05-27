@@ -51,6 +51,11 @@ The module reads a sequence of time-tagged waypoints. Defining :math:`t=[t_0,...
 - for :math:`t_{sim} < t_0`: the attitude is held constant and equal to the attitude of the first waypoint; angular rates and acceleration are kept at zero;
 - for :math:`t_0 \leq t_{sim} \leq t_N`: attitude, angular rates and accelerations are the result of linear interpolation between the closest two waypoints;
 - for :math:`t_{sim} > t_N`: the attitude is held constant and equal to the attitude of the last waypoint; angular rates and acceleration are kept at zero.
+
+When reading from the data file, the module always maps the attitude to the short rotation MRP set, regardless of the attitude type. This means that, for a data file that
+describes large attitude rotations (larger than 180 deg), the ``attRefOutMsg.sigma_RN`` will present a discontinuity. When two subsequent waypoints are mapped into different 
+MRP sets, the interpolation is carried out in that time interval between the first waypoint and the shadow set of the second waypoint. This allows for a non-singular attitude
+description.
 		
 		
 User Guide

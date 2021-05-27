@@ -23,7 +23,7 @@ Overview
 Demonstrates how to set up conical keep-in and keep-out constraints for a spacecraft.
 This script sets up a 6-DOF spacecraft which is orbiting the Earth, in the presence of the Sun.
 The spacecraft is modelled according to the specifics of the Bevo-2 satellite, that has a sensitive
-star tracker aligned with the x body axes and two sun sensors aligned with the y and z body axes.
+star tracker aligned with the x body axis and two sun sensors aligned with the y and z body axes.
 The goal is to illustrate how to set up a Basilisk simulation to check whether certain slew 
 maneuvers cause violations in the positional constraints of the spacecraft.
 
@@ -45,7 +45,7 @@ where this process is explained in the details.
 
 This script uses :ref:`simIncludeGravBody` to add Earth and Sun to the simulation. The method ``createSpiceInterface``
 to create Spice modules for the celestial bodies and generate the respective Spice planet state messages.
-The :ref:`boreAngCalc` module is set up for each of the instruments that have an angular constraints. This module 
+The :ref:`boreAngCalc` module is set up for each of the instruments that have geometric angular constraints. This module 
 subscribes to the :ref:`SCStatesMsgPayload` and :ref:`SpicePlanetStateMsgPayload` of the bright object (the Sun) and
 returns a :ref:`BoreAngleMsgPayload` that contains the angle between the bright object and the direction of the 
 boresight vector of the instrument.
@@ -59,7 +59,7 @@ show the angle between the boresight vector of the star tracker and the Sun (fig
 the Sun (fig. 6). Each plot features a dashed line that represents an angular threshold for that specific instrument.
 Opaque red zones in each plot represent the portions of each maneuver where that constraint has been violated.
 
-Each plot describes a slew maneuver performen from an initial inertial attitude :math:`\sigma_{\mathcal{B/N},i}` to
+Each plot describes a slew maneuver performed from an initial inertial attitude :math:`\sigma_{\mathcal{B/N},i}` to
 a final inertial attitude :math:`\sigma_{\mathcal{B/N},f}`, both of which are set for each case to show the desired
 constraint violation.
 
@@ -82,7 +82,7 @@ sensor along the y body axis is considered. The keep in constraint is violated w
     show_plots = True, use2SunSensors = True, starTrackerFov = 20, sunSensorFov = 70, attitudeSetCase = 0
 
 This case is identical to the previous one, except for the fact that both sun sensors along the y and z body axes are 
-being used. No constraint is violated, since the keep in condition only needs to be satisfied for at least one sun 
+being used. No constraints are violated, since the keep in condition only needs to be satisfied for at least one sun 
 sensor at  the time.
 
 .. image:: /_images/Scenarios/scenarioAttitudeConstraintViolation5120700.svg
@@ -95,7 +95,7 @@ sensor at  the time.
 
     show_plots = True, use2SunSensors = True, starTrackerFov = 20, sunSensorFov = 70, attitudeSetCase = 1
 
-In this case there is a portion of the slew maneuver where both the sun sensor boresight exceed the threshold, 
+In this case there is a portion of the slew maneuver where both the sun sensor boresights exceed the threshold, 
 therefore the keep in constraint is violated.
 
 .. image:: /_images/Scenarios/scenarioAttitudeConstraintViolation5120701.svg

@@ -118,7 +118,21 @@ void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
 			}
 			/* if t_a <= CurrentTime <= t_b interpolate between attRefMsg_a and attRefMsg_b */
 			if (t >= this->t_a && t <= this->t_b) {
-			    linearInterpolation(this->t_a, this->attRefMsg_a.sigma_RN, this->t_b, this->attRefMsg_b.sigma_RN, t, &attMsgBuffer.sigma_RN[0]);
+				/* check the norm of the MRP difference between two consecutive waypoints */
+				double deltaSigma[3];
+			    v3Subtract(this->attRefMsg_b.sigma_RN, this->attRefMsg_a.sigma_RN, deltaSigma);
+                double normDeltaSigma = v3Norm(deltaSigma);
+				/* if norm <= 1 interpolate between waypoints */
+				if (normDeltaSigma <= 1) {
+					linearInterpolation(this->t_a, this->attRefMsg_a.sigma_RN, this->t_b, this->attRefMsg_b.sigma_RN, t, &attMsgBuffer.sigma_RN[0]);
+				}
+				/* if norm > 1 interpolate between waypoint a and shadow set of waypoint b */
+				else {
+					double normSigma_RN_b = v3Norm(this->attRefMsg_b.sigma_RN);
+					double sigma_RN_b_S[3];
+					v3Scale(-1/(normSigma_RN_b*normSigma_RN_b), this->attRefMsg_b.sigma_RN, sigma_RN_b_S);
+					linearInterpolation(this->t_a, this->attRefMsg_a.sigma_RN, this->t_b, sigma_RN_b_S, t, &attMsgBuffer.sigma_RN[0]);
+				}
                 linearInterpolation(this->t_a, this->attRefMsg_a.omega_RN_N, this->t_b, this->attRefMsg_b.omega_RN_N, t, &attMsgBuffer.omega_RN_N[0]);
                 linearInterpolation(this->t_a, this->attRefMsg_a.domega_RN_N, this->t_b, this->attRefMsg_b.domega_RN_N, t, &attMsgBuffer.domega_RN_N[0]);
 			}
@@ -152,13 +166,22 @@ void WaypointReference::pullDataLine(uint64_t *t, AttRefMsgPayload *attRefMsg_t)
         *t = (uint64_t) (pullScalar(&iss) * SEC2NANO);
 		
 		/* get inertial attitude of reference frame R with respect to N and store in msg */
+		double attNorm;
 		double att3[3];
 		double att4[4];
 		switch (this->attitudeType) {
 			case 0:
 			    /* 3D attitude coordinate set */
+				/* if MRP norm <= 1 save the MRP set immediately,
+				   if not map to the shadow set and saves the shadow set */
                 pullVector(&iss, att3);
-				v3Copy(att3, attRefMsg_t->sigma_RN);
+				attNorm = v3Norm(att3);
+				if (attNorm <= 1) {
+					v3Copy(att3, attRefMsg_t->sigma_RN);
+				}
+				else {
+					v3Scale(-1/(attNorm*attNorm), att3, attRefMsg_t->sigma_RN);
+				}
 				break;
 			case 1:
 			    /* 4D attitude coordinate set (q0, q1, q2, q3) */
