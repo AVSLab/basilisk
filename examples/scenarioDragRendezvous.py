@@ -35,7 +35,7 @@ output message of type :ref:`NavAttIntMsg` continuously to a :ref:`hillStateConv
 spacecraft's flight software stack. The :ref:`hillStateConverter` module then writes a :ref:`hillRelStateMsg`, which is read by the :ref:`hillToAttRef` module implementing
 the differential drag attitude guidance law. 
 
-.. image:: /_images/static/scenarioDragRendezvous.png
+.. image:: /_images/static/scenarioDragRendezvousDiagram.png
    :align: center
 
 
