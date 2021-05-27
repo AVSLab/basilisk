@@ -128,9 +128,8 @@ void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
 				}
 				/* if norm > 1 interpolate between waypoint a and shadow set of waypoint b */
 				else {
-					double normSigma_RN_b = v3Norm(this->attRefMsg_b.sigma_RN);
 					double sigma_RN_b_S[3];
-					v3Scale(-1/(normSigma_RN_b*normSigma_RN_b), this->attRefMsg_b.sigma_RN, sigma_RN_b_S);
+                    MRPshadow(this->attRefMsg_b.sigma_RN, sigma_RN_b_S);
 					linearInterpolation(this->t_a, this->attRefMsg_a.sigma_RN, this->t_b, sigma_RN_b_S, t, &attMsgBuffer.sigma_RN[0]);
 				}
                 linearInterpolation(this->t_a, this->attRefMsg_a.omega_RN_N, this->t_b, this->attRefMsg_b.omega_RN_N, t, &attMsgBuffer.omega_RN_N[0]);
