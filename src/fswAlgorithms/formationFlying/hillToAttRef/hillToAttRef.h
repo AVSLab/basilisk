@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -34,10 +34,10 @@
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module IO interfaces */
-    HillRelStateMsg_C hillStateInMsg;
-    AttRefMsg_C attRefInMsg;
-    NavAttMsg_C attNavInMsg;
-    AttRefMsg_C attRefOutMsg;
+    HillRelStateMsg_C hillStateInMsg;               //!< Provides state relative to chief
+    AttRefMsg_C attRefInMsg;                        //!< (Optional) Provides basis for relative attitude
+    NavAttMsg_C attNavInMsg;                        //!< (Optional) Provides basis for relative attitude
+    AttRefMsg_C attRefOutMsg;                       //!< Provides the attitude reference output message. 
     BSKLogger *bskLogger;                           //!< BSK Logging
 
     double gainMatrix[3][6]; //!< User-configured gain matrix that maps from hill states to relative attitudes.

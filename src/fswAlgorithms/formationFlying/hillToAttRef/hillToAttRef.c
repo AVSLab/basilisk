@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,8 @@
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-/* modify the path to reflect the new module names */
+ */
+
 #include "hillToAttRef.h"
 #include "string.h"
 #include "math.h"
@@ -28,10 +29,24 @@ void SelfInit_hillToAttRef(HillToAttRefConfig *configData, int64_t moduleID){
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Reset_hillToAttRef(HillToAttRefConfig *configData,  uint64_t callTime, int64_t moduleID)
 {
+    if (!HillRelStateMsg_C_isLinked(&configData->hillStateInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillToAttRef.hillStateInMsg wasn't connected.");
+    }
+    
+    if (AttRefMsg_C_isLinked(&configData->attRefInMsg) && NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillToAttRef can't have both attRefInMsg and attNavInMsg connected.");
+    }
+
+    if (!AttRefMsg_C_isLinked(&configData->attRefInMsg) && !NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillToAttRef must have one of attRefInMsg and attNavInMsg connected.");
+    }
+
     return;
 }
 
@@ -54,7 +69,9 @@ AttRefMsgPayload RelativeToInertialMRP(HillToAttRefConfig *configData, double re
 
 /*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding. 
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Update_hillToAttRef(HillToAttRefConfig *configData, uint64_t callTime, int64_t moduleID) {
 

@@ -67,7 +67,7 @@ private:
     void updateDragDir();
 public:
     uint64_t numFacets;                             //!< number of facets
-    ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg;
+    ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg; //!< atmospheric density input message
     //std::string atmoDensInMsgName;                  //!< -- message used to read command inputs
     StateData *hubSigma;                            //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                         //!< m/s Hub inertial velocity vector

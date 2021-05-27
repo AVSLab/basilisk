@@ -25,12 +25,11 @@ Message Connection Descriptions
 
 Detailed Module Description
 ---------------------------
-This module converts a pair of spacecraft inertial positions into a relative position and velocity represented in the "Chief" spacecraft's hill frame.
 
-The Hill frame relative position and velocity of the "Deputy" spacecraft is returned in a :ref:`HillRelStateMsgPayload`. 
+This module converts a pair of spacecraft inertial positions into a relative position and velocity represented in the chief spacecraft's hill frame.
 
-Frame Definition and Calculation
-^^^^^^^^^
+The Hill frame relative position and velocity of the deputy spacecraft is returned in a :ref:`HillRelStateMsgPayload`. 
+
 The chief Hill frame is computed from the Chief navigation message by first calculating the radial and orbit angular momentum unit vectors:
 
     .. math:: 

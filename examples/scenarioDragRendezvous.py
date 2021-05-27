@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -26,13 +26,16 @@ chief using attitude-driven differential drag using the strategy outlined in `th
 
 This script is found in the folder ``src/examples`` and executed by using::
 
-      python3 scenarioDragRenzesvous
+      python3 scenarioDragRendezvous
 
 The simulation layout is shown in the following illustration. Two spacecraft are orbiting the earth at
-close distance. Perturbations from atmospheric drag, provided by :ref:`exponentialAtmosphere` and :ref:`facetDragDynamicEffector`, 
-are implemented by default; the :math:`J_2` gravity perturbation can also be included. Each spacecraft sends a :ref:`simple_nav`
-output message of type :ref:`NavAttIntMsg` continuously to a :ref:`hillStateConverter` module, which is assumed to be a part of the deputy (maneuvering) 
-spacecraft's flight software stack. The :ref:`hillStateConverter` module then writes a :ref:`hillRelStateMsg`, which is read by the :ref:`hillToAttRef` module implementing
+close distance. Perturbations from atmospheric drag, provided by :ref:`exponentialAtmosphere` and
+:ref:`facetDragDynamicEffector`,  are implemented by default; the :math:`J_2` gravity perturbation
+can also be included. Each spacecraft sends a :ref:`simpleNav`
+output message of type :ref:`NavAttMsgPayload` continuously to a :ref:`hillStateConverter` module,
+which is assumed to be a part of the deputy (maneuvering)
+spacecraft's flight software stack. The :ref:`hillStateConverter` module then writes
+a :ref:`hillRelStateMsgPayload`, which is read by the :ref:`hillToAttRef` module implementing
 the differential drag attitude guidance law. 
 
 .. image:: /_images/static/scenarioDragRendezvousDiagram.png
@@ -46,13 +49,13 @@ Illustration of Simulation Results
 
         0.0, #   altitude offset (m)
         0.1, #  True anomaly offset (deg)
-        1, #    Density multiplier (nondimensional)
+        1, #    Density multiplier (non-dimensional)
         ctrlType='lqr',
         useJ2=False
 
-In this case, the deputy spacecraft attempts to `catch up' to a reference set ten kilometers ahead of it along-track using a
-static LQR control law, without considering the impact of J2 perturbations. The resulting relative attitude and in-plane Hill
-trajectory are shown below.
+In this case, the deputy spacecraft attempts to catch up to a reference set ten kilometers ahead of it
+along-track using a static LQR control law, without considering the impact of :math:`J_2` perturbations.
+The resulting relative attitude and in-plane Hill trajectory are shown below.
 
 
 .. image:: /_images/Scenarios/scenarioDragRendezvous_relativeAtt.svg
@@ -436,7 +439,6 @@ def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', u
     plt.semilogy(timeData[1:], depDensity[1:],label=r'Deputy $\rho$')
     plt.grid()
     plt.legend()
-    plt.ylim([-1,1])
     plt.xlabel('Time')
     plt.ylabel('Density (kg/m3)')
     pltName = fileName + "_densities"
@@ -445,7 +447,6 @@ def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', u
     plt.figure()
     plt.plot(hillPos[1:,0],hillPos[1:,1])
     plt.grid()
-    plt.legend()
     plt.xlabel('Hill X (m)')
     plt.ylabel('Hill Y (m)')
     pltName = fileName + "_hillTraj"
