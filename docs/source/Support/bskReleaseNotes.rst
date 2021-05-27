@@ -33,6 +33,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 2.0.4
+-------------
 - updated :ref:`spacecraft` ``Reset()`` method to write all spacecraft and effector state output messages
   with their initial values.  This way these output messages are correct as already as calling the
   ``InitializeSimulation()`` method.
@@ -133,7 +137,6 @@ Version 2.0.1
 
 Version 2.0.0
 -------------
-
 - New message system with strong type checking.  You now get a much simpler method to create message objects,
   how to connect them within python, create stand-alone messages in python, etc.  If you engage with a message
   of the wrong type you get immediate compiler warnings.
@@ -186,17 +189,17 @@ Version 2.0.0
 
 
 
-Version 1.8.10
---------------
+**Version 1.8.10**
+
 - Added support and expanded installation instructions making use of virtual environments
 
-Version 1.8.9
+**Version 1.8.9**
 
 - Added support for ``Location`` scripting in Vizard 1.7.1
 - Added a new documentation page discussing how to launch Vizard from the command line
   and what optional arguments are available
 
-Version 1.8.8
+**Version 1.8.8**
 
 - The protobuffer interface files are now automatically created from
   ``src/utilities/vizProtobuffer/vizMessage.proto`` without having to manually run the
@@ -208,13 +211,13 @@ Version 1.8.8
 - All unit test cases are compatible with windows platform
 - Added scripting support for Vizard 1.7.0
 
-Version 1.8.7
+**Version 1.8.7**
 
 - Updated ``orbitalMotion`` python and C libraries to include the new methods ``hillFrame()``, ``hill2rv()`` and ``rv2hill()``
 - Updated :ref:`dualHingedRigidBodyStateEffector` to support an output message of the panel angular states, an output message of the panel inertial position and attitude states, as well as upgrading the module to support ``spacecraftDynamics``.
 - Updated :ref:`vizInterface` to support scripting of new Vizard 1.6.1 features
 
-Version 1.8.6
+**Version 1.8.6**
 
 - Fixed an issue where some Sim-FSW interface messages could not be written to from the Python layer
 - Fixed an issue that prevented the ``opNav`` build mode to compile the OpenCV related libraries
@@ -233,7 +236,7 @@ Version 1.8.6
 
 
 
-Version 1.8.5
+**Version 1.8.5**
 
 - Provide support of Vizard 1.5.1 scripting
 - Updated conan to 1.29.2 to address issues building with opNav and support xcode 12
