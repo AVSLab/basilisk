@@ -50,3 +50,15 @@ void PartitionedStorageUnit::customReset(uint64_t currentClock){
     }
     return;
 }
+
+/*! Adds a partition to the storageUnit
+ @param dataName
+ @return void
+ */
+void PartitionedStorageUnit::addPartition(std::string dataName){
+    dataInstance tmpDataInstance;
+    strncpy(tmpDataInstance.dataInstanceName, dataName.c_str(), sizeof(tmpDataInstance.dataInstanceName));
+    tmpDataInstance.dataInstanceSum = 0.0;
+    this->storedData.push_back(tmpDataInstance);
+    return;
+}

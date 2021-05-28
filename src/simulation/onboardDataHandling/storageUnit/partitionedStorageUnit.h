@@ -29,6 +29,7 @@ class PartitionedStorageUnit: public DataStorageUnitBase {
 public:
     PartitionedStorageUnit();
     ~PartitionedStorageUnit();
+    void addPartition(std::string dataName);
 
 private:
     void customReset(uint64_t CurrentClock) override;

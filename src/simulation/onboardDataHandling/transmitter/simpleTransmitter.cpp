@@ -84,42 +84,46 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimM
 
     dataUsageSimMsg->baudRate = this->nodeBaudRate;
 
-    //! - If we have no transmitted any of the packet, we select a new type of data to downlink
-    if (this->packetTransmitted == 0.0) {
-
-        //! - Loop through storedData, select index w/ largest amt
-        double maxVal = 0.0;
-        int maxIndex = 0;
-        for (int i = 0; i < this->numBuffers; i++) {
-            if (this->storageUnitMsgs.back().storedData[i] > maxVal) {
-                maxVal = this->storageUnitMsgs.back().storedData[i];
-                maxIndex = i;
-            }
-        }
-
-        // Set nodeDataName to the maximum data name
-        strncpy(this->nodeDataName, this->storageUnitMsgs.back().storedDataName[maxIndex],
-                sizeof(this->nodeDataName));
-
-        // strncpy nodeDataName to the name of the output message
-        strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
-        this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
-
-        // Check to see if maxVal is less than packet size.
-        // If so, set the output message baudRate to zero
-        // We do not want to start downlinking until we have enough data for one packet
-        if (maxVal < (-1*(this->packetSize))) {
-            dataUsageSimMsg->baudRate = 0;
-            this->packetTransmitted = 0;
+    //! - Loop through storedData, select index w/ largest amt
+    double maxVal = -1.0;
+    int maxIndex = -1;
+    for (int i = 0; i < this->storageUnitMsgs.back().storedData.size(); i++) {
+        if (this->storageUnitMsgs.back().storedData[i] > maxVal) {
+            maxVal = this->storageUnitMsgs.back().storedData[i];
+            maxIndex = i;
         }
     }
-    else {
-        strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
-        this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
-        // If the transmitted packet size has exceeded the packet size, set packetTransmitted to zero
-        if (this->packetTransmitted <= this->packetSize) {
-            this->packetTransmitted = 0.0;
+
+    //! - If we have no transmitted any of the packet, we select a new type of data to downlink
+    if (maxIndex != -1) {
+        if (this->packetTransmitted == 0.0) {
+
+            // Set nodeDataName to the maximum data name
+            strncpy(this->nodeDataName, this->storageUnitMsgs.back().storedDataName[maxIndex].c_str(),
+                    sizeof(this->nodeDataName));
+
+            // strncpy nodeDataName to the name of the output message
+            strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
+            this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
+
+            // Check to see if maxVal is less than packet size.
+            // If so, set the output message baudRate to zero
+            // We do not want to start downlinking until we have enough data for one packet
+            if (maxVal < (-1 * (this->packetSize))) {
+                dataUsageSimMsg->baudRate = 0;
+                this->packetTransmitted = 0;
+            }
+        } else {
+            strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
+            this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
+            // If the transmitted packet size has exceeded the packet size, set packetTransmitted to zero
+            if (this->packetTransmitted <= this->packetSize) {
+                this->packetTransmitted = 0.0;
+            }
         }
+    } else {
+        dataUsageSimMsg->baudRate = 0;
+        this->packetTransmitted = 0;
     }
     this->previousTime = currentTime;
     return;

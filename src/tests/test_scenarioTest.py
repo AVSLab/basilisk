@@ -48,6 +48,7 @@ sys.path.append(path + '/../../examples/')
 @pytest.mark.parametrize("scenarioCase", [
                                         'scenarioGroundLocationImaging'
                                         , 'scenarioGroundDownlink'
+                                        , 'scenarioDataDemo'
                                         ])
 @pytest.mark.scenarioTest
 def test_scenarioBskScenarios(show_plots, scenarioCase):

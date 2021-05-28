@@ -294,6 +294,8 @@ def run(show_plots):
     dataMonitor.storageCapacity = 2*8E9  # bits (1 GB)
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(transmitter.nodeDataOutMsg)
+    dataMonitor.addPartition("boulder")
+    dataMonitor.addPartition("santiago")
     scSim.AddModelToTask(simTaskName, dataMonitor, ModelPriority=100)
     transmitter.addStorageUnitToTransmitter(dataMonitor.storageUnitDataOutMsg)
 
@@ -416,6 +418,8 @@ def run(show_plots):
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
+    # print(dataMonitor.getStoredDataAll()[0].dataInstanceName)
+
     #
     #   configure new ground location target in Santiago, Chile
     #
@@ -439,7 +443,8 @@ def run(show_plots):
     #
     dataSigmaBR = attErrLog.sigma_BR
     storageLevel = dataMonLog.storageLevel
-    storedData = dataMonLog.storedData[:, range(32)]
+    storedDataName = dataMonLog.storedDataName
+    storedData = dataMonLog.storedData
     deviceStatus = deviceLog.deviceStatus
     hasAccess = locationLog.hasAccess
 
@@ -475,7 +480,6 @@ def run(show_plots):
     plt.close("all")
 
     return figureList
-
 
 #
 # This statement below ensures that the unit test scrip can be run as a

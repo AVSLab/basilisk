@@ -19,6 +19,7 @@
 
 #include "dataStorageUnitBase.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include <iostream>
 
 /*! This method initializes some basic parameters for the module.
  @return void
@@ -47,7 +48,11 @@ DataStorageUnitBase::~DataStorageUnitBase(){
 void DataStorageUnitBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousTime = 0;
-    this->storedData.clear();
+
+    //! - Zero out the partitions
+    for(uint64_t i = 0; i < this->storedData.size(); i++){
+        this->storedData[i].dataInstanceSum = 0.0;
+    }
 
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
@@ -126,7 +131,6 @@ bool DataStorageUnitBase::readMessages()
  @return void
  */
 void DataStorageUnitBase::writeMessages(uint64_t CurrentClock){
-
     //! zero output message to begin with
     this->storageStatusMsg = this->storageUnitDataOutMsg.zeroMsgPayload;
 
@@ -137,15 +141,14 @@ void DataStorageUnitBase::writeMessages(uint64_t CurrentClock){
 
     //! - Loop through stored data and copy over to the output message
     for(uint64_t i = 0; i < this->storedData.size(); i++){
-        strncpy(this->storageStatusMsg.storedDataName[i], this->storedData[i].dataInstanceName, sizeof(this->storageStatusMsg.storedDataName[i]));
-        this->storageStatusMsg.storedData[i] = this->storedData[i].dataInstanceSum;
+        this->storageStatusMsg.storedDataName.push_back(this->storedData[i].dataInstanceName);
+        this->storageStatusMsg.storedData.push_back(this->storedData[i].dataInstanceSum);
     }
 
     this->storageUnitDataOutMsg.write(&this->storageStatusMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);
-
     return;
 }
 
@@ -188,7 +191,6 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
 
     //! - Update previousTime
     this->previousTime = currentTime;
-
     return;
 }
 
@@ -206,7 +208,6 @@ int DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload *tmpNodeMsg
             index = (int) i;
         }
     }
-
     return index;
 }
 

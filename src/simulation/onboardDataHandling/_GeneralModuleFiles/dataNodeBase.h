@@ -27,7 +27,7 @@
 
 #include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 #include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
-#include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 

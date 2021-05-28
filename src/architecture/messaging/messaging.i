@@ -37,7 +37,6 @@ STRUCTASLIST(AccPktDataMsgPayload)
 STRUCTASLIST(RWConfigElementMsgPayload)
 STRUCTASLIST(CSSArraySensorMsgPayload)
 
-
 %pythoncode %{
     import numpy as np
     from Basilisk.architecture import cMsgCInterfacePy
@@ -47,7 +46,11 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 #include "messaging.h"
 #include <vector>
 %}
+
 %template(TimeVector) std::vector<uint64_t>;
+//%template(DoubleVector) std::vector<double>;
+//%template(StringVector) std::vector<std::string>;
+
 %include "std_vector.i"
 %include "architecture/_GeneralModuleFiles/sys_model.h"
 %include "messaging.h"
@@ -108,37 +111,52 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
             return np.array(self.__timeWritten_vector())
 
         def explore_and_find_subattr(self,attr,attr_name,content):
-            if "method" in str(type(attr)):
+            print('Attribute type: ', str(type(attr)))
+            if "method" in str(type(attr)) or "bool" in str(type(attr)):
                 # The attribute is a method, nothing to do here
+                print("Attribute is a method, pass: ", attr_name)
                 pass
             elif isinstance(attr,list):
                 # The attribute is a list of yet to be determined types
+                print("The attribute is a list: ", attr_name)
                 if len(attr) > 0:
                     if "Basilisk" in str(type(attr[0])):
                         # The attribute is a list of swigged BSK objects
                         for el,k in zip(attr,range(len(attr))):
+                            print(attr_name + "[" + str(k) + "]")
                             self.explore_and_find_subattr(el,attr_name + "[" + str(k) + "]",content)
                     else:
                         # The attribute is a list of common types 
                         content[attr_name] = attr
             elif "Basilisk" in str(type(attr)):
                 # The attribute is a swigged BSK object
-                for subattr_name in  dir(attr):
-                    if not subattr_name.startswith("__") and subattr_name != "this":
-                        self.explore_and_find_subattr(getattr(attr,subattr_name),attr_name + "." + subattr_name,content)
+                # Check to see if the object is a vector and pull out the data
+                print("The attribute is a swigged BSK object: ", attr_name)
+                if "Vector" in str(type(attr)) or "vector" in str(type(attr)):
+                    content[attr_name] = []
+                    for data in attr:
+                        content[attr_name].append(data)
+                else:
+                    for subattr_name in  dir(attr):
+                        if not subattr_name.startswith("__") and subattr_name != "this":
+                            self.explore_and_find_subattr(getattr(attr,subattr_name),attr_name + "." + subattr_name,content)
             else:
                 # The attribute has a common type
+                print("The attribute has a common type: ", attr_name)
                 content[attr_name] = attr
 
 
         # This __getattr__ is written in message.i.
         # It lets us return message struct attribute record as lists for plotting, etc.
         def __getattr__(self, name):
+            print(name)
             data = self.__record_vector()
+            print(data)
             data_record = []
             for rec in data.iterator():
                 content = {}
                 self.explore_and_find_subattr(rec.__getattribute__(name),name,content)
+                print('Content: ', content)
                 if len(content) == 1 and "." not in str(list(content.keys())[0]):
                     data_record.append(next(iter(content.values())))
                 else:
@@ -193,13 +211,13 @@ typedef struct messageType;
 %template(ExtInertialForceOutMsgsVector) std::vector<Message<CmdForceInertialMsgPayload>*>;
 %template(THROutputOutMsgsVectorVector) std::vector <std::vector <Message<THROutputMsgPayload>*>>;
 %template(RWConfigLogOutMsgsVectorVector) std::vector <std::vector <Message<RWConfigLogMsgPayload>*>>;
-
+//%template(DataStorageStatusOutMsgsVector) std::vector<Message<DataStorageStatusMsgPayload>>;
 
 %template(SCStatesInMsgsVector) std::vector<ReadFunctor<SCStatesMsgPayload>>;
 %template(SpicePlanetStateInMsgsVector) std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>;
 %template(SwDataInMsgsVector) std::vector<ReadFunctor<SwDataMsgPayload>>;
 %template(DataNodeUsageInMsgsVector) std::vector<ReadFunctor<DataNodeUsageMsgPayload>>;
-%template(DataStorageStatusInMsgsVector) std::vector<ReadFunctor<DataStorageStatusMsgPayload>>;
+//%template(DataStorageStatusInMsgsVector) std::vector<ReadFunctor<DataStorageStatusMsgPayload>>;
 %template(AccessInMsgsVector) std::vector<ReadFunctor<AccessMsgPayload>>;
 %template(RWConfigLogInMsgsVector) std::vector<ReadFunctor<RWConfigLogMsgPayload>>;
 %template(THROutputInMsgsVector) std::vector<ReadFunctor<THROutputMsgPayload>>;

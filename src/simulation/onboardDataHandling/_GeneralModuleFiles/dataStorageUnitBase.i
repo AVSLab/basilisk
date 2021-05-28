@@ -17,33 +17,30 @@
 
  */
 
-%module simpleStorageUnit
+%module dataStorageUnitBase
 %{
-#include "simpleStorageUnit.h"
+#include "dataStorageUnitBase.h"
 %}
-
 
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
-%include "swig_conly_data.i"
 %include "swig_eigen.i"
-%include "std_vector.i"
+%include "swig_conly_data.i"
+%include "carrays.i"
 %include "sys_model.h"
-namespace std {
-    %template(storedDataVector) std::vector<dataInstance>;
-}
+%include "std_vector.i"
+%include "cstring.i"
 
-%template(DoubleVector) std::vector<double>;
-%template(StringVector) std::vector<std::string>;
-
-%include "../_GeneralModuleFiles/dataStorageUnitBase.h"
-%include "simpleStorageUnit.h"
+//%template(DoubleVector) std::vector<double>;
+//%template(StringVector) std::vector<std::string>;
 
 %include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 struct DataNodeUsageMsg_C;
 %include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
+
+%include "dataStorageUnitBase.h"
 
 %pythoncode %{
 import sys

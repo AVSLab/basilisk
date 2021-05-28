@@ -20,7 +20,7 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "dataNodeBase.h"
 #include "string.h"
-
+#include <iostream>
 /*! Constructor.
  @return void
  */
@@ -64,7 +64,6 @@ void DataNodeBase::writeMessages(uint64_t CurrentClock)
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);
-
     return;
 }
 
@@ -86,7 +85,6 @@ bool DataNodeBase::readMessages()
 
     //! - call the custom method to perform additional input reading
     bool customRead = this->customReadMessages();
-
     return(dataRead && customRead);
 }
 

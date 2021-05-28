@@ -22,7 +22,6 @@
     #include "partitionedStorageUnit.h"
 %}
 
-
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
 %}
@@ -32,17 +31,22 @@ from Basilisk.architecture.swig_common_model import *
 %include "carrays.i"
 %include "sys_model.h"
 %include "std_vector.i"
+%include "cstring.i"
+
 namespace std {
     %template(storedDataVector) std::vector<dataInstance>;
 }
+
+//%template(DoubleVector) std::vector<double>;
+//%template(StringVector) std::vector<std::string>;
+
 %include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
 struct dataInstance;
-%include "partitionedStorageUnit.h"
-
 %include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 struct DataNodeUsageMsg_C;
-%include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
-struct DataStorageStatusMsg_C;
+%include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
+
+%include "partitionedStorageUnit.h"
 
 %pythoncode %{
 import sys

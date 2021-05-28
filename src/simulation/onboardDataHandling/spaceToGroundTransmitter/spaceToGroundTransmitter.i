@@ -32,8 +32,7 @@
 struct DataNodeUsageMsg_C;
 %include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
 struct DeviceStatusMsg_C;
-%include "architecture/msgPayloadDefC/DataStorageStatusMsgPayload.h"
-struct DataStorageStatusMsg_C;
+%include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 %include "architecture/msgPayloadDefC/AccessMsgPayload.h"
 struct AccessMsg_C;
 

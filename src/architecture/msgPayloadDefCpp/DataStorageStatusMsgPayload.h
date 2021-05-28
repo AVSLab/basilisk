@@ -17,10 +17,12 @@
 
  */
 
+#include <vector>
+
 struct dataInstance{
     char dataInstanceName[128];     //!< data instance name
     //std::string dataInstanceName;
-    double dataInstanceSum;         //!< data instance sum value
+    double dataInstanceSum;         //!< data instance sum value, bits
 }; //!< Struct for instances of data stored in a buffer. Includes names and amounts.
 
 #ifndef BASILISK_DATASTORAGESTATUSSIMMSG_H
@@ -28,13 +30,19 @@ struct dataInstance{
 
 
 /*! @brief Message to store current storage unit stored data, storage capacity, and received data.*/
-typedef struct{
+typedef struct
+//@cond DOXYGEN_IGNORE
+DataStorageStatusMsgPayload
+//@endcond
+{
     double storageLevel; //!< [b] Storage unit stored data in bits.
     double storageCapacity; //!< [b] Maximum data storage unit capacity.
     double currentNetBaud; //!< [baud] Current data written to or removed from the storage unit net power.
-    //dataInstance storedData[32]; //! Data stored in the storage unit.
-    double storedData[32];      //!< stored data array
-    char storedDataName[32][128];   //!< stored data name
+//    std::vector<dataInstance> storedData; //! < Current state of the data buffer
+    std::vector<std::string> storedDataName;
+    std::vector<double> storedData;
+//    double storedData[32];      //!< stored data array
+//    char storedDataName[32][128];   //!< stored data name
 }DataStorageStatusMsgPayload;
 
 #endif //BASILISK_DATASTORAGESTATUSSIMMSG_H
