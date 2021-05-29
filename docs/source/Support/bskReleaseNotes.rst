@@ -33,8 +33,13 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- fixed issue in :ref:`waypointReference` to interpolate between waypoint ``n`` and shadow set of waypoint ``n+1`` when these are
-  described by opposite MRP sets. Updated documentation and corrected typos in :ref:`scenarioAttitudeConstraintViolation`.
+- fixed issue in :ref:`waypointReference` to interpolate between waypoint ``n`` and shadow set of
+  waypoint ``n+1`` when these are described by opposite MRP sets. Updated documentation and corrected
+  typos in :ref:`scenarioAttitudeConstraintViolation`.
+- Added :ref:`hillStateConverter` and :ref:`hillToAttRef` modules for formation flight navigation and attitude-driven differential drag
+- Added representative scenario :ref:`scenarioDragRendezvous` demonstrating attitude-driven differential drag formation flight
+- Added new scenario :ref:`scenarioDragSensitivity` showing how to do a differential drag
+  spacecraft control sensitivity analysis
 
 Version 2.0.4
 -------------

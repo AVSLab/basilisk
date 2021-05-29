@@ -89,7 +89,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
 
-from Basilisk.simulation import spacecraft, facetDragDynamicEffector, simpleNav, exponentialAtmosphere, vizInterface, ephemerisConverter
+from Basilisk.simulation import spacecraft, facetDragDynamicEffector, simpleNav, exponentialAtmosphere
 from Basilisk.fswAlgorithms import hillStateConverter, hillToAttRef, hillPoint
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -161,7 +161,7 @@ def setup_spacecraft_plant(rN, vN, modelName,):
     return scObject, dragEffector, scNav
 
 
-def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', makeViz=False, useJ2=False):
+def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', useJ2=False):
     """
     Basilisk simulation of a two-spacecraft rendezvous using relative-attitude driven differential drag. Includes
     both static gain and desensitized time-varying gain options and the option to use simulated attitude control or
@@ -182,8 +182,8 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     dynTaskName = "dynTask"
     fswTaskName = "fswTask"
     simProcess = scSim.CreateNewProcess(simProcessName, 2)
-    dynTimeStep = macros.sec2nano(10.0) #   Timestep to evaluate dynamics at
-    fswTimeStep = macros.sec2nano(1.0) #   Timestep to evaluate FSW at
+    dynTimeStep = macros.sec2nano(60.0)  # Timestep to evaluate dynamics at
+    fswTimeStep = macros.sec2nano(60.0)  # Timestep to evaluate FSW at
     simProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
     simProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
@@ -239,10 +239,6 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     #   Connect s/c to environment (gravity, density)
     chiefSc.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
     depSc.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-
-    # ephemConverter = ephemerisConverter.EphemerisConverter()
-    # ephemConverter.ModelTag = 'ephemConvert'
-    # ephemConverter.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[0])
 
     atmosphere.addSpacecraftToModel(depSc.scStateOutMsg)
     depDrag.atmoDensInMsg.subscribeTo(atmosphere.envOutMsgs[-1])
@@ -335,10 +331,9 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    if makeViz:
-        viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [chiefSc,depSc],
-                                                  saveFile=fileName,
-                                                  )
+    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [chiefSc, depSc],
+                                              # saveFile=fileName,
+                                              )
     
     # ----- execute sim ----- #
     scSim.InitializeSimulation()
@@ -377,8 +372,8 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', ma
     return results_dict
 
 
-def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', useJ2=False, makeViz=False):
-    results = drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType=ctrlType, makeViz=makeViz,useJ2=useJ2)
+def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', useJ2=False):
+    results = drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType=ctrlType, useJ2=useJ2)
 
     timeData = results['dynTimeData']
     fswTimeData = results['fswTimeData']

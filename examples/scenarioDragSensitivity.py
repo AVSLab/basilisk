@@ -1,35 +1,95 @@
+#
+#  ISC License
+#
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+r"""
+Overview
+--------
+
+This script executes a parametric analysis of the control law examined in :ref:`scenarioDragRendezvous`,
+considering the performance of that control
+law across both increasing initial displacements and variations in atmospheric density. 
+
+This script is found in the folder ``src/examples`` and executed by using::
+
+      python3 scenarioDragSensitivity.py
+
+The simulation layout is identical to that used in :ref:`scenarioDragRendezvous`. The simulator used in
+that scenario is run using a grid
+of true anomaly offsets and atmospheric densities using Python's multiprocessing library, and a
+set of surface plots reflecting the controls' terminal performance
+and trajectories are produced.
+
+Illustration of Simulation Results
+----------------------------------
+
+In this scenario, the differential drag scenario used in :ref:`scenarioDragRendezvous` is examined
+across a range of initial along-track orbit offsets and atmospheric densities.
+The resulting Hill-frame trajectories corresponding to every fifth simulation run are shown in the following image.
+
+.. image:: /_images/Scenarios/scenarioDragSensitivity_hillTrajectories.svg
+   :align: center
+
+To visualize the sensitivity of terminal position and velocity errors to both increasing baseline and
+variations in density, the following surface plots - which show the
+scale of terminal errors as a function of atmospheric density and maneuver baseline - are shown below:
+
+.. image:: /_images/Scenarios/scenarioDragSensitivity_positionSensitivity.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioDragSensitivity_velocitySensitivity.svg
+   :align: center
+
+"""
+
 import multiprocessing as mp
 import numpy as np
 from matplotlib import pyplot as plt
 import pickle
+import os
 
 from scenarioDragRendezvous import drag_simulator
 
-""" 
-This scenario demonstrates how a basilisk scenario can be used to evaluate the sensitivity of a drag-driven rendezvous controller.
-"""
+fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 def sim_wrapper(arg):
     """
-    This function wraps the basilisk simulator, mapping from one """
+     Because multiprocessing.map only considers single-input functions as targets for maps,
+     this function maps args and kwargs from the dicts provided by multiprocessing to the inputs
+     demanded by drag_simulator.
+     """
     args, kwargs = arg
 
-    result =  drag_simulator(*args, **kwargs)
+    result = drag_simulator(*args, **kwargs)
 
     return result
 
-def drag_sensitivity_analysis(ctrlType, rerunSims=False):
 
-    alt_offsets= [0]#np.arange(-100,100,10)
-    nu_offsets = np.arange(0.001,0.1,0.005)
-    density_multipliers = np.logspace(-1,0.4,num=20)
-    pool = mp.Pool(mp.cpu_count() - 2)
+def drag_sensitivity_analysis(ctrlType, nuOffsetNum, densityNum, rerunSims=False):
 
+    alt_offsets= [0]  # np.arange(-100,100,10)
+    nu_offsets = np.arange(0.001, 1, (1-0.001)/nuOffsetNum)
+    density_multipliers = np.logspace(-1, 0.4, num=densityNum)
+    pool = mp.Pool(mp.cpu_count())
 
     X,Y,Z = np.meshgrid(alt_offsets, nu_offsets, density_multipliers)
 
     positions = np.vstack([X.ravel(), Y.ravel(), Z.ravel()]).T
-    kwargs = {'ctrlType':ctrlType, 'makeViz':False}
+    kwargs = {'ctrlType': ctrlType}
     arg = [(position, kwargs) for position in positions]
     if rerunSims:
         sim_results = pool.map(sim_wrapper, arg)
@@ -37,161 +97,96 @@ def drag_sensitivity_analysis(ctrlType, rerunSims=False):
         with open(ctrlType+"_sweep_results.pickle", "wb") as output_file:
                 pickle.dump(sim_results, output_file,-1)
     else:
-        with open(ctrlType+"_sweep_results.pickle","rb") as fp:
+        with open(ctrlType+"_sweep_results.pickle", "rb") as fp:
             sim_results = pickle.load(fp)
-    # dens_mults = []
-    # pos_errs = np.empty(len(sim_results))
-    # vel_errs = np.empty(len(sim_results))
-    # init_relpos = np.empty(len(sim_results))
-    # init_relvel = np.empty(len(sim_results))
-    # dens_list = np.empty(len(sim_results))
     
-    # plt.figure()
-    # for ind,result in enumerate(sim_results):
-    #     hill_pos = result['dep_hill_nav.r_DC_H']
-    #     hill_vel = result['dep_hill_nav.v_DC_H']
-    #     init_relpos[ind] = np.linalg.norm(hill_pos[1,1:4])
-    #     init_relvel[ind] = np.linalg.norm(hill_vel[1,1:4])
-    #     pos_errs[ind] = np.linalg.norm(hill_pos[-1,1:4])
-    #     vel_errs[ind] = np.linalg.norm(hill_vel[-1,1:4])
-
-    #     if ind%5==0:
-    #         plt.plot(hill_pos[:,1],hill_pos[:,2])
-    #         plt.grid()
-    #         plt.xlabel('Hill X (m)')
-    #         plt.ylabel('Hill Y (m)')
-    #         plt.title(f'Simulation {ind}')
-    #     # dens_list[ind] = result['']
-
-
-    # fig = plt.figure()
-    # ax = fig.gca(projection='3d')
-    # ax.scatter(init_relpos,Z.ravel(),pos_errs)
-    # plt.savefig('scatter.png')
-    # ax.set_xlabel('Maneuver Displacement (m)')
-    # ax.set_ylabel('Density Multiplier')
-
-    # plt.figure()
-    # plt.semilogy(init_relpos, pos_errs)
-    # plt.xlabel('Index')
-    # plt.ylabel('Position error')
-
-    # fig = plt.figure()
-    # ax = fig.gca(projection='3d')
-    # # plt.contour(init_relpos.reshape(X.shape)[5,:,:],Z[5,:,:],np.log10(pos_errs.reshape(Z.shape)[5,:,:]))
-    # plt.savefig('scatter.png')
-    # ax.set_xlabel('Maneuver Displacement (m)')
-    # ax.set_ylabel('Log Density Multiplier')
-
-    # fig = plt.figure()
-    # # plt.contour(X[:,:,5], Y[:,:,5], np.log10(pos_errs.reshape(X.shape)[:,:,5]))
-    # plt.savefig('scatter.png')
-    # ax.set_xlabel('Altitude offset (m)')
-    # ax.set_ylabel('True anomaly offset (deg)')
-
-    # fig = plt.figure()
-    # # plt.contour(X[:,:,8], Y[:,:,8], np.log10(pos_errs.reshape(X.shape)[:,:,8]))
-    # plt.savefig('scatter.png')
-    # ax.set_xlabel('Altitude offset (m)')
-    # ax.set_ylabel('True anomaly offset (deg)')
-    
-    # fig = plt.figure()
-    # # plt.contour(X[:,:,3], Y[:,:,3], np.log10(pos_errs.reshape(X.shape)[:,:,3]))
-    # plt.savefig('scatter.png')
-    # ax.set_xlabel('Altitude offset (m)')
-    # ax.set_ylabel('True anomaly offset (deg)')
-
-    
-    # fig = plt.figure()
-    # #plt.contour(Y[:,5,:], np.log10(Z[:,5,:]), np.log10(pos_errs.reshape(X.shape)[:,5,:]))
-    # plt.savefig('scatter.png')
-    # ax.set_xlabel('Altitude offset (m)')
-    # ax.set_ylabel('True anomaly offset (deg)')
-    # plt.show()
-    # print('done!')
     pool.close()
 
+
 def results_to_ranges_and_plot(results_list):
+    """
+    Converts a results dict from scenarioDragRendezvous to a set of initial and final distance and speed errors, 
+    and returns a plot of all of the Hill-frame trajectories.
+    """
     fig = plt.figure()
     pos_errs = np.empty(len(results_list))
     vel_errs = np.empty(len(results_list))
     init_relpos = np.empty(len(results_list))
     init_relvel = np.empty(len(results_list))
     dens_list = np.empty(len(results_list))
-    for ind,result in enumerate(results_list):
-        hill_pos = result['dep_hill_nav.r_DC_H']
-        hill_vel = result['dep_hill_nav.v_DC_H']
-        init_relpos[ind] = np.linalg.norm(hill_pos[1,1:4])
-        init_relvel[ind] = np.linalg.norm(hill_vel[1,1:4])
-        pos_errs[ind] = np.linalg.norm(hill_pos[-1,1:4])
-        vel_errs[ind] = np.linalg.norm(hill_vel[-1,1:4])
+
+    density_colorvals = np.logspace(-1,0.4,num=20)
+    # normalizer = cmap.norma
+
+    for ind, result in enumerate(results_list):
+        hill_pos = result['relState.r_DC_H']
+        hill_vel = result['relState.v_DC_H']
+        init_relpos[ind] = np.linalg.norm(hill_pos[1,:])
+        init_relvel[ind] = np.linalg.norm(hill_vel[1,:])
+        pos_errs[ind] = np.linalg.norm(hill_pos[-1,:])
+        vel_errs[ind] = np.linalg.norm(hill_vel[-1,:])
         dens_list[ind] = result['dens_mult']
 
 
         if ind%5==0:
-            plt.plot(hill_pos[:,1],hill_pos[:,2] )
+            plt.plot(hill_pos[:,0],hill_pos[:,1] )
             plt.grid()
             plt.xlabel('Hill X (m)')
             plt.ylabel('Hill Y (m)')
-            plt.title(f'Simulation {ind}')
 
     return init_relpos, init_relvel, pos_errs, vel_errs, dens_list, fig
 
-def comparison_sweep():
+def comparison_sweep(savePickle):
 
     from matplotlib import cm
 
-    with open("tv_lqr_sweep_results.pickle","rb") as fp:
-            lqr_sim_results = pickle.load(fp)
-    with open("desen_sweep_results.pickle","rb") as fp:
-            desen_sim_results = pickle.load(fp)
-    with open("ddesen_sweep_results.pickle","rb") as fp:
-            ddesen_sim_results = pickle.load(fp)
+    with open("lqr_sweep_results.pickle", "rb") as fp:
+        lqr_sim_results = pickle.load(fp)
+    if not savePickle:
+        os.remove("lqr_sweep_results.pickle")
 
+    figlist = {}
     lqr_init_range, lqr_init_vel, lqr_err_range, lqr_err_vel, lqr_dens, lqr_fig = results_to_ranges_and_plot(lqr_sim_results)
-    desen_init_range, desen_init_vel, desen_err_range, desen_err_vel, desen_dens, desen_fig = results_to_ranges_and_plot(desen_sim_results)
-    ddesen_init_range, ddesen_init_vel, ddesen_err_range, ddesen_err_vel, ddesen_dens, desen_fig = results_to_ranges_and_plot(ddesen_sim_results)
+    figlist[fileName+'_hillTrajectories'] = lqr_fig
 
-    desen_diff = desen_err_range - lqr_err_range
-    ddesen_diff = ddesen_err_range - lqr_err_range
     unique_ranges = np.unique(lqr_init_range.round(decimals=2))
+    x_shape = len(unique_ranges)
+    unique_dens = np.unique(lqr_dens)
+    y_shape = len(unique_dens)
 
+    import matplotlib.colors as colors
     fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    ax.scatter(lqr_init_range,lqr_dens,np.log10(lqr_err_range))
-    ax.scatter(desen_init_range,desen_dens,np.log10(desen_err_range))
-    ax.scatter(ddesen_init_range,ddesen_dens,np.log10(ddesen_err_range))
-    plt.savefig('scatter.png')
-    ax.set_xlabel('Maneuver Displacement (m)')
-    ax.set_ylabel('Density Multiplier')
+    X,Y = np.meshgrid(unique_ranges, unique_dens)
+    Z = lqr_err_range.reshape([x_shape, y_shape])
+    Z_vel = lqr_err_vel.reshape([x_shape, y_shape])
 
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    lqr_surf = ax.plot_surface(lqr_init_range.reshape([20,20]),lqr_dens.reshape([20,20]),np.log10(lqr_err_range.reshape([20,20])))
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    desen_surf = ax.plot_surface(desen_init_range.reshape([20,20]),desen_dens.reshape([20,20]),np.log10(desen_err_range.reshape([20,20])))
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    desen_surf = ax.plot_surface(ddesen_init_range.reshape([20,20]),ddesen_dens.reshape([20,20]),np.log10(ddesen_err_range.reshape([20,20])))
+    #   Position error contours
+    contour = plt.contourf(X.T,Y.T,Z, 30,norm=colors.LogNorm(Z.min(), Z.max()))
+    plt.ylabel('Density Multiplier')
+    plt.xlabel('Initial Displacement (m)')
+    cbar = fig.colorbar(contour)
+    cbar.set_label("Terminal Positioning Error (m)")
+    figlist[fileName+'_positionSensitivity'] = fig
 
+    #   Velocity error contours
+    fig2 = plt.figure()
+    contour2 = plt.contourf(X.T,Y.T,Z_vel, 30,norm=colors.LogNorm(Z.min(), Z.max()))
+    plt.ylabel('Density Multiplier')
+    plt.xlabel('Initial Displacement (m)')
+    cbar2 = fig2.colorbar(contour2)
+    cbar2.set_label("Terminal Velocity Error (m/s)")
+    figlist[fileName+'_velocitySensitivity'] = fig2
 
+    return figlist
 
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    desen_surf = ax.plot_surface(ddesen_init_range.reshape([20,20]),ddesen_dens.reshape([20,20]),desen_diff.reshape([20,20]))
-    plt.title('DOC Difference vs. LQR')
-
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    desen_surf = ax.plot_surface(ddesen_init_range.reshape([20,20]),ddesen_dens.reshape([20,20]),ddesen_diff.reshape([20,20]))
-    plt.title('CDOC Difference vs. LQR')
+def run(show_plots, nuOffsetNum, densityNum, rerunSims=False, savePickle=False):
+    drag_sensitivity_analysis('lqr', nuOffsetNum, densityNum, rerunSims=rerunSims)
+    plots = comparison_sweep(savePickle)
+    if show_plots:
+        plt.show()
+    return plots
 
 if __name__=='__main__':
-    # # drag_sensitivity_analysis('lqr', rerunSims=True)
-    drag_sensitivity_analysis('tv_lqr', rerunSims=False)
-    drag_sensitivity_analysis('desen', rerunSims=False)
-    drag_sensitivity_analysis('ddesen', rerunSims=False)
-    comparison_sweep()
-    
-    plt.show()
+    nuOffsetNum = 15
+    densityNum = 20
+    run(True, nuOffsetNum, densityNum, rerunSims=True, savePickle=False)
