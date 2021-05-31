@@ -17,35 +17,6 @@
 
  */
 
-/*
-%module simpleTransmitter
-%{
-#include "simpleTransmitter.h"
-%}
-
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-
-%include "carrays.i"
-%include "sys_model.h"
-%include "../_GeneralModuleFiles/dataNodeBase.h"
-%include "simpleTransmitter.h"
-%include "swig_conly_data.i"
-
-%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
-struct DataNodeUsageMsg_C;
-%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
-struct DeviceStatusMsg_C;
-%include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
-*/
-
 %module simpleTransmitter
 %{
 #include "simpleTransmitter.h"
