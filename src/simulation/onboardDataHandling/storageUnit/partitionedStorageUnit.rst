@@ -36,5 +36,8 @@ The next step is to attach one or more :ref:`DataNodeUsageMsgPayload` instances 
 
    storageUnit.addDataNodeToModel(dataMsg)
 
+Then, the names of the partitions need to be added to the storageUnit using::
+
+   storageUnit.addPartition("partitionName")
 
 For more information on how to set up and use this module, see the simple data system example :ref:`scenarioDataDemo`.

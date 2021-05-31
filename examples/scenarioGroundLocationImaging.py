@@ -418,8 +418,6 @@ def run(show_plots):
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
-    # print(dataMonitor.getStoredDataAll()[0].dataInstanceName)
-
     #
     #   configure new ground location target in Santiago, Chile
     #

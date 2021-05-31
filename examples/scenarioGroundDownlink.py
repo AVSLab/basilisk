@@ -31,7 +31,7 @@ visibility to a ground station.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
-      python3 scenarioDataDemo.py
+      python3 scenarioGroundDownlink.py
 
 The scenario is meant to be representative of a small satellite with constant data collection attempting to
 downlink data to a ground station located in Boulder, Colorado.
@@ -181,6 +181,8 @@ def run(show_plots):
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(instrument2.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(transmitter.nodeDataOutMsg)
+    dataMonitor.addPartition("Instrument 1")
+    dataMonitor.addPartition("Instrument 2")
     scenarioSim.AddModelToTask(taskName, dataMonitor)
 
     transmitter.addStorageUnitToTransmitter(dataMonitor.storageUnitDataOutMsg)

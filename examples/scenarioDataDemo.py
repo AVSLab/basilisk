@@ -213,8 +213,6 @@ def run(show_plots):
     storedData = dataMonLog.storedData
     storedDataName = dataMonLog.storedDataName
 
-    print(storedDataName)
-
     tvec = dataMonLog.times()
     tvec = tvec * macros.NANO2HOUR
 
