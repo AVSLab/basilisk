@@ -19,13 +19,20 @@
 
 %module simpleTransmitter
 %{
-#include "simpleTransmitter.h"
+    #include "simpleTransmitter.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.architecture.swig_common_model import *
+%}
+
+%include "std_string.i"
 %include "carrays.i"
+%include "std_vector.i"
 %include "sys_model.h"
-%include "../_GeneralModuleFiles/dataNodeBase.h"
+%include "stdint.i"
+
+%include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
 %include "simpleTransmitter.h"
 
 %include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"

@@ -80,14 +80,14 @@ def testDefault():
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
     instrument.ModelTag = "instrument1"
-    instrument.nodeBaudRate = 9600. # baud
+    instrument.nodeBaudRate = 9600.  # baud
     instrument.nodeDataName = "Instrument 1" # baud
     unitTestSim.AddModelToTask(unitTaskName, instrument)
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
-    dataMonitor.storageCapacity = 8E9 # bits (1 GB)
+    dataMonitor.storageCapacity = 8E9  # bits (1 GB)
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(testModule.nodeDataOutMsg)
     unitTestSim.AddModelToTask(unitTaskName, dataMonitor)
@@ -111,8 +111,8 @@ def testDefault():
     # compare the module results to the truth values
     accuracy = 1e-16
 
-    trueData = 9600. # Module should be on after enough data is accrued
-    testArray = [0, 0, 0, trueData, trueData, trueData, trueData] # Should go through three iterations of no data downlinked
+    trueData = 9600.  # Module should be on after enough data is accrued
+    testArray = [0, 0, 0, trueData, trueData, trueData, trueData]   # Should go through three iterations of no data downlinked
 
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
         testArray, generatedData, accuracy, "dataOutput",

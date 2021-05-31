@@ -32,21 +32,20 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "std_vector.i"
 %include "cstring.i"
+%include "stdint.i"
 
-namespace std {
-    %template(storedDataVector) std::vector<dataInstance>;
-}
-
-//%template(DoubleVector) std::vector<double>;
-//%template(StringVector) std::vector<std::string>;
 
 %include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
+%include "partitionedStorageUnit.h"
 struct dataInstance;
+
 %include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 struct DataNodeUsageMsg_C;
 %include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 
-%include "partitionedStorageUnit.h"
+namespace std {
+    %template(storedDataVector) std::vector<dataInstance>;
+}
 
 %pythoncode %{
 import sys

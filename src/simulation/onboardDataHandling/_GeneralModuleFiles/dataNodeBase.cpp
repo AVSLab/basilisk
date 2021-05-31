@@ -20,7 +20,7 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "dataNodeBase.h"
 #include "string.h"
-#include <iostream>
+
 /*! Constructor.
  @return void
  */
