@@ -21,7 +21,6 @@
 
 struct dataInstance{
     char dataInstanceName[128];     //!< data instance name
-    //std::string dataInstanceName;
     double dataInstanceSum;         //!< data instance sum value, bits
 }; //!< Struct for instances of data stored in a buffer. Includes names and amounts.
 
@@ -38,11 +37,8 @@ DataStorageStatusMsgPayload
     double storageLevel; //!< [b] Storage unit stored data in bits.
     double storageCapacity; //!< [b] Maximum data storage unit capacity.
     double currentNetBaud; //!< [baud] Current data written to or removed from the storage unit net power.
-//    std::vector<dataInstance> storedData; //! < Current state of the data buffer
     std::vector<std::string> storedDataName;
     std::vector<double> storedData;
-//    double storedData[32];      //!< stored data array
-//    char storedDataName[32][128];   //!< stored data name
 }DataStorageStatusMsgPayload;
 
 #endif //BASILISK_DATASTORAGESTATUSSIMMSG_H
