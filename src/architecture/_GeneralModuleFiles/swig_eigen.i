@@ -22,6 +22,7 @@
 
 %typemap(in) type {
     #include <Eigen/Dense>
+
     if(!PySequence_Check($input)) {
         PyErr_SetString(PyExc_ValueError,"Expected some sort of list!  Does not appear to be that.");
         return NULL;
@@ -68,6 +69,7 @@
 
 %typemap(in) type & {
     #include <Eigen/Dense>
+
     if(!PySequence_Check($input)) {
         PyErr_SetString(PyExc_ValueError,"Expected a list of lists!  Does not appear to be that.");
         return NULL;
@@ -159,3 +161,4 @@ EIGEN_MAT_WRAP(Eigen::MatrixXd)
 EIGEN_MAT_WRAP(Eigen::Matrix3d)
 EIGEN_MAT_WRAP(Eigen::Vector3d)
 EIGEN_MAT_WRAP(Eigen::VectorXd)
+
