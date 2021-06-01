@@ -32,6 +32,11 @@
 #ifndef BASILISK_DATASTORAGEUNITBASE_H
 #define BASILISK_DATASTORAGEUNITBASE_H
 
+struct dataInstance {
+    char dataInstanceName[128];     //!< data instance name
+    double dataInstanceSum;         //!< data instance sum value, bits
+}; //!< Struct for instances of data stored in a buffer. Includes names and amounts.
+
 /*! @brief on-board data handling base class */
 class DataStorageUnitBase: public SysModel {
 public:
@@ -40,8 +45,6 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void addDataNodeToModel(Message<DataNodeUsageMsgPayload> *tmpNodeMsg); //!< Adds dataNode to the storageUnit
     void UpdateState(uint64_t CurrentSimNanos);
-    std::vector<dataInstance> getStoredDataAll(); //!< Getter function for the storedData vector.
-    double getStoredDataSum(); //!< Getter function for the storedDataSum
 
 protected:
     void writeMessages(uint64_t CurrentClock);

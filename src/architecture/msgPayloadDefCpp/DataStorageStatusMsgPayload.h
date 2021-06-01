@@ -19,11 +19,6 @@
 
 #include <vector>
 
-struct dataInstance{
-    char dataInstanceName[128];     //!< data instance name
-    double dataInstanceSum;         //!< data instance sum value, bits
-}; //!< Struct for instances of data stored in a buffer. Includes names and amounts.
-
 #ifndef BASILISK_DATASTORAGESTATUSSIMMSG_H
 #define BASILISK_DATASTORAGESTATUSSIMMSG_H
 

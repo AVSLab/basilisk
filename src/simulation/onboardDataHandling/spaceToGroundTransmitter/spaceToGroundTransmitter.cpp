@@ -164,6 +164,7 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUs
                  }
 
                  // If the transmitted packet size has exceeded the packet size, set packetTransmitted to zero
+                 // Both of these variables are negative so the comparison is non-intuitive
                  if (this->packetTransmitted <= this->packetSize) {
                      this->packetTransmitted = 0.0;
                  }

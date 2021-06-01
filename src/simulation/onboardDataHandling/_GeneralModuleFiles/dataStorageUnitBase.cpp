@@ -211,20 +211,6 @@ int DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload *tmpNodeMsg
     return index;
 }
 
-/*! Getter function for all of the stored data
- @return std::vector<dataInstance>
- */
-std::vector<dataInstance> DataStorageUnitBase::getStoredDataAll(){
-    return this->storedData;
-}
-
-/*! Getter function for sum of the stored data
- @return double
- */
-double DataStorageUnitBase::getStoredDataSum(){
-    return this->storedDataSum;
-}
-
 /*! Sums all of the data in the storedData vector
  @return double
  */

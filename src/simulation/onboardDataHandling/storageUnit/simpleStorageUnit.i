@@ -35,15 +35,9 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
 %include "simpleStorageUnit.h"
-
 %include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 struct DataNodeUsageMsg_C;
 %include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
-struct dataInstance;
-
-namespace std {
-    %template(storedDataVector) std::vector<dataInstance>;
-}
 
 %pythoncode %{
 import sys

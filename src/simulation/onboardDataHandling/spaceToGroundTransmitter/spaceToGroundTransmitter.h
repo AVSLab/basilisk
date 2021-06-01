@@ -51,7 +51,6 @@ private:
     double packetTransmitted; //!< Amount of packet downlinked (bytes)
     double currentTimestep; //!< Current timestep tracked for data packet integration
     double previousTime; //!< Previous timestep tracked for data packet integration
-    std::vector<dataInstance> storedData; //! Vector of data. Represents the makeup of the data buffer. Created from input messages.
     std::vector<AccessMsgPayload> groundLocationAccessMsgs; //!< local copy of ground access messages
 };
 #endif //BASILISK_SPACETOGROUNDTRANSMITTER_H
