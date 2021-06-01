@@ -30,6 +30,8 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "std_string.i"
 %include "swig_eigen.i"
+%include "stdint.i"
+
 %include "sys_model.h"
 %include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"

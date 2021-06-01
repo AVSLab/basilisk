@@ -23,7 +23,13 @@
     #include "groundLocation.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.architecture.swig_common_model import *
+%}
+%include "std_string.i"
+%include "swig_conly_data.i"
+%include "swig_eigen.i"
+
 %include "sys_model.h"
 %include "groundLocation.h"
 %include "std_vector.i"

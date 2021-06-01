@@ -32,7 +32,6 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "std_vector.i"
 %include "cstring.i"
-%include "stdint.i"
 
 
 %include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"

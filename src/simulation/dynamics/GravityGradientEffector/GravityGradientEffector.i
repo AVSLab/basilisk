@@ -23,7 +23,13 @@
    #include "GravityGradientEffector.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.architecture.swig_common_model import *
+%}
+
+%include "stdint.i"
+%include "std_string.i"
+%include "swig_conly_data.i"
 
 // Instantiate templates used by example
 %include "sys_model.h"

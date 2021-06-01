@@ -23,7 +23,13 @@
     #include "ReactionWheelPower.h"
 %}
 
-%include "swig_common_model.i"
+%pythoncode %{
+from Basilisk.architecture.swig_common_model import *
+%}
+
+%include "stdint.i"
+%include "std_string.i"
+
 %include "sys_model.h"
 %include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
 %include "ReactionWheelPower.h"
