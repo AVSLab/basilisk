@@ -20,6 +20,7 @@
 #include "keplerianOrbit.h"
 #include "architecture/utilities/astroConstants.h"
 #include <architecture/utilities/avsEigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
 
 /*! This constructor initialized to an arbitrary orbit */
 KeplerianOrbit::KeplerianOrbit()
@@ -191,9 +192,9 @@ void KeplerianOrbit::change_f(){
     this->velocity_BP_P = cArray2EigenVector3d(v); //
     this->true_anomaly_rate = this->n() * pow(this->a(), 2) * sqrt(1 - pow(this->e(), 2)) / pow(this->r(), 2); //
     this->radial_rate = this->r() * this->fDot() * this->e() * sin(this->f()) / (1 + this->e() * cos(this->f())); //
-    this->eccentric_anomaly = acos((this->e() + cos(this->f()) / (1 + this->e() * cos(this->f())))); //
+    this->eccentric_anomaly = safeAcos((this->e() + cos(this->f()) / (1 + this->e() * cos(this->f())))); //
     this->mean_anomaly = this->E() - this->e() * sin(this->E()); //
-    this->flight_path_angle = acos(sqrt((1 - pow(this->e(), 2)) / (1 - pow(this->e(), 2)*pow(cos(this->E()), 2)))); //
+    this->flight_path_angle = safeAcos(sqrt((1 - pow(this->e(), 2)) / (1 - pow(this->e(), 2)*pow(cos(this->E()), 2)))); //
     return;
 }
 

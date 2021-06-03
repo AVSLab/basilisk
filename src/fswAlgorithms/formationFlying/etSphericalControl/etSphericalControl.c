@@ -205,7 +205,7 @@ void calc_RelativeMotionControl(etSphericalControlConfig *configData, NavTransMs
     // spherical coordinates
     double L = v3Norm(rho_H); // separation distance
     double theta = atan2(x,-y); // in-plane rotation angle
-    double phi = asin(-z/L); // out-of-plane rotation angle
+    double phi = safeAsin(-z/L); // out-of-plane rotation angle
     // more DCMs
     double dcm_SH[3][3]; // [SH] from Hill frame to spherical frame
     m33Set(cos(phi)*sin(theta), -cos(theta)*cos(phi), -sin(phi),

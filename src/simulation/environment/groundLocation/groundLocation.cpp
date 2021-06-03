@@ -173,7 +173,7 @@ void GroundLocation::computeAccess()
         auto r_BL_mag = r_BL_N.norm();
         Eigen::Vector3d relativeHeading_N = r_BL_N / r_BL_mag;
 
-        double viewAngle = (M_PI_2-acos(this->rhat_LP_N.dot(relativeHeading_N)));
+        double viewAngle = (M_PI_2-safeAcos(this->rhat_LP_N.dot(relativeHeading_N)));
 
         accessMsgIt->slantRange = r_BL_N.norm();
         accessMsgIt->elevation = viewAngle;

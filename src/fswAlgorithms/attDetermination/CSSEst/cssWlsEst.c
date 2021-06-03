@@ -250,7 +250,7 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
             dOldDotNew = v3Dot(dHatNew,dHatOld);
             if (dOldDotNew > 1.0) dOldDotNew = 1.0;
             if (dOldDotNew < -1.0) dOldDotNew = -1.0;
-            v3Scale(acos(dOldDotNew)/dt, sunlineOutBuffer.omega_BN_B, sunlineOutBuffer.omega_BN_B);
+            v3Scale(safeAcos(dOldDotNew)/dt, sunlineOutBuffer.omega_BN_B, sunlineOutBuffer.omega_BN_B);
         } else {
             configData->priorSignalAvailable = 1;
         }

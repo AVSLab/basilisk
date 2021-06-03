@@ -464,7 +464,7 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
         centers[1] = reCentered[1] + configData->cameraSpecs.resolution[1]/2 - 0.5;
         
         denom = planetRad/rNorm;
-        radius = tan(asin(denom)) / X;
+        radius = tan(safeAsin(denom)) / X;
         if (j==0){
             v2Subtract(centers, configData->obs, &configData->obs[3]);
             configData->obs[5] = radius - configData->obs[2];

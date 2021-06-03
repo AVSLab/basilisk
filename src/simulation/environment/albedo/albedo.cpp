@@ -663,8 +663,8 @@ double Albedo::computeEclipseAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen
     //! - Note that the eclipse module computes the shadow factor at the spacecraft position
     auto r_SdA_N = r_SP_N - r_dAP_N; //! - [m] position vector from dA to Sun (inertial)
     auto s = r_dAP_N.norm();
-    auto f_1 = asin((REQ_SUN * 1000 + Rplanet) / r_SP_N.norm());
-    auto f_2 = asin((REQ_SUN * 1000 - Rplanet) / r_SP_N.norm());
+    auto f_1 = safeAsin((REQ_SUN * 1000 + Rplanet) / r_SP_N.norm());
+    auto f_2 = safeAsin((REQ_SUN * 1000 - Rplanet) / r_SP_N.norm());
     auto s_0 = (-r_dAP_N.dot(r_SP_N)) / r_SP_N.norm();
     auto c_1 = s_0 + Rplanet / sin(f_1);
     auto c_2 = s_0 - Rplanet / sin(f_2);
@@ -673,9 +673,9 @@ double Albedo::computeEclipseAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen
     auto l_2 = c_2 * tan(f_2);
     double area = 0.0;
     double shadowFactorAtdA = 1.0; //! - Initialise the value for no eclipse
-    double a = asin(REQ_SUN * 1000 / r_SdA_N.norm());   //! - Apparent radius of sun
-    double b = asin(Rplanet / r_dAP_N.norm()); //! - Apparent radius of occulting body
-    double c = acos((-r_dAP_N.dot(r_SdA_N)) / (r_dAP_N.norm() * r_SdA_N.norm()));
+    double a = safeAsin(REQ_SUN * 1000 / r_SdA_N.norm());   //! - Apparent radius of sun
+    double b = safeAsin(Rplanet / r_dAP_N.norm()); //! - Apparent radius of occulting body
+    double c = safeAcos((-r_dAP_N.dot(r_SdA_N)) / (r_dAP_N.norm() * r_SdA_N.norm()));
     if (fabs(l) < fabs(l_2) || fabs(l) < fabs(l_1))
     {
         // The order of the conditionals is important.
@@ -693,7 +693,7 @@ double Albedo::computeEclipseAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen
         else if (c < a + b) { // partial eclipse
             double x = (c * c + a * a - b * b) / (2 * c);
             double y = sqrt(a * a - x * x);
-            area = a * a * acos(x / a) + b * b * acos((c - x) / b) - c * y;
+            area = a * a * safeAcos(x / a) + b * b * safeAcos((c - x) / b) - c * y;
             shadowFactorAtdA = 1 - area / (M_PI * a * a);
         }
     }

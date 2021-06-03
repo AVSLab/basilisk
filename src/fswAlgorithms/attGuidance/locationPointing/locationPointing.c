@@ -129,7 +129,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     if (fabs(dum1) > 1.0) {
         dum1 = dum1 / fabs(dum1);
     }
-    phi = acos(dum1);
+    phi = safeAcos(dum1);
 
     /* calculate sigma_BR */
     if (phi < configData->smallAngle) {

@@ -140,7 +140,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
         cthNormalized = v3Dot(configData->alignAxis_C, currentHeading_C);
         cthNormalized = fabs(cthNormalized) > 1.0 ?
         cthNormalized/fabs(cthNormalized) : cthNormalized;
-        configData->opNavAngleErr = acos(cthNormalized);
+        configData->opNavAngleErr = safeAcos(cthNormalized);
 
         /*
             Compute the opNav error relative to the opNav direction vector

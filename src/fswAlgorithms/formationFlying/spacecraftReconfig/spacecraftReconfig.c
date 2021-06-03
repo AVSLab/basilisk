@@ -469,7 +469,7 @@ void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
     }
     v3Normalize(ep_vec,ep_vec);
     double cos_dv = v3Dot(thruster_dir,ez);
-    double acos_dv = acos(cos_dv);
+    double acos_dv = safeAcos(cos_dv);
     double ep_TR[4] = {cos(acos_dv/2.0),ep_vec[0]*sin(acos_dv/2.0),ep_vec[1]*sin(acos_dv/2.0),ep_vec[2]*sin(acos_dv/2.0)};
     double dcm_TR[3][3];
     EP2C(ep_TR,dcm_TR);

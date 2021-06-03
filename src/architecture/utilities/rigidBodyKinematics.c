@@ -59,7 +59,7 @@ void addEuler121(double *e1, double *e2, double *result)
     sp2 = sin(e2[1]);
     dum = e1[2] + e2[0];
 
-    result[1] = acos(cp1 * cp2 - sp1 * sp2 * cos(dum));
+    result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
     cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
@@ -85,7 +85,7 @@ void addEuler131(double *e1, double *e2, double *result)
     sp2 = sin(e2[1]);
     dum = e1[2] + e2[0];
 
-    result[1] = acos(cp1 * cp2 - sp1 * sp2 * cos(dum));
+    result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
     cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
@@ -145,7 +145,7 @@ void addEuler212(double *e1, double *e2, double *result)
     sp2 = sin(e2[1]);
     dum = e1[2] + e2[0];
 
-    result[1] = acos(cp1 * cp2 - sp1 * sp2 * cos(dum));
+    result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
     cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
@@ -205,7 +205,7 @@ void addEuler232(double *e1, double *e2, double *result)
     sp2 = sin(e2[1]);
     dum = e1[2] + e2[0];
 
-    result[1] = acos(cp1 * cp2 - sp1 * sp2 * cos(dum));
+    result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
     cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
@@ -248,7 +248,7 @@ void addEuler313(double *e1, double *e2, double *result)
     sp2 = sin(e2[1]);
     dum = e1[2] + e2[0];
 
-    result[1] = acos(cp1 * cp2 - sp1 * sp2 * cos(dum));
+    result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
     cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
@@ -291,7 +291,7 @@ void addEuler323(double *e1, double *e2, double *result)
     sp2 = sin(e2[1]);
     dum = e1[2] + e2[0];
 
-    result[1] = acos(cp1 * cp2 - sp1 * sp2 * cos(dum));
+    result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
     cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
@@ -386,7 +386,7 @@ void addPRV(double *qq1, double *qq2, double *result)
     v3Set(q1[1], q1[2], q1[3], e1);
     v3Set(q2[1], q2[2], q2[3], e2);
 
-    p = 2 * acos(cp1 * cp2 - sp1 * sp2 * v3Dot(e1, e2));
+    p = 2 * safeAcos(cp1 * cp2 - sp1 * sp2 * v3Dot(e1, e2));
     if(fabs(p) < 1.0E-13)
     {
         v3SetZero(result);
@@ -1397,7 +1397,7 @@ void C2EP(double C[3][3], double b[4])
 void C2Euler121(double C[3][3], double *q)
 {
     q[0] = atan2(C[0][1], -C[0][2]);
-    q[1] = acos(C[0][0]);
+    q[1] = safeAcos(C[0][0]);
     q[2] = atan2(C[1][0], C[2][0]);
 }
 
@@ -1408,7 +1408,7 @@ void C2Euler121(double C[3][3], double *q)
 void C2Euler123(double C[3][3], double *q)
 {
     q[0] = atan2(-C[2][1], C[2][2]);
-    q[1] = asin(C[2][0]);
+    q[1] = safeAsin(C[2][0]);
     q[2] = atan2(-C[1][0], C[0][0]);
 }
 
@@ -1419,7 +1419,7 @@ void C2Euler123(double C[3][3], double *q)
 void C2Euler131(double C[3][3], double *q)
 {
     q[0] = atan2(C[0][2], C[0][1]);
-    q[1] = acos(C[0][0]);
+    q[1] = safeAcos(C[0][0]);
     q[2] = atan2(C[2][0], -C[1][0]);
 }
 
@@ -1430,7 +1430,7 @@ void C2Euler131(double C[3][3], double *q)
 void C2Euler132(double C[3][3], double *q)
 {
     q[0] = atan2(C[1][2], C[1][1]);
-    q[1] = asin(-C[1][0]);
+    q[1] = safeAsin(-C[1][0]);
     q[2] = atan2(C[2][0], C[0][0]);
 }
 
@@ -1441,7 +1441,7 @@ void C2Euler132(double C[3][3], double *q)
 void C2Euler212(double C[3][3], double *q)
 {
     q[0] = atan2(C[1][0], C[1][2]);
-    q[1] = acos(C[1][1]);
+    q[1] = safeAcos(C[1][1]);
     q[2] = atan2(C[0][1], -C[2][1]);
 }
 
@@ -1452,7 +1452,7 @@ void C2Euler212(double C[3][3], double *q)
 void C2Euler213(double C[3][3], double *q)
 {
     q[0] = atan2(C[2][0], C[2][2]);
-    q[1] = asin(-C[2][1]);
+    q[1] = safeAsin(-C[2][1]);
     q[2] = atan2(C[0][1], C[1][1]);
 }
 
@@ -1463,7 +1463,7 @@ void C2Euler213(double C[3][3], double *q)
 void C2Euler231(double C[3][3], double *q)
 {
     q[0] = atan2(-C[0][2], C[0][0]);
-    q[1] = asin(C[0][1]);
+    q[1] = safeAsin(C[0][1]);
     q[2] = atan2(-C[2][1], C[1][1]);
 }
 
@@ -1474,7 +1474,7 @@ void C2Euler231(double C[3][3], double *q)
 void C2Euler232(double C[3][3], double *q)
 {
     q[0] = atan2(C[1][2], -C[1][0]);
-    q[1] = acos(C[1][1]);
+    q[1] = safeAcos(C[1][1]);
     q[2] = atan2(C[2][1], C[0][1]);
 }
 
@@ -1485,7 +1485,7 @@ void C2Euler232(double C[3][3], double *q)
 void C2Euler312(double C[3][3], double *q)
 {
     q[0] = atan2(-C[1][0], C[1][1]);
-    q[1] = asin(C[1][2]);
+    q[1] = safeAsin(C[1][2]);
     q[2] = atan2(-C[0][2], C[2][2]);
 }
 
@@ -1496,7 +1496,7 @@ void C2Euler312(double C[3][3], double *q)
 void C2Euler313(double C[3][3], double *q)
 {
     q[0] = atan2(C[2][0], -C[2][1]);
-    q[1] = acos(C[2][2]);
+    q[1] = safeAcos(C[2][2]);
     q[2] = atan2(C[0][2], C[1][2]);
 }
 
@@ -1507,7 +1507,7 @@ void C2Euler313(double C[3][3], double *q)
 void C2Euler321(double C[3][3], double *q)
 {
     q[0] = atan2(C[0][1], C[0][0]);
-    q[1] = asin(-C[0][2]);
+    q[1] = safeAsin(-C[0][2]);
     q[2] = atan2(C[1][2], C[2][2]);
 }
 
@@ -1518,7 +1518,7 @@ void C2Euler321(double C[3][3], double *q)
 void C2Euler323(double C[3][3], double *q)
 {
     q[0] = atan2(C[2][1], C[2][0]);
-    q[1] = acos(C[2][2]);
+    q[1] = safeAcos(C[2][2]);
     q[2] = atan2(C[1][2], -C[0][2]);
 }
 
@@ -1877,7 +1877,7 @@ void EP2Euler121(double *q, double *e)
     t2 = atan2(q[1], q[0]);
 
     e[0] = t1 + t2;
-    e[1] = 2 * acos(sqrt(q[0] * q[0] + q[1] * q[1]));
+    e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[1] * q[1]));
     e[2] = t2 - t1;
 }
 
@@ -1898,7 +1898,7 @@ void EP2Euler123(double *q, double *e)
     q3 = q[3];
 
     e[0] = atan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
-    e[1] = asin(2 * (q1 * q3 + q0 * q2));
+    e[1] = safeAsin(2 * (q1 * q3 + q0 * q2));
     e[2] = atan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
 }
 
@@ -1916,7 +1916,7 @@ void EP2Euler131(double *q, double *e)
     t2 = atan2(q[1], q[0]);
 
     e[0] = t2 - t1;
-    e[1] = 2 * acos(sqrt(q[0] * q[0] + q[1] * q[1]));
+    e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[1] * q[1]));
     e[2] = t2 + t1;
 }
 
@@ -1937,7 +1937,7 @@ void EP2Euler132(double *q, double *e)
     q3 = q[3];
 
     e[0] = atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
-    e[1] = asin(-2 * (q1 * q2 - q0 * q3));
+    e[1] = safeAsin(-2 * (q1 * q2 - q0 * q3));
     e[2] = atan2(2 * (q1 * q3 + q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
 }
 
@@ -1955,7 +1955,7 @@ void EP2Euler212(double *q, double *e)
     t2 = atan2(q[2], q[0]);
 
     e[0] = t2 - t1;
-    e[1] = 2 * acos(sqrt(q[0] * q[0] + q[2] * q[2]));
+    e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[2] * q[2]));
     e[2] = t2 + t1;
 }
 
@@ -1976,7 +1976,7 @@ void EP2Euler213(double *q, double *e)
     q3 = q[3];
 
     e[0] = atan2(2 * (q1 * q3 + q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
-    e[1] = asin(-2 * (q2 * q3 - q0 * q1));
+    e[1] = safeAsin(-2 * (q2 * q3 - q0 * q1));
     e[2] = atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
 }
 
@@ -1997,7 +1997,7 @@ void EP2Euler231(double *q, double *e)
     q3 = q[3];
 
     e[0] = atan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
-    e[1] = asin(2 * (q1 * q2 + q0 * q3));
+    e[1] = safeAsin(2 * (q1 * q2 + q0 * q3));
     e[2] = atan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
 }
 
@@ -2015,7 +2015,7 @@ void EP2Euler232(double *q, double *e)
     t2 = atan2(q[2], q[0]);
 
     e[0] = t1 + t2;
-    e[1] = 2 * acos(sqrt(q[0] * q[0] + q[2] * q[2]));
+    e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[2] * q[2]));
     e[2] = t2 - t1;
 }
 
@@ -2036,7 +2036,7 @@ void EP2Euler312(double *q, double *e)
     q3 = q[3];
 
     e[0] = atan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
-    e[1] = asin(2 * (q2 * q3 + q0 * q1));
+    e[1] = safeAsin(2 * (q2 * q3 + q0 * q1));
     e[2] = atan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
 }
 
@@ -2054,7 +2054,7 @@ void EP2Euler313(double *q, double *e)
     t2 = atan2(q[3], q[0]);
 
     e[0] = t1 + t2;
-    e[1] = 2 * acos(sqrt(q[0] * q[0] + q[3] * q[3]));
+    e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[3] * q[3]));
     e[2] = t2 - t1;
 }
 
@@ -2075,7 +2075,7 @@ void EP2Euler321(double *q, double *e)
     q3 = q[3];
 
     e[0] = atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
-    e[1] = asin(-2 * (q1 * q3 - q0 * q2));
+    e[1] = safeAsin(-2 * (q1 * q3 - q0 * q2));
     e[2] = atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
 }
 
@@ -2093,7 +2093,7 @@ void EP2Euler323(double *q, double *e)
     t2 = atan2(q[3], q[0]);
 
     e[0] = t2 - t1;
-    e[1] = 2 * acos(sqrt(q[0] * q[0] + q[3] * q[3]));
+    e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[3] * q[3]));
     e[2] = t2 + t1;
 }
 
@@ -2134,7 +2134,7 @@ void EP2PRV(double *q1, double *q)
     double p;
     double sp;
 
-    p = 2 * acos(q1[0]);
+    p = 2 * safeAcos(q1[0]);
     sp = sin(p / 2);
     if (fabs(sp) < nearZero) {
         q[0] = 0.0;
@@ -4049,7 +4049,7 @@ void subEuler121(double *e, double *e1, double *e2)
     sp1 = sin(e1[1]);
     dum = e[0] - e1[0];
 
-    e2[1] = acos(cp1 * cp + sp1 * sp * cos(dum));
+    e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
     cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
@@ -4090,7 +4090,7 @@ void subEuler131(double *e, double *e1, double *e2)
     sp1 = sin(e1[1]);
     dum = e[0] - e1[0];
 
-    e2[1] = acos(cp1 * cp + sp1 * sp * cos(dum));
+    e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
     cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
@@ -4131,7 +4131,7 @@ void subEuler212(double *e, double *e1, double *e2)
     sp1 = sin(e1[1]);
     dum = e[0] - e1[0];
 
-    e2[1] = acos(cp1 * cp + sp1 * sp * cos(dum));
+    e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
     cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
@@ -4188,7 +4188,7 @@ void subEuler232(double *e, double *e1, double *e2)
     sp1 = sin(e1[1]);
     dum = e[0] - e1[0];
 
-    e2[1] = acos(cp1 * cp + sp1 * sp * cos(dum));
+    e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
     cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
@@ -4229,7 +4229,7 @@ void subEuler313(double *e, double *e1, double *e2)
     sp1 = sin(e1[1]);
     dum = e[0] - e1[0];
 
-    e2[1] = acos(cp1 * cp + sp1 * sp * cos(dum));
+    e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
     cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
@@ -4270,7 +4270,7 @@ void subEuler323(double *e, double *e1, double *e2)
     sp1 = sin(e1[1]);
     dum = e[0] - e1[0];
 
-    e2[1] = acos(cp1 * cp + sp1 * sp * cos(dum));
+    e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
     cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
@@ -4354,7 +4354,7 @@ void subPRV(double *q10, double *q20, double *q)
     v3Copy(&(q1[1]), e1);
     v3Copy(&(q2[1]), e2);
 
-    p = 2.*acos(cp1 * cp2 + sp1 * sp2 * v3Dot(e1, e2));
+    p = 2.*safeAcos(cp1 * cp2 + sp1 * sp2 * v3Dot(e1, e2));
     sp = sin(p / 2.);
 
     v3Cross(e1, e2, q1);

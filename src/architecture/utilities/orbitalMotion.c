@@ -554,7 +554,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     }
 
     /* Calculate the inclination */
-    elements->i = acos(hVec[2] / h);
+    elements->i = safeAcos(hVec[2] / h);
 
     /* Calculate Ascending Node Omega */
     v3Cross(n1Hat, inHat, v3);
@@ -996,7 +996,7 @@ void clMeanOscMap(double req, double J2, classicElements *elements, classicEleme
     double d4 = (sin(i / 2.0) + cos(i / 2.0) * di / 2.0) * cos(Omega) - sin(i / 2.0) * dOmega * sin(Omega);  // (F.19)
 
     double Omegap = atan2(d3, d4);                  // (F.20)
-    double ip = 2.0 * asin(sqrt(d3 * d3 + d4 * d4));  // (F.21)
+    double ip = 2.0 * safeAsin(sqrt(d3 * d3 + d4 * d4));  // (F.21)
     double omegap = MpopOp - Mp - Omegap;           // (F.22)
 
     double Ep = M2E(Mp, ep);

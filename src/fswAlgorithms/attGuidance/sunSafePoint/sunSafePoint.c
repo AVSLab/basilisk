@@ -113,7 +113,7 @@ void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
         ctSNormalized = v3Dot(configData->sHatBdyCmd, navMsg.vehSunPntBdy)/sNorm;
         ctSNormalized = fabs(ctSNormalized) > 1.0 ?
         ctSNormalized/fabs(ctSNormalized) : ctSNormalized;
-        configData->sunAngleErr = acos(ctSNormalized);
+        configData->sunAngleErr = safeAcos(ctSNormalized);
 
         /*
             Compute the heading error relative to the sun direction vector 

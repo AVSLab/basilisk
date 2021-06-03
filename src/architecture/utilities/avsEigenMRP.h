@@ -621,7 +621,7 @@ namespace Eigen {
         Vector3 v1 = b.normalized();
         Scalar c = v1.dot(v0);
 
-        if (c != 1 && c != -1) {
+        if (c <= 1 && c >= -1) {
             Vector3 axis = v0.cross(v1);
             axis.normalize();
 
