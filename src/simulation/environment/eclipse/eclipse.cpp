@@ -159,8 +159,8 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
             double s = s_BP_N.norm();
             std::string plName(this->planetBuffer[eclipsePlanetKey].PlanetName);
             double planetRadius = this->getPlanetEquatorialRadius(plName);
-            double f_1 = asin((REQ_SUN*1000 + planetRadius)/s_HP_N.norm());
-            double f_2 = asin((REQ_SUN*1000 - planetRadius)/s_HP_N.norm());
+            double f_1 = safeAsin((REQ_SUN*1000 + planetRadius)/s_HP_N.norm());
+            double f_2 = safeAsin((REQ_SUN*1000 - planetRadius)/s_HP_N.norm());
             double s_0 = (-s_BP_N.dot(s_HP_N))/s_HP_N.norm();
             double c_1 = s_0 + planetRadius/sin(f_1);
             double c_2 = s_0 - planetRadius/sin(f_2);
@@ -196,9 +196,9 @@ double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N
     double shadowFraction = 1.0; // Initialise to value for no eclipse
     double normR_HB_N = r_HB_N.norm();
     double normS_BP_N = s_BP_N.norm();
-    double a = asin(REQ_SUN*1000/normR_HB_N); // apparent radius of sun
-    double b = asin(planetRadius/normS_BP_N); // apparent radius of occulting body
-    double c = acos((-s_BP_N.dot(r_HB_N))/(normS_BP_N*normR_HB_N));
+    double a = safeAsin(REQ_SUN*1000/normR_HB_N); // apparent radius of sun
+    double b = safeAsin(planetRadius/normS_BP_N); // apparent radius of occulting body
+    double c = safeAcos((-s_BP_N.dot(r_HB_N))/(normS_BP_N*normR_HB_N));
     
     // The order of these conditionals is important.
     // In particular (c < a + b) must check last to avoid testing
@@ -213,7 +213,7 @@ double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N
     } else if (c < a + b) { // partial eclipse
         double x = (c*c + a*a - b*b)/(2*c);
         double y = sqrt(a*a - x*x);
-        area = a*a*acos(x/a) + b*b*acos((c-x)/b) - c*y;
+        area = a*a*safeAcos(x/a) + b*b*safeAcos((c-x)/b) - c*y;
         shadowFraction = 1 - area/(M_PI*a*a);
     }
     return shadowFraction;

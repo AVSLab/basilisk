@@ -123,7 +123,7 @@ void BoreAngCalc::computeOutputData()
     double eps = 1e-10;
     double baselinePoint[3] = {1.0, 0.0, 0.0};
     double dotValue = v3Dot(this->boreVecPoint, baselinePoint);
-    this->boresightAng.missAngle = fabs(acos(dotValue));
+    this->boresightAng.missAngle = fabs(safeAcos(dotValue));
     if(fabs(this->boreVecPoint[1]) < eps){
         this->boresightAng.azimuth = 0.0;
     }

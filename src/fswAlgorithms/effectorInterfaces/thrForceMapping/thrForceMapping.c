@@ -343,7 +343,7 @@ double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr_B[3], uint32_t n
         v3Normalize(tauActual_B, tauActual_B);
         if(v3Dot(BLr_hat_B, tauActual_B) < 1.0)
         {
-            returnAngle = acos(v3Dot(BLr_hat_B, tauActual_B)); /* Eq 16 */
+            returnAngle = safeAcos(v3Dot(BLr_hat_B, tauActual_B)); /* Eq 16 */
         }
     }
     return(returnAngle);

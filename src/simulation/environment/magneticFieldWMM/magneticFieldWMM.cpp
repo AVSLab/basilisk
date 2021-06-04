@@ -192,7 +192,7 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, 
     rHat_P = this->r_BP_P.normalized();
 
     //! - compute spacecraft latitude and longitude
-    phi = asin(rHat_P[2]);
+    phi = safeAsin(rHat_P[2]);
     lambda = atan2(rHat_P[1], rHat_P[0]);
     h = (this->orbitRadius - this->planetRadius)/1000.; /* must be in km */
 

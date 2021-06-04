@@ -205,7 +205,7 @@ void SpacecraftLocation::computeAccess()
                 Eigen::Vector3d aHat_P;     // sensor axis in planet frame components
                 double phi;                 // angle between relative positin vector and aHat
                 aHat_P = this->dcm_PN * dcm_NB * this->aHat_B;
-                phi = acos(r_SL_P.dot(aHat_P) / range);
+                phi = safeAcos(r_SL_P.dot(aHat_P) / range);
                 this->accessMsgBuffer.at(c).elevation = M_PI_2 - phi;
                 if (phi > this->theta) {
                     // other spacecraft is outside the cone field of view

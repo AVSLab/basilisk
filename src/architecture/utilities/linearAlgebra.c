@@ -2546,7 +2546,7 @@ void cubicRoots(double a[3], double result[3])
          * result[1] = Acos(t + 2pi/3) - B = A*(cos(t)*-0.5 - sin(t)*sqrt(3)*0.5) - B
          * result[1] = Acos(t + 4pi/3) - B = A*(cos(t)*-0.5 + sin(t)*sqrt(3)*0.5) - B */
         double A = 2.0 * sqrt(-Q);
-        double td3 = acos(RdsqrtnQ3) / 3.0;
+        double td3 = safeAcos(RdsqrtnQ3) / 3.0;
         double costd3 = cos(td3);
         double sintd3 = sin(td3);
         double sqrt3d2 = sqrt(3) * 0.5;
@@ -2568,3 +2568,20 @@ void cubicRoots(double a[3], double result[3])
     }
 
 }
+
+double safeAcos (double x) {
+    if (x < -1.0)
+        return acos(-1);
+    else if (x > 1.0)
+        return acos(1) ;
+    return acos (x) ;
+}
+
+double safeAsin (double x) {
+    if (x < -1.0)
+        return asin(-1);
+    else if (x > 1.0)
+        return asin(1) ;
+    return asin (x) ;
+}
+

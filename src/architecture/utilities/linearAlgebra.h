@@ -236,7 +236,10 @@ extern "C" {
     /* additional routines */
     /* Solve cubic formula for x^3 + a[2]*x^2 + a[1]*x + a[0] = 0 */
     void    cubicRoots(double a[3], double result[3]);
-    
+
+    double safeAcos(double x);
+    double safeAsin(double x);
+
 #ifdef __cplusplus
 }
 #endif

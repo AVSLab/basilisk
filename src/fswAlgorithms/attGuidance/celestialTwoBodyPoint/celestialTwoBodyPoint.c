@@ -114,16 +114,13 @@ void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleI
         v3Normalize(configData->R_P1B_N, R_P1B_N_hat);
         v3Normalize(configData->R_P2B_N, R_P2B_N_hat);
         dotProduct = v3Dot(R_P2B_N_hat, R_P1B_N_hat);
-        if (dotProduct >= 1.0) /* Check that the two frames are defined (headings to both planets don't overlap)*/
-        {
-            platAngDiff = 0.0;  /* If the dot product is greater than 1, zero output */
-        } else {
-            platAngDiff = acos(dotProduct);
-        }
+        platAngDiff = safeAcos(dotProduct);
     }
     
     /*! - Cross the P1 states to get R_P2, v_p2 and a_P2 */
-    if(!configData->secCelBodyIsLinked || fabs(platAngDiff) < configData->singularityThresh)
+    if(!configData->secCelBodyIsLinked ||
+       fabs(platAngDiff) < configData->singularityThresh ||
+       fabs(platAngDiff) > M_PI - configData->singularityThresh)
     {
         v3Cross(configData->R_P1B_N, configData->v_P1B_N, configData->R_P2B_N);
         v3Cross(configData->R_P1B_N, configData->a_P1B_N, configData->v_P2B_N);
