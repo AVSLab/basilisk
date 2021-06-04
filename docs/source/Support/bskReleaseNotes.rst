@@ -40,6 +40,10 @@ Version |release|
 - Added representative scenario :ref:`scenarioDragRendezvous` demonstrating attitude-driven differential drag formation flight
 - Added new scenario :ref:`scenarioDragSensitivity` showing how to do a differential drag
   spacecraft control sensitivity analysis
+- updated :ref:`celestialTwoBodyPoint` to account for a case where the celestial objects are in opposite directions
+- replaced ``acos()`` and ``asin()`` with ``safeAcos()`` and ``safeAsin()`` which ensure that arguments are
+  clipped to be within and including -1 and 1
+
 
 Version 2.0.4
 -------------
