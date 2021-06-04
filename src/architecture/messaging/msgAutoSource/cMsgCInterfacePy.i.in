@@ -17,6 +17,19 @@ typedef struct {type};
         else:
             raise Exception('tried to subscribe {type} to another message type')
 
+
+
+    def isSubscribedTo(self, source):
+        """check if self is subscribed to another message source"""
+        from Basilisk.architecture.messaging import {type}
+        if type(source) == type(self):
+            return ({type}_C_isSubscribedTo(self, source))
+        elif type(source) == {type}:
+            return ({type}_cpp_isSubscribedTo(self, source))
+        else:
+            raise Exception('tried to check subscription between {type} and another message type')
+
+
     def recorder(self, timeDiff=0):
         """create a recorder module for this message"""
         from Basilisk.architecture.messaging import {type}Recorder

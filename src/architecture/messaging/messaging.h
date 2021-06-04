@@ -23,7 +23,6 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include "architecture/messaging/msg2Header.h"
 #include "architecture/utilities/bskLogging.h"
 #include <typeinfo>
-
 /*! forward-declare sim message for use by read functor */
 template<typename messageType>
 class Message;
@@ -122,6 +121,28 @@ public:
         this->initialized = true;
     };
 
+
+    //! Check if self has been subscribed to a C message
+    uint8_t isSubscribedToC(void *source){
+        
+        int8_t firstCheck = (this->headerPointer == (Msg2Header*) source);
+        Msg2Header* pt = this->headerPointer;
+        int8_t secondCheck = (this->payloadPointer == (messageType *) (++pt));
+
+        return (this->initialized && firstCheck && secondCheck);
+        
+    };
+    //! Check if self has been subscribed to a Cpp message
+    uint8_t isSubscribedTo(Message<messageType> *source){
+        
+        Msg2Header *dummyMsgPtr;
+        int8_t firstCheck = (this->payloadPointer == source->dummySubscribeRaw(&(dummyMsgPtr)));
+        int8_t secondCheck = (this->headerPointer == dummyMsgPtr);
+
+        return (this->initialized && firstCheck && secondCheck );
+
+    };
+
     //! Recorder method description
     Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
 };
@@ -168,6 +189,10 @@ public:
     WriteFunctor<messageType> addAuthor();
     //! for plain ole c modules
     messageType* subscribeRaw(Msg2Header **msgPtr);
+
+    //! for plain ole c modules
+    messageType* dummySubscribeRaw(Msg2Header **msgPtr);
+
     //! Recorder object
     Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
     
@@ -196,6 +221,12 @@ messageType* Message<messageType>::subscribeRaw(Msg2Header **msgPtr){
     return &this->payload;
 }
 
+template<typename messageType>
+messageType* Message<messageType>::dummySubscribeRaw(Msg2Header **msgPtr){
+    *msgPtr = &this->header;
+    return &this->payload;
+}
+
 /*! Keep a time history of messages accessible to users from python */
 template<typename messageType>
 class Recorder : public SysModel{
@@ -211,11 +242,9 @@ public:
     Recorder(void* message, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
         Msg2Header msgHeader;
-
         Msg2Header* pt = (Msg2Header *) message;
         messageType* payloadPointer;
         payloadPointer = (messageType *) (++pt);
-
         this->readMessage = ReadFunctor<messageType>(payloadPointer, &msgHeader);
         this->ModelTag = "Rec:";
         Message<messageType> tempMsg;
