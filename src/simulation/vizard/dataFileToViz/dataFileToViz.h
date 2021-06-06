@@ -72,7 +72,7 @@ public:
 
 private:
     std::vector<std::vector<int>> numThrPerCluster;  //!< vector containing list of numbers of thruster per cluster per spacecraft
-    std::ifstream *fileHandle;                  //!< file handle to the simulation data input file
+    std::ifstream fileHandle;                  //!< file handle to the simulation data input file
     std::vector <Eigen::Vector3d> thrPosList;   //!< [m] vector of thrust positions
     std::vector <Eigen::Vector3d> thrDirList;   //!< [-] vector of thrust unit direction vectors in B-frame components
     std::vector <double> thrForceMaxList;       //!< [-] vector of thrust maximum force values
