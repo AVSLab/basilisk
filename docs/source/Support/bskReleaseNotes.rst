@@ -43,6 +43,8 @@ Version |release|
 - updated :ref:`celestialTwoBodyPoint` to account for a case where the celestial objects are in opposite directions
 - replaced ``acos()`` and ``asin()`` with ``safeAcos()`` and ``safeAsin()`` which ensure that arguments are
   clipped to be within and including -1 and 1
+- updated :ref:`dataFileToViz` to allow the ``Reset()`` method to be called multiple times.  If a data file
+  was already opened, then it is closed before the next data file is opened.
 
 
 Version 2.0.4
