@@ -42,8 +42,8 @@ DataFileToViz::DataFileToViz()
 DataFileToViz::~DataFileToViz()
 {
     /* close the data file if it is open */
-    if(this->fileHandle->is_open()) {
-        this->fileHandle->close();
+    if(this->fileHandle.is_open()) {
+        this->fileHandle.close();
         bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz:\nclosed the file: %s.", this->dataFileName.c_str());
     }
 
@@ -113,14 +113,20 @@ void DataFileToViz::Reset(uint64_t CurrentSimNanos)
         }
     }
 
+    /* close the data file if it is open */
+    if(this->fileHandle.is_open()) {
+        this->fileHandle.close();
+        bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz:\nclosed the file: %s.", this->dataFileName.c_str());
+    }
+    
     /* open the data file*/
-    this->fileHandle = new std::ifstream(this->dataFileName);
-    if (this->fileHandle->fail()) {
+    this->fileHandle.open(this->dataFileName);
+    if (this->fileHandle.fail()) {
         bskLogger.bskLog(BSK_ERROR, "DataFileToViz: was not able to load the file %s.", this->dataFileName.c_str());
     }
     if (this->headerLine) {
         std::string line;
-        getline(*this->fileHandle, line);
+        getline(this->fileHandle, line);
     }
 
     bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz:\nloaded the file: %s.", this->dataFileName.c_str());
@@ -255,10 +261,10 @@ void DataFileToViz::appendRwDir(double dir_B[3])
 void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
 {
     /* ensure that a file was opened */
-    if (this->fileHandle->is_open()) {
+    if (this->fileHandle.is_open()) {
         /* read in next line*/
         std::string line;
-        if (getline(*this->fileHandle, line)) {
+        if (getline(this->fileHandle, line)) {
 
             std::istringstream iss(line);
 
