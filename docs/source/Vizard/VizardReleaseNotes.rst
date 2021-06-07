@@ -17,6 +17,15 @@ Release Notes
     - Add the rate gyro visualization
     - using Unity HD Rendering pipeline
 
+**Version 1.8.4.1**
+
+- main camera was not transforming the camera up-axis for the changing Hill Frame resulting in drift that
+  was very noticeable at large time steps or rapidly changing orbits, added recalculation of up-axis for
+  each change in Hill Frame to resolve this issue for most cases
+- known issue:  long mouse drags when running through messages at frame rate at large time steps can
+  result in the main camera spinning about target. This problem does not manifest when using the
+  keyboard camera controls.
+
 **Version 1.8.4**
 
 - reflective solar panels(!) on the default spacecraft model
