@@ -275,9 +275,9 @@ def test_AzElR_rates():
     sc_Euler_elev = sc_elevation[0] + sc_el_rate[0]*dt
     sc_Euler_azimuth = sc_azimuth[0] + sc_az_rate[0]*dt
 
-    range_rate_worked = sc_range[1] == pytest.approx(sc_Euler_range, rel=1e-4)
-    el_rate_worked = sc_elevation[1] == pytest.approx(sc_Euler_elev, rel=1e-4)
-    az_rate_worked = sc_azimuth[1] == pytest.approx(sc_Euler_azimuth, rel=1e-4)
+    range_rate_worked = sc_range[1] == pytest.approx(sc_Euler_range, rel=1e-5)
+    el_rate_worked = sc_elevation[1] == pytest.approx(sc_Euler_elev, rel=1e-5)
+    az_rate_worked = sc_azimuth[1] == pytest.approx(sc_Euler_azimuth, rel=1e-5)
 
     assert (range_rate_worked and el_rate_worked and az_rate_worked)
 

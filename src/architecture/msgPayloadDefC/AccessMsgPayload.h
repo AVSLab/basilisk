@@ -31,6 +31,8 @@ typedef struct {
     double range_dot; //!< [m/s] Range rate of a given spacecraft relative to a location in the SEZ rotating frame.
     double el_dot; //!< [rad/s] Elevation angle rate for a given spacecraft in the SEZ rotating frame.
     double az_dot; //!< [rad/s] Azimuth angle rate for a given spacecraft in the SEZ rotating frame.
+    double r_BL_L[3]; //!<[m] Spacecraft position relative to the groundLocation in the SEZ frame.
+    double v_BL_L[3]; //!<[m/s] Spacecraft velocity relative to the groundLocation in the SEZ rotating frame.
 }AccessMsgPayload;
 
 

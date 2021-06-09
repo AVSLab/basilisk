@@ -14,8 +14,8 @@ The first spacecraft is 0, the second is 1, and so on.
 
 Module Assumptions and Limitations
 ----------------------------------
-This module assumes that it is affixed to a spherical body with a constant radius. Elevation constraints are computed assuming
-a conical field of view around the normal vector fom the body's surface at the location.
+This module assumes that the location is affixed to a spherical body with a constant radius. Elevation constraints are computed assuming
+a conical field of view around the normal vector from the body's surface at the location.
 
 Message Connection Descriptions
 -------------------------------
@@ -56,6 +56,43 @@ The ``groundLocation`` module handles the following behavior:
 #. Conversion of latitude, longitude, altitude coordinates to planet-centered, planet-fixed coordinates
 #. Computation of spacecraft visibility (i.e. access) considering range and ground location field-of-view constraints
 #. Support for multiple spacecraft given one groundLocation instance
+
+
+Determining States
+~~~~~~~~~~~~~~~~~~
+The position of the spacecraft in the SEZ frame, relative to the groundstation, is parameterized by the cartesian coordinates:
+
+.. math:: \mathbf{r}_{B/L} = x\hat{S} + y\hat{E} + z\hat{Z}
+    :label: eq:SEZ_coords:1
+
+The cartesian coordinates are converted to spherical coordinates, centered at the groundstation position, which give the range (:math:`\rho`), azimuth(:math:`Az`), and elevation(:math:`El`).
+
+.. math:: \rho = \sqrt{x^2 + y^2 + z^2}
+    :label: eq:rho:2
+
+.. math:: Az = \tan{\frac{y}{x}}
+    :label: eq:az:3
+
+.. math:: El = \tan{\frac{z}{\sqrt{x^2+y^2}}}
+    :label: eq:el:4
+
+.. _ConShad:
+.. figure:: /../../src/simulation/environment/groundLocation/_Documentation/Images/AzEl_diagram/AzEl_sketch.jpg
+    :align: center
+
+    Figure 1: Diagram of the Azimuth and Elevation, in the South-East-Zenith frame
+
+The spherical coordinate rates are computed by differentiating the range, azimuth, and elevation with respect to the rotating SEZ frame.
+
+.. math:: \dot{\rho} = \frac{{}^Ld}{dt} \rho = \frac{x\dot{x}+y\dot{y}+z\dot{z}}{\sqrt{x^2 + y^2 + z^2}}
+    :label: eq:SEZ_rhoDot:5
+
+.. math:: \dot{Az} = \frac{{}^Ld}{dt} Az = \frac{1}{1+\frac{y^2}{x^2}} \bigg( \frac{y\dot{x}-x\dot{y}}{x^2} \bigg)
+    :label: eq:SEZ_AzDot:6
+
+.. math:: \dot{El} = \frac{{}^Ld}{dt} El = \frac{1}{1+\frac{z^2}{x^2+y^2}} \bigg( \frac{\dot{z}}{\sqrt{x^2+y^2}} - \frac{z(x\dot{x}+y\dot{y})}{(x^2+y^2)^{3/2}} \bigg)
+    :label: eq:SEZ_ElDot:7
+
 
 User Guide
 ----------
