@@ -32,8 +32,8 @@ DataStorageStatusMsgPayload
     double storageLevel; //!< [b] Storage unit stored data in bits.
     double storageCapacity; //!< [b] Maximum data storage unit capacity.
     double currentNetBaud; //!< [baud] Current data written to or removed from the storage unit net power.
-    std::vector<std::string> storedDataName;
-    std::vector<double> storedData;
+    std::vector<std::string> storedDataName;    //!< [] vector of data name strings
+    std::vector<double> storedData;             //!< [] vector of stored data amount for each data name group
 }DataStorageStatusMsgPayload;
 
 #endif //BASILISK_DATASTORAGESTATUSSIMMSG_H

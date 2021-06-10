@@ -21,7 +21,6 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
-
 /*! @brief Creates an instance of the GroundLocation class with a minimum elevation of 10 degrees,
  @return void
  */
@@ -148,11 +147,15 @@ void GroundLocation::updateInertialPositions()
 {
     // First, get the rotation matrix from the inertial to planet frame from SPICE:
     this->dcm_PN = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
+    this->dcm_PN_dot = cArray2EigenMatrix3d(*this->planetState.J20002Pfix_dot);
     this->r_PN_N = cArray2EigenVector3d(this->planetState.PositionVector);
     // Then, transpose it to get the planet to inertial frame
     this->r_LP_N = this->dcm_PN.transpose() * this->r_LP_P_Init;
     this->rhat_LP_N = this->r_LP_N/this->r_LP_N.norm();
     this->r_LN_N = this->r_PN_N + this->r_LP_N;
+    // Get planet frame angular velocity vector
+    Eigen::Matrix3d w_tilde_PN = - this->dcm_PN_dot * this->dcm_PN.transpose();
+    this->w_PN << w_tilde_PN(2,1), w_tilde_PN(0,2), w_tilde_PN(1,0);
     //  Stash updated position in the groundState message
     eigenVector3d2CArray(this->r_LN_N, this->currentGroundStateBuffer.r_LN_N);
     eigenVector3d2CArray(this->r_LP_N, this->currentGroundStateBuffer.r_LP_N);
@@ -175,12 +178,20 @@ void GroundLocation::computeAccess()
 
         double viewAngle = (M_PI_2-safeAcos(this->rhat_LP_N.dot(relativeHeading_N)));
 
-        accessMsgIt->slantRange = r_BL_N.norm();
+        accessMsgIt->slantRange = r_BL_mag;
         accessMsgIt->elevation = viewAngle;
-        Eigen::Vector3d sezPosition = this->dcm_LP * this->dcm_PN * r_BL_N;
-        double cos_az = -sezPosition[0]/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
-        double sin_az = sezPosition[1]/(sqrt(pow(sezPosition[0],2) + pow(sezPosition[1],2)));
+        Eigen::Vector3d r_BL_L = this->dcm_LP * this->dcm_PN * r_BL_N;
+        eigenVector3d2CArray(r_BL_L, accessMsgIt->r_BL_L);
+        double cos_az = -r_BL_L[0]/(sqrt(pow(r_BL_L[0],2) + pow(r_BL_L[1],2)));
+        double sin_az = r_BL_L[1]/(sqrt(pow(r_BL_L[0],2) + pow(r_BL_L[1],2)));
         accessMsgIt->azimuth = atan2(sin_az, cos_az);
+        
+        Eigen::Vector3d v_BL_L = this->dcm_LP * this->dcm_PN * (cArray2EigenVector3d(scStatesMsgIt->v_BN_N) - this->w_PN.cross(r_BP_N)); // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
+        eigenVector3d2CArray(v_BL_L, accessMsgIt->v_BL_L);
+        accessMsgIt->range_dot = v_BL_L.dot(r_BL_L)/r_BL_mag;
+        double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));
+        accessMsgIt->az_dot = (-r_BL_L[0]*v_BL_L[1] + r_BL_L[1]*v_BL_L[0])/pow(xy_norm,2);
+        accessMsgIt->el_dot = (v_BL_L[2]/xy_norm - r_BL_L[2]*(r_BL_L[0]*v_BL_L[0] + r_BL_L[1]*v_BL_L[1])/pow(xy_norm,3))/(1+pow(r_BL_L[2]/xy_norm,2));
         
         if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0)){
             accessMsgIt->hasAccess = 1;

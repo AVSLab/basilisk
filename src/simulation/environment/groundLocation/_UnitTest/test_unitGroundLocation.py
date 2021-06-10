@@ -23,14 +23,18 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import messaging
 from Basilisk.simulation import groundLocation
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import unitTestSupport
+from Basilisk import __path__
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
+bskPath = __path__[0]
 
 def test_range(show_plots):
     """
@@ -197,6 +201,85 @@ def test_rotation(show_plots):
     access_worked = test_access == pytest.approx(ref_access, abs=1e-16)
 
     assert (range_worked and elevation_worked and access_worked)
+
+def test_AzElR_rates():
+    """
+    Tests that the Az,El,range rates are correct by using 1-step Euler integration
+
+    :return:
+    """
+    simTaskName = "simTask"
+    simProcessName = "simProcess"
+    scSim = SimulationBaseClass.SimBaseClass()
+    dynProcess = scSim.CreateNewProcess(simProcessName)
+    dt = 1.0
+    simulationTimeStep = macros.sec2nano(dt)
+    simulationTime = simulationTimeStep
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    planet = gravFactory.createEarth()
+    mu = planet.mu
+    planet.isCentralBody = True
+    timeInitString = '2021 MAY 04 06:47:48.965 (UTC)'
+    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
+                                     , timeInitString
+                                     )
+    gravFactory.spiceObject.zeroBase = 'Earth'
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
+
+    scObject = spacecraft.Spacecraft()
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scSim.AddModelToTask(simTaskName, scObject)
+    oe = orbitalMotion.ClassicElements()
+    r_sc = planet.radEquator + 100*1E3
+    oe.a = r_sc
+    oe.e = 0.00001
+    oe.i = 53.0*macros.D2R
+    oe.Omega = 115.0*macros.D2R
+    oe.omega = 5.0*macros.D2R
+    oe.f = 75.*macros.D2R
+    rN, vN = orbitalMotion.elem2rv(mu, oe)
+    scObject.hub.r_CN_NInit = rN
+    scObject.hub.v_CN_NInit = vN
+
+    groundStation = groundLocation.GroundLocation()
+    groundStation.planetRadius = planet.radEquator
+    groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
+    groundStation.planetInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
+    groundStation.minimumElevation = np.radians(60.)
+    groundStation.addSpacecraftToModel(scObject.scStateOutMsg)
+    scSim.AddModelToTask(simTaskName, groundStation)
+
+    # Log the Az,El,R and rates info
+    numDataPoints = 2
+    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    dataLog = groundStation.accessOutMsgs[0].recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, dataLog)
+
+    # Run the sim
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(simulationTime)
+    scSim.ExecuteSimulation()
+
+    # Get logged data
+    sc_range = dataLog.slantRange
+    sc_elevation = dataLog.elevation
+    sc_azimuth = dataLog.azimuth
+    sc_range_rate = dataLog.range_dot
+    sc_el_rate = dataLog.el_dot
+    sc_az_rate = dataLog.az_dot
+
+    # Euler integration
+    sc_Euler_range = sc_range[0] + sc_range_rate[0]*dt
+    sc_Euler_elev = sc_elevation[0] + sc_el_rate[0]*dt
+    sc_Euler_azimuth = sc_azimuth[0] + sc_az_rate[0]*dt
+
+    range_rate_worked = sc_range[1] == pytest.approx(sc_Euler_range, rel=1e-5)
+    el_rate_worked = sc_elevation[1] == pytest.approx(sc_Euler_elev, rel=1e-5)
+    az_rate_worked = sc_azimuth[1] == pytest.approx(sc_Euler_azimuth, rel=1e-5)
+
+    assert (range_rate_worked and el_rate_worked and az_rate_worked)
 
 def plot_geometry(groundLocation, scLocations, minimumElevation):
     """

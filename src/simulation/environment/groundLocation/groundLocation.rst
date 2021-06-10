@@ -1,21 +1,24 @@
 
 Executive Summary
 -----------------
-This class is used to represent a point attached to the surface of a planetary body which computes the access of a set of spacecraft.
-It considers both the relative position of a set of spacecraft to the location and a minimum elevation for the
-location (set to 10 deg by default).
+This module allows the user to specify a single celestial-body fixed ground location :math:`L`.
+Reading in the planet's ephemeris state the position of :math:`L` relative to the planet origin and
+the inertial frame are evaluated at output as a message.
 
-To use this module, instantiate the class and provide it with a body-fixed location (in either lat/long/altitude,
-via the specifyLocation method, or in
-planet-centered planet-fixed coordinates directly via the ``r_LP_P_Init`` attribute) and a planet position/attitude
-message (i.e., an instance of :ref:`SpicePlanetStateMsgPayload`);
-to compute access, at least one :ref:`SCStatesMsgPayload` message must be added to the module using the ``addSpacecraftToModel()`` method.
-The first spacecraft is 0, the second is 1, and so on.
+Further, one or more spacecraft states can be added to this module to compute the spacecraft position
+relative to the ground location :math:`L`.  The associated output access output message contains the relative
+position vector in terms the spherical coordinates range, azimuth and elevation angle, as well as in terms of
+South-East-Zenith (SEZ) coordinates.  Finally, the velocity of the spacecraft as seen by the :math:`L` location
+is provided in terms of range, azimuth, elevation, south east and zenith rates.  Finally, this access message
+has a integer variable indicating if the spacecraft is above a minimum elevation angle of the :math:`L` SEC frame.
+
+
 
 Module Assumptions and Limitations
 ----------------------------------
-This module assumes that it is affixed to a spherical body with a constant radius. Elevation constraints are computed assuming
-a conical field of view around the normal vector fom the body's surface at the location.
+This module assumes that the location is affixed to a spherical body with a constant radius.
+Elevation constraints are computed assuming
+a conical field of view around the normal vector from the body's surface at the location.
 
 Message Connection Descriptions
 -------------------------------
@@ -48,15 +51,63 @@ Detailed Module Description
 ---------------------------
 The ``groundLocation`` module handles the following behavior:
 
-#. Body-fixed location representation: a single groundLocation instance represents one body-fixed location on a
-   body, including translation and rotation due to the motion of that body as computed by a module that
-   writes a SPICEPlanetStateMsgPayload.
+#. Reads in the planet's states using the ``planetInMsg`` input message
 #. Conversion of latitude, longitude, altitude coordinates to planet-centered, planet-fixed coordinates
+#. Conversion of relative position vector in SEZ range, azimuth, elevation, south, east and zenith coordinates
+#. Determine the :math:`L` relative spacecraft velocity as range, azimuth, elevation, south,
+   east and zenith coordinate rates
 #. Computation of spacecraft visibility (i.e. access) considering range and ground location field-of-view constraints
 #. Support for multiple spacecraft given one groundLocation instance
 
+
+Determining States
+~~~~~~~~~~~~~~~~~~
+The position of the spacecraft in the SEZ frame, relative to the ground station, is parameterized
+by the cartesian coordinates:
+
+.. math:: \mathbf{r}_{B/L} = x\hat{S} + y\hat{E} + z\hat{Z}
+    :label: eq:SEZ_coords:1
+
+The cartesian coordinates are converted to spherical coordinates, centered at the ground station position,
+which give the range (:math:`\rho`), azimuth(:math:`Az`), and elevation(:math:`El`).
+
+.. math:: \rho = \sqrt{x^2 + y^2 + z^2}
+    :label: eq:rho:2
+
+.. math:: Az = \tan{\frac{y}{x}}
+    :label: eq:az:3
+
+.. math:: El = \tan{\frac{z}{\sqrt{x^2+y^2}}}
+    :label: eq:el:4
+
+.. _glAzElSketch:
+.. figure:: /../../src/simulation/environment/groundLocation/_Documentation/Images/AzEl_diagram/AzEl_sketch.jpg
+    :align: center
+
+    Figure 1: Diagram of the Azimuth and Elevation, in the South-East-Zenith frame
+
+The spherical coordinate rates are computed by differentiating the range, azimuth, and elevation with respect to the rotating SEZ frame.
+
+.. math:: \dot{\rho} = \frac{{}^L\text{d}}{\text{d}t} \rho = \frac{x\dot{x}+y\dot{y}+z\dot{z}}{\sqrt{x^2 + y^2 + z^2}}
+    :label: eq:SEZ_rhoDot:5
+
+.. math:: \dot{Az} = \frac{{}^L\text{d}}{\text{d}t} Az = \frac{1}{1+\frac{y^2}{x^2}} \bigg( \frac{y\dot{x}-x\dot{y}}{x^2} \bigg)
+    :label: eq:SEZ_AzDot:6
+
+.. math:: \dot{El} = \frac{{}^L\text{d}}{\text{d}t} El = \frac{1}{1+\frac{z^2}{x^2+y^2}} \bigg( \frac{\dot{z}}{\sqrt{x^2+y^2}} - \frac{z(x\dot{x}+y\dot{y})}{(x^2+y^2)^{3/2}} \bigg)
+    :label: eq:SEZ_ElDot:7
+
+
 User Guide
 ----------
+
+To use this module, instantiate the class and provide it with a body-fixed location (in either lat/long/altitude,
+via the specifyLocation method, or in
+planet-centered planet-fixed coordinates directly via the ``r_LP_P_Init`` attribute) and a planet position/attitude
+message (i.e., an instance of :ref:`SpicePlanetStateMsgPayload`);
+to compute access, at least one :ref:`SCStatesMsgPayload` message must be added to the module using the ``addSpacecraftToModel()`` method.
+The first spacecraft is 0, the second is 1, and so on.
+
 A new instance of groundLocation, alongside necessary user-supplied parameters, can be created by calling:
 
 .. code-block:: python
@@ -68,6 +119,9 @@ A new instance of groundLocation, alongside necessary user-supplied parameters, 
     groundTarget.minimumElevation = np.radians(10.) #   Sets necessary minimum elevation for visibility to 10 deg in radians
     groundTarget.specifyLocation(np.radians(0.), np.radians(0.), 0.) #  Sets location in latitude, longitude, altitude coordinates
     scSim.AddModelToTask(simTaskName, groundTarget)
+
+The ``planetRadius`` variable is optional and defaults to Earth's radius.  Instead of specifying the ground location
+through the ``specifyLocation()`` method, you can also set the module variable ``r_LP_P_Init`` directly.
 
 The ``maximumRange`` variable is optional and defaults to -1.  This means by default no maximum range is considered.  Set it to a positive value to have ``hasAccess`` output message variable depend on range.
 
