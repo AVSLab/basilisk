@@ -45,6 +45,9 @@ Version |release|
   clipped to be within and including -1 and 1
 - updated :ref:`dataFileToViz` to allow the ``Reset()`` method to be called multiple times.  If a data file
   was already opened, then it is closed before the next data file is opened.
+- updated :ref:`groundLocation` to also output SEZ coordinates, as well as range, azimuth, elevation, south, east
+  and zenith coordinate rates.  These coordinates are always computed regardless if a spacecraft is visible to the
+  target.  Check the ``hasAccess`` message variable to see if the spacecraft is visible.
 
 
 Version 2.0.4
