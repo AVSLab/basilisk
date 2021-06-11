@@ -146,6 +146,8 @@ class BSKDynamicModels():
         # setup OpNav behavior by connecting camera module config message
         self.vizInterface.cameraConfInMsg.subscribeTo(self.cameraMod.cameraConfigOutMsg)
         self.vizInterface.opNavMode = 2
+        self.vizInterface.settings.skyBox = "black"
+        self.vizInterface.settings.ambient = 0.5
 
     def SetSpacecraftHub(self):
         self.scObject.ModelTag = "bskSat"

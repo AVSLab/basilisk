@@ -249,7 +249,6 @@ def run(showPlots, simTime = None):
     TheBSKSim.get_DynModel().cameraMod.saveImages = 0
     # opNavMode 1 is used for viewing the spacecraft as it navigates, opNavMode 2 is for headless camera simulation
     TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
-    TheBSKSim.get_DynModel().vizInterface.settings.skyBox = "black"
 
     # The following code spawns the Vizard application from python
     mode = ["None", "-directComm", "-noDisplay"]
