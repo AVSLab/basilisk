@@ -109,7 +109,7 @@ int8_t {type}_cpp_isSubscribedTo({type}_C *subscriber, void* source) {{
 
     Msg2Header *dummyMsgPtr;
     Message<{type}Payload>* source_t = (Message<{type}Payload>*) source;
-    int8_t firstCheck = (subscriber->payloadPointer == source_t->dummySubscribeRaw(&(dummyMsgPtr)));
+    int8_t firstCheck = (subscriber->payloadPointer == source_t->getMsgPointers(&(dummyMsgPtr)));
     int8_t secondCheck = (subscriber->headerPointer == dummyMsgPtr);
 
     return (firstCheck && secondCheck);

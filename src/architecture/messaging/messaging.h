@@ -137,7 +137,7 @@ public:
     uint8_t isSubscribedTo(Message<messageType> *source){
         
         Msg2Header *dummyMsgPtr;
-        int8_t firstCheck = (this->payloadPointer == source->dummySubscribeRaw(&(dummyMsgPtr)));
+        int8_t firstCheck = (this->payloadPointer == source->getMsgPointers(&(dummyMsgPtr)));
         int8_t secondCheck = (this->headerPointer == dummyMsgPtr);
 
         return (this->initialized && firstCheck && secondCheck );
@@ -192,7 +192,7 @@ public:
     messageType* subscribeRaw(Msg2Header **msgPtr);
 
     //! for plain ole c modules
-    messageType* dummySubscribeRaw(Msg2Header **msgPtr);
+    messageType* getMsgPointers(Msg2Header **msgPtr);
 
     //! Recorder object
     Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
@@ -223,7 +223,7 @@ messageType* Message<messageType>::subscribeRaw(Msg2Header **msgPtr){
 }
 
 template<typename messageType>
-messageType* Message<messageType>::dummySubscribeRaw(Msg2Header **msgPtr){
+messageType* Message<messageType>::getMsgPointers(Msg2Header **msgPtr){
     *msgPtr = &this->header;
     return &this->payload;
 }
