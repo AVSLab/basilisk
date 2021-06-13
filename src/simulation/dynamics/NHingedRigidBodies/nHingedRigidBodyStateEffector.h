@@ -89,7 +89,7 @@ private:
     StateData *hubSigma;            //!< -- state manager access to the hubs MRP state
     StateData *hubOmega;            //!< -- state manager access to the hubs omegaBN_B state
     StateData *hubVelocity;         //!< -- state manager access to the hubs rDotBN_N state
-    Eigen::MatrixXd *g_N;            //!< [m/s^2] Gravitational acceleration in N frame components
+    Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
 
 public:
     NHingedRigidBodyStateEffector();  //!< -- Contructor

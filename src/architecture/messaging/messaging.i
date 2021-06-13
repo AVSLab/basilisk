@@ -37,9 +37,6 @@ STRUCTASLIST(AccPktDataMsgPayload)
 STRUCTASLIST(RWConfigElementMsgPayload)
 STRUCTASLIST(CSSArraySensorMsgPayload)
 
-
-
-
 %pythoncode %{
     import numpy as np
     from Basilisk.architecture import cMsgCInterfacePy
@@ -49,6 +46,7 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 #include "messaging.h"
 #include <vector>
 %}
+
 %template(TimeVector) std::vector<uint64_t>;
 %template(DoubleVector) std::vector<double>;
 %template(StringVector) std::vector<std::string>;
@@ -220,7 +218,6 @@ typedef struct messageType;
 %template(ExtInertialForceOutMsgsVector) std::vector<Message<CmdForceInertialMsgPayload>*>;
 %template(THROutputOutMsgsVectorVector) std::vector <std::vector <Message<THROutputMsgPayload>*>>;
 %template(RWConfigLogOutMsgsVectorVector) std::vector <std::vector <Message<RWConfigLogMsgPayload>*>>;
-
 
 %template(SCStatesInMsgsVector) std::vector<ReadFunctor<SCStatesMsgPayload>>;
 %template(SpicePlanetStateInMsgsVector) std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>;

@@ -23,6 +23,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include "architecture/messaging/msg2Header.h"
 #include "architecture/utilities/bskLogging.h"
 #include <typeinfo>
+
 /*! forward-declare sim message for use by read functor */
 template<typename messageType>
 class Message;
@@ -242,9 +243,11 @@ public:
     Recorder(void* message, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
         Msg2Header msgHeader;
+
         Msg2Header* pt = (Msg2Header *) message;
         messageType* payloadPointer;
         payloadPointer = (messageType *) (++pt);
+
         this->readMessage = ReadFunctor<messageType>(payloadPointer, &msgHeader);
         this->ModelTag = "Rec:";
         Message<messageType> tempMsg;
