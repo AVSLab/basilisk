@@ -49,6 +49,8 @@ Version |release|
   and zenith coordinate rates.  These coordinates are always computed regardless if a spacecraft is visible to the
   target.  Check the ``hasAccess`` message variable to see if the spacecraft is visible.
 - updated the OpNav examples script to set a black sky background in the Vizard camera images
+- added a new Python method ``isSubscribedTo()`` to query if the input and output messages between
+  two modules are connected
 
 Version 2.0.4
 -------------
