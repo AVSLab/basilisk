@@ -122,6 +122,28 @@ public:
         this->initialized = true;
     };
 
+
+    //! Check if self has been subscribed to a C message
+    uint8_t isSubscribedToC(void *source){
+        
+        int8_t firstCheck = (this->headerPointer == (Msg2Header*) source);
+        Msg2Header* pt = this->headerPointer;
+        int8_t secondCheck = (this->payloadPointer == (messageType *) (++pt));
+
+        return (this->initialized && firstCheck && secondCheck);
+        
+    };
+    //! Check if self has been subscribed to a Cpp message
+    uint8_t isSubscribedTo(Message<messageType> *source){
+        
+        Msg2Header *dummyMsgPtr;
+        int8_t firstCheck = (this->payloadPointer == source->getMsgPointers(&(dummyMsgPtr)));
+        int8_t secondCheck = (this->headerPointer == dummyMsgPtr);
+
+        return (this->initialized && firstCheck && secondCheck );
+
+    };
+
     //! Recorder method description
     Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
 };
@@ -168,6 +190,10 @@ public:
     WriteFunctor<messageType> addAuthor();
     //! for plain ole c modules
     messageType* subscribeRaw(Msg2Header **msgPtr);
+
+    //! for plain ole c modules
+    messageType* getMsgPointers(Msg2Header **msgPtr);
+
     //! Recorder object
     Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
     
@@ -193,6 +219,12 @@ template<typename messageType>
 messageType* Message<messageType>::subscribeRaw(Msg2Header **msgPtr){
     *msgPtr = &this->header;
     this->header.isLinked = 1;
+    return &this->payload;
+}
+
+template<typename messageType>
+messageType* Message<messageType>::getMsgPointers(Msg2Header **msgPtr){
+    *msgPtr = &this->header;
     return &this->payload;
 }
 

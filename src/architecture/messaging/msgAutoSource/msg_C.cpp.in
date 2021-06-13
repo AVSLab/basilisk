@@ -11,6 +11,13 @@ void {type}_C_subscribe({type}_C *subscriber, {type}_C *source) {{
     subscriber->headerPointer->isLinked = 1;        // set output message as linked
 }};
 
+//! C interface to check if subscriber is indeed subscribed to a message (1: subscribed, 0: not subscribed)
+int8_t {type}_C_isSubscribedTo({type}_C *subscriber, {type}_C *source) {{
+
+    return ((subscriber->payloadPointer == &(source->payload))&&(subscriber->headerPointer == &(source->header)));
+    
+}};
+
 //! C interface to claim authorship to a message
 void {type}_C_addAuthor({type}_C *coownerMsg, {type}_C *targetMsg) {{
     coownerMsg->payloadPointer = &(targetMsg->payload);
@@ -94,4 +101,17 @@ void {type}_cpp_subscribe({type}_C *subscriber, void* source){{
     subscriber->headerPointer = msgPtr;
     subscriber->header.isLinked = 1;    // set input message as linked
     subscriber->headerPointer->isLinked = 1;    // set output message as linked
+}};
+
+
+//! Cpp interface to check if subscriber is indeed subscribed to a message (1: subscribed, 0: not subscribed)
+int8_t {type}_cpp_isSubscribedTo({type}_C *subscriber, void* source) {{
+
+    Msg2Header *dummyMsgPtr;
+    Message<{type}Payload>* source_t = (Message<{type}Payload>*) source;
+    int8_t firstCheck = (subscriber->payloadPointer == source_t->getMsgPointers(&(dummyMsgPtr)));
+    int8_t secondCheck = (subscriber->headerPointer == dummyMsgPtr);
+
+    return (firstCheck && secondCheck);
+    
 }};

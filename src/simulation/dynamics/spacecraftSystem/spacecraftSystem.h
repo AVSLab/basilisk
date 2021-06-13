@@ -59,6 +59,8 @@ struct DockingData {
 /*! @brief spacecraft dynamic effector */
 class SpacecraftUnit {
 public:
+    friend class SpacecraftSystem;
+
     bool docked;                         //!< class variable
     std::string spacecraftName;          //!< -- Name of the spacecraft so that multiple spacecraft can be distinguished
     Message<SCStatesMsgPayload> scStateOutMsg;       //!< -- Name of the state output message
@@ -89,15 +91,7 @@ public:
     Eigen::Vector3d nonConservativeAccelpntB_B;//!< [m/s/s] Current spacecraft body acceleration in the B frame
     Eigen::Vector3d omegaDot_BN_B;       //!< [rad/s/s] angular acceleration of body wrt to N in body frame
 
-    Eigen::MatrixXd *m_SC;               //!< [kg] spacecrafts total mass
-    Eigen::MatrixXd *mDot_SC;            //!< [kg/s] Time derivative of spacecrafts total mass
-    Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
-    Eigen::MatrixXd *c_B;                //!< [m] Vector from point B to CoM of s/c in B frame components
-    Eigen::MatrixXd *cPrime_B;           //!< [m/s] Body time derivative of c_B
-    Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
-    Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
-
-    Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
+    
 
     HubEffector hub;                     //!< class variable
     GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
@@ -105,10 +99,7 @@ public:
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     std::vector<DockingData*> dockingPoints;    //!< class variable
 
-    StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
-    StateData *hubV_N;                          //!< -- State data access to inertial velocity for the hub
-    StateData *hubOmega_BN_B;                   //!< -- State data access to the attitude rate of the hub
-    StateData *hubSigma;                        //!< -- State data access to sigmaBN for the hub
+    
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
 
@@ -130,24 +121,37 @@ public:
     void initializeDynamicsSC(DynParamManager& statesIn); //!< class method
 
 private:
+
+    Eigen::MatrixXd *m_SC;               //!< [kg] spacecrafts total mass
+    Eigen::MatrixXd *mDot_SC;            //!< [kg/s] Time derivative of spacecrafts total mass
+    Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
+    Eigen::MatrixXd *c_B;                //!< [m] Vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd *cPrime_B;           //!< [m/s] Body time derivative of c_B
+    Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
+    Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
+
+    Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
+    StateData *hubR_N;                   //!< -- State data accesss to inertial position for the hub
+    StateData *hubV_N;                   //!< -- State data access to inertial velocity for the hub
+    StateData *hubOmega_BN_B;            //!< -- State data access to the attitude rate of the hub
+    StateData *hubSigma;                 //!< -- State data access to sigmaBN for the hub
 };
 
 
 /*! @brief spacecraft dynamic effector */
 class SpacecraftSystem : public DynamicObject{
 public:
+
     uint64_t simTimePrevious;            //!< -- Previous simulation time
     uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
     std::string sysTimePropertyName;     //!< -- Name of the system time property
     double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
     double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
-    Eigen::MatrixXd *sysTime;            //!< [s] System time
     SpacecraftUnit primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacecraft can attach/detach to/from
     std::vector<SpacecraftUnit*> spacecraftDockedToPrimary; //!< -- vector of spacecraft currently docked with primary spacecraft
     std::vector<SpacecraftUnit*> unDockedSpacecraft; //!< -- vector of spacecraft currently detached from all other spacecraft
     int numberOfSCAttachedToPrimary;          //!< class variable 
     BSKLogger bskLogger;                      //!< -- BSK Logging
-
 
 public:
     SpacecraftSystem();                    //!< -- Constructor
@@ -173,6 +177,7 @@ public:
     void determineAttachedSCStates();  //!< class method
 
 private:
+    Eigen::MatrixXd *sysTime;            //!< [s] System time
     
 };
 

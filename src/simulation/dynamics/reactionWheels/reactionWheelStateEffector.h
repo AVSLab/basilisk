@@ -65,7 +65,6 @@ public:
     
 public:
 	std::vector<RWConfigMsgPayload *> ReactionWheelData;          //!< -- RW information
-    Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
 
 	ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorCmdInMsg;    //!< -- RW motor torque array cmd input message
 	Message<RWSpeedMsgPayload> rwSpeedOutMsg;                   //!< -- RW speed array output message
@@ -88,6 +87,7 @@ private:
 	StateData *hubVelocity;                                     //!< class variable
 	StateData *OmegasState;                                     //!< class variable
 	StateData *thetasState;                                     //!< class variable
+    Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
 
 };
 

@@ -80,7 +80,6 @@ public:
     std::string nameOfTheta1DotState; //!< [-] Identifier for the thetaDot state data container
     std::string nameOfTheta2State;    //!< [-] Identifier for the theta state data container
     std::string nameOfTheta2DotState; //!< [-] Identifier for the thetaDot state data container
-    Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
     BSKLogger bskLogger;                      //!< -- BSK Logging
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< -- (optional) motor torque input message
     std::vector<Message<HingedRigidBodyMsgPayload>*> dualHingedRigidBodyOutMsgs; //!< -- state output message vector for all panels
@@ -135,6 +134,8 @@ private:
     StateData *omega_BN_BState;       //!< Hub/Inertial angular velocity vector in B frame components
     StateData *r_BN_NState;           //!< Hub/Inertial position vector in inertial frame components
     StateData *v_BN_NState;           //!< Hub/Inertial velocity vector in inertial frame components
+    Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
+    
 };
 
 

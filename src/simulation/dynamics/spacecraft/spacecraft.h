@@ -57,15 +57,7 @@ public:
     Eigen::Vector3d sumForceExternal_N;  //!< [N] Sum of forces given in the inertial frame
     Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
     Eigen::Vector3d sumTorquePntB_B;     //!< [N-m] Total torque about point B in B frame components
-    Eigen::MatrixXd *m_SC;               //!< [kg] spacecrafts total mass
-    Eigen::MatrixXd *mDot_SC;            //!< [kg/s] Time derivative of spacecrafts total mass
-    Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
-    Eigen::MatrixXd *c_B;                //!< [m] Vector from point B to CoM of s/c in B frame components
-    Eigen::MatrixXd *cPrime_B;           //!< [m/s] Body time derivative of c_B
-    Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
-    Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
-    Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
-    Eigen::MatrixXd *sysTime;            //!< [s] System time
+    
     Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v of center of mass relative to inertial frame in body frame coordinates
     Eigen::Vector3d dvAccum_BN_B;        //!< [m/s] accumulated delta-v of body frame relative to inertial frame in body frame coordinates
     Eigen::Vector3d nonConservativeAccelpntB_B;//!< [m/s/s] Current spacecraft body acceleration in the B frame
@@ -104,6 +96,17 @@ private:
     StateData *hubSigma;                        //!< -- State data access to sigmaBN for the hub
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+
+
+    Eigen::MatrixXd *m_SC;               //!< [kg] spacecrafts total mass
+    Eigen::MatrixXd *mDot_SC;            //!< [kg/s] Time derivative of spacecrafts total mass
+    Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
+    Eigen::MatrixXd *c_B;                //!< [m] Vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd *cPrime_B;           //!< [m/s] Body time derivative of c_B
+    Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
+    Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
+    Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
+    Eigen::MatrixXd *sysTime;            //!< [s] System time
 
 private:
     void readAttRefMsg();                       //!< -- Read the optional attitude reference input message and set the reference attitude

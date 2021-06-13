@@ -60,7 +60,6 @@ struct HingedPanel {
 class NHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     std::string NHingedRigidBodyOutMsgName; //!< -- state output message name
-    Eigen::MatrixXd *g_N;            //!< [m/s^2] Gravitational acceleration in N frame components
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to the first Hinge location
@@ -90,6 +89,7 @@ private:
     StateData *hubSigma;            //!< -- state manager access to the hubs MRP state
     StateData *hubOmega;            //!< -- state manager access to the hubs omegaBN_B state
     StateData *hubVelocity;         //!< -- state manager access to the hubs rDotBN_N state
+    Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
 
 public:
     NHingedRigidBodyStateEffector();  //!< -- Contructor

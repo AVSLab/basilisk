@@ -56,6 +56,8 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %include "messaging.h"
 %rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
+%rename(__is_subscribed_to) isSubscribedTo;  // we want the users to have a unified "isSubscribedTo" interface
+%rename(__is_subscribed_to_C) isSubscribedToC;  // we want the users to have a unified "isSubscribedTo" interface
 %rename(__time_vector) times;  // It's not really useful to give the user back a time vector
 %rename(__timeWritten_vector) timesWritten;
 %rename(__record_vector) record;
@@ -77,6 +79,20 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
                     self.__subscribe_to_C(source)
                 else:
                     raise Exception('tried to subscribe ReadFunctor<messageTypePayload> to output message type' + str(type(source)))
+
+
+            def isSubscribedTo(self, source):
+                if type(source) == messageType:
+                    return self.__is_subscribed_to(source)
+                else:
+                    from Basilisk.architecture.cMsgCInterfacePy import messageType ## _C
+                    if type(source) == messageType ## _C:
+                        return self.__is_subscribed_to_C(source)
+                    else:
+                        return 0                
+
+
+
         %}
 };
 

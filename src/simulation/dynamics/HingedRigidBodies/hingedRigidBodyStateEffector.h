@@ -44,8 +44,6 @@ public:
     double thetaDotInit;             //!< [rad/s] Initial hinged rigid body angle rate
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
-    Eigen::MatrixXd *c_B;            //!< [m] Vector from point B to CoM of s/c in B frame components
-    Eigen::MatrixXd *cPrime_B;       //!< [m/s] Body time derivative of vector c_B in B frame components
     Eigen::Matrix3d IPntS_S;         //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
@@ -78,8 +76,6 @@ private:
     Eigen::Matrix3d ISPrimePntS_P;  //!< [kg-m^2/s] time body derivative IPntS in body frame components
     Eigen::Vector3d omegaLoc_PN_P;  //!< [rad/s] local copy of omegaBN
     Eigen::Matrix3d omegaTildeLoc_PN_P; //!< -- tilde matrix of omegaBN
-    StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
-    StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
     Eigen::Vector3d r_SN_N;          //!< [m] position vector of hinge CM S relative to inertial frame
     Eigen::Vector3d v_SN_N;          //!< [m/s] inertial velocity vector of S relative to inertial frame
     Eigen::Vector3d sigma_SN;        //!< -- MRP attitude of panel frame S relative to inertial frame
@@ -88,6 +84,12 @@ private:
     StateData *omega_BN_B;           //!< Hub/Inertial angular velocity vector in B frame components
     StateData *r_BN_N;               //!< Hub/Inertial position vector in inertial frame components
     StateData *v_BN_N;               //!< Hub/Inertial velocity vector in inertial frame components
+    StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
+
+    StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
+    Eigen::MatrixXd *c_B;            //!< [m] Vector from point B to CoM of s/c in B frame components
+
+    Eigen::MatrixXd *cPrime_B;       //!< [m/s] Body time derivative of vector c_B in B frame components
 
 public:
     HingedRigidBodyStateEffector();  //!< -- Contructor
