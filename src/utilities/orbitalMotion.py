@@ -676,10 +676,10 @@ def rv2elem(mu, rVec, vVec):
         elements.Omega = math.acos(nVec[0] / n)
         if nVec[1] < 0.0:
             elements.Omega = 2.0 * np.pi - elements.Omega
-        elements.omega = math.acos(np.dot(nVec, eVec) / n / elements.e)
+        elements.omega = math.acos(np.clip(np.dot(nVec, eVec) / n / elements.e, a_min=-1.0, a_max=1.0))
         if eVec[2] < 0.0:
             elements.omega = 2.0 * np.pi - elements.omega
-        elements.f = math.acos(np.dot(eVec, rVec) / elements.e / r)
+        elements.f = math.acos(np.clip(np.dot(eVec, rVec) / elements.e / r, a_min=-1.0, a_max=1.0))
         if np.dot(rVec, vVec) < 0.0:
             elements.f = 2.0 * np.pi - elements.f
     elif elements.e >= 1e-11 and elements.i < 1e-11:
@@ -690,7 +690,7 @@ def rv2elem(mu, rVec, vVec):
         elements.omega = math.acos(eVec[0] / elements.e)
         if eVec[1] < 0.0:
             elements.omega = 2.0 * np.pi - elements.omega
-        elements.f = math.acos(np.dot(eVec, rVec) / elements.e / r)
+        elements.f = math.acos(np.clip(np.dot(eVec, rVec) / elements.e / r, a_min=-1.0, a_max=1.0))
         if np.dot(rVec, vVec) < 0.0:
             elements.f = 2.0 * np.pi - elements.f
     elif elements.e < 1e-11 and elements.i >= 1e-11:
@@ -700,7 +700,7 @@ def rv2elem(mu, rVec, vVec):
             elements.Omega = 2.0 * np.pi - elements.Omega
         elements.omega = 0.0
         # Argument of latitude, u = omega + f #
-        elements.f = math.acos(np.dot(nVec, rVec) / n / r)
+        elements.f = math.acos(np.clip(np.dot(nVec, rVec) / n / r, a_min=-1.0, a_max=1.0))
         if rVec[2] < 0.0:
             elements.f = 2.0 * np.pi - elements.f
     elif elements.e < 1e-11 and elements.i < 1e-11:
@@ -1097,7 +1097,7 @@ def clMeanOscMap(req, J2, oe, oep, sign):
     d4 = (math.sin(i/2)+math.cos(i/2)*di/2)*math.cos(Omega) - math.sin(i/2)*dOmega*math.sin(Omega)  # (F.19)
 
     Omegap = math.atan2(d3, d4)  # (F.20)
-    ip = 2*math.asin(math.sqrt(d3**2+d4**2))  # (F.21)
+    ip = 2*math.asin(np.clip(math.sqrt(d3**2+d4**2), a_min=-1.0, a_max=1.0))  # (F.21)
     omegap = MpopOp - Mp - Omegap  # (F.22)
 
     Ep = M2E(Mp, ep)
