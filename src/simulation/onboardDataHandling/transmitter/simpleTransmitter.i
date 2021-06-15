@@ -22,9 +22,7 @@
     #include "simpleTransmitter.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
+%include "swig_common_model.i"
 
 %include "std_string.i"
 %include "carrays.i"
