@@ -51,6 +51,8 @@ Version |release|
 - updated the OpNav examples script to set a black sky background in the Vizard camera images
 - added a new Python method ``isSubscribedTo()`` to query if the input and output messages between
   two modules are connected
+- updated :ref:`gravityEffector` documentation to properly pull in the RST documentation and link to the
+  PDF describing the gravity models
 
 Version 2.0.4
 -------------
