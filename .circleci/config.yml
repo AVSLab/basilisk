@@ -108,15 +108,16 @@ jobs:
       - run:
           name: "run pytest for src"
           command: source .venv/bin/activate && cd src && pytest -n 4 -m "not scenarioTest"
-      - slack/notify:
-          branch_pattern: develop
-          event: fail
-          template: basic_fail_1
-          mentions: '@Schaub'
-      - slack/notify:
-          branch_pattern: develop
-          event: pass
-          template: basic_success_1
+      #Disabling slack for till they fix this issue: https://github.com/CircleCI-Public/slack-orb/issues/208
+      #- slack/notify:
+          #branch_pattern: develop
+          #event: fail
+          #template: basic_fail_1
+          #mentions: '@Schaub'
+      #- slack/notify:
+          #branch_pattern: develop
+          #event: pass
+          #template: basic_success_1
   linux-build:
     machine:
       #Use this link for available images: https://circleci.com/docs/2.0/configuration-reference/
