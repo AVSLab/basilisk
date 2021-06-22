@@ -53,6 +53,8 @@ Version |release|
   two modules are connected
 - updated :ref:`gravityEffector` documentation to properly pull in the RST documentation and link to the
   PDF describing the gravity models
+- updated ``setAllButCurrentEventActivity`` method in :ref:`SimulationBaseClass` to work with multiple satellites. We can now add an index at the 
+  end of each event name that guarantees only events with the same index are affected. The ``useIndex`` flag must be set to ``True``.
 
 Version 2.0.4
 -------------

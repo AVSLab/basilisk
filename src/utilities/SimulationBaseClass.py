@@ -645,11 +645,22 @@ class SimBaseClass:
             return
         self.eventMap[eventName].eventActive = activityCommand
 
-    def setAllButCurrentEventActivity(self, currentEventName, activityCommand):
-        """Set all event activity variables except for the currentEventName event"""
+    def setAllButCurrentEventActivity(self, currentEventName, activityCommand, useIndex=False):
+        """Set all event activity variables except for the currentEventName event. The ``useIndex`` flag can be used to
+        prevent enabling or disabling every task, and instead only alter the ones that belong to the same group (for
+        example, the same spacecraft). The distinction is made through an index set after the ``_`` symbol in the event
+        name. All events of the same group must have the same index."""
+
+        if useIndex:
+            index = currentEventName.partition('_')[2]  # save the current event's index
+
         for eventName in list(self.eventMap.keys()):
             if currentEventName != eventName:
-                self.eventMap[eventName].eventActive = activityCommand
+                if useIndex:
+                    if eventName.partition('_')[2] == index:
+                        self.eventMap[eventName].eventActive = activityCommand
+                else:
+                    self.eventMap[eventName].eventActive = activityCommand
 
     def setModelDataWrap(self, modelData):
         """
