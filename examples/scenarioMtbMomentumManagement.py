@@ -219,12 +219,6 @@ def plot_data_rw_motor_torque_desired(dataUsReq, tauRequested_W, numRW):
     """Plot the RW desired motor torques."""
     plt.figure(9)
     for idx in range(numRW):
-        '''
-        plt.plot(dataUsReq[:, idx],
-                 '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\hat u_{s,' + str(idx) + '}$')
-        '''
         plt.plot(tauRequested_W[idx],
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx) + '}$')
