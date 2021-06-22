@@ -1,7 +1,7 @@
 Executive Summary
 -----------------
 
-This module computes the appropriate wheel torques and magnetic torque bar dipoles to bias the wheels to their desired speeds. Note that there is no gurantee that the wheel speeds will converge to their bias when less than 3 orthornormal torque rods are in use. In this case it is recommended that a nullspace controller be used to drive the wheels toward their bias. Documentation for the math used in this module can be found here:download:`PDF Description </../../src/fswAlgorithms/attControl/mtbMomentumManagement/_Documentation/Hogan2015a.pdf>`.
+This module computes the appropriate wheel torques and magnetic torque bar dipoles to bias the wheels to their desired speeds. Note that there is no gurantee that the wheel speeds will converge to their bias when less than 3 orthornormal torque rods are in use. In this case it is recommended that a nullspace controller be used to drive the wheels toward their bias. Documentation for the math used in this module can be found in a `paper <http://dx.doi.org/10.2514/1.G000812>`__ by Eric Hogan.
 
 Message Connection Descriptions
 -------------------------------
@@ -37,3 +37,12 @@ provides information on what this message is used for.
     * - rwMotorTorqueOutMsg
       - :ref:`ArrayMotorTorqueMsgPayload`
       - output message for RW motor torques
+
+User Guide
+----------
+See the example script :ref:`scenarioMtbMomentumManagement` for an illustration on how to use this module.
+
+The user must set the momentum dumping gain value ``cGain`` to a postive value.  The required input messages are described above.
+The optional module list ``wheelSpeedBiases`` can be set to desired RW spin rates in terms of rad/sec.  If this is not set,
+the default values are zero rates.
+
