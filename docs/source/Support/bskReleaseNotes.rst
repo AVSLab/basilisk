@@ -21,10 +21,8 @@ Basilisk Release Notes
 .. sidebar:: In Progress Features
 
     - GPU based methods to evaluate solar radiation pressure forces and torques
-    - magnetic torque bar effector
-    - magnetic FSW control module to dump reaction wheel angular momentum
+    - more magnetic FSW control modules to dump reaction wheel angular momentum
     - new tutorial example scripts
-    - new FSW planet location pointing guidance module
     - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
       CAD asteroid or lunar surface terrain.
     - Basilisk 2.1 that includes:
@@ -55,6 +53,9 @@ Version |release|
   PDF describing the gravity models
 - updated ``setAllButCurrentEventActivity`` method in :ref:`SimulationBaseClass` to work with multiple satellites. We can now add an index at the 
   end of each event name that guarantees only events with the same index are affected. The ``useIndex`` flag must be set to ``True``.
+- added new magnetic torque bar effector in :ref:`MtbEffector`
+- added new FSW module to control the RW momentum using MTBs in :ref:`mtbMomentumManagement`
+- new tutorial example script :ref:`scenarioMtbMomentumManagement`
 
 Version 2.0.4
 -------------

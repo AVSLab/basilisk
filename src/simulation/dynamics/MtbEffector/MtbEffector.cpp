@@ -121,13 +121,7 @@ void MtbEffector::computeForceTorque(double integTime)
     this->bField = magField_B;
     this->sBN = sigmaBN;
     this->muCmds = muCmd_T;
-    /*
-    cout << "magField_B " << magField_B << endl;
-    cout << "muCmd_T " << muCmd_T << endl;
-    cout << "mtbTorque_B " << mtbTorque_B << endl;
-    cout << "sigmaBN " << this->hubSigma->getState() << endl;
-     */
-    
+
     return;
 }
 
@@ -143,11 +137,6 @@ void MtbEffector::WriteOutputMessages(uint64_t CurrentClock)
     // write output message
     eigenVector3d2CArray(this->torqueExternalPntB_B, mtbOutMsgBuffer.mtbNetTorque_B);
     this->mtbOutMsg.write(&mtbOutMsgBuffer, this->moduleID, CurrentClock);
-    /*
-    cout << "muCmd_T cpp " << this->muCmds << endl;
-    cout << "this->torqueExternalPntB_B " << this->torqueExternalPntB_B << endl;
-    cout << "sigmaBN cpp " << this->hubSigma->getState() << endl;
-    cout << "magField_B cpp " << this->bField << endl << endl << endl;
-    */
+
     return;
 }
