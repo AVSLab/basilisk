@@ -191,37 +191,40 @@ def MtbEffectorTestFunction(show_plots):
     dataMagField = dataLogMag.magField_N
     np.set_printoptions(precision=16)
      
-    # plot net mtb torque 
-    plt.close("all")  # clears out plots from earlier test runs
-    plt.figure(1)
-    for idx in range(0, 3):
-        plt.plot(dataLogMTB.times() * macros.NANO2SEC, mtbData[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\tau_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [s]')
-    plt.ylabel(r'MTB Net Torque $\tau_{B}$ [Nm]')
+    # plot net mtb torque
+    if show_plots:
+        plt.close("all")  # clears out plots from earlier test runs
+        plt.figure(1)
+        for idx in range(0, 3):
+            plt.plot(dataLogMTB.times() * macros.NANO2SEC, mtbData[:, idx],
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     label=r'$\tau_' + str(idx) + '$')
+        plt.legend(loc='lower right')
+        plt.xlabel('Time [s]')
+        plt.ylabel(r'MTB Net Torque $\tau_{B}$ [Nm]')
 
-    # plot magnetic field data in the Inertial frame 
-    plt.figure(2)
-    for idx in range(3):
-        plt.plot(dataLogMag.times() * macros.NANO2SEC, dataMagField[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$B\_N_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [s]')
-    plt.ylabel('Magnetic Field [nT]')
-    
-    # plot the Body relative to Inertial attitude
-    plt.figure(3)
-    for idx in range(0, 3):
-        plt.plot(dataLog.times() * macros.NANO2SEC, attData[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [s]')
-    plt.ylabel(r'MRP Attitude $\sigma_{B/N}$')
-    
+        # plot magnetic field data in the Inertial frame
+        plt.figure(2)
+        for idx in range(3):
+            plt.plot(dataLogMag.times() * macros.NANO2SEC, dataMagField[:, idx] * 1e9,
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     label=r'$B\_N_{' + str(idx) + '}$')
+        plt.legend(loc='lower right')
+        plt.xlabel('Time [s]')
+        plt.ylabel('Magnetic Field [nT]')
+
+        # plot the Body relative to Inertial attitude
+        plt.figure(3)
+        for idx in range(0, 3):
+            plt.plot(dataLog.times() * macros.NANO2SEC, attData[:, idx],
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     label=r'$\sigma_' + str(idx) + '$')
+        plt.legend(loc='lower right')
+        plt.xlabel('Time [s]')
+        plt.ylabel(r'MRP Attitude $\sigma_{B/N}$')
+
+        plt.show()
+
     # compare gravity gradient torque vector to the truth
     accuracy = 1e-12
 
@@ -240,9 +243,7 @@ def MtbEffectorTestFunction(show_plots):
         print("PASSED: Mtb Effector")
     else:
         print("Failed: Mtb Effector")
-        
-    plt.show()
-    
+
     return testFailCount, testMessages
 if __name__ == "__main__":
     test_MtbEffector(False)
