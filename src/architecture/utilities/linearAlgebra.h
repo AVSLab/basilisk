@@ -23,6 +23,10 @@
 #include <stdio.h>
 #include <architecture/utilities/bskLogging.h>
 
+/* Divide by zero epsilon value */
+#define DB0_EPS 1e-30
+
+#define MXINDEX(dim2, row, col) ((row)*(dim2) + (col))
 
 /* General vectors */
 #ifdef __cplusplus
@@ -30,6 +34,7 @@ extern "C" {
 #endif
 
     /* N element vectors */
+    void    vElementwiseMult(double *v1, size_t dim, double *v2, double *result);
     void    vCopy(double *v, size_t dim, double *result);
     void    vSetZero(double *v, size_t dim);
     void    vSetOnes(double *v, size_t dim);
@@ -99,6 +104,8 @@ extern "C" {
     int     v6IsEqual(double v1[6], double v2[6], double accuracy);
     
     /* NxM matrices */
+    void    mLeastSquaresInverse(void *mx, size_t dim1, size_t dim2, void *result);
+    void    mMinimumNormInverse(void *mx, size_t dim1, size_t dim2, void *result);
     void    mCopy(void *mx, size_t dim1, size_t dim2, void *result);
     void    mSetZero(void *result, size_t dim1, size_t dim2);
     void    mSetIdentity(void *result, size_t dim1, size_t dim2);

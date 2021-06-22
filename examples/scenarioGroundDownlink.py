@@ -90,7 +90,7 @@ def run(show_plots):
     scenarioSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(1.0)     # update process rate update time
+    testProcessRate = macros.sec2nano(10.0)     # update process rate update time
     testProc = scenarioSim.CreateNewProcess(processname)
     testProc.addTask(scenarioSim.CreateNewTask(taskName, testProcessRate))
 
@@ -237,7 +237,7 @@ def run(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    scenarioSim.ConfigureStopTime(macros.sec2nano(86400))        # seconds to stop simulation
+    scenarioSim.ConfigureStopTime(macros.hour2nano(24))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     scenarioSim.ExecuteSimulation()

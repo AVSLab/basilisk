@@ -25,17 +25,21 @@
 #include <string.h>
 #include <math.h>
 
-/* Divide by zero epsilon value */
-#define DB0_EPS 1e-30
-
 /* define a maximum array size for the functions that need
  to allocate memory within their routine */
 #define LINEAR_ALGEBRA_MAX_ARRAY_SIZE (128*128)
 
 
-#define MXINDEX(dim2, row, col) ((row)*(dim2) + (col))
 #define MOVE_DOUBLE(source, dim, destination) (memmove((void*)(destination), (void*)(source), sizeof(double)*(dim)))
 
+void vElementwiseMult(double *v1, size_t dim,
+                       double *v2, double *result)
+{
+    size_t i;
+    for(i = 0; i < dim; i++) {
+        result[i] = v1[i] * v2[i];
+    }
+}
 
 void vCopy(double *v, size_t dim,
            double *result)
@@ -770,6 +774,39 @@ int v6IsEqual(double v1[6],
     return 1;
 }
 
+void mLeastSquaresInverse(void *mx, size_t dim1, size_t dim2, void *result)
+{
+    /*
+     * Computes the least squares inverse.
+     */
+    double *m_result = (double *)result;
+    double mxTranspose[dim2 * dim1];
+    double mxGrammian[dim2 * dim2];
+    double mxGrammianInverse[dim2 * dim2];
+    
+    mTranspose(mx, dim1, dim2, mxTranspose);
+    mMultM(mxTranspose, dim2, dim1, mx, dim1, dim2, mxGrammian);
+    mInverse(mxGrammian, dim2, mxGrammianInverse);
+    mMultM(mxGrammianInverse, dim2, dim2, mxTranspose, dim2, dim1, m_result);
+
+}
+
+void mMinimumNormInverse(void *mx, size_t dim1, size_t dim2, void *result)
+{
+    /*
+     * Computes the minumum norm inverse.
+     */
+    double *m_mx = (double *)mx;
+    double *m_result = (double *)result;
+    double mxTranspose[dim2 * dim1];
+    double mxMxTranspose[dim1 * dim1];
+    double mxMxTransposeInverse[dim1 * dim1];
+    
+    mTranspose(m_mx, dim1, dim2, mxTranspose);
+    mMultM(m_mx, dim1, dim2, mxTranspose, dim2, dim1, mxMxTranspose);
+    mInverse(mxMxTranspose, dim1, mxMxTransposeInverse);
+    mMultM(mxTranspose, dim2, dim1, mxMxTransposeInverse, dim1, dim1, m_result);
+}
 
 void mCopy(void *mx, size_t dim1, size_t dim2,
            void *result)
@@ -1177,7 +1214,7 @@ int mInverse(void *mx, size_t dim, void *result)
     double  m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim*dim > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
-
+    
     if(fabs(det) > DB0_EPS) {
         /* Find adjoint matrix */
         double m_adjoint[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
@@ -1309,7 +1346,6 @@ void mSetSubMatrix(void *mx, size_t dim1, size_t dim2,
         }
     }
 }
-
 
 void m22Set(double m00, double m01,
             double m10, double m11,
