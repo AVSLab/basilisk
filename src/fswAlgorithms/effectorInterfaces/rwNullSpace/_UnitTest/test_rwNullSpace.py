@@ -22,18 +22,20 @@ path = os.path.dirname(os.path.abspath(filename))
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("numWheels", [
-     (3)
-    ,(4)
+@pytest.mark.parametrize("numWheels, defaultDesired", [
+     (3, True)
+    , (4, True)
+    , (3, False)
+    , (4, False)
 ])
 
 
-def test_rwNullSpace(numWheels):
+def test_rwNullSpace(numWheels, defaultDesired):
     """ Test rwNullSpace. """
-    [testResults, testMessage] = rwNullSpaceTestFunction(numWheels)
+    [testResults, testMessage] = rwNullSpaceTestFunction(numWheels, defaultDesired)
     assert testResults < 1, testMessage
 
-def rwNullSpaceTestFunction(numWheels):
+def rwNullSpaceTestFunction(numWheels, defaultDesired):
     """ Test the rwNullSpace module. Setup a simulation, """
 
     testFailCount = 0  # zero unit test result counter
@@ -73,6 +75,13 @@ def rwNullSpaceTestFunction(numWheels):
 
     # Initialize the msg that gives the speed of the reaction wheels
     inputSpeedMsg = messaging.RWSpeedMsgPayload()
+
+    if defaultDesired:
+        desiredOmega = [0]*numRW
+    else:
+        desiredOmega = [5]*numRW
+        inputDesiredSpeedMsg = messaging.RWSpeedMsgPayload()
+        inputDesiredSpeedMsg.wheelSpeeds = desiredOmega
 
     gsHat = [[1, 0, 0], [0,1,0], [0, 0, 1]]
     if numWheels == 4:
@@ -118,6 +127,9 @@ def rwNullSpaceTestFunction(numWheels):
     moduleConfig.rwMotorTorqueInMsg.subscribeTo(rwCmdMsg)
     moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedMsg)
     moduleConfig.rwConfigInMsg.subscribeTo(rwConfigMsg)
+    if not defaultDesired:
+        rwDesiredMsg = messaging.RWSpeedMsg().write(inputDesiredSpeedMsg)
+        moduleConfig.rwDesiredSpeedsInMsg.subscribeTo(rwDesiredMsg)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -144,7 +156,7 @@ def rwNullSpaceTestFunction(numWheels):
         tmp = GsT.dot(inv(tmp))
         tmp = tmp.dot(Gs)
         tau = np.identity(numWheels) - tmp
-        d = - moduleConfig.OmegaGain * np.array(rwSpeeds)
+        d = - moduleConfig.OmegaGain * (np.array(rwSpeeds) - np.array(desiredOmega))
         uNull = tau.dot(d)
         trueTorque = np.array(usControl) + uNull
         trueVector = [
@@ -181,4 +193,4 @@ def rwNullSpaceTestFunction(numWheels):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == '__main__':
-    test_rwNullSpace(4)
+    test_rwNullSpace(4, True)

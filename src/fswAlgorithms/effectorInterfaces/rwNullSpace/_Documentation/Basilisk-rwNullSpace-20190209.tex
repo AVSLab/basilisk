@@ -48,7 +48,7 @@
 \newcommand{\subject}{Reaction Wheel Wheel Speed Reduction using the RW Null Space}
 \newcommand{\status}{first release module Documentation}
 \newcommand{\preparer}{H. Schaub}
-\newcommand{\summary}{The module reads in the reaction wheel (RW) control motor torques, and super imposes an additional torque that reduces the wheel speeds.  The RW speed control torque array is projected through the RW null space to ensure that the net torque created is always zero.  Thus, the addition of this RW null motion torque has no impact on the earlier control torque performance.}
+\newcommand{\summary}{The module reads in the reaction wheel (RW) control motor torques, and super imposes an additional torque that drives the wheel speeds to desired values.  The default RW desired speeds are 0 rpm.  The RW speed control torque array is projected through the RW null space to ensure that the net torque created is always zero.  Thus, the addition of this RW null motion torque has no impact on the earlier control torque performance.}
 
 \begin{document}
 
@@ -66,6 +66,7 @@
 {\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 \hline
 1.0 & Initial Documentation & H. Schaub & 2019-02-09\\
+1.1 & Desired RW Speeds & H. Schaub & 2021-06-23\\
 \hline
 
 \end{longtable}

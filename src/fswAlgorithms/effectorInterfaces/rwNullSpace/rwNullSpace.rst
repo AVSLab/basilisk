@@ -30,6 +30,9 @@ provides information on what this message is used for.
     * - rwSpeedsInMsg
       - :ref:`RWSpeedMsgPayload`
       - RW speed message
+    * - rwDesiredSpeedsInMsg
+      - :ref:`RWSpeedMsgPayload`
+      - (optional) input message with the desired RW speeds
     * - rwConfigInMsg
       - :ref:`RWConstellationMsgPayload`
       - RW constellation configuration input message
