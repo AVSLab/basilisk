@@ -33,6 +33,7 @@
 typedef struct {
     ArrayMotorTorqueMsg_C rwMotorTorqueInMsg;       //!< [-] The name of the Input message
     RWSpeedMsg_C rwSpeedsInMsg;                     //!< [-] The name of the input RW speeds
+    RWSpeedMsg_C rwDesiredSpeedsInMsg;              //!< [-] (optional) The name of the desired RW speeds
     RWConstellationMsg_C rwConfigInMsg;             //!< [-] The name of the RWA configuration message
     ArrayMotorTorqueMsg_C rwMotorTorqueOutMsg;      //!< [-] The name of the output message
 

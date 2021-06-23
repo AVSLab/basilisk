@@ -65,11 +65,14 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwNullSpace.rwSpeedsInMsg wasn't connected.");
     }
 
-    /*! -# read in the RW spin axis headings */
+    /* read in the RW spin axis headings */
     localRWData = RWConstellationMsg_C_read(&configData->rwConfigInMsg);
 
-    /*! -# create the 3xN [Gs] RW spin axis projection matrix */
+    /* create the 3xN [Gs] RW spin axis projection matrix */
     configData->numWheels = (uint32_t) localRWData.numRW;
+    if (configData->numWheels > MAX_EFF_CNT) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwNullSpace.numWheels is larger that max effector count.");
+    }
     for(uint32_t i=0; i<configData->numWheels; i=i+1)
     {
         for(int j=0; j<3; j=j+1)
@@ -78,7 +81,7 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
         }
     }
 
-    /*! -# find the [tau] null space projection matrix [tau]= ([I] - [Gs]^T.([Gs].[Gs]^T) */
+    /* find the [tau] null space projection matrix [tau]= ([I] - [Gs]^T.([Gs].[Gs]^T) */
     mTranspose(GsMatrix, 3, configData->numWheels, GsTranspose);            /* find [Gs]^T */
     mMultM(GsMatrix, 3, configData->numWheels, GsTranspose,
            configData->numWheels, 3, GsInvHalf);                            /* find [Gs].[Gs]^T */
@@ -105,30 +108,40 @@ void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     int64_t moduleID)
 {
     ArrayMotorTorqueMsgPayload cntrRequest;        /* [Nm]  array of the RW motor torque solution vector from the control module */
-	RWSpeedMsgPayload rwSpeeds;                 /* [r/s] array of RW speeds */
+    RWSpeedMsgPayload rwSpeeds;                    /* [r/s] array of RW speeds */
+    RWSpeedMsgPayload rwDesiredSpeeds;             /* [r/s] array of RW speeds */
 	ArrayMotorTorqueMsgPayload finalControl;       /* [Nm]  array of final RW motor torques containing both
                                                        the control and null motion torques */
-	double dVector[MAX_EFF_CNT];            /* [Nm]  null motion wheel speed control array */
+	double dVector[MAX_EFF_CNT];                   /* [Nm]  null motion wheel speed control array */
+    double DeltaOmega[MAX_EFF_CNT];                /* [r/s] difference in RW speeds */
     
-    /*! - zero all outut message containers prior to evaluation */
+    /* zero all output message containers prior to evaluation */
     finalControl = ArrayMotorTorqueMsg_C_zeroMsgPayload();
 
-    /*! - Read the input RW commands to get the raw RW requests*/
+    /* Read the input RW commands to get the raw RW requests*/
     cntrRequest = ArrayMotorTorqueMsg_C_read(&configData->rwMotorTorqueInMsg);
-    /*! - Read the RW speeds*/
+    /* Read the RW speeds*/
     rwSpeeds = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
 
-    /*! - compute the wheel speed control vector d = -K.Omega */
-	vScale(-configData->OmegaGain, rwSpeeds.wheelSpeeds,
-		configData->numWheels, dVector);
-    /*! - compute the RW null space motor torque solution to reduce the wheel speeds */
+    /* make the default desired wheel speed zero and read in values if connected */
+    rwDesiredSpeeds = RWSpeedMsg_C_zeroMsgPayload();
+    if (RWSpeedMsg_C_isLinked(&configData->rwDesiredSpeedsInMsg)) {
+        rwDesiredSpeeds = RWSpeedMsg_C_read(&configData->rwDesiredSpeedsInMsg);
+    }
+
+    /* compute the wheel speed control vector d = -K.DeltaOmega */
+    vSubtract(rwSpeeds.wheelSpeeds, configData->numWheels, rwDesiredSpeeds.wheelSpeeds, DeltaOmega);
+	vScale(-configData->OmegaGain, DeltaOmega, configData->numWheels, dVector);
+
+    /* compute the RW null space motor torque solution to reduce the wheel speeds */
 	mMultV(configData->tau, configData->numWheels, configData->numWheels,
 		dVector, finalControl.motorTorque);
-    /*! - add the null motion RW torque solution to the RW feedback control torque solution */
+    
+    /* add the null motion RW torque solution to the RW feedback control torque solution */
 	vAdd(finalControl.motorTorque, configData->numWheels,
 		cntrRequest.motorTorque, finalControl.motorTorque);
 
-    /*! - write the final RW torque solution to the output message */
+    /* write the final RW torque solution to the output message */
     ArrayMotorTorqueMsg_C_write(&finalControl, &configData->rwMotorTorqueOutMsg, moduleID, callTime);
 
     return;
