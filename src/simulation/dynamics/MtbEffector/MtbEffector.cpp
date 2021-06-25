@@ -115,6 +115,16 @@ void MtbEffector::computeForceTorque(double integTime)
     magField_B = dcm_BN * magField_N;
     bTilde = eigenTilde(magField_B);
     GtMatrix_B = cArray2EigenMatrixXd(this->mtbConfigParams.GtMatrix_B, 3, this->mtbConfigParams.numMTB);
+    
+    /* check if dipole commands are saturating the effector */
+    for (int i=0; i<this->mtbConfigParams.numMTB; i++) {
+        if (this->mtbCmdInMsgBuffer.mtbDipoleCmds[i] > this->mtbConfigParams.maxMtbDipoles[i]) {
+            this->mtbCmdInMsgBuffer.mtbDipoleCmds[i] = this->mtbConfigParams.maxMtbDipoles[i];
+        } else if (this->mtbCmdInMsgBuffer.mtbDipoleCmds[i] < -this->mtbConfigParams.maxMtbDipoles[i]) {
+            this->mtbCmdInMsgBuffer.mtbDipoleCmds[i] = -this->mtbConfigParams.maxMtbDipoles[i];
+        }
+    }
+
     muCmd_T = Eigen::Map<Eigen::VectorXd>(this->mtbCmdInMsgBuffer.mtbDipoleCmds, this->mtbConfigParams.numMTB, 1);
     mtbTorque_B = - bTilde * GtMatrix_B * muCmd_T;
     this->torqueExternalPntB_B = mtbTorque_B;

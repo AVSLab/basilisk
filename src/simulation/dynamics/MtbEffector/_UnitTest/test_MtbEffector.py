@@ -35,19 +35,29 @@ from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-def truthMagneticTorque(bField_N, sigmaBN, mtbCmds, GtMatrix, numMTB):
+
+def truthMagneticTorque(bField_N, sigmaBN, mtbCmds, GtMatrix, numMTB, maxDipole):
     
     temp = np.asarray(GtMatrix[0:3*numMTB])
     GtMatrix = np.reshape(temp, (3, numMTB))
     bField_N = np.asarray(bField_N)
     BN = RigidBodyKinematics.MRP2C(sigmaBN)
     bField_B = BN @ bField_N
+    for i in range(len(mtbCmds)):
+        if mtbCmds[i] > maxDipole:
+            mtbCmds[i] = maxDipole
+        if mtbCmds[i] < -maxDipole:
+            mtbCmds[i] = -maxDipole
+
     mtbCmds = np.asarray(mtbCmds[0:numMTB])
     bTilde = np.asarray(RigidBodyKinematics.v3Tilde(bField_B))
     tauNet = - bTilde @ GtMatrix @ mtbCmds
     return tauNet
 
-def test_MtbEffector(show_plots):
+
+@pytest.mark.parametrize("accuracy", [1e-12])
+@pytest.mark.parametrize("maxDipole", [10., 0.1])
+def test_MtbEffector(show_plots, accuracy, maxDipole):
     r"""
     **Validation Test Description**
 
@@ -66,11 +76,11 @@ def test_MtbEffector(show_plots):
 
     Here discuss what variables and states are being checked. 
     """
-    [testResults, testMessage] = MtbEffectorTestFunction(show_plots)
+    [testResults, testMessage] = MtbEffectorTestFunction(show_plots, accuracy, maxDipole)
     assert testResults < 1, testMessage
 
 
-def MtbEffectorTestFunction(show_plots):
+def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     """Call this routine directly to run the unit test."""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -89,7 +99,7 @@ def MtbEffectorTestFunction(show_plots):
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(1.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
-    simTime = 3600.
+    simTime = 3.
     simulationTime = macros.sec2nano(simTime)
 
 
@@ -150,8 +160,7 @@ def MtbEffectorTestFunction(show_plots):
     mtbConfigParams = messaging.MTBArrayConfigMsgPayload()
     mtbConfigParams.numMTB = 3
     mtbConfigParams.GtMatrix_B = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
-    PLACEHOLDER = 0.
-    mtbConfigParams.maxMtbDipoles = [PLACEHOLDER, PLACEHOLDER, PLACEHOLDER, PLACEHOLDER]
+    mtbConfigParams.maxMtbDipoles = [maxDipole]*4
     mtbParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbConfigParams)
     
     
@@ -226,11 +235,14 @@ def MtbEffectorTestFunction(show_plots):
         plt.show()
 
     # compare gravity gradient torque vector to the truth
-    accuracy = 1e-12
 
     # use mtbData[1:, :] since mtbData is the torque from prev iterations
     for sV, mtbTauV, bV in zip(attData[1:, :], mtbData[1:, :], dataMagField):
-        mtbTauTruth = truthMagneticTorque(bV, sV, mtbCmdInMsgContainer.mtbDipoleCmds, mtbConfigParams.GtMatrix_B, mtbConfigParams.numMTB)
+        mtbTauTruth = truthMagneticTorque(bV, sV, mtbCmdInMsgContainer.mtbDipoleCmds,
+                                          mtbConfigParams.GtMatrix_B,
+                                          mtbConfigParams.numMTB,
+                                          maxDipole
+                                          )
         
         testFailCount, testMessages = unitTestSupport.compareVector(mtbTauV,
                                                                     mtbTauTruth,
@@ -238,7 +250,6 @@ def MtbEffectorTestFunction(show_plots):
                                                                     "mtbTorque_B",
                                                                     testFailCount, testMessages)
      
-    print("Accuracy used: " + str(accuracy))
     if testFailCount == 0:
         print("PASSED: Mtb Effector")
     else:
@@ -246,6 +257,10 @@ def MtbEffectorTestFunction(show_plots):
 
     return testFailCount, testMessages
 if __name__ == "__main__":
-    test_MtbEffector(False)
+    test_MtbEffector(
+        False,
+        1e-12,
+        0.1
+    )
 
 
