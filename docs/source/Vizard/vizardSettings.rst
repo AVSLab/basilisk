@@ -590,7 +590,9 @@ The following table illustrates the arguments for the ``createCustomModel`` meth
       -
       - No
       - Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with
-        its textures during custom model import)
+        its textures during custom model import).  The image file types supported are: jpg, bmp, exr,
+        gif, hdr, iff, pict, png, psd, tga, and tiff. The maximum image dimensions supported for runtime
+        import are 16384 pixels by 16384 pixels. The image does not have to be square.
     * - ``normalMapPath``
       - string
       -
