@@ -58,6 +58,7 @@ Version |release|
 - new tutorial example script :ref:`scenarioMtbMomentumManagement`
 - updated :ref:`rwNullSpace` to have an optional input message of desired RW speeds.  These desired values default to
   zero so the module retains the earlier behavior if this optional input message is not connected.
+- added two lines in :ref:`waypointReference` to normalize the attitude quaternion that is read from file.
 
 Version 2.0.4
 -------------

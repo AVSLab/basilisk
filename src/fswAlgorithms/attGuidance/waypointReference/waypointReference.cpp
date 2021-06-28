@@ -168,6 +168,7 @@ void WaypointReference::pullDataLine(uint64_t *t, AttRefMsgPayload *attRefMsg_t)
 		double attNorm;
 		double att3[3];
 		double att4[4];
+		double att4Norm[4];
 		switch (this->attitudeType) {
 			case 0:
 			    /* 3D attitude coordinate set */
@@ -179,13 +180,14 @@ void WaypointReference::pullDataLine(uint64_t *t, AttRefMsgPayload *attRefMsg_t)
 					v3Copy(att3, attRefMsg_t->sigma_RN);
 				}
 				else {
-					v3Scale(-1/(attNorm*attNorm), att3, attRefMsg_t->sigma_RN);
+					MRPshadow(att3, attRefMsg_t->sigma_RN);
 				}
 				break;
 			case 1:
 			    /* 4D attitude coordinate set (q0, q1, q2, q3) */
                 pullVector4(&iss, att4);
-				EP2MRP(att4, attRefMsg_t->sigma_RN);
+				vNormalize(att4, 4, att4Norm);
+				EP2MRP(att4Norm, attRefMsg_t->sigma_RN);
 				break;
 			case 2:
 			    /* 4D attitude coordinate set (q1, q2, q3, qs) */
@@ -195,7 +197,8 @@ void WaypointReference::pullDataLine(uint64_t *t, AttRefMsgPayload *attRefMsg_t)
 				att4[1] = attBuffer[0];
 				att4[2] = attBuffer[1];
 				att4[3] = attBuffer[2];
-				EP2MRP(att4, attRefMsg_t->sigma_RN);
+				vNormalize(att4, 4, att4Norm);
+				EP2MRP(att4Norm, attRefMsg_t->sigma_RN);
 				break;
 			default:
 			    bskLogger.bskLog(BSK_ERROR, "WaypointReference: the attitude type provided is invalid.");
