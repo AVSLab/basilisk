@@ -21,9 +21,8 @@
 #include "simulation/dynamics/MtbEffector/MtbEffector.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/linearAlgebra.h"
 
-#include <iostream>
-using namespace std;
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -41,7 +40,9 @@ MtbEffector::~MtbEffector()
 */
 void MtbEffector::Reset(uint64_t CurrentSimNanos)
 {
-    // check that required input messages are connected
+    /*
+     * Check that required input messages are connected.
+     */
     if (!this->mtbCmdInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "MtbEffector.mtbCmdInMsg was not linked.");
     }
@@ -52,7 +53,9 @@ void MtbEffector::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "MtbEffector.mtbParamsInMsg was not linked.");
     }
     
-    /* zero the effector output forces and torques */
+    /*
+     * Zero the effector output forces and torques.
+     */
     this->forceExternal_B.fill(0.0);
     this->torqueExternalPntB_B.fill(0.0);
     this->forceExternal_N.fill(0.0);
@@ -65,7 +68,9 @@ void MtbEffector::Reset(uint64_t CurrentSimNanos)
 */
 void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-    // write to the output message
+    /*
+     * Write to the output message.
+     */
     this->WriteOutputMessages(CurrentSimNanos);
     
     return;
@@ -77,7 +82,9 @@ void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
  */
 void MtbEffector::linkInStates(DynParamManager& states)
 {
-    // link the Body relative to Inertial frame modified modriguez parameter
+    /*
+     * Link the Body relative to Inertial frame modified modriguez parameter.
+     */
     this->hubSigma = states.getStateObject("hubSigma");
     
     return;
@@ -88,7 +95,9 @@ void MtbEffector::linkInStates(DynParamManager& states)
 */
 void MtbEffector::computeForceTorque(double integTime)
 {
-    // create local variables
+    /*
+     * Create local variables.
+     */
     Eigen::MRPd sigmaBN;
     Eigen::Matrix3d dcm_BN;
     Eigen::Vector3d magField_B;
@@ -98,29 +107,50 @@ void MtbEffector::computeForceTorque(double integTime)
     Eigen::Vector3d mtbTorque_B;
     Eigen::Vector3d magField_N;
     
-    // assign input messages to private class attributes
+    /*
+     * Assign input messages to private class attributes.
+     */
     this->mtbCmdInMsgBuffer = this->mtbCmdInMsg();
     this->magInMsgBuffer = this->magInMsg();
     this->mtbConfigParams = this->mtbParamsInMsg();
     
-    // zero out the external torque in the body frame
+    /*
+     * Zero out the external torque in the body frame.
+     */
     this->torqueExternalPntB_B.setZero();
     
-    // compute torque produced by magnetic torque bars in body frame components
+
+    /*
+     * Construct bTilde matrix.
+     */
     sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
-    
     dcm_BN = sigmaBN.toRotationMatrix().transpose();
-    
     magField_N = cArray2EigenVector3d(this->magInMsgBuffer.magField_N);
     magField_B = dcm_BN * magField_N;
     bTilde = eigenTilde(magField_B);
-    GtMatrix_B = cArray2EigenMatrixXd(this->mtbConfigParams.GtMatrix_B, 3, this->mtbConfigParams.numMTB);
+
+    /*
+     * Compute torque produced by magnetic torque bars in body frame components.
+     * Since cArray2EigenMatrixXd expects a column major input, we need to
+     * transpose GtMatrix_B.
+     */
+    double GtColMajor[3*this->mtbConfigParams.numMTB];
+    mSetZero(GtColMajor, 3, this->mtbConfigParams.numMTB);
+    mTranspose(this->mtbConfigParams.GtMatrix_B, 3, this->mtbConfigParams.numMTB, GtColMajor);
+    GtMatrix_B = cArray2EigenMatrixXd(GtColMajor, 3, this->mtbConfigParams.numMTB);
+    
+    /* check if dipole commands are saturating the effector */
+    for (int i=0; i<this->mtbConfigParams.numMTB; i++) {
+        if (this->mtbCmdInMsgBuffer.mtbDipoleCmds[i] > this->mtbConfigParams.maxMtbDipoles[i]) {
+            this->mtbCmdInMsgBuffer.mtbDipoleCmds[i] = this->mtbConfigParams.maxMtbDipoles[i];
+        } else if (this->mtbCmdInMsgBuffer.mtbDipoleCmds[i] < -this->mtbConfigParams.maxMtbDipoles[i]) {
+            this->mtbCmdInMsgBuffer.mtbDipoleCmds[i] = -this->mtbConfigParams.maxMtbDipoles[i];
+        }
+    }
+
     muCmd_T = Eigen::Map<Eigen::VectorXd>(this->mtbCmdInMsgBuffer.mtbDipoleCmds, this->mtbConfigParams.numMTB, 1);
     mtbTorque_B = - bTilde * GtMatrix_B * muCmd_T;
     this->torqueExternalPntB_B = mtbTorque_B;
-    this->bField = magField_B;
-    this->sBN = sigmaBN;
-    this->muCmds = muCmd_T;
 
     return;
 }
@@ -130,11 +160,15 @@ void MtbEffector::computeForceTorque(double integTime)
  */
 void MtbEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
-    // initialize output message buffer
+    /*
+     * Initialize output message buffer.
+     */
     MTBMsgPayload mtbOutMsgBuffer;
     mtbOutMsgBuffer = this->mtbOutMsg.zeroMsgPayload;
     
-    // write output message
+    /*
+     * Write output message
+     */
     eigenVector3d2CArray(this->torqueExternalPntB_B, mtbOutMsgBuffer.mtbNetTorque_B);
     this->mtbOutMsg.write(&mtbOutMsgBuffer, this->moduleID, CurrentClock);
 

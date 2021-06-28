@@ -29,3 +29,8 @@ provides information on what this message is used for.
       - :ref:`CmdTorqueBodyMsgPayload`
       - output msg for commanded force in B frame
 
+
+User Guide
+----------
+Note that the MTB input configuration message variable ``GtMatrix_B`` must be provided in a row major format.
+

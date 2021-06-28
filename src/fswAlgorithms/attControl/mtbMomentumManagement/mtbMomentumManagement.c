@@ -78,6 +78,7 @@ void Reset_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint64
     return;
 }
 
+
 /*! Computes the appropriate wheel torques and magnetic torque bar dipoles to bias the wheels to their desired speeds.
  @return void
  @param configData The configuration data associated with the module
@@ -91,6 +92,7 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
      */
     int numRW = configData->rwConfigParams.numRW;
     int numMTB = configData->mtbConfigParams.numMTB;
+    int j = 0;
     double BTilde_B[3*3];
     double BGt[3*configData->mtbConfigParams.numMTB];
     double BGtPsuedoInverse[configData->mtbConfigParams.numMTB*3];
@@ -130,11 +132,25 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
     vScale(-configData->cGain, configData->hDeltaWheels_W, numRW, configData->tauIdealRW_W);
     mMultV(Gs, 3, numRW, configData->tauIdealRW_W, configData->tauIdealRW_B);
 
-    /*! - Compute the magnetic torque bar command dipoles. */
+    /*! - Compute the magnetic torque bar dipole commands. */
     v3TildeM(tamSensorBodyInMsgBuffer.tam_B, BTilde_B);
     mMultM(BTilde_B, 3, 3, configData->mtbConfigParams.GtMatrix_B, 3, numMTB, BGt);
     solveSVD(BGt, 3, numMTB, mtbCmdOutputMsgBuffer.mtbDipoleCmds, configData->tauIdealRW_B, 0.00000000001);
     vScale(-1.0, mtbCmdOutputMsgBuffer.mtbDipoleCmds, numMTB, mtbCmdOutputMsgBuffer.mtbDipoleCmds);
+    
+    /*
+     * Saturate dipoles.
+     */
+    for (j = 0; j < numMTB; j++)
+    {
+        if (mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] > configData->mtbConfigParams.maxMtbDipoles[j])
+            mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] = configData->mtbConfigParams.maxMtbDipoles[j];
+        
+        if (mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] < -configData->mtbConfigParams.maxMtbDipoles[j])
+            mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] = -configData->mtbConfigParams.maxMtbDipoles[j];
+    }
+    
+    /*! - Compute the desired Body torque produced by the torque bars.*/
     mMultV(BGt, 3, numMTB, mtbCmdOutputMsgBuffer.mtbDipoleCmds, configData->tauDesiredMTB_B);
     vScale(-1.0, configData->tauDesiredMTB_B, 3, configData->tauDesiredMTB_B);
     
@@ -143,6 +159,8 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
     mMinimumNormInverse(Gs, 3, numRW, GsPsuedoInverse);
     mMultV(GsPsuedoInverse, numRW, 3, uDelta_B, uDelta_W);
     vAdd(configData->tauIdealRW_W, numRW, uDelta_W, configData->tauDesiredRW_W);
+    
+    /*! - Compute the desired Body torque produced by the reaction wheels.*/
     mMultV(Gs, 3, numRW, configData->tauDesiredRW_W, configData->tauDesiredRW_B);
     vScale(-1.0, configData->tauDesiredRW_B, 3, configData->tauDesiredRW_B);
     
