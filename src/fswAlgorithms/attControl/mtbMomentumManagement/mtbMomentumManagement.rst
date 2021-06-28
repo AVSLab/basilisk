@@ -46,3 +46,5 @@ The user must set the momentum dumping gain value ``cGain`` to a postive value. 
 The optional module list ``wheelSpeedBiases`` can be set to desired RW spin rates in terms of rad/sec.  If this is not set,
 the default values are zero rates.
 
+Note that the MTB input configuration message variable ``GtMatrix_B`` must be provided in a row major format.
+

@@ -254,7 +254,7 @@ def run(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(2)
+    simulationTimeStep = macros.sec2nano(2.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -421,19 +421,21 @@ def run(show_plots):
     
     # mtbConfigData message
     mtbConfigParams = messaging.MTBArrayConfigMsgPayload()
-    mtbConfigParams.numMTB = 3
-    mtbConfigParams.GtMatrix_B = [
-        1., 0., 0.,
-        0., 1., 0.,
-        0., 0., 1.]
-    PLACEHOLDER = 0.
-    mtbConfigParams.muMax_W = [PLACEHOLDER, PLACEHOLDER, PLACEHOLDER, PLACEHOLDER]
+    mtbConfigParams.numMTB = 4
+    
+    # row major toque bar alignments
+    mtbConfigParams.GtMatrix_B =[
+        1., 0., 0., 0.70710678,
+        0., 1., 0., 0.70710678,
+        0., 0., 1., 0.]
+    maxDipole = 0.1
+    mtbConfigParams.maxMtbDipoles = [maxDipole]*mtbConfigParams.numMTB
     mtbParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbConfigParams)
     
     #
     #   Setup data logging before the simulation is initialized
     #
-    numDataPoints = 100
+    numDataPoints = 200
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     rwMotorLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
     attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
@@ -520,7 +522,6 @@ def run(show_plots):
     mtbMomentumManagementConfig.rwMotorTorqueInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
     
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(mtbMomentumManagementConfig.rwMotorTorqueOutMsg)
-    # rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
 
     mtbEff.mtbCmdInMsg.subscribeTo(mtbMomentumManagementConfig.mtbCmdOutMsg)
     mtbEff.mtbParamsInMsg.subscribeTo(mtbParamsInMsg)

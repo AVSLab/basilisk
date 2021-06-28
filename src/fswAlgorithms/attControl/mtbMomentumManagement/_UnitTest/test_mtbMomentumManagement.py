@@ -99,9 +99,13 @@ def mtbMomentumManagementModuleTestFunction():
     # mtbConfigData message (array is ordered c11, c22, c33, c44, ...)
     mtbConfigParams = messaging.MTBArrayConfigMsgPayload()
     mtbConfigParams.numMTB = 3
-    mtbConfigParams.GtMatrix_B = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
-    PLACEHOLDER = 0.
-    mtbConfigParams.maxMtbDipoles = [PLACEHOLDER, PLACEHOLDER, PLACEHOLDER, PLACEHOLDER]
+    # row major toque bar alignments
+    mtbConfigParams.GtMatrix_B = [
+        1., 0., 0.,
+        0., 1., 0.,
+        0., 0., 1.
+    ]
+    mtbConfigParams.maxMtbDipoles = [10.]*mtbConfigParams.numMTB
     mtbParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbConfigParams)
     
     # TAMSensorBodyMsg message (leads to non-invertible matrix)

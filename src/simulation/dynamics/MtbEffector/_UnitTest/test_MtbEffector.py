@@ -159,7 +159,12 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     # mtbConfigData message
     mtbConfigParams = messaging.MTBArrayConfigMsgPayload()
     mtbConfigParams.numMTB = 3
-    mtbConfigParams.GtMatrix_B = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
+    # row major toque bar alignments
+    mtbConfigParams.GtMatrix_B = [
+        1., 0., 0.,
+        0., 1., 0.,
+        0., 0., 1.
+    ]
     mtbConfigParams.maxMtbDipoles = [maxDipole]*4
     mtbParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbConfigParams)
     

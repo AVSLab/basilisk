@@ -58,9 +58,6 @@ private:
     MTBCmdMsgPayload mtbCmdInMsgBuffer;         //!< msg buffer or commanded mtb dipole array in the magnetic torque bar frame T
     MagneticFieldMsgPayload magInMsgBuffer;     //!< msg buffer for magnetic field data in inertial frame N
     MTBArrayConfigMsgPayload mtbConfigParams;   //!< msg for layout of magnetic torque bars
-    Eigen::Vector3d bField;
-    Eigen::MRPd sBN;
-    Eigen::VectorXd muCmds;
 };
 
 
