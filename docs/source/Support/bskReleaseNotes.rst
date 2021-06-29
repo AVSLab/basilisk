@@ -31,6 +31,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 2.0.5
+-------------
 - fixed issue in :ref:`waypointReference` to interpolate between waypoint ``n`` and shadow set of
   waypoint ``n+1`` when these are described by opposite MRP sets. Updated documentation and corrected
   typos in :ref:`scenarioAttitudeConstraintViolation`.
