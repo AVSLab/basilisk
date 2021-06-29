@@ -31,7 +31,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- updated :ref:`ephemerisConverter` to also convert the planet orientation states, not just the
+  translational states
 
 Version 2.0.5
 -------------

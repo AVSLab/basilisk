@@ -23,11 +23,13 @@
 # Author:   Thibaud Teil
 #
 
+import numpy as np
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import spiceInterface
 from Basilisk.simulation import ephemerisConverter
 from Basilisk.utilities import macros
+from Basilisk.utilities import RigidBodyKinematics
 from Basilisk import __path__
 bskPath = __path__[0]
 
@@ -93,15 +95,36 @@ def unitephemeris_converter(show_plots):
     sim.InitializeSimulation()
     sim.ExecuteSimulation()
 
-    # Get the position, velocities and time for the message before and after the copy
+    # Initialize sigma_BN and omega_BN_B spice message truth data
+    sigma_BN = np.zeros((len(planets), numDataPoints, 3))
+    omega_BN_B = np.zeros((len(planets), numDataPoints, 3))
+
+    # Loop through planets and data points to compute sigma_BN and omega_BN_B
+    for i in range(0, len(planets)):
+        spicePlanetDCM_PN = dataSpiceLog[i].J20002Pfix
+        spicePlanetDCM_PN_dot = dataSpiceLog[i].J20002Pfix_dot
+        for j in range(0, numDataPoints):
+            dcm_PN = spicePlanetDCM_PN[j,:]
+            dcm_PN_dot = spicePlanetDCM_PN_dot[j,:]
+            sigma_BN[i,j,0:3] = RigidBodyKinematics.C2MRP(dcm_PN)
+            omega_BN_B_tilde = -np.matmul(dcm_PN_dot, dcm_PN.T)
+            omega_BN_B[i,j,0] = omega_BN_B_tilde[2,1]
+            omega_BN_B[i,j,1] = omega_BN_B_tilde[0,2]
+            omega_BN_B[i,j,2] = omega_BN_B_tilde[1,0]
+
+    # Get the position, velocities, attitude, attitude rate, and time for the message before and after the copy
     accuracy = 1e-12
     for i in range(0, len(planets)):
         ephemPlanetPosData = dataEphemLog[i].r_BdyZero_N
         spicePlanetPosData = dataSpiceLog[i].PositionVector
         ephemPlanetVelData = dataEphemLog[i].v_BdyZero_N
         spicePlanetVelData = dataSpiceLog[i].VelocityVector
+        ephemPlanetAttData = dataEphemLog[i].sigma_BN
+        ephemePlanetAngVelData = dataEphemLog[i].omega_BN_B
         testFailCount, testMessages = unitTestSupport.compareArrayRelative(spicePlanetPosData[:,0:3], ephemPlanetPosData, accuracy, "Position", testFailCount, testMessages)
         testFailCount, testMessages = unitTestSupport.compareArrayRelative(spicePlanetVelData[:,0:3], ephemPlanetVelData, accuracy, "Velocity", testFailCount, testMessages)
+        testFailCount, testMessages = unitTestSupport.compareArrayRelative(sigma_BN[i,:,:], ephemPlanetAttData, accuracy, "Attitude", testFailCount, testMessages)
+        testFailCount, testMessages = unitTestSupport.compareArray(omega_BN_B[i,:], ephemePlanetAngVelData, accuracy, "Angular Velocity", testFailCount, testMessages)
 
     # print out success message if no error were found
     if testFailCount == 0:
