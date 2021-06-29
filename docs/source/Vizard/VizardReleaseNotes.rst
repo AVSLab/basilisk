@@ -17,6 +17,20 @@ Release Notes
     - Add the rate gyro visualization
     - using Unity HD Rendering pipeline
 
+**Version 1.9.0**
+
+- native file browser support for all platforms except Apple M1 Silicon.
+  We expect the fix from the developer in July.  In the mean time only run Vizard in Rosetta if on an M1 computer.
+- improved the Moon and Earth textures to higher quality pixel counts
+- fixed skybox bug in OpNav mode: skybox will now correctly default to black and will try to load
+  and apply and custom user skybox texture specified in messages
+- updated BSK SAT to use the new Basilisk 2.0 logo
+- fixed an issue where the directional light was not getting created when no
+  celestial bodies were present (spacecraft only mode).
+- changed the HUD offset calculation to use the maximum dimension of the model envelope.
+- added Creative Commons 4.0 BY image and link to documentation to the start up screen
+
+
 **Version 1.8.4.1**
 
 - main camera was not transforming the camera up-axis for the changing Hill Frame resulting in drift that
