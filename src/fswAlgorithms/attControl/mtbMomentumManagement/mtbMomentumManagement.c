@@ -94,12 +94,12 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
     int numMTB = configData->mtbConfigParams.numMTB;
     int j = 0;
     double BTilde_B[3*3];
-    double BGt[3*configData->mtbConfigParams.numMTB];
-    double BGtPsuedoInverse[configData->mtbConfigParams.numMTB*3];
+    double BGt[3*MAX_EFF_CNT];
+    double BGtPsuedoInverse[MAX_EFF_CNT*3];
     double uDelta_B[3];
-    double uDelta_W[configData->rwConfigParams.numRW];
-    double GsPsuedoInverse[configData->rwConfigParams.numRW*3];
-    double Gs[3 * configData->rwConfigParams.numRW];
+    double uDelta_W[MAX_EFF_CNT];
+    double GsPsuedoInverse[MAX_EFF_CNT*3];
+    double Gs[3 * MAX_EFF_CNT];
     mSetZero(BTilde_B, 3, 3);
     mSetZero(BGt, 3, numMTB);
     mSetZero(BGtPsuedoInverse, numMTB, 3);

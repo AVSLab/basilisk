@@ -134,7 +134,7 @@ void MtbEffector::computeForceTorque(double integTime)
      * Since cArray2EigenMatrixXd expects a column major input, we need to
      * transpose GtMatrix_B.
      */
-    double GtColMajor[3*this->mtbConfigParams.numMTB];
+    double GtColMajor[3*MAX_EFF_CNT];
     mSetZero(GtColMajor, 3, this->mtbConfigParams.numMTB);
     mTranspose(this->mtbConfigParams.GtMatrix_B, 3, this->mtbConfigParams.numMTB, GtColMajor);
     GtMatrix_B = cArray2EigenMatrixXd(GtColMajor, 3, this->mtbConfigParams.numMTB);

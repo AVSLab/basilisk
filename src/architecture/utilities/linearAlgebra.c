@@ -25,9 +25,6 @@
 #include <string.h>
 #include <math.h>
 
-/* define a maximum array size for the functions that need
- to allocate memory within their routine */
-#define LINEAR_ALGEBRA_MAX_ARRAY_SIZE (128*128)
 
 
 #define MOVE_DOUBLE(source, dim, destination) (memmove((void*)(destination), (void*)(source), sizeof(double)*(dim)))
@@ -780,9 +777,9 @@ void mLeastSquaresInverse(void *mx, size_t dim1, size_t dim2, void *result)
      * Computes the least squares inverse.
      */
     double *m_result = (double *)result;
-    double mxTranspose[dim2 * dim1];
-    double mxGrammian[dim2 * dim2];
-    double mxGrammianInverse[dim2 * dim2];
+    double mxTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double mxGrammian[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double mxGrammianInverse[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     
     mTranspose(mx, dim1, dim2, mxTranspose);
     mMultM(mxTranspose, dim2, dim1, mx, dim1, dim2, mxGrammian);
@@ -798,9 +795,9 @@ void mMinimumNormInverse(void *mx, size_t dim1, size_t dim2, void *result)
      */
     double *m_mx = (double *)mx;
     double *m_result = (double *)result;
-    double mxTranspose[dim2 * dim1];
-    double mxMxTranspose[dim1 * dim1];
-    double mxMxTransposeInverse[dim1 * dim1];
+    double mxTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double mxMxTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double mxMxTransposeInverse[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     
     mTranspose(m_mx, dim1, dim2, mxTranspose);
     mMultM(m_mx, dim1, dim2, mxTranspose, dim2, dim1, mxMxTranspose);

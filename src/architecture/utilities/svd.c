@@ -64,7 +64,7 @@ double pythag(double a, double b) {
 int svdcmp(double *mx, size_t dim1, size_t dim2, double *w, double *v) {
     int flag, i, its, j, jj, k, l, nm, cm;
     double anorm, c, f, g, h, s, scale, x, y, z, max;
-    double rv1[dim2];
+    double rv1[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     vSetZero(rv1, dim2);
 
     g = scale = anorm = 0.0;
@@ -294,13 +294,13 @@ int svdcmp(double *mx, size_t dim1, size_t dim2, double *w, double *v) {
 
 void solveSVD(double *mx, size_t dim1, size_t dim2, double *x, double *b, double minSV)
 {
-    double mxCopy[dim1 * dim2];
-    double w[dim2];
-    double v[dim2 * dim2];
-    double A[dim1 * dim2];
-    double uTranspose[dim2 * dim1];
-    double wInvDiag[dim2 * dim2];
-    double temp[dim2 * dim2];
+    double mxCopy[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double w[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double v[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double A[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double uTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double wInvDiag[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double temp[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     int j;
     
     vSetZero(w, dim2);
