@@ -23,7 +23,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/gauss_markov.h"
-#include "architecture/msgPayloadDefC/ephemerisMsgPayload.h"
+#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include "architecture/messaging/messaging.h"
@@ -51,8 +51,8 @@ public:
 
     ephemerisMsgPayload truePlanetState; //!< planet ephemeris msg without noise
     ephemerisMsgPayload noisePlanetState;  //!< planet ephemeris msg with noise
-    ReadFunctor<ephemerisMsgPayload> ephemerisInMsg;  //!< planet ephemeris input msg
-    Message<ephemerisMsgPayload> ephemerisOutMsg;  //!< planet ephemeris output msg
+    ReadFunctor<EphemerisMsgPayload> ephemerisInMsg;  //!< planet ephemeris input msg
+    Message<EphemerisMsgPayload> ephemerisOutMsg;  //!< planet ephemeris output msg
 
     BSKLogger bskLogger;              //!< -- BSK Logging
 
