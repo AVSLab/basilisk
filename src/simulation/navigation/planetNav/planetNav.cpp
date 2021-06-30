@@ -21,6 +21,7 @@
 #include "simulation/navigation/planetNav/planetNav.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include <iostream>
 #include <cstring>
 
@@ -48,6 +49,7 @@ PlanetNav::~PlanetNav()
 
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
+    @param CurrentSimNanos The clock time associated with the module call
 */
 void PlanetNav::Reset(uint64_t CurrentSimNanos)
 {
@@ -87,7 +89,7 @@ void PlanetNav::readInputMessages()
 
 /*! This method writes the aggregate nav information into the output state message.
  @return void
- @param Clock The clock time associated with the model call
+ @param CurrentSimNanos The clock time associated with the model call
  */
 void PlanetNav::writeOutputMessages(uint64_t CurrentSimNanos)
 {
@@ -134,6 +136,7 @@ void PlanetNav::computeErrors(uint64_t CurrentSimNanos)
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @return void
+    @param CurrentSimNanos The clock time associated with the model call
 */
 void PlanetNav::UpdateState(uint64_t CurrentSimNanos)
 {

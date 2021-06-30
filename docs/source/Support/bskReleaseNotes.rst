@@ -33,6 +33,7 @@ Version |release|
 -----------------
 - updated :ref:`ephemerisConverter` to also convert the planet orientation states, not just the
   translational states
+- added a :ref:`planetNav` module that adds noisy to planet ephemeris, similar to simpleNav.
 
 Version 2.0.5
 -------------

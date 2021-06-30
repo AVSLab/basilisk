@@ -35,12 +35,12 @@ public:
     PlanetNav();
     ~PlanetNav();
 
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
-    void computeErrors(uint64_t CurrentSimNanos);
-    void applyErrors();
-    void readInputMessages();
-    void writeOutputMessages(uint64_t Clock);
+    void Reset(uint64_t CurrentSimNanos);  //!< -- Reset function
+    void UpdateState(uint64_t CurrentSimNanos);  //!< -- UpdateState
+    void computeErrors(uint64_t CurrentSimNanos);  //!< -- Compute the errors to add to the truth
+    void applyErrors();  //!< -- Add the errors to the truth
+    void readInputMessages();  //!> -- Read the input messages
+    void writeOutputMessages(uint64_t Clock);  //!> -- Write the output messages
 
 public:
     Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
@@ -49,8 +49,8 @@ public:
     bool crossTrans;                  //!< -- Have position error depend on velocity
     bool crossAtt;                    //!< -- Have attitude depend on attitude rate
 
-    ephemerisMsgPayload truePlanetState; //!< planet ephemeris msg without noise
-    ephemerisMsgPayload noisePlanetState;  //!< planet ephemeris msg with noise
+    EphemerisMsgPayload truePlanetState; //!< planet ephemeris msg without noise
+    EphemerisMsgPayload noisePlanetState;  //!< planet ephemeris msg with noise
     ReadFunctor<EphemerisMsgPayload> ephemerisInMsg;  //!< planet ephemeris input msg
     Message<EphemerisMsgPayload> ephemerisOutMsg;  //!< planet ephemeris output msg
 
