@@ -78,7 +78,7 @@ bool DataNodeBase::readMessages()
     if(this->nodeStatusInMsg.isLinked())
     {
         this->nodeStatusMsg = this->nodeStatusInMsg();
-        this->dataStatus = this->nodeStatusMsg.deviceStatus;
+        this->dataStatus = this->nodeStatusMsg.deviceCmd;
         tmpStatusRead = this->nodeStatusInMsg.isWritten();
         dataRead = dataRead && tmpStatusRead;
     }

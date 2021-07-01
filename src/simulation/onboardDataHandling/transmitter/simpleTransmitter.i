@@ -35,8 +35,8 @@
 
 %include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 struct DataNodeUsageMsg_C;
-%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
-struct DeviceStatusMsg_C;
+%include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
+struct DeviceCmdMsg_C;
 %include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 
 %pythoncode %{

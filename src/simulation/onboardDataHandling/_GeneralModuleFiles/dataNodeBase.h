@@ -26,7 +26,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
-#include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
+#include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
@@ -50,14 +50,14 @@ protected:
 
 public:
     Message<DataNodeUsageMsgPayload> nodeDataOutMsg; //!< Message name for the node's output message
-    ReadFunctor<DeviceStatusMsgPayload> nodeStatusInMsg; //!< String for the message name that tells the node it's status
+    ReadFunctor<DeviceCmdMsgPayload> nodeStatusInMsg; //!< String for the message name that tells the node it's status
     double nodeBaudRate; //!< [baud] Data provided (+) or consumed (-).
     char nodeDataName[128]; //!< Name of the data node consuming or generating data.
     uint64_t dataStatus; //!< Device data mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
 
 protected:
     DataNodeUsageMsgPayload nodeDataMsg;    //!< class variable
-    DeviceStatusMsgPayload nodeStatusMsg;   //!< class variable
+    DeviceCmdMsgPayload nodeStatusMsg;   //!< class variable
 };
 
 #endif //BASILISK_DATANODEBASE_H

@@ -17,27 +17,12 @@
 
  */
 
-%module simpleInstrument
-%{
-#include "simpleInstrument.h"
-%}
+#ifndef BASILISK_DEVICECMDMSGPAYLOAD_H
+#define BASILISK_DEVICECMDMSGPAYLOAD_H
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-%include "sys_model.h"
-%include "../_GeneralModuleFiles/dataNodeBase.h"
-%include "simpleInstrument.h"
-%include "swig_conly_data.i"
+//! @brief Device command message used to change the state of instruments.
+typedef struct{
+    uint64_t deviceCmd;   //!< device command; 0 is off, >0 commands other states
+}DeviceCmdMsgPayload;
 
-%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
-struct DataNodeUsageMsg_C;
-%include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
-struct DeviceCmdMsg_C;
-%include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#endif //BASILISK_DEVICECMDMSGPAYLOAD_H

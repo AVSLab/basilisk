@@ -36,7 +36,7 @@
 void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig *configData, int64_t moduleID)
 {
     configData->imaged = 0;
-    DeviceStatusMsg_C_init(&configData->deviceStatusOutMsg);
+    DeviceCmdMsg_C_init(&configData->deviceCmdOutMsg);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -68,16 +68,16 @@ void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configDa
 */
 void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    unsigned int status; //!< Data status to be written to deviceStatus msg
+    unsigned int cmd; //!< Data status to be written to deviceCmd msg
     double sigma_BR_norm; //!< Norm of sigma_BR
 
     /* Local copies of the msg buffers*/
     AccessMsgPayload accessInMsgBuffer;  //!< local copy of input message buffer
     AttGuidMsgPayload attGuidInMsgBuffer;  //!< local copy of output message buffer
-    DeviceStatusMsgPayload deviceStatusOutMsgBuffer;  //!< local copy of output message buffer
+    DeviceCmdMsgPayload deviceCmdOutMsgBuffer;  //!< local copy of output message buffer
 
     // zero output buffer
-    deviceStatusOutMsgBuffer = DeviceStatusMsg_C_zeroMsgPayload();
+    deviceCmdOutMsgBuffer = DeviceCmdMsg_C_zeroMsgPayload();
 
     // read in the input messages
     accessInMsgBuffer = AccessMsg_C_read(&configData->locationAccessInMsg);
@@ -91,19 +91,19 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configD
         /* If the attitude error is less than the tolerance and the groundLocation is accessible, turn on the instrument and
         set the imaged indicator to 1*/
         if ((sigma_BR_norm <= configData->attErrTolerance) && (accessInMsgBuffer.hasAccess)) {
-            deviceStatusOutMsgBuffer.deviceStatus = 1;
+            deviceCmdOutMsgBuffer.deviceCmd = 1;
             configData->imaged = 1;
             // Otherwise, turn off the instrument
         } else {
-            deviceStatusOutMsgBuffer.deviceStatus = 0;
+            deviceCmdOutMsgBuffer.deviceCmd = 0;
         }
     }
     else {
-        deviceStatusOutMsgBuffer.deviceStatus = 0;
+        deviceCmdOutMsgBuffer.deviceCmd = 0;
     }
 
     // write to the output messages
-    DeviceStatusMsg_C_write(&deviceStatusOutMsgBuffer, &(configData->deviceStatusOutMsg), moduleID, callTime);
+    DeviceCmdMsg_C_write(&deviceCmdOutMsgBuffer, &(configData->deviceCmdOutMsg), moduleID, callTime);
 
     return;
 }

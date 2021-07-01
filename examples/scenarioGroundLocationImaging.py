@@ -335,12 +335,12 @@ def run(show_plots):
     simpleInsControlConfig.attGuidInMsg.subscribeTo(locPointConfig.attGuidOutMsg)
     simpleInsControlConfig.locationAccessInMsg.subscribeTo(imagingTarget.accessOutMsgs[-1])
     scSim.AddModelToTask(simTaskName, simpleInsControlWrap, simpleInsControlConfig, ModelPriority=900)
-    instrument.nodeStatusInMsg.subscribeTo(simpleInsControlConfig.deviceStatusOutMsg)
+    instrument.nodeStatusInMsg.subscribeTo(simpleInsControlConfig.deviceCmdOutMsg)
 
     #
     #   Setup data logging before the simulation is initialized
     #
-    deviceLog = simpleInsControlConfig.deviceStatusOutMsg.recorder()
+    deviceLog = simpleInsControlConfig.deviceCmdOutMsg.recorder()
     mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder()
     attErrLog = locPointConfig.attGuidOutMsg.recorder()
     snAttLog = sNavObject.attOutMsg.recorder()
@@ -443,7 +443,7 @@ def run(show_plots):
     storageLevel = dataMonLog.storageLevel
     storedDataName = dataMonLog.storedDataName
     storedData = dataMonLog.storedData
-    deviceStatus = deviceLog.deviceStatus
+    deviceCmd = deviceLog.deviceCmd
     hasAccess = locationLog.hasAccess
 
     np.set_printoptions(precision=16)
@@ -463,7 +463,7 @@ def run(show_plots):
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
-    plot_device_status(timeLineSet, deviceStatus)
+    plot_device_status(timeLineSet, deviceCmd)
     pltName = fileName + "3"
     figureList[pltName] = plt.figure(3)
 
