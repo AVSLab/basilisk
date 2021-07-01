@@ -93,7 +93,6 @@ void PlanetNav::readInputMessages()
  */
 void PlanetNav::writeOutputMessages(uint64_t CurrentSimNanos)
 {
-    this->ephemerisOutMsg.zeroMsgPayload;
     this->ephemerisOutMsg.write(&this->noisePlanetState, this->moduleID, CurrentSimNanos);
 }
 
@@ -140,6 +139,9 @@ void PlanetNav::computeErrors(uint64_t CurrentSimNanos)
 */
 void PlanetNav::UpdateState(uint64_t CurrentSimNanos)
 {
+    /* zero the output msg buffer */
+    this->noisePlanetState = this->ephemerisOutMsg.zeroMsgPayload;
+
     this->readInputMessages();
     this->computeErrors(CurrentSimNanos);
     this->applyErrors();
