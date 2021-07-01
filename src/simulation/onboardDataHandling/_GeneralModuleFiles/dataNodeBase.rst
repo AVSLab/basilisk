@@ -3,7 +3,7 @@ Executive Summary
 The dataNodeBase class is used to generate a standard interface and list of features for modules that generate or downlink simulated onboard data (ie. science or telemetry data). Specifically, each DataNodeBase:
 
 1. Writes out a :ref:`DataNodeUsageMsgPayload` describing its data name and the amount of data it has generated or downlinked (using baud rates) at each sim update.
-2. Can be switched on or off using an optional :ref:`DeviceStatusMsgPayload`
+2. Can be switched on or off using an optional :ref:`DeviceCmdMsgPayload`
 3. Can also be switched on or off using the public variable ``dataStatus``
 
 Core functionality is wrapped in the ``evaluateDataModel()`` protected virtual void method, which is assumed to compute data usage based on a module specific mathematical model. Typically, this will be a straightforward static baud rate. However, some modules may wish to perform computations to generate variable baud rates based on data content.

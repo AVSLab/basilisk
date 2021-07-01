@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-This module generates a command in the form of a :ref:`DeviceStatusMsgPayload` that turns on a :ref:`simpleInstrument`
+This module generates a command in the form of a :ref:`DeviceCmdMsgPayload` that turns on a :ref:`simpleInstrument`
 if the spacecraft a.) has access to a :ref:`groundLocation` and b.) the associated attitude error from an attitude
 guidance message is within the given tolerance.
 
