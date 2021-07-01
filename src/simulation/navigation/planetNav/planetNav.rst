@@ -1,10 +1,9 @@
 Executive Summary
 -----------------
 This module is used to generate noisy ephemeris data, similar to what simpleNav() does for spacecraft states. These
-noisy states can either serve as a stand-in for an orbit determination filter or as measurements for an orbit
-determination filter (if an evolution of the error covariance is required). This module is most useful for small bodies
-where large uncertainty in the body's ephemeris is present. This module is not recommended for larger bodies like the
-Earth or the sun.
+noisy states can either serve as a stand-in for a filter that estimates the body's ephemeris or as measurements input
+into such a filter. This module is most useful for small bodies like comets or asteroids where large uncertainty in the
+body's ephemeris is present. This module is not recommended for larger bodies like the Earth or the sun.
 
 The noise present in the planetNav module is designed to mimic the error signals that will be observed in the real
 navigation system. The true ”noise” present in an orbit determination nav system is always a combination of bias,
