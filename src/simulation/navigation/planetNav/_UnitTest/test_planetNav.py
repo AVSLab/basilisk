@@ -22,10 +22,8 @@ import pytest
 import matplotlib.pyplot as plt
 import numpy
 import math
-import os
 from Basilisk.simulation import planetNav
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
@@ -65,7 +63,7 @@ def test_planetNav(show_plots):
     assert testResults < 1, testMessage
 
 
-def planetNavTestFunction(show_plots, param1, param2, accuracy):
+def planetNavTestFunction(show_plots):
     """Test method"""
     testFailCount = 0
     testMessages = []
@@ -147,19 +145,19 @@ def planetNavTestFunction(show_plots, param1, param2, accuracy):
     rateDiffCount = 0
     i = 0
     while i < r_BN_N.shape[0]:
-        posVecDiff = r_BN_N[i,0:] - ephemerisInMsgData.r_BdyZero_N
-        velVecDiff = v_BN_N[i,0:] - ephemerisInMsgData.v_BdyZero_N
-        attVecDiff = sigma_BN[i,0:] - ephemerisInMsgData.sigma_BN
-        rateVecDiff = omega_BN_B[i,0:] - ephemerisInMsgData.omega_BN_B
-        j=0
-        while j<3:
-            if(abs(posVecDiff[j]) > posBound[j]):
+        posVecDiff = r_BN_N[i, 0:] - ephemerisInMsgData.r_BdyZero_N
+        velVecDiff = v_BN_N[i, 0:] - ephemerisInMsgData.v_BdyZero_N
+        attVecDiff = sigma_BN[i, 0:] - ephemerisInMsgData.sigma_BN
+        rateVecDiff = omega_BN_B[i, 0:] - ephemerisInMsgData.omega_BN_B
+        j = 0
+        while j < 3:
+            if abs(posVecDiff[j]) > posBound[j]:
                 posDiffCount += 1
-            if(abs(velVecDiff[j]) > velBound[j]):
+            if abs(velVecDiff[j]) > velBound[j]:
                 velDiffCount += 1
-            if(abs(attVecDiff[j]) > attBound[j]):
+            if abs(attVecDiff[j]) > attBound[j]:
                 attDiffCount += 1
-            if(abs(rateVecDiff[j]) > rateBound[j]):
+            if abs(rateVecDiff[j]) > rateBound[j]:
                 rateDiffCount += 1
             j += 1
         i += 1
@@ -184,13 +182,13 @@ def planetNavTestFunction(show_plots, param1, param2, accuracy):
         rateVecDiff = omega_BN_B[i,0:] - ephemerisInMsgData.omega_BN_B
         j=0
         while j<3:
-            if(abs(posVecDiff[j]) > posBound[j]*sigmaThreshold):
+            if abs(posVecDiff[j]) > posBound[j]*sigmaThreshold:
                 posDiffCount += 1
-            if(abs(velVecDiff[j]) > velBound[j]*sigmaThreshold):
+            if abs(velVecDiff[j]) > velBound[j]*sigmaThreshold:
                 velDiffCount += 1
-            if(abs(attVecDiff[j]) > attBound[j]*sigmaThreshold):
+            if abs(attVecDiff[j]) > attBound[j]*sigmaThreshold:
                 attDiffCount += 1
-            if(abs(rateVecDiff[j]) > rateBound[j]*sigmaThreshold):
+            if abs(rateVecDiff[j]) > rateBound[j]*sigmaThreshold:
                 rateDiffCount += 1
             j += 1
         i += 1
@@ -200,7 +198,7 @@ def planetNavTestFunction(show_plots, param1, param2, accuracy):
     for count in errorCounts:
         if count < 1:
             testFailCount += 1
-            testMessages.append("FAILED: Too few error counts -" + str(count))
+            testMessages.append("FAILED: Too few error counts - " + str(count))
 
     plt.figure(1)
     plt.clf()

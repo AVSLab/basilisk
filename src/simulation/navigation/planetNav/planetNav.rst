@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-This module is used to generate noisy ephemeris data, similar to what simpleNav() does for spacecraft states. These
+This module is used to generate noisy ephemeris data, similar to what :ref:`simpleNav` does for spacecraft states. These
 noisy states can either serve as a stand-in for a filter that estimates the body's ephemeris or as measurements input
 into such a filter. This module is most useful for small bodies like comets or asteroids where large uncertainty in the
 body's ephemeris is present. This module is not recommended for larger bodies like the Earth or the sun.
