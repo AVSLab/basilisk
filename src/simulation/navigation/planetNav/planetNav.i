@@ -32,7 +32,7 @@
 %include "sys_model.h"
 %include "planetNav.h"
 
-%include "architecture/msgPayloadDefC/ephemerisMsgPayload.h"
+%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct ephemerisMsg_C;
 
 %pythoncode %{
