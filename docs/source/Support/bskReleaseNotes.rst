@@ -25,6 +25,7 @@ Basilisk Release Notes
     - new tutorial example scripts
     - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
       CAD asteroid or lunar surface terrain.
+    - new example scripts how to spacecraft formation simulations exploiting the BSK2 messaging
     - Basilisk 2.1 that includes:
 
         - support for multi-threading when simulating multiple satellite systems
@@ -36,6 +37,8 @@ Version |release|
 - added a :ref:`planetNav` module that adds noisy to planet ephemeris, similar to simpleNav.
 - created a new device command status message :ref:`DeviceCmdMsgPayload` and updated :ref:`simpleInstrumentController`,
   :ref:`simpleInstrument` and :ref:`spaceToGroundTransmitter` to make use of it.
+- added :ref:`attRefCorrection` to adjust the reference attitude by a fixed rotation
+- added :ref:`scenarioAttitudePrescribed` to illustrate how to prescribe the spacecraft orientation
 
 Version 2.0.5
 -------------
