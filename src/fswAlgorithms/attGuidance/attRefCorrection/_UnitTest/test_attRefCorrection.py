@@ -36,14 +36,12 @@ def test_attRefCorrection(show_plots, accuracy):
 
     **Test Parameters**
 
-    Discuss the test parameters used.
-
     Args:
         accuracy (float): absolute accuracy value used in the validation tests
 
     **Description of Variables Being Tested**
 
-    The ``sigma_RN`` variable of the outpout message is tested
+    The ``sigma_RN`` variable of the output message is tested
     """
     [testResults, testMessage] = attRefCorrectionTestFunction(show_plots, accuracy)
     assert testResults < 1, testMessage

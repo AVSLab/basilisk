@@ -57,6 +57,7 @@ Attitude Guidance
    Hill Frame Pointing on Elliptic Orbit <scenarioAttitudeGuidance>
    Velocity Frame Pointing on Hyperbolic Orbit <scenarioAttGuideHyperbolic>
    Pointing at Earth Location <scenarioAttLocPoint>
+   Prescribing the spacecraft orientation <scenarioAttitudePrescribed>
 
 
 Attitude Control with Actuators
