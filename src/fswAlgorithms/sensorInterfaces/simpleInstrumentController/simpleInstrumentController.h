@@ -26,7 +26,7 @@
 
 #include "cMsgCInterface/AccessMsg_C.h"
 #include "cMsgCInterface/AttGuidMsg_C.h"
-#include "cMsgCInterface/DeviceStatusMsg_C.h"
+#include "cMsgCInterface/DeviceCmdMsg_C.h"
 
 /*! @brief Data configuration structure for the MRP feedback attitude control routine. */
 typedef struct {
@@ -37,7 +37,7 @@ typedef struct {
     /* declare module IO interfaces */
     AccessMsg_C locationAccessInMsg;                   //!< Ground location access input message
     AttGuidMsg_C attGuidInMsg;                         //!< attitude guidance input message
-    DeviceStatusMsg_C deviceStatusOutMsg;              //!< device status output message
+    DeviceCmdMsg_C deviceCmdOutMsg;              //!< device status output message
 
     BSKLogger *bskLogger;                              //!< BSK Logging
 }simpleInstrumentControllerConfig;

@@ -102,7 +102,7 @@ def simpleInstrumentControllerTestFunction(show_plots):
     inputAttGuidMsg = messaging.AttGuidMsg().write(inputAttGuidMsgData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.deviceStatusOutMsg.recorder()
+    dataLog = moduleConfig.deviceCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect the message interfaces
@@ -133,14 +133,14 @@ def simpleInstrumentControllerTestFunction(show_plots):
     # set the filtered output truth states
     trueVector = [1, 0, 0, 1, 0]
 
-    if not unitTestSupport.isArrayEqual(dataLog.deviceStatus, trueVector, 3, 1e-12):
+    if not unitTestSupport.isArrayEqual(dataLog.deviceCmd, trueVector, 3, 1e-12):
         testFailCount += 1
         testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed dataVector" + " unit test at t=" + str(dataLog.times()[0]*macros.NANO2SEC) + "sec\n")
 
     # Plots
     plt.close("all")  # close all prior figures so we start with a clean slate
     plt.figure(1)
-    plt.plot(dataLog.times() * macros.NANO2SEC, dataLog.deviceStatus)
+    plt.plot(dataLog.times() * macros.NANO2SEC, dataLog.deviceCmd)
     plt.xlabel('Time [s]')
     plt.ylabel('Device Status')
     plt.suptitle('Device Status Over Time')

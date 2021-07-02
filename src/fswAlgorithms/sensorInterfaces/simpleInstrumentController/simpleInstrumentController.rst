@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-This module generates a command in the form of a :ref:`DeviceStatusMsgPayload` that turns on a :ref:`simpleInstrument`
+This module generates a command in the form of a :ref:`DeviceCmdMsgPayload` that turns on a :ref:`simpleInstrument`
 if the spacecraft a.) has access to a :ref:`groundLocation` and b.) the associated attitude error from an attitude
 guidance message is within the given tolerance.
 
@@ -24,13 +24,13 @@ provides information on what this message is used for.
     * - attGuidInMsg
       - :ref:`AttGuidMsgPayload`
       - input message containing the attitude guidance
-    * - deviceStatusOutMsg
-      - :ref:`DeviceStatusMsgPayload`
-      - output message with the device status
+    * - deviceCmdOutMsg
+      - :ref:`DeviceCmdMsgPayload`
+      - output message with the device command
 
 Detailed Module Description
 ---------------------------
-This module writes out a :ref:`DeviceStatusMsgPayload` to turn on an instrument, i.e. :ref:`simpleInstrument`.
+This module writes out a :ref:`DeviceCmdMsgPayload` to turn on an instrument, i.e. :ref:`simpleInstrument`.
 
 .. note::
 
@@ -39,7 +39,7 @@ This module writes out a :ref:`DeviceStatusMsgPayload` to turn on an instrument,
 
 The module first checks if the target has already been imaged. If the target has not been imaged, the module then
 checks if the norm of the attitude error is less than the user specified tolerance and if the :ref:`groundLocation` is
-accessible. If both are true, the module sets the ``deviceStatus`` to 1. Otherwise, the ``deviceStatus`` is set to 0.
+accessible. If both are true, the module sets the ``deviceCmd`` to 1. Otherwise, the ``deviceCmd`` is set to 0.
 
 User Guide
 ----------

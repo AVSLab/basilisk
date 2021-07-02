@@ -125,9 +125,9 @@ def testStatus():
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # create the input messages
-    dataStatusMsg = messaging.DeviceStatusMsgPayload()  # Create a structure for the input message
-    dataStatusMsg.deviceStatus = 0
-    statMsg = messaging.DeviceStatusMsg().write(dataStatusMsg)
+    dataCmdMsg = messaging.DeviceCmdMsgPayload()  # Create a structure for the input message
+    dataCmdMsg.deviceCmd = 0
+    statMsg = messaging.DeviceCmdMsg().write(dataCmdMsg)
     testModule.nodeStatusInMsg.subscribeTo(statMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
