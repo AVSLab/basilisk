@@ -35,16 +35,16 @@ def test_planetNav(show_plots):
     path coverage. The test design is broken up into three main parts:
 
     1. Error Bound Enforcement: The simulation is run for 2.4 hours and the error bounds for all of the signals are
-    tested. This test length is long enough to see both the walk in the signal and the noise, all the while not
-    being so long as to slow down the test. The test ensures that the bounds are crossed no more than 30% of the
-    time.
+       tested. This test length is long enough to see both the walk in the signal and the noise, all the while not
+       being so long as to slow down the test. The test ensures that the bounds are crossed no more than 30% of the
+       time.
 
     2. Error Bound Usage:  The error signals are checked for all of the model parameters over the course of the
-    simulation to ensure that the error gets to at least 80% of its maximum error bound at least once, ensuring that
-    noise is indeed properly introduced.
+       simulation to ensure that the error gets to at least 80% of its maximum error bound at least once, ensuring that
+       noise is indeed properly introduced.
 
     3. Corner Case Check: The simulation is intentionally given bad inputs to ensure that it alerts the user and
-    does not crash.
+       does not crash.
 
     **Test Parameters**
 
@@ -56,8 +56,7 @@ def test_planetNav(show_plots):
 
     The test used for the planetNav module tests the statistics of the Gauss Markov process, making sure that we
     are getting the variability we want. In order to do so, no specific scenario is necessary. Therefore the position of
-    the planet is set generically:
-        - The planet position is [10000, 0, 0]^T
+    the planet is set generically.  The planet position is [10000, 0, 0]^T
     """
     [testResults, testMessage] = planetNavTestFunction(show_plots)
     assert testResults < 1, testMessage
