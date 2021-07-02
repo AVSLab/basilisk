@@ -34,6 +34,8 @@ Version |release|
 - updated :ref:`ephemerisConverter` to also convert the planet orientation states, not just the
   translational states
 - added a :ref:`planetNav` module that adds noisy to planet ephemeris, similar to simpleNav.
+- created a new device command status message :ref:`DeviceCmdMsgPayload` and updated :ref:`simpleInstrumentController`,
+  :ref:`simpleInstrument` and :ref:`spaceToGroundTransmitter` to make use of it.
 
 Version 2.0.5
 -------------
