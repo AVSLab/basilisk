@@ -396,7 +396,7 @@ class fileCrawler():
                 # pull in the module documentation file if it exists
                 docFileName = os.path.join(src_path, c_file_basename + '.rst')
                 if os.path.isfile(docFileName):
-                    with open(docFileName, 'r') as docFile:
+                    with open(docFileName, 'r', encoding="utf8") as docFile:
                         docContents = docFile.read()
                     lines += docContents + "\n\n"
                     lines += "----\n\n"

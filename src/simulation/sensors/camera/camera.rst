@@ -60,7 +60,7 @@ Overview of Corruptions
 ~~~~~~~~~~~~~~~~~~~~~~~
 #. Gaussian noise is designed to simulate camera sensor noise. This is done by using the addWeighted OpenCV method and
    scaling the noise according to the input parameter. The noise is zero-mean with standard deviation equal to twice the
-   gaussian noise parameter. The image is then thresholded at the 6-σ value of the noise parameter in order to keep
+   gaussian noise parameter. The image is then thresholded at the 6-sigma value of the noise parameter in order to keep
    the background dark.
 
 #. Blurring is implemented using the standard OpenCV blur function with size specified by the blur parameter. This type
@@ -73,7 +73,7 @@ Overview of Corruptions
 
 #. The image color can be changed in the HSV color space.  The hue value is rotated by  a specified amount of radians,
    while the saturation and value component can be adjusted through a positive or negative percentage values.  The
-   hue value rotates such that 360˚ becomes 0˚.  The saturation and value components are limited to [0,255].
+   hue value rotates such that 360 degrees becomes 0 degrees.  The saturation and value components are limited to [0,255].
 
 #. The image color can be changed in the BGR color space.  All color channel changes are specified through
    an integer percentage value that can be either positive or negative.  The resulting integer color value is
