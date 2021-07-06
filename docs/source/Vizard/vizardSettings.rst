@@ -270,8 +270,8 @@ Basilisk as well using using a helper function ``createPointLine()``:
 .. code-block::
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
-    vizSupport.createPointLine(viz, toBodyName='earth', lineColor=[0, 0, 255, 255])
-    vizSupport.createPointLine(viz, toBodyName=“sun”, lineColor=“yellow”)]
+    vizSupport.createPointLine(viz, toBodyName='earth_planet_data', lineColor=[0, 0, 255, 255])
+    vizSupport.createPointLine(viz, toBodyName=“sun_planet_data”, lineColor=“yellow”)]
 
 The ``createPointLine`` support macro requires the parameters ``toBodyName`` and ``lineColor`` to be
 defined. The parameter ``fromBodyName`` is optional. If it is not
