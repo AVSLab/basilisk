@@ -31,7 +31,6 @@ import numpy as np
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import mtbFeedforward               # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging                     # import the message definitions
@@ -45,7 +44,7 @@ accuracy = 1E-12
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 
-def mtbFeedforward_module():     # update "module" in this function name to reflect the module name
+def test_mtbFeedforward_module():     # update "module" in this function name to reflect the module name
     r"""
     **Validation Test Description**
 
