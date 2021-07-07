@@ -223,27 +223,39 @@ Monte Carlo Simulations
 Spacecraft Formation Flying
 ---------------------------
 
-Formation Flying Dynamics
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. toctree::
-   :maxdepth: 1
-
-   Basic Servicer/Debris Simulation <scenarioFormationBasic>
-   Two-Spacecraft Formation using BskSim  <BskSim/scenarios/scenario_BasicOrbitFormation>
-
-
-Formation Flying Control
+Stand Alone Architecture
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
    :maxdepth: 1
 
-   Relative Pointing Control  <BskSim/scenarios/scenario_RelativePointingFormation>
+   Basic Servicer/Debris Simulation <scenarioFormationBasic>
    Mean orbit element based relative motion control <scenarioFormationMeanOEFeedback>
    Impulsive feedback control of relative motion <scenarioFormationReconfig>
    Electrostatic Tractor Debris Reorbiting <scenarioDebrisReorbitET>
    Attitude-Driven differential drag control <scenarioDragRendezvous>
+   
+
+
+``FormationBskSim`` Architecture
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
+   Two-Spacecraft Formation using BskSim  <BskSim/scenarios/scenario_BasicOrbitFormation>
+   Relative Pointing Control  <BskSim/scenarios/scenario_RelativePointingFormation>
+   
+
+``MultiSatBskSim`` Architecture
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
+   Three-Spacecraft Formation using MultiSat architecture  <MultiSatBskSim/scenariosMultiSat/scenario_BasicOrbitMultiSat>
+   Attitude Guidance Modes Scheduling  <MultiSatBskSim/scenariosMultiSat/scenario_AttGuidMultiSat>
+   MultiSatBskSim Folder <MultiSatBskSim/index>
 
 
 Advanced Simulation Options
