@@ -20,7 +20,6 @@
 #ifndef DIPOLE_REQUEST_BODY_MSG_H
 #define DIPOLE_REQUEST_BODY_MSG_H
 
-#include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief Structure used to define the output of the sub-module.  This is the same
     output message that is used by all sub-modules in the module folder. */
