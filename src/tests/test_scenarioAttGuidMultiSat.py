@@ -1,7 +1,7 @@
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the scenario_BasicOrbitMultiSat
+# Purpose:  Integrated test of the scenario_AttGuidMultiSat
 # Author:   João Vaz Carneiro
 # Creation Date:  Jul. 2, 2021
 #
