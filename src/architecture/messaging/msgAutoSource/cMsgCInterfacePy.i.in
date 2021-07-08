@@ -27,7 +27,7 @@ typedef struct {type};
         elif type(source) == {type}:
             return ({type}_cpp_isSubscribedTo(self, source))
         else:
-            raise Exception('tried to check subscription between {type} and another message type')
+            return 0
 
 
     def recorder(self, timeDiff=0):
