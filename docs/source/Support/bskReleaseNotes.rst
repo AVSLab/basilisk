@@ -39,6 +39,11 @@ Version |release|
   :ref:`simpleInstrument` and :ref:`spaceToGroundTransmitter` to make use of it.
 - added :ref:`attRefCorrection` to adjust the reference attitude by a fixed rotation
 - added :ref:`scenarioAttitudePrescribed` to illustrate how to prescribe the spacecraft orientation
+- added new modules :ref:`mtbFeedforward`, :ref:`mtbMomentumManagementSimple`, :ref:`dipoleMapping` and
+  :ref:`torque2Dipole` which are using in combination to achieve MTB based RW momentum dumping.
+- added a new magnetic RW momentum dumping example in :ref:`scenarioMtbMomentumManagementSimple` which illustrates
+  using the above new MTB related modules to change the momentum, as well as drive the nominal momentum to
+  a desired value using :ref:`rwNullSpace`.
 
 Version 2.0.5
 -------------
