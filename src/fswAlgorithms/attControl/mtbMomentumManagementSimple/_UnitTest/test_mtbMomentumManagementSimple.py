@@ -21,7 +21,7 @@
 #   Unit Test Script
 #   Module Name:        mtbMomentumManagement
 #   Author:             Henry Macanas
-#   Creation Date:      02 23, 2021
+#   Creation Date:      07 07, 2021
 #
 import pytest
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
@@ -30,14 +30,11 @@ import numpy as np
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import mtbMomentumManagementSimple  # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging                     # import the message definitions
 from Basilisk.architecture import bskLogging
 
-# CONSTANTS
-MAX_EFF_CNT = 36
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -54,11 +51,9 @@ def test_mtbMomentumManagementSimple():     # update "module" in this function n
 
     **Description of Variables Being Tested**
 
-    The variables being checked are:
-    variables
+    The output torque message is being recorded and the following variable is being checked.
 
-    - ``mtbDipoleCmds[MAX_EFF_CNT]``
-    - ``motorTorque[MAX_EFF_CNT]``
+    - ``torqueRequestBody``
     """
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
@@ -100,7 +95,6 @@ def mtbMomentumManagementSimpleTestFunction():
     rwSpeedsInMsgContainer.wheelSpeeds = [100., 200., 300., 400.]
     rwSpeedsInMsg = messaging.RWSpeedMsg().write(rwSpeedsInMsgContainer)
 
-    
     # Setup logging on the test module output message so that we get all the writes to it
     resultTauMtbRequestOutMsg = moduleConfig.tauMtbRequestOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, resultTauMtbRequestOutMsg)
@@ -118,8 +112,7 @@ def mtbMomentumManagementSimpleTestFunction():
     # simulation end time.
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))        # seconds to stop simulation
     accuracy = 1E-8
-    
-    
+
     '''
         TEST 1: 
             Check that tauMtbRequestOutMsg is non-zero when the wheel speeds
@@ -133,7 +126,6 @@ def mtbMomentumManagementSimpleTestFunction():
                                                             accuracy,
                                                             "tauMtbRequestOutMsg",
                                                             testFailCount, testMessages, ExpectedResult=0)
-
 
     '''
         TEST 2: 

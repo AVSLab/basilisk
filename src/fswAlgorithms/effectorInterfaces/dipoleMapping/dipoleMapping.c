@@ -75,7 +75,7 @@ void Update_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, in
     /*
      * Initialize local variables.
      */
-    int j = 0;
+    int j = 0;  // counter used in loop over magnetic torque rods
     
     /*
      * Read the input messages and initialize output message.

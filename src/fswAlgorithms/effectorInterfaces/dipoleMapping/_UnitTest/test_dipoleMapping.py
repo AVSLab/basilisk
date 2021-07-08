@@ -37,7 +37,6 @@ from Basilisk.architecture import messaging                     # import the mes
 from Basilisk.architecture import bskLogging
 
 accuracy = 1E-12
-MAX_EFF_CNT = 36
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -116,7 +115,7 @@ def dipoleMappingModuleTestFunction():
             steeringMatrix.
     '''
     unitTestSim.ExecuteSimulation()
-    expectedDipole = [0.] * MAX_EFF_CNT
+    expectedDipole = [0.] * messaging.MAX_EFF_CNT
     expectedDipole[0:3] = [1., 2., 3.]
     testFailCount, testMessages = unitTestSupport.compareVector(expectedDipole,
                                                                 resultDipoleRequestMtbOutMsg.mtbDipoleCmds[0],
@@ -143,7 +142,7 @@ def dipoleMappingModuleTestFunction():
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
     
-    expectedDipole = [0.] * MAX_EFF_CNT
+    expectedDipole = [0.] * messaging.MAX_EFF_CNT
     expectedDipole[0:2] = GtInverse @ np.array(dipoleRequestBodyInMsgContainer.dipole_B)
     testFailCount, testMessages = unitTestSupport.compareVector(expectedDipole,
                                                             resultDipoleRequestMtbOutMsg.mtbDipoleCmds[0],
@@ -163,7 +162,7 @@ def dipoleMappingModuleTestFunction():
     unitTestSim.ExecuteSimulation()
     
     unitTestSim.ExecuteSimulation()
-    expectedDipole = [0.] * MAX_EFF_CNT
+    expectedDipole = [0.] * messaging.MAX_EFF_CNT
     testFailCount, testMessages = unitTestSupport.compareVector(expectedDipole,
                                                                 resultDipoleRequestMtbOutMsg.mtbDipoleCmds[0],
                                                                 accuracy,

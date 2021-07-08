@@ -26,8 +26,21 @@ provides information on what this message is used for.
       - :ref:`MTBCmdMsgPayload`
       - input message containing the individual dipole requests for each torque bar on the vehicle
 
+Detailed Module Description
+---------------------------
+The following presents the mathematics for mapping a Body frame dipole request into individual torque rod dipole commands.
+
+The individual rod dipoles are given by
+
+.. math::
+    {\pmb \mu}_{\text{cmd}} = [G_t]^{\dagger} \ {}^{\cal B} {\pmb\mu}_{\text{desired}}
+
+where the :math:`\dagger` symbol denotes the pseudo inverse. The dipole commands may need to be
+saturated at this point. The saturated commands are referred to as :math:`{\pmb\mu}_{\text{saturated}}`
+from here on out in this document.
+
 User Guide
 ----------
 See the example script :ref:`scenarioMtbMomentumManagementSimple` for an illustration on how to use this module.
 
-The user must set the ``steeringMatrix``, which is the psuedoinverse of ``GtMatrix_B``. Note that the MTB input configuration message variable ``GtMatrix_B`` must be provided in a row major format.
+Note that user must set the torque rod alignment matrix ``GtMatrix_B`` and the ``steeringMatrix`` in row major format. Also not that ``steeringMatrix`` is simply the psuedoinverse of the torque rod alignment matrix

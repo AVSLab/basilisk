@@ -54,7 +54,7 @@ def test_mtbFeedforward_module():     # update "module" in this function name to
 
     **Description of Variables Being Tested**
 
-    In this file we are checking the values of the variable:
+    In this file we are checking the values of the output message variable:
 
     - ``torqueRequestBody``
     """
@@ -215,5 +215,5 @@ def mtbFeedforwardModuleTestFunction():
 # stand-along python script
 #
 if __name__ == "__main__":
-    mtbFeedforward_module()
+    test_mtbFeedforward_module()
     

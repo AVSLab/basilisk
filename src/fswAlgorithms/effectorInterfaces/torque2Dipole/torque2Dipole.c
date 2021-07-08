@@ -70,7 +70,7 @@ void Update_torque2Dipole(torque2DipoleConfig *configData, uint64_t callTime, in
     /*
      * Initialize local variables.
      */
-    double bFieldNormSqrd = 0.0;
+    double bFieldNormSqrd = 0.0;        // the norm squared of the local magnetic field vector
     
     /*
      * Read the input messages and initialize output message.

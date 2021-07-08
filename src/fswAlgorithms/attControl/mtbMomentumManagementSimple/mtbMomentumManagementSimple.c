@@ -35,11 +35,6 @@ void SelfInit_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig  *co
      */
     CmdTorqueBodyMsg_C_init(&configData->tauMtbRequestOutMsg);
     
-    /*
-     * Sanity check configs.
-     */
-    if (configData->Kp < 0.0)
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: k < 0.0");
     return;
 }
 
@@ -75,6 +70,12 @@ void Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *config
      */
     mTranspose(configData->rwConfigParams.GsMatrix_B, configData->rwConfigParams.numRW, 3, configData->Gs);
     
+    /*
+     * Sanity check configs.
+     */
+    if (configData->Kp < 0.0)
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: k < 0.0");
+    
     return;
 }
 
@@ -90,8 +91,8 @@ void Update_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *confi
     /*
      * Initialize local variables.
      */
-    double hWheels_B[3] = {0.0, 0.0, 0.0};
-    double hWheels_W[MAX_EFF_CNT];
+    double hWheels_B[3] = {0.0, 0.0, 0.0};                      // the net momentum of the reaction wheels in the body frame
+    double hWheels_W[MAX_EFF_CNT];                              // array of individual wheel momentum values
     vSetZero(hWheels_W, configData->rwConfigParams.numRW);
     
     /*
