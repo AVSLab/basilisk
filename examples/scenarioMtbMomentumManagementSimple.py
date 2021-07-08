@@ -31,7 +31,7 @@ this RW momentum control is engaged.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
-      python3 scenarioMtbMomentumManagement.py
+      python3 scenarioMtbMomentumManagementSimple.py
 
 Illustration of Simulation Results
 ----------------------------------
@@ -464,22 +464,22 @@ def run(show_plots):
     rwConfigElementMsg1 = messaging.RWConfigElementMsgPayload()
     rwConfigElementMsg1.gsHat_B = Gs[:, 0]
     rwConfigElementMsg1.Js = RW1.Js
-    rwConfigElementMsg1.uMax = RW2.u_max
+    rwConfigElementMsg1.uMax = RW1.u_max
     rwConfigElementList.append(rwConfigElementMsg1)
     rwConfigElementMsg2 = messaging.RWConfigElementMsgPayload()
     rwConfigElementMsg2.gsHat_B = Gs[:, 1]
-    rwConfigElementMsg2.Js = RW1.Js
+    rwConfigElementMsg2.Js = RW2.Js
     rwConfigElementMsg2.uMax = RW2.u_max
     rwConfigElementList.append(rwConfigElementMsg2)
     rwConfigElementMsg3 = messaging.RWConfigElementMsgPayload()
     rwConfigElementMsg3.gsHat_B = Gs[:, 2]
-    rwConfigElementMsg3.Js = RW1.Js
-    rwConfigElementMsg3.uMax = RW2.u_max
+    rwConfigElementMsg3.Js = RW3.Js
+    rwConfigElementMsg3.uMax = RW3.u_max
     rwConfigElementList.append(rwConfigElementMsg3)
     rwConfigElementMsg4 = messaging.RWConfigElementMsgPayload()
     rwConfigElementMsg4.gsHat_B = Gs[:, 3]
-    rwConfigElementMsg4.Js = RW1.Js
-    rwConfigElementMsg4.uMax = RW2.u_max
+    rwConfigElementMsg4.Js = RW4.Js
+    rwConfigElementMsg4.uMax = RW4.u_max
     rwConfigElementList.append(rwConfigElementMsg4)
     rwConstellationConfig.reactionWheels = rwConfigElementList
     rwConstellationConfigInMsg = messaging.RWConstellationMsg().write(rwConstellationConfig)
@@ -489,12 +489,11 @@ def run(show_plots):
     rwNullSpaceWheelSpeedBias = messaging.RWSpeedMsgPayload()
     rwNullSpaceWheelSpeedBias.wheelSpeeds = desiredOmega
     rwNullSpaceWheelSpeedBiasInMsg = messaging.RWSpeedMsg().write(rwNullSpaceWheelSpeedBias)
-
     
     #
     #   Setup data logging before the simulation is initialized
     #
-    numDataPoints = 500
+    numDataPoints = 200
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     rwMotorLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
     attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)

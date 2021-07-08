@@ -189,8 +189,7 @@ def mtbFeedforwardModuleTestFunction():
                                                      Gt[2, 0], Gt[2, 1]]  
     mtbArrayConfigParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbArrayConfigParamsInMsgContainer)
     moduleConfig.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
-    
-    
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
     m = Gt @ np.array(dipoleRequestMtbInMsgContainer.mtbDipoleCmds[0:2])

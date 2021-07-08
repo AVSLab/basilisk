@@ -30,7 +30,6 @@ import numpy as np
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import dipoleMapping                # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging                     # import the message definitions
@@ -44,19 +43,19 @@ accuracy = 1E-12
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 
-def dipoleMapping_module():     # update "module" in this function name to reflect the module name
+def test_dipoleMapping_module():     # update "module" in this function name to reflect the module name
     r"""
     **Validation Test Description**
 
     This script tests the mapping of a 3x1 requested Body frame dipole, 
-    dipole_B, mapped correctly to individual torque bar requests and that the
+    ``dipole_B``, mapped correctly to individual torque bar requests and that the
     algorithm doesn't fail when the inputs are given zero values.
 
     **Description of Variables Being Tested**
 
-    In this file we are checking the values of the variable:
+    In this file we are checking the values of the output message variable:
 
-    - ``dipoles[MAX_EFF_CNT]``
+    - ``mtbDipoleCmds[MAX_EFF_CNT]``
     """
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
@@ -168,8 +167,7 @@ def dipoleMappingModuleTestFunction():
                                                                 accuracy,
                                                                 "dipoles",
                                                                 testFailCount, testMessages)
-    
-    
+
     print("Accuracy used: " + str(accuracy))
     if testFailCount == 0:
         print("PASSED: dipoleMapping unit test")
@@ -183,5 +181,5 @@ def dipoleMappingModuleTestFunction():
 # stand-along python script
 #
 if __name__ == "__main__":
-    dipoleMapping_module()
+    test_dipoleMapping_module()
     
