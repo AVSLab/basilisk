@@ -37,7 +37,7 @@ def test_formationBarycenter(show_plots, accuracy):
 
     **Test Parameters**
 
-    Discuss the test parameters used.
+    The test parameters used are the following:
 
     Args:
         accuracy (float): absolute accuracy value used in the validation tests
@@ -48,10 +48,14 @@ def test_formationBarycenter(show_plots, accuracy):
 
     - ``barycenter``
     - ``barycenterVelocity``
+    - ``barycenterC``
+    - ``barycenterVelocityC``
 
-    which represent the center of mass position and velocity vectors. These variables are compared to ``trueBarycenter``
-    and ``trueBarycenterVelocity``, which contain the true values.
-    Both the C and C++ wrapped message outputs are checked.  
+    which represent the center of mass position and velocity vectors. The variables ending in ``C`` are pulled from the
+    C-wrapped navigation output message, whereas the other two come from the usual C++ message. All these variables are
+    compared to ``trueBarycenter`` and ``trueBarycenterVelocity``, which contain their true values.
+
+    As stated, both the C and C++ wrapped message outputs are checked.
     """
     [testResults, testMessage] = formationBarycenterTestFunction(show_plots, accuracy)
     assert testResults < 1, testMessage

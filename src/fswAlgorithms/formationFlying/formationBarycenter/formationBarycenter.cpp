@@ -63,12 +63,6 @@ void FormationBarycenter::Reset(uint64_t CurrentSimNanos) {
 void FormationBarycenter::addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg, Message<VehicleConfigMsgPayload>* tmpScPayloadMsg) {
     this->scNavInMsgs.push_back(tmpScNavMsg->addSubscriber());
     this->scPayloadInMsgs.push_back(tmpScPayloadMsg->addSubscriber());
-
-    // expand the buffer vector
-    NavTransMsgPayload scNavMsg;
-    this->scNavBuffer.push_back(scNavMsg);
-    VehicleConfigMsgPayload scPayloadMsg;
-    this->scPayloadBuffer.push_back(scPayloadMsg);
 }
 
 /*! Reads the input messages
@@ -146,7 +140,7 @@ void FormationBarycenter::computeBaricenter() {
         elem2rv(this->mu, &orbitElements, barycenter, barycenterVelocity);
     }
 
-    // save the information to the output buff
+    // save the information to the output buffer
     for (int n = 0; n < 3; n++) {
         this->transOutBuffer.r_BN_N[n] = barycenter[n];
         this->transOutBuffer.v_BN_N[n] = barycenterVelocity[n];

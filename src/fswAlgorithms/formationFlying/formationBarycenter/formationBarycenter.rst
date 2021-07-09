@@ -1,7 +1,8 @@
 Executive Summary
 -----------------
 This module computes the barycenter of a swarm of satellites. The barycenter can either be computed in the regular cartesian way (using a weighted average of the position and velocity vectors) 
-or using the weighted average of the orbital elements. Both output a navigation message that describes the position and velocity of the barycenter.
+or using the weighted average of the orbital elements. Both output two navigation messages that describe the position and velocity of the barycenter. The output messages contain the same 
+information, although one is a C++ message and the other is a C-wrapped message.
 
 Message Connection Descriptions
 -------------------------------
@@ -25,16 +26,19 @@ provides information on what this message is used for.
       - vector of spacecraft payload input messages.  These are set through ``addSpacecraftToModel()``
     * - transOutMsg
       - :ref:`NavTransMsgPayload`
-      - barycenter information output message
+      - barycenter information C++ output message
+    * - transOutMsgC
+      - :ref:`NavTransMsgPayload`
+      - barycenter information C-wrapped output message
 
 Detailed Module Description
 ---------------------------
 
 This module computes the barycenter of a swarm of spacecraft. For the cartesian method, a simple center of mass calculation is made for the position and velocity vectors. 
-Let :math:`\boldsymbol{x}` represent either the position or the velocity vectors. The corresponding weighted average is:
+Let :math:`\textbf{x}` represent either the position or the velocity vectors. The corresponding weighted average is:
 
 .. math::
-    \bar{x} = \dfrac{1}{m_{total}}\sum_{i}m_ix_i,
+    \bar{\textbf{x}} = \dfrac{1}{m_{total}}\sum_{i}m_i\textbf{x}_i,
 
 where :math:`m_{total}=\sum_{i}m_i`.
 
@@ -45,6 +49,8 @@ that is done, we take the average of each orbital element :math:`oe` as such:
     \bar{oe} = \dfrac{1}{m_{total}}\sum_{i}m_ioe_i
 
 The set of :math:`\bar{oe}` are then converted back into position and velocity vectors.
+
+As stated before, the module outputs both a C++ and C-wrapped navigation messages. Both contain the same payload.
 
 Model Assumptions and Limitations
 ---------------------------------
