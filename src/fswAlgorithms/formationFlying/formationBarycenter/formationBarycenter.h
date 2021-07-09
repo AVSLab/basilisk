@@ -23,8 +23,8 @@
 
 #include <vector>
 
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 #include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/bskLogging.h"
@@ -37,6 +37,7 @@ public:
     FormationBarycenter();
     ~FormationBarycenter();
 
+    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadInputMessages();
@@ -48,7 +49,8 @@ public:
     std::vector<ReadFunctor<NavTransMsgPayload>> scNavInMsgs;  //!< spacecraft navigation input msg
     std::vector<ReadFunctor<VehicleConfigMsgPayload>> scPayloadInMsgs;  //!< spacecraft payload input msg
 
-    Message<NavTransMsgPayload> transOutMsg;    //!< translation navigation output msg    
+    Message<NavTransMsgPayload> transOutMsg;    //!< translation navigation output msg   
+    NavTransMsg_C transOutMsgC = {};        //!< C-wrapped translation navigation output msg, zeroed
 
     bool useOrbitalElements;        //!< flag that determines whether to use cartesian or orbital elementd weighted averaging
     double mu;      //!< gravitational parameter to be used with orbital elements averaging
@@ -62,6 +64,5 @@ private:
     NavTransMsgPayload transOutBuffer;      //!< buffer for the output message
 
 };
-
 
 #endif
