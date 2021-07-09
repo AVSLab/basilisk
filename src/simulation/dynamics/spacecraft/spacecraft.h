@@ -94,6 +94,7 @@ private:
     StateData *hubV_N;                          //!< -- State data access to inertial velocity for the hub
     StateData *hubOmega_BN_B;                   //!< -- State data access to the attitude rate of the hub
     StateData *hubSigma;                        //!< -- State data access to sigmaBN for the hub
+    StateData *hubGravVelocity;                 //!< -- State data access to the gravity-accumulated DV
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
 
