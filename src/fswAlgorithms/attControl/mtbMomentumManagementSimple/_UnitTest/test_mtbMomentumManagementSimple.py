@@ -82,7 +82,7 @@ def mtbMomentumManagementSimpleTestFunction():
     moduleWrap.ModelTag = "mtbMomentumManagementSimple"           # update python name of test module
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
-    # wheelConfigData message (array is ordered c11, c22, c33, c44, ...)
+    # wheelConfigData message (column major format)
     rwConfigParams = messaging.RWArrayConfigMsgPayload()
     beta = 45. * np.pi / 180.
     rwConfigParams.GsMatrix_B = [0., np.cos(beta), np.sin(beta), 0., np.sin(beta), -np.cos(beta), np.cos(beta), -np.sin(beta), 0., -np.cos(beta), -np.sin(beta), 0.]
@@ -120,12 +120,20 @@ def mtbMomentumManagementSimpleTestFunction():
     '''
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
+    Gs = np.array([
+            [0.,            0.,             np.cos(beta), -np.cos(beta)],
+            [np.cos(beta),  np.sin(beta),  -np.sin(beta), -np.sin(beta)],
+            [np.sin(beta), -np.cos(beta),   0.,             0.]])
+    wheelSpeeds = np.array(rwSpeedsInMsgContainer.wheelSpeeds[0:4])
+    hWheels_W = wheelSpeeds * rwConfigParams.JsList[0]
+    hWheels_B  = Gs @ hWheels_W
+    tauExpected = - moduleConfig.Kp * hWheels_B
     
-    testFailCount, testMessages = unitTestSupport.compareVector([0., 0., 0.],
+    testFailCount, testMessages = unitTestSupport.compareVector(tauExpected,
                                                             resultTauMtbRequestOutMsg.torqueRequestBody[0][0:3],
                                                             accuracy,
                                                             "tauMtbRequestOutMsg",
-                                                            testFailCount, testMessages, ExpectedResult=0)
+                                                            testFailCount, testMessages, ExpectedResult=1)
 
     '''
         TEST 2: 
