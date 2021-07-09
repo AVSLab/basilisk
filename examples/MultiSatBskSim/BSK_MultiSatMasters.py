@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -17,7 +17,7 @@
 #
 
 # Import architectural modules
-from Basilisk.utilities import SimulationBaseClass, simIncludeGravBody
+from Basilisk.utilities import SimulationBaseClass
 
 from Basilisk import __path__
 
@@ -33,7 +33,16 @@ sys.path.append(path + '/models')
 
 
 class BSKSim(SimulationBaseClass.SimBaseClass):
-    """Main bskSim simulation class"""
+    """
+    Main bskSim simulation class
+
+    Args:
+        numberSpacecraft (int): number of spacecraft
+        fswRate (float): [s] FSW update rate
+        dynRate (float): [s] dynamics update rate
+        envRate (float): [s] environment update rate
+
+    """
 
     def __init__(self, numberSpacecraft, fswRate=0.1, dynRate=0.1, envRate=0.1):
         self.dynRate = dynRate

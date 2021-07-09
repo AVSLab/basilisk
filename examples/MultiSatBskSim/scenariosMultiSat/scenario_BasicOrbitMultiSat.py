@@ -20,7 +20,7 @@ r"""
 Overview
 --------
 
-This script sets up three 3-DOF spacecraft orbiting a planet (Earth or Mercury). The goal of the scenario is to
+This script sets up three spacecraft orbiting a planet (Earth or Mercury). The goal of the scenario is to
 
 #. highlight the refactored BSK_Sim structure that allows for easy addition of several spacecraft,
 #. demonstrate how to create a formation flying scenario with any number of spacecraft, and
@@ -37,8 +37,8 @@ structure. However, this last scenario hard codes both spacecraft into the dynam
 While this works for a small number of spacecraft, it is not easily scalable. This example aims to show a more pipelined
 way of adding spacecraft that can be either homogeneous or heterogeneous (different dynamics and flight software modules
 from one another). Another advantage of these changes is that the simulation now has a separate process for the
-environment, dynamics and FSW. This makes multithreading possible, greatly reducing the time it takes to run the
-simulation with a large number of spacecraft.
+environment, dynamics and FSW. When Basilisk supports multi-threading the process evaluation, this will
+greatly reducing the time it takes to run the simulation with a large number of spacecraft.
 
 In line with these changes, the environment is not embedded into the dynamics class, as each spacecraft has its own
 dynamics class. Therefore, a new environment class has also been created, where any changes can be made to accommodate
@@ -56,7 +56,8 @@ representing the dynamics and flight software modules. It is absolutely crucial 
 first, then the dynamics model for each spacecraft and then the FSW model for each spacecraft. In this case, the
 Environment files used are :ref:`BSK_EnvironmentEarth` and :ref:`BSK_EnvironmentMercury`, whereas the Dynamics
 file used is the :ref:`BSK_MultiSatDynamics`. The environment used in the simulation can be changed with either the
-``Earth`` or ``Mercury`` flag on the ``run`` method. As stated before, the FSW file is not added. All these files have been
+``Earth`` or ``Mercury`` flag on the ``run`` method. As stated before, the FSW file is not added in this scenario
+to focus first on setting up the dynamics of a number of spacecraft. All these files have been
 created for this specific formation flying implementation into Basilisk but can be changed to accommodate any changes to
 the intended simulation.
 
@@ -80,7 +81,7 @@ BSK_EnvironmentEarth and BSK_EnvironmentMercury files description
 Both the :ref:`BSK_EnvironmentEarth` and :ref:`BSK_EnvironmentMercury` share the same structure, with a difference in the
 gravity bodies used: the first uses the Sun, Earth and the Moon, while the second one only uses the Sun and Mercury.
 
-The gravity bodies are created using ``gravBodyFactory`` and their information is overridden by the SPICE library. A
+The gravity bodies are created using :ref:`gravBodyFactory` and their information is overridden by the SPICE library. A
 ground location (representing Boulder's location on Earth) is also set to be used in flight software. All modules are
 added to the environment process.
 
@@ -90,9 +91,9 @@ Looking at the :ref:`BSK_MultiSatDynamics` file, it can be observed that the dyn
 consists of one tasks named ``DynamicsTaskX`` where ``X`` represents that spacecraft's index. This task are added to the
 corresponding dynamics process and an instance of a specific object is added.
 
-The dynamics class creates a ``spacecraft``, ``simpleNav`` and ``reactionWheelStateEffector`` objects. Although no
-attitude guidance and control is implemented in this example, this class will be used in other scenarios that make use
-of those control surfaces (see :ref:`scenario_AttGuidMultiSat`).
+The dynamics class creates a :ref:`spacecraft`, :ref:`simpleNav` and :ref:`reactionWheelStateEffector` objects.
+Although no attitude guidance and control is implemented in this example, this class will be used in
+other scenarios that make use of those control surfaces (see :ref:`scenario_AttGuidMultiSat`).
 
 The necessary connections between the environment and dynamics classes are also done in this file, such as adding the
 gravity bodies from the environment into the spacecraft object.
@@ -150,6 +151,10 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
             self.set_EnvModel(BSK_EnvironmentEarth)
         elif environment == "Mercury":
             self.set_EnvModel(BSK_EnvironmentMercury)
+
+        # Here we are setting the list of spacecraft dynamics to be a homogenous formation.
+        # To use a heterogeneous spacecraft formation, this list can contain different classes
+        # of type BSKDynamicModels
         self.set_DynModel([BSK_MultiSatDynamics]*numberSpacecraft)
 
         # declare empty class variables
@@ -165,17 +170,17 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
         self.configure_initial_conditions()
         self.log_outputs()
 
-        # if this scenario is to interface with the BSK Viz, uncomment the following lines
-        # DynModelsList = []
-        # rwStateEffectorList = []
-        # for i in range(self.numberSpacecraft):
-        #     DynModelsList.append(self.DynModels[i].scObject)
-        #     rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
-        #
-        # vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
-        #                                     , saveFile=__file__
-        #                                     , rwEffectorList=rwStateEffectorList
-        #                                     )
+        # if this scenario is to interface with the BSK Viz, uncomment the saveFile line
+        DynModelsList = []
+        rwStateEffectorList = []
+        for i in range(self.numberSpacecraft):
+            DynModelsList.append(self.DynModels[i].scObject)
+            rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
+
+        vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
+                                            # , saveFile=__file__
+                                            , rwEffectorList=rwStateEffectorList
+                                            )
 
     def configure_initial_conditions(self):
         EnvModel = self.get_EnvModel()

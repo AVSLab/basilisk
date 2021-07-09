@@ -176,7 +176,7 @@ def plot_orbits(r_BN, numberSpacecraft, id=None):
     ax.set_ylim3d(-8000, 8000)
     ax.set_zlim3d(-8000, 8000)
     ax.scatter(0, 0, 0, c=color_x)
-    ax.set_title('Spacecraft Orbits')
+    ax.set_title('Spacecraft Inertial Orbits')
     ax.set_xlabel('x [km]')
     ax.set_ylabel('y [km]')
     ax.set_zlabel('z [km]')

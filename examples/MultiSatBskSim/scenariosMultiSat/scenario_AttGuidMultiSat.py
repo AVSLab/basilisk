@@ -139,17 +139,17 @@ class scenario_AttGuidFormationFlying(BSKSim, BSKScenario):
         self.configure_initial_conditions()
         self.log_outputs()
 
-        # if this scenario is to interface with the BSK Viz, uncomment the following line
-        # DynModelsList = []
-        # rwStateEffectorList = []
-        # for i in range(self.numberSpacecraft):
-        #     DynModelsList.append(self.DynModels[i].scObject)
-        #     rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
-        #
-        # vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
-        #                                     , saveFile=__file__
-        #                                     , rwEffectorList=rwStateEffectorList
-        #                                     )
+        # if this scenario is to interface with the BSK Viz, uncomment the saveFile line
+        DynModelsList = []
+        rwStateEffectorList = []
+        for i in range(self.numberSpacecraft):
+            DynModelsList.append(self.DynModels[i].scObject)
+            rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
+
+        vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
+                                            # , saveFile=__file__
+                                            , rwEffectorList=rwStateEffectorList
+                                            )
 
     def configure_initial_conditions(self):
         EnvModel = self.get_EnvModel()
@@ -290,7 +290,7 @@ def runScenario(scenario):
     scenario.ConfigureStopTime(simulationTime)
     scenario.ExecuteSimulation()
 
-    scenario.FSWModels[0].modeRequest = "locationPointing"
+    # change flight mode on selected spacecraft
     scenario.FSWModels[1].modeRequest = "sunPointing"
     scenario.FSWModels[2].modeRequest = "inertialPointing"
     scenario.ConfigureStopTime(2*simulationTime)
