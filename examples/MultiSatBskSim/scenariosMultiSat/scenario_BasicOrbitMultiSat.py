@@ -81,9 +81,9 @@ BSK_EnvironmentEarth and BSK_EnvironmentMercury files description
 Both the :ref:`BSK_EnvironmentEarth` and :ref:`BSK_EnvironmentMercury` share the same structure, with a difference in the
 gravity bodies used: the first uses the Sun, Earth and the Moon, while the second one only uses the Sun and Mercury.
 
-The gravity bodies are created using :ref:`gravBodyFactory` and their information is overridden by the SPICE library. A
-ground location (representing Boulder's location on Earth) is also set to be used in flight software. All modules are
-added to the environment process.
+The gravity bodies are created using :ref:`simIncludeGravBody` and their information is overridden by
+the SPICE library. A ground location (representing Boulder's location on Earth) is also set to be used in
+flight software. All modules are added to the environment process.
 
 BSK_MultiSatDynamics file description
 -------------------------------------
