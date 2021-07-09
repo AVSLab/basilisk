@@ -43,6 +43,12 @@ Version |release|
 - added a new magnetic RW momentum dumping example in :ref:`scenarioMtbMomentumManagementSimple` which illustrates
   using the above new MTB related modules to change the momentum, as well as drive the nominal momentum to
   a desired value using :ref:`rwNullSpace`.
+- created a new architecture based on ``BskSim`` called ``MultiSatBskSim``. It exploits the new messaging system to create a simulation
+  with any number of spacecraft in a highly modular way. It allows for the addition of homogeneous or heterogeneous satellites without 
+  having to hard code their properties into a single dynamics or FSW script. It will be a foundation to test the upcoming multithreading
+  capabilities of Basilisk.
+- added two example scenarios that showcase this new architecture. See :ref:`scenario_BasicOrbitMultiSat` and :ref:`scenario_AttGuidMultiSat`.
+
 
 Version 2.0.5
 -------------
