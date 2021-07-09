@@ -20,14 +20,24 @@ r"""
 Overview
 --------
 
-Demonstrates how to use magnetic torque bars to drive the angular momentum of RWs to zero.
-The basic spacecraft setup with RWs is similar to that seen in :ref:`scenarioAttitudeFeedbackRW`.
-A magnetic field is simulated, and a three-axis magnetometer (TAM) sensor device is added.  Three orthogonally
-aligned magnetic torque bars (MTBs) (see :ref:`MtbEffector`) are included to provide a magnetic torque.  Finally,
-the RW angular momentum management module using MTBs, called :ref:`mtbMomentumManagement`,
-is used to drive the RW spin rates
-to desired values.  The spacecraft is setup to stabilize and point in a fixed inertial direction while
-this RW momentum control is engaged.
+Demonstrates how to use magnetic torque bars to drive the net angular momentum of the RW cluster
+to zero rather than driving
+the individual wheels speeds to desired values as in :ref:`scenarioMtbMomentumManagement`.  As in this
+scenario, the spacecraft is initialized with a small tumble and the :ref:`inertial3D` module is used to stabilize
+to and hold a desired orientation.
+
+In this script a series of modules are used
+to control the momentum of the reaction wheels and interface with magnetic torque
+bars: :ref:`mtbMomentumManagementSimple`, :ref:`torque2Dipole`, :ref:`dipoleMapping`, and :ref:`mtbFeedforward`.
+Four magnetic torque bars (MTBs) (see :ref:`MtbEffector`)
+are included to provide a magnetic torque. It’s important to point out that driving the net momentum
+of the reaction wheels to zero does not necessarily mean driving the individual reaction wheel speeds to zero
+because the wheels can be spun up in their null space, if it exists, and still have a net momentum of zero.
+As a result, the :ref:`rwNullSpace` module is used to control
+the null space of the wheels. The basic spacecraft setup with RWs is similar to that seen
+in :ref:`scenarioAttitudeFeedbackRW`.  A magnetic field is simulated, and a three-axis magnetometer (TAM)
+sensor device is added. The spacecraft is setup to stabilize
+and point in a fixed inertial direction while this RW momentum control is engaged.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
@@ -42,24 +52,25 @@ Illustration of Simulation Results
 
 The first plot illustrates that the :ref:`Inertial3D` module is able to achieve a stable inertial pointing.
 
-.. image:: /_images/Scenarios/scenarioMtbMomentumManagement1.svg
+.. image:: /_images/Scenarios/scenarioMtbMomentumManagementSimple1.svg
    :align: center
 
 The next plots illustrate the RW states.  The motor torque are initially large to stabilize the
 spacecraft orientation.  After this they return to small values that are compensating for the
-magnetic momentum dumping.  The RW spin rates converge to the desired values over time.
+magnetic momentum dumping.  Finally they settle to zero as the momentum dumping is done and the RW null motion
+module has driven the RW speeds as close as it could to the desired values.
 
-.. image:: /_images/Scenarios/scenarioMtbMomentumManagement3.svg
+
+.. image:: /_images/Scenarios/scenarioMtbMomentumManagementSimple2.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioMtbMomentumManagement4.svg
+.. image:: /_images/Scenarios/scenarioMtbMomentumManagementSimple3.svg
    :align: center
 
-The following plots illustrate the sensed magnetic field as well as the TAM commanded dipoles.
+The following plot illustrates the MTB commanded dipoles.  They first are active to reduce the net RW
+momentum and then settle to zero.
 
-.. image:: /_images/Scenarios/scenarioMtbMomentumManagement6.svg
-   :align: center
-.. image:: /_images/Scenarios/scenarioMtbMomentumManagement7.svg
+.. image:: /_images/Scenarios/scenarioMtbMomentumManagementSimple7.svg
    :align: center
 
 """
