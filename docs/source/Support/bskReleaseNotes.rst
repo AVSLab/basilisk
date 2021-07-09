@@ -48,6 +48,9 @@ Version |release|
   having to hard code their properties into a single dynamics or FSW script. It will be a foundation to test the upcoming multithreading
   capabilities of Basilisk.
 - added two example scenarios that showcase this new architecture. See :ref:`scenario_BasicOrbitMultiSat` and :ref:`scenario_AttGuidMultiSat`.
+- added a new FSW module :ref:`formationBarycenter`. It computes the barycenter's position and velocity of a swarm of satellites. This barycenter
+  can be either computed with cartesian coordinates (usual mass-weighted average), or using orbital elements weighted average. Will be useful 
+  for spacecraft formations defined around the barycenter of the swarm and not a chief spacecraft.
 
 
 Version 2.0.5
