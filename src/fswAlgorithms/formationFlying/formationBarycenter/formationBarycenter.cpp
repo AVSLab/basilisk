@@ -56,9 +56,6 @@ void FormationBarycenter::Reset(uint64_t CurrentSimNanos) {
         bskLogger.bskLog(BSK_ERROR, "FormationBarycenter module requires defining a gravitational parameter if using orbital elements.");
     }
 
-    // zero the output message buffer
-    this->transOutBuffer = this->transOutMsg.zeroMsgPayload;
-
 }
 
 /*! Adds a scNav and scPayload messages name to the vector of names to be subscribed to.
@@ -119,15 +116,8 @@ void FormationBarycenter::computeBaricenter() {
             barycenterVelocity[n] /= totalMass;
         }
     } else {
-        classicElements orbitElements, tempElements;
-
-        // zero the orbit elements first
-        orbitElements.a = 0;
-        orbitElements.e = 0;
-        orbitElements.i = 0;
-        orbitElements.Omega = 0;
-        orbitElements.omega = 0;
-        orbitElements.f = 0;
+        classicElements orbitElements = {}; // zero the orbit elements first
+        classicElements tempElements;
 
         // compute the orbital elements barycenter
         for (long unsigned int c = 0; c < this->scNavInMsgs.size(); c++) {
@@ -178,6 +168,7 @@ void FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock) {
 void FormationBarycenter::UpdateState(uint64_t CurrentSimNanos)
 {
     this->ReadInputMessages();
+    this->transOutBuffer = this->transOutMsg.zeroMsgPayload; // zero the output message buffer
     this->computeBaricenter();
     this->WriteOutputMessage(CurrentSimNanos);
 }

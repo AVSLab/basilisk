@@ -51,6 +51,7 @@ def test_formationBarycenter(show_plots, accuracy):
 
     which represent the center of mass position and velocity vectors. These variables are compared to ``trueBarycenter``
     and ``trueBarycenterVelocity``, which contain the true values.
+    Both the C and C++ wrapped message outputs are checked.  
     """
     [testResults, testMessage] = formationBarycenterTestFunction(show_plots, accuracy)
     assert testResults < 1, testMessage
