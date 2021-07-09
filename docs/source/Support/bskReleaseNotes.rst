@@ -21,7 +21,6 @@ Basilisk Release Notes
 .. sidebar:: In Progress Features
 
     - GPU based methods to evaluate solar radiation pressure forces and torques
-    - more magnetic FSW control modules to dump reaction wheel angular momentum
     - new tutorial example scripts
     - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
       CAD asteroid or lunar surface terrain.
