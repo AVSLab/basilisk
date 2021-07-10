@@ -20,6 +20,8 @@
 #ifndef VEHICLE_CONFIG_MESSAGE2_H
 #define VEHICLE_CONFIG_MESSAGE2_H
 
+#include <stdint.h>
+
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {
