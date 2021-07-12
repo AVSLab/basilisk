@@ -36,6 +36,7 @@ public:
     std::string nameOfHubSigma;          //!< -- Identifier for hub sigmaBN states
     std::string nameOfHubOmega;          //!< -- Identifier for hub omegaBN_B states
     std::string nameOfHubGravVelocity;   //!< -- Identified for hub gravitational DV state
+    std::string nameOfBcGravVelocity;    //!< -- Identified for point Bc gravitational DV state
     Eigen::Vector3d r_BcB_B;             //!< [m] vector from point B to CoM of hub in B frame components
     Eigen::Matrix3d IHubPntBc_B;         //!< [kg m^2] Inertia of hub about point Bc in B frame components
     BackSubMatrices hubBackSubMatrices;  //!< class method
@@ -56,7 +57,7 @@ public:
                                       double & rotEnergyContr, Eigen::Vector3d omega_BN_B); //!< -- Add contributions to energy and momentum
     void modifyStates(double integTime); //!< -- Method to switch MRPs
     void prependSpacecraftNameToStates(); //!< class method
-    void matchGravitytoVelocityState(); //!< method to set the gravity velocity to base velocity
+    void matchGravitytoVelocityState(Eigen::Vector3d v_CN_N); //!< method to set the gravity velocity to base velocity
 
 private:
     Eigen::Vector3d r_BcP_P;             //!< [m] vector from point B to CoM of hub in B frame components
@@ -67,6 +68,7 @@ private:
     StateData *sigmaState;               //!< [-] State data container for hub sigma_BN
     StateData *omegaState;               //!< [-] State data container for hub omegaBN_B
     StateData *gravVelocityState;        //!< [-] State data container for hub gravitational velocity
+    StateData *gravVelocityBcState;      //!< [-] State data container for point Bc gravitational velocity
 };
 
 #endif /* HUB_EFFECTOR_H */
