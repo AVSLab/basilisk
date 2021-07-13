@@ -510,19 +510,22 @@ def setInstrumentGuiSetting(viz, **kwargs):
     ------------
     spacecraftName: str
         The name of the spacecraft for which the actuator GUI options are set.
-        Default: If not provided, then the name of the first spacecraft in the simulation is used.
-    viewCSSPanel: bool
-        flag if the GUI panel should be shown illustrating the CSS states
-        Default: if not provided, then the Vizard default settings are used
-    viewCSSCoverage: bool
-        flag if the HUD spherical coverage of the CSS states should be shown
-        Default: if not provided, then the Vizard default settings are used
-    viewCSSBoresight: bool
-        flag if the HUD boresight axes of the CSS states should be shown
-        Default: if not provided, then the Vizard default settings are used
-    showCSSLabels: bool
-        flag if the CSS labels should be shown
-        Default: if not provided, then the Vizard default settings are used
+        Default: 0 - If not provided, then the name of the first spacecraft in the simulation is used.
+    viewCSSPanel: int
+        flag if the GUI panel should be shown (1) or hidden (-1) illustrating the CSS states
+        Default: 0 - if not provided, then the Vizard default settings are used
+    viewCSSCoverage: int
+        flag if the HUD spherical coverage of the CSS states should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
+    viewCSSBoresight: int
+        flag if the HUD boresight axes of the CSS states should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
+    showCSSLabels: int
+        flag if the CSS labels should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
+    showGenericSensorLabels: int
+        flag if the generic sensor labels should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
 
     """
     if not vizFound:
@@ -533,7 +536,8 @@ def setInstrumentGuiSetting(viz, **kwargs):
     vizElement = vizInterface.InstrumentGuiSettings()
 
     unitTestSupport.checkMethodKeyword(
-        ['spacecraftName', 'viewCSSPanel', 'viewCSSCoverage', 'viewCSSBoresight', 'showCSSLabels'],
+        ['spacecraftName', 'viewCSSPanel', 'viewCSSCoverage', 'viewCSSBoresight', 'showCSSLabels',
+         'showGenericSensorLabels'],
         kwargs)
 
     if 'spacecraftName' in kwargs:
@@ -547,31 +551,64 @@ def setInstrumentGuiSetting(viz, **kwargs):
 
     if 'viewCSSPanel' in kwargs:
         setting = kwargs['viewCSSPanel']
-        if not isinstance(setting, bool):
-            print('ERROR: vizSupport: viewCSSPanel must be True or False')
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
         vizElement.viewCSSPanel = setting
+        print(vizElement.viewCSSPanel)
 
     if 'viewCSSCoverage' in kwargs:
         setting = kwargs['viewCSSCoverage']
-        if not isinstance(setting, bool):
-            print('ERROR: vizSupport: viewCSSCoverage must be True or False')
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: viewCSSCoverage must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
         vizElement.viewCSSCoverage = setting
 
     if 'viewCSSBoresight' in kwargs:
         setting = kwargs['viewCSSBoresight']
-        if not isinstance(setting, bool):
-            print('ERROR: vizSupport: viewCSSBoresight must be True or False')
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: viewCSSBoresight must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
         vizElement.viewCSSBoresight = setting
 
     if 'showCSSLabels' in kwargs:
         setting = kwargs['showCSSLabels']
-        if not isinstance(setting, bool):
-            print('ERROR: vizSupport: showCSSLabels must be an integer value')
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: showCSSLabels must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
         vizElement.showCSSLabels = setting
+
+    if 'showGenericSensorLabels' in kwargs:
+        setting = kwargs['showGenericSensorLabels']
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: showGenericSensorLabels must be  -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
+        vizElement.showGenericSensorLabels = setting
 
     instrumentGuiSettingList.append(vizElement)
     del viz.settings.instrumentGuiSettingsList[:]  # clear settings list to replace it with updated list

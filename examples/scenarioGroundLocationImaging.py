@@ -372,6 +372,7 @@ def run(show_plots):
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                               # , saveFile=fileName
                                               )
+    vizSupport.setInstrumentGuiSetting(viz, showGenericSensorLabels=True)
 
     # Add the Boulder target
     vizSupport.addLocation(viz, stationName="Boulder Target"

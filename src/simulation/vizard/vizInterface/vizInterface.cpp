@@ -504,6 +504,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             il->set_viewcsscoverage(this->settings.instrumentGuiSettingsList[idx].viewCSSCoverage);
             il->set_viewcssboresight(this->settings.instrumentGuiSettingsList[idx].viewCSSBoresight);
             il->set_showcsslabels(this->settings.instrumentGuiSettingsList[idx].showCSSLabels);
+            il->set_showgenericsensorlabels(this->settings.instrumentGuiSettingsList[idx].showGenericSensorLabels);
         }
 
 
