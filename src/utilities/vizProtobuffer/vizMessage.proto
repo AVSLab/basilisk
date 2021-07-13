@@ -49,7 +49,7 @@ message VizMessage{
         repeated ReactionWheel reactionWheels = 5;
         repeated Thruster thrusters = 6;
         repeated CoarseSunSensor CSS = 7;
-        repeated StarTracker starTrackers = 8;
+        repeated GenericSensor genericSensors = 8;
         string spacecraftSprite = 9; // Set sprite for this spacecraft only through shape name and optional int RGBA color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
 }
 
@@ -73,7 +73,7 @@ message VizMessage{
     }
 
     message CoarseSunSensor{
-        repeated double position = 2;
+        repeated double position = 2; // [m] position of the CSS in body frame
         double fieldOfView = 3; //[deg] Field of View edge-to-edge
         repeated double normalVector = 4;
         double currentMsmt = 5;
@@ -81,13 +81,16 @@ message VizMessage{
         int32 CSSGroupID = 7;
         double minMsmt = 8;
     }
-  
-    message StarTracker{
-        repeated double position = 2;
-        repeated double rotation = 4;
-        double fieldOfViewHeight = 5;
-        double fieldOfViewWidth = 6;
-        int32 starTrackerGroupID = 7;
+    
+    message GenericSensor{
+        repeated double position = 2; // [m] position of the sensor in body frame
+        repeated double fieldOfView = 3; //[deg] Sensor will be assumed to be circular if Field of View has single entry, rectangular (width x height) if two values are provided
+        repeated double normalVector = 4;  // [] normal vector of the sensor bore sight axis
+        bool isHidden = 5; // true to hide sensor HUD, false to show sensor HUD
+        int32 activityStatus = 6; // 0 for sensor inactive, 1 for sensor active, additional modes can be added and viz will attempt to use corresponding mode colors if they are provided in the color array
+        double range = 7; // [m] (Optional) Value of 0 (protobuffer default) to show HUD at viz default size
+        repeated int32 color = 8; // (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2 will use the color indexed to 1, etc.
+        string label = 9; // (Optional) string to display on sensor label
     }
 
     message CameraConfig{
@@ -150,6 +153,7 @@ message VizMessage{
         int32 viewCSSCoverage = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showCSSLabels = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 viewCSSBoresight = 5;// Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showGenericSensorLabels = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true 
     }
     
     message CustomModel{
@@ -164,7 +168,7 @@ message VizMessage{
     }
 
     message LiveVizSettingsPb{
-        repeated PointLine targetLines = 1;     // list of lines between 2 scenario targets.  This list is redrawn on each update step, so the line properties can change with time.
+        repeated PointLine targetLines = 1; // list of lines between 2 scenario targets.  This list is redrawn on each update step, so the line properties can change with time.
     }
 
     message VizSettingsPb{
