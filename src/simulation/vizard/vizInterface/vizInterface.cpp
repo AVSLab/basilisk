@@ -117,12 +117,6 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
             }
         }
 
-        /* Check StarTracker input message */
-        if (scIt->starTrackerInMsg.isLinked()) {
-            scIt->starTrackerInMsgStatus.dataFresh = false;
-            scIt->starTrackerInMsgStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-        }
-
         /* Check RW input message */
         {
             MsgCurrStatus rwStatus;
@@ -274,19 +268,6 @@ void VizInterface::ReadBSKMessages()
         }
         }
 
-        /* Read incoming ST constellation msg */
-        {
-        if (scIt->starTrackerInMsg.isLinked()){
-            STSensorMsgPayload localSTArray;
-            localSTArray = scIt->starTrackerInMsg();
-            if(scIt->starTrackerInMsg.isWritten() &&
-               scIt->starTrackerInMsg.timeWritten() != scIt->starTrackerInMsgStatus.lastTimeTag){
-                scIt->starTrackerInMsgStatus.lastTimeTag = scIt->starTrackerInMsg.timeWritten();
-                scIt->starTrackerInMsgStatus.dataFresh = true;
-            }
-            scIt->STMessage = localSTArray;
-        }
-        }
     } /* end of scIt loop */
 
     /*! Read incoming camera config msg */
@@ -696,18 +677,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     //cssConfLogInMsgId[idx].dataFresh = false;
                 }
             }
-
-
-            // Write ST output msg
-            //if (starTrackerInMsgID != -1){
-            //vizProtobufferMessage::VizMessage::StarTracker* st = scp->add_startrackers();
-            //st->set_fieldofviewwidth(90);
-            //st->set_fieldofviewheight(90);
-            //for (int i=0; i<4; i++){
-            //    st->add_position(0);
-            //    st->add_rotation(this->STMessage.qInrtl2Case[i]);
-            //}
-            //}
 
         }
     }

@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 
 #include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
@@ -166,10 +165,6 @@ VizSpacecraftData
     std::vector<ReadFunctor<CSSConfigLogMsgPayload>> cssInMsgs; //!< [-] (Optional) Vector of CSS config log messages
     std::vector<MsgCurrStatus> cssConfLogInMsgStatus;           //!< [-] (Private) status of the incoming array of css configuration log messages
     std::vector<CSSConfigLogMsgPayload> cssInMessage;           //!< [-] (Private) CSS message data vector
-
-    ReadFunctor<STSensorMsgPayload> starTrackerInMsg;           //!< [-] (Optional) input message for Star Tracker data
-    MsgCurrStatus starTrackerInMsgStatus;                       //!< [-] (Private) status of the incoming Star Tracker data message
-    STSensorMsgPayload STMessage;                               //!< [-] (Private) ST message data
 
     std::vector<ReadFunctor<THROutputMsgPayload>> thrInMsgs;    //!< [-] (Optional) vector of thruster input messages
     std::vector<MsgCurrStatus> thrMsgStatus;                    //!< [-] (Private) THR msg status vector

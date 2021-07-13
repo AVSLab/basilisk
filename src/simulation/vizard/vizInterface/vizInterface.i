@@ -52,8 +52,6 @@ namespace std {
 struct CameraConfigMsg_C;
 %include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
-%include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
-struct STSensorMsg_C;
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
