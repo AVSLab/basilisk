@@ -52,6 +52,8 @@ struct RWSpeedMsg_C;
 struct AccDataMsg_C;
 %include "architecture/msgPayloadDefC/AccPktDataMsgPayload.h"
 struct AccPktDataMsg_C;
+%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+struct NavAttMsg_C;
 
 %include "architecture/utilities/signalCondition.h"
 struct LowPassFilterData;
