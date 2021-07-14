@@ -86,8 +86,8 @@ message VizMessage{
         repeated double position = 2; // [m] position of the sensor in body frame
         repeated double fieldOfView = 3; //[deg] Sensor will be assumed to be circular if Field of View has single entry, rectangular (width x height) if two values are provided
         repeated double normalVector = 4;  // [] normal vector of the sensor bore sight axis
-        bool isHidden = 5; // true to hide sensor HUD, false to show sensor HUD
-        int32 activityStatus = 6; // 0 for sensor inactive, 1 for sensor active, additional modes can be added and viz will attempt to use corresponding mode colors if they are provided in the color array
+        bool isHidden = 5; // (Optional) true to hide sensor HUD, false to show sensor HUD (default)
+        int32 activityStatus = 6; // (Optional) 0 for sensor inactive, 1 for sensor active, additional modes can be added and viz will attempt to use corresponding mode colors if they are provided in the color array
         double range = 7; // [m] (Optional) Value of 0 (protobuffer default) to show HUD at viz default size
         repeated int32 color = 8; // (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2 will use the color indexed to 1, etc.
         string label = 9; // (Optional) string to display on sensor label
