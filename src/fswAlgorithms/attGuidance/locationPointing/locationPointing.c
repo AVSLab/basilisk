@@ -60,14 +60,7 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: In the locationPointing module no target messages were not connected.");
     }
     else if (GroundStateMsg_C_isLinked(&configData->locationInMsg) && EphemerisMsg_C_isLinked(&configData->celBodyInMsg)) {
-        _bskLog(configData->bskLogger, BSK_WARNING, "Warning: In the locationPointing module both target messages were connected. Defaulting to ground location.");
-        configData->useGroundLocation = true;
-    }
-    else if (GroundStateMsg_C_isLinked(&configData->locationInMsg) ) {
-        configData->useGroundLocation = true;
-    }
-    else if (EphemerisMsg_C_isLinked(&configData->celBodyInMsg)) {
-        configData->useGroundLocation = false;
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: In the locationPointing module both target messages were connected. Defaulting to ground location.");
     }
 
     configData->init = 1;
@@ -121,6 +114,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     double time_diff;                   /*!< module update time */
     double Binv[3][3];                  /*!< BinvMRP for dsigma_RB_R calculations*/
     double dum1;
+    double r_TN_N[3];                   /*!< [m] inertial target location */
 
     // zero output buffer
     attGuidOutMsgBuffer = AttGuidMsg_C_zeroMsgPayload();
@@ -128,20 +122,17 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     // read in the input messages
     scAttInMsgBuffer = NavAttMsg_C_read(&configData->scAttInMsg);
     scTransInMsgBuffer = NavTransMsg_C_read(&configData->scTransInMsg);
-    if (configData->useGroundLocation) {
+    if (GroundStateMsg_C_isLinked(&configData->locationInMsg)) {
         locationInMsgBuffer = GroundStateMsg_C_read(&configData->locationInMsg);
+        v3Copy(locationInMsgBuffer.r_LN_N, r_TN_N);
     }
     else {
         celBodyInMsgBuffer = EphemerisMsg_C_read(&configData->celBodyInMsg);
+        v3Copy(celBodyInMsgBuffer.r_BdyZero_N, r_TN_N);
     }
 
     /* calculate r_LS_N*/
-    if (configData->useGroundLocation) {
-        v3Subtract(locationInMsgBuffer.r_LN_N, scTransInMsgBuffer.r_BN_N, r_LS_N);
-    }
-    else {
-        v3Subtract(celBodyInMsgBuffer.r_BdyZero_N, scTransInMsgBuffer.r_BN_N, r_LS_N);
-    }
+    v3Subtract(r_TN_N, scTransInMsgBuffer.r_BN_N, r_LS_N);
 
     /* principle rotation angle to point pHat at location */
     MRP2C(scAttInMsgBuffer.sigma_BN, dcmBN);

@@ -51,6 +51,8 @@ Version |release|
 - added a new FSW module :ref:`formationBarycenter`. It computes the barycenter's position and velocity of a swarm of satellites. This barycenter
   can be either computed with cartesian coordinates (usual mass-weighted average), or using orbital elements weighted average. Will be useful 
   for spacecraft formations defined around the barycenter of the swarm and not a chief spacecraft.
+- enhanced :ref:`locationPointing` to support the target input msg being either a location message or an
+  ephemeris message
 
 
 Version 2.0.5

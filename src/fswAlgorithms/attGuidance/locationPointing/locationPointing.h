@@ -22,7 +22,6 @@
 #define LOCATIONPOINTING_H
 
 #include <stdint.h>
-#include <stdbool.h>
 #include "cMsgCInterface/NavAttMsg_C.h"
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/GroundStateMsg_C.h"
@@ -43,7 +42,6 @@ typedef struct {
     double time_old;            /*!< prior time value */
     double init;                /*!< moudle initialization counter */
     double eHat180_B[3];        /*!< -- Eigen axis to use if commanded axis is 180 from pHat */
-    bool useGroundLocation;     /*!< -- flag to determine whether to use locationInMsg or celBodyInMsg*/
 
     /* declare module IO interfaces */
     NavAttMsg_C scAttInMsg;                 //!< input msg with inertial spacecraft attitude states
