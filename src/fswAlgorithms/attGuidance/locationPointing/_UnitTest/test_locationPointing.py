@@ -34,15 +34,12 @@ from Basilisk.fswAlgorithms import locationPointing
 from Basilisk.utilities import RigidBodyKinematics
 import numpy as np
 
+
 @pytest.mark.parametrize("accuracy", [1e-12])
-@pytest.mark.parametrize("r_LS_N", [
-     [1., 0., 0.]
-    , [-1, 0, 0]
-    , [0., 1., 0.]
-    , [0, -1, 0.]
-    , [1, 1, 1]
-])
-def test_locationPointing(show_plots, r_LS_N, accuracy):
+@pytest.mark.parametrize("r_LS_N", [[1., 0., 0.], [-1, 0, 0], [0., 1., 0.], [0, -1, 0.], [1, 1, 1]])
+@pytest.mark.parametrize("useGroundLocation", [True, False])
+
+def test_locationPointing(show_plots, r_LS_N, useGroundLocation, accuracy):
     r"""
     **Validation Test Description**
 
@@ -56,17 +53,18 @@ def test_locationPointing(show_plots, r_LS_N, accuracy):
 
     Args:
         r_LS_N (float): position vector of location relative to spacecraft
+        useGroundLocation (bool): choose whether to use ``locationInMsg`` or ``celBodyInMsg``
         accuracy (float): absolute accuracy value used in the validation tests
 
     **Description of Variables Being Tested**
 
     Here discuss what variables and states are being checked. 
     """
-    [testResults, testMessage] = locationPointingTestFunction(show_plots, r_LS_N, accuracy)
+    [testResults, testMessage] = locationPointingTestFunction(show_plots, r_LS_N, useGroundLocation, accuracy)
     assert testResults < 1, testMessage
 
 
-def locationPointingTestFunction(show_plots, r_LS_NIn, accuracy):
+def locationPointingTestFunction(show_plots, r_LS_NIn, useGroundLocation, accuracy):
     """Test method"""
     testFailCount = 0
     testMessages = []
@@ -105,14 +103,22 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, accuracy):
     scAttInMsgData.sigma_BN = sigma_BN
     scAttInMsg = messaging.NavAttMsg().write(scAttInMsgData)
 
-    locationInMsgData = messaging.GroundStateMsgPayload()
-    locationInMsgData.r_LN_N = r_LN_N
-    locationInMsg = messaging.GroundStateMsg().write(locationInMsgData)
+    if useGroundLocation:
+        locationInMsgData = messaging.GroundStateMsgPayload()
+        locationInMsgData.r_LN_N = r_LN_N
+        locationInMsg = messaging.GroundStateMsg().write(locationInMsgData)
+    else:
+        locationInMsgData = messaging.EphemerisMsgPayload()
+        locationInMsgData.r_BdyZero_N = r_LN_N
+        locationInMsg = messaging.EphemerisMsg().write(locationInMsgData)
 
     # subscribe input messages to module
     moduleConfig.scTransInMsg.subscribeTo(scTransInMsg)
     moduleConfig.scAttInMsg.subscribeTo(scAttInMsg)
-    moduleConfig.locationInMsg.subscribeTo(locationInMsg)
+    if useGroundLocation:
+        moduleConfig.locationInMsg.subscribeTo(locationInMsg)
+    else:
+        moduleConfig.celBodyInMsg.subscribeTo(locationInMsg)
 
     # setup output message recorder objects
     attGuidOutMsgRec = moduleConfig.attGuidOutMsg.recorder()
@@ -128,7 +134,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, accuracy):
     while counter < 3:
         scAttInMsgData.sigma_BN = sigma_BN + omega_BN_B * timeStep * counter
         scAttInMsg.write(scAttInMsgData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano(counter*timeStep))
+        unitTestSim.ConfigureStopTime(macros.sec2nano(counter * timeStep))
         unitTestSim.ExecuteSimulation()
         counter += 1
 
@@ -177,7 +183,7 @@ def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, smallAngle, dt):
         sigma_BN = sigma_BNList[counter]
         dcmBN = RigidBodyKinematics.MRP2C(sigma_BN)
         r_LS_B = dcmBN.dot(r_LS_N)
-        phi = math.acos(pHat_B.dot(r_LS_B)/np.linalg.norm(r_LS_B))
+        phi = math.acos(pHat_B.dot(r_LS_B) / np.linalg.norm(r_LS_B))
         if phi < smallAngle:
             sigma_BR = np.array([0., 0., 0.])
         else:
@@ -189,7 +195,7 @@ def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, smallAngle, dt):
             sigma_BR = - math.tan(phi / 4.) * eHat_B
 
         if counter >= 1:
-            dsigma = (sigma_BR - sigma_BR_Out[counter-1]) / dt
+            dsigma = (sigma_BR - sigma_BR_Out[counter - 1]) / dt
             Binv = RigidBodyKinematics.BinvMRP(sigma_BR)
             omega_BR_B = Binv.dot(dsigma) * 4
 
@@ -201,7 +207,6 @@ def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, smallAngle, dt):
 
     return sigma_BR_Out, omega_BR_B_Out
 
+
 if __name__ == "__main__":
-    locationPointingTestFunction(False, [0, 1, 0], 1e-12)
-
-
+    locationPointingTestFunction(False, [0, 1, 0], True, 1e-12)
