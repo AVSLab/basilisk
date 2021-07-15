@@ -495,7 +495,7 @@ void Spacecraft::integrateState(double integrateToThisTime)
                                                  this->hubGravVelocity->getState());
 
     // - non-conservative acceleration of the body frame in the body frame
-    this->nonConservativeAccelpntB_B = (newDcm_NB.transpose()*(this->hubV_N->getState() -
+    this->nonConservativeAccelpntB_B = (newDcm_NB.transpose()*(newV_BN_N -
                                                                this->hubGravVelocity->getState()))/localTimeStep;
 
     // - angular acceleration in the body frame

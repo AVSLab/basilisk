@@ -31,7 +31,7 @@ SpacecraftUnit::SpacecraftUnit()
     this->spacecraftName = "spacecraft";
 
     // - Set values to either zero or default values
-    this->dvAccum_B.setZero();
+    this->dvAccum_CN_B.setZero();
     this->dvAccum_BN_B.setZero();
 
     return;
@@ -96,7 +96,7 @@ void SpacecraftUnit::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
     eigenVector3d2CArray(vLocal_CN_N, stateOut.v_CN_N);
     eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
     eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
-    eigenMatrixXd2CArray(this->dvAccum_B, stateOut.TotalAccumDVBdy);
+    eigenMatrixXd2CArray(this->dvAccum_CN_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->hub.MRPSwitchCount;
     eigenMatrixXd2CArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
     eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
@@ -128,6 +128,8 @@ void SpacecraftUnit::linkInStatesSC(DynParamManager& statesIn)
     this->hubV_N = statesIn.getStateObject(this->hub.nameOfHubVelocity);
     this->hubSigma = statesIn.getStateObject(this->hub.nameOfHubSigma);   /* Need sigmaBN for MRP switching */
     this->hubOmega_BN_B = statesIn.getStateObject(this->hub.nameOfHubOmega);
+    this->hubGravVelocity = statesIn.getStateObject(this->hub.nameOfHubGravVelocity);
+    this->BcGravVelocity = statesIn.getStateObject(this->hub.nameOfBcGravVelocity);
 
     // - Get access to the hubs position and velocity in the property manager
     this->inertialPositionProperty = statesIn.getPropertyReference(this->gravField.inertialPositionPropName);
@@ -1022,6 +1024,7 @@ void SpacecraftSystem::findPriorStateInformation(SpacecraftUnit &spacecraft)
     // - Finally find v_CN_N
     Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
     spacecraft.oldV_CN_N = spacecraft.oldV_BN_N + oldDcm_NB*(*spacecraft.cDot_B);
+    spacecraft.hub.matchGravitytoVelocityState(spacecraft.oldV_CN_N);
 
     return;
 }
@@ -1079,27 +1082,17 @@ void SpacecraftSystem::calculateDeltaVandAcceleration(SpacecraftUnit &spacecraft
     Eigen::Matrix3d newDcm_NB = newSigma_BN.toRotationMatrix();  // - dcm_NB after integration
     newV_CN_N = newV_BN_N + newDcm_NB*(*spacecraft.cDot_B);
 
-    // - Find change in velocity
-    Eigen::Vector3d dV_N; // dV of the center of mass in the intertial frame
-    Eigen::Vector3d dV_B_N; //dV of the body frame in the inertial frame
-    Eigen::Vector3d dV_B_B; //dV of the body frame in the body frame
-    dV_N = newV_CN_N - spacecraft.oldV_CN_N;
-    dV_B_N = newV_BN_N - spacecraft.oldV_BN_N;
-    // - Subtract out gravity
-    Eigen::Vector3d gLocal_N;
-    gLocal_N = *spacecraft.g_N;
-    dV_N -= gLocal_N*localTimeStep;
-    dV_B_N -= gLocal_N*localTimeStep;
-    dV_B_B = newDcm_NB.transpose()*dV_B_N;
-
     // - Find accumulated DV of the center of mass in the body frame
-    spacecraft.dvAccum_B += newDcm_NB.transpose()*dV_N;
+    spacecraft.dvAccum_CN_B += newDcm_NB.transpose()*(newV_CN_N -
+                                                    spacecraft.BcGravVelocity->getState());
 
     // - Find the accumulated DV of the body frame in the body frame
-    spacecraft.dvAccum_BN_B += dV_B_B;
+    spacecraft.dvAccum_BN_B += newDcm_NB.transpose()*(newV_BN_N -
+                                                    spacecraft.hubGravVelocity->getState());
 
     // - non-conservative acceleration of the body frame in the body frame
-    spacecraft.nonConservativeAccelpntB_B = dV_B_B/localTimeStep;
+    spacecraft.nonConservativeAccelpntB_B = (newDcm_NB.transpose()*(newV_BN_N -
+                                                                   spacecraft.hubGravVelocity->getState()))/localTimeStep;
 
     // - angular acceleration in the body frame
     Eigen::Vector3d newOmega_BN_B;

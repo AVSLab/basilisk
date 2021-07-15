@@ -86,7 +86,7 @@ public:
     Eigen::Vector3d oldV_BN_N;           //!< class variable
     Eigen::Vector3d oldOmega_BN_B;       //!< class variable
 
-    Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v of center of mass relative to inertial frame in body frame coordinates
+    Eigen::Vector3d dvAccum_CN_B;        //!< [m/s] Accumulated delta-v of center of mass relative to inertial frame in body frame coordinates
     Eigen::Vector3d dvAccum_BN_B;        //!< [m/s] accumulated delta-v of body frame relative to inertial frame in body frame coordinates
     Eigen::Vector3d nonConservativeAccelpntB_B;//!< [m/s/s] Current spacecraft body acceleration in the B frame
     Eigen::Vector3d omegaDot_BN_B;       //!< [rad/s/s] angular acceleration of body wrt to N in body frame
@@ -135,6 +135,8 @@ private:
     StateData *hubV_N;                   //!< -- State data access to inertial velocity for the hub
     StateData *hubOmega_BN_B;            //!< -- State data access to the attitude rate of the hub
     StateData *hubSigma;                 //!< -- State data access to sigmaBN for the hub
+    StateData *hubGravVelocity;          //!< -- State data access to the gravity-accumulated DV on the Body frame
+    StateData *BcGravVelocity;           //!< -- State data access to the gravity-accumulated DV on point Bc
 };
 
 
