@@ -56,8 +56,18 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
     if (!NavTransMsg_C_isLinked(&configData->scTransInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.scTransInMsg was not connected.");
     }
-    if (!GroundStateMsg_C_isLinked(&configData->locationInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.locationInMsg was not connected.");
+    if (!GroundStateMsg_C_isLinked(&configData->locationInMsg) && !EphemerisMsg_C_isLinked(&configData->celBodyInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: In the locationPointing module no target messages were not connected.");
+    }
+    else if (GroundStateMsg_C_isLinked(&configData->locationInMsg) && EphemerisMsg_C_isLinked(&configData->celBodyInMsg)) {
+        _bskLog(configData->bskLogger, BSK_WARNING, "Warning: In the locationPointing module both target messages were connected. Defaulting to ground location.");
+        configData->useGroundLocation = true;
+    }
+    else if (GroundStateMsg_C_isLinked(&configData->locationInMsg) ) {
+        configData->useGroundLocation = true;
+    }
+    else if (EphemerisMsg_C_isLinked(&configData->celBodyInMsg)) {
+        configData->useGroundLocation = false;
     }
 
     configData->init = 1;
@@ -96,7 +106,8 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     /* Local copies*/
     NavAttMsgPayload scAttInMsgBuffer;  //!< local copy of input message buffer
     NavTransMsgPayload scTransInMsgBuffer;  //!< local copy of input message buffer
-    GroundStateMsgPayload locationInMsgBuffer;  //!< local copy of input message buffer
+    GroundStateMsgPayload locationInMsgBuffer;  //!< local copy of location input message buffer
+    EphemerisMsgPayload celBodyInMsgBuffer; //!< local copy of celestial body input message buffer
     AttGuidMsgPayload attGuidOutMsgBuffer;  //!< local copy of output message buffer
 
     double r_LS_N[3];                   /*!< Position vector of location w.r.t spacecraft CoM in inertial frame */
@@ -117,10 +128,20 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     // read in the input messages
     scAttInMsgBuffer = NavAttMsg_C_read(&configData->scAttInMsg);
     scTransInMsgBuffer = NavTransMsg_C_read(&configData->scTransInMsg);
-    locationInMsgBuffer = GroundStateMsg_C_read(&configData->locationInMsg);
+    if (configData->useGroundLocation) {
+        locationInMsgBuffer = GroundStateMsg_C_read(&configData->locationInMsg);
+    }
+    else {
+        celBodyInMsgBuffer = EphemerisMsg_C_read(&configData->celBodyInMsg);
+    }
 
     /* calculate r_LS_N*/
-    v3Subtract(locationInMsgBuffer.r_LN_N, scTransInMsgBuffer.r_BN_N, r_LS_N);
+    if (configData->useGroundLocation) {
+        v3Subtract(locationInMsgBuffer.r_LN_N, scTransInMsgBuffer.r_BN_N, r_LS_N);
+    }
+    else {
+        v3Subtract(celBodyInMsgBuffer.r_BdyZero_N, scTransInMsgBuffer.r_BN_N, r_LS_N);
+    }
 
     /* principle rotation angle to point pHat at location */
     MRP2C(scAttInMsgBuffer.sigma_BN, dcmBN);
