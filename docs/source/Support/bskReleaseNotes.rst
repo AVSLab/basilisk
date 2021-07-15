@@ -53,6 +53,8 @@ Version |release|
   for spacecraft formations defined around the barycenter of the swarm and not a chief spacecraft.
 - enhanced :ref:`locationPointing` to support the target input msg being either a location message or an
   ephemeris message
+- updated install notes to ensure Linux python3 developer libraries are installed, and to ensure that ``wheel``
+  package is installed along with ``conan``
 
 
 Version 2.0.5

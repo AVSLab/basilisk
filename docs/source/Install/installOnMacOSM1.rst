@@ -46,7 +46,7 @@ Install Packages
 ~~~~~~~~~~~~~~~~
 The first step is still to install ``conan``.  However, in this setup you also need to install the ``wheel`` package using::
 
-    (.venv) $ pip3 install conan wheel
+    (.venv) $ pip3 install wheel conan
 
 After this you can run the regular ``python3 conanfile.py`` command as discussed in :ref:`installMacOS`.  This will prompt you to install the remaining required packages for Basilisk.
 

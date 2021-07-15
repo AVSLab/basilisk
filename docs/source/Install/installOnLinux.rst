@@ -46,6 +46,9 @@ Dependencies
        # Package development process library to facilitate packaging Python packages
        $ apt-get install python3-setuptools
 
+       # ensure that the python developer libraries are installed
+       $ apt-get install python3-dev
+
        # Tkinter
        $ apt-get install python3-tk
 
@@ -96,9 +99,9 @@ Dependencies
 
         (venv) $ deactivate
 
-#. Install Conan using pip, an example is below::
+#. Ensure ``wheel`` is installed and install ``conan`` using pip, an example is below::
 
-       (venv) $ pip3 install conan
+       (venv) $ pip3 install wheel conan
 
    The conan repositories information is automatically setup by ``conanfile.py``.
 

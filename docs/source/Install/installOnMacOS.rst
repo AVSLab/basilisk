@@ -145,10 +145,10 @@ steps work regardless if done within a virtual environment or not.
 
 Installing required python support packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--  Basilisk uses conan for package managing. In order to do so, users
-   must install conan::
+-  Basilisk uses ``conan`` for package managing. In order to do so, users
+   must ensure ``wheel`` is installed and install ``conan``::
 
-       (.venv) $ pip3 install conan
+       (.venv) $ pip3 install wheel conan
 
    The conan repositories information is automatically setup by ``conanfile.py``.
 
