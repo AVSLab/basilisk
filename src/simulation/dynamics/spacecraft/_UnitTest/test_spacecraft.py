@@ -1055,17 +1055,21 @@ def test_scAccumDV():
     accuracy = 1e-10
     truth_dataAccumDV_CN_B = [0.0, 0.0, 0.0]
     v_r = numpy.cross(numpy.array(scObject.hub.omega_BN_BInit).T, -numpy.array(scObject.hub.r_BcB_B).T)[0]
+    truth_dataAccumDV_BN_B = numpy.zeros(3)
     for i in range(len(dataLog.times())-1):
-        if not unitTestSupport.isArrayEqualRelative(dataAccumDV_CN_B[i+1],truth_dataAccumDV_CN_B,3,accuracy):
+        if not unitTestSupport.isArrayEqual(dataAccumDV_CN_B[i+1],truth_dataAccumDV_CN_B,3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Point C Accumulated DV test failed pos unit test")
 
-        truth_dataAccumDV_BN_B = numpy.matmul(RigidBodyKinematics.MRP2C(dataLog.sigma_BN[i+1]),
+        truth_dataAccumDV_BN_B += numpy.matmul(RigidBodyKinematics.MRP2C(dataLog.sigma_BN[i+1]),
                                               numpy.matmul(RigidBodyKinematics.MRP2C(dataLog.sigma_BN[i+1]).T,v_r) -
                                               numpy.matmul(RigidBodyKinematics.MRP2C(dataLog.sigma_BN[i]).T,v_r))
-        if not unitTestSupport.isArrayEqualRelative(dataAccumDV_BN_B[i+1],truth_dataAccumDV_BN_B,3,accuracy):
+        if not unitTestSupport.isArrayEqual(dataAccumDV_BN_B[i+1],truth_dataAccumDV_BN_B,3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Point B Accumulated DV test failed pos unit test")
+
+    if testFailCount == 0:
+        print("PASSED: Spacecraft Accumulated DV tests with offset CoM")
 
     return [testFailCount, ''.join(testMessages)]
 
