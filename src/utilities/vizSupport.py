@@ -49,6 +49,7 @@ def toRGBA255(color):
         # convert color name to 4D array of values with 0-255
         if is_color_like(color):
             answer = np.array(colors.to_rgba(color)) * 255
+            answer = [round(a) for a in answer]
         else:
             print("toRGBA255() was provided unknown color name " + color)
             exit(1)
@@ -948,6 +949,11 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         Each list entry is a list of RGBA array values for each cluster set.
     cssList:
         list of lists of :ref:`CoarseSunSensor` objects.  The outer list length must match ``scList``.
+    genericSensorList:
+        list of lists of :ref:`GenericSensor` structures.  The outer list length must match ``scList``.
+    genericSensorCmdInMsgs:
+        list of lists of :ref:`DeviceCmdMsgPayload` sensor state messages.  The outer list length must
+        match ``scList``.  If the spacecraft has no sensor command msg, then use ``None``.
     opNavMode: bool
         flag if opNaveMode should be used
     liveStream: bool
@@ -970,7 +976,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList'],
+        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList',
+         'genericSensorList', 'genericSensorCmdInMsgs'],
         kwargs)
 
     # setup the Vizard interface module
@@ -1017,7 +1024,28 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if not isinstance(cssScList, list):
             cssScList = [[cssScList]]
         if len(cssScList) != len(scList):
-            print('ERROR: vizSupport: cssList should have the same length as the number of spacecraft and contain lists of CSSs')
+            print('ERROR: vizSupport: cssList should have the same length as the number '
+                  'of spacecraft and contain lists of CSSs')
+            exit(1)
+
+    gsScList = False
+    if 'genericSensorList' in kwargs:
+        gsScList = kwargs['genericSensorList']
+        if not isinstance(gsScList, list):
+            gsScList = [[gsScList]]
+        if len(gsScList) != len(scList):
+            print('ERROR: vizSupport: genericSensorList should have the same length as the '
+                  'number of spacecraft and contain lists of generic sensors')
+            exit(1)
+
+    gsMsgScList = False
+    if 'genericSensorCmdInMsgs' in kwargs:
+        gsMsgScList = kwargs['genericSensorCmdInMsgs']
+        if not isinstance(gsMsgScList, list):
+            gsMsgScList = [[gsMsgScList]]
+        if len(gsMsgScList) != len(scList):
+            print('ERROR: vizSupport: genericSensorCmdInMsgs should have the same length as the '
+                  'number of spacecraft')
             exit(1)
 
     # loop over all spacecraft to associated states and msg information
@@ -1084,6 +1112,26 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 for css in cssScList[c]:
                     cssDeviceList.append(css.cssConfigLogOutMsg.addSubscriber())
                 scData.cssInMsgs = messaging.CSSConfigLogInMsgsVector(cssDeviceList)
+
+        # process generic sensor information
+        if gsScList:
+            gsList = []
+            if gsScList[c] is not None:  # generic sensor(s) have been added to this spacecraft
+                for gs in gsScList[c]:
+                    gsList.append(gs)
+                scData.genericSensorList = vizInterface.GenericSensorVector(gsList)
+        if gsMsgScList:
+            gsMsgList = []
+            if gsMsgScList[c] is not None:
+                for gsMsg in gsMsgScList[c]:
+                    if gsMsg is not None:
+                        blankCmdInMsg = messaging.DeviceCmdMsgReader()
+                        blankCmdInMsg.subscribeTo(gsMsg)
+                        gsMsgList.append(blankCmdInMsg)
+                    else:
+                        blankCmdMsg = messaging.DeviceCmdMsg()
+                        gsMsgList.append(blankCmdMsg.addSubscriber())
+                scData.genericSensorCmdInMsgs = messaging.DeviceCmdInMsgsVector(gsMsgList)
 
         vizMessenger.scData.push_back(scData)
         c += 1
