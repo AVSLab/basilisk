@@ -950,7 +950,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     cssList:
         list of lists of :ref:`CoarseSunSensor` objects.  The outer list length must match ``scList``.
     genericSensorList:
-        list of lists of :ref:`GenericSensor` structures.  The outer list length must match ``scList``.
+        list of lists of ``GenericSensor`` structures.  The outer list length must match ``scList``.
     genericSensorCmdInMsgs:
         list of lists of :ref:`DeviceCmdMsgPayload` sensor state messages.  The outer list length must
         match ``scList``.  If the spacecraft has no sensor command msg, then use ``None``.

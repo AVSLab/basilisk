@@ -104,6 +104,7 @@ from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
+from Basilisk.simulation import vizInterface
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -369,8 +370,19 @@ def run(show_plots):
     mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    genericSensor = vizInterface.GenericSensor()
+    genericSensor.r_SB_B = [1., 1.0, 1.0]
+    genericSensor.fieldOfView = [20.0 * macros.D2R, -1]
+    genericSensor.normalVector = [0., 0., 1.]
+    genericSensor.isHidden = 0
+    genericSensor.range = 10
+    genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("red"))
+    genericSensor.label = "genSen1"
+
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                               # , saveFile=fileName
+                                              , genericSensorList=genericSensor
+                                              , genericSensorCmdInMsgs=simpleInsControlConfig.deviceCmdOutMsg
                                               )
     vizSupport.setInstrumentGuiSetting(viz, showGenericSensorLabels=True)
 
