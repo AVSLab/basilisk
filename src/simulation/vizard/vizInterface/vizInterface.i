@@ -43,6 +43,7 @@ namespace std {
     %template(VizSCVector) vector<VizSpacecraftData>;
     %template(ThrClusterVector) vector<ThrClusterMap>;
     %template(GravBodyInfoVector) vector<GravBodyInfo>;
+    %template(GenericSensorVector) vector<GenericSensor>;
 }
 
 %include "vizInterface.h"

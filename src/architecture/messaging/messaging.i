@@ -229,6 +229,7 @@ typedef struct messageType;
 %template(THROutputInMsgsVector) std::vector<ReadFunctor<THROutputMsgPayload>>;
 %template(CSSConfigLogInMsgsVector) std::vector<ReadFunctor<CSSConfigLogMsgPayload>>;
 %template(VolgateInMsgsVector) std::vector<ReadFunctor<VoltMsgPayload>>;
+%template(DeviceCmdInMsgsVector) std::vector<ReadFunctor<DeviceCmdMsgPayload>>;
 
 
 %include "messaging.h"
