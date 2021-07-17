@@ -371,8 +371,8 @@ def run(show_plots):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     genericSensor = vizInterface.GenericSensor()
-    genericSensor.r_SB_B = [1., 1.0, 1.0]
-    genericSensor.fieldOfView = [20.0 * macros.D2R, -1]
+    genericSensor.r_SB_B = [0., 1., 1.]
+    genericSensor.fieldOfView.push_back(20.0 * macros.D2R)  # single value means a conic sensor
     genericSensor.normalVector = [0., 0., 1.]
     genericSensor.isHidden = 0
     genericSensor.range = 10

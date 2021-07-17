@@ -156,7 +156,7 @@ GenericSensor
 //@endcond
 {
     double r_SB_B[3];                   //!< [m] Position of sensor relative to body frame, in body frame components
-    double fieldOfView[2] = {-1.0, -1.0}; //!< [rad] edgle-to-edge field of view, single positive value means a conical sensor, 2 positive values are for a rectangular sensor
+    std::vector<double> fieldOfView;    //!< [rad] edgle-to-edge field of view, single positive value means a conical sensor, 2 positive values are for a rectangular sensor
     double normalVector[3];             //!< [] normal vector of the sensor bore sight axis
     int isHidden = 0;                   //!< [] (optional) true to hide sensor HUD, false to show sensor HUD (default)
     double range = 0;                   //!< [m] (optional) range of the sensor, use 0 (protobuffer default) to use viz default

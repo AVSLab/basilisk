@@ -724,7 +724,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     gs->add_position(scIt->genericSensorList[idx].r_SB_B[j]);
                     gs->add_normalvector(scIt->genericSensorList[idx].normalVector[j]);
                 }
-                for (int j=0; j<2; j++) {
+                for (int j=0; j<scIt->genericSensorList[idx].fieldOfView.size(); j++) {
                     gs->add_fieldofview(scIt->genericSensorList[idx].fieldOfView[j]*R2D);
                 }
                 gs->set_ishidden(scIt->genericSensorList[idx].isHidden);

@@ -797,7 +797,7 @@ The full list of required and optional generic sensor parmeters are provided in 
       - Yes
       - sensor view axis
     * - ``fieldOfView``
-      - int[2]
+      - vector<float>
       - rad
       - Yes
       - edge-to-edge field of view of cone (single positive float) or rectangle (two positive floats)
@@ -826,12 +826,16 @@ Thus, to setup a sensor that uses red to display the location, orientation and s
 
     genericSensor = vizInterface.GenericSensor()
     genericSensor.r_SB_B = [1., 1.0, 1.0]
-    genericSensor.fieldOfView = [20.0 * macros.D2R, -1]
+    genericSensor.fieldOfView.push_back(20.0 * macros.D2R)
+    genericSensor.fieldOfView.push_back(25.0 * macros.D2R)
     genericSensor.normalVector = [0., 0., 1.]
     genericSensor.isHidden = 0
     genericSensor.range = 10
     genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("red"))
     genericSensor.label = "genSen1"
+
+Note that here a rectangular 20x25 degree field of view is specified.  To add a conical 20 degree field of view,
+then a single angle should be provided.
 
 Multiple generic sensors can be created for each spacecraft, and multiple spacecraft are supported.  Using
 the ``vizSupport.py`` file, the sensors are sent to :ref:`vizInterface` using they keyword ``genericSensorList``::
@@ -872,3 +876,5 @@ message can have several positive command states.  These distinct activity state
 For example, to use ``red`` for state 1, ``green`` for state 2, you could use::
 
     genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("green"))
+
+See :ref:`scenarioGroundLocation` for an example of using the generic sensor visualization.
