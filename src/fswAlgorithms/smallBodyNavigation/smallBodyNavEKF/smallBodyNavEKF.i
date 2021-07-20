@@ -27,6 +27,7 @@
 %}
 %include "std_string.i"
 %include "swig_conly_data.i"
+%include "swig_eigen.i"
 
 %include "sys_model.h"
 %include "smallBodyNavEKF.h"
@@ -37,10 +38,11 @@ struct NavTransMsg_C;
 struct NavAttMsg_C;
 %include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
-%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
-struct RWSpeedMsg_C;
 %include "architecture/msgPayloadDefC/SmallBodyNavMsgPayload.h"
 struct SmallBodyNavMsg_C;
+%include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+struct RWConfigLogMsg_C;
+%include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 
 %pythoncode %{
 import sys
