@@ -159,7 +159,7 @@ def plot_pos_error(time, r_err, P):
     plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
 
     ax[0].plot(time, r_err[:, 0], label='error')
-    ax[0].plot(time, 2*np.sqrt(P[:, 0, 0]), 'k--', label='$2\sigma$')
+    ax[0].plot(time, 2*np.sqrt(P[:, 0, 0]), 'k--', label=r'$2\sigma$')
     ax[0].plot(time, -2*np.sqrt(P[:, 0, 0]), 'k--')
 
     ax[1].plot(time, r_err[:, 1])
@@ -191,7 +191,7 @@ def plot_vel_error(time, v_err, P):
     plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
 
     ax[0].plot(time, v_err[:, 0], label='error')
-    ax[0].plot(time, 2*np.sqrt(P[:, 3, 3]), 'k--', label='$2\sigma$')
+    ax[0].plot(time, 2*np.sqrt(P[:, 3, 3]), 'k--', label=r'$2\sigma$')
     ax[0].plot(time, -2*np.sqrt(P[:, 3, 3]), 'k--')
 
     ax[1].plot(time, v_err[:, 1])
@@ -234,9 +234,9 @@ def plot_sc_att(time, sigma_BN_truth, sigma_BN_est, sigma_BN_meas):
 
     plt.xlabel('Time [sec]')
 
-    ax[0].set_ylabel('$\sigma_{BN_1}$')
-    ax[1].set_ylabel('$\sigma_{BN_2}$')
-    ax[2].set_ylabel('$\sigma_{BN_3}$')
+    ax[0].set_ylabel(r'$\sigma_{BN_1}$')
+    ax[1].set_ylabel(r'$\sigma_{BN_2}$')
+    ax[2].set_ylabel(r'$\sigma_{BN_3}$')
 
     ax[0].legend()
 
@@ -263,9 +263,9 @@ def plot_sc_rate(time, omega_BN_B_truth, omega_BN_B_est, omega_BN_B_meas):
 
     plt.xlabel('Time [sec]')
 
-    ax[0].set_ylabel('${}^B\omega_{BN_{1}}$')
-    ax[1].set_ylabel('${}^B\omega_{BN_{2}}$')
-    ax[2].set_ylabel('${}^B\omega_{BN_{3}}$')
+    ax[0].set_ylabel(r'${}^B\omega_{BN_{1}}$')
+    ax[1].set_ylabel(r'${}^B\omega_{BN_{2}}$')
+    ax[2].set_ylabel(r'${}^B\omega_{BN_{3}}$')
 
     ax[0].legend()
 
@@ -292,9 +292,9 @@ def plot_ast_att(time, sigma_AN_truth, sigma_AN_est, sigma_AN_meas):
 
     plt.xlabel('Time [sec]')
 
-    ax[0].set_ylabel('$\sigma_{AN_{1}}$')
-    ax[1].set_ylabel('$\sigma_{AN_{2}}$')
-    ax[2].set_ylabel('$\sigma_{AN_{3}}$')
+    ax[0].set_ylabel(r'$\sigma_{AN_{1}}$')
+    ax[1].set_ylabel(r'$\sigma_{AN_{2}}$')
+    ax[2].set_ylabel(r'$\sigma_{AN_{3}}$')
 
     ax[0].legend()
 
@@ -319,9 +319,9 @@ def plot_ast_rate(time, omega_AN_A_truth, omega_AN_A_est, omega_AN_A_meas):
     ax[1].plot(time, omega_AN_A_est[:, 1])
     ax[2].plot(time, omega_AN_A_est[:, 2])
 
-    ax[0].set_ylabel('${}^A\omega_{AN_{1}}$')
-    ax[1].set_ylabel('${}^A\omega_{AN_{2}}$')
-    ax[2].set_ylabel('${}^A\omega_{AN_{3}}$')
+    ax[0].set_ylabel(r'${}^A\omega_{AN_{1}}$')
+    ax[1].set_ylabel(r'${}^A\omega_{AN_{2}}$')
+    ax[2].set_ylabel(r'${}^A\omega_{AN_{3}}$')
 
     plt.xlabel('Time [sec]')
 
@@ -727,5 +727,5 @@ def run(show_plots):
 #
 if __name__ == "__main__":
     run(
-        True  # show_plots
+        False  # show_plots
     )

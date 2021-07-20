@@ -55,6 +55,7 @@ Version |release|
   ephemeris message
 - updated install notes to ensure Linux python3 developer libraries are installed, and to ensure that ``wheel``
   package is installed along with ``conan``
+- created :ref:`smallBodyNavEKF` to simulate autonomous navigation in proximity of a small body
 
 
 Version 2.0.5
