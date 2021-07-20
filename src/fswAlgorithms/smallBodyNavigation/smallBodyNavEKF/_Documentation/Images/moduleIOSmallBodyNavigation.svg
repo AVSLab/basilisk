@@ -14,7 +14,7 @@
     </marker>
   </defs>
   <metadata> Produced by OmniGraffle 7.11.3 
-    <dc:date>2021-07-19 16:51:57 +0000</dc:date>
+    <dc:date>2021-07-20 16:23:27 +0000</dc:date>
   </metadata>
   <g id="Canvas_1" stroke-dasharray="none" fill-opacity="1" stroke="none" stroke-opacity="1" fill="none">
     <title>Canvas 1</title>
@@ -31,7 +31,7 @@
         <rect x="575.5" y="169" width="185.08202" height="71" fill="#c0ffc0"/>
         <rect x="575.5" y="169" width="185.08202" height="71" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(580.5 190.164)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="27.415008" y="11">smallBodyNavOutMsg</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="19.975008" y="11">smallBodyNavOutMsg(C)</tspan>
           <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="14.647008" y="25.336">SmallBodyNavMsgPayload</tspan>
         </text>
       </g>
@@ -39,7 +39,7 @@
         <rect x="575.5" y="268" width="185.08202" height="71" fill="#c0ffc0"/>
         <rect x="575.5" y="268" width="185.08202" height="71" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(580.5 289.164)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="42.08501" y="11">transNavOutMsg</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="34.64501" y="11">transNavOutMsg(C)</tspan>
           <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="29.203008" y="25.336">NavTransMsgPayload</tspan>
         </text>
       </g>
@@ -47,7 +47,7 @@
         <rect x="575.5" y="367" width="185.08202" height="71" fill="#c0ffc0"/>
         <rect x="575.5" y="367" width="185.08202" height="71" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(580.5 388.164)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="48.52901" y="11">attNavOutMsg</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="41.08901" y="11">attNavOutMsg(C)</tspan>
           <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="35.98301" y="25.336">NavAttMsgPayload</tspan>
         </text>
       </g>
@@ -55,8 +55,8 @@
         <rect x="575.5" y="466" width="185.08202" height="71" fill="#c0ffc0"/>
         <rect x="575.5" y="466" width="185.08202" height="71" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(580.5 487.164)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="25.627008" y="11">asteroidEphemOutMsg</tspan>
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="22.093008" y="25.336">SpicePlanetMsgPayload</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="18.187008" y="11">asteroidEphemOutMsg(C)</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="25.753008" y="25.336">EphemerisMsgPayload</tspan>
         </text>
       </g>
       <g id="Line_14">

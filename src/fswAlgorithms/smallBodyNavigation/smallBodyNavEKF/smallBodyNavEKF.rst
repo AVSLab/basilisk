@@ -50,15 +50,27 @@ provides information on what this message is used for.
     * - navTransOutMsg
       - :ref:`NavTransMsgPayload`
       - Translational nav output message
+    * - navTransOutMsgC
+      - :ref:`NavTransMsgPayload`
+      - C-wrapped translational nav output message
     * - navAttOutMsg
       - :ref:`NavAttMsgPayload`
       - Attitude nav output message
+    * - navAttOutMsgC
+      - :ref:`NavAttMsgPayload`
+      - C-wrapped attitude nav output message
     * - smallBodyNavOutMsg
       - :ref:`SmallBodyNavMsgPayload`
       - Small body nav output msg - states and covariances
+    * - smallBodyNavOutMsgC
+      - :ref:`SmallBodyNavMsgPayload`
+      - C-wrapped small body nav output msg - states and covariances
     * - asteroidEphemerisOutMsg
       - :ref:`EphemerisMsgPayload`
       - Small body ephemeris output message
+    * - asteroidEphemerisOutMsgC
+      - :ref:`EphemerisMsgPayload`
+      - C-wrapped small body ephemeris output message
 
 Detailed Module Description
 ---------------------------

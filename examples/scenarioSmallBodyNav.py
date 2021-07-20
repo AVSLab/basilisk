@@ -31,9 +31,37 @@ as well as navigation output messages - :ref:`navTransMsgPayload`, :ref:`navAttM
 Furthermore, an :ref:`mrpFeedback` module is also created to demonstrate using the filter output as an input into an attitude
 control algorithm.
 
-NOTE: This module is only meant to provide a somewhat representative autonomous small body proximity operations navigation solution
-for attitude control modules or POMDP solvers. Therefore, realistic measurement modules do not exist to support this module, and
-not every source of uncertainty in the problem is an estimated parameter.
+.. note:: This module is only meant to provide a somewhat representative autonomous small body proximity operations navigation solution for attitude control modules or POMDP solvers. Therefore, realistic measurement modules do not exist to support this module, and not every source of uncertainty in the problem is an estimated parameter.
+
+The relative position estimate and the estimation error and covariance may be found in the plots below.
+
+.. image:: /_images/Scenarios/scenarioSmallBodyNav1.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioSmallBodyNav3.svg
+   :align: center
+
+Likewise, the relative velocity estimate and the estimation error and covariance may be found in the plots below.
+
+.. image:: /_images/Scenarios/scenarioSmallBodyNav2.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioSmallBodyNav4.svg
+   :align: center
+
+In the next four plots, the attitude and rate estimates of both the spacecraft and small body with respect to the inertial frame are displayed.
+
+.. image:: /_images/Scenarios/scenarioSmallBodyNav5.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioSmallBodyNav6.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioSmallBodyNav7.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioSmallBodyNav8.svg
+   :align: center
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
@@ -110,9 +138,9 @@ def plot_position(time, r_BO_O_truth, r_BO_O_est, r_BO_O_meas):
     plt.xlabel('Time [sec]')
     plt.title('Relative Spacecraft Position')
 
-    ax[0].set_ylabel('${}^Or_{BO_1}$')
-    ax[1].set_ylabel('${}^Or_{BO_2}}$')
-    ax[2].set_ylabel('${}^Or_{BO_3}$')
+    ax[0].set_ylabel('${}^Or_{BO_1}$ [m]')
+    ax[1].set_ylabel('${}^Or_{BO_2}}$ [m]')
+    ax[2].set_ylabel('${}^Or_{BO_3}$ [m]')
 
     ax[0].legend()
 
@@ -141,9 +169,9 @@ def plot_velocity(time, v_BO_O_truth, v_BO_O_est, v_BO_O_meas):
     plt.xlabel('Time [sec]')
     plt.title('Relative Spacecraft Velocity')
 
-    ax[0].set_ylabel('${}^Ov_{BO_1}$')
-    ax[1].set_ylabel('${}^Ov_{BO_2}}$')
-    ax[2].set_ylabel('${}^Ov_{BO_3}$')
+    ax[0].set_ylabel('${}^Ov_{BO_1}$ [m/s]')
+    ax[1].set_ylabel('${}^Ov_{BO_2}}$ [m/s]')
+    ax[2].set_ylabel('${}^Ov_{BO_3}$ [m/s]')
 
     ax[0].legend()
 
@@ -173,9 +201,9 @@ def plot_pos_error(time, r_err, P):
     plt.xlabel('Time [sec]')
     plt.title('Position Error and Covariance')
 
-    ax[0].set_ylabel('${}^Or_{BO_1}$')
-    ax[1].set_ylabel('${}^Or_{BO_2}}$')
-    ax[2].set_ylabel('${}^Or_{BO_3}$')
+    ax[0].set_ylabel('${}^Or_{BO_1}$ [m]')
+    ax[1].set_ylabel('${}^Or_{BO_2}}$ [m]')
+    ax[2].set_ylabel('${}^Or_{BO_3}$ [m]')
 
     ax[0].legend()
 
@@ -205,9 +233,9 @@ def plot_vel_error(time, v_err, P):
     plt.xlabel('Time [sec]')
     plt.title('Velocity Error and Covariance')
 
-    ax[0].set_ylabel('${}^Ov_{BO_1}$')
-    ax[1].set_ylabel('${}^Ov_{BO_2}}$')
-    ax[2].set_ylabel('${}^Ov_{BO_3}$')
+    ax[0].set_ylabel('${}^Ov_{BO_1}$ [m/s]')
+    ax[1].set_ylabel('${}^Ov_{BO_2}}$ [m/s]')
+    ax[2].set_ylabel('${}^Ov_{BO_3}$ [m/s]')
 
     ax[0].legend()
 
@@ -234,9 +262,9 @@ def plot_sc_att(time, sigma_BN_truth, sigma_BN_est, sigma_BN_meas):
 
     plt.xlabel('Time [sec]')
 
-    ax[0].set_ylabel(r'$\sigma_{BN_1}$')
-    ax[1].set_ylabel(r'$\sigma_{BN_2}$')
-    ax[2].set_ylabel(r'$\sigma_{BN_3}$')
+    ax[0].set_ylabel(r'$\sigma_{BN_1}$ [rad]')
+    ax[1].set_ylabel(r'$\sigma_{BN_2}$ [rad]')
+    ax[2].set_ylabel(r'$\sigma_{BN_3}$ [rad]')
 
     ax[0].legend()
 
@@ -263,9 +291,9 @@ def plot_sc_rate(time, omega_BN_B_truth, omega_BN_B_est, omega_BN_B_meas):
 
     plt.xlabel('Time [sec]')
 
-    ax[0].set_ylabel(r'${}^B\omega_{BN_{1}}$')
-    ax[1].set_ylabel(r'${}^B\omega_{BN_{2}}$')
-    ax[2].set_ylabel(r'${}^B\omega_{BN_{3}}$')
+    ax[0].set_ylabel(r'${}^B\omega_{BN_{1}}$ [rad/s]')
+    ax[1].set_ylabel(r'${}^B\omega_{BN_{2}}$ [rad/s]')
+    ax[2].set_ylabel(r'${}^B\omega_{BN_{3}}$ [rad/s]')
 
     ax[0].legend()
 
@@ -292,9 +320,9 @@ def plot_ast_att(time, sigma_AN_truth, sigma_AN_est, sigma_AN_meas):
 
     plt.xlabel('Time [sec]')
 
-    ax[0].set_ylabel(r'$\sigma_{AN_{1}}$')
-    ax[1].set_ylabel(r'$\sigma_{AN_{2}}$')
-    ax[2].set_ylabel(r'$\sigma_{AN_{3}}$')
+    ax[0].set_ylabel(r'$\sigma_{AN_{1}}$ [rad]')
+    ax[1].set_ylabel(r'$\sigma_{AN_{2}}$ [rad]')
+    ax[2].set_ylabel(r'$\sigma_{AN_{3}}$ [rad]')
 
     ax[0].legend()
 
@@ -319,9 +347,9 @@ def plot_ast_rate(time, omega_AN_A_truth, omega_AN_A_est, omega_AN_A_meas):
     ax[1].plot(time, omega_AN_A_est[:, 1])
     ax[2].plot(time, omega_AN_A_est[:, 2])
 
-    ax[0].set_ylabel(r'${}^A\omega_{AN_{1}}$')
-    ax[1].set_ylabel(r'${}^A\omega_{AN_{2}}$')
-    ax[2].set_ylabel(r'${}^A\omega_{AN_{3}}$')
+    ax[0].set_ylabel(r'${}^A\omega_{AN_{1}}$ [rad/s]')
+    ax[1].set_ylabel(r'${}^A\omega_{AN_{2}}$ [rad/s]')
+    ax[2].set_ylabel(r'${}^A\omega_{AN_{3}}$ [rad/s]')
 
     plt.xlabel('Time [sec]')
 
@@ -727,5 +755,5 @@ def run(show_plots):
 #
 if __name__ == "__main__":
     run(
-        False  # show_plots
+        True  # show_plots
     )

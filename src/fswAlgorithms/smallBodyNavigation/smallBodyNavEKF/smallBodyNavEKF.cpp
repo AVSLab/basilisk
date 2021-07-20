@@ -60,6 +60,14 @@ SmallBodyNavEKF::~SmallBodyNavEKF()
 {
 }
 
+/*! Initialize C-wrapped output messages */
+void SmallBodyNavEKF::SelfInit(){
+    NavTransMsg_C_init(&this->navTransOutMsgC);
+    NavAttMsg_C_init(&this->navAttOutMsgC);
+    SmallBodyNavMsg_C_init(&this->smallBodyNavOutMsgC);
+    EphemerisMsg_C_init(&this->asteroidEphemerisOutMsgC);
+}
+
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
 */
@@ -466,10 +474,16 @@ void SmallBodyNavEKF::writeMessages(uint64_t CurrentSimNanos){
     eigenMatrixXd2CArray(x_hat_k1, smallBodyNavOutMsgBuffer.state);
     eigenMatrixXd2CArray(P_k1, *smallBodyNavOutMsgBuffer.covar);
 
-    /* Write to the output messages */
+    /* Write to the C++-wrapped output messages */
     this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, CurrentSimNanos);
     this->navAttOutMsg.write(&navAttOutMsgBuffer, this->moduleID, CurrentSimNanos);
     this->smallBodyNavOutMsg.write(&smallBodyNavOutMsgBuffer, this->moduleID, CurrentSimNanos);
     this->asteroidEphemerisOutMsg.write(&asteroidEphemerisOutMsgBuffer, this->moduleID, CurrentSimNanos);
+
+    /* Write to the C-wrapped output messages */
+    NavTransMsg_C_write(&navTransOutMsgBuffer, &this->navTransOutMsgC, this->moduleID, CurrentSimNanos);
+    NavAttMsg_C_write(&navAttOutMsgBuffer, &this->navAttOutMsgC, this->moduleID, CurrentSimNanos);
+    SmallBodyNavMsg_C_write(&smallBodyNavOutMsgBuffer, &this->smallBodyNavOutMsgC, this->moduleID, CurrentSimNanos);
+    EphemerisMsg_C_write(&asteroidEphemerisOutMsgBuffer, &this->asteroidEphemerisOutMsgC, this->moduleID, CurrentSimNanos);
 }
 
