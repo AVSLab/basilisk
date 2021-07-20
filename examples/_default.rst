@@ -203,7 +203,13 @@ Optical Navigation Simulations
    Filter Heading measurements  <OpNavScenarios/scenariosOpNav/scenario_OpNavHeading>
    OpNav Scenarios Folder <OpNavScenarios/index>
 
+Small Body Navigation Simulations
+---------------------------------
 
+.. toctree::
+   :maxdepth: 1
+
+    Proximity Operations Hybrid EKF <scenarioSmallBodyNav>
 
 Monte Carlo Simulations
 -----------------------
