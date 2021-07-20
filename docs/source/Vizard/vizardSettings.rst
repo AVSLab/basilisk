@@ -820,7 +820,10 @@ The full list of required and optional generic sensor parmeters are provided in 
       - vector<int>
       -
       - No
-      - Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2 will use the color indexed to 1, etc.
+      - (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this
+        field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2
+        will use the color indexed to 1, etc.  If the mode number exceeds the number of colors provided
+        then the default color is used again.
 
 Thus, to setup a sensor that uses red to display the location, orientation and status, you could use::
 
