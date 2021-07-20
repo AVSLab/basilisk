@@ -22,6 +22,10 @@ provides information on what this message is used for.
 
     Figure 1: ``smallBodyNavEKF()`` Module I/O Illustration
 
+Note that this C++ FSW module provides both C- and C++-wrapped output messages.  The regular C++ wrapped output
+messages end with the usual ``...OutMsg``.  The C wrapped output messages have the same payload type, but end
+with ``...OutMsgC``.  
+
 .. list-table:: Module I/O Messages
     :widths: 25 25 50
     :header-rows: 1
@@ -211,9 +215,12 @@ Note that the MRP switching is checked following the procedure outlined in `Karl
 
 The derivation of the state dynamics matrix :math:`A` is not shown here for brevity.
 
+
 Module Assumptions and Limitations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 The module assumptions and limitations are listed below:
+
  - The reaction wheels' spin axes are aligned with the body-frame axes of the spacecraft
  - Only three reaction wheels are used for attitude control
  - The reaction wheels must be added in the order of the body-frame axes, i.e. 1-2-3
