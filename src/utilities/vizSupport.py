@@ -44,11 +44,12 @@ except ImportError:
 
 firstSpacecraftName = ''
 
-def toRGBA255(color):
+def toRGBA255(color, alpha=None):
     if isinstance(color, basestring):
         # convert color name to 4D array of values with 0-255
         if is_color_like(color):
-            answer = np.array(colors.to_rgba(color)) * 255
+
+            answer = np.array(colors.to_rgba(color, alpha=alpha)) * 255
             answer = [round(a) for a in answer]
         else:
             print("toRGBA255() was provided unknown color name " + color)

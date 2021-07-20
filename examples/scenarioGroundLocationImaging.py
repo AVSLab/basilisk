@@ -374,9 +374,7 @@ def run(show_plots):
     genericSensor.r_SB_B = [0., 1., 1.]
     genericSensor.fieldOfView.push_back(20.0 * macros.D2R)  # single value means a conic sensor
     genericSensor.normalVector = [0., 0., 1.]
-    genericSensor.isHidden = 0
-    genericSensor.range = 10
-    genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("red"))
+    genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("red", alpha=0.25))
     genericSensor.label = "genSen1"
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
