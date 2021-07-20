@@ -20,7 +20,24 @@ r"""
 Overview
 --------
 
-Here
+This scenario demonstrates how to use the ``smallBodyNavEKF()`` for state estimation about a small body. In this example,
+Bennu is used. However, any small body could be selected as long as the appropriate gravitational parameter is set.
+
+In this scenario, :ref:`simpleNav` and :ref:`planetEphemeris` provide measurements to the EKF in the form of :ref:`navTransMsgPayload`,
+:ref:`navAttMsgPayload`, and :ref:`ephemerisMsgPayload` input messages. The EKF takes in these measurements at each timestep
+and updates the state estimate, outputting this state estimate in its own standalone message, a :ref:`smallBodyNavMsgPayload`,
+as well as navigation output messages - :ref:`navTransMsgPayload`, :ref:`navAttMsgPayload`, and :ref:`ephemerisMsgPayload`.
+
+Furthermore, an :ref:`mrpFeedback` module is also created to demonstrate using the filter output as an input into an attitude
+control algorithm.
+
+NOTE: This module is only meant to provide a somewhat representative autonomous small body proximity operations navigation solution
+for attitude control modules or POMDP solvers. Therefore, realistic measurement modules do not exist to support this module, and
+not every source of uncertainty in the problem is an estimated parameter.
+
+The script is found in the folder ``basilisk/examples`` and executed by using::
+
+      python3 scenarioSmallBodyNav.py
 
 
 """
@@ -142,16 +159,16 @@ def plot_pos_error(time, r_err, P):
     plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
 
     ax[0].plot(time, r_err[:, 0], label='error')
-    ax[0].plot(time, 2*np.sqrt(P[:, 0, 0]), label='$2\sigma$')
-    ax[0].plot(time, -2*np.sqrt(P[:, 0, 0]))
+    ax[0].plot(time, 2*np.sqrt(P[:, 0, 0]), 'k--', label='$2\sigma$')
+    ax[0].plot(time, -2*np.sqrt(P[:, 0, 0]), 'k--')
 
     ax[1].plot(time, r_err[:, 1])
-    ax[1].plot(time, 2*np.sqrt(P[:, 1, 1]))
-    ax[1].plot(time, -2*np.sqrt(P[:, 1, 1]))
+    ax[1].plot(time, 2*np.sqrt(P[:, 1, 1]), 'k--')
+    ax[1].plot(time, -2*np.sqrt(P[:, 1, 1]), 'k--')
 
     ax[2].plot(time, r_err[:, 2])
-    ax[2].plot(time, 2*np.sqrt(P[:, 2, 2]))
-    ax[2].plot(time, -2*np.sqrt(P[:, 2, 2]))
+    ax[2].plot(time, 2*np.sqrt(P[:, 2, 2]), 'k--')
+    ax[2].plot(time, -2*np.sqrt(P[:, 2, 2]), 'k--')
 
     plt.xlabel('Time [sec]')
     plt.title('Position Error and Covariance')
@@ -174,16 +191,16 @@ def plot_vel_error(time, v_err, P):
     plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
 
     ax[0].plot(time, v_err[:, 0], label='error')
-    ax[0].plot(time, 2*np.sqrt(P[:, 3, 3]), label='$2\sigma$')
-    ax[0].plot(time, -2*np.sqrt(P[:, 3, 3]))
+    ax[0].plot(time, 2*np.sqrt(P[:, 3, 3]), 'k--', label='$2\sigma$')
+    ax[0].plot(time, -2*np.sqrt(P[:, 3, 3]), 'k--')
 
     ax[1].plot(time, v_err[:, 1])
-    ax[1].plot(time, 2*np.sqrt(P[:, 4, 4]))
-    ax[1].plot(time, -2*np.sqrt(P[:, 4, 4]))
+    ax[1].plot(time, 2*np.sqrt(P[:, 4, 4]), 'k--')
+    ax[1].plot(time, -2*np.sqrt(P[:, 4, 4]), 'k--')
 
     ax[2].plot(time, v_err[:, 2])
-    ax[2].plot(time, 2*np.sqrt(P[:, 5, 5]))
-    ax[2].plot(time, -2*np.sqrt(P[:, 5, 5]))
+    ax[2].plot(time, 2*np.sqrt(P[:, 5, 5]), 'k--')
+    ax[2].plot(time, -2*np.sqrt(P[:, 5, 5]), 'k--')
 
     plt.xlabel('Time [sec]')
     plt.title('Velocity Error and Covariance')
@@ -552,16 +569,16 @@ def run(show_plots):
 
     # Set the process noise
     Q = np.identity(18)
-    Q[0,0] = Q[1,1] = Q[2,2] = 10.
-    Q[3,3] = Q[4,4] = Q[5,5] = 0.01
-    Q[0:3,3:6] = Q[3:6,0:3] = 0.01   # Cross position and velocity
+    Q[0,0] = Q[1,1] = Q[2,2] = 5.
+    Q[3,3] = Q[4,4] = Q[5,5] = 0.0001
+    Q[0:3,3:6] = Q[3:6,0:3] = 0.0001   # Cross position and velocity
     smallBodyNav.Q = Q.tolist()
 
     # Set the measurement noise
     R = np.identity(18)
-    R[0,0] = 100.  # position sigmas
-    R[1,1] = R[2,2] = 50.
-    R[3,3] = R[4,4] = R[5,5] = 0.001   # velocity sigmas
+    R[0,0] = 45.  # position sigmas
+    R[1,1] = R[2,2] = 20.
+    R[3,3] = R[4,4] = R[5,5] = 0.1   # velocity sigmas
     R[0:3,3:6] = R[3:6,0:3] = 0.001   # Cross position and velocity
     smallBodyNav.R = R.tolist()  # Measurement Noise
 

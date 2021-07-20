@@ -31,20 +31,13 @@ def test_smallBodyNavEKF(show_plots):
     r"""
     **Validation Test Description**
 
-    Compose a general description of what is being tested in this unit test script.
+    This unit test checks that the filter converges to a constant state estimate under the presence of static measurements.
+    No reaction wheels or thrusters are used, but a message for each is created and connected to avoid warnings.
 
     **Test Parameters**
 
-    Discuss the test parameters used.
-
     Args:
-        param1 (int): Dummy test parameter for this parameterized unit test
-        param2 (int): Dummy test parameter for this parameterized unit test
-        accuracy (float): absolute accuracy value used in the validation tests
-
-    **Description of Variables Being Tested**
-
-    Here discuss what variables and states are being checked. 
+        :param show_plots: flag if plots should be shown.
     """
     [testResults, testMessage] = smallBodyNavEKFTestFunction(show_plots)
     assert testResults < 1, testMessage
@@ -137,9 +130,6 @@ def smallBodyNavEKFTestFunction(show_plots):
     x_hat = smallBodyNavOutMsgRec.state
     covar = smallBodyNavOutMsgRec.covar
     true_x_hat = np.array([[1000.1, 1000., 1000., 0., 1.0, 0., 0.1, 0., 0., 0., 0., 0., 0.1, 0., 0., 0., 0., 0.]])
-
-    print(np.array(x_hat[0,:]))
-    print(true_x_hat)
 
     testFailCount, testMessages = unitTestSupport.compareArray(
         true_x_hat, np.array([x_hat[0,:]]), 0.1, "x_hat",
