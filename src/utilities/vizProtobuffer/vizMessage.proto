@@ -51,6 +51,7 @@ message VizMessage{
         repeated CoarseSunSensor CSS = 7;
         repeated GenericSensor genericSensors = 8;
         string spacecraftSprite = 9; // Set sprite for this spacecraft only through shape name and optional int RGBA color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
+        repeated Transceiver transceivers = 10;
 }
 
     message ReactionWheel{
@@ -88,9 +89,21 @@ message VizMessage{
         repeated double normalVector = 4;  // [] normal vector of the sensor bore sight axis
         bool isHidden = 5; // (Optional) true to hide sensor HUD, false to show sensor HUD (default)
         int32 activityStatus = 6; // (Optional) 0 for sensor inactive, 1 for sensor active, additional modes can be added and viz will attempt to use corresponding mode colors if they are provided in the color array
-        double range = 7; // [m] (Optional) Value of 0 (protobuffer default) to show HUD at viz default size
+        double size = 7; // [m] (Optional) Value of 0 (protobuffer default) to show HUD at viz default size
         repeated int32 color = 8; // (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2 will use the color indexed to 1, etc.
         string label = 9; // (Optional) string to display on sensor label
+    }
+    
+    message Transceiver{
+        repeated double position = 2; // [m] position of the transceiver in body frame
+        double fieldOfView = 3; //[deg]
+        repeated double normalVector = 4;  // [] normal vector of the transceiver bore sight axis
+        bool isHidden = 5; // (Optional) true to hide transceiver HUD, false to show transceiver HUD (default)
+        int32 transmitStatus = 6; // (Optional) 0 for transceiver inactive, 1 for sending, 2 for receiving, 3 for sending and receiving
+        double size = 7; // [m] (Optional) Value of 0 (protobuffer default) to show HUD at viz default size
+        repeated int32 color = 8; // (Optional) Send desired RGBA of transmission animation as values between 0 and 255
+        string label = 9; // (Optional) string to display on sensor label
+        int32 animationSpeed = 10; //(Optional) Set transmission animation speed to a value between 1(slowest) to 10 (fastest), or 0 to use viz defafult
     }
 
     message CameraConfig{
@@ -153,7 +166,8 @@ message VizMessage{
         int32 viewCSSCoverage = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showCSSLabels = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 viewCSSBoresight = 5;// Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showGenericSensorLabels = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true 
+        int32 showGenericSensorLabels = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showTransceiverLabels = 7; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
     
     message CustomModel{

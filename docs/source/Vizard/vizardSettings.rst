@@ -806,7 +806,7 @@ The full list of required and optional generic sensor parmeters are provided in 
       -
       - No
       - optional argument to hide the sensor visualization.  Default value is ``False``
-    * - ``range``
+    * - ``size``
       - double
       - m
       - No
@@ -833,7 +833,7 @@ Thus, to setup a sensor that uses red to display the location, orientation and s
     genericSensor.fieldOfView.push_back(25.0 * macros.D2R)
     genericSensor.normalVector = [0., 0., 1.]
     genericSensor.isHidden = 0
-    genericSensor.range = 10
+    genericSensor.size = 10
     genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("red"))
     genericSensor.label = "genSen1"
 

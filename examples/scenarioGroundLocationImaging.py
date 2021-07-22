@@ -378,7 +378,7 @@ def run(show_plots):
     genericSensor.label = "genSen1"
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=fileName
+                                              , saveFile=fileName
                                               , genericSensorList=genericSensor
                                               , genericSensorCmdInMsgs=simpleInsControlConfig.deviceCmdOutMsg
                                               )

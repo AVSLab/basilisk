@@ -159,7 +159,7 @@ GenericSensor
     std::vector<double> fieldOfView;    //!< [rad] edgle-to-edge field of view, single positive value means a conical sensor, 2 positive values are for a rectangular sensor
     double normalVector[3];             //!< [] normal vector of the sensor bore sight axis
     int isHidden = 0;                   //!< [] (optional) true to hide sensor HUD, false to show sensor HUD (default)
-    double range = 0;                   //!< [m] (optional) range of the sensor, use 0 (protobuffer default) to use viz default
+    double size = 0;                   //!< [m] (optional) size of the sensor, use 0 (protobuffer default) to use viz default size
     std::vector<int> color;             //!< [] (optional) RGBA as values between 0 and 255, multiple colors can be populated in this field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2 will use the color indexed to 1, etc.  If 2 colors are provided, then the vector should have size 8 (2x4 color channels)
     std::string label = "";             //!< [] (optional) string to display on sensor label
 

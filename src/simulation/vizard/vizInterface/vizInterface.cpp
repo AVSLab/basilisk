@@ -728,7 +728,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     gs->add_fieldofview(scIt->genericSensorList[idx].fieldOfView[j]*R2D);
                 }
                 gs->set_ishidden(scIt->genericSensorList[idx].isHidden);
-                gs->set_range(scIt->genericSensorList[idx].range);
+                gs->set_size(scIt->genericSensorList[idx].size);
                 gs->set_label(scIt->genericSensorList[idx].label);
                 for (int j=0; j<scIt->genericSensorList[idx].color.size(); j++) {
                     gs->add_color(scIt->genericSensorList[idx].color[j]);
