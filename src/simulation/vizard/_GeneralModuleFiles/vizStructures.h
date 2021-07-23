@@ -13,6 +13,7 @@
 #include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
+#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 
 #include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
@@ -113,6 +114,7 @@ InstrumentGuiSettings
     int viewCSSCoverage=0;          //!< [int] should CSS coverage spheres be shown, -1 (off), 0 (default), 1 (on)
     int showCSSLabels=0;            //!< [int] should CSS panel labels be shown, -1 (off), 0 (default), 1 (on)
     int showGenericSensorLabels=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showTransceiverLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }InstrumentGuiSettings;
 
 /*! Structure defining a custom CAD model to load to represent a simulation object.
@@ -167,6 +169,26 @@ GenericSensor
 
 }GenericSensor;
 
+/*! Structure defining antenna transceiver information
+ */
+typedef struct
+//@cond DOXYGEN_IGNORE
+Transceiver
+//@endcond
+{
+    double r_SB_B[3];                   //!< [m] Position of sensor relative to body frame, in body frame components
+    double fieldOfView;                 //!< [rad] edgle-to-edge transceiver access cone
+    double normalVector[3];             //!< [] normal vector of the transceiver bore sight axis
+    int isHidden = 0;                   //!< [] (optional) true to hide sensor HUD, false to show transceiver HUD (default)
+    double size = 0;                    //!< [m] (optional) size of the transceiver visualization, use 0 (protobuffer default) to use viz default size
+    std::vector<int> color;             //!< [] (optional) RGBA as values between 0 and 255
+    std::string label = "";             //!< [] (optional) string to display on sensor label
+    int animationSpeed = 0;             //!< [] (optional) Set transmission animation speed to a value between 1(slowest) to 10 (fastest), or 0 to use viz default
+    std::vector<ReadFunctor<DataNodeUsageMsgPayload>> transceiverStateInMsgs;   //!< [-] (Optional)  vector of incoming transceiver state msgs
+    int transceiverState = 0;           //!< [int] (optional) transceiver state value, if communication input msg is connected, then this is set from the message
+}Transceiver;
+
+
 /*! Defines a data structure for the spacecraft state messages and ID's.
  */
 typedef struct
@@ -195,6 +217,7 @@ VizSpacecraftData
 
     std::vector<GenericSensor> genericSensorList;               //!< [-] (Optional) Vector of generic sensor configuration info
 
+    std::vector<Transceiver> transceiverList;                   //!< [-] (Optional) Vector of transceiver configuration info
 
     std::string spacecraftSprite = "";                          //!< Set sprite for this spacecraft only through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
 

@@ -756,7 +756,7 @@ The following table lists all required and optional arguments that can be provid
 
 Adding Generic Sensor Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Vizard can illustrate generic sensors in the 3d environments whicih have either a conical or rectangular field of
+Vizard can illustrate generic sensors in the 3d environments which have either a conical or rectangular field of
 view.  For example, these sensors could be a camera, a star tracker or a fine sun sensor.   Instead of making a
 specific visualization of such sensors, the generic sensor message allows a series of messages to be tied
 to a spacecraft and be configured to look like either sensor type.  Further, an optional :ref:`DeviceCmdMsgPayload`
@@ -831,7 +831,7 @@ The full list of required and optional generic sensor parameters are provided in
       - set the sensor command state from python.  Note that this value is replaced with the value from
         the sensor cmd input message if such an input message is provided.
     * - ``genericSensorCmdInMsg``
-      - ReadFunctor<DeviceCmdMsgPayload>
+      - ReadFunctor<:ref:`DeviceCmdMsgPayload`>
       -
       - No
       - sensor cmd input message
@@ -883,4 +883,129 @@ For example, to use ``red`` for state 1, ``green`` for state 2, you could use::
 
     genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("green"))
 
-See :ref:`scenarioGroundLocation` for an example of using the generic sensor visualization.
+See :ref:`scenarioGroundLocationImaging` for an example of using the generic sensor visualization.
+
+
+
+Adding Transceiver Visualization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Vizard can illustrate the state of an antenna in the 3d environments.  The state can be either off (default),
+transmitting, receiving, or transmitting and receiving. The antenna communication state is dynamically
+set through an optional :ref:`DataNodeUsageMsgPayload`
+message.  Note that this message contains a baud rate variable which dictactes if the module is transmitting
+data (negative baud rate) or receiving data (positive baud rate).  Thus, a single transceiver HUD element
+can connect to a vector of :ref:`DataNodeUsageMsgPayload` input messages.  These messages are scaned if they are
+transmitting, receiving or doing mix, and the transceiver state is set accordingly.
+
+First, let's discuss how to setup a transceiver HUD element.  The associated structure and the required
+parameters are set using::
+
+    transceiverHUD = vizInterface.Transceiver()
+    transceiverHUD.r_SB_B = [0., 0., 1.]
+    transceiverHUD.fieldOfView = 40.0 * macros.D2R
+    transceiverHUD.normalVector = [0., 0., 1.]
+
+The transceiver location relative to the spacecraft B frame is given by ``r_SB_B``.  The transceiver
+bore sight axis is
+set through ``normalVector``.  The ``fieldOfView`` sets the edge-to-edge field of view of this antenna communication
+process.
+The full list of required and optional transceiver parameters are provided in the following table.
+
+.. list-table:: Transceiver Configuration Options
+    :widths: 20 10 10 10 100
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Units
+      - Required
+      - Description
+    * - ``r_SB_B``
+      - double[3]
+      - m
+      - Yes
+      - transceiver location relative to body frame in body frame components
+    * - ``normalVector``
+      - double[3]
+      -
+      - Yes
+      - transceiver center axis
+    * - ``fieldOfView``
+      - float
+      - rad
+      - Yes
+      - edge-to-edge field of the antenna communication access cone
+    * - ``isHidden``
+      - bool
+      -
+      - No
+      - argument to hide the transceiver visualization.  Default value is ``False``
+    * - ``size``
+      - double
+      - m
+      - No
+      - Value of 0 (protobuffer default) to show HUD at viz default size
+    * - ``label``
+      - string
+      -
+      - No
+      - string to display on transceiver label
+    * - ``color``
+      - vector<int>
+      -
+      - No
+      - Send desired RGBA as values between 0 and 255.
+    * - ``transceiverState``
+      - int
+      -
+      - No
+      - set the transceiver state from python.  This can be 0 (off), 1 (sending), 2 (receiving) and
+        3 (sending and receiving).  Note that this value is replaced with the value from
+        the transceiver state input message if such an input message is provided.
+    * - ``transceiverStateInMsgs``
+      - vector<ReadFunctor<:ref:`DataNodeUsageMsgPayload`>>
+      -
+      - No
+      - vector of transceiver communication state message(s)
+
+Thus, to setup a sensor that uses yellow to display the location, orientation and status, you could use::
+
+    transceiverHUD = vizInterface.Transceiver()
+    transceiverHUD.r_SB_B = [0., 0., 1.]
+    transceiverHUD.fieldOfView = 40.0 * macros.D2R
+    transceiverHUD.normalVector = [0., 0., 1.]
+    transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("yellow", alpha=0.5))
+    transceiverHUD.label = "antenna"
+
+Next, each sensor can be connected to the optional device status message of type :ref:`DataNodeUsageMsgPayload`::
+
+    trInMsg = messaging.DataNodeUsageMsgReader()
+    trInMsg.subscribeTo(transmitter.nodeDataOutMsg)
+    transceiverHUD.transceiverStateInMsgs.push_back(trInMsg)
+
+The transceiver state can also be set directly from python using::
+
+    transceiverHUD.transceiverState = 1
+
+However, if the input message is specified then this value is replaced with the content of the input message.
+
+Multiple transceiver HUD elements can be setup for each spacecraft, and multiple spacecraft are supported.  Using
+the ``vizSupport.py`` file, the sensors are sent to :ref:`vizInterface` using they keyword ``genericSensorList``::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , saveFile=fileName
+                                              , transceiverList=transceiverHUD
+                                              )
+
+Note that here a single transceiver and spacecraft is setup.  If you have multiple sensors, or multiple spacecraft,
+then lists of lists are required::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
+                                              , saveFile=fileName
+                                              , genericSensorList=[ None, [genericSensor2, genericSensor3] ]
+                                              )
+
+Here the first spacecraft has no transceiver, and the 2nd spacecraft has 2 transceivers.
+
+See :ref:`scenarioGroundLocationImaging` for an example of using the generic sensor visualization.
+

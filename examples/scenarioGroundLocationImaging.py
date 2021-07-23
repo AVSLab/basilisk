@@ -276,7 +276,7 @@ def run(show_plots):
     # Create a "transmitter"
     transmitter = spaceToGroundTransmitter.SpaceToGroundTransmitter()
     transmitter.ModelTag = "transmitter"
-    transmitter.nodeBaudRate = -1E6   # baud
+    transmitter.nodeBaudRate = -1E5   # baud
     transmitter.packetSize = -8E6   # bits
     transmitter.numBuffers = 2
     transmitter.addAccessMsgToTransmitter(singaporeStation.accessOutMsgs[-1])
@@ -369,23 +369,38 @@ def run(show_plots):
     configDataMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
     mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    genericSensor = vizInterface.GenericSensor()
-    genericSensor.r_SB_B = [0., 1., 1.]
-    genericSensor.fieldOfView.push_back(20.0 * macros.D2R)  # single value means a conic sensor
-    genericSensor.normalVector = [0., 0., 1.]
-    genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("red", alpha=0.25))
-    genericSensor.label = "genSen1"
-    genericSensor.genericSensorCmd = 1
+    #
+    # setup Vizard visualization elements
+    #
+    genericSensorHUD = vizInterface.GenericSensor()
+    genericSensorHUD.r_SB_B = [0., 1., 1.]
+    genericSensorHUD.fieldOfView.push_back(20.0 * macros.D2R)  # single value means a conic sensor
+    genericSensorHUD.normalVector = [0., 0., 1.]
+    genericSensorHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("red", alpha=0.25))
+    genericSensorHUD.label = "genSen1"
     cmdInMsg = messaging.DeviceCmdMsgReader()
     cmdInMsg.subscribeTo(simpleInsControlConfig.deviceCmdOutMsg)
-    genericSensor.genericSensorCmdInMsg = cmdInMsg
+    genericSensorHUD.genericSensorCmdInMsg = cmdInMsg
 
+    transceiverHUD = vizInterface.Transceiver()
+    transceiverHUD.r_SB_B = [0., 0., 1.]
+    transceiverHUD.fieldOfView = 40.0 * macros.D2R
+    transceiverHUD.normalVector = [0., 0., 1.]
+    transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("white"))
+    transceiverHUD.label = "antenna"
+    transceiverHUD.size = 20
+    trInMsg = messaging.DataNodeUsageMsgReader()
+    trInMsg.subscribeTo(transmitter.nodeDataOutMsg)
+    transceiverHUD.transceiverStateInMsgs.push_back(trInMsg)
+
+    # if this scenario is to interface with the BSK Viz, uncomment the "saveFile" line
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              , saveFile=fileName
-                                              , genericSensorList=genericSensor
+                                              # , saveFile=fileName
+                                              , genericSensorList=genericSensorHUD
+                                              , transceiverList=transceiverHUD
                                               )
     vizSupport.setInstrumentGuiSetting(viz, showGenericSensorLabels=True)
+    vizSupport.setInstrumentGuiSetting(viz, showTransceiverLabels=True)
 
     # Add the Boulder target
     vizSupport.addLocation(viz, stationName="Boulder Target"

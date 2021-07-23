@@ -44,6 +44,7 @@ namespace std {
     %template(ThrClusterVector) vector<ThrClusterMap>;
     %template(GravBodyInfoVector) vector<GravBodyInfo>;
     %template(GenericSensorVector) vector<GenericSensor>;
+    %template(TransceiverVector) vector<Transceiver>;
 }
 
 %include "vizInterface.h"

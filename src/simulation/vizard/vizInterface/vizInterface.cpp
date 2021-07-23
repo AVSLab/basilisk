@@ -268,7 +268,7 @@ void VizInterface::ReadBSKMessages()
         }
         }
 
-        /* read in generic sensor cmd values */
+        /* read in generic sensor cmd value */
         {
             for (size_t idx=0;idx< (size_t) scIt->genericSensorList.size(); idx++) {
                 if (scIt->genericSensorList[idx].genericSensorCmdInMsg.isLinked()){
@@ -276,6 +276,31 @@ void VizInterface::ReadBSKMessages()
                     deviceCmdMsgBuffer = scIt->genericSensorList[idx].genericSensorCmdInMsg();
                     if(scIt->genericSensorList[idx].genericSensorCmdInMsg.isWritten()){
                         scIt->genericSensorList[idx].genericSensorCmd = deviceCmdMsgBuffer.deviceCmd;
+                    }
+                }
+            }
+        }
+        
+        /* read in transceiver state values */
+        {
+            for (size_t idx=0;idx< (size_t) scIt->transceiverList.size(); idx++) {
+                if (scIt->transceiverList[idx].transceiverStateInMsgs.size() > 0) {
+                    scIt->transceiverList[idx].transceiverState = 0;
+                    for (size_t idxTr=0; idxTr < (size_t) scIt->transceiverList[idx].transceiverStateInMsgs.size(); idxTr++) {
+                        if (scIt->transceiverList[idx].transceiverStateInMsgs[idxTr].isLinked()){
+                            DataNodeUsageMsgPayload stateMsgBuffer;
+                            stateMsgBuffer = scIt->transceiverList[idx].transceiverStateInMsgs[idxTr]();
+                            if(scIt->transceiverList[idx].transceiverStateInMsgs[idxTr].isWritten()){
+                                /* state 0->off, 1->sending, 2->receiving, 3->sending and receiving */
+                                if (stateMsgBuffer.baudRate < 0.0) {
+                                    /* sending data */
+                                    scIt->transceiverList[idx].transceiverState = scIt->transceiverList[idx].transceiverState | 1;
+                                } else if (stateMsgBuffer.baudRate > 0.0) {
+                                    /* receiving data */
+                                    scIt->transceiverList[idx].transceiverState = scIt->transceiverList[idx].transceiverState | 2;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -518,6 +543,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             il->set_viewcssboresight(this->settings.instrumentGuiSettingsList[idx].viewCSSBoresight);
             il->set_showcsslabels(this->settings.instrumentGuiSettingsList[idx].showCSSLabels);
             il->set_showgenericsensorlabels(this->settings.instrumentGuiSettingsList[idx].showGenericSensorLabels);
+            il->set_showtransceiverlabels(this->settings.instrumentGuiSettingsList[idx].showTransceiverLabels);
         }
 
 
@@ -696,7 +722,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             for (size_t idx =0; idx < (size_t) scIt->genericSensorList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::GenericSensor* gs = scp->add_genericsensors();
 
-                /* set sensor parameters */
                 for (int j=0; j<3; j++) {
                     gs->add_position(scIt->genericSensorList[idx].r_SB_B[j]);
                     gs->add_normalvector(scIt->genericSensorList[idx].normalVector[j]);
@@ -712,7 +737,25 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 }
                 gs->set_activitystatus(scIt->genericSensorList[idx].genericSensorCmd);
             }
+            
+            // Write transceiver messages
+            for (size_t idx =0; idx < (size_t) scIt->transceiverList.size(); idx++) {
+                vizProtobufferMessage::VizMessage::Transceiver* tr = scp->add_transceivers();
 
+                for (int j=0; j<3; j++) {
+                    tr->add_position(scIt->transceiverList[idx].r_SB_B[j]);
+                    tr->add_normalvector(scIt->transceiverList[idx].normalVector[j]);
+                }
+                tr->set_fieldofview(scIt->transceiverList[idx].fieldOfView*R2D);
+                tr->set_ishidden(scIt->transceiverList[idx].isHidden);
+                tr->set_size(scIt->transceiverList[idx].size);
+                tr->set_label(scIt->transceiverList[idx].label);
+                for (int j=0; j<scIt->transceiverList[idx].color.size(); j++) {
+                    tr->add_color(scIt->transceiverList[idx].color[j]);
+                }
+                tr->set_transmitstatus(scIt->transceiverList[idx].transceiverState);
+                tr->set_animationspeed(scIt->transceiverList[idx].animationSpeed);
+            }
 
         }
     }

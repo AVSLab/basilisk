@@ -103,7 +103,7 @@ message VizMessage{
         double size = 7; // [m] (Optional) Value of 0 (protobuffer default) to show HUD at viz default size
         repeated int32 color = 8; // (Optional) Send desired RGBA of transmission animation as values between 0 and 255
         string label = 9; // (Optional) string to display on sensor label
-        int32 animationSpeed = 10; //(Optional) Set transmission animation speed to a value between 1(slowest) to 10 (fastest), or 0 to use viz defafult
+        int32 animationSpeed = 10; //(Optional) Set transmission animation speed to a value between 1(slowest) to 10 (fastest), or 0 to use viz default
     }
 
     message CameraConfig{

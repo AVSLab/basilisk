@@ -528,6 +528,9 @@ def setInstrumentGuiSetting(viz, **kwargs):
     showGenericSensorLabels: int
         flag if the generic sensor labels should be shown (1) or hidden (-1)
         Default: 0 - if not provided, then the Vizard default settings are used
+    showTransceiverLabels: int
+        flag if the generic sensor labels should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
 
     """
     if not vizFound:
@@ -539,7 +542,7 @@ def setInstrumentGuiSetting(viz, **kwargs):
 
     unitTestSupport.checkMethodKeyword(
         ['spacecraftName', 'viewCSSPanel', 'viewCSSCoverage', 'viewCSSBoresight', 'showCSSLabels',
-         'showGenericSensorLabels'],
+         'showGenericSensorLabels', 'showTransceiverLabels'],
         kwargs)
 
     if 'spacecraftName' in kwargs:
@@ -606,11 +609,24 @@ def setInstrumentGuiSetting(viz, **kwargs):
             print('ERROR: vizSupport: showGenericSensorLabels must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
         if setting*setting > 1:
-            print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
+            print('ERROR: vizSupport: showGenericSensorLabels must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
         if setting is False:
             setting = -1
         vizElement.showGenericSensorLabels = setting
+
+    if 'showTransceiverLabels' in kwargs:
+        setting = kwargs['showTransceiverLabels']
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: showTransceiverLabels must be  -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: showTransceiverLabels must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
+        vizElement.showTransceiverLabels = setting
+        print("HPS: showTransceiverLabels set")
 
     instrumentGuiSettingList.append(vizElement)
     del viz.settings.instrumentGuiSettingsList[:]  # clear settings list to replace it with updated list
@@ -978,7 +994,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
 
     unitTestSupport.checkMethodKeyword(
         ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList',
-         'genericSensorList'],
+         'genericSensorList', 'transceiverList'],
         kwargs)
 
     # setup the Vizard interface module
@@ -1042,6 +1058,16 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if len(gsScList) != len(scList):
             print('ERROR: vizSupport: genericSensorList should have the same length as the '
                   'number of spacecraft and contain lists of generic sensors')
+            exit(1)
+
+    tcScList = False
+    if 'transceiverList' in kwargs:
+        tcScList = kwargs['transceiverList']
+        if not isinstance(tcScList, list):
+            tcScList = [[tcScList]]
+        if len(tcScList) != len(tcScList):
+            print('ERROR: vizSupport: tcScList should have the same length as the '
+                  'number of spacecraft and contain lists of transceivers')
             exit(1)
 
     # loop over all spacecraft to associated states and msg information
@@ -1109,13 +1135,21 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                     cssDeviceList.append(css.cssConfigLogOutMsg.addSubscriber())
                 scData.cssInMsgs = messaging.CSSConfigLogInMsgsVector(cssDeviceList)
 
-        # process generic sensor information
+        # process generic sensor HUD information
         if gsScList:
             gsList = []
             if gsScList[c] is not None:  # generic sensor(s) have been added to this spacecraft
                 for gs in gsScList[c]:
                     gsList.append(gs)
                 scData.genericSensorList = vizInterface.GenericSensorVector(gsList)
+
+        # process transceiver HUD information
+        if tcScList:
+            tcList = []
+            if tcScList[c] is not None:  # transceiver(s) have been added to this spacecraft
+                for tc in tcScList[c]:
+                    tcList.append(tc)
+                scData.transceiverList = vizInterface.TransceiverVector(tcList)
 
         vizMessenger.scData.push_back(scData)
         c += 1
