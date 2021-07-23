@@ -772,10 +772,10 @@ parameters are set using::
     genericSensor.normalVector = [0., 0., 1.]
 
 The sensor location relative to the spacecraft B frame is given by ``r_SB_B``.  The sensor view axis is
-set through ``normalVector``.  The ``fieldOfView`` is a 2d list of floats.  If a single positive value is provided,
+set through ``normalVector``.  The ``fieldOfView`` is a vector with up to 2 floats.  If a single positive value is provided,
 then the sensor shape is a cone with this edge-to-edge field of view.  If 2 positive floats are provided
 then the sensor shape is a rectangle.
-The full list of required and optional generic sensor parmeters are provided in the following table.
+The full list of required and optional generic sensor parameters are provided in the following table.
 
 .. list-table:: Generic Sensor Configuration Options
     :widths: 20 10 10 10 100
@@ -805,25 +805,36 @@ The full list of required and optional generic sensor parmeters are provided in 
       - bool
       -
       - No
-      - optional argument to hide the sensor visualization.  Default value is ``False``
+      - argument to hide the sensor visualization.  Default value is ``False``
     * - ``size``
       - double
       - m
       - No
-      - (Optional) Value of 0 (protobuffer default) to show HUD at viz default size
+      - Value of 0 (protobuffer default) to show HUD at viz default size
     * - ``label``
       - string
       -
       - No
-      - (Optional) string to display on sensor label
+      - string to display on sensor label
     * - ``color``
       - vector<int>
       -
       - No
-      - (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this
+      - Send desired RGBA as values between 0 and 255, multiple colors can be populated in this
         field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2
         will use the color indexed to 1, etc.  If the mode number exceeds the number of colors provided
         then the default color is used again.
+    * - ``genericSensorCmd``
+      - int
+      -
+      - No
+      - set the sensor command state from python.  Note that this value is replaced with the value from
+        the sensor cmd input message if such an input message is provided.
+    * - ``genericSensorCmdInMsg``
+      - ReadFunctor<DeviceCmdMsgPayload>
+      -
+      - No
+      - sensor cmd input message
 
 Thus, to setup a sensor that uses red to display the location, orientation and status, you could use::
 
@@ -832,13 +843,23 @@ Thus, to setup a sensor that uses red to display the location, orientation and s
     genericSensor.fieldOfView.push_back(20.0 * macros.D2R)
     genericSensor.fieldOfView.push_back(25.0 * macros.D2R)
     genericSensor.normalVector = [0., 0., 1.]
-    genericSensor.isHidden = 0
-    genericSensor.size = 10
     genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("red"))
     genericSensor.label = "genSen1"
 
 Note that here a rectangular 20x25 degree field of view is specified.  To add a conical 20 degree field of view,
 then a single angle should be provided.
+
+Next, each sensor can be connected to the optional device status message of type :ref:`DeviceCmdMsgPayload`::
+
+    cmdInMsg = messaging.DeviceCmdMsgReader()
+    cmdInMsg.subscribeTo(simpleInsControlConfig.deviceCmdOutMsg)
+    genericSensor.genericSensorCmdInMsg = cmdInMsg
+
+The sensor command state can also be set directly from python using::
+
+    genericSensor.genericSensorCmd = 1
+
+However, if the input message is specified then this value is replaced with the content of the input message.
 
 Multiple generic sensors can be created for each spacecraft, and multiple spacecraft are supported.  Using
 the ``vizSupport.py`` file, the sensors are sent to :ref:`vizInterface` using they keyword ``genericSensorList``::
@@ -854,24 +875,6 @@ then lists of lists are required::
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
                                               , saveFile=fileName
                                               , genericSensorList=[ [genericSensor1], [genericSensor2, genericSensor3] ]
-                                              )
-
-Next, each sensor can be connected to the optional device status message of type :ref:`DeviceCmdMsgPayload`::
-
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              , saveFile=fileName
-                                              , genericSensorList=genericSensor
-                                              , genericSensorCmdInMsgs=simpleInsControlConfig.deviceCmdOutMsg
-                                              )
-
-If multiple sensors are provided per spacecraft, then again lists of lists are expected.  There must be an entry
-for each spacecraft and for each generic sensor of the spacecraft.  If a sensor is not driving by this activity
-message, then provide ``None`` for that entry::
-
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject1, scObject2]
-                                              , saveFile=fileName
-                                              , genericSensorList=[ [genericSensor], [genericSensor2, genericSensor3]]
-                                              , genericSensorCmdInMsgs=[[simpleInsControlConfig.deviceCmdOutMsg], [None, None]]
                                               )
 
 If the sensor has multiple activity types, such as taking a red, green, and blue color image, the :ref:`DeviceCmdMsgPayload`

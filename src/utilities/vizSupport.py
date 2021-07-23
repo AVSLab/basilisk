@@ -978,7 +978,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
 
     unitTestSupport.checkMethodKeyword(
         ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList',
-         'genericSensorList', 'genericSensorCmdInMsgs'],
+         'genericSensorList'],
         kwargs)
 
     # setup the Vizard interface module
@@ -1037,16 +1037,6 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if len(gsScList) != len(scList):
             print('ERROR: vizSupport: genericSensorList should have the same length as the '
                   'number of spacecraft and contain lists of generic sensors')
-            exit(1)
-
-    gsMsgScList = False
-    if 'genericSensorCmdInMsgs' in kwargs:
-        gsMsgScList = kwargs['genericSensorCmdInMsgs']
-        if not isinstance(gsMsgScList, list):
-            gsMsgScList = [[gsMsgScList]]
-        if len(gsMsgScList) != len(scList):
-            print('ERROR: vizSupport: genericSensorCmdInMsgs should have the same length as the '
-                  'number of spacecraft')
             exit(1)
 
     # loop over all spacecraft to associated states and msg information
@@ -1121,18 +1111,6 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 for gs in gsScList[c]:
                     gsList.append(gs)
                 scData.genericSensorList = vizInterface.GenericSensorVector(gsList)
-        if gsMsgScList:
-            gsMsgList = []
-            if gsMsgScList[c] is not None:
-                for gsMsg in gsMsgScList[c]:
-                    if gsMsg is not None:
-                        blankCmdInMsg = messaging.DeviceCmdMsgReader()
-                        blankCmdInMsg.subscribeTo(gsMsg)
-                        gsMsgList.append(blankCmdInMsg)
-                    else:
-                        blankCmdMsg = messaging.DeviceCmdMsg()
-                        gsMsgList.append(blankCmdMsg.addSubscriber())
-                scData.genericSensorCmdInMsgs = messaging.DeviceCmdInMsgsVector(gsMsgList)
 
         vizMessenger.scData.push_back(scData)
         c += 1

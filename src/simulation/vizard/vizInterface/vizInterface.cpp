@@ -156,26 +156,6 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
                                  , (int) scIt->thrInfo.size(), (int) scIt->thrInMsgs.size());
             }
         }
-
-        /* check generic sensor information */
-        {
-            /* check GS cmd vector size */
-            if (scIt->genericSensorCmdInMsgs.size() > 0) {
-                if (scIt->genericSensorCmdInMsgs.size() != scIt->genericSensorList.size()) {
-                    bskLogger.bskLog(BSK_ERROR, "vizInterface: genericSensorCmdInMsgs vector (%d) must be the same size as genericSensorList (%d)"
-                                     , (int) scIt->genericSensorCmdInMsgs.size(), (int) scIt->genericSensorList.size());
-                }
-
-                /* check GS cmd input messages */
-                MsgCurrStatus gsStatus;
-                gsStatus.dataFresh = false;
-                gsStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-                for (int gsCounter = 0; gsCounter < (int) scIt->genericSensorCmdInMsgs.size(); gsCounter++) {
-                    scIt->genericSensorCmdInMsgStatus.push_back(gsStatus);
-                    scIt->genericSensorCmds.push_back(0);
-                }
-            }
-        }
     }
 
     /* Check Camera input messages */
@@ -290,15 +270,12 @@ void VizInterface::ReadBSKMessages()
 
         /* read in generic sensor cmd values */
         {
-            for (size_t idx=0;idx< (size_t) scIt->genericSensorCmdInMsgs.size(); idx++) {
-                if (scIt->genericSensorCmdInMsgs[idx].isLinked()){
+            for (size_t idx=0;idx< (size_t) scIt->genericSensorList.size(); idx++) {
+                if (scIt->genericSensorList[idx].genericSensorCmdInMsg.isLinked()){
                     DeviceCmdMsgPayload deviceCmdMsgBuffer;
-                    deviceCmdMsgBuffer = scIt->genericSensorCmdInMsgs.at(idx)();
-                    if(scIt->genericSensorCmdInMsgs.at(idx).isWritten() &&
-                       scIt->genericSensorCmdInMsgs.at(idx).timeWritten() != scIt->genericSensorCmdInMsgStatus[idx].lastTimeTag){
-                        scIt->genericSensorCmdInMsgStatus[idx].lastTimeTag = scIt->genericSensorCmdInMsgs.at(idx).timeWritten();
-                        scIt->genericSensorCmdInMsgStatus[idx].dataFresh = true;
-                        scIt->genericSensorCmds[idx] = deviceCmdMsgBuffer.deviceCmd;
+                    deviceCmdMsgBuffer = scIt->genericSensorList[idx].genericSensorCmdInMsg();
+                    if(scIt->genericSensorList[idx].genericSensorCmdInMsg.isWritten()){
+                        scIt->genericSensorList[idx].genericSensorCmd = deviceCmdMsgBuffer.deviceCmd;
                     }
                 }
             }
@@ -733,14 +710,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 for (int j=0; j<scIt->genericSensorList[idx].color.size(); j++) {
                     gs->add_color(scIt->genericSensorList[idx].color[j]);
                 }
-
-                /* optional, set sensor commanded activity state from input message */
-                if (scIt->genericSensorCmdInMsgs.size() > 0) {
-                    gs->set_activitystatus(scIt->genericSensorCmds[idx]);
-                } else {
-                    gs->set_activitystatus(0);
-                }
-
+                gs->set_activitystatus(scIt->genericSensorList[idx].genericSensorCmd);
             }
 
 

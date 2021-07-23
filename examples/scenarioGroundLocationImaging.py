@@ -376,11 +376,14 @@ def run(show_plots):
     genericSensor.normalVector = [0., 0., 1.]
     genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("red", alpha=0.25))
     genericSensor.label = "genSen1"
+    genericSensor.genericSensorCmd = 1
+    cmdInMsg = messaging.DeviceCmdMsgReader()
+    cmdInMsg.subscribeTo(simpleInsControlConfig.deviceCmdOutMsg)
+    genericSensor.genericSensorCmdInMsg = cmdInMsg
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                               , saveFile=fileName
                                               , genericSensorList=genericSensor
-                                              , genericSensorCmdInMsgs=simpleInsControlConfig.deviceCmdOutMsg
                                               )
     vizSupport.setInstrumentGuiSetting(viz, showGenericSensorLabels=True)
 
