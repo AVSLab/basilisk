@@ -1013,8 +1013,13 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     thrColorsScList = False
     if 'thrColors' in kwargs:
         thrColorsScList = kwargs['thrColors']
-        if not isinstance(thrColorsScList, list):
-            thrColorsScList = [[thrColorsScList]]
+        if len(thrColorsScList) == 4:
+            colorCheck = True
+            for c in thrColorsScList:
+                if not isinstance(c, int):
+                    colorCheck = False
+            if colorCheck:
+                thrColorsScList = [[thrColorsScList]]
         if len(thrColorsScList) != len(scList):
             print('ERROR: vizSupport: thrColors should have the same length as the number of spacecraft')
             exit(1)
