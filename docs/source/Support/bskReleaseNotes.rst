@@ -56,6 +56,7 @@ Version |release|
 - updated install notes to ensure Linux python3 developer libraries are installed, and to ensure that ``wheel``
   package is installed along with ``conan``
 - created :ref:`smallBodyNavEKF` to simulate autonomous navigation in proximity of a small body
+- added a :ref:`AttRefMsgPayload` output message to the :ref:`locationPointing` module.
 
 
 Version 2.0.5
