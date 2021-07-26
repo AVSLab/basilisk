@@ -35,6 +35,7 @@
 void SelfInit_locationPointing(locationPointingConfig  *configData, int64_t moduleID)
 {
     AttGuidMsg_C_init(&configData->attGuidOutMsg);
+    AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
 
@@ -101,15 +102,19 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     NavTransMsgPayload scTransInMsgBuffer;  //!< local copy of input message buffer
     GroundStateMsgPayload locationInMsgBuffer;  //!< local copy of location input message buffer
     EphemerisMsgPayload celBodyInMsgBuffer; //!< local copy of celestial body input message buffer
-    AttGuidMsgPayload attGuidOutMsgBuffer;  //!< local copy of output message buffer
+    AttGuidMsgPayload attGuidOutMsgBuffer;  //!< local copy of guidance output message buffer
+    AttRefMsgPayload attRefOutMsgBuffer;  //!< local copy of reference output message buffer
 
     double r_LS_N[3];                   /*!< Position vector of location w.r.t spacecraft CoM in inertial frame */
     double r_LS_B[3];                   /*!< Position vector of location w.r.t spacecraft CoM in body frame */
     double eHat_B[3];                   /*!< --- Eigen Axis */
     double dcmBN[3][3];                 /*!< inertial spacecraft orientation DCM */
+    double dcmNB[3][3];                 /*!< DCM between the N frame and the B frame */
     double phi;                         /*!< principal angle between pHat and heading to location */
     double sigmaDot_BR[3];              /*!< time derivative of sigma_BR*/
     double sigma_BR[3];                 /*!< MRP of B relative to R */
+    double sigma_RB[3];                 /*!< MRP of R relative to B */
+    double omega_RN_B[3];               /*!< angular velocity of the R frame w.r.t the B frame in B frame components */
     double difference[3];
     double time_diff;                   /*!< module update time */
     double Binv[3][3];                  /*!< BinvMRP for dsigma_RB_R calculations*/
@@ -118,6 +123,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
 
     // zero output buffer
     attGuidOutMsgBuffer = AttGuidMsg_C_zeroMsgPayload();
+    attRefOutMsgBuffer = AttRefMsg_C_zeroMsgPayload();
 
     // read in the input messages
     scAttInMsgBuffer = NavAttMsg_C_read(&configData->scAttInMsg);
@@ -159,6 +165,10 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
         v3Scale(-tan(phi / 4.), eHat_B, sigma_BR);
     }
     v3Copy(sigma_BR, attGuidOutMsgBuffer.sigma_BR);
+
+    // compute sigma_RN
+    v3Scale(-1.0, sigma_BR, sigma_RB);
+    addMRP(scAttInMsgBuffer.sigma_BN, sigma_RB, attRefOutMsgBuffer.sigma_RN);
     
     /* use sigma_BR to compute d(sigma_BR)/dt if at least two data points */
     if (configData->init < 1) {
@@ -180,6 +190,13 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
         configData->init -= 1;
     }
 
+    // compute omega_RN_B
+    v3Subtract(scAttInMsgBuffer.omega_BN_B, attGuidOutMsgBuffer.omega_BR_B, omega_RN_B);
+
+    // convert to omega_RN_N
+    mTranspose(dcmBN, 3, 3, dcmNB);
+    m33MultV3(dcmNB, omega_RN_B, attRefOutMsgBuffer.omega_RN_N);
+
     // copy current attitude states into prior state buffers
     v3Copy(sigma_BR, configData->sigma_BR_old);
 
@@ -188,5 +205,6 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
 
     // write to the output messages
     AttGuidMsg_C_write(&attGuidOutMsgBuffer, &configData->attGuidOutMsg, moduleID, callTime);
+    AttRefMsg_C_write(&attRefOutMsgBuffer, &configData->attRefOutMsg, moduleID, callTime);
 }
 

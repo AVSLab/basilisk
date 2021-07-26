@@ -36,14 +36,14 @@ import numpy as np
 
 
 @pytest.mark.parametrize("accuracy", [1e-12])
-@pytest.mark.parametrize("r_LS_N", [[1., 0., 0.], [-1, 0, 0], [0., 1., 0.], [0, -1, 0.], [1, 1, 1]])
+@pytest.mark.parametrize("r_LS_N", [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.], [0, -1, 0.], [1, 1, 1]])
 @pytest.mark.parametrize("useGroundLocation", [True, False])
 
 def test_locationPointing(show_plots, r_LS_N, useGroundLocation, accuracy):
     r"""
     **Validation Test Description**
 
-    This unit test ensures that the Attitude Guidance message content is properly computed
+    This unit test ensures that the Attitude Guidance and Attitude Reference messages content are properly computed
     for a series of desired inertial target locations
     
 
@@ -123,6 +123,8 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, useGroundLocation, accura
     # setup output message recorder objects
     attGuidOutMsgRec = moduleConfig.attGuidOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, attGuidOutMsgRec)
+    attRefOutMsgRec = moduleConfig.attRefOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, attRefOutMsgRec)
     scTransRec = scTransInMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, scTransRec)
     scAttRec = scAttInMsg.recorder()
@@ -138,8 +140,8 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, useGroundLocation, accura
         unitTestSim.ExecuteSimulation()
         counter += 1
 
-    truthSigmaBR, truthOmegaBR = \
-        truthValues(pHat_B, r_LN_N, r_SN_N, scAttRec.sigma_BN, eps, timeStep)
+    truthSigmaBR, truthOmegaBR, truthSigmaRN, truthOmegaRN = \
+        truthValues(pHat_B, r_LN_N, r_SN_N, scAttRec.sigma_BN, scAttRec.omega_BN_B, eps, timeStep)
 
     # compare the module results to the truth values
     for i in range(0, len(truthSigmaBR)):
@@ -158,6 +160,22 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, useGroundLocation, accura
                                 str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
+    for i in range(0, len(truthSigmaRN)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqual(attRefOutMsgRec.sigma_RN[i], truthSigmaRN[i], 3, accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_RN unit test at t=" +
+                                str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
+                                "sec\n")
+
+    for i in range(0, len(truthOmegaRN)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqual(attRefOutMsgRec.omega_RN_N[i], truthOmegaRN[i], 3, accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_N unit test at t=" +
+                                str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
+                                "sec\n")
+
     if testFailCount == 0:
         print("PASSED: " + moduleWrap.ModelTag)
     else:
@@ -166,7 +184,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, useGroundLocation, accura
     return [testFailCount, "".join(testMessages)]
 
 
-def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, smallAngle, dt):
+def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, omega_BNList, smallAngle, dt):
     # setup eHat180_B
     eHat180_B = np.cross(pHat_B, np.array([1., 0., 0.]))
     if np.linalg.norm(eHat180_B) < 0.1:
@@ -179,6 +197,8 @@ def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, smallAngle, dt):
     omega_BR_B = np.array([0., 0., 0.])
     sigma_BR_Out = []
     omega_BR_B_Out = []
+    sigma_RN_Out = []
+    omega_RN_N_Out = []
     while counter <= 2:
         sigma_BN = sigma_BNList[counter]
         dcmBN = RigidBodyKinematics.MRP2C(sigma_BN)
@@ -202,11 +222,13 @@ def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, smallAngle, dt):
         # store truth results
         sigma_BR_Out.append(sigma_BR)
         omega_BR_B_Out.append(omega_BR_B)
+        sigma_RN_Out.append(RigidBodyKinematics.addMRP(sigma_BNList[counter], -sigma_BR))
+        omega_RN_N_Out.append(np.transpose(dcmBN).dot(omega_BNList[counter] - omega_BR_B_Out[counter]))
 
         counter += 1
 
-    return sigma_BR_Out, omega_BR_B_Out
+    return sigma_BR_Out, omega_BR_B_Out, sigma_RN_Out, omega_RN_N_Out
 
 
 if __name__ == "__main__":
-    locationPointingTestFunction(False, [0, 1, 0], True, 1e-12)
+    locationPointingTestFunction(False, [1, 0, 0], True, 1e-12)

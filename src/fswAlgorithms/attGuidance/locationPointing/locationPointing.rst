@@ -32,6 +32,9 @@ provides information on what this message is used for.
     * - AttGuidOutMsg
       - :ref:`AttGuidMsgPayload`
       - output message with the attitude guidance
+    * - AttRefOutMsg
+      - :ref:`AttRefMsgPayload`
+      - output message with the attitude reference
 
 
 
@@ -72,6 +75,10 @@ The tracking error rates :math:`{\pmb\omega}_{B/R}` are obtained through numeric
 MRP values.  During the first module ``Update`` evaluation the numerical differencing is not possible and
 this value is thus set to zero.
 
+Using the attitude navigation and guidance messages, this module also computes the reference information in 
+the form of ``attRefOutMsg``. This additional output message is useful when working with modules that need 
+a reference message and cannot accept a guidance message.
+
 .. note::
 
     The module checks for several conditions such as heading vectors
@@ -89,7 +96,3 @@ both will result in a warning and the module defaults to using the ``locationInM
 
 The variable ``smallAngle`` defined the minimum angular separation where two vectors are considered colinear.
 It is defaulted to zero, but can be set to any desired value in radians.
-
-
-
-
