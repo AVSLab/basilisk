@@ -399,8 +399,8 @@ def run(show_plots):
                                               , genericSensorList=genericSensorHUD
                                               , transceiverList=transceiverHUD
                                               )
-    vizSupport.setInstrumentGuiSetting(viz, showGenericSensorLabels=True)
-    vizSupport.setInstrumentGuiSetting(viz, showTransceiverLabels=True)
+    # the following command sets Viz settings for the first spacecraft in the simulation
+    vizSupport.setInstrumentGuiSetting(viz, showGenericSensorLabels=True, showTransceiverLabels=True)
 
     # Add the Boulder target
     vizSupport.addLocation(viz, stationName="Boulder Target"

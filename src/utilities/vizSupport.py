@@ -626,7 +626,6 @@ def setInstrumentGuiSetting(viz, **kwargs):
         if setting is False:
             setting = -1
         vizElement.showTransceiverLabels = setting
-        print("HPS: showTransceiverLabels set")
 
     instrumentGuiSettingList.append(vizElement)
     del viz.settings.instrumentGuiSettingsList[:]  # clear settings list to replace it with updated list
