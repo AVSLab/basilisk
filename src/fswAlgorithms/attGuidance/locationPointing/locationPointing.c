@@ -109,7 +109,6 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     double r_LS_B[3];                   /*!< Position vector of location w.r.t spacecraft CoM in body frame */
     double eHat_B[3];                   /*!< --- Eigen Axis */
     double dcmBN[3][3];                 /*!< inertial spacecraft orientation DCM */
-    double dcmNB[3][3];                 /*!< DCM between the N frame and the B frame */
     double phi;                         /*!< principal angle between pHat and heading to location */
     double sigmaDot_BR[3];              /*!< time derivative of sigma_BR*/
     double sigma_BR[3];                 /*!< MRP of B relative to R */
@@ -194,8 +193,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     v3Subtract(scAttInMsgBuffer.omega_BN_B, attGuidOutMsgBuffer.omega_BR_B, omega_RN_B);
 
     // convert to omega_RN_N
-    mTranspose(dcmBN, 3, 3, dcmNB);
-    m33MultV3(dcmNB, omega_RN_B, attRefOutMsgBuffer.omega_RN_N);
+    m33tMultV3(dcmBN, omega_RN_B, attRefOutMsgBuffer.omega_RN_N);
 
     // copy current attitude states into prior state buffers
     v3Copy(sigma_BR, configData->sigma_BR_old);
