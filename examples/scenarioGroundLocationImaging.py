@@ -388,7 +388,6 @@ def run(show_plots):
     transceiverHUD.normalVector = [0., 0., 1.]
     transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("white"))
     transceiverHUD.label = "antenna"
-    transceiverHUD.size = 20
     trInMsg = messaging.DataNodeUsageMsgReader()
     trInMsg.subscribeTo(transmitter.nodeDataOutMsg)
     transceiverHUD.transceiverStateInMsgs.push_back(trInMsg)

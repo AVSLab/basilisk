@@ -749,7 +749,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 }
                 tr->set_fieldofview(scIt->transceiverList[idx].fieldOfView*R2D);
                 tr->set_ishidden(scIt->transceiverList[idx].isHidden);
-                tr->set_size(scIt->transceiverList[idx].size);
                 tr->set_label(scIt->transceiverList[idx].label);
                 for (int j=0; j<scIt->transceiverList[idx].color.size(); j++) {
                     tr->add_color(scIt->transceiverList[idx].color[j]);

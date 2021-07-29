@@ -948,11 +948,11 @@ The full list of required and optional transceiver parameters are provided in th
       -
       - No
       - argument to hide the transceiver visualization.  Default value is ``False``
-    * - ``size``
-      - double
-      - m
+    * - ``animationSpeed``
+      - int
+      -
       - No
-      - Value of 0 (protobuffer default) to show HUD at viz default size
+      - Set transmission animation speed to a value between 1(slowest) to 10 (fastest), or 0 to use viz default
     * - ``label``
       - string
       -

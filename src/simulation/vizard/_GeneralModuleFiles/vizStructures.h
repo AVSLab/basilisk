@@ -181,7 +181,6 @@ Transceiver
     double fieldOfView;                 //!< [rad] edgle-to-edge transceiver access cone
     double normalVector[3];             //!< [] normal vector of the transceiver bore sight axis
     int isHidden = 0;                   //!< [] (optional) true to hide sensor HUD, false to show transceiver HUD (default)
-    double size = 0;                    //!< [m] (optional) size of the transceiver visualization, use 0 (protobuffer default) to use viz default size
     std::vector<int> color;             //!< [] (optional) RGBA as values between 0 and 255
     std::string label = "";             //!< [] (optional) string to display on sensor label
     int animationSpeed = 0;             //!< [] (optional) Set transmission animation speed to a value between 1(slowest) to 10 (fastest), or 0 to use viz default
