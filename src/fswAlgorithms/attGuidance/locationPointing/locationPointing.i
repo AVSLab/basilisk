@@ -43,6 +43,8 @@ struct NavAttMsg_C;
 struct GroundStateMsg_C;
 %include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+struct AttRefMsg_C;
 %include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
 
