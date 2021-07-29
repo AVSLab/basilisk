@@ -68,6 +68,30 @@ def plot_attitude_error(timeData, dataSigmaBR, id=None):
     plt.ylabel(r'Attitude tracking error $\sigma_{B/R}$')
     return
 
+def plot_attitude_reference(timeData, dataSigmaRN, id=None):
+    """Plot the spacecraft attitude reference."""
+    plt.figure(id)
+    for idx in range(3):
+        plt.plot(timeData, dataSigmaRN[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label=r'$\sigma_' + str(idx+1) + '$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel(r'Attitude reference $\sigma_{R/N}$')
+    return
+
+def plot_rate(timeData, dataOmegaBN, id=None):
+    """Plot the body angular velocity rate tracking errors."""
+    plt.figure(id)
+    for idx in range(3):
+        plt.plot(timeData, dataOmegaBN[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label=r'$\omega_{BN,' + str(idx+1) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Angular Rate (rad/s)')
+    return
+
 def plot_rate_error(timeData, dataOmegaBR, id=None):
     """Plot the body angular velocity rate tracking errors."""
     plt.figure(id)
@@ -78,6 +102,18 @@ def plot_rate_error(timeData, dataOmegaBR, id=None):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (rad/s)')
+    return
+
+def plot_rate_reference(timeData, dataOmegaRN, id=None):
+    """Plot the body angular velocity rate reference."""
+    plt.figure(id)
+    for idx in range(3):
+        plt.plot(timeData, dataOmegaRN[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label=r'$\omega_{RN,' + str(idx+1) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Reference Rate (rad/s)')
     return
 
 def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW, id=None):
@@ -164,6 +200,23 @@ def plot_rw_temperature(timeData, dataTemp, numRW, id=None):
     plt.ylabel('RW Temperatures [ºC]')
     return
 
+def plot_orbit(r_BN, id=None):
+    """Plot the spacecraft inertial orbitS."""
+    plt.figure(id, figsize=(6, 5))
+    ax = plt.axes(projection='3d')
+    ax.plot(r_BN[:, 0] * m2km, r_BN[:, 1] * m2km, r_BN[:, 2] * m2km,
+            label="Spacecraft")
+    ax.set_xlim3d(-8000, 8000)
+    ax.set_ylim3d(-8000, 8000)
+    ax.set_zlim3d(-8000, 8000)
+    ax.scatter(0, 0, 0, c=color_x)
+    ax.set_title('Spacecraft Inertial Orbit')
+    ax.set_xlabel('x [km]')
+    ax.set_ylabel('y [km]')
+    ax.set_zlabel('z [km]')
+    ax.legend(loc=2)
+    return
+
 def plot_orbits(r_BN, numberSpacecraft, id=None):
     """Plot the spacecraft inertial orbits."""
     plt.figure(id, figsize=(6, 5))
@@ -183,14 +236,33 @@ def plot_orbits(r_BN, numberSpacecraft, id=None):
     ax.legend(loc=2)
     return
 
-def plot_thrust(timeData, dataThrust, numThr, id=None):
-    """Plot the thrusters information."""
-    plt.figure(id)
-    for idx in range(numThr):
-        plt.plot(timeData, dataThrust[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3))
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Thrust')
+def plot_relative_orbits(r_BN, numberSpacecraft, id=None):
+    """Plot the spacecraft inertial orbits."""
+    plt.figure(id, figsize=(6, 5))
+    ax = plt.axes(projection='3d')
+    for i in range(numberSpacecraft):
+        ax.plot(r_BN[i][:, 0] * m2km, r_BN[i][:, 1] * m2km, r_BN[i][:, 2] * m2km,
+                label="Spacecraft " + str(i),
+                c=unitTestSupport.getLineColor(i, numberSpacecraft))
+    ax.set_box_aspect((np.ptp(r_BN[i][:, 0]), np.ptp(r_BN[i][:, 1]), np.ptp(r_BN[i][:, 2])))
+    ax.scatter(0, 0, 0, c=color_x)
+    ax.set_title('Spacecraft Relative Orbits in Hill Frame')
+    ax.set_xlabel('$i_r$ [km]')
+    ax.set_ylabel(r'$i_{\theta}$ [km]')
+    ax.set_zlabel('$i_h$ [km]')
+    ax.legend(loc=2)
     return
+
+def plot_orbital_element_differences(timeData, oed, id=None):
+    """Plot the orbital element difference between the chief and another spacecraft."""
+    plt.figure(id)
+    plt.plot(timeData, oed[:, 0], label="da")
+    plt.plot(timeData, oed[:, 1], label="de")
+    plt.plot(timeData, oed[:, 2], label="di")
+    plt.plot(timeData, oed[:, 3], label="dOmega")
+    plt.plot(timeData, oed[:, 4], label="domega")
+    plt.plot(timeData, oed[:, 5], label="dM")
+    plt.legend()
+    plt.xlabel("time [orbit]")
+    plt.ylabel("orbital element difference")
 
