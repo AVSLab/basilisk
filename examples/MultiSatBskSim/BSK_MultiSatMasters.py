@@ -17,9 +17,10 @@
 #
 
 # Import architectural modules
-from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import SimulationBaseClass, macros as mc
 
 from Basilisk import __path__
+from Basilisk.fswAlgorithms import formationBarycenter
 
 # Get current file path
 import sys, os, inspect
@@ -38,16 +39,19 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
     Args:
         numberSpacecraft (int): number of spacecraft
+        relativeNavigation (bool): whether the chief is the barycenter of the spacecraft formation
         fswRate (float): [s] FSW update rate
         dynRate (float): [s] dynamics update rate
         envRate (float): [s] environment update rate
+        relNavRate (float): [s] relative navigation update rate
 
     """
 
-    def __init__(self, numberSpacecraft, fswRate=0.1, dynRate=0.1, envRate=0.1):
+    def __init__(self, numberSpacecraft, relativeNavigation=False, fswRate=0.1, dynRate=0.1, envRate=0.1, relNavRate=0.1):
         self.dynRate = dynRate
         self.fswRate = fswRate
         self.envRate = envRate
+        self.relNavRate = relNavRate
         self.numberSpacecraft = numberSpacecraft
 
         # Create a sim module as an empty container
@@ -67,6 +71,13 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.dynamics_added = False
         self.fsw_added = False
 
+        # Set the formationBarycenter module if the flag is set to True
+        if relativeNavigation:
+            self.relNavProc = None
+            self.relativeNavigationModule = None
+            self.relativeNavigationTaskName = None
+            self.add_relativeNavigation()
+
     def get_EnvModel(self):
         assert (self.environment_added is True), "It is mandatory to use an environment model as an argument"
         return self.EnvModel
@@ -74,7 +85,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
     def set_EnvModel(self, envModel):
         self.environment_added = True
         self.EnvProcessName = "EnvironmentProcess"
-        self.envProc = self.CreateNewProcess(self.EnvProcessName)
+        self.envProc = self.CreateNewProcess(self.EnvProcessName, 300)
 
         # Add the environment class
         self.EnvModel = envModel.BSKEnvironmentModel(self, self.envRate)
@@ -89,7 +100,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         # Add the dynamics classes
         for spacecraftIndex in range(self.numberSpacecraft):
             self.DynamicsProcessName.append("DynamicsProcess" + str(spacecraftIndex))  # Create simulation process name
-            self.dynProc.append(self.CreateNewProcess(self.DynamicsProcessName[spacecraftIndex]))  # Create process
+            self.dynProc.append(self.CreateNewProcess(self.DynamicsProcessName[spacecraftIndex], 200))  # Create process
             self.DynModels.append(dynModel[spacecraftIndex].BSKDynamicModels(self, self.dynRate, spacecraftIndex))
 
     def get_FswModel(self):
@@ -102,9 +113,22 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         # Add the FSW classes
         for spacecraftIndex in range(self.numberSpacecraft):
             self.FSWProcessName.append("FSWProcess" + str(spacecraftIndex))  # Create simulation process name
-            self.fswProc.append(self.CreateNewProcess(self.FSWProcessName[spacecraftIndex]))  # Create process
+            self.fswProc.append(self.CreateNewProcess(self.FSWProcessName[spacecraftIndex], 100))  # Create process
             self.FSWModels.append(fswModel[spacecraftIndex].BSKFswModels(self, self.fswRate, spacecraftIndex))
 
+    def add_relativeNavigation(self):
+        processName = "RelativeNavigation"
+        processTasksTimeStep = mc.sec2nano(self.relNavRate)
+        self.relativeNavigationTaskName = "relativeNavigationTask"
+
+        # Create an independt process for barycenter calculation
+        self.relNavProc = self.CreateNewProcess(processName, 150)
+        self.relNavProc.addTask(self.CreateNewTask(self.relativeNavigationTaskName, processTasksTimeStep), 20)
+
+        # Add the formationBarycenter module
+        self.relativeNavigationModule = formationBarycenter.FormationBarycenter()
+        self.relativeNavigationModule.ModelTag = "RelativeNavigation"
+        self.AddModelToTask(self.relativeNavigationTaskName, self.relativeNavigationModule, None, 0)
 
 class BSKScenario(object):
     def __init__(self):
