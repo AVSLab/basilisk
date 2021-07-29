@@ -260,6 +260,14 @@ The following table includes the keyword options for this method.
       - Boolean
       - No
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``showTransceiverLabels``
+      - Boolean
+      - No
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``showTransceiverFrustrum``
+      - Boolean
+      - No
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 
 
 Defining a Pointing Line

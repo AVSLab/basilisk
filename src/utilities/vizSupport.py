@@ -531,6 +531,9 @@ def setInstrumentGuiSetting(viz, **kwargs):
     showTransceiverLabels: int
         flag if the generic sensor labels should be shown (1) or hidden (-1)
         Default: 0 - if not provided, then the Vizard default settings are used
+    showTransceiverFrustrum: int
+        flag if the generic sensor labels should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
 
     """
     if not vizFound:
@@ -542,7 +545,7 @@ def setInstrumentGuiSetting(viz, **kwargs):
 
     unitTestSupport.checkMethodKeyword(
         ['spacecraftName', 'viewCSSPanel', 'viewCSSCoverage', 'viewCSSBoresight', 'showCSSLabels',
-         'showGenericSensorLabels', 'showTransceiverLabels'],
+         'showGenericSensorLabels', 'showTransceiverLabels', 'showTransceiverFrustrum'],
         kwargs)
 
     if 'spacecraftName' in kwargs:
@@ -626,6 +629,18 @@ def setInstrumentGuiSetting(viz, **kwargs):
         if setting is False:
             setting = -1
         vizElement.showTransceiverLabels = setting
+
+    if 'showTransceiverFrustrum' in kwargs:
+        setting = kwargs['showTransceiverFrustrum']
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: showTransceiverFrustrum must be  -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: showTransceiverFrustrum must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
+        vizElement.showTransceiverFrustrum = setting
 
     instrumentGuiSettingList.append(vizElement)
     del viz.settings.instrumentGuiSettingsList[:]  # clear settings list to replace it with updated list

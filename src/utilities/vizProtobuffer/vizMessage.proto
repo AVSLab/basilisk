@@ -168,6 +168,7 @@ message VizMessage{
         int32 viewCSSBoresight = 5;// Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showGenericSensorLabels = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showTransceiverLabels = 7; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showTransceiverFrustrum = 8; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
     
     message CustomModel{
