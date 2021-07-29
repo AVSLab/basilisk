@@ -261,6 +261,7 @@ Stand Alone Architecture
 
    Three-Spacecraft Formation using MultiSat architecture  <MultiSatBskSim/scenariosMultiSat/scenario_BasicOrbitMultiSat>
    Attitude Guidance Modes Scheduling  <MultiSatBskSim/scenariosMultiSat/scenario_AttGuidMultiSat>
+   Formation Flying Control  <MultiSatBskSim/scenariosMultiSat/scenario_StationKeepingMultiSat>
    MultiSatBskSim Folder <MultiSatBskSim/index>
 
 
