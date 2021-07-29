@@ -52,7 +52,7 @@ class BSKFswModels:
         # Create tasks
         SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("inertialPointTask" + str(spacecraftIndex),
                                                                        self.processTasksTimeStep), 20)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("sunHillPointTask" + str(spacecraftIndex),
+        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("sunPointTask" + str(spacecraftIndex),
                                                                        self.processTasksTimeStep), 20)
         SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("locPointTask" + str(spacecraftIndex),
                                                                        self.processTasksTimeStep), 20)
@@ -64,9 +64,9 @@ class BSKFswModels:
         self.inertial3DPointWrap = SimBase.setModelDataWrap(self.inertial3DPointData)
         self.inertial3DPointWrap.ModelTag = "inertial3D"
 
-        self.sunHillPointData = hillPoint.hillPointConfig()
-        self.sunHillPointWrap = SimBase.setModelDataWrap(self.sunHillPointData)
-        self.sunHillPointWrap.ModelTag = "sunHillPoint"
+        self.sunPointData = locationPointing.locationPointingConfig()
+        self.sunPointWrap = SimBase.setModelDataWrap(self.sunPointData)
+        self.sunPointWrap.ModelTag = "sunPoint"
 
         self.locPointData = locationPointing.locationPointingConfig()
         self.locPointWrap = SimBase.setModelDataWrap(self.locPointData)
@@ -94,8 +94,7 @@ class BSKFswModels:
         SimBase.AddModelToTask("inertialPointTask" + str(spacecraftIndex), self.inertial3DPointWrap, self.inertial3DPointData, 10)
         SimBase.AddModelToTask("inertialPointTask" + str(spacecraftIndex), self.trackingErrorWrap, self.trackingErrorData, 9)
 
-        SimBase.AddModelToTask("sunHillPointTask" + str(spacecraftIndex), self.sunHillPointWrap, self.sunHillPointData, 10)
-        SimBase.AddModelToTask("sunHillPointTask" + str(spacecraftIndex), self.trackingErrorWrap, self.trackingErrorData, 9)
+        SimBase.AddModelToTask("sunPointTask" + str(spacecraftIndex), self.sunPointWrap, self.sunPointData, 10)
 
         SimBase.AddModelToTask("locPointTask" + str(spacecraftIndex), self.locPointWrap, self.locPointData, 10)
 
@@ -125,7 +124,7 @@ class BSKFswModels:
                                ["self.FSWModels[" + str(spacecraftIndex) + "].modeRequest == 'sunPointing'"],
                                ["self.fswProc[" + str(spacecraftIndex) + "].disableAllTasks()",
                                 "self.FSWModels[" + str(spacecraftIndex) + "].zeroGateWayMsgs()",
-                                "self.enableTask('sunHillPointTask" + str(spacecraftIndex) + "')",
+                                "self.enableTask('sunPointTask" + str(spacecraftIndex) + "')",
                                 "self.enableTask('mrpFeedbackRWsTask" + str(spacecraftIndex) + "')",
                                 "self.setAllButCurrentEventActivity('initiateSunPointing_" + str(spacecraftIndex) +
                                 "', True, useIndex=True)"])
@@ -148,19 +147,21 @@ class BSKFswModels:
         self.inertial3DPointData.sigma_R0N = [0.1, 0.2, -0.3]
         cMsgPy.AttRefMsg_C_addAuthor(self.inertial3DPointData.attRefOutMsg, self.attRefMsg)
 
-    def SetSunHillPointGuidance(self, SimBase):
+    def SetSunPointGuidance(self, SimBase):
         """
-        Defines the Sun-relative Hill pointing guidance module.
+        Defines the Sun pointing guidance module.
         """
-        self.sunHillPointData.transNavInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
-        self.sunHillPointData.celBodyInMsg.subscribeTo(SimBase.EnvModel.ephemObject.ephemOutMsgs[SimBase.EnvModel.sun])  # Sun
-        cMsgPy.AttRefMsg_C_addAuthor(self.sunHillPointData.attRefOutMsg, self.attRefMsg)
+        self.sunPointData.pHat_B = [0, 0, 1]
+        self.sunPointData.scAttInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
+        self.sunPointData.scTransInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
+        self.sunPointData.celBodyInMsg.subscribeTo(SimBase.EnvModel.ephemObject.ephemOutMsgs[SimBase.EnvModel.sun])
+        cMsgPy.AttGuidMsg_C_addAuthor(self.sunPointData.attGuidOutMsg, self.attGuidMsg)
 
     def SetLocationPointGuidance(self, SimBase):
         """
         Defines the location pointing guidance module.
         """
-        self.locPointData.pHat_B = [0, 0, 1]
+        self.locPointData.pHat_B = [1, 0, 0]
         self.locPointData.scAttInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
         self.locPointData.scTransInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
         self.locPointData.locationInMsg.subscribeTo(SimBase.EnvModel.groundStation.currentGroundStateOutMsg)
@@ -223,7 +224,7 @@ class BSKFswModels:
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
         self.SetInertial3DPointGuidance()
-        self.SetSunHillPointGuidance(SimBase)
+        self.SetSunPointGuidance(SimBase)
         self.SetLocationPointGuidance(SimBase)
         self.SetAttitudeTrackingError(SimBase)
         self.SetVehicleConfiguration(SimBase)
