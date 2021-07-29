@@ -27,6 +27,9 @@ bskPath = __path__[0]
 
 
 class BSKDynamicModels:
+    """
+    Defines the Dynamics class.
+    """
     def __init__(self, SimBase, dynRate, spacecraftIndex):
         self.I_sc = None
         self.numRW = 4
