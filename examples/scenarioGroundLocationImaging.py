@@ -383,10 +383,10 @@ def run(show_plots):
     genericSensorHUD.genericSensorCmdInMsg = cmdInMsg
 
     transceiverHUD = vizInterface.Transceiver()
-    transceiverHUD.r_SB_B = [0., 0., 1.]
+    transceiverHUD.r_SB_B = [0.23, 0., 1.38]
     transceiverHUD.fieldOfView = 40.0 * macros.D2R
-    transceiverHUD.normalVector = [0., 0., 1.]
-    transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("white"))
+    transceiverHUD.normalVector = [-1., 0., 1.]
+    transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
     transceiverHUD.label = "antenna"
     trInMsg = messaging.DataNodeUsageMsgReader()
     trInMsg.subscribeTo(transmitter.nodeDataOutMsg)
@@ -399,9 +399,10 @@ def run(show_plots):
                                               , transceiverList=transceiverHUD
                                               )
     # the following command sets Viz settings for the first spacecraft in the simulation
-    vizSupport.setInstrumentGuiSetting(viz, showGenericSensorLabels=True,
-                                       showTransceiverLabels=True,
-                                       showTransceiverFrustrum=True)
+    vizSupport.setInstrumentGuiSetting(viz,
+                                       showGenericSensorLabels=True,
+                                       showTransceiverLabels=True
+                                       )
 
     # Add the Boulder target
     vizSupport.addLocation(viz, stationName="Boulder Target"
