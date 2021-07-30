@@ -103,7 +103,7 @@ from the ``B/N`` states to obtain the equivalent ``R/N`` states.
 The variable ``smallAngle`` defined the minimum angular separation where two vectors are considered colinear.
 It is defaulted to zero, but can be set to any desired value in radians.
 
-By default this is a 2D attiude control module in attitude and a 2D rate control.  In particular, the rates about the
+By default this is a 2D attitude control module in attitude and a 2D rate control.  In particular, the rates about the
 desired heading axis are not damped.  By setting the module variable ``useBoresightRateDamping`` to 1,
 the body rates about about the desired heading 
 angle are added to the rate tracking error yielding a 3D rate control implementation.  
