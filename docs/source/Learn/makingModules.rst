@@ -21,8 +21,8 @@ The following pages cover the primary tasks required to make a Basilisk module. 
 
    makingModules/makingModules-1
    makingModules/makingModules-2
-   makingModules/cppModules
    makingModules/cModules
+   makingModules/cppModules
    makingModules/pyModules
    makingModules/makingModules-3
    makingModules/makingModules-4
