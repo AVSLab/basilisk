@@ -15,5 +15,6 @@ This section covers how to write a C++ Basilisk Module.  A sample C++ Basilisk m
    cppModules/cppModules-2
    cppModules/cppModules-3
    cppModules/cppModules-4
+   cppModules/cppModules-5
 
 
