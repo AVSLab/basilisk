@@ -38,8 +38,8 @@ import numpy as np
 @pytest.mark.parametrize("accuracy", [1e-12])
 @pytest.mark.parametrize("r_LS_N", [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.], [0, -1, 0.], [1, 1, 1]])
 @pytest.mark.parametrize("useGroundLocation", [True, False])
-
-def test_locationPointing(show_plots, r_LS_N, useGroundLocation, accuracy):
+@pytest.mark.parametrize("use3DRate", [True, False])
+def test_locationPointing(show_plots, r_LS_N, useGroundLocation, use3DRate, accuracy):
     r"""
     **Validation Test Description**
 
@@ -54,17 +54,20 @@ def test_locationPointing(show_plots, r_LS_N, useGroundLocation, accuracy):
     Args:
         r_LS_N (float): position vector of location relative to spacecraft
         useGroundLocation (bool): choose whether to use ``locationInMsg`` or ``celBodyInMsg``
+        use3DRate (bool): choose between 2D or 3D rate control
         accuracy (float): absolute accuracy value used in the validation tests
 
     **Description of Variables Being Tested**
 
-    Here discuss what variables and states are being checked. 
+    The script checks the attitude and rate outputs.
+
     """
-    [testResults, testMessage] = locationPointingTestFunction(show_plots, r_LS_N, useGroundLocation, accuracy)
+    [testResults, testMessage] = locationPointingTestFunction(show_plots, r_LS_N, useGroundLocation,
+                                                              use3DRate, accuracy)
     assert testResults < 1, testMessage
 
 
-def locationPointingTestFunction(show_plots, r_LS_NIn, useGroundLocation, accuracy):
+def locationPointingTestFunction(show_plots, r_LS_NIn, useGroundLocation, use3DRate, accuracy):
     """Test method"""
     testFailCount = 0
     testMessages = []
@@ -93,6 +96,8 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, useGroundLocation, accura
     moduleConfig.pHat_B = pHat_B
     eps = 0.1 * macros.D2R
     moduleConfig.smallAngle = eps
+    if use3DRate:
+        moduleConfig.useBoresightRateDamping = 1
 
     # Configure input messages
     scTransInMsgData = messaging.NavTransMsgPayload()
@@ -141,7 +146,8 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, useGroundLocation, accura
         counter += 1
 
     truthSigmaBR, truthOmegaBR, truthSigmaRN, truthOmegaRN = \
-        truthValues(pHat_B, r_LN_N, r_SN_N, scAttRec.sigma_BN, scAttRec.omega_BN_B, eps, timeStep)
+        truthValues(pHat_B, r_LN_N, r_SN_N, scAttRec.sigma_BN, scAttRec.omega_BN_B, eps, timeStep,
+                    use3DRate)
 
     # compare the module results to the truth values
     for i in range(0, len(truthSigmaBR)):
@@ -184,7 +190,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, useGroundLocation, accura
     return [testFailCount, "".join(testMessages)]
 
 
-def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, omega_BNList, smallAngle, dt):
+def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, omega_BNList, smallAngle, dt, use3DRate):
     # setup eHat180_B
     eHat180_B = np.cross(pHat_B, np.array([1., 0., 0.]))
     if np.linalg.norm(eHat180_B) < 0.1:
@@ -218,6 +224,10 @@ def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, omega_BNList, smallAngle, 
             dsigma = (sigma_BR - sigma_BR_Out[counter - 1]) / dt
             Binv = RigidBodyKinematics.BinvMRP(sigma_BR)
             omega_BR_B = Binv.dot(dsigma) * 4
+
+        if use3DRate:
+            rHat_LS_B = r_LS_B / np.linalg.norm(r_LS_B)
+            omega_BR_B = omega_BR_B + (omega_BNList[counter].dot(rHat_LS_B))*rHat_LS_B
 
         # store truth results
         sigma_BR_Out.append(sigma_BR)
