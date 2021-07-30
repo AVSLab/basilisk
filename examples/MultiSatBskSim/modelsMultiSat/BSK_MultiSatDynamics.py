@@ -18,8 +18,8 @@
 
 import numpy as np
 from Basilisk.utilities import (macros as mc, unitTestSupport as sp, RigidBodyKinematics as rbk,
-                                simIncludeRW)
-from Basilisk.simulation import (spacecraft, simpleNav, reactionWheelStateEffector)
+                                simIncludeRW, simIncludeThruster)
+from Basilisk.simulation import (spacecraft, simpleNav, reactionWheelStateEffector, thrusterDynamicEffector)
 
 from Basilisk import __path__
 
@@ -27,10 +27,13 @@ bskPath = __path__[0]
 
 
 class BSKDynamicModels:
-    """Defines the Dynamics class."""
+    """
+    Defines the Dynamics class.
+    """
     def __init__(self, SimBase, dynRate, spacecraftIndex):
         self.I_sc = None
         self.numRW = 4
+        self.numThr = 2
         self.spacecraftIndex = spacecraftIndex
 
         # Define process name, task name and task time-step
@@ -45,21 +48,24 @@ class BSKDynamicModels:
         self.simpleNavObject = simpleNav.SimpleNav()
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
         self.rwFactory = simIncludeRW.rwFactory()
+        self.thrusterEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+        self.thrusterFactory = simIncludeThruster.thrusterFactory()
 
         # Initialize all modules and write init one-time messages
         self.InitAllDynObjects(SimBase)
 
         # Assign initialized modules to tasks
-        SimBase.AddModelToTask(self.taskName, self.scObject, None, 200)
-        SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 200)
-        SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 200)
+        SimBase.AddModelToTask(self.taskName, self.scObject, None, 100)
+        SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 100)
+        SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 100)
+        SimBase.AddModelToTask(self.taskName, self.thrusterEffector, None, 100)
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
 
     def SetSpacecraftHub(self):
         """
-        Sets the spacecraft's properties.
+        Defines the spacecraft object properties.
         """
         self.scObject.ModelTag = "spacecraft" + str(self.spacecraftIndex)
         self.I_sc = [900., 0., 0.,
@@ -71,27 +77,21 @@ class BSKDynamicModels:
 
     def SetGravityBodies(self, SimBase):
         """
-        Specifies what gravitational bodies to include in the simulation
+        Specify what gravitational bodies to include in the simulation
         """
         # Attach the gravity body
         self.scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(SimBase.EnvModel.gravFactory.gravBodies.values()))
 
-    def SetGroundLocations(self, SimBase):
-        """
-        Connects the ground locations.
-        """
-        SimBase.EnvModel.groundStation.addSpacecraftToModel(self.scObject.scStateOutMsg)
-
     def SetSimpleNavObject(self):
         """
-        Sets up the navigation module.
+        Defines the navigation module.
         """
         self.simpleNavObject.ModelTag = "SimpleNavigation" + str(self.spacecraftIndex)
         self.simpleNavObject.scStateInMsg.subscribeTo(self.scObject.scStateOutMsg)
 
     def SetReactionWheelDynEffector(self):
         """
-        Creates the reaction wheel array.
+        Defines the RW state effector.
         """
         # specify RW momentum capacity
         maxRWMomentum = 50.  # Nms
@@ -112,12 +112,36 @@ class BSKDynamicModels:
                                   maxMomentum=maxRWMomentum,
                                   rWB_B=posVector)
 
-        self.rwFactory.addToSpacecraft("RW" + str(self.spacecraftIndex), self.rwStateEffector, self.scObject)
+        self.rwFactory.addToSpacecraft("RWArray" + str(self.spacecraftIndex), self.rwStateEffector, self.scObject)
+
+    def SetThrusterDynEffector(self):
+        """
+        Defines the thruster state effector.
+        """
+        location = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+        direction = [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
+
+        # create the thruster devices by specifying the thruster type and its location and direction
+        for pos_B, dir_B in zip(location, direction):
+            self.thrusterFactory.create('MOOG_Monarc_445', pos_B, dir_B, useMinPulseTime=False)
+
+        # create thruster object container and tie to spacecraft object
+        self.thrusterFactory.addToSpacecraft("thrusterFactory", self.thrusterEffector, self.scObject)
+
+    def SetGroundLocations(self, SimBase):
+        """
+        Adds the spacecraft to the ground location module.
+        """
+        SimBase.EnvModel.groundStation.addSpacecraftToModel(self.scObject.scStateOutMsg)
 
     # Global call to initialize every module
     def InitAllDynObjects(self, SimBase):
+        """
+        Initializes all dynamic objects.
+        """
         self.SetSpacecraftHub()
         self.SetGravityBodies(SimBase)
-        self.SetGroundLocations(SimBase)
         self.SetReactionWheelDynEffector()
+        self.SetThrusterDynEffector()
         self.SetSimpleNavObject()
+        self.SetGroundLocations(SimBase)
