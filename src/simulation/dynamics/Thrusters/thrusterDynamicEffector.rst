@@ -32,7 +32,7 @@ provides information on what this message is used for.
       - Description
     * - cmdsInMsg
       - :ref:`THRArrayOnTimeCmdMsgPayload`
-      - input message with thruster commands
+      - (optional) input message with thruster commands. If not connected the thruster commands are set to zero.
     * - thrusterOutMsgs
       - :ref:`THROutputMsgPayload`
       - output message vector for thruster data
