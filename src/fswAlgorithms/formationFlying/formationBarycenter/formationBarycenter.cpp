@@ -112,6 +112,12 @@ void FormationBarycenter::computeBaricenter() {
     } else {
         classicElements orbitElements = {}; // zero the orbit elements first
         classicElements tempElements;
+        double OmegaSineSum = 0;
+        double OmegaCosineSum = 0;
+        double omegaSineSum = 0;
+        double omegaCosineSum = 0;
+        double fSineSum = 0;
+        double fCosineSum = 0;
 
         // compute the orbital elements barycenter
         for (long unsigned int c = 0; c < this->scNavInMsgs.size(); c++) {
@@ -121,9 +127,13 @@ void FormationBarycenter::computeBaricenter() {
             orbitElements.a += this->scPayloadBuffer.at(c).massSC * tempElements.a;
             orbitElements.e += this->scPayloadBuffer.at(c).massSC * tempElements.e;
             orbitElements.i += this->scPayloadBuffer.at(c).massSC * tempElements.i;
-            orbitElements.Omega += this->scPayloadBuffer.at(c).massSC * tempElements.Omega;
-            orbitElements.omega += this->scPayloadBuffer.at(c).massSC * tempElements.omega;
-            orbitElements.f += this->scPayloadBuffer.at(c).massSC * tempElements.f;
+            
+            OmegaSineSum += this->scPayloadBuffer.at(c).massSC * sin(tempElements.Omega);
+            OmegaCosineSum += this->scPayloadBuffer.at(c).massSC * cos(tempElements.Omega);
+            omegaSineSum += this->scPayloadBuffer.at(c).massSC * sin(tempElements.omega);
+            omegaCosineSum += this->scPayloadBuffer.at(c).massSC * cos(tempElements.omega);
+            fSineSum += this->scPayloadBuffer.at(c).massSC * sin(tempElements.f);
+            fCosineSum += this->scPayloadBuffer.at(c).massSC * cos(tempElements.f);
 
             totalMass += this->scPayloadBuffer.at(c).massSC;
 
@@ -132,9 +142,9 @@ void FormationBarycenter::computeBaricenter() {
         orbitElements.a /= totalMass;
         orbitElements.e /= totalMass;
         orbitElements.i /= totalMass;
-        orbitElements.Omega /= totalMass;
-        orbitElements.omega /= totalMass;
-        orbitElements.f /= totalMass;
+        orbitElements.Omega = atan2(OmegaSineSum, OmegaCosineSum);
+        orbitElements.omega = atan2(omegaSineSum, omegaCosineSum);
+        orbitElements.f = atan2(fSineSum, fCosineSum);
 
         // convert orbital elements into position and velocity vectors
         elem2rv(this->mu, &orbitElements, barycenter, barycenterVelocity);

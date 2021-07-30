@@ -48,7 +48,15 @@ that is done, we take the average of each orbital element :math:`oe` as such:
 .. math::
     \bar{oe} = \dfrac{1}{m_{total}}\sum_{i}m_ioe_i
 
-The set of :math:`\bar{oe}` are then converted back into position and velocity vectors.
+This formula is only valid for semi-major axis (a), eccentricity (e) and inclination (i). For the other angular orbital elements, a problem with angle wrapping can occur 
+when the angles are close to zero. For example, if two spacecraft of equal mass have a true anomaly of 10 and 350 degrees, the previous averaging formula would suggest 
+that the mean should be 180 degrees, when in fact it should be 0. To solve this problem, a different formula is used for RAAN (:math:`\Omega`), AoP (:math:`\omega`) 
+and true anomaly (f):
+
+.. math::
+    \bar{\alpha} = \texttt{atan2}\left(\sum_{i}m_i\sin\alpha_i, \sum_{i}m_i\cos\alpha_i\right)
+
+where :math:`\bar{\alpha}` is the averaged angular orbital element. The set of :math:`\bar{oe}` are then converted back into position and velocity vectors.
 
 As stated before, the module outputs both a C++ and C-wrapped navigation messages. Both contain the same payload.
 
