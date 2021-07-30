@@ -91,9 +91,10 @@ Looking at the :ref:`BSK_MultiSatDynamics` file, it can be observed that the dyn
 consists of one tasks named ``DynamicsTaskX`` where ``X`` represents that spacecraft's index. This task are added to the
 corresponding dynamics process and an instance of a specific object is added.
 
-The dynamics class creates a :ref:`spacecraft`, :ref:`simpleNav` and :ref:`reactionWheelStateEffector` objects.
-Although no attitude guidance and control is implemented in this example, this class will be used in
-other scenarios that make use of those control surfaces (see :ref:`scenario_AttGuidMultiSat`).
+The dynamics class creates a :ref:`spacecraft`, :ref:`simpleNav`, :ref:`reactionWheelStateEffector` and
+:ref:`thrusterDynamicEffector` objects. Although no attitude guidance and control is implemented in this example, this
+class will be used in other scenarios that make use of those control surfaces (see :ref:`scenario_AttGuidMultiSat` and
+:ref:`scenario_StationKeepingMultiSat`).
 
 The necessary connections between the environment and dynamics classes are also done in this file, such as adding the
 gravity bodies from the environment into the spacecraft object.

@@ -55,13 +55,15 @@ modes are implemented through the use of events and are described below:
 
 The attitude is controlled using a set of four reaction wheels that are set up in :ref:`BSK_MultiSatDynamics`. The
 ``mrpFeedback`` is used for the control law and ``rwMotorTorque`` interfaces with the reaction wheels. The
-``attTrackingError`` module is used with sun and inertial pointing modules, as they are 3D rotations, whereas the
-location pointing is only 2D and therefore does not need that module.
+``attTrackingError`` module is used with all modes to convert from a reference message to a guidance one.
 
 The events can be set using the ``modeRequest`` flag inside the FSW class. It is crucial that all events call the
 ``setAllButCurrentEventActivity`` method. This function is called in a way such that all events' activity is made active
 except for the current one. Without this command, every event could only be made active once. The method also makes
 sure it only affects the events specific to each spacecraft. For more information, see :ref:`SimulationBaseClass`.
+
+No formation flying control is done in this scenario. To see a more complete example which includes formation geometry
+control, see :ref:`scenario_StationKeepingMultiSat`.
 
 In this scenario, it is shown how the flight software events are set up, and how to change them on-the-fly.
 

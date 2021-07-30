@@ -46,16 +46,16 @@ information for all spacecraft in the simulation.
 Custom Dynamics Configurations Instructions
 -------------------------------------------
 
-The dynamics modules required for this scenario can be accessed in :ref:`BSK_MultiSatDynamicsComplex` and are very
-similar to :ref:`BSK_MultiSatDynamics`. The only difference between the two is that the former creates an array of
-thrusters to be used for orbit correction maneuvers.
+The dynamics modules required for this scenario are the same used in :ref:`scenario_BasicOrbitMultiSat` and
+:ref:`scenario_AttGuidMultiSat`. However, this example takes full advantage of all the features of the dynamics class,
+which includes thrusters for orbit corrections.
 
 Custom FSW Configurations Instructions
 --------------------------------------
 
-As stated in the previous section, the new :ref:`BSK_MultiSatFswComplex` class used in this example is based on the
-previous :ref:`BSK_MultiSatFsw` class. It borrows the same attitude modes, but adds the station keeping event that runs
-in parallel to the attitude modes.
+As stated in the previous section, the :ref:`BSK_MultiSatFsw` class used in this example is the same as the one used in
+:ref:`scenario_AttGuidMultiSat`. The main difference is that the station keeping module is now used, which allows for
+relative orbit geometry control.
 
 If no station keeping is desired, then the FSW stack works exactly as in :ref:`scenario_AttGuidMultiSat`. However, if
 station keeping is set properly, the FSW events work as follows. First, the attitude reference is set given the pointing
