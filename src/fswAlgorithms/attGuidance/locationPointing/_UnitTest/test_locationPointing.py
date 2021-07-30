@@ -241,4 +241,4 @@ def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, omega_BNList, smallAngle, 
 
 
 if __name__ == "__main__":
-    locationPointingTestFunction(False, [1, 0, 0], True, 1e-12)
+    locationPointingTestFunction(False, [1, 0, 0], True, False, 1e-12)
