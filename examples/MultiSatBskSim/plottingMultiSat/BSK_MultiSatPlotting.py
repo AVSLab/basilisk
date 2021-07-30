@@ -65,7 +65,7 @@ def plot_attitude_error(timeData, dataSigmaBR, id=None):
                  label=r'$\sigma_' + str(idx+1) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude tracking error $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Tracking Error $\sigma_{B/R}$')
     return
 
 def plot_attitude_reference(timeData, dataSigmaRN, id=None):
@@ -77,7 +77,7 @@ def plot_attitude_reference(timeData, dataSigmaRN, id=None):
                  label=r'$\sigma_' + str(idx+1) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude reference $\sigma_{R/N}$')
+    plt.ylabel(r'Attitude Reference $\sigma_{R/N}$')
     return
 
 def plot_rate(timeData, dataOmegaBN, id=None):
@@ -264,5 +264,5 @@ def plot_orbital_element_differences(timeData, oed, id=None):
     plt.plot(timeData, oed[:, 5], label="dM")
     plt.legend()
     plt.xlabel("time [orbit]")
-    plt.ylabel("orbital element difference")
+    plt.ylabel("Orbital Element Difference")
 

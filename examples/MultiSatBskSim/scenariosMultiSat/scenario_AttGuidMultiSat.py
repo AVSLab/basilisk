@@ -78,6 +78,9 @@ spacecraft is plotted per simulation.
 .. image:: /_images/Scenarios/scenario_AttGuidMultiSat_attitude.svg
    :align: center
 
+.. image:: /_images/Scenarios/scenario_AttGuidMultiSat_rate.svg
+   :align: center
+
 .. image:: /_images/Scenarios/scenario_AttGuidMultiSat_attitude_tracking_error.svg
    :align: center
 
@@ -258,17 +261,19 @@ class scenario_AttGuidFormationFlying(BSKSim, BSKScenario):
         timeLineSetSec = self.snTransLog[spacecraftIndex].times() * macros.NANO2SEC
 
         plt.plot_attitude(timeLineSetMin, dataSigmaBN, 1)
-        plt.plot_attitude_error(timeLineSetMin, dataSigmaBR, 2)
-        plt.plot_rate_error(timeLineSetMin, dataOmegaBR, 3)
-        plt.plot_rw_motor_torque(timeLineSetMin, dataUsReq, dataRW, DynModels[spacecraftIndex].numRW, 4)
-        plt.plot_rw_speeds(timeLineSetMin, dataOmegaRW, DynModels[spacecraftIndex].numRW, 5)
+        plt.plot_rate(timeLineSetMin, dataOmegaBN_B, 2)
+        plt.plot_attitude_error(timeLineSetMin, dataSigmaBR, 3)
+        plt.plot_rate_error(timeLineSetMin, dataOmegaBR, 4)
+        plt.plot_rw_motor_torque(timeLineSetMin, dataUsReq, dataRW, DynModels[spacecraftIndex].numRW, 5)
+        plt.plot_rw_speeds(timeLineSetMin, dataOmegaRW, DynModels[spacecraftIndex].numRW, 6)
 
         figureList = {}
         if show_plots:
             plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["attitude", "attitude_tracking_error", "tracking_error_rate", "rw_motor_torque", "rw_speeds"]
+            figureNames = ["attitude", "rate", "attitude_tracking_error", "tracking_error_rate",
+                           "rw_motor_torque", "rw_speeds"]
             figureList = plt.save_all_plots(fileName, figureNames)
 
         # close the plots being saved off to avoid over-writing old and new figures

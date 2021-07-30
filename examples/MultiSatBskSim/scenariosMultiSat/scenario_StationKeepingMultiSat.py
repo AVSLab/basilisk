@@ -146,8 +146,8 @@ sys.path.append(path + '/../modelsMultiSat')
 sys.path.append(path + '/../plottingMultiSat')
 from BSK_MultiSatMasters import BSKSim, BSKScenario
 import BSK_EnvironmentEarth
-import BSK_MultiSatDynamicsComplex
-import BSK_MultiSatFswComplex
+import BSK_MultiSatDynamics
+import BSK_MultiSatFsw
 
 # Import plotting files for your scenario
 import BSK_MultiSatPlotting as plt
@@ -162,8 +162,8 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         # Connect the environment, dynamics and FSW classes. It is crucial that these are set in the order specified, as
         # some connects made imply that some modules already exist
         self.set_EnvModel(BSK_EnvironmentEarth)
-        self.set_DynModel([BSK_MultiSatDynamicsComplex] * numberSpacecraft)
-        self.set_FswModel([BSK_MultiSatFswComplex] * numberSpacecraft)
+        self.set_DynModel([BSK_MultiSatDynamics] * numberSpacecraft)
+        self.set_FswModel([BSK_MultiSatFsw] * numberSpacecraft)
 
         # declare empty class variables
         self.samplingTime = []
@@ -364,6 +364,9 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                 if oed[i, j] < -math.pi:
                     oed[i, j] = oed[i, j] + 2 * math.pi
 
+        # Compute the orbit period
+        T = 2*math.pi*math.sqrt(self.oe[spacecraftIndex].a ** 3 / EnvModel.mu)
+
         #
         # Plot results
         #
@@ -379,7 +382,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         plt.plot_rw_speeds(timeLineSetMin, dataOmegaRW, DynModels[spacecraftIndex].numRW, 8)
         plt.plot_orbits(r_BN_N, self.numberSpacecraft, 9)
         plt.plot_relative_orbits(dr, len(dr), 10)
-        plt.plot_orbital_element_differences(timeLineSetMin, oed, 11)
+        plt.plot_orbital_element_differences(timeLineSetSec / T, oed, 11)
 
         figureList = {}
         if showPlots:
@@ -423,11 +426,11 @@ def runScenario(scenario, relativeNavigation):
     # Set up the station keeping requirements
     if relativeNavigation:
         scenario.FSWModels[0].stationKeeping = "ON"
-        scenario.FSWModels[0].spacecraftReconfigData.targetClassicOED = [0.0000, -0.005, -0.001, 0.0000, 0.0000, 0.003]
+        scenario.FSWModels[0].spacecraftReconfigData.targetClassicOED = [0.0000, -0.005, -0.001, 0.0000, 0.0000, 0.000]
     scenario.FSWModels[1].stationKeeping = "ON"
     scenario.FSWModels[1].spacecraftReconfigData.targetClassicOED = [0.0000, 0.005, 0.0000, 0.0000, 0.0000, -0.003]
     scenario.FSWModels[2].stationKeeping = "ON"
-    scenario.FSWModels[2].spacecraftReconfigData.targetClassicOED = [0.0000, 0.000, 0.001, 0.0000, 0.0000, 0.000]
+    scenario.FSWModels[2].spacecraftReconfigData.targetClassicOED = [0.0000, 0.000, 0.001, 0.0000, 0.0000, 0.003]
 
     # Initialize simulation
     scenario.InitializeSimulation()
