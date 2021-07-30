@@ -57,7 +57,7 @@ Version |release|
   package is installed along with ``conan``
 - created :ref:`smallBodyNavEKF` to simulate autonomous navigation in proximity of a small body
 - added a :ref:`AttRefMsgPayload` output message to the :ref:`locationPointing` module.
-
+- added :ref:`cppModules-5` to the section on learning how to create BSK modules
 
 Version 2.0.5
 -------------
