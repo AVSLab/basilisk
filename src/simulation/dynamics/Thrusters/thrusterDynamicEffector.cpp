@@ -66,12 +66,6 @@ void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos)
     NewThrustCmds.insert(this->NewThrustCmds.begin(), this->thrusterData.size(), 0.0);
     mDotTotal = 0.0;
 
-    // check if input message has not been included
-    if (!this->cmdsInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "thrusterDynamicEffector.cmdsInMsg was not linked.");
-    }
-
-
     return;
 }
 
@@ -114,17 +108,22 @@ bool ThrusterDynamicEffector::ReadInputs()
     std::vector<double>::iterator CmdIt;
     uint64_t i;
     bool dataGood;
-
-    //! - read the incoming command array
-    this->incomingCmdBuffer = this->cmdsInMsg();
-    dataGood = this->cmdsInMsg.isWritten();
-
-    //! - Check if message has already been read, if stale return
-    if(prevCommandTime==this->cmdsInMsg.timeWritten() || !dataGood) {
-        return(false);
-    }
-    prevCommandTime = this->cmdsInMsg.timeWritten();
     
+    if (this->cmdsInMsg.isLinked()) {
+        //! - read the incoming command array
+        this->incomingCmdBuffer = this->cmdsInMsg();
+        dataGood = this->cmdsInMsg.isWritten();
+
+        //! - Check if message has already been read, if stale return
+        if(this->prevCommandTime==this->cmdsInMsg.timeWritten() || !dataGood) {
+            return(false);
+        }
+        this->prevCommandTime = this->cmdsInMsg.timeWritten();
+    } else {
+        this->incomingCmdBuffer = this->cmdsInMsg.zeroMsgPayload;
+        this->prevCommandTime = 0;
+    }
+
     //! - Set the NewThrustCmds vector.  Using the data() method for raw speed
     double *CmdPtr;
     for(i=0, CmdPtr = NewThrustCmds.data(); i < this->thrusterData.size();
@@ -482,7 +481,7 @@ void ThrusterDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
     if(this->ReadInputs())
     {
-        this->ConfigureThrustRequests(prevCommandTime*1.0E-9);
+        this->ConfigureThrustRequests(this->prevCommandTime*1.0E-9);
     }
     this->writeOutputMessages(CurrentSimNanos);
 }
