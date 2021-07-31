@@ -22,6 +22,7 @@
 #include <iostream>
 #include <cstring>
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! This is the constructor for the simple nav model.  It sets default variable
     values and initializes the various parts of the model */
@@ -109,8 +110,12 @@ void SimpleNav::readInputMessages()
  */
 void SimpleNav::writeOutputMessages(uint64_t Clock)
 {
-  this->attOutMsg.write(&this->estAttState, this->moduleID, Clock);
-  this->transOutMsg.write(&this->estTransState, this->moduleID, Clock);
+    /* time tage the output message */
+    this->estAttState.timeTag = (double) Clock * NANO2SEC;
+    this->estTransState.timeTag = (double) Clock * NANO2SEC;
+    
+    this->attOutMsg.write(&this->estAttState, this->moduleID, Clock);
+    this->transOutMsg.write(&this->estTransState, this->moduleID, Clock);
 }
 
 void SimpleNav::applyErrors()

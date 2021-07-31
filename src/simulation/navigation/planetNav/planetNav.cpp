@@ -22,6 +22,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <iostream>
 #include <cstring>
 
@@ -93,6 +94,7 @@ void PlanetNav::readInputMessages()
  */
 void PlanetNav::writeOutputMessages(uint64_t CurrentSimNanos)
 {
+    this->noisePlanetState.timeTag = (double) CurrentSimNanos * NANO2SEC;
     this->ephemerisOutMsg.write(&this->noisePlanetState, this->moduleID, CurrentSimNanos);
 }
 
