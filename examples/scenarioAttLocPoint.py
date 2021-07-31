@@ -245,6 +245,7 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, locPointWrap, locPointConfig)
     locPointConfig.pHat_B = [0, 0, 1]
     locPointConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    locPointConfig.useBoresightRateDamping = 1
     locPointConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
     locPointConfig.locationInMsg.subscribeTo(groundStation.currentGroundStateOutMsg)
     # grMsgData = messaging.GroundStateMsgPayload()

@@ -107,6 +107,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
 
     double r_LS_N[3];                   /*!< Position vector of location w.r.t spacecraft CoM in inertial frame */
     double r_LS_B[3];                   /*!< Position vector of location w.r.t spacecraft CoM in body frame */
+    double rHat_LS_B[3];                /*!< unit vector of location w.r.t spacecraft CoM in body frame */
     double eHat_B[3];                   /*!< --- Eigen Axis */
     double dcmBN[3][3];                 /*!< inertial spacecraft orientation DCM */
     double phi;                         /*!< principal angle between pHat and heading to location */
@@ -119,6 +120,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     double Binv[3][3];                  /*!< BinvMRP for dsigma_RB_R calculations*/
     double dum1;
     double r_TN_N[3];                   /*!< [m] inertial target location */
+    double boreRate_B[3];               /*!< [rad/s] rotation rate about target direction */
 
     // zero output buffer
     attGuidOutMsgBuffer = AttGuidMsg_C_zeroMsgPayload();
@@ -142,7 +144,8 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     /* principle rotation angle to point pHat at location */
     MRP2C(scAttInMsgBuffer.sigma_BN, dcmBN);
     m33MultV3(dcmBN, r_LS_N, r_LS_B);
-    dum1 = v3Dot(configData->pHat_B, r_LS_B)/v3Norm(r_LS_B);
+    v3Normalize(r_LS_B, rHat_LS_B);
+    dum1 = v3Dot(configData->pHat_B, rHat_LS_B);
     if (fabs(dum1) > 1.0) {
         dum1 = dum1 / fabs(dum1);
     }
@@ -158,7 +161,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
             v3Copy(configData->eHat180_B, eHat_B);
         } else {
             /* normal case where body and inertial heading vectors are not aligned */
-            v3Cross(configData->pHat_B, r_LS_B, eHat_B);
+            v3Cross(configData->pHat_B, rHat_LS_B, eHat_B);
         }
         v3Normalize(eHat_B, eHat_B);
         v3Scale(-tan(phi / 4.), eHat_B, sigma_BR);
@@ -187,6 +190,11 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
 
     } else {
         configData->init -= 1;
+    }
+
+    if (configData->useBoresightRateDamping) {
+        v3Scale(v3Dot(scAttInMsgBuffer.omega_BN_B, rHat_LS_B), rHat_LS_B, boreRate_B);
+        v3Add(attGuidOutMsgBuffer.omega_BR_B, boreRate_B, attGuidOutMsgBuffer.omega_BR_B);
     }
 
     // compute omega_RN_B

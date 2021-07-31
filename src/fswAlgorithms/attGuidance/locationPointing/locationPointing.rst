@@ -94,5 +94,16 @@ pointed at the desired inertial location.
 The user should only connect one location of interest input message, either ``locationInMsg`` or ``celBodyInMsg``. Connecting 
 both will result in a warning and the module defaults to using the ``locationInMsg`` information.
 
+This 2D attitude control module provides two output messages in the form of :ref:`attGuidMsgPayload` and :ref:`attRefMsgPayload`.
+The first guidance message, describing body relative to reference tracking errors,
+can be directly connected to an attitude control module.  However, at times we need to have the
+attitude reference message as the output to feed to :ref:`attTrackingError`.  Here the ``B/R`` states are subtracted
+from the ``B/N`` states to obtain the equivalent ``R/N`` states.
+
 The variable ``smallAngle`` defined the minimum angular separation where two vectors are considered colinear.
 It is defaulted to zero, but can be set to any desired value in radians.
+
+By default this is a 2D attitude control module in attitude and a 2D rate control.  In particular, the rates about the
+desired heading axis are not damped.  By setting the module variable ``useBoresightRateDamping`` to 1,
+the body rates about about the desired heading 
+angle are added to the rate tracking error yielding a 3D rate control implementation.  

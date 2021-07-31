@@ -58,6 +58,8 @@ Version |release|
 - created :ref:`smallBodyNavEKF` to simulate autonomous navigation in proximity of a small body
 - added a :ref:`AttRefMsgPayload` output message to the :ref:`locationPointing` module.
 - added :ref:`cppModules-5` to the section on learning how to create BSK modules
+- updated :ref:`locationPointing` to support 3D rate damping as an option
+
 
 Version 2.0.5
 -------------
