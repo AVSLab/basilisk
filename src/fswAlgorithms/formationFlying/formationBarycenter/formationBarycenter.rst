@@ -67,6 +67,10 @@ This code makes the following assumptions:
 
 - **Gravitational parameter is known** 
 
+This code has the following limitations:
+
+- **Equatorial singularities**: when using orbital element averaging, near equatorial orbits may have induce a singularity in the ascending node.
+
 
 User Guide
 ----------
