@@ -150,33 +150,37 @@ def formationBarycenterTestFunction(show_plots, accuracy):
 
     unitTestSim.TotalSim.SingleStepProcesses()
 
-    # Pull module data and set the truth
+    # Pull module data
     barycenter = barycenterOutMsg.r_BN_N
     barycenterVelocity = barycenterOutMsg.v_BN_N
     barycenterC = barycenterOutMsgC.r_BN_N
     barycenterVelocityC = barycenterOutMsgC.v_BN_N
-    trueBarycenter = np.array([[-2795.61091086, 4349.07305245, 4711.56751498],
-                               [-2803.59754591, 4359.85462329, 4728.6127649]])
-    trueBarycenterVelocity = np.array([[-5.73871824, -4.74464078, 1.07961505], [-5.75840284, -4.7437476, 1.07036395]])
+    elements = orbitalMotion.rv2elem(mu, barycenter[1], barycenterVelocity[1])
+    elementsArray = [elements.a, elements.e, elements.i, elements.Omega, elements.omega, elements.f]
+    elementsC = orbitalMotion.rv2elem(mu, barycenterC[1], barycenterVelocityC[1])
+    elementsArrayC = [elementsC.a, elementsC.e, elementsC.i, elementsC.Omega, elementsC.omega, elementsC.f]
+
+    # Set the true values
+    trueBarycenter = np.array([-2795.61091086, 4349.07305245, 4711.56751498])
+    trueBarycenterVelocity = np.array([-5.73871824, -4.74464078, 1.07961505])
+    trueElements = [7015.94993, 0.0099, 0.7579092276785376, 0.8412486994612671, 6.07025513843626, 1.5855546253383273]
 
     # Verify the data
-    if not unitTestSupport.isArrayEqual(barycenter[0], trueBarycenter[0], 3, accuracy) or \
-            not unitTestSupport.isArrayEqual(barycenterVelocity[0], trueBarycenterVelocity[0], 3, accuracy):
+    if not unitTestSupport.isArrayEqual(barycenter[0], trueBarycenter, 3, accuracy) or \
+            not unitTestSupport.isArrayEqual(barycenterVelocity[0], trueBarycenterVelocity, 3, accuracy):
         testFailCount += 1
         testMessages.append("FAILED: formationBarycenter cartesian unit test.")
 
-    if not unitTestSupport.isArrayEqual(barycenter[1], trueBarycenter[1], 3, accuracy) or \
-            not unitTestSupport.isArrayEqual(barycenterVelocity[1], trueBarycenterVelocity[1], 3, accuracy):
+    if not unitTestSupport.isArrayEqual(elementsArray, trueElements, 6, accuracy):
         testFailCount += 1
         testMessages.append("FAILED: formationBarycenter orbital element unit test.")
 
-    if not unitTestSupport.isArrayEqual(barycenterC[0], trueBarycenter[0], 3, accuracy) or \
-            not unitTestSupport.isArrayEqual(barycenterVelocityC[0], trueBarycenterVelocity[0], 3, accuracy):
+    if not unitTestSupport.isArrayEqual(barycenterC[0], trueBarycenter, 3, accuracy) or \
+            not unitTestSupport.isArrayEqual(barycenterVelocityC[0], trueBarycenterVelocity, 3, accuracy):
         testFailCount += 1
         testMessages.append("FAILED: formationBarycenter C message cartesian unit test.")
 
-    if not unitTestSupport.isArrayEqual(barycenterC[1], trueBarycenter[1], 3, accuracy) or \
-            not unitTestSupport.isArrayEqual(barycenterVelocityC[1], trueBarycenterVelocity[1], 3, accuracy):
+    if not unitTestSupport.isArrayEqual(elementsArrayC, trueElements, 6, accuracy):
         testFailCount += 1
         testMessages.append("FAILED: formationBarycenter C message orbital element unit test.")
 
