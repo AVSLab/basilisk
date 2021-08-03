@@ -771,6 +771,10 @@ to a spacecraft and be configured to look like either sensor type.  Further, an 
 message can be provided for each sensor such that the sensor state (active, inactive, etc.) can be
 visualized as well.
 
+.. image:: /_images/static/vizard-ImgGenSensor.jpg
+   :align: center
+   :scale: 80 %
+
 First, let's discuss how to setup a generic sensor.  The associated sensor structure and the required
 parameters are set using::
 
@@ -904,6 +908,10 @@ message.  Note that this message contains a baud rate variable which dictactes i
 data (negative baud rate) or receiving data (positive baud rate).  Thus, a single transceiver HUD element
 can connect to a vector of :ref:`DataNodeUsageMsgPayload` input messages.  These messages are scaned if they are
 transmitting, receiving or doing mix, and the transceiver state is set accordingly.
+
+.. image:: /_images/static/vizard-ImgTransceiver.jpg
+   :align: center
+   :scale: 80 %
 
 First, let's discuss how to setup a transceiver HUD element.  The associated structure and the required
 parameters are set using::

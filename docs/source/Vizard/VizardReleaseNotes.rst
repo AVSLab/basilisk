@@ -7,15 +7,33 @@ Release Notes
 
 .. sidebar:: In Progress Features
 
-    - Adding star tracker configuration visualization
     - general GUI enhancements
-    - dynamic texture rendering
     - articulating CAD models
     - fuel tank visualization
     - show the battery and power state
     - show the hard drive state
     - Add the rate gyro visualization
-    - using Unity HD Rendering pipeline
+    - Improved atmospheric shaders
+    - Alternate camera view points relative to non-spacecraft locations (lunar landing site, etc.)
+    - Add magnetic torque bar visualization
+    - Provide a spacecraft attached flash light component
+
+
+**Version 1.9.1**
+
+- added Generic Sensor message to ``vizMessage.proto`` and HUD support in Vizard
+- added Transceiver message to ``vizMessage.proto`` and HUD support in Vizard
+- updated startup screen Vizard image to show the lizard is now vaccinated
+- migrated Vizard to Unity 2020.3.13f1 LTS.
+- added support to visualize a conical or rectangular generic sensor, including the device
+  status state.  This can illustrate a sensor field of view, as well as if the sensor
+  is active.  Multiple activity states can be visualized in the HUD
+- added support to visualize the transceiver message information.  The user can
+  specify if the transceiver is sending, receiving or sending and receiving.  Further,
+  the animation speed can be varied from 1 to 10 to illustrate slow or fast communication
+  modes
+- The macOS Vizard binary is still Intel only for now until the issues with the native file
+  browser are resolved.
 
 **Version 1.9.0**
 
