@@ -20,6 +20,7 @@
 
 #include "fswAlgorithms/effectorInterfaces/forceTorqueThrForceMapping/forceTorqueThrForceMapping.h"
 #include "string.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 /*!
     This method initializes the output messages for this module.
@@ -59,7 +60,17 @@ void Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configDa
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
     configData->numThrusters = (uint32_t) thrConfigInMsgBuffer.numThrusters;
-    configData->CoM_B = vehConfigInMsgBuffer.CoM_B;
+    v3Copy(vehConfigInMsgBuffer.CoM_B, configData->CoM_B);
+
+    /*! - copy the thruster position and thruster force heading information into the module configuration data */
+    for(uint32_t i = 0; i < configData->numThrusters; i++)
+    {
+        v3Copy(thrConfigInMsgBuffer.thrusters[i].rThrust_B, configData->rThruster_B[i]);
+        v3Copy(thrConfigInMsgBuffer.thrusters[i].tHatThrust_B, configData->gtThruster_B[i]);
+        if(thrConfigInMsgBuffer.thrusters[i].maxThrust <= 0.0){
+            _bskLog(configData->bskLogger, BSK_ERROR, "A configured thruster has a non-sensible saturation limit of <= 0 N!");
+        }
+    }
 }
 
 
@@ -111,7 +122,7 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
 
     /* - compute thruster locations relative to COM */
     for (uint32_t i = 0; i<configData->numThrusters; i++) {
-        v3Subtract(configData->rThruster_B[i], configData->sc.CoM_B, rThrusterRelCOM_B[i]);
+        v3Subtract(configData->rThruster_B[i], configData->CoM_B, rThrusterRelCOM_B[i]);
     }
 
     /* Fill DG with thruster directions and moment arms */
@@ -129,10 +140,10 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     }
 
     /* Check DG for zero rows */
-    vSetZero(*zeroVector, configData->numThrusters);
+    vSetZero(zeroVector, configData->numThrusters);
     numZeroes = 0;
     for(uint32_t j = 0; j < 6; j++) {
-        if (vIsEqual(*zeroVector, 6, *DG[j], 0.0000001)) {
+        if (vIsEqual(zeroVector, 6, DG[j], 0.0000001)) {
             zeroRows[j] = 1;
             numZeroes += 1;
         } else {
@@ -142,11 +153,12 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
 
     /* Create the DG w/ zero rows removed */
     double DG_full[6-numZeroes][configData->numThrusters];
-    uint32_t zerosPassed;
+    uint32_t zeroesPassed;
     zeroesPassed = 0;
     for(uint32_t j = 0; j < 6; j++) {
         if (!zeroRows[j]) {
-            DG_full[j-zeroesPassed] = DG[j];
+            //DG_full[j-zeroesPassed] = DG[j];
+            vCopy(DG[j], configData->numThrusters, DG_full[j-zeroesPassed]);
         } else {
             zeroesPassed += 1;
         }
@@ -160,32 +172,32 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
 
     /* Compute DG transpose */
     for (uint32_t i = 0; i < (6-numZeroes); i++){
-        for (j = 0; j < (6-numZeroes); j++){
-            DGT[i][j] = DG[j][i];
+        for (uint32_t j = 0; j < configData->numThrusters; j++){
+            DGT[j][i] = DG_full[i][j];
         }
     }
 
     /* Multiply DG and DGT */
     uint32_t dim11 = 6-numZeroes;
-    uint32_t dim12 = 6-numZeroes;
-    uint32_t dim21 = 6-numZeroes;
+    uint32_t dim12 = configData->numThrusters;
+    uint32_t dim22 = 6-numZeroes;
     for(uint32_t i = 0; i < dim11; i++) {
-        for(uint32_t j = 0; j < dim21; j++) {
-            DGDGT[i][j] = 0.0;
+        for(uint32_t j = 0; j < dim22; j++) {
+            DGDGT[MXINDEX(dim22, i, j)] = 0.0;
             for(uint32_t k = 0; k < dim12; k++) {
-                DGDGT[MXINDEX(dim21, i, j)] += DG[i][k] * DGT[j][k];
+                DGDGT[MXINDEX(dim22, i, j)] += DG_full[i][k] * DGT[k][j];
             }
         }
     }
 
     /* Compute the inverse of DGDGT */
-    mInverse(*DGDGT, (size_t) 6-numZeroes, *DGDGT_inv);
+    mInverse(DGDGT, (size_t) 6-numZeroes, DGDGT_inv);
 
     /* Compute DGT*(DGDT_inv) */
-    mMultM(*DGT, (size_t) configData->numThrusters, (size_t) 6-numZeroes, *DGDGT, (size_t) 6-numZeroes, (size_t) 6-numZeroes, *DGT_DGDGT_inv);
+    mMultM(DGT, (size_t) configData->numThrusters, (size_t) 6-numZeroes, DGDGT_inv, (size_t) 6-numZeroes, (size_t) 6-numZeroes, DGT_DGDGT_inv);
 
     /* Compute the force for each thruster */
-    mMultV(*DGT_DGDGT_inv, (size_t) configData->numThrusters, (size_t) 6-numZeroes, void *forceTorque_B, *force_B);
+    mMultV(DGT_DGDGT_inv, (size_t) configData->numThrusters, (size_t) 6-numZeroes, forceTorque_B, force_B);
 
     /* Find the minimum force */
     double min_force = force_B[0];
@@ -196,12 +208,12 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     }
 
     /* Subtract the minimum force */
-    for(uint32_t i = 1; i < configData->numThrusters; i++) {
-        forceSubtracted_B = force_B[i] - min_force;
+    for(uint32_t i = 0; i < configData->numThrusters; i++) {
+        forceSubtracted_B[i] = force_B[i] - min_force;
     }
 
     /* Write to the output messages */
-    thrForceCmdOutMsgBuffer.thrForce = forceSubtracted_B;
+    vCopy(forceSubtracted_B, configData->numThrusters, thrForceCmdOutMsgBuffer.thrForce);
     THRArrayCmdForceMsg_C_write(&thrForceCmdOutMsgBuffer, &configData->thrForceCmdOutMsg, moduleID, callTime);
 }
 
