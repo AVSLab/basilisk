@@ -109,3 +109,34 @@ To ensure no commanded thrust is less than zero, the minimum thrust is subtracte
     \mathbf{F} = \mathbf{F} - \text{min}(\mathbf{F})
 
 These thrust commands are then written to the output message.
+
+
+User's Guide
+------------
+To set up this module users must create the config data and module wrap::
+
+    moduleConfig = forceTorqueThrForceMapping.forceTorqueThrForceMappingConfig()
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
+    moduleWrap.ModelTag = "forceTorqueThrForceMappingTag"
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+
+The ``cmdForceInMsg`` and ``cmdTorqueInMsg`` are optional. However, the ``thrConfigInMsg`` and ``vehConfigInMsg`` are not. These
+can both be set up as follows, where ``rcsLocationData`` is a list of the thruster positions and ``rcsDirectionData`` is a
+list of thruster directions. ``CoM_B`` is the center of mass of the spacecraft in the body frame.::
+
+    fswSetupThrusters.clearSetup()
+    for i in range(numThrusters):
+        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrust)
+    thrConfigInMsg = fswSetupThrusters.writeConfigMessage()
+    vehConfigInMsgData = messaging.VehicleConfigMsgPayload()
+    vehConfigInMsgData.CoM_B = CoM_B
+    vehConfigInMsg = messaging.VehicleConfigMsg().write(vehConfigInMsgData)
+
+Then, the relevant messages must be subscribed to by the module::
+
+    moduleConfig.cmdTorqueInMsg.subscribeTo(cmdTorqueInMsg)
+    moduleConfig.cmdForceInMsg.subscribeTo(cmdForceInMsg)
+    moduleConfig.thrConfigInMsg.subscribeTo(thrConfigInMsg)
+    moduleConfig.vehConfigInMsg.subscribeTo(vehConfigInMsg)
+
+For more information on how to set up and use this module, see the unit test.
