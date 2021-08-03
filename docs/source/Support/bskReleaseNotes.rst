@@ -31,6 +31,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 2.0.6
+-------------
 - updated :ref:`vizInterface` to support Vizard 1.9.1 and the ability to visualize generic sensor types and
   antenna communication status
 - updated :ref:`ephemerisConverter` to also convert the planet orientation states, not just the
