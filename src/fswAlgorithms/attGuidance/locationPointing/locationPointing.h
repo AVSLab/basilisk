@@ -37,7 +37,7 @@ typedef struct {
     /* user configurable variables */
     double pHat_B[3];           /*!< body fixed vector that is to be aimed at a location */
     double smallAngle;          /*!< rad An angle value that specifies what is near 0 or 180 degrees */
-    int useBoresightRateDamping; /*! [int] flag to use rate damping about the sensor boresight */
+    int useBoresightRateDamping; /*!< [int] flag to use rate damping about the sensor boresight */
 
     /* private variables */
     double sigma_BR_old[3];     /*!< Older sigma_BR value, stored for finite diff*/
