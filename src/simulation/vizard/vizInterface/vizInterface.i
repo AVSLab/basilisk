@@ -43,6 +43,8 @@ namespace std {
     %template(VizSCVector) vector<VizSpacecraftData>;
     %template(ThrClusterVector) vector<ThrClusterMap>;
     %template(GravBodyInfoVector) vector<GravBodyInfo>;
+    %template(GenericSensorVector) vector<GenericSensor>;
+    %template(TransceiverVector) vector<Transceiver>;
 }
 
 %include "vizInterface.h"
@@ -52,8 +54,6 @@ namespace std {
 struct CameraConfigMsg_C;
 %include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
-%include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
-struct STSensorMsg_C;
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"

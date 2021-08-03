@@ -104,6 +104,7 @@ from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
+from Basilisk.simulation import vizInterface
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -275,7 +276,7 @@ def run(show_plots):
     # Create a "transmitter"
     transmitter = spaceToGroundTransmitter.SpaceToGroundTransmitter()
     transmitter.ModelTag = "transmitter"
-    transmitter.nodeBaudRate = -1E6   # baud
+    transmitter.nodeBaudRate = -1E5   # baud
     transmitter.packetSize = -8E6   # bits
     transmitter.numBuffers = 2
     transmitter.addAccessMsgToTransmitter(singaporeStation.accessOutMsgs[-1])
@@ -368,10 +369,40 @@ def run(show_plots):
     configDataMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
     mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    #
+    # setup Vizard visualization elements
+    #
+    genericSensorHUD = vizInterface.GenericSensor()
+    genericSensorHUD.r_SB_B = [0., 1., 1.]
+    genericSensorHUD.fieldOfView.push_back(20.0 * macros.D2R)  # single value means a conic sensor
+    genericSensorHUD.normalVector = [0., 0., 1.]
+    genericSensorHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("red", alpha=0.25))
+    genericSensorHUD.label = "genSen1"
+    cmdInMsg = messaging.DeviceCmdMsgReader()
+    cmdInMsg.subscribeTo(simpleInsControlConfig.deviceCmdOutMsg)
+    genericSensorHUD.genericSensorCmdInMsg = cmdInMsg
+
+    transceiverHUD = vizInterface.Transceiver()
+    transceiverHUD.r_SB_B = [0.23, 0., 1.38]
+    transceiverHUD.fieldOfView = 40.0 * macros.D2R
+    transceiverHUD.normalVector = [-1., 0., 1.]
+    transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
+    transceiverHUD.label = "antenna"
+    trInMsg = messaging.DataNodeUsageMsgReader()
+    trInMsg.subscribeTo(transmitter.nodeDataOutMsg)
+    transceiverHUD.transceiverStateInMsgs.push_back(trInMsg)
+
+    # if this scenario is to interface with the BSK Viz, uncomment the "saveFile" line
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                               # , saveFile=fileName
+                                              , genericSensorList=genericSensorHUD
+                                              , transceiverList=transceiverHUD
                                               )
+    # the following command sets Viz settings for the first spacecraft in the simulation
+    vizSupport.setInstrumentGuiSetting(viz,
+                                       showGenericSensorLabels=True,
+                                       showTransceiverLabels=True
+                                       )
 
     # Add the Boulder target
     vizSupport.addLocation(viz, stationName="Boulder Target"

@@ -11,8 +11,9 @@
 #include <vector>
 
 #include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
+#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 
 #include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
@@ -108,10 +109,13 @@ InstrumentGuiSettings
 {
     std::string spacecraftName;     /*!< Specify which spacecraft should show actuator information.
                                          If not provided then the ``viz.spacecraftName`` is used. */
-    int viewCSSPanel=0;             //!< [bool] should CSS panel illustration be shown, -1 (off), 0 (default), 1 (on)
-    int viewCSSBoresight=0;         //!< [bool] should CSS boresight axes be shown, -1 (off), 0 (default), 1 (on)
-    int viewCSSCoverage=0;          //!< [bool] should CSS coverage spheres be shown, -1 (off), 0 (default), 1 (on)
-    int showCSSLabels=0;            //!< [bool] should CSS panel labels be shown, -1 (off), 0 (default), 1 (on)
+    int viewCSSPanel=0;             //!< [int] should CSS panel illustration be shown, -1 (off), 0 (default), 1 (on)
+    int viewCSSBoresight=0;         //!< [int] should CSS boresight axes be shown, -1 (off), 0 (default), 1 (on)
+    int viewCSSCoverage=0;          //!< [int] should CSS coverage spheres be shown, -1 (off), 0 (default), 1 (on)
+    int showCSSLabels=0;            //!< [int] should CSS panel labels be shown, -1 (off), 0 (default), 1 (on)
+    int showGenericSensorLabels=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showTransceiverLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showTransceiverFrustrum=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }InstrumentGuiSettings;
 
 /*! Structure defining a custom CAD model to load to represent a simulation object.
@@ -147,6 +151,44 @@ LocationPbMsg
     double range = 0;                   //!< [m] range of the ground location, use 0 (protobuffer default) to use viz default
 }LocationPbMsg;
 
+/*! Structure defining generic sensor information
+ */
+typedef struct
+//@cond DOXYGEN_IGNORE
+GenericSensor
+//@endcond
+{
+    double r_SB_B[3];                   //!< [m] Position of sensor relative to body frame, in body frame components
+    std::vector<double> fieldOfView;    //!< [rad] edgle-to-edge field of view, single positive value means a conical sensor, 2 positive values are for a rectangular sensor
+    double normalVector[3];             //!< [] normal vector of the sensor bore sight axis
+    int isHidden = 0;                   //!< [] (optional) true to hide sensor HUD, false to show sensor HUD (default)
+    double size = 0;                   //!< [m] (optional) size of the sensor visualization, use 0 (protobuffer default) to use viz default size
+    std::vector<int> color;             //!< [] (optional) RGBA as values between 0 and 255, multiple colors can be populated in this field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2 will use the color indexed to 1, etc.  If 2 colors are provided, then the vector should have size 8 (2x4 color channels)
+    std::string label = "";             //!< [] (optional) string to display on sensor label
+    ReadFunctor<DeviceCmdMsgPayload> genericSensorCmdInMsg;   //!< [-] (Optional)  incoming sensor cmd state msgs
+    int genericSensorCmd = 0;           //!< [int] (optional) sensor cmd value, if cmd input msg is connected, then this is set from the message
+
+}GenericSensor;
+
+/*! Structure defining antenna transceiver information
+ */
+typedef struct
+//@cond DOXYGEN_IGNORE
+Transceiver
+//@endcond
+{
+    double r_SB_B[3];                   //!< [m] Position of sensor relative to body frame, in body frame components
+    double fieldOfView;                 //!< [rad] edgle-to-edge transceiver access cone
+    double normalVector[3];             //!< [] normal vector of the transceiver bore sight axis
+    int isHidden = 0;                   //!< [] (optional) true to hide sensor HUD, false to show transceiver HUD (default)
+    std::vector<int> color;             //!< [] (optional) RGBA as values between 0 and 255
+    std::string label = "";             //!< [] (optional) string to display on sensor label
+    int animationSpeed = 0;             //!< [] (optional) Set transmission animation speed to a value between 1(slowest) to 10 (fastest), or 0 to use viz default
+    std::vector<ReadFunctor<DataNodeUsageMsgPayload>> transceiverStateInMsgs;   //!< [-] (Optional)  vector of incoming transceiver state msgs
+    int transceiverState = 0;           //!< [int] (optional) transceiver state value, if communication input msg is connected, then this is set from the message
+}Transceiver;
+
+
 /*! Defines a data structure for the spacecraft state messages and ID's.
  */
 typedef struct
@@ -167,15 +209,15 @@ VizSpacecraftData
     std::vector<MsgCurrStatus> cssConfLogInMsgStatus;           //!< [-] (Private) status of the incoming array of css configuration log messages
     std::vector<CSSConfigLogMsgPayload> cssInMessage;           //!< [-] (Private) CSS message data vector
 
-    ReadFunctor<STSensorMsgPayload> starTrackerInMsg;           //!< [-] (Optional) input message for Star Tracker data
-    MsgCurrStatus starTrackerInMsgStatus;                       //!< [-] (Private) status of the incoming Star Tracker data message
-    STSensorMsgPayload STMessage;                               //!< [-] (Private) ST message data
-
     std::vector<ReadFunctor<THROutputMsgPayload>> thrInMsgs;    //!< [-] (Optional) vector of thruster input messages
     std::vector<MsgCurrStatus> thrMsgStatus;                    //!< [-] (Private) THR msg status vector
     std::vector<THROutputMsgPayload> thrOutputMessage;          //!< [-] (Private) Thr message data vector
 
     std::vector<ThrClusterMap> thrInfo;                         //!< [-] thruster tagging info
+
+    std::vector<GenericSensor> genericSensorList;               //!< [-] (Optional) Vector of generic sensor configuration info
+
+    std::vector<Transceiver> transceiverList;                   //!< [-] (Optional) Vector of transceiver configuration info
 
     std::string spacecraftSprite = "";                          //!< Set sprite for this spacecraft only through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
 

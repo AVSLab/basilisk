@@ -31,6 +31,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- updated :ref:`vizInterface` to support Vizard 1.9.1 and the ability to visualize generic sensor types
 - updated :ref:`ephemerisConverter` to also convert the planet orientation states, not just the
   translational states
 - added a :ref:`planetNav` module that adds noisy to planet ephemeris, similar to simpleNav.

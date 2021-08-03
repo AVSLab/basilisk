@@ -44,11 +44,13 @@ except ImportError:
 
 firstSpacecraftName = ''
 
-def toRGBA255(color):
+def toRGBA255(color, alpha=None):
     if isinstance(color, basestring):
         # convert color name to 4D array of values with 0-255
         if is_color_like(color):
-            answer = np.array(colors.to_rgba(color)) * 255
+
+            answer = np.array(colors.to_rgba(color, alpha=alpha)) * 255
+            answer = [round(a) for a in answer]
         else:
             print("toRGBA255() was provided unknown color name " + color)
             exit(1)
@@ -510,19 +512,28 @@ def setInstrumentGuiSetting(viz, **kwargs):
     ------------
     spacecraftName: str
         The name of the spacecraft for which the actuator GUI options are set.
-        Default: If not provided, then the name of the first spacecraft in the simulation is used.
-    viewCSSPanel: bool
-        flag if the GUI panel should be shown illustrating the CSS states
-        Default: if not provided, then the Vizard default settings are used
-    viewCSSCoverage: bool
-        flag if the HUD spherical coverage of the CSS states should be shown
-        Default: if not provided, then the Vizard default settings are used
-    viewCSSBoresight: bool
-        flag if the HUD boresight axes of the CSS states should be shown
-        Default: if not provided, then the Vizard default settings are used
-    showCSSLabels: bool
-        flag if the CSS labels should be shown
-        Default: if not provided, then the Vizard default settings are used
+        Default: 0 - If not provided, then the name of the first spacecraft in the simulation is used.
+    viewCSSPanel: int
+        flag if the GUI panel should be shown (1) or hidden (-1) illustrating the CSS states
+        Default: 0 - if not provided, then the Vizard default settings are used
+    viewCSSCoverage: int
+        flag if the HUD spherical coverage of the CSS states should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
+    viewCSSBoresight: int
+        flag if the HUD boresight axes of the CSS states should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
+    showCSSLabels: int
+        flag if the CSS labels should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
+    showGenericSensorLabels: int
+        flag if the generic sensor labels should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
+    showTransceiverLabels: int
+        flag if the generic sensor labels should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
+    showTransceiverFrustrum: int
+        flag if the generic sensor labels should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
 
     """
     if not vizFound:
@@ -533,7 +544,8 @@ def setInstrumentGuiSetting(viz, **kwargs):
     vizElement = vizInterface.InstrumentGuiSettings()
 
     unitTestSupport.checkMethodKeyword(
-        ['spacecraftName', 'viewCSSPanel', 'viewCSSCoverage', 'viewCSSBoresight', 'showCSSLabels'],
+        ['spacecraftName', 'viewCSSPanel', 'viewCSSCoverage', 'viewCSSBoresight', 'showCSSLabels',
+         'showGenericSensorLabels', 'showTransceiverLabels', 'showTransceiverFrustrum'],
         kwargs)
 
     if 'spacecraftName' in kwargs:
@@ -547,31 +559,88 @@ def setInstrumentGuiSetting(viz, **kwargs):
 
     if 'viewCSSPanel' in kwargs:
         setting = kwargs['viewCSSPanel']
-        if not isinstance(setting, bool):
-            print('ERROR: vizSupport: viewCSSPanel must be True or False')
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
         vizElement.viewCSSPanel = setting
+        print(vizElement.viewCSSPanel)
 
     if 'viewCSSCoverage' in kwargs:
         setting = kwargs['viewCSSCoverage']
-        if not isinstance(setting, bool):
-            print('ERROR: vizSupport: viewCSSCoverage must be True or False')
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: viewCSSCoverage must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
         vizElement.viewCSSCoverage = setting
 
     if 'viewCSSBoresight' in kwargs:
         setting = kwargs['viewCSSBoresight']
-        if not isinstance(setting, bool):
-            print('ERROR: vizSupport: viewCSSBoresight must be True or False')
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: viewCSSBoresight must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
         vizElement.viewCSSBoresight = setting
 
     if 'showCSSLabels' in kwargs:
         setting = kwargs['showCSSLabels']
-        if not isinstance(setting, bool):
-            print('ERROR: vizSupport: showCSSLabels must be an integer value')
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: showCSSLabels must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
         vizElement.showCSSLabels = setting
+
+    if 'showGenericSensorLabels' in kwargs:
+        setting = kwargs['showGenericSensorLabels']
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: showGenericSensorLabels must be  -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: showGenericSensorLabels must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
+        vizElement.showGenericSensorLabels = setting
+
+    if 'showTransceiverLabels' in kwargs:
+        setting = kwargs['showTransceiverLabels']
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: showTransceiverLabels must be  -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: showTransceiverLabels must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
+        vizElement.showTransceiverLabels = setting
+
+    if 'showTransceiverFrustrum' in kwargs:
+        setting = kwargs['showTransceiverFrustrum']
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: showTransceiverFrustrum must be  -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: showTransceiverFrustrum must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
+        vizElement.showTransceiverFrustrum = setting
 
     instrumentGuiSettingList.append(vizElement)
     del viz.settings.instrumentGuiSettingsList[:]  # clear settings list to replace it with updated list
@@ -911,6 +980,11 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         Each list entry is a list of RGBA array values for each cluster set.
     cssList:
         list of lists of :ref:`CoarseSunSensor` objects.  The outer list length must match ``scList``.
+    genericSensorList:
+        list of lists of ``GenericSensor`` structures.  The outer list length must match ``scList``.
+    genericSensorCmdInMsgs:
+        list of lists of :ref:`DeviceCmdMsgPayload` sensor state messages.  The outer list length must
+        match ``scList``.  If the spacecraft has no sensor command msg, then use ``None``.
     opNavMode: bool
         flag if opNaveMode should be used
     liveStream: bool
@@ -933,7 +1007,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList'],
+        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList',
+         'genericSensorList', 'transceiverList'],
         kwargs)
 
     # setup the Vizard interface module
@@ -968,8 +1043,13 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     thrColorsScList = False
     if 'thrColors' in kwargs:
         thrColorsScList = kwargs['thrColors']
-        if not isinstance(thrColorsScList, list):
-            thrColorsScList = [[thrColorsScList]]
+        if len(thrColorsScList) == 4:
+            colorCheck = True
+            for c in thrColorsScList:
+                if not isinstance(c, int):
+                    colorCheck = False
+            if colorCheck:
+                thrColorsScList = [[thrColorsScList]]
         if len(thrColorsScList) != len(scList):
             print('ERROR: vizSupport: thrColors should have the same length as the number of spacecraft')
             exit(1)
@@ -980,7 +1060,28 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if not isinstance(cssScList, list):
             cssScList = [[cssScList]]
         if len(cssScList) != len(scList):
-            print('ERROR: vizSupport: cssList should have the same length as the number of spacecraft and contain lists of CSSs')
+            print('ERROR: vizSupport: cssList should have the same length as the number '
+                  'of spacecraft and contain lists of CSSs')
+            exit(1)
+
+    gsScList = False
+    if 'genericSensorList' in kwargs:
+        gsScList = kwargs['genericSensorList']
+        if not isinstance(gsScList, list):
+            gsScList = [[gsScList]]
+        if len(gsScList) != len(scList):
+            print('ERROR: vizSupport: genericSensorList should have the same length as the '
+                  'number of spacecraft and contain lists of generic sensors')
+            exit(1)
+
+    tcScList = False
+    if 'transceiverList' in kwargs:
+        tcScList = kwargs['transceiverList']
+        if not isinstance(tcScList, list):
+            tcScList = [[tcScList]]
+        if len(tcScList) != len(tcScList):
+            print('ERROR: vizSupport: tcScList should have the same length as the '
+                  'number of spacecraft and contain lists of transceivers')
             exit(1)
 
     # loop over all spacecraft to associated states and msg information
@@ -1047,6 +1148,22 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 for css in cssScList[c]:
                     cssDeviceList.append(css.cssConfigLogOutMsg.addSubscriber())
                 scData.cssInMsgs = messaging.CSSConfigLogInMsgsVector(cssDeviceList)
+
+        # process generic sensor HUD information
+        if gsScList:
+            gsList = []
+            if gsScList[c] is not None:  # generic sensor(s) have been added to this spacecraft
+                for gs in gsScList[c]:
+                    gsList.append(gs)
+                scData.genericSensorList = vizInterface.GenericSensorVector(gsList)
+
+        # process transceiver HUD information
+        if tcScList:
+            tcList = []
+            if tcScList[c] is not None:  # transceiver(s) have been added to this spacecraft
+                for tc in tcScList[c]:
+                    tcList.append(tc)
+                scData.transceiverList = vizInterface.TransceiverVector(tcList)
 
         vizMessenger.scData.push_back(scData)
         c += 1
