@@ -31,7 +31,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- new :ref:`forceTorqueThrForceMapping` to map commanded forces and torques to a set of thrusters
 
 Version 2.0.6
 -------------
@@ -66,7 +66,6 @@ Version 2.0.6
 - added a :ref:`AttRefMsgPayload` output message to the :ref:`locationPointing` module.
 - added :ref:`cppModules-5` to the section on learning how to create BSK modules
 - updated :ref:`locationPointing` to support 3D rate damping as an option
-- created a :ref:`forceTorqueThrForceMapping` module to map commanded forces and torques to a set of thrusters
 
 
 Version 2.0.5
