@@ -61,6 +61,9 @@ void Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configDa
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
     configData->numThrusters = (uint32_t) thrConfigInMsgBuffer.numThrusters;
     v3Copy(vehConfigInMsgBuffer.CoM_B, configData->CoM_B);
+    if (configData->numThrusters > MAX_EFF_CNT) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: forceTorqueThrForceMapping thruster configuration input message has a number of thrusters that is larger than MAX_EFF_CNT");
+    }
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
     for(uint32_t i = 0; i < configData->numThrusters; i++)
@@ -68,7 +71,7 @@ void Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configDa
         v3Copy(thrConfigInMsgBuffer.thrusters[i].rThrust_B, configData->rThruster_B[i]);
         v3Copy(thrConfigInMsgBuffer.thrusters[i].tHatThrust_B, configData->gtThruster_B[i]);
         if(thrConfigInMsgBuffer.thrusters[i].maxThrust <= 0.0){
-            _bskLog(configData->bskLogger, BSK_ERROR, "A configured thruster has a non-sensible saturation limit of <= 0 N!");
+            _bskLog(configData->bskLogger, BSK_ERROR, "Error: forceTorqueThrForceMapping: A configured thruster has a non-sensible saturation limit of <= 0 N!");
         }
     }
 }
@@ -104,15 +107,15 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     }
 
     /* Initialize variables */
-    double DG[6][configData->numThrusters];
-    double rThrusterRelCOM_B[configData->numThrusters][3];
+    double DG[6][MAX_EFF_CNT];
+    double rThrusterRelCOM_B[MAX_EFF_CNT][3];
     double rCrossGt[3];
-    double zeroVector[configData->numThrusters];
+    double zeroVector[MAX_EFF_CNT];
     uint32_t zeroRows[6];
     uint32_t numZeroes;
-    double force_B[configData->numThrusters];
+    double force_B[MAX_EFF_CNT];
     double forceTorque_B[6];
-    double forceSubtracted_B[configData->numThrusters];
+    double forceSubtracted_B[MAX_EFF_CNT];
 
     /* Create the torque and force vector */
     for (uint32_t i = 0; i < 3; i++) {

@@ -1,7 +1,14 @@
 Executive Summary
 -----------------
 This module maps commanded forces and torques defined in the body frame of the spacecraft to a set of thrusters. It is
-capable of handling CoM offsets and directions with no thrusters.
+capable of handling Center of Mass (CoM) offsets and non-controllable axis.  In contrast to :ref:`thrForceMapping`, this module
+only handles on-pulsing, but not off-pulsing.  Further, it provides a single force/torque projection onto the thrusters and
+thus lacks some of the robustness features of :ref:`thrForceMapping`.
+
+The commanded force and torque input messages are optional, and the associated vectors are zeroed if no
+input message is connected.  This provides a general capability to map control torques, forces or torques and forces
+onto a set of thrusters.
+
 
 Message Connection Descriptions
 -------------------------------
@@ -20,10 +27,10 @@ Both the `cmdTorqueInMsg` and `cmdForceInMsg` are optional.
       - Description
     * - cmdTorqueInMsg
       - :ref:`CmdTorqueBodyMsgPayload`
-      - The name of the vehicle control (Lr) input message
+      - (optional) The name of the vehicle control torque (Lr) input message
     * - cmdForceInMsg
       - :ref:`CmdForceBodyMsgPayload`
-      - The name of the vehicle control force input message
+      - (optional) The name of the vehicle control force input message
     * - thrConfigInMsg
       - :ref:`THRArrayConfigMsgPayload`
       - The name of the thruster cluster input message

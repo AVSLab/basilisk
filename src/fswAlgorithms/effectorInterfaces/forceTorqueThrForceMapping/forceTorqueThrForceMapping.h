@@ -41,11 +41,11 @@ typedef struct {
     double CoM_B[3];                                //!< [m]     CoM of the s/c
 
     /* declare module IO interfaces */
-    CmdTorqueBodyMsg_C cmdTorqueInMsg;  //!< The name of the vehicle control (Lr) input message
-    CmdForceBodyMsg_C cmdForceInMsg;  //!< The name of the vehicle control force input message
-    THRArrayConfigMsg_C thrConfigInMsg;  //!< The name of the thruster cluster input message
-    VehicleConfigMsg_C vehConfigInMsg;  //!< The name of the vehicle config input message
-    THRArrayCmdForceMsg_C thrForceCmdOutMsg;  //!< The name of the output thruster force message
+    CmdTorqueBodyMsg_C cmdTorqueInMsg;  //!< (optional) vehicle control (Lr) input message
+    CmdForceBodyMsg_C cmdForceInMsg;  //!< (optional) vehicle control force input message
+    THRArrayConfigMsg_C thrConfigInMsg;  //!< thruster cluster configuration input message
+    VehicleConfigMsg_C vehConfigInMsg;  //!< vehicle config input message
+    THRArrayCmdForceMsg_C thrForceCmdOutMsg;  //!< thruster force command output message
 
     BSKLogger *bskLogger;  //!< BSK Logging
 }forceTorqueThrForceMappingConfig;
