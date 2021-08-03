@@ -31,7 +31,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- new :ref:`forceTorqueThrForceMapping` to map commanded forces and torques to a set of thrusters
 
 Version 2.0.6
 -------------
