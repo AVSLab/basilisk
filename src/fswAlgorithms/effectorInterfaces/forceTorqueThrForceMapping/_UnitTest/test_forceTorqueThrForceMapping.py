@@ -262,6 +262,8 @@ def forceTorqueThrForceMappingTestFunction(rcsLocation, rcsDirection, requested_
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))
     unitTestSim.ExecuteSimulation()
 
+    print(np.array([moduleConfig.thrForceCmdOutMsg.read().thrForce[0:len(rcsLocation)]]))
+
     testFailCount, testMessages = unitTestSupport.compareArray(truth, np.array([moduleConfig.thrForceCmdOutMsg.read().thrForce[0:len(rcsLocation)]]), 1e-3,
                                                                  "CompareForces", testFailCount, testMessages)
 
