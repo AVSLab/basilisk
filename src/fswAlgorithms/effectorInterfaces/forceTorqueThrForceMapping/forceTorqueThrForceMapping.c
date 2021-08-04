@@ -155,7 +155,7 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     }
 
     /* Create the DG w/ zero rows removed */
-    double DG_full[6-numZeroes][configData->numThrusters];
+    double DG_full[6][MAX_EFF_CNT];
     uint32_t zeroesPassed;
     zeroesPassed = 0;
     for(uint32_t j = 0; j < 6; j++) {
@@ -168,17 +168,9 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     }
 
     /* Initialize the vars for the pseudo-inverse */
-    double DGT[configData->numThrusters][6-numZeroes];
-    double DGDGT[(6-numZeroes)*(6-numZeroes)];
-    double DGDGT_inv[(6-numZeroes)*(6-numZeroes)];
-    double DGT_DGDGT_inv[6-numZeroes][6-numZeroes];
-
-    /* Compute DG transpose */
-    for (uint32_t i = 0; i < (6-numZeroes); i++){
-        for (uint32_t j = 0; j < configData->numThrusters; j++){
-            DGT[j][i] = DG_full[i][j];
-        }
-    }
+    double DGDGT[6*6];
+    double DGDGT_inv[6*6];
+    double DGT_DGDGT_inv[6*6];
 
     /* Multiply DG and DGT */
     uint32_t dim11 = 6-numZeroes;
@@ -188,7 +180,7 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
         for(uint32_t j = 0; j < dim22; j++) {
             DGDGT[MXINDEX(dim22, i, j)] = 0.0;
             for(uint32_t k = 0; k < dim12; k++) {
-                DGDGT[MXINDEX(dim22, i, j)] += DG_full[i][k] * DGT[k][j];
+                DGDGT[MXINDEX(dim22, i, j)] += DG_full[i][k] * DG[j][k];
             }
         }
     }
@@ -196,8 +188,8 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     /* Compute the inverse of DGDGT */
     mInverse(DGDGT, (size_t) 6-numZeroes, DGDGT_inv);
 
-    /* Compute DGT*(DGDT_inv) */
-    mMultM(DGT, (size_t) configData->numThrusters, (size_t) 6-numZeroes, DGDGT_inv, (size_t) 6-numZeroes, (size_t) 6-numZeroes, DGT_DGDGT_inv);
+    /* Compute DG^T*(DGDT_inv) */
+    mtMultM(DG, (size_t) 6-numZeroes, (size_t) configData->numThrusters, DGDGT_inv, (size_t) 6-numZeroes, (size_t) 6-numZeroes, DGT_DGDGT_inv);
 
     /* Compute the force for each thruster */
     mMultV(DGT_DGDGT_inv, (size_t) configData->numThrusters, (size_t) 6-numZeroes, forceTorque_B, force_B);
