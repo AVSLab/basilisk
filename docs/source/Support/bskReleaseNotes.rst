@@ -32,6 +32,7 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - new :ref:`forceTorqueThrForceMapping` to map commanded forces and torques to a set of thrusters
+- updated Vizard documentation on the setting flags ``orbitLinesOn`` and ``trueTrajectoryLinesOn``
 
 Version 2.0.6
 -------------

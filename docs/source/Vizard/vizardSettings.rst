@@ -59,8 +59,13 @@ default setting for that behavior.
       - [0,1]
       - float value to specify the ambient Vizard lighting.
     * - ``orbitLinesOn``
-      - (-1,1)
-      - flag to show (1) or hide (-1) the orbit trajectory lines
+      - (-1,0,1,2)
+      - Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default,
+        -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
+    * - ``trueTrajectoryLinesOn``
+      - (-1,0,1,2)
+      - Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default,
+        -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body
     * - ``spacecraftCSon``
       - (-1,1)
       - flag to show (1) or hide (-1) the spacecraft coordinate axes
