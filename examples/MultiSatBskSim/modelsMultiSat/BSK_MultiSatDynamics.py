@@ -20,7 +20,7 @@ import numpy as np
 from Basilisk.utilities import (macros as mc, unitTestSupport as sp, RigidBodyKinematics as rbk,
                                 simIncludeRW, simIncludeThruster)
 from Basilisk.simulation import (spacecraft, simpleNav, reactionWheelStateEffector, thrusterDynamicEffector,
-                                 ephemerisConverter, simpleSolarPanel, simplePowerSink, simpleBattery,
+                                 simpleSolarPanel, simplePowerSink, simpleBattery,
                                  ReactionWheelPower)
 
 from Basilisk import __path__
@@ -56,7 +56,6 @@ class BSKDynamicModels:
         self.solarPanel = simpleSolarPanel.SimpleSolarPanel()
         self.powerSink = simplePowerSink.SimplePowerSink()
         self.powerMonitor = simpleBattery.SimpleBattery()
-        self.ephemObject = ephemerisConverter.EphemerisConverter()
 
         self.rwPowerList = []
         for item in range(self.numRW):
@@ -158,7 +157,7 @@ class BSKDynamicModels:
         self.thrusterFactory.addToSpacecraft("thrusterFactory", self.thrusterEffector, self.scObject)
 
     def SetReactionWheelPower(self):
-        """Set the reaction wheel power parameters"""
+        """Sets the reaction wheel power parameters"""
         for item in range(self.numRW):
             self.rwPowerList[item].ModelTag = self.scObject.ModelTag + "RWPower" + str(item)
             self.rwPowerList[item].basePowerNeed = 5.  # baseline power draw, Watt
@@ -166,7 +165,7 @@ class BSKDynamicModels:
             self.rwPowerList[item].mechToElecEfficiency = 0.5
 
     def SetSolarPanel(self, SimBase):
-        """Set the solar panel"""
+        """Sets the solar panel"""
         self.solarPanel.ModelTag = "solarPanel"
         self.solarPanel.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
         self.solarPanel.sunEclipseInMsg.subscribeTo(SimBase.EnvModel.eclipseObject.eclipseOutMsgs[0])  # choose the earth message
@@ -177,12 +176,12 @@ class BSKDynamicModels:
                                            0.35)  # efficiency
 
     def SetPowerSink(self):
-        """Define the energy sink parameters"""
+        """Defines the energy sink parameters"""
         self.powerSink.ModelTag = "powerSink"
-        self.powerSink.nodePowerOut = -1.  # Watt
+        self.powerSink.nodePowerOut = -20.  # Watt
 
     def SetBattery(self):
-        """Set up the battery with all the power components"""
+        """Sets up the battery with all the power components"""
         self.powerMonitor.ModelTag = "powerMonitor"
         self.powerMonitor.storageCapacity = 2 * 60.0 * 3600.0  # Convert from W-hr to Joule
         self.powerMonitor.storedCharge_Init = self.powerMonitor.storageCapacity * 0.6  # 40% depletion
