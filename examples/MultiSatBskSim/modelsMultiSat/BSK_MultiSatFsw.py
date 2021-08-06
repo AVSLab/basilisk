@@ -181,7 +181,7 @@ class BSKFswModels:
         """
         Defines the Sun pointing guidance module.
         """
-        self.sunPointData.pHat_B = [0, 0, 1]
+        self.sunPointData.pHat_B = SimBase.DynModels[self.spacecraftIndex].solarPanelAxis
         self.sunPointData.scAttInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
         self.sunPointData.scTransInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
         self.sunPointData.celBodyInMsg.subscribeTo(SimBase.EnvModel.ephemObject.ephemOutMsgs[SimBase.EnvModel.sun])

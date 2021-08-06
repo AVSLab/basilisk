@@ -82,8 +82,9 @@ Both the :ref:`BSK_EnvironmentEarth` and :ref:`BSK_EnvironmentMercury` share the
 gravity bodies used: the first uses the Sun, Earth and the Moon, while the second one only uses the Sun and Mercury.
 
 The gravity bodies are created using :ref:`simIncludeGravBody` and their information is overridden by
-the SPICE library. A ground location (representing Boulder's location on Earth) is also set to be used in
-flight software. All modules are added to the environment process.
+the SPICE library. An eclipse module is set up using the gravitational bodies used in the simulation. A ground location
+(representing Boulder's location on Earth) is also set to be used in flight software. All modules are added to the
+environment process.
 
 BSK_MultiSatDynamics file description
 -------------------------------------
@@ -95,6 +96,9 @@ The dynamics class creates a :ref:`spacecraft`, :ref:`simpleNav`, :ref:`reaction
 :ref:`thrusterDynamicEffector` objects. Although no attitude guidance and control is implemented in this example, this
 class will be used in other scenarios that make use of those control surfaces (see :ref:`scenario_AttGuidMultiSat` and
 :ref:`scenario_StationKeepingMultiSat`).
+
+The dynamics script also sets up a number of power-related modules such as :ref:`simpleSolarPanel`,
+:ref:`simplePowerSink`, :ref:`simpleBattery` and :ref:`ReactionWheelPower`.
 
 The necessary connections between the environment and dynamics classes are also done in this file, such as adding the
 gravity bodies from the environment into the spacecraft object.
