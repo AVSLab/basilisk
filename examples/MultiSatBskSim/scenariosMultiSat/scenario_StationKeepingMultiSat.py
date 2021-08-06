@@ -124,6 +124,9 @@ spacecraft is plotted per simulation.
 .. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_oeDifferences.svg
    :align: center
 
+.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_Power.svg
+   :align: center
+
 """
 
 import copy
@@ -173,7 +176,11 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         self.attRefLog = []
         self.rwMotorLog = []
         self.rwSpeedLog = []
+        self.spLog = []
+        self.psLog = []
+        self.pmLog = []
         self.rwLogs = [[] for _ in range(self.numberSpacecraft)]
+        self.rwPowerLogs = [[] for _ in range(self.numberSpacecraft)]
         self.thrCmdLog = []
         self.chiefTransLog = None
         self.attErrorLogTrackingModule = []
@@ -247,7 +254,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         # Set the sampling time
         self.samplingTime = macros.sec2nano(10)
 
-        # Log the barycenter's position and velocity
+        # Log the barycentre's position and velocity
         if relativeNavigation:
             self.chiefTransLog = self.relativeNavigationModule.transOutMsg.recorder(self.samplingTime)
             self.AddModelToTask(self.relativeNavigationTaskName, self.chiefTransLog)
@@ -280,9 +287,18 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
 
             # log addition RW information (power, etc)
             for item in range(DynModels[spacecraft].numRW):
-                self.rwLogs[spacecraft].append(
-                    DynModels[spacecraft].rwStateEffector.rwOutMsgs[item].recorder(self.samplingTime))
+                self.rwLogs[spacecraft].append(DynModels[spacecraft].rwStateEffector.rwOutMsgs[item].recorder(self.samplingTime))
+                self.rwPowerLogs[spacecraft].append(DynModels[spacecraft].rwPowerList[item].nodePowerOutMsg.recorder(self.samplingTime))
                 self.AddModelToTask(DynModels[spacecraft].taskName, self.rwLogs[spacecraft][item])
+                self.AddModelToTask(DynModels[spacecraft].taskName, self.rwPowerLogs[spacecraft][item])
+
+            # log the remaining power modules
+            self.spLog.append(DynModels[spacecraft].solarPanel.nodePowerOutMsg.recorder(self.samplingTime))
+            self.psLog.append(DynModels[spacecraft].powerSink.nodePowerOutMsg.recorder(self.samplingTime))
+            self.pmLog.append(DynModels[spacecraft].powerMonitor.batPowerOutMsg.recorder(self.samplingTime))
+            self.AddModelToTask(DynModels[spacecraft].taskName, self.spLog[spacecraft])
+            self.AddModelToTask(DynModels[spacecraft].taskName, self.psLog[spacecraft])
+            self.AddModelToTask(DynModels[spacecraft].taskName, self.pmLog[spacecraft])
 
     def pull_outputs(self, showPlots, relativeNavigation, spacecraftIndex):
         # Process outputs
@@ -345,8 +361,16 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
 
         # Save RW information
         dataRW = []
+        dataRWPower = []
         for item in range(DynModels[spacecraftIndex].numRW):
             dataRW.append(self.rwLogs[spacecraftIndex][item].u_current)
+            dataRWPower.append(self.rwPowerLogs[spacecraftIndex][item].netPower)
+
+        # Save power info
+        supplyData = self.spLog[spacecraftIndex].netPower
+        sinkData = self.psLog[spacecraftIndex].netPower
+        storageData = self.pmLog[spacecraftIndex].storageLevel
+        netData = self.pmLog[spacecraftIndex].currentNetPower
 
         # Compute the orbital element differences between the spacecraft and the chief
         oed = np.empty((simLength, 6))
@@ -386,6 +410,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         plt.plot_orbits(r_BN_N, self.numberSpacecraft, 9)
         plt.plot_relative_orbits(dr, len(dr), 10)
         plt.plot_orbital_element_differences(timeLineSetSec / T, oed, 11)
+        plt.plot_power(timeLineSetMin, netData, supplyData, sinkData, 12)
 
         figureList = {}
         if showPlots:
@@ -393,7 +418,8 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
             figureNames = ["attitude", "rate", "attitudeTrackingError", "trackingErrorRate", "attitudeReference",
-                           "rateReference", "rwMotorTorque", "rwSpeeds", "orbits", "relativeOrbits", "oeDifferences"]
+                           "rateReference", "rwMotorTorque", "rwSpeeds", "orbits", "relativeOrbits", "oeDifferences",
+                           "Power"]
             figureList = plt.save_all_plots(fileName, figureNames)
 
         # close the plots being saved off to avoid over-writing old and new figures
