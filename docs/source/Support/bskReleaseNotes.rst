@@ -33,6 +33,7 @@ Version |release|
 -----------------
 - new :ref:`forceTorqueThrForceMapping` to map commanded forces and torques to a set of thrusters
 - updated Vizard documentation on the setting flags ``orbitLinesOn`` and ``trueTrajectoryLinesOn``
+- added power modules to the :ref:`BSK_MultiSatDynamics` class.
 
 Version 2.0.6
 -------------
