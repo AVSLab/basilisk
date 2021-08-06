@@ -19,7 +19,7 @@
 import numpy as np
 
 from Basilisk.utilities import macros as mc, simIncludeGravBody
-from Basilisk.simulation import ephemerisConverter, groundLocation
+from Basilisk.simulation import ephemerisConverter, groundLocation, eclipse
 from Basilisk.topLevelModules import pyswice
 
 from Basilisk import __path__
@@ -47,6 +47,7 @@ class BSKEnvironmentModel:
         # Instantiate Env modules as objects
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
         self.ephemObject = ephemerisConverter.EphemerisConverter()
+        self.eclipseObject = eclipse.Eclipse()
         self.groundStation = groundLocation.GroundLocation()
 
         # Initialize all modules and write init one-time messages
@@ -55,6 +56,7 @@ class BSKEnvironmentModel:
         # Add modules to environment task
         SimBase.AddModelToTask(self.envTaskName, self.gravFactory.spiceObject, None, 200)
         SimBase.AddModelToTask(self.envTaskName, self.ephemObject, None, 200)
+        SimBase.AddModelToTask(self.envTaskName, self.eclipseObject, None, 200)
         SimBase.AddModelToTask(self.envTaskName, self.groundStation, None, 200)
 
     # ------------------------------------------------------------------------------------------- #
@@ -97,6 +99,16 @@ class BSKEnvironmentModel:
         self.ephemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.earth])
         self.ephemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.moon])
 
+    def SetEclipseObject(self):
+        """
+        Specify what celestial object is causing an eclipse message.
+        """
+        self.eclipseObject.ModelTag = "eclipseObject"
+        self.eclipseObject.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
+        # add all celestial objects in spiceObjects except for the sun (0th object)
+        for item in range(1, len(self.gravFactory.spiceObject.planetStateOutMsgs)):
+            self.eclipseObject.addPlanetToModel(self.gravFactory.spiceObject.planetStateOutMsgs[item])
+
     def SetGroundLocations(self):
         """
         Specify which ground locations are of interest.
@@ -111,4 +123,5 @@ class BSKEnvironmentModel:
     def InitAllEnvObjects(self):
         self.SetGravityBodies()
         self.SetEpochObject()
+        self.SetEclipseObject()
         self.SetGroundLocations()

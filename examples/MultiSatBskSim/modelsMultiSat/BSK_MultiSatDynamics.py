@@ -19,7 +19,9 @@
 import numpy as np
 from Basilisk.utilities import (macros as mc, unitTestSupport as sp, RigidBodyKinematics as rbk,
                                 simIncludeRW, simIncludeThruster)
-from Basilisk.simulation import (spacecraft, simpleNav, reactionWheelStateEffector, thrusterDynamicEffector)
+from Basilisk.simulation import (spacecraft, simpleNav, reactionWheelStateEffector, thrusterDynamicEffector,
+                                 ephemerisConverter, simpleSolarPanel, simplePowerSink, simpleBattery,
+                                 ReactionWheelPower)
 
 from Basilisk import __path__
 
@@ -32,6 +34,7 @@ class BSKDynamicModels:
     """
     def __init__(self, SimBase, dynRate, spacecraftIndex):
         self.I_sc = None
+        self.solarPanelAxis = None
         self.numRW = 4
         self.numThr = 2
         self.spacecraftIndex = spacecraftIndex
@@ -50,6 +53,14 @@ class BSKDynamicModels:
         self.rwFactory = simIncludeRW.rwFactory()
         self.thrusterEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
         self.thrusterFactory = simIncludeThruster.thrusterFactory()
+        self.solarPanel = simpleSolarPanel.SimpleSolarPanel()
+        self.powerSink = simplePowerSink.SimplePowerSink()
+        self.powerMonitor = simpleBattery.SimpleBattery()
+        self.ephemObject = ephemerisConverter.EphemerisConverter()
+
+        self.rwPowerList = []
+        for item in range(self.numRW):
+            self.rwPowerList.append(ReactionWheelPower.ReactionWheelPower())
 
         # Initialize all modules and write init one-time messages
         self.InitAllDynObjects(SimBase)
@@ -59,6 +70,12 @@ class BSKDynamicModels:
         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 100)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 100)
         SimBase.AddModelToTask(self.taskName, self.thrusterEffector, None, 100)
+        SimBase.AddModelToTask(self.taskName, self.solarPanel, None, 100)
+        SimBase.AddModelToTask(self.taskName, self.powerSink, None, 100)
+        SimBase.AddModelToTask(self.taskName, self.powerMonitor, None, 100)
+
+        for item in range(self.numRW):
+            SimBase.AddModelToTask(self.taskName, self.rwPowerList[item], 100)
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -81,6 +98,18 @@ class BSKDynamicModels:
         """
         # Attach the gravity body
         self.scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(SimBase.EnvModel.gravFactory.gravBodies.values()))
+
+    def SetGroundLocations(self, SimBase):
+        """
+        Adds the spacecraft to the ground location module.
+        """
+        SimBase.EnvModel.groundStation.addSpacecraftToModel(self.scObject.scStateOutMsg)
+
+    def SetEclipseObject(self, SimBase):
+        """
+        Adds the spacecraft to the eclipse module.
+        """
+        SimBase.EnvModel.eclipseObject.addSpacecraftToModel(self.scObject.scStateOutMsg)
 
     def SetSimpleNavObject(self):
         """
@@ -128,11 +157,41 @@ class BSKDynamicModels:
         # create thruster object container and tie to spacecraft object
         self.thrusterFactory.addToSpacecraft("thrusterFactory", self.thrusterEffector, self.scObject)
 
-    def SetGroundLocations(self, SimBase):
-        """
-        Adds the spacecraft to the ground location module.
-        """
-        SimBase.EnvModel.groundStation.addSpacecraftToModel(self.scObject.scStateOutMsg)
+    def SetReactionWheelPower(self):
+        """Set the reaction wheel power parameters"""
+        for item in range(self.numRW):
+            self.rwPowerList[item].ModelTag = self.scObject.ModelTag + "RWPower" + str(item)
+            self.rwPowerList[item].basePowerNeed = 5.  # baseline power draw, Watt
+            self.rwPowerList[item].rwStateInMsg.subscribeTo(self.rwStateEffector.rwOutMsgs[item])
+            self.rwPowerList[item].mechToElecEfficiency = 0.5
+
+    def SetSolarPanel(self, SimBase):
+        """Set the solar panel"""
+        self.solarPanel.ModelTag = "solarPanel"
+        self.solarPanel.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
+        self.solarPanel.sunEclipseInMsg.subscribeTo(SimBase.EnvModel.eclipseObject.eclipseOutMsgs[0])  # choose the earth message
+        self.solarPanel.sunInMsg.subscribeTo(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.sun])
+        self.solarPanelAxis = [0, 0, 1]
+        self.solarPanel.setPanelParameters(self.solarPanelAxis,  # panel normal vector in the body frame
+                                           0.4 * 0.4 * 2 + 0.2 * 0.4 * 2,  # area, m^2
+                                           0.35)  # efficiency
+
+    def SetPowerSink(self):
+        """Define the energy sink parameters"""
+        self.powerSink.ModelTag = "powerSink"
+        self.powerSink.nodePowerOut = -1.  # Watt
+
+    def SetBattery(self):
+        """Set up the battery with all the power components"""
+        self.powerMonitor.ModelTag = "powerMonitor"
+        self.powerMonitor.storageCapacity = 2 * 60.0 * 3600.0  # Convert from W-hr to Joule
+        self.powerMonitor.storedCharge_Init = self.powerMonitor.storageCapacity * 0.6  # 40% depletion
+
+        # attach the sources/sinks to the battery
+        self.powerMonitor.addPowerNodeToModel(self.solarPanel.nodePowerOutMsg)
+        self.powerMonitor.addPowerNodeToModel(self.powerSink.nodePowerOutMsg)
+        for item in range(self.numRW):
+            self.powerMonitor.addPowerNodeToModel(self.rwPowerList[item].nodePowerOutMsg)
 
     # Global call to initialize every module
     def InitAllDynObjects(self, SimBase):
@@ -145,3 +204,8 @@ class BSKDynamicModels:
         self.SetThrusterDynEffector()
         self.SetSimpleNavObject()
         self.SetGroundLocations(SimBase)
+        self.SetReactionWheelPower()
+        self.SetEclipseObject(SimBase)
+        self.SetSolarPanel(SimBase)
+        self.SetPowerSink()
+        self.SetBattery()
