@@ -56,6 +56,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
         # Create a sim module as an empty container
         SimulationBaseClass.SimBaseClass.__init__(self)
+        self.SetProgressBar(True)
 
         self.EnvModel = []
         self.DynModels = []
