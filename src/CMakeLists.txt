@@ -492,7 +492,12 @@ if(WIN32)
         list(REMOVE_ITEM CONAN_LIBS opencv_sfm411d multiview)
 
 elseif(APPLE)
-	set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_osx.a)
+    if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm64")
+	    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_osx_arm64.a)
+	else()
+		set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_osx.a)
+    endif()
+
 
 	SET(CMAKE_SKIP_BUILD_RPATH  FALSE)	# use, i.e. don't skip the full RPATH for the build tree
 	SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) # when building, don't use the install RPATH already (but later on when installing)

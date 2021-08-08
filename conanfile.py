@@ -91,8 +91,10 @@ class BasiliskConan(ConanFile):
 
     try:
         consoleReturn = str(subprocess.check_output(["conan", "remote", "list", "--raw"]))
-        conanRepos = ["conan-community https://api.bintray.com/conan/conan-community/conan",
-                      "bincrafters https://api.bintray.com/conan/bincrafters/public-conan"]
+        conanRepos = ["conan-community https://api.bintray.com/conan/conan-community/conan"
+                      # , "bincraftersNew https://bincrafters.jfrog.io/artifactory/api/conan/public-conan"
+                      , "bincrafters https://api.bintray.com/conan/bincrafters/public-conan"
+                      ]
         for item in conanRepos:
             if item not in consoleReturn:
                 print("Configuring: " + statusColor + item + endColor)
