@@ -40,6 +40,8 @@ HubEffector::HubEffector()
     this->nameOfHubVelocity = "hubVelocity";
     this->nameOfHubSigma = "hubSigma";
     this->nameOfHubOmega = "hubOmega";
+    this->nameOfHubGravVelocity = "hubGravVelocity";
+    this->nameOfBcGravVelocity = "BcGravVelocity";
 
     // - define a default mass of 1kg
     this->mHub = 1.0;
@@ -59,6 +61,7 @@ HubEffector::~HubEffector()
  these values in the computeDerivatives method call */
 void HubEffector::linkInStates(DynParamManager& statesIn)
 {
+    this->g_N = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "g_N");
     return;
 }
 
@@ -68,6 +71,8 @@ void HubEffector::prependSpacecraftNameToStates()
     this->nameOfHubVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfHubVelocity;
     this->nameOfHubSigma = this->nameOfSpacecraftAttachedTo + this->nameOfHubSigma;
     this->nameOfHubOmega = this->nameOfSpacecraftAttachedTo + this->nameOfHubOmega;
+    this->nameOfHubGravVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfHubGravVelocity;
+    this->nameOfBcGravVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfBcGravVelocity;
 
     return;
 }
@@ -80,12 +85,16 @@ void HubEffector::registerStates(DynParamManager& states)
     this->velocityState = states.registerState(3, 1, this->nameOfHubVelocity);
     this->sigmaState = states.registerState(3, 1, this->nameOfHubSigma);
     this->omegaState = states.registerState(3, 1, this->nameOfHubOmega);
+    this->gravVelocityState = states.registerState(3, 1, this->nameOfHubGravVelocity);
+    this->gravVelocityBcState = states.registerState(3, 1, this->nameOfBcGravVelocity);
     /* - r_BN_N and v_BN_N of the hub is first set to r_CN_N and v_CN_N and then is corrected in spacecraft
      initializeDynamics to incorporate the fact that point B and point C are not necessarily coincident */
     this->posState->setState(this->r_CN_NInit);
     this->velocityState->setState(this->v_CN_NInit);
     this->sigmaState->setState(this->sigma_BNInit);
     this->omegaState->setState(this->omega_BN_BInit);
+    this->gravVelocityState->setState(this->v_CN_NInit);
+    this->gravVelocityBcState->setState(this->v_CN_NInit);
 
     return;
 }
@@ -128,6 +137,7 @@ void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_
     rDotLocal_BN_N = velocityState->getState();
     sigmaLocal_BN = (Eigen::Vector3d )sigmaState->getState();
     omegaLocal_BN_B = omegaState->getState();
+    gLocal_N = *this->g_N;
 
     // - Set kinematic derivative
     sigmaState->setDerivative(1.0/4.0*sigmaLocal_BN.Bmat()*omegaLocal_BN_B);
@@ -149,6 +159,10 @@ void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_
 
     // - Solve for rDDot_BN_N
     velocityState->setDerivative(dcm_NB*hubBackSubMatrices.matrixA.inverse()*(hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB*omegaDotLocal_BN_B));
+
+    // - Set gravity velocity derivatives
+    gravVelocityState->setDerivative(gLocal_N);
+    gravVelocityBcState->setDerivative(gLocal_N);
 
     // - Set kinematic derivative
     posState->setDerivative(rDotLocal_BN_N);
@@ -187,4 +201,11 @@ void HubEffector::modifyStates(double integTime)
         this->MRPSwitchCount++;
     }
     return;
+}
+
+/*! This method is used to set the gravitational velocity state equal to the base velocity state */
+void HubEffector::matchGravitytoVelocityState(Eigen::Vector3d v_CN_N)
+{
+    this->gravVelocityState->setState(this->velocityState->getState());
+    this->gravVelocityBcState->setState(v_CN_N);
 }

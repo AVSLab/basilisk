@@ -56,6 +56,8 @@ def spacecraftAllTest(show_plots):
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_scAttRef(show_plots, 1e-3)
     assert testResults < 1, testMessage
+    [testResults, testMessage] = test_scAccumDV()
+    assert testResults < 1, testMessage
 
 def test_SCTranslation(show_plots):
     """Module Unit Test"""
@@ -992,6 +994,82 @@ def test_scAttRef(show_plots, accuracy):
         print("PASSED: scPlus setting attRefInMsg")
     else:
         print("FAILED: scPlus setting attRefInMsg")
+
+    return [testFailCount, ''.join(testMessages)]
+
+def test_scAccumDV():
+    """Module Unit Test"""
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    timeStep = 0.1
+    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    dataLog = scObject.scStateOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # add Earth
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True  # ensure this is the central gravitational body
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+
+    # Define initial conditions of the spacecraft
+    scObject.hub.mHub = 100
+    scObject.hub.r_BcB_B = [[0.0], [100.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    scObject.hub.r_CN_NInit = [[-7000000.0],	[0.0],	[0.0]]
+    scObject.hub.v_CN_NInit = [[0.0],	[7000.0],	[0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [numpy.pi/180]]
+
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 0.5
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    dataAccumDV_CN_B = dataLog.TotalAccumDVBdy
+    dataAccumDV_BN_B = dataLog.TotalAccumDV_BN_B
+
+    accuracy = 1e-10
+    truth_dataAccumDV_CN_B = [0.0, 0.0, 0.0]
+    v_r = numpy.cross(numpy.array(scObject.hub.omega_BN_BInit).T, -numpy.array(scObject.hub.r_BcB_B).T)[0]
+    truth_dataAccumDV_BN_B = numpy.zeros(3)
+    for i in range(len(dataLog.times())-1):
+        if not unitTestSupport.isArrayEqual(dataAccumDV_CN_B[i+1],truth_dataAccumDV_CN_B,3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Spacecraft Point C Accumulated DV test failed pos unit test")
+
+        truth_dataAccumDV_BN_B += numpy.matmul(RigidBodyKinematics.MRP2C(dataLog.sigma_BN[i+1]),
+                                              numpy.matmul(RigidBodyKinematics.MRP2C(dataLog.sigma_BN[i+1]).T,v_r) -
+                                              numpy.matmul(RigidBodyKinematics.MRP2C(dataLog.sigma_BN[i]).T,v_r))
+        if not unitTestSupport.isArrayEqual(dataAccumDV_BN_B[i+1],truth_dataAccumDV_BN_B,3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Spacecraft Point B Accumulated DV test failed pos unit test")
+
+    if testFailCount == 0:
+        print("PASSED: Spacecraft Accumulated DV tests with offset CoM")
 
     return [testFailCount, ''.join(testMessages)]
 

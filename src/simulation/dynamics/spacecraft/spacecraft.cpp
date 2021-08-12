@@ -36,7 +36,7 @@ Spacecraft::Spacecraft()
     this->timePrevious = 0.0;
     this->simTimePrevious = 0;
     this->numOutMsgBuffers = 2;
-    this->dvAccum_B.setZero();
+    this->dvAccum_CN_B.setZero();
     this->dvAccum_BN_B.setZero();
 
     // - Set integrator as RK4 by default
@@ -106,7 +106,7 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
     eigenVector3d2CArray(vLocal_CN_N, stateOut.v_CN_N);
     eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
     eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
-    eigenMatrixXd2CArray(this->dvAccum_B, stateOut.TotalAccumDVBdy);
+    eigenMatrixXd2CArray(this->dvAccum_CN_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->hub.MRPSwitchCount;
     eigenMatrixXd2CArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
     eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
@@ -186,6 +186,8 @@ void Spacecraft::linkInStates(DynParamManager& statesIn)
     this->hubV_N = statesIn.getStateObject("hubVelocity");
     this->hubSigma = statesIn.getStateObject("hubSigma");   /* Need sigmaBN for MRP switching */
     this->hubOmega_BN_B = statesIn.getStateObject("hubOmega");
+    this->hubGravVelocity = statesIn.getStateObject("hubGravVelocity");
+    this->BcGravVelocity = statesIn.getStateObject("BcGravVelocity");
 
     // - Get access to the hubs position and velocity in the property manager
     this->inertialPositionProperty = statesIn.getPropertyReference("r_BN_N");
@@ -450,7 +452,7 @@ void Spacecraft::integrateState(double integrateToThisTime)
     // - Find the time step
 	double localTimeStep = integrateToThisTime - this->timePrevious;
 
-    // - Find v_CN_N before integration for accumulated DV
+	// - Find v_CN_N before integration for accumulated DV
     Eigen::Vector3d oldV_BN_N = this->hubV_N->getState();  // - V_BN_N before integration
     Eigen::Vector3d oldV_CN_N;  // - V_CN_N before integration
     Eigen::Vector3d oldC_B;     // - Center of mass offset before integration
@@ -464,8 +466,8 @@ void Spacecraft::integrateState(double integrateToThisTime)
     Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
     oldV_CN_N = oldV_BN_N + oldDcm_NB*(*this->cDot_B);
 
-
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
+    this->hub.matchGravitytoVelocityState(oldV_CN_N); // Set gravity velocity to base velocity for DV estimation
     double timeBefore = integrateToThisTime - localTimeStep;
     this->integrator->integrate(timeBefore, localTimeStep);
     this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
@@ -484,27 +486,17 @@ void Spacecraft::integrateState(double integrateToThisTime)
     Eigen::Matrix3d newDcm_NB = newSigma_BN.toRotationMatrix();  // - dcm_NB after integration
     newV_CN_N = newV_BN_N + newDcm_NB*(*this->cDot_B);
 
-    // - Find change in velocity
-    Eigen::Vector3d dV_N; // dV of the center of mass in the intertial frame
-    Eigen::Vector3d dV_B_N; //dV of the body frame in the inertial frame
-    Eigen::Vector3d dV_B_B; //dV of the body frame in the body frame
-    dV_N = newV_CN_N - oldV_CN_N;
-    dV_B_N = newV_BN_N - oldV_BN_N;
-    // - Subtract out gravity
-    Eigen::Vector3d gLocal_N;
-    gLocal_N = *this->g_N;
-    dV_N -= gLocal_N*localTimeStep;
-    dV_B_N -= gLocal_N*localTimeStep;
-    dV_B_B = newDcm_NB.transpose()*dV_B_N;
-
     // - Find accumulated DV of the center of mass in the body frame
-    this->dvAccum_B += newDcm_NB.transpose()*dV_N;
+    this->dvAccum_CN_B += newDcm_NB.transpose()*(newV_CN_N -
+                                              this->BcGravVelocity->getState());
 
     // - Find the accumulated DV of the body frame in the body frame
-    this->dvAccum_BN_B += dV_B_B;
+    this->dvAccum_BN_B += newDcm_NB.transpose()*(newV_BN_N -
+                                                 this->hubGravVelocity->getState());
 
     // - non-conservative acceleration of the body frame in the body frame
-    this->nonConservativeAccelpntB_B = dV_B_B/localTimeStep;
+    this->nonConservativeAccelpntB_B = (newDcm_NB.transpose()*(newV_BN_N -
+                                                               this->hubGravVelocity->getState()))/localTimeStep;
 
     // - angular acceleration in the body frame
     Eigen::Vector3d newOmega_BN_B;
