@@ -25,6 +25,7 @@
 typedef struct {
     double fuelMass;                   //!< [kg], current fuel mass
     double fuelMassDot;                //!< [kg/s], current rate of change of fuel mass
+    double maxFuelMass;                //!< [kg], maximum fuel mass capacity
 }FuelTankMsgPayload;
 
 

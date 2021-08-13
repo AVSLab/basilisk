@@ -305,6 +305,39 @@ void VizInterface::ReadBSKMessages()
                 }
             }
         }
+        
+        /* read in generic storage state values */
+        {
+            for (size_t idx=0;idx< (size_t) scIt->genericStorageList.size(); idx++) {
+                /* read in battery device state */
+                if (scIt->genericStorageList[idx].batteryStateInMsg.isLinked()){
+                    PowerStorageStatusMsgPayload deviceStateMsgBuffer;
+                    deviceStateMsgBuffer = scIt->genericStorageList[idx].batteryStateInMsg();
+                    if(scIt->genericStorageList[idx].batteryStateInMsg.isWritten()){
+                        scIt->genericStorageList[idx].currentValue = deviceStateMsgBuffer.storageLevel;
+                        scIt->genericStorageList[idx].maxValue = deviceStateMsgBuffer.storageCapacity;
+                    }
+                }
+                /* read in data storage device state */
+                if (scIt->genericStorageList[idx].dataStorageStateInMsg.isLinked()){
+                    DataStorageStatusMsgPayload deviceStateMsgBuffer;
+                    deviceStateMsgBuffer = scIt->genericStorageList[idx].dataStorageStateInMsg();
+                    if(scIt->genericStorageList[idx].dataStorageStateInMsg.isWritten()){
+                        scIt->genericStorageList[idx].currentValue = deviceStateMsgBuffer.storageLevel;
+                        scIt->genericStorageList[idx].maxValue = deviceStateMsgBuffer.storageCapacity;
+                    }
+                }
+                /* read in fuel tank device state */
+                if (scIt->genericStorageList[idx].fuelTankStateInMsg.isLinked()){
+                    FuelTankMsgPayload deviceStateMsgBuffer;
+                    deviceStateMsgBuffer = scIt->genericStorageList[idx].fuelTankStateInMsg();
+                    if(scIt->genericStorageList[idx].fuelTankStateInMsg.isWritten()){
+                        scIt->genericStorageList[idx].currentValue = deviceStateMsgBuffer.fuelMass;
+                        scIt->genericStorageList[idx].maxValue = deviceStateMsgBuffer.maxFuelMass;
+                    }
+                }
+            }
+        }
 
     } /* end of scIt loop */
 
@@ -545,6 +578,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             il->set_showgenericsensorlabels(this->settings.instrumentGuiSettingsList[idx].showGenericSensorLabels);
             il->set_showtransceiverlabels(this->settings.instrumentGuiSettingsList[idx].showTransceiverLabels);
             il->set_showtransceiverfrustrum(this->settings.instrumentGuiSettingsList[idx].showTransceiverFrustrum);
+            il->set_showgenericstoragepanel(this->settings.instrumentGuiSettingsList[idx].showGenericStoragePanel);
         }
 
 
@@ -755,6 +789,24 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 }
                 tr->set_transmitstatus(scIt->transceiverList[idx].transceiverState);
                 tr->set_animationspeed(scIt->transceiverList[idx].animationSpeed);
+            }
+
+            // Write generic storage device messages
+            for (size_t idx =0; idx < (size_t) scIt->genericStorageList.size(); idx++) {
+                vizProtobufferMessage::VizMessage::GenericStorage* gsd = scp->add_storagedevices();
+
+                gsd->set_label(scIt->genericStorageList[idx].label);
+                gsd->set_type(scIt->genericStorageList[idx].type);
+                gsd->set_currentvalue(scIt->genericStorageList[idx].currentValue);
+                gsd->set_maxvalue(scIt->genericStorageList[idx].maxValue);
+                gsd->set_units(scIt->genericStorageList[idx].units);
+                for (int j=0; j<scIt->genericStorageList[idx].color.size(); j++) {
+                    gsd->add_color(scIt->genericStorageList[idx].color[j]);
+                }
+                for (int j=0; j<scIt->genericStorageList[idx].thresholds.size(); j++) {
+                    gsd->add_thresholds(scIt->genericStorageList[idx].thresholds[j]);
+                }
+
             }
 
         }

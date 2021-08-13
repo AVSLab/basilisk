@@ -14,6 +14,10 @@
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
 #include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
+#include "architecture/msgPayloadDefC/PowerStorageStatusMsgPayload.h"
+#include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"
 
 #include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
@@ -116,6 +120,7 @@ InstrumentGuiSettings
     int showGenericSensorLabels=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showTransceiverLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showTransceiverFrustrum=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showGenericStoragePanel=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }InstrumentGuiSettings;
 
 /*! Structure defining a custom CAD model to load to represent a simulation object.
@@ -165,10 +170,31 @@ GenericSensor
     double size = 0;                   //!< [m] (optional) size of the sensor visualization, use 0 (protobuffer default) to use viz default size
     std::vector<int> color;             //!< [] (optional) RGBA as values between 0 and 255, multiple colors can be populated in this field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2 will use the color indexed to 1, etc.  If 2 colors are provided, then the vector should have size 8 (2x4 color channels)
     std::string label = "";             //!< [] (optional) string to display on sensor label
-    ReadFunctor<DeviceCmdMsgPayload> genericSensorCmdInMsg;   //!< [-] (Optional)  incoming sensor cmd state msgs
+    ReadFunctor<DeviceCmdMsgPayload> genericSensorCmdInMsg;   //!< [-] (Optional)  incoming sensor cmd state msg
     int genericSensorCmd = 0;           //!< [int] (optional) sensor cmd value, if cmd input msg is connected, then this is set from the message
 
 }GenericSensor;
+
+
+/*! Structure defining generic storage information
+ */
+typedef struct
+//@cond DOXYGEN_IGNORE
+GenericStorage
+//@endcond
+{
+    std::string label = "";             //!< [] Name of storage device
+    std::string type = "";              //!< [] Type of storage device, i.e. "Battery", 'Hard Drive", "Propellant Tank", etc.
+    double currentValue = 0;            //!< [] current absolute value of the storage device, set from the input message if connected
+    double maxValue = 0;                //!< [] maximum absolute value of the storage device, set from the input message if connected
+    std::string units = "";             //!< [] (Optional) Units of stored quantity, i.e. "bytes", "TB", "kg", etc.
+    std::vector<int> color;             //!< [] (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be used to color the bar graph between thresholds (i.e. the first color will be used between values of 0 and threshold 1, the second color will be used between threshold 1 and 2,..., the last color will be used between threshold n and the maxValue
+    std::vector<int> thresholds;        //!< [] (Optional) Percentages of maxValue at which to change color, note that there should be one fewer threshold values than colors
+    ReadFunctor<PowerStorageStatusMsgPayload> batteryStateInMsg;    //!< [-] (Optional)  incoming battery state msg, only connect one input message
+    ReadFunctor<DataStorageStatusMsgPayload> dataStorageStateInMsg; //!< [-] (Optional)  incoming data storage state msg, only connect one input message
+    ReadFunctor<FuelTankMsgPayload> fuelTankStateInMsg;             //!< [-] (Optional)  incoming fuel tank state msg, only connect one input message
+}GenericStorage;
+
 
 /*! Structure defining antenna transceiver information
  */
@@ -218,6 +244,8 @@ VizSpacecraftData
     std::vector<GenericSensor> genericSensorList;               //!< [-] (Optional) Vector of generic sensor configuration info
 
     std::vector<Transceiver> transceiverList;                   //!< [-] (Optional) Vector of transceiver configuration info
+    
+    std::vector<GenericStorage> genericStorageList;             //!< [-] (Optional) Vector of generic storage configuration info
 
     std::string spacecraftSprite = "";                          //!< Set sprite for this spacecraft only through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
 
