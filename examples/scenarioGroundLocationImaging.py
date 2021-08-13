@@ -392,16 +392,27 @@ def run(show_plots):
     trInMsg.subscribeTo(transmitter.nodeDataOutMsg)
     transceiverHUD.transceiverStateInMsgs.push_back(trInMsg)
 
+    hdDevicePanel = vizInterface.GenericStorage()
+    hdDevicePanel.label = "Main Disk"
+    hdDevicePanel.type = "Hard Drive"
+    hdDevicePanel.units = "bytes"
+    hdDevicePanel.color = vizInterface.IntVector(vizSupport.toRGBA255("blue") + vizSupport.toRGBA255("red"))
+    hdDevicePanel.thresholds = vizInterface.IntVector([50])
+    hdInMsg = messaging.DataStorageStatusMsgReader()
+    hdInMsg.subscribeTo(dataMonitor.storageUnitDataOutMsg)
+    hdDevicePanel.dataStorageStateInMsg = hdInMsg
     # if this scenario is to interface with the BSK Viz, uncomment the "saveFile" line
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                               # , saveFile=fileName
                                               , genericSensorList=genericSensorHUD
                                               , transceiverList=transceiverHUD
+                                              , genericStorageList=hdDevicePanel
                                               )
     # the following command sets Viz settings for the first spacecraft in the simulation
     vizSupport.setInstrumentGuiSetting(viz,
                                        showGenericSensorLabels=True,
-                                       showTransceiverLabels=True
+                                       showTransceiverLabels=True,
+                                       showGenericStoragePanel=True
                                        )
 
     # Add the Boulder target
