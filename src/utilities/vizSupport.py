@@ -534,6 +534,9 @@ def setInstrumentGuiSetting(viz, **kwargs):
     showTransceiverFrustrum: int
         flag if the generic sensor labels should be shown (1) or hidden (-1)
         Default: 0 - if not provided, then the Vizard default settings are used
+    showGenericStoragePanel: int
+        flag if the generic sensor labels should be shown (1) or hidden (-1)
+        Default: 0 - if not provided, then the Vizard default settings are used
 
     """
     if not vizFound:
@@ -545,7 +548,8 @@ def setInstrumentGuiSetting(viz, **kwargs):
 
     unitTestSupport.checkMethodKeyword(
         ['spacecraftName', 'viewCSSPanel', 'viewCSSCoverage', 'viewCSSBoresight', 'showCSSLabels',
-         'showGenericSensorLabels', 'showTransceiverLabels', 'showTransceiverFrustrum'],
+         'showGenericSensorLabels', 'showTransceiverLabels', 'showTransceiverFrustrum',
+         'showGenericStoragePanel'],
         kwargs)
 
     if 'spacecraftName' in kwargs:
@@ -641,6 +645,18 @@ def setInstrumentGuiSetting(viz, **kwargs):
         if setting is False:
             setting = -1
         vizElement.showTransceiverFrustrum = setting
+
+    if 'showGenericStoragePanel' in kwargs:
+        setting = kwargs['showGenericStoragePanel']
+        if not isinstance(setting, int):
+            print('ERROR: vizSupport: showGenericStoragePanel must be  -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting*setting > 1:
+            print('ERROR: vizSupport: showGenericStoragePanel must be -1 (Off), 0 (default) or 1 (On)')
+            exit(1)
+        if setting is False:
+            setting = -1
+        vizElement.showGenericStoragePanel = setting
 
     instrumentGuiSettingList.append(vizElement)
     del viz.settings.instrumentGuiSettingsList[:]  # clear settings list to replace it with updated list
@@ -989,6 +1005,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         flag if opNaveMode should be used
     liveStream: bool
         flag if live data streaming to Vizard should be used
+    genericStorageList:
+        list of lists of ``GenericStorage`` structures.  The outer list length must match ``scList``.
 
     Returns
     -------
@@ -1008,7 +1026,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
 
     unitTestSupport.checkMethodKeyword(
         ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList',
-         'genericSensorList', 'transceiverList'],
+         'genericSensorList', 'transceiverList', 'genericStorageList'],
         kwargs)
 
     # setup the Vizard interface module
@@ -1071,6 +1089,16 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             gsScList = [[gsScList]]
         if len(gsScList) != len(scList):
             print('ERROR: vizSupport: genericSensorList should have the same length as the '
+                  'number of spacecraft and contain lists of generic sensors')
+            exit(1)
+
+    gsdScList = False
+    if 'genericStorageList' in kwargs:
+        gsdScList = kwargs['genericStorageList']
+        if not isinstance(gsdScList, list):
+            gsdScList = [[gsdScList]]
+        if len(gsdScList) != len(scList):
+            print('ERROR: vizSupport: genericStorageList should have the same length as the '
                   'number of spacecraft and contain lists of generic sensors')
             exit(1)
 
@@ -1156,6 +1184,25 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 for gs in gsScList[c]:
                     gsList.append(gs)
                 scData.genericSensorList = vizInterface.GenericSensorVector(gsList)
+
+        # process generic sensor HUD information
+        if gsdScList:
+            gsdList = []
+            if gsdScList[c] is not None:  # generic storage device(s) have been added to this spacecraft
+                for gsd in gsdScList[c]:
+                    if len(gsd.color) > 1:
+                        if len(gsd.color)/4 != len(gsd.thresholds) + 1:
+                            print("ERROR: vizSupport: generic storage " + gsd.label +
+                                  " threshold list does not have the correct dimension.  "
+                                  "It should be 1 smaller than the list of colors.")
+                            exit(1)
+                    else:
+                        if len(gsd.thresholds) > 0:
+                            print("ERROR: vizSupport: generic storage " + gsd.label +
+                                  " threshold list is set, but no multiple of colors are provided.")
+                            exit(1)
+                    gsdList.append(gsd)
+                scData.genericStorageList = vizInterface.GenericStorageVector(gsdList)
 
         # process transceiver HUD information
         if tcScList:
