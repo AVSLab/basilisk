@@ -311,7 +311,7 @@ class BSKFswModels:
         # connect gateway FSW effector command msgs with the dynamics
         SimBase.DynModels[self.spacecraftIndex].rwStateEffector.rwMotorCmdInMsg.subscribeTo(
             self.rwMotorTorqueData.rwMotorTorqueOutMsg)
-        SimBase.DynModels[self.spacecraftIndex].thrusterEffector.cmdsInMsg.subscribeTo(
+        SimBase.DynModels[self.spacecraftIndex].thrusterDynamicEffector.cmdsInMsg.subscribeTo(
             self.spacecraftReconfigData.onTimeOutMsg)
 
     def zeroGateWayMsgs(self):

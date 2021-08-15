@@ -93,7 +93,8 @@ consists of one tasks named ``DynamicsTaskX`` where ``X`` represents that spacec
 corresponding dynamics process and an instance of a specific object is added.
 
 The dynamics class creates a :ref:`spacecraft`, :ref:`simpleNav`, :ref:`reactionWheelStateEffector` and
-:ref:`thrusterDynamicEffector` objects. Although no attitude guidance and control is implemented in this example, this
+:ref:`thrusterDynamicEffector` objects. It also creates a :ref:`fuelTank` module that uses truster information to show
+the status of the onboard fuel tank. Although no attitude guidance and control is implemented in this example, this
 class will be used in other scenarios that make use of those control surfaces (see :ref:`scenario_AttGuidMultiSat` and
 :ref:`scenario_StationKeepingMultiSat`).
 

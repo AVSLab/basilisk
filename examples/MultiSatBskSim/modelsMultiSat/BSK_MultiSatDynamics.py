@@ -20,7 +20,7 @@ import numpy as np
 from Basilisk.utilities import (macros as mc, unitTestSupport as sp, RigidBodyKinematics as rbk,
                                 simIncludeRW, simIncludeThruster)
 from Basilisk.simulation import (spacecraft, simpleNav, reactionWheelStateEffector, thrusterDynamicEffector,
-                                 simpleSolarPanel, simplePowerSink, simpleBattery,
+                                 simpleSolarPanel, simplePowerSink, simpleBattery, fuelTank,
                                  ReactionWheelPower)
 
 from Basilisk import __path__
@@ -36,7 +36,8 @@ class BSKDynamicModels:
         self.I_sc = None
         self.solarPanelAxis = None
         self.numRW = 4
-        self.numThr = 2
+        self.numThr = None
+        self.tankModel = None
         self.spacecraftIndex = spacecraftIndex
 
         # Define process name, task name and task time-step
@@ -51,11 +52,12 @@ class BSKDynamicModels:
         self.simpleNavObject = simpleNav.SimpleNav()
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
         self.rwFactory = simIncludeRW.rwFactory()
-        self.thrusterEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+        self.thrusterDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
         self.thrusterFactory = simIncludeThruster.thrusterFactory()
         self.solarPanel = simpleSolarPanel.SimpleSolarPanel()
         self.powerSink = simplePowerSink.SimplePowerSink()
         self.powerMonitor = simpleBattery.SimpleBattery()
+        self.fuelTankStateEffector = fuelTank.FuelTank()
 
         self.rwPowerList = []
         for item in range(self.numRW):
@@ -68,10 +70,11 @@ class BSKDynamicModels:
         SimBase.AddModelToTask(self.taskName, self.scObject, None, 100)
         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 100)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 100)
-        SimBase.AddModelToTask(self.taskName, self.thrusterEffector, None, 100)
+        SimBase.AddModelToTask(self.taskName, self.thrusterDynamicEffector, None, 100)
         SimBase.AddModelToTask(self.taskName, self.solarPanel, None, 100)
         SimBase.AddModelToTask(self.taskName, self.powerSink, None, 100)
         SimBase.AddModelToTask(self.taskName, self.powerMonitor, None, 100)
+        SimBase.AddModelToTask(self.taskName, self.fuelTankStateEffector, None, 100)
 
         for item in range(self.numRW):
             SimBase.AddModelToTask(self.taskName, self.rwPowerList[item], 100)
@@ -140,21 +143,41 @@ class BSKDynamicModels:
                                   maxMomentum=maxRWMomentum,
                                   rWB_B=posVector)
 
+        self.numRW = self.rwFactory.getNumOfDevices()
         self.rwFactory.addToSpacecraft("RWArray" + str(self.spacecraftIndex), self.rwStateEffector, self.scObject)
 
     def SetThrusterDynEffector(self):
         """
         Defines the thruster state effector.
         """
-        location = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-        direction = [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
+        location = [[0.0, 0.0, 0.0]]
+        direction = [[1.0, 1.0, 1.0]]
 
         # create the thruster devices by specifying the thruster type and its location and direction
         for pos_B, dir_B in zip(location, direction):
-            self.thrusterFactory.create('MOOG_Monarc_445', pos_B, dir_B, useMinPulseTime=False)
+            self.thrusterFactory.create('MOOG_Monarc_90HT', pos_B, dir_B, useMinPulseTime=False)
+
+        self.numThr = self.thrusterFactory.getNumOfDevices()
 
         # create thruster object container and tie to spacecraft object
-        self.thrusterFactory.addToSpacecraft("thrusterFactory", self.thrusterEffector, self.scObject)
+        self.thrusterFactory.addToSpacecraft("thrusterFactory", self.thrusterDynamicEffector, self.scObject)
+
+    def SetFuelTank(self):
+        """
+        Defines the fuel tank for the thrusters
+        """
+        # Define the tank
+        self.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_UNIFORM_BURN)
+        self.tankModel = fuelTank.cvar.FuelTankModelUniformBurn
+        self.tankModel.propMassInit = 50
+        self.tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]
+        self.fuelTankStateEffector.r_TB_B = [[0.0], [0.0], [0.0]]
+        self.tankModel.radiusTankInit = 5
+        self.tankModel.lengthTank = 5
+        
+        # Add the tank and connect the thrusters
+        self.scObject.addStateEffector(self.fuelTankStateEffector)
+        self.fuelTankStateEffector.addThrusterSet(self.thrusterDynamicEffector)
 
     def SetReactionWheelPower(self):
         """Sets the reaction wheel power parameters"""
@@ -201,6 +224,7 @@ class BSKDynamicModels:
         self.SetGravityBodies(SimBase)
         self.SetReactionWheelDynEffector()
         self.SetThrusterDynEffector()
+        self.SetFuelTank()
         self.SetSimpleNavObject()
         self.SetGroundLocations(SimBase)
         self.SetReactionWheelPower()
