@@ -796,7 +796,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 vizProtobufferMessage::VizMessage::GenericStorage* gsd = scp->add_storagedevices();
 
                 gsd->set_label(scIt->genericStorageList[idx].label);
-                gsd->set_type(scIt->genericStorageList[idx].type);
                 gsd->set_currentvalue(scIt->genericStorageList[idx].currentValue);
                 gsd->set_maxvalue(scIt->genericStorageList[idx].maxValue);
                 gsd->set_units(scIt->genericStorageList[idx].units);

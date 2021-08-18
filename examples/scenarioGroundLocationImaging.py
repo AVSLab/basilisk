@@ -394,7 +394,6 @@ def run(show_plots):
 
     hdDevicePanel = vizInterface.GenericStorage()
     hdDevicePanel.label = "Main Disk"
-    hdDevicePanel.type = "Hard Drive"
     hdDevicePanel.units = "bytes"
     hdDevicePanel.color = vizInterface.IntVector(vizSupport.toRGBA255("blue") + vizSupport.toRGBA255("red"))
     hdDevicePanel.thresholds = vizInterface.IntVector([50])

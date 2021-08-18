@@ -97,12 +97,11 @@ message VizMessage{
     
     message GenericStorage{
         string label = 2; //Name of storage device
-        string type = 3; //Type of storage device, i.e. "Battery", 'Hard Drive", "Propellant Tank", etc.
-        double currentValue = 4; // current absolute value of the storage device
-        double maxValue = 5; // maximum absolute value of the storage device
-        string units = 6; // (Optional) Units of stored quantity, i.e. "bytes", "TB", "kg", etc. 
-        repeated int32 color = 7; // (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be used to color the bar graph between thresholds (i.e. the first color will be used between values of 0 and threshold 1, the second color will be used between threshold 1 and 2,..., the last color will be used between threshold n and the maxValue
-        repeated int32 thresholds = 8; //(Optional) Percentages of maxValue at which to change color, note that there should be one fewer threshold values than colors
+        double currentValue = 3; // current absolute value of the storage device
+        double maxValue = 4; // maximum absolute value of the storage device
+        string units = 5; // (Optional) Units of stored quantity, i.e. "bytes", "TB", "kg", etc.
+        repeated int32 color = 6; // (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be used to color the bar graph between thresholds (i.e. the first color will be used between values of 0 and threshold 1, the second color will be used between threshold 1 and 2,..., the last color will be used between threshold n and the maxValue
+        repeated int32 thresholds = 7; //(Optional) Percentages of maxValue at which to change color, note that there should be one fewer threshold values than colors
     }
     
     message Transceiver{
