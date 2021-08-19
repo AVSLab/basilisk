@@ -40,18 +40,21 @@ public:
     SysModelTask(uint64_t InputPeriod, uint64_t InputDelay=0,
                    uint64_t FirstStartTime=0); //!< class method
     ~SysModelTask();
-    void AddNewObject(SysModel *NewModel, int32_t Priority = -1); //!< class method
-    void SelfInitTaskList(); //!< class method
-    void ExecuteTaskList(uint64_t CurrentSimTime); //!< class method
-	void ResetTaskList(uint64_t CurrentSimTime); //!< class method
-    void ResetTask() {this->NextStartTime = this->FirstTaskTime;} //!< class method
-	void enableTask() {this->taskActive = true;} //!< class method
-	void disableTask() {this->taskActive = false;} //!< class method
-    void updatePeriod(uint64_t newPeriod); //!< class method
+    void AddNewObject(SysModel *NewModel, int32_t Priority = -1);
+    void SelfInitTaskList();
+    //void CrossInitTaskList();
+    void ExecuteTaskList(uint64_t CurrentSimTime);
+	void ResetTaskList(uint64_t CurrentSimTime);
+    void ResetTask() {this->NextStartTime = this->FirstTaskTime;}
+	void enableTask() {this->taskActive = true;}
+	void disableTask() {this->taskActive = false;}
+    void updatePeriod(uint64_t newPeriod);
+    void updateParentProc(std::string parent) {this->parentProc = parent;}
     
 public:
     std::vector<ModelPriorityPair> TaskModels;  //!< -- Array that has pointers to all task sysModels
     std::string TaskName;  //!< -- Identifier for Task
+    std::string parentProc; //!< -- Process that calls this task
     uint64_t NextStartTime;  //!< [ns] Next time to start task
     uint64_t NextPickupTime;  //!< [ns] Next time read Task outputs
     uint64_t TaskPeriod;  //!< [ns] Cycle rate for Task

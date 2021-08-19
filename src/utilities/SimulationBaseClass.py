@@ -485,6 +485,7 @@ class SimBaseClass:
         """
         Initialize the BSK simulation.  This runs the SelfInit() and Reset() methods on each module.
         """
+        self.TotalSim.assignRemainingProcs()
         self.TotalSim.ResetSimulation()
         self.TotalSim.selfInitSimulation()
         for proc in self.pyProcList:

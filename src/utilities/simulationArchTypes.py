@@ -104,13 +104,17 @@ class PythonModelClass(object):
 
 
 class PythonTaskClass(object):
-    def __init__(self, taskName, taskRate, taskActive=True, taskPriority=-1):
+    def __init__(self, taskName, taskRate, taskActive=True, taskPriority=-1, parentProc=None):
         self.name = taskName
         self.rate = taskRate
         self.priority = taskPriority
         self.modelList = []
         self.nextTaskTime = 0
         self.taskActive = taskActive
+        self.parentProc = parentProc
+
+    def updateParentProc(self, newParentProc):
+        self.parentProc = newParentProc
 
     def selfInitTask(self):
         for model in self.modelList:
@@ -124,6 +128,8 @@ class PythonTaskClass(object):
         if priority is not None:
             newModel.modelPriority = priority
         i = 0
+        sim_model.SystemMessaging_GetInstance().addModuleToProcess(
+        newModel.moduleID, self.parentProc.processName)
         for model in self.modelList:
             if newModel.modelPriority > model.modelPriority:
                 self.modelList.insert(i, newModel)
@@ -162,7 +168,7 @@ class PythonProcessClass(ProcessBaseClass):
         self.executionOrder.append(newTask)
 
     def createPythonTask(self, newTaskName, taskRate, taskActive=True, taskPriority=-1):
-        self.taskList.append(PythonTaskClass(newTaskName, taskRate, taskActive, taskPriority))
+        self.taskList.append(PythonTaskClass(newTaskName, taskRate, taskActive, taskPriority, self.processData))
 
     def addPythonTask(self, newPyTask):
         self.taskList.append(newPyTask)

@@ -87,6 +87,8 @@ void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
 	{
 		(*ModelPair).ModelPtr->Reset(CurrentSimTime);
 	}
+	this->NextStartTime = CurrentSimTime;
+    this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
 }
 
 /*! This method executes all of the models on the Task during runtime.
@@ -125,6 +127,8 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
     //! - Set the local pair with the requested priority and mode
     LocalPair.CurrentModelPriority = Priority;
     LocalPair.ModelPtr = NewModel;
+//    SystemMessaging::GetInstance()->addModuleToProcess(NewModel->moduleID,
+//            parentProc);
     //! - Loop through the ModelPair vector and if Priority is higher than next, insert
     for(ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
         ModelPair++)
@@ -147,10 +151,17 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
  */
 void SysModelTask::updatePeriod(uint64_t newPeriod)
 {
+    uint64_t newStartTime;
     //! - If the requested time is above the min time, set the next time based on the previos time plus the new period
     if(this->NextStartTime > this->TaskPeriod)
     {
-        this->NextStartTime = this->NextStartTime - this->TaskPeriod + newPeriod;
+        newStartTime = this->NextStartTime - this->TaskPeriod + newPeriod;
+        newStartTime = (newStartTime/newPeriod)*newPeriod;
+        if(newStartTime <= (this->NextStartTime - this->TaskPeriod))
+        {
+            newStartTime += newPeriod;
+        }
+        this->NextStartTime = newStartTime;
     }
     //! - Otherwise, we just should keep the original requested first call time for the task
     else
@@ -159,5 +170,6 @@ void SysModelTask::updatePeriod(uint64_t newPeriod)
     }
     //! - Change the period of the task so that future calls will be based on the new period
     this->TaskPeriod = newPeriod;
+
     
 }
