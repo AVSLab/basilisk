@@ -1149,4 +1149,5 @@ or multiple spacecraft, then lists of lists are required::
 Here the first spacecraft has no transceiver, and the 2nd spacecraft has 2 transceivers.
 
 See :ref:`scenarioGroundLocationImaging` for an example of using a data storage visualization.
+The example :ref:`scenario_BasicOrbitMultiSat` illustrates how to show a battery or fuel tank storage device.
 

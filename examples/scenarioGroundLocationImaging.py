@@ -292,7 +292,7 @@ def run(show_plots):
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
-    dataMonitor.storageCapacity = 2*8E9  # bits (1 GB)
+    dataMonitor.storageCapacity = 0.25*8E7  # bits
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(transmitter.nodeDataOutMsg)
     dataMonitor.addPartition("boulder")
@@ -394,7 +394,7 @@ def run(show_plots):
 
     hdDevicePanel = vizInterface.GenericStorage()
     hdDevicePanel.label = "Main Disk"
-    hdDevicePanel.units = "bytes"
+    hdDevicePanel.units = "bits"
     hdDevicePanel.color = vizInterface.IntVector(vizSupport.toRGBA255("blue") + vizSupport.toRGBA255("red"))
     hdDevicePanel.thresholds = vizInterface.IntVector([50])
     hdInMsg = messaging.DataStorageStatusMsgReader()
