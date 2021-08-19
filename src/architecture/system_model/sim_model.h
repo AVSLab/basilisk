@@ -28,7 +28,7 @@
 #include <iostream>
 #include "architecture/system_model/sys_process.h"
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/semaphore.h"
+#include "architecture/utilities/bskSemaphore.h"
 
 //! This class handles the management of a given "thread" of execution and provides the main mechanism for running concurrent jobs inside BSK
 class SimThreadExecution
@@ -72,8 +72,8 @@ public:
 private:
     bool threadRunning;            //!< Flag that will allow for easy concurrent locking
     bool terminateThread;          //!< Flag that indicates that it is time to take thread down
-    Semaphore parentThreadLock;   //!< Lock that ensures parent thread won't proceed
-    Semaphore selfThreadLock;     //!< Lock that ensures this thread only reaches allowed time
+    BSKSemaphore parentThreadLock;   //!< Lock that ensures parent thread won't proceed
+    BSKSemaphore selfThreadLock;     //!< Lock that ensures this thread only reaches allowed time
     std::vector<SysProcess*> processList;  //!< List of processes associated with thread
     std::mutex initReadyLock;      //!< Lock function to ensure runtime locks are configured
     std::condition_variable initHoldVar; //!< Conditional variable used to prevent race conditions

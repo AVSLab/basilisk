@@ -128,6 +128,8 @@ class PythonTaskClass(object):
         if priority is not None:
             newModel.modelPriority = priority
         i = 0
+        sim_model.SystemMessaging_GetInstance().addModuleToProcess(
+        newModel.moduleID, self.parentProc.processName)
         for model in self.modelList:
             if newModel.modelPriority > model.modelPriority:
                 self.modelList.insert(i, newModel)
