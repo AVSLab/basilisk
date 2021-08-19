@@ -36,6 +36,8 @@ Version |release|
 - added power modules to the :ref:`BSK_MultiSatDynamics` class.
 - improved the DV calculation of the spacecraft state output message by integrating the gravitational acceleration
   using the current integration scheme rather than using a first order approximation.
+- updated install script to be able to have ``conan`` install ``opencv`` again.  Something changed with the ``conan``
+  repo that broke this.
 
 Version 2.0.6
 -------------

@@ -159,6 +159,8 @@ class BasiliskConan(ConanFile):
 
     def requirements(self):
         if self.options.opNav:
+            self.requires.add("gettext/0.20.1")
+            self.requires.add("glib/2.65.0")
             self.requires.add("opencv/4.1.1@conan/stable")
             self.requires.add("zlib/1.2.11")
             self.requires.add("bzip2/1.0.8@conan/stable")
