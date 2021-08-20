@@ -235,6 +235,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                                                   , thrEffectorList=thDynamicEffectorList
                                                   , genericStorageList=gsList
                                                   )
+        viz.settings.showSpacecraftLabels = True
         for i in range(3):
             vizSupport.setInstrumentGuiSetting(viz, spacecraftName=self.DynModels[i].scObject.ModelTag,
                                                showGenericStoragePanel=True)
@@ -245,8 +246,8 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
 
         # Configure initial conditions for spacecraft 0
         self.oe.append(orbitalMotion.ClassicElements())
-        self.oe[0].a = 1.1*EnvModel.planetRadius  # meters
-        self.oe[0].e = 0.3
+        self.oe[0].a = 1.4*EnvModel.planetRadius  # meters
+        self.oe[0].e = 0.2
         self.oe[0].i = 45.0 * macros.D2R
         self.oe[0].Omega = 48.2 * macros.D2R
         self.oe[0].omega = 347.8 * macros.D2R
