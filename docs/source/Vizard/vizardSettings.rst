@@ -1045,7 +1045,6 @@ parameters are set using::
 
     hdDevicePanel = vizInterface.GenericStorage()
     hdDevicePanel.label = "Main Disk"
-    hdDevicePanel.type = "Hard Drive"
 
 The full list of required and optional generic storage parameters are provided in the following table.
 
@@ -1063,11 +1062,6 @@ The full list of required and optional generic storage parameters are provided i
       -
       - Yes
       - Name of storage device
-    * - ``type``
-      - string
-      -
-      - Yes
-      - Type of storage device, i.e. "Battery", 'Hard Drive", "Propellant Tank", etc.
     * - ``currentValue``
       - float
       - variable
@@ -1122,7 +1116,6 @@ orange if the storage is more than 80% full, you could use::
 
     hdDevicePanel = vizInterface.GenericStorage()
     hdDevicePanel.label = "Main Disk"
-    hdDevicePanel.type = "Hard Drive"
     hdDevicePanel.units = "bytes"
     hdDevicePanel.color = vizInterface.IntVector(vizSupport.toRGBA255("blue") + vizSupport.toRGBA255("orange"))
     hdDevicePanel.thresholds = vizInterface.IntVector([80])
