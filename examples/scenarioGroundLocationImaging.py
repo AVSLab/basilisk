@@ -292,7 +292,7 @@ def run(show_plots):
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
-    dataMonitor.storageCapacity = 2*8E9  # bits (1 GB)
+    dataMonitor.storageCapacity = 0.25*8E7  # bits
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(transmitter.nodeDataOutMsg)
     dataMonitor.addPartition("boulder")
@@ -392,16 +392,26 @@ def run(show_plots):
     trInMsg.subscribeTo(transmitter.nodeDataOutMsg)
     transceiverHUD.transceiverStateInMsgs.push_back(trInMsg)
 
+    hdDevicePanel = vizInterface.GenericStorage()
+    hdDevicePanel.label = "Main Disk"
+    hdDevicePanel.units = "bits"
+    hdDevicePanel.color = vizInterface.IntVector(vizSupport.toRGBA255("blue") + vizSupport.toRGBA255("red"))
+    hdDevicePanel.thresholds = vizInterface.IntVector([50])
+    hdInMsg = messaging.DataStorageStatusMsgReader()
+    hdInMsg.subscribeTo(dataMonitor.storageUnitDataOutMsg)
+    hdDevicePanel.dataStorageStateInMsg = hdInMsg
     # if this scenario is to interface with the BSK Viz, uncomment the "saveFile" line
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                               # , saveFile=fileName
                                               , genericSensorList=genericSensorHUD
                                               , transceiverList=transceiverHUD
+                                              , genericStorageList=hdDevicePanel
                                               )
     # the following command sets Viz settings for the first spacecraft in the simulation
     vizSupport.setInstrumentGuiSetting(viz,
                                        showGenericSensorLabels=True,
-                                       showTransceiverLabels=True
+                                       showTransceiverLabels=True,
+                                       showGenericStoragePanel=True
                                        )
 
     # Add the Boulder target

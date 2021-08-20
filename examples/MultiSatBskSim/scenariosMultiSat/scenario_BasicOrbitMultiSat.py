@@ -132,6 +132,8 @@ import copy
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
+from Basilisk.simulation import vizInterface
+from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -182,10 +184,31 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
             DynModelsList.append(self.DynModels[i].scObject)
             rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
 
-        vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
-                                            # , saveFile=__file__
-                                            , rwEffectorList=rwStateEffectorList
-                                            )
+        batteryPanel = vizInterface.GenericStorage()
+        batteryPanel.label = "Battery"
+        batteryPanel.units = "Ws"
+        batteryPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("green"))
+        batteryPanel.thresholds = vizInterface.IntVector([20])
+        batteryInMsg = messaging.PowerStorageStatusMsgReader()
+        batteryInMsg.subscribeTo(self.DynModels[0].powerMonitor.batPowerOutMsg)
+        batteryPanel.batteryStateInMsg = batteryInMsg
+
+        tankPanel = vizInterface.GenericStorage()
+        tankPanel.label = "Tank"
+        tankPanel.units = "kg"
+        tankPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
+        tankPanel.currentValue = 50.
+        tankPanel.maxValue = 100.
+        # tankInMsg = messaging.FuelTankMsgReader()
+        # tankInMsg.subscribeTo(self.DynModels[0].powerMonitor.batPowerOutMsg)
+        # tankPanel.fuelTankStateInMsg = tankInMsg
+
+        viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
+                                                  # , saveFile=__file__
+                                                  , rwEffectorList=rwStateEffectorList
+                                                  , genericStorageList=[[batteryPanel, tankPanel], None, None]
+                                                  )
+        vizSupport.setInstrumentGuiSetting(viz, showGenericStoragePanel=True)
 
     def configure_initial_conditions(self):
         EnvModel = self.get_EnvModel()

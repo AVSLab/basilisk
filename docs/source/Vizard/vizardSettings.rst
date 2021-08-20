@@ -1030,3 +1030,117 @@ Here the first spacecraft has no transceiver, and the 2nd spacecraft has 2 trans
 
 See :ref:`scenarioGroundLocationImaging` for an example of using the generic sensor visualization.
 
+
+
+Adding Storage Device Panel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Vizard can illustrate the state of storage devices (battery, data storage, fuel tank) in a 2D panel.  A
+panel is create for each spacecraft, and the storage devices types are ordered with the panel.  Each
+storage device state is illustrated on a horizontal bar chart.  Hovering over the bar yields a
+popup with the current number.  Thus, it is possible to have a spacecraft with multiple data storage devices,
+a large and small battery, as well as a single tank.
+
+First, let's discuss how to setup a generic storage element.  The associated structure and the required
+parameters are set using::
+
+    hdDevicePanel = vizInterface.GenericStorage()
+    hdDevicePanel.label = "Main Disk"
+
+The full list of required and optional generic storage parameters are provided in the following table.
+
+.. list-table:: Transceiver Configuration Options
+    :widths: 20 10 10 10 100
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Units
+      - Required
+      - Description
+    * - ``label``
+      - string
+      -
+      - Yes
+      - Name of storage device
+    * - ``currentValue``
+      - float
+      - variable
+      - No
+      - Current value of the storage device.  If this is not set, then a storage status message must
+        be connected to set this value.
+    * - ``maxValue``
+      - float
+      -
+      - No
+      - maximum absolute value of the storage device.  If this is not set, then a storage status message must
+        be connected to set this value.
+    * - ``units``
+      - string
+      -
+      - No
+      - Units of stored quantity, i.e. "bytes", "TB", "kg", etc.
+    * - ``color``
+      - vector<int>
+      -
+      - No
+      - Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field
+        and will be used to color the bar graph between thresholds (i.e. the first color will be used
+        between values of 0 and threshold 1, the second color will be used between threshold 1 and 2,...,
+        the last color will be used between threshold n and the maxValue
+    * - ``thresholds``
+      - vector<int>
+      -
+      - No
+      - set the transceiver state from python.  This can be 0 (off), 1 (sending), 2 (receiving) and
+        3 (sending and receiving).  Note that this value is replaced with the value from
+        the transceiver state input message if such an input message is provided.
+    * - ``batteryStateInMsg``
+      - vector<ReadFunctor<:ref:`PowerStorageStatusMsgPayload`>>
+      -
+      - No
+      - incoming battery state msg, only connect one input message
+    * - ``dataStorageStateInMsg``
+      - vector<ReadFunctor<:ref:`DataStorageStatusMsgPayload`>>
+      -
+      - No
+      - incoming data storage state msg, only connect one input message
+    * - ``fuelTankStateInMsg``
+      - vector<ReadFunctor<:ref:`FuelTankMsgPayload`>>
+      -
+      - No
+      - incoming fuel tank state msg, only connect one input message
+
+
+Thus, to setup a data storage device that uses blue if the storage state is less than 80%, and
+orange if the storage is more than 80% full, you could use::
+
+    hdDevicePanel = vizInterface.GenericStorage()
+    hdDevicePanel.label = "Main Disk"
+    hdDevicePanel.units = "bytes"
+    hdDevicePanel.color = vizInterface.IntVector(vizSupport.toRGBA255("blue") + vizSupport.toRGBA255("orange"))
+    hdDevicePanel.thresholds = vizInterface.IntVector([80])
+    hdInMsg = messaging.DataStorageStatusMsgReader()
+    hdInMsg.subscribeTo(dataMonitor.storageUnitDataOutMsg)
+    hdDevicePanel.dataStorageStateInMsg = hdInMsg
+
+Multiple storage panel elements can be setup for each spacecraft, and multiple spacecraft are supported.  Using
+the ``vizSupport.py`` file, the generic storage structures list is sent to :ref:`vizInterface` using they keyword ``genericStorageList``::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , saveFile=fileName
+                                              , genericStorageList=hdDevicePanel
+                                              )
+
+Note that here a single storage device and spacecraft is setup.  If you have multiple storage devices,
+or multiple spacecraft, then lists of lists are required::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
+                                              , saveFile=fileName
+                                              , genericStorageList=[ None, [hdDevicePanel2, hdDevicePanel3] ]
+                                              )
+
+Here the first spacecraft has no transceiver, and the 2nd spacecraft has 2 transceivers.
+
+See :ref:`scenarioGroundLocationImaging` for an example of using a data storage visualization.
+The example :ref:`scenario_BasicOrbitMultiSat` illustrates how to show a battery or fuel tank storage device.
+

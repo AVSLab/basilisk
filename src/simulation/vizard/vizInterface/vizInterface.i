@@ -45,6 +45,7 @@ namespace std {
     %template(GravBodyInfoVector) vector<GravBodyInfo>;
     %template(GenericSensorVector) vector<GenericSensor>;
     %template(TransceiverVector) vector<Transceiver>;
+    %template(GenericStorageVector) vector<GenericStorage>;
 }
 
 %include "vizInterface.h"

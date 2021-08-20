@@ -178,7 +178,7 @@ class BSKDynamicModels:
     def SetPowerSink(self):
         """Defines the energy sink parameters"""
         self.powerSink.ModelTag = "powerSink"
-        self.powerSink.nodePowerOut = -20.  # Watt
+        self.powerSink.nodePowerOut = -2.  # Watt
 
     def SetBattery(self):
         """Sets up the battery with all the power components"""
