@@ -75,6 +75,7 @@ SimThreadExecution::SimThreadExecution() {
     threadID = 0;
     CurrentNanos = 0;
     NextTaskTime = 0;
+    stopThreadNanos=0;
     nextProcPriority = -1;
     threadContext = nullptr;
 
@@ -131,7 +132,6 @@ void SimThreadExecution::SingleStepProcesses(int64_t stopPri)
         }
         it++;
     }
-    
     this->NextTaskTime = nextCallTime != ~((uint64_t) 0) ? nextCallTime : this->CurrentNanos;
     
 }
@@ -250,8 +250,8 @@ void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
         (*thrIt)->stopThreadPriority = stopPri;
         (*thrIt)->unlockThread();
     }
-    this->NextTaskTime = (*this->threadList.begin())->NextTaskTime;
-    this->CurrentNanos = (*this->threadList.begin())->CurrentNanos;
+    this->NextTaskTime = (uint64_t) ~0;
+    this->CurrentNanos = (uint64_t) ~0;
     for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
     {
         (*thrIt)->lockMaster();

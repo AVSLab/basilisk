@@ -139,7 +139,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     }
     if(fireIt->NextTaskStart > currentNanos)
     {
-        this->nextTaskTime = it->NextTaskStart;
+        this->nextTaskTime = fireIt->NextTaskStart;
         return;
     }
     //! - Call the next scheduled model, and set the time to its start

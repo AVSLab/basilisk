@@ -99,6 +99,7 @@ public:
     void resetThreads(uint64_t threadCount);
     void deleteThreads();
     void assignRemainingProcs();
+    uint64_t getThreadCount() {return threadList.size();}
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
