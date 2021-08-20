@@ -151,7 +151,7 @@ class BSKDynamicModels:
         Defines the thruster state effector.
         """
         location = [[0.0, 0.0, 0.0]]
-        direction = [[1.0, 1.0, 1.0]]
+        direction = [[0.0, 0.0, -1.0]]
 
         # create the thruster devices by specifying the thruster type and its location and direction
         for pos_B, dir_B in zip(location, direction):
