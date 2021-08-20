@@ -198,11 +198,9 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
         tankPanel.label = "Tank"
         tankPanel.units = "kg"
         tankPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
-        tankPanel.currentValue = 50.
-        tankPanel.maxValue = 100.
-        # tankInMsg = messaging.FuelTankMsgReader()
-        # tankInMsg.subscribeTo(self.DynModels[0].powerMonitor.batPowerOutMsg)
-        # tankPanel.fuelTankStateInMsg = tankInMsg
+        tankInMsg = messaging.FuelTankMsgReader()
+        tankInMsg.subscribeTo(self.DynModels[0].fuelTankStateEffector.fuelTankOutMsg)
+        tankPanel.fuelTankStateInMsg = tankInMsg
 
         viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
                                                   # , saveFile=__file__

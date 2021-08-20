@@ -145,6 +145,8 @@ import math
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport, RigidBodyKinematics as rbk
+from Basilisk.simulation import vizInterface
+from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -207,11 +209,35 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
             rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
             thDynamicEffectorList.append([self.DynModels[i].thrusterDynamicEffector])
 
-        vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
-                                            # , saveFile=__file__
-                                            , rwEffectorList=rwStateEffectorList
-                                            , thrEffectorList=thDynamicEffectorList
-                                            )
+        gsList = []
+        for i in range(3):
+            batteryPanel = vizInterface.GenericStorage()
+            batteryPanel.label = "Battery"
+            batteryPanel.units = "Ws"
+            batteryPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("green"))
+            batteryPanel.thresholds = vizInterface.IntVector([20])
+            batteryInMsg = messaging.PowerStorageStatusMsgReader()
+            batteryInMsg.subscribeTo(self.DynModels[i].powerMonitor.batPowerOutMsg)
+            batteryPanel.batteryStateInMsg = batteryInMsg
+
+            tankPanel = vizInterface.GenericStorage()
+            tankPanel.label = "Tank"
+            tankPanel.units = "kg"
+            tankPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
+            tankInMsg = messaging.FuelTankMsgReader()
+            tankInMsg.subscribeTo(self.DynModels[i].fuelTankStateEffector.fuelTankOutMsg)
+            tankPanel.fuelTankStateInMsg = tankInMsg
+            gsList.append([batteryPanel, tankPanel])
+
+        viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
+                                                  # , saveFile=__file__
+                                                  , rwEffectorList=rwStateEffectorList
+                                                  , thrEffectorList=thDynamicEffectorList
+                                                  , genericStorageList=gsList
+                                                  )
+        for i in range(3):
+            vizSupport.setInstrumentGuiSetting(viz, spacecraftName=self.DynModels[i].scObject.ModelTag,
+                                               showGenericStoragePanel=True)
 
     def configure_initial_conditions(self):
         EnvModel = self.get_EnvModel()

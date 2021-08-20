@@ -86,7 +86,7 @@ class BSKDynamicModels:
         """
         Defines the spacecraft object properties.
         """
-        self.scObject.ModelTag = "spacecraft" + str(self.spacecraftIndex)
+        self.scObject.ModelTag = "sat-" + str(self.spacecraftIndex)
         self.I_sc = [900., 0., 0.,
                      0., 800., 0.,
                      0., 0., 600.]
