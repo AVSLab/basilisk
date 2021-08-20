@@ -170,6 +170,7 @@ class BSKDynamicModels:
         self.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_UNIFORM_BURN)
         self.tankModel = fuelTank.cvar.FuelTankModelUniformBurn
         self.tankModel.propMassInit = 50
+        self.tankModel.maxFuelMass = 75.0
         self.tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]
         self.fuelTankStateEffector.r_TB_B = [[0.0], [0.0], [0.0]]
         self.tankModel.radiusTankInit = 5
