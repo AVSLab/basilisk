@@ -38,6 +38,8 @@ Version |release|
   using the current integration scheme rather than using a first order approximation.
 - updated install script to be able to have ``conan`` install ``opencv`` again.  Something changed with the ``conan``
   repo that broke this.
+- updated BSK install instructions on the M1 Apple Silicon platform as Basiliks can now run natively
+
 
 Version 2.0.6
 -------------
