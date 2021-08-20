@@ -201,7 +201,7 @@ def plot_rw_temperature(timeData, tempData, numRW, id=None):
     return
 
 def plot_thrust(timeData, thrustData, numThr, id=None):
-    """Plot the thrust information"""
+    """Plot the thrusters net force output"""
     plt.figure(id)
     for idx in range(numThr):
         plt.plot(timeData, thrustData[idx],
@@ -213,7 +213,7 @@ def plot_thrust(timeData, thrustData, numThr, id=None):
     return
 
 def plot_thrust_percentage(timeData, thrustData, numThr, id=None):
-    """Plot the thrust information"""
+    """Plot the thrust as a percentage of maximum"""
     plt.figure(id)
     for idx in range(numThr):
         plt.plot(timeData, thrustData[idx],

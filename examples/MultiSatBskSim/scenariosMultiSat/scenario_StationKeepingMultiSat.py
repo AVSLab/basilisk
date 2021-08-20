@@ -201,16 +201,16 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         DynModelsList = []
         rwStateEffectorList = []
-        thStateEffectorList = []
+        thDynamicEffectorList = []
         for i in range(self.numberSpacecraft):
             DynModelsList.append(self.DynModels[i].scObject)
             rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
-            thStateEffectorList.append([self.DynModels[i].thrusterDynamicEffector])
+            thDynamicEffectorList.append([self.DynModels[i].thrusterDynamicEffector])
 
         vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
                                             # , saveFile=__file__
                                             , rwEffectorList=rwStateEffectorList
-                                            , thrEffectorList=thStateEffectorList
+                                            , thrEffectorList=thDynamicEffectorList
                                             )
 
     def configure_initial_conditions(self):

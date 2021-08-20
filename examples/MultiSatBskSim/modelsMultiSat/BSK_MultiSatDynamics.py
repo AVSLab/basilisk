@@ -164,7 +164,7 @@ class BSKDynamicModels:
 
     def SetFuelTank(self):
         """
-        Defines the fuel tank for the thrusters
+        Defines the fuel tank for the thrusters.
         """
         # Define the tank
         self.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_UNIFORM_BURN)

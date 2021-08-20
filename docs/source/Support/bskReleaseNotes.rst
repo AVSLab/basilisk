@@ -33,7 +33,7 @@ Version |release|
 -----------------
 - new :ref:`forceTorqueThrForceMapping` to map commanded forces and torques to a set of thrusters
 - updated Vizard documentation on the setting flags ``orbitLinesOn`` and ``trueTrajectoryLinesOn``
-- added power modules to the :ref:`BSK_MultiSatDynamics` class.
+- added power and fuel tank modules to the :ref:`BSK_MultiSatDynamics` class.
 - improved the DV calculation of the spacecraft state output message by integrating the gravitational acceleration
   using the current integration scheme rather than using a first order approximation.
 - updated install script to be able to have ``conan`` install ``opencv`` again.  Something changed with the ``conan``
