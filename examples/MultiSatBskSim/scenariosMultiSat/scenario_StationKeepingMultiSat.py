@@ -214,7 +214,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
             batteryPanel = vizInterface.GenericStorage()
             batteryPanel.label = "Battery"
             batteryPanel.units = "Ws"
-            batteryPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("green"))
+            batteryPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("lightgreen"))
             batteryPanel.thresholds = vizInterface.IntVector([20])
             batteryInMsg = messaging.PowerStorageStatusMsgReader()
             batteryInMsg.subscribeTo(self.DynModels[i].powerMonitor.batPowerOutMsg)
@@ -229,13 +229,14 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
             tankPanel.fuelTankStateInMsg = tankInMsg
             gsList.append([batteryPanel, tankPanel])
 
-        viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
+        viz = vizSupport.enableUnityVisualization(self, self.DynModels[2].taskName, DynModelsList
                                                   # , saveFile=__file__
                                                   , rwEffectorList=rwStateEffectorList
                                                   , thrEffectorList=thDynamicEffectorList
                                                   , genericStorageList=gsList
                                                   )
         viz.settings.showSpacecraftLabels = True
+        viz.settings.orbitLinesOn = 2  # show osculating relative orbit trajectories
         for i in range(3):
             vizSupport.setInstrumentGuiSetting(viz, spacecraftName=self.DynModels[i].scObject.ModelTag,
                                                showGenericStoragePanel=True)

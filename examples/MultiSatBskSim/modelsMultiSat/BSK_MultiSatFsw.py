@@ -207,7 +207,7 @@ class BSKFswModels:
         self.spacecraftReconfigData.thrustConfigInMsg.subscribeTo(self.fswThrusterConfigMsg)
         self.spacecraftReconfigData.scMassDeputy = SimBase.DynModels[self.spacecraftIndex].scObject.hub.mHub  # [kg]
         self.spacecraftReconfigData.mu = SimBase.EnvModel.mu  # [m^3/s^2]
-        self.spacecraftReconfigData.attControlTime = 400  # [s]
+        self.spacecraftReconfigData.attControlTime = 600  # [s]
         cMsgPy.AttRefMsg_C_addAuthor(self.spacecraftReconfigData.attRefOutMsg, self.attRefMsg)
 
         # connect a blank chief message
