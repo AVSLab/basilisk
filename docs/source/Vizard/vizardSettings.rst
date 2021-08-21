@@ -150,7 +150,7 @@ default setting for that behavior.
       - int
       - flag to set with respect to which frame the relative orbit trajectory is drawn.
         Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
-    * - ``relativeOrbitFrame``
+    * - ``relativeOrbitChief``
       - string
       - If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that
         spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera
