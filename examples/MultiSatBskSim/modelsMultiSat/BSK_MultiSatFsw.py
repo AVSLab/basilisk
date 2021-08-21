@@ -207,7 +207,7 @@ class BSKFswModels:
         self.spacecraftReconfigData.thrustConfigInMsg.subscribeTo(self.fswThrusterConfigMsg)
         self.spacecraftReconfigData.scMassDeputy = SimBase.DynModels[self.spacecraftIndex].scObject.hub.mHub  # [kg]
         self.spacecraftReconfigData.mu = SimBase.EnvModel.mu  # [m^3/s^2]
-        self.spacecraftReconfigData.attControlTime = 600  # [s]
+        self.spacecraftReconfigData.attControlTime = 400  # [s]
         cMsgPy.AttRefMsg_C_addAuthor(self.spacecraftReconfigData.attRefOutMsg, self.attRefMsg)
 
         # connect a blank chief message
@@ -228,8 +228,8 @@ class BSKFswModels:
         """
         Defines the control properties.
         """
-        self.decayTime = 100
-        self.xi = 0.5
+        self.decayTime = 30
+        self.xi = 0.9
         self.mrpFeedbackRWsData.Ki = -1  # make value negative to turn off integral feedback
         self.mrpFeedbackRWsData.P = 2 * np.max(SimBase.DynModels[self.spacecraftIndex].I_sc) / self.decayTime
         self.mrpFeedbackRWsData.K = (self.mrpFeedbackRWsData.P / self.xi) * \

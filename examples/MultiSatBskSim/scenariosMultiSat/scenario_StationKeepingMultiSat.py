@@ -145,7 +145,6 @@ import math
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport, RigidBodyKinematics as rbk
-from Basilisk.simulation import vizInterface
 from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -200,46 +199,48 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         self.configure_initial_conditions()
         self.log_outputs(relativeNavigation)
 
-        # if this scenario is to interface with the BSK Viz, uncomment the following line
-        DynModelsList = []
-        rwStateEffectorList = []
-        thDynamicEffectorList = []
-        for i in range(self.numberSpacecraft):
-            DynModelsList.append(self.DynModels[i].scObject)
-            rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
-            thDynamicEffectorList.append([self.DynModels[i].thrusterDynamicEffector])
+        if vizSupport.vizFound:
+            # if this scenario is to interface with the BSK Viz, uncomment the following line
+            DynModelsList = []
+            rwStateEffectorList = []
+            thDynamicEffectorList = []
+            for i in range(self.numberSpacecraft):
+                DynModelsList.append(self.DynModels[i].scObject)
+                rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
+                thDynamicEffectorList.append([self.DynModels[i].thrusterDynamicEffector])
 
-        gsList = []
-        for i in range(3):
-            batteryPanel = vizInterface.GenericStorage()
-            batteryPanel.label = "Battery"
-            batteryPanel.units = "Ws"
-            batteryPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("lightgreen"))
-            batteryPanel.thresholds = vizInterface.IntVector([20])
-            batteryInMsg = messaging.PowerStorageStatusMsgReader()
-            batteryInMsg.subscribeTo(self.DynModels[i].powerMonitor.batPowerOutMsg)
-            batteryPanel.batteryStateInMsg = batteryInMsg
+            gsList = []
+            for i in range(3):
+                batteryPanel = vizSupport.vizInterface.GenericStorage()
+                batteryPanel.label = "Battery"
+                batteryPanel.units = "Ws"
+                batteryPanel.color = vizSupport.vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("lightgreen"))
+                batteryPanel.thresholds = vizSupport.vizInterface.IntVector([20])
+                batteryInMsg = messaging.PowerStorageStatusMsgReader()
+                batteryInMsg.subscribeTo(self.DynModels[i].powerMonitor.batPowerOutMsg)
+                batteryPanel.batteryStateInMsg = batteryInMsg
 
-            tankPanel = vizInterface.GenericStorage()
-            tankPanel.label = "Tank"
-            tankPanel.units = "kg"
-            tankPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
-            tankInMsg = messaging.FuelTankMsgReader()
-            tankInMsg.subscribeTo(self.DynModels[i].fuelTankStateEffector.fuelTankOutMsg)
-            tankPanel.fuelTankStateInMsg = tankInMsg
-            gsList.append([batteryPanel, tankPanel])
+                tankPanel = vizSupport.vizInterface.GenericStorage()
+                tankPanel.label = "Tank"
+                tankPanel.units = "kg"
+                tankPanel.color = vizSupport.vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
+                tankInMsg = messaging.FuelTankMsgReader()
+                tankInMsg.subscribeTo(self.DynModels[i].fuelTankStateEffector.fuelTankOutMsg)
+                tankPanel.fuelTankStateInMsg = tankInMsg
+                gsList.append([batteryPanel, tankPanel])
 
-        viz = vizSupport.enableUnityVisualization(self, self.DynModels[2].taskName, DynModelsList
-                                                  # , saveFile=__file__
-                                                  , rwEffectorList=rwStateEffectorList
-                                                  , thrEffectorList=thDynamicEffectorList
-                                                  , genericStorageList=gsList
-                                                  )
-        viz.settings.showSpacecraftLabels = True
-        viz.settings.orbitLinesOn = 2  # show osculating relative orbit trajectories
-        for i in range(3):
-            vizSupport.setInstrumentGuiSetting(viz, spacecraftName=self.DynModels[i].scObject.ModelTag,
-                                               showGenericStoragePanel=True)
+            viz = vizSupport.enableUnityVisualization(self, self.DynModels[2].taskName, DynModelsList
+                                                      # , saveFile=__file__
+                                                      , rwEffectorList=rwStateEffectorList
+                                                      , thrEffectorList=thDynamicEffectorList
+                                                      , genericStorageList=gsList
+                                                      )
+            viz.settings.showSpacecraftLabels = True
+            viz.settings.orbitLinesOn = 2  # show osculating relative orbit trajectories
+            viz.settings.relativeOrbitChief = "sat-0"  # set the chief for relative orbit trajectory
+            for i in range(3):
+                vizSupport.setInstrumentGuiSetting(viz, spacecraftName=self.DynModels[i].scObject.ModelTag,
+                                                   showGenericStoragePanel=True)
 
     def configure_initial_conditions(self):
         EnvModel = self.get_EnvModel()

@@ -133,7 +133,6 @@ import copy
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
-from Basilisk.simulation import vizInterface
 from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -178,36 +177,37 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
         self.configure_initial_conditions()
         self.log_outputs()
 
-        # if this scenario is to interface with the BSK Viz, uncomment the saveFile line
-        DynModelsList = []
-        rwStateEffectorList = []
-        for i in range(self.numberSpacecraft):
-            DynModelsList.append(self.DynModels[i].scObject)
-            rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
+        if vizSupport.vizFound:
+            # if this scenario is to interface with the BSK Viz, uncomment the saveFile line
+            DynModelsList = []
+            rwStateEffectorList = []
+            for i in range(self.numberSpacecraft):
+                DynModelsList.append(self.DynModels[i].scObject)
+                rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
 
-        batteryPanel = vizInterface.GenericStorage()
-        batteryPanel.label = "Battery"
-        batteryPanel.units = "Ws"
-        batteryPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("green"))
-        batteryPanel.thresholds = vizInterface.IntVector([20])
-        batteryInMsg = messaging.PowerStorageStatusMsgReader()
-        batteryInMsg.subscribeTo(self.DynModels[0].powerMonitor.batPowerOutMsg)
-        batteryPanel.batteryStateInMsg = batteryInMsg
+            batteryPanel = vizSupport.vizInterface.GenericStorage()
+            batteryPanel.label = "Battery"
+            batteryPanel.units = "Ws"
+            batteryPanel.color = vizSupport.vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("green"))
+            batteryPanel.thresholds = vizSupport.vizInterface.IntVector([20])
+            batteryInMsg = messaging.PowerStorageStatusMsgReader()
+            batteryInMsg.subscribeTo(self.DynModels[0].powerMonitor.batPowerOutMsg)
+            batteryPanel.batteryStateInMsg = batteryInMsg
 
-        tankPanel = vizInterface.GenericStorage()
-        tankPanel.label = "Tank"
-        tankPanel.units = "kg"
-        tankPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
-        tankInMsg = messaging.FuelTankMsgReader()
-        tankInMsg.subscribeTo(self.DynModels[0].fuelTankStateEffector.fuelTankOutMsg)
-        tankPanel.fuelTankStateInMsg = tankInMsg
+            tankPanel = vizSupport.vizInterface.GenericStorage()
+            tankPanel.label = "Tank"
+            tankPanel.units = "kg"
+            tankPanel.color = vizSupport.vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
+            tankInMsg = messaging.FuelTankMsgReader()
+            tankInMsg.subscribeTo(self.DynModels[0].fuelTankStateEffector.fuelTankOutMsg)
+            tankPanel.fuelTankStateInMsg = tankInMsg
 
-        viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
-                                                  # , saveFile=__file__
-                                                  , rwEffectorList=rwStateEffectorList
-                                                  , genericStorageList=[[batteryPanel, tankPanel], None, None]
-                                                  )
-        vizSupport.setInstrumentGuiSetting(viz, showGenericStoragePanel=True)
+            viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
+                                                      # , saveFile=__file__
+                                                      , rwEffectorList=rwStateEffectorList
+                                                      , genericStorageList=[[batteryPanel, tankPanel], None, None]
+                                                      )
+            vizSupport.setInstrumentGuiSetting(viz, showGenericStoragePanel=True)
 
     def configure_initial_conditions(self):
         EnvModel = self.get_EnvModel()
