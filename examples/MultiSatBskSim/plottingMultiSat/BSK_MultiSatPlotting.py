@@ -188,16 +188,49 @@ def plot_battery(timeData, storageData, id=None):
     plt.ylabel('Stored Energy [W-s]')
     return
 
-def plot_rw_temperature(timeData, dataTemp, numRW, id=None):
+def plot_rw_temperature(timeData, tempData, numRW, id=None):
     """Plot the reaction wheel temperatures"""
     plt.figure(id)
     for idx in range(numRW):
-        plt.plot(timeData, dataTemp[idx],
+        plt.plot(timeData, tempData[idx],
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label='$T_{rw,' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Temperatures [ºC]')
+    return
+
+def plot_thrust(timeData, thrustData, numThr, id=None):
+    """Plot the thrusters net force output"""
+    plt.figure(id)
+    for idx in range(numThr):
+        plt.plot(timeData, thrustData[idx],
+                 color=unitTestSupport.getLineColor(idx, numThr),
+                 label='$F_{thr,' + str(idx + 1) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Thrust [N]')
+    return
+
+def plot_thrust_percentage(timeData, thrustData, numThr, id=None):
+    """Plot the thrust as a percentage of maximum"""
+    plt.figure(id)
+    for idx in range(numThr):
+        plt.plot(timeData, thrustData[idx],
+                 color=unitTestSupport.getLineColor(idx, numThr),
+                 label='$F_{thr,' + str(idx + 1) + '}$')
+    plt.legend(loc='lower right')
+    plt.ylim([0, 1.1])
+    plt.xlabel('Time [min]')
+    plt.ylabel('Thrust Percentage')
+    return
+
+def plot_fuel(timeData, fuelData, id=None):
+    """Plot the fuel mass information"""
+    plt.figure(id)
+    plt.plot(timeData, fuelData)
+    plt.xlabel('Time [min]')
+    plt.ylabel('Stored Fuel Mass [kg]')
     return
 
 def plot_orbit(r_BN, id=None):

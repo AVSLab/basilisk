@@ -124,7 +124,13 @@ spacecraft is plotted per simulation.
 .. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_oeDifferences.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_Power.svg
+.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_power.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_fuel.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_thrustPercentage.svg
    :align: center
 
 """
@@ -139,6 +145,8 @@ import math
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport, RigidBodyKinematics as rbk
+from Basilisk.simulation import vizInterface
+from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -181,9 +189,9 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         self.pmLog = []
         self.rwLogs = [[] for _ in range(self.numberSpacecraft)]
         self.rwPowerLogs = [[] for _ in range(self.numberSpacecraft)]
-        self.thrCmdLog = []
+        self.fuelLog = []
+        self.thrLogs = [[] for _ in range(self.numberSpacecraft)]
         self.chiefTransLog = None
-        self.attErrorLogTrackingModule = []
 
         # declare empty containers for orbital elements
         self.oe = []
@@ -195,17 +203,43 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         DynModelsList = []
         rwStateEffectorList = []
-        thStateEffectorList = []
+        thDynamicEffectorList = []
         for i in range(self.numberSpacecraft):
             DynModelsList.append(self.DynModels[i].scObject)
             rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
-            thStateEffectorList.append([self.DynModels[i].thrusterEffector])
+            thDynamicEffectorList.append([self.DynModels[i].thrusterDynamicEffector])
 
-        vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
-                                            # , saveFile=__file__
-                                            , rwEffectorList=rwStateEffectorList
-                                            , thrEffectorList=thStateEffectorList
-                                            )
+        gsList = []
+        for i in range(3):
+            batteryPanel = vizInterface.GenericStorage()
+            batteryPanel.label = "Battery"
+            batteryPanel.units = "Ws"
+            batteryPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("lightgreen"))
+            batteryPanel.thresholds = vizInterface.IntVector([20])
+            batteryInMsg = messaging.PowerStorageStatusMsgReader()
+            batteryInMsg.subscribeTo(self.DynModels[i].powerMonitor.batPowerOutMsg)
+            batteryPanel.batteryStateInMsg = batteryInMsg
+
+            tankPanel = vizInterface.GenericStorage()
+            tankPanel.label = "Tank"
+            tankPanel.units = "kg"
+            tankPanel.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
+            tankInMsg = messaging.FuelTankMsgReader()
+            tankInMsg.subscribeTo(self.DynModels[i].fuelTankStateEffector.fuelTankOutMsg)
+            tankPanel.fuelTankStateInMsg = tankInMsg
+            gsList.append([batteryPanel, tankPanel])
+
+        viz = vizSupport.enableUnityVisualization(self, self.DynModels[2].taskName, DynModelsList
+                                                  # , saveFile=__file__
+                                                  , rwEffectorList=rwStateEffectorList
+                                                  , thrEffectorList=thDynamicEffectorList
+                                                  , genericStorageList=gsList
+                                                  )
+        viz.settings.showSpacecraftLabels = True
+        viz.settings.orbitLinesOn = 2  # show osculating relative orbit trajectories
+        for i in range(3):
+            vizSupport.setInstrumentGuiSetting(viz, spacecraftName=self.DynModels[i].scObject.ModelTag,
+                                               showGenericStoragePanel=True)
 
     def configure_initial_conditions(self):
         EnvModel = self.get_EnvModel()
@@ -213,8 +247,8 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
 
         # Configure initial conditions for spacecraft 0
         self.oe.append(orbitalMotion.ClassicElements())
-        self.oe[0].a = 1.1*EnvModel.planetRadius  # meters
-        self.oe[0].e = 0.3
+        self.oe[0].a = 1.4*EnvModel.planetRadius  # meters
+        self.oe[0].e = 0.2
         self.oe[0].i = 45.0 * macros.D2R
         self.oe[0].Omega = 48.2 * macros.D2R
         self.oe[0].omega = 347.8 * macros.D2R
@@ -300,6 +334,15 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
             self.AddModelToTask(DynModels[spacecraft].taskName, self.psLog[spacecraft])
             self.AddModelToTask(DynModels[spacecraft].taskName, self.pmLog[spacecraft])
 
+            # log fuel information
+            self.fuelLog.append(DynModels[spacecraft].fuelTankStateEffector.fuelTankOutMsg.recorder(self.samplingTime))
+            self.AddModelToTask(DynModels[spacecraft].taskName, self.fuelLog[spacecraft])
+
+            # log thruster information
+            for item in range(DynModels[spacecraft].numThr):
+                self.thrLogs[spacecraft].append(DynModels[spacecraft].thrusterDynamicEffector.thrusterOutMsgs[item].recorder(self.samplingTime))
+                self.AddModelToTask(DynModels[spacecraft].taskName, self.thrLogs[spacecraft][item])
+
     def pull_outputs(self, showPlots, relativeNavigation, spacecraftIndex):
         # Process outputs
         DynModels = self.get_DynModel()
@@ -316,6 +359,27 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         dataOmegaRW = self.rwSpeedLog[spacecraftIndex].wheelSpeeds
         dataSigmaRN = self.attRefLog[spacecraftIndex].sigma_RN
         dataOmegaRN_N = self.attRefLog[spacecraftIndex].omega_RN_N
+        dataFuelMass = self.fuelLog[spacecraftIndex].fuelMass
+
+        # Save RW information
+        dataRW = []
+        dataRWPower = []
+        for item in range(DynModels[spacecraftIndex].numRW):
+            dataRW.append(self.rwLogs[spacecraftIndex][item].u_current)
+            dataRWPower.append(self.rwPowerLogs[spacecraftIndex][item].netPower)
+
+        # Save thrusters information
+        dataThrust = []
+        dataThrustPercentage = []
+        for item in range(DynModels[spacecraftIndex].numThr):
+            dataThrust.append(self.thrLogs[spacecraftIndex][item].thrustForce_B)
+            dataThrustPercentage.append(self.thrLogs[spacecraftIndex][item].thrustFactor)
+
+        # Save power info
+        supplyData = self.spLog[spacecraftIndex].netPower
+        sinkData = self.psLog[spacecraftIndex].netPower
+        storageData = self.pmLog[spacecraftIndex].storageLevel
+        netData = self.pmLog[spacecraftIndex].currentNetPower
 
         # Retrieve the time info
         timeLineSetMin = self.snTransLog[spacecraftIndex].times() * macros.NANO2MIN
@@ -359,19 +423,6 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                                                      v_BN_N[i][item])[0] for item in range(simLength)])
                 dr.append(rd)
 
-        # Save RW information
-        dataRW = []
-        dataRWPower = []
-        for item in range(DynModels[spacecraftIndex].numRW):
-            dataRW.append(self.rwLogs[spacecraftIndex][item].u_current)
-            dataRWPower.append(self.rwPowerLogs[spacecraftIndex][item].netPower)
-
-        # Save power info
-        supplyData = self.spLog[spacecraftIndex].netPower
-        sinkData = self.psLog[spacecraftIndex].netPower
-        storageData = self.pmLog[spacecraftIndex].storageLevel
-        netData = self.pmLog[spacecraftIndex].currentNetPower
-
         # Compute the orbital element differences between the spacecraft and the chief
         oed = np.empty((simLength, 6))
         for i in range(simLength):
@@ -411,6 +462,8 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         plt.plot_relative_orbits(dr, len(dr), 10)
         plt.plot_orbital_element_differences(timeLineSetSec / T, oed, 11)
         plt.plot_power(timeLineSetMin, netData, supplyData, sinkData, 12)
+        plt.plot_fuel(timeLineSetMin, dataFuelMass, 13)
+        plt.plot_thrust_percentage(timeLineSetMin, dataThrustPercentage, DynModels[spacecraftIndex].numThr, 14)
 
         figureList = {}
         if showPlots:
@@ -419,7 +472,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
             fileName = os.path.basename(os.path.splitext(__file__)[0])
             figureNames = ["attitude", "rate", "attitudeTrackingError", "trackingErrorRate", "attitudeReference",
                            "rateReference", "rwMotorTorque", "rwSpeeds", "orbits", "relativeOrbits", "oeDifferences",
-                           "Power"]
+                           "power", "fuel", "thrustPercentage"]
             figureList = plt.save_all_plots(fileName, figureNames)
 
         # close the plots being saved off to avoid over-writing old and new figures

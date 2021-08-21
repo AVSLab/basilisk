@@ -44,6 +44,7 @@
 /*! fuel tank model structure */
 struct FuelTankModel {
 	double propMassInit;                               //!< [kg] Initial propellant mass in tank
+    double maxFuelMass = 1.0;                          //!< [kg] maximum tank mass
 	Eigen::Vector3d r_TcT_TInit;                       //!< [m] Initial position vector from B to tank point in B frame comp.
 	Eigen::Matrix3d ITankPntT_T;					   //!< [kg m^2] Inertia of tank about pnt T in B frame comp.
 	Eigen::Matrix3d IPrimeTankPntT_T;				   //!< [kg m^2/s] Derivative of inertia of tank about pnt T in B frame comp.
