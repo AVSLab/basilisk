@@ -206,6 +206,11 @@ void SimThreadExecution::resetProcesses() {
     }
 }
 
+void SimThreadExecution::addNewProcess(SysProcess* newProc) {
+    processList.push_back(newProc);
+    newProc->setProcessOwnership(true);
+}
+
 /*! This Constructor is used to initialize the top-level sim model.
  */
 SimModel::SimModel()
@@ -248,17 +253,21 @@ void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
     {
         (*thrIt)->stopThreadNanos = SimStopTime;
         (*thrIt)->stopThreadPriority = stopPri;
-        (*thrIt)->unlockThread();
+        if((*thrIt)->procCount() > 0) {
+            (*thrIt)->unlockThread();
+        }
     }
     this->NextTaskTime = (uint64_t) ~0;
     this->CurrentNanos = (uint64_t) ~0;
     for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
     {
-        (*thrIt)->lockMaster();
-        this->NextTaskTime = (*thrIt)->NextTaskTime < this->NextTaskTime ?
-                             (*thrIt)->NextTaskTime : this->NextTaskTime;
-        this->CurrentNanos = (*thrIt)->CurrentNanos < this->CurrentNanos ?
-                             (*thrIt)->CurrentNanos : this->CurrentNanos;
+        if((*thrIt)->procCount() > 0) {
+            (*thrIt)->lockMaster();
+            this->NextTaskTime = (*thrIt)->NextTaskTime < this->NextTaskTime ?
+                                 (*thrIt)->NextTaskTime : this->NextTaskTime;
+            this->CurrentNanos = (*thrIt)->CurrentNanos < this->CurrentNanos ?
+                                 (*thrIt)->CurrentNanos : this->CurrentNanos;
+        }
     }
 }
 
@@ -334,40 +343,6 @@ void SimModel::resetInitSimulation()
     @return void
 */
 
-//void SimModel::SingleStepProcesses(int64_t stopPri)
-//{
-//    uint64_t nextCallTime = ~((uint64_t) 0);
-//    std::vector<SysProcess *>::iterator it = this->processList.begin();
-//    this->CurrentNanos = this->NextTaskTime;
-//    while(it!= this->processList.end())
-//    {
-//        SysProcess *localProc = (*it);
-//        if(localProc->processEnabled())
-//        {
-//            while(localProc->nextTaskTime < this->CurrentNanos ||
-//                (localProc->nextTaskTime == this->CurrentNanos &&
-//                  localProc->processPriority >= stopPri))
-//            {
-//                localProc->singleStepNextTask(this->CurrentNanos);
-//            }
-//            if(localProc->getNextTime() < nextCallTime)
-//            {
-//                nextCallTime = localProc->getNextTime();
-//                this->nextProcPriority = localProc->processPriority;
-//            }
-//            else if(localProc->getNextTime() == nextCallTime &&
-//                localProc->processPriority > this->nextProcPriority)
-//            {
-//                this->nextProcPriority = localProc->processPriority;
-//            }
-//        }
-//        it++;
-//    }
-//
-//    this->NextTaskTime = nextCallTime != ~((uint64_t) 0) ? nextCallTime : this->CurrentNanos;
-//    //! - If a message has been added to logger, link the message IDs
-//}
-
 void SimModel::SingleStepProcesses(int64_t stopPri)
 {
     uint64_t nextCallTime = ~((uint64_t) 0);
@@ -425,21 +400,18 @@ void SimModel::ResetSimulation()
     }
 }
 
-
-///*! This method clears all messages.  Note that once you do this, the simulation
-//    object itself is really dead.
-//    @return void
-//*/
-//void SimModel::terminateSimulation()
-//{
-//}
-
 void SimModel::clearProcsFromThreads() {
 
     std::vector<SimThreadExecution*>::iterator thrIt;
     for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
     {
         (*thrIt)->clearProcessList();
+    }
+    std::vector<SysProcess *>::iterator it;
+    //! - Iterate through model list and call the Task model initializer
+    for(it = this->processList.begin(); it != this->processList.end(); it++)
+    {
+        (*it)->setProcessOwnership(false);
     }
 
 }
@@ -481,7 +453,13 @@ void SimModel::assignRemainingProcs() {
         {
             thrIt = threadList.begin();
         }
-        (*thrIt)->addNewProcess((*it));
+        if((*it)->getProcessOwnership()) {
+            thrIt--; //Didn't get a thread to add, so roll back
+        }
+        else
+        {
+            (*thrIt)->addNewProcess((*it));
+        }
     }
     for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
     {
@@ -496,7 +474,14 @@ void SimModel::assignRemainingProcs() {
     {
         (*thrIt)->waitOnInit();
     }
-
-
 }
+
+void SimModel::addProcessToThread(SysProcess *newProc, uint64_t threadSel)
+{
+    std::vector<SimThreadExecution*>::iterator thrIt;
+    thrIt=threadList.begin() + threadSel;
+    (*thrIt)->addNewProcess(newProc);
+}
+
+
 

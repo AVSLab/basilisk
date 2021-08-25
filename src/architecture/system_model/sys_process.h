@@ -57,6 +57,8 @@ public:
     void setPriority(int64_t newPriority) {this->processPriority = newPriority;} //!< class method
     void disableAllTasks(); //!< class method
     void enableAllTasks(); //!< class method
+    bool getProcessOwnership() {return this->processOnThread;}
+    void setProcessOwnership(bool processTaken) {processOnThread = processTaken;}
     
 public:
     std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks
@@ -64,6 +66,7 @@ public:
     uint64_t prevRouteTime;  //!< [ns] Time that interfaces were previously routed
     std::string processName;  //!< -- Identifier for process
 	bool processActive;  //!< -- Flag indicating whether the Process is active
+	bool processOnThread; //!< -- Flag indicating that the process has been added to a thread for execution
     int64_t processPriority;  //!< [-] Priority level for process (higher first)
     BSKLogger bskLogger;                      //!< -- BSK Logging
 };

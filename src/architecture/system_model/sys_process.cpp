@@ -27,6 +27,7 @@ SysProcess :: SysProcess()
     this->nextTaskTime = 0;
     this->processActive = true;
     this->processPriority = -1;
+    this->processOnThread = false;
     this->disableProcess();
 }
 /*! Make a process AND attach a storage bucket with the provided name. Give
@@ -40,6 +41,7 @@ SysProcess::SysProcess(std::string messageContainer)
     this->processActive = true;
     this->processName = messageContainer;
     this->prevRouteTime = 0xFF;
+    this->processOnThread = false;
     this->disableProcess();
 }
 
