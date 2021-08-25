@@ -256,7 +256,7 @@ def run(show_plots, numberSpacecraft, environment, numThreads):
 
 if __name__ == "__main__":
     run(show_plots=True,
-        numberSpacecraft=16,
+        numberSpacecraft=32,
         environment="Earth",  # Earth or Mercury
         numThreads=4
         )
