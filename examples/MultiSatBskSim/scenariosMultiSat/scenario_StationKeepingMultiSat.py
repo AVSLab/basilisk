@@ -210,7 +210,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                 thDynamicEffectorList.append([self.DynModels[i].thrusterDynamicEffector])
 
             gsList = []
-            for i in range(3):
+            for i in range(self.numberSpacecraft):
                 batteryPanel = vizSupport.vizInterface.GenericStorage()
                 batteryPanel.label = "Battery"
                 batteryPanel.units = "Ws"
@@ -229,7 +229,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                 tankPanel.fuelTankStateInMsg = tankInMsg
                 gsList.append([batteryPanel, tankPanel])
 
-            viz = vizSupport.enableUnityVisualization(self, self.DynModels[2].taskName, DynModelsList
+            viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
                                                       # , saveFile=__file__
                                                       , rwEffectorList=rwStateEffectorList
                                                       , thrEffectorList=thDynamicEffectorList
@@ -238,7 +238,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
             viz.settings.showSpacecraftLabels = True
             viz.settings.orbitLinesOn = 2  # show osculating relative orbit trajectories
             viz.settings.relativeOrbitChief = "sat-0"  # set the chief for relative orbit trajectory
-            for i in range(3):
+            for i in range(self.numberSpacecraft):
                 vizSupport.setInstrumentGuiSetting(viz, spacecraftName=self.DynModels[i].scObject.ModelTag,
                                                    showGenericStoragePanel=True)
 
