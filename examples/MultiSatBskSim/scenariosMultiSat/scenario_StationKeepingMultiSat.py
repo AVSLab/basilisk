@@ -237,7 +237,8 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                                                       )
             viz.settings.showSpacecraftLabels = True
             viz.settings.orbitLinesOn = 2  # show osculating relative orbit trajectories
-            viz.settings.relativeOrbitChief = "sat-0"  # set the chief for relative orbit trajectory
+            viz.settings.mainCameraTarget = "sat-1"
+            viz.liveSettings.relativeOrbitChief = "sat-0"  # set the chief for relative orbit trajectory
             for i in range(self.numberSpacecraft):
                 vizSupport.setInstrumentGuiSetting(viz, spacecraftName=self.DynModels[i].scObject.ModelTag,
                                                    showGenericStoragePanel=True)

@@ -292,10 +292,10 @@ VizSettings
     double  defaultThrusterPlumeLifeScalar = 1.0; //!< Value of 1.0 or 0.0 to use viz default, values between 0 and 1 will decrease the length of all plumes, >1 will increase lengths of all plumes
     int orbitLineSegments = 0; //!< Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 4
     int relativeOrbitRange = 0; //!< [deg] Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 1
+    std::string mainCameraTarget = "";  //!< If valid spacecraft or celestial body name is provided, the main camera will be targeted at that body at start
     int showHillFrame = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showVelocityFrame = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int relativeOrbitFrame = 0; //!< Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
-    std::string relativeOrbitChief = "";            //!< If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
     double spacecraftShadowBrightness = -1.0;       //!< Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
     double spacecraftSizeMultiplier = -1; //!< Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0, use negative value to use viz default
     int32_t showLocationCommLines = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -312,6 +312,7 @@ LiveVizSettings
 //@endcond
 {
     std::vector<PointLine> targetLineList;           //!< vector of lines between 2 scenario targets.  This list is redrawn on each update step, thus the line properties can change with time.
+    std::string relativeOrbitChief = "";            //!< If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
 }LiveVizSettings;
 
 

@@ -194,6 +194,7 @@ message VizMessage{
 
     message LiveVizSettingsPb{
         repeated PointLine targetLines = 1; // list of lines between 2 scenario targets.  This list is redrawn on each update step, so the line properties can change with time.
+        string relativeOrbitChief = 2; // If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
     }
 
     message VizSettingsPb{
@@ -231,7 +232,7 @@ message VizMessage{
         int32 showHillFrame = 31; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showVelocityFrame = 32; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 relativeOrbitFrame = 33; // Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
-        string relativeOrbitChief = 34; // If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
+        string mainCameraTarget = 34; // If valid spacecraft or celestial body name is provided, the main camera will be targeted at that body at start
         double spacecraftShadowBrightness = 35; // Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
         double spacecraftSizeMultiplier = 36; // Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0, use negative value to use viz default
         int32 showLocationCommLines = 37; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
