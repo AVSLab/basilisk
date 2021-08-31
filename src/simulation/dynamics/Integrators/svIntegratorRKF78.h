@@ -16,32 +16,27 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module svIntegrators
-#pragma SWIG nowarn=362
-%{
-   #include "../_GeneralModuleFiles/stateVecIntegrator.h"
-   #include "../_GeneralModuleFiles/svIntegratorRK4.h"
-   #include "svIntegratorEuler.h"
-   #include "svIntegratorRK2.h"
-   #include "svIntegratorRKF45.h"
-   #include "svIntegratorRKF78.h"
-   #include "architecture/_GeneralModuleFiles/sys_model.h"
-%}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
+#ifndef svIntegratorRKF78_h
+#define svIntegratorRKF78_h
+
+#include "../_GeneralModuleFiles/stateVecIntegrator.h"
+#include "../_GeneralModuleFiles/dynParamManager.h"
+#include <stdint.h>
+
+/*! @brief 7/8 order Runge-Kutta integrator */
+class svIntegratorRKF78 : public StateVecIntegrator
+{
+public:
+    svIntegratorRKF78(DynamicObject* dyn);            //!< class method
+    virtual ~svIntegratorRKF78();
+    virtual void integrate(double currentTime, double timeStep); //!< class method
+    double alphaMatrix[13];
+    double betaMatrix[13][12];
+    double chMatrix[13];
+    double kMatrix[13];
+};
 
 
-%include "sys_model.h"
-%include "../_GeneralModuleFiles/stateVecIntegrator.h"
-%include "../_GeneralModuleFiles/svIntegratorRK4.h"
-%include "svIntegratorEuler.h"
-%include "svIntegratorRK2.h"
-%include "svIntegratorRKF45.h"
-%include "svIntegratorRKF78.h"
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#endif /* svIntegratorRKF78_h */
