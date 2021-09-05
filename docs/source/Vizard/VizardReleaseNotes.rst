@@ -18,6 +18,21 @@ Release Notes
     - Add magnetic torque bar visualization
     - Provide a spacecraft attached flash light component
 
+**Version 1.9.2**
+
+- Apple Silicon compatible native file browser, Vizard can be run in M1 native mode
+- added message and GUI support for Generic Storage Devices. Vizard can now display a panel for each
+  spacecraft showing the remaining capacity for storage devices like hard drives, propellant tanks, etc.
+- Instruments tab on the main menu bar was renamed Devices to accommodate the inclusion of Generic Storage
+- moved ``RelativeOrbitChief`` setting to the ``LiveSettings`` message to allow user to change the
+  relative orbit chief spacecraft by message automatically. Manually setting the relative orbit chief
+  is still available under the View menu.
+- added ``MainCameraTarget`` setting to the Settings message to allow user to designate the main camera’s
+  target on startup instead of defaulting to the first spacecraft in messages. The main camera target
+  at startup can also be set to any available celestial body.
+
+
+
 
 **Version 1.9.1**
 
