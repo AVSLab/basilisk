@@ -548,7 +548,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_showhillframe(this->settings.showHillFrame);
         vizSettings->set_showvelocityframe(this->settings.showVelocityFrame);
         vizSettings->set_relativeorbitframe(this->settings.relativeOrbitFrame);
-        vizSettings->set_relativeorbitchief(this->settings.relativeOrbitChief);
+        vizSettings->set_maincameratarget(this->settings.mainCameraTarget);
         vizSettings->set_spacecraftshadowbrightness(this->settings.spacecraftShadowBrightness);
         vizSettings->set_spacecraftsizemultiplier(this->settings.spacecraftSizeMultiplier);
         vizSettings->set_showlocationcommlines(this->settings.showLocationCommLines);
@@ -641,6 +641,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             pl->add_linecolor(this->liveSettings.targetLineList[idx].lineColor[i]);
         }
     }
+    liveVizSettings->set_relativeorbitchief(this->liveSettings.relativeOrbitChief);
     message->set_allocated_livesettings(liveVizSettings);
 
     /*! Write timestamp output msg */

@@ -48,7 +48,7 @@ The following settings can be set directly using::
 Note that for setting flags 1 means turn on, -1 means turn off, and a setting of 0 tells Vizard to use its own
 default setting for that behavior.
 
-.. list-table:: Vizard Simulation Parameters
+.. list-table:: Vizard Simulation Parameters Read at Start Up
     :widths: 10 10 80
     :header-rows: 1
 
@@ -150,11 +150,10 @@ default setting for that behavior.
       - int
       - flag to set with respect to which frame the relative orbit trajectory is drawn.
         Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
-    * - ``relativeOrbitChief``
+    * - ``mainCameraTarget``
       - string
-      - If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that
-        spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera
-        target spacecraft as the chief.
+      - If valid spacecraft or celestial body name is provided, the main camera will be targeted at
+        that body at start
     * - ``spacecraftShadowBrightness``
       - double
       - Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value
@@ -173,6 +172,27 @@ default setting for that behavior.
       - int
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 
+While the prior settings are only read once during start up, the following settings are checked
+with every message being sent.  The following live settings can be set directly using::
+
+    viz.liveSettings.variableName = value
+
+.. list-table:: Vizard Simulation Parameters Read Live
+    :widths: 10 10 80
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Description
+    * - ``targetLineList``
+      - ``std::vector<PointLine>``
+      - vector of lines between 2 scenario targets.  This list is redrawn on each update step,
+        thus the line properties can change with time.
+    * - ``relativeOrbitChief``
+      - string
+      - If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft
+        object. Setting the string to ``AUTO`` or leaving this field empty will select the camera target
+        spacecraft as the chief.
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
