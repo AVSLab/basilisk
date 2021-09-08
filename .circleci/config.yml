@@ -164,11 +164,11 @@ workflows:
   version: 2
   #branch-testing:
     #jobs: 
-    #- <job-name>: # either linux-build, macos-build or windows-build
+    #- <job-name>:
         #context: slack-secrets
         #filters:
           #branches:
-            #only: <branch-name>  # full path to branch on origin. Include sub-folders
+            #only: <branch-name>
   alternative:
     triggers:
       - schedule:
