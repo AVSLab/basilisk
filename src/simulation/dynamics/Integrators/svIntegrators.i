@@ -23,6 +23,7 @@
    #include "../_GeneralModuleFiles/svIntegratorRK4.h"
    #include "svIntegratorEuler.h"
    #include "svIntegratorRK2.h"
+   #include "svIntegratorRKF45.h"
    #include "architecture/_GeneralModuleFiles/sys_model.h"
 %}
 
@@ -36,6 +37,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "../_GeneralModuleFiles/svIntegratorRK4.h"
 %include "svIntegratorEuler.h"
 %include "svIntegratorRK2.h"
+%include "svIntegratorRKF45.h"
 
 %pythoncode %{
 import sys
