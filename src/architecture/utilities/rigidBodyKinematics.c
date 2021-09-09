@@ -1296,6 +1296,30 @@ void BmatMRP(double *q, double B[3][3])
 }
 
 /*
+ * BdotmatMRP(Q,dQ,B) returns the 3x3 matrix derivative of 
+ * the BmatMRP matrix, and it is used to relate the 
+ * body angular acceleration vector dw to the second order 
+ * derivative of the MRP vector Q.
+ *
+ * (d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
+ */
+void BdotmatMRP(double *q, double *dq, double B[3][3])
+{
+    double s;
+
+    s = -2 * v3Dot(q, dq);
+    B[0][0] = s + 4 * ( q[0] * dq[0] );
+    B[0][1] = 2 * (-dq[2] + q[0] * dq[1] + dq[0] * q[1] );
+    B[0][2] = 2 * ( dq[1] + q[0] * dq[2] + dq[0] * q[2] );
+    B[1][0] = 2 * ( dq[2] + q[0] * dq[1] + dq[0] * q[1] );
+    B[1][1] = s + 4 * ( q[1] * dq[1] );
+    B[1][2] = 2 * (-dq[0] + q[1] * dq[2] + dq[1] * q[2] );
+    B[2][0] = 2 * (-dq[1] + q[0] * dq[2] + dq[0] * q[2] );
+    B[2][1] = 2 * ( dq[0] + q[1] * dq[2] + dq[1] * q[2] );
+    B[2][2] = s + 4 * ( q[2] * dq[2] );
+}
+
+/*
  * BmatPRV(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * principal rotation vector Q.
@@ -1804,6 +1828,68 @@ void dMRP(double *q, double *w, double *dq)
     BmatMRP(q, B);
     m33MultV3(B, w, dq);
     v3Scale(0.25, dq, dq);
+}
+
+/*
+ * dMRP2omega(Q,dQ,W) returns the angular rate W
+ * for a given MRP vector Q and 
+ * MRP derivative dQ.
+ * 
+ * w = 4 [B(Q)]^(-1) dQ/dt
+ */
+void dMRP2Omega(double *q, double *dq, double *w)
+{
+    double B[3][3];
+
+    BinvMRP(q, B);
+    m33MultV3(B, dq, w);
+    v3Scale(4, w, w);
+}
+
+/*
+ * ddMRP(Q,dQ,W,dW) returns the second order MRP derivative
+ * for a given MRP vector Q, first MRP derivative dQ, body angular
+ * velocity vector w and body angular acceleration vector dw.
+ * 
+ * (d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
+ */
+void ddMRP(double *q, double *dq, double *w, double *dw, double *ddq)
+{
+    double B[3][3], Bdot[3][3];
+    double s1[3], s2[3];
+    int i;
+
+    BmatMRP(q, B);
+    BdotmatMRP(q, dq, Bdot);
+    m33MultV3(B, dw, s1);
+    m33MultV3(Bdot, w, s2);
+    for(i = 0; i < 3; i++) {
+        ddq[i] = 0.25 * ( s1[i] + s2[i] );
+    }
+}
+
+/*
+ * ddMRP2omegaDot(Q,dQ,ddQ) returns the angular rate W
+ * for a given MRP vector Q and 
+ * MRP derivative dQ.
+ * 
+ * w = 4 [B(Q)]^(-1) dQ/dt
+ */
+void ddMRP2dOmega(double *q, double *dq, double *ddq, double *dw)
+{
+    double B[3][3], Bdot[3][3];
+    double s1[3], s2[3], s3[3];
+    int i;
+
+    BinvMRP(q, B);
+    BdotmatMRP(q, dq, Bdot);
+    m33MultV3(B, dq, s1);
+    m33MultV3(Bdot, s1, s2);
+    for(i = 0; i < 3; i++) {
+        s3[i] = ddq[i] - s2[i];
+    }
+    m33MultV3(B, s3, dw);
+    v3Scale(4, dw, dw);
 }
 
 /*
