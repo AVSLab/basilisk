@@ -29,38 +29,38 @@ svIntegratorRKF45::svIntegratorRKF45(DynamicObject* dyn) : StateVecIntegrator(dy
     memset(cMatrix, 0x0, sizeof(cMatrix));
     memset(dMatrix, 0x0, sizeof(dMatrix));
 
-    aMatrix[2] = 1.0 / 4.0;
-    aMatrix[3] = 3.0 / 8.0;
-    aMatrix[4] = 12.0 / 13.0;
-    aMatrix[5] = 1.0;
-    aMatrix[6] = 1.0 / 2.0;
+    aMatrix[1] = 1.0 / 4.0;
+    aMatrix[2] = 3.0 / 8.0;
+    aMatrix[3] = 12.0 / 13.0;
+    aMatrix[4] = 1.0;
+    aMatrix[5] = 1.0 / 2.0;
 
-    bMatrix[2][1] = 1.0 / 4.0;
-    bMatrix[3][1] = 3.0 / 32.0;
-    bMatrix[3][2] = 9.0 / 32.0;
-    bMatrix[4][1] = 1932.0 / 2197.0;
-    bMatrix[4][2] = -7200.0 / 2197.0;
-    bMatrix[4][3] = 7296.0 / 2197.0;
-    bMatrix[5][1] = 439.0 / 216.0;
-    bMatrix[5][2] = -8.0;
-    bMatrix[5][3] = 3680.0 / 513.0;
-    bMatrix[5][4] = -845.0 / 4104.0;
-    bMatrix[6][1] = -8.0 / 27.0;
-    bMatrix[6][2] = 2.0;
-    bMatrix[6][3] = -3544.0 / 2565.0;
-    bMatrix[6][4] = 1859.0 / 4104.0;
-    bMatrix[6][5] = -11.0 / 40.0;
+    bMatrix[1][0] = 1.0 / 4.0;
+    bMatrix[2][0] = 3.0 / 32.0;
+    bMatrix[2][1] = 9.0 / 32.0;
+    bMatrix[3][0] = 1932.0 / 2197.0;
+    bMatrix[3][1] = -7200.0 / 2197.0;
+    bMatrix[3][2] = 7296.0 / 2197.0;
+    bMatrix[4][0] = 439.0 / 216.0;
+    bMatrix[4][1] = -8.0;
+    bMatrix[4][2] = 3680.0 / 513.0;
+    bMatrix[4][3] = -845.0 / 4104.0;
+    bMatrix[5][0] = -8.0 / 27.0;
+    bMatrix[5][1] = 2.0;
+    bMatrix[5][2] = -3544.0 / 2565.0;
+    bMatrix[5][3] = 1859.0 / 4104.0;
+    bMatrix[5][4] = -11.0 / 40.0;
 
-    cMatrix[1] = 25.0 / 216.0;
-    cMatrix[3] = 1408.0 / 2565.0;
-    cMatrix[4] = 2197.0 / 4104.0;
-    cMatrix[5] = -1.0 / 5.0;
+    cMatrix[0] = 25.0 / 216.0;
+    cMatrix[2] = 1408.0 / 2565.0;
+    cMatrix[3] = 2197.0 / 4104.0;
+    cMatrix[4] = -1.0 / 5.0;
 
-    dMatrix[1] = 1.0 / 360.0;
-    dMatrix[3] = -128.0 / 4275.0;
-    dMatrix[4] = -2197.0 / 75240.0;
-    dMatrix[5] = -1.0 / 50.0;
-    dMatrix[6] = 2.0 / 55.0;
+    dMatrix[0] = 1.0 / 360.0;
+    dMatrix[2] = -128.0 / 4275.0;
+    dMatrix[3] = -2197.0 / 75240.0;
+    dMatrix[4] = -1.0 / 50.0;
+    dMatrix[5] = 2.0 / 55.0;
 
     
     return;
@@ -79,27 +79,38 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
 {
 	StateVector stateOut;
 	StateVector stateInit;
+    std::vector<StateVector> kMatrix;
 	std::map<std::string, StateData>::iterator it;
 	std::map<std::string, StateData>::iterator itOut;
 	std::map<std::string, StateData>::iterator itInit;
 	stateOut = dynPtr->dynManager.getStateVector();
 	stateInit = dynPtr->dynManager.getStateVector();
+    kMatrix.clear();
     dynPtr->equationsOfMotion(currentTime);
-    for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
+    for (uint64_t i = 0; i < 6; i++)
     {
-        itOut->second.setDerivative(it->second.getStateDeriv());
-        itOut->second.propagateState(timeStep / 2.0);
-        it->second.state = itInit->second.state + timeStep*it->second.stateDeriv;
+        for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itInit++)
+        {
+            it->second.state = itInit->second.state;
+        }
+        for (uint64_t j = 0; j < i; j++)
+        {
+            for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = kMatrix[j].stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
+            {
+                it->second.state = it->second.state + timeStep * bMatrix[i][j] * itOut->second.stateDeriv;
+
+            }
+
+        }
+        dynPtr->equationsOfMotion(currentTime + timeStep * aMatrix[i]);
+        kMatrix.push_back(dynPtr->dynManager.getStateVector());
+        for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
+        {
+            itOut->second.state = itOut->second.state + timeStep * cMatrix[i] * it->second.stateDeriv;
+        }
     }
 
-    dynPtr->equationsOfMotion(currentTime + timeStep);
-    for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
-    {
-        itOut->second.setDerivative(it->second.getStateDeriv());
-        itOut->second.propagateState(timeStep / 2.0);
-    }
-
-	dynPtr->dynManager.updateStateVector(stateOut);	
+    dynPtr->dynManager.updateStateVector(stateOut);
 
     return;
 }

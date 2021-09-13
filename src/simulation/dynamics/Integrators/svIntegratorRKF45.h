@@ -35,6 +35,7 @@ public:
     double bMatrix[6][5];
     double cMatrix[6];
     double dMatrix[6];
+    double kMatrix[6];
 };
 
 
