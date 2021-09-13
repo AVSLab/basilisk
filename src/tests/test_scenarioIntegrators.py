@@ -38,7 +38,6 @@ sys.path.append(path + '/../../examples')
 import scenarioIntegrators
 
 
-
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -47,35 +46,41 @@ import scenarioIntegrators
 #   of the multiple test runs for this test.
 # @pytest.mark.parametrize("integratorCase", ["rk4", "euler", "rk2"])
 @pytest.mark.scenarioTest
-
 def test_scenarioIntegrators(show_plots):
     """This function is called by the py.test environment."""
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
-    for integratorCase in ["rk4", "euler", "rk2"]:
+    for integratorCase in ["rk4", "rkf45", "euler", "rk2"]:
 
         # each test method requires a single assert method to be called
         posData, figureList = scenarioIntegrators.run(show_plots, integratorCase)
 
-
         numTruthPoints = 5
-        skipValue = int(len(posData)/(numTruthPoints-1))
+        skipValue = int(len(posData) / (numTruthPoints - 1))
         dataPosRed = posData[::skipValue]
 
         # setup truth data for unit test
         if integratorCase == "rk4":
             truePos = [
-                  [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
+                [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
                 , [-6.379381726549218e6, -1.4688565370540658e6, 2.4807857675497606e6]
                 , [-2.230094305694789e6, -6.410420020364709e6, -1.7146277675541767e6]
                 , [4.614900659014343e6, -3.60224207689023e6, -3.837022825958977e6]
                 , [5.879095186201691e6, 3.561495655367985e6, -1.3195821703218794e6]
             ]
+        if integratorCase == "rkf45":
+            truePos = [
+                [6343122.681395919, 396501.78632660967, -2932539.2914087307]
+                , [6385759.757220186, 1232061.6219036756, -2587584.918333401]
+                , [6321657.127943617, 2047027.1643309772, -2199378.3835694017]
+                , [6151884.468695515, 2827775.46506309, -1774408.027800635]
+                , [5879278.326923609, 3561255.294074021, -1319777.089191588]
+            ]
         if integratorCase == "euler":
             truePos = [
-                  [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
+                [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
                 , [-7.061548530211288e6, -1.4488790844105487e6, 2.823580168201031e6]
                 , [-4.831279689590867e6, -8.015202650472983e6, -1.1434851461593418e6]
                 , [719606.5825106134, -1.0537603309084207e7, -4.966060248346598e6]
@@ -83,7 +88,7 @@ def test_scenarioIntegrators(show_plots):
             ]
         if integratorCase == "rk2":
             truePos = [
-                  [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
+                [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
                 , [-6.425636528569288e6, -1.466693214251768e6, 2.50438327358707e6]
                 , [-2.466642497083674e6, -6.509473992136429e6, -1.6421621818735446e6]
                 , [4.342561337924192e6, -4.1593822658140697e6, -3.947594705237753e6]
@@ -111,4 +116,3 @@ def test_scenarioIntegrators(show_plots):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
-
