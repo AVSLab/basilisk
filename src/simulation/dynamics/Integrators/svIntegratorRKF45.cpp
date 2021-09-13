@@ -73,7 +73,7 @@ svIntegratorRKF45::~svIntegratorRKF45()
 
 /*<!
  Implements a 4th order Runge Kutta Fehlberg variable time step integration method
- see [Wiki Page on Runge-Kutta-Fehlberg's Method](https://en.wikipedia.org/wiki/Runge–Kutta–Fehlberg_method)
+ see [Wiki Page on Runge-Kutta-Fehlberg's Method](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta%E2%80%93Fehlberg_method)
  */
 void svIntegratorRKF45::integrate(double currentTime, double timeStep)
 {
