@@ -1,5 +1,5 @@
 
-RK2 integrator. It only implements the method integrate() to advance one time step.
+RKF45 integrator. It only implements the method integrate() to advance one time step.
 
 The module
 :download:`PDF Description </../../src/simulation/dynamics/Integrators/_Documentation/Basilisk-Integrators20170724.pdf>`

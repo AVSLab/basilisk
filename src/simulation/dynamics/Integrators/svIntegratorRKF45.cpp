@@ -85,14 +85,21 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
 	std::map<std::string, StateData>::iterator itInit;
 	stateOut = dynPtr->dynManager.getStateVector();
 	stateInit = dynPtr->dynManager.getStateVector();
-    kMatrix.clear();
+    kMatrix.clear(); //Clearing out the matrix and beginning to populate
+
+    // Compute the equations of motion for t0
     dynPtr->equationsOfMotion(currentTime);
+
+    // Loop through all 6 coefficients (k1 through k6)
     for (uint64_t i = 0; i < 6; i++)
     {
+        // Initialize the state iterators
         for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itInit++)
         {
             it->second.state = itInit->second.state;
         }
+
+        // Loop through the B matrix coefficients that defien the point of integration
         for (uint64_t j = 0; j < i; j++)
         {
             for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = kMatrix[j].stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
@@ -102,14 +109,21 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
             }
 
         }
+
+        // Integrate with the appropriate time step using the A matrix
         dynPtr->equationsOfMotion(currentTime + timeStep * aMatrix[i]);
+
+        // Save the current coefficient
         kMatrix.push_back(dynPtr->dynManager.getStateVector());
+
+        // Update the intermediate result
         for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
         {
             itOut->second.state = itOut->second.state + timeStep * cMatrix[i] * it->second.stateDeriv;
         }
     }
 
+    // Update the entire state vector after integration
     dynPtr->dynManager.updateStateVector(stateOut);
 
     return;
