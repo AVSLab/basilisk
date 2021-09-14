@@ -32,9 +32,11 @@
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
-    /* Declare module private variables */
+    /* Declare module public variables */
     double angleSet[3];                         //!< [-] current euler angle 321 set R/R0  with respect to the input reference
     double angleRates[3];                       //!< [rad/s] euler angle 321 rates
+
+    /* Declare module private variables */
     double cmdSet[3];                           //!< [] msg commanded initial Euler angle 321 set with respect to input reference
     double cmdRates[3];                         //!< [rad/s] msg commanded constant 321 Euler angle rates
     double priorCmdSet[3];                      //!< [] prior commanded 321 Euler angle set
