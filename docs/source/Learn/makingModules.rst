@@ -26,6 +26,7 @@ The following pages cover the primary tasks required to make a Basilisk module. 
    makingModules/pyModules
    makingModules/makingModules-3
    makingModules/makingModules-4
+   makingModules/makingDraftModule
    makingModules/makingModules-5
 
 
