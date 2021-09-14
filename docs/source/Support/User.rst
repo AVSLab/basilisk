@@ -13,7 +13,6 @@ The following support documents are for the Basilisk user who is seeking general
    User/FAQmacOS
    User/FAQwindows
    User/createHtmlDocumentation
-   User/usingLivePlotting
    User/migratingToBsk2
 
 

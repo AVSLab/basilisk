@@ -27,3 +27,9 @@ provides information on what this message is used for.
       - :ref:`AttStateMsgPayload`
       - (optional) name of the incoming message containing the desired Euler angle set
 
+User Guide
+----------
+The initial orientation of the dynamic reference frame is set through the module variable ``angleSet``.  This is a
+3-2-1 Euler angle sequence.
+
+To set the desired constant 3-2-1 Euler angel rates, set the module variable ``angleRates``.
