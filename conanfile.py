@@ -11,10 +11,13 @@ sys.path.insert(1, './src/utilities/')
 import makeDraftModule
 
 try:
-	from conans import ConanFile, CMake, tools
+    from conans import ConanFile, CMake, tools
+    from conans.tools import Version
+    from conans import __version__ as conan_version
 except ModuleNotFoundError:
-	print("Please make sure you install python conan package\nRun command `pip install conan` for Windows\nRun command `pip3 install conan` for Linux/MacOS")
-	sys.exit(1)
+    print("Please make sure you install python conan package\nRun command `pip install conan` "
+          "for Windows\nRun command `pip3 install conan` for Linux/MacOS")
+    sys.exit(1)
 
 # define BSK module option list (option name and default value)
 bskModuleOptionsBool = {
@@ -52,13 +55,19 @@ class BasiliskConan(ConanFile):
     version = f.read()
     f.close()
     generators = "cmake_find_package_multi"
-    requires = "eigen/3.3.7@conan/stable"
+    requires = "eigen/3.3.7"
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
     license = "ISC"
 
     options = {"generator": "ANY"}
     default_options = {"generator": ""}
+
+    # check conan version
+    if conan_version < Version("1.40.1"):
+        print(failColor + "conan version " + conan_version + " is not compatible with Basilisk.")
+        print("use version 1.40.1+ to work with the conan repo changes from 2021." + endColor)
+        exit(0)
 
     for opt, value in bskModuleOptionsBool.items():
         options.update({opt: [True, False]})
@@ -91,9 +100,7 @@ class BasiliskConan(ConanFile):
 
     try:
         consoleReturn = str(subprocess.check_output(["conan", "remote", "list", "--raw"]))
-        conanRepos = ["conan-community https://api.bintray.com/conan/conan-community/conan"
-                      # , "bincraftersNew https://bincrafters.jfrog.io/artifactory/api/conan/public-conan"
-                      , "bincrafters https://api.bintray.com/conan/bincrafters/public-conan"
+        conanRepos = ["bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan"
                       ]
         for item in conanRepos:
             if item not in consoleReturn:
@@ -104,6 +111,11 @@ class BasiliskConan(ConanFile):
         print("conan: " + failColor + "Error configuring conan repo information." + endColor)
     print(statusColor + "Checking conan configuration:" + endColor + " Done")
 
+    try:
+        # enable this flag for the bincrafters repo to be available.
+        subprocess.check_output(["conan", "config", "set", "general.revisions_enabled=1"])
+    except:
+        pass
 
 
     def system_requirements(self):
