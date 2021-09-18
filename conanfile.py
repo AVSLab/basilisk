@@ -11,10 +11,13 @@ sys.path.insert(1, './src/utilities/')
 import makeDraftModule
 
 try:
-	from conans import ConanFile, CMake, tools
+    from conans import ConanFile, CMake, tools
+    from conans.tools import Version
+    from conans import __version__ as conan_version
 except ModuleNotFoundError:
-	print("Please make sure you install python conan package\nRun command `pip install conan` for Windows\nRun command `pip3 install conan` for Linux/MacOS")
-	sys.exit(1)
+    print("Please make sure you install python conan package\nRun command `pip install conan` "
+          "for Windows\nRun command `pip3 install conan` for Linux/MacOS")
+    sys.exit(1)
 
 # define BSK module option list (option name and default value)
 bskModuleOptionsBool = {
@@ -61,10 +64,8 @@ class BasiliskConan(ConanFile):
     default_options = {"generator": ""}
 
     # check conan version
-    conanVersion = str(subprocess.check_output(["conan", "--version"])).split("version ")[1]
-    conanVersion = conanVersion.split(r'\n')[0]
-    if float(conanVersion[2:]) < 40.1:
-        print(failColor + "conan version " + conanVersion + " is not compatible with Basilisk.")
+    if conan_version < Version("1.40.1"):
+        print(failColor + "conan version " + conan_version + " is not compatible with Basilisk.")
         print("use version 1.40.1+ to work with the conan repo changes from 2021." + endColor)
         exit(0)
 
