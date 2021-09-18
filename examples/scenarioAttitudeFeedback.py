@@ -428,7 +428,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
                  color=unitTestSupport.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
+    plt.xlabel('Time [min]')
     plt.ylabel('Inertial Position [km]')
 
     if show_plots:
