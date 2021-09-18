@@ -52,13 +52,21 @@ class BasiliskConan(ConanFile):
     version = f.read()
     f.close()
     generators = "cmake_find_package_multi"
-    requires = "eigen/3.3.7@conan/stable"
+    requires = "eigen/3.3.7"
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
     license = "ISC"
 
     options = {"generator": "ANY"}
     default_options = {"generator": ""}
+
+    # check conan version
+    conanVersion = str(subprocess.check_output(["conan", "--version"])).split("version ")[1]
+    conanVersion = conanVersion.split(r'\n')[0]
+    if float(conanVersion[2:]) < 40.1:
+        print(failColor + "conan version " + conanVersion + " is not compatible with Basilisk.")
+        print("use version 1.40.1+ to work with the conan repo changes from 2021." + endColor)
+        exit(0)
 
     for opt, value in bskModuleOptionsBool.items():
         options.update({opt: [True, False]})
@@ -91,9 +99,7 @@ class BasiliskConan(ConanFile):
 
     try:
         consoleReturn = str(subprocess.check_output(["conan", "remote", "list", "--raw"]))
-        conanRepos = ["conan-community https://api.bintray.com/conan/conan-community/conan"
-                      # , "bincraftersNew https://bincrafters.jfrog.io/artifactory/api/conan/public-conan"
-                      , "bincrafters https://api.bintray.com/conan/bincrafters/public-conan"
+        conanRepos = ["bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan"
                       ]
         for item in conanRepos:
             if item not in consoleReturn:
@@ -104,6 +110,11 @@ class BasiliskConan(ConanFile):
         print("conan: " + failColor + "Error configuring conan repo information." + endColor)
     print(statusColor + "Checking conan configuration:" + endColor + " Done")
 
+    try:
+        # enable this flag for the bincrafters repo to be available.
+        subprocess.check_output(["conan", "config", "set", "general.revisions_enabled=1"])
+    except:
+        pass
 
 
     def system_requirements(self):
