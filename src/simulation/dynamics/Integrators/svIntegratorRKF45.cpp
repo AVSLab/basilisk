@@ -21,14 +21,21 @@
 #include "svIntegratorRKF45.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include <stdio.h>
+#include <iostream>
+#include <Eigen/Dense>
+#include <vector>
+
+using namespace Eigen;
 
 svIntegratorRKF45::svIntegratorRKF45(DynamicObject* dyn) : StateVecIntegrator(dyn)
 {
+    // Initialize the matrices to 0
     memset(aMatrix, 0x0, sizeof(aMatrix));
     memset(bMatrix, 0x0, sizeof(bMatrix));
-    memset(cMatrix, 0x0, sizeof(cMatrix));
-    memset(dMatrix, 0x0, sizeof(dMatrix));
+    memset(chMatrix, 0x0, sizeof(chMatrix));
+    memset(ctMatrix, 0x0, sizeof(ctMatrix));
 
+    // Populate the coefficient matrices 
     aMatrix[1] = 1.0 / 4.0;
     aMatrix[2] = 3.0 / 8.0;
     aMatrix[3] = 12.0 / 13.0;
@@ -51,17 +58,20 @@ svIntegratorRKF45::svIntegratorRKF45(DynamicObject* dyn) : StateVecIntegrator(dy
     bMatrix[5][3] = 1859.0 / 4104.0;
     bMatrix[5][4] = -11.0 / 40.0;
 
-    cMatrix[0] = 25.0 / 216.0;
-    cMatrix[2] = 1408.0 / 2565.0;
-    cMatrix[3] = 2197.0 / 4104.0;
-    cMatrix[4] = -1.0 / 5.0;
+    chMatrix[0] = 25.0 / 216.0;
+    chMatrix[2] = 1408.0 / 2565.0;
+    chMatrix[3] = 2197.0 / 4104.0;
+    chMatrix[4] = -1.0 / 5.0;
 
-    dMatrix[0] = 1.0 / 360.0;
-    dMatrix[2] = -128.0 / 4275.0;
-    dMatrix[3] = -2197.0 / 75240.0;
-    dMatrix[4] = -1.0 / 50.0;
-    dMatrix[5] = 2.0 / 55.0;
+    ctMatrix[0] = 1.0 / 360.0;
+    ctMatrix[2] = -128.0 / 4275.0;
+    ctMatrix[3] = -2197.0 / 75240.0;
+    ctMatrix[4] = -1.0 / 50.0;
+    ctMatrix[5] = 2.0 / 55.0;
 
+    // Set the default values for absolute and relative tolerance
+    this->absTol = 1e-8;
+    this->relTol = 1e-4;
     
     return;
 }
@@ -79,53 +89,114 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
 {
 	StateVector stateOut;
 	StateVector stateInit;
+    StateVector errorMatrix;
     std::vector<StateVector> kMatrix;
 	std::map<std::string, StateData>::iterator it;
 	std::map<std::string, StateData>::iterator itOut;
 	std::map<std::string, StateData>::iterator itInit;
+    std::map<std::string, StateData>::iterator itkMatrix;
+    std::map<std::string, StateData>::iterator itError;
 	stateOut = dynPtr->dynManager.getStateVector();
 	stateInit = dynPtr->dynManager.getStateVector();
-    kMatrix.clear(); //Clearing out the matrix and beginning to populate
+    errorMatrix = dynPtr->dynManager.getStateVector();
+    double h = timeStep;  // integration time step
+    double t = currentTime;  // integration time
+    double error;
+    double relError;
+    double scaleFactor = 0.9;
 
-    // Compute the equations of motion for t0
-    dynPtr->equationsOfMotion(currentTime);
+    while (abs(t - currentTime - timeStep) > 1e-6) {
+        // Compute the equations of motion for t0
+        dynPtr->equationsOfMotion(t);
 
-    // Loop through all 6 coefficients (k1 through k6)
-    for (uint64_t i = 0; i < 6; i++)
-    {
-        // Initialize the state iterators
-        for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itInit++)
-        {
-            it->second.state = itInit->second.state;
-        }
+        // Enter the loop
+        relError = 10 * relTol;
+        while (relError > relTol) {
 
-        // Loop through the B matrix coefficients that defien the point of integration
-        for (uint64_t j = 0; j < i; j++)
-        {
-            for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = kMatrix[j].stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
+            // Reset the relative error
+            relError = 0;
+
+            //Clear out the matrix and beginning to populate
+            kMatrix.clear();
+
+            // Loop through all 6 coefficients (k1 through k6)
+            for (uint64_t i = 0; i < 6; i++)
             {
-                it->second.state = it->second.state + timeStep * bMatrix[i][j] * itOut->second.stateDeriv;
+                // Initialize the state iterators
+                for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itInit++)
+                {
+                    it->second.state = itInit->second.state;
+                }
+
+                // Loop through the B matrix coefficients that define the point of integration
+                for (uint64_t j = 0; j < i; j++)
+                {
+                    for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = kMatrix[j].stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
+                    {
+                        it->second.state = it->second.state + h * bMatrix[i][j] * itOut->second.stateDeriv;
+
+                    }
+
+                }
+
+                // Integrate with the appropriate time step using the A matrix
+                dynPtr->equationsOfMotion(t + h * aMatrix[i]);
+
+                // Save the current coefficient
+                kMatrix.push_back(dynPtr->dynManager.getStateVector());
+
+                // Update the final result and the error vector
+                for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
+                {
+                    itOut->second.state = itOut->second.state + h * chMatrix[i] * it->second.stateDeriv;
+                }
+
+                for (itkMatrix = kMatrix[i].stateMap.begin(), itError = errorMatrix.stateMap.begin(); itkMatrix != kMatrix[i].stateMap.end(); itkMatrix++, itError++)
+                {
+                    // Reset the error vector to 0
+                    if (i == 0) {
+                        for (uint64_t j = 0; j < itError->second.state.size(); j++) {
+                            itError->second.state(j, 0) = 0;
+                        }
+                    }
+
+                    itError->second.state = itError->second.state + ctMatrix[i] * itkMatrix->second.stateDeriv;
+                }
 
             }
 
+            // Calculate the relative error
+            for (it = stateOut.stateMap.begin(), itError = errorMatrix.stateMap.begin(); it != stateOut.stateMap.end(); it++, itError++)
+            {
+                //
+                if (it->second.state.norm() < absTol)
+                    error = abs(itError->second.state.norm() / absTol);
+                else {
+                    error = abs(itError->second.state.norm() / it->second.state.norm());
+                }
+                
+                if (relError < error) {
+                    relError = error;
+                }
+            }
+          
+            // Recalculate the time step
+            h = scaleFactor * h * pow(relTol / relError, 0.2);
         }
 
-        // Integrate with the appropriate time step using the A matrix
-        dynPtr->equationsOfMotion(currentTime + timeStep * aMatrix[i]);
+        // Update the entire state vector after integration
+        dynPtr->dynManager.updateStateVector(stateOut);
 
-        // Save the current coefficient
-        kMatrix.push_back(dynPtr->dynManager.getStateVector());
-
-        // Update the intermediate result
-        for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
-        {
-            itOut->second.state = itOut->second.state + timeStep * cMatrix[i] * it->second.stateDeriv;
+        // Check for overpassing time
+        if (t + h > currentTime + timeStep) {
+            h = currentTime + timeStep - t;
         }
+
+        // Update the time
+        t += h;
+
     }
-
-    // Update the entire state vector after integration
-    dynPtr->dynManager.updateStateVector(stateOut);
-
+    
     return;
 }
 
