@@ -71,7 +71,7 @@ svIntegratorRKF45::svIntegratorRKF45(DynamicObject* dyn) : StateVecIntegrator(dy
 
     // Set the default values for absolute and relative tolerance
     this->absTol = 1e-8;
-    this->relTol = 1e-4;
+    this->relTol = 1e-5;
     
     return;
 }
@@ -105,9 +105,7 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
     double relError;
     double scaleFactor = 0.9;
 
-    while (abs(t - currentTime - timeStep) > 1e-6) {
-        // Compute the equations of motion for t0
-        dynPtr->equationsOfMotion(t);
+    while (abs(t - currentTime - timeStep) > 1e-12) {
 
         // Enter the loop
         relError = 10 * relTol;
@@ -118,6 +116,12 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
 
             //Clear out the matrix and beginning to populate
             kMatrix.clear();
+
+            // Compute the equations of motion for t
+            dynPtr->equationsOfMotion(t);
+
+            // Reset the ouput vector
+            stateOut = dynPtr->dynManager.getStateVector();
 
             // Loop through all 6 coefficients (k1 through k6)
             for (uint64_t i = 0; i < 6; i++)
@@ -160,7 +164,7 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
                         }
                     }
 
-                    itError->second.state = itError->second.state + ctMatrix[i] * itkMatrix->second.stateDeriv;
+                    itError->second.state = itError->second.state + h * ctMatrix[i] * itkMatrix->second.stateDeriv;
                 }
 
             }
@@ -182,10 +186,14 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
           
             // Recalculate the time step
             h = scaleFactor * h * pow(relTol / relError, 0.2);
+
         }
 
         // Update the entire state vector after integration
         dynPtr->dynManager.updateStateVector(stateOut);
+
+        // Update the initial state
+        stateInit = dynPtr->dynManager.getStateVector();
 
         // Check for overpassing time
         if (t + h > currentTime + timeStep) {
