@@ -26,6 +26,7 @@
 #include <vector>
 
 using namespace Eigen;
+using namespace std;
 
 svIntegratorRKF45::svIntegratorRKF45(DynamicObject* dyn) : StateVecIntegrator(dyn)
 {
@@ -101,7 +102,7 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
     errorMatrix = dynPtr->dynManager.getStateVector();  // copy current state variables
     double h = timeStep;  // variable time step
     double t = currentTime;  // integration time
-    double hInt = h;  // integration time step
+    double hInt;  // integration time step
     double relError;  // relative error for the current state variable
     double maxRelError;  // largest relative error of all the state variables
     double scaleFactor = 0.9;  // scale factor used for robustness. If the error and the tolerance are very close, this scale factor decreases the time step to improve performance
@@ -127,7 +128,10 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
             dynPtr->equationsOfMotion(t);
 
             // Reset the ouput vector
-            stateOut = dynPtr->dynManager.getStateVector();
+            for (itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); itOut != stateOut.stateMap.end(); itOut++, itInit++)
+            {
+                itOut->second.state = itInit->second.state;
+            }
 
             // Loop through all 6 coefficients (k1 through k6)
             for (uint64_t i = 0; i < 6; i++)
@@ -144,9 +148,7 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
                     for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = kMatrix[j].stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
                     {
                         it->second.state = it->second.state + hInt * bMatrix[i][j] * itOut->second.stateDeriv;
-
                     }
-
                 }
 
                 // Integrate with the appropriate time step using the A matrix coefficients
@@ -158,7 +160,7 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
                 // Update the state at the end of the current integration step
                 for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
                 {
-                    itOut->second.state = itOut->second.state + hInt * chMatrix[i] * it->second.stateDeriv;
+                    itOut->second.state += hInt * chMatrix[i] * it->second.stateDeriv;
                 }
 
                 // Update the current error vector
@@ -171,9 +173,9 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
                         }
                     }
 
-                    itError->second.state = itError->second.state + hInt * ctMatrix[i] * itkMatrix->second.stateDeriv;
+                    // Update the error vector with the appropriate coefficients
+                    itError->second.state += hInt * ctMatrix[i] * itkMatrix->second.stateDeriv;
                 }
-
             }
 
             // Calculate the relative error. The error is calculated using the norm of each state variable
@@ -191,9 +193,9 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
                     maxRelError = relError;
                 }
             }
-          
+
             // Recalculate the time step. If the relative error is larger than the relative tolerance, then decrease the time step and vice-versa.
-            h = scaleFactor * h * pow(this->relTol / maxRelError, 0.2);
+            h *= scaleFactor * pow(this->relTol / maxRelError, 0.2);
         }
 
         // Update the entire state vector after integration
@@ -209,7 +211,6 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
         if (t + h > currentTime + timeStep) {
             h = currentTime + timeStep - t;
         }
-
     }
     
     return;

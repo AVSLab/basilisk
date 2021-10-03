@@ -37,8 +37,8 @@ public:
     double ctMatrix[6];      //!< matrix of coefficients for the error
     double kMatrix[6];      //!< matrix of the k coefficients
 
-    double absTol;
-    double relTol;
+    double absTol;      //!< absolute tolerance
+    double relTol;      //!< relative tolerance
 };
 
 
