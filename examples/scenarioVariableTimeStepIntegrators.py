@@ -36,10 +36,10 @@ Illustration of Simulation Results
 
 ::
 
-    show_plots = True, integratorCase = {'rk4', rkf45', 'rkf78'}
+    show_plots = True, integratorCase = {'rk4', 'rkf45', 'rkf78'}
 
 The following figure illustrates the resulting trajectories relative to the true trajectory using a very coarse
-integration time step of 600 seconds. The variable time step integrators still approximates the true orbit well, while
+integration time step of 2 hours. The variable time step integrators still approximates the true orbit well, while
 the RK4 method is starting to show some visible errors, illustrating that much smaller time steps must be used with
 this method in this scenario.
 
@@ -129,7 +129,7 @@ def run(show_plots, integratorCase, relTol, absTol):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(6000.)
+    simulationTimeStep = macros.hour2nano(2.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -190,7 +190,7 @@ def run(show_plots, integratorCase, relTol, absTol):
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
     P = 2. * np.pi / n
-    simulationTime = macros.sec2nano(0.85 * P)
+    simulationTime = macros.sec2nano(0.9 * P)
 
     #
     #   Setup data logging before the simulation is initialized
