@@ -50,8 +50,8 @@ module which other module will provide the ``equationOfMotion()`` function to ev
 the state vector.  The send line ties the integration module to the dynamics module.  After that we are
 done.
 
-The integrator scenario script is setup to evaluate the default integration method (RK4), a first order
-Euler integration method, as well as a second order RK2 method.
+The integrator scenario script is setup to evaluate the default integration method (RK4), a fourth-order variable time
+step integrator (RKF45), a first order Euler integration method, as well as a second order RK2 method.
 
 When the simulation completes a plot is shown for illustrating both the true and the numerically
 evaluated orbit.
@@ -62,11 +62,11 @@ Illustration of Simulation Results
 
 ::
 
-    show_plots = True, integratorCase = {'rk4', 'rk2', 'euler'}
+    show_plots = True, integratorCase = {'rk4', 'rkf45', 'rk2', 'euler'}
 
 The following figure illustrates the resulting
 trajectories relative to the true trajectory using a very coarse integration time step of 120 seconds.
-The RK4 method still approximates the true orbit well, while the RK2 method is starting to show some visible
+The RK4 and RKF45 method still approximate the true orbit well, while the RK2 method is starting to show some visible
 errors. The first order Euler method provides a horrible estimate of the resulting trajectory, illustrating
 that much smaller time steps must be used with this method in this scenario.
 
@@ -128,7 +128,7 @@ def run(show_plots, integratorCase):
 
     Args:
         show_plots (bool): Determines if the script should display plots
-        integratorCase (bool): Specify if an external torque should be included
+        integratorCase (bool): Specify what type of integrator to use in the simulation
 
             =======  ============================
             String   Definition
@@ -165,14 +165,14 @@ def run(show_plots, integratorCase):
     scObject.ModelTag = "bskSat"
 
     # default case, RK4 is automatically setup, no extra code is needed
-    if integratorCase == "euler":
+    if integratorCase == "rkf45":
+        integratorObject = svIntegrators.svIntegratorRKF45(scObject)
+        scObject.setIntegrator(integratorObject)
+    elif integratorCase == "euler":
         integratorObject = svIntegrators.svIntegratorEuler(scObject)
         scObject.setIntegrator(integratorObject)
     elif integratorCase == "rk2":
         integratorObject = svIntegrators.svIntegratorRK2(scObject)
-        scObject.setIntegrator(integratorObject)
-    elif integratorCase == "rkf45":
-        integratorObject = svIntegrators.svIntegratorRKF45(scObject)
         scObject.setIntegrator(integratorObject)
 
     # add spacecraft object to the simulation process

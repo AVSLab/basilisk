@@ -44,7 +44,7 @@ import scenarioIntegrators
 # @pytest.mark.xfail(True, reason="Scott's brain no-worky\n")
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-# @pytest.mark.parametrize("integratorCase", ["rk4", "euler", "rk2"])
+# @pytest.mark.parametrize("integratorCase", ["rk4", "rkf45", "euler", "rk2"])
 @pytest.mark.scenarioTest
 def test_scenarioIntegrators(show_plots):
     """This function is called by the py.test environment."""

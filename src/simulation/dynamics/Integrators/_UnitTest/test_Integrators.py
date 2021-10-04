@@ -94,14 +94,14 @@ def run(doUnitTests, show_plots, integratorCase):
     scObject.ModelTag = "spacecraftBody"
 
     # default case, RK4 is automatically setup, no extra code is needed
-    if integratorCase == "euler":
+    if integratorCase == "rkf45":
+        integratorObject = svIntegrators.svIntegratorRKF45(scObject)
+        scObject.setIntegrator(integratorObject)
+    elif integratorCase == "euler":
         integratorObject = svIntegrators.svIntegratorEuler(scObject)
         scObject.setIntegrator(integratorObject)
     elif integratorCase == "rk2":
         integratorObject = svIntegrators.svIntegratorRK2(scObject)
-        scObject.setIntegrator(integratorObject)
-    elif integratorCase == "rkf45":
-        integratorObject = svIntegrators.svIntegratorRKF45(scObject)
         scObject.setIntegrator(integratorObject)
 
     # add spacecraft object to the simulation process
@@ -253,13 +253,14 @@ def run(doUnitTests, show_plots, integratorCase):
                 , [4.614900659014343e6, -3.60224207689023e6, -3.837022825958977e6]
                 , [5.879095186201691e6, 3.561495655367985e6, -1.3195821703218794e6]
             ]
+
         if integratorCase == "rkf45":
             truePos = [
                 [-2816801.601023492, 5248174.846916147, 3677157.2646772973]
-                , [-6379400.583189211, -1468867.3527969904, 2480790.265929521]
-                , [-2230167.3300352595, -6410467.341067661, -1714612.7269653515]
-                , [4614825.371384772, -3602446.1553066857, -3837075.3102980503]
-                , [5879278.326923609, 3561255.294074021, -1319777.089191588]
+                , [-6379401.371821285, -1468864.3054099309, 2480791.986349233]
+                , [-2230174.3175259614, -6410466.966924664, -1714609.141476535]
+                , [4614818.453276067, -3602456.430939972, -3837076.421576209]
+                , [5879286.370257609, 3561242.508107331, -1319786.625981026]
             ]
         if integratorCase == "euler":
             truePos = [

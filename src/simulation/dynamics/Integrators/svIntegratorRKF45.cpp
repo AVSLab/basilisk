@@ -72,7 +72,7 @@ svIntegratorRKF45::svIntegratorRKF45(DynamicObject* dyn) : StateVecIntegrator(dy
 
     // Set the default values for absolute and relative tolerance
     this->absTol = 1e-8;
-    this->relTol = 1e-5;
+    this->relTol = 1e-4;
     
     return;
 }
