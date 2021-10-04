@@ -20,57 +20,30 @@ r"""
 Overview
 --------
 
-This script illustrates how to setup different integration methods for a basic 3-DOF orbit scenario.
+This script illustrates how to setup different variable time step integration methods for a basic 3-DOF orbit scenario.
+Both a fourth-order (RKF45) and a seventh-order (RKF78) integrators are used. For comparison, an RK4 integrator is also
+used.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
-      python3 scenarioIntegrators.py
+      python3 scenarioVariableTimeStepIntegrators.py
 
-The simulation layout is shown in the following illustration.  A single simulation process is created
-which contains the spacecraft object.  Gravity effectors are attached to the spacecraft dynamics to
-simulate the gravitational accelerations.  The spacecraft object provides the states that the integration
-module needs to perform the time integration.
-
-.. image:: /_images/static/test_scenarioIntegrators.svg
-   :align: center
-
-If :ref:`spacecraft`, or any other dynamics module, is created without specifying a particular
-integration type, the fixed time step 4th order Runge-Kutta method is used by default.  To invoke a
-different integration scheme, the following code is used before the dynamics module is added to the
-python task list:
-
-.. code-block:: python
-
-   integratorObject = svIntegrators.svIntegratorEuler(scObject)
-   scObject.setIntegrator(integratorObject)
-
-The first line invokes an instance of the desired state vector integration module, and provides
-the dynamics module (spacecraft() in this case) as the input.  This specifies to the integrator
-module which other module will provide the ``equationOfMotion()`` function to evaluate the derivatives of
-the state vector.  The send line ties the integration module to the dynamics module.  After that we are
-done.
-
-The integrator scenario script is setup to evaluate the default integration method (RK4), a first order
-Euler integration method, as well as a second order RK2 method.
-
-When the simulation completes a plot is shown for illustrating both the true and the numerically
-evaluated orbit.
-
+For more information on how to setup different integrators, see :ref:`scenarioIntegrators`. When the simulation
+completes, a plot is shown for illustrating both the true and the numerically evaluated orbit.
 
 Illustration of Simulation Results
 ----------------------------------
 
 ::
 
-    show_plots = True, integratorCase = {'rk4', 'rk2', 'euler'}
+    show_plots = True, integratorCase = {'rk4', rkf45', 'rkf78'}
 
-The following figure illustrates the resulting
-trajectories relative to the true trajectory using a very coarse integration time step of 120 seconds.
-The RK4 method still approximates the true orbit well, while the RK2 method is starting to show some visible
-errors. The first order Euler method provides a horrible estimate of the resulting trajectory, illustrating
-that much smaller time steps must be used with this method in this scenario.
+The following figure illustrates the resulting trajectories relative to the true trajectory using a very coarse
+integration time step of 600 seconds. The variable time step integrators still approximates the true orbit well, while
+the RK4 method is starting to show some visible errors, illustrating that much smaller time steps must be used with
+this method in this scenario.
 
-.. image:: /_images/Scenarios/scenarioIntegrators.svg
+.. image:: /_images/Scenarios/scenarioVariableTimeStepIntegrators.svg
    :align: center
 
 
@@ -126,13 +99,14 @@ def run(show_plots, integratorCase, relTol, absTol):
 
     Args:
         show_plots (bool): Determines if the script should display plots
-        integratorCase (bool): Specify if an external torque should be included
+        integratorCase (bool): Specify what type of integrator to use in the sim
         relTol (double): Specify the relative tolerance to use in the integration
         absTol (double): Specify the absolute tolerance to use in the integration
 
             =======  ============================
             String   Definition
             =======  ============================
+            'rk4'    RK4
             'rkf45'  RKF45
             'rkf78'  RKF78
             =======  ============================
@@ -155,7 +129,7 @@ def run(show_plots, integratorCase, relTol, absTol):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10 * 60.)
+    simulationTimeStep = macros.sec2nano(6000.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -169,13 +143,17 @@ def run(show_plots, integratorCase, relTol, absTol):
     if integratorCase == "rkf45":
         integratorObject = svIntegrators.svIntegratorRKF45(scObject)
         scObject.setIntegrator(integratorObject)
-    elif integratorCase == "rkf78":
-        integratorObject = svIntegrators.svIntegratorRKF78(scObject)
-        scObject.setIntegrator(integratorObject)
 
-    # set the relative and absolute tolerances
-    integratorObject.relTol = relTol
-    integratorObject.absTol = absTol
+        # set the relative and absolute tolerances
+        integratorObject.relTol = relTol
+        integratorObject.absTol = absTol
+    # elif integratorCase == "rkf78":
+    #     integratorObject = svIntegrators.svIntegratorRKF78(scObject)
+    #     scObject.setIntegrator(integratorObject)
+    #
+    #     # set the relative and absolute tolerances
+    #     integratorObject.relTol = relTol
+    #     integratorObject.absTol = absTol
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -195,12 +173,12 @@ def run(show_plots, integratorCase, relTol, absTol):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = 16e6
-    oe.e = 0.5
+    oe.a = 16e7
+    oe.e = 0.8
     oe.i = 33.3 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
     oe.omega = 347.8 * macros.D2R
-    oe.f = 135 * macros.D2R
+    oe.f = -90 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     oe = orbitalMotion.rv2elem(mu, rN, vN)
     #
@@ -248,8 +226,8 @@ def run(show_plots, integratorCase, relTol, absTol):
     #   plot the results
     #
     np.set_printoptions(precision=16)
-    if integratorCase == "rkf45":
-        plt.close("all")  # clears out plots from earlier test runs
+    # if integratorCase == "rkf45":
+    #     plt.close("all")  # clears out plots from earlier test runs
 
     # draw orbit in perifocal frame
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
@@ -266,13 +244,14 @@ def run(show_plots, integratorCase, relTol, absTol):
     # draw the actual orbit
     rData = []
     fData = []
-    labelStrings = ("rkf45", "rkf78")
+    # labelStrings = ("rk4", "rkf45", "rkf78")
+    labelStrings = ("rk4", "rkf45")
     for idx in range(0, len(posData)):
         oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
     plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000
-             , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase), 2)
+             , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase), len(labelStrings))
              , label=integratorCase
              , linewidth=3.0
              )
@@ -296,10 +275,8 @@ def run(show_plots, integratorCase, relTol, absTol):
     if show_plots:
         plt.show()
 
-    # # close the plots being saved off to avoid over-writing old and new figures
-    # plt.close("all")
-
-    if integratorCase == "rkf78":
+    # if integratorCase == "rkf78":
+    if integratorCase == "rkf45":
         plt.close("all")
 
     # each test method requires a single assert method to be called
@@ -314,6 +291,6 @@ def run(show_plots, integratorCase, relTol, absTol):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        'rkf45',  # integrator case(0 - rkf45, 1 - rkf78)
+        'rkf45',  # integrator case(0 - rk4, 1 - rkf45, 2 - rkf78)
         1e-5,  # relative tolerance
-        1e-8)  #  absolute tolerance
+        1e-8)  # absolute tolerance
