@@ -100,8 +100,6 @@ def run(show_plots, integratorCase, relTol, absTol):
     Args:
         show_plots (bool): Determines if the script should display plots
         integratorCase (bool): Specify what type of integrator to use in the sim
-        relTol (double): Specify the relative tolerance to use in the integration
-        absTol (double): Specify the absolute tolerance to use in the integration
 
             =======  ============================
             String   Definition
@@ -110,6 +108,9 @@ def run(show_plots, integratorCase, relTol, absTol):
             'rkf45'  RKF45
             'rkf78'  RKF78
             =======  ============================
+
+        relTol (double): Specify the relative tolerance to use in the integration
+        absTol (double): Specify the absolute tolerance to use in the integration
 
     """
 
