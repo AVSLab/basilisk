@@ -26,12 +26,12 @@ The initial conditions are specified through $\bm x_{0} = \bm x(t_{0})$.  In int
 \subsubsection{4th Order Runge Kutta - Default Integrator}
 A standard fixed time step 4th order Runge Kutta integrator is enabled by default.  The 4 $k_{i}$ values are defined as
 \begin{align}
-	\bm k_{1} &= \bm f(t_{n}, \bm x_{n}) \\
-	\bm k_{2} &= \bm f(t_{n} + \frac{h}{2}, \bm x_{n} + \frac{h}{2} \bm k_{1}) \\
-	\bm k_{3} &= \bm f(t_{n} + \frac{h}{2}, \bm x_{n} + \frac{h}{2} \bm k_{2}) \\
-	\bm k_{4} &= \bm f(t_{n} + h, \bm x_{n} + h \bm k_{3}) 
+	\bm k_{1} &= \bm f\left(t_{n}, \bm x_{n}\right) \\
+	\bm k_{2} &= \bm f\left(t_{n} + \frac{h}{2}, \bm x_{n} + \frac{h}{2} \bm k_{1}\right) \\
+	\bm k_{3} &= \bm f\left(t_{n} + \frac{h}{2}, \bm x_{n} + \frac{h}{2} \bm k_{2}\right) \\
+	\bm k_{4} &= \bm f\left(t_{n} + h, \bm x_{n} + h \bm k_{3}\right) 
 \end{align}
-The states at the next integration time $t_{n+1} = t_{n} + h$ is
+The state at the next integration time $t_{n+1} = t_{n} + h$ is
 \begin{equation}
 	\bm x_{n+1} = \bm x_{n} + \frac{h}{6} \left(
 		\bm k_{1} + 2 \bm k_{2} + 2 \bm k_{3} + \bm k_{4}
@@ -45,7 +45,7 @@ A 2nd order Runge-Kutta method is implemented through Heun's method.\footnote{\u
 	\bm k_{1} &= \bm f(t_{n}, \bm x_{n}) \\
 	\bm k_{2} &= \bm f(t_{n} + h, \bm x_{n} + h \bm k_{1}) 
 \end{align}
-The states at the next integration time $t_{n+1} = t_{n} + h$ is
+The state at the next integration time $t_{n+1} = t_{n} + h$ is
 \begin{equation}
 	\bm x_{n+1} = \bm x_{n} + \frac{h}{2} \left(
 		\bm k_{1} +  \bm k_{2}
@@ -58,8 +58,49 @@ A first order Runge-Kutta method is implemented through Euler's method. The one 
 \begin{align}
 	\bm k_{1} &= \bm f(t_{n}, \bm x_{n}) 
 \end{align}
-The states at the next integration time $t_{n+1} = t_{n} + h$ is
+The state at the next integration time $t_{n+1} = t_{n} + h$ is
 \begin{equation}
 	\bm x_{n+1} = \bm x_{n} + h
 		\bm k_{1}
 \end{equation}
+
+\subsubsection{4th Order Runge Kutta Fehlberg Variable Time Step}
+A fourth order Runge-Kutta-Fehlberg is implemented. It propagates the state using a fourth order integration method, while comparing the resulting truncation error with a fifth order integration method. The $k_i$ values are defined as
+\begin{align}
+	\bm k_1 &= \bm f\left(t_{n}, \bm x_{n}\right) \label{eq:k1_RKF45}\\
+	\bm k_2 &= \bm f\left(t_{n} + \frac{h}{4}, \bm x_{n} + \frac{h}{4} \bm k_1\right) \\
+	\bm k_3 &= \bm f\left(t_{n} + \frac{3h}{8}, \bm x_{n} + \frac{3h}{32} \bm k_1 + \frac{9h}{32} \bm k_2\right) \\
+	\bm k_4 &= \bm f\left(t_{n} + \frac{12h}{13}, \bm x_{n} + \frac{1932h}{2197} \bm k_1 - \frac{7200h}{2197} \bm k_2 + \frac{7296h}{2197} \bm k_3\right) \\
+	\bm k_5 &= \bm f\left(t_{n} + h, \bm x_{n} + \frac{439h}{216} \bm k_1 - 8h \bm k_2 + \frac{3680h}{513} \bm k_3 - \frac{8450h}{4104} \bm k_4\right) \\
+	\bm k_6 &= \bm f\left(t_{n} + \frac{h}{2}, \bm x_{n} - \frac{8h}{27} \bm k_1 + 2h \bm k_2 - \frac{3544h}{2565} \bm k_3 + \frac{1859h}{4104} \bm k_4 - \frac{11h}{40} \bm k_5\right) \label{eq:k6_RKF45}
+\end{align}
+The state at the next integration time $t_{n+1} = t_{n} + h$ is
+\begin{equation}
+	\bm x_{n+1} = \bm x_{n} + h \left(
+		\frac{25}{216} \bm k_{1} + \frac{1408}{2565} \bm k_{3} + \frac{2197}{4104} \bm k_{4} - \frac{1}{5} \bm k_{5} \label{eq:PropagateState_RKF45}
+	\right)
+\end{equation}
+The estimate for the relative truncation error is
+\begin{equation}
+	\bm \delta = \frac{\left\|
+		\frac{1}{360} \bm k_{1} - \frac{128}{4275} \bm k_{3} - \frac{2197}{75240} \bm k_{4} - \frac{1}{50} \bm k_{5} + \frac{2}{55} \bm k_{6} \label{eq:Error_RKF45}
+	\right\|}{\|\bm x_n\|}
+\end{equation}
+The updated time step is calculated through the following equation
+\begin{equation}
+	h_{\text{new}}=0.9h\left(\frac{\bm \epsilon}{\bm \delta}\right)^{1/5}, \label{eq:h_RKF45}
+\end{equation}
+where $\bm \epsilon$ corresponds to the relative tolerance. If the norm of the state is smaller than the absolute tolerance, the relative error is calculated with respect to that absolute tolerance instead of the true vector norm. The time step is scaled by $0.9$ for robustness, so that the integrator will not use values that barely pass through the relative tolerance.\\
+The algorithm for the variable time step integrator works as follows:
+\begin{enumerate}
+	\item For every state vector, compute the $\bm k_i$ integration weights through equations \ref{eq:k1_RKF45}-\ref{eq:k6_RKF45}.
+	\item Propagate the state to the next time step using those weights using equation \ref{eq:PropagateState_RKF45}.
+	\item For every state, calculate the relative truncation error (\ref{eq:Error_RKF45}) and store the largest value of all the state errors.
+	\item Compute the new time step through \ref{eq:h_RKF45}.
+	\item If the relative truncation error $\bm \delta$ is larger than the relative tolerance $\bm \epsilon$, repeat steps 1-4 with the new time step until it does.
+	\item Update the integration time with the time step used during integration: $t_{n+1} = t_n + h$.
+	\item Update the integration time step with the new time step: $h = h_{\text{new}}$.
+	\item Check if the new time step would overpass the final integration time. If it does, change it so that $h = t_f - t_{n+1}$.
+	\item Go back to step 1 until the final integration time has been reached.
+\end{enumerate}
+
