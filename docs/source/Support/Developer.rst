@@ -9,6 +9,7 @@ The following support files help with writing Basilisk modules.
    :maxdepth: 2
 
    Developer/CodingGuidlines
+   Developer/Debugging
    Developer/makeBskFork
    Developer/makingNewBskModule
    Developer/addSphinxDoc
