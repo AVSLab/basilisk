@@ -69,6 +69,7 @@
             PyObject *outObject = PyFloat_FromDouble((double) $1[i]);
             PyList_Append($result,outObject);
             Py_DECREF(outObject);
+            Py_DECREF(locOutObj);
         }
         else
         {
