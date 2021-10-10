@@ -34,7 +34,7 @@ Version |release|
 - updated the installation script to function with the latest ``conan`` program and the recent
   ``conan`` repo changes.  Note, you will have to delete the ``.conan`` folder in your home
   directory to create a fresh copy of the software dependencies.
-- added a support page for how to use the Debugging tool in C/C++ modules.
+- added a Developer support page :ref:`debugging`.
 
 
 
