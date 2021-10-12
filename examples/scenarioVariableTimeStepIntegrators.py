@@ -148,13 +148,13 @@ def run(show_plots, integratorCase, relTol, absTol):
         # set the relative and absolute tolerances
         integratorObject.relTol = relTol
         integratorObject.absTol = absTol
-    # elif integratorCase == "rkf78":
-    #     integratorObject = svIntegrators.svIntegratorRKF78(scObject)
-    #     scObject.setIntegrator(integratorObject)
-    #
-    #     # set the relative and absolute tolerances
-    #     integratorObject.relTol = relTol
-    #     integratorObject.absTol = absTol
+    elif integratorCase == "rkf78":
+        integratorObject = svIntegrators.svIntegratorRKF78(scObject)
+        scObject.setIntegrator(integratorObject)
+
+        # set the relative and absolute tolerances
+        integratorObject.relTol = relTol
+        integratorObject.absTol = absTol
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -245,8 +245,7 @@ def run(show_plots, integratorCase, relTol, absTol):
     # draw the actual orbit
     rData = []
     fData = []
-    # labelStrings = ("rk4", "rkf45", "rkf78")
-    labelStrings = ("rk4", "rkf45")
+    labelStrings = ("rk4", "rkf45", "rkf78")
     for idx in range(0, len(posData)):
         oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
         rData.append(oeData.rmag)
@@ -292,6 +291,6 @@ def run(show_plots, integratorCase, relTol, absTol):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        'rkf45',  # integrator case(0 - rk4, 1 - rkf45, 2 - rkf78)
+        'rkf78',  # integrator case(0 - rk4, 1 - rkf45, 2 - rkf78)
         1e-5,  # relative tolerance
         1e-8)  # absolute tolerance

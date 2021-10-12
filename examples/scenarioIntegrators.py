@@ -168,6 +168,9 @@ def run(show_plots, integratorCase):
     if integratorCase == "rkf45":
         integratorObject = svIntegrators.svIntegratorRKF45(scObject)
         scObject.setIntegrator(integratorObject)
+    if integratorCase == "rkf78":
+        integratorObject = svIntegrators.svIntegratorRKF78(scObject)
+        scObject.setIntegrator(integratorObject)
     elif integratorCase == "euler":
         integratorObject = svIntegrators.svIntegratorEuler(scObject)
         scObject.setIntegrator(integratorObject)
@@ -265,13 +268,13 @@ def run(show_plots, integratorCase):
     # draw the actual orbit
     rData = []
     fData = []
-    labelStrings = ("rk4", "rkf45", "euler", "rk2")
+    labelStrings = ("rk4", "rkf45", "rkf78", "euler", "rk2")
     for idx in range(0, len(posData)):
         oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
     plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000
-             , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase), 4)
+             # , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase), len(labelStrings))
              , label=integratorCase
              , linewidth=3.0
              )
@@ -313,4 +316,4 @@ def run(show_plots, integratorCase):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        'rkf45')  # integrator case(0 - rk4, 1 - rkf45, 2 - euler, 3 - rk2)
+        'rkf78')  # integrator case(0 - rk4, 1 - rkf45, 2 - rkf78, 3 - euler, 4 - rk2)

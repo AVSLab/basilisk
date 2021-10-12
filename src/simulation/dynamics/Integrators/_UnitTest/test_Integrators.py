@@ -53,7 +53,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # @pytest.mark.xfail(True, reason="Scott's brain no-worky\n")
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("integratorCase", ["rk4", "rkf45", "euler", "rk2"])
+@pytest.mark.parametrize("integratorCase", ["rk4", "rkf45", "rkf78", "euler", "rk2"])
 def test_scenarioIntegrators(show_plots, integratorCase):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
@@ -96,6 +96,9 @@ def run(doUnitTests, show_plots, integratorCase):
     # default case, RK4 is automatically setup, no extra code is needed
     if integratorCase == "rkf45":
         integratorObject = svIntegrators.svIntegratorRKF45(scObject)
+        scObject.setIntegrator(integratorObject)
+    if integratorCase == "rkf78":
+        integratorObject = svIntegrators.svIntegratorRKF78(scObject)
         scObject.setIntegrator(integratorObject)
     elif integratorCase == "euler":
         integratorObject = svIntegrators.svIntegratorEuler(scObject)
@@ -190,13 +193,13 @@ def run(doUnitTests, show_plots, integratorCase):
     # draw the actual orbit
     rData = []
     fData = []
-    labelStrings = ("rk4", "rkf45", "euler", "rk2")
+    labelStrings = ("rk4", "rkf45", "rkf78", "euler", "rk2")
     for idx in range(0, len(posData)):
         oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
     plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000
-             , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase) + 1, 4)
+             # , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase) + 1, len(labelStrings))
              , label=integratorCase
              , linewidth=3.0
              )
@@ -253,7 +256,6 @@ def run(doUnitTests, show_plots, integratorCase):
                 , [4.614900659014343e6, -3.60224207689023e6, -3.837022825958977e6]
                 , [5.879095186201691e6, 3.561495655367985e6, -1.3195821703218794e6]
             ]
-
         if integratorCase == "rkf45":
             truePos = [
                 [-2816801.601023492, 5248174.846916147, 3677157.2646772973]
@@ -261,6 +263,14 @@ def run(doUnitTests, show_plots, integratorCase):
                 , [-2230174.3175259614, -6410466.966924664, -1714609.141476535]
                 , [4614818.453276067, -3602456.430939972, -3837076.421576209]
                 , [5879286.370257609, 3561242.508107331, -1319786.625981026]
+            ]
+        if integratorCase == "rkf78":
+            truePos = [
+                [-2816801.601023492, 5248174.846916147, 3677157.2646772973]
+                , [-6379401.371832086, -1468864.3054097842, 2480791.9863545913]
+                , [-2230174.317580403, -6410466.966948945, -1714609.1414605032]
+                , [4614818.45321768, -3602456.431072683, -3837076.4216056713]
+                , [5879286.370365726, 3561242.507948514, -1319786.6261035257]
             ]
         if integratorCase == "euler":
             truePos = [
@@ -321,4 +331,4 @@ def run(doUnitTests, show_plots, integratorCase):
 if __name__ == "__main__":
     run(True,  # do unit tests
         True,  # show_plots
-        'rkf45')  # integrator case(0 - RK4, 1 - RKF45, 2 - Euler, 3 - RK2)
+        'rkf78')  # integrator case(0 - RK4, 1 - RKF45, 2 - Euler, 3 - RK2)

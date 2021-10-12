@@ -27,6 +27,10 @@ If the 4th order variable time step integration method is desired, use instead
 \begin{verbatim}
 	integratorObject = svIntegrators.svIntegratorRKF45(scObject)
 \end{verbatim}
+If the 7th order variable time step integration method is desired, use instead
+\begin{verbatim}
+	integratorObject = svIntegrators.svIntegratorRKF78(scObject)
+\end{verbatim}
 
 Next, to connect this integrator module to the {\tt DynamicObject} instance (i.e. {\tt spacecraft()} called {\tt scObject}, use the following code
 \begin{verbatim}
