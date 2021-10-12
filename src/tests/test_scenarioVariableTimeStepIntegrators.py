@@ -57,7 +57,7 @@ def test_scenarioIntegrators(show_plots):
     testMessages = []  # create empty array to store test log messages
 
     # for integratorCase in ["rk4", "rkf45", "rkf78"]:
-    for integratorCase in ["rk4", "rkf45"]:
+    for integratorCase in ["rk4", "rkf45", "rkf78"]:
 
         # each test method requires a single assert method to be called
         posData, figureList = scenarioVariableTimeStepIntegrators.run(show_plots, integratorCase, 1e-4, 1e-8)
@@ -74,7 +74,6 @@ def test_scenarioIntegrators(show_plots):
                 , [-1.9303770991326889e+08, -1.5676982514195076e+08,  2.5889371222740099e+07]
                 , [-9.5984840659665108e+07, -1.6150850904769760e+08, -2.3710817876644962e+07]
             ]
-            print(dataPosRed)
         if integratorCase == "rkf45":
             truePos = [
                 [2.6965319797723856e+07, -4.0438014777803928e+07, -3.0909521009497888e+07]
@@ -82,14 +81,12 @@ def test_scenarioIntegrators(show_plots):
                 , [-2.3287921820332012e+08, -1.5541450266266349e+08,  4.5992609018449008e+07]
                 , [-1.8429335189943227e+08, -1.9670820137819085e+08,  4.1211605646267980e+06]
             ]
-            print(dataPosRed)
         if integratorCase == "rkf78":
             truePos = [
-                [6343122.681395919, 396501.78632660967, -2932539.2914087307]
-                , [6385759.757220186, 1232061.6219036756, -2587584.918333401]
-                , [6321657.127943617, 2047027.1643309772, -2199378.3835694017]
-                , [6151884.468695515, 2827775.46506309, -1774408.027800635]
-                , [5879278.326923609, 3561255.294074021, -1319777.089191588]
+                [2.6965319797723856e+07, -4.0438014777803928e+07, -3.0909521009497888e+07]
+                , [-1.9213620487859124e+08, -5.6231399937485360e+07, 6.9466655120191082e+07]
+                , [-2.3288519890219730e+08, -1.5542401305950305e+08, 4.5991373747153923e+07]
+                , [-1.8431058338898057e+08, -1.9672328628053436e+08, 4.1229939645756241e+06]
             ]
 
     # compare the results to the truth values
