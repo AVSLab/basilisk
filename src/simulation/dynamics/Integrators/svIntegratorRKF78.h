@@ -34,6 +34,7 @@ public:
     double alphaMatrix[13];
     double betaMatrix[13][12];
     double chMatrix[13];
+    double ctMatrix[13];
     double kMatrix[13];
 };
 

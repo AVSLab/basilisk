@@ -27,6 +27,7 @@ svIntegratorRKF78::svIntegratorRKF78(DynamicObject* dyn) : StateVecIntegrator(dy
     memset(alphaMatrix, 0x0, sizeof(alphaMatrix));
     memset(betaMatrix, 0x0, sizeof(betaMatrix));
     memset(chMatrix, 0x0, sizeof(chMatrix));
+    memset(ctMatrix, 0x0, sizeof(ctMatrix));
     
     chMatrix[5] = 34.0 / 105;
     chMatrix[6]= 9.0 / 35;
@@ -35,6 +36,11 @@ svIntegratorRKF78::svIntegratorRKF78(DynamicObject* dyn) : StateVecIntegrator(dy
     chMatrix[9]= chMatrix[8];
     chMatrix[11] = 41.0 / 840;
     chMatrix[12]= chMatrix[11];
+
+    ctMatrix[0] = -41.0 / 840.0;
+    ctMatrix[10] = ctMatrix[0];
+    ctMatrix[11] = 41.0 / 840.0;
+    ctMatrix[12] = ctMatrix[11];
     
     alphaMatrix[1] = 2.0/27.0;
     alphaMatrix[2] = 1.0/9.0;
