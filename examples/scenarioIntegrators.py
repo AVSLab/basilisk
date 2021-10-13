@@ -134,9 +134,10 @@ def run(show_plots, integratorCase):
             String   Definition
             =======  ============================
             'rk4'    RK4 - default
+            'rkf45'  RKF45
+            'rkf78'  RKF78
             'rk2'    RK2
             'euler'  Euler or RK1
-            'rkf45'  RKF45
             =======  ============================
 
     """
