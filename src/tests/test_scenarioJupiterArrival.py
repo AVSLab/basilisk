@@ -66,7 +66,7 @@ def test_scenarioBasicOrbit(show_plots):
         testMessages.append("scenarioJupiterArrival  test are failed.")
 
     # compare the results to the truth values
-    accuracy = 3.0  # meters
+    accuracy = 1.5 
 
     if posData > accuracy:
         testFailCount += 1

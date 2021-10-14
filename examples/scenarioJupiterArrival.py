@@ -32,16 +32,21 @@ second chunk starts after the spacecraft performs the required maneuver and runs
 nearly one circular revolution around Jupiter.
 
 The desired parking orbit radius is first specified and the resulting hyperbolic arrival orbit and required delta V
-is calculated. The hyperbolic time equation is used to calculate the simulation time for the first chunk.
-The delta V is then added to the current spacecraft velocity at the end of the second chunk.
+is calculated. The hyperbolic time equation is used to calculate the simulation time for the first chunk
 
+.. math::
+    N = \sqrt{\frac{\mu}{(-a)^{3}}}(t-t_p) = etan(\zeta)-ln \left[ tan \left( \frac{\zeta}{2} + \frac{\pi}{4} \right) \right]
+    
+where the orbit equation in terms of :math:`\zeta` is :math:`r = a(1-esec(\zeta))` and :math:`\zeta = cos^{-1}\left( \frac{ea}{a-r}\right)`.
+
+The delta V is then added to the current spacecraft velocity at the end of the second chunk.
 
 How to setup a basic spacecraft simulation is shown in the earlier tutorial :ref:`scenarioBasicOrbit`.
 Simulating a Hohmann transfer is illustrated in :ref:`scenarioOrbitManeuver`.
 Setting up multiple gravitational bodies is shown in :ref:`scenarioOrbitMultiBody`
 while providing pseudo-SPICE messages is laid out in :ref:`scenarioCSS`.
 
-This simulation combines all these techniques as well as implementing custom gravitational bodies.
+This simulation combines all these techniques as well as implementing custom gravitational bodies (Leah future work).
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
@@ -244,7 +249,7 @@ def run(show_plots):
     if show_plots:
         plt.show()
 
-    # close the plots being saved off to avoid over-writing old and new figures
+    # Close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
     return finalDiff, figureList
@@ -284,12 +289,14 @@ def plotOrbits(timeAxis, posData, velData, oe, mu, jupiter, a_park, e_park):
     planetColor = '#008800'
     planetRadius = jupiter.radEquator / 1000
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
+    
     # Draw the actual orbit from pulled data (DataRec)
     plt.plot(posData[:,0] / 1000., posData[:,1] / 1000., color='orangered', label='Simulated Flight')
     plt.xlabel('Jupiter Velocity Direction [km]')
     plt.ylabel('Anti-Sunward Direction [km]')
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
+    
     # Draw desired parking orbit
     fData = np.linspace(0, 2*np.pi, 100)
     rData = []
@@ -303,7 +310,7 @@ def plotOrbits(timeAxis, posData, velData, oe, mu, jupiter, a_park, e_park):
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
     
-    finalDiff = 2
+    finalDiff = 1
     
     return figureList, finalDiff
     
