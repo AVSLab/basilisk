@@ -31,33 +31,33 @@ using namespace std;
 svIntegratorRKF45::svIntegratorRKF45(DynamicObject* dyn) : StateVecIntegrator(dyn)
 {
     // Initialize the matrices to 0
-    memset(aMatrix, 0x0, sizeof(aMatrix));
-    memset(bMatrix, 0x0, sizeof(bMatrix));
+    memset(alphaMatrix, 0x0, sizeof(alphaMatrix));
+    memset(betaMatrix, 0x0, sizeof(betaMatrix));
     memset(chMatrix, 0x0, sizeof(chMatrix));
     memset(ctMatrix, 0x0, sizeof(ctMatrix));
 
     // Populate the coefficient matrices 
-    aMatrix[1] = 1.0 / 4.0;
-    aMatrix[2] = 3.0 / 8.0;
-    aMatrix[3] = 12.0 / 13.0;
-    aMatrix[4] = 1.0;
-    aMatrix[5] = 1.0 / 2.0;
+    alphaMatrix[1] = 1.0 / 4.0;
+    alphaMatrix[2] = 3.0 / 8.0;
+    alphaMatrix[3] = 12.0 / 13.0;
+    alphaMatrix[4] = 1.0;
+    alphaMatrix[5] = 1.0 / 2.0;
 
-    bMatrix[1][0] = 1.0 / 4.0;
-    bMatrix[2][0] = 3.0 / 32.0;
-    bMatrix[2][1] = 9.0 / 32.0;
-    bMatrix[3][0] = 1932.0 / 2197.0;
-    bMatrix[3][1] = -7200.0 / 2197.0;
-    bMatrix[3][2] = 7296.0 / 2197.0;
-    bMatrix[4][0] = 439.0 / 216.0;
-    bMatrix[4][1] = -8.0;
-    bMatrix[4][2] = 3680.0 / 513.0;
-    bMatrix[4][3] = -845.0 / 4104.0;
-    bMatrix[5][0] = -8.0 / 27.0;
-    bMatrix[5][1] = 2.0;
-    bMatrix[5][2] = -3544.0 / 2565.0;
-    bMatrix[5][3] = 1859.0 / 4104.0;
-    bMatrix[5][4] = -11.0 / 40.0;
+    betaMatrix[1][0] = 1.0 / 4.0;
+    betaMatrix[2][0] = 3.0 / 32.0;
+    betaMatrix[2][1] = 9.0 / 32.0;
+    betaMatrix[3][0] = 1932.0 / 2197.0;
+    betaMatrix[3][1] = -7200.0 / 2197.0;
+    betaMatrix[3][2] = 7296.0 / 2197.0;
+    betaMatrix[4][0] = 439.0 / 216.0;
+    betaMatrix[4][1] = -8.0;
+    betaMatrix[4][2] = 3680.0 / 513.0;
+    betaMatrix[4][3] = -845.0 / 4104.0;
+    betaMatrix[5][0] = -8.0 / 27.0;
+    betaMatrix[5][1] = 2.0;
+    betaMatrix[5][2] = -3544.0 / 2565.0;
+    betaMatrix[5][3] = 1859.0 / 4104.0;
+    betaMatrix[5][4] = -11.0 / 40.0;
 
     chMatrix[0] = 25.0 / 216.0;
     chMatrix[2] = 1408.0 / 2565.0;
@@ -148,12 +148,12 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
                 {
                     for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = kMatrix[j].stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
                     {
-                        it->second.state = it->second.state + hInt * bMatrix[i][j] * itOut->second.stateDeriv;
+                        it->second.state = it->second.state + hInt * betaMatrix[i][j] * itOut->second.stateDeriv;
                     }
                 }
 
                 // Integrate with the appropriate time step using the A matrix coefficients
-                dynPtr->equationsOfMotion(t + hInt * aMatrix[i]);
+                dynPtr->equationsOfMotion(t + hInt * alphaMatrix[i]);
 
                 // Save the current k coefficient
                 kMatrix.push_back(dynPtr->dynManager.getStateVector());
@@ -209,5 +209,3 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
     
     return;
 }
-
-

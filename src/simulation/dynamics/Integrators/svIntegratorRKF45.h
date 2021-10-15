@@ -31,8 +31,8 @@ public:
     svIntegratorRKF45(DynamicObject* dyn); //!< class method
     virtual ~svIntegratorRKF45();
     virtual void integrate(double currentTime, double timeStep); //!< class method
-    double aMatrix[6];      //!< matrix of coefficients for time steps
-    double bMatrix[6][5];   //!< matrix of coefficients for state steps
+    double alphaMatrix[6];      //!< matrix of coefficients for time steps
+    double betaMatrix[6][5];   //!< matrix of coefficients for state steps
     double chMatrix[6];      //!< matrix of coefficients for the result
     double ctMatrix[6];      //!< matrix of coefficients for the error
     double kMatrix[6];      //!< matrix of the k coefficients
