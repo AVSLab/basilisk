@@ -275,8 +275,7 @@ def run(show_plots, integratorCase, relTol, absTol):
     if show_plots:
         plt.show()
 
-    # if integratorCase == "rkf78":
-    if integratorCase == "rkf45":
+    if integratorCase == "rkf78":
         plt.close("all")
 
     # each test method requires a single assert method to be called

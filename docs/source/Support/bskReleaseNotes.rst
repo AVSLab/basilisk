@@ -39,6 +39,7 @@ Version |release|
   Stephen Ritter and Toney for tracking down this issue.
 - added a new orbit maneuver example :ref:`scenarioJupiterArrival`
 - made SWIG interface to the MRP derivative variable
+- added two new variable time step integrators. See :ref:`svIntegratorRKF45` and :ref:`svIntegratorRKF78`.
 
 
 

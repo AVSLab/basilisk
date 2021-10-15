@@ -31,11 +31,11 @@ public:
     svIntegratorRKF78(DynamicObject* dyn);            //!< class method
     virtual ~svIntegratorRKF78();
     virtual void integrate(double currentTime, double timeStep); //!< class method
-    double alphaMatrix[13];
-    double betaMatrix[13][12];
-    double chMatrix[13];
-    double ctMatrix[13];
-    double kMatrix[13];
+    double alphaMatrix[13];         //!< matrix of coefficients for time steps
+    double betaMatrix[13][12];      //!< matrix of coefficients for state steps
+    double chMatrix[13];            //!< matrix of coefficients for the result
+    double ctMatrix[13];            //!< matrix of coefficients for the error
+    double kMatrix[13];             //!< matrix of the k coefficients
 
     double absTol;      //!< absolute tolerance
     double relTol;      //!< relative tolerance
