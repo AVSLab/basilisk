@@ -109,6 +109,10 @@ svIntegratorRKF78::svIntegratorRKF78(DynamicObject* dyn) : StateVecIntegrator(dy
     betaMatrix[11][9] = 6.0 / 41;
     betaMatrix[12][9] = 12.0 / 41;
     betaMatrix[12][11] = 1.0;
+
+    // Set the default values for absolute and relative tolerance
+    this->absTol = 1e-8;
+    this->relTol = 1e-4;
     
     return;
 }
@@ -118,43 +122,130 @@ svIntegratorRKF78::~svIntegratorRKF78()
     return;
 }
 
+
+/*<!
+ Implements a 7th order Runge Kutta Fehlberg variable time step integration method
+ */
 void svIntegratorRKF78::integrate(double currentTime, double timeStep)
 {
-    
-    StateVector stateOut;
-    StateVector stateInit;
-    std::vector<StateVector> kMatrix;
+    StateVector stateOut;  // output state vector
+    StateVector stateInit;  // initial state vector
+    StateVector errorMatrix;  // error state vector
+    std::vector<StateVector> kMatrix;  // matrix of k coefficients
     std::map<std::string, StateData>::iterator it;
     std::map<std::string, StateData>::iterator itOut;
     std::map<std::string, StateData>::iterator itInit;
-    stateOut = dynPtr->dynManager.getStateVector();
-    stateInit = dynPtr->dynManager.getStateVector();
-    kMatrix.clear(); //Clearing out the matrix and beginning to populate
-    
-    for(uint64_t i=0; i<13; i++)
-    {
-        for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itInit++)
-        {
-            it->second.state = itInit->second.state;
-        }
-        for(uint64_t j=0; j<i; j++)
-        {
-            for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut=kMatrix[j].stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
+    std::map<std::string, StateData>::iterator itkMatrix;
+    std::map<std::string, StateData>::iterator itError;
+    stateOut = dynPtr->dynManager.getStateVector();  // copy current state variables
+    stateInit = dynPtr->dynManager.getStateVector();  // copy current state variables
+    errorMatrix = dynPtr->dynManager.getStateVector();  // copy current state variables
+    double h = timeStep;  // updated variable time step that depends on the relative error and the relative tolerance
+    double t = currentTime;  // integration time
+    double hInt;  // time step used for the current integration loop
+    double relError;  // relative error for the current state variable
+    double maxRelError;  // largest relative error of all the state variables
+    double scaleFactor = 0.9;  // scale factor used for robustness. If the error and the tolerance are very close, this scale factor decreases the time step to improve performance
+
+    while (abs(t - currentTime - timeStep) > 1e-12) {
+
+        // Enter the loop
+        maxRelError = 10 * relTol;
+
+        // Time step refinement loop
+        while (maxRelError > relTol) {
+
+            // Reset the maximum relative error
+            maxRelError = 0;
+
+            // Reset the time step for integration
+            hInt = h;
+
+            // Reset the k matrix
+            kMatrix.clear();
+
+            // Compute the equations of motion for t
+            dynPtr->equationsOfMotion(t);
+
+            // Reset the ouput and error vectors
+            for (itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(), itError = errorMatrix.stateMap.begin(); itOut != stateOut.stateMap.end(); itOut++, itInit++, itError++)
             {
-                it->second.state = it->second.state + timeStep*betaMatrix[i][j]*itOut->second.stateDeriv;
-                
+                itOut->second.state = itInit->second.state;
+                itError->second.state.setZero();
             }
-            
+
+            // Loop through all 13 coefficients (k1 through k13)
+            for (uint64_t i = 0; i < 13; i++)
+            {
+                // Initialize the state iterators. The state variables are defined in a dictionary and are pulled and populated one by one
+                for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itInit++)
+                {
+                    it->second.state = itInit->second.state;
+                }
+
+                // Loop through the B matrix coefficients that define the point of integration
+                for (uint64_t j = 0; j < i; j++)
+                {
+                    for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = kMatrix[j].stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
+                    {
+                        it->second.state = it->second.state + hInt * betaMatrix[i][j] * itOut->second.stateDeriv;
+                    }
+                }
+
+                // Integrate with the appropriate time step using the A matrix coefficients
+                dynPtr->equationsOfMotion(t + hInt * alphaMatrix[i]);
+
+                // Save the current k coefficient
+                kMatrix.push_back(dynPtr->dynManager.getStateVector());
+
+                // Update the state at the end of the current integration step
+                for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
+                {
+                    itOut->second.state += hInt * chMatrix[i] * it->second.stateDeriv;
+                }
+
+                // Update the current error vector
+                for (itkMatrix = kMatrix[i].stateMap.begin(), itError = errorMatrix.stateMap.begin(); itkMatrix != kMatrix[i].stateMap.end(); itkMatrix++, itError++)
+                {
+                    // Update the error vector with the appropriate coefficients
+                    itError->second.state += hInt * ctMatrix[i] * itkMatrix->second.stateDeriv;
+                }
+            }
+
+            // Calculate the relative error. The error is calculated using the norm of each state variable
+            for (it = stateOut.stateMap.begin(), itError = errorMatrix.stateMap.begin(); it != stateOut.stateMap.end(); it++, itError++)
+            {
+                // Check if the norm is smaller than the absolute tolerance. If it is, calculate the error relative to the absolute tolerance instead
+                if (it->second.state.norm() < this->absTol)
+                    relError = itError->second.state.norm() / this->absTol;
+                else {
+                    relError = itError->second.state.norm() / it->second.state.norm();
+                }
+
+                // Save the maximum relative error to use on the time step refinement
+                if (maxRelError < relError) {
+                    maxRelError = relError;
+                }
+            }
+
+            // Recalculate the time step. If the relative error is larger than the relative tolerance, then decrease the time step and vice-versa.
+            h *= scaleFactor * pow(this->relTol / maxRelError, 0.2);
         }
-        dynPtr->equationsOfMotion(currentTime+timeStep*alphaMatrix[i]);
-        kMatrix.push_back(dynPtr->dynManager.getStateVector());
-        for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++)
-        {
-            itOut->second.state  = itOut->second.state + timeStep*chMatrix[i]*it->second.stateDeriv;
+
+        // Update the entire state vector after integration
+        dynPtr->dynManager.updateStateVector(stateOut);
+
+        // Update the initial state
+        stateInit = dynPtr->dynManager.getStateVector();
+
+        // Update the time
+        t += hInt;
+
+        // Check for overpassing time
+        if (t + h > currentTime + timeStep) {
+            h = currentTime + timeStep - t;
         }
     }
-    
-    dynPtr->dynManager.updateStateVector(stateOut);	
 
     return;
 }

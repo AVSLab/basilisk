@@ -36,6 +36,9 @@ public:
     double chMatrix[13];
     double ctMatrix[13];
     double kMatrix[13];
+
+    double absTol;      //!< absolute tolerance
+    double relTol;      //!< relative tolerance
 };
 
 
