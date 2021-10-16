@@ -232,7 +232,7 @@ SimModel::SimModel()
 /*! Nothing to destroy really */
 SimModel::~SimModel()
 {
-    //this->deleteThreads();
+    this->deleteThreads();
 }
 
 /*! This method steps the simulation until the specified stop time and
@@ -438,9 +438,11 @@ void SimModel::deleteThreads() {
         (*thrIt)->unlockThread();
         if((*thrIt)->threadContext && (*thrIt)->threadContext->joinable()) {
             (*thrIt)->threadContext->join();
+            delete (*thrIt)->threadContext;
         }
         delete (*thrIt);
     }
+    this->threadList.clear();
 }
 
 void SimModel::assignRemainingProcs() {
