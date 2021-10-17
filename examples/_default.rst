@@ -26,6 +26,7 @@ Orbital Simulations
 
    Basic Orbit Simulations <scenarioBasicOrbit>
    Delta_v Orbit Maneuvers <scenarioOrbitManeuver>
+   Hyperbolic Jupiter Arrival Orbit <scenarioJupiterArrival>
    Multiple Gravitational Bodies <scenarioOrbitMultiBody>
    Defining Motion Relative to Planet <scenarioCentralBody>
    Simulating Trajectory about Multiple Celestial Bodies <scenarioPatchedConics>
