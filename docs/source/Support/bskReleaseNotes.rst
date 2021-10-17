@@ -38,7 +38,7 @@ Version |release|
 - fixed a memory leak with the Swig layer where an object was not released properly.  Thanks go to
   Stephen Ritter and Toney for tracking down this issue.
 - added a new orbit maneuver example :ref:`scenarioJupiterArrival`
-
+- made SWIG interface to the MRP derivative variable
 
 
 
