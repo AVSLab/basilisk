@@ -233,14 +233,14 @@ def run(show_plots, integratorCase, relTol, absTol):
     # draw orbit in perifocal frame
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
     p = oe.a * (1 - oe.e * oe.e)
-    plt.figure(1, figsize=np.array((1.0, b / oe.a)) * 4.75, dpi=100)
-    plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
+    plt.figure(1)
+    plt.axis([-50, 10, -20, 20])
     # draw the planet
     fig = plt.gcf()
-    fig.set_tight_layout(False)
     ax = fig.gca()
+    ax.set_aspect('equal')
     planetColor = '#008800'
-    planetRadius = earth.radEquator / 1000
+    planetRadius = 1.0
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
     # draw the actual orbit
     rData = []
@@ -248,9 +248,9 @@ def run(show_plots, integratorCase, relTol, absTol):
     labelStrings = ("rk4", "rkf45", "rkf78")
     for idx in range(0, len(posData)):
         oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
-        rData.append(oeData.rmag)
+        rData.append(oeData.rmag/earth.radEquator)
         fData.append(oeData.f + oeData.omega - oe.omega)
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000
+    plt.plot(rData * np.cos(fData), rData * np.sin(fData)
              , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase), len(labelStrings))
              , label=integratorCase
              , linewidth=3.0
@@ -260,12 +260,12 @@ def run(show_plots, integratorCase, relTol, absTol):
     rData = []
     for idx in range(0, len(fData)):
         rData.append(p / (1 + oe.e * np.cos(fData[idx])))
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000
+    plt.plot(rData * np.cos(fData)/earth.radEquator, rData * np.sin(fData)/earth.radEquator
              , '--'
              , color='#555555'
              )
-    plt.xlabel('$i_e$ Cord. [km]')
-    plt.ylabel('$i_p$ Cord. [km]')
+    plt.xlabel('$i_e$ Cord. [DU]')
+    plt.ylabel('$i_p$ Cord. [DU]')
     plt.legend(loc='lower right')
     plt.grid()
     figureList = {}

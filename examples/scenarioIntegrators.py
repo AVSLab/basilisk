@@ -317,4 +317,4 @@ def run(show_plots, integratorCase):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        'rkf78')  # integrator case(0 - rk4, 1 - rkf45, 2 - rkf78, 3 - euler, 4 - rk2)
+        'rk4')  # integrator case(0 - rk4, 1 - rkf45, 2 - rkf78, 3 - euler, 4 - rk2)

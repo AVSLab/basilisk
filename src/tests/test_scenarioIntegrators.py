@@ -52,7 +52,7 @@ def test_scenarioIntegrators(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    for integratorCase in ["rk4", "rkf45", "euler", "rk2"]:
+    for integratorCase in ["rk4", "rkf45", "rkf78", "euler", "rk2"]:
 
         # each test method requires a single assert method to be called
         posData, figureList = scenarioIntegrators.run(show_plots, integratorCase)
@@ -94,6 +94,14 @@ def test_scenarioIntegrators(show_plots):
                 , [4.342561337924192e6, -4.1593822658140697e6, -3.947594705237753e6]
                 , [6.279757158711852e6, 2.8527385905952943e6, -1.8260959147806289e6]
             ]
+        if integratorCase == "rkf78":
+            truePos = [
+                [-2816801.601023492,   5248174.846916147,   3677157.2646772973]
+                ,[-6379401.371832086, -1468864.3054097842,  2480791.9863545913]
+                ,[-2230174.317580403,  -6410466.966948945,  -1714609.1414605032]
+                ,[ 4614818.45321768,   -3602456.431072683,  -3837076.4216056713]
+                ,[ 5879286.370365726,   3561242.507948514,  -1319786.6261035257]
+            ]
 
     # compare the results to the truth values
     accuracy = 1.0  # meters
@@ -116,3 +124,7 @@ def test_scenarioIntegrators(show_plots):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
+
+if __name__ == "__main__":
+    test_scenarioIntegrators(
+        True)
