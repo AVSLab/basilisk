@@ -23,13 +23,24 @@ To force the default RK4 method, use
 \begin{verbatim}
 	integratorObject = svIntegrators.svIntegratorRK4(scObject)
 \end{verbatim}
+If the 4th order variable time step integration method is desired, use instead
+\begin{verbatim}
+	integratorObject = svIntegrators.svIntegratorRKF45(scObject)
+\end{verbatim}
+If the 7th order variable time step integration method is desired, use instead
+\begin{verbatim}
+	integratorObject = svIntegrators.svIntegratorRKF78(scObject)
+\end{verbatim}
 
 Next, to connect this integrator module to the {\tt DynamicObject} instance (i.e. {\tt spacecraft()} called {\tt scObject}, use the following code
 \begin{verbatim}
 	scObject.setIntegrator(integratorObject)
 \end{verbatim}
-That is it, the Basilisk simulation is now setup to use the desired numerical  integration method.
-
+That is it, the Basilisk simulation is now setup to use the desired numerical  integration method. If the user is using a variable time step and wants to override the default tolerance values, add the following lines of code
+\begin{verbatim}
+	integratorObject.absTol = 1e-6
+	integratorObject.relTol = 1e-3
+\end{verbatim}
 
 \subsection{Creating New Integration Methods}
 New integration modules can readily be created for Basilisk. They are all stored in the folder

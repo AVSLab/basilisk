@@ -43,9 +43,13 @@ The same simulation setup is run for each of the integration methods:
 \begin{enumerate}
 \item The first test uses the default RK4 integration method.  Here the simulation script does not specify the integration method, testing both that the RK4 integrator is the default integration method, and that that the integrator is implemented correctly.
 
-\item The 2nd test uses the Euler's integration method.
+\item The 2nd test uses the RKF45 integration method.
 
-\item the 3rd test uses Heun's integration method.
+\item The 3rd test used the RK78 integration method.
+
+\item The 4th test uses the Euler's integration method.
+
+\item the 5th test uses Heun's integration method.
 
 \end{enumerate}
 
@@ -74,6 +78,8 @@ Three tests are run controlled through a single test parameter called {\tt integ
 		\hline\hline
 		\textbf{Test}   	      	               & \textbf{Tolerated Error} 						           \\ \hline
 		``rk4"                           & 1 meter	  \\
+		``rkf45"                           & 1 meter	  \\
+		``rkf78"                           & 1 meter	  \\
 		``euler"                           & 1 meter	  \\
 		``rk2"                           & 1 meter	  \\
 		\hline\hline
@@ -81,7 +87,7 @@ Three tests are run controlled through a single test parameter called {\tt integ
 \end{table}
 
 \section{Test Results}
-All integration checks within the integrated test {\tt scenarios/test\_scenarioIntegrators.py} passed.  Table~\ref{tbl:intResults} shows the test results, while Figure~\ref{fig:intResultsPython} shows the resulting trajectories for each integration test.
+All integration checks within the integrated test {\tt scenarios/test\_scenarioIntegrators.py} passed.  Table~\ref{tbl:intResults} shows the test results, while Figure~\ref{fig:intResults} shows the resulting trajectories for each integration test.
 
 \input{AutoTeX/scenarioIntegrators.tex}
 
@@ -96,6 +102,14 @@ All integration checks within the integrated test {\tt scenarios/test\_scenarioI
 		``rk4"		  	&
 		\input{AutoTex/IntegratorsTestMsg-rk4}      	  &
 		\input{AutoTex/IntegratorsMsg-rk4}
+		\\ \hline
+		``rkf45"		  	&
+		\input{AutoTex/IntegratorsTestMsg-rkf45}      	  &
+		\input{AutoTex/IntegratorsMsg-rkf45}
+		\\ \hline
+		``rkf78"		  	&
+		\input{AutoTex/IntegratorsTestMsg-rkf78}      	  &
+		\input{AutoTex/IntegratorsMsg-rkf78}
 		\\ \hline
 		``euler''	   	           	&
 		\input{AutoTex/IntegratorsTestMsg-euler}           		&      

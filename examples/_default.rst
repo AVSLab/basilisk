@@ -273,6 +273,7 @@ Advanced Simulation Options
    :maxdepth: 1
 
    Setting Type of Integrator <scenarioIntegrators>
+   Using a Variable Time Step Integrator <scenarioVariableTimeStepIntegrators>
    Using a Python BSK Module <scenarioAttitudePointingPy>
    Changing the bskLog Verbosity from Python <scenarioBskLog>
 

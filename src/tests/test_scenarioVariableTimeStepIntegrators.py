@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -22,12 +22,16 @@
 #
 # Purpose:  Demonstration of how to setup and use different integrators in
 #           Basilisk.  The simulation performs a 3-DOF orbit scenario.
-# Author:   Hanspeter Schaub
-# Creation Date:  Dec. 14, 2016
+# Author:   João Vaz Carneiro
+# Creation Date:  Oct. 4, 2021
 #
 
-import sys, os, inspect
+import inspect
+import os
+import sys
+
 import pytest
+
 from Basilisk.utilities import unitTestSupport
 
 # Get current file path
@@ -35,7 +39,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 sys.path.append(path + '/../../examples')
-import scenarioIntegrators
+import scenarioVariableTimeStepIntegrators
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -52,10 +56,11 @@ def test_scenarioIntegrators(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    for integratorCase in ["rk4", "rkf45", "rkf78", "euler", "rk2"]:
+    # for integratorCase in ["rk4", "rkf45", "rkf78"]:
+    for integratorCase in ["rk4", "rkf45", "rkf78"]:
 
         # each test method requires a single assert method to be called
-        posData, figureList = scenarioIntegrators.run(show_plots, integratorCase)
+        posData, figureList = scenarioVariableTimeStepIntegrators.run(show_plots, integratorCase, 1e-4, 1e-8)
 
         numTruthPoints = 5
         skipValue = int(len(posData) / (numTruthPoints - 1))
@@ -64,43 +69,24 @@ def test_scenarioIntegrators(show_plots):
         # setup truth data for unit test
         if integratorCase == "rk4":
             truePos = [
-                [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
-                , [-6.379381726549218e6, -1.4688565370540658e6, 2.4807857675497606e6]
-                , [-2.230094305694789e6, -6.410420020364709e6, -1.7146277675541767e6]
-                , [4.614900659014343e6, -3.60224207689023e6, -3.837022825958977e6]
-                , [5.879095186201691e6, 3.561495655367985e6, -1.3195821703218794e6]
+                [2.6965319797723856e+07, -4.0438014777803928e+07, -3.0909521009497888e+07]
+                , [-1.8150865907367039e+08, -6.3070994959505990e+07,  6.1267912683989421e+07]
+                , [-1.9303770991326889e+08, -1.5676982514195076e+08,  2.5889371222740099e+07]
+                , [-9.5984840659665108e+07, -1.6150850904769760e+08, -2.3710817876644962e+07]
             ]
         if integratorCase == "rkf45":
             truePos = [
-                [6343122.681395919, 396501.78632660967, -2932539.2914087307]
-                , [6385759.757220186, 1232061.6219036756, -2587584.918333401]
-                , [6321657.127943617, 2047027.1643309772, -2199378.3835694017]
-                , [6151884.468695515, 2827775.46506309, -1774408.027800635]
-                , [5879278.326923609, 3561255.294074021, -1319777.089191588]
-            ]
-        if integratorCase == "euler":
-            truePos = [
-                [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
-                , [-7.061548530211288e6, -1.4488790844105487e6, 2.823580168201031e6]
-                , [-4.831279689590867e6, -8.015202650472983e6, -1.1434851461593418e6]
-                , [719606.5825106134, -1.0537603309084207e7, -4.966060248346598e6]
-                , [6.431097055190775e6, -9.795566286964862e6, -7.438012269629238e6]
-            ]
-        if integratorCase == "rk2":
-            truePos = [
-                [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
-                , [-6.425636528569288e6, -1.466693214251768e6, 2.50438327358707e6]
-                , [-2.466642497083674e6, -6.509473992136429e6, -1.6421621818735446e6]
-                , [4.342561337924192e6, -4.1593822658140697e6, -3.947594705237753e6]
-                , [6.279757158711852e6, 2.8527385905952943e6, -1.8260959147806289e6]
+                [2.6965319797723856e+07, -4.0438014777803928e+07, -3.0909521009497888e+07]
+                , [-1.9213449717316824e+08, -5.6224612680104271e+07,  6.9468790545288116e+07]
+                , [-2.3287921820332012e+08, -1.5541450266266349e+08,  4.5992609018449008e+07]
+                , [-1.8429335189943227e+08, -1.9670820137819085e+08,  4.1211605646267980e+06]
             ]
         if integratorCase == "rkf78":
             truePos = [
-                [-2816801.601023492,   5248174.846916147,   3677157.2646772973]
-                ,[-6379401.371832086, -1468864.3054097842,  2480791.9863545913]
-                ,[-2230174.317580403,  -6410466.966948945,  -1714609.1414605032]
-                ,[ 4614818.45321768,   -3602456.431072683,  -3837076.4216056713]
-                ,[ 5879286.370365726,   3561242.507948514,  -1319786.6261035257]
+                [2.6965319797723856e+07, -4.0438014777803928e+07, -3.0909521009497888e+07]
+                , [-1.9213620487859124e+08, -5.6231399937485360e+07, 6.9466655120191082e+07]
+                , [-2.3288519890219730e+08, -1.5542401305950305e+08, 4.5991373747153923e+07]
+                , [-1.8431058338898057e+08, -1.9672328628053436e+08, 4.1229939645756241e+06]
             ]
 
     # compare the results to the truth values
@@ -124,7 +110,3 @@ def test_scenarioIntegrators(show_plots):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
-
-if __name__ == "__main__":
-    test_scenarioIntegrators(
-        True)
