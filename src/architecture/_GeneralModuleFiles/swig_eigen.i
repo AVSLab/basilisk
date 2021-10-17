@@ -17,6 +17,10 @@
 
  */
 %module swig_eigen
+%{
+    #include <Eigen/Dense>
+    #include "architecture/utilities/avsEigenMRP.h"
+%}
 
 %define EIGEN_MAT_WRAP(type)
 
@@ -156,9 +160,188 @@
 
 %enddef
 
+%define EIGEN_ROT_WRAP(type)
+
+%typemap(in) type {
+    #include <Eigen/Dense>
+    
+
+    if(!PySequence_Check($input)) {
+        PyErr_SetString(PyExc_ValueError,"Expected some sort of list!  Does not appear to be that.");
+        return NULL;
+    }
+
+    Py_ssize_t rowLength = 0;
+    Py_ssize_t colLength = 0;
+    Eigen::MatrixXd matrixAssemble;
+    PyObject *obj = PySequence_GetItem($input, 0);
+    if(!PySequence_Check(obj)) {
+        rowLength = PySequence_Length($input);
+        matrixAssemble.resize(PySequence_Length($input), 1);
+        for(Py_ssize_t j=0; j<rowLength; j++)
+        {
+            matrixAssemble(j, 0) = PyFloat_AsDouble(PySequence_GetItem($input, j));
+        }
+    }
+    else
+    {
+        for(Py_ssize_t i=0; i<PySequence_Length($input); i++){
+            obj = PySequence_GetItem($input, i);
+            if(!PySequence_Check(obj)) {
+                printf("Row bad in matrix: %zd\n", i);
+                PyErr_SetString(PyExc_ValueError,"Need a list for each row");
+            }
+            if(!rowLength)
+            {
+                rowLength = PySequence_Length(obj);
+                matrixAssemble.resize(PySequence_Length($input), rowLength);
+                matrixAssemble.fill(0.0);
+                colLength = PySequence_Length($input);
+            }
+            if(!rowLength || rowLength != PySequence_Length(obj))
+            {
+                printf("Row bad in matrix: %zd\n", i);
+                PyErr_SetString(PyExc_ValueError,"All rows must be the same length!");
+            }
+            for(Py_ssize_t j=0; j<rowLength; j++)
+            {
+                matrixAssemble(i, j) = PyFloat_AsDouble(PySequence_GetItem(obj, j));
+            }
+        }
+    }
+    if(rowLength == 3 && colLength<=1)
+    {
+        $1 = (Eigen::Vector3d) (matrixAssemble);
+    }
+    else if(rowLength == 4 && colLength<=1)
+    {
+        Eigen::Matrix<double, 4, 1> tempQuat = (Eigen::Matrix<double, 4, 1>) (matrixAssemble);
+        $1 = ((Eigen::Quaterniond) tempQuat).toRotationMatrix();
+    }
+    else if(rowLength==3 && colLength==3)
+    {
+        $1 = (Eigen::Matrix3d) (matrixAssemble);
+    }
+    else
+    {
+        printf("Unknown rotation dimensions: %zd %zd\n", rowLength, colLength);
+        PyErr_SetString(PyExc_ValueError,"I don't know how to handle that rotation dimension");
+    }
+}
+
+%typemap(in) type & {
+    #include <Eigen/Dense>
+
+    if(!PySequence_Check($input)) {
+        PyErr_SetString(PyExc_ValueError,"Expected a list of lists!  Does not appear to be that.");
+        return NULL;
+    }
+    Py_ssize_t rowLength = 0;
+    Py_ssize_t colLength = 0;
+    Eigen::MatrixXd matrixAssemble;
+    for(Py_ssize_t i=0; i<PySequence_Length($input); i++){
+        PyObject *obj = PySequence_GetItem($input, i);
+        if(!PySequence_Check($input)) {
+            printf("Row bad in matrix: %zd\n", i);
+            PyErr_SetString(PyExc_ValueError,"Need a list for each row");
+        }
+        if(!rowLength)
+        {
+            rowLength = PySequence_Length(obj);
+            matrixAssemble.resize(PySequence_Length($input), rowLength);
+            matrixAssemble.fill(0.0);
+        }
+        if(!rowLength || rowLength != PySequence_Length(obj))
+        {
+            printf("Row bad in matrix: %zd\n", i);
+            PyErr_SetString(PyExc_ValueError,"All rows must be the same length!");
+        }
+        for(Py_ssize_t j=0; j<rowLength; j++)
+        {
+            matrixAssemble(i, j) = PyFloat_AsDouble(PySequence_GetItem(obj, j));
+        }
+    }
+    type localConvert = matrixAssemble;
+    $1 = new type();
+    if(rowLength == 3 && colLength<=1)
+    {
+        *$1 = (Eigen::Vector3d) (matrixAssemble);
+    }
+    else if(rowLength == 4 && colLength<=1)
+    {
+        Eigen::Matrix<double, 4, 1> tempQuat = (Eigen::Matrix<double, 4, 1>) (matrixAssemble);
+        *$1 = ((Eigen::Quaterniond) tempQuat).toRotationMatrix();
+    }
+    else if(rowLength==3 && colLength==3)
+    {
+        *$1 = (Eigen::Matrix3d) (matrixAssemble);
+    }
+    else
+    {
+        printf("Unknown rotation dimensions: %zd %zd\n", rowLength, colLength);
+        PyErr_SetString(PyExc_ValueError,"I don't know how to handle that rotation dimension");
+    }
+}
+
+%typemap(typecheck) type {
+    $1 = PySequence_Check($input);
+}
+
+%typemap(typecheck) type & {
+    $1 = PySequence_Check($input);
+}
+
+%typemap(memberin) type {
+    $1 = $input;
+}
+
+%typemap(out) type {
+    int i, j;
+    #include <Eigen/Dense>
+    $result = PyList_New(0);
+    Eigen::MatrixXd readPtr = ($1).vec();
+    for(i=0; i<readPtr.innerSize(); i++)
+    {
+        PyObject *locRow = PyList_New(0);
+        for(j=0; j<readPtr.outerSize(); j++)
+        {
+            PyObject *outObject = PyFloat_FromDouble((readPtr)(i,j));
+            PyList_Append(locRow, outObject);
+        }
+        PyList_Append($result, locRow);
+    }
+}
+
+%typemap(out) type * {
+    int i, j;
+    #include <Eigen/Dense>
+    $result = PyList_New(0);
+
+    if(!($1))
+    {
+        return Py_None;
+    }
+    Eigen::MatrixXd readPtr = ($1)->vec();
+    for(i=0; i<readPtr.innerSize(); i++)
+    {
+        PyObject *locRow = PyList_New(0);
+        for(j=0; j<readPtr.outerSize(); j++)
+        {
+            PyObject *outObject = PyFloat_FromDouble((readPtr)(i,j));
+            PyList_Append(locRow, outObject);
+        }
+        PyList_Append($result, locRow);
+    }
+}
+
+%enddef
+
+
+
 //EIGEN_MAT_WRAP(const Eigen::MatrixXd)
 EIGEN_MAT_WRAP(Eigen::MatrixXd)
 EIGEN_MAT_WRAP(Eigen::Matrix3d)
 EIGEN_MAT_WRAP(Eigen::Vector3d)
 EIGEN_MAT_WRAP(Eigen::VectorXd)
-
+EIGEN_ROT_WRAP(Eigen::MRPd)
+EIGEN_ROT_WRAP(Eigen::Quaterniond)
