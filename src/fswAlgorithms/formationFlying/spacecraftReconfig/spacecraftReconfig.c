@@ -60,7 +60,7 @@ void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t cal
     if (!THRArrayConfigMsg_C_isLinked(&configData->thrustConfigInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.thrustConfigInMsg wasn't connected.");
     }
-    if (!SCMassPropsMsg_C_isLinked(&configData->vehicleConfigInMsg)) {
+    if (!VehicleConfigMsg_C_isLinked(&configData->vehicleConfigInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.vehicleConfigInMsg wasn't connected.");
     }
 
