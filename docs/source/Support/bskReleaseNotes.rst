@@ -42,6 +42,9 @@ Version |release|
 - added two new variable time step integrators. See :ref:`svIntegratorRKF45` and :ref:`svIntegratorRKF78`.
 - added new scenario :ref:`scenarioVariableTimeStepIntegrators`
 - updated :ref:`scenarioIntegrators` to include the ``rkf45`` and ``rkf78`` options
+- changed the way :ref:`spacecraftReconfig` gets the deputy's mass properties. It now receives that information
+  through a message of the type ``VehicleConfigMsgPayload`` instead of an internal variable. Relevant example 
+  scripts have been updated.
 
 
 Version 2.0.7

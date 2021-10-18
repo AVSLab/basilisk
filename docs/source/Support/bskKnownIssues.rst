@@ -11,6 +11,8 @@ Version |release|
 - ``conan`` changed the default repos in version 1.40 onwards which broke the Basilisk installation.
   This is now corrected in the latest release.  After pulling the latest code release, you'll need to
   delete the ``.conan`` folder in your home directory to create a fresh copy.  This only has to be done once.
+- :ref:`spacecraftReconfig` has been changed to read in the spacecraft mass from an input message, not be set as
+  a module variable
 
 
 Version 2.0.7
