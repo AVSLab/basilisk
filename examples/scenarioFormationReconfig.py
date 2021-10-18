@@ -174,6 +174,12 @@ def run(show_plots, useRefAttitude):
     fswTimeStep = macros.sec2nano(timeStep)
     fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
+    # VehicleConfigFswMsg
+    vehicleConfigOut2 = messaging.VehicleConfigMsgPayload()
+    vehicleConfigOut2.ISCPntB_B = I
+    vehicleConfigOut2.massSC = scObject2.hub.mHub
+    vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut2)
+
     # inertial 3D target attitude
     inertial3DData = inertial3D.inertial3DConfig()
     inertial3DWrap = scSim.setModelDataWrap(inertial3DData)
@@ -198,8 +204,8 @@ def run(show_plots, useRefAttitude):
     if useRefAttitude:
         spacecraftReconfigData.attRefInMsg.subscribeTo(inertial3DData.attRefOutMsg)
     spacecraftReconfigData.thrustConfigInMsg.subscribeTo(fswThrConfMsg)
+    spacecraftReconfigData.vehicleConfigInMsg.subscribeTo(vcMsg)
     thrusterEffector2.cmdsInMsg.subscribeTo(spacecraftReconfigData.onTimeOutMsg)
-    spacecraftReconfigData.scMassDeputy = scObject2.hub.mHub  # [kg]
     spacecraftReconfigData.mu = orbitalMotion.MU_EARTH*1e9  # [m^3/s^2]
     spacecraftReconfigData.attControlTime = 400  # [s]
     spacecraftReconfigData.targetClassicOED = [0.0000, 0.0001, 0.0002, -0.0001, -0.0002, -0.0003]
@@ -212,11 +218,6 @@ def run(show_plots, useRefAttitude):
     scSim.AddModelToTask(fswTaskName, attErrorWrap, attErrorData, 9)
     attErrorData.attRefInMsg.subscribeTo(spacecraftReconfigData.attRefOutMsg)
     attErrorData.attNavInMsg.subscribeTo(simpleNavObject2.attOutMsg)
-
-    # VehicleConfigFswMsg
-    vehicleConfigOut2 = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut2.ISCPntB_B = I
-    vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut2)
 
     # MRP_FeedBack
     mrpControlData = mrpFeedback.mrpFeedbackConfig()

@@ -67,7 +67,6 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "spacecraftReconfig"  # update python name of test spacecraftReconfig
     moduleConfig.targetClassicOED = [0.0000, 0.0000, 0.0000, 0.0001, 0.0002, 0.0003]
-    moduleConfig.scMassDeputy = 500  # [kg]
     moduleConfig.attControlTime = 400  # [s]
     moduleConfig.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
     # Add test spacecraftReconfig to runtime call list
@@ -111,7 +110,15 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     deputyInMsg = messaging.NavTransMsg().write(deputyNavStateOutData)
     moduleConfig.deputyTransInMsg.subscribeTo(deputyInMsg)
 
-    # 
+    #
+    # Deputy Vehicle Config Message
+    #
+    vehicleConfigInData = messaging.VehicleConfigMsgPayload()
+    vehicleConfigInData.massSC = 500
+    vehicleConfigMsg = messaging.VehicleConfigMsg().write(vehicleConfigInData)
+    moduleConfig.vehicleConfigInMsg.subscribeTo(vehicleConfigMsg)
+
+    #
     # reference attitude message
     #
     if useRefAttitude:
