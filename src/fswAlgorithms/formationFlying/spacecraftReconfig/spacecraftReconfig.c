@@ -60,6 +60,9 @@ void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t cal
     if (!THRArrayConfigMsg_C_isLinked(&configData->thrustConfigInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.thrustConfigInMsg wasn't connected.");
     }
+    if (!SCMassPropsMsg_C_isLinked(&configData->vehicleConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.vehicleConfigInMsg wasn't connected.");
+    }
 
     configData->prevCallTime    = 0;
     configData->tCurrent        = 0.0;
@@ -82,21 +85,23 @@ void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t cal
 void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     // in
-    NavTransMsgPayload chiefTransMsg;
-    NavTransMsgPayload deputyTransMsg;
-    THRArrayConfigMsgPayload thrustConfigMsg;
-    AttRefMsgPayload attRefInMsg;
+    NavTransMsgPayload chiefTransMsgBuffer;
+    NavTransMsgPayload deputyTransMsgBuffer;
+    THRArrayConfigMsgPayload thrustConfigMsgBuffer;
+    AttRefMsgPayload attRefInMsgBuffer;
+    VehicleConfigMsgPayload vehicleConfigMsgBuffer;
     // out
-    AttRefMsgPayload attRefMsg;
-    THRArrayOnTimeCmdMsgPayload thrustOnMsg;
+    AttRefMsgPayload attRefOutMsgBuffer;
+    THRArrayOnTimeCmdMsgPayload thrustOnMsgBuffer;
 
     /*! - Read the input messages */
-    chiefTransMsg = NavTransMsg_C_read(&configData->chiefTransInMsg);
-    deputyTransMsg = NavTransMsg_C_read(&configData->deputyTransInMsg);
-    thrustConfigMsg = THRArrayConfigMsg_C_read(&configData->thrustConfigInMsg);
-    attRefInMsg = AttRefMsg_C_zeroMsgPayload();
+    chiefTransMsgBuffer = NavTransMsg_C_read(&configData->chiefTransInMsg);
+    deputyTransMsgBuffer = NavTransMsg_C_read(&configData->deputyTransInMsg);
+    thrustConfigMsgBuffer = THRArrayConfigMsg_C_read(&configData->thrustConfigInMsg);
+    vehicleConfigMsgBuffer = VehicleConfigMsg_C_read(&configData->vehicleConfigInMsg);
+    attRefInMsgBuffer = AttRefMsg_C_zeroMsgPayload();
     if (configData->attRefInIsLinked) {
-        attRefInMsg = AttRefMsg_C_read(&configData->attRefInMsg);
+        attRefInMsgBuffer = AttRefMsg_C_read(&configData->attRefInMsg);
     }
 
     if(configData->prevCallTime == 0) {
@@ -108,17 +113,17 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
 	configData->prevCallTime = callTime;
 
     /* zero output messages */
-    attRefMsg = AttRefMsg_C_zeroMsgPayload();
-    thrustOnMsg = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
+    attRefOutMsgBuffer = AttRefMsg_C_zeroMsgPayload();
+    thrustOnMsgBuffer = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
 
-    UpdateManeuver(configData, chiefTransMsg, deputyTransMsg, attRefInMsg,
-                     thrustConfigMsg, &attRefMsg, &thrustOnMsg, callTime, moduleID);
+    UpdateManeuver(configData, chiefTransMsgBuffer, deputyTransMsgBuffer, attRefInMsgBuffer,
+                     thrustConfigMsgBuffer, vehicleConfigMsgBuffer, &attRefOutMsgBuffer, &thrustOnMsgBuffer, callTime, moduleID);
 
     /*! - write the module output message */
-    AttRefMsg_C_write(&attRefMsg, &configData->attRefOutMsg, moduleID, callTime);
+    AttRefMsg_C_write(&attRefOutMsgBuffer, &configData->attRefOutMsg, moduleID, callTime);
     if(configData->thrustOnFlag == 1){
         // only when thrustOnFlag is 1, thrustOnMessage is output
-        THRArrayOnTimeCmdMsg_C_write(&thrustOnMsg, &configData->onTimeOutMsg, moduleID, callTime);
+        THRArrayOnTimeCmdMsg_C_write(&thrustOnMsgBuffer, &configData->onTimeOutMsg, moduleID, callTime);
     }
     return;
 }
@@ -127,29 +132,30 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
  reference attitude and thruster on time
  @return void
  @param configData The configuration data associated with the module
- @param chiefTransMsg chief's position and velocity
- @param deputyTransMsg deputy's position and velocity
- @param attRefInMsg target attitude
- @param thrustConfigMsg thruster's config information
- @param attRefMsg target attitude
- @param thrustOnMsg thruster on time
+ @param chiefTransMsgBuffer chief's position and velocity
+ @param deputyTransMsgBuffer deputy's position and velocity
+ @param attRefInMsgBuffer target attitude
+ @param thrustConfigMsgBuffer thruster's config information
+ @param attRefOutMsgBuffer target attitude
+ @param thrustOnMsgBuffer thruster on time
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chiefTransMsg,
-                     NavTransMsgPayload deputyTransMsg, AttRefMsgPayload attRefInMsg,
-                     THRArrayConfigMsgPayload thrustConfigMsg, AttRefMsgPayload *attRefMsg,
-                     THRArrayOnTimeCmdMsgPayload *thrustOnMsg, uint64_t callTime, int64_t moduleID)
+void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chiefTransMsgBuffer,
+                     NavTransMsgPayload deputyTransMsgBuffer, AttRefMsgPayload attRefInMsgBuffer,
+                     THRArrayConfigMsgPayload thrustConfigMsgBuffer, VehicleConfigMsgPayload vehicleConfigMsgBuffer,
+                     AttRefMsgPayload *attRefOutMsgBuffer, THRArrayOnTimeCmdMsgPayload *thrustOnMsgBuffer, 
+                     uint64_t callTime, int64_t moduleID)
 {
     /* conversion from r,v to classical orbital elements */
     classicElements oe_c, oe_d;
-    rv2elem(configData->mu,chiefTransMsg.r_BN_N,chiefTransMsg.v_BN_N,&oe_c);
-    rv2elem(configData->mu,deputyTransMsg.r_BN_N,deputyTransMsg.v_BN_N,&oe_d);
+    rv2elem(configData->mu,chiefTransMsgBuffer.r_BN_N,chiefTransMsgBuffer.v_BN_N,&oe_c);
+    rv2elem(configData->mu,deputyTransMsgBuffer.r_BN_N,deputyTransMsgBuffer.v_BN_N,&oe_d);
 
     /* schedule dv manuever at the initiation timing of this module */
     if(configData->dvArray[0].flag == 0){
         configData->resetPeriod = 2*M_PI/sqrt(configData->mu/pow(oe_c.a,3)); // one orbital period
-        ScheduleDV(configData, oe_c, oe_d, thrustConfigMsg);
+        ScheduleDV(configData, oe_c, oe_d, thrustConfigMsgBuffer, vehicleConfigMsgBuffer);
         // sort three burns (dvArray structures) in ascending order
         qsort(configData->dvArray, sizeof(configData->dvArray) / sizeof(configData->dvArray[0]),
               sizeof(spacecraftReconfigConfigBurnInfo), CompareTime);
@@ -161,19 +167,19 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
         double t_left = configData->dvArray[0].t - configData->tCurrent; // remaining time until first burn
         if(t_left > configData->attControlTime && configData->attRefInIsLinked){
             // in this case, there is enough time until first burn, so reference input attitude is set as target
-            *attRefMsg = attRefInMsg;
+            *attRefOutMsgBuffer = attRefInMsgBuffer;
         }else{
             // in this case, first burn attitude is set at target
-            v3Copy(configData->dvArray[0].sigma_RN, attRefMsg->sigma_RN);
+            v3Copy(configData->dvArray[0].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }
         // middle of thruster burn duration time is located at the expected exact timing of impulsive control
-        if(t_left < (int)configData->dvArray[0].thrustOnTime/(2*thrustConfigMsg.numThrusters) &&
+        if(t_left < (int)configData->dvArray[0].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters) &&
             configData->dvArray[0].flag == 1){
             configData->thrustOnFlag     = 1; // thrustOnFlag is ON
             configData->dvArray[0].flag  = 2; // first burn is regarded as finished by setting this to 2
             int i = 0;
-            for(i = 0;i < thrustConfigMsg.numThrusters;++i){
-                thrustOnMsg->OnTimeRequest[i] = configData->dvArray[0].thrustOnTime/thrustConfigMsg.numThrusters;
+            for(i = 0;i < thrustConfigMsgBuffer.numThrusters;++i){
+                thrustOnMsgBuffer->OnTimeRequest[i] = configData->dvArray[0].thrustOnTime/thrustConfigMsgBuffer.numThrusters;
             }
         }else{
             configData->thrustOnFlag = 0; // thrustOnFlag is OFF
@@ -181,23 +187,23 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
     }else if(configData->dvArray[1].flag == 1) {
         double t_left = configData->dvArray[1].t - configData->tCurrent; // remaining time until second burn
         if(configData->dvArray[0].flag == 2 && 
-           configData->tCurrent < (configData->dvArray[0].t+configData->dvArray[0].thrustOnTime/(2*thrustConfigMsg.numThrusters))){
+           configData->tCurrent < (configData->dvArray[0].t+configData->dvArray[0].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters))){
             // in this case, first burn is still executed, so first burn attitude is set as target
-            v3Copy(configData->dvArray[0].sigma_RN, attRefMsg->sigma_RN);
+            v3Copy(configData->dvArray[0].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }else if(t_left > configData->attControlTime && configData->attRefInIsLinked){
             // in this case, there is enough time until second burn, so reference input attitude is set as target
-            *attRefMsg = attRefInMsg;
+            *attRefOutMsgBuffer = attRefInMsgBuffer;
         }else{
             // in this case, second burn attitude is set at target
-            v3Copy(configData->dvArray[1].sigma_RN, attRefMsg->sigma_RN);
+            v3Copy(configData->dvArray[1].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }
-        if(t_left < (int)configData->dvArray[1].thrustOnTime/(2*thrustConfigMsg.numThrusters) &&
+        if(t_left < (int)configData->dvArray[1].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters) &&
            configData->dvArray[1].flag == 1){
             configData->thrustOnFlag = 1;
             configData->dvArray[1].flag = 2;
             int i = 0;
-            for(i = 0;i < thrustConfigMsg.numThrusters;++i){
-                thrustOnMsg->OnTimeRequest[i] = configData->dvArray[1].thrustOnTime/thrustConfigMsg.numThrusters;
+            for(i = 0;i < thrustConfigMsgBuffer.numThrusters;++i){
+                thrustOnMsgBuffer->OnTimeRequest[i] = configData->dvArray[1].thrustOnTime/thrustConfigMsgBuffer.numThrusters;
             }
         }else{
             configData->thrustOnFlag = 0;
@@ -205,27 +211,27 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
     }else if(configData->dvArray[2].flag == 1){
         double t_left = configData->dvArray[2].t - configData->tCurrent; // remaining time until third burn
         if(configData->dvArray[1].flag == 2 && 
-           configData->tCurrent < (configData->dvArray[1].t+configData->dvArray[1].thrustOnTime/(2*thrustConfigMsg.numThrusters))){
+           configData->tCurrent < (configData->dvArray[1].t+configData->dvArray[1].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters))){
             // in this case, second burn is still executed, so second burn attitude is set as target
-            v3Copy(configData->dvArray[1].sigma_RN, attRefMsg->sigma_RN);
+            v3Copy(configData->dvArray[1].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }else if(configData->dvArray[0].flag == 2 && 
-           configData->tCurrent < (configData->dvArray[0].t+configData->dvArray[0].thrustOnTime/(2*thrustConfigMsg.numThrusters))){
+           configData->tCurrent < (configData->dvArray[0].t+configData->dvArray[0].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters))){
             // in this case, first burn is still executed, so first burn attitude is set as target
-            v3Copy(configData->dvArray[0].sigma_RN, attRefMsg->sigma_RN);
+            v3Copy(configData->dvArray[0].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }else if(t_left > configData->attControlTime && configData->attRefInIsLinked){
             // in this case, there is enough time until second burn, so reference input attitude is set as target
-            *attRefMsg = attRefInMsg;
+            *attRefOutMsgBuffer = attRefInMsgBuffer;
         }else{
             // in this case, third burn attitude is set at target
-            v3Copy(configData->dvArray[2].sigma_RN, attRefMsg->sigma_RN);
+            v3Copy(configData->dvArray[2].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }
-        if(t_left < (int)configData->dvArray[2].thrustOnTime/(2*thrustConfigMsg.numThrusters) &&
+        if(t_left < (int)configData->dvArray[2].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters) &&
            configData->dvArray[2].flag == 1){
             configData->thrustOnFlag = 1;
             configData->dvArray[2].flag = 2;
             int i = 0;
-            for(i = 0;i < thrustConfigMsg.numThrusters;++i){
-                thrustOnMsg->OnTimeRequest[i] = configData->dvArray[2].thrustOnTime/thrustConfigMsg.numThrusters;
+            for(i = 0;i < thrustConfigMsgBuffer.numThrusters;++i){
+                thrustOnMsgBuffer->OnTimeRequest[i] = configData->dvArray[2].thrustOnTime/thrustConfigMsgBuffer.numThrusters;
             }
         }else{
             configData->thrustOnFlag = 0;
@@ -234,28 +240,28 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
         // this section is valid when all the impulses are finished
         // we have to consider a case when one dvArray[].flag is set to 3, which means that the burn is combined with another
         if(configData->dvArray[2].flag == 2){
-            if(configData->tCurrent > (configData->dvArray[2].t+configData->dvArray[2].thrustOnTime/(2*thrustConfigMsg.numThrusters)) &&
+            if(configData->tCurrent > (configData->dvArray[2].t+configData->dvArray[2].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters)) &&
                configData->attRefInIsLinked){
-                *attRefMsg = attRefInMsg;
+                *attRefOutMsgBuffer = attRefInMsgBuffer;
             }else{
-                v3Copy(configData->dvArray[2].sigma_RN, attRefMsg->sigma_RN);
+                v3Copy(configData->dvArray[2].sigma_RN, attRefOutMsgBuffer->sigma_RN);
             }
         }else if(configData->dvArray[1].flag == 2){
-            if(configData->tCurrent > (configData->dvArray[1].t+configData->dvArray[1].thrustOnTime/(2*thrustConfigMsg.numThrusters)) &&
+            if(configData->tCurrent > (configData->dvArray[1].t+configData->dvArray[1].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters)) &&
                configData->attRefInIsLinked){
-                *attRefMsg = attRefInMsg;
+                *attRefOutMsgBuffer = attRefInMsgBuffer;
             }else{
-                v3Copy(configData->dvArray[1].sigma_RN, attRefMsg->sigma_RN);
+                v3Copy(configData->dvArray[1].sigma_RN, attRefOutMsgBuffer->sigma_RN);
             }  
         }else if(configData->dvArray[0].flag == 2){
-            if(configData->tCurrent > (configData->dvArray[0].t+configData->dvArray[0].thrustOnTime/(2*thrustConfigMsg.numThrusters)) &&
+            if(configData->tCurrent > (configData->dvArray[0].t+configData->dvArray[0].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters)) &&
                configData->attRefInIsLinked){
-                *attRefMsg = attRefInMsg;
+                *attRefOutMsgBuffer = attRefInMsgBuffer;
             }else{
-                v3Copy(configData->dvArray[0].sigma_RN, attRefMsg->sigma_RN);
+                v3Copy(configData->dvArray[0].sigma_RN, attRefOutMsgBuffer->sigma_RN);
             }
         }else{
-            *attRefMsg = attRefInMsg;
+            *attRefOutMsgBuffer = attRefInMsgBuffer;
         }
         configData->thrustOnFlag = 0;
     }
@@ -320,10 +326,10 @@ int CompareTime(const void * n1, const void * n2)
  @param configData The configuration data associated with this module
  @param oe_c chief's orbital element
  @param oe_d deputy's orbital element
- @param thrustConfigMsg
+ @param thrustConfigMsgBuffer
  */
 void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
-                          classicElements oe_d, THRArrayConfigMsgPayload thrustConfigMsg)
+                          classicElements oe_d, THRArrayConfigMsgPayload thrustConfigMsgBuffer, VehicleConfigMsgPayload vehicleConfigMsgBuffer)
 {
     // calculation necessary variables
     double da     = oe_d.a - oe_c.a;
@@ -422,30 +428,30 @@ void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
     // if timings of any two burns are close to each other, they are combined into one burn
     if(configData->dvArray[2].t - configData->dvArray[0].t < configData->attControlTime &&
        configData->dvArray[0].t - configData->dvArray[2].t < configData->attControlTime){
-        configData->dvArray[0].thrustOnTime = sqrt(dvrp_mag*dvrp_mag+dvtp_mag*dvtp_mag+dvn_mag*dvn_mag)*configData->scMassDeputy/thrustConfigMsg.thrusters[0].maxThrust;
-        configData->dvArray[1].thrustOnTime = sqrt(dvra_mag*dvra_mag+dvta_mag*dvta_mag)*configData->scMassDeputy/thrustConfigMsg.thrusters[0].maxThrust;
+        configData->dvArray[0].thrustOnTime = sqrt(dvrp_mag*dvrp_mag+dvtp_mag*dvtp_mag+dvn_mag*dvn_mag)* vehicleConfigMsgBuffer.massSC/thrustConfigMsgBuffer.thrusters[0].maxThrust;
+        configData->dvArray[1].thrustOnTime = sqrt(dvra_mag*dvra_mag+dvta_mag*dvta_mag)* vehicleConfigMsgBuffer.massSC/thrustConfigMsgBuffer.thrusters[0].maxThrust;
         configData->dvArray[2].thrustOnTime = 0.0;
         configData->dvArray[2].flag = 3;
     }else if(configData->dvArray[2].t - configData->dvArray[1].t < configData->attControlTime &&
              configData->dvArray[1].t - configData->dvArray[2].t < configData->attControlTime){
-        configData->dvArray[0].thrustOnTime = sqrt(dvrp_mag*dvrp_mag+dvtp_mag*dvtp_mag)*configData->scMassDeputy/thrustConfigMsg.thrusters[0].maxThrust;
-        configData->dvArray[1].thrustOnTime = sqrt(dvra_mag*dvra_mag+dvta_mag*dvta_mag+dvn_mag*dvn_mag)*configData->scMassDeputy/thrustConfigMsg.thrusters[0].maxThrust;
+        configData->dvArray[0].thrustOnTime = sqrt(dvrp_mag*dvrp_mag+dvtp_mag*dvtp_mag)* vehicleConfigMsgBuffer.massSC/thrustConfigMsgBuffer.thrusters[0].maxThrust;
+        configData->dvArray[1].thrustOnTime = sqrt(dvra_mag*dvra_mag+dvta_mag*dvta_mag+dvn_mag*dvn_mag)* vehicleConfigMsgBuffer.massSC/thrustConfigMsgBuffer.thrusters[0].maxThrust;
         configData->dvArray[2].thrustOnTime = 0.0;
         configData->dvArray[2].flag = 3;
     }else{
-        configData->dvArray[0].thrustOnTime = sqrt(dvrp_mag*dvrp_mag+dvtp_mag*dvtp_mag)*configData->scMassDeputy/thrustConfigMsg.thrusters[0].maxThrust;
-        configData->dvArray[1].thrustOnTime = sqrt(dvra_mag*dvra_mag+dvta_mag*dvta_mag)*configData->scMassDeputy/thrustConfigMsg.thrusters[0].maxThrust;
-        configData->dvArray[2].thrustOnTime = dvn_mag*configData->scMassDeputy/thrustConfigMsg.thrusters[0].maxThrust;
+        configData->dvArray[0].thrustOnTime = sqrt(dvrp_mag*dvrp_mag+dvtp_mag*dvtp_mag)* vehicleConfigMsgBuffer.massSC/thrustConfigMsgBuffer.thrusters[0].maxThrust;
+        configData->dvArray[1].thrustOnTime = sqrt(dvra_mag*dvra_mag+dvta_mag*dvta_mag)* vehicleConfigMsgBuffer.massSC/thrustConfigMsgBuffer.thrusters[0].maxThrust;
+        configData->dvArray[2].thrustOnTime = dvn_mag* vehicleConfigMsgBuffer.massSC/thrustConfigMsgBuffer.thrusters[0].maxThrust;
     }
     // if thrustOnTime is smaller than a cerain threshold, the impulse is neglected
     // 1.0 second is temporarily set as threshold regarding whether small impulse is neglected or not
-    if(configData->dvArray[0].thrustOnTime/thrustConfigMsg.numThrusters < 1.0){
+    if(configData->dvArray[0].thrustOnTime/thrustConfigMsgBuffer.numThrusters < 1.0){
         configData->dvArray[0].flag = 3;
     }
-    if(configData->dvArray[1].thrustOnTime/thrustConfigMsg.numThrusters < 1.0){
+    if(configData->dvArray[1].thrustOnTime/thrustConfigMsgBuffer.numThrusters < 1.0){
         configData->dvArray[1].flag = 3;
     }
-    if(configData->dvArray[2].thrustOnTime/thrustConfigMsg.numThrusters < 1.0){
+    if(configData->dvArray[2].thrustOnTime/thrustConfigMsgBuffer.numThrusters < 1.0){
         configData->dvArray[2].flag = 3;
     }
 
@@ -458,7 +464,7 @@ void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
     double thruster_dir[3];
     double ep_vec[3];
     double ez[3] = {0.0,0.0,1.0};
-    v3Normalize(thrustConfigMsg.thrusters[0].tHatThrust_B,thruster_dir);
+    v3Normalize(thrustConfigMsgBuffer.thrusters[0].tHatThrust_B,thruster_dir);
     if(thruster_dir[0] == 0.0 && thruster_dir[1] == 0.0){
         // can be any vector in XY-plane
         ep_vec[0] = 1.0;

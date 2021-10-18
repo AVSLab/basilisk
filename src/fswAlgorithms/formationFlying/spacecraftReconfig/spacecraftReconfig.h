@@ -26,6 +26,7 @@
 #include "cMsgCInterface/THRArrayConfigMsg_C.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
 #include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+#include "cMsgCInterface/VehicleConfigMsg_C.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/orbitalMotion.h"
@@ -46,6 +47,7 @@ typedef struct {
     NavTransMsg_C deputyTransInMsg;                     //!< deputy orbit input msg
     THRArrayConfigMsg_C thrustConfigInMsg;              //!< THR configuration input msg
     AttRefMsg_C attRefInMsg;                            //!< nominal attitude reference input msg
+    VehicleConfigMsg_C vehicleConfigInMsg;              //!< deputy vehicle config msg
 
     // out
     AttRefMsg_C attRefOutMsg;                           //!< attitude reference output msg
@@ -55,7 +57,6 @@ typedef struct {
     double attControlTime; //!< [s] attitude control margin time (time necessary to change sc's attitude)
     double targetClassicOED[6]; //!< target classic orital element difference, SMA should be normalized
     double resetPeriod; //!< [s] burn scheduling reset period
-    double scMassDeputy; //!< [kg] deputy SC mass
     double tCurrent; //!< [s] timer
     uint64_t prevCallTime; //!< [ns]
     uint8_t thrustOnFlag; //!< thrust control
@@ -73,14 +74,15 @@ extern "C" {
     void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t callTime, int64_t moduleID);
 
-    void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chiefTransMsg,
-                             NavTransMsgPayload deputyTransMsg, AttRefMsgPayload attRefInMsg,
-                             THRArrayConfigMsgPayload thrustConfigMsg, AttRefMsgPayload *attRefMsg,
-                             THRArrayOnTimeCmdMsgPayload *thrustOnMsg, uint64_t callTime, int64_t moduleID);
+    void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chiefTransMsgBuffer,
+                             NavTransMsgPayload deputyTransMsgBuffer, AttRefMsgPayload attRefInMsgBuffer,
+                             THRArrayConfigMsgPayload thrustConfigMsgBuffer, VehicleConfigMsgPayload vehicleConfigMsgBuffer,
+                             AttRefMsgPayload *attRefOutMsgBuffer, THRArrayOnTimeCmdMsgPayload *thrustOnMsgBuffer,
+                             uint64_t callTime, int64_t moduleID);
     double AdjustRange(double lower, double upper, double angle);
     int CompareTime(const void * n1, const void * n2);
     void ScheduleDV(spacecraftReconfigConfig *configData, classicElements oe_c,
-                         classicElements oe_d, THRArrayConfigMsgPayload thrustConfigMsg);
+                         classicElements oe_d, THRArrayConfigMsgPayload thrustConfigMsgBuffer, VehicleConfigMsgPayload vehicleConfigMsgBuffer);
 
 #ifdef __cplusplus
 }
