@@ -43,9 +43,11 @@ provides information on what this message is used for.
     |                          |                                   | reference attitude unless it must point the thrusters in a    |
     |                          |                                   | control direction.                                            |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | attRefOutMsg             | :ref:`AttRefMsgPayload`           | The name of deputy's target attitude output message           |
+    | vehicleConfigInMsg       | :ref:`VehicleConfigMsgPayload`    | The name of the deputy's vehicle configuration input message  |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | onTimeOutMsg             | :ref:`THRArrayOnTimeCmdMsgPayload`| The name of deputy's reference attitude input message         |
+    | attRefOutMsg             | :ref:`AttRefMsgPayload`           | The name of the deputy's target attitude output message       |
+    +--------------------------+-----------------------------------+---------------------------------------------------------------+
+    | onTimeOutMsg             | :ref:`THRArrayOnTimeCmdMsgPayload`| The name of the deputy's reference attitude input message     |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
 
 Module Assumptions and Limitations
@@ -61,6 +63,5 @@ This module requires the following variables to be set as parameters:
 - ``attControlTime`` time [s] necessary to control one attitude to another attitude
 - ``mu`` gravitational constant for a central body in m^3/s^2
 - ``targetClassicOED`` desired orbital element difference.
-- ``scMassDeputy`` deputy's mass [kg]
 
 For ``targetClassicOED``, normalized semi major axis must be used.

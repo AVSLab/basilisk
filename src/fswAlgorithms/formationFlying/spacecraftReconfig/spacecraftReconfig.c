@@ -136,6 +136,7 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
  @param deputyTransMsgBuffer deputy's position and velocity
  @param attRefInMsgBuffer target attitude
  @param thrustConfigMsgBuffer thruster's config information
+ @param vehicleConfigMsgBuffer deputy's vehicle config information
  @param attRefOutMsgBuffer target attitude
  @param thrustOnMsgBuffer thruster on time
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -327,6 +328,7 @@ int CompareTime(const void * n1, const void * n2)
  @param oe_c chief's orbital element
  @param oe_d deputy's orbital element
  @param thrustConfigMsgBuffer
+ @param vehicleConfigMsgBuffer deputy's vehicle config information
  */
 void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
                           classicElements oe_d, THRArrayConfigMsgPayload thrustConfigMsgBuffer, VehicleConfigMsgPayload vehicleConfigMsgBuffer)
