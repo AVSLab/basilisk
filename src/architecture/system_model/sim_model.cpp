@@ -72,6 +72,7 @@ SimThreadExecution::SimThreadExecution() {
     terminateThread = false;
     selfInitNow = false;
     crossInitNow = false;
+    resetNow = false;
     threadID = 0;
     CurrentNanos = 0;
     NextTaskTime = 0;
@@ -108,7 +109,7 @@ void SimThreadExecution::SingleStepProcesses(int64_t stopPri)
     uint64_t nextCallTime = ~((uint64_t) 0);
     std::vector<SysProcess *>::iterator it = this->processList.begin();
     this->CurrentNanos = this->NextTaskTime;
-    while(it!= this->processList.end())
+    while(it!= this->processList.end() && this->threadValid())
     {
         SysProcess *localProc = (*it);
         if(localProc->processEnabled())
@@ -148,8 +149,8 @@ void SimThreadExecution::StepUntilStop()
      (that's less than all process priorities, so it will run through the next
      process)*/
     int64_t inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
-    while(this->NextTaskTime < stopThreadNanos || (this->NextTaskTime == stopThreadNanos &&
-                                               this->nextProcPriority >= stopThreadPriority) )
+    while(this->threadValid() && (this->NextTaskTime < stopThreadNanos || (this->NextTaskTime == stopThreadNanos &&
+                                               this->nextProcPriority >= stopThreadPriority)) )
     {
         this->SingleStepProcesses(inPri);
         inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
