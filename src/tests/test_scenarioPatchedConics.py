@@ -60,16 +60,16 @@ def test_scenarioPatchedConics(show_plots):
 
     except OSError as err:
         testFailCount += 1
-        testMessages.append("scenarioPatchedConics  test are failed.")
+        testMessages.append("scenarioPatchedConics test are failed.")
 
     # setup truth data for unit test
     truePos = [
-        [158952067.0, 514585340.0, 0.0]
+        [19503460698.246426, 1948347074.142926, 0.0]
     ]
 
 
     # compare the results to the truth values
-    accuracy = 1000.0 # meters
+    accuracy = 1000000.0 # meters
     testFailCount, testMessages = unitTestSupport.compareArray(
         truePos, dataPos, accuracy, "r_BN_N Vector",testFailCount, testMessages)
 

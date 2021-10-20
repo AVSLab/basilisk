@@ -295,7 +295,7 @@ def run(show_plots):
     posRef.setState(unitTestSupport.np2EigenVectorXd(rN))
     velRef.setState(unitTestSupport.np2EigenVectorXd(vN))
 
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2 - macros.sec2nano(6058000))
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2 - oneWeek*1)
     scSim.ExecuteSimulation()
 
     hohmann_PosData = dataLog.r_BN_N
@@ -312,10 +312,10 @@ def run(show_plots):
     # the simulation is propagated until it reaches Jupiter's SOI. Similar to the
     # Interplanetary section, the position and
     # velocity states are pulled and manipulated to be Jupiter-centric and then fed back to the simulation.
-    simulationTimeStep = macros.sec2nano(100.)
+    simulationTimeStep = macros.sec2nano(500.)
     dynProcess.updateTaskPeriod(simTaskName, simulationTimeStep)
     dataLog.updateTimeInterval(macros.sec2nano(20*60))
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2)
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2 - oneWeek*0.5)
     scSim.ExecuteSimulation()
 
     timeSwitch_posData = dataLog.r_BN_N
@@ -355,7 +355,7 @@ def run(show_plots):
     # Setup data logging before the simulation is initialized
 
     # scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, simulationTimeStep)
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2 + macros.sec2nano(1100000))
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2 + oneWeek*6)
 
     scSim.ExecuteSimulation()
     #   retrieve the logged data
@@ -478,7 +478,7 @@ def run(show_plots):
 
 
     plt.figure(4,figsize=(5,5))
-    plt.axis([-500000, 500000, -500000, 500000])
+    plt.axis([-20000000, 20000000, -20000000, 20000000])
     # draw the planet
     fig = plt.gcf()
     ax = fig.gca()
