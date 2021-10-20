@@ -155,7 +155,7 @@ void SysModelTask::updatePeriod(uint64_t newPeriod)
     //! - If the requested time is above the min time, set the next time based on the previos time plus the new period
     if(this->NextStartTime > this->TaskPeriod)
     {
-        newStartTime = (newStartTime/newPeriod)*newPeriod;
+        newStartTime = (this->NextStartTime/newPeriod)*newPeriod;
         if(newStartTime <= (this->NextStartTime - this->TaskPeriod))
         {
             newStartTime += newPeriod;

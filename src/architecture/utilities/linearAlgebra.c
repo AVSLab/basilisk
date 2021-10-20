@@ -134,7 +134,9 @@ void vtMultM(double *v,
     double *m_mx2 = (double *)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim11*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+    {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+    }
 
     size_t i;
     size_t j;
@@ -162,7 +164,9 @@ void vtMultMt(double *v,
     double *m_mx2 = (double *)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim11*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+    {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+    }
 
     size_t i;
     size_t j;
@@ -866,7 +870,9 @@ void mTranspose(void *mx, size_t dim1, size_t dim2,
     double *m_mx = (double *)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim1*dim2 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+    {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+    }
 
     size_t i;
     size_t j;
@@ -937,7 +943,9 @@ void mMultM(void *mx1, size_t dim11, size_t dim12,
     double *m_mx2 = (double *)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim11*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+    {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+    }
 
     size_t i;
     size_t j;
@@ -966,7 +974,9 @@ void mtMultM(void *mx1, size_t dim11, size_t dim12,
     double *m_mx2 = (double *)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim12*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+    {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+    }
 
     size_t i;
     size_t j;
@@ -995,7 +1005,9 @@ void mMultMt(void *mx1, size_t dim11, size_t dim12,
     double *m_mx2 = (double *)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim11*dim21 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+    {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+    }
 
     size_t i;
     size_t j;
@@ -1024,7 +1036,9 @@ void mtMultMt(void *mx1, size_t dim11, size_t dim12,
     double *m_mx2 = (double *)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim12*dim21 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+    {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+    }
 
     size_t i;
     size_t j;
@@ -1056,7 +1070,9 @@ void mMultV(void *mx, size_t dim1, size_t dim2,
     double *m_mx2 = (double *)v;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim11*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+    {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+    }
 
     size_t i;
     size_t j;
@@ -1084,7 +1100,9 @@ void mtMultV(void *mx, size_t dim1, size_t dim2,
     double *m_mx2 = (double *)v;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim12*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+    {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+    }
 
     size_t i;
     size_t j;
@@ -1125,7 +1143,9 @@ double mDeterminant(void *mx, size_t dim)
     double result = 0;
     double mxTemp[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if ((dim-1)*(dim-1) > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+    {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+    }
 
     if(dim < 1) {
         return 0;
@@ -1167,7 +1187,9 @@ void mCofactor(void *mx, size_t dim, void *result)
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double  det;
     if (dim*dim > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+    {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+    }
 
     for(i = 0; i < dim; i++) {
         for(j = 0; j < dim; j++) {
@@ -1210,7 +1232,9 @@ int mInverse(void *mx, size_t dim, void *result)
     double  det = mDeterminant(mx, dim);
     double  m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     if (dim*dim > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+    {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
+    }
     
     if(fabs(det) > DB0_EPS) {
         /* Find adjoint matrix */
