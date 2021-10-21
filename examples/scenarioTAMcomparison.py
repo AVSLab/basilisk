@@ -56,26 +56,26 @@ Illustration of Simulation Results
 
     show_plots = True, orbitCase = 'circular', useBias1 = False, useBounds1 = True, useBias2 = False, useBounds2 = True
 
-.. image:: /_images/Scenarios/scenarioTAMcomparison1circular.svg
+.. image:: /_images/Scenarios/scenarioTAMcomparison1circularFalseTrueFalseTrue.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioTAMcomparison2circularFalseTrue.svg
+.. image:: /_images/Scenarios/scenarioTAMcomparison2circularFalseTrueFalseTrue.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioTAMcomparison3circularFalseTrue.svg
+.. image:: /_images/Scenarios/scenarioTAMcomparison3circularFalseTrueFalseTrue.svg
    :align: center
 
 ::
 
     show_plots = True, orbitCase = 'elliptical', useBias1 = True, useBounds1 = False, useBias2 = True, useBounds2=False
 
-.. image:: /_images/Scenarios/scenarioTAMcomparison1elliptical.svg
+.. image:: /_images/Scenarios/scenarioTAMcomparison1ellipticalTrueFalseTrueFalse.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioTAMcomparison2ellipticalTrueFalse.svg
+.. image:: /_images/Scenarios/scenarioTAMcomparison2ellipticalTrueFalseTrueFalse.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioTAMcomparison3ellipticalTrueFalse.svg
+.. image:: /_images/Scenarios/scenarioTAMcomparison3ellipticalTrueFalseTrueFalse.svg
    :align: center
 
 ::
@@ -83,26 +83,26 @@ Illustration of Simulation Results
     show_plots = True, orbitCase = 'elliptical', useBias1 = False, useBounds1 = False, useBias2 = False,
     useBounds2 = False
 
-.. image:: /_images/Scenarios/scenarioTAMcomparison1elliptical.svg
+.. image:: /_images/Scenarios/scenarioTAMcomparison1ellipticalFalseFalseFalseFalse.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioTAMcomparison2ellipticalFalseFalse.svg
+.. image:: /_images/Scenarios/scenarioTAMcomparison2ellipticalFalseFalseFalseFalse.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioTAMcomparison3ellipticalFalseFalse.svg
+.. image:: /_images/Scenarios/scenarioTAMcomparison3ellipticalFalseFalseFalseFalse.svg
    :align: center
 
 ::
 
     show_plots = True, orbitCase = 'circular', useBias1 = False, useBounds1 = True, useBias2 = False, useBounds2 = False
 
-.. image:: /_images/Scenarios/scenarioTAMcomparison1circular.svg
+.. image:: /_images/Scenarios/scenarioTAMcomparison1circularFalseTrueFalseFalse.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioTAMcomparison2circularFalseTrue.svg
+.. image:: /_images/Scenarios/scenarioTAMcomparison2circularFalseTrueFalseFalse.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioTAMcomparison3circularFalseFalse.svg
+.. image:: /_images/Scenarios/scenarioTAMcomparison3circularFalseTrueFalseFalse.svg
    :align: center
 """
 
@@ -204,7 +204,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
         # different custom dipole model.  It is connected to the
         # same spacecraft state message as the first magnetic field model.
 
-        magModule2= magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
+        magModule2 = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
         magModule2.ModelTag = "CenteredDipole2"
         magModule2.addSpacecraftToModel(scObject.scStateOutMsg)
         # set the 2nd magnetic field through custom dipole settings
@@ -252,28 +252,27 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     TAM2.senNoiseStd = [100e-9, 100e-9, 100e-9]
 
     if orbitCase == 'elliptical':
-        TAM3 = magnetometer.Magnetometer() #TAM3 is a dummy TAM used to plot Dipole Magnetic Model 2
+        TAM3 = magnetometer.Magnetometer()  # TAM3 is a dummy TAM used to plot Dipole Magnetic Model 2
         TAM3.ModelTag = "TAM3_sensor"
         TAM3.scaleFactor = 1.0
         TAM3.senNoiseStd = [100e-9, 100e-9, 100e-9]
 
-
     if useBias1:
-        useBias1_str='True'
+        useBias1_str = 'True'
         TAM1.senBias = [0, 0, -1e-6]  # Tesla
         if orbitCase == 'elliptical':
             TAM3.senBias = [0, 0, -1e-6]  # Tesla
     else:
-        useBias1_str='False'
+        useBias1_str = 'False'
     if useBounds1:
-        useBounds1_str='True'
+        useBounds1_str = 'True'
         TAM1.maxOutput = 2.5E-5  # Tesla
         TAM1.minOutput = -2.5E-5  # Tesla
         if orbitCase == 'elliptical':
             TAM3.maxOutput = 2.5E-5  # Tesla
             TAM3.minOutput = -2.5E-5  # Tesla
     else:
-        useBounds1_str='False'
+        useBounds1_str = 'False'
     TAM1.stateInMsg.subscribeTo(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, TAM1)
     if orbitCase == 'elliptical':
@@ -281,16 +280,16 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
         scSim.AddModelToTask(simTaskName, TAM3)
 
     if useBias2:
-        useBias2_str='True'
+        useBias2_str = 'True'
         TAM2.senBias = [0, 0, -1e-6]  # Tesla
     else:
-        useBias2_str='False'
+        useBias2_str = 'False'
     if useBounds2:
-        useBounds2_str='True'
+        useBounds2_str = 'True'
         TAM2.maxOutput = 2.5E-5  # Tesla
         TAM2.minOutput = -2.5E-5  # Tesla
     else:
-        useBounds2_str='False'
+        useBounds2_str = 'False'
     TAM2.stateInMsg.subscribeTo(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, TAM2)
 
@@ -406,7 +405,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     plt.ylabel('Radius [km]')
     plt.ylim(min(rData) * 0.9, max(rData) * 1.1)
     figureList = {}
-    pltName = fileName + "1" + orbitCase
+    pltName = fileName + "1" + orbitCase + useBias1_str + useBounds1_str + useBias2_str + useBounds2_str
     figureList[pltName] = plt.figure(1)
 
     # plot 2
@@ -428,7 +427,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
             plt.plot(timeAxis * macros.NANO2SEC / P, tam3Data[:, idx] * 1e9, '--',
                      color=unitTestSupport.getLineColor(idx, 3),
                      label=r'$TAM_{' + str(idx) + '}$')
-    pltName = fileName + "2" + orbitCase + useBias1_str + useBounds1_str
+    pltName = fileName + "2" + orbitCase + useBias1_str + useBounds1_str + useBias2_str + useBounds2_str
     figureList[pltName] = plt.figure(2)
 
     # plot 3
@@ -445,7 +444,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     plt.xlabel('Time [orbits]')
     plt.ylabel('Magnetic Field [nT] ')
     plt.title('WMM Model')
-    pltName = fileName + "3" + orbitCase + useBias2_str + useBounds2_str
+    pltName = fileName + "3" + orbitCase + useBias1_str + useBounds1_str + useBias2_str + useBounds2_str
     figureList[pltName] = plt.figure(3)
 
 
