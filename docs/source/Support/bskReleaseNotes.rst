@@ -45,6 +45,7 @@ Version |release|
 - changed the way :ref:`spacecraftReconfig` gets the deputy's mass properties. It now receives that information
   through a message of the type ``VehicleConfigMsgPayload`` instead of an internal variable. Relevant example 
   scripts have been updated.
+- new tutorial example scenario script :ref:`scenarioTAMcomparison`
 
 
 Version 2.0.7
