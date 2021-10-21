@@ -136,7 +136,7 @@ Three-Axis Magnetometers
    Adding a Three-Axis Magnetometer (TAM)  <scenarioTAM>
    RW Momentum Management using TAMs and MTBs <scenarioMtbMomentumManagementSimple>
    RW Momentum Management using TAMs and MTBs Using desired Nominal RW Speed <scenarioMtbMomentumManagement>
-
+   TAM Comparison <scenarioTAMcomparison>
 
 Spacecraft Sub-Systems
 ----------------------
