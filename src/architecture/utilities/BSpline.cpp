@@ -103,6 +103,8 @@ void interpolate(InputDataSet Input, int Num, double avgXDot, int P, OutputDataS
         uk[n] = T[n] / Ttot;
     }
 
+    std::cout << uk << '\n';
+
     int K = 0;  // number of endpoint derivatives
     if (Input.XDot_0_flag == true) {K += 1;}
     if (Input.XDot_N_flag == true) {K += 1;}
@@ -120,7 +122,7 @@ void interpolate(InputDataSet Input, int Num, double avgXDot, int P, OutputDataS
 
     for (int j = 0; j < M-2*P-1; j++) {
         u = 0.0;
-        for (int i = j; i < j+P; i++) {
+        for (int i = j+1; i < j+P+1; i++) {
             if (i >= uk.size()) {
                 u += uk[N] / P;
             }
@@ -134,6 +136,7 @@ void interpolate(InputDataSet Input, int Num, double avgXDot, int P, OutputDataS
     for (int p = 0; p < P+1; p++) {
         U[M-P+p] = 1;   // should be 1
     }
+    std::cout << U << '\n';
 
     // build stiffness matrix A
     Eigen::MatrixXd A(N+K+1,N+K+1);
@@ -195,6 +198,7 @@ void interpolate(InputDataSet Input, int Num, double avgXDot, int P, OutputDataS
         Q2[n] = (1-U[M-P-1]) / P * Input.XDot_N[1] * Ttot;
         Q3[n] = (1-U[M-P-1]) / P * Input.XDot_N[2] * Ttot;
     }
+    std::cout << A << '\n';
     
     Eigen::MatrixXd B = A.inverse();
     Eigen::VectorXd C1 = B * Q1;
@@ -258,7 +262,20 @@ void interpolate(InputDataSet Input, int Num, double avgXDot, int P, OutputDataS
 
 /*! */
 void basisFunction(double t, Eigen::VectorXd U, int I, int P, double *NN, double *NN1, double *NN2)
-{
+{   
+    if (t == 1.0) {
+        for (int i = 0; i < I-1; i++) {
+            *(NN+i)  = 0.0;
+            *(NN1+i) = 0.0;
+            *(NN2+i) = 0.0;    
+            }
+        *(NN+I-1)  = 1.0;
+        *(NN1+I-1) = 0.0;
+        *(NN2+I-1) = 0.0;
+        
+        return;
+    }
+
     Eigen::MatrixXd N(U.size()-1, P+1);
     Eigen::MatrixXd N1(U.size()-1, P+1);
     Eigen::MatrixXd N2(U.size()-1, P+1);
@@ -273,7 +290,7 @@ void basisFunction(double t, Eigen::VectorXd U, int I, int P, double *NN, double
     }
     /* zero order */
     for (int i = 0; i < U.size()-1; i++) {
-        if ( (t >= U(i)) && (t <= U(i+1)) ) {
+        if ( (t >= U(i)) && (t < U(i+1)) ) {
             N(i,0) = 1;
         }
     }
