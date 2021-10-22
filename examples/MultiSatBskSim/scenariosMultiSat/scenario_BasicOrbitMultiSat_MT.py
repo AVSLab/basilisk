@@ -192,43 +192,20 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
         DynModels = self.get_DynModel()
 
         # Configure Dynamics initial conditions
-        self.oe.append(orbitalMotion.ClassicElements())
-        self.oe[0].a = 1.1 * EnvModel.planetRadius  # meters
-        self.oe[0].e = 0.01
-        self.oe[0].i = 45.0 * macros.D2R
-        self.oe[0].Omega = 48.2 * macros.D2R
-        self.oe[0].omega = 347.8 * macros.D2R
-        self.oe[0].f = 85.3 * macros.D2R
-        rN, vN = orbitalMotion.elem2rv(EnvModel.mu, self.oe[0])
-        orbitalMotion.rv2elem(EnvModel.mu, rN, vN)
-        DynModels[0].scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
-        DynModels[0].scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-        DynModels[0].scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+        for i in range(self.numberSpacecraft):
+            self.oe.append(orbitalMotion.ClassicElements())
+            self.oe[i].a = 1.1 * EnvModel.planetRadius + 1E5*(i+1)  # meters
+            self.oe[i].e = 0.01 + 0.001* (i)
+            self.oe[i].i = 45.0 * macros.D2R
+            self.oe[i].Omega = (48.2 + 5.0*i) * macros.D2R 
+            self.oe[i].omega = 347.8 * macros.D2R
+            self.oe[i].f = 85.3 * macros.D2R
+            rN, vN = orbitalMotion.elem2rv(EnvModel.mu, self.oe[i])
+            orbitalMotion.rv2elem(EnvModel.mu, rN, vN)
+            DynModels[i].scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
+            DynModels[i].scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
+            DynModels[i].scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
         DynModels[0].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
-
-        # Configure Dynamics initial conditions
-        self.oe.append(copy.deepcopy(self.oe[0]))
-        self.oe[1].a = 1.2 * EnvModel.planetRadius
-        self.oe[1].e = 0.1
-        self.oe[1].i = 30.0 * macros.D2R
-        rN2, vN2 = orbitalMotion.elem2rv(EnvModel.mu, self.oe[1])
-        orbitalMotion.rv2elem(EnvModel.mu, rN2, vN2)
-        DynModels[1].scObject.hub.r_CN_NInit = rN2  # m   - r_CN_N
-        DynModels[1].scObject.hub.v_CN_NInit = vN2  # m/s - v_CN_N
-        DynModels[1].scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        DynModels[1].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
-
-        # Configure Dynamics initial conditions
-        self.oe.append(copy.deepcopy(self.oe[0]))
-        self.oe[2].a = 1.3 * EnvModel.planetRadius
-        self.oe[2].e = 0.05
-        self.oe[2].i = 60.0 * macros.D2R
-        rN3, vN3 = orbitalMotion.elem2rv(EnvModel.mu, self.oe[2])
-        orbitalMotion.rv2elem(EnvModel.mu, rN3, vN3)
-        DynModels[2].scObject.hub.r_CN_NInit = rN3  # m   - r_CN_N
-        DynModels[2].scObject.hub.v_CN_NInit = vN3  # m/s - v_CN_N
-        DynModels[2].scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        DynModels[2].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         # Process outputs
@@ -320,7 +297,7 @@ def run(show_plots, numberSpacecraft, environment, numThreads):
 
 if __name__ == "__main__":
     run(show_plots=True,
-        numberSpacecraft=8,
+        numberSpacecraft=16,
         environment="Earth",  # Earth or Mercury
-        numThreads=3
+        numThreads=4
         )
