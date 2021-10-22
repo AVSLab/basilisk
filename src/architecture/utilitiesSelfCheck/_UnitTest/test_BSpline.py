@@ -35,13 +35,20 @@ import matplotlib.pyplot as plt
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-X1 = np.array([0, 1, 2, 3, 4])
-X2 = np.array([4, 3, 2, 1, 0])
-X3 = np.array([0, 0, 0, 0, 0])
+# X1 = np.array([0, 1, 2, 3, 4, 5, 6])
+# X2 = np.array([5, 4, 3, 2, 1, 0, 1])
+# X3 = np.array([0, 0, 0, 0, 0, 0, 0])
+
+X1 = np.array([0, 1, 2, 3, 4, 5, 6])
+X2 = np.array([5, 4, 3, 2, 1, 0, 1])
+X3 = np.array([0, 0, 0, 0, 0, 0, 0])
+
+for i in range(len(X1)):
+    plt.plot(X1[i],X2[i],'r*')
 
 Input = BSpline.InputDataSet(X1, X2, X3)
-Input.setXDot_0([0, 0, 0])
-Input.setXDot_N([0, 0, 0])
+# Input.setXDot_0([0, 0, 0])
+# Input.setXDot_N([0, 0, 0])
 # Input.setXDDot_0([0, 0, 0])
 # Input.setXDDot_N([0, 0, 0])
 # Input.setT([0, 1, 2, 3])
@@ -70,13 +77,19 @@ for i in range(I):
     XDD2.append(Output.XDD2[i][0])
     XDD3.append(Output.XDD3[i][0])
 
+plt.figure(1)
 plt.plot(X1,X2)
-# plt.plot(XD1)
-# plt.plot(XDD1)
+plt.figure(2)
+plt.plot(XD1)
+plt.plot(XD2)
+plt.figure(3)
+plt.plot(XDD1)
+plt.plot(XDD2)
 plt.show()
 
 # print(Input.X1)
 # print(Output.X1)
+# print(Output.X2)
 # print(Input.XDot_0_flag)
 # print(Input.XDot_N_flag)
 # print(Input.T)
