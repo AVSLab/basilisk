@@ -18,6 +18,26 @@ Release Notes
     - Add magnetic torque bar visualization
     - Provide a spacecraft attached flash light component
 
+**Version 2.0.0**
+
+- The version 2.0 release main feature is the new improved atmosphere shader which is currently enabled on
+  Earth, Venus and Mars whenever one of these bodies is the camera target or the parent body of the camera
+  target in spacecraft local and planet local views. This is a computation intensive shader and is turned
+  off when these conditions are not met. The old Atmosphere scattering shader is enabled in all other cases.
+- The atmosphere rendering can be turned off completely using the ``atmospheresOff`` user setting in
+  the protobuffer messages.
+- Added support in the new atmosphere shader for artificial nighttime albedo lighting
+- Added multipliers for distance to the planet view transition and hello view transition to allow the user
+  to zoom further out before triggering the transition (new vizMessage.proto file attached). This change
+  required some rescripting for how the transitions thresholds were set and used by various scripts,
+  but luckily a small change overall.
+
+.. warning::
+
+    A known issue with the new shader is that if you are in the eclipse region of the planet and move radially
+    outward you will see a white ring around the planet.  This will be addressed in a future release.
+
+
 **Version 1.9.2**
 
 - Apple Silicon compatible native file browser, Vizard can be run in M1 native mode
