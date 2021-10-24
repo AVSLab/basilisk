@@ -25,9 +25,9 @@ Basilisk Release Notes
     - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
       CAD asteroid or lunar surface terrain.
     - new example scripts how to spacecraft formation simulations exploiting the BSK2 messaging
-    - Basilisk 2.1 that includes:
+    - Basilisk 2.2 that includes:
 
-        - support for multi-threading when simulating multiple satellite systems
+        - support a way to do thread-safe messaging
 
 Version |release|
 -----------------
@@ -53,6 +53,15 @@ Version |release|
 - new tutorial example scenario script :ref:`scenarioTAMcomparison`
 - new mass sensor that converts a ``simulation`` mass properties message to a ``FSW`` vehicle configuration message :ref:`simpleMassProps`
 - added scripting support for Vizard 2.0.1 and 2.0.2
+- This release provides a new ability to run a single Basilisk simulation in a multi-threaded manner.
+  The BSK processes can be spread across multiple threads.  See :ref:`scenario_BasicOrbitMultiSat_MT`
+  for an example of how to use this.
+
+.. warning::
+
+    The BSK v2.1 multi-threading assumes all processes assigned to a thread can run independently
+    from processes in another thread.  Further, cross thread message communication is not yet
+    thread safe!
 
 
 Version 2.0.7
