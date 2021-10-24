@@ -36,9 +36,6 @@ the spacecraft object. The spacecraft state and the magnetic field models (World
 Dipole Magnetic Field) messages are each connected to a :ref:`magnetometer` module which outputs the local magnetic field
 measurements in sensor frame components.
 
-.. image:: /../../src/simulation/sensors/magnetometerComparison/Documentation/Images/scenario_TAM_MagneticField.svg
-    :align: center
-
 When the simulation completes three plots are shown for each case. One plot shows the radius in km, the second shows
 the :ref:`scenarioMagneticFieldCenteredDipole` measurements, and the third shows the :ref:`scenarioMagneticFieldWMM`
 measurements. The magnetic models measurements are shown as vector components with respect to the sensor frame.
