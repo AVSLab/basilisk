@@ -277,6 +277,13 @@ Advanced Simulation Options
    Using a Python BSK Module <scenarioAttitudePointingPy>
    Changing the bskLog Verbosity from Python <scenarioBskLog>
 
+Multi-Threading Basilisk Simulations
+------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   Simulation of Multiple independent spacecraft <MultiSatBskSim/scenariosMultiSat/scenario_BasicOrbitMultiSat_MT>
 
 
 Advanced Visualizations
