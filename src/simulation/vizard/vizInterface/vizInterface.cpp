@@ -554,7 +554,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_showlocationcommlines(this->settings.showLocationCommLines);
         vizSettings->set_showlocationcones(this->settings.showLocationCones);
         vizSettings->set_showlocationlabels(this->settings.showLocationLabels);
-        
+        vizSettings->set_atmospheresoff(this->settings.atmospheresOff);
+        vizSettings->set_scviewtoplanetviewboundarymultiplier(this->settings.scViewToPlanetViewBoundaryMultiplier);
+        vizSettings->set_planetviewtohelioviewboundarymultiplier(this->settings.planetViewToHelioViewBoundaryMultiplier);
+
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();
