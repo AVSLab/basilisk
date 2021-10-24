@@ -45,11 +45,11 @@ public:
     //void CrossInitTaskList();
     void ExecuteTaskList(uint64_t CurrentSimTime);
 	void ResetTaskList(uint64_t CurrentSimTime);
-    void ResetTask() {this->NextStartTime = this->FirstTaskTime;}
-	void enableTask() {this->taskActive = true;}
-	void disableTask() {this->taskActive = false;}
+    void ResetTask() {this->NextStartTime = this->FirstTaskTime;} //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
+	void enableTask() {this->taskActive = true;} //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
+	void disableTask() {this->taskActive = false;} //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
     void updatePeriod(uint64_t newPeriod);
-    void updateParentProc(std::string parent) {this->parentProc = parent;}
+    void updateParentProc(std::string parent) {this->parentProc = parent;} //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
     
 public:
     std::vector<ModelPriorityPair> TaskModels;  //!< -- Array that has pointers to all task sysModels

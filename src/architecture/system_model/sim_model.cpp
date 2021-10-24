@@ -82,18 +82,30 @@ SimThreadExecution::SimThreadExecution() {
 
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimThreadExecution::lockThread() {
     this->selfThreadLock.lock();
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimThreadExecution::lockMaster() {
     this->masterThreadLock.lock();
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimThreadExecution::unlockThread() {
     this->selfThreadLock.unlock();
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimThreadExecution::unlockMaster() {
     this->masterThreadLock.unlock();
 }
@@ -101,7 +113,7 @@ void SimThreadExecution::unlockMaster() {
 /*! This method steps all of the processes forward to the current time.  It also
     increments the internal simulation time appropriately as the simulation
     processes are triggered
-    @param int64_t stopPri The priority level below which the sim won't go
+    @param stopPri The priority level below which the sim won't go
     @return void
 */
 void SimThreadExecution::SingleStepProcesses(int64_t stopPri)
@@ -157,6 +169,9 @@ void SimThreadExecution::StepUntilStop()
     }
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimThreadExecution::moveProcessMessages() {
     std::vector<SysProcess *>::iterator it;
     for(it = this->processList.begin(); it != this->processList.end(); it++)
@@ -166,6 +181,9 @@ void SimThreadExecution::moveProcessMessages() {
 
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimThreadExecution::waitOnInit() {
     std::unique_lock<std::mutex> lck(this->initReadyLock);
     while(!this->threadActive())
@@ -174,12 +192,18 @@ void SimThreadExecution::waitOnInit() {
     }
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimThreadExecution::postInit() {
     std::unique_lock<std::mutex> lck(this->initReadyLock);
     this->threadReady();
     this->initHoldVar.notify_one();
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimThreadExecution::selfInitProcesses() {
     std::vector<SysProcess *>::iterator it;
     for(it=this->processList.begin(); it!= this->processList.end(); it++)
@@ -188,6 +212,9 @@ void SimThreadExecution::selfInitProcesses() {
     }
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimThreadExecution::crossInitProcesses() {
     std::vector<SysProcess *>::iterator it;
     for(it=this->processList.begin(); it!= this->processList.end(); it++)
@@ -196,6 +223,9 @@ void SimThreadExecution::crossInitProcesses() {
     }
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimThreadExecution::resetProcesses() {
     std::vector<SysProcess *>::iterator it;
     this->currentThreadNanos = 0;
@@ -207,6 +237,9 @@ void SimThreadExecution::resetProcesses() {
     }
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimThreadExecution::addNewProcess(SysProcess* newProc) {
     processList.push_back(newProc);
     newProc->setProcessOwnership(true);
@@ -238,9 +271,9 @@ SimModel::~SimModel()
 
 /*! This method steps the simulation until the specified stop time and
  stop priority have been reached.
+ @param SimStopTime Nanoseconds to step the simulation for
+ @param stopPri The priority level below which the sim won't go
  @return void
- @param uint64_t SimStopTime Nanoseconds to step the simulation for
- @param int64_t stopPri The priority level below which the sim won't go
  */
 void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
 {
@@ -401,6 +434,9 @@ void SimModel::ResetSimulation()
     }
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimModel::clearProcsFromThreads() {
 
     std::vector<SimThreadExecution*>::iterator thrIt;
@@ -417,6 +453,10 @@ void SimModel::clearProcsFromThreads() {
 
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @param threadCount number of threads
+ @return void
+ */
 void SimModel::resetThreads(uint64_t threadCount)
 {
 
@@ -431,6 +471,9 @@ void SimModel::resetThreads(uint64_t threadCount)
 
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimModel::deleteThreads() {
     std::vector<SimThreadExecution*>::iterator thrIt;
     for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
@@ -446,6 +489,9 @@ void SimModel::deleteThreads() {
     this->threadList.clear();
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimModel::assignRemainingProcs() {
 
     std::vector<SysProcess *>::iterator it;
@@ -479,6 +525,11 @@ void SimModel::assignRemainingProcs() {
     }
 }
 
+/*! SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @param newProc SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @param threadSel SCOTT PIGGOTT DOCUMENTATION REQUIRED
+ @return void
+ */
 void SimModel::addProcessToThread(SysProcess *newProc, uint64_t threadSel)
 {
     std::vector<SimThreadExecution*>::iterator thrIt;

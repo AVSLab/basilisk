@@ -29,31 +29,26 @@
 #include "architecture/system_model/sys_process.h"
 #include "architecture/utilities/bskLogging.h"
 
-/*! \addtogroup SimArchGroup Simulation Architecture Classes
- *  This architecture group contains the source used to drive/schedule/interface
- *  with the simulation.
- * @{
- */
-
+//! SCOTT PIGGOTT DOCUMENTATION REQUIRED
 class SimThreadExecution
 {
 public:
     SimThreadExecution();
     SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos=0);    //!< Constructor for a given sim thread
     ~SimThreadExecution();   //!< Destructor for given sim thread
-    void updateNewStopTime(uint64_t newStopNanos) {stopThreadNanos = newStopNanos;}
-    void clearProcessList() {processList.clear();}
+    void updateNewStopTime(uint64_t newStopNanos) {stopThreadNanos = newStopNanos;}  //!< Method to update a new simulation stop time
+    void clearProcessList() {processList.clear();}  //!< clear the process list
     void selfInitProcesses();
     void crossInitProcesses();
     void resetProcesses();
     void addNewProcess(SysProcess* newProc);
-    uint64_t procCount() {return processList.size();}
-    bool threadActive() {return this->threadRunning;};
-    void threadReady() {this->threadRunning=true;}
+    uint64_t procCount() {return processList.size();} //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
+    bool threadActive() {return this->threadRunning;} //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
+    void threadReady() {this->threadRunning=true;} //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
     void waitOnInit();
     void postInit();
-    bool threadValid() {return (!this->terminateThread);}
-    void killThread() {this->terminateThread=true;}
+    bool threadValid() {return (!this->terminateThread);} //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
+    void killThread() {this->terminateThread=true;} //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
     void lockThread();
     void unlockThread();
     void lockMaster();
@@ -66,13 +61,13 @@ public:
     uint64_t stopThreadNanos;   //!< Current stop conditions for the thread
     int64_t stopThreadPriority; //!< Current stop priority for thread
     uint64_t threadID;          //!< Identifier for thread
-    std::thread *threadContext;
+    std::thread *threadContext; //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
     uint64_t CurrentNanos;  //!< [ns] Current sim time
     uint64_t NextTaskTime;  //!< [ns] time for the next Task
     int64_t nextProcPriority;  //!< [-] Priority level for the next process
     bool selfInitNow;              //!< Flag requesting self init
     bool crossInitNow;             //!< Flag requesting cross-init
-    bool resetNow;
+    bool resetNow;                 //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
 private:
     bool threadRunning;            //!< Flag that will allow for easy concurrent locking
     bool terminateThread;          //!< Flag that indicates that it is time to take thread down
@@ -101,7 +96,7 @@ public:
     void resetThreads(uint64_t threadCount);
     void deleteThreads();
     void assignRemainingProcs();
-    uint64_t getThreadCount() {return threadList.size();}
+    uint64_t getThreadCount() {return threadList.size();} //!< returns the number of threads used
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 

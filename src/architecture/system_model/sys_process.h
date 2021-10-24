@@ -57,8 +57,8 @@ public:
     void setPriority(int64_t newPriority) {this->processPriority = newPriority;} //!< class method
     void disableAllTasks(); //!< class method
     void enableAllTasks(); //!< class method
-    bool getProcessOwnership() {return this->processOnThread;}
-    void setProcessOwnership(bool processTaken) {processOnThread = processTaken;}
+    bool getProcessOwnership() {return this->processOnThread;} //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
+    void setProcessOwnership(bool processTaken) {processOnThread = processTaken;} //!< SCOTT PIGGOTT DOCUMENTATION REQUIRED
     
 public:
     std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks
