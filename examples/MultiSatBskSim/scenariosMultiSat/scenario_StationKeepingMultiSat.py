@@ -482,6 +482,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
 
         return figureList
 
+
 def runScenario(scenario, relativeNavigation):
     # Get the environment model
     EnvModel = scenario.get_EnvModel()
@@ -495,7 +496,8 @@ def runScenario(scenario, relativeNavigation):
     for spacecraft in range(scenario.numberSpacecraft):
         if relativeNavigation:
             scenario.relativeNavigationModule.addSpacecraftToModel(
-                scenario.DynModels[spacecraft].simpleNavObject.transOutMsg, scenario.FSWModels[spacecraft].vcMsg)
+                scenario.DynModels[spacecraft].simpleNavObject.transOutMsg,
+                scenario.DynModels[spacecraft].simpleMassPropsObject.vehicleConfigOutMsg)
             scenario.FSWModels[spacecraft].spacecraftReconfigData.chiefTransInMsg.subscribeTo(
                 scenario.relativeNavigationModule.transOutMsg)
         else:
@@ -532,6 +534,7 @@ def runScenario(scenario, relativeNavigation):
     # Execute the simulation
     scenario.ConfigureStopTime(2 * simulationTime)
     scenario.ExecuteSimulation()
+
 
 def run(showPlots, numberSpacecraft, relativeNavigation):
     """
