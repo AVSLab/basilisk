@@ -46,6 +46,7 @@ Version |release|
   through a message of the type ``VehicleConfigMsgPayload`` instead of an internal variable. Relevant example 
   scripts have been updated.
 - new tutorial example scenario script :ref:`scenarioTAMcomparison`
+- new mass sensor that converts a ``simulation`` mass properties message to a ``FSW`` vehicle configuration message :ref:`simpleMassProps`
 
 
 Version 2.0.7

@@ -205,7 +205,7 @@ class BSKFswModels:
             SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
         self.spacecraftReconfigData.attRefInMsg.subscribeTo(self.attRefMsg)
         self.spacecraftReconfigData.thrustConfigInMsg.subscribeTo(self.fswThrusterConfigMsg)
-        self.spacecraftReconfigData.vehicleConfigInMsg.subscribeTo(self.vcMsg)
+        self.spacecraftReconfigData.vehicleConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
         self.spacecraftReconfigData.mu = SimBase.EnvModel.mu  # [m^3/s^2]
         self.spacecraftReconfigData.attControlTime = 400  # [s]
         cMsgPy.AttRefMsg_C_addAuthor(self.spacecraftReconfigData.attRefOutMsg, self.attRefMsg)
@@ -228,7 +228,7 @@ class BSKFswModels:
         """
         Defines the control properties.
         """
-        self.decayTime = 30
+        self.decayTime = 50
         self.xi = 0.9
         self.mrpFeedbackRWsData.Ki = -1  # make value negative to turn off integral feedback
         self.mrpFeedbackRWsData.P = 2 * np.max(SimBase.DynModels[self.spacecraftIndex].I_sc) / self.decayTime
@@ -237,7 +237,7 @@ class BSKFswModels:
             SimBase.DynModels[self.spacecraftIndex].I_sc)
         self.mrpFeedbackRWsData.integralLimit = 2. / self.mrpFeedbackRWsData.Ki * 0.1
 
-        self.mrpFeedbackRWsData.vehConfigInMsg.subscribeTo(self.vcMsg)
+        self.mrpFeedbackRWsData.vehConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
         self.mrpFeedbackRWsData.rwSpeedsInMsg.subscribeTo(
             SimBase.DynModels[self.spacecraftIndex].rwStateEffector.rwSpeedOutMsg)
         self.mrpFeedbackRWsData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
@@ -274,16 +274,6 @@ class BSKFswModels:
         self.rwMotorTorqueData.vehControlInMsg.subscribeTo(self.mrpFeedbackRWsData.cmdTorqueOutMsg)
         self.rwMotorTorqueData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
-    def SetVehicleConfiguration(self, SimBase):
-        """
-        Defines the FSW vehicle configuration message.
-        """
-        # use the same inertia in the FSW algorithm as in the simulation
-        vcData = messaging.VehicleConfigMsgPayload()
-        vcData.ISCPntB_B = SimBase.DynModels[self.spacecraftIndex].I_sc
-        vcData.massSC = SimBase.DynModels[self.spacecraftIndex].scObject.hub.mHub
-        self.vcMsg = messaging.VehicleConfigMsg().write(vcData)
-
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
         """
@@ -293,7 +283,6 @@ class BSKFswModels:
         self.SetSunPointGuidance(SimBase)
         self.SetLocationPointGuidance(SimBase)
         self.SetAttitudeTrackingError(SimBase)
-        self.SetVehicleConfiguration(SimBase)
         self.SetRWConfigMsg(SimBase)
         self.SetThrustersConfigMsg(SimBase)
         self.SetMRPFeedbackRWA(SimBase)

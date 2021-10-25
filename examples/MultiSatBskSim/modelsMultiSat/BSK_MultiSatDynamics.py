@@ -19,8 +19,8 @@
 import numpy as np
 from Basilisk.utilities import (macros as mc, unitTestSupport as sp, RigidBodyKinematics as rbk,
                                 simIncludeRW, simIncludeThruster)
-from Basilisk.simulation import (spacecraft, simpleNav, reactionWheelStateEffector, thrusterDynamicEffector,
-                                 simpleSolarPanel, simplePowerSink, simpleBattery, fuelTank,
+from Basilisk.simulation import (spacecraft, simpleNav, simpleMassProps, reactionWheelStateEffector,
+                                 thrusterDynamicEffector, simpleSolarPanel, simplePowerSink, simpleBattery, fuelTank,
                                  ReactionWheelPower)
 
 from Basilisk import __path__
@@ -50,6 +50,7 @@ class BSKDynamicModels:
         # Instantiate Dyn modules as objects
         self.scObject = spacecraft.Spacecraft()
         self.simpleNavObject = simpleNav.SimpleNav()
+        self.simpleMassPropsObject = simpleMassProps.SimpleMassProps()
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
         self.rwFactory = simIncludeRW.rwFactory()
         self.thrusterDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
@@ -69,6 +70,7 @@ class BSKDynamicModels:
         # Assign initialized modules to tasks
         SimBase.AddModelToTask(self.taskName, self.scObject, None, 100)
         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 100)
+        SimBase.AddModelToTask(self.taskName, self.simpleMassPropsObject, None, 99)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 100)
         SimBase.AddModelToTask(self.taskName, self.thrusterDynamicEffector, None, 100)
         SimBase.AddModelToTask(self.taskName, self.solarPanel, None, 100)
@@ -120,6 +122,13 @@ class BSKDynamicModels:
         self.simpleNavObject.ModelTag = "SimpleNavigation" + str(self.spacecraftIndex)
         self.simpleNavObject.scStateInMsg.subscribeTo(self.scObject.scStateOutMsg)
 
+    def SetSimpleMassPropsObject(self):
+        """
+        Defines the navigation module.
+        """
+        self.simpleMassPropsObject.ModelTag = "SimpleMassProperties" + str(self.spacecraftIndex)
+        self.simpleMassPropsObject.scMassPropsInMsg.subscribeTo(self.scObject.scMassOutMsg)
+
     def SetReactionWheelDynEffector(self):
         """
         Defines the RW state effector.
@@ -169,12 +178,12 @@ class BSKDynamicModels:
         # Define the tank
         self.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_UNIFORM_BURN)
         self.tankModel = fuelTank.cvar.FuelTankModelUniformBurn
-        self.tankModel.propMassInit = 50
+        self.tankModel.propMassInit = 50.0
         self.tankModel.maxFuelMass = 75.0
         self.tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]
         self.fuelTankStateEffector.r_TB_B = [[0.0], [0.0], [0.0]]
-        self.tankModel.radiusTankInit = 5
-        self.tankModel.lengthTank = 5
+        self.tankModel.radiusTankInit = 1
+        self.tankModel.lengthTank = 1
         
         # Add the tank and connect the thrusters
         self.scObject.addStateEffector(self.fuelTankStateEffector)
@@ -227,6 +236,7 @@ class BSKDynamicModels:
         self.SetThrusterDynEffector()
         self.SetFuelTank()
         self.SetSimpleNavObject()
+        self.SetSimpleMassPropsObject()
         self.SetGroundLocations(SimBase)
         self.SetReactionWheelPower()
         self.SetEclipseObject(SimBase)
