@@ -33,9 +33,9 @@ public:
     ~SimpleMassProps();
 
     void Reset(uint64_t CurrentSimNanos);
-    void SimpleMassProps::readInputMessages();
-    void SimpleMassProps::writeOutputMessages(uint64_t CurrentClock);
-    void SimpleMassProps::computeMassProperties();
+    void readInputMessages();
+    void writeOutputMessages(uint64_t CurrentClock);
+    void computeMassProperties();
     void UpdateState(uint64_t CurrentSimNanos);
 
 
