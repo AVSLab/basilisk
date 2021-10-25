@@ -228,7 +228,7 @@ class BSKFswModels:
         """
         Defines the control properties.
         """
-        self.decayTime = 30
+        self.decayTime = 50
         self.xi = 0.9
         self.mrpFeedbackRWsData.Ki = -1  # make value negative to turn off integral feedback
         self.mrpFeedbackRWsData.P = 2 * np.max(SimBase.DynModels[self.spacecraftIndex].I_sc) / self.decayTime
