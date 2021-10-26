@@ -114,7 +114,7 @@ class BSKEnvironmentModel:
         Specify which ground locations are of interest.
         """
         self.groundStation.ModelTag = "BoulderGroundStation"
-        self.groundStation.planetRadius = self.planetRadius * 1e3
+        self.groundStation.planetRadius = self.planetRadius
         self.groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
         self.groundStation.minimumElevation = np.radians(10.)
         self.groundStation.maximumRange = 1e9
