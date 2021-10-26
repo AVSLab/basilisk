@@ -171,6 +171,20 @@ default setting for that behavior.
     * - ``showLocationLabels``
       - int
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``atmospheresOff``
+      - int
+      - Toggle to disable the atmosphere effect on celestial bodies, Value of 0 (protobuffer default to use
+        viz default, -1 for false, 1 for true.
+    * - ``scViewToPlanetViewBoundaryMultiplier``
+      - int
+      - Multiplier x 1000m to set the boundary at which the spacecraft local view transitions to planet view.
+        Valid range from 1 to 10 or 0 to use viz default.
+    * - ``planetViewToHelioViewBoundaryMultiplier``
+      - int
+      - Multiplier x (10000 * current planet local scale) at which the planet view transitions to the solar
+        system view. Valid range from 1 to 10 or 0 to use viz default.
+
+
 
 While the prior settings are only read once during start up, the following settings are checked
 with every message being sent.  The following live settings can be set directly using::

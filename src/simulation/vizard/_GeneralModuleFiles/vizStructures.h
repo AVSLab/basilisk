@@ -301,6 +301,9 @@ VizSettings
     int32_t showLocationCommLines = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int32_t showLocationCones = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int32_t showLocationLabels = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32_t atmospheresOff = 0; //!< Toggle to disable the atmosphere effect on celestial bodies, Value of 0 (protobuffer default to use viz default, -1 for false, 1 for true.
+    int32_t scViewToPlanetViewBoundaryMultiplier = 0; //!< Multiplier x 1000m to set the boundary at which the spacecraft local view transitions to planet view. Valid range from 1 to 10 or 0 to use viz default.
+    int32_t planetViewToHelioViewBoundaryMultiplier = 0; //!< Multiplier x (10000 * current planet local scale) at which the planet view transitions to the solar system view. Valid range from 1 to 10 or 0 to use viz default.
 }VizSettings;
 
 
