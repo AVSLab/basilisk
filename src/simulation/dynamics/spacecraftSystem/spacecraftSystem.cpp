@@ -483,7 +483,7 @@ void SpacecraftSystem::initializeDynamics()
     }
 
     // - Call equations of motion at time zero
-    this->equationsOfMotion(0.0);
+    this->equationsOfMotion(0.0, 1.0);
 
     return;
 }
@@ -623,25 +623,25 @@ void SpacecraftSystem::initializeSCPosVelocity(SpacecraftUnit &spacecraft)
  the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled 
  in this method. At the end of this method all of the states will have their corresponding state derivatives set in the 
  dynParam Manager thus solving for Xdot*/
-void SpacecraftSystem::equationsOfMotion(double integTimeSeconds)
+void SpacecraftSystem::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
     // - Update time to the current time
     uint64_t integTimeNanos = this->simTimePrevious + (uint64_t) ((integTimeSeconds-this->timePrevious)/NANO2SEC);
     (*this->sysTime) << (double)integTimeNanos, integTimeSeconds;
 
-    this->equationsOfMotionSystem(integTimeSeconds);
+    this->equationsOfMotionSystem(integTimeSeconds, timeStep);
     // Call this for all unconnected spacecraft:
     // - Call this for all of the unconnected spacecraft
     std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
-        this->equationsOfMotionSC(integTimeSeconds, (*(*spacecraftUnConnectedIt)));
+        this->equationsOfMotionSC(integTimeSeconds, timeStep, (*(*spacecraftUnConnectedIt)));
     }
 
     return;
 }
 
-void SpacecraftSystem::equationsOfMotionSC(double integTimeSeconds, SpacecraftUnit& spacecraft)
+void SpacecraftSystem::equationsOfMotionSC(double integTimeSeconds, double timeStep, SpacecraftUnit& spacecraft)
 {
     // - Zero all Matrices and vectors for back-sub and the dynamics
     spacecraft.hub.hubBackSubMatrices.matrixA.setZero();
@@ -675,7 +675,7 @@ void SpacecraftSystem::equationsOfMotionSC(double integTimeSeconds, SpacecraftUn
     for(dynIt = spacecraft.dynEffectors.begin(); dynIt != spacecraft.dynEffectors.end(); dynIt++)
     {
         // - Compute the force and torque contributions from the dynamicEffectors
-        (*dynIt)->computeForceTorque(integTimeSeconds);
+        (*dynIt)->computeForceTorque(integTimeSeconds, timeStep);
         spacecraft.sumForceExternal_N += (*dynIt)->forceExternal_N;
         spacecraft.sumForceExternal_B += (*dynIt)->forceExternal_B;
         spacecraft.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
@@ -754,7 +754,7 @@ void SpacecraftSystem::equationsOfMotionSC(double integTimeSeconds, SpacecraftUn
     return;
 }
 
-void SpacecraftSystem::equationsOfMotionSystem(double integTimeSeconds)
+void SpacecraftSystem::equationsOfMotionSystem(double integTimeSeconds, double timeStep)
 {
     // - Zero all Matrices and vectors for back-sub and the dynamics
     this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA.setZero();
@@ -788,7 +788,7 @@ void SpacecraftSystem::equationsOfMotionSystem(double integTimeSeconds)
     for(dynIt = this->primaryCentralSpacecraft.dynEffectors.begin(); dynIt != this->primaryCentralSpacecraft.dynEffectors.end(); dynIt++)
     {
         // - Compute the force and torque contributions from the dynamicEffectors
-        (*dynIt)->computeForceTorque(integTimeSeconds);
+        (*dynIt)->computeForceTorque(integTimeSeconds, timeStep);
         this->primaryCentralSpacecraft.sumForceExternal_N += (*dynIt)->forceExternal_N;
         this->primaryCentralSpacecraft.sumForceExternal_B += (*dynIt)->forceExternal_B;
         this->primaryCentralSpacecraft.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
@@ -802,7 +802,7 @@ void SpacecraftSystem::equationsOfMotionSystem(double integTimeSeconds)
         for(dynIt = (*spacecraftConnectedIt)->dynEffectors.begin(); dynIt != (*spacecraftConnectedIt)->dynEffectors.end(); dynIt++)
         {
             // - Compute the force and torque contributions from the dynamicEffectors
-            (*dynIt)->computeForceTorque(integTimeSeconds);
+            (*dynIt)->computeForceTorque(integTimeSeconds, timeStep);
             this->primaryCentralSpacecraft.sumForceExternal_N += (*dynIt)->forceExternal_N;
             this->primaryCentralSpacecraft.sumForceExternal_B += (*dynIt)->forceExternal_B;
             this->primaryCentralSpacecraft.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;

@@ -98,7 +98,7 @@ def run(show_plots, offCount):
     for tStop in range(1, 11):
         scSim.ConfigureStopTime(macros.sec2nano(tStop*DT))
         scSim.ExecuteSimulation()
-        testObject.computeForceTorque(scSim.TotalSim.CurrentNanos)
+        testObject.computeForceTorque(scSim.TotalSim.CurrentNanos, testProcessRate)
         scSim.TotalSim.SingleStepProcesses()
         scSim.RecordLogVars()
 

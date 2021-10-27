@@ -189,7 +189,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
  @return void
  @param integTime Integration time
  */
-void ThrusterDynamicEffector::computeForceTorque(double integTime){
+void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeStep){
     
     std::vector<THRSimConfigMsgPayload>::iterator it;
     THROperationMsgPayload *ops;

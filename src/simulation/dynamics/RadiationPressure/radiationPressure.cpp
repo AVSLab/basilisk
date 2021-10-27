@@ -94,7 +94,7 @@ void RadiationPressure::readInputMessages()
  @return void
  @param integTime Current simulation integration time
  */
-void RadiationPressure::computeForceTorque(double integTime)
+void RadiationPressure::computeForceTorque(double integTime, double timeStep)
 {
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();

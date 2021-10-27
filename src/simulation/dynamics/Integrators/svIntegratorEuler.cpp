@@ -48,7 +48,7 @@ void svIntegratorEuler::integrate(double currentTime, double timeStep)
 	std::map<std::string, StateData>::iterator itInit;
 	stateOut = dynPtr->dynManager.getStateVector();
 	stateInit = dynPtr->dynManager.getStateVector();
-	dynPtr->equationsOfMotion(currentTime);
+	dynPtr->equationsOfMotion(currentTime, timeStep);
 	for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
 	{
 		itOut->second.setDerivative(it->second.getStateDeriv());

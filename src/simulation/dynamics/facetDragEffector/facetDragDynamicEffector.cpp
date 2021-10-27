@@ -147,7 +147,7 @@ void FacetDragDynamicEffector::plateDrag(){
 /*! This method computes the body forces and torques for the dragEffector in a simulation loop,
 selecting the model type based on the settable attribute "modelType."
 */
-void FacetDragDynamicEffector::computeForceTorque(double integTime){
+void FacetDragDynamicEffector::computeForceTorque(double integTime, double timeStep){
 	updateDragDir();
 	plateDrag();
   return;

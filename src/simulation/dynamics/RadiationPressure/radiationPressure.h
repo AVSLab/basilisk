@@ -54,7 +54,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void linkInStates(DynParamManager& statesIn);
     void readInputMessages();
-    void computeForceTorque(double integTime);
+    void computeForceTorque(double integTime, double timeStep);
     void setUseCannonballModel();
     void setUseFacetedCPUModel();
     void addForceLookupBEntry(Eigen::Vector3d vec);

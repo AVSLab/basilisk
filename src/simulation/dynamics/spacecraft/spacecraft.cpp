@@ -275,7 +275,7 @@ void Spacecraft::initializeDynamics()
     readAttRefMsg();
 
     // - Call equations of motion at time zero
-    this->equationsOfMotion(0.0);
+    this->equationsOfMotion(0.0, 1.0);
 
     return;
 }
@@ -328,7 +328,7 @@ void Spacecraft::updateSCMassProps(double time)
  the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled
  in this method. At the end of this method all of the states will have their corresponding state derivatives set in the
  dynParam Manager thus solving for Xdot*/
-void Spacecraft::equationsOfMotion(double integTimeSeconds)
+void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
     // - Update time to the current time
     uint64_t integTimeNanos = this->simTimePrevious + (uint64_t) ((integTimeSeconds-this->timePrevious)/NANO2SEC);
@@ -366,7 +366,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds)
     for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
     {
         // - Compute the force and torque contributions from the dynamicEffectors
-        (*dynIt)->computeForceTorque(integTimeSeconds);
+        (*dynIt)->computeForceTorque(integTimeSeconds, timeStep);
         this->sumForceExternal_N += (*dynIt)->forceExternal_N;
         this->sumForceExternal_B += (*dynIt)->forceExternal_B;
         this->sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
