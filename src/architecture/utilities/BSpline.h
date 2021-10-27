@@ -23,9 +23,8 @@
 #include "architecture/utilities/macroDefinitions.h"
 
 
-//! @brief The KeplerianOrbit class represents an elliptical orbit and provides a coherent set of
-//! common outputs such as position and velocity, orbital period, semi-parameter, etc. It uses the
-//! utility orbitalMotion to do orbital element to position and velocity conversion.
+//! @brief The InputDataSet class contains the information about the points that must be interpolated.
+//! It is used as a data structure to intialize the inputs that are passed to the interpolating function.
 
 class InputDataSet {
 public:
@@ -38,20 +37,23 @@ public:
     void setXDDot_0(Eigen::Vector3d XDDot_0);
     void setXDDot_N(Eigen::Vector3d XDDot_N);
     void setT(Eigen::VectorXd T);
+    void setAvgXDot(double AvgXDot);
     
-    Eigen::VectorXd T;
-    Eigen::VectorXd X1;
-    Eigen::VectorXd X2;
-    Eigen::VectorXd X3;
-    Eigen::Vector3d XDot_0;
-    Eigen::Vector3d XDot_N;
-    Eigen::Vector3d XDDot_0;
-    Eigen::Vector3d XDDot_N;
-    bool T_flag;
-    bool XDot_0_flag;
-    bool XDot_N_flag;
-    bool XDDot_0_flag;
-    bool XDDot_N_flag;
+    double AvgXDot;                  //!< desired average velocity norm
+    Eigen::VectorXd T;               //!< time tags: specifies at what time each waypoint is hit
+    Eigen::VectorXd X1;              //!< coordinate #1 of the waypoints
+    Eigen::VectorXd X2;              //!< coordinate #2 of the waypoints
+    Eigen::VectorXd X3;              //!< coordinate #3 of the waypoints
+    Eigen::Vector3d XDot_0;          //!< 3D vector containing the first derivative at starting point
+    Eigen::Vector3d XDot_N;          //!< 3D vector containing the first derivative at final point
+    Eigen::Vector3d XDDot_0;         //!< 3D vector containing the second derivative at starting point
+    Eigen::Vector3d XDDot_N;         //!< 3D vector containing the second derivative at final point
+    bool T_flag;                     //!< indicates that time tags have been specified; if true, AvgXDot_flag is false
+    bool AvgXDot_flag;               //!< indicates that avg velocity norm has been specified; if true, T_flag is false
+    bool XDot_0_flag;                //!< indicates that first derivative at starting point has been specified
+    bool XDot_N_flag;                //!< indicates that first derivative at final point has been specified
+    bool XDDot_0_flag;               //!< indicates that second derivative at starting point has been specified
+    bool XDDot_N_flag;               //!< indicates that second derivative at final point has been specified
 };
 
 class OutputDataSet {
@@ -59,16 +61,16 @@ public:
     OutputDataSet();
     ~OutputDataSet();
     
-    Eigen::VectorXd T;
-    Eigen::VectorXd X1;
-    Eigen::VectorXd X2;
-    Eigen::VectorXd X3;
-    Eigen::VectorXd XD1;
-    Eigen::VectorXd XD2;
-    Eigen::VectorXd XD3;
-    Eigen::VectorXd XDD1;
-    Eigen::VectorXd XDD2;
-    Eigen::VectorXd XDD3;
+    Eigen::VectorXd T;               //!< time tags for each point of the interpolated trajectory
+    Eigen::VectorXd X1;              //!< coordinate #1 of the interpolated trajectory
+    Eigen::VectorXd X2;              //!< coordinate #2 of the interpolated trajectory
+    Eigen::VectorXd X3;              //!< coordinate #3 of the interpolated trajectory
+    Eigen::VectorXd XD1;             //!< first derivative of coordinate #1 of the interpolated trajectory
+    Eigen::VectorXd XD2;             //!< first derivative of coordinate #2 of the interpolated trajectory
+    Eigen::VectorXd XD3;             //!< first derivative of coordinate #3 of the interpolated trajectory
+    Eigen::VectorXd XDD1;            //!< second derivative of coordinate #1 of the interpolated trajectory
+    Eigen::VectorXd XDD2;            //!< second derivative of coordinate #2 of the interpolated trajectory
+    Eigen::VectorXd XDD3;            //!< second derivative of coordinate #3 of the interpolated trajectory
 };
 
 void interpolate(InputDataSet Input, int N, double avgXDot, int P, OutputDataSet *Output);
