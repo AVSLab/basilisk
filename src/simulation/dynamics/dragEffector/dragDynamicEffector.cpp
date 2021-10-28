@@ -117,7 +117,7 @@ void DragDynamicEffector::cannonballDrag(){
 /*! This method computes the body forces and torques for the dragEffector in a simulation loop,
 selecting the model type based on the settable attribute "modelType."
 */
-void DragDynamicEffector::computeForceTorque(double integTime){
+void DragDynamicEffector::computeForceTorque(double integTime, double timeStep){
 	updateDragDir();
 	if(this->modelType == "cannonball"){
 		cannonballDrag();

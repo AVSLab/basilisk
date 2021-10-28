@@ -43,7 +43,7 @@ public:
     void linkInStates(DynParamManager& statesIn);       //!< class method
     void writeOutputMessages(uint64_t currentClock);    //!< class method
     void readInputMessages();
-    void computeForceTorque(double integTime);
+    void computeForceTorque(double integTime, double timeStep);
 
 private:
     CmdTorqueBodyMsgPayload incomingCmdTorqueBuffer;            //!< -- One-time allocation for savings

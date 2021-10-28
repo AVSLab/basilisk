@@ -168,9 +168,9 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
-    void equationsOfMotion(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
-    void equationsOfMotionSC(double integTimeSeconds, SpacecraftUnit& spacecraft);    //!< -- This method computes the equations of motion for the whole system
-    void equationsOfMotionSystem(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
+    void equationsOfMotion(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system
+    void equationsOfMotionSC(double integTimeSeconds, double timeStep, SpacecraftUnit& spacecraft);    //!< -- This method computes the equations of motion for the whole system
+    void equationsOfMotionSystem(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system
     void findPriorStateInformation(SpacecraftUnit& spacecraft);  //!< class method
     void calculateDeltaVandAcceleration(SpacecraftUnit& spacecraft, double localTimeStep); //!< class method
     void integrateState(double time);       //!< -- This method steps the state forward one step in time

@@ -125,7 +125,7 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
             kMatrix.clear();
 
             // Compute the equations of motion for t
-            dynPtr->equationsOfMotion(t);
+            dynPtr->equationsOfMotion(t, hInt);
 
             // Reset the ouput and error vectors
             for (itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(), itError = errorMatrix.stateMap.begin(); itOut != stateOut.stateMap.end(); itOut++, itInit++, itError++)
@@ -153,7 +153,7 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
                 }
 
                 // Integrate with the appropriate time step using the A matrix coefficients
-                dynPtr->equationsOfMotion(t + hInt * alphaMatrix[i]);
+                dynPtr->equationsOfMotion(t + hInt * alphaMatrix[i], hInt);
 
                 // Save the current k coefficient
                 kMatrix.push_back(dynPtr->dynManager.getStateVector());

@@ -93,7 +93,7 @@ void MtbEffector::linkInStates(DynParamManager& states)
 /*! This method computes the body torque contribution from all magnetic torque bars.
  @return void
 */
-void MtbEffector::computeForceTorque(double integTime)
+void MtbEffector::computeForceTorque(double integTime, double timeStep)
 {
     /*
      * Create local variables.

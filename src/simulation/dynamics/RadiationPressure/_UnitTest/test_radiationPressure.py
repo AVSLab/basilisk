@@ -159,8 +159,8 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     # Configure a simulation stop time time and execute the simulation run
     unitTestSim.ConfigureStopTime(simulationTime)
     unitTestSim.ExecuteSimulation()
-    srpDynEffector.computeForceTorque(unitTestSim.TotalSim.CurrentNanos)
-    srpDynEffector2.computeForceTorque(unitTestSim.TotalSim.CurrentNanos)
+    srpDynEffector.computeForceTorque(unitTestSim.TotalSim.CurrentNanos, testTaskRate)
+    srpDynEffector2.computeForceTorque(unitTestSim.TotalSim.CurrentNanos, testTaskRate)
     unitTestSim.TotalSim.SingleStepProcesses()
     unitTestSim.RecordLogVars()
 

@@ -44,7 +44,7 @@ public:
     ThrusterDynamicEffector();
     ~ThrusterDynamicEffector();
     void linkInStates(DynParamManager& states);
-    void computeForceTorque(double integTime);
+    void computeForceTorque(double integTime, double timeStep);
     void computeStateContribution(double integTime);
     void Reset(uint64_t CurrentSimNanos);
     //! Add a new thruster to the thruster set

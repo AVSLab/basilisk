@@ -134,7 +134,7 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     #
     scSim.ExecuteSimulation()
 
-    extFTObject.computeForceTorque(scSim.TotalSim.CurrentNanos)
+    extFTObject.computeForceTorque(scSim.TotalSim.CurrentNanos, macros.sec2nano(0.1))
     scSim.TotalSim.SingleStepProcesses()
     scSim.RecordLogVars()
 

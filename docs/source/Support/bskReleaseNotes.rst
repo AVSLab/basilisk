@@ -40,6 +40,8 @@ Version |release|
 - added a new orbit maneuver example :ref:`scenarioJupiterArrival`
 - made SWIG interface to the MRP derivative variable
 - added two new variable time step integrators. See :ref:`svIntegratorRKF45` and :ref:`svIntegratorRKF78`.
+- updated the state effector base class to also provide the current integration time step in addition to the
+  current time
 - added new scenario :ref:`scenarioVariableTimeStepIntegrators`
 - updated :ref:`scenarioIntegrators` to include the ``rkf45`` and ``rkf78`` options
 - changed the way :ref:`spacecraftReconfig` gets the deputy's mass properties. It now receives that information

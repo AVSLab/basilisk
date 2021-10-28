@@ -99,7 +99,7 @@ void GravityGradientEffector::linkInStates(DynParamManager& states){
 
 /*! This method computes the body forces and torques for the gravity gradient effector.
 */
-void GravityGradientEffector::computeForceTorque(double integTime){
+void GravityGradientEffector::computeForceTorque(double integTime, double timeStep){
 	// Zero out the force/torque values to begin with
     this->torqueExternalPntB_B.setZero();
 

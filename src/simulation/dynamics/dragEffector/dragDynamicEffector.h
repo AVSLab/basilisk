@@ -51,7 +51,7 @@ public:
     DragDynamicEffector();
     ~DragDynamicEffector();
     void linkInStates(DynParamManager& states);             //!< class method
-    void computeForceTorque(double integTime);
+    void computeForceTorque(double integTime, double timeStep);
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
