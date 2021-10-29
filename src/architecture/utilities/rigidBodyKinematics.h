@@ -71,6 +71,7 @@ extern "C" {
     void   BmatEuler323(double *q, double B[3][3]);
     void   BmatGibbs(double *q, double B[3][3]);
     void   BmatMRP(double *q, double B[3][3]);
+    void   BdotmatMRP(double *q, double *dq, double B[3][3]);
     void   BmatPRV(double *q, double B[3][3]);
     void   C2EP(double C[3][3], double b[4]);
     void   C2Euler121(double C[3][3], double *q);
@@ -103,6 +104,9 @@ extern "C" {
     void   dEuler323(double *q, double *w, double *dq);
     void   dGibbs(double *q, double *w, double *dq);
     void   dMRP(double *q, double *w, double *dq);
+    void   dMRP2Omega(double *q, double *dq, double *w);
+    void   ddMRP(double *q, double *dq, double *w, double *dw, double *ddq);
+    void   ddMRP2dOmega(double *q, double *dq, double *ddq, double *dw);
     void   dPRV(double *q, double *w, double *dq);
     void   elem2PRV(double *r, double *q);
     void   EP2C(double *q, double C[3][3]);

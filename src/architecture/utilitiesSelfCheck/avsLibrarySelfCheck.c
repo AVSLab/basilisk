@@ -2588,6 +2588,18 @@ int testRigidBodyKinematics(double accuracy)
         errorCount++;
     }
 
+    v3Set(0.2, 0.1, -0.5, v3_1);
+    v3Set(0.015, 0.045, -0.005, v3_2);
+    v3Scale(1 / D2R, v3_2, v3_2);
+    BdotmatMRP(v3_1, v3_2, C);
+    v3Set(-0.4583662361046585,  1.7761691649055522,  4.1825919044550091, C2[0]);
+    v3Set( 0.6302535746439056, -0.1145915590261646, -4.3544792429942563, C2[1]);
+    v3Set(-6.1306484078998089, -0.9167324722093173, -0.5729577951308232, C2[2]);
+    if(!m33IsEqual(C, C2, accuracy)) {
+        printf("BdotmatMRP failed\n");
+        errorCount++;
+    }
+
     v3Set(0.25, 0.5, -0.5, v3_1);
     BmatPRV(v3_1, C);
     v3Set(0.95793740211924, 0.26051564947019, 0.23948435052981, C2[0]);
@@ -2820,6 +2832,30 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(0.34316538031149, 0.255728121815202, -0.3710557691157747, v3_2);
     if(!v3IsEqual(v3, v3_2, accuracy)) {
         printf("dPRV failed\n");
+        errorCount++;
+    }
+    
+    double w[3];
+    v3Set(0.0124791041517595, 0.0042760566673861, -0.0043633231299858, v3_1);
+    dMRP2Omega(om, v3_1, v3);
+    v3Set(0.0174532925199433, 0.0349065850398866, -0.0174532925199433, w);
+    if(!v3IsEqual(v3, w, accuracy)) {
+        printf("dMRP2Omega failed\n");
+        errorCount++;
+    }
+    
+    double dw[3];
+    v3Set(0.0022991473184427, 0.0035194052312667, -0.0070466757773158, dw);
+    ddMRP(om, v3_1, w, dw, v3);
+    v3Set(0.0015, 0.0010, -0.0020, v3_2);
+    if(!v3IsEqual(v3, v3_2, accuracy)) {
+        printf("ddMRP failed\n");
+        errorCount++;
+    }
+
+    ddMRP2dOmega(om, v3_1, v3_2, v3);
+    if(!v3IsEqual(v3, dw, accuracy)) {
+        printf("ddMRP2dOmega failed\n");
         errorCount++;
     }
 

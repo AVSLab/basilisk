@@ -31,6 +31,9 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- added BSpline function to ``utilities`` and related UnitTest. 
+- added kinematic relations between angular accelerations and second derivative of MRP set to
+  :ref:`rigidBodyKinematicsutilities` library
 - updated the installation script to function with the latest ``conan`` program and the recent
   ``conan`` repo changes.  Note, you will have to delete the ``.conan`` folder in your home
   directory to create a fresh copy of the software dependencies.
