@@ -93,6 +93,7 @@ void RadiationPressure::readInputMessages()
  is designed to be called by the simulation dynamics engine.
  @return void
  @param integTime Current simulation integration time
+ @param timeStep Current integration time step used
  */
 void RadiationPressure::computeForceTorque(double integTime, double timeStep)
 {

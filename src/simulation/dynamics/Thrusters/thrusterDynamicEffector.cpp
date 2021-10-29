@@ -188,6 +188,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
 /*! This method computes the Forces on Torque on the Spacecraft Body.
  @return void
  @param integTime Integration time
+ @param timeStep Current integration time step used
  */
 void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeStep){
     
