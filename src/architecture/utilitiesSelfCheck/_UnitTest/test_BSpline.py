@@ -27,31 +27,78 @@
 import pytest
 import os, inspect
 from Basilisk.architecture import BSpline
-from Basilisk.utilities import unitTestSupport
 import numpy as np
-from mpl_toolkits import mplot3d
-import matplotlib.pyplot as plt
 
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
-@pytest.mark.parametrize("P", [3, 4, 5, 6])
-@pytest.mark.parametrize("XDot_0_flag", [False, True])
-@pytest.mark.parametrize("XDot_N_flag", [False, True])
-@pytest.mark.parametrize("XDDot_0_flag", [False, True])
-@pytest.mark.parametrize("XDDot_N_flag", [False, True])
+@pytest.mark.parametrize("P", [5, 6])
+@pytest.mark.parametrize("XDot_flag", [False, True])
+@pytest.mark.parametrize("XDDot_flag", [False, True])
 @pytest.mark.parametrize("accuracy", [1e-6])
 
-def test_BSpline(show_plots, P, XDot_0_flag, XDot_N_flag, XDDot_0_flag, XDDot_N_flag, accuracy):
+def test_BSpline(show_plots, P, XDot_flag, XDDot_flag, accuracy):
+    r"""
+    **Validation Test Description**
+
+    This unit test script tests the capability of the BSpline function to correctly interpolate 
+    a series of points in 3 dimensions.
+    The coordinates of these 7 points are stored in 3 numpy arrays:
+
+    X1 = np.array([0, 1, 2, 3, 4, 5, 6])
+
+    X2 = np.array([5, 4, 3, 2, 1, 0, 1])
+
+    X3 = np.array([3, 2, 1, 2, 3, 4, 5]).
+
+    The input arrays are initialized through ``Input = BSpline.InputDataSet(X1, X2, X3)``. 
+    The time tags at which each waypoint is to be hit are provided through ``Input.setT([0, 2, 3, 5, 7, 8, 10])``. 
+    Alternatively, it is possible to specify the average velocity norm through ``Input.setAvgXDot()``.
+    The endpoint derivatives are specified through the methods:
+
+    - ``Input.setXDot_0()`` for starting point first-order derivative;
+    - ``Input.setXDot_N()`` for last point first-order derivative;
+    - ``Input.setXDDot_0()`` for starting point second-order derivative;
+    - ``Input.setXDDot_N()`` for last point second-order derivative.
+
+    Each method to specify the derivatives takes in a 3-dimensional numpy array.
+    The output data structure is created with ``Output = BSpline.OutputDataSet()``.
+    The interpolation happens calling the method ``BSpline.interpolate(Input, N, P, Output)`` where:
+
+    - N is the desired number of equally spaced data points in the interpolated function;
+    
+    - P is the polynomial order of the B-Spline function. The order should be at least 3 when first-order derivatives are specified, 
+      and 5 when second-order derivatives are specified. The maximum oder is P = n + k - 1, with n being the number of waypoints and k
+      being the number of endpoint derivatives that are being specified.
+
+    **Test Parameters**
+
+    As this is a parameterized unit test, note that the test case parameters values are shown automatically in the
+    pytest HTML report.  This sample script has the parameters param1 and param 2.  Provide a description of what
+    each parameter controls.  This is a convenient location to include the accuracy variable used in the
+    validation test.
+
+    Args:
+        P (int): polynomial order of the B-Spline curve;
+        XDot_flag (bool) : whether the first-order end point derivatives should be specified;
+        XDDot_flag (bool) : whether the second-order end point derivatives should be specified;
+        accuracy (float): absolute accuracy value used in the validation tests.
+
+    **Description of Variables Being Tested**
+
+    This unit test checks the correctness of the interpolated function: 
+    - a check is performed on whether or not each waypoint is hit at the specified time;
+    - when the derivatives are specified, it checks whether the starting point derivative actually matches the input derivative.
+    """
     
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = BSplineTestFunction(P, XDot_0_flag, XDot_N_flag, XDDot_0_flag, XDDot_N_flag, accuracy)
+    [testResults, testMessage] = BSplineTestFunction(P, XDot_flag, XDDot_flag, accuracy)
     assert testResults < 1, testMessage
 
 
-def BSplineTestFunction(P, XDot_0_flag, XDot_N_flag, XDDot_0_flag, XDDot_N_flag, accuracy):
+def BSplineTestFunction(P, XDot_flag, XDDot_flag, accuracy):
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -62,17 +109,15 @@ def BSplineTestFunction(P, XDot_0_flag, XDot_N_flag, XDDot_0_flag, XDDot_N_flag,
 
     Input = BSpline.InputDataSet(X1, X2, X3)
     Input.setT([0, 2, 3, 5, 7, 8, 10])
-    if XDot_0_flag:
+    if XDot_flag:
         Input.setXDot_0([0, 0, 0])
-    if XDot_N_flag:
         Input.setXDot_N([0, 0, 0])
-    if XDDot_0_flag:
+    if XDDot_flag:
         Input.setXDDot_0([0, 0, 0])
-    if XDDot_N_flag:
         Input.setXDDot_N([0.2, 0, 0])
 
     Output = BSpline.OutputDataSet()
-    BSpline.interpolate(Input, 101, 1, P, Output)
+    BSpline.interpolate(Input, 101, P, Output)
 
     for i in range(len(Output.T)):
         for j in range(len(Input.T)):
@@ -86,23 +131,21 @@ def BSplineTestFunction(P, XDot_0_flag, XDot_N_flag, XDDot_0_flag, XDDot_N_flag,
                 if not abs(Output.X3[i][0] - X3[j]) < accuracy:
                     testFailCount += 1
                     testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Input.T[j][0]))
-    if XDot_0_flag:
+    if XDot_flag:
         if not ((abs(Output.XD1[0][0]-Input.XDot_0[0][0]) < accuracy) and 
                 (abs(Output.XD2[0][0]-Input.XDot_0[1][0]) < accuracy) and 
                 (abs(Output.XD3[0][0]-Input.XDot_0[2][0]) < accuracy)):
             testFailCount += 1
             testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at starting point".format(P))
-    if XDDot_0_flag:
+    if XDDot_flag:
         if not ((abs(Output.XDD1[0][0]-Input.XDDot_0[0][0]) < accuracy) and 
                 (abs(Output.XDD2[0][0]-Input.XDDot_0[1][0]) < accuracy) and 
                 (abs(Output.XDD3[0][0]-Input.XDDot_0[2][0]) < accuracy)):
             testFailCount += 1
             testMessages.append("FAILED: BSpline." + " Function of order {} failed second derivative at starting point".format(P))
 
-    print(testFailCount, testMessages)
 
-
-    return
+    return [testFailCount, ''.join(testMessages)]
 
 
 #
@@ -111,51 +154,7 @@ def BSplineTestFunction(P, XDot_0_flag, XDot_N_flag, XDDot_0_flag, XDDot_N_flag,
 #
 if __name__ == "__main__":
     BSplineTestFunction(
-        1,       # polynomial order 
-        False,    # XDot_0_flag
-        False,    # XDot_N_flag
-        False,    # XDDot_0_flag
-        False,    # XDDot_N_flag
+        5,        # polynomial order 
+        True,    # XDot_flag
+        False,    # XDDot_flag
         1e-6)     
-
-# X1 = []
-# X2 = []
-# X3 = []
-# XD1 = []
-# XD2 = []
-# XD3 = []
-# XDD1 = []
-# XDD2 = []
-# XDD3 = []
-# I = len(Output.X1)
-# for i in range(I):
-#     X1.append(Output.X1[i][0])
-#     X2.append(Output.X2[i][0])
-#     X3.append(Output.X3[i][0])
-#     XD1.append(Output.XD1[i][0])
-#     XD2.append(Output.XD2[i][0])
-#     XD3.append(Output.XD3[i][0])
-#     XDD1.append(Output.XDD1[i][0])
-#     XDD2.append(Output.XDD2[i][0])
-#     XDD3.append(Output.XDD3[i][0])
-
-# plt.figure(1)
-# plt.plot(X1,X2,X3)
-# plt.figure(2)
-# plt.plot(Output.T,X1)
-# plt.plot(Output.T,X2)
-# plt.figure(3)
-# plt.plot(Output.T,XD1)
-# plt.plot(Output.T,XD2)
-# plt.figure(4)
-# plt.plot(Output.T,XDD1)
-# plt.plot(Output.T,XDD2)
-# plt.grid()
-# plt.show()
-
-# print(Input.X1)
-# print(Output.X1)
-# print(Output.X2)
-# print(Input.XDot_0_flag)
-# print(Input.XDot_N_flag)
-# print(Input.T)

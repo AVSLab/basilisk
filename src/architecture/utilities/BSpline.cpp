@@ -40,6 +40,7 @@ InputDataSet::InputDataSet(Eigen::VectorXd X1, Eigen::VectorXd X2, Eigen::Vector
     this->XDDot_0_flag = false;
     this->XDDot_N_flag = false;
     this->T_flag = false;
+    this->AvgXDot_flag = false;
 
     double N1 = X1.size();
     double N2 = X2.size();
@@ -90,13 +91,14 @@ OutputDataSet::~OutputDataSet()
 }
 
 /*! This function takes the Input structure, performs the BSpline interpolation and outputs the result into Output structure */
-void interpolate(InputDataSet Input, int Num, double avgXDot, int P, OutputDataSet *Output)
+void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
 {   
     // N = number of waypoints - 1 
     int N = Input.X1.size() - 1;
     
     // T = time tags; if not specified, it is computed from a cartesian distance assuming a constant velocity norm on average
     Eigen::VectorXd T(N+1);
+    double S = 0;
     if (Input.T_flag == true) {
         T = Input.T;
     }
@@ -104,12 +106,12 @@ void interpolate(InputDataSet Input, int Num, double avgXDot, int P, OutputDataS
         T[0] = 0;
         for (int n = 1; n < N+1; n++) {
             T[n] = T[n-1] + pow( (pow(Input.X1[n]-Input.X1[n-1], 2) + pow(Input.X2[n]-Input.X2[n-1], 2) + pow(Input.X3[n]-Input.X3[n-1], 2)), 0.5 );
+            S += T[n] - T[n-1];
         }
     }
     if (Input.AvgXDot_flag == true) {
-        double S = T.sum();
         for (int n = 0; n < N+1; n++) {
-            T[n] = T[n] * S / T[N];
+            T[n] = T[n] / T[N] * S / Input.AvgXDot;
         }
     }
 

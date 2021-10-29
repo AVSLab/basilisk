@@ -73,6 +73,6 @@ public:
     Eigen::VectorXd XDD3;            //!< second derivative of coordinate #3 of the interpolated trajectory
 };
 
-void interpolate(InputDataSet Input, int N, double avgXDot, int P, OutputDataSet *Output);
+void interpolate(InputDataSet Input, int N, int P, OutputDataSet *Output);
 
 void basisFunction(double t, Eigen::VectorXd U, int I, int P, double *NN, double *NN1, double *NN2);
