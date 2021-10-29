@@ -56,6 +56,8 @@ public:
     bool XDDot_N_flag;               //!< indicates that second derivative at final point has been specified
 };
 
+//! @brief The OutputDataSet class is used as a data structure to contain the interpolated function and its first- and 
+//! second-order derivatives, together with the time-tag vector T.
 class OutputDataSet {
 public:
     OutputDataSet();
