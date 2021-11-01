@@ -1,7 +1,7 @@
 
 # ISC License
 #
-# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -32,17 +32,17 @@ from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
 from Basilisk.simulation import spacecraft
-from Basilisk.simulation import exponentialAtmosphere
+from Basilisk.simulation import tabularAtmosphere
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import messaging
 
 
-def test_unitExponentialAtmosphere():
+def test_unitTabularAtmosphere():
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
-    newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
-    newAtmo.ModelTag = "ExpAtmo"
+    newAtmo = tabularAtmosphere.TabularAtmosphere()
+    newAtmo.ModelTag = "tabAtmo"
 
     testResults = []
     testMessage = []
@@ -51,9 +51,9 @@ def test_unitExponentialAtmosphere():
     testMessage.append(addScMsg)
     testResults.append(addScRes)
 
-    exponentialRes, exponentialMsg = TestExponentialAtmosphere()
-    testMessage.append(exponentialMsg)
-    testResults.append(exponentialRes)
+    tabularRes, tabularMsg = TestTabularAtmosphere()
+    testMessage.append(tabularMsg)
+    testResults.append(tabularRes)
 
     #   print out success message if no error were found
     snippetName = "passFail"
@@ -88,21 +88,21 @@ def AddSpacecraftToModel(atmoModel):
     if len(atmoModel.scStateInMsgs) != 2:
         testFailCount += 1
         testMessages.append(
-            "FAILED: ExponentialAtmosphere does not have enough input message names.")
+            "FAILED: TabularAtmosphere does not have enough input message names.")
 
     if len(atmoModel.envOutMsgs) != 2:
         testFailCount += 1
         testMessages.append(
-            "FAILED: ExponentialAtmosphere does not have enough output message names.")
+            "FAILED: TabularAtmosphere does not have enough output message names.")
     return testFailCount, testMessages
 
 ##  Test specific atmospheric model performance
 
-def TestExponentialAtmosphere():
+def TestTabularAtmosphere():
     testFailCount = 0
     testMessages = []
 
-    def expAtmoComp(alt, baseDens, scaleHeight):
+    def tabAtmoComp(alt, baseDens, scaleHeight):
         density = baseDens * math.exp(-alt/scaleHeight)
         return density
 
@@ -122,8 +122,8 @@ def TestExponentialAtmosphere():
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #   Initialize new atmosphere and drag model, add them to task
-    newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
-    newAtmo.ModelTag = "ExpAtmo"
+    newAtmo = tabularAtmosphere.TabularAtmosphere()
+    newAtmo.ModelTag = "TabAtmo"
 
     #
     #   setup the simulation tasks/objects
@@ -224,18 +224,18 @@ def TestExponentialAtmosphere():
             dist = np.linalg.norm(posData[ind])
             alt = dist - newAtmo.planetRadius
 
-            trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight)
+            trueDensity = tabAtmoComp(alt, refBaseDens, refScaleHeight)
             # check a vector values
             if not unitTestSupport.isDoubleEqualRelative(densData[ind], trueDensity, accuracy):
                 testFailCount += 1
                 testMessages.append(
-                    "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-trueDensity))
+                    "FAILED:  TabAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-trueDensity))
     else:
         testFailCount += 1
-        testMessages.append("FAILED:  ExpAtmo failed to pull any logged data")
+        testMessages.append("FAILED:  tabAtmo failed to pull any logged data")
 
     return testFailCount, testMessages
 
 if __name__=='__main__':
-    # TestExponentialAtmosphere()
-    test_unitExponentialAtmosphere()
+    # TestTabularAtmosphere()
+    test_unitTabularAtmosphere()

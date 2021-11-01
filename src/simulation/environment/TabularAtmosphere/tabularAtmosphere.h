@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -18,8 +18,8 @@
  */
 
 
-#ifndef EXPONENTIAL_ATMOSPHERE_H
-#define EXPONENTIAL_ATMOSPHERE_H
+#ifndef TABULAR_ATMOSPHERE_H
+#define TABULAR_ATMOSPHERE_H
 
 #include <Eigen/Dense>
 #include <vector>
@@ -29,11 +29,11 @@
 #include "simulation/environment/_GeneralModuleFiles/atmosphereBase.h"
 #include "architecture/utilities/bskLogging.h"
 
-/*! @brief exponential atmosphere model */
-class ExponentialAtmosphere:  public AtmosphereBase {
+/*! @brief tabular atmosphere model */
+class TabularAtmosphere:  public AtmosphereBase {
 public:
-    ExponentialAtmosphere();
-    ~ExponentialAtmosphere();
+    TabularAtmosphere();
+    ~TabularAtmosphere();
 
 private:
     void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime);
@@ -41,10 +41,10 @@ private:
 
 public:
     double baseDensity;             //!< [kg/m^3] Density at h=0
-    double scaleHeight;             //!< [m] Exponential characteristic height
+    double scaleHeight;             //!< [m] Tabular characteristic height
     double localTemp = 293.0;       //!< [K] Local atmospheric temperature; set to be constant.
     BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 
 
-#endif /* EXPONENTIAL_ATMOSPHERE_H */
+#endif /* TABULAR_ATMOSPHERE_H */

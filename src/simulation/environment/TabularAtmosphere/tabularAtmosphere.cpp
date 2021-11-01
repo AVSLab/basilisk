@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,13 +17,13 @@
 
  */
 
-#include "exponentialAtmosphere.h"
+#include "tabularAtmosphere.h"
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
  @return void
  */
-ExponentialAtmosphere::ExponentialAtmosphere()
+TabularAtmosphere::TabularAtmosphere()
 {
     //! - Set the default atmospheric properties to yield a zero response
     this->baseDensity = 0.0;            // [T]
@@ -37,7 +37,7 @@ ExponentialAtmosphere::ExponentialAtmosphere()
 /*! Empty destructor method.
  @return void
  */
-ExponentialAtmosphere::~ExponentialAtmosphere()
+TabularAtmosphere::~TabularAtmosphere()
 {
     return;
 }
@@ -47,7 +47,7 @@ ExponentialAtmosphere::~ExponentialAtmosphere()
  @param currentTime current time (s)
  @return void
  */
-void ExponentialAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
+void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
 {
     msg->neutralDensity = this->baseDensity * exp(-(this->orbitAltitude) / this->scaleHeight);
     msg->localTemp = this->localTemp;

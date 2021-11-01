@@ -1,7 +1,7 @@
 
 # ISC License
 #
-# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -36,7 +36,7 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import exponentialAtmosphere
+from Basilisk.simulation import tabularAtmosphere
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -79,15 +79,15 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    testModule = exponentialAtmosphere.ExponentialAtmosphere()
-    testModule.ModelTag = "exponential"
+    testModule = tabularAtmosphere.TabularAtmosphere()
+    testModule.ModelTag = "tabular"
 
     if useDefault:
         refBaseDens = 0
         refScaleHeight = 1.0
         refPlanetRadius = 0.0
     else:
-        simSetPlanetEnvironment.exponentialAtmosphere(testModule, "earth")
+        simSetPlanetEnvironment.tabularAtmosphere(testModule, "earth")
         refPlanetRadius = testModule.planetRadius
         refBaseDens = testModule.baseDensity
         refScaleHeight = testModule.scaleHeight
@@ -164,7 +164,7 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     dens0Data = dataLog0.neutralDensity
     dens1Data = dataLog1.neutralDensity
 
-    def expAtmoComp(alt, baseDens, scaleHeight, minReach, maxReach):
+    def tabAtmoComp(alt, baseDens, scaleHeight, minReach, maxReach):
         density = baseDens * math.exp(-alt/scaleHeight)
         if alt < minReach:
             density = 0.0
@@ -176,11 +176,11 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     accuracy = 1e-5
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
-    # check the exponential atmosphere results
+    # check the tabular atmosphere results
     #
     # check spacecraft 0 neutral density results
     alt = r0 - refPlanetRadius
-    trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
+    trueDensity = tabAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
     if trueDensity != 0:
         testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
             [trueDensity]*3, dens0Data, accuracy, "density sc0",
@@ -192,7 +192,7 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
     # check spacecraft 1 neutral density results
     alt = r1 - refPlanetRadius
-    trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
+    trueDensity = tabAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
     if trueDensity != 0:
         testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
             [trueDensity]*3, dens1Data, accuracy, "density sc1",

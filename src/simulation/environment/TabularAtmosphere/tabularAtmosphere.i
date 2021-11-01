@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -18,9 +18,9 @@
  */
 
 
-%module exponentialAtmosphere
+%module tabularAtmosphere
 %{
-    #include "exponentialAtmosphere.h"
+    #include "tabularAtmosphere.h"
 %}
 
 %pythoncode %{
@@ -32,7 +32,7 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "sys_model.h"
 %include "simulation/environment/_GeneralModuleFiles/atmosphereBase.h"
-%include "exponentialAtmosphere.h"
+%include "tabularAtmosphere.h"
 
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
