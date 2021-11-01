@@ -85,10 +85,144 @@ The inputs, also listed in the header of the data file, are: date of 4/1/21 at
 In the provided data file, 1 is altitude in kilometers, 2 is density in
 grams/cubic centimeter, and 3 is temperature in Kelvin.
 
+===============================================================================
+MarsGRAMNominal.txt
+===============================================================================
+The 2010 version of the Global Reference Atmospheric Model for Mars, or 
+Mars-GRAM2010, was used to generate this data. GRAM software is under General
+Public Release from NASA but must be requested for download: 
+https://software.nasa.gov/software/MFS-33158-1
+
+GRAM is run with numerous required inputs included in a namelist file. The file
+used to generate the data included here is provided in this directory as 
+MarsGRAM_bsk_namelist.txt, which also includes brief descriptions of each
+input variable. See the GRAM documentation for more info.
+
+In the provided file, HgtMOLA is altitude in kilometers, Denkgm3 is the mean
+density in kilograms/cubic meter, and Temp is the avg. temperature in Kelvin.
+Perturbation values are also included, but for this nominal output the mean 
+values are more appropriate, & these are what's read in by the python function.
+
+The provided data is a single columnar (only altitude varies) atmosphere table.
+To generate N dispersed perturbed profiles with the same settings, one could
+change the value of NMONTE in the namelist file to equal N and re-run.
 
 
+===============================================================================
+VenusGRAMNominal.csv
+===============================================================================
+The 2021 version of the Global Reference Atmospheric Model for Venus, or 
+Venus-GRAM2021, was used to generate this data. GRAM software is under General
+Public Release from NASA but must be requested for download: 
+https://software.nasa.gov/software/MFS-33888-1
+
+GRAM is run with numerous required inputs included in a namelist file. The file
+used to generate the data included here is provided in this directory as 
+VenusGRAM_bsk_namelist.txt, which also includes brief descriptions of each
+input variable. See the GRAM documentation for more info.
+
+In the provided file, Height_km is altitude above the reference ellipsoid in
+kilometers, Density_kgm3 is the mean density in kilograms/cubic meter, and
+Temperature_K is the avgerage temperature in Kelvin. Perturbation values are
+also included, but for this nominal output the mean values are more
+appropriate, and these are what is read in by the python function.
+
+The provided data is a single columnar (only altitude varies) atmosphere table.
+To generate N dispersed perturbed profiles with the same settings, one could
+change the value of NumberOfMonteCarloRuns in the namelist file to equal N
+and re-run.
 
 
+===============================================================================
+TitanGRAMNominal.csv
+===============================================================================
+The 2021b version of the Global Reference Atmospheric Model for Titan, or 
+Titan-GRAM2021b, was used to generate this data. GRAM software is under General
+Public Release from NASA but must be requested for download: 
+https://software.nasa.gov/software/MFS-33888-1
 
+GRAM is run with numerous required inputs included in a namelist file. The file
+used to generate the data included here is provided in this directory as 
+TitanGRAM_bsk_namelist.txt, which also includes brief descriptions of each
+input variable. See the GRAM documentation for more info.
 
+In the provided file, Height_km is altitude above the reference ellipsoid in
+kilometers, Density_kgm3 is the mean density in kilograms/cubic meter, and
+Temperature_K is the avgerage temperature in Kelvin. Perturbation values are
+also included, but for this nominal output the mean values are more
+appropriate, and these are what is read in by the python function.
 
+The provided data is a single columnar (only altitude varies) atmosphere table.
+To generate N dispersed perturbed profiles with the same settings, one could
+change the value of NumberOfMonteCarloRuns in the namelist file to equal N
+and re-run.
+
+===============================================================================
+NeptuneGRAMNominal.csv
+===============================================================================
+The 2019c version of the Global Reference Atmospheric Model for Neptune, or 
+Neptune-GRAM2019c, was used to generate this data. GRAM software is under
+General Public Release from NASA but must be requested for download: 
+https://software.nasa.gov/software/MFS-33888-1
+
+GRAM is run with numerous required inputs included in a namelist file. The file
+used to generate the data included here is provided in this directory as 
+NeptuneGRAM_bsk_namelist.txt, which also includes brief descriptions of each
+input variable. See the GRAM documentation for more info.
+
+In the provided file, Height_km is altitude above the reference ellipsoid in
+kilometers, Density_kgm3 is the mean density in kilograms/cubic meter, and
+Temperature_K is the avgerage temperature in Kelvin. Perturbation values are
+also included, but for this nominal output the mean values are more
+appropriate, and these are what is read in by the python function.
+
+The provided data is a single columnar (only altitude varies) atmosphere table.
+To generate N dispersed perturbed profiles with the same settings, one could
+change the value of NumberOfMonteCarloRuns in the namelist file to equal N
+and re-run.
+
+===============================================================================
+UranusGRAMNominal.csv
+===============================================================================
+The 2021a version of the Global Reference Atmospheric Model for Uranus, or 
+Uranus-GRAM2021a, was used to generate this data. GRAM software is under
+General Public Release from NASA but must be requested for download: 
+https://software.nasa.gov/software/MFS-33888-1
+
+GRAM is run with numerous required inputs included in a namelist file. The file
+used to generate the data included here is provided in this directory as 
+UranusGRAM_bsk_namelist.txt, which also includes brief descriptions of each
+input variable. See the GRAM documentation for more info.
+
+In the provided file, Height_km is altitude above the reference ellipsoid in
+kilometers, Density_kgm3 is the mean density in kilograms/cubic meter, and
+Temperature_K is the avgerage temperature in Kelvin. Perturbation values are
+also included, but for this nominal output the mean values are more
+appropriate, and these are what is read in by the python function.
+
+The provided data is a single columnar (only altitude varies) atmosphere table.
+To generate N dispersed perturbed profiles with the same settings, one could
+change the value of NumberOfMonteCarloRuns in the namelist file to equal N
+and re-run.
+
+===============================================================================
+JupiterGRAMNominal.csv
+===============================================================================
+The 2021 version of the Global Reference Atmospheric Model for Jupiter, or 
+Jupiter-GRAM2021, was used to generate this data. GRAM software is under
+General Public Release from NASA but must be requested for download: 
+https://software.nasa.gov/software/MFS-33888-1
+
+GRAM is run with numerous required inputs included in a namelist file. The file
+used to generate the data included here is provided in this directory as 
+JupiterGRAM_bsk_namelist.txt, which also includes brief descriptions of each
+input variable. See the GRAM documentation for more info.
+
+In the provided file, Height_km is altitude above the reference ellipsoid in
+kilometers, Density_kgm3 is the mean density in kilograms/cubic meter, and
+Temperature_K is the avgerage temperature in Kelvin. Perturbation values are
+also included, but for this nominal output the mean values are more
+appropriate, and these are what is read in by the python function.
+
+JupiterGRAM does not currently include a perturbation model for use in Monte
+Carlo analyses.

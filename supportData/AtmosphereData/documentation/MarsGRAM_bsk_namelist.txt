@@ -1,0 +1,209 @@
+ $INPUT_M10
+  LSTFL    = 'bskLIST.txt'
+  OUTFL    = 'MarsGRAMNominal.txt'
+  TRAJFL   = 'null'
+  profile  = 'null'
+  WaveFile = 'null'
+  DATADIR  = 'C:\GRAMs\MarsGRAM2010\Mars-GRAM 2010\Mars-GRAM 2010\Release1.0_Nov10\binFiles\'
+  GCMDIR   = 'C:\GRAMs\MarsGRAM2010\Mars-GRAM 2010\Mars-GRAM 2010\Release1.0_Nov10\binFiles\'
+  IERT     = 0
+  IUTC     = 1
+  MONTH    = 2
+  MDAY     = 18
+  MYEAR    = 2021
+  NPOS     = 401
+  IHR      = 12
+  IMIN     = 30
+  SEC      = 0.0
+  LonEW    = 1
+  Dusttau  = 0.3
+  Dustmin  = 0.3
+  Dustmax  = 1.0
+  Dustnu   = 0.003
+  Dustdiam = 5.0
+  Dustdens = 3000.
+  ALS0     = 0.0
+  ALSDUR   = 48.
+  INTENS   = 0.0
+  RADMAX   = 0.0
+  DUSTLAT  = 0.0
+  DUSTLON  = 0.0
+  MapYear  = 1
+  F107     = 68.0
+  NR1      = 1996
+  NVARX    = 1
+  NVARY    = 0
+  LOGSCALE = 0
+  FLAT     = 18.44
+  FLON     = 77.45
+  FHGT     = 0.
+  MOLAhgts = 1
+  hgtasfcm = 0.
+  zoffset  = 0.
+  ibougher = 1
+  DELHGT   = 0.5
+  DELLAT   = 0
+  DELLON   = 0
+  DELTIME  = 0
+  deltaTEX = 0.0
+  profnear = 0.0
+  proffar  = 0.0
+  rpscale  = 1.0
+  rwscale  = 1.0
+  wlscale  = 1.0
+  wmscale  = 1.0
+  blwinfac = 1.0
+  NMONTE   = 1
+  iup      = 13
+  WaveA0   = 1.0
+  WaveDate = 0.0
+  WaveA1   = 0.0
+  Wavephi1 = 0.0
+  phi1dot  = 0.0
+  WaveA2   = 0.0
+  Wavephi2 = 0.0
+  phi2dot  = 0.0
+  WaveA3   = 0.0
+  Wavephi3 = 0.0
+  phi3dot  = 0.0
+  iuwave   = 0
+  Wscale   = 20.
+  corlmin  = 0.0
+  ipclat   = 1
+  requa    = 3396.19
+  rpole    = 3376.20
+  idaydata = 1
+ $END
+
+ Explanation of variables:
+ LSTFL    =  List file name (CON for console listing)
+ OUTFL    =  Output file name
+ TRAJFL   =  (Optional) Trajectory input file. File contains time (sec)
+              relative to start time, height (km), latitude (deg),
+              longitude (deg W if LonEW=0, deg E if LonEW=1, see below)
+ profile  =  (Optional) auxiliary profile input file name              
+ WaveFile =  (Optional) file for time-dependent wave coefficient data.
+              See file description under parameter iuwave, below.
+ DATADIR  =  Directory for COSPAR data and topographic height data 
+ GCMDIR   =  Directory for GCM binary data files
+ IERT     =  1 for time input as Earth-Receive time (ERT) or 0 Mars-event 
+              time (MET)
+ IUTC     =  1 for time input as Coordinated Universal Time (UTC), or 0 
+              for Terrestrial (Dynamical) Time (TT)
+ MONTH    =  (Integer) month of year
+ MDAY     =  (Integer) day of month
+ MYEAR    =  (Integer) year (4-digit; 1970-2069 can be 2-digit)
+ NPOS     =  max # positions to evaluate (0 = read data from trajectory
+              input file)
+ IHR      =  Hour of day (ERT or MET, controlled by IERT and UTC or TT, 
+              controlled by IUTC)
+ IMIN     =  minute of hour (meaning controlled by IERT and IUTC)
+ SEC      =  seconds of minute (meaning controlled by IERT and IUTC).  
+              IHR:IMIN:SEC is time for initial position to be evaluated
+ LonEW    =  0 for input and output West longitudes positive; 1 for East
+              longitudes positive
+ Dusttau  =  Optical depth of background dust level (no time-developing
+              dust storm, just uniformly mixed dust), 0.1 to 3.0, or use
+              0 for assumed seasonal variation of background dust
+ Dustmin  =  Minimum seasonal dust tau if input Dusttau=0 (>=0.1)
+ Dustmax  =  Maximum seasonal dust tau if input Dusttau=0 (<=1.0)
+ Dustnu   =  Parameter for vertical distribution of dust density (Haberle
+              et al., J. Geophys. Res., 104, 8957, 1999)
+ Dustdiam =  Dust particle diameter (micrometers, assumed monodisperse)
+ Dustdens =  Dust particle density (kg/m**3)
+ ALS0     =  starting Ls value (degrees) for dust storm (0 = none)
+ ALSDUR   =  duration (in Ls degrees) for dust storm (default = 48)
+ INTENS   =  dust storm intensity (0.0 - 3.0)
+ RADMAX   =  max. radius (km) of dust storm (0 or >10000 = global)
+ DUSTLAT  =  Latitude (degrees) for center of dust storm
+ DUSTLON  =  Longitude (degrees) (West positive if LonEW=0, or East
+              positive if LonEW = 1) for center of dust storm
+ MapYear  =  1 or 2 for TES mapping year 1 or 2 GCM input data, or 0 for 
+              Mars-GRAM 2001 GCM input data sets           
+ F107     =  10.7 cm solar flux (10**-22 W/cm**2 at 1 AU)
+ NR1      =  starting random number (0 < NR1 < 30000)
+ NVARX    =  x-code for plotable output (1=hgt above MOLA areoid).
+              See file xycodes.txt
+ NVARY    =  y-code for 3-D plotable output (0 for 2-D plots)
+ LOGSCALE =  0=regular SI units, 1=log-base-10 scale, 2=percentage
+              deviations from COSPAR model, 3=SI units, with density
+              in kg/km**3 (suitable for high altitudes)
+ FLAT     =  initial latitude (N positive), degrees
+ FLON     =  initial longitude (West positive if LowEW = 0 or East
+              positive if LonEW = 1), degrees
+ FHGT     =  initial height (km); <=-10 means evaluate at surface height;
+              > 3000 km means planeto-centric radius
+ MOLAhgts =  1 for input heights relative to MOLA areoid, otherwise
+             input heights are relative to reference ellipsoid
+ hgtasfcm =  height above surface (0-4500 m); use if FHGT <= -10. km
+ zoffset  =  constant height offset (km) for MTGCM data or constant
+             part of Ls-dependent (Bougher) height offset (0.0 means
+             no constant offset).  Positive offset increases density,
+             negative offset decreases density.
+ ibougher =  0 for no Ls-dependent (Bougher) height offset term; 1
+             means add Ls-dependent (Bougher) term, -A*Sin(Ls) (km),
+             to constant term (zoffset) [offset amplitude A = 2.5 for 
+             MapYear=0 or 0.5 for MapYear > 0]; 2 means use global mean
+             height offset from data file hgtoffst.dat; 3 means use
+             daily average height offset at local position; 4 means
+             use height offset at current time and local position.
+             Value of zoffset is ignored if ibougher = 2, 3, or 4.
+ DELHGT   =  height increment (km) between steps
+ DELLAT   =  Latitude increment (deg) between steps (Northward positive)
+ DELLON   =  Longitude increment (deg) between steps (Westward positive
+              if LonEW = 0, Eastward positive if LonEW = 1)
+ DELTIME  =  time increment (sec) between steps
+ deltaTEX =  adjustment for exospheric temperature (K)
+ profnear =  Lat-lon radius (degrees) within which weight for auxiliary  
+               profile is 1.0 (Use profnear = 0.0 for no profile input)
+ proffar  =  Lat-lon radius (degrees) beyond which weight for auxiliary
+               profile is 0.0
+ rpscale  =  random density perturbation scale factor (0-2)
+ rwscale  =  random wind perturbation scale factor (>=0)
+ wlscale  =  scale factor for perturbation wavelengths (0.1-10)
+ wmscale  =  scale factor for mean winds
+ blwinfac =  scale factor for boundary layer slope winds (0 = none)
+ NMONTE   =  number of Monte Carlo runs
+ iup      =  0 for no LIST and graphics output, or unit number for output
+ WaveA0   =  Mean term of longitude-dependent wave multiplier for density
+ WaveDate =  Julian date for (primary) peak(s) of wave (0 for no traveling 
+              component) 
+ WaveA1   =  Amplitude of wave-1 component of longitude-dependent wave
+              multiplier for density
+ Wavephi1 =  Phase of wave-1 component of longitude-dependent wave
+              multiplier (longitude, with West positive if LonEW = 0,
+              East positive if LonEW = 1)
+ phi1dot  =  Rate of longitude movement (degrees per day) for wave-1 
+              component (Westward positive if LonEW = 0, Eastward 
+              positive if LonEW = 1)
+ WaveA2   =  Amplitude of wave-2 component of longitude-dependent wave
+              multiplier for density
+ Wavephi2 =  Phase of wave-2 component of longitude-dependent wave
+              multiplier (longitude, with West positive if LonEW = 0,
+              East positive if LonEW = 1)
+ phi2dot  =  Rate of longitude movement (degrees per day) for wave-2 
+              component (Westward positive if LonEW = 0, Eastward 
+              positive if LonEW = 1)
+ WaveA3   =  Amplitude of wave-3 component of longitude-dependent wave
+              multiplier for density
+ Wavephi3 =  Phase of wave-3 component of longitude-dependent wave
+              multiplier (longitude, with West positive if LonEW = 0,
+              East positive if LonEW = 1)
+ phi3dot  =  Rate of longitude movement (degrees per day) for wave-3 
+              component (Westward positive if LonEW = 0, Eastward 
+              positive if LonEW = 1)
+ iuwave   =  Unit number for (Optional) time-dependent wave coefficient
+              data file "WaveFile" (or 0 for none).
+              WaveFile contains time (sec) relative to start time, and
+              wave model coefficients (WaveA0 thru Wavephi3) from the
+              given time to the next time in the data file.
+ Wscale   =  Vertical scale (km) of longitude-dependent wave damping
+              at altitudes below 100 km (10<=Wscale<=10,000 km)
+ corlmin  =  minimum relative step size for perturbation updates
+              (0.0-1.0); 0.0 means always update perturbations, x.x
+              means only update perturbations when corlim > x.x
+ ipclat   =  1 for Planeto-centric latitude and height input, 
+             0 for Planeto-graphic latitude and height input
+ requa    =  Equatorial radius (km) for reference ellipsoid
+ rpole    =  Polar radius (km) for reference ellipsoid 
+ idaydata =  1 for daily max/min data output; 0 for none
