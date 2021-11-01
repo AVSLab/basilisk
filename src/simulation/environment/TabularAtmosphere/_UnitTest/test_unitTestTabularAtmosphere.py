@@ -40,7 +40,6 @@ from Basilisk.simulation import tabularAtmosphere
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simSetPlanetEnvironment
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -50,21 +49,17 @@ from Basilisk.utilities import simSetPlanetEnvironment
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useDefault", [ True, False])
-@pytest.mark.parametrize("useMinReach", [ True, False])
-@pytest.mark.parametrize("useMaxReach", [ True, False])
-@pytest.mark.parametrize("usePlanetEphemeris", [ True, False])
+# @pytest.mark.parametrize("useDefault", [ True, False])
+
+def test_tabularAtmosphere():
+    """Tabular Atmosphere Unit Test"""
+    # [testResults, testMessage] = run()
+    # assert testResults < 1, testMessage
+    run()
 
 
-# update "module" in this function name to reflect the module name
-def test_module(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
-    """Module Unit Test"""
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris)
-    assert testResults < 1, testMessage
 
-
-def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
+def run():
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -82,33 +77,13 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     testModule = tabularAtmosphere.TabularAtmosphere()
     testModule.ModelTag = "tabular"
 
-    if useDefault:
-        refBaseDens = 0
-        refScaleHeight = 1.0
-        refPlanetRadius = 0.0
-    else:
-        simSetPlanetEnvironment.tabularAtmosphere(testModule, "earth")
-        refPlanetRadius = testModule.planetRadius
-        refBaseDens = testModule.baseDensity
-        refScaleHeight = testModule.scaleHeight
+    # define planet state using ephemeris
+    planetStateMsg = messaging.SpicePlanetStateMsgPayload()
+    planetPosition = [1000.0, 2000.0, -1000.0]
+    planetStateMsg.PositionVector = planetPosition
+    plMsg = messaging.SpicePlanetStateMsg().write(planetStateMsg)
+    testModule.planetPosInMsg.subscribeTo(plMsg)
 
-    minReach = -1.0
-    if useMinReach:
-        minReach = 200*1000.0     # meters
-        testModule.envMinReach = minReach
-        testModule.planetRadius =  6378136.6 #meters
-    maxReach = -1.0
-    if useMaxReach:
-        maxReach = 200*1000.0     # meters
-        testModule.envMaxReach = maxReach
-        testModule.planetRadius =  6378136.6
-    planetPosition = [0.0, 0.0, 0.0]
-    if usePlanetEphemeris:
-        planetStateMsg = messaging.SpicePlanetStateMsgPayload()
-        planetPosition = [1000.0, 2000.0, -1000.0]
-        planetStateMsg.PositionVector = planetPosition
-        plMsg = messaging.SpicePlanetStateMsg().write(planetStateMsg)
-        testModule.planetPosInMsg.subscribeTo(plMsg)
 
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
@@ -156,67 +131,69 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+    
+    print('module added and sim configured successfully')
 
-    # Begin the simulation time run set above
-    unitTestSim.ExecuteSimulation()
+    # # Begin the simulation time run set above
+    # unitTestSim.ExecuteSimulation()
 
-    # This pulls the actual data log from the simulation run.
-    dens0Data = dataLog0.neutralDensity
-    dens1Data = dataLog1.neutralDensity
+    # # This pulls the actual data log from the simulation run.
+    # dens0Data = dataLog0.neutralDensity
+    # dens1Data = dataLog1.neutralDensity
 
-    def tabAtmoComp(alt, baseDens, scaleHeight, minReach, maxReach):
-        density = baseDens * math.exp(-alt/scaleHeight)
-        if alt < minReach:
-            density = 0.0
-        if alt > maxReach and maxReach > 0:
-            density = 0.0
-        return density
+    # def tabAtmoComp(alt, baseDens, scaleHeight, minReach, maxReach):
+    #     density = baseDens * math.exp(-alt/scaleHeight)
+    #     if alt < minReach:
+    #         density = 0.0
+    #     if alt > maxReach and maxReach > 0:
+    #         density = 0.0
+    #     return density
 
-    # compare the module results to the truth values
-    accuracy = 1e-5
-    unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
+    # # compare the module results to the truth values
+    # accuracy = 1e-5
+    # unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
-    # check the tabular atmosphere results
-    #
-    # check spacecraft 0 neutral density results
-    alt = r0 - refPlanetRadius
-    trueDensity = tabAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
-    if trueDensity != 0:
-        testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
-            [trueDensity]*3, dens0Data, accuracy, "density sc0",
-            testFailCount, testMessages)
-    else:
-        testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-            [trueDensity] * 3, dens0Data, accuracy, "density sc0",
-            testFailCount, testMessages)
+    # # check the tabular atmosphere results
+    # #
+    # # check spacecraft 0 neutral density results
+    # alt = r0 - refPlanetRadius
+    # trueDensity = tabAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
+    # if trueDensity != 0:
+    #     testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
+    #         [trueDensity]*3, dens0Data, accuracy, "density sc0",
+    #         testFailCount, testMessages)
+    # else:
+    #     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
+    #         [trueDensity] * 3, dens0Data, accuracy, "density sc0",
+    #         testFailCount, testMessages)
 
-    # check spacecraft 1 neutral density results
-    alt = r1 - refPlanetRadius
-    trueDensity = tabAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
-    if trueDensity != 0:
-        testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
-            [trueDensity]*3, dens1Data, accuracy, "density sc1",
-            testFailCount, testMessages)
-    else:
-        testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-            [trueDensity] * 3, dens1Data, accuracy, "density sc1",
-            testFailCount, testMessages)
+    # # check spacecraft 1 neutral density results
+    # alt = r1 - refPlanetRadius
+    # trueDensity = tabAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
+    # if trueDensity != 0:
+    #     testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
+    #         [trueDensity]*3, dens1Data, accuracy, "density sc1",
+    #         testFailCount, testMessages)
+    # else:
+    #     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
+    #         [trueDensity] * 3, dens1Data, accuracy, "density sc1",
+    #         testFailCount, testMessages)
 
-    #   print out success or failure message
-    snippentName = "unitTestPassFail" + str(useDefault) + str(useMinReach) + str(useMaxReach) + str(usePlanetEphemeris)
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + testModule.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("Failed: " + testModule.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    # #   print out success or failure message
+    # snippentName = "unitTestPassFail" + str(useDefault) + str(useMinReach) + str(useMaxReach) + str(usePlanetEphemeris)
+    # if testFailCount == 0:
+    #     colorText = 'ForestGreen'
+    #     print("PASSED: " + testModule.ModelTag)
+    #     passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    # else:
+    #     colorText = 'Red'
+    #     print("Failed: " + testModule.ModelTag)
+    #     passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
+    # unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    # # each test method requires a single assert method to be called
+    # # this check below just makes sure no sub-test failures were found
+    # return [testFailCount, ''.join(testMessages)]
 
 
 #
@@ -224,10 +201,10 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(              # update "module" in function name
-                 False,         # showplots
-                 False,         # useDefault
-                 False,         # useMinReach
-                 True,         # useMaxReach
-                 False          # usePlanetEphemeris
+    test_tabularAtmosphere(             
+                 # False,         # showplots
+                 # False,         # useDefault
+                 # False,         # useMinReach
+                 # True,         # useMaxReach
+                 # False          # usePlanetEphemeris
                )
