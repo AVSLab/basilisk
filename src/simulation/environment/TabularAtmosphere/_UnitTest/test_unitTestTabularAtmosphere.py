@@ -19,8 +19,8 @@
 #
 #   Unit Test Script
 #   Module Name:        atmosphere
-#   Author:             Hanspeter Schaub
-#   Creation Date:      March 9, 2019
+#   Author:             Mikaela Felix
+#   Creation Date:      Nov 1 2021
 #
 
 import pytest
