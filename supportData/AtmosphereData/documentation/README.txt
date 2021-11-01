@@ -29,7 +29,9 @@ USStandardAtmosphere1976.csv
 ===============================================================================
 The 1976 version of the US Standard Atmosphere is defined in a report of the
 same name from NOAA, NASA, and the USAF, currently available at the link below:
-https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
+ https://www.ngdc.noaa.gov/stp/space-weather/online-publications/...
+     miscellaneous/us-standard-atmosphere-1976/...
+     us-standard-atmosphere_st76-1562_noaa.pdf 
 
 The provided data table was generated using the webapp available at:
 https://www.digitaldutch.com/atmoscalc/table.htm
