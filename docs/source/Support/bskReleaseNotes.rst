@@ -52,7 +52,7 @@ Version |release|
   scripts have been updated.
 - new tutorial example scenario script :ref:`scenarioTAMcomparison`
 - new mass sensor that converts a ``simulation`` mass properties message to a ``FSW`` vehicle configuration message :ref:`simpleMassProps`
-- added scripting support for Vizard 2.0
+- added scripting support for Vizard 2.0.1
 
 
 Version 2.0.7

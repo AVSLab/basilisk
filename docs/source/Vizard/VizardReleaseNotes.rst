@@ -18,6 +18,13 @@ Release Notes
     - Add magnetic torque bar visualization
     - Provide a spacecraft attached flash light component
 
+**Version 2.0.1**
+
+- Fixed a start-up issue on Windows and Linux where the application only started up in full screen
+  mode that could not be exited.  Now the application starts in a Window.  You can start up
+  pressing Option or Windows key during start up to ensure the application starts in a size that fits
+  the monitor.
+
 **Version 2.0.0**
 
 - The version 2.0 release main feature is the new improved atmosphere shader which is currently enabled on
@@ -35,7 +42,8 @@ Release Notes
 .. warning::
 
     A known issue with the new shader is that if you are in the eclipse region of the planet and move radially
-    outward you will see a white ring around the planet.  This will be addressed in a future release.
+    outward you will see a white ring around the planet.  A glow about the planet is expected, but we are
+    still working on the correct fading of this glow with distance.
 
 
 **Version 1.9.2**
