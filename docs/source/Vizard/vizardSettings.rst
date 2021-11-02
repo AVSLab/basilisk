@@ -679,7 +679,7 @@ set then Basilisk assumes a default January 1, 2019, 00:00:00 epoch time and dat
 thus the time since epoch.  To specify a different simulation epoch data and time the :ref:`EpochMsgPayload` can be
 setup as discussed in :ref:`scenarioMagneticFieldWMM`.  To tell :ref:`vizInterface` what epoch message to read use::
 
-	viz.epochInMsg.subscribe(epochMsg)
+	viz.epochInMsg.subscribeTo(epochMsg)
 
 An example of the use of this epoch message is shown in :ref:`scenarioMagneticFieldWMM`.
 
