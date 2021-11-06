@@ -14,6 +14,8 @@ def test_vehicleConfigData():
     """Module Unit Test"""
     [testResults, testMessage] = vehicleConfigDataTestFunction()
 
+    assert testResults < 1, testMessage
+
 def vehicleConfigDataTestFunction():
     """ Test the vehicleConfigData module """
 
