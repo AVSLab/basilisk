@@ -186,8 +186,6 @@ def run(show_plots):
     panel1.r_HB_B = [[-2.0], [0.0], [1.0]]
     panel1.dcm_HB = rbk.euler3(90.0 * macros.D2R)
     # unique names for the state engine to track the panel angular states
-    panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     # panel initial angular states
     panel1.thetaInit = 0.0
     panel1.thetaDotInit = 1.0 * macros.D2R  # rad/sec panel rotation rate

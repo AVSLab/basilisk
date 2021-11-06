@@ -100,8 +100,6 @@ def test_SCConnected(show_plots):
     unitTestSim.panel1.c = 0.0
     unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
     unitTestSim.panel1.thetaDotInit = 0.0
 
@@ -161,8 +159,6 @@ def test_SCConnected(show_plots):
     unitTestSim.panel2.c = 0.0
     unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
-    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
 
@@ -378,8 +374,6 @@ def test_SCConnectedAndUnconnected(show_plots):
     unitTestSim.panel1.c = 0.0
     unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
     unitTestSim.panel1.thetaDotInit = 0.0
 
@@ -439,8 +433,6 @@ def test_SCConnectedAndUnconnected(show_plots):
     unitTestSim.panel2.c = 0.0
     unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta1"
-    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
 
@@ -479,8 +471,6 @@ def test_SCConnectedAndUnconnected(show_plots):
     unitTestSim.panel3.c = 0.0
     unitTestSim.panel3.r_HB_B = [[-0.5], [0.0], [1.0]]
     unitTestSim.panel3.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel3.nameOfThetaState = "hingedRigidBodyTheta1"
-    unitTestSim.panel3.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel3.thetaInit = 0.0
     unitTestSim.panel3.thetaDotInit = 0.0
 

@@ -23,6 +23,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <iostream>
+#include <string>
 
 /*! This is the constructor, setting variables to default values */
 HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
@@ -45,15 +46,19 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->IPntS_S.Identity();
     this->r_HB_B.setZero();
     this->dcm_HB.Identity();
-    this->nameOfThetaState = "hingedRigidBodyTheta";
-    this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
+    this->nameOfThetaState = "hingedRigidBodyTheta" + std::to_string(this->panelID);
+    this->nameOfThetaDotState = "hingedRigidBodyThetaDot" + std::to_string(this->panelID);
+    this->panelID++;
 
     return;
 }
 
+uint64_t HingedRigidBodyStateEffector::panelID = 1;
+
 /*! This is the destructor, nothing to report here */
 HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
 {
+    panelID = 1;    /* reset the panel ID*/
     return;
 }
 

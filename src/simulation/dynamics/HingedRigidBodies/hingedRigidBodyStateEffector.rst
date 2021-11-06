@@ -76,7 +76,9 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 
    Do this for all of the parameters for a Hinged Rigid Body seen in the Hinged Rigid Body 1 Parameters Table.
 
-#. Define the initial conditions of the states::
+#. (Optional) Define a unique name for each state.  If you have multiple panels, they each must have
+   a unique name.  If these names are not specified, then the default names are used which are
+   incremented by the effector number::
 
     panel1.thetaInit = 5*numpy.pi/180.0
     panel1.thetaDotInit = 0.0

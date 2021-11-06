@@ -225,8 +225,6 @@ def run(show_plots):
     scSim.panel1.c = 0.0  # c is the rotational damping coefficient for the hinge, which is modeled as a spring.
     scSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     scSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    scSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    scSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     scSim.panel1.thetaInit = 5 * np.pi / 180.0
     scSim.panel1.thetaDotInit = 0.0
 
@@ -238,8 +236,6 @@ def run(show_plots):
     scSim.panel2.c = 0.0  # c is the rotational damping coefficient for the hinge, which is modeled as a spring.
     scSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     scSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    scSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
-    scSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     scSim.panel2.thetaInit = 5 * np.pi / 180.0
     scSim.panel2.thetaDotInit = 0.0
 
