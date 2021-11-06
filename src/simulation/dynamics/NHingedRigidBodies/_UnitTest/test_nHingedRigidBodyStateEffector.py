@@ -112,13 +112,9 @@ def nHingedRigidBody(show_plots, testCase):
 
     unitTestSim.effector1.r_HB_B = [[0.5], [0.0], [1.0]]
     unitTestSim.effector1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.effector1.nameOfThetaState = "nHingedRigidBody1Theta"
-    unitTestSim.effector1.nameOfThetaDotState = "nHingedRigidBody1ThetaDot"
 
     unitTestSim.effector2.r_HB_B = [[-0.5], [0.0], [1.0]]
     unitTestSim.effector2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.effector2.nameOfThetaState = "nHingedRigidBody2Theta"
-    unitTestSim.effector2.nameOfThetaDotState = "nHingedRigidBody2ThetaDot"
 
     # Define Variable for a panel
     unitTestSim.panel.mass = 50.0
