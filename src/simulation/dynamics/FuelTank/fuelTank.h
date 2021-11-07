@@ -270,7 +270,7 @@ private:
 	FuelTankModel* fuelTankModel;					   //!< -- style of tank to simulate
 	Eigen::Matrix3d ITankPntT_B;
 	Eigen::Vector3d r_TcB_B;
-    static uint64_t panelID;                           //!< [] ID number of this panel
+    static uint64_t effectorID;                           //!< [] ID number of this panel
 
 public:
 	FuelTank();                                        //!< -- Contructor
