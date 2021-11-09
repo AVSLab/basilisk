@@ -242,6 +242,11 @@ def run(show_plots, numberSpacecraft, environment, numThreads):
 
     # Configure a scenario in the base simulation
     TheScenario = scenario_BasicOrbitFormationFlying(numberSpacecraft, environment)
+    #This call allocates out the requested number of threads into the simulation
+    #Note that unless the user does something further, processes will be assigned 
+    #in a round-robin fashion to the allocated threads.  If you desire to specify
+    #which processes execute on a given thread, then the addProcessToThread in 
+    #the SimModel (TotalSim in SimulationBaseClass) should be used.
     TheScenario.TotalSim.resetThreads(numThreads)
     runScenario(TheScenario)
     figureList = TheScenario.pull_outputs(show_plots)
