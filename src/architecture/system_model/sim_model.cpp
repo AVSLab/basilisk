@@ -27,7 +27,7 @@ void activateNewThread(void *threadData)
     SimThreadExecution *theThread = static_cast<SimThreadExecution*> (threadData);
 
     //std::cout << "Starting thread yes" << std::endl;
-    theThread->lockMaster();
+    theThread->lockParent();
     theThread->postInit();
 
     while(theThread->threadValid())
@@ -49,7 +49,7 @@ void activateNewThread(void *threadData)
             theThread->StepUntilStop();
         }
         //std::cout << "Stepping thread"<<std::endl;
-        theThread->unlockMaster();
+        theThread->unlockParent();
 
     }
     //std::cout << "Killing thread" << std::endl;
@@ -96,8 +96,8 @@ void SimThreadExecution::lockThread() {
     known time until this thread has finished its execution for that time.
  @return void
  */
-void SimThreadExecution::lockMaster() {
-    this->masterThreadLock.lock();
+void SimThreadExecution::lockParent() {
+    this->parentThreadLock.lock();
 }
 
 /*! This method provides an entry point for the "parent" thread to release the 
@@ -115,8 +115,8 @@ void SimThreadExecution::unlockThread() {
     its execution.
  @return void
  */
-void SimThreadExecution::unlockMaster() {
-    this->masterThreadLock.unlock();
+void SimThreadExecution::unlockParent() {
+    this->parentThreadLock.unlock();
 }
 
 /*! This method steps all of the processes forward to the current time.  It also
@@ -265,7 +265,7 @@ void SimThreadExecution::resetProcesses() {
  */
 void SimThreadExecution::addNewProcess(SysProcess* newProc) {
     processList.push_back(newProc);
-    newProc->setProcessOwnership(true);
+    newProc->setProcessControlStatus(true);
 }
 
 /*! This Constructor is used to initialize the top-level sim model.
@@ -319,7 +319,7 @@ void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
     for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
     {
         if((*thrIt)->procCount() > 0) {
-            (*thrIt)->lockMaster();
+            (*thrIt)->lockParent();
             this->NextTaskTime = (*thrIt)->NextTaskTime < this->NextTaskTime ?
                                  (*thrIt)->NextTaskTime : this->NextTaskTime;
             this->CurrentNanos = (*thrIt)->CurrentNanos < this->CurrentNanos ?
@@ -364,7 +364,7 @@ void SimModel::selfInitSimulation()
         (*thrIt)->unlockThread();
     }
     for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++) {
-        (*thrIt)->lockMaster();
+        (*thrIt)->lockParent();
     }
     this->NextTaskTime = 0;
     this->CurrentNanos = 0;
@@ -388,7 +388,7 @@ void SimModel::resetInitSimulation()
     }
     for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
     {
-        (*thrIt)->lockMaster();
+        (*thrIt)->lockParent();
 
     }
 }
@@ -473,7 +473,7 @@ void SimModel::clearProcsFromThreads() {
     //! - Iterate through model list and call the Task model initializer
     for(it = this->processList.begin(); it != this->processList.end(); it++)
     {
-        (*it)->setProcessOwnership(false);
+        (*it)->setProcessControlStatus(false);
     }
 
 }
@@ -536,7 +536,7 @@ void SimModel::assignRemainingProcs() {
         {
             thrIt = threadList.begin();
         }
-        if((*it)->getProcessOwnership()) {
+        if((*it)->getProcessControlStatus()) {
             thrIt--; //Didn't get a thread to add, so roll back
         }
         else

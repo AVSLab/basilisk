@@ -57,8 +57,8 @@ public:
     void setPriority(int64_t newPriority) {this->processPriority = newPriority;} //!< class method
     void disableAllTasks(); //!< class method
     void enableAllTasks(); //!< class method
-    bool getProcessOwnership() {return this->processOnThread;} //!< Allows caller to see if this process is parented by a thread
-    void setProcessOwnership(bool processTaken) {processOnThread = processTaken;} //!< Provides a mechanism to say that this process is allocated to a thread
+    bool getProcessControlStatus() {return this->processOnThread;} //!< Allows caller to see if this process is parented by a thread
+    void setProcessControlStatus(bool processTaken) {processOnThread = processTaken;} //!< Provides a mechanism to say that this process is allocated to a thread
     
 public:
     std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks

@@ -51,8 +51,8 @@ public:
     void killThread() {this->terminateThread=true;} //!< Politely asks the thread to no longer be alive.
     void lockThread();
     void unlockThread();
-    void lockMaster();
-    void unlockMaster();
+    void lockParent();
+    void unlockParent();
     void StepUntilStop();  //!< Step simulation until stop time uint64_t reached
     void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
     void moveProcessMessages();
@@ -71,7 +71,7 @@ public:
 private:
     bool threadRunning;            //!< Flag that will allow for easy concurrent locking
     bool terminateThread;          //!< Flag that indicates that it is time to take thread down
-    std::mutex masterThreadLock;   //!< Lock that ensures master thread won't proceed
+    std::mutex parentThreadLock;   //!< Lock that ensures parent thread won't proceed
     std::mutex selfThreadLock;     //!< Lock that ensures this thread only reaches allowed time
     std::vector<SysProcess*> processList;  //!< List of processes associated with thread
     std::mutex initReadyLock;      //!< Lock function to ensure runtime locks are configured
