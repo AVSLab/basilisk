@@ -183,6 +183,14 @@ default setting for that behavior.
       - int
       - Multiplier x (10000 * current planet local scale) at which the planet view transitions to the solar
         system view. Valid range from 1 to 10 or 0 to use viz default.
+    * - ``sunIntensity``
+      - double
+      - Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use
+        viz default
+    * - ``attenuateSunLightWithDistance``
+      - int
+      - Toggle to reduce brightness of sun lighting with the square of the distance from the sun.
+        Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
 
 
 
