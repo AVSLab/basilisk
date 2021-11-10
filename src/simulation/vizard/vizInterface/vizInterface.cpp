@@ -557,6 +557,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_atmospheresoff(this->settings.atmospheresOff);
         vizSettings->set_scviewtoplanetviewboundarymultiplier(this->settings.scViewToPlanetViewBoundaryMultiplier);
         vizSettings->set_planetviewtohelioviewboundarymultiplier(this->settings.planetViewToHelioViewBoundaryMultiplier);
+        vizSettings->set_sunintensity(this->settings.sunIntensity);
+        vizSettings->set_attenuatesunlightwithdistance(this->settings.attenuateSunLightWithDistance);
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {

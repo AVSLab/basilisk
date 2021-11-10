@@ -304,6 +304,8 @@ VizSettings
     int32_t atmospheresOff = 0; //!< Toggle to disable the atmosphere effect on celestial bodies, Value of 0 (protobuffer default to use viz default, -1 for false, 1 for true.
     int32_t scViewToPlanetViewBoundaryMultiplier = 0; //!< Multiplier x 1000m to set the boundary at which the spacecraft local view transitions to planet view. Valid range from 1 to 10 or 0 to use viz default.
     int32_t planetViewToHelioViewBoundaryMultiplier = 0; //!< Multiplier x (10000 * current planet local scale) at which the planet view transitions to the solar system view. Valid range from 1 to 10 or 0 to use viz default.
+    double sunIntensity = 0; //!< Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use viz default
+    int32_t attenuateSunLightWithDistance = 0; //!< Toggle to reduce brightness of sun lighting with the square of the distance from the sun. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
 }VizSettings;
 
 
