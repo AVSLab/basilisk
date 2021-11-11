@@ -80,7 +80,7 @@ StdCameraSettings
 {
     std::string spacecraftName; //!< name of spacecraft onto which to place a camera
     int setMode=1;              //!< 0 -> body targeting, 1 -> pointing vector (default)
-    double fieldOfView=-1;      //!< [rad], field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
+    double fieldOfView=-1;      //!< [rad], edge-to-edge field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
     std::string bodyTarget;     //!< Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
     int setView=0;              //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
     double pointingVector_B[3]; //!< (default to 1, 0, 0). This is a setting for pointing vector mode.
