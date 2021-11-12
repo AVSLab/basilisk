@@ -24,14 +24,14 @@
 #include <mutex>
 #include <condition_variable>
 
-class Semaphore
+class BSKSemaphore
 {
     std::mutex mutex;
     std::condition_variable cv;
     size_t count;
 
 public:
-    Semaphore(int count_in = 0)
+    BSKSemaphore(int count_in = 0)
         : count(count_in)
     {
     }
