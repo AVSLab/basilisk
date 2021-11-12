@@ -27,7 +27,6 @@ void activateNewThread(void *threadData)
     SimThreadExecution *theThread = static_cast<SimThreadExecution*> (threadData);
 
     //std::cout << "Starting thread yes" << std::endl;
-    theThread->lockParent();
     theThread->postInit();
 
     while(theThread->threadValid())
@@ -88,7 +87,7 @@ SimThreadExecution::SimThreadExecution() {
  @return void
  */
 void SimThreadExecution::lockThread() {
-    this->selfThreadLock.lock();
+    this->selfThreadLock.acquire();
 }
 
 /*! This method provides a forced synchronization on the "parent" thread so that 
@@ -97,7 +96,7 @@ void SimThreadExecution::lockThread() {
  @return void
  */
 void SimThreadExecution::lockParent() {
-    this->parentThreadLock.lock();
+    this->parentThreadLock.acquire();
 }
 
 /*! This method provides an entry point for the "parent" thread to release the 
@@ -106,7 +105,7 @@ void SimThreadExecution::lockParent() {
  @return void
  */
 void SimThreadExecution::unlockThread() {
-    this->selfThreadLock.unlock();
+    this->selfThreadLock.release();
 }
 
 /*! This method provides an entry point for the "child" thread to unlock the 
@@ -116,7 +115,7 @@ void SimThreadExecution::unlockThread() {
  @return void
  */
 void SimThreadExecution::unlockParent() {
-    this->parentThreadLock.unlock();
+    this->parentThreadLock.release();
 }
 
 /*! This method steps all of the processes forward to the current time.  It also
@@ -550,7 +549,7 @@ void SimModel::assignRemainingProcs() {
         (*thrIt)->nextProcPriority = (*it)->processPriority;
         (*thrIt)->NextTaskTime = 0;
         (*thrIt)->CurrentNanos = 0;
-        (*thrIt)->lockThread();
+        //(*thrIt)->lockThread();
         (*thrIt)->threadContext = new std::thread(activateNewThread, (*thrIt));
     }
     for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
