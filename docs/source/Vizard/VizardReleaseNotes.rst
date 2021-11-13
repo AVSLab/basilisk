@@ -18,6 +18,25 @@ Release Notes
     - Add magnetic torque bar visualization
     - Provide a spacecraft attached flash light component
 
+**Version 2.0.2**
+
+- added About Panel (under the File menu) to provide information Vizard, Basilisk, and about the third
+  party scripting assets as well as the many imagery, texture, and model assets that Vizard uses
+- sun light attenuation setting: enabling this will cause the lighting to dim as you move further
+  from the sun. This setting can be set under the General tab of the Settings panel or in the
+  vizMessage Settings message.
+- main light intensity setting: the user can set their own light intensity for the sun or the main
+  directional light (if no sun message present). This setting can be set under the General tab of the
+  Settings panel or in the vizMessage Settings message.
+- improved Saturn and Saturn’s Rings. Rings are now shadowed by the planet.
+- fixed bug with camera zooming when the user’s mouse is on the About Panel, Settings Panel, and
+  Main Camera Target dropdown
+- updated the default star map with a newer NASA SVS star map of 8k resolution
+- fixed bug with Phobos and Deimos models sizing that was introduced when the model assignment
+  script during planet creation was revised. Phobos and Deimos models will now appear correctly scaled
+  when targeted by the main camera
+- improved planet atmosphere shader to attenuate the ring of light seen around the planet in eclipse
+
 **Version 2.0.1**
 
 - Fixed a start-up issue on Windows and Linux where the application only started up in full screen
@@ -38,12 +57,6 @@ Release Notes
   to zoom further out before triggering the transition (new vizMessage.proto file attached). This change
   required some rescripting for how the transitions thresholds were set and used by various scripts,
   but luckily a small change overall.
-
-.. warning::
-
-    A known issue with the new shader is that if you are in the eclipse region of the planet and move radially
-    outward you will see a white ring around the planet.  A glow about the planet is expected, but we are
-    still working on the correct fading of this glow with distance.
 
 
 **Version 1.9.2**
