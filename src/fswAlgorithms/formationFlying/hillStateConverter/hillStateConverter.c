@@ -64,9 +64,6 @@ void Reset_hillStateConverter(HillStateConverterConfig *configData, uint64_t cal
 */
 void Update_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    uint64_t            timeOfMsgWritten;
-    uint32_t            sizeOfMsgWritten;
-
     /*! - Read the input messages */
     NavTransMsgPayload chiefStateIn;
     NavTransMsgPayload depStateIn;
