@@ -29,8 +29,13 @@ Basilisk Release Notes
 
         - support a way to do thread-safe messaging
 
-Version |release| (Nov. 13, 2021)
----------------------------------
+Version |release|
+-----------------
+- text here
+
+
+Version 2.1.0 (Nov. 13, 2021)
+-----------------------------
 - added BSpline function to ``utilities`` and related UnitTest. 
 - added kinematic relations between angular accelerations and second derivative of MRP set to
   :ref:`rigidBodyKinematicsutilities` library
