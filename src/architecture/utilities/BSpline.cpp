@@ -42,9 +42,9 @@ InputDataSet::InputDataSet(Eigen::VectorXd X1, Eigen::VectorXd X2, Eigen::Vector
     this->T_flag = false;
     this->AvgXDot_flag = false;
 
-    double N1 = X1.size();
-    double N2 = X2.size();
-    double N3 = X3.size();
+    uint64_t N1 = (uint64_t) X1.size();
+    uint64_t N2 = (uint64_t) X2.size();
+    uint64_t N3 = (uint64_t) X3.size();
 
     if ((N1 != N2) || (N1 != N3) || (N2 != N3)) {
         std::cout << "Error in BSpline.InputDataSet: \n the Input coordinate vectors X1, X2, X3 have different sizes. \n";
@@ -94,7 +94,7 @@ OutputDataSet::~OutputDataSet()
 void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
 {   
     // N = number of waypoints - 1 
-    int N = Input.X1.size() - 1;
+    int N = (int) Input.X1.size() - 1;
     
     // T = time tags; if not specified, it is computed from a cartesian distance assuming a constant velocity norm on average
     Eigen::VectorXd T(N+1);

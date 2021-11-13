@@ -210,7 +210,7 @@ def run(show_plots):
                                               # saveFile=__file__
                                               )
      
-    # Initialize and excecute simulation for the first section (stops at periapsis of hyperbola before delta V)
+    # Initialize and execute simulation for the first section (stops at periapsis of hyperbola before delta V)
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
@@ -218,12 +218,9 @@ def run(show_plots):
     np.set_printoptions(precision=16)
     
     # Get current spacecraft states
-    posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
-    rN = unitTestSupport.EigenVector3d2np(posRef.getState())
-    vN = unitTestSupport.EigenVector3d2np(velRef.getState())
-    # print(np.linalg.norm(rN)) # Matches chosen parking orbit radius: r_SC_J_park!
-    
+    vN = dataRec.v_BN_N[-1]
+
     # Apply delta V and set new velocity state
     vHat = vN / np.linalg.norm(vN)
     vN = vN + Delta_V_Parking_Orbit*vHat
