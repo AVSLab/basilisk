@@ -27,6 +27,7 @@ SysProcess :: SysProcess()
     this->nextTaskTime = 0;
     this->processActive = true;
     this->processPriority = -1;
+    this->processOnThread = false;
     this->disableProcess();
 }
 /*! Make a process AND attach a storage bucket with the provided name. Give
@@ -40,6 +41,7 @@ SysProcess::SysProcess(std::string messageContainer)
     this->processActive = true;
     this->processName = messageContainer;
     this->prevRouteTime = 0xFF;
+    this->processOnThread = false;
     this->disableProcess();
 }
 
@@ -83,6 +85,7 @@ void SysProcess::resetProcess(uint64_t currentTime)
         SysModelTask *localTask = it->TaskPtr;
         localTask->ResetTaskList(currentTime); //! Time of reset. Models that utilize currentTime will start at this.
     }
+    this->nextTaskTime = currentTime;
     return;
 }
 
@@ -118,37 +121,46 @@ void SysProcess::reInitProcess()
 void SysProcess::singleStepNextTask(uint64_t currentNanos)
 {
     std::vector<ModelScheduleEntry>::iterator it;
-    int32_t localPriority;
+    std::vector<ModelScheduleEntry>::iterator fireIt;
 
     //! - Check to make sure that there are models to be called.
-    it = this->processTasks.begin();
-    if(it == this->processTasks.end())
+    if(this->processTasks.begin() == this->processTasks.end())
     {
         bskLogger.bskLog(BSK_WARNING, "Received a step command on sim that has no active Tasks.");
         return;
     }
+    fireIt=this->processTasks.begin();
     //! - If the requested time does not meet our next start time, just return
-    if(it->NextTaskStart > currentNanos)
+    for(it=this->processTasks.begin(); it!=this->processTasks.end(); it++)
     {
-        this->nextTaskTime = it->NextTaskStart;
+        if(it->NextTaskStart < fireIt->NextTaskStart ||
+                (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority))
+        {
+            fireIt = it;
+        }
+    }
+    if(fireIt->NextTaskStart > currentNanos)
+    {
+        this->nextTaskTime = fireIt->NextTaskStart;
         return;
     }
     //! - Call the next scheduled model, and set the time to its start
-    if(currentNanos != this->prevRouteTime)
-    {
-        this->prevRouteTime = currentNanos;
-    }
-    SysModelTask *localTask = it->TaskPtr;
+    SysModelTask *localTask = fireIt->TaskPtr;
     localTask->ExecuteTaskList(currentNanos);
-    
-    //! - Erase the current call from the stack and schedule the next call
-    localPriority = it->taskPriority;
-    this->processTasks.erase(it);
-    this->addNewTask(localTask, localPriority);
+    fireIt->NextTaskStart = localTask->NextStartTime;
     
     //! - Figure out when we are going to be called next for scheduling purposes
-    it = this->processTasks.begin();
-    this->nextTaskTime = it->NextTaskStart;
+    fireIt=this->processTasks.begin();
+    //! - If the requested time does not meet our next start time, just return
+    for(it=this->processTasks.begin(); it!=this->processTasks.end(); it++)
+    {
+        if(it->NextTaskStart < fireIt->NextTaskStart ||
+           (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority))
+        {
+            fireIt = it;
+        }
+    }
+    this->nextTaskTime = fireIt->NextTaskStart;
 }
 
 /*! This method adds a new task into the Task list.  Note that
@@ -165,6 +177,7 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
     localEntry.NextTaskStart = newTask->NextStartTime;
     localEntry.taskPriority = taskPriority;
     this->scheduleTask(localEntry);
+    newTask->updateParentProc(processName);
     this->enableProcess();
 }
 
@@ -238,13 +251,8 @@ void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 		if (it->TaskPtr->TaskName == taskName)
 		{
 			it->TaskPtr->updatePeriod(newPeriod);
-			ModelScheduleEntry localEntry;
-			localEntry.TaskPtr = it->TaskPtr;
-			localEntry.TaskUpdatePeriod = it->TaskPtr->TaskPeriod;
-			localEntry.NextTaskStart = it->TaskPtr->NextStartTime;
-			localEntry.taskPriority = it->taskPriority;
-            this->processTasks.erase(it);
-            this->scheduleTask(localEntry);
+			it->NextTaskStart = it->TaskPtr->NextStartTime;
+			it->TaskUpdatePeriod = it->TaskPtr->TaskPeriod;
 			return;
 		}
 	}

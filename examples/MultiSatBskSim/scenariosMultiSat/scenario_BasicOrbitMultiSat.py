@@ -201,11 +201,13 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
             tankInMsg = messaging.FuelTankMsgReader()
             tankInMsg.subscribeTo(self.DynModels[0].fuelTankStateEffector.fuelTankOutMsg)
             tankPanel.fuelTankStateInMsg = tankInMsg
+            storageList = [None]*self.numberSpacecraft
+            storageList[0] = [batteryPanel, tankPanel]
 
             viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
                                                       # , saveFile=__file__
                                                       , rwEffectorList=rwStateEffectorList
-                                                      , genericStorageList=[[batteryPanel, tankPanel], None, None]
+                                                      , genericStorageList=storageList
                                                       )
             vizSupport.setInstrumentGuiSetting(viz, showGenericStoragePanel=True)
 

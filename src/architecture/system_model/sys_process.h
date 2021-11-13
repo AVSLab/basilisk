@@ -57,6 +57,8 @@ public:
     void setPriority(int64_t newPriority) {this->processPriority = newPriority;} //!< class method
     void disableAllTasks(); //!< class method
     void enableAllTasks(); //!< class method
+    bool getProcessControlStatus() {return this->processOnThread;} //!< Allows caller to see if this process is parented by a thread
+    void setProcessControlStatus(bool processTaken) {processOnThread = processTaken;} //!< Provides a mechanism to say that this process is allocated to a thread
     
 public:
     std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks
@@ -64,6 +66,7 @@ public:
     uint64_t prevRouteTime;  //!< [ns] Time that interfaces were previously routed
     std::string processName;  //!< -- Identifier for process
 	bool processActive;  //!< -- Flag indicating whether the Process is active
+	bool processOnThread; //!< -- Flag indicating that the process has been added to a thread for execution
     int64_t processPriority;  //!< [-] Priority level for process (higher first)
     BSKLogger bskLogger;                      //!< -- BSK Logging
 };
