@@ -51,7 +51,7 @@ SmallBodyNavEKF::SmallBodyNavEKF()
     this->L.setIdentity(this->numStates, this->numStates);
     this->M.setIdentity(this->numStates, this->numStates);
     this->H_k1.setIdentity(this->numStates, this->numStates);
-    this->prevTime = 0.0;
+    this->prevTime = 0;
     return;
 }
 

@@ -28,8 +28,6 @@
 %ignore SelfInit_hillToAttRef;
 %constant void Reset_hillToAttRef(void*, uint64_t, uint64_t);
 %ignore Reset_hillToAttRef;
-%constant struct RelativeToInertialMRP(double*, double*);
-%ignore RelativeToInertialMRP;
 
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *

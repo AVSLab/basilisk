@@ -53,6 +53,7 @@ message VizMessage{
         string spacecraftSprite = 9; // Set sprite for this spacecraft only through shape name and optional int RGBA color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
         repeated Transceiver transceivers = 10;
         repeated GenericStorage storageDevices = 11;
+        repeated Light lights = 12;
 }
 
     message ReactionWheel{
@@ -76,7 +77,7 @@ message VizMessage{
 
     message CoarseSunSensor{
         repeated double position = 2; // [m] position of the CSS in body frame
-        double fieldOfView = 3; //[deg] Field of View edge-to-edge
+        double fieldOfView = 3; //[deg] angle is measured edge-to-edge
         repeated double normalVector = 4;
         double currentMsmt = 5;
         double maxMsmt = 6;
@@ -86,7 +87,7 @@ message VizMessage{
     
     message GenericSensor{
         repeated double position = 2; // [m] position of the sensor in body frame
-        repeated double fieldOfView = 3; //[deg] Sensor will be assumed to be circular if Field of View has single entry, rectangular (width x height) if two values are provided
+        repeated double fieldOfView = 3; //[deg] Sensor will be assumed to be circular if Field of View has single entry, rectangular (width x height) if two values are provided, angle is measured edge-to-edge
         repeated double normalVector = 4;  // [] normal vector of the sensor bore sight axis
         bool isHidden = 5; // (Optional) true to hide sensor HUD, false to show sensor HUD (default)
         int32 activityStatus = 6; // (Optional) 0 for sensor inactive, 1 for sensor active, additional modes can be added and viz will attempt to use corresponding mode colors if they are provided in the color array
@@ -104,9 +105,19 @@ message VizMessage{
         repeated int32 thresholds = 7; //(Optional) Percentages of maxValue at which to change color, note that there should be one fewer threshold values than colors
     }
     
+    message Light{
+        repeated double position = 2; // [m] position of the light in body frame
+        double fieldOfView = 3; //[deg] angle is measured edge-to-edge
+        repeated double normalVector = 4;  // [] normal vector of the light in the body frame
+        double range = 5; // [m] Distance light will act over
+        double intensity = 6; // [Optional] Intensity of light at light origin, default is 1.0
+        double lensDiameter = 7; //[m] [Optional] Size to draw the visible lens of the light, default is 0.01 m
+        repeated int32 color = 8; // (Optional) Send desired RGBA as values between 0 and 255, default is pure white
+    }
+    
     message Transceiver{
         repeated double position = 2; // [m] position of the transceiver in body frame
-        double fieldOfView = 3; //[deg]
+        double fieldOfView = 3; //[deg] angle is measured edge-to-edge
         repeated double normalVector = 4;  // [] normal vector of the transceiver bore sight axis
         bool isHidden = 5; // (Optional) true to hide transceiver HUD, false to show transceiver HUD (default)
         int32 transmitStatus = 6; // (Optional) 0 for transceiver inactive, 1 for sending, 2 for receiving, 3 for sending and receiving
@@ -152,7 +163,7 @@ message VizMessage{
 //        bool viewPanel = 2; //False (default) -> panel is not visible on screen
         int32 setMode = 3; // 0 -> body targeting, 1 -> pointing vector
 //        bool spacecraftVisible = 4; //False (default) -> parent spacecraft will not be visible in camera view
-        double fieldOfView = 5; //-1 -> use default, values between 0.0001 and 179.9999 valid
+        double fieldOfView = 5; // angle is measured edge-to-edge, -1 -> use default, values between 0.0001 and 179.9999 valid
         string bodyTarget = 6; // Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
         int32 setView = 7; //0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
         repeated double pointingVector = 8; //x,y,z, vector (default to 1, 0, 0). This is a setting for pointing vector mode.
@@ -239,9 +250,11 @@ message VizMessage{
         int32 showLocationCones = 38; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showLocationLabels = 39; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 trueTrajectoryLinesOn = 40; // Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body
-        int32 atmospheresOff = 41; //Toggle to disable the atmosphere effect on celestial bodies, Value of 0 (protobuffer default to use viz default, -1 for false, 1 for true.
+        int32 atmospheresOff = 41; //Toggle to disable the atmosphere effect on celestial bodies, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
         int32 scViewToPlanetViewBoundaryMultiplier = 42; //Multiplier x 1000m to set the boundary at which the spacecraft local view transitions to planet view. Valid range from 1 to 10 or 0 to use viz default.
         int32 planetViewToHelioViewBoundaryMultiplier = 43; //Multiplier x (10000 * current planet local scale) at which the planet view transitions to the solar system view. Valid range from 1 to 10 or 0 to use viz default.
+        double sunIntensity = 44; //Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use viz default
+        int32 attenuateSunLightWithDistance = 45; //Toggle to reduce brightness of sun lighting with the square of the distance from the sun. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
     }
     
     message Location{
@@ -249,7 +262,7 @@ message VizMessage{
         string parentBodyName = 2; // name of the parent body P (spacecraft or planet) on which the location G is positioned
         repeated double r_GP_P = 3; //[m] Position of G relative to parent body frame P
         repeated double gHat_P = 4; // location Normal relative to parent body frame.
-        double fieldOfView = 5; // [deg] Edge-to-Edge, -1 -> use default, values between 0.0001 and 179.9999 valid
+        double fieldOfView = 5; // [deg] angle is measured edge-to-edge, -1 -> use default, values between 0.0001 and 179.9999 valid
         repeated int32 color = 6; //Send desired RGBA as values between 0 and 255, default is white
         double range = 7; // [m] Value of 0 (protobuffer default) to use viz default
     }

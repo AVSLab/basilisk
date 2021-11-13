@@ -41,7 +41,7 @@ typedef struct {
 
     /* private variables */
     double sigma_BR_old[3];     /*!< Older sigma_BR value, stored for finite diff*/
-    double time_old;            /*!< prior time value */
+    uint64_t time_old;          /*!< [ns] prior time value */
     double init;                /*!< moudle initialization counter */
     double eHat180_B[3];        /*!< -- Eigen axis to use if commanded axis is 180 from pHat */
 

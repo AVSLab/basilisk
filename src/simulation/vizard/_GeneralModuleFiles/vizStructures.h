@@ -80,7 +80,7 @@ StdCameraSettings
 {
     std::string spacecraftName; //!< name of spacecraft onto which to place a camera
     int setMode=1;              //!< 0 -> body targeting, 1 -> pointing vector (default)
-    double fieldOfView=-1;      //!< [rad], field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
+    double fieldOfView=-1;      //!< [rad], edge-to-edge field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
     std::string bodyTarget;     //!< Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
     int setView=0;              //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
     double pointingVector_B[3]; //!< (default to 1, 0, 0). This is a setting for pointing vector mode.
@@ -171,7 +171,7 @@ GenericSensor
     std::vector<int> color;             //!< [] (optional) RGBA as values between 0 and 255, multiple colors can be populated in this field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2 will use the color indexed to 1, etc.  If 2 colors are provided, then the vector should have size 8 (2x4 color channels)
     std::string label = "";             //!< [] (optional) string to display on sensor label
     ReadFunctor<DeviceCmdMsgPayload> genericSensorCmdInMsg;   //!< [-] (Optional)  incoming sensor cmd state msg
-    int genericSensorCmd = 0;           //!< [int] (optional) sensor cmd value, if cmd input msg is connected, then this is set from the message
+    uint64_t genericSensorCmd = 0;      //!< [int] (optional) sensor cmd value, if cmd input msg is connected, then this is set from the message
 
 }GenericSensor;
 
@@ -304,6 +304,8 @@ VizSettings
     int32_t atmospheresOff = 0; //!< Toggle to disable the atmosphere effect on celestial bodies, Value of 0 (protobuffer default to use viz default, -1 for false, 1 for true.
     int32_t scViewToPlanetViewBoundaryMultiplier = 0; //!< Multiplier x 1000m to set the boundary at which the spacecraft local view transitions to planet view. Valid range from 1 to 10 or 0 to use viz default.
     int32_t planetViewToHelioViewBoundaryMultiplier = 0; //!< Multiplier x (10000 * current planet local scale) at which the planet view transitions to the solar system view. Valid range from 1 to 10 or 0 to use viz default.
+    double sunIntensity = 0; //!< Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use viz default
+    int32_t attenuateSunLightWithDistance = 0; //!< Toggle to reduce brightness of sun lighting with the square of the distance from the sun. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
 }VizSettings;
 
 

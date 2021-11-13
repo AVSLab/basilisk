@@ -68,7 +68,6 @@ void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configDa
 */
 void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    unsigned int cmd; //!< Data status to be written to deviceCmd msg
     double sigma_BR_norm; //!< Norm of sigma_BR
 
     /* Local copies of the msg buffers*/
