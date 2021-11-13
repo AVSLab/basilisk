@@ -122,7 +122,7 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUs
     // Get the buffer with the most data
     double maxVal = -1.0;
     int maxIndex = -1;
-    for (int i = 0; i < this->storageUnitMsgsBuffer.back().storedData.size(); i++) {
+    for (uint64_t i = 0; i < this->storageUnitMsgsBuffer.back().storedData.size(); i++) {
         if (this->storageUnitMsgsBuffer.back().storedData[i] > maxVal) {
             maxVal = this->storageUnitMsgsBuffer.back().storedData[i];
             maxIndex = i;

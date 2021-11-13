@@ -767,13 +767,13 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     gs->add_position(scIt->genericSensorList[idx].r_SB_B[j]);
                     gs->add_normalvector(scIt->genericSensorList[idx].normalVector[j]);
                 }
-                for (int j=0; j<scIt->genericSensorList[idx].fieldOfView.size(); j++) {
+                for (uint64_t j=0; j<scIt->genericSensorList[idx].fieldOfView.size(); j++) {
                     gs->add_fieldofview(scIt->genericSensorList[idx].fieldOfView[j]*R2D);
                 }
                 gs->set_ishidden(scIt->genericSensorList[idx].isHidden);
                 gs->set_size(scIt->genericSensorList[idx].size);
                 gs->set_label(scIt->genericSensorList[idx].label);
-                for (int j=0; j<scIt->genericSensorList[idx].color.size(); j++) {
+                for (uint64_t j=0; j<scIt->genericSensorList[idx].color.size(); j++) {
                     gs->add_color(scIt->genericSensorList[idx].color[j]);
                 }
                 gs->set_activitystatus(scIt->genericSensorList[idx].genericSensorCmd);
@@ -790,7 +790,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 tr->set_fieldofview(scIt->transceiverList[idx].fieldOfView*R2D);
                 tr->set_ishidden(scIt->transceiverList[idx].isHidden);
                 tr->set_label(scIt->transceiverList[idx].label);
-                for (int j=0; j<scIt->transceiverList[idx].color.size(); j++) {
+                for (uint64_t j=0; j<scIt->transceiverList[idx].color.size(); j++) {
                     tr->add_color(scIt->transceiverList[idx].color[j]);
                 }
                 tr->set_transmitstatus(scIt->transceiverList[idx].transceiverState);
@@ -805,10 +805,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 gsd->set_currentvalue(scIt->genericStorageList[idx].currentValue);
                 gsd->set_maxvalue(scIt->genericStorageList[idx].maxValue);
                 gsd->set_units(scIt->genericStorageList[idx].units);
-                for (int j=0; j<scIt->genericStorageList[idx].color.size(); j++) {
+                for (uint64_t j=0; j<scIt->genericStorageList[idx].color.size(); j++) {
                     gsd->add_color(scIt->genericStorageList[idx].color[j]);
                 }
-                for (int j=0; j<scIt->genericStorageList[idx].thresholds.size(); j++) {
+                for (uint64_t j=0; j<scIt->genericStorageList[idx].thresholds.size(); j++) {
                     gsd->add_thresholds(scIt->genericStorageList[idx].thresholds[j]);
                 }
 

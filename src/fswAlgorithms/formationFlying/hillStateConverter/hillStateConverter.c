@@ -70,7 +70,9 @@ void Update_hillStateConverter(HillStateConverterConfig *configData, uint64_t ca
     HillRelStateMsgPayload hillStateOut;
     chiefStateIn = NavTransMsg_C_read(&configData->chiefStateInMsg);
     depStateIn = NavTransMsg_C_read(&configData->depStateInMsg);
-
+    
+    hillStateOut = HillRelStateMsg_C_zeroMsgPayload();
+    
     /*! - Add the module specific code */
     rv2hill(chiefStateIn.r_BN_N, chiefStateIn.v_BN_N,
             depStateIn.r_BN_N,  depStateIn.v_BN_N,

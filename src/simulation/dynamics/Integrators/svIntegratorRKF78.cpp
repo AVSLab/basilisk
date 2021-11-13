@@ -142,7 +142,7 @@ void svIntegratorRKF78::integrate(double currentTime, double timeStep)
     errorMatrix = dynPtr->dynManager.getStateVector();  // copy current state variables
     double h = timeStep;  // updated variable time step that depends on the relative error and the relative tolerance
     double t = currentTime;  // integration time
-    double hInt;  // time step used for the current integration loop
+    double hInt = timeStep;  // time step used for the current integration loop
     double relError;  // relative error for the current state variable
     double maxRelError;  // largest relative error of all the state variables
     double scaleFactor = 0.9;  // scale factor used for robustness. If the error and the tolerance are very close, this scale factor decreases the time step to improve performance
