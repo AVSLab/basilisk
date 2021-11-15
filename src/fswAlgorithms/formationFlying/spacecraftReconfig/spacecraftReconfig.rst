@@ -47,7 +47,9 @@ provides information on what this message is used for.
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
     | attRefOutMsg             | :ref:`AttRefMsgPayload`           | The name of the deputy's target attitude output message       |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | onTimeOutMsg             | :ref:`THRArrayOnTimeCmdMsgPayload`| The name of the deputy's reference attitude input message     |
+    | onTimeOutMsg             | :ref:`THRArrayOnTimeCmdMsgPayload`| The name of the deputy's thruster's on time output message    |
+    +--------------------------+-----------------------------------+---------------------------------------------------------------+
+    | burnInfoOutMsgs          | :ref:`ReconfigBurnInfoMsgPayload` | The name of the deputy's scheduled burns info output message  |
     +--------------------------+-----------------------------------+---------------------------------------------------------------+
 
 Module Assumptions and Limitations
