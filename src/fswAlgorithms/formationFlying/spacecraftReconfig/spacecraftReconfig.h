@@ -27,17 +27,10 @@
 #include "cMsgCInterface/AttRefMsg_C.h"
 #include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 #include "cMsgCInterface/VehicleConfigMsg_C.h"
+#include "cMsgCInterface/ReconfigBurnInfoMsg_C.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/orbitalMotion.h"
-
-/*! @brief Local module specific data structure */
-typedef struct {
-    uint8_t flag;        //!< 0:not scheduled yet, 1:not burned yet, 2:already burned, 3:skipped (combined with another burn)
-    double t;            //!< when to burn [s]
-    double thrustOnTime; //!< thrust on duration time [s]
-    double sigma_RN[3];  //!< target attitude
-}spacecraftReconfigConfigBurnInfo;
 
 /*! @brief Data structure for the MRP feedback attitude control routine. */
 typedef struct {
@@ -52,6 +45,7 @@ typedef struct {
     // out
     AttRefMsg_C attRefOutMsg;                           //!< attitude reference output msg
     THRArrayOnTimeCmdMsg_C onTimeOutMsg;                //!< THR on-time output msg
+    ReconfigBurnInfoMsg_C burnInfoOutMsgs[3];            //!< array of burns output msg
 
     double mu;  //!< [m^3/s^2] gravity constant of planet being orbited
     double attControlTime; //!< [s] attitude control margin time (time necessary to change sc's attitude)
@@ -61,7 +55,7 @@ typedef struct {
     uint64_t prevCallTime; //!< [ns]
     uint8_t thrustOnFlag; //!< thrust control
     int    attRefInIsLinked;        //!< flag if the attitude reference input message is linked
-    spacecraftReconfigConfigBurnInfo dvArray[3];    //!< array of burns
+    ReconfigBurnInfoMsgPayload burnInfoOutMsgsBuffer[3];    //!< buffer for burn array
 
 
     BSKLogger* bskLogger;                             //!< BSK Logging
