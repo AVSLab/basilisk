@@ -8,6 +8,10 @@ Version |release|
 -----------------
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
   The code compiles, but auto-completion etc. doesn't work in that module.
+- On windows when building with ``opNav`` mode on,
+  the ``gettext`` library was not included with the ``conan`` software unless the version is 0.21,
+  not 0.20.1.  This dependency has been upgraded.  This might require deleting the ``.conan`` folder in your
+  home directory and re-installing all dependencies.
 
 
 Version 2.1.0

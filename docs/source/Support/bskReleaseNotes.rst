@@ -31,7 +31,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Updated ``OpNav`` mode dependency ``gettext`` to version 0.21 to allow BSK to be build on Windows
+  with ``OpNav`` support.
 
 
 Version 2.1.0 (Nov. 13, 2021)

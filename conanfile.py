@@ -163,7 +163,7 @@ class BasiliskConan(ConanFile):
         if not (sys.version_info.major == 3 and sys.version_info.minor >= 7):
             print(warningColor + "Python 3.7 or newer should be used with Basilisk." + endColor)
             print("You are using Python {}.{}.{}".format(sys.version_info.major,
-                                                         sys.version_info.minor,sys.version_info.micro))
+                                                         sys.version_info.minor, sys.version_info.micro))
         else:
             print(statusColor + "Python {}.{}.{}".format(sys.version_info.major,
                                                          sys.version_info.minor, sys.version_info.micro)
@@ -173,11 +173,12 @@ class BasiliskConan(ConanFile):
 
     def requirements(self):
         if self.options.opNav:
-            self.requires.add("gettext/0.20.1")
+            self.requires.add("pcre/8.45")
+            self.requires.add("gettext/0.21")
             self.requires.add("glib/2.65.0")
             self.requires.add("opencv/4.1.1@conan/stable")
             self.requires.add("zlib/1.2.11")
-            self.requires.add("bzip2/1.0.8@conan/stable")
+            self.requires.add("bzip2/1.0.8")
 
         if self.options.vizInterface or self.options.opNav:
             self.requires.add("libsodium/1.0.18@bincrafters/stable")
