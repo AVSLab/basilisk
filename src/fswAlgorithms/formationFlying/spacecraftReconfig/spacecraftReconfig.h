@@ -45,7 +45,7 @@ typedef struct {
     // out
     AttRefMsg_C attRefOutMsg;                           //!< attitude reference output msg
     THRArrayOnTimeCmdMsg_C onTimeOutMsg;                //!< THR on-time output msg
-    ReconfigBurnInfoMsg_C burnInfoOutMsgs[3];            //!< array of burns output msg
+    ReconfigBurnInfoMsg_C burnInfoOutMsgs[3];            //!< array of burns output msgs
 
     double mu;  //!< [m^3/s^2] gravity constant of planet being orbited
     double attControlTime; //!< [s] attitude control margin time (time necessary to change sc's attitude)
@@ -55,7 +55,7 @@ typedef struct {
     uint64_t prevCallTime; //!< [ns]
     uint8_t thrustOnFlag; //!< thrust control
     int    attRefInIsLinked;        //!< flag if the attitude reference input message is linked
-    ReconfigBurnInfoMsgPayload burnInfoOutMsgsBuffer[3];    //!< buffer for burn array
+    ReconfigBurnInfoMsgPayload burnInfoOutMsgsBuffer[3];    //!< msgs buffer for burn array
 
 
     BSKLogger* bskLogger;                             //!< BSK Logging
