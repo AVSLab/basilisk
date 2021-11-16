@@ -41,6 +41,8 @@ struct AttRefMsg_C;
 struct THRArrayOnTimeCmdMsg_C;
 %include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;
+%include "architecture/msgPayloadDefC/ReconfigBurnInfoMsgPayload.h"
+struct ReconfigBurnInfoMsg_C;
 
 %pythoncode %{
 import sys

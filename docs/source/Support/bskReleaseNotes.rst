@@ -33,6 +33,10 @@ Version |release|
 -----------------
 - Updated ``OpNav`` mode dependency ``gettext`` to version 0.21 to allow BSK to be build on Windows
   with ``OpNav`` support.
+- created a new message that contains the information regarding cheduled burns for orbit recofiguration in
+  formation flying scenarios. See :ref:`ReconfigBurnInfoMsgPayload`.
+- the module :ref:`spacecraftReconfig` now ouputs an array of messages of type :ref:`ReconfigBurnInfoMsgPayload`.
+  All internal calculation are also done using a buffer of this message type.
 
 
 Version 2.1.0 (Nov. 13, 2021)
