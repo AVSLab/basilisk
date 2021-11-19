@@ -22,6 +22,7 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
+#include <time.h>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
