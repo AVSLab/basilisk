@@ -17,7 +17,6 @@
 
 */
 
-
 #include "simulation/environment/dentonFluxModel/dentonFluxModel.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <iostream>
@@ -27,8 +26,10 @@
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-DentonFluxModel::DentonFluxModel()
+DentonFluxModel::DentonFluxModel(int kp, double energy)
 {
+    choose_kp = kp;
+    choose_energy = energy;
 }
 
 /*! Module Destructor */
@@ -56,22 +57,17 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
 */
 void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
 {
+    // Make local copies of messages
     SCStatesMsgPayload scStateInMsgBuffer;  //!< local copy of message buffer
     FluxMsgPayload fluxOutMsgBuffer;  //!< local copy of message buffer
-    //EphemerisMsgPayload earthStateMsgBuffer, sunStateMsgBuffer;
-    //SpicePlanetStateMsgPayload earthSpiceInMsgBuffer, sunSpiceInMsgBuffer;
-    SpicePlanetStateMsgPayload sunSpiceInMsgBuffer;
-
+    //SpicePlanetStateMsgPayload sunSpiceInMsgBuffer;
 
     // Always zero the output message buffers before assigning values
     fluxOutMsgBuffer = this->fluxOutMsg.zeroMsgPayload;
 
     // Read in the input messages
     scStateInMsgBuffer = this->satStateInMsg();
-    //earthStateMsgBuffer = this->earthStateInMsg();
-    //sunStateMsgBuffer = this->sunStateInMsg();
-    //earthSpiceInMsgBuffer = this->earthStateInputMsg;
-    sunSpiceInMsgBuffer = this->sunStateInputMsg();
+    //sunSpiceInMsgBuffer = this->sunStateInputMsg();
     
     // Set parameters
     int numKps = 28;
@@ -211,7 +207,10 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     }
     
     // Find local lime from spacecraft state message
-    choose_local_time = calcLocalTime(sunSpiceInMsgBuffer.PositionVector, scStateInMsgBuffer.r_BN_N);
+    //choose_local_time = calcLocalTime(sunSpiceInMsgBuffer.PositionVector, scStateInMsgBuffer.r_BN_N);
+    double PositionVector[3] = {1, 0, 0};
+    choose_local_time = calcLocalTime(PositionVector, scStateInMsgBuffer.r_BN_N);
+
     //choose_local_time = 12.07;
     
     int localTimeFloor = floor(choose_local_time + 1);
@@ -257,12 +256,6 @@ double DentonFluxModel::calcLocalTime(double sunIPosVec[3], double scIPosVec[3])
 {
     double choose_local_time;
     
-    // Calculate position vector magnitudes
-    double scIPosMag = sqrt(scIPosVec[0]*scIPosVec[0] + scIPosVec[1]*scIPosVec[1] + scIPosVec[2]*scIPosVec[2]);
-    //double scIposMag = v3norm(scIPosVec[]);
-    double sunIPosMag = sqrt(sunIPosVec[0]*sunIPosVec[0] + sunIPosVec[1]*sunIPosVec[1] + sunIPosVec[2]*sunIPosVec[2]);
-    //double sunIposMag = v3norm(sunIPosVec[]);
-
     // Calculate 2D position vector magnitudes
     double sc2DIPosMag = sqrt(scIPosVec[0]*scIPosVec[0] + scIPosVec[1]*scIPosVec[1]);
     double sun2DIPosMag = sqrt(sunIPosVec[0]*sunIPosVec[0] + sunIPosVec[1]*sunIPosVec[1]);

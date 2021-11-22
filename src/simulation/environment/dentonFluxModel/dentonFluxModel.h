@@ -24,7 +24,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 //#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+//#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/FluxMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
@@ -33,7 +33,7 @@
  */
 class DentonFluxModel: public SysModel {
 public:
-    DentonFluxModel();
+    DentonFluxModel(int kp, double energy);
     ~DentonFluxModel();
 
     void Reset(uint64_t CurrentSimNanos);
@@ -46,7 +46,7 @@ public:
 public:
     
     int choose_kp;
-    long double choose_energy;
+    double choose_energy;
     double choose_local_time;
     
     ReadFunctor<SCStatesMsgPayload> satStateInMsg;  //!< input spacecraft states
@@ -54,7 +54,7 @@ public:
     //ReadFunctor<EphemerisMsgPayload> sunStateInMsg;  //!< input sun states
 
     //ReadFunctor<SpicePlanetStateMsgPayload> earthStateInputMsg;  //!< input planet states
-    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInputMsg;  //!< input sun states
+    //ReadFunctor<SpicePlanetStateMsgPayload> sunStateInputMsg;  //!< input sun states
 
     Message<FluxMsgPayload> fluxOutMsg;  //!< output ion and electron fluxes
 
