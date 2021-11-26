@@ -29,28 +29,28 @@ provides information on what this message is used for.
 .. table:: Module I/O Messages
     :widths: 25 25 100
 
-    +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | Msg Variable Name        | Msg Type                          | Description                                                   |
-    +==========================+===================================+===============================================================+
-    | chiefTransInMsg          | :ref:`NavTransMsgPayload`         | chief's position and velocity input message                   |
-    +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | deputyTransInMsg         | :ref:`NavTransMsgPayload`         | deputy's position and velocity input message                  |
-    +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | thrustConfigInMsg        | :ref:`THRArrayConfigMsgPayload`   | deputy's thruster configuration input message                 |
-    +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | attRefInMsg              | :ref:`AttRefMsgPayload`           | (optional) deputy's reference attitude                        |
-    |                          |                                   | input message. If set, then the deputy will point along this  |
-    |                          |                                   | reference attitude unless it must point the thrusters in a    |
-    |                          |                                   | control direction.                                            |
-    +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | vehicleConfigInMsg       | :ref:`VehicleConfigMsgPayload`    | deputy's vehicle configuration input message                  |
-    +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | attRefOutMsg             | :ref:`AttRefMsgPayload`           | deputy's target attitude output message                       |
-    +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | onTimeOutMsg             | :ref:`THRArrayOnTimeCmdMsgPayload`| The deputy's thruster's on time output message                |
-    +--------------------------+-----------------------------------+---------------------------------------------------------------+
-    | burnInfoOutMsgs          | :ref:`ReconfigBurnInfoMsgPayload` | deputy's scheduled burns info output message                  |
-    +--------------------------+-----------------------------------+---------------------------------------------------------------+
+    +--------------------------+----------------------------------------+---------------------------------------------------------------+
+    | Msg Variable Name        | Msg Type                               | Description                                                   |
+    +==========================+========================================+===============================================================+
+    | chiefTransInMsg          | :ref:`NavTransMsgPayload`              | chief's position and velocity input message                   |
+    +--------------------------+----------------------------------------+---------------------------------------------------------------+
+    | deputyTransInMsg         | :ref:`NavTransMsgPayload`              | deputy's position and velocity input message                  |
+    +--------------------------+----------------------------------------+---------------------------------------------------------------+
+    | thrustConfigInMsg        | :ref:`THRArrayConfigMsgPayload`        | deputy's thruster configuration input message                 |
+    +--------------------------+----------------------------------------+---------------------------------------------------------------+
+    | attRefInMsg              | :ref:`AttRefMsgPayload`                | (optional) deputy's reference attitude                        |
+    |                          |                                        | input message. If set, then the deputy will point along this  |
+    |                          |                                        | reference attitude unless it must point the thrusters in a    |
+    |                          |                                        | control direction.                                            |
+    +--------------------------+----------------------------------------+---------------------------------------------------------------+
+    | vehicleConfigInMsg       | :ref:`VehicleConfigMsgPayload`         | deputy's vehicle configuration input message                  |
+    +--------------------------+----------------------------------------+---------------------------------------------------------------+
+    | attRefOutMsg             | :ref:`AttRefMsgPayload`                | deputy's target attitude output message                       |
+    +--------------------------+----------------------------------------+---------------------------------------------------------------+
+    | onTimeOutMsg             | :ref:`THRArrayOnTimeCmdMsgPayload`     | The deputy's thruster's on time output message                |
+    +--------------------------+----------------------------------------+---------------------------------------------------------------+
+    | burnInfoOutMsgs          | :ref:`ReconfigBurnArrayInfoMsgPayload` | deputy's scheduled burns info output message                  |
+    +--------------------------+----------------------------------------+---------------------------------------------------------------+
 
 Module Assumptions and Limitations
 ----------------------------------
