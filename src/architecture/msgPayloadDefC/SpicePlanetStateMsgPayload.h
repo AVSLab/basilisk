@@ -17,8 +17,8 @@
 
  */
 
-#ifndef SpicePlanetState_MESSAGE2_H
-#define SpicePlanetState_MESSAGE2_H
+#ifndef SpicePlanetState_MESSAGE_H
+#define SpicePlanetState_MESSAGE_H
 
 
 #define MAX_BODY_NAME_LENGTH 64

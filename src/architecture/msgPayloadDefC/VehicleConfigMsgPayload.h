@@ -17,8 +17,8 @@
 
  */
 
-#ifndef VEHICLE_CONFIG_MESSAGE2_H
-#define VEHICLE_CONFIG_MESSAGE2_H
+#ifndef VEHICLE_CONFIG_MESSAGE_H
+#define VEHICLE_CONFIG_MESSAGE_H
 
 #include <stdint.h>
 

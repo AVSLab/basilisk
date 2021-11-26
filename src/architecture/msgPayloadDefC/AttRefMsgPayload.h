@@ -17,8 +17,8 @@
 
  */
 
-#ifndef ATT_REF_MESSAGE2_H
-#define ATT_REF_MESSAGE2_H
+#ifndef ATT_REF_MESSAGE_H
+#define ATT_REF_MESSAGE_H
 
 
 
