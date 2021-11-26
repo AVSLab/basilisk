@@ -33,6 +33,7 @@
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDefC/TransRefMsgPayload.h"
 
 #include "../_GeneralModuleFiles/hubEffector.h"
 #include "architecture/utilities/bskLogging.h"
@@ -47,6 +48,7 @@ public:
     uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
     std::string sysTimePropertyName;     //!< -- Name of the system time property
     ReadFunctor<AttRefMsgPayload> attRefInMsg; //!< -- (optional) reference attitude input message name
+    ReadFunctor<TransRefMsgPayload> transRefInMsg; //!< -- (optional) reference translation input message name
     double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
     double rotEnergyContr;               //!< [J] Contribution of stateEffector to total rotational energy
@@ -111,7 +113,7 @@ private:
     Eigen::MatrixXd *sysTime;            //!< [s] System time
 
 private:
-    void readAttRefMsg();                       //!< -- Read the optional attitude reference input message and set the reference attitude
+    void readOptionalRefMsg();                  //!< -- Read the optional attitude or translational reference input message and set the reference states
 };
 
 

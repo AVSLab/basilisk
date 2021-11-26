@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _CMD_FORCE_INERTIAL_MESSAGE2_
-#define _CMD_FORCE_INERTIAL_MESSAGE2_
+#ifndef _CMD_FORCE_INERTIAL_MESSAGE_
+#define _CMD_FORCE_INERTIAL_MESSAGE_
 
 /*! @brief Message used to define the vehicle control force vector in Inertial frame components*/
 typedef struct {

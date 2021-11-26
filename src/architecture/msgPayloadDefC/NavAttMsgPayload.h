@@ -17,8 +17,8 @@
 
  */
 
-#ifndef NAV_ATT_MESSAGE2_H
-#define NAV_ATT_MESSAGE2_H
+#ifndef NAV_ATT_MESSAGE_H
+#define NAV_ATT_MESSAGE_H
 
 /*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {

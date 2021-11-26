@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xl="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="623.5 260.5 582 87.18181" width="582" height="87.18181">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="621.4233 260.5 584.0767 87.18181" width="584.0767" height="87.18181">
   <defs>
     <font-face font-family="Courier" font-size="12" units-per-em="1000" underline-position="-178.22266" underline-thickness="57.61719" slope="0" x-height="456.54297" cap-height="586.91406" ascent="753.90625" descent="-246.09375" font-weight="400">
       <font-face-src>
@@ -23,8 +23,8 @@
       </font-face-src>
     </font-face>
   </defs>
-  <metadata> Produced by OmniGraffle 7.18.1\n2020-12-14 14:34:53 +0000</metadata>
-  <g id="Canvas_1" fill="none" fill-opacity="1" stroke-opacity="1" stroke-dasharray="none" stroke="none">
+  <metadata> Produced by OmniGraffle 7.18.5\n2021-11-26 15:48:49 +0000</metadata>
+  <g id="Canvas_1" stroke-dasharray="none" fill-opacity="1" stroke-opacity="1" fill="none" stroke="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
       <title>Layer 1</title>
@@ -37,7 +37,7 @@
         <path d="M 818.4825 261 L 989.2413 261 C 992.0027 261 994.2413 263.23858 994.2413 266 L 994.2413 342.1818 C 994.2413 344.94324 992.0027 347.1818 989.2413 347.1818 L 818.4825 347.1818 C 815.7211 347.1818 813.4825 344.94324 813.4825 342.1818 L 813.4825 266 C 813.4825 263.23858 815.7211 261 818.4825 261 Z" fill="#ffc0ff"/>
         <path d="M 818.4825 261 L 989.2413 261 C 992.0027 261 994.2413 263.23858 994.2413 266 L 994.2413 342.1818 C 994.2413 344.94324 992.0027 347.1818 989.2413 347.1818 L 818.4825 347.1818 C 815.7211 347.1818 813.4825 344.94324 813.4825 342.1818 L 813.4825 266 C 813.4825 263.23858 815.7211 261 818.4825 261 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(818.4825 296.9229)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="44.603364" y="11">Spacecraft</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="56.159364" y="11">Spacecraft</tspan>
         </text>
       </g>
       <g id="Line_9">
@@ -72,6 +72,19 @@
       <g id="Graphic_2">
         <text transform="translate(1005.5272 311.1851)" fill="black">
           <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">scMassStateOutMsg</tspan>
+        </text>
+      </g>
+      <g id="Line_14">
+        <line x1="670.5315" y1="325.69807" x2="803.6175" y2="325.69807" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8.0,8.0" stroke-width="2"/>
+      </g>
+      <g id="Graphic_13">
+        <text transform="translate(626.4233 325.1999)" fill="black">
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="41.137634" y="11">TransRefMsgPayload</tspan>
+        </text>
+      </g>
+      <g id="Graphic_12">
+        <text transform="translate(639.935 310.6958)" fill="black">
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="79.21779" y="11">transRefInMsg</tspan>
         </text>
       </g>
     </g>

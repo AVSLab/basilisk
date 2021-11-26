@@ -17,8 +17,8 @@
 
  */
 
-#ifndef ATT_GUID_MESSAGE2_H
-#define ATT_GUID_MESSAGE2_H
+#ifndef ATT_GUID_MESSAGE_H
+#define ATT_GUID_MESSAGE_H
 
 
 

@@ -46,6 +46,9 @@ provides information on what this message is used for.
     * - attRefInMsg
       - :ref:`AttRefMsgPayload`
       - (Optional) Input message to specify a prescribed attitude motion
+    * - transRefInMsg
+      - :ref:`TransRefMsgPayload`
+      - (Optional) Input message to specify a prescribed translational motion
 
 User Guide
 ----------
@@ -81,6 +84,11 @@ This section is to outline the steps needed to setup a Spacecraft module in pyth
     input message of type :ref:`attRefMsgPayload`::
 
         scObject.attRefInMsg.subscribeTo(someAttRefMsg)
+#.  If you want to prescribe the spacecraft hub translational motion, this can be specified through an optional
+    input message of type :ref:`transRefMsgPayload`::
+
+        scObject.transRefInMsg.subscribeTo(someTransRefMsg)
+
 
 .. list-table:: Spacecraft Parameters Table
     :widths: 25 25 50

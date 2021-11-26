@@ -50,6 +50,8 @@ struct SCStatesMsg_C;
 struct SCMassPropsMsg_C;
 %include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;
+%include "architecture/msgPayloadDefC/TransRefMsgPayload.h"
+struct TransRefMsg_C;
 
 %include "../_GeneralModuleFiles/hubEffector.h"
 

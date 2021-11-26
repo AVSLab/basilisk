@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,14 +17,17 @@
 
  */
 
-#ifndef _CMD_FORCE_BODY_MESSAGE_
-#define _CMD_FORCE_BODY_MESSAGE_
+#ifndef TRANS_REF_MESSAGE_H
+#define TRANS_REF_MESSAGE_H
 
 
-/*! @brief Message used to define the vehicle control force vector in Body frame components*/
+
+/*! @brief Structure used to define the output definition for attitude reference generation */
 typedef struct {
-    double forceRequestBody[3];     //!< [N] Control force requested
-}CmdForceBodyMsgPayload;
+    double r_RN_N[3];       //!< [m]     spacecraft reference position vector in inertial frame components
+    double v_RN_N[3];       //!< [m/s]  spacecraft reference inertial velocity vector in N frame components
+    double a_RN_N[3];       //!< [m/s^2]    spacecraft reference acceleration vector in N frame components
+}TransRefMsgPayload;
 
 
 #endif

@@ -17,8 +17,8 @@
 
  */
 
-#ifndef NAV_TRANS_MESSAGE2_H
-#define NAV_TRANS_MESSAGE2_H
+#ifndef NAV_TRANS_MESSAGE_H
+#define NAV_TRANS_MESSAGE_H
 
 
 /*! @brief Structure used to define the output definition for translatoin guidance*/
