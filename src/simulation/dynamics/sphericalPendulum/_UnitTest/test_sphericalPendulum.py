@@ -83,11 +83,6 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     scSim.pendulum1.pendulumRadius = 0.3  #  m/s
     scSim.pendulum1.d = [[0.1], [0.1], [0.1]] # m
     scSim.pendulum1.D = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]] # N*s/m
-    scSim.pendulum1.nameOfPhiState = "sphericalPendulumPhi1"
-    scSim.pendulum1.nameOfPhiDotState = "sphericalPendulumPhiDot1"
-    scSim.pendulum1.nameOfThetaState= "sphericalPendulumTheta1"
-    scSim.pendulum1.nameOfThetaDotState= "sphericalPendulumThetaDot1"
-    scSim.pendulum1.nameOfMassState = "sphericalPendulumMass1"
     scSim.pendulum1.phiDotInit = 0.01 # rad/s
     scSim.pendulum1.thetaDotInit = 0.05 # rad/s
     scSim.pendulum1.massInit = 20.0 # kg
@@ -101,11 +96,6 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     scSim.pendulum2.pendulumRadius = 0.4  #  m/s
     scSim.pendulum2.d = [[0.1], [0.1], [0.1]] # m
     scSim.pendulum2.D = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]] # N*s/m
-    scSim.pendulum2.nameOfPhiState = "sphericalPendulumPhi2"
-    scSim.pendulum2.nameOfPhiDotState = "sphericalPendulumPhiDot2"
-    scSim.pendulum2.nameOfThetaState= "sphericalPendulumTheta2"
-    scSim.pendulum2.nameOfThetaDotState= "sphericalPendulumThetaDot2"
-    scSim.pendulum2.nameOfMassState = "sphericalPendulumMass2"
     scSim.pendulum2.phiDotInit = 0.1 # rad/s
     scSim.pendulum2.thetaDotInit = 0.5 # rad/s
     scSim.pendulum2.massInit =40.0 # kg

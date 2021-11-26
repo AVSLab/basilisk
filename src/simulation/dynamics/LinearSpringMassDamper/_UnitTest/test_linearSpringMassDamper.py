@@ -84,9 +84,6 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.particle1.c = 0.0
     unitTestSim.particle1.r_PB_B = [[0.1], [0], [-0.1]]
     unitTestSim.particle1.pHat_B = [[np.sqrt(3)/3], [np.sqrt(3)/3], [np.sqrt(3)/3]]
-    unitTestSim.particle1.nameOfRhoState = "linearSpringMassDamperRho1"
-    unitTestSim.particle1.nameOfRhoDotState = "linearSpringMassDamperRhoDot1"
-    unitTestSim.particle1.nameOfMassState = "linearSpringMassDamperMass1"
     unitTestSim.particle1.rhoInit = 0.05
     unitTestSim.particle1.rhoDotInit = 0.0
     unitTestSim.particle1.massInit = 10.0
@@ -96,9 +93,6 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.particle2.c = 0.0
     unitTestSim.particle2.r_PB_B = [[0], [0], [0.1]]
     unitTestSim.particle2.pHat_B = [[np.sqrt(3)/3], [-np.sqrt(3)/3], [-np.sqrt(3)/3]]
-    unitTestSim.particle2.nameOfRhoState = "linearSpringMassDamperRho2"
-    unitTestSim.particle2.nameOfRhoDotState = "linearSpringMassDamperRhoDot2"
-    unitTestSim.particle2.nameOfMassState = "linearSpringMassDamperMass2"
     unitTestSim.particle2.rhoInit = -0.025
     unitTestSim.particle2.rhoDotInit = 0.0
     unitTestSim.particle2.massInit = 20.0
@@ -108,9 +102,6 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.particle3.c = 0.0
     unitTestSim.particle3.r_PB_B = [[-0.1], [0], [0.1]]
     unitTestSim.particle3.pHat_B = [[-np.sqrt(3)/3], [-np.sqrt(3)/3], [np.sqrt(3)/3]]
-    unitTestSim.particle3.nameOfRhoState = "linearSpringMassDamperRho3"
-    unitTestSim.particle3.nameOfRhoDotState = "linearSpringMassDamperRhoDot3"
-    unitTestSim.particle3.nameOfMassState = "linearSpringMassDamperMass3"
     unitTestSim.particle3.rhoInit = -0.015
     unitTestSim.particle3.rhoDotInit = 0.0
     unitTestSim.particle3.massInit = 15.0

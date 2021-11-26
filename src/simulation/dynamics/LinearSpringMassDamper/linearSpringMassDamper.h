@@ -64,6 +64,7 @@ private:
 	StateData *omegaState;         //!< -- state data for the hubs omega_BN_B
 	StateData *sigmaState;         //!< -- state data for the hubs sigma_BN
 	StateData *velocityState;      //!< -- state data for the hubs rDot_BN_N
+    static uint64_t effectorID;    //!< [] ID number of this panel
 
 public:
 	LinearSpringMassDamper();           //!< -- Contructor

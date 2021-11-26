@@ -228,9 +228,6 @@ def run(show_plots, damping_parameter, timeStep):
     scSim.particle1.c = damping_parameter  # kg/s
     scSim.particle1.r_PB_B = [[0.1], [0], [-0.1]]  # m
     scSim.particle1.pHat_B = [[1], [0], [0]]
-    scSim.particle1.nameOfRhoState = "linearSpringMassDamperRho1"
-    scSim.particle1.nameOfRhoDotState = "linearSpringMassDamperRhoDot1"
-    scSim.particle1.nameOfMassState = "linearSpringMassDamperMass1"
     scSim.particle1.rhoInit = 0.05  # m
     scSim.particle1.rhoDotInit = 0.0  # m/s
     scSim.particle1.massInit = 1500.0  # kg
@@ -243,9 +240,6 @@ def run(show_plots, damping_parameter, timeStep):
     scSim.particle2.c = damping_parameter  # kg/s
     scSim.particle2.r_PB_B = [[0], [0], [0.1]]  # m
     scSim.particle2.pHat_B = [[0], [1], [0]]
-    scSim.particle2.nameOfRhoState = "linearSpringMassDamperRho2"
-    scSim.particle2.nameOfRhoDotState = "linearSpringMassDamperRhoDot2"
-    scSim.particle2.nameOfMassState = "linearSpringMassDamperMass2"
     scSim.particle2.rhoInit = -0.025  # m
     scSim.particle2.rhoDotInit = 0.0  # m/s
     scSim.particle2.massInit = 1400.0  # kg
@@ -258,9 +252,6 @@ def run(show_plots, damping_parameter, timeStep):
     scSim.particle3.c = damping_parameter  # kg/s
     scSim.particle3.r_PB_B = [[-0.1], [0], [0.1]]  # m
     scSim.particle3.pHat_B = [[0], [0], [1]]
-    scSim.particle3.nameOfRhoState = "linearSpringMassDamperRho3"
-    scSim.particle3.nameOfRhoDotState = "linearSpringMassDamperRhoDot3"
-    scSim.particle3.nameOfMassState = "linearSpringMassDamperMass3"
     scSim.particle3.rhoInit = -0.015  # m
     scSim.particle3.rhoDotInit = 0.0  # m/s
     scSim.particle3.massInit = 1300.0  # kg

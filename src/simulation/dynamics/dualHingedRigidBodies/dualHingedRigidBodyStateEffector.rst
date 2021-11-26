@@ -66,7 +66,7 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
     panel1.theta2Init = 5*numpy.pi/180.0
     panel1.theta2DotInit = 0.0
 
-#. Define a unique name for each state::
+#. (Optional) Define a unique name for each state::
 
     panel1.nameOfTheta1State = "dualHingedRigidBodyTheta1"
     panel1.nameOfTheta1DotState = "dualHingedRigidBodyThetaDot1"

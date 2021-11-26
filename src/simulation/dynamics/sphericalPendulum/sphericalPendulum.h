@@ -81,6 +81,7 @@ private:
 	StateData *sigmaState;         //!< -- state data for the hubs sigma_BN
 	StateData *velocityState;      //!< -- state data for the hubs rDot_BN_N
     Eigen::Matrix3d dcm_B_P0;      // Rotation matrix from P0 to B frame
+    static uint64_t effectorID;        //!< [] ID number of this panel
 
 
 

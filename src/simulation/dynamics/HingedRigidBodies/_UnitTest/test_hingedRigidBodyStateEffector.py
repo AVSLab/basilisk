@@ -98,8 +98,6 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.panel1.c = 0.0
     unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
     unitTestSim.panel1.thetaDotInit = 0.0
     unitTestSim.panel1.ModelTag = "Panel1"
@@ -112,8 +110,6 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.panel2.c = 0.0
     unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
-    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
     unitTestSim.panel2.ModelTag = "Panel2"
@@ -327,8 +323,6 @@ def test_hingedRigidBodyNoGravity(show_plots):
     unitTestSim.panel1.c = 0.0
     unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
     unitTestSim.panel1.thetaDotInit = 0.0
 
@@ -340,8 +334,6 @@ def test_hingedRigidBodyNoGravity(show_plots):
     unitTestSim.panel2.c = 0.0
     unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
-    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
 
@@ -559,8 +551,6 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     unitTestSim.panel1.c = 6.0
     unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
     unitTestSim.panel1.thetaDotInit = 0.0
 
@@ -572,8 +562,6 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     unitTestSim.panel2.c = 7.0
     unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
-    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
 
@@ -750,8 +738,6 @@ def test_hingedRigidBodyThetaSS(show_plots):
     unitTestSim.panel1.c = 75
     unitTestSim.panel1.r_HB_B = [[0.5], [1.0], [0.0]]
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
-    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 0.0
     unitTestSim.panel1.thetaDotInit = 0.0
 
@@ -763,8 +749,6 @@ def test_hingedRigidBodyThetaSS(show_plots):
     unitTestSim.panel2.c = 75
     unitTestSim.panel2.r_HB_B = [[-0.5], [1.0], [0.0]]
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
-    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
-    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
 
@@ -943,8 +927,6 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.panel1.c = 0.0
     unitTestSim.panel1.r_HB_B = [[0.5], [1.0], [0.0]]
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
-    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 0.0
     unitTestSim.panel1.thetaDotInit = 0.0
 
@@ -956,8 +938,6 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.panel2.c = 0.0
     unitTestSim.panel2.r_HB_B = [[-0.5], [1.0], [0.0]]
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
-    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
-    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
 
@@ -1231,8 +1211,6 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel1.c = 0.0
     unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 0 * numpy.pi / 180.0
     unitTestSim.panel1.thetaDotInit = 0.0
     unitTestSim.panel1.ModelTag = "panel1"
@@ -1251,8 +1229,6 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.c = 0.0
     unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
-    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0 * macros.D2R
     unitTestSim.panel2.thetaDotInit = 0.0
     unitTestSim.panel2.ModelTag = "panel2"
@@ -1471,8 +1447,6 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitTestSim.panel1.c = 75
     unitTestSim.panel1.r_HB_B = [[0.5], [1.0], [0.0]]
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
-    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 0.0
     unitTestSim.panel1.thetaDotInit = 0.0
 
@@ -1484,8 +1458,6 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitTestSim.panel2.c = 75
     unitTestSim.panel2.r_HB_B = [[-0.5], [1.0], [0.0]]
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
-    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
-    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
 

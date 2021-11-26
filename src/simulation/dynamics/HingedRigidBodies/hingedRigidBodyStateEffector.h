@@ -54,6 +54,7 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
+    static uint64_t effectorID;        //!< [] ID number of this panel
     double theta;                    //!< [rad] hinged rigid body angle
     double thetaDot;                 //!< [rad/s] hinged rigid body angle rate
     double cTheta;                  //!< -- term needed for back substitution

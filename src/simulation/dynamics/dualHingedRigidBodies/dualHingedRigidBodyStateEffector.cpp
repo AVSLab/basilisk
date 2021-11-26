@@ -23,6 +23,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <iostream>
+#include <string>
 
 DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
 {
@@ -57,10 +58,11 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->r_H1B_B.setZero();
     this->dcm_H1B.setIdentity();
     this->thetaH2S1 = 0.0;
-    this->nameOfTheta1State = "hingedRigidBodyTheta1";
-    this->nameOfTheta1DotState = "hingedRigidBodyTheta1Dot";
-    this->nameOfTheta2State = "hingedRigidBodyTheta2";
-    this->nameOfTheta2DotState = "hingedRigidBodyTheta2Dot";
+    this->nameOfTheta1State = "hingedRigidBodyTheta1" + std::to_string(this->effectorID);
+    this->nameOfTheta1DotState = "hingedRigidBodyTheta1Dot" + std::to_string(this->effectorID);
+    this->nameOfTheta2State = "hingedRigidBodyTheta2" + std::to_string(this->effectorID);
+    this->nameOfTheta2DotState = "hingedRigidBodyTheta2Dot" + std::to_string(this->effectorID);
+    this->effectorID++;
 
     Message<HingedRigidBodyMsgPayload> *panelMsg;
     Message<SCStatesMsgPayload> *scMsg;
@@ -76,6 +78,7 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     return;
 }
 
+uint64_t DualHingedRigidBodyStateEffector::effectorID = 1;
 
 DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 {
@@ -83,6 +86,8 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
         free(this->dualHingedRigidBodyOutMsgs.at(c));
         free(this->dualHingedRigidBodyConfigLogOutMsgs.at(c));
     }
+    
+    this->effectorID = 1;    /* reset the panel ID*/
     return;
 }
 

@@ -49,14 +49,18 @@ FuelTank::FuelTank()
 	this->r_TB_B.setZero();
 
 	// - Initialize the variables to working values
-	this->nameOfMassState = "fuelTankMass";
-
+	this->nameOfMassState = "fuelTankMass" + std::to_string(this->effectorID);
+    this->effectorID++;
+    
     return;
 }
+
+uint64_t FuelTank::effectorID = 1;
 
 /*! This is the destructor, nothing to report here */
 FuelTank::~FuelTank()
 {
+    this->effectorID = 1;    /* reset the panel ID*/
     return;
 }
 
