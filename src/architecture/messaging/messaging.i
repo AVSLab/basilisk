@@ -36,6 +36,7 @@ STRUCTASLIST(CSSUnitConfigMsgPayload)
 STRUCTASLIST(AccPktDataMsgPayload)
 STRUCTASLIST(RWConfigElementMsgPayload)
 STRUCTASLIST(CSSArraySensorMsgPayload)
+STRUCTASLIST(ReconfigBurnInfoMsgPayload)
 
 %pythoncode %{
     import numpy as np
