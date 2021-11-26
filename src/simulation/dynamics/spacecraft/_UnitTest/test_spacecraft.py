@@ -909,7 +909,7 @@ def test_SCPointBVsPointC(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 @pytest.mark.parametrize("accuracy", [1e-3])
-def test_scAttRef(show_plots, accuracy):
+def test_scOptionalRef(show_plots, accuracy):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -966,10 +966,16 @@ def test_scAttRef(show_plots, accuracy):
     # write attitude reference message
     attRef = messaging.AttRefMsgPayload()
     attRef.sigma_RN = [0.0, 0.0, 1.0]
-    attRef.omega_RN_N = [1.0, 2.0, 3.0]
     attRef.omega_RN_N = [0.0001, 0.0002, 0.0003]
     attRefMsg = messaging.AttRefMsg().write(attRef)
     scObject.attRefInMsg.subscribeTo(attRefMsg)
+
+    # write translational reference message
+    transRef = messaging.TransRefMsgPayload()
+    transRef.r_RN_N = [1000000, 2000000, 3000000]
+    transRef.v_RN_N = [2000, 3000, 4000]
+    transRefMsg = messaging.TransRefMsg().write(transRef)
+    scObject.transRefInMsg.subscribeTo(transRefMsg)
 
     unitTestSim.InitializeSimulation()
 
@@ -979,9 +985,13 @@ def test_scAttRef(show_plots, accuracy):
 
     omegaOut = dataLog.omega_BN_B
     sigmaOut = dataLog.sigma_BN
+    r_RN_Out = dataLog.r_BN_N
+    v_RN_Out = dataLog.v_BN_N
 
     trueSigma = [attRef.sigma_RN]*3
     trueOmega = [[-0.0001, -0.0002, 0.0003]]*3
+    truer_RN_N = [transRef.r_RN_N]*3
+    truev_RN_N = [transRef.v_RN_N]*3
 
     testFailCount, testMessages = unitTestSupport.compareArray(trueSigma, sigmaOut,
                                                                accuracy, "sigma_BN",
@@ -989,11 +999,19 @@ def test_scAttRef(show_plots, accuracy):
     testFailCount, testMessages = unitTestSupport.compareArray(trueOmega, omegaOut,
                                                                accuracy, "omega_BN_B",
                                                                testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(truer_RN_N, r_RN_Out,
+                                                               accuracy, "r_RN_N",
+                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(truev_RN_N, v_RN_Out,
+                                                               accuracy, "v_RN_N",
+                                                               testFailCount, testMessages)
 
     if testFailCount == 0:
-        print("PASSED: scPlus setting attRefInMsg")
+        print("PASSED: scPlus setting optional reference state input message")
     else:
-        print("FAILED: scPlus setting attRefInMsg")
+        print("FAILED: scPlus setting optional reference state input message")
+
+    assert testFailCount < 1, testMessages
 
     return [testFailCount, ''.join(testMessages)]
 
@@ -1075,9 +1093,9 @@ def test_scAccumDV():
 
 if __name__ == "__main__":
     # test_scAttRef(True, 1e-3)
-    test_SCTranslation(True)
+    # test_SCTranslation(True)
     # test_SCTransAndRotation(True)
     # test_SCRotation(True)
     # test_SCTransBOE(True)
     # test_SCPointBVsPointC(True)
-    # test_scAttRef(True, 0.001)
+    test_scOptionalRef(True, 0.001)
