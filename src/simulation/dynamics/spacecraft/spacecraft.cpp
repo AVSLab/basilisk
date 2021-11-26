@@ -125,20 +125,33 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
 }
 
 /*! If the optional attitude reference input message is set, then read in the reference attitude and set it for the hub*/
-void Spacecraft::readAttRefMsg()
+void Spacecraft::readOptionalRefMsg()
 {
     if (this->attRefInMsg.isLinked()) {
         Eigen::MRPd sigma_BN;
         Eigen::Vector3d omega_BN_B;
-        AttRefMsgPayload attRefMsg;
-        attRefMsg = this->attRefInMsg();
-        sigma_BN = cArray2EigenVector3d(attRefMsg.sigma_RN);
-        Eigen::Vector3d omega_BN_N = cArray2EigenVector3d(attRefMsg.omega_RN_N);
+        AttRefMsgPayload attRefMsgBuffer;
+        attRefMsgBuffer = this->attRefInMsg();
+        sigma_BN = cArray2EigenVector3d(attRefMsgBuffer.sigma_RN);
+        Eigen::Vector3d omega_BN_N = cArray2EigenVector3d(attRefMsgBuffer.omega_RN_N);
         Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
         omega_BN_B = dcm_BN * omega_BN_N;
 
         this->hubSigma->setState(eigenMRPd2Vector3d(sigma_BN));
         this->hubOmega_BN_B->setState(omega_BN_B);
+    }
+    
+    if (this->transRefInMsg.isLinked()) {
+        Eigen::Vector3d r_RN_N;
+        Eigen::Vector3d v_RN_N;
+        TransRefMsgPayload transRefMsgBuffer;
+        transRefMsgBuffer = this->transRefInMsg();
+        
+        r_RN_N = cArray2EigenVector3d(transRefMsgBuffer.r_RN_N);
+        v_RN_N = cArray2EigenVector3d(transRefMsgBuffer.v_RN_N);
+        
+        this->hubR_N->setState(r_RN_N);
+        this->hubV_N->setState(v_RN_N);
     }
 
     return;
@@ -157,7 +170,7 @@ void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
     this->integrateState(newTime);
 
     // If set, read in and prescribe attitude reference motion
-    readAttRefMsg();
+    readOptionalRefMsg();
 
     Eigen::Vector3d rLocal_BN_N = this->hubR_N->getState();
     Eigen::Vector3d vLocal_BN_N = this->hubV_N->getState();
@@ -272,7 +285,7 @@ void Spacecraft::initializeDynamics()
     }
 
     // If set, read in and prescribe attitude reference motion as initial states
-    readAttRefMsg();
+    readOptionalRefMsg();
 
     // - Call equations of motion at time zero
     this->equationsOfMotion(0.0, 1.0);
