@@ -38,7 +38,7 @@ Version |release|
 - the module :ref:`spacecraftReconfig` now ouputs an array of messages of type :ref:`ReconfigBurnInfoMsgPayload`.
   All internal calculation are also done using a buffer of this message type.
 - Added the time standard library to include statements in atmosphereBase.h to fix a build issue found on windows.
-
+- updated :ref:`spacecraft` to include an optional translational reference message to specify the trajectory
 
 Version 2.1.0 (Nov. 13, 2021)
 -----------------------------
