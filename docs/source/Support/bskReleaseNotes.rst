@@ -33,9 +33,9 @@ Version |release|
 -----------------
 - Updated ``OpNav`` mode dependency ``gettext`` to version 0.21 to allow BSK to be build on Windows
   with ``OpNav`` support.
-- created a new message that contains the information regarding cheduled burns for orbit recofiguration in
-  formation flying scenarios. See :ref:`ReconfigBurnInfoMsgPayload`.
-- the module :ref:`spacecraftReconfig` now ouputs an array of messages of type :ref:`ReconfigBurnInfoMsgPayload`.
+- created two new messages that contain the information regarding cheduled burns for orbit recofiguration in
+  formation flying scenarios. See :ref:`ReconfigBurnInfoMsgPayload` and :ref:`ReconfigBurnArrayInfoMsgPayload`.
+- the module :ref:`spacecraftReconfig` now ouputs a message of type :ref:`ReconfigBurnArrayInfoMsgPayload`.
   All internal calculation are also done using a buffer of this message type.
 - Added the time standard library to include statements in atmosphereBase.h to fix a build issue found on windows.
 - updated :ref:`spacecraft` to include an optional translational reference message to specify the trajectory
