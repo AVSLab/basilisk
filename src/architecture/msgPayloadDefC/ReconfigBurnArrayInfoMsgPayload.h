@@ -26,7 +26,7 @@
 
  //! @brief Container for the orbit reconfiguration burn information.
 typedef struct {
-    ReconfigBurnInfoMsgPayload burnArray[MAX_BURN_CNT];
+    ReconfigBurnInfoMsgPayload burnArray[MAX_BURN_CNT]; //!< array of burn info messages
 }ReconfigBurnArrayInfoMsgPayload;
 
 

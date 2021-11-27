@@ -49,7 +49,7 @@ provides information on what this message is used for.
     +--------------------------+----------------------------------------+---------------------------------------------------------------+
     | onTimeOutMsg             | :ref:`THRArrayOnTimeCmdMsgPayload`     | The deputy's thruster's on time output message                |
     +--------------------------+----------------------------------------+---------------------------------------------------------------+
-    | burnInfoOutMsgs          | :ref:`ReconfigBurnArrayInfoMsgPayload` | deputy's scheduled burns info output message                  |
+    | burnArrayInfoOutMsg      | :ref:`ReconfigBurnArrayInfoMsgPayload` | deputy's scheduled burns info output message                  |
     +--------------------------+----------------------------------------+---------------------------------------------------------------+
 
 Module Assumptions and Limitations
