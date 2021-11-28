@@ -36,7 +36,6 @@ STRUCTASLIST(CSSUnitConfigMsgPayload)
 STRUCTASLIST(AccPktDataMsgPayload)
 STRUCTASLIST(RWConfigElementMsgPayload)
 STRUCTASLIST(CSSArraySensorMsgPayload)
-STRUCTASLIST(ReconfigBurnInfoMsgPayload)
 
 %pythoncode %{
     import numpy as np
@@ -198,6 +197,7 @@ typedef struct messageType;
 
 %array_functions(THRConfigMsgPayload, ThrustConfigArray);
 %array_functions(RWConfigElementMsgPayload, RWConfigArray);
+%array_functions(ReconfigBurnInfoMsgPayload, ReconfigBurnArray)
 
 %template(Eigen3dVector) std::vector<Eigen::Vector3d>;
 
