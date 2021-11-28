@@ -28,7 +28,6 @@
 #include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
 #include "cMsgCInterface/VehicleConfigMsg_C.h"
 #include "cMsgCInterface/ReconfigBurnArrayInfoMsg_C.h"
-#include "cMsgCInterface/ReconfigBurnInfoMsg_C.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/orbitalMotion.h"
