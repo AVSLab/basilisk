@@ -135,7 +135,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     # create RW availability message
     if useAvailability:
         rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
-        rwAvailArray = np.zeros(messaging.MAX_EFF_CNT)
+        rwAvailArray = np.zeros(messaging.MAX_EFF_CNT, dtype=int)
         rwAvailArray.fill(messaging.AVAILABLE)
         rwAvailArray[2] = messaging.UNAVAILABLE        # make 3rd RW unavailable
         rwAvailabilityMessage.wheelAvailability = rwAvailArray

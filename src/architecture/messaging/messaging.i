@@ -31,7 +31,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 %include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 
-ARRAYASLIST(FSWdeviceAvailability)
+ARRAYINTASLIST(FSWdeviceAvailability)
 STRUCTASLIST(CSSUnitConfigMsgPayload)
 STRUCTASLIST(AccPktDataMsgPayload)
 STRUCTASLIST(RWConfigElementMsgPayload)

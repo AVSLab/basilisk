@@ -432,7 +432,7 @@ class NormalVectorCartDispersion(VectorVariableDispersion):
     def generate(self, sim=None):
         dispVec = []
         for i in range(3):
-            if isinstance(self.stdDeviation, collections.Sequence):
+            if isinstance(self.stdDeviation, collections.abc.Sequence):
                 rnd = random.gauss(self.mean[i], self.stdDeviation[i])
                 if self.stdDeviation[i] != 0:
                     self.magnitude.append(str(round((rnd - self.mean[i])/self.stdDeviation[i],2)) + " sigma")
