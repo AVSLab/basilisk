@@ -39,6 +39,10 @@ Version |release|
   All internal calculation are also done using a buffer of this message type.
 - Added the time standard library to include statements in atmosphereBase.h to fix a build issue found on windows.
 - updated :ref:`spacecraft` to include an optional translational reference message to specify the trajectory
+- Added a swig array-type ``ARRAYINTASLIST`` that fixes a double to int conversion error when building the
+  ``FSWdeviceAvailability`` message on windows.
+- Updated dispersions.py to support functionality that was deprecated in python3.10. This change supports
+  python versions >=3.3.
 
 Version 2.1.0 (Nov. 13, 2021)
 -----------------------------
