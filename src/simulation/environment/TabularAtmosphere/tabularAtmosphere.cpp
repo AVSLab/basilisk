@@ -25,11 +25,19 @@
  */
 TabularAtmosphere::TabularAtmosphere()
 {
-    //! - Set the default atmospheric properties to yield a zero response
-    this->baseDensity = 0.0;            // [T]
-    this->scaleHeight = 1.0;            // [m]
-    this->planetRadius = 0.0;   // [m]
-    this->localTemp = 1.0; // [K]
+
+    altList_length = altList.size();
+    rhoList_length = rhoList.size();
+    tempList_length = tempList.size();
+
+
+
+    if((altList_length == rhoList_length) && (altList_length == tempList_length)){
+        return;
+    else{
+        printf("Error: data not equal length.")
+        }
+    }
 
     return;
 }
@@ -42,15 +50,13 @@ TabularAtmosphere::~TabularAtmosphere()
     return;
 }
 
-/*! This method is evaluates the centered dipole magnetic field model.
- @param msg magnetic field message structure
- @param currentTime current time (s)
- @return void
- */
 void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
 {
-    msg->neutralDensity = this->baseDensity * exp(-(this->orbitAltitude) / this->scaleHeight);
-    msg->localTemp = this->localTemp;
+
+    for(int i=1; i <= length(this->altList); i++){
+		if(this->altList[i] > this->orbitAltitude){
+			msg->neutralDensity = this->densList[i-1] + (h - this->altList[i-1]) * (this->densList[i] - this->densList[i-1]) / (this->altList[i] - this->altList[i-1]);
+			msg->localTemp = this->tempList[i-1] + (h - this->altList[i-1]) * (this->tempList[i] - this->tempList[i-1]) / (this->altList[i] - this->altList[i-1]);
 
     return;
 }
