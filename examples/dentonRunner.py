@@ -40,7 +40,7 @@ def run(show_plots):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # See progress bar
-    #scSim.SetProgressBar(True)
+    scSim.SetProgressBar(True)
     
     # Create the simulation process
     simProcessName = "dynamicsProcess"
@@ -59,35 +59,35 @@ def run(show_plots):
     # Add spacecraft obect to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
     
-    
-    ################################################################################################################################
-    
     gravFactory = simIncludeGravBody.gravBodyFactory()
         
     # Setup Earth gravity body
     earth = gravFactory.createEarth()
     earth.isCentralBody = True
     mu = earth.mu
+    earthMsgPayload = messaging.SpicePlanetStateMsgPayload()
+    earthMsg = messaging.SpicePlanetStateMsg().write(earthMsgPayload)
     
     # Setup Sun gravity body
-    #sun = gravFactory.createSun()
+    sun = gravFactory.createSun()
+    sunMsgPayload = messaging.SpicePlanetStateMsgPayload()
+    sunMsgPayload.PositionVector = [0., 0., 0.]
+    sunMsgPayload.VelocityVector = [0., 0., 0.]
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunMsgPayload)
     
-    # Only add Earth as a gravity body
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-    #scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values("0")))
-
     
     # Next, the default SPICE support module is created and configured.  The first step is to store
     # the date and time of the start of the simulation.
-    #timeInitString = "2012 MAY 1 00:28:30.0"
-    #spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
-    #timeInit = datetime.strptime(timeInitString, spiceTimeStringFormat)
+    timeInitString = "2012 MAY 1 00:28:30.0"
+    spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
+    timeInit = datetime.strptime(timeInitString, spiceTimeStringFormat)
 
     # The following is a support macro that creates a `gravFactory.spiceObject` instance, and fills in typical
-    # default parameters.  By setting the epochInMsg argument, this macro provides an epoch date/time
-    # message as well.  The spiceObject is set to subscribe to this epoch message.  Using the epoch message
+    # default parameters. By setting the epochInMsg argument, this macro provides an epoch date/time
+    # message as well. The spiceObject is set to subscribe to this epoch message.  Using the epoch message
     # makes it trivial to synchronize the epoch information across multiple modules.
-    #gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', timeInitString,epochInMsg=True)
+    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', timeInitString,epochInMsg=True)
 
     # By default the SPICE object will use the solar system barycenter as the inertial origin
     # If the spacecraft() output is desired relative to another celestial object, the zeroBase string
@@ -98,13 +98,11 @@ def run(show_plots):
     # or SSB for short.  The spacecraft() state output message is relative to this SBB frame by default.  To change
     # this behavior, the zero based point must be redefined from SBB to another body.
     # In this simulation we use the Earth.
-    #gravFactory.spiceObject.zeroBase = 'Earth'
+    gravFactory.spiceObject.zeroBase = 'Earth'
 
     # Finally, the SPICE object is added to the simulation task list.
-    #scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
-    
-    ################################################################################################################################
-    
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+
     # Setup orbit and simulation time
     #
     # Setup the orbit using classical orbit elements
@@ -131,32 +129,28 @@ def run(show_plots):
     
     numDataPoints = 200
     samplingTime = unitTestSupport.samplingTime(simulationTime, 10, numDataPoints)
-    #msgRec = scObject.scStateOutMsg.recorder(samplingTime)
-    #scSim.AddModelToTask(simTaskName, msgRec)
+    msgRec = scObject.scStateOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, msgRec)
     
     # Create copies of the Basilisk modules
-    mod1 = dentonFluxModel.DentonFluxModel(2, 2400.0)
+    mod1 = dentonFluxModel.DentonFluxModel(2, 50)
     mod1.ModelTag = "cppModule"
     scSim.AddModelToTask(simTaskName, mod1, None, 10)
 
-    ##########################################################################################################
-    
     # Connect messages
     mod1.satStateInMsg.subscribeTo(scObject.scStateOutMsg);
-    # mod1.sunStateInMsg.subscribeTo(sun.planetStateOutMsgs);
+    mod1.sunStateInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1]);
+    mod1.earthStateInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0]);
+
+    #mod1.sunStateInMsg.subscribeTo(sunMsg);
+    #mod1.earthStateInMsg.subscribeTo(earthMsg);
+    #mod1.sunStateInMsg.subscribeTo(sun.planetStateOutMsgs);
     #mod1.sunStateInputMsg.subscribeTo(gravFactory.gravBodies.values.planetStateOutMsgs("0"));
 
-    ##########################################################################################################
-
-    
     # Setup message recording
     msgRec = mod1.fluxOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, msgRec)
-    
-    # Set Desired Energy and Kp From Script (FOR NOW)
-    #mod1.choose_kp = 2;
-    #mod1.choose_energy = 2400;
-    
+
     # Initialize Simulation:
     scSim.InitializeSimulation()
 

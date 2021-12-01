@@ -19,13 +19,17 @@
 
 #ifndef FLUX_MESSAGE_H_
 #define FLUX_MESSAGE_H_
+// #include "architecture/utilities/macroDefinitions.h"
+
+#define MAX_SIZE 100
 
 
 /*! @brief Structure used to define the output of the sub-module.  This is the same
     output message that is used by all sub-modules in the module folder. */
 typedef struct {
-    double MeanElectronFlux;     //!< [cm^-2 s^-1 sr^-2 eV^-1] differential flux
-    double MeanIonFlux;          //!< [cm^-2 s^-1 sr^-2 eV^-1] differential flux
+    double meanElectronFlux[MAX_SIZE];     //!< [cm^-2 s^-1 sr^-2 eV^-1] differential flux
+    double meanIonFlux[MAX_SIZE];          //!< [cm^-2 s^-1 sr^-2 eV^-1] differential flux
+    double energies[MAX_SIZE];             //!< [eV]
 }FluxMsgPayload;
 
 

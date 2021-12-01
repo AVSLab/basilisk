@@ -23,8 +23,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-//#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-//#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/FluxMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
@@ -33,32 +32,34 @@
  */
 class DentonFluxModel: public SysModel {
 public:
-    DentonFluxModel(int kp, double energy);
+    
+    // Constructor And Destructor
+    DentonFluxModel(int kp, int numEn);
     ~DentonFluxModel();
 
+    // Methods
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
-    
-    // Other Methods
     double calcLocalTime(double v1[3], double v2[3]);
-    long double bilinear(int, int, long double, long double, double, long double, long double, long double, long double, long double);
+    double bilinear(int, int, double, double, double, double, double, double, double, double);
     
-public:
     
+    // Other
+    int numEnergies;
     int choose_kp;
     double choose_energy;
-    double choose_local_time;
+    double localTime;
+    //double inputEnergies[];
     
     ReadFunctor<SCStatesMsgPayload> satStateInMsg;  //!< input spacecraft states
-    //ReadFunctor<EphemerisMsgPayload> earthStateInMsg;  //!< input Earth states
-    //ReadFunctor<EphemerisMsgPayload> sunStateInMsg;  //!< input sun states
-
-    //ReadFunctor<SpicePlanetStateMsgPayload> earthStateInputMsg;  //!< input planet states
-    //ReadFunctor<SpicePlanetStateMsgPayload> sunStateInputMsg;  //!< input sun states
+    ReadFunctor<SpicePlanetStateMsgPayload> earthStateInputMsg;  //!< input planet states
+    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInputMsg;  //!< input sun states
 
     Message<FluxMsgPayload> fluxOutMsg;  //!< output ion and electron fluxes
 
     BSKLogger bskLogger;              //!< -- BSK Logging
+
+private:
 
 };
 
