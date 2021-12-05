@@ -28,10 +28,8 @@
     values and initializes the various parts of the model */
 
  // Final Desired Constructor
-DentonFluxModel::DentonFluxModel(int kp, int numEn)
+DentonFluxModel::DentonFluxModel()
 {
-    choose_kp = kp;
-    numEnergies = numEn;
 }
 
 /*! Module Destructor */
@@ -46,24 +44,37 @@ DentonFluxModel::~DentonFluxModel()
 void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
 {
     // Check that required input messages are connected
-    if (!this->satStateInMsg.isLinked())
+    if (!this->scStateInMsg.isLinked())
     {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.scStateInMsg was not linked.");
     }
-    
-    // Check the disired array size is not larger than the maximum value
-    if (numEnergies > MAX_SIZE)
+
+    if (!this->earthStateInMsg.isLinked())
     {
-        bskLogger.bskLog(BSK_ERROR, "Maximum array size exceeded.");
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.earthStateInMsg was not linked.");
     }
+
+    if (!this->sunStateInMsg.isLinked())
+    {
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.sunStateInMsg was not linked.");
+    }
+    
+    if (this->kpIndex < 0) {
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.kpIndex was not set to a proper value.");
+    }
+
+    // Check the disired array size is not larger than the maximum value
+    if (this->numEnergies > MAX_PLASMA_FLUX_SIZE)
+    {
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Maximum denton space weather array size exceeded.");
+    }
+    if (this->numEnergies < 0)
+    {
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.numEnergies was not set.");
+    }
+
 }
 
-
-/*! This method takes the computed shadow factors and outputs them to the
- messaging system.
- @param CurrentClock The current simulation time (used for time stamping)
- @return void
- */
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @return void
@@ -71,18 +82,18 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
 void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
 {
     // Make local copies of messages
-    SCStatesMsgPayload scStateInMsgBuffer;  //!< local copy of message buffer
-    FluxMsgPayload fluxOutMsgBuffer;
-    SpicePlanetStateMsgPayload sunSpiceInMsgBuffer;
-    SpicePlanetStateMsgPayload earthSpiceInMsgBuffer;
+    SCStatesMsgPayload scStateInMsgBuffer;  //!< local copy of spacecraft states
+    PlasmaFluxMsgPayload fluxOutMsgBuffer; //!< local copy of the plasma flux output message content
+    SpicePlanetStateMsgPayload sunSpiceInMsgBuffer;  //!< local copy of the sun state input message payload
+    SpicePlanetStateMsgPayload earthSpiceInMsgBuffer;  //!< local copy of the earth state input message payload
 
     // Always zero the output message buffers before assigning values
     fluxOutMsgBuffer = this->fluxOutMsg.zeroMsgPayload;
 
     // Read in the input messages
-    scStateInMsgBuffer = this->satStateInMsg();  //!< populating local copy
-    sunSpiceInMsgBuffer = this->sunStateInputMsg();
-    earthSpiceInMsgBuffer = this->earthStateInputMsg();
+    scStateInMsgBuffer = this->scStateInMsg();  //!< populating local copy
+    sunSpiceInMsgBuffer = this->sunStateInMsg();
+    earthSpiceInMsgBuffer = this->earthStateInMsg();
     
     // Set parameters
     int numKps = 28;
@@ -178,15 +189,15 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     double sun_r_EN_N[3] = {sunSpiceInMsgBuffer.PositionVector[0] - earthSpiceInMsgBuffer.PositionVector[0], sunSpiceInMsgBuffer.PositionVector[1] - earthSpiceInMsgBuffer.PositionVector[1], sunSpiceInMsgBuffer.PositionVector[2] - earthSpiceInMsgBuffer.PositionVector[2]};
     
     // Find local lime from spacecraft and Earth state messages
-    localTime = calcLocalTime(sat_r_EN_N, sun_r_EN_N);
+    calcLocalTime(sat_r_EN_N, sun_r_EN_N);
     
     // For loop to calculate each element of output flux vectors
     for (int i = 0; i < numEnergies; i++)
     {
-        choose_energy = inputEnergies[i];
+        this->chooseEnergy = inputEnergies[i];
             
         // Convert energies to log10
-        double choose_energy_log = log(choose_energy);
+        double chooseEnergyLog = log(this->chooseEnergy);
         double logEnElec[numEnergies];
         double logEnProt[numEnergies];
         
@@ -204,7 +215,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         
         for (int j = 0; j < numEnergies; j++)
         {
-            if (logEnElec[j] > choose_energy_log)
+            if (logEnElec[j] > chooseEnergyLog)
             {
                 eHigher = logEnElec[j];
                 eLower = logEnElec[j-1];
@@ -225,7 +236,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         
         for (int m = 0; m < numEnergies; m++)
         {
-            if (logEnProt[m] > choose_energy_log)
+            if (logEnProt[m] > chooseEnergyLog)
             {
                 iHigher = logEnProt[m];
                 iLower = logEnProt[m-1];
@@ -238,8 +249,8 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
             }
         }
         
-        int localTimeFloor = floor(localTime + 1);
-        int localTimeCeil = ceil(localTime + 1);
+        int localTimeFloor = floor(this->localTime + 1);
+        int localTimeCeil = ceil(this->localTime + 1);
         
         // Initialize flux variables
         double flux11 = 0.0;
@@ -248,40 +259,38 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         double flux14 = 0.0;
         
         // ELECTRON: Gather four nearest *MEAN* flux values for *ALL F10.7*
-        flux11 = mean_e_all[choose_kp][eLowerIndex][localTimeFloor];
-        flux12 = mean_e_all[choose_kp][eHigherIndex][localTimeFloor];
-        flux13 = mean_e_all[choose_kp][eLowerIndex][localTimeCeil];
-        flux14 = mean_e_all[choose_kp][eHigherIndex][localTimeCeil];
+        flux11 = mean_e_all[this->kpIndex][eLowerIndex][localTimeFloor];
+        flux12 = mean_e_all[this->kpIndex][eHigherIndex][localTimeFloor];
+        flux13 = mean_e_all[this->kpIndex][eLowerIndex][localTimeCeil];
+        flux14 = mean_e_all[this->kpIndex][eHigherIndex][localTimeCeil];
         
         // ELECTRON: Find flux
-        //finalElecAll[0] = bilinear((localTimeFloor - 1), (localTimeCeil-1), logEnElec[eLowerIndex], logEnElec[eHigherIndex], localTime, choose_energy_log, flux11, flux12, flux13, flux14); // Future
-        finalElecAll = bilinear((localTimeFloor - 1), (localTimeCeil-1), logEnElec[eLowerIndex], logEnElec[eHigherIndex], localTime, choose_energy_log, flux11, flux12, flux13, flux14);
+        finalElecAll = bilinear((localTimeFloor - 1), (localTimeCeil-1), logEnElec[eLowerIndex], logEnElec[eHigherIndex], chooseEnergyLog, flux11, flux12, flux13, flux14);
         
         // ION: Gather four nearest *MEAN* flux values for *ALL F10.7*
-        flux11 = mean_i_all[choose_kp][iLowerIndex][localTimeFloor];
-        flux12 = mean_i_all[choose_kp][iHigherIndex][localTimeFloor];
-        flux13 = mean_i_all[choose_kp][iLowerIndex][localTimeCeil];
-        flux14 = mean_i_all[choose_kp][iHigherIndex][localTimeCeil];
+        flux11 = mean_i_all[this->kpIndex][iLowerIndex][localTimeFloor];
+        flux12 = mean_i_all[this->kpIndex][iHigherIndex][localTimeFloor];
+        flux13 = mean_i_all[this->kpIndex][iLowerIndex][localTimeCeil];
+        flux14 = mean_i_all[this->kpIndex][iHigherIndex][localTimeCeil];
         
         // ION: Find flux
-        //finalIonAll[0] = bilinear(localTimeFloor, localTimeCeil, logEnProt[iHigherIndex], logEnProt[iLowerIndex], localTime, choose_energy_log, flux11, flux12, flux13, flux14); // Future
-        finalIonAll = bilinear(localTimeFloor, localTimeCeil, logEnProt[iHigherIndex], logEnProt[iLowerIndex], localTime, choose_energy_log, flux11, flux12, flux13, flux14);
+        finalIonAll = bilinear(localTimeFloor, localTimeCeil, logEnProt[iHigherIndex], logEnProt[iLowerIndex], chooseEnergyLog, flux11, flux12, flux13, flux14);
         
         // Store the output message
         fluxOutMsgBuffer.meanElectronFlux[i] = finalElecAll;
         fluxOutMsgBuffer.meanIonFlux[i] = finalIonAll;
-        fluxOutMsgBuffer.energies[i] = choose_energy;
+        fluxOutMsgBuffer.energies[i] = this->chooseEnergy;
     }
     
     // Write to the output message
     this->fluxOutMsg.write(&fluxOutMsgBuffer, this->moduleID, CurrentSimNanos);
 }
 
-// Calcualte local time method
-double DentonFluxModel::calcLocalTime(double sunIPosVec[3], double scIPosVec[3])
+/*! method to calculate the local time of the spacecraft within the GEO belt
+    @return void
+*/
+void DentonFluxModel::calcLocalTime(double sunIPosVec[3], double scIPosVec[3])
 {
-    double localTime;
-    
     // Calculate 2D position vector magnitudes
     double sc2DIPosMag = sqrt(scIPosVec[0]*scIPosVec[0] + scIPosVec[1]*scIPosVec[1]);
     double sun2DIPosMag = sqrt(sunIPosVec[0]*sunIPosVec[0] + sunIPosVec[1]*sunIPosVec[1]);
@@ -298,33 +307,37 @@ double DentonFluxModel::calcLocalTime(double sunIPosVec[3], double scIPosVec[3])
 
     if (y == 1 || y == -1)
     {
-        localTime = 0.0;    //!<  Data files are from 0-23 LT
+        this->localTime = 0.0;    //!<  Data files are from 0-23 LT
     }
     else
     {
-        localTime = 12.00 + (theta / 360)*24;
+        this->localTime = 12.00 + (theta / 360)*24;
     }
     
-    return localTime;
+    return;
     
 }
 
-// Bilinear interpolation method
-double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double x, double y, double f11, double f12, double f13, double f14)
+/*! Bilinear interpolation method
+    @return void
+*/
+double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double y, double f11, double f12, double f13, double f14)
 {
-  // Define variables
-  double R1, R2, bilinear = 0.0;
-  if (x1 != x2)
-  {
-      R1 = ( (x2 - x) / (x2 - x1) ) * f11 + ( (x - x1) / (x2 - x1) ) * f13;
-      R2 = ( (x2 - x) / (x2 - x1) ) * f12 + ( (x - x1) / (x2 - x1) ) * f14;
-      bilinear = ( (y2 - y ) / (y2 - y1) ) * R1 + ( (y - y1) / (y2 - y1) ) * R2;
-      return bilinear;
-  }
-  else
-  {
-      bilinear = ( (y2 - y ) / (y2 - y1) ) * f11 + ( (y - y1) / (y2 - y1) ) * f13;
-      return bilinear;
-  }
+    // Define variables
+    double R1, R2, bilinear = 0.0;
+    double x = this->localTime;
+
+    if (x1 != x2)
+    {
+        R1 = ( (x2 - x) / (x2 - x1) ) * f11 + ( (x - x1) / (x2 - x1) ) * f13;
+        R2 = ( (x2 - x) / (x2 - x1) ) * f12 + ( (x - x1) / (x2 - x1) ) * f14;
+        bilinear = ( (y2 - y ) / (y2 - y1) ) * R1 + ( (y - y1) / (y2 - y1) ) * R2;
+        return bilinear;
+    }
+    else
+    {
+        bilinear = ( (y2 - y ) / (y2 - y1) ) * f11 + ( (y - y1) / (y2 - y1) ) * f13;
+        return bilinear;
+    }
 
 }

@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,20 +17,18 @@
 
  */
 
-#ifndef FLUX_MESSAGE_H_
-#define FLUX_MESSAGE_H_
-// #include "architecture/utilities/macroDefinitions.h"
+#ifndef PLASMA_FLUX_MESSAGE_H_
+#define PLASMA_FLUX_MESSAGE_H_
 
-#define MAX_SIZE 100
+#define MAX_PLASMA_FLUX_SIZE 100
 
 
-/*! @brief Structure used to define the output of the sub-module.  This is the same
-    output message that is used by all sub-modules in the module folder. */
+//!@brief GEO space weather flux message definition.
 typedef struct {
-    double meanElectronFlux[MAX_SIZE];     //!< [cm^-2 s^-1 sr^-2 eV^-1] differential flux
-    double meanIonFlux[MAX_SIZE];          //!< [cm^-2 s^-1 sr^-2 eV^-1] differential flux
-    double energies[MAX_SIZE];             //!< [eV]
-}FluxMsgPayload;
+    double meanElectronFlux[MAX_PLASMA_FLUX_SIZE];     //!< [cm^-2 s^-1 sr^-2 eV^-1] differential flux
+    double meanIonFlux[MAX_PLASMA_FLUX_SIZE];          //!< [cm^-2 s^-1 sr^-2 eV^-1] differential flux
+    double energies[MAX_PLASMA_FLUX_SIZE];             //!< [eV]
+}PlasmaFluxMsgPayload;
 
 
 #endif

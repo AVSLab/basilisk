@@ -24,42 +24,42 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/FluxMsgPayload.h"
+#include "architecture/msgPayloadDefC/PlasmaFluxMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 
-/*! @brief This is an auto-created sample C++ module.  The description is included with the module class definition
+/*! @brief This module provides the 10-year averaged GEO elecon and ion flux as discussed in the paper by Denton.
  */
 class DentonFluxModel: public SysModel {
 public:
     
     // Constructor And Destructor
-    DentonFluxModel(int kp, int numEn);
+    DentonFluxModel();
     ~DentonFluxModel();
 
     // Methods
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
-    double calcLocalTime(double v1[3], double v2[3]);
-    double bilinear(int, int, double, double, double, double, double, double, double, double);
     
+    /* public variables */
+    int numEnergies = -1;          //!< number of energy bins used in the output message
+    int kpIndex = -1;              //!< Kp index
     
-    // Other
-    int numEnergies;
-    int choose_kp;
-    double choose_energy;
-    double localTime;
-    //double inputEnergies[];
-    
-    ReadFunctor<SCStatesMsgPayload> satStateInMsg;  //!< input spacecraft states
-    ReadFunctor<SpicePlanetStateMsgPayload> earthStateInputMsg;  //!< input planet states
-    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInputMsg;  //!< input sun states
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;  //!<  spacecraft state input message
+    ReadFunctor<SpicePlanetStateMsgPayload> earthStateInMsg;  //!< Earth planet state input message
+    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg;  //!< sun state input message
 
-    Message<FluxMsgPayload> fluxOutMsg;  //!< output ion and electron fluxes
+    Message<PlasmaFluxMsgPayload> fluxOutMsg;  //!< output message with ion and electron fluxes
 
     BSKLogger bskLogger;              //!< -- BSK Logging
 
 private:
+
+    double chooseEnergy;
+    double localTime;           //!< [??] local time in the GEO belt
+
+    void calcLocalTime(double v1[3], double v2[3]);     //!< calculate the local time
+    double bilinear(int, int, double, double, double, double, double, double, double);
 
 };
 

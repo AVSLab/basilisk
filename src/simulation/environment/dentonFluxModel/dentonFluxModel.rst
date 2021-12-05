@@ -1,6 +1,7 @@
 Executive Summary
 -----------------
-This is an auto-created sample C++ module.  The description is included with the module class definition
+This module provides the 10-year averaged GEO elecon and ion flux as discussed in the paper by Denton.
+
 
 Message Connection Descriptions
 -------------------------------
@@ -16,10 +17,16 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - scStateInMsg
+    * - ``scStateInMsg``
       - :ref:`SCStatesMsgPayload`
-      - input spacecraft states
-    * - fluxOutMsg
-      - :ref:`FluxMsgPayload`
+      - spacecraft state input message
+    * - ``earthStateInMsg``
+      - :ref:`SpicePlanetStateMsgPayload`
+      - Earth planet state input message
+    * - ``sunStateInMsg``
+      - :ref:`SpicePlanetStateMsgPayload`
+      - sun state input message
+    * - ``fluxOutMsg``
+      - :ref:`PlasmaFluxMsgPayload`
       - output ion and electron fluxes
 
