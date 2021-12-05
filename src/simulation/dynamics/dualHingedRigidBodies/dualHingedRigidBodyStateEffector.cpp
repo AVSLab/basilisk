@@ -58,10 +58,10 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->r_H1B_B.setZero();
     this->dcm_H1B.setIdentity();
     this->thetaH2S1 = 0.0;
-    this->nameOfTheta1State = "hingedRigidBodyTheta1" + std::to_string(this->effectorID);
-    this->nameOfTheta1DotState = "hingedRigidBodyTheta1Dot" + std::to_string(this->effectorID);
-    this->nameOfTheta2State = "hingedRigidBodyTheta2" + std::to_string(this->effectorID);
-    this->nameOfTheta2DotState = "hingedRigidBodyTheta2Dot" + std::to_string(this->effectorID);
+    this->nameOfTheta1State = "DualHingedRigidBodyStateEffectorTheta1" + std::to_string(this->effectorID);
+    this->nameOfTheta1DotState = "DualHingedRigidBodyStateEffectorTheta1Dot" + std::to_string(this->effectorID);
+    this->nameOfTheta2State = "DualHingedRigidBodyStateEffectorTheta2" + std::to_string(this->effectorID);
+    this->nameOfTheta2DotState = "DualHingedRigidBodyStateEffectorTheta2Dot" + std::to_string(this->effectorID);
     this->effectorID++;
 
     Message<HingedRigidBodyMsgPayload> *panelMsg;
