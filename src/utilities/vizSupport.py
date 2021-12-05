@@ -1007,6 +1007,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         flag if live data streaming to Vizard should be used
     genericStorageList:
         list of lists of ``GenericStorage`` structures.  The outer list length must match ``scList``.
+    lightList:
+        list of lists of ``Light`` structures.   The outer list length must match ``scList``.
 
     Returns
     -------
@@ -1026,7 +1028,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
 
     unitTestSupport.checkMethodKeyword(
         ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList',
-         'genericSensorList', 'transceiverList', 'genericStorageList'],
+         'genericSensorList', 'transceiverList', 'genericStorageList', 'lightList'],
         kwargs)
 
     # setup the Vizard interface module
@@ -1090,6 +1092,16 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if len(gsScList) != len(scList):
             print('ERROR: vizSupport: genericSensorList should have the same length as the '
                   'number of spacecraft and contain lists of generic sensors')
+            exit(1)
+
+    liScList = False
+    if 'lightList' in kwargs:
+        liScList = kwargs['lightList']
+        if not isinstance(liScList, list):
+            liScList = [[liScList]]
+        if len(liScList) != len(scList):
+            print('ERROR: vizSupport: lightList should have the same length as the '
+                  'number of spacecraft and contain lists of light devices')
             exit(1)
 
     gsdScList = False
@@ -1184,6 +1196,15 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 for gs in gsScList[c]:
                     gsList.append(gs)
                 scData.genericSensorList = vizInterface.GenericSensorVector(gsList)
+
+        # process spacecraft lights
+        if liScList:
+            liList = []
+            if liScList[c] is not None: # light objects(s) have been added to this spacecraft
+                for li in liScList[c]:
+                    liList.append(li)
+                scData.lightList = vizInterface.LightVector(liList)
+
 
         # process generic sensor HUD information
         if gsdScList:

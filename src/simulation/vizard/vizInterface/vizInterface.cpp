@@ -814,6 +814,27 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
             }
 
+            // Write light device messages
+            for (size_t idx =0; idx < (size_t) scIt->lightList.size(); idx++) {
+                vizProtobufferMessage::VizMessage::Light* ld = scp->add_lights();
+
+                ld->set_name(scIt->lightList[idx].name);
+                for (uint64_t j=0; j<3; j++) {
+                    ld->add_position(scIt->lightList[idx].position[j]);
+                    ld->add_normalvector(scIt->lightList[idx].normalVector[j]);
+                }
+                ld->set_fieldofview(scIt->lightList[idx].fieldOfView*R2D);
+                ld->set_range(scIt->lightList[idx].range);
+                ld->set_intensity(scIt->lightList[idx].intensity);
+                ld->set_lensdiameter(scIt->lightList[idx].lensDiameter);
+                for (uint64_t j=0; j<scIt->lightList[idx].color.size(); j++) {
+                    ld->add_color(scIt->lightList[idx].color[j]);
+                }
+                ld->set_showlensflare(scIt->lightList[idx].showLensFlare);
+                ld->set_lensflarebrightness(scIt->lightList[idx].lensFlareBrightness);
+                ld->set_lensflarefadespeed(scIt->lightList[idx].lensFlareFadeSpeed);
+            }
+
         }
     }
 
