@@ -1186,3 +1186,109 @@ Here the first spacecraft has no transceiver, and the 2nd spacecraft has 2 trans
 See :ref:`scenarioGroundLocationImaging` for an example of using a data storage visualization.
 The example :ref:`scenario_BasicOrbitMultiSat` illustrates how to show a battery or fuel tank storage device.
 
+
+
+Adding Spacecraft Light Devices
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Vizard can add light emitting devices, i.e. spotlights, to a spacecraft object. First, let's discuss how to
+setup a light device.  The associated light structure and the required
+parameters are set using::
+
+    scLight.name = "Main Light"
+    scLight.position = [0.2, -1.0, 1.01]
+    scLight.fieldOfView = 3.0 * macros.D2R
+    scLight.normalVector = [0, 0, 1]
+    scLight.range = 50.0
+    scLight.intensity = 6.0
+    scLight.lensDiameter = 0.02
+    scLight.color = vizInterface.IntVector(vizSupport.toRGBA255("red"))
+    scLight.showLensFlare = 1
+    scLight.lensFlareFadeSpeed = 2.0
+    scLight.lensFlareBrightness = 0.5
+
+The light location relative to the spacecraft B frame is given by ``position``.  The light normalaxis is
+set through ``normalVector``.  The edge-to-edge ``fieldOfView`` is set in radians.
+The full list of required and optional generic sensor parameters are provided in the following table.
+
+.. list-table:: Generic Sensor Configuration Options
+    :widths: 20 10 10 10 100
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Units
+      - Required
+      - Description
+    * - ``name``
+      - string
+      -
+      - No
+      - Label to use to identify light
+    * - ``position``
+      - double[3]
+      - m
+      - Yes
+      - position of the light in body frame
+    * - ``normalVector``
+      - double[3]
+      -
+      - Yes
+      - normal vector of the light in the body frame
+    * - ``fieldOfView``
+      - float
+      - rad
+      - Yes
+      - edge-to-edge light cone angle
+    * - ``range``
+      - double
+      - m
+      - Yes
+      - Distance light will act over
+    * - ``intensity``
+      - double
+      -
+      - No
+      - Intensity of light at light origin, default is 1.0
+    * - ``lensDiameter``
+      - double
+      - m
+      - No
+      - Size to draw the visible lens of the light, default is 0.01 m
+    * - ``color``
+      - vector<int>
+      -
+      - No
+      - Send desired RGBA as values between 0 and 255, default is pure white
+    * - ``showLensFlare``
+      - double
+      -
+      - No
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``lensFlareBrightness``
+      - double
+      -
+      - No
+      - Simulates refraction of light in camera lens, this value controls the size and brightness
+        of the lens flare, default is 0.3
+    * - ``lensFlareFadeSpeed``
+      - double
+      -
+      - No
+      - Speed with which the lens flare fades, default is 4.0
+
+
+Multiple light devices can be created for each spacecraft, and multiple spacecraft are supported.  Using
+the ``vizSupport.py`` file, the sensors are sent to :ref:`vizInterface` using they keyword ``lightList``::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , saveFile=fileName
+                                              , lightList=scLight
+                                              )
+
+Note that here a single light and spacecraft is setup.  If you have multiple sensors, or multiple spacecraft,
+then lists of lists are required::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
+                                              , saveFile=fileName
+                                              , lightList=[ [scLight], None ]
+                                              )
