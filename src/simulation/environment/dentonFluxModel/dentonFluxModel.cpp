@@ -199,13 +199,14 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     //double finalElecAll[7]; //!< Desired end result for all F10.7
     //double finalIonAll[7];
 
-    //  Calculate both Sun snd spacecraft position vectors from Earth in ECI frame
-    double sat_r_EN_N[3] = {scStateInMsgBuffer.r_BN_N[0] - earthSpiceInMsgBuffer.PositionVector[0], scStateInMsgBuffer.r_BN_N[1] - earthSpiceInMsgBuffer.PositionVector[1], scStateInMsgBuffer.r_BN_N[2] - earthSpiceInMsgBuffer.PositionVector[2]};
-    
-    double sun_r_EN_N[3] = {sunSpiceInMsgBuffer.PositionVector[0] - earthSpiceInMsgBuffer.PositionVector[0], sunSpiceInMsgBuffer.PositionVector[1] - earthSpiceInMsgBuffer.PositionVector[1], sunSpiceInMsgBuffer.PositionVector[2] - earthSpiceInMsgBuffer.PositionVector[2]};
+    //  Calculate both Sun snd spacecraft B position vectors from Earth in ECI frame
+    double r_BE_N[3];       /* satellite position relative to Earth in N frame components */
+    double r_SE_N[3];       /* sun position relative to Earth in N frame components */
+    v3Subtract(scStateInMsgBuffer.r_BN_N, earthSpiceInMsgBuffer.PositionVector, r_BE_N);
+    v3Subtract(sunSpiceInMsgBuffer.PositionVector, earthSpiceInMsgBuffer.PositionVector, r_SE_N);
     
     // Find local lime from spacecraft and Earth state messages
-    calcLocalTime(sat_r_EN_N, sun_r_EN_N);
+    calcLocalTime(r_BE_N, r_SE_N);
     
     // For loop to calculate each element of output flux vectors
     for (int i = 0; i < numEnergies; i++)
