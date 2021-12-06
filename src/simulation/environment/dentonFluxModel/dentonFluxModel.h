@@ -42,7 +42,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     
     /* public variables */
-    int numEnergies = -1;               //!< number of energy bins used in the output message
+    int numOutputEnergies = -1;               //!< number of energy bins used in the output message
     int kpIndex = -1;                   //!< Kp index
     std::string dataPath = "";          //!< -- String with the path to the Denton GEO data
 

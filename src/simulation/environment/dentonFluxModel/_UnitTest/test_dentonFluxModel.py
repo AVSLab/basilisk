@@ -72,7 +72,7 @@ def dentonFluxModelTestFunction(show_plots, param1, param2, accuracy):
     module = dentonFluxModel.DentonFluxModel()
     module.ModelTag = "dentonFluxModule"
     module.kpIndex = 2
-    module.numEnergies = 50
+    module.numOutputEnergies = 30
     module.dataPath = bskPath + '/supportData/DentonGEO/'
     print(module.dataPath)
 

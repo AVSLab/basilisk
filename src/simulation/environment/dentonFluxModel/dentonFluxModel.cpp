@@ -66,11 +66,11 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     }
 
     // Check the disired array size is not larger than the maximum value
-    if (this->numEnergies > MAX_PLASMA_FLUX_SIZE)
+    if (this->numOutputEnergies > MAX_PLASMA_FLUX_SIZE)
     {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Maximum denton space weather array size exceeded.");
     }
-    if (this->numEnergies < 0)
+    if (this->numOutputEnergies < 0)
     {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.numEnergies was not set.");
     }
@@ -107,10 +107,10 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     
     // Define Energy Array
     double inputEnergies[numEnergies];          /* HPS: can't do this */
-    double step = (40000 - 1)/numEnergies;
+    double step = (40000 - 1)/numOutputEnergies;
  
     inputEnergies[0] = 1;
-    for (int i = 1; i < numEnergies; i++)
+    for (int i = 1; i < numOutputEnergies; i++)
     {
         inputEnergies[i] = inputEnergies[i-1] + step;
     }
@@ -211,7 +211,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     calcLocalTime(r_BE_N, r_SE_N);
     
     // For loop to calculate each element of output flux vectors
-    for (int i = 0; i < numEnergies; i++)
+    for (int i = 0; i < numOutputEnergies; i++)
     {
         this->chooseEnergy = inputEnergies[i];
             
