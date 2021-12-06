@@ -18,6 +18,8 @@
 # 
 
 import pytest
+from Basilisk import __path__
+bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
@@ -68,22 +70,38 @@ def dentonFluxModelTestFunction(show_plots, param1, param2, accuracy):
 
     # setup module to be tested
     module = dentonFluxModel.DentonFluxModel()
-    module.ModelTag = "dentonFluxModelTag"
+    module.ModelTag = "dentonFluxModule"
+    module.kpIndex = 2
+    module.numEnergies = 50
+    module.dataPath = bskPath + '/supportData/DentonGEO/'
+    print(module.dataPath)
+
     unitTestSim.AddModelToTask(unitTaskName, module)
 
-    # Configure blank module input messages
+    # Configure input messages
     scStateInMsgData = messaging.SCStatesMsgPayload()
+    scStateInMsgData.r_BN_N = [7000, 0, 0]
     scStateInMsg = messaging.SCStatesMsg().write(scStateInMsgData)
+
+    sunStateInMsgData = messaging.SpicePlanetStateMsgPayload()
+    sunStateInMsgData.PositionVector = [0, 149000000000.0, 0]
+    sunStateInMsg = messaging.SpicePlanetStateMsg().write(sunStateInMsgData)
+
+    earthStateInMsgData = messaging.SpicePlanetStateMsgPayload()
+    earthStateInMsgData.PositionVector = [0, 0, 0]
+    earthStateInMsg = messaging.SpicePlanetStateMsg().write(earthStateInMsgData)
 
     # subscribe input messages to module
     module.scStateInMsg.subscribeTo(scStateInMsg)
+    module.earthStateInMsg.subscribeTo(earthStateInMsg)
+    module.sunStateInMsg.subscribeTo(sunStateInMsg)
 
     # setup output message recorder objects
     fluxOutMsgRec = module.fluxOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, fluxOutMsgRec)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))
     unitTestSim.ExecuteSimulation()
 
     # pull module data and make sure it is correct
