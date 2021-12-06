@@ -42,9 +42,10 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     
     /* public variables */
-    int numEnergies = -1;          //!< number of energy bins used in the output message
-    int kpIndex = -1;              //!< Kp index
-    
+    int numEnergies = -1;               //!< number of energy bins used in the output message
+    int kpIndex = -1;                   //!< Kp index
+    std::string dataPath = "";          //!< -- String with the path to the Denton GEO data
+
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;  //!<  spacecraft state input message
     ReadFunctor<SpicePlanetStateMsgPayload> earthStateInMsg;  //!< Earth planet state input message
     ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg;  //!< sun state input message
@@ -56,7 +57,7 @@ public:
 private:
 
     double chooseEnergy;
-    double localTime;           //!< [??] local time in the GEO belt
+    double localTime;
 
     void calcLocalTime(double v1[3], double v2[3]);     //!< calculate the local time
     double bilinear(int, int, double, double, double, double, double, double, double);

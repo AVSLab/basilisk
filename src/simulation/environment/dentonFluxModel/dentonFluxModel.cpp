@@ -72,6 +72,9 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.numEnergies was not set.");
     }
+    if (this->dataPath == "") {
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.dataPath was not set.");
+    }
 
 }
 
@@ -101,7 +104,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     int numLocalTimes = 24;
     
     // Define Energy Array
-    double inputEnergies[numEnergies];
+    double inputEnergies[numEnergies];          /* HPS: can't do this */
     double step = (40000 - 1)/numEnergies;
  
     inputEnergies[0] = 1;
@@ -116,43 +119,56 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     // Ion: All F10.7
     double mean_i_all[numKps][numEnergies][numLocalTimes];
     
+    // HPS: why is this done in update and note in Reset()??
+    
     // Input file stream object
     std::ifstream inputFile1;
     
     // Read data from file 1: electron all F10.7
-    inputFile1.open("/Basilisk/src/simulation/environment/dentonFluxModel/data/model_e_array_all.txt");
+    inputFile1.open(this->dataPath + "model_e_array_all.txt");
     
     // Read information into arrays: MEAN
-    for (int i = 0; i < numKps; i++)
-    {   for (int j = 0; j < numEnergies; j++)
-        {   for (int k = 0; k < numLocalTimes; k++)
-            {   inputFile1 >> mean_e_all[i][j][k];
-                //cout << mean_e_all[i][j][k];
+    if (inputFile1.is_open()) {
+        for (int i = 0; i < numKps; i++)
+        {   for (int j = 0; j < numEnergies; j++)
+            {   for (int k = 0; k < numLocalTimes; k++)
+                {   inputFile1 >> mean_e_all[i][j][k];
+//                    std::cout << mean_e_all[i][j][k] << std::endl;
+                }
             }
         }
+    } else {
+        bskLogger.bskLog(BSK_ERROR, ("Could not open " + this->dataPath + "model_e_array_all.txt").c_str());
     }
     
     // Close file
     inputFile1.close();
+    printf("HPS:\n");
     
     // Input file stream object
     std::ifstream inputFile2;
     
     // Read data from file 2: ion all F10.7
-    inputFile2.open("/Basilisk/src/simulation/environment/dentonFluxModel/data/model_i_array_all.txt");
+    inputFile2.open(this->dataPath + "model_i_array_all.txt");
     
     // Read information into arrays: MEAN
-    for (int i = 0; i < numKps; i++)
-    {   for (int j = 0; j < numEnergies; j++)
-        {   for (int k = 0; k < numLocalTimes; k++)
-            {   inputFile2 >> mean_i_all[i][j][k];
-                //cout << mean_i_all[i][j][k];
+    if (inputFile2.is_open()) {
+        for (int i = 0; i < numKps; i++)
+        {   for (int j = 0; j < numEnergies; j++)
+            {   for (int k = 0; k < numLocalTimes; k++)
+                {   inputFile2 >> mean_i_all[i][j][k];
+//                    std::cout << mean_i_all[i][j][k] << std::endl;
+                }
             }
         }
+    } else {
+        bskLogger.bskLog(BSK_ERROR, ("Could not open " + this->dataPath + "model_i_array_all.txt").c_str());
     }
+    
     
     // Close file
     inputFile2.close();
+    printf("HPS:\n");
     
     // Fill average centre energies, normalized by satellite
     double enElec[40] = {1.034126,     1.346516,     1.817463,     2.399564,
@@ -341,3 +357,4 @@ double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double y,
     }
 
 }
+
