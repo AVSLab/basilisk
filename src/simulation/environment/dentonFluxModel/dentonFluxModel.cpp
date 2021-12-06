@@ -19,6 +19,8 @@
 
 #include "simulation/environment/dentonFluxModel/dentonFluxModel.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/astroConstants.h"
+
 #include <iostream>
 #include <cstring>
 #include <fstream>
@@ -204,7 +206,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     double r_SE_N[3];       /* sun position relative to Earth in N frame components */
     v3Subtract(scStateInMsgBuffer.r_BN_N, earthSpiceInMsgBuffer.PositionVector, r_BE_N);
     v3Subtract(sunSpiceInMsgBuffer.PositionVector, earthSpiceInMsgBuffer.PositionVector, r_SE_N);
-    
+
     // Find local lime from spacecraft and Earth state messages
     calcLocalTime(r_BE_N, r_SE_N);
     
@@ -320,7 +322,7 @@ void DentonFluxModel::calcLocalTime(double sunIPosVec[3], double scIPosVec[3])
     double x = v2Dot(sc2DIPos_hat, sun2DIPos_hat);
     double y = sun2DIPos_hat[0]*sc2DIPos_hat[1] - sun2DIPos_hat[1]*sc2DIPos_hat[0];
     
-    double theta = atan2(y,x)*(3.141592654/180);
+    double theta = atan2(y,x);
 
     if (y == 1 || y == -1)
     {
@@ -328,7 +330,7 @@ void DentonFluxModel::calcLocalTime(double sunIPosVec[3], double scIPosVec[3])
     }
     else
     {
-        this->localTime = 12.00 + (theta / 360)*24;
+        this->localTime = 12.00 + (theta / (2.*M_PI))*24;
     }
     
     return;
