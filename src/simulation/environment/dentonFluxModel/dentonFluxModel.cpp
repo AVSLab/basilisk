@@ -308,23 +308,20 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
 /*! method to calculate the local time of the spacecraft within the GEO belt
     @return void
 */
-void DentonFluxModel::calcLocalTime(double sunIPosVec[3], double scIPosVec[3])
+void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
 {
-    // Calculate 2D position vector magnitudes
-    double sc2DIPosMag = sqrt(scIPosVec[0]*scIPosVec[0] + scIPosVec[1]*scIPosVec[1]);
-    double sun2DIPosMag = sqrt(sunIPosVec[0]*sunIPosVec[0] + sunIPosVec[1]*sunIPosVec[1]);
-    
-    // Convert positions to 2D unit vectors
-    double sc2DIPos_hat[2] = {scIPosVec[0]/sc2DIPosMag, scIPosVec[1]/sc2DIPosMag};
-    double sun2DIPos_hat[2] = {sunIPosVec[0]/sun2DIPosMag, sunIPosVec[1]/sun2DIPosMag};
+    double r_BE_N_hat[2];       /* unit vector from Earth to spacecraft */
+    double r_SE_N_hat[2];       /* unit vector from Earth to Sun */
+    v2Normalize(r_BE_N, r_BE_N_hat);
+    v2Normalize(r_SE_N, r_SE_N_hat);
     
     // Determine Local Time: Using atan2()
-    double x = v2Dot(sc2DIPos_hat, sun2DIPos_hat);
-    double y = sun2DIPos_hat[0]*sc2DIPos_hat[1] - sun2DIPos_hat[1]*sc2DIPos_hat[0];
+    double x = v2Dot(r_BE_N_hat, r_SE_N_hat);
+    double y = r_SE_N_hat[0]*r_BE_N_hat[1] - r_SE_N_hat[1]*r_BE_N_hat[0];
     
     double theta = atan2(y,x);
 
-    if (y == 1 || y == -1)
+    if (y == 1 || y == -1)      // HPS: check that this is still ok?
     {
         this->localTime = 0.0;    //!<  Data files are from 0-23 LT
     }

@@ -315,6 +315,17 @@ void v2Copy(double v[2],
     }
 }
 
+void v2Scale(double scaleFactor,
+             double v[2],
+             double result[2])
+{
+    size_t dim = 2;
+    size_t i;
+    for(i = 0; i < dim; i++) {
+        result[i] = v[i] * scaleFactor;
+    }
+}
+
 double v2Dot(double v1[2],
              double v2[2])
 {
@@ -375,6 +386,25 @@ void v2Subtract(double v1[2],
         result[i] = v1[i] - v2[i];
     }
 }
+
+double v2Norm(double v[2])
+{
+    return sqrt(v2Dot(v, v));
+}
+
+void v2Normalize(double v[2], double result[2])
+{
+    double norm = v2Norm(v);
+    if(norm > DB0_EPS) {
+        v2Scale(1. / norm, v, result);
+    } else {
+        v2SetZero(result);
+    }
+}
+
+
+
+
 
 
 void v3Set(double v0, double v1, double v2,
