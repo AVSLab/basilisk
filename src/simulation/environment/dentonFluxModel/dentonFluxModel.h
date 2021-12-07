@@ -51,6 +51,8 @@ public:
     int numOutputEnergies = -1;               //!< number of energy bins used in the output message
     int kpIndex = -1;                   //!< Kp index
     std::string dataPath = "";          //!< -- String with the path to the Denton GEO data
+    std::string eDataFileName = "model_e_array_all.txt";   //!< file name of the electron data file 
+    std::string iDataFileName = "model_i_array_all.txt";   //!< file name of the ion data file
 
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;  //!<  spacecraft state input message
     ReadFunctor<SpicePlanetStateMsgPayload> earthStateInMsg;  //!< Earth planet state input message

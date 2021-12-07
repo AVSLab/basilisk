@@ -96,8 +96,8 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     }
 
     // Read in Denton data files
-    readDentonDataFile("model_e_array_all.txt", this->mean_e_all);
-    readDentonDataFile("model_i_array_all.txt", this->mean_i_all);
+    readDentonDataFile(this->eDataFileName, this->mean_e_all);
+    readDentonDataFile(this->iDataFileName, this->mean_i_all);
 
 }
 
