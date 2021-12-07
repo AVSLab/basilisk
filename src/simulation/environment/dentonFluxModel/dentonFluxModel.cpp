@@ -77,6 +77,23 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     if (this->dataPath == "") {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.dataPath was not set.");
     }
+    
+    // convert energies to log10 values
+    for (int k = 0; k < MAX_NUM_ENERGIES; k++)
+    {
+        this->logEnElec[k] = log(this->enElec[k]);
+        this->logEnProt[k] = log(this->enProt[k]);
+    }
+
+    // Define Energy Array
+    double step = (40000 - 1)/this->numOutputEnergies;
+ 
+    this->inputEnergies[0] = 1;
+    for (int i = 1; i < numOutputEnergies; i++)
+    {
+        this->inputEnergies[i] = this->inputEnergies[i-1] + step;
+    }
+
 
 }
 
@@ -101,25 +118,13 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     earthSpiceInMsgBuffer = this->earthStateInMsg();
     
     // Set parameters
-    int numKps = 28;
-    int numEnergies = 40;
-    int numLocalTimes = 24;
     
-    // Define Energy Array
-    double inputEnergies[numEnergies];          /* HPS: can't do this */
-    double step = (40000 - 1)/numOutputEnergies;
- 
-    inputEnergies[0] = 1;
-    for (int i = 1; i < numOutputEnergies; i++)
-    {
-        inputEnergies[i] = inputEnergies[i-1] + step;
-    }
     
     // Electron: All F10.7
-    double mean_e_all[numKps][numEnergies][numLocalTimes];
+    double mean_e_all[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
     
     // Ion: All F10.7
-    double mean_i_all[numKps][numEnergies][numLocalTimes];
+    double mean_i_all[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
     
     // HPS: why is this done in update and note in Reset()??
     
@@ -131,9 +136,9 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     
     // Read information into arrays: MEAN
     if (inputFile1.is_open()) {
-        for (int i = 0; i < numKps; i++)
-        {   for (int j = 0; j < numEnergies; j++)
-            {   for (int k = 0; k < numLocalTimes; k++)
+        for (int i = 0; i < MAX_NUM_KPS; i++)
+        {   for (int j = 0; j < MAX_NUM_ENERGIES; j++)
+            {   for (int k = 0; k < MAX_NUM_LOCAL_TIMES; k++)
                 {   inputFile1 >> mean_e_all[i][j][k];
 //                    std::cout << mean_e_all[i][j][k] << std::endl;
                 }
@@ -154,9 +159,9 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     
     // Read information into arrays: MEAN
     if (inputFile2.is_open()) {
-        for (int i = 0; i < numKps; i++)
-        {   for (int j = 0; j < numEnergies; j++)
-            {   for (int k = 0; k < numLocalTimes; k++)
+        for (int i = 0; i < MAX_NUM_KPS; i++)
+        {   for (int j = 0; j < MAX_NUM_ENERGIES; j++)
+            {   for (int k = 0; k < MAX_NUM_LOCAL_TIMES; k++)
                 {   inputFile2 >> mean_i_all[i][j][k];
 //                    std::cout << mean_i_all[i][j][k] << std::endl;
                 }
@@ -170,28 +175,6 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     // Close file
     inputFile2.close();
     
-    // Fill average centre energies, normalized by satellite
-    double enElec[40] = {1.034126,     1.346516,     1.817463,     2.399564,
-    3.161048,     4.153217,     5.539430,     7.464148,
-    9.836741,    12.543499,    16.062061,    20.876962,
-    27.183572,    35.843437,    47.179073,    61.424732,
-    80.120170,   104.563461,   136.914871,   179.740982,
-    235.406829,   309.020721,   405.806213,   532.664123,
-    699.243896,   917.146484,  1205.174438,  1582.510986,
-    2069.619628,  2703.301269,  3540.124511,  4639.775390,
-    6069.347656,  7957.457519, 10436.841796, 13677.195312,
-    17923.560546, 23488.560546, 30782.000000, 40326.937500};
-    
-    double enProt[40] = { 1.816424,     2.284231,     2.904752,     3.639589,
-    4.483188,     5.671049,     7.343667,     9.450922,
-    11.934194,    15.105951,    19.372854,    24.943658,
-    32.053474,    41.142940,    53.239536,    68.940170,
-    89.082473,   115.585487,   150.529022,   196.249755,
-    256.610107,   335.709136,   439.549621,   574.766357,
-    749.907531,   982.261108,  1278.967041,  1662.856079,
-    2170.886474,  2829.989013,  3691.509765,  4822.499023,
-    6300.260742,  8217.569335, 10726.390625, 14001.280273,
-    18276.244140, 23856.085937, 31140.962890, 40649.562500};
     
     // Define output (array if we open more than 2 files)
     double finalElecAll;
@@ -211,28 +194,18 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     // For loop to calculate each element of output flux vectors
     for (int i = 0; i < numOutputEnergies; i++)
     {
-        this->chooseEnergy = inputEnergies[i];
-            
         // Convert energies to log10
-        double chooseEnergyLog = log(this->chooseEnergy);
-        double logEnElec[numEnergies];
-        double logEnProt[numEnergies];
-        
-        for (int k = 0; k < numEnergies; k++)
-        {
-            logEnElec[k] = log(enElec[k]);
-            logEnProt[k] = log(enProt[k]);
-        }
-        
+        double logInputEnergy = log(inputEnergies[i]);
+                
         // ELECTRONS: Find nearest neighbors in energy
         double eHigher = 0.0;
         double eLower = 0.0;
         int eHigherIndex = 0;
         int eLowerIndex = 0;
         
-        for (int j = 0; j < numEnergies; j++)
+        for (int j = 0; j < MAX_NUM_ENERGIES; j++)
         {
-            if (logEnElec[j] > chooseEnergyLog)
+            if (logEnElec[j] > logInputEnergy)
             {
                 eHigher = logEnElec[j];
                 eLower = logEnElec[j-1];
@@ -251,9 +224,9 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         int iHigherIndex = 0;
         int iLowerIndex = 0;
         
-        for (int m = 0; m < numEnergies; m++)
+        for (int m = 0; m < MAX_NUM_ENERGIES; m++)
         {
-            if (logEnProt[m] > chooseEnergyLog)
+            if (logEnProt[m] > logInputEnergy)
             {
                 iHigher = logEnProt[m];
                 iLower = logEnProt[m-1];
@@ -282,7 +255,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         flux14 = mean_e_all[this->kpIndex][eHigherIndex][localTimeCeil];
         
         // ELECTRON: Find flux
-        finalElecAll = bilinear((localTimeFloor - 1), (localTimeCeil-1), logEnElec[eLowerIndex], logEnElec[eHigherIndex], chooseEnergyLog, flux11, flux12, flux13, flux14);
+        finalElecAll = bilinear((localTimeFloor - 1), (localTimeCeil-1), logEnElec[eLowerIndex], logEnElec[eHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);
         
         // ION: Gather four nearest *MEAN* flux values for *ALL F10.7*
         flux11 = mean_i_all[this->kpIndex][iLowerIndex][localTimeFloor];
@@ -291,12 +264,12 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         flux14 = mean_i_all[this->kpIndex][iHigherIndex][localTimeCeil];
         
         // ION: Find flux
-        finalIonAll = bilinear(localTimeFloor, localTimeCeil, logEnProt[iHigherIndex], logEnProt[iLowerIndex], chooseEnergyLog, flux11, flux12, flux13, flux14);
+        finalIonAll = bilinear(localTimeFloor, localTimeCeil, logEnProt[iHigherIndex], logEnProt[iLowerIndex], logInputEnergy, flux11, flux12, flux13, flux14);
         
         // Store the output message
         fluxOutMsgBuffer.meanElectronFlux[i] = finalElecAll;
         fluxOutMsgBuffer.meanIonFlux[i] = finalIonAll;
-        fluxOutMsgBuffer.energies[i] = this->chooseEnergy;
+        fluxOutMsgBuffer.energies[i] = inputEnergies[i];
     }
     
     // Write to the output message
