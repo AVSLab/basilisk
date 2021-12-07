@@ -145,7 +145,6 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     
     // Close file
     inputFile1.close();
-    printf("HPS:\n");
     
     // Input file stream object
     std::ifstream inputFile2;
@@ -170,7 +169,6 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     
     // Close file
     inputFile2.close();
-    printf("HPS:\n");
     
     // Fill average centre energies, normalized by satellite
     double enElec[40] = {1.034126,     1.346516,     1.817463,     2.399564,
@@ -321,9 +319,9 @@ void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
     
     double theta = atan2(y,x);
 
-    if (y == 1 || y == -1)      // HPS: check that this is still ok?
+    if (x <= -1.0)
     {
-        this->localTime = 0.0;    //!<  Data files are from 0-23 LT
+        this->localTime = 0.0;    //!<  Data files are from 0-23 LT, this results in 24h being 0h
     }
     else
     {
