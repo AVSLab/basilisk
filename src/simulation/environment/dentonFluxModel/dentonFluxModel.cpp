@@ -41,6 +41,7 @@ DentonFluxModel::~DentonFluxModel()
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
+    @param CurrentSimNanos current simulation time in nano-seconds
     @return void
 */
 void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
@@ -102,6 +103,7 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
 
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
+    @param CurrentSimNanos current simulation time in nano-seconds
     @return void
 */
 void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
@@ -116,7 +118,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     fluxOutMsgBuffer = this->fluxOutMsg.zeroMsgPayload;
 
     // Read in the input messages
-    scStateInMsgBuffer = this->scStateInMsg();  //!< populating local copy
+    scStateInMsgBuffer = this->scStateInMsg();
     sunSpiceInMsgBuffer = this->sunStateInMsg();
     earthSpiceInMsgBuffer = this->earthStateInMsg();
     
@@ -219,6 +221,8 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! method to calculate the local time of the spacecraft within the GEO belt
+    @param r_SE_N sun position vector relative to the Earth
+    @param r_BE_N spacecraft position vector relative to the Earth
     @return void
 */
 void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
@@ -231,7 +235,6 @@ void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
     // Determine Local Time: Using atan2()
     double x = v2Dot(r_BE_N_hat, r_SE_N_hat);
     double y = r_SE_N_hat[0]*r_BE_N_hat[1] - r_SE_N_hat[1]*r_BE_N_hat[0];
-    
     double theta = atan2(y,x);
 
     if (x <= -1.0)
