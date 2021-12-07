@@ -94,6 +94,9 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
         this->inputEnergies[i] = this->inputEnergies[i-1] + step;
     }
 
+    // Read in Denton data files
+    readDentonDataFile("model_e_array_all.txt", this->mean_e_all);
+    readDentonDataFile("model_i_array_all.txt", this->mean_i_all);
 
 }
 
@@ -117,70 +120,9 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     sunSpiceInMsgBuffer = this->sunStateInMsg();
     earthSpiceInMsgBuffer = this->earthStateInMsg();
     
-    // Set parameters
-    
-    
-    // Electron: All F10.7
-    double mean_e_all[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
-    
-    // Ion: All F10.7
-    double mean_i_all[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
-    
-    // HPS: why is this done in update and note in Reset()??
-    
-    // Input file stream object
-    std::ifstream inputFile1;
-    
-    // Read data from file 1: electron all F10.7
-    inputFile1.open(this->dataPath + "model_e_array_all.txt");
-    
-    // Read information into arrays: MEAN
-    if (inputFile1.is_open()) {
-        for (int i = 0; i < MAX_NUM_KPS; i++)
-        {   for (int j = 0; j < MAX_NUM_ENERGIES; j++)
-            {   for (int k = 0; k < MAX_NUM_LOCAL_TIMES; k++)
-                {   inputFile1 >> mean_e_all[i][j][k];
-//                    std::cout << mean_e_all[i][j][k] << std::endl;
-                }
-            }
-        }
-    } else {
-        bskLogger.bskLog(BSK_ERROR, ("Could not open " + this->dataPath + "model_e_array_all.txt").c_str());
-    }
-    
-    // Close file
-    inputFile1.close();
-    
-    // Input file stream object
-    std::ifstream inputFile2;
-    
-    // Read data from file 2: ion all F10.7
-    inputFile2.open(this->dataPath + "model_i_array_all.txt");
-    
-    // Read information into arrays: MEAN
-    if (inputFile2.is_open()) {
-        for (int i = 0; i < MAX_NUM_KPS; i++)
-        {   for (int j = 0; j < MAX_NUM_ENERGIES; j++)
-            {   for (int k = 0; k < MAX_NUM_LOCAL_TIMES; k++)
-                {   inputFile2 >> mean_i_all[i][j][k];
-//                    std::cout << mean_i_all[i][j][k] << std::endl;
-                }
-            }
-        }
-    } else {
-        bskLogger.bskLog(BSK_ERROR, ("Could not open " + this->dataPath + "model_i_array_all.txt").c_str());
-    }
-    
-    
-    // Close file
-    inputFile2.close();
-    
-    
     // Define output (array if we open more than 2 files)
     double finalElecAll;
     double finalIonAll;
-    //double finalElecAll[7]; //!< Desired end result for all F10.7
-    //double finalIonAll[7];
 
     //  Calculate both Sun snd spacecraft B position vectors from Earth in ECI frame
     double r_BE_N[3];       /* satellite position relative to Earth in N frame components */
@@ -249,19 +191,19 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         double flux14 = 0.0;
         
         // ELECTRON: Gather four nearest *MEAN* flux values for *ALL F10.7*
-        flux11 = mean_e_all[this->kpIndex][eLowerIndex][localTimeFloor];
-        flux12 = mean_e_all[this->kpIndex][eHigherIndex][localTimeFloor];
-        flux13 = mean_e_all[this->kpIndex][eLowerIndex][localTimeCeil];
-        flux14 = mean_e_all[this->kpIndex][eHigherIndex][localTimeCeil];
+        flux11 = this->mean_e_all[this->kpIndex][eLowerIndex][localTimeFloor];
+        flux12 = this->mean_e_all[this->kpIndex][eHigherIndex][localTimeFloor];
+        flux13 = this->mean_e_all[this->kpIndex][eLowerIndex][localTimeCeil];
+        flux14 = this->mean_e_all[this->kpIndex][eHigherIndex][localTimeCeil];
         
         // ELECTRON: Find flux
         finalElecAll = bilinear((localTimeFloor - 1), (localTimeCeil-1), logEnElec[eLowerIndex], logEnElec[eHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);
         
         // ION: Gather four nearest *MEAN* flux values for *ALL F10.7*
-        flux11 = mean_i_all[this->kpIndex][iLowerIndex][localTimeFloor];
-        flux12 = mean_i_all[this->kpIndex][iHigherIndex][localTimeFloor];
-        flux13 = mean_i_all[this->kpIndex][iLowerIndex][localTimeCeil];
-        flux14 = mean_i_all[this->kpIndex][iHigherIndex][localTimeCeil];
+        flux11 = this->mean_i_all[this->kpIndex][iLowerIndex][localTimeFloor];
+        flux12 = this->mean_i_all[this->kpIndex][iHigherIndex][localTimeFloor];
+        flux13 = this->mean_i_all[this->kpIndex][iLowerIndex][localTimeCeil];
+        flux14 = this->mean_i_all[this->kpIndex][iHigherIndex][localTimeCeil];
         
         // ION: Find flux
         finalIonAll = bilinear(localTimeFloor, localTimeCeil, logEnProt[iHigherIndex], logEnProt[iLowerIndex], logInputEnergy, flux11, flux12, flux13, flux14);
@@ -327,5 +269,39 @@ double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double y,
         return bilinear;
     }
 
+}
+
+
+/*! Read in the Denton data file
+    @param fileName data file name
+    @param outArray data array pointer
+    @return void
+*/
+void DentonFluxModel::readDentonDataFile(std::string fileName, double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES])
+{
+    // Input file stream object
+    std::ifstream inputFile;
+    
+    // Read data from file 1: electron all F10.7
+    inputFile.open(this->dataPath + fileName);
+    
+    // Read information into arrays: MEAN
+    if (inputFile.is_open()) {
+        for (int i = 0; i < MAX_NUM_KPS; i++)
+        {   for (int j = 0; j < MAX_NUM_ENERGIES; j++)
+            {   for (int k = 0; k < MAX_NUM_LOCAL_TIMES; k++)
+                {
+                    inputFile >> data[i][j][k];
+                }
+            }
+        }
+    } else {
+        bskLogger.bskLog(BSK_ERROR, ("Could not open " + this->dataPath + fileName).c_str());
+    }
+    
+    // Close file
+    inputFile.close();
+    
+    return;
 }
 

@@ -67,6 +67,12 @@ private:
     double logEnProt[MAX_NUM_ENERGIES];     /* log of the proton energies */
     double inputEnergies[MAX_NUM_ENERGIES];     /* input energies considered in this module */
 
+    // Electron: All F10.7
+    double mean_e_all[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
+    
+    // Ion: All F10.7
+    double mean_i_all[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
+        
     // Fill average centre energies, normalized by satellite
     double enElec[40] = {1.034126,     1.346516,     1.817463,     2.399564,
     3.161048,     4.153217,     5.539430,     7.464148,
@@ -93,6 +99,7 @@ private:
     
     void calcLocalTime(double v1[3], double v2[3]);     //!< calculate the local time
     double bilinear(int, int, double, double, double, double, double, double, double);
+    void readDentonDataFile(std::string fileName, double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES]);
 
 };
 
