@@ -191,7 +191,10 @@ default setting for that behavior.
       - int
       - Toggle to reduce brightness of sun lighting with the square of the distance from the sun.
         Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
-
+    * - ``showLightLabels``
+      - int
+      - Toggle to label spacecraft light elements, Value of 0 (protobuffer default) to use viz
+        default, -1 for false, 1 for true
 
 
 While the prior settings are only read once during start up, the following settings are checked
