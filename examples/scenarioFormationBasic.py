@@ -419,17 +419,13 @@ def run(show_plots):
     # to save the BSK data to a file, uncomment the saveFile line below
     if vizFound:
         servicerLight = vizInterface.Light()
-        servicerLight.name = "Main Light"
+        servicerLight.label = "Main Light"
         servicerLight.position = [0.2, -1.0, 1.01]
         servicerLight.fieldOfView = 3.0 * macros.D2R
         servicerLight.normalVector = [0, 0, 1]
         servicerLight.range = 50.0
-        servicerLight.intensity = 6.0
-        servicerLight.lensDiameter = 0.02
+        servicerLight.markerDiameter = 0.1
         servicerLight.color = vizInterface.IntVector(vizSupport.toRGBA255("red"))
-        servicerLight.showLensFlare = 1
-        servicerLight.lensFlareFadeSpeed = 2.0
-        servicerLight.lensFlareBrightness = 0.5
 
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2, scObject3]
                                                   , rwEffectorList=[rwStateEffector, rwStateEffector2, None]

@@ -182,17 +182,21 @@ typedef struct
 Light
 //@endcond
 {
-    std::string name; //[Optional] Name to use to identify light
-    double position[3]; // [m] position of the light in body frame
-    double fieldOfView; //[rad] angle is measured edge-to-edge
-    double normalVector[3];  // [] normal vector of the light in the body frame
-    double range; // [m] Distance light will act over
-    double intensity; // (Optional) Intensity of light at light origin, default is 1.0
-    double lensDiameter; //[m] (Optional) Size to draw the visible lens of the light, default is 0.01 m
-    std::vector<int> color; // (Optional) Send desired RGBA as values between 0 and 255, default is pure white
-    double showLensFlare; // (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    double lensFlareBrightness; // (Optional) Simulates refraction of light in camera lens, this value controls the size and brightness of the lens flare, default is 0.3
-    double lensFlareFadeSpeed; //(Optional) Speed with which the lens flare fades, default is 4.0
+    std::string label;              //!< [Optional] Name to use to identify light
+    double position[3];             //!< [m] position of the light in body frame
+    double fieldOfView;             //!< [rad] angle is measured edge-to-edge
+    double normalVector[3];         //!< [] normal vector of the light in the body frame
+    int lightOn;                    //!< (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    double range;                   //!< [m] Distance light will act over
+    double intensity=-1;            //!< (Optional) Intensity of light at light origin, default is 1.0
+    int showLightMarker;            //!< (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    double markerDiameter=-1;       //!< [m] (Optional) Size to draw the visible lens of the light, default is 0.01 m
+    std::vector<int> color;         //!< (Optional) Send desired RGBA as values between 0 and 255, default is pure white
+    double gammaSaturation=-1;      //!< (Optional) Desired gamma saturation of the light lens, 0 to match light color, 1.0 for pure white, default is 0.8
+    double showLensFlare;           //!< (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    double lensFlareBrightness=-1;  //!< (Optional) Simulates refraction of light in camera lens, this value controls the size and brightness of the lens flare, default is 0.3
+    double lensFlareFadeSpeed=-1;   //!< (Optional) Speed with which the lens flare fades, default is 4.0
+    ReadFunctor<DeviceCmdMsgPayload> onOffCmdInMsg;   //!< [-] (Optional)  incoming light on/off cmd state msg
 }Light;
 
 

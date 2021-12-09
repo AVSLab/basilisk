@@ -1194,13 +1194,13 @@ Vizard can add light emitting devices, i.e. spotlights, to a spacecraft object. 
 setup a light device.  The associated light structure and the required
 parameters are set using::
 
-    scLight.name = "Main Light"
+    scLight.label = "Main Light"
     scLight.position = [0.2, -1.0, 1.01]
     scLight.fieldOfView = 3.0 * macros.D2R
     scLight.normalVector = [0, 0, 1]
     scLight.range = 50.0
     scLight.intensity = 6.0
-    scLight.lensDiameter = 0.02
+    scLight.markerDiameter = 0.02
     scLight.color = vizInterface.IntVector(vizSupport.toRGBA255("red"))
     scLight.showLensFlare = 1
     scLight.lensFlareFadeSpeed = 2.0
@@ -1219,7 +1219,7 @@ The full list of required and optional generic sensor parameters are provided in
       - Units
       - Required
       - Description
-    * - ``name``
+    * - ``label``
       - string
       -
       - No
@@ -1235,10 +1235,22 @@ The full list of required and optional generic sensor parameters are provided in
       - Yes
       - normal vector of the light in the body frame
     * - ``fieldOfView``
-      - float
+      - double
       - rad
       - Yes
       - edge-to-edge light cone angle
+    * - ``lightOn``
+      - double
+      -
+      - No
+      - Turn the light element on or off.  Value of 0 (protobuffer default) to use viz default,
+        -1 for false, 1 for true
+    * - ``onOffCmdInMsg``
+      - ReadFunctor<:ref:`DeviceCmdMsgPayload`>
+      -
+      - No
+      - incoming light on/off cmd state msg.  If this input message is connected, then the ``lightOn``
+        variable is overwritten with the value from this input message.
     * - ``range``
       - double
       - m
@@ -1249,7 +1261,13 @@ The full list of required and optional generic sensor parameters are provided in
       -
       - No
       - Intensity of light at light origin, default is 1.0
-    * - ``lensDiameter``
+    * - ``showLightMarker``
+      - int
+      -
+      - No
+      - flag to turn on the light marker,  Value of 0 (protobuffer default) to use viz default,
+        -1 for false, 1 for true
+    * - ``markerDiameter``
       - double
       - m
       - No
@@ -1292,3 +1310,19 @@ then lists of lists are required::
                                               , saveFile=fileName
                                               , lightList=[ [scLight], None ]
                                               )
+
+Next, each light can be connected to the optional device status message of type :ref:`DeviceCmdMsgPayload`::
+
+        lightCmdMsgData = messaging.DeviceCmdMsgPayload()
+        lightCmdMsgData.deviceCmd = 1
+        lightCmdMsg = messaging.DeviceCmdMsg().write(lightCmdMsgData)
+
+        cmdInMsg = messaging.DeviceCmdMsgReader()
+        cmdInMsg.subscribeTo(lightCmdMsg)
+        scLight.onOffCmdInMsg = cmdInMsg
+
+The light command state can also be set directly from python using::
+
+    scLight.onLight = 1
+
+However, if the input message is specified then this value is replaced with the content of the input message.
