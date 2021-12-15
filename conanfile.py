@@ -219,6 +219,13 @@ class BasiliskConan(ConanFile):
         else:
             self.generator = str(self.options.generator)
         print("cmake generator set to: " + statusColor + str(self.generator) + endColor)
+    
+    def package_id(self):
+        if self.settings.compiler == "Visual Studio":
+            if "MD" in self.settings.compiler.runtime:
+                self.info.settings.compiler.runtime = "MD/MDd"
+            else:
+                self.info.settings.compiler.runtime = "MT/MTd"
 
     def imports(self):
         if self.settings.os == "Windows":
@@ -259,6 +266,9 @@ class BasiliskConan(ConanFile):
         self.build_folder = os.path.join(root, "dist3")
 
         cmake = CMake(self, set_cmake_flags=True, generator=self.generator)
+        if self.settings.compiler == "Visual Studio":
+            cmake.definitions["CONAN_LINK_RUNTIME_MULTI"] = cmake.definitions["CONAN_LINK_RUNTIME"]
+            cmake.definitions["CONAN_LINK_RUNTIME"] = False
         cmake.definitions["BUILD_OPNAV"] = self.options.opNav
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
         cmake.definitions["EXTERNAL_MODULES_PATH"] = self.options.pathToExternalModules
