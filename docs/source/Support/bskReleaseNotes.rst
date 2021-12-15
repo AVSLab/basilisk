@@ -43,6 +43,8 @@ Version |release|
   ``FSWdeviceAvailability`` message on windows.
 - Updated dispersions.py to support functionality that was deprecated in python3.10. This change supports
   python versions >=3.3.
+- Updated the Windows build process to fix a static runtime library issue with ``vizInterface`` found
+  in older versions of visual studio.
 
 Version 2.1.0 (Nov. 13, 2021)
 -----------------------------
