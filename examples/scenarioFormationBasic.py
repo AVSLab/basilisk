@@ -46,6 +46,7 @@ The simulation setups the spacecraft with 3 RW devices similar to :ref:`scenario
 is that here :ref:`hillPoint` is used to align the spacecraft with the Hill frame.  The two debris objects are
 in a 2:1 centered ellipse and a lead-follower configuration with the servicer respectively.  The servicer camera
 has a camera instrument attached that is pointing in the 3rd body axis direction.
+The servicer has a light attached to illuminate the debris object.
 
 This simulation scripts illustrates how to use the :ref:`vizSupport` methods to record the simulation data such
 that it can be viewed in the Vizard visualization.
@@ -417,8 +418,18 @@ def run(show_plots):
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
     if vizFound:
+        servicerLight = vizInterface.Light()
+        servicerLight.label = "Main Light"
+        servicerLight.position = [0.2, -1.0, 1.01]
+        servicerLight.fieldOfView = 3.0 * macros.D2R
+        servicerLight.normalVector = [0, 0, 1]
+        servicerLight.range = 50.0
+        servicerLight.markerDiameter = 0.1
+        servicerLight.color = vizInterface.IntVector(vizSupport.toRGBA255("red"))
+
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2, scObject3]
                                                   , rwEffectorList=[rwStateEffector, rwStateEffector2, None]
+                                                  , lightList=[[servicerLight], None, None]
                                                   # , saveFile=fileName,
                                                   )
         vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,

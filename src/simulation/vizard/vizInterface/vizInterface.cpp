@@ -280,6 +280,19 @@ void VizInterface::ReadBSKMessages()
                 }
             }
         }
+
+        /* read in light on/off cmd value */
+        {
+            for (size_t idx=0;idx< (size_t) scIt->lightList.size(); idx++) {
+                if (scIt->lightList[idx].onOffCmdInMsg.isLinked()){
+                    DeviceCmdMsgPayload onOffCmdMsgBuffer;
+                    onOffCmdMsgBuffer = scIt->lightList[idx].onOffCmdInMsg();
+                    if(scIt->lightList[idx].onOffCmdInMsg.isWritten()){
+                        scIt->lightList[idx].lightOn = onOffCmdMsgBuffer.deviceCmd;
+                    }
+                }
+            }
+        }
         
         /* read in transceiver state values */
         {
@@ -559,6 +572,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_planetviewtohelioviewboundarymultiplier(this->settings.planetViewToHelioViewBoundaryMultiplier);
         vizSettings->set_sunintensity(this->settings.sunIntensity);
         vizSettings->set_attenuatesunlightwithdistance(this->settings.attenuateSunLightWithDistance);
+        vizSettings->set_showlightlabels(this->settings.showLightLabels);
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
@@ -812,6 +826,36 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     gsd->add_thresholds(scIt->genericStorageList[idx].thresholds[j]);
                 }
 
+            }
+
+            // Write light device messages
+            for (size_t idx =0; idx < (size_t) scIt->lightList.size(); idx++) {
+                vizProtobufferMessage::VizMessage::Light* ld = scp->add_lights();
+
+                ld->set_label(scIt->lightList[idx].label);
+                for (uint64_t j=0; j<3; j++) {
+                    ld->add_position(scIt->lightList[idx].position[j]);
+                    ld->add_normalvector(scIt->lightList[idx].normalVector[j]);
+                }
+                /* light on integer can only be 1, 0 or -1*/
+                if (scIt->lightList[idx].lightOn > 1) {
+                    scIt->lightList[idx].lightOn = 1;
+                } else if (scIt->lightList[idx].lightOn < 0) {
+                    scIt->lightList[idx].lightOn = -1;
+                }
+                ld->set_lighton(scIt->lightList[idx].lightOn);
+                ld->set_fieldofview(scIt->lightList[idx].fieldOfView*R2D);
+                ld->set_range(scIt->lightList[idx].range);
+                ld->set_intensity(scIt->lightList[idx].intensity);
+                ld->set_showlightmarker(scIt->lightList[idx].showLightMarker);
+                ld->set_markerdiameter(scIt->lightList[idx].markerDiameter);
+                for (uint64_t j=0; j<scIt->lightList[idx].color.size(); j++) {
+                    ld->add_color(scIt->lightList[idx].color[j]);
+                }
+                ld->set_gammasaturation(scIt->lightList[idx].gammaSaturation);
+                ld->set_showlensflare(scIt->lightList[idx].showLensFlare);
+                ld->set_lensflarebrightness(scIt->lightList[idx].lensFlareBrightness);
+                ld->set_lensflarefadespeed(scIt->lightList[idx].lensFlareFadeSpeed);
             }
 
         }

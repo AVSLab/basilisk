@@ -106,13 +106,20 @@ message VizMessage{
     }
     
     message Light{
+        string label = 1; //[Optional] Name to use to identify light
         repeated double position = 2; // [m] position of the light in body frame
         double fieldOfView = 3; //[deg] angle is measured edge-to-edge
         repeated double normalVector = 4;  // [] normal vector of the light in the body frame
-        double range = 5; // [m] Distance light will act over
-        double intensity = 6; // [Optional] Intensity of light at light origin, default is 1.0
-        double lensDiameter = 7; //[m] [Optional] Size to draw the visible lens of the light, default is 0.01 m
-        repeated int32 color = 8; // (Optional) Send desired RGBA as values between 0 and 255, default is pure white
+        int32 lightOn = 5;// (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double range = 6; // [m] Distance light will act over
+        double intensity = 7; // (Optional) Intensity of light at light origin, default is 1.0
+        int32 showLightMarker = 8; //(Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double markerDiameter = 9; //[m] (Optional) Size to draw the visible lens of the light, default is 0.01 m
+        repeated int32 color = 10; // (Optional) Send desired RGBA as values between 0 and 255, default is pure white
+        double gammaSaturation = 11; //(Optional) Desired gamma saturation of the light lens, 0 to match light color, 1.0 for pure white, default is 0.8
+        int32 showLensFlare = 12; // (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double lensFlareBrightness = 13; // (Optional) Simulates refraction of light in camera lens, this value controls the size and brightness of the lens flare, default is 0.3
+        double lensFlareFadeSpeed = 14; //(Optional) Speed with which the lens flare fades, default is 10.0
     }
     
     message Transceiver{
@@ -255,6 +262,7 @@ message VizMessage{
         int32 planetViewToHelioViewBoundaryMultiplier = 43; //Multiplier x (10000 * current planet local scale) at which the planet view transitions to the solar system view. Valid range from 1 to 10 or 0 to use viz default.
         double sunIntensity = 44; //Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use viz default
         int32 attenuateSunLightWithDistance = 45; //Toggle to reduce brightness of sun lighting with the square of the distance from the sun. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
+        int32 showLightLabels = 46; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
     
     message Location{
