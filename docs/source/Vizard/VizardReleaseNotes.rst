@@ -18,6 +18,23 @@ Release Notes
     - Add magnetic torque bar visualization
     - Provide a spacecraft attached flash light component
 
+**Version 2.0.3**
+
+- built-in high vertex count models of Bennu and Ryugu asteroids. These models will automatically be
+  applied when a celestial body message’s name field contains the key word ``bennu`` or ``ryugu``.
+- added user configurable spot lights that can be placed as desired on any spacecraft object.
+  See :ref:`scenarioFormationBasic` for an example use of a spacecraft light
+
+    - lights can be configured from messages using the new Light sub message in ``vizMessage.proto``
+    - lights can be manually configured using the new Lights panel available under the View menu
+    - lights can be customized by position, normal vector, color, field of view, range and intensity
+    - each light can be toggled on/off from messages or in the Lights panel
+    - each light has an optional GUI marker in the form of a sphere whose size and emission gamma
+      saturation can be set in the panel or the light message
+    - each light has an optional lens flare whose brightness and fade speed can be set in the
+      panel or in the light message
+    - each light has a label that can be turned on from the Labels panel under the View menu
+
 **Version 2.0.2**
 
 - added About Panel (under the File menu) to provide information Vizard, Basilisk, and about the third
