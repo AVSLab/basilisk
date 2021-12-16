@@ -31,6 +31,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 2.1.1 (Dec. 15, 2021)
+-----------------------------
 - Updated ``OpNav`` mode dependency ``gettext`` to version 0.21 to allow BSK to be build on Windows
   with ``OpNav`` support.
 - created two new messages that contain the information regarding cheduled burns for orbit recofiguration in
@@ -45,6 +49,7 @@ Version |release|
   python versions >=3.3.
 - Updated the Windows build process to fix a static runtime library issue with ``vizInterface`` found
   in older versions of visual studio.
+- Added scripting support for Vizard 2.0.3
 
 Version 2.1.0 (Nov. 13, 2021)
 -----------------------------

@@ -18,7 +18,7 @@ Release Notes
     - Add magnetic torque bar visualization
     - Provide a spacecraft attached flash light component
 
-**Version 2.0.3**
+**Version 2.0.3 (Dec. 15, 2021)**
 
 - built-in high vertex count models of Bennu and Ryugu asteroids. These models will automatically be
   applied when a celestial body message’s name field contains the key word ``bennu`` or ``ryugu``.
