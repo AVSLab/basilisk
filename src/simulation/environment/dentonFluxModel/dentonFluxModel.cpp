@@ -66,7 +66,7 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.kpIndex was not set to a proper value.");
     }
 
-    // Check the disired array size is not larger than the maximum value
+    // Check the desired array size is not larger than the maximum value
     if (this->numOutputEnergies > MAX_PLASMA_FLUX_SIZE)
     {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Maximum denton space weather array size exceeded.");
@@ -96,8 +96,8 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     }
 
     // Read in Denton data files
-    readDentonDataFile(this->eDataFileName, this->mean_e_all);
-    readDentonDataFile(this->iDataFileName, this->mean_i_all);
+    readDentonDataFile(this->eDataFileName, this->mean_e_flux);
+    readDentonDataFile(this->iDataFileName, this->mean_i_flux);
 
 }
 
@@ -123,10 +123,10 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     earthSpiceInMsgBuffer = this->earthStateInMsg();
     
     // Define output (array if we open more than 2 files)
-    double finalElecAll;
-    double finalIonAll;
+    double finalElec;
+    double finalIon;
 
-    //  Calculate both Sun snd spacecraft B position vectors from Earth in ECI frame
+    //  Calculate both Sun (S) and spacecraft (B) position vectors from Earth (E) in ECI frame
     double r_BE_N[3];       /* satellite position relative to Earth in N frame components */
     double r_SE_N[3];       /* sun position relative to Earth in N frame components */
     v3Subtract(scStateInMsgBuffer.r_BN_N, earthSpiceInMsgBuffer.PositionVector, r_BE_N);
@@ -192,27 +192,27 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         double flux13 = 0.0;
         double flux14 = 0.0;
         
-        // ELECTRON: Gather four nearest *MEAN* flux values for *ALL F10.7*
-        flux11 = this->mean_e_all[this->kpIndex][eLowerIndex][localTimeFloor];
-        flux12 = this->mean_e_all[this->kpIndex][eHigherIndex][localTimeFloor];
-        flux13 = this->mean_e_all[this->kpIndex][eLowerIndex][localTimeCeil];
-        flux14 = this->mean_e_all[this->kpIndex][eHigherIndex][localTimeCeil];
+        // ELECTRON: Gather four nearest *MEAN* flux values
+        flux11 = this->mean_e_flux[this->kpIndex][eLowerIndex][localTimeFloor];
+        flux12 = this->mean_e_flux[this->kpIndex][eHigherIndex][localTimeFloor];
+        flux13 = this->mean_e_flux[this->kpIndex][eLowerIndex][localTimeCeil];
+        flux14 = this->mean_e_flux[this->kpIndex][eHigherIndex][localTimeCeil];
         
         // ELECTRON: Find flux
-        finalElecAll = bilinear((localTimeFloor - 1), (localTimeCeil-1), logEnElec[eLowerIndex], logEnElec[eHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);
+        finalElec = bilinear((localTimeFloor - 1), (localTimeCeil-1), logEnElec[eLowerIndex], logEnElec[eHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);
         
-        // ION: Gather four nearest *MEAN* flux values for *ALL F10.7*
-        flux11 = this->mean_i_all[this->kpIndex][iLowerIndex][localTimeFloor];
-        flux12 = this->mean_i_all[this->kpIndex][iHigherIndex][localTimeFloor];
-        flux13 = this->mean_i_all[this->kpIndex][iLowerIndex][localTimeCeil];
-        flux14 = this->mean_i_all[this->kpIndex][iHigherIndex][localTimeCeil];
+        // ION: Gather four nearest *MEAN* flux values
+        flux11 = this->mean_i_flux[this->kpIndex][iLowerIndex][localTimeFloor];
+        flux12 = this->mean_i_flux[this->kpIndex][iHigherIndex][localTimeFloor];
+        flux13 = this->mean_i_flux[this->kpIndex][iLowerIndex][localTimeCeil];
+        flux14 = this->mean_i_flux[this->kpIndex][iHigherIndex][localTimeCeil];
         
         // ION: Find flux
-        finalIonAll = bilinear(localTimeFloor, localTimeCeil, logEnProt[iHigherIndex], logEnProt[iLowerIndex], logInputEnergy, flux11, flux12, flux13, flux14);
+        finalIon = bilinear(localTimeFloor, localTimeCeil, logEnProt[iHigherIndex], logEnProt[iLowerIndex], logInputEnergy, flux11, flux12, flux13, flux14);
         
         // Store the output message
-        fluxOutMsgBuffer.meanElectronFlux[i] = finalElecAll;
-        fluxOutMsgBuffer.meanIonFlux[i] = finalIonAll;
+        fluxOutMsgBuffer.meanElectronFlux[i] = finalElec;
+        fluxOutMsgBuffer.meanIonFlux[i] = finalIon;
         fluxOutMsgBuffer.energies[i] = inputEnergies[i];
     }
     
@@ -227,6 +227,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
 */
 void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
 {
+    // r_SE_N and r_BE_N are projected onto the equatorial plane to compute angle, thus only x and y components are used (z component is perpendicular to equator)
     double r_BE_N_hat[2];       /* unit vector from Earth to spacecraft */
     double r_SE_N_hat[2];       /* unit vector from Earth to Sun */
     v2Normalize(r_BE_N, r_BE_N_hat);

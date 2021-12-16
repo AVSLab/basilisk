@@ -69,11 +69,11 @@ private:
     double logEnProt[MAX_NUM_ENERGIES];     /* log of the proton energies */
     double inputEnergies[MAX_NUM_ENERGIES];     /* input energies considered in this module */
 
-    // Electron: All F10.7
-    double mean_e_all[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
+    // Electron Flux:
+    double mean_e_flux[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
     
-    // Ion: All F10.7
-    double mean_i_all[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
+    // Ion Flux:
+    double mean_i_flux[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
         
     // Fill average centre energies, normalized by satellite
     double enElec[40] = {1.034126,     1.346516,     1.817463,     2.399564,
