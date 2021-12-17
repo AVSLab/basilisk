@@ -30,6 +30,9 @@
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpiceTimeMsgPayload.h"
 #include "architecture/msgPayloadDefC/EpochMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDefC/TransRefMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 /*! @brief spice interface class */
@@ -54,6 +57,9 @@ public:
     Message<SpiceTimeMsgPayload> spiceTimeOutMsg;    //!< spice time sampling output message
     ReadFunctor<EpochMsgPayload> epochInMsg;            //!< (optional) input epoch message
     std::vector<Message<SpicePlanetStateMsgPayload>*> planetStateOutMsgs; //!< vector of planet state output messages
+    std::vector<Message<SCStatesMsgPayload>*> scStateOutMsgs; //!< vector of spacecraft state output messages
+    std::vector<Message<AttRefMsgPayload>*> attRefStateOutMsgs; //!< vector of spacecraft attitude reference state output messages
+    std::vector<Message<TransRefMsgPayload>*> transRefStateOutMsgs; //!< vector of spacecraft translational reference state output messages
 
     std::string SPICEDataPath;           //!< -- Path on file to SPICE data
     std::string referenceBase;           //!< -- Base reference frame to use
