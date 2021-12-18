@@ -52,6 +52,7 @@ sys.path.append(path + '/../../examples/')
                                         , 'scenarioMtbMomentumManagementSimple'
                                         , 'scenarioSmallBodyNav'
                                         , 'scenarioJupiterArrival'
+                                        , 'scenarioSpiceSpacecraft'
                                         ])
 @pytest.mark.scenarioTest
 def test_scenarioBskScenarios(show_plots, scenarioCase):
