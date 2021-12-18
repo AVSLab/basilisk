@@ -31,7 +31,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- enhanced :ref:`spiceInterface` to allow Spice spacecraft names to be setup to pull their
+  trajectory and attitude states from a spice kernel
+- added :ref:`scenarioSpiceSpacecraft` to illustrate using Spice to specify the trajectory of a
+  spacecraft while leaving the attitude dynamics unprescribed.
 
 Version 2.1.1 (Dec. 15, 2021)
 -----------------------------

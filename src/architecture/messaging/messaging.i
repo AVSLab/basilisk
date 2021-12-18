@@ -206,6 +206,8 @@ typedef struct messageType;
 %template(SpicePlanetStateOutMsgsVector) std::vector<Message<SpicePlanetStateMsgPayload>*>;
 %template(AtmoPropsOutMsgsVector) std::vector<Message<AtmoPropsMsgPayload>*>;
 %template(SCStatesOutMsgsVector) std::vector<Message<SCStatesMsgPayload>*>;
+%template(AttRefOutMsgsVector) std::vector<Message<AttRefMsgPayload>*>;
+%template(TransRefOutMsgsVector) std::vector<Message<TransRefMsgPayload>*>;
 %template(HingedRigidBodyOutMsgsVector) std::vector<Message<HingedRigidBodyMsgPayload>*>;
 %template(THROutputOutMsgsVector) std::vector<Message<THROutputMsgPayload>*>;
 %template(VSCMGConfigOutMsgsVector) std::vector<Message<VSCMGConfigMsgPayload>*>;

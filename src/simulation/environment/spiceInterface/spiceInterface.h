@@ -30,6 +30,9 @@
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpiceTimeMsgPayload.h"
 #include "architecture/msgPayloadDefC/EpochMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDefC/TransRefMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 /*! @brief spice interface class */
@@ -45,15 +48,19 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void initTimeData();
     void computeGPSData();
-    void computePlanetData();
+    void pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spiceData);
     void writeOutputMessages(uint64_t CurrentClock);
     void clearKeeper();                         //!< class method
     void addPlanetNames(std::vector<std::string> planetNames);
-    
+    void addSpacecraftNames(std::vector<std::string> spacecraftNames);
+
 public:
     Message<SpiceTimeMsgPayload> spiceTimeOutMsg;    //!< spice time sampling output message
     ReadFunctor<EpochMsgPayload> epochInMsg;            //!< (optional) input epoch message
     std::vector<Message<SpicePlanetStateMsgPayload>*> planetStateOutMsgs; //!< vector of planet state output messages
+    std::vector<Message<SCStatesMsgPayload>*> scStateOutMsgs; //!< vector of spacecraft state output messages
+    std::vector<Message<AttRefMsgPayload>*> attRefStateOutMsgs; //!< vector of spacecraft attitude reference state output messages
+    std::vector<Message<TransRefMsgPayload>*> transRefStateOutMsgs; //!< vector of spacecraft translational reference state output messages
 
     std::string SPICEDataPath;           //!< -- Path on file to SPICE data
     std::string referenceBase;           //!< -- Base reference frame to use
@@ -77,11 +84,11 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    std::vector<std::string>planetNames;  //!< -- Names of planets we want to track
     std::string GPSEpochTime;   //!< -- String for the GPS epoch
     double JDGPSEpoch;          //!< s Epoch for GPS time.  Saved for efficiency
 
     std::vector<SpicePlanetStateMsgPayload> planetData;
+    std::vector<SpicePlanetStateMsgPayload> scData;
 
 };
 
