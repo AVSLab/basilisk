@@ -48,11 +48,12 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void initTimeData();
     void computeGPSData();
-    void computePlanetData();
+    void pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spiceData);
     void writeOutputMessages(uint64_t CurrentClock);
     void clearKeeper();                         //!< class method
     void addPlanetNames(std::vector<std::string> planetNames);
-    
+    void addSpacecraftNames(std::vector<std::string> spacecraftNames);
+
 public:
     Message<SpiceTimeMsgPayload> spiceTimeOutMsg;    //!< spice time sampling output message
     ReadFunctor<EpochMsgPayload> epochInMsg;            //!< (optional) input epoch message
@@ -83,11 +84,11 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    std::vector<std::string>planetNames;  //!< -- Names of planets we want to track
     std::string GPSEpochTime;   //!< -- String for the GPS epoch
     double JDGPSEpoch;          //!< s Epoch for GPS time.  Saved for efficiency
 
     std::vector<SpicePlanetStateMsgPayload> planetData;
+    std::vector<SpicePlanetStateMsgPayload> scData;
 
 };
 

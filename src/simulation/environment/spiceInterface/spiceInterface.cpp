@@ -23,6 +23,7 @@
 #include <string.h>
 #include "architecture/utilities/simDefinitions.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.
@@ -63,6 +64,15 @@ SpiceInterface::~SpiceInterface()
 {
     for (long unsigned int c=0; c<this->planetStateOutMsgs.size(); c++) {
         delete this->planetStateOutMsgs.at(c);
+    }
+    for (long unsigned int c=0; c<this->scStateOutMsgs.size(); c++) {
+        delete this->scStateOutMsgs.at(c);
+    }
+    for (long unsigned int c=0; c<this->attRefStateOutMsgs.size(); c++) {
+        delete this->attRefStateOutMsgs.at(c);
+    }
+    for (long unsigned int c=0; c<this->transRefStateOutMsgs.size(); c++) {
+        delete this->transRefStateOutMsgs.at(c);
     }
     delete [] this->spiceBuffer;
 //    if(this->SPICELoaded)
@@ -194,6 +204,28 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
     {
         this->planetStateOutMsgs[c]->write(&this->planetData[c], this->moduleID, CurrentClock);
     }
+
+    //! - Iterate through all of the spacecraft that are on and write their outputs
+    for (long unsigned int c=0; c<this->scStateOutMsgs.size(); c++)
+    {
+        SCStatesMsgPayload scStateMsgData = {};
+        v3Copy(this->scData[c].PositionVector, scStateMsgData.r_BN_N);
+        v3Copy(this->scData[c].PositionVector, scStateMsgData.r_CN_N);
+        v3Copy(this->scData[c].VelocityVector, scStateMsgData.v_BN_N);
+        v3Copy(this->scData[c].VelocityVector, scStateMsgData.v_CN_N);
+        C2MRP(this->scData[c].J20002Pfix, scStateMsgData.sigma_BN);
+        this->scStateOutMsgs[c]->write(&scStateMsgData, this->moduleID, CurrentClock);
+
+        AttRefMsgPayload attRefMsgData = {};
+        C2MRP(this->scData[c].J20002Pfix, attRefMsgData.sigma_RN);
+        this->attRefStateOutMsgs[c]->write(&attRefMsgData, this->moduleID, CurrentClock);
+
+        TransRefMsgPayload transRefMsgData = {};
+        v3Copy(this->scData[c].PositionVector, transRefMsgData.r_RN_N);
+        v3Copy(this->scData[c].VelocityVector, transRefMsgData.v_RN_N);
+        this->transRefStateOutMsgs[c]->write(&transRefMsgData, this->moduleID, CurrentClock);
+
+    }
 }
 
 /*! This method is the interface point between the upper level simulation and
@@ -214,7 +246,8 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
     this->julianDateCurrent = std::stod(localString);
     //! Get GPS and Planet data and then write the message outputs
     this->computeGPSData();
-    this->computePlanetData();
+    this->pullSpiceData(&this->planetData);
+    this->pullSpiceData(&this->scData);
     this->writeOutputMessages(CurrentSimNanos);
 }
 
@@ -238,13 +271,13 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
         spiceOutMsg = new Message<SpicePlanetStateMsgPayload>;
         this->planetStateOutMsgs.push_back(spiceOutMsg);
 
-        SpicePlanetStateMsgPayload newPlanet;
+        SpicePlanetStateMsgPayload newPlanet = {};
+        m33SetIdentity(newPlanet.J20002Pfix);
         if(it->size() >= MAX_BODY_NAME_LENGTH)
         {
-            bskLogger.bskLog(BSK_WARNING, "Warning, your planet name is too long for me.  Ignoring: %s", (*it).c_str());
+            bskLogger.bskLog(BSK_WARNING, "spiceInterface: Warning, your planet name is too long for me.  Ignoring: %s", (*it).c_str());
             continue;
         }
-        newPlanet = spiceOutMsg->zeroMsgPayload;
         strcpy(newPlanet.PlanetName, it->c_str());
 
         std::string planetFrame = *it;
@@ -257,15 +290,72 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     return;
 }
 
-/*! This method gets the state of each planet that has been added to the model
- and saves the information off into the planet array.
+/*! take a vector of spacecraft name strings and create the vectors of
+    spacecraft state output messages and the vector of spacecraft state message payloads */
+void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames) {
+    std::vector<std::string>::iterator it;
+    SpiceChar *name = new SpiceChar[this->charBufferSize];
+    SpiceBoolean frmFound;
+    SpiceInt frmCode;
+
+    /* clear the spacecraft state message and payload vectors */
+    for (long unsigned int c=0; c<this->scStateOutMsgs.size(); c++) {
+        delete this->scStateOutMsgs.at(c);
+    }
+    for (long unsigned int c=0; c<this->attRefStateOutMsgs.size(); c++) {
+        delete this->attRefStateOutMsgs.at(c);
+    }
+    for (long unsigned int c=0; c<this->transRefStateOutMsgs.size(); c++) {
+        delete this->transRefStateOutMsgs.at(c);
+    }
+    this->scStateOutMsgs.clear();
+    this->attRefStateOutMsgs.clear();
+    this->transRefStateOutMsgs.clear();
+    this->scData.clear();
+
+    for (it = spacecraftNames.begin(); it != spacecraftNames.end(); it++) {
+        /* append to spacecraft related output messages */
+        Message<SCStatesMsgPayload> *scStateOutMsg;
+        scStateOutMsg = new Message<SCStatesMsgPayload>;
+        this->scStateOutMsgs.push_back(scStateOutMsg);
+
+        Message<AttRefMsgPayload> *attRefOutMsg;
+        attRefOutMsg = new Message<AttRefMsgPayload>;
+        this->attRefStateOutMsgs.push_back(attRefOutMsg);
+
+        Message<TransRefMsgPayload> *transRefOutMsg;
+        transRefOutMsg = new Message<TransRefMsgPayload>;
+        this->transRefStateOutMsgs.push_back(transRefOutMsg);
+
+        SpicePlanetStateMsgPayload newSpacecraft = {};
+        m33SetIdentity(newSpacecraft.J20002Pfix);
+        if(it->size() >= MAX_BODY_NAME_LENGTH)
+        {
+            bskLogger.bskLog(BSK_WARNING, "spiceInterface: Warning, your spacecraft name is too long for me.  Ignoring: %s", (*it).c_str());
+            continue;
+        }
+        strcpy(newSpacecraft.PlanetName, it->c_str());
+
+        std::string planetFrame = *it;
+        cnmfrm_c(planetFrame.c_str(), this->charBufferSize, &frmCode, name, &frmFound);
+        newSpacecraft.computeOrient = frmFound;
+        this->scData.push_back(newSpacecraft);
+    }
+    delete [] name;
+
+    return;
+}
+
+
+/*! This method gets the state of each spice item that has been added to the module
+ and saves the information off into the array.
  @return void
  */
-void SpiceInterface::computePlanetData()
+void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spiceData)
 {
     std::vector<SpicePlanetStateMsgPayload>::iterator planit;
     
-    /*! - Loop over the PlanetData vector and compute values.
+    /*! - Loop over the vector of Spice objects and compute values.
      
      -# Call the Ephemeris file (spkezr)
      -# Copy out the position and velocity values (default in km)
@@ -273,21 +363,18 @@ void SpiceInterface::computePlanetData()
      -# Time stamp the message appropriately
      */
     int c = 0;
-    for(planit = this->planetData.begin(); planit != this->planetData.end(); planit++)
+    for(planit = spiceData->begin(); planit != spiceData->end(); planit++)
     {
         double lighttime;
         double localState[6];
         std::string planetFrame = "";
 
         spkezr_c(planit->PlanetName, this->J2000Current, this->referenceBase.c_str(),
-            "NONE", zeroBase.c_str(), localState, &lighttime);
-        memcpy(planit->PositionVector, &localState[0], 3*sizeof(double));
-        memcpy(planit->VelocityVector, &localState[3], 3*sizeof(double));
-        for(uint32_t i=0; i<3; i++)
-        {
-            planit->PositionVector[i]*=1000.0;
-            planit->VelocityVector[i]*=1000.0;
-        }
+            "NONE", this->zeroBase.c_str(), localState, &lighttime);
+        v3Copy(&localState[0], planit->PositionVector);
+        v3Copy(&localState[3], planit->VelocityVector);
+        v3Scale(1000., planit->PositionVector, planit->PositionVector);
+        v3Scale(1000., planit->VelocityVector, planit->VelocityVector);
         planit->J2000Current = this->J2000Current;
         if (this->planetFrames.size() > 0) {
             if (this->planetFrames[c].size() > 0) {
