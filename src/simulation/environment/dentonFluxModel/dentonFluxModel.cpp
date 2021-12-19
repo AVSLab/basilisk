@@ -253,7 +253,7 @@ void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
     
     // Determine Local Time: Using atan2()
     double x = v2Dot(r_BE_N_hat, r_SE_N_hat);
-    double y = r_SE_N_hat[0]*r_BE_N_hat[1] - r_SE_N_hat[1]*r_BE_N_hat[0];
+    double y = r_BE_N_hat[0]*r_SE_N_hat[1] - r_BE_N_hat[1]*r_SE_N_hat[0];
     double theta = atan2(y,x);
 
     if (x <= -1.0)
