@@ -93,8 +93,9 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
 
     // Define Energy Array
     double step = (40000 - 1)/this->numOutputEnergies;
- 
-    this->inputEnergies[0] = 1;
+    
+    // start at 100eV (fluxes of smaller energies are unreliable due to contamination with secondary electrons and photoelectrons, according to Denton)
+    this->inputEnergies[0] = 100;
     for (int i = 1; i < numOutputEnergies; i++)
     {
         this->inputEnergies[i] = this->inputEnergies[i-1] + step;
@@ -223,6 +224,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         
         // ELECTRON: Find flux
         finalElec = bilinear(localTimeFloor, localTimeCeil, logEnElec[eLowerIndex], logEnElec[eHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);
+        finalElec = pow(10.0, finalElec);
         
         // ION: Gather four nearest *MEAN* flux values
         flux11 = this->mean_i_flux[this->kpIndex][iLowerIndex][localTimeFloor];
@@ -232,6 +234,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         
         // ION: Find flux
         finalIon = bilinear(localTimeFloor, localTimeCeil, logEnProt[iLowerIndex], logEnProt[iHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);
+        finalIon = pow(10.0, finalIon);
         
         // Store the output message
         fluxOutMsgBuffer.meanElectronFlux[i] = finalElec;
