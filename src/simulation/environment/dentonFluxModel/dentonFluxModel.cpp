@@ -151,10 +151,19 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         {
             if (logEnElec[j] > logInputEnergy)
             {
-                eHigher = logEnElec[j];
-                eLower = logEnElec[j-1];
-                eHigherIndex = j;
-                eLowerIndex = j-1;
+                int k = 0;
+                if (j == 0)
+                {
+                    k = j+1;
+                }
+                else
+                {
+                    k = j;
+                }
+                eHigher = logEnElec[k];
+                eLower = logEnElec[k-1];
+                eHigherIndex = k;
+                eLowerIndex = k-1;
                 break;
             }
             else
@@ -172,10 +181,19 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         {
             if (logEnProt[m] > logInputEnergy)
             {
-                iHigher = logEnProt[m];
-                iLower = logEnProt[m-1];
-                iHigherIndex = m;
-                iLowerIndex = m-1;
+                int k;
+                if (m == 0)
+                {
+                    k = m+1;
+                }
+                else
+                {
+                    k = m;
+                }
+                iHigher = logEnProt[k];
+                iLower = logEnProt[k-1];
+                iHigherIndex = k;
+                iLowerIndex = k-1;
                 break;
             }
             else
@@ -208,7 +226,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         flux14 = this->mean_i_flux[this->kpIndex][iHigherIndex][localTimeCeil];
         
         // ION: Find flux
-        finalIon = bilinear(localTimeFloor, localTimeCeil, logEnProt[iHigherIndex], logEnProt[iLowerIndex], logInputEnergy, flux11, flux12, flux13, flux14);
+        finalIon = bilinear(localTimeFloor, localTimeCeil, logEnProt[iLowerIndex], logEnProt[iHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);
         
         // Store the output message
         fluxOutMsgBuffer.meanElectronFlux[i] = finalElec;
