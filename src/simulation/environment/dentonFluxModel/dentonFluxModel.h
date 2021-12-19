@@ -32,6 +32,7 @@
 #define MAX_NUM_KPS             28
 #define MAX_NUM_ENERGIES        40
 #define MAX_NUM_LOCAL_TIMES     24
+#define MAX_NUM_VALUE_TYPES     7
 
 
 /*! @brief This module provides the 10-year averaged GEO elecon and ion flux as discussed in the paper by Denton.

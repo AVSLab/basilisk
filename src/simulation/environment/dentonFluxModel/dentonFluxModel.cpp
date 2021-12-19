@@ -71,6 +71,11 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Maximum denton space weather array size exceeded.");
     }
+    // Check Kp is not larger than 9 (corresponding to maximum index 27)
+    if (this->kpIndex > MAX_NUM_KPS - 1)
+    {
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Maximum Kp index exceeded.");
+    }
     if (this->numOutputEnergies < 0)
     {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.numEnergies was not set.");
@@ -201,8 +206,8 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
             }
         }
         
-        int localTimeFloor = floor(this->localTime + 1);
-        int localTimeCeil = ceil(this->localTime + 1);
+        int localTimeFloor = floor(this->localTime);
+        int localTimeCeil = ceil(this->localTime);
         
         // Initialize flux variables
         double flux11 = 0.0;
@@ -217,7 +222,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         flux14 = this->mean_e_flux[this->kpIndex][eHigherIndex][localTimeCeil];
         
         // ELECTRON: Find flux
-        finalElec = bilinear((localTimeFloor - 1), (localTimeCeil-1), logEnElec[eLowerIndex], logEnElec[eHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);
+        finalElec = bilinear(localTimeFloor, localTimeCeil, logEnElec[eLowerIndex], logEnElec[eHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);
         
         // ION: Gather four nearest *MEAN* flux values
         flux11 = this->mean_i_flux[this->kpIndex][iLowerIndex][localTimeFloor];
@@ -283,13 +288,12 @@ double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double y,
         R1 = ( (x2 - x) / (x2 - x1) ) * f11 + ( (x - x1) / (x2 - x1) ) * f13;
         R2 = ( (x2 - x) / (x2 - x1) ) * f12 + ( (x - x1) / (x2 - x1) ) * f14;
         bilinear = ( (y2 - y ) / (y2 - y1) ) * R1 + ( (y - y1) / (y2 - y1) ) * R2;
-        return bilinear;
     }
     else
     {
         bilinear = ( (y2 - y ) / (y2 - y1) ) * f11 + ( (y - y1) / (y2 - y1) ) * f13;
-        return bilinear;
     }
+    return bilinear;
 
 }
 
@@ -301,19 +305,28 @@ double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double y,
 */
 void DentonFluxModel::readDentonDataFile(std::string fileName, double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES])
 {
+    double temp = 0.0;
+    
     // Input file stream object
     std::ifstream inputFile;
     
-    // Read data from file 1: electron all F10.7
+    // Read data from file:
     inputFile.open(this->dataPath + fileName);
     
-    // Read information into arrays: MEAN
+    // Read information into array: Data includes information about mean, standard deviation, median and percentiles (7 types of values in total). Only mean is relevant for this module
     if (inputFile.is_open()) {
-        for (int i = 0; i < MAX_NUM_KPS; i++)
+        for (int i = 0; i < MAX_NUM_KPS*MAX_NUM_VALUE_TYPES; i++)
         {   for (int j = 0; j < MAX_NUM_ENERGIES; j++)
             {   for (int k = 0; k < MAX_NUM_LOCAL_TIMES; k++)
                 {
-                    inputFile >> data[i][j][k];
+                    // MEAN corresponds to every 7th index
+                    if (i%MAX_NUM_VALUE_TYPES == 0)
+                    {
+                        inputFile >> data[i/MAX_NUM_VALUE_TYPES][j][k];
+                    } else {
+                        inputFile >> temp;
+                    }
+                    
                 }
             }
         }
