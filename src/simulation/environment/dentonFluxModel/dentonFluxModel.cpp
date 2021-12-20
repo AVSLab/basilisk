@@ -137,6 +137,14 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     double r_SE_N[3];       /* sun position relative to Earth in N frame components */
     v3Subtract(scStateInMsgBuffer.r_BN_N, earthSpiceInMsgBuffer.PositionVector, r_BE_N);
     v3Subtract(sunSpiceInMsgBuffer.PositionVector, earthSpiceInMsgBuffer.PositionVector, r_SE_N);
+    
+    // Check that spacecraft is located in GEO regime (otherwise Denton flux data not valid)
+    double r_GEO = 42000e3; // GEO orbit radius
+    double tol = 4000e3; // tolerance how far spacecraft can be away from GEO
+    if (v2Norm(r_BE_N) < r_GEO - tol || v2Norm(r_BE_N) > r_GEO + tol || abs(r_BE_N[2]) > tol)
+    {
+        bskLogger.bskLog(BSK_WARNING, "DentonFluxModel: Spacecraft not in GEO regime. Denton Model not valid outside of GEO.");
+    }
 
     // Find local lime from spacecraft and Earth state messages
     calcLocalTime(r_BE_N, r_SE_N);
