@@ -218,6 +218,8 @@ class BasiliskConan(ConanFile):
                 print("Specify your own using the -o generator='Name' flag during conan install")
         else:
             self.generator = str(self.options.generator)
+            if self.settings.os == "Windows":
+                self.options["*"].shared = True
         print("cmake generator set to: " + statusColor + str(self.generator) + endColor)
     
     def package_id(self):

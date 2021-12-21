@@ -35,6 +35,7 @@ Version |release|
   trajectory and attitude states from a spice kernel
 - added :ref:`scenarioSpiceSpacecraft` to illustrate using Spice to specify the trajectory of a
   spacecraft while leaving the attitude dynamics unprescribed.
+- fixed a bug where using the generator flag to build on windows would skip a line in the conanfile.py that is crucial for building opNav.
 
 Version 2.1.1 (Dec. 15, 2021)
 -----------------------------
