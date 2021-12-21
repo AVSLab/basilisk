@@ -172,6 +172,7 @@ class BasiliskConan(ConanFile):
         print("\n")
 
     def requirements(self):
+        self.requires.add("tinyobjloader/1.0.6")
         if self.options.opNav:
             self.requires.add("pcre/8.45")
             self.requires.add("gettext/0.21")
