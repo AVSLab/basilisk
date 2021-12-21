@@ -20,7 +20,7 @@
 #ifndef PLASMA_FLUX_MESSAGE_H_
 #define PLASMA_FLUX_MESSAGE_H_
 
-#define MAX_PLASMA_FLUX_SIZE 100
+#define MAX_PLASMA_FLUX_SIZE 50
 
 
 //!@brief GEO space weather flux message definition.

@@ -50,7 +50,7 @@ public:
     
     /* public variables */
     int numOutputEnergies = -1;               //!< number of energy bins used in the output message
-    int kpIndex = -1;                   //!< Kp index
+    std::string kpIndex = "";                   //!< Kp index
     std::string dataPath = "";          //!< -- String with the path to the Denton GEO data
     std::string eDataFileName = "model_e_array_all.txt";   //!< file name of the electron data file 
     std::string iDataFileName = "model_i_array_all.txt";   //!< file name of the ion data file
@@ -65,6 +65,7 @@ public:
 
 private:
 
+    int kpIndexCounter;                   //!< Kp index counter (betweeen 0 and 27)
     double localTime;               /* spacecraft location time relative to sun heading at GEO */
     double logEnElec[MAX_NUM_ENERGIES];     /* log of the electron energies */
     double logEnProt[MAX_NUM_ENERGIES];     /* log of the proton energies */

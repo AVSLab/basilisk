@@ -61,27 +61,52 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.sunStateInMsg was not linked.");
     }
-    
-    if (this->kpIndex < 0) {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.kpIndex was not set to a proper value.");
+    // Check that required parameters are set
+    if (this->numOutputEnergies < 0)
+    {
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.numEnergies was not set.");
     }
-
+    if (this->kpIndex == "")
+    {
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.kpIndex was not set.");
+    }
+    if (this->dataPath == "")
+    {
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.dataPath was not set.");
+    }
     // Check the desired array size is not larger than the maximum value
     if (this->numOutputEnergies > MAX_PLASMA_FLUX_SIZE)
     {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Maximum denton space weather array size exceeded.");
     }
-    // Check Kp is not larger than 9 (corresponding to maximum index 27)
-    if (this->kpIndex > MAX_NUM_KPS - 1)
+    // Check that the Kp index is a string of length 2
+    if (!(this->kpIndex.length() == 2))
     {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Maximum Kp index exceeded.");
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.kpIndex must be a string of length 2, such as '1-', '3o', '4+' etc.");
     }
-    if (this->numOutputEnergies < 0)
+    // Convert Kp index (such as '0o', '1-', '5+' etc.) to Kp index counter (int 0-27)
+    char kpMain = this->kpIndex[0]; // main Kp index, between 0 and 9
+    char kpSub = this->kpIndex[1]; // sub Kp index, either '-', 'o', or '+'
+    int kpMainInt = kpMain - '0'; // convert main Kp from char to int
+    if (kpMainInt < 0 || kpMainInt > 9) {
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Kp index not set to a proper value.");
+    }
+    if (kpSub == '-') {
+        this->kpIndexCounter = 3*kpMainInt - 1;
+    }
+    else if (kpSub == 'o') {
+        this->kpIndexCounter = 3*kpMainInt;
+    }
+    else if (kpSub == '+') {
+        this->kpIndexCounter = 3*kpMainInt + 1;
+    }
+    else {
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Kp index not set to a proper value.");
+    }
+    // Check that Kp index is between 0o and 9o (corresponding to Kp index counter 0-27)
+    if (this->kpIndexCounter < 0 || this->kpIndexCounter > MAX_NUM_KPS - 1)
     {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.numEnergies was not set.");
-    }
-    if (this->dataPath == "") {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.dataPath was not set.");
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Kp index must be between 0o and 9o. Indices 0- and 9+ do not exist.");
     }
     
     // convert energies to log10 values
@@ -225,20 +250,20 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         double flux14 = 0.0;
         
         // ELECTRON: Gather four nearest *MEAN* flux values
-        flux11 = this->mean_e_flux[this->kpIndex][eLowerIndex][localTimeFloor];
-        flux12 = this->mean_e_flux[this->kpIndex][eHigherIndex][localTimeFloor];
-        flux13 = this->mean_e_flux[this->kpIndex][eLowerIndex][localTimeCeil];
-        flux14 = this->mean_e_flux[this->kpIndex][eHigherIndex][localTimeCeil];
+        flux11 = this->mean_e_flux[this->kpIndexCounter][eLowerIndex][localTimeFloor];
+        flux12 = this->mean_e_flux[this->kpIndexCounter][eHigherIndex][localTimeFloor];
+        flux13 = this->mean_e_flux[this->kpIndexCounter][eLowerIndex][localTimeCeil];
+        flux14 = this->mean_e_flux[this->kpIndexCounter][eHigherIndex][localTimeCeil];
         
         // ELECTRON: Find flux
         finalElec = bilinear(localTimeFloor, localTimeCeil, logEnElec[eLowerIndex], logEnElec[eHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);
         finalElec = pow(10.0, finalElec);
         
         // ION: Gather four nearest *MEAN* flux values
-        flux11 = this->mean_i_flux[this->kpIndex][iLowerIndex][localTimeFloor];
-        flux12 = this->mean_i_flux[this->kpIndex][iHigherIndex][localTimeFloor];
-        flux13 = this->mean_i_flux[this->kpIndex][iLowerIndex][localTimeCeil];
-        flux14 = this->mean_i_flux[this->kpIndex][iHigherIndex][localTimeCeil];
+        flux11 = this->mean_i_flux[this->kpIndexCounter][iLowerIndex][localTimeFloor];
+        flux12 = this->mean_i_flux[this->kpIndexCounter][iHigherIndex][localTimeFloor];
+        flux13 = this->mean_i_flux[this->kpIndexCounter][iLowerIndex][localTimeCeil];
+        flux14 = this->mean_i_flux[this->kpIndexCounter][iHigherIndex][localTimeCeil];
         
         // ION: Find flux
         finalIon = bilinear(localTimeFloor, localTimeCeil, logEnProt[iLowerIndex], logEnProt[iHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);

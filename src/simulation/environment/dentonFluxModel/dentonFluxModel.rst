@@ -36,7 +36,7 @@ provides information on what this message is used for.
       - Earth planet state input message
     * - ``sunStateInMsg``
       - :ref:`SpicePlanetStateMsgPayload`
-      - sun state input message
+      - Sun state input message
     * - ``fluxOutMsg``
       - :ref:`PlasmaFluxMsgPayload`
       - output ion and electron fluxes
@@ -73,5 +73,4 @@ the local time is computed within the module using the position vectors of the s
 
 Note that the `Kp index <https://www.spaceweatherlive.com/en/help/the-kp-index.html>`__ (global geomagnetic activity
 index) ranges from 0 to 9, with sub-indices '-','o' and '+' and therefore a total number of 28 indices (Kp index 0-
-and 9+ do not exist). Instead of the actual Kp index, this module uses a number between 0 and 27 to specify the Kp
-index. For example, a Kp index value of 5 in this module corresponds to an actual Kp index of 2-.
+and 9+ do not exist). In this module, the Kp index is specified with a string of length 2, for example '5-'.
