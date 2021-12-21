@@ -177,6 +177,8 @@ def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, para
     fig = plt.gcf()
     ax = fig.gca()
     plt.plot(EnergyData, ElectronFluxData)
+    plt.xlabel('Energy [eV]')
+    plt.ylabel('log10 Electron Flux [e$^{-}$ cm$^{-2}$ s$^{-1}$ str$^{-1}$ eV$^{-1}$]')
 
     if show_plots:
         plt.show()
@@ -185,4 +187,4 @@ def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, para
 
 
 if __name__ == "__main__":
-    test_dentonFluxModel(False, Kps[1], LTs[0], z_offsets[1], r_EN_Ns[1], 1e-6)
+    test_dentonFluxModel(True, Kps[1], LTs[0], z_offsets[1], r_EN_Ns[1], 1e-6)
