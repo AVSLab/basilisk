@@ -251,6 +251,30 @@ int testLinearAlgebra(double accuracy)
         errorCount++;
     }
 
+    v2Set(3, 4, v2_0);
+    a = v2Norm(v2_0);
+    if(!isEqual(a, 5.0, accuracy)) {
+        printf("v2Norm failed\n");
+        errorCount++;
+    }
+
+    v2Set(1, 2, v2_0);
+    v2Set(3, 6, v2_2);
+    v2Scale(3, v2_0, v2_0);
+    if(!v2IsEqual(v2_0, v2_2, accuracy)) {
+        printf("v2Scale failed\n");
+        errorCount++;
+    }
+
+    v2Set(1, 1, v2_0);
+    v2Set(1./sqrt(2), 1./(sqrt(2)), v2_2);
+    v2Normalize(v2_0, v2_0);
+    if(!v2IsEqual(v2_0, v2_2, accuracy)) {
+        printf("v2Normalize failed\n");
+        errorCount++;
+    }
+
+
 
     //---------
 

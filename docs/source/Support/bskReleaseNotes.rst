@@ -36,6 +36,7 @@ Version |release|
 - added :ref:`scenarioSpiceSpacecraft` to illustrate using Spice to specify the trajectory of a
   spacecraft while leaving the attitude dynamics unprescribed.
 - fixed a bug where using the generator flag to build on windows would skip a line in the conanfile.py that is crucial for building opNav.
+- added :ref:`dentonFluxModel` to compute electron and ion fluxes for the GEO regime.
 
 Version 2.1.1 (Dec. 15, 2021)
 -----------------------------
