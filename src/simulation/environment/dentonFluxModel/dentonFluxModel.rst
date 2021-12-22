@@ -2,7 +2,7 @@ Executive Summary
 -----------------
 This module provides the GEO electron and ion flux based on 82 satellite-years as discussed in `this paper <https://doi
 .org/10.1002/2015SW001168>`__ by M. H. Denton and on `this website <https://gemelli.spacescience.org/mdenton/>`__.
-A Fortran module can be downloaded from this website which computes the electron and ion flux for a given Kp index,
+A Fortran module can be downloaded from this website which computes the electron and ion flux for a given :math:`K_p` index,
 local time and particle energy, and also includes the relevant flux data. The Basilisk module only uses the mean
 flux data.
 
@@ -58,19 +58,22 @@ more than 4,000 km away from Geostationary Orbit (equatorial orbit with radius o
 
 User Guide
 ----------
-The ETcontrol module is created using:
+The Denton model averaged GEO space plasma properties module is created using:
 
 .. code-block:: python
     :linenos:
 
-    FluxModule = dentonFluxModel.DentonFluxModel()
-    FluxModule.ModelTag = "dentonFluxModule"
-    FluxModule.dataPath = bskPath + '/supportData/DentonGEO/'
-    scSim.AddModelToTask(dynTaskName, FluxModule)
+    fluxModule = dentonFluxModel.DentonFluxModel()
+    fluxModule.ModelTag = "dentonFluxModule"
+    fluxModule.dataPath = bskPath + '/supportData/DentonGEO/'
+    fluxModule.kpIndex = "2+"
+    fluxModule.numOutputEnergies = 30
+    scSim.AddModelToTask(dynTaskName, fluxModule)
 
-The Kp index (kpIndex) and number of output energies (numOutputEnergies) must be added to FluxModule as well, while
+The :math:`K_p` index (``kpIndex``) and number of output energies (``numOutputEnergies``) must be
+added to FluxModule as well, while
 the local time is computed within the module using the position vectors of the spacecraft, Sun and Earth.
 
 Note that the `Kp index <https://www.spaceweatherlive.com/en/help/the-kp-index.html>`__ (global geomagnetic activity
-index) ranges from 0 to 9, with sub-indices '-','o' and '+' and therefore a total number of 28 indices (Kp index 0-
+index) ranges from 0 to 9, with sub-indices '-','o' and '+' and therefore a total number of 28 indices (:math:`K_p` index 0-
 and 9+ do not exist). In this module, the Kp index is specified with a string of length 2, for example '5-'.
