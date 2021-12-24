@@ -193,6 +193,7 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
             batteryInMsg = messaging.PowerStorageStatusMsgReader()
             batteryInMsg.subscribeTo(self.DynModels[0].powerMonitor.batPowerOutMsg)
             batteryPanel.batteryStateInMsg = batteryInMsg
+            batteryPanel.this.disown()
 
             tankPanel = vizSupport.vizInterface.GenericStorage()
             tankPanel.label = "Tank"
@@ -201,6 +202,8 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
             tankInMsg = messaging.FuelTankMsgReader()
             tankInMsg.subscribeTo(self.DynModels[0].fuelTankStateEffector.fuelTankOutMsg)
             tankPanel.fuelTankStateInMsg = tankInMsg
+            tankPanel.this.disown()
+
             storageList = [None]*self.numberSpacecraft
             storageList[0] = [batteryPanel, tankPanel]
 
