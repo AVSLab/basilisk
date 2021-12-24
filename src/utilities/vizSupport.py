@@ -1205,8 +1205,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                     liList.append(li)
                 scData.lightList = vizInterface.LightVector(liList)
 
-
-        # process generic sensor HUD information
+        # process generic storage HUD information
         if gsdScList:
             gsdList = []
             if gsdScList[c] is not None:  # generic storage device(s) have been added to this spacecraft
