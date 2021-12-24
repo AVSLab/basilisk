@@ -271,11 +271,11 @@ void VizInterface::ReadBSKMessages()
         /* read in generic sensor cmd value */
         {
             for (size_t idx=0;idx< (size_t) scIt->genericSensorList.size(); idx++) {
-                if (scIt->genericSensorList[idx].genericSensorCmdInMsg.isLinked()){
+                if (scIt->genericSensorList[idx]->genericSensorCmdInMsg.isLinked()){
                     DeviceCmdMsgPayload deviceCmdMsgBuffer;
-                    deviceCmdMsgBuffer = scIt->genericSensorList[idx].genericSensorCmdInMsg();
-                    if(scIt->genericSensorList[idx].genericSensorCmdInMsg.isWritten()){
-                        scIt->genericSensorList[idx].genericSensorCmd = deviceCmdMsgBuffer.deviceCmd;
+                    deviceCmdMsgBuffer = scIt->genericSensorList[idx]->genericSensorCmdInMsg();
+                    if(scIt->genericSensorList[idx]->genericSensorCmdInMsg.isWritten()){
+                        scIt->genericSensorList[idx]->genericSensorCmd = deviceCmdMsgBuffer.deviceCmd;
                     }
                 }
             }
@@ -284,11 +284,11 @@ void VizInterface::ReadBSKMessages()
         /* read in light on/off cmd value */
         {
             for (size_t idx=0;idx< (size_t) scIt->lightList.size(); idx++) {
-                if (scIt->lightList[idx].onOffCmdInMsg.isLinked()){
+                if (scIt->lightList[idx]->onOffCmdInMsg.isLinked()){
                     DeviceCmdMsgPayload onOffCmdMsgBuffer;
-                    onOffCmdMsgBuffer = scIt->lightList[idx].onOffCmdInMsg();
-                    if(scIt->lightList[idx].onOffCmdInMsg.isWritten()){
-                        scIt->lightList[idx].lightOn = onOffCmdMsgBuffer.deviceCmd;
+                    onOffCmdMsgBuffer = scIt->lightList[idx]->onOffCmdInMsg();
+                    if(scIt->lightList[idx]->onOffCmdInMsg.isWritten()){
+                        scIt->lightList[idx]->lightOn = onOffCmdMsgBuffer.deviceCmd;
                     }
                 }
             }
@@ -297,20 +297,20 @@ void VizInterface::ReadBSKMessages()
         /* read in transceiver state values */
         {
             for (size_t idx=0;idx< (size_t) scIt->transceiverList.size(); idx++) {
-                if (scIt->transceiverList[idx].transceiverStateInMsgs.size() > 0) {
-                    scIt->transceiverList[idx].transceiverState = 0;
-                    for (size_t idxTr=0; idxTr < (size_t) scIt->transceiverList[idx].transceiverStateInMsgs.size(); idxTr++) {
-                        if (scIt->transceiverList[idx].transceiverStateInMsgs[idxTr].isLinked()){
+                if (scIt->transceiverList[idx]->transceiverStateInMsgs.size() > 0) {
+                    scIt->transceiverList[idx]->transceiverState = 0;
+                    for (size_t idxTr=0; idxTr < (size_t) scIt->transceiverList[idx]->transceiverStateInMsgs.size(); idxTr++) {
+                        if (scIt->transceiverList[idx]->transceiverStateInMsgs[idxTr].isLinked()){
                             DataNodeUsageMsgPayload stateMsgBuffer;
-                            stateMsgBuffer = scIt->transceiverList[idx].transceiverStateInMsgs[idxTr]();
-                            if(scIt->transceiverList[idx].transceiverStateInMsgs[idxTr].isWritten()){
+                            stateMsgBuffer = scIt->transceiverList[idx]->transceiverStateInMsgs[idxTr]();
+                            if(scIt->transceiverList[idx]->transceiverStateInMsgs[idxTr].isWritten()){
                                 /* state 0->off, 1->sending, 2->receiving, 3->sending and receiving */
                                 if (stateMsgBuffer.baudRate < 0.0) {
                                     /* sending data */
-                                    scIt->transceiverList[idx].transceiverState = scIt->transceiverList[idx].transceiverState | 1;
+                                    scIt->transceiverList[idx]->transceiverState = scIt->transceiverList[idx]->transceiverState | 1;
                                 } else if (stateMsgBuffer.baudRate > 0.0) {
                                     /* receiving data */
-                                    scIt->transceiverList[idx].transceiverState = scIt->transceiverList[idx].transceiverState | 2;
+                                    scIt->transceiverList[idx]->transceiverState = scIt->transceiverList[idx]->transceiverState | 2;
                                 }
                             }
                         }
@@ -323,30 +323,30 @@ void VizInterface::ReadBSKMessages()
         {
             for (size_t idx=0;idx< (size_t) scIt->genericStorageList.size(); idx++) {
                 /* read in battery device state */
-                if (scIt->genericStorageList[idx].batteryStateInMsg.isLinked()){
+                if (scIt->genericStorageList[idx]->batteryStateInMsg.isLinked()){
                     PowerStorageStatusMsgPayload deviceStateMsgBuffer;
-                    deviceStateMsgBuffer = scIt->genericStorageList[idx].batteryStateInMsg();
-                    if(scIt->genericStorageList[idx].batteryStateInMsg.isWritten()){
-                        scIt->genericStorageList[idx].currentValue = deviceStateMsgBuffer.storageLevel;
-                        scIt->genericStorageList[idx].maxValue = deviceStateMsgBuffer.storageCapacity;
+                    deviceStateMsgBuffer = scIt->genericStorageList[idx]->batteryStateInMsg();
+                    if(scIt->genericStorageList[idx]->batteryStateInMsg.isWritten()){
+                        scIt->genericStorageList[idx]->currentValue = deviceStateMsgBuffer.storageLevel;
+                        scIt->genericStorageList[idx]->maxValue = deviceStateMsgBuffer.storageCapacity;
                     }
                 }
                 /* read in data storage device state */
-                if (scIt->genericStorageList[idx].dataStorageStateInMsg.isLinked()){
+                if (scIt->genericStorageList[idx]->dataStorageStateInMsg.isLinked()){
                     DataStorageStatusMsgPayload deviceStateMsgBuffer;
-                    deviceStateMsgBuffer = scIt->genericStorageList[idx].dataStorageStateInMsg();
-                    if(scIt->genericStorageList[idx].dataStorageStateInMsg.isWritten()){
-                        scIt->genericStorageList[idx].currentValue = deviceStateMsgBuffer.storageLevel;
-                        scIt->genericStorageList[idx].maxValue = deviceStateMsgBuffer.storageCapacity;
+                    deviceStateMsgBuffer = scIt->genericStorageList[idx]->dataStorageStateInMsg();
+                    if(scIt->genericStorageList[idx]->dataStorageStateInMsg.isWritten()){
+                        scIt->genericStorageList[idx]->currentValue = deviceStateMsgBuffer.storageLevel;
+                        scIt->genericStorageList[idx]->maxValue = deviceStateMsgBuffer.storageCapacity;
                     }
                 }
                 /* read in fuel tank device state */
-                if (scIt->genericStorageList[idx].fuelTankStateInMsg.isLinked()){
+                if (scIt->genericStorageList[idx]->fuelTankStateInMsg.isLinked()){
                     FuelTankMsgPayload deviceStateMsgBuffer;
-                    deviceStateMsgBuffer = scIt->genericStorageList[idx].fuelTankStateInMsg();
-                    if(scIt->genericStorageList[idx].fuelTankStateInMsg.isWritten()){
-                        scIt->genericStorageList[idx].currentValue = deviceStateMsgBuffer.fuelMass;
-                        scIt->genericStorageList[idx].maxValue = deviceStateMsgBuffer.maxFuelMass;
+                    deviceStateMsgBuffer = scIt->genericStorageList[idx]->fuelTankStateInMsg();
+                    if(scIt->genericStorageList[idx]->fuelTankStateInMsg.isWritten()){
+                        scIt->genericStorageList[idx]->currentValue = deviceStateMsgBuffer.fuelMass;
+                        scIt->genericStorageList[idx]->maxValue = deviceStateMsgBuffer.maxFuelMass;
                     }
                 }
             }
@@ -683,19 +683,19 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     /*! write the Locations protobuffer messages */
-    std::vector<LocationPbMsg>::iterator glIt;
+    std::vector<LocationPbMsg *>::iterator glIt;
     for (glIt = locations.begin(); glIt != locations.end(); glIt++) {
         vizProtobufferMessage::VizMessage::Location* glp = message->add_locations();
-        glp->set_stationname(glIt->stationName);
-        glp->set_parentbodyname(glIt->parentBodyName);
-        glp->set_fieldofview(glIt->fieldOfView*R2D);
-        glp->set_range(glIt->range);
+        glp->set_stationname((*glIt)->stationName);
+        glp->set_parentbodyname((*glIt)->parentBodyName);
+        glp->set_fieldofview((*glIt)->fieldOfView*R2D);
+        glp->set_range((*glIt)->range);
         for (int i=0; i<3; i++) {
-            glp->add_r_gp_p(glIt->r_GP_P[i]);
-            glp->add_ghat_p(glIt->gHat_P[i]);
+            glp->add_r_gp_p((*glIt)->r_GP_P[i]);
+            glp->add_ghat_p((*glIt)->gHat_P[i]);
         }
         for (int i=0; i<4; i++) {
-            glp->add_color(glIt->color[i]);
+            glp->add_color((*glIt)->color[i]);
         }
     }
 
@@ -778,19 +778,19 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 vizProtobufferMessage::VizMessage::GenericSensor* gs = scp->add_genericsensors();
 
                 for (int j=0; j<3; j++) {
-                    gs->add_position(scIt->genericSensorList[idx].r_SB_B[j]);
-                    gs->add_normalvector(scIt->genericSensorList[idx].normalVector[j]);
+                    gs->add_position(scIt->genericSensorList[idx]->r_SB_B[j]);
+                    gs->add_normalvector(scIt->genericSensorList[idx]->normalVector[j]);
                 }
-                for (uint64_t j=0; j<scIt->genericSensorList[idx].fieldOfView.size(); j++) {
-                    gs->add_fieldofview(scIt->genericSensorList[idx].fieldOfView[j]*R2D);
+                for (uint64_t j=0; j<scIt->genericSensorList[idx]->fieldOfView.size(); j++) {
+                    gs->add_fieldofview(scIt->genericSensorList[idx]->fieldOfView[j]*R2D);
                 }
-                gs->set_ishidden(scIt->genericSensorList[idx].isHidden);
-                gs->set_size(scIt->genericSensorList[idx].size);
-                gs->set_label(scIt->genericSensorList[idx].label);
-                for (uint64_t j=0; j<scIt->genericSensorList[idx].color.size(); j++) {
-                    gs->add_color(scIt->genericSensorList[idx].color[j]);
+                gs->set_ishidden(scIt->genericSensorList[idx]->isHidden);
+                gs->set_size(scIt->genericSensorList[idx]->size);
+                gs->set_label(scIt->genericSensorList[idx]->label);
+                for (uint64_t j=0; j<scIt->genericSensorList[idx]->color.size(); j++) {
+                    gs->add_color(scIt->genericSensorList[idx]->color[j]);
                 }
-                gs->set_activitystatus(scIt->genericSensorList[idx].genericSensorCmd);
+                gs->set_activitystatus(scIt->genericSensorList[idx]->genericSensorCmd);
             }
             
             // Write transceiver messages
@@ -798,32 +798,32 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 vizProtobufferMessage::VizMessage::Transceiver* tr = scp->add_transceivers();
 
                 for (int j=0; j<3; j++) {
-                    tr->add_position(scIt->transceiverList[idx].r_SB_B[j]);
-                    tr->add_normalvector(scIt->transceiverList[idx].normalVector[j]);
+                    tr->add_position(scIt->transceiverList[idx]->r_SB_B[j]);
+                    tr->add_normalvector(scIt->transceiverList[idx]->normalVector[j]);
                 }
-                tr->set_fieldofview(scIt->transceiverList[idx].fieldOfView*R2D);
-                tr->set_ishidden(scIt->transceiverList[idx].isHidden);
-                tr->set_label(scIt->transceiverList[idx].label);
-                for (uint64_t j=0; j<scIt->transceiverList[idx].color.size(); j++) {
-                    tr->add_color(scIt->transceiverList[idx].color[j]);
+                tr->set_fieldofview(scIt->transceiverList[idx]->fieldOfView*R2D);
+                tr->set_ishidden(scIt->transceiverList[idx]->isHidden);
+                tr->set_label(scIt->transceiverList[idx]->label);
+                for (uint64_t j=0; j<scIt->transceiverList[idx]->color.size(); j++) {
+                    tr->add_color(scIt->transceiverList[idx]->color[j]);
                 }
-                tr->set_transmitstatus(scIt->transceiverList[idx].transceiverState);
-                tr->set_animationspeed(scIt->transceiverList[idx].animationSpeed);
+                tr->set_transmitstatus(scIt->transceiverList[idx]->transceiverState);
+                tr->set_animationspeed(scIt->transceiverList[idx]->animationSpeed);
             }
 
             // Write generic storage device messages
             for (size_t idx =0; idx < (size_t) scIt->genericStorageList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::GenericStorage* gsd = scp->add_storagedevices();
 
-                gsd->set_label(scIt->genericStorageList[idx].label);
-                gsd->set_currentvalue(scIt->genericStorageList[idx].currentValue);
-                gsd->set_maxvalue(scIt->genericStorageList[idx].maxValue);
-                gsd->set_units(scIt->genericStorageList[idx].units);
-                for (uint64_t j=0; j<scIt->genericStorageList[idx].color.size(); j++) {
-                    gsd->add_color(scIt->genericStorageList[idx].color[j]);
+                gsd->set_label(scIt->genericStorageList[idx]->label);
+                gsd->set_currentvalue(scIt->genericStorageList[idx]->currentValue);
+                gsd->set_maxvalue(scIt->genericStorageList[idx]->maxValue);
+                gsd->set_units(scIt->genericStorageList[idx]->units);
+                for (uint64_t j=0; j<scIt->genericStorageList[idx]->color.size(); j++) {
+                    gsd->add_color(scIt->genericStorageList[idx]->color[j]);
                 }
-                for (uint64_t j=0; j<scIt->genericStorageList[idx].thresholds.size(); j++) {
-                    gsd->add_thresholds(scIt->genericStorageList[idx].thresholds[j]);
+                for (uint64_t j=0; j<scIt->genericStorageList[idx]->thresholds.size(); j++) {
+                    gsd->add_thresholds(scIt->genericStorageList[idx]->thresholds[j]);
                 }
 
             }
@@ -832,30 +832,30 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             for (size_t idx =0; idx < (size_t) scIt->lightList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::Light* ld = scp->add_lights();
 
-                ld->set_label(scIt->lightList[idx].label);
+                ld->set_label(scIt->lightList[idx]->label);
                 for (uint64_t j=0; j<3; j++) {
-                    ld->add_position(scIt->lightList[idx].position[j]);
-                    ld->add_normalvector(scIt->lightList[idx].normalVector[j]);
+                    ld->add_position(scIt->lightList[idx]->position[j]);
+                    ld->add_normalvector(scIt->lightList[idx]->normalVector[j]);
                 }
                 /* light on integer can only be 1, 0 or -1*/
-                if (scIt->lightList[idx].lightOn > 1) {
-                    scIt->lightList[idx].lightOn = 1;
-                } else if (scIt->lightList[idx].lightOn < 0) {
-                    scIt->lightList[idx].lightOn = -1;
+                if (scIt->lightList[idx]->lightOn > 1) {
+                    scIt->lightList[idx]->lightOn = 1;
+                } else if (scIt->lightList[idx]->lightOn < 0) {
+                    scIt->lightList[idx]->lightOn = -1;
                 }
-                ld->set_lighton(scIt->lightList[idx].lightOn);
-                ld->set_fieldofview(scIt->lightList[idx].fieldOfView*R2D);
-                ld->set_range(scIt->lightList[idx].range);
-                ld->set_intensity(scIt->lightList[idx].intensity);
-                ld->set_showlightmarker(scIt->lightList[idx].showLightMarker);
-                ld->set_markerdiameter(scIt->lightList[idx].markerDiameter);
-                for (uint64_t j=0; j<scIt->lightList[idx].color.size(); j++) {
-                    ld->add_color(scIt->lightList[idx].color[j]);
+                ld->set_lighton(scIt->lightList[idx]->lightOn);
+                ld->set_fieldofview(scIt->lightList[idx]->fieldOfView*R2D);
+                ld->set_range(scIt->lightList[idx]->range);
+                ld->set_intensity(scIt->lightList[idx]->intensity);
+                ld->set_showlightmarker(scIt->lightList[idx]->showLightMarker);
+                ld->set_markerdiameter(scIt->lightList[idx]->markerDiameter);
+                for (uint64_t j=0; j<scIt->lightList[idx]->color.size(); j++) {
+                    ld->add_color(scIt->lightList[idx]->color[j]);
                 }
-                ld->set_gammasaturation(scIt->lightList[idx].gammaSaturation);
-                ld->set_showlensflare(scIt->lightList[idx].showLensFlare);
-                ld->set_lensflarebrightness(scIt->lightList[idx].lensFlareBrightness);
-                ld->set_lensflarefadespeed(scIt->lightList[idx].lensFlareFadeSpeed);
+                ld->set_gammasaturation(scIt->lightList[idx]->gammaSaturation);
+                ld->set_showlensflare(scIt->lightList[idx]->showLensFlare);
+                ld->set_lensflarebrightness(scIt->lightList[idx]->lensFlareBrightness);
+                ld->set_lensflarefadespeed(scIt->lightList[idx]->lensFlareFadeSpeed);
             }
 
         }

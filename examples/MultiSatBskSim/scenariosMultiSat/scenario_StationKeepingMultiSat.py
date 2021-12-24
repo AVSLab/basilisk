@@ -219,6 +219,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                 batteryInMsg = messaging.PowerStorageStatusMsgReader()
                 batteryInMsg.subscribeTo(self.DynModels[i].powerMonitor.batPowerOutMsg)
                 batteryPanel.batteryStateInMsg = batteryInMsg
+                batteryPanel.this.disown()
 
                 tankPanel = vizSupport.vizInterface.GenericStorage()
                 tankPanel.label = "Tank"
@@ -227,6 +228,8 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                 tankInMsg = messaging.FuelTankMsgReader()
                 tankInMsg.subscribeTo(self.DynModels[i].fuelTankStateEffector.fuelTankOutMsg)
                 tankPanel.fuelTankStateInMsg = tankInMsg
+                tankPanel.this.disown()
+
                 gsList.append([batteryPanel, tankPanel])
 
             viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
