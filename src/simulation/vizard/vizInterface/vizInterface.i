@@ -34,7 +34,7 @@ from Basilisk.architecture.swig_common_model import *
 // Instantiate templates used by example
 namespace std {
     %template(PointLineConfig) vector<PointLine>;
-    %template(LocationConfig) vector<LocationPbMsg>;
+    %template(LocationConfig) vector<LocationPbMsg *>;
     %template(CustomModelConfig) vector<CustomModel>;
     %template(ActuatorGuiSettingsConfig) vector<ActuatorGuiSettings>;
     %template(InstrumentGuiSettingsConfig) vector<InstrumentGuiSettings>;

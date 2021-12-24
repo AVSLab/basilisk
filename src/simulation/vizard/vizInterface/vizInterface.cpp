@@ -683,19 +683,19 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     /*! write the Locations protobuffer messages */
-    std::vector<LocationPbMsg>::iterator glIt;
+    std::vector<LocationPbMsg *>::iterator glIt;
     for (glIt = locations.begin(); glIt != locations.end(); glIt++) {
         vizProtobufferMessage::VizMessage::Location* glp = message->add_locations();
-        glp->set_stationname(glIt->stationName);
-        glp->set_parentbodyname(glIt->parentBodyName);
-        glp->set_fieldofview(glIt->fieldOfView*R2D);
-        glp->set_range(glIt->range);
+        glp->set_stationname((*glIt)->stationName);
+        glp->set_parentbodyname((*glIt)->parentBodyName);
+        glp->set_fieldofview((*glIt)->fieldOfView*R2D);
+        glp->set_range((*glIt)->range);
         for (int i=0; i<3; i++) {
-            glp->add_r_gp_p(glIt->r_GP_P[i]);
-            glp->add_ghat_p(glIt->gHat_P[i]);
+            glp->add_r_gp_p((*glIt)->r_GP_P[i]);
+            glp->add_ghat_p((*glIt)->gHat_P[i]);
         }
         for (int i=0; i<4; i++) {
-            glp->add_color(glIt->color[i]);
+            glp->add_color((*glIt)->color[i]);
         }
     }
 
