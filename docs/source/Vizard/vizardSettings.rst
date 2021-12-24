@@ -833,6 +833,12 @@ parameters are set using::
     genericSensor.fieldOfView = [20.0 * macros.D2R, -1]
     genericSensor.normalVector = [0., 0., 1.]
 
+.. caution::
+    As a pointer to the ``GenericSensor`` structure is connected to :ref:`vizInterface`, it is
+    important that the python structure is retained in memory.  If the python structure instance
+    is created in a manner where this is not the case, use ``genericSensor.this.disown()``
+    to ensure the python structure remains intact throughout the simulation.
+
 The sensor location relative to the spacecraft B frame is given by ``r_SB_B``.  The sensor view axis is
 set through ``normalVector``.  The ``fieldOfView`` is a vector with up to 2 floats.  If a single positive value is provided,
 then the sensor shape is a cone with this edge-to-edge field of view.  If 2 positive floats are provided
@@ -970,6 +976,12 @@ parameters are set using::
     transceiverHUD.r_SB_B = [0., 0., 1.]
     transceiverHUD.fieldOfView = 40.0 * macros.D2R
     transceiverHUD.normalVector = [0., 0., 1.]
+
+.. caution::
+    As a pointer to the ``Transceiver`` structure is connected to :ref:`vizInterface`, it is
+    important that the python structure is retained in memory.  If the python structure instance
+    is created in a manner where this is not the case, use ``transceiverHUD.this.disown()``
+    to ensure the python structure remains intact throughout the simulation.
 
 The transceiver location relative to the spacecraft B frame is given by ``r_SB_B``.  The transceiver
 bore sight axis is
@@ -1168,6 +1180,12 @@ orange if the storage is more than 80% full, you could use::
     hdInMsg.subscribeTo(dataMonitor.storageUnitDataOutMsg)
     hdDevicePanel.dataStorageStateInMsg = hdInMsg
 
+.. caution::
+    As a pointer to the ``GenericStorage`` structure is connected to :ref:`vizInterface`, it is
+    important that the python structure is retained in memory.  If the python structure instance
+    is created in a manner where this is not the case, use ``hdDevicePanel.this.disown()``
+    to ensure the python structure remains intact throughout the simulation.
+
 Multiple storage panel elements can be setup for each spacecraft, and multiple spacecraft are supported.  Using
 the ``vizSupport.py`` file, the generic storage structures list is sent to :ref:`vizInterface` using they keyword ``genericStorageList``::
 
@@ -1197,6 +1215,7 @@ Vizard can add light emitting devices, i.e. spotlights, to a spacecraft object. 
 setup a light device.  The associated light structure and the required
 parameters are set using::
 
+    scLight = vizInterface.Light()
     scLight.label = "Main Light"
     scLight.position = [0.2, -1.0, 1.01]
     scLight.fieldOfView = 3.0 * macros.D2R
@@ -1208,6 +1227,12 @@ parameters are set using::
     scLight.showLensFlare = 1
     scLight.lensFlareFadeSpeed = 2.0
     scLight.lensFlareBrightness = 0.5
+
+.. caution::
+    As a pointer to the ``Light`` structure is connected to :ref:`vizInterface`, it is
+    important that the python structure is retained in memory.  If the python structure instance
+    is created in a manner where this is not the case, use ``scLight.this.disown()``
+    to ensure the python structure remains intact throughout the simulation.
 
 The light location relative to the spacecraft B frame is given by ``position``.  The light normalaxis is
 set through ``normalVector``.  The edge-to-edge ``fieldOfView`` is set in radians.
