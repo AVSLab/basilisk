@@ -261,11 +261,10 @@ class BasiliskConan(ConanFile):
         if self.options.pathToExternalModules:
             print(statusColor + "Including External Folder: " + endColor + str(self.options.pathToExternalModules))
 
-
         root = os.path.abspath(os.path.curdir)
 
-        self.source_folder = os.path.join(root, "src")
-        self.build_folder = os.path.join(root, "dist3")
+        self.folders.source = os.path.join(root, "src")
+        self.folders.build = os.path.join(root, "dist3")
 
         cmake = CMake(self, set_cmake_flags=True, generator=self.generator)
         if self.settings.compiler == "Visual Studio":

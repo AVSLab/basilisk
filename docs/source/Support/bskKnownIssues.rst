@@ -8,6 +8,8 @@ Version |release|
 -----------------
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
   The code compiles, but auto-completion etc. doesn't work in that module.
+- ``conan`` version 1.44 is causing build issues because the way the source and build folders are set has
+  changed.  This is fixed in current version of Basilisk.
 
 Version 2.1.1
 -------------
