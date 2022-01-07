@@ -54,21 +54,31 @@ void RigidBodyContactEffector::Reset()
 @return void
 @param objFile The .obj file associated with the primary body
  */
-void RigidBodyContactEffector::LoadMainBody(const char *objFile)
+void RigidBodyContactEffector::LoadSpacecraftBody(const char *objFile, std::string modelTag, double boundingRadius, double coefRestitution, double coefFriction)
 {
+    geometry body;
+    body.boundingRadius = boundingRadius;
+    body.coefRestitution = coefRestitution;
+    body.coefFriction = coefFriction;
+    body.modelTag = modelTag;
+    body.isSpice = false;
+    
     std::vector<tinyobj::material_t> materials;
     std::string warn;
     std::string err;
+    
     // - Use TinyOBJLoader
-    bool ret = tinyobj::LoadObj(&this->mainBody.attrib, &this->mainBody.shapes, &materials, &err, objFile);
+    bool ret = tinyobj::LoadObj(&body.attrib, &body.shapes, &materials, &err, objFile);
     // - Organize the vertices into a useful format
-    for (int vertIt=0; vertIt<this->mainBody.attrib.vertices.size()/3; ++vertIt)
+    for (int vertIt=0; vertIt<body.attrib.vertices.size()/3; ++vertIt)
     {
-        Eigen::Vector3d v(this->mainBody.attrib.vertices[3*vertIt + 0], this->mainBody.attrib.vertices[3*vertIt + 1], this->mainBody.attrib.vertices[3*vertIt + 2]);
-        this->mainBody.vertices.push_back(v);
+        Eigen::Vector3d v(body.attrib.vertices[3*vertIt + 0], body.attrib.vertices[3*vertIt + 1], body.attrib.vertices[3*vertIt + 2]);
+        body.vertices.push_back(v);
     }
     // - Orgazine the shape information into a half edge format
-    this->mainBody.polyhedron = this->ComputeHalfEdge(this->mainBody.vertices, this->mainBody.shapes);
+    body.polyhedron = this->ComputeHalfEdge(body.vertices, body.shapes);
+    this->Bodies.push_back(body);
+    this->numBodies++;
     return;
 }
 
@@ -81,29 +91,32 @@ void RigidBodyContactEffector::LoadMainBody(const char *objFile)
 @param boundingRadius The radius of this body's bounding sphere, for primary collision detection
 @param coefRestitution The Coefficient of Restitution between this body and the primary body
 */
-void RigidBodyContactEffector::AddOtherBody(const char *objFile, Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double boundingRadius, double coefRestitution, double coefFriction)
+void RigidBodyContactEffector::AddSpiceBody(const char *objFile, Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double boundingRadius, double coefRestitution, double coefFriction)
 {
-    geometry externalBody;
-    externalBody.boundingRadius = boundingRadius;
-    externalBody.coefRestitution = coefRestitution;
-    externalBody.coefFriction = coefFriction;
-    externalBody.planetInMsg = planetSpiceMsg->addSubscriber();
+    geometry body;
+    body.boundingRadius = boundingRadius;
+    body.coefRestitution = coefRestitution;
+    body.coefFriction = coefFriction;
+    body.planetInMsg = planetSpiceMsg->addSubscriber();
+    body.isSpice = true;
+    
 //    externalBody.modelTag = modelTag;
     std::vector<tinyobj::material_t> materials;
     std::string warn;
     std::string err;
     // - Use TinyOBJLoader
-    bool ret = tinyobj::LoadObj(&externalBody.attrib, &externalBody.shapes, &materials, &err, objFile);
+    bool ret = tinyobj::LoadObj(&body.attrib, &body.shapes, &materials, &err, objFile);
     // - Organize the vertices into a useful format
-    for (int vertIt=0; vertIt<externalBody.attrib.vertices.size()/3; ++vertIt)
+    for (int vertIt=0; vertIt<body.attrib.vertices.size()/3; ++vertIt)
     {
-        Eigen::Vector3d v(externalBody.attrib.vertices[3*vertIt + 0], externalBody.attrib.vertices[3*vertIt + 1], externalBody.attrib.vertices[3*vertIt + 2]);
-        externalBody.vertices.push_back(v);
+        Eigen::Vector3d v(body.attrib.vertices[3*vertIt + 0], body.attrib.vertices[3*vertIt + 1], body.attrib.vertices[3*vertIt + 2]);
+        body.vertices.push_back(v);
     }
     // - Orgazine the shape information into a half edge format
-    externalBody.polyhedron = this->ComputeHalfEdge(externalBody.vertices, externalBody.shapes);
+    body.polyhedron = this->ComputeHalfEdge(body.vertices, body.shapes);
     // - Add this body to the list of all external bodies
-    this->externalBodies.push_back(externalBody);
+    this->Bodies.push_back(body);
+    this->numBodies++;
     return;
 }
 
@@ -115,28 +128,38 @@ void RigidBodyContactEffector::AddOtherBody(const char *objFile, Message<SpicePl
 std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eigen::Vector3d> vertices, std::vector<tinyobj::shape_t> shapes)
 {
     std::vector<halfEdge> polyhedron;
-    polyhedron.resize(shapes.size());
+    halfEdge boundingGroup;
     int indexOffset;
     Eigen::Vector3d v1;
     Eigen::Vector3d v2;
     Eigen::Vector3d faceNormal;
-    Eigen::Vector3d preCentroid;
-    double shapeVolume;
+    Eigen::Vector3d centroid;
     std::vector<int> tempTriangle;
     std::vector<int> searchEdge(2,0);
     std::vector<std::vector<int>> allFaces;
     std::vector<Eigen::Vector3d> allNormals;
+    std::vector<Eigen::Vector3d> allBoundingBoxes;
+    std::vector<Eigen::Vector3d> allCentroids;
     std::vector<std::vector<int>> allConnections;
     std::vector<int> unconnectedFaces;
+    std::vector<int> ungroupedFaces;
+    std::vector<int> facesInGroup;
+    std::vector<Eigen::Vector3d> verticesInGroup;
+    std::vector<Eigen::Vector3d> convHullPoints;
+    std::vector<int> adjacentFacesToGroup;
     std::vector<int> dummyVec(3, -1);
     std::vector<double> faceMaxDist;
+    std::vector<double> adjacentDistsToGroup;
+    std::vector<double> indivMaxDists;
     int faceCounter = 0;
+    bool searchingForCloseFace;
+    double maxX;
+    double maxY;
+    double maxZ;
     
     for (int shapeIt=0; shapeIt<shapes.size(); ++shapeIt)
     {
         indexOffset = 0;
-        preCentroid << 0.0, 0.0, 0.0;
-        shapeVolume = 0;
         for (int faceIt=0; faceIt<shapes[shapeIt].mesh.num_face_vertices.size(); ++faceIt)
         {
             tempTriangle.clear();
@@ -144,57 +167,44 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
             v2 = vertices[shapes[shapeIt].mesh.indices[indexOffset+2].vertex_index] - vertices[shapes[shapeIt].mesh.indices[indexOffset+1].vertex_index];
             faceNormal = v1.cross(v2);
             faceNormal.normalize();
-            polyhedron[shapeIt].faceNormals.push_back( faceNormal);
             tempTriangle.push_back(shapes[shapeIt].mesh.indices[indexOffset+0].vertex_index);
             tempTriangle.push_back(shapes[shapeIt].mesh.indices[indexOffset+1].vertex_index);
             tempTriangle.push_back(shapes[shapeIt].mesh.indices[indexOffset+2].vertex_index);
-            polyhedron[shapeIt].faceTriangles.push_back(tempTriangle);
+            centroid = (vertices[shapes[shapeIt].mesh.indices[indexOffset].vertex_index] + vertices[shapes[shapeIt].mesh.indices[indexOffset+1].vertex_index] + vertices[shapes[shapeIt].mesh.indices[indexOffset+2].vertex_index]) / 3.0;
+            maxX = 0;
+            maxY = 0;
+            maxZ = 0;
+            for (int ii=0; ii < 3; ++ii)
+            {
+                v1 = vertices[tempTriangle[ii]] - centroid;
+                if (abs(v1[0]) > maxX)
+                {
+                    maxX = abs(v1[0]);
+                }
+                if (abs(v1[1]) > maxY)
+                {
+                    maxY = abs(v1[1]);
+                }
+                if (abs(v1[2]) > maxZ)
+                {
+                    maxZ = abs(v1[2]);
+                }
+            }
+            v2 <<maxX, maxY, maxZ;
+            allCentroids.push_back(centroid);
+            allBoundingBoxes.push_back(v2);
             allFaces.push_back(tempTriangle);
             allNormals.push_back(faceNormal);
             allConnections.push_back(dummyVec);
             unconnectedFaces.push_back(faceCounter);
+            ungroupedFaces.push_back(faceCounter);
             faceMaxDist.push_back(std::max({vertices[shapes[shapeIt].mesh.indices[indexOffset+0].vertex_index].norm(),
                 vertices[shapes[shapeIt].mesh.indices[indexOffset+1].vertex_index].norm(),
                 vertices[shapes[shapeIt].mesh.indices[indexOffset+2].vertex_index].norm()}));
             faceCounter++;
             
-            
-            for ( int inx=0; inx<shapes[shapeIt].mesh.num_face_vertices[faceIt]-1; ++inx)
-            {
-                std::vector<int> edgeGroup = {shapes[shapeIt].mesh.indices[indexOffset+inx].vertex_index, shapes[shapeIt].mesh.indices[indexOffset+inx+1].vertex_index};
-                polyhedron[shapeIt].edgeIndices.push_back(edgeGroup);
-                polyhedron[shapeIt].faceIndices.push_back(faceIt);
-            }
-            std::vector<int> edgeGroup = { shapes[shapeIt].mesh.indices[indexOffset+shapes[shapeIt].mesh.num_face_vertices[faceIt]-1].vertex_index, shapes[shapeIt].mesh.indices[indexOffset].vertex_index};
-            polyhedron[shapeIt].edgeIndices.push_back(edgeGroup);
-            polyhedron[shapeIt].faceIndices.push_back(faceIt);
             indexOffset = indexOffset + shapes[shapeIt].mesh.num_face_vertices[faceIt];
         }
-        for ( int edgeIt=0; edgeIt<polyhedron[shapeIt].edgeIndices.size(); ++edgeIt)
-        {
-            polyhedron[shapeIt].uniqueVertIndices.push_back(polyhedron[shapeIt].edgeIndices[edgeIt][0]);
-            searchEdge[0] = polyhedron[shapeIt].edgeIndices[edgeIt][1];
-            searchEdge[1] = polyhedron[shapeIt].edgeIndices[edgeIt][0];
-            for ( int searchIt=edgeIt+1; searchIt<polyhedron[shapeIt].edgeIndices.size(); ++searchIt)
-            {
-                if (polyhedron[shapeIt].edgeIndices[searchIt]==searchEdge)
-                {
-                    std::vector<std::vector<int>>::iterator itEdge1 = polyhedron[shapeIt].edgeIndices.begin() + edgeIt+1;
-                    std::vector<std::vector<int>>::iterator itSearch1 = polyhedron[shapeIt].edgeIndices.begin() + searchIt+1;
-                    std::vector<int>::iterator itEdge2 = polyhedron[shapeIt].faceIndices.begin() + edgeIt+1;
-                    std::vector<int>::iterator itSearch2 = polyhedron[shapeIt].faceIndices.begin() + searchIt+1;
-                    polyhedron[shapeIt].edgeIndices.emplace(itEdge1, searchEdge);
-                    polyhedron[shapeIt].edgeIndices.erase(itSearch1);
-                    polyhedron[shapeIt].faceIndices.emplace(itEdge2, polyhedron[shapeIt].faceIndices[searchIt]);
-                    polyhedron[shapeIt].faceIndices.erase(itSearch2);
-                    edgeIt++;
-                    continue;
-                }
-            }
-        }
-        
-        std::set<int> uniqueSet(polyhedron[shapeIt].uniqueVertIndices.begin(), polyhedron[shapeIt].uniqueVertIndices.end());
-        polyhedron[shapeIt].uniqueVertIndices.assign(uniqueSet.begin(), uniqueSet.end());
         
     }
     
@@ -234,7 +244,186 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
         }
     }
     
+    std::sort(ungroupedFaces.begin(), ungroupedFaces.end(),
+              [faceMaxDist] (int const& f1, int const& f2) -> bool
+              {
+                return faceMaxDist[f1] > faceMaxDist[f2];
+              });
     
+    while (!ungroupedFaces.empty())
+    {
+        boundingGroup.faceTriangles.clear();
+        boundingGroup.faceNormals.clear();
+        facesInGroup.clear();
+        verticesInGroup.clear();
+        
+        boundingGroup.faceTriangles.push_back(allFaces[ungroupedFaces[0]]);
+        boundingGroup.faceNormals.push_back(allNormals[ungroupedFaces[0]]);
+        facesInGroup.push_back(ungroupedFaces[0]);
+        for (int ii=0; ii < 3; ++ii)
+        {
+            verticesInGroup.push_back(vertices[allFaces[ungroupedFaces[0]][ii]]);
+        }
+        ungroupedFaces.erase(ungroupedFaces.begin());
+        
+        searchingForCloseFace = true;
+        while (searchingForCloseFace)
+        {
+            adjacentFacesToGroup.clear();
+            adjacentDistsToGroup.clear();
+            for (int ii=0; ii < facesInGroup.size(); ++ii)
+            {
+                for (int jj=0; jj < 3; ++jj)
+                {
+                    if ((std::find(facesInGroup.begin(), facesInGroup.end(), allConnections[facesInGroup[ii]][jj]) == facesInGroup.end()) &&
+                        (std::find(adjacentFacesToGroup.begin(), adjacentFacesToGroup.end(), allConnections[facesInGroup[ii]][jj]) == adjacentFacesToGroup.end()))
+                    {
+                        adjacentFacesToGroup.push_back(allConnections[facesInGroup[ii]][jj]);
+                    }
+                }
+            }
+            
+            adjacentDistsToGroup.resize(adjacentFacesToGroup.size());
+            for (int ii=0; ii < adjacentFacesToGroup.size(); ++ii)
+            {
+                adjacentDistsToGroup[ii] = 0;
+                for (int jj=0; jj < 3; ++jj)
+                {
+                    indivMaxDists.clear();
+                    for (int kk=0; kk < verticesInGroup.size(); ++kk)
+                    {
+                        indivMaxDists.push_back((verticesInGroup[kk] - vertices[allFaces[adjacentFacesToGroup[ii]][jj]]).norm());
+                    }
+                    if (*std::max_element(indivMaxDists.begin(), indivMaxDists.end()) > adjacentDistsToGroup[ii])
+                    {
+                        adjacentDistsToGroup[ii] = *std::max_element(indivMaxDists.begin(), indivMaxDists.end());
+                    }
+                }
+            }
+            
+            faceCounter = std::distance(adjacentDistsToGroup.begin(), std::min_element(adjacentDistsToGroup.begin(), adjacentDistsToGroup.end()));
+            boundingGroup.faceTriangles.push_back(allFaces[adjacentFacesToGroup[faceCounter]]);
+            boundingGroup.faceNormals.push_back(allNormals[adjacentFacesToGroup[faceCounter]]);
+            boundingGroup.faceCentroids.push_back(allCentroids[adjacentFacesToGroup[faceCounter]]);
+            boundingGroup.faceBoundingBoxes.push_back(allBoundingBoxes[adjacentFacesToGroup[faceCounter]]);
+            facesInGroup.push_back(adjacentFacesToGroup[faceCounter]);
+            for (int ii=0; ii < 3; ++ii)
+            {
+                verticesInGroup.push_back(vertices[allFaces[adjacentFacesToGroup[faceCounter]][ii]]);
+            }
+            ungroupedFaces.erase(std::find(ungroupedFaces.begin(), ungroupedFaces.end(), adjacentFacesToGroup[faceCounter]));
+            
+            if (ungroupedFaces.empty())
+            {
+                searchingForCloseFace = false;
+            }
+            indivMaxDists.clear();
+            for (int ii=0; ii < verticesInGroup.size()-1; ++ii)
+            {
+                for (int jj=ii+1; jj < verticesInGroup.size(); ++jj)
+                {
+                    indivMaxDists.push_back((verticesInGroup[ii] - verticesInGroup[jj]).norm());
+                }
+            }
+            if (*std::max_element(indivMaxDists.begin(), indivMaxDists.end()) >= this->maxBoundingBoxDim)
+            {
+                searchingForCloseFace = false;
+            }
+        }
+        
+        polyhedron.push_back(boundingGroup);
+    }
+    
+    for (int shapeIt=0; shapeIt<polyhedron.size(); ++shapeIt)
+    {
+        facesInGroup.clear();
+        verticesInGroup.clear();
+        for (int ii=0; ii < polyhedron[shapeIt].faceTriangles.size(); ++ii)
+        {
+            for (int jj=0; jj < 3; ++jj)
+            {
+                if (std::find(facesInGroup.begin(), facesInGroup.end(), polyhedron[shapeIt].faceTriangles[ii][jj]) == facesInGroup.end())
+                {
+                    facesInGroup.push_back(polyhedron[shapeIt].faceTriangles[ii][jj]);
+                    verticesInGroup.push_back(vertices[polyhedron[shapeIt].faceTriangles[ii][jj]]);
+                }
+            }
+        }
+        
+        convHullPoints = findConvexHull(verticesInGroup);
+        centroid << 0.0, 0.0, 0.0;
+        
+        for (int ii=0; ii < convHullPoints.size(); ++ii)
+        {
+            centroid += convHullPoints[ii];
+        }
+        centroid = centroid / convHullPoints.size();
+        
+        maxX = 0;
+        maxY = 0;
+        maxZ = 0;
+        for (int ii=0; ii < convHullPoints.size(); ++ii)
+        {
+            v1 = convHullPoints[ii] - centroid;
+            if (abs(v1[0]) > maxX)
+            {
+                maxX = abs(v1[0]);
+            }
+            if (abs(v1[1]) > maxY)
+            {
+                maxY = abs(v1[1]);
+            }
+            if (abs(v1[2]) > maxZ)
+            {
+                maxZ = abs(v1[2]);
+            }
+        }
+        
+        polyhedron[shapeIt].centroid = centroid;
+        polyhedron[shapeIt].boundingBox << maxX, maxY, maxZ;
+        
+        
+        for (int faceIt=0; faceIt<polyhedron[shapeIt].faceTriangles.size(); ++faceIt)
+        {
+            
+            for ( int inx=0; inx<2; ++inx)
+            {
+                std::vector<int> edgeGroup = {polyhedron[shapeIt].faceTriangles[faceIt][inx], polyhedron[shapeIt].faceTriangles[faceIt][inx+1]};
+                polyhedron[shapeIt].edgeIndices.push_back(edgeGroup);
+                polyhedron[shapeIt].faceIndices.push_back(faceIt);
+            }
+            std::vector<int> edgeGroup = { polyhedron[shapeIt].faceTriangles[faceIt][2], polyhedron[shapeIt].faceTriangles[faceIt][0]};
+            polyhedron[shapeIt].edgeIndices.push_back(edgeGroup);
+            polyhedron[shapeIt].faceIndices.push_back(faceIt);
+        }
+        
+        for ( int edgeIt=0; edgeIt<polyhedron[shapeIt].edgeIndices.size(); ++edgeIt)
+        {
+            polyhedron[shapeIt].uniqueVertIndices.push_back(polyhedron[shapeIt].edgeIndices[edgeIt][0]);
+            searchEdge[0] = polyhedron[shapeIt].edgeIndices[edgeIt][1];
+            searchEdge[1] = polyhedron[shapeIt].edgeIndices[edgeIt][0];
+            for ( int searchIt=edgeIt+1; searchIt<polyhedron[shapeIt].edgeIndices.size(); ++searchIt)
+            {
+                if (polyhedron[shapeIt].edgeIndices[searchIt]==searchEdge)
+                {
+                    std::vector<std::vector<int>>::iterator itEdge1 = polyhedron[shapeIt].edgeIndices.begin() + edgeIt+1;
+                    std::vector<std::vector<int>>::iterator itSearch1 = polyhedron[shapeIt].edgeIndices.begin() + searchIt+1;
+                    std::vector<int>::iterator itEdge2 = polyhedron[shapeIt].faceIndices.begin() + edgeIt+1;
+                    std::vector<int>::iterator itSearch2 = polyhedron[shapeIt].faceIndices.begin() + searchIt+1;
+                    polyhedron[shapeIt].edgeIndices.emplace(itEdge1, searchEdge);
+                    polyhedron[shapeIt].edgeIndices.erase(itSearch1);
+                    polyhedron[shapeIt].faceIndices.emplace(itEdge2, polyhedron[shapeIt].faceIndices[searchIt]);
+                    polyhedron[shapeIt].faceIndices.erase(itSearch2);
+                    edgeIt++;
+                    continue;
+                }
+            }
+        }
+        
+        std::set<int> uniqueSet(polyhedron[shapeIt].uniqueVertIndices.begin(), polyhedron[shapeIt].uniqueVertIndices.end());
+        polyhedron[shapeIt].uniqueVertIndices.assign(uniqueSet.begin(), uniqueSet.end());
+        
+    }
     
     
     
@@ -260,305 +449,305 @@ void RigidBodyContactEffector::linkInStates(DynParamManager& statesIn)
 @param integTime Integration time
 @ToDo Distribute the mass at each contact point
 */
-void RigidBodyContactEffector::computeForceTorque(double integTime)
-{
-    this->forceExternal_N.setZero();
-    this->forceExternal_B.setZero();
-    this->torqueExternalPntB_B.setZero();
-    
-//     - Get all necessary state information
-    this->mainBody.states.r_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubPosition->getState();
-    this->mainBody.states.v_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubVelocity->getState();
-    this->mainBody.states.m_SC = (double)(*this->mainBody.hubState.m_SC)(0,0);
-    this->mainBody.states.c_B = (Eigen::Vector3d )*this->mainBody.hubState.c_B;
-    this->mainBody.states.omega_BN_B = (Eigen::Vector3d )this->mainBody.hubState.hubOmega_BN_N->getState();
-    this->mainBody.states.ISCPntB_B = *this->mainBody.hubState.ISCPntB_B;
-    this->mainBody.states.sigma_BN = (Eigen::Vector3d )this->mainBody.hubState.hubSigma->getState();
-    this->mainBody.states.dcm_NB = this->mainBody.states.sigma_BN.toRotationMatrix();
-    this->mainBody.states.dcm_BN = this->mainBody.states.dcm_NB.transpose();
-    
-    int numStateVar = 9 + (4 * this->mainBody.collisionPoints.size());
-//    int numStateVar = 10 + (3 * this->mainBody.collisionPoints.size());
-    Eigen::VectorXd collisionStateVec = Eigen::VectorXd::Zero(numStateVar);
-    Eigen::Vector3d v_CT_C = Eigen::Vector3d::Zero();
-    Eigen::VectorXd compressionEnergy = Eigen::VectorXd::Zero(this->mainBody.collisionPoints.size());
-    Eigen::VectorXd restitutionEnergy = Eigen::VectorXd::Zero(this->mainBody.collisionPoints.size());
-//    double compressionEnergy = 0.0;
-//    double restitutionEnergy = 0.0;
-    double totalSlip;
-    Eigen::VectorXd k1;
-    Eigen::VectorXd k2;
-    Eigen::VectorXd k3;
-    Eigen::VectorXd k4;
-
-    
-    // - Check if any new collisions will happen during this time step, and calculate the resulting forces and torques
-    if (this->mainBody.collisionPoints.empty() == false)
-    {
-        if (this->mainBody.collisionPoints[0].empty() == false)
-        {
-            if ( integTime - this->currentSimSeconds < this->simTimeStep / 5.0)
-            {
-            // - Loop through every collision point
-            for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-            {
-                v_CT_C = this->mainBody.collisionPoints[bodyIt].back().dcm_CB * (this->mainBody.states.dcm_BN * (this->mainBody.states.v_BN_N - this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.v_BN_N) + eigenTilde(this->mainBody.states.omega_BN_B) * this->mainBody.collisionPoints[bodyIt].back().mainContactPoint - ((this->mainBody.states.dcm_BN * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB) * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.omegaTilde_BN_B *  (this->mainBody.states.dcm_BN * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB).transpose()) * this->mainBody.collisionPoints[bodyIt].back().mainContactPoint);
-                
-                collisionStateVec[bodyIt * 3] = sqrt(pow(v_CT_C[0], 2.0) + pow(v_CT_C[1], 2.0));
-                collisionStateVec[bodyIt * 3 + 1] = atan2(v_CT_C[1], v_CT_C[0]);
-                collisionStateVec[bodyIt * 3 + 2] = v_CT_C[2];
-                collisionStateVec[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] = this->mainBody.collisionPoints[bodyIt].back().penetrationEnergy;
-            }
-            
-            collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) = this->mainBody.states.v_BN_N;
-            collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = this->mainBody.states.omega_BN_B;
-            
-            do
-            {
-                std::cout << collisionStateVec << '\n' << '\n';
-                totalSlip = 0;
-                // - Loop through every collision point
-                for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-                {
-                    totalSlip = totalSlip + collisionStateVec[bodyIt * 3];
-                }
-                
-                k1 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec, totalSlip);
-//                std::cout << k1 << '\n' << '\n';
-                k2 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec + 0.5 * k1, totalSlip);
-                k3 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec + 0.5 * k2, totalSlip);
-                k4 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec + k3, totalSlip);
-                collisionStateVec = collisionStateVec + (1.0 / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
-                
-                
-                for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-                {
-                    if (collisionStateVec[bodyIt * 3] < this->slipTolerance)
-                    {
-                        this->mainBody.collisionPoints[bodyIt].back().slipHitZero = true;
-                    }
-                    if (collisionStateVec[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] < compressionEnergy[bodyIt])
-                    {
-                        compressionEnergy[bodyIt] = collisionStateVec[ this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt];
-                        restitutionEnergy[bodyIt] = - pow(this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefRestitution, 2.0) * compressionEnergy[bodyIt];
-                    }
-                }
-//                if (collisionStateVec[numStateVar - 1] < compressionEnergy)
-//                {
-//                    compressionEnergy = collisionStateVec[numStateVar - 1];
-//                    restitutionEnergy = - pow(this->externalBodies[ this->mainBody.collisionPoints[ 0].back().otherBodyIndex].coefRestitution, 2.0) * compressionEnergy;
-//                }
-//                std::cout << collisionStateVec[this->mainBody.collisionPoints.size() * 3 + 9] << '\n' << '\n';
-            } while ((collisionStateVec.segment( this->mainBody.collisionPoints.size() * 3 + 9, this->mainBody.collisionPoints.size()).array() < (compressionEnergy + restitutionEnergy).array()).any());
-//            } while (collisionStateVec[numStateVar - 1] <= (compressionEnergy + restitutionEnergy));
-            
-                std::cout << collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) << '\n' << '\n';
-//                std::cout << collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) << '\n' << '\n';
-            this->forceExternal_N = this->mainBody.states.m_SC * (collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) - this->mainBody.states.v_BN_N) / (this->simTimeStep );
-            
-            this->torqueExternalPntB_B = this->mainBody.states.ISCPntB_B * ((collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) - this->mainBody.states.omega_BN_B) / (this->simTimeStep));
-            
-                this->mainBody.collisionPoints[0].back().force_N = this->mainBody.states.m_SC * (collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) - this->mainBody.states.v_BN_N) / (this->simTimeStep);
+//void RigidBodyContactEffector::computeForceTorque(double integTime)
+//{
+//    this->forceExternal_N.setZero();
+//    this->forceExternal_B.setZero();
+//    this->torqueExternalPntB_B.setZero();
 //
-                this->mainBody.collisionPoints[0].back().torque_B =  this->mainBody.states.ISCPntB_B * ((collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) - this->mainBody.states.omega_BN_B) / (this->simTimeStep));
-//                this->mainBody.collisionPoints[0].back().force_N = collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3);
-            
-//                this->mainBody.collisionPoints[0].back().torque_B =  collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3);
-            }else
-            {
-                this->forceExternal_N = this->mainBody.collisionPoints[0].back().force_N;
+////     - Get all necessary state information
+//    this->mainBody.states.r_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubPosition->getState();
+//    this->mainBody.states.v_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubVelocity->getState();
+//    this->mainBody.states.m_SC = (double)(*this->mainBody.hubState.m_SC)(0,0);
+//    this->mainBody.states.c_B = (Eigen::Vector3d )*this->mainBody.hubState.c_B;
+//    this->mainBody.states.omega_BN_B = (Eigen::Vector3d )this->mainBody.hubState.hubOmega_BN_N->getState();
+//    this->mainBody.states.ISCPntB_B = *this->mainBody.hubState.ISCPntB_B;
+//    this->mainBody.states.sigma_BN = (Eigen::Vector3d )this->mainBody.hubState.hubSigma->getState();
+//    this->mainBody.states.dcm_NB = this->mainBody.states.sigma_BN.toRotationMatrix();
+//    this->mainBody.states.dcm_BN = this->mainBody.states.dcm_NB.transpose();
 //
-                this->torqueExternalPntB_B = this->mainBody.collisionPoints[0].back().torque_B;
-//                this->forceExternal_N = this->mainBody.states.m_SC * (this->mainBody.collisionPoints[0].back().force_N - this->mainBody.states.v_BN_N) / (this->simTimeStep );
-
-//                this->torqueExternalPntB_B = this->mainBody.states.ISCPntB_B * ((this->mainBody.collisionPoints[0].back().torque_B - this->mainBody.states.omega_BN_B) / (this->simTimeStep));
-            }
-        }
-    }
-    
-    
-}
-
-Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::VectorXd X_c, double totalSlip)
-{
-    Eigen::VectorXd Xdot_c = Eigen::VectorXd::Zero(X_c.size());
-    Eigen::Vector3d dPcont;
-    Eigen::Vector3d dPdp = Eigen::Vector3d::Zero();
-    std::vector<Eigen::Vector3d> dPlist;
-    Eigen::Vector3d dv = Eigen::Vector3d::Zero();
-    double eta;
-    
-    // - Loop through every collision point
-    for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-    {
-//        if (X_c[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] > 0.00000001)
+//    int numStateVar = 9 + (4 * this->mainBody.collisionPoints.size());
+////    int numStateVar = 10 + (3 * this->mainBody.collisionPoints.size());
+//    Eigen::VectorXd collisionStateVec = Eigen::VectorXd::Zero(numStateVar);
+//    Eigen::Vector3d v_CT_C = Eigen::Vector3d::Zero();
+//    Eigen::VectorXd compressionEnergy = Eigen::VectorXd::Zero(this->mainBody.collisionPoints.size());
+//    Eigen::VectorXd restitutionEnergy = Eigen::VectorXd::Zero(this->mainBody.collisionPoints.size());
+////    double compressionEnergy = 0.0;
+////    double restitutionEnergy = 0.0;
+//    double totalSlip;
+//    Eigen::VectorXd k1;
+//    Eigen::VectorXd k2;
+//    Eigen::VectorXd k3;
+//    Eigen::VectorXd k4;
+//
+//
+//    // - Check if any new collisions will happen during this time step, and calculate the resulting forces and torques
+//    if (this->mainBody.collisionPoints.empty() == false)
+//    {
+//        if (this->mainBody.collisionPoints[0].empty() == false)
 //        {
-//            dPcont << 0.0, 0.0, 0.0;
-//            dPlist.push_back(dPcont);
-//            continue;
+//            if ( integTime - this->currentSimSeconds < this->simTimeStep / 5.0)
+//            {
+//            // - Loop through every collision point
+//            for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
+//            {
+//                v_CT_C = this->mainBody.collisionPoints[bodyIt].back().dcm_CB * (this->mainBody.states.dcm_BN * (this->mainBody.states.v_BN_N - this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.v_BN_N) + eigenTilde(this->mainBody.states.omega_BN_B) * this->mainBody.collisionPoints[bodyIt].back().mainContactPoint - ((this->mainBody.states.dcm_BN * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB) * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.omegaTilde_BN_B *  (this->mainBody.states.dcm_BN * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB).transpose()) * this->mainBody.collisionPoints[bodyIt].back().mainContactPoint);
+//
+//                collisionStateVec[bodyIt * 3] = sqrt(pow(v_CT_C[0], 2.0) + pow(v_CT_C[1], 2.0));
+//                collisionStateVec[bodyIt * 3 + 1] = atan2(v_CT_C[1], v_CT_C[0]);
+//                collisionStateVec[bodyIt * 3 + 2] = v_CT_C[2];
+//                collisionStateVec[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] = this->mainBody.collisionPoints[bodyIt].back().penetrationEnergy;
+//            }
+//
+//            collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) = this->mainBody.states.v_BN_N;
+//            collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = this->mainBody.states.omega_BN_B;
+//
+//            do
+//            {
+//                std::cout << collisionStateVec << '\n' << '\n';
+//                totalSlip = 0;
+//                // - Loop through every collision point
+//                for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
+//                {
+//                    totalSlip = totalSlip + collisionStateVec[bodyIt * 3];
+//                }
+//
+//                k1 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec, totalSlip);
+////                std::cout << k1 << '\n' << '\n';
+//                k2 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec + 0.5 * k1, totalSlip);
+//                k3 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec + 0.5 * k2, totalSlip);
+//                k4 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec + k3, totalSlip);
+//                collisionStateVec = collisionStateVec + (1.0 / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
+//
+//
+//                for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
+//                {
+//                    if (collisionStateVec[bodyIt * 3] < this->slipTolerance)
+//                    {
+//                        this->mainBody.collisionPoints[bodyIt].back().slipHitZero = true;
+//                    }
+//                    if (collisionStateVec[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] < compressionEnergy[bodyIt])
+//                    {
+//                        compressionEnergy[bodyIt] = collisionStateVec[ this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt];
+//                        restitutionEnergy[bodyIt] = - pow(this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefRestitution, 2.0) * compressionEnergy[bodyIt];
+//                    }
+//                }
+////                if (collisionStateVec[numStateVar - 1] < compressionEnergy)
+////                {
+////                    compressionEnergy = collisionStateVec[numStateVar - 1];
+////                    restitutionEnergy = - pow(this->externalBodies[ this->mainBody.collisionPoints[ 0].back().otherBodyIndex].coefRestitution, 2.0) * compressionEnergy;
+////                }
+////                std::cout << collisionStateVec[this->mainBody.collisionPoints.size() * 3 + 9] << '\n' << '\n';
+//            } while ((collisionStateVec.segment( this->mainBody.collisionPoints.size() * 3 + 9, this->mainBody.collisionPoints.size()).array() < (compressionEnergy + restitutionEnergy).array()).any());
+////            } while (collisionStateVec[numStateVar - 1] <= (compressionEnergy + restitutionEnergy));
+//
+//                std::cout << collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) << '\n' << '\n';
+////                std::cout << collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) << '\n' << '\n';
+//            this->forceExternal_N = this->mainBody.states.m_SC * (collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) - this->mainBody.states.v_BN_N) / (this->simTimeStep );
+//
+//            this->torqueExternalPntB_B = this->mainBody.states.ISCPntB_B * ((collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) - this->mainBody.states.omega_BN_B) / (this->simTimeStep));
+//
+//                this->mainBody.collisionPoints[0].back().force_N = this->mainBody.states.m_SC * (collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) - this->mainBody.states.v_BN_N) / (this->simTimeStep);
+////
+//                this->mainBody.collisionPoints[0].back().torque_B =  this->mainBody.states.ISCPntB_B * ((collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) - this->mainBody.states.omega_BN_B) / (this->simTimeStep));
+////                this->mainBody.collisionPoints[0].back().force_N = collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3);
+//
+////                this->mainBody.collisionPoints[0].back().torque_B =  collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3);
+//            }else
+//            {
+//                this->forceExternal_N = this->mainBody.collisionPoints[0].back().force_N;
+////
+//                this->torqueExternalPntB_B = this->mainBody.collisionPoints[0].back().torque_B;
+////                this->forceExternal_N = this->mainBody.states.m_SC * (this->mainBody.collisionPoints[0].back().force_N - this->mainBody.states.v_BN_N) / (this->simTimeStep );
+//
+////                this->torqueExternalPntB_B = this->mainBody.states.ISCPntB_B * ((this->mainBody.collisionPoints[0].back().torque_B - this->mainBody.states.omega_BN_B) / (this->simTimeStep));
+//            }
 //        }
-        if ((totalSlip < this->slipTolerance) && (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric <= this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction))
-        {
-            dPcont << - this->mainBody.collisionPoints[bodyIt].back().critCoeffFric * cos(this->mainBody.collisionPoints[bodyIt].back().critSlideDir), - this->mainBody.collisionPoints[bodyIt].back().critCoeffFric * sin(this->mainBody.collisionPoints[bodyIt].back().critSlideDir), 1.0;
-            
-            dPcont = this->mainBody.collisionPoints[bodyIt].back().dcm_CB.transpose() * (dPcont);// / this->mainBody.collisionPoints.size());
-            
-            
-            Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) + eigenTilde( this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * dPcont;
-            
-            dPcont = this->mainBody.states.dcm_BN.transpose() * dPcont;
-            
-            Xdot_c[this->mainBody.collisionPoints.size() * 3] = Xdot_c[this->mainBody.collisionPoints.size() * 3] + dPcont[0];
-            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] + dPcont[1];
-            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] + dPcont[2];
-            
-            dPlist.push_back(dPcont);
-//            std::cout << Xdot_c << '\n';
-        } else
-        {
-            
-            
-            if ((this->mainBody.collisionPoints[bodyIt].back().slipHitZero) && (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric > this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction))
-            {
-                eta = 1.0;
-                dPcont << -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir), -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir), 1.0;
-            }else
-            {
-                eta = (X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction);// / this->collisionIntegrationStep;
-                dPcont << -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(X_c[bodyIt * 3 + 1]), -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(X_c[bodyIt * 3 + 1]), 1.0;
-            }
-            dPcont = this->mainBody.collisionPoints[bodyIt].back().dcm_CB.transpose() * (dPcont);// / this->mainBody.collisionPoints.size());
-            
-            
-            Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) + eigenTilde( this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * (eta * dPcont);
-            
-            dPcont = this->mainBody.states.dcm_BN.transpose() * dPcont;
-            
-            
-            Xdot_c[this->mainBody.collisionPoints.size() * 3] = Xdot_c[this->mainBody.collisionPoints.size() * 3] + (eta * dPcont[0]);
-            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] + (eta * dPcont[1]);
-            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] + (eta * dPcont[2]);
-            
-            dPlist.push_back( dPcont);
-            
-            dPdp = dPdp + dPcont;
-        }
-    }
-    for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-    {
-        dv = Eigen::Vector3d::Zero();
-        if ((totalSlip < this->slipTolerance) || ((this->mainBody.collisionPoints[bodyIt].back().slipHitZero) && (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric > this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction)))
-        {
-            for ( int bodyIt2 = 0; bodyIt2 < this->mainBody.collisionPoints.size(); ++bodyIt2)
-            {
-                dv = dv + this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B[bodyIt2] * this->mainBody.states.dcm_BN * dPlist[bodyIt2];
-            }
-//            dv << this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B * this->mainBody.states.dcm_BN * (Xdot_c.segment(this->mainBody.collisionPoints.size() * 3, 3));// / this->mainBody.collisionPoints.size());
-//            dv[0] = ceil(dv[0] * pow(10.0, 14)) / pow(10.0, 14);
-//            dv[1] = ceil(dv[1] * pow(10.0, 14)) / pow(10.0, 14);
-            Xdot_c[bodyIt * 3] = cos(X_c[bodyIt * 3 + 1]) * dv[0] + sin(X_c[bodyIt * 3 + 1]) * dv[1];
-            Xdot_c[bodyIt * 3 + 1] = (cos(X_c[bodyIt * 3 + 1]) / X_c[bodyIt * 3]) * dv[1] - (sin(X_c[bodyIt * 3 + 1]) / X_c[bodyIt * 3]) * dv[0];
-            if (std::isnan(Xdot_c[bodyIt * 3 + 1]))
-            {
-                Xdot_c[bodyIt * 3 + 1] = 0.0;
-            }
-            Xdot_c[bodyIt * 3 + 2] = dv[2];
-            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] = X_c[bodyIt * 3 + 2];
-//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9] + X_c[bodyIt * 3 + 2];
-//            std::cout << Xdot_c << '\n';
-        }else
-        {
-            for ( int bodyIt2 = 0; bodyIt2 < this->mainBody.collisionPoints.size(); ++bodyIt2)
-            {
-                dv = dv + this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B[bodyIt2] * this->mainBody.states.dcm_BN * dPlist[bodyIt2];
-            }
-//            dv << this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B * this->mainBody.states.dcm_BN * (dPdp);// / this->mainBody.collisionPoints.size());
-            Xdot_c[bodyIt * 3] = ((X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * (cos(X_c[bodyIt * 3 + 1]) * dv[0] + sin(X_c[bodyIt * 3 + 1]) * dv[1]));// / this->collisionIntegrationStep;
-            Xdot_c[bodyIt * 3 + 1] = ((cos(X_c[bodyIt * 3 + 1]) * dv[1] - sin(X_c[bodyIt * 3 + 1]) * dv[0]) / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction);// / this->collisionIntegrationStep;
-            Xdot_c[bodyIt * 3 + 2] = ((X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * dv[2]);// / this->collisionIntegrationStep;
-            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] = ((X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * X_c[bodyIt * 3 + 2]);// / this->collisionIntegrationStep;
-//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9] + (X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * X_c[bodyIt * 3 + 2];
-        }
-    }
-    
-    Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) = (1.0 / this->mainBody.states.m_SC) * Xdot_c.segment(this->mainBody.collisionPoints.size() * 3, 3);
-    Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = this->mainBody.states.ISCPntB_B_inv * Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3);
-//    std::cout << Xdot_c << '\n';
-    
-    return Xdot_c;
-}
+//    }
+//
+//
+//}
+
+//Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::VectorXd X_c, double totalSlip)
+//{
+//    Eigen::VectorXd Xdot_c = Eigen::VectorXd::Zero(X_c.size());
+//    Eigen::Vector3d dPcont;
+//    Eigen::Vector3d dPdp = Eigen::Vector3d::Zero();
+//    std::vector<Eigen::Vector3d> dPlist;
+//    Eigen::Vector3d dv = Eigen::Vector3d::Zero();
+//    double eta;
+//
+//    // - Loop through every collision point
+//    for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
+//    {
+////        if (X_c[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] > 0.00000001)
+////        {
+////            dPcont << 0.0, 0.0, 0.0;
+////            dPlist.push_back(dPcont);
+////            continue;
+////        }
+//        if ((totalSlip < this->slipTolerance) && (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric <= this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction))
+//        {
+//            dPcont << - this->mainBody.collisionPoints[bodyIt].back().critCoeffFric * cos(this->mainBody.collisionPoints[bodyIt].back().critSlideDir), - this->mainBody.collisionPoints[bodyIt].back().critCoeffFric * sin(this->mainBody.collisionPoints[bodyIt].back().critSlideDir), 1.0;
+//
+//            dPcont = this->mainBody.collisionPoints[bodyIt].back().dcm_CB.transpose() * (dPcont);// / this->mainBody.collisionPoints.size());
+//
+//
+//            Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) + eigenTilde( this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * dPcont;
+//
+//            dPcont = this->mainBody.states.dcm_BN.transpose() * dPcont;
+//
+//            Xdot_c[this->mainBody.collisionPoints.size() * 3] = Xdot_c[this->mainBody.collisionPoints.size() * 3] + dPcont[0];
+//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] + dPcont[1];
+//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] + dPcont[2];
+//
+//            dPlist.push_back(dPcont);
+////            std::cout << Xdot_c << '\n';
+//        } else
+//        {
+//
+//
+//            if ((this->mainBody.collisionPoints[bodyIt].back().slipHitZero) && (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric > this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction))
+//            {
+//                eta = 1.0;
+//                dPcont << -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir), -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir), 1.0;
+//            }else
+//            {
+//                eta = (X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction);// / this->collisionIntegrationStep;
+//                dPcont << -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(X_c[bodyIt * 3 + 1]), -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(X_c[bodyIt * 3 + 1]), 1.0;
+//            }
+//            dPcont = this->mainBody.collisionPoints[bodyIt].back().dcm_CB.transpose() * (dPcont);// / this->mainBody.collisionPoints.size());
+//
+//
+//            Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) + eigenTilde( this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * (eta * dPcont);
+//
+//            dPcont = this->mainBody.states.dcm_BN.transpose() * dPcont;
+//
+//
+//            Xdot_c[this->mainBody.collisionPoints.size() * 3] = Xdot_c[this->mainBody.collisionPoints.size() * 3] + (eta * dPcont[0]);
+//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] + (eta * dPcont[1]);
+//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] + (eta * dPcont[2]);
+//
+//            dPlist.push_back( dPcont);
+//
+//            dPdp = dPdp + dPcont;
+//        }
+//    }
+//    for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
+//    {
+//        dv = Eigen::Vector3d::Zero();
+//        if ((totalSlip < this->slipTolerance) || ((this->mainBody.collisionPoints[bodyIt].back().slipHitZero) && (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric > this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction)))
+//        {
+//            for ( int bodyIt2 = 0; bodyIt2 < this->mainBody.collisionPoints.size(); ++bodyIt2)
+//            {
+//                dv = dv + this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B[bodyIt2] * this->mainBody.states.dcm_BN * dPlist[bodyIt2];
+//            }
+////            dv << this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B * this->mainBody.states.dcm_BN * (Xdot_c.segment(this->mainBody.collisionPoints.size() * 3, 3));// / this->mainBody.collisionPoints.size());
+////            dv[0] = ceil(dv[0] * pow(10.0, 14)) / pow(10.0, 14);
+////            dv[1] = ceil(dv[1] * pow(10.0, 14)) / pow(10.0, 14);
+//            Xdot_c[bodyIt * 3] = cos(X_c[bodyIt * 3 + 1]) * dv[0] + sin(X_c[bodyIt * 3 + 1]) * dv[1];
+//            Xdot_c[bodyIt * 3 + 1] = (cos(X_c[bodyIt * 3 + 1]) / X_c[bodyIt * 3]) * dv[1] - (sin(X_c[bodyIt * 3 + 1]) / X_c[bodyIt * 3]) * dv[0];
+//            if (std::isnan(Xdot_c[bodyIt * 3 + 1]))
+//            {
+//                Xdot_c[bodyIt * 3 + 1] = 0.0;
+//            }
+//            Xdot_c[bodyIt * 3 + 2] = dv[2];
+//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] = X_c[bodyIt * 3 + 2];
+////            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9] + X_c[bodyIt * 3 + 2];
+////            std::cout << Xdot_c << '\n';
+//        }else
+//        {
+//            for ( int bodyIt2 = 0; bodyIt2 < this->mainBody.collisionPoints.size(); ++bodyIt2)
+//            {
+//                dv = dv + this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B[bodyIt2] * this->mainBody.states.dcm_BN * dPlist[bodyIt2];
+//            }
+////            dv << this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B * this->mainBody.states.dcm_BN * (dPdp);// / this->mainBody.collisionPoints.size());
+//            Xdot_c[bodyIt * 3] = ((X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * (cos(X_c[bodyIt * 3 + 1]) * dv[0] + sin(X_c[bodyIt * 3 + 1]) * dv[1]));// / this->collisionIntegrationStep;
+//            Xdot_c[bodyIt * 3 + 1] = ((cos(X_c[bodyIt * 3 + 1]) * dv[1] - sin(X_c[bodyIt * 3 + 1]) * dv[0]) / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction);// / this->collisionIntegrationStep;
+//            Xdot_c[bodyIt * 3 + 2] = ((X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * dv[2]);// / this->collisionIntegrationStep;
+//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] = ((X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * X_c[bodyIt * 3 + 2]);// / this->collisionIntegrationStep;
+////            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9] + (X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * X_c[bodyIt * 3 + 2];
+//        }
+//    }
+//
+//    Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) = (1.0 / this->mainBody.states.m_SC) * Xdot_c.segment(this->mainBody.collisionPoints.size() * 3, 3);
+//    Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = this->mainBody.states.ISCPntB_B_inv * Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3);
+////    std::cout << Xdot_c << '\n';
+//
+//    return Xdot_c;
+//}
 
 
-void RigidBodyContactEffector::CalcCollisionProps()
-{
-    Eigen::Vector3d cHat_1;
-    Eigen::Vector3d cHat_2;
-    Eigen::Vector3d cHat_3;
-    Eigen::Vector3d zDirection;
-    Eigen::Vector3d xDirection;
-    zDirection << 0, 0, 1;
-    xDirection << 1, 0, 0;
-    Eigen::Matrix3d MSCPntC_C;
-    Eigen::Matrix3d dcm_CN;
-    double slipReverseDirp1;
-    double h;
-    double hp;
-    double hpp;
-    double hppp;
-    // - Check if any new collisions will happen during this time step, and calculate the resulting forces and torques
-    if (this->mainBody.collisionPoints.empty() == false)
-    {
-        if (this->mainBody.collisionPoints[0].empty() == false)
-        {
-            // - Loop through every collision point
-            for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-            {
-                this->mainBody.collisionPoints[bodyIt].back().slipHitZero = false;
-                cHat_3 = - this->mainBody.collisionPoints[bodyIt].back().contactNormal;
-                cHat_1 = cHat_3.cross( this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB * zDirection);
-                cHat_1.normalize();
-                if (int(ceil(cHat_1.norm() * pow(10.0, 9))) == 0 )
-                {
-                    cHat_1 = this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB * xDirection;
-                    cHat_1.normalize();
-                }
-                cHat_2 = cHat_3.cross(cHat_1);
-                cHat_2.normalize();
-                dcm_CN << cHat_1[0], cHat_1[1], cHat_1[2], cHat_2[0], cHat_2[1], cHat_2[2], cHat_3[0], cHat_3[1], cHat_3[2];
-                this->mainBody.collisionPoints[bodyIt].back().dcm_CB = dcm_CN * this->mainBody.states.dcm_NB;
-                for ( int bodyIt2 = 0; bodyIt2 < this->mainBody.collisionPoints.size(); ++bodyIt2)
-                {
-                    this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B.push_back(((1.0 / this->mainBody.states.m_SC) * Eigen::Matrix3d::Identity()) - (eigenTilde(this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * (this->mainBody.states.ISCPntB_B_inv * eigenTilde(this->mainBody.collisionPoints[bodyIt2].back().mainContactPoint))));
-                }
-                MSCPntC_C = (this->mainBody.collisionPoints[bodyIt].back().dcm_CB) * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B[bodyIt] * (this->mainBody.collisionPoints[bodyIt].back().dcm_CB).transpose();
-                this->mainBody.collisionPoints[bodyIt].back().critSlideDir = atan2((MSCPntC_C(0,0) * MSCPntC_C(1,2) - MSCPntC_C(1,0) * MSCPntC_C(0,2)) , (MSCPntC_C(1,1) * MSCPntC_C(0,2) - MSCPntC_C(0,1) * MSCPntC_C(1,2)));
-                this->mainBody.collisionPoints[bodyIt].back().critCoeffFric = sqrt((pow(MSCPntC_C(0,1) * MSCPntC_C(1,2) - MSCPntC_C(1,1) * MSCPntC_C(0,2), 2.0) + pow(MSCPntC_C(1,0) * MSCPntC_C(0,2) - MSCPntC_C(0,0) * MSCPntC_C(1,2), 2.0)) / pow(MSCPntC_C(0,0) * MSCPntC_C(1,1) - MSCPntC_C(0,1) * MSCPntC_C(1,0), 2.0));
-                std::cout << MSCPntC_C(0,0) * MSCPntC_C(1,1) - MSCPntC_C(0,1) * MSCPntC_C(1,0) << '\n' << '\n';
-                
-                if (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric > this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction)
-                {
-                    slipReverseDirp1 = this->mainBody.collisionPoints[bodyIt].back().critSlideDir;
-                    do
-                    {
-                        this->mainBody.collisionPoints[bodyIt].back().slipReverseDir = slipReverseDirp1;
-                        h = -MSCPntC_C(0,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + MSCPntC_C(1,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + 0.5 *  this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
-                        hp = -MSCPntC_C(0,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - MSCPntC_C(1,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + 2.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
-                        
-                        hpp = MSCPntC_C(0,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - MSCPntC_C(1,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - 2.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + 4.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
-                        
-                        hppp = MSCPntC_C(0,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + MSCPntC_C(1,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - 4.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - 8.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
-                        
-                        slipReverseDirp1 = this->mainBody.collisionPoints[bodyIt].back().slipReverseDir - (6.0 * h * pow(hpp, 2.0) -3.0 * pow(h, 2.0) * hpp) / (6.0 * pow(hp, 3.0) - 6.0 * h * hp * hpp + pow(h, 2.0) * hppp);
-                    }
-                    while (abs(slipReverseDirp1 - this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) > 1e-6);
-                    this->mainBody.collisionPoints[bodyIt].back().slipReverseDir = slipReverseDirp1;
-                }
-            }
-            
-        }
-    }
-    return;
-}
+//void RigidBodyContactEffector::CalcCollisionProps()
+//{
+//    Eigen::Vector3d cHat_1;
+//    Eigen::Vector3d cHat_2;
+//    Eigen::Vector3d cHat_3;
+//    Eigen::Vector3d zDirection;
+//    Eigen::Vector3d xDirection;
+//    zDirection << 0, 0, 1;
+//    xDirection << 1, 0, 0;
+//    Eigen::Matrix3d MSCPntC_C;
+//    Eigen::Matrix3d dcm_CN;
+//    double slipReverseDirp1;
+//    double h;
+//    double hp;
+//    double hpp;
+//    double hppp;
+//    // - Check if any new collisions will happen during this time step, and calculate the resulting forces and torques
+//    if (this->mainBody.collisionPoints.empty() == false)
+//    {
+//        if (this->mainBody.collisionPoints[0].empty() == false)
+//        {
+//            // - Loop through every collision point
+//            for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
+//            {
+//                this->mainBody.collisionPoints[bodyIt].back().slipHitZero = false;
+//                cHat_3 = - this->mainBody.collisionPoints[bodyIt].back().contactNormal;
+//                cHat_1 = cHat_3.cross( this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB * zDirection);
+//                cHat_1.normalize();
+//                if (int(ceil(cHat_1.norm() * pow(10.0, 9))) == 0 )
+//                {
+//                    cHat_1 = this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB * xDirection;
+//                    cHat_1.normalize();
+//                }
+//                cHat_2 = cHat_3.cross(cHat_1);
+//                cHat_2.normalize();
+//                dcm_CN << cHat_1[0], cHat_1[1], cHat_1[2], cHat_2[0], cHat_2[1], cHat_2[2], cHat_3[0], cHat_3[1], cHat_3[2];
+//                this->mainBody.collisionPoints[bodyIt].back().dcm_CB = dcm_CN * this->mainBody.states.dcm_NB;
+//                for ( int bodyIt2 = 0; bodyIt2 < this->mainBody.collisionPoints.size(); ++bodyIt2)
+//                {
+//                    this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B.push_back(((1.0 / this->mainBody.states.m_SC) * Eigen::Matrix3d::Identity()) - (eigenTilde(this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * (this->mainBody.states.ISCPntB_B_inv * eigenTilde(this->mainBody.collisionPoints[bodyIt2].back().mainContactPoint))));
+//                }
+//                MSCPntC_C = (this->mainBody.collisionPoints[bodyIt].back().dcm_CB) * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B[bodyIt] * (this->mainBody.collisionPoints[bodyIt].back().dcm_CB).transpose();
+//                this->mainBody.collisionPoints[bodyIt].back().critSlideDir = atan2((MSCPntC_C(0,0) * MSCPntC_C(1,2) - MSCPntC_C(1,0) * MSCPntC_C(0,2)) , (MSCPntC_C(1,1) * MSCPntC_C(0,2) - MSCPntC_C(0,1) * MSCPntC_C(1,2)));
+//                this->mainBody.collisionPoints[bodyIt].back().critCoeffFric = sqrt((pow(MSCPntC_C(0,1) * MSCPntC_C(1,2) - MSCPntC_C(1,1) * MSCPntC_C(0,2), 2.0) + pow(MSCPntC_C(1,0) * MSCPntC_C(0,2) - MSCPntC_C(0,0) * MSCPntC_C(1,2), 2.0)) / pow(MSCPntC_C(0,0) * MSCPntC_C(1,1) - MSCPntC_C(0,1) * MSCPntC_C(1,0), 2.0));
+//                std::cout << MSCPntC_C(0,0) * MSCPntC_C(1,1) - MSCPntC_C(0,1) * MSCPntC_C(1,0) << '\n' << '\n';
+//
+//                if (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric > this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction)
+//                {
+//                    slipReverseDirp1 = this->mainBody.collisionPoints[bodyIt].back().critSlideDir;
+//                    do
+//                    {
+//                        this->mainBody.collisionPoints[bodyIt].back().slipReverseDir = slipReverseDirp1;
+//                        h = -MSCPntC_C(0,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + MSCPntC_C(1,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + 0.5 *  this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
+//                        hp = -MSCPntC_C(0,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - MSCPntC_C(1,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + 2.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
+//
+//                        hpp = MSCPntC_C(0,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - MSCPntC_C(1,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - 2.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + 4.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
+//
+//                        hppp = MSCPntC_C(0,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + MSCPntC_C(1,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - 4.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - 8.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
+//
+//                        slipReverseDirp1 = this->mainBody.collisionPoints[bodyIt].back().slipReverseDir - (6.0 * h * pow(hpp, 2.0) -3.0 * pow(h, 2.0) * hpp) / (6.0 * pow(hp, 3.0) - 6.0 * h * hp * hpp + pow(h, 2.0) * hppp);
+//                    }
+//                    while (abs(slipReverseDirp1 - this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) > 1e-6);
+//                    this->mainBody.collisionPoints[bodyIt].back().slipReverseDir = slipReverseDirp1;
+//                }
+//            }
+//
+//        }
+//    }
+//    return;
+//}
 
 void RigidBodyContactEffector::computeStateContribution(double integTime)
 {
@@ -572,31 +761,45 @@ void RigidBodyContactEffector::computeStateContribution(double integTime)
 void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->currentSimSeconds = CurrentSimNanos*NANO2SEC;
-    this->mainBody.states.r_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubPosition->getState();
-    this->mainBody.states.v_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubVelocity->getState();
-    this->mainBody.states.m_SC = (double)(*this->mainBody.hubState.m_SC)(0,0);
-    this->mainBody.states.c_B = (Eigen::Vector3d )*this->mainBody.hubState.c_B;
-    this->mainBody.states.omega_BN_B = (Eigen::Vector3d )this->mainBody.hubState.hubOmega_BN_N->getState();
-    this->mainBody.states.ISCPntB_B = *this->mainBody.hubState.ISCPntB_B;
-    this->mainBody.states.ISCPntB_B_inv = this->mainBody.states.ISCPntB_B.inverse();
-    this->mainBody.states.sigma_BN = (Eigen::Vector3d )this->mainBody.hubState.hubSigma->getState();
-    this->mainBody.states.dcm_NB = this->mainBody.states.sigma_BN.toRotationMatrix();
-    this->mainBody.states.dcm_BN = this->mainBody.states.dcm_NB.transpose();
-    this->mainBody.states.omegaTilde_BN_B = eigenTilde(this->mainBody.states.omega_BN_B);
+//    this->mainBody.states.r_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubPosition->getState();
+//    this->mainBody.states.v_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubVelocity->getState();
+//    this->mainBody.states.m_SC = (double)(*this->mainBody.hubState.m_SC)(0,0);
+//    this->mainBody.states.c_B = (Eigen::Vector3d )*this->mainBody.hubState.c_B;
+//    this->mainBody.states.omega_BN_B = (Eigen::Vector3d )this->mainBody.hubState.hubOmega_BN_N->getState();
+//    this->mainBody.states.ISCPntB_B = *this->mainBody.hubState.ISCPntB_B;
+//    this->mainBody.states.ISCPntB_B_inv = this->mainBody.states.ISCPntB_B.inverse();
+//    this->mainBody.states.sigma_BN = (Eigen::Vector3d )this->mainBody.hubState.hubSigma->getState();
+//    this->mainBody.states.dcm_NB = this->mainBody.states.sigma_BN.toRotationMatrix();
+//    this->mainBody.states.dcm_BN = this->mainBody.states.dcm_NB.transpose();
+//    this->mainBody.states.omegaTilde_BN_B = eigenTilde(this->mainBody.states.omega_BN_B);
     
     this->ReadInputs();
     this->ExtractFromBuffer();
-    this->mainBody.collisionPoints.clear();
-    this->mainBody.penetrationData.clear();
+    
+    for (int bodyIt=0; bodyIt<this->numBodies; ++bodyIt)
+    {
+        this->Bodies[bodyIt].futureStates.r_BN_N = this->Bodies[bodyIt].states.r_BN_N + this->Bodies[bodyIt].states.v_BN_N / this->simTimeStep;
+        if (this->Bodies[bodyIt].isSpice == true)
+        {
+            this->Bodies[bodyIt].futureStates.dcm_BN = ((-this->Bodies[bodyIt].states.omegaTilde_BN_B * this->Bodies[bodyIt].states.dcm_BN) * this->simTimeStep) + this->Bodies[bodyIt].states.dcm_BN;
+            this->Bodies[bodyIt].futureStates.dcm_NB = this->Bodies[bodyIt].futureStates.dcm_BN.transpose();
+        }else
+        {
+            this->Bodies[bodyIt].futureStates.sigma_BN = (0.25 * this->mainBody.states.sigma_BN.Bmat() * this->mainBody.states.omega_BN_B * this->simTimeStep) + ((Eigen::Vector3d) this->mainBody.states.sigma_BN.coeffs());
+            this->Bodies[bodyIt].futureStates.dcm_NB = this->Bodies[bodyIt].futureStates.sigma_BN.toRotationMatrix();
+            this->Bodies[bodyIt].futureStates.dcm_BN = this->Bodies[bodyIt].futureStates.dcm_NB.transpose();
+        }
+        this->Bodies[bodyIt].coarseSearchList.clear();
+    }
+    
+    this->closeBodies.clear();
     this->CheckBoundingSphere();
-    this->overlapFace1 = true;
-    this->overlapFace2 = true;
-    this->overlapEdge = true;
+    this->CheckBoundingBox();
     this->isOverlap = false;
     
-    for ( std::vector<int>::iterator bodyIt = this->closeBodies.begin(); bodyIt != this->closeBodies.end(); ++bodyIt){
-        this->isOverlap = this->Overlap(this->externalBodies[*bodyIt], *bodyIt);
-    }
+//    for ( std::vector<int>::iterator bodyIt = this->closeBodies.begin(); bodyIt != this->closeBodies.end(); ++bodyIt){
+//        this->isOverlap = this->Overlap(this->Bodies[*bodyIt], *bodyIt);
+//    }
     this->CalcCollisionProps();
     
     return;
@@ -608,9 +811,17 @@ void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
 void RigidBodyContactEffector::ReadInputs()
 {
 
-    for (int bodyIt=0; bodyIt<this->externalBodies.size(); ++bodyIt)
+    for (int bodyIt=0; bodyIt<this->numBodies; ++bodyIt)
     {
-        this->externalBodies[bodyIt].plMsg = this->externalBodies[bodyIt].planetInMsg();
+        if (this->Bodies[bodyIt].isSpice == true)
+        {
+            this->Bodies[bodyIt].plMsg = this->Bodies[bodyIt].planetInMsg();
+        }else
+        {
+            this->Bodies[bodyIt].stateInBuffer = this->Bodies[bodyIt].scStateInMsg();
+            this->Bodies[bodyIt].massStateInBuffer = this->Bodies[bodyIt].scMassStateInMsg();
+        }
+        
     }
 
     return;
@@ -622,20 +833,33 @@ void RigidBodyContactEffector::ReadInputs()
 void RigidBodyContactEffector::ExtractFromBuffer()
 {
     Eigen::Matrix3d dcm_BN_dot;
-    for( int bodyIt=0; bodyIt<this->externalBodies.size(); ++bodyIt)
+    for( int bodyIt=0; bodyIt<this->Bodies.size(); ++bodyIt)
     {
-        this->externalBodies[bodyIt].states.r_BN_N = cArray2EigenVector3d(this->externalBodies[bodyIt].plMsg.PositionVector);
-        this->externalBodies[bodyIt].states.v_BN_N = cArray2EigenVector3d(this->externalBodies[bodyIt].plMsg.VelocityVector);
-        this->externalBodies[bodyIt].states.dcm_BN = cArray2EigenMatrix3d(*this->externalBodies[bodyIt].plMsg.J20002Pfix);
-        dcm_BN_dot = cArray2EigenMatrix3d(*this->externalBodies[bodyIt].plMsg.J20002Pfix_dot);
-        this->externalBodies[bodyIt].states.omegaTilde_BN_B = - dcm_BN_dot * this->externalBodies[bodyIt].states.dcm_BN.transpose();
-        this->externalBodies[bodyIt].states.sigma_BN = eigenC2MRP(this->externalBodies[bodyIt].states.dcm_BN);
-        this->externalBodies[bodyIt].states.dcm_NB = this->externalBodies[bodyIt].states.dcm_BN.transpose();
-//        double effectiveMass = (this->mainBody.states.m_SC * 78e9) / (this->mainBody.states.m_SC + 78e9);
+        if (this->Bodies[bodyIt].isSpice == true)
+        {
+            this->Bodies[bodyIt].states.r_BN_N = cArray2EigenVector3d(this->Bodies[bodyIt].plMsg.PositionVector);
+            this->Bodies[bodyIt].states.v_BN_N = cArray2EigenVector3d(this->Bodies[bodyIt].plMsg.VelocityVector);
+            this->Bodies[bodyIt].states.dcm_BN = cArray2EigenMatrix3d(*this->Bodies[bodyIt].plMsg.J20002Pfix);
+            dcm_BN_dot = cArray2EigenMatrix3d(*this->Bodies[bodyIt].plMsg.J20002Pfix_dot);
+            this->Bodies[bodyIt].states.omegaTilde_BN_B = - dcm_BN_dot * this->Bodies[bodyIt].states.dcm_BN.transpose();
+            this->Bodies[bodyIt].states.sigma_BN = eigenC2MRP(this->Bodies[bodyIt].states.dcm_BN);
+            this->Bodies[bodyIt].states.dcm_NB = this->Bodies[bodyIt].states.dcm_BN.transpose();
+        }else
+        {
+            this->Bodies[bodyIt].states.r_BN_N = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.r_BN_N);
+            this->Bodies[bodyIt].states.v_BN_N = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.v_BN_N);
+            this->Bodies[bodyIt].states.m_SC = this->Bodies[bodyIt].massStateInBuffer.massSC;
+            this->Bodies[bodyIt].states.c_B = cArray2EigenVector3d(this->Bodies[bodyIt].massStateInBuffer.c_B);
+            this->Bodies[bodyIt].states.omega_BN_B = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.omega_BN_B);
+            this->Bodies[bodyIt].states.ISCPntB_B = cArray2EigenMatrix3d(this->Bodies[bodyIt].massStateInBuffer.ISC_PntB_B);
+            this->Bodies[bodyIt].states.ISCPntB_B_inv = this->Bodies[bodyIt].states.ISCPntB_B.inverse();
+            this->Bodies[bodyIt].states.sigma_BN = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.sigma_BN);
+            this->Bodies[bodyIt].states.dcm_NB = this->Bodies[bodyIt].states.sigma_BN.toRotationMatrix();
+            this->Bodies[bodyIt].states.dcm_BN = this->Bodies[bodyIt].states.dcm_NB.transpose();
+            this->Bodies[bodyIt].states.omegaTilde_BN_B = eigenTilde(this->Bodies[bodyIt].states.omega_BN_B);
+        }
         
-        // - Calculate the spring constant and damping constant from the Coefficent of Restitution
-        this->externalBodies[bodyIt].springConstant = (  ( this->mainBody.states.m_SC) ) / pow(4.0 * this->simTimeStep, 2) * ( pow(M_PI, 2) + pow(log(this->externalBodies[bodyIt].coefRestitution), 2));
-        this->externalBodies[bodyIt].dampingConstant = - (2 * this->mainBody.states.m_SC) / ( this->simTimeStep) * log(this->externalBodies[bodyIt].coefRestitution);
+        
     }
     return;
 }
@@ -648,18 +872,162 @@ void RigidBodyContactEffector::ExtractFromBuffer()
 void RigidBodyContactEffector::CheckBoundingSphere()
 {
     this->closeBodies.clear();
-    Eigen::Vector3d bodyDifference;
-    double bodyDistance;
+    std::vector<int> bodyPair(2,0);
+    vectorInterval bodyDifference;
+    std::vector<double> bodyDistance;
     
-    for(int bodyIt=0; bodyIt < this->externalBodies.size(); ++bodyIt)
+    for(int bodyIt1=0; bodyIt1 < this->numBodies-1; ++bodyIt1)
     {
-        bodyDifference = this->mainBody.states.r_BN_N - this->externalBodies[bodyIt].states.r_BN_N;
-        bodyDistance = bodyDifference.norm();
+        bodyPair[0] = bodyIt1;
+        for(int bodyIt2=bodyIt1+1; bodyIt2 < this->numBodies; ++bodyIt2)
+        {
+            bodyPair[1] = bodyIt2;
+            bodyDifference.lower = this->Bodies[bodyIt1].states.r_BN_N - this->Bodies[bodyIt2].states.r_BN_N;
+            bodyDifference.upper = this->Bodies[bodyIt1].futureStates.r_BN_N - this->Bodies[bodyIt2].futureStates.r_BN_N;
+            bodyDistance = this->IntervalDotProduct(bodyDifference, bodyDifference);
+            
+            if ((sqrt(abs(bodyDistance[0])) < (this->Bodies[bodyIt1].boundingRadius + this->Bodies[bodyIt2].boundingRadius)) || (sqrt(abs(bodyDistance[1])) < (this->Bodies[bodyIt1].boundingRadius + this->Bodies[bodyIt2].boundingRadius)))
+                this->closeBodies.push_back(bodyPair);
+        }
         
-        if (bodyDistance < (this->mainBody.boundingRadius + this->externalBodies[bodyIt].boundingRadius))
-            this->closeBodies.push_back(bodyIt);
     }
     return;
+}
+
+
+/*! This method checks if the primary body is within the bounding sphere of any external bodies.
+@return void
+*/
+void RigidBodyContactEffector::CheckBoundingBox()
+{
+    boundingBoxDetail layer1Box;
+    indivBoundingBox box1;
+    indivBoundingBox box2;
+    Eigen::Vector3d xAxis;
+    Eigen::Vector3d yAxis;
+    Eigen::Vector3d zAxis;
+    xAxis << 1, 0, 0;
+    yAxis << 0, 1, 0;
+    zAxis << 0, 0, 1;
+    vectorInterval displacementInterval;
+    
+    
+    for (int groupIt1=0; groupIt1 < this->closeBodies.size(); ++groupIt1)
+    {
+        layer1Box.parentIndices = std::make_tuple(this->closeBodies[groupIt1][0], this->closeBodies[groupIt1][1]);
+        layer1Box.overlaps.clear();
+        
+        for (int boxIt1=0; boxIt1 < this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron.size(); ++boxIt1)
+        {
+            for (int boxIt2=0; boxIt2 < this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron.size(); ++boxIt2)
+            {
+                displacementInterval.lower = (this->Bodies[std::get<0>(layer1Box.parentIndices)].states.r_BN_N + this->Bodies[std::get<0>(layer1Box.parentIndices)].states.dcm_NB * this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].centroid) - (this->Bodies[std::get<1>(layer1Box.parentIndices)].states.r_BN_N + this->Bodies[std::get<1>(layer1Box.parentIndices)].states.dcm_NB * this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].centroid);
+                
+                displacementInterval.upper = (this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.r_BN_N + this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.dcm_NB * this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].centroid) - (this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.r_BN_N + this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.dcm_NB * this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].centroid);
+                
+                box1.xAxisInterval.lower = this->Bodies[std::get<0>(layer1Box.parentIndices)].states.dcm_NB * xAxis;
+                box1.xAxisInterval.upper = this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.dcm_NB * xAxis;
+                
+                box1.yAxisInterval.lower = this->Bodies[std::get<0>(layer1Box.parentIndices)].states.dcm_NB * yAxis;
+                box1.yAxisInterval.upper = this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.dcm_NB * yAxis;
+                
+                box1.zAxisInterval.lower = this->Bodies[std::get<0>(layer1Box.parentIndices)].states.dcm_NB * zAxis;
+                box1.zAxisInterval.upper = this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.dcm_NB * zAxis;
+                
+                box1.halfSize = this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].boundingBox * this->boundingBoxFF;
+                
+                box2.xAxisInterval.lower = this->Bodies[std::get<1>(layer1Box.parentIndices)].states.dcm_NB * xAxis;
+                box2.xAxisInterval.upper = this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.dcm_NB * xAxis;
+                
+                box2.yAxisInterval.lower = this->Bodies[std::get<1>(layer1Box.parentIndices)].states.dcm_NB * yAxis;
+                box2.yAxisInterval.upper = this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.dcm_NB * yAxis;
+                
+                box2.zAxisInterval.lower = this->Bodies[std::get<1>(layer1Box.parentIndices)].states.dcm_NB * zAxis;
+                box2.zAxisInterval.upper = this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.dcm_NB * zAxis;
+                
+                box2.halfSize = this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].boundingBox * this->boundingBoxFF;
+                
+                if (this->SeparatingPlane(displacementInterval, box1.xAxisInterval, box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, box1.yAxisInterval, box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, box1.zAxisInterval, box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, box2.xAxisInterval, box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, box2.yAxisInterval, box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, box2.zAxisInterval, box1, box2)) continue;
+                
+                if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.xAxisInterval), box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.yAxisInterval), box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.zAxisInterval), box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.xAxisInterval), box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.yAxisInterval), box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.zAxisInterval), box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.xAxisInterval), box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.yAxisInterval), box1, box2)) continue;
+                if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.zAxisInterval), box1, box2)) continue;
+                
+                
+                for (int subBoxIt1=0; subBoxIt1 < this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceBoundingBoxes.size(); ++subBoxIt1)
+                {
+                    for (int subBoxIt2=0; subBoxIt2 < this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceBoundingBoxes.size(); ++subBoxIt2)
+                    {
+                        displacementInterval.lower = (this->Bodies[std::get<0>(layer1Box.parentIndices)].states.r_BN_N + this->Bodies[std::get<0>(layer1Box.parentIndices)].states.dcm_NB * this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceCentroids[subBoxIt1]) - (this->Bodies[std::get<1>(layer1Box.parentIndices)].states.r_BN_N + this->Bodies[std::get<1>(layer1Box.parentIndices)].states.dcm_NB * this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceCentroids[subBoxIt2]);
+                        
+                        displacementInterval.upper = (this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.r_BN_N + this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.dcm_NB * this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceCentroids[subBoxIt1]) - (this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.r_BN_N + this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.dcm_NB * this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceCentroids[subBoxIt2]);
+                        
+                        box1.halfSize = this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceBoundingBoxes[subBoxIt1] * this->boundingBoxFF;
+                        box2.halfSize = this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceBoundingBoxes[subBoxIt2] * this->boundingBoxFF;
+                        
+                        if (this->SeparatingPlane(displacementInterval, box1.xAxisInterval, box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, box1.yAxisInterval, box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, box1.zAxisInterval, box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, box2.xAxisInterval, box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, box2.yAxisInterval, box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, box2.zAxisInterval, box1, box2)) continue;
+                        
+                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.xAxisInterval), box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.yAxisInterval), box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.zAxisInterval), box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.xAxisInterval), box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.yAxisInterval), box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.zAxisInterval), box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.xAxisInterval), box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.yAxisInterval), box1, box2)) continue;
+                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.zAxisInterval), box1, box2)) continue;
+                        
+                        layer1Box.overlaps.push_back(std::make_tuple(boxIt1, subBoxIt1, boxIt2, subBoxIt2));
+                    }
+                }
+            }
+        }
+        
+        if (layer1Box.overlaps.size() > 0) this->Bodies[std::get<0>(layer1Box.parentIndices)].coarseSearchList.push_back(layer1Box);
+    }
+    return;
+}
+                
+bool RigidBodyContactEffector::SeparatingPlane(vectorInterval displacementInterval, vectorInterval candidateInterval, indivBoundingBox box1, indivBoundingBox box2)
+{
+    double lhs;
+    double rhs;
+    std::vector<double> tempInterval;
+    
+    tempInterval = this->IntervalDotProduct(candidateInterval, displacementInterval);
+    lhs = std::max(abs(tempInterval[0]), abs(tempInterval[1]));
+    
+    tempInterval = this->IntervalDotProduct(candidateInterval, box1.xAxisInterval);
+    rhs = box1.halfSize[0] * std::max(abs(tempInterval[0]), abs(tempInterval[1]));
+    tempInterval = this->IntervalDotProduct(candidateInterval, box1.yAxisInterval);
+    rhs += box1.halfSize[1] * std::max(abs(tempInterval[0]), abs(tempInterval[1]));
+    tempInterval = this->IntervalDotProduct(candidateInterval, box1.zAxisInterval);
+    rhs += box1.halfSize[2] * std::max(abs(tempInterval[0]), abs(tempInterval[1]));
+    
+    tempInterval = this->IntervalDotProduct(candidateInterval, box2.xAxisInterval);
+    rhs += box2.halfSize[0] * std::max(abs(tempInterval[0]), abs(tempInterval[1]));
+    tempInterval = this->IntervalDotProduct(candidateInterval, box2.yAxisInterval);
+    rhs += box2.halfSize[1] * std::max(abs(tempInterval[0]), abs(tempInterval[1]));
+    tempInterval = this->IntervalDotProduct(candidateInterval, box2.zAxisInterval);
+    rhs += box2.halfSize[2] * std::max(abs(tempInterval[0]), abs(tempInterval[1]));
+    
+    return lhs > rhs;
 }
 
 /*! This method is the hub for the collision detection algorithm. It applies the Separating Axis Theorem between every convex shape on the main body and the external body to calcuate where and when there will be a collision. If there is already penetration, it detects that too and calculates the needed information to compute the forces and torques.
