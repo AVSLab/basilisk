@@ -23,6 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <Eigen/Dense>
 #include <vector>
+#include <tuple>
 #include <set>
 #include <iostream>
 #include <stack>
@@ -85,20 +86,36 @@ typedef struct{
     edgeQuery edgeData;                         //!< -- Edge penetration information
 }penetrationDetail;
 
+typedef struct{
+    std::tuple<int, int> parentIndices;
+    std::vector<std::tuple<int, int, int, int>> overlaps;
+}boundingBoxDetail;
+
 /*! Struct for holding the bounds of a vector over a time interval.*/
 typedef struct{
     Eigen::Vector3d lower;                      //!< -- Lower time bound
     Eigen::Vector3d upper;                      //!< -- Upper time bound
 }vectorInterval;
 
+typedef struct{
+    vectorInterval xAxisInterval;
+    vectorInterval yAxisInterval;
+    vectorInterval zAxisInterval;
+    Eigen::Vector3d halfSize;
+}indivBoundingBox;
+
 /*! Struct for holding primitive information of a single polyhedron in a half edge format*/
 typedef struct{
     std::vector<Eigen::Vector3d> faceNormals;   //!< -- Normal vectors of each face
     std::vector<std::vector<int>> faceTriangles;//!< -- Indices for vertices of each triangle
+    std::vector<Eigen::Vector3d> faceCentroids;
+    std::vector<Eigen::Vector3d> faceBoundingBoxes;
+    std::vector<double> faceBoundingRadius;
     std::vector<std::vector<int>> edgeIndices;  //!< -- Indicies for the verticies of each edge
     std::vector<int> faceIndices;               //!< -- Indicies for each face connecting to an edge
     Eigen::Vector3d centroid;                   //!< [m] Centroid of the polyhedron
     std::vector<int> uniqueVertIndices;
+    Eigen::Vector3d boundingBox;
 }halfEdge;
 
 /*! Struct for holding dynamics data of each body*/
@@ -145,11 +162,18 @@ typedef struct{
     std::vector<halfEdge> polyhedron;           //!< -- Half edge converted polyhedra data
     std::vector<std::vector<contactDetail>> collisionPoints;//!< -- Current collision data
     std::vector<penetrationDetail> penetrationData;//!< -- Current penetration data
+    std::vector<boundingBoxDetail> coarseSearchList;
     linkedStates hubState;                      //!< -- Linked states for the body
     dynamicData states;                         //!< -- Extracted states for the body
+    dynamicData futureStates;
     std::string modelTag;                       //!< -- Name of body's model tag
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;
     SpicePlanetStateMsgPayload plMsg;
+    bool isSpice;
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;
+    ReadFunctor<SCMassPropsMsgPayload> scMassStateInMsg;
+    SCStatesMsgPayload stateInBuffer;           //!< -- Body state buffer
+    SCMassPropsMsgPayload massStateInBuffer;    //!< -- Body mass state buffer
     
 }geometry;
 
@@ -161,8 +185,8 @@ public:
     ~RigidBodyContactEffector();
     
     void Reset();
-    void LoadMainBody(const char *objFile);
-    void AddOtherBody(const char *objFile, Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double boundingRadius, double coefRestitution, double coefFriction);
+    void LoadSpacecraftBody(const char *objFile, std::string modelTag, double boundingRadius, double coefRestitution, double coefFriction);
+    void AddSpiceBody(const char *objFile, Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double boundingRadius, double coefRestitution, double coefFriction);
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime);
     void computeStateContribution(double integTime);
@@ -170,19 +194,20 @@ public:
     void ReadInputs();
     void ExtractFromBuffer();
     void CheckBoundingSphere();
+    void CheckBoundingBox();
     bool Overlap(geometry foriegnBody, int bodyIndex);
     
 private:
     double currentSimSeconds;
-    std::vector<int> closeBodies;               //!< -- Indicies of all external bodies that the main body is within the bounding sphere of
-    SCStatesMsgPayload stateInBuffer;           //!< -- Body state buffer
-    SCMassPropsMsgPayload massStateInBuffer;    //!< -- Body mass state buffer
+    std::vector<std::vector<int>> closeBodies;               //!< -- Indicies of all external bodies that the main body is within the bounding sphere of
+    
     
 public:
     geometry mainBody;
-    ReadFunctor<SCStatesMsgPayload> scStateInMsg;
-    ReadFunctor<SCMassPropsMsgPayload> scMassStateInMsg;
-    std::vector<geometry> externalBodies;
+    
+    std::vector<geometry> Bodies;
+    int numBodies;
+    int currentBody;
     bool isOverlap;
     bool overlapFace1;
     bool overlapFace2;
@@ -191,11 +216,14 @@ public:
     double slipTolerance;
     double simTimeStep;
     double collisionIntegrationStep;
+    double maxBoundingBoxDim;
+    double boundingBoxFF;
     
     
 private:
     Eigen::VectorXd CollisionStateDerivative( Eigen::VectorXd X_c, double totalSlip);
     void CalcCollisionProps();
+    bool SeparatingPlane(vectorInterval displacementInterval, vectorInterval candidateInterval, indivBoundingBox box1, indivBoundingBox box2);
     bool IsMinkowskiFace(Eigen::Vector3d edgeA, Eigen::Vector3d edgeB, Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d c, Eigen::Vector3d d);
     std::vector<halfEdge> ComputeHalfEdge(std::vector<Eigen::Vector3d> vertices, std::vector<tinyobj::shape_t> shapes);
     edgeQuery QueryEdgeDirection(std::vector<Eigen::Vector3d> verticesA, halfEdge polyA, dynamicData stateA, std::vector<Eigen::Vector3d> verticesB, halfEdge polyB, dynamicData stateB);
