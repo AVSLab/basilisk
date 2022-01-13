@@ -38,6 +38,9 @@ Version |release|
 - fixed a bug where using the generator flag to build on windows would skip a line in the conanfile.py that is crucial for building opNav.
 - added :ref:`dentonFluxModel` to compute electron and ion fluxes for the GEO regime.
 - fixed build issue with ``conan`` version 1.44 or newer
+- enhanced ability to set the planet Spice frame in the gravity factory class
+- new ability to set the Vizard celestial body name to be different from the Spice planet body name
+
 
 Version 2.1.1 (Dec. 15, 2021)
 -----------------------------
