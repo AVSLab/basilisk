@@ -92,6 +92,7 @@ class gravBodyFactory(object):
         sun.mu = 1.32712440018E20  # meters^3/s^2
         sun.radEquator = 695508000.0  # meters
         self.gravBodies['sun'] = sun
+        self.spicePlanetFrames.append("IAU_sun")
         sun.this.disown()
         return sun
 
@@ -102,6 +103,7 @@ class gravBodyFactory(object):
         mercury.mu = 4.28283100e13  # meters^3/s^2
         mercury.radEquator = 2439700.0  # meters
         self.gravBodies['mercury'] = mercury
+        self.spicePlanetFrames.append("IAU_mercury")
         mercury.this.disown()
         return mercury
 
@@ -112,6 +114,7 @@ class gravBodyFactory(object):
         venus.mu = 3.24858599e14  # meters^3/s^2
         venus.radEquator = 6051800.0  # meters
         self.gravBodies['venus'] = venus
+        self.spicePlanetFrames.append("IAU_venus")
         venus.this.disown()
         return venus
 
@@ -122,6 +125,7 @@ class gravBodyFactory(object):
         earth.mu = 0.3986004415E+15  # meters^3/s^2
         earth.radEquator = 6378136.6  # meters
         self.gravBodies['earth'] = earth
+        self.spicePlanetFrames.append("IAU_earth")
         earth.this.disown()
         return earth
 
@@ -132,6 +136,7 @@ class gravBodyFactory(object):
         moon.mu = 4.902799E12  # meters^3/s^2
         moon.radEquator = 1738100.0  # meters
         self.gravBodies['moon'] = moon
+        self.spicePlanetFrames.append("IAU_moon")
         moon.this.disown()
         return moon
 
@@ -142,6 +147,7 @@ class gravBodyFactory(object):
         mars.mu = 4.28283100e13  # meters^3/s^2
         mars.radEquator = 3396190  # meters
         self.gravBodies['mars'] = mars
+        self.spicePlanetFrames.append("IAU_mars")
         mars.this.disown()
         return mars
 
@@ -152,6 +158,7 @@ class gravBodyFactory(object):
         mars_barycenter.mu = 4.28283100e13  # meters^3/s^2
         mars_barycenter.radEquator = 3396190  # meters
         self.gravBodies['mars barycenter'] = mars_barycenter
+        self.spicePlanetFrames.append("IAU_mars")
         mars_barycenter.this.disown()
         return mars_barycenter
 
@@ -162,6 +169,7 @@ class gravBodyFactory(object):
         jupiter.mu = 1.266865349093058E17  # meters^3/s^2
         jupiter.radEquator = 71492000.0  # meters
         self.gravBodies['jupiter barycenter'] = jupiter
+        self.spicePlanetFrames.append("IAU_jupiter")
         jupiter.this.disown()
         return jupiter
 
@@ -172,6 +180,7 @@ class gravBodyFactory(object):
         saturn.mu = 3.79395000E16  # meters^3/s^2
         saturn.radEquator = 60268000.0  # meters
         self.gravBodies['saturn'] = saturn
+        self.spicePlanetFrames.append("IAU_saturn")
         saturn.this.disown()
         return saturn
 
@@ -182,6 +191,7 @@ class gravBodyFactory(object):
         uranus.mu = 5.79396566E15  # meters^3/s^2
         uranus.radEquator = 25559000.0  # meters
         self.gravBodies['uranus'] = uranus
+        self.spicePlanetFrames.append("IAU_uranus")
         uranus.this.disown()
         return uranus
 
@@ -192,6 +202,7 @@ class gravBodyFactory(object):
         neptune.mu = 6.83509920E15  # meters^3/s^2
         neptune.radEquator = 24764000.0  # meters
         self.gravBodies['neptune'] = neptune
+        self.spicePlanetFrames.append("IAU_neptune")
         neptune.this.disown()
         return neptune
 
@@ -213,10 +224,12 @@ class gravBodyFactory(object):
                     Equatorial radius in meters
                 radiusRatio : double
                     Ratio of the polar radius to the equatorial radius.
+                planetFrame : string
+                    Name of the spice planet frame
 
         """
         unitTestSupport.checkMethodKeyword(
-            ['radEquator', 'radiusRatio'],
+            ['radEquator', 'radiusRatio', 'planetFrame', 'displayName'],
             kwargs)
 
         if not isinstance(label, str):
@@ -231,6 +244,10 @@ class gravBodyFactory(object):
         if 'radiusRatio' in kwargs:
             gravBody.radiusRatio = kwargs['radiusRatio']
         self.gravBodies[label] = gravBody
+        planetFrame = ""
+        if 'planetFrame' in kwargs:
+            planetFrame = kwargs['planetFrame']
+        self.spicePlanetFrames.append(planetFrame)
         gravBody.this.disown()
         return gravBody
 
@@ -281,9 +298,9 @@ class gravBodyFactory(object):
         else:
             self.spicePlanetNames = list(self.gravBodies.keys())
 
-        self.spicePlanetFrames = []
         if 'spicePlanetFrames' in kwargs:
             try:
+                self.spicePlanetFrames = []
                 for planetFrame in kwargs['spicePlanetFrames']:
                     self.spicePlanetFrames.append(planetFrame)
             except TypeError:
@@ -295,9 +312,6 @@ class gravBodyFactory(object):
         self.spiceObject.addPlanetNames(spiceInterface.StringVector(self.spicePlanetNames))
         self.spiceObject.UTCCalInit = time
         if len(self.spicePlanetFrames) > 0:
-            if len(self.spicePlanetFrames) != len(self.spicePlanetNames):
-                print("List arguments spicePlanetFrames and spicePlanetNames must contain the same number of strings.")
-                exit(0)
             self.spiceObject.planetFrames = spiceInterface.StringVector(self.spicePlanetFrames)
 
         for fileName in self.spiceKernelFileNames:

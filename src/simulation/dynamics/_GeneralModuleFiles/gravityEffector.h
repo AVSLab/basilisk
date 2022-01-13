@@ -90,7 +90,7 @@ public:
     double radiusRatio=0;           //!< []       ratio of polar over equatorial radius
     SpicePlanetStateMsgPayload localPlanet = {};  //!< [-]   Class storage of ephemeris info from scheduled portion
     uint64_t timeWritten = 0;       //!< [ns]     time the input planet state message was written
-    std::string planetName;         //!<          Gravitational body name
+    std::string planetName="";      //!<          Gravitational body name, this is used as the Spice name if spiceInterface is used
 
     SphericalHarmonics spherHarm;   //!<          Object that computes the spherical harmonics gravity field
     BSKLogger bskLogger;            //!< -- BSK Logging
