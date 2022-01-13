@@ -389,7 +389,7 @@ def run(show_plots):
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
     gravBodyEphem.ModelTag = 'planetEphemeris'
-    gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["Bennu"]))
+    gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["bennu"]))
 
     # specify orbits of gravitational bodies
     # https://ssd.jpl.nasa.gov/horizons.cgi#results
@@ -426,7 +426,7 @@ def run(show_plots):
     sunEphemerisMsg.write(sunEphemerisMsgData)
 
     mu = 4.892  # m^3/s^2
-    asteroid = gravFactory.createCustomGravObject("Bennu", mu)
+    asteroid = gravFactory.createCustomGravObject("bennu", mu)
     asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])
 
     # create SC object
@@ -663,6 +663,12 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, sc_att_meas_recorder)
     scSim.AddModelToTask(simTaskName, ast_ephemeris_recorder)
     scSim.AddModelToTask(simTaskName, ast_ephemeris_meas_recorder)
+
+    if vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                  # , saveFile=fileName
+                                                  )
+        viz.settings.showSpacecraftLabels = 1
 
     #   initialize Simulation
     scSim.InitializeSimulation()
