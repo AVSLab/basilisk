@@ -1146,7 +1146,10 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             if gravBody.planetName not in planetNameList:
                 planetNameList.append(gravBody.planetName)
                 planetInfo = vizInterface.GravBodyInfo()
-                planetInfo.bodyName = gravBody.planetName
+                if gravBody.displayName == "":
+                    planetInfo.bodyName = gravBody.planetName
+                else:
+                    planetInfo.bodyName = gravBody.displayName
                 planetInfo.mu = gravBody.mu
                 planetInfo.radEquator = gravBody.radEquator
                 planetInfo.radiusRatio = gravBody.radiusRatio

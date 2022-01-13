@@ -121,6 +121,29 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
     this->initTimeData();
     this->J2000Current = this->J2000ETInit;
     this->timeDataInit = true;
+
+    std::vector<SpicePlanetStateMsgPayload>::iterator planit;
+    int c = 0;
+    SpiceChar *name = new SpiceChar[this->charBufferSize];
+    SpiceBoolean frmFound;
+    SpiceInt frmCode;
+    for(planit = this->planetData.begin(); planit != planetData.end(); planit++)
+    {
+        if (this->planetFrames.size() > 0) {
+            if (c < this->planetFrames.size()) {
+                if (this->planetFrames[c].size() > 0) {
+                    planit->computeOrient = 1;
+                }
+            }
+        } else {
+            std::string planetFrame = planit->PlanetName;
+            cnmfrm_c(planetFrame.c_str(), this->charBufferSize, &frmCode, name, &frmFound);
+            planit->computeOrient = frmFound;
+        }
+        c++;
+    }
+    delete [] name;
+
     // - Call Update state so that the spice bodies are inputted into the messaging system on reset
     this->UpdateState(CurrenSimNanos);
 }
@@ -255,9 +278,6 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
     planet state output messages and the vector of planet state message payloads */
 void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     std::vector<std::string>::iterator it;
-    SpiceChar *name = new SpiceChar[this->charBufferSize];
-    SpiceBoolean frmFound;
-    SpiceInt frmCode;
 
     /* clear the planet state message and payload vectors */
     for (long unsigned int c=0; c<this->planetStateOutMsgs.size(); c++) {
@@ -280,12 +300,8 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
         }
         strcpy(newPlanet.PlanetName, it->c_str());
 
-        std::string planetFrame = *it;
-        cnmfrm_c(planetFrame.c_str(), this->charBufferSize, &frmCode, name, &frmFound);
-        newPlanet.computeOrient = frmFound;
         this->planetData.push_back(newPlanet);
     }
-    delete [] name;
 
     return;
 }
@@ -368,7 +384,7 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
         double lighttime;
         double localState[6];
         std::string planetFrame = "";
-
+        
         spkezr_c(planit->PlanetName, this->J2000Current, this->referenceBase.c_str(),
             "NONE", this->zeroBase.c_str(), localState, &lighttime);
         v3Copy(&localState[0], planit->PositionVector);
@@ -376,16 +392,20 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
         v3Scale(1000., planit->PositionVector, planit->PositionVector);
         v3Scale(1000., planit->VelocityVector, planit->VelocityVector);
         planit->J2000Current = this->J2000Current;
+        /* use default IAU planet frame name */
+        planetFrame = "IAU_";
+        planetFrame += planit->PlanetName;
+
+        /* use specific planet frame if specified */
         if (this->planetFrames.size() > 0) {
-            if (this->planetFrames[c].size() > 0) {
-                /* use custom planet frame name */
-                planetFrame = this->planetFrames[c];
+            if (c < this->planetFrames[c].size()) {
+                if (this->planetFrames[c].size() > 0){
+                    /* use custom planet frame name */
+                    planetFrame = this->planetFrames[c];
+                }
             }
-        } else {
-            /* use default IAU planet frame name */
-            planetFrame = "IAU_";
-            planetFrame += planit->PlanetName;
         }
+
         if(planit->computeOrient)
         {
             //pxform_c ( referenceBase.c_str(), planetFrame.c_str(), J2000Current,

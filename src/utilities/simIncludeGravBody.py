@@ -89,9 +89,11 @@ class gravBodyFactory(object):
         """Create gravity body with sun mass properties."""
         sun = gravityEffector.GravBodyData()
         sun.planetName = "sun_planet_data"
+        sun.displayName = "sun"
         sun.mu = 1.32712440018E20  # meters^3/s^2
         sun.radEquator = 695508000.0  # meters
         self.gravBodies['sun'] = sun
+        self.spicePlanetFrames.append("IAU_sun")
         sun.this.disown()
         return sun
 
@@ -99,9 +101,11 @@ class gravBodyFactory(object):
         """Create gravity body with Mercury mass properties."""
         mercury = gravityEffector.GravBodyData()
         mercury.planetName = "mercury_planet_data"
+        mercury.displayName = "mercury"
         mercury.mu = 4.28283100e13  # meters^3/s^2
         mercury.radEquator = 2439700.0  # meters
         self.gravBodies['mercury'] = mercury
+        self.spicePlanetFrames.append("IAU_mercury")
         mercury.this.disown()
         return mercury
 
@@ -109,9 +113,11 @@ class gravBodyFactory(object):
         """Create gravity body with Venus mass properties."""
         venus = gravityEffector.GravBodyData()
         venus.planetName = "venus_planet_data"
+        venus.displayName = "venus"
         venus.mu = 3.24858599e14  # meters^3/s^2
         venus.radEquator = 6051800.0  # meters
         self.gravBodies['venus'] = venus
+        self.spicePlanetFrames.append("IAU_venus")
         venus.this.disown()
         return venus
 
@@ -119,9 +125,11 @@ class gravBodyFactory(object):
         """Create gravity body with Earth mass properties."""
         earth = gravityEffector.GravBodyData()
         earth.planetName = "earth_planet_data"
+        earth.displayName = "earth"
         earth.mu = 0.3986004415E+15  # meters^3/s^2
         earth.radEquator = 6378136.6  # meters
         self.gravBodies['earth'] = earth
+        self.spicePlanetFrames.append("IAU_earth")
         earth.this.disown()
         return earth
 
@@ -129,9 +137,11 @@ class gravBodyFactory(object):
         """Create gravity body with Moon mass properties."""
         moon = gravityEffector.GravBodyData()
         moon.planetName = "moon_planet_data"
+        moon.displayName = "moon"
         moon.mu = 4.902799E12  # meters^3/s^2
         moon.radEquator = 1738100.0  # meters
         self.gravBodies['moon'] = moon
+        self.spicePlanetFrames.append("IAU_moon")
         moon.this.disown()
         return moon
 
@@ -139,9 +149,11 @@ class gravBodyFactory(object):
         """Create gravity body with Mars mass properties."""
         mars = gravityEffector.GravBodyData()
         mars.planetName = "mars_planet_data"
+        mars.displayName = "mars"
         mars.mu = 4.28283100e13  # meters^3/s^2
         mars.radEquator = 3396190  # meters
         self.gravBodies['mars'] = mars
+        self.spicePlanetFrames.append("IAU_mars")
         mars.this.disown()
         return mars
 
@@ -149,9 +161,11 @@ class gravBodyFactory(object):
         """Create gravity body with Mars mass properties."""
         mars_barycenter = gravityEffector.GravBodyData()
         mars_barycenter.planetName = "mars barycenter_planet_data"
+        mars_barycenter.displayName = "mars"
         mars_barycenter.mu = 4.28283100e13  # meters^3/s^2
         mars_barycenter.radEquator = 3396190  # meters
         self.gravBodies['mars barycenter'] = mars_barycenter
+        self.spicePlanetFrames.append("IAU_mars")
         mars_barycenter.this.disown()
         return mars_barycenter
 
@@ -159,9 +173,11 @@ class gravBodyFactory(object):
         """Create gravity body with Jupiter mass properties."""
         jupiter = gravityEffector.GravBodyData()
         jupiter.planetName = "jupiter barycenter_planet_data"
+        jupiter.displayName = "jupiter"
         jupiter.mu = 1.266865349093058E17  # meters^3/s^2
         jupiter.radEquator = 71492000.0  # meters
         self.gravBodies['jupiter barycenter'] = jupiter
+        self.spicePlanetFrames.append("IAU_jupiter")
         jupiter.this.disown()
         return jupiter
 
@@ -169,9 +185,11 @@ class gravBodyFactory(object):
         """Create gravity body with Saturn mass properties."""
         saturn = gravityEffector.GravBodyData()
         saturn.planetName = "saturn barycenter_planet_data"
+        saturn.displayName = "saturn"
         saturn.mu = 3.79395000E16  # meters^3/s^2
         saturn.radEquator = 60268000.0  # meters
         self.gravBodies['saturn'] = saturn
+        self.spicePlanetFrames.append("IAU_saturn")
         saturn.this.disown()
         return saturn
 
@@ -179,9 +197,11 @@ class gravBodyFactory(object):
         """Create gravity body with Uranus mass properties."""
         uranus = gravityEffector.GravBodyData()
         uranus.planetName = "uranus barycenter_planet_data"
+        uranus.displayName = "uranus"
         uranus.mu = 5.79396566E15  # meters^3/s^2
         uranus.radEquator = 25559000.0  # meters
         self.gravBodies['uranus'] = uranus
+        self.spicePlanetFrames.append("IAU_uranus")
         uranus.this.disown()
         return uranus
 
@@ -189,9 +209,11 @@ class gravBodyFactory(object):
         """Create gravity body with Neptune mass properties."""
         neptune = gravityEffector.GravBodyData()
         neptune.planetName = "neptune barycenter_planet_data"
+        neptune.displayName = "neptune"
         neptune.mu = 6.83509920E15  # meters^3/s^2
         neptune.radEquator = 24764000.0  # meters
         self.gravBodies['neptune'] = neptune
+        self.spicePlanetFrames.append("IAU_neptune")
         neptune.this.disown()
         return neptune
 
@@ -213,10 +235,14 @@ class gravBodyFactory(object):
                     Equatorial radius in meters
                 radiusRatio : double
                     Ratio of the polar radius to the equatorial radius.
+                planetFrame : string
+                    Name of the spice planet frame
+                displayName: string
+                    Vizard celestial body name, if not provided then planetFrame becomes the Vizard name
 
         """
         unitTestSupport.checkMethodKeyword(
-            ['radEquator', 'radiusRatio'],
+            ['radEquator', 'radiusRatio', 'planetFrame', 'displayName'],
             kwargs)
 
         if not isinstance(label, str):
@@ -230,7 +256,13 @@ class gravBodyFactory(object):
             gravBody.radEquator = kwargs['radEquator']
         if 'radiusRatio' in kwargs:
             gravBody.radiusRatio = kwargs['radiusRatio']
+        if 'displayName' in kwargs:
+            gravBody.displayName = kwargs['displayName']
         self.gravBodies[label] = gravBody
+        planetFrame = ""
+        if 'planetFrame' in kwargs:
+            planetFrame = kwargs['planetFrame']
+        self.spicePlanetFrames.append(planetFrame)
         gravBody.this.disown()
         return gravBody
 
@@ -281,9 +313,9 @@ class gravBodyFactory(object):
         else:
             self.spicePlanetNames = list(self.gravBodies.keys())
 
-        self.spicePlanetFrames = []
         if 'spicePlanetFrames' in kwargs:
             try:
+                self.spicePlanetFrames = []
                 for planetFrame in kwargs['spicePlanetFrames']:
                     self.spicePlanetFrames.append(planetFrame)
             except TypeError:
@@ -295,9 +327,6 @@ class gravBodyFactory(object):
         self.spiceObject.addPlanetNames(spiceInterface.StringVector(self.spicePlanetNames))
         self.spiceObject.UTCCalInit = time
         if len(self.spicePlanetFrames) > 0:
-            if len(self.spicePlanetFrames) != len(self.spicePlanetNames):
-                print("List arguments spicePlanetFrames and spicePlanetNames must contain the same number of strings.")
-                exit(0)
             self.spiceObject.planetFrames = spiceInterface.StringVector(self.spicePlanetFrames)
 
         for fileName in self.spiceKernelFileNames:
