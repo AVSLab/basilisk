@@ -121,7 +121,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     # setup Gravity Bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()
     earth = gravFactory.createEarth()
-    mars = gravFactory.createMars()
+    mars = gravFactory.createMarsBarycenter()
     if planet == "earth":
         earth.isCentralBody = True
     elif planet == "mars":
