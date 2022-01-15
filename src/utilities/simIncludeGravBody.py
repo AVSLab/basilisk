@@ -313,9 +313,9 @@ class gravBodyFactory(object):
         else:
             self.spicePlanetNames = list(self.gravBodies.keys())
 
+        self.spicePlanetFrames = []
         if 'spicePlanetFrames' in kwargs:
             try:
-                self.spicePlanetFrames = []
                 for planetFrame in kwargs['spicePlanetFrames']:
                     self.spicePlanetFrames.append(planetFrame)
             except TypeError:
