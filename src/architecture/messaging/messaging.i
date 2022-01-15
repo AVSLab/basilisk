@@ -201,7 +201,6 @@ typedef struct messageType;
 
 %template(Eigen3dVector) std::vector<Eigen::Vector3d>;
 
-%template(AccDataMsgPayloadVector) std::vector<Message<AccDataMsgPayload>*>;
 %template(RWConfigLogOutMsgsVector) std::vector<Message<RWConfigLogMsgPayload>*>;
 %template(SpicePlanetStateOutMsgsVector) std::vector<Message<SpicePlanetStateMsgPayload>*>;
 %template(AtmoPropsOutMsgsVector) std::vector<Message<AtmoPropsMsgPayload>*>;
