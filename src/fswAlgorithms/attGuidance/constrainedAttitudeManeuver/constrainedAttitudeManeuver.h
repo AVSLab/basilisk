@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -32,6 +32,7 @@
 class ConstrainedAttitudeManeuver: public SysModel {
 public:
     ConstrainedAttitudeManeuver();
+    ConstrainedAttitudeManeuver(int N);
     ~ConstrainedAttitudeManeuver(); 
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
@@ -47,7 +48,7 @@ public:
 class Node {
 public:
     Node();
-    Node(double sigma_BN[3], double keepOutFov, double keepOutBoresight[3], double keepInFov, double keepInBoresight[3]);
+    Node(double sigma_BN[3]); //, double keepOutFov, double keepOutBoresight[3], double keepInFov, double keepInBoresight[3]);
     ~Node();
 
     double sigma_BN[3];
@@ -67,12 +68,12 @@ public:
     Node path[20];
 };
 
-void mirrorFunction(double indices[3], double mirrorIndices[8][3]);
+void mirrorFunction(int indices[3], int mirrorIndices[8][3]);
 
-void neighboringNodes(double indices[3], double *neighbors[26][3]);
+void neighboringNodes(int indices[3], int neighbors[26][3]);
 
 double distance(Node n1, Node n2);
 
-void generateGrid(Node startNode, Node goalNode, int N, std::map<const char*,Node> NodesMap, std::map<const char*,NodeProperties> NodePropertiesMap);
+void generateGrid(Node startNode, Node goalNode, int N, std::map<int,std::map<int,std::map<int,Node>>> NodesMap, std::map<int,std::map<int,std::map<int,Node>>> NodePropertiesMap);
 
 #endif

@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -30,13 +30,47 @@
     values and initializes the various parts of the model */
 ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver()
 {
-    this->N = 7;
+    return;
+}
+
+/*! This is the constructor for the module class.  It sets default variable
+    values and initializes the various parts of the model */
+ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver(int N)
+{
+    this->N = N;
+
+	std::map<int,std::map<int,std::map<int,Node>>> NodesMap;
+	std::map<int,std::map<int,std::map<int,Node>>> NodePropertiesMap;
+	double s0[3], sN[3];
+	s0[0] = 0; s0[1] = 0; s0[2] = 0;
+	sN[0] = 1; sN[1] = 0; sN[2] = 0;
+	Node startNode = Node(s0);
+	Node goalNode = Node(sN);
+	generateGrid(startNode, goalNode, this->N, NodesMap, NodePropertiesMap);
 
     return;
 }
 
 /*! Module Destructor.  */
 ConstrainedAttitudeManeuver::~ConstrainedAttitudeManeuver()
+{
+    return;
+}
+
+/*! This method is used to reset the module.
+ @return void
+ */
+void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
+{
+    return;
+
+}
+
+/*! This method is the state update.
+ @return void
+ @param CurrentSimNanos The current simulation time for system
+ */
+void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
 {
     return;
 }
@@ -49,7 +83,7 @@ Node::Node()
 }
 
 /*! The constructor requires the MRP set */
-Node::Node(double sigma_BN[3], double keepOutFov, double keepOutBoresight[3], double keepInFov, double keepInBoresight[3])
+Node::Node(double sigma_BN[3]) //, double keepOutFov, double keepOutBoresight[3], double keepInFov, double keepInBoresight[3])
 {
     MRPswitch(sigma_BN, 1, this->sigma_BN);
 	this->isFree = true;
@@ -82,7 +116,7 @@ NodeProperties::~NodeProperties()
     return;
 }
 
-void mirrorFunction(double indices[3], double mirrorIndices[8][3]) 
+void mirrorFunction(int indices[3], int mirrorIndices[8][3]) 
 {
 	mirrorIndices[0][0] =  indices[0];   mirrorIndices[0][1] =  indices[1];   mirrorIndices[0][2] =  indices[2];
 	mirrorIndices[1][0] = -indices[0];   mirrorIndices[1][1] =  indices[1];   mirrorIndices[1][2] =  indices[2];
@@ -94,7 +128,7 @@ void mirrorFunction(double indices[3], double mirrorIndices[8][3])
 	mirrorIndices[7][0] = -indices[0];   mirrorIndices[7][1] = -indices[1];   mirrorIndices[7][2] = -indices[2];
 }
 
-void neighboringNodes(double indices[3], double neighbors[26][3])
+void neighboringNodes(int indices[3], int neighbors[26][3])
 {
 	neighbors[0][0]  = indices[0]-1;     neighbors[0][1]  = indices[1];       neighbors[0][2]  = indices[2];
 	neighbors[1][0]  = indices[0]+1;     neighbors[1][1]  = indices[1];       neighbors[1][2]  = indices[2];
@@ -163,31 +197,97 @@ double distance(Node n1, Node n2)
 	return D;
 }
 
-void generateGrid(Node startNode, Node goalNode, int N, std::map<const char*,Node> NodesMap, std::map<const char*,NodeProperties> NodePropertiesMap)
+void generateGrid(Node startNode, Node goalNode, int N, 
+     std::map<int,std::map<int,std::map<int,Node>>> NodesMap, 
+	 std::map<int,std::map<int,std::map<int,Node>>> NodePropertiesMap)
 {
     double u[20];
 	for (int n = 0; n < N; n++) {
-		u[n] = n / (N - 1);
+		u[n] = n / ((double)N - 1);
 	}
-    
-	double indices[3], mirrorIndices[8][3];
-	for (int i = 0; i > N; i++) {
-		for (int j = 0; j > N; j++) {
-			for (int k = 0; k > N; k++) {
+	// add internal nodes (|sigma_BN| < 1)
+	int indices[3], mirrorIndices[8][3];
+	double sigma_BN[3];
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			for (int k = 0; k < N; k++) {
+				// std::cout << i << " " << j << " " << k << "\n";
 				if (pow(u[i],2) + pow(u[j],2) + pow(u[k],2) < 1) {
 					indices[0] = i; indices[1] = j; indices[2] = k;
 					mirrorFunction(indices, mirrorIndices);
 					for (int m = 0; m < 8; m++) {
-						std::stringstream tmp;
-						tmp << mirrorIndices[m][0] << " " << mirrorIndices[m][1] << " " << mirrorIndices[m][2];
-						const char* key = tmp.str().c_str();
-						if (NodesMap.count(key) == 0) {
-							std::cout << key;
-						}
+						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+							for (int p = 0; p < 3; p++) {
+								if (indices[p] != 0) { sigma_BN[p] = mirrorIndices[m][p]/indices[p]*u[indices[p]]; } else { sigma_BN[p] = 0; }
+							}
+							// std::cout << sigma_BN[0] << " " << sigma_BN[1] << " " << sigma_BN[2] << "\n";
+							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN);
+						} /*
+						std::cout << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[0] << " " 
+						          << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[1] << " " 
+								  << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[2] << "\n"; */
 					}
 				}
 			}
 		}
+	}
+	// add boundary nodes (|sigma_BN| = 1)
+	double r;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			for (int k = 0; k < N; k++) {
+				sigma_BN[0] = u[i]; sigma_BN[1] = u[j]; sigma_BN[2] = u[k];
+				r = v3Norm(sigma_BN);
+				// along i direction
+				if (NodesMap[i][j].count(k) == 1 && NodesMap[i+1][j].count(k) == 0 && r < 1) {
+					indices[0] = i+1; indices[1] = j; indices[2] = k;
+					mirrorFunction(indices, mirrorIndices);
+					for (int m = 0; m < 8; m++) {
+						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+							sigma_BN[0] = mirrorIndices[m][0]/indices[0] * pow(1-pow(u[j],2)-pow(u[k],2),0.5);
+							if (indices[1] != 0) { sigma_BN[1] = mirrorIndices[m][1]/indices[1]*u[indices[1]]; } else { sigma_BN[1] = 0; }
+							if (indices[2] != 0) { sigma_BN[2] = mirrorIndices[m][2]/indices[2]*u[indices[2]]; } else { sigma_BN[2] = 0; }
+							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN);
+						}
+					}
+				}
+				// along j direction
+				if (NodesMap[i][j].count(k) == 1 && NodesMap[i][j+1].count(k) == 0 && r < 1) {
+					indices[0] = i; indices[1] = j+1; indices[2] = k;
+					mirrorFunction(indices, mirrorIndices);
+					for (int m = 0; m < 8; m++) {
+						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+							if (indices[0] != 0) { sigma_BN[0] = mirrorIndices[m][0]/indices[0]*u[indices[0]]; } else { sigma_BN[0] = 0; }
+							sigma_BN[1] = mirrorIndices[m][1]/indices[1] * pow(1-pow(u[i],2)-pow(u[k],2),0.5);
+							if (indices[2] != 0) { sigma_BN[2] = mirrorIndices[m][2]/indices[2]*u[indices[2]]; } else { sigma_BN[2] = 0; }
+							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN);
+						}
+					}
+				}
+				// along k direction
+				if (NodesMap[i][j].count(k) == 1 && NodesMap[i][j].count(k+1) == 0 && r < 1) {
+					indices[0] = i; indices[1] = j; indices[2] = k+1;
+					mirrorFunction(indices, mirrorIndices);
+					for (int m = 0; m < 8; m++) {
+						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+							if (indices[0] != 0) { sigma_BN[0] = mirrorIndices[m][0]/indices[0]*u[indices[0]]; } else { sigma_BN[0] = 0; }
+							if (indices[1] != 0) { sigma_BN[1] = mirrorIndices[m][1]/indices[1]*u[indices[1]]; } else { sigma_BN[1] = 0; }
+							sigma_BN[2] = mirrorIndices[m][2]/indices[2] * pow(1-pow(u[i],2)-pow(u[j],2),0.5);
+							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN);
+						}
+					}
+				}
+			}
+		} 
+	}
+
+	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
+		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
+			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
+				std::cout << it1->first << " " << it2->first << " " << it3->first << ": "
+				          << it3->second.sigma_BN[0] << " " << it3->second.sigma_BN[1] << " " << it3->second.sigma_BN[2] << "\n";
+			}
+		} 
 	}
 
 	return;
