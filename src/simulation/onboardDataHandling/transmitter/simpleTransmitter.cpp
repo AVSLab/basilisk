@@ -127,7 +127,7 @@ int SimpleTransmitter::getMaxIndex() {
     //! - Loop through storedData, select index w/ largest amt
     double maxVal = -1.0;
     int maxIndex = -1;
-    for (int i = 0; i < this->storageUnitMsgs.back().storedData.size(); i++) {
+    for (long unsigned int i = 0; i < this->storageUnitMsgs.back().storedData.size(); i++) {
         if (this->storageUnitMsgs.back().storedData[i] > maxVal) {
             maxVal = this->storageUnitMsgs.back().storedData[i];
             maxIndex = i;
