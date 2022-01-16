@@ -334,6 +334,7 @@ VizSettings
     double sunIntensity = 0; //!< Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use viz default
     int32_t attenuateSunLightWithDistance = 0; //!< Toggle to reduce brightness of sun lighting with the square of the distance from the sun. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
     int showLightLabels; //!< Toggle to label spacecraft light elements, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    double celestialBodyHelioViewSizeMultiplier = -1; //!< Control the display size of celestial bodies in the Solar System View, values greater than 0, use negative value to use viz default
 
 }VizSettings;
 

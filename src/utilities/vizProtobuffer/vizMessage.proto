@@ -143,7 +143,7 @@ message VizMessage{
         repeated double cameraPos_B = 7;  //[m] Camera position in body frame
         repeated double cameraDir_B = 8;  //[-] Rotation to the camera frame MRP
         uint64 renderRate = 9;  //[ns] Sim elapsed time between saved camera images
-        string skybox = 10; // '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
+        string skybox = 10; // ' ' to use default (black for headless, NASA SVS otherwise), "NASA_SVS" provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background,
     }
 
     
@@ -263,6 +263,7 @@ message VizMessage{
         double sunIntensity = 44; //Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use viz default
         int32 attenuateSunLightWithDistance = 45; //Toggle to reduce brightness of sun lighting with the square of the distance from the sun. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
         int32 showLightLabels = 46; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double celestialBodyHelioViewSizeMultiplier = 47; // Control the display size of celestial bodies in the Solar System View, values greater than 0, use negative value to use viz default
     }
     
     message Location{
