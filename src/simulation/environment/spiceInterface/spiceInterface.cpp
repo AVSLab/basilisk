@@ -123,22 +123,27 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
     this->timeDataInit = true;
 
     std::vector<SpicePlanetStateMsgPayload>::iterator planit;
-    int c = 0;
+    int c = 0;  // celestial object counter
+    int autoFrame;  // flag to set the frame automatically
     SpiceChar *name = new SpiceChar[this->charBufferSize];
     SpiceBoolean frmFound;
     SpiceInt frmCode;
     for(planit = this->planetData.begin(); planit != planetData.end(); planit++)
     {
+        autoFrame = 1;
+        planit->computeOrient = 0;  // turn off by default
         if (this->planetFrames.size() > 0) {
             if (c < this->planetFrames.size()) {
-                if (this->planetFrames[c].size() > 0) {
-                    planit->computeOrient = 1;
+                if (this->planetFrames[c].length() > 0) {
+                    planit->computeOrient = 1;  // turn on as a custom name is provided
+                    autoFrame = 0;
                 }
             }
-        } else {
+        }
+        if (autoFrame > 0) {
             std::string planetFrame = planit->PlanetName;
             cnmfrm_c(planetFrame.c_str(), this->charBufferSize, &frmCode, name, &frmFound);
-            planit->computeOrient = frmFound;
+            planit->computeOrient = frmFound;  // set the flag to the Spice response on finding this frame
         }
         c++;
     }
@@ -378,7 +383,7 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
      -# Convert the pos/vel over to meters.
      -# Time stamp the message appropriately
      */
-    int c = 0;
+    int c = 0; // celestial body counter
     for(planit = spiceData->begin(); planit != spiceData->end(); planit++)
     {
         double lighttime;
@@ -398,8 +403,8 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
 
         /* use specific planet frame if specified */
         if (this->planetFrames.size() > 0) {
-            if (c < this->planetFrames[c].size()) {
-                if (this->planetFrames[c].size() > 0){
+            if (c < this->planetFrames.size()) {
+                if (this->planetFrames[c].length() > 0){
                     /* use custom planet frame name */
                     planetFrame = this->planetFrames[c];
                 }
