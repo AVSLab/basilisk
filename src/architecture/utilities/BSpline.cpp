@@ -145,7 +145,7 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
     }
     for (int j = 0; j < M-2*P-1; j++) {
         u = 0.0;
-        for (int i = j+1; i < j+P+1; i++) {
+        for (int i = j; i < j+P; i++) {
             if (i >= uk.size()) {
                 u += uk[N] / P;
             }
@@ -224,7 +224,7 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
         Q2[n] = (1-U[M-P-1]) / P * Input.XDot_N[1] * Ttot;
         Q3[n] = (1-U[M-P-1]) / P * Input.XDot_N[2] * Ttot;
     }
-    
+
     // solve linear systems
     Eigen::MatrixXd B = A.inverse();
     Eigen::VectorXd C1 = B * Q1;
