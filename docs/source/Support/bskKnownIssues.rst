@@ -6,10 +6,14 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
-- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found
+  when opNav is included.
   The code compiles, but auto-completion etc. doesn't work in that module.
 - ``conan`` version 1.44 is causing build issues because the way the source and build folders are set has
   changed.  This is fixed in current version of Basilisk.
+- building Basilisk from scratch with ``opNav`` turned on was failing because ``conan`` was not able to
+  install ``opencv/4.1.1``.  In particular, the package ``jasper`` was now failing as a required argument
+  is no longer supported.  This is fixed in the current release by turning off this ``jasper`` requirement.
 
 Version 2.1.1
 -------------
