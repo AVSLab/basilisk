@@ -62,9 +62,12 @@ public:
 class NodeProperties {
 public:
     NodeProperties();
+    NodeProperties(int i);
     ~NodeProperties();
 
-    Node neighbors[26];
+    int i;
+
+    std::map<int,std::map<int,std::map<int,Node>>> neighbors;
     Node path[20];
 };
 
@@ -74,6 +77,6 @@ void neighboringNodes(int indices[3], int neighbors[26][3]);
 
 double distance(Node n1, Node n2);
 
-void generateGrid(Node startNode, Node goalNode, int N, std::map<int,std::map<int,std::map<int,Node>>> NodesMap, std::map<int,std::map<int,std::map<int,Node>>> NodePropertiesMap);
+void generateGrid(Node startNode, Node goalNode, int N, std::map<int,std::map<int,std::map<int,Node>>> NodesMap, std::map<int,std::map<int,std::map<int,NodeProperties>>> NodePropertiesMap);
 
 #endif
