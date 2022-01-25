@@ -103,19 +103,6 @@ Node::~Node()
     return;
 }
 
-/*! This is the constructor for the Node class.  It sets default variable
-    values and initializes the various parts of the model */
-NodeProperties::NodeProperties()
-{
-    return;
-}
-
-/*! Module Destructor.  */
-NodeProperties::~NodeProperties()
-{
-    return;
-}
-
 void mirrorFunction(int indices[3], int mirrorIndices[8][3]) 
 {
 	mirrorIndices[0][0] =  indices[0];   mirrorIndices[0][1] =  indices[1];   mirrorIndices[0][2] =  indices[2];
@@ -223,7 +210,7 @@ void generateGrid(Node startNode, Node goalNode, int N,
 							// std::cout << sigma_BN[0] << " " << sigma_BN[1] << " " << sigma_BN[2] << "\n";
 							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN);
 							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
-						} /*
+						}/*
 						std::cout << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[0] << " " 
 						          << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[1] << " " 
 								  << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[2] << "\n"; */
@@ -286,17 +273,16 @@ void generateGrid(Node startNode, Node goalNode, int N,
 	}
 
 	// link nodes to adjacent neighbors
-	/*
 	int neighbors[26][3];
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			for (int k = 0; k < N; k++) {
-				indices[0] = i; indices[1] = j; indices[2] = k;
+	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
+		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
+			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
+				indices[0] = it1->first; indices[1] = it2->first; indices[2] = it3->first;
 				neighboringNodes(indices, neighbors);
 				for (int n = 0; n < 26; n++) {
-					if (NodesMap[i][j].count(k) == 1 && NodesMap[neighbors[n][0]][neighbors[n][1]].count(neighbors[n][k]) == 1) {
-						if (NodesMap[i][j][k].isFree && NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][k]].isFree) {
-							NodePropertiesMap[i][j][k].neighbors[neighbors[n][0]][neighbors[n][1]][neighbors[n][k]] = NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][k]];
+					if (NodesMap[neighbors[n][0]][neighbors[n][1]].count(neighbors[n][2]) == 1) {
+						if (NodesMap[indices[0]][indices[1]][indices[2]].isFree && NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]].isFree) {
+							NodePropertiesMap[indices[0]][indices[1]][indices[2]].neighbors[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]] = NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]];
 						}
 					}
 				}
@@ -304,17 +290,18 @@ void generateGrid(Node startNode, Node goalNode, int N,
 		}
 	}
 	// link boundary nodes to neighbors of shadow set
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			for (int k = 0; k < N; k++) {
-				if (NodesMap[i][j].count(k) == 1) {
-					std::cout << i << " " << j << " " << k << ":\n";
-					if (NodesMap[i][j][k].isBoundary) {
-						for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodePropertiesMap[-i][-j][-k].neighbors.begin(); it1!=NodePropertiesMap[-i][-j][-k].neighbors.end(); it1++) {
-							for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
-								for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
-									NodePropertiesMap[i][j][k].neighbors[it1->first][it2->first][it3->first] = it3->second;
-									std::cout << it1->first << " " << it2->first << " " << it3->first << "\n";
+	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
+		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
+			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
+				if (it3->second.isBoundary && it3->second.isFree) {
+					int i, j, k;
+					i = it1->first; j = it2->first; k = it3->first;
+					// std::cout << it1->first << " " << it2->first << " " << it3->first << ": \n";
+					for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it4=NodePropertiesMap[-i][-j][-k].neighbors.begin(); it4!=NodePropertiesMap[-i][-j][-k].neighbors.end(); it4++) {
+						for (std::map<int,std::map<int,Node>>::iterator it5=it4->second.begin(); it5!=it4->second.end(); it5++) {
+							for (std::map<int,Node>::iterator it6=it5->second.begin(); it6!=it5->second.end(); it6++) {
+								if (NodePropertiesMap[i][j][k].neighbors[it4->first][it5->first].count(it6->first) == 0 && it6->second.isFree) {
+									NodePropertiesMap[i][j][k].neighbors[it4->first][it5->first][it6->first] = it6->second;
 								}
 							}
 						}
@@ -322,17 +309,27 @@ void generateGrid(Node startNode, Node goalNode, int N,
 				}
 			}
 		}
-	}*/
+	}
     
 	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
 		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
 			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
-				std::cout << it1->first << " " << it2->first << " " << it3->first << ": "
-				          << it3->second.sigma_BN[0] << " " << it3->second.sigma_BN[1] << " " << it3->second.sigma_BN[2]
-						  << " " << it3->second.isBoundary << "\n";
+				std::cout << it1->first << " " << it2->first << " " << it3->first << ": \n";
+				        //  << it3->second.sigma_BN[0] << " " << it3->second.sigma_BN[1] << " " << it3->second.sigma_BN[2]
+						//  << " " << it3->second.isBoundary << "\n";
+				int i, j, k;
+				i = it1->first; j = it2->first; k = it3->first;
+				for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it4=NodePropertiesMap[i][j][k].neighbors.begin(); it4!=NodePropertiesMap[i][j][k].neighbors.end(); it4++) {
+					for (std::map<int,std::map<int,Node>>::iterator it5=it4->second.begin(); it5!=it4->second.end(); it5++) {
+						for (std::map<int,Node>::iterator it6=it5->second.begin(); it6!=it5->second.end(); it6++) {
+							std::cout << it4->first << " " << it5->first << " " << it6->first << "\n";
+						}
+					}
+				} 
 			}
 		} 
 	}
 
 	return;
 }
+

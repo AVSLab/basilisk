@@ -59,13 +59,7 @@ public:
 
 };
 
-class NodeProperties {
-public:
-    NodeProperties();
-    NodeProperties(int i);
-    ~NodeProperties();
-
-    int i;
+struct NodeProperties {
 
     std::map<int,std::map<int,std::map<int,Node>>> neighbors;
     Node path[20];
