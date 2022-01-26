@@ -357,6 +357,7 @@ typedef struct{
     double mu;                          //!< [m^3/s^2] celestial body gravity constant
     double radEquator;                  //!< [m] celestial body radius at equator
     double radiusRatio;                 //!< [] radiusPolar/radiusEq
+    std::string modelDictionaryKey;  //!< (optional) Vizard model key to use.  If set, it over-rides the model selected by the name
 }GravBodyInfo;
 
 #endif /* vizStructures_h */

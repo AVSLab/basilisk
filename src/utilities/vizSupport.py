@@ -1153,6 +1153,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 planetInfo.mu = gravBody.mu
                 planetInfo.radEquator = gravBody.radEquator
                 planetInfo.radiusRatio = gravBody.radiusRatio
+                planetInfo.modelDictionaryKey = gravBody.modelDictionaryKey
                 planetInfoList.append(planetInfo)
                 spiceMsgList.append(gravBody.planetBodyInMsg)
 

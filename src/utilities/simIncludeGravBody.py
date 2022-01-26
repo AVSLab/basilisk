@@ -90,6 +90,7 @@ class gravBodyFactory(object):
         sun = gravityEffector.GravBodyData()
         sun.planetName = "sun_planet_data"
         sun.displayName = "sun"
+        sun.modelDictionaryKey = ""
         sun.mu = 1.32712440018E20  # meters^3/s^2
         sun.radEquator = 695508000.0  # meters
         self.gravBodies['sun'] = sun
@@ -102,6 +103,7 @@ class gravBodyFactory(object):
         mercury = gravityEffector.GravBodyData()
         mercury.planetName = "mercury_planet_data"
         mercury.displayName = "mercury"
+        mercury.modelDictionaryKey = ""
         mercury.mu = 4.28283100e13  # meters^3/s^2
         mercury.radEquator = 2439700.0  # meters
         self.gravBodies['mercury'] = mercury
@@ -114,6 +116,7 @@ class gravBodyFactory(object):
         venus = gravityEffector.GravBodyData()
         venus.planetName = "venus_planet_data"
         venus.displayName = "venus"
+        venus.modelDictionaryKey = ""
         venus.mu = 3.24858599e14  # meters^3/s^2
         venus.radEquator = 6051800.0  # meters
         self.gravBodies['venus'] = venus
@@ -126,6 +129,7 @@ class gravBodyFactory(object):
         earth = gravityEffector.GravBodyData()
         earth.planetName = "earth_planet_data"
         earth.displayName = "earth"
+        earth.modelDictionaryKey = ""
         earth.mu = 0.3986004415E+15  # meters^3/s^2
         earth.radEquator = 6378136.6  # meters
         self.gravBodies['earth'] = earth
@@ -138,6 +142,7 @@ class gravBodyFactory(object):
         moon = gravityEffector.GravBodyData()
         moon.planetName = "moon_planet_data"
         moon.displayName = "moon"
+        moon.modelDictionaryKey = ""
         moon.mu = 4.902799E12  # meters^3/s^2
         moon.radEquator = 1738100.0  # meters
         self.gravBodies['moon'] = moon
@@ -150,6 +155,7 @@ class gravBodyFactory(object):
         mars = gravityEffector.GravBodyData()
         mars.planetName = "mars_planet_data"
         mars.displayName = "mars"
+        mars.modelDictionaryKey = ""
         mars.mu = 4.28283100e13  # meters^3/s^2
         mars.radEquator = 3396190  # meters
         self.gravBodies['mars'] = mars
@@ -162,6 +168,7 @@ class gravBodyFactory(object):
         mars_barycenter = gravityEffector.GravBodyData()
         mars_barycenter.planetName = "mars barycenter_planet_data"
         mars_barycenter.displayName = "mars"
+        mars_barycenter.modelDictionaryKey = ""
         mars_barycenter.mu = 4.28283100e13  # meters^3/s^2
         mars_barycenter.radEquator = 3396190  # meters
         self.gravBodies['mars barycenter'] = mars_barycenter
@@ -174,6 +181,7 @@ class gravBodyFactory(object):
         jupiter = gravityEffector.GravBodyData()
         jupiter.planetName = "jupiter barycenter_planet_data"
         jupiter.displayName = "jupiter"
+        jupiter.modelDictionaryKey = ""
         jupiter.mu = 1.266865349093058E17  # meters^3/s^2
         jupiter.radEquator = 71492000.0  # meters
         self.gravBodies['jupiter barycenter'] = jupiter
@@ -186,6 +194,7 @@ class gravBodyFactory(object):
         saturn = gravityEffector.GravBodyData()
         saturn.planetName = "saturn barycenter_planet_data"
         saturn.displayName = "saturn"
+        saturn.modelDictionaryKey = ""
         saturn.mu = 3.79395000E16  # meters^3/s^2
         saturn.radEquator = 60268000.0  # meters
         self.gravBodies['saturn'] = saturn
@@ -198,6 +207,7 @@ class gravBodyFactory(object):
         uranus = gravityEffector.GravBodyData()
         uranus.planetName = "uranus barycenter_planet_data"
         uranus.displayName = "uranus"
+        uranus.modelDictionaryKey = ""
         uranus.mu = 5.79396566E15  # meters^3/s^2
         uranus.radEquator = 25559000.0  # meters
         self.gravBodies['uranus'] = uranus
@@ -210,6 +220,7 @@ class gravBodyFactory(object):
         neptune = gravityEffector.GravBodyData()
         neptune.planetName = "neptune barycenter_planet_data"
         neptune.displayName = "neptune"
+        neptune.modelDictionaryKey = ""
         neptune.mu = 6.83509920E15  # meters^3/s^2
         neptune.radEquator = 24764000.0  # meters
         self.gravBodies['neptune'] = neptune
@@ -239,10 +250,12 @@ class gravBodyFactory(object):
                     Name of the spice planet frame
                 displayName: string
                     Vizard celestial body name, if not provided then planetFrame becomes the Vizard name
+                modelDictionaryKey: string
+                    Vizard model key name.  if not set, then either the displayName or planetName is used to set the model
 
         """
         unitTestSupport.checkMethodKeyword(
-            ['radEquator', 'radiusRatio', 'planetFrame', 'displayName'],
+            ['radEquator', 'radiusRatio', 'planetFrame', 'displayName', 'modelDictionaryKey'],
             kwargs)
 
         if not isinstance(label, str):
@@ -258,6 +271,9 @@ class gravBodyFactory(object):
             gravBody.radiusRatio = kwargs['radiusRatio']
         if 'displayName' in kwargs:
             gravBody.displayName = kwargs['displayName']
+        gravBody.modelDictionaryKey = ""
+        if 'modelDictionaryKey' in kwargs:
+            gravBody.modelDictionaryKey = kwargs['modelDictionaryKey']
         self.gravBodies[label] = gravBody
         planetFrame = ""
         if 'planetFrame' in kwargs:

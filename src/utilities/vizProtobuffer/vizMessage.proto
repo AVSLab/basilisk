@@ -37,6 +37,7 @@ message VizMessage{
         double mu = 5; // [km^3/s^2] Gravitational parameter must be provided if body name is not in the basic Vizard body dictionary
         double radiusEq = 6; //[km] Equatorial radius must be provided if body name is not in the basic Vizard body dictionary
         double radiusRatio = 7; //[radiusPolar/radiusEq] Used to compute ellipticity. It is optional and is provided for bodies in the basic Vizard body dictionary.  Default is 1.
+        string modelDictionaryKey = 8; //"" will result in using the current default for the celestial body's given name, otherwise key will be matched if possible to available model in internal model dictionary
     }
   
     //Spacecraft message carry spacecraft position, velocity, and rotation data and proto messages for actuators and sensors
