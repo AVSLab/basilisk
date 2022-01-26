@@ -55,7 +55,7 @@ def readEarthGRAM(filename):
 def readMarsGRAM(filename):
 	df = pd.read_csv(filename, delim_whitespace = True)
 	df.sort_values(by=['HgtMOLA'],ascending=True, inplace=True)
-	df.HgtMOLA = df.HgtMOLA * 1000;
+	df.HgtMOLA = df.HgtMOLA * 1000
 	altList = df.HgtMOLA.to_list()
 	rhoList = df.Denkgm3.to_list()
 	tempList = df.Temp.to_list()

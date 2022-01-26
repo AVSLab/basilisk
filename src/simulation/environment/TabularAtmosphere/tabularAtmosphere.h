@@ -31,20 +31,25 @@
 
 /*! @brief tabular atmosphere model */
 class TabularAtmosphere:  public AtmosphereBase {
-public:
-    TabularAtmosphere();
-    ~TabularAtmosphere();
 
-private:
-    void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime);
-    double interp(double x, std::vector<double> xList, std::vector<double> yList);
-
-public:
-    // double baseDensity;             //!< [kg/m^3] Density at h=0
-    // double scaleHeight;             //!< [m] Tabular characteristic height
-    // double localTemp = 293.0;       //!< [K] Local atmospheric temperature; set to be constant.
-    // alt, rho, temp list vector of doubles
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    private:
+        void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime);
+        double interp(double x, std::vector<double> xList, std::vector<double> yList);
+        int altList_length;
+        int rhoList_length;
+        int tempList_length;
+    
+    public:
+         TabularAtmosphere();
+         ~TabularAtmosphere();
+        // double baseDensity;             //!< [kg/m^3] Density at h=0
+        // double scaleHeight;             //!< [m] Tabular characteristic height
+        // double localTemp = 293.0;       //!< [K] Local atmospheric temperature; set to be constant.
+        // alt, rho, temp list vector of doubles
+        std::vector<double> altList;
+        std::vector<double> rhoList;
+        std::vector<double> tempList;
+        BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 
 
