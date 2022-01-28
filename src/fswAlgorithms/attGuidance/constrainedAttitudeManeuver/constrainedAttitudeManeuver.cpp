@@ -21,6 +21,7 @@
 #include <sstream>
 #include <string>
 #include <string.h>
+#include <math.h>
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -38,15 +39,8 @@ ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver()
 ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver(int N)
 {
     this->N = N;
-
-	std::map<int,std::map<int,std::map<int,Node>>> NodesMap;
-	std::map<int,std::map<int,std::map<int,NodeProperties>>> NodePropertiesMap;
-	double s0[3], sN[3];
-	s0[0] = 0; s0[1] = 0; s0[2] = 0;
-	sN[0] = 1; sN[1] = 0; sN[2] = 0;
-	Node startNode = Node(s0);
-	Node goalNode = Node(sN);
-	generateGrid(startNode, goalNode, this->N, NodesMap, NodePropertiesMap);
+    this->scStateMsgBuffer = this->scStateInMsg.zeroMsgPayload;
+	this->celBodyMsgBuffer = this->celBodyInMsg.zeroMsgPayload;
 
     return;
 }
@@ -62,6 +56,16 @@ ConstrainedAttitudeManeuver::~ConstrainedAttitudeManeuver()
  */
 void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
 {
+	ReadInputs();
+
+	// std::map<int,std::map<int,std::map<int,Node>>> NodesMap;
+	// std::map<int,std::map<int,std::map<int,NodeProperties>>> NodePropertiesMap;
+	double s0[3], sN[3];
+	s0[0] = 0; s0[1] = 0; s0[2] = 0;
+	sN[0] = 1; sN[1] = 0; sN[2] = 0;
+	Node startNode = Node(s0, this->constraints, this->keepOutFov, this->keepOutBore_B);
+	Node goalNode = Node(sN, this->constraints, this->keepOutFov, this->keepOutBore_B);
+	GenerateGrid(startNode, goalNode, this->N, NodesMap, NodePropertiesMap);
     return;
 
 }
@@ -75,6 +79,190 @@ void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
+/*! This method reads the input messages in from the system and sets the
+ appropriate parameters
+ @return void
+ */
+void ConstrainedAttitudeManeuver::ReadInputs()
+{
+    //! - Read the input messages into the correct pointer
+	if (this->scStateInMsg.isWritten()) {
+		this->scStateMsgBuffer = this->scStateInMsg();
+	}
+	else {
+		std::cout << "SCStateMsg not connected \n";
+	}
+	if (this->celBodyInMsg.isWritten()) {
+		this->celBodyMsgBuffer = this->celBodyInMsg();
+	}
+	else {
+		std::cout << "celBodyMsg not connected \n";
+	}
+
+	//! - Compute the inertial direction of the object w.r.t. the S/C
+    double relPosVector[3];
+	v3Subtract(this->celBodyMsgBuffer.PositionVector, this->scStateMsgBuffer.r_BN_N, relPosVector);
+	v3Normalize(relPosVector, this->constraints.keepOutDir_N);
+}
+
+/*! This method generates the MRP grid and connects the free neighboring nodes
+ @return void
+ */
+void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode, int N, 
+     std::map<int,std::map<int,std::map<int,Node>>> NodesMap, 
+	 std::map<int,std::map<int,std::map<int,NodeProperties>>> NodePropertiesMap)
+{
+    double u[20];
+	for (int n = 0; n < N; n++) {
+		u[n] = n / ((double)N - 1);
+	}
+	// add internal nodes (|sigma_BN| < 1)
+	int indices[3], mirrorIndices[8][3];
+	double sigma_BN[3];
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			for (int k = 0; k < N; k++) {
+				// std::cout << i << " " << j << " " << k << "\n";
+				if (pow(u[i],2) + pow(u[j],2) + pow(u[k],2) < 1) {
+					indices[0] = i; indices[1] = j; indices[2] = k;
+					mirrorFunction(indices, mirrorIndices);
+					for (int m = 0; m < 8; m++) {
+						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+							for (int p = 0; p < 3; p++) {
+								if (indices[p] != 0) { sigma_BN[p] = mirrorIndices[m][p]/indices[p]*u[indices[p]]; } else { sigma_BN[p] = 0; }
+							}
+							// std::cout << sigma_BN[0] << " " << sigma_BN[1] << " " << sigma_BN[2] << "\n";
+							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints,
+							                                                                               this->keepOutFov, this->keepOutBore_B);
+							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
+						}/*
+						std::cout << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[0] << " " 
+						          << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[1] << " " 
+								  << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[2] << "\n"; */
+					}
+				}
+			}
+		}
+	}
+	// add boundary nodes (|sigma_BN| = 1)
+	double r;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			for (int k = 0; k < N; k++) {
+				sigma_BN[0] = u[i]; sigma_BN[1] = u[j]; sigma_BN[2] = u[k];
+				r = v3Norm(sigma_BN);
+				// along i direction
+				if (NodesMap[i][j].count(k) == 1 && NodesMap[i+1][j].count(k) == 0 && r < 1) {
+					indices[0] = i+1; indices[1] = j; indices[2] = k;
+					mirrorFunction(indices, mirrorIndices);
+					for (int m = 0; m < 8; m++) {
+						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+							sigma_BN[0] = mirrorIndices[m][0]/indices[0] * pow(1-pow(u[j],2)-pow(u[k],2),0.5);
+							if (indices[1] != 0) { sigma_BN[1] = mirrorIndices[m][1]/indices[1]*u[indices[1]]; } else { sigma_BN[1] = 0; }
+							if (indices[2] != 0) { sigma_BN[2] = mirrorIndices[m][2]/indices[2]*u[indices[2]]; } else { sigma_BN[2] = 0; }
+							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints,
+							                                                                               this->keepOutFov, this->keepOutBore_B);
+							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
+						}
+					}
+				}
+				// along j direction
+				if (NodesMap[i][j].count(k) == 1 && NodesMap[i][j+1].count(k) == 0 && r < 1) {
+					indices[0] = i; indices[1] = j+1; indices[2] = k;
+					mirrorFunction(indices, mirrorIndices);
+					for (int m = 0; m < 8; m++) {
+						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+							if (indices[0] != 0) { sigma_BN[0] = mirrorIndices[m][0]/indices[0]*u[indices[0]]; } else { sigma_BN[0] = 0; }
+							sigma_BN[1] = mirrorIndices[m][1]/indices[1] * pow(1-pow(u[i],2)-pow(u[k],2),0.5);
+							if (indices[2] != 0) { sigma_BN[2] = mirrorIndices[m][2]/indices[2]*u[indices[2]]; } else { sigma_BN[2] = 0; }
+							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints,
+							                                                                               this->keepOutFov, this->keepOutBore_B);
+							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
+						}
+					}
+				}
+				// along k direction
+				if (NodesMap[i][j].count(k) == 1 && NodesMap[i][j].count(k+1) == 0 && r < 1) {
+					indices[0] = i; indices[1] = j; indices[2] = k+1;
+					mirrorFunction(indices, mirrorIndices);
+					for (int m = 0; m < 8; m++) {
+						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+							if (indices[0] != 0) { sigma_BN[0] = mirrorIndices[m][0]/indices[0]*u[indices[0]]; } else { sigma_BN[0] = 0; }
+							if (indices[1] != 0) { sigma_BN[1] = mirrorIndices[m][1]/indices[1]*u[indices[1]]; } else { sigma_BN[1] = 0; }
+							sigma_BN[2] = mirrorIndices[m][2]/indices[2] * pow(1-pow(u[i],2)-pow(u[j],2),0.5);
+							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints,
+							                                                                               this->keepOutFov, this->keepOutBore_B);
+							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
+						}
+					}
+				}
+			}
+		} 
+	}
+
+	// link nodes to adjacent neighbors
+	int neighbors[26][3];
+	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
+		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
+			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
+				indices[0] = it1->first; indices[1] = it2->first; indices[2] = it3->first;
+				neighboringNodes(indices, neighbors);
+				for (int n = 0; n < 26; n++) {
+					if (NodesMap[neighbors[n][0]][neighbors[n][1]].count(neighbors[n][2]) == 1) {
+						if (NodesMap[indices[0]][indices[1]][indices[2]].isFree && NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]].isFree) {
+							NodePropertiesMap[indices[0]][indices[1]][indices[2]].neighbors[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]] = NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]];
+						}
+					}
+				}
+			}
+		}
+	}
+	// link boundary nodes to neighbors of shadow set
+	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
+		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
+			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
+				if (it3->second.isBoundary && it3->second.isFree) {
+					int i, j, k;
+					i = it1->first; j = it2->first; k = it3->first;
+					// std::cout << it1->first << " " << it2->first << " " << it3->first << ": \n";
+					for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it4=NodePropertiesMap[-i][-j][-k].neighbors.begin(); it4!=NodePropertiesMap[-i][-j][-k].neighbors.end(); it4++) {
+						for (std::map<int,std::map<int,Node>>::iterator it5=it4->second.begin(); it5!=it4->second.end(); it5++) {
+							for (std::map<int,Node>::iterator it6=it5->second.begin(); it6!=it5->second.end(); it6++) {
+								if (NodePropertiesMap[i][j][k].neighbors[it4->first][it5->first].count(it6->first) == 0 && it6->second.isFree) {
+									NodePropertiesMap[i][j][k].neighbors[it4->first][it5->first][it6->first] = it6->second;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+    
+	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
+		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
+			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
+				if (!it3->second.isFree) {
+    				std::cout << it1->first << " " << it2->first << " " << it3->first << "\n";
+				}
+				        //  << it3->second.sigma_BN[0] << " " << it3->second.sigma_BN[1] << " " << it3->second.sigma_BN[2]
+						//  << " " << it3->second.isBoundary << "\n";
+						/*
+				int i, j, k;
+				i = it1->first; j = it2->first; k = it3->first;
+				for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it4=NodePropertiesMap[i][j][k].neighbors.begin(); it4!=NodePropertiesMap[i][j][k].neighbors.end(); it4++) {
+					for (std::map<int,std::map<int,Node>>::iterator it5=it4->second.begin(); it5!=it4->second.end(); it5++) {
+						for (std::map<int,Node>::iterator it6=it5->second.begin(); it6!=it5->second.end(); it6++) {
+							std::cout << it4->first << " " << it5->first << " " << it6->first << "\n";
+						}
+					}
+				} */
+			}
+		} 
+	}
+
+}
+
 /*! This is the constructor for the Node class.  It sets default variable
     values and initializes the various parts of the model */
 Node::Node()
@@ -83,13 +271,22 @@ Node::Node()
 }
 
 /*! The constructor requires the MRP set */
-Node::Node(double sigma_BN[3]) //, double keepOutFov, double keepOutBoresight[3], double keepInFov, double keepInBoresight[3])
+Node::Node(double sigma_BN[3], constraintStruct constraints, 
+           double keepOutFov, double keepOutBore_B[3]) //, double keepOutFov, double keepOutBoresight[3], double keepInFov, double keepInBoresight[3])
 {
     MRPswitch(sigma_BN, 1, this->sigma_BN);
-	this->isFree = true;
 	this->isBoundary = false;
 	if (abs(v3Norm(this->sigma_BN) - 1) < 1e-5) {
 		this->isBoundary = true;
+	}
+	double BN[3][3];
+	MRP2C(this->sigma_BN, BN);
+	v3tMultM33(keepOutBore_B, BN, this->keepOutBore_N);
+	if ( v3Dot(this->keepOutBore_N, constraints.keepOutDir_N) >= cos(keepOutFov) ) {
+		this->isFree = false;
+	}
+	else {
+		this->isFree = true;
 	}
 	this->heuristic = 0;
 	this->priority = 0;
@@ -183,153 +380,3 @@ double distance(Node n1, Node n2)
     }
 	return D;
 }
-
-void generateGrid(Node startNode, Node goalNode, int N, 
-     std::map<int,std::map<int,std::map<int,Node>>> NodesMap, 
-	 std::map<int,std::map<int,std::map<int,NodeProperties>>> NodePropertiesMap)
-{
-    double u[20];
-	for (int n = 0; n < N; n++) {
-		u[n] = n / ((double)N - 1);
-	}
-	// add internal nodes (|sigma_BN| < 1)
-	int indices[3], mirrorIndices[8][3];
-	double sigma_BN[3];
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			for (int k = 0; k < N; k++) {
-				// std::cout << i << " " << j << " " << k << "\n";
-				if (pow(u[i],2) + pow(u[j],2) + pow(u[k],2) < 1) {
-					indices[0] = i; indices[1] = j; indices[2] = k;
-					mirrorFunction(indices, mirrorIndices);
-					for (int m = 0; m < 8; m++) {
-						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
-							for (int p = 0; p < 3; p++) {
-								if (indices[p] != 0) { sigma_BN[p] = mirrorIndices[m][p]/indices[p]*u[indices[p]]; } else { sigma_BN[p] = 0; }
-							}
-							// std::cout << sigma_BN[0] << " " << sigma_BN[1] << " " << sigma_BN[2] << "\n";
-							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN);
-							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
-						}/*
-						std::cout << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[0] << " " 
-						          << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[1] << " " 
-								  << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[2] << "\n"; */
-					}
-				}
-			}
-		}
-	}
-	// add boundary nodes (|sigma_BN| = 1)
-	double r;
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			for (int k = 0; k < N; k++) {
-				sigma_BN[0] = u[i]; sigma_BN[1] = u[j]; sigma_BN[2] = u[k];
-				r = v3Norm(sigma_BN);
-				// along i direction
-				if (NodesMap[i][j].count(k) == 1 && NodesMap[i+1][j].count(k) == 0 && r < 1) {
-					indices[0] = i+1; indices[1] = j; indices[2] = k;
-					mirrorFunction(indices, mirrorIndices);
-					for (int m = 0; m < 8; m++) {
-						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
-							sigma_BN[0] = mirrorIndices[m][0]/indices[0] * pow(1-pow(u[j],2)-pow(u[k],2),0.5);
-							if (indices[1] != 0) { sigma_BN[1] = mirrorIndices[m][1]/indices[1]*u[indices[1]]; } else { sigma_BN[1] = 0; }
-							if (indices[2] != 0) { sigma_BN[2] = mirrorIndices[m][2]/indices[2]*u[indices[2]]; } else { sigma_BN[2] = 0; }
-							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN);
-							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
-						}
-					}
-				}
-				// along j direction
-				if (NodesMap[i][j].count(k) == 1 && NodesMap[i][j+1].count(k) == 0 && r < 1) {
-					indices[0] = i; indices[1] = j+1; indices[2] = k;
-					mirrorFunction(indices, mirrorIndices);
-					for (int m = 0; m < 8; m++) {
-						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
-							if (indices[0] != 0) { sigma_BN[0] = mirrorIndices[m][0]/indices[0]*u[indices[0]]; } else { sigma_BN[0] = 0; }
-							sigma_BN[1] = mirrorIndices[m][1]/indices[1] * pow(1-pow(u[i],2)-pow(u[k],2),0.5);
-							if (indices[2] != 0) { sigma_BN[2] = mirrorIndices[m][2]/indices[2]*u[indices[2]]; } else { sigma_BN[2] = 0; }
-							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN);
-							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
-						}
-					}
-				}
-				// along k direction
-				if (NodesMap[i][j].count(k) == 1 && NodesMap[i][j].count(k+1) == 0 && r < 1) {
-					indices[0] = i; indices[1] = j; indices[2] = k+1;
-					mirrorFunction(indices, mirrorIndices);
-					for (int m = 0; m < 8; m++) {
-						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
-							if (indices[0] != 0) { sigma_BN[0] = mirrorIndices[m][0]/indices[0]*u[indices[0]]; } else { sigma_BN[0] = 0; }
-							if (indices[1] != 0) { sigma_BN[1] = mirrorIndices[m][1]/indices[1]*u[indices[1]]; } else { sigma_BN[1] = 0; }
-							sigma_BN[2] = mirrorIndices[m][2]/indices[2] * pow(1-pow(u[i],2)-pow(u[j],2),0.5);
-							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN);
-							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
-						}
-					}
-				}
-			}
-		} 
-	}
-
-	// link nodes to adjacent neighbors
-	int neighbors[26][3];
-	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
-		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
-			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
-				indices[0] = it1->first; indices[1] = it2->first; indices[2] = it3->first;
-				neighboringNodes(indices, neighbors);
-				for (int n = 0; n < 26; n++) {
-					if (NodesMap[neighbors[n][0]][neighbors[n][1]].count(neighbors[n][2]) == 1) {
-						if (NodesMap[indices[0]][indices[1]][indices[2]].isFree && NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]].isFree) {
-							NodePropertiesMap[indices[0]][indices[1]][indices[2]].neighbors[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]] = NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]];
-						}
-					}
-				}
-			}
-		}
-	}
-	// link boundary nodes to neighbors of shadow set
-	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
-		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
-			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
-				if (it3->second.isBoundary && it3->second.isFree) {
-					int i, j, k;
-					i = it1->first; j = it2->first; k = it3->first;
-					// std::cout << it1->first << " " << it2->first << " " << it3->first << ": \n";
-					for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it4=NodePropertiesMap[-i][-j][-k].neighbors.begin(); it4!=NodePropertiesMap[-i][-j][-k].neighbors.end(); it4++) {
-						for (std::map<int,std::map<int,Node>>::iterator it5=it4->second.begin(); it5!=it4->second.end(); it5++) {
-							for (std::map<int,Node>::iterator it6=it5->second.begin(); it6!=it5->second.end(); it6++) {
-								if (NodePropertiesMap[i][j][k].neighbors[it4->first][it5->first].count(it6->first) == 0 && it6->second.isFree) {
-									NodePropertiesMap[i][j][k].neighbors[it4->first][it5->first][it6->first] = it6->second;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-    
-	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
-		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
-			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
-				std::cout << it1->first << " " << it2->first << " " << it3->first << ": \n";
-				        //  << it3->second.sigma_BN[0] << " " << it3->second.sigma_BN[1] << " " << it3->second.sigma_BN[2]
-						//  << " " << it3->second.isBoundary << "\n";
-				int i, j, k;
-				i = it1->first; j = it2->first; k = it3->first;
-				for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it4=NodePropertiesMap[i][j][k].neighbors.begin(); it4!=NodePropertiesMap[i][j][k].neighbors.end(); it4++) {
-					for (std::map<int,std::map<int,Node>>::iterator it5=it4->second.begin(); it5!=it4->second.end(); it5++) {
-						for (std::map<int,Node>::iterator it6=it5->second.begin(); it6!=it5->second.end(); it6++) {
-							std::cout << it4->first << " " << it5->first << " " << it6->first << "\n";
-						}
-					}
-				} 
-			}
-		} 
-	}
-
-	return;
-}
-
