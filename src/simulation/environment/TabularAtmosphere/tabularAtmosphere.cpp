@@ -26,18 +26,6 @@
  */
 TabularAtmosphere::TabularAtmosphere()
 {
-
-    altList_length = altList.size();
-    rhoList_length = rhoList.size();
-    tempList_length = tempList.size();
-    
-
-    if((altList_length == rhoList_length) && (altList_length == tempList_length)){
-        return;
-    } else {
-        printf("Error: data not equal length.");
-    }
-
     return;
 }
 
@@ -49,21 +37,32 @@ TabularAtmosphere::~TabularAtmosphere()
     return;
 }
 
+void TabularAtmosphere::customReset()
+{
+    altList_length = altList.size();
+    rhoList_length = rhoList.size();
+    tempList_length = tempList.size();
+    
+
+    if((altList_length == rhoList_length) && (altList_length == tempList_length)){
+        return;
+    } else {
+        std::cout << "Error: data not equal length." << std::endl;
+    }
+
+    return;
+}
+
 void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
 {
-    // printf("Orbit Altitude = %.2f \n ",this->orbitAltitude);
     std::cout << "altList:" << altList.size() << std::endl;
+    std::cout << "Planet Radius: " << this->planetRadius << std::endl;
     std::cout << currentTime << std::endl;
     for(int i=1; i <= this->altList.size(); i++){
-        // printf("%.2f\n", altList[i]);
-        // printf("%.2f\n", rhoList[i]);
 		if(this->altList[i] > this->orbitAltitude){
 			msg->neutralDensity = this->rhoList[i-1] + (this->orbitAltitude - this->altList[i-1]) * (this->rhoList[i] - this->rhoList[i-1]) / (this->altList[i] - this->altList[i-1]);
 			msg->localTemp = this->tempList[i-1] + (this->orbitAltitude - this->altList[i-1]) * (this->tempList[i] - this->tempList[i-1]) / (this->altList[i] - this->altList[i-1]);
         }
     }
-    
-    // printf("returned value: %.2f\n\n", msg->neutralDensity);
-    
     return;
 }

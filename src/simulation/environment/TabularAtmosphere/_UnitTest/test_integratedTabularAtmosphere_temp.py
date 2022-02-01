@@ -164,7 +164,10 @@ def TestTabularAtmosphere():
     altList, rhoList, tempList = readAtmTable(filename,'EarthGRAM')
     
     # added variables
-    tabularAtmosphere.altList = messaging.DoubleVector(altList)
+    # tabularAtmosphere.altList = messaging.DoubleVector(altList)
+    
+    tabularAtmosphere.altList = altList
+    
     tabularAtmosphere.rhoList = messaging.DoubleVector(rhoList)
     tabularAtmosphere.tempList = messaging.DoubleVector(tempList)
     

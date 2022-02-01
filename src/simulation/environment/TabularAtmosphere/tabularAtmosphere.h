@@ -42,6 +42,7 @@ class TabularAtmosphere:  public AtmosphereBase {
     public:
          TabularAtmosphere();
          ~TabularAtmosphere();
+         void customReset();
         // double baseDensity;             //!< [kg/m^3] Density at h=0
         // double scaleHeight;             //!< [m] Tabular characteristic height
         // double localTemp = 293.0;       //!< [K] Local atmospheric temperature; set to be constant.
