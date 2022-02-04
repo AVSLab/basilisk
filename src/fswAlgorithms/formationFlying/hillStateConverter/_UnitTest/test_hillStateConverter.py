@@ -65,11 +65,11 @@ def test_hillStateConverter(show_plots):
     ref_pos = [1,0,0]
     ref_vel = [0,0.00901408,0]
     #   Test the position calculation:
-    for val1, val2 in zip(hill_positions, ref_pos):
-        assert pytest.approx(val1, val2)
+    for val1, val2 in zip(hill_positions[-1], ref_pos):
+        assert  val1 == pytest.approx(val2)
 
-    for val1, val2  in zip(hill_velocities, ref_vel):
-        assert pytest.approx(val1, val2)
+    for val1, val2  in zip(hill_velocities[-1], ref_vel):
+        assert val1 == pytest.approx(val2)
 
 if __name__=="__main__":
     test_hillStateConverter(False)
