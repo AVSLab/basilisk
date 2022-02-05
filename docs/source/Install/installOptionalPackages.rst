@@ -27,10 +27,18 @@ The ``pytest`` program can run a series of test on python scripts that begin wit
 
 Note that version 4.0.1 or higher works properly with Basilisk, while versions between 3.6.1 and 4.0.0 had some bugs that impacted some Basilisk tests.
 
-If you want to use ``pytest`` to generate a validation HTML report using the ``--report`` argument,
+Generating HTML Report of the ``pytest`` Results
+------------------------------------------------
+If you want to use ``pytest`` to generate a validation HTML report,
 then the ``pytest-html`` package must be installed::
 
    pip3 install pytest-html
+
+When running ``pytest`` from the terminal, add the ``--html`` argument followed by the path to where
+to generate the report html folder.  It is recommended to put this inside a folder as HTML
+support folder will be created::
+
+    pytest --html report/report.html
 
 
 Running ``pytest`` in a multi-threaded manner

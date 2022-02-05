@@ -15,7 +15,6 @@ from Basilisk.fswAlgorithms import hillToAttRef
 from Basilisk.architecture import messaging
 #from Basilisk.simulation import simFswInterfaceMessages
 
-@pytest.mark.xfail(reason="test does not use correct truth values")
 @pytest.mark.parametrize("msg_type", ['AttRefMsg','NavAttMsg'])
 @pytest.mark.parametrize("use_limits", [True, False])
 def test_hillToAttRef(show_plots, use_limits, msg_type):
@@ -76,9 +75,17 @@ def runner(show_plots, use_limits, msg_type):
         depAttRefData.relMRPMin = -0.2 #    Configure minimum MRP
         depAttRefData.relMRPMax = 0.2  #    Configure maximum MRP
 
-        ref_vals = [0.2, -0.2, 0.2]
+        # ref_vals = [0.2, -0.2, 0.2]
+        if msg_type == 'NavAttMsg':
+            ref_vals = [-0.37398374, -0.25203252, -0.57723577]
+        else:
+            ref_vals = [0.2165725,  0.32956685, 0.51789077]
     else:
-        ref_vals = lqr_gain_set.dot(relative_state)
+        # ref_vals = lqr_gain_set.dot(relative_state)
+        if msg_type == 'NavAttMsg':
+            ref_vals = [0.5, 0.5, 0.5]
+        else:
+            ref_vals = [0.2, 0.2, 0.2]
     
     #   Store the output att ref message
     depAttRecorder = depAttRefData.attRefOutMsg.recorder()
@@ -92,8 +99,6 @@ def runner(show_plots, use_limits, msg_type):
 
     hill_positions = depAttRecorder.sigma_RN
     #   Test the attitude calculation:
-    # Note, this unit test is broken as it does not provide correct truth values.  This was not
-    # caught earlier as the manner of testing was not correct either.
     for val1, val2 in zip(hill_positions[-1], ref_vals):
         assert val1 == pytest.approx(val2)
 

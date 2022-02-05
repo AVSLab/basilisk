@@ -43,6 +43,7 @@ Version |release|
 - enhanced ability to set the planet Spice frame in the gravity factory class
 - new ability to set the Vizard celestial body name to be different from the Spice planet body name
 - added support for ``pytest`` version 7.0.0 and higher
+- updated how ``pytest`` is run to generate a resulting HTML report
 
 
 Version 2.1.1 (Dec. 15, 2021)
