@@ -25,6 +25,7 @@ import matplotlib as mpl
 from datetime import datetime, timedelta
 from Basilisk.architecture import messaging
 from Basilisk.topLevelModules import pyswice
+import pytest
 
 mpl.rc("figure", facecolor="white")
 mpl.rc('xtick', labelsize=9)
@@ -290,6 +291,36 @@ def compareDoubleArray(trueStates, dataStates, accuracy, msg, testFailCount, tes
     return testFailCount, testMessages
 
 
+def compareListRelative(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
+    """Compare two row lists of values and check relative accuracy"""
+    if len(trueStates) != len(dataStates):
+        testFailCount += 1
+        testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
+    elif len(trueStates) == 0 or len(dataStates) == 0:
+        testFailCount += 1
+        testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
+    else:
+        if not trueStates == pytest.approx(dataStates, rel=accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + msg + "\n")
+    return testFailCount, testMessages
+
+
+def compareList(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
+    """Compare two row lists of values and check relative accuracy"""
+    if len(trueStates) != len(dataStates):
+        testFailCount += 1
+        testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
+    elif len(trueStates) == 0 or len(dataStates) == 0:
+        testFailCount += 1
+        testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
+    else:
+        if not trueStates == pytest.approx(dataStates, abs=accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + msg + "\n")
+    return testFailCount, testMessages
+
+
 def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
     """Take a list and return equivalent LaTeX table code"""
 
@@ -489,6 +520,12 @@ def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
 
     return epochMsg
 
+def columnToRowList(set):
+    """Loop through a column list and return a row list"""
+    ans = []
+    for item in set:
+        ans.append(item[0])
+    return ans
 
 def checkMethodKeyword(karglist, kwargs):
     """loop through list of method keyword arguments and make sure that an approved keyword is used."""
