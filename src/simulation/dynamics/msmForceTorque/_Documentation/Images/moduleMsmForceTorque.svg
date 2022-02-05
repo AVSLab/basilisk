@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" viewBox="999 594.3182 468.5 103.18181" width="468.5" height="103.18181">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="999 583.999 468.88205 121.37968" width="468.88205" height="121.37968">
   <defs>
     <font-face font-family="Courier" font-size="12" units-per-em="1000" underline-position="-178.22266" underline-thickness="57.61719" slope="0" x-height="456.54297" cap-height="586.91406" ascent="753.90625" descent="-246.09375" font-weight="400">
       <font-face-src>
@@ -23,13 +23,13 @@
       </font-face-src>
     </font-face>
   </defs>
-  <metadata> Produced by OmniGraffle 7.18.4\n2021-03-17 15:56:55 +0000</metadata>
-  <g id="Canvas_1" fill-opacity="1" fill="none" stroke-opacity="1" stroke-dasharray="none" stroke="none">
+  <metadata> Produced by OmniGraffle 7.19.4\n2022-02-05 18:27:45 +0000</metadata>
+  <g id="Canvas_1" fill-opacity="1" stroke-opacity="1" stroke="none" stroke-dasharray="none" fill="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
       <title>Layer 1</title>
       <g id="Graphic_9">
-        <text transform="translate(1324.5922 621.86885)" fill="black">
+        <text transform="translate(1324.5922 605.86885)" fill="black">
           <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">CmdTorqueBodyMsg</tspan>
         </text>
       </g>
@@ -44,10 +44,10 @@
         <line x1="1003.1082" y1="622.00556" x2="1136.1942" y2="622.00556" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </g>
       <g id="Line_7">
-        <line x1="1313.3063" y1="620.3664" x2="1446.3923" y2="620.3664" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <line x1="1313.3063" y1="604.3664" x2="1446.3923" y2="604.3664" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </g>
       <g id="Graphic_8">
-        <text transform="translate(1324.5922 604.5023)" fill="black">
+        <text transform="translate(1324.5922 588.5023)" fill="black">
           <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">eTorqueOutMsgs</tspan>
         </text>
       </g>
@@ -75,16 +75,29 @@
         </text>
       </g>
       <g id="Graphic_17">
-        <text transform="translate(1324.5922 663.86985)" fill="black">
+        <text transform="translate(1324.5922 647.86985)" fill="black">
           <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">CmdForceInertialMsg</tspan>
         </text>
       </g>
       <g id="Line_16">
-        <line x1="1313.3063" y1="662.3674" x2="1446.3923" y2="662.3674" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <line x1="1313.3063" y1="646.3674" x2="1446.3923" y2="646.3674" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </g>
       <g id="Graphic_15">
-        <text transform="translate(1324.5922 646.5033)" fill="black">
+        <text transform="translate(1324.5922 630.5033)" fill="black">
           <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">eForceOutMsgs</tspan>
+        </text>
+      </g>
+      <g id="Graphic_20">
+        <text transform="translate(1324.9742 686.8754)" fill="black">
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">ChargeMsmMsgPayload</tspan>
+        </text>
+      </g>
+      <g id="Line_19">
+        <line x1="1313.6883" y1="685.373" x2="1446.7744" y2="685.373" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_18">
+        <text transform="translate(1324.9742 669.5088)" fill="black">
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">chargeMsmOutMsgs</tspan>
         </text>
       </g>
     </g>

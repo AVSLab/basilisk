@@ -29,7 +29,7 @@ typedef struct
 ChargeMsmMsgPayload
 //@endcond
 {
-    Eigen::VectorXd q;;      //!< [C], charge of each MSM sphere
+    Eigen::VectorXd q;      //!< [C], charge of each MSM sphere
 }ChargeMsmMsgPayload;
 
 

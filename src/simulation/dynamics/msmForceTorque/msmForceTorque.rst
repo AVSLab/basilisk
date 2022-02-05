@@ -34,6 +34,9 @@ provides information on what this message is used for.
     * - eForceOutMsgs
       - :ref:`CmdForceInertialMsgPayload`
       - vector of E-forces in inertial frame components
+    * - chargeMsmOutMsgs
+      - :ref:`ChargeMsmMsgPayload`
+      - vector of MSM charge messages
 
 
 Module Assumptions and Limitations
