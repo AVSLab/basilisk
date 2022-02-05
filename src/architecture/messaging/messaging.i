@@ -220,6 +220,7 @@ typedef struct messageType;
 %template(ExtInertialForceOutMsgsVector) std::vector<Message<CmdForceInertialMsgPayload>*>;
 %template(THROutputOutMsgsVectorVector) std::vector <std::vector <Message<THROutputMsgPayload>*>>;
 %template(RWConfigLogOutMsgsVectorVector) std::vector <std::vector <Message<RWConfigLogMsgPayload>*>>;
+%template(ChargeMsmOutMsgsVector) std::vector<Message<ChargeMsmMsgPayload>*>;
 
 %template(SCStatesInMsgsVector) std::vector<ReadFunctor<SCStatesMsgPayload>>;
 %template(SpicePlanetStateInMsgsVector) std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>;

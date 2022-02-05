@@ -41,6 +41,7 @@ struct VoltMsg_C;
 struct CmdTorqueBodyMsg_C;
 %include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
 struct CmdForceInertialMsg_C;
+%include "architecture/msgPayloadDefCpp/ChargeMsmMsgPayload.h"
 
 
 
