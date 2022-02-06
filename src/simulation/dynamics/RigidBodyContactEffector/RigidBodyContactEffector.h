@@ -122,11 +122,13 @@ typedef struct{
 typedef struct{
     Eigen::Vector3d r_BN_N;                     //!< [m] Position of body wrt to base
     Eigen::Vector3d v_BN_N;                     //!< [m/s] Velocity of body wrt to base
+    Eigen::Vector3d nonConservativeAccelpntB_B;
     double m_SC;                                //!< [kg] Mass of body
     Eigen::MatrixXd ISCPntB_B;                  //!<  [kg m^2] Inertia of body about point B in that body's frame
     Eigen::MatrixXd ISCPntB_B_inv;
     Eigen::Vector3d c_B;                        //!< [m] Vector from point B to CoM of body in body's frame
     Eigen::Vector3d omega_BN_B;                 //!< [r/s] Attitude rate of the body wrt base
+    Eigen::Vector3d omegaDot_BN_B;
     Eigen::Matrix3d omegaTilde_BN_B;
     Eigen::MRPd sigma_BN;                       //!< -- Attitude of the body wrt base
     Eigen::MRPd sigma_BprimeB;                  //!< -- Linearly propegated attitude of the body wrt base
@@ -162,7 +164,7 @@ typedef struct{
     std::vector<halfEdge> polyhedron;           //!< -- Half edge converted polyhedra data
     std::vector<std::vector<contactDetail>> collisionPoints;//!< -- Current collision data
     std::vector<penetrationDetail> penetrationData;//!< -- Current penetration data
-    std::vector<boundingBoxDetail> coarseSearchList;
+    boundingBoxDetail coarseSearchList;
     linkedStates hubState;                      //!< -- Linked states for the body
     dynamicData states;                         //!< -- Extracted states for the body
     dynamicData futureStates;
@@ -188,7 +190,7 @@ public:
     void LoadSpacecraftBody(const char *objFile, std::string modelTag, double boundingRadius, double coefRestitution, double coefFriction);
     void AddSpiceBody(const char *objFile, Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double boundingRadius, double coefRestitution, double coefFriction);
     void linkInStates(DynParamManager& states);
-    void computeForceTorque(double integTime);
+    void computeForceTorque(double currentTime, double timeStep, std::string modelTag);
     void computeStateContribution(double integTime);
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadInputs();
