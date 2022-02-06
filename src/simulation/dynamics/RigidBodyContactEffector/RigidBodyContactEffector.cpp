@@ -449,124 +449,194 @@ void RigidBodyContactEffector::linkInStates(DynParamManager& statesIn)
 @param integTime Integration time
 @ToDo Distribute the mass at each contact point
 */
-//void RigidBodyContactEffector::computeForceTorque(double integTime)
-//{
-//    this->forceExternal_N.setZero();
-//    this->forceExternal_B.setZero();
-//    this->torqueExternalPntB_B.setZero();
-//
-////     - Get all necessary state information
-//    this->mainBody.states.r_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubPosition->getState();
-//    this->mainBody.states.v_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubVelocity->getState();
-//    this->mainBody.states.m_SC = (double)(*this->mainBody.hubState.m_SC)(0,0);
-//    this->mainBody.states.c_B = (Eigen::Vector3d )*this->mainBody.hubState.c_B;
-//    this->mainBody.states.omega_BN_B = (Eigen::Vector3d )this->mainBody.hubState.hubOmega_BN_N->getState();
-//    this->mainBody.states.ISCPntB_B = *this->mainBody.hubState.ISCPntB_B;
-//    this->mainBody.states.sigma_BN = (Eigen::Vector3d )this->mainBody.hubState.hubSigma->getState();
-//    this->mainBody.states.dcm_NB = this->mainBody.states.sigma_BN.toRotationMatrix();
-//    this->mainBody.states.dcm_BN = this->mainBody.states.dcm_NB.transpose();
-//
-//    int numStateVar = 9 + (4 * this->mainBody.collisionPoints.size());
-////    int numStateVar = 10 + (3 * this->mainBody.collisionPoints.size());
-//    Eigen::VectorXd collisionStateVec = Eigen::VectorXd::Zero(numStateVar);
-//    Eigen::Vector3d v_CT_C = Eigen::Vector3d::Zero();
-//    Eigen::VectorXd compressionEnergy = Eigen::VectorXd::Zero(this->mainBody.collisionPoints.size());
-//    Eigen::VectorXd restitutionEnergy = Eigen::VectorXd::Zero(this->mainBody.collisionPoints.size());
-////    double compressionEnergy = 0.0;
-////    double restitutionEnergy = 0.0;
-//    double totalSlip;
-//    Eigen::VectorXd k1;
-//    Eigen::VectorXd k2;
-//    Eigen::VectorXd k3;
-//    Eigen::VectorXd k4;
-//
-//
-//    // - Check if any new collisions will happen during this time step, and calculate the resulting forces and torques
-//    if (this->mainBody.collisionPoints.empty() == false)
-//    {
-//        if (this->mainBody.collisionPoints[0].empty() == false)
-//        {
-//            if ( integTime - this->currentSimSeconds < this->simTimeStep / 5.0)
-//            {
-//            // - Loop through every collision point
-//            for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-//            {
-//                v_CT_C = this->mainBody.collisionPoints[bodyIt].back().dcm_CB * (this->mainBody.states.dcm_BN * (this->mainBody.states.v_BN_N - this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.v_BN_N) + eigenTilde(this->mainBody.states.omega_BN_B) * this->mainBody.collisionPoints[bodyIt].back().mainContactPoint - ((this->mainBody.states.dcm_BN * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB) * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.omegaTilde_BN_B *  (this->mainBody.states.dcm_BN * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB).transpose()) * this->mainBody.collisionPoints[bodyIt].back().mainContactPoint);
-//
-//                collisionStateVec[bodyIt * 3] = sqrt(pow(v_CT_C[0], 2.0) + pow(v_CT_C[1], 2.0));
-//                collisionStateVec[bodyIt * 3 + 1] = atan2(v_CT_C[1], v_CT_C[0]);
-//                collisionStateVec[bodyIt * 3 + 2] = v_CT_C[2];
-//                collisionStateVec[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] = this->mainBody.collisionPoints[bodyIt].back().penetrationEnergy;
-//            }
-//
-//            collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) = this->mainBody.states.v_BN_N;
-//            collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = this->mainBody.states.omega_BN_B;
-//
-//            do
-//            {
-//                std::cout << collisionStateVec << '\n' << '\n';
-//                totalSlip = 0;
-//                // - Loop through every collision point
-//                for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-//                {
-//                    totalSlip = totalSlip + collisionStateVec[bodyIt * 3];
-//                }
-//
-//                k1 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec, totalSlip);
-////                std::cout << k1 << '\n' << '\n';
-//                k2 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec + 0.5 * k1, totalSlip);
-//                k3 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec + 0.5 * k2, totalSlip);
-//                k4 = this->collisionIntegrationStep * this->CollisionStateDerivative(collisionStateVec + k3, totalSlip);
-//                collisionStateVec = collisionStateVec + (1.0 / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
-//
-//
-//                for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-//                {
-//                    if (collisionStateVec[bodyIt * 3] < this->slipTolerance)
-//                    {
-//                        this->mainBody.collisionPoints[bodyIt].back().slipHitZero = true;
-//                    }
-//                    if (collisionStateVec[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] < compressionEnergy[bodyIt])
-//                    {
-//                        compressionEnergy[bodyIt] = collisionStateVec[ this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt];
-//                        restitutionEnergy[bodyIt] = - pow(this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefRestitution, 2.0) * compressionEnergy[bodyIt];
-//                    }
-//                }
-////                if (collisionStateVec[numStateVar - 1] < compressionEnergy)
-////                {
-////                    compressionEnergy = collisionStateVec[numStateVar - 1];
-////                    restitutionEnergy = - pow(this->externalBodies[ this->mainBody.collisionPoints[ 0].back().otherBodyIndex].coefRestitution, 2.0) * compressionEnergy;
-////                }
-////                std::cout << collisionStateVec[this->mainBody.collisionPoints.size() * 3 + 9] << '\n' << '\n';
-//            } while ((collisionStateVec.segment( this->mainBody.collisionPoints.size() * 3 + 9, this->mainBody.collisionPoints.size()).array() < (compressionEnergy + restitutionEnergy).array()).any());
-////            } while (collisionStateVec[numStateVar - 1] <= (compressionEnergy + restitutionEnergy));
-//
-//                std::cout << collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) << '\n' << '\n';
-////                std::cout << collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) << '\n' << '\n';
-//            this->forceExternal_N = this->mainBody.states.m_SC * (collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) - this->mainBody.states.v_BN_N) / (this->simTimeStep );
-//
-//            this->torqueExternalPntB_B = this->mainBody.states.ISCPntB_B * ((collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) - this->mainBody.states.omega_BN_B) / (this->simTimeStep));
-//
-//                this->mainBody.collisionPoints[0].back().force_N = this->mainBody.states.m_SC * (collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) - this->mainBody.states.v_BN_N) / (this->simTimeStep);
-////
-//                this->mainBody.collisionPoints[0].back().torque_B =  this->mainBody.states.ISCPntB_B * ((collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) - this->mainBody.states.omega_BN_B) / (this->simTimeStep));
-////                this->mainBody.collisionPoints[0].back().force_N = collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3);
-//
-////                this->mainBody.collisionPoints[0].back().torque_B =  collisionStateVec.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3);
-//            }else
-//            {
-//                this->forceExternal_N = this->mainBody.collisionPoints[0].back().force_N;
-////
-//                this->torqueExternalPntB_B = this->mainBody.collisionPoints[0].back().torque_B;
-////                this->forceExternal_N = this->mainBody.states.m_SC * (this->mainBody.collisionPoints[0].back().force_N - this->mainBody.states.v_BN_N) / (this->simTimeStep );
-//
-////                this->torqueExternalPntB_B = this->mainBody.states.ISCPntB_B * ((this->mainBody.collisionPoints[0].back().torque_B - this->mainBody.states.omega_BN_B) / (this->simTimeStep));
-//            }
-//        }
-//    }
-//
-//
-//}
+void RigidBodyContactEffector::computeForceTorque(double currentTime, double timeStep, std::string modelTag)
+{
+    this->forceExternal_N.setZero();
+    this->forceExternal_B.setZero();
+    this->torqueExternalPntB_B.setZero();
+    
+    
+    dynamicData body1Current;
+    dynamicData body2Current;
+    dynamicData body1Future;
+    dynamicData body2Future;
+    
+    vectorInterval tempVecInter;
+    
+    std::vector<vectorInterval> body1VertInter;
+    std::vector<vectorInterval> body2VertInter;
+    
+    vectorInterval faceLegInterval1;
+    vectorInterval faceLegInterval2;
+    vectorInterval supportInterval;
+    
+    std::vector<double> elemTest;
+    int intersectFlag;
+    Eigen::Vector3d contactPoint;
+    
+    std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts;
+    
+    for (int groupIt1=0; groupIt1 < this->closeBodies.size(); ++groupIt1)
+    {
+        if (this->Bodies[this->closeBodies[groupIt1][0]].isSpice == true)
+        {
+            body1Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * (currentTime*NANO2SEC - this->currentSimSeconds);
+            body1Current.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B * this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_BN) * (currentTime*NANO2SEC - this->currentSimSeconds)) + this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_BN;
+            body1Current.dcm_NB = body1Current.dcm_BN.transpose();
+            
+            body1Future.r_BN_N = body1Current.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * timeStep*NANO2SEC ;
+            body1Future.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B * body1Current.dcm_BN) * timeStep*NANO2SEC) + body1Current.dcm_BN;
+            body1Future.dcm_NB = body1Future.dcm_BN.transpose();
+        }else
+        {
+            body1Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * (currentTime*NANO2SEC - this->currentSimSeconds) + this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][0]].states.nonConservativeAccelpntB_B * (currentTime*NANO2SEC - this->currentSimSeconds) * (currentTime*NANO2SEC - this->currentSimSeconds));
+            body1Current.v_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][0]].states.nonConservativeAccelpntB_B * (currentTime*NANO2SEC - this->currentSimSeconds));
+            body1Current.omega_BN_B = this->Bodies[this->closeBodies[groupIt1][0]].states.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][0]].states.omegaDot_BN_B * (currentTime*NANO2SEC - this->currentSimSeconds);
+            body1Current.sigma_BN = (0.25 * this->Bodies[this->closeBodies[groupIt1][0]].states.sigma_BN.Bmat() * body1Current.omega_BN_B * (currentTime*NANO2SEC - this->currentSimSeconds)) + ((Eigen::Vector3d) this->Bodies[this->closeBodies[groupIt1][0]].states.sigma_BN.coeffs());
+            body1Current.dcm_NB = body1Current.sigma_BN.toRotationMatrix();
+            body1Current.dcm_BN = body1Current.dcm_NB.transpose();
+            
+            body1Future.r_BN_N = body1Current.r_BN_N + body1Current.v_BN_N * timeStep*NANO2SEC + body1Current.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][0]].states.nonConservativeAccelpntB_B * timeStep*NANO2SEC * timeStep*NANO2SEC);
+            body1Future.omega_BN_B = body1Current.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][0]].states.omegaDot_BN_B * timeStep*NANO2SEC;
+            body1Future.sigma_BN = (0.25 * body1Current.sigma_BN.Bmat() * body1Future.omega_BN_B * timeStep*NANO2SEC) + ((Eigen::Vector3d) body1Current.sigma_BN.coeffs());
+            body1Future.dcm_NB = body1Future.sigma_BN.toRotationMatrix();
+            body1Future.dcm_BN = body1Future.dcm_NB.transpose();
+        }
+        
+        if (this->Bodies[this->closeBodies[groupIt1][1]].isSpice == true)
+        {
+            body2Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * (currentTime*NANO2SEC - this->currentSimSeconds);
+            body2Current.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B * this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_BN) * (currentTime*NANO2SEC - this->currentSimSeconds)) + this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_BN;
+            body2Current.dcm_NB = body2Current.dcm_BN.transpose();
+            
+            body2Future.r_BN_N = body2Current.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * timeStep*NANO2SEC ;
+            body2Future.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B * body2Current.dcm_BN) * timeStep*NANO2SEC) + body2Current.dcm_BN;
+            body2Future.dcm_NB = body2Future.dcm_BN.transpose();
+        }else
+        {
+            body2Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * (currentTime*NANO2SEC - this->currentSimSeconds) + this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][1]].states.nonConservativeAccelpntB_B * (currentTime*NANO2SEC - this->currentSimSeconds) * (currentTime*NANO2SEC - this->currentSimSeconds));
+            body2Current.v_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][1]].states.nonConservativeAccelpntB_B * (currentTime*NANO2SEC - this->currentSimSeconds));
+            body2Current.omega_BN_B = this->Bodies[this->closeBodies[groupIt1][1]].states.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][1]].states.omegaDot_BN_B * (currentTime*NANO2SEC - this->currentSimSeconds);
+            body2Current.sigma_BN = (0.25 * this->Bodies[this->closeBodies[groupIt1][1]].states.sigma_BN.Bmat() * body2Current.omega_BN_B * (currentTime*NANO2SEC - this->currentSimSeconds)) + ((Eigen::Vector3d) this->Bodies[this->closeBodies[groupIt1][1]].states.sigma_BN.coeffs());
+            body2Current.dcm_NB = body2Current.sigma_BN.toRotationMatrix();
+            body2Current.dcm_BN = body2Current.dcm_NB.transpose();
+            
+            body2Future.r_BN_N = body2Current.r_BN_N + body2Current.v_BN_N * timeStep*NANO2SEC + body2Current.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][1]].states.nonConservativeAccelpntB_B * timeStep*NANO2SEC * timeStep*NANO2SEC);
+            body2Future.omega_BN_B = body2Current.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][0]].states.omegaDot_BN_B * timeStep*NANO2SEC;
+            body2Future.sigma_BN = (0.25 * body2Current.sigma_BN.Bmat() * body2Future.omega_BN_B * timeStep*NANO2SEC) + ((Eigen::Vector3d) body2Current.sigma_BN.coeffs());
+            body2Future.dcm_NB = body2Future.sigma_BN.toRotationMatrix();
+            body2Future.dcm_BN = body2Future.dcm_NB.transpose();
+        }
+        
+        // Begin looping through contactable triangles
+        
+        for (int triPairInd=0; triPairInd < this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps.size(); triPairInd++)
+        {
+            
+            tempVecInter.lower = body1Current.r_BN_N + body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][0]];
+            tempVecInter.upper = body1Future.r_BN_N + body1Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][0]];
+            
+            body1VertInter.push_back(tempVecInter);
+            
+            tempVecInter.lower = body1Current.r_BN_N + body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][1]];
+            tempVecInter.upper = body1Future.r_BN_N + body1Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][1]];
+            
+            body1VertInter.push_back(tempVecInter);
+            
+            tempVecInter.lower = body1Current.r_BN_N + body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][2]];
+            tempVecInter.upper = body1Future.r_BN_N + body1Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][2]];
+            
+            body1VertInter.push_back(tempVecInter);
+            
+            tempVecInter.lower = body2Current.r_BN_N + body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][0]];
+            tempVecInter.upper = body2Future.r_BN_N + body2Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][0]];
+            
+            body2VertInter.push_back(tempVecInter);
+            
+            tempVecInter.lower = body2Current.r_BN_N + body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][1]];
+            tempVecInter.upper = body2Future.r_BN_N + body2Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][1]];
+            
+            body2VertInter.push_back(tempVecInter);
+            
+            tempVecInter.lower = body2Current.r_BN_N + body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][2]];
+            tempVecInter.upper = body2Future.r_BN_N + body2Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][2]];
+            
+            body2VertInter.push_back(tempVecInter);
+            
+            // Face of triange 1 with each vertex of triangle 2
+            faceLegInterval1.lower = body1VertInter[0].lower - body1VertInter[1].lower;
+            faceLegInterval1.upper = body1VertInter[0].upper - body1VertInter[1].upper;
+            faceLegInterval2.lower = body1VertInter[0].lower - body1VertInter[2].lower;
+            faceLegInterval2.upper = body1VertInter[0].upper - body1VertInter[2].upper;
+            
+            for (int vertInd=0; vertInd < 3; vertInd++)
+            {
+                supportInterval.lower = body2VertInter[vertInd].lower - body1VertInter[0].lower;
+                supportInterval.upper = body2VertInter[vertInd].upper - body1VertInter[0].upper;
+                
+                elemTest = this->IntervalDotProduct(supportInterval, this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
+                
+                if (((elemTest[0] <= -1e-12) && (elemTest[1] >= 1e-12)) || ((elemTest[0] >= 1e-12) && (elemTest[1] <= -1e-12)))
+                {
+                    intersectFlag = this->PointInTriangle(body2VertInter[vertInd].lower, body1VertInter[0].lower, body1VertInter[1].lower, body1VertInter[2].lower, &contactPoint);
+                    
+                    if (intersectFlag == 1)
+                    {
+                        impacts.push_back(std::make_tuple(contactPoint, body2VertInter[vertInd].lower, body1Current.dcm_NB * -this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceNormals[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])]));
+                    }
+                }
+            }
+            
+            // Face of triange 2 with each vertex of triangle 1
+            faceLegInterval1.lower = body2VertInter[0].lower - body2VertInter[1].lower;
+            faceLegInterval1.upper = body2VertInter[0].upper - body2VertInter[1].upper;
+            faceLegInterval2.lower = body2VertInter[0].lower - body2VertInter[2].lower;
+            faceLegInterval2.upper = body2VertInter[0].upper - body2VertInter[2].upper;
+            
+            for (int vertInd=0; vertInd < 3; vertInd++)
+            {
+                supportInterval.lower = body1VertInter[vertInd].lower - body2VertInter[0].lower;
+                supportInterval.upper = body1VertInter[vertInd].upper - body2VertInter[0].upper;
+                
+                elemTest = this->IntervalDotProduct(supportInterval, this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
+                
+                if (((elemTest[0] <= -1e-12) && (elemTest[1] >= 1e-12)) || ((elemTest[0] >= 1e-12) && (elemTest[1] <= -1e-12)))
+                {
+                    intersectFlag = this->PointInTriangle(body1VertInter[vertInd].lower, body2VertInter[0].lower, body2VertInter[1].lower, body2VertInter[2].lower, &contactPoint);
+                    
+                    if (intersectFlag == 1)
+                    {
+                        impacts.push_back(std::make_tuple(body1VertInter[vertInd].lower, contactPoint, body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceNormals[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])]));
+                    }
+                }
+            }
+        }
+        
+        
+        
+        
+    }
+    
+
+
+    int numStateVar = 9 + (4 * this->mainBody.collisionPoints.size());
+//    int numStateVar = 10 + (3 * this->mainBody.collisionPoints.size());
+    Eigen::VectorXd collisionStateVec = Eigen::VectorXd::Zero(numStateVar);
+    Eigen::Vector3d v_CT_C = Eigen::Vector3d::Zero();
+    Eigen::VectorXd compressionEnergy = Eigen::VectorXd::Zero(this->mainBody.collisionPoints.size());
+    Eigen::VectorXd restitutionEnergy = Eigen::VectorXd::Zero(this->mainBody.collisionPoints.size());
+//    double compressionEnergy = 0.0;
+//    double restitutionEnergy = 0.0;
+    double totalSlip;
+    Eigen::VectorXd k1;
+    Eigen::VectorXd k2;
+    Eigen::VectorXd k3;
+    Eigen::VectorXd k4;
+
+
+
+
+}
 
 //Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::VectorXd X_c, double totalSlip)
 //{
@@ -761,35 +831,26 @@ void RigidBodyContactEffector::computeStateContribution(double integTime)
 void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->currentSimSeconds = CurrentSimNanos*NANO2SEC;
-//    this->mainBody.states.r_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubPosition->getState();
-//    this->mainBody.states.v_BN_N = (Eigen::Vector3d )this->mainBody.hubState.hubVelocity->getState();
-//    this->mainBody.states.m_SC = (double)(*this->mainBody.hubState.m_SC)(0,0);
-//    this->mainBody.states.c_B = (Eigen::Vector3d )*this->mainBody.hubState.c_B;
-//    this->mainBody.states.omega_BN_B = (Eigen::Vector3d )this->mainBody.hubState.hubOmega_BN_N->getState();
-//    this->mainBody.states.ISCPntB_B = *this->mainBody.hubState.ISCPntB_B;
-//    this->mainBody.states.ISCPntB_B_inv = this->mainBody.states.ISCPntB_B.inverse();
-//    this->mainBody.states.sigma_BN = (Eigen::Vector3d )this->mainBody.hubState.hubSigma->getState();
-//    this->mainBody.states.dcm_NB = this->mainBody.states.sigma_BN.toRotationMatrix();
-//    this->mainBody.states.dcm_BN = this->mainBody.states.dcm_NB.transpose();
-//    this->mainBody.states.omegaTilde_BN_B = eigenTilde(this->mainBody.states.omega_BN_B);
+
     
     this->ReadInputs();
     this->ExtractFromBuffer();
     
     for (int bodyIt=0; bodyIt<this->numBodies; ++bodyIt)
     {
-        this->Bodies[bodyIt].futureStates.r_BN_N = this->Bodies[bodyIt].states.r_BN_N + this->Bodies[bodyIt].states.v_BN_N / this->simTimeStep;
+        
         if (this->Bodies[bodyIt].isSpice == true)
         {
+            this->Bodies[bodyIt].futureStates.r_BN_N = this->Bodies[bodyIt].states.r_BN_N + this->Bodies[bodyIt].states.v_BN_N * this->simTimeStep;
             this->Bodies[bodyIt].futureStates.dcm_BN = ((-this->Bodies[bodyIt].states.omegaTilde_BN_B * this->Bodies[bodyIt].states.dcm_BN) * this->simTimeStep) + this->Bodies[bodyIt].states.dcm_BN;
             this->Bodies[bodyIt].futureStates.dcm_NB = this->Bodies[bodyIt].futureStates.dcm_BN.transpose();
         }else
         {
-            this->Bodies[bodyIt].futureStates.sigma_BN = (0.25 * this->mainBody.states.sigma_BN.Bmat() * this->mainBody.states.omega_BN_B * this->simTimeStep) + ((Eigen::Vector3d) this->mainBody.states.sigma_BN.coeffs());
+            this->Bodies[bodyIt].futureStates.r_BN_N = this->Bodies[bodyIt].states.r_BN_N + this->Bodies[bodyIt].states.v_BN_N * this->simTimeStep + this->Bodies[bodyIt].states.dcm_NB * (this->Bodies[bodyIt].states.nonConservativeAccelpntB_B * this->simTimeStep * this->simTimeStep);
+            this->Bodies[bodyIt].futureStates.sigma_BN = (0.25 * this->Bodies[bodyIt].states.sigma_BN.Bmat() * (this->Bodies[bodyIt].states.omega_BN_B + this->Bodies[bodyIt].states.omegaDot_BN_B * this->simTimeStep) * this->simTimeStep) + ((Eigen::Vector3d) this->Bodies[bodyIt].states.sigma_BN.coeffs());
             this->Bodies[bodyIt].futureStates.dcm_NB = this->Bodies[bodyIt].futureStates.sigma_BN.toRotationMatrix();
             this->Bodies[bodyIt].futureStates.dcm_BN = this->Bodies[bodyIt].futureStates.dcm_NB.transpose();
         }
-        this->Bodies[bodyIt].coarseSearchList.clear();
     }
     
     this->closeBodies.clear();
@@ -848,9 +909,11 @@ void RigidBodyContactEffector::ExtractFromBuffer()
         {
             this->Bodies[bodyIt].states.r_BN_N = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.r_BN_N);
             this->Bodies[bodyIt].states.v_BN_N = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.v_BN_N);
+            this->Bodies[bodyIt].states.nonConservativeAccelpntB_B = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.nonConservativeAccelpntB_B);
             this->Bodies[bodyIt].states.m_SC = this->Bodies[bodyIt].massStateInBuffer.massSC;
             this->Bodies[bodyIt].states.c_B = cArray2EigenVector3d(this->Bodies[bodyIt].massStateInBuffer.c_B);
             this->Bodies[bodyIt].states.omega_BN_B = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.omega_BN_B);
+            this->Bodies[bodyIt].states.omegaDot_BN_B = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.omegaDot_BN_B);
             this->Bodies[bodyIt].states.ISCPntB_B = cArray2EigenMatrix3d(this->Bodies[bodyIt].massStateInBuffer.ISC_PntB_B);
             this->Bodies[bodyIt].states.ISCPntB_B_inv = this->Bodies[bodyIt].states.ISCPntB_B.inverse();
             this->Bodies[bodyIt].states.sigma_BN = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.sigma_BN);
@@ -999,7 +1062,7 @@ void RigidBodyContactEffector::CheckBoundingBox()
             }
         }
         
-        if (layer1Box.overlaps.size() > 0) this->Bodies[std::get<0>(layer1Box.parentIndices)].coarseSearchList.push_back(layer1Box);
+        if (layer1Box.overlaps.size() > 0) this->Bodies[std::get<0>(layer1Box.parentIndices)].coarseSearchList = layer1Box;
     }
     return;
 }
@@ -1029,6 +1092,9 @@ bool RigidBodyContactEffector::SeparatingPlane(vectorInterval displacementInterv
     
     return lhs > rhs;
 }
+
+
+
 
 /*! This method is the hub for the collision detection algorithm. It applies the Separating Axis Theorem between every convex shape on the main body and the external body to calcuate where and when there will be a collision. If there is already penetration, it detects that too and calculates the needed information to compute the forces and torques.
 @return If there is any collision/penetration
@@ -1990,47 +2056,31 @@ int RigidBodyContactEffector::PointInTriangle(Eigen::Vector3d supportPoint, Eige
     
     if ( (f2 <= 0) && (f1 > 0))
     {
-        if ( ((triVertex0 - *contactPoint).cross(triVertex1 - *contactPoint)).dot(n) < 0 )
-        {
-            return -1;
-        }
-        if ( ((triVertex0 - *contactPoint).cross(triVertex1 - *contactPoint)).dot(n) > 0 )
+        if ( ((triVertex0 - *contactPoint).cross(triVertex1 - *contactPoint)).dot(n) >= -1e-9 )
         {
             return 1;
-        }
-        if ( ((triVertex0 - *contactPoint).cross(triVertex1 - *contactPoint)).dot(n) == 0 )
-        {
-            return 0;
+        }else{
+            return -1;
         }
     }
     if ( (f3 <= 0) && (f2 > 0))
     {
-        if ( ((triVertex1 - *contactPoint).cross(triVertex2 - *contactPoint)).dot(n) < 0 )
-        {
-            return -1;
-        }
-        if ( ((triVertex1 - *contactPoint).cross(triVertex2 - *contactPoint)).dot(n) > 0 )
+        if ( ((triVertex1 - *contactPoint).cross(triVertex2 - *contactPoint)).dot(n) >= -1e-9 )
         {
             return 1;
-        }
-        if ( ((triVertex1 - *contactPoint).cross(triVertex2 - *contactPoint)).dot(n) == 0 )
+        }else
         {
-            return 0;
+            return -1;
         }
     }
     if ( (f1 <= 0) && (f3 > 0))
     {
-        if ( ((triVertex2 - *contactPoint).cross(triVertex0 - *contactPoint)).dot(n) < 0 )
-        {
-            return -1;
-        }
-        if ( ((triVertex2 - *contactPoint).cross(triVertex0 - *contactPoint)).dot(n) > 0 )
+        if ( ((triVertex2 - *contactPoint).cross(triVertex0 - *contactPoint)).dot(n) >= -1e-9 )
         {
             return 1;
-        }
-        if ( ((triVertex2 - *contactPoint).cross(triVertex0 - *contactPoint)).dot(n) == 0 )
+        }else
         {
-            return 0;
+            return -1;
         }
     }
     return -1;
