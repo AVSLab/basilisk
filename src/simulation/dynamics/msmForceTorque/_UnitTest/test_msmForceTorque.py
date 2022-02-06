@@ -133,6 +133,11 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
         , [0.00688387, -0.00209438, -0.00647544]
         , [0.00581629, 0.007876, -0.00986612]
     ]
+    chargeTruth = [
+        [1.99932e-6, 5.73861e-6]
+        , [-1.06715e-6, -2.51072e-6, -1.94044e-6]
+        , [1.30148e-6, 3.23131e-6]
+    ]
 
     # pull module data and make sure it is correct
     for i in range(3):
@@ -145,6 +150,12 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
         testFailCount, testMessages = \
             unitTestSupport.compareDoubleArrayRelative(tau, tauTruth[i],
                                                        accuracy, "sc" + str(i) + " torque test",
+                                                       testFailCount, testMessages)
+
+        charge = unitTestSupport.columnToRowList(module.chargeMsmOutMsgs[i].read().q)
+        testFailCount, testMessages = \
+            unitTestSupport.compareListRelative(charge, chargeTruth[i],
+                                                       accuracy, "sc" + str(i) + " charge test",
                                                        testFailCount, testMessages)
 
     if testFailCount == 0:

@@ -1,6 +1,8 @@
-``sphinx``
-``breathe``
+``sphinx==4.2.1``
+``breathe==4.32.0``
 ``sphinx_rtd_theme==0.5.1``
 ``recommonmark``
 ``pytest-xdist``
 ``pytest-html``
+``pytest-html``
+``docutils==0.16``

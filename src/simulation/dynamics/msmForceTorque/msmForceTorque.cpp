@@ -38,6 +38,9 @@ MsmForceTorque::~MsmForceTorque()
     for (long unsigned int c=0; c<this->eForceOutMsgs.size(); c++) {
         delete this->eForceOutMsgs.at(c);
     }
+    for (long unsigned int c=0; c<this->chargeMsmOutMsgs.size(); c++) {
+        delete this->chargeMsmOutMsgs.at(c);
+    }
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
@@ -111,6 +114,11 @@ void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg
     Message<CmdForceInertialMsgPayload> *msgForce;
     msgForce = new Message<CmdForceInertialMsgPayload>;
     this->eForceOutMsgs.push_back(msgForce);
+
+    Message<ChargeMsmMsgPayload> *msmCharge;
+    msmCharge = new Message<ChargeMsmMsgPayload>;
+    this->chargeMsmOutMsgs.push_back(msmCharge);
+
 }
 
 /*!  Read in the input messages
@@ -153,6 +161,7 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
     long unsigned int counter;                  //!< [] loop counter
     CmdForceInertialMsgPayload forceMsgBuffer;  //!< [] force out message buffer
     CmdTorqueBodyMsgPayload torqueMsgBuffer;    //!< [] torque out message buffer
+    ChargeMsmMsgPayload chargeMsmMsgBuffer;     //!< [] MSM charge message buffer
 
     kc = 8.99e9;
     
@@ -198,8 +207,8 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
 
     /* find forces and torques acting on each space object */
     counter = 0;
-    long unsigned int i0 = 0;
-    long unsigned int i1;
+    long unsigned int i0 = 0;       // counter where the MSM sphere charges start in the q vector
+    long unsigned int i1;           // counter where the next spacecraft MSM sphere charges start
     // loop over all satellites
     for (long unsigned int c=0; c < this->numSat; c++) {
         Eigen::Vector3d netForce_N;     // net force acting on spacecraft
@@ -218,6 +227,7 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
         // zero output message buffer
         forceMsgBuffer = this->eForceOutMsgs.at(c)->zeroMsgPayload;
         torqueMsgBuffer = this->eTorqueOutMsgs.at(c)->zeroMsgPayload;
+        chargeMsmMsgBuffer = this->chargeMsmOutMsgs.at(c)->zeroMsgPayload;
         
         // loop over current body spheres
         for (long unsigned int j=i0; j<i1; j++) {
@@ -247,6 +257,10 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
         this->eForceOutMsgs.at(c)->write(&forceMsgBuffer, this->moduleID, CurrentSimNanos);
         eigenVector3d2CArray(netTorque_B, torqueMsgBuffer.torqueRequestBody);
         this->eTorqueOutMsgs.at(c)->write(&torqueMsgBuffer, this->moduleID, CurrentSimNanos);
+
+        // store MSM charges to output message
+        chargeMsmMsgBuffer.q = q.segment(i0, i1-i0);
+        this->chargeMsmOutMsgs.at(c)->write(&chargeMsmMsgBuffer, this->moduleID, CurrentSimNanos);
 
         // set the body sphere start counter
         i0 = i1;

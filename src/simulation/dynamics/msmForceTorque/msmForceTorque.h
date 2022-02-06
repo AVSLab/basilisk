@@ -26,6 +26,7 @@
 #include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/ChargeMsmMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -52,6 +53,7 @@ public:
 
     std::vector<Message<CmdTorqueBodyMsgPayload>*> eTorqueOutMsgs;      //!< vector of E-torques in body frame components
     std::vector<Message<CmdForceInertialMsgPayload>*> eForceOutMsgs;    //!< vector of E-forces in inertial frame components
+    std::vector<Message<ChargeMsmMsgPayload>*> chargeMsmOutMsgs;        //!< vector of spacecraft MSM charge values
 
     BSKLogger bskLogger;                                        //!< -- BSK Logging
 
