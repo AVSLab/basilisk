@@ -1,0 +1,6 @@
+\begindata
+
+BODY2000269_POLE_RA             = (  84.00      0.0         0.0 )
+BODY2000269_POLE_DEC            = (  -56.00      0.0         0.0 )
+BODY2000269_PM                  = (  316.2    260.797885    0.0 )
+BODY2000269_CONSTANTS_JED_EPOCH = 2451545.0

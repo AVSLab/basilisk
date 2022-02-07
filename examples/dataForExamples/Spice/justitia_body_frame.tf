@@ -1,0 +1,8 @@
+\begindata
+
+FRAME_JUSTITIA_BODY               =  2000269
+FRAME_2000269_NAME                 = 'JUSTITIA_BODY'
+FRAME_2000269_CLASS                =  2
+FRAME_2000269_CLASS_ID             =  2000269
+FRAME_2000269_CENTER               =  2000269
+TKFRAME_2000269_RELATIVE           = 'J2000'
