@@ -20,8 +20,39 @@ r"""
 Overview
 --------
 
-Discusses how to layer attitude references. Starts with an inertial pointing attitude and then adds a spiral scanning motion on top of it.
+This scenario demonstrates how to layer attitude references. It starts with an inertial pointing attitude and then adds a spiral scanning motion on top of it.
 
+The script is found in the folder ``basilisk/examples`` and executed by using::
+
+    python3 scenarioInertialSpiral.py
+
+The initial orientation is set to zero for all MRPs and rates, and the desired attitude is layered on top using ``eulerRotation``, which allows 3-2-1 Euler rotations to be specified. In this script, the first rotation is 0.02 radians per second about the 1-axis and the second is 0.0001 radians per second about the 2-axis. This creates an outward sweeping spiral motion. The inertial pointing module feeds its output message into the first rotation, which feeds into the second, which in turn gives the attitude error that is used by the control law.
+
+Illustration of Simulation Results
+----------------------------------
+
+::
+
+    show_plots = True, useLargeTumble = False
+
+Five plots are shown. The first three show the atittude error, control torque, and rate tracking error, showing a transient response as the initial condition does not match the desired rates.
+
+.. image:: /_images/Scenarios/scenarioInertialSpiral1.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioInertialSpiral2.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioInertialSpiral3.svg
+   :align: center
+
+The final two show the logged MRP data, converted back into Euler angles. The pitch and yaw and plotted against time as well as against each other to show the resulting spiral.
+
+.. image:: /_images/Scenarios/scenarioInertialSpiral4.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioInertialSpiral5.svg
+   :align: center
 
 """
 
@@ -71,7 +102,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 def run(show_plots):
     """
-    The scenarios can be run with the followings parameters:
+    The scenario can be run with the followings parameters:
 
     Args:
         show_plots (bool): Determines if the script should display plots
@@ -295,6 +326,8 @@ def run(show_plots):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')
+    pltName = fileName + "3"
+    figureList[pltName] = plt.figure(3)
 
     plt.figure(4)
     plt.plot(timeLineSet, dataEulerAnglesYaw,
@@ -304,17 +337,22 @@ def run(show_plots):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Euler Angles [rad]')
+    pltName = fileName + "4"
+    figureList[pltName] = plt.figure(4)
 
     plt.figure(5)
     plt.plot(dataEulerAnglesPitch, dataEulerAnglesYaw)
     plt.xlabel('Pitch [rad]')
     plt.ylabel('Yaw [rad]')
+    pltName = fileName + "5"
+    figureList[pltName] = plt.figure(5)
 
     if show_plots:
         plt.show()
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
+    print(figureList)
 
     return figureList
 
