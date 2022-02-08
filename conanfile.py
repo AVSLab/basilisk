@@ -346,7 +346,10 @@ if __name__ == "__main__":
 
     # run conan install
     conanCmdString = list()
-    conanCmdString.append('conan install . --build=missing')
+    if is_running_virtual_env() or platform.system() == "Windows":
+        conanCmdString.append('python -m conans.conan install . --build=missing')
+    else:
+        conanCmdString.append('python3 -m conans.conan install . --build=missing')
     conanCmdString.append(' -s build_type=' + str(args.buildType))
     conanCmdString.append(' -if ' + buildFolderName)
     if args.generator:
@@ -373,7 +376,10 @@ if __name__ == "__main__":
     os.system(conanCmdString)
 
     # run conan build
-    cmakeCmdString = 'conan build . -if ' + buildFolderName
+    if is_running_virtual_env() or platform.system() == "Windows":
+        cmakeCmdString = 'python -m conans.conan build . -if ' + buildFolderName
+    else:
+        cmakeCmdString = 'python3 -m conans.conan build . -if ' + buildFolderName
     print(statusColor + "Running cmake:" + endColor)
     print(cmakeCmdString)
     os.system(cmakeCmdString)
