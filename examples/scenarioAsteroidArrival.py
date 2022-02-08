@@ -25,8 +25,8 @@ attitude changes. Several attitude pointing modes are implemented, along with ot
 transmission and thruster visualization.
 
 The spacecraft starts on a elliptical orbit towards the asteroid Bennu. The spacecraft conducts a
-burn at periapsis of the elliptical orbit, transferring to a circular orbit about Bennu with a radius of 250
-kilometers. The spacecraft then completes a series of Hohmann transfers while also conducting several attitude changes
+burn at periapsis of the elliptical orbit, transferring to a circular orbit about Bennu with a radius of 800
+meters. The spacecraft then completes a series of Hohmann transfers while also conducting several attitude changes
 until reaching a final elliptical orbit about the asteroid.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
@@ -152,7 +152,7 @@ Illustration of Simulation Results
 
 The following image illustrates the expected simulation run return for the case when plots are requested.
 
-.. image:: /_images/Scenarios/scenarioAsteroidArrivalFig1.svg
+.. image:: /_images/Scenarios/scenarioAsteroidArrival1.svg
    :align: center
 
 Visualization In Vizard
@@ -160,7 +160,7 @@ Visualization In Vizard
 
 The following image illustrates the expected visualization of this simulation script.
 
-.. image:: /_images/Scenarios/scenarioAsteroidArrivalFig2.png
+.. image:: /_images/Scenarios/scenarioAsteroidArrival2.png
    :align: center
 
 """
@@ -232,7 +232,7 @@ def run(show_plots):
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
     gravBodyEphem.ModelTag = 'planetEphemeris'
     scSim.AddModelToTask(simTaskName, gravBodyEphem)
-    gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["Bennu"]))
+    gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["bennu"]))
 
     # Specify orbital parameters of the asteroid
     timeInitString = "2011 January 1 0:00:00.0"
@@ -256,10 +256,10 @@ def run(show_plots):
     gravBodyEphem.rotRate = planetEphemeris.DoubleVector([360 * macros.D2R / (4.296057 * 3600.)])  # rad/sec
 
     # Set orbital radii about asteroid
-    r0 = 250 * 1000.0  # capture orbit, meters
-    r1 = 175 * 1000.0  # intermediate orbit, meters
-    r2 = 100 * 1000.0  # final science orbit, meters
-    r3 = diam/2.0 + 10 * 1000.0  # meters, very close fly-by, elliptic orbit
+    r0 = diam/2.0 + 800  # capture orbit, meters
+    r1 = diam/2.0 + 600  # intermediate orbit, meters
+    r2 = diam/2.0 + 400 # final science orbit, meters
+    r3 = diam/2.0 + 200  # meters, very close fly-by, elliptic orbit
     rP = r0
     rA = 3*rP
 
@@ -292,7 +292,7 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
 
     # Create the asteroid custom gravitational body
-    asteroid = gravFactory.createCustomGravObject("Bennu", mu)
+    asteroid = gravFactory.createCustomGravObject("bennu", mu)
     asteroid.isCentralBody = True  # ensures the asteroid is the central gravitational body
     asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0]) # connect asteroid ephem. to custom grav body
 
@@ -730,20 +730,20 @@ def plotOrbits(timeAxis, posData1, posData2, rP, diam):
     ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     ax.get_xaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     planetColor = '#008800'
-    planetRadius = .5*(diam / 1000) # km
+    planetRadius = .5*(diam) # m
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
 
     # Draw the actual orbit from pulled data (DataRec)
-    plt.plot(posData2[:, 1] / 1000., posData2[:, 2] / 1000., color='orangered',
+    plt.plot(posData2[:, 1], posData2[:, 2], color='orangered',
              label='Simulated Flight')
-    plt.xlabel('Bennu Velocity Direction [km]')
-    plt.ylabel('Anti-Sunward Direction [km]')
+    plt.xlabel('Bennu Velocity Direction [m]')
+    plt.ylabel('Anti-Sunward Direction [m]')
 
     # Draw desired parking orbit
     fData = np.linspace(0, 2 * np.pi, 100)
     rData = []
     for indx in range(0, len(fData)):
-        rData.append(rP / 1000)
+        rData.append(rP)
     plt.plot(rData* np.cos(fData), rData * np.sin(fData), '--', color='#555555', label='Desired Circ.Capture Orbit')
     plt.legend(loc='upper right')
     plt.grid()
