@@ -258,34 +258,6 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
         Output->XDD3[i] = NN2.dot(C3) / pow(Ttot,2);
         t += dt;
     }
-    // override last point to avoid errors for t = 1
-    Output->T[Num-1] = Ttot;
-    // last point coincides with last waypoint
-    Output->X1[Num-1] = Input.X1[N];
-    Output->X2[Num-1] = Input.X2[N];
-    Output->X3[Num-1] = Input.X3[N];
-    // if final derivatives are specified as inputs, they are imposed for the last waypoint
-    // otherwise, derivatives are computed with second order finite differences from adjacent points
-    if (Input.XDot_N_flag == true) {
-        Output->XD1[Num-1] = Input.XDot_N[0];
-        Output->XD2[Num-1] = Input.XDot_N[1];
-        Output->XD3[Num-1] = Input.XDot_N[2];
-    }
-    else {
-        Output->XD1[Num-1] = ( (Output->X1[Num-3]-Output->X1[Num-1])*0.5 - (Output->X1[Num-2]-Output->X1[Num-1])*2 ) / (dt * Ttot);
-        Output->XD2[Num-1] = ( (Output->X2[Num-3]-Output->X2[Num-1])*0.5 - (Output->X2[Num-2]-Output->X2[Num-1])*2 ) / (dt * Ttot);
-        Output->XD3[Num-1] = ( (Output->X3[Num-3]-Output->X3[Num-1])*0.5 - (Output->X3[Num-2]-Output->X3[Num-1])*2 ) / (dt * Ttot);      
-    }
-    if (Input.XDDot_N_flag == true) {
-        Output->XDD1[Num-1] = Input.XDDot_N[0];
-        Output->XDD2[Num-1] = Input.XDDot_N[1];
-        Output->XDD3[Num-1] = Input.XDDot_N[2];
-    }
-    else {
-        Output->XDD1[Num-1] = ( (Output->XD1[Num-3]-Output->XD1[Num-1])*0.5 - (Output->XD1[Num-2]-Output->XD1[Num-1])*2 ) / (dt * Ttot);
-        Output->XDD2[Num-1] = ( (Output->XD2[Num-3]-Output->XD2[Num-1])*0.5 - (Output->XD2[Num-2]-Output->XD2[Num-1])*2 ) / (dt * Ttot);
-        Output->XDD3[Num-1] = ( (Output->XD3[Num-3]-Output->XD3[Num-1])*0.5 - (Output->XD3[Num-2]-Output->XD3[Num-1])*2 ) / (dt * Ttot);      
-    }
 
     return;
 }
@@ -293,26 +265,11 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
 /*! This function calculates the basis functions NN of order P, and derivatives NN1, NN2, for a given time t and knot vector U */
 void basisFunction(double t, Eigen::VectorXd U, int I, int P, double *NN, double *NN1, double *NN2)
 {   
-    // If t = 1 return the following NN, NN1, NN2. This case only presents itself when populating the A matrix
-    // When computing the interpolated trajectory, endpoint coordinates and derivatives are computed separately
-    if (t == 1.0) {
-        for (int i = 0; i < I-1; i++) {
-            *(NN+i)  = 0.0;
-            *(NN1+i) = 0.0;
-            *(NN2+i) = 0.0;    
-            }
-        *(NN+I-1)  = 1.0;
-        *(NN1+I-1) = 0.0;
-        *(NN2+I-1) = 0.0;
-        
-        return;
-    }
-
-    Eigen::MatrixXd N(U.size()-1, P+1);
-    Eigen::MatrixXd N1(U.size()-1, P+1);
-    Eigen::MatrixXd N2(U.size()-1, P+1);
+    Eigen::MatrixXd N(I, P+1);
+    Eigen::MatrixXd N1(I, P+1);
+    Eigen::MatrixXd N2(I, P+1);
     /* populate matrices with zeros */
-    for (int i = 0; i < U.size()-1; i++) {
+    for (int i = 0; i < I; i++) {
         for (int p = 0; p < P+1; p++) {
             N(i,p)  = 0;
             N1(i,p) = 0;
@@ -320,14 +277,17 @@ void basisFunction(double t, Eigen::VectorXd U, int I, int P, double *NN, double
         }
     }
     /* zero order */
-    for (int i = 0; i < U.size()-1; i++) {
+    for (int i = 0; i < I; i++) {
         if ( (t >= U(i)) && (t < U(i+1)) ) {
             N(i,0) = 1;
         }
     }
+    if (abs(t-1.0) < 1e-5) {
+        N(I-1,0) = 1;
+    }
     /* higher order - De Boor formula */
     for (int p = 1; p < P+1; p++) {
-        for (int i = 0; i < U.size()-P-1; i++) {
+        for (int i = 0; i < I; i++) {
             if (U[i+p]-U[i] != 0) {
                 N(i,p)  += (t-U[i]) / (U[i+p]-U[i]) * N(i,p-1);
                 N1(i,p) += p / (U[i+p]-U[i]) * N(i,p-1);
