@@ -160,7 +160,7 @@ Visualization In Vizard
 
 The following image illustrates the expected visualization of this simulation script.
 
-.. image:: /_images/Scenarios/scenarioAsteroidArrival2.png
+.. image:: /_images/static/scenarioAsteroidArrival2.png
    :align: center
 
 """
