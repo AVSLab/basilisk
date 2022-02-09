@@ -249,7 +249,6 @@ import os
 import numpy as np
 import inspect
 
-import matplotlib.pyplot as plt
 from Basilisk import __path__
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -257,14 +256,12 @@ path = os.path.dirname(os.path.abspath(filename))
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-from datetime import datetime
 from Basilisk.simulation import spacecraft, gravityEffector, extForceTorque, simpleNav, ephemerisConverter
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
+from Basilisk.utilities import SimulationBaseClass, macros, simIncludeGravBody, unitTestSupport
 from Basilisk.architecture import messaging
 from Basilisk.utilities import vizSupport
 
 # import general simulation support files
-from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.simulation import vizInterface
 
 # import FSW Algorithm related support
@@ -278,7 +275,7 @@ def run(planetCase):
 
         Args:
             planetCase (str): {'venus', 'earth', 'mars'}
-        """
+    """
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -300,7 +297,7 @@ def run(planetCase):
 
     # Configure the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"  # Name of the spacecraft
+    scObject.ModelTag = "spiceSat"  # Name of the spacecraft
 
     # Create gravitational bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()

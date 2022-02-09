@@ -77,6 +77,11 @@ Finally, subscribe the custom gravitational body ``planetBodyInMsg`` to the plan
 
 The spacecraft object is then created and all gravitational bodies are connected to the spacecraft.
 
+Recall that when configuring the ephemeris converter module, Bennu was not created with Spice. Therefore its input
+message is of type ``planetEphemeris``::
+
+    ephemObject.addSpiceInputMsg(gravBodyEphem.planetOutMsgs[0])
+
 Implementing Attitude Pointing Modes
 ------------------------------------
 
@@ -90,16 +95,21 @@ towards the asteroid using a sensor created on the spacecraft.
                    <https://hanspeterschaub.info/basilisk/examples/scenarioFlybySpice.html>`__ for a more detailed
                    discussion on configuring the attitude modules.
 
-Recall that when configuring the ephemeris converter module, Bennu was not created with Spice. Therefore its input
-message is of type ``planetEphemeris``::
 
-    ephemObject.addSpiceInputMsg(gravBodyEphem.planetOutMsgs[0])
+To execute the desired attitude-pointing mode, the run flight mode function must be called
+with the desired simulation time::
+
+    runAntennaEarthPointing(desiredSimTimeSec)
 
 Additional Visualization Features
-------------------------------------
+---------------------------------
 
-To add a visualization of antenna transmission back to Earth during the Earth-pointing mode, a transceiver is created
-through the ``vizInterface``::
+To add a visualization of antenna transmission back to Earth during the Earth-pointing mode we
+can't use the typical way of adding these generic sensors, thrusters, etc.  The reason is that we want to illustrate a
+thruster, but we are not using a thruster effector.  Thus, to add a thruster to the Vizard binary
+we need to manually add these to the ``vizInterface`` spacecraft data structure.
+
+First, as is typical, a transceiver is created through the ``vizInterface``::
 
     transceiverHUD = vizInterface.Transceiver()
     transceiverHUD.r_SB_B = [0., 0., 1.38]
@@ -127,7 +137,10 @@ To add a camera to the science-pointing mode, the ``createStandardCamera`` metho
                                     fieldOfView=10 * macros.D2R,
                                     pointingVector_B=[0,1,0], position_B=cameraLocation)
 
-Finally, to add a thruster visualization for the thruster burn mode, the ``vizInterface`` is again invoked::
+Finally, to add a thruster visualization for the thruster burn mode, the ``vizInterface`` is again invoked.
+Here we manually add the Vizard interface elements back in to redo what the ``enableUnityVisualization()``
+normally does for us.  The main difference is that we are manually setting the thruster information as
+the spacecraft dynamics does not contain a thruster effector::
 
     scData = vizInterface.VizSpacecraftData()
     scData.spacecraftName = scObject.ModelTag
@@ -143,9 +156,12 @@ Finally, to add a thruster visualization for the thruster burn mode, the ``vizIn
     thrMsg = messaging.THROutputMsg().write(thrusterMsgInfo)
     scData.thrInMsgs = messaging.THROutputInMsgsVector([thrMsg.addSubscriber()])
 
-To execute the desired attitude-pointing mode, the ``run`` function must be called with the desired simulation time::
+After running the ``enableUnityVisualization()`` method, we need to clear the ``vizInterface`` spacecraft
+data container ``scData`` and push our custom copy to it::
 
-    runAntennaEarthPointing(desiredSimTimeSec)
+    viz.scData.clear()
+    viz.scData.push_back(scData)
+
 
 Illustration of Simulation Results
 ----------------------------------
@@ -182,7 +198,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport, unitTestSupport, orbitalMotion, RigidBodyKinematics)
+from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport, unitTestSupport, orbitalMotion)
 from Basilisk.simulation import spacecraft, gravityEffector, extForceTorque, simpleNav, ephemerisConverter, planetEphemeris
 from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, locationPointing
 from Basilisk.architecture import messaging
