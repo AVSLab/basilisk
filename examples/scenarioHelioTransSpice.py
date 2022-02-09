@@ -31,12 +31,9 @@ Configuring Translational Motion Using Custom Spice Files
 ---------------------------------------------------------
 
 To set up the spacecraft's heliocentric translational motion via multiple Spice files, the user should first create a
-string list containing the desired file names to upload. This script identifies four Spice files that will be loaded::
+string list containing the desired file names to upload. This script a single Spice file that will be loaded::
 
-    customSpiceFiles = ["targets_merged.bsp",
-                        "all_targets_IAU.tpc",
-                        "all_targets_body_frame.tf",
-                        "spacecraft_21T01.bsp"]
+    customSpiceFiles = ["spacecraft_21T01.bsp"]
 
 Next, the ``loadSpiceKernel()`` method of class SpiceInterface should be called to load the custom Spice files.
 This method accepts a file name and the path to the desired file to load::
@@ -95,6 +92,9 @@ from Basilisk.utilities import vizSupport
 
 
 def run():
+    """
+        Heliocentric mission simulation scenarion.
+    """
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -116,7 +116,7 @@ def run():
 
     # Configure the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"  # Name of the spacecraft
+    scObject.ModelTag = "spiceSat"  # Name of the spacecraft
 
     # Create gravitational bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()
