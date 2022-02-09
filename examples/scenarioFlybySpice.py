@@ -231,7 +231,7 @@ Simulation Visualization In Vizard
 
 The following image illustrates the expected visualization of this simulation script for a flyby of Mars.
 
-.. image:: /_images/static/scenarioFlybySpice.png
+.. image:: /_images/static/scenarioFlybySpice.jpg
    :align: center
 
 """

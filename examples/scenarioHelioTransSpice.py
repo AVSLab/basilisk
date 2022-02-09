@@ -60,7 +60,7 @@ Simulation Visualization In Vizard
 
 The following image illustrates the expected visualization of this simulation script.
 
-.. image:: /_images/static/scenarioHelioTransSpice.png
+.. image:: /_images/static/scenarioHelioTransSpice.jpg
    :align: center
 
 """
