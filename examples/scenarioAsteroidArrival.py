@@ -481,7 +481,7 @@ def run(show_plots):
 
     # Create the Zizard visualization file and set parameters
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              , saveFile=fileName
+                                              # , saveFile=fileName
                                               )
     viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
     viz.settings.showCelestialBodyLabels = 1

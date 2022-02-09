@@ -508,7 +508,7 @@ def run(planetCase):
     # Configure vizard settings
     vizFile = os.path.realpath(__file__).strip(".py") + "_" + planetCase + ".py"
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              , saveFile=vizFile
+                                              # , saveFile=vizFile
                                               , transceiverList=transceiverHUD)
     viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
     viz.settings.orbitLinesOn = -1

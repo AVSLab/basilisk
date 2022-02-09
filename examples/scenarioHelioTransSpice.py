@@ -161,7 +161,7 @@ def run():
 
     # Configure Vizard settings
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              , saveFile=__file__
+                                              # , saveFile=__file__
                                               )
     viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
     viz.settings.orbitLinesOn = 1
