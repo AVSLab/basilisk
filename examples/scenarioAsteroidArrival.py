@@ -221,7 +221,7 @@ def run(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # Create the dynamics task and specify the simulation time step information
-    simulationTimeStep = macros.sec2nano(10.0)
+    simulationTimeStep = macros.sec2nano(20.0)
 
     # Add dynamics task to the simulation process
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
