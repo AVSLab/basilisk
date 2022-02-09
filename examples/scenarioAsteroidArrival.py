@@ -207,8 +207,6 @@ def run(show_plots):
 
     """
 
-    path = os.path.dirname(os.path.abspath(__file__))
-
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -258,7 +256,7 @@ def run(show_plots):
     # Set orbital radii about asteroid
     r0 = diam/2.0 + 800  # capture orbit, meters
     r1 = diam/2.0 + 600  # intermediate orbit, meters
-    r2 = diam/2.0 + 400 # final science orbit, meters
+    r2 = diam/2.0 + 400  # final science orbit, meters
     r3 = diam/2.0 + 200  # meters, very close fly-by, elliptic orbit
     rP = r0
     rA = 3*rP
@@ -275,7 +273,6 @@ def run(show_plots):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravFactory.createBodies(["earth", "sun"])
     sun = gravFactory.gravBodies["sun"]
-    sunMu = sun.mu
 
     # Set gravity body index values
     earthIdx = 0
@@ -294,7 +291,7 @@ def run(show_plots):
     # Create the asteroid custom gravitational body
     asteroid = gravFactory.createCustomGravObject("bennu", mu)
     asteroid.isCentralBody = True  # ensures the asteroid is the central gravitational body
-    asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0]) # connect asteroid ephem. to custom grav body
+    asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])  # connect asteroid ephem. to custom grav body
 
     # Create the spacecraft object
     scObject = spacecraft.Spacecraft()
@@ -335,12 +332,12 @@ def run(show_plots):
     n = np.sqrt(mu/(oe.a**3))
     h = np.sqrt(mu*oe.a*(1-oe.e**2)) # specific angular momentum
     vP = h/rP
-    V_SC_C_B = np.sqrt(mu / rP)     # [m/s] (2) "S"pace"C"raft "C"ircular parking speed relative to "B"ennu.
+    V_SC_C_B = np.sqrt(mu / rP)     # [m/s] (2) spacecraft circular parking speed relative to bennu.
     Delta_V_Parking_Orbit = V_SC_C_B - vP
 
     # Setting initial position and velocity vectors using orbital elements
     r_N, v_N = orbitalMotion.elem2rv(mu, oe)
-    T1 = M/n # time until spacecraft reaches periapsis of arrival "hyperbola"
+    T1 = M/n  # time until spacecraft reaches periapsis of arrival trajectory
 
     # Initialize spacecraft states with the initialization variables
     scObject.hub.r_CN_NInit = r_N  # [m]   = r_BN_N
@@ -477,15 +474,15 @@ def run(show_plots):
 
     # Set the simulation time
     # Set up data logging before the simulation is initialized
-    numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(macros.sec2nano(T1), simulationTimeStep, numDataPoints)
     scRec = scObject.scStateOutMsg.recorder()
     astRec = gravBodyEphem.planetOutMsgs[0].recorder()
     scSim.AddModelToTask(simTaskName, scRec)
     scSim.AddModelToTask(simTaskName, astRec)
 
     # Create the Zizard visualization file and set parameters
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , saveFile=fileName
+                                              )
     viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
     viz.settings.showCelestialBodyLabels = 1
     viz.settings.scViewToPlanetViewBoundaryMultiplier = 100
@@ -509,18 +506,6 @@ def run(show_plots):
     def runPanelSunPointing(simTime):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(sunPointGuidanceConfig.attRefOutMsg)
-        transceiverHUD.transceiverState = 0  # antenna off
-        attErrorConfig.sigma_R0R = [0, 0, 0]
-        thrusterMsgInfo.thrustForce = 0
-        genericSensor.isHidden = 1
-        thrMsg.write(thrusterMsgInfo, simulationTime)
-        simulationTime += macros.sec2nano(simTime)
-        scSim.ConfigureStopTime(simulationTime)
-        scSim.ExecuteSimulation()
-
-    def runAsteroidVelocityPointing(simTime):
-        nonlocal simulationTime
-        attErrorConfig.attRefInMsg.subscribeTo(velAsteroidGuidanceConfig.attRefOutMsg)  # initial flight mode
         transceiverHUD.transceiverState = 0  # antenna off
         attErrorConfig.sigma_R0R = [0, 0, 0]
         thrusterMsgInfo.thrustForce = 0
