@@ -37,15 +37,15 @@ file for this scenario incorporates translational information for all three plan
 first specify the correct flyby date and time to initialize the simulation with the correct Spice information. This is
 done using the ``timeIntString`` variable::
 
-        if planetCase == "venus":
-            timeInitString = "2028 August 13 0:30:30.0"
-        elif planetCase == "earth":
-            timeInitString = "2029 June 20 5:30:30.0"
-        elif planetCase == "mars":
-            timeInitString = "2031 October 3 20:00:00.0"
-        else:
-            print("flyby target not implemented.")
-            exit(1)
+    if planetCase == "venus":
+        timeInitString = "2028 August 13 0:30:30.0"
+    elif planetCase == "earth":
+        timeInitString = "2029 June 20 5:30:30.0"
+    elif planetCase == "mars":
+        timeInitString = "2031 October 3 20:00:00.0"
+    else:
+        print("flyby target not implemented.")
+        exit(1)
 
 Next the custom Spice file must be loaded. The ``loadSpiceKernel()`` method of class ``SpiceInterface``
 is called to load the file. This method accepts the file name and the path to the desired file to load::
@@ -64,7 +64,7 @@ Finally, add the Spice object to the simulation task list::
     scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
 
 Implementing Attitude Pointing Modes
-----------------------------------
+------------------------------------
 
 Now that the spacecraft's translational motion is set, the user is free to implement attitude changes to enhance the
 mission visualization. Three attitude pointing modes are incorporated into this script for each planetary flyby case.
@@ -300,20 +300,18 @@ def run(planetCase):
 
     # Configure the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spiceSat" # Names the spacecraft
+    scObject.ModelTag = "bskSat"  # Name of the spacecraft
 
     # Create gravitational bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravFactory.createBodies(["earth", "sun", "moon", "venus", "mars barycenter"])
     earth = gravFactory.gravBodies["earth"]
-    venus = gravFactory.gravBodies["venus"]
     earth.isCentralBody = True
     scObject.gravField.setGravBodies(gravityEffector.GravBodyVector(list(gravFactory.gravBodies.values())))
 
     # Define planet gravitational parameters needed for the attitude pointing modes
     earthMu = earth.mu
     venusMu = gravFactory.gravBodies["venus"].mu
-    sunMu = gravFactory.gravBodies["sun"].mu
     marsMu = gravFactory.gravBodies["mars barycenter"].mu
 
     # Set planet index values
@@ -341,12 +339,12 @@ def run(planetCase):
                                      epochInMsg=True)
     gravFactory.spiceObject.zeroBase = 'Earth'
 
-    # Specify spacecraft name
+    # Specify Spice spacecraft name
     scNames = ["-60000"]
     gravFactory.spiceObject.addSpacecraftNames(messaging.StringVector(scNames))
 
-    # Load the custom Spice file using the SpiceInterface class loadSpiceKernel() method
-    gravFactory.spiceObject.loadSpiceKernel("max_21T01.bsp", os.path.join(path, "dataForExamples", "Spice/"))
+    # Load the custom spacecraft trajectory Spice file using the SpiceInterface class loadSpiceKernel() method
+    gravFactory.spiceObject.loadSpiceKernel("spacecraft_21T01.bsp", os.path.join(path, "dataForExamples", "Spice/"))
 
     # Connect the configured Spice translational output message to spacecraft object's transRefInMsg input message
     scObject.transRefInMsg.subscribeTo(gravFactory.spiceObject.transRefStateOutMsgs[0])
@@ -384,7 +382,8 @@ def run(planetCase):
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
-    # Add the simple Navigation sensor module.  This sets the SC attitude, rate, position, and velocity navigation message
+    # Add the simple Navigation sensor module.  This sets the SC attitude, rate, position,
+    # and velocity navigation message
     sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
@@ -574,7 +573,7 @@ def run(planetCase):
 
     # Unload custom Spice kernel at the end of each simulation
     gravFactory.unloadSpiceKernels()
-    gravFactory.spiceObject.unloadSpiceKernel("max_21T01.bsp", os.path.join(path, "Data", "Spice/"))
+    gravFactory.spiceObject.unloadSpiceKernel("spacecraft_21T01.bsp", os.path.join(path, "Data", "Spice/"))
 
     return
 
