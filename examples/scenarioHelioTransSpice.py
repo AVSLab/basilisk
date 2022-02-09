@@ -36,7 +36,7 @@ string list containing the desired file names to upload. This script identifies 
     customSpiceFiles = ["targets_merged.bsp",
                         "all_targets_IAU.tpc",
                         "all_targets_body_frame.tf",
-                        "max_21T01.bsp"]
+                        "spacecraft_21T01.bsp"]
 
 Next, the ``loadSpiceKernel()`` method of class SpiceInterface should be called to load the custom Spice files.
 This method accepts a file name and the path to the desired file to load::
@@ -88,15 +88,10 @@ path = os.path.dirname(os.path.abspath(filename))
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-from datetime import datetime
 from Basilisk.simulation import spacecraft, gravityEffector
 from Basilisk.utilities import SimulationBaseClass, macros, simIncludeGravBody, unitTestSupport
 from Basilisk.architecture import messaging
 from Basilisk.utilities import vizSupport
-
-# import general simulation support files
-from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.simulation import vizInterface
 
 
 def run():
@@ -114,14 +109,14 @@ def run():
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # Create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(1 * 60 * 60.)
+    simulationTimeStep = macros.sec2nano(5 * 60 * 60.)
 
     # Add the dynamics task to the dynamics process
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # Configure the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spiceSat"  # Names the spacecraft
+    scObject.ModelTag = "bskSat"  # Name of the spacecraft
 
     # Create gravitational bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -135,10 +130,7 @@ def run():
                                      epochInMsg=True)
 
     # Create a string list of all custom Spice files to upload
-    customSpiceFiles = ["targets_merged.bsp",
-                        "all_targets_IAU.tpc",
-                        "all_targets_body_frame.tf",
-                        "max_21T01.bsp"]
+    customSpiceFiles = ["spacecraft_21T01.bsp"]
 
     # Load the custom Spice files using the SpiceInterface class loadSpiceKernel() method
     for file in customSpiceFiles:
@@ -169,18 +161,14 @@ def run():
 
     # Configure Vizard settings
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              ,saveFile=__file__)  # Saves .bin file for visualiation to examples/_VizFiles
+                                              , saveFile=__file__
+                                              )
     viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
     viz.settings.orbitLinesOn = 1
-    viz.settings.spacecraftSizeMultiplier = 100
-    # viz.settings.celestialBodyHelioViewSizeMultiplier = 8
-    viz.settings.spacecraftShadowBrightness = 1
+    viz.settings.spacecraftSizeMultiplier = 50
     viz.settings.showSpacecraftLabels = 1
     viz.settings.showCelestialBodyLabels = 1
     viz.settings.mainCameraTarget = "sun"  # Gives heliocentric view
-    viz.settings.keyboardZoomRate = 0.25
-    viz.settings.scViewToPlanetViewBoundaryMultiplier = 1
-    viz.settings.planetViewToHelioViewBoundaryMultiplier = 1
 
     # Initialize and execute simulation
     scSim.InitializeSimulation()
