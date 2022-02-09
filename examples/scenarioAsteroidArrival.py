@@ -324,7 +324,7 @@ def run(show_plots):
     oe.a = (rP + rA)/2.0
     oe.e = 1 - (rP / oe.a)
     oe.i = 90.0 * macros.D2R
-    oe.Omega = 90.0 * macros.D2R
+    oe.Omega = 180.0 * macros.D2R
     oe.omega = 347.8 * macros.D2R
     oe.f = -45.0 * macros.D2R
     Ecc = np.arctan(np.tan(-oe.f/2)*np.sqrt((1-oe.e)/(1+oe.e)))*2 # eccentric anomaly
