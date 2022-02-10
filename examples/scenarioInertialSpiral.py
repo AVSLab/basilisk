@@ -20,22 +20,28 @@ r"""
 Overview
 --------
 
-This scenario demonstrates how to layer attitude references. It starts with an inertial pointing attitude and then adds a spiral scanning motion on top of it.
+This scenario demonstrates how to layer attitude references. It starts with an inertial pointing attitude and then
+adds a spiral scanning motion on top of it.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioInertialSpiral.py
 
-The initial orientation is set to zero for all MRPs and rates, and the desired attitude is layered on top using ``eulerRotation``, which allows 3-2-1 Euler rotations to be specified. In this script, the first rotation is 0.02 radians per second about the 1-axis and the second is 0.0001 radians per second about the 2-axis. This creates an outward sweeping spiral motion. The inertial pointing module feeds its output message into the first rotation, which feeds into the second, which in turn gives the attitude error that is used by the control law.
+The initial orientation is set to zero for all MRPs and rates, and the desired attitude is layered on top using
+:ref:`eulerRotation`, which allows 3-2-1 Euler rotations to be specified. In this script, the first rotation
+is 0.02 radians per second about the 1-axis and the second is 0.0001 radians per second about the 2-axis. This
+creates an outward sweeping spiral motion. The inertial pointing module feeds its output message into the first
+rotation, which feeds into the second, which in turn gives the attitude error that is used by the control law.
 
 Illustration of Simulation Results
 ----------------------------------
 
 ::
 
-    show_plots = True, useLargeTumble = False
+    show_plots = True
 
-Five plots are shown. The first three show the atittude error, control torque, and rate tracking error, showing a transient response as the initial condition does not match the desired rates.
+Five plots are shown. The first three show the attitude error, control torque, and rate tracking error,
+showing a transient response as the initial condition does not match the desired rates.
 
 .. image:: /_images/Scenarios/scenarioInertialSpiral1.svg
    :align: center
@@ -46,7 +52,8 @@ Five plots are shown. The first three show the atittude error, control torque, a
 .. image:: /_images/Scenarios/scenarioInertialSpiral3.svg
    :align: center
 
-The final two show the logged MRP data, converted back into Euler angles. The pitch and yaw and plotted against time as well as against each other to show the resulting spiral.
+The final two show the logged MRP data, converted back into Euler angles. The pitch and yaw and plotted
+against time as well as against each other to show the resulting spiral.
 
 .. image:: /_images/Scenarios/scenarioInertialSpiral4.svg
    :align: center
@@ -62,10 +69,9 @@ The final two show the logged MRP data, converted back into Euler angles. The pi
 # Purpose:  Integrated test of the attitude navigation modules with eulerRotation()
 #           module to demonstrate layering attitude references.
 # Author:   Galen Bascom
-# Creation Date:  ___ ___, 2022
+# Creation Date:  February 9, 2022
 #
 
-import sys
 import os
 import numpy as np
 np.set_printoptions(precision=16)
@@ -125,7 +131,7 @@ def run(show_plots):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.ModelTag = "bskSat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -150,9 +156,6 @@ def run(show_plots):
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
-    # use the input flag to determine which external torque should be applied
-    # Note that all variables are initialized to zero.  Thus, not setting this
-    # vector would leave its components all zero for the simulation.
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
@@ -173,24 +176,24 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
     inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
+    # we create 2 dynamic attitude reference modules as we want to do a 1-2 Euler angle rotation
+    # and the modules provide a 3-2-1 sequence.  Thus, we do a 0-0-1 321-rotation and then a 0-1-0 321-rotation
+    # get a 1-2 result.
     attGuidanceConfigEuler1 = eulerRotation.eulerRotationConfig()
     attGuidanceWrapEuler1 = scSim.setModelDataWrap(attGuidanceConfigEuler1)
     attGuidanceWrapEuler1.ModelTag = "eulerRotation1"
     attGuidanceConfigEuler1.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
     scSim.AddModelToTask(simTaskName, attGuidanceWrapEuler1, attGuidanceConfigEuler1)
-    
+    # Make rotation 1 be 0.02 rad/s about 1 axis
+    attGuidanceConfigEuler1.angleRates = [0.0, 0.0, 0.02]
+
     attGuidanceConfigEuler2 = eulerRotation.eulerRotationConfig()
     attGuidanceWrapEuler2 = scSim.setModelDataWrap(attGuidanceConfigEuler2)
     attGuidanceWrapEuler2.ModelTag = "eulerRotation2"
     attGuidanceConfigEuler2.attRefInMsg.subscribeTo(attGuidanceConfigEuler1.attRefOutMsg)
     scSim.AddModelToTask(simTaskName, attGuidanceWrapEuler2, attGuidanceConfigEuler2)
-
-    # Set up Euler angles.
-    # Make rotation 1 be 0.02 rad/s about 1 axis
     # Make rotation 2 be 0.0001 rad/s about 2 axis
-    
-    attGuidanceConfigEuler1.angleRates = [0,0,.02]
-    attGuidanceConfigEuler2.angleRates = [0,0.0001,0]
+    attGuidanceConfigEuler2.angleRates = [0.0, 0.0001, 0.0]
     
     # set up the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.attTrackingErrorConfig()
@@ -211,15 +214,9 @@ def run(show_plots):
     #
     # create simulation messages
     #
-    # The MRP Feedback algorithm requires the vehicle configuration structure. This defines various spacecraft
-    # related states such as the inertia tensor and the position vector between the primary Body-fixed frame
-    # B origin and the center of mass (defaulted to zero).  The message payload is created through
     configData = messaging.VehicleConfigMsgPayload()
     configData.ISCPntB_B = I
-    # Two methods are shown to create either a C++ or C wrapped msg object in python.  The
-    # preferred method is to just create C++ wrapped messages.
-    configDataMsg = messaging.VehicleConfigMsg()
-    configDataMsg.write(configData)
+    configDataMsg = messaging.VehicleConfigMsg().write(configData)
 
     #
     # connect the messages to the modules
@@ -236,12 +233,7 @@ def run(show_plots):
     #
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
-    snLog = scObject.scStateOutMsg.recorder(samplingTime)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
-    # instead of recording the contents of a C++ output message, you can also recording
-    # the incoming contents of a C++ input message.  However, note that you must set up the
-    # input message recorder after this input message has been subscribed to another message.
-    # Otherwise, you are reading an uninitialized msg which leads to lovely segmentation faults.
     snLog = sNavObject.scStateInMsg.recorder(samplingTime)
     attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
     mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
@@ -352,7 +344,6 @@ def run(show_plots):
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
-    print(figureList)
 
     return figureList
 
