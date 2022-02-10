@@ -60,6 +60,7 @@ Attitude Guidance
    Velocity Frame Pointing on Hyperbolic Orbit <scenarioAttGuideHyperbolic>
    Pointing at Earth Location <scenarioAttLocPoint>
    Prescribing the spacecraft orientation <scenarioAttitudePrescribed>
+   Layered spiral attitude guidance <scenarioInertialSpiral>
 
 
 Attitude Control with Actuators
