@@ -513,7 +513,7 @@ def run(show_plots):
                                     fieldOfView=10 * macros.D2R,
                                     pointingVector_B=[0,1,0], position_B=cameraLocation)
 
-    # NOTe: After running the enableUnityVisualization() method, we need to clear the vizInterface spacecraft data container,
+    # Note: After running the enableUnityVisualization() method, we need to clear the vizInterface spacecraft data container,
     # scData, and push our custom copy to it.
     viz.scData.clear()
     viz.scData.push_back(scData)
