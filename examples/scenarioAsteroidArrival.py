@@ -91,10 +91,8 @@ Earth-pointing using the spacecraft's antenna with transmission visualization, S
 solar panel normal axis, orbital velocity pointing while conducting thruster burn visualizations, and science-pointing
 towards the asteroid using a sensor created on the spacecraft.
 
-.. important:: Refer to the integrated example script `scenarioFlybySpice
-                   <https://hanspeterschaub.info/basilisk/examples/scenarioFlybySpice.html>`__ for a more detailed
-                   discussion on configuring the attitude modules.
-
+.. important:: Refer to the integrated example script :ref:`scenarioFlybySpice` for a more detailed discussion on
+configuring attitude modules and modes for a mission scenario.
 
 To execute the desired attitude-pointing mode, the run flight mode function must be called
 with the desired simulation time::
@@ -470,6 +468,9 @@ def run(show_plots):
     transceiverHUD.animationSpeed = 1
 
     # Set up the thruster visualization info
+    # Note: This process is different from the usual procedure of creating a thruster effector.
+    # The following code creates a thruster visualization only.
+    # before adding the thruster
     scData = vizInterface.VizSpacecraftData()
     scData.spacecraftName = scObject.ModelTag
     scData.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -495,7 +496,7 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, scRec)
     scSim.AddModelToTask(simTaskName, astRec)
 
-    # Create the Zizard visualization file and set parameters
+    # Create the Vizard visualization file and set parameters
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                               # , saveFile=fileName
                                               )
@@ -512,6 +513,8 @@ def run(show_plots):
                                     fieldOfView=10 * macros.D2R,
                                     pointingVector_B=[0,1,0], position_B=cameraLocation)
 
+    # NOTe: After running the enableUnityVisualization() method, we need to clear the vizInterface spacecraft data container,
+    # scData, and push our custom copy to it.
     viz.scData.clear()
     viz.scData.push_back(scData)
 
@@ -735,10 +738,10 @@ def plotOrbits(timeAxis, posData1, posData2, rP, diam):
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
 
     # Draw the actual orbit from pulled data (DataRec)
-    plt.plot(posData2[:, 1], posData2[:, 2], color='orangered',
+    plt.plot(posData2[:, 0], posData2[:, 2], color='orangered',
              label='Simulated Flight')
-    plt.xlabel('Bennu Velocity Direction [m]')
-    plt.ylabel('Anti-Sunward Direction [m]')
+    plt.xlabel('X Distance, Inertial [m]')
+    plt.ylabel('Z Distance, Inertial [m]')
 
     # Draw desired parking orbit
     fData = np.linspace(0, 2 * np.pi, 100)

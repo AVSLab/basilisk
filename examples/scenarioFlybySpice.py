@@ -98,9 +98,7 @@ Both modules are added to the simulation task::
     scSim.AddModelToTask(simTaskName, sNavObject)
 
 Next the ``velocityPoint`` module is configured for each planet case. This module fixes the spacecraft attitude in the
-orbit velocity frame. See the `velocityPoint Module
-<https://hanspeterschaub.info/basilisk/Documentation/fswAlgorithms/attGuidance/velocityPoint/velocityPoint.html?highlight=velocity%20point>`__
-page for a more detailed description of this module. The Mars velocity-pointing case is shown below::
+orbit velocity frame. See :ref:`velocityPoint` for a more detailed description of this module. The Mars velocity-pointing case is shown below::
 
     velMarsGuidanceConfig = velocityPoint.velocityPointConfig()
     velMarsGuidanceWrap = scSim.setModelDataWrap(velMarsGuidanceConfig)
@@ -122,9 +120,8 @@ The other attitude guidance modules used in this simulation are implemented in s
 module points a body-fixed spacecraft axis towards a particular location of interest. Modes for Earth- and Sun-pointing
 are implemented by subscribing the module's ``celBodyInMsg`` input message to the desired planet's ephemeris output
 message. The module's ``pHat_B`` vector is set according to which body-fixed vector should point towards the location
-of interest. See the `locationPointing Module
-<https://hanspeterschaub.info/basilisk/Documentation/fswAlgorithms/attGuidance/locationPointing/locationPointing.html?highlight=location%20pointing>`__
-page for a more detailed description of this module. The Earth-pointing guidance module setup is shown below::
+of interest. See :ref:`locationPointing` for a more detailed description of this module.
+The Earth-pointing guidance module setup is shown below::
 
     earthPointGuidanceConfig = locationPointing.locationPointingConfig()
     earthPointGuidanceWrap = scSim.setModelDataWrap(earthPointGuidanceConfig)
@@ -138,9 +135,8 @@ page for a more detailed description of this module. The Earth-pointing guidance
     scSim.AddModelToTask(simTaskName, earthPointGuidanceWrap, earthPointGuidanceConfig)
 
 Next, a science-pointing mode is implemented using the ``hillPoint`` module. This module points a body-fixed location
-on the spacecraft designated as a camera towards the flyby planet of interest. See the `hillPoint Module
-<https://hanspeterschaub.info/basilisk/Documentation/fswAlgorithms/attGuidance/hillPoint/hillPoint.html?highlight=hill%20point>`__
-page for a more detailed description of this module::
+on the spacecraft designated as a camera towards the flyby planet of interest. See :ref:`hillPoint` for a more
+detailed description of this module::
 
     cameraLocation = [0.0, 1.5, 0.0]
     sciencePointGuidanceConfig = hillPoint.hillPointConfig()

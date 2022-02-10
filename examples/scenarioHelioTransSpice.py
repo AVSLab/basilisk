@@ -30,8 +30,8 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 Configuring Translational Motion Using Custom Spice Files
 ---------------------------------------------------------
 
-To set up the spacecraft's heliocentric translational motion via multiple Spice files, the user should first create a
-string list containing the desired file names to upload. This script a single Spice file that will be loaded::
+To set up the spacecraft's heliocentric translational motion via custom Spice files, the user should first create a
+string list containing the desired file names to upload. This script loads a single Spice file::
 
     customSpiceFiles = ["spacecraft_21T01.bsp"]
 
