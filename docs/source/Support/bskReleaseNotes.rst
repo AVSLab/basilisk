@@ -45,6 +45,7 @@ Version |release|
 - added support for ``pytest`` version 7.0.0 and higher
 - updated how ``pytest`` is run to generate a resulting HTML report
 - modified :ref:`msmForceTorque` to create an output message with the MSM charge values for each spacecraft
+- added new :ref:`scenarioInertialSpiral` example scenario
 - improved robustness of Basilisk installation script
 
 
