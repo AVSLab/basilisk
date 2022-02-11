@@ -55,13 +55,11 @@ void TabularAtmosphere::customReset()
 
 void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
 {
-    std::cout << "altList:" << altList.size() << std::endl;
-    std::cout << "Planet Radius: " << this->planetRadius << std::endl;
-    std::cout << currentTime << std::endl;
     for(int i=1; i <= this->altList.size(); i++){
 		if(this->altList[i] > this->orbitAltitude){
 			msg->neutralDensity = this->rhoList[i-1] + (this->orbitAltitude - this->altList[i-1]) * (this->rhoList[i] - this->rhoList[i-1]) / (this->altList[i] - this->altList[i-1]);
 			msg->localTemp = this->tempList[i-1] + (this->orbitAltitude - this->altList[i-1]) * (this->tempList[i] - this->tempList[i-1]) / (this->altList[i] - this->altList[i-1]);
+			break;
         }
     }
     return;

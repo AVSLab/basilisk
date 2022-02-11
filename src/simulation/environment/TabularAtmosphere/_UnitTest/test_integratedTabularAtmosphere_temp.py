@@ -164,9 +164,9 @@ def TestTabularAtmosphere():
     altList, rhoList, tempList = readAtmTable(filename,'EarthGRAM')
     
     # added variables
-    # tabularAtmosphere.altList = messaging.DoubleVector(altList)    
-    # tabularAtmosphere.rhoList = messaging.DoubleVector(rhoList)
-    # tabularAtmosphere.tempList = messaging.DoubleVector(tempList)
+    # newAtmo.altList = messaging.DoubleVector(altList)    
+    # newAtmo.rhoList = messaging.DoubleVector(rhoList)
+    # newAtmo.tempList = messaging.DoubleVector(tempList)
     
     newAtmo.altList = tabularAtmosphere.DoubleVector(altList)    
     newAtmo.rhoList = tabularAtmosphere.DoubleVector(rhoList)
@@ -228,9 +228,6 @@ def TestTabularAtmosphere():
     posData = dataLog.r_BN_N
     densData = denLog.neutralDensity
     np.set_printoptions(precision=16)
-    print(altList[-1])
-    print(posData)
-    print(densData)
 
 
     ## For later: insert python helper function and assign data
