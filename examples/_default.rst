@@ -171,6 +171,15 @@ Complex Spacecraft Dynamics Simulations
    Flexible (Hinged) Panels <scenarioHingedRigidBody>
    Sensors Attached to a Rotating Panel <scenarioRotatingPanel>
 
+Mission Simulations
+---------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   Heliocentric Translation Using Custom Spice Files <scenarioHelioTransSpice>
+   Planetary Flybys Using Custom Spice File <scenarioFlybySpice>
+   Asteroid Arrival <scenarioAsteroidArrival>
 
 bskSim()-Based Simulation
 -------------------------

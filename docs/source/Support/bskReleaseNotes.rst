@@ -47,6 +47,11 @@ Version |release|
 - modified :ref:`msmForceTorque` to create an output message with the MSM charge values for each spacecraft
 - added new :ref:`scenarioInertialSpiral` example scenario
 - improved robustness of Basilisk installation script
+- added a new heliocentric mission simulation example using custom Spice spacecraft
+  trajectory file :ref:`scenarioHelioTransSpice`
+- added a new planetary fly-by mission example using a custom Spice translational file and
+  attitude pointing modes :ref:`scenarioFlybySpice`
+- added a new asteroid arrival mission example with attitude pointing modes :ref:`scenarioAsteroidArrival`
 
 
 Version 2.1.1 (Dec. 15, 2021)
