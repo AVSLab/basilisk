@@ -286,7 +286,7 @@ def run(planetCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # Create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(2.)
+    simulationTimeStep = macros.sec2nano(10.)
 
     # Add the dynamics task to the dynamics process
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
@@ -478,9 +478,10 @@ def run(planetCase):
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
     mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
     mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
+    II = 900.
+    mrpControlConfig.P = 2*II/(3*60)
+    mrpControlConfig.K = mrpControlConfig.P*mrpControlConfig.P/II
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
 
     # Connect torque command to external torque effector
@@ -501,7 +502,7 @@ def run(planetCase):
     # Configure vizard settings
     vizFile = os.path.realpath(__file__).strip(".py") + "_" + planetCase + ".py"
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=vizFile
+                                              , saveFile=vizFile
                                               , transceiverList=transceiverHUD)
     viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
     viz.settings.orbitLinesOn = -1
