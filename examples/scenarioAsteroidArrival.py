@@ -92,7 +92,7 @@ solar panel normal axis, orbital velocity pointing while conducting thruster bur
 towards the asteroid using a sensor created on the spacecraft.
 
 .. important:: Refer to the integrated example script :ref:`scenarioFlybySpice` for a more detailed discussion on
-configuring attitude modules and modes for a mission scenario.
+   configuring attitude modules and modes for a mission scenario.
 
 To execute the desired attitude-pointing mode, the run flight mode function must be called
 with the desired simulation time::
