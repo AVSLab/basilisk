@@ -9,14 +9,18 @@ Release Notes
 
     - general GUI enhancements
     - articulating CAD models
-    - fuel tank visualization
-    - show the battery and power state
-    - show the hard drive state
     - Add the rate gyro visualization
     - Improved atmospheric shaders
     - Alternate camera view points relative to non-spacecraft locations (lunar landing site, etc.)
     - Add magnetic torque bar visualization
-    - Provide a spacecraft attached flash light component
+    - visualize MSM charge values
+
+**Version 2.0.4(XXXX 2022)**
+
+- Updated :ref:`VizardGUI` to list the built-in CAD shapes in Vizard to show planet and asteroid shapes
+- added support for the Vizard flag ``celestialBodyHelioViewSizeMultiplier`` to script in python
+  how much the celestial bodies are enlarged in heliocentric view
+- added support for the ``modelDictionaryKey`` flag
 
 **Version 2.0.3 (Dec. 15, 2021)**
 
