@@ -74,10 +74,8 @@ The following image illustrates the expected visualization of this simulation sc
 #
 
 import os
-import numpy as np
 import inspect
 
-import matplotlib.pyplot as plt
 from Basilisk import __path__
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -89,7 +87,6 @@ from Basilisk.simulation import spacecraft, gravityEffector
 from Basilisk.utilities import SimulationBaseClass, macros, simIncludeGravBody, unitTestSupport
 from Basilisk.architecture import messaging
 from Basilisk.utilities import vizSupport
-
 
 def run():
     """

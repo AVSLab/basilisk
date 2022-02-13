@@ -258,7 +258,11 @@ from Basilisk.architecture import messaging
 from Basilisk.utilities import vizSupport
 
 # import general simulation support files
-from Basilisk.simulation import vizInterface
+try:
+    from Basilisk.simulation import vizInterface
+    vizFound = True
+except ImportError:
+    vizFound = False
 
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import hillPoint
@@ -490,27 +494,28 @@ def run(planetCase):
     # Set the initial simulation time
     simulationTime = macros.sec2nano(0)
 
-    # Set up antenna transmission to Earth visualization
-    transceiverHUD = vizInterface.Transceiver()
-    transceiverHUD.r_SB_B = [0.23, 0., 1.38]
-    transceiverHUD.fieldOfView = 40.0 * macros.D2R
-    transceiverHUD.normalVector = [0.0, 0., 1.0]
-    transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
-    transceiverHUD.label = "antenna"
-    transceiverHUD.animationSpeed = 1
+    if vizFound:
+        # Set up antenna transmission to Earth visualization
+        transceiverHUD = vizInterface.Transceiver()
+        transceiverHUD.r_SB_B = [0.23, 0., 1.38]
+        transceiverHUD.fieldOfView = 40.0 * macros.D2R
+        transceiverHUD.normalVector = [0.0, 0., 1.0]
+        transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
+        transceiverHUD.label = "antenna"
+        transceiverHUD.animationSpeed = 1
 
-    # Configure vizard settings
-    vizFile = os.path.realpath(__file__).strip(".py") + "_" + planetCase + ".py"
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              , saveFile=vizFile
-                                              , transceiverList=transceiverHUD)
-    viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
-    viz.settings.orbitLinesOn = -1
-    viz.settings.keyboardAngularRate = np.deg2rad(0.5)
+        # Configure vizard settings
+        vizFile = os.path.realpath(__file__).strip(".py") + "_" + planetCase + ".py"
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                  , saveFile=vizFile
+                                                  , transceiverList=transceiverHUD)
+        viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
+        viz.settings.orbitLinesOn = -1
+        viz.settings.keyboardAngularRate = np.deg2rad(0.5)
 
-    vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.ModelTag,
-                                    fieldOfView=10 * macros.D2R,
-                                    pointingVector_B=[0,1,0], position_B=cameraLocation)
+        vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.ModelTag,
+                                        fieldOfView=10 * macros.D2R,
+                                        pointingVector_B=[0,1,0], position_B=cameraLocation)
 
     # Initialize and execute simulation for the first section (stops at periapsis of hyperbola before delta V)
     scSim.InitializeSimulation()
