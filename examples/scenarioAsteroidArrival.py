@@ -197,7 +197,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport, unitTestSupport, orbitalMotion)
-from Basilisk.simulation import spacecraft, gravityEffector, extForceTorque, simpleNav, ephemerisConverter, planetEphemeris
+from Basilisk.simulation import spacecraft, extForceTorque, simpleNav, ephemerisConverter, planetEphemeris
 from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, locationPointing
 from Basilisk.architecture import messaging
 
@@ -447,48 +447,6 @@ def run(show_plots):
     # Connect the torque command to external torque effector
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
 
-    # Set up the sensor for the science-pointing mode
-    genericSensor = vizInterface.GenericSensor()
-    genericSensor.r_SB_B = cameraLocation
-    genericSensor.fieldOfView.push_back(10.0 * macros.D2R)
-    genericSensor.fieldOfView.push_back(10.0 * macros.D2R)
-    genericSensor.normalVector = cameraLocation
-    genericSensor.size = 10
-    genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("white", alpha=0.1))
-    genericSensor.label = "scienceCamera"
-    genericSensor.genericSensorCmd = 1
-
-    # Set up the antenna visualization for transmission to Earth
-    transceiverHUD = vizInterface.Transceiver()
-    transceiverHUD.r_SB_B = [0., 0., 1.38]
-    transceiverHUD.fieldOfView = 40.0 * macros.D2R
-    transceiverHUD.normalVector = [0., 0., 1.]
-    transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
-    transceiverHUD.label = "antenna"
-    transceiverHUD.animationSpeed = 1
-
-    # Set up the thruster visualization info
-    # Note: This process is different from the usual procedure of creating a thruster effector.
-    # The following code creates a thruster visualization only.
-    # before adding the thruster
-    scData = vizInterface.VizSpacecraftData()
-    scData.spacecraftName = scObject.ModelTag
-    scData.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    scData.transceiverList = vizInterface.TransceiverVector([transceiverHUD])
-    scData.genericSensorList = vizInterface.GenericSensorVector([genericSensor])
-
-    thrusterMsgInfo = messaging.THROutputMsgPayload()
-    thrusterMsgInfo.maxThrust = 1  # Newtons
-    thrusterMsgInfo.thrustForce = 0  # Newtons
-    thrusterMsgInfo.thrusterLocation = [0, 0, -1.5]
-    thrusterMsgInfo.thrusterDirection = [0, 0, 1]
-    thrMsg = messaging.THROutputMsg().write(thrusterMsgInfo)
-    scData.thrInMsgs = messaging.THROutputInMsgsVector([thrMsg.addSubscriber()])
-
-    thrInfo = vizInterface.ThrClusterMap()
-    thrInfo.thrTag = "DV"
-    scData.thrInfo = vizInterface.ThrClusterVector([thrInfo])
-
     # Set the simulation time
     # Set up data logging before the simulation is initialized
     scRec = scObject.scStateOutMsg.recorder()
@@ -496,27 +454,70 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, scRec)
     scSim.AddModelToTask(simTaskName, astRec)
 
-    # Create the Vizard visualization file and set parameters
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=fileName
-                                              )
-    viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
-    viz.settings.showCelestialBodyLabels = 1
-    viz.settings.scViewToPlanetViewBoundaryMultiplier = 100
-    viz.settings.planetViewToHelioViewBoundaryMultiplier = 100
-    viz.settings.orbitLinesOn = -1
-    viz.settings.keyboardAngularRate = np.deg2rad(0.5)
-    viz.settings.spacecraftSizeMultiplier = 100
+    if vizFound:
+        # Set up the sensor for the science-pointing mode
+        genericSensor = vizInterface.GenericSensor()
+        genericSensor.r_SB_B = cameraLocation
+        genericSensor.fieldOfView.push_back(10.0 * macros.D2R)
+        genericSensor.fieldOfView.push_back(10.0 * macros.D2R)
+        genericSensor.normalVector = cameraLocation
+        genericSensor.size = 10
+        genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("white", alpha=0.1))
+        genericSensor.label = "scienceCamera"
+        genericSensor.genericSensorCmd = 1
 
-    # Create the science mode camera
-    vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.ModelTag,
-                                    fieldOfView=10 * macros.D2R,
-                                    pointingVector_B=[0,1,0], position_B=cameraLocation)
+        # Set up the antenna visualization for transmission to Earth
+        transceiverHUD = vizInterface.Transceiver()
+        transceiverHUD.r_SB_B = [0., 0., 1.38]
+        transceiverHUD.fieldOfView = 40.0 * macros.D2R
+        transceiverHUD.normalVector = [0., 0., 1.]
+        transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
+        transceiverHUD.label = "antenna"
+        transceiverHUD.animationSpeed = 1
 
-    # Note: After running the enableUnityVisualization() method, we need to clear the vizInterface spacecraft data container,
-    # scData, and push our custom copy to it.
-    viz.scData.clear()
-    viz.scData.push_back(scData)
+        # Set up the thruster visualization info
+        # Note: This process is different from the usual procedure of creating a thruster effector.
+        # The following code creates a thruster visualization only.
+        # before adding the thruster
+        scData = vizInterface.VizSpacecraftData()
+        scData.spacecraftName = scObject.ModelTag
+        scData.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+        scData.transceiverList = vizInterface.TransceiverVector([transceiverHUD])
+        scData.genericSensorList = vizInterface.GenericSensorVector([genericSensor])
+
+        thrusterMsgInfo = messaging.THROutputMsgPayload()
+        thrusterMsgInfo.maxThrust = 1  # Newtons
+        thrusterMsgInfo.thrustForce = 0  # Newtons
+        thrusterMsgInfo.thrusterLocation = [0, 0, -1.5]
+        thrusterMsgInfo.thrusterDirection = [0, 0, 1]
+        thrMsg = messaging.THROutputMsg().write(thrusterMsgInfo)
+        scData.thrInMsgs = messaging.THROutputInMsgsVector([thrMsg.addSubscriber()])
+
+        thrInfo = vizInterface.ThrClusterMap()
+        thrInfo.thrTag = "DV"
+        scData.thrInfo = vizInterface.ThrClusterVector([thrInfo])
+
+        # Create the Vizard visualization file and set parameters
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                  # , saveFile=fileName
+                                                  )
+        viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
+        viz.settings.showCelestialBodyLabels = 1
+        viz.settings.scViewToPlanetViewBoundaryMultiplier = 100
+        viz.settings.planetViewToHelioViewBoundaryMultiplier = 100
+        viz.settings.orbitLinesOn = -1
+        viz.settings.keyboardAngularRate = np.deg2rad(0.5)
+        viz.settings.spacecraftSizeMultiplier = 100
+
+        # Create the science mode camera
+        vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.ModelTag,
+                                        fieldOfView=10 * macros.D2R,
+                                        pointingVector_B=[0,1,0], position_B=cameraLocation)
+
+        # Note: After running the enableUnityVisualization() method, we need to clear the
+        # vizInterface spacecraft data container, scData, and push our custom copy to it.
+        viz.scData.clear()
+        viz.scData.push_back(scData)
 
     # Initialize and execute the simulation for the first section
     scSim.InitializeSimulation()
@@ -525,11 +526,12 @@ def run(show_plots):
     def runPanelSunPointing(simTime):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(sunPointGuidanceConfig.attRefOutMsg)
-        transceiverHUD.transceiverState = 0  # antenna off
+        if vizFound:
+            transceiverHUD.transceiverState = 0  # antenna off
+            genericSensor.isHidden = 1
+            thrusterMsgInfo.thrustForce = 0
+            thrMsg.write(thrusterMsgInfo, simulationTime)
         attErrorConfig.sigma_R0R = [0, 0, 0]
-        thrusterMsgInfo.thrustForce = 0
-        genericSensor.isHidden = 1
-        thrMsg.write(thrusterMsgInfo, simulationTime)
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -537,11 +539,12 @@ def run(show_plots):
     def runSensorSciencePointing(simTime):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(sciencePointGuidanceConfig.attRefOutMsg)
-        transceiverHUD.transceiverState = 0  # antenna off
+        if vizFound:
+            transceiverHUD.transceiverState = 0  # antenna off
+            genericSensor.isHidden = 0
+            thrusterMsgInfo.thrustForce = 0
+            thrMsg.write(thrusterMsgInfo, simulationTime)
         attErrorConfig.sigma_R0R = [0, 0, 0]
-        thrusterMsgInfo.thrustForce = 0
-        genericSensor.isHidden = 0
-        thrMsg.write(thrusterMsgInfo, simulationTime)
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -549,11 +552,12 @@ def run(show_plots):
     def runAntennaEarthPointing(simTime):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(earthPointGuidanceConfig.attRefOutMsg)
-        transceiverHUD.transceiverState = 3  # antenna in send and receive mode
+        if vizFound:
+            transceiverHUD.transceiverState = 3  # antenna in send and receive mode
+            genericSensor.isHidden = 1
+            thrusterMsgInfo.thrustForce = 0
+            thrMsg.write(thrusterMsgInfo, simulationTime)
         attErrorConfig.sigma_R0R = [0, 0, 0]
-        thrusterMsgInfo.thrustForce = 0
-        genericSensor.isHidden = 1
-        thrMsg.write(thrusterMsgInfo, simulationTime)
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -561,8 +565,9 @@ def run(show_plots):
     def runDvBurn(simTime, burnSign, planetMsg):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(planetMsg)
-        transceiverHUD.transceiverState = 0  # antenna off
-        genericSensor.isHidden = 1
+        if vizFound:
+            transceiverHUD.transceiverState = 0  # antenna off
+            genericSensor.isHidden = 1
         if burnSign > 0:
             attErrorConfig.sigma_R0R = [np.tan((np.pi/2)/4), 0, 0]
         else:
@@ -575,8 +580,9 @@ def run(show_plots):
             simulationTime += macros.sec2nano(minTime)
             scSim.ConfigureStopTime(simulationTime)
             scSim.ExecuteSimulation()
-            thrusterMsgInfo.thrustForce = thrusterMsgInfo.maxThrust
-            thrMsg.write(thrusterMsgInfo, simulationTime)
+            if vizFound:
+                thrusterMsgInfo.thrustForce = thrusterMsgInfo.maxThrust
+                thrMsg.write(thrusterMsgInfo, simulationTime)
             simulationTime += macros.sec2nano(simTime - minTime)
             scSim.ConfigureStopTime(simulationTime)
             scSim.ExecuteSimulation()

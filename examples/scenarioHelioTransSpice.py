@@ -74,10 +74,8 @@ The following image illustrates the expected visualization of this simulation sc
 #
 
 import os
-import numpy as np
 import inspect
 
-import matplotlib.pyplot as plt
 from Basilisk import __path__
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -89,7 +87,6 @@ from Basilisk.simulation import spacecraft, gravityEffector
 from Basilisk.utilities import SimulationBaseClass, macros, simIncludeGravBody, unitTestSupport
 from Basilisk.architecture import messaging
 from Basilisk.utilities import vizSupport
-
 
 def run():
     """
@@ -160,15 +157,16 @@ def run():
     scObject.hub.omega_BN_BInit = [[0.000], [-0.00], [0.00]]  # rad/s - omega_BN_B
 
     # Configure Vizard settings
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=__file__
-                                              )
-    viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
-    viz.settings.orbitLinesOn = 1
-    viz.settings.spacecraftSizeMultiplier = 50
-    viz.settings.showSpacecraftLabels = 1
-    viz.settings.showCelestialBodyLabels = 1
-    viz.settings.mainCameraTarget = "sun"  # Gives heliocentric view
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                  # , saveFile=__file__
+                                                  )
+        viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
+        viz.settings.orbitLinesOn = 1
+        viz.settings.spacecraftSizeMultiplier = 50
+        viz.settings.showSpacecraftLabels = 1
+        viz.settings.showCelestialBodyLabels = 1
+        viz.settings.mainCameraTarget = "sun"  # Gives heliocentric view
 
     # Initialize and execute simulation
     scSim.InitializeSimulation()

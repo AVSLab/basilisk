@@ -104,7 +104,11 @@ from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
-from Basilisk.simulation import vizInterface
+try:
+    from Basilisk.simulation import vizInterface
+    vizFound = True
+except ImportError:
+    vizFound = False
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -372,82 +376,83 @@ def run(show_plots):
     #
     # setup Vizard visualization elements
     #
-    genericSensorHUD = vizInterface.GenericSensor()
-    genericSensorHUD.r_SB_B = [0., 1., 1.]
-    genericSensorHUD.fieldOfView.push_back(20.0 * macros.D2R)  # single value means a conic sensor
-    genericSensorHUD.normalVector = [0., 0., 1.]
-    genericSensorHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("red", alpha=0.25))
-    genericSensorHUD.label = "genSen1"
-    cmdInMsg = messaging.DeviceCmdMsgReader()
-    cmdInMsg.subscribeTo(simpleInsControlConfig.deviceCmdOutMsg)
-    genericSensorHUD.genericSensorCmdInMsg = cmdInMsg
+    if vizFound:
+        genericSensorHUD = vizInterface.GenericSensor()
+        genericSensorHUD.r_SB_B = [0., 1., 1.]
+        genericSensorHUD.fieldOfView.push_back(20.0 * macros.D2R)  # single value means a conic sensor
+        genericSensorHUD.normalVector = [0., 0., 1.]
+        genericSensorHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("red", alpha=0.25))
+        genericSensorHUD.label = "genSen1"
+        cmdInMsg = messaging.DeviceCmdMsgReader()
+        cmdInMsg.subscribeTo(simpleInsControlConfig.deviceCmdOutMsg)
+        genericSensorHUD.genericSensorCmdInMsg = cmdInMsg
 
-    transceiverHUD = vizInterface.Transceiver()
-    transceiverHUD.r_SB_B = [0.23, 0., 1.38]
-    transceiverHUD.fieldOfView = 40.0 * macros.D2R
-    transceiverHUD.normalVector = [-1., 0., 1.]
-    transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
-    transceiverHUD.label = "antenna"
-    trInMsg = messaging.DataNodeUsageMsgReader()
-    trInMsg.subscribeTo(transmitter.nodeDataOutMsg)
-    transceiverHUD.transceiverStateInMsgs.push_back(trInMsg)
+        transceiverHUD = vizInterface.Transceiver()
+        transceiverHUD.r_SB_B = [0.23, 0., 1.38]
+        transceiverHUD.fieldOfView = 40.0 * macros.D2R
+        transceiverHUD.normalVector = [-1., 0., 1.]
+        transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
+        transceiverHUD.label = "antenna"
+        trInMsg = messaging.DataNodeUsageMsgReader()
+        trInMsg.subscribeTo(transmitter.nodeDataOutMsg)
+        transceiverHUD.transceiverStateInMsgs.push_back(trInMsg)
 
-    hdDevicePanel = vizInterface.GenericStorage()
-    hdDevicePanel.label = "Main Disk"
-    hdDevicePanel.units = "bits"
-    hdDevicePanel.color = vizInterface.IntVector(vizSupport.toRGBA255("blue") + vizSupport.toRGBA255("red"))
-    hdDevicePanel.thresholds = vizInterface.IntVector([50])
-    hdInMsg = messaging.DataStorageStatusMsgReader()
-    hdInMsg.subscribeTo(dataMonitor.storageUnitDataOutMsg)
-    hdDevicePanel.dataStorageStateInMsg = hdInMsg
-    # if this scenario is to interface with the BSK Viz, uncomment the "saveFile" line
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=fileName
-                                              , genericSensorList=genericSensorHUD
-                                              , transceiverList=transceiverHUD
-                                              , genericStorageList=hdDevicePanel
-                                              )
-    # the following command sets Viz settings for the first spacecraft in the simulation
-    vizSupport.setInstrumentGuiSetting(viz,
-                                       showGenericSensorLabels=True,
-                                       showTransceiverLabels=True,
-                                       showGenericStoragePanel=True
-                                       )
+        hdDevicePanel = vizInterface.GenericStorage()
+        hdDevicePanel.label = "Main Disk"
+        hdDevicePanel.units = "bits"
+        hdDevicePanel.color = vizInterface.IntVector(vizSupport.toRGBA255("blue") + vizSupport.toRGBA255("red"))
+        hdDevicePanel.thresholds = vizInterface.IntVector([50])
+        hdInMsg = messaging.DataStorageStatusMsgReader()
+        hdInMsg.subscribeTo(dataMonitor.storageUnitDataOutMsg)
+        hdDevicePanel.dataStorageStateInMsg = hdInMsg
+        # if this scenario is to interface with the BSK Viz, uncomment the "saveFile" line
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                  # , saveFile=fileName
+                                                  , genericSensorList=genericSensorHUD
+                                                  , transceiverList=transceiverHUD
+                                                  , genericStorageList=hdDevicePanel
+                                                  )
+        # the following command sets Viz settings for the first spacecraft in the simulation
+        vizSupport.setInstrumentGuiSetting(viz,
+                                           showGenericSensorLabels=True,
+                                           showTransceiverLabels=True,
+                                           showGenericStoragePanel=True
+                                           )
 
-    # Add the Boulder target
-    vizSupport.addLocation(viz, stationName="Boulder Target"
-                           , parentBodyName=earth.planetName
-                           , r_GP_P=imagingTarget.r_LP_P_Init
-                           , fieldOfView=np.radians(160.)
-                           , color='pink'
-                           , range=2000.0*1000  # meters
-                           )
+        # Add the Boulder target
+        vizSupport.addLocation(viz, stationName="Boulder Target"
+                               , parentBodyName=earth.planetName
+                               , r_GP_P=imagingTarget.r_LP_P_Init
+                               , fieldOfView=np.radians(160.)
+                               , color='pink'
+                               , range=2000.0*1000  # meters
+                               )
 
-    # Add target line to first Boulder
-    vizSupport.createTargetLine(viz, toBodyName="Boulder Target", lineColor="red")
+        # Add target line to first Boulder
+        vizSupport.createTargetLine(viz, toBodyName="Boulder Target", lineColor="red")
 
-    # Add the Santiago target
-    vizSupport.addLocation(viz, stationName="Santiago Target"
-                           , parentBodyName=earth.planetName
-                           , r_GP_P=[[1761771.6422437236], [-5022201.882030934], [-3515898.6046771165]]
-                           , fieldOfView=np.radians(160.)
-                           , color='pink'
-                           , range=2000.0*1000  # meters
-                           )
+        # Add the Santiago target
+        vizSupport.addLocation(viz, stationName="Santiago Target"
+                               , parentBodyName=earth.planetName
+                               , r_GP_P=[[1761771.6422437236], [-5022201.882030934], [-3515898.6046771165]]
+                               , fieldOfView=np.radians(160.)
+                               , color='pink'
+                               , range=2000.0*1000  # meters
+                               )
 
-    # Add the Santiago target
-    vizSupport.addLocation(viz, stationName="Singapore Station"
-                           , parentBodyName=earth.planetName
-                           , r_GP_P=singaporeStation.r_LP_P_Init
-                           , fieldOfView=np.radians(160.)
-                           , color='green'
-                           , range=2000.0*1000  # meters
-                           )
+        # Add the Santiago target
+        vizSupport.addLocation(viz, stationName="Singapore Station"
+                               , parentBodyName=earth.planetName
+                               , r_GP_P=singaporeStation.r_LP_P_Init
+                               , fieldOfView=np.radians(160.)
+                               , color='green'
+                               , range=2000.0*1000  # meters
+                               )
 
-    viz.settings.spacecraftSizeMultiplier = 1.5
-    viz.settings.showLocationCommLines = 1
-    viz.settings.showLocationCones = 1
-    viz.settings.showLocationLabels = 1
+        viz.settings.spacecraftSizeMultiplier = 1.5
+        viz.settings.showLocationCommLines = 1
+        viz.settings.showLocationCones = 1
+        viz.settings.showLocationLabels = 1
     #
     #   initialize Simulation
     #
@@ -467,9 +472,10 @@ def run(show_plots):
     simpleInsControlConfig.imaged = 0
 
     # update targeting line to point to Santiago and be blue
-    vizSupport.targetLineList[0].lineColor = vizSupport.toRGBA255('blue')
-    vizSupport.targetLineList[0].toBodyName = "Santiago Target"
-    vizSupport.updateTargetLineList(viz)
+    if vizFound:
+        vizSupport.targetLineList[0].lineColor = vizSupport.toRGBA255('blue')
+        vizSupport.targetLineList[0].toBodyName = "Santiago Target"
+        vizSupport.updateTargetLineList(viz)
 
     #
     #   configure the new simulation stop time and execute sim
