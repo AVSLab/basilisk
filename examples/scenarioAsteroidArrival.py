@@ -526,11 +526,12 @@ def run(show_plots):
     def runPanelSunPointing(simTime):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(sunPointGuidanceConfig.attRefOutMsg)
-        transceiverHUD.transceiverState = 0  # antenna off
+        if vizFound:
+            transceiverHUD.transceiverState = 0  # antenna off
+            genericSensor.isHidden = 1
+            thrusterMsgInfo.thrustForce = 0
+            thrMsg.write(thrusterMsgInfo, simulationTime)
         attErrorConfig.sigma_R0R = [0, 0, 0]
-        thrusterMsgInfo.thrustForce = 0
-        genericSensor.isHidden = 1
-        thrMsg.write(thrusterMsgInfo, simulationTime)
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -538,11 +539,12 @@ def run(show_plots):
     def runSensorSciencePointing(simTime):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(sciencePointGuidanceConfig.attRefOutMsg)
-        transceiverHUD.transceiverState = 0  # antenna off
+        if vizFound:
+            transceiverHUD.transceiverState = 0  # antenna off
+            genericSensor.isHidden = 0
+            thrusterMsgInfo.thrustForce = 0
+            thrMsg.write(thrusterMsgInfo, simulationTime)
         attErrorConfig.sigma_R0R = [0, 0, 0]
-        thrusterMsgInfo.thrustForce = 0
-        genericSensor.isHidden = 0
-        thrMsg.write(thrusterMsgInfo, simulationTime)
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -550,11 +552,12 @@ def run(show_plots):
     def runAntennaEarthPointing(simTime):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(earthPointGuidanceConfig.attRefOutMsg)
-        transceiverHUD.transceiverState = 3  # antenna in send and receive mode
+        if vizFound:
+            transceiverHUD.transceiverState = 3  # antenna in send and receive mode
+            genericSensor.isHidden = 1
+            thrusterMsgInfo.thrustForce = 0
+            thrMsg.write(thrusterMsgInfo, simulationTime)
         attErrorConfig.sigma_R0R = [0, 0, 0]
-        thrusterMsgInfo.thrustForce = 0
-        genericSensor.isHidden = 1
-        thrMsg.write(thrusterMsgInfo, simulationTime)
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -562,8 +565,9 @@ def run(show_plots):
     def runDvBurn(simTime, burnSign, planetMsg):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(planetMsg)
-        transceiverHUD.transceiverState = 0  # antenna off
-        genericSensor.isHidden = 1
+        if vizFound:
+            transceiverHUD.transceiverState = 0  # antenna off
+            genericSensor.isHidden = 1
         if burnSign > 0:
             attErrorConfig.sigma_R0R = [np.tan((np.pi/2)/4), 0, 0]
         else:
@@ -576,8 +580,9 @@ def run(show_plots):
             simulationTime += macros.sec2nano(minTime)
             scSim.ConfigureStopTime(simulationTime)
             scSim.ExecuteSimulation()
-            thrusterMsgInfo.thrustForce = thrusterMsgInfo.maxThrust
-            thrMsg.write(thrusterMsgInfo, simulationTime)
+            if vizFound:
+                thrusterMsgInfo.thrustForce = thrusterMsgInfo.maxThrust
+                thrMsg.write(thrusterMsgInfo, simulationTime)
             simulationTime += macros.sec2nano(simTime - minTime)
             scSim.ConfigureStopTime(simulationTime)
             scSim.ExecuteSimulation()

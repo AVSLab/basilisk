@@ -524,7 +524,8 @@ def run(planetCase):
     def runVelocityPointing(simTime, planetMsg):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(planetMsg)
-        transceiverHUD.transceiverState = 0  # antenna off
+        if vizFound:
+            transceiverHUD.transceiverState = 0  # antenna off
         attErrorConfig.sigma_R0R = [np.tan(90.*macros.D2R/4), 0, 0]
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
@@ -533,7 +534,8 @@ def run(planetCase):
     def runAntennaEarthPointing(simTime):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(earthPointGuidanceConfig.attRefOutMsg)
-        transceiverHUD.transceiverState = 3  # antenna in send and receive mode
+        if vizFound:
+            transceiverHUD.transceiverState = 3  # antenna in send and receive mode
         attErrorConfig.sigma_R0R = [0, 0, 0]
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
@@ -542,7 +544,8 @@ def run(planetCase):
     def runPanelSunPointing(simTime):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(sunPointGuidanceConfig.attRefOutMsg)
-        transceiverHUD.transceiverState = 0  # antenna off
+        if vizFound:
+            transceiverHUD.transceiverState = 0  # antenna off
         attErrorConfig.sigma_R0R = [0, 0, 0]
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
@@ -551,7 +554,8 @@ def run(planetCase):
     def runSensorSciencePointing(simTime):
         nonlocal simulationTime
         attErrorConfig.attRefInMsg.subscribeTo(sciencePointGuidanceConfig.attRefOutMsg)
-        transceiverHUD.transceiverState = 0  # antenna off
+        if vizFound:
+            transceiverHUD.transceiverState = 0  # antenna off
         attErrorConfig.sigma_R0R = [-1./3., 1./3., -1./3.]
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)

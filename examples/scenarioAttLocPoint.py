@@ -291,20 +291,21 @@ def run(show_plots):
     mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=fileName
-                                              )
-    vizSupport.addLocation(viz, stationName="Boulder Station"
-                           , parentBodyName=earth.planetName
-                           , r_GP_P=groundStation.r_LP_P_Init
-                           , fieldOfView=np.radians(160.)
-                           , color='pink'
-                           , range=2000.0*1000  # meters
-                           )
-    viz.settings.spacecraftSizeMultiplier = 1.5
-    viz.settings.showLocationCommLines = 1
-    viz.settings.showLocationCones = 1
-    viz.settings.showLocationLabels = 1
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                  # , saveFile=fileName
+                                                  )
+        vizSupport.addLocation(viz, stationName="Boulder Station"
+                               , parentBodyName=earth.planetName
+                               , r_GP_P=groundStation.r_LP_P_Init
+                               , fieldOfView=np.radians(160.)
+                               , color='pink'
+                               , range=2000.0*1000  # meters
+                               )
+        viz.settings.spacecraftSizeMultiplier = 1.5
+        viz.settings.showLocationCommLines = 1
+        viz.settings.showLocationCones = 1
+        viz.settings.showLocationLabels = 1
     #
     #   initialize Simulation
     #

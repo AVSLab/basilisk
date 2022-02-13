@@ -157,15 +157,16 @@ def run():
     scObject.hub.omega_BN_BInit = [[0.000], [-0.00], [0.00]]  # rad/s - omega_BN_B
 
     # Configure Vizard settings
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=__file__
-                                              )
-    viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
-    viz.settings.orbitLinesOn = 1
-    viz.settings.spacecraftSizeMultiplier = 50
-    viz.settings.showSpacecraftLabels = 1
-    viz.settings.showCelestialBodyLabels = 1
-    viz.settings.mainCameraTarget = "sun"  # Gives heliocentric view
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                  # , saveFile=__file__
+                                                  )
+        viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
+        viz.settings.orbitLinesOn = 1
+        viz.settings.spacecraftSizeMultiplier = 50
+        viz.settings.showSpacecraftLabels = 1
+        viz.settings.showCelestialBodyLabels = 1
+        viz.settings.mainCameraTarget = "sun"  # Gives heliocentric view
 
     # Initialize and execute simulation
     scSim.InitializeSimulation()
