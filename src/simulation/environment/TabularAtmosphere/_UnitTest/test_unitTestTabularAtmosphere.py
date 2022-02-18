@@ -132,7 +132,7 @@ def tabularAtmosphereTestFunction(show_plots, altitude, accuracy):
     r_eq = 6371*1000.0
     filename = '../../../../../supportData/AtmosphereData/EarthGRAMNominal.txt' # TODO: fix file path syntax
     altList, rhoList, tempList = readAtmTable(filename,'EarthGRAM')
-    
+        
     # assign constants & ref. data to module
     module.planetRadius = r_eq
     module.altList = tabularAtmosphere.DoubleVector(altList)    
@@ -180,29 +180,37 @@ def tabularAtmosphereTestFunction(show_plots, altitude, accuracy):
     
     # This pulls the actual data log from the simulation run.
     densData = dataLog.neutralDensity
+    tempData = dataLog.localTemp
     
     # define python function to compute truth values
-    def tabAtmoComp(alt, altList, rhoList):
-        if alt < altList[0]:
-            density = altList[0]
-            return density
-        elif alt > altList[-1]:
-            density = 0
-            return density
+    def tabAtmoComp(val, xList, yList):
+        if val < xList[0]:
+            out = xList[0]
+            return out
+        elif val > xList[-1]:
+            out = 0
+            return out
+        elif isinstance(val,int) != 1:      # probably need to delete but check with Sam?
+            print("Incorrect input")
+            return
         else:
-            for i, x in enumerate(altList):
-                if x > alt:
-                    alt_0 = altList[i-1]
-                    rho_0 = rhoList[i-1]
-                    rho_1 = rhoList[i]
-                    m = (rho_1 - rho_0)/(x - alt_0)
-                    density = rho_0 + (alt - alt_0) * m
-                    return density
+            for i, x in enumerate(xList):
+                if x > val:
+                    x0 = xList[i-1]
+                    y0 = yList[i-1]
+                    y1 = yList[i]
+                    m = (y1 - y0)/(x - x0)
+                    out = y0 + (val - x0) * m
+                    return out
     
     # compute truth values
     trueDensity = tabAtmoComp(altitude * 1000, altList, rhoList)
-    # print('\nmodule density: {0:.6e}'.format(densData[0]))
-    # print('true density: {0:.6e}\n'.format(trueDensity))
+    print('\nmodule density: {0:.6e}'.format(densData[0]))
+    print('true density: {0:.6e}\n'.format(trueDensity))
+    
+    trueTemp = tabAtmoComp(altitude * 1000, altList, tempList)
+    print('\nmodule temperature: {0:.6e}'.format(tempData[0]))
+    print('true temperature: {0:.6e}\n'.format(trueTemp))
     
     # compare truth values to module results
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
@@ -214,6 +222,17 @@ def tabularAtmosphereTestFunction(show_plots, altitude, accuracy):
         testMessage = "density computed correctly"
     else:
         testMessage = "density computed incorrectly"
+        
+    # compare truth values to module results for temperature
+    if trueTemp != 2.7:    # temperature of space in kelvin - needs checking
+        testFailCount = not unitTestSupport.isDoubleEqualRelative(tempData[0], trueTemp, accuracy)
+    else:
+        testFailCount = not unitTestSupport.isDoubleEqual(tempData[0], trueTemp, accuracy)
+    if testFailCount == 0:
+        testMessage += "and temperature computed correctly"
+    else:
+        testMesage += "and temperature computed incorrectly"
+    
     
 
     # reset the module to test this functionality
@@ -221,9 +240,9 @@ def tabularAtmosphereTestFunction(show_plots, altitude, accuracy):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.ModelTag)       
 
-    return [testFailCount, testMessage]
+    return [testFailCount, testMessage]         
 
 
 #
@@ -233,6 +252,6 @@ def tabularAtmosphereTestFunction(show_plots, altitude, accuracy):
 if __name__ == "__main__":
     test_tabularAtmosphere(              # update "module" in function name
                  False,
-                 50,          # altitude
+                 51,          # altitude
                  1e-12        # accuracy
                )
