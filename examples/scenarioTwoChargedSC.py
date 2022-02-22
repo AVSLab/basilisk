@@ -152,11 +152,11 @@ def run(show_plots):
 
     # define electric potentials
     voltLeaderInMsgData = messaging.VoltMsgPayload()
-    voltLeaderInMsgData.voltage = -200  # [V] servicer potential
+    voltLeaderInMsgData.voltage = -2000  # [V] servicer potential
     voltLeaderInMsg = messaging.VoltMsg().write(voltLeaderInMsgData)
 
     voltFollowerInMsgData = messaging.VoltMsgPayload()
-    voltFollowerInMsgData.voltage = -200  # [V] debris potential
+    voltFollowerInMsgData.voltage = 2000  # [V] debris potential
     voltFollowerInMsg = messaging.VoltMsg().write(voltFollowerInMsgData)
 
     # Import multi-sphere model of GOESR bus and read them into an array of strings
@@ -234,7 +234,7 @@ def run(show_plots):
     oe = orbitalMotion.rv2elem(mu, r_LN, v_LN)
 
     # setup Follower object states
-    r_FS = np.array([0, -10.0, 0.0])  # relative position of follower, 10m behind servicer in along-track direction
+    r_FS = np.array([0, -30.0, 0.0])  # relative position of follower, 10m behind servicer in along-track direction
     r_FN = r_FS + r_LN
     v_FN = v_LN
     scObjectFollower.hub.r_CN_NInit = r_FN  # m
@@ -259,7 +259,7 @@ def run(show_plots):
     # to save the BSK data to a file, uncomment the saveFile line below
     if vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObjectLeader, scObjectFollower]
-                                                   #, saveFile=fileName,
+                                                   , saveFile=fileName,
                                                   )
 
     #
