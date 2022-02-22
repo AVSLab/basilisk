@@ -190,9 +190,6 @@ def tabularAtmosphereTestFunction(show_plots, altitude, accuracy):
         elif val > xList[-1]:
             out = 0
             return out
-        elif isinstance(val,int) != 1:      # probably need to delete but check with Sam?
-            print("Incorrect input")
-            return
         else:
             for i, x in enumerate(xList):
                 if x > val:
