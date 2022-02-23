@@ -52,6 +52,8 @@ Version |release|
 - added a new planetary fly-by mission example using a custom Spice translational file and
   attitude pointing modes :ref:`scenarioFlybySpice`
 - added a new asteroid arrival mission example with attitude pointing modes :ref:`scenarioAsteroidArrival`
+- added a new scenario :ref:`scenarioTwoChargedSC` illustrating how to apply the MSM spacecraft
+  charging model to a relative motion simulation
 
 
 Version 2.1.1 (Dec. 15, 2021)
