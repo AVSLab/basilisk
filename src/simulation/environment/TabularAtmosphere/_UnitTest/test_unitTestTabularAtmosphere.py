@@ -54,7 +54,7 @@ from Basilisk.utilities.readAtmTable import readAtmTable
 # matters for the documentation in that it impacts the order in which the test arguments are shown.
 # The first parametrize arguments are shown last in the pytest argument list
 @pytest.mark.parametrize("accuracy", [1e-12])
-@pytest.mark.parameterize("altitude", [50.0, 33.33333, 10000.0, -10.0]) # exact, interpolate, above, below
+@pytest.mark.parametrize("altitude", [50.0, 33.33333, 10000.0, -10.0]) # exact, interpolate, above, below
 
 def test_tabularAtmosphere(show_plots, altitude, accuracy):
     r"""
@@ -228,12 +228,7 @@ def tabularAtmosphereTestFunction(show_plots, altitude, accuracy):
     if testFailCount == 0:
         testMessage += "and temperature computed correctly"
     else:
-        testMesage += "and temperature computed incorrectly"
-    
-    
-
-    # reset the module to test this functionality
-    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+        testMessage += "and temperature computed incorrectly"
 
     #   print out success message if no error were found
     if testFailCount == 0:

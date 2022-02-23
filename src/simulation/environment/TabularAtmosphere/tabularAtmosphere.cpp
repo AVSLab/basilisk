@@ -39,9 +39,9 @@ TabularAtmosphere::~TabularAtmosphere()
 
 void TabularAtmosphere::customReset()
 {
-    altList_length = altList.size();
-    rhoList_length = rhoList.size();
-    tempList_length = tempList.size();
+    this->altList_length = this->altList.size();
+    this->rhoList_length = this->rhoList.size();
+    this->tempList_length = this->tempList.size();
     
 
     if((altList_length == rhoList_length) && (altList_length == tempList_length)){
