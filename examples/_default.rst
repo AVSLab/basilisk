@@ -63,6 +63,7 @@ Attitude Guidance
    Layered spiral attitude guidance <scenarioInertialSpiral>
 
 
+
 Attitude Control with Actuators
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -170,6 +171,7 @@ Complex Spacecraft Dynamics Simulations
    Fuel Slosh <scenarioFuelSlosh>
    Flexible (Hinged) Panels <scenarioHingedRigidBody>
    Sensors Attached to a Rotating Panel <scenarioRotatingPanel>
+   MSM Simulation of Charged Spacecraft <scenarioTwoChargedSC>
 
 Mission Simulations
 ---------------------------------------
@@ -252,7 +254,7 @@ Stand Alone Architecture
    Impulsive feedback control of relative motion <scenarioFormationReconfig>
    Electrostatic Tractor Debris Reorbiting <scenarioDebrisReorbitET>
    Attitude-Driven differential drag control <scenarioDragRendezvous>
-   
+
 
 
 ``FormationBskSim`` Architecture
@@ -263,7 +265,7 @@ Stand Alone Architecture
 
    Two-Spacecraft Formation using BskSim  <BskSim/scenarios/scenario_BasicOrbitFormation>
    Relative Pointing Control  <BskSim/scenarios/scenario_RelativePointingFormation>
-   
+
 
 ``MultiSatBskSim`` Architecture
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -309,7 +311,3 @@ Interfacing with Vizard
    Live Streaming to Vizard  <scenarioBasicOrbitStream>
    Pointing a Vizard Camera  <scenarioVizPoint>
    Convert Simulation Data file to Vizard File <scenarioDataToViz>
-
-
-
-
