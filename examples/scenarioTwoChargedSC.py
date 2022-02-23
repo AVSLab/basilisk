@@ -152,11 +152,11 @@ def run(show_plots):
 
     # define electric potentials
     voltLeaderInMsgData = messaging.VoltMsgPayload()
-    voltLeaderInMsgData.voltage = -2000  # [V] servicer potential
+    voltLeaderInMsgData.voltage = -500  # [V] servicer potential
     voltLeaderInMsg = messaging.VoltMsg().write(voltLeaderInMsgData)
 
     voltFollowerInMsgData = messaging.VoltMsgPayload()
-    voltFollowerInMsgData.voltage = 2000  # [V] debris potential
+    voltFollowerInMsgData.voltage = 500  # [V] debris potential
     voltFollowerInMsg = messaging.VoltMsg().write(voltFollowerInMsgData)
 
     # Import multi-sphere model of GOESR bus and read them into an array of strings
@@ -234,7 +234,7 @@ def run(show_plots):
     oe = orbitalMotion.rv2elem(mu, r_LN, v_LN)
 
     # setup Follower object states
-    r_FS = np.array([0, -30.0, 0.0])  # relative position of follower, 10m behind servicer in along-track direction
+    r_FS = np.array([0, -50.0, 0.0])  # relative position of follower, 10m behind servicer in along-track direction
     r_FN = r_FS + r_LN
     v_FN = v_LN
     scObjectFollower.hub.r_CN_NInit = r_FN  # m
@@ -246,10 +246,10 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 1000
-    simulationTime = macros.sec2nano(1 * P)
+    simulationTime = macros.sec2nano(0.1 * P)
     samplingTime = simulationTime // (numDataPoints - 1)
-    dataRecL = scObjectLeader.scStateOutMsg.recorder(samplingTime)
-    dataRecF = scObjectFollower.scStateOutMsg.recorder(samplingTime)
+    dataRecL = scObjectLeader.scStateOutMsg.recorder()
+    dataRecF = scObjectFollower.scStateOutMsg.recorder()
     
     # Add recorders to the Task
     scSim.AddModelToTask(dynTaskName, dataRecL)
@@ -259,7 +259,7 @@ def run(show_plots):
     # to save the BSK data to a file, uncomment the saveFile line below
     if vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObjectLeader, scObjectFollower]
-                                                   , saveFile=fileName,
+                                                  # , saveFile=fileName,
                                                   )
 
     #
@@ -352,7 +352,7 @@ def plotOrbits(timeData, posDataL_N, posDataF_N, relPosMagn, attDataL_N, attData
     # Plot relative separation in the Frame of the Leader spacecrafts
     #
 
-    plt.figure(2)
+    plt.figure(2, figsize=(5, 4))
     ax = plt.axes(projection='3d')
     # Set the Leader S/C as the center of the plot
     r_LN_N = np.array([0., 0., 0.])
@@ -374,7 +374,7 @@ def plotOrbits(timeData, posDataL_N, posDataF_N, relPosMagn, attDataL_N, attData
     ax.plot(relXPosData_H, relYPosData_H, relZPosData_H)
     ax.set_xlabel('Radial(m)')
     ax.set_ylabel('Along Track(m)')
-    ax.set_zlabel('Direction of Angular Momentum (m)')
+    ax.set_zlabel('Orbit Normal (m)')
     pltName = 'scenarioTwoChargedSC2'
     figureList[pltName] = plt.figure(2)
 
@@ -382,7 +382,7 @@ def plotOrbits(timeData, posDataL_N, posDataF_N, relPosMagn, attDataL_N, attData
     # Draw the sphere representation of the satellites used by the MSM in the Hill frame of the Leader spacecraft
     #
 
-    plt.figure(3)
+    plt.figure(3, figsize=(4, 4))
     ax = plt.axes(projection='3d')
     # get S/C position
     r_LN_N = np.array([0., 0., 0.])
@@ -467,7 +467,7 @@ def plotOrbits(timeData, posDataL_N, posDataF_N, relPosMagn, attDataL_N, attData
     ax.set_box_aspect(np.ptp(limits, axis=1))
     ax.set_xlabel('Radial')
     ax.set_ylabel('Along Track')
-    ax.set_zlabel('Direction of Angular Momentum')
+    ax.set_zlabel('Orbit Normal')
     plt.title('MSM Representation')
     pltName = 'scenarioTwoChargedSC3'
 
