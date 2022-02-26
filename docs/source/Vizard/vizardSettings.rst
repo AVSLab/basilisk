@@ -200,6 +200,10 @@ default setting for that behavior.
       - Control the display size of celestial bodies in the Solar System View,
         values greater than 0, use negative value to use viz default.
         Default value is -1 to use Vizard default value.
+    * - ``showMissionTime``
+      - int
+      - flag to show the mission time instead of the simulation time. Value of 0 (protobuffer default)
+        to use viz default, -1 for false, 1 for true
 
 
 

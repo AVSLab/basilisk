@@ -574,7 +574,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_attenuatesunlightwithdistance(this->settings.attenuateSunLightWithDistance);
         vizSettings->set_showlightlabels(this->settings.showLightLabels);
         vizSettings->set_celestialbodyhelioviewsizemultiplier(this->settings.celestialBodyHelioViewSizeMultiplier);
-
+        vizSettings->set_showmissiontime(this->settings.showMissionTime);
+        
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();

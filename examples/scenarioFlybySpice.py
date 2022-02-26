@@ -512,6 +512,7 @@ def run(planetCase):
         viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
         viz.settings.orbitLinesOn = -1
         viz.settings.keyboardAngularRate = np.deg2rad(0.5)
+        viz.settings.showMissionTime = 1
 
         vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.ModelTag,
                                         fieldOfView=10 * macros.D2R,

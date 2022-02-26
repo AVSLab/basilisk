@@ -269,6 +269,9 @@ message VizMessage{
         int32 attenuateSunLightWithDistance = 45; //Toggle to reduce brightness of sun lighting with the square of the distance from the sun. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
         int32 showLightLabels = 46; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         double celestialBodyHelioViewSizeMultiplier = 47; // Control the display size of celestial bodies in the Solar System View, values greater than 0, use negative value to use viz default
+        int32 showMissionTime = 48; //Toggle to show Mission Time instead of Sim Elapsed Time, -1 for false, 0 for viz default, 1 for true
+
+        
     }
     
     message Location{
