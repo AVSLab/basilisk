@@ -66,7 +66,7 @@ message VizMessage{
         double wheelSpeed = 5;  //[rad/s] RWSpeedIntMsg.wheelSpeeds
         double wheelTorque = 6; //[N m] RWArrayTorqueIntMsg.motorTorque
         double maxSpeed = 7; //[rad/s] (Optional) maximum RW speed capability
-        double maxTorque = 8; //[N m] (Optional) maximum RW toruqe capability
+        double maxTorque = 8; //[N m] (Optional) maximum RW torque capability
     }
 
     message Thruster{
@@ -179,6 +179,7 @@ message VizMessage{
         int32 setView = 7; //0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
         repeated double pointingVector = 8; //x,y,z, vector (default to 1, 0, 0). This is a setting for pointing vector mode.
         repeated double position = 9; // [m] (Optional) If populated, sets camera position relative to parent body coordinate frame in meters using B frame components. If unpopulated, camera is positioned automatically along camera view direction outside of parent body's mesh to prevent obstruction of view.
+        string displayName = 10; //(Optional) Camera name to display on panel and floating labels.
     }
 
     message ActuatorSettings{

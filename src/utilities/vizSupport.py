@@ -766,6 +766,9 @@ def createConeInOut(viz, **kwargs):
 
 stdCameraList = []
 def createStandardCamera(viz, **kwargs):
+    '''
+    add a standard camera window
+    '''
     if not vizFound:
         print('vizFound is false. Skipping this method.')
         return
@@ -773,7 +776,7 @@ def createStandardCamera(viz, **kwargs):
 
     unitTestSupport.checkMethodKeyword(
         ['spacecraftName', 'setMode', 'setView', 'fieldOfView',
-         'bodyTarget', 'pointingVector_B', 'position_B'],
+         'bodyTarget', 'pointingVector_B', 'position_B', 'displayName'],
         kwargs)
 
     if 'spacecraftName' in kwargs:
@@ -852,6 +855,13 @@ def createStandardCamera(viz, **kwargs):
         cam.position_B = position_B
     else:
         cam.position_B = [0, 0, 0]
+
+    if 'displayName' in kwargs:
+        displayName = kwargs['displayName']
+        if not isinstance(displayName, basestring):
+            print('ERROR: vizSupport: createStandardCamera: displayName must be a string')
+            exit(1)
+        cam.displayName = displayName
 
     stdCameraList.append(cam)
     del viz.settings.stdCameraList[:]  # clear settings list to replace it with updated list
@@ -1163,9 +1173,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                   'number of spacecraft and contain lists of transceivers')
             exit(1)
         for elem in oscOrbitColorList:
-            print(elem)
             if isinstance(elem, list):
-                if len(elem) is not 4:
+                if len(elem) != 4:
                     print('ERROR: vizSupport: if specifying oscOrbitColorList color via RGBA values, you '
                           'must provide 4 integers values from 0 to 255 ')
                     exit(1)
@@ -1180,7 +1189,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         for elem in trueOrbitColorList:
             print(elem)
             if isinstance(elem, list):
-                if len(elem) is not 4:
+                if len(elem) != 4:
                     print('ERROR: vizSupport: if specifying trueOrbitColorList color via RGBA values, you '
                           'must provide 4 integers values from 0 to 255 ')
                     exit(1)

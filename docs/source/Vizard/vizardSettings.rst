@@ -515,6 +515,10 @@ the arguments for the ``createStandardCamera`` method.
       - If populated, ets camera  position relative to parent body coordinate frame in meters using B frame
         components.  If unpopulated camera is positioned automatically along camera view direction outside
         of parent body's mesh to prevent obstruction of view.
+    * - ``displayName``
+      - string
+      -
+      - (optional) name that is used to label the camera window
 
 .. image:: /_images/static/vizard-ImgCustomCam.jpg
    :align: center

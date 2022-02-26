@@ -641,6 +641,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     sc->add_position(scp->position_B[i]);
                 }
             }
+            sc->set_displayname(scp->displayName);
         }
 
         message->set_allocated_settings(vizSettings);
