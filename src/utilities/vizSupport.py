@@ -1009,6 +1009,16 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         list of lists of ``GenericStorage`` structures.  The outer list length must match ``scList``.
     lightList:
         list of lists of ``Light`` structures.   The outer list length must match ``scList``.
+    spriteList:
+        list of sprite information for each spacecraft
+    modelDictionaryKeyList:
+        list of the spacecraft model dictionary.  Use ``None`` if default values are used
+    oscOrbitColorList:
+        list of spacecraft osculating orbit colors.  Can be 4 RGBA integer value (0-255), a color string, or
+        ``None`` if default values should be used.  The array must be of the length of the spacecraft list
+    trueOrbitColorList:
+        list of spacecraft true or actual orbit colors.  Can be 4 RGBA integer value (0-255), a color string, or
+        ``None`` if default values should be used.  The array must be of the length of the spacecraft list
 
     Returns
     -------
@@ -1028,7 +1038,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
 
     unitTestSupport.checkMethodKeyword(
         ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList',
-         'genericSensorList', 'transceiverList', 'genericStorageList', 'lightList'],
+         'genericSensorList', 'transceiverList', 'genericStorageList', 'lightList', 'spriteList',
+         'modelDictionaryKeyList', 'oscOrbitColorList', 'trueOrbitColorList'],
         kwargs)
 
     # setup the Vizard interface module
@@ -1119,10 +1130,60 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         tcScList = kwargs['transceiverList']
         if not isinstance(tcScList, list):
             tcScList = [[tcScList]]
-        if len(tcScList) != len(tcScList):
+        if len(tcScList) != len(scList):
             print('ERROR: vizSupport: tcScList should have the same length as the '
                   'number of spacecraft and contain lists of transceivers')
             exit(1)
+
+    spriteScList = False
+    if 'spriteList' in kwargs:
+        spriteScList = kwargs['spriteList']
+        if not isinstance(spriteScList, list):
+            spriteScList = [spriteScList]
+        if len(spriteScList) != len(scList):
+            print('ERROR: vizSupport: spriteScList should have the same length as the '
+                  'number of spacecraft and contain lists of transceivers')
+            exit(1)
+
+    modelDictionaryKeyList = False
+    if 'modelDictionaryKeyList' in kwargs:
+        modelDictionaryKeyList = kwargs['modelDictionaryKeyList']
+        if not isinstance(modelDictionaryKeyList, list):
+            modelDictionaryKeyList = [modelDictionaryKeyList]
+        if len(modelDictionaryKeyList) != len(scList):
+            print('ERROR: vizSupport: modelDictionaryKeyList should have the same length as the '
+                  'number of spacecraft and contain lists of transceivers')
+            exit(1)
+
+    oscOrbitColorList = False
+    if 'oscOrbitColorList' in kwargs:
+        oscOrbitColorList = kwargs['oscOrbitColorList']
+        if len(oscOrbitColorList) != len(scList):
+            print('ERROR: vizSupport: oscOrbitColorList should have the same length as the '
+                  'number of spacecraft and contain lists of transceivers')
+            exit(1)
+        for elem in oscOrbitColorList:
+            print(elem)
+            if isinstance(elem, list):
+                if len(elem) is not 4:
+                    print('ERROR: vizSupport: if specifying oscOrbitColorList color via RGBA values, you '
+                          'must provide 4 integers values from 0 to 255 ')
+                    exit(1)
+
+    trueOrbitColorList = False
+    if 'trueOrbitColorList' in kwargs:
+        trueOrbitColorList = kwargs['trueOrbitColorList']
+        if len(trueOrbitColorList) != len(scList):
+            print('ERROR: vizSupport: trueOrbitColorList should have the same length as the '
+                  'number of spacecraft and contain lists of transceivers')
+            exit(1)
+        for elem in trueOrbitColorList:
+            print(elem)
+            if isinstance(elem, list):
+                if len(elem) is not 4:
+                    print('ERROR: vizSupport: if specifying trueOrbitColorList color via RGBA values, you '
+                          'must provide 4 integers values from 0 to 255 ')
+                    exit(1)
 
     # loop over all spacecraft to associated states and msg information
     planetNameList = []
@@ -1235,6 +1296,23 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 for tc in tcScList[c]:
                     tcList.append(tc)
                 scData.transceiverList = vizInterface.TransceiverVector(tcList)
+
+        # process sprite information
+        if spriteScList:
+            if spriteScList[c] is not None:
+                scData.spacecraftSprite = spriteScList[c]
+        # process modelDictionaryKey information
+        if modelDictionaryKeyList:
+            if modelDictionaryKeyList[c] is not None:
+                scData.modelDictionaryKey = modelDictionaryKeyList[c]
+
+        if oscOrbitColorList:
+            if oscOrbitColorList[c] is not None:
+                scData.oscOrbitLineColor = vizInterface.IntVector(oscOrbitColorList[c])
+
+        if trueOrbitColorList:
+            if trueOrbitColorList[c] is not None:
+                scData.trueTrajectoryLineColor = vizInterface.IntVector(trueOrbitColorList[c])
 
         vizMessenger.scData.push_back(scData)
         c += 1

@@ -275,6 +275,9 @@ VizSpacecraftData
     std::vector<Light *> lightList;                             //!<[-] (Optional) Vector of spacecraft light devices
 
     std::string spacecraftSprite = "";                          //!< Set sprite for this spacecraft only through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
+    std::string modelDictionaryKey = "";                        //!< (Optional) string specifiying which Vizard cad model to use. If set, it over-rides the model selected by `spacecraftName`
+    int oscOrbitLineColor[4] = {-1,-1,-1,-1};                   //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
+    int trueTrajectoryLineColor[4] = {-1,-1,-1,-1};             //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
 
 }VizSpacecraftData;
 

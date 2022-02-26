@@ -1,4 +1,4 @@
-/* vizMessage is a protobuffer message template to relay messages from the 
+/* vizMessage is a protobuffer message template to relay messages from the
  * Basilisk Sim to an external visualization application.
  * To generate the asscociate files for C++, run from a terminal window
  * protoc --cpp_out=./ vizMessage.proto
@@ -55,6 +55,9 @@ message VizMessage{
         repeated Transceiver transceivers = 10;
         repeated GenericStorage storageDevices = 11;
         repeated Light lights = 12;
+        string modelDictionaryKey = 13;
+        repeated int32 oscOrbitLineColor = 14; // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
+        repeated int32 trueTrajectoryLineColor = 15; // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
 }
 
     message ReactionWheel{
