@@ -685,8 +685,18 @@ spacecraft data structure.
 The example scenario :ref:`scenarioFormationBasic` illustrates how to simulate multiple spacecraft.  To make
 a spacecraft use a specific sprite representation use::
 
-    scData.spacecraftSprite = vizSupport.setSprite("STAR")
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , spriteList=vizSupport.setSprite("STAR", color="red")
+                                              , saveFile=fileName,
+                                              )
 
+If you are using multiple spacecraft, then the sprite information list must have the same length as
+the number of spacecraft::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2, scObject3]
+                                              , spriteList=[None, vizSupport.setSprite("STAR", color="red"), None]
+                                              , saveFile=fileName,
+                                              )
 
 
 Specifying the Simulation Epoch Date and Time Information
