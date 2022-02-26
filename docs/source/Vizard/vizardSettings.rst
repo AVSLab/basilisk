@@ -1374,3 +1374,40 @@ The light command state can also be set directly from python using::
     scLight.onLight = 1
 
 However, if the input message is specified then this value is replaced with the content of the input message.
+
+
+Specifying the CAD Model to use
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The spacecraft Vizard data supports the use of ``modelDictionaryKey`` to override the default spacecraft shape
+and is selected by the name, and specify a CAD model to use.  Assume a Vizard spacecraft CAD model is
+labeled with ``cadString``, then you use::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , modelDictionaryKeyList="cadString")
+
+If you have multiple spacecraft, then this argument must be a list with the length being the number of
+spacecraft::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
+                                              , [modelDictionaryKeyList="cadString", None])
+
+The argument None is used to specify the Vizard default shape to be used.
+
+Specifying the Osculating or True Orbit Line Colors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The spacecraft Vizard data supports the use of ``oscOrbitColorList`` to override the default spacecraft osculating
+orbit line color and specify a custom color.  This is done using::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , oscOrbitColorList=vizSupport.toRGB255("red"))
+
+If you have multiple spacecraft, then this argument must be a list with the length being the number of
+spacecraft::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
+                                              , oscOrbitColorList=[vizSupport.toRGB255("red"), None])
+
+The argument None is used to specify the Vizard default shape to be used.
+
+Similarly, to set the actual or true trajectory color, use the keyword ``trueOrbitColorList`` with the same behavior
+as ``oscOrbitColorList``.
