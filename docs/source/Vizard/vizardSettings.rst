@@ -522,6 +522,7 @@ the arguments for the ``createStandardCamera`` method.
     * - ``displayName``
       - string
       -
+      - No, Default is ``Standard Camera``
       - (optional) name that is used to label the camera window
 
 .. image:: /_images/static/vizard-ImgCustomCam.jpg
