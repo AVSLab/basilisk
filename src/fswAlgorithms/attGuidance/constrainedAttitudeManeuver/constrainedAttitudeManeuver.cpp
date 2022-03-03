@@ -58,14 +58,11 @@ void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
 {
 	ReadInputs();
 
-	// std::map<int,std::map<int,std::map<int,Node>>> NodesMap;
-	// std::map<int,std::map<int,std::map<int,NodeProperties>>> NodePropertiesMap;
-	double s0[3], sN[3];
-	s0[0] = 0; s0[1] = 0; s0[2] = 0;
-	sN[0] = 1; sN[1] = 0; sN[2] = 0;
-	Node startNode = Node(s0, this->constraints, this->keepOutFov, this->keepOutBore_B);
-	Node goalNode = Node(sN, this->constraints, this->keepOutFov, this->keepOutBore_B);
-	GenerateGrid(startNode, goalNode, this->N, NodesMap, NodePropertiesMap);
+	Node startNode = Node(this->scStateMsgBuffer.sigma_BN, this->constraints, this->keepOutFov, this->keepOutBore_B);
+	Node goalNode = Node(this->sigma_BN_goal, this->constraints, this->keepOutFov, this->keepOutBore_B);
+	GenerateGrid(startNode, goalNode);
+	// Node *path[20];
+	// AStar(path);
     return;
 
 }
@@ -108,10 +105,9 @@ void ConstrainedAttitudeManeuver::ReadInputs()
 /*! This method generates the MRP grid and connects the free neighboring nodes
  @return void
  */
-void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode, int N, 
-     std::map<int,std::map<int,std::map<int,Node>>> NodesMap, 
-	 std::map<int,std::map<int,std::map<int,NodeProperties>>> NodePropertiesMap)
+void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 {
+	int N = this->N;
     double u[20];
 	for (int n = 0; n < N; n++) {
 		u[n] = n / ((double)N - 1);
@@ -122,23 +118,17 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode, in
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			for (int k = 0; k < N; k++) {
-				// std::cout << i << " " << j << " " << k << "\n";
 				if (pow(u[i],2) + pow(u[j],2) + pow(u[k],2) < 1) {
 					indices[0] = i; indices[1] = j; indices[2] = k;
 					mirrorFunction(indices, mirrorIndices);
 					for (int m = 0; m < 8; m++) {
-						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+						if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
 							for (int p = 0; p < 3; p++) {
 								if (indices[p] != 0) { sigma_BN[p] = mirrorIndices[m][p]/indices[p]*u[indices[p]]; } else { sigma_BN[p] = 0; }
 							}
-							// std::cout << sigma_BN[0] << " " << sigma_BN[1] << " " << sigma_BN[2] << "\n";
-							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints,
+							this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints,
 							                                                                               this->keepOutFov, this->keepOutBore_B);
-							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
-						}/*
-						std::cout << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[0] << " " 
-						          << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[1] << " " 
-								  << NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]].sigma_BN[2] << "\n"; */
+						}
 					}
 				}
 			}
@@ -152,65 +142,61 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode, in
 				sigma_BN[0] = u[i]; sigma_BN[1] = u[j]; sigma_BN[2] = u[k];
 				r = v3Norm(sigma_BN);
 				// along i direction
-				if (NodesMap[i][j].count(k) == 1 && NodesMap[i+1][j].count(k) == 0 && r < 1) {
+				if (this->NodesMap[i][j].count(k) == 1 && this->NodesMap[i+1][j].count(k) == 0 && r < 1) {
 					indices[0] = i+1; indices[1] = j; indices[2] = k;
 					mirrorFunction(indices, mirrorIndices);
 					for (int m = 0; m < 8; m++) {
-						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+						if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
 							sigma_BN[0] = mirrorIndices[m][0]/indices[0] * pow(1-pow(u[j],2)-pow(u[k],2),0.5);
 							if (indices[1] != 0) { sigma_BN[1] = mirrorIndices[m][1]/indices[1]*u[indices[1]]; } else { sigma_BN[1] = 0; }
 							if (indices[2] != 0) { sigma_BN[2] = mirrorIndices[m][2]/indices[2]*u[indices[2]]; } else { sigma_BN[2] = 0; }
-							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints,
+							this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints,
 							                                                                               this->keepOutFov, this->keepOutBore_B);
-							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
 						}
 					}
 				}
 				// along j direction
-				if (NodesMap[i][j].count(k) == 1 && NodesMap[i][j+1].count(k) == 0 && r < 1) {
+				if (this->NodesMap[i][j].count(k) == 1 && this->NodesMap[i][j+1].count(k) == 0 && r < 1) {
 					indices[0] = i; indices[1] = j+1; indices[2] = k;
 					mirrorFunction(indices, mirrorIndices);
 					for (int m = 0; m < 8; m++) {
-						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+						if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
 							if (indices[0] != 0) { sigma_BN[0] = mirrorIndices[m][0]/indices[0]*u[indices[0]]; } else { sigma_BN[0] = 0; }
 							sigma_BN[1] = mirrorIndices[m][1]/indices[1] * pow(1-pow(u[i],2)-pow(u[k],2),0.5);
 							if (indices[2] != 0) { sigma_BN[2] = mirrorIndices[m][2]/indices[2]*u[indices[2]]; } else { sigma_BN[2] = 0; }
-							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints,
+							this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints,
 							                                                                               this->keepOutFov, this->keepOutBore_B);
-							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
 						}
 					}
 				}
 				// along k direction
-				if (NodesMap[i][j].count(k) == 1 && NodesMap[i][j].count(k+1) == 0 && r < 1) {
+				if (this->NodesMap[i][j].count(k) == 1 && this->NodesMap[i][j].count(k+1) == 0 && r < 1) {
 					indices[0] = i; indices[1] = j; indices[2] = k+1;
 					mirrorFunction(indices, mirrorIndices);
 					for (int m = 0; m < 8; m++) {
-						if (NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+						if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
 							if (indices[0] != 0) { sigma_BN[0] = mirrorIndices[m][0]/indices[0]*u[indices[0]]; } else { sigma_BN[0] = 0; }
 							if (indices[1] != 0) { sigma_BN[1] = mirrorIndices[m][1]/indices[1]*u[indices[1]]; } else { sigma_BN[1] = 0; }
 							sigma_BN[2] = mirrorIndices[m][2]/indices[2] * pow(1-pow(u[i],2)-pow(u[j],2),0.5);
-							NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints,
+							this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints,
 							                                                                               this->keepOutFov, this->keepOutBore_B);
-							NodePropertiesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = NodeProperties();
 						}
 					}
 				}
 			}
 		} 
 	}
-
 	// link nodes to adjacent neighbors
 	int neighbors[26][3];
-	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
+	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=this->NodesMap.begin(); it1!=this->NodesMap.end(); it1++) {
 		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
 			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
 				indices[0] = it1->first; indices[1] = it2->first; indices[2] = it3->first;
 				neighboringNodes(indices, neighbors);
 				for (int n = 0; n < 26; n++) {
-					if (NodesMap[neighbors[n][0]][neighbors[n][1]].count(neighbors[n][2]) == 1) {
-						if (NodesMap[indices[0]][indices[1]][indices[2]].isFree && NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]].isFree) {
-							NodePropertiesMap[indices[0]][indices[1]][indices[2]].neighbors[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]] = NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]];
+					if (this->NodesMap[neighbors[n][0]][neighbors[n][1]].count(neighbors[n][2]) == 1) {
+						if (this->NodesMap[indices[0]][indices[1]][indices[2]].isFree && this->NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]].isFree) {
+							this->NodesMap[indices[0]][indices[1]][indices[2]].appendNeighbor(&this->NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]]);
 						}
 					}
 				}
@@ -218,47 +204,96 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode, in
 		}
 	}
 	// link boundary nodes to neighbors of shadow set
-	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
+	bool flag;
+	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=this->NodesMap.begin(); it1!=this->NodesMap.end(); it1++) {
 		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
 			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
 				if (it3->second.isBoundary && it3->second.isFree) {
 					int i, j, k;
-					i = it1->first; j = it2->first; k = it3->first;
-					// std::cout << it1->first << " " << it2->first << " " << it3->first << ": \n";
-					for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it4=NodePropertiesMap[-i][-j][-k].neighbors.begin(); it4!=NodePropertiesMap[-i][-j][-k].neighbors.end(); it4++) {
-						for (std::map<int,std::map<int,Node>>::iterator it5=it4->second.begin(); it5!=it4->second.end(); it5++) {
-							for (std::map<int,Node>::iterator it6=it5->second.begin(); it6!=it5->second.end(); it6++) {
-								if (NodePropertiesMap[i][j][k].neighbors[it4->first][it5->first].count(it6->first) == 0 && it6->second.isFree) {
-									NodePropertiesMap[i][j][k].neighbors[it4->first][it5->first][it6->first] = it6->second;
-								}
+					i = it1->first;  j = it2->first;  k = it3->first;
+					for (int n = 0; n < this->NodesMap[-i][-j][-k].neighborCount; n++) {
+						flag = true;
+						for (int m = 0; m < this->NodesMap[i][j][k].neighborCount; m++) {
+							if (this->NodesMap[-i][-j][-k].neighbors[n] == this->NodesMap[i][j][k].neighbors[m]) {
+								flag = false;
 							}
+						}
+						if (flag == true) {
+							it3->second.appendNeighbor(this->NodesMap[-i][-j][-k].neighbors[n]);
 						}
 					}
 				}
 			}
 		}
 	}
-    
+    /*
 	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
 		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
 			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
-				if (!it3->second.isFree) {
-    				std::cout << it1->first << " " << it2->first << " " << it3->first << "\n";
-				}
-				        //  << it3->second.sigma_BN[0] << " " << it3->second.sigma_BN[1] << " " << it3->second.sigma_BN[2]
-						//  << " " << it3->second.isBoundary << "\n";
-						/*
 				int i, j, k;
 				i = it1->first; j = it2->first; k = it3->first;
-				for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it4=NodePropertiesMap[i][j][k].neighbors.begin(); it4!=NodePropertiesMap[i][j][k].neighbors.end(); it4++) {
-					for (std::map<int,std::map<int,Node>>::iterator it5=it4->second.begin(); it5!=it4->second.end(); it5++) {
-						for (std::map<int,Node>::iterator it6=it5->second.begin(); it6!=it5->second.end(); it6++) {
-							std::cout << it4->first << " " << it5->first << " " << it6->first << "\n";
-						}
-					}
-				} */
+				std::cout << NodesMap[i][j][k].sigma_BN[0] << " " << NodesMap[i][j][k].sigma_BN[1] << " " << NodesMap[i][j][k].sigma_BN[2] << " : \n";
+				for (int n = 0; n < NodesMap[i][j][k].neighborCount; n++) {
+					std::cout << NodesMap[i][j][k].neighbors[n]->sigma_BN[0] << " " << NodesMap[i][j][k].neighbors[n]->sigma_BN[1] << " " << NodesMap[i][j][k].neighbors[n]->sigma_BN[2] << "\n";
+				}
 			}
-		} 
+		}
+	} */
+    
+	// add start and goal node to grid and connecting them to the neighboring nodes:
+	double ds = 10;
+	double dg = 10;
+	double d1, d2;
+	int keyS[3];
+	int keyG[3];
+	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=this->NodesMap.begin(); it1!=this->NodesMap.end(); it1++) {
+		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
+			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
+				d1 = distance(startNode, it3->second);
+				if (d1 < ds) {
+					ds = d1;
+					keyS[0] = it1->first;   keyS[1] = it2->first;   keyS[2] = it3->first;
+				}
+				d2 = distance(goalNode, it3->second);
+				if (d2 < dg) {
+					dg = d2;
+					keyG[0] = it1->first;   keyG[1] = it2->first;   keyG[2] = it3->first;
+				}
+			}
+		}
+	}
+	for (int n = 0; n < this->NodesMap[keyS[0]][keyS[1]][keyS[2]].neighborCount; n++) {
+		startNode.appendNeighbor(this->NodesMap[keyS[0]][keyS[1]][keyS[2]].neighbors[n]);
+	}
+	for (int n = 0; n < this->NodesMap[keyG[0]][keyG[1]][keyG[2]].neighborCount; n++) {
+		this->NodesMap[keyG[0]][keyG[1]][keyG[2]].neighbors[n]->appendNeighbor(&goalNode);
+	}
+	this->NodesMap[keyS[0]][keyS[1]][keyS[2]] = startNode;
+	this->NodesMap[keyG[0]][keyG[1]][keyG[2]] = goalNode;
+	this->keyS[0] = keyS[0]; this->keyS[1] = keyS[1]; this->keyS[2] = keyS[2];
+	this->keyG[0] = keyG[0]; this->keyG[1] = keyG[1]; this->keyG[2] = keyG[2];
+
+}
+
+/*! This method applies standard distance-based A* to find a valid path
+ @return void
+ */
+void ConstrainedAttitudeManeuver::AStar(Node *path[20])
+{
+	for (std::map<int,std::map<int,std::map<int,Node>>>::iterator it1=NodesMap.begin(); it1!=NodesMap.end(); it1++) {
+		for (std::map<int,std::map<int,Node>>::iterator it2=it1->second.begin(); it2!=it1->second.end(); it2++) {
+			for (std::map<int,Node>::iterator it3=it2->second.begin(); it3!=it2->second.end(); it3++) {
+				it3->second.heuristic = distance(it3->second, NodesMap[this->keyG[0]][this->keyG[1]][this->keyG[2]]);
+			}
+		}
+	}
+
+	NodeList O, C;
+	O.append(&NodesMap[this->keyS[0]][this->keyS[1]][this->keyS[2]]);
+    int n = 0;
+	while (O.list[0] != &NodesMap[this->keyG[0]][this->keyG[1]][this->keyG[2]] && n < 1000) {
+		n += 1;
+		C.append(O.list[0]);
 	}
 
 }
@@ -290,6 +325,8 @@ Node::Node(double sigma_BN[3], constraintStruct constraints,
 	}
 	this->heuristic = 0;
 	this->priority = 0;
+	this->neighborCount = 0;
+	this->pathCount = 0;
 
     return;
 }
@@ -297,6 +334,22 @@ Node::Node(double sigma_BN[3], constraintStruct constraints,
 /*! Module Destructor.  */
 Node::~Node()
 {
+    return;
+}
+
+/*! This method appends a pointer to neighboring node to the neighbors class variable */
+void Node::appendNeighbor(Node *node)
+{
+	this->neighbors[this->neighborCount] = node;
+	this->neighborCount += 1;
+    return;
+}
+
+/*! This method appends a pointer to neighboring node to the neighbors class variable */
+void Node::appendPathNode(Node *node)
+{
+	this->neighbors[this->pathCount] = node;
+	this->pathCount += 1;
     return;
 }
 
@@ -379,4 +432,56 @@ double distance(Node n1, Node n2)
         if (d[i] < D) { D = d[i]; }
     }
 	return D;
+}
+
+/*! This is the constructor for the NodeList class. */
+NodeList::NodeList()
+{
+	this-> N = 0;
+    return;
+}
+
+/*! Class Destructor. */
+NodeList::~NodeList()
+{
+    return;
+}
+
+void NodeList::append(Node* node)
+{
+	this->list[this->N] = node;
+	this->N += 1;
+}
+
+void NodeList::pop(int M)
+{
+	for (int m = M; m < N-1; m++) {
+		this->list[m] = this->list[m+1];
+	}
+	this->N -= 1;
+}
+
+void NodeList::swap(int m, int n)
+{
+	Node *p1 = this->list[m];
+	Node *p2 = this->list[n];
+	this->list[m] = p2;
+	this->list[n] = p1;
+}
+
+void NodeList::sort()
+{
+	int M;
+	double p;
+	for (int n = 0; n < this->N; n++) {
+		p = 1e5;
+		M = N-1;
+		for (int m = n; m < this->N; m++) {
+			if (this->list[m]->priority < p) {
+				p = this->list[m]->priority;
+				M = m;
+			}
+		}
+		swap(n, M);
+	}
 }

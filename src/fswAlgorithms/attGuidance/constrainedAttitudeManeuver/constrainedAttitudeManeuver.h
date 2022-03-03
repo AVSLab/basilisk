@@ -49,14 +49,20 @@ public:
     bool isFree;
     double heuristic;
     double priority;
-
+    Node *neighbors[52];
+    int neighborCount;
+    void appendNeighbor(Node *node);
+    Node *path[20];
+    int pathCount;
+    void appendPathNode(Node *node);
 };
 
+/*
 struct NodeProperties {
 
     std::map<int,std::map<int,std::map<int,Node>>> neighbors;
-    Node path[20];
-};
+    Node *path[20];
+}; */
 
 /*! @brief waypoint reference module class */
 class ConstrainedAttitudeManeuver: public SysModel {
@@ -67,17 +73,20 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadInputs();
-    void GenerateGrid(Node startNode, Node goalNode, int N, std::map<int,std::map<int,std::map<int,Node>>> NodesMap, std::map<int,std::map<int,std::map<int,NodeProperties>>> NodePropertiesMap);
+    void GenerateGrid(Node startNode, Node goalNode);
+         // no need to have maps in the arguments since those are class variables
+    void AStar(Node *path[20]);
 
 public:
     int N;                                                                          //!< Fineness level of discretization
-    double sigma_BN_0[3];                                                           //!< Initial S/C attitude
-    double omega_BN_B_0[3];                                                         //!< Initial S/C angular rate
+    double sigma_BN_goal[3];                                                        //!< Initial S/C attitude
+    double omega_BN_B_goal[3];                                                      //!< Initial S/C angular rate
     double keepOutFov;                                                              //|< Field of view of the sensitive instrument
     double keepOutBore_B[3];                                                        //|< Body-frame direction of the boresight of the sensitive instrument
     constraintStruct constraints;                                                   //!< Structure containing the constraint directions in inertial coordinates
     std::map<int,std::map<int,std::map<int,Node>>> NodesMap;                        //!< C++ map from node indices to Node class
-    std::map<int,std::map<int,std::map<int,NodeProperties>>> NodePropertiesMap;     //!< C++ map from indices to NodeProperties struc
+    int keyS[3];                                                                    //!< key to Start node in NodesMap
+    int keyG[3];                                                                    //!< key to Goal node in NodesMap
 
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;                                   //!< Spacecraft state input message
     ReadFunctor<SpicePlanetStateMsgPayload> celBodyInMsg;                           //!< Celestial body state msg at which we pointing at
@@ -93,5 +102,20 @@ void mirrorFunction(int indices[3], int mirrorIndices[8][3]);
 void neighboringNodes(int indices[3], int neighbors[26][3]);
 
 double distance(Node n1, Node n2);
+
+//! @brief The NodeList class is used in the A* algorithm to handle Open and Closed lists O and C
+class NodeList {
+public:
+    NodeList();
+    ~NodeList();
+
+    Node* list[50];
+    int N;
+    void append(Node* node);
+    void pop(int M);
+    void swap(int m, int n);
+    void sort();
+
+};
 
 #endif

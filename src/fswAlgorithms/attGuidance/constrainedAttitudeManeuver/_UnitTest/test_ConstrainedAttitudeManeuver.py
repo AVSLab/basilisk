@@ -19,7 +19,7 @@
 
 #
 #   Unit Test Script
-#   Module Name:        waypointReference
+#   Module Name:        constrainedAttitudeManeuver
 #   Author:             Riccardo Calaon
 #   Creation Date:      March 14, 2021
 #
@@ -59,6 +59,8 @@ def CAMTestFunction(N):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
     
     CAM = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(N)
+    CAM.sigma_BN_goal = [0.75, 0, 0]
+    CAM.omega_BN_B_goal = [0, 0, 0]
     CAM.keepOutFov = np.pi/9
     CAM.keepOutBore_B = [1,0,0]
     CAM.ModelTag = "CAMTestModule"
@@ -67,6 +69,7 @@ def CAMTestFunction(N):
     # connect messages
     SCStatesMsgData = messaging.SCStatesMsgPayload()
     SCStatesMsgData.r_BN_N = [1,0,0]
+    SCStatesMsgData.sigma_BN = [0,1,0]
     SCStatesMsg = messaging.SCStatesMsg().write(SCStatesMsgData)
     PlanetStateMsgData = messaging.SpicePlanetStateMsgPayload()
     PlanetStateMsgData.PositionVector = [10,0,0]
@@ -95,5 +98,5 @@ def CAMTestFunction(N):
 #
 if __name__ == "__main__":
     CAMTestFunction(
-        10)
+        11)
 	   
