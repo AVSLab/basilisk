@@ -43,10 +43,6 @@ class TabularAtmosphere:  public AtmosphereBase {
          TabularAtmosphere();
          ~TabularAtmosphere();
          void customReset();
-        // double baseDensity;             //!< [kg/m^3] Density at h=0
-        // double scaleHeight;             //!< [m] Tabular characteristic height
-        // double localTemp = 293.0;       //!< [K] Local atmospheric temperature; set to be constant.
-        // alt, rho, temp list vector of doubles
         std::vector<double> altList;
         std::vector<double> rhoList;
         std::vector<double> tempList;
