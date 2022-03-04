@@ -55,6 +55,8 @@ from Basilisk.utilities.readAtmTable import readAtmTable
 # The first parametrize arguments are shown last in the pytest argument list
 @pytest.mark.parametrize("accuracy", [1e-12])
 @pytest.mark.parametrize("altitude", [50.0, 33.33333, 10000.0, -10.0]) # exact, interpolate, above, below
+@pytest.mark.parametrize("useMinReach", [ True, False])
+@pytest.mark.parametrize("useMaxReach", [ True, False])
 
 def test_tabularAtmosphere(show_plots, altitude, accuracy):
     r"""
@@ -67,6 +69,18 @@ def test_tabularAtmosphere(show_plots, altitude, accuracy):
     content will be copied into each report so each test description is individually complete.  If there is a
     discussion you want to include that is specific to the a parameterized test case, then include this at the
     end of the file with a conditional print() statement that only executes for that particular parameterized test.
+    
+ ADDED   
+   Calculates the atmospheric density and temperature at the requested altitude of the user. The function readAtmTable
+    will be used to to read in the requested atmosphere table and then fetch the column of values for altitude, density, 
+    and temperature to insert them into their own respective variables as vectors of doubles. The function also makes 
+    necessary conversions to these values before assigning them to their variables so the units are meters for altitude, 
+    kilogram per meter cubed for density, and Kelvin for temperature. Will parse the altitude list until either there is
+    a match with the requested value and will return the density and temperaure with the same index. If the requested 
+    altitude lands between two consecutive values on the list, then will perform linear interpolation. 
+    When requesting the table, the inputted string must match directly with the table name but can be all lowercase. 
+    The input altitude must be in units of meters. Any input altitude outside of the range on the requested table will
+    return 0. Any input value other than type double will throw an error. 
 
     **Test Parameters**
 
@@ -109,7 +123,7 @@ def test_tabularAtmosphere(show_plots, altitude, accuracy):
     assert testResults < 1, testMessage
 
 
-def tabularAtmosphereTestFunction(show_plots, altitude, accuracy):
+def tabularAtmosphereTestFunction(show_plots, altitude, accuracy, useMinReach, useMaxReach):
     testFailCount = 0                       # zero unit test result counter
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
@@ -141,6 +155,19 @@ def tabularAtmosphereTestFunction(show_plots, altitude, accuracy):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
+    
+    
+    # CHECK - env min and max
+    minReach = -1.0
+    if useMinReach:
+        minReach = module.altList[0]    
+        module.envMinReach = minReach
+        module.planetRadius =  6378136.6 #meters
+    maxReach = -1.0
+    if useMaxReach:
+        maxReach = module.altList[-1]
+        module.envMaxReach = maxReach
+        module.planetRadius =  6378136.6
     
     #   setup orbit and simulation time
     r0 = r_eq + (altitude * 1000.0)  # meters
@@ -221,7 +248,7 @@ def tabularAtmosphereTestFunction(show_plots, altitude, accuracy):
         testMessage = "density computed incorrectly"
         
     # compare truth values to module results for temperature
-    if trueTemp != 2.7:    # temperature of space in kelvin - needs checking
+    if trueTemp != 0 :    # needs checking
         testFailCount = not unitTestSupport.isDoubleEqualRelative(tempData[0], trueTemp, accuracy)
     else:
         testFailCount = not unitTestSupport.isDoubleEqual(tempData[0], trueTemp, accuracy)

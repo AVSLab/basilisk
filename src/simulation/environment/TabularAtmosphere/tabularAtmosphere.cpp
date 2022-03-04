@@ -37,25 +37,33 @@ TabularAtmosphere::~TabularAtmosphere()
     return;
 }
 
-void TabularAtmosphere::customReset()
+virtual void TabularAtmosphere::customReset()
 {
     this->altList_length = this->altList.size();
     this->rhoList_length = this->rhoList.size();
     this->tempList_length = this->tempList.size();
     
 
-    if((altList_length == rhoList_length) && (altList_length == tempList_length)){
+    if((this->altList_length == this->rhoList_length) && (this->altList_length == this->tempList_length)){
         return;
     } else {
         std::cout << "Error: data not equal length." << std::endl;
     }
-
+    
+    if(this->altList_length == 0){
+        std::cout << "Error: no data in altitude list." << std::endl;
+    } else if(this->rhoList_length == 0){
+        std::cout << "Error: no data in density list." << std::endl;
+    } else if(this->tempList_length == 0){
+        std::cout << "Error: no data in temperature list." << std::endl;
+    }
+    
     return;
 }
 
 void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
 {
-    for(int i=0; i <= this->altList.size(); i++){
+    for(int i=0; i <= this->altList.size() - 1; i++){
 		if(this->altList[i] > this->orbitAltitude){
 			msg->neutralDensity = this->rhoList[i-1] + (this->orbitAltitude - this->altList[i-1]) * (this->rhoList[i] - this->rhoList[i-1]) / (this->altList[i] - this->altList[i-1]);
 			msg->localTemp = this->tempList[i-1] + (this->orbitAltitude - this->altList[i-1]) * (this->tempList[i] - this->tempList[i-1]) / (this->altList[i] - this->altList[i-1]);

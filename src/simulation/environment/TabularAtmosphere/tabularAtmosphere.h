@@ -33,19 +33,21 @@
 class TabularAtmosphere:  public AtmosphereBase {
 
     private:
+    
+        // pulls density and temperature from atmospheric table at requested altitude, performs linear interpolation if necessary
         void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime);
-        double interp(double x, std::vector<double> xList, std::vector<double> yList);
-        int altList_length;
-        int rhoList_length;
-        int tempList_length;
+        
+        int altList_length;     // length of list of altitude values extracted from the atmosphere table
+        int rhoList_length;     // length of list of density values extracted from the atmosphere table
+        int tempList_length;    // length of list of temperature values extracted from the atmosphere table
     
     public:
          TabularAtmosphere();
          ~TabularAtmosphere();
-         void customReset();
-        std::vector<double> altList;
-        std::vector<double> rhoList;
-        std::vector<double> tempList;
+         void customReset();            // reset if error thrown
+        std::vector<double> altList;    // vector of doubles of altitude values extracted from the atmosphere table
+        std::vector<double> rhoList;    // vector of doubles of density values extracted from the atmosphere table
+        std::vector<double> tempList;   // vector of doubles of temperature values extracted from the atmosphere table
         BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 
