@@ -159,6 +159,7 @@ def run():
     # Configure Vizard settings
     if vizSupport.vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                  , oscOrbitColorList=[vizSupport.toRGBA255("Magenta")]
                                                   # , saveFile=__file__
                                                   )
         viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
@@ -167,6 +168,7 @@ def run():
         viz.settings.showSpacecraftLabels = 1
         viz.settings.showCelestialBodyLabels = 1
         viz.settings.mainCameraTarget = "sun"  # Gives heliocentric view
+        viz.settings.showMissionTime = 1
 
     # Initialize and execute simulation
     scSim.InitializeSimulation()
