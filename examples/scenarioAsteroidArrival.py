@@ -507,12 +507,12 @@ def run(show_plots):
         viz.settings.planetViewToHelioViewBoundaryMultiplier = 100
         viz.settings.orbitLinesOn = -1
         viz.settings.keyboardAngularRate = np.deg2rad(0.5)
-        viz.settings.spacecraftSizeMultiplier = 100
 
         # Create the science mode camera
         vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.ModelTag,
                                         fieldOfView=10 * macros.D2R,
-                                        pointingVector_B=[0,1,0], position_B=cameraLocation)
+                                        displayName="10˚ FOV Camera",
+                                        pointingVector_B=[0, 1, 0], position_B=cameraLocation)
 
         # Note: After running the enableUnityVisualization() method, we need to clear the
         # vizInterface spacecraft data container, scData, and push our custom copy to it.
