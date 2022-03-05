@@ -1187,7 +1187,6 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                   'number of spacecraft and contain lists of transceivers')
             exit(1)
         for elem in trueOrbitColorList:
-            print(elem)
             if isinstance(elem, list):
                 if len(elem) != 4:
                     print('ERROR: vizSupport: if specifying trueOrbitColorList color via RGBA values, you '

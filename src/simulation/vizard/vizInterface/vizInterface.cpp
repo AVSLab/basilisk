@@ -865,12 +865,12 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             scp->set_modeldictionarykey(scIt->modelDictionaryKey);
 
             /* set spacecraft osculating orbit line color */
-            for (int i=0; i<4; i++){
+            for (int i=0; i<scIt->oscOrbitLineColor.size(); i++){
                 scp->add_oscorbitlinecolor(scIt->oscOrbitLineColor[i]);
             }
 
             /* set spacecraft true orbit line color */
-            for (int i=0; i<4; i++){
+            for (int i=0; i<scIt->trueTrajectoryLineColor.size(); i++){
                 scp->add_truetrajectorylinecolor(scIt->trueTrajectoryLineColor[i]);
             }
 
