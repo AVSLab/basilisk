@@ -47,6 +47,7 @@ Version |release|
 - modified :ref:`msmForceTorque` to create an output message with the MSM charge values for each spacecraft
 - added new :ref:`scenarioInertialSpiral` example scenario
 - improved robustness of Basilisk installation script
+- provide support for Vizard 2.0.4 feature scripting
 - added a new heliocentric mission simulation example using custom Spice spacecraft
   trajectory file :ref:`scenarioHelioTransSpice`
 - added a new planetary fly-by mission example using a custom Spice translational file and
