@@ -40,11 +40,12 @@ class TabularAtmosphere:  public AtmosphereBase {
         int altList_length;     // length of list of altitude values extracted from the atmosphere table
         int rhoList_length;     // length of list of density values extracted from the atmosphere table
         int tempList_length;    // length of list of temperature values extracted from the atmosphere table
-    
+
+        virtual void customReset(uint64_t CurrentClock);        // reset if error thrown
+
     public:
          TabularAtmosphere();
          ~TabularAtmosphere();
-         void customReset();            // reset if error thrown
         std::vector<double> altList;    // vector of doubles of altitude values extracted from the atmosphere table
         std::vector<double> rhoList;    // vector of doubles of density values extracted from the atmosphere table
         std::vector<double> tempList;   // vector of doubles of temperature values extracted from the atmosphere table

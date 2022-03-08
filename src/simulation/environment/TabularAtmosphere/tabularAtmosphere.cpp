@@ -37,7 +37,7 @@ TabularAtmosphere::~TabularAtmosphere()
     return;
 }
 
-virtual void TabularAtmosphere::customReset()
+void TabularAtmosphere::customReset(uint64_t CurrentClock)
 {
     this->altList_length = this->altList.size();
     this->rhoList_length = this->rhoList.size();
