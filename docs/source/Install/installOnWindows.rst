@@ -85,7 +85,7 @@ steps work regardless if done within a virtual environment or not.
 
 - Activate virtual environment when needing configure, build or run Basilisk::
 
-    $ venv\Scripts\activate
+    $ .venv\Scripts\activate
 
   If the virtual environment is activated, users will see (venv) before the prompt
 
