@@ -1178,6 +1178,10 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                     print('ERROR: vizSupport: if specifying oscOrbitColorList color via RGBA values, you '
                           'must provide 4 integers values from 0 to 255 ')
                     exit(1)
+                for color in elem:
+                    if color < 0:
+                        print('ERROR: vizSupport:  oscOrbitColorList color contained negative value ')
+                        exit(1)
 
     trueOrbitColorList = False
     if 'trueOrbitColorList' in kwargs:
@@ -1192,6 +1196,10 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                     print('ERROR: vizSupport: if specifying trueOrbitColorList color via RGBA values, you '
                           'must provide 4 integers values from 0 to 255 ')
                     exit(1)
+                for color in elem:
+                    if color < 0:
+                        print('ERROR: vizSupport:  trueOrbitColorList color contained negative value ')
+                        exit(1)
 
     # loop over all spacecraft to associated states and msg information
     planetNameList = []
