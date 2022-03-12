@@ -9,14 +9,47 @@ Release Notes
 
     - general GUI enhancements
     - articulating CAD models
-    - fuel tank visualization
-    - show the battery and power state
-    - show the hard drive state
     - Add the rate gyro visualization
     - Improved atmospheric shaders
     - Alternate camera view points relative to non-spacecraft locations (lunar landing site, etc.)
     - Add magnetic torque bar visualization
-    - Provide a spacecraft attached flash light component
+    - visualize MSM charge values
+    - load custom Unity generated spacecraft and celestial body models at run time
+
+**Version 2.0.4(March 12, 2022)**
+
+- Updated :ref:`VizardGUI` to list the built-in CAD shapes in Vizard to show planet and asteroid shapes
+- added support for the Vizard flag ``celestialBodyHelioViewSizeMultiplier`` to script in python
+  how much the celestial bodies are enlarged in heliocentric view
+- shows spacecraft true path trajectory correctly around small bodies and in solar system view
+- fixed bug in scaling of non-spherical celestial bodies in solar system view, these bodies will
+  now show up at the artificially large size of the other bodies in solar system view
+- added a setting to protobuffer so user can set the default size of celestial bodies in solar
+  system view
+- added ``modelDictionaryKey`` key field to both Spacecraft and Celestial Body sub messages to
+  allow users to specify one of the internally supported spacecraft or celestial body
+  models without having to match the model’s name to the object’s name (i.e. you could
+  use “Phobos” as an asteroid model)
+- fixed bug in primary body calculation for custom celestial bodies
+- fixed bug with double clicking on celestial bodies in solar system view
+- made matching of supported celestial bodies with their included textures/models case-insensitive
+- instrument camera skybox will correctly show the chosen skybox instead of always defaulting to black
+- camera skybox defaults to NASA SVS skybox
+- generic sensor labels stay off when HUD isHidden changes
+- made the setting of main camera near and far clipping planes dynamic to better
+  accommodate distant small objects
+- added a panel label string to the standard camera protobuffer settings, user
+  can also rename the camera panel view by clicking on the label and typing a new name in it
+- standard camera panel windows will open with the settings sub panel hidden if they
+  were automatically set up with a camera settings message for a cleaner appearance on start up
+- added settings to spacecraft sub message to allow user to set the colors of both the
+  osculating and true path trajectory lines
+- added setting to allow user to toggle showing the Mission Time in the playback bar on startup
+- ground locations will update all their parameters at every time step, allowing them to be
+  reused for multiple ground targets
+- fixed bug when zooming out from spacecraft when it is in deep space and its parent body is the sun
+- added support to main camera hill frame following so that a transition across spheres of
+  influence can be correctly managed
 
 **Version 2.0.3 (Dec. 15, 2021)**
 

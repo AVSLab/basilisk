@@ -573,7 +573,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_sunintensity(this->settings.sunIntensity);
         vizSettings->set_attenuatesunlightwithdistance(this->settings.attenuateSunLightWithDistance);
         vizSettings->set_showlightlabels(this->settings.showLightLabels);
-
+        vizSettings->set_celestialbodyhelioviewsizemultiplier(this->settings.celestialBodyHelioViewSizeMultiplier);
+        vizSettings->set_showmissiontime(this->settings.showMissionTime);
+        
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();
@@ -640,6 +642,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     sc->add_position(scp->position_B[i]);
                 }
             }
+            sc->set_displayname(scp->displayName);
         }
 
         message->set_allocated_settings(vizSettings);
@@ -858,6 +861,19 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 ld->set_lensflarefadespeed(scIt->lightList[idx]->lensFlareFadeSpeed);
             }
 
+            /* Write the SC sprite string */
+            scp->set_modeldictionarykey(scIt->modelDictionaryKey);
+
+            /* set spacecraft osculating orbit line color */
+            for (int i=0; i<scIt->oscOrbitLineColor.size(); i++){
+                scp->add_oscorbitlinecolor(scIt->oscOrbitLineColor[i]);
+            }
+
+            /* set spacecraft true orbit line color */
+            for (int i=0; i<scIt->trueTrajectoryLineColor.size(); i++){
+                scp->add_truetrajectorylinecolor(scIt->trueTrajectoryLineColor[i]);
+            }
+
         }
     }
 
@@ -891,6 +907,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             spice->set_mu(this->gravBodyInformation.at(k).mu/1e9);  /* must be in km^3/s^2 */
             spice->set_radiuseq(this->gravBodyInformation.at(k).radEquator/1000.);  /* must be in km */
             spice->set_radiusratio(this->gravBodyInformation.at(k).radiusRatio);
+            spice->set_modeldictionarykey(this->gravBodyInformation.at(k).modelDictionaryKey);
             for (int i=0; i<3; i++){
                 spice->add_position(this->spiceMessage[k].PositionVector[i]);
                 spice->add_velocity(this->spiceMessage[k].VelocityVector[i]);

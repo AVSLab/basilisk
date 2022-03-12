@@ -421,9 +421,9 @@ def run(show_plots):
         servicerLight = vizInterface.Light()
         servicerLight.label = "Main Light"
         servicerLight.position = [0.2, -1.0, 1.01]
-        servicerLight.fieldOfView = 3.0 * macros.D2R
+        servicerLight.fieldOfView = 10.0 * macros.D2R
         servicerLight.normalVector = [0, 0, 1]
-        servicerLight.range = 50.0
+        servicerLight.range = 150.0
         servicerLight.markerDiameter = 0.1
         servicerLight.color = vizInterface.IntVector(vizSupport.toRGBA255("red"))
 

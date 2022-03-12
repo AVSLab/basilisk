@@ -92,6 +92,7 @@ public:
     uint64_t timeWritten = 0;       //!< [ns]     time the input planet state message was written
     std::string planetName="";      //!<          Gravitational body name, this is used as the Spice name if spiceInterface is used
     std::string displayName="";     //!<          this is the name that is displayed in Vizard.  If not set, Vizard shows planetName
+    std::string modelDictionaryKey = ""; //!<     "" will result in using the current default for the celestial body's given name, otherwise key will be matched if possible to available model in internal model dictionary
 
     SphericalHarmonics spherHarm;   //!<          Object that computes the spherical harmonics gravity field
     BSKLogger bskLogger;            //!< -- BSK Logging

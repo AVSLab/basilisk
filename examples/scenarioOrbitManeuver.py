@@ -195,9 +195,13 @@ def run(show_plots, maneuverCase):
     scSim.AddModelToTask(simTaskName, dataRec)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , oscOrbitColorList=[vizSupport.toRGBA255("yellow")]
+                                              , trueOrbitColorList=[vizSupport.toRGBA255("turquoise")]
+                                              # , saveFile=fileName
+                                              )
+    viz.settings.mainCameraTarget = "earth"
+    viz.settings.trueTrajectoryLinesOn = 1
 
     #
     #   initialize Simulation

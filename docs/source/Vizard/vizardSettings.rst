@@ -195,6 +195,16 @@ default setting for that behavior.
       - int
       - Toggle to label spacecraft light elements, Value of 0 (protobuffer default) to use viz
         default, -1 for false, 1 for true
+    * - ``celestialBodyHelioViewSizeMultiplier``
+      - double
+      - Control the display size of celestial bodies in the Solar System View,
+        values greater than 0, use negative value to use viz default.
+        Default value is -1 to use Vizard default value.
+    * - ``showMissionTime``
+      - int
+      - flag to show the mission time instead of the simulation time. Value of 0 (protobuffer default)
+        to use viz default, -1 for false, 1 for true
+
 
 
 While the prior settings are only read once during start up, the following settings are checked
@@ -509,6 +519,11 @@ the arguments for the ``createStandardCamera`` method.
       - If populated, ets camera  position relative to parent body coordinate frame in meters using B frame
         components.  If unpopulated camera is positioned automatically along camera view direction outside
         of parent body's mesh to prevent obstruction of view.
+    * - ``displayName``
+      - string
+      -
+      - No, Default is ``Standard Camera``
+      - (optional) name that is used to label the camera window
 
 .. image:: /_images/static/vizard-ImgCustomCam.jpg
    :align: center
@@ -679,8 +694,18 @@ spacecraft data structure.
 The example scenario :ref:`scenarioFormationBasic` illustrates how to simulate multiple spacecraft.  To make
 a spacecraft use a specific sprite representation use::
 
-    scData.spacecraftSprite = vizSupport.setSprite("STAR")
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , spriteList=vizSupport.setSprite("STAR", color="red")
+                                              , saveFile=fileName,
+                                              )
 
+If you are using multiple spacecraft, then the sprite information list must have the same length as
+the number of spacecraft::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2, scObject3]
+                                              , spriteList=[None, vizSupport.setSprite("STAR", color="red"), None]
+                                              , saveFile=fileName,
+                                              )
 
 
 Specifying the Simulation Epoch Date and Time Information
@@ -1354,3 +1379,40 @@ The light command state can also be set directly from python using::
     scLight.onLight = 1
 
 However, if the input message is specified then this value is replaced with the content of the input message.
+
+
+Specifying the CAD Model to use
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The spacecraft Vizard data supports the use of ``modelDictionaryKey`` to override the default spacecraft shape
+and is selected by the name, and specify a CAD model to use.  Assume a Vizard spacecraft CAD model is
+labeled with ``cadString``, then you use::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , modelDictionaryKeyList="cadString")
+
+If you have multiple spacecraft, then this argument must be a list with the length being the number of
+spacecraft::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
+                                              , [modelDictionaryKeyList="cadString", None])
+
+The argument None is used to specify the Vizard default shape to be used.
+
+Specifying the Osculating or True Orbit Line Colors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The spacecraft Vizard data supports the use of ``oscOrbitColorList`` to override the default spacecraft osculating
+orbit line color and specify a custom color.  This is done using::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , oscOrbitColorList=vizSupport.toRGB255("red"))
+
+If you have multiple spacecraft, then this argument must be a list with the length being the number of
+spacecraft::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
+                                              , oscOrbitColorList=[vizSupport.toRGB255("red"), None])
+
+The argument None is used to specify the Vizard default shape to be used.
+
+Similarly, to set the actual or true trajectory color, use the keyword ``trueOrbitColorList`` with the same behavior
+as ``oscOrbitColorList``.

@@ -85,6 +85,7 @@ StdCameraSettings
     int setView=0;              //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
     double pointingVector_B[3]; //!< (default to 1, 0, 0). This is a setting for pointing vector mode.
     double position_B[3];       //!< (default to 0, 0, 0). If a non-zero vector, this determines the location of the camera.  If a zero vector, then the camera is placed outside of the spacecraft along the pointing vector direction.
+    std::string displayName=""; //!< (optional) name of the standard camera panel
 }StdCameraSettings;
 
 /*! Vizard User Interface structure specifying what actuator visualizations to show.
@@ -275,6 +276,9 @@ VizSpacecraftData
     std::vector<Light *> lightList;                             //!<[-] (Optional) Vector of spacecraft light devices
 
     std::string spacecraftSprite = "";                          //!< Set sprite for this spacecraft only through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
+    std::string modelDictionaryKey = "";                        //!< (Optional) string specifiying which Vizard cad model to use. If set, it over-rides the model selected by `spacecraftName`
+    std::vector<int> oscOrbitLineColor;                         //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
+    std::vector<int>  trueTrajectoryLineColor;                  //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
 
 }VizSpacecraftData;
 
@@ -333,8 +337,9 @@ VizSettings
     int32_t planetViewToHelioViewBoundaryMultiplier = 0; //!< Multiplier x (10000 * current planet local scale) at which the planet view transitions to the solar system view. Valid range from 1 to 10 or 0 to use viz default.
     double sunIntensity = 0; //!< Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use viz default
     int32_t attenuateSunLightWithDistance = 0; //!< Toggle to reduce brightness of sun lighting with the square of the distance from the sun. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
-    int showLightLabels; //!< Toggle to label spacecraft light elements, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-
+    int showLightLabels=0; //!< Toggle to label spacecraft light elements, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    double celestialBodyHelioViewSizeMultiplier = -1; //!< Control the display size of celestial bodies in the Solar System View, values greater than 0, use negative value to use viz default
+    int showMissionTime = 0;  //!< flag to show the mission time instead of the simulation time. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }VizSettings;
 
 
@@ -356,6 +361,7 @@ typedef struct{
     double mu;                          //!< [m^3/s^2] celestial body gravity constant
     double radEquator;                  //!< [m] celestial body radius at equator
     double radiusRatio;                 //!< [] radiusPolar/radiusEq
+    std::string modelDictionaryKey;  //!< (optional) Vizard model key to use.  If set, it over-rides the model selected by the name
 }GravBodyInfo;
 
 #endif /* vizStructures_h */

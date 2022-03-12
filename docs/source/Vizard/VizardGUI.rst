@@ -331,6 +331,64 @@ selected such as a sphere, cylinder or cube.
    :width: 90 %
 
 
+
+Built-In CAD Models of Celestial Bodies
+---------------------------------------
+
+While custom CAD shapes can be imported to display celestial bodies and spacecraft shapes,
+Vizard has several built-in models that are automatically applied if the body has the
+corresponding name.  For the gravitational bodies, :ref:`vizInterface` uses by default
+the string ``planetName`` in the ``GravBodyData()`` structure as the gravity body label.  If
+the optional string ``displayName`` is set, this this gravity body label over-rides the ``planetName``
+string.  This is handy in that sometimes the gravity body might have an unintuitive Spice ID or name,
+and the user wishes to label the planet with a more common name such as ``earth``, ``mars``, etc.
+Further, or override the auto-shape selection and specify a specific shape, use the
+``modelDictionaryKey`` string to specify CAD model to be used.  This allows the CAD keyword and the
+planet label to be different.
+
+This gravity body label is used in Vizard to select a default shape.  For example, Vizard seeks
+for the label ``earth`` (regardless of capitalization) and will find it in ``earth``, ``earth_planet_data``, etc.
+The following table is the list of built-in Vizard celestial bodies.
+
+.. list-table:: Build-In Vizard Celestial Body Shapes
+    :widths: 25 25 50
+    :header-rows: 1
+
+    * - Vizard Keyword
+      - Features
+      - Satellites
+    * - Mercury
+      -
+      -
+    * - Venus
+      - atmospheric shader
+      -
+    * - Earth
+      - atmospheric shader
+      - moon
+    * - Mars
+      - atmospheric shader
+      - Phobos, Deimos
+    * - Jupiter
+      -
+      -
+    * - Saturn
+      -
+      -
+    * - Uranus
+      -
+      -
+    * - Neptune
+      -
+      -
+    * - Bennu
+      -
+      -
+    * - Ryugu
+      -
+      -
+
+
 Advanced Options
 ----------------
 
