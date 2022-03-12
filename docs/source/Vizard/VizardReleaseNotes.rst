@@ -16,7 +16,7 @@ Release Notes
     - visualize MSM charge values
     - load custom Unity generated spacecraft and celestial body models at run time
 
-**Version 2.0.4(XXXX 2022)**
+**Version 2.0.4(March 12, 2022)**
 
 - Updated :ref:`VizardGUI` to list the built-in CAD shapes in Vizard to show planet and asteroid shapes
 - added support for the Vizard flag ``celestialBodyHelioViewSizeMultiplier`` to script in python
