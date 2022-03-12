@@ -31,6 +31,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 2.1.2 (March 12, 2022)
+------------------------------
 - enhanced :ref:`spiceInterface` to allow Spice spacecraft names to be setup to pull their
   trajectory and attitude states from a spice kernel
 - added :ref:`scenarioSpiceSpacecraft` to illustrate using Spice to specify the trajectory of a
@@ -61,9 +65,9 @@ Version 2.1.1 (Dec. 15, 2021)
 -----------------------------
 - Updated ``OpNav`` mode dependency ``gettext`` to version 0.21 to allow BSK to be build on Windows
   with ``OpNav`` support.
-- created two new messages that contain the information regarding cheduled burns for orbit recofiguration in
+- created two new messages that contain the information regarding scheduled burns for orbit reconfiguration in
   formation flying scenarios. See :ref:`ReconfigBurnInfoMsgPayload` and :ref:`ReconfigBurnArrayInfoMsgPayload`.
-- the module :ref:`spacecraftReconfig` now ouputs a message of type :ref:`ReconfigBurnArrayInfoMsgPayload`.
+- the module :ref:`spacecraftReconfig` now outputs a message of type :ref:`ReconfigBurnArrayInfoMsgPayload`.
   All internal calculation are also done using a buffer of this message type.
 - Added the time standard library to include statements in atmosphereBase.h to fix a build issue found on windows.
 - updated :ref:`spacecraft` to include an optional translational reference message to specify the trajectory
