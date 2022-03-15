@@ -4231,3 +4231,28 @@ def v3Tilde(vector):
               ]
 
     return xTilde
+
+def Euler3232C(vector):
+    """
+    convert Euler 323 sequence to DCM
+    """
+    st1 = math.sin(vector[0])
+    ct1 = math.cos(vector[0])
+    st2 = math.sin(vector[1])
+    ct2 = math.cos(vector[1])
+    st3 = math.sin(vector[2])
+    ct3 = math.cos(vector[2])
+
+    C = np.zeros((3, 3))
+
+    C[0][0] = ct1 * ct2 * ct3 - st1 * st3
+    C[0][1] = ct2 * ct3 * st1 + ct1 * st3
+    C[0][2] = -ct3 * st2
+    C[1][0] = -ct3 * st1 - ct1 * ct2 * st3
+    C[1][1] = ct1 * ct3 - ct2 * st1 * st3
+    C[1][2] = st2 * st3
+    C[2][0] = ct1 * st2
+    C[2][1] = st1 * st2
+    C[2][2] = ct2
+
+    return C

@@ -9,6 +9,7 @@ Version |release|
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found
   when opNav is included.
   The code compiles, but auto-completion etc. doesn't work in that module.
+- :ref:`planetEphemeris` was not computing the correct orientation, this is fixed in current release
 
 Version 2.1.2
 -------------

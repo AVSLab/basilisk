@@ -4505,3 +4505,19 @@ void Mi(double theta, int a, double C[3][3])
             BSK_PRINT(MSG_ERROR, "Mi() error: incorrect axis %d selected.", a);
     }
 }
+
+/*
+ * tilde(theta, mat) returns the the 3x3 cross product matrix
+ */
+void   tilde(double *v, double mat[3][3])
+{
+    m33SetZero(mat);
+    mat[0][1] = -v[2];
+    mat[1][0] = v[2];
+    mat[0][2] = v[1];
+    mat[2][0] = -v[1];
+    mat[1][2] = -v[0];
+    mat[2][1] = v[0];
+
+    return;
+}

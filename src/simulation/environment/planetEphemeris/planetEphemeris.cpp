@@ -106,19 +106,6 @@ void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
         }
     }
 
-    /*! - compute the polar rotation axis unit vector for each planet */
-    if (this->computeAttitudeFlag) {
-        Eigen::Vector3d eHat_N;
-        std::vector<double>::iterator RAN;
-        std::vector<double>::iterator DEC;
-
-        for(RAN = this->rightAscension.begin(), DEC = this->declination.begin(); RAN != this->rightAscension.end(); RAN++, DEC++)
-        {
-            eHat_N << cos(*DEC)*cos(*RAN),cos(*DEC)*sin(*RAN),sin(*DEC);
-            this->eHat_N.push_back(eHat_N);
-        }
-    }
-
     return;
 }
 
@@ -142,7 +129,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
     double lst;                             // [r] local sidereal time angle
     double omega_NP_P[3];                   // [r/s] angular velocity of inertial frame relative to planet frame in planet frame components
     double tilde[3][3];                     // [] skew-symmetric matrix
-    Eigen::Vector3d gamma;                  // [] principal rotation vector going from inertial to planet frame
+    double theta_PN[3];                     // [rad] 3-2-3 planet orientation coordinates
 
 
 
@@ -179,9 +166,8 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
             //! - compute current planet principal rotation parameter vector */
             lst = this->lst0[c] + this->rotRate[c]*(time - this->epochTime);
 
-            //! - compute the planet DCM
-            gamma = this->eHat_N[c]*lst;
-            PRV2C(gamma.data(), newPlanet.J20002Pfix);
+            v3Set(this->rightAscension.at(c), M_PI_2 - this->declination.at(c), lst, theta_PN);
+            Euler3232C(theta_PN, newPlanet.J20002Pfix);
 
             //! - compute the planet DCM rate
             v3Set(0.0, 0.0, -this->rotRate[c], omega_NP_P);

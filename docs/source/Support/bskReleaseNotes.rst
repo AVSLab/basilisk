@@ -31,7 +31,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- corrected how :ref:`planetEphemeris` computes the celestial body orientation
+
 
 Version 2.1.2 (March 12, 2022)
 ------------------------------

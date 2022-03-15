@@ -3996,6 +3996,15 @@ int testRigidBodyKinematics(double accuracy)
         errorCount++;
     }
 
+    v3Set(1.0, 2.0, 3.0, v3_1);
+    tilde(v3_1, C);
+    v3Set(0.0, -3.0, 2.0, C2[0]);
+    v3Set(3.0, 0.0, -1.0, C2[1]);
+    v3Set(-2.0, 1.0, 0.0, C2[2]);
+    if(!m33IsEqual(C, C2, accuracy)) {
+        printf("tilde() failed\n");
+        errorCount++;
+    }
 
     return errorCount;
 }
