@@ -218,13 +218,11 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
             RAN = RANlist[c]
             DEC = DEClist[c]
             lst0 = lstList[c]
-            eHat_N = np.array([np.cos(DEC)*np.cos(RAN), np.cos(DEC)*np.sin(RAN), np.sin(DEC)])
             omega_NP_P = np.array([0.0, 0.0, -omegaList[c]])
             tilde = rbk.v3Tilde(omega_NP_P)
             for time in timeTrue:
                 lst = lst0 + omegaList[c]*time[0]
-                gamma = eHat_N*lst
-                DCM = rbk.PRV2C(gamma)
+                DCM = rbk.Euler3232C([RAN, np.pi/2.0 - DEC, lst])
                 dcmTrue.append(DCM)
                 dDCMdt = np.matmul(tilde, DCM)
                 dcmRateTrue.append(dDCMdt)
@@ -271,7 +269,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
 if __name__ == "__main__":
     test_module(
                  False,           # show plots flag
-                 False,           # setRAN
+                 True,           # setRAN
                  True,           # setDEC
                  True,           # setLST
                  True            # setRate
