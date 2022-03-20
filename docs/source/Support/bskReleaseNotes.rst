@@ -33,6 +33,7 @@ Version |release|
 -----------------
 - corrected how :ref:`planetEphemeris` computes the celestial body orientation
 - corrected issue in Monte Carlo controller class where if a single run is called that fails, this is not reported
+- updated Basilisk documentation CSS to work with the latest version of ``sphinx`` and ``breathe``
 
 Version 2.1.2 (March 12, 2022)
 ------------------------------
