@@ -74,6 +74,26 @@ code, .rst-content tt, .rst-content code {
 	color: #E74C3C;
 }
 
+ul.simple li, aside.sidebar ul li {
+	all: revert;
+}
+
+ul.simple li p, aside.sidebar ul li p {
+	all: revert;
+	line-height: 24px;
+	font-size: 16px;
+	margin: 0px;
+}
+
+ul.simple, aside.sidebar ul {
+	all: revert;
+	padding-left: 1.5em;
+}
+
+figure {
+	text-align: center;
+}
+
 @media (prefers-color-scheme: dark) {
 	.wy-nav-content, .wy-body-for-nav, .wy-nav-content-wrap, math, span[id*='MathJax-Span'] {
 		background-color: black;
