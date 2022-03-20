@@ -630,9 +630,12 @@ class Controller:
                 simGenerator = self.generateSims(list(range(i,i+1)))
                 for sim in simGenerator:
                     try:
-                        simulationExecutor([sim, self.dataOutQueue])
+                        run_ok = simulationExecutor([sim, self.dataOutQueue])[0]
                     except:
                         failed.append(i)
+                    else:
+                        if not run_ok:
+                            failed.append(i)
                     i += 1
                     progressBar.update(i)
         else:
