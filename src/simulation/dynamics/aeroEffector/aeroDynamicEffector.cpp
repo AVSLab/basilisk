@@ -27,7 +27,6 @@ AeroDynamicEffector::AeroDynamicEffector()
 	this->coreParams.projectedArea = 0.0;
 	this->coreParams.dragCoeff = 0.0;
     this->coreParams.comOffset.setZero();
-	this->modelType = "cannonball";
 	this->forceExternal_B.fill(0.0);
 	this->torqueExternalPntB_B.fill(0.0);
 	this->v_B.fill(0.0);
@@ -71,9 +70,19 @@ atmospheric data.
 bool AeroDynamicEffector::ReadInputs()
 {
 	bool dataGood;
+    bool planetRead = false;
     this->atmoInData = this->atmoDensInMsg();
     dataGood = this->atmoDensInMsg.isWritten();
-	return(dataGood);
+    if (this->planetPosInMsg.isLinked())
+    {
+        this->planetState = this->planetPosInMsg();
+        planetRead = this->planetPosInMsg.isWritten();
+        this->dcm_PN_dot = Eigen::Map<Eigen::Matrix3d>(&(this->planetState.J20002Pfix_dot[0][0]), 3, 3);
+    }
+    std::cout << "planetRead:" << planetRead << std::endl;
+    std::cout << "dcm_PN_dot" << dcm_PN_dot << std::endl;
+
+    return(dataGood && planetRead);
 }
 
 /*!
@@ -119,9 +128,7 @@ selecting the model type based on the settable attribute "modelType."
 */
 void AeroDynamicEffector::computeForceTorque(double integTime, double timeStep){
 	updateAeroDir();
-	if(this->modelType == "cannonball"){
-		cannonballAero();
-  	}
+	cannonballAero();
   	return;
 }
 

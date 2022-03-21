@@ -28,6 +28,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/avsEigenMRP.h"
@@ -62,15 +63,18 @@ public:
 public:
     AeroBaseData coreParams;                               //!< -- Struct used to hold aero parameters
     ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg;        //!< -- message used to read density inputs
-    std::string modelType;                                 //!< -- String used to set the type of model used to compute drag
     StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
     Eigen::Vector3d v_B;                                   //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B;                               //!< -- Drag force direction in the inertial frame
     BSKLogger bskLogger;                                   //!< -- BSK Logging
+    Eigen::Matrix3d dcm_PN_dot;                            //!< rad/s DCM rate from inertial to planet-fixed frame
+    ReadFunctor<SpicePlanetStateMsgPayload> planetPosInMsg;           //!< -- Class storage of ephemeris info from scheduled portion
+
 
 private:
     AtmoPropsMsgPayload atmoInData;
+    SpicePlanetStateMsgPayload planetState;                //!< planet state message
     
 };
 
