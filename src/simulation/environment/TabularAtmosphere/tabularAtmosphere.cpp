@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -21,11 +21,15 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include <iostream>
 
-/*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
+/*! The constructor method initializes data list lengths to zero.
  @return void
  */
 TabularAtmosphere::TabularAtmosphere()
 {
+    // initialize to avoid compiler warnings
+    this->altList_length = 0;
+    this->rhoList_length = 0;
+    this->tempList_length = 0;
     return;
 }
 
@@ -37,6 +41,9 @@ TabularAtmosphere::~TabularAtmosphere()
     return;
 }
 
+/*! Reset method checks that the data lists for altitude, density, and temperature have been defined with equal nonzero lengths.
+* @return void
+*/
 void TabularAtmosphere::customReset(uint64_t CurrentClock)
 {
     this->altList_length = this->altList.size();
@@ -47,27 +54,36 @@ void TabularAtmosphere::customReset(uint64_t CurrentClock)
     if((this->altList_length == this->rhoList_length) && (this->altList_length == this->tempList_length)){
         return;
     } else {
-        std::cout << "Error: data not equal length." << std::endl;
+        bskLogger.bskLog(BSK_ERROR, "Input arrays not of equal length.");
     }
     
     if(this->altList_length == 0){
-        std::cout << "Error: no data in altitude list." << std::endl;
+        bskLogger.bskLog(BSK_ERROR, "No data in altitude list.");
     } else if(this->rhoList_length == 0){
-        std::cout << "Error: no data in density list." << std::endl;
+        bskLogger.bskLog(BSK_ERROR, "No data in density list.");
     } else if(this->tempList_length == 0){
-        std::cout << "Error: no data in temperature list." << std::endl;
+        bskLogger.bskLog(BSK_ERROR, "No data in temperature list.");
     }
     
     return;
 }
 
+/*! evaluate function interpolates from given data lists. Sets density and temp to 0 if altitude outside bounds of input lists OR if outside bounds of envMinReach and envMaxReach.
+* @return void
+*/
 void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
 {
-    for(int i=0; i <= this->altList.size() - 1; i++){
-		if(this->altList[i] > this->orbitAltitude){
-			msg->neutralDensity = this->rhoList[i-1] + (this->orbitAltitude - this->altList[i-1]) * (this->rhoList[i] - this->rhoList[i-1]) / (this->altList[i] - this->altList[i-1]);
-			msg->localTemp = this->tempList[i-1] + (this->orbitAltitude - this->altList[i-1]) * (this->tempList[i] - this->tempList[i-1]) / (this->altList[i] - this->altList[i-1]);
-			break;
+    if ((this->orbitAltitude < this->altList[0]) || (this->orbitAltitude > this->altList.back())) {
+        msg->neutralDensity = 0.0;
+        msg->localTemp = 0.0;
+    }
+    else {
+        for (uint32_t i = 0; i <= this->altList.size() - 1; i++) {
+            if (this->altList[i] > this->orbitAltitude) {
+                msg->neutralDensity = this->rhoList[i - 1] + (this->orbitAltitude - this->altList[i - 1]) * (this->rhoList[i] - this->rhoList[i - 1]) / (this->altList[i] - this->altList[i - 1]);
+                msg->localTemp = this->tempList[i - 1] + (this->orbitAltitude - this->altList[i - 1]) * (this->tempList[i] - this->tempList[i - 1]) / (this->altList[i] - this->altList[i - 1]);
+                break;
+            }
         }
     }
     return;

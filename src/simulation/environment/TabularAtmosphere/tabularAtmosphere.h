@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -49,7 +49,7 @@ class TabularAtmosphere:  public AtmosphereBase {
         std::vector<double> altList;    // vector of doubles of altitude values extracted from the atmosphere table
         std::vector<double> rhoList;    // vector of doubles of density values extracted from the atmosphere table
         std::vector<double> tempList;   // vector of doubles of temperature values extracted from the atmosphere table
-        BSKLogger bskLogger;                      //!< -- BSK Logging
+        BSKLogger bskLogger;            //!< -- BSK Logging
 };
 
 

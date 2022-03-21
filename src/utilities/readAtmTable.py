@@ -6,7 +6,6 @@ Created on Sun Oct 24 19:59:42 2021
 @author: mikaelafelix
 """
 
-import csv
 import pandas as pd
 import numpy as np
 

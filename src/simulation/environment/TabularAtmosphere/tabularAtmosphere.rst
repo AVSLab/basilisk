@@ -18,16 +18,14 @@ The ``tabularAtmosphere`` module handles the following behavior:
       
 Module Assumptions and Limitations
 ----------------------------------
-Returns a density of 0 kg/m^3 when the input altitude is above the maximum altitude or below the minimum altitude in the table.
-Returns a temperature of 0 K when the input altitude is below the minimum altitude in the table.
-Returns a temperature of 2.7 K when the input altitude is beyond the maximum altitude in the table, which is the temperature of space. 
+Returns density = 0 kg/m^3 and temperature = 0 K when altitude is outside range of provided data OR if outside range set by (envMinReach, envMaxReach) if those module parameters are defined.
 This module uses a python helper function as access to different atmospheric tables for various planets.
+See Basilisk\supportData\AtmosphereData\support\README.txt for more detail on python helper function and currently provided data tables.
 
 User Guide
 ----------
     
-Required variables are altList, rhoList, and tempList and 
-Each are a list, altitude in ascending order, length of lists are same, 
-Can be defined using helper function
-    
+Required variables are altList, rhoList, and tempList, each a standard vector of doubles.
+The lists must be sorted corresponding to ascending altitude, and be of the same nonzero length.
+Altitude must be provided in meters, density in kg/m^3, and temperature in Kelvin.
     
