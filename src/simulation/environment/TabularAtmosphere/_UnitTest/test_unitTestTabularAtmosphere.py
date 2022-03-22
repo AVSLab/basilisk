@@ -55,22 +55,27 @@ def test_tabularAtmosphere(altitude, accuracy, useMinReach, useMaxReach):
     test uses a python helper function to provide data from EarthGRAM (see supportData\AtmosphereData\support).
     Data lists can also be manually-input, but check sorting and units per documentation and support info (above).
     The module returns 0 for both density and temperature if ANY ONE of the following conditions is met:
-        - altitude below minimum value in provided table
-        - altitude above maximum value in provided table
-        - altitude below envMinReach
-        - altitude above envMaxReach
+
+    - altitude below minimum value in provided table
+    - altitude above maximum value in provided table
+    - altitude below envMinReach
+    - altitude above envMaxReach
+
     Note that this results in nonphysical behavior for temperature (absolute zero) when outside defined range.
 
     **Test Parameters**
+
     Args:
-        altitude (float): Spacecraft altitude for which density, temperature are returned
-        accuracy (float): accuracy value used in validation tests
-        useMinReach (bool): set value of envMinReach
-        useMaxReach (bool): set value of envMaxReach
+
+    - altitude (float): Spacecraft altitude for which density, temperature are returned
+    - accuracy (float): accuracy value used in validation tests
+    - useMinReach (bool): set value of envMinReach
+    - useMaxReach (bool): set value of envMaxReach
 
     **Description of Variables Being Tested**
 
     The unit test checks density (kg/m^3) and temperature (K) against their expected values:
+
     - ``densData[0]``
     - ``tempData[0]``
     """
