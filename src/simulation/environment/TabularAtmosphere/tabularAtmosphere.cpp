@@ -51,9 +51,7 @@ void TabularAtmosphere::customReset(uint64_t CurrentClock)
     this->tempList_length = this->tempList.size();
     
 
-    if((this->altList_length == this->rhoList_length) && (this->altList_length == this->tempList_length)){
-        return;
-    } else {
+    if((this->altList_length != this->rhoList_length) || (this->altList_length != this->tempList_length)){
         bskLogger.bskLog(BSK_ERROR, "Input arrays not of equal length.");
     }
     
