@@ -1,0 +1,94 @@
+ $INPUT
+  SpicePath             = '\spice'                                          
+  ListFileName          = 'C:\GRAMs\GRAM_Suite_1.3\Uranus\IOfiles\UranusGRAMLIST'            
+  ColumnFileName        = 'C:\GRAMs\GRAM_Suite_1.3\Uranus\IOfiles\UranusGRAMNominal'         
+  EastLongitudePositive = 0   
+    
+  TimeFrame = 1
+  TimeScale = 1
+  Month     = 3
+  Day       = 25
+  Year      = 2020
+  Hour      = 12
+  Minute    = 30
+  Seconds   = 0.0
+
+  InitialRandomSeed        = 1234   
+  DensityPerturbationScale = 1.0   
+  MinimumRelativeStepSize  = 0.0
+
+  TrajectoryFileName = 'null' 
+  NumberOfPositions  = 2001     
+  InitialHeight      = 0.0     
+  InitialLatitude    = 22.0   
+  InitialLongitude   = 48.0    
+  DeltaHeight        = 1.0    
+  DeltaLatitude      = 0.     
+  DeltaLongitude     = 0.    
+  DeltaTime          = 0.
+
+  AuxiliaryAtmosphereFileName = 'null'
+  InnerRadius = 0.0
+  OuterRadius = 0.0
+
+  NumberOfMonteCarloRuns = 1    
+ 
+  FastModeOn        = 0
+  ExtraPrecision    = 0
+
+ $END                
+
+ Explanation of variables:
+  SpicePath         =  Path to NAIF Spice data
+  ListFileName      =  List file name
+  ColumnFileName      =  Output file name 
+  EastLongitudePositive =  0 for input and output West longitudes positive
+                           1 for East longitudes positive
+
+  TimeFrame = 0 Planet event time (PET)
+              1 for time input as Earth-receive time (ERT)
+ 
+  TimeScale = 0 for Terrestrial (Dynamical) Time (TDT)
+              1 for time input as Coordinated Universal Time (UTC)
+              2 for Barycentric Dynamical Time (TDB)
+  Month     = month of year                         
+  Day       = day of month                    
+  Year      = year (4-digit, or 1970-2069 can be 2-digit)
+  Hour      = hour of day (meaning controlled by TimeFrame and TimeScale) 
+  Minute    = minute of hour (meaning controlled by TimeFrame and TimeScale)                                       
+  Seconds   = seconds of minute (meaning controlled by TimeFrame and TimeScale) 
+
+  InitialRandomSeed        = starting random number (0 - 2^24 = 16,777,216) 
+  DensityPerturbationScale = random perturbation scale factor for density (0 - 2)    
+  PerturbationScales       = sets all perturbation scale factors (0 - 2)    
+  MinimumRelativeStepSize  = Minimum relative step size for perturbations(0 - 1)
+                         0.0 means always update perturbations, 
+                         x.x means only update perturbations when relative step size > x.x
+
+  TrajectoryFileName = (Optional) Trajectory input file name 
+                       If present, then the values below are ignored 
+  NumberOfPositions  = number of positions to evaluate 
+  InitialHeight      = initial height (km)  
+  InitialLatitude    = initial latitude (N positive), degrees  
+  InitialLongitude   = initial longitude, degrees 
+                       (depends on EastLongitudePositive)
+  DeltaHeight        = height increment (km) between steps
+  DeltaLatitude      = latitude increment (deg) between steps        
+  DeltaLongitude     = longitude increment (deg) between steps
+                       (depends on EastLongitudePositive)      
+  DeltaTime          = time increment (seconds) between steps.
+                      
+
+  AuxiliaryAtmosphereFileName = (Optional) auxiliary profile input file name  
+  InnerRadius = Lat-lon radius within which weight for auxiliary profile is 1.0
+                (Use InnerRadius = 0.0 for no profile input)                   
+  OuterRadius = Lat-lon radius beyond which weight for auxiliary profile is 0.0       
+           
+  NumberOfMonteCarloRuns = the number of Monte Carlo runs             
+
+  FastModeOn        = Flags use of faster ephemeris computations (less accurate)
+                      0 Most accurate ephemeris computations are used
+                      1 Faster computations with slight loss in accuracy
+  ExtraPrecision    = For the new column output format, this parameter 
+                      adds precision to all outputs.
+  

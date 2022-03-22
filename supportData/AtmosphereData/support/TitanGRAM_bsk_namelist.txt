@@ -1,0 +1,125 @@
+ $INPUT
+  SpicePath             = '\spice'                                          
+  ListFileName          = 'C:\GRAMs\GRAM_Suite_1.3\Titan\IOfiles\TitanGRAMLIST'            
+  ColumnFileName        = 'C:\GRAMs\GRAM_Suite_1.3\Titan\IOfiles\TitanGRAMNominal'          
+  EastLongitudePositive = 0   
+    
+  TimeFrame = 1
+  TimeScale = 1
+  Month     = 8
+  Day       = 25
+  Year      = 2021
+  Hour      = 15
+  Minute    = 45
+  Seconds   = 0.0
+
+  InitialRandomSeed        = 1234    
+  DensityPerturbationScale = 1.0   
+  EWWindPerturbationScale  = 1.0   
+  NSWindPerturbationScale  = 1.0   
+  MinimumRelativeStepSize  = 0.0
+
+  TrajectoryFileName = 'null' 
+  NumberOfPositions  = 2001     
+  InitialHeight      = 0.0     
+  InitialLatitude    = 22.0   
+  InitialLongitude   = 48.0    
+  DeltaHeight        = 0.5    
+  DeltaLatitude      = 0.     
+  DeltaLongitude     = 0.     
+  DeltaTime          = 0.
+
+  AuxiliaryAtmosphereFileName = 'null'
+  InnerRadius = 0.0
+  OuterRadius = 0.0
+
+  NumberOfMonteCarloRuns = 1    
+ 
+  ModelType              = 1
+  MinMaxFactor           = 0.0    
+  ComputeMinMaxFactor    = 1
+  MethaneMoleFraction    = 0.0
+ 
+  FastModeOn        = 0
+  ExtraPrecision    = 0
+  UseLegacyOutputs  = 0 
+  DensityPrintScale = 0       
+
+ $END                
+
+ Explanation of variables:
+  SpicePath         =  Path to NAIF Spice data
+  ListFileName      =  List file name
+  ColumnFileName      =  Output file name 
+  EastLongitudePositive =  0 for input and output West longitudes positive
+                           1 for East longitudes positive
+
+  TimeFrame = 0 Planet event time (PET)
+              1 for time input as Earth-receive time (ERT)
+ 
+  TimeScale = 0 for Terrestrial (Dynamical) Time (TDT)
+              1 for time input as Coordinated Universal Time (UTC)
+              2 for Barycentric Dynamical Time (TDB)
+  Month     = month of year                         
+  Day       = day of month                    
+  Year      = year (4-digit, or 1970-2069 can be 2-digit)
+  Hour      = hour of day (meaning controlled by TimeFrame and TimeScale) 
+  Minute    = minute of hour (meaning controlled by TimeFrame and TimeScale)                                       
+  Seconds   = seconds of minute (meaning controlled by TimeFrame and TimeScale) 
+
+  InitialRandomSeed        = starting random number (0 - 2^24 = 16,777,216) 
+  DensityPerturbationScale = random perturbation scale factor for density (0 - 2)    
+  EWWindPerturbationScale  = random perturbation scale factor for east/west winds (0 - 2)    
+  NSWindPerturbationScale  = random perturbation scale factor for north/south winds (0 - 2)    
+  PerturbationScales       = sets all perturbation scale factors (0 - 2)    
+  MinimumRelativeStepSize  = Minimum relative step size for perturbations(0 - 1)
+                         0.0 means always update perturbations, 
+                         x.x means only update perturbations when relative step size > x.x
+
+  TrajectoryFileName = (Optional) Trajectory input file name 
+                       If present, then the values below are ignored 
+  NumberOfPositions  = number of positions to evaluate 
+  InitialHeight      = initial height (km)  
+  InitialLatitude    = initial latitude (N positive), degrees  
+  InitialLongitude   = initial longitude, degrees 
+                       (depends on EastLongitudePositive)
+  DeltaHeight        = height increment (km) between steps
+  DeltaLatitude      = latitude increment (deg) between steps        
+  DeltaLongitude     = longitude increment (deg) between steps
+                       (depends on EastLongitudePositive)      
+  DeltaTime          = time increment (seconds) between steps.
+                      
+
+  AuxiliaryAtmosphereFileName = (Optional) auxiliary profile input file name  
+  InnerRadius = Lat-lon radius within which weight for auxiliary profile is 1.0
+                (Use InnerRadius = 0.0 for no profile input)                   
+  OuterRadius = Lat-lon radius beyond which weight for auxiliary profile is 0.0       
+           
+  NumberOfMonteCarloRuns = the number of Monte Carlo runs             
+
+  ModelType              = 1 to use the Yelle Min/Max data model
+                           2 to use the Titan GCM model
+  MinMaxFactor           = Factor (-1. to +1. to vary between minimum and 
+                           maximuum allowed mean profiles
+  ComputeMinMaxFactor    = 0 to use MinMaxFactor input value "as is"
+                           1 to automatically adjust input the factor for
+                             seasonal, latitude, and time-of-day effects
+  MethaneMoleFraction    = Methane mole fraction override (percent) 1.0 to 5.0.  
+                           Input = 0.0 (default) means use modelled values.
+
+
+  FastModeOn        = Flags use of faster ephemeris computations (less accurate)
+                      0 Most accurate ephemeris computations are used
+                      1 Faster computations with slight loss in accuracy
+  ExtraPrecision    = For the new column output format, this parameter 
+                      adds precision to all outputs.
+  UseLegacyOutputs  = Flags which outputs to generate.
+                      0 Use the new output formats.
+                      1 Use output formats closely matching those of the 
+					    legacy NeptuneGram.
+  DensityPrintScale = For legacy outputs only.
+                      0 regular SI units
+                      1 log-base-10 scale
+                      2 percentage deviations from Mean model
+                      3 SI units with density in kg/km**3 
+  

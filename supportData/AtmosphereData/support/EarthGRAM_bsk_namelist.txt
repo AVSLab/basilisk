@@ -1,0 +1,146 @@
+ $namein_e16
+  atmpath = C:\GRAMs\EarthGRAM2016\Version2.0\IOfiles\
+  NCEPpath = C:\GRAMs\EarthGRAM2016\Version2.0\NCEPdata\FixedBin\
+  trapath = null
+  prtpath = output.txt
+  nprpath = EarthGRAMNominal.txt
+  conpath = null
+  rrapath = C:\GRAMs\EarthGRAM2016\Version2.0\RRAdata\
+  rralist = null		
+  profile = null
+  h1 = 200.0
+  phi1 = 40.0
+  thet1 = -105.27
+  f10 = 230.
+  f10b = 230.
+  ap = 16.3
+  s10     = 0.
+  s10b    = 0.
+  xm10    = 0.
+  xm10b   = 0.
+  y10     = 0.
+  y10b    = 0.
+  dstdtc  = 0.
+  mn = 9
+  ida = 21
+  iyr = 2021
+  ihro = 21
+  mino = 21
+  seco = 0.0
+  dphi = 0.0
+  dthet = 0.0
+  dhgt = -0.5
+  nmax = 401
+  delt = 0.0
+  iopt = 0
+  iaux = 0
+  iprt = 1
+  inpr = 1
+  icon = 0
+  NCEPyr = 9715
+  NCEPhr = 5
+  nr1 = 1234
+  mc = 1
+  rpscale = 1.0
+  ruscale = 1.0
+  rwscale = 1.0
+  iurra = 0
+  iyrrra = 3
+  sitelim = 2.5
+  sitenear = 0.5
+  initpert = 0
+  rdinit = 0.
+  rtinit = 0.
+  ruinit = 0.
+  rvinit = 0.
+  rwinit = 0.0
+  patchy = 1.0
+  itherm = 1
+  z0in   = -1
+  ibltest = 0
+ $End
+Parameter Descriptions:
+atmpath  = path name for "atmosdat" atmospheric data file
+NCEPpath = path name for NCEP data files
+trapath  = path name for trajectory input file (null if none)
+prtpath  = path name for the "output" format output file (null if none)
+nprpath  = path name for the "special" format output file (null if none)
+conpath  = path name for species concentration output file (null if none)
+rrapath  = DIRECTORY for Range Reference Atmosphere (RRA) data (optional)
+rralist  = File name for list of RRA sites (optional)
+profile  = path name for auxiliary profile data (null if none)
+h1       = initial height (km).  Heights > 6000 km are interpreted as radius.
+phi1     = initial geocentric latitude (degrees, N positive)
+thet1    = initial longitude (degrees, East positive)
+f10      = daily 10.7-cm flux
+f10b     = mean 10.7-cm flux
+ap       = geomagnetic index (Note: Valid ap must be used if JB2008 selected,
+             for use in HWM wind model)
+s10      = EUV index (26-34 nm) scaled to F10 units (0.0 -> s10=f10)
+s10b     = EUV 81-day center-averaged index (0.0 -> s10b = f10b)
+xm10     = MG2 index scaled to F10 units (0.0 -> xm10 = f10)
+xm10b    = MG2 81-day center-averaged index (0.0 -> xm10b = f10b)
+y10      = Solar X-Ray & Lya index scaled to F10 (0.0 -> y10=f10) (for JB2008)
+y10b     = Solar X-Ray & Lya 81-day avg. centered index (0.0 -> y10b=f10b) (for JB2008)
+dstdtc   = Temperature change computed from Dst index (for JB2008)
+mn       = month (1-12)
+ida      = day of month
+iyr      = 4-digit year, or 2-digit year: >56=19xx <57=20XX
+ihro     = initial UTC (Greenwich) time hour (0-23)
+mino     = initial UTC (Greenwich) time minutes (0-59)
+seco     = initial UTC (Greenwich) time seconds (0.0-60.0)
+dphi     = geocentric latitude increment (degrees, Northward positive)
+dthet    = longitude increment (degrees, Eastward positive)
+dhgt     = height increment (km, upward positive). If radius input is used,
+             dhgt is interpreted as a radius increment.
+nmax     = maximum number of positions (including initial one; 0 means read
+             trajectory input file)
+delt     = time increment between positions (real seconds)
+iopt     = trajectory option (0 = no trajectory data; > 0 for trajectory data)
+iaux     = auxiliary profile option (0 = no auxiliary profile; > 0 for auxiliary profile data) 
+iprt	 = "output.txt" output option (0 = no "output.txt" output; > 0 = "output.txt" output)
+inpr 	 = "special.txt" output option (0 = no "special.txt" output; > 0 = "special.txt" output)
+icon 	 = "species.txt" output option (0 = no "species.txt" output; > 0 = "species.txt" output)
+NCEPyr   = y1y2  to use NCEP climatology for period-of-record (POR) from year 
+             y1 through year y2 (e.g. NCEPyr=9008 for POR = 1990 through 
+             2008). NCEP monthly climatology is determined by input value 
+             of month (mn) in initial time input
+NCEPhr   = Code for UT hour of day if NCEP climatology is used: 1=00 UT, 
+             2=06UT, 3=12UT, 4=18UT, 5=all times of day combined, or 0 to 
+             use NCEP time-of-day based on input UTC hour (ihro)
+nr1      = first starting random number (1 to 9 * 10**8)
+mc     = number of Monte Carlo runs
+rpscale  = random perturbation scale for density, temperature and pressure; 
+             nominal=1.0, max=2.0, min=0.1
+ruscale  = random perturbation scale for horizontal winds; nominal=1.0, 
+             maximum=2.0, minimum=0.1
+rwscale  = random perturbation scale for vertical winds; nominal=1.0, 
+             maximum=2.0, minimum=0.1
+iurra    = unit number for Range Reference Atmosphere (RRA) data (0 if none; iurra > 0 for RRA data)
+iyrrra   = 1 for 1983 RRAs, 2 for 2006 RRAs, 3 for 2013 RRAs
+sitelim  = lat-lon radius (deg) from RRA site, outside which RRA data are
+             NOT used.  Also used, with a similar meaning, for auxiliary
+             profile input.  Note that RRA and auxiliary profile input
+             cannot be used simultaneously.
+sitenear = lat-lon radius (deg) from RRA site, inside which RRA data is
+             used with full weight of 1 (smooth transition of weight factor
+             from 1 to 0 between sitenear and sitelim). Also used, with a 
+             similar meaning, for auxiliary profile input.
+initpert = Use 1 for user-selected initial perturbations or 0 (default) for
+             GRAM-derived, random initial perturbation values
+rdinit   = initial density perturbation value (% of mean)
+rtinit   = initial temperature perturbation value (% of mean). Note - initial
+             pressure perturbation is computed from rdinit and rtinit
+ruinit   = initial eastward velocity perturbation (m/s)
+rvinit   = initial northward velocity perturbation (m/s)
+rwinit   = initial upward velocity perturbation (m/s)
+patchy   = not equal 0 for patchiness; 0 to suppress patchiness in 
+             perturbation model
+itherm   = 1 for MET (Jacchia), 2 for MSIS, or 3 for JB2008 thermosphere   
+z0in     = surface roughness (z0) for sigma-w model [ < 0 to use 1-by-1 deg 
+            lat-lon surface data, from new file atmosdat_E07.txt;   = 0 for
+            speed-dependent z0 over water; or enter a value between 1.0e-5 
+            and 3 for user-specified z0 value ].   For more information, 
+            see file README7.txt.
+ibltest  = unit number for BL model output file (bltest.txt), or 0 for no  
+            BL model output

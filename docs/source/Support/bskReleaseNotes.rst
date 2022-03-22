@@ -32,8 +32,10 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - corrected how :ref:`planetEphemeris` computes the celestial body orientation
-- corrected issue in Monte Carlo controller class where if a single run is called that fails, this is not reported
+- corrected issue in Monte Carlo controller class where if a single run is called that fails,
+  this was not reported
 - updated Basilisk documentation CSS to work with the latest version of ``sphinx`` and ``breathe``
+- added new :ref:`tabularAtmosphere` to calculate atmospheric density using atmosphere tables
 
 Version 2.1.2 (March 12, 2022)
 ------------------------------
@@ -3391,7 +3393,7 @@ documentation on using these libraries in
 
    <li>
 
-Updated the RW and gravitational body (i.e. adding Earth, sun, etc. to
+Updated the RW and gravitational body (i.e. adding Earth, sun, etc. to
 the simulation) to use new factory classes. If you did use the older
 ``simIncludeRW.py`` or ``simIncludeGravity.py`` libraries, you’ll need
 to update your python code to work with the new factory classes.
