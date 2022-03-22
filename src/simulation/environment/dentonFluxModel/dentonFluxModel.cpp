@@ -175,20 +175,18 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     calcLocalTime(r_BE_N, r_SE_N);
     
     // For loop to calculate each element of output flux vectors
-    for (int i = 0; i < numOutputEnergies; i++)
+    for (int i = 0; i < this->numOutputEnergies; i++)
     {
         // Convert energies to log10
-        double logInputEnergy = log(inputEnergies[i]);
+        double logInputEnergy = log(this->inputEnergies[i]);
                 
         // ELECTRONS: Find nearest neighbors in energy
-        double eHigher = 0.0;
-        double eLower = 0.0;
         int eHigherIndex = 0;
         int eLowerIndex = 0;
         
         for (int j = 0; j < MAX_NUM_ENERGIES; j++)
         {
-            if (logEnElec[j] > logInputEnergy)
+            if (this->logEnElec[j] > logInputEnergy)
             {
                 int k = 0;
                 if (j == 0)
@@ -199,8 +197,6 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
                 {
                     k = j;
                 }
-                eHigher = logEnElec[k];
-                eLower = logEnElec[k-1];
                 eHigherIndex = k;
                 eLowerIndex = k-1;
                 break;
@@ -211,14 +207,12 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         }
         
         // IONS: Find nearest neighbors in energy
-        double iHigher = 0.0;
-        double iLower = 0.0;
         int iHigherIndex = 0;
         int iLowerIndex = 0;
         
         for (int m = 0; m < MAX_NUM_ENERGIES; m++)
         {
-            if (logEnProt[m] > logInputEnergy)
+            if (this->logEnProt[m] > logInputEnergy)
             {
                 int k;
                 if (m == 0)
@@ -229,8 +223,6 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
                 {
                     k = m;
                 }
-                iHigher = logEnProt[k];
-                iLower = logEnProt[k-1];
                 iHigherIndex = k;
                 iLowerIndex = k-1;
                 break;

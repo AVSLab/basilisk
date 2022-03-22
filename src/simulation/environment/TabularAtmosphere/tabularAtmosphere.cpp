@@ -56,8 +56,12 @@ void TabularAtmosphere::customReset(uint64_t CurrentClock)
     }
     
     if(this->altList_length == 0){
-        bskLogger.bskLog(BSK_ERROR, "No data in altitude, density and temperature lists.");
-    } 
+        bskLogger.bskLog(BSK_ERROR, "No data in altitude list.");
+    } else if(this->rhoList_length == 0){
+        bskLogger.bskLog(BSK_ERROR, "No data in density list.");
+    } else if(this->tempList_length == 0){
+        bskLogger.bskLog(BSK_ERROR, "No data in temperature list.");
+    }
     
     return;
 }
