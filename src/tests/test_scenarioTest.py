@@ -51,6 +51,7 @@ sys.path.append(path + '/../../examples/')
                                         , 'scenarioMtbMomentumManagement'
                                         , 'scenarioMtbMomentumManagementSimple'
                                         , 'scenarioSmallBodyNav'
+                                        , 'scenarioSmallBodyNavUKF'
                                         , 'scenarioJupiterArrival'
                                         , 'scenarioSpiceSpacecraft'
                                         , 'scenarioInertialSpiral'
