@@ -35,7 +35,7 @@ Version |release|
 - corrected issue in Monte Carlo controller class where if a single run is called that fails,
   this was not reported
 - updated Basilisk documentation CSS to work with the latest version of ``sphinx`` and ``breathe``
-- added new module :ref:`TabularAtmosphere` to calculate atmospheric density using atmosphere tables
+- added new :ref:`tabularAtmosphere` to calculate atmospheric density using atmosphere tables
 
 Version 2.1.2 (March 12, 2022)
 ------------------------------
