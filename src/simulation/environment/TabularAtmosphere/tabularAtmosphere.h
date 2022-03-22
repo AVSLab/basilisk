@@ -46,9 +46,9 @@ class TabularAtmosphere:  public AtmosphereBase {
     public:
          TabularAtmosphere();
          ~TabularAtmosphere();
-        std::vector<double> altList;    // vector of doubles of altitude values extracted from the atmosphere table
-        std::vector<double> rhoList;    // vector of doubles of density values extracted from the atmosphere table
-        std::vector<double> tempList;   // vector of doubles of temperature values extracted from the atmosphere table
+        std::vector<double> altList;    //!< vector of doubles of altitude values extracted from the atmosphere table
+        std::vector<double> rhoList;    //!< vector of doubles of density values extracted from the atmosphere table
+        std::vector<double> tempList;   //!< vector of doubles of temperature values extracted from the atmosphere table
         BSKLogger bskLogger;            //!< -- BSK Logging
 };
 
