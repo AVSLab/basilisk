@@ -224,6 +224,7 @@ Small Body Navigation Simulations
    :maxdepth: 1
 
     Proximity Operations Hybrid EKF <scenarioSmallBodyNav>
+    Non-Keplerian Acceleration Estimation using UKF <scenarioSmallBodyNavUKF>
 
 Monte Carlo Simulations
 -----------------------
