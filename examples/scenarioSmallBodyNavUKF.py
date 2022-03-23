@@ -88,11 +88,10 @@ import math
 
 from mpl_toolkits.mplot3d import Axes3D
 
-from scipy.spatial.transform import Rotation as rotate
-
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import RigidBodyKinematics
 
 from Basilisk.simulation import ephemerisConverter
 from Basilisk.simulation import planetEphemeris
@@ -330,17 +329,17 @@ def run(show_plots):
     oeAsteroid.f = 7.0315*macros.D2R
 
     # the rotational state would be prescribed to
-    AR = 309.03
-    dec = 42.23
-    lst0 = 0
+    AR = 309.03 * macros.D2R
+    dec = 42.23 * macros.D2R
+    lst0 = 0 * macros.D2R
     gravBodyEphem.planetElements = planetEphemeris.classicElementVector([oeAsteroid])
-    gravBodyEphem.rightAscension = planetEphemeris.DoubleVector([AR * macros.D2R])
-    gravBodyEphem.declination = planetEphemeris.DoubleVector([dec * macros.D2R])
-    gravBodyEphem.lst0 = planetEphemeris.DoubleVector([lst0 * macros.D2R])
+    gravBodyEphem.rightAscension = planetEphemeris.DoubleVector([AR])
+    gravBodyEphem.declination = planetEphemeris.DoubleVector([dec])
+    gravBodyEphem.lst0 = planetEphemeris.DoubleVector([lst0])
     gravBodyEphem.rotRate = planetEphemeris.DoubleVector([360 * macros.D2R / (5.3421 * 3600.)])
 
     # initialize small body fixed frame dcm w.r.t. inertial and its angular velocity
-    dcm_AN = rotate.from_euler('zyz', [lst0, 90 - dec, AR], degrees=True).as_matrix().transpose()
+    dcm_AN = RigidBodyKinematics.euler3232C([AR , np.pi/2 - dec,  lst0])
     omega_AN_A = np.array([0,0,360 * macros.D2R / (5.3421 * 3600.)])
 
     # setup small body gravity effector (no Sun 3rd perturbation included)
@@ -542,8 +541,7 @@ def run(show_plots):
     # loop through simulation points
     for ii in range(N_points):
         # obtain rotation matrix
-        R_NA = rotate.from_mrp(sigma_AN[ii][0:3]).as_matrix()
-        R_AN = R_NA.transpose()
+        R_AN = RigidBodyKinematics.MRP2C(sigma_AN[ii][0:3])
 
         # rotate position and velocity
         r_truth_A[ii][0:3] = R_AN.dot(r_truth_N[ii][0:3])
