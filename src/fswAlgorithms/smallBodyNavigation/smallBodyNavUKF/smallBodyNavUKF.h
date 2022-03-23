@@ -32,7 +32,7 @@
 #include "architecture/utilities/macroDefinitions.h"
 
 
-/*! @brief This module estimates relative spacecraft position, velocity with respect to the body, and the non-Keplerian acceleration perturbing the spacecraft motion
+/*! @brief This module estimates relative spacecraft position, velocity with respect to the body, and the non-Keplerian acceleration perturbing the spacecraft motion, using an unscented Kalman filter (UKF)
  */
 class SmallBodyNavUKF: public SysModel {
 public:

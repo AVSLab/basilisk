@@ -103,7 +103,7 @@ void SmallBodyNavUKF::readMessages(){
 */
 void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
     /* Read angular velocity of the small body fixed frame */
-    this->omega_AN_A = cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.omega_BN_B);
+    this->omega_AN_A = cArray2EigenVector3d(this->asteroidEphemerisInMsgBuffer.omega_BN_B);
     
     /* Declare matrix to store sigma points spread */
     Eigen::MatrixXd X_sigma_k;
@@ -115,15 +115,15 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
     
     /* Compute square root matrix of covariance */
     Eigen::MatrixXd Psqrt_k;
-    Psqrt_k = P_k.llt().matrixL();
+    Psqrt_k = this->P_k.llt().matrixL();
     
     /* Assign mean to central sigma point */
-    X_sigma_k.col(0) = x_hat_k;
+    X_sigma_k.col(0) = this->x_hat_k;
     
     /* Loop to generate remaining sigma points */
     for (int i = 0; i < this->numStates; i++) {
         /* Generate sigma points */
-        X_sigma_k.col(i+1) = x_hat_k
+        X_sigma_k.col(i+1) = this->x_hat_k
             - sqrt(this->numStates + this->kappa) * Psqrt_k.col(i);
         X_sigma_k.col(numStates+i+1) = x_hat_k
             + sqrt(this->numStates + this->kappa) * Psqrt_k.col(i);
@@ -172,7 +172,7 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
     }
     
     /* Add process noise covariance */
-    this->P_k1_ = this->P_k1_ + P_proc;
+    this->P_k1_ = this->P_k1_ + this->P_proc;
 }
 
 /*! This method does the UT to the a-priori state to compute the a-priori measurements
@@ -192,7 +192,7 @@ void SmallBodyNavUKF::measurementUT(){
         /* Generate sigma points */
         this->X_sigma_k1_.col(i+1) = this->x_hat_k1_
             - sqrt(this->numStates + this->kappa) * Psqrt_k1_.col(i);
-        this->X_sigma_k1_.col(numStates+i+1) = this->x_hat_k1_
+        this->X_sigma_k1_.col(this->numStates+i+1) = this->x_hat_k1_
             + sqrt(this->numStates + this->kappa) * Psqrt_k1_.col(i);
     }
     
@@ -234,7 +234,7 @@ void SmallBodyNavUKF::measurementUT(){
     this->dcm_AN = cArray2EigenMatrix3d(*dcm_AN_array);
     
     /* Add process noise covariance */
-    this->R_k1_ = this->R_k1_ + this->dcm_AN * R_meas * this->dcm_AN.transpose();
+    this->R_k1_ = this->R_k1_ + this->dcm_AN * this->R_meas * this->dcm_AN.transpose();
 }
 
 /*! This method collects the measurements and updates the estimation
@@ -299,5 +299,5 @@ void SmallBodyNavUKF::UpdateState(uint64_t CurrentSimNanos)
     this->measurementUT();
     this->kalmanUpdate();
     this->writeMessages(CurrentSimNanos);
-    prevTime = CurrentSimNanos;
+    this->prevTime = CurrentSimNanos;
 }
