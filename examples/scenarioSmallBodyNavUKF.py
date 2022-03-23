@@ -21,7 +21,7 @@ Overview
 --------
 
 This scenario demonstrates how to use the ``smallBodyNavUKF()`` for translational state and non-Keplerian gravity
-acceleration estimation about a small body. In this example, Vesta is chosen (``supportData/LocalGravData/VESTA20H.txt``).
+acceleration estimation about a small body. In this example, Vesta is chosen (supportData/LocalGravData/VESTA20H.txt).
 However, any small body could be selected as long as the appropriate gravitational parameter is set.
 
 In this scenario, :ref:`simpleNav` and :ref:`planetEphemeris` provide measurements to the UKF in the form of
