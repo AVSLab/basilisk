@@ -222,7 +222,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
             tilde = rbk.v3Tilde(omega_NP_P)
             for time in timeTrue:
                 lst = lst0 + omegaList[c]*time[0]
-                DCM = rbk.Euler3232C([RAN, np.pi/2.0 - DEC, lst])
+                DCM = rbk.euler3232C([RAN, np.pi/2.0 - DEC, lst])
                 dcmTrue.append(DCM)
                 dDCMdt = np.matmul(tilde, DCM)
                 dcmRateTrue.append(dDCMdt)
