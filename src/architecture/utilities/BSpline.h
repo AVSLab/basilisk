@@ -37,10 +37,12 @@ public:
     void setXDDot_0(Eigen::Vector3d XDDot_0);
     void setXDDot_N(Eigen::Vector3d XDDot_N);
     void setT(Eigen::VectorXd T);
+    void setW(Eigen::VectorXd W);
     void setAvgXDot(double AvgXDot);
     
     double AvgXDot;                  //!< desired average velocity norm
     Eigen::VectorXd T;               //!< time tags: specifies at what time each waypoint is hit
+    Eigen::VectorXd W;               //!< weight vector for the LS approximation
     Eigen::VectorXd X1;              //!< coordinate #1 of the waypoints
     Eigen::VectorXd X2;              //!< coordinate #2 of the waypoints
     Eigen::VectorXd X3;              //!< coordinate #3 of the waypoints
@@ -50,6 +52,7 @@ public:
     Eigen::Vector3d XDDot_N;         //!< 3D vector containing the second derivative at final point
     bool T_flag;                     //!< indicates that time tags have been specified; if true, AvgXDot_flag is false
     bool AvgXDot_flag;               //!< indicates that avg velocity norm has been specified; if true, T_flag is false
+    bool W_flag;                     //!< indicates that weight vector has been specified
     bool XDot_0_flag;                //!< indicates that first derivative at starting point has been specified
     bool XDot_N_flag;                //!< indicates that first derivative at final point has been specified
     bool XDDot_0_flag;               //!< indicates that second derivative at starting point has been specified
@@ -62,6 +65,7 @@ class OutputDataSet {
 public:
     OutputDataSet();
     ~OutputDataSet();
+    void getData(double t, double x[3], double xDot[3], double xDDot[3]);
     
     Eigen::VectorXd T;               //!< time tags for each point of the interpolated trajectory
     Eigen::VectorXd X1;              //!< coordinate #1 of the interpolated trajectory
@@ -73,8 +77,16 @@ public:
     Eigen::VectorXd XDD1;            //!< second derivative of coordinate #1 of the interpolated trajectory
     Eigen::VectorXd XDD2;            //!< second derivative of coordinate #2 of the interpolated trajectory
     Eigen::VectorXd XDD3;            //!< second derivative of coordinate #3 of the interpolated trajectory
+
+    int P;
+    Eigen::VectorXd U;
+    Eigen::VectorXd C1;
+    Eigen::VectorXd C2;
+    Eigen::VectorXd C3;
 };
 
-void interpolate(InputDataSet Input, int N, int P, OutputDataSet *Output);
+void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output);
+
+void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Output);
 
 void basisFunction(double t, Eigen::VectorXd U, int I, int P, double *NN, double *NN1, double *NN2);
