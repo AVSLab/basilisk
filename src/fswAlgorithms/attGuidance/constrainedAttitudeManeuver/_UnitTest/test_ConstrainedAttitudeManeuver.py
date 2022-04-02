@@ -165,31 +165,32 @@ def generateGrid(n_start, n_goal, N, constraints, data):
     u = np.linspace(0, 1, N, endpoint = True)
     nodes = {}
 
-    # add internal nodes (|sigma| < 1)
+    # add internal nodes (|sigma| <= 1)
     for i in range(N):
         for j in range(N):
             for k in range(N):
-                if (u[i]**2+u[j]**2+u[k]**2) < 1:
+                if (u[i]**2+u[j]**2+u[k]**2) <= 1:
                     for m in mirrorFunction(i, j, k):
                         if (m[0], m[1], m[2]) not in nodes:
                             nodes[(m[0], m[1], m[2])] = node([np.sign(m[0])*u[i], np.sign(m[1])*u[j], np.sign(m[2])*u[k]], constraints, **data)
-    # add boundary nodes (|sigma| = 1)
+    # add missing boundary nodes (|sigma| = 1)
     for i in range(N-1):
         for j in range(N-1):
             for k in range(N-1):
-                r = np.linalg.norm(np.array([u[i], u[j], u[k]]))
-                if (i, j, k) in nodes and (i+1, j, k) not in nodes and r < 1:
-                    for m in mirrorFunction(i+1, j, k):
-                        if (m[0], m[1], m[2]) not in nodes:
-                            nodes[(m[0], m[1], m[2])] = node([np.sign(m[0])*(1-u[j]**2-u[k]**2)**0.5, np.sign(m[1])*u[j], np.sign(m[2])*u[k]], constraints, **data)
-                if (i, j, k) in nodes and (i, j+1, k) not in nodes and r < 1:
-                    for m in mirrorFunction(i, j+1, k):
-                        if (m[0], m[1], m[2]) not in nodes:
-                            nodes[(m[0], m[1], m[2])] = node([np.sign(m[0])*u[i], np.sign(m[1])*(1-u[i]**2-u[k]**2)**0.5, np.sign(m[2])*u[k]], constraints, **data)
-                if (i, j, k) in nodes and (i, j, k+1) not in nodes and r < 1:
-                    for m in mirrorFunction(i, j, k+1):
-                        if (m[0], m[1], m[2]) not in nodes:
-                            nodes[(m[0], m[1], m[2])] = node([np.sign(m[0])*u[i], np.sign(m[1])*u[j], np.sign(m[2])*(1-u[i]**2-u[j]**2)**0.5], constraints, **data)
+                if (i, j, k) in nodes:
+                    if not nodes[(i, j, k)].isBoundary:
+                        if (i+1, j, k) not in nodes:
+                            for m in mirrorFunction(i+1, j, k):
+                                if (m[0], m[1], m[2]) not in nodes:
+                                    nodes[(m[0], m[1], m[2])] = node([np.sign(m[0])*(1-u[j]**2-u[k]**2)**0.5, np.sign(m[1])*u[j], np.sign(m[2])*u[k]], constraints, **data)
+                        if (i, j+1, k) not in nodes:
+                            for m in mirrorFunction(i, j+1, k):
+                                if (m[0], m[1], m[2]) not in nodes:
+                                    nodes[(m[0], m[1], m[2])] = node([np.sign(m[0])*u[i], np.sign(m[1])*(1-u[i]**2-u[k]**2)**0.5, np.sign(m[2])*u[k]], constraints, **data)
+                        if (i, j, k+1) not in nodes:
+                            for m in mirrorFunction(i, j, k+1):
+                                if (m[0], m[1], m[2]) not in nodes:
+                                    nodes[(m[0], m[1], m[2])] = node([np.sign(m[0])*u[i], np.sign(m[1])*u[j], np.sign(m[2])*(1-u[i]**2-u[j]**2)**0.5], constraints, **data)
     
     # # linking nodes
     for key1 in nodes:
@@ -248,7 +249,7 @@ def generateGrid(n_start, n_goal, N, constraints, data):
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
-@pytest.mark.parametrize("N", [6,7,8,9,11,12,13,14])
+@pytest.mark.parametrize("N", [6,7,8,9,10,11,12])
 @pytest.mark.parametrize("keepOutFov", [20])
 @pytest.mark.parametrize("keepInFov", [70])
 @pytest.mark.parametrize("accuracy", [1e-12])
@@ -353,11 +354,9 @@ def CAMTestFunction(N, keepOutFov, keepInFov, accuracy):
                     if not unitTestSupport.isVectorEqual(sigma_BN, sigma_BN_BSK, accuracy):
                         testFailCount += 1
                         testMessages.append("FAILED: " + testModule.ModelTag + " Error in the coordinates of node ({},{},{}) \n".format(i, j, k))
-                        print((i, j, k), sigma_BN, sigma_BN_BSK, np.linalg.norm(sigma_BN))
                     if not Grid[(i, j, k)].isFree == testModule.returnNodeState([i, j, k]):
                         testFailCount += 1
                         testMessages.append("FAILED: " + testModule.ModelTag + " Error in the state of node ({},{},{}) \n".format(i, j, k))
-                        # print( (i, j, k), ":", Grid[(i, j, k)].isFree, testModule.returnNodeState([i, j, k]) )
 
     # timeData = CAMLog.times() * macros.NANO2SEC
     # dataSigmaRN = CAMLog.sigma_RN
@@ -414,7 +413,7 @@ def plot_acc_reference(timeData, dataOmegaDotRN):
 #
 if __name__ == "__main__":
     CAMTestFunction(
-        8,       # grid coarsness N
+        7,       # grid coarsness N
         20,      # keepOutFov
         70,      # keepInFov
         1e-12    # accuracy

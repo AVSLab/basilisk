@@ -22,7 +22,6 @@
 #include <string>
 #include <string.h>
 #include <math.h>
-#include <cmath>
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -180,7 +179,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			for (int k = 0; k < N; k++) {
-				if (pow(u[i],2) + pow(u[j],2) + pow(u[k],2) < 1) {
+				if (pow(u[i],2) + pow(u[j],2) + pow(u[k],2) <= 1) {
 					indices[0] = i; indices[1] = j; indices[2] = k;
 					mirrorFunction(indices, mirrorIndices);
 					for (int m = 0; m < 8; m++) {
@@ -195,54 +194,55 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 			}
 		}
 	}
-	// add boundary nodes (|sigma_BN| = 1)
-	double r;
+	// add missing boundary nodes (|sigma_BN| = 1)
 	for (int i = 0; i < N-1; i++) {
 		for (int j = 0; j < N-1; j++) {
 			for (int k = 0; k < N-1; k++) {
-				sigma_BN[0] = u[i]; sigma_BN[1] = u[j]; sigma_BN[2] = u[k];
-				r = v3Norm(sigma_BN);
-				// along i direction
-				if (this->NodesMap[i][j].count(k) == 1 && this->NodesMap[i+1][j].count(k) == 0 && r < 1) {
-					indices[0] = i+1; indices[1] = j; indices[2] = k;
-					mirrorFunction(indices, mirrorIndices);
-					for (int m = 0; m < 8; m++) {
-						if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
-							sigma_BN[0] = mirrorIndices[m][0]/indices[0] * pow(1-pow(u[j],2)-pow(u[k],2),0.5);
-							if (indices[1] != 0) { sigma_BN[1] = mirrorIndices[m][1]/indices[1]*u[indices[1]]; } else { sigma_BN[1] = 0; }
-							if (indices[2] != 0) { sigma_BN[2] = mirrorIndices[m][2]/indices[2]*u[indices[2]]; } else { sigma_BN[2] = 0; }
-							this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints, this->boresights);
+				if (this->NodesMap[i][j].count(k) == 1) {
+					if (this->NodesMap[i][j][k].isBoundary == false) {
+						// along i direction
+						if (this->NodesMap[i+1][j].count(k) == 0) {
+							indices[0] = i+1; indices[1] = j; indices[2] = k;
+							mirrorFunction(indices, mirrorIndices);
+							for (int m = 0; m < 8; m++) {
+								if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+									sigma_BN[0] = mirrorIndices[m][0]/indices[0] * pow(1-pow(u[j],2)-pow(u[k],2),0.5);
+									if (indices[1] != 0) { sigma_BN[1] = mirrorIndices[m][1]/indices[1]*u[indices[1]]; } else { sigma_BN[1] = 0; }
+									if (indices[2] != 0) { sigma_BN[2] = mirrorIndices[m][2]/indices[2]*u[indices[2]]; } else { sigma_BN[2] = 0; }
+									this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints, this->boresights);
+								}
+							}
 						}
-					}
-				}
-				// along j direction
-				if (this->NodesMap[i][j].count(k) == 1 && this->NodesMap[i][j+1].count(k) == 0 && r < 1) {
-					indices[0] = i; indices[1] = j+1; indices[2] = k;
-					mirrorFunction(indices, mirrorIndices);
-					for (int m = 0; m < 8; m++) {
-						if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
-							if (indices[0] != 0) { sigma_BN[0] = mirrorIndices[m][0]/indices[0]*u[indices[0]]; } else { sigma_BN[0] = 0; }
-							sigma_BN[1] = mirrorIndices[m][1]/indices[1] * pow(1-pow(u[i],2)-pow(u[k],2),0.5);
-							if (indices[2] != 0) { sigma_BN[2] = mirrorIndices[m][2]/indices[2]*u[indices[2]]; } else { sigma_BN[2] = 0; }
-							this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints, this->boresights);
+						// along j direction
+						if (this->NodesMap[i][j+1].count(k) == 0) {
+							indices[0] = i; indices[1] = j+1; indices[2] = k;
+							mirrorFunction(indices, mirrorIndices);
+							for (int m = 0; m < 8; m++) {
+								if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+									if (indices[0] != 0) { sigma_BN[0] = mirrorIndices[m][0]/indices[0]*u[indices[0]]; } else { sigma_BN[0] = 0; }
+									sigma_BN[1] = mirrorIndices[m][1]/indices[1] * pow(1-pow(u[i],2)-pow(u[k],2),0.5);
+									if (indices[2] != 0) { sigma_BN[2] = mirrorIndices[m][2]/indices[2]*u[indices[2]]; } else { sigma_BN[2] = 0; }
+									this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints, this->boresights);
+								}
+							}
 						}
-					}
-				}
-				// along k direction
-				if (this->NodesMap[i][j].count(k) == 1 && this->NodesMap[i][j].count(k+1) == 0 && r < 1) {
-					indices[0] = i; indices[1] = j; indices[2] = k+1;
-					mirrorFunction(indices, mirrorIndices);
-					for (int m = 0; m < 8; m++) {
-						if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
-							if (indices[0] != 0) { sigma_BN[0] = mirrorIndices[m][0]/indices[0]*u[indices[0]]; } else { sigma_BN[0] = 0; }
-							if (indices[1] != 0) { sigma_BN[1] = mirrorIndices[m][1]/indices[1]*u[indices[1]]; } else { sigma_BN[1] = 0; }
-							sigma_BN[2] = mirrorIndices[m][2]/indices[2] * pow(1-pow(u[i],2)-pow(u[j],2),0.5);
-							this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints, this->boresights);
+						// along k direction
+						if (this->NodesMap[i][j].count(k+1) == 0) {
+							indices[0] = i; indices[1] = j; indices[2] = k+1;
+							mirrorFunction(indices, mirrorIndices);
+							for (int m = 0; m < 8; m++) {
+								if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2]) == 0) {
+									if (indices[0] != 0) { sigma_BN[0] = mirrorIndices[m][0]/indices[0]*u[indices[0]]; } else { sigma_BN[0] = 0; }
+									if (indices[1] != 0) { sigma_BN[1] = mirrorIndices[m][1]/indices[1]*u[indices[1]]; } else { sigma_BN[1] = 0; }
+									sigma_BN[2] = mirrorIndices[m][2]/indices[2] * pow(1-pow(u[i],2)-pow(u[j],2),0.5);
+									this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] = Node(sigma_BN, this->constraints, this->boresights);
+								}
+							}
 						}
 					}
 				}
 			}
-		} 
+		}
 	}
 	// link nodes to adjacent neighbors
 	int neighbors[26][3];
@@ -355,7 +355,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 double ConstrainedAttitudeManeuver::returnNodeCoord(int key[3], int nodeCoord)
 {
 	if (nodeCoord < 0 || nodeCoord > 2 || NodesMap[key[0]][key[1]].count(key[2]) == 0) {
-		return std::nan("");
+		return 1000; // random large number that will cause the UnitTest comparison to fail
 	}
 	else {
 		return this->NodesMap[key[0]][key[1]][key[2]].sigma_BN[nodeCoord];
