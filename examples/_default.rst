@@ -225,6 +225,7 @@ Small Body Navigation Simulations
 
     Proximity Operations Hybrid EKF <scenarioSmallBodyNav>
     Non-Keplerian Acceleration Estimation using UKF <scenarioSmallBodyNavUKF>
+    Small Body Waypoint Navigation <scenarioSmallBodyFeedbackControl>
 
 Monte Carlo Simulations
 -----------------------

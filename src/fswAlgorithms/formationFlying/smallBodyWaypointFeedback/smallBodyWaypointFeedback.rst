@@ -46,7 +46,7 @@ Algorithm
 The state vector is defined as follows:
 
 .. math::
-    :label: eq:state
+    :label: eq:smwf_state
 
     \mathbf{X} =
     \begin{bmatrix}
@@ -74,7 +74,7 @@ The associated frame definitions may be found in the following table.
 The derivation of the control law is skipped here for brevity. The thrust, however, is computed as follows:
 
 .. math::
-    :label: eq:u
+    :label: eq:smwf_u
 
     \begin{equation}
     \mathbf{u} = -(f(\mathbf{x}) - f(\mathbf{x}_{ref})) - [K_1]\Delta\mathbf{x}_1 - [K_1]\Delta\mathbf{x}_2
@@ -84,7 +84,7 @@ The relative velocity dynamics are described in detail by `Takahashi <https://do
 `Scheeres <http://dx.doi.org/10.2514/1.57247>`__.
 
 .. math::
-    :label: eq:x_dot_2
+    :label: eq:smwf_x_dot_2
 
     \begin{split}
     f(\mathbf{x}) = ^O\ddot{\mathbf{r}}_{S/O} = -\ddot{F}[\tilde{\hat{\mathbf{o}}}_3]\mathbf{x}_1 - 2\dot{F}[\tilde{\hat{\mathbf{o}}}_3]\mathbf{x}_2 - \dot{F}^2[\tilde{\hat{\mathbf{o}}}_3][\tilde{\hat{\mathbf{o}}}_3]\mathbf{x}_1- \dfrac{\mu_a \mathbf{x}_1}{||\mathbf{x}_1||^3} + \dfrac{\mu_s(3{}^O\hat{\mathbf{d}}{}^O\hat{\mathbf{d}}^T-[I_{3 \times 3}])\mathbf{x}_1}{d^3} \\
@@ -94,7 +94,7 @@ The relative velocity dynamics are described in detail by `Takahashi <https://do
 
 User Guide
 ^^^^^^^^^^
-A detailed example of the module is provided in :ref:`scenarioSmallBodyFeedbackControl.py`. However, the initialization
+A detailed example of the module is provided in :ref:`scenarioSmallBodyFeedbackControl`. However, the initialization
 of the module is also shown here. The module is first initialized as follows:
 
 .. code-block:: python

@@ -179,12 +179,12 @@ of `Analytical Mechanics of Space Systems <http://doi.org/10.2514/4.105210>`__. 
 constant rate.
 
 .. math::
-    :label: eq:x_dot_1
+    :label: eq:smn_x_dot_1
 
     \dot{\mathbf{x}}_1 = ^O\dot{\mathbf{r}}_{S/O} = \mathbf{x}_2
 
 .. math::
-    :label: eq:x_dot_2
+    :label: eq:smn_x_dot_2
 
     \begin{split}
     \dot{\mathbf{x}}_2 = ^O\ddot{\mathbf{r}}_{S/O} = -\ddot{F}[\tilde{\hat{\mathbf{o}}}_3]\mathbf{x}_1 - 2\dot{F}[\tilde{\hat{\mathbf{o}}}_3]\mathbf{x}_2 - \dot{F}^2[\tilde{\hat{\mathbf{o}}}_3][\tilde{\hat{\mathbf{o}}}_3]\mathbf{x}_1- \dfrac{\mu_a \mathbf{x}_1}{||\mathbf{x}_1||^3} + \dfrac{\mu_s(3{}^O\hat{\mathbf{d}}{}^O\hat{\mathbf{d}}^T-[I_{3 \times 3}])\mathbf{x}_1}{d^3} \\
@@ -192,22 +192,22 @@ constant rate.
     \end{split}
 
 .. math::
-    :label: eq:x_dot_3
+    :label: eq:smn_x_dot_3
 
     \dot{\mathbf{x}}_3 = \dot{\boldsymbol{\sigma}}_{A/N} = \dfrac{1}{4} \Bigr [ \Bigr ( 1-||\mathbf{x}_3||^2 \Bigr ) [I_{3 \times 3}] + 2[\tilde{\mathbf{x}}_3] + 2\mathbf{x}_3\mathbf{x}_3^T \Bigr]\mathbf{x}_4
 
 .. math::
-    :label: eq:x_dot_4
+    :label: eq:smn_x_dot_4
 
     \dot{\mathbf{x}}_4 = {}^A\dot{\boldsymbol{\omega}}_{A/N} = \mathbf{0}
 
 .. math::
-    :label: eq:x_dot_5
+    :label: eq:smn_x_dot_5
 
     \dot{\mathbf{x}}_5 = \dot{\boldsymbol{\sigma}}_{B/N} = \dfrac{1}{4} \Bigr [ \Bigr ( 1-||\mathbf{x}_5||^2 \Bigr ) [I_{3 \times 3}] + 2[\tilde{\mathbf{x}}_5] + 2\mathbf{x}_5\mathbf{x}_5^T \Bigr]\mathbf{x}_6
 
 .. math::
-    :label: eq:x_dot_6
+    :label: eq:smn_x_dot_6
 
     \dot{\mathbf{x}}_6 = {}^B\dot{\boldsymbol{\omega}}_{B/N} = -[I_T]^{-1} \Bigr([\tilde{\mathbf{x}}_6][I_T]\mathbf{x}_6 + [I_W]{}^B\dot{\boldsymbol{\Omega}} + [\tilde{\mathbf{x}}_6][I_W]{}^B\boldsymbol{\Omega} -\sum_j^J{}^B\mathbf{L}_{T_j}\Bigr )
 
