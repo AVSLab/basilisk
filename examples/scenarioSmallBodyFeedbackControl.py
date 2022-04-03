@@ -472,7 +472,7 @@ def run(show_plots):
     fileName = f'small_body_science_env-v1_{datetime.today()}'
 
     vizInterface = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                            , saveFile=fileName
+                                                            # , saveFile=fileName
                                                             )
     vizSupport.createStandardCamera(vizInterface, setMode=0, bodyTarget='bennu', setView=0)
 
@@ -523,8 +523,8 @@ def run(show_plots):
         r_BO_O_meas.append(r_BO_O)
         v_BO_O_meas.append(v_BO_O)
 
-        print(rd_N)
-        print(vd_N)
+        # print(rd_N)
+        # print(vd_N)
 
     # Plot the results
     time = sc_truth_recorder.times() * macros.NANO2SEC
