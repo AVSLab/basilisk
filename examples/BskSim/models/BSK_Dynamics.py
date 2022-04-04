@@ -77,6 +77,11 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, None, 300)
+        
+        SimBase.createNewEvent("addRWFault_1", self.processTasksTimeStep, True,
+            ["self.TotalSim.CurrentNanos>=self.faultTime and self.RWFaultFlag==True"],
+            ["self.DynModels.AddRWFault('friction',10,1)", "self.RWFaultFlag=False"])
+
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -156,13 +161,29 @@ class BSKDynamicModels():
                        [-0.8, 0.8, 1.79070]
                        ]
 
-        for elAngle, azAngle, posVector in zip(rwElAngle, rwAzimuthAngle, rwPosVector):
-            gsHat = (rbk.Mi(-azAngle,3).dot(rbk.Mi(elAngle,2))).dot(np.array([1,0,0]))
-            self.rwFactory.create('Honeywell_HR16',
-                                  gsHat,
-                                  maxMomentum=maxRWMomentum,
-                                  rWB_B=posVector)
+        gsHat = (rbk.Mi(-rwAzimuthAngle[0],3).dot(rbk.Mi(rwElAngle[0],2))).dot(np.array([1,0,0]))
+        self.RW1 = self.rwFactory.create('Honeywell_HR16',
+            gsHat,
+            maxMomentum=maxRWMomentum,
+            rWB_B=rwPosVector[0], useRWfriction=True)
+        
+        gsHat = (rbk.Mi(-rwAzimuthAngle[1],3).dot(rbk.Mi(rwElAngle[1],2))).dot(np.array([1,0,0]))
+        self.RW2 = self.rwFactory.create('Honeywell_HR16',
+            gsHat,
+            maxMomentum=maxRWMomentum,
+            rWB_B=rwPosVector[1], useRWfriction=True)
 
+        gsHat = (rbk.Mi(-rwAzimuthAngle[2],3).dot(rbk.Mi(rwElAngle[2],2))).dot(np.array([1,0,0]))
+        self.RW3 = self.rwFactory.create('Honeywell_HR16',
+            gsHat,
+            maxMomentum=maxRWMomentum,
+            rWB_B=rwPosVector[2], useRWfriction=True)
+            
+        gsHat = (rbk.Mi(-rwAzimuthAngle[3],3).dot(rbk.Mi(rwElAngle[3],2))).dot(np.array([1,0,0]))
+        self.RW4 = self.rwFactory.create('Honeywell_HR16',
+            gsHat,
+            maxMomentum=maxRWMomentum,
+            rWB_B=rwPosVector[3], useRWfriction=True)
         self.rwFactory.addToSpacecraft("RWA", self.rwStateEffector, self.scObject)
 
     def SetThrusterStateEffector(self):
@@ -237,6 +258,21 @@ class BSKDynamicModels():
 
         # assign the list of CSS devices to the CSS array class
         self.CSSConstellationObject.sensorList = coarseSunSensor.CSSVector(cssList)
+
+    # Method for adding reaction wheel faults
+    def AddRWFault(self, faultType, fault, faultRW):
+        # Add the fault
+        if faultType == "friction":
+            if faultRW == 1:
+                self.RW1.fCoulomb *= fault
+            elif faultRW == 2:
+                self.RW2.fCoulomb *= fault
+            elif faultRW == 3:
+                self.RW3.fCoulomb *= fault
+            elif faultRW == 4:
+                self.RW4.fCoulomb *= fault
+        else:
+            print("Invalid fault type. No fault added.")
 
     # Global call to initialize every module
     def InitAllDynObjects(self):

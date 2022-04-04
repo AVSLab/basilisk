@@ -43,6 +43,9 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.FSWProcessName = None
         self.dynProc = None
         self.fswProc = None
+        
+        self.RWFaultFlag = False
+        self.faultTime = -1
 
         self.dynamics_added = False
         self.fsw_added = False
