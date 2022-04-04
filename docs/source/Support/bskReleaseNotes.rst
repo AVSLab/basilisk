@@ -38,6 +38,9 @@ Version |release|
 - added new :ref:`tabularAtmosphere` to calculate atmospheric density using atmosphere tables
 - created new :ref:`smallBodyNavUKF` to make an UKF filter for small body navigation
 - created new example script :ref:`scenarioSmallBodyNavUKF` to demonstrate the use of :ref:`smallBodyNavUKF`
+- added a function titled ``SpherePlot()`` that allows for plotting of charged spheres based
+  on the MSM model :ref:`msmForceTorque`
+
 
 Version 2.1.2 (March 12, 2022)
 ------------------------------
