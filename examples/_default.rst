@@ -31,6 +31,7 @@ Orbital Simulations
    Defining Motion Relative to Planet <scenarioCentralBody>
    Simulating Trajectory about Multiple Celestial Bodies <scenarioPatchedConics>
    Including Custom Gravitational Bodies <scenarioCustomGravBody>
+   Small Body Waypoint-to-Waypoint Control <scenarioSmallBodyFeedbackControl>
 
 
 Attitude Simulations
@@ -225,7 +226,6 @@ Small Body Navigation Simulations
 
     Proximity Operations Hybrid EKF <scenarioSmallBodyNav>
     Non-Keplerian Acceleration Estimation using UKF <scenarioSmallBodyNavUKF>
-    Small Body Waypoint Navigation <scenarioSmallBodyFeedbackControl>
 
 Monte Carlo Simulations
 -----------------------

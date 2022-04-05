@@ -20,19 +20,43 @@ r"""
 Overview
 --------
 
-Here.
+This scenario demonstrates how to use the ``smallBodyWaypointFeedback()`` module for waypoint to waypoint motion about a
+small body. In this scenario, the spacecraft holds an inertial pointing attitude while it moves to a waypoint defined in the small
+body's Hill frame. The :ref:`simpleNav` and :ref:`planetNav` moduels provide measurements to the control law in the form
+of :ref:`navTransMsgPayload`, :ref:`navAttMsgPayload`, and :ref:`ephemerisMsgPayload` input messages. The control law
+outputs a :ref:`CmdForceBodyMsgPayload`, which is read in by :ref:`extForceTorque`.
+
+The control output in the spacecraft body frame can be found in the following plot:
+
+.. image:: /_images/Scenarios/scenarioSmallBodyFeedbackControl3.svg
+   :align: center
+
+The difference between the spacecraft position and velocity and associated references may be found in the figures below:
+
+.. image:: /_images/Scenarios/scenarioSmallBodyFeedbackControl1.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioSmallBodyFeedbackControl2.svg
+   :align: center
+
+Finally, the attitude and attitude rate is given in the plots below.
+
+.. image:: /_images/Scenarios/scenarioSmallBodyFeedbackControl4.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioSmallBodyFeedbackControl5.svg
+   :align: center
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioSmallBodyFeedbackControl.py
-
 
 """
 
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Example simulation to demonstrate the use of the smallBodyNavEKF
+# Purpose:  Example simulation to demonstrate the use of the smallBodyWaypointFeedback module
 # Author:   Adam Herrmann
 # Creation Date:  March 28th, 2022
 #
@@ -469,7 +493,7 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, attitude_error_recorder)
 
     from datetime import datetime
-    fileName = f'small_body_science_env-v1_{datetime.today()}'
+    fileName = 'scenarioSmallBodyFeedbackControl'
 
     vizInterface = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                                             # , saveFile=fileName

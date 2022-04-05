@@ -38,20 +38,19 @@ def test_smallBodyWaypointFeedback(show_plots):
     r"""
     **Validation Test Description**
 
-    Compose a general description of what is being tested in this unit test script.
+    This test checks two things: a large force output when the spacecraft is far from the waypoint, and a small force
+    output when the spacecraft is at the waypoint.
 
     **Test Parameters**
 
-    Discuss the test parameters used.
-
     Args:
-        param1 (int): Dummy test parameter for this parameterized unit test
-        param2 (int): Dummy test parameter for this parameterized unit test
-        accuracy (float): absolute accuracy value used in the validation tests
+        :param show_plots: flag if plots should be shown.
 
     **Description of Variables Being Tested**
 
-    Here discuss what variables and states are being checked. 
+    In this test, the ``forceRequestBody`` variable in the :ref:`CmdForceBodyMsgPayload` output by the module is tested.
+    When far away from the waypoint, the force request should be larger than 1 N. When close to the waypoint, the force
+    request should only account for third body perturbations and SRP.
     """
     [testResults1, testMessages1] = smallBodyWaypointFeedbackTestFunction1()
     [testResults2, testMessages2] = smallBodyWaypointFeedbackTestFunction2()

@@ -31,6 +31,9 @@ provides information on what this message is used for.
     * - forceOutMsg
       - :ref:`CmdForceBodyMsgPayload`
       - force command output
+    * - forceOutMsgC
+      - :ref:`CmdForceBodyMsgPayload`
+      - C-wrapped force output message
 
 Detailed Module Description
 ---------------------------
@@ -77,7 +80,7 @@ The derivation of the control law is skipped here for brevity. The thrust, howev
     :label: eq:smwf_u
 
     \begin{equation}
-    \mathbf{u} = -(f(\mathbf{x}) - f(\mathbf{x}_{ref})) - [K_1]\Delta\mathbf{x}_1 - [K_1]\Delta\mathbf{x}_2
+    \mathbf{u} = -(f(\mathbf{x}) - f(\mathbf{x}_{ref})) - [K_1]\Delta\mathbf{x}_1 - [K_2]\Delta\mathbf{x}_2
     \end{equation}
 
 The relative velocity dynamics are described in detail by `Takahashi <https://doi.org/10.2514/1.G005733>`__ and

@@ -17,7 +17,7 @@
 
 */
 
-#include "fswAlgorithms/formationFlying/smallBodyWaypointFeedback/smallBodyWaypointFeedback.h"
+#include "fswAlgorithms/orbitControl/smallBodyWaypointFeedback/smallBodyWaypointFeedback.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <iostream>
@@ -44,6 +44,11 @@ SmallBodyWaypointFeedback::SmallBodyWaypointFeedback()
 /*! Module Destructor */
 SmallBodyWaypointFeedback::~SmallBodyWaypointFeedback()
 {
+}
+
+/*! Initialize C-wrapped output messages */
+void SmallBodyWaypointFeedback::SelfInit(){
+    CmdForceBodyMsg_C_init(&this->forceOutMsgC);
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
@@ -170,4 +175,7 @@ void SmallBodyWaypointFeedback::writeMessages(uint64_t CurrentSimNanos){
 
     /* Write the message */
     this->forceOutMsg.write(&forceOutMsgBuffer, this->moduleID, CurrentSimNanos);
+
+    /* Write the c-wrapped message */
+    CmdForceBodyMsg_C_write(&forceOutMsgBuffer, &this->forceOutMsgC, this->moduleID, CurrentSimNanos);
 }
