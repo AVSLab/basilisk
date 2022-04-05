@@ -31,6 +31,7 @@ Orbital Simulations
    Defining Motion Relative to Planet <scenarioCentralBody>
    Simulating Trajectory about Multiple Celestial Bodies <scenarioPatchedConics>
    Including Custom Gravitational Bodies <scenarioCustomGravBody>
+   Small Body Waypoint-to-Waypoint Control <scenarioSmallBodyFeedbackControl>
 
 
 Attitude Simulations
@@ -81,6 +82,15 @@ Attitude Steering Control
    :maxdepth: 1
 
    MRP Steering Law <scenarioAttitudeSteering>
+
+Orbit Control
+-------------
+.. toctree::
+   :maxdepth: 1
+
+   Small Body Waypoint-to-Waypoint Control <scenarioSmallBodyFeedbackControl>
+
+
 
 Planetary Environments
 ----------------------
