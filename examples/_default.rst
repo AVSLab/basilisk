@@ -83,6 +83,15 @@ Attitude Steering Control
 
    MRP Steering Law <scenarioAttitudeSteering>
 
+Orbit Control
+-------------
+.. toctree::
+   :maxdepth: 1
+
+   Small Body Waypoint-to-Waypoint Control <scenarioSmallBodyFeedbackControl>
+
+
+
 Planetary Environments
 ----------------------
 
