@@ -28,6 +28,7 @@
 #include <iostream>
 #include <fstream>
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 
@@ -77,10 +78,10 @@ public:
     int N;
     void append(Node* node);
     void pop(int M);
+    void clear();
     void swap(int m, int n);
     void sort();
     bool contains(Node *node);
-
 };
 
 /*! @brief waypoint reference module class */
@@ -96,9 +97,12 @@ public:
     double returnNodeCoord(int key[3], int nodeCoord);
     bool returnNodeState(int key[3]);
     void AStar();
+    void effortBasedAStar();
     void backtrack(Node *p);
     void pathHandle();
     void spline();
+    void computeTorque(int n, double I[9], double L[3]);
+    double effortEvaluation();
 
 public:
     int N;                                                                          //!< Fineness level of discretization
@@ -120,6 +124,7 @@ public:
     OutputDataSet Output;
 
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;                                   //!< Spacecraft state input message
+    ReadFunctor<VehicleConfigMsgPayload> vehicleConfigInMsg;                        //!< FSW vehicle configuration input message
     ReadFunctor<SpicePlanetStateMsgPayload> keepOutCelBodyInMsg;                    //!< Celestial body state msg - keep out direction
     ReadFunctor<SpicePlanetStateMsgPayload> keepInCelBodyInMsg;                     //!< Celestial body state msg - keep in direction
     Message<AttRefMsgPayload> attRefOutMsg;
@@ -127,6 +132,7 @@ public:
 
 private:
     SCStatesMsgPayload scStateMsgBuffer;
+    VehicleConfigMsgPayload vehicleConfigMsgBuffer;
     SpicePlanetStateMsgPayload keepOutCelBodyMsgBuffer;
     SpicePlanetStateMsgPayload keepInCelBodyMsgBuffer;
 };

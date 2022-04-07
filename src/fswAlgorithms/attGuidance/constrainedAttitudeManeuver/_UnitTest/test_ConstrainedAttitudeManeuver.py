@@ -270,6 +270,9 @@ def CAMTestFunction(N, keepOutFov, keepInFov, accuracy):
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
+    InertiaTensor = [0.02 / 3,  0.,         0.,
+                     0.,        0.1256 / 3, 0.,
+                     0.,        0.,         0.1256 / 3]
     PlanetInertialPosition = np.array([10, 0, 0])
     SCInertialPosition = np.array([1, 0, 0])
     SCInitialAttitude = np.array([0, 0, -0.5])
@@ -317,10 +320,14 @@ def CAMTestFunction(N, keepOutFov, keepInFov, accuracy):
     SCStatesMsgData.sigma_BN = SCInitialAttitude
     SCStatesMsgData.omega_BN_B = SCInitialAngRate
     SCStatesMsg = messaging.SCStatesMsg().write(SCStatesMsgData)
+    VehicleConfigMsgData = messaging.VehicleConfigMsgPayload()
+    VehicleConfigMsgData.ISCPntB_B = InertiaTensor
+    VehicleConfigMsg = messaging.VehicleConfigMsg().write(VehicleConfigMsgData)
     PlanetStateMsgData = messaging.SpicePlanetStateMsgPayload()
     PlanetStateMsgData.PositionVector = PlanetInertialPosition
     PlanetStateMsg = messaging.SpicePlanetStateMsg().write(PlanetStateMsgData)
     testModule.scStateInMsg.subscribeTo(SCStatesMsg)
+    testModule.vehicleConfigInMsg.subscribeTo(VehicleConfigMsg)
     testModule.keepOutCelBodyInMsg.subscribeTo(PlanetStateMsg)
     testModule.keepInCelBodyInMsg.subscribeTo(PlanetStateMsg)
 

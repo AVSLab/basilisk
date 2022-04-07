@@ -176,7 +176,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the simulation time and integration update time
-    simulationTime = macros.min2nano(3)
+    simulationTime = macros.min2nano(5)
     simulationTimeStep = macros.sec2nano(0.01)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
     
@@ -317,12 +317,12 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # scSim.AddModelToTask(simTaskName, waypointReferenceConfig)
 
     # setup readManeuver guidance module
-    CAM = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(8)
+    CAM = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(4)
     CAM.ModelTag = "constrainedAttitudeManeuvering"
     CAM.sigma_BN_goal = sigma_BN_target[attitudeSetCase]
     CAM.omega_BN_B_goal = [0, 0, 0]
     CAM.avgOmega = 0.04
-    CAM.BSplineType = 1
+    CAM.BSplineType = 0
     CAM.appendKeepOutDirection([1,0,0], starTrackerFov*macros.D2R)
     CAM.appendKeepInDirection([0,1,0], sunSensorFov*macros.D2R)
     scSim.AddModelToTask(simTaskName, CAM)
@@ -422,6 +422,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     CAM.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    CAM.vehicleConfigInMsg.subscribeTo(vcMsg)
     CAM.keepOutCelBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
     CAM.keepInCelBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
     attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)

@@ -86,9 +86,10 @@ void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
 		bskLogger.bskLog(BSK_WARNING, "ConstraintAttitudeManeuver: the target attitude of the S/C is not constraint-compliant.");
 	}
 	GenerateGrid(startNode, goalNode);
-	// AStar();
-	// pathHandle();
-	// spline();
+	effortBasedAStar();
+	pathHandle();
+	spline();
+	// std::cout << effortEvaluation();
     return;
 
 }
@@ -99,7 +100,6 @@ void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
  */
 void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
 {
-	/*
 	double t = CurrentSimNanos * 1e-9;
 	double sigma_RN[3], sigmaDot_RN[3], sigmaDDot_RN[3], omega_RN_R[3], omegaDot_RN_R[3];
 	this->Output.getData(t, sigma_RN, sigmaDot_RN, sigmaDDot_RN);
@@ -121,7 +121,7 @@ void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
 	v3tMultM33(omegaDot_RN_R, RN, attMsgBuffer.domega_RN_N);
 
 	// write output attitude reference message
-    this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, CurrentSimNanos); */
+    this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, CurrentSimNanos);
 
 	return;
 }
@@ -138,8 +138,8 @@ void ConstrainedAttitudeManeuver::ReadInputs()
 	if (this->scStateInMsg.isWritten()) {
 		this->scStateMsgBuffer = this->scStateInMsg();
 	}
-	else {
-		bskLogger.bskLog(BSK_ERROR, "ConstraintAttitudeManeuver: scStateInMsg is not connected. \n");
+	if (this->vehicleConfigInMsg.isWritten()) {
+		this->vehicleConfigMsgBuffer = this->vehicleConfigInMsg();
 	}
 	if (this->keepOutCelBodyInMsg.isWritten()) {
 		this->keepOutCelBodyMsgBuffer = this->keepOutCelBodyInMsg();
@@ -413,7 +413,6 @@ void ConstrainedAttitudeManeuver::AStar()
 
 	while (O.list[0] != &NodesMap[this->keyG[0]][this->keyG[1]][this->keyG[2]] && n < Nmax) {
 		n += 1;
-		// std::cout << "List count: " << O.N << "\n";
 		C.append(O.list[0]);
 
 		for (int k = 0; k < O.list[0]->neighborCount; k++) {
@@ -434,13 +433,71 @@ void ConstrainedAttitudeManeuver::AStar()
 				}
 			}
 		}
-		// std::cout << O.list[0]->sigma_BN[0] << " " << O.list[0]->sigma_BN[1] << " " << O.list[0]->sigma_BN[2] << " Count = " << n << "\n";
+		
 		O.pop(0);
 		O.sort();
 	}
 
 	backtrack(O.list[0]);
     
+	for (int n = 0; n < this->path.N; n++) {
+		std::cout << this->path.list[n]->sigma_BN[0] << " " << this->path.list[n]->sigma_BN[1] << " " << this->path.list[n]->sigma_BN[2] << "\n";
+	}
+}
+
+/*! This method applies the effort-based A* to find a valid path
+ @return void
+ */
+void ConstrainedAttitudeManeuver::effortBasedAStar()
+{
+	int Nmax = 100;
+	int n = 0;
+	double p;
+	Node *key;
+    NodeList O, C;
+	O.append(&NodesMap[this->keyS[0]][this->keyS[1]][this->keyS[2]]);
+
+	while (O.list[0] != &NodesMap[this->keyG[0]][this->keyG[1]][this->keyG[2]] && n < Nmax) {
+		n += 1;
+		std::cout << "N = " << n << "\n"; // "; sigma = " << O.list[0]->sigma_BN[0] << " " << O.list[0]->sigma_BN[1] << " " << O.list[0]->sigma_BN[2] << "\n";
+		C.append(O.list[0]);
+
+		for (int k = 0; k < O.list[0]->neighborCount; k++) {
+
+			key = O.list[0]->neighbors[k];
+
+			if (C.contains(key) == false) {
+				backtrack(O.list[0]);
+				this->path.append(key);
+				if (key != &NodesMap[this->keyG[0]][this->keyG[1]][this->keyG[2]]) {
+					this->path.append(&NodesMap[this->keyG[0]][this->keyG[1]][this->keyG[2]]);
+				}
+				pathHandle();
+				spline();
+				p = effortEvaluation();
+				this->path.clear();
+				if (O.contains(key)) {
+					if (p < key->priority) {
+						key->priority = p;
+						key->backPointer = O.list[0];
+					}
+				}
+				else {
+					key->priority = p;
+					key->backPointer = O.list[0];
+					O.append(key);
+				}
+			}
+			// std::cout << key->sigma_BN[0] << " " << key->sigma_BN[1] << " " << key->sigma_BN[2] << " => " << key->priority << "\n";
+		}
+		
+		O.pop(0);
+		O.sort();
+	}
+
+	backtrack(O.list[0]);
+    
+	std::cout << "Waypoints: \n";
 	for (int n = 0; n < this->path.N; n++) {
 		std::cout << this->path.list[n]->sigma_BN[0] << " " << this->path.list[n]->sigma_BN[1] << " " << this->path.list[n]->sigma_BN[2] << "\n";
 	}
@@ -496,9 +553,7 @@ void ConstrainedAttitudeManeuver::pathHandle()
 	X1[path.N-1] = sigma[0]; X2[path.N-1] = sigma[1]; X3[path.N-1] = sigma[2];
 
 	this->Input = InputDataSet(X1, X2, X3);
-	// std::cout << S << " " << T[this->path.N-1] << " " << this->avgOmega << "\n";
 	this->Input.setT(T * 4 * S / (T[this->path.N-1] * this->avgOmega));
-	// std::cout << this->Input.T;
 }
 
 /*! This method ...
@@ -524,6 +579,47 @@ void ConstrainedAttitudeManeuver::spline()
 	else if (this->BSplineType == 1) {
 		approximate(this->Input, 100, this->Input.X1.size(), 4, &this->Output);  // review
 	}
+}
+
+/*! This method ...
+ @return void
+ */
+void ConstrainedAttitudeManeuver::computeTorque(int n, double I[9], double L[3])
+{
+	double sigma[3], sigmaDot[3], sigmaDDot[3], omega[3], omegaDot[3], L1[3], L2[3], H[3];
+	
+	sigma[0]     = this->Output.X1[0];    sigma[1]     = this->Output.X2[0];    sigma[2]     = this->Output.X3[0];
+	sigmaDot[0]  = this->Output.XD1[0];   sigmaDot[1]  = this->Output.XD2[0];   sigmaDot[2]  = this->Output.XD3[0];
+	sigmaDDot[0] = this->Output.XDD1[0];  sigmaDDot[1] = this->Output.XDD2[0];  sigmaDDot[2] = this->Output.XDD3[0];
+	dMRP2Omega(sigma, sigmaDot, omega);
+	ddMRP2dOmega(sigma, sigmaDot, sigmaDDot, omegaDot);
+    m33MultV3(RECAST3X3 I, omegaDot, L1);
+	m33MultV3(RECAST3X3 I, omega, H);
+	v3Cross(omega, H, L2);
+	v3Add(L1, L2, L);
+}
+
+/*! This method ...
+ @return void
+ */
+double ConstrainedAttitudeManeuver::effortEvaluation()
+{
+    double effort = 0;
+	double l_a, l_b;
+	double L_a[3], L_b[3];
+	computeTorque(0, this->vehicleConfigMsgBuffer.ISCPntB_B, L_a);
+
+	N = this->Output.T.size();
+	for (int n = 0; n < N-1; n++) {
+		computeTorque(n+1, this->vehicleConfigMsgBuffer.ISCPntB_B, L_b);
+		l_a = v3Norm(L_a);
+		l_b = v3Norm(L_b);
+		effort += (l_a + l_b) * (Output.T[n+1] - Output.T[n]) / 2;
+
+		v3Copy(L_b, L_a);
+	}
+
+	return effort;
 }
 
 /*! This is the constructor for the Node class.  It sets default variable
@@ -712,10 +808,15 @@ void NodeList::append(Node* node)
 
 void NodeList::pop(int M)
 {
-	for (int m = M; m < N-1; m++) {
+	for (int m = M; m < this->N-1; m++) {
 		this->list[m] = this->list[m+1];
 	}
 	this->N -= 1;
+}
+
+void NodeList::clear()
+{
+	this->N = 0;
 }
 
 void NodeList::swap(int m, int n)
