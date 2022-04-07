@@ -269,6 +269,6 @@ def run(show_plots):
 
     # close the plots being saved off to avoid over-writing old and new figures
 if __name__ == '__main__':
-    run(True,"LPO","Earth")
+    run(True)
     
     
