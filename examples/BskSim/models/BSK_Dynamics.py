@@ -78,9 +78,9 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, None, 300)
         
-        SimBase.createNewEvent("addRWFault_1", self.processTasksTimeStep, True,
+        SimBase.createNewEvent("addRWFault", self.processTasksTimeStep, True,
             ["self.TotalSim.CurrentNanos>=self.faultTime and self.RWFaultFlag==True"],
-            ["self.DynModels.AddRWFault('friction',10,1)", "self.RWFaultFlag=False"])
+            ["self.DynModels.AddRWFault('friction',0.05,1)", "self.RWFaultFlag=False"])
 
 
     # ------------------------------------------------------------------------------------------- #
@@ -165,25 +165,26 @@ class BSKDynamicModels():
         self.RW1 = self.rwFactory.create('Honeywell_HR16',
             gsHat,
             maxMomentum=maxRWMomentum,
-            rWB_B=rwPosVector[0], useRWfriction=True)
+            rWB_B=rwPosVector[0])
         
         gsHat = (rbk.Mi(-rwAzimuthAngle[1],3).dot(rbk.Mi(rwElAngle[1],2))).dot(np.array([1,0,0]))
         self.RW2 = self.rwFactory.create('Honeywell_HR16',
             gsHat,
             maxMomentum=maxRWMomentum,
-            rWB_B=rwPosVector[1], useRWfriction=True)
+            rWB_B=rwPosVector[1])
 
         gsHat = (rbk.Mi(-rwAzimuthAngle[2],3).dot(rbk.Mi(rwElAngle[2],2))).dot(np.array([1,0,0]))
         self.RW3 = self.rwFactory.create('Honeywell_HR16',
             gsHat,
             maxMomentum=maxRWMomentum,
-            rWB_B=rwPosVector[2], useRWfriction=True)
+            rWB_B=rwPosVector[2])
             
         gsHat = (rbk.Mi(-rwAzimuthAngle[3],3).dot(rbk.Mi(rwElAngle[3],2))).dot(np.array([1,0,0]))
         self.RW4 = self.rwFactory.create('Honeywell_HR16',
             gsHat,
             maxMomentum=maxRWMomentum,
-            rWB_B=rwPosVector[3], useRWfriction=True)
+            rWB_B=rwPosVector[3])
+
         self.rwFactory.addToSpacecraft("RWA", self.rwStateEffector, self.scObject)
 
     def SetThrusterStateEffector(self):
@@ -264,13 +265,13 @@ class BSKDynamicModels():
         # Add the fault
         if faultType == "friction":
             if faultRW == 1:
-                self.RW1.fCoulomb *= fault
+                self.RW1.fCoulomb += fault
             elif faultRW == 2:
-                self.RW2.fCoulomb *= fault
+                self.RW2.fCoulomb += fault
             elif faultRW == 3:
-                self.RW3.fCoulomb *= fault
+                self.RW3.fCoulomb += fault
             elif faultRW == 4:
-                self.RW4.fCoulomb *= fault
+                self.RW4.fCoulomb += fault
         else:
             print("Invalid fault type. No fault added.")
 

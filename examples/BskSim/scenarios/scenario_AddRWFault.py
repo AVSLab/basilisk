@@ -19,7 +19,19 @@ r"""
 Overview
 --------
 
-This script demonstrates how to use event handlers to add reaction wheel faults.
+This script demonstrates how to use event handlers to add reaction wheel faults. The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
+
+      python3 scenario_AddRWFault.py
+
+The method for injecting the reaction wheel fault, ``AddRWFault``, is added to the dynamics file governing the simulation. The event handler is also added to the dynamics file, set up with the following conditions::
+
+    SimBase.createNewEvent("addRWFault", self.processTasksTimeStep, True,
+        ["self.TotalSim.CurrentNanos>=self.faultTime and self.RWFaultFlag==True"],
+        ["self.DynModels.AddRWFault('friction',0.05,1)", "self.RWFaultFlag=False"])
+
+The string in the first set of square brackets provides the conditions for executing the commands in the second set of square brackets. The main scenario script sets ``faultTime`` and turns the ``RWFaultFlag`` to true.
+
+The fault is added 10 minutes into the simulation, increasing the friction of reaction wheel 1 from 0.0 to 0.05 and causing a noticeable attitude error offset.
 
 Illustration of Simulation Results
 ----------------------------------
@@ -28,10 +40,10 @@ Illustration of Simulation Results
 
     showPlots = True
 
-.. image:: /_images/Scenarios/scenario_AttModes_rateError.svg
+.. image:: /_images/Scenarios/scenario_AddRWFault_rateError.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenario_AttModes_attitudeErrorNorm.svg
+.. image:: /_images/Scenarios/scenario_AddRWFault_attitudeErrorNorm.svg
    :align: center
 
 """
@@ -51,8 +63,6 @@ sys.path.append(path + '/../plotting')
 from BSK_masters import BSKSim, BSKScenario
 import BSK_Dynamics, BSK_Fsw
 import BSK_Plotting as BSK_plt
-
-from random import random, randrange
 
 # Create your own scenario child class
 class scenario_AddRWFault(BSKSim, BSKScenario):
@@ -145,20 +155,20 @@ def runScenario(scenario):
     return
 
 
-def run(showPlots, RWFaultFlag):
+def run(showPlots):
     """
-        The scenarios can be run with the followings setups parameters:
+        The scenarios can be run with the following parameters:
 
         Args:
             showPlots (bool): Determines if the script should display plots
-            RWFaultFlag (bool): Determines if a 10x friction fault is added 10 minutes into the scenario
+            RWFaultFlag (bool): Determines if a friction fault is added 10 minutes into the scenario
 
     """
     scenario = scenario_AddRWFault()
-    scenario.RWFaultFlag = RWFaultFlag
+    scenario.RWFaultFlag = True
     runScenario(scenario)
     figureList = scenario.pull_outputs(showPlots)
     return figureList
 
 if __name__ == "__main__":
-    run(True, True)
+    run(True)
