@@ -87,6 +87,7 @@ void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
 	}
 	GenerateGrid(startNode, goalNode);
 	effortBasedAStar();
+	// AStar();
 	pathHandle();
 	spline();
 	// std::cout << effortEvaluation();
@@ -376,6 +377,20 @@ bool ConstrainedAttitudeManeuver::returnNodeState(int key[3])
 	}
 }
 
+/*! This method  allows to access the coordinates of path Nodes in without swigging NodesList C++.
+    It is designed to be used in the UnitTest primarily.
+ @return void
+ */
+double ConstrainedAttitudeManeuver::returnPathCoord(int index, int nodeCoord)
+{
+	if (index < 0 || index > this->path.N-1) {
+		return 1000; // random large number that will cause the UnitTest comparison to fail
+	}
+	else {
+		return this->path.list[index]->sigma_BN[nodeCoord];
+	}
+}
+
 /*! This method is used inside A* to track the path from goal to start, order it from start to goal and store in class variable path
  @return void
  */
@@ -572,7 +587,7 @@ void ConstrainedAttitudeManeuver::spline()
 	
 	this->Input.setXDot_0(sDot_s);
 	this->Input.setXDot_N(sDot_g);
-	this->Input.setAvgXDot(this->avgOmega / 4);
+	// this->Input.setAvgXDot(this->avgOmega / 4); // this should be removed??
 	if (this->BSplineType == 0) {
 		interpolate(this->Input, 100, 4, &this->Output);
 	}

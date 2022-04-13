@@ -1574,6 +1574,32 @@ def BmatMRP(q):
     return B
 
 
+def BdotmatMRP(q, dq):
+    """
+    BdotmatMRP(Q, dQ)
+
+    	B = BdotmatMRP(Q, dQ) returns the derivative of the 3x3 BmatMRP 
+        matrix, which is used to calculate the second order derivative 
+        of the MRP vector Q.
+
+    	(d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
+    """
+
+    Bdot = np.zeros([3, 3])
+    s = -2 * np.dot(q, dq)
+    Bdot[0, 0] = s + 4 * (q[0] * dq[0])
+    Bdot[0, 1] = 2 * (-dq[2] + q[0] * dq[1] + dq[0] * q[1])
+    Bdot[0, 2] = 2 * ( dq[1] + q[0] * dq[2] + dq[0] * q[2])
+    Bdot[1, 0] = 2 * ( dq[2] * q[0] * dq[1] + dq[0] * q[1])
+    Bdot[1, 1] = s + 4 * (q[1] * dq[1])
+    Bdot[1, 2] = 2 * (-dq[0] + q[1] * dq[2] + dq[1] * q[2])
+    Bdot[2, 0] = 2 * (-dq[1] + q[0] * dq[2] + dq[0] * q[2])
+    Bdot[2, 1] = 2 * ( dq[0] * q[1] * dq[2] + dq[1] * q[2])
+    Bdot[2, 2] = s + 4 * (q[2] * dq[2])
+
+    return Bdot
+
+
 def BmatPRV(q):
     """
     BmatPRV(Q)
@@ -1809,6 +1835,49 @@ def dMRP(q, w):
     """
 
     return .25 * np.dot(BmatMRP(q), w)
+
+
+def dMRP2Omega(q, dq):
+    """
+    dMRP(Q,dQ)
+
+    	W = dMRP(Q,dQ) returns the angular rate
+    	for a given MRP set q MRP derivative dq.
+
+        W = 4 [B(Q)]^(-1) dQ
+    """
+
+    return 4 * np.matmul(BinvMRP(q), dq)
+
+
+def ddMRP(q, dq, w, dw):
+    """
+    dMRP(Q,dQ,W,dW)
+
+    	ddQ = ddMRP(Q,dQ,W,dW) returns the MRP second derivative
+    	for a given MRP vector q, MRP derivative dq, body
+    	angular velocity vector w and body angulat acceleration
+        vector dw.
+
+    	(d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
+    """
+
+    return .25 * ( np.dot(BmatMRP(q), dw) + np.dot(BdotmatMRP(q, dq), w) )
+
+def ddMRP2dOmega(q, dq, ddq):
+    """
+    ddMRP2dOmega(Q,dQ,ddQ)
+
+    	dW = ddMRP2dOmega(Q,dQ,ddQ) returns the body angular acceleration
+        dW given the MRP vector Q, the MRP derivative dQ and the MRP
+        second order derivative ddQ.
+
+    	dW/dt = 4 [B(Q)]^(-1) ( ddQ - [Bdot(Q,dQ)] [B(Q)]^(-1) dQ )
+    """
+
+    Binv = BinvMRP(q)
+
+    return 4 * np.matmul(Binv, (ddq - np.matmul(BdotmatMRP(q, dq), np.matmul(Binv, dq))) )
 
 
 def dPRV(q, w):

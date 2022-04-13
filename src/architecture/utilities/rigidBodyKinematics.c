@@ -1873,7 +1873,7 @@ void ddMRP(double *q, double *dq, double *w, double *dw, double *ddq)
  * for a given MRP vector Q and 
  * MRP derivative dQ.
  * 
- * w = 4 [B(Q)]^(-1) dQ/dt
+ * dW/dt = 4 [B(Q)]^(-1) ( ddQ - [Bdot(Q,dQ)] [B(Q)]^(-1) dQ )
  */
 void ddMRP2dOmega(double *q, double *dq, double *ddq, double *dw)
 {

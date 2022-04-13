@@ -96,6 +96,7 @@ public:
     void GenerateGrid(Node startNode, Node goalNode);
     double returnNodeCoord(int key[3], int nodeCoord);
     bool returnNodeState(int key[3]);
+    double returnPathCoord(int index, int nodeCoord);
     void AStar();
     void effortBasedAStar();
     void backtrack(Node *p);

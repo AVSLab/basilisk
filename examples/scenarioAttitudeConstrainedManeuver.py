@@ -305,19 +305,9 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
                         [0.326, -0.206, -0.823],     # to violate two keepIn and not keepOut
                         [0.350,  0.220, -0.440],     # to violate keepOut and both keepIn 
                         [0.350,  0.220, -0.440] ]    # to violate keepOut only
-	
-    # setup waypointReference guidance module
-    # waypointReferenceConfig = waypointReference.WaypointReference()
-    # waypointReferenceConfig.ModelTag = "waypointReference"
-    # waypointReferenceConfig.dataFileName = dataFileName
-    # waypointReferenceConfig.delimiter = ","
-    # waypointReferenceConfig.attitudeType = 0
-    # waypointReferenceConfig.useReferenceFrame = True
-    # waypointReferenceConfig.headerLines = 0
-    # scSim.AddModelToTask(simTaskName, waypointReferenceConfig)
 
     # setup readManeuver guidance module
-    CAM = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(4)
+    CAM = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(7)
     CAM.ModelTag = "constrainedAttitudeManeuvering"
     CAM.sigma_BN_goal = sigma_BN_target[attitudeSetCase]
     CAM.omega_BN_B_goal = [0, 0, 0]
@@ -642,7 +632,7 @@ if __name__ == "__main__":
     run(
         True,           # show_plots
         True,           # use2SunSensors
-        20,             # starTrackerFov
+        30,             # starTrackerFov
         70,             # sunSensorFov
-        2               # attitudeSetCase
+        3               # attitudeSetCase
     )

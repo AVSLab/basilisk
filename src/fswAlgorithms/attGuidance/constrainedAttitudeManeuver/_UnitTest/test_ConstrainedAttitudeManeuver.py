@@ -26,6 +26,7 @@
 
 
 import os
+from Basilisk.architecture.sim_model import MRPshadow
 import pytest
 import numpy as np
 
@@ -36,6 +37,7 @@ from Basilisk.fswAlgorithms import constrainedAttitudeManeuver
 from Basilisk.utilities import macros
 from Basilisk.architecture import bskLogging
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.architecture import BSpline
 from Basilisk.architecture import messaging
 
 import matplotlib.pyplot as plt
@@ -76,7 +78,7 @@ class node:
         self.neighbors = {}
         self.heuristic = 0
         self.priority = 0
-        self.path = []
+        self.backpointer = self
         # check cosntraint compliance
         sigma_tilde = np.array([ [0,           -sigma_BN[2], sigma_BN[1]],
                                  [sigma_BN[2],      0,      -sigma_BN[0]],
@@ -192,18 +194,18 @@ def generateGrid(n_start, n_goal, N, constraints, data):
                                 if (m[0], m[1], m[2]) not in nodes:
                                     nodes[(m[0], m[1], m[2])] = node([np.sign(m[0])*u[i], np.sign(m[1])*u[j], np.sign(m[2])*(1-u[i]**2-u[j]**2)**0.5], constraints, **data)
     
-    # # linking nodes
+    # link nodes
     for key1 in nodes:
         i = key1[0]
         j = key1[1]
         k = key1[2]
-        # linking nodes to immediate neighbors
+        # link nodes to immediate neighbors
         for n in neighboringNodes(i, j, k):
             key2 = (n[0], n[1], n[2])
             if key2 in nodes:
                 if nodes[key1].isFree and nodes[key2].isFree:
                     nodes[key1].neighbors[key2] = nodes[key2]
-        # linking boundary nodes to neighbors of respective shadow sets
+        # link boundary nodes to neighbors of respective shadow sets
         if nodes[key1].isBoundary:
             if (-i, -j, -k) in nodes:
                 for key2 in nodes[(-i, -j, -k)].neighbors:
@@ -247,6 +249,179 @@ def generateGrid(n_start, n_goal, N, constraints, data):
 
     return nodes
 
+def backtrack(n, n_start):
+    if n == n_start:
+        path = [n]
+        return path
+    else:
+        path = backtrack(n.backpointer, n_start)
+        path.append(n)
+        return path
+
+def pathHandle(path, avgOmega):
+
+    T = [0]
+    S = 0
+    for n in range(len(path)-1):
+        T.append(T[n] + distanceCart(path[n], path[n+1]))
+        S += T[n+1] - T[n]
+    
+    X1 = []
+    X2 = []
+    X3 = []
+    shadowSet = False
+    for n in range(len(path)-1):
+        if not shadowSet:
+            sigma = path[n].sigma_BN
+        else:
+            if unitTestSupport.isVectorEqual(path[n].sigma_BN, [0,0,0], 1e-6):
+                for m in range(0,n):
+                    s2 = (X1[m]**2 + X2[m]**2 + X3[m]**2)**0.5
+                    X1[m] = -X1[m] / s2
+                    X2[m] = -X2[m] / s2
+                    X3[m] = -X3[m] / s2
+                shadowSet = not shadowSet
+            sigma = MRPshadow(path[n])
+        delSigma = path[n+1].sigma_BN - path[n].sigma_BN
+        if (np.linalg.norm(delSigma) > 1):
+            shadowSet = not shadowSet
+        X1.append(sigma[0])
+        X2.append(sigma[1])
+        X3.append(sigma[2])
+    if shadowSet:
+        sigma = MRPshadow(path[-1].sigma_BN)
+    else:
+        sigma = path[-1].sigma_BN
+    X1.append(sigma[0])
+    X2.append(sigma[1])
+    X3.append(sigma[2])
+
+    Input = BSpline.InputDataSet(X1, X2, X3)
+    Input.setT( np.array(T) * 4 * S / (T[-1] * avgOmega) )
+
+    return Input
+
+def spline(Input, omegaS, omegaG):
+
+    sigmaS = [Input.X1[0][0],  Input.X2[0][0],  Input.X3[0][0]]
+    sigmaG = [Input.X1[-1][0], Input.X2[-1][0], Input.X3[-1][0]]
+    print(sigmaS, omegaS)
+    sigmaDotS = rbk.dMRP(sigmaS, omegaS)
+    sigmaDotG = rbk.dMRP(sigmaG, omegaG)
+
+    Input.setXDot_0(sigmaDotS)
+    Input.setXDot_N(sigmaDotG)
+
+    Output = BSpline.OutputDataSet()
+    BSpline.interpolate(Input, 100, 4, Output)
+
+    return Output
+
+def computeTorque(sigma, sigmaDot, sigmaDDot, I):
+
+    print(sigma, sigmaDot, sigmaDDot)
+
+    omega = rbk.dMRP2Omega(sigma, sigmaDot)
+    omegaDot = rbk.ddMRP2dOmega(sigma, sigmaDot, sigmaDDot)
+
+    return np.matmul(I, omegaDot) + np.cross(omega, np.matmul(I, omega))
+
+def effortEvaluation(Output, I):
+
+    effort = 0
+    sigma     = [Output.X1[0][0], Output.X2[0][0], Output.X3[0][0]]
+    sigmaDot  = [Output.XD1[0][0], Output.XD2[0][0], Output.XD3[0][0]]
+    sigmaDDot = [Output.XDD1[0][0], Output.XDD2[0][0], Output.XDD3[0][0]]
+    L_a = computeTorque(sigma, sigmaDot, sigmaDDot, I)
+
+    for n in range(len(Output.T)):
+        sigma     = [Output.X1[n+1], Output.X2[n+1], Output.X3[n+1]]
+        sigmaDot  = [Output.XD1[n+1], Output.XD2[n+1], Output.XD3[n+1]]
+        sigmaDDot = [Output.XDD1[n+1], Output.XDD2[n+1], Output.XDD3[n+1]]
+        L_b = computeTorque(sigma, sigmaDot, sigmaDDot, I)
+        effort += (np.linalg.norm(L_a) + np.linalg.norm(L_b)) * (Output.T[n+1] - Output.T[n]) / 2
+
+        L_a = L_b
+
+    return effort
+
+def AStar(nodes, n_start, n_goal):
+
+    for key in nodes:
+        nodes[key].heuristic = distanceCart(nodes[key], n_goal)
+
+    O = [n_start]
+    C = []
+    n = 0
+
+    while O[0] != n_goal and n < 10000:
+        n += 1
+        C.append(O[0])
+        for key in O[0].neighbors:
+            if nodes[key] not in C:
+                p = nodes[key].heuristic + distanceCart(O[0], nodes[key]) + O[0].priority - O[0].heuristic
+                if nodes[key] in O:
+                    if p < nodes[key].priority:
+                        nodes[key].priority = p
+                        nodes[key].backpointer = O[0]
+                else:
+                    nodes[key].priority = p
+                    nodes[key].backpointer = O[0]
+                    O.append(nodes[key])
+        O.pop(0)
+
+        if not O:
+            print("Dead end")
+        else:
+            O.sort(key = lambda x: x.priority)
+
+    path = backtrack(O[0], n_start)
+
+    for p in path:
+        print(p.sigma_BN)
+
+    return path
+
+def effortBasedAStar(nodes, n_start, n_goal, omegaS, omegaG, avgOmega, I):
+
+    O = [n_start]
+    C = []
+    n = 0
+
+    while O[0] != n_goal and n < 10000:
+        n += 1
+        C.append(O[0])
+        for key in O[0].neighbors:
+            if nodes[key] not in C:
+                path = backtrack(O[0], n_start)
+                path.append(nodes[key])
+                if nodes[key] != n_goal:
+                    path.append(n_goal)
+                Input = pathHandle(path, avgOmega)
+                Output = spline(Input, omegaS, omegaG)
+                p = effortEvaluation(Output, I)
+                if nodes[key] in O:
+                    if p < nodes[key].priority:
+                        nodes[key].priority = p
+                        nodes[key].backpointer = O[0]
+                else:
+                    nodes[key].priority = p
+                    nodes[key].backpointer = O[0]
+                    O.append(nodes[key])
+        O.pop(0)
+
+        if not O:
+            print("Dead end")
+        else:
+            O.sort(key = lambda x: x.priority)
+
+    path = backtrack(O[0], n_start)
+
+    for p in path:
+        print(p.sigma_BN)
+
+    return path
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("N", [6,7,8,9,10,11,12])
@@ -270,15 +445,17 @@ def CAMTestFunction(N, keepOutFov, keepInFov, accuracy):
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
-    InertiaTensor = [0.02 / 3,  0.,         0.,
-                     0.,        0.1256 / 3, 0.,
-                     0.,        0.,         0.1256 / 3]
+    Inertia = [0.02 / 3,  0.,         0.,
+               0.,        0.1256 / 3, 0.,
+               0.,        0.,         0.1256 / 3]
+    InertiaTensor = unitTestSupport.np2EigenMatrix3d(Inertia)
     PlanetInertialPosition = np.array([10, 0, 0])
     SCInertialPosition = np.array([1, 0, 0])
     SCInitialAttitude = np.array([0, 0, -0.5])
     SCTargetAttitude = np.array([0, 0.5, 0])
     SCInitialAngRate = np.array([0, 0, 0])
     SCTargetAngRate = np.array([0, 0, 0])
+    SCAvgAngRate = 0.03
     keepOutBoresight_B = [[1, 0, 0]]
     keepInBoresight_B = [[0, 1, 0], [0, 0, 1]]
     # convert Fov angles to radiants
@@ -292,7 +469,9 @@ def CAMTestFunction(N, keepOutFov, keepInFov, accuracy):
              'keepIn_b' : keepInBoresight_B, 'keepIn_fov' : [keepInFov, keepInFov]}
     n_start = node(SCInitialAttitude, constraints, **data)
     n_goal  = node(SCTargetAttitude, constraints, **data)
-    Grid = generateGrid(n_start, n_goal, N, constraints, data)
+    nodes = generateGrid(n_start, n_goal, N, constraints, data)
+    path = AStar(nodes, n_start, n_goal)
+    path = effortBasedAStar(nodes, n_start, n_goal, SCInitialAngRate, SCTargetAngRate, SCAvgAngRate, InertiaTensor)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -306,7 +485,7 @@ def CAMTestFunction(N, keepOutFov, keepInFov, accuracy):
     testModule = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(N)
     testModule.sigma_BN_goal = SCTargetAttitude
     testModule.omega_BN_B_goal = SCTargetAngRate
-    testModule.avgOmega = 0.03
+    testModule.avgOmega = SCAvgAngRate
     testModule.BSplineType = 0
     testModule.appendKeepOutDirection(keepOutBoresight_B[0], keepOutFov)
     testModule.appendKeepInDirection(keepInBoresight_B[0], keepInFov)
@@ -321,7 +500,7 @@ def CAMTestFunction(N, keepOutFov, keepInFov, accuracy):
     SCStatesMsgData.omega_BN_B = SCInitialAngRate
     SCStatesMsg = messaging.SCStatesMsg().write(SCStatesMsgData)
     VehicleConfigMsgData = messaging.VehicleConfigMsgPayload()
-    VehicleConfigMsgData.ISCPntB_B = InertiaTensor
+    VehicleConfigMsgData.ISCPntB_B = Inertia
     VehicleConfigMsg = messaging.VehicleConfigMsg().write(VehicleConfigMsgData)
     PlanetStateMsgData = messaging.SpicePlanetStateMsgPayload()
     PlanetStateMsgData.PositionVector = PlanetInertialPosition
@@ -349,21 +528,31 @@ def CAMTestFunction(N, keepOutFov, keepInFov, accuracy):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-    # checking correctness of grid points:
+    # check correctness of grid points:
     for i in range(-N,N+1):
         for j in range(-N,N+1):
             for k in range(-N,N+1):
-                if (i, j, k) in Grid:
-                    sigma_BN = Grid[(i, j, k)].sigma_BN
+                if (i, j, k) in nodes:
+                    sigma_BN = nodes[(i, j, k)].sigma_BN
                     sigma_BN_BSK = []
                     for p in range(3):
                         sigma_BN_BSK.append( testModule.returnNodeCoord([i, j, k], p) )
                     if not unitTestSupport.isVectorEqual(sigma_BN, sigma_BN_BSK, accuracy):
                         testFailCount += 1
                         testMessages.append("FAILED: " + testModule.ModelTag + " Error in the coordinates of node ({},{},{}) \n".format(i, j, k))
-                    if not Grid[(i, j, k)].isFree == testModule.returnNodeState([i, j, k]):
+                    if not nodes[(i, j, k)].isFree == testModule.returnNodeState([i, j, k]):
                         testFailCount += 1
                         testMessages.append("FAILED: " + testModule.ModelTag + " Error in the state of node ({},{},{}) \n".format(i, j, k))
+
+    # check that the same path is produced
+    for p in range(len(path)):
+        sigma_BN = path[p].sigma_BN
+        sigma_BN_BSK = []
+        for j in range(3):
+            sigma_BN_BSK.append(testModule.returnPathCoord(p,j))
+        if not unitTestSupport.isVectorEqual(sigma_BN, sigma_BN_BSK, accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in waypoint number {} in path \n".format(p))
 
     # timeData = CAMLog.times() * macros.NANO2SEC
     # dataSigmaRN = CAMLog.sigma_RN
