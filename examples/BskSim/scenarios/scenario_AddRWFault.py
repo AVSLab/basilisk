@@ -22,16 +22,39 @@ Overview
 This script demonstrates how to use event handlers to add reaction wheel faults. The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_AddRWFault.py
+      
+Using event handlers
+--------------------
 
-The method for injecting the reaction wheel fault, ``AddRWFault``, is added to the dynamics file governing the simulation. The event handler is also added to the dynamics file, set up with the following conditions::
+The event handler class, defined in ``SimulationBaseClass``, allows the user to define events. These events can be used for a variety of reasons, ranging from changing flight modes to creating faults. The events used in this example are defined in ``BSK_Dynamics``.
 
-    SimBase.createNewEvent("addRWFault", self.processTasksTimeStep, True,
-        ["self.TotalSim.CurrentNanos>=self.faultTime and self.RWFaultFlag==True"],
-        ["self.DynModels.AddRWFault('friction',0.05,1)", "self.RWFaultFlag=False"])
+When creating an event handler, the following syntax is used::
 
-The string in the first set of square brackets provides the conditions for executing the commands in the second set of square brackets. The main scenario script sets ``faultTime`` and turns the ``RWFaultFlag`` to true.
+    SimBase.createNewEvent("eventName", eventRate, eventActive,
+        conditionList=[], actionList = [])
 
-The fault is added 10 minutes into the simulation, increasing the friction of reaction wheel 1 from 0.0 to 0.05 and causing a noticeable attitude error offset.
+Within the condition list should be the conditions for executing the event, specified as strings. Likewise, the action list enumerates strings that are executed when the event happens. Because the code parses these strings, rather than having complex conditions or actions in the string literals, it can be convenient to create methods (see the examples below).
+
+By default, after the event has happened once, the eventActive flag is turned to false. For repeated events, this behavior can be overriden by calling the function ``setEventActivity``. Likewise, the eventActive flags of other events can be set using ``setAllButCurrentEventActivity``. See the associated documentation for more details.
+
+Setting up the faults
+---------------------
+
+This script uses two event handlers. The first one defines an event that injects a large, one-time static friction fault::
+
+        SimBase.createNewEvent("addOneTimeRWFault", self.processTasksTimeStep, True,
+            ["self.TotalSim.CurrentNanos>=self.oneTimeFaultTime and self.oneTimeRWFaultFlag==1"],
+            ["self.DynModels.AddRWFault('friction',0.05,1, self.TotalSim.CurrentNanos)", "self.oneTimeRWFaultFlag=0"])
+
+For this event, the conditions are that the time for the fault has passed, and that the corresponding fault flag is active. The fault time is specified in the scenario script. The ``oneTimeRWFaultFlag`` and the ``repeatRWFaultFlag``, also set in the scenario script, ensures that the faults are added only for the fault scenario.
+
+The second event handler defines an event that is always active, and adds a smaller static friction fault with small probability::
+
+        SimBase.createNewEvent("addRepeatedRWFault", self.processTasksTimeStep, True,
+            ["self.repeatRWFaultFlag==1"],
+            ["self.DynModels.PeriodicRWFault(1./3000,'friction',0.005,1, self.TotalSim.CurrentNanos)", "self.setEventActivity('addRepeatedRWFault',True)"])
+
+Note the command ``"self.setEventActivity('addRepeatedRWFault',True)"``, keeping the eventActive flag turned on for this event handler. For both event handlers, the particular methods that change the reaction wheel friction parameters are defined in ``BSK_Dynamics``.
 
 Illustration of Simulation Results
 ----------------------------------
@@ -44,6 +67,12 @@ Illustration of Simulation Results
    :align: center
 
 .. image:: /_images/Scenarios/scenario_AddRWFault_attitudeErrorNorm.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenario_AddRWFault_RWSpeeds.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenario_AddRWFault_RWFriction.svg
    :align: center
 
 """
@@ -81,9 +110,12 @@ class scenario_AddRWFault(BSKSim, BSKScenario):
         self.configure_initial_conditions()
         self.log_outputs()
         
-        self.faultTime = macros.min2nano(10.)
-
+        self.oneTimeRWFaultFlag = 1
+        self.repeatRWFaultFlag = 1
+        self.oneTimeFaultTime = macros.min2nano(10.)
+        
         DynModels = self.get_DynModel()
+        self.DynModels.RWFaultLog = []
 
     def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
@@ -109,11 +141,19 @@ class scenario_AddRWFault(BSKSim, BSKScenario):
         DynModel = self.get_DynModel()
         samplingTime = FswModel.processTasksTimeStep
 
+        self.rwSpeedRec = DynModel.rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+        self.AddModelToTask(DynModel.taskName, self.rwSpeedRec)
+
         self.msgRecList[self.attGuidName] = FswModel.attGuidMsg.recorder(samplingTime)
         self.AddModelToTask(DynModel.taskName, self.msgRecList[self.attGuidName])
 
         self.msgRecList[self.sNavTransName] = DynModel.simpleNavObject.transOutMsg.recorder(samplingTime)
         self.AddModelToTask(DynModel.taskName, self.msgRecList[self.sNavTransName])
+
+        self.rwLogs = []
+        for item in range(4):
+            self.rwLogs.append(DynModel.rwStateEffector.rwOutMsgs[item].recorder(samplingTime))
+            self.AddModelToTask(DynModel.taskName, self.rwLogs[item])
 
         return
 
@@ -123,19 +163,27 @@ class scenario_AddRWFault(BSKSim, BSKScenario):
 
         sigma_BR = np.delete(attErrRec.sigma_BR, 0, 0)
         omega_BR_B = np.delete(attErrRec.omega_BR_B, 0, 0)
+        
+        num_RW = 4
+        RW_speeds = np.delete(self.rwSpeedRec.wheelSpeeds[:, range(num_RW)], 0, 0)
+        RW_friction = []
+        for i in range(num_RW):
+            RW_friction.append(np.delete(self.rwLogs[i].u_f, 0, 0))
 
         # Plot results
-        # Change this to plot everything we need
         BSK_plt.clear_all_plots()
         timeData = np.delete(attErrRec.times(), 0, 0) * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
         BSK_plt.plot_rate_error(timeData, omega_BR_B)
+        BSK_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
+        BSK_plt.plot_rw_friction(timeData, RW_friction, num_RW, self.DynModels.RWFaultLog)
+
         figureList = {}
         if showPlots:
             BSK_plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["attitudeErrorNorm", "rateError"]
+            figureNames = ["attitudeErrorNorm", "rateError", "RWSpeeds", "RWFriction"]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
@@ -165,7 +213,6 @@ def run(showPlots):
 
     """
     scenario = scenario_AddRWFault()
-    scenario.RWFaultFlag = True
     runScenario(scenario)
     figureList = scenario.pull_outputs(showPlots)
     return figureList

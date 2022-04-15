@@ -78,10 +78,14 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, None, 300)
         
-        SimBase.createNewEvent("addRWFault", self.processTasksTimeStep, True,
-            ["self.TotalSim.CurrentNanos>=self.faultTime and self.RWFaultFlag==True"],
-            ["self.DynModels.AddRWFault('friction',0.05,1)", "self.RWFaultFlag=False"])
+        SimBase.createNewEvent("addOneTimeRWFault", self.processTasksTimeStep, True,
+            ["self.TotalSim.CurrentNanos>=self.oneTimeFaultTime and self.oneTimeRWFaultFlag==1"],
+            ["self.DynModels.AddRWFault('friction',0.05,1, self.TotalSim.CurrentNanos)", "self.oneTimeRWFaultFlag=0"])
 
+        
+        SimBase.createNewEvent("addRepeatedRWFault", self.processTasksTimeStep, True,
+            ["self.repeatRWFaultFlag==1"],
+            ["self.DynModels.PeriodicRWFault(1./3000,'friction',0.005,1, self.TotalSim.CurrentNanos)", "self.setEventActivity('addRepeatedRWFault',True)"])
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -261,8 +265,20 @@ class BSKDynamicModels():
         self.CSSConstellationObject.sensorList = coarseSunSensor.CSSVector(cssList)
 
     # Method for adding reaction wheel faults
-    def AddRWFault(self, faultType, fault, faultRW):
-        # Add the fault
+    def PeriodicRWFault(self, probability, faultType, fault, faultRW, currentTime):
+        """
+        Adds a fault periodically. Probability is the chance of the fault occurring per update.
+        """
+        if np.random.uniform() < probability:
+            self.AddRWFault(faultType, fault, faultRW, currentTime)
+        
+        
+    
+    def AddRWFault(self, faultType, fault, faultRW, currentTime):
+        """
+        Adds a static friction fault to the reaction wheel.
+        """
+        self.RWFaultLog.append([faultType, fault, faultRW, currentTime*mc.NANO2MIN])
         if faultType == "friction":
             if faultRW == 1:
                 self.RW1.fCoulomb += fault

@@ -262,6 +262,21 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW, id=None, livePlot=False):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
 
+def plot_rw_friction(timeData, dataFrictionRW, numRW, dataFaultLog=[],  id=None, livePlot=False):
+    plt.figure(id)
+    for idx in range(numRW):
+        plt.plot(timeData, dataFrictionRW[idx],
+                 color=unitTestSupport.getLineColor(idx, numRW),
+                 label=r'$RW_{' + str(idx+1) + '} Friction$')
+    if dataFaultLog:
+        # fourth column of dataFaultLog is the fault times
+        plt.scatter([row[3] for row in dataFaultLog], np.zeros(len(dataFaultLog)), marker="x", color=(1,0,0),
+            label='Faults')
+    if not livePlot:
+        plt.legend(loc='upper right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Static Friction ')
+
 
 def plot_planet(oe, planet):
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
