@@ -209,7 +209,6 @@ def run(showPlots):
 
         Args:
             showPlots (bool): Determines if the script should display plots
-            RWFaultFlag (bool): Determines if a friction fault is added 10 minutes into the scenario
 
     """
     scenario = scenario_AddRWFault()
