@@ -140,7 +140,6 @@ from datetime import datetime
 
 import matplotlib.pyplot as plt
 import matplotlib.transforms as mtransforms
-from copy import copy
 
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, constrainedAttitudeManeuver, rwMotorTorque)
 from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, spacecraft, boreAngCalc)
@@ -307,12 +306,13 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
                         [0.350,  0.220, -0.440] ]    # to violate keepOut only
 
     # setup readManeuver guidance module
-    CAM = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(7)
+    CAM = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(8)
     CAM.ModelTag = "constrainedAttitudeManeuvering"
     CAM.sigma_BN_goal = sigma_BN_target[attitudeSetCase]
     CAM.omega_BN_B_goal = [0, 0, 0]
     CAM.avgOmega = 0.04
     CAM.BSplineType = 0
+    CAM.costFcnType = 0
     CAM.appendKeepOutDirection([1,0,0], starTrackerFov*macros.D2R)
     CAM.appendKeepInDirection([0,1,0], sunSensorFov*macros.D2R)
     scSim.AddModelToTask(simTaskName, CAM)
