@@ -27,6 +27,158 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
 
+
+/*! This is the constructor for the Node class.  It sets default variable
+    values and initializes the various parts of the model */
+Node::Node()
+{
+    return;
+}
+
+/*! The constructor requires the MRP set, the constraint structure and the sc boresight structure */
+Node::Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct boresights)
+{
+    // MRPswitch(sigma_BN, 1, this->sigma_BN);
+	v3Copy(sigma_BN, this->sigma_BN);
+	this->isBoundary = false;
+	if (abs(v3Norm(this->sigma_BN) - 1) < 1e-5) {
+		this->isBoundary = true;
+	}
+	this->heuristic = 0;
+	this->priority = 0;
+	this->neighborCount = 0;
+
+	// check constraint compliance
+	this->isFree = true;
+	double BN[3][3];
+	MRP2C(this->sigma_BN, BN);
+	double boresight_B[3], boresight_N[3];
+	int N;
+	// keep-out
+	if (constraints.keepOut) {
+		N = boresights.keepOutBoresightCount;
+		for (int n = 0; n < N; n++) {
+			for (int j = 0; j < 3; j++) {
+				boresight_B[j] = boresights.keepOutBoresight_B[n][j];
+			}
+			v3tMultM33(boresight_B, BN, boresight_N);
+			if ( v3Dot(boresight_N, constraints.keepOutDir_N) >= cos(boresights.keepOutFov[n]) ) {
+				this->isFree = false;
+				return;
+			}
+		}
+	}
+	// keep-in
+	if (constraints.keepIn) {
+		N = boresights.keepInBoresightCount;
+		bool isIn = false;
+		for (int n = 0; n < N; n++) {
+			for (int j = 0; j < 3; j++) {
+				boresight_B[j] = boresights.keepInBoresight_B[n][j];
+			}
+			v3tMultM33(boresight_B, BN, boresight_N);
+			if ( v3Dot(boresight_N, constraints.keepInDir_N) >= cos(boresights.keepInFov[n]) ) {
+				isIn = true;
+			}
+		}
+		if (!isIn) {
+			this->isFree = false;
+		}
+	}
+
+    return;
+}
+
+/*! Module Destructor.  */
+Node::~Node()
+{
+    return;
+}
+
+/*! This method appends a pointer to neighboring node to the neighbors class variable */
+void Node::appendNeighbor(Node *node)
+{
+	this->neighbors[this->neighborCount] = node;
+	this->neighborCount += 1;
+    return;
+}
+
+
+/*! This is the constructor for the NodeList class. */
+NodeList::NodeList()
+{
+	this-> N = 0;
+    return;
+}
+
+/*! Class Destructor. */
+NodeList::~NodeList()
+{
+    return;
+}
+
+/*! This method appends a pointer to the node list. */
+void NodeList::append(Node* node)
+{
+	this->list[this->N] = node;
+	this->N += 1;
+}
+
+/*! This method removes the pointer at index M from the node list. */
+void NodeList::pop(int M)
+{
+	for (int m = M; m < this->N-1; m++) {
+		this->list[m] = this->list[m+1];
+	}
+	this->N -= 1;
+}
+
+/*! This method resets the list counter to 0, effectively clearing the list. */
+void NodeList::clear()
+{
+	this->N = 0;
+}
+
+/*! This method swaps the two pointers at indices m and n. */
+void NodeList::swap(int m, int n)
+{
+	Node *p1 = this->list[m];
+	Node *p2 = this->list[n];
+	this->list[m] = p2;
+	this->list[n] = p1;
+}
+
+/*! This method sorts the nodes in the list according to their priority. */
+void NodeList::sort()
+{
+	int M;
+	double p;
+	for (int n = 0; n < this->N; n++) {
+		p = 1e5;
+		M = this->N;
+		for (int m = n; m < this->N; m++) {
+			if (this->list[m]->priority < p) {
+				p = this->list[m]->priority;
+				M = m;
+			}
+		}
+		swap(n, M);
+	}
+}
+
+/*! This method returns true if a node is contained in the list, false otherwise. */
+bool NodeList::contains(Node *node)
+{
+	bool flag = false;
+	for (int n = 0; n < this->N; n++) {
+		if (node == this->list[n]) {
+			flag = true;
+		}
+	}
+	return flag;
+}
+
+
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
 ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver()
@@ -34,7 +186,7 @@ ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver()
     return;
 }
 
-/*! This is the constructor for the module class.  It sets default variable
+/*! This is the constructor for the module class. It sets default variable
     values and initializes the various parts of the model */
 ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver(int N)
 {
@@ -70,9 +222,8 @@ void ConstrainedAttitudeManeuver::appendKeepInDirection(double direction[3], dou
 	this->boresights.keepInBoresightCount += 1;
 }
 
-/*! This method is used to reset the module.
- @return void
- */
+/*! This method is used to reset the module. The input messages are read here,
+the grid is generated and the graph search is performed. */
 void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
 {
 	ReadInputs();
@@ -86,16 +237,24 @@ void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
 		bskLogger.bskLog(BSK_WARNING, "ConstraintAttitudeManeuver: the target attitude of the S/C is not constraint-compliant.");
 	}
 	GenerateGrid(startNode, goalNode);
-	effortBasedAStar();
-	// AStar();
+	if (this->costFcnType == 0) {
+		AStar();
+	}
+	else if (this->costFcnType == 1) {
+		effortBasedAStar();
+	}
+	else {
+		bskLogger.bskLog(BSK_ERROR, "ConstraintAttitudeManeuver: costFcnType has not been specified.");
+	}
 	pathHandle();
 	spline();
-	// std::cout << effortEvaluation();
+	this->pathCost = effortEvaluation();
     return;
 
 }
 
-/*! This method is the state update.
+/*! This method is the state update. It reads the information from the interpolated
+trajectory and writes the output message.
  @return void
  @param CurrentSimNanos The current simulation time for system
  */
@@ -349,48 +508,6 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 	
 }
 
-/*! This method  allows to access the coordinates of a Node in NodesMap without swigging the C++ Map.
-    It is designed to be used in the UnitTest primarily.
- @return void
- */
-double ConstrainedAttitudeManeuver::returnNodeCoord(int key[3], int nodeCoord)
-{
-	if (nodeCoord < 0 || nodeCoord > 2 || NodesMap[key[0]][key[1]].count(key[2]) == 0) {
-		return 1000; // random large number that will cause the UnitTest comparison to fail
-	}
-	else {
-		return this->NodesMap[key[0]][key[1]][key[2]].sigma_BN[nodeCoord];
-	}
-}
-
-/*! This method  allows to access the state of a Node (free or not free) in NodesMap without swigging the C++ Map.
-    It is designed to be used in the UnitTest primarily.
- @return void
- */
-bool ConstrainedAttitudeManeuver::returnNodeState(int key[3])
-{
-	if (NodesMap[key[0]][key[1]].count(key[2]) != 0) {
-		return this->NodesMap[key[0]][key[1]][key[2]].isFree;
-	}
-	else {
-		return false;
-	}
-}
-
-/*! This method  allows to access the coordinates of path Nodes in without swigging NodesList C++.
-    It is designed to be used in the UnitTest primarily.
- @return void
- */
-double ConstrainedAttitudeManeuver::returnPathCoord(int index, int nodeCoord)
-{
-	if (index < 0 || index > this->path.N-1) {
-		return 1000; // random large number that will cause the UnitTest comparison to fail
-	}
-	else {
-		return this->path.list[index]->sigma_BN[nodeCoord];
-	}
-}
-
 /*! This method is used inside A* to track the path from goal to start, order it from start to goal and store in class variable path
  @return void
  */
@@ -455,9 +572,11 @@ void ConstrainedAttitudeManeuver::AStar()
 
 	backtrack(O.list[0]);
     
+	// Uncomment to print path node coordinates
+	/*
 	for (int n = 0; n < this->path.N; n++) {
 		std::cout << this->path.list[n]->sigma_BN[0] << " " << this->path.list[n]->sigma_BN[1] << " " << this->path.list[n]->sigma_BN[2] << "\n";
-	}
+	}*/
 }
 
 /*! This method applies the effort-based A* to find a valid path
@@ -474,7 +593,7 @@ void ConstrainedAttitudeManeuver::effortBasedAStar()
 
 	while (O.list[0] != &NodesMap[this->keyG[0]][this->keyG[1]][this->keyG[2]] && n < Nmax) {
 		n += 1;
-		std::cout << "N = " << n << "\n"; // "; sigma = " << O.list[0]->sigma_BN[0] << " " << O.list[0]->sigma_BN[1] << " " << O.list[0]->sigma_BN[2] << "\n";
+		// std::cout << "N = " << n << "\n"; // uncomment to show the number of nodes explored
 		C.append(O.list[0]);
 
 		for (int k = 0; k < O.list[0]->neighborCount; k++) {
@@ -503,7 +622,6 @@ void ConstrainedAttitudeManeuver::effortBasedAStar()
 					O.append(key);
 				}
 			}
-			// std::cout << key->sigma_BN[0] << " " << key->sigma_BN[1] << " " << key->sigma_BN[2] << " => " << key->priority << "\n";
 		}
 		
 		O.pop(0);
@@ -512,13 +630,15 @@ void ConstrainedAttitudeManeuver::effortBasedAStar()
 
 	backtrack(O.list[0]);
     
+	// Uncomment to print path node coordinates
+	/*
 	std::cout << "Waypoints: \n";
 	for (int n = 0; n < this->path.N; n++) {
 		std::cout << this->path.list[n]->sigma_BN[0] << " " << this->path.list[n]->sigma_BN[1] << " " << this->path.list[n]->sigma_BN[2] << "\n";
-	}
+	} */
 }
 
-/*! This method ...
+/*! This method takes a path of waypoints and returns an Input structure suitable for BSpline interpolation/approximation
  @return void
  */
 void ConstrainedAttitudeManeuver::pathHandle()
@@ -571,7 +691,7 @@ void ConstrainedAttitudeManeuver::pathHandle()
 	this->Input.setT(T * 4 * S / (T[this->path.N-1] * this->avgOmega));
 }
 
-/*! This method ...
+/*! This method performs the BSpline interpolation/approximation and outputs an Output structure
  @return void
  */
 void ConstrainedAttitudeManeuver::spline()
@@ -587,25 +707,27 @@ void ConstrainedAttitudeManeuver::spline()
 	
 	this->Input.setXDot_0(sDot_s);
 	this->Input.setXDot_N(sDot_g);
-	// this->Input.setAvgXDot(this->avgOmega / 4); // this should be removed??
 	if (this->BSplineType == 0) {
 		interpolate(this->Input, 100, 4, &this->Output);
 	}
 	else if (this->BSplineType == 1) {
 		approximate(this->Input, 100, this->Input.X1.size(), 4, &this->Output);  // review
 	}
+	else {
+		bskLogger.bskLog(BSK_ERROR, "ConstraintAttitudeManeuver: BSplineType has not been specified.");
+	}
 }
 
-/*! This method ...
+/*! This method computes the torque vector required at time step with index n
  @return void
  */
 void ConstrainedAttitudeManeuver::computeTorque(int n, double I[9], double L[3])
 {
 	double sigma[3], sigmaDot[3], sigmaDDot[3], omega[3], omegaDot[3], L1[3], L2[3], H[3];
 	
-	sigma[0]     = this->Output.X1[0];    sigma[1]     = this->Output.X2[0];    sigma[2]     = this->Output.X3[0];
-	sigmaDot[0]  = this->Output.XD1[0];   sigmaDot[1]  = this->Output.XD2[0];   sigmaDot[2]  = this->Output.XD3[0];
-	sigmaDDot[0] = this->Output.XDD1[0];  sigmaDDot[1] = this->Output.XDD2[0];  sigmaDDot[2] = this->Output.XDD3[0];
+	sigma[0]     = this->Output.X1[n];    sigma[1]     = this->Output.X2[n];    sigma[2]     = this->Output.X3[n];
+	sigmaDot[0]  = this->Output.XD1[n];   sigmaDot[1]  = this->Output.XD2[n];   sigmaDot[2]  = this->Output.XD3[n];
+	sigmaDDot[0] = this->Output.XDD1[n];  sigmaDDot[1] = this->Output.XDD2[n];  sigmaDDot[2] = this->Output.XDD3[n];
 	dMRP2Omega(sigma, sigmaDot, omega);
 	ddMRP2dOmega(sigma, sigmaDot, sigmaDDot, omegaDot);
     m33MultV3(RECAST3X3 I, omegaDot, L1);
@@ -614,7 +736,18 @@ void ConstrainedAttitudeManeuver::computeTorque(int n, double I[9], double L[3])
 	v3Add(L1, L2, L);
 }
 
-/*! This method ...
+/*! This method computes the torque vector required at time step with index n
+ @return void
+ */
+double ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I[9])
+{
+	double L[3];
+	computeTorque(n, this->vehicleConfigMsgBuffer.ISCPntB_B, L);
+	
+	return v3Norm(L);
+}
+
+/*! This method integrates the control torque norm over maneuver time and returns the cost for the effort-based A*.
  @return void
  */
 double ConstrainedAttitudeManeuver::effortEvaluation()
@@ -637,90 +770,49 @@ double ConstrainedAttitudeManeuver::effortEvaluation()
 	return effort;
 }
 
-/*! This is the constructor for the Node class.  It sets default variable
-    values and initializes the various parts of the model */
-Node::Node()
+/*! This method  allows to access the coordinates of a Node in NodesMap without swigging the C++ Map.
+    It is designed to be used in the UnitTest primarily.
+ @return void
+ */
+double ConstrainedAttitudeManeuver::returnNodeCoord(int key[3], int nodeCoord)
 {
-    return;
-}
-
-/*! The constructor requires the MRP set */
-Node::Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct boresights)
-{
-    // MRPswitch(sigma_BN, 1, this->sigma_BN);
-	v3Copy(sigma_BN, this->sigma_BN);
-	this->isBoundary = false;
-	if (abs(v3Norm(this->sigma_BN) - 1) < 1e-5) {
-		this->isBoundary = true;
+	if (nodeCoord < 0 || nodeCoord > 2 || NodesMap[key[0]][key[1]].count(key[2]) == 0) {
+		return 1000; // random large number that will cause the UnitTest comparison to fail
 	}
-	this->heuristic = 0;
-	this->priority = 0;
-	this->neighborCount = 0;
-	this->pathCount = 0;
-
-	// check constraint compliance
-	this->isFree = true;
-	double BN[3][3];
-	MRP2C(this->sigma_BN, BN);
-	double boresight_B[3], boresight_N[3];
-	int N;
-	// keep-out
-	if (constraints.keepOut) {
-		N = boresights.keepOutBoresightCount;
-		for (int n = 0; n < N; n++) {
-			for (int j = 0; j < 3; j++) {
-				boresight_B[j] = boresights.keepOutBoresight_B[n][j];
-			}
-			v3tMultM33(boresight_B, BN, boresight_N);
-			if ( v3Dot(boresight_N, constraints.keepOutDir_N) >= cos(boresights.keepOutFov[n]) ) {
-				this->isFree = false;
-				return;
-			}
-		}
+	else {
+		return this->NodesMap[key[0]][key[1]][key[2]].sigma_BN[nodeCoord];
 	}
-	// keep-in
-	if (constraints.keepIn) {
-		N = boresights.keepInBoresightCount;
-		bool isIn = false;
-		for (int n = 0; n < N; n++) {
-			for (int j = 0; j < 3; j++) {
-				boresight_B[j] = boresights.keepInBoresight_B[n][j];
-			}
-			v3tMultM33(boresight_B, BN, boresight_N);
-			if ( v3Dot(boresight_N, constraints.keepInDir_N) >= cos(boresights.keepInFov[n]) ) {
-				isIn = true;
-			}
-		}
-		if (!isIn) {
-			this->isFree = false;
-		}
+}
+
+/*! This method  allows to access the state of a Node (free or not free) in NodesMap without swigging the C++ Map.
+    It is designed to be used in the UnitTest primarily.
+ @return void
+ */
+bool ConstrainedAttitudeManeuver::returnNodeState(int key[3])
+{
+	if (NodesMap[key[0]][key[1]].count(key[2]) != 0) {
+		return this->NodesMap[key[0]][key[1]][key[2]].isFree;
 	}
-
-    return;
+	else {
+		return false;
+	}
 }
 
-/*! Module Destructor.  */
-Node::~Node()
+/*! This method allows to access the coordinates of path Nodes in without swigging NodesList C++.
+    It is designed to be used in the UnitTest primarily.
+ @return void
+ */
+double ConstrainedAttitudeManeuver::returnPathCoord(int index, int nodeCoord)
 {
-    return;
+	if (index < 0 || index > this->path.N-1) {
+		return 1000; // random large number that will cause the UnitTest comparison to fail
+	}
+	else {
+		return this->path.list[index]->sigma_BN[nodeCoord];
+	}
 }
 
-/*! This method appends a pointer to neighboring node to the neighbors class variable */
-void Node::appendNeighbor(Node *node)
-{
-	this->neighbors[this->neighborCount] = node;
-	this->neighborCount += 1;
-    return;
-}
-
-/*! This method appends a pointer to neighboring node to the neighbors class variable */
-void Node::appendPathNode(Node *node)
-{
-	this->neighbors[this->pathCount] = node;
-	this->pathCount += 1;
-    return;
-}
-
+/*! This helper function returns the coordinates of the 8 symmetrical points to a point in 3D cartesian space. */
 void mirrorFunction(int indices[3], int mirrorIndices[8][3]) 
 {
 	mirrorIndices[0][0] =  indices[0];   mirrorIndices[0][1] =  indices[1];   mirrorIndices[0][2] =  indices[2];
@@ -733,6 +825,7 @@ void mirrorFunction(int indices[3], int mirrorIndices[8][3])
 	mirrorIndices[7][0] = -indices[0];   mirrorIndices[7][1] = -indices[1];   mirrorIndices[7][2] = -indices[2];
 }
 
+/*! For a set of indices, this helper function returns the indices of the 26 immediate neighbors. */
 void neighboringNodes(int indices[3], int neighbors[26][3])
 {
 	neighbors[0][0]  = indices[0]-1;     neighbors[0][1]  = indices[1];       neighbors[0][2]  = indices[2];
@@ -763,6 +856,7 @@ void neighboringNodes(int indices[3], int neighbors[26][3])
 	neighbors[25][0] = indices[0]+1;     neighbors[25][1] = indices[1]+1;     neighbors[25][2] = indices[2]+1;
 }
 
+/*! This function implements the MRP cartesian distance between 2 nodes.  */
 double distance(Node n1, Node n2)
 {
 	double n1n, n2n;
@@ -800,72 +894,4 @@ double distance(Node n1, Node n2)
         if (d[i] < D) { D = d[i]; }
     }
 	return D;
-}
-
-/*! This is the constructor for the NodeList class. */
-NodeList::NodeList()
-{
-	this-> N = 0;
-    return;
-}
-
-/*! Class Destructor. */
-NodeList::~NodeList()
-{
-    return;
-}
-
-void NodeList::append(Node* node)
-{
-	this->list[this->N] = node;
-	this->N += 1;
-}
-
-void NodeList::pop(int M)
-{
-	for (int m = M; m < this->N-1; m++) {
-		this->list[m] = this->list[m+1];
-	}
-	this->N -= 1;
-}
-
-void NodeList::clear()
-{
-	this->N = 0;
-}
-
-void NodeList::swap(int m, int n)
-{
-	Node *p1 = this->list[m];
-	Node *p2 = this->list[n];
-	this->list[m] = p2;
-	this->list[n] = p1;
-}
-
-void NodeList::sort()
-{
-	int M;
-	double p;
-	for (int n = 0; n < this->N; n++) {
-		p = 1e5;
-		M = this->N;
-		for (int m = n; m < this->N; m++) {
-			if (this->list[m]->priority < p) {
-				p = this->list[m]->priority;
-				M = m;
-			}
-		}
-		swap(n, M);
-	}
-}
-
-bool NodeList::contains(Node *node)
-{
-	bool flag = false;
-	for (int n = 0; n < this->N; n++) {
-		if (node == this->list[n]) {
-			flag = true;
-		}
-	}
-	return flag;
 }

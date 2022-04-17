@@ -32,12 +32,14 @@
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 
+//! @brief The constraintStruc structure is used to store the inertial direction of the keep-in and keep-out zones
 struct constraintStruct {
 
     double keepOutDir_N[3], keepInDir_N[3];
     bool keepOut, keepIn;
 };
 
+//! @brief The scBoresightStruc structure is used to store the body frame directions and fields of view of the instruments
 struct scBoresightStruct {
 
     double keepOutBoresight_B[10][3], keepInBoresight_B[10][3];
@@ -53,19 +55,15 @@ public:
     Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct boresights);
     ~Node();
 
-    double sigma_BN[3];
-    double keepOutBore_N[3];
-    bool isBoundary;
-    bool isFree;
-    double heuristic;
-    double priority;
-    Node *neighbors[52];
-    int neighborCount;
+    double sigma_BN[3];                                             //!< MRP set corresponding to the node
+    bool isBoundary;                                                //!< If true, the node lies on the |sigma| = 1 boundary surface
+    bool isFree;                                                    //!< If true, the node is constraint-compliant
+    double heuristic;                                               //!< Heuristic value used by cartesian distance A*
+    double priority;                                                //!< Priority of the node in A*
+    Node *neighbors[52];                                            //!< Container of pointers to neighboring nodes
+    int neighborCount;                                              //!< Number of neighboring nodes
+    Node *backPointer;                                              //!< Pointer to the previous node in the path computer by A*
     void appendNeighbor(Node *node);
-    Node *path[20];
-    Node *backPointer;
-    int pathCount;
-    void appendPathNode(Node *node);
 };
 
 //! @brief The NodeList class is used in the A* algorithm to handle Open and Closed lists O and C
@@ -74,8 +72,8 @@ public:
     NodeList();
     ~NodeList();
 
-    Node* list[10000];
-    int N;
+    Node* list[10000];                                              //!< Container of pointers to the nodes in the list
+    int N;                                                          //!< Number of nodes in the list
     void append(Node* node);
     void pop(int M);
     void clear();
@@ -94,41 +92,44 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadInputs();
     void GenerateGrid(Node startNode, Node goalNode);
-    double returnNodeCoord(int key[3], int nodeCoord);
-    bool returnNodeState(int key[3]);
-    double returnPathCoord(int index, int nodeCoord);
+    void appendKeepOutDirection(double direction[3], double Fov);
+    void appendKeepInDirection(double direction[3], double Fov);
     void AStar();
     void effortBasedAStar();
     void backtrack(Node *p);
     void pathHandle();
     void spline();
     void computeTorque(int n, double I[9], double L[3]);
+    double computeTorqueNorm(int n, double I[9]);
     double effortEvaluation();
+    double returnNodeCoord(int key[3], int nodeCoord);
+    bool returnNodeState(int key[3]);
+    double returnPathCoord(int index, int nodeCoord);
 
 public:
     int N;                                                                          //!< Fineness level of discretization
     int BSplineType;                                                                //!< 0 for interpolation; 1 for LS approximation
+    int costFcnType;                                                                //!< 0 for minimum distance path; 1 for minimum control effort path
     double sigma_BN_goal[3];                                                        //!< Initial S/C attitude
     double omega_BN_B_goal[3];                                                      //!< Initial S/C angular rate
-    double avgOmega;
+    double avgOmega;                                                                //!< Average angular rate norm during the maneuver
     double keepOutFov;                                                              //|< Field of view of the sensitive instrument
     double keepOutBore_B[3];                                                        //|< Body-frame direction of the boresight of the sensitive instrument
     constraintStruct constraints;                                                   //!< Structure containing the constraint directions in inertial coordinates
-    scBoresightStruct boresights;
-    void appendKeepOutDirection(double direction[3], double Fov);
-    void appendKeepInDirection(double direction[3], double Fov);
+    scBoresightStruct boresights;                                                   //!< Structure containing the instrument boresight directions in body frame coordinates
     std::map<int,std::map<int,std::map<int,Node>>> NodesMap;                        //!< C++ map from node indices to Node class
-    int keyS[3];                                                                    //!< key to Start node in NodesMap
-    int keyG[3];                                                                    //!< key to Goal node in NodesMap
-    NodeList path;
-    InputDataSet Input;
-    OutputDataSet Output;
+    int keyS[3];                                                                    //!< Key to Start node in NodesMap
+    int keyG[3];                                                                    //!< Key to Goal node in NodesMap
+    NodeList path;                                                                  //!< Path of nodes from start to goal
+    double pathCost;                                                                //!< Cost of the path above, according to the cost function used
+    InputDataSet Input;                                                             //!< Input structure for the BSpline interpolation/approximation
+    OutputDataSet Output;                                                           //!< Output structure of the BSpline interpolation/approximation
 
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;                                   //!< Spacecraft state input message
     ReadFunctor<VehicleConfigMsgPayload> vehicleConfigInMsg;                        //!< FSW vehicle configuration input message
     ReadFunctor<SpicePlanetStateMsgPayload> keepOutCelBodyInMsg;                    //!< Celestial body state msg - keep out direction
     ReadFunctor<SpicePlanetStateMsgPayload> keepInCelBodyInMsg;                     //!< Celestial body state msg - keep in direction
-    Message<AttRefMsgPayload> attRefOutMsg;
+    Message<AttRefMsgPayload> attRefOutMsg;                                         //!< Attitude reference output message
     BSKLogger bskLogger;                                                            //!< BSK Logging
 
 private:

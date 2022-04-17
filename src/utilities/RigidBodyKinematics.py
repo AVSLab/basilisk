@@ -1590,11 +1590,11 @@ def BdotmatMRP(q, dq):
     Bdot[0, 0] = s + 4 * (q[0] * dq[0])
     Bdot[0, 1] = 2 * (-dq[2] + q[0] * dq[1] + dq[0] * q[1])
     Bdot[0, 2] = 2 * ( dq[1] + q[0] * dq[2] + dq[0] * q[2])
-    Bdot[1, 0] = 2 * ( dq[2] * q[0] * dq[1] + dq[0] * q[1])
+    Bdot[1, 0] = 2 * ( dq[2] + q[0] * dq[1] + dq[0] * q[1])
     Bdot[1, 1] = s + 4 * (q[1] * dq[1])
     Bdot[1, 2] = 2 * (-dq[0] + q[1] * dq[2] + dq[1] * q[2])
     Bdot[2, 0] = 2 * (-dq[1] + q[0] * dq[2] + dq[0] * q[2])
-    Bdot[2, 1] = 2 * ( dq[0] * q[1] * dq[2] + dq[1] * q[2])
+    Bdot[2, 1] = 2 * ( dq[0] + q[1] * dq[2] + dq[1] * q[2])
     Bdot[2, 2] = s + 4 * (q[2] * dq[2])
 
     return Bdot
@@ -1876,8 +1876,9 @@ def ddMRP2dOmega(q, dq, ddq):
     """
 
     Binv = BinvMRP(q)
+    Bdot = BdotmatMRP(q, dq)
 
-    return 4 * np.matmul(Binv, (ddq - np.matmul(BdotmatMRP(q, dq), np.matmul(Binv, dq))) )
+    return 4 * np.dot(Binv, (ddq - np.dot(Bdot, np.dot(Binv, dq))) )
 
 
 def dPRV(q, w):

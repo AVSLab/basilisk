@@ -21,7 +21,7 @@
 #   Unit Test Script
 #   Module Name:        constrainedAttitudeManeuver
 #   Author:             Riccardo Calaon
-#   Creation Date:      March 14, 2021
+#   Creation Date:      April 16, 2022
 #
 
 
@@ -131,7 +131,6 @@ def distanceCart(n1, n2):
 
     return min(d1, d2, d3, d4)
 
-# PRA between two nodes
 def distanceMRP(n1, n2):    
     s1 = n1.sigma_BN
     s2 = n2.sigma_BN
@@ -305,7 +304,6 @@ def spline(Input, omegaS, omegaG):
 
     sigmaS = [Input.X1[0][0],  Input.X2[0][0],  Input.X3[0][0]]
     sigmaG = [Input.X1[-1][0], Input.X2[-1][0], Input.X3[-1][0]]
-    print(sigmaS, omegaS)
     sigmaDotS = rbk.dMRP(sigmaS, omegaS)
     sigmaDotG = rbk.dMRP(sigmaG, omegaG)
 
@@ -318,8 +316,6 @@ def spline(Input, omegaS, omegaG):
     return Output
 
 def computeTorque(sigma, sigmaDot, sigmaDDot, I):
-
-    print(sigma, sigmaDot, sigmaDDot)
 
     omega = rbk.dMRP2Omega(sigma, sigmaDot)
     omegaDot = rbk.ddMRP2dOmega(sigma, sigmaDot, sigmaDDot)
@@ -334,12 +330,12 @@ def effortEvaluation(Output, I):
     sigmaDDot = [Output.XDD1[0][0], Output.XDD2[0][0], Output.XDD3[0][0]]
     L_a = computeTorque(sigma, sigmaDot, sigmaDDot, I)
 
-    for n in range(len(Output.T)):
-        sigma     = [Output.X1[n+1], Output.X2[n+1], Output.X3[n+1]]
-        sigmaDot  = [Output.XD1[n+1], Output.XD2[n+1], Output.XD3[n+1]]
-        sigmaDDot = [Output.XDD1[n+1], Output.XDD2[n+1], Output.XDD3[n+1]]
+    for n in range(len(Output.T)-1):
+        sigma     = [Output.X1[n+1][0], Output.X2[n+1][0], Output.X3[n+1][0]]
+        sigmaDot  = [Output.XD1[n+1][0], Output.XD2[n+1][0], Output.XD3[n+1][0]]
+        sigmaDDot = [Output.XDD1[n+1][0], Output.XDD2[n+1][0], Output.XDD3[n+1][0]]
         L_b = computeTorque(sigma, sigmaDot, sigmaDDot, I)
-        effort += (np.linalg.norm(L_a) + np.linalg.norm(L_b)) * (Output.T[n+1] - Output.T[n]) / 2
+        effort += (np.linalg.norm(L_a) + np.linalg.norm(L_b)) * (Output.T[n+1][0] - Output.T[n][0]) / 2
 
         L_a = L_b
 
@@ -377,8 +373,8 @@ def AStar(nodes, n_start, n_goal):
 
     path = backtrack(O[0], n_start)
 
-    for p in path:
-        print(p.sigma_BN)
+    # for p in path:
+    #     print(p.sigma_BN)
 
     return path
 
@@ -390,6 +386,7 @@ def effortBasedAStar(nodes, n_start, n_goal, omegaS, omegaG, avgOmega, I):
 
     while O[0] != n_goal and n < 10000:
         n += 1
+        print(n)
         C.append(O[0])
         for key in O[0].neighbors:
             if nodes[key] not in C:
@@ -417,28 +414,64 @@ def effortBasedAStar(nodes, n_start, n_goal, omegaS, omegaG, avgOmega, I):
 
     path = backtrack(O[0], n_start)
 
-    for p in path:
-        print(p.sigma_BN)
+    # for p in path:
+    #     print(p.sigma_BN)
 
     return path
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
-@pytest.mark.parametrize("N", [6,7,8,9,10,11,12])
-@pytest.mark.parametrize("keepOutFov", [20])
-@pytest.mark.parametrize("keepInFov", [70])
+@pytest.mark.parametrize("N", [6,7,8,9,10])
+@pytest.mark.parametrize("keepOutFov", [20,30])
+@pytest.mark.parametrize("keepInFov", [70]) 
+@pytest.mark.parametrize("costFcnType", [0])
+# Uncomment the following line to test the effort-based A*
+# @pytest.mark.parametrize("costFcnType", [0,1])
 @pytest.mark.parametrize("accuracy", [1e-12])
 
-def test_constrainedAttitudeManeuver(show_plots, N, keepOutFov, keepInFov, accuracy):
+def test_constrainedAttitudeManeuver(show_plots, N, keepOutFov, keepInFov, costFcnType, accuracy):
+    r"""
+    **Validation Test Description**
 
-    r"""Add documentation here"""
+    This unit test script tests the correctness of the path computed by the ConstrainedAttitudeManeuver module.
+    The module is tested against Python scripts that mirror the same functions contained in the module. Tests are run for
+    different grid coarseness levels, different keep-out fields of view, and one keep-in field of view.
+
+    **Test Parameters**
+
+    Args:
+        N (int) : grid coarseness;
+        keepOutFov (float) : Field of View (in radiants) of the keep-out boresight;
+        keepInFov (float) : Field of View (in radiants) of the keep-in boresight;
+        costFcnType (int) : 0 for the minimum MRP cartesian distance graph search, 1 for the effort-based graph search.
+        accuracy (float): absolute accuracy value used in the validation tests
+
+    **Description of Variables Being Tested**
+
+    The tests to show the correctness of the module are the following:
+    
+    - First of all, an equivalent grid is built in python. The first test consists in comparing the nodes generated
+      in Python versus the nodes generated in C++. The check consists in verifying whether the same key indices
+      :math:`(i,j,k)` generate the same node coordinates :math:`\sigma_{BN}`. Secondly, it is checked whether 
+      the same node is constraint-compliant or -incompliant both in Python and in C++.
+
+    - After running the graph-search algorithm, a check is conduced to ensure the equivalence of the computed paths.
+      Note that this unit test does not run the effort-based version of A*, due to the slow nature of the Python 
+      implementation. If the user wishes, it is possible to uncomment line 429 to also test the effort-based graph-search algorithm. 
+
+    - The interpolated trajectory obtained in Python is checked versus the interpolated trajectory obtained in C++. The Python code
+      uses the BSK-native :ref:`BSpline` library, which has its own unit test.
+
+    - Lastly, a check is run on the norm of the required control torque for each timestep of the interpolated trajectory.
+      The correctness of this check should imply the correctness of the functions used in the effort-based graph-search algorithm as well.
+    """
 
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = CAMTestFunction(N, keepOutFov, keepInFov, accuracy)
+    [testResults, testMessage] = CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy)
 
     assert testResults < 1, testMessage
 
-def CAMTestFunction(N, keepOutFov, keepInFov, accuracy):
+def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -470,8 +503,13 @@ def CAMTestFunction(N, keepOutFov, keepInFov, accuracy):
     n_start = node(SCInitialAttitude, constraints, **data)
     n_goal  = node(SCTargetAttitude, constraints, **data)
     nodes = generateGrid(n_start, n_goal, N, constraints, data)
-    path = AStar(nodes, n_start, n_goal)
-    path = effortBasedAStar(nodes, n_start, n_goal, SCInitialAngRate, SCTargetAngRate, SCAvgAngRate, InertiaTensor)
+    if costFcnType == 0:
+        path = AStar(nodes, n_start, n_goal)
+    else:
+        path = effortBasedAStar(nodes, n_start, n_goal, SCInitialAngRate, SCTargetAngRate, SCAvgAngRate, InertiaTensor)
+    Input = pathHandle(path, SCAvgAngRate)
+    Output = spline(Input, SCInitialAngRate, SCTargetAngRate)
+    pathCost = effortEvaluation(Output, InertiaTensor)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -487,6 +525,7 @@ def CAMTestFunction(N, keepOutFov, keepInFov, accuracy):
     testModule.omega_BN_B_goal = SCTargetAngRate
     testModule.avgOmega = SCAvgAngRate
     testModule.BSplineType = 0
+    testModule.costFcnType = costFcnType
     testModule.appendKeepOutDirection(keepOutBoresight_B[0], keepOutFov)
     testModule.appendKeepInDirection(keepInBoresight_B[0], keepInFov)
     testModule.appendKeepInDirection(keepInBoresight_B[1], keepInFov)
@@ -554,54 +593,50 @@ def CAMTestFunction(N, keepOutFov, keepInFov, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + testModule.ModelTag + " Error in waypoint number {} in path \n".format(p))
 
-    # timeData = CAMLog.times() * macros.NANO2SEC
-    # dataSigmaRN = CAMLog.sigma_RN
-    # dataOmegaRN = CAMLog.omega_RN_N
-    # dataOmegaDotRN = CAMLog.domega_RN_N
+    # check interpolated path compliance
+    for n in range(len(Output.T)):
+        T_BSK = testModule.Output.T[n][0]
+        sigma_BSK = np.array([testModule.Output.X1[n][0], testModule.Output.X2[n][0], testModule.Output.X3[n][0]])
+        sigmaDot_BSK = np.array([testModule.Output.XD1[n][0], testModule.Output.XD2[n][0], testModule.Output.XD3[n][0]])
+        sigmaDDot_BSK = np.array([testModule.Output.XDD1[n][0], testModule.Output.XDD2[n][0], testModule.Output.XDD3[n][0]])
 
-    # plot_attitude_reference(timeData, dataSigmaRN)
-    # plot_rate_reference(timeData, dataOmegaRN)
-    # plot_acc_reference(timeData, dataOmegaDotRN)
+        T         = Output.T[n][0]
+        sigma     = np.array([Output.X1[n][0], Output.X2[n][0], Output.X3[n][0]])
+        sigmaDot  = np.array([Output.XD1[n][0], Output.XD2[n][0], Output.XD3[n][0]])
+        sigmaDDot = np.array([Output.XDD1[n][0], Output.XDD2[n][0], Output.XDD3[n][0]])
 
-    # plt.show()
+        if not unitTestSupport.isDoubleEqual(T, T_BSK, accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in time at index #{} in trajectory \n".format(n))
+        if not unitTestSupport.isVectorEqual(sigma, sigma_BSK, accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in sigma at index #{} in trajectory \n".format(n))
+        if not unitTestSupport.isVectorEqual(sigmaDot, sigmaDot_BSK, accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in sigmaDot at index #{} in trajectory \n".format(n))
+        if not unitTestSupport.isVectorEqual(sigmaDDot, sigmaDDot_BSK, accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in sigmaDDot at index #{} in trajectory \n".format(n))
+
+    # check same path cost for every spline point
+    for n in range(len(Output.T)):
+        c1 = testModule.computeTorqueNorm(n, Inertia)
+
+        sigma     = [Output.X1[n][0], Output.X2[n][0], Output.X3[n][0]]
+        sigmaDot  = [Output.XD1[n][0], Output.XD2[n][0], Output.XD3[n][0]]
+        sigmaDDot = [Output.XDD1[n][0], Output.XDD2[n][0], Output.XDD3[n][0]]
+        c2 = np.linalg.norm(computeTorque(sigma, sigmaDot, sigmaDDot, InertiaTensor))
+
+        if not unitTestSupport.isDoubleEqual(c1, c2, accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error torque norm in point {} in trajectory \n".format(n))
+
+    if not unitTestSupport.isDoubleEqual(pathCost, testModule.pathCost, accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: " + testModule.ModelTag + " Error in path cost \n")
 
     return [testFailCount, ''.join(testMessages)]
 	   
-
-def plot_attitude_reference(timeData, dataSigmaRN):
-    """Plot the reference attitude."""
-    plt.figure(1)
-    for idx in range(3):
-        plt.plot(timeData, dataSigmaRN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [sec]')
-    plt.ylabel(r'Reference Attitude $\sigma_{R/N}$')
-
-def plot_rate_reference(timeData, dataOmegaRN):
-    """Plot the reference angular rate."""
-    plt.figure(2)
-    for idx in range(3):
-        plt.plot(timeData, dataOmegaRN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{RN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [sec]')
-    plt.ylabel('Reference Angular Rate (rad/s) ')
-
-def plot_acc_reference(timeData, dataOmegaDotRN):
-    """Plot the reference angular acceleration."""
-    plt.figure(3)
-    for idx in range(3):
-        plt.plot(timeData, dataOmegaDotRN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\dot{\omega}_{RN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [sec]')
-    plt.ylabel('Reference Angular Acceleration (rad/s^2) ')
-
-
 
 #
 # This statement below ensures that the unitTestScript can be run as a
@@ -609,8 +644,9 @@ def plot_acc_reference(timeData, dataOmegaDotRN):
 #
 if __name__ == "__main__":
     CAMTestFunction(
-        7,       # grid coarsness N
+        10,      # grid coarsness N
         20,      # keepOutFov
         70,      # keepInFov
+        0,       # costFcnType
         1e-12    # accuracy
         )
