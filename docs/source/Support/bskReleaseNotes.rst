@@ -42,6 +42,7 @@ Version |release|
   on the MSM model :ref:`msmForceTorque`
 - created new :ref:`smallBodyWaypointFeedback` module for waypoint-to-waypoint control about a small body
 - created new example script :ref:`scenarioSmallBodyFeedbackControl` to demonstrate the new module
+- added :ref:`scenario_AddRWFault` to show how to use event handlers to add faults
 
 
 Version 2.1.2 (March 12, 2022)
