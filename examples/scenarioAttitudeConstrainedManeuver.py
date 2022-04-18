@@ -20,35 +20,21 @@ r"""
 Overview
 --------
 
-Demonstrates how to set up conical keep-in and keep-out constraints for a spacecraft.
 This script sets up a 6-DOF spacecraft which is orbiting the Earth, in the presence of the Sun.
 The spacecraft is modelled according to the specifics of the Bevo-2 satellite, that has a sensitive
-star tracker aligned with the x body axes and two sun sensors aligned with the y and z body axes.
-The goal is to illustrate how to set up a Basilisk simulation to check whether certain slew 
-maneuvers cause violations in the positional constraints of the spacecraft.
+star tracker aligned with the x body axis and two sun sensors aligned with the y and z body axes.
+In contrast with :ref:`scenarioAttitudeConstraintViolation` the goal of this scenario is to illustrate 
+how to set up a Basilisk simulation using the :ref:`constrainedAttitudeManeuver` module to perform a 
+slew maneuver while ensuring constraint compliance.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
-      python3 scenarioAttitudeConstraintViolation.py
+      python3 scenarioAttitudeConstrainedManeuver.py
 
-The main simulation layout is the same as in :ref:`scenarioAttitudeFeedbackRW`, shown in the following illustration.  
-A single simulation process is created which contains both the spacecraft simulation modules, as well as the Flight 
-Software (FSW) algorithm modules.
-
-.. image:: /_images/static/test_scenarioAttitudeFeedbackRW.svg
-   :align: center
-
-The spacecraft mass, inertia, and control gains in this example script have been designed to match the performance 
-of the Bevo 2 satellite. To better understand how to add RW to the Spacecraft Simulation to perform slew maneuvers
-from an initial to a final inertially fixed attitude, the reader is redirected to :ref:`scenarioAttitudeFeedbackRW`
-where this process is explained in the details.
-
-This script uses :ref:`simIncludeGravBody` to add Earth and Sun to the simulation. The method ``createSpiceInterface``
-to create Spice modules for the celestial bodies and generate the respective Spice planet state messages.
-The :ref:`boreAngCalc` module is set up for each of the instruments that have an angular constraints. This module 
-subscribes to the :ref:`SCStatesMsgPayload` and :ref:`SpicePlanetStateMsgPayload` of the bright object (the Sun) and
-returns a :ref:`BoreAngleMsgPayload` that contains the angle between the bright object and the direction of the 
-boresight vector of the instrument.
+This simulation is set up identically to :ref:`scenarioAttitudeConstraintViolation`. The reader is referred
+to this scenario for a detailed description of the setup. The only difference in this scenario is that the 
+constraint-naive :ref:`inertial3D` module for attitude pointing is replaced with the :ref:`constrainedAttitudeManeuver`
+module.
 
 Illustration of Simulation Results
 ----------------------------------
@@ -57,79 +43,50 @@ Each run of the script produces 6 figures. Figures 1-4 report, respectively, att
 tracking error, and RW speed. These plots are only relevant to the spacecraft / RW dynamics. Figures 5 and 6 
 show the angle between the boresight vector of the star tracker and the Sun (fig. 5), and of the sun sensor(s) and
 the Sun (fig. 6). Each plot features a dashed line that represents an angular threshold for that specific instrument.
-Opaque red zones in each plot represent the portions of each maneuver where that constraint has been violated.
 
-Each plot describes a slew maneuver performen from an initial inertial attitude :math:`\sigma_{\mathcal{B/N},i}` to
-a final inertial attitude :math:`\sigma_{\mathcal{B/N},f}`, both of which are set for each case to show the desired
-constraint violation.
+Each plot describes a slew maneuver performed from an initial inertial attitude :math:`\sigma_{\mathcal{B/N},i}` to
+a final inertial attitude :math:`\sigma_{\mathcal{B/N},f}`. In :ref:`scenarioAttitudeConstraintViolation`, these
+sets of attitudes and constraints were chosen to highlight specific constraint violations. This scenario shows how,
+using :ref:`constrainedAttitudeManeuver`, the constraints are not violated.
 
 ::
 
     show_plots = True, use2SunSensors = False, starTrackerFov = 20, sunSensorFov = 70, attitudeSetCase = 0
 
-This case features the violation of the keep in constraint of the sun sensor only. Just for this case, only the sun
-sensor along the y body axis is considered. The keep in constraint is violated when the boresight angle exceeds the 
-70 def field of view of the instrument.
+This case features the violation of the keep in constraint of the sun sensor only when :ref:`inertial3D` is used. 
+Just for this case, only the sun sensor along the y body axis is considered. Now, the keep in constraint is not violated 
+as the boresight angle never exceeds the 70 def field of view of the instrument.
 
-.. image:: /_images/Scenarios/scenarioAttitudeConstraintViolation5020700.svg
+.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver5020700.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttitudeConstraintViolation6020700.svg
-   :align: center
-
-::
-
-    show_plots = True, use2SunSensors = True, starTrackerFov = 20, sunSensorFov = 70, attitudeSetCase = 0
-
-This case is identical to the previous one, except for the fact that both sun sensors along the y and z body axes are 
-being used. No constraint is violated, since the keep in condition only needs to be satisfied for at least one sun 
-sensor at  the time.
-
-.. image:: /_images/Scenarios/scenarioAttitudeConstraintViolation5120700.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioAttitudeConstraintViolation6120700.svg
+.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver6020700.svg
    :align: center
 
 ::
 
     show_plots = True, use2SunSensors = True, starTrackerFov = 20, sunSensorFov = 70, attitudeSetCase = 1
 
-In this case there is a portion of the slew maneuver where both the sun sensor boresight exceed the threshold, 
-therefore the keep in constraint is violated.
+In this case, using :ref:`inertial3D`, both the sun sensor boresights exceed the respective thresholds. 
+In this scenario, however, they do not.
 
-.. image:: /_images/Scenarios/scenarioAttitudeConstraintViolation5120701.svg
+.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver5120701.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttitudeConstraintViolation6120701.svg
+.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver6120701.svg
    :align: center
 
 ::
 
     show_plots = True, use2SunSensors = True, starTrackerFov = 20, sunSensorFov = 70, attitudeSetCase = 2
 
-In this case, the keep out constraint of the star tracker is violated, alongside with the keep in constraints
-for both the sun sensors.
+In this case, :ref:`inertial3D` violates the keep out constraint of the star tracker, alongside with the keep in 
+constraints for both the sun sensors. The following simulation shows how all the constraints are respected.
 
-.. image:: /_images/Scenarios/scenarioAttitudeConstraintViolation5120702.svg
+.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver5120702.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttitudeConstraintViolation6120702.svg
-   :align: center
-
-::
-
-    show_plots = True, use2SunSensors = True, starTrackerFov = 30, sunSensorFov = 70, attitudeSetCase = 3
-
-In this last case, only the keep out constraint is violated. Since the fields of view of star tracker and 
-sun sensors for the Bevo 2 are, respectively, 20 deg and 70 deg, and they are mounted 90 deg apart from 
-each other on the spacecraft, this keep-out-only violation would not be possible. In this case it is 
-obtained by increasing the field of view of the star tracker to 30 deg.
-
-.. image:: /_images/Scenarios/scenarioAttitudeConstraintViolation5130703.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioAttitudeConstraintViolation6130703.svg
+.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver6120702.svg
    :align: center
 
 """
@@ -157,9 +114,6 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase):
 
-    path = os.path.dirname(os.path.abspath(__file__))
-    dataFileName = os.path.join(path, "RNDataFile3.txt")
-
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -175,7 +129,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the simulation time and integration update time
-    simulationTime = macros.min2nano(5)
+    simulationTime = macros.min2nano(3.5)
     simulationTimeStep = macros.sec2nano(0.01)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
     
@@ -312,7 +266,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     CAM.omega_BN_B_goal = [0, 0, 0]
     CAM.avgOmega = 0.04
     CAM.BSplineType = 0
-    CAM.costFcnType = 0
+    CAM.costFcnType = 1
     CAM.appendKeepOutDirection([1,0,0], starTrackerFov*macros.D2R)
     CAM.appendKeepInDirection([0,1,0], sunSensorFov*macros.D2R)
     scSim.AddModelToTask(simTaskName, CAM)
@@ -485,7 +439,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     
     timeData = rwMotorLog.times() * macros.NANO2MIN
 
-    plot_attitude_error(timeData, dataSigmaRN)
+    plot_attitude_error(timeData, dataSigmaBR)
     figureList = {}
     pltName = fileName + "1" + str(int(use2SunSensors)) + str(starTrackerFov) + str(sunSensorFov) + str(attitudeSetCase)
     figureList[pltName] = plt.figure(1)

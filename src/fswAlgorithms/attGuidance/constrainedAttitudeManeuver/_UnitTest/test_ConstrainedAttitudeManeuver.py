@@ -26,7 +26,6 @@
 
 
 import os
-from Basilisk.architecture.sim_model import MRPshadow
 import pytest
 import numpy as np
 
@@ -264,10 +263,11 @@ def pathHandle(path, avgOmega):
     for n in range(len(path)-1):
         T.append(T[n] + distanceCart(path[n], path[n+1]))
         S += T[n+1] - T[n]
-    
+
     X1 = []
     X2 = []
     X3 = []
+
     shadowSet = False
     for n in range(len(path)-1):
         if not shadowSet:
@@ -280,7 +280,7 @@ def pathHandle(path, avgOmega):
                     X2[m] = -X2[m] / s2
                     X3[m] = -X3[m] / s2
                 shadowSet = not shadowSet
-            sigma = MRPshadow(path[n])
+            sigma = rbk.MRPswitch(path[n].sigma_BN, 0)
         delSigma = path[n+1].sigma_BN - path[n].sigma_BN
         if (np.linalg.norm(delSigma) > 1):
             shadowSet = not shadowSet
@@ -288,7 +288,7 @@ def pathHandle(path, avgOmega):
         X2.append(sigma[1])
         X3.append(sigma[2])
     if shadowSet:
-        sigma = MRPshadow(path[-1].sigma_BN)
+        sigma = rbk.MRPswitch(path[-1].sigma_BN, 0)
     else:
         sigma = path[-1].sigma_BN
     X1.append(sigma[0])
@@ -373,9 +373,6 @@ def AStar(nodes, n_start, n_goal):
 
     path = backtrack(O[0], n_start)
 
-    # for p in path:
-    #     print(p.sigma_BN)
-
     return path
 
 def effortBasedAStar(nodes, n_start, n_goal, omegaS, omegaG, avgOmega, I):
@@ -414,19 +411,14 @@ def effortBasedAStar(nodes, n_start, n_goal, omegaS, omegaG, avgOmega, I):
 
     path = backtrack(O[0], n_start)
 
-    # for p in path:
-    #     print(p.sigma_BN)
-
     return path
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
-@pytest.mark.parametrize("N", [6,7,8,9,10])
-@pytest.mark.parametrize("keepOutFov", [20,30])
+@pytest.mark.parametrize("N", [5,6])
+@pytest.mark.parametrize("keepOutFov", [20])
 @pytest.mark.parametrize("keepInFov", [70]) 
-@pytest.mark.parametrize("costFcnType", [0])
-# Uncomment the following line to test the effort-based A*
-# @pytest.mark.parametrize("costFcnType", [0,1])
+@pytest.mark.parametrize("costFcnType", [0,1])
 @pytest.mark.parametrize("accuracy", [1e-12])
 
 def test_constrainedAttitudeManeuver(show_plots, N, keepOutFov, keepInFov, costFcnType, accuracy):
@@ -644,9 +636,9 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
 #
 if __name__ == "__main__":
     CAMTestFunction(
-        10,      # grid coarsness N
+        5,      # grid coarsness N
         20,      # keepOutFov
         70,      # keepInFov
-        0,       # costFcnType
+        1,       # costFcnType
         1e-12    # accuracy
         )
