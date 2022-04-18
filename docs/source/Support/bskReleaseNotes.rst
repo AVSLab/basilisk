@@ -43,6 +43,8 @@ Version |release|
 - created new :ref:`smallBodyWaypointFeedback` module for waypoint-to-waypoint control about a small body
 - created new example script :ref:`scenarioSmallBodyFeedbackControl` to demonstrate the new module
 - added :ref:`scenario_AddRWFault` to show how to use event handlers to add faults
+- added :ref:`constrainedAttitudeManeuver` with MRP-cartesian-distance- and effort-based A* graph search algorithms
+- added :ref:`scenarioAttitudeConstrainedManeuver` to illustrate how to use :ref:`constrainedAttitudeManeuver`
 
 
 Version 2.1.2 (March 12, 2022)
