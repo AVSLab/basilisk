@@ -392,7 +392,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # ---------------------------
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-             saveFile=__file__
+             # saveFile=__file__
              )
     vizSupport.createConeInOut(viz, toBodyName='sun_planet_data', coneColor = 'r',
                        normalVector_B=[1, 0, 0], incidenceAngle=starTrackerFov*macros.D2R, isKeepIn=False,
