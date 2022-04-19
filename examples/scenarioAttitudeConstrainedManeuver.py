@@ -121,8 +121,6 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
 
-    # (Optional) If you want to see a simulation progress bar in the terminal window, the
-    # use the following SetProgressBar(True) statement
     scSim.SetProgressBar(False)
 
     #  create the simulation process
@@ -158,8 +156,6 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # Next, the default SPICE support module is created and configured.
     timeInitString = "2021 JANUARY 15 00:28:30.0"
-    spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
-    timeInit = datetime.strptime(timeInitString, spiceTimeStringFormat)
 
     # The following is a support macro that creates a `gravFactory.spiceObject` instance
     gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
@@ -184,9 +180,8 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     oe.omega = 347.8 * macros.D2R
     oe.f = 135 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)
-	
-	# sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
+
+    # sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
     sigma_BN_start = [ [0.522, -0.065,  0.539],     # to violate one keepIn only
                        [0.314, -0.251,  0.228],     # to violate two keepIn and not keepOut
                        [-0.378, 0.119, -0.176],     # to violate keepOut and both keepIn 
@@ -195,8 +190,8 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
-    scObject.hub.sigma_BNInit = sigma_BN_start[attitudeSetCase]   # change this MRP set to customize initial inertial attitude        
-    scObject.hub.omega_BN_BInit = [[0.], [0.], [0.]]              # rad/s - omega_CN_B
+    scObject.hub.sigma_BNInit = sigma_BN_start[attitudeSetCase]  # MRP set to customize initial inertial attitude
+    scObject.hub.omega_BN_BInit = [[0.], [0.], [0.]]             # rad/s - omega_CN_B
     
     # define the simulation inertia
     I = [0.02 / 3,  0.,         0.,
@@ -253,7 +248,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     #   setup the FSW algorithm tasks
     #
 
-  	# sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
+    # sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
     sigma_BN_target = [ [0.342,  0.223, -0.432],     # to violate one keepIn only
                         [0.326, -0.206, -0.823],     # to violate two keepIn and not keepOut
                         [0.350,  0.220, -0.440],     # to violate keepOut and both keepIn 
@@ -417,9 +412,6 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # RW
     dataUsReq = rwMotorLog.motorTorque
-    dataSigmaBN = sNavRec.sigma_BN
-    dataOmegaBN = sNavRec.omega_BN_B
-    dataSigmaRN = CAMRec.sigma_RN
     dataSigmaBR = attErrorLog.sigma_BR
     dataOmegaBR = attErrorLog.omega_BR_B
     dataOmegaRW = mrpLog.wheelSpeeds
