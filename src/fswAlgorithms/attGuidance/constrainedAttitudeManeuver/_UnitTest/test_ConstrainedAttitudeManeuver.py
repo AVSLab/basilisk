@@ -577,6 +577,10 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
+    timeData = CAMLog.times() * macros.NANO2SEC
+    print(timeData)
+    # print(len(CAMLog.sigma_RN))
+
     # check correctness of grid points:
     for i in range(-N,N+1):
         for j in range(-N,N+1):
@@ -644,6 +648,29 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
     if not unitTestSupport.isDoubleEqual(pathCost, testModule.pathCost, accuracy):
         testFailCount += 1
         testMessages.append("FAILED: " + testModule.ModelTag + " Error in path cost \n")
+
+    # check correctness of output message
+    for n in range(len(timeData)):
+        t = timeData[n]
+        sigma_RN     = [Output.getStates(t,0,0), Output.getStates(t,0,1), Output.getStates(t,0,2)]
+        sigmaDot_RN  = [Output.getStates(t,1,0), Output.getStates(t,1,1), Output.getStates(t,1,2)]
+        sigmaDDot_RN = [Output.getStates(t,2,0), Output.getStates(t,2,1), Output.getStates(t,2,2)]
+        RN = rbk.MRP2C(sigma_RN)
+        omega_RN_R = rbk.dMRP2Omega(sigma_RN, sigmaDot_RN)
+        omega_RN_N = np.matmul(omega_RN_R, RN)
+        omegaDot_RN_R = rbk.ddMRP2dOmega(sigma_RN, sigmaDot_RN, sigmaDDot_RN)
+        omegaDot_RN_N = np.matmul(omegaDot_RN_R, RN)
+
+        if not unitTestSupport.isVectorEqual(sigma_RN, CAMLog.sigma_RN[n], accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in attitude reference message at t = {} sec \n".format(t))
+        if not unitTestSupport.isVectorEqual(omega_RN_N, CAMLog.omega_RN_N[n], accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in attitude reference message at t = {} sec \n".format(t))
+        if not unitTestSupport.isVectorEqual(omegaDot_RN_N, CAMLog.domega_RN_N[n], accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in attitude reference message at t = {} sec \n".format(t)) 
+
 
     return [testFailCount, ''.join(testMessages)]
 	   

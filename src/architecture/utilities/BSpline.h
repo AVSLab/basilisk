@@ -66,6 +66,7 @@ public:
     OutputDataSet();
     ~OutputDataSet();
     void getData(double t, double x[3], double xDot[3], double xDDot[3]);
+    double getStates(double t, int derivative,  int index);
     
     Eigen::VectorXd T;               //!< time tags for each point of the interpolated trajectory
     Eigen::VectorXd X1;              //!< coordinate #1 of the interpolated trajectory

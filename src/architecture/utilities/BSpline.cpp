@@ -129,6 +129,108 @@ void OutputDataSet::getData(double T, double x[3], double xDot[3], double xDDot[
     }
 }
 
+/*! This method returns single coordinates of x, xDot and xDDot at the desired input time T. */
+/*! It is designed to be accessible from Python */
+double OutputDataSet::getStates(double T, int derivative, int index)
+{
+    int N = this->T.size()-1;
+    double Ttot = this->T[N];
+
+    // if T < Ttot calculalte the values
+    if (T <= Ttot) {
+        double t = T / Ttot;
+        int Q = this->C1.size();
+        Eigen::VectorXd NN(Q), NN1(Q), NN2(Q);
+        basisFunction(t, this->U, Q, this->P, &NN[0], &NN1[0], &NN2[0]);
+
+        switch (derivative) {
+            case 0 :
+                switch(index) {
+                    case 0 :
+                        return NN.dot(this->C1);
+                    case 1 :
+                        return NN.dot(this->C2);
+                    case 2 :
+                        return NN.dot(this->C3);
+                    default :
+                        std::cout << "Error in Output.getStates: invalid index \n";
+                        return 1000;
+                }
+            case 1 :
+                switch(index) {
+                    case 0 :
+                        return NN1.dot(this->C1) / Ttot;
+                    case 1 :
+                        return NN1.dot(this->C2) / Ttot;
+                    case 2 :
+                        return NN1.dot(this->C3) / Ttot;
+                    default :
+                        std::cout << "Error in Output.getStates: invalid index \n";
+                        return 1000;
+                }
+            case 2 :
+                switch(index) {
+                    case 0 :
+                        return NN2.dot(this->C1) / pow(Ttot,2);
+                    case 1 :
+                        return NN2.dot(this->C2) / pow(Ttot,2);
+                    case 2 :
+                        return NN2.dot(this->C3) / pow(Ttot,2);
+                    default :
+                        std::cout << "Error in Output.getStates: invalid index \n";
+                        return 1000;
+                }
+            default :
+                std::cout << "Error in Output.getStates: invalid derivative \n";
+                return 1000;
+        }
+    }
+    // if t > Ttot return final value with zero derivatives
+    else {
+        switch (derivative) {
+            case 0 :
+                switch(index) {
+                    case 0 :
+                        return this->X1[N];
+                    case 1 :
+                        return this->X2[N];
+                    case 2 :
+                        return this->X3[N];
+                    default :
+                        std::cout << "Error in Output.getStates: invalid index \n";
+                        return 1000;
+                }
+            case 1 :
+                switch(index) {
+                    case 0 :
+                        return 0;
+                    case 1 :
+                        return 0;
+                    case 2 :
+                        return 0;
+                    default :
+                        std::cout << "Error in Output.getStates: invalid index \n";
+                        return 1000;
+                }
+            case 2 :
+                switch(index) {
+                    case 0 :
+                        return 0;
+                    case 1 :
+                        return 0;
+                    case 2 :
+                        return 0;
+                    default :
+                        std::cout << "Error in Output.getStates: invalid index \n";
+                        return 1000;
+                }
+            default :
+                std::cout << "Error in Output.getStates: invalid derivative \n";
+                return 1000;
+        }
+    }
+}
+
 /*! This function takes the Input structure, performs the BSpline interpolation and outputs the result into Output structure */
 void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
 {   
