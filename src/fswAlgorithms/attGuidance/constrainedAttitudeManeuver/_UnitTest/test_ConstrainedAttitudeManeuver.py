@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -44,6 +44,7 @@ import matplotlib.pyplot as plt
 path = os.path.dirname(os.path.abspath(__file__))
 dataFileName = None
 
+
 def shadowSetMap(sigma, switch):
     sigma = np.array(sigma)
     if switch:
@@ -55,11 +56,13 @@ def shadowSetMap(sigma, switch):
     else:
         return sigma
 
+
 class constraint:
     def __init__(self, axis, color):
         self.axis =  axis / np.linalg.norm(axis)
         self.color = color
         
+
 class node:
     def __init__(self, sigma_BN, constraints, **kwargs):
         self.sigma_BN = np.array(sigma_BN)
@@ -109,6 +112,7 @@ class node:
             if not isIn:
                 self.isFree = False
 
+
 def distanceCart(n1, n2):
     d1 = np.linalg.norm(n1.sigma_BN - n2.sigma_BN)
     sigma1norm2 = n1.sigma_BN[0]**2 + n1.sigma_BN[1]**2 + n1.sigma_BN[2]**2
@@ -129,6 +133,7 @@ def distanceCart(n1, n2):
         d4 = d1
 
     return min(d1, d2, d3, d4)
+
 
 def distanceMRP(n1, n2):    
     s1 = n1.sigma_BN
@@ -151,14 +156,17 @@ def distanceMRP(n1, n2):
 
     return 4*np.arctan(np.linalg.norm(s12))
 
+
 def mirrorFunction(i, j, k):
     return [ [i, j, k], [-i, j, k], [i, -j, k], [i, j, -k], [-i, -j, k], [-i, j, -k], [i, -j, -k], [-i, -j, -k] ]
+
 
 def neighboringNodes(i, j, k):
     return [ [i-1,  j,  k], [i+1,  j,  k], [i,  j-1,  k], [i,  j+1,  k], [i,  j,  k-1], [i,  j,  k+1],
              [i-1, j-1, k], [i+1, j-1, k], [i-1, j+1, k], [i+1, j+1, k], [i-1, j, k-1], [i+1, j, k-1],
              [i-1, j, k+1], [i+1, j, k+1], [i, j-1, k-1], [i, j+1, k-1], [i, j-1, k+1], [i, j+1, k+1],
              [i-1,j-1,k-1], [i+1,j-1,k-1], [i-1,j+1,k-1], [i-1,j-1,k+1], [i+1,j+1,k-1], [i+1,j-1,k+1], [i-1,j+1,k+1], [i+1,j+1,k+1] ]
+
 
 def generateGrid(n_start, n_goal, N, constraints, data):
     
@@ -247,6 +255,7 @@ def generateGrid(n_start, n_goal, N, constraints, data):
 
     return nodes
 
+
 def backtrack(n, n_start):
     if n == n_start:
         path = [n]
@@ -255,6 +264,7 @@ def backtrack(n, n_start):
         path = backtrack(n.backpointer, n_start)
         path.append(n)
         return path
+
 
 def pathHandle(path, avgOmega):
 
@@ -300,6 +310,7 @@ def pathHandle(path, avgOmega):
 
     return Input
 
+
 def spline(Input, omegaS, omegaG):
 
     sigmaS = [Input.X1[0][0],  Input.X2[0][0],  Input.X3[0][0]]
@@ -315,12 +326,14 @@ def spline(Input, omegaS, omegaG):
 
     return Output
 
+
 def computeTorque(sigma, sigmaDot, sigmaDDot, I):
 
     omega = rbk.dMRP2Omega(sigma, sigmaDot)
     omegaDot = rbk.ddMRP2dOmega(sigma, sigmaDot, sigmaDDot)
 
     return np.matmul(I, omegaDot) + np.cross(omega, np.matmul(I, omega))
+
 
 def effortEvaluation(Output, I):
 
@@ -340,6 +353,7 @@ def effortEvaluation(Output, I):
         L_a = L_b
 
     return effort
+
 
 def AStar(nodes, n_start, n_goal):
 
@@ -374,6 +388,7 @@ def AStar(nodes, n_start, n_goal):
     path = backtrack(O[0], n_start)
 
     return path
+
 
 def effortBasedAStar(nodes, n_start, n_goal, omegaS, omegaG, avgOmega, I):
 
@@ -420,7 +435,6 @@ def effortBasedAStar(nodes, n_start, n_goal, omegaS, omegaG, avgOmega, I):
 @pytest.mark.parametrize("keepInFov", [70]) 
 @pytest.mark.parametrize("costFcnType", [0,1])
 @pytest.mark.parametrize("accuracy", [1e-12])
-
 def test_constrainedAttitudeManeuver(show_plots, N, keepOutFov, keepInFov, costFcnType, accuracy):
     r"""
     **Validation Test Description**
@@ -449,13 +463,15 @@ def test_constrainedAttitudeManeuver(show_plots, N, keepOutFov, keepInFov, costF
 
     - After running the graph-search algorithm, a check is conduced to ensure the equivalence of the computed paths.
       Note that this unit test does not run the effort-based version of A*, due to the slow nature of the Python 
-      implementation. If the user wishes, it is possible to uncomment line 429 to also test the effort-based graph-search algorithm. 
+      implementation. If the user wishes, it is possible to uncomment line 429 to also test the effort-based
+      graph-search algorithm.
 
-    - The interpolated trajectory obtained in Python is checked versus the interpolated trajectory obtained in C++. The Python code
-      uses the BSK-native :ref:`BSpline` library, which has its own unit test.
+    - The interpolated trajectory obtained in Python is checked versus the interpolated trajectory
+      obtained in C++. The Python code uses the BSK-native :ref:`BSpline` library, which has its own unit test.
 
-    - Lastly, a check is run on the norm of the required control torque for each timestep of the interpolated trajectory.
-      The correctness of this check should imply the correctness of the functions used in the effort-based graph-search algorithm as well.
+    - Lastly, a check is run on the norm of the required control torque for each time step of the
+      interpolated trajectory.  The correctness of this check should imply the correctness of the
+      functions used in the effort-based graph-search algorithm as well.
     """
 
     # each test method requires a single assert method to be called
