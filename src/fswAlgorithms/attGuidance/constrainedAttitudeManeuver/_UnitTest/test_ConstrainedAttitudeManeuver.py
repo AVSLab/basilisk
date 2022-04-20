@@ -669,7 +669,17 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
             testMessages.append("FAILED: " + testModule.ModelTag + " Error in attitude reference message at t = {} sec \n".format(t))
         if not unitTestSupport.isVectorEqual(omegaDot_RN_N, CAMLog.domega_RN_N[n], accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Error in attitude reference message at t = {} sec \n".format(t)) 
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in attitude reference message at t = {} sec \n".format(t))
+
+        if not unitTestSupport.isVectorEqual(sigma_RN, CAMLogC.sigma_RN[n], accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in C attitude reference message at t = {} sec \n".format(t))
+        if not unitTestSupport.isVectorEqual(omega_RN_N, CAMLogC.omega_RN_N[n], accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in C attitude reference message at t = {} sec \n".format(t))
+        if not unitTestSupport.isVectorEqual(omegaDot_RN_N, CAMLogC.domega_RN_N[n], accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in C attitude reference message at t = {} sec \n".format(t)) 
 
 
     return [testFailCount, ''.join(testMessages)]
