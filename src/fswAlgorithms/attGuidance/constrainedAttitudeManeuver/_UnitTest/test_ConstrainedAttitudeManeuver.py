@@ -562,6 +562,8 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
 
     CAMLog = testModule.attRefOutMsg.recorder(samplingTime)
     unitTestSim.AddModelToTask(unitTaskName, CAMLog)
+    CAMLogC = testModule.attRefOutMsgC.recorder(samplingTime)
+    unitTestSim.AddModelToTask(unitTaskName, CAMLogC)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()

@@ -30,7 +30,7 @@
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
 
 //! @brief The constraintStruc structure is used to store the inertial direction of the keep-in and keep-out zones
 struct constraintStruct {
@@ -88,6 +88,7 @@ public:
     ConstrainedAttitudeManeuver();
     ConstrainedAttitudeManeuver(int N);
     ~ConstrainedAttitudeManeuver(); 
+    void SelfInit();  //!< Self initialization for C-wrapped messages
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadInputs();
@@ -113,8 +114,8 @@ public:
     double sigma_BN_goal[3];                                                        //!< Initial S/C attitude
     double omega_BN_B_goal[3];                                                      //!< Initial S/C angular rate
     double avgOmega;                                                                //!< Average angular rate norm during the maneuver
-    double keepOutFov;                                                              //|< Field of view of the sensitive instrument
-    double keepOutBore_B[3];                                                        //|< Body-frame direction of the boresight of the sensitive instrument
+    double keepOutFov;                                                              //!< Field of view of the sensitive instrument
+    double keepOutBore_B[3];                                                        //!< Body-frame direction of the boresight of the sensitive instrument
     constraintStruct constraints;                                                   //!< Structure containing the constraint directions in inertial coordinates
     scBoresightStruct boresights;                                                   //!< Structure containing the instrument boresight directions in body frame coordinates
     std::map<int,std::map<int,std::map<int,Node>>> NodesMap;                        //!< C++ map from node indices to Node class
@@ -130,6 +131,8 @@ public:
     ReadFunctor<SpicePlanetStateMsgPayload> keepOutCelBodyInMsg;                    //!< Celestial body state msg - keep out direction
     ReadFunctor<SpicePlanetStateMsgPayload> keepInCelBodyInMsg;                     //!< Celestial body state msg - keep in direction
     Message<AttRefMsgPayload> attRefOutMsg;                                         //!< Attitude reference output message
+    AttRefMsg_C attRefOutMsgC = {};                                                 //!< C-wrapped attitude reference output message
+
     BSKLogger bskLogger;                                                            //!< BSK Logging
 
 private:

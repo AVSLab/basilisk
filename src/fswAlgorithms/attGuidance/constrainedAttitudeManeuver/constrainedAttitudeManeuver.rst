@@ -22,6 +22,9 @@ provides information on what this message is used for.
     * - attRefOutMsg
       - :ref:`AttRefMsgPayload`
       - Output Attitude Reference Message.
+    * - attRefOutMsgC
+      - :ref:`AttRefMsgPayload`
+      - C-wrapped Output Attitude Reference Message.
     * - scStateInMsg
       - :ref:`SCStatesMsgPayload`
       - Input SC States Message.
