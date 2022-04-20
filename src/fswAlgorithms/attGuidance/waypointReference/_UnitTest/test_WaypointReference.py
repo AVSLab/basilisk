@@ -69,11 +69,6 @@ def test_waypointReference(show_plots, attType, MRPswitching, useReferenceFrame,
 
     **Test Parameters**
 
-    As this is a parameterized unit test, note that the test case parameters values are shown automatically in the
-    pytest HTML report.  This sample script has the parameters param1 and param 2.  Provide a description of what
-    each parameter controls.  This is a convenient location to include the accuracy variable used in the
-    validation test.
-
     Args:
         attType (int): 0 - MRPs; 1 - EP [q0, q1, q2, q3]; 2 - [q1, q2, q3, qs]
         MRPswitching : False: every waypoint is within 180 deg from the inertial frame; True: some waipoints exceed 180 deg rotation from the inertial frame and ``attRefOutMsg.sigma_RN`` presents a discontinuity in correspondence of MRP switching;
