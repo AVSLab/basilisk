@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -15,29 +15,28 @@
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- */
+*/
 
-%module simpleInstrument
+%module mappingInstrument
 %{
-#include "simpleInstrument.h"
+    #include "mappingInstrument.h"
 %}
 
 %pythoncode %{
-from Basilisk.architecture.swig_common_model import *
+    from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
-%include "sys_model.h"
-%include "../_GeneralModuleFiles/dataNodeBase.h"
-%include "simpleInstrument.h"
 %include "swig_conly_data.i"
 
-%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
-struct DataNodeUsageMsg_C;
-%include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
-struct DeviceCmdMsg_C;
+%include "sys_model.h"
+%include "mappingInstrument.h"
 %include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
+struct DataNodeUsageMsg_C;
+%include "architecture/msgPayloadDefC/AccessMsgPayload.h"
+struct AccessMsg_C;
 
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
+
