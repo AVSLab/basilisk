@@ -80,6 +80,20 @@ void GroundLocation::specifyLocation(double lat, double longitude, double alt)
     this->dcm_LP = C_PCPF2SEZ(lat, longitude);
 }
 
+/*! Specifies the ground location from planet-centered, planet-fixed coordinates
+ * @param r_LP_P_Init
+ */
+void GroundLocation::specifyLocationPCPF(Eigen::Vector3d& r_LP_P_loc){
+    /* Assign to r_LP_P_Init */
+    this->r_LP_P_Init = r_LP_P_loc;
+
+    /* Convert to LLA */
+    Eigen::Vector3d tmpLLAPosition = PCPF2LLA(this->r_LP_P_Init, this->planetRadius);
+
+    /* Compute dcm_LP */
+    this->dcm_LP = C_PCPF2SEZ(tmpLLAPosition[0], tmpLLAPosition[1]);
+}
+
 
 /*! Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message output name.
 */
