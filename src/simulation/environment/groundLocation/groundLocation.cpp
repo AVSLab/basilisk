@@ -82,11 +82,11 @@ void GroundLocation::specifyLocation(double lat, double longitude, double alt)
 }
 
 /*! Specifies the ground location from planet-centered, planet-fixed coordinates
- * @param r_LP_P_Init
+ * @param r_LP_P_Loc
  */
-void GroundLocation::specifyLocationPCPF(Eigen::Vector3d& r_LP_P_loc){
+void GroundLocation::specifyLocationPCPF(Eigen::Vector3d& r_LP_P_Loc){
     /* Assign to r_LP_P_Init */
-    this->r_LP_P_Init = r_LP_P_loc;
+    this->r_LP_P_Init = r_LP_P_Loc;
 
     /* Convert to LLA */
     Eigen::Vector3d tmpLLAPosition = PCPF2LLA(this->r_LP_P_Init, this->planetRadius);

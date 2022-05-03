@@ -47,7 +47,7 @@ public:
     void WriteMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void specifyLocation(double lat, double longitude, double alt);
-    void specifyLocationPCPF(Eigen::Vector3d& r_LP_P_loc);
+    void specifyLocationPCPF(Eigen::Vector3d& r_LP_P_Loc);
     
 private:
     void updateInertialPositions();
