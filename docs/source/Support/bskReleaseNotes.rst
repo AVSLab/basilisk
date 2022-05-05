@@ -47,6 +47,8 @@ Version |release|
 - added :ref:`scenarioAttitudeConstrainedManeuver` to illustrate how to use :ref:`constrainedAttitudeManeuver`
 - added ``specifyLocationPCPF()`` method to :ref:`groundLocation` for specifying ground locations in planet-centered,
   planet-fixed coordinates
+- updated :ref:`spacecraftLocation` to handle cases where the closed approach point to
+  the planet is outside the spacecraft-spacecraft interval
 
 
 Version 2.1.2 (March 12, 2022)

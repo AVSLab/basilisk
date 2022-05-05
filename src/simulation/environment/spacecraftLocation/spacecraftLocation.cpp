@@ -186,7 +186,11 @@ void SpacecraftLocation::computeAccess()
         double param;               // line scaling parameter
         param = - r_LP_P.dot(r_SL_P)/r_SL_P.dot(r_SL_P);
         Eigen::Vector3d rClose = r_LP_P + param * r_SL_P;
-        
+
+        // check for out of bounds condition.  
+        param = std::min(param, 1.0); // If param > 1, the closest point on segment is the other satellite
+        param = std::max(param, 0.0); // If param < 0, the closest point on segment is the primary satellite
+
         // determine access output message
         this->accessMsgBuffer.at(c) = this->accessOutMsgs.at(c)->zeroMsgPayload;
         if (rClose.norm() > this->rEquator) {
