@@ -3,7 +3,7 @@ Executive Summary
 -----------------
 This module determines if one satellite has a line of sight vector to another satellite.  An oblate planet is modeled through the equatorial and the polar radius. If the line of sight vector between two satellites is above this surface, then the output access message is set to true.  The module has a primary spacecraft which determines access to `N` other spacecraft orbiting the same planet.
 
-Further, the module tracks a body-fixed location `L` on the primary spacecraft (i.e. location where an antenna is attached), and you can specify an optional sensor/communication bore sight axis :math:`\hat{\bf a}` and an center-to-edge sensor/communication cone angle :math:`\theta`.  In this case the access message is true if teh line of sight vector between spacecraft is above the surface and the relative position vector to the other spacecraft is within this cone.
+Further, the module tracks a body-fixed location `L` on the primary spacecraft (i.e. location where an antenna is attached), and you can specify an optional sensor/communication bore sight axis :math:`\hat{\bf a}` and an center-to-edge sensor/communication cone angle :math:`\theta`.  In this case the access message is true if the line of sight vector between spacecraft is above the surface and the relative position vector to the other spacecraft is within this cone.
 
 Finaly, if the other spacecraft is accessable, the range to the other satellite is stored in the output message.
 
@@ -62,14 +62,14 @@ Let `P` be the planet-centered planet-fixed frame.  The inertial planet origin i
     {}^{P} {\bf r}_{S/P} = [PN] ( {}^{N} {\bf r}_{S/N} - {}^{N} {\bf r}_{P/N})
 
 .. math::
-    {}^{P} {\bf r}_{S/B} = {}^{P} {\bf r}_{S/P} - {}^{P} {\bf r}_{B/P})
+    {}^{P} {\bf r}_{S/B} = {}^{P} {\bf r}_{S/P} - {}^{P} {\bf r}_{B/P}
 
 The line of sight vector is defined through the point `B` and the direction :math:`{\bf r}_{S/B}`.  Let :math:`\kappa` be a scaling factor, the line is then defined as:
 
 .. math::
     {\bf l} =  {\bf r}_{B/P} + \kappa * {\bf r}_{S/B}
 
-The process of intersecting a line with an ellipsoid is simplified by using an affine project to render the ellipsoid a sphere.  This affine mapping preserves a line to remain a line.  The math of this is as follow.  The planet is assumed to have rotational symmetry about the 3rd axis about which it is spinning.  Thus, to map the ellipsoid into a sphere the planet relative 3rd coordinates must scaled by the ratio of the equatorial radius to the polar radius.  The following math assumes this affine mapping has been performed in the above planet-relative position coordinates.
+The process of intersecting a line with an ellipsoid is simplified by using an affine project to render the ellipsoid a sphere.  This affine mapping preserves a line to remain a line.  The math of this is as follow.  The planet is assumed to have rotational symmetry about the 3:sup`rd` axis about which it is spinning.  Thus, to map the ellipsoid into a sphere the planet relative 3:sup`rd` coordinates must scaled by the ratio of the equatorial radius to the polar radius.  The following math assumes this affine mapping has been performed in the above planet-relative position coordinates.
 
 To determine the minimum distance of the line :math:`\bf l` to the planet origin, consider the cost function :math:`J`:
 
@@ -81,12 +81,16 @@ Setting the first variation of :math:`J` with respect to :math:`\kappa` to zero 
 .. math::
     \kappa^\ast = - \frac{{\bf r}_{B/P} \cdot {\bf r}_{S/B}}{{\bf r}_{S/B} \cdot {\bf r}_{S/B}}
 
+Note that if :math:`\kappa<0` or :math:`\kappa>1`, then the point of closed approach is outside of the
+line-of-sight interval between the two spacecraft and the planet cannot be blocking access
+of one spacecraft from another.
+
 Thus, the point of closed approach is determined through:
 
 .. math::
     {\bf r}^\ast = {\bf r}_{B/P} + \kappa^\ast * {\bf r}_{S/B}
 
-If :math:`|{\bf r}^\ast| > r_{eq}` then the other spacecraft is visible relative to the primary spacecraft.
+If :math:`|{\bf r}^\ast| > r_{\text{eq}}` then the other spacecraft is visible relative to the primary spacecraft.
 
 
 Determining Sensor Cone Inclusion
@@ -98,7 +102,7 @@ If the line of sight property is established, then the module can also take into
 
 The module sets the sensor cone half-angle :math:`\theta`.  If :math:`\phi > \theta` then the sensor or communication axis does not have access to the other spacecraft.
 
-This :math:`\hat{\bf a}` is considered, then the access output message sets the message elevation angle as
+If this :math:`\hat{\bf a}` is considered, then the access output message sets the message elevation angle as
 
 .. math::
 
