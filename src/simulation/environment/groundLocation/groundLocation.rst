@@ -121,7 +121,10 @@ A new instance of groundLocation, alongside necessary user-supplied parameters, 
     scSim.AddModelToTask(simTaskName, groundTarget)
 
 The ``planetRadius`` variable is optional and defaults to Earth's radius.  Instead of specifying the ground location
-through the ``specifyLocation()`` method, you can also set the module variable ``r_LP_P_Init`` directly.
+through the ``specifyLocation()`` method, you can also set the module variable ``r_LP_P_Init`` using the
+``specifyLocationPCPF()`` method. Avoid setting the module variable ``r_LP_P_Init`` directly, as there are computations
+that occur within the ``specifyLocation()`` and ``specifylocationPCPF()`` methods that are important for access message
+states.
 
 The ``maximumRange`` variable is optional and defaults to -1.  This means by default no maximum range is considered.  Set it to a positive value to have ``hasAccess`` output message variable depend on range.
 

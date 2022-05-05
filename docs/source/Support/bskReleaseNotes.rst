@@ -45,6 +45,8 @@ Version |release|
 - added :ref:`scenario_AddRWFault` to show how to use event handlers to add faults
 - added :ref:`constrainedAttitudeManeuver` with MRP-cartesian-distance- and effort-based A* graph search algorithms
 - added :ref:`scenarioAttitudeConstrainedManeuver` to illustrate how to use :ref:`constrainedAttitudeManeuver`
+- added ``specifyLocationPCPF()`` method to :ref:`groundLocation` for specifying ground locations in planet-centered,
+  planet-fixed coordinates
 
 
 Version 2.1.2 (March 12, 2022)

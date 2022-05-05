@@ -20,6 +20,7 @@
 #include "simulation/environment/groundLocation/groundLocation.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include <iostream>
 
 /*! @brief Creates an instance of the GroundLocation class with a minimum elevation of 10 degrees,
  @return void
@@ -78,6 +79,20 @@ void GroundLocation::specifyLocation(double lat, double longitude, double alt)
     Eigen::Vector3d tmpLLAPosition(lat, longitude, alt);
     this->r_LP_P_Init = LLA2PCPF(tmpLLAPosition, this->planetRadius);
     this->dcm_LP = C_PCPF2SEZ(lat, longitude);
+}
+
+/*! Specifies the ground location from planet-centered, planet-fixed coordinates
+ * @param r_LP_P_Loc
+ */
+void GroundLocation::specifyLocationPCPF(Eigen::Vector3d& r_LP_P_Loc){
+    /* Assign to r_LP_P_Init */
+    this->r_LP_P_Init = r_LP_P_Loc;
+
+    /* Convert to LLA */
+    Eigen::Vector3d tmpLLAPosition = PCPF2LLA(this->r_LP_P_Init, this->planetRadius);
+
+    /* Compute dcm_LP */
+    this->dcm_LP = C_PCPF2SEZ(tmpLLAPosition[0], tmpLLAPosition[1]);
 }
 
 
