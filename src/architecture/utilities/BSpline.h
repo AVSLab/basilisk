@@ -79,11 +79,11 @@ public:
     Eigen::VectorXd XDD2;            //!< second derivative of coordinate #2 of the interpolated trajectory
     Eigen::VectorXd XDD3;            //!< second derivative of coordinate #3 of the interpolated trajectory
 
-    int P;
-    Eigen::VectorXd U;
-    Eigen::VectorXd C1;
-    Eigen::VectorXd C2;
-    Eigen::VectorXd C3;
+    int P;                           //!< polynomial degree of the BSpline
+    Eigen::VectorXd U;               //!< knot vector of the BSpline
+    Eigen::VectorXd C1;              //!< coordinate #1 of the control points
+    Eigen::VectorXd C2;              //!< coordinate #2 of the control points
+    Eigen::VectorXd C3;              //!< coordinate #3 of the control points
 };
 
 void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output);

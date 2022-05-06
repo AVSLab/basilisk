@@ -35,17 +35,17 @@
 //! @brief The constraintStruc structure is used to store the inertial direction of the keep-in and keep-out zones
 struct constraintStruct {
 
-    double keepOutDir_N[3], keepInDir_N[3];
-    bool keepOut, keepIn;
+    double keepOutDir_N[3], keepInDir_N[3];                         //!< Inertial direction of keepIn and keepOut celestial bodies
+    bool keepOut, keepIn;                                           //!< Flags to assess whether keepIn and keepOut constraints are being considered
 };
 
 //! @brief The scBoresightStruc structure is used to store the body frame directions and fields of view of the instruments
 struct scBoresightStruct {
 
-    double keepOutBoresight_B[10][3], keepInBoresight_B[10][3];
-    double keepOutFov[10], keepInFov[10];
-    int keepOutBoresightCount = 0;
-    int keepInBoresightCount = 0;
+    double keepOutBoresight_B[10][3], keepInBoresight_B[10][3];     //!< Unit vectors containing body frame directions of keepIn and keepOut instruments
+    double keepOutFov[10], keepInFov[10];                           //!< Fields of view of the keepIn and keepOut instruments
+    int keepOutBoresightCount = 0;                                  //!< Number of keepOut sensitive instruments
+    int keepInBoresightCount = 0;                                   //!< Number of keepIn instruments
 };
 
 //! @brief The Node class is used to create nodes in the 3D MRP graph
