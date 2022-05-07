@@ -21,7 +21,7 @@ Overview
 --------
 
 Demonstrates how to simulate an attitude control scenario without having any gravity
-bodies present. In essence, the spacecraft is hovering in deep space.  The goal is to
+bodies present. In essence, the 3-U cube-sat spacecraft is hovering in deep space.  The goal is to
 stabilize the tumble of a spacecraft and point it towards a fixed inertial direction.
 This script sets up a 6-DOF spacecraft which is hovering in deep space.  The scenario duplicates
 the scenario in :ref:`scenarioAttitudeFeedback` without adding
@@ -265,6 +265,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , modelDictionaryKeyList="3USat"
                                               # , saveFile=fileName
                                               )
     #

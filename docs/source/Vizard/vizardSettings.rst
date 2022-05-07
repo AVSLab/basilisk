@@ -1398,6 +1398,21 @@ spacecraft::
 
 The argument None is used to specify the Vizard default shape to be used.
 
+The following table provides the keywords for the built-in spacecraft shape models.
+
+.. list-table:: Built-In Spacecraft Models
+    :widths: 25 75
+    :header-rows: 1
+
+    * - Key Name
+      - Description
+    * - ``bskSpacecraft``
+      - Default hexagonal spacecraft model with 3 solar panels.
+    * - ``3USat``
+      - 3U cube-sat model
+    * - ``6USat``
+      - 6U cube-sat model
+
 Specifying the Osculating or True Orbit Line Colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The spacecraft Vizard data supports the use of ``oscOrbitColorList`` to override the default spacecraft osculating
