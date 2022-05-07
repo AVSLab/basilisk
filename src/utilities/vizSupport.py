@@ -1049,7 +1049,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     unitTestSupport.checkMethodKeyword(
         ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList',
          'genericSensorList', 'transceiverList', 'genericStorageList', 'lightList', 'spriteList',
-         'modelDictionaryKeyList', 'oscOrbitColorList', 'trueOrbitColorList'],
+         'modelDictionaryKeyList', 'oscOrbitColorList', 'trueOrbitColorList', 'logoTextureList'],
         kwargs)
 
     # setup the Vizard interface module
@@ -1162,6 +1162,16 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             modelDictionaryKeyList = [modelDictionaryKeyList]
         if len(modelDictionaryKeyList) != len(scList):
             print('ERROR: vizSupport: modelDictionaryKeyList should have the same length as the '
+                  'number of spacecraft and contain lists of transceivers')
+            exit(1)
+
+    logoTextureList = False
+    if 'logoTextureList' in kwargs:
+        logoTextureList = kwargs['logoTextureList']
+        if not isinstance(logoTextureList, list):
+            logoTextureList = [logoTextureList]
+        if len(logoTextureList) != len(scList):
+            print('ERROR: vizSupport: logoTextureList should have the same length as the '
                   'number of spacecraft and contain lists of transceivers')
             exit(1)
 
@@ -1321,6 +1331,10 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if modelDictionaryKeyList:
             if modelDictionaryKeyList[c] is not None:
                 scData.modelDictionaryKey = modelDictionaryKeyList[c]
+        # process logoTexture information
+        if logoTextureList:
+            if logoTextureList[c] is not None:
+                scData.logoTexture = logoTextureList[c]
 
         if oscOrbitColorList:
             if oscOrbitColorList[c] is not None:

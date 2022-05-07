@@ -259,7 +259,8 @@ def run(show_plots):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        , modelDictionaryKeyList="bskSaturn"
+                                        , modelDictionaryKeyList="6USat"
+                                        # , saveFile=fileName
                                         )
 
     #

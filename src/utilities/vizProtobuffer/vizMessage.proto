@@ -58,6 +58,7 @@ message VizMessage{
         string modelDictionaryKey = 13;
         repeated int32 oscOrbitLineColor = 14; // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
         repeated int32 trueTrajectoryLineColor = 15; // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
+        string logoTexture = 16; //Path to image texture to be used to customize built-in spacecraft models
 }
 
     message ReactionWheel{
