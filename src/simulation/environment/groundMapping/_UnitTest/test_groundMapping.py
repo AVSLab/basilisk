@@ -23,7 +23,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
-from Basilisk.simulation/environment import groundMapping
+from Basilisk.simulation import groundMapping
 
 @pytest.mark.parametrize("accuracy", [1e-12])
 @pytest.mark.parametrize("param1, param2", [

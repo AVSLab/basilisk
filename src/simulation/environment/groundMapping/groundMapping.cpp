@@ -30,6 +30,21 @@
     values and initializes the various parts of the model */
 GroundMapping::GroundMapping()
 {
+    //! - Set some default initial conditions:
+    this->minimumElevation = 10.*D2R; // [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees
+    this->maximumRange = -1; // [m] Maximum range for the groundLocation to compute access.
+
+    this->planetRadius = REQ_EARTH*1e3;
+
+    this->planetInMsgBuffer = this->planetInMsg.zeroMsgPayload;
+    this->planetInMsgBuffer.J20002Pfix[0][0] = 1;
+    this->planetInMsgBuffer.J20002Pfix[1][1] = 1;
+    this->planetInMsgBuffer.J20002Pfix[2][2] = 1;
+
+    this->scStateInMsgBuffer = this->scStateInMsg.zeroMsgPayload;
+
+    this->halfFieldOfView = 10.*D2R;  // [rad] half-angle field-of-view of the instrument
+
 }
 
 /*! Module Destructor */
@@ -43,8 +58,8 @@ GroundMapping::~GroundMapping()
 void GroundMapping::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
-    if (!this->planetInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "GroundMapping.planetInMsg was not linked.");
+    if (this->planetRadius < 0) {
+        bskLogger.bskLog(BSK_ERROR, "GroundLocation module must have planetRadius set.");
     }
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "GroundMapping.scStateInMsg was not linked.");
@@ -55,11 +70,13 @@ void GroundMapping::Reset(uint64_t CurrentSimNanos)
 /*! Read module messages
 */
 void GroundMapping::ReadMessages(){
-    //SpicePlanetStateMsgPayload planetInMsgBuffer;  //!< local copy of message buffer
-    //SCStatesMsgPayload scStateInMsgBuffer;  //!< local copy of message buffer
 
-    planetInMsgBuffer = this->planetInMsg();
-    scStateInMsgBuffer = this->scStateInMsg();
+    if(this->planetInMsg.isLinked())
+    {
+        this->planetInMsgBuffer = this->planetInMsg();
+    }
+
+    this->scStateInMsgBuffer = this->scStateInMsg();
 }
 
 /*! Method to add map points
@@ -68,9 +85,6 @@ void GroundMapping::ReadMessages(){
 void GroundMapping::addPointToModel(Eigen::Vector3d& r_LP_P_init){
     /* Add the mapping point */
     this->mappingPoints.push_back(r_LP_P_init);
-
-    //std::vector<AccessMsgPayload> accessMsgBuffer;                  //!< buffer of access output data
-    //std::vector<GroundStateMsgPayload> currentGroundStateMsgBuffer;                  //!< buffer of access output data
 
     /* Create buffer output messages */
     Message<AccessMsgPayload> *msg;
@@ -106,7 +120,6 @@ void GroundMapping::computeAccess(long unsigned int c){
     eigenVector3d2CArray(this->r_LP_N, this->currentGroundStateMsgBuffer.at(c).r_LP_N);
 
     //! Compute the relative position of each spacecraft to the site in the planet-centered inertial frame
-
     Eigen::Vector3d r_BL_N = r_BP_N - this->r_LP_N;
     auto r_BL_mag = r_BL_N.norm();
     Eigen::Vector3d relativeHeading_N = r_BL_N / r_BL_mag;
@@ -153,7 +166,7 @@ void GroundMapping::updateInertialPositions()
     this->r_BP_N = cArray2EigenVector3d(scStateInMsgBuffer.r_BN_N) - this->r_PN_N;
     double dcm_BN[3][3];
     MRP2C(scStateInMsgBuffer.sigma_BN, dcm_BN);
-    this->dcm_NB = cArray2EigenMatrixXd(*dcm_BN, 3, 3).transpose();
+    this->dcm_NB = cArray2EigenMatrixXd(*dcm_BN, 3, 3);
 
     // Get planet frame angular velocity vector
     Eigen::Matrix3d w_tilde_PN = - this->dcm_PN_dot * this->dcm_PN.transpose();
@@ -166,11 +179,12 @@ uint64_t GroundMapping::checkInstrumentFOV(){
     /* Compute the projection of the mapping point along the instrument's boresight */
     double boresightNormalProj = ((this->r_LP_N - (this->r_BP_N + this->dcm_NB*cameraPos_B)).transpose())*(dcm_NB*this->nHat_B);
 
-    /* */
+    /* Check that the normal projection is within the maximum range*/
     if ((boresightNormalProj >= 0) && (boresightNormalProj <= this->maximumRange)){
         /* Compute the radius of the instrument's cone at the projection distance */
-        double coneRadius = boresightNormalProj*sin(this->halfFieldOfView);
-        double orthDistance = ((this->r_BP_N + this->dcm_NB*cameraPos_B) - this->r_LP_N  - boresightNormalProj*dcm_NB*this->nHat_B).norm();
+        double coneRadius = boresightNormalProj*tan(this->halfFieldOfView);
+        double orthDistance = (this->r_LP_N - (this->r_BP_N + this->dcm_NB*cameraPos_B)  - boresightNormalProj*dcm_NB*this->nHat_B).norm();
+        /* Check that the orthogonal distance is less than the cone radius */
         if (orthDistance < coneRadius) {
             return 1;
         } else {
@@ -202,6 +216,9 @@ void GroundMapping::UpdateState(uint64_t CurrentSimNanos)
 {
     // Read messages
     this->ReadMessages();
+
+    // Update the inertial positions
+    this->updateInertialPositions();
 
     // Loop through each mapping point and perform computations
     for (long unsigned int c = 0; c < this->mappingPoints.size(); c++) {

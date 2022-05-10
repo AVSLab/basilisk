@@ -28,7 +28,7 @@
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
-
+%include "std_vector.i"
 %include "sys_model.h"
 %include "groundMapping.h"
 

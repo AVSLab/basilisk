@@ -76,6 +76,7 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import planetStates
 
 # import simulation related support
 from Basilisk.simulation import spacecraft
@@ -86,6 +87,7 @@ from Basilisk.utilities import astroFunctions
 from Basilisk.simulation import mappingInstrument
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import partitionedStorageUnit
+from Basilisk.simulation import ephemerisConverter
 
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import mrpFeedback
@@ -157,6 +159,17 @@ def plot_access(timeLineSet, hasAccess):
 
     return
 
+
+def plot_map_progress(timeLineSet, mapping_points, map_access, sc_pos_PCPF):
+    fig = plt.figure(2)
+    ax = plt.axes(projection='3d')
+    ax.plot(sc_pos_PCPF[:,0], sc_pos_PCPF[:,1], sc_pos_PCPF[:,2], '.')
+    ax.plot(mapping_points[map_access,0], mapping_points[map_access,1], mapping_points[map_access,2], '.', c='g')
+    ax.plot(mapping_points[np.logical_not(map_access),0], mapping_points[np.logical_not(map_access),1], mapping_points[np.logical_not(map_access),2], '.', c='k')
+
+    return
+
+
 def generate_mapping_points(num_points, radius):
     """Generates a number of mapping points on the surface of the body using a Fibonnaci sphere
        Algorithm from:
@@ -179,7 +192,7 @@ def generate_mapping_points(num_points, radius):
     return np.array(points)
 
 
-def run(show_plots):
+def run(show_plots, useCentral):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -192,26 +205,20 @@ def run(show_plots):
     simTaskName = "simTask"
     simProcessName = "simProcess"
 
-    #  Create a sim module as an empty container
+    # Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
     simulationTime = macros.min2nano(20.)
 
-    #
-    #  create the simulation process
-    #
+    # Create the simulation process
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
-    # create the dynamics task and specify the integration update time
+    # Create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(1.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    #
-    #   setup the simulation tasks/objects
-    #
-
-    # initialize spacecraft object and set properties
+    # Initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
@@ -222,26 +229,27 @@ def run(show_plots):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
-    # add spacecraft object to the simulation process
+    # Add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
-    # clear prior gravitational body and SPICE setup definitions
+    # Clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
-    # setup Earth Gravity Body
+    # Setup Earth Gravity Body
     earth = gravFactory.createEarth()
-    earth.isCentralBody = True  # ensure this is the central gravitational body
+    earth.isCentralBody = useCentral  # ensure this is the central gravitational body
     mu = earth.mu
 
-    # attach gravity model to spacecraft
+    timeInitString = '2020 MAY 21 18:28:03 (UTC)'
+    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', timeInitString)
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
+
+    # Attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
-    #
-    #   initialize Spacecraft States with initialization variables
-    #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = (6378 + 600)*1000.  # meters
+    oe.a = (6378 + 2000)*1000.  # meters
     oe.e = 0.01
     oe.i = 63.3 * macros.D2R
     oe.Omega = 88.2 * macros.D2R
@@ -252,6 +260,14 @@ def run(show_plots):
     scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+
+    if useCentral:
+        scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
+        scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
+    else:
+        planetPosition, planetVelocity = planetStates.planetPositionVelocity('EARTH', timeInitString)
+        scObject.hub.r_CN_NInit = rN + np.array(planetPosition)
+        scObject.hub.v_CN_NInit = vN + np.array(planetVelocity)
 
     # setup extForceTorque module
     # the control torque is read in through the messaging system
@@ -271,37 +287,138 @@ def run(show_plots):
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # Generate the mapping points
-    N = 2000
+    N = 1000
     mapping_points = generate_mapping_points(N, astroFunctions.E_radius*1e3)
 
     # Create the initial imaging target
     groundMap = groundMapping.GroundMapping()
     groundMap.ModelTag = "groundMapping"
-    #groundMap.planetRadius = astroFunctions.E_radius*1e3
+    groundMap.planetRadius = astroFunctions.E_radius*1e3
     for map_idx in range(N):
-        print(mapping_points[map_idx,:].tolist())
         groundMap.addPointToModel(unitTestSupport.np2EigenVectorXd(mapping_points[map_idx,:]))
-    #groundMap.minimumElevation = np.radians(10.)
-    #groundMap.maximumRange = 1e9
-    # groundMap.addSpacecraftToModel(scObject.scStateOutMsg)
-    scSim.AddModelToTask(simTaskName, groundMap, ModelPriority=1000)
+    groundMap.minimumElevation = np.radians(45.)
+    groundMap.maximumRange = 1e9
+    groundMap.cameraPos_B = [0, 0, 0]
+    groundMap.nHat_B = [0, 0, 1]
+    groundMap.halfFieldOfView = np.radians(22.5)
+    groundMap.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    groundMap.planetInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
+    scSim.AddModelToTask(simTaskName, groundMap, ModelPriority=1)
+
+    ephemConverter = ephemerisConverter.EphemerisConverter()
+    ephemConverter.ModelTag = "ephemConverter"
+    ephemConverter.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[0])
+    scSim.AddModelToTask(simTaskName, ephemConverter)
+
+    # Setup nadir pointing guidance module
+    locPointConfig = locationPointing.locationPointingConfig()
+    locPointWrap = scSim.setModelDataWrap(locPointConfig)
+    locPointWrap.ModelTag = "locPoint"
+    scSim.AddModelToTask(simTaskName, locPointWrap, locPointConfig, ModelPriority=99)
+    locPointConfig.pHat_B = [0, 0, 1]
+    locPointConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    locPointConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    locPointConfig.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[0])
+
+    # Setup the MRP Feedback control module
+    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
+    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
+    mrpControlWrap.ModelTag = "MRP_Feedback"
+    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig, ModelPriority=901)
+    mrpControlConfig.guidInMsg.subscribeTo(locPointConfig.attGuidOutMsg)
+    mrpControlConfig.K = 5.5
+    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
+    mrpControlConfig.P = 30.0
+    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+
+    # connect torque command to external torque effector
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+
+    # create the FSW vehicle configuration message
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
+    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    configDataMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
+    mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
+
+    # Setup data logging before the simulation is initialized
+    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder()
+    attErrLog = locPointConfig.attGuidOutMsg.recorder()
+    snAttLog = sNavObject.attOutMsg.recorder()
+    snTransLog = sNavObject.transOutMsg.recorder()
+    scLog = scObject.scStateOutMsg.recorder()
+    planetLog = gravFactory.spiceObject.planetStateOutMsgs[0].recorder()
+
+    # Setup the logging for the mapping locations
+    mapLog = []
+    for idx in range(0, N):
+        mapLog.append(groundMap.accessOutMsgs[idx].recorder())
+        scSim.AddModelToTask(simTaskName, mapLog[idx])
+
+    scSim.AddModelToTask(simTaskName, mrpLog)
+    scSim.AddModelToTask(simTaskName, attErrLog)
+    scSim.AddModelToTask(simTaskName, snAttLog)
+    scSim.AddModelToTask(simTaskName, snTransLog)
+    scSim.AddModelToTask(simTaskName, scLog)
+    scSim.AddModelToTask(simTaskName, planetLog)
+
+    # setup Vizard support
+    if vizSupport.vizFound:
+        genericSensorHUD = vizInterface.GenericSensor()
+        genericSensorHUD.r_SB_B = [0., 0., 0.]
+        genericSensorHUD.fieldOfView.push_back(45 * macros.D2R)  # single value means a conic sensor
+        genericSensorHUD.normalVector = [0., 0., 1.]
+        genericSensorHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("red", alpha=0.25))
+        genericSensorHUD.label = "genSen1"
+
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                  , saveFile=fileName
+                                                  , genericSensorList=genericSensorHUD
+                                                  )
+        # the following command sets Viz settings for the first spacecraft in the simulation
+        vizSupport.setInstrumentGuiSetting(viz,
+                                           showGenericSensorLabels=True,
+                                           )
 
 
+    # Need to call the self-init and cross-init methods
+    scSim.InitializeSimulation()
 
-    #
-    #   plot the results
-    #
-    # timeLineSet = attErrLog.times() * macros.NANO2MIN
-    # plt.close("all")  # clears out plots from earlier test runs
-    #
-    # plot_attitude_error(timeLineSet, dataSigmaBR)
+    # Set the simulation time.
+    scSim.ConfigureStopTime(macros.hour2nano(2))
+    # scSim.ConfigureStopTime(macros.sec2nano(2))
+
+    # Begin the simulation time run set above
+    scSim.ExecuteSimulation()
+
+    # Retrieve the logged data
+    dataSigmaBR = attErrLog.sigma_BR
+    sc_pos_N = scLog.r_BN_N
+    dcms_PN = planetLog.J20002Pfix
+    planet_pos_N = planetLog.PositionVector
+
+    sc_pos_PCPF = np.zeros((len(sc_pos_N), 3))
+    for idx in range(0, len(sc_pos_N)):
+        sc_pos_PCPF[idx,:] = np.matmul(dcms_PN[idx,:,:], sc_pos_N[idx,:] - planet_pos_N[idx,:])
+
+    # Retrieve the access messages
+    map_access = np.zeros(N, dtype=np.bool)
+    for idx in range(0, N):
+        access = mapLog[idx].hasAccess
+        if sum(access):
+            map_access[idx] = 1
+
+    # Plot the results
+    timeLineSet = attErrLog.times() * macros.NANO2MIN
+    plt.close("all")  # clears out plots from earlier test runs
+
+    plot_attitude_error(timeLineSet, dataSigmaBR)
     figureList = {}
-    # pltName = fileName + "1"
-    # figureList[pltName] = plt.figure(1)
-    #
-    # plot_access(timeLineSet, hasAccess)
-    # pltName = fileName + "2"
-    # figureList[pltName] = plt.figure(2)
+    pltName = fileName + "1"
+    figureList[pltName] = plt.figure(1)
+
+    plot_map_progress(timeLineSet, mapping_points, map_access, sc_pos_PCPF)
+    pltName = fileName + "2"
+    figureList[pltName] = plt.figure(2)
     #
     # plot_device_status(timeLineSet, deviceCmd)
     # pltName = fileName + "3"
@@ -325,5 +442,6 @@ def run(show_plots):
 #
 if __name__ == "__main__":
     run(
-        True  # show_plots
+        True,  # show_plots
+        True
     )
