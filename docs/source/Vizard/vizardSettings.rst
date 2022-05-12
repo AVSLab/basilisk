@@ -1406,7 +1406,7 @@ The following table provides the keywords for the built-in spacecraft shape mode
 
     * - Key Name
       - Description
-    * - ``bskSpacecraft``
+    * - ``bskSat``
       - Default hexagonal spacecraft model with 3 solar panels.
     * - ``3USat``
       - 3U cube-sat model
