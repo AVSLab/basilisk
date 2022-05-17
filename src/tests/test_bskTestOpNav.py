@@ -100,4 +100,4 @@ def test_opnavBskScenarios(show_plots):
     assert testFailCount < 1, testMessages
 
 if __name__ == "__main__":
-    test_opnavBskScenarios(True, 'scenario_OpNavAttODLimb')
+    test_opnavBskScenarios(True)
