@@ -193,6 +193,7 @@ Mission Simulations
    Heliocentric Translation Using Custom Spice Files <scenarioHelioTransSpice>
    Planetary Flybys Using Custom Spice File <scenarioFlybySpice>
    Asteroid Arrival <scenarioAsteroidArrival>
+   Aerocapture Scenario <scenarioAerocapture>
 
 bskSim()-Based Simulation
 -------------------------
