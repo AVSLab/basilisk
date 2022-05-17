@@ -49,6 +49,7 @@ Version |release|
   planet-fixed coordinates
 - updated :ref:`spacecraftLocation` to handle cases where the closed approach point to
   the planet is outside the spacecraft-spacecraft interval
+- added new :ref:`scenarioAerocapture` which simulates an aerocapture scenario
 
 
 Version 2.1.2 (March 12, 2022)
