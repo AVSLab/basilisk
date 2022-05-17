@@ -1,22 +1,87 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Apr  5 19:46:35 2022
+#
+#  ISC License
+#
+#  Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
-@author: mikaelafelix
-"""
-# --- My Comments----
-# most copied from scenarioOrbitManuever and referenced test_atmoDrag
-# used earth as reference body
+r"""
+Overview
+--------
 
-import os, inspect
+Demonstrates a spacecraft performing aerocapture.  :ref:`tabularAtmosphere` is used
+to read in a table of atmospheric density value for the planet.  A cannonball
+drag effector (:ref:`dragDynamicEffector`) is used to simulate the atmospheric drag force.
+
+The script is found in the folder ``basilisk/examples`` and executed by using::
+
+      python3 scenarioAerocapture.py
+
+
+Illustration of Simulation Results
+----------------------------------
+For the Earth aerocapture the following figures illustrate the simulation results.
+The spacecraft first dips into the atmosphere and looses orbital energy to the point
+of being capture by the planet.  The spacecraft has enough velocity to escape the
+planet atmosphere at the end of the simulation time.  This is also illustrated by
+the velocity versus altitude plot.  The density plot illustrates the result of the
+tabular atmosphere model.
+
+::
+
+    show_plots = True, planetCase = `Earth`
+
+.. image:: /_images/Scenarios/scenarioAerocapture5Earth.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAerocapture4Earth.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAerocapture3Earth.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAerocapture2Earth.svg
+   :align: center
+
+For the Mars aerocapture scenario the orbit is adjusted to be suitable for this planet scenario.
+Here too the spacecraft enters the atmosphere to burn off orbital energy and become
+captured by the planet.
+
+::
+
+    show_plots = True, planetCase = `Mars`
+
+.. image:: /_images/Scenarios/scenarioAerocapture5Mars.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAerocapture4Mars.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAerocapture3Mars.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAerocapture2Mars.svg
+   :align: center
+
+
+"""
+
+import os
 import numpy as np
-import math
-
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -25,12 +90,20 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import tabularAtmosphere, simpleNav
-from Basilisk.utilities import unitTestSupport, RigidBodyKinematics
-#print dir(exponentialAtmosphere)
+from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import dragDynamicEffector
 from Basilisk.architecture import messaging
 from Basilisk.utilities.readAtmTable import readAtmTable
+from Basilisk.utilities import vizSupport
 
+
+#
+# Basilisk Scenario Script and Integrated Test
+#
+# Purpose:  Aerocapture with cannonball drag and tabular atmosphere modules
+# Author:   Mikaela Felix and Hanspeter Schaub
+# Creation Date:  May 17, 2022
+#
 
 # filename = inspect.getframeinfo(inspect.currentframe()).filename
 # path = os.path.dirname(os.path.abspath(filename))
@@ -41,11 +114,12 @@ from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
+
 def sph2rv(xxsph):
-    '''
+    """
     NOTE: this function assumes inertial and planet-fixed frames are aligned
     at this time
-    '''
+    """
     
     r = xxsph[0]
     lon = xxsph[1]
@@ -70,11 +144,16 @@ def sph2rv(xxsph):
     
     return rvec_N, uvec_N
 
-def run(show_plots):
-    
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
 
+def run(show_plots, planetCase):
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        planetCase (string): Specify if a `Mars` or `Earth` arrival is simulated
+
+    """
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -92,16 +171,21 @@ def run(show_plots):
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-   # Construct algorithm and associated C++ container
-   # change module to tabAtmo
+    # Construct algorithm and associated C++ container
+    # change module to tabAtmo
     tabAtmo = tabularAtmosphere.TabularAtmosphere()   # update with current values
     tabAtmo.ModelTag = "tabularAtmosphere"            # update python name of test module
     atmoTaskName = "atmosphere"
     
     # define constants & load data
-    r_eq = 6378136.6
-    filename = bskPath + '/../../supportData/AtmosphereData/EarthGRAMNominal.txt'
-    altList, rhoList, tempList = readAtmTable(filename,'EarthGRAM')
+    if planetCase == 'Earth':
+        r_eq = 6378136.6
+        filename = bskPath + '/../../supportData/AtmosphereData/EarthGRAMNominal.txt'
+        altList, rhoList, tempList = readAtmTable(filename, 'EarthGRAM')
+    else:
+        r_eq = 3397.2 * 1000
+        filename = bskPath + '/../../supportData/AtmosphereData/MarsGRAMNominal.txt'
+        altList, rhoList, tempList = readAtmTable(filename, 'MarsGRAM')
         
     # assign constants & ref. data to module
     tabAtmo.planetRadius = r_eq
@@ -125,12 +209,9 @@ def run(show_plots):
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, tabAtmo)
-    
-
 
     # Add test module to runtime call list
     scSim.AddModelToTask(simTaskName, tabAtmo)
-
 
     #
     #   setup the simulation tasks/objects
@@ -152,57 +233,43 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, scObject)
     scSim.AddModelToTask(dragEffectorTaskName, dragEffector)
     # clear prior gravitational body and SPICE setup definitions
-    gravFactory = simIncludeGravBody.gravBodyFactory()
 
     dragEffector.atmoDensInMsg.subscribeTo(tabAtmo.envOutMsgs[0])
 
     # setup Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    earth = gravFactory.createEarth()
-    earth.isCentralBody = True  # ensure this is the central gravitational body
-    mu = earth.mu
-
+    if planetCase == 'Earth':
+        planet = gravFactory.createEarth()
+    else:
+        planet = gravFactory.createMars()
+    planet.isCentralBody = True  # ensure this is the central gravitational body
+    mu = planet.mu
 
     # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
-    #
-    #   setup orbit and simulation time
-    #
-    # setup the orbit using classical orbit elements
-    # oe = orbitalMotion.ClassicElements()
-# =============================================================================
-#     rLEO = 6550. * 1000  # meters
-#     oe.a = rLEO
-#     oe.e = 0.0001
-#     oe.i = 0.0 * macros.D2R
-#     oe.Omega = 48.2 * macros.D2R
-#     oe.omega = 347.8 * macros.D2R
-#     oe.f = 85.3 * macros.D2R
-# =============================================================================
-    
-    r = 6503 * 1000
+    if planetCase == 'Earth':
+        r = 6503 * 1000
+        u = 11.2 * 1000
+        gam = -5.15 * macros.D2R
+    else:
+        r = (3397.2 + 125.) * 1000
+        u = 6 * 1000
+        gam = -10 * macros.D2R
     lon = 0
     lat = 0
-    u = 11.2 * 1000
-    gam = -5.15 * macros.D2R
     hda = np.pi/2
     xxsph = [r,lon,lat,u,gam,hda]
     rN, vN = sph2rv(xxsph)
     
-    # rN, vN = orbitalMotion.elem2rv(earth.mu, oe)
-    oe = orbitalMotion.rv2elem(mu,rN,vN)
     scObject.hub.r_CN_NInit = rN  # m - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m - v_CN_N
-    print(rN)
-    print(vN)
-    # print(oe)
-    # print(oe.a)
 
     # set the simulation time
-    # n = np.sqrt(earth.mu / oe.a / oe.a / oe.a)
-    # P = 2. * np.pi / n
-    simulationTime = macros.sec2nano(300)
+    if planetCase == 'Earth':
+        simulationTime = macros.sec2nano(300)
+    else:
+        simulationTime = macros.sec2nano(400)
 
     #
     #   Setup data logging before the simulation is initialized
@@ -214,13 +281,16 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, dataLog)
     scSim.AddModelToTask(simTaskName, dataNewAtmoLog)
 
-    scSim.AddVariableForLogging('DragEff.forceExternal_B', samplingTime, StartIndex=0, StopIndex=2)
     #
     #   initialize Spacecraft States with initialization variables
     #
     scObject.hub.r_CN_NInit = rN  # m - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m - v_CN_N
 
+    # if this scenario is to interface with the BSK Viz, uncomment the following line
+    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                        # , saveFile=fileName
+                                        )
     #
     #   initialize Simulation
     #
@@ -237,126 +307,85 @@ def run(show_plots):
     #
     posData = dataLog.r_BN_N
     velData = dataLog.v_BN_N
-    attData = dataLog.sigma_BN
-    dragForce = scSim.GetLogVariableData('DragEff.forceExternal_B')
     densData = dataNewAtmoLog.neutralDensity
     np.set_printoptions(precision=16)
-    
-    
 
-    
+    figureList = {}
+    plt.close("all")  # clears out plots from earlier test runs
+
+    # draw the inertial position vector components
+    plt.figure(1)
+    fig = plt.gcf()
+    ax = fig.gca()
+    ax.ticklabel_format(useOffset=False, style='plain')
+    for idx in range(0,3):
+        plt.plot(dataLog.times()*macros.NANO2MIN, posData[:, idx]/1000.,
+                 color=unitTestSupport.getLineColor(idx,3),
+                 label='$r_{BN,'+str(idx)+'}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Inertial Position [km]')
+
+    plt.figure(2)
+    fig = plt.gcf()
+    ax = fig.gca()
+    ax.ticklabel_format(useOffset=False, style='plain')
+    smaData = []
+    engData = []
+    for idx in range(0, len(posData)):
+        oeData = orbitalMotion.rv2elem(mu, posData[idx, 0:3], velData[idx, 0:3])
+        smaData.append(oeData.a/1000.)
+        engData.append(-mu/(2*oeData.a)/1e6)    # km^2/s^2
+    plt.plot(dataLog.times()*macros.NANO2MIN, engData
+             , color='#aa0000'
+             )
+    plt.xlabel('Time [min]')
+    plt.ylabel('Energy [km^2/s^2]')
+    plt.grid()
+    pltName = fileName + "2" + planetCase
+    figureList[pltName] = plt.figure(2)
+
+    r = np.linalg.norm(posData, axis=1)
+    v = np.linalg.norm(velData, axis=1)
+
+    plt.figure(3)
+    fig = plt.gcf()
+    ax = fig.gca()
+    ax.ticklabel_format(useOffset=False, style='sci')
+    plt.plot(dataNewAtmoLog.times()*macros.NANO2MIN, densData)
+    plt.xlabel('Time [min]')
+    plt.ylabel('Density in kg/m^3')
+    pltName = fileName + "3" + planetCase
+    figureList[pltName] = plt.figure(3)
+
+    plt.figure(4)
+    fig = plt.gcf()
+    ax = fig.gca()
+    plt.plot(v/1e3, (r-r_eq)/1e3)
+    plt.xlabel('velocity [km/s]')
+    plt.ylabel('altitude [km]')
+    plt.grid()
+    pltName = fileName + "4" + planetCase
+    figureList[pltName] = plt.figure(4)
+
+    plt.figure(5)
+    fig = plt.gcf()
+    ax = fig.gca()
+    plt.plot(dataLog.times()*macros.NANO2MIN, (r-r_eq)/1e3)
+    plt.xlabel('time [min]')
+    plt.ylabel('altitude [km]')
+    plt.grid()
+    pltName = fileName + "5" + planetCase
+    figureList[pltName] = plt.figure(5)
+
     if show_plots:
-        plt.close("all")  # clears out plots from earlier test runs
-
-        # draw the inertial position vector components
-        plt.figure(1)
-        fig = plt.gcf()
-        ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
-        for idx in range(0,3):
-            plt.plot(dataLog.times()*macros.NANO2SEC, posData[:, idx]/1000.,
-                     color=unitTestSupport.getLineColor(idx,3),
-                     label='$r_{BN,'+str(idx)+'}$')
-        plt.legend(loc='lower right')
-        plt.xlabel('Time [orbits]')
-        plt.ylabel('Inertial Position [km]')
-
-        # # draw orbit in perifocal frame
-        # b = oe.a*np.sqrt(1-oe.e*oe.e)
-        # p = oe.a*(1-oe.e*oe.e)
-        # plt.figure(2,figsize=np.array((1.0, b/oe.a))*4.75,dpi=100)
-        # plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b])/1000*1.25)     # took out negatve from oe.rApoap and first b
-        # # draw the planet
-        # fig = plt.gcf()
-        # ax = fig.gca()
-
-        # planetColor= '#008800'
-        # planetRadius = earth.radEquator/1000
-        # ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
-        # # draw the actual orbit
-        # rData=[]
-        # fData=[]
-        # for idx in range(0,len(posData)):
-        #     oeData = orbitalMotion.rv2elem(mu,posData[idx,0:3],velData[idx,0:3])
-        #     rData.append(oeData.rmag)
-        #     fData.append(oeData.f + oeData.omega - oe.omega)
-        # plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
-        #           ,color='#aa0000'
-        #           ,linewidth = 3.0
-        #           )
-        # # draw the full osculating orbit from the initial conditions
-        # fData = np.linspace(0,2*np.pi,100)
-        # rData = []
-        # for idx in range(0,len(fData)):
-        #     rData.append(p/(1+oe.e*np.cos(fData[idx])))
-        # plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
-        #           ,'--'
-        #           , color='#555555'
-        #           )
-        # plt.xlabel('$i_e$ Cord. [km]')
-        # plt.ylabel('$i_p$ Cord. [km]')
-        # plt.grid()
-
-        plt.figure()
-        fig = plt.gcf()
-        ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
-        smaData = []
-        engData = []
-        for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(mu, posData[idx, 0:3], velData[idx, 0:3])
-            smaData.append(oeData.a/1000.)
-            engData.append(-mu/(2*oeData.a)/1e6)    # km^2/s^2
-        plt.plot(dataLog.times()*macros.NANO2SEC, engData
-                  ,color='#aa0000',
-                  )
-        plt.xlabel('Time [s]')
-        plt.ylabel('Energy [km^2/s^2]')
-        plt.grid()
-        
-        r = np.linalg.norm(posData, axis = 1)
-
-        v = np.linalg.norm(velData, axis = 1)
-
-
-        plt.figure()
-        fig = plt.gcf()
-        ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='sci')
-        plt.plot(dataNewAtmoLog.times()*macros.NANO2SEC, densData)
-        plt.title('Density Data vs. Time')
-        plt.xlabel('Time [s]')
-        plt.ylabel('Density in kg/m^3')
-        
-        plt.figure()
-        fig = plt.gcf()
-        ax = fig.gca()
-        plt.plot(v/1e3, (r-r_eq)/1e3)
-        plt.xlabel('velocity [km/s]')
-        plt.ylabel('altitude [km]')
-        plt.grid()
-        
-        plt.figure()
-        fig = plt.gcf()
-        ax = fig.gca()
-        plt.plot(dataLog.times()*macros.NANO2SEC, (r-r_eq)/1e3)
-        plt.xlabel('time [s]')
-        plt.ylabel('altitude [km]')
-        plt.grid()
-        
-
         plt.show()
         plt.close("all")
 
-    if testFailCount == 0:
-        print("PASSED: " + dragEffector.ModelTag)
-    else:
-        print("Failed: " + dragEffector.ModelTag)
-
-    return testFailCount, testMessages
+    return figureList
 
     # close the plots being saved off to avoid over-writing old and new figures
 if __name__ == '__main__':
-    run(True)
+    run(True, 'Mars')      # planet arrival case, can be Earth or Mars
     
     
