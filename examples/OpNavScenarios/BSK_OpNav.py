@@ -98,7 +98,7 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/modelsOpNav')
 
 # TODO : Modify the path to the viz here
-appPath = '/Applications/Vizard.app/Contents/MacOS/Basilisk Vizard' #If on Mac
+appPath = '/Applications/Vizard.app/Contents/MacOS/Vizard' #If on Mac
 # appPath = './../../Applications/Vizard.app' #If on Linux
 
 
