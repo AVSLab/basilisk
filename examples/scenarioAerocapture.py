@@ -180,12 +180,12 @@ def run(show_plots, planetCase):
     # define constants & load data
     if planetCase == 'Earth':
         r_eq = 6378136.6
-        filename = bskPath + '/../../supportData/AtmosphereData/EarthGRAMNominal.txt'
-        altList, rhoList, tempList = readAtmTable(filename, 'EarthGRAM')
+        dataFileName = bskPath + '/supportData/AtmosphereData/EarthGRAMNominal.txt'
+        altList, rhoList, tempList = readAtmTable(dataFileName, 'EarthGRAM')
     else:
         r_eq = 3397.2 * 1000
-        filename = bskPath + '/../../supportData/AtmosphereData/MarsGRAMNominal.txt'
-        altList, rhoList, tempList = readAtmTable(filename, 'MarsGRAM')
+        dataFileName = bskPath + '/supportData/AtmosphereData/MarsGRAMNominal.txt'
+        altList, rhoList, tempList = readAtmTable(dataFileName, 'MarsGRAM')
         
     # assign constants & ref. data to module
     tabAtmo.planetRadius = r_eq
@@ -274,10 +274,9 @@ def run(show_plots, planetCase):
     #
     #   Setup data logging before the simulation is initialized
     #
-    numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
-    dataLog = scObject.scStateOutMsg.recorder(samplingTime)
-    dataNewAtmoLog = tabAtmo.envOutMsgs[0].recorder(samplingTime)
+
+    dataLog = scObject.scStateOutMsg.recorder()
+    dataNewAtmoLog = tabAtmo.envOutMsgs[0].recorder()
     scSim.AddModelToTask(simTaskName, dataLog)
     scSim.AddModelToTask(simTaskName, dataNewAtmoLog)
 
