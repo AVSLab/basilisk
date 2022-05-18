@@ -93,6 +93,10 @@ The script accepts the following options to customize this process.
       -
       - None
       - If flag is set the all optional Basilisk python package depenencies are installed
+    * - ``pathToExternalModules``
+      - String
+      - Empty
+      - path to external modules folder, see :ref:`buildExtModules`
 
 Thus, for example, to create a build with ``opNav`` modes enabled, but no :ref:`vizInterface`, and using a
 clean distribution folder, and that is built right away, you could use::
