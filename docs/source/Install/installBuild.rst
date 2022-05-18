@@ -3,6 +3,11 @@
 
 .. _configureBuild:
 
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/t9VrmrVfJ0M" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
 Building the Software Framework
 ===============================
 
@@ -94,7 +99,7 @@ clean distribution folder, and that is built right away, you could use::
 
     python3 conanfile.py --clean --opNav True --vizInterface False --buildProject True
 
-The ``buidlProject`` argument here is optional as its default value is ``True``.
+The ``buildProject`` argument here is optional as its default value is ``True``.
 
 .. warning::
 
