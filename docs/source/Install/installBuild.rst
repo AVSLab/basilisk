@@ -3,6 +3,11 @@
 
 .. _configureBuild:
 
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/t9VrmrVfJ0M" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
 Building the Software Framework
 ===============================
 
@@ -88,13 +93,17 @@ The script accepts the following options to customize this process.
       -
       - None
       - If flag is set the all optional Basilisk python package depenencies are installed
+    * - ``pathToExternalModules``
+      - String
+      - Empty
+      - path to external modules folder, see :ref:`buildExtModules`
 
 Thus, for example, to create a build with ``opNav`` modes enabled, but no :ref:`vizInterface`, and using a
 clean distribution folder, and that is built right away, you could use::
 
     python3 conanfile.py --clean --opNav True --vizInterface False --buildProject True
 
-The ``buidlProject`` argument here is optional as its default value is ``True``.
+The ``buildProject`` argument here is optional as its default value is ``True``.
 
 .. warning::
 
