@@ -51,7 +51,7 @@ def test_hingedBodyLinearProfiler(show_plots, startTime, endTime, startTheta, en
     
     For a deployment from 0 to 1 degree, starting at 1 second and ending at 2 seconds into the simulation, checks that the angle and angle rates are as expected before, during, and after deployment.
     
-    Before deployment, theta should be 0 and thetaDot 0. During deployment, thetaDot should be 1 degree per second, with theta varying linearly. After deployment, theta should be 1 degree and thetaDot 0.
+    Before deployment, theta should be 0 and ``thetaDot`` 0. During deployment, ``thetaDot`` should be 1 degree per second, with theta varying linearly. After deployment, theta should be 1 degree and ``thetaDot`` 0.
 
     """
     [testResults, testMessage] = hingedBodyLinearProfilerTestFunction(show_plots, startTime, endTime, startTheta, endTheta)
