@@ -21,6 +21,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include "RigidBodyContactEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include <Eigen/QR>
 
 
 
@@ -469,15 +470,42 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     vectorInterval faceLegInterval1;
     vectorInterval faceLegInterval2;
     vectorInterval supportInterval;
+    int tempNextVert1;
+    int tempNextVert2;
     
     std::vector<double> elemTest;
     int intersectFlag;
     Eigen::Vector3d contactPoint;
+    Eigen::Vector3d contactPoint2;
+    int numImpacts;
+    
+    Eigen::Vector3d cHat_1;
+    Eigen::Vector3d cHat_2;
+    Eigen::Vector3d cHat_3;
+    Eigen::Vector3d zDirection;
+    Eigen::Vector3d xDirection;
+    zDirection << 0, 0, 1;
+    xDirection << 1, 0, 0;
+    std::vector<Eigen::Matrix3d> dcm_CN;
+    std::vector<Eigen::Matrix3d> dcm_CB1;
+    std::vector<Eigen::Matrix3d> dcm_CB2;
+    Eigen::Matrix3d tempDCM;
+    Eigen::Matrix3d M_C;
+    Eigen::MatrixXd M_tot;
+    Eigen::MatrixXd M_inv;
+    Eigen::MatrixXd M_inv_red1;
+    Eigen::MatrixXd M_inv_red2;
+    std::vector<double> f_vals;
+    std::vector<double> phi_vals;
+    int tempSel;
+    Eigen::VectorXd dv3dj;
+    Eigen::VectorXd tempVec;
     
     std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts;
     
     for (int groupIt1=0; groupIt1 < this->closeBodies.size(); ++groupIt1)
     {
+        // Fine collision detection begin
         if (this->Bodies[this->closeBodies[groupIt1][0]].isSpice == true)
         {
             body1Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * (currentTime*NANO2SEC - this->currentSimSeconds);
@@ -610,10 +638,139 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                     }
                 }
             }
+            
+            // Each edge of triangle 1 with each edge of triangle 2 (not avoiding duplicate edges)
+            for (int vertInd1=0; vertInd1 < 3; vertInd1++)
+            {
+                if (vertInd1 == 2)
+                {
+                    tempNextVert1 = 0;
+                } else
+                {
+                    tempNextVert1 = vertInd1 + 1;
+                }
+                // Reuse the faceLegInterval variables, but these should be called edgeInterval
+                faceLegInterval1.lower = body1VertInter[tempNextVert1].lower - body1VertInter[vertInd1].lower;
+                faceLegInterval1.upper = body1VertInter[tempNextVert1].upper - body1VertInter[vertInd1].upper;
+                
+                for (int vertInd2=0; vertInd2 < 3; vertInd2++)
+                {
+                    if (vertInd2 == 2)
+                    {
+                        tempNextVert2 = 0;
+                    } else
+                    {
+                        tempNextVert2 = vertInd2 + 1;
+                    }
+                    faceLegInterval2.lower = body2VertInter[tempNextVert2].lower - body2VertInter[vertInd2].lower;
+                    faceLegInterval2.upper = body2VertInter[tempNextVert2].upper - body2VertInter[vertInd2].upper;
+                    // Reuse supportInterval, but it should be called edgeIntervalMixed
+                    supportInterval.lower = body2VertInter[vertInd2].lower - body1VertInter[vertInd1].lower;
+                    supportInterval.upper = body2VertInter[vertInd2].upper - body1VertInter[vertInd1].upper;
+                    
+                    elemTest = this->IntervalDotProduct(supportInterval, this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
+                    
+                    if (((elemTest[0] <= -1e-12) && (elemTest[1] >= 1e-12)) || ((elemTest[0] >= 1e-12) && (elemTest[1] <= -1e-12)))
+                    {
+                        intersectFlag = this->LineLineDistance(body1VertInter[vertInd1].lower, body1VertInter[tempNextVert1].lower, body2VertInter[vertInd2].lower, body2VertInter[tempNextVert2].lower, &contactPoint, &contactPoint2);
+                        
+                        if (intersectFlag == 0)
+                        {
+                            impacts.push_back(std::make_tuple(contactPoint, contactPoint2, ((contactPoint - contactPoint2) * 1e6).normalized));
+                        }else if (intersectFlag == 1)
+                        {
+                            impacts.push_back(std::make_tuple(contactPoint, contactPoint2, (eigenTilde(faceLegInterval1.lower) * faceLegInterval2.lower).normalized));
+                        }
+                    }
+                }
+            }
+        } // Fine collision detection end
+        
+        // Calculate total impact begin
+        numImpacts = impacts.size();
+        for (int impNum=0; impNum < numImpacts; impNum++)
+        {
+            // Create local contact frame
+            cHat_3 = (std::get<2>(impacts[impNum])).normalized();
+            cHat_1 = cHat_3.cross(body2Current.dcm_NB * zDirection);
+            if (cHat_1.norm() < 1e-9)
+            {
+                cHat_1 = cHat_3.cross(body2Current.dcm_NB * xDirection);
+            }
+            cHat_1 = cHat_1.normalized();
+            cHat_2 = (cHat_3.cross(cHat_1)).normalized();
+            
+            // Create DCMs to rotate between inertial, contact, and the body frames
+            tempDCM <<  cHat_1[0], cHat_1[1], cHat_1[2],
+                        cHat_2[0], cHat_2[1], cHat_2[2],
+                        cHat_3[0], cHat_3[1], cHat_3[2];
+            dcm_CN.push_back(tempDCM);
+            dcm_CB1.push_back(dcm_CN[impNum] * body1Current.dcm_NB);
+            dcm_CB2.push_back(dcm_CN[impNum] * body2Current.dcm_NB);
         }
         
+        // Create the "inverse inertia matrix"
+        M_tot = Eigen::MatrixXd::Zero(3*numImpacts, 3*numImpacts);
+        for (int ii=0; ii < numImpacts; ii++)
+        {
+            for (int jj=0; jj < numImpacts; jj++)
+            {
+                M_C = ((1.0 / this->Bodies[this->closeBodies[groupIt1][0]].states.m_SC) * Eigen::MatrixXd::Identity(3, 3) - eigenTilde(dcm_CN[ii] * std::get<0>(impacts[ii])) * (dcm_CB1[ii] * this->Bodies[this->closeBodies[groupIt1][0]].states.ISCPntB_B_inv * dcm_CB1[ii].transpose()) * eigenTilde(dcm_CN[ii] * std::get<0>(impacts[jj]))) + ((1.0 / this->Bodies[this->closeBodies[groupIt1][1]].states.m_SC) * Eigen::MatrixXd::Identity(3, 3) - eigenTilde(dcm_CN[ii] * std::get<1>(impacts[ii])) * (dcm_CB2[ii] * this->Bodies[this->closeBodies[groupIt1][1]].states.ISCPntB_B_inv * dcm_CB2[ii].transpose()) * eigenTilde(dcm_CN[ii] * std::get<1>(impacts[jj])));
+                
+                if (ii == jj)
+                {
+                    M_tot.block(ii*3, jj*3, 3, 3) = M_C;
+                }else
+                {
+                    M_tot.block(ii*3, jj*3, 3, 3) = M_C * (dcm_CB1[ii] * dcm_CB1[jj].transpose());
+                }
+            }
+        }
         
+        // Solve for the critical values of friction and sliding direction
+        if (impacts.size() == 1)
+        {
+            f_vals.push_back(sqrt((pow(M_tot(0,1) * M_tot(1,2) - M_tot(1,1) * M_tot(0,2), 2) + pow(M_tot(1,0) * M_tot(0,2) - M_tot(0,0) * M_tot(1,2), 2)) / pow(M_tot(0,0) * M_tot(1,1) - M_tot(0,1) * M_tot(1,0), 2)));
+            
+            phi_vals.push_back(atan2(M_tot(0,0) * M_tot(1,2) - M_tot(1,0) * M_tot(0,2), M_tot(1,1) * M_tot(0,2) - M_tot(0,1) * M_tot(1,3)));
+        }else
+        {
+            M_inv = M_tot.completeOrthogonalDecomposition().pseudoInverse();
+            M_inv_red1 = Eigen::MatrixXd::Zero(3*numImpacts, numImpacts);
+            tempSel = 2;
+            for (int ii=0; ii < numImpacts; ii++)
+            {
+                M_inv_red1.block(0, ii, 3*numImpacts, 1) = M_inv.block(0, tempSel, 3*numImpacts, 1);
+                tempSel += 3;
+            }
+            M_inv_red2 = Eigen::MatrixXd::Zero(numImpacts, numImpacts);
+            tempSel = 2;
+            for (int ii=0; ii < numImpacts; ii++)
+            {
+                M_inv_red2.block(ii, 0, 1, numImpacts) = M_inv_red1.block(tempSel, 0, 1, numImpacts);
+                tempSel += 3;
+            }
+            
+            dv3dj = M_inv_red2.completeOrthogonalDecomposition().pseudoInverse() * Eigen::VectorXd::Ones(numImpacts);
+            tempVec = Eigen::VectorXd::Zero(3*numImpacts);
+            tempSel = 2;
+            for (int ii=0; ii < numImpacts; ii++)
+            {
+                tempVec(tempSel) = dv3dj(ii);
+                tempSel += 3;
+            }
+            
+            tempVec = M_inv * tempVec;
+            tempSel = 0;
+            for (int ii=0; ii < numImpacts; ii++)
+            {
+                f_vals.push_back(sqrt(pow(tempVec(tempSel), 2) + pow(tempVec(tempSel+1), 2)));
+                phi_vals.push_back(atan2(tempVec(tempSel+1), tempVec(tempSel)));
+                tempSel += 3;
+            }
+        }
         
+        // Create the initial collision state
         
     }
     
