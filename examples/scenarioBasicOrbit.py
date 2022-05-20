@@ -17,6 +17,11 @@
 #
 
 r"""
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/71ZFeameBcU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 Overview
 --------
 
@@ -31,14 +36,14 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioBasicOrbit.py
 
-.. important:: This scenario is currently the most minimal example available. If it doesn't make sense consider
+.. important:: This scenario is currently the most minimal example available. It doesn't make sense consider
                    returning to the :ref:`examples` before moving on.
 
 
 Making a Copy of the Example Basilisk Scenario Script
 -----------------------------------------------------
 
-However, to play with any scenario scripts as tutorials, you should make a copy of
+To play with any scenario scripts as tutorials, you should make a copy of
 them into a custom folder outside of the Basilisk directory.
 
 To copy them, first find the location of the Basilisk installation. After installing, you can find the
@@ -258,8 +263,6 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
-    # Note that a priority of 100 is chosen to ensure this task runs before the logging task below
-    # which should come last.  Higher priority tasks are evaluated first.
 
     # setup the simulation tasks/objects
     # initialize spacecraft object and set properties
@@ -396,8 +399,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # To enable this, uncomment this line:
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                              # saveFile=__file__,
-                                              # liveStream=True,
+                                              # saveFile=__file__
+                                              # liveStream=True
                                               )
 
     # The vizInterface module must be built into BSK.  This is done if the correct CMake options are selected.
@@ -420,7 +423,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # which initializes each BSK module (run self init, cross init and reset) and clears the BSK logging stack.
 
     #   initialize Simulation:  This function runs the self_init()
-    #   cross_init() and reset() routines on each module.
+    #   and reset() routines on each module.
     scSim.InitializeSimulation()
 
     #   configure a simulation stop time time and execute the simulation run
