@@ -1,3 +1,8 @@
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/JykP4zMAaBg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 .. _bskPrinciples-2:
 
 Adding Basilisk Modules
@@ -94,7 +99,3 @@ If you execute this python code you should see the following terminal output:
 After the initialization, Basilisk starts the time loop evaluating the modules at the specified rate.  The ``Update()`` routine in both :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` print out the module ID and the simulation time where the module is called.  Note that thanks to the module evaluation priorities we set, the desired module execution order is achieved.
 
 
-
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/JykP4zMAaBg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

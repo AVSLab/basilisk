@@ -1,3 +1,8 @@
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/XuaSmG4wYlk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
 .. _bskPrinciples-6:
 
 Setting and Recording Module Variables
@@ -61,9 +66,3 @@ Here ``variableString`` is again composed of the ``ModelTag`` and variable name 
      [1.e+09 1.e+00 2.e+00 3.e+00]]
 
 Note that both the C and C++ module variables are correctly being recorded.
-
-
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/XuaSmG4wYlk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-

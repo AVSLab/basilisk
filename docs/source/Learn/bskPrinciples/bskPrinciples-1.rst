@@ -1,3 +1,8 @@
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/6YmZyu0f-qI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 .. _bskPrinciples-1:
 
 Basilisk Process and Task Creation
@@ -53,6 +58,3 @@ Next, the simulation length is set through ``ConfigureStopTime(stopTime)`` where
     scSim.ExecuteSimulation()
 
 
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/6YmZyu0f-qI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

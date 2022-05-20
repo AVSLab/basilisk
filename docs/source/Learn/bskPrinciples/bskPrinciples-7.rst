@@ -1,3 +1,7 @@
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/e_938BFwtiI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 .. _bskPrinciples-7:
 
 Advanced: Redirecting Module Output to Stand-Alone Message
@@ -70,8 +74,4 @@ To see the message states of both the module internal message objects and the st
     cppMsg:
     [2.0, 0.0, 0.0]
 
-
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/e_938BFwtiI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

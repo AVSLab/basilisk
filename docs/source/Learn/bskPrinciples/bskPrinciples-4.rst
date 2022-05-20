@@ -1,3 +1,8 @@
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/qlcV0NCEtSg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
 .. _bskPrinciples-4:
 
 Recording Messages
@@ -63,9 +68,5 @@ Note that the messager recorder will continuously add message data to its intern
 
     scRec.clear()
 
-
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/qlcV0NCEtSg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
