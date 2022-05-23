@@ -51,6 +51,7 @@ Version |release|
   the planet is outside the spacecraft-spacecraft interval
 - added new :ref:`scenarioAerocapture` which simulates an aerocapture scenario
 - added new :ref:`hingedBodyLinearProfiler` to provide a panel deployment angular profile
+- added new :ref:`hingedRigidBodyMotor` to provide panel motor torque control
 
 
 Version 2.1.2 (March 12, 2022)
