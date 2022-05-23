@@ -17,6 +17,11 @@
 #
 
 r"""
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/uUomHSGQW3c" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 Overview
 --------
 
@@ -155,15 +160,18 @@ def run(show_plots):
     gravBodyEphem.rotRate = planetEphemeris.DoubleVector(
         [360 * macros.D2R / (12.132 * 3600.), 360 * macros.D2R / (24. * 3600.)])
 
-    # setup Earth Gravity Body
+    # setup Sun gravity body
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravFactory.createSun()
+
+    # setup asteroid gravity body
     mu = 2.34268    # meters^3/s^2
     asteroid = gravFactory.createCustomGravObject("Itokawa", mu)
 
     asteroid.isCentralBody = True  # ensure this is the central gravitational body
     asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])
 
+    # setup Earth gravity Body
     earth = gravFactory.createCustomGravObject("earth", 0.3986004415E+15, radEquator=6378136.6)
     earth.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[1])
 
@@ -182,7 +190,6 @@ def run(show_plots):
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N

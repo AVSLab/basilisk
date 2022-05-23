@@ -1,3 +1,8 @@
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/F7pcy5dkZw4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
 .. _bskPrinciples-3:
 
 Connecting Messages
@@ -46,8 +51,4 @@ If you execute this python code you should see the following terminal output:
     BSK_INFORMATION: C++ Module ID 2 ran Update at 5.000000s
 
 Note that here the two modules are added without setting a priority.  Thus, they are executed in the order that they were added to the Basilisk task.
-
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/F7pcy5dkZw4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
