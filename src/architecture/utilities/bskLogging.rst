@@ -52,7 +52,7 @@ Changing Verbosity for a Particular BSK Module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 It is possible to override the global verbosity setting and specify a different verbosity for a particular module.  Assume we want to have a unique verbosity level for the ``simpleNav`` module.  This can be done through::
 
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     scSim.AddModelToTask(simTaskName, sNavObject)
     logger = bskLogging.BSKLogger()
     logger.setLogLevel(bskLogging.BSK_INFORMATION)
@@ -60,7 +60,7 @@ It is possible to override the global verbosity setting and specify a different 
 
 Another option is to use the ``BSKLogger()`` constructor to provide the verbosity directly through::
 
-    sNavObject = simple_nav.SimpleNav()
+    sNavObject = simpleNav.SimpleNav()
     sNavObject.bskLogger = bskLogging.BSKLogger(bskLogging.BSK_INFORMATION)
 
 Unlike change the global verbosity level, the module specific verbosity can be changed later on in the Basilisk

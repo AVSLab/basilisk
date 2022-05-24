@@ -37,7 +37,7 @@
         <rect x="256.5" y="109.43885" width="83" height="28" fill="#c0ffc0"/>
         <rect x="256.5" y="109.43885" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(261.5 112.30832)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" fill="black" x="12.749" y="9">simple_nav()</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" fill="black" x="12.749" y="9">simpleNav()</tspan>
         </text>
       </g>
       <g id="Graphic_17">
@@ -142,7 +142,7 @@
         <rect x="384" y="109.43885" width="83" height="28" fill="#c0ffc0"/>
         <rect x="384" y="109.43885" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(389 112.30832)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" fill="black" x="12.749" y="9">simple_nav()</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" fill="black" x="12.749" y="9">simpleNav()</tspan>
         </text>
       </g>
       <g id="Graphic_48">

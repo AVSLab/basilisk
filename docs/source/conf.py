@@ -509,5 +509,5 @@ else:
 #TODO: Pickle the breathe_project_source and load that back in
 
 # Example of how to link C with Breathe
-# breathe_projects_source = {"BasiliskFSW": ("../../src/fswAlgorithms/attControl/MRP_Feedback", ['MRP_Feedback.c', 'MRP_Feedback.h'])}
+# breathe_projects_source = {"BasiliskFSW": ("../../src/fswAlgorithms/attControl/mrpFeedback", ['mrpFeedback.c', 'mrpFeedback.h'])}
 

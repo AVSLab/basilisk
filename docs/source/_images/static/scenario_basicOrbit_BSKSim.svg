@@ -229,7 +229,7 @@
           <g id="Graphic_27">
             <title>Text</title>
             <text transform="translate(148.3755 217.70428)" fill="black">
-              <tspan font-family="Helvetica Neue" font-size="9" font-weight="400" fill="black" x=".0795" y="9">MRP_Feedback()</tspan>
+              <tspan font-family="Helvetica Neue" font-size="9" font-weight="400" fill="black" x=".0795" y="9">mrpFeedback()</tspan>
             </text>
           </g>
         </g>

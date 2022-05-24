@@ -198,7 +198,7 @@ is 'on', the requested thruster force is always negative, as it can be seen in t
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(), thrusterDynamicEffector() and
-#           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit, while using thrusters
+#           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit, while using thrusters
 #           to do the attitude control actuation.
 # Author: Giulio Napolitano
 # Creation Date:  June 26, 2019
@@ -550,7 +550,7 @@ def run(show_plots, useDVThrusters):
     # setup the MRP Feedback control module
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "MRP_Feedback"
+    mrpControlWrap.ModelTag = "mrpFeedback"
     scSim.AddModelToTask(fswTaskName, mrpControlWrap, mrpControlConfig)
     mrpControlConfig.K = 3.5*10.0
     mrpControlConfig.Ki = 0.0002  # make value negative to turn off integral feedback

@@ -42,7 +42,7 @@
       <rect x="92.5" y="139.5" width="83" height="28" fill="#c0ffc0"/>
       <rect x="92.5" y="139.5" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <text transform="translate(97.5 142.36947)" fill="black">
-        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="12.749" y="9" textLength="47.502">simple_nav()</tspan>
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="12.749" y="9" textLength="47.502">simpleNav()</tspan>
       </text>
       <rect x="224" y="74.5" width="83" height="28" fill="#c0ffc0"/>
       <rect x="224" y="74.5" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
@@ -65,7 +65,7 @@
       <rect x="92.5" y="292" width="83" height="28" fill="#ffffc0"/>
       <rect x="92.5" y="292" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <text transform="translate(97.5 300.36947)" fill="black">
-        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="3.3755" y="9" textLength="66.249">MRP_Feedback()</tspan>
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="3.3755" y="9" textLength="66.249">mrpFeedback()</tspan>
       </text>
       <line x1="134" y1="270.5" x2="134" y2="286.6" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <path d="M 175.5 306 L 182.9 306 L 326.40625 306 L 326.40625 206.3164 L 326.40625 88.5 L 314.4 88.5 L 312.4 88.5" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>

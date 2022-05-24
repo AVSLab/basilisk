@@ -17,7 +17,7 @@
 #
 #
 #   Unit Test Script
-#   Module Name:        MRP_Feedback
+#   Module Name:        mrpFeedback
 #   Author:             Hanspeter Schaub
 #   Creation Date:      December 18, 2015
 #
@@ -112,7 +112,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     #   Construct algorithm and associated C++ container
     moduleConfig = mrpFeedback.mrpFeedbackConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "MRP_Feedback"
+    moduleWrap.ModelTag = "mrpFeedback"
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)

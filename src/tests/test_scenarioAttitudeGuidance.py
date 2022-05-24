@@ -21,7 +21,7 @@
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(),
-#           MRP_Feedback() with attitude navigation modules.  Illustrates how
+#           mrpFeedback() with attitude navigation modules.  Illustrates how
 #           attitude guidance behavior can be changed in a very modular manner.
 # Author:   Hanspeter Schaub
 # Creation Date:  Dec. 2, 2016

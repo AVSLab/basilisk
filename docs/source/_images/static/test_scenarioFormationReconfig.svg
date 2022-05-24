@@ -161,7 +161,7 @@
         <rect x="132.868" y="-123" width="90.22" height="22.28" fill="#ffffc0"/>
         <rect x="132.868" y="-123" width="90.22" height="22.28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(137.868 -118)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="10" font-weight="400" fill="black" x="1.8650006" y="10">MRP_Feedback()</tspan>
+          <tspan font-family="Helvetica Neue" font-size="10" font-weight="400" fill="black" x="1.8650006" y="10">mrpFeedback()</tspan>
         </text>
       </g>
       <g id="Graphic_56">

@@ -222,7 +222,7 @@ def run(show_plots, useRefAttitude):
     # MRP_FeedBack
     mrpControlData = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlData)
-    mrpControlWrap.ModelTag = "MRP_Feedback"
+    mrpControlWrap.ModelTag = "mrpFeedback"
     scSim.AddModelToTask(fswTaskName, mrpControlWrap, mrpControlData, 8)
     mrpControlData.guidInMsg.subscribeTo(attErrorData.attGuidOutMsg)
     mrpControlData.vehConfigInMsg.subscribeTo(vcMsg)

@@ -60,7 +60,7 @@ gravity gradient torque the closed loop dynamics is now only Lagrange stable or 
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(),
-#           MRP_Feedback() with attitude navigation modules.  Illustrates how
+#           mrpFeedback() with attitude navigation modules.  Illustrates how
 #           attitude guidance behavior can be changed in a very modular manner.
 # Author:   Hanspeter Schaub
 # Creation Date:  Dec. 2, 2016
@@ -219,7 +219,7 @@ def run(show_plots):
     # setup the MRP Feedback control module
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "MRP_Feedback"
+    mrpControlWrap.ModelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
     mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback

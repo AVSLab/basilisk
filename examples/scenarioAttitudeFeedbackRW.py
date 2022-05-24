@@ -264,7 +264,7 @@ the balanced RW case.  But there is a distinct numerical difference.
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and
-#           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
+#           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
 #           while using the RWs to do the attitude control actuation.
 # Author:   Hanspeter Schaub
 # Creation Date:  Jan. 7, 2017
@@ -495,7 +495,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     # setup the MRP Feedback control module
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "MRP_Feedback"
+    mrpControlWrap.ModelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
     mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback

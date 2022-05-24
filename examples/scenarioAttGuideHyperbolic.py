@@ -109,7 +109,7 @@ to point the correct face of the spacecraft along the negative V-bar.
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(),
-#           MRP_Feedback() with attitude navigation modules.  This script is a
+#           mrpFeedback() with attitude navigation modules.  This script is a
 #           spinoff from the attitude guidance tutorial, it implements a hyperbolic
 #           trajectory and uses the velocityPoint module.
 # Author:   Anne Bennett
@@ -331,7 +331,7 @@ def run(show_plots, useAltBodyFrame):
     # setup the MRP Feedback control module
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "MRP_Feedback"
+    mrpControlWrap.ModelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
     mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
     mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)

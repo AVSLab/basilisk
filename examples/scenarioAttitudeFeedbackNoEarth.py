@@ -99,7 +99,7 @@ hovering in deep space.
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
-#           MRP_Feedback() modules.  Illustrates spacecraft attitude control in deep
+#           mrpFeedback() modules.  Illustrates spacecraft attitude control in deep
 #           space without a planet or gravity body setup.
 # Author:   Hanspeter Schaub
 # Creation Date:  Sept. 13, 2018
@@ -226,7 +226,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # setup the MRP Feedback control module
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "MRP_Feedback"
+    mrpControlWrap.ModelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
     mrpControlConfig.K = 3.5
     if useIntGain:

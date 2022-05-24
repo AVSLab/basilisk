@@ -77,7 +77,7 @@ torque effort is also much larger in this case.
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
-#           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in deep space.
+#           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in deep space.
 # Author:   Hanspeter Schaub
 # Creation Date:  Nov. 19, 2016
 #
@@ -204,7 +204,7 @@ def run(show_plots, useLargeTumble):
     # setup the MRP Feedback control module
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "MRP_Feedback"
+    mrpControlWrap.ModelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
     mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback

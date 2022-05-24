@@ -141,7 +141,7 @@ to settle on a value that matches the un-modeled external torque.
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
-#           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
+#           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
 # Author:   Hanspeter Schaub
 # Creation Date:  Nov. 19, 2016
 #

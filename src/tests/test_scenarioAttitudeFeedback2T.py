@@ -21,7 +21,7 @@
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
-#           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit.
+#           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit.
 #           This scenario is the same as test_scenarioAttitudeControl, but with the
 #           difference that here the control and dynamics are executed at different
 #           frequencies or time steps.

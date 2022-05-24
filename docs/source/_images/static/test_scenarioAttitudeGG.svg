@@ -55,7 +55,7 @@
           <rect x="84.00126" y="133.81395" width="94.5814" height="31.906977" fill="#c0ffc0"/>
           <rect x="84.00126" y="133.81395" width="94.5814" height="31.906977" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
           <text transform="translate(89.00126 136.6079)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="11" font-weight="300" fill="black" x="13.261699" y="11">simple_nav()</tspan>
+            <tspan font-family="Helvetica Neue" font-size="11" font-weight="300" fill="black" x="13.261699" y="11">simpleNav()</tspan>
           </text>
         </g>
         <g id="Graphic_12">
@@ -92,7 +92,7 @@
           <rect x="84.00126" y="307.59302" width="94.5814" height="31.906977" fill="#ffffc0"/>
           <rect x="84.00126" y="307.59302" width="94.5814" height="31.906977" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
           <text transform="translate(89.00126 316.88697)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="11" font-weight="300" fill="black" x="1.805199" y="11">MRP_Feedback()</tspan>
+            <tspan font-family="Helvetica Neue" font-size="11" font-weight="300" fill="black" x="1.805199" y="11">mrpFeedback()</tspan>
           </text>
         </g>
         <g id="Line_5">
