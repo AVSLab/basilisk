@@ -25,15 +25,14 @@ from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.simulation import hingedRigidBodyMotor
 
-@pytest.mark.parametrize("K", [5,10
-])
-@pytest.mark.parametrize("P", [1,2
-])
+@pytest.mark.parametrize("accuracy", [1e-12])
+@pytest.mark.parametrize("K", [5,10])
+@pytest.mark.parametrize("P", [1,2])
 @pytest.mark.parametrize("sensedTheta, sensedThetaDot, refTheta, refThetaDot", [
     (1,.1,1.2,.2),
     (1,.1,.8,-.1)
 ])
-def test_hingedRigidBodyMotor(show_plots, K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot):
+def test_hingedRigidBodyMotor(show_plots, K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot, accuracy):
     r"""
     **Validation Test Description**
 
@@ -48,19 +47,19 @@ def test_hingedRigidBodyMotor(show_plots, K, P, sensedTheta, sensedThetaDot, ref
         sensedThetaDot (double): sensed thetaDot value.
         refTheta (double): reference theta value.
         refThetaDot (double): reference thetaDot value.
+        accuracy (double): unit text accuracy
 
     **Description of Variables Being Tested**
     
     K and P are varied (note both must be set to positive values). The sensed hinged rigid body state is held constant while the reference is also varied to check positive and negative deltas.
 
     """
-    [testResults, testMessage] = hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot)
+    [testResults, testMessage] = hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot, accuracy)
     assert testResults < 1, testMessage
 
 
-def hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot):
+def hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot, accuracy):
     """Test method"""
-    accuracy = 1e-12
     testFailCount = 0
     testMessages = []
     unitTaskName = "unitTask"
@@ -117,6 +116,6 @@ def hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaD
 
 
 if __name__ == "__main__":
-    test_hingedRigidBodyMotor(False, 5, 1, 1, .1, 1.2, .2) # first test case above
+    test_hingedRigidBodyMotor(False, 5, 1, 1, .1, 1.2, .2, 1e-12) # first test case above
 
 

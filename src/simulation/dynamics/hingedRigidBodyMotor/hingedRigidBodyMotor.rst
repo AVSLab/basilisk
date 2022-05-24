@@ -61,4 +61,4 @@ A sample setup is done using:
     testModule.K = 1 # proportional gain constant
     testModule.P = 1 # derivative gain constant
 
-If K and P are not set, they default to 0.
+If :math:`K` and :math:`P` are not set, they default to 0.
