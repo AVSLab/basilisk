@@ -44,7 +44,7 @@ THRSimConfigMsgPayload
     double MaxThrust;                               //!< [N] Steady state thrust of thruster
     double steadyIsp;                               //!< [s] Steady state specific impulse of thruster
     double MinOnTime;                               //!< s  Minimum allowable on-time
-    THROperationMsgPayload ThrustOps;                   //!< -- Thruster operating data
+    THROperationMsgPayload ThrustOps = {};                   //!< -- Thruster operating data
     double thrusterMagDisp;                         //!< -- Percentage of magnitude dispersion
     std::vector<double> thrusterDirectionDisp;      //!< -- Unit vector of dispersed thruster pointing
 	bool updateOnly = true;							//!< -- Use update only calculations
