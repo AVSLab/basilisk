@@ -16,6 +16,36 @@ Release Notes
     - visualize MSM charge values
     - load custom Unity generated spacecraft and celestial body models at run time
 
+**Version 2.1.0 (May 25, 2022)**
+
+- moved the large asteroid and Martian moon models and the optional MilkyWay skybox to be Addressable Assets.
+  These are large assets that are rarely used. By making them Addressable Assets, they will no longer be
+  automatically loaded into memory by Vizard at the start and instead will only increase the Vizard
+  runtime memory footprint when in use.
+
+- added 6U and 3U cubeSat models that include reflective solar panels, they can be applied with the
+  ``modelDictionaryKey`` field in the Spacecraft vizMessage or by using the ModelDirectory GUI panel
+  (model keys are ``6Usat`` and ``3Usat``)
+
+- modified the spacecraft local view scaling to support self-shadowing on satellites with dimensions of less
+  than 1 meter: If the camera target spacecraft’s dimensions are less than 1 meter, the spacecraft local view
+  scale will increase from 1m to 1 Unity Units to 1m to 2UnityUnits/minimumSpacecraftMeshDimension. This scale
+  is applied to both size and distance, ensuring the relative position and size of the all objects in the scene
+  remains true to the simulated distances/sizes.
+
+- added customizable logo patches to the sides of all three built in spacecraft (BSKsat, 6U cubeSat,
+  and 3U cubeSat) that users can change by providing a path to their own image file as part of the Spacecraft
+  protobuffer message
+
+- fixed bug with HD atmosphere not initializing correctly when its attached planet is specified in the
+  vizMessage as the camera target on start-up
+
+- improved the automatic resizing/repositioning of spacecraft HUD objects when their attached
+  spacecraft model is changed (takes into account the new dimensions and ensures the HUD
+  objects shrink or grow accordingly)
+
+- fixed bug with Custom Cameras in headless mode not applying the user specified skybox
+
 **Version 2.0.4 (March 12, 2022)**
 
 - Updated :ref:`VizardGUI` to list the built-in CAD shapes in Vizard to show planet and asteroid shapes
