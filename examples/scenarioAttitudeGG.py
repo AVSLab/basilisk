@@ -20,7 +20,7 @@ r"""
 Overview
 --------
 
-Illustrates how to add a :ref:`GravityGradientEffector` to the spacecraft while a Hill-frame pointing
+Illustrates how to add a :ref:`GravityGradientEffector` to a 6U cube-sat spacecraft while a Hill-frame pointing
 control solution is active.  This script expands on :ref:`scenarioAttitudeGuidance` sets
 up a 6-DOF spacecraft which is orbiting the Earth.  More illustrations on using the gravity gradient
 torque effector can be found in the modules :ref:`UnitTestGravityGradientEffector` folder.
@@ -259,6 +259,7 @@ def run(show_plots):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                        , modelDictionaryKeyList="6USat"
                                         # , saveFile=fileName
                                         )
 

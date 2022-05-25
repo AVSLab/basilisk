@@ -1394,9 +1394,38 @@ If you have multiple spacecraft, then this argument must be a list with the leng
 spacecraft::
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
-                                              , [modelDictionaryKeyList="cadString", None])
+                                              , modelDictionaryKeyList=["cadString", None])
 
 The argument None is used to specify the Vizard default shape to be used.
+
+The following table provides the keywords for the built-in spacecraft shape models.
+
+.. list-table:: Built-In Spacecraft Models
+    :widths: 25 75
+    :header-rows: 1
+
+    * - Key Name
+      - Description
+    * - ``bskSat``
+      - Default hexagonal spacecraft model with 3 solar panels.
+    * - ``3USat``
+      - 3U cube-sat model
+    * - ``6USat``
+      - 6U cube-sat model
+
+If you want to customize the log on the built-in spacecraft models, this can be done using
+``logoTexture`` spacecraft structure string::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
+                                              , logoTextureList=["pathToTexture", None])
+
+In this example the first spacecraft logo is overwritten from the default logo, while the 2nd
+spacecraft model retains the default logo.  If just a single spacecraft is simulated then the
+user can also just provide a simple string path value instead of a list of string path values.
+
+The image can be a ``jpg`` or ``png`` image and should have square dimensions, such as being 256x256
+in size.
+
 
 Specifying the Osculating or True Orbit Line Colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

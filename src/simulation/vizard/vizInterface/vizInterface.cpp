@@ -864,6 +864,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             /* Write the SC sprite string */
             scp->set_modeldictionarykey(scIt->modelDictionaryKey);
 
+            /* Write the sc logoTexture string */
+            scp->set_logotexture(scIt->logoTexture);
+
             /* set spacecraft osculating orbit line color */
             for (int i=0; i<scIt->oscOrbitLineColor.size(); i++){
                 scp->add_oscorbitlinecolor(scIt->oscOrbitLineColor[i]);
