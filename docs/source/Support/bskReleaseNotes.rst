@@ -52,6 +52,9 @@ Version |release|
 - added new :ref:`scenarioAerocapture` which simulates an aerocapture scenario
 - added new :ref:`hingedBodyLinearProfiler` to provide a panel deployment angular profile
 - added new :ref:`hingedRigidBodyMotor` to provide panel motor torque control
+- added new training videos to :ref:`configureBuild`, :ref:`installOptionalPackages`, :ref:`scenarioBasicOrbit`,
+  :ref:`scenarioOrbitManeuver`, :ref:`scenarioOrbitMultiBody`, :ref:`scenarioCustomGravBody`
+- added support for Vizard 2.1 scripting
 
 
 Version 2.1.2 (March 12, 2022)
