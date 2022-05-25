@@ -26,20 +26,21 @@
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
 %}
+
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
-// Instantiate templates used by example
 %include "std_vector.i"
 namespace std {
     %template(ThrusterTimeVector) vector<THRTimePairMsgPayload>;
     %template(ThrusterConfigVector) vector<THRSimConfigMsgPayload>;
 }
+
 %include "sys_model.h"
-%include "../../_GeneralModuleFiles/stateData.h"
-%include "../../_GeneralModuleFiles/stateEffector.h"
-%include "../../_GeneralModuleFiles/dynParamManager.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 %include "thrusterStateEffector.h"
 
 %include "architecture/msgPayloadDefC/THRTimePairMsgPayload.h"
