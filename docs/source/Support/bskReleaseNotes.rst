@@ -31,6 +31,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- text here
+
+Version 2.1.3 (May 25, 2022)
+----------------------------
 - corrected how :ref:`planetEphemeris` computes the celestial body orientation
 - corrected issue in Monte Carlo controller class where if a single run is called that fails,
   this was not reported
