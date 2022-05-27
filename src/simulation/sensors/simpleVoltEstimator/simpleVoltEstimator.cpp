@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/environment/simpleVoltEstimator/simpleVoltEstimator.h"
+#include "simulation/sensors/simpleVoltEstimator/simpleVoltEstimator.h"
 #include <iostream>
 #include <cstring>
 #include "architecture/utilities/avsEigenSupport.h"
