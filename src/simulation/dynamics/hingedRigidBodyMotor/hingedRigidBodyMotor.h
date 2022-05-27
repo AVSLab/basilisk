@@ -27,7 +27,8 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 
-/*! @brief Calculates a motor torque given a sensed and reference hinged rigid body state using a simple PD control law.
+/*! @brief Calculates a motor torque to drive a hinged panel to a reference angle state. A sensed and reference hinged rigid body angle
+           drives a simple PD control law.
  */
 class HingedRigidBodyMotor: public SysModel {
 public:

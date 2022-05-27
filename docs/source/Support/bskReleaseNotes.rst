@@ -31,7 +31,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- added new :ref:`hingedRigidBodyMotorSensor` for adding noise, bias, and discretization to panel state message
+
 
 Version 2.1.3 (May 25, 2022)
 ----------------------------
