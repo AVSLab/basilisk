@@ -1,6 +1,8 @@
 Executive Summary
 -----------------
-Outputs measured angle and angle rate for a hinged rigid body.
+Outputs measured angle and angle rate for a hinged rigid body.  By default the angle measurement does not contain
+any measurement errors.  The module can be configured to add gaussian noise, a bias or a discretization error to the
+measured state.
 
 Message Connection Descriptions
 -------------------------------
@@ -45,6 +47,8 @@ The interface module is created in python using:
     testModule.ModelTag = "motorSensor"
 
 The sensor adds an optional noise (defined by a standard deviation), bias, and discretization to ``theta`` and ``thetaDot``.
+If no noise is specified then the default behavior is for the actual panel states to be passed along as the
+sensed state.
 
 A sample setup is done using:
 
@@ -56,8 +60,9 @@ A sample setup is done using:
     testModule.thetaBias = thetaBias # [rad]
     testModule.thetaDotBias = thetaDotBias # [rad/s]
     testModule.thetaLSB = thetaLSB # [rad] smallest resolution of sensor
-    testModule.thetaDotLSB = thetaDotLSB # [rad/s]
+    testModule.thetaDotLSB = thetaDotLSB # [rad/s] smallest sensor rate resolution
 
+When discretizing, the value is rounded up or down to the nearest sensor state resolution.
 The seed used for the noise can also be changed using:
 
 .. code-block:: python

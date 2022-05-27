@@ -74,16 +74,16 @@ void HingedRigidBodyMotorSensor::setRNGSeed(unsigned int newSeed)
 void HingedRigidBodyMotorSensor::UpdateState(uint64_t CurrentSimNanos)
 {
     //! variables for  calculations
-    double trueTheta;
-    double trueThetaDot;
-    double thetaNoise;
-    double thetaDotNoise;
-    double sensedTheta;
-    double sensedThetaDot;
-    double numLSB;
-    double workingTheta;
-    double workingThetaDot;
-    double remainder;
+    double trueTheta;               //! [rad] actual planel angle
+    double trueThetaDot;            //! [rad/s] actual panel angular rate
+    double thetaNoise;              //! [rad] gaussian noise for panel angle
+    double thetaDotNoise;           //! [rad/s] gaussian noise for panel angular rate
+    double sensedTheta;             //! [rad] the sensed output angle
+    double sensedThetaDot;          //! [rad/s] the sended output angle rate
+    double numLSB;                  //! [] number of times the discretized theta value fits int to sensed value
+    double workingTheta;            //! [rad] discretized panel angle
+    double workingThetaDot;         //! [rad/s] discretized panel angle rate
+    double remainder;               //! [] remainder between sensed state and discretized state
     
     HingedRigidBodyMsgPayload hingedRigidBodyMotorSensorInMsgBuffer;  //! local copy of message buffer
     HingedRigidBodyMsgPayload hingedRigidBodyMotorSensorOutMsgBuffer;  //! local copy of message buffer
