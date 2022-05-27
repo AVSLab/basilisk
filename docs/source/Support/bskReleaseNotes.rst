@@ -32,7 +32,6 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - added new :ref:`hingedRigidBodyMotorSensor` for adding noise, bias, and discretization to panel state message
-
 - added new :ref:`simpleVoltEstimator` to provide simulated voltage measurements of a neighboring space object
 
 Version 2.1.3 (May 25, 2022)

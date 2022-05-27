@@ -28,3 +28,13 @@ provides information on what this message is used for.
     * - voltInMsg
       - :ref:`VoltMsgPayload`
       - spacecraft voltage input msg
+
+
+User Guide
+----------
+This module is set up similarly to the :ref:`simpleNav` module. It is constructed using ``sVoltObject =
+simpleVoltEstimator.SimpleVoltEstimator()``. The random walk bound is specified using ``sVoltObject.walkBounds`` and
+the standard deviation is specified using ``sVoltObject.PMatrix``. Note that the input for the walk bound and
+standard deviation must be a list to work for the :ref:`gauss_markov` module.
+
+If no walk bound or standard deviation is specified, then the voltage measurement will not be corrupted with noise.
