@@ -31,7 +31,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- added new :ref:`hingedRigidBodyMotorSensor` for adding noise, bias, and discretization to panel state message
+
 
 Version 2.1.3 (May 25, 2022)
 ----------------------------
@@ -56,7 +57,6 @@ Version 2.1.3 (May 25, 2022)
 - added new :ref:`scenarioAerocapture` which simulates an aerocapture scenario
 - added new :ref:`hingedBodyLinearProfiler` to provide a panel deployment angular profile
 - added new :ref:`hingedRigidBodyMotor` to provide panel motor torque control
-- added new :ref:`hingedRigidBodyMotorSensor` for adding noise, bias, and discretization to panel state message 
 - added new training videos to :ref:`configureBuild`, :ref:`installOptionalPackages`, :ref:`scenarioBasicOrbit`,
   :ref:`scenarioOrbitManeuver`, :ref:`scenarioOrbitMultiBody`, :ref:`scenarioCustomGravBody`
 - added support for Vizard 2.1 scripting
