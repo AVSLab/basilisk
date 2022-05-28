@@ -222,7 +222,7 @@ def RWUpdateTest(show_plots, accuracy):
     numTests += 1
 
     # expected output
-    trueTorque.append([0., 0., -0.3])
+    trueTorque.append([0., 0.1, -0.3])
 
     #
     # retrieve the logged data

@@ -529,6 +529,7 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
         // Speed saturation
         if (std::abs(this->ReactionWheelData[RWIter]->Omega) >= this->ReactionWheelData[RWIter]->Omega_max
             && this->ReactionWheelData[RWIter]->Omega_max > 0.0 /* negative Omega_max turns of wheel saturation modeling */
+            && this->ReactionWheelData[RWIter]->Omega * CmdIt->u_cmd >= 0.0 // check if torque would accelerate wheel speed beyond Omega_max
             ) {
             CmdIt->u_cmd = 0.0;
         }

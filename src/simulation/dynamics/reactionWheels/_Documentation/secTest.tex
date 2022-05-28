@@ -96,12 +96,12 @@ The test gives two commanded torques, one above $u_{\textnormal{min}}$ and one b
 
 \subsection{Speed Saturation - Unit Test}
 
-This test is ensuring that when the current reaction wheel speed is greater than or equal to the maximum allowable wheel speed, the applied torque is set to zero. The logic can be seen in the following equation:
+This test is ensuring that when the current reaction wheel speed is greater than or equal to the maximum allowable wheel speed, and the applied torque is trying to increase the wheel speed further, the applied torque is set to zero. The logic can be seen in the following equation:
 
 \begin{equation}
 \begin{gathered}
 \begin{aligned}
-&\textnormal{\textbf{if}}\quad \vert \Omega \vert >= \Omega_{\text{max}}  \quad \textnormal{\textbf{then}}\\
+&\textnormal{\textbf{if}}\quad \vert \Omega \vert >= \Omega_{\text{max}} \textnormal{ and } \Omega u_s >= 0  \quad \textnormal{\textbf{then}}\\
 &\quad u_s = 0.0 \\
 &\textnormal{\textbf{end if}}\\
 \end{aligned}

@@ -141,7 +141,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
         u_cmd = [1.5, 1.5, 1.5]
         writeNewRWCmds(ReactionWheel, u_cmd, len(RWs))
 
-        expOut['u_current'] = [1.5, 0.0, 0.0]
+        expOut['u_current'] = [1.5, 0.0, 1.5]
 
     else:
         raise Exception('invalid test case')

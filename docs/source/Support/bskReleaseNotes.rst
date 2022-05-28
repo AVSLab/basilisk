@@ -33,6 +33,8 @@ Version |release|
 -----------------
 - added new :ref:`hingedRigidBodyMotorSensor` for adding noise, bias, and discretization to panel state message
 - added new :ref:`simpleVoltEstimator` to provide simulated voltage measurements of a neighboring space object
+- added the ability to have a RW motor torque break slow down the wheel speed if saturated.  The motor torque
+  is set to zero if it is trying to increase the wheel speed in saturation conditions.
 
 Version 2.1.3 (May 25, 2022)
 ----------------------------
