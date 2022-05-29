@@ -21,8 +21,8 @@
 #ifndef THRUSTER_STATE_EFFECTOR_H
 #define THRUSTER_STATE_EFFECTOR_H
 
-#include "../../_GeneralModuleFiles/stateEffector.h"
-#include "../../_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/THRTimePairMsgPayload.h"
@@ -39,40 +39,39 @@
 
 
 /*! @brief thruster dynamic effector class */
-class ThrusterStateEffector: public SysModel, public StateEffector {
+class ThrusterStateEffector: public StateEffector, public SysModel {
 public:
     ThrusterStateEffector();
     ~ThrusterStateEffector();
+    void Reset(uint64_t CurrentSimNanos);
     bool ReadInputs();
     void writeOutputStateMessages(uint64_t CurrentClock);
     void registerStates(DynParamManager& states);  //!< -- Method for the effector to register its states
     void linkInStates(DynParamManager& states);  //!< -- Method for the effector to get access of other states
-    void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);  //!< -- Force and torque on s/c
-    void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
-    void updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d& rotAngMomPntCContr_B, double& rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
     void UpdateState(uint64_t CurrentSimNanos);
 
 
-    void addThruster(THRSimConfigMsgPayload *newThruster); //!< -- Add a new thruster to the thruster set 
+    void addThruster(THRSimConfigMsgPayload *newThruster); //!< -- Add a new thruster to the thruster set
+    void ConfigureThrustRequests(uint64_t currentTime);
 
 public:
+    // Input and output messages
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
-
-    int stepsInRamp;                               //!< class variable
     std::vector<THRSimConfigMsgPayload> thrusterData; //!< -- Thruster information
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
-    double kappaInit;                //!< [rad] Initial hinged rigid body angle
-    double kappaDotInit;             //!< [rad/s] Initial hinged rigid body angle rate
-    std::string nameOfKappaState;    //!< -- Identifier for the theta state data container
-    std::string nameOfKappaDotState; //!< -- Identifier for the thetaDot state data container
-    double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
+
+    // State information
+    double kappaInit;                //!< [N] Initial thruster state
+    std::string nameOfKappaState;    //!< -- Identifier for the kappa state data container
     double prevFireTime;                           //!< s  Previous thruster firing time
-	StateData *hubSigma;                           //!< class variable
-    StateData *hubOmega;                           //!< class varaible
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+
+    // State structures
+	StateData *hubSigma;        //!< class variable
+    StateData *hubOmega;        //!< class varaible
+    StateData* kappaState;      //!< -- state manager of theta for hinged rigid body
+    BSKLogger bskLogger;        //!< -- BSK Logging
 
 private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data

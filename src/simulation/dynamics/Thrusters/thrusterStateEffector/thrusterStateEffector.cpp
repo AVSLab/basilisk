@@ -26,9 +26,6 @@
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include <cstring>
-#include <iostream>
-#include <cmath>
 
 /*! The Constructor.*/
 ThrusterStateEffector::ThrusterStateEffector()
@@ -41,11 +38,10 @@ ThrusterStateEffector::ThrusterStateEffector()
     this->effProps.IEffPrimePntB_B.fill(0.0);
 
     CallCounts = 0;
-    this->mDotTotal = 0.0;
-    this->kappaInit = 0.00;
-    this->kappaDotInit = 0.0;
+    this->prevFireTime = 0.0;
+    this->prevCommandTime = 0xFFFFFFFFFFFFFFFF;
+    this->kappaInit = 0.0;
     this->nameOfKappaState = "thrusterKappa" + std::to_string(this->effectorID);
-    this->nameOfKappaDotState = "thrusterKappaDot" + std::to_string(this->effectorID);
     this->effectorID++;
 
     return;
@@ -56,6 +52,7 @@ uint64_t ThrusterStateEffector::effectorID = 1;
 /*! The destructor. */
 ThrusterStateEffector::~ThrusterStateEffector()
 {
+    // Free memory to avoid errors
     for (long unsigned int c=0; c<this->thrusterOutMsgs.size(); c++) {
         free(this->thrusterOutMsgs.at(c));
     }
@@ -63,6 +60,56 @@ ThrusterStateEffector::~ThrusterStateEffector()
     this->effectorID = 1;    /* reset the panel ID*/
 
     return;
+}
+
+/*! This method is used to reset the module.
+ @return void
+ */
+void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos)
+{
+    //! - Clear out any currently firing thrusters and re-init cmd array
+    this->NewThrustCmds.clear();
+    this->NewThrustCmds.insert(this->NewThrustCmds.begin(), this->thrusterData.size(), 0.0);
+
+    return;
+}
+
+/*! This method is used to read the incoming command message and set the
+ associated command structure for operating the thrusters.
+ @return void
+ */
+bool ThrusterStateEffector::ReadInputs()
+{
+    // Initialize local variables
+    std::vector<double>::iterator CmdIt;
+    uint64_t i;
+    bool dataGood;
+    
+    //Check if the message has been linked
+    if (this->cmdsInMsg.isLinked()) {
+        //! - Read the incoming command array
+        this->incomingCmdBuffer = this->cmdsInMsg();
+        dataGood = this->cmdsInMsg.isWritten();
+
+        //! - Check if message has already been read, if so then stale return
+        if(this->prevCommandTime == this->cmdsInMsg.timeWritten() || !dataGood) {
+            return(false);
+        }
+        this->prevCommandTime = this->cmdsInMsg.timeWritten();
+    } else {
+        this->incomingCmdBuffer = this->cmdsInMsg.zeroMsgPayload;
+        this->prevCommandTime = 0;
+    }
+
+    //! - Set the NewThrustCmds vector.  Using the data() method for raw speed
+    double *CmdPtr;
+    for(i=0, CmdPtr = NewThrustCmds.data(); i < this->thrusterData.size();
+        CmdPtr++, i++)
+    {
+        *CmdPtr = this->incomingCmdBuffer.OnTimeRequest[i];
+    }
+    return(true);
+    
 }
 
 /*! This method is here to write the output message structure into the specified
@@ -86,49 +133,57 @@ void ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
         tmpThruster.thrustForce = v3Norm(it->ThrustOps.opThrustForce_B);
         v3Copy(it->ThrustOps.opThrustForce_B, tmpThruster.thrustForce_B);
         v3Copy(it->ThrustOps.opThrustTorquePntB_B, tmpThruster.thrustTorquePntB_B);
-        
+
         this->thrusterOutMsgs[idx]->write(&tmpThruster, this->moduleID, CurrentClock);
 
-        idx ++;
+        idx++;
     }
 }
 
-
-/*! This method is used to read the incoming command message and set the
- associated command structure for operating the thrusters.
+/*! This method is used to read the new commands vector and set the thruster
+ firings appropriately.  It assumes that the ReadInputs method has already been
+ run successfully.  It honors all previous thruster firings if they are still
+ active.  Note that for unit testing purposes you can insert firings directly
+ into NewThrustCmds.
  @return void
+ @param currentTime The current simulation time converted to a double
  */
-bool ThrusterStateEffector::ReadInputs()
+void ThrusterStateEffector::ConfigureThrustRequests(uint64_t currentTime)
 {
-    
+    std::vector<THRSimConfigMsgPayload>::iterator it;
     std::vector<double>::iterator CmdIt;
-    uint64_t i;
-    bool dataGood;
-    
-    if (this->cmdsInMsg.isLinked()) {
-        //! - read the incoming command array
-        this->incomingCmdBuffer = this->cmdsInMsg();
-        dataGood = this->cmdsInMsg.isWritten();
-
-        //! - Check if message has already been read, if stale return
-        if(this->prevCommandTime==this->cmdsInMsg.timeWritten() || !dataGood) {
-            return(false);
-        }
-        this->prevCommandTime = this->cmdsInMsg.timeWritten();
-    } else {
-        this->incomingCmdBuffer = this->cmdsInMsg.zeroMsgPayload;
-        this->prevCommandTime = 0;
-    }
-
-    //! - Set the NewThrustCmds vector.  Using the data() method for raw speed
-    double *CmdPtr;
-    for(i=0, CmdPtr = NewThrustCmds.data(); i < this->thrusterData.size();
-        CmdPtr++, i++)
+    //! - Iterate through the list of thruster commands that we read in.
+    for (CmdIt = NewThrustCmds.begin(), it = this->thrusterData.begin();
+        it != this->thrusterData.end(); it++, CmdIt++)
     {
-        *CmdPtr = this->incomingCmdBuffer.OnTimeRequest[i];
+        if (*CmdIt >= it->MinOnTime) /// - Check to see if we have met minimum for each thruster
+        {
+            //! - For each case where we are above the minimum firing request, reset the thruster
+            it->ThrustOps.ThrustOnCmd = *CmdIt;
+            it->ThrustOps.fireCounter += it->ThrustOps.ThrustFactor > 0.0
+                ? 0 : 1;
+        }
+        else
+        {
+            //! - Will ensure that thruster shuts down once this cmd expires
+            it->ThrustOps.ThrustOnCmd = it->ThrustOps.ThrustFactor > 1E-5
+                ? *CmdIt : 0.0;
+        }
+        it->ThrustOps.ThrusterEndTime = this->prevCommandTime + it->ThrustOps.ThrustOnCmd;
+        //! After we have assigned the firing to the internal thruster, zero the command request.
+        *CmdIt = 0.0;
     }
-    return(true);
-    
+
+}
+
+void ThrusterStateEffector::addThruster(THRSimConfigMsgPayload* newThruster)
+{
+    this->thrusterData.push_back(*newThruster);
+
+    /* create corresponding output message */
+    Message<THROutputMsgPayload>* msg;
+    msg = new Message<THROutputMsgPayload>;
+    this->thrusterOutMsgs.push_back(msg);
 }
 
 /*! This method is used to link the states to the thrusters
@@ -140,14 +195,55 @@ void ThrusterStateEffector::linkInStates(DynParamManager& states){
 	this->hubOmega = states.getStateObject("hubOmega");
 }
 
-void ThrusterStateEffector::addThruster(THRSimConfigMsgPayload *newThruster)
+/*! This method allows the thruster state effector to register its state kappa with the dyn param manager */
+void ThrusterStateEffector::registerStates(DynParamManager& states)
 {
-    this->thrusterData.push_back(*newThruster);
+    // - Register the states associated with thruster - kappa
+    this->kappaState = states.registerState(this->thrusterData.size(), 1, this->nameOfKappaState);
+    Eigen::MatrixXd kappaInitMatrix(this->thrusterData.size(), 1);
+    // Loop through all thrusters to initialize each state variable
+    for (uint64_t i = 0; i < this->thrusterData.size(); i++) {
+        kappaInitMatrix(i, 0) = this->kappaInit;
+    }  
+    this->kappaState->setState(kappaInitMatrix);
 
-    /* create corresponding output message */
-    Message<THROutputMsgPayload> *msg;
-    msg = new Message<THROutputMsgPayload>;
-    this->thrusterOutMsgs.push_back(msg);
+    return;
+}
+
+/*! This method is used to find the derivatives for the thruster stateEffector */
+void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
+{
+    std::vector<THRSimConfigMsgPayload>::iterator it;
+    THROperationMsgPayload* ops;
+    uint64_t i;
+    double dt = 0.0;
+    double zeta = 1.0;
+
+    dt = integTime - prevFireTime;
+
+    // - Compute Derivatives
+    Eigen::MatrixXd kappaDot(this->thrusterData.size(), 1);
+
+    // Loop through all thrusters to initialize each state variable
+    for (it = this->thrusterData.begin(), i = 0; it != this->thrusterData.end(); it++, i++)
+    {
+        // Grab the thruster operations payload
+        ops = &it->ThrustOps;
+
+        //! - For each thruster check if the end time is greater than the current time, and if so thrust
+        if ((ops->ThrusterEndTime - integTime) > 0.0 && ops->ThrustOnCmd > 0.0) {
+            kappaDot(i, 0) = (1.0 - this->kappaState->state(i, 0)) / zeta;
+        }
+        else {
+            kappaDot(i, 0) = -this->kappaState->state(i, 0) / zeta;
+        }
+
+        // Save the state to thruster ops
+        ops->ThrustFactor = this->kappaState->state(i, 0);
+    }
+    this->kappaState->setDerivative(kappaDot);
+   
+    return;
 }
 
 /*! This method is the main cyclical call for the scheduled part of the thruster
@@ -161,54 +257,9 @@ void ThrusterStateEffector::addThruster(THRSimConfigMsgPayload *newThruster)
 void ThrusterStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
-    if(this->ReadInputs())
+    if (this->ReadInputs())
     {
-        //this->ConfigureThrustRequests(this->prevCommandTime*1.0E-9);
+        this->ConfigureThrustRequests(this->prevCommandTime);
     }
     this->writeOutputStateMessages(CurrentSimNanos);
-}
-
-/*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager */
-void ThrusterStateEffector::registerStates(DynParamManager& states)
-{
-
-    return;
-}
-
-/*! This method allows the HRB state effector to provide its contributions to the mass props and mass prop rates of the
- spacecraft */
-void ThrusterStateEffector::updateEffectorMassProps(double integTime)
-{
-   
-
-    return;
-}
-
-/*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub
- method */
-void ThrusterStateEffector::updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
-{
-
-    return;
-}
-
-/*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
-void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
-{
-    
-    return;
-}
-
-/*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c */
-void ThrusterStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d& rotAngMomPntCContr_B,
-    double& rotEnergyContr, Eigen::Vector3d omega_BN_B)
-{
-
-    return;
-}
-
-void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
-{
-
-    return;
 }
