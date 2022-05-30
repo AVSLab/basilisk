@@ -17,6 +17,11 @@
 #
 
 r"""
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/Fux_UsZ5FR0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 Overview
 --------
 
@@ -254,7 +259,7 @@ def run(show_plots):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
     vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        , saveFile=fileName
+                                        # , saveFile=fileName
                                         )
 
     #
@@ -269,6 +274,7 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     # unload custom Spice kernel
+    gravFactory.unloadSpiceKernels()
     gravFactory.spiceObject.unloadSpiceKernel("hst_edited.bsp", bskPath + '/supportData/EphemerisData/')
 
     #

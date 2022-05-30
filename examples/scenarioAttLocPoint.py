@@ -17,6 +17,11 @@
 #
 
 r"""
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/AQAcHAmxcaU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 Overview
 --------
 
@@ -227,10 +232,10 @@ def run(show_plots):
     # Create the ground location
     groundStation = groundLocation.GroundLocation()
     groundStation.ModelTag = "BoulderGroundStation"
-    groundStation.planetRadius = astroFunctions.E_radius*1e3
+    groundStation.planetRadius = astroFunctions.E_radius*1e3  # meters
     groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
     groundStation.minimumElevation = np.radians(10.)
-    groundStation.maximumRange = 1e9
+    groundStation.maximumRange = 1e9  # meters
     groundStation.addSpacecraftToModel(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, groundStation)
 

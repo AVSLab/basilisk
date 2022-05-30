@@ -20,7 +20,7 @@ provides information on what this message is used for.
     * - attRefInMsg
       - :ref:`AttRefMsgPayload`
       - attitude reference input message
-    * - attRef2OutMsg
+    * - attRefOutMsg
       - :ref:`AttRefMsgPayload`
       - corrected attitude reference input message
 
