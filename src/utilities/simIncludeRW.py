@@ -66,6 +66,7 @@ class rwFactory(object):
                 fStatic: double for Static friction torque magnitude
                 betaStatic: double for Stribeck friction coefficient, positive turns Stribeck friction on, negative turns this friction off
                 cViscous: double for Viscous friction coefficient
+                Js: double for RW inertia about spin axis
             Returns
             -------
             RWConfigSimMsg : message structure
@@ -178,7 +179,7 @@ class rwFactory(object):
 
         if 'u_max' in kwargs:
             varu_max = kwargs['u_max']
-            if not isinstance(varu_max, (float)):
+            if not isinstance(varu_max, float):
                 print('ERROR: u_max must be a FLOAT argument')
                 exit(1)
             RW.u_max = varu_max
@@ -189,18 +190,37 @@ class rwFactory(object):
         # set initial RW states
         if 'Omega_max' in kwargs:
             varOmega_max = kwargs['Omega_max']
-            if not isinstance(varOmega_max, (float)):
+            if not isinstance(varOmega_max, float):
                 print('ERROR: Omega_max must be a FLOAT argument')
                 exit(1)
             RW.Omega_max = varOmega_max * macros.RPM
-        if RW.Omega_max <= 0.0:
-            print('ERROR: RW is being setup with non-positive Omega_max value')
-            exit(1)
 
-        # spin axis gs inertia [kg*m^2]
-        RW.Js = self.maxMomentum / RW.Omega_max
-        RW.Jt = 0.5 * RW.Js
-        RW.Jg = RW.Jt
+        # set RW spin axis inertia
+        RW.Js = -1.0
+        if 'Js' in kwargs:
+            varJs = kwargs['Js']
+            if not isinstance(varJs, float):
+                print('ERROR: Js must be a FLOAT argument')
+                exit(1)
+            if varJs > 0.0:
+                RW.Js = varJs * macros.RPM
+                RW.Jt = 0.5 * RW.Js
+                RW.Jg = RW.Jt
+            else:
+                print('ERROR: Js must be a positive value')
+                exit(1)
+
+        if RW.Omega_max > 0.0 and self.maxMomentum > 0.0:
+            if RW.Js <= 0.0:  # no inertia specified
+                # spin axis gs inertia [kg*m^2]
+                RW.Js = self.maxMomentum / RW.Omega_max
+                RW.Jt = 0.5 * RW.Js
+                RW.Jg = RW.Jt
+            else:
+                print('ERROR: rwFactory tried to set Js both directly and through maxMomentum and Omega_max')
+                exit(1)
+        if RW.Js < 0.0:
+            print('ERROR: RW Js value not specified direct, nor indirectly using maxMomentum and Omega_max')
 
         # set RW axes
         self.setGsHat(RW, gsHat_B)
@@ -527,13 +547,11 @@ class rwFactory(object):
     def custom(self, RW):
         """
         Creates an empty reaction wheel configuration message.  This assumes the user provided the
-        RW maximum speed and maximum angular momentum information.
+        RW maximum speed and maximum angular momentum information so that Js can be computed,
+        or the user provides the Js inertia value directly.
 
         :param RW: reaction wheel configuration message
         :return:
         """
-
-        if self.maxMomentum == 0.0:
-            print("ERROR: simIncludeRW.create() custom RW must have a non-zero maxMomentum specified.")
 
         return
