@@ -164,7 +164,7 @@ class thrusterFactory(object):
         self.thrusterList[varLabel] = TH
         return TH
 
-    def addToSpacecraft(self, modelTag, thDynamicEffector, sc):
+    def addToSpacecraft(self, modelTag, thEffector, sc):
         """
             This function should be called after all Thruster devices are created with create()
             It creates the C-class container for the array of TH devices, and attaches
@@ -174,17 +174,24 @@ class thrusterFactory(object):
             ----------
             modelTag:  string
                 module model tag string
-            thDynamicEffector: thrusterDynamicEffector
-                thruster dynamic effector handle
+            thEffector: thrusterEffector
+                thruster effector handle
             sc: spacecraft
         """
 
-        thDynamicEffector.ModelTag = modelTag
+        thEffector.ModelTag = modelTag
 
         for key, th in list(self.thrusterList.items()):
-            thDynamicEffector.addThruster(th)
+            thEffector.addThruster(th)
 
-        sc.addDynamicEffector(thDynamicEffector)
+        # Check the type of thruster effector
+        thrusterType = str(type(thEffector))
+        if 'ThrusterDynamicEffector' in thrusterType:
+            sc.addDynamicEffector(thEffector)
+        elif 'ThrusterStateEffector' in thrusterType:
+            sc.addStateEffector(thEffector)
+        else:
+            print("This isn't a thruster effector. You did something wrong.")
 
         return
 
