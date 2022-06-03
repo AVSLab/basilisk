@@ -176,7 +176,8 @@ typedef struct{
     ReadFunctor<SCMassPropsMsgPayload> scMassStateInMsg;
     SCStatesMsgPayload stateInBuffer;           //!< -- Body state buffer
     SCMassPropsMsgPayload massStateInBuffer;    //!< -- Body mass state buffer
-    
+    Eigen::Vector3d forceExternal_N;
+    Eigen::Vector3d torqueExternalPntB_B;
 }geometry;
 
 /*! @brief Rigid Body Contact state effector class */
@@ -223,7 +224,7 @@ public:
     
     
 private:
-    Eigen::VectorXd CollisionStateDerivative( Eigen::VectorXd X_c, double totalSlip);
+    Eigen::VectorXd CollisionStateDerivative(Eigen::VectorXd X_c, std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts, std::vector<double> f_vals, std::vector<double> phi_vals, Eigen::MatrixXd M_tot, double coefRes, double coefFric);
     void CalcCollisionProps();
     bool SeparatingPlane(vectorInterval displacementInterval, vectorInterval candidateInterval, indivBoundingBox box1, indivBoundingBox box2);
     bool IsMinkowskiFace(Eigen::Vector3d edgeA, Eigen::Vector3d edgeB, Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d c, Eigen::Vector3d d);
