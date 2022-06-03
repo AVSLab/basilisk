@@ -501,6 +501,15 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     Eigen::VectorXd dv3dj;
     Eigen::VectorXd tempVec;
     
+    Eigen::VectorXd X_c;
+    bool energyMet;
+    int currLoop;
+    Eigen::VectorXd k1;
+    Eigen::VectorXd k2;
+    Eigen::VectorXd k3;
+    Eigen::VectorXd k4;
+    Eigen::Vector3d impulse_Body1_N;
+    
     std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts;
     
     for (int groupIt1=0; groupIt1 < this->closeBodies.size(); ++groupIt1)
@@ -511,6 +520,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             body1Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * (currentTime*NANO2SEC - this->currentSimSeconds);
             body1Current.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B * this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_BN) * (currentTime*NANO2SEC - this->currentSimSeconds)) + this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_BN;
             body1Current.dcm_NB = body1Current.dcm_BN.transpose();
+            body1Current.omegaTilde_BN_B = this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B;
             
             body1Future.r_BN_N = body1Current.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * timeStep*NANO2SEC ;
             body1Future.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B * body1Current.dcm_BN) * timeStep*NANO2SEC) + body1Current.dcm_BN;
@@ -523,6 +533,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             body1Current.sigma_BN = (0.25 * this->Bodies[this->closeBodies[groupIt1][0]].states.sigma_BN.Bmat() * body1Current.omega_BN_B * (currentTime*NANO2SEC - this->currentSimSeconds)) + ((Eigen::Vector3d) this->Bodies[this->closeBodies[groupIt1][0]].states.sigma_BN.coeffs());
             body1Current.dcm_NB = body1Current.sigma_BN.toRotationMatrix();
             body1Current.dcm_BN = body1Current.dcm_NB.transpose();
+            body1Current.omegaTilde_BN_B = eigenTilde(body1Current.omega_BN_B);
             
             body1Future.r_BN_N = body1Current.r_BN_N + body1Current.v_BN_N * timeStep*NANO2SEC + body1Current.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][0]].states.nonConservativeAccelpntB_B * timeStep*NANO2SEC * timeStep*NANO2SEC);
             body1Future.omega_BN_B = body1Current.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][0]].states.omegaDot_BN_B * timeStep*NANO2SEC;
@@ -536,6 +547,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             body2Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * (currentTime*NANO2SEC - this->currentSimSeconds);
             body2Current.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B * this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_BN) * (currentTime*NANO2SEC - this->currentSimSeconds)) + this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_BN;
             body2Current.dcm_NB = body2Current.dcm_BN.transpose();
+            body2Current.omegaTilde_BN_B = this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B;
             
             body2Future.r_BN_N = body2Current.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * timeStep*NANO2SEC ;
             body2Future.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B * body2Current.dcm_BN) * timeStep*NANO2SEC) + body2Current.dcm_BN;
@@ -548,6 +560,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             body2Current.sigma_BN = (0.25 * this->Bodies[this->closeBodies[groupIt1][1]].states.sigma_BN.Bmat() * body2Current.omega_BN_B * (currentTime*NANO2SEC - this->currentSimSeconds)) + ((Eigen::Vector3d) this->Bodies[this->closeBodies[groupIt1][1]].states.sigma_BN.coeffs());
             body2Current.dcm_NB = body2Current.sigma_BN.toRotationMatrix();
             body2Current.dcm_BN = body2Current.dcm_NB.transpose();
+            body2Current.omegaTilde_BN_B = eigenTilde(body2Current.omega_BN_B);
             
             body2Future.r_BN_N = body2Current.r_BN_N + body2Current.v_BN_N * timeStep*NANO2SEC + body2Current.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][1]].states.nonConservativeAccelpntB_B * timeStep*NANO2SEC * timeStep*NANO2SEC);
             body2Future.omega_BN_B = body2Current.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][0]].states.omegaDot_BN_B * timeStep*NANO2SEC;
@@ -771,138 +784,106 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         }
         
         // Create the initial collision state
+        X_c = Eigen::VectorXd::Zero(numImpacts * 8);
+        for (int impNum=0; impNum < numImpacts; impNum++)
+        {
+            // Velocity of the contact point on body 1 relative to the contact point on body 2, in the local contact frame
+            X_c.segment(impNum * 3, 3) = dcm_CN[impNum] * ((body1Current.v_BN_N + body1Current.dcm_NB * (body1Current.omegaTilde_BN_B * (body1Current.dcm_BN * std::get<0>(impacts[impNum])))) - (body2Current.v_BN_N + body2Current.dcm_NB * (body2Current.omegaTile_BN_B * (body2Current.dcm_BN * std::get<1>(impacts[impNum])))));
+            
+            // Add initial perturbation to energy states for numerical robustness
+            if (X_c(impNum * 3) < 0)
+            {
+                X_c(numImpacts * 6 + impNum * 2 + 1) = -1e-14;
+            } else
+            {
+                X_c(numImpacts * 6 + impNum * 2 + 1) = 1e-14;
+            }
+        }
+        
+        // Integrate the collision state until the restitution energy conditions are met
+        energyMet = false;
+        currLoop = 0;
+        while (!energyMet)
+        {
+            currLoop++;
+            // Use RK4 to integrate the collision state
+            k1 = this->CollisionStateDerivative(X_c, impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
+            k2 = this->CollisionStateDerivative(X_c + this->collisionIntegrationStep * (k1 / 2.0), impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
+            k3 = this->CollisionStateDerivative(X_c + this->collisionIntegrationStep * (k2 / 2.0), impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
+            k4 = this->CollisionStateDerivative(X_c + this->collisionIntegrationStep * k3, impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
+            X_c = X_c + (this->collisionIntegrationStep / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4);
+            
+            energyMet = true;
+            // Check if there are any contact points that have not met the restitution energy requirements
+            for (int impNum=0; impNum < numImpacts; impNum++)
+            {
+                if (X_c(numImpacts * 6 + impNum * 2 + 1) < (-1 * (pow(this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, 2) * X_c(numImpacts * 6 + impNum * 2))))
+                {
+                    energyMet = false;
+                    break;
+                }
+            }
+            
+            // Hard cap on number of loops, which should never be reached.
+            if (currLoop > 1e9)
+            {
+                energyMet = true;
+            }
+        }
+        
+        // Extract resulting force and torque
+        for (int impNum=0; impNum < numImpacts; impNum++)
+        {
+            impulse_Body1_N = dcm_CN[impNum].transpose() * X_c.segment(numImpacts * 3 + impNum * 3, 3);
+            this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N += impulse_Body1_N / timeStep;
+            this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N -= impulse_Body1_N / timeStep;
+            this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B += body1Current.dcm_BN * (std::get<0>(impacts[impNum]) - body1Current.r_BN_N).cross(impulse_Body1_N / timeStep);
+            this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B -= body2Current.dcm_BN * (std::get<1>(impacts[impNum]) - body2Current.r_BN_N).cross(impulse_Body1_N / timeStep);
+        }
         
     }
     
 
-
-    int numStateVar = 9 + (4 * this->mainBody.collisionPoints.size());
-//    int numStateVar = 10 + (3 * this->mainBody.collisionPoints.size());
-    Eigen::VectorXd collisionStateVec = Eigen::VectorXd::Zero(numStateVar);
-    Eigen::Vector3d v_CT_C = Eigen::Vector3d::Zero();
-    Eigen::VectorXd compressionEnergy = Eigen::VectorXd::Zero(this->mainBody.collisionPoints.size());
-    Eigen::VectorXd restitutionEnergy = Eigen::VectorXd::Zero(this->mainBody.collisionPoints.size());
-//    double compressionEnergy = 0.0;
-//    double restitutionEnergy = 0.0;
-    double totalSlip;
-    Eigen::VectorXd k1;
-    Eigen::VectorXd k2;
-    Eigen::VectorXd k3;
-    Eigen::VectorXd k4;
-
-
-
-
 }
 
-//Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::VectorXd X_c, double totalSlip)
-//{
-//    Eigen::VectorXd Xdot_c = Eigen::VectorXd::Zero(X_c.size());
-//    Eigen::Vector3d dPcont;
-//    Eigen::Vector3d dPdp = Eigen::Vector3d::Zero();
-//    std::vector<Eigen::Vector3d> dPlist;
-//    Eigen::Vector3d dv = Eigen::Vector3d::Zero();
-//    double eta;
-//
-//    // - Loop through every collision point
-//    for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-//    {
-////        if (X_c[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] > 0.00000001)
-////        {
-////            dPcont << 0.0, 0.0, 0.0;
-////            dPlist.push_back(dPcont);
-////            continue;
-////        }
-//        if ((totalSlip < this->slipTolerance) && (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric <= this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction))
-//        {
-//            dPcont << - this->mainBody.collisionPoints[bodyIt].back().critCoeffFric * cos(this->mainBody.collisionPoints[bodyIt].back().critSlideDir), - this->mainBody.collisionPoints[bodyIt].back().critCoeffFric * sin(this->mainBody.collisionPoints[bodyIt].back().critSlideDir), 1.0;
-//
-//            dPcont = this->mainBody.collisionPoints[bodyIt].back().dcm_CB.transpose() * (dPcont);// / this->mainBody.collisionPoints.size());
-//
-//
-//            Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) + eigenTilde( this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * dPcont;
-//
-//            dPcont = this->mainBody.states.dcm_BN.transpose() * dPcont;
-//
-//            Xdot_c[this->mainBody.collisionPoints.size() * 3] = Xdot_c[this->mainBody.collisionPoints.size() * 3] + dPcont[0];
-//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] + dPcont[1];
-//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] + dPcont[2];
-//
-//            dPlist.push_back(dPcont);
-////            std::cout << Xdot_c << '\n';
-//        } else
-//        {
-//
-//
-//            if ((this->mainBody.collisionPoints[bodyIt].back().slipHitZero) && (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric > this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction))
-//            {
-//                eta = 1.0;
-//                dPcont << -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir), -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir), 1.0;
-//            }else
-//            {
-//                eta = (X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction);// / this->collisionIntegrationStep;
-//                dPcont << -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(X_c[bodyIt * 3 + 1]), -this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(X_c[bodyIt * 3 + 1]), 1.0;
-//            }
-//            dPcont = this->mainBody.collisionPoints[bodyIt].back().dcm_CB.transpose() * (dPcont);// / this->mainBody.collisionPoints.size());
-//
-//
-//            Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) + eigenTilde( this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * (eta * dPcont);
-//
-//            dPcont = this->mainBody.states.dcm_BN.transpose() * dPcont;
-//
-//
-//            Xdot_c[this->mainBody.collisionPoints.size() * 3] = Xdot_c[this->mainBody.collisionPoints.size() * 3] + (eta * dPcont[0]);
-//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 1] + (eta * dPcont[1]);
-//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 2] + (eta * dPcont[2]);
-//
-//            dPlist.push_back( dPcont);
-//
-//            dPdp = dPdp + dPcont;
-//        }
-//    }
-//    for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-//    {
-//        dv = Eigen::Vector3d::Zero();
-//        if ((totalSlip < this->slipTolerance) || ((this->mainBody.collisionPoints[bodyIt].back().slipHitZero) && (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric > this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction)))
-//        {
-//            for ( int bodyIt2 = 0; bodyIt2 < this->mainBody.collisionPoints.size(); ++bodyIt2)
-//            {
-//                dv = dv + this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B[bodyIt2] * this->mainBody.states.dcm_BN * dPlist[bodyIt2];
-//            }
-////            dv << this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B * this->mainBody.states.dcm_BN * (Xdot_c.segment(this->mainBody.collisionPoints.size() * 3, 3));// / this->mainBody.collisionPoints.size());
-////            dv[0] = ceil(dv[0] * pow(10.0, 14)) / pow(10.0, 14);
-////            dv[1] = ceil(dv[1] * pow(10.0, 14)) / pow(10.0, 14);
-//            Xdot_c[bodyIt * 3] = cos(X_c[bodyIt * 3 + 1]) * dv[0] + sin(X_c[bodyIt * 3 + 1]) * dv[1];
-//            Xdot_c[bodyIt * 3 + 1] = (cos(X_c[bodyIt * 3 + 1]) / X_c[bodyIt * 3]) * dv[1] - (sin(X_c[bodyIt * 3 + 1]) / X_c[bodyIt * 3]) * dv[0];
-//            if (std::isnan(Xdot_c[bodyIt * 3 + 1]))
-//            {
-//                Xdot_c[bodyIt * 3 + 1] = 0.0;
-//            }
-//            Xdot_c[bodyIt * 3 + 2] = dv[2];
-//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] = X_c[bodyIt * 3 + 2];
-////            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9] + X_c[bodyIt * 3 + 2];
-////            std::cout << Xdot_c << '\n';
-//        }else
-//        {
-//            for ( int bodyIt2 = 0; bodyIt2 < this->mainBody.collisionPoints.size(); ++bodyIt2)
-//            {
-//                dv = dv + this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B[bodyIt2] * this->mainBody.states.dcm_BN * dPlist[bodyIt2];
-//            }
-////            dv << this->mainBody.collisionPoints[bodyIt].back().dcm_CB * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B * this->mainBody.states.dcm_BN * (dPdp);// / this->mainBody.collisionPoints.size());
-//            Xdot_c[bodyIt * 3] = ((X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * (cos(X_c[bodyIt * 3 + 1]) * dv[0] + sin(X_c[bodyIt * 3 + 1]) * dv[1]));// / this->collisionIntegrationStep;
-//            Xdot_c[bodyIt * 3 + 1] = ((cos(X_c[bodyIt * 3 + 1]) * dv[1] - sin(X_c[bodyIt * 3 + 1]) * dv[0]) / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction);// / this->collisionIntegrationStep;
-//            Xdot_c[bodyIt * 3 + 2] = ((X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * dv[2]);// / this->collisionIntegrationStep;
-//            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9 + bodyIt] = ((X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * X_c[bodyIt * 3 + 2]);// / this->collisionIntegrationStep;
-////            Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9] = Xdot_c[this->mainBody.collisionPoints.size() * 3 + 9] + (X_c[bodyIt * 3] / this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction) * X_c[bodyIt * 3 + 2];
-//        }
-//    }
-//
-//    Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 3, 3) = (1.0 / this->mainBody.states.m_SC) * Xdot_c.segment(this->mainBody.collisionPoints.size() * 3, 3);
-//    Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3) = this->mainBody.states.ISCPntB_B_inv * Xdot_c.segment(this->mainBody.collisionPoints.size() * 3 + 6, 3);
-////    std::cout << Xdot_c << '\n';
-//
-//    return Xdot_c;
-//}
+Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::VectorXd X_c, std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts, std::vector<double> f_vals, std::vector<double> phi_vals, Eigen::MatrixXd M_tot, double coefRes, double coefFric)
+{
+    Eigen::VectorXd Xdot_c = Eigen::VectorXd::Zero(X_c.size());
+    double phi;
+    int numImpacts = impacts.size();
+
+    // - Loop through every collision point
+    for (int impNum=0; impNum < numImpacts; impNum++)
+    {
+        if (X_c(numImpacts * 6 + impNum * 2 + 1) < (-1 * (pow(coefRes, 2) * X_c(numImpacts * 6 + impNum * 2))))
+        {
+            if (sqrt(pow(X_c(impNum * 3), 2) + pow(X_c(impNum * 3 + 1), 2)) < 1e-6)
+            {
+                Xdot_c(numImpacts * 3 + impNum * 3) = -f_vals[impNum] * cos(phi_vals[impNum]);
+                Xdot_c(numImpacts * 3 + impNum * 3 + 1) = -f_vals[impNum] * sin(phi_vals[impNum]);
+                Xdot_c(numImpacts * 3 + impNum * 3 + 2) = 1.0;
+            }else
+            {
+                phi = atan2(X_c(impNum * 3 + 1), X_c(impNum * 3));
+                Xdot_c(numImpacts * 3 + impNum * 3) = -coefFric * cos(phi);
+                Xdot_c(numImpacts * 3 + impNum * 3 + 1) = -coefFric * sin(phi);
+                Xdot_c(numImpacts * 3 + impNum * 3 + 2) = 1.0;
+            }
+        }
+        
+        if (X_c(impNum * 3 + 2) < 0)
+        {
+            Xdot_c(numImpacts * 6 + impNum * 2) = X_c(impNum * 3 + 2);
+        }else if (X_c(numImpacts * 6 + impNum * 2 + 1) < (-1 * (pow(coefRes, 2) * X_c(numImpacts * 6 + impNum * 2))))
+        {
+            Xdot_c(numImpacts * 6 + impNum * 2 + 1) = X_c(impNum * 3 + 2);
+        }
+    }
+    
+    Xdot_c.head(numImpacts * 3) = M_tot * Xdot_c.segment(numImpacts * 3, numImpacts * 3);
+
+    return Xdot_c;
+}
 
 
 //void RigidBodyContactEffector::CalcCollisionProps()
