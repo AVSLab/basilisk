@@ -24,7 +24,7 @@ Basilisk Release Notes
     - new tutorial example scripts
     - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
       CAD asteroid or lunar surface terrain.
-    - new example scripts how to spacecraft formation simulations exploiting the BSK2 messaging
+    - spacecraft charging related modules
     - Basilisk 2.2 that includes:
 
         - support a way to do thread-safe messaging
@@ -35,6 +35,9 @@ Version |release|
 - added new :ref:`simpleVoltEstimator` to provide simulated voltage measurements of a neighboring space object
 - added the ability to have a RW motor torque break slow down the wheel speed if saturated.  The motor torque
   is set to zero if it is trying to increase the wheel speed in saturation conditions.
+- added new training videos to :ref:`scenario_BasicOrbit`, :ref:`scenario_FeedbackRW` to discuss how to
+  create class based Basilisk simulations
+
 
 Version 2.1.3 (May 25, 2022)
 ----------------------------

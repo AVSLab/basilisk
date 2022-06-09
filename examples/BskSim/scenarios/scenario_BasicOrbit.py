@@ -17,6 +17,11 @@
 #
 
 """
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/YjRM_3MOjAc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 Overview
 --------
 
@@ -30,7 +35,7 @@ The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and exe
 
       python3 scenario_BasicOrbit.py
 
-The simulation mimics the basic simulation simulation in the earlier tutorial in
+The simulation mimics the basic simulation scenario in the earlier tutorial in
 :ref:`scenarioBasicOrbit`.  But rather than explicitly defining all simulation properties
 within the python simulation file, the bskSim spacecraft simulation class is used to encapsulate a lot of the
 setup and configuring.
@@ -214,7 +219,6 @@ class scenario_BasicOrbit(BSKSim, BSKScenario):
         self.AddModelToTask(DynModels.taskName, self.sNavAttRec)
         self.AddModelToTask(DynModels.taskName, self.sNavTransRec)
 
-
     def pull_outputs(self, showPlots):
         # Dynamics process outputs
         sigma_BN = self.sNavAttRec.sigma_BN
@@ -236,6 +240,7 @@ class scenario_BasicOrbit(BSKSim, BSKScenario):
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
+
 
 def runScenario(scenario):
 

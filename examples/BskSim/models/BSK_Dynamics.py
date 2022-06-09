@@ -26,7 +26,6 @@ from Basilisk.simulation import ephemerisConverter
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import simIncludeRW, simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.topLevelModules import pyswice
 from Basilisk.architecture import messaging
 
 from Basilisk import __path__
@@ -44,6 +43,10 @@ class BSKDynamicModels():
         self.earth = None
         self.moon = None
         self.epochMsg = None
+        self.RW1 = None
+        self.RW2 = None
+        self.RW3 = None
+        self.RW4 = None
 
         # Define process name, task name and task time-step
         self.processName = SimBase.DynamicsProcessName
@@ -124,11 +127,6 @@ class BSKDynamicModels():
 
         self.EarthEphemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.earth])
 
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants
-
     def SetEclipseObject(self):
         """
         Specify what celestial object is causing an eclipse message.
@@ -165,29 +163,29 @@ class BSKDynamicModels():
                        [-0.8, 0.8, 1.79070]
                        ]
 
-        gsHat = (rbk.Mi(-rwAzimuthAngle[0],3).dot(rbk.Mi(rwElAngle[0],2))).dot(np.array([1,0,0]))
+        gsHat = (rbk.Mi(-rwAzimuthAngle[0], 3).dot(rbk.Mi(rwElAngle[0], 2))).dot(np.array([1, 0, 0]))
         self.RW1 = self.rwFactory.create('Honeywell_HR16',
-            gsHat,
-            maxMomentum=maxRWMomentum,
-            rWB_B=rwPosVector[0])
+                                         gsHat,
+                                         maxMomentum=maxRWMomentum,
+                                         rWB_B=rwPosVector[0])
         
-        gsHat = (rbk.Mi(-rwAzimuthAngle[1],3).dot(rbk.Mi(rwElAngle[1],2))).dot(np.array([1,0,0]))
+        gsHat = (rbk.Mi(-rwAzimuthAngle[1], 3).dot(rbk.Mi(rwElAngle[1], 2))).dot(np.array([1, 0, 0]))
         self.RW2 = self.rwFactory.create('Honeywell_HR16',
-            gsHat,
-            maxMomentum=maxRWMomentum,
-            rWB_B=rwPosVector[1])
+                                         gsHat,
+                                         maxMomentum=maxRWMomentum,
+                                         rWB_B=rwPosVector[1])
 
-        gsHat = (rbk.Mi(-rwAzimuthAngle[2],3).dot(rbk.Mi(rwElAngle[2],2))).dot(np.array([1,0,0]))
+        gsHat = (rbk.Mi(-rwAzimuthAngle[2], 3).dot(rbk.Mi(rwElAngle[2], 2))).dot(np.array([1, 0, 0]))
         self.RW3 = self.rwFactory.create('Honeywell_HR16',
-            gsHat,
-            maxMomentum=maxRWMomentum,
-            rWB_B=rwPosVector[2])
+                                         gsHat,
+                                         maxMomentum=maxRWMomentum,
+                                         rWB_B=rwPosVector[2])
             
-        gsHat = (rbk.Mi(-rwAzimuthAngle[3],3).dot(rbk.Mi(rwElAngle[3],2))).dot(np.array([1,0,0]))
+        gsHat = (rbk.Mi(-rwAzimuthAngle[3], 3).dot(rbk.Mi(rwElAngle[3], 2))).dot(np.array([1, 0, 0]))
         self.RW4 = self.rwFactory.create('Honeywell_HR16',
-            gsHat,
-            maxMomentum=maxRWMomentum,
-            rWB_B=rwPosVector[3])
+                                         gsHat,
+                                         maxMomentum=maxRWMomentum,
+                                         rWB_B=rwPosVector[3])
 
         self.rwFactory.addToSpacecraft("RWA", self.rwStateEffector, self.scObject)
 

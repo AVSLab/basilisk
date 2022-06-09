@@ -17,6 +17,11 @@
 #
 
 r"""
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/-tG4OZzGJfQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 Overview
 --------
 
@@ -329,6 +334,9 @@ def run(show_plots, useAltBodyFrame):
     # if you want to connect attGuidanceConfig.celBodyInMsg, then you need a planet ephemeris message of
     # type EphemerisMsgPayload.  In this simulation the input message is not connected to create an empty planet
     # ephemeris message which puts the earth at (0,0,0) origin with zero speed.
+    CelBodyData = messaging.EphemerisMsgPayload() # make zero'd planet ephemeris message
+    celBodyInMsg = messaging.EphemerisMsg().write(CelBodyData)
+    attGuidanceConfig.celBodyInMsg.subscribeTo(celBodyInMsg)
     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 
     # setup the attitude tracking error evaluation module
@@ -444,5 +452,5 @@ def run(show_plots, useAltBodyFrame):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        False  # useAltBodyFrame
+        True  # useAltBodyFrame
     )

@@ -59,10 +59,10 @@ class scenario_AttFeedback(BSKSim, BSKScenario):
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         DynModels = self.get_DynModel()
-        # vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
-        #                                     # , saveFile=__file__
-        #                                     , rwEffectorList=DynModels.rwStateEffector
-        #                                     )
+        vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
+                                            # , saveFile=__file__
+                                            , rwEffectorList=DynModels.rwStateEffector
+                                            )
 
     def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
