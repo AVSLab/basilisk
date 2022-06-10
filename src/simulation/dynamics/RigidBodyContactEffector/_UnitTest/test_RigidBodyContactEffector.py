@@ -28,8 +28,7 @@ from Basilisk.simulation import RigidBodyContactEffector, spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros, RigidBodyKinematics, unitTestSupport, vizSupport)
 from Basilisk.architecture import messaging
 import copy
-from mayavi import mlab
-import GeometryUtility as GEO
+# import GeometryUtility as GEO
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -37,78 +36,6 @@ from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-
-@mlab.animate(delay=10)
-def updateAnimation(landerObjs, path, landMeshs, surfObjs, other, surfMeshs):
-    while True:
-        for X1, X2 in zip(path, other):
-            meshind = 0
-            for ii in range(len(landerObjs)):
-                for face in landerObjs[ii]['facePoints']:
-                    x = []
-                    y = []
-                    z = []
-                    for vertex in face:
-                        transVertex = (RigidBodyKinematics.MRP2C(-X1[6:9]) @ landerObjs[ii]['vertices'][vertex]) + X1[0:3]
-                        x.append(transVertex[0])
-                        y.append(transVertex[1])
-                        z.append(transVertex[2])
-                    landMeshs[meshind].mlab_source.set(x=[x.copy(), x[::-1]], y=[y.copy(), y[::-1]], z=[z.copy(), z[::-1]])
-                    meshind += 1
-            meshind = 0
-            for ii in range(len(surfObjs)):
-                for face in surfObjs[ii]['facePoints']:
-                    x = []
-                    y = []
-                    z = []
-                    for vertex in face:
-                        transVertex = (RigidBodyKinematics.MRP2C(-X2[6:9]) @ surfObjs[ii]['vertices'][vertex]) + X2[
-                                                                                                                   0:3]
-                        x.append(transVertex[0])
-                        y.append(transVertex[1])
-                        z.append(transVertex[2])
-                    surfMeshs[meshind].mlab_source.set(x=[x.copy(), x[::-1]], y=[y.copy(), y[::-1]],
-                                                       z=[z.copy(), z[::-1]])
-                    meshind += 1
-            yield
-
-def PlotMotionPath(landGeo, surfGeo, path, other):
-
-    mlab.figure()
-    surfMeshs = []
-    for obj in surfGeo.allObjs:
-        verts = []
-        for face in obj['facePoints']:
-            x = []
-            y = []
-            z = []
-            for vertex in face:
-                x.append(obj['vertices'][vertex][0])
-                y.append(obj['vertices'][vertex][1])
-                z.append(obj['vertices'][vertex][2])
-            surfMeshs.append(mlab.mesh([x.copy(), x[::-1]], [y.copy(), y[::-1]], [z.copy(), z[::-1]],
-                      color=(204.0 / 255.0, 204.0 / 255.0, 203.0 / 255.0)))
-
-    landMeshs = []
-    for obj in landGeo.landerObjs:
-        for face in obj['facePoints']:
-            x = []
-            y = []
-            z = []
-            for vertex in face:
-                transVertex = (RigidBodyKinematics.MRP2C(-path[0][6:9]) @ obj['vertices'][vertex]) + path[0][0:3]
-                x.append(transVertex[0])
-                y.append(transVertex[1])
-                z.append(transVertex[2])
-            landMeshs.append(mlab.mesh([x.copy(), x[::-1]], [y.copy(), y[::-1]], [z.copy(), z[::-1]],
-                                       color=(112.0 / 255.0, 224.0 / 255.0, 254.0 / 255.0)))
-
-    # mlab.view(azimuth=200, elevation=45, focalpoint=[20.0, 20.0, 0.0])
-
-    updateAnimation(landGeo.landerObjs, path, landMeshs, surfGeo.allObjs, other, surfMeshs)
-    # updateAnimation(surfGeo.allObjs, other, surfMeshs)
-
-    mlab.show()
 
 def create_vert_data(rN, sigma):
     C = RigidBodyKinematics.MRP2C(-sigma)
@@ -221,82 +148,82 @@ def run():
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "Primary"
     # define the simulation inertia
-    mMainBody = 95.0
-    xDimMainBody = 2.0
-    yDimMainBody = 1.0
-    zDimMainBody = 0.6
-    posMainBody = np.array([0.0, 0.0, 0.2])
-    IMainBody = np.array([[((1. / 12.) * mMainBody * ((yDimMainBody ** 2.) + (zDimMainBody ** 2.))), 0., 0.],
-         [0., ((1. / 12.) * mMainBody * ((xDimMainBody ** 2.) + (zDimMainBody ** 2.))), 0.],
-         [0., 0., ((1. / 12.) * mMainBody * ((xDimMainBody ** 2.) + (yDimMainBody ** 2.)))]]) - mMainBody * np.array(RigidBodyKinematics.v3Tilde(-posMainBody)) @ np.array(
-        RigidBodyKinematics.v3Tilde(-posMainBody)).transpose()
+    # mMainBody = 95.0
+    # xDimMainBody = 2.0
+    # yDimMainBody = 1.0
+    # zDimMainBody = 0.6
+    # posMainBody = np.array([0.0, 0.0, 0.2])
+    # IMainBody = np.array([[((1. / 12.) * mMainBody * ((yDimMainBody ** 2.) + (zDimMainBody ** 2.))), 0., 0.],
+    #      [0., ((1. / 12.) * mMainBody * ((xDimMainBody ** 2.) + (zDimMainBody ** 2.))), 0.],
+    #      [0., 0., ((1. / 12.) * mMainBody * ((xDimMainBody ** 2.) + (yDimMainBody ** 2.)))]]) - mMainBody * np.array(RigidBodyKinematics.v3Tilde(-posMainBody)) @ np.array(
+    #     RigidBodyKinematics.v3Tilde(-posMainBody)).transpose()
+    #
+    # mLeftLeg = 5.0
+    # xLeftLeg = 1.0
+    # yLeftLeg = 0.2
+    # zLeftLeg = 0.2
+    # posLeftLeg = np.array([1.0, 0, -0.3])
+    # dcmLeftLeg = RigidBodyKinematics.Mi(np.deg2rad(45.), 2)
+    # ILeftLeg = dcmLeftLeg @ np.array([[((1. / 12.) * mLeftLeg * ((yLeftLeg ** 2.) + (zLeftLeg ** 2.))), 0., 0.],
+    #      [0., ((1. / 12.) * mLeftLeg * ((xLeftLeg ** 2.) + (zLeftLeg ** 2.))), 0.],
+    #      [0., 0., ((1. / 12.) * mLeftLeg * ((xLeftLeg ** 2.) + (yLeftLeg ** 2.)))]]) @ dcmLeftLeg.transpose() \
+    #            + mLeftLeg * np.array(RigidBodyKinematics.v3Tilde(-posLeftLeg)) @ np.array(
+    #     RigidBodyKinematics.v3Tilde(-posLeftLeg)).transpose()
+    #
+    # mRightLeg = 5.0
+    # xRightLeg = 1.0
+    # yRightLeg = 0.2
+    # zRightLeg = 0.2
+    # posRightLeg = np.array([-1.0, 0, -0.3])
+    # dcmRightLeg = RigidBodyKinematics.Mi(np.deg2rad(-45.), 2)
+    # IRightLeg = dcmRightLeg @ np.array([[((1. / 12.) * mRightLeg * ((yRightLeg ** 2.) + (zRightLeg ** 2.))), 0., 0.],
+    #                                   [0., ((1. / 12.) * mRightLeg * ((xRightLeg ** 2.) + (zRightLeg ** 2.))), 0.],
+    #                                   [0., 0., ((1. / 12.) * mRightLeg * (
+    #                                               (xRightLeg ** 2.) + (yRightLeg ** 2.)))]]) @ dcmRightLeg.transpose() \
+    #            + mRightLeg * np.array(RigidBodyKinematics.v3Tilde(-posRightLeg)) @ np.array(
+    #     RigidBodyKinematics.v3Tilde(-posRightLeg)).transpose()
+    #
+    # mLeftFoot = 10.0
+    # xLeftFoot = 1.0
+    # yLeftFoot = 1.4
+    # zLeftFoot = 0.4
+    # posLeftFoot = np.array([1.5, 0, -0.8])
+    # ILeftFoot = np.array([[((1. / 12.) * mLeftFoot * ((yLeftFoot ** 2.) + (zLeftFoot ** 2.))), 0., 0.],
+    #                                     [0., ((1. / 12.) * mLeftFoot * ((xLeftFoot ** 2.) + (zLeftFoot ** 2.))), 0.],
+    #                                     [0., 0., ((1. / 12.) * mLeftFoot * (
+    #                                             (xLeftFoot ** 2.) + (yLeftFoot ** 2.)))]]) \
+    #             + mLeftFoot * np.array(RigidBodyKinematics.v3Tilde(-posLeftFoot)) @ np.array(
+    #     RigidBodyKinematics.v3Tilde(-posLeftFoot)).transpose()
+    #
+    # mRightFoot = 10.0
+    # xRightFoot = 1.0
+    # yRightFoot = 1.4
+    # zRightFoot = 0.4
+    # posRightFoot = np.array([-1.5, 0, -0.8])
+    # IRightFoot = np.array([[((1. / 12.) * mRightFoot * ((yRightFoot ** 2.) + (zRightFoot ** 2.))), 0., 0.],
+    #                       [0., ((1. / 12.) * mRightFoot * ((xRightFoot ** 2.) + (zRightFoot ** 2.))), 0.],
+    #                       [0., 0., ((1. / 12.) * mRightFoot * (
+    #                               (xRightFoot ** 2.) + (yRightFoot ** 2.)))]]) \
+    #             + mRightFoot * np.array(RigidBodyKinematics.v3Tilde(-posRightFoot)) @ np.array(
+    #     RigidBodyKinematics.v3Tilde(-posRightFoot)).transpose()
+    #
+    # CoMLander = (mMainBody * posMainBody + mLeftLeg * posLeftLeg + mRightLeg * posRightLeg + mLeftFoot * posLeftFoot + mRightFoot * posRightFoot) / (
+    #     mMainBody + mRightFoot + mLeftFoot + mLeftLeg + mRightLeg)
 
-    mLeftLeg = 5.0
-    xLeftLeg = 1.0
-    yLeftLeg = 0.2
-    zLeftLeg = 0.2
-    posLeftLeg = np.array([1.0, 0, -0.3])
-    dcmLeftLeg = RigidBodyKinematics.Mi(np.deg2rad(45.), 2)
-    ILeftLeg = dcmLeftLeg @ np.array([[((1. / 12.) * mLeftLeg * ((yLeftLeg ** 2.) + (zLeftLeg ** 2.))), 0., 0.],
-         [0., ((1. / 12.) * mLeftLeg * ((xLeftLeg ** 2.) + (zLeftLeg ** 2.))), 0.],
-         [0., 0., ((1. / 12.) * mLeftLeg * ((xLeftLeg ** 2.) + (yLeftLeg ** 2.)))]]) @ dcmLeftLeg.transpose() \
-               + mLeftLeg * np.array(RigidBodyKinematics.v3Tilde(-posLeftLeg)) @ np.array(
-        RigidBodyKinematics.v3Tilde(-posLeftLeg)).transpose()
-
-    mRightLeg = 5.0
-    xRightLeg = 1.0
-    yRightLeg = 0.2
-    zRightLeg = 0.2
-    posRightLeg = np.array([-1.0, 0, -0.3])
-    dcmRightLeg = RigidBodyKinematics.Mi(np.deg2rad(-45.), 2)
-    IRightLeg = dcmRightLeg @ np.array([[((1. / 12.) * mRightLeg * ((yRightLeg ** 2.) + (zRightLeg ** 2.))), 0., 0.],
-                                      [0., ((1. / 12.) * mRightLeg * ((xRightLeg ** 2.) + (zRightLeg ** 2.))), 0.],
-                                      [0., 0., ((1. / 12.) * mRightLeg * (
-                                                  (xRightLeg ** 2.) + (yRightLeg ** 2.)))]]) @ dcmRightLeg.transpose() \
-               + mRightLeg * np.array(RigidBodyKinematics.v3Tilde(-posRightLeg)) @ np.array(
-        RigidBodyKinematics.v3Tilde(-posRightLeg)).transpose()
-
-    mLeftFoot = 10.0
-    xLeftFoot = 1.0
-    yLeftFoot = 1.4
-    zLeftFoot = 0.4
-    posLeftFoot = np.array([1.5, 0, -0.8])
-    ILeftFoot = np.array([[((1. / 12.) * mLeftFoot * ((yLeftFoot ** 2.) + (zLeftFoot ** 2.))), 0., 0.],
-                                        [0., ((1. / 12.) * mLeftFoot * ((xLeftFoot ** 2.) + (zLeftFoot ** 2.))), 0.],
-                                        [0., 0., ((1. / 12.) * mLeftFoot * (
-                                                (xLeftFoot ** 2.) + (yLeftFoot ** 2.)))]]) \
-                + mLeftFoot * np.array(RigidBodyKinematics.v3Tilde(-posLeftFoot)) @ np.array(
-        RigidBodyKinematics.v3Tilde(-posLeftFoot)).transpose()
-
-    mRightFoot = 10.0
-    xRightFoot = 1.0
-    yRightFoot = 1.4
-    zRightFoot = 0.4
-    posRightFoot = np.array([-1.5, 0, -0.8])
-    IRightFoot = np.array([[((1. / 12.) * mRightFoot * ((yRightFoot ** 2.) + (zRightFoot ** 2.))), 0., 0.],
-                          [0., ((1. / 12.) * mRightFoot * ((xRightFoot ** 2.) + (zRightFoot ** 2.))), 0.],
-                          [0., 0., ((1. / 12.) * mRightFoot * (
-                                  (xRightFoot ** 2.) + (yRightFoot ** 2.)))]]) \
-                + mRightFoot * np.array(RigidBodyKinematics.v3Tilde(-posRightFoot)) @ np.array(
-        RigidBodyKinematics.v3Tilde(-posRightFoot)).transpose()
-
-    CoMLander = (mMainBody * posMainBody + mLeftLeg * posLeftLeg + mRightLeg * posRightLeg + mLeftFoot * posLeftFoot + mRightFoot * posRightFoot) / (
-        mMainBody + mRightFoot + mLeftFoot + mLeftLeg + mRightLeg)
-
-    # scObject.hub.mHub = 5.0  # kg - spacecraft mass
-    # I = [((1./6.)*scObject.hub.mHub*4.), 0., 0.,
-    #      0., ((1./6.)*scObject.hub.mHub*4.), 0.,
-    #      0., 0., ((1./6.)*scObject.hub.mHub*4.)]
+    scObject.hub.mHub = 5.0  # kg - spacecraft mass
+    I = [((1./6.)*scObject.hub.mHub*4.), 0., 0.,
+         0., ((1./6.)*scObject.hub.mHub*4.), 0.,
+         0., 0., ((1./6.)*scObject.hub.mHub*4.)]
 
     # I = [((1. / 6.) * scObject.hub.mHub * 9.), 0., 0.,
     #      0., ((1. / 6.) * scObject.hub.mHub * 9.), 0.,
     #      0., 0., ((1. / 6.) * scObject.hub.mHub * 9.)]
 
-    IAll = IMainBody + ILeftFoot + ILeftLeg + IRightFoot + IRightLeg
-    I = [IAll[0, 0], IAll[0, 1], IAll[0, 2],
-         IAll[1, 0], IAll[1, 1], IAll[1, 2],
-         IAll[2, 0], IAll[2, 1], IAll[2, 2]]
-    scObject.hub.mHub = mMainBody + mRightLeg + mLeftLeg + mLeftFoot + mRightFoot
+    # IAll = IMainBody + ILeftFoot + ILeftLeg + IRightFoot + IRightLeg
+    # I = [IAll[0, 0], IAll[0, 1], IAll[0, 2],
+    #      IAll[1, 0], IAll[1, 1], IAll[1, 2],
+    #      IAll[2, 0], IAll[2, 1], IAll[2, 2]]
+    # scObject.hub.mHub = mMainBody + mRightLeg + mLeftLeg + mLeftFoot + mRightFoot
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
 
@@ -304,12 +231,10 @@ def run():
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
     scContact = RigidBodyContactEffector.RigidBodyContactEffector()
-    # scContact.LoadMainBody("cube2.obj")
-    scContact.LoadMainBody("Lander.obj")
-    scContact.mainBody.modelTag = scObject.ModelTag
-    scContact.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    scContact.scMassStateInMsg.subscribeTo(scObject.scMassOutMsg)
-    scContact.mainBody.boundingRadius = 3.5
+    scContact.LoadSpacecraftBody("cube2.obj", scObject.ModelTag, scObject.scStateOutMsg, scObject.scMassOutMsg, 1.5, 1.0, 0.0)
+    # scContact.LoadMainBody("Lander.obj")
+    # scContact.mainBody.modelTag = scObject.ModelTag
+    # scContact.mainBody.boundingRadius = 3.5
     # scContact.mainBody.boundingRadius = 1.5
     scContact.maxPosError = 0.001
     scContact.simTimeStep = 0.01
@@ -324,17 +249,19 @@ def run():
     stObMsg = messaging.SpicePlanetStateMsg().write(staticObjectMsg)
 
 
-    # scContact.AddOtherBody("cube2.obj", stObMsg, 0.0, 1.0, 1.0)
-    scContact.AddOtherBody("surface.obj", stObMsg, 5.0, 1.0, 1.0)
+    scContact.AddSpiceBody("cube2.obj", stObMsg, 0.0, 1.0, 1.0)
+    # scContact.AddOtherBody("surface.obj", stObMsg, 5.0, 1.0, 1.0)
     # scContact.externalBodies[0].states.r_BN_N = [[3.5], [2.0], [2.0]]  # m   - r_CN_N
     # scContact.externalBodies[0].states.v_BN_N = [[0.0], [0.0], [0.0]]  # m/s - v_CN_N
     # scContact.externalBodies[0].states.sigma_BN = [[0.0], [0.0], [0.0]]  # sigma_CN_B
     # scContact.externalBodies[0].states.omega_BN_B = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
     # scContact.externalBodies[0].states.c_B = [[0.0], [0.0], [0.0]]
-    # I2 = [((1. / 6.) * 2000. * 4.), 0., 0.,
-    #       0., ((1. / 6.) * 2000. * 4.), 0.,
-    #       0., 0, ((1. / 6.) * 2000. * 4.)]
-    # scContact.externalBodies[0].states.ISCPntB_B = unitTestSupport.np2EigenMatrix3d(I2)
+    I2 = np.array([[((1. / 6.) * 2000. * 4.), 0., 0.],
+          [0., ((1. / 6.) * 2000. * 4.), 0.],
+          [0., 0, ((1. / 6.) * 2000. * 4.)]])
+    scContact.Bodies[1].states.m_SC = 2000.
+    scContact.Bodies[1].states.ISCPntB_B = unitTestSupport.np2EigenMatrix3d(I2)
+    scContact.Bodies[1].states.ISCPntB_B_inv = unitTestSupport.np2EigenMatrix3d(np.invert(I2))
 
     scObject.addDynamicEffector(scContact)
     scSim.AddModelToTask(simTaskName, scContact)
@@ -437,54 +364,53 @@ def run():
         totalKinetic.append( np.sqrt(kineticData1[ii]))
         relVel.append(np.linalg.norm(vNData1[ii, :]) - np.linalg.norm(vNData2[ii, :]))
 
-    surfaceGeo = GEO.SurfaceGeometry(["surface.obj"], [1.0])
-    landerGeo = GEO.LanderGeometry("Lander.obj", 1.0)
+    # surfaceGeo = GEO.SurfaceGeometry(["surface.obj"], [1.0])
+    # landerGeo = GEO.LanderGeometry("Lander.obj", 1.0)
     # surfaceGeo = GEO.SurfaceGeometry(["cube2.obj"], [1.0])
     # landerGeo = GEO.LanderGeometry("cube2.obj", 1.0)
-    PlotMotionPath(landerGeo, surfaceGeo, mainPath, otherPath)
 
 
-    # fig1 = plt.figure(figsize=(5, 5))
-    # fig1.set_tight_layout(False)
-    # ax1 = p3.Axes3D(fig1)
-    #
-    # ax1.set_xlim3d([0.0, 7.0])
-    # ax1.set_xlabel('X')
-    #
-    # ax1.set_ylim3d([0.0, 7.0])
-    # ax1.set_ylabel('Y')
-    #
-    # ax1.set_zlim3d([0.0, 7.0])
-    # ax1.set_zlabel('Z')
-    #
-    #
-    #
-    # cube1 = []
-    # cube2 = []
-    # for ii in range(rNData1.shape[0]):
-    #     cube1.append(create_vert_data(rNData1[ii, :], sigmaData1[ii, :]))
-    #     cube2.append(create_vert_data(rNData2[ii, :], sigmaData2[ii, :]))
-    #
-    # #shapes = [ax1.add_collection3d(Poly3DCollection(cube1[0][ii])) for ii in range(12)]
-    # #shapes.extend([ax1.add_collection3d(Poly3DCollection(cube2[0][ii])) for ii in range(12)])
-    #
-    # shapes = [Poly3DCollection(cube1[0][ii]) for ii in range(12)]
-    # shapes.extend([Poly3DCollection(cube2[0][ii]) for ii in range(12)])
-    #
-    # for shape in shapes:
-    #     ax1.add_collection3d(shape)
-    #
-    #
-    # polys = []
-    # for col in ax1.collections:
-    #     polys.append(col)
-    #
-    #
-    # animat = animation.FuncAnimation(fig1, update_shapes, rNData1.shape[0], fargs=(cube1, cube2, polys),
-    #                                  interval=60, blit=False)
-    #
-    #
-    # plt.show()
+    fig1 = plt.figure(figsize=(5, 5))
+    fig1.set_tight_layout(False)
+    ax1 = p3.Axes3D(fig1)
+
+    ax1.set_xlim3d([0.0, 7.0])
+    ax1.set_xlabel('X')
+
+    ax1.set_ylim3d([0.0, 7.0])
+    ax1.set_ylabel('Y')
+
+    ax1.set_zlim3d([0.0, 7.0])
+    ax1.set_zlabel('Z')
+
+
+
+    cube1 = []
+    cube2 = []
+    for ii in range(rNData1.shape[0]):
+        cube1.append(create_vert_data(rNData1[ii, :], sigmaData1[ii, :]))
+        cube2.append(create_vert_data(rNData2[ii, :], sigmaData2[ii, :]))
+
+    #shapes = [ax1.add_collection3d(Poly3DCollection(cube1[0][ii])) for ii in range(12)]
+    #shapes.extend([ax1.add_collection3d(Poly3DCollection(cube2[0][ii])) for ii in range(12)])
+
+    shapes = [Poly3DCollection(cube1[0][ii]) for ii in range(12)]
+    shapes.extend([Poly3DCollection(cube2[0][ii]) for ii in range(12)])
+
+    for shape in shapes:
+        ax1.add_collection3d(shape)
+
+
+    polys = []
+    for col in ax1.collections:
+        polys.append(col)
+
+
+    animat = animation.FuncAnimation(fig1, update_shapes, rNData1.shape[0], fargs=(cube1, cube2, polys),
+                                     interval=60, blit=False)
+
+
+    plt.show()
 
     
 

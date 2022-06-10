@@ -32,6 +32,7 @@ RigidBodyContactEffector::RigidBodyContactEffector()
     this->isOverlap = false;
     this->mainBody.boundingRadius = 0.0;
     this->mainBody.collisionPoints.clear();
+    this->currentBodyInCycle = 0;
     return;
 }
 
@@ -48,6 +49,7 @@ void RigidBodyContactEffector::Reset()
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
+    this->currentBodyInCycle = 0;
     
 }
 
@@ -55,13 +57,15 @@ void RigidBodyContactEffector::Reset()
 @return void
 @param objFile The .obj file associated with the primary body
  */
-void RigidBodyContactEffector::LoadSpacecraftBody(const char *objFile, std::string modelTag, double boundingRadius, double coefRestitution, double coefFriction)
+void RigidBodyContactEffector::LoadSpacecraftBody(const char *objFile, std::string modelTag, Message<SCStatesMsgPayload> *scStateMsg, Message<SCMassPropsMsgPayload> *scMassStateMsg, double boundingRadius, double coefRestitution, double coefFriction)
 {
     geometry body;
     body.boundingRadius = boundingRadius;
     body.coefRestitution = coefRestitution;
     body.coefFriction = coefFriction;
     body.modelTag = modelTag;
+    body.scStateInMsg = scStateMsg->addSubscriber();
+    body.scMassStateInMsg = scMassStateMsg->addSubscriber();
     body.isSpice = false;
     
     std::vector<tinyobj::material_t> materials;
@@ -158,10 +162,10 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
     double maxY;
     double maxZ;
     
-    for (int shapeIt=0; shapeIt<shapes.size(); ++shapeIt)
+    for (int shapeIt=0; shapeIt<shapes.size(); shapeIt++)
     {
         indexOffset = 0;
-        for (int faceIt=0; faceIt<shapes[shapeIt].mesh.num_face_vertices.size(); ++faceIt)
+        for (int faceIt=0; faceIt<shapes[shapeIt].mesh.num_face_vertices.size(); faceIt++)
         {
             tempTriangle.clear();
             v1 =  vertices[shapes[shapeIt].mesh.indices[indexOffset+1].vertex_index] - vertices[shapes[shapeIt].mesh.indices[indexOffset+0].vertex_index];
@@ -175,7 +179,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
             maxX = 0;
             maxY = 0;
             maxZ = 0;
-            for (int ii=0; ii < 3; ++ii)
+            for (int ii=0; ii < 3; ii++)
             {
                 v1 = vertices[tempTriangle[ii]] - centroid;
                 if (abs(v1[0]) > maxX)
@@ -209,39 +213,50 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
         
     }
     
-    for ( int ii=0; ii<allConnections.size(); ++ii)
+    for ( int ii=0; ii<allConnections.size(); ii++)
     {
         if (std::find(allConnections[ii].begin(), allConnections[ii].end(), -1) != allConnections[ii].end())
         {
-            for ( int jj=1; jj<unconnectedFaces.size(); ++jj)
+            for ( int jj=0; jj<unconnectedFaces.size(); jj++)
             {
-                for ( int kk=0; kk<3; ++kk)
+                if (unconnectedFaces[jj] == ii)
                 {
-                    for ( int gg=0; gg<3; ++gg)
+                    continue;
+                }
+                for ( int kk=0; kk<3; kk++)
+                {
+                    for ( int gg=0; gg<3; gg++)
                     {
-                        if (allFaces[ii][kk] == allFaces[unconnectedFaces[jj]][gg])
+                        for ( int ww=2; ww>=0; ww--)
                         {
-                            *std::find(allConnections[ii].begin(), allConnections[ii].end(), -1) = unconnectedFaces[jj];
-                            *std::find(allConnections[unconnectedFaces[jj]].begin(), allConnections[unconnectedFaces[jj]].end(), -1) = ii;
-                            goto endloop;
+                            for ( int pp=2; pp>=0; pp--)
+                            {
+                                if ((ww != kk) && (gg != pp) && (allFaces[ii][kk] == allFaces[unconnectedFaces[jj]][gg]) && (allFaces[ii][ww] == allFaces[unconnectedFaces[jj]][pp]))
+                                {
+                                    *std::find(allConnections[ii].begin(), allConnections[ii].end(), -1) = unconnectedFaces[jj];
+                                    *std::find(allConnections[unconnectedFaces[jj]].begin(), allConnections[unconnectedFaces[jj]].end(), -1) = ii;
+                                    goto endloop;
+                                }
+                            }
                         }
                     }
                 }
                 endloop:
-                if (std::find(allConnections[ii].begin(), allConnections[ii].end(), -1) != allConnections[ii].end())
+                if (std::find(allConnections[ii].begin(), allConnections[ii].end(), -1) == allConnections[ii].end())
                 {
                     break;
                 }
             }
             
-            for ( int jj=0; jj<3; ++jj)
+            
+            for ( int jj=0; jj<3; jj++)
             {
-                if (std::find(allConnections[allConnections[ii][jj]].begin(), allConnections[allConnections[ii][jj]].end(), -1) == allConnections[allConnections[ii][jj]].end())
+                if (std::find(allConnections.at(allConnections[ii][jj]).begin(), allConnections.at(allConnections[ii][jj]).end(), -1) == allConnections.at(allConnections[ii][jj]).end())
                 {
-                    unconnectedFaces.erase(std::find(unconnectedFaces.begin(), unconnectedFaces.end(),allConnections[ii][jj]));
+                    unconnectedFaces.erase(std::remove(unconnectedFaces.begin(), unconnectedFaces.end(), allConnections[ii][jj]), unconnectedFaces.end());
                 }
             }
-            unconnectedFaces.erase(std::find(unconnectedFaces.begin(), unconnectedFaces.end(), ii));
+            unconnectedFaces.erase(std::remove(unconnectedFaces.begin(), unconnectedFaces.end(), ii), unconnectedFaces.end());
         }
     }
     
@@ -312,7 +327,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
             {
                 verticesInGroup.push_back(vertices[allFaces[adjacentFacesToGroup[faceCounter]][ii]]);
             }
-            ungroupedFaces.erase(std::find(ungroupedFaces.begin(), ungroupedFaces.end(), adjacentFacesToGroup[faceCounter]));
+            ungroupedFaces.erase(std::remove(ungroupedFaces.begin(), ungroupedFaces.end(), adjacentFacesToGroup[faceCounter]), ungroupedFaces.end());
             
             if (ungroupedFaces.empty())
             {
@@ -434,15 +449,22 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
 /*! This method allows the RB Contact state effector to have access to the hub states and gravity*/
 void RigidBodyContactEffector::linkInStates(DynParamManager& statesIn)
 {
-    this->mainBody.hubState.hubPosition = statesIn.getStateObject("hubPosition");
-    this->mainBody.hubState.hubSigma = statesIn.getStateObject("hubSigma");
-    this->mainBody.hubState.hubOmega_BN_N = statesIn.getStateObject("hubOmega");
-    this->mainBody.hubState.hubVelocity = statesIn.getStateObject("hubVelocity");
-    this->mainBody.hubState.r_BN_N = statesIn.getPropertyReference( "r_BN_N");
-    this->mainBody.hubState.v_BN_N = statesIn.getPropertyReference( "v_BN_N");
-    this->mainBody.hubState.m_SC = statesIn.getPropertyReference( "m_SC");
-    this->mainBody.hubState.ISCPntB_B = statesIn.getPropertyReference( "inertiaSC");
-    this->mainBody.hubState.c_B = statesIn.getPropertyReference( "centerOfMassSC");
+//    while (this->Bodies[this->currentBodyInCycle].isSpice)
+//    {
+//        this->currentBodyInCycle++;
+//    }
+//
+//    this->Bodies[this->currentBodyInCycle].hubState.hubPosition = statesIn.getStateObject("hubPosition");
+//    this->Bodies[this->currentBodyInCycle].hubState.hubSigma = statesIn.getStateObject("hubSigma");
+//    this->Bodies[this->currentBodyInCycle].hubState.hubOmega_BN_N = statesIn.getStateObject("hubOmega");
+//    this->Bodies[this->currentBodyInCycle].hubState.hubVelocity = statesIn.getStateObject("hubVelocity");
+//    this->Bodies[this->currentBodyInCycle].hubState.r_BN_N = statesIn.getPropertyReference( "r_BN_N");
+//    this->Bodies[this->currentBodyInCycle].hubState.v_BN_N = statesIn.getPropertyReference( "v_BN_N");
+//    this->Bodies[this->currentBodyInCycle].hubState.m_SC = statesIn.getPropertyReference( "m_SC");
+//    this->Bodies[this->currentBodyInCycle].hubState.ISCPntB_B = statesIn.getPropertyReference( "inertiaSC");
+//    this->Bodies[this->currentBodyInCycle].hubState.c_B = statesIn.getPropertyReference( "centerOfMassSC");
+//
+//    this->currentBodyInCycle++;
 }
 
 /*! This method computes the Forces on Torque on the Spacecraft Body.
@@ -450,7 +472,7 @@ void RigidBodyContactEffector::linkInStates(DynParamManager& statesIn)
 @param integTime Integration time
 @ToDo Distribute the mass at each contact point
 */
-void RigidBodyContactEffector::computeForceTorque(double currentTime, double timeStep, std::string modelTag)
+void RigidBodyContactEffector::computeForceTorque(double currentTime, double timeStep)
 {
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
@@ -689,10 +711,10 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                         
                         if (intersectFlag == 0)
                         {
-                            impacts.push_back(std::make_tuple(contactPoint, contactPoint2, ((contactPoint - contactPoint2) * 1e6).normalized));
+                            impacts.push_back(std::make_tuple(contactPoint, contactPoint2, ((contactPoint - contactPoint2) * 1e6).normalized()));
                         }else if (intersectFlag == 1)
                         {
-                            impacts.push_back(std::make_tuple(contactPoint, contactPoint2, (eigenTilde(faceLegInterval1.lower) * faceLegInterval2.lower).normalized));
+                            impacts.push_back(std::make_tuple(contactPoint, contactPoint2, (eigenTilde(faceLegInterval1.lower) * faceLegInterval2.lower).normalized()));
                         }
                     }
                 }
@@ -788,7 +810,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         for (int impNum=0; impNum < numImpacts; impNum++)
         {
             // Velocity of the contact point on body 1 relative to the contact point on body 2, in the local contact frame
-            X_c.segment(impNum * 3, 3) = dcm_CN[impNum] * ((body1Current.v_BN_N + body1Current.dcm_NB * (body1Current.omegaTilde_BN_B * (body1Current.dcm_BN * std::get<0>(impacts[impNum])))) - (body2Current.v_BN_N + body2Current.dcm_NB * (body2Current.omegaTile_BN_B * (body2Current.dcm_BN * std::get<1>(impacts[impNum])))));
+            X_c.segment(impNum * 3, 3) = dcm_CN[impNum] * ((body1Current.v_BN_N + body1Current.dcm_NB * (body1Current.omegaTilde_BN_B * (body1Current.dcm_BN * std::get<0>(impacts[impNum])))) - (body2Current.v_BN_N + body2Current.dcm_NB * (body2Current.omegaTilde_BN_B * (body2Current.dcm_BN * std::get<1>(impacts[impNum])))));
             
             // Add initial perturbation to energy states for numerical robustness
             if (X_c(impNum * 3) < 0)
@@ -996,11 +1018,6 @@ void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
     this->CheckBoundingBox();
     this->isOverlap = false;
     
-//    for ( std::vector<int>::iterator bodyIt = this->closeBodies.begin(); bodyIt != this->closeBodies.end(); ++bodyIt){
-//        this->isOverlap = this->Overlap(this->Bodies[*bodyIt], *bodyIt);
-//    }
-    this->CalcCollisionProps();
-    
     return;
 }
 
@@ -1052,7 +1069,7 @@ void RigidBodyContactEffector::ExtractFromBuffer()
             this->Bodies[bodyIt].states.c_B = cArray2EigenVector3d(this->Bodies[bodyIt].massStateInBuffer.c_B);
             this->Bodies[bodyIt].states.omega_BN_B = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.omega_BN_B);
             this->Bodies[bodyIt].states.omegaDot_BN_B = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.omegaDot_BN_B);
-            this->Bodies[bodyIt].states.ISCPntB_B = cArray2EigenMatrix3d(this->Bodies[bodyIt].massStateInBuffer.ISC_PntB_B);
+            this->Bodies[bodyIt].states.ISCPntB_B = cArray2EigenMatrix3d(*this->Bodies[bodyIt].massStateInBuffer.ISC_PntB_B);
             this->Bodies[bodyIt].states.ISCPntB_B_inv = this->Bodies[bodyIt].states.ISCPntB_B.inverse();
             this->Bodies[bodyIt].states.sigma_BN = cArray2EigenVector3d(this->Bodies[bodyIt].stateInBuffer.sigma_BN);
             this->Bodies[bodyIt].states.dcm_NB = this->Bodies[bodyIt].states.sigma_BN.toRotationMatrix();
