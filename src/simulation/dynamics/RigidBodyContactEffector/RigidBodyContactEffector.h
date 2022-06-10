@@ -188,10 +188,10 @@ public:
     ~RigidBodyContactEffector();
     
     void Reset();
-    void LoadSpacecraftBody(const char *objFile, std::string modelTag, double boundingRadius, double coefRestitution, double coefFriction);
+    void LoadSpacecraftBody(const char *objFile, std::string modelTag, Message<SCStatesMsgPayload> *scStateMsg, Message<SCMassPropsMsgPayload> *scMassStateMsg, double boundingRadius, double coefRestitution, double coefFriction);
     void AddSpiceBody(const char *objFile, Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double boundingRadius, double coefRestitution, double coefFriction);
     void linkInStates(DynParamManager& states);
-    void computeForceTorque(double currentTime, double timeStep, std::string modelTag);
+    void computeForceTorque(double currentTime, double timeStep);
     void computeStateContribution(double integTime);
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadInputs();
@@ -203,7 +203,7 @@ public:
 private:
     double currentSimSeconds;
     std::vector<std::vector<int>> closeBodies;               //!< -- Indicies of all external bodies that the main body is within the bounding sphere of
-    
+    int currentBodyInCycle;
     
 public:
     geometry mainBody;
@@ -225,7 +225,6 @@ public:
     
 private:
     Eigen::VectorXd CollisionStateDerivative(Eigen::VectorXd X_c, std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts, std::vector<double> f_vals, std::vector<double> phi_vals, Eigen::MatrixXd M_tot, double coefRes, double coefFric);
-    void CalcCollisionProps();
     bool SeparatingPlane(vectorInterval displacementInterval, vectorInterval candidateInterval, indivBoundingBox box1, indivBoundingBox box2);
     bool IsMinkowskiFace(Eigen::Vector3d edgeA, Eigen::Vector3d edgeB, Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d c, Eigen::Vector3d d);
     std::vector<halfEdge> ComputeHalfEdge(std::vector<Eigen::Vector3d> vertices, std::vector<tinyobj::shape_t> shapes);
