@@ -85,6 +85,11 @@ ul.simple li p, aside.sidebar ul li p {
 	margin: 0px;
 }
 
+ul.simple ul li {
+	list-style-type: circle;
+	margin-left: 1.5em;
+}
+
 ul.simple, aside.sidebar ul {
 	all: revert;
 	padding-left: 1.5em;
