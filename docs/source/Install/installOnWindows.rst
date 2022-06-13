@@ -13,7 +13,8 @@ Software setup
 
 In order to run Basilisk, the following software will be necessary:
 
--  `Cmake <https://cmake.org/>`__ 3.14 or higher
+-  `Cmake <https://cmake.org/>`__ 3.14 or higher.  Make sure you can execute this
+   program from the command line
 -  `Python <https://www.python.org/downloads/windows/>`__ 3.7.x
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
 -  Visual Studios 15 or Greater
@@ -53,6 +54,7 @@ Add SWIG and Basilisk paths into environment variables using the following steps
   - Under the User Variables panel, Select Path, and Click Edit
 
     - Add the ``swig.exe`` directory to your path
+    - add the path to ``CMake\bin``, such as ``C:\Program Files\CMake\bin``
     - Add the Basilisk library directory (``path2bsk/dist3/Basilisk``) to your path. Here, ``path2bsk`` is replaced with the actual path to the Basilisk folder.
 
 For more information on how to configure the path Variable on Windows see this
