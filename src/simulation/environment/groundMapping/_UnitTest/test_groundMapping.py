@@ -83,7 +83,6 @@ def groundMappingTestFunction():
     # Setup the logging for the mapping locations
     mapLog = []
     for idx in range(0, 2):
-        print(groundMap.accessOutMsgs)
         mapLog.append(groundMap.accessOutMsgs[idx].recorder())
         unitTestSim.AddModelToTask(unitTaskName, mapLog[idx])
 

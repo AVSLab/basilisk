@@ -429,5 +429,6 @@ def run(show_plots, useCentral):
 #
 if __name__ == "__main__":
     run(
-        True  # show_plots
+        True,  # show_plots
+        True
     )
