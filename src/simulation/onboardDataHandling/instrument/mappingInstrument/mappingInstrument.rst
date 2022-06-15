@@ -1,6 +1,13 @@
 Executive Summary
 -----------------
-This module receives a vector of accessMsgPayloads and outputs a vector of DataNodeUsageMsgPayloads for each accessible point.
+This module receives a vector of accessMsgPayloads and outputs a vector of DataNodeUsageMsgPayloads for each accessible
+point. This module is meant to keep track of which points have been imaged, and which have not, passing the output messages
+to a ``partitionedStorageUnit`` module.
+
+Module Assumptions and Limitations
+----------------------------------
+This module assumes a single baudRate for all mapping points. This module provides a zero baudRate for points that
+are not accessible.
 
 Message Connection Descriptions
 -------------------------------
@@ -16,4 +23,40 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
+    * - accessInMsgs
+      - :ref:`AccessMsgPayload`
+      - vector of ground location input access messages
+    * - dataNodeOutMsgs
+      - :ref:`DataNodeUsageMsgPayload`
+      - vector of data node output messages
 
+User Guide
+----------
+To use this module, the user must first instantiate the module
+
+.. code-block:: python
+
+    mapInstrument = mappingInstrument.mappingInstrument()
+    mapInstrument.ModelTag = "mapInstrument"
+
+The user must then set the baudRate, in bits/second, within the module.
+
+.. code-block:: python
+
+    mapInstrument.baudRate = 1
+
+The mapping points and names should then be added to the module one at a time. The access message is the ``accessMsg``
+associated with the point. The ``pointName`` is the name of the point.
+
+.. code-block:: python
+
+    mapInstrument.addMappingPoint(accessMsg, pointName)
+
+Finally, logs for every mapping point can be created as follows. In this example, N = 1:
+
+.. code-block:: python
+
+    dataLogs = []
+    for idx in range(0, N):
+        dataLogs.append(mapInstrument.dataNodeOutMsgs[idx].recorder())
+        scSim.AddModelToTask(simTaskName, dataLogs[idx])

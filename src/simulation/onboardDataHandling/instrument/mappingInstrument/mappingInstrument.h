@@ -21,26 +21,36 @@
 #ifndef MAPPINGINSTRUMENT_H
 #define MAPPINGINSTRUMENT_H
 
-#include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
+#include <Eigen/Dense>
+#include <vector>
+#include <string>
+
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefC/AccessMsgPayload.h"
+#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+#include "architecture/messaging/messaging.h"
 
 /*! @brief This module receives a vector of accessMsgPayloads and outputs a vector of DataNodeUsageMsgPayloads for each accessible point.
  */
-class MappingInstrument: public DataNodeBase {
+class MappingInstrument: public SysModel {
 public:
     MappingInstrument();
     ~MappingInstrument();
 
-public:
-    std::vector<Message<DataNodeUsageMsgPayload>*> dataNodeOutMsgs;    //!< vector of ground location output message
-    std::vector<ReadFunctor<AccessMsgPayload>*> accessInMsgs;           //!< vector of ground location access messages
+    void Reset(uint64_t CurrentSimNanos);
+    void UpdateState(uint64_t CurrentSimNanos);
+    void addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg, std::string dataName); //!< connects accessMsgPayload to instrument
 
-    BSKLogger bskLogger;              //!< -- BSK Logging
+public:
+    std::vector<Message<DataNodeUsageMsgPayload>*> dataNodeOutMsgs; //!< vector of ground location output message
+    std::vector<ReadFunctor<AccessMsgPayload>> accessInMsgs; //!< vector of ground location access messages
+    BSKLogger bskLogger; //!< -- BSK Logging
+    double nodeBaudRate; //!< [baud] Data provided (+) or consumed (-).
 
 private:
-    void evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, double currentTime); //!< Sets the name and baud rate for the data in the output message.
+    std::vector<std::string> mappingPoints;
+    std::vector<DataNodeUsageMsgPayload> dataNodeOutMsgBuffer;                  //!< buffer of data node output data
 
 };
 
-
-#endif
+#endif //BASILISK_MAPPINGINSTRUMENT_H

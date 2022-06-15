@@ -18,43 +18,29 @@
 # 
 
 import pytest
+import numpy as np
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
-from Basilisk.simulation/onboardDataHandling/instrument import mappingInstrument
+from Basilisk.simulation import mappingInstrument
 
-@pytest.mark.parametrize("accuracy", [1e-12])
-@pytest.mark.parametrize("param1, param2", [
-     (1, 1)
-    ,(1, 3)
-])
-
-def test_mappingInstrument(show_plots, param1, param2, accuracy):
+def test_mappingInstrument():
     r"""
-    **Validation Test Description**
+    This test checks that both the name of the data and the baudRate are correctly set in the mapping instrument module.
 
-    Compose a general description of what is being tested in this unit test script.
-
-    **Test Parameters**
-
-    Discuss the test parameters used.
-
-    Args:
-        param1 (int): Dummy test parameter for this parameterized unit test
-        param2 (int): Dummy test parameter for this parameterized unit test
-        accuracy (float): absolute accuracy value used in the validation tests
-
-    **Description of Variables Being Tested**
-
-    Here discuss what variables and states are being checked. 
+    In this test, two accessMsgs are instantiated to test the module. In the first accessMsg, hasAccess = 1, meaning
+    that the point is accessible. This point is named '1.' In the second accessMsg, hasAccess = 0, meaning that the
+    point is not accessible. The point is named 'data2' to test longer dataNames. The mappingInstrument should output
+    a baudRate of 1 for point one, and a baudRate of 0 for point two. The dataNames in the output message are also
+    checked.
     """
-    [testResults, testMessage] = mappingInstrumentTestFunction(show_plots, param1, param2, accuracy)
+    [testResults, testMessage] = mappingInstrumentTestFunction()
     assert testResults < 1, testMessage
 
 
-def mappingInstrumentTestFunction(show_plots, param1, param2, accuracy):
+def mappingInstrumentTestFunction():
     """Test method"""
     testFailCount = 0
     testMessages = []
@@ -70,17 +56,52 @@ def mappingInstrumentTestFunction(show_plots, param1, param2, accuracy):
     module = mappingInstrument.MappingInstrument()
     module.ModelTag = "mappingInstrumentTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
+    module.nodeBaudRate = 1.
 
     # Configure blank module input messages
+    accessInMsgData1 = messaging.AccessMsgPayload()
+    accessInMsgData1.hasAccess = 1
+    accessInMsg1 = messaging.AccessMsg().write(accessInMsgData1)
+
+    accessInMsgData2 = messaging.AccessMsgPayload()
+    accessInMsgData2.hasAccess = 0
+    accessInMsg2 = messaging.AccessMsg().write(accessInMsgData2)
+
     # subscribe input messages to module
+    module.addMappingPoint(accessInMsg1, '1')
+    module.addMappingPoint(accessInMsg2, 'data2')
 
     # setup output message recorder objects
+    dataLogs = []
+    for idx in range(0, 2):
+        dataLogs.append(module.dataNodeOutMsgs[idx].recorder())
+        unitTestSim.AddModelToTask(unitTaskName, dataLogs[idx])
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
     unitTestSim.ExecuteSimulation()
 
     # pull module data and make sure it is correct
+    dataAmt = []
+    dataNames = []
+    for idx in range(0, 2):
+        dataNames.append(dataLogs[idx].dataName)
+        dataAmt.append(dataLogs[idx].baudRate)
+
+    dataAmt = np.array(dataAmt)
+    dataNames = np.array(dataNames)
+
+    if not np.array_equal(dataAmt[0,:], np.array([1., 1., 1.])):
+        testFailCount += 1
+
+    if not np.array_equal(dataAmt[1,:], np.array([0., 0., 0.])):
+        testFailCount += 1
+
+    if not np.array_equal(dataNames[0,:], np.array(['1', '1', '1'])):
+        testFailCount += 1
+
+    if not np.array_equal(dataNames[1,:], np.array(['data2', 'data2', 'data2'])):
+        testFailCount += 1
 
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)
@@ -91,6 +112,6 @@ def mappingInstrumentTestFunction(show_plots, param1, param2, accuracy):
 
 
 if __name__ == "__main__":
-    test_mappingInstrument(False, 1, 1, 1e-12)
+    test_mappingInstrument()
 
 

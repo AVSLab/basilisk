@@ -172,6 +172,7 @@ Data Sub-System
 
   Basic Data Generation and Transmission  <scenarioDataDemo>
   Ground Target Imaging and Downlink <scenarioGroundLocationImaging>
+  Mapping A Body <scenarioGroundMapping>
 
 Complex Spacecraft Dynamics Simulations
 ---------------------------------------

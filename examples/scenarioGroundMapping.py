@@ -40,18 +40,16 @@ Illustration of Simulation Results
 
     show_plots = True
 
-The following plots illustrate the number of collected points and storage level of the data buffer.
+The following plots illustrate the attitude error of the spacecraft, a 3D view of the spacecraft trajectory and the mapping
+points expressed in the planet-centered, planet-fixed frame, and the number of points stored in the data buffer.
 
-.. image:: /_images/Scenarios/scenarioGroundLocationImaging1.svg
+.. image:: /_images/Scenarios/scenarioGroundMapping1.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioGroundLocationImaging2.svg
+.. image:: /_images/Scenarios/scenarioGroundMapping2.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioGroundLocationImaging3.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioGroundLocationImaging4.svg
+.. image:: /_images/Scenarios/scenarioGroundMapping3.svg
    :align: center
 
 """
@@ -59,9 +57,7 @@ The following plots illustrate the number of collected points and storage level 
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraft(), extForceTorque(), simpleNav(), locationPoint(), groundLocation(),
-#           simpleInstrumentController(), simpleInstrument(), partitionedStorageUnit(), and spaceToGroundTransmitter()
-#           modules.  Will point a spacecraft axis at two Earth fixed locations and downlink the associated data.
+# Purpose:  Integrated test of the groundMapping(), mappingInstrument(), partitionedStorageUnit() modules.
 # Author:   Adam Herrmann
 # Creation Date:  April 18th, 2022
 #
@@ -129,43 +125,20 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
     return
 
 
-def plot_data_levels(timeLineSet, storageLevel, storedData):
-    plt.figure(4)
-    plt.plot(timeLineSet, storageLevel / 8E3, label='Data Unit Total Storage Level (KB)')
-    plt.plot(timeLineSet, storedData[:, 0] / 8E3, label='Boulder Partition Level (KB)')
-    plt.plot(timeLineSet, storedData[:, 1] / 8E3, label='Santiago Partition Level (KB)')
-    plt.xlabel('Time (min)')
-    plt.ylabel('Data Stored (KB)')
-    plt.grid(True)
-    plt.legend()
-
-    return
-
-
-def plot_device_status(timeLineSet, deviceStatus):
-    plt.figure(3)
-    plt.plot(timeLineSet, deviceStatus)
-    plt.xlabel('Time [min]')
-    plt.ylabel('Device Status')
-
-    return
-
-
-def plot_access(timeLineSet, hasAccess):
-    plt.figure(2)
-    plt.plot(timeLineSet, hasAccess)
-    plt.xlabel('Time [min]')
-    plt.ylabel('Imaging Target Access')
-
-    return
-
-
-def plot_map_progress(timeLineSet, mapping_points, map_access, sc_pos_PCPF):
+def plot_map_progress(mapping_points, map_access, sc_pos_PCPF):
     fig = plt.figure(2)
     ax = plt.axes(projection='3d')
     ax.plot(sc_pos_PCPF[:,0], sc_pos_PCPF[:,1], sc_pos_PCPF[:,2], '.')
     ax.plot(mapping_points[map_access,0], mapping_points[map_access,1], mapping_points[map_access,2], '.', c='g')
-    ax.plot(mapping_points[np.logical_not(map_access),0], mapping_points[np.logical_not(map_access),1], mapping_points[np.logical_not(map_access),2], '.', c='k')
+
+    return
+
+
+def plot_stored_points(timeLineSet, stored_points):
+    fig = plt.figure(3)
+    plt.plot(timeLineSet, stored_points)
+    plt.xlabel('Time [min]')
+    plt.ylabel('Stored Points')
 
     return
 
@@ -207,9 +180,6 @@ def run(show_plots, useCentral):
 
     # Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
-
-    # set the simulation time variable used later on
-    simulationTime = macros.min2nano(20.)
 
     # Create the simulation process
     dynProcess = scSim.CreateNewProcess(simProcessName)
@@ -273,9 +243,6 @@ def run(show_plots, useCentral):
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
-    # use the input flag to determine which external torque should be applied
-    # Note that all variables are initialized to zero.  Thus, not setting this
-    # vector would leave it's components all zero for the simulation.
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
@@ -287,13 +254,12 @@ def run(show_plots, useCentral):
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # Generate the mapping points
-    N = 1000
+    N = 500
     mapping_points = generate_mapping_points(N, astroFunctions.E_radius*1e3)
 
-    # Create the initial imaging target
+    # Create the ground mapping module
     groundMap = groundMapping.GroundMapping()
     groundMap.ModelTag = "groundMapping"
-    groundMap.planetRadius = astroFunctions.E_radius*1e3
     for map_idx in range(N):
         groundMap.addPointToModel(unitTestSupport.np2EigenVectorXd(mapping_points[map_idx,:]))
     groundMap.minimumElevation = np.radians(45.)
@@ -305,6 +271,23 @@ def run(show_plots, useCentral):
     groundMap.planetInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
     scSim.AddModelToTask(simTaskName, groundMap, ModelPriority=1)
 
+    # Create the mapping instrument
+    mapInstrument = mappingInstrument.MappingInstrument()
+    mapInstrument.nodeBaudRate = 1
+    for map_idx in range(N):
+        mapInstrument.addMappingPoint(groundMap.accessOutMsgs[map_idx], str(map_idx))
+    scSim.AddModelToTask(simTaskName, mapInstrument, ModelPriority=2)
+
+    # Create the partitioned storage unit
+    storageUnit = partitionedStorageUnit.PartitionedStorageUnit()
+    storageUnit.ModelTag = "storageUnit"
+    storageUnit.storageCapacity = 8E9  # bits (1 GB)
+    for map_idx in range(N):
+        storageUnit.addDataNodeToModel(mapInstrument.dataNodeOutMsgs[map_idx])
+        storageUnit.addPartition(str(map_idx))
+    scSim.AddModelToTask(simTaskName, storageUnit, ModelPriority=3)
+
+    # Create the ephemeris converter module
     ephemConverter = ephemerisConverter.EphemerisConverter()
     ephemConverter.ModelTag = "ephemConverter"
     ephemConverter.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[0])
@@ -347,6 +330,7 @@ def run(show_plots, useCentral):
     snTransLog = sNavObject.transOutMsg.recorder()
     scLog = scObject.scStateOutMsg.recorder()
     planetLog = gravFactory.spiceObject.planetStateOutMsgs[0].recorder()
+    storageLog = storageUnit.storageUnitDataOutMsg.recorder()
 
     # Setup the logging for the mapping locations
     mapLog = []
@@ -354,12 +338,14 @@ def run(show_plots, useCentral):
         mapLog.append(groundMap.accessOutMsgs[idx].recorder())
         scSim.AddModelToTask(simTaskName, mapLog[idx])
 
+    # Add all of the logs to the task
     scSim.AddModelToTask(simTaskName, mrpLog)
     scSim.AddModelToTask(simTaskName, attErrLog)
     scSim.AddModelToTask(simTaskName, snAttLog)
     scSim.AddModelToTask(simTaskName, snTransLog)
     scSim.AddModelToTask(simTaskName, scLog)
     scSim.AddModelToTask(simTaskName, planetLog)
+    scSim.AddModelToTask(simTaskName, storageLog)
 
     # setup Vizard support
     if vizSupport.vizFound:
@@ -379,13 +365,11 @@ def run(show_plots, useCentral):
                                            showGenericSensorLabels=True,
                                            )
 
-
     # Need to call the self-init and cross-init methods
     scSim.InitializeSimulation()
 
     # Set the simulation time.
-    scSim.ConfigureStopTime(macros.hour2nano(2))
-    # scSim.ConfigureStopTime(macros.sec2nano(2))
+    scSim.ConfigureStopTime(macros.hour2nano(1))
 
     # Begin the simulation time run set above
     scSim.ExecuteSimulation()
@@ -396,6 +380,9 @@ def run(show_plots, useCentral):
     dcms_PN = planetLog.J20002Pfix
     planet_pos_N = planetLog.PositionVector
 
+    timeLineSet = attErrLog.times() * macros.NANO2MIN
+
+    # Compute the PCPF position of the spacecraft
     sc_pos_PCPF = np.zeros((len(sc_pos_N), 3))
     for idx in range(0, len(sc_pos_N)):
         sc_pos_PCPF[idx,:] = np.matmul(dcms_PN[idx,:,:], sc_pos_N[idx,:] - planet_pos_N[idx,:])
@@ -407,8 +394,12 @@ def run(show_plots, useCentral):
         if sum(access):
             map_access[idx] = 1
 
+    storedData = storageLog.storedData
+    stored_points = np.zeros(len(timeLineSet))
+    for idx in range(0, len(timeLineSet)):
+        stored_points[idx] = np.count_nonzero(storedData[idx,:])
+
     # Plot the results
-    timeLineSet = attErrLog.times() * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
     plot_attitude_error(timeLineSet, dataSigmaBR)
@@ -416,17 +407,13 @@ def run(show_plots, useCentral):
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
 
-    plot_map_progress(timeLineSet, mapping_points, map_access, sc_pos_PCPF)
+    plot_map_progress(mapping_points, map_access, sc_pos_PCPF)
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
-    #
-    # plot_device_status(timeLineSet, deviceCmd)
-    # pltName = fileName + "3"
-    # figureList[pltName] = plt.figure(3)
-    #
-    # plot_data_levels(timeLineSet, storageLevel, storedData)
-    # pltName = fileName + "4"
-    # figureList[pltName] = plt.figure(4)
+
+    plot_stored_points(timeLineSet, stored_points)
+    pltName = fileName + "3"
+    figureList[pltName] = plt.figure(3)
 
     if show_plots:
         plt.show()
@@ -442,6 +429,5 @@ def run(show_plots, useCentral):
 #
 if __name__ == "__main__":
     run(
-        True,  # show_plots
-        True
+        True  # show_plots
     )

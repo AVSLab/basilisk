@@ -50,7 +50,7 @@ public:
 
 private:
     void ReadMessages();
-    void computeAccess(long unsigned int c);
+    void computeAccess(uint64_t c);
     void WriteMessages(uint64_t CurrentClock);
     void updateInertialPositions();
     uint64_t checkInstrumentFOV();

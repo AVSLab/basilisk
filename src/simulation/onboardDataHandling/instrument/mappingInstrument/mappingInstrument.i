@@ -27,13 +27,13 @@
 %}
 %include "std_string.i"
 %include "swig_conly_data.i"
-
+%include "std_vector.i"
 %include "sys_model.h"
 %include "mappingInstrument.h"
-%include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
-struct DataNodeUsageMsg_C;
+
 %include "architecture/msgPayloadDefC/AccessMsgPayload.h"
 struct AccessMsg_C;
+%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 
 %pythoncode %{
 import sys

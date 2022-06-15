@@ -34,8 +34,6 @@ GroundMapping::GroundMapping()
     this->minimumElevation = 10.*D2R; // [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees
     this->maximumRange = -1; // [m] Maximum range for the groundLocation to compute access.
 
-    this->planetRadius = REQ_EARTH*1e3;
-
     this->planetInMsgBuffer = this->planetInMsg.zeroMsgPayload;
     this->planetInMsgBuffer.J20002Pfix[0][0] = 1;
     this->planetInMsgBuffer.J20002Pfix[1][1] = 1;
@@ -58,9 +56,6 @@ GroundMapping::~GroundMapping()
 void GroundMapping::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
-    if (this->planetRadius < 0) {
-        bskLogger.bskLog(BSK_ERROR, "GroundLocation module must have planetRadius set.");
-    }
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "GroundMapping.scStateInMsg was not linked.");
     }
@@ -108,7 +103,10 @@ void GroundMapping::addPointToModel(Eigen::Vector3d& r_LP_P_init){
 /*! Method to compute whether or not the spacecraft has access to the location
  * @param c: index of the given location
  */
-void GroundMapping::computeAccess(long unsigned int c){
+void GroundMapping::computeAccess(uint64_t c){
+    //! Zero the output message buffers
+    this->accessMsgBuffer.at(c) = this->accessOutMsgs.at(c)->zeroMsgPayload;
+    this->currentGroundStateMsgBuffer.at(c) = this->currentGroundStateOutMsgs.at(c)->zeroMsgPayload;
 
     //! Compute the planet to inertial frame location position
     this->r_LP_N = this->dcm_PN.transpose() * this->mappingPoints[c];
