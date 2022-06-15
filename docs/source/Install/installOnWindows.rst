@@ -51,7 +51,7 @@ Add SWIG and Basilisk paths into environment variables using the following steps
 
   - Right-click on My Computer, Select Properties
   - Under the Advanced tab, Select Environment Variables
-  - Under the User Variables panel, Select Path, and Click Edit
+  - Under the User (or System, depending on your setup) Variables panel, Select Path, and Click Edit
 
     - Add the ``swig.exe`` directory to your path
     - add the path to ``CMake\bin``, such as ``C:\Program Files\CMake\bin``
