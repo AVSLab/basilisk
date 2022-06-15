@@ -35,6 +35,7 @@ Version |release|
 - added new :ref:`simpleVoltEstimator` to provide simulated voltage measurements of a neighboring space object
 - added the ability to have a RW motor torque break slow down the wheel speed if saturated.  The motor torque
   is set to zero if it is trying to increase the wheel speed in saturation conditions.
+- updated Windows install instructions about setting path variables
 - enhanced Windows install instructions to highlight adding ``cmake`` binary to the command line path
 - added new training videos to :ref:`scenario_BasicOrbit`, :ref:`scenario_FeedbackRW` to discuss how to
   create class based Basilisk simulations

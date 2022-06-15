@@ -167,7 +167,6 @@ setup(
     packages=['Basilisk', ],
     license=open('./LICENSE').read(),
     long_description=open('./README.md').read(),
-    author_email='basilisk-info@colorado.edu',
     url='https://hanspeterschaub.info/basilisk/',
     package_dir={'': package_dir},
     # install_requires=[
