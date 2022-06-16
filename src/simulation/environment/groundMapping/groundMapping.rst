@@ -83,7 +83,7 @@ The user must then set several variables regarding the spacecraft instrument. Th
 in the body-frame of the spacecraft, the normal vector of the instrument boresight defined in the body-frame of the
 spacecraft, and the half field-of-view of the instrument. The position of the camera defaults to zero and is an optional
 parameter. The normal vector of the instrument boresight, nHat_B, is also defaulted to zero, but is not an optional
-parameter. Finally, the halfFieldOfView is a required parameter defaulted to 10 degrees.
+parameter. Finally, the ``halfFieldOfView`` is a required parameter and defaults to 10 degrees if not set.
 
 .. code-block:: python
 

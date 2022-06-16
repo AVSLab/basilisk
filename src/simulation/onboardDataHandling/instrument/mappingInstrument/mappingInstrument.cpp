@@ -41,9 +41,9 @@ MappingInstrument::~MappingInstrument()
  */
 void MappingInstrument::Reset(uint64_t CurrentSimNanos)
 {
-    // check that the direction of the camera is provided
-    if (!this->nodeBaudRate){
-        bskLogger.bskLog(BSK_ERROR, "MappingInstrument.nodeBaudRate is zero.");
+    // check that the baud rate is set
+    if (this->nodeBaudRate < 0.0){
+        bskLogger.bskLog(BSK_ERROR, "MappingInstrument.nodeBaudRate is not set to a positive value.");
     }
 
     return;

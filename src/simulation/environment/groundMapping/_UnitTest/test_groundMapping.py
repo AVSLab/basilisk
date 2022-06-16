@@ -96,7 +96,7 @@ def groundMappingTestFunction():
     unitTestSim.ExecuteSimulation()
 
     # pull module data and make sure it is correct
-    map_access = np.zeros(2, dtype=np.bool)
+    map_access = np.zeros(2, dtype=bool)
     for idx in range(0, 2):
         access = mapLog[idx].hasAccess
         if sum(access):
