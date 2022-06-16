@@ -30,14 +30,22 @@ MappingInstrument::MappingInstrument()
 /*! Module Destructor */
 MappingInstrument::~MappingInstrument()
 {
+    for (long unsigned int c = 0; c < this->dataNodeOutMsgs.size(); c++) {
+        delete this->dataNodeOutMsgs.at(c);
+    }
 }
 
-/*! This method is used to reset the module. No functionality is reset.
+/*! This method is used to reset the module. The nodeBaudRate is checked for a non-zero value.
  @param CurrentSimNanos
  @return void
  */
 void MappingInstrument::Reset(uint64_t CurrentSimNanos)
 {
+    // check that the direction of the camera is provided
+    if (!this->nodeBaudRate){
+        bskLogger.bskLog(BSK_ERROR, "MappingInstrument.nodeBaudRate is zero.");
+    }
+
     return;
 }
 

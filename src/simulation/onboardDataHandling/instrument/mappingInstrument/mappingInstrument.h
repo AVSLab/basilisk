@@ -45,7 +45,7 @@ public:
     std::vector<Message<DataNodeUsageMsgPayload>*> dataNodeOutMsgs; //!< vector of data node output messages
     std::vector<ReadFunctor<AccessMsgPayload>> accessInMsgs; //!< vector of ground location access messages
     BSKLogger bskLogger; //!< -- BSK Logging
-    double nodeBaudRate; //!< [baud] Data provided (+) or consumed (-).
+    double nodeBaudRate = 0; //!< [baud] Data provided (+).
 
 private:
     std::vector<std::string> mappingPoints;

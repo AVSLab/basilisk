@@ -2,7 +2,7 @@ Executive Summary
 -----------------
 This module receives a vector of accessMsgPayloads and outputs a vector of DataNodeUsageMsgPayloads for each accessible
 point. This module is meant to keep track of which points have been imaged, and which have not, passing the output messages
-to a ``partitionedStorageUnit`` module. 
+to a :ref:`partitionedStorageUnit` module.
 
 Module Assumptions and Limitations
 ----------------------------------
@@ -39,7 +39,7 @@ To use this module, the user must first instantiate the module
     mapInstrument = mappingInstrument.mappingInstrument()
     mapInstrument.ModelTag = "mapInstrument"
 
-The user must then set the baudRate, in bits/second, within the module.
+The user must then set the nodeBaudRate, in bits/second, within the module. This is a required parameter.
 
 .. code-block:: python
 

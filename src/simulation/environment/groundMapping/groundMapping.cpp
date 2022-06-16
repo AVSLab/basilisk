@@ -31,8 +31,11 @@
 GroundMapping::GroundMapping()
 {
     //! - Set some default initial conditions:
-    this->minimumElevation = 0.*D2R; // [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees
+    this->minimumElevation = 0.*D2R; // [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 0 degrees
     this->maximumRange = -1; // [m] Maximum range for the groundLocation to compute access.
+    this->halfFieldOfView = 10.*D2R;  // [rad] half-angle field-of-view of the instrument
+    this->cameraPos_B.setZero(3);  // Default to zero
+    this->nHat_B.setZero(3);  // Default to zero
 
     this->planetInMsgBuffer = this->planetInMsg.zeroMsgPayload;
     this->planetInMsgBuffer.J20002Pfix[0][0] = 1;
@@ -40,14 +43,15 @@ GroundMapping::GroundMapping()
     this->planetInMsgBuffer.J20002Pfix[2][2] = 1;
 
     this->scStateInMsgBuffer = this->scStateInMsg.zeroMsgPayload;
-
-    this->halfFieldOfView = 10.*D2R;  // [rad] half-angle field-of-view of the instrument
-
 }
 
 /*! Module Destructor */
 GroundMapping::~GroundMapping()
 {
+    for (long unsigned int c = 0; c < this->accessOutMsgs.size(); c++) {
+        delete this->accessOutMsgs.at(c);
+        delete this->currentGroundStateOutMsgs.at(c);
+    }
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
@@ -60,6 +64,10 @@ void GroundMapping::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "GroundMapping.scStateInMsg was not linked.");
     }
 
+    // check that the direction of the camera is provided
+    if (this->nHat_B.isZero()){
+        bskLogger.bskLog(BSK_ERROR, "GroundMapping.nHat_B vector not set.");
+    }
 }
 
 /*! Read module messages

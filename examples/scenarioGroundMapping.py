@@ -128,8 +128,11 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
 def plot_map_progress(mapping_points, map_access, sc_pos_PCPF):
     fig = plt.figure(2)
     ax = plt.axes(projection='3d')
-    ax.plot(sc_pos_PCPF[:,0], sc_pos_PCPF[:,1], sc_pos_PCPF[:,2], '.')
-    ax.plot(mapping_points[map_access,0], mapping_points[map_access,1], mapping_points[map_access,2], '.', c='g')
+    ax.plot(sc_pos_PCPF[:,0]/1000, sc_pos_PCPF[:,1]/1000, sc_pos_PCPF[:,2]/1000, '.')
+    ax.plot(mapping_points[map_access,0]/1000, mapping_points[map_access,1]/1000, mapping_points[map_access,2]/1000, '.', c='g')
+    ax.set_xlabel('X [km]')
+    ax.set_ylabel('Y [km]')
+    ax.set_zlabel('Z [km]')
 
     return
 
@@ -388,7 +391,7 @@ def run(show_plots, useCentral):
         sc_pos_PCPF[idx,:] = np.matmul(dcms_PN[idx,:,:], sc_pos_N[idx,:] - planet_pos_N[idx,:])
 
     # Retrieve the access messages
-    map_access = np.zeros(N, dtype=np.bool)
+    map_access = np.zeros(N, dtype=bool)
     for idx in range(0, N):
         access = mapLog[idx].hasAccess
         if sum(access):

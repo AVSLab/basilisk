@@ -56,7 +56,6 @@ private:
     uint64_t checkInstrumentFOV();
 
 public:
-    double planetRadius; //!< [m] Planet radius in meters.
     double minimumElevation; //!< [rad] (optional) minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees equivalent.
     double maximumRange; //!< [m] (optional) Maximum slant range to compute access for; defaults to -1, which represents no maximum range.
     Eigen::Vector3d cameraPos_B;  //!< [m] (optional) Instrument position in body frame

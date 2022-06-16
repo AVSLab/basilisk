@@ -32,6 +32,9 @@ provides information on what this message is used for.
     * - accessOutMsgs
       - :ref:`AccessMsgPayload`
       - vector of ground location access messages
+    * - currentGroundStateOutMsgs
+      - :ref:`GroundStateMsgPayload`
+      - vector of ground state messages
 
 Detailed Module Description
 ---------------------------
@@ -67,7 +70,9 @@ To use this module, the user must first instantiate the module
 
 The user must then set several variables within the module. First, the minimum elevation and maximum range should be
 set. The minimum elevation is the minimum required elevation of the spacecraft with respect to the mapping points. The
-maximum range is the farthest distance the spacecraft can be from a mapping point to have access.
+minimum elevation is an optional parameter, defaulting to zero. The maximum range is the farthest distance the
+spacecraft can be from a mapping point to have access. This parameter is also optional, defaulting to a value of -1,
+which means that no maximum range is considered.
 
 .. code-block:: python
 
@@ -76,7 +81,9 @@ maximum range is the farthest distance the spacecraft can be from a mapping poin
 
 The user must then set several variables regarding the spacecraft instrument. These include the position of the camera
 in the body-frame of the spacecraft, the normal vector of the instrument boresight defined in the body-frame of the
-spacecraft, and the half field-of-view of the instrument.
+spacecraft, and the half field-of-view of the instrument. The position of the camera defaults to zero and is an optional
+parameter. The normal vector of the instrument boresight, nHat_B, is also defaulted to zero, but is not an optional
+parameter. Finally, the halfFieldOfView is a required parameter defaulted to 10 degrees.
 
 .. code-block:: python
 
