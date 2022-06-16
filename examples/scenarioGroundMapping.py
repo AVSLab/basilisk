@@ -144,7 +144,7 @@ def plot_stored_points(timeLineSet, stored_points):
 
 
 def generate_mapping_points(num_points, radius):
-    """Generates a number of mapping points on the surface of the body using a Fibonnaci sphere
+    """Generates a number of mapping points on the surface of the body using a Fibonacci sphere
        Algorithm from:
        https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere"""
 
@@ -185,7 +185,7 @@ def run(show_plots, useCentral):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # Create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(1.0)
+    simulationTimeStep = macros.sec2nano(5.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # Initialize spacecraft object and set properties
@@ -357,7 +357,7 @@ def run(show_plots, useCentral):
         genericSensorHUD.label = "genSen1"
 
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                  , saveFile=fileName
+                                                  # , saveFile=fileName
                                                   , genericSensorList=genericSensorHUD
                                                   )
         # the following command sets Viz settings for the first spacecraft in the simulation

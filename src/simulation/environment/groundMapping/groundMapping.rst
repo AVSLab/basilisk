@@ -25,7 +25,7 @@ provides information on what this message is used for.
       - Description
     * - planetInMsg
       - :ref:`SpicePlanetStateMsgPayload`
-      - Planet state input message
+      - (optional) Planet state input message
     * - scStateInMsg
       - :ref:`SCStatesMsgPayload`
       - Spacecraft state input message
@@ -52,8 +52,8 @@ follows:
 #. The projection of the mapping point along the instrument's boresight is computed and stored
 #. If the above projection is less than 0, the point is not within the instrument's FOV cone
 #. If the above projection is greater than 0, the point may be within the instrument's FOV cone
-#  A final check is performed to compare the distance from mapping point to the instrument's boresight vector. If this
-distance is less than the radius at the boresight projection distance, the point is within the instrument's FOV
+#. A final check is performed to compare the distance from mapping point to the instrument's boresight vector. If this
+   distance is less than the radius at the boresight projection distance, the point is within the instrument's FOV
 
 
 User Guide

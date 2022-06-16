@@ -42,7 +42,7 @@ public:
     void addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg, std::string dataName); //!< connects accessMsgPayload to instrument
 
 public:
-    std::vector<Message<DataNodeUsageMsgPayload>*> dataNodeOutMsgs; //!< vector of ground location output message
+    std::vector<Message<DataNodeUsageMsgPayload>*> dataNodeOutMsgs; //!< vector of data node output messages
     std::vector<ReadFunctor<AccessMsgPayload>> accessInMsgs; //!< vector of ground location access messages
     BSKLogger bskLogger; //!< -- BSK Logging
     double nodeBaudRate; //!< [baud] Data provided (+) or consumed (-).
