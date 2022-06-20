@@ -111,7 +111,7 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
     double dcm_BN[3][3];
     MRP2C(navAttInMsgBuffer.sigma_BN, dcm_BN);
     Eigen::Matrix3d dcm_OB;
-    dcm_OB = dcm_ON * (cArray2EigenMatrixXd(*dcm_BN, 3, 3).transpose());
+    dcm_OB = dcm_ON * (cArray2EigenMatrixXd(*dcm_BN, 3, 3));
 
     /* Compute x1, x2 from the input messages */
     double r_BO_O[3];
