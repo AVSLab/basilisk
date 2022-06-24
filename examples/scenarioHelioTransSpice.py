@@ -164,7 +164,7 @@ def run():
                                                   )
         viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
         viz.settings.orbitLinesOn = 1
-        viz.settings.spacecraftSizeMultiplier = 50
+        viz.settings.spacecraftHelioViewSizeMultiplier = 3
         viz.settings.showSpacecraftLabels = 1
         viz.settings.showCelestialBodyLabels = 1
         viz.settings.mainCameraTarget = "sun"  # Gives heliocentric view
