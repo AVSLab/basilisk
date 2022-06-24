@@ -37,9 +37,9 @@ import numpy as np
 
 @pytest.mark.parametrize("accuracy", [1e-12])
 @pytest.mark.parametrize("r_LS_N", [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.], [0, -1, 0.], [1, 1, 1]])
-@pytest.mark.parametrize("useGroundLocation", [True, False])
+@pytest.mark.parametrize("locationType", [0, 1, 2])
 @pytest.mark.parametrize("use3DRate", [True, False])
-def test_locationPointing(show_plots, r_LS_N, useGroundLocation, use3DRate, accuracy):
+def test_locationPointing(show_plots, r_LS_N, locationType, use3DRate, accuracy):
     r"""
     **Validation Test Description**
 
@@ -53,7 +53,7 @@ def test_locationPointing(show_plots, r_LS_N, useGroundLocation, use3DRate, accu
 
     Args:
         r_LS_N (float): position vector of location relative to spacecraft
-        useGroundLocation (bool): choose whether to use ``locationInMsg`` or ``celBodyInMsg``
+        locationType (int): choose whether to use ``locationInMsg``, ``celBodyInMsg`` or ``scTargetInMsg``
         use3DRate (bool): choose between 2D or 3D rate control
         accuracy (float): absolute accuracy value used in the validation tests
 
@@ -62,12 +62,12 @@ def test_locationPointing(show_plots, r_LS_N, useGroundLocation, use3DRate, accu
     The script checks the attitude and rate outputs.
 
     """
-    [testResults, testMessage] = locationPointingTestFunction(show_plots, r_LS_N, useGroundLocation,
+    [testResults, testMessage] = locationPointingTestFunction(show_plots, r_LS_N, locationType,
                                                               use3DRate, accuracy)
     assert testResults < 1, testMessage
 
 
-def locationPointingTestFunction(show_plots, r_LS_NIn, useGroundLocation, use3DRate, accuracy):
+def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, accuracy):
     """Test method"""
     testFailCount = 0
     testMessages = []
@@ -108,22 +108,25 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, useGroundLocation, use3DR
     scAttInMsgData.sigma_BN = sigma_BN
     scAttInMsg = messaging.NavAttMsg().write(scAttInMsgData)
 
-    if useGroundLocation:
+    if locationType == 0:
         locationInMsgData = messaging.GroundStateMsgPayload()
         locationInMsgData.r_LN_N = r_LN_N
         locationInMsg = messaging.GroundStateMsg().write(locationInMsgData)
-    else:
+        moduleConfig.locationInMsg.subscribeTo(locationInMsg)
+    elif locationType == 1:
         locationInMsgData = messaging.EphemerisMsgPayload()
         locationInMsgData.r_BdyZero_N = r_LN_N
         locationInMsg = messaging.EphemerisMsg().write(locationInMsgData)
+        moduleConfig.celBodyInMsg.subscribeTo(locationInMsg)
+    elif locationType == 2:
+        locationInMsgData = messaging.NavTransMsgPayload()
+        locationInMsgData.r_BN_N = r_LN_N
+        locationInMsg = messaging.NavTransMsg().write(locationInMsgData)
+        moduleConfig.scTargetInMsg.subscribeTo(locationInMsg)
 
     # subscribe input messages to module
     moduleConfig.scTransInMsg.subscribeTo(scTransInMsg)
     moduleConfig.scAttInMsg.subscribeTo(scAttInMsg)
-    if useGroundLocation:
-        moduleConfig.locationInMsg.subscribeTo(locationInMsg)
-    else:
-        moduleConfig.celBodyInMsg.subscribeTo(locationInMsg)
 
     # setup output message recorder objects
     attGuidOutMsgRec = moduleConfig.attGuidOutMsg.recorder()
