@@ -47,9 +47,10 @@ typedef struct {
 
     /* declare module IO interfaces */
     NavAttMsg_C scAttInMsg;                 //!< input msg with inertial spacecraft attitude states
-    NavTransMsg_C scTransInMsg;             //!< input msg with inertial spacecraft attitude states
+    NavTransMsg_C scTransInMsg;             //!< input msg with inertial spacecraft position states
     GroundStateMsg_C locationInMsg;         //!< input msg with location relative to planet
     EphemerisMsg_C celBodyInMsg;            //!< input celestial body message
+    NavTransMsg_C scTargetInMsg;            //!< input msg with inertial target spacecraft position states
     AttGuidMsg_C attGuidOutMsg;             //!< attitude guidance output message
     AttRefMsg_C attRefOutMsg;               //!< attitude reference output message
 

@@ -57,11 +57,15 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
     if (!NavTransMsg_C_isLinked(&configData->scTransInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.scTransInMsg was not connected.");
     }
-    if (!GroundStateMsg_C_isLinked(&configData->locationInMsg) && !EphemerisMsg_C_isLinked(&configData->celBodyInMsg)) {
+    int numInMsgs = GroundStateMsg_C_isLinked(&configData->locationInMsg)
+                    + EphemerisMsg_C_isLinked(&configData->celBodyInMsg)
+                    + NavTransMsg_C_isLinked(&configData->scTargetInMsg);
+
+    if (numInMsgs == 0) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: In the locationPointing module no target messages were not connected.");
     }
-    else if (GroundStateMsg_C_isLinked(&configData->locationInMsg) && EphemerisMsg_C_isLinked(&configData->celBodyInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: In the locationPointing module both target messages were connected. Defaulting to ground location.");
+    else if (numInMsgs > 1) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: In the locationPointing module multiple target messages were connected. Defaulting to either ground location, planet location or spacecraft location, in that order.");
     }
 
     configData->init = 1;
@@ -102,6 +106,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     NavTransMsgPayload scTransInMsgBuffer;  //!< local copy of input message buffer
     GroundStateMsgPayload locationInMsgBuffer;  //!< local copy of location input message buffer
     EphemerisMsgPayload celBodyInMsgBuffer; //!< local copy of celestial body input message buffer
+    NavTransMsgPayload scTargetInMsgBuffer;  //!< local copy of input message buffer of target spacecraft
     AttGuidMsgPayload attGuidOutMsgBuffer;  //!< local copy of guidance output message buffer
     AttRefMsgPayload attRefOutMsgBuffer;  //!< local copy of reference output message buffer
 
@@ -133,9 +138,12 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
         locationInMsgBuffer = GroundStateMsg_C_read(&configData->locationInMsg);
         v3Copy(locationInMsgBuffer.r_LN_N, r_TN_N);
     }
-    else {
+    else if (EphemerisMsg_C_isLinked(&configData->celBodyInMsg)) {
         celBodyInMsgBuffer = EphemerisMsg_C_read(&configData->celBodyInMsg);
         v3Copy(celBodyInMsgBuffer.r_BdyZero_N, r_TN_N);
+    } else {
+        scTargetInMsgBuffer = NavTransMsg_C_read(&configData->scTargetInMsg);
+        v3Copy(scTargetInMsgBuffer.r_BN_N, r_TN_N);
     }
 
     /* calculate r_LS_N*/
