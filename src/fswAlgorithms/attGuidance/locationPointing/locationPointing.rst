@@ -1,7 +1,8 @@
 Executive Summary
 -----------------
 This module generates an attitude guidance message to make a specified spacecraft pointing vector target an inertial location.
-This location could be on a planet if this module is connected with :ref:`groundLocation` for example.  
+This location could be on a planet if this module is connected with :ref:`groundLocation` for example, or it could point
+to a celestial object center using :ref:`EphemerisMsgPayload`, or a spacecraft location using :ref:`NavTransMsgPayload`.
 
 Message Connection Descriptions
 -------------------------------
@@ -29,10 +30,13 @@ provides information on what this message is used for.
     * - celBodyInMsg
       - :ref:`EphemerisMsgPayload`
       - (alternative) input msg containing the inertial point location of a celestial body of interest
-    * - AttGuidOutMsg
+    * - scTargetInMsg
+      - :ref:`NavTransMsgPayload`
+      - (alternative) input msg with inertial target spacecraft translational states
+    * - attGuidOutMsg
       - :ref:`AttGuidMsgPayload`
       - output message with the attitude guidance
-    * - AttRefOutMsg
+    * - attRefOutMsg
       - :ref:`AttRefMsgPayload`
       - output message with the attitude reference
 
@@ -41,8 +45,9 @@ provides information on what this message is used for.
 Detailed Module Description
 ---------------------------
 The inertial location of interest is given by :math:`{\bf r}_{L/N}` and can be either extracted from ``locationInMsg`` when 
-a location on a planet is provided, or ``celBodyInMsg`` when a celestial body's ephemeris location is provided (for pointing 
-at the Sun or the Earth). The vector pointing from the satellite location :math:`{\bf r}_{S/N}` to this location is then
+a location on a planet is provided,  ``celBodyInMsg`` when a celestial body's ephemeris location is provided (for pointing
+at the Sun or the Earth), or ``scTargetInMsg`` when pointing at another spacecraft.
+The vector pointing from the satellite location :math:`{\bf r}_{S/N}` to this location is then
 
 .. math::
     {\bf r}_{L/S} = {\bf r}_{L/N} - {\bf r}_{S/N}
@@ -91,8 +96,8 @@ User Guide
 The one required variable that must be set is ``pHat_B``.  This is body-fixed unit vector which is to be
 pointed at the desired inertial location.
 
-The user should only connect one location of interest input message, either ``locationInMsg`` or ``celBodyInMsg``. Connecting 
-both will result in a warning and the module defaults to using the ``locationInMsg`` information.
+The user should only connect one location of interest input message, either ``locationInMsg``, ``celBodyInMsg`` or ``scTargetInMsg``. 
+Connecting both will result in a warning and the module defaults to using the ``locationInMsg`` information.
 
 This 2D attitude control module provides two output messages in the form of :ref:`attGuidMsgPayload` and :ref:`attRefMsgPayload`.
 The first guidance message, describing body relative to reference tracking errors,
