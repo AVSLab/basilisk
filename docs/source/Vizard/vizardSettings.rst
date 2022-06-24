@@ -1385,8 +1385,8 @@ The light command state can also be set directly from python using::
 However, if the input message is specified then this value is replaced with the content of the input message.
 
 
-Specifying the CAD Model to use
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Specifying the Spacecraft CAD Model to use
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The spacecraft Vizard data supports the use of ``modelDictionaryKey`` to override the default spacecraft shape
 and is selected by the name, and specify a CAD model to use.  Assume a Vizard spacecraft CAD model is
 labeled with ``cadString``, then you use::
@@ -1430,6 +1430,18 @@ user can also just provide a simple string path value instead of a list of strin
 The image can be a ``jpg`` or ``png`` image and should have square dimensions, such as being 256x256
 in size.
 
+Specifying the Celestial Object CAD Model to use
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The gravity body data structure
+contains a ``modelDictionaryKey`` string which can specify what CAD model to use.  By default Vizard uses
+the ``planetName`` variable to determine if the celestial object matches an available model.  If ``displayName``
+is specified then this overrules the ``planetName`` info.  Lastly, the ``modelDictionaryKey`` overrules the prior
+two names.  This is done to provide fine control over what ``planetName`` is used, such as a
+Spice name, the ``displayName`` could be ``TestAsteroid`` if desired, and the object shown could be a custom shape
+called ``custom_test_asteroid``.
+
+The ``createCustomGravObject()`` method in the gravity factory class has an optional ``modelDictionaryKey``
+argument to specify this string if desired.
 
 Specifying the Osculating or True Orbit Line Colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
