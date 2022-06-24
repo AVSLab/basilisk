@@ -39,8 +39,9 @@ Version |release|
 - enhanced Windows install instructions to highlight adding ``cmake`` binary to the command line path
 - added new training videos to :ref:`scenario_BasicOrbit`, :ref:`scenario_FeedbackRW` to discuss how to
   create class based Basilisk simulations
-- added new :ref:`groundMapping` module for mapping points on the surface of a spherical body.
-- added new :ref:`mappingInstrument` module to pass along access from a vector of map points to a storage unit.
+- added new :ref:`groundMapping` for mapping points on the surface of a spherical body.
+- added new :ref:`mappingInstrument` to pass along access from a vector of map points to a storage unit.
+- updated :ref:`locationPointing` to allow for spacecraft targeting as well
 - added new :ref:`scenarioGroundMapping` scenario to demonstrate the new mapping capabilities.
 
 
