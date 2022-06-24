@@ -162,6 +162,10 @@ default setting for that behavior.
       - double
       - Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0,
         use negative value to use viz default
+    * - ``spacecraftHelioViewSizeMultiplier``
+      - double
+      - Control the display size of spacecraft in the Solar System View, values greater than 0, use negative
+        value to use viz default
     * - ``showLocationCommLines``
       - int
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true

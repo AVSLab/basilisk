@@ -55,10 +55,11 @@ message VizMessage{
         repeated Transceiver transceivers = 10;
         repeated GenericStorage storageDevices = 11;
         repeated Light lights = 12;
-        string modelDictionaryKey = 13;
+        string modelDictionaryKey = 13; // ""  or "bskSat" will result in the default BSKSat model, "6USat" to use a built-in 6U model, "3USat" to use a built-in 3U model
         repeated int32 oscOrbitLineColor = 14; // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
         repeated int32 trueTrajectoryLineColor = 15; // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
         string logoTexture = 16; //Path to image texture to be used to customize built-in spacecraft models
+        repeated MultiSphere multiSpheres = 17; 
 }
 
     message ReactionWheel{
@@ -258,7 +259,7 @@ message VizMessage{
         int32 relativeOrbitFrame = 33; // Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
         string mainCameraTarget = 34; // If valid spacecraft or celestial body name is provided, the main camera will be targeted at that body at start
         double spacecraftShadowBrightness = 35; // Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
-        double spacecraftSizeMultiplier = 36; // Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0, use negative value to use viz default
+        double spacecraftSizeMultiplier = 36; // Control the display size of spacecraft in Planet View, values greater than 0, use negative value to use viz default
         int32 showLocationCommLines = 37; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showLocationCones = 38; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showLocationLabels = 39; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -271,8 +272,19 @@ message VizMessage{
         int32 showLightLabels = 46; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         double celestialBodyHelioViewSizeMultiplier = 47; // Control the display size of celestial bodies in the Solar System View, values greater than 0, use negative value to use viz default
         int32 showMissionTime = 48; //Toggle to show Mission Time instead of Sim Elapsed Time, -1 for false, 0 for viz default, 1 for true
+        double spacecraftHelioViewSizeMultiplier = 49; // Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
 
         
+    }
+    
+    message MultiSphere{
+        int32 isOn = 1; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        repeated double position = 2; //[m] position in the body frame
+        double radius = 3; //[m] radius of the sphere
+        double currentValue = 4;
+        double maxValue = 5;
+        repeated int32 positiveColor = 6; //Send desired RGBA as values between 0 and 255, default is white
+        repeated int32 negativecolor = 7; //Send desired RGBA as values between 0 and 255, default is white
     }
     
     message Location{

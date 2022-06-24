@@ -330,6 +330,8 @@ VizSettings
     int relativeOrbitFrame = 0; //!< Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
     double spacecraftShadowBrightness = -1.0;       //!< Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
     double spacecraftSizeMultiplier = -1; //!< Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0, use negative value to use viz default
+    double spacecraftHelioViewSizeMultiplier = -1; //!< Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
+
     int32_t showLocationCommLines = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int32_t showLocationCones = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int32_t showLocationLabels = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
