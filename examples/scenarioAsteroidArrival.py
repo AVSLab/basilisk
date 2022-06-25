@@ -33,6 +33,11 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioAsteroidArrival.py
 
+.. attention::
+
+    To see the asteroid Bennu in Vizard the asteroid asset bundle must be installed.  See
+    the Vizard `Download <http://hanspeterschaub.info/basilisk/Vizard/VizardDownload.html>`__ web page.
+
 Setting Up The Custom Gravitational Body
 ----------------------------------------
 
@@ -303,7 +308,10 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
 
     # Create the asteroid custom gravitational body
-    asteroid = gravFactory.createCustomGravObject("bennu", mu)
+    asteroid = gravFactory.createCustomGravObject("bennu", mu
+                                                  , modelDictionaryKey="Bennu"
+                                                  , radEquator=565. / 2.0
+                                                  )
     asteroid.isCentralBody = True  # ensures the asteroid is the central gravitational body
     asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])  # connect asteroid ephem. to custom grav body
 
