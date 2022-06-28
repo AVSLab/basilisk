@@ -40,7 +40,6 @@ ThrusterStateEffector::ThrusterStateEffector()
     CallCounts = 0;
     this->prevFireTime = 0.0;
     this->prevCommandTime = 0xFFFFFFFFFFFFFFFF;
-    this->kappaInit = 0.0;
     this->nameOfKappaState = "thrusterKappa" + std::to_string(this->effectorID);
     this->effectorID++;
 
@@ -67,9 +66,13 @@ ThrusterStateEffector::~ThrusterStateEffector()
  */
 void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos)
 {
-    //! - Clear out any currently firing thrusters and re-init cmd array
+    // Clear out any currently firing thrusters and re-init cmd array
     this->NewThrustCmds.clear();
     this->NewThrustCmds.insert(this->NewThrustCmds.begin(), this->thrusterData.size(), 0.0);
+
+    // Add warning to keep it between 0 and 1
+
+    // Reset the thrust states?
 
     return;
 }
@@ -85,7 +88,7 @@ bool ThrusterStateEffector::ReadInputs()
     uint64_t i;
     bool dataGood;
     
-    //Check if the message has been linked
+    // Check if the message has been linked
     if (this->cmdsInMsg.isLinked()) {
         //! - Read the incoming command array
         this->incomingCmdBuffer = this->cmdsInMsg();
@@ -101,7 +104,7 @@ bool ThrusterStateEffector::ReadInputs()
         this->prevCommandTime = 0;
     }
 
-    //! - Set the NewThrustCmds vector.  Using the data() method for raw speed
+    // Set the NewThrustCmds vector.  Using the data() method for raw speed
     double *CmdPtr;
     for(i=0, CmdPtr = NewThrustCmds.data(); i < this->thrusterData.size();
         CmdPtr++, i++)
@@ -184,6 +187,10 @@ void ThrusterStateEffector::addThruster(THRSimConfigMsgPayload* newThruster)
     Message<THROutputMsgPayload>* msg;
     msg = new Message<THROutputMsgPayload>;
     this->thrusterOutMsgs.push_back(msg);
+
+    // Set the initial condition
+    double state = 0.0;
+    this->kappaInit.push_back(state);
 }
 
 /*! This method is used to link the states to the thrusters
@@ -203,7 +210,7 @@ void ThrusterStateEffector::registerStates(DynParamManager& states)
     Eigen::MatrixXd kappaInitMatrix(this->thrusterData.size(), 1);
     // Loop through all thrusters to initialize each state variable
     for (uint64_t i = 0; i < this->thrusterData.size(); i++) {
-        kappaInitMatrix(i, 0) = this->kappaInit;
+        kappaInitMatrix(i, 0) = this->kappaInit[i];
     }  
     this->kappaState->setState(kappaInitMatrix);
 
@@ -216,10 +223,7 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
     std::vector<THRSimConfigMsgPayload>::iterator it;
     THROperationMsgPayload* ops;
     uint64_t i;
-    double dt = 0.0;
-    double zeta = 1.0;
-
-    dt = integTime - prevFireTime;
+    double ksi = 1.0;
 
     // - Compute Derivatives
     Eigen::MatrixXd kappaDot(this->thrusterData.size(), 1);
@@ -231,11 +235,11 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
         ops = &it->ThrustOps;
 
         //! - For each thruster check if the end time is greater than the current time, and if so thrust
-        if ((ops->ThrusterEndTime - integTime) > 0.0 && ops->ThrustOnCmd > 0.0) {
-            kappaDot(i, 0) = (1.0 - this->kappaState->state(i, 0)) / zeta;
+        if ((ops->ThrusterEndTime - integTime) >= 0.0 && ops->ThrustOnCmd > 0.0) {
+            kappaDot(i, 0) = (1.0 - this->kappaState->state(i, 0)) * it->cutoffFrequency;
         }
         else {
-            kappaDot(i, 0) = -this->kappaState->state(i, 0) / zeta;
+            kappaDot(i, 0) = -this->kappaState->state(i, 0) * it->cutoffFrequency;
         }
 
         // Save the state to thruster ops
@@ -244,6 +248,101 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
     this->kappaState->setDerivative(kappaDot);
    
     return;
+}
+
+void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
+{
+    std::vector<THRSimConfigMsgPayload>::iterator it;
+    THROperationMsgPayload* ops;
+    Eigen::Vector3d SingleThrusterForce;
+    Eigen::Vector3d SingleThrusterTorque;
+    Eigen::Vector3d CoMRelPos;
+    Eigen::Vector3d omegaLocal_BN_B;
+    Eigen::Matrix3d BMj;
+    Eigen::Matrix3d	axesWeightMatrix;
+    Eigen::Vector3d BM1, BM2, BM3;
+    double tmpThrustMag = 0;
+    double dt = 0.0;
+    double mDotNozzle;
+
+    //! - Zero out the structure force/torque for the thruster set
+    // MassProps are missing, so setting CoM to zero momentarily
+    CoMRelPos.setZero();
+    this->forceOnBody_B.setZero();
+    this->torqueOnBodyPntB_B.setZero();
+    this->torqueOnBodyPntC_B.setZero();
+
+    omegaLocal_BN_B = hubOmega->getState();
+    axesWeightMatrix << 2, 0, 0, 0, 1, 0, 0, 0, 1;
+
+    //! - Iterate through all of the thrusters to aggregate the force/torque in the system
+    for (it = this->thrusterData.begin(); it != this->thrusterData.end(); it++)
+    {
+        ops = &it->ThrustOps;
+
+        //! - For each thruster, aggregate the current thrust direction into composite body force
+        tmpThrustMag = it->MaxThrust * ops->ThrustFactor;
+        // Apply dispersion to magnitude
+        tmpThrustMag *= (1. + it->thrusterMagDisp);
+        SingleThrusterForce = it->thrDir_B * tmpThrustMag;
+        this->forceOnBody_B = SingleThrusterForce + forceOnBody_B;
+
+        //! - Compute the point B relative torque and aggregate into the composite body torque
+        SingleThrusterTorque = it->thrLoc_B.cross(SingleThrusterForce);
+        this->torqueOnBodyPntB_B = SingleThrusterTorque + torqueOnBodyPntB_B;
+
+        if (!it->updateOnly) {
+            //! - Add the mass depletion force contribution
+            mDotNozzle = 0.0;
+            if (it->steadyIsp * ops->IspFactor > 0.0)
+            {
+                mDotNozzle = it->MaxThrust * ops->ThrustFactor / (EARTH_GRAV *
+                    it->steadyIsp * ops->IspFactor);
+            }
+            this->forceOnBody_B += 2 * mDotNozzle * omegaLocal_BN_B.cross(it->thrLoc_B);
+
+            //! - Add the mass depletion torque contribution
+            BM1 = it->thrDir_B;
+            BM2 << -BM1(1), BM1(0), BM1(2);
+            BM3 = BM1.cross(BM2);
+            BMj.col(0) = BM1;
+            BMj.col(1) = BM2;
+            BMj.col(2) = BM3;
+            this->torqueOnBodyPntB_B += mDotNozzle * (eigenTilde(it->thrDir_B) * eigenTilde(it->thrDir_B).transpose()
+                + it->areaNozzle / (4 * M_PI) * BMj * axesWeightMatrix * BMj.transpose()) * omegaLocal_BN_B;
+
+        }
+        // - Save force and torque values for messages
+        eigenVector3d2CArray(SingleThrusterForce, it->ThrustOps.opThrustForce_B);
+        eigenVector3d2CArray(SingleThrusterTorque, it->ThrustOps.opThrustTorquePntB_B);
+    }
+
+    return;
+}
+
+/*! This is the method for the thruster effector to add its contributions to the mass props and mass prop rates of the vehicle */
+void ThrusterStateEffector::updateEffectorMassProps(double integTime) {
+
+    std::vector<THRSimConfigMsgPayload>::iterator it;
+    THROperationMsgPayload* ops;
+    double mDotSingle = 0.0;
+    this->mDotTotal = 0.0;
+    //! - Iterate through all of the thrusters to aggregate the force/torque in the system
+    for (it = this->thrusterData.begin(); it != this->thrusterData.end(); it++)
+    {
+        ops = &it->ThrustOps;
+        mDotSingle = 0.0;
+        if (it->steadyIsp * ops->IspFactor > 0.0)
+        {
+            mDotSingle = it->MaxThrust * ops->ThrustFactor / (EARTH_GRAV *
+                it->steadyIsp * ops->IspFactor);
+        }
+        this->mDotTotal += mDotSingle;
+    }
+
+    return;
+
+
 }
 
 /*! This method is the main cyclical call for the scheduled part of the thruster

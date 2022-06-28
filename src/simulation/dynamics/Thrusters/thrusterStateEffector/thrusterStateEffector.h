@@ -49,6 +49,8 @@ public:
     void registerStates(DynParamManager& states);  //!< -- Method for the effector to register its states
     void linkInStates(DynParamManager& states);  //!< -- Method for the effector to get access of other states
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
+    void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);
+    void updateEffectorMassProps(double integTime);
     void UpdateState(uint64_t CurrentSimNanos);
 
 
@@ -63,7 +65,7 @@ public:
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
 
     // State information
-    double kappaInit;                //!< [N] Initial thruster state
+    std::vector<double> kappaInit;                //!< [] Vector of initial thruster states
     std::string nameOfKappaState;    //!< -- Identifier for the kappa state data container
     double prevFireTime;                           //!< s  Previous thruster firing time
 
@@ -72,6 +74,9 @@ public:
     StateData *hubOmega;        //!< class varaible
     StateData* kappaState;      //!< -- state manager of theta for hinged rigid body
     BSKLogger bskLogger;        //!< -- BSK Logging
+
+    //Miscellaneous
+    double mDotTotal;           //!< kg/s Current mass flow rate of thrusters
 
 private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
