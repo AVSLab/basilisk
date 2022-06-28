@@ -49,6 +49,7 @@ THRSimConfigMsgPayload
     std::vector<double> thrusterDirectionDisp;      //!< -- Unit vector of dispersed thruster pointing
 	bool updateOnly = true;							//!< -- Use update only calculations
     char label[10];                                 //!< [-], label name of the TH device being simulated
+    double cutoffFrequency;                         //!< [rad/s] cutoff frequency for first-order behavior
 }THRSimConfigMsgPayload;
 
 

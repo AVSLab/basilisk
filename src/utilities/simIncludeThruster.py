@@ -75,6 +75,7 @@ class thrusterFactory(object):
         TH.MaxThrust = 0.200        # [N]
         TH.thrusterMagDisp = 0.0    # [%]
         TH.MinOnTime = 0.020        # [s]
+        TH.cutoffFrequency = 10  # [rad/s]
 
         # populate the thruster object with the type specific parameters
         try:
@@ -247,7 +248,8 @@ class thrusterFactory(object):
         # Isp value [s]
         TH.steadyIsp = 227.5
 
-        TH.areaNozzle = 0.000079 # [m^2]
+        TH.areaNozzle = 0.000079  # [m^2]
+
         return
 
     #
