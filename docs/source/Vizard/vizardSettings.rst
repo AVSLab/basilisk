@@ -1441,7 +1441,13 @@ Spice name, the ``displayName`` could be ``TestAsteroid`` if desired, and the ob
 called ``custom_test_asteroid``.
 
 The ``createCustomGravObject()`` method in the gravity factory class has an optional ``modelDictionaryKey``
-argument to specify this string if desired.
+argument to specify this string if desired.  By default Vizard will read in the CAD model assuming the dimensions are
+in kilometers unless ``radEquator`` is specified.
+To scale the CAD model differently, specify the ``radEquator`` argument.  For a celestial object
+with a general shape, Vizard finds the largest dimension along the x, y and z axes and scales the body
+uniformly for this largest dimension to be ``radEquator``.  Note that the ``createCustomGravObject()`` method
+requires ``radEquator`` to be given in meters.
+
 
 Specifying the Osculating or True Orbit Line Colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
