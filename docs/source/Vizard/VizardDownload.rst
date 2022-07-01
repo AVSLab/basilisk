@@ -31,11 +31,11 @@ The bundle must be installed in specific directories on each platform.  On macOS
 
 On Linux, install the bundle contents in::
 
-    xxx/CustomModels
+    home/your_user_name/.config/unity3d/Vizard/Vizard/Resources/CustomModels
 
 On Window, install the bundle contents in::
 
-    xxx/CustomModels
+    C:/Users/your_user_name/AppData/LocalLow/Vizard/Vizard/Resources/CustomModels
 
 
 .. list-table:: Unity 2020 Asset Download
