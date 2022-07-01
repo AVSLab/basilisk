@@ -56,7 +56,7 @@ In order to call Vizard from python simulations, the path to the downloaded Viza
 If needed, adjust the following line illustrated below to reflect the path to the Vizard binary::
 
     # TODO : Modify the path to the viz here
-    appPath = '/Applications/Vizard.app/Contents/MacOS/Basilisk Vizard' #If on Mac
+    appPath = '/Applications/Vizard.app/Contents/MacOS/Vizard' #If on Mac
 
 The Vizard app must therefore me downloaded, and this path must reflect it's position in the file structure, and its
 name. If the path is not properly set, the OpNav simulations will hang (printing that it is waiting for the
