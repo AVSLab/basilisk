@@ -33,6 +33,8 @@ RigidBodyContactEffector::RigidBodyContactEffector()
     this->mainBody.boundingRadius = 0.0;
     this->mainBody.collisionPoints.clear();
     this->currentBodyInCycle = 0;
+    this->numBodies = 0;
+    this->boundingBoxFF = 1.0;
     return;
 }
 
@@ -102,7 +104,7 @@ void RigidBodyContactEffector::AddSpiceBody(const char *objFile, Message<SpicePl
     body.boundingRadius = boundingRadius;
     body.coefRestitution = coefRestitution;
     body.coefFriction = coefFriction;
-    body.planetInMsg = planetSpiceMsg->addSubscriber();
+    body.planetInMsg.subscribeTo(planetSpiceMsg);
     body.isSpice = true;
     
 //    externalBody.modelTag = modelTag;
@@ -195,7 +197,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
                     maxZ = abs(v1[2]);
                 }
             }
-            v2 <<maxX, maxY, maxZ;
+            v2 << maxX, maxY, maxZ;
             allCentroids.push_back(centroid);
             allBoundingBoxes.push_back(v2);
             allFaces.push_back(tempTriangle);
@@ -265,16 +267,19 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
               {
                 return faceMaxDist[f1] > faceMaxDist[f2];
               });
-    
     while (!ungroupedFaces.empty())
     {
         boundingGroup.faceTriangles.clear();
         boundingGroup.faceNormals.clear();
+        boundingGroup.faceCentroids.clear();
+        boundingGroup.faceBoundingBoxes.clear();
         facesInGroup.clear();
         verticesInGroup.clear();
         
         boundingGroup.faceTriangles.push_back(allFaces[ungroupedFaces[0]]);
         boundingGroup.faceNormals.push_back(allNormals[ungroupedFaces[0]]);
+        boundingGroup.faceCentroids.push_back(allCentroids[ungroupedFaces[0]]);
+        boundingGroup.faceBoundingBoxes.push_back(allBoundingBoxes[ungroupedFaces[0]]);
         facesInGroup.push_back(ungroupedFaces[0]);
         for (int ii=0; ii < 3; ++ii)
         {
@@ -477,7 +482,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
-    
+    std::cout << currentTime << std::endl;
     
     dynamicData body1Current;
     dynamicData body2Current;
@@ -592,7 +597,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         }
         
         // Begin looping through contactable triangles
-        
+        std::cout << this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps.size() << std::endl;
         for (int triPairInd=0; triPairInd < this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps.size(); triPairInd++)
         {
             
@@ -723,8 +728,13 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         
         // Calculate total impact begin
         numImpacts = impacts.size();
+        if (numImpacts == 0)
+        {
+            return;
+        }
         for (int impNum=0; impNum < numImpacts; impNum++)
         {
+            std::cout << std::get<0>(impacts[impNum]) << std::endl;
             // Create local contact frame
             cHat_3 = (std::get<2>(impacts[impNum])).normalized();
             cHat_1 = cHat_3.cross(body2Current.dcm_NB * zDirection);
@@ -746,18 +756,38 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         
         // Create the "inverse inertia matrix"
         M_tot = Eigen::MatrixXd::Zero(3*numImpacts, 3*numImpacts);
-        for (int ii=0; ii < numImpacts; ii++)
+        if (this->Bodies[this->closeBodies[groupIt1][1]].isSpice)
         {
-            for (int jj=0; jj < numImpacts; jj++)
+            for (int ii=0; ii < numImpacts; ii++)
             {
-                M_C = ((1.0 / this->Bodies[this->closeBodies[groupIt1][0]].states.m_SC) * Eigen::MatrixXd::Identity(3, 3) - eigenTilde(dcm_CN[ii] * std::get<0>(impacts[ii])) * (dcm_CB1[ii] * this->Bodies[this->closeBodies[groupIt1][0]].states.ISCPntB_B_inv * dcm_CB1[ii].transpose()) * eigenTilde(dcm_CN[ii] * std::get<0>(impacts[jj]))) + ((1.0 / this->Bodies[this->closeBodies[groupIt1][1]].states.m_SC) * Eigen::MatrixXd::Identity(3, 3) - eigenTilde(dcm_CN[ii] * std::get<1>(impacts[ii])) * (dcm_CB2[ii] * this->Bodies[this->closeBodies[groupIt1][1]].states.ISCPntB_B_inv * dcm_CB2[ii].transpose()) * eigenTilde(dcm_CN[ii] * std::get<1>(impacts[jj])));
-                
-                if (ii == jj)
+                for (int jj=0; jj < numImpacts; jj++)
                 {
-                    M_tot.block(ii*3, jj*3, 3, 3) = M_C;
-                }else
+                    M_C = ((1.0 / this->Bodies[this->closeBodies[groupIt1][0]].states.m_SC) * Eigen::MatrixXd::Identity(3, 3) - eigenTilde(dcm_CN[ii] * std::get<0>(impacts[ii])) * (dcm_CB1[ii] * this->Bodies[this->closeBodies[groupIt1][0]].states.ISCPntB_B_inv * dcm_CB1[ii].transpose()) * eigenTilde(dcm_CN[ii] * std::get<0>(impacts[jj])));
+                    
+                    if (ii == jj)
+                    {
+                        M_tot.block(ii*3, jj*3, 3, 3) = M_C;
+                    }else
+                    {
+                        M_tot.block(ii*3, jj*3, 3, 3) = M_C * (dcm_CB1[ii] * dcm_CB1[jj].transpose());
+                    }
+                }
+            }
+        }else
+        {
+            for (int ii=0; ii < numImpacts; ii++)
+            {
+                for (int jj=0; jj < numImpacts; jj++)
                 {
-                    M_tot.block(ii*3, jj*3, 3, 3) = M_C * (dcm_CB1[ii] * dcm_CB1[jj].transpose());
+                    M_C = ((1.0 / this->Bodies[this->closeBodies[groupIt1][0]].states.m_SC) * Eigen::MatrixXd::Identity(3, 3) - eigenTilde(dcm_CN[ii] * std::get<0>(impacts[ii])) * (dcm_CB1[ii] * this->Bodies[this->closeBodies[groupIt1][0]].states.ISCPntB_B_inv * dcm_CB1[ii].transpose()) * eigenTilde(dcm_CN[ii] * std::get<0>(impacts[jj]))) + ((1.0 / this->Bodies[this->closeBodies[groupIt1][1]].states.m_SC) * Eigen::MatrixXd::Identity(3, 3) - eigenTilde(dcm_CN[ii] * std::get<1>(impacts[ii])) * (dcm_CB2[ii] * this->Bodies[this->closeBodies[groupIt1][1]].states.ISCPntB_B_inv * dcm_CB2[ii].transpose()) * eigenTilde(dcm_CN[ii] * std::get<1>(impacts[jj])));
+                    
+                    if (ii == jj)
+                    {
+                        M_tot.block(ii*3, jj*3, 3, 3) = M_C;
+                    }else
+                    {
+                        M_tot.block(ii*3, jj*3, 3, 3) = M_C * (dcm_CB1[ii] * dcm_CB1[jj].transpose());
+                    }
                 }
             }
         }
@@ -825,6 +855,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         // Integrate the collision state until the restitution energy conditions are met
         energyMet = false;
         currLoop = 0;
+        std::cout << "Entering Impule Integration" << std::endl;
         while (!energyMet)
         {
             currLoop++;
@@ -861,6 +892,8 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N -= impulse_Body1_N / timeStep;
             this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B += body1Current.dcm_BN * (std::get<0>(impacts[impNum]) - body1Current.r_BN_N).cross(impulse_Body1_N / timeStep);
             this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B -= body2Current.dcm_BN * (std::get<1>(impacts[impNum]) - body2Current.r_BN_N).cross(impulse_Body1_N / timeStep);
+            this->forceExternal_N += impulse_Body1_N / timeStep;
+            this->torqueExternalPntB_B += body1Current.dcm_BN * (std::get<0>(impacts[impNum]) - body1Current.r_BN_N).cross(impulse_Body1_N / timeStep);
         }
         
     }
@@ -1027,7 +1060,7 @@ void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
 void RigidBodyContactEffector::ReadInputs()
 {
 
-    for (int bodyIt=0; bodyIt<this->numBodies; ++bodyIt)
+    for (int bodyIt=0; bodyIt<this->numBodies; bodyIt++)
     {
         if (this->Bodies[bodyIt].isSpice == true)
         {
@@ -1134,7 +1167,7 @@ void RigidBodyContactEffector::CheckBoundingBox()
     {
         layer1Box.parentIndices = std::make_tuple(this->closeBodies[groupIt1][0], this->closeBodies[groupIt1][1]);
         layer1Box.overlaps.clear();
-        
+
         for (int boxIt1=0; boxIt1 < this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron.size(); ++boxIt1)
         {
             for (int boxIt2=0; boxIt2 < this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron.size(); ++boxIt2)
@@ -1181,7 +1214,6 @@ void RigidBodyContactEffector::CheckBoundingBox()
                 if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.xAxisInterval), box1, box2)) continue;
                 if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.yAxisInterval), box1, box2)) continue;
                 if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.zAxisInterval), box1, box2)) continue;
-                
                 
                 for (int subBoxIt1=0; subBoxIt1 < this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceBoundingBoxes.size(); ++subBoxIt1)
                 {
