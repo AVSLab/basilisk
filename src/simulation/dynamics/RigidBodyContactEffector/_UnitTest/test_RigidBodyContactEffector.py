@@ -27,6 +27,7 @@ import matplotlib.animation as animation
 from Basilisk.simulation import RigidBodyContactEffector, spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros, RigidBodyKinematics, unitTestSupport, vizSupport)
 from Basilisk.architecture import messaging
+from Basilisk.simulation import svIntegrators
 import copy
 # import GeometryUtility as GEO
 
@@ -147,6 +148,8 @@ def run():
     # initialize object and set properties
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "Primary"
+    integratorObject = svIntegrators.svIntegratorRKF45(scObject)
+    scObject.setIntegrator(integratorObject)
     # define the simulation inertia
     # mMainBody = 95.0
     # xDimMainBody = 2.0
@@ -231,15 +234,18 @@ def run():
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
     scContact = RigidBodyContactEffector.RigidBodyContactEffector()
+    scContact.maxPosError = 0.001
+    scContact.simTimeStep = 0.01
+    scContact.slipTolerance = 1e-6
+    scContact.collisionIntegrationStep = 1e-3
+    scContact.maxBoundingBoxDim = 0.1
+    scContact.boundingBoxFF = 1.1
     scContact.LoadSpacecraftBody("cube2.obj", scObject.ModelTag, scObject.scStateOutMsg, scObject.scMassOutMsg, 1.5, 1.0, 0.0)
     # scContact.LoadMainBody("Lander.obj")
     # scContact.mainBody.modelTag = scObject.ModelTag
     # scContact.mainBody.boundingRadius = 3.5
     # scContact.mainBody.boundingRadius = 1.5
-    scContact.maxPosError = 0.001
-    scContact.simTimeStep = 0.01
-    scContact.slipTolerance = 1e-6
-    scContact.collisionIntegrationStep = 1e-3
+
 
     staticObjectMsg = messaging.SpicePlanetStateMsgPayload()
     # staticObjectMsg.PositionVector = [3.5, 2.01, 2.01]
@@ -256,12 +262,12 @@ def run():
     # scContact.externalBodies[0].states.sigma_BN = [[0.0], [0.0], [0.0]]  # sigma_CN_B
     # scContact.externalBodies[0].states.omega_BN_B = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
     # scContact.externalBodies[0].states.c_B = [[0.0], [0.0], [0.0]]
-    I2 = np.array([[((1. / 6.) * 2000. * 4.), 0., 0.],
-          [0., ((1. / 6.) * 2000. * 4.), 0.],
-          [0., 0, ((1. / 6.) * 2000. * 4.)]])
-    scContact.Bodies[1].states.m_SC = 2000.
-    scContact.Bodies[1].states.ISCPntB_B = unitTestSupport.np2EigenMatrix3d(I2)
-    scContact.Bodies[1].states.ISCPntB_B_inv = unitTestSupport.np2EigenMatrix3d(np.invert(I2))
+    # I2 = np.array([[((1. / 6.) * 2000. * 4.), 0., 0.],
+    #       [0., ((1. / 6.) * 2000. * 4.), 0.],
+    #       [0., 0, ((1. / 6.) * 2000. * 4.)]])
+    # scContact.Bodies[1].states.m_SC = 2000.
+    # scContact.Bodies[1].states.ISCPntB_B = unitTestSupport.np2EigenMatrix3d(I2)
+    # scContact.Bodies[1].states.ISCPntB_B_inv = unitTestSupport.np2EigenMatrix3d(np.invert(I2))
 
     scObject.addDynamicEffector(scContact)
     scSim.AddModelToTask(simTaskName, scContact)
@@ -297,7 +303,7 @@ def run():
 
     mrp = RigidBodyKinematics.C2MRP(RigidBodyKinematics.Mi(0.0, 2))
     scObject.hub.r_CN_NInit = [[0.0], [0.0], [3.5]]  # m   - r_CN_N
-    scObject.hub.v_CN_NInit = [[0.0], [0.0], [-0.4]]  # m/s - v_CN_N
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [-0.7]]  # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[mrp[0]], [mrp[1]], [mrp[2]]]  # sigma_CN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
 
@@ -372,15 +378,16 @@ def run():
 
     fig1 = plt.figure(figsize=(5, 5))
     fig1.set_tight_layout(False)
-    ax1 = p3.Axes3D(fig1)
+    ax1 = p3.Axes3D(fig1, auto_add_to_figure=False)
+    fig1.add_axes(ax1)
 
-    ax1.set_xlim3d([0.0, 7.0])
+    ax1.set_xlim3d([-4.0, 4.0])
     ax1.set_xlabel('X')
 
-    ax1.set_ylim3d([0.0, 7.0])
+    ax1.set_ylim3d([-4.0, 4.0])
     ax1.set_ylabel('Y')
 
-    ax1.set_zlim3d([0.0, 7.0])
+    ax1.set_zlim3d([-1.0, 7.0])
     ax1.set_zlabel('Z')
 
 
