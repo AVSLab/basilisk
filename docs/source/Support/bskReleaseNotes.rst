@@ -43,6 +43,8 @@ Version |release|
 - added new :ref:`mappingInstrument` to pass along access from a vector of map points to a storage unit.
 - updated :ref:`locationPointing` to allow for spacecraft targeting as well
 - added new :ref:`scenarioGroundMapping` scenario to demonstrate the new mapping capabilities.
+- added new :ref:`scenarioRendezVous` scenario illustrating a servicer approaching
+  a debris object and engage several flight modes.
 
 
 Version 2.1.3 (May 25, 2022)
