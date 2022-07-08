@@ -134,7 +134,7 @@ def run():
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(0.1)
+    simulationTime = macros.min2nano(0.02)
 
     #
     #  create the simulation process
@@ -238,9 +238,9 @@ def run():
     scContact.simTimeStep = 0.01
     scContact.slipTolerance = 1e-6
     scContact.collisionIntegrationStep = 1e-3
-    scContact.maxBoundingBoxDim = 0.1
+    scContact.maxBoundingBoxDim = 0.7
     scContact.boundingBoxFF = 1.1
-    scContact.LoadSpacecraftBody("cube2.obj", scObject.ModelTag, scObject.scStateOutMsg, scObject.scMassOutMsg, 1.5, 1.0, 0.0)
+    scContact.LoadSpacecraftBody("cube2.obj", scObject.ModelTag, scObject.scStateOutMsg, scObject.scMassOutMsg, 1.0, 1.0, 0.0)
     # scContact.LoadMainBody("Lander.obj")
     # scContact.mainBody.modelTag = scObject.ModelTag
     # scContact.mainBody.boundingRadius = 3.5
@@ -301,8 +301,8 @@ def run():
     # scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_CN_B
     # scObject.hub.omega_BN_BInit = [[0.1], [0.1], [0.1]]  # rad/s - omega_CN_B
 
-    mrp = RigidBodyKinematics.C2MRP(RigidBodyKinematics.Mi(0.0, 2))
-    scObject.hub.r_CN_NInit = [[0.0], [0.0], [3.5]]  # m   - r_CN_N
+    mrp = RigidBodyKinematics.C2MRP(RigidBodyKinematics.Mi(0.2, 2))
+    scObject.hub.r_CN_NInit = [[-0.2], [-0.2], [1.5]]  # m   - r_CN_N
     scObject.hub.v_CN_NInit = [[0.0], [0.0], [-0.7]]  # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[mrp[0]], [mrp[1]], [mrp[2]]]  # sigma_CN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B

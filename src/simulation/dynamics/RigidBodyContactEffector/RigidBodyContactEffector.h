@@ -220,7 +220,10 @@ public:
     double simTimeStep;
     double collisionIntegrationStep;
     double maxBoundingBoxDim;
+    double minBoundingBoxDim;
     double boundingBoxFF;
+    
+    
     
     
 private:
