@@ -22,6 +22,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/orbitalMotion.h"
 #include <iostream>
 #include <cstring>
 #include <math.h>
@@ -67,6 +68,18 @@ void GroundMapping::Reset(uint64_t CurrentSimNanos)
     // check that the direction of the camera is provided
     if (this->nHat_B.isZero()){
         bskLogger.bskLog(BSK_ERROR, "GroundMapping.nHat_B vector not set.");
+    }
+
+    // check that the user has set the solarLongitude and tolerance if the sun msg is connected
+    if (this->sunInMsg.isLinked()) {
+        if (this->solarLongitude == -4.0) {
+            bskLogger.bskLog(BSK_ERROR, "GroundMapping.solarLongitude was not set.");
+        }
+
+        if (this->solarLongitudeTolerance == -1.0) {
+            bskLogger.bskLog(BSK_ERROR, "GroundMapping.solarLongitudeTolerance was not set.");
+        }
+
     }
 }
 
@@ -149,7 +162,33 @@ void GroundMapping::computeAccess(uint64_t c){
 
     uint64_t within_view = this->checkInstrumentFOV();
 
-    if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0) && within_view){
+    bool solarLongitudeRequirement = true;
+    if (this->sunInMsg.isLinked()){
+        // Compute the position of the spacecraft in the map body's Hill-frame
+        double rd_H[3];
+        double rdPrime_H[3];
+        double rho;
+        rv2hill(planetInMsgBuffer.PositionVector, planetInMsgBuffer.VelocityVector, scStateInMsgBuffer.r_BN_N, scStateInMsgBuffer.v_BN_N, rd_H, rdPrime_H);
+        rho = v3Norm(rd_H);
+
+        // Compute the solar longitude
+        double latitude;
+        double longitude;
+        latitude = M_PI_2 - acos(rd_H[2]/rho);
+        longitude = acos(rd_H[0]/(rho*sin(M_PI_2 - latitude)));
+        if (((rd_H[1] < 0) && (longitude > 0)) or ((rd_H[1] > 0) && (longitude < 0))){
+            longitude = -longitude;
+        }
+
+        // Check the solar longitude is within requirements
+        if ((longitude >= (this->solarLongitude - this->solarLongitudeTolerance)) && (longitude <= (this->solarLongitude + this->solarLongitudeTolerance))){
+            solarLongitudeRequirement = true;
+        } else{
+            solarLongitudeRequirement = false;
+        }
+    }
+
+    if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0) && within_view && solarLongitudeRequirement){
         this->accessMsgBuffer.at(c).hasAccess = 1;
     }
     else

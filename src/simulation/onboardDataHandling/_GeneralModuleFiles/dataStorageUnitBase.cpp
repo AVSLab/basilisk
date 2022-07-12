@@ -20,6 +20,7 @@
 #include "dataStorageUnitBase.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <iostream>
+#include <string>
 
 /*! This method initializes some basic parameters for the module.
  @return void
@@ -165,7 +166,11 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
     //! - loop over all the data nodes
     std::vector<DataNodeUsageMsgPayload>::iterator it;
     for(it = nodeBaudMsgs.begin(); it != nodeBaudMsgs.end(); it++) {
-        index = messageInStoredData(&(*it));
+        if (this->useNameIndex){
+            index = std::stoi(it->dataName);
+        } else {
+            index = messageInStoredData(&(*it));
+        }
 
         //! - If the storage capacity has not been reached or the baudRate is less than 0 and won't take below 0, then add the data
        if ((this->storedDataSum < this->storageCapacity) || (it->baudRate < 0)) {

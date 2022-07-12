@@ -145,6 +145,9 @@
 /* Deimos */
 #define REQ_DEIMOS     6.1              /* km */
 
+/* Bennu */
+#define REQ_BENNU     0.24503           /* km */
+
 /* Jupiter */
 #define REQ_JUPITER   71492.
 #define J2_JUPITER    14736.e-6

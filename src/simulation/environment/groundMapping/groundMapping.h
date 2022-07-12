@@ -61,11 +61,14 @@ public:
     Eigen::Vector3d cameraPos_B;  //!< [m] (optional) Instrument position in body frame, defaults to (0,0,0)
     double halfFieldOfView;  //!< [r] Instrument half-fov, defaults to 10 degrees
     Eigen::Vector3d nHat_B;  //!< [-] Instrument unit direction vector in body frame components
+    double solarLongitude = -4.0;  //!< [rad] (optional) A solar longitude angle the mapping must be performed from [-pi, pi]
+    double solarLongitudeTolerance = -1.0; //!< (optional) A tolerance on the required solar longitude, positive number
 
     BSKLogger bskLogger;              //!< -- BSK Logging
 
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;  //!< Planet state input message
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;  //!< Spacecraft state input message
+    ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;  //!< (optional) Solar state input message
     std::vector<Message<GroundStateMsgPayload>*> currentGroundStateOutMsgs;    //!< vector of ground location output message
     std::vector<Message<AccessMsgPayload>*> accessOutMsgs;           //!< vector of ground location access messages
 

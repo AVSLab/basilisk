@@ -282,8 +282,13 @@ double Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName)
     } else if (planetSpiceName == "uranus") {
         return REQ_MARS*1000.0;
     } else if (planetSpiceName == "neptune") {
-        return REQ_MARS*1000.0;
-    } else {
+        return REQ_MARS * 1000.0;
+    } else if (planetSpiceName == "bennu") {
+        return REQ_BENNU * 1000.0;
+    } else if (planetSpiceName == "custom") {
+        return this->REQ_CUSTOM * 1000.0;
+    }
+    else {
         bskLogger.bskLog(BSK_ERROR, "Eclipse: unrecognized planetSpiceName.");
         return 1.0;
     }

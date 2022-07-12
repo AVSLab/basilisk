@@ -20,6 +20,7 @@
 #include "simulation/environment/groundLocation/groundLocation.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <iostream>
 
 /*! @brief Creates an instance of the GroundLocation class with a minimum elevation of 10 degrees,
@@ -44,6 +45,8 @@ GroundLocation::GroundLocation()
     this->planetState.J20002Pfix[2][2] = 1;
 
     this->r_North_N << 0, 0, 1;
+
+    this->accessTimes.setConstant(32, 2, -1);
 }
 
 /*! Empty destructor method.
@@ -176,10 +179,22 @@ void GroundLocation::updateInertialPositions()
     eigenVector3d2CArray(this->r_LP_N, this->currentGroundStateBuffer.r_LP_N);
 }
 
-void GroundLocation::computeAccess()
+void GroundLocation::computeAccess(uint64_t CurrentSimNanos)
 {
     // Update the groundLocation's inertial position
     this->updateInertialPositions();
+
+    // Determine if the current access time is within any of the access windows
+    bool accessTimeCheck = false;
+    if (this->accessTimes(0, 0) == -1) {
+        accessTimeCheck = true;
+    } else {
+        for (uint64_t i = 0; i < this->accessTimes.rows(); i++){
+            if ((SEC2NANO*accessTimes(i,0) <= CurrentSimNanos) && (SEC2NANO*accessTimes(i,1) >= CurrentSimNanos)) {
+                accessTimeCheck = true;
+            }
+        }
+    }
 
     // Iterate over spacecraft position messages and compute the access for each one
     std::vector<AccessMsgPayload>::iterator accessMsgIt;
@@ -208,7 +223,7 @@ void GroundLocation::computeAccess()
         accessMsgIt->az_dot = (-r_BL_L[0]*v_BL_L[1] + r_BL_L[1]*v_BL_L[0])/pow(xy_norm,2);
         accessMsgIt->el_dot = (v_BL_L[2]/xy_norm - r_BL_L[2]*(r_BL_L[0]*v_BL_L[0] + r_BL_L[1]*v_BL_L[1])/pow(xy_norm,3))/(1+pow(r_BL_L[2]/xy_norm,2));
         
-        if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0)){
+        if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0) && accessTimeCheck){
             accessMsgIt->hasAccess = 1;
         }
         else
@@ -225,7 +240,7 @@ void GroundLocation::computeAccess()
 void GroundLocation::UpdateState(uint64_t CurrentSimNanos)
 {
     this->ReadMessages();
-    this->computeAccess();
+    this->computeAccess(CurrentSimNanos);
     this->WriteMessages(CurrentSimNanos);
 
 }
