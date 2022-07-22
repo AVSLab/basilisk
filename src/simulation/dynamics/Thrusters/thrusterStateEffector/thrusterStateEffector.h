@@ -75,8 +75,8 @@ public:
     StateData* kappaState;      //!< -- state manager of theta for hinged rigid body
     BSKLogger bskLogger;        //!< -- BSK Logging
 
-    //Miscellaneous
-    double mDotTotal;           //!< kg/s Current mass flow rate of thrusters
+    // Miscellaneous
+    double mDotTotal = 0.0;           //!< kg/s Current mass flow rate of thrusters
 
 private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data

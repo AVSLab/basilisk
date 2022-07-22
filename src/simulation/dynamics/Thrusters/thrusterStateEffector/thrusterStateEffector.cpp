@@ -39,8 +39,7 @@ ThrusterStateEffector::ThrusterStateEffector()
 
     CallCounts = 0;
     this->prevFireTime = 0.0;
-    this->prevCommandTime = 0xFFFFFFFFFFFFFFFF;
-    this->nameOfKappaState = "thrusterKappa" + std::to_string(this->effectorID);
+    this->prevCommandTime = 0xFFFFFFFFFFFFFFFF;    this->mDotTotal = 0.0;
     this->effectorID++;
 
     return;
@@ -210,6 +209,11 @@ void ThrusterStateEffector::registerStates(DynParamManager& states)
     Eigen::MatrixXd kappaInitMatrix(this->thrusterData.size(), 1);
     // Loop through all thrusters to initialize each state variable
     for (uint64_t i = 0; i < this->thrusterData.size(); i++) {
+        // Make sure that the thruster state is between 0 and 1
+        if (this->kappaInit[i] < 0.0 || this->kappaInit[i] > 1.0) {
+            bskLogger.bskLog(BSK_ERROR, "thrusterStateEffector: the initial condition for the thrust factor must be between 0 and 1. Setting it to 0.");
+            this->kappaInit[i] = 0.0;
+        }
         kappaInitMatrix(i, 0) = this->kappaInit[i];
     }  
     this->kappaState->setState(kappaInitMatrix);
@@ -241,6 +245,9 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
         else {
             kappaDot(i, 0) = -this->kappaState->state(i, 0) * it->cutoffFrequency;
         }
+
+        // Set the IspFactor to 1
+        ops->IspFactor = 1.0;
 
         // Save the state to thruster ops
         ops->ThrustFactor = this->kappaState->state(i, 0);
@@ -341,7 +348,6 @@ void ThrusterStateEffector::updateEffectorMassProps(double integTime) {
     }
 
     return;
-
 
 }
 
