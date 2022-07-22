@@ -539,6 +539,11 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     this->torqueExternalPntB_B.setZero();
     //td::cout << currentTime << std::endl;
     
+    Eigen::Vector3d forceExternalOther_N;
+    Eigen::Vector3d torqueExternalOtherPntB_B;
+    forceExternalOther_N.setZero();
+    torqueExternalOtherPntB_B.setZero();
+    
     dynamicData body1Current;
     dynamicData body2Current;
     dynamicData body1Future;
@@ -559,6 +564,9 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     int intersectFlag;
     Eigen::Vector3d contactPoint;
     Eigen::Vector3d contactPoint2;
+    double contactError;
+    double currentMaxError = 0.0;
+    this->currentMinError = 100.0;
     int numImpacts;
     
     Eigen::Vector3d cHat_1;
@@ -594,65 +602,71 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     
     std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts;
     
+    
     for (int groupIt1=0; groupIt1 < this->closeBodies.size(); ++groupIt1)
     {
+        if (this->responseFound)
+        {
+            this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N;
+            this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B;
+            return;
+        }
         // Fine collision detection begin
         if (this->Bodies[this->closeBodies[groupIt1][0]].isSpice == true)
         {
-            body1Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * (currentTime*NANO2SEC - this->currentSimSeconds);
-            body1Current.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B * this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_BN) * (currentTime*NANO2SEC - this->currentSimSeconds)) + this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_BN;
+            body1Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * (currentTime - this->currentSimSeconds);
+            body1Current.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B * this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_BN) * (currentTime - this->currentSimSeconds)) + this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_BN;
             body1Current.dcm_NB = body1Current.dcm_BN.transpose();
             body1Current.omegaTilde_BN_B = this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B;
             
-            body1Future.r_BN_N = body1Current.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * timeStep*NANO2SEC ;
-            body1Future.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B * body1Current.dcm_BN) * timeStep*NANO2SEC) + body1Current.dcm_BN;
+            body1Future.r_BN_N = body1Current.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * timeStep ;
+            body1Future.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B * body1Current.dcm_BN) * timeStep) + body1Current.dcm_BN;
             body1Future.dcm_NB = body1Future.dcm_BN.transpose();
         }else
         {
-            body1Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * (currentTime*NANO2SEC - this->currentSimSeconds) + this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][0]].states.nonConservativeAccelpntB_B * (currentTime*NANO2SEC - this->currentSimSeconds) * (currentTime*NANO2SEC - this->currentSimSeconds));
-            body1Current.v_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][0]].states.nonConservativeAccelpntB_B * (currentTime*NANO2SEC - this->currentSimSeconds));
-            body1Current.omega_BN_B = this->Bodies[this->closeBodies[groupIt1][0]].states.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][0]].states.omegaDot_BN_B * (currentTime*NANO2SEC - this->currentSimSeconds);
-            body1Current.sigma_BN = (0.25 * this->Bodies[this->closeBodies[groupIt1][0]].states.sigma_BN.Bmat() * body1Current.omega_BN_B * (currentTime*NANO2SEC - this->currentSimSeconds)) + ((Eigen::Vector3d) this->Bodies[this->closeBodies[groupIt1][0]].states.sigma_BN.coeffs());
+            body1Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * (currentTime - this->currentSimSeconds) + this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][0]].states.nonConservativeAccelpntB_B * (currentTime - this->currentSimSeconds) * (currentTime - this->currentSimSeconds));
+            body1Current.v_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][0]].states.nonConservativeAccelpntB_B * (currentTime - this->currentSimSeconds));
+            body1Current.omega_BN_B = this->Bodies[this->closeBodies[groupIt1][0]].states.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][0]].states.omegaDot_BN_B * (currentTime - this->currentSimSeconds);
+            body1Current.sigma_BN = (0.25 * this->Bodies[this->closeBodies[groupIt1][0]].states.sigma_BN.Bmat() * body1Current.omega_BN_B * (currentTime - this->currentSimSeconds)) + ((Eigen::Vector3d) this->Bodies[this->closeBodies[groupIt1][0]].states.sigma_BN.coeffs());
             body1Current.dcm_NB = body1Current.sigma_BN.toRotationMatrix();
             body1Current.dcm_BN = body1Current.dcm_NB.transpose();
             body1Current.omegaTilde_BN_B = eigenTilde(body1Current.omega_BN_B);
             
-            body1Future.r_BN_N = body1Current.r_BN_N + body1Current.v_BN_N * timeStep*NANO2SEC + body1Current.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][0]].states.nonConservativeAccelpntB_B * timeStep*NANO2SEC * timeStep*NANO2SEC);
-            body1Future.omega_BN_B = body1Current.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][0]].states.omegaDot_BN_B * timeStep*NANO2SEC;
-            body1Future.sigma_BN = (0.25 * body1Current.sigma_BN.Bmat() * body1Future.omega_BN_B * timeStep*NANO2SEC) + ((Eigen::Vector3d) body1Current.sigma_BN.coeffs());
+            body1Future.r_BN_N = body1Current.r_BN_N + body1Current.v_BN_N * timeStep + body1Current.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][0]].states.nonConservativeAccelpntB_B * timeStep * timeStep);
+            body1Future.omega_BN_B = body1Current.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][0]].states.omegaDot_BN_B * timeStep;
+            body1Future.sigma_BN = (0.25 * body1Current.sigma_BN.Bmat() * body1Future.omega_BN_B * timeStep) + ((Eigen::Vector3d) body1Current.sigma_BN.coeffs());
             body1Future.dcm_NB = body1Future.sigma_BN.toRotationMatrix();
             body1Future.dcm_BN = body1Future.dcm_NB.transpose();
         }
         
         if (this->Bodies[this->closeBodies[groupIt1][1]].isSpice == true)
         {
-            body2Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * (currentTime*NANO2SEC - this->currentSimSeconds);
-            body2Current.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B * this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_BN) * (currentTime*NANO2SEC - this->currentSimSeconds)) + this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_BN;
+            body2Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * (currentTime - this->currentSimSeconds);
+            body2Current.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B * this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_BN) * (currentTime - this->currentSimSeconds)) + this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_BN;
             body2Current.dcm_NB = body2Current.dcm_BN.transpose();
             body2Current.omegaTilde_BN_B = this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B;
             
-            body2Future.r_BN_N = body2Current.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * timeStep*NANO2SEC ;
-            body2Future.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B * body2Current.dcm_BN) * timeStep*NANO2SEC) + body2Current.dcm_BN;
+            body2Future.r_BN_N = body2Current.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * timeStep ;
+            body2Future.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B * body2Current.dcm_BN) * timeStep) + body2Current.dcm_BN;
             body2Future.dcm_NB = body2Future.dcm_BN.transpose();
         }else
         {
-            body2Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * (currentTime*NANO2SEC - this->currentSimSeconds) + this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][1]].states.nonConservativeAccelpntB_B * (currentTime*NANO2SEC - this->currentSimSeconds) * (currentTime*NANO2SEC - this->currentSimSeconds));
-            body2Current.v_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][1]].states.nonConservativeAccelpntB_B * (currentTime*NANO2SEC - this->currentSimSeconds));
-            body2Current.omega_BN_B = this->Bodies[this->closeBodies[groupIt1][1]].states.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][1]].states.omegaDot_BN_B * (currentTime*NANO2SEC - this->currentSimSeconds);
-            body2Current.sigma_BN = (0.25 * this->Bodies[this->closeBodies[groupIt1][1]].states.sigma_BN.Bmat() * body2Current.omega_BN_B * (currentTime*NANO2SEC - this->currentSimSeconds)) + ((Eigen::Vector3d) this->Bodies[this->closeBodies[groupIt1][1]].states.sigma_BN.coeffs());
+            body2Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * (currentTime - this->currentSimSeconds) + this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][1]].states.nonConservativeAccelpntB_B * (currentTime - this->currentSimSeconds) * (currentTime - this->currentSimSeconds));
+            body2Current.v_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][1]].states.nonConservativeAccelpntB_B * (currentTime - this->currentSimSeconds));
+            body2Current.omega_BN_B = this->Bodies[this->closeBodies[groupIt1][1]].states.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][1]].states.omegaDot_BN_B * (currentTime - this->currentSimSeconds);
+            body2Current.sigma_BN = (0.25 * this->Bodies[this->closeBodies[groupIt1][1]].states.sigma_BN.Bmat() * body2Current.omega_BN_B * (currentTime - this->currentSimSeconds)) + ((Eigen::Vector3d) this->Bodies[this->closeBodies[groupIt1][1]].states.sigma_BN.coeffs());
             body2Current.dcm_NB = body2Current.sigma_BN.toRotationMatrix();
             body2Current.dcm_BN = body2Current.dcm_NB.transpose();
             body2Current.omegaTilde_BN_B = eigenTilde(body2Current.omega_BN_B);
             
-            body2Future.r_BN_N = body2Current.r_BN_N + body2Current.v_BN_N * timeStep*NANO2SEC + body2Current.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][1]].states.nonConservativeAccelpntB_B * timeStep*NANO2SEC * timeStep*NANO2SEC);
-            body2Future.omega_BN_B = body2Current.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][0]].states.omegaDot_BN_B * timeStep*NANO2SEC;
-            body2Future.sigma_BN = (0.25 * body2Current.sigma_BN.Bmat() * body2Future.omega_BN_B * timeStep*NANO2SEC) + ((Eigen::Vector3d) body2Current.sigma_BN.coeffs());
+            body2Future.r_BN_N = body2Current.r_BN_N + body2Current.v_BN_N * timeStep + body2Current.dcm_NB * (this->Bodies[this->closeBodies[groupIt1][1]].states.nonConservativeAccelpntB_B * timeStep * timeStep);
+            body2Future.omega_BN_B = body2Current.omega_BN_B + this->Bodies[this->closeBodies[groupIt1][0]].states.omegaDot_BN_B * timeStep;
+            body2Future.sigma_BN = (0.25 * body2Current.sigma_BN.Bmat() * body2Future.omega_BN_B * timeStep) + ((Eigen::Vector3d) body2Current.sigma_BN.coeffs());
             body2Future.dcm_NB = body2Future.sigma_BN.toRotationMatrix();
             body2Future.dcm_BN = body2Future.dcm_NB.transpose();
         }
         
         // Begin looping through contactable triangles
-        std::cout << this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps.size() << std::endl;
         for (int triPairInd=0; triPairInd < this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps.size(); triPairInd++)
         {
             
@@ -700,13 +714,24 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                 elemTest = this->IntervalDotProduct(supportInterval, this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
                 
                 //std::cout << elemTest[0] << " " << elemTest[1] << std::endl;
-                if (((elemTest[0] <= 1e-12) && (elemTest[1] >= -1e-12)) || ((elemTest[0] >= -1e-12) && (elemTest[1] <= 1e-12)))
+                if (((elemTest[0] <= -1e-12) && (elemTest[1] >= 1e-12)) || ((elemTest[0] >= 1e-12) && (elemTest[1] <= -1e-12)))
                 {
-                    intersectFlag = this->PointInTriangle(body2VertInter[vertInd].lower, body1VertInter[0].lower, body1VertInter[1].lower, body1VertInter[2].lower, &contactPoint);
-                    std::cout << intersectFlag << std::endl;
+                    intersectFlag = this->PointInTriangle(body2VertInter[vertInd].lower, body1VertInter[0].lower, body1VertInter[1].lower, body1VertInter[2].lower, &contactPoint, &contactError);
+                    
                     if (intersectFlag == 1)
                     {
-                        impacts.push_back(std::make_tuple(contactPoint, body2VertInter[vertInd].lower, body1Current.dcm_NB * -this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceNormals[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])]));
+                        //contactError = (contactPoint - body2VertInter[vertInd].lower).norm();
+                        if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
+                        {
+                            impacts.push_back(std::make_tuple(contactPoint, body2VertInter[vertInd].lower, body1Current.dcm_NB * -this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceNormals[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])]));
+                            if (contactError > currentMaxError)
+                            {
+                                currentMaxError = contactError;
+                            }else{
+                                this->currentMinError = contactError;
+                            }
+                            
+                        }
                     }
                 }
             }
@@ -725,13 +750,24 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                 elemTest = this->IntervalDotProduct(supportInterval, this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
                 
                 //std::cout << elemTest[0] << " " << elemTest[1] << std::endl;
-                if (((elemTest[0] <= 1e-12) && (elemTest[1] >= -1e-12)) || ((elemTest[0] >= -1e-12) && (elemTest[1] <= 1e-12)))
+                if (((elemTest[0] <= -1e-12) && (elemTest[1] >= 1e-12)) || ((elemTest[0] >= 1e-12) && (elemTest[1] <= -1e-12)))
                 {
-                    intersectFlag = this->PointInTriangle(body1VertInter[vertInd].lower, body2VertInter[0].lower, body2VertInter[1].lower, body2VertInter[2].lower, &contactPoint);
-                    std::cout << intersectFlag << std::endl;
+                    intersectFlag = this->PointInTriangle(body1VertInter[vertInd].lower, body2VertInter[0].lower, body2VertInter[1].lower, body2VertInter[2].lower, &contactPoint, &contactError);
+                    
+                    
                     if (intersectFlag == 1)
                     {
-                        impacts.push_back(std::make_tuple(body1VertInter[vertInd].lower, contactPoint, body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceNormals[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])]));
+                        //contactError = (contactPoint - body1VertInter[vertInd].lower).norm();
+                        if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
+                        {
+                            impacts.push_back(std::make_tuple(body1VertInter[vertInd].lower, contactPoint, body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceNormals[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])]));
+                            if (contactError > currentMaxError)
+                            {
+                                currentMaxError = contactError;
+                            }else{
+                                this->currentMinError = contactError;
+                            }
+                        }
                     }
                 }
             }
@@ -768,16 +804,37 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                     elemTest = this->IntervalDotProduct(supportInterval, this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
                     
                     //std::cout << elemTest[0] << " " << elemTest[1] << std::endl;
-                    if (((elemTest[0] <= 1e-12) && (elemTest[1] >= -1e-12)) || ((elemTest[0] >= -1e-12) && (elemTest[1] <= 1e-12)))
+                    if (((elemTest[0] <= -1e-12) && (elemTest[1] >= 1e-12)) || ((elemTest[0] >= 1e-12) && (elemTest[1] <= -1e-12)))
                     {
                         intersectFlag = this->LineLineDistance(body1VertInter[vertInd1].lower, body1VertInter[tempNextVert1].lower, body2VertInter[vertInd2].lower, body2VertInter[tempNextVert2].lower, &contactPoint, &contactPoint2);
                         
+                        
                         if (intersectFlag == 0)
                         {
-                            impacts.push_back(std::make_tuple(contactPoint, contactPoint2, ((contactPoint - contactPoint2) * 1e6).normalized()));
+                            contactError = (contactPoint - contactPoint2).norm();
+                            if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
+                            {
+                                impacts.push_back(std::make_tuple(contactPoint, contactPoint2, ((contactPoint - contactPoint2) * 1e6).normalized()));
+                                if (contactError > currentMaxError)
+                                {
+                                    currentMaxError = contactError;
+                                }else{
+                                    this->currentMinError = contactError;
+                                }
+                            }
                         }else if (intersectFlag == 1)
                         {
-                            impacts.push_back(std::make_tuple(contactPoint, contactPoint2, (eigenTilde(faceLegInterval1.lower) * faceLegInterval2.lower).normalized()));
+                            contactError = (contactPoint - contactPoint2).norm();
+                            if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
+                            {
+                                impacts.push_back(std::make_tuple(contactPoint, contactPoint2, (eigenTilde(faceLegInterval1.lower) * faceLegInterval2.lower).normalized()));
+                                if (contactError > currentMaxError)
+                                {
+                                    currentMaxError = contactError;
+                                }else{
+                                    this->currentMinError = contactError;
+                                }
+                            }
                         }
                     }
                 }
@@ -786,14 +843,15 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         
         // Calculate total impact begin
         numImpacts = impacts.size();
-        std::cout << numImpacts << std::endl;
+        //std::cout << this->currentMinError << std::endl;
+        //std::cout << numImpacts << std::endl;
         if (numImpacts == 0)
         {
             return;
         }
         for (int impNum=0; impNum < numImpacts; impNum++)
         {
-            std::cout << std::get<0>(impacts[impNum]) << std::endl;
+            //std::cout << std::get<0>(impacts[impNum]) << std::endl;
             // Create local contact frame
             cHat_3 = (std::get<2>(impacts[impNum])).normalized();
             cHat_1 = cHat_3.cross(body2Current.dcm_NB * zDirection);
@@ -947,14 +1005,23 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         for (int impNum=0; impNum < numImpacts; impNum++)
         {
             impulse_Body1_N = dcm_CN[impNum].transpose() * X_c.segment(numImpacts * 3 + impNum * 3, 3);
-            this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N += impulse_Body1_N / timeStep;
-            this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N -= impulse_Body1_N / timeStep;
-            this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B += body1Current.dcm_BN * (std::get<0>(impacts[impNum]) - body1Current.r_BN_N).cross(impulse_Body1_N / timeStep);
-            this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B -= body2Current.dcm_BN * (std::get<1>(impacts[impNum]) - body2Current.r_BN_N).cross(impulse_Body1_N / timeStep);
+            forceExternalOther_N -= impulse_Body1_N / timeStep;
+            torqueExternalOtherPntB_B -= body2Current.dcm_BN * (std::get<1>(impacts[impNum]) - body2Current.r_BN_N).cross(impulse_Body1_N / timeStep);
             this->forceExternal_N += impulse_Body1_N / timeStep;
             this->torqueExternalPntB_B += body1Current.dcm_BN * (std::get<0>(impacts[impNum]) - body1Current.r_BN_N).cross(impulse_Body1_N / timeStep);
         }
         
+        if (currentMaxError <= this->maxPosError)
+        {
+            std::cout << this->forceExternal_N << std::endl;
+            std::cout << this->torqueExternalPntB_B << std::endl;
+            this->responseFound = true;
+            this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N = this->forceExternal_N;
+            this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N = forceExternalOther_N;
+            this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B = this->torqueExternalPntB_B;
+            this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B = torqueExternalOtherPntB_B;
+        }
+        return;
     }
     
 
@@ -1083,7 +1150,10 @@ void RigidBodyContactEffector::computeStateContribution(double integTime)
 void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->currentSimSeconds = CurrentSimNanos*NANO2SEC;
+    this->currentMinError = 1.0;
+    this->responseFound = false;
 
+    std::cout << "Update State" << std::endl;
     
     this->ReadInputs();
     this->ExtractFromBuffer();
@@ -1108,7 +1178,8 @@ void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
     this->closeBodies.clear();
     this->CheckBoundingSphere();
     this->CheckBoundingBox();
-    this->isOverlap = false;
+    
+    //this->computeForceTorque(CurrentSimNanos*NANO2SEC, this->simTimeStep);
     
     return;
 }
@@ -1308,6 +1379,7 @@ void RigidBodyContactEffector::CheckBoundingBox()
             }
         }
         
+        std::cout << layer1Box.overlaps.size() << std::endl;
         if (layer1Box.overlaps.size() > 0) this->Bodies[std::get<0>(layer1Box.parentIndices)].coarseSearchList = layer1Box;
     }
     return;
@@ -1685,13 +1757,13 @@ bool RigidBodyContactEffector::Overlap(geometry foriegnBody, int bodyIndex)
                 // - If penetration was found of a vertex on the external polyhedron with a face on the main polyhedron, then find where in the face the deepest penetration is projected to
                 if  (faceA.supportIndex != -1)
                 {
-                    inTriangleA = this->PointInTriangle( (foriegnBody.states.dcm_NB * foriegnBody.vertices[faceA.supportIndex]) + foriegnBody.states.r_BN_N, (this->mainBody.states.dcm_NB *  this->mainBody.vertices[this->mainBody.polyhedron[mainShapeIt].faceTriangles[faceA.faceIndex][0]]) + this->mainBody.states.r_BN_N, (this->mainBody.states.dcm_NB *  this->mainBody.vertices[this->mainBody.polyhedron[mainShapeIt].faceTriangles[faceA.faceIndex][1]]) + this->mainBody.states.r_BN_N, (this->mainBody.states.dcm_NB *  this->mainBody.vertices[this->mainBody.polyhedron[mainShapeIt].faceTriangles[faceA.faceIndex][2]]) + this->mainBody.states.r_BN_N, &faceAContactPoint_N);
+                    //inTriangleA = this->PointInTriangle( (foriegnBody.states.dcm_NB * foriegnBody.vertices[faceA.supportIndex]) + foriegnBody.states.r_BN_N, (this->mainBody.states.dcm_NB *  this->mainBody.vertices[this->mainBody.polyhedron[mainShapeIt].faceTriangles[faceA.faceIndex][0]]) + this->mainBody.states.r_BN_N, (this->mainBody.states.dcm_NB *  this->mainBody.vertices[this->mainBody.polyhedron[mainShapeIt].faceTriangles[faceA.faceIndex][1]]) + this->mainBody.states.r_BN_N, (this->mainBody.states.dcm_NB *  this->mainBody.vertices[this->mainBody.polyhedron[mainShapeIt].faceTriangles[faceA.faceIndex][2]]) + this->mainBody.states.r_BN_N, &faceAContactPoint_N);
                     
                 }
                 // - If penetration was found of a vertex on the main polyhedron with a face on the external polyhedron, then find where in the face the deepest penetration is projected to
                 if  (faceB.supportIndex != -1)
                 {
-                    inTriangleB = this->PointInTriangle( (this->mainBody.states.dcm_NB * this->mainBody.vertices[faceB.supportIndex]) + this->mainBody.states.r_BN_N, (foriegnBody.states.dcm_NB *  foriegnBody.vertices[foriegnBody.polyhedron[otherShapeIt].faceTriangles[faceB.faceIndex][0]]) + foriegnBody.states.r_BN_N, (foriegnBody.states.dcm_NB *  foriegnBody.vertices[foriegnBody.polyhedron[otherShapeIt].faceTriangles[faceB.faceIndex][1]]) + foriegnBody.states.r_BN_N, (foriegnBody.states.dcm_NB *  foriegnBody.vertices[foriegnBody.polyhedron[otherShapeIt].faceTriangles[faceB.faceIndex][2]]) + foriegnBody.states.r_BN_N, &faceBContactPoint_N);
+                    //inTriangleB = this->PointInTriangle( (this->mainBody.states.dcm_NB * this->mainBody.vertices[faceB.supportIndex]) + this->mainBody.states.r_BN_N, (foriegnBody.states.dcm_NB *  foriegnBody.vertices[foriegnBody.polyhedron[otherShapeIt].faceTriangles[faceB.faceIndex][0]]) + foriegnBody.states.r_BN_N, (foriegnBody.states.dcm_NB *  foriegnBody.vertices[foriegnBody.polyhedron[otherShapeIt].faceTriangles[faceB.faceIndex][1]]) + foriegnBody.states.r_BN_N, (foriegnBody.states.dcm_NB *  foriegnBody.vertices[foriegnBody.polyhedron[otherShapeIt].faceTriangles[faceB.faceIndex][2]]) + foriegnBody.states.r_BN_N, &faceBContactPoint_N);
                     
                 }
                 // - If penetration was found between two edges, find where on each edge the deepest penetration is projected to
@@ -1885,7 +1957,7 @@ faceQuery RigidBodyContactEffector::QueryFaceDirection(std::vector<Eigen::Vector
     double bestProjection;
     double supportDistance;
     int supportIdx;
-    int onTriangle;
+    int onTriangle = -1;
     faceQuery result;
     result.separation = -1000.0;
     result.supportIndex = -1;
@@ -1906,7 +1978,7 @@ faceQuery RigidBodyContactEffector::QueryFaceDirection(std::vector<Eigen::Vector
             }
         }
         
-        onTriangle = this->PointInTriangle(supportPoint, (stateA.dcm_NB * verticesA[polyA.faceTriangles[indexA][0]]) + stateA.r_BN_N, (stateA.dcm_NB * verticesA[polyA.faceTriangles[indexA][1]]) + stateA.r_BN_N, (stateA.dcm_NB * verticesA[polyA.faceTriangles[indexA][2]]) + stateA.r_BN_N, &contactPoint);
+        //onTriangle = this->PointInTriangle(supportPoint, (stateA.dcm_NB * verticesA[polyA.faceTriangles[indexA][0]]) + stateA.r_BN_N, (stateA.dcm_NB * verticesA[polyA.faceTriangles[indexA][1]]) + stateA.r_BN_N, (stateA.dcm_NB * verticesA[polyA.faceTriangles[indexA][2]]) + stateA.r_BN_N, &contactPoint);
 
         supportDistance = ( stateA.dcm_NB * polyA.faceNormals[indexA]).dot(supportPoint - contactPoint);
 
@@ -2191,7 +2263,7 @@ vectorInterval RigidBodyContactEffector::IntervalCrossProduct(vectorInterval vec
 
 int RigidBodyContactEffector::LineLineDistance(Eigen::Vector3d vertex1, Eigen::Vector3d vertex2, Eigen::Vector3d vertex3, Eigen::Vector3d vertex4, Eigen::Vector3d *pointA, Eigen::Vector3d *pointB)
 {
-    Eigen::Vector3d line13, line23, line43, line21, line24, line14;
+    Eigen::Vector3d line13, line23, line43, line21, line24, line41, temp;
     double d1343, d4321, d1321, d4343, d2121;
     double numer, denom;
     double mua, mub;
@@ -2202,6 +2274,15 @@ int RigidBodyContactEffector::LineLineDistance(Eigen::Vector3d vertex1, Eigen::V
     line43 = vertex4 - vertex3;
     line21 = vertex2 - vertex1;
     
+    if (line21.dot(line43) < 0.0)
+    {
+        temp = vertex3;
+        vertex3 = vertex4;
+        vertex4 = temp;
+        line13 = vertex1 - vertex3;
+        line43 = vertex4 - vertex3;
+    }
+    
     d1343 = line13[0] * line43[0] + line13[1] * line43[1] + line13[2] * line43[2];
     d4321 = line43[0] * line21[0] + line43[1] * line21[1] + line43[2] * line21[2];
     d1321 = line13[0] * line21[0] + line13[1] * line21[1] + line13[2] * line21[2];
@@ -2209,41 +2290,67 @@ int RigidBodyContactEffector::LineLineDistance(Eigen::Vector3d vertex1, Eigen::V
     d2121 = line21[0] * line21[0] + line21[1] * line21[1] + line21[2] * line21[2];
     
     denom = d2121 * d4343 - d4321 * d4321;
-    if (denom < 0.001)
+    if (abs(denom) < 1e-9)
     {
         line23 = vertex2 - vertex3;
-        dotRes = (line13.normalized()).dot(line23.normalized());
-        if (dotRes < 0)
+        line24 = vertex2 - vertex4;
+        line41 = vertex4 - vertex1;
+        //dotRes = (line13.normalized()).dot(line23.normalized());
+        if ((line13.dot(line43) < 0.0) && (line24.dot(-line43) > 0.0))
         {
-            *pointA = vertex1 + ((vertex3 - vertex1).dot(line21) / line21.dot(line21)) * line21;
+            *pointA = vertex1 + ((-line13).dot(line21) / d2121) * line21;
             *pointA = (*pointA + vertex2) / 2.0;
-            *pointB = vertex3 + ((vertex2 - vertex3).dot(line43) / line43.dot(line43)) * line43;
+            *pointB = vertex3 + (line23.dot(line43) / d4343) * line43;
             *pointB = (*pointB + vertex3) / 2.0;
             return 0;
         }
-        line24 = vertex2 - vertex4;
-        line14 = vertex1 - vertex4;
-        dotRes = (line14.normalized()).dot(line24.normalized());
-        if (dotRes < 0)
+        
+        //dotRes = (line14.normalized()).dot(line24.normalized());
+        if ((line13.dot(line43) < 0.0) && (line24.dot(-line43) < 0.0))
         {
-            *pointA = vertex1 + ((vertex4 - vertex1).dot(line21) / line21.dot(line21)) * line21;
+            *pointA = vertex1 + ((-line13).dot(line21) / d2121) * line21;
+            *pointA = (*pointA + (vertex1 + (line41.dot(line21) / d2121) * line21)) / 2.0;
+            *pointB = (vertex3 + vertex4) / 2.0;
+            return 0;
+        }
+        
+        //dotRes = (line21.normalized()).dot(-line23.normalized());
+        if (((-line43).dot(line24) < 0.0) && (line13.dot(line43) > 0.0))
+        {
+            *pointA = vertex1 + (line41.dot(line21) / d2121) * line21;
             *pointA = (*pointA + vertex1) / 2.0;
-            *pointB = vertex3 + ((vertex1 - vertex3).dot(line43) / line43.dot(line43)) * line43;
+            *pointB = vertex3 + (line13.dot(line43) / d4343) * line43;
             *pointB = (*pointB + vertex4) / 2.0;
             return 0;
         }
-        dotRes = (line21.normalized()).dot(-line23.normalized());
-        if (dotRes >= 0)
+        
+        //dotRes = (line14.normalized()).dot(line21.normalized());
+        if (((-line43).dot(line24) > 0.0) && (line13.dot(line43) > 0.0))
+        {
+            *pointA = (vertex1 + vertex2) / 2.0;
+            *pointB = vertex3 + (line13.dot(line43) / d4343) * line43;
+            *pointB = (*pointB + (vertex3 + (line23.dot(line43) / d4343) * line43)) / 2.0;
+            return 0;
+        }
+        
+        if ((line21.dot(-line23) >= -1e-6) && (line21.dot(-line23) <= 1e-6))
         {
             *pointA = vertex2;
             *pointB = vertex3;
             return 0;
         }
-        dotRes = (line14.normalized()).dot(line21.normalized());
-        if (dotRes >= 0)
+        
+        if (((-line41).dot(line21) >= -1e-6) && ((-line41).dot(line21) <= 1e-6))
         {
             *pointA = vertex1;
             *pointB = vertex4;
+            return 0;
+        }
+        
+        if ((line21.dot(line13) >= -1e-6) && (line21.dot(line13) <= 1e-6) && (line21.dot(line24) >= -1e-6) && (line21.dot(line24) <= 1e-6))
+        {
+            *pointA = (vertex1 + vertex2) / 2.0;
+            *pointB = (vertex3 + vertex4) / 2.0;
             return 0;
         }
         return -1;
@@ -2281,7 +2388,7 @@ int RigidBodyContactEffector::LineLineDistance(Eigen::Vector3d vertex1, Eigen::V
     return retValue;
 }
 
-int RigidBodyContactEffector::PointInTriangle(Eigen::Vector3d supportPoint, Eigen::Vector3d triVertex0, Eigen::Vector3d triVertex1, Eigen::Vector3d triVertex2, Eigen::Vector3d *contactPoint)
+int RigidBodyContactEffector::PointInTriangle(Eigen::Vector3d supportPoint, Eigen::Vector3d triVertex0, Eigen::Vector3d triVertex1, Eigen::Vector3d triVertex2, Eigen::Vector3d *contactPoint, double *distance)
 {
     Eigen::Vector3d u01 = triVertex1 - triVertex0;
     Eigen::Vector3d u02 = triVertex2 - triVertex0;
@@ -2292,6 +2399,7 @@ int RigidBodyContactEffector::PointInTriangle(Eigen::Vector3d supportPoint, Eige
     Eigen::Vector3d vecToPlane = -alpha * n;
     
     *contactPoint = supportPoint + vecToPlane;
+    *distance = abs(alpha);
     
     Eigen::Vector3d V1 = -u01.normalized() - u02.normalized();
     Eigen::Vector3d V2 = -u12.normalized() + u01.normalized();
@@ -2583,7 +2691,7 @@ double RigidBodyContactEffector::WhenFaceContact(std::vector<int> trianglePoints
             
             if ((timeInterval[1] - timeInterval[0])  <= intervalThreshold)
             {
-                if (this->PointInTriangle(vertexIntervalB0.lower, vertexIntervalA0.lower, vertexIntervalA1.lower, vertexIntervalA2.lower, faceContactPoint_N) == 1)
+                //if (this->PointInTriangle(vertexIntervalB0.lower, vertexIntervalA0.lower, vertexIntervalA1.lower, vertexIntervalA2.lower, faceContactPoint_N) == 1)
                 {
                     if ( (*faceContactPoint_N - vertexIntervalB0.lower).norm() <= this->maxPosError)
                     {
