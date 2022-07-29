@@ -25,7 +25,7 @@ path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.simulation import spacecraft, stateArchitecture, thrusterStateEffector
+from Basilisk.simulation import spacecraft, thrusterStateEffector, svIntegrators
 from Basilisk.architecture import messaging
 import matplotlib.pyplot as plt
 
@@ -69,7 +69,54 @@ def thrusterEffectorAllTests(show_plots):
 ])
 # provide a unique test method name, starting with test_
 def test_unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle, lat_angle, location, rate):
-    """Module Unit Test"""
+    r"""
+    **Validation Test Description**
+
+    This unit test script tests the stateEffector implementation of thrusters. It sets up the thruster module and runs
+    a combination of 6 different scenarios. Each scenario uses either one or two thrusters, while also changing the
+    thruster's locations and whether thruster 1 is firing or not.
+
+    For information on how the thruster module works and what the closed-form solution for the ``thrustFactor`` variable
+    is, see :ref:`thrusterStateEffector`. Given the ``thrustFactor`` :math:`\kappa`, the thrust is computed as follows:
+
+    .. math::
+        \textbf{F} = \kappa \cdot F_{max} \cdot \hat{n}
+
+    where :math:`\hat{n}` is the thruster's direction vector. The torque is computed by:
+
+    .. math::
+        \textbf{T} = \textbf{r}\times\textbf{F}
+
+    where :math:`\textbf{r}` corresponds to the thruster's position relative to the spacecraft's center of mass. The
+    mass flow rate is given by:
+
+    .. math::
+        \dot{m} = \dfrac{F}{g\cdot I_{sp}}
+
+    where :math:`g` is Earth's gravitational acceleration and :math:`I_{sp}` is the thruster's specific impulse.
+
+    **Test Parameters**
+
+    Args:
+        thrustNumber (int): number of thrusters used in the simulation
+        initialConditions (float): initial value of the ``thrustFactor`` variable for thruster 1. Thruster always starts
+        off.
+        duration (float): duration of the thrust in seconds.
+        long_angle (float): longitude angle in degrees for thruster 1. Thruster 2 is also impacted by this value.
+        lat_angle (float): latitude angle in degrees for thruster 1. Thruster 2 is also impacted by this value.
+        location (float): location of thruster 1.
+        rate (int): simulation rate in nanoseconds.
+
+    **Description of Variables Being Tested**
+
+    In this file we are checking the values of the variables
+
+    - ``thrForce``
+    - ``thrTorque``
+    - ``mDot``
+
+    All these variables are compared to the true values from the closed-form expressions given in :ref:`thrusterStateEffector`.
+    """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle,
                                                lat_angle, location, rate)
@@ -239,13 +286,6 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
             # Compute the mass flow rate
             expectedMDot[i, 0] = (np.linalg.norm(force1) + np.linalg.norm(force2)) / (g * Isp)
 
-    # for i in range(np.shape(np.array(mDot))[0]):
-    #     if 0 < i < int(round(thrDurationTime / testRate)) + 1:
-    #         if thrustNumber == 1:
-    #             expectedMDot[i, 0] = np.linalg.norm(force1) / (g * Isp)
-    #         elif thrustNumber == 2:
-    #             expectedMDot[i, 0] = (np.linalg.norm(force1) + np.linalg.norm(force2)) / (g * Isp)
-
     # Modify expected values for comparison and define errorTolerance
     TruthForce = np.transpose(expectedThrustData)
     TruthTorque = np.transpose(expectedTorqueData)
@@ -282,4 +322,4 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
 
 
 if __name__ == "__main__":
-    unitThrusters(ResultsStore(), False, 2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], macros.sec2nano(0.01))
+    unitThrusters(ResultsStore(), False, 2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], macros.sec2nano(0.1))
