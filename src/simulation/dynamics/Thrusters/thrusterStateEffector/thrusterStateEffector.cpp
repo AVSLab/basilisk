@@ -39,7 +39,8 @@ ThrusterStateEffector::ThrusterStateEffector()
 
     CallCounts = 0;
     this->prevFireTime = 0.0;
-    this->prevCommandTime = 0xFFFFFFFFFFFFFFFF;    this->mDotTotal = 0.0;
+    this->prevCommandTime = 0xFFFFFFFFFFFFFFFF;    
+    this->mDotTotal = 0.0;
     this->effectorID++;
 
     return;
@@ -346,6 +347,7 @@ void ThrusterStateEffector::updateEffectorMassProps(double integTime) {
         }
         this->mDotTotal += mDotSingle;
     }
+    this->stateDerivContribution(0) = this->mDotTotal;
 
     return;
 

@@ -130,6 +130,12 @@ void FuelTank::updateEffectorMassProps(double integTime)
         (*dynIt)->computeStateContribution(integTime);
         this->fuelConsumption += (*dynIt)->stateDerivContribution(0);
     }
+    std::vector<StateEffector*>::iterator stateIt;
+    for (stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++)
+    {
+        (*stateIt)->updateEffectorMassProps(integTime);
+        this->fuelConsumption += (*stateIt)->stateDerivContribution(0);
+    }
 
     std::vector<FuelSlosh*>::iterator fuelSloshInt;
     // - Mass depletion (finding total mass in tank)
