@@ -29,6 +29,32 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 
+/*! @brief poyhedral class */
+class Polyhedral
+{
+public:
+    unsigned int nVertex;         //!< [-] Number of vertexes
+    unsigned int nFacet;          //!< [-] Number of facets
+    
+    double volPoly;               //!< [-] Volume of the polyhedral
+    double muBody;                //!< [-] Gravitation parameter for the planet
+    
+    Eigen::MatrixXd xyzVertex;    //!< [m] Position of vertex
+    Eigen::MatrixXd orderFacet;   //!< [-] Vertexes of a facet
+
+    Eigen::MatrixXd normalFacet;  //!< [-] Normal of a facet
+
+    BSKLogger bskLogger;          //!< -- BSK Logging
+
+public:
+
+    Polyhedral();
+    ~Polyhedral();
+    bool initializeParameters();            //!< [-] configure polyhedral based on inputs
+    Eigen::Vector3d computeField(const Eigen::Vector3d pos_Pfix);
+    bool polyReady();                       //!< class variable
+};
+
 /*! @brief spherical harmonics class */
 class SphericalHarmonics
 {
@@ -81,6 +107,7 @@ public:
 
 public:
     bool isCentralBody=0;           //!<          Flag indicating that object is center
+    bool usePolyhedral=0;           //!<          Flag indicating to use polyhedral model
     bool useSphericalHarmParams=0;  //!<          Flag indicating to use spherical harmonics perturbations
 
     double mu=0;                    //!< [m3/s^2] central body gravitational param
@@ -94,6 +121,7 @@ public:
     std::string displayName="";     //!<          this is the name that is displayed in Vizard.  If not set, Vizard shows planetName
     std::string modelDictionaryKey = ""; //!<     "" will result in using the current default for the celestial body's given name, otherwise key will be matched if possible to available model in internal model dictionary
 
+    Polyhedral poly;                //!<          Object that computes the polyhedral gravity field
     SphericalHarmonics spherHarm;   //!<          Object that computes the spherical harmonics gravity field
     BSKLogger bskLogger;            //!< -- BSK Logging
     Eigen::MatrixXd *r_PN_N;        //!< [m]      (state engine property) planet inertial position vector

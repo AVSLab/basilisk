@@ -21,6 +21,7 @@ from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spiceInterface
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation.gravityEffector import loadGravFromFile as loadGravFromFile_python
+from Basilisk.simulation.gravityEffector import loadPolyFromFile as loadPolyFromFile_python
 from Basilisk.architecture import messaging
 
 try:
@@ -392,3 +393,25 @@ def loadGravFromFile(fileName, spherHarm, maxDeg=2):
             Note that this function calls the gravityEffector function loadGravFromFile().
     """
     loadGravFromFile_python(fileName, spherHarm, maxDeg)
+
+def loadPolyFromFile(fileName, poly):
+    """
+            Load the gravitational body spherical harmonics coefficients from a file.
+
+            Parameters
+            ----------
+            fileName : string
+                The full path to the specified data file.
+            spherHarm:
+                The spherical harmonics container of the gravity body.
+            maxDeg : integer
+                maximum degree of spherical harmonics to load
+
+
+            Notes
+            -----
+            This function is a convenience utility for loading in the spherical harmonics
+            coefficients from a data file.  The default harmonic degree is 2 unless specified.
+            Note that this function calls the gravityEffector function loadGravFromFile().
+    """
+    loadPolyFromFile_python(fileName, poly)

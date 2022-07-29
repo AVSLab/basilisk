@@ -81,3 +81,118 @@ def loadGravFromFileToList(fileName, maxDeg=2):
             slmRow.append(float(gravRow[3]))
 
         return [clmList, slmList, mu, radEquator]
+        
+        
+def loadPolyFromFile(fileName, poly):
+    with open(fileName) as polyFile:
+        if fileName.endswith('.tab'):
+            nVertex, nFacet = [int(x) for x in next(polyFile).split()] # read first line
+            vertList = []
+            faceList = []
+
+            contLines = 0
+            for line in polyFile:
+                arrtemp = []
+
+                for x in line.split():
+                    arrtemp.append(float(x))
+
+                if contLines < nVertex:
+                    vertList.append([float(arrtemp[1]*1e3),float(arrtemp[2]*1e3),float(arrtemp[3]*1e3)])
+                else:
+                    faceList.append([int(arrtemp[1]),int(arrtemp[2]),int(arrtemp[3])])
+
+                contLines += 1
+        elif fileName.endswith('.obj'):
+            nVertex = 0
+            nFacet = 0
+            vertList = []
+            faceList = []
+            for line in polyFile:
+                arrtemp = line.split()
+                if arrtemp:
+                    if arrtemp[0] == 'v':
+                        nVertex += 1
+                        vertList.append([float(arrtemp[1])*1e3, float(arrtemp[2])*1e3, float(arrtemp[3])*1e3])
+                    elif arrtemp[0] == 'f':
+                        nFacet += 1
+                        faceList.append([int(arrtemp[1]), int(arrtemp[2]), int(arrtemp[3])])
+        elif fileName.endswith('.txt'):
+            nVertex, nFacet = [int(x) for x in next(polyFile).split()] # read first line
+            vertList = []
+            faceList = []
+
+            contLines = 0
+            for line in polyFile:
+                arrtemp = []
+
+                for x in line.split():
+                    arrtemp.append(float(x))
+
+                if contLines < nVertex:
+                    vertList.append([float(arrtemp[0]*1e3),float(arrtemp[1]*1e3),float(arrtemp[2]*1e3)])
+                else:
+                    faceList.append([int(arrtemp[0]),int(arrtemp[1]),int(arrtemp[2])])
+
+                contLines += 1
+
+        poly.nVertex = nVertex
+        poly.nFacet = nFacet
+        poly.xyzVertex = vertList
+        poly.orderFacet = faceList
+
+
+def loadPolyFromFileToList(fileName):
+    with open(fileName) as polyFile:
+        if fileName.endswith('.tab'):
+            nVertex, nFacet = [int(x) for x in next(polyFile).split()] # read first line
+            vertList = []
+            faceList = []
+
+            contLines = 0
+            for line in polyFile:
+                arrtemp = []
+
+                for x in line.split():
+                    arrtemp.append(float(x))
+
+                if contLines < nVertex:
+                    vertList.append([float(arrtemp[1]*1e3),float(arrtemp[2]*1e3),float(arrtemp[3]*1e3)])
+                else:
+                    faceList.append([int(arrtemp[1]),int(arrtemp[2]),int(arrtemp[3])])
+
+                contLines += 1
+        elif fileName.endswith('.obj'):
+            nVertex = 0
+            nFacet = 0
+            vertList = []
+            faceList = []
+            for line in polyFile:
+                arrtemp = line.split()
+                if arrtemp:
+                    if arrtemp[0] == 'v':
+                        nVertex += 1
+                        vertList.append([float(arrtemp[1])*1e3, float(arrtemp[2])*1e3, float(arrtemp[3])*1e3])
+                    elif arrtemp[0] == 'f':
+                        nFacet += 1
+                        faceList.append([int(arrtemp[1]), int(arrtemp[2]), int(arrtemp[3])])
+        elif fileName.endswith('.txt'):
+            nVertex, nFacet = [int(x) for x in next(polyFile).split()] # read first line
+            vertList = []
+            faceList = []
+
+            contLines = 0
+            for line in polyFile:
+                arrtemp = []
+
+                for x in line.split():
+                    arrtemp.append(float(x))
+
+                if contLines < nVertex:
+                    vertList.append([float(arrtemp[0]*1e3),float(arrtemp[1]*1e3),float(arrtemp[2]*1e3)])
+                else:
+                    faceList.append([int(arrtemp[0]),int(arrtemp[1]),int(arrtemp[2])])
+
+                contLines += 1
+
+        return [vertList, faceList, nVertex, nFacet]
