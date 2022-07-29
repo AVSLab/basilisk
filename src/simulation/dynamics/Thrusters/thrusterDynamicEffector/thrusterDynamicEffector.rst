@@ -42,3 +42,5 @@ provides information on what this message is used for.
       - :ref:`THROutputMsgPayload`
       - output message vector for thruster data
 
+.. note::
+  The dynamic behaviour of this module is governed by the variables inside :ref:`THRTimePairMsgPayload`, which determine the on and off-ramp characeteristics. The default behaviour is to not have on and off-ramps active. The ``cutoffFrequency`` variable inside :ref:`THRSimConfigMsgPayload` has no impact on this module and is instead supposed to be used to determine the dynamic behaviour within :ref:`thrusterStateEffector`.
