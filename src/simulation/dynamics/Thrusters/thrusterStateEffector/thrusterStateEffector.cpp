@@ -37,6 +37,9 @@ ThrusterStateEffector::ThrusterStateEffector()
     this->effProps.rEffPrime_CB_B.fill(0.0);
     this->effProps.IEffPrimePntB_B.fill(0.0);
 
+    this->stateDerivContribution.resize(1);
+    this->stateDerivContribution.setZero();
+
     CallCounts = 0;
     this->prevFireTime = 0.0;
     this->prevCommandTime = 0xFFFFFFFFFFFFFFFF;    
@@ -335,6 +338,7 @@ void ThrusterStateEffector::updateEffectorMassProps(double integTime) {
     THROperationMsgPayload* ops;
     double mDotSingle = 0.0;
     this->mDotTotal = 0.0;
+    this->stateDerivContribution.setZero();
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
     for (it = this->thrusterData.begin(); it != this->thrusterData.end(); it++)
     {
