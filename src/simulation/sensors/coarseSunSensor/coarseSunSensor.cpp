@@ -394,10 +394,13 @@ CSSConstellation::~CSSConstellation()
  @return void */
 void CSSConstellation::Reset(uint64_t CurrentSimNanos)
 {
-    std::vector<CoarseSunSensor>::iterator it;
+    std::vector<CoarseSunSensor*>::iterator itp;
+    CoarseSunSensor *it;
+
     //! - Loop over the sensor list and initialize all children
-    for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
+    for(itp=this->sensorList.begin(); itp!= this->sensorList.end(); itp++)
     {
+        it = *itp;
         it->Reset(CurrentSimNanos);
     }
 
@@ -407,11 +410,13 @@ void CSSConstellation::Reset(uint64_t CurrentSimNanos)
 
 void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
 {
-    std::vector<CoarseSunSensor>::iterator it;
+    std::vector<CoarseSunSensor*>::iterator itp;
+    CoarseSunSensor *it;
 
     //! - Loop over the sensor list and update all data
-    for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
+    for(itp=this->sensorList.begin(); itp!= this->sensorList.end(); itp++)
     {
+        it = *itp;
         it->readInputMessages();
         it->computeSunData();
         it->computeTrueOutput();
@@ -419,13 +424,14 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
         it->scaleSensorValues();
         it->applySaturation();
         it->writeOutputMessages(CurrentSimNanos);
+        
+        this->outputBuffer.CosValue[itp - this->sensorList.begin()] = it->sensedValue;
 
-        this->outputBuffer.CosValue[it - this->sensorList.begin()] = it->sensedValue;
     }
     this->constellationOutMsg.write(&this->outputBuffer, this->moduleID, CurrentSimNanos);
 }
 
 void CSSConstellation::appendCSS(CoarseSunSensor *newSensor) {
-    sensorList.push_back(*newSensor);
+    sensorList.push_back(newSensor);
     return;
 }

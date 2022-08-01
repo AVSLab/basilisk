@@ -45,7 +45,7 @@ struct CSSArraySensorMsg_C;
 %include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 
 namespace std {
-    %template(CSSVector) vector<CoarseSunSensor>;
+    %template(CSSVector) vector<CoarseSunSensor *>;
 }
 
 %pythoncode %{

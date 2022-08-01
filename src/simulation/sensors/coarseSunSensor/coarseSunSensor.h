@@ -123,7 +123,7 @@ class CSSConstellation: public SysModel {
     
  public:
     Message<CSSArraySensorMsgPayload> constellationOutMsg;  //!< [-] CSS constellation output message
-    std::vector<CoarseSunSensor> sensorList;    //!< [-] List of coarse sun sensors in constellation
+    std::vector<CoarseSunSensor *> sensorList;    //!< [-] List of coarse sun sensors in constellation
  private:
     CSSArraySensorMsgPayload outputBuffer;      //!< [-] buffer used to write output message
 };
