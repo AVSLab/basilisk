@@ -5,6 +5,7 @@ The mathematical description of gravity effects are implemented in gravityEffect
 	\item \textbf{Orbital Energy}: The code can calculate the total orbital energy as well as orbital kinetic and orbital potential energy of a spacecraft about a gravity body.
 	\item \textbf{Simple Gravity}: The code can compute a gravity acceleration between two bodies according to Newton's law of universal gravitation given $\mu$ and the distance between the bodies.
 	\item \textbf{Spherical Harmonics}: The code can compute gravity acceleration between two bodies using the more-complex method of spherical harmonics. To do this, it must be provided with the same inputs as for calculating simple gravity. In addition, it needs to be provided a "degree" of spherical harmonics to be used and spherical harmonics coefficients useful up to that degree.
+	\item \textbf{Polyhedral:} The code can compute gravity acceleration between two bodies using the polyhedral model. To do this, it must be provided with the same inputs as for calculating simple gravity. In addition, it needs to be provided with the vertexes positions and their assignment to faces. 
 	\item \textbf{Multiple Body Effects}: The code can stack the effects of multiple gravity bodies on top of each other to determine the net effect on a spacecraft. The user must indicate in the spacecraft set-up which gravitational bodies should be taken into account.
 	\item \textbf{Interface: Spacecraft States}: The code sends and receives spacecraft state information via the DynParamManager.
 	\item \textbf{Interface: Energy Contributions}: The code sends spacecraft energy contributions via \\updateEnergyContributions() which is called by the spacecraft.
@@ -13,9 +14,20 @@ The mathematical description of gravity effects are implemented in gravityEffect
 \end{itemize}
 
 \section{Model Assumptions and Limitations}
+\subsection{Spherical harmonics gravity model}
 The limitations of spherical harmonics gravity model are well-known and clearly explained in Schaub and Junkins' book\cite{schaub2014}. The limitations include:
 \begin{itemize}
 	\item \textbf{Coefficient Accuracy}: The coefficients used in the spherical harmonics equations are typically calculated based on gravitational data gathered by satellites. Therefore, the accuracy of the model is determined by the accuracy of the satellite instrumentation and precision of the stored data. Furthermore, for some bodies, there may not be sufficient information available to provide accurate coefficients or higher-degree coefficients.
 	\item \textbf{Maximum Degree}: The spherical harmonics equation is a series expansion. Therefore, any implementation must truncate the equation at some point. The truncated portion of the equation necessarily defines some amount of error in the final calculation. This error is, however, small after the first handful of terms. Additionally, a larger distance between gravity body and spacecraft requires fewer terms of the series to achieve equal accuracy as compared to a case with less distance. This code allows the user to request a maximum number of terms to evaluate rather than a specific accuracy. This could lead to less-than-desirable accuracy with small separation distances and greater-than-necessary run times with large separation distances.
 	\item \textbf{Planetary Ephemeris Data}: This code generally relies on an external package for planetary ephemeris information. Errors included in this package will translate into error in the gravity calculations, but those errors should be small. Because the ephemeris data is tabulated, this code should not be used to try to project the orbits of the celestial bodies in question. This could be done, though, by treating any celestial body as a "spacecraft".
 \end{itemize}
+
+\subsection{Polyhedral gravity model}
+The limitations of polyhedral gravity model are well-known and clearly explained in Werner and Scheere's article\cite{werner1996}. The limitations include:
+\begin{itemize}
+	\item \textbf{Constant Density}: The polyhedron gravity computation assumes that the body has constant density. Consequently, this method does not account for spatial density variations that typically arise within the internal structure of bodies or in contact binary asteroids.
+	\item \textbf{Shape Accuracy}: The polyhedral model assumes the body shape is described as a polyhedron which is an approximation of the continuous real shape. The resolution of the model can be augmented by increasing the number of vertexes and faces though, in turn, this may considerably slow down the gravity evaluation times. Let recall that the polyhedron gravity computation requires to loop over all faces and edges.
+	\item \textbf{Trisurface Polyhedron:} The implemented computation is case-specific for polyhedrons with faces composed of three vertexes. This reduces the possible polyhedrons to a single geometrical topology. However, the trisurface polyhedron is the standardized shape for small bodies.     
+\end{itemize}
+
+

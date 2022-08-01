@@ -2,9 +2,7 @@
 
 The gravity effector module is responsible for calculating the effects of gravity from a body on a spacecraft. A spherical harmonics model and implementation is developed and described below. The iterative methods used for the software algorithms are also described. Finally, the results of the code unit tests are presented and discussed.
 
-\subsection{Mathematical model}
-
-\subsubsection{Relative Gravitational Dynamics Formulation}
+\subsection{Relative Gravitational Dynamics Formulation}
 
 The gravity effector module is critical to the propagation of spacecraft orbits in Basilisk. In order to increase the accuracy of spacecraft trajectories, a relative gravitational acceleration formulation can be used. Relative dynamics keep the acceleration, velocity, and distance magnitudes small, allowing more bits of a double variable to be used for accuracy, rather than magnitude. This additional accuracy is compounded via integration. This relative formulation is enforced when a user sets any planet in a multi-planet environment to have \verb|isCentralBody = True|.
 
@@ -57,7 +55,7 @@ Dynamic state effectors connected to the spacecraft hub can use the relative gra
 
 For intricacies related to using absolute vs relative dynamics, see the user manual at the end of this document.
 
-\subsubsection{Gravity models}
+\subsection{Spherical harmonics gravity model}
 
 Gravity models are usually based on solutions of the Laplace equation ($\nabla^2 U(\mathbf{\bar r}) = 0$). It is very important to state that this equation only models a gravity potential outside a body. For computing a potential inside a body the Poisson equation is used instead.
 
@@ -376,7 +374,25 @@ In order to avoid computing factorials, it is easy to see that
 
 Using all these expressions, the potential and the gravity field can be computed.
 
-\subsubsection{Simple Gravity}
+\subsection{Polyhedral gravity model}
+
+The polyhedral model, described in Werner and Scheeres publication\cite{werner1996} , computes the exterior gravity of a polyhedron with constant density $\sigma$. Let recall that a polyhedron is geometrically described by a number of planar faces composed by vertexes. An edge $e$ is the line connecting two adjacent vertexes belonging to the same face $f$ (the edges follow a counterclockwise concatenation). The potential of such object is
+
+\begin{equation}
+U(\bar{\mathbf{r}})=- \frac{1}{2}G\sigma\sum_{f\in\text{faces}}\left(\mathbf{r}_f \cdot\mathbf{n}_f\mathbf{n}_f\cdot\mathbf{r}_f\omega_f-\sum_{e\in\text{face's edges}}\mathbf{r}_f\cdot\mathbf{n}_f\mathbf{n}_e\cdot\mathbf{r}_e L_e\right)\label{eq:polyhedral_potential}
+\end{equation}
+
+ The vector $\mathbf{r}_f$ extends from the evaluation point to any vertex on the face. The variable $\mathbf{n}_f$ is the outward-pointing normal vector of face $f$. The term $\omega_f$ is the signed solid angle subtended by the face $f$ when viewed from the evalution point. The variable $\mathbf{r}_e$ is a vector from the evaluation point to the initial vertex of edge $e$. The vector $\mathbf{n}_e$ is the normal of the edge lying on the face plane. The term $L_e$ corresponds to the potential of a 1D wire.
+ 
+ Note that in Werner and Scheeres\cite{werner1996}, the double summation term of \eqref{eq:polyhedral_potential} was simplified to a single summation over all polyhedron's edges. Although that reduction is convenient for mathematical compactness, retaining the double summation simplifies the algorithmic implementation (so that there is no need to check for common edges between adjacent faces).
+ 
+ In order to provide consistency with other gravity models, the density $\sigma$ is computed based on the polyhedron shape and the input gravity parameter $\mu$. The volume of a trisurface polyhedron is
+ \begin{equation}
+ V = \frac{1}{6}\sum_{f\in\text{faces}}|(\mathbf{r}^{f}_1\times\mathbf{r}^{f}_2)\cdot \mathbf{r}^{f}_3|,
+ \end{equation}
+then $\sigma=\mu / (VG)$. The vector $\mathbf{r}^{f}_i$, $i=1,2,3$, is the position of each face's vertex.
+
+\subsection{Simple Gravity}
 "Simple Gravity", or gravitational potential and acceleration without taking spherical harmonics into account, is equivalent to using only the $0\sup{th}$ term of the spherical harmonics equations. This is the equation that is used in basics physics courses and is most often used in Basilisk simulations. It assumes the gravitational body to be a point mass:
 
 \begin{equation}

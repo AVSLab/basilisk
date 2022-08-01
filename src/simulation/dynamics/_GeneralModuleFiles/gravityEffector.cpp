@@ -24,6 +24,174 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include <iostream>
 
+Polyhedral::Polyhedral()
+{
+    this->volPoly = 0.0;
+    this->muBody = 0.0;
+    return;
+}
+
+Polyhedral::~Polyhedral()
+{
+    return;
+}
+
+bool Polyhedral::initializeParameters()
+{
+    bool paramsDone = false;
+
+    //! - If coefficients haven't been loaded, quit and return failure
+    if(xyzVertex.size() == 0 || orderFacet.size() == 0)
+    {
+        return paramsDone;
+    }
+    
+    int i, j, k;
+    Eigen::Vector3d v, xyz1, xyz2, xyz3, e21, e32;
+    
+    /* Initialize normal */
+    this->normalFacet.setZero(this->nFacet,3);
+    
+    /* Loop through each facet to compute volume */
+    for (unsigned int m = 0; m < this->nFacet; m++)
+    {
+        /* Fill auxiliary variables with vertex order on each facet */
+        v = orderFacet.row(m);
+        i = v[0] - 1;
+        j = v[1] - 1;
+        k = v[2] - 1;
+        
+        xyz1 = xyzVertex.row(i);
+        xyz2 = xyzVertex.row(j);
+        xyz3 = xyzVertex.row(k);
+        
+        /* Compute two edge vectors and normal to facet */
+        e21 = xyz2 - xyz1;
+        e32 = xyz3 - xyz2;
+        this->normalFacet.row(m) = e21.cross(e32) / e21.cross(e32).norm();
+        
+        /* Add volume contribution */
+        this->volPoly += abs(xyz1.cross(xyz2).transpose()*xyz3)/6;
+    }
+    
+    paramsDone = true;
+    return paramsDone;
+}
+
+///---------------------------------Main Interface----------------------------///
+/*!
+ @brief Use to compute the field in position pos, given in a body frame.
+ @param pos_Pfix Position in which the field is to be computed.
+ @return acc Vector including the computed field.
+ */
+Eigen::Vector3d Polyhedral::computeField(const Eigen::Vector3d pos_Pfix)
+{
+    int i, j, k;
+    Eigen::Vector3d v;
+    Eigen::Vector3d ri, rj, rk;
+    Eigen::Vector3d nf;
+    Eigen::Vector3d r1, r2, re;
+    Eigen::Vector3d r21, n21;
+    Eigen::Matrix3d Ee;
+    
+    int idx_min;
+    double a, b, e, Le;
+    double wy, wx, wf;
+    
+    Eigen::Vector3d dUe, dUf, acc;
+    dUe.setZero(3);
+    dUf.setZero(3);
+    
+    /* Loop through each facet */
+    for (unsigned int m = 0; m < this->nFacet; m++){
+        /* Fill auxiliary variables with vertex order on each facet */
+        v = orderFacet.row(m);
+        i = v[0] - 1;
+        j = v[1] - 1;
+        k = v[2] - 1;
+        
+        /* Compute vectors and norm from each vertex to the evaluation position */
+        ri = xyzVertex.row(i).transpose() - pos_Pfix;
+        rj = xyzVertex.row(j).transpose() - pos_Pfix;
+        rk = xyzVertex.row(k).transpose() - pos_Pfix;
+        
+        /* Extract normal to facet */
+        nf = this->normalFacet.row(m).transpose();
+        
+        /* Loop through each facet edge */
+        for (unsigned int n = 0; n <= 2; n++){
+            switch(n){
+                case 0:
+                    idx_min = fmin(i,j);
+                    r1 = ri;
+                    r2 = rj;
+                    re = xyzVertex.row(idx_min).transpose() - pos_Pfix;
+                    
+                    a = ri.norm();
+                    b = rj.norm();
+                    break;
+                case 1:
+                    idx_min = fmin(j,k);
+                    r1 = rj;
+                    r2 = rk;
+                    re = xyzVertex.row(idx_min).transpose() - pos_Pfix;
+                    
+                    a = rj.norm();
+                    b = rk.norm();
+                    break;
+                case 2:
+                    idx_min = fmin(i,k);
+                    r1 = rk;
+                    r2 = ri;
+                    re = xyzVertex.row(idx_min).transpose() - pos_Pfix;
+                    
+                    a = rk.norm();
+                    b = ri.norm();
+                    break;
+            }
+            
+        
+            /* Compute along edge vector and norm */
+            r21 = r2 - r1;
+            e = r21.norm();
+            n21 = r21.cross(nf) / r21.cross(nf).norm();
+        
+            /* Dimensionless per edge factor */
+            Le = log((a+b+e) / (a+b-e));
+        
+            /* Compute dyad product */
+            Ee = nf*n21.transpose();
+        
+            /* Add current facet distribution */
+            dUe += Ee*re*Le;
+        }
+        
+        /* Compute solid angle for the current facet */
+        wy = ri.transpose()*rj.cross(rk);
+        wx = ri.norm()*rj.norm()*rk.norm() + ri.norm()*rj.transpose()*rk
+            + rj.norm()*rk.transpose()*ri + rk.norm()*ri.transpose()*rj;
+        wf = 2*atan2(wy, wx);
+        
+        /* Add current solid angle facet */
+        dUf += nf*(nf.transpose()*ri)*wf;
+    }
+    
+    /* Compute acceleration contribution */
+    acc = (this->muBody/this->volPoly)*(-dUe + dUf);
+    
+    return acc;
+}
+
+bool Polyhedral::polyReady()
+{
+    bool polyGood = true;
+
+    polyGood = polyGood && xyzVertex.size() > 0;
+    polyGood = polyGood && orderFacet.size() > 0;
+
+    return polyGood;
+}
+
 SphericalHarmonics::SphericalHarmonics()
 {
     this->radEquator = 0.0;
@@ -262,6 +430,7 @@ bool SphericalHarmonics::harmReady()
  */
 GravBodyData::GravBodyData()
 {
+    this->usePolyhedral = false;
     this->useSphericalHarmParams = false;
     this->isCentralBody = false;
     this->ephemTime = 0;               //!< [s]      Ephemeris time for the body in question
@@ -283,6 +452,10 @@ GravBodyData::~GravBodyData()
 
 void GravBodyData::initBody(int64_t moduleID)
 {
+    bool polyFound;
+    polyFound = this->poly.initializeParameters();
+    this->poly.muBody = polyFound ? this->mu : 0;
+    
     bool spherFound;
     spherFound = this->spherHarm.initializeParameters();
     this->mu = spherFound ? this->spherHarm.muBody : this->mu;
@@ -346,6 +519,13 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
         Eigen::Vector3d gravPert_Pfix = this->spherHarm.computeField(r_Pfix,
            this->spherHarm.maxDeg, false);
         gravOut += dcm_PfixN.transpose() * gravPert_Pfix;
+    }
+    else if(this->poly.polyReady() && this->usePolyhedral)
+    {
+        dcm_PfixN.transposeInPlace();
+        Eigen::Vector3d r_Pfix = dcm_PfixN*r_I;
+        Eigen::Vector3d gravPert_Pfix = this->poly.computeField(r_Pfix);
+        gravOut = dcm_PfixN.transpose() * gravPert_Pfix;
     }
 
     return(gravOut);

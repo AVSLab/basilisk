@@ -4,7 +4,7 @@ This section contains descriptions of how the gravity effector code works and in
 \subsection{Code Diagram}
 The diagram in Fig. \ref{img:codeFlow} demonstrates the basic iterative logic of the gravity effector module. There is extensive additional code that deals with things from the messaging system to transforming the spacecraft position from one frame to another. In general, the inputs shown must be given for each gravity body to be considered. There are, however, convenience functions which add the standard values of these inputs for common celestial bodies. An example is simIncludeGravbody.createEarth() in the test\_scenarioOrbitManeuver.py tutorial.
 
-After the inputs are given for each gravity body, the computeGravityInertial() method calculates the $0^{\textrm{th}}$ degree gravity term for each body and its effects on the spacecraft. If useSphericalHarmParams is True for a given body, then computeField() is called to calculate higher degree spherical harmonics terms for that body.
+After the inputs are given for each gravity body, the computeGravityInertial() method calculates the $0^{\textrm{th}}$ degree gravity term for each body and its effects on the spacecraft. If useSphericalHarmParams is True for a given body, then computeField() is called to calculate and add the non-Keplerian term higher degree spherical harmonics terms for that body. If usePolyhedral is True for a given body, then computeField() is called to compute the polyhedron gravity acceleration which overrides the previous $0^{\textrm{th}}$ degree gravity term (as it is implicitly considered in the polyhedron gravity computation). 
 
 \begin{figure}[H]
 	\centering \includegraphics[height=1.0\textwidth, keepaspectratio]{Figures/codeFlow.pdf}
@@ -70,3 +70,40 @@ Of course, if a user has initial positions and velocities directly, those should
 \subsubsection{Reference Frames}
 An understanding of spice reference frames will help to explain the code above. The spice inertial frame is the ICRF. The ICRF is coplaner with the Earth's equator. Generally, the Earth Centered Inertial system one would give Keplerian elements in is aligned with ICRF. ICRF is referred to within spice as "j2000" for legacy reasons and because the J2000 system is only rotated from the ICRF by a few milliarcseconds.
 
+\subsection{Loading polyhedral shape files}
+
+The user has to load polyhedral files in a similar way as spherical harmonics ones. The following code, that loads a polyhedral shape from the file 'EROS856Vert1708Fac.txt', is shown as an example: \\\\
+\verb|mu = 4.46275472004*1e5|\\
+\verb|gravFactory = simIncludeGravBody.gravBodyFactory()|\\
+\verb|polyBody = gravFactory.createCustomGravObject('eros', mu=mu)|\\
+\verb|polyBody.usePolyhedral = True|\\
+\verb|simIncludeGravBody.loadPolyFromFile('EROS856Vert1708Fac.txt', polyBody.poly)|\\
+
+\subsubsection{Supported polyhedral shape files}
+
+The current supported polyhedral shapes files have extensions as '.obj', '.tab' and '.txt'. These describe polyhedral shape models with triangular faces (three vertexes per face). Generally speaking, these files contain the polyhedral vertexes coordinates followed by the composition of each face (in other words, the vertexes that compose a face). It is expected that the vertexes coordinates are stated in kilometers (km). Then, the file reader function \verb|loadPolyFromFile| does the neccesary conversions to meters (m). The vertexes positions are assumed in a body-centered body-fixed reference frame, thus the $z$ coordinate is aligned with the body rotation axis. The expected format of each one of the supported files is detailed below (for a polyhedral shape of 32002 vertexes and 64000 faces).\\
+
+The '.obj' file has to follow this format:\\
+\verb|v -0.477031 0.084442 232.978500|\\
+\verb|...|\\
+\verb|v -1.560627 -1.586087 -225.401962|\\
+\verb|f 10 9 1|\\
+\verb|...|\\
+\verb|f 32002 31996 32000|\\
+
+The '.tab' file has to follow this format:\\
+\verb|1 -0.477031 0.084442 232.978500|\\
+\verb|...|\\
+\verb|32002 -1.560627 -1.586087 -225.401962|\\
+\verb|1 10 9 1|\\
+\verb|...|\\
+\verb|64000 32002 31996 32000|\\
+
+The '.txt' file has to follow this format:\\
+\verb|32002 64000|\\
+\verb|-0.477031 0.084442 232.978500|\\
+\verb|...|\\
+\verb|-1.560627 -1.586087 -225.401962|\\
+\verb|10 9 1|\\
+\verb|...|\\
+\verb|32002 31996 32000|\\

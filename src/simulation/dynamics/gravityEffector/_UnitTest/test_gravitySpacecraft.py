@@ -18,18 +18,23 @@
 
 import os, inspect
 import numpy
+import csv
+
+import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 from Basilisk import __path__
 bskPath = __path__[0]
 
-
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion, RigidBodyKinematics
 from Basilisk.utilities import SimulationBaseClass
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
+from Basilisk.simulation import ephemerisConverter
+from Basilisk.simulation import planetEphemeris
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import messaging
@@ -299,7 +304,147 @@ def test_multiBodyGravity(show_plots):
 
     return [testFailCount, ''.join(testMessages)]
 
+
+def test_polyGravityBody(show_plots):
+    """Module Unit Test"""
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    # Obtain validation data (simulation with tight integration tolerances in MATLAB)
+    valData = numpy.genfromtxt(path + '/../_UnitTest/polyTestData.csv', delimiter=',')
+    tVal = numpy.array(valData[:,0])
+    posVal = numpy.array(valData[:,1:4])
+    velVal = numpy.array(valData[:,4:7])
+
+    # Create a sim module as an empty container
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    DynUnitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
+    # create the dynamics task and specify the integration update time
+    intTime = 30.0
+    DynUnitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, macros.sec2nano(intTime)))
+
+    # specify orbit of polyhedral body
+    oePolyBody = planetEphemeris.ClassicElementsMsgPayload()
+    oePolyBody.a = 2.3612 * orbitalMotion.AU * 1000
+    oePolyBody.e = 0
+    oePolyBody.i = 0*macros.D2R
+    oePolyBody.Omega = 0*macros.D2R
+    oePolyBody.omega = 0*macros.D2R
+    oePolyBody.f = 0*macros.D2R
+
+    raPolyBody = 0 * macros.D2R
+    decPolyBody = 90 * macros.D2R
+    lst0PolyBody = 0 * macros.D2R
+    rotPeriodPolyBody = 5.27 * 3600
+
+    # setup celestial object ephemeris module
+    polyBodyEphem = planetEphemeris.PlanetEphemeris()
+    polyBodyEphem.ModelTag = 'erosEphemeris'
+    polyBodyEphem.setPlanetNames(planetEphemeris.StringVector(["eros"]))
+
+    # specify celestial objects orbit
+    polyBodyEphem.planetElements = planetEphemeris.classicElementVector([oePolyBody])
+
+    # specify celestial object orientation
+    polyBodyEphem.rightAscension = planetEphemeris.DoubleVector([raPolyBody])
+    polyBodyEphem.declination = planetEphemeris.DoubleVector([decPolyBody])
+    polyBodyEphem.lst0 = planetEphemeris.DoubleVector([lst0PolyBody])
+    polyBodyEphem.rotRate = planetEphemeris.DoubleVector([360 * macros.D2R / rotPeriodPolyBody])
+
+    # setup polyhedral gravity body
+    mu = 4.46275472004 * 1e5
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    polyBody = gravFactory.createCustomGravObject('eros', mu=mu)
+    polyBody.isCentralBody = True
+    polyBody.usePolyhedral = True
+    simIncludeGravBody.loadPolyFromFile(path + '/../_UnitTest/EROS856Vert1708Fac.txt', polyBody.poly)
+    polyBody.planetBodyInMsg.subscribeTo(polyBodyEphem.planetOutMsgs[0])
+
+    # create an ephemeris converter
+    polyBodyEphemConverter = ephemerisConverter.EphemerisConverter()
+    polyBodyEphemConverter.ModelTag = "erosEphemConverter"
+    polyBodyEphemConverter.addSpiceInputMsg(polyBodyEphem.planetOutMsgs[0])
+
+    # create spacecraft and attach polyhedral body
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraft"
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+
+    # set initial conditions for spacecraft
+    angvelPolyBody = np.array([0,0,360 * macros.D2R / rotPeriodPolyBody])
+    posInit = posVal[0,0:3]
+    velInit = velVal[0,0:3] + np.cross(angvelPolyBody, posInit)
+    scObject.hub.r_CN_NInit = posInit.tolist()
+    scObject.hub.v_CN_NInit = velInit.tolist()
+
+    # add models to task
+    unitTestSim.AddModelToTask(unitTaskName, polyBodyEphem, ModelPriority=10)
+    unitTestSim.AddModelToTask(unitTaskName, polyBodyEphemConverter, ModelPriority=9)
+    unitTestSim.AddModelToTask(unitTaskName, scObject, ModelPriority=8)
+
+    totalTime = 24*3600
+
+    samplingTime = 300
+    scRec = scObject.scStateOutMsg.recorder(macros.sec2nano(samplingTime))
+    polyBodyRec = polyBodyEphemConverter.ephemOutMsgs[0].recorder(macros.sec2nano(samplingTime))
+    unitTestSim.AddModelToTask(unitTaskName, scRec)
+    unitTestSim.AddModelToTask(unitTaskName, polyBodyRec)
+
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(totalTime))
+    unitTestSim.ExecuteSimulation()
+
+    # retrieve logged variables
+    time = scRec.times() * macros.NANO2SEC
+    N_points = len(time)
+    r_BN_N = scRec.r_BN_N
+    r_AN_N = polyBodyRec.r_BdyZero_N
+    sigma_AN = polyBodyRec.sigma_BN
+
+    # obtain position in small body centered fixed frame
+    posArray = numpy.zeros((N_points, 3))
+    for ii in range(N_points):
+        # obtain rotation matrix
+        R_AN = RigidBodyKinematics.MRP2C(sigma_AN[ii][0:3])
+
+        # rotate position and velocity
+        posArray[ii,0:3] = R_AN.dot(numpy.subtract(r_BN_N[ii],r_AN_N[ii]))
+
+    # compute error in position and assert max error
+    posError = numpy.linalg.norm(posArray - posVal,axis=1)
+    assert max(posError) < 10
+    print(max(posError))
+
+    plt.close("all")
+    plt.figure()
+    plt.plot(tVal, posArray - posVal)
+    plt.xlabel('Time (s)')
+    plt.ylabel('Position Difference (m)')
+
+    if(show_plots):
+        plt.show()
+        plt.close('all')
+
+    if testFailCount == 0:
+        print("PASSED: " + " Single body with polyhedral shape")
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+
+    return [testFailCount, ''.join(testMessages)]
+
+
 if __name__ == "__main__":
     # gravityEffectorAllTest(False)
     test_singleGravityBody(True)
     # test_multiBodyGravity(True)
+    test_polyGravityBody(True)
