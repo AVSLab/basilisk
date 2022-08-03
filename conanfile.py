@@ -301,7 +301,7 @@ class BasiliskConan(ConanFile):
 
     def add_basilisk_to_sys_path(self):
         print("Adding Basilisk module to python\n")
-        add_basilisk_module_command = [sys.executable, "setup.py", "develop"]
+        add_basilisk_module_command = [sys.executable, "-m", "pip", "install", "-e", "."]
         if not is_running_virtual_env() and self.options.autoKey != 's':
             add_basilisk_module_command.append("--user")
 
