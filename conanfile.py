@@ -69,6 +69,16 @@ class BasiliskConan(ConanFile):
         print("use version 1.40.1+ to work with the conan repo changes from 2021." + endColor)
         exit(0)
 
+    # ensure latest pip is installed
+    if is_running_virtual_env() or platform.system() == "Windows":
+        cmakeCmdString = 'python -m pip install --upgrade pip'
+    else:
+        cmakeCmdString = 'python3 -m pip install --upgrade pip'
+    print(statusColor + "Updating pip:" + endColor)
+    print(cmakeCmdString)
+    os.system(cmakeCmdString)
+
+
     for opt, value in bskModuleOptionsBool.items():
         options.update({opt: [True, False]})
         default_options.update({opt: value})
@@ -301,7 +311,7 @@ class BasiliskConan(ConanFile):
 
     def add_basilisk_to_sys_path(self):
         print("Adding Basilisk module to python\n")
-        add_basilisk_module_command = [sys.executable, "setup.py", "develop"]
+        add_basilisk_module_command = [sys.executable, "-m", "pip", "install", "-e", "."]
         if not is_running_virtual_env() and self.options.autoKey != 's':
             add_basilisk_module_command.append("--user")
 

@@ -46,6 +46,8 @@ Version |release|
 - added new :ref:`scenarioRendezVous` scenario illustrating a servicer approaching
   a debris object and engage several flight modes.
 - added support for the polynomial gravity model to :ref:`gravityEffector`
+- updated the ``conanFile.py`` to fix configuration and building issues with the latest
+  version of python
 
 
 Version 2.1.3 (May 25, 2022)
