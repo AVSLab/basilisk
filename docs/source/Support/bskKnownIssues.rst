@@ -19,6 +19,9 @@ Version 2.1.3
 - updated ``examples/OpNavScenarios/BSK_OpNav.py`` path to the Vizard binary. If you are calling
   Vizard 2.1+ from the python script, the Vizard binary name changed from ``Basilisk Vizard` to
   simply ``Vizard``.
+- using newer versions of Python, such as 3.9.13 or 3.10.5, running ``conanfile.py`` runs into errors
+  and fails.  This is now addressed in the next release.  Upgrading ``pip`` to the newest version
+  manually can resolve this issue as well.
 
 Version 2.1.2
 -------------
