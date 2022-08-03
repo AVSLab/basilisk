@@ -69,6 +69,16 @@ class BasiliskConan(ConanFile):
         print("use version 1.40.1+ to work with the conan repo changes from 2021." + endColor)
         exit(0)
 
+    # ensure latest pip is installed
+    if is_running_virtual_env() or platform.system() == "Windows":
+        cmakeCmdString = 'python -m pip install --upgrade pip'
+    else:
+        cmakeCmdString = 'python3 -m pip install --upgrade pip'
+    print(statusColor + "Updating pip:" + endColor)
+    print(cmakeCmdString)
+    os.system(cmakeCmdString)
+
+
     for opt, value in bskModuleOptionsBool.items():
         options.update({opt: [True, False]})
         default_options.update({opt: value})
