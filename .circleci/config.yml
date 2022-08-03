@@ -160,6 +160,8 @@ jobs:
           branch_pattern: develop
           event: pass
           template: basic_success_1
+    resource_class: large
+
 workflows:
   version: 2
   #branch-testing:
