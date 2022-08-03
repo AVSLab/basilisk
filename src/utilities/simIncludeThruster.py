@@ -126,6 +126,13 @@ class thrusterFactory(object):
             else:
                 TH.MinOnTime = varMinOnTime
 
+        if 'cutoffFrequency' in kwargs:
+            varCutoffFrequency = kwargs['cutoffFrequency']
+            if not isinstance(varCutoffFrequency, (float)):
+                print('ERROR: cutoffFrequency must be a float argument')
+                exit(1)
+            else:
+                TH.cutoffFrequency = varCutoffFrequency
 
         if 'useMinPulseTime' in kwargs:
             varUseMinPulseTime = kwargs['useMinPulseTime']
