@@ -88,7 +88,7 @@ typedef struct{
 
 typedef struct{
     std::tuple<int, int> parentIndices;
-    std::vector<std::tuple<int, int, int, int>> overlaps;
+    std::vector<std::tuple<int, int>> overlaps;
 }boundingBoxDetail;
 
 /*! Struct for holding the bounds of a vector over a time interval.*/
@@ -112,7 +112,7 @@ typedef struct{
     std::vector<Eigen::Vector3d> faceBoundingBoxes;
     std::vector<double> faceBoundingRadius;
     std::vector<std::vector<int>> edgeIndices;  //!< -- Indicies for the verticies of each edge
-    std::vector<int> faceIndices;               //!< -- Indicies for each face connecting to an edge
+    std::vector<std::tuple<int, int, int>> faceIndices;               //!< -- Indicies for each face connecting to an edge
     Eigen::Vector3d centroid;                   //!< [m] Centroid of the polyhedron
     std::vector<int> uniqueVertIndices;
     Eigen::Vector3d boundingBox;
@@ -206,6 +206,7 @@ private:
     int currentBodyInCycle;
     double currentMinError;
     bool responseFound;
+    double timeFound;
     
 public:
     geometry mainBody;

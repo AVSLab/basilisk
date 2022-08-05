@@ -168,6 +168,11 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
     double minY;
     double minZ;
     
+    std::vector<std::vector<int>> edgeIndices;
+    std::vector<int> faceIndices;
+    std::vector<int> shapeIndices;
+    std::set<int> totalSet;
+    
     for (int shapeIt=0; shapeIt<shapes.size(); shapeIt++)
     {
         indexOffset = 0;
@@ -464,43 +469,60 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
             
             for ( int inx=0; inx<2; ++inx)
             {
+                polyhedron[shapeIt].uniqueVertIndices.push_back(polyhedron[shapeIt].faceTriangles[faceIt][inx]);
                 std::vector<int> edgeGroup = {polyhedron[shapeIt].faceTriangles[faceIt][inx], polyhedron[shapeIt].faceTriangles[faceIt][inx+1]};
-                polyhedron[shapeIt].edgeIndices.push_back(edgeGroup);
-                polyhedron[shapeIt].faceIndices.push_back(faceIt);
+                edgeIndices.push_back(edgeGroup);
+                faceIndices.push_back(faceIt);
+                shapeIndices.push_back(shapeIt);
             }
+            polyhedron[shapeIt].uniqueVertIndices.push_back(polyhedron[shapeIt].faceTriangles[faceIt][2]);
             std::vector<int> edgeGroup = { polyhedron[shapeIt].faceTriangles[faceIt][2], polyhedron[shapeIt].faceTriangles[faceIt][0]};
-            polyhedron[shapeIt].edgeIndices.push_back(edgeGroup);
-            polyhedron[shapeIt].faceIndices.push_back(faceIt);
-        }
-        
-        for ( int edgeIt=0; edgeIt<polyhedron[shapeIt].edgeIndices.size(); ++edgeIt)
-        {
-            polyhedron[shapeIt].uniqueVertIndices.push_back(polyhedron[shapeIt].edgeIndices[edgeIt][0]);
-            searchEdge[0] = polyhedron[shapeIt].edgeIndices[edgeIt][1];
-            searchEdge[1] = polyhedron[shapeIt].edgeIndices[edgeIt][0];
-            for ( int searchIt=edgeIt+1; searchIt<polyhedron[shapeIt].edgeIndices.size(); ++searchIt)
-            {
-                if (polyhedron[shapeIt].edgeIndices[searchIt]==searchEdge)
-                {
-                    std::vector<std::vector<int>>::iterator itEdge1 = polyhedron[shapeIt].edgeIndices.begin() + edgeIt+1;
-                    std::vector<std::vector<int>>::iterator itSearch1 = polyhedron[shapeIt].edgeIndices.begin() + searchIt+1;
-                    std::vector<int>::iterator itEdge2 = polyhedron[shapeIt].faceIndices.begin() + edgeIt+1;
-                    std::vector<int>::iterator itSearch2 = polyhedron[shapeIt].faceIndices.begin() + searchIt+1;
-                    polyhedron[shapeIt].edgeIndices.emplace(itEdge1, searchEdge);
-                    polyhedron[shapeIt].edgeIndices.erase(itSearch1);
-                    polyhedron[shapeIt].faceIndices.emplace(itEdge2, polyhedron[shapeIt].faceIndices[searchIt]);
-                    polyhedron[shapeIt].faceIndices.erase(itSearch2);
-                    edgeIt++;
-                    continue;
-                }
-            }
+            edgeIndices.push_back(edgeGroup);
+            faceIndices.push_back(faceIt);
+            shapeIndices.push_back(shapeIt);
         }
         
         std::set<int> uniqueSet(polyhedron[shapeIt].uniqueVertIndices.begin(), polyhedron[shapeIt].uniqueVertIndices.end());
-        polyhedron[shapeIt].uniqueVertIndices.assign(uniqueSet.begin(), uniqueSet.end());
+        polyhedron[shapeIt].uniqueVertIndices.clear();
+        std::set<int> newSet;
+        std::set_difference(uniqueSet.begin(), uniqueSet.end(), totalSet.begin(), totalSet.end(),
+                                std::inserter(newSet, newSet.begin()));
+        polyhedron[shapeIt].uniqueVertIndices.assign(newSet.begin(), newSet.end());
+        totalSet.insert(uniqueSet.begin(), uniqueSet.end());
         
     }
     
+    for ( int edgeIt=0; edgeIt<edgeIndices.size(); ++edgeIt)
+    {
+        searchEdge[0] = edgeIndices[edgeIt][1];
+        searchEdge[1] = edgeIndices[edgeIt][0];
+        for ( int searchIt=edgeIt+1; searchIt<edgeIndices.size(); ++searchIt)
+        {
+            if (edgeIndices[searchIt]==searchEdge)
+            {
+                std::vector<std::vector<int>>::iterator itEdge1 = edgeIndices.begin() + edgeIt+1;
+                std::vector<std::vector<int>>::iterator itSearch1 = edgeIndices.begin() + searchIt+1;
+                std::vector<int>::iterator itEdge2 = faceIndices.begin() + edgeIt+1;
+                std::vector<int>::iterator itSearch2 = faceIndices.begin() + searchIt+1;
+                std::vector<int>::iterator itEdge3 = shapeIndices.begin() + edgeIt+1;
+                std::vector<int>::iterator itSearch3 = shapeIndices.begin() + searchIt+1;
+                edgeIndices.emplace(itEdge1, searchEdge);
+                edgeIndices.erase(itSearch1);
+                faceIndices.emplace(itEdge2, faceIndices[searchIt]);
+                faceIndices.erase(itSearch2);
+                shapeIndices.emplace(itEdge3, shapeIndices[searchIt]);
+                shapeIndices.erase(itSearch3);
+                edgeIt++;
+                continue;
+            }
+        }
+    }
+    
+    for ( int edgeIt=0; edgeIt<edgeIndices.size(); edgeIt=edgeIt+2)
+    {
+        polyhedron[shapeIndices[edgeIt]].edgeIndices.push_back(edgeIndices[edgeIt]);
+        polyhedron[shapeIndices[edgeIt]].faceIndices.push_back(std::make_tuple(faceIndices[edgeIt], shapeIndices[edgeIt+1], faceIndices[edgeIt+1]));
+    }
     
     
     return polyhedron;
@@ -550,15 +572,23 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     dynamicData body2Future;
     
     vectorInterval tempVecInter;
+    std::tuple<vectorInterval, vectorInterval, Eigen::Vector3d, Eigen::Vector3d> tempEdgeInter;
     
-    std::vector<vectorInterval> body1VertInter;
-    std::vector<vectorInterval> body2VertInter;
+    std::vector<vectorInterval> body1UniqueVertInter;
+    std::vector<vectorInterval> body2UniqueVertInter;
+    std::vector<std::tuple<vectorInterval, vectorInterval, Eigen::Vector3d, Eigen::Vector3d>> body1EdgeInter;
+    std::vector<std::tuple<vectorInterval, vectorInterval, Eigen::Vector3d, Eigen::Vector3d>> body2EdgeInter;
+    
+    std::tuple<vectorInterval, vectorInterval, vectorInterval> faceVertInter;
     
     vectorInterval faceLegInterval1;
     vectorInterval faceLegInterval2;
     vectorInterval supportInterval;
-    int tempNextVert1;
-    int tempNextVert2;
+    
+    std::vector<int> usedVerts;
+
+    Eigen::Vector3d contactNormal_N;
+    Eigen::Vector3d contactVelocity_N;
     
     std::vector<double> elemTest;
     int intersectFlag;
@@ -594,6 +624,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     Eigen::VectorXd X_c;
     bool energyMet;
     int currLoop;
+    int loopMax;
     Eigen::VectorXd k1;
     Eigen::VectorXd k2;
     Eigen::VectorXd k3;
@@ -607,9 +638,12 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     {
         if (this->responseFound)
         {
-            this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N;
-            this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B;
-            return;
+            if (this->timeFound >= currentTime)
+            {
+                this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N;
+                this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B;
+                return;
+            }
         }
         // Fine collision detection begin
         if (this->Bodies[this->closeBodies[groupIt1][0]].isSpice == true)
@@ -666,147 +700,216 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             body2Future.dcm_BN = body2Future.dcm_NB.transpose();
         }
         
+        //std::cout << body1Current.r_BN_N(2) - 0.5 << " " << body1Future.r_BN_N(2) - 0.5 << std::endl;
+        
         // Begin looping through contactable triangles
-        for (int triPairInd=0; triPairInd < this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps.size(); triPairInd++)
+        for (int polyPairInd=0; polyPairInd < this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps.size(); polyPairInd++)
         {
+            body1UniqueVertInter.clear();
+            body2UniqueVertInter.clear();
+            body1EdgeInter.clear();
+            body2EdgeInter.clear();
             
-            tempVecInter.lower = body1Current.r_BN_N + body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][0]];
-            tempVecInter.upper = body1Future.r_BN_N + body1Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][0]];
+            for (int uniqueVertInd=0; uniqueVertInd < this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].uniqueVertIndices.size(); uniqueVertInd++)
+            {
+                tempVecInter.lower = body1Current.r_BN_N + body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].uniqueVertIndices[uniqueVertInd]];
+                tempVecInter.upper = body1Future.r_BN_N + body1Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].uniqueVertIndices[uniqueVertInd]];
+                
+                body1UniqueVertInter.push_back(tempVecInter);
+            }
             
-            body1VertInter.push_back(tempVecInter);
+            for (int uniqueVertInd=0; uniqueVertInd < this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].uniqueVertIndices.size(); uniqueVertInd++)
+            {
+                tempVecInter.lower = body2Current.r_BN_N + body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].uniqueVertIndices[uniqueVertInd]];
+                tempVecInter.upper = body2Future.r_BN_N + body2Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].uniqueVertIndices[uniqueVertInd]];
+                
+                body2UniqueVertInter.push_back(tempVecInter);
+            }
             
-            tempVecInter.lower = body1Current.r_BN_N + body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][1]];
-            tempVecInter.upper = body1Future.r_BN_N + body1Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][1]];
+            for (int edgeInd=0; edgeInd < this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].edgeIndices.size(); edgeInd++)
+            {
+                tempVecInter.lower = body1Current.r_BN_N + body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].edgeIndices[edgeInd][0]];
+                tempVecInter.upper = body1Future.r_BN_N + body1Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].edgeIndices[edgeInd][0]];
+                std::get<0>(tempEdgeInter) = tempVecInter;
+                
+                tempVecInter.lower = body1Current.r_BN_N + body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].edgeIndices[edgeInd][1]];
+                tempVecInter.upper = body1Future.r_BN_N + body1Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].edgeIndices[edgeInd][1]];
+                std::get<1>(tempEdgeInter) = tempVecInter;
+                
+                std::get<2>(tempEdgeInter) = body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceNormals[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceIndices[edgeInd])];
+                
+                std::get<3>(tempEdgeInter) = body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceIndices[edgeInd])].faceNormals[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceIndices[edgeInd])];
+                
+                body1EdgeInter.push_back(tempEdgeInter);
+            }
             
-            body1VertInter.push_back(tempVecInter);
-            
-            tempVecInter.lower = body1Current.r_BN_N + body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][2]];
-            tempVecInter.upper = body1Future.r_BN_N + body1Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][2]];
-            
-            body1VertInter.push_back(tempVecInter);
-            
-            tempVecInter.lower = body2Current.r_BN_N + body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][0]];
-            tempVecInter.upper = body2Future.r_BN_N + body2Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][0]];
-            
-            body2VertInter.push_back(tempVecInter);
-            
-            tempVecInter.lower = body2Current.r_BN_N + body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][1]];
-            tempVecInter.upper = body2Future.r_BN_N + body2Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][1]];
-            
-            body2VertInter.push_back(tempVecInter);
-            
-            tempVecInter.lower = body2Current.r_BN_N + body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][2]];
-            tempVecInter.upper = body2Future.r_BN_N + body2Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceTriangles[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])][2]];
-            
-            body2VertInter.push_back(tempVecInter);
+            for (int edgeInd=0; edgeInd < this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].edgeIndices.size(); edgeInd++)
+            {
+                tempVecInter.lower = body2Current.r_BN_N + body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].edgeIndices[edgeInd][0]];
+                tempVecInter.upper = body2Future.r_BN_N + body2Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].edgeIndices[edgeInd][0]];
+                std::get<0>(tempEdgeInter) = tempVecInter;
+                
+                tempVecInter.lower = body2Current.r_BN_N + body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].edgeIndices[edgeInd][1]];
+                tempVecInter.upper = body2Future.r_BN_N + body2Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].edgeIndices[edgeInd][1]];
+                std::get<1>(tempEdgeInter) = tempVecInter;
+                
+                std::get<2>(tempEdgeInter) = body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceNormals[std::get<0>(this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceIndices[edgeInd])];
+                
+                std::get<3>(tempEdgeInter) = body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceIndices[edgeInd])].faceNormals[std::get<2>(this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceIndices[edgeInd])];
+                
+                body2EdgeInter.push_back(tempEdgeInter);
+            }
+
             
             // Face of triange 1 with each vertex of triangle 2
-            faceLegInterval1.lower = body1VertInter[0].lower - body1VertInter[1].lower;
-            faceLegInterval1.upper = body1VertInter[0].upper - body1VertInter[1].upper;
-            faceLegInterval2.lower = body1VertInter[0].lower - body1VertInter[2].lower;
-            faceLegInterval2.upper = body1VertInter[0].upper - body1VertInter[2].upper;
-            
-            for (int vertInd=0; vertInd < 3; vertInd++)
+            for (int faceInd=0; faceInd < this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles.size(); faceInd++)
             {
-                supportInterval.lower = body2VertInter[vertInd].lower - body1VertInter[0].lower;
-                supportInterval.upper = body2VertInter[vertInd].upper - body1VertInter[0].upper;
+                usedVerts.clear();
                 
-                elemTest = this->IntervalDotProduct(supportInterval, this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
+                tempVecInter.lower = body1Current.r_BN_N + body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles[faceInd][0]];
+                tempVecInter.upper = body1Future.r_BN_N + body1Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles[faceInd][0]];
+
+                std::get<0>(faceVertInter) = tempVecInter;
+
+                tempVecInter.lower = body1Current.r_BN_N + body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles[faceInd][1]];
+                tempVecInter.upper = body1Future.r_BN_N + body1Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles[faceInd][1]];
+
+                std::get<1>(faceVertInter) = tempVecInter;
+
+                tempVecInter.lower = body1Current.r_BN_N + body1Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles[faceInd][2]];
+                tempVecInter.upper = body1Future.r_BN_N + body1Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][0]].vertices[this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles[faceInd][2]];
                 
-                //std::cout << elemTest[0] << " " << elemTest[1] << std::endl;
-                if (((elemTest[0] <= -1e-12) && (elemTest[1] >= 1e-12)) || ((elemTest[0] >= 1e-12) && (elemTest[1] <= -1e-12)))
-                {
-                    intersectFlag = this->PointInTriangle(body2VertInter[vertInd].lower, body1VertInter[0].lower, body1VertInter[1].lower, body1VertInter[2].lower, &contactPoint, &contactError);
-                    
-                    if (intersectFlag == 1)
-                    {
-                        //contactError = (contactPoint - body2VertInter[vertInd].lower).norm();
-                        if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
-                        {
-                            impacts.push_back(std::make_tuple(contactPoint, body2VertInter[vertInd].lower, body1Current.dcm_NB * -this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceNormals[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])]));
-                            if (contactError > currentMaxError)
-                            {
-                                currentMaxError = contactError;
-                            }else{
-                                this->currentMinError = contactError;
-                            }
-                            
-                        }
-                    }
-                }
-            }
-            
-            // Face of triange 2 with each vertex of triangle 1
-            faceLegInterval1.lower = body2VertInter[0].lower - body2VertInter[1].lower;
-            faceLegInterval1.upper = body2VertInter[0].upper - body2VertInter[1].upper;
-            faceLegInterval2.lower = body2VertInter[0].lower - body2VertInter[2].lower;
-            faceLegInterval2.upper = body2VertInter[0].upper - body2VertInter[2].upper;
-            
-            for (int vertInd=0; vertInd < 3; vertInd++)
-            {
-                supportInterval.lower = body1VertInter[vertInd].lower - body2VertInter[0].lower;
-                supportInterval.upper = body1VertInter[vertInd].upper - body2VertInter[0].upper;
+                std::get<2>(faceVertInter) = tempVecInter;
                 
-                elemTest = this->IntervalDotProduct(supportInterval, this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
+                faceLegInterval1.lower = std::get<0>(faceVertInter).lower - std::get<1>(faceVertInter).lower;
+                faceLegInterval1.upper = std::get<0>(faceVertInter).upper - std::get<1>(faceVertInter).upper;
+                faceLegInterval2.lower = std::get<0>(faceVertInter).lower - std::get<2>(faceVertInter).lower;
+                faceLegInterval2.upper = std::get<0>(faceVertInter).upper - std::get<2>(faceVertInter).upper;
                 
-                //std::cout << elemTest[0] << " " << elemTest[1] << std::endl;
-                if (((elemTest[0] <= -1e-12) && (elemTest[1] >= 1e-12)) || ((elemTest[0] >= 1e-12) && (elemTest[1] <= -1e-12)))
+                for (int vertInd=0; vertInd < body2UniqueVertInter.size(); vertInd++)
                 {
-                    intersectFlag = this->PointInTriangle(body1VertInter[vertInd].lower, body2VertInter[0].lower, body2VertInter[1].lower, body2VertInter[2].lower, &contactPoint, &contactError);
-                    
-                    
-                    if (intersectFlag == 1)
-                    {
-                        //contactError = (contactPoint - body1VertInter[vertInd].lower).norm();
-                        if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
-                        {
-                            impacts.push_back(std::make_tuple(body1VertInter[vertInd].lower, contactPoint, body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<2>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])].faceNormals[std::get<3>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[triPairInd])]));
-                            if (contactError > currentMaxError)
-                            {
-                                currentMaxError = contactError;
-                            }else{
-                                this->currentMinError = contactError;
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // Each edge of triangle 1 with each edge of triangle 2 (not avoiding duplicate edges)
-            for (int vertInd1=0; vertInd1 < 3; vertInd1++)
-            {
-                if (vertInd1 == 2)
-                {
-                    tempNextVert1 = 0;
-                } else
-                {
-                    tempNextVert1 = vertInd1 + 1;
-                }
-                // Reuse the faceLegInterval variables, but these should be called edgeInterval
-                faceLegInterval1.lower = body1VertInter[tempNextVert1].lower - body1VertInter[vertInd1].lower;
-                faceLegInterval1.upper = body1VertInter[tempNextVert1].upper - body1VertInter[vertInd1].upper;
-                
-                for (int vertInd2=0; vertInd2 < 3; vertInd2++)
-                {
-                    if (vertInd2 == 2)
-                    {
-                        tempNextVert2 = 0;
-                    } else
-                    {
-                        tempNextVert2 = vertInd2 + 1;
-                    }
-                    faceLegInterval2.lower = body2VertInter[tempNextVert2].lower - body2VertInter[vertInd2].lower;
-                    faceLegInterval2.upper = body2VertInter[tempNextVert2].upper - body2VertInter[vertInd2].upper;
-                    // Reuse supportInterval, but it should be called edgeIntervalMixed
-                    supportInterval.lower = body2VertInter[vertInd2].lower - body1VertInter[vertInd1].lower;
-                    supportInterval.upper = body2VertInter[vertInd2].upper - body1VertInter[vertInd1].upper;
+                    supportInterval.lower = body2UniqueVertInter[vertInd].lower - std::get<0>(faceVertInter).lower;
+                    supportInterval.upper = body2UniqueVertInter[vertInd].upper - std::get<0>(faceVertInter).upper;
                     
                     elemTest = this->IntervalDotProduct(supportInterval, this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
                     
-                    //std::cout << elemTest[0] << " " << elemTest[1] << std::endl;
                     if (((elemTest[0] <= -1e-12) && (elemTest[1] >= 1e-12)) || ((elemTest[0] >= 1e-12) && (elemTest[1] <= -1e-12)))
                     {
-                        intersectFlag = this->LineLineDistance(body1VertInter[vertInd1].lower, body1VertInter[tempNextVert1].lower, body2VertInter[vertInd2].lower, body2VertInter[tempNextVert2].lower, &contactPoint, &contactPoint2);
+                        intersectFlag = this->PointInTriangle(body2UniqueVertInter[vertInd].lower, std::get<0>(faceVertInter).lower, std::get<1>(faceVertInter).lower, std::get<2>(faceVertInter).lower, &contactPoint, &contactError);
+                        
+                        if (intersectFlag == 1)
+                        {
+                            //contactError = (contactPoint - body2VertInter[vertInd].lower).norm();
+                            if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
+                            {
+                                impacts.push_back(std::make_tuple(contactPoint, body2UniqueVertInter[vertInd].lower, body1Current.dcm_NB * -this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceNormals[faceInd]));
+                                usedVerts.push_back(vertInd);
+                                std::cout << "Face 1 Verts 2: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
+                                if (contactError > currentMaxError)
+                                {
+                                    currentMaxError = contactError;
+                                }else{
+                                    this->currentMinError = contactError;
+                                }
+                                
+                            }
+                        }
+                    }
+                }
+                for (int vertInd=usedVerts.size()-1; vertInd >=0; vertInd--)
+                {
+                    body2UniqueVertInter.erase(body2UniqueVertInter.begin()+usedVerts[vertInd]);
+                }
+                
+            }
+            
+            
+            
+            
+            
+            
+            // Face of triange 2 with each vertex of triangle 1
+            for (int faceInd=0; faceInd < this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles.size(); faceInd++)
+            {
+                usedVerts.clear();
+                tempVecInter.lower = body2Current.r_BN_N + body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles[faceInd][0]];
+                tempVecInter.upper = body2Future.r_BN_N + body2Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles[faceInd][0]];
+
+                std::get<0>(faceVertInter) = tempVecInter;
+
+                tempVecInter.lower = body2Current.r_BN_N + body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles[faceInd][1]];
+                tempVecInter.upper = body2Future.r_BN_N + body2Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles[faceInd][1]];
+
+                std::get<1>(faceVertInter) = tempVecInter;
+
+                tempVecInter.lower = body2Current.r_BN_N + body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles[faceInd][2]];
+                tempVecInter.upper = body2Future.r_BN_N + body2Future.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].vertices[this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceTriangles[faceInd][2]];
+                
+                std::get<2>(faceVertInter) = tempVecInter;
+                
+                faceLegInterval1.lower = std::get<0>(faceVertInter).lower - std::get<1>(faceVertInter).lower;
+                faceLegInterval1.upper = std::get<0>(faceVertInter).upper - std::get<1>(faceVertInter).upper;
+                faceLegInterval2.lower = std::get<0>(faceVertInter).lower - std::get<2>(faceVertInter).lower;
+                faceLegInterval2.upper = std::get<0>(faceVertInter).upper - std::get<2>(faceVertInter).upper;
+                
+                for (int vertInd=0; vertInd < body1UniqueVertInter.size(); vertInd++)
+                {
+                    supportInterval.lower = body1UniqueVertInter[vertInd].lower - std::get<0>(faceVertInter).lower;
+                    supportInterval.upper = body1UniqueVertInter[vertInd].upper - std::get<0>(faceVertInter).upper;
+                    
+                    elemTest = this->IntervalDotProduct(supportInterval, this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
+                    
+                    if (((elemTest[0] <= -1e-12) && (elemTest[1] >= 1e-12)) || ((elemTest[0] >= 1e-12) && (elemTest[1] <= -1e-12)))
+                    {
+                        intersectFlag = this->PointInTriangle(body1UniqueVertInter[vertInd].lower, std::get<0>(faceVertInter).lower, std::get<1>(faceVertInter).lower, std::get<2>(faceVertInter).lower, &contactPoint, &contactError);
+                        
+                        
+                        if (intersectFlag == 1)
+                        {
+                            if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
+                            {
+                                impacts.push_back(std::make_tuple(body1UniqueVertInter[vertInd].lower, contactPoint, body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceNormals[faceInd]));
+                                usedVerts.push_back(vertInd);
+                                std::cout << "Face 2 Verts 1: " << std::get<1>(impacts.back())[0] << " " << std::get<1>(impacts.back())[1] << " " << std::get<1>(impacts.back())[2] << std::endl;
+                                if (contactError > currentMaxError)
+                                {
+                                    currentMaxError = contactError;
+                                }else{
+                                    this->currentMinError = contactError;
+                                }
+                            }
+                        }
+                    }
+                }
+                for (int vertInd=usedVerts.size()-1; vertInd >=0; vertInd--)
+                {
+                    body1UniqueVertInter.erase(body1UniqueVertInter.begin()+usedVerts[vertInd]);
+                }
+            }
+            
+            // Each edge of triangle 1 with each edge of triangle 2
+            for (int vertInd1=0; vertInd1 < body1EdgeInter.size(); vertInd1++)
+            {
+
+                // Reuse the faceLegInterval variables, but these should be called edgeInterval
+                faceLegInterval1.lower = std::get<1>(body1EdgeInter[vertInd1]).lower - std::get<0>(body1EdgeInter[vertInd1]).lower;
+                faceLegInterval1.upper = std::get<1>(body1EdgeInter[vertInd1]).upper - std::get<0>(body1EdgeInter[vertInd1]).upper;
+                
+                for (int vertInd2=0; vertInd2 < body2EdgeInter.size(); vertInd2++)
+                {
+
+                    faceLegInterval2.lower = std::get<1>(body2EdgeInter[vertInd2]).lower - std::get<0>(body2EdgeInter[vertInd2]).lower;
+                    faceLegInterval2.upper = std::get<1>(body2EdgeInter[vertInd2]).upper - std::get<0>(body2EdgeInter[vertInd2]).upper;
+                    // Reuse supportInterval, but it should be called edgeIntervalMixed
+                    supportInterval.lower = std::get<0>(body2EdgeInter[vertInd2]).lower - std::get<0>(body1EdgeInter[vertInd1]).lower;
+                    supportInterval.upper = std::get<0>(body2EdgeInter[vertInd2]).upper - std::get<0>(body1EdgeInter[vertInd1]).upper;
+                    
+                    elemTest = this->IntervalDotProduct(supportInterval, this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
+
+                    
+                    if (((elemTest[0] <= -1e-12) && (elemTest[1] >= 1e-12)) || ((elemTest[0] >= 1e-12) && (elemTest[1] <= -1e-12)))
+                    {
+                        intersectFlag = this->LineLineDistance(std::get<0>(body1EdgeInter[vertInd1]).lower, std::get<1>(body1EdgeInter[vertInd1]).lower, std::get<0>(body2EdgeInter[vertInd2]).lower, std::get<1>(body2EdgeInter[vertInd2]).lower, &contactPoint, &contactPoint2);
                         
                         
                         if (intersectFlag == 0)
@@ -814,7 +917,8 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                             contactError = (contactPoint - contactPoint2).norm();
                             if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
                             {
-                                impacts.push_back(std::make_tuple(contactPoint, contactPoint2, ((contactPoint - contactPoint2) * 1e6).normalized()));
+                                impacts.push_back(std::make_tuple(contactPoint, contactPoint2, ((contactPoint - contactPoint2) * 1.0e6).normalized()));
+                                std::cout << "Edge 0: " << std::get<1>(impacts.back())[0] << " " << std::get<1>(impacts.back())[1] << " " << std::get<1>(impacts.back())[2] << std::endl;
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
@@ -827,7 +931,18 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                             contactError = (contactPoint - contactPoint2).norm();
                             if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
                             {
-                                impacts.push_back(std::make_tuple(contactPoint, contactPoint2, (eigenTilde(faceLegInterval1.lower) * faceLegInterval2.lower).normalized()));
+                                contactNormal_N = ((faceLegInterval1.lower).cross(faceLegInterval2.lower)).normalized();
+                                contactVelocity_N = (body1Current.v_BN_N + body1Current.dcm_NB * (body1Current.omegaTilde_BN_B * body1Current.dcm_BN * (contactPoint - body1Current.r_BN_N))) - (body2Current.v_BN_N + body2Current.dcm_NB * (body2Current.omegaTilde_BN_B * body2Current.dcm_BN * (contactPoint2 - body2Current.r_BN_N)));
+                                if ((contactNormal_N.dot(std::get<2>(body2EdgeInter[vertInd2])) < 1e-12) && (contactNormal_N.dot(std::get<3>(body2EdgeInter[vertInd2])) < 1e-12))
+                                {
+                                    contactNormal_N = -contactNormal_N;
+                                }
+                                if (contactVelocity_N.dot(contactNormal_N) > 0)
+                                {
+                                    continue;
+                                }
+                                impacts.push_back(std::make_tuple(contactPoint, contactPoint2, contactNormal_N));
+                                std::cout << "Edge 1: " << std::get<1>(impacts.back())[0] << " " << std::get<1>(impacts.back())[1] << " " << std::get<1>(impacts.back())[2] << std::endl;
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
@@ -854,6 +969,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             //std::cout << std::get<0>(impacts[impNum]) << std::endl;
             // Create local contact frame
             cHat_3 = (std::get<2>(impacts[impNum])).normalized();
+            //std::cout << std::get<2>(impacts[impNum])[0] << " " << std::get<2>(impacts[impNum])[1] << " " << std::get<2>(impacts[impNum])[2] << std::endl;
             cHat_1 = cHat_3.cross(body2Current.dcm_NB * zDirection);
             if (cHat_1.norm() < 1e-9)
             {
@@ -972,6 +1088,13 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         // Integrate the collision state until the restitution energy conditions are met
         energyMet = false;
         currLoop = 0;
+        if (currentMaxError <= this->maxPosError)
+        {
+            loopMax = 1e6;
+        }else
+        {
+            loopMax = 1e2;
+        }
         std::cout << "Entering Impule Integration" << std::endl;
         while (!energyMet)
         {
@@ -981,13 +1104,13 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             k2 = this->CollisionStateDerivative(X_c + this->collisionIntegrationStep * (k1 / 2.0), impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
             k3 = this->CollisionStateDerivative(X_c + this->collisionIntegrationStep * (k2 / 2.0), impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
             k4 = this->CollisionStateDerivative(X_c + this->collisionIntegrationStep * k3, impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
-            X_c = X_c + (this->collisionIntegrationStep / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4);
+            X_c = X_c + (this->collisionIntegrationStep / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
             
             energyMet = true;
             // Check if there are any contact points that have not met the restitution energy requirements
             for (int impNum=0; impNum < numImpacts; impNum++)
             {
-                if (X_c(numImpacts * 6 + impNum * 2 + 1) < (-1 * (pow(this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, 2) * X_c(numImpacts * 6 + impNum * 2))))
+                if (X_c(numImpacts * 6 + impNum * 2 + 1) < (-1.0 * (pow(this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, 2.0) * X_c(numImpacts * 6 + impNum * 2))))
                 {
                     energyMet = false;
                     break;
@@ -995,8 +1118,9 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             }
             
             // Hard cap on number of loops, which should never be reached.
-            if (currLoop > 1e9)
+            if (currLoop > loopMax)
             {
+                std::cout << "hit cap" << std::endl;
                 energyMet = true;
             }
         }
@@ -1016,6 +1140,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             std::cout << this->forceExternal_N << std::endl;
             std::cout << this->torqueExternalPntB_B << std::endl;
             this->responseFound = true;
+            this->timeFound = currentTime + timeStep + 1.0e-12;
             this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N = this->forceExternal_N;
             this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N = forceExternalOther_N;
             this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B = this->torqueExternalPntB_B;
@@ -1036,9 +1161,9 @@ Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::Vecto
     // - Loop through every collision point
     for (int impNum=0; impNum < numImpacts; impNum++)
     {
-        if (X_c(numImpacts * 6 + impNum * 2 + 1) < (-1 * (pow(coefRes, 2) * X_c(numImpacts * 6 + impNum * 2))))
+        if (X_c(numImpacts * 6 + impNum * 2 + 1) < (-1.0 * (pow(coefRes, 2.0) * X_c(numImpacts * 6 + impNum * 2))))
         {
-            if (sqrt(pow(X_c(impNum * 3), 2) + pow(X_c(impNum * 3 + 1), 2)) < 1e-6)
+            if (sqrt(pow(X_c(impNum * 3), 2) + pow(X_c(impNum * 3 + 1), 2)) < 1.0e-6)
             {
                 Xdot_c(numImpacts * 3 + impNum * 3) = -f_vals[impNum] * cos(phi_vals[impNum]);
                 Xdot_c(numImpacts * 3 + impNum * 3 + 1) = -f_vals[impNum] * sin(phi_vals[impNum]);
@@ -1055,7 +1180,7 @@ Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::Vecto
         if (X_c(impNum * 3 + 2) < 0)
         {
             Xdot_c(numImpacts * 6 + impNum * 2) = X_c(impNum * 3 + 2);
-        }else if (X_c(numImpacts * 6 + impNum * 2 + 1) < (-1 * (pow(coefRes, 2) * X_c(numImpacts * 6 + impNum * 2))))
+        }else if (X_c(numImpacts * 6 + impNum * 2 + 1) < (-1.0 * (pow(coefRes, 2.0) * X_c(numImpacts * 6 + impNum * 2))))
         {
             Xdot_c(numImpacts * 6 + impNum * 2 + 1) = X_c(impNum * 3 + 2);
         }
@@ -1178,8 +1303,8 @@ void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
     this->closeBodies.clear();
     this->CheckBoundingSphere();
     this->CheckBoundingBox();
-    
-    //this->computeForceTorque(CurrentSimNanos*NANO2SEC, this->simTimeStep);
+//    std::cout << CurrentSimNanos*NANO2SEC << std::endl;
+//    this->computeForceTorque(CurrentSimNanos*NANO2SEC, this->simTimeStep);
     
     return;
 }
@@ -1345,37 +1470,38 @@ void RigidBodyContactEffector::CheckBoundingBox()
                 if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.yAxisInterval), box1, box2)) continue;
                 if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.zAxisInterval), box1, box2)) continue;
                 
-                for (int subBoxIt1=0; subBoxIt1 < this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceBoundingBoxes.size(); ++subBoxIt1)
-                {
-                    for (int subBoxIt2=0; subBoxIt2 < this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceBoundingBoxes.size(); ++subBoxIt2)
-                    {
-                        displacementInterval.lower = (this->Bodies[std::get<0>(layer1Box.parentIndices)].states.r_BN_N + this->Bodies[std::get<0>(layer1Box.parentIndices)].states.dcm_NB * this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceCentroids[subBoxIt1]) - (this->Bodies[std::get<1>(layer1Box.parentIndices)].states.r_BN_N + this->Bodies[std::get<1>(layer1Box.parentIndices)].states.dcm_NB * this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceCentroids[subBoxIt2]);
-                        
-                        displacementInterval.upper = (this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.r_BN_N + this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.dcm_NB * this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceCentroids[subBoxIt1]) - (this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.r_BN_N + this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.dcm_NB * this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceCentroids[subBoxIt2]);
-                        
-                        box1.halfSize = this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceBoundingBoxes[subBoxIt1] * this->boundingBoxFF;
-                        box2.halfSize = this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceBoundingBoxes[subBoxIt2] * this->boundingBoxFF;
-                        
-                        if (this->SeparatingPlane(displacementInterval, box1.xAxisInterval, box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, box1.yAxisInterval, box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, box1.zAxisInterval, box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, box2.xAxisInterval, box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, box2.yAxisInterval, box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, box2.zAxisInterval, box1, box2)) continue;
-                        
-                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.xAxisInterval), box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.yAxisInterval), box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.zAxisInterval), box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.xAxisInterval), box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.yAxisInterval), box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.zAxisInterval), box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.xAxisInterval), box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.yAxisInterval), box1, box2)) continue;
-                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.zAxisInterval), box1, box2)) continue;
-                        
-                        layer1Box.overlaps.push_back(std::make_tuple(boxIt1, subBoxIt1, boxIt2, subBoxIt2));
-                    }
-                }
+//                for (int subBoxIt1=0; subBoxIt1 < this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceBoundingBoxes.size(); ++subBoxIt1)
+//                {
+//                    for (int subBoxIt2=0; subBoxIt2 < this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceBoundingBoxes.size(); ++subBoxIt2)
+//                    {
+//                        displacementInterval.lower = (this->Bodies[std::get<0>(layer1Box.parentIndices)].states.r_BN_N + this->Bodies[std::get<0>(layer1Box.parentIndices)].states.dcm_NB * this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceCentroids[subBoxIt1]) - (this->Bodies[std::get<1>(layer1Box.parentIndices)].states.r_BN_N + this->Bodies[std::get<1>(layer1Box.parentIndices)].states.dcm_NB * this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceCentroids[subBoxIt2]);
+//
+//                        displacementInterval.upper = (this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.r_BN_N + this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.dcm_NB * this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceCentroids[subBoxIt1]) - (this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.r_BN_N + this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.dcm_NB * this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceCentroids[subBoxIt2]);
+//
+//                        box1.halfSize = this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceBoundingBoxes[subBoxIt1] * this->boundingBoxFF;
+//                        box2.halfSize = this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceBoundingBoxes[subBoxIt2] * this->boundingBoxFF;
+//
+//                        if (this->SeparatingPlane(displacementInterval, box1.xAxisInterval, box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, box1.yAxisInterval, box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, box1.zAxisInterval, box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, box2.xAxisInterval, box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, box2.yAxisInterval, box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, box2.zAxisInterval, box1, box2)) continue;
+//
+//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.xAxisInterval), box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.yAxisInterval), box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.zAxisInterval), box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.xAxisInterval), box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.yAxisInterval), box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.zAxisInterval), box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.xAxisInterval), box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.yAxisInterval), box1, box2)) continue;
+//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.zAxisInterval), box1, box2)) continue;
+//
+//                        layer1Box.overlaps.push_back(std::make_tuple(boxIt1, subBoxIt1, boxIt2, subBoxIt2));
+//                    }
+//                }
+                layer1Box.overlaps.push_back(std::make_tuple(boxIt1, boxIt2));
             }
         }
         
@@ -1902,40 +2028,40 @@ edgeQuery RigidBodyContactEffector::QueryEdgeDirection(std::vector<Eigen::Vector
     double newSeparation;
     edgeQuery result;
     result.separation = -1000.0;
-    
-    for (int indexA=0; indexA<polyA.edgeIndices.size(); indexA += 2)
-    {
-        normalA = stateA.dcm_NB * polyA.faceNormals[polyA.faceIndices[indexA]];
-        normalB = stateA.dcm_NB * polyA.faceNormals[polyA.faceIndices[indexA+1]];
-        edgeDirectionA = stateA.dcm_NB * (verticesA[polyA.edgeIndices[indexA][1]] - verticesA[polyA.edgeIndices[indexA][0]]);
-        for (int indexB=0; indexB<polyB.edgeIndices.size(); indexB += 2)
-        {
-            normalC = stateB.dcm_NB * polyB.faceNormals[polyB.faceIndices[indexB]];
-            normalD = stateB.dcm_NB * polyB.faceNormals[polyB.faceIndices[indexB+1]];
-            edgeDirectionB = stateB.dcm_NB * (verticesB[polyB.edgeIndices[indexB][1]] - verticesB[polyB.edgeIndices[indexB][0]]);
-            
-            if(this->IsMinkowskiFace(edgeDirectionA, edgeDirectionB, normalA, normalB, -normalC, -normalD))
-            {
-                edgeHeadA = stateA.dcm_NB * verticesA[polyA.edgeIndices[indexA][1]];
-                edgeHeadB = (stateB.dcm_NB * verticesB[polyB.edgeIndices[indexB][1]]) + (stateB.r_BN_N - stateA.r_BN_N);
-                edgeCross = edgeDirectionA.cross(edgeDirectionB);
-                if (edgeCross == zeroVec) continue;
 
-                edgeCrossNorm = edgeCross.normalized();
-                if (edgeCrossNorm.dot(edgeHeadA)<0.0f)
-                    edgeCrossNorm = -edgeCrossNorm;
-
-                newSeparation = edgeCrossNorm.dot(edgeHeadB - edgeHeadA);
-                if ( newSeparation > result.separation)
-                {
-                    result.separation = newSeparation;
-                    result.edgePair.clear();
-                    result.edgePair.push_back(polyA.edgeIndices[indexA]);
-                    result.edgePair.push_back(polyB.edgeIndices[indexB]);
-                }
-            }
-        }
-    }
+//    for (int indexA=0; indexA<polyA.edgeIndices.size(); indexA += 2)
+//    {
+//        normalA = stateA.dcm_NB * polyA.faceNormals[polyA.faceIndices[indexA]];
+//        normalB = stateA.dcm_NB * polyA.faceNormals[polyA.faceIndices[indexA+1]];
+//        edgeDirectionA = stateA.dcm_NB * (verticesA[polyA.edgeIndices[indexA][1]] - verticesA[polyA.edgeIndices[indexA][0]]);
+//        for (int indexB=0; indexB<polyB.edgeIndices.size(); indexB += 2)
+//        {
+//            normalC = stateB.dcm_NB * polyB.faceNormals[polyB.faceIndices[indexB]];
+//            normalD = stateB.dcm_NB * polyB.faceNormals[polyB.faceIndices[indexB+1]];
+//            edgeDirectionB = stateB.dcm_NB * (verticesB[polyB.edgeIndices[indexB][1]] - verticesB[polyB.edgeIndices[indexB][0]]);
+//
+//            if(this->IsMinkowskiFace(edgeDirectionA, edgeDirectionB, normalA, normalB, -normalC, -normalD))
+//            {
+//                edgeHeadA = stateA.dcm_NB * verticesA[polyA.edgeIndices[indexA][1]];
+//                edgeHeadB = (stateB.dcm_NB * verticesB[polyB.edgeIndices[indexB][1]]) + (stateB.r_BN_N - stateA.r_BN_N);
+//                edgeCross = edgeDirectionA.cross(edgeDirectionB);
+//                if (edgeCross == zeroVec) continue;
+//
+//                edgeCrossNorm = edgeCross.normalized();
+//                if (edgeCrossNorm.dot(edgeHeadA)<0.0f)
+//                    edgeCrossNorm = -edgeCrossNorm;
+//
+//                newSeparation = edgeCrossNorm.dot(edgeHeadB - edgeHeadA);
+//                if ( newSeparation > result.separation)
+//                {
+//                    result.separation = newSeparation;
+//                    result.edgePair.clear();
+//                    result.edgePair.push_back(polyA.edgeIndices[indexA]);
+//                    result.edgePair.push_back(polyB.edgeIndices[indexB]);
+//                }
+//            }
+//        }
+//    }
     return result;
 }
 
