@@ -534,9 +534,15 @@ the arguments for the ``createStandardCamera`` method.
    :width: 90 %
 
 It is also possible to create a custom instrument camera view for opNav mode which points in an
-arbitrary direction as illustrate in the image above. The following
-helper method is an example of how such an instrument camera view can be
-created::
+arbitrary direction as illustrate in the image above. Such a camera can be created by
+connecting ``vizSupport.cameraConfInMsg`` to a message of type :ref:`CameraConfigMsgPayload`,
+or by assigning appropirate values to the ``vizSupport.cameraConfigBuffer``
+message payload directly.  If a message is connected then any values set directly
+will be overridden by the input message values.
+
+The following
+helper method is an example of how such an instrument camera message can be
+created directly::
 
    vizSupport.createCameraConfigMsg(viz, cameraID=1, fieldOfView=10 * macros.D2R,
                                         resolution=[1024, 1024], renderRate=0.1,
@@ -553,8 +559,8 @@ Dr. Teil's `dissertation <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.p
    :align: center
    :width: 600px
 
-The following tale illustrates the arguments for the
-``createCameraConfigMsg`` method.
+The following table illustrates the possible variables for the
+``createCameraConfigMsg()`` method.
 
 .. list-table:: ``createCameraConfigMsg`` Parameter Options
     :widths: 15 10 10 15 100
@@ -607,6 +613,32 @@ The following tale illustrates the arguments for the
       - Used to determine what star background should be shown. The empty string "" provides default NASA
         SVS Starmap, “ESO”  shows the ESO Milky Way skybox, “black” provides a black background, or the
         user can provide a filepath to custom  background image file.
+    * - ``postProcessingOn``
+      - int
+      -
+      - needed for any ``ppXXX`` parameters to work
+      - flag to turn on any post-processing features of the camera
+    * - ``ppFocusDistance``
+      - double
+      -
+      - No
+      - Distance to the point of focus
+    * - ``ppAperture``
+      - double
+      -
+      - No
+      - Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is.
+    * - ``ppFocalLength``
+      - double
+      - m
+      - No
+      - Valid setting range: 0.001m to 0.300m.
+    * - ``ppMaxBlurSize``
+      - int
+      -
+      - No
+      - Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh.
+
 
 
 Defining the Custom Spacecraft Shape model
