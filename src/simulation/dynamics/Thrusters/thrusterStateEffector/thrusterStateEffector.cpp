@@ -37,6 +37,7 @@ ThrusterStateEffector::ThrusterStateEffector()
     this->effProps.rEffPrime_CB_B.fill(0.0);
     this->effProps.IEffPrimePntB_B.fill(0.0);
 
+    // initialize the state derivative contribution for mass rate
     this->stateDerivContribution.resize(1);
     this->stateDerivContribution.setZero();
 
@@ -73,9 +74,7 @@ void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos)
     this->NewThrustCmds.clear();
     this->NewThrustCmds.insert(this->NewThrustCmds.begin(), this->thrusterData.size(), 0.0);
 
-    // Add warning to keep it between 0 and 1
-
-    // Reset the thrust states?
+    this->mDotTotal = 0.0;
 
     return;
 }
@@ -329,6 +328,14 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
     }
 
     return;
+}
+
+void ThrusterStateEffector::updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+{
+    // Define the translational and rotational contributions from the computed force and torque
+    backSubContr.vecTrans = this->forceOnBody_B;
+    backSubContr.vecRot = this->torqueOnBodyPntB_B;
+
 }
 
 /*! This is the method for the thruster effector to add its contributions to the mass props and mass prop rates of the vehicle */

@@ -50,6 +50,7 @@ public:
     void linkInStates(DynParamManager& states);  //!< -- Method for the effector to get access of other states
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);
+    void updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);
     void updateEffectorMassProps(double integTime);
     void UpdateState(uint64_t CurrentSimNanos);
 
