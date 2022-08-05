@@ -150,6 +150,12 @@ message VizMessage{
         repeated double cameraDir_B = 8;  //[-] Rotation to the camera frame MRP
         uint64 renderRate = 9;  //[ns] Sim elapsed time between saved camera images
         string skybox = 10; // ' ' to use default (black for headless, NASA SVS otherwise), "NASA_SVS" provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background,
+        int64 postProcessingOn = 11; // (Optional) Enable post-processing of camera image. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double ppFocusDistance = 12; // (Optional) Distance to the point of focus, minimum value of 0.1, Value of 0 to turn off this parameter entirely.
+        double ppAperture = 13; //  (Optional) Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to turn off this parameter entirely.
+        double ppFocalLength = 14; // [mm] (Optional) Valid setting range: 1mm to 300mm. Value of 0 to turn off this parameter entirely.
+        int64 ppMaxBlurSize = 15; //(Optional) Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to turn off this parameter entirely.
+        
     }
 
     

@@ -900,6 +900,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         camera->set_fieldofview(this->cameraConfigBuffer.fieldOfView*R2D);  // Unity expects degrees
         camera->set_skybox(this->cameraConfigBuffer.skyBox);
         camera->set_parentname(this->cameraConfigBuffer.parentName);
+        camera->set_postprocessingon(this->cameraConfigBuffer.postProcessingOn);
+        camera->set_ppfocusdistance(this->cameraConfigBuffer.ppFocusDistance);
+        camera->set_ppaperture(this->cameraConfigBuffer.ppAperture);
+        camera->set_ppfocallength(this->cameraConfigBuffer.ppFocalLength*1000.); // Unity expects mm
+        camera->set_ppmaxblursize(this->cameraConfigBuffer.ppMaxBlurSize);
     }
 
     /*! Write spice output msgs */

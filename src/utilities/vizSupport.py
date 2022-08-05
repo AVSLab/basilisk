@@ -875,7 +875,7 @@ def createCameraConfigMsg(viz, **kwargs):
         return
     global firstSpacecraftName
     unitTestSupport.checkMethodKeyword(
-        ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'cameraPos_B', 'sigma_CB', 'skyBox'],
+        ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'cameraPos_B', 'sigma_CB', 'skyBox', 'postProcessingOn', 'ppFocusDistance', 'ppAperture', 'ppFocalLength', 'ppMaxBlurSize'],
         kwargs)
 
     if 'cameraID' in kwargs:
@@ -970,6 +970,41 @@ def createCameraConfigMsg(viz, **kwargs):
         viz.cameraConfigBuffer.skyBox = val
     else:
         viz.cameraConfigBuffer.skyBox = ""
+
+    if 'postProcessingOn' in kwargs:
+        val = kwargs['postProcessingOn']
+        if not isinstance(val, int) or val < 0:
+            print('ERROR: vizSupport: postProcessingOn must be non-negative integer value.')
+            exit(1)
+        viz.cameraConfigBuffer.postProcessingOn = val
+
+    if 'ppFocusDistance' in kwargs:
+        val = kwargs['ppFocusDistance']
+        if not isinstance(val, float) or val < 0:
+            print('ERROR: vizSupport: ppFocusDistance ' + str(val) + ' must be 0 or greater than 0.1.')
+            exit(1)
+        viz.cameraConfigBuffer.ppFocusDistance = int(val)
+
+    if 'ppAperture' in kwargs:
+        val = kwargs['ppAperture']
+        if not isinstance(val, float) or val < 0 or val > 32:
+            print('ERROR: vizSupport: ppAperture ' + str(val) + ' must be 0 or with [0.05, 32].')
+            exit(1)
+        viz.cameraConfigBuffer.ppAperture = int(val)
+
+    if 'ppFocalLength' in kwargs:
+        val = kwargs['ppFocalLength']
+        if not isinstance(val, float) or val < 0 or val > 0.3:
+            print('ERROR: vizSupport: ppFocalLength ' + str(val) + ' must be 0 or with [0.001, 0.3] meters.')
+            exit(1)
+        viz.cameraConfigBuffer.ppFocalLength = int(val)
+
+    if 'ppMaxBlurSize' in kwargs:
+        val = kwargs['ppMaxBlurSize']
+        if not isinstance(val, int) or val < 0 or val > 4:
+            print('ERROR: vizSupport: ppMaxBlurSize must be non-negative integer value between [0, 4].')
+            exit(1)
+        viz.cameraConfigBuffer.ppMaxBlurSize = val
 
     return
 

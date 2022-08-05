@@ -51,6 +51,11 @@ Camera::Camera()
     strcpy(this->skyBox, "black");
     this->saveImages = 0;
     this->saveDir = "";
+    this->postProcessingOn = 0;
+    this->ppAperture = 0;
+    this->ppFocalLength = 0;
+    this->ppFocusDistance = 0;
+    this->ppMaxBlurSize = 0;
 
     /*! Default values for the perturbations.  */
     this->gaussian = 0;
@@ -343,6 +348,11 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     v3Copy(this->cameraPos_B, cameraMsg.cameraPos_B);
     v3Copy(this->sigma_CB, cameraMsg.sigma_CB);
     strcpy(cameraMsg.skyBox, this->skyBox);
+    cameraMsg.postProcessingOn = this->postProcessingOn;
+    cameraMsg.ppAperture = this->ppAperture;
+    cameraMsg.ppFocalLength = this->ppFocalLength;
+    cameraMsg.ppFocusDistance = this->ppFocusDistance;
+    cameraMsg.ppMaxBlurSize = this->ppMaxBlurSize;
     
     /*! - Update the camera config data no matter if an image is present*/
     this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, CurrentSimNanos);
