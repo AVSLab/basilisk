@@ -33,6 +33,11 @@ The `Vizard <vizard>`_ application supports the following command line arguments
 
 	open /Applications/Vizard.app --args -directComm  tcp://xxx.xxx.x.xx:xxxxx
 
+   Note that here Vizard will show the scene being rendered which is helpful for debugging and
+   demonstrations, but it will slow down the simulation.
+
+   To run Vizard cameras in a headless mode, use the ``-noDisplay`` argument instead.
+
 #. To save a copy of all vizMessages passed to `Vizard <vizard>`_ during the run,
    use the ``-saveMsgFile`` argument. Optionally, this argument can be followed by the desired
    file name that `Vizard <vizard>`_ will name the saved message file on exit::
