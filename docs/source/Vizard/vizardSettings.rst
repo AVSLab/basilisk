@@ -545,10 +545,10 @@ helper method is an example of how such an instrument camera message can be
 created directly::
 
    vizSupport.createCameraConfigMsg(viz, cameraID=1, fieldOfView=10 * macros.D2R,
-                                        resolution=[1024, 1024], renderRate=0.1,
+                                        resolution=[1024, 1024], renderRate=macros.sec2nano(10),
                                         cameraPos_B=[0.2, 0.1, 0.3], sigma_CB=[-1./3., 1./3., -1./3.])
 
-Note that with this instrument camera Vizard will save off images the the user home folder at the rate
+Note that with this instrument camera Vizard will save off images at the user home folder at the rate
 specified in ``renderRate``.  To avoid saving off images just make ``renderRate`` zero.
 
 The camera frame is illustrated in the following image.  It uses classical image image coordinates where ``x`` points
@@ -593,7 +593,7 @@ The following table illustrates the possible variables for the
       - image sensor pixels
     * - ``renderRate``
       - float
-      -
+      - [ns]
       - yes
       - time between image grabs. 0 turns this off (default).
     * - ``cameraPos_B``
@@ -617,7 +617,7 @@ The following table illustrates the possible variables for the
       - int
       -
       - needed for any ``ppXXX`` parameters to work
-      - flag to turn on any post-processing features of the camera
+      - flag to turn on any post-processing features of the camera.  Values are 0 (default) or 1.
     * - ``ppFocusDistance``
       - double
       -

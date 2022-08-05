@@ -67,6 +67,18 @@ The scripts are tested if all modules are installed, but can be run at full leng
 
     python3 scenario_OpNavAttOD.py
 
+See the Scene Rendering
+-----------------------
+By default the Vizard will run in head-less mode where the full scene is note rendered
+for viewing as this slows down the simulation.  To see the scene, edit the following line
+within the scenario script::
+
+    TheBSKSim.get_DynModel().vizInterface.opNavMode = 1
+
+to set `opNaveMode` flag to 1 instead of 2.  This launches Vizard with the argument ``-directComm``
+rather than with ``-noDisplay`` and the user can monitor the scene being rendered.
+
+
 OpNav Dynamics, Flight Software, and Plotting
 ---------------------------------------------
 
