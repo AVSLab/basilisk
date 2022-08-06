@@ -177,19 +177,19 @@ how the control action is performed just on the x and y axes, leaving the
 spacecraft tumbling around the z one. Another important remark is that, since the default state of the DV thrusters
 is 'on', the requested thruster force is always negative, as it can be seen in the plot.
 
-.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH10.svg
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH11.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH20.svg
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH21.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH30.svg
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH31.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH40.svg
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH41.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH50.svg
+.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH51.svg
    :align: center
 
 """
