@@ -41,11 +41,16 @@ ThrusterStateEffector::ThrusterStateEffector()
     this->stateDerivContribution.resize(1);
     this->stateDerivContribution.setZero();
 
+    // initialize internal variables
     CallCounts = 0;
-    this->prevFireTime = 0.0;
-    this->prevCommandTime = 0xFFFFFFFFFFFFFFFF;    
+    this->prevCommandTime = -1.0;  // initialize to a negative number to allow an onTime command at t=0
     this->mDotTotal = 0.0;
     this->effectorID++;
+
+    // clear all vectors
+    this->thrusterData.clear();
+    this->thrusterOutMsgs.clear();
+    this->NewThrustCmds.clear();
 
     return;
 }
@@ -97,13 +102,13 @@ bool ThrusterStateEffector::ReadInputs()
         dataGood = this->cmdsInMsg.isWritten();
 
         //! - Check if message has already been read, if so then stale return
-        if(this->prevCommandTime == this->cmdsInMsg.timeWritten() || !dataGood) {
+        if(abs(this->prevCommandTime - this->cmdsInMsg.timeWritten() * NANO2SEC) < 1E-9 || !dataGood) {
             return(false);
         }
-        this->prevCommandTime = this->cmdsInMsg.timeWritten();
+        this->prevCommandTime = this->cmdsInMsg.timeWritten() * NANO2SEC;
     } else {
         this->incomingCmdBuffer = this->cmdsInMsg.zeroMsgPayload;
-        this->prevCommandTime = 0;
+        this->prevCommandTime = 0.0;
     }
 
     // Set the NewThrustCmds vector.  Using the data() method for raw speed
@@ -153,7 +158,7 @@ void ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
  @return void
  @param currentTime The current simulation time converted to a double
  */
-void ThrusterStateEffector::ConfigureThrustRequests(uint64_t currentTime)
+void ThrusterStateEffector::ConfigureThrustRequests()
 {
     std::vector<THRSimConfigMsgPayload>::iterator it;
     std::vector<double>::iterator CmdIt;
@@ -377,7 +382,7 @@ void ThrusterStateEffector::UpdateState(uint64_t CurrentSimNanos)
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
     if (this->ReadInputs())
     {
-        this->ConfigureThrustRequests(this->prevCommandTime);
+        this->ConfigureThrustRequests();
     }
     this->writeOutputStateMessages(CurrentSimNanos);
 }

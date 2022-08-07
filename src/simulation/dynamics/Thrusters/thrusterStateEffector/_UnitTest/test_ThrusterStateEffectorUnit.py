@@ -257,7 +257,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     # Generate the truth data (force, torque and mass rate)
     expectedThrustData = np.zeros([3, np.shape(thrForce)[0]])
     expectedTorqueData = np.zeros([3, np.shape(thrTorque)[0]])
-    expectedMDot = np.zeros([np.shape(np.array(mDot))[0], 1])
+    expectedMDot = np.zeros([np.shape(mDot)[0], 1])
     for i in range(np.shape(thrForce)[0]):
         if thrustNumber == 1:
             # Compute the thrust force
@@ -322,4 +322,4 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
 
 
 if __name__ == "__main__":
-    unitThrusters(ResultsStore(), False, 2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], macros.sec2nano(0.1))
+    unitThrusters(ResultsStore(), True, 1, 0.0, 2.0, 30., 15., [[1.125], [0.5], [2.0]], macros.sec2nano(0.01))

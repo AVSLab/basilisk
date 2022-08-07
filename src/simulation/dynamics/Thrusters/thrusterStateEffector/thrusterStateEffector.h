@@ -50,13 +50,13 @@ public:
     void linkInStates(DynParamManager& states);  //!< -- Method for the effector to get access of other states
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);
-    void updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);
+    void updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< Method to pass the forces and torques onto the hub
     void updateEffectorMassProps(double integTime);
     void UpdateState(uint64_t CurrentSimNanos);
 
 
     void addThruster(THRSimConfigMsgPayload *newThruster); //!< -- Add a new thruster to the thruster set
-    void ConfigureThrustRequests(uint64_t currentTime);
+    void ConfigureThrustRequests();
 
 public:
     // Input and output messages
@@ -68,7 +68,6 @@ public:
     // State information
     std::vector<double> kappaInit;                //!< [] Vector of initial thruster states
     std::string nameOfKappaState;    //!< -- Identifier for the kappa state data container
-    double prevFireTime;                           //!< s  Previous thruster firing time
 
     // State structures
 	StateData *hubSigma;        //!< class variable
@@ -76,13 +75,13 @@ public:
     StateData* kappaState;      //!< -- state manager of theta for hinged rigid body
     BSKLogger bskLogger;        //!< -- BSK Logging
 
-    // Miscellaneous
-    double mDotTotal = 0.0;           //!< kg/s Current mass flow rate of thrusters
+    // Mass flow rate
+    double mDotTotal = 0.0;           //!< [kg/s] Current mass flow rate of thrusters
 
 private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
-    uint64_t prevCommandTime;                       //!< -- Time for previous valid thruster firing
+    double prevCommandTime;                       //!< [s] -- Time for previous valid thruster firing
     static uint64_t effectorID;    //!< [] ID number of this panel
 
 };
