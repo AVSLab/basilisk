@@ -207,6 +207,7 @@ private:
     double currentMinError;
     bool responseFound;
     double timeFound;
+    double integrateTimeStep;
     
 public:
     geometry mainBody;

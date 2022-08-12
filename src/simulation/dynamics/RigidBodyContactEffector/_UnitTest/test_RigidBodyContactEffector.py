@@ -237,7 +237,7 @@ def run():
     scContact.maxPosError = 1e-4
     scContact.simTimeStep = 0.01
     scContact.slipTolerance = 1e-6
-    scContact.collisionIntegrationStep = 1e-6
+    scContact.collisionIntegrationStep = 1e-4
     scContact.maxBoundingBoxDim = 0.7
     scContact.minBoundingBoxDim = 0.01
     scContact.boundingBoxFF = 1
