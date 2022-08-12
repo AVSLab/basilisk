@@ -597,7 +597,9 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     double contactError;
     double currentMaxError = 0.0;
     this->currentMinError = 100.0;
+    int maxErrorInd=-1;
     int numImpacts;
+    bool alreadyFound;
     
     Eigen::Vector3d cHat_1;
     Eigen::Vector3d cHat_2;
@@ -638,12 +640,15 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     {
         if (this->responseFound)
         {
-            if (this->timeFound >= currentTime)
+            if ((this->timeFound >= currentTime) && ((timeStep - this->integrateTimeStep) < 1e-12))
             {
                 this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N;
                 this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B;
+                //this->integrateTimeStep = timeStep;
+                std::cout << "again" << std::endl;
                 return;
             }
+            this->responseFound = false;
         }
         // Fine collision detection begin
         if (this->Bodies[this->closeBodies[groupIt1][0]].isSpice == true)
@@ -802,12 +807,27 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                             //contactError = (contactPoint - body2VertInter[vertInd].lower).norm();
                             if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
                             {
+                                alreadyFound = false;
+                                for (int impInd=0; impInd < impacts.size(); impInd++){
+                                    if (((contactPoint - std::get<0>(impacts[impInd])).norm() < 1e-3) || ((body2UniqueVertInter[vertInd].lower - std::get<1>(impacts[impInd])).norm() < 1e-3))
+                                    {
+                                        alreadyFound = true;
+                                        if (impInd == maxErrorInd)
+                                        {
+                                            currentMaxError = this->currentMinError;
+                                        }
+                                        impacts.erase(impacts.begin()+impInd);
+                                        break;
+                                    }
+                                }
+                                //if (alreadyFound) continue;
                                 impacts.push_back(std::make_tuple(contactPoint, body2UniqueVertInter[vertInd].lower, body1Current.dcm_NB * -this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceNormals[faceInd]));
                                 usedVerts.push_back(vertInd);
-                                std::cout << "Face 1 Verts 2: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
+//                                std::cout << "Face 1 Verts 2: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
+                                    maxErrorInd = impacts.size()-1;
                                 }else{
                                     this->currentMinError = contactError;
                                 }
@@ -868,12 +888,28 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                         {
                             if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
                             {
+                                alreadyFound = false;
+                                for (int impInd=0; impInd < impacts.size(); impInd++){
+                                    if (((body1UniqueVertInter[vertInd].lower - std::get<0>(impacts[impInd])).norm() < 1e-3) || ((contactPoint - std::get<1>(impacts[impInd])).norm() < 1e-3))
+                                    {
+                                        alreadyFound = true;
+                                        if (impInd == maxErrorInd)
+                                        {
+                                            currentMaxError = this->currentMinError;
+                                        }
+                                        impacts.erase(impacts.begin()+impInd);
+                                        break;
+                                    }
+                                }
+                                //if (alreadyFound) continue;
+                                
                                 impacts.push_back(std::make_tuple(body1UniqueVertInter[vertInd].lower, contactPoint, body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceNormals[faceInd]));
                                 usedVerts.push_back(vertInd);
-                                std::cout << "Face 2 Verts 1: " << std::get<1>(impacts.back())[0] << " " << std::get<1>(impacts.back())[1] << " " << std::get<1>(impacts.back())[2] << std::endl;
+//                                std::cout << "Face 2 Verts 1: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
+                                    maxErrorInd = impacts.size()-1;
                                 }else{
                                     this->currentMinError = contactError;
                                 }
@@ -917,11 +953,27 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                             contactError = (contactPoint - contactPoint2).norm();
                             if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
                             {
+                                alreadyFound = false;
+                                for (int impInd=0; impInd < impacts.size(); impInd++){
+                                    if (((contactPoint - std::get<0>(impacts[impInd])).norm() < 1e-3) || ((contactPoint2 - std::get<1>(impacts[impInd])).norm() < 1e-3))
+                                    {
+                                        alreadyFound = true;
+                                        if (impInd == maxErrorInd)
+                                        {
+                                            currentMaxError = this->currentMinError;
+                                        }
+                                        impacts.erase(impacts.begin()+impInd);
+                                        break;
+                                    }
+                                }
+                                //if (alreadyFound) continue;
+                                
                                 impacts.push_back(std::make_tuple(contactPoint, contactPoint2, ((contactPoint - contactPoint2) * 1.0e6).normalized()));
-                                std::cout << "Edge 0: " << std::get<1>(impacts.back())[0] << " " << std::get<1>(impacts.back())[1] << " " << std::get<1>(impacts.back())[2] << std::endl;
+                                //std::cout << "Edge 0: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
+                                    maxErrorInd = impacts.size()-1;
                                 }else{
                                     this->currentMinError = contactError;
                                 }
@@ -931,6 +983,21 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                             contactError = (contactPoint - contactPoint2).norm();
                             if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
                             {
+                                alreadyFound = false;
+                                for (int impInd=0; impInd < impacts.size(); impInd++){
+                                    if (((contactPoint - std::get<0>(impacts[impInd])).norm() < 1e-3) || ((contactPoint2 - std::get<1>(impacts[impInd])).norm() < 1e-3))
+                                    {
+                                        alreadyFound = true;
+                                        if (impInd == maxErrorInd)
+                                        {
+                                            currentMaxError = this->currentMinError;
+                                        }
+                                        impacts.erase(impacts.begin()+impInd);
+                                        break;
+                                    }
+                                }
+                                //if (alreadyFound) continue;
+                                
                                 contactNormal_N = ((faceLegInterval1.lower).cross(faceLegInterval2.lower)).normalized();
                                 contactVelocity_N = (body1Current.v_BN_N + body1Current.dcm_NB * (body1Current.omegaTilde_BN_B * body1Current.dcm_BN * (contactPoint - body1Current.r_BN_N))) - (body2Current.v_BN_N + body2Current.dcm_NB * (body2Current.omegaTilde_BN_B * body2Current.dcm_BN * (contactPoint2 - body2Current.r_BN_N)));
                                 if ((contactNormal_N.dot(std::get<2>(body2EdgeInter[vertInd2])) < 1e-12) && (contactNormal_N.dot(std::get<3>(body2EdgeInter[vertInd2])) < 1e-12))
@@ -942,10 +1009,11 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                                     continue;
                                 }
                                 impacts.push_back(std::make_tuple(contactPoint, contactPoint2, contactNormal_N));
-                                std::cout << "Edge 1: " << std::get<1>(impacts.back())[0] << " " << std::get<1>(impacts.back())[1] << " " << std::get<1>(impacts.back())[2] << std::endl;
+                                //std::cout << "Edge 1: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
+                                    maxErrorInd = impacts.size()-1;
                                 }else{
                                     this->currentMinError = contactError;
                                 }
@@ -1140,12 +1208,16 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             std::cout << this->forceExternal_N << std::endl;
             std::cout << this->torqueExternalPntB_B << std::endl;
             this->responseFound = true;
+            std::cout << timeStep << std::endl;
             this->timeFound = currentTime + timeStep + 1.0e-12;
+            this->integrateTimeStep = timeStep;
             this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N = this->forceExternal_N;
             this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N = forceExternalOther_N;
             this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B = this->torqueExternalPntB_B;
             this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B = torqueExternalOtherPntB_B;
         }
+        //this->forceExternal_N = this->forceExternal_N / timeStep;
+        //this->torqueExternalPntB_B = this->torqueExternalPntB_B / timeStep;
         return;
     }
     
