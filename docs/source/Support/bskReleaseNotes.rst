@@ -48,6 +48,7 @@ Version |release|
 - added support for the polynomial gravity model to :ref:`gravityEffector`
 - updated the ``conanFile.py`` to fix configuration and building issues with the latest
   version of python
+- fixed an issue in the RKF45 variable time step integrator where one of the constants had the wrong sign.
 
 
 Version 2.1.3 (May 25, 2022)
