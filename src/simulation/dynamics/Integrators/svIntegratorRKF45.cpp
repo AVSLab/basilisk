@@ -67,7 +67,7 @@ svIntegratorRKF45::svIntegratorRKF45(DynamicObject* dyn) : StateVecIntegrator(dy
     ctMatrix[0] = 1.0 / 360.0;
     ctMatrix[2] = -128.0 / 4275.0;
     ctMatrix[3] = -2197.0 / 75240.0;
-    ctMatrix[4] = -1.0 / 50.0;
+    ctMatrix[4] = 1.0 / 50.0;
     ctMatrix[5] = 2.0 / 55.0;
 
     // Set the default values for absolute and relative tolerance
