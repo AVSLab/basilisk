@@ -47,6 +47,7 @@ namespace std {
     %template(LightVector) vector<Light *>;
     %template(TransceiverVector) vector<Transceiver *>;
     %template(GenericStorageVector) vector<GenericStorage *>;
+    %template(MultiSphereVector) vector<MultiSphere *>;
 }
 
 %include "vizInterface.h"
@@ -69,6 +70,7 @@ struct EpochMsg_C;
 
 %include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 %include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/ChargeMsmMsgPayload.h"
 
 %pythoncode %{
 import sys

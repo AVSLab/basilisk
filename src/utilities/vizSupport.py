@@ -1064,6 +1064,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     trueOrbitColorList:
         list of spacecraft true or actual orbit colors.  Can be 4 RGBA integer value (0-255), a color string, or
         ``None`` if default values should be used.  The array must be of the length of the spacecraft list
+    msmInfoList:
+        list of MSM configuration messages
 
     Returns
     -------
@@ -1084,7 +1086,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     unitTestSupport.checkMethodKeyword(
         ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList',
          'genericSensorList', 'transceiverList', 'genericStorageList', 'lightList', 'spriteList',
-         'modelDictionaryKeyList', 'oscOrbitColorList', 'trueOrbitColorList', 'logoTextureList'],
+         'modelDictionaryKeyList', 'oscOrbitColorList', 'trueOrbitColorList', 'logoTextureList',
+         'msmInfoList'],
         kwargs)
 
     # setup the Vizard interface module
@@ -1246,6 +1249,16 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                         print('ERROR: vizSupport:  trueOrbitColorList color contained negative value ')
                         exit(1)
 
+    msmInfoList = False
+    if 'msmInfoList' in kwargs:
+        msmInfoList = kwargs['msmInfoList']
+        if not isinstance(msmInfoList, list):
+            msmInfoList = [msmInfoList]
+        if len(msmInfoList) != len(scList):
+            print('ERROR: vizSupport: msmInfoList should have the same length as the '
+                  'number of spacecraft')
+            exit(1)
+
     # loop over all spacecraft to associated states and msg information
     planetNameList = []
     planetInfoList = []
@@ -1378,6 +1391,11 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if trueOrbitColorList:
             if trueOrbitColorList[c] is not None:
                 scData.trueTrajectoryLineColor = vizInterface.IntVector(trueOrbitColorList[c])
+
+        # process MSM information
+        if msmInfoList:
+            if msmInfoList[c] is not None:  # MSM have been added to this spacecraft
+                scData.msmInfo = msmInfoList[c]
 
         vizMessenger.scData.push_back(scData)
         c += 1

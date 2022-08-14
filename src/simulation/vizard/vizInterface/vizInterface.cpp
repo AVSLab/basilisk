@@ -352,6 +352,25 @@ void VizInterface::ReadBSKMessages()
             }
         }
 
+        /* read in MSM charge values */
+        {
+            /* read in MSM charge states */
+            if (scIt->msmInfo.msmChargeInMsg.isLinked()){
+                if(scIt->msmInfo.msmChargeInMsg.isWritten()){
+                    ChargeMsmMsgPayload msmChargeMsgBuffer;
+                    msmChargeMsgBuffer = scIt->msmInfo.msmChargeInMsg();
+                    if (msmChargeMsgBuffer.q.size() == scIt->msmInfo.msmList.size()) {
+                        for (size_t idx=0;idx< (size_t) scIt->msmInfo.msmList.size(); idx++) {
+                            scIt->msmInfo.msmList[idx]->currentValue = msmChargeMsgBuffer.q[idx];
+                        }
+                    } else {
+                        bskLogger.bskLog(BSK_ERROR, "vizInterface: the number of charged in MSM message and the number of msm vizInterface spheres must be the same.");
+
+                    }
+                }
+            }
+        }
+
     } /* end of scIt loop */
 
     /*! Read incoming camera config msg */
@@ -876,6 +895,25 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             /* set spacecraft true orbit line color */
             for (int i=0; i<scIt->trueTrajectoryLineColor.size(); i++){
                 scp->add_truetrajectorylinecolor(scIt->trueTrajectoryLineColor[i]);
+            }
+
+            // Write generic storage device messages
+            for (size_t idx =0; idx < (size_t) scIt->msmInfo.msmList.size(); idx++) {
+                vizProtobufferMessage::VizMessage::MultiSphere* msmp = scp->add_multispheres();
+
+                msmp->set_ison(scIt->msmInfo.msmList[idx]->isOn);
+                for (uint64_t j=0; j<3; j++) {
+                    msmp->add_position(scIt->msmInfo.msmList[idx]->position[j]);
+                }
+                msmp->set_radius(scIt->msmInfo.msmList[idx]->radius);
+                msmp->set_currentvalue(scIt->msmInfo.msmList[idx]->currentValue);
+                msmp->set_maxvalue(scIt->msmInfo.msmList[idx]->maxValue);
+                for (uint64_t j=0; j<scIt->msmInfo.msmList[idx]->positiveColor.size(); j++) {
+                    msmp->add_positivecolor(scIt->msmInfo.msmList[idx]->positiveColor[j]);
+                }
+                for (uint64_t j=0; j<scIt->msmInfo.msmList[idx]->negativeColor.size(); j++) {
+                    msmp->add_negativecolor(scIt->msmInfo.msmList[idx]->negativeColor[j]);
+                }
             }
 
         }
