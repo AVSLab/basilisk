@@ -26,6 +26,9 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
+    * - hingedRigidBodyRefMsg
+      - :ref:`HingedRigidBodyMsgPayload`
+      - (Optional) Input message of the reference angle and angle rate
     * - motorTorqueInMsg
       - :ref:`ArrayMotorTorqueMsgPayload`
       - (Optional) Input message of the hinge motor torque value
@@ -44,7 +47,9 @@ Mathematical Modeling
 ^^^^^^^^^^^^^^^^^^^^^
 See
 Allard, Schaub, and Piggott paper: `General Hinged Solar Panel Dynamics Approximating First-Order Spacecraft Flexing <http://dx.doi.org/10.2514/1.A34125>`__
-for a detailed description of this model. A hinged rigid body has 2 states: theta and thetaDot
+for a detailed description of this model. A hinged rigid body has 2 states: theta and thetaDot.
+
+For additional information about connecting a reference, see Bascom and Schaub paper: `Modular Dynamic Modeling of Hinged Solar Panel Deployments <https://hanspeterschaub.info/Papers/Bascom2022.pdf>`__
 
 The module
 :download:`PDF Description </../../src/simulation/dynamics/HingedRigidBodies/_Documentation/Basilisk-HINGEDRIGIDBODYSTATEEFFECTOR-20170703.pdf>`
