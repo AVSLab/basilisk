@@ -42,8 +42,6 @@ public:
     double c;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
     double thetaInit;                //!< [rad] Initial hinged rigid body angle
     double thetaDotInit;             //!< [rad/s] Initial hinged rigid body angle rate
-    double thetaRef;                  //!< [rad] hinged rigid body reference angle
-    double thetaDotRef;               //!< [rad/s] hinged rigid body reference angle rate
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
     Eigen::Matrix3d IPntS_S;         //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
@@ -51,7 +49,6 @@ public:
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
     Message<HingedRigidBodyMsgPayload> hingedRigidBodyOutMsg; //!< -- state output message name
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< -- (optional) motor torque input message name
-    ReadFunctor<HingedRigidBodyMsgPayload> hingedRigidBodyRefMsg; //!< -- (optional) rigid body reference input message name
     Message<SCStatesMsgPayload> hingedRigidBodyConfigLogOutMsg; //!< panel state config log message name
     HingedRigidBodyMsgPayload HRBoutputStates;  //!< instance of messaging system message struct
     BSKLogger bskLogger;                      //!< -- BSK Logging

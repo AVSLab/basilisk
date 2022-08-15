@@ -41,8 +41,6 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->k = 1.0;
     this->c = 0.0;
     this->u = 0.0;
-    this->thetaRef = 0.0;
-    this->thetaDotRef = 0.0;
     this->thetaInit = 0.00;
     this->thetaDotInit = 0.0;
     this->IPntS_S.Identity();
@@ -218,7 +216,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     // - Define cTheta
     Eigen::Vector3d gravityTorquePntH_P;
     gravityTorquePntH_P = -this->d*this->sHat1_P.cross(this->mass*g_P);
-    this->cTheta = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(this->u -this->k*(this->theta-this->thetaRef) - this->c*(this->thetaDot-this->thetaDotRef)
+    this->cTheta = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(this->u -this->k*this->theta - this->c*this->thetaDot
                     + this->sHat2_P.dot(gravityTorquePntH_P) + (this->IPntS_S(2,2) - this->IPntS_S(0,0)
                      + this->mass*this->d*this->d)*this->omega_PN_S(2)*this->omega_PN_S(0) - this->mass*this->d*
                               this->sHat3_P.transpose()*this->omegaTildeLoc_PN_P*this->omegaTildeLoc_PN_P*this->r_HP_P);
@@ -291,7 +289,7 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
 
     // - Find rotational energy contribution from the hub
     rotEnergyContr = 1.0/2.0*omega_SN_P.dot(IPntS_P*omega_SN_P) + 1.0/2.0*this->mass*rDot_SP_P.dot(rDot_SP_P)
-                                                                              + 1.0/2.0*this->k*(this->theta-this->thetaRef)*(this->theta-this->thetaRef);
+                                                                              + 1.0/2.0*this->k*this->theta*this->theta;
 
     return;
 }
@@ -306,12 +304,6 @@ void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
         ArrayMotorTorqueMsgPayload incomingCmdBuffer;
         incomingCmdBuffer = this->motorTorqueInMsg();
         this->u = incomingCmdBuffer.motorTorque[0];
-    }
-    if (this->hingedRigidBodyRefMsg.isLinked()) {
-        HingedRigidBodyMsgPayload incomingRefBuffer;
-        incomingRefBuffer = this->hingedRigidBodyRefMsg();
-        this->thetaRef = incomingRefBuffer.theta;
-        this->thetaDotRef = incomingRefBuffer.thetaDot;
     }
 
     /* compute panel inertial states */
