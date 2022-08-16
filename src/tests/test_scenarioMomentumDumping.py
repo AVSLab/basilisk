@@ -20,9 +20,9 @@
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and mrpFeedback()
-#           and boreAngCalc() modules.  Illustrates the compliance of several keep-in and
-#           keep out constraints while performing a slew maneuver with RWs as actuators.
+# Purpose:  Integrated test of the spacecraft(), RWs, thrusters, thrMomentumManagement(),
+#           thrForceMapping() and thrMomentumDumping() modules. Illustrates how to dump momentum
+#           once a certain threshold is passed.
 # Author:   Riccardo Calaon
 # Creation Date:  Apr. 18, 2022
 #
@@ -38,7 +38,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 sys.path.append(path + '/../../examples')
-import scenarioAttitudeConstrainedManeuver
+import scenarioMomentumDumping
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -50,13 +50,10 @@ import scenarioAttitudeConstrainedManeuver
 # of the multiple test runs for this test.
 
 
-@pytest.mark.parametrize("use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase", [(False, 20, 70, 0),
-                                                                                           (True,  20, 70, 1),
-																						   (True,  20, 70, 2)])
 @pytest.mark.scenarioTest
 
 # provide a unique test method name, starting with test_
-def test_bskAttitudeConstrainedManeuver(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase):
+def test_bskMomentumDumping(show_plots):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
 
@@ -64,14 +61,14 @@ def test_bskAttitudeConstrainedManeuver(show_plots, use2SunSensors, starTrackerF
     testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioAttitudeConstrainedManeuver.run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase)
+        figureList = scenarioMomentumDumping.run(show_plots)
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     except OSError as err:
         testFailCount += 1
-        testMessages.append("scenarioAttitudeConstrainedManeuver tests have failed.")
+        testMessages.append("scenarioMomentumDumping tests have failed.")
 
     #   print out success message if no error were found
     if testFailCount == 0:
