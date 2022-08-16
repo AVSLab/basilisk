@@ -124,9 +124,7 @@ The {\tt Reset()} method reads in the RW configuration message and then resets t
 \end{itemize}
 
 \section{Module Assumptions and Limitations}
-The module assumes the spacecraft is holding a steady inertial orientation during the momentum dumping maneuver.  
-
-
+The module assumes the spacecraft is holding a steady inertial orientation during the momentum dumping maneuver. This module and the cascading two modules used to perform momentum dumping do not work when run at simulation time $t=0$. For the modules to work as intended, the user needs to call \texttt{Reset()} on this module at a simulation time $t \neq 0$, at which point the amount of momentum to be dumped is computed.
 
 
 
