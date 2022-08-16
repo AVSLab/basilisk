@@ -20,73 +20,63 @@ r"""
 Overview
 --------
 
-This script sets up a 6-DOF spacecraft which is orbiting the Earth, in the presence of the Sun.
-The spacecraft is modelled according to the specifics of the Bevo-2 satellite, that has a sensitive
-star tracker aligned with the x body axis and two sun sensors aligned with the y and z body axes.
-In contrast with :ref:`scenarioAttitudeConstraintViolation` the goal of this scenario is to illustrate 
-how to set up a Basilisk simulation using the :ref:`constrainedAttitudeManeuver` module to perform a 
-slew maneuver while ensuring constraint compliance.
+This script shows how to perform momentum dumping when the momentum accumulated on the reaction wheels
+is above a user-defined threshold. In this case, such threshold is set at 80 Nms. The dumping is performed 
+by a set of 8 thrusters that can provide control about the three principal axes of the spacecraft. 
+To perform the momentum dumping, three concatenated modules are used:
+
+- :ref:`thrMomentumManagement`: computes the amount of momentum to be dumped, based on current stored momentum 
+  and the user-defined threshold. It is important to notice that, for the three concatenated modules to work
+  correctly, this first module cannot be run at simulation time :math:`t = 0`. In this script, the method 
+  ``Reset`` is called on :ref:`thrMomentumManagement` at :math:`t = 10` s, which coincides to the time at which 
+  the first desaturating impulse is fired.
+- :ref:`thrForceMapping`: maps the amout of momentum to be dumped into impulses that must be delivered by each
+  thruster. This module is originally implemented to map a requested torque into forces imparted by the thrusters,
+  but it can be applied in this case as well, because the math is the same. The only caveat is that, in this case,
+  the output should not be scaled by the thruster maximum torque capability, since the desired output is an impulse
+  and not a torque. To deactivate the output scaling, the ``angErrThresh`` input variable for this module must be 
+  set to a value larger than :math:`\pi`, as specified in the module documentation.
+- :ref:`thrMomentumDumping`: computes the thruster on-times required to deliver the desired impulse. A 
+  ``maxCounterValue`` of 100 is used in this example to allow the spacecraft to maneuver back to the desired attitude
+  after each time the thrusters fire. 
+
+For this script to work as intended, it is necessary to run the flight software and the dynamics at two different 
+frequencies. In this example, the simulation time step for the flight software is 1 second, whereas for the dynamics
+it is 0.1 seconds. This is necessary because the :ref:`thrMomentumDumping` automatically uses the task time step as 
+control period for the firing. However, if the dynamics is integrated at the same frequency, this does not give 
+enough time resolution to appreciate the variation in the momentum.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
-      python3 scenarioAttitudeConstrainedManeuver.py
-
-This simulation is set up identically to :ref:`scenarioAttitudeConstraintViolation`. The reader is referred
-to this scenario for a detailed description of the setup. The only difference in this scenario is that the 
-constraint-naive :ref:`inertial3D` module for attitude pointing is replaced with the :ref:`constrainedAttitudeManeuver`
-module.
+      python3 scenarioMomentumDumping.py
 
 Illustration of Simulation Results
 ----------------------------------
 
-Each run of the script produces 6 figures. Figures 1-4 report, respectively, attitude error, RW motor torque, rate 
-tracking error, and RW speed. These plots are only relevant to the spacecraft / RW dynamics. Figures 5 and 6 
-show the angle between the boresight vector of the star tracker and the Sun (fig. 5), and of the sun sensor(s) and
-the Sun (fig. 6). Each plot features a dashed line that represents an angular threshold for that specific instrument.
+In this examples, the spacecraft is already at the desired attitude, but the four reaction wheels are saturated (the total
+angular momentum exceeds the threshold). The desaturation happens at :math:`t = 10` when the :ref:`thrMomentumManagement` is
+reset. Three firings are sufficient to dump the momentum below the set threshold. The following figures illustrate the change
+in momentum for the four wheels :math:`H_i` for :math:`i = 1,...,4` and the total angular momentum :math:`\|H\|`, and the 
+attitude errors, as functions of time, with respect to the desired target attitude.
 
-Each plot describes a slew maneuver performed from an initial inertial attitude :math:`\sigma_{\mathcal{B/N},i}` to
-a final inertial attitude :math:`\sigma_{\mathcal{B/N},f}`. In :ref:`scenarioAttitudeConstraintViolation`, these
-sets of attitudes and constraints were chosen to highlight specific constraint violations. This scenario shows how,
-using :ref:`constrainedAttitudeManeuver`, the constraints are not violated.
-
-::
-
-    show_plots = True, use2SunSensors = False, starTrackerFov = 20, sunSensorFov = 70, attitudeSetCase = 0
-
-This case features the violation of the keep in constraint of the sun sensor only when :ref:`inertial3D` is used. 
-Just for this case, only the sun sensor along the y body axis is considered. Now, the keep in constraint is not violated 
-as the boresight angle never exceeds the 70 def field of view of the instrument.
-
-.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver5020700.svg
+.. image:: /_images/Scenarios/scenarioMomentumDumping3.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver6020700.svg
+.. image:: /_images/Scenarios/scenarioMomentumDumping1.svg
    :align: center
 
-::
+The plots show that the momentum is dumped below the threshold. Also, the desired attitude is recovered between the first and
+second firing, and after the third, but between the second and the third there is not enough time for the spacecraft to slew
+back to that attitude.
 
-    show_plots = True, use2SunSensors = True, starTrackerFov = 20, sunSensorFov = 70, attitudeSetCase = 1
+The next two plots show the amount of impulse [Ns] requested for each thruster, and the times during which each thruster is 
+operational. As expected, 100 control times pass between each firing: because the control time coincides with the flight 
+software simulation time step of 1 s, this means that firings are 100 seconds apart.
 
-In this case, using :ref:`inertial3D`, both the sun sensor boresights exceed the respective thresholds. 
-In this scenario, however, they do not.
-
-.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver5120701.svg
+.. image:: /_images/Scenarios/scenarioMomentumDumping5.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver6120701.svg
-   :align: center
-
-::
-
-    show_plots = True, use2SunSensors = True, starTrackerFov = 20, sunSensorFov = 70, attitudeSetCase = 2
-
-In this case, :ref:`inertial3D` violates the keep out constraint of the star tracker, alongside with the keep in 
-constraints for both the sun sensors. The following simulation shows how all the constraints are respected.
-
-.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver5120702.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver6120702.svg
+.. image:: /_images/Scenarios/scenarioMomentumDumping7.svg
    :align: center
 
 """
@@ -129,7 +119,7 @@ def run(show_plots):
     # create the dynamics task and specify the simulation time and integration update time
     simulationTime = macros.min2nano(5)
     simulationTimeStepFsw = macros.sec2nano(1)
-    simulationTimeStepDyn = macros.sec2nano(0.01)
+    simulationTimeStepDyn = macros.sec2nano(0.1)
     dynProcess.addTask(scSim.CreateNewTask(fswTask, simulationTimeStepFsw))
     dynProcess.addTask(scSim.CreateNewTask(dynTask, simulationTimeStepDyn))
     
