@@ -49,7 +49,6 @@ Attitude Regulation Control
    Complex Attitude Pointing in Deep Space <scenarioAttitudeFeedbackNoEarth>
    Sun-Pointing Constraint Violation in Space <scenarioAttitudeConstraintViolation>
    Inertial Pointing with Spice prescribed translational motion <scenarioSpiceSpacecraft>
-   Reaction Wheel Momentum Dumping using Thrusters <scenarioMomentumDumping>
 
 
 Attitude Guidance
@@ -75,6 +74,7 @@ Attitude Control with Actuators
 
    Pointing with Reaction Wheels <scenarioAttitudeFeedbackRW>
    Pointing with Attitude Thrusters <scenarioAttitudeFeedback2T_TH>
+   Reaction Wheel Momentum Dumping using Thrusters <scenarioMomentumDumping>
 
 
 Attitude Steering Control
