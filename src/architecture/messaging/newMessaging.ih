@@ -15,27 +15,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
-#define SWIGPYTHON_BUILTIN
 
-%include messaging.header.auto.i
-
-%module messaging
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "architecture/utilities/macroDefinitions.h"
-%include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-%include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
-
-ARRAYINTASLIST(FSWdeviceAvailability)
-STRUCTASLIST(CSSUnitConfigMsgPayload)
-STRUCTASLIST(AccPktDataMsgPayload)
-STRUCTASLIST(RWConfigElementMsgPayload)
-STRUCTASLIST(CSSArraySensorMsgPayload)
 
 %pythoncode %{
     import numpy as np
@@ -44,23 +24,11 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %{
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "messaging.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include <vector>
 %}
 
-%template(TimeVector) std::vector<uint64_t>;
-%template(DoubleVector) std::vector<double>;
-%template(StringVector) std::vector<std::string>;
-
-%include "std_vector.i"
-%include "architecture/_GeneralModuleFiles/sys_model.h"
-%include "messaging.h"
-%rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
-%rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
-%rename(__is_subscribed_to) isSubscribedTo;  // we want the users to have a unified "isSubscribedTo" interface
-%rename(__is_subscribed_to_C) isSubscribedToC;  // we want the users to have a unified "isSubscribedTo" interface
-%rename(__time_vector) times;  // It's not really useful to give the user back a time vector
-%rename(__timeWritten_vector) timesWritten;
-%rename(__record_vector) record;
 %define INSTANTIATE_TEMPLATES(messageType, messageTypePayload, folder)
 %{
 #include "architecture/folder/messageTypePayload.h"
@@ -193,48 +161,6 @@ typedef struct messageType;
 };
 %enddef
 
-%include messaging.auto.i
-
-%array_functions(THRConfigMsgPayload, ThrustConfigArray);
-%array_functions(RWConfigElementMsgPayload, RWConfigArray);
-%array_functions(ReconfigBurnInfoMsgPayload, ReconfigBurnArray)
-
-%template(Eigen3dVector) std::vector<Eigen::Vector3d>;
-
-%template(RWConfigLogOutMsgsVector) std::vector<Message<RWConfigLogMsgPayload>*>;
-%template(SpicePlanetStateOutMsgsVector) std::vector<Message<SpicePlanetStateMsgPayload>*>;
-%template(AtmoPropsOutMsgsVector) std::vector<Message<AtmoPropsMsgPayload>*>;
-%template(SCStatesOutMsgsVector) std::vector<Message<SCStatesMsgPayload>*>;
-%template(AttRefOutMsgsVector) std::vector<Message<AttRefMsgPayload>*>;
-%template(TransRefOutMsgsVector) std::vector<Message<TransRefMsgPayload>*>;
-%template(HingedRigidBodyOutMsgsVector) std::vector<Message<HingedRigidBodyMsgPayload>*>;
-%template(THROutputOutMsgsVector) std::vector<Message<THROutputMsgPayload>*>;
-%template(VSCMGConfigOutMsgsVector) std::vector<Message<VSCMGConfigMsgPayload>*>;
-%template(EclipseOutMsgsVector) std::vector<Message<EclipseMsgPayload>*>;
-%template(EphemerisOutMsgsVector) std::vector<Message<EphemerisMsgPayload>*>;
-%template(AccessOutMsgsVector) std::vector<Message<AccessMsgPayload>*>;
-%template(MagneticFieldOutMsgsVector) std::vector<Message<MagneticFieldMsgPayload>*>;
-%template(AlbedoOutMsgsVector) std::vector<Message<AlbedoMsgPayload>*>;
-%template(ExtTorqueOutMsgsVector) std::vector<Message<CmdTorqueBodyMsgPayload>*>;
-%template(ExtBodyForceOutMsgsVector) std::vector<Message<CmdForceBodyMsgPayload>*>;
-%template(ExtInertialForceOutMsgsVector) std::vector<Message<CmdForceInertialMsgPayload>*>;
-%template(THROutputOutMsgsVectorVector) std::vector <std::vector <Message<THROutputMsgPayload>*>>;
-%template(RWConfigLogOutMsgsVectorVector) std::vector <std::vector <Message<RWConfigLogMsgPayload>*>>;
-%template(ChargeMsmOutMsgsVector) std::vector<Message<ChargeMsmMsgPayload>*>;
-%template(DataNodeOutMsgsVector) std::vector<Message<DataNodeUsageMsgPayload>*>;
-
-%template(SCStatesInMsgsVector) std::vector<ReadFunctor<SCStatesMsgPayload>>;
-%template(SpicePlanetStateInMsgsVector) std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>;
-%template(SwDataInMsgsVector) std::vector<ReadFunctor<SwDataMsgPayload>>;
-%template(DataNodeUsageInMsgsVector) std::vector<ReadFunctor<DataNodeUsageMsgPayload>>;
-%template(DataStorageStatusInMsgsVector) std::vector<ReadFunctor<DataStorageStatusMsgPayload>>;
-%template(AccessInMsgsVector) std::vector<ReadFunctor<AccessMsgPayload>>;
-%template(RWConfigLogInMsgsVector) std::vector<ReadFunctor<RWConfigLogMsgPayload>>;
-%template(THROutputInMsgsVector) std::vector<ReadFunctor<THROutputMsgPayload>>;
-%template(CSSConfigLogInMsgsVector) std::vector<ReadFunctor<CSSConfigLogMsgPayload>>;
-%template(VolgateInMsgsVector) std::vector<ReadFunctor<VoltMsgPayload>>;
-%template(DeviceCmdInMsgsVector) std::vector<ReadFunctor<DeviceCmdMsgPayload>>;
 
 
-%include "messaging.h"
 
