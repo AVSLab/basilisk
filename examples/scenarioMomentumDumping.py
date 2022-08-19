@@ -170,7 +170,7 @@ def run(show_plots):
     oe.i = 33.3 * macros.D2R
     oe.Omega = 148.2 * macros.D2R
     oe.omega = 347.8 * macros.D2R
-    oe.f = 135 * macros.D2R
+    oe.f = 335 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
@@ -182,7 +182,7 @@ def run(show_plots):
     # define the simulation inertia
     I = [1700,  0.,    0.,
          0.,    1700,  0.,
-         0.,    0.,    1800   ]
+         0.,    0.,    1800]
     scObject.hub.mHub = 2500  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [1.28]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
@@ -342,7 +342,19 @@ def run(show_plots):
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
-    
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    viz = vizSupport.enableUnityVisualization(scSim, dynTask, scObject
+                                              # , saveFile=fileName
+                                              , rwEffectorList=rwStateEffector
+                                              , thrEffectorList=thrusterSet
+                                              )
+    vizSupport.setActuatorGuiSetting(viz, viewRWPanel=True,
+                                     viewRWHUD=True,
+                                     viewThrusterPanel=True,
+                                     viewThrusterHUD=True
+                                     )
+
     # link messages
     attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
