@@ -74,6 +74,7 @@ Attitude Control with Actuators
 
    Pointing with Reaction Wheels <scenarioAttitudeFeedbackRW>
    Pointing with Attitude Thrusters <scenarioAttitudeFeedback2T_TH>
+   Reaction Wheel Momentum Dumping using Thrusters <scenarioMomentumDumping>
 
 
 Attitude Steering Control
