@@ -73,7 +73,7 @@ Limitations
 One of the limitations of this model relates to the dynamic nature of this thruster implementation. The thrust is simulated through the thrust factor, which is updated by integrating a differencial equation. This means that it is not possible to reproduce on-off behavior, where the thruster goes from not thrusting to being at maximum thrust or vice-versa. Using this dynamic model, we would have to use infinite derivatives to 
 reproduce this behavior, which is not numerically feasible. To replicate this behavior, the user should use the older version of the thruster effector (:ref:`thrusterDynamicEffector`) with both on or off-ramps disabled.
 
-Another limitation is that the :math:`I_{sp}` used is constant throughout the simulation. If the user needs to change the :math:`I_{sp}` value of any of the thrusters, the simulation needs to be stop and restarted.
+Another limitation is that the :math:`I_{sp}` used is constant throughout the simulation. This means that the mass flow rate of the thruster is constant - the thruster will lose mass as soon as the valve is open, independent of how much thrust force is being produced. If the user needs to change the :math:`I_{sp}` value of any of the thrusters, the simulation needs to be stop and restarted.
 
 
 .. note::

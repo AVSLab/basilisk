@@ -254,7 +254,7 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
             kappaDot(i, 0) = -this->kappaState->state(i, 0) * it->cutoffFrequency;
         }
 
-        // Set the IspFactor to 1
+        // Set the IspFactor to 1 to check that there is mass flow
         ops->IspFactor = 1.0;
 
         // Save the state to thruster ops
@@ -351,15 +351,14 @@ void ThrusterStateEffector::updateEffectorMassProps(double integTime) {
     double mDotSingle = 0.0;
     this->mDotTotal = 0.0;
     this->stateDerivContribution.setZero();
-    //! - Iterate through all of the thrusters to aggregate the force/torque in the system
+    //! - Iterate through all of the thrusters to aggregate the mass flow rate in the system
     for (it = this->thrusterData.begin(); it != this->thrusterData.end(); it++)
     {
         ops = &it->ThrustOps;
         mDotSingle = 0.0;
         if (it->steadyIsp * ops->IspFactor > 0.0)
         {
-            mDotSingle = it->MaxThrust * ops->ThrustFactor / (EARTH_GRAV *
-                it->steadyIsp * ops->IspFactor);
+            mDotSingle = it->MaxThrust / (EARTH_GRAV * it->steadyIsp);
         }
         this->mDotTotal += mDotSingle;
     }

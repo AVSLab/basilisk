@@ -655,5 +655,5 @@ def run(show_plots, useDVThrusters):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        True,  # useDVThrusters
+        False,  # useDVThrusters
     )

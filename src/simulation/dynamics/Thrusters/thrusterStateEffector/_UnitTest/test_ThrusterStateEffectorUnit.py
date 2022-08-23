@@ -270,7 +270,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
             # Compute the torque
             expectedTorqueData[0:3, i] = np.cross(loc1, force1)
             # Compute the mass flow rate
-            expectedMDot[i, 0] = np.linalg.norm(force1) / (g * Isp)
+            expectedMDot[i, 0] = thruster1.MaxThrust / (g * Isp)
         else:
             # Compute the thrust force
             if duration == 0.:
@@ -284,7 +284,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
             # Compute the torque
             expectedTorqueData[0:3, i] = np.cross(loc1, force1) + np.cross(loc2, force2)
             # Compute the mass flow rate
-            expectedMDot[i, 0] = (np.linalg.norm(force1) + np.linalg.norm(force2)) / (g * Isp)
+            expectedMDot[i, 0] = (thruster1.MaxThrust + thruster2.MaxThrust) / (g * Isp)
 
     # Modify expected values for comparison and define errorTolerance
     TruthForce = np.transpose(expectedThrustData)
