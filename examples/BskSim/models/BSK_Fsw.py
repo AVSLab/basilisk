@@ -30,7 +30,6 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW
 
 from Basilisk.architecture import messaging
-import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
 
 
 class BSKFswModels:
@@ -198,33 +197,33 @@ class BSKFswModels:
     def SetInertial3DPointGuidance(self):
         """Define the inertial 3D guidance module"""
         self.inertial3DData.sigma_R0N = [0.2, 0.4, 0.6]
-        cMsgPy.AttRefMsg_C_addAuthor(self.inertial3DData.attRefOutMsg, self.attRefMsg)
+        messaging.AttRefMsg_C_addAuthor(self.inertial3DData.attRefOutMsg, self.attRefMsg)
 
     def SetHillPointGuidance(self, SimBase):
         """Define the Hill pointing guidance module"""
         self.hillPointData.transNavInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.transOutMsg)
         self.hillPointData.celBodyInMsg.subscribeTo(SimBase.DynModels.EarthEphemObject.ephemOutMsgs[0])  # earth
-        cMsgPy.AttRefMsg_C_addAuthor(self.hillPointData.attRefOutMsg, self.attRefMsg)
+        messaging.AttRefMsg_C_addAuthor(self.hillPointData.attRefOutMsg, self.attRefMsg)
 
     def SetSunSafePointGuidance(self, SimBase):
         """Define the sun safe pointing guidance module"""
         self.sunSafePointData.imuInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.attOutMsg)
         self.sunSafePointData.sunDirectionInMsg.subscribeTo(self.cssWlsEstData.navStateOutMsg)
         self.sunSafePointData.sHatBdyCmd = [0.0, 0.0, 1.0]
-        cMsgPy.AttGuidMsg_C_addAuthor(self.sunSafePointData.attGuidanceOutMsg, self.attGuidMsg)
+        messaging.AttGuidMsg_C_addAuthor(self.sunSafePointData.attGuidanceOutMsg, self.attGuidMsg)
 
     def SetVelocityPointGuidance(self, SimBase):
         """Define the velocity pointing guidance module"""
         self.velocityPointData.transNavInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.transOutMsg)
         self.velocityPointData.celBodyInMsg.subscribeTo(SimBase.DynModels.EarthEphemObject.ephemOutMsgs[0])
         self.velocityPointData.mu = SimBase.DynModels.gravFactory.gravBodies['earth'].mu
-        cMsgPy.AttRefMsg_C_addAuthor(self.velocityPointData.attRefOutMsg, self.attRefMsg)
+        messaging.AttRefMsg_C_addAuthor(self.velocityPointData.attRefOutMsg, self.attRefMsg)
 
     def SetAttitudeTrackingError(self, SimBase):
         """Define the attitude tracking error module"""
         self.trackingErrorData.attNavInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.attOutMsg)
         self.trackingErrorData.attRefInMsg.subscribeTo(self.attRefMsg)
-        cMsgPy.AttGuidMsg_C_addAuthor(self.trackingErrorData.attGuidOutMsg, self.attGuidMsg)
+        messaging.AttGuidMsg_C_addAuthor(self.trackingErrorData.attGuidOutMsg, self.attGuidMsg)
 
     def SetCSSWlsEst(self, SimBase):
         """Set the FSW CSS configuration information """
@@ -257,7 +256,7 @@ class BSKFswModels:
         """Set the MRP feedback module configuration"""
         self.mrpFeedbackControlData.guidInMsg.subscribeTo(self.attGuidMsg)
         self.mrpFeedbackControlData.vehConfigInMsg.subscribeTo(self.vcMsg)
-        cMsgPy.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackControlData.cmdTorqueOutMsg, self.cmdTorqueDirectMsg)
+        messaging.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackControlData.cmdTorqueOutMsg, self.cmdTorqueDirectMsg)
 
         self.mrpFeedbackControlData.K = 3.5
         self.mrpFeedbackControlData.Ki = -1.0  # Note: make value negative to turn off integral feedback
@@ -275,7 +274,7 @@ class BSKFswModels:
         self.mrpFeedbackRWsData.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
         self.mrpFeedbackRWsData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
         self.mrpFeedbackRWsData.guidInMsg.subscribeTo(self.attGuidMsg)
-        cMsgPy.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackRWsData.cmdTorqueOutMsg, self.cmdTorqueMsg)
+        messaging.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackRWsData.cmdTorqueOutMsg, self.cmdTorqueMsg)
 
     def SetMRPSteering(self):
         """Set the MRP Steering module"""
@@ -292,7 +291,7 @@ class BSKFswModels:
         self.rateServoData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
         self.rateServoData.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
         self.rateServoData.rateSteeringInMsg.subscribeTo(self.mrpSteeringData.rateCmdOutMsg)
-        cMsgPy.CmdTorqueBodyMsg_C_addAuthor(self.rateServoData.cmdTorqueOutMsg, self.cmdTorqueMsg)
+        messaging.CmdTorqueBodyMsg_C_addAuthor(self.rateServoData.cmdTorqueOutMsg, self.cmdTorqueMsg)
 
         self.rateServoData.Ki = 5.0
         self.rateServoData.P = 150.0
@@ -331,7 +330,7 @@ class BSKFswModels:
         ]
         self.rwMotorTorqueData.controlAxes_B = controlAxes_B
         self.rwMotorTorqueData.vehControlInMsg.subscribeTo(self.cmdTorqueMsg)
-        cMsgPy.ArrayMotorTorqueMsg_C_addAuthor(self.rwMotorTorqueData.rwMotorTorqueOutMsg, self.cmdRwMotorMsg)
+        messaging.ArrayMotorTorqueMsg_C_addAuthor(self.rwMotorTorqueData.rwMotorTorqueOutMsg, self.cmdRwMotorMsg)
         self.rwMotorTorqueData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
     # Global call to initialize every module
@@ -357,11 +356,11 @@ class BSKFswModels:
     def setupGatewayMsgs(self, SimBase):
         """create C-wrapped gateway messages such that different modules can write to this message
         and provide a common input msg for down-stream modules"""
-        self.cmdTorqueMsg = cMsgPy.CmdTorqueBodyMsg_C()
-        self.cmdTorqueDirectMsg = cMsgPy.CmdTorqueBodyMsg_C()
-        self.attRefMsg = cMsgPy.AttRefMsg_C()
-        self.attGuidMsg = cMsgPy.AttGuidMsg_C()
-        self.cmdRwMotorMsg = cMsgPy.ArrayMotorTorqueMsg_C()
+        self.cmdTorqueMsg = messaging.CmdTorqueBodyMsg_C()
+        self.cmdTorqueDirectMsg = messaging.CmdTorqueBodyMsg_C()
+        self.attRefMsg = messaging.AttRefMsg_C()
+        self.attGuidMsg = messaging.AttGuidMsg_C()
+        self.cmdRwMotorMsg = messaging.ArrayMotorTorqueMsg_C()
 
         self.zeroGateWayMsgs()
 

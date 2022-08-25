@@ -44,6 +44,15 @@ struct RWConfigLogMsg_C;
 namespace std {
     %template(VizThrConfig) vector<ThrClusterMap>;
     %template(ThrClusterMapVectorVector) std::vector <std::vector <ThrClusterMap>>;
+    %template(THROutputMsgOutMsgsVector) std::vector<Message<THROutputMsgPayload>>;
+    %template(THROutputMsgOutMsgsPtrVector) std::vector<Message<THROutputMsgPayload>*>;
+    %template(THROutputMsgInMsgsVector) std::vector<ReadFunctor<THROutputMsgPayload>>;
+    %template(THROutputOutMsgsVectorVector) std::vector <std::vector <Message<THROutputMsgPayload>*>>;
+    %template(RWConfigLogMsgOutMsgsVector) std::vector<Message<RWConfigLogMsgPayload>>;
+    %template(RWConfigLogMsgOutMsgsPtrVector) std::vector<Message<RWConfigLogMsgPayload>*>;
+    %template(RWConfigLogMsgInMsgsVector) std::vector<ReadFunctor<RWConfigLogMsgPayload>>;
+    %template(RWConfigLogMsgInMsgsVectorVector) std::vector <std::vector <Message<RWConfigLogMsgPayload>*>>;
+
 }
 
 %pythoncode %{

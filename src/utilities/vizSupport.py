@@ -1251,7 +1251,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 # RWs have been added to this spacecraft
                 for rwLogMsg in rwEffectorScList[c].rwOutMsgs:
                     rwList.append(rwLogMsg.addSubscriber())
-            scData.rwInMsgs = messaging.RWConfigLogInMsgsVector(rwList)
+            scData.rwInMsgs = messaging.RWConfigLogMsgInMsgsVector(rwList)
 
         # process THR effectors
         if thrEffectorScList:
@@ -1269,7 +1269,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                         thrList.append(thrLogMsg.addSubscriber())
                         thrInfo.append(thSet)
                     clusterCounter += 1
-            scData.thrInMsgs = messaging.THROutputInMsgsVector(thrList)
+            scData.thrInMsgs = messaging.THROutputMsgInMsgsVector(thrList)
             scData.thrInfo = vizInterface.ThrClusterVector(thrInfo)
 
         # process CSS information
@@ -1278,7 +1278,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             if cssScList[c] is not None:  # CSS list has been added to this spacecraft
                 for css in cssScList[c]:
                     cssDeviceList.append(css.cssConfigLogOutMsg.addSubscriber())
-                scData.cssInMsgs = messaging.CSSConfigLogInMsgsVector(cssDeviceList)
+                scData.cssInMsgs = messaging.CSSConfigLogMsgInMsgsVector(cssDeviceList)
 
         # process generic sensor HUD information
         if gsScList:
@@ -1348,7 +1348,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         c += 1
 
     vizMessenger.gravBodyInformation = vizInterface.GravBodyInfoVector(planetInfoList)
-    vizMessenger.spiceInMsgs = messaging.SpicePlanetStateInMsgsVector(spiceMsgList)
+    vizMessenger.spiceInMsgs = messaging.SpicePlanetStateMsgInMsgsVector(spiceMsgList)
 
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.

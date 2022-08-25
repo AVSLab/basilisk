@@ -32,7 +32,6 @@ import pytest
 from Basilisk.utilities import unitTestSupport
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
-from Basilisk.architecture import cMsgCInterfacePy
 
 import glob
 import Basilisk
@@ -131,15 +130,15 @@ def test_c_msg_subscription_check():
     
 
     # Try out all the existing c messages
-    cMessages = [ el for el in dir(cMsgCInterfacePy) if el.endswith("Msg_C")] 
+    cMessages = [ el for el in dir(messaging) if el.endswith("Msg_C")] 
 
     
     for el in cMessages:
         
         # Create three messages
-        msgA = eval("cMsgCInterfacePy." + el + "()")
-        msgB = eval("cMsgCInterfacePy." + el + "()")
-        msgC = eval("cMsgCInterfacePy." + el + "()")
+        msgA = eval("messaging." + el + "()")
+        msgB = eval("messaging." + el + "()")
+        msgC = eval("messaging." + el + "()")
 
         # Subscribe
         msgB.subscribeTo(msgA) # Subscribe B to A
@@ -190,7 +189,7 @@ def test_c_2_cpp_msg_subscription_check():
 
     # Try out all the existing messages
     cppMessages = [ el for el in dir(messaging) if el.endswith("Msg")] 
-    cMessages = [ el for el in dir(cMsgCInterfacePy) if el.endswith("Msg_C")] 
+    cMessages = [ el for el in dir(messaging) if el.endswith("Msg_C")] 
         
     # Find common messages
     common_messages = [el for el in cppMessages if el + "_C" in cMessages]
@@ -202,8 +201,8 @@ def test_c_2_cpp_msg_subscription_check():
         msgA = eval("messaging." + el + "()")
         msgB = eval("messaging." + el + "()")
 
-        msgC = eval("cMsgCInterfacePy." + el + "_C()")
-        msgD = eval("cMsgCInterfacePy." + el + "_C()")
+        msgC = eval("messaging." + el + "_C()")
+        msgD = eval("messaging." + el + "_C()")
 
     
         # Subscribe
@@ -259,7 +258,7 @@ def test_cpp_2_c_msg_subscription_check():
 
     # Try out all the existing messages
     cppMessages = [ el for el in dir(messaging) if el.endswith("Msg")] 
-    cMessages = [ el for el in dir(cMsgCInterfacePy) if el.endswith("Msg_C")] 
+    cMessages = [ el for el in dir(messaging) if el.endswith("Msg_C")] 
         
     # Find common messages
     common_messages = [el for el in cppMessages if el + "_C" in cMessages]
@@ -268,8 +267,8 @@ def test_cpp_2_c_msg_subscription_check():
     for el in common_messages:
         
         # Create c and cpp messages
-        msgA = eval("cMsgCInterfacePy." + el + "_C()")
-        msgB = eval("cMsgCInterfacePy." + el + "_C()")
+        msgA = eval("messaging." + el + "_C()")
+        msgB = eval("messaging." + el + "_C()")
 
         msgC = eval("messaging." + el + "()")
         msgD = eval("messaging." + el + "()")

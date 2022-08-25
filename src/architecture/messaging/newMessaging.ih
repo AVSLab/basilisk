@@ -23,7 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %};
 %{
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "messaging.h"
+#include "architecture/messaging/messaging.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include <vector>
@@ -42,7 +42,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                 if type(source) == messageType:
                     self.__subscribe_to(source)
                     return
-                from Basilisk.architecture.cMsgCInterfacePy import messageType ## _C
+                from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
                 if type(source) == messageType ## _C:
                     self.__subscribe_to_C(source)
                 else:
@@ -53,7 +53,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                 if type(source) == messageType:
                     return self.__is_subscribed_to(source)
                 else:
-                    from Basilisk.architecture.cMsgCInterfacePy import messageType ## _C
+                    from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
                     if type(source) == messageType ## _C:
                         return self.__is_subscribed_to_C(source)
                     else:
@@ -160,7 +160,4 @@ typedef struct messageType;
     %}
 };
 %enddef
-
-
-
 

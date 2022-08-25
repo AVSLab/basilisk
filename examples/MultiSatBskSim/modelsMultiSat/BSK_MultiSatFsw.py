@@ -20,7 +20,6 @@ from Basilisk.utilities import (macros as mc, fswSetupThrusters)
 from Basilisk.fswAlgorithms import (inertial3D, locationPointing, attTrackingError, mrpFeedback,
                                     rwMotorTorque, spacecraftReconfig)
 from Basilisk.architecture import messaging
-import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
 
 import numpy as np
 import itertools
@@ -175,7 +174,7 @@ class BSKFswModels:
         Defines the inertial pointing guidance module.
         """
         self.inertial3DPointData.sigma_R0N = [0.1, 0.2, -0.3]
-        cMsgPy.AttRefMsg_C_addAuthor(self.inertial3DPointData.attRefOutMsg, self.attRefMsg)
+        messaging.AttRefMsg_C_addAuthor(self.inertial3DPointData.attRefOutMsg, self.attRefMsg)
 
     def SetSunPointGuidance(self, SimBase):
         """
@@ -185,7 +184,7 @@ class BSKFswModels:
         self.sunPointData.scAttInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
         self.sunPointData.scTransInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
         self.sunPointData.celBodyInMsg.subscribeTo(SimBase.EnvModel.ephemObject.ephemOutMsgs[SimBase.EnvModel.sun])
-        cMsgPy.AttRefMsg_C_addAuthor(self.sunPointData.attRefOutMsg, self.attRefMsg)
+        messaging.AttRefMsg_C_addAuthor(self.sunPointData.attRefOutMsg, self.attRefMsg)
 
     def SetLocationPointGuidance(self, SimBase):
         """
@@ -195,7 +194,7 @@ class BSKFswModels:
         self.locPointData.scAttInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
         self.locPointData.scTransInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
         self.locPointData.locationInMsg.subscribeTo(SimBase.EnvModel.groundStation.currentGroundStateOutMsg)
-        cMsgPy.AttRefMsg_C_addAuthor(self.locPointData.attRefOutMsg, self.attRefMsg)
+        messaging.AttRefMsg_C_addAuthor(self.locPointData.attRefOutMsg, self.attRefMsg)
 
     def SetSpacecraftOrbitReconfig(self, SimBase):
         """
@@ -208,7 +207,7 @@ class BSKFswModels:
         self.spacecraftReconfigData.vehicleConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
         self.spacecraftReconfigData.mu = SimBase.EnvModel.mu  # [m^3/s^2]
         self.spacecraftReconfigData.attControlTime = 400  # [s]
-        cMsgPy.AttRefMsg_C_addAuthor(self.spacecraftReconfigData.attRefOutMsg, self.attRefMsg)
+        messaging.AttRefMsg_C_addAuthor(self.spacecraftReconfigData.attRefOutMsg, self.attRefMsg)
 
         # connect a blank chief message
         chiefData = messaging.NavTransMsgPayload()
@@ -222,7 +221,7 @@ class BSKFswModels:
         self.trackingErrorData.attNavInMsg.subscribeTo(
             SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
         self.trackingErrorData.attRefInMsg.subscribeTo(self.attRefMsg)
-        cMsgPy.AttGuidMsg_C_addAuthor(self.trackingErrorData.attGuidOutMsg, self.attGuidMsg)
+        messaging.AttGuidMsg_C_addAuthor(self.trackingErrorData.attGuidOutMsg, self.attGuidMsg)
 
     def SetMRPFeedbackRWA(self, SimBase):
         """
@@ -292,8 +291,8 @@ class BSKFswModels:
     def setupGatewayMsgs(self, SimBase):
         """create C-wrapped gateway messages such that different modules can write to this message
         and provide a common input msg for down-stream modules"""
-        self.attRefMsg = cMsgPy.AttRefMsg_C()
-        self.attGuidMsg = cMsgPy.AttGuidMsg_C()
+        self.attRefMsg = messaging.AttRefMsg_C()
+        self.attGuidMsg = messaging.AttGuidMsg_C()
 
         self.zeroGateWayMsgs()
 
