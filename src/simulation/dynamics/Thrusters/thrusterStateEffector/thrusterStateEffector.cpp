@@ -311,8 +311,7 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
             mDotNozzle = 0.0;
             if (it->steadyIsp * ops->IspFactor > 0.0)
             {
-                mDotNozzle = it->MaxThrust * ops->ThrustFactor / (EARTH_GRAV *
-                    it->steadyIsp * ops->IspFactor);
+                mDotNozzle = it->MaxThrust / (EARTH_GRAV * it->steadyIsp);
             }
             this->forceOnBody_B += 2 * mDotNozzle * omegaLocal_BN_B.cross(it->thrLoc_B);
 
