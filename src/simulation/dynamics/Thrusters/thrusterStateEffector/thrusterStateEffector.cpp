@@ -235,7 +235,6 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
     std::vector<THRSimConfigMsgPayload>::iterator it;
     THROperationMsgPayload* ops;
     uint64_t i;
-    double ksi = 1.0;
 
     // - Compute Derivatives
     Eigen::MatrixXd kappaDot(this->thrusterData.size(), 1);
@@ -277,7 +276,6 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
     Eigen::Matrix3d	axesWeightMatrix;
     Eigen::Vector3d BM1, BM2, BM3;
     double tmpThrustMag = 0;
-    double dt = 0.0;
     double mDotNozzle;
 
     //! - Zero out the structure force/torque for the thruster set
