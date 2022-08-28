@@ -48,6 +48,7 @@ namespace std {
     %template(TransceiverVector) vector<Transceiver *>;
     %template(GenericStorageVector) vector<GenericStorage *>;
     %template(MultiSphereVector) vector<MultiSphere *>;
+    %template(EllipsoidVector) vector<Ellipsoid *>;
 }
 
 %include "vizInterface.h"

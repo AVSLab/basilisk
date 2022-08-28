@@ -60,6 +60,7 @@ message VizMessage{
         repeated int32 trueTrajectoryLineColor = 15; // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
         string logoTexture = 16; //Path to image texture to be used to customize built-in spacecraft models
         repeated MultiSphere multiSpheres = 17; // (Optional) Multi-Sphere-Model (MSM) charging model information
+        repeated Ellipsoid ellipsoids = 18; //(Optional) Ellipsoid Heads Up Displays
 }
 
     message ReactionWheel{
@@ -279,8 +280,6 @@ message VizMessage{
         double celestialBodyHelioViewSizeMultiplier = 47; // Control the display size of celestial bodies in the Solar System View, values greater than 0, use negative value to use viz default
         int32 showMissionTime = 48; //Toggle to show Mission Time instead of Sim Elapsed Time, -1 for false, 0 for viz default, 1 for true
         double spacecraftHelioViewSizeMultiplier = 49; // Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
-
-        
     }
     
     message MultiSphere{
@@ -303,6 +302,14 @@ message VizMessage{
         double range = 7; // [m] Value of 0 (protobuffer default) to use viz default
     }
 
+    message Ellipsoid{
+        int32 isOn =1; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 useBodyFrame = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        repeated double position = 3; //[m] Position of ellipsoid center in xyz (if using body frame) or r-theta-h (if Hill frame)
+        repeated double semiMajorAxes = 4; // [m] Semi-major axes in xyz (if using body frame) or r-theta-h (if Hill frame)
+        repeated int32 color = 5; //Send desired RGBA as values between 0 and 255
+    }
+    
     TimeStamp currentTime = 1;
     repeated CelestialBody celestialBodies = 2;
     repeated Spacecraft spacecraft = 3;

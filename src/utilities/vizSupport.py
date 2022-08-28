@@ -1066,6 +1066,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         ``None`` if default values should be used.  The array must be of the length of the spacecraft list
     msmInfoList:
         list of MSM configuration messages
+    ellipsoidList:
+        list of lists of ``Ellipsoid`` structures.  The outer list length must match ``scList``.
 
     Returns
     -------
@@ -1087,7 +1089,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList',
          'genericSensorList', 'transceiverList', 'genericStorageList', 'lightList', 'spriteList',
          'modelDictionaryKeyList', 'oscOrbitColorList', 'trueOrbitColorList', 'logoTextureList',
-         'msmInfoList'],
+         'msmInfoList', 'ellipsoidList'],
         kwargs)
 
     # setup the Vizard interface module
@@ -1150,6 +1152,16 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             gsScList = [[gsScList]]
         if len(gsScList) != len(scList):
             print('ERROR: vizSupport: genericSensorList should have the same length as the '
+                  'number of spacecraft and contain lists of generic sensors')
+            exit(1)
+
+    elScList = False
+    if 'ellipsoidList' in kwargs:
+        elScList = kwargs['ellipsoidList']
+        if not isinstance(elScList, list):
+            elScList = [[elScList]]
+        if len(elScList) != len(elScList):
+            print('ERROR: vizSupport: ellipsoidList should have the same length as the '
                   'number of spacecraft and contain lists of generic sensors')
             exit(1)
 
@@ -1335,6 +1347,14 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 for gs in gsScList[c]:
                     gsList.append(gs)
                 scData.genericSensorList = vizInterface.GenericSensorVector(gsList)
+
+        # process spacecraft ellipsoids
+        if elScList:
+            elList = []
+            if elScList[c] is not None:  # generic sensor(s) have been added to this spacecraft
+                for el in elScList[c]:
+                    elList.append(el)
+                scData.ellipsoidList = vizInterface.EllipsoidVector(elList)
 
         # process spacecraft lights
         if liScList:

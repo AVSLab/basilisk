@@ -815,6 +815,21 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 }
                 gs->set_activitystatus(scIt->genericSensorList[idx]->genericSensorCmd);
             }
+
+            // Write Ellipsoid messages
+            for (size_t idx =0; idx < (size_t) scIt->ellipsoidList.size(); idx++) {
+                vizProtobufferMessage::VizMessage::Ellipsoid* el = scp->add_ellipsoids();
+                el->set_ison(scIt->ellipsoidList[idx]->isOn);
+                el->set_usebodyframe(scIt->ellipsoidList[idx]->useBodyFrame);
+                for (int j=0; j<3; j++) {
+                    el->add_position(scIt->ellipsoidList[idx]->position[j]);
+                    el->add_semimajoraxes(scIt->ellipsoidList[idx]->semiMajorAxes[j]);
+                }
+                for (uint64_t j=0; j<scIt->ellipsoidList[idx]->color.size(); j++) {
+                    el->add_color(scIt->ellipsoidList[idx]->color[j]);
+                }
+            }
+
             
             // Write transceiver messages
             for (size_t idx =0; idx < (size_t) scIt->transceiverList.size(); idx++) {

@@ -1299,7 +1299,7 @@ The light location relative to the spacecraft B frame is given by ``position``. 
 set through ``normalVector``.  The edge-to-edge ``fieldOfView`` is set in radians.
 The full list of required and optional generic sensor parameters are provided in the following table.
 
-.. list-table:: Generic Sensor Configuration Options
+.. list-table:: Light Object Configuration Options
     :widths: 20 10 10 10 100
     :header-rows: 1
 
@@ -1499,3 +1499,85 @@ The argument None is used to specify the Vizard default shape to be used.
 
 Similarly, to set the actual or true trajectory color, use the keyword ``trueOrbitColorList`` with the same behavior
 as ``oscOrbitColorList``.
+
+
+
+Adding Ellipsoid Objects to a Spacecraft Location
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Vizard can illustrate generic ellipsoid shapes in the 3d environments relative to a spacecraft location.
+These could indicate keep-out zones, position uncertainties, etc.  Multiple ellipsoids can be
+attached to a spacecraft, each with unique features and colors.
+
+First, let's discuss how to setup an ellipsoid.  The associated ellipsoid structure and the required
+parameters are set using::
+
+    gncEllipsoid = vizInterface.Ellipsoid()
+    gncEllipsoid.isOn = 1
+    gncEllipsoid.useBodyFrame = 0
+    gncEllipsoid.position = [0, 0, 0]
+    gncEllipsoid.semiMajorAxes = [10, 20, 10]
+    gncEllipsoid.color = vizInterface.IntVector(vizSupport.toRGBA255("yellow", alpha=0.5))
+
+.. caution::
+    As a pointer to the ``Ellipsoid`` structure is connected to :ref:`vizInterface`, it is
+    important that the python structure is retained in memory.  If the python structure instance
+    is created in a manner where this is not the case, use ``gncEllipsoid.this.disown()``
+    to ensure the python structure remains intact throughout the simulation.
+
+The ellipsoid location relative to the spacecraft B frame is given by ``position`` in B-frame coordinates.
+The ``semiMajorAxes`` provide the ellipsoid semi-major axes in meters.  If the flag ``useBodyFrame``
+is set to 1, then the ellipsoid is drawn relative to the body frame, not the orbit or hill frame.
+
+The full list of required and optional generic sensor parameters are provided in the following table.
+
+.. list-table:: Ellipsoid Configuration Options
+    :widths: 20 10 10 10 100
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Units
+      - Required
+      - Description
+    * - ``isOn``
+      - int
+      -
+      - No
+      - Flag indicating if the ellipsoid is on (1) or off (-1).  0 is the default value with the object shown.
+    * - ``useBodyFrame``
+      - int
+      -
+      - No
+      - Flag indicating if the ellipsoid should be drawn in the body frame (1) or Hill/Orbit frame (0)
+    * - ``position``
+      - double[3]
+      - m
+      - No
+      - Center of the ellipsoid location in either body or Hill frame depending on ``useBodyFrame``
+    * - ``semiMajorAxes``
+      - double[3]
+      - m
+      - Yes
+      - The three semi-major axes of the ellipsoid object
+    * - ``color``
+      - vector<int>
+      -
+      - No
+      - Desired ellipsoid RGBA values, default is translucent gold
+
+
+Multiple ellipsoid objects can be created for each spacecraft, and multiple spacecraft are supported.  Using
+the ``vizSupport.py`` file, the sensors are sent to :ref:`vizInterface` using they keyword ``ellipsoidList``::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , saveFile=fileName
+                                              , ellipsoidList=gncEllipsoid
+                                              )
+
+Note that here a single ellipsoid and spacecraft is setup.  If you have multiple ellipsoids, or multiple spacecraft,
+then lists of lists are required::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
+                                              , saveFile=fileName
+                                              , genericSensorList=[ None, [gncEllipsoid] ]
+                                              )

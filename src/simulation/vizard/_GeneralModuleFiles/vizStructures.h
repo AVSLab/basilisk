@@ -177,6 +177,23 @@ GenericSensor
 
 }GenericSensor;
 
+
+/*! Structure defining spcecraft Ellipsoid information
+ */
+typedef struct
+//@cond DOXYGEN_IGNORE
+Ellipsoid
+//@endcond
+{
+    int isOn;                   //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int useBodyFrame;           //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true, default is to use the Hill frame
+    double position[3];         //!< [m] Position of ellipsoid center in xyz (if using body frame) or radial-along track-orbit normal (if Hill frame)
+    double semiMajorAxes[3];    //!< [m] Semi-major axes in xyz (if using body frame) or radial-along track-orbit normal (if Hill frame)
+    std::vector<int> color;     //!< [] (optional) RGBA as values between 0 and 255, default is translucent gold
+}Ellipsoid;
+
+
+
 /*! Structure defining spacecraft light information
  */
 typedef struct
@@ -312,6 +329,7 @@ VizSpacecraftData
     std::vector<int> oscOrbitLineColor;                         //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
     std::vector<int>  trueTrajectoryLineColor;                  //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
     MultiSphereInfo msmInfo;                                    //!< (Optional) MSM configuration information
+    std::vector<Ellipsoid *> ellipsoidList;                     //!< (Optional) ellipsoid about the spacecraft location
 }VizSpacecraftData;
 
 /*! Structure defining various Vizard options
