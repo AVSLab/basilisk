@@ -48,6 +48,9 @@ Version |release|
 - added support for the polynomial gravity model to :ref:`gravityEffector`
 - updated the ``conanFile.py`` to fix configuration and building issues with the latest
   version of python
+- fixed issue computing latitude angle in ``PCPF2LLA()`` in :ref:`geodeticConversion`.  This was used
+  in the helper method ``specifyLocationPCPF()`` method inside :ref:`groundLocation`, as well as
+  :ref:`msisAtmosphere` and ref:`albedo`.
 - fixed an issue in the RKF45 variable time step integrator where one of the constants had the wrong sign.
 - added new :ref:`scenarioMomentumDumping` to illustrate how to perform momentum dumping using thrusters.
 
