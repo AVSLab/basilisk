@@ -35,7 +35,7 @@ Eigen::Vector3d PCI2PCPF(Eigen::Vector3d pciPosition, double J20002Pfix[3][3]){
   return pcpfPosition;
 }
 
-/*! Converts from a planet-centered, planet-fixed coordinates to latitutde/longitude/altitude (LLA) coordinates given a planet radius.
+/*! Converts from a planet-centered, planet-fixed coordinates to latitude/longitude/altitude (LLA) coordinates given a planet radius.
 @param pcpfPosition : [m] Position vector in PCPF coordinates
 @param planetRad : [m] Planetary radius, assumed to be constant (i.e., spherical)
 @return llaPosition: Final position in latitude/longitude/altitude coordinates
@@ -49,7 +49,7 @@ Eigen::Vector3d PCPF2LLA(Eigen::Vector3d pcpfPosition, double planetRad){
   llaPosition.fill(0.0);
   llaPosition[2] = pcpfPosition.norm() - planetRad; //  Altitude is the height above assumed-spherical planet surface
   llaPosition[1] = atan2(pcpfPosition[1], pcpfPosition[0]);
-  llaPosition[0] = atan2( sqrt(pow(pcpfPosition[0],2.) + pow(pcpfPosition[1],2.)), pcpfPosition.norm());
+  llaPosition[0] = atan2(pcpfPosition[2], sqrt(pow(pcpfPosition[0], 2.0) + pow(pcpfPosition[1], 2.0)));
 
   return llaPosition;
 }
