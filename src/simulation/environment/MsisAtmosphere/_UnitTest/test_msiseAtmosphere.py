@@ -163,11 +163,11 @@ def run(show_plots, orbitCase, setEpoch):
     #   Setup data logging before the simulation is initialized
     #
     sw_msg_names = [
-        "ap_24_0", "ap_3_0", "ap_3_-3","ap_3_-6","ap_3_-9",
-        "ap_3_-12","ap_3_-15","ap_3_-18","ap_3_-21","ap_3_-24",
-        "ap_3_-27", "ap_3_-30","ap_3_-33","ap_3_-36","ap_3_-39",
-        "ap_3_-42", "ap_3_-45", "ap_3_-48","ap_3_-51","ap_3_-54",
-        "ap_3_-57","f107_1944_0","f107_24_-24"
+        "ap_24_0", "ap_3_0", "ap_3_-3", "ap_3_-6", "ap_3_-9",
+        "ap_3_-12", "ap_3_-15", "ap_3_-18", "ap_3_-21", "ap_3_-24",
+        "ap_3_-27", "ap_3_-30", "ap_3_-33", "ap_3_-36", "ap_3_-39",
+        "ap_3_-42", "ap_3_-45", "ap_3_-48", "ap_3_-51", "ap_3_-54",
+        "ap_3_-57", "f107_1944_0", "f107_24_-24"
     ]
 
     swMsgList = []
@@ -219,16 +219,18 @@ def run(show_plots, orbitCase, setEpoch):
 
     #   Test atmospheric density calculation; note that refAtmoData is in g/cm^3,
     #   and must be adjusted by a factor of 1e-3 to match kg/m^3
+    print(densData[-1])
+    print(refAtmoData[5])
     if not unitTestSupport.isDoubleEqualRelative(densData[-1], refAtmoData[5]*1000., accuracy):
-            testFailCount += 1
-            testMessages.append(
-                "FAILED:  NRLMSISE-00 failed density unit test with a value difference of "+str(densData[0]-refAtmoData[5]))
+        testFailCount += 1
+        testMessages.append("FAILED:  NRLMSISE-00 failed density unit test with a value difference of "+str(densData[0]-refAtmoData[5]))
 
+    print(tempData[-1])
+    print(refAtmoData[-1])
     if not unitTestSupport.isDoubleEqualRelative(tempData[-1], refAtmoData[-1], accuracy):
         testFailCount += 1
         testMessages.append(
         "FAILED:  NRLMSISE-00 failed temperature unit test with a value difference of "+str(tempData[0]-refAtmoData[-1]))
-
 
     snippentName = "unitTestPassFail" + str(orbitCase) + str(setEpoch)
     if testFailCount == 0:
@@ -239,6 +241,7 @@ def run(show_plots, orbitCase, setEpoch):
         colorText = 'Red'
         print("Failed: " + newAtmo.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print(testMessages)
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]

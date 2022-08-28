@@ -36,6 +36,7 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 bskPath = __path__[0]
 
+
 def test_range(show_plots):
     """
     Tests whether groundLocation:
@@ -281,6 +282,7 @@ def test_AzElR_rates():
 
     assert (range_rate_worked and el_rate_worked and az_rate_worked)
 
+
 def plot_geometry(groundLocation, scLocations, minimumElevation):
     """
     Plots the location of a ground station, its field of view,  and the positions of two spacecraft to verify whether
@@ -304,7 +306,6 @@ def plot_geometry(groundLocation, scLocations, minimumElevation):
     # draw a point0
     ax.scatter(groundLocation[0],groundLocation[1],groundLocation[2], color="r", s=100)
 
-
     # draw a vector
     from matplotlib.patches import FancyArrowPatch
     from mpl_toolkits.mplot3d import proj3d
@@ -317,6 +318,7 @@ def plot_geometry(groundLocation, scLocations, minimumElevation):
     #ax.add_artist(a)
 
     plt.show()
+
 
 if __name__ == '__main__':
     test_rotation(False)
