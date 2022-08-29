@@ -21,8 +21,8 @@
 #ifndef THRUSTER_DYNAMIC_EFFECTOR_H
 #define THRUSTER_DYNAMIC_EFFECTOR_H
 
-#include "../../_GeneralModuleFiles/dynamicEffector.h"
-#include "../../_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/THRTimePairMsgPayload.h"

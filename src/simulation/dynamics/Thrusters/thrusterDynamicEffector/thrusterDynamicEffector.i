@@ -37,9 +37,9 @@ namespace std {
     %template(ThrusterConfigVector) vector<THRSimConfigMsgPayload>;
 }
 %include "sys_model.h"
-%include "../../_GeneralModuleFiles/stateData.h"
-%include "../../_GeneralModuleFiles/dynamicEffector.h"
-%include "../../_GeneralModuleFiles/dynParamManager.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 %include "thrusterDynamicEffector.h"
 
 %include "architecture/msgPayloadDefC/THRTimePairMsgPayload.h"
