@@ -130,7 +130,7 @@ bool ThrusterStateEffector::ReadInputs()
 void ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     int idx = 0;
-    std::vector<THRSimConfigMsgPayload>::iterator it;
+    std::vector<THRSimConfig>::iterator it;
 
     THROutputMsgPayload tmpThruster;
     for (it = this->thrusterData.begin(); it != this->thrusterData.end(); ++it)
@@ -160,7 +160,7 @@ void ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
  */
 void ThrusterStateEffector::ConfigureThrustRequests()
 {
-    std::vector<THRSimConfigMsgPayload>::iterator it;
+    std::vector<THRSimConfig>::iterator it;
     std::vector<double>::iterator CmdIt;
     //! - Iterate through the list of thruster commands that we read in.
     for (CmdIt = NewThrustCmds.begin(), it = this->thrusterData.begin();
@@ -186,7 +186,7 @@ void ThrusterStateEffector::ConfigureThrustRequests()
 
 }
 
-void ThrusterStateEffector::addThruster(THRSimConfigMsgPayload* newThruster)
+void ThrusterStateEffector::addThruster(THRSimConfig* newThruster)
 {
     this->thrusterData.push_back(*newThruster);
 
@@ -232,7 +232,7 @@ void ThrusterStateEffector::registerStates(DynParamManager& states)
 /*! This method is used to find the derivatives for the thruster stateEffector */
 void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
-    std::vector<THRSimConfigMsgPayload>::iterator it;
+    std::vector<THRSimConfig>::iterator it;
     THROperationMsgPayload* ops;
     uint64_t i;
 
@@ -266,7 +266,7 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
 
 void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
 {
-    std::vector<THRSimConfigMsgPayload>::iterator it;
+    std::vector<THRSimConfig>::iterator it;
     THROperationMsgPayload* ops;
     Eigen::Vector3d SingleThrusterForce;
     Eigen::Vector3d SingleThrusterTorque;
@@ -343,7 +343,7 @@ void ThrusterStateEffector::updateContributions(double integTime, BackSubMatrice
 /*! This is the method for the thruster effector to add its contributions to the mass props and mass prop rates of the vehicle */
 void ThrusterStateEffector::updateEffectorMassProps(double integTime) {
 
-    std::vector<THRSimConfigMsgPayload>::iterator it;
+    std::vector<THRSimConfig>::iterator it;
     THROperationMsgPayload* ops;
     double mDotSingle = 0.0;
     this->mDotTotal = 0.0;

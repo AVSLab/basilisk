@@ -23,11 +23,11 @@
 
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THRTimePair.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/THRTimePairMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/THROperationMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/THRSimConfigMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 #include "architecture/messaging/messaging.h"
@@ -35,6 +35,7 @@
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include <vector>
+
 
 
 
@@ -48,14 +49,14 @@ public:
     void computeStateContribution(double integTime);
     void Reset(uint64_t CurrentSimNanos);
     //! Add a new thruster to the thruster set
-    void addThruster(THRSimConfigMsgPayload *newThruster);
+    void addThruster(THRSimConfig *newThruster);
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double currentTime);
-    void ComputeThrusterFire(THRSimConfigMsgPayload *CurrentThruster,
+    void ComputeThrusterFire(THRSimConfig *CurrentThruster,
                              double currentTime);
-    void ComputeThrusterShut(THRSimConfigMsgPayload *CurrentThruster,
+    void ComputeThrusterShut(THRSimConfig *CurrentThruster,
                              double currentTime);
     
 
@@ -64,12 +65,12 @@ public:
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
 
     int stepsInRamp;                               //!< class variable
-    std::vector<THRSimConfigMsgPayload> thrusterData; //!< -- Thruster information
+    std::vector<THRSimConfig> thrusterData; //!< -- Thruster information
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
     double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
     double prevFireTime;                           //!< s  Previous thruster firing time
-	double thrFactorToTime(THRSimConfigMsgPayload *thrData,
-		std::vector<THRTimePairMsgPayload> *thrRamp);
+	double thrFactorToTime(THRSimConfig *thrData,
+		std::vector<THRTimePair> *thrRamp);
 	StateData *hubSigma;                           //!< class variable
     StateData *hubOmega;                           //!< class varaible
     BSKLogger bskLogger;                      //!< -- BSK Logging

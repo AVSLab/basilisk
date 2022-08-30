@@ -23,11 +23,10 @@
 
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/THRTimePairMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/THROperationMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/THRSimConfigMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 #include "architecture/messaging/messaging.h"
@@ -55,14 +54,14 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
 
 
-    void addThruster(THRSimConfigMsgPayload *newThruster); //!< -- Add a new thruster to the thruster set
+    void addThruster(THRSimConfig *newThruster); //!< -- Add a new thruster to the thruster set
     void ConfigureThrustRequests();
 
 public:
     // Input and output messages
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
-    std::vector<THRSimConfigMsgPayload> thrusterData; //!< -- Thruster information
+    std::vector<THRSimConfig> thrusterData; //!< -- Thruster information
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
 
     // State information

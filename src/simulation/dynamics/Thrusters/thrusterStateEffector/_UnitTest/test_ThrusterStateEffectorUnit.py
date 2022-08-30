@@ -166,7 +166,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     lat_angle_deg = lat_angle
     long_angle_rad = long_angle_deg * math.pi / 180.0
     lat_angle_rad = lat_angle_deg * math.pi / 180.0
-    thruster1 = messaging.THRSimConfigMsgPayload()
+    thruster1 = thrusterStateEffector.THRSimConfig()
     thruster1.thrLoc_B = location  # Parametrized location for thruster
     thruster1.thrDir_B = [[math.cos(long_angle_rad) * math.cos(lat_angle_rad)],
                           [math.sin(long_angle_rad) * math.cos(lat_angle_rad)], [math.sin(lat_angle_rad)]]
@@ -181,7 +181,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
 
     #  Create thruster characteristic parameters for thruster 2
     if thrustNumber == 2:
-        thruster2 = messaging.THRSimConfigMsgPayload()
+        thruster2 = thrusterStateEffector.THRSimConfig()
         thruster2.thrLoc_B = np.array([[1.], [0.0], [0.0]]).reshape([3, 1])
         thruster2.thrDir_B = np.array(
             [[math.cos(long_angle_rad + math.pi / 4.) * math.cos(lat_angle_rad - math.pi / 4.)],

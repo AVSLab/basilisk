@@ -77,7 +77,7 @@ void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos)
 void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
 {
     int idx = 0;
-    std::vector<THRSimConfigMsgPayload>::iterator it;
+    std::vector<THRSimConfig>::iterator it;
 
     THROutputMsgPayload tmpThruster;
     for (it = this->thrusterData.begin(); it != this->thrusterData.end(); ++it)
@@ -145,9 +145,9 @@ bool ThrusterDynamicEffector::ReadInputs()
  */
 void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 {
-    std::vector<THRSimConfigMsgPayload>::iterator it;
+    std::vector<THRSimConfig>::iterator it;
     std::vector<double>::iterator CmdIt;
-    std::vector<THRTimePairMsgPayload>::iterator PairIt;
+    std::vector<THRTimePair>::iterator PairIt;
     //! - Iterate through the list of thruster commands that we read in.
     for(CmdIt = NewThrustCmds.begin(), it = this->thrusterData.begin();
         it != this->thrusterData.end(); it++, CmdIt++)
@@ -192,7 +192,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
  */
 void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeStep){
     
-    std::vector<THRSimConfigMsgPayload>::iterator it;
+    std::vector<THRSimConfig>::iterator it;
     THROperationMsgPayload *ops;
     Eigen::Vector3d SingleThrusterForce;
     Eigen::Vector3d SingleThrusterTorque;
@@ -271,7 +271,7 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
     prevFireTime = integTime;
 }
 
-void ThrusterDynamicEffector::addThruster(THRSimConfigMsgPayload *newThruster)
+void ThrusterDynamicEffector::addThruster(THRSimConfig *newThruster)
 {
     this->thrusterData.push_back(*newThruster);
 
@@ -284,7 +284,7 @@ void ThrusterDynamicEffector::addThruster(THRSimConfigMsgPayload *newThruster)
 
 void ThrusterDynamicEffector::computeStateContribution(double integTime){
     
-    std::vector<THRSimConfigMsgPayload>::iterator it;
+    std::vector<THRSimConfig>::iterator it;
     THROperationMsgPayload *ops;
     double mDotSingle=0.0;
     this->mDotTotal = 0.0;
@@ -317,10 +317,10 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param currentTime The current simulation clock time converted to a double
  */
-void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfigMsgPayload *CurrentThruster,
+void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfig *CurrentThruster,
                                                   double currentTime)
 {
-    std::vector<THRTimePairMsgPayload>::iterator it;
+    std::vector<THRTimePair>::iterator it;
     THROperationMsgPayload *ops = &(CurrentThruster->ThrustOps);
     //! - Set the current ramp time for the thruster firing
     if(ops->ThrustOnRampTime == 0.0 &&
@@ -376,10 +376,10 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfigMsgPayload *Curren
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param currentTime The current simulation clock time converted to a double
  */
-void ThrusterDynamicEffector::ComputeThrusterShut(THRSimConfigMsgPayload *CurrentThruster,
+void ThrusterDynamicEffector::ComputeThrusterShut(THRSimConfig *CurrentThruster,
                                                   double currentTime)
 {
-    std::vector<THRTimePairMsgPayload>::iterator it;
+    std::vector<THRTimePair>::iterator it;
     THROperationMsgPayload *ops = &(CurrentThruster->ThrustOps);
     
     //! - Set the current off-ramp time based on the previous clock time and now
@@ -429,10 +429,10 @@ void ThrusterDynamicEffector::ComputeThrusterShut(THRSimConfigMsgPayload *Curren
  @param thrData The data for the thruster that we are currently firing
  @param thrRamp This just allows us to avoid switching to figure out which ramp
  */
-double ThrusterDynamicEffector::thrFactorToTime(THRSimConfigMsgPayload *thrData,
-                                                std::vector<THRTimePairMsgPayload> *thrRamp)
+double ThrusterDynamicEffector::thrFactorToTime(THRSimConfig *thrData,
+                                                std::vector<THRTimePair> *thrRamp)
 {
-    std::vector<THRTimePairMsgPayload>::iterator it;
+    std::vector<THRTimePair>::iterator it;
     //! - Grab the last element in the ramp and determine if it goes up or down
     it = thrRamp->end();
     it--;

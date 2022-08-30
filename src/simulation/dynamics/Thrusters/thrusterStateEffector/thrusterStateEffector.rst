@@ -77,7 +77,7 @@ Another limitation is that the :math:`I_{sp}` used is constant throughout the si
 
 
 .. note::
-  The dynamic behaviour of this module is governed by the ``cutoffFrequency`` variable inside :ref:`THRSimConfigMsgPayload`. Its default value is equal to 10 rad/s. All variables related to on and off-ramps have no impact on this module and are instead supposed to be used to determine the dynamic behaviour within :ref:`thrusterDynamicEffector`.
+  The dynamic behaviour of this module is governed by the ``cutoffFrequency`` variable inside :ref:`THRSimConfig`. Its default value is equal to 10 rad/s. All variables related to on and off-ramps have no impact on this module and are instead supposed to be used to determine the dynamic behaviour within :ref:`thrusterDynamicEffector`.
 
 
 

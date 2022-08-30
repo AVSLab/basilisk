@@ -24,6 +24,7 @@
 import sys
 import numpy
 from Basilisk.architecture import messaging
+from Basilisk.simulation import thrusterDynamicEffector
 
 try:
     from collections.abc import OrderedDict
@@ -67,7 +68,7 @@ class thrusterFactory(object):
 
         """
         # create the blank thruster object
-        TH = messaging.THRSimConfigMsgPayload()
+        TH = thrusterDynamicEffector.THRSimConfig()
 
         # set default thruster values
         TH.areaNozzle = 0.1         # [m^2]

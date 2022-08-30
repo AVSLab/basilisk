@@ -148,7 +148,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     angledeg_lat = lat_angle
     anglerad_long = angledeg_long * math.pi/180.0
     anglerad_lat = angledeg_lat * math.pi / 180.0
-    thruster1 = messaging.THRSimConfigMsgPayload()
+    thruster1 = thrusterDynamicEffector.THRSimConfig()
     thruster1.thrLoc_B = location # Parametrized location for thruster
     thruster1.thrDir_B = [[math.cos(anglerad_long)*math.cos(anglerad_lat)], [math.sin(anglerad_long)*math.cos(anglerad_lat)], [math.sin(anglerad_lat)]]
     thruster1.MaxThrust = 1.0
@@ -160,7 +160,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     dir1 = np.array([thruster1.thrDir_B[0][0], thruster1.thrDir_B[1][0], thruster1.thrDir_B[2][0]])
 
     if thrustNumber==2:
-        thruster2 = messaging.THRSimConfigMsgPayload()
+        thruster2 = thrusterDynamicEffector.THRSimConfig()
         thruster2.thrLoc_B =np.array([[1.], [0.0], [0.0]]).reshape([3,1])
         thruster2.thrDir_B = np.array([[math.cos(anglerad_long+math.pi/4.)*math.cos(anglerad_lat-math.pi/4.)], [math.sin(anglerad_long+math.pi/4.)*math.cos(anglerad_lat-math.pi/4.)], [math.sin(anglerad_lat-math.pi/4.)]]).reshape([3,1])
         thruster2.MaxThrust = 1.0
@@ -353,12 +353,12 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         rampOffList = []
         # Note that this ramp is totally linear and ramps up 30 ms using 30 steps
         for i in range(rampsteps):
-            newElement = messaging.THRTimePairMsgPayload()
+            newElement = thrusterDynamicEffector.THRTimePair()
             newElement.TimeDelta = (i + 1.) * 0.1
             newElement.ThrustFactor = (i + 1.0) / 10.0
             newElement.IspFactor = (i + 1.0) / 10.0
             rampOnList.append(newElement)
-            newElement = messaging.THRTimePairMsgPayload()
+            newElement = thrusterDynamicEffector.THRTimePair()
             newElement.TimeDelta = (i + 1) * 0.1
             newElement.ThrustFactor = 1.0 - (i + 1.0) / 10.0
             newElement.IspFactor = newElement.ThrustFactor

@@ -32,23 +32,17 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 
 %include "std_vector.i"
-namespace std {
-    %template(ThrusterTimeVector) vector<THRTimePairMsgPayload>;
-    %template(ThrusterConfigVector) vector<THRSimConfigMsgPayload>;
-}
 
 %include "sys_model.h"
 %include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+%include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
 %include "thrusterStateEffector.h"
 
-%include "architecture/msgPayloadDefC/THRTimePairMsgPayload.h"
-struct THRTimePairMsg_C;
 %include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
 %include "architecture/msgPayloadDefCpp/THROperationMsgPayload.h"
-%include "architecture/msgPayloadDefCpp/THRSimConfigMsgPayload.h"
 %include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 
 %pythoncode %{
