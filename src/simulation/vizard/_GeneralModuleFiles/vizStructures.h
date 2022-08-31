@@ -190,6 +190,7 @@ Ellipsoid
     double position[3];         //!< [m] Position of ellipsoid center in xyz (if using body frame) or radial-along track-orbit normal (if Hill frame)
     double semiMajorAxes[3];    //!< [m] Semi-major axes in xyz (if using body frame) or radial-along track-orbit normal (if Hill frame)
     std::vector<int> color;     //!< [] (optional) RGBA as values between 0 and 255, default is translucent gold
+    int showGridLines;          //!< Show Gridlines on ellipsoid, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }Ellipsoid;
 
 

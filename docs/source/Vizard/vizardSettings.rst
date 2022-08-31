@@ -1564,6 +1564,11 @@ The full list of required and optional generic sensor parameters are provided in
       -
       - No
       - Desired ellipsoid RGBA values, default is translucent gold
+    * - ``showGridLines``
+      - int
+      -
+      - No
+      - Show Gridlines on ellipsoid
 
 
 Multiple ellipsoid objects can be created for each spacecraft, and multiple spacecraft are supported.  Using

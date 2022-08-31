@@ -308,6 +308,7 @@ message VizMessage{
         repeated double position = 3; //[m] Position of ellipsoid center in xyz (if using body frame) or r-theta-h (if Hill frame)
         repeated double semiMajorAxes = 4; // [m] Semi-major axes in xyz (if using body frame) or r-theta-h (if Hill frame)
         repeated int32 color = 5; //Send desired RGBA as values between 0 and 255
+        int32 showGridLines = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
     
     TimeStamp currentTime = 1;

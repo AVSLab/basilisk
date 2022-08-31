@@ -828,6 +828,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 for (uint64_t j=0; j<scIt->ellipsoidList[idx]->color.size(); j++) {
                     el->add_color(scIt->ellipsoidList[idx]->color[j]);
                 }
+                el->set_showgridlines(scIt->ellipsoidList[idx]->showGridLines);
             }
 
             
