@@ -193,7 +193,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
 void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeStep){
     
     std::vector<THRSimConfig>::iterator it;
-    THROperationMsgPayload *ops;
+    THROperation *ops;
     Eigen::Vector3d SingleThrusterForce;
     Eigen::Vector3d SingleThrusterTorque;
     Eigen::Vector3d CoMRelPos;
@@ -285,7 +285,7 @@ void ThrusterDynamicEffector::addThruster(THRSimConfig *newThruster)
 void ThrusterDynamicEffector::computeStateContribution(double integTime){
     
     std::vector<THRSimConfig>::iterator it;
-    THROperationMsgPayload *ops;
+    THROperation *ops;
     double mDotSingle=0.0;
     this->mDotTotal = 0.0;
 	this->stateDerivContribution.setZero();
@@ -321,7 +321,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfig *CurrentThruster,
                                                   double currentTime)
 {
     std::vector<THRTimePair>::iterator it;
-    THROperationMsgPayload *ops = &(CurrentThruster->ThrustOps);
+    THROperation *ops = &(CurrentThruster->ThrustOps);
     //! - Set the current ramp time for the thruster firing
     if(ops->ThrustOnRampTime == 0.0 &&
        CurrentThruster->ThrusterOnRamp.size() > 0)
@@ -380,7 +380,7 @@ void ThrusterDynamicEffector::ComputeThrusterShut(THRSimConfig *CurrentThruster,
                                                   double currentTime)
 {
     std::vector<THRTimePair>::iterator it;
-    THROperationMsgPayload *ops = &(CurrentThruster->ThrustOps);
+    THROperation *ops = &(CurrentThruster->ThrustOps);
     
     //! - Set the current off-ramp time based on the previous clock time and now
     if(ops->ThrustOffRampTime == 0.0 &&

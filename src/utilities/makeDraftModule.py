@@ -680,7 +680,6 @@ def fillCppInfo(module):
     inMsgList.append({'type': 'AttRefMsg', 'var': 'someInMsg', 'desc': 'input msg description', 'wrap': 'C'})
     inMsgList.append({'type': 'AttRefMsg', 'var': 'some2InMsg', 'desc': 'input msg description', 'wrap': 'C'})
     inMsgList.append({'type': 'CSSConfigMsg', 'var': 'anotherInMsg', 'desc': 'input msg description', 'wrap': 'C'})
-    inMsgList.append({'type': 'THROperationMsg', 'var': 'someCppInMsg', 'desc': 'input msg description', 'wrap': 'C++'})
     inMsgList.append({'type': 'CSSConfigLogMsg', 'var': 'anotherCppInMsg', 'desc': 'input msg description', 'wrap': 'C++'})
     module.inMsgList = inMsgList
 
@@ -689,7 +688,6 @@ def fillCppInfo(module):
     outMsgList = list()
     outMsgList.append({'type': 'AttRefMsg', 'var': 'some2OutMsg', 'desc': 'output msg description', 'wrap': 'C'})
     outMsgList.append({'type': 'SCStatesMsg', 'var': 'someOutMsg', 'desc': 'output msg description', 'wrap': 'C'})
-    outMsgList.append({'type': 'THROperationMsg', 'var': 'someCppOutMsg', 'desc': 'output msg description', 'wrap': 'C++'})
     outMsgList.append({'type': 'RWConfigMsg', 'var': 'anotherCppOutMsg', 'desc': 'output msg description', 'wrap': 'C++'})
     module.outMsgList = outMsgList
 

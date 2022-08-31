@@ -233,7 +233,7 @@ void ThrusterStateEffector::registerStates(DynParamManager& states)
 void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
     std::vector<THRSimConfig>::iterator it;
-    THROperationMsgPayload* ops;
+    THROperation* ops;
     uint64_t i;
 
     // - Compute Derivatives
@@ -267,7 +267,7 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
 void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
 {
     std::vector<THRSimConfig>::iterator it;
-    THROperationMsgPayload* ops;
+    THROperation* ops;
     Eigen::Vector3d SingleThrusterForce;
     Eigen::Vector3d SingleThrusterTorque;
     Eigen::Vector3d CoMRelPos;
@@ -344,7 +344,7 @@ void ThrusterStateEffector::updateContributions(double integTime, BackSubMatrice
 void ThrusterStateEffector::updateEffectorMassProps(double integTime) {
 
     std::vector<THRSimConfig>::iterator it;
-    THROperationMsgPayload* ops;
+    THROperation* ops;
     double mDotSingle = 0.0;
     this->mDotTotal = 0.0;
     this->stateDerivContribution.setZero();

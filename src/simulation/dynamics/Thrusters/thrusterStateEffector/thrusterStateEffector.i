@@ -42,7 +42,6 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
-%include "architecture/msgPayloadDefCpp/THROperationMsgPayload.h"
 %include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 
 %pythoncode %{

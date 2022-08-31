@@ -29,7 +29,7 @@
  on for.  It is intended to have the previous firing remain resident for logging*/
 typedef struct
 //@cond DOXYGEN_IGNORE
-THROperationMsgPayload
+THROperation
 //@endcond
 {
     uint64_t fireCounter;                //!< (-) Number of times thruster fired
@@ -49,7 +49,7 @@ THROperationMsgPayload
 
     // The following is used in thrusterStateEffector
     double ThrusterEndTime;              //!< s  Time thruster stops burning
-}THROperationMsgPayload;
+}THROperation;
 
 
 
