@@ -14,7 +14,7 @@ function(generate_messages searchDir generateCCode)
          set(COMP_OUT_NAME "${CMAKE_CURRENT_SOURCE_DIR}/../../../dist3/autoSource/${TARGET_NAME}.i")
         add_custom_command(OUTPUT ${COMP_OUT_NAME}
                            COMMAND python generateSWIGModules.py ${COMP_OUT_NAME} ${msgFile} ${TARGET_NAME} ${searchDir} ${generateCCode}
-                           DEPENDS ${msgFile}
+                           DEPENDS ${msgFile} 
                            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/
                           )
         set_property(SOURCE ${COMP_OUT_NAME} PROPERTY CPLUSPLUS ON)
@@ -34,6 +34,7 @@ function(generate_messages searchDir generateCCode)
                 OUTFILE_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/" #_wrap.c/.cxx file
                 OUTPUT_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
                )
+        add_dependencies(${TARGET_NAME} swigtrick)
         set_target_properties(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PROPERTIES
     	    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
         set_target_properties(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PROPERTIES
@@ -44,18 +45,16 @@ function(generate_messages searchDir generateCCode)
     endforeach()
 endfunction(generate_messages)
 
+add_custom_command(
+  OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
+  COMMAND ${PYTHON_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/" "../../msgPayloadDefC/" "../../msgPayloadDefCpp/"
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
+  VERBATIM)
+# Custom target for establishing dependency
+add_custom_target(
+  swigtrick
+  DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py)
+
+# Dependency
 generate_messages(msgPayloadDefCpp "False")
 generate_messages(msgPayloadDefC "True")
-#set_property(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/MessagingToplevel.i PROPERTY CPLUSPLUS ON)
-#set_property(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/MessagingToplevel.i PROPERTY SWIG_FLAGS
-#    "-I${CMAKE_CURRENT_SOURCE_DIR}/../"
-#    "-I${CMAKE_CURRENT_SOURCE_DIR}/../../"
-#    "-I${CMAKE_BINARY_DIR}/autoSource/"
-#    "-I${PYTHON_INCLUDE_PATH}")
-#swig_add_library(MessagingToplevel
-#        LANGUAGE "python"
-#        TYPE MODULE
-#        SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/MessagingToplevel.i
-#        OUTFILE_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/" #_wrap.c/.cxx file
-#        OUTPUT_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
-#       )

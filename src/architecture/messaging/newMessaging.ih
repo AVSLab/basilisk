@@ -19,7 +19,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 %pythoncode %{
     import numpy as np
-    from Basilisk.architecture import cMsgCInterfacePy
 %};
 %{
 #include "architecture/_GeneralModuleFiles/sys_model.h"

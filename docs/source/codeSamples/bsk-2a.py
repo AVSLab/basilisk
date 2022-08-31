@@ -21,7 +21,6 @@ from Basilisk.utilities import macros
 from Basilisk.moduleTemplates import cModuleTemplate
 from Basilisk.moduleTemplates import cppModuleTemplate
 from Basilisk.architecture import messaging
-from Basilisk.architecture import cMsgCInterfacePy as cMsgPy
 
 def run():
     """
