@@ -22,9 +22,9 @@ Overview
 --------
 
 This scenario demonstrates how to set up a spacecraft orbiting Earth subject to atmospheric drag, causing it to
-deorbit. This is achieved using the :ref:`exponentialAtmosphere` environment module and the :ref:`dragDynamicEffector`
-dynamics module. The simulation is repeatedly stepped on the order of minutes of sim time until the altitude falls
-below some threshold.
+deorbit. This is achieved using the :ref:`exponentialAtmosphere` or :ref:`msisAtmosphere` environment module and the
+:ref:`dragDynamicEffector` dynamics module. The simulation is repeatedly stepped on the order of minutes of sim time
+until the altitude falls below some threshold.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
@@ -35,12 +35,23 @@ Simulation Scenario Setup Details
 
 A single simulation with a spacecraft object is created, along with the atmosphere, drag, and gravity models.
 
-The atmosphere model ``ExponentialAtmosphere()`` is initialized as ``atmo``; to set the model to use Earthlike values,
+If the exponential model is selected, the atmosphere module ``ExponentialAtmosphere()`` is initialized as ``atmo``; to
+set the model to use Earthlike values,
 the utility::
 
     simSetPlanetEnvironment.exponentialAtmosphere(atmo, "earth")
 
 is invoked.
+
+If the msis model is selected, the atmosphere module ``MsisAtmosphere()`` is initialized as ``atmo``. Solar weather
+data must be mocked in a message to the module, where ``sw_msg`` is a dict of reasonable ap and f10.7cm values::
+
+    swMsgList = []
+    for c, val in enumerate(sw_msg.values()):
+        swMsgData = messaging.SwDataMsgPayload()
+        swMsgData.dataValue = val
+        swMsgList.append(messaging.SwDataMsg().write(swMsgData))
+        atmo.swDataInMsgs[c].subscribeTo(swMsgList[-1])
 
 The drag model ``DragDynamicEffector()`` is initialized, then model parameters are set. In this example, the projected
 area ``coreParams.projectedArea`` is set to 10 meters squared and the drag coefficient :math:`C_D`
@@ -64,28 +75,44 @@ the drag model::
 Illustration of Simulation Results
 ----------------------------------
 
-The following images illustrate the expected simulation run returns.
+The following images illustrate the expected simulation run returns for a deorbit from 250 to 150 km with the
+exponential model.
 
 The orbit is plotted in the orbital plane:
 
-.. image:: /_images/Scenarios/scenarioDragDeorbit1.svg
+.. image:: /_images/Scenarios/scenarioDragDeorbitexponential1.svg
    :align: center
 
 The altitude as a function of time is plotted.
 
-.. image:: /_images/Scenarios/scenarioDragDeorbit2.svg
+.. image:: /_images/Scenarios/scenarioDragDeorbitexponential2.svg
    :align: center
 
 The atmospheric density as a function of altitude is plotted in lin-log space. Since this uses the exponential
 atmosphere model, the result should be linear.
 
-.. image:: /_images/Scenarios/scenarioDragDeorbit3.svg
+.. image:: /_images/Scenarios/scenarioDragDeorbitexponential3.svg
    :align: center
 
 The magnitude of drag force over time is plotted in lin-log space.
 
-.. image:: /_images/Scenarios/scenarioDragDeorbit4.svg
+.. image:: /_images/Scenarios/scenarioDragDeorbitexponential4.svg
    :align: center
+
+The same plots are generated using the MSIS model:
+
+.. image:: /_images/Scenarios/scenarioDragDeorbitmsis1.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioDragDeorbitmsis2.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioDragDeorbitmsis3.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioDragDeorbitmsisl4.svg
+   :align: center
+
 
 """
 
@@ -107,7 +134,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport, simSetPlanetEnvironment)
 
 # import atmosphere and drag modules
-from Basilisk.simulation import exponentialAtmosphere, dragDynamicEffector
+from Basilisk.simulation import exponentialAtmosphere, msisAtmosphere, dragDynamicEffector
 
 # always import the Basilisk messaging support
 from Basilisk.architecture import messaging
@@ -119,7 +146,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-def run(show_plots, initial_alt=250, deorbit_alt=200):
+def run(show_plots, initial_alt=250, deorbit_alt=150, model="exponential"):
     """
     Initialize a satellite with drag and propagate until it falls below a deorbit altitude. Note that an excessively
     low deorbit_alt can lead to intersection with the Earth prior to deorbit being detected, causing some terms to blow
@@ -129,6 +156,7 @@ def run(show_plots, initial_alt=250, deorbit_alt=200):
         show_plots (bool): Toggle plotting on/off
         initial_alt (float): Starting altitude in km
         deorbit_alt (float): Terminal altitude in km
+        model (str): ["exponential", "msis"]
 
     Returns:
         Dictionary of figure handles
@@ -142,10 +170,34 @@ def run(show_plots, initial_alt=250, deorbit_alt=200):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # Initialize atmosphere model and add to sim
-    atmo = exponentialAtmosphere.ExponentialAtmosphere()
-    atmo.ModelTag = "ExpAtmo"
+    match model:
+        case "exponential":
+            atmo = exponentialAtmosphere.ExponentialAtmosphere()
+            atmo.ModelTag = "ExpAtmo"
+            simSetPlanetEnvironment.exponentialAtmosphere(atmo, "earth")
+        case "msis":
+            atmo = msisAtmosphere.MsisAtmosphere()
+            atmo.ModelTag = "MsisAtmo"
+
+            ap = 8
+            f107 = 110
+            sw_msg = {
+                "ap_24_0": ap, "ap_3_0": ap, "ap_3_-3": ap, "ap_3_-6": ap, "ap_3_-9": ap,
+                "ap_3_-12": ap, "ap_3_-15": ap, "ap_3_-18": ap, "ap_3_-21": ap, "ap_3_-24": ap,
+                "ap_3_-27": ap, "ap_3_-30": ap, "ap_3_-33": ap, "ap_3_-36": ap, "ap_3_-39": ap,
+                "ap_3_-42": ap, "ap_3_-45": ap, "ap_3_-48": ap, "ap_3_-51": ap, "ap_3_-54": ap,
+                "ap_3_-57": ap, "f107_1944_0": f107, "f107_24_-24": f107
+            }
+
+            swMsgList = []
+            for c, val in enumerate(sw_msg.values()):
+                swMsgData = messaging.SwDataMsgPayload()
+                swMsgData.dataValue = val
+                swMsgList.append(messaging.SwDataMsg().write(swMsgData))
+                atmo.swDataInMsgs[c].subscribeTo(swMsgList[-1])
+        case _:
+            raise ValueError(f"{model} not a valid model!")
     atmoTaskName = "atmosphere"
-    simSetPlanetEnvironment.exponentialAtmosphere(atmo, "earth")
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, atmo)
 
@@ -196,7 +248,12 @@ def run(show_plots, initial_alt=250, deorbit_alt=200):
     # set the simulation time increments
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
     P = 2. * np.pi / n
-    orbit_frac = 0.1  # fraction of initial orbit period to step the simulation by
+
+    # fraction of initial orbit period to step the simulation by
+    if model == "exponential":
+        orbit_frac = 0.1
+    elif model == "msis":
+        orbit_frac = 0.03  # msis deorbits more quickly
     simulationTime = macros.sec2nano(orbit_frac * P)
     numDataPoints = int(10000 * orbit_frac)  # per orbit_fraction at initial orbit conditions
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
@@ -242,7 +299,7 @@ def run(show_plots, initial_alt=250, deorbit_alt=200):
     dragForce = scSim.GetLogVariableData('DragEff.forceExternal_B')
     denseData = dataAtmoLog.neutralDensity
 
-    figureList = plotOrbits(dataRec.times(), posData, velData, dragForce, denseData, oe, mu, planet)
+    figureList = plotOrbits(dataRec.times(), posData, velData, dragForce, denseData, oe, mu, planet, model)
 
     if show_plots:
         plt.show()
@@ -253,13 +310,13 @@ def run(show_plots, initial_alt=250, deorbit_alt=200):
     return figureList
 
 
-def plotOrbits(timeAxis, posData, velData, dragForce, denseData, oe, mu, planet):
+def plotOrbits(timeAxis, posData, velData, dragForce, denseData, oe, mu, planet, model):
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
     figureList = {}
 
     def register_fig(i):
-        pltName = fileName + str(i)
+        pltName = fileName + model + str(i)
         figureList[pltName] = plt.figure(i)
         fig = plt.gcf()
         ax = fig.gca()
@@ -316,5 +373,6 @@ if __name__ == "__main__":
     run(
         show_plots=True,
         initial_alt=250,
-        deorbit_alt=150
+        deorbit_alt=150,
+        model="msis"
     )

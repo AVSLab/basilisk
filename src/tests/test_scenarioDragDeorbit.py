@@ -44,11 +44,12 @@ import scenarioDragDeorbit
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("initial_alt, deorbit_alt", [
-    (250, 150)
+@pytest.mark.parametrize("initial_alt, deorbit_alt, model", [
+    (250, 150, "exponential"),
+    (250, 150, "msis")
 ])
 @pytest.mark.scenarioTest
-def test_scenarioDragDeorbit(show_plots, initial_alt, deorbit_alt):
+def test_scenarioDragDeorbit(show_plots, initial_alt, deorbit_alt, model):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
@@ -83,5 +84,6 @@ if __name__ == "__main__":
     test_scenarioDragDeorbit(
         False,  # show_plots
         initial_alt=250,
-        deorbit_alt=150
+        deorbit_alt=150,
+        model="exponential"
     )
