@@ -302,12 +302,12 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
 void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Zero the command buffer and read the incoming command array
-    if (this->motorTorqueInMsg.isLinked()) {
+    if (this->motorTorqueInMsg.isLinked() && this->motorTorqueInMsg.isWritten()) {
         ArrayMotorTorqueMsgPayload incomingCmdBuffer;
         incomingCmdBuffer = this->motorTorqueInMsg();
         this->u = incomingCmdBuffer.motorTorque[0];
     }
-    if (this->hingedRigidBodyRefMsg.isLinked()) {
+    if (this->hingedRigidBodyRefMsg.isLinked() && this->hingedRigidBodyRefMsg.isWritten()) {
         HingedRigidBodyMsgPayload incomingRefBuffer;
         incomingRefBuffer = this->hingedRigidBodyRefMsg();
         this->thetaRef = incomingRefBuffer.theta;
