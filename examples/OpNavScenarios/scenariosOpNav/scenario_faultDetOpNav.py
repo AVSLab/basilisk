@@ -53,7 +53,6 @@ sys.path.append(path + '/../plottingOpNav')
 import OpNav_Plotting as BSK_plt
 
 from Basilisk.architecture import messaging
-import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
 
 
 # Create your own scenario child class
@@ -96,8 +95,8 @@ class scenario_OpNav(BSKScenario):
 
         # primary_opnav, secondary_opnav
         FswModel = self.masterSim.get_FswModel()
-        cMsgPy.OpNavMsg_C_addAuthor(FswModel.horizonNavData.opNavOutMsg, FswModel.opnavPrimaryMsg)
-        cMsgPy.OpNavMsg_C_addAuthor(FswModel.pixelLineData.opNavOutMsg, FswModel.opnavSecondaryMsg)
+        messaging.OpNavMsg_C_addAuthor(FswModel.horizonNavData.opNavOutMsg, FswModel.opnavPrimaryMsg)
+        messaging.OpNavMsg_C_addAuthor(FswModel.pixelLineData.opNavOutMsg, FswModel.opnavSecondaryMsg)
 
         # Filter noise param
         self.masterSim.get_FswModel().relativeODData.noiseSF = 5
