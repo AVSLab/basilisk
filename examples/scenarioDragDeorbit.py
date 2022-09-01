@@ -23,25 +23,69 @@ Overview
 
 This scenario demonstrates how to set up a spacecraft orbiting Earth subject to atmospheric drag, causing it to
 deorbit. This is achieved using the :ref:`exponentialAtmosphere` environment module and the :ref:`dragDynamicEffector`
-dynamics module.
+dynamics module. The simulation is repeatedly stepped on the order of minutes of sim time until the altitude falls
+below some threshold.
 
-The simulation is repeatedly stepped on the order of minutes of sim time until the altitude falls below some threshold.
+The script is found in the folder ``basilisk/examples`` and executed by using::
 
+      python3 scenarioDragDeorbit.py
+
+Simulation Scenario Setup Details
+---------------------------------
+
+A single simulation with a spacecraft object is created, along with the atmosphere, drag, and gravity models.
+
+The atmosphere model ``ExponentialAtmosphere()`` is initialized as ``atmo``; to set the model to use Earthlike values,
+the utility::
+
+    simSetPlanetEnvironment.exponentialAtmosphere(atmo, "earth")
+
+is invoked.
+
+The drag model ``DragDynamicEffector()`` is initialized, then model parameters are set. In this example, the projected
+area ``coreParams.projectedArea`` is set to 10 meters squared and the drag coefficient :math:`C_D`
+``coreParams.dragCoeff`` is set to 2.2.
+
+Once the models have been added to the simulation task, the atmosphere, drag model, and spacecraft must be linked.
+First, the atmosphere model is given the spacecraft state message so it knows the location for which to calculate
+atmospheric conditions::
+
+    atmo.addSpacecraftToModel(scObject.scStateOutMsg)
+
+Then, the drag effector is linked to the spacecraft::
+
+    scObject.addDynamicEffector(dragEffector)
+
+The drag model will calculate zero drag unless it is passed atmospheric conditions. To link the atmosphere model to
+the drag model::
+
+    dragEffector.atmoDensInMsg.subscribeTo(atmo.envOutMsgs[0])
 
 Illustration of Simulation Results
 ----------------------------------
 
 The following images illustrate the expected simulation run returns.
 
+The orbit is plotted in the orbital plane:
+
 .. image:: /_images/Scenarios/scenarioDragDeorbit1.svg
    :align: center
+
+The altitude as a function of time is plotted.
 
 .. image:: /_images/Scenarios/scenarioDragDeorbit2.svg
    :align: center
 
+The atmospheric density as a function of altitude is plotted in lin-log space. Since this uses the exponential
+atmosphere model, the result should be linear.
+
 .. image:: /_images/Scenarios/scenarioDragDeorbit3.svg
    :align: center
 
+The magnitude of drag force over time is plotted in lin-log space.
+
+.. image:: /_images/Scenarios/scenarioDragDeorbit4.svg
+   :align: center
 
 """
 
@@ -77,10 +121,9 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 def run(show_plots, initial_alt=250, deorbit_alt=200):
     """
-    Initialize a satellite with drag and propagate until it falls below a deorbit altitude.
-
-    Note that excessively low deorbit_alt can lead to intersection with the Earth, causing some terms to blow up and
-    the simulation to terminate.
+    Initialize a satellite with drag and propagate until it falls below a deorbit altitude. Note that an excessively
+    low deorbit_alt can lead to intersection with the Earth prior to deorbit being detected, causing some terms to blow
+    up and the simulation to terminate.
 
     Args:
         show_plots (bool): Toggle plotting on/off
