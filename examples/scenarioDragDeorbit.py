@@ -141,7 +141,7 @@ def run(show_plots, initial_alt=250, deorbit_alt=200):
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # Initialize atmosphere model
+    # Initialize atmosphere model and add to sim
     atmo = exponentialAtmosphere.ExponentialAtmosphere()
     atmo.ModelTag = "ExpAtmo"
     atmoTaskName = "atmosphere"
@@ -149,7 +149,7 @@ def run(show_plots, initial_alt=250, deorbit_alt=200):
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, atmo)
 
-    # Initialize drag effector
+    # Initialize drag effector and add to sim
     projArea = 10.0  # drag area in m^2
     dragCoeff = 2.2  # drag coefficient
     dragEffector = dragDynamicEffector.DragDynamicEffector()
@@ -287,7 +287,7 @@ def plotOrbits(timeAxis, posData, velData, dragForce, denseData, oe, mu, planet)
     plt.xlabel('$i_e$ Cord. [km]')
     plt.ylabel('$i_p$ Cord. [km]')
 
-    # draw altitude, density, and drag as a function of time
+    # draw altitude as a function of time
     fig, ax = register_fig(2)
     ax.ticklabel_format(useOffset=False, style='plain')
     alt = np.array(rData) / 1000 - planetRadius
@@ -297,11 +297,13 @@ def plotOrbits(timeAxis, posData, velData, dragForce, denseData, oe, mu, planet)
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
+    # draw density as a function of altitude
     fig, ax = register_fig(3)
     plt.semilogy(alt, denseData)
     plt.xlabel('Alt. [km]')
     plt.ylabel('$\\rho$ [kg/m$^2$]')
 
+    # draw drag as a function of time
     fig, ax = register_fig(4)
     plt.semilogy(timeAxis * macros.NANO2HOUR, np.linalg.norm(dragForce[:, 1:], 2, 1))
     plt.xlabel('$t$ [hr]')
