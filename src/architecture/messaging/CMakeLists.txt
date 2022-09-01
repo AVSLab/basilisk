@@ -13,7 +13,7 @@ function(generate_messages searchDir generateCCode)
         get_filename_component(TARGET_DIR ${msgFile} DIRECTORY)
          set(COMP_OUT_NAME "${CMAKE_CURRENT_SOURCE_DIR}/../../../dist3/autoSource/${TARGET_NAME}.i")
         add_custom_command(OUTPUT ${COMP_OUT_NAME}
-                           COMMAND python generateSWIGModules.py ${COMP_OUT_NAME} ${msgFile} ${TARGET_NAME} ${searchDir} ${generateCCode}
+                           COMMAND ${PYTHON_EXECUTABLE} generateSWIGModules.py ${COMP_OUT_NAME} ${msgFile} ${TARGET_NAME} ${searchDir} ${generateCCode}
                            DEPENDS ${msgFile} 
                            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/
                           )
