@@ -44,12 +44,12 @@ import scenarioDragDeorbit
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("initial_alt, deorbit_alt, model", [
-    (250, 150, "exponential"),
-    (250, 150, "msis")
+@pytest.mark.parametrize("initialAlt, deorbitAlt, model", [
+    (250, 200, "exponential"),
+    (250, 200, "msis")
 ])
 @pytest.mark.scenarioTest
-def test_scenarioDragDeorbit(show_plots, initial_alt, deorbit_alt, model):
+def test_scenarioDragDeorbit(show_plots, initialAlt, deorbitAlt, model):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
@@ -58,7 +58,7 @@ def test_scenarioDragDeorbit(show_plots, initial_alt, deorbit_alt, model):
     testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioDragDeorbit.run(show_plots, initial_alt, deorbit_alt)
+        figureList = scenarioDragDeorbit.run(show_plots, initialAlt, deorbitAlt, model)
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)
@@ -83,7 +83,7 @@ def test_scenarioDragDeorbit(show_plots, initial_alt, deorbit_alt, model):
 if __name__ == "__main__":
     test_scenarioDragDeorbit(
         False,  # show_plots
-        initial_alt=250,
-        deorbit_alt=150,
-        model="exponential"
+        initialAlt=250,
+        deorbitAlt=180,
+        model="msis"
     )
