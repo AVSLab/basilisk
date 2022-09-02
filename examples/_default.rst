@@ -111,7 +111,15 @@ Gravity Gradient Torque
 .. toctree::
    :maxdepth: 1
 
-   Gravity  Gradient Perturbed Hill Pointing <scenarioAttitudeGG>
+   Gravity Gradient Perturbed Hill Pointing <scenarioAttitudeGG>
+
+Atmospheric Drag
+^^^^^^^^^^^^^^^^^^^^^^^
+.. toctree::
+   :maxdepth: 1
+
+   Satellite Drag Deorbit about Earth <scenarioDragDeorbit>
+
 
 Access to Communication Locations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
