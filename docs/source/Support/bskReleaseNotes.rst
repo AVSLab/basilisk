@@ -54,6 +54,7 @@ Version |release|
   :ref:`msisAtmosphere` and ref:`albedo`.
 - fixed an issue in the RKF45 variable time step integrator where one of the constants had the wrong sign.
 - added new :ref:`scenarioMomentumDumping` to illustrate how to perform momentum dumping using thrusters.
+- updated :ref:`hingedRigidBodyStateEffector` to allow for an optional panel reference state input message
 
 
 Version 2.1.3 (May 25, 2022)
