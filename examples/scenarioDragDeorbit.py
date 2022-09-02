@@ -36,7 +36,7 @@ Simulation Scenario Setup Details
 A single simulation with a spacecraft object is created, along with the atmosphere, drag, and gravity models.
 
 If the exponential model is selected, the atmosphere module ``ExponentialAtmosphere()`` is initialized as ``atmo``; to
-set the model to use Earthlike values,
+set the model to use Earth-like values,
 the utility::
 
     simSetPlanetEnvironment.exponentialAtmosphere(atmo, "earth")
@@ -110,7 +110,7 @@ The same plots are generated using the MSIS model:
 .. image:: /_images/Scenarios/scenarioDragDeorbitmsis3.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioDragDeorbitmsisl4.svg
+.. image:: /_images/Scenarios/scenarioDragDeorbitmsis4.svg
    :align: center
 
 
@@ -146,7 +146,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-def run(show_plots, initial_alt=250, deorbit_alt=150, model="exponential"):
+def run(show_plots, initialAlt=250, deorbitAlt=180, model="exponential"):
     """
     Initialize a satellite with drag and propagate until it falls below a deorbit altitude. Note that an excessively
     low deorbit_alt can lead to intersection with the Earth prior to deorbit being detected, causing some terms to blow
@@ -154,8 +154,8 @@ def run(show_plots, initial_alt=250, deorbit_alt=150, model="exponential"):
 
     Args:
         show_plots (bool): Toggle plotting on/off
-        initial_alt (float): Starting altitude in km
-        deorbit_alt (float): Terminal altitude in km
+        initialAlt (float): Starting altitude in km
+        deorbitAlt (float): Terminal altitude in km
         model (str): ["exponential", "msis"]
 
     Returns:
@@ -166,40 +166,38 @@ def run(show_plots, initial_alt=250, deorbit_alt=150, model="exponential"):
     simProcessName = "simProcess"
     scSim = SimulationBaseClass.SimBaseClass()
     dynProcess = scSim.CreateNewProcess(simProcessName)
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(15.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # Initialize atmosphere model and add to sim
-    match model:
-        case "exponential":
-            atmo = exponentialAtmosphere.ExponentialAtmosphere()
-            atmo.ModelTag = "ExpAtmo"
-            simSetPlanetEnvironment.exponentialAtmosphere(atmo, "earth")
-        case "msis":
-            atmo = msisAtmosphere.MsisAtmosphere()
-            atmo.ModelTag = "MsisAtmo"
+    if model == "exponential":
+        atmo = exponentialAtmosphere.ExponentialAtmosphere()
+        atmo.ModelTag = "ExpAtmo"
+        simSetPlanetEnvironment.exponentialAtmosphere(atmo, "earth")
+    elif model == "msis":
+        atmo = msisAtmosphere.MsisAtmosphere()
+        atmo.ModelTag = "MsisAtmo"
 
-            ap = 8
-            f107 = 110
-            sw_msg = {
-                "ap_24_0": ap, "ap_3_0": ap, "ap_3_-3": ap, "ap_3_-6": ap, "ap_3_-9": ap,
-                "ap_3_-12": ap, "ap_3_-15": ap, "ap_3_-18": ap, "ap_3_-21": ap, "ap_3_-24": ap,
-                "ap_3_-27": ap, "ap_3_-30": ap, "ap_3_-33": ap, "ap_3_-36": ap, "ap_3_-39": ap,
-                "ap_3_-42": ap, "ap_3_-45": ap, "ap_3_-48": ap, "ap_3_-51": ap, "ap_3_-54": ap,
-                "ap_3_-57": ap, "f107_1944_0": f107, "f107_24_-24": f107
-            }
+        ap = 8
+        f107 = 110
+        sw_msg = {
+            "ap_24_0": ap, "ap_3_0": ap, "ap_3_-3": ap, "ap_3_-6": ap, "ap_3_-9": ap,
+            "ap_3_-12": ap, "ap_3_-15": ap, "ap_3_-18": ap, "ap_3_-21": ap, "ap_3_-24": ap,
+            "ap_3_-27": ap, "ap_3_-30": ap, "ap_3_-33": ap, "ap_3_-36": ap, "ap_3_-39": ap,
+            "ap_3_-42": ap, "ap_3_-45": ap, "ap_3_-48": ap, "ap_3_-51": ap, "ap_3_-54": ap,
+            "ap_3_-57": ap, "f107_1944_0": f107, "f107_24_-24": f107
+        }
 
-            swMsgList = []
-            for c, val in enumerate(sw_msg.values()):
-                swMsgData = messaging.SwDataMsgPayload()
-                swMsgData.dataValue = val
-                swMsgList.append(messaging.SwDataMsg().write(swMsgData))
-                atmo.swDataInMsgs[c].subscribeTo(swMsgList[-1])
-        case _:
-            raise ValueError(f"{model} not a valid model!")
-    atmoTaskName = "atmosphere"
-    dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
-    scSim.AddModelToTask(atmoTaskName, atmo)
+        swMsgList = []
+        for c, val in enumerate(sw_msg.values()):
+            swMsgData = messaging.SwDataMsgPayload()
+            swMsgData.dataValue = val
+            swMsgList.append(messaging.SwDataMsg().write(swMsgData))
+            atmo.swDataInMsgs[c].subscribeTo(swMsgList[-1])
+    else:
+        raise ValueError(f"{model} not a valid model!")
+
+    scSim.AddModelToTask(simTaskName, atmo)
 
     # Initialize drag effector and add to sim
     projArea = 10.0  # drag area in m^2
@@ -231,7 +229,7 @@ def run(show_plots, initial_alt=250, deorbit_alt=150, model="exponential"):
 
     # Set up a circular orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = planet.radEquator + initial_alt * 1000  # meters
+    oe.a = planet.radEquator + initialAlt * 1000  # meters
     oe.e = 0.0001
     oe.i = 33.3 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
@@ -290,7 +288,7 @@ def run(show_plots, initial_alt=250, deorbit_alt=150, model="exponential"):
         scSim.ExecuteSimulation()
         r = orbitalMotion.rv2elem(mu, dataRec.r_BN_N[-1], dataRec.v_BN_N[-1]).rmag
         alt = (r - planet.radEquator) / 1000  # km
-        if alt < deorbit_alt or alt > 1e10:
+        if alt < deorbitAlt or alt > 1e10:
             deorbited = True
 
     # retrieve the logged data
@@ -372,7 +370,7 @@ def plotOrbits(timeAxis, posData, velData, dragForce, denseData, oe, mu, planet,
 if __name__ == "__main__":
     run(
         show_plots=True,
-        initial_alt=250,
-        deorbit_alt=150,
-        model="msis"
+        initialAlt=250,
+        deorbitAlt=180,
+        model="msis"   # "msis", "exponential"
     )
