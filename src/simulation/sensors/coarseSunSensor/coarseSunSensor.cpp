@@ -36,6 +36,7 @@ CoarseSunSensor::CoarseSunSensor()
 //    this->CallCounts = 0;
     this->senBias = 0.0;
     this->senNoiseStd = 0.0;
+    this->faultNoiseStd = 0.5;
     this->walkBounds = 1E-15; //don't allow random walk by default
     this->noiseModel = GaussMarkov(1, this->RNGSeed);
     this->faultNoiseModel = GaussMarkov(1, this->RNGSeed+1);
@@ -126,13 +127,17 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "CoarseSunSensor: Failed to link a spacecraft state input message");
     }
 
+    // Must reinitialize gauss markov object to capture user specified RNGSeed
+    // this->noiseModel = GaussMarkov(1, this->RNGSeed);
+    // this->faultNoiseModel = GaussMarkov(1, this->RNGSeed+1);
+
     Eigen::VectorXd nMatrix;
     Eigen::VectorXd pMatrix;
     Eigen::VectorXd bounds;
     nMatrix.resize(1,1);
     pMatrix.resize(1,1);
     bounds.resize(1,1);
-
+    
     this->noiseModel.setRNGSeed(this->RNGSeed);
     
     nMatrix(0,0) = this->senNoiseStd*1.5;
@@ -156,13 +161,13 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
 
     this->faultNoiseModel.setRNGSeed(this->RNGSeed+1);
 
-    nMatrix(0,0) = this->senNoiseStd*1.5; // sensor noise standard dev
+    nMatrixFault(0,0) = this->faultNoiseStd*1.5; // sensor noise standard dev
     this->faultNoiseModel.setNoiseMatrix(nMatrixFault);
     
-    bounds(0,0) = 1.0; // walk bounds
+    boundsFault(0,0) = 2.0; // walk bounds
     this->faultNoiseModel.setUpperBounds(boundsFault);
 
-    pMatrix(0,0) = 1.0; // propagation matrix 
+    pMatrixFault(0,0) = 1.0; // propagation matrix 
     this->faultNoiseModel.setPropMatrix(pMatrixFault);
 
     Eigen::MatrixXd satBounds;
@@ -296,7 +301,7 @@ void CoarseSunSensor::applySensorErrors()
         this->sensedValue = this->faultNoiseModel.getCurrentState().coeff(0,0);
         this->faultState = CSSFAULT_STUCK_CURRENT; 
     } else if (this->faultState == CSSFAULT_RAND){
-        this->sensedValue = this->faultNoiseModel.getCurrentState().coeff(0,0);        
+        this->sensedValue = this->faultNoiseModel.getCurrentState().coeff(0,0);
     } else { // Nominal
 
     }
@@ -411,7 +416,7 @@ void CSSConstellation::Reset(uint64_t CurrentSimNanos)
 void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
 {
     std::vector<CoarseSunSensor*>::iterator itp;
-    CoarseSunSensor *it;
+    CoarseSunSensor* it;
 
     //! - Loop over the sensor list and update all data
     for(itp=this->sensorList.begin(); itp!= this->sensorList.end(); itp++)
@@ -431,7 +436,7 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
     this->constellationOutMsg.write(&this->outputBuffer, this->moduleID, CurrentSimNanos);
 }
 
-void CSSConstellation::appendCSS(CoarseSunSensor *newSensor) {
+void CSSConstellation::appendCSS(CoarseSunSensor* newSensor) {
     sensorList.push_back(newSensor);
     return;
 }

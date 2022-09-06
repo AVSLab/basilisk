@@ -91,7 +91,7 @@ public:
     Eigen::Vector3d     r_PB_B;                 //!< [m] misalignment of CSS platform wrt spacecraft body frame 
     double              senBias;                //!< [-] Sensor bias value
     double              senNoiseStd;            //!< [-] Sensor noise value
-
+    double              faultNoiseStd;          //!< [-] Sensor noise value if CSSFAULT_RAND is triggered
     double              maxOutput;              //!< [-] maximum output (ceiling) for saturation application
     double              minOutput;              //!< [-] minimum output (floor) for saturation application
     double              walkBounds;             //!< [-] Gauss Markov walk bounds
