@@ -236,6 +236,7 @@ class BSKDynamicModels():
             cssDevice.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
             cssDevice.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
             cssDevice.sunEclipseInMsg.subscribeTo(self.eclipseObject.eclipseOutMsgs[0])
+            cssDevice.this.disown()
 
         # setup CSS sensor normal vectors in body frame components
         nHat_B_List = [

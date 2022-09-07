@@ -454,6 +454,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
         CSS.senNoiseStd = 0.017
         CSS.sunInMsg.subscribeTo(sunMsg)
         CSS.stateInMsg.subscribeTo(scObject.scStateOutMsg)
+        CSS.this.disown()
     for CSSHat in CSSOrientationList:
         newCSS = coarseSunSensor.CoarseSunSensor()
         newCSS.ModelTag = "CSS" + str(counter)

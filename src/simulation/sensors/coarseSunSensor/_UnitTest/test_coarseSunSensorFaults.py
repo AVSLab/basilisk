@@ -29,6 +29,7 @@
 #
 
 from doctest import OutputChecker
+from operator import truth
 import os
 import pytest
 import numpy as np
@@ -115,16 +116,16 @@ def run(cssFault):
         truthValue = 0.0
     elif cssFault == "CSSFAULT_STUCK_CURRENT":
         cssFaultValue = coarseSunSensor.CSSFAULT_STUCK_CURRENT
-        truthValue = 1.42809708
+        truthValue = 1.4280970791070948
     elif cssFault == "CSSFAULT_STUCK_MAX":
         cssFaultValue = coarseSunSensor.CSSFAULT_STUCK_MAX
         truthValue = 2.0
     elif cssFault == "CSSFAULT_STUCK_RAND":
         cssFaultValue = coarseSunSensor.CSSFAULT_STUCK_RAND
-        truthValue = 1.72783048
+        truthValue = 1.7278304838858731
     elif cssFault == "CSSFAULT_RAND":
         cssFaultValue = coarseSunSensor.CSSFAULT_RAND
-        truthValue = 1.88754574
+        truthValue = 0.7974448327854251
     else:
         NotImplementedError("Fault type specified does not exist.")
 
@@ -138,10 +139,18 @@ def run(cssFault):
         unitTestSim.TotalSim.SingleStepProcesses()
 
     cssOutput = cssRecoder.OutputData[-1]
-    testFailCount += unitTestSupport.isDoubleEqualRelative(cssOutput, truthValue, 1E-12)
+    print(cssOutput)
+    print(truthValue)
+    
+    if cssFault == "CSSFAULT_OFF":
+        if not truthValue == cssOutput:
+            testFailCount += 1
+    elif not unitTestSupport.isDoubleEqualRelative(cssOutput, truthValue, 1E-12):
+        testFailCount += 1
+
 
     return [testFailCount, ''.join(testMessages)]
 
 
 if __name__ == "__main__":
-    run("CSSFAULT_OFF")
+    run("CSSFAULT_STUCK_MAX")
