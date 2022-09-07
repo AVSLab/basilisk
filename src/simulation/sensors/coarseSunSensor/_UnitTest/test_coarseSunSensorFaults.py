@@ -144,8 +144,4 @@ def run(cssFault):
 
 
 if __name__ == "__main__":
-    # run("CSSFAULT_OFF")
-    # run("CSSFAULT_OFF")
-    # run("CSSFAULT_OFF")
-    run("CSSFAULT_STUCK_RAND")
-    run("CSSFAULT_RAND")
+    run("CSSFAULT_OFF")
