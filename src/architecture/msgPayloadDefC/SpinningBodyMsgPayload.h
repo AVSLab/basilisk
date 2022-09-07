@@ -24,7 +24,7 @@
  /*! @brief Structure used to define the individual Spinning Body data message*/
 typedef struct {
     double theta;                   //!< [rad], spinning body angular displacement
-    double Omega;                //!< [rad/s], spinning body angular displacement rate
+    double thetaDot;                //!< [rad/s], spinning body angular displacement rate
 }SpinningBodyMsgPayload;
 
 
