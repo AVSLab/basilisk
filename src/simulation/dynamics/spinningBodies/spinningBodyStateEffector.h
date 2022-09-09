@@ -44,7 +44,6 @@ public:
     Eigen::Matrix3d IPntSc_S;       //!< [kg-m^2] Inertia of hinged rigid body about point Sc in S frame components
     Eigen::Vector3d r_SB_B;         //!< [m] vector pointing from body frame B origin to spinning frame S origin in B frame components.
     Eigen::Vector3d r_ScS_S;        //!< [m] vector pointing from spinning frame origin to point Sc (center of mass of the spinner) in S frame components
-    Eigen::Matrix3d dcm_BS;         //!< -- DCM from spinner frame to body frame
     Eigen::Vector3d sHat;               //!< spinning axis in B or S frame components.
     Message<SpinningBodyMsgPayload> spinningBodyOutMsg; //!< -- state output message name
     Message<SCStatesMsgPayload> spinningBodyConfigLogOutMsg; //!< panel state config log message name
@@ -58,7 +57,8 @@ private:
     double cTheta;                      //!< -- term needed for back substitution
     double dTheta;                      //!< -- term needed for back substitution
     double u;                           //!< [N-m] optional motor torque
-    Eigen::Vector3d prv_BS;             //!< [rad] PRV attitude of body frame relative to S frame
+    Eigen::Matrix3d dcm_BS;         //!< -- DCM from spinner frame to body frame
+    Eigen::Vector3d prv_BS;             
     Eigen::Vector3d r_ScS_B;            //!< [m] vector pointing from spinning frame origin to point Sc (center of mass of the spinner) in B frame components
     Eigen::Vector3d r_ScB_B;            //!< [m] vector pointing from spinning frame S origin to the center of mass of the spinning body, in S frame components.
     Eigen::Matrix3d rTilde_ScB_B;       //!< [m] tilde matrix of r_ScB_B
@@ -68,11 +68,12 @@ private:
     Eigen::Vector3d omega_SN_B;         //!< [rad/s] angular velocity of the S frame wrt the inertial frame in B frame components.
     Eigen::Vector3d rPrime_ScS_B;       //!< [m/s] body frame time derivative of r_ScS_B
     Eigen::Vector3d rPrime_ScB_B;       //!< [m/s] body frame time derivative of r_ScB_B
-    Eigen::Matrix3d rPrimeTilde_ScS_B;  //!< [m/s] tilde matrix of rPrime_ScS_B
+    Eigen::Matrix3d rPrimeTilde_ScB_B;  //!< [m/s] tilde matrix of rPrime_ScB_B
     Eigen::Vector3d rDot_ScS_B;
     Eigen::Vector3d rDot_SB_B;
     Eigen::Vector3d rDot_ScB_B;
     Eigen::Matrix3d omegaTilde_SB_B;    //!< [rad/s] tilde matrix of omega_SB_B
+    Eigen::Matrix3d omegaTilde_SN_B;    //!< [rad/s] tilde matrix of omega_SN_B
     Eigen::Vector3d r_ScN_N;             //!< [m] position vector of hinge CM S relative to inertial frame
     Eigen::Vector3d v_ScN_N;             //!< [m/s] inertial velocity vector of S relative to inertial frame
     Eigen::Vector3d sigma_SN;           //!< -- MRP attitude of frame S relative to inertial frame

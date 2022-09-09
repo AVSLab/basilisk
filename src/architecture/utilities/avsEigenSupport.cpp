@@ -43,6 +43,7 @@ void eigenMatrixXd2CArray(Eigen::MatrixXd inMat, double *outArray)
 	memcpy(outArray, tempMat.data(), inMat.rows()*inMat.cols()*sizeof(double));
 }
 
+
 /*! This function provides a direct conversion between a 3-vector and an
 output C array.  We are providing this function to save on the  inline conversion
 and the transpose that would have been performed by the general case.
@@ -54,6 +55,7 @@ void eigenVector3d2CArray(Eigen::Vector3d & inMat, double *outArray)
 {
 	memcpy(outArray, inMat.data(), 3 * sizeof(double));
 }
+
 
 /*! This function provides a direct conversion between a 3x3 matrix and an
 output C array.  We are providing this function to save on the inline conversion
@@ -67,6 +69,8 @@ void eigenMatrix3d2CArray(Eigen::Matrix3d & inMat, double *outArray)
 	Eigen::MatrixXd tempMat = inMat.transpose();
 	memcpy(outArray, tempMat.data(), 9 * sizeof(double));
 }
+
+
 /*! This function performs the general conversion between an input C array
 and an Eigen matrix.  Note that to use this function the user MUST size
 the Eigen matrix ahead of time so that the internal map call has enough
@@ -83,6 +87,8 @@ Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols)
 	outMat = Eigen::Map<Eigen::MatrixXd>(inArray, outMat.rows(), outMat.cols());
     return outMat;
 }
+
+
 /*! This function performs the conversion between an input C array
 3-vector and an output Eigen vector3d.  This function is provided
 in order to save an unnecessary conversion between types
@@ -93,6 +99,8 @@ Eigen::Vector3d cArray2EigenVector3d(double *inArray)
 {
     return Eigen::Map<Eigen::Vector3d>(inArray, 3, 1);
 }
+
+
 /*! This function performs the conversion between an input C array
 3x3-matrix and an output Eigen vector3d.  This function is provided
 in order to save an unnecessary conversion between types
@@ -102,6 +110,24 @@ in order to save an unnecessary conversion between types
 Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray)
 {
 	return Eigen::Map<Eigen::Matrix3d>(inArray, 3, 3).transpose();
+}
+
+/*! This function performs the conversion between an input C 3x3 2D
+array and an output Eigen vector3d.  This function is provided
+in order to save an unnecessary conversion between types
+@return Eigen::Matrix3d
+@param inArray The input 2D array
+*/
+Eigen::Matrix3d c2DArray2EigenMatrix3d(double in2DArray[3][3])
+{
+    Eigen::Matrix3d outMat;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            outMat(i, j) = in2DArray[i][j];
+        }
+    }
+
+    return outMat;
 }
 
 
@@ -223,7 +249,6 @@ Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd mrp)
 
     return vec3d;
 }
-
 
 
 /*! This function solves for the zero of the passed function using the Newton Raphson Method

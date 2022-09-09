@@ -36,6 +36,8 @@ Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols);
 Eigen::Vector3d cArray2EigenVector3d(double *inArray);
 //!@brief Specfici conversion between a C array and an Eigen 3x3 matrix
 Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray);
+//!@brief Specfici conversion between a C 2D array and an Eigen 3x3 matrix
+Eigen::Matrix3d c2DArray2EigenMatrix3d(double in2DArray[3][3]);
 //!@brief returns the first axis DCM with the input angle 
 Eigen::Matrix3d eigenM1(double angle);
 //!@brief returns the second axis DCM with the input angle
