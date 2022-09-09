@@ -226,6 +226,7 @@ public:
     double maxBoundingBoxDim;
     double minBoundingBoxDim;
     double boundingBoxFF;
+    double maxTimeStep;
     
     
     

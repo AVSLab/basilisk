@@ -36,6 +36,7 @@ RigidBodyContactEffector::RigidBodyContactEffector()
     this->numBodies = 0;
     this->boundingBoxFF = 1.0;
     this->minBoundingBoxDim = 0.005;
+    this->maxTimeStep = 0.001;
     return;
 }
 
@@ -626,7 +627,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     Eigen::VectorXd X_c;
     bool energyMet;
     int currLoop;
-    int loopMax;
+    int loopMax = 1e9;
     Eigen::VectorXd k1;
     Eigen::VectorXd k2;
     Eigen::VectorXd k3;
@@ -642,8 +643,8 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         {
             if ((this->timeFound >= currentTime) && ((timeStep - this->integrateTimeStep) < 1e-12))
             {
-                this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N;
-                this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B;
+                this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N / timeStep;
+                this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B / timeStep;
                 //this->integrateTimeStep = timeStep;
                 std::cout << "again" << std::endl;
                 return;
@@ -1156,7 +1157,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         // Integrate the collision state until the restitution energy conditions are met
         energyMet = false;
         currLoop = 0;
-        if (currentMaxError <= this->maxPosError)
+        if ((currentMaxError <= this->maxPosError))
         {
             loopMax = 1e6;
         }else
@@ -1188,7 +1189,10 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             // Hard cap on number of loops, which should never be reached.
             if (currLoop > loopMax)
             {
-                std::cout << "hit cap" << std::endl;
+                if (currentMaxError <= this->maxPosError)
+                {
+                    std::cout << "hit cap" << std::endl;
+                }
                 energyMet = true;
             }
         }
@@ -1197,16 +1201,17 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         for (int impNum=0; impNum < numImpacts; impNum++)
         {
             impulse_Body1_N = dcm_CN[impNum].transpose() * X_c.segment(numImpacts * 3 + impNum * 3, 3);
-            forceExternalOther_N -= impulse_Body1_N / timeStep;
-            torqueExternalOtherPntB_B -= body2Current.dcm_BN * (std::get<1>(impacts[impNum]) - body2Current.r_BN_N).cross(impulse_Body1_N / timeStep);
-            this->forceExternal_N += impulse_Body1_N / timeStep;
-            this->torqueExternalPntB_B += body1Current.dcm_BN * (std::get<0>(impacts[impNum]) - body1Current.r_BN_N).cross(impulse_Body1_N / timeStep);
+            forceExternalOther_N -= impulse_Body1_N;// / timeStep;
+            torqueExternalOtherPntB_B -= body2Current.dcm_BN * (std::get<1>(impacts[impNum]) - body2Current.r_BN_N).cross(impulse_Body1_N);// / timeStep);
+            this->forceExternal_N += impulse_Body1_N;// / timeStep;
+            this->torqueExternalPntB_B += body1Current.dcm_BN * (std::get<0>(impacts[impNum]) - body1Current.r_BN_N).cross(impulse_Body1_N);// / timeStep);
         }
         
         if (currentMaxError <= this->maxPosError)
         {
             std::cout << this->forceExternal_N << std::endl;
             std::cout << this->torqueExternalPntB_B << std::endl;
+            std::cout << std::endl << timeStep << std::endl;
             this->responseFound = true;
             std::cout << timeStep << std::endl;
             this->timeFound = currentTime + timeStep + 1.0e-12;
@@ -1216,8 +1221,8 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B = this->torqueExternalPntB_B;
             this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B = torqueExternalOtherPntB_B;
         }
-        //this->forceExternal_N = this->forceExternal_N / timeStep;
-        //this->torqueExternalPntB_B = this->torqueExternalPntB_B / timeStep;
+        this->forceExternal_N = this->forceExternal_N / timeStep;
+        this->torqueExternalPntB_B = this->torqueExternalPntB_B / timeStep;
         return;
     }
     

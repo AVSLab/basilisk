@@ -256,7 +256,7 @@ def run():
     stObMsg = messaging.SpicePlanetStateMsg().write(staticObjectMsg)
 
 
-    scContact.AddSpiceBody("cube2.obj", stObMsg, 1.0, 1.0, 1.0)
+    scContact.AddSpiceBody("cube2.obj", stObMsg, 1.0, 1.0, 0.0)
     # scContact.AddOtherBody("surface.obj", stObMsg, 5.0, 1.0, 1.0)
     # scContact.externalBodies[0].states.r_BN_N = [[3.5], [2.0], [2.0]]  # m   - r_CN_N
     # scContact.externalBodies[0].states.v_BN_N = [[0.0], [0.0], [0.0]]  # m/s - v_CN_N
@@ -303,7 +303,7 @@ def run():
     # scObject.hub.omega_BN_BInit = [[0.1], [0.1], [0.1]]  # rad/s - omega_CN_B
 
     mrp = RigidBodyKinematics.C2MRP(RigidBodyKinematics.Mi(0.2, 2))
-    scObject.hub.r_CN_NInit = [[-0.3], [0.0], [1.5]]  # m   - r_CN_N
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [1.5]]  # m   - r_CN_N
     scObject.hub.v_CN_NInit = [[0.0], [0.0], [-0.7]]  # m/s - v_CN_N
     #scObject.hub.sigma_BNInit = [[mrp[0]], [mrp[1]], [mrp[2]]]  # sigma_CN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
@@ -371,6 +371,7 @@ def run():
         totalKinetic.append( np.sqrt(kineticData1[ii]))
         relVel.append(np.linalg.norm(vNData1[ii, :]) - np.linalg.norm(vNData2[ii, :]))
 
+    print(totalKinetic[-1] / totalKinetic[0])
     # surfaceGeo = GEO.SurfaceGeometry(["surface.obj"], [1.0])
     # landerGeo = GEO.LanderGeometry("Lander.obj", 1.0)
     # surfaceGeo = GEO.SurfaceGeometry(["cube2.obj"], [1.0])
