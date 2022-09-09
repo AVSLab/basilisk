@@ -54,7 +54,6 @@ import scenarioLagrangePointOrbit
     (5, 1, 300, False)
 ])
 @pytest.mark.scenarioTest
-
 def test_scenarioLagrangePointOrbit(lagrangePoint, nOrbits, timestep, showPlots):
     """This function is called by the py.test environment."""
 
