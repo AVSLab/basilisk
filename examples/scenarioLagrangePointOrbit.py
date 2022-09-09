@@ -136,7 +136,6 @@ from datetime import datetime, timedelta
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import orbElemConvert
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                planetStates,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
@@ -237,7 +236,6 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     else:
         oe.f = oe.f - np.pi/3
 
-
     oe.f = oe.f - macros.D2R*2
 
     rN, vN = orbitalMotion.elem2rv(earth.mu, oe)
@@ -258,6 +256,9 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     scDataRec = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scDataRec)
 
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
+                                              # saveFile=__file__
+                                              )
     # Initialize simulation
     scSim.InitializeSimulation()
 
