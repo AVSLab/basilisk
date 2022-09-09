@@ -5,7 +5,6 @@ find_package(PythonInterp 3 REQUIRED)
 
 function(generate_messages searchDir generateCCode)
 
-    message(${searchDir})
     file(GLOB_RECURSE message_files RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "../${searchDir}/*Payload.h")
 
     foreach(msgFile ${message_files})

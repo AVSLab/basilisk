@@ -9,6 +9,7 @@ sys.path.append(path + '/../../../../../Basilisk/src/architecture/messaging/msgA
 
 if __name__ == "__main__":
     moduleOutputPath = sys.argv[1]
+    isExist = os.path.exists(moduleOutputPath)
     mainImportFid = open(moduleOutputPath + '/__init__.py', 'w')
     #mainImportFid.write('from Basilisk.architecture.MessagingToplevel import *\n')
     for i in range(2, len(sys.argv)):
@@ -23,3 +24,5 @@ if __name__ == "__main__":
                 #mainImportFid.write('from Basilisk.architecture.messaging.' + className + ' import ' + msgName + 'Recorder' + ' as ' + msgName + 'Recorder'+ '\n')
                 #mainImportFid.write('from Basilisk.architecture.messaging.' + className + ' import ' + className + 'Vector' + ' as ' + msgName + 'Vector' + '\n')
     mainImportFid.close()
+    setOldPath = moduleOutputPath.split('messaging')[0] + '/cMsgCInterfacePy'
+    os.symlink(moduleOutputPath, setOldPath)
