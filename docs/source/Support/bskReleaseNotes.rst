@@ -46,6 +46,7 @@ Version |release|
 - added new :ref:`scenarioRendezVous` scenario illustrating a servicer approaching
   a debris object and engage several flight modes.
 - added new scenario :ref:`scenarioDragDeorbit`
+- added new scenario :ref:`scenarioLagrangePointOrbit`
 - added support for the polynomial gravity model to :ref:`gravityEffector`
 - updated the ``conanFile.py`` to fix configuration and building issues with the latest
   version of python
