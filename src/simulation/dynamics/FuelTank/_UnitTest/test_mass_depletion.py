@@ -200,10 +200,10 @@ def test_massDepletionTest(show_plots, thrusterType):
         truePos = [[-6.7815933935338277e+06, 4.9468685979815889e+06, 5.4867416696776701e+06]]
         trueSigma = [[1.4401781243854264e-01, -6.4168702021364002e-02, 3.0166086824900967e-01]]
     elif thrusterType == "stateEffector":
-        truePos = [[-6.781599105621495e+06, 4.946865407561626e+06, 5.486741593346272e+06]]
-        trueSigma = [[1.338004605412921e-01, 3.6782736310926184e-02, -2.5041063535788616e-01]]
+        truePos = [[-6781593.400948599, 4946868.619447934, 5486741.690842073]]
+        trueSigma = [[0.14367298348925786, -0.06487574480164254, 0.3032693696902734]]
 
-    accuracy = 1e-7
+    accuracy = 1e-6
     for i in range(0, len(truePos)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataPos[i], truePos[i], 3, accuracy):
@@ -213,6 +213,7 @@ def test_massDepletionTest(show_plots, thrusterType):
     snippetName = thrusterType + 'PositionPassFail'
     passFail(testFailCount, snippetName)
 
+    accuracy = 1e-4
     for i in range(0, len(trueSigma)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i], trueSigma[i], 3, accuracy):
@@ -351,5 +352,5 @@ def passFail(testFailCountInput, snippetName):
 if __name__ == "__main__":
     test_massDepletionTest(
         True,  # show_plots
-        "dynamicEffector"  # thrusterType
+        "stateEffector"  # thrusterType
     )
