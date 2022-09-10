@@ -127,10 +127,6 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "CoarseSunSensor: Failed to link a spacecraft state input message");
     }
 
-    // Must reinitialize gauss markov object to capture user specified RNGSeed
-    // this->noiseModel = GaussMarkov(1, this->RNGSeed);
-    // this->faultNoiseModel = GaussMarkov(1, this->RNGSeed+1);
-
     Eigen::VectorXd nMatrix;
     Eigen::VectorXd pMatrix;
     Eigen::VectorXd bounds;
