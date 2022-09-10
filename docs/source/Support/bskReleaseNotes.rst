@@ -56,7 +56,11 @@ Version |release|
 - fixed an issue in the RKF45 variable time step integrator where one of the constants had the wrong sign.
 - added new :ref:`scenarioMomentumDumping` to illustrate how to perform momentum dumping using thrusters.
 - updated :ref:`hingedRigidBodyStateEffector` to allow for an optional panel reference state input message
-
+- added new :ref:`thrusterStateEffector` which is compatible with a variable time step integrator.  Here
+  the thrust on-off command is passed through a first order low-pass filter to provide smooth on- and
+  off-ramping.
+- added new attitude pointing scenario :ref:`scenarioAttitudeFeedback2T_stateEffTH` that uses
+  the new :ref:`thrusterStateEffector`
 
 Version 2.1.3 (May 25, 2022)
 ----------------------------

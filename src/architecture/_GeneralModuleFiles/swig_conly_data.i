@@ -278,7 +278,7 @@ def getStructSize(self):
 
 
 def protectSetAttr(self, name, value):
-    if(hasattr(self, name) or name == 'this'):
+    if(hasattr(self, name) or name == 'this' or name.find('swig') >= 0):
         object.__setattr__(self, name, value)
     else:
         raise ValueError('You tried to add this variable: ' + name + '\n' + 

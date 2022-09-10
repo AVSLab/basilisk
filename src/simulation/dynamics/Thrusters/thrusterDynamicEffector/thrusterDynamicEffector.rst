@@ -13,7 +13,7 @@ There is technically double inheritance here, but both the DynEffector and
 SysModel classes are abstract base classes so there is no risk of diamond.
 
 The module
-:download:`PDF Description </../../src/simulation/dynamics/Thrusters/_Documentation/Basilisk-THRUSTERS20170712.pdf>`
+:download:`PDF Description </../../src/simulation/dynamics/Thrusters/thrusterDynamicEffector/_Documentation/Basilisk-THRUSTERS20170712.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 
@@ -42,3 +42,5 @@ provides information on what this message is used for.
       - :ref:`THROutputMsgPayload`
       - output message vector for thruster data
 
+.. note::
+  The dynamic behaviour of this module is governed by the variables inside :ref:`THRTimePair`, which determine the on and off-ramp characeteristics. The default behaviour is to not have on and off-ramps active. The ``cutoffFrequency`` variable inside :ref:`THRSimConfig` has no impact on this module and is instead supposed to be used to determine the dynamic behaviour within :ref:`thrusterStateEffector`.

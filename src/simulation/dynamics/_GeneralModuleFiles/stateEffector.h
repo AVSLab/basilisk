@@ -52,6 +52,7 @@ class StateEffector {
 public:
     std::string nameOfSpacecraftAttachedTo="";//!< class variable
     EffectorMassProps effProps;            //!< -- stateEffectors instantiation of effector mass props
+    Eigen::VectorXd stateDerivContribution; //!< -- stateEffector contribution to another stateEffector to prevent double-counting
     Eigen::Vector3d forceOnBody_B;         //!< [N] Force that the state effector applies to the s/c
     Eigen::Vector3d torqueOnBodyPntB_B;    //!< [N] Torque that the state effector applies to the body about point B
     Eigen::Vector3d torqueOnBodyPntC_B;    //!< [N] Torque that the state effector applies to the body about point B

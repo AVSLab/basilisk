@@ -24,6 +24,7 @@
 import sys
 import numpy
 from Basilisk.architecture import messaging
+from Basilisk.simulation import thrusterDynamicEffector
 
 try:
     from collections.abc import OrderedDict
@@ -67,7 +68,7 @@ class thrusterFactory(object):
 
         """
         # create the blank thruster object
-        TH = messaging.THRSimConfigMsgPayload()
+        TH = thrusterDynamicEffector.THRSimConfig()
 
         # set default thruster values
         TH.areaNozzle = 0.1         # [m^2]
@@ -75,6 +76,7 @@ class thrusterFactory(object):
         TH.MaxThrust = 0.200        # [N]
         TH.thrusterMagDisp = 0.0    # [%]
         TH.MinOnTime = 0.020        # [s]
+        TH.cutoffFrequency = 10  # [rad/s]
 
         # populate the thruster object with the type specific parameters
         try:
@@ -125,6 +127,13 @@ class thrusterFactory(object):
             else:
                 TH.MinOnTime = varMinOnTime
 
+        if 'cutoffFrequency' in kwargs:
+            varCutoffFrequency = kwargs['cutoffFrequency']
+            if not isinstance(varCutoffFrequency, (float)):
+                print('ERROR: cutoffFrequency must be a float argument')
+                exit(1)
+            else:
+                TH.cutoffFrequency = varCutoffFrequency
 
         if 'useMinPulseTime' in kwargs:
             varUseMinPulseTime = kwargs['useMinPulseTime']
@@ -164,7 +173,7 @@ class thrusterFactory(object):
         self.thrusterList[varLabel] = TH
         return TH
 
-    def addToSpacecraft(self, modelTag, thDynamicEffector, sc):
+    def addToSpacecraft(self, modelTag, thEffector, sc):
         """
             This function should be called after all Thruster devices are created with create()
             It creates the C-class container for the array of TH devices, and attaches
@@ -174,17 +183,24 @@ class thrusterFactory(object):
             ----------
             modelTag:  string
                 module model tag string
-            thDynamicEffector: thrusterDynamicEffector
-                thruster dynamic effector handle
+            thEffector: thrusterEffector
+                thruster effector handle
             sc: spacecraft
         """
 
-        thDynamicEffector.ModelTag = modelTag
+        thEffector.ModelTag = modelTag
 
         for key, th in list(self.thrusterList.items()):
-            thDynamicEffector.addThruster(th)
+            thEffector.addThruster(th)
 
-        sc.addDynamicEffector(thDynamicEffector)
+        # Check the type of thruster effector
+        thrusterType = str(type(thEffector))
+        if 'ThrusterDynamicEffector' in thrusterType:
+            sc.addDynamicEffector(thEffector)
+        elif 'ThrusterStateEffector' in thrusterType:
+            sc.addStateEffector(thEffector)
+        else:
+            print("This isn't a thruster effector. You did something wrong.")
 
         return
 
@@ -240,7 +256,8 @@ class thrusterFactory(object):
         # Isp value [s]
         TH.steadyIsp = 227.5
 
-        TH.areaNozzle = 0.000079 # [m^2]
+        TH.areaNozzle = 0.000079  # [m^2]
+
         return
 
     #

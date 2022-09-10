@@ -29,22 +29,27 @@
  on for.  It is intended to have the previous firing remain resident for logging*/
 typedef struct
 //@cond DOXYGEN_IGNORE
-THROperationMsgPayload
+THROperation
 //@endcond
 {
     uint64_t fireCounter;                //!< (-) Number of times thruster fired
     double ThrustFactor;                 //!< -- Current Thrust Percentage
     double IspFactor;                    //!< -- Current fractional ISP
+    double ThrustOnCmd;                  //!< s  Time Thruster was requested
+    double totalOnTime;                  //!< s  Total amount of time thruster has fired
+    double opThrustForce_B[3] = {0};     //!< N  Thrust force vector in body frame components
+    double opThrustTorquePntB_B[3] = {0}; //!< N-m Thrust torque about point B in body frame components
+
+    // The following are used in thrusterDynamicEffector
     double ThrustOnRampTime;             //!< s  Time thruster has been on for
     double ThrustOnSteadyTime;           //!< s  Time thruster has been on steady
     double ThrustOffRampTime;            //!< s  Time thruster has been turning off
     double ThrusterStartTime;            //!< s  Time thruster has been executing total
-    double ThrustOnCmd;                  //!< s  Time Thruster was requested
     double PreviousIterTime;             //!< s  Previous thruster int time
-    double totalOnTime;                  //!< s  Total amount of time thruster has fired
-    double opThrustForce_B[3] = {0};     //!< N  Thrust force vector in body frame components
-    double opThrustTorquePntB_B[3] = {0}; //!< N-m Thrust torque about point B in body frame components
-}THROperationMsgPayload;
+
+    // The following is used in thrusterStateEffector
+    double ThrusterEndTime;              //!< s  Time thruster stops burning
+}THROperation;
 
 
 

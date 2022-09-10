@@ -22,8 +22,8 @@
 
 #include <vector>
 #include <Eigen/Dense>
-#include "architecture/msgPayloadDefCpp/THROperationMsgPayload.h"
-#include "architecture/msgPayloadDefC/THRTimePairMsgPayload.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THRTimePair.h"
 
 
 //! @brief Container for overall thruster configuration data for single thruster
@@ -33,23 +33,24 @@
  a thruster.*/
 typedef struct
 //@cond DOXYGEN_IGNORE
-THRSimConfigMsgPayload
+THRSimConfig
 //@endcond
 {
     Eigen::Vector3d thrLoc_B;                       //!< [m] Thruster location expressed in body
     Eigen::Vector3d thrDir_B;                       //!< [-] Thruster force direction unit vector in body
-    std::vector<THRTimePairMsgPayload> ThrusterOnRamp;  //!< -- Percentage of max thrust for ramp up
-    std::vector<THRTimePairMsgPayload> ThrusterOffRamp; //!< -- Percentage of max thrust for ramp down
+    std::vector<THRTimePair> ThrusterOnRamp;        //!< -- Percentage of max thrust for ramp up
+    std::vector<THRTimePair> ThrusterOffRamp;       //!< -- Percentage of max thrust for ramp down
 	double areaNozzle;								//!< [m^2] Area of nozzle
     double MaxThrust;                               //!< [N] Steady state thrust of thruster
     double steadyIsp;                               //!< [s] Steady state specific impulse of thruster
     double MinOnTime;                               //!< s  Minimum allowable on-time
-    THROperationMsgPayload ThrustOps;                   //!< -- Thruster operating data
+    THROperation ThrustOps;                         //!< -- Thruster operating data
     double thrusterMagDisp;                         //!< -- Percentage of magnitude dispersion
     std::vector<double> thrusterDirectionDisp;      //!< -- Unit vector of dispersed thruster pointing
 	bool updateOnly = true;							//!< -- Use update only calculations
     char label[10];                                 //!< [-], label name of the TH device being simulated
-}THRSimConfigMsgPayload;
+    double cutoffFrequency;                         //!< [rad/s] cutoff frequency for first-order behavior
+}THRSimConfig;
 
 
 #endif
