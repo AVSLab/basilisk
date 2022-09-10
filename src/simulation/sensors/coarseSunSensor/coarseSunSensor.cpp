@@ -36,16 +36,18 @@ CoarseSunSensor::CoarseSunSensor()
 //    this->CallCounts = 0;
     this->senBias = 0.0;
     this->senNoiseStd = 0.0;
+    this->faultNoiseStd = 0.5;
     this->walkBounds = 1E-15; //don't allow random walk by default
     this->noiseModel = GaussMarkov(1, this->RNGSeed);
-    this->faultState = MAX_CSSFAULT;
+    this->faultNoiseModel = GaussMarkov(1, this->RNGSeed+1);
+    this->faultState = NOMINAL;
     this->nHat_B.fill(0.0);
-    this->directValue = 0.0;
     this->albedoValue = 0.0;
     this->scaleFactor = 1.0;
     this->kellyFactor = 0.0;
     this->kPower = 2.0;
     this->sensedValue = 0.0;
+    this->pastValue = 0.0;
     this->maxOutput = 1e6;
     this->minOutput = 0.0;
     this->saturateUtility = Saturate(1);
@@ -126,18 +128,43 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
     }
 
     Eigen::VectorXd nMatrix;
+    Eigen::VectorXd pMatrix;
+    Eigen::VectorXd bounds;
     nMatrix.resize(1,1);
+    pMatrix.resize(1,1);
+    bounds.resize(1,1);
+    
+    this->noiseModel.setRNGSeed(this->RNGSeed);
+    
     nMatrix(0,0) = this->senNoiseStd*1.5;
     this->noiseModel.setNoiseMatrix(nMatrix);
-    Eigen::VectorXd bounds;
-    bounds.resize(1,1);
+    
     bounds(0,0) = this->walkBounds;
     this->noiseModel.setUpperBounds(bounds);
-    this->noiseModel.setRNGSeed(this->RNGSeed);
-    Eigen::VectorXd pMatrix;
-    pMatrix.resize(1, 1);
+    
     pMatrix(0,0) = 1.;
     this->noiseModel.setPropMatrix(pMatrix);
+
+    
+    
+    // Fault Noise Model
+    Eigen::VectorXd nMatrixFault;
+    Eigen::VectorXd pMatrixFault;
+    Eigen::VectorXd boundsFault;
+    nMatrixFault.resize(1,1);
+    pMatrixFault.resize(1,1);
+    boundsFault.resize(1,1);
+
+    this->faultNoiseModel.setRNGSeed(this->RNGSeed+1);
+
+    nMatrixFault(0,0) = this->faultNoiseStd*1.5; // sensor noise standard dev
+    this->faultNoiseModel.setNoiseMatrix(nMatrixFault);
+    
+    boundsFault(0,0) = 2.0; // walk bounds
+    this->faultNoiseModel.setUpperBounds(boundsFault);
+
+    pMatrixFault(0,0) = 1.0; // propagation matrix 
+    this->faultNoiseModel.setPropMatrix(pMatrixFault);
 
     Eigen::MatrixXd satBounds;
     satBounds.resize(1, 2);
@@ -209,46 +236,74 @@ void CoarseSunSensor::computeSunData()
     
 }
 
-/*! This method computes the tru sensed values for the sensor */
+/*! This method computes the true sensed values for the sensor */
 void CoarseSunSensor::computeTrueOutput()
 {
-    this->directValue = this->nHat_B.dot(this->sHat_B) >= cos(this->fov) ? this->nHat_B.dot(this->sHat_B) : 0.0;
+    // If sun heading is within sensor field of view, compute signal
+    double signal = this->nHat_B.dot(this->sHat_B);
+    this->trueValue = signal >= cos(this->fov) ? signal : 0.0;
+
     // Define epsilon that will avoid dividing by a very small kelly factor, i.e 0.0.
     double eps = 1e-10;
+
     //! - Apply the kelly fit to the truth direct value
-    double kellyFit = 1.0;
+    double kellyFit;
     if (this->kellyFactor > eps) {
-        kellyFit -= exp(-pow(this->directValue, this->kPower) / this->kellyFactor);
+        // (1 - e^{-x^kPower/kFactor}})
+        kellyFit = 1.0 - exp(-pow(this->trueValue, this->kPower) / this->kellyFactor);
+    } else {
+        kellyFit = 1.0;
     }
-    this->directValue = this->directValue*kellyFit;
+    this->trueValue *= kellyFit; 
     
     // apply sun distance factor (adjust based on flux at current distance from sun)
+    this->trueValue *= this->sunDistanceFactor;
+
     // Also apply shadow factor. Basically, correct the intensity of the light.
-    this->directValue = this->directValue*this->sunDistanceFactor*this->sunVisibilityFactor.shadowFactor;
+    this->trueValue *= this->sunVisibilityFactor.shadowFactor;
+
     // Adding albedo value (if defined by the user)
     if (this->albedoValue > 0.0){        
-        this->directValue = this->directValue + this->albedoValue;}
-    this->trueValue = this->directValue;
+        this->trueValue += this->albedoValue;}
 }
 
-/*! This method takes the true observed cosine value (directValue) and converts 
+/*! This method takes the true observed cosine value and converts 
  it over to an errored value.  It applies noise to the truth. */
 void CoarseSunSensor::applySensorErrors()
 {
-    if(this->senNoiseStd <= 0.0){
-        this->sensedValue = this->directValue + this->senBias;
-        return;
+    double sensorError;
+    if(this->senNoiseStd <= 0.0){ // only include sensor bias
+        sensorError = this->senBias;
+    } else { // include bias and noise
+        //! - Get current error from random number generator
+        this->noiseModel.computeNextState();
+        Eigen::VectorXd currentErrorEigen = this->noiseModel.getCurrentState();
+        double sensorNoise = currentErrorEigen.coeff(0,0);
+        sensorError = this->senBias + sensorNoise;
     }
 
-    //! - Get current error from random number generator
-    this->noiseModel.computeNextState();
-    Eigen::VectorXd currentErrorEigen =  this->noiseModel.getCurrentState();
-    double currentError = currentErrorEigen.coeff(0,0);
+    this->sensedValue = this->trueValue + sensorError;
     
-    //Apply saturation values here.
+    //Apply faults values here.
+    this->faultNoiseModel.computeNextState();
     
-    //! - Sensed value is total illuminance with a kelly fit + noise
-    this->sensedValue = this->directValue + currentError + this->senBias;
+    if(this->faultState == CSSFAULT_OFF){
+        this->sensedValue = 0.0;
+    } else if (this->faultState == CSSFAULT_STUCK_MAX){
+        this->sensedValue = 1.0;
+    } else if (this->faultState == CSSFAULT_STUCK_CURRENT){
+        this->sensedValue = this->pastValue; 
+    } else if (this->faultState == CSSFAULT_STUCK_RAND){
+        this->sensedValue = this->faultNoiseModel.getCurrentState().coeff(0,0);
+        this->faultState = CSSFAULT_STUCK_CURRENT; 
+    } else if (this->faultState == CSSFAULT_RAND){
+        this->sensedValue = this->faultNoiseModel.getCurrentState().coeff(0,0);
+    } else { // Nominal
+
+    }
+
+    this->pastValue = this->sensedValue; 
+    
 }
 
 void CoarseSunSensor::scaleSensorValues()
@@ -340,10 +395,13 @@ CSSConstellation::~CSSConstellation()
  @return void */
 void CSSConstellation::Reset(uint64_t CurrentSimNanos)
 {
-    std::vector<CoarseSunSensor>::iterator it;
+    std::vector<CoarseSunSensor*>::iterator itp;
+    CoarseSunSensor *it;
+
     //! - Loop over the sensor list and initialize all children
-    for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
+    for(itp=this->sensorList.begin(); itp!= this->sensorList.end(); itp++)
     {
+        it = *itp;
         it->Reset(CurrentSimNanos);
     }
 
@@ -353,11 +411,13 @@ void CSSConstellation::Reset(uint64_t CurrentSimNanos)
 
 void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
 {
-    std::vector<CoarseSunSensor>::iterator it;
+    std::vector<CoarseSunSensor*>::iterator itp;
+    CoarseSunSensor* it;
 
     //! - Loop over the sensor list and update all data
-    for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
+    for(itp=this->sensorList.begin(); itp!= this->sensorList.end(); itp++)
     {
+        it = *itp;
         it->readInputMessages();
         it->computeSunData();
         it->computeTrueOutput();
@@ -365,13 +425,14 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
         it->scaleSensorValues();
         it->applySaturation();
         it->writeOutputMessages(CurrentSimNanos);
+        
+        this->outputBuffer.CosValue[itp - this->sensorList.begin()] = it->sensedValue;
 
-        this->outputBuffer.CosValue[it - this->sensorList.begin()] = it->sensedValue;
     }
     this->constellationOutMsg.write(&this->outputBuffer, this->moduleID, CurrentSimNanos);
 }
 
-void CSSConstellation::appendCSS(CoarseSunSensor *newSensor) {
-    sensorList.push_back(*newSensor);
+void CSSConstellation::appendCSS(CoarseSunSensor* newSensor) {
+    sensorList.push_back(newSensor);
     return;
 }

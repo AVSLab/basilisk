@@ -39,14 +39,12 @@
 #include <Eigen/Dense>
 
 typedef enum {
-    CSSFAULT_OFF,           /*!< CSS measurement is set to 0 for all future time
-                             */
+    CSSFAULT_OFF,           /*!< CSS measurement is set to 0 for all future time */
     CSSFAULT_STUCK_CURRENT, /*!< CSS measurement is set to current value for all future time */
     CSSFAULT_STUCK_MAX,     /*!< CSS measurement is set to maximum value for all future time */
     CSSFAULT_STUCK_RAND,    /*!< CSS measurement is set to randomly selected value for all future time */
-    CSSFAULT_STUCK,         /*!< CSS measurement is set to percent value for all future time */
     CSSFAULT_RAND,          /*!< CSS measurement returns uniformly distributed random values between 0 and max */
-    MAX_CSSFAULT
+    NOMINAL
 } CSSFaultState_t;
 
 /*! @brief coarse sun sensor class */
@@ -82,18 +80,18 @@ public:
     Eigen::Matrix3d     dcm_PB;                 //!< [-] DCM from platform frame P to body frame B
     Eigen::Vector3d     nHat_B;                 //!< [-] css unit direction vector in body frame components
     Eigen::Vector3d     sHat_B;                 //!< [-] unit vector to sun in B
-    double              directValue;            //!< [-] direct solar irradiance measurement
     double              albedoValue = -1.0;     //!< [-] albedo irradiance measurement
     double              scaleFactor;            //!< [-] scale factor applied to sensor (common + individual multipliers)
-    double              sensedValue;            //!< [-] total measurement including perturbations
-    double              trueValue;              //!< [-] total measurement without perturbations
+    double              pastValue;              //!< [-] measurement from last update (used only for faults)
+    double              trueValue;              //!< [-] solar irradiance measurement without perturbations
+    double              sensedValue;            //!< [-] solar irradiance measurement including perturbations
     double              kellyFactor;            //!< [-] Kelly curve fit for output cosine curve
     double              fov;                    //!< [-] rad, field of view half angle
     Eigen::Vector3d     r_B;                    //!< [m] position vector in body frame
     Eigen::Vector3d     r_PB_B;                 //!< [m] misalignment of CSS platform wrt spacecraft body frame 
     double              senBias;                //!< [-] Sensor bias value
     double              senNoiseStd;            //!< [-] Sensor noise value
-
+    double              faultNoiseStd;          //!< [-] Sensor noise value if CSSFAULT_RAND is triggered
     double              maxOutput;              //!< [-] maximum output (ceiling) for saturation application
     double              minOutput;              //!< [-] minimum output (floor) for saturation application
     double              walkBounds;             //!< [-] Gauss Markov walk bounds
@@ -107,6 +105,7 @@ private:
     EclipseMsgPayload sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
     double              sunDistanceFactor;      //! [-] Factor to scale cosine curve magnitude based on solar flux at location
     GaussMarkov noiseModel;                     //! [-] Gauss Markov noise generation model
+    GaussMarkov faultNoiseModel;                //! [-] Gauss Markov noise generation model exclusively for CSS fault
     Saturate saturateUtility;                   //! [-] Saturation utility
 };
 
@@ -124,7 +123,7 @@ class CSSConstellation: public SysModel {
     
  public:
     Message<CSSArraySensorMsgPayload> constellationOutMsg;  //!< [-] CSS constellation output message
-    std::vector<CoarseSunSensor> sensorList;    //!< [-] List of coarse sun sensors in constellation
+    std::vector<CoarseSunSensor *> sensorList;    //!< [-] List of coarse sun sensors in constellation
  private:
     CSSArraySensorMsgPayload outputBuffer;      //!< [-] buffer used to write output message
 };

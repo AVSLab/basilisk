@@ -61,6 +61,8 @@ Version |release|
   off-ramping.
 - added new attitude pointing scenario :ref:`scenarioAttitudeFeedback2T_stateEffTH` that uses
   the new :ref:`thrusterStateEffector`
+- added ability to simulate faults within :ref:`coarseSunSensor` module
+
 
 Version 2.1.3 (May 25, 2022)
 ----------------------------

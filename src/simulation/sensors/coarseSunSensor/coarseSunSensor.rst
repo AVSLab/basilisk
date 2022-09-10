@@ -12,6 +12,31 @@ how to run it, as well as testing.
 The corruption types are outlined in this
 :download:`PDF Description </../../src/simulation/sensors/imuSensor/_Documentation/BasiliskCorruptions.pdf>`.
 
+.. warning::
+  Be careful when generating CSS objects in a loop or using a function! It is often convenient to initialize many CSS' with the same attributes using a loop with a function like ``setupCSS(CSS)`` where ``setupCSS`` initializes the field of view, sensor noise, min / max outputs, etc. If you do this, be sure to disown the memory in Python so the object doesn't get accidentally garbage collected or freed for use. You can disown the memory though ``cssObject.this.disown()``.
+
+The coarse sun sensor module also supports user-enabled faulty behavior by assigning a values to the ``.faultState`` member of a given sensor. An example of such call would is ``cssSensor.faultState = coarse_sun_sensor.CSSFAULT_OFF`` where ``cssSensor`` is an instantiated sensor, and ``coarse_sun_sensor`` is the imported module. 
+
+The module currently supports the following faults: 
+
+.. list-table:: ``CoarseSunSensor`` Fault Types
+    :widths: 35 50
+    :header-rows: 1
+
+    * - Fault Enumeration
+      - Description
+    * - ``CSSFAULT_OFF``
+      - CSS no longer provides a signal (output = 0)
+    * - ``CSSFAULT_STUCK_CURRENT``
+      - CSS signal is stuck on value from past timestep
+    * - ``CSSFAULT_STUCK_MAX``
+      - CSS signal is stuck on the maximum value
+    * - ``CSSFAULT_STUCK_RAND``
+      - CSS signal is stuck on a random value 
+    * - ``CSSFAULT_RAND``
+      - CSS produces random values 
+
+
 
 Message Connection Descriptions
 -------------------------------
