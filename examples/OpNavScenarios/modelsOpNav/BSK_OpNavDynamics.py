@@ -313,7 +313,7 @@ class BSKDynamicModels():
 
         # store all
         cssList = []
-        for nHat_B, i in zip(nHat_B_List, list(range(1,numCSS+1))):
+        for nHat_B, i in zip(nHat_B_List, list(range(1, numCSS+1))):
             CSS = coarseSunSensor.CoarseSunSensor()
             setupCSS(CSS)
             CSS.ModelTag = "CSS" + str(i)

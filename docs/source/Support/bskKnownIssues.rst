@@ -12,6 +12,10 @@ Version |release|
 - prior version had a bug in computer the latitude in ``PCPF2LLA()`` inside :ref:`geodeticConversion`.  This is used
   in the ``specifyLocationPCPF()`` method inside :ref:`groundLocation`, and in
   :ref:`msisAtmosphere` and ref:`albedo`.
+- :ref:`coarsesunsensor` now receives in ``sensorList`` a list of CSS configuration state pointers, not
+  a copy to the configuration structures.  This allows these values to be changed on the fly from
+  within python.  However, the simulation code must ensure that the CSS configuration structures
+  are retained in memory or a segmentation fault will ensue.
 
 Version 2.1.3
 -------------
