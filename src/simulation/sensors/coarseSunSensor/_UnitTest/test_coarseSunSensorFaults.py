@@ -129,7 +129,6 @@ def run(cssFault):
     else:
         NotImplementedError("Fault type specified does not exist.")
 
-
     unitTestSim.InitializeSimulation()
 
     # Execute the simulation for one time step
@@ -147,7 +146,6 @@ def run(cssFault):
             testFailCount += 1
     elif not unitTestSupport.isDoubleEqualRelative(cssOutput, truthValue, 1E-12):
         testFailCount += 1
-
 
     return [testFailCount, ''.join(testMessages)]
 
