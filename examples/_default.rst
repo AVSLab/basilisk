@@ -74,7 +74,8 @@ Attitude Control with Actuators
    :maxdepth: 1
 
    Pointing with Reaction Wheels <scenarioAttitudeFeedbackRW>
-   Pointing with Attitude Thrusters <scenarioAttitudeFeedback2T_TH>
+   Pointing with Attitude State Effector Thrusters <scenarioAttitudeFeedback2T_stateEffTH>
+   Pointing with Attitude Dynamic Effector Thrusters <scenarioAttitudeFeedback2T_TH>
    Reaction Wheel Momentum Dumping using Thrusters <scenarioMomentumDumping>
 
 

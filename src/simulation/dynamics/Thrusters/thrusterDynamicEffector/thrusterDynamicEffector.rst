@@ -13,7 +13,7 @@ There is technically double inheritance here, but both the DynEffector and
 SysModel classes are abstract base classes so there is no risk of diamond.
 
 The module
-:download:`PDF Description </../../src/simulation/dynamics/Thrusters/_Documentation/Basilisk-THRUSTERS20170712.pdf>`
+:download:`PDF Description </../../src/simulation/dynamics/Thrusters/thrusterDynamicEffector/_Documentation/Basilisk-THRUSTERS20170712.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 

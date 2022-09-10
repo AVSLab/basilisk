@@ -2,7 +2,7 @@
 Executive Summary
 -----------------
 
-This module provides an implementation of the behavior of thrusters. Thrusters are modeled dynamically using a first-order ordinary differencial equation, which is compatible with variable timestep integrators. 
+This module provides an implementation of the behavior of thrusters. Thrusters are modeled dynamically using a first-order ordinary differential equation, which is compatible with variable time step integrators.
 With this module, there are now two different thruster implementations. See :ref:`thrusterDynamicEffector` for the previous version, which implemented thrusters using on and off-ramps, although not compatible with variable 
 time step integrators.
 
@@ -90,7 +90,7 @@ Module Setup
 ~~~~~~~~~~~~
 
 To use the thruster state effector module, the user first needs to create the thruster and populate it with the necessary information, such as thruster magnitude, minimum on time, etc. This can be done with the help 
-of the :ref:`ThrusterFactory` Basilisk Python library. The code to create a generic thruster is shown below:
+of the :ref:`simIncludeThruster` Basilisk Python library. The code to create a generic thruster is shown below:
 
 .. code-block:: python
 
