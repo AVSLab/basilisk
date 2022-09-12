@@ -194,6 +194,7 @@ Complex Spacecraft Dynamics Simulations
    Fuel Slosh <scenarioFuelSlosh>
    Flexible (Hinged) Panels <scenarioHingedRigidBody>
    Sensors Attached to a Rotating Panel <scenarioRotatingPanel>
+   Hinged Panel Deployment <scenarioDeployingPanel>
    MSM Simulation of Charged Spacecraft <scenarioTwoChargedSC>
 
 Mission Simulations

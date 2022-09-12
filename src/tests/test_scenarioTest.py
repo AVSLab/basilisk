@@ -56,6 +56,7 @@ sys.path.append(path + '/../../examples/')
                                         , 'scenarioJupiterArrival'
                                         , 'scenarioSpiceSpacecraft'
                                         , 'scenarioInertialSpiral'
+                                        , 'scenarioDeployingPanel'
                                         , 'scenarioAsteroidArrival'
                                         , 'scenarioTwoChargedSC'
                                         , 'scenarioRendezVous'
