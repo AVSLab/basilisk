@@ -41,9 +41,11 @@ SpinningBodyStateEffector::SpinningBodyStateEffector()
     this->thetaInit = 0.00;
     this->thetaDotInit = 0.0;
     this->IPntSc_S.Identity();
-    this->r_SB_B.setZero();
-    this->sHat.setZero();
     this->dcm_BS.Identity();
+    this->dcm_S0B.Identity();
+    this->r_SB_B.setZero();
+    this->sHat_S.setZero();
+    
     this->nameOfThetaState = "spinningBodyTheta" + std::to_string(this->effectorID);
     this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(this->effectorID);
     this->effectorID++; 
@@ -57,8 +59,8 @@ uint64_t SpinningBodyStateEffector::effectorID = 1;
 SpinningBodyStateEffector::~SpinningBodyStateEffector()
 {
     // Normalize the sHat vector (same in B or S frame components)
-    if (this->sHat.norm() > 0.01) {
-        this->sHat.normalize();
+    if (this->sHat_S.norm() > 0.01) {
+        this->sHat_S.normalize();
     }
     else {
         bskLogger.bskLog(BSK_ERROR, "Norm of sHat must be greater than 0. sHat may not have been set by the user.");
@@ -152,12 +154,13 @@ void SpinningBodyStateEffector::updateEffectorMassProps(double integTime)
     this->thetaDot = this->thetaDotState->getState()(0, 0);
 
     // Compute the DCM from S frame to B frame
-    double prv_BS[3];
-    double dcm_BS[3][3];
-    this->prv_BS = -this->theta * this->sHat;
-    eigenVector3d2CArray(this->prv_BS, prv_BS);
-    PRV2C(prv_BS, dcm_BS);
-    this->dcm_BS = c2DArray2EigenMatrix3d(dcm_BS);
+    double prv_S0S[3];
+    double dcm_S0S[3][3];
+    this->prv_S0S = -this->theta * this->sHat_S;
+    eigenVector3d2CArray(this->prv_S0S, prv_S0S);
+    PRV2C(prv_S0S, dcm_S0S);
+    this->dcm_BS = this->dcm_S0B.transpose() * c2DArray2EigenMatrix3d(dcm_S0S);
+    this->sHat_B = this->dcm_BS * this->sHat_S;
 
     // Compute the effector's CoM with respect to point B
     this->r_ScS_B = this->dcm_BS * this->r_ScS_S;
@@ -170,7 +173,7 @@ void SpinningBodyStateEffector::updateEffectorMassProps(double integTime)
     this->effProps.IEffPntB_B = this->IPntSc_B - this->mass * this->rTilde_ScB_B * this->rTilde_ScB_B;
 
     // Define omega_SB_S and the cross product operator
-    this->omega_SB_B = this->thetaDot * this->sHat;
+    this->omega_SB_B = this->thetaDot * this->sHat_B;
     this->omegaTilde_SB_B = eigenTilde(this->omega_SB_B);
 
     // Find rPrime_ScB_B
@@ -207,36 +210,36 @@ void SpinningBodyStateEffector::updateContributions(double integTime, BackSubMat
     this->omegaTilde_SN_B = eigenTilde(this->omega_SN_B);
 
     // Define dTheta
-    this->dTheta = this->sHat.transpose() * (this->IPntSc_B - this->mass * this->rTilde_ScS_B * this->rTilde_ScS_B) * this->sHat;
+    this->dTheta = this->sHat_B.transpose() * (this->IPntSc_B - this->mass * this->rTilde_ScS_B * this->rTilde_ScS_B) * this->sHat_B;
 
     // Define aTheta
-    this->aTheta = this->mass * this->rTilde_ScS_B * this->sHat / this->dTheta;
+    this->aTheta = this->mass * this->rTilde_ScS_B * this->sHat_B / this->dTheta;
 
     // Define bTheta
     this->rTilde_ScS_B = eigenTilde(this->r_ScS_B);
-    this->bTheta = -(this->IPntSc_B - this->mass * this->rTilde_ScB_B * this->rTilde_ScS_B) * this->sHat / this->dTheta;
+    this->bTheta = -(this->IPntSc_B - this->mass * this->rTilde_ScB_B * this->rTilde_ScS_B) * this->sHat_B / this->dTheta;
 
     // Define cTheta
     Eigen::Vector3d gravityTorquePntS_B;
-    this->rDot_ScS_B = this->omega_SN_B.cross(this->r_ScS_B);
-    this->rDot_SB_B = this->omega_BN_B.cross(this->r_SB_B);
-    gravityTorquePntS_B = this->r_ScS_B.cross(this->mass * g_B);
-    this->cTheta = this->sHat.dot(gravityTorquePntS_B - this->omegaTilde_SN_B * this->IPntSc_B * this->omega_SN_B
+    this->rDot_ScS_B = this->omegaTilde_SN_B * this->r_ScS_B;
+    this->rDot_SB_B = this->omegaTilde_BN_B * this->r_SB_B;
+    gravityTorquePntS_B = this->rTilde_ScS_B * this->mass * g_B;
+    this->cTheta = this->sHat_B.dot(gravityTorquePntS_B - this->omegaTilde_SN_B * this->IPntSc_B * this->omega_SN_B
         - (this->IPntSc_B - this->mass * this->rTilde_ScS_B * this->rTilde_ScS_B) * this->omegaTilde_BN_B * this->omega_SB_B
         - this->mass * this->rTilde_ScS_B * (this->omegaTilde_BN_B * this->rDot_SB_B + this->omegaTilde_SN_B * this->rDot_ScS_B)) / this->dTheta;
 
     // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
     // Translation contributions
-    backSubContr.matrixA = -this->mass * this->rTilde_ScS_B * this->sHat * this->aTheta.transpose();
-    backSubContr.matrixB = -this->mass * this->rTilde_ScS_B * this->sHat * this->bTheta.transpose();
-    backSubContr.vecTrans = -this->mass * this->omegaTilde_SB_B * this->rPrime_ScS_B + this->mass * this->rTilde_ScS_B * this->sHat * this->cTheta;
+    backSubContr.matrixA = -this->mass * this->rTilde_ScS_B * this->sHat_B * this->aTheta.transpose();
+    backSubContr.matrixB = -this->mass * this->rTilde_ScS_B * this->sHat_B * this->bTheta.transpose();
+    backSubContr.vecTrans = -this->mass * this->omegaTilde_SB_B * this->rPrime_ScS_B + this->mass * this->rTilde_ScS_B * this->sHat_B * this->cTheta;
 
     // Rotation contributions
-    backSubContr.matrixC = (this->IPntSc_B - this->mass * this->rTilde_ScB_B * this->rTilde_ScS_B) * this->sHat * this->aTheta.transpose();
-    backSubContr.matrixD = (this->IPntSc_B - this->mass * this->rTilde_ScB_B * this->rTilde_ScS_B) * this->sHat * this->bTheta.transpose();
+    backSubContr.matrixC = (this->IPntSc_B - this->mass * this->rTilde_ScB_B * this->rTilde_ScS_B) * this->sHat_B * this->aTheta.transpose();
+    backSubContr.matrixD = (this->IPntSc_B - this->mass * this->rTilde_ScB_B * this->rTilde_ScS_B) * this->sHat_B * this->bTheta.transpose();
     backSubContr.vecRot = -this->omegaTilde_SN_B * this->IPntSc_B * this->omega_SB_B - this->mass * this->omegaTilde_BN_B * this->rTilde_ScB_B * this->rPrime_ScB_B
         - this->mass * this->rTilde_ScB_B * this->omegaTilde_SB_B * this->rPrime_ScS_B
-        - (this->IPntSc_B - this->mass * this->rTilde_ScB_B * this->rTilde_ScS_B) * this->sHat * this->cTheta;
+        - (this->IPntSc_B - this->mass * this->rTilde_ScB_B * this->rTilde_ScS_B) * this->sHat_B * this->cTheta;
 
     return;
 }
@@ -244,6 +247,10 @@ void SpinningBodyStateEffector::updateContributions(double integTime, BackSubMat
 /*! This method is used to find the derivatives for the SB stateEffector: thetaDDot and the kinematic derivative */
 void SpinningBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
+    // Update dcm_BN
+    this->sigma_BN = sigma_BN;
+    this->dcm_BN = (this->sigma_BN.toRotationMatrix()).transpose();
+
     // Grab omegaDot_BN_B 
     Eigen::Vector3d omegaDotLocal_BN_B;
     omegaDotLocal_BN_B = omegaDot_BN_B;
@@ -269,7 +276,11 @@ void SpinningBodyStateEffector::updateEnergyMomContributions(double integTime, E
 {
     // Update omega_BN_B and omega_SN_B
     this->omega_BN_B = omega_BN_B;
+    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
     this->omega_SN_B = this->omega_SB_B + this->omega_BN_B;
+
+    // Compute rDot_ScB_B
+    this->rDot_ScB_B = this->rPrime_ScB_B + this->omegaTilde_BN_B * this->r_ScB_B;
 
     // Find rotational angular momentum contribution from hub
     rotAngMomPntCContr_B = this->IPntSc_B * this->omega_SN_B + this->mass * this->rTilde_ScB_B * this->rDot_ScB_B;
@@ -311,7 +322,7 @@ void SpinningBodyStateEffector::computeSpinningBodyInertialStates()
     this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
 
     // inertial position vector
-    this->r_ScN_N = this->dcm_BN.transpose() * this->r_ScB_B + (Eigen::Vector3d)this->hubVelocity->getState();
+    this->r_ScN_N = (Eigen::Vector3d)this->hubPosition->getState() + this->dcm_BN.transpose() * this->r_ScB_B;
 
     // inertial velocity vector
     this->v_ScN_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * this->rDot_ScB_B;

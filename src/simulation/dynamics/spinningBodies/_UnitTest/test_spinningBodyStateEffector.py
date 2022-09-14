@@ -75,9 +75,10 @@ def test_spinningBody(show_plots):
     # Define properties of spinning body
     spinningBody.mass = 100.0
     spinningBody.IPntSc_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    spinningBody.r_ScS_S = [[0.5], [0.0], [1.0]]
+    spinningBody.dcm_S0B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    spinningBody.r_ScS_S = [[0.5/], [0.0], [1.0]]
     spinningBody.r_SB_B = [[1.5], [-0.5], [2.0]]
-    spinningBody.sHat = [[1], [0], [0]]
+    spinningBody.sHat_S = [[0], [0], [1]]
     spinningBody.thetaInit = 5 * macros.D2R
     spinningBody.thetaDotInit = 1 * macros.D2R
     spinningBody.ModelTag = "SpinningBody"
@@ -121,31 +122,34 @@ def test_spinningBody(show_plots):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
 
+    # Add states to log
+    thetaData = spinningBody.spinningBodyOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, thetaData)
+
+    # Setup and run the simulation
     stopTime = 2.5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    sigmaOut = datLog.sigma_BN
-    dataSigma = [sigmaOut[-1]]
-    trueSigma = [[0.06170318243240492, -0.07089090074412899, 0.06409500412692531]]
-
+    # Extract the logged variables
     orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    theta = thetaData.theta
+    thetaDot = thetaData.thetaDot
 
+    # Setup the conservation quantities
     initialOrbAngMom_N = [[orbAngMom_N[0, 1], orbAngMom_N[0, 2], orbAngMom_N[0, 3]]]
     finalOrbAngMom = [orbAngMom_N[-1]]
-
     initialRotAngMom_N = [[rotAngMom_N[0, 1], rotAngMom_N[0, 2], rotAngMom_N[0, 3]]]
     finalRotAngMom = [rotAngMom_N[-1]]
-
     initialOrbEnergy = [[orbEnergy[0, 1]]]
     finalOrbEnergy = [orbEnergy[-1]]
-
     initialRotEnergy = [[rotEnergy[0, 1]]]
     finalRotEnergy = [rotEnergy[-1]]
 
+    # Plotting
     plt.close("all")
     plt.figure()
     plt.clf()
@@ -175,17 +179,24 @@ def test_spinningBody(show_plots):
     plt.xlabel('time (s)')
     plt.ylabel('Rotational Energy Relative Difference')
 
+    plt.figure()
+    plt.clf()
+    plt.plot(thetaData.times() * 1e-9, theta)
+    plt.xlabel('time (s)')
+    plt.ylabel('theta')
+
+    plt.figure()
+    plt.clf()
+    plt.plot(thetaData.times() * 1e-9, thetaDot)
+    plt.xlabel('time (s)')
+    plt.ylabel('thetaDot')
+
     if show_plots:
         plt.show()
     plt.close("all")
 
+    # Testing setup
     accuracy = 1e-10
-    for i in range(0, len(trueSigma)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(dataSigma[i], trueSigma[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED:  Spinning Body integrated test failed gravity attitude test")
-
     finalOrbAngMom = numpy.delete(finalOrbAngMom, 0, axis=1)  # remove time column
     finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
     finalRotEnergy = numpy.delete(finalRotEnergy, 0, axis=1)  # remove time column

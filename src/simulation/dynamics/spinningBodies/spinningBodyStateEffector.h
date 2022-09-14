@@ -44,7 +44,8 @@ public:
     Eigen::Matrix3d IPntSc_S;       //!< [kg-m^2] Inertia of hinged rigid body about point Sc in S frame components
     Eigen::Vector3d r_SB_B;         //!< [m] vector pointing from body frame B origin to spinning frame S origin in B frame components.
     Eigen::Vector3d r_ScS_S;        //!< [m] vector pointing from spinning frame origin to point Sc (center of mass of the spinner) in S frame components
-    Eigen::Vector3d sHat;               //!< spinning axis in B or S frame components.
+    Eigen::Vector3d sHat_S;               //!< spinning axis in B or S frame components.
+    Eigen::Matrix3d dcm_S0B;        //!< -- DCM from the body frame to the S frame for theta=0
     Message<SpinningBodyMsgPayload> spinningBodyOutMsg; //!< -- state output message name
     Message<SCStatesMsgPayload> spinningBodyConfigLogOutMsg; //!< panel state config log message name
     SpinningBodyMsgPayload SBoutputStates;  //!< instance of messaging system message struct
@@ -58,7 +59,8 @@ private:
     double dTheta;                      //!< -- term needed for back substitution
     double u;                           //!< [N-m] optional motor torque
     Eigen::Matrix3d dcm_BS;         //!< -- DCM from spinner frame to body frame
-    Eigen::Vector3d prv_BS;             
+    Eigen::Vector3d prv_S0S;             
+    Eigen::Vector3d sHat_B;
     Eigen::Vector3d r_ScS_B;            //!< [m] vector pointing from spinning frame origin to point Sc (center of mass of the spinner) in B frame components
     Eigen::Vector3d r_ScB_B;            //!< [m] vector pointing from spinning frame S origin to the center of mass of the spinning body, in S frame components.
     Eigen::Matrix3d rTilde_ScB_B;       //!< [m] tilde matrix of r_ScB_B
