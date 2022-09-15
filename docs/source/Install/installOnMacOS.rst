@@ -84,38 +84,6 @@ Setting up the Python Environment
 
 In the following instructions, be sure to follow the sequence of tasks as outlined below.
 
-Setting the ``PATH`` Environment Variable
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-As this installation will install all required Python packages in the
-user home directory ``Library/Python`` folder, the ``PATH`` variable
-must be setup within the terminal environment.
-
-#. Open a terminal window
-#. To open these system files in TextEdit.app for easy editing, you can use the shell ``open`` command in steps 3 through 6 below
-#. If using a zsh shell, then
-
-    - type::
-
-        $ open .zshrc
-
-    - Add the line::
-
-        PATH=/Users/hp/Library/Python/3.7/bin:$PATH
-
-#. If using a Bash shell, then
-
-   -  type::
-
-        $ open ~/.bash_profile
-
-   -  Add the line::
-
-        export PATH=~/Library/Python/3.7/bin:$PATH
-
-#. Save and close the file
-#. Open a new terminal window for the path to take effect
-
 
 Using A Python Virtual Environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
