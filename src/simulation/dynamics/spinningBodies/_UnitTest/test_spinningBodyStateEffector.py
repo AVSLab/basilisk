@@ -26,13 +26,7 @@ splitPath = path.split('simulation')
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import spinningBodyStateEffector
-from Basilisk.utilities import macros
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import spacecraftSystem
-from Basilisk.architecture import messaging
+from Basilisk.simulation import spacecraft, spinningBodyStateEffector, gravityEffector
 from Basilisk.utilities import macros
 
 
@@ -76,17 +70,17 @@ def test_spinningBody(show_plots):
     spinningBody.mass = 100.0
     spinningBody.IPntSc_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     spinningBody.dcm_S0B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    spinningBody.r_ScS_S = [[0.5/], [0.0], [1.0]]
+    spinningBody.r_ScS_S = [[0.5], [0.0], [1.0]]
     spinningBody.r_SB_B = [[1.5], [-0.5], [2.0]]
     spinningBody.sHat_S = [[0], [0], [1]]
     spinningBody.thetaInit = 5 * macros.D2R
     spinningBody.thetaDotInit = 1 * macros.D2R
     spinningBody.ModelTag = "SpinningBody"
 
-    # Add panels to spaceCraft
+    # Add spinning body to spacecraft
     scObject.addStateEffector(spinningBody)
 
-    # Define mass properties of the rigid part of the spacecraft
+    # Define mass properties of the rigid hub of the spacecraft
     scObject.hub.mHub = 750.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
@@ -101,13 +95,13 @@ def test_spinningBody(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, spinningBody)
 
-    # Add Earth gravity to the sim
-    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.planetName = "earth_planet_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15  # meters!
-    unitTestSim.earthGravBody.isCentralBody = True
-    unitTestSim.earthGravBody.useSphericalHarmParams = False
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
+    # Add Earth gravity to the simulation
+    earthGravBody = gravityEffector.GravBodyData()
+    earthGravBody.planetName = "earth_planet_data"
+    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.isCentralBody = True
+    earthGravBody.useSphericalHarmParams = False
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
     # Log the spacecraft state message
     datLog = scObject.scStateOutMsg.recorder()
@@ -196,7 +190,7 @@ def test_spinningBody(show_plots):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-10
+    accuracy = 1e-12
     finalOrbAngMom = numpy.delete(finalOrbAngMom, 0, axis=1)  # remove time column
     finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
     finalRotEnergy = numpy.delete(finalRotEnergy, 0, axis=1)  # remove time column
