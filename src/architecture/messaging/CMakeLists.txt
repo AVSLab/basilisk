@@ -1,3 +1,4 @@
+cmake_policy(SET CMP0078 NEW)
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
 find_package(PythonLibs 3 REQUIRED)
@@ -34,6 +35,7 @@ function(generate_messages searchDir generateCCode)
                 OUTPUT_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
                )
         add_dependencies(${TARGET_NAME} swigtrick)
+        set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "architecture/messaging/derivedCode")
         set_target_properties(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PROPERTIES
     	    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
         set_target_properties(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PROPERTIES
