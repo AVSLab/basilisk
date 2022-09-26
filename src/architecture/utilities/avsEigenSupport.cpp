@@ -116,7 +116,7 @@ Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray)
 array and an output Eigen vector3d.  This function is provided
 in order to save an unnecessary conversion between types
 @return Eigen::Matrix3d
-@param inArray The input 2D array
+@param in2DArray The input 2D array
 */
 Eigen::Matrix3d c2DArray2EigenMatrix3d(double in2DArray[3][3])
 {

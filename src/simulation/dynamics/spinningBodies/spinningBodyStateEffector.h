@@ -26,6 +26,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 
+#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpinningBodyMsgPayload.h"
 #include "architecture/messaging/messaging.h"
@@ -47,10 +48,12 @@ public:
     Eigen::Matrix3d dcm_S0B;                                    //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
     Message<SpinningBodyMsgPayload> spinningBodyOutMsg;         //!< state output message
     Message<SCStatesMsgPayload> spinningBodyConfigLogOutMsg;    //!< spinning body state config log message
+    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< -- (optional) motor torque input message name
     BSKLogger bskLogger;                                        //!< -- BSK Logging
 
 private:
     static uint64_t effectorID;         //!< [] ID number of this panel
+    double u;                           //!< [N-m] optional motor torque
 
     // Terms needed for back substitution
     Eigen::Vector3d aTheta;             //!< -- rDDot_BN term for back substitution

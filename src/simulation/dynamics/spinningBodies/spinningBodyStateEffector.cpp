@@ -44,6 +44,7 @@ SpinningBodyStateEffector::SpinningBodyStateEffector()
     this->dcm_S0B.Identity();
     this->r_SB_B.setZero();
     this->sHat_S.setZero();
+    this->u = 0.0;
     
     this->nameOfThetaState = "spinningBodyTheta" + std::to_string(this->effectorID);
     this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(this->effectorID);
@@ -235,8 +236,8 @@ void SpinningBodyStateEffector::updateContributions(double integTime, BackSubMat
     Eigen::Vector3d gravityTorquePntS_B;
     rDot_SB_B = this->omegaTilde_BN_B * this->r_SB_B;
     gravityTorquePntS_B = rTilde_ScS_B * this->mass * g_B;
-    this->cTheta = this->sHat_B.dot(gravityTorquePntS_B - omegaTilde_SN_B * IPntS_B * this->omega_SN_B
-        - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B -  this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * rDot_SB_B) / this->dTheta;
+    this->cTheta = (this->sHat_B.dot(gravityTorquePntS_B - omegaTilde_SN_B * IPntS_B * this->omega_SN_B
+        - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B -  this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * rDot_SB_B) + this->u) / this->dTheta;
 
     // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
     // Translation contributions
@@ -321,6 +322,13 @@ void SpinningBodyStateEffector::computeSpinningBodyInertialStates()
 /*! This method is used so that the simulation will ask SB to update messages */
 void SpinningBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
+    //! - Zero the command buffer and read the incoming command array
+    if (this->motorTorqueInMsg.isLinked() && this->motorTorqueInMsg.isWritten()) {
+        ArrayMotorTorqueMsgPayload incomingCmdBuffer;
+        incomingCmdBuffer = this->motorTorqueInMsg();
+        this->u = incomingCmdBuffer.motorTorque[0];
+    }
+
     /* Compute spinning body inertial states */
     this->computeSpinningBodyInertialStates();
 

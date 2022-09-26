@@ -1,6 +1,6 @@
 # ISC License
 #
-# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -15,9 +15,17 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import os, inspect
+#
+#   Unit Test Script
+#   Module Name:        spinningBodies
+#   Author:             João Vaz Carneiro
+#   Creation Date:      September 15, 2022
+#
+
+import inspect
+import os
+
 import numpy
-import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -37,8 +45,27 @@ from Basilisk.utilities import macros
 # provide a unique test method name, starting with test_
 
 
-def hingedRigidBodyAllTest(show_plots):
-    """Module Unit Test"""
+def spinningBodyTest(show_plots):
+    r"""
+    **Validation Test Description**
+
+    This unit test sets up a spacecraft with a single-axis rotating rigid body attached to a rigid hub. The spinning
+    body's center of mass is off-center from the spinning axis and the position of the axis is arbitrary. The scenario
+    includes gravity acting on both the spacecraft and the effector.
+
+    **Description of Variables Being Tested**
+
+    In this file we are checking the principles of conservation of energy and angular momentum. Both the orbital and
+    rotational energy and angular momentum must be maintained when conservative forces like gravity are present.
+    Therefore, the values of the variables
+
+    - ``finalOrbAngMom``
+    - ``finalOrbEnergy``
+    - ``finalRotAngMom``
+    - ``finalRotEnergy``
+
+    against their initial values.
+    """
     [testResults, testMessage] = test_spinningBody(show_plots)
     assert testResults < 1, testMessage
 
@@ -232,4 +259,4 @@ def test_spinningBody(show_plots):
 
 
 if __name__ == "__main__":
-    test_spinningBody(True)
+    spinningBodyTest(True)
