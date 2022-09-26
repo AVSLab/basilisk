@@ -31,6 +31,12 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- revised how the build system swig's all the message objects.  This leads to compile time improvements across all
+  platforms.  In Linux in particular we are seeing a 2x reduction in compile time.  These changes also reduce
+  the memory requirements when compiling. Note: The ``basilisk.architecture.cMsgCInterfacePy`` content is
+  now included in ``basilisk.architecture.messaging`` package.  Prior scripts using ``cMsgCInterfacePy``
+  still run as a link has been created.  However, the use of ``cMsgCInterfacePy`` is depreciated and code
+  should be updated to using ``messaging`` instead.
 - added new :ref:`hingedRigidBodyMotorSensor` for adding noise, bias, and discretization to panel state message
 - added new :ref:`simpleVoltEstimator` to provide simulated voltage measurements of a neighboring space object
 - added the ability to have a RW motor torque break slow down the wheel speed if saturated.  The motor torque

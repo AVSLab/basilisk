@@ -28,13 +28,13 @@ The sample simulation script creates both a C and C++ module which have their in
 
     Basilisk C modules contain C wrapped message objects and thus can only write to a stand-alone C wrapped message interface.  Similarly, a C++ module contains C++ message objects and can only write to a C++ stand-alone message.  You can't have a C module write to a C++ stand-alone message.
 
-In the following sample code, a C and C++ Basilisk module are created.  To create a C wrapped stand-alone message the ``cMsgCInterfacePy`` package must be imported from ``Basilisk.architecture``.  Next, assume a message of type ``SomeMsg`` needs to be created.  This is done using::
+In the following sample code, a C and C++ Basilisk module are created.  To create a C wrapped stand-alone message the ``messaging`` package must be imported from ``Basilisk.architecture``.  Next, assume a message of type ``SomeMsg`` needs to be created.  This is done using::
 
-    cStandAloneMsg = cMsgCInterfacePy.SomeMsg_C()
+    cStandAloneMsg = messaging.SomeMsg_C()
 
 To enable a C module ``someCModule`` to redirect its output message ``dataOutMsg`` writing to this stand-alone message use::
 
-    cMsgCInterfacePy.SomeMsg_C_addAuthor(someCModule.dataOutMsg, cStandAloneMsg)
+    messaging.SomeMsg_C_addAuthor(someCModule.dataOutMsg, cStandAloneMsg)
 
 Now the module ``someCModule`` will not write to its own internal output message, but rather it will write into this stand-alone message.
 

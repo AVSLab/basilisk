@@ -179,7 +179,6 @@ from Basilisk.architecture import messaging
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
-import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -314,9 +313,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
         configDataMsg = messaging.VehicleConfigMsg()
     else:
         # example of how to create a C-wrapped C-msg in Python, have it init and write the data
-        configDataMsg = cMsgPy.VehicleConfigMsg_C().init(configData)
+        configDataMsg = messaging.VehicleConfigMsg_C().init(configData)
         # example of how to create a C-wrapped C-msg in Python that is initialized
-        configDataMsg = cMsgPy.VehicleConfigMsg_C().init()
+        configDataMsg = messaging.VehicleConfigMsg_C().init()
     configDataMsg.write(configData)
 
     #
@@ -328,9 +327,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
     mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
     mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
     if useCMsg:
-        cmdTorqueMsg = cMsgPy.CmdTorqueBodyMsg_C()
+        cmdTorqueMsg = messaging.CmdTorqueBodyMsg_C()
         # connect to external commanded torque msg
-        cMsgPy.CmdTorqueBodyMsg_C_addAuthor(mrpControlConfig.cmdTorqueOutMsg, cmdTorqueMsg)
+        messaging.CmdTorqueBodyMsg_C_addAuthor(mrpControlConfig.cmdTorqueOutMsg, cmdTorqueMsg)
         extFTObject.cmdTorqueInMsg.subscribeTo(cmdTorqueMsg)
     else:
         # connect to module-internal commanded torque msg

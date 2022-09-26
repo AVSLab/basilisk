@@ -25,6 +25,7 @@ import matplotlib as mpl
 from datetime import datetime, timedelta
 from Basilisk.architecture import messaging
 from Basilisk.topLevelModules import pyswice
+from Basilisk.architecture import bskUtilities
 import pytest
 
 mpl.rc("figure", facecolor="white")
@@ -452,7 +453,7 @@ def np2EigenVectorXd(vec):
 
 def npList2EigenXdVector(list):
     """Conver a list of arrays to a list of eigen values"""
-    eigenList = messaging.Eigen3dVector(len(list))
+    eigenList = bskUtilities.Eigen3dVector(len(list))
     c = 0
     for pos in list:
         eigenList[c] = np2EigenVectorXd(pos)

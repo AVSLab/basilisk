@@ -4,6 +4,12 @@
 Basilisk Known Issues
 =====================
 
+.. caution::
+
+    The use of ``cMsgCInterfacePy`` is depreciated.  Use ``messaging`` instead.
+
+
+
 Version |release|
 -----------------
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found
@@ -16,6 +22,10 @@ Version |release|
   a copy to the configuration structures.  This allows these values to be changed on the fly from
   within python.  However, the simulation code must ensure that the CSS configuration structures
   are retained in memory or a segmentation fault will ensue.
+- How stand alone C-wrapped message objects are created in python has moved from ``cMsgCInterfacePy``
+  to ``messaging``.  Old scripts still using ``cMsgCInterfacePy`` still work as a link has been
+  created to ``messaging``.  But, the use of ``cMsgCInterfacePy`` is no depreciated and code should
+  be updated to using ``messaging`` instead.
 
 Version 2.1.3
 -------------

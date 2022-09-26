@@ -23,6 +23,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include "architecture/messaging/msg2Header.h"
 #include "architecture/utilities/bskLogging.h"
 #include <typeinfo>
+#include <stdlib.h>
 
 /*! forward-declare sim message for use by read functor */
 template<typename messageType>
@@ -201,6 +202,9 @@ public:
 
     //! check if this msg has been connected to
     bool isLinked(){return this->header.isLinked;};
+
+    //! Return the memory size of the payload, be careful about dynamically sized things
+    uint64_t getPayloadSize() {return sizeof(messageType);};
 };
 
 

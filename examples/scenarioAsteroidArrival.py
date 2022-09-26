@@ -491,7 +491,7 @@ def run(show_plots):
         thrusterMsgInfo.thrusterLocation = [0, 0, -1.5]
         thrusterMsgInfo.thrusterDirection = [0, 0, 1]
         thrMsg = messaging.THROutputMsg().write(thrusterMsgInfo)
-        scData.thrInMsgs = messaging.THROutputInMsgsVector([thrMsg.addSubscriber()])
+        scData.thrInMsgs = messaging.THROutputMsgInMsgsVector([thrMsg.addSubscriber()])
 
         thrInfo = vizInterface.ThrClusterMap()
         thrInfo.thrTag = "DV"

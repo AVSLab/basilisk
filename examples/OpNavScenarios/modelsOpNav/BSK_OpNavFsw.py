@@ -39,7 +39,6 @@ from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, mrp
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW, unitTestSupport, orbitalMotion, macros
 from Basilisk.architecture import messaging
-import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
 
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -343,7 +342,7 @@ class BSKFswModels():
         self.hillPointData.celBodyInMsg.subscribeTo(SimBase.DynModels.ephemObject.ephemOutMsgs[0])
 
     def SetOpNavPointGuidance(self, SimBase):
-        cMsgPy.AttGuidMsg_C_addAuthor(self.opNavPointData.attGuidanceOutMsg, self.attGuidMsg)
+        messaging.AttGuidMsg_C_addAuthor(self.opNavPointData.attGuidanceOutMsg, self.attGuidMsg)
         self.opNavPointData.imuInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
         self.opNavPointData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
         self.opNavPointData.opnavDataInMsg.subscribeTo(self.opnavMsg)
@@ -378,7 +377,7 @@ class BSKFswModels():
     def SetAttTrackingErrorCam(self, SimBase):
         self.trackingErrorCamData.attRefInMsg.subscribeTo(self.hillPointData.attRefOutMsg)
         self.trackingErrorCamData.attNavInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
-        cMsgPy.AttGuidMsg_C_addAuthor(self.trackingErrorCamData.attGuidOutMsg, self.attGuidMsg)
+        messaging.AttGuidMsg_C_addAuthor(self.trackingErrorCamData.attGuidOutMsg, self.attGuidMsg)
 
         M2 =  rbk.euler2(90 * macros.D2R) #rbk.euler2(-90 * macros.D2R) #
         M3 =  rbk.euler1(90 * macros.D2R) #rbk.euler3(90 * macros.D2R) #
@@ -458,7 +457,7 @@ class BSKFswModels():
         self.pixelLineData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
         self.pixelLineData.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
         self.pixelLineData.planetTarget = 2
-        cMsgPy.OpNavMsg_C_addAuthor(self.pixelLineData.opNavOutMsg, self.opnavMsg)
+        messaging.OpNavMsg_C_addAuthor(self.pixelLineData.opNavOutMsg, self.opnavMsg)
 
     def SetLimbFinding(self, SimBase):
         self.limbFinding.imageInMsg.subscribeTo(SimBase.DynModels.cameraMod.imageOutMsg)
@@ -475,7 +474,7 @@ class BSKFswModels():
         self.horizonNavData.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
         self.horizonNavData.planetTarget = 2
         self.horizonNavData.noiseSF = 1  # 2 should work though
-        cMsgPy.OpNavMsg_C_addAuthor(self.horizonNavData.opNavOutMsg, self.opnavMsg)
+        messaging.OpNavMsg_C_addAuthor(self.horizonNavData.opNavOutMsg, self.opnavMsg)
 
     def SetRelativeODFilter(self):
         self.relativeODData.opNavInMsg.subscribeTo(self.opnavMsg)
@@ -514,7 +513,7 @@ class BSKFswModels():
         self.opNavFaultData.navMeasSecondaryInMsg.subscribeTo(self.opnavSecondaryMsg)
         self.opNavFaultData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
         self.opNavFaultData.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
-        cMsgPy.OpNavMsg_C_addAuthor(self.opNavFaultData.opNavOutMsg, self.opnavMsg)
+        messaging.OpNavMsg_C_addAuthor(self.opNavFaultData.opNavOutMsg, self.opnavMsg)
         self.opNavFaultData.sigmaFault = 0.3
         self.opNavFaultData.faultMode = 0
 
@@ -585,10 +584,10 @@ class BSKFswModels():
         """create gateway messages such that different modules can write to this message
         and provide a common input msg for down-stream modules"""
         # C wrapped gateway messages
-        self.attGuidMsg = cMsgPy.AttGuidMsg_C()
-        self.opnavMsg = cMsgPy.OpNavMsg_C()
-        self.opnavPrimaryMsg = cMsgPy.OpNavMsg_C()
-        self.opnavSecondaryMsg = cMsgPy.OpNavMsg_C()
+        self.attGuidMsg = messaging.AttGuidMsg_C()
+        self.opnavMsg = messaging.OpNavMsg_C()
+        self.opnavPrimaryMsg = messaging.OpNavMsg_C()
+        self.opnavSecondaryMsg = messaging.OpNavMsg_C()
 
         # C++ wrapped gateway messages
         self.opnavCirclesMsg = messaging.OpNavCirclesMsg()

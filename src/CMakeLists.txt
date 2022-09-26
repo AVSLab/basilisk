@@ -520,6 +520,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 add_subdirectory("architecture/utilities")
 add_subdirectory("utilities") # has protobuffers included
 add_subdirectory("architecture/messaging/cMsgCInterface")
+add_subdirectory("architecture/messaging/")
 
 
 

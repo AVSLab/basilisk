@@ -21,7 +21,6 @@ from Basilisk.utilities import macros
 from Basilisk.moduleTemplates import cModuleTemplate
 from Basilisk.moduleTemplates import cppModuleTemplate
 from Basilisk.architecture import messaging
-from Basilisk.architecture import cMsgCInterfacePy as cMsgPy
 
 def run():
     """
@@ -49,8 +48,8 @@ def run():
 
     # create stand-alone message with a C interface and re-direct
     # the C module output message writing to this stand-alone message
-    cMsg = cMsgPy.CModuleTemplateMsg_C()
-    cMsgPy.CModuleTemplateMsg_C_addAuthor(mod1.dataOutMsg, cMsg)
+    cMsg = messaging.CModuleTemplateMsg_C()
+    messaging.CModuleTemplateMsg_C_addAuthor(mod1.dataOutMsg, cMsg)
 
     # create stand-along message with a C++ interface and re-direct
     # the C++ module output message writing to this stand-alone message

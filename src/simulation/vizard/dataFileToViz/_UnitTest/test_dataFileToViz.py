@@ -306,14 +306,14 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
                     for i in range(thrNumList[c][k]):
                         thrInfo.append(info)
                     k += 1
-                scData.thrInMsgs = messaging.THROutputInMsgsVector(thrList)
+                scData.thrInMsgs = messaging.THROutputMsgInMsgsVector(thrList)
                 scData.thrInfo = vizInterface.ThrClusterVector(thrInfo)
 
             if checkRW:
                 rwList = []
                 for rwLogMsg in testModule.rwScOutMsgs[c]:
                     rwList.append(rwLogMsg.addSubscriber())
-                scData.rwInMsgs = messaging.RWConfigLogInMsgsVector(rwList)
+                scData.rwInMsgs = messaging.RWConfigLogMsgInMsgsVector(rwList)
 
             viz.scData.push_back(scData)
 
