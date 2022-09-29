@@ -185,9 +185,12 @@ class BasiliskConan(ConanFile):
         if self.options.opNav:
             self.requires.add("pcre/8.45")
             self.requires.add("gettext/0.21")
+            self.requires.add("libiconv/1.17")
+            self.requires.add("harfbuzz/4.3.0")
+            self.requires.add("freetype/2.12.1")
             self.requires.add("glib/2.65.0")
             self.requires.add("opencv/4.1.1@conan/stable")
-            self.requires.add("zlib/1.2.11")
+            self.requires.add("zlib/1.2.12")
             self.requires.add("bzip2/1.0.8")
             self.options['opencv'].jasper = False
 
