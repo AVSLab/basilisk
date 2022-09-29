@@ -32,8 +32,14 @@ Detailed Module Description
 
 Mathematical Modeling
 ^^^^^^^^^^^^^^^^^^^^^
-See Vaz Carneiro, Allard, Schaub paper: `Rotating Rigid Body Dynamics Architecture for Spacecraft Simulation Software Implementation`
-for a detailed description of this model. A 1 DoF spinning body has 2 states: theta and thetaDot.
+See the following conference paper
+for a detailed description of this model. A 1 DoF spinning body has 2 states: ``theta`` and ``thetaDot``.
+
+.. note::
+
+    J. Vaz Carneiro, C. Allard and H. Schaub, “Rotating Rigid Body Dynamics
+    Architecture for Spacecraft Simulation Software Implementation,” AAS Rocky
+    Mountain GN&C Conference, Breckenridge, CO, Feb. 2–8, 2023
 
 User Guide
 ----------
@@ -56,14 +62,13 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
     spinningBody.r_SB_B = [[1.5], [-0.5], [2.0]]
     spinningBody.sHat_S = [[0], [0], [1]]
 
-#. (Optional) Define a unique name for each state.  If you have multiple spinning bodies, they each must have
-   a unique name.  If these names are not specified, then the default names are used which are
-   incremented by the effector number::
+
+#. (Optional) Define initial conditions of the effector.  Default values are zero states::
 
     spinningBody.thetaInit = 5 * macros.D2R
     spinningBody.thetaDotInit = 1 * macros.D2R
 
-#. Define a unique name for each state::
+#. (Optional) Define a unique name for each state.  If you have multiple spinning bodies, they each must have a unique name.  If these names are not specified, then the default names are used which are incremented by the effector number::
 
     spinningBody.nameOfThetaState = "spinningBodyTheta"
     spinningBody.nameOfThetaDotState = "spinningBodyThetaDot"
@@ -81,7 +86,4 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, spinningBody)
-
-
-
 
