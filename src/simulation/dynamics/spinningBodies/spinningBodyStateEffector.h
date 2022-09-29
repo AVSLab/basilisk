@@ -64,7 +64,7 @@ private:
     // Vector quantities
     Eigen::Vector3d sHat_B;             //!< -- spinning axis in B frame components
     Eigen::Vector3d r_ScS_B;            //!< [m] vector pointing from spinning frame S origin to point Sc in B frame components
-    Eigen::Vector3d r_ScB_B;            //!< [m] vector pointing from body frame B origin to point Sc in S frame components.
+    Eigen::Vector3d r_ScB_B;            //!< [m] vector pointing from body frame B origin to point Sc in B frame components.
     Eigen::Vector3d rPrime_ScS_B;       //!< [m/s] body frame time derivative of r_ScS_B
     Eigen::Vector3d rPrime_ScB_B;       //!< [m/s] body frame time derivative of r_ScB_B
     Eigen::Vector3d rDot_ScB_B;         //!< [m/s] inertial frame time derivative of r_ScB_B
