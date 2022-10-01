@@ -29,8 +29,10 @@ Basilisk Release Notes
 
         - support a way to do thread-safe messaging
 
-Version |release|
------------------
+
+Version |release| (Oct. 1, 2022)
+--------------------------------
+
 - revised how the build system swig's all the message objects.  This leads to compile time improvements across all
   platforms.  In Linux in particular we are seeing a 2x reduction in compile time.  These changes also reduce
   the memory requirements when compiling. Note: The ``basilisk.architecture.cMsgCInterfacePy`` content is
@@ -53,7 +55,7 @@ Version |release|
   a debris object and engage several flight modes.
 - added new scenario :ref:`scenarioDragDeorbit`
 - added new scenario :ref:`scenarioLagrangePointOrbit`
-- added Vizard support for MSM spheres, spacecraft ellipsoid shapes, Unity camera parameters
+- added Vizard 2.1.1 support for spacecraft ellipsoid shapes, Unity camera parameters
 - added support for the polynomial gravity model to :ref:`gravityEffector`
 - updated the ``conanFile.py`` to fix configuration and building issues with the latest
   version of python
