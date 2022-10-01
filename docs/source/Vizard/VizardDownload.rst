@@ -51,7 +51,7 @@ On Window, install the bundle contents in::
       -
       -
       -
-    * - asteroid
+    * - Asteroids
       - Asteroid model package including high fidelity models of Bennu, Ryugu, Itokawa, as well as some
         generic asteroid models
       - :download:`macOS<https://hanspeterschaub.info/bskFiles/Assets/asteroids_macOS.zip>`
