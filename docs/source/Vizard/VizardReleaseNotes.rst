@@ -10,11 +10,48 @@ Release Notes
     - general GUI enhancements
     - articulating CAD models
     - Add the rate gyro visualization
-    - Improved atmospheric shaders
     - Alternate camera view points relative to non-spacecraft locations (lunar landing site, etc.)
     - Add magnetic torque bar visualization
     - visualize MSM charge values
     - load custom Unity generated spacecraft and celestial body models at run time
+
+**Version 2.1.1 (Oct. 1, 2022)**
+
+- added support for loading spacecraft and celestial body models created by users
+  and saved as Addressable Bundles using the VizardCustomContent Unity project.
+  This Unity project will be released to users in the near future to allow custom
+  Addressable bundles that can be loaded at Vizard start-up and automatically applied
+  by supplying the desired model key for each body needing a custom model loaded and applied
+
+  - custom celestial body models will be scaled using the radius message in the celestial body submessage. If the radius field is not populated, the maximum dimension of the custom model will be used as the radius and the imported model will be assumed to be scaled in kilometers
+
+  - custom spacecraft body models will be assumed to be sized 1 meter to 1 Unity Unit
+
+- added support for science cameras and opNav camera use of Unity’s Depth of Field
+  post-processing effects. Updated built-in post-processing to Unity Post Processing
+  Package 3.2.2. Vizard now support up to five different post processing profiles
+  (up to five different cameras can have different depth of field settings profiles,
+  more than five cameras will have to share settings). Added fields in the
+  ``vizMessage.proto`` ``CameraConfig`` sub message to allow access to all the Unity
+  Depth of Field post-processing settings.
+
+- added support for Ellipsoids HUD. User can specify the creation of ellipsoidal shells using the ``vizMessage.proto`` ``Ellipsoid`` sub message. Ellipsoids can be used to illustrate position uncertainty or keep-out zones.  They can be aligned with the spacecraft Hill or body frames.
+
+- changed appearance of Coarse Sun Sensor and Location HUD shells to use the shadowed shell material created for the Ellipsoid HUD. The appearance of these HUD shapes with the new material greatly improves user ability to interpret the shapes.
+
+- fixed bug in the chief spacecraft selection dropdown menu to ensure a new spacecraft selection updates the orbit line calculations of all spacecraft in scene
+
+- fixed bug in the relative osculating orbit calculations to correctly plot multiple orbits
+
+- removed internal handling for asteroids Bennu and Ryugu that would automatically specify the model key for objects named after these asteroids. Now the model key field must be populated by the user to apply the Bennu or Ryugu Addressable asset correctly (as was already true for all other asteroids included in the Asteroids bundle)
+
+- fixed bug in the true path trajectory plotting that occurred during live streaming when the position arrays of the chief spacecraft and the deputy spacecraft might temporarily be of different lengths
+
+- added setting in ``vizMessage.proto`` and on the Settings panel to allow user to specify a different spacecraft scale in solar system view vs. spacecraft local or planet local views
+
+- fixed bug in Light HUD where light did not correctly hide when spacecraft was in Sprite mode
+
+
 
 **Version 2.1.0 (May 25, 2022)**
 

@@ -55,10 +55,12 @@ message VizMessage{
         repeated Transceiver transceivers = 10;
         repeated GenericStorage storageDevices = 11;
         repeated Light lights = 12;
-        string modelDictionaryKey = 13;
+        string modelDictionaryKey = 13; // ""  or "bskSat" will result in the default BSKSat model, "6USat" to use a built-in 6U model, "3USat" to use a built-in 3U model
         repeated int32 oscOrbitLineColor = 14; // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
         repeated int32 trueTrajectoryLineColor = 15; // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
         string logoTexture = 16; //Path to image texture to be used to customize built-in spacecraft models
+        repeated MultiSphere multiSpheres = 17; // (Optional) Multi-Sphere-Model (MSM) charging model information
+        repeated Ellipsoid ellipsoids = 18; //(Optional) Ellipsoid Heads Up Displays
 }
 
     message ReactionWheel{
@@ -149,6 +151,12 @@ message VizMessage{
         repeated double cameraDir_B = 8;  //[-] Rotation to the camera frame MRP
         uint64 renderRate = 9;  //[ns] Sim elapsed time between saved camera images
         string skybox = 10; // ' ' to use default (black for headless, NASA SVS otherwise), "NASA_SVS" provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background,
+        int64 postProcessingOn = 11; // (Optional) Enable post-processing of camera image. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double ppFocusDistance = 12; // (Optional) Distance to the point of focus, minimum value of 0.1, Value of 0 to leave this option off
+        double ppAperture = 13; //  (Optional) Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to leave this option off.
+        double ppFocalLength = 14; // [mm] (Optional) Value of -1 to calculate the focal length automatically from the field-of-view value set on the camera, otherwise provide positive non-zero value in range. Valid setting range: 1mm to 300mm. Value of 0 to leave this option off.
+        int64 ppMaxBlurSize = 15; //(Optional) Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to leave this option off.
+        
     }
 
     
@@ -258,7 +266,7 @@ message VizMessage{
         int32 relativeOrbitFrame = 33; // Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
         string mainCameraTarget = 34; // If valid spacecraft or celestial body name is provided, the main camera will be targeted at that body at start
         double spacecraftShadowBrightness = 35; // Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
-        double spacecraftSizeMultiplier = 36; // Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0, use negative value to use viz default
+        double spacecraftSizeMultiplier = 36; // Control the display size of spacecraft in Planet View, values greater than 0, use negative value to use viz default
         int32 showLocationCommLines = 37; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showLocationCones = 38; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showLocationLabels = 39; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -271,8 +279,17 @@ message VizMessage{
         int32 showLightLabels = 46; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         double celestialBodyHelioViewSizeMultiplier = 47; // Control the display size of celestial bodies in the Solar System View, values greater than 0, use negative value to use viz default
         int32 showMissionTime = 48; //Toggle to show Mission Time instead of Sim Elapsed Time, -1 for false, 0 for viz default, 1 for true
-
-        
+        double spacecraftHelioViewSizeMultiplier = 49; // Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
+    }
+    
+    message MultiSphere{
+        int32 isOn = 1; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        repeated double position = 2; //[m] position in the body frame
+        double radius = 3; //[m] radius of the sphere
+        double currentValue = 4; // [Coulomb] current sphere charge value
+        double maxValue = 5; // [Coulomb] maximum sphere charge value
+        repeated int32 positiveColor = 6; // (optional) Send desired RGBA as values between 0 and 255, default is white
+        repeated int32 negativeColor = 7; // (optional) Send desired RGBA as values between 0 and 255, default is white
     }
     
     message Location{
@@ -285,6 +302,15 @@ message VizMessage{
         double range = 7; // [m] Value of 0 (protobuffer default) to use viz default
     }
 
+    message Ellipsoid{
+        int32 isOn =1; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 useBodyFrame = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        repeated double position = 3; //[m] Position of ellipsoid center in xyz (if using body frame) or r-theta-h (if Hill frame)
+        repeated double semiMajorAxes = 4; // [m] Semi-major axes in xyz (if using body frame) or r-theta-h (if Hill frame)
+        repeated int32 color = 5; //Send desired RGBA as values between 0 and 255
+        int32 showGridLines = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    }
+    
     TimeStamp currentTime = 1;
     repeated CelestialBody celestialBodies = 2;
     repeated Spacecraft spacecraft = 3;

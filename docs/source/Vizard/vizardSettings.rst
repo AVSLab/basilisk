@@ -162,6 +162,10 @@ default setting for that behavior.
       - double
       - Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0,
         use negative value to use viz default
+    * - ``spacecraftHelioViewSizeMultiplier``
+      - double
+      - Control the display size of spacecraft in the Solar System View, values greater than 0, use negative
+        value to use viz default
     * - ``showLocationCommLines``
       - int
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -530,15 +534,21 @@ the arguments for the ``createStandardCamera`` method.
    :width: 90 %
 
 It is also possible to create a custom instrument camera view for opNav mode which points in an
-arbitrary direction as illustrate in the image above. The following
-helper method is an example of how such an instrument camera view can be
-created::
+arbitrary direction as illustrate in the image above. Such a camera can be created by
+connecting ``vizSupport.cameraConfInMsg`` to a message of type :ref:`CameraConfigMsgPayload`,
+or by assigning appropirate values to the ``vizSupport.cameraConfigBuffer``
+message payload directly.  If a message is connected then any values set directly
+will be overridden by the input message values.
+
+The following
+helper method is an example of how such an instrument camera message can be
+created directly::
 
    vizSupport.createCameraConfigMsg(viz, cameraID=1, fieldOfView=10 * macros.D2R,
-                                        resolution=[1024, 1024], renderRate=0.1,
+                                        resolution=[1024, 1024], renderRate=macros.sec2nano(10),
                                         cameraPos_B=[0.2, 0.1, 0.3], sigma_CB=[-1./3., 1./3., -1./3.])
 
-Note that with this instrument camera Vizard will save off images the the user home folder at the rate
+Note that with this instrument camera Vizard will save off images at the user home folder at the rate
 specified in ``renderRate``.  To avoid saving off images just make ``renderRate`` zero.
 
 The camera frame is illustrated in the following image.  It uses classical image image coordinates where ``x`` points
@@ -549,8 +559,8 @@ Dr. Teil's `dissertation <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.p
    :align: center
    :width: 600px
 
-The following tale illustrates the arguments for the
-``createCameraConfigMsg`` method.
+The following table illustrates the possible variables for the
+``createCameraConfigMsg()`` method.
 
 .. list-table:: ``createCameraConfigMsg`` Parameter Options
     :widths: 15 10 10 15 100
@@ -583,7 +593,7 @@ The following tale illustrates the arguments for the
       - image sensor pixels
     * - ``renderRate``
       - float
-      -
+      - [ns]
       - yes
       - time between image grabs. 0 turns this off (default).
     * - ``cameraPos_B``
@@ -603,6 +613,32 @@ The following tale illustrates the arguments for the
       - Used to determine what star background should be shown. The empty string "" provides default NASA
         SVS Starmap, “ESO”  shows the ESO Milky Way skybox, “black” provides a black background, or the
         user can provide a filepath to custom  background image file.
+    * - ``postProcessingOn``
+      - int
+      -
+      - needed for any ``ppXXX`` parameters to work
+      - flag to turn on any post-processing features of the camera.  Values are 0 (default) or 1.
+    * - ``ppFocusDistance``
+      - double
+      -
+      - No
+      - Distance to the point of focus
+    * - ``ppAperture``
+      - double
+      -
+      - No
+      - Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is.
+    * - ``ppFocalLength``
+      - double
+      - m
+      - No
+      - Valid setting range: 0.001m to 0.300m.
+    * - ``ppMaxBlurSize``
+      - int
+      -
+      - No
+      - Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh.
+
 
 
 Defining the Custom Spacecraft Shape model
@@ -1263,7 +1299,7 @@ The light location relative to the spacecraft B frame is given by ``position``. 
 set through ``normalVector``.  The edge-to-edge ``fieldOfView`` is set in radians.
 The full list of required and optional generic sensor parameters are provided in the following table.
 
-.. list-table:: Generic Sensor Configuration Options
+.. list-table:: Light Object Configuration Options
     :widths: 20 10 10 10 100
     :header-rows: 1
 
@@ -1381,8 +1417,8 @@ The light command state can also be set directly from python using::
 However, if the input message is specified then this value is replaced with the content of the input message.
 
 
-Specifying the CAD Model to use
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Specifying the Spacecraft CAD Model to use
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The spacecraft Vizard data supports the use of ``modelDictionaryKey`` to override the default spacecraft shape
 and is selected by the name, and specify a CAD model to use.  Assume a Vizard spacecraft CAD model is
 labeled with ``cadString``, then you use::
@@ -1426,6 +1462,24 @@ user can also just provide a simple string path value instead of a list of strin
 The image can be a ``jpg`` or ``png`` image and should have square dimensions, such as being 256x256
 in size.
 
+Specifying the Celestial Object CAD Model to use
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The gravity body data structure
+contains a ``modelDictionaryKey`` string which can specify what CAD model to use.  By default Vizard uses
+the ``planetName`` variable to determine if the celestial object matches an available model.  If ``displayName``
+is specified then this overrules the ``planetName`` info.  Lastly, the ``modelDictionaryKey`` overrules the prior
+two names.  This is done to provide fine control over what ``planetName`` is used, such as a
+Spice name, the ``displayName`` could be ``TestAsteroid`` if desired, and the object shown could be a custom shape
+called ``custom_test_asteroid``.
+
+The ``createCustomGravObject()`` method in the gravity factory class has an optional ``modelDictionaryKey``
+argument to specify this string if desired.  By default Vizard will read in the CAD model assuming the dimensions are
+in kilometers unless ``radEquator`` is specified.
+To scale the CAD model differently, specify the ``radEquator`` argument.  For a celestial object
+with a general shape, Vizard finds the largest dimension along the x, y and z axes and scales the body
+uniformly for this largest dimension to be ``radEquator``.  Note that the ``createCustomGravObject()`` method
+requires ``radEquator`` to be given in meters.
+
 
 Specifying the Osculating or True Orbit Line Colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1445,3 +1499,90 @@ The argument None is used to specify the Vizard default shape to be used.
 
 Similarly, to set the actual or true trajectory color, use the keyword ``trueOrbitColorList`` with the same behavior
 as ``oscOrbitColorList``.
+
+
+
+Adding Ellipsoid Objects to a Spacecraft Location
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Vizard can illustrate generic ellipsoid shapes in the 3d environments relative to a spacecraft location.
+These could indicate keep-out zones, position uncertainties, etc.  Multiple ellipsoids can be
+attached to a spacecraft, each with unique features and colors.
+
+First, let's discuss how to setup an ellipsoid.  The associated ellipsoid structure and the required
+parameters are set using::
+
+    gncEllipsoid = vizInterface.Ellipsoid()
+    gncEllipsoid.isOn = 1
+    gncEllipsoid.useBodyFrame = 0
+    gncEllipsoid.position = [0, 0, 0]
+    gncEllipsoid.semiMajorAxes = [10, 20, 10]
+    gncEllipsoid.color = vizInterface.IntVector(vizSupport.toRGBA255("yellow", alpha=0.5))
+
+.. caution::
+    As a pointer to the ``Ellipsoid`` structure is connected to :ref:`vizInterface`, it is
+    important that the python structure is retained in memory.  If the python structure instance
+    is created in a manner where this is not the case, use ``gncEllipsoid.this.disown()``
+    to ensure the python structure remains intact throughout the simulation.
+
+The ellipsoid location relative to the spacecraft B frame is given by ``position`` in B-frame coordinates.
+The ``semiMajorAxes`` provide the ellipsoid semi-major axes in meters.  If the flag ``useBodyFrame``
+is set to 1, then the ellipsoid is drawn relative to the body frame, not the orbit or hill frame.
+
+The full list of required and optional generic sensor parameters are provided in the following table.
+
+.. list-table:: Ellipsoid Configuration Options
+    :widths: 20 10 10 10 100
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Units
+      - Required
+      - Description
+    * - ``isOn``
+      - int
+      -
+      - No
+      - Flag indicating if the ellipsoid is on (1) or off (-1).  0 is the default value with the object shown.
+    * - ``useBodyFrame``
+      - int
+      -
+      - No
+      - Flag indicating if the ellipsoid should be drawn in the body frame (1) or Hill/Orbit frame (0)
+    * - ``position``
+      - double[3]
+      - m
+      - No
+      - Center of the ellipsoid location in either body or Hill frame depending on ``useBodyFrame``
+    * - ``semiMajorAxes``
+      - double[3]
+      - m
+      - Yes
+      - The three semi-major axes of the ellipsoid object
+    * - ``color``
+      - vector<int>
+      -
+      - No
+      - Desired ellipsoid RGBA values, default is translucent gold
+    * - ``showGridLines``
+      - int
+      -
+      - No
+      - Show Gridlines on ellipsoid
+
+
+Multiple ellipsoid objects can be created for each spacecraft, and multiple spacecraft are supported.  Using
+the ``vizSupport.py`` file, the sensors are sent to :ref:`vizInterface` using they keyword ``ellipsoidList``::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , saveFile=fileName
+                                              , ellipsoidList=gncEllipsoid
+                                              )
+
+Note that here a single ellipsoid and spacecraft is setup.  If you have multiple ellipsoids, or multiple spacecraft,
+then lists of lists are required::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
+                                              , saveFile=fileName
+                                              , genericSensorList=[ None, [gncEllipsoid] ]
+                                              )

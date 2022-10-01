@@ -352,6 +352,25 @@ void VizInterface::ReadBSKMessages()
             }
         }
 
+        /* read in MSM charge values */
+        {
+            /* read in MSM charge states */
+            if (scIt->msmInfo.msmChargeInMsg.isLinked()){
+                if(scIt->msmInfo.msmChargeInMsg.isWritten()){
+                    ChargeMsmMsgPayload msmChargeMsgBuffer;
+                    msmChargeMsgBuffer = scIt->msmInfo.msmChargeInMsg();
+                    if (msmChargeMsgBuffer.q.size() == scIt->msmInfo.msmList.size()) {
+                        for (size_t idx=0;idx< (size_t) scIt->msmInfo.msmList.size(); idx++) {
+                            scIt->msmInfo.msmList[idx]->currentValue = msmChargeMsgBuffer.q[idx];
+                        }
+                    } else {
+                        bskLogger.bskLog(BSK_ERROR, "vizInterface: the number of charged in MSM message and the number of msm vizInterface spheres must be the same.");
+
+                    }
+                }
+            }
+        }
+
     } /* end of scIt loop */
 
     /*! Read incoming camera config msg */
@@ -564,6 +583,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_maincameratarget(this->settings.mainCameraTarget);
         vizSettings->set_spacecraftshadowbrightness(this->settings.spacecraftShadowBrightness);
         vizSettings->set_spacecraftsizemultiplier(this->settings.spacecraftSizeMultiplier);
+        vizSettings->set_spacecrafthelioviewsizemultiplier(this->settings.spacecraftHelioViewSizeMultiplier);
         vizSettings->set_showlocationcommlines(this->settings.showLocationCommLines);
         vizSettings->set_showlocationcones(this->settings.showLocationCones);
         vizSettings->set_showlocationlabels(this->settings.showLocationLabels);
@@ -795,6 +815,22 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 }
                 gs->set_activitystatus(scIt->genericSensorList[idx]->genericSensorCmd);
             }
+
+            // Write Ellipsoid messages
+            for (size_t idx =0; idx < (size_t) scIt->ellipsoidList.size(); idx++) {
+                vizProtobufferMessage::VizMessage::Ellipsoid* el = scp->add_ellipsoids();
+                el->set_ison(scIt->ellipsoidList[idx]->isOn);
+                el->set_usebodyframe(scIt->ellipsoidList[idx]->useBodyFrame);
+                for (int j=0; j<3; j++) {
+                    el->add_position(scIt->ellipsoidList[idx]->position[j]);
+                    el->add_semimajoraxes(scIt->ellipsoidList[idx]->semiMajorAxes[j]);
+                }
+                for (uint64_t j=0; j<scIt->ellipsoidList[idx]->color.size(); j++) {
+                    el->add_color(scIt->ellipsoidList[idx]->color[j]);
+                }
+                el->set_showgridlines(scIt->ellipsoidList[idx]->showGridLines);
+            }
+
             
             // Write transceiver messages
             for (size_t idx =0; idx < (size_t) scIt->transceiverList.size(); idx++) {
@@ -877,6 +913,25 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 scp->add_truetrajectorylinecolor(scIt->trueTrajectoryLineColor[i]);
             }
 
+            // Write generic storage device messages
+            for (size_t idx =0; idx < (size_t) scIt->msmInfo.msmList.size(); idx++) {
+                vizProtobufferMessage::VizMessage::MultiSphere* msmp = scp->add_multispheres();
+
+                msmp->set_ison(scIt->msmInfo.msmList[idx]->isOn);
+                for (uint64_t j=0; j<3; j++) {
+                    msmp->add_position(scIt->msmInfo.msmList[idx]->position[j]);
+                }
+                msmp->set_radius(scIt->msmInfo.msmList[idx]->radius);
+                msmp->set_currentvalue(scIt->msmInfo.msmList[idx]->currentValue);
+                msmp->set_maxvalue(scIt->msmInfo.msmList[idx]->maxValue);
+                for (uint64_t j=0; j<scIt->msmInfo.msmList[idx]->positiveColor.size(); j++) {
+                    msmp->add_positivecolor(scIt->msmInfo.msmList[idx]->positiveColor[j]);
+                }
+                for (uint64_t j=0; j<scIt->msmInfo.msmList[idx]->negativeColor.size(); j++) {
+                    msmp->add_negativecolor(scIt->msmInfo.msmList[idx]->negativeColor[j]);
+                }
+            }
+
         }
     }
 
@@ -899,6 +954,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         camera->set_fieldofview(this->cameraConfigBuffer.fieldOfView*R2D);  // Unity expects degrees
         camera->set_skybox(this->cameraConfigBuffer.skyBox);
         camera->set_parentname(this->cameraConfigBuffer.parentName);
+        camera->set_postprocessingon(this->cameraConfigBuffer.postProcessingOn);
+        camera->set_ppfocusdistance(this->cameraConfigBuffer.ppFocusDistance);
+        camera->set_ppaperture(this->cameraConfigBuffer.ppAperture);
+        camera->set_ppfocallength(this->cameraConfigBuffer.ppFocalLength*1000.); // Unity expects mm
+        camera->set_ppmaxblursize(this->cameraConfigBuffer.ppMaxBlurSize);
     }
 
     /*! Write spice output msgs */

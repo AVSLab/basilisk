@@ -21,6 +21,7 @@
 
 #include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/ChargeMsmMsgPayload.h"
 
 #include "architecture/messaging/messaging.h"
 
@@ -176,6 +177,24 @@ GenericSensor
 
 }GenericSensor;
 
+
+/*! Structure defining spcecraft Ellipsoid information
+ */
+typedef struct
+//@cond DOXYGEN_IGNORE
+Ellipsoid
+//@endcond
+{
+    int isOn;                   //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int useBodyFrame;           //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true, default is to use the Hill frame
+    double position[3];         //!< [m] Position of ellipsoid center in xyz (if using body frame) or radial-along track-orbit normal (if Hill frame)
+    double semiMajorAxes[3];    //!< [m] Semi-major axes in xyz (if using body frame) or radial-along track-orbit normal (if Hill frame)
+    std::vector<int> color;     //!< [] (optional) RGBA as values between 0 and 255, default is translucent gold
+    int showGridLines;          //!< Show Gridlines on ellipsoid, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+}Ellipsoid;
+
+
+
 /*! Structure defining spacecraft light information
  */
 typedef struct
@@ -199,6 +218,36 @@ Light
     double lensFlareFadeSpeed=-1;   //!< (Optional) Speed with which the lens flare fades, default is 4.0
     ReadFunctor<DeviceCmdMsgPayload> onOffCmdInMsg;   //!< [-] (Optional)  incoming light on/off cmd state msg
 }Light;
+
+
+
+
+/*! Structure defining Multi-Sphere-Method (MSM) sphere configurations
+ */
+typedef struct
+//@cond DOXYGEN_IGNORE
+MultiSphere
+//@endcond
+{
+    int isOn=0;                         //!< [] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    double position[3];                 //!< [m] MSM sphere position in the body frame
+    double radius;                      //!< [m] radius of the sphere
+    double currentValue;                //!< [Coulomb] current sphere charge value
+    double maxValue;                    //!< [Coulomb] maximum sphere charge value
+    std::vector<int> positiveColor;     //!< (optional) Send desired RGBA as values between 0 and 255, default is white
+    std::vector<int> negativeColor;     //!< (optional) Send desired RGBA as values between 0 and 255, default is white
+}MultiSphere;
+
+/*! Structure defining Multi-Sphere-Method (MSM) information
+ */
+typedef struct
+//@cond DOXYGEN_IGNORE
+MultiSphereInfo
+//@endcond
+{
+    std::vector<MultiSphere *> msmList;                     //!< list of MSM configuration information
+    ReadFunctor<ChargeMsmMsgPayload> msmChargeInMsg;        //!< [-] input message to read current MSM charges.  If not connected, currentValue can be set directly from python
+}MultiSphereInfo;
 
 
 
@@ -277,10 +326,11 @@ VizSpacecraftData
 
     std::string spacecraftSprite = "";                          //!< Set sprite for this spacecraft only through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
     std::string modelDictionaryKey = "";                        //!< (Optional) string specifiying which Vizard cad model to use. If set, it over-rides the model selected by `spacecraftName`
-    std::string logoTexture = "";                        //!< (Optional) Path to image texture to be used to customize built-in spacecraft models
+    std::string logoTexture = "";                               //!< (Optional) Path to image texture to be used to customize built-in spacecraft models
     std::vector<int> oscOrbitLineColor;                         //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
     std::vector<int>  trueTrajectoryLineColor;                  //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
-
+    MultiSphereInfo msmInfo;                                    //!< (Optional) MSM configuration information
+    std::vector<Ellipsoid *> ellipsoidList;                     //!< (Optional) ellipsoid about the spacecraft location
 }VizSpacecraftData;
 
 /*! Structure defining various Vizard options
@@ -330,6 +380,8 @@ VizSettings
     int relativeOrbitFrame = 0; //!< Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
     double spacecraftShadowBrightness = -1.0;       //!< Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
     double spacecraftSizeMultiplier = -1; //!< Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0, use negative value to use viz default
+    double spacecraftHelioViewSizeMultiplier = -1; //!< Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
+
     int32_t showLocationCommLines = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int32_t showLocationCones = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int32_t showLocationLabels = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true

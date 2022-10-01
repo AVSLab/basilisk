@@ -303,8 +303,37 @@ def run(show_plots):
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
     if vizFound:
+        # setup MSM information
+        msmInfoServicer = vizInterface.MultiSphereInfo()
+        msmInfoServicer.msmChargeInMsg.subscribeTo(MSMmodule.chargeMsmOutMsgs[0])
+        msmServicerList = []
+        for (pos, rad) in zip(spPosListServicer, rListServicer):
+            msmServicer = vizInterface.MultiSphere()
+            msmServicer.position = pos
+            msmServicer.radius = rad
+            msmServicer.isOn = 1
+            msmServicer.maxValue = 30e-6  # Coulomb
+            msmServicer.currentValue = 4e-6  # Coulomb
+            msmServicerList.append(msmServicer)
+        msmInfoServicer.msmList = vizInterface.MultiSphereVector(msmServicerList)
+
+        msmInfoDebris = vizInterface.MultiSphereInfo()
+        msmInfoDebris.msmChargeInMsg.subscribeTo(MSMmodule.chargeMsmOutMsgs[1])
+        msmDebrisList = []
+        for (pos, rad) in zip(spPosListDebris, rListDebris):
+            msmDebris = vizInterface.MultiSphere()
+            msmDebris.position = pos
+            msmDebris.radius = rad
+            msmDebris.isOn = 1
+            msmDebris.maxValue = 30e-6  # Coulomb
+            msmDebris.currentValue = 4e-6  # Coulomb
+            msmDebrisList.append(msmDebris)
+        msmInfoDebris.msmList = vizInterface.MultiSphereVector(msmDebrisList)
+
+
         viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObjectServicer, scObjectDebris]
-                                                  # , saveFile=fileName,
+                                                  # , saveFile=fileName
+                                                  , msmInfoList=[msmInfoServicer, msmInfoDebris]
                                                   )
 
     #

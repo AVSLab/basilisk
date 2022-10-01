@@ -56,7 +56,7 @@ In order to call Vizard from python simulations, the path to the downloaded Viza
 If needed, adjust the following line illustrated below to reflect the path to the Vizard binary::
 
     # TODO : Modify the path to the viz here
-    appPath = '/Applications/Vizard.app/Contents/MacOS/Basilisk Vizard' #If on Mac
+    appPath = '/Applications/Vizard.app/Contents/MacOS/Vizard' #If on Mac
 
 The Vizard app must therefore me downloaded, and this path must reflect it's position in the file structure, and its
 name. If the path is not properly set, the OpNav simulations will hang (printing that it is waiting for the
@@ -66,6 +66,18 @@ check OpNav or Direct Comm, and provide the tcp/ip address printed by the scenar
 The scripts are tested if all modules are installed, but can be run at full length by calling::
 
     python3 scenario_OpNavAttOD.py
+
+See the Scene Rendering
+-----------------------
+By default the Vizard will run in head-less mode where the full scene is note rendered
+for viewing as this slows down the simulation.  To see the scene, edit the following line
+within the scenario script::
+
+    TheBSKSim.get_DynModel().vizInterface.opNavMode = 1
+
+to set `opNaveMode` flag to 1 instead of 2.  This launches Vizard with the argument ``-directComm``
+rather than with ``-noDisplay`` and the user can monitor the scene being rendered.
+
 
 OpNav Dynamics, Flight Software, and Plotting
 ---------------------------------------------

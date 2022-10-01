@@ -28,10 +28,15 @@ In this scenario, :ref:`simpleNav` and :ref:`planetEphemeris` provide measuremen
 and updates the state estimate, outputting this state estimate in its own standalone message, a :ref:`smallBodyNavMsgPayload`,
 as well as navigation output messages - :ref:`navTransMsgPayload`, :ref:`navAttMsgPayload`, and :ref:`ephemerisMsgPayload`.
 
-Furthermore, an :ref:`mrpFeedback` module is also created to demonstrate using the filter output as an input into an attitude
-control algorithm.
+Furthermore, an :ref:`mrpFeedback` module is also created to demonstrate using the filter output as
+an input into an attitude control algorithm.
 
 .. note:: This module is only meant to provide a somewhat representative autonomous small body proximity operations navigation solution for attitude control modules or POMDP solvers. Therefore, realistic measurement modules do not exist to support this module, and not every source of uncertainty in the problem is an estimated parameter.
+
+.. attention::
+
+    To see the asteroid Bennu in Vizard the asteroid asset bundle must be installed.  See
+    the Vizard `Download <http://hanspeterschaub.info/basilisk/Vizard/VizardDownload.html>`__ web page.
 
 The relative position estimate and the estimation error and covariance may be found in the plots below.
 
@@ -426,7 +431,10 @@ def run(show_plots):
     sunEphemerisMsg.write(sunEphemerisMsgData)
 
     mu = 4.892  # m^3/s^2
-    asteroid = gravFactory.createCustomGravObject("bennu", mu)
+    asteroid = gravFactory.createCustomGravObject("bennu", mu
+                                                  , modelDictionaryKey="Bennu"
+                                                  , radEquator=565. / 2.0
+                                                  )
     asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])
 
     # create SC object
