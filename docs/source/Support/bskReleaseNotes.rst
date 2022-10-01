@@ -30,8 +30,13 @@ Basilisk Release Notes
         - support a way to do thread-safe messaging
 
 
-Version |release| (Oct. 1, 2022)
---------------------------------
+Version |release|
+-----------------
+- text goes here
+
+
+Version 2.1.4 (Oct. 1, 2022)
+----------------------------
 
 - revised how the build system swig's all the message objects.  This leads to compile time improvements across all
   platforms.  In Linux in particular we are seeing a 2x reduction in compile time.  These changes also reduce
@@ -61,7 +66,7 @@ Version |release| (Oct. 1, 2022)
   version of python
 - fixed issue computing latitude angle in ``PCPF2LLA()`` in :ref:`geodeticConversion`.  This was used
   in the helper method ``specifyLocationPCPF()`` method inside :ref:`groundLocation`, as well as
-  :ref:`msisAtmosphere` and ref:`albedo`.
+  :ref:`msisAtmosphere` and :ref:`albedo`.
 - fixed an issue in the RKF45 variable time step integrator where one of the constants had the wrong sign.
 - added new :ref:`scenarioMomentumDumping` to illustrate how to perform momentum dumping using thrusters.
 - updated :ref:`hingedRigidBodyStateEffector` to allow for an optional panel reference state input message
