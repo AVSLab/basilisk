@@ -21,7 +21,7 @@ Version 2.1.4
   The code compiles, but auto-completion etc. doesn't work in that module.
 - prior version had a bug in computer the latitude in ``PCPF2LLA()`` inside :ref:`geodeticConversion`.  This is used
   in the ``specifyLocationPCPF()`` method inside :ref:`groundLocation`, and in
-  :ref:`msisAtmosphere` and ref:`albedo`.
+  :ref:`msisAtmosphere` and :ref:`albedo`.
 - :ref:`coarsesunsensor` now receives in ``sensorList`` a list of CSS configuration state pointers, not
   a copy to the configuration structures.  This allows these values to be changed on the fly from
   within python.  However, the simulation code must ensure that the CSS configuration structures
@@ -30,6 +30,8 @@ Version 2.1.4
   to ``messaging``.  Old scripts still using ``cMsgCInterfacePy`` still work as a link has been
   created to ``messaging``.  But, the use of ``cMsgCInterfacePy`` is no depreciated and code should
   be updated to using ``messaging`` instead.
+- The use of custom message in the external modules folders is broke with the new build
+  modification in this release.  This is fixed in the latest release.
 
 Version 2.1.3
 -------------
