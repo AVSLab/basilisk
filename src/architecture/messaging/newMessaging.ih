@@ -30,9 +30,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 %define INSTANTIATE_TEMPLATES(messageType, messageTypePayload, folder)
 %{
-#include "architecture/folder/messageTypePayload.h"
+#include "folder/messageTypePayload.h"
 %}
-%include "architecture/folder/messageTypePayload.h"
+%include "folder/messageTypePayload.h"
 
 %template(messageType ## Reader) ReadFunctor<messageTypePayload>;
 %extend ReadFunctor<messageTypePayload> {

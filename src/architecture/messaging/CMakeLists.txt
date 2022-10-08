@@ -6,7 +6,7 @@ find_package(PythonInterp 3 REQUIRED)
 
 function(generate_messages searchDir generateCCode)
 
-    file(GLOB_RECURSE message_files RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "../${searchDir}/*Payload.h")
+    file(GLOB_RECURSE message_files RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "../${searchDir}/*Payload.h" "${EXTERNAL_MODULES_PATH}/${searchDir}/*Payload.h")
 
     foreach(msgFile ${message_files})
         get_filename_component(TARGET_NAME ${msgFile} NAME_WE)
@@ -21,12 +21,14 @@ function(generate_messages searchDir generateCCode)
         set_property(SOURCE ${COMP_OUT_NAME} PROPERTY SWIG_FLAGS
             "-I${CMAKE_CURRENT_SOURCE_DIR}/../"
             "-I${CMAKE_CURRENT_SOURCE_DIR}/../../"
+            "-I${EXTERNAL_MODULES_PATH}/"
             "-I${CMAKE_BINARY_DIR}/autoSource/"
             "-I${PYTHON_INCLUDE_PATH}")
         include_directories(${PYTHON_INCLUDE_PATH})
         include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../")
         include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
         include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../")
+        include_directories("${EXTERNAL_MODULES_PATH}/")
         swig_add_library(${TARGET_NAME}
                 LANGUAGE "python"
                 TYPE MODULE
@@ -48,7 +50,7 @@ endfunction(generate_messages)
 
 add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
-  COMMAND ${PYTHON_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/" "../../msgPayloadDefC/" "../../msgPayloadDefCpp/"
+  COMMAND ${PYTHON_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/" "../../msgPayloadDefC/" "../../msgPayloadDefCpp/" "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/" "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
   VERBATIM)
 # Custom target for establishing dependency
