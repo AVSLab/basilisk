@@ -32,7 +32,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text goes here
+- Made the external module custom message definitions work again with the
+  latest build system.
 
 
 Version 2.1.4 (Oct. 1, 2022)
