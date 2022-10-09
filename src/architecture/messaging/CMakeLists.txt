@@ -18,17 +18,25 @@ function(generate_messages searchDir generateCCode)
                            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/
                           )
         set_property(SOURCE ${COMP_OUT_NAME} PROPERTY CPLUSPLUS ON)
-        set_property(SOURCE ${COMP_OUT_NAME} PROPERTY SWIG_FLAGS
-            "-I${CMAKE_CURRENT_SOURCE_DIR}/../"
-            "-I${CMAKE_CURRENT_SOURCE_DIR}/../../"
-            "-I${EXTERNAL_MODULES_PATH}/"
-            "-I${CMAKE_BINARY_DIR}/autoSource/"
-            "-I${PYTHON_INCLUDE_PATH}")
+        if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
+            set_property(SOURCE ${COMP_OUT_NAME} PROPERTY SWIG_FLAGS
+                "-I${CMAKE_CURRENT_SOURCE_DIR}/../"
+                "-I${CMAKE_CURRENT_SOURCE_DIR}/../../"
+                "-I${EXTERNAL_MODULES_PATH}/"
+                "-I${CMAKE_BINARY_DIR}/autoSource/"
+                "-I${PYTHON_INCLUDE_PATH}")
+            include_directories("${EXTERNAL_MODULES_PATH}/")
+        else()
+            set_property(SOURCE ${COMP_OUT_NAME} PROPERTY SWIG_FLAGS
+                "-I${CMAKE_CURRENT_SOURCE_DIR}/../"
+                "-I${CMAKE_CURRENT_SOURCE_DIR}/../../"
+                "-I${CMAKE_BINARY_DIR}/autoSource/"
+                "-I${PYTHON_INCLUDE_PATH}")
+        endif(NOT "${EXTERNAL_MODULE_PATH}" STREQUAL "")
         include_directories(${PYTHON_INCLUDE_PATH})
         include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../")
         include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
         include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../")
-        include_directories("${EXTERNAL_MODULES_PATH}/")
         swig_add_library(${TARGET_NAME}
                 LANGUAGE "python"
                 TYPE MODULE
@@ -48,11 +56,20 @@ function(generate_messages searchDir generateCCode)
     endforeach()
 endfunction(generate_messages)
 
-add_custom_command(
-  OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
-  COMMAND ${PYTHON_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/" "../../msgPayloadDefC/" "../../msgPayloadDefCpp/" "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/" "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/"
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
-  VERBATIM)
+if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
+    add_custom_command(
+      OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
+      COMMAND ${PYTHON_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/" "../../msgPayloadDefC/" "../../msgPayloadDefCpp/" "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/" "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/"
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
+      VERBATIM)
+else()
+    add_custom_command(
+      OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
+      COMMAND ${PYTHON_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/" "../../msgPayloadDefC/" "../../msgPayloadDefCpp/"
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
+      VERBATIM)
+endif(NOT "${EXTERNAL_MODULE_PATH}" STREQUAL "")
+
 # Custom target for establishing dependency
 add_custom_target(
   swigtrick
