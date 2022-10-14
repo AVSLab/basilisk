@@ -88,6 +88,6 @@ public:
 
 void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output);
 
-void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Output);
+void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Output);
 
 void basisFunction(double t, Eigen::VectorXd U, int I, int P, double *NN, double *NN1, double *NN2);
