@@ -28,7 +28,7 @@
 
 #include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/SpinningBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpinningBodyTwoDOFMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
@@ -56,7 +56,7 @@ public:
     Eigen::Matrix3d IPntSc2_S2;                                   //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
     Eigen::Matrix3d dcm_S10B;                                    //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
     Eigen::Matrix3d dcm_S20S1;                                    //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
-    Message<SpinningBodyMsgPayload> spinningBodyOutMsg;         //!< state output message
+    Message<SpinningBodyTwoDOFMsgPayload> spinningBodyOutMsg;         //!< state output message
     std::vector<Message<SCStatesMsgPayload>> spinningBodyConfigLogOutMsg;    //!< spinning body state config log message
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< -- (optional) motor torque input message name
     BSKLogger bskLogger;                                        //!< -- BSK Logging

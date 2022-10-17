@@ -100,25 +100,27 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
 {
     // Write out the spinning body output messages
     if (this->spinningBodyOutMsg.isLinked()) {
-        SpinningBodyMsgPayload spinningBodyBuffer;
+        SpinningBodyTwoDOFMsgPayload spinningBodyBuffer;
         spinningBodyBuffer = this->spinningBodyOutMsg.zeroMsgPayload;
-        spinningBodyBuffer.theta = this->theta;
-        spinningBodyBuffer.thetaDot = this->thetaDot;
+        spinningBodyBuffer.theta1 = this->theta1;
+        spinningBodyBuffer.theta2 = this->theta2;
+        spinningBodyBuffer.theta1Dot = this->theta1Dot;
+        spinningBodyBuffer.theta2Dot = this->theta2Dot;
         this->spinningBodyOutMsg.write(&spinningBodyBuffer, this->moduleID, CurrentClock);
     }
 
     // Write out the spinning body state config log message
-    if (this->spinningBodyConfigLogOutMsg.isLinked()) {
-        SCStatesMsgPayload configLogMsg;
-        configLogMsg = this->spinningBodyConfigLogOutMsg.zeroMsgPayload;
+    //if (this->spinningBodyConfigLogOutMsg.isLinked()) {
+    //    SCStatesMsgPayload configLogMsg;
+    //    configLogMsg = this->spinningBodyConfigLogOutMsg.zeroMsgPayload;
 
-        // Logging the S frame is the body frame B of that object
-        eigenVector3d2CArray(this->r_ScN_N, configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_ScN_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_SN, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
-        this->spinningBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
-    }
+    //    // Logging the S frame is the body frame B of that object
+    //    eigenVector3d2CArray(this->r_ScN_N, configLogMsg.r_BN_N);
+    //    eigenVector3d2CArray(this->v_ScN_N, configLogMsg.v_BN_N);
+    //    eigenVector3d2CArray(this->sigma_SN, configLogMsg.sigma_BN);
+    //    eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
+    //    this->spinningBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
+    //}
 
 }
 
@@ -253,57 +255,7 @@ void SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime)
  method */
 void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
-    // Find the DCM from N to B frames
-    this->sigma_BN = sigma_BN;
-    this->dcm_BN = (this->sigma_BN.toRotationMatrix()).transpose();
-
-    // Map gravity to body frame
-    Eigen::Vector3d gLocal_N;
-    Eigen::Vector3d g_B;
-    gLocal_N = g_N;
-    g_B = this->dcm_BN * gLocal_N;
-
-    // Define omega_SN_B
-    this->omega_BN_B = omega_BN_B;
-    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
-    this->omega_SN_B = this->omega_SB_B + this->omega_BN_B;
-    Eigen::Matrix3d omegaTilde_SN_B = eigenTilde(this->omega_SN_B);
-
-    // Define IPntS_B for compactness
-    Eigen::Matrix3d rTilde_ScS_B = eigenTilde(this->r_ScS_B);
-    Eigen::Matrix3d IPntS_B = this->IPntSc_B - this->mass * rTilde_ScS_B * rTilde_ScS_B;
-
-    // Define auxiliary variable dTheta
-    this->dTheta = this->sHat_B.transpose() * IPntS_B * this->sHat_B;
-
-    // Define aTheta
-    this->aTheta = this->mass * rTilde_ScS_B * this->sHat_B / this->dTheta;
-
-    // Define bTheta
-    Eigen::Matrix3d rTilde_SB_B = eigenTilde(this->r_SB_B);
-    this->bTheta = -(IPntS_B - this->mass * rTilde_SB_B * rTilde_ScS_B) * this->sHat_B / this->dTheta;
-
-    // Define cTheta with gravity gradient torque
-    Eigen::Vector3d rDot_SB_B;
-    Eigen::Vector3d gravityTorquePntS_B;
-    rDot_SB_B = this->omegaTilde_BN_B * this->r_SB_B;
-    gravityTorquePntS_B = rTilde_ScS_B * this->mass * g_B;
-    this->cTheta = (this->sHat_B.dot(gravityTorquePntS_B - omegaTilde_SN_B * IPntS_B * this->omega_SN_B
-        - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B -  this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * rDot_SB_B) + this->u) / this->dTheta;
-
-    // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
-    // Translation contributions
-    backSubContr.matrixA = -this->mass * rTilde_ScS_B * this->sHat_B * this->aTheta.transpose();
-    backSubContr.matrixB = -this->mass * rTilde_ScS_B * this->sHat_B * this->bTheta.transpose();
-    backSubContr.vecTrans = -this->mass * this->omegaTilde_SB_B * this->rPrime_ScS_B + this->mass * rTilde_ScS_B * this->sHat_B * this->cTheta;
-
-    // Rotation contributions
-    backSubContr.matrixC = (this->IPntSc_B - this->mass * this->rTilde_ScB_B * rTilde_ScS_B) * this->sHat_B * this->aTheta.transpose();
-    backSubContr.matrixD = (this->IPntSc_B - this->mass * this->rTilde_ScB_B * rTilde_ScS_B) * this->sHat_B * this->bTheta.transpose();
-    backSubContr.vecRot = -omegaTilde_SN_B * this->IPntSc_B * this->omega_SB_B - this->mass * this->omegaTilde_BN_B * this->rTilde_ScB_B * this->rPrime_ScB_B
-        - this->mass * this->rTilde_ScB_B * this->omegaTilde_SB_B * this->rPrime_ScS_B
-        - (this->IPntSc_B - this->mass * this->rTilde_ScB_B * rTilde_ScS_B) * this->sHat_B * this->cTheta;
-
+    
     return;
 }
 

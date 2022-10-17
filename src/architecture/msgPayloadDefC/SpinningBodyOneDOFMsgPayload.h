@@ -17,15 +17,15 @@
 
  */
 
-#ifndef spinningBodySimMsg_h
-#define spinningBodySimMsg_h
+#ifndef spinningBodyOneDOFSimMsg_h
+#define spinningBodyOneDOFSimMsg_h
 
 
- /*! @brief Structure used to define the individual Spinning Body data message*/
+ /*! @brief Structure used to define the individual 1-DOF Spinning Body data message*/
 typedef struct {
     double theta;                   //!< [rad], spinning body angular displacement
     double thetaDot;                //!< [rad/s], spinning body angular displacement rate
-}SpinningBodyMsgPayload;
+}SpinningBodyOneDOFMsgPayload;
 
 
-#endif /* spinningBodySimMsg_h */
+#endif /* spinningBodyOneDOFSimMsg_h */
