@@ -251,7 +251,6 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::V
     Eigen::MRPd sigmaLocal_PN;
     Eigen::Vector3d omegaDotLoc_PN_P;
     sigmaLocal_PN = sigma_BN;
-    omegaDotLoc_PN_P = omegaDot_BN_B;
 
     // - Find rDDotLoc_BN_B
     Eigen::Matrix3d dcm_PN;
@@ -264,7 +263,7 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::V
     this->thetaState->setDerivative(thetaDotState->getState());
     // - Second, a little more involved
     Eigen::MatrixXd thetaDDot(1,1);
-    thetaDDot(0,0) = this->aTheta.dot(rDDotLoc_PN_P) + this->bTheta.dot(omegaDotLoc_PN_P) + this->cTheta;
+    thetaDDot(0,0) = this->aTheta.dot(rDDotLoc_PN_P) + this->bTheta.dot(omegaDot_BN_B) + this->cTheta;
     this->thetaDotState->setDerivative(thetaDDot);
 
     return;
