@@ -99,6 +99,7 @@ void AeroDynamicEffector::linkInStates(DynParamManager& states){
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
 */
 void AeroDynamicEffector::updateAeroDir(){
+    /* compute DCN [BN] */
     Eigen::MRPd sigmaBN;
     sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
