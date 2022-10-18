@@ -34,7 +34,7 @@ splitPath = path.split('simulation')
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.simulation import spacecraft, spinningBodyStateEffector, gravityEffector
+from Basilisk.simulation import spacecraft, spinningBodyOneDOFStateEffector, gravityEffector
 from Basilisk.utilities import macros
 
 
@@ -91,7 +91,7 @@ def spinningBody(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create two hinged rigid bodies
-    spinningBody = spinningBodyStateEffector.SpinningBodyStateEffector()
+    spinningBody = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
 
     # Define properties of spinning body
     spinningBody.mass = 100.0

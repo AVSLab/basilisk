@@ -34,7 +34,7 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief spinning body state effector class */
-class spinningBodyOneDOFStateEffector: public StateEffector, public SysModel {
+class SpinningBodyOneDOFStateEffector: public StateEffector, public SysModel {
 public:
     double mass;                                                //!< [kg] mass of spinning body
     double k;                                                   //!< [N-m/rad] torsional spring constant
@@ -102,8 +102,8 @@ private:
     Eigen::MatrixXd *cPrime_B;          //!< [m/s] body time derivative of vector c_B in B frame components
 
 public:
-    spinningBodyOneDOFStateEffector();    //!< -- Contructor
-    ~spinningBodyOneDOFStateEffector();   //!< -- Destructor
+    SpinningBodyOneDOFStateEffector();    //!< -- Contructor
+    ~SpinningBodyOneDOFStateEffector();   //!< -- Destructor
     void Reset(uint64_t CurrentClock);                   //!< -- Method for reset
     void writeOutputStateMessages(uint64_t CurrentClock);   //!< -- Method for writing the output messages
 	void UpdateState(uint64_t CurrentSimNanos);             //!< -- Method for updating information
