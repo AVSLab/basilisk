@@ -18,9 +18,9 @@
  */
 
 
-%module SpinningBodyTwoDOFStateEffector
+%module spinningBodyTwoDOFStateEffector
 %{
-   #include "SpinningBodyTwoDOFStateEffector.h"
+   #include "spinningBodyTwoDOFStateEffector.h"
 %}
 
 %pythoncode %{
@@ -35,7 +35,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
-%include "SpinningBodyTwoDOFStateEffector.h"
+%include "spinningBodyTwoDOFStateEffector.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsg_C;

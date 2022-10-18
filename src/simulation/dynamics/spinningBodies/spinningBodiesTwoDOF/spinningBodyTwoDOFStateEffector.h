@@ -65,6 +65,7 @@ private:
     static uint64_t effectorID;         //!< [] ID number of this panel
     double u1;                           //!< [N-m] optional motor torque
     double u2;
+    double mass;
 
     // Terms needed for back substitution
     Eigen::Matrix<double, 2, 3> ATheta;             //!< -- rDDot_BN term for back substitution
