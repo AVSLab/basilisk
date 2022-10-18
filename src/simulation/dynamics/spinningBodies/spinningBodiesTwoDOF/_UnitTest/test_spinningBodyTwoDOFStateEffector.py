@@ -19,7 +19,7 @@
 #   Unit Test Script
 #   Module Name:        spinningBodies
 #   Author:             João Vaz Carneiro
-#   Creation Date:      September 15, 2022
+#   Creation Date:      October 17, 2022
 #
 
 import inspect
@@ -34,7 +34,7 @@ splitPath = path.split('simulation')
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.simulation import spacecraft, spinningBodyStateEffector, gravityEffector
+from Basilisk.simulation import spacecraft, spinningBodyTwoDOFStateEffector, gravityEffector
 from Basilisk.utilities import macros
 
 
@@ -91,17 +91,25 @@ def test_spinningBody(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create two hinged rigid bodies
-    spinningBody = spinningBodyStateEffector.SpinningBodyStateEffector()
+    spinningBody = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
 
     # Define properties of spinning body
-    spinningBody.mass = 100.0
-    spinningBody.IPntSc_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    spinningBody.dcm_S0B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    spinningBody.r_ScS_S = [[0.5], [0.0], [1.0]]
-    spinningBody.r_SB_B = [[1.5], [-0.5], [2.0]]
-    spinningBody.sHat_S = [[0], [0], [1]]
-    spinningBody.thetaInit = 5 * macros.D2R
-    spinningBody.thetaDotInit = 1 * macros.D2R
+    spinningBody.mass1 = 100.0
+    spinningBody.mass2 = 100.0
+    spinningBody.IPntSc1_S1 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    spinningBody.IPntSc2_S2 = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
+    spinningBody.dcm_S10B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    spinningBody.dcm_S20S1 = [[0.0, 1.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 0.0, -1.0]]
+    spinningBody.r_Sc1S1_S1 = [[0.5], [0.0], [1.0]]
+    spinningBody.r_Sc2S2_S2 = [[0.0], [0.0], [-1.0]]
+    spinningBody.r_S1B_B = [[1.5], [-0.5], [2.0]]
+    spinningBody.r_S2S1_S1 = [[0.5], [-1.5], [-0.5]]
+    spinningBody.s1Hat_S1 = [[0], [0], [1]]
+    spinningBody.s2Hat_S2 = [[0], [-1], [0]]
+    spinningBody.theta1Init = 5 * macros.D2R
+    spinningBody.theta2Init = -1 * macros.D2R
+    spinningBody.theta1DotInit = 1 * macros.D2R
+    spinningBody.theta2DotInit = 0.5 * macros.D2R
     spinningBody.ModelTag = "SpinningBody"
 
     # Add spinning body to spacecraft
