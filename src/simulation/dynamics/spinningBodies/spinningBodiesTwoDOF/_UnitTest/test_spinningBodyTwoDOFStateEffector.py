@@ -165,8 +165,10 @@ def test_spinningBody(show_plots):
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
-    theta = thetaData.theta
-    thetaDot = thetaData.thetaDot
+    theta1 = thetaData.theta1
+    theta2 = thetaData.theta2
+    theta1Dot = thetaData.theta1Dot
+    theta2Dot = thetaData.theta2Dot
 
     # Setup the conservation quantities
     initialOrbAngMom_N = [[orbAngMom_N[0, 1], orbAngMom_N[0, 2], orbAngMom_N[0, 3]]]
@@ -210,15 +212,27 @@ def test_spinningBody(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(thetaData.times() * 1e-9, theta)
+    plt.plot(thetaData.times() * 1e-9, theta1)
     plt.xlabel('time (s)')
-    plt.ylabel('theta')
+    plt.ylabel('theta1')
 
     plt.figure()
     plt.clf()
-    plt.plot(thetaData.times() * 1e-9, thetaDot)
+    plt.plot(thetaData.times() * 1e-9, theta1Dot)
     plt.xlabel('time (s)')
-    plt.ylabel('thetaDot')
+    plt.ylabel('theta1Dot')
+
+    plt.figure()
+    plt.clf()
+    plt.plot(thetaData.times() * 1e-9, theta2)
+    plt.xlabel('time (s)')
+    plt.ylabel('theta2')
+
+    plt.figure()
+    plt.clf()
+    plt.plot(thetaData.times() * 1e-9, theta2Dot)
+    plt.xlabel('time (s)')
+    plt.ylabel('theta2Dot')
 
     if show_plots:
         plt.show()

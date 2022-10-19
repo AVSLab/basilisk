@@ -52,6 +52,12 @@ SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector()
     this->s2Hat_S2.setZero();
     this->u1 = 0.0;
     this->u2 = 0.0;
+
+    // Create the output vector
+    Message<SCStatesMsgPayload>* msg;
+    msg = new Message<SCStatesMsgPayload>;
+    this->spinningBodyConfigLogOutMsg.push_back(msg);
+    this->spinningBodyConfigLogOutMsg.push_back(msg);
     
     this->nameOfTheta1State = "spinningBodyTheta1" + std::to_string(this->effectorID);
     this->nameOfTheta1DotState = "spinningBodyTheta1Dot" + std::to_string(this->effectorID);
@@ -67,6 +73,11 @@ uint64_t SpinningBodyTwoDOFStateEffector::effectorID = 1;
 /*! This is the destructor, nothing to report here */
 SpinningBodyTwoDOFStateEffector::~SpinningBodyTwoDOFStateEffector()
 {
+    // Free memory to avoid errors
+    for (long unsigned int c = 0; c < this->spinningBodyConfigLogOutMsg.size(); c++) {
+        free(this->spinningBodyConfigLogOutMsg.at(c));
+    }
+
     this->effectorID = 1;    /* reset the panel ID*/
 
     return;
@@ -109,28 +120,28 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
     }
 
     // Write out the spinning body state config log message
-    if (this->spinningBodyConfigLogOutMsg[0].isLinked()) {
+    if (this->spinningBodyConfigLogOutMsg[0]->isLinked()) {
         SCStatesMsgPayload configLogMsg;
-        configLogMsg = this->spinningBodyConfigLogOutMsg[0].zeroMsgPayload;
+        configLogMsg = this->spinningBodyConfigLogOutMsg[0]->zeroMsgPayload;
 
         // Logging the S frame is the body frame B of that object
         eigenVector3d2CArray(this->r_Sc1N_N, configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_Sc1N_N, configLogMsg.v_BN_N);
         eigenVector3d2CArray(this->sigma_S1N, configLogMsg.sigma_BN);
         eigenVector3d2CArray(this->omega_S1N_S, configLogMsg.omega_BN_B);
-        this->spinningBodyConfigLogOutMsg[0].write(&configLogMsg, this->moduleID, CurrentClock);
+        this->spinningBodyConfigLogOutMsg[0]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 
-    if (this->spinningBodyConfigLogOutMsg[1].isLinked()) {
+    if (this->spinningBodyConfigLogOutMsg[1]->isLinked()) {
         SCStatesMsgPayload configLogMsg;
-        configLogMsg = this->spinningBodyConfigLogOutMsg[1].zeroMsgPayload;
+        configLogMsg = this->spinningBodyConfigLogOutMsg[1]->zeroMsgPayload;
 
         // Logging the S frame is the body frame B of that object
         eigenVector3d2CArray(this->r_Sc2N_N, configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_Sc2N_N, configLogMsg.v_BN_N);
         eigenVector3d2CArray(this->sigma_S2N, configLogMsg.sigma_BN);
         eigenVector3d2CArray(this->omega_S2N_S, configLogMsg.omega_BN_B);
-        this->spinningBodyConfigLogOutMsg[1].write(&configLogMsg, this->moduleID, CurrentClock);
+        this->spinningBodyConfigLogOutMsg[1]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 
 }
@@ -316,8 +327,8 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
 
     // Define and populate the mass matrix for thetaDDot
     Eigen::Matrix2d MTheta;
-    MTheta << IS1PntS1_B * this->s1Hat_B, (this->IS2PntSc2_B - this->mass2 * rTilde_Sc2S1_B * rTilde_Sc2S2_B) * this->s2Hat_B,
-              (IS2PntS2_B - this->mass2 * rTilde_Sc2S2_B * rTilde_S2S1_B) * this->s1Hat_B, IS2PntS2_B* this->s2Hat_B;
+    MTheta << this->s1Hat_B.transpose() * IS1PntS1_B * this->s1Hat_B, this->s1Hat_B.transpose() * (this->IS2PntSc2_B - this->mass2 * rTilde_Sc2S1_B * rTilde_Sc2S2_B)* this->s2Hat_B,
+              this->s2Hat_B.transpose() * (IS2PntS2_B - this->mass2 * rTilde_Sc2S2_B * rTilde_S2S1_B) * this->s1Hat_B, this->s2Hat_B.transpose() * IS2PntS2_B* this->s2Hat_B;
 
     // Define AThetaStar matrix
     Eigen::Matrix<double, 2, 3> AThetaStar;
@@ -331,7 +342,7 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
 
     // Define CThetaStar vector
     Eigen::Vector3d rDot_S1B_B = this->omegaTilde_BN_B * this->r_S1B_B;
-    Eigen::Vector3d rDot_S2S1_B = omegaTilde_S1N_B * this->r_S2S1_B;
+    Eigen::Vector3d rDot_S2S1_B = this->rPrime_S2S1_B + this->omegaTilde_BN_B * this->r_S2S1_B;
     Eigen::Vector3d gravityTorquePntS1_B = rTilde_ScS1_B * this->mass * g_B;
     Eigen::Vector3d gravityTorquePntS2_B = rTilde_Sc2S2_B * this->mass2 * g_B;
     Eigen::Vector2d CThetaStar;
@@ -351,8 +362,8 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
     // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
     // Translation contributions
     backSubContr.matrixA = - (this->mass1 * rTilde_Sc1S1_B + this->mass2 * rTilde_Sc2S1_B) * this->s1Hat_B * this->ATheta.row(0) 
-        - this->mass2 * rTilde_Sc2S2_B* this->s2Hat_B* this->ATheta.row(1);
-    backSubContr.matrixB = -(this->mass1 * rTilde_Sc1S1_B + this->mass2 * rTilde_Sc2S1_B) * this->s1Hat_B * this->BTheta.row(0)
+        - this->mass2 * rTilde_Sc2S2_B* this->s2Hat_B * this->ATheta.row(1);
+    backSubContr.matrixB = - (this->mass1 * rTilde_Sc1S1_B + this->mass2 * rTilde_Sc2S1_B) * this->s1Hat_B * this->BTheta.row(0)
         - this->mass2 * rTilde_Sc2S2_B * this->s2Hat_B * this->BTheta.row(1);
     backSubContr.vecTrans = - this->mass1 * this->omegaTilde_S1B_B * this->rPrime_Sc1S1_B - this->mass2 * (this->omegaTilde_S1B_B * omegaTilde_S2S1_B * this->r_Sc2S2_B 
         + this->omegaTilde_S2B_B * this->rPrime_Sc2S2_B + this->omegaTilde_S1B_B * this->rPrime_S2S1_B)
@@ -413,16 +424,16 @@ void SpinningBodyTwoDOFStateEffector::updateEnergyMomContributions(double integT
     this->omega_S2N_B = this->omega_S2B_B + this->omega_BN_B;
 
     // Compute rDot_ScB_B
-    this->rDot_Sc1B_B = this->rPrime_Sc1B_B + this->omegaTilde_BN_B * this->r_Sc1B_B;
-    this->rDot_Sc2B_B = this->rPrime_Sc2B_B + this->omegaTilde_BN_B * this->r_Sc2B_B;
+    Eigen::Vector3d rDot_Sc1B_B = this->rPrime_Sc1B_B + this->omegaTilde_BN_B * this->r_Sc1B_B;
+    Eigen::Vector3d rDot_Sc2B_B = this->rPrime_Sc2B_B + this->omegaTilde_BN_B * this->r_Sc2B_B;
 
     // Find rotational angular momentum contribution from hub
-    rotAngMomPntCContr_B = this->IS1PntSc1_B * this->omega_S1N_B + this->mass1 * this->rTilde_Sc1B_B * this->rDot_Sc1B_B
-        + this->IS2PntSc2_B * this->omega_S2N_B + this->mass2 * this->rTilde_Sc2B_B * this->rDot_Sc2B_B;
+    rotAngMomPntCContr_B = this->IS1PntSc1_B * this->omega_S1N_B + this->mass1 * this->rTilde_Sc1B_B * rDot_Sc1B_B
+        + this->IS2PntSc2_B * this->omega_S2N_B + this->mass2 * this->rTilde_Sc2B_B * rDot_Sc2B_B;
 
     // Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0 / 2.0 * this->omega_S1N_B.dot(this->IS1PntSc1_B * this->omega_S1N_B) + 1.0 / 2.0 * this->mass1 * this->rDot_Sc1B_B.dot(this->rDot_Sc1B_B)
-        + 1.0 / 2.0 * this->omega_S2N_B.dot(this->IS2PntSc2_B * this->omega_S2N_B) + 1.0 / 2.0 * this->mass2 * this->rDot_Sc2B_B.dot(this->rDot_Sc2B_B);
+    rotEnergyContr = 1.0 / 2.0 * this->omega_S1N_B.dot(this->IS1PntSc1_B * this->omega_S1N_B) + 1.0 / 2.0 * this->mass1 * rDot_Sc1B_B.dot(rDot_Sc1B_B)
+        + 1.0 / 2.0 * this->omega_S2N_B.dot(this->IS2PntSc2_B * this->omega_S2N_B) + 1.0 / 2.0 * this->mass2 * rDot_Sc2B_B.dot(rDot_Sc2B_B);
 
     return;
 }
@@ -443,8 +454,8 @@ void SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates()
     this->r_Sc2N_N = (Eigen::Vector3d)this->hubPosition->getState() + this->dcm_BN.transpose() * this->r_Sc2B_B;
 
     // Compute the inertial velocity vector
-    this->v_Sc1N_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * this->rDot_Sc1B_B;
-    this->v_Sc2N_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * this->rDot_Sc2B_B;
+    this->v_Sc1N_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * rDot_Sc1B_B;
+    this->v_Sc2N_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * rDot_Sc2B_B;
 
     return;
 }
