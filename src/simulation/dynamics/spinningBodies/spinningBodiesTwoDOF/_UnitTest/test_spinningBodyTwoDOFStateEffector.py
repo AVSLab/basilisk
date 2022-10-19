@@ -95,9 +95,9 @@ def test_spinningBody(show_plots):
 
     # Define properties of spinning body
     spinningBody.mass1 = 100.0
-    spinningBody.mass2 = 100.0
-    spinningBody.IPntSc1_S1 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    spinningBody.IPntSc2_S2 = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
+    spinningBody.mass2 = 50.0
+    spinningBody.IS1PntSc1_S1 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    spinningBody.IS2PntSc2_S2 = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
     spinningBody.dcm_S10B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     spinningBody.dcm_S20S1 = [[0.0, 1.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 0.0, -1.0]]
     spinningBody.r_Sc1S1_S1 = [[0.5], [0.0], [1.0]]

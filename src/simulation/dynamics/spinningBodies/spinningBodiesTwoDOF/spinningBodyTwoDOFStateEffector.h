@@ -52,8 +52,8 @@ public:
     Eigen::Vector3d r_Sc2S2_S2;                                    //!< [m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in S frame components
     Eigen::Vector3d s1Hat_S1;                                     //!< -- spinning axis in S frame components.
     Eigen::Vector3d s2Hat_S2;                                     //!< -- spinning axis in S frame components.
-    Eigen::Matrix3d IPntSc1_S1;                                   //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
-    Eigen::Matrix3d IPntSc2_S2;                                   //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
+    Eigen::Matrix3d IS1PntSc1_S1;                                   //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
+    Eigen::Matrix3d IS2PntSc2_S2;                                   //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
     Eigen::Matrix3d dcm_S10B;                                    //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
     Eigen::Matrix3d dcm_S20S1;                                    //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
     Message<SpinningBodyTwoDOFMsgPayload> spinningBodyOutMsg;         //!< state output message
@@ -85,6 +85,7 @@ private:
     Eigen::Vector3d rPrime_S2S1_B;       //!< [m/s] body frame time derivative of r_ScS_B
     Eigen::Vector3d rPrime_Sc1B_B;       //!< [m/s] body frame time derivative of r_ScB_B
     Eigen::Vector3d rPrime_Sc2B_B;       //!< [m/s] body frame time derivative of r_ScB_B
+    Eigen::Vector3d rPrime_Sc2S1_B;       //!< [m/s] body frame time derivative of r_ScB_B
     Eigen::Vector3d rDot_Sc1B_B;         //!< [m/s] inertial frame time derivative of r_ScB_B
     Eigen::Vector3d rDot_Sc2B_B;         //!< [m/s] inertial frame time derivative of r_ScB_B
     Eigen::Vector3d omega_S1B_B;         //!< [rad/s] angular velocity of the S frame wrt the B frame in B frame components.
@@ -104,10 +105,10 @@ private:
     Eigen::Matrix3d dcm_BS1;             //!< -- DCM from spinner frame to body frame
     Eigen::Matrix3d dcm_BS2;             //!< -- DCM from spinner frame to body frame
     Eigen::Matrix3d dcm_BN;             //!< -- DCM from inertial frame to body frame
-    Eigen::Matrix3d IPntSc1_B;           //!< [kg-m^2] inertia of spinning body about point Sc in B frame components
-    Eigen::Matrix3d IPntSc2_B;           //!< [kg-m^2] inertia of spinning body about point Sc in B frame components
-    Eigen::Matrix3d IPrimePntSc1_B;           //!< [kg-m^2] inertia of spinning body about point Sc in B frame components
-    Eigen::Matrix3d IPrimePntSc2_B;           //!< [kg-m^2] inertia of spinning body about point Sc in B frame components
+    Eigen::Matrix3d IS1PntSc1_B;           //!< [kg-m^2] inertia of spinning body about point Sc in B frame components
+    Eigen::Matrix3d IS2PntSc2_B;           //!< [kg-m^2] inertia of spinning body about point Sc in B frame components
+    Eigen::Matrix3d IPrimeS1PntSc1_B;           //!< [kg-m^2] inertia of spinning body about point Sc in B frame components
+    Eigen::Matrix3d IPrimeS2PntSc2_B;           //!< [kg-m^2] inertia of spinning body about point Sc in B frame components
 
     // Spinning body properties
     Eigen::Vector3d r_Sc1N_N;            //!< [m] position vector of spinning body center of mass Sc relative to the inertial frame origin N
