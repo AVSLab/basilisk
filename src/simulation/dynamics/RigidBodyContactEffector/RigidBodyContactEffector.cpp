@@ -22,6 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "RigidBodyContactEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include <Eigen/QR>
+#include <stdlib.h>
 
 
 
@@ -620,7 +621,6 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     Eigen::MatrixXd M_inv_red2;
     std::vector<double> f_vals;
     std::vector<double> phi_vals;
-    int tempSel;
     Eigen::VectorXd dv3dj;
     Eigen::VectorXd tempVec;
     
@@ -628,6 +628,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     bool energyMet;
     int currLoop;
     int loopMax = 1e9;
+    double colIntStep;
     Eigen::VectorXd k1;
     Eigen::VectorXd k2;
     Eigen::VectorXd k3;
@@ -636,30 +637,38 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     
     std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts;
     
+    if (this->justOneTime){
+        return;
+    }
     
     for (int groupIt1=0; groupIt1 < this->closeBodies.size(); ++groupIt1)
     {
         if (this->responseFound)
         {
-            if ((this->timeFound >= currentTime) && ((timeStep - this->integrateTimeStep) < 1e-12))
+            if ((this->timeFound >= currentTime) && (abs(timeStep - this->integrateTimeStep) < 1e-15))
             {
-                this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N / timeStep;
-                this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B / timeStep;
+                this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N;// / timeStep;
+                this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B;// / timeStep;
                 //this->integrateTimeStep = timeStep;
                 std::cout << "again" << std::endl;
                 return;
             }
             this->responseFound = false;
+            this->justOneTime = true;
+            return;
         }
+        
         // Fine collision detection begin
         if (this->Bodies[this->closeBodies[groupIt1][0]].isSpice == true)
         {
             body1Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * (currentTime - this->currentSimSeconds);
+            body1Current.v_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N ;
             body1Current.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B * this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_BN) * (currentTime - this->currentSimSeconds)) + this->Bodies[this->closeBodies[groupIt1][0]].states.dcm_BN;
             body1Current.dcm_NB = body1Current.dcm_BN.transpose();
             body1Current.omegaTilde_BN_B = this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B;
             
             body1Future.r_BN_N = body1Current.r_BN_N + this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N * timeStep ;
+            body1Future.v_BN_N = this->Bodies[this->closeBodies[groupIt1][0]].states.v_BN_N ;
             body1Future.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][0]].states.omegaTilde_BN_B * body1Current.dcm_BN) * timeStep) + body1Current.dcm_BN;
             body1Future.dcm_NB = body1Future.dcm_BN.transpose();
         }else
@@ -682,11 +691,13 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         if (this->Bodies[this->closeBodies[groupIt1][1]].isSpice == true)
         {
             body2Current.r_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * (currentTime - this->currentSimSeconds);
+            body2Current.v_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N;
             body2Current.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B * this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_BN) * (currentTime - this->currentSimSeconds)) + this->Bodies[this->closeBodies[groupIt1][1]].states.dcm_BN;
             body2Current.dcm_NB = body2Current.dcm_BN.transpose();
             body2Current.omegaTilde_BN_B = this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B;
             
             body2Future.r_BN_N = body2Current.r_BN_N + this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N * timeStep ;
+            body2Future.v_BN_N = this->Bodies[this->closeBodies[groupIt1][1]].states.v_BN_N;
             body2Future.dcm_BN = ((-this->Bodies[this->closeBodies[groupIt1][1]].states.omegaTilde_BN_B * body2Current.dcm_BN) * timeStep) + body2Current.dcm_BN;
             body2Future.dcm_NB = body2Future.dcm_BN.transpose();
         }else
@@ -806,7 +817,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                         if (intersectFlag == 1)
                         {
                             //contactError = (contactPoint - body2VertInter[vertInd].lower).norm();
-                            if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
+                            if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-15)))
                             {
                                 alreadyFound = false;
                                 for (int impInd=0; impInd < impacts.size(); impInd++){
@@ -824,7 +835,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                                 //if (alreadyFound) continue;
                                 impacts.push_back(std::make_tuple(contactPoint, body2UniqueVertInter[vertInd].lower, body1Current.dcm_NB * -this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceNormals[faceInd]));
                                 usedVerts.push_back(vertInd);
-//                                std::cout << "Face 1 Verts 2: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
+                                std::cout << "Face 1 Verts 2: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
@@ -887,7 +898,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                         
                         if (intersectFlag == 1)
                         {
-                            if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
+                            if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-15)))
                             {
                                 alreadyFound = false;
                                 for (int impInd=0; impInd < impacts.size(); impInd++){
@@ -906,7 +917,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                                 
                                 impacts.push_back(std::make_tuple(body1UniqueVertInter[vertInd].lower, contactPoint, body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceNormals[faceInd]));
                                 usedVerts.push_back(vertInd);
-//                                std::cout << "Face 2 Verts 1: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
+                                std::cout << "Face 2 Verts 1: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
@@ -944,15 +955,15 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                     elemTest = this->IntervalDotProduct(supportInterval, this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
 
                     
-                    if (((elemTest[0] <= -1e-12) && (elemTest[1] >= 1e-12)) || ((elemTest[0] >= 1e-12) && (elemTest[1] <= -1e-12)))
+                    if (((elemTest[0] < 0) && (elemTest[1] > 0)) || ((elemTest[0] > 0) && (elemTest[1] < 0)))
                     {
                         intersectFlag = this->LineLineDistance(std::get<0>(body1EdgeInter[vertInd1]).lower, std::get<1>(body1EdgeInter[vertInd1]).lower, std::get<0>(body2EdgeInter[vertInd2]).lower, std::get<1>(body2EdgeInter[vertInd2]).lower, &contactPoint, &contactPoint2);
                         
                         
-                        if (intersectFlag == 0)
+                        if ((intersectFlag == 0) || (intersectFlag == 1))
                         {
                             contactError = (contactPoint - contactPoint2).norm();
-                            if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
+                            if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-15)))
                             {
                                 alreadyFound = false;
                                 for (int impInd=0; impInd < impacts.size(); impInd++){
@@ -968,9 +979,15 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                                     }
                                 }
                                 //if (alreadyFound) continue;
-                                
-                                impacts.push_back(std::make_tuple(contactPoint, contactPoint2, ((contactPoint - contactPoint2) * 1.0e6).normalized()));
-                                //std::cout << "Edge 0: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
+                                contactNormal_N = ((contactPoint - contactPoint2) * 1.0e6).normalized();
+                                contactVelocity_N = (body1Current.v_BN_N + body1Current.dcm_NB * (body1Current.omegaTilde_BN_B * body1Current.dcm_BN * (contactPoint - body1Current.r_BN_N))) - (body2Current.v_BN_N + body2Current.dcm_NB * (body2Current.omegaTilde_BN_B * body2Current.dcm_BN * (contactPoint2 - body2Current.r_BN_N)));
+                                if (contactVelocity_N.dot(contactNormal_N) > 0)
+                                {
+                                    continue;
+                                }
+                                impacts.push_back(std::make_tuple(contactPoint, contactPoint2, (-contactVelocity_N).normalized()));
+//                                impacts.push_back(std::make_tuple(contactPoint, contactPoint2, ((contactPoint - contactPoint2) * 1.0e6).normalized()));
+                                std::cout << "Edge 0: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
@@ -1010,7 +1027,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                                     continue;
                                 }
                                 impacts.push_back(std::make_tuple(contactPoint, contactPoint2, contactNormal_N));
-                                //std::cout << "Edge 1: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
+                                std::cout << "Edge 1: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
@@ -1031,6 +1048,38 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         //std::cout << numImpacts << std::endl;
         if (numImpacts == 0)
         {
+            this->lockedToRand = true;
+            this->timeFound = currentTime + timeStep + 1.0e-15;
+            this->integrateTimeStep = timeStep;
+            return;
+        }
+        if (this->lockedToRand)
+        {
+            if ((abs(timeStep - this->integrateTimeStep) < 1e-15))
+            {
+                this->forceExternal_N[0] = ((std::rand() % 1000) + 1000.0) / timeStep;
+                this->forceExternal_N[1] = ((std::rand() % 1000) + 1000.0) / timeStep;
+                this->forceExternal_N[2] = ((std::rand() % 1000) + 1000.0) / timeStep;
+                this->torqueExternalPntB_B[0] = ((std::rand() % 1000) + 1000.0) / timeStep;
+                this->torqueExternalPntB_B[1] = ((std::rand() % 1000) + 1000.0) / timeStep;
+                this->torqueExternalPntB_B[2] = ((std::rand() % 1000) + 1000.0) / timeStep;
+                return;
+            }
+            this->lockedToRand = false;
+        }
+        if (currentMaxError > this->maxPosError)
+        {
+            this->forceExternal_N[0] = ((std::rand() % 1000) + 1000.0) / timeStep;
+            this->forceExternal_N[1] = ((std::rand() % 1000) + 1000.0) / timeStep;
+            this->forceExternal_N[2] = ((std::rand() % 1000) + 1000.0) / timeStep;
+            this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N = -this->forceExternal_N;
+            this->torqueExternalPntB_B[0] = ((std::rand() % 1000) + 1000.0) / timeStep;
+            this->torqueExternalPntB_B[1] = ((std::rand() % 1000) + 1000.0) / timeStep;
+            this->torqueExternalPntB_B[2] = ((std::rand() % 1000) + 1000.0) / timeStep;
+//            this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B = -this->torqueExternalPntB_B;
+            this->lockedToRand = true;
+            this->timeFound = currentTime + timeStep + 1.0e-15;
+            this->integrateTimeStep = timeStep;
             return;
         }
         for (int impNum=0; impNum < numImpacts; impNum++)
@@ -1095,54 +1144,54 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         }
         
         // Solve for the critical values of friction and sliding direction
-        if (impacts.size() == 1)
-        {
-            f_vals.push_back(sqrt((pow(M_tot(0,1) * M_tot(1,2) - M_tot(1,1) * M_tot(0,2), 2) + pow(M_tot(1,0) * M_tot(0,2) - M_tot(0,0) * M_tot(1,2), 2)) / pow(M_tot(0,0) * M_tot(1,1) - M_tot(0,1) * M_tot(1,0), 2)));
-            
-            phi_vals.push_back(atan2(M_tot(0,0) * M_tot(1,2) - M_tot(1,0) * M_tot(0,2), M_tot(1,1) * M_tot(0,2) - M_tot(0,1) * M_tot(1,3)));
-        }else
-        {
-            M_inv = M_tot.completeOrthogonalDecomposition().pseudoInverse();
-            M_inv_red1 = Eigen::MatrixXd::Zero(3*numImpacts, numImpacts);
-            tempSel = 2;
-            for (int ii=0; ii < numImpacts; ii++)
-            {
-                M_inv_red1.block(0, ii, 3*numImpacts, 1) = M_inv.block(0, tempSel, 3*numImpacts, 1);
-                tempSel += 3;
-            }
-            M_inv_red2 = Eigen::MatrixXd::Zero(numImpacts, numImpacts);
-            tempSel = 2;
-            for (int ii=0; ii < numImpacts; ii++)
-            {
-                M_inv_red2.block(ii, 0, 1, numImpacts) = M_inv_red1.block(tempSel, 0, 1, numImpacts);
-                tempSel += 3;
-            }
-            
-            dv3dj = M_inv_red2.completeOrthogonalDecomposition().pseudoInverse() * Eigen::VectorXd::Ones(numImpacts);
-            tempVec = Eigen::VectorXd::Zero(3*numImpacts);
-            tempSel = 2;
-            for (int ii=0; ii < numImpacts; ii++)
-            {
-                tempVec(tempSel) = dv3dj(ii);
-                tempSel += 3;
-            }
-            
-            tempVec = M_inv * tempVec;
-            tempSel = 0;
-            for (int ii=0; ii < numImpacts; ii++)
-            {
-                f_vals.push_back(sqrt(pow(tempVec(tempSel), 2) + pow(tempVec(tempSel+1), 2)));
-                phi_vals.push_back(atan2(tempVec(tempSel+1), tempVec(tempSel)));
-                tempSel += 3;
-            }
-        }
+//        if (impacts.size() == 1)
+//        {
+//            f_vals.push_back(sqrt((pow(M_tot(0,1) * M_tot(1,2) - M_tot(1,1) * M_tot(0,2), 2) + pow(M_tot(1,0) * M_tot(0,2) - M_tot(0,0) * M_tot(1,2), 2)) / pow(M_tot(0,0) * M_tot(1,1) - M_tot(0,1) * M_tot(1,0), 2)));
+//
+//            phi_vals.push_back(atan2(M_tot(0,0) * M_tot(1,2) - M_tot(1,0) * M_tot(0,2), M_tot(1,1) * M_tot(0,2) - M_tot(0,1) * M_tot(1,3)));
+//        }else
+//        {
+//            M_inv = M_tot.completeOrthogonalDecomposition().pseudoInverse();
+//            M_inv_red1 = Eigen::MatrixXd::Zero(3*numImpacts, numImpacts);
+//            tempSel = 2;
+//            for (int ii=0; ii < numImpacts; ii++)
+//            {
+//                M_inv_red1.block(0, ii, 3*numImpacts, 1) = M_inv.block(0, tempSel, 3*numImpacts, 1);
+//                tempSel += 3;
+//            }
+//            M_inv_red2 = Eigen::MatrixXd::Zero(numImpacts, numImpacts);
+//            tempSel = 2;
+//            for (int ii=0; ii < numImpacts; ii++)
+//            {
+//                M_inv_red2.block(ii, 0, 1, numImpacts) = M_inv_red1.block(tempSel, 0, 1, numImpacts);
+//                tempSel += 3;
+//            }
+//
+//            dv3dj = M_inv_red2.completeOrthogonalDecomposition().pseudoInverse() * Eigen::VectorXd::Ones(numImpacts);
+//            tempVec = Eigen::VectorXd::Zero(3*numImpacts);
+//            tempSel = 2;
+//            for (int ii=0; ii < numImpacts; ii++)
+//            {
+//                tempVec(tempSel) = dv3dj(ii);
+//                tempSel += 3;
+//            }
+//
+//            tempVec = M_inv * tempVec;
+//            tempSel = 0;
+//            for (int ii=0; ii < numImpacts; ii++)
+//            {
+//                f_vals.push_back(sqrt(pow(tempVec(tempSel), 2) + pow(tempVec(tempSel+1), 2)));
+//                phi_vals.push_back(atan2(tempVec(tempSel+1), tempVec(tempSel)));
+//                tempSel += 3;
+//            }
+//        }
         
         // Create the initial collision state
         X_c = Eigen::VectorXd::Zero(numImpacts * 8);
         for (int impNum=0; impNum < numImpacts; impNum++)
         {
             // Velocity of the contact point on body 1 relative to the contact point on body 2, in the local contact frame
-            X_c.segment(impNum * 3, 3) = dcm_CN[impNum] * ((body1Current.v_BN_N + body1Current.dcm_NB * (body1Current.omegaTilde_BN_B * (body1Current.dcm_BN * std::get<0>(impacts[impNum])))) - (body2Current.v_BN_N + body2Current.dcm_NB * (body2Current.omegaTilde_BN_B * (body2Current.dcm_BN * std::get<1>(impacts[impNum])))));
+            X_c.segment(impNum * 3, 3) = dcm_CN[impNum] * ((body1Current.v_BN_N + body1Current.dcm_NB * (body1Current.omegaTilde_BN_B * (body1Current.dcm_BN * std::get<0>(impacts[impNum]) - body1Current.r_BN_N))) - (body2Current.v_BN_N + body2Current.dcm_NB * (body2Current.omegaTilde_BN_B * (body2Current.dcm_BN * std::get<1>(impacts[impNum]) - body2Current.r_BN_N))));
             
             // Add initial perturbation to energy states for numerical robustness
             if (X_c(impNum * 3) < 0)
@@ -1157,23 +1206,25 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         // Integrate the collision state until the restitution energy conditions are met
         energyMet = false;
         currLoop = 0;
-        if ((currentMaxError <= this->maxPosError))
-        {
-            loopMax = 1e6;
-        }else
-        {
-            loopMax = 1e2;
-        }
+//        if ((currentMaxError <= this->maxPosError))
+//        {
+            loopMax = 1e9;
+            colIntStep = this->collisionIntegrationStep;
+//        }else
+//        {
+//            loopMax = 1e6;
+//            colIntStep = 1e-2;
+//        }
         std::cout << "Entering Impule Integration" << std::endl;
         while (!energyMet)
         {
             currLoop++;
             // Use RK4 to integrate the collision state
             k1 = this->CollisionStateDerivative(X_c, impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
-            k2 = this->CollisionStateDerivative(X_c + this->collisionIntegrationStep * (k1 / 2.0), impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
-            k3 = this->CollisionStateDerivative(X_c + this->collisionIntegrationStep * (k2 / 2.0), impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
-            k4 = this->CollisionStateDerivative(X_c + this->collisionIntegrationStep * k3, impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
-            X_c = X_c + (this->collisionIntegrationStep / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
+            k2 = this->CollisionStateDerivative(X_c + colIntStep * (k1 / 2.0), impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
+            k3 = this->CollisionStateDerivative(X_c + colIntStep * (k2 / 2.0), impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
+            k4 = this->CollisionStateDerivative(X_c + colIntStep * k3, impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
+            X_c = X_c + (colIntStep / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
             
             energyMet = true;
             // Check if there are any contact points that have not met the restitution energy requirements
@@ -1201,10 +1252,10 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         for (int impNum=0; impNum < numImpacts; impNum++)
         {
             impulse_Body1_N = dcm_CN[impNum].transpose() * X_c.segment(numImpacts * 3 + impNum * 3, 3);
-            forceExternalOther_N -= impulse_Body1_N;// / timeStep;
-            torqueExternalOtherPntB_B -= body2Current.dcm_BN * (std::get<1>(impacts[impNum]) - body2Current.r_BN_N).cross(impulse_Body1_N);// / timeStep);
-            this->forceExternal_N += impulse_Body1_N;// / timeStep;
-            this->torqueExternalPntB_B += body1Current.dcm_BN * (std::get<0>(impacts[impNum]) - body1Current.r_BN_N).cross(impulse_Body1_N);// / timeStep);
+            forceExternalOther_N -= impulse_Body1_N / timeStep;
+            torqueExternalOtherPntB_B -= body2Current.dcm_BN * (std::get<1>(impacts[impNum]) - body2Current.r_BN_N).cross(impulse_Body1_N / timeStep);
+            this->forceExternal_N += impulse_Body1_N / timeStep;
+            this->torqueExternalPntB_B += body1Current.dcm_BN * (std::get<0>(impacts[impNum]) - body1Current.r_BN_N).cross(impulse_Body1_N / timeStep);
         }
         
         if (currentMaxError <= this->maxPosError)
@@ -1213,16 +1264,15 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             std::cout << this->torqueExternalPntB_B << std::endl;
             std::cout << std::endl << timeStep << std::endl;
             this->responseFound = true;
-            std::cout << timeStep << std::endl;
-            this->timeFound = currentTime + timeStep + 1.0e-12;
+            this->timeFound = currentTime + timeStep + 1.0e-15;
             this->integrateTimeStep = timeStep;
             this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N = this->forceExternal_N;
             this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N = forceExternalOther_N;
             this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B = this->torqueExternalPntB_B;
             this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B = torqueExternalOtherPntB_B;
         }
-        this->forceExternal_N = this->forceExternal_N / timeStep;
-        this->torqueExternalPntB_B = this->torqueExternalPntB_B / timeStep;
+        this->forceExternal_N = this->forceExternal_N;// / timeStep;
+        this->torqueExternalPntB_B = this->torqueExternalPntB_B;// / timeStep;
         return;
     }
     
@@ -1240,18 +1290,18 @@ Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::Vecto
     {
         if (X_c(numImpacts * 6 + impNum * 2 + 1) < (-1.0 * (pow(coefRes, 2.0) * X_c(numImpacts * 6 + impNum * 2))))
         {
-            if (sqrt(pow(X_c(impNum * 3), 2) + pow(X_c(impNum * 3 + 1), 2)) < 1.0e-6)
-            {
-                Xdot_c(numImpacts * 3 + impNum * 3) = -f_vals[impNum] * cos(phi_vals[impNum]);
-                Xdot_c(numImpacts * 3 + impNum * 3 + 1) = -f_vals[impNum] * sin(phi_vals[impNum]);
-                Xdot_c(numImpacts * 3 + impNum * 3 + 2) = 1.0;
-            }else
-            {
+//            if (sqrt(pow(X_c(impNum * 3), 2) + pow(X_c(impNum * 3 + 1), 2)) < 1.0e-6)
+//            {
+//                Xdot_c(numImpacts * 3 + impNum * 3) = -f_vals[impNum] * cos(phi_vals[impNum]);
+//                Xdot_c(numImpacts * 3 + impNum * 3 + 1) = -f_vals[impNum] * sin(phi_vals[impNum]);
+//                Xdot_c(numImpacts * 3 + impNum * 3 + 2) = 1.0;
+//            }else
+//            {
                 phi = atan2(X_c(impNum * 3 + 1), X_c(impNum * 3));
                 Xdot_c(numImpacts * 3 + impNum * 3) = -coefFric * cos(phi);
                 Xdot_c(numImpacts * 3 + impNum * 3 + 1) = -coefFric * sin(phi);
                 Xdot_c(numImpacts * 3 + impNum * 3 + 2) = 1.0;
-            }
+//            }
         }
         
         if (X_c(impNum * 3 + 2) < 0)
@@ -1269,76 +1319,6 @@ Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::Vecto
 }
 
 
-//void RigidBodyContactEffector::CalcCollisionProps()
-//{
-//    Eigen::Vector3d cHat_1;
-//    Eigen::Vector3d cHat_2;
-//    Eigen::Vector3d cHat_3;
-//    Eigen::Vector3d zDirection;
-//    Eigen::Vector3d xDirection;
-//    zDirection << 0, 0, 1;
-//    xDirection << 1, 0, 0;
-//    Eigen::Matrix3d MSCPntC_C;
-//    Eigen::Matrix3d dcm_CN;
-//    double slipReverseDirp1;
-//    double h;
-//    double hp;
-//    double hpp;
-//    double hppp;
-//    // - Check if any new collisions will happen during this time step, and calculate the resulting forces and torques
-//    if (this->mainBody.collisionPoints.empty() == false)
-//    {
-//        if (this->mainBody.collisionPoints[0].empty() == false)
-//        {
-//            // - Loop through every collision point
-//            for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-//            {
-//                this->mainBody.collisionPoints[bodyIt].back().slipHitZero = false;
-//                cHat_3 = - this->mainBody.collisionPoints[bodyIt].back().contactNormal;
-//                cHat_1 = cHat_3.cross( this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB * zDirection);
-//                cHat_1.normalize();
-//                if (int(ceil(cHat_1.norm() * pow(10.0, 9))) == 0 )
-//                {
-//                    cHat_1 = this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].states.dcm_NB * xDirection;
-//                    cHat_1.normalize();
-//                }
-//                cHat_2 = cHat_3.cross(cHat_1);
-//                cHat_2.normalize();
-//                dcm_CN << cHat_1[0], cHat_1[1], cHat_1[2], cHat_2[0], cHat_2[1], cHat_2[2], cHat_3[0], cHat_3[1], cHat_3[2];
-//                this->mainBody.collisionPoints[bodyIt].back().dcm_CB = dcm_CN * this->mainBody.states.dcm_NB;
-//                for ( int bodyIt2 = 0; bodyIt2 < this->mainBody.collisionPoints.size(); ++bodyIt2)
-//                {
-//                    this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B.push_back(((1.0 / this->mainBody.states.m_SC) * Eigen::Matrix3d::Identity()) - (eigenTilde(this->mainBody.collisionPoints[bodyIt].back().mainContactPoint) * (this->mainBody.states.ISCPntB_B_inv * eigenTilde(this->mainBody.collisionPoints[bodyIt2].back().mainContactPoint))));
-//                }
-//                MSCPntC_C = (this->mainBody.collisionPoints[bodyIt].back().dcm_CB) * this->mainBody.collisionPoints[bodyIt].back().MSCPntC_B[bodyIt] * (this->mainBody.collisionPoints[bodyIt].back().dcm_CB).transpose();
-//                this->mainBody.collisionPoints[bodyIt].back().critSlideDir = atan2((MSCPntC_C(0,0) * MSCPntC_C(1,2) - MSCPntC_C(1,0) * MSCPntC_C(0,2)) , (MSCPntC_C(1,1) * MSCPntC_C(0,2) - MSCPntC_C(0,1) * MSCPntC_C(1,2)));
-//                this->mainBody.collisionPoints[bodyIt].back().critCoeffFric = sqrt((pow(MSCPntC_C(0,1) * MSCPntC_C(1,2) - MSCPntC_C(1,1) * MSCPntC_C(0,2), 2.0) + pow(MSCPntC_C(1,0) * MSCPntC_C(0,2) - MSCPntC_C(0,0) * MSCPntC_C(1,2), 2.0)) / pow(MSCPntC_C(0,0) * MSCPntC_C(1,1) - MSCPntC_C(0,1) * MSCPntC_C(1,0), 2.0));
-//                std::cout << MSCPntC_C(0,0) * MSCPntC_C(1,1) - MSCPntC_C(0,1) * MSCPntC_C(1,0) << '\n' << '\n';
-//
-//                if (this->mainBody.collisionPoints[bodyIt].back().critCoeffFric > this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction)
-//                {
-//                    slipReverseDirp1 = this->mainBody.collisionPoints[bodyIt].back().critSlideDir;
-//                    do
-//                    {
-//                        this->mainBody.collisionPoints[bodyIt].back().slipReverseDir = slipReverseDirp1;
-//                        h = -MSCPntC_C(0,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + MSCPntC_C(1,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + 0.5 *  this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
-//                        hp = -MSCPntC_C(0,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - MSCPntC_C(1,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + 2.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
-//
-//                        hpp = MSCPntC_C(0,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - MSCPntC_C(1,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - 2.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + 4.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
-//
-//                        hppp = MSCPntC_C(0,2) * cos(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) + MSCPntC_C(1,2) * sin(this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - 4.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * (MSCPntC_C(0,0) - MSCPntC_C(1,1)) * cos(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) - 8.0 * this->externalBodies[ this->mainBody.collisionPoints[ bodyIt].back().otherBodyIndex].coefFriction * sin(2.0 * this->mainBody.collisionPoints[bodyIt].back().slipReverseDir);
-//
-//                        slipReverseDirp1 = this->mainBody.collisionPoints[bodyIt].back().slipReverseDir - (6.0 * h * pow(hpp, 2.0) -3.0 * pow(h, 2.0) * hpp) / (6.0 * pow(hp, 3.0) - 6.0 * h * hp * hpp + pow(h, 2.0) * hppp);
-//                    }
-//                    while (abs(slipReverseDirp1 - this->mainBody.collisionPoints[bodyIt].back().slipReverseDir) > 1e-6);
-//                    this->mainBody.collisionPoints[bodyIt].back().slipReverseDir = slipReverseDirp1;
-//                }
-//            }
-//
-//        }
-//    }
-//    return;
-//}
 
 void RigidBodyContactEffector::computeStateContribution(double integTime)
 {
@@ -1354,8 +1334,7 @@ void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
     this->currentSimSeconds = CurrentSimNanos*NANO2SEC;
     this->currentMinError = 1.0;
     this->responseFound = false;
-
-    std::cout << "Update State" << std::endl;
+    this->lockedToRand = false;
     
     this->ReadInputs();
     this->ExtractFromBuffer();
@@ -1546,43 +1525,11 @@ void RigidBodyContactEffector::CheckBoundingBox()
                 if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.xAxisInterval), box1, box2)) continue;
                 if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.yAxisInterval), box1, box2)) continue;
                 if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.zAxisInterval), box1, box2)) continue;
-                
-//                for (int subBoxIt1=0; subBoxIt1 < this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceBoundingBoxes.size(); ++subBoxIt1)
-//                {
-//                    for (int subBoxIt2=0; subBoxIt2 < this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceBoundingBoxes.size(); ++subBoxIt2)
-//                    {
-//                        displacementInterval.lower = (this->Bodies[std::get<0>(layer1Box.parentIndices)].states.r_BN_N + this->Bodies[std::get<0>(layer1Box.parentIndices)].states.dcm_NB * this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceCentroids[subBoxIt1]) - (this->Bodies[std::get<1>(layer1Box.parentIndices)].states.r_BN_N + this->Bodies[std::get<1>(layer1Box.parentIndices)].states.dcm_NB * this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceCentroids[subBoxIt2]);
-//
-//                        displacementInterval.upper = (this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.r_BN_N + this->Bodies[std::get<0>(layer1Box.parentIndices)].futureStates.dcm_NB * this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceCentroids[subBoxIt1]) - (this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.r_BN_N + this->Bodies[std::get<1>(layer1Box.parentIndices)].futureStates.dcm_NB * this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceCentroids[subBoxIt2]);
-//
-//                        box1.halfSize = this->Bodies[std::get<0>(layer1Box.parentIndices)].polyhedron[boxIt1].faceBoundingBoxes[subBoxIt1] * this->boundingBoxFF;
-//                        box2.halfSize = this->Bodies[std::get<1>(layer1Box.parentIndices)].polyhedron[boxIt2].faceBoundingBoxes[subBoxIt2] * this->boundingBoxFF;
-//
-//                        if (this->SeparatingPlane(displacementInterval, box1.xAxisInterval, box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, box1.yAxisInterval, box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, box1.zAxisInterval, box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, box2.xAxisInterval, box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, box2.yAxisInterval, box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, box2.zAxisInterval, box1, box2)) continue;
-//
-//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.xAxisInterval), box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.yAxisInterval), box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.xAxisInterval, box2.zAxisInterval), box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.xAxisInterval), box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.yAxisInterval), box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.yAxisInterval, box2.zAxisInterval), box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.xAxisInterval), box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.yAxisInterval), box1, box2)) continue;
-//                        if (this->SeparatingPlane(displacementInterval, this->IntervalCrossProduct(box1.zAxisInterval, box2.zAxisInterval), box1, box2)) continue;
-//
-//                        layer1Box.overlaps.push_back(std::make_tuple(boxIt1, subBoxIt1, boxIt2, subBoxIt2));
-//                    }
-//                }
+        
                 layer1Box.overlaps.push_back(std::make_tuple(boxIt1, boxIt2));
             }
         }
         
-        std::cout << layer1Box.overlaps.size() << std::endl;
         if (layer1Box.overlaps.size() > 0) this->Bodies[std::get<0>(layer1Box.parentIndices)].coarseSearchList = layer1Box;
     }
     return;
@@ -1617,726 +1564,6 @@ bool RigidBodyContactEffector::SeparatingPlane(vectorInterval displacementInterv
 
 
 
-/*! This method is the hub for the collision detection algorithm. It applies the Separating Axis Theorem between every convex shape on the main body and the external body to calcuate where and when there will be a collision. If there is already penetration, it detects that too and calculates the needed information to compute the forces and torques.
-@return If there is any collision/penetration
-@param foriegnBody The geometry information of the external body
-@param bodyIndex Identifier for which external body is being checked
-*/
-bool RigidBodyContactEffector::Overlap(geometry foriegnBody, int bodyIndex)
-{
-    // - Declare oh-so-many variables
-    faceQuery faceA;
-    faceQuery faceB;
-    edgeQuery edge;
-    std::vector<std::vector<int>> edgePair;
-    double timeToContact;
-    Eigen::Vector3d faceContactPoint_N;
-    Eigen::Vector3d faceAContactPoint_N;
-    Eigen::Vector3d faceBContactPoint_N;
-    Eigen::Vector3d mainEdgeContact_N;
-    Eigen::Vector3d otherEdgeContact_N;
-    Eigen::Vector3d sigma_BprimeN;
-    Eigen::Matrix3d dcm_BprimeN;
-    Eigen::Vector3d sigma_BN;
-    Eigen::Vector3d colPlaneVec1;
-    Eigen::Vector3d colPlaneVec2;
-    Eigen::Vector3d colPlaneNormal;
-    Eigen::Vector3d aggNormals;
-    Eigen::Vector3d zDirection;
-    Eigen::Vector3d colinCenter;
-    Eigen::Vector3d colinTestVec;
-    Eigen::Vector3d colinExtreme1;
-    Eigen::Vector3d colinExtreme2;
-    zDirection << 0, 0, 1;
-    Eigen::MRPd sigma_ColPlaneToXY;
-    std::vector<Eigen::Vector3d> colPlanePoints;
-    std::vector<Eigen::Vector3d> colConvexArea;
-    double colZcoord;
-    int colPlaneVecIter;
-    int colinear;
-    int inTriangleA;
-    int inTriangleB;
-    contactDetail newCollisionPoint;
-    penetrationDetail newPenetration;
-    std::vector<contactDetail> currentCollisionList;
-    newCollisionPoint.otherBodyIndex = bodyIndex;
-    newPenetration.otherBodyIndex = bodyIndex;
-    bool contactPointTaken;
-    
-    // - Predict the main body's attitude at the end of this time step
-    sigma_BprimeN = 0.25 * this->mainBody.states.sigma_BN.Bmat() * this->mainBody.states.omega_BN_B * this->simTimeStep;
-    sigma_BN = (Eigen::Vector3d) this->mainBody.states.sigma_BN.coeffs();
-    sigma_BprimeN = sigma_BN + sigma_BprimeN;
-    if (sigma_BprimeN.norm() > 1.0)
-    {
-        sigma_BprimeN = -sigma_BprimeN / sigma_BprimeN.dot(sigma_BprimeN);
-    }
-    this->mainBody.states.sigma_BprimeB = ((1.0 - this->mainBody.states.sigma_BN.squaredNorm()) *  sigma_BprimeN - (1 - sigma_BprimeN.squaredNorm()) * sigma_BN + 2 * sigma_BprimeN.cross( sigma_BN)) / (1 + this->mainBody.states.sigma_BN.squaredNorm() * sigma_BprimeN.squaredNorm() + 2 * sigma_BN.dot(sigma_BprimeN));
-    this->mainBody.states.dcm_BprimeB = this->mainBody.states.sigma_BprimeB.toRotationMatrix().transpose();
-    
-    // - Predict the external body's attitude at the end of this time step
-    dcm_BprimeN = ((-foriegnBody.states.omegaTilde_BN_B * foriegnBody.states.dcm_BN) * this->simTimeStep) + foriegnBody.states.dcm_BN;
-    foriegnBody.states.dcm_BprimeB = dcm_BprimeN * foriegnBody.states.dcm_BN.transpose();
-    foriegnBody.states.sigma_BprimeB = eigenC2MRP(foriegnBody.states.dcm_BprimeB);
-    
-    // - Loop through every combination of main body and external body polyhedra
-    for (int mainShapeIt=0; mainShapeIt<this->mainBody.polyhedron.size(); ++mainShapeIt)
-    {
-        //        currentCollisionList.clear();
-        //        newCollisionPoint.area = 0;
-        for (int otherShapeIt=0; otherShapeIt<foriegnBody.polyhedron.size(); ++otherShapeIt)
-        {
-            currentCollisionList.clear();
-            newCollisionPoint.area = 0;
-            newCollisionPoint.penetrationEnergy = 0.0;
-            
-            // - Find the possible penetration of a vertex on the external polyhedron with a face on the main polyhedron
-            faceA = this->QueryFaceDirection(this->mainBody.vertices, this->mainBody.polyhedron[mainShapeIt], this->mainBody.states, foriegnBody.vertices, foriegnBody.polyhedron[otherShapeIt], foriegnBody.states);
-            
-            // - Find the possible penetration of a vertex on the main polyhedron with a face on the external polyhedron
-            faceB = this->QueryFaceDirection(foriegnBody.vertices, foriegnBody.polyhedron[otherShapeIt], foriegnBody.states, this->mainBody.vertices, this->mainBody.polyhedron[mainShapeIt], this->mainBody.states);
-            
-            // - Find the possible penetration of an edge from each polyhedron
-            edge = this->QueryEdgeDirection(this->mainBody.vertices, this->mainBody.polyhedron[mainShapeIt], this->mainBody.states, foriegnBody.vertices, foriegnBody.polyhedron[otherShapeIt], foriegnBody.states);
-            
-            // - Check if the polyhedra are not already intersecting
-            if ((faceA.separation > 0.0) || (faceB.separation > 0.0) || (edge.separation > 0.0) || ((faceA.supportIndex == -1) && (faceB.supportIndex == -1) && edge.edgePair.empty()) )
-            {
-                // - Loop through each face on the main polyhedra, and each vertex on the external polyhedra
-                for (int mainFaceIt=0; mainFaceIt<this->mainBody.polyhedron[mainShapeIt].faceTriangles.size(); ++mainFaceIt)
-                {
-                    for (int otherVertIt=0; otherVertIt<foriegnBody.polyhedron[otherShapeIt].uniqueVertIndices.size(); ++otherVertIt)
-                    {
-                        // - Find the possible collision of a vertex on the external polyhedron with a face on the main polyhedron
-                        timeToContact = this->WhenFaceContact(this->mainBody.polyhedron[mainShapeIt].faceTriangles[mainFaceIt], this->mainBody.vertices, foriegnBody.polyhedron[otherShapeIt].uniqueVertIndices[otherVertIt], foriegnBody.vertices, this->mainBody.states, foriegnBody.states, this->simTimeStep, &faceContactPoint_N);
-                        // - If there will be a collision, add it to the list of all collision points
-                        if (timeToContact > -1)
-                        {
-                            newCollisionPoint.timeToContact = timeToContact;
-                            newCollisionPoint.mainContactPoint = this->mainBody.states.dcm_BN * (faceContactPoint_N  - this->mainBody.states.r_BN_N);
-                            newCollisionPoint.otherContactPoint = foriegnBody.vertices[foriegnBody.polyhedron[otherShapeIt].uniqueVertIndices[otherVertIt]];
-                            newCollisionPoint.contactNormal = this->mainBody.states.dcm_NB * this->mainBody.polyhedron[mainShapeIt].faceNormals[mainFaceIt];
-                            newCollisionPoint.contactNormal = newCollisionPoint.contactNormal.normalized();
-                            if (newCollisionPoint.contactNormal.dot((this->mainBody.states.v_BN_N + eigenTilde(this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) * (faceContactPoint_N  - this->mainBody.states.r_BN_N)).normalized()) > 0.0)
-                            {
-                                currentCollisionList.push_back(newCollisionPoint);
-                            }
-                            //                            currentCollisionList.push_back(newCollisionPoint);
-                        }
-                    }
-                }
-                // - Loop through each face on the external polyhedra, and each vertex on the main polyhedra
-                for (int otherFaceIt=0; otherFaceIt<foriegnBody.polyhedron[otherShapeIt].faceTriangles.size(); ++otherFaceIt)
-                {
-                    for (int mainVertIt=0; mainVertIt<this->mainBody.polyhedron[mainShapeIt].uniqueVertIndices.size(); ++mainVertIt)
-                    {
-                        // - Find the possible collision of a vertex on the main polyhedron with a face on the external polyhedron
-                        timeToContact = this->WhenFaceContact(foriegnBody.polyhedron[otherShapeIt].faceTriangles[otherFaceIt], foriegnBody.vertices, this->mainBody.polyhedron[mainShapeIt].uniqueVertIndices[mainVertIt], this->mainBody.vertices, foriegnBody.states, this->mainBody.states, this->simTimeStep, &faceContactPoint_N);
-                        // - If there will be a collision, add it to the list of all collision points
-                        if (timeToContact > -1)
-                        {
-                            newCollisionPoint.timeToContact = timeToContact;
-                            newCollisionPoint.mainContactPoint = this->mainBody.vertices[this->mainBody.polyhedron[mainShapeIt].uniqueVertIndices[mainVertIt]];
-                            newCollisionPoint.otherContactPoint = foriegnBody.states.dcm_BN  * (faceContactPoint_N  - foriegnBody.states.r_BN_N);
-                            newCollisionPoint.contactNormal = -(foriegnBody.states.dcm_NB * foriegnBody.polyhedron[otherShapeIt].faceNormals[otherFaceIt]);
-                            //                            if ((this->mainBody.states.dcm_NB * this->mainBody.polyhedron[mainShapeIt].centroid - (faceContactPoint_N  - foriegnBody.states.r_BN_N)).dot(newCollisionPoint.contactNormal) > 0.0)
-                            //                            {
-                            //                                newCollisionPoint.contactNormal = -newCollisionPoint.contactNormal.normalized();
-                            //                            }
-                            //                            currentCollisionList.push_back(newCollisionPoint);
-                            if (newCollisionPoint.contactNormal.dot((this->mainBody.states.v_BN_N + eigenTilde(this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) * (faceContactPoint_N  - foriegnBody.states.r_BN_N)).normalized()) > 0.0)
-                            {
-                                currentCollisionList.push_back(newCollisionPoint);
-                            }
-                        }
-                    }
-                }
-                // - Loop through each edge on both the main and external polyhedra
-                for (int mainEdgeIt=0; mainEdgeIt<this->mainBody.polyhedron[mainShapeIt].edgeIndices.size(); mainEdgeIt += 2)
-                {
-                    for (int otherEdgeIt=0; otherEdgeIt<foriegnBody.polyhedron[otherShapeIt].edgeIndices.size(); otherEdgeIt += 2)
-                    {
-                        edgePair.clear();
-                        edgePair.push_back( this->mainBody.polyhedron[mainShapeIt].edgeIndices[mainEdgeIt]);
-                        edgePair.push_back( foriegnBody.polyhedron[otherShapeIt].edgeIndices[otherEdgeIt]);
-                        // - Find the possible collision of an edge from each polyhedron
-                        timeToContact = this->WhenEdgeContact(edgePair, this->mainBody.vertices, foriegnBody.vertices, this->mainBody.states, foriegnBody.states, this->simTimeStep, &mainEdgeContact_N, &otherEdgeContact_N, &colinear);
-                        // - If there will be a collision, add it to the list of all collision points
-                        if (timeToContact > -1)
-                        {
-                            newCollisionPoint.timeToContact = timeToContact;
-                            newCollisionPoint.mainContactPoint = this->mainBody.states.dcm_BN  * (mainEdgeContact_N  - this->mainBody.states.r_BN_N);
-                            newCollisionPoint.otherContactPoint = foriegnBody.states.dcm_BN  * (otherEdgeContact_N  - foriegnBody.states.r_BN_N);
-                            // - If the edges are colinear, the contact normal must be calculated differently
-                            if (colinear == 1)
-                            {
-                                newCollisionPoint.contactNormal = -((foriegnBody.states.dcm_NB * (foriegnBody.vertices[edgePair[1][1]] - foriegnBody.vertices[edgePair[1][0]])).cross(this->mainBody.states.dcm_NB * (this->mainBody.vertices[edgePair[0][1]] - this->mainBody.vertices[edgePair[0][0]])));
-                                newCollisionPoint.contactNormal.normalize();
-                                if ( newCollisionPoint.contactNormal.dot(this->mainBody.states.dcm_NB * (this->mainBody.vertices[edgePair[0][0]] - this->mainBody.polyhedron[mainShapeIt].centroid)) < 0){
-                                    newCollisionPoint.contactNormal = -newCollisionPoint.contactNormal;
-                                }
-                            }else
-                            {
-                                newCollisionPoint.contactNormal = (foriegnBody.states.dcm_BN * foriegnBody.polyhedron[otherShapeIt].centroid + foriegnBody.states.r_BN_N) - (this->mainBody.states.dcm_NB * this->mainBody.polyhedron[mainShapeIt].centroid + this->mainBody.states.r_BN_N);
-                                newCollisionPoint.contactNormal.normalize();
-                                
-                            }
-                            //                            newCollisionPoint.contactNormal = (foriegnBody.states.dcm_BN * foriegnBody.polyhedron[otherShapeIt].centroid + foriegnBody.states.r_BN_N) - (this->mainBody.states.dcm_NB * this->mainBody.polyhedron[mainShapeIt].centroid + this->mainBody.states.r_BN_N);
-                            //                            newCollisionPoint.contactNormal.normalize();
-                            //                            currentCollisionList.push_back(newCollisionPoint);
-                            if (newCollisionPoint.contactNormal.dot((this->mainBody.states.v_BN_N + eigenTilde(this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) * (mainEdgeContact_N  - this->mainBody.states.r_BN_N)).normalized()) > 0.0)
-                            {
-                                currentCollisionList.push_back(newCollisionPoint);
-                            }
-                        }
-                    }
-                }
-                //            }
-                //        }
-                
-                // - When there are more than one incoming collison point, they must be combined into a singluar point for each set of polyhedra
-                timeToContact = 0;
-                for (int timeIt = 0; timeIt < currentCollisionList.size(); ++timeIt)
-                {
-                    timeToContact += currentCollisionList[timeIt].timeToContact;
-                }
-                // - If there are three or more collision points, an average collision plane can be found
-                if (currentCollisionList.size() >= 3)
-                {
-                    newCollisionPoint.timeToContact = timeToContact / currentCollisionList.size();
-                    colPlaneVec1 = currentCollisionList[1].mainContactPoint - currentCollisionList[0].mainContactPoint;
-                    colPlaneVec1.normalize();
-                    colPlaneVecIter = 2;
-                    
-                    // - Find the normal vector for the collision plane
-                    do
-                    {
-                        colPlaneVec2 = currentCollisionList[colPlaneVecIter].mainContactPoint - currentCollisionList[0].mainContactPoint;
-                        colPlaneVec2.normalize();
-                        colPlaneNormal = colPlaneVec1.cross(colPlaneVec2);
-                        colPlaneVecIter++;
-                    }
-                    while ( (colPlaneNormal.norm() == 0) && (colPlaneVecIter < currentCollisionList.size()));
-                    
-                    colPlaneNormal.normalize();
-                    if (colPlaneNormal.norm() != 0) // - A plane can actually be formed
-                    {
-                        // - Make sure the collision plane normal is in the same hemisphere as the rest of the collision normals
-                        aggNormals << 0, 0, 0;
-                        for (int pointIdx=0; pointIdx<currentCollisionList.size(); ++pointIdx)
-                        {
-                            aggNormals += currentCollisionList[pointIdx].mainContactPoint - this->mainBody.polyhedron[mainShapeIt].centroid;
-                        }
-                        
-                        if ( colPlaneNormal.dot(aggNormals) < 0)
-                        {
-                            colPlaneNormal = -colPlaneNormal;
-                        }
-                        
-                        // - Find the rotation to express all the collision points in-plane
-                        sigma_ColPlaneToXY.setFromTwoVectors(colPlaneNormal, zDirection);
-                        
-                        // - Transform all collision points to be expressed in-plane
-                        colPlanePoints.clear();
-                        colZcoord = 0;
-                        for (int buildInd = 0; buildInd < currentCollisionList.size(); buildInd++)
-                        { colPlanePoints.push_back(sigma_ColPlaneToXY.toRotationMatrix().transpose() * currentCollisionList[buildInd].mainContactPoint);
-                            colZcoord += colPlanePoints[buildInd][2];
-                            colPlanePoints[buildInd][2] = 0.0;
-                        }
-                        colZcoord = colZcoord / currentCollisionList.size();
-                        
-                        // - Create convex hull within the collision plane
-                        colConvexArea = findConvexHull(colPlanePoints);
-                        // - If a convex hull cannot be found, these points are colinear
-                        if (colConvexArea.empty())
-                        {
-                            goto JumpToColin;
-                            continue;
-                        }
-                        // - Determine the area of the collision
-                        newCollisionPoint.area = 0;
-                        for (int areaInd = 0; areaInd < colConvexArea.size()-1; areaInd++)
-                        {
-                            newCollisionPoint.area += colConvexArea[areaInd][0] * colConvexArea[areaInd+1][1] - colConvexArea[areaInd+1][0] * colConvexArea[areaInd][1];
-                        }
-                        newCollisionPoint.area += colConvexArea[colConvexArea.size()-1][0] * colConvexArea[0][1] - colConvexArea[0][0] * colConvexArea[colConvexArea.size()-1][1];
-                        newCollisionPoint.area = newCollisionPoint.area / 2.0;
-                        
-                        // - The centroid of the collision area becomes the new collision point
-                        newCollisionPoint.mainContactPoint << 0, 0, colZcoord;
-                        for (int coordInd = 0; coordInd < colConvexArea.size()-1; coordInd++)
-                        {
-                            newCollisionPoint.mainContactPoint[0] += (colConvexArea[coordInd][0] + colConvexArea[coordInd+1][0]) * (colConvexArea[coordInd][0] * colConvexArea[coordInd+1][1] - colConvexArea[coordInd+1][0] * colConvexArea[coordInd][1]);
-                            newCollisionPoint.mainContactPoint[1] += (colConvexArea[coordInd][1] + colConvexArea[coordInd+1][1]) * (colConvexArea[coordInd][0] * colConvexArea[coordInd+1][1] - colConvexArea[coordInd+1][0] * colConvexArea[coordInd][1]);
-                        }
-                        newCollisionPoint.mainContactPoint[0] += (colConvexArea[colConvexArea.size()-1][0] + colConvexArea[0][0]) * (colConvexArea[colConvexArea.size()-1][0] * colConvexArea[0][1] - colConvexArea[0][0] * colConvexArea[colConvexArea.size()-1][1]);
-                        newCollisionPoint.mainContactPoint[1] += (colConvexArea[colConvexArea.size()-1][1] + colConvexArea[0][1]) * (colConvexArea[colConvexArea.size()-1][0] * colConvexArea[0][1] - colConvexArea[0][0] * colConvexArea[colConvexArea.size()-1][1]);
-                        newCollisionPoint.mainContactPoint[0] = newCollisionPoint.mainContactPoint[0] / (6 * newCollisionPoint.area);
-                        newCollisionPoint.mainContactPoint[1] = newCollisionPoint.mainContactPoint[1] / (6 * newCollisionPoint.area);
-                        
-                        // - Rotate new collision point back into the polyheadra frame
-                        newCollisionPoint.mainContactPoint = (sigma_ColPlaneToXY.toRotationMatrix()) * newCollisionPoint.mainContactPoint;
-                        newCollisionPoint.contactNormal = this->mainBody.states.dcm_NB * colPlaneNormal;
-                        newCollisionPoint.otherContactPoint = foriegnBody.states.dcm_BN * this->mainBody.states.dcm_NB * newCollisionPoint.mainContactPoint;
-                        currentCollisionList.push_back(newCollisionPoint);
-                    }else
-                    {
-                        // - If the collision points are colinear, then find their midpoint
-                    JumpToColin:
-                        colinCenter << 0, 0, 0;
-                        newCollisionPoint.contactNormal << 0, 0, 0;
-                        for (int sumInx=0; sumInx < currentCollisionList.size(); ++sumInx)
-                        {
-                            colinCenter += currentCollisionList[sumInx].mainContactPoint;
-                            newCollisionPoint.contactNormal += currentCollisionList[sumInx].contactNormal;
-                        }
-                        colinCenter = colinCenter / currentCollisionList.size();
-                        colinExtreme1 = currentCollisionList[0].mainContactPoint;
-                        for (int maxInx=1; maxInx < currentCollisionList.size(); ++maxInx)
-                        {
-                            colinTestVec = currentCollisionList[maxInx].mainContactPoint - colinCenter;
-                            if (colinTestVec.norm() > (colinExtreme1 - colinCenter).norm())
-                            {
-                                colinExtreme1 = currentCollisionList[maxInx].mainContactPoint;
-                            }
-                        }
-                        
-                        for (int maxInx=0; maxInx < currentCollisionList.size(); ++maxInx){
-                            colinTestVec = currentCollisionList[maxInx].mainContactPoint - colinCenter;
-                            if (colinTestVec.dot(colinExtreme1 - colinCenter) < 0) {
-                                colinExtreme2 = currentCollisionList[maxInx].mainContactPoint;
-                                break;
-                            }
-                        }
-                        for (int maxInx=1; maxInx < currentCollisionList.size(); ++maxInx){
-                            colinTestVec = currentCollisionList[maxInx].mainContactPoint - colinCenter;
-                            if ((colinTestVec.norm() > (colinExtreme2 - colinCenter).norm()) && (colinTestVec.dot(colinExtreme1 - colinCenter) < 0)) {
-                                colinExtreme2 = currentCollisionList[maxInx].mainContactPoint;
-                            }
-                        }
-                        colinCenter = (colinExtreme1 + colinExtreme2) / 2;
-                        newCollisionPoint.mainContactPoint =  colinCenter;
-                        newCollisionPoint.otherContactPoint = foriegnBody.states.dcm_BN * this->mainBody.states.dcm_NB * newCollisionPoint.mainContactPoint;
-                        newCollisionPoint.contactNormal.normalize();
-                        currentCollisionList.push_back(newCollisionPoint);
-                    }
-                    // - If there are only two collision points, their midpoint collision is MUCH easier to determine
-                }else if (currentCollisionList.size() == 2)
-                {
-                    newCollisionPoint.timeToContact = timeToContact / currentCollisionList.size();
-                    newCollisionPoint.mainContactPoint = (currentCollisionList[0].mainContactPoint + currentCollisionList[1].mainContactPoint) / 2;
-                    newCollisionPoint.otherContactPoint = (currentCollisionList[0].otherContactPoint + currentCollisionList[1].otherContactPoint) / 2;
-                    newCollisionPoint.contactNormal = (currentCollisionList[0].contactNormal + currentCollisionList[1].contactNormal).normalized();
-                    currentCollisionList.push_back(newCollisionPoint);
-                }
-                if (currentCollisionList.empty() == false)
-                {
-                    contactPointTaken = false;
-                    if (this->mainBody.collisionPoints.empty() == false)
-                    {
-                        for ( int bodyIt = 0; bodyIt < this->mainBody.collisionPoints.size(); ++bodyIt)
-                        {
-                            if ((int(ceil(this->mainBody.collisionPoints[bodyIt].back().mainContactPoint[0] * pow(10.0, 9))) == int(ceil(currentCollisionList.back().mainContactPoint[0] * pow(10.0, 9)))) && (int(ceil(this->mainBody.collisionPoints[bodyIt].back().mainContactPoint[1] * pow(10.0, 9))) == int(ceil(currentCollisionList.back().mainContactPoint[1] * pow(10.0, 9)))) && (int(ceil(this->mainBody.collisionPoints[bodyIt].back().mainContactPoint[2] * pow(10.0, 9))) == int(ceil(currentCollisionList.back().mainContactPoint[3] * pow(10.0, 9)))))
-                            {
-                                contactPointTaken = true;
-                            }
-                        }
-                    }
-                    if (contactPointTaken == false)
-                    {
-                        this->mainBody.collisionPoints.push_back(currentCollisionList);
-                    }
-                }
-                
-                // - If the polyhedra are already intersecting, find the points of deepest penetration
-            }else
-            {
-                
-                inTriangleA = -1;
-                inTriangleB = -1;
-                colinear = -1;
-                
-                // - If penetration was found of a vertex on the external polyhedron with a face on the main polyhedron, then find where in the face the deepest penetration is projected to
-                if  (faceA.supportIndex != -1)
-                {
-                    //inTriangleA = this->PointInTriangle( (foriegnBody.states.dcm_NB * foriegnBody.vertices[faceA.supportIndex]) + foriegnBody.states.r_BN_N, (this->mainBody.states.dcm_NB *  this->mainBody.vertices[this->mainBody.polyhedron[mainShapeIt].faceTriangles[faceA.faceIndex][0]]) + this->mainBody.states.r_BN_N, (this->mainBody.states.dcm_NB *  this->mainBody.vertices[this->mainBody.polyhedron[mainShapeIt].faceTriangles[faceA.faceIndex][1]]) + this->mainBody.states.r_BN_N, (this->mainBody.states.dcm_NB *  this->mainBody.vertices[this->mainBody.polyhedron[mainShapeIt].faceTriangles[faceA.faceIndex][2]]) + this->mainBody.states.r_BN_N, &faceAContactPoint_N);
-                    
-                }
-                // - If penetration was found of a vertex on the main polyhedron with a face on the external polyhedron, then find where in the face the deepest penetration is projected to
-                if  (faceB.supportIndex != -1)
-                {
-                    //inTriangleB = this->PointInTriangle( (this->mainBody.states.dcm_NB * this->mainBody.vertices[faceB.supportIndex]) + this->mainBody.states.r_BN_N, (foriegnBody.states.dcm_NB *  foriegnBody.vertices[foriegnBody.polyhedron[otherShapeIt].faceTriangles[faceB.faceIndex][0]]) + foriegnBody.states.r_BN_N, (foriegnBody.states.dcm_NB *  foriegnBody.vertices[foriegnBody.polyhedron[otherShapeIt].faceTriangles[faceB.faceIndex][1]]) + foriegnBody.states.r_BN_N, (foriegnBody.states.dcm_NB *  foriegnBody.vertices[foriegnBody.polyhedron[otherShapeIt].faceTriangles[faceB.faceIndex][2]]) + foriegnBody.states.r_BN_N, &faceBContactPoint_N);
-                    
-                }
-                // - If penetration was found between two edges, find where on each edge the deepest penetration is projected to
-                if (edge.edgePair.empty() == false)
-                {
-                    colinear = this->LineLineDistance( (this->mainBody.states.dcm_NB * this->mainBody.vertices[edge.edgePair[0][0]]) + this->mainBody.states.r_BN_N, (this->mainBody.states.dcm_NB * this->mainBody.vertices[edge.edgePair[0][1]]) + this->mainBody.states.r_BN_N, (foriegnBody.states.dcm_NB * foriegnBody.vertices[edge.edgePair[1][0]]) + foriegnBody.states.r_BN_N, (foriegnBody.states.dcm_NB * foriegnBody.vertices[edge.edgePair[1][1]]) + foriegnBody.states.r_BN_N, &mainEdgeContact_N, &otherEdgeContact_N);
-                    
-                }
-                
-                // - The next three if blocks determine where the deepest, real penetration is, and assigns the relevant information accordingly
-                if (((faceA.separation > faceB.separation) || (inTriangleB == -1)) && ((faceA.separation > edge.separation) || (colinear < 0)) && (inTriangleA > -1))
-                {
-                    newPenetration.mainContactPoint = this->mainBody.states.dcm_BN * (faceAContactPoint_N - this->mainBody.states.r_BN_N);
-                    newPenetration.springLine_N = this->mainBody.states.dcm_NB * this->mainBody.polyhedron[mainShapeIt].faceNormals[faceA.faceIndex];
-                    newPenetration.contactCase = 0;
-                    newPenetration.faceData = faceA;
-                    
-                    newCollisionPoint.mainContactPoint = this->mainBody.states.dcm_BN * (faceAContactPoint_N - this->mainBody.states.r_BN_N);
-                    newCollisionPoint.otherContactPoint = foriegnBody.vertices[faceA.supportIndex];
-                    newCollisionPoint.contactNormal = this->mainBody.states.dcm_NB * this->mainBody.polyhedron[mainShapeIt].faceNormals[faceA.faceIndex];
-                    newCollisionPoint.contactNormal = newCollisionPoint.contactNormal.normalized();
-                    newCollisionPoint.timeToContact = 0.0;
-//                    newCollisionPoint.penetrationEnergy = -(faceAContactPoint_N - ((foriegnBody.states.dcm_NB * foriegnBody.vertices[faceA.supportIndex]) + foriegnBody.states.r_BN_N)).norm();
-                    
-                    if (newCollisionPoint.contactNormal.dot((this->mainBody.states.v_BN_N + eigenTilde(this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) * (faceAContactPoint_N - this->mainBody.states.r_BN_N)).normalized()) > 0.0)
-                    {
-                        currentCollisionList.push_back(newCollisionPoint);
-                        this->mainBody.collisionPoints.push_back(currentCollisionList);
-                    }
-                    
-                    //                    currentCollisionList.push_back(newCollisionPoint);
-                    
-                    this->mainBody.penetrationData.push_back(newPenetration);
-                    continue;
-                }
-                
-                if (((faceB.separation > faceA.separation) || (inTriangleA == -1)) && ((faceB.separation > edge.separation) || (colinear < 0)) && (inTriangleB > -1))
-                {
-                    newPenetration.otherContactPoint = foriegnBody.states.dcm_BN * (faceBContactPoint_N - foriegnBody.states.r_BN_N);
-                    newPenetration.springLine_N = foriegnBody.states.dcm_NB * -foriegnBody.polyhedron[otherShapeIt].faceNormals[faceB.faceIndex];
-                    newPenetration.contactCase = 1;
-                    newPenetration.faceData = faceB;
-                    
-                    newCollisionPoint.mainContactPoint = this->mainBody.vertices[faceB.supportIndex];
-                    newCollisionPoint.otherContactPoint = foriegnBody.states.dcm_BN * (faceBContactPoint_N - foriegnBody.states.r_BN_N);
-                    newCollisionPoint.contactNormal = foriegnBody.states.dcm_NB * -foriegnBody.polyhedron[otherShapeIt].faceNormals[faceB.faceIndex];
-                    newCollisionPoint.contactNormal = newCollisionPoint.contactNormal.normalized();
-                    newCollisionPoint.timeToContact = 0.0;
-//                    newCollisionPoint.penetrationEnergy = -(((this->mainBody.states.dcm_NB * this->mainBody.vertices[faceB.supportIndex]) + this->mainBody.states.r_BN_N) - faceBContactPoint_N).norm();
-                    
-                    if (newCollisionPoint.contactNormal.dot((this->mainBody.states.v_BN_N + eigenTilde(this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) * (this->mainBody.states.dcm_NB * this->mainBody.vertices[faceB.supportIndex])).normalized()) > 0.0)
-                    {
-                        currentCollisionList.push_back(newCollisionPoint);
-                        this->mainBody.collisionPoints.push_back(currentCollisionList);
-                    }
-                    //                    currentCollisionList.push_back(newCollisionPoint);
-                    
-                    this->mainBody.penetrationData.push_back(newPenetration);
-                    continue;
-                }
-                
-                if (((edge.separation > faceB.separation) || (inTriangleB == -1)) && ((edge.separation > faceA.separation) || (inTriangleA == -1)) && (colinear > 0))
-                {
-                    newPenetration.mainContactPoint = this->mainBody.states.dcm_BN * (mainEdgeContact_N - this->mainBody.states.r_BN_N);
-                    newPenetration.otherContactPoint = foriegnBody.states.dcm_BN * (otherEdgeContact_N - foriegnBody.states.r_BN_N);
-                    newPenetration.springLine_N =  (mainEdgeContact_N - otherEdgeContact_N).normalized();
-                    newPenetration.contactCase = 2;
-                    newPenetration.edgeData = edge;
-                    
-                    newCollisionPoint.mainContactPoint = this->mainBody.states.dcm_BN * (mainEdgeContact_N  - this->mainBody.states.r_BN_N);
-                    newCollisionPoint.otherContactPoint = foriegnBody.states.dcm_BN * (otherEdgeContact_N - foriegnBody.states.r_BN_N);
-                    newCollisionPoint.contactNormal = (mainEdgeContact_N - otherEdgeContact_N).normalized();
-                    newCollisionPoint.timeToContact = 0.0;
-//                    newCollisionPoint.penetrationEnergy = -(mainEdgeContact_N  - otherEdgeContact_N).norm();
-                    if (newCollisionPoint.contactNormal.dot((this->mainBody.states.v_BN_N + eigenTilde(this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) * (mainEdgeContact_N - this->mainBody.states.r_BN_N)).normalized()) > 0.0)
-                    {
-                        currentCollisionList.push_back(newCollisionPoint);
-                        this->mainBody.collisionPoints.push_back(currentCollisionList);
-                    }
-                    
-                    //                    currentCollisionList.push_back(newCollisionPoint);
-                    
-                    
-                    this->mainBody.penetrationData.push_back(newPenetration);
-                    continue;
-                }
-            }
-        }
-    }
-    return true;
-}
-
-
-/*! This method determines if the intersection of two arcs on a Guass sphere forms a Minkowski face.
-@return Bool if the arcs form a Minkowski face
-@param edgeA Vector defining the line segment of edge A
-@param edgeB Vector defining the line segment of edge B
-@param a Normal vector of the first face attached to edge A
-@param b Normal vector of the second face attached to edge A
-@param c Negative of normal vector of the first face attached to edge B
-@param d Negative of normal vector of the second face attached to edge B
-*/
-bool RigidBodyContactEffector::IsMinkowskiFace(Eigen::Vector3d edgeA, Eigen::Vector3d edgeB, Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d c, Eigen::Vector3d d)
-{
-    // - Test if arcs ab and cd intersect on the unit sphere
-    float cba = c.dot(edgeA);
-    float dba = d.dot(edgeA);
-    float adc = a.dot(edgeB);
-    float bdc = b.dot(edgeB);
-    
-    return cba * dba < 0 && adc * bdc < 0 && cba * bdc > 0;
-}
-
-/*! This method finds the deepest penetration of two edges between two polyhedra.
-@return Struct containing information about the deepest penetration
-@param verticesA The vertices of body A
-@param polyA The primitive information for polyhedron A (which is part of body A)
-@param stateA The state information for body A
-@param verticesB The vertices of body B
-@param polyB The primitive information for polyhedron B (which is part of body B)
-@param stateB The state information for body B
-*/
-edgeQuery RigidBodyContactEffector::QueryEdgeDirection(std::vector<Eigen::Vector3d> verticesA, halfEdge polyA, dynamicData stateA, std::vector<Eigen::Vector3d> verticesB, halfEdge polyB, dynamicData stateB)
-{
-    Eigen::Vector3d normalA;
-    Eigen::Vector3d normalB;
-    Eigen::Vector3d normalC;
-    Eigen::Vector3d normalD;
-    Eigen::Vector3d edgeDirectionA;
-    Eigen::Vector3d edgeDirectionB;
-    Eigen::Vector3d edgeHeadA;
-    Eigen::Vector3d edgeHeadB;
-    Eigen::Vector3d edgeCross;
-    Eigen::Vector3d edgeCrossNorm;
-    Eigen::Vector3d zeroVec(0.0f, 0.0f, 0.0f);
-    double newSeparation;
-    edgeQuery result;
-    result.separation = -1000.0;
-
-//    for (int indexA=0; indexA<polyA.edgeIndices.size(); indexA += 2)
-//    {
-//        normalA = stateA.dcm_NB * polyA.faceNormals[polyA.faceIndices[indexA]];
-//        normalB = stateA.dcm_NB * polyA.faceNormals[polyA.faceIndices[indexA+1]];
-//        edgeDirectionA = stateA.dcm_NB * (verticesA[polyA.edgeIndices[indexA][1]] - verticesA[polyA.edgeIndices[indexA][0]]);
-//        for (int indexB=0; indexB<polyB.edgeIndices.size(); indexB += 2)
-//        {
-//            normalC = stateB.dcm_NB * polyB.faceNormals[polyB.faceIndices[indexB]];
-//            normalD = stateB.dcm_NB * polyB.faceNormals[polyB.faceIndices[indexB+1]];
-//            edgeDirectionB = stateB.dcm_NB * (verticesB[polyB.edgeIndices[indexB][1]] - verticesB[polyB.edgeIndices[indexB][0]]);
-//
-//            if(this->IsMinkowskiFace(edgeDirectionA, edgeDirectionB, normalA, normalB, -normalC, -normalD))
-//            {
-//                edgeHeadA = stateA.dcm_NB * verticesA[polyA.edgeIndices[indexA][1]];
-//                edgeHeadB = (stateB.dcm_NB * verticesB[polyB.edgeIndices[indexB][1]]) + (stateB.r_BN_N - stateA.r_BN_N);
-//                edgeCross = edgeDirectionA.cross(edgeDirectionB);
-//                if (edgeCross == zeroVec) continue;
-//
-//                edgeCrossNorm = edgeCross.normalized();
-//                if (edgeCrossNorm.dot(edgeHeadA)<0.0f)
-//                    edgeCrossNorm = -edgeCrossNorm;
-//
-//                newSeparation = edgeCrossNorm.dot(edgeHeadB - edgeHeadA);
-//                if ( newSeparation > result.separation)
-//                {
-//                    result.separation = newSeparation;
-//                    result.edgePair.clear();
-//                    result.edgePair.push_back(polyA.edgeIndices[indexA]);
-//                    result.edgePair.push_back(polyB.edgeIndices[indexB]);
-//                }
-//            }
-//        }
-//    }
-    return result;
-}
-
-/*! This method finds the deepest penetration of vertices in polyhedron B and faces in polyhedron A.
-@return Struct containing information about the deepest penetration
-@param verticesA The vertices of body A
-@param polyA The primitive information for polyhedron A (which is part of body A)
-@param stateA The state information for body A
-@param verticesB The vertices of body B
-@param polyB The primitive information for polyhedron B (which is part of body B)
-@param stateB The state information for body B
-*/
-faceQuery RigidBodyContactEffector::QueryFaceDirection(std::vector<Eigen::Vector3d> verticesA, halfEdge polyA, dynamicData stateA, std::vector<Eigen::Vector3d> verticesB, halfEdge polyB, dynamicData stateB)
-{
-    Eigen::Vector3d edgeHead;
-    Eigen::Vector3d supportPoint;
-    Eigen::Vector3d contactPoint;
-    double projection;
-    double bestProjection;
-    double supportDistance;
-    int supportIdx;
-    int onTriangle = -1;
-    faceQuery result;
-    result.separation = -1000.0;
-    result.supportIndex = -1;
-    
-    for (int indexA=0; indexA<polyA.faceNormals.size(); ++indexA)
-    {
-        bestProjection = -1000.0;
-        for (int indexB=0; indexB<polyB.edgeIndices.size(); ++indexB)
-        {
-            edgeHead =  (stateB.dcm_NB * verticesB[polyB.edgeIndices[indexB][0]]);
-            projection = (stateA.dcm_NB * -polyA.faceNormals[indexA]).dot(edgeHead);
-            
-            if ( projection > bestProjection)
-            {
-                bestProjection = projection;
-                supportPoint = edgeHead + stateB.r_BN_N;
-                supportIdx = polyB.edgeIndices[indexB][0];
-            }
-        }
-        
-        //onTriangle = this->PointInTriangle(supportPoint, (stateA.dcm_NB * verticesA[polyA.faceTriangles[indexA][0]]) + stateA.r_BN_N, (stateA.dcm_NB * verticesA[polyA.faceTriangles[indexA][1]]) + stateA.r_BN_N, (stateA.dcm_NB * verticesA[polyA.faceTriangles[indexA][2]]) + stateA.r_BN_N, &contactPoint);
-
-        supportDistance = ( stateA.dcm_NB * polyA.faceNormals[indexA]).dot(supportPoint - contactPoint);
-
-        if ( ((supportDistance > result.separation) && (onTriangle > -1)) || ((supportDistance > result.separation) && (supportDistance > 0)))
-        {
-            result.separation = supportDistance;
-            result.faceIndex = indexA;
-            result.supportIndex = supportIdx;
-        }
-//        if (supportDistance > result.separation)
-//        {
-//            result.separation = supportDistance;
-//            result.faceIndex = indexA;
-//            result.supportIndex = supportIdx;
-//        }
-    }
-    return result;
-}
-
-Eigen::Vector3d RigidBodyContactEffector::MakeIntervalValue(Eigen::Vector3d vertex_B, dynamicData dynamics, double time)
-{
-    
-    Eigen::Vector3d vertex_N = ((dynamics.dcm_NB * vertex_B + dynamics.dcm_NB * (dynamics.omegaTilde_BN_B * time) * vertex_B) + dynamics.r_BN_N) + dynamics.v_BN_N * time;
-    
-    return vertex_N;
-}
-
-vectorInterval RigidBodyContactEffector::MakeIntervalValues(Eigen::Vector3d vertex_B, dynamicData dynamics, double screwAngle, Eigen::Matrix3d screwRot, Eigen::Vector3d screwOffset, double screwDistance, std::vector<double> timeInterval)
-{
-    vectorInterval result;
-
-    if (screwAngle == 0)
-    {
-        Eigen::Vector3d displacement = dynamics.v_BN_N * this->simTimeStep;
-        result.lower = dynamics.dcm_NB * vertex_B + dynamics.r_BN_N + displacement * timeInterval[0];
-        result.upper = dynamics.dcm_NB * vertex_B + dynamics.r_BN_N + displacement * timeInterval[1];
-        return result;
-    }
-    
-    Eigen::Vector3d Px = (screwRot *  vertex_B) + screwOffset;
-    std::vector<double> cosInt = this->IntervalCosine(timeInterval[0] * screwAngle, timeInterval[1] * screwAngle);
-    std::vector<double> sinInt = this->IntervalSine(timeInterval[0] * screwAngle, timeInterval[1] * screwAngle);
-    
-    result.lower[0] = cosInt[0] * Px[0] + sinInt[0] * Px[1];
-    result.lower[1] = -sinInt[0] * Px[0] + cosInt[0] * Px[1];
-    result.lower[2] = Px[2] + screwDistance * timeInterval[0];
-    
-    result.upper[0] = cosInt[1] * Px[0] + sinInt[1] * Px[1];
-    result.upper[1] = -sinInt[1] * Px[0] + cosInt[1] * Px[1];
-    result.upper[2] = Px[2] + screwDistance * timeInterval[1];
-    
-    result.lower = (screwRot.transpose() * result.lower) - (screwRot.transpose() * screwOffset);
-    result.upper = (screwRot.transpose() * result.upper) - (screwRot.transpose() * screwOffset);
-    
-    result.lower = dynamics.dcm_NB * result.lower + dynamics.r_BN_N;
-    result.upper = dynamics.dcm_NB * result.upper + dynamics.r_BN_N;
-    
-    return result;
-}
-
-double RigidBodyContactEffector::FindEdgeIntervalThreshold(Eigen::Vector3d vertexA0_B, Eigen::Vector3d vertexA1_B, dynamicData dynamicsA, Eigen::Vector3d vertexB0_B, Eigen::Vector3d vertexB1_B, dynamicData dynamicsB, double maxError)
-{
-    std::vector<double> thresholdList;
-    Eigen::Vector3d vertexVelocity_N;
-    
-    
-    vertexVelocity_N = (dynamicsA.dcm_NB * dynamicsA.omegaTilde_BN_B * vertexA0_B) + dynamicsA.v_BN_N;
-    thresholdList.push_back(maxError / vertexVelocity_N.norm());
-    vertexVelocity_N = (dynamicsA.dcm_NB * dynamicsA.omegaTilde_BN_B * vertexA1_B) + dynamicsA.v_BN_N;
-    thresholdList.push_back(maxError / vertexVelocity_N.norm());
-    vertexVelocity_N = (dynamicsB.dcm_NB * dynamicsB.omegaTilde_BN_B * vertexB0_B) + dynamicsB.v_BN_N;
-    thresholdList.push_back(maxError / vertexVelocity_N.norm());
-    vertexVelocity_N = (dynamicsB.dcm_NB * dynamicsB.omegaTilde_BN_B * vertexB1_B) + dynamicsB.v_BN_N;
-    thresholdList.push_back(maxError / vertexVelocity_N.norm());
-    
-    return *std::min_element(thresholdList.begin(), thresholdList.end());
-}
-
-double RigidBodyContactEffector::FindEdgeIntervalThresholds(Eigen::Vector3d vertexA0_B, Eigen::Vector3d vertexA1_B, dynamicData dynamicsA, double screwAngleA, Eigen::Matrix3d screwRotA, Eigen::Vector3d screwOffsetA, double screwDistanceA, Eigen::Vector3d vertexB0_B, Eigen::Vector3d vertexB1_B, dynamicData dynamicsB, double screwAngleB, Eigen::Matrix3d screwRotB, Eigen::Vector3d screwOffsetB, double screwDistanceB, double maxError)
-{
-    std::vector<double> thresholdList;
-    Eigen::Vector3d vertex_S;
-    
-    if (screwAngleA > 0)
-    {
-        vertex_S = screwRotA * vertexA0_B + screwOffsetA;
-        thresholdList.push_back(maxError / sqrt( pow(screwDistanceA, 2) + pow(screwAngleA, 2) * (pow(vertex_S[0], 2) + pow(vertex_S[1], 2))));
-        vertex_S = screwRotA * vertexA1_B + screwOffsetA;
-        thresholdList.push_back(maxError / sqrt( pow(screwDistanceA, 2) + pow(screwAngleA, 2) * (pow(vertex_S[0], 2) + pow(vertex_S[1], 2))));
-    }else if (dynamicsA.v_BN_N.norm() > 0)
-    {
-        thresholdList.push_back(maxError / (dynamicsA.v_BN_N.norm() * this->simTimeStep));
-    }
-    
-    if (screwAngleB > 0)
-    {
-        vertex_S = screwRotB * vertexB0_B + screwOffsetB;
-        thresholdList.push_back(maxError / sqrt( pow(screwDistanceB, 2) + pow(screwAngleB, 2) * (pow(vertex_S[0], 2) + pow(vertex_S[1], 2))));
-        vertex_S = screwRotB * vertexB1_B + screwOffsetB;
-        thresholdList.push_back(maxError / sqrt( pow(screwDistanceB, 2) + pow(screwAngleB, 2) * (pow(vertex_S[0], 2) + pow(vertex_S[1], 2))));
-    }else if (dynamicsB.v_BN_N.norm() > 0)
-    {
-        thresholdList.push_back(maxError / (dynamicsB.v_BN_N.norm() * this->simTimeStep));
-    }
-
-    return *std::min_element(thresholdList.begin(), thresholdList.end());
-}
-
-double RigidBodyContactEffector::FindFaceIntervalThreshold(Eigen::Vector3d faceVertex0_B, Eigen::Vector3d faceVertex1_B, Eigen::Vector3d faceVertex2_B, dynamicData dynamicsA, Eigen::Vector3d supportVertex_B, dynamicData dynamicsB, double maxError)
-{
-    std::vector<double> thresholdList;
-    Eigen::Vector3d vertexVelocity_N;
-    
-    
-    vertexVelocity_N = (dynamicsA.dcm_NB * dynamicsA.omegaTilde_BN_B * faceVertex0_B) + dynamicsA.v_BN_N;
-    thresholdList.push_back(maxError / vertexVelocity_N.norm());
-    vertexVelocity_N = (dynamicsA.dcm_NB * dynamicsA.omegaTilde_BN_B * faceVertex1_B) + dynamicsA.v_BN_N;
-    thresholdList.push_back(maxError / vertexVelocity_N.norm());
-    vertexVelocity_N = (dynamicsA.dcm_NB * dynamicsA.omegaTilde_BN_B * faceVertex2_B) + dynamicsA.v_BN_N;
-    thresholdList.push_back(maxError / vertexVelocity_N.norm());
-    vertexVelocity_N = (dynamicsB.dcm_NB * dynamicsB.omegaTilde_BN_B * supportVertex_B) + dynamicsB.v_BN_N;
-    thresholdList.push_back(maxError / vertexVelocity_N.norm());
-    
-    return *std::min_element(thresholdList.begin(), thresholdList.end());
-}
-
-double RigidBodyContactEffector::FindFaceIntervalThresholds(Eigen::Vector3d faceVertex0_B, Eigen::Vector3d faceVertex1_B, Eigen::Vector3d faceVertex2_B, dynamicData dynamicsA,  double screwAngleA, Eigen::Matrix3d screwRotA, Eigen::Vector3d screwOffsetA, double screwDistanceA, Eigen::Vector3d supportVertex_B, dynamicData dynamicsB,  double screwAngleB, Eigen::Matrix3d screwRotB, Eigen::Vector3d screwOffsetB, double screwDistanceB, double maxError)
-{
-    std::vector<double> thresholdList;
-    Eigen::Vector3d vertex_S;
-
-    if (screwAngleA > 0)
-    {
-        vertex_S = screwRotA * faceVertex0_B + screwOffsetA;
-        thresholdList.push_back(maxError / sqrt( pow(screwDistanceA, 2) + pow(screwAngleA, 2) * (pow(vertex_S[0], 2) + pow(vertex_S[1], 2))));
-        vertex_S = screwRotA * faceVertex1_B + screwOffsetA;
-        thresholdList.push_back(maxError / sqrt( pow(screwDistanceA, 2) + pow(screwAngleA, 2) * (pow(vertex_S[0], 2) + pow(vertex_S[1], 2))));
-        vertex_S = screwRotA * faceVertex2_B + screwOffsetA;
-        thresholdList.push_back(maxError / sqrt( pow(screwDistanceA, 2) + pow(screwAngleA, 2) * (pow(vertex_S[0], 2) + pow(vertex_S[1], 2))));
-    }else if (dynamicsA.v_BN_N.norm() > 0)
-    {
-        thresholdList.push_back(maxError / (dynamicsA.v_BN_N.norm() * this->simTimeStep));
-    }
-    
-    if (screwAngleB > 0)
-    {
-        vertex_S = screwRotB * supportVertex_B + screwOffsetB;
-        thresholdList.push_back(maxError / sqrt( pow(screwDistanceB, 2) + pow(screwAngleB, 2) * (pow(vertex_S[0], 2) + pow(vertex_S[1], 2))));
-    }else if (dynamicsB.v_BN_N.norm() > 0)
-    {
-        thresholdList.push_back(maxError / (dynamicsB.v_BN_N.norm() * this->simTimeStep));
-    }
-    
-    return *std::min_element(thresholdList.begin(), thresholdList.end());
-}
 
 std::vector<double> RigidBodyContactEffector::IntervalSine(double a, double b)
 {
@@ -2470,13 +1697,11 @@ int RigidBodyContactEffector::LineLineDistance(Eigen::Vector3d vertex1, Eigen::V
     double d1343, d4321, d1321, d4343, d2121;
     double numer, denom;
     double mua, mub;
-    double dotRes;
     int retValue = 1;
     
     line13 = vertex1 - vertex3;
     line43 = vertex4 - vertex3;
     line21 = vertex2 - vertex1;
-    
     if (line21.dot(line43) < 0.0)
     {
         temp = vertex3;
@@ -2641,364 +1866,6 @@ int RigidBodyContactEffector::PointInTriangle(Eigen::Vector3d supportPoint, Eige
         }
     }
     return -1;
-}
-
-double RigidBodyContactEffector::WhenEdgeContact(std::vector<std::vector<int>> edgePair, std::vector<Eigen::Vector3d> verticesA, std::vector<Eigen::Vector3d> verticesB, dynamicData dynamicsA, dynamicData dynamicsB, double dt, Eigen::Vector3d *edgeAContact_N, Eigen::Vector3d *edgeBContact_N, int *coLin)
-{
-    vectorInterval edgeIntervalA;
-    vectorInterval edgeIntervalB;
-    vectorInterval edgeIntervalMixed;
-    vectorInterval vertexIntervalA0;
-    vectorInterval vertexIntervalA1;
-    vectorInterval vertexIntervalB0;
-    vectorInterval vertexIntervalB1;
-    Eigen::Vector3d edgeVertexA0 = verticesA[edgePair[0][0]];
-    Eigen::Vector3d edgeVertexA1 = verticesA[edgePair[0][1]];
-    Eigen::Vector3d edgeVertexB0 = verticesB[edgePair[1][0]];
-    Eigen::Vector3d edgeVertexB1 = verticesB[edgePair[1][1]];
-    std::vector<double> contactInterval;
-    double intervalThreshold;
-    std::vector<double> timeInterval;
-    std::vector<double> timeIntervalChain;
-    std::vector<Eigen::Vector3d> upperIntervalChain;
-    vectorInterval tempIntervalA;
-    vectorInterval tempIntervalB;
-    vectorInterval tempIntervalMixed;
-    int timeSearch = 2;
-    Eigen::Vector3d potentialContactA0;
-    Eigen::Vector3d potentialContactA1;
-    Eigen::Vector3d potentialContactB0;
-    Eigen::Vector3d potentialContactB1;
-    Eigen::Vector3d edgeConnect;
-    Eigen::Vector3d colinCheck1;
-    Eigen::Vector3d colinCheck2;
-    double screwAngleA;
-    Eigen::Matrix3d screwRotA;
-    Eigen::Vector3d screwOffsetA;
-    double screwDistanceA;
-    double screwAngleB;
-    Eigen::Matrix3d screwRotB;
-    Eigen::Vector3d screwOffsetB;
-    double screwDistanceB;
-    
-    this->C2Screw(dynamicsA.dcm_BprimeB, dynamicsA.dcm_BN * (dynamicsA.v_BN_N * this->simTimeStep), &screwAngleA, &screwRotA, &screwOffsetA, &screwDistanceA);
-    this->C2Screw(dynamicsB.dcm_BprimeB, dynamicsB.dcm_BN * (dynamicsB.v_BN_N * this->simTimeStep), &screwAngleB, &screwRotB, &screwOffsetB, &screwDistanceB);
-    
-    timeInterval.push_back(0.0);
-    timeInterval.push_back(1.0);
-    
-    vertexIntervalA0 = MakeIntervalValues(edgeVertexA0, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, timeInterval);
-    vertexIntervalA1 = MakeIntervalValues(edgeVertexA1, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, timeInterval);
-    vertexIntervalB0 = MakeIntervalValues(edgeVertexB0, dynamicsB, screwAngleB, screwRotB, screwOffsetB, screwDistanceB, timeInterval);
-    vertexIntervalB1 = MakeIntervalValues(edgeVertexB1, dynamicsB, screwAngleB, screwRotB, screwOffsetB, screwDistanceB, timeInterval);
-    
-    edgeIntervalA.lower = vertexIntervalA1.lower - vertexIntervalA0.lower;
-    edgeIntervalA.upper = vertexIntervalA1.upper - vertexIntervalA0.upper;
-    edgeIntervalB.lower = vertexIntervalB1.lower - vertexIntervalB0.lower;
-    edgeIntervalB.upper = vertexIntervalB1.upper - vertexIntervalB0.upper;
-    edgeIntervalMixed.lower = vertexIntervalB0.lower - vertexIntervalA0.lower;
-    edgeIntervalMixed.upper = vertexIntervalB0.upper - vertexIntervalA0.upper;
-    
-    contactInterval = this->IntervalDotProduct(edgeIntervalMixed,this->IntervalCrossProduct(edgeIntervalA, edgeIntervalB));
-    
-    if (contactInterval[0] > 0.0 || contactInterval[1] < 0.0 )
-    {
-        return -1;
-    } else if ((contactInterval[0] > -0.0001f) && (contactInterval[1] < 0.0001f))
-    {
-        *coLin = this->LineLineDistance(vertexIntervalA0.lower, vertexIntervalA1.lower, vertexIntervalB0.lower, vertexIntervalB1.lower, edgeAContact_N, edgeBContact_N);
-        if (*coLin == -1)
-        {
-            return -1;
-        }
-        colinCheck1 = *edgeBContact_N - *edgeAContact_N;
-        *coLin = this->LineLineDistance(vertexIntervalA0.upper, vertexIntervalA1.upper, vertexIntervalB0.upper, vertexIntervalB1.upper, edgeAContact_N, edgeBContact_N);
-        if (*coLin == -1)
-        {
-            return -1;
-        }
-        colinCheck2 = *edgeBContact_N - *edgeAContact_N;
-        if (colinCheck1.dot(colinCheck2) > 0){
-            return -1;
-        }
-    }
-
-        intervalThreshold = this->FindEdgeIntervalThresholds(edgeVertexA0, edgeVertexA1, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, edgeVertexB0, edgeVertexB1, dynamicsB, screwAngleB, screwRotB, screwOffsetB, screwDistanceB, this->maxPosError / 100.0f);
-
-        while (timeSearch > 0)
-        {
-            timeIntervalChain.push_back(timeInterval[1]);
-            timeInterval[1] = 0.5f * (timeInterval[0] + timeInterval[1]);
-            vertexIntervalA0 = MakeIntervalValues(edgeVertexA0, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, timeInterval);
-            vertexIntervalA1 = MakeIntervalValues(edgeVertexA1, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, timeInterval);
-            vertexIntervalB0 = MakeIntervalValues(edgeVertexB0, dynamicsB, screwAngleB, screwRotB, screwOffsetB, screwDistanceB, timeInterval);
-            vertexIntervalB1 = MakeIntervalValues(edgeVertexB1, dynamicsB, screwAngleB, screwRotB, screwOffsetB, screwDistanceB, timeInterval);
-            
-            edgeIntervalA.lower = vertexIntervalA1.lower - vertexIntervalA0.lower;
-            edgeIntervalA.upper = vertexIntervalA1.upper - vertexIntervalA0.upper;
-            edgeIntervalB.lower = vertexIntervalB1.lower - vertexIntervalB0.lower;
-            edgeIntervalB.upper = vertexIntervalB1.upper - vertexIntervalB0.upper;
-            edgeIntervalMixed.lower = vertexIntervalB0.lower - vertexIntervalA0.lower;
-            edgeIntervalMixed.upper = vertexIntervalB0.upper - vertexIntervalA0.upper;
-            
-            contactInterval = this->IntervalDotProduct(edgeIntervalMixed,this->IntervalCrossProduct(edgeIntervalA, edgeIntervalB));
-            
-            if (contactInterval[0] > 0.0f || contactInterval[1] < 0.0f)
-            {
-                timeInterval[0] = timeInterval[1];
-                timeInterval[1] = timeIntervalChain.back();
-                timeIntervalChain.pop_back();
-                if ((timeInterval[1] - timeInterval[0]) * dt <= intervalThreshold)
-                {
-                    if (timeIntervalChain.size() == 0)
-                    {
-                        timeSearch -= 1;
-                    }else
-                    {
-                        timeInterval[1] = timeIntervalChain.back();
-                        timeIntervalChain.pop_back();
-                    }
-                    
-                }
-                continue;
-            }
-            
-            if ((timeInterval[1] - timeInterval[0]) * dt <= intervalThreshold)
-            {
-                *coLin = this->LineLineDistance(vertexIntervalA0.lower, vertexIntervalA1.lower, vertexIntervalB0.lower, vertexIntervalB1.lower, edgeAContact_N, edgeBContact_N);
-                
-                if (*coLin >= 0)
-                {
-                    edgeConnect = *edgeBContact_N - *edgeAContact_N;
-                    if ( edgeConnect.norm() <= this->maxPosError)
-                    {
-                        return dt * (timeInterval[1] + timeInterval[0]) / 2.0f;
-                    }
-                }
-                timeInterval[0] = timeInterval[1];
-                timeInterval[1] = timeIntervalChain.back();
-                timeIntervalChain.pop_back();
-                if (timeIntervalChain.size() == 0)
-                {
-                    timeSearch -= 1;
-                }else
-                {
-                    timeInterval[1] = timeIntervalChain.back();
-                    timeIntervalChain.pop_back();
-                }
-            }
-        }
-    
-    return -1;
-}
-
-
-double RigidBodyContactEffector::WhenFaceContact(std::vector<int> trianglePoints, std::vector<Eigen::Vector3d> verticesA, int supportPoint, std::vector<Eigen::Vector3d> verticesB, dynamicData dynamicsA, dynamicData dynamicsB, double dt, Eigen::Vector3d *faceContactPoint_N)
-{
-    vectorInterval supportInterval;
-    vectorInterval faceLegInterval1;
-    vectorInterval faceLegInterval2;
-    vectorInterval vertexIntervalA0;
-    vectorInterval vertexIntervalA1;
-    vectorInterval vertexIntervalA2;
-    vectorInterval vertexIntervalB0;
-    Eigen::Vector3d faceVertex0 = verticesA[trianglePoints[0]];
-    Eigen::Vector3d faceVertex1 = verticesA[trianglePoints[1]];
-    Eigen::Vector3d faceVertex2 = verticesA[trianglePoints[2]];
-    Eigen::Vector3d supportVertex = verticesB[supportPoint];
-    std::vector<double> contactInterval;
-    double intervalThreshold;
-    std::vector<double> timeInterval;
-    std::vector<double> timeIntervalChain;
-    std::vector<Eigen::Vector3d> upperIntervalChain;
-    vectorInterval tempLegInterval1;
-    vectorInterval tempLegInterval2;
-    vectorInterval tempSupportInterval;
-    int timeSearch = 2;
-    Eigen::Vector3d potentialSupport;
-    Eigen::Vector3d potentialVertex0;
-    Eigen::Vector3d potentialVertex1;
-    Eigen::Vector3d potentialVertex2;
-    double screwAngleA;
-    Eigen::Matrix3d screwRotA;
-    Eigen::Vector3d screwOffsetA;
-    double screwDistanceA;
-    double screwAngleB;
-    Eigen::Matrix3d screwRotB;
-    Eigen::Vector3d screwOffsetB;
-    double screwDistanceB;
-    
-    this->C2Screw(dynamicsA.dcm_BprimeB, dynamicsA.dcm_BN * (dynamicsA.v_BN_N * this->simTimeStep), &screwAngleA, &screwRotA, &screwOffsetA, &screwDistanceA);
-    this->C2Screw(dynamicsB.dcm_BprimeB, dynamicsB.dcm_BN * (dynamicsB.v_BN_N * this->simTimeStep), &screwAngleB, &screwRotB, &screwOffsetB, &screwDistanceB);
-    
-    timeInterval.push_back(0.0);
-    timeInterval.push_back(1.0);
-    
-    vertexIntervalA0 = MakeIntervalValues(faceVertex0, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, timeInterval);
-    vertexIntervalA1 = MakeIntervalValues(faceVertex1, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, timeInterval);
-    vertexIntervalA2 = MakeIntervalValues(faceVertex2, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, timeInterval);
-    vertexIntervalB0 = MakeIntervalValues(supportVertex, dynamicsB, screwAngleB, screwRotB, screwOffsetB, screwDistanceB, timeInterval);
-    
-    faceLegInterval1.lower = vertexIntervalA0.lower - vertexIntervalA1.lower;
-    faceLegInterval1.upper = vertexIntervalA0.upper - vertexIntervalA1.upper;
-    faceLegInterval2.lower = vertexIntervalA0.lower - vertexIntervalA2.lower;
-    faceLegInterval2.upper = vertexIntervalA0.upper - vertexIntervalA2.upper;
-    supportInterval.lower = vertexIntervalB0.lower - vertexIntervalA0.lower;
-    supportInterval.upper = vertexIntervalB0.upper - vertexIntervalA0.upper;
-    
-    contactInterval = this->IntervalDotProduct(supportInterval,this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
-    
-    if (contactInterval[0] > 0.0000001f || contactInterval[1] < 0.0000001f)
-    {
-        return -1;
-    } else
-    {
-        intervalThreshold = this->FindFaceIntervalThresholds( faceVertex0, faceVertex1, faceVertex2, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, supportVertex, dynamicsB,  screwAngleB, screwRotB, screwOffsetB, screwDistanceB, this->maxPosError / 100.0f);
-        while (timeSearch > 0)
-        {
-            timeIntervalChain.push_back(timeInterval[1]);
-            timeInterval[1] = 0.5f * (timeInterval[0] + timeInterval[1]);
-            vertexIntervalA0 = MakeIntervalValues(faceVertex0, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, timeInterval);
-            vertexIntervalA1 = MakeIntervalValues(faceVertex1, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, timeInterval);
-            vertexIntervalA2 = MakeIntervalValues(faceVertex2, dynamicsA, screwAngleA, screwRotA, screwOffsetA, screwDistanceA, timeInterval);
-            vertexIntervalB0 = MakeIntervalValues(supportVertex, dynamicsB, screwAngleB, screwRotB, screwOffsetB, screwDistanceB, timeInterval);
-            
-            faceLegInterval1.lower = vertexIntervalA0.lower - vertexIntervalA1.lower;
-            faceLegInterval1.upper = vertexIntervalA0.upper - vertexIntervalA1.upper;
-            faceLegInterval2.lower = vertexIntervalA0.lower - vertexIntervalA2.lower;
-            faceLegInterval2.upper = vertexIntervalA0.upper - vertexIntervalA2.upper;
-            supportInterval.lower = vertexIntervalB0.lower - vertexIntervalA0.lower;
-            supportInterval.upper = vertexIntervalB0.upper - vertexIntervalA0.upper;
-            
-            contactInterval = this->IntervalDotProduct(supportInterval,this->IntervalCrossProduct(faceLegInterval1, faceLegInterval2));
-            
-            if (contactInterval[0] > 0.0f || contactInterval[1] < 0.0f)
-            {
-                timeInterval[0] = timeInterval[1];
-                timeInterval[1] = timeIntervalChain.back();
-                timeIntervalChain.pop_back();
-                if ((timeInterval[1] - timeInterval[0])  <= intervalThreshold)
-                {
-                    if (timeIntervalChain.size() == 0)
-                    {
-                        timeSearch -= 1;
-                    }else
-                    {
-                        timeInterval[1] = timeIntervalChain.back();
-                        timeIntervalChain.pop_back();
-                    }
-                    
-                }
-                continue;
-            }
-            
-            if ((timeInterval[1] - timeInterval[0])  <= intervalThreshold)
-            {
-                //if (this->PointInTriangle(vertexIntervalB0.lower, vertexIntervalA0.lower, vertexIntervalA1.lower, vertexIntervalA2.lower, faceContactPoint_N) == 1)
-                {
-                    if ( (*faceContactPoint_N - vertexIntervalB0.lower).norm() <= this->maxPosError)
-                    {
-                        return dt * (timeInterval[1] + timeInterval[0]) / 2.0f;
-                    }
-                }
-                
-                timeInterval[0] = timeInterval[1];
-                timeInterval[1] = timeIntervalChain.back();
-                timeIntervalChain.pop_back();
-                if (timeIntervalChain.size() == 0)
-                {
-                    timeSearch -= 1;
-                }else
-                {
-                    timeInterval[1] = timeIntervalChain.back();
-                    timeIntervalChain.pop_back();
-                }
-            }
-        }
-    }
-    return -1;
-}
-    
-Eigen::Vector3d RigidBodyContactEffector::CalcImpluse(contactDetail collisionData, dynamicData otherDynamics, double coefRestitution)
-{
-    Eigen::MatrixXd invIMainPntB_N = this->mainBody.states.dcm_NB *  this->mainBody.states.ISCPntB_B.inverse() * this->mainBody.states.dcm_BN;
-////    Eigen::MatrixXd invIOtherPntB_N = otherDynamics.dcm_NB *  otherDynamics.ISCPntB_B.inverse() * otherDynamics.dcm_BN;
-//
-    Eigen::Vector3d contactPosMain_N = this->mainBody.states.dcm_NB * (collisionData.mainContactPoint - this->mainBody.states.c_B);
-    Eigen::Vector3d contactPosOther_N = otherDynamics.dcm_NB * (collisionData.otherContactPoint);// - otherDynamics.c_B);
-//
-    Eigen::Vector3d contactVelMain_N = this->mainBody.states.v_BN_N + eigenTilde(this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) * contactPosMain_N;
-    Eigen::Vector3d contactVelOther_N = otherDynamics.v_BN_N + (otherDynamics.dcm_NB * otherDynamics.omegaTilde_BN_B * otherDynamics.dcm_BN) * contactPosOther_N;
-//
-    double v_rel_N = collisionData.contactNormal.dot(contactVelMain_N - contactVelOther_N);
-    if (v_rel_N < 0.0)
-    {
-        return 0.0 * collisionData.contactNormal;
-    }
-//
-//    Eigen::Vector3d interDenom1 = eigenTilde(contactPosMain_N) * collisionData.contactNormal;
-//
-////    Eigen::Vector3d interDenom2 = invIOtherPntB_N * eigenTilde(contactPosOther_N) * collisionData.contactNormal;
-//
-////    double j = (-(1 + coefRestitution) * v_rel_N) / ( 1/this->mainBody.states.m_SC + 1/otherDynamics.m_SC + collisionData.contactNormal.dot(eigenTilde(interDenom1) * contactPosMain_N) + collisionData.contactNormal.dot(eigenTilde(interDenom2) * contactPosOther_N));
-//
-//    double j = (-(1.0 + coefRestitution) * v_rel_N) / ( (1.0 / this->mainBody.states.m_SC) + collisionData.contactNormal.dot(invIMainPntB_N * eigenTilde(interDenom1) * contactPosMain_N));
-    
-    double j = (((1.0 / this->mainBody.states.m_SC ) * Eigen::Matrix3d::Identity() - eigenTilde(this->mainBody.states.dcm_NB * collisionData.mainContactPoint) * invIMainPntB_N * eigenTilde(this->mainBody.states.dcm_NB * collisionData.mainContactPoint)).inverse() * (eigenTilde(this->mainBody.states.dcm_NB * collisionData.mainContactPoint) * (this->mainBody.states.dcm_NB * this->mainBody.states.omega_BN_B) - this->mainBody.states.v_BN_N + contactVelOther_N)).norm();
-    
-    return (j + coefRestitution * j) * -collisionData.contactNormal;
-}
-    
-void RigidBodyContactEffector::C2Screw(Eigen::Matrix3d DCM, Eigen::Vector3d displacement, double *screwAngle, Eigen::Matrix3d *screwRot, Eigen::Vector3d *screwOffset, double *screwDistance)
-{
-    Eigen::Matrix3d screwFrame;
-    double C[3][3];
-    double Q[4];
-    Eigen::Vector3d PRV;
-    eigenMatrix3d2CArray(DCM, *C);
-    Q[0] = acos(0.5 * ( C[0][0] + C[1][1] + C[2][2] - 1));
-    Q[1] = (1 / (2 * sin(Q[0]))) * (C[1][2] - C[2][1]);
-    Q[2] = (1 / (2 * sin(Q[0]))) * (C[2][0] - C[0][2]);
-    Q[3] = (1 / (2 * sin(Q[0]))) * (C[0][1] - C[1][0]);
-    *screwAngle = Q[0];
-    PRV[0] = Q[1];
-    PRV[1] = Q[2];
-    PRV[2] = Q[3];
-    PRV.normalize();
-    
-    Eigen::Vector3d perpD = displacement - displacement.dot(PRV) * PRV;
-    
-    if ( (round(perpD[0] * 1000.0) == 0.0) && (round(perpD[1] * 1000.0) == 0.0) && (round(perpD[2] * 1000.0) == 0.0))
-    {
-        Eigen::Vector3d newPerp;
-        if (abs(PRV[0]) > abs(PRV[1]))
-        {
-            newPerp[0] = PRV[2];
-            newPerp[1] = 0.0;
-            newPerp[2] = -PRV[0];
-        }else
-        {
-            newPerp[0] = 0.0;
-            newPerp[1] = PRV[2];
-            newPerp[2] = -PRV[1];
-        }
-        Eigen::Vector3d w = PRV.cross(newPerp);
-        screwFrame << newPerp, w, PRV;
-        *screwRot = screwFrame.transpose();
-        *screwOffset << 0.0, 0.0, 0.0;
-        *screwDistance = PRV.dot(displacement);
-        return;
-    }
-    
-    Eigen::Vector3d v = perpD.normalized();
-    Eigen::Vector3d w = PRV.cross(v);
-    screwFrame << v, w, PRV;
-    *screwRot = screwFrame.transpose();
-    
-    *screwOffset = (perpD.norm() / 2) * ( v + (sin(*screwAngle) / (1 - cos(*screwAngle))) * w);
-    *screwOffset = - *screwRot * *screwOffset;
-    *screwDistance = PRV.dot(displacement);
-    return;
 }
 
 Eigen::Vector3d RigidBodyContactEffector::SecondTop(std::stack<Eigen::Vector3d> &stk)

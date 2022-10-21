@@ -186,7 +186,6 @@ class RigidBodyContactEffector: public SysModel, public DynamicEffector
 public:
     RigidBodyContactEffector();
     ~RigidBodyContactEffector();
-    
     void Reset();
     void LoadSpacecraftBody(const char *objFile, std::string modelTag, Message<SCStatesMsgPayload> *scStateMsg, Message<SCMassPropsMsgPayload> *scMassStateMsg, double boundingRadius, double coefRestitution, double coefFriction);
     void AddSpiceBody(const char *objFile, Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double boundingRadius, double coefRestitution, double coefFriction);
@@ -198,7 +197,6 @@ public:
     void ExtractFromBuffer();
     void CheckBoundingSphere();
     void CheckBoundingBox();
-    bool Overlap(geometry foriegnBody, int bodyIndex);
     
 private:
     double currentSimSeconds;
@@ -206,8 +204,11 @@ private:
     int currentBodyInCycle;
     double currentMinError;
     bool responseFound;
+    bool lockedToRand;
     double timeFound;
     double integrateTimeStep;
+    
+    bool justOneTime = false;
     
 public:
     geometry mainBody;
@@ -234,26 +235,15 @@ public:
 private:
     Eigen::VectorXd CollisionStateDerivative(Eigen::VectorXd X_c, std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts, std::vector<double> f_vals, std::vector<double> phi_vals, Eigen::MatrixXd M_tot, double coefRes, double coefFric);
     bool SeparatingPlane(vectorInterval displacementInterval, vectorInterval candidateInterval, indivBoundingBox box1, indivBoundingBox box2);
-    bool IsMinkowskiFace(Eigen::Vector3d edgeA, Eigen::Vector3d edgeB, Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d c, Eigen::Vector3d d);
+  
     std::vector<halfEdge> ComputeHalfEdge(std::vector<Eigen::Vector3d> vertices, std::vector<tinyobj::shape_t> shapes);
-    edgeQuery QueryEdgeDirection(std::vector<Eigen::Vector3d> verticesA, halfEdge polyA, dynamicData stateA, std::vector<Eigen::Vector3d> verticesB, halfEdge polyB, dynamicData stateB);
-    faceQuery QueryFaceDirection(std::vector<Eigen::Vector3d> verticesA, halfEdge polyA, dynamicData stateA, std::vector<Eigen::Vector3d> verticesB, halfEdge polyB, dynamicData stateB);
-    Eigen::Vector3d MakeIntervalValue(Eigen::Vector3d vertex_B, dynamicData dynamics, double time);
-    vectorInterval MakeIntervalValues(Eigen::Vector3d vertex_B, dynamicData dynamics, double screwAngle, Eigen::Matrix3d screwRot, Eigen::Vector3d screwOffset, double screwDistance, std::vector<double> timeInterval);
-    double FindEdgeIntervalThreshold(Eigen::Vector3d vertexA0_B, Eigen::Vector3d vertexA1_B, dynamicData dynamicsA, Eigen::Vector3d vertexB0_B, Eigen::Vector3d vertexB1_B, dynamicData dynamicsB, double maxError);
-    double FindEdgeIntervalThresholds(Eigen::Vector3d vertexA0_B, Eigen::Vector3d vertexA1_B, dynamicData dynamicsA, double screwAngleA, Eigen::Matrix3d screwRotA, Eigen::Vector3d screwOffsetA, double screwDistanceA, Eigen::Vector3d vertexB0_B, Eigen::Vector3d vertexB1_B, dynamicData dynamicsB, double screwAngleB, Eigen::Matrix3d screwRotB, Eigen::Vector3d screwOffsetB, double screwDistanceB, double maxError);
-    double FindFaceIntervalThreshold(Eigen::Vector3d faceVertex0_B, Eigen::Vector3d faceVertex1_B, Eigen::Vector3d faceVertex2_B, dynamicData dynamicsA, Eigen::Vector3d supportVertex_B, dynamicData dynamicsB, double maxError);
+
     std::vector<double> IntervalSine(double a, double b);
     std::vector<double> IntervalCosine(double a, double b);
     std::vector<double> IntervalDotProduct(vectorInterval vectorA, vectorInterval vectorB);
-    double FindFaceIntervalThresholds(Eigen::Vector3d faceVertex0_B, Eigen::Vector3d faceVertex1_B, Eigen::Vector3d faceVertex2_B, dynamicData dynamicsA,  double screwAngleA, Eigen::Matrix3d screwRotA, Eigen::Vector3d screwOffsetA, double screwDistanceA, Eigen::Vector3d supportVertex_B, dynamicData dynamicsB,  double screwAngleB, Eigen::Matrix3d screwRotB, Eigen::Vector3d screwOffsetB, double screwDistanceB, double maxError);
     vectorInterval IntervalCrossProduct(vectorInterval vectorA, vectorInterval vectorB);
     int LineLineDistance(Eigen::Vector3d vertex1, Eigen::Vector3d vertex2, Eigen::Vector3d vertex3, Eigen::Vector3d vertex4, Eigen::Vector3d *pointA, Eigen::Vector3d *pointB);
     int PointInTriangle(Eigen::Vector3d supportPoint, Eigen::Vector3d triVertex0, Eigen::Vector3d triVertex1, Eigen::Vector3d triVertex2, Eigen::Vector3d *contactPoint, double *distance);
-    double WhenEdgeContact(std::vector<std::vector<int>> edgePair, std::vector<Eigen::Vector3d> verticesA, std::vector<Eigen::Vector3d> verticesB, dynamicData dynamicsA, dynamicData dynamicsB, double dt, Eigen::Vector3d *edgeAContact_N, Eigen::Vector3d *edgeBContact_N, int *coLin);
-    double WhenFaceContact(std::vector<int> trianglePoints, std::vector<Eigen::Vector3d> verticesA, int supportPoint, std::vector<Eigen::Vector3d> verticesB, dynamicData dynamicsA, dynamicData dynamicsB, double dt, Eigen::Vector3d *faceContactPoint_N);
-    Eigen::Vector3d CalcImpluse(contactDetail collisionData, dynamicData otherDynamics, double coefRestitution);
-    void C2Screw(Eigen::Matrix3d DCM, Eigen::Vector3d displacement, double *screwAngle, Eigen::Matrix3d *screwRot, Eigen::Vector3d *screwOffset, double *screwDistance);
     Eigen::Vector3d SecondTop(std::stack<Eigen::Vector3d> &stk);
     bool ComparePoints(const std::vector<Eigen::Vector3d> &point1, const std::vector<Eigen::Vector3d> &point2);
     std::vector<Eigen::Vector3d> findConvexHull(std::vector<Eigen::Vector3d> points);

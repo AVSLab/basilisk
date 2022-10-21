@@ -298,14 +298,14 @@ def run():
     # scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
 
     # scObject.hub.r_CN_NInit = [[1.51], [1.7], [1.7]]  # m   - r_CN_N
-    # scObject.hub.v_CN_NInit = [[0.2], [0.0], [0.0]]  # m/s - v_CN_N
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_CN_B
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [-2.0]]  # m/s - v_CN_N
+    # scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_CN_B
     # scObject.hub.omega_BN_BInit = [[0.1], [0.1], [0.1]]  # rad/s - omega_CN_B
 
     mrp = RigidBodyKinematics.C2MRP(RigidBodyKinematics.Mi(0.2, 2))
     scObject.hub.r_CN_NInit = [[0.0], [0.0], [1.5]]  # m   - r_CN_N
-    scObject.hub.v_CN_NInit = [[0.0], [0.0], [-0.7]]  # m/s - v_CN_N
-    #scObject.hub.sigma_BNInit = [[mrp[0]], [mrp[1]], [mrp[2]]]  # sigma_CN_B
+    # scObject.hub.v_CN_NInit = [[0.0], [0.0], [-0.7]]  # m/s - v_CN_N
+    scObject.hub.sigma_BNInit = [[mrp[0]], [mrp[1]], [mrp[2]]]  # sigma_CN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
 
     # mrp = RigidBodyKinematics.C2MRP(RigidBodyKinematics.Mi(0.3, 2))
