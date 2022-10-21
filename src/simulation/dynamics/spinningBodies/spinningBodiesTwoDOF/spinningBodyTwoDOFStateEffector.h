@@ -86,6 +86,8 @@ private:
     Eigen::Vector3d rPrime_Sc1B_B;       //!< [m/s] body frame time derivative of r_ScB_B
     Eigen::Vector3d rPrime_Sc2B_B;       //!< [m/s] body frame time derivative of r_ScB_B
     Eigen::Vector3d rPrime_Sc2S1_B;       //!< [m/s] body frame time derivative of r_ScB_B
+    Eigen::Vector3d rDot_Sc1B_B;         //!< [m/s] inertial frame time derivative of r_ScB_B
+    Eigen::Vector3d rDot_Sc2B_B;         //!< [m/s] inertial frame time derivative of r_ScB_B
     Eigen::Vector3d omega_S1B_B;         //!< [rad/s] angular velocity of the S frame wrt the B frame in B frame components.
     Eigen::Vector3d omega_S2S1_B;         //!< [rad/s] angular velocity of the S frame wrt the B frame in B frame components.
     Eigen::Vector3d omega_S2B_B;         //!< [rad/s] angular velocity of the S frame wrt the B frame in B frame components.

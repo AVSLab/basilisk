@@ -361,13 +361,11 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
 
     // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
     // Translation contributions
-    backSubContr.matrixA = - (this->mass1 * rTilde_Sc1S1_B + this->mass2 * rTilde_Sc2S1_B) * this->s1Hat_B * this->ATheta.row(0) 
-        - this->mass2 * rTilde_Sc2S2_B* this->s2Hat_B * this->ATheta.row(1);
-    backSubContr.matrixB = - (this->mass1 * rTilde_Sc1S1_B + this->mass2 * rTilde_Sc2S1_B) * this->s1Hat_B * this->BTheta.row(0)
-        - this->mass2 * rTilde_Sc2S2_B * this->s2Hat_B * this->BTheta.row(1);
-    backSubContr.vecTrans = - this->mass1 * this->omegaTilde_S1B_B * this->rPrime_Sc1S1_B - this->mass2 * (this->omegaTilde_S1B_B * omegaTilde_S2S1_B * this->r_Sc2S2_B 
+    backSubContr.matrixA = - this->mass * rTilde_ScS1_B * this->s1Hat_B * this->ATheta.row(0) - this->mass2 * rTilde_Sc2S2_B * this->s2Hat_B * this->ATheta.row(1);
+    backSubContr.matrixB = - this->mass * rTilde_ScS1_B * this->s1Hat_B * this->BTheta.row(0) - this->mass2 * rTilde_Sc2S2_B * this->s2Hat_B * this->BTheta.row(1);
+    backSubContr.vecTrans = - this->mass1 * this->omegaTilde_S1B_B * this->rPrime_Sc1S1_B - this->mass2 * (rTilde_Sc2S2_B * omegaTilde_S2S1_B * this->omega_S1B_B
         + this->omegaTilde_S2B_B * this->rPrime_Sc2S2_B + this->omegaTilde_S1B_B * this->rPrime_S2S1_B)
-        + (this->mass1 * rTilde_Sc1S1_B + this->mass2 * rTilde_Sc2S1_B) * this->s1Hat_B * this->CTheta.row(0) + this->mass2 * rTilde_Sc2S2_B * this->s2Hat_B * this->CTheta.row(1);
+        + this->mass * rTilde_ScS1_B * this->s1Hat_B * this->CTheta.row(0) + this->mass2 * rTilde_Sc2S2_B * this->s2Hat_B * this->CTheta.row(1);
 
     // Rotation contributions
     backSubContr.matrixC = (this->IS1PntSc1_B + this->IS2PntSc2_B - this->mass1 * this->rTilde_Sc1B_B * rTilde_Sc1S1_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S1_B) * this->s1Hat_B * this->ATheta.row(0)
@@ -424,16 +422,16 @@ void SpinningBodyTwoDOFStateEffector::updateEnergyMomContributions(double integT
     this->omega_S2N_B = this->omega_S2B_B + this->omega_BN_B;
 
     // Compute rDot_ScB_B
-    Eigen::Vector3d rDot_Sc1B_B = this->rPrime_Sc1B_B + this->omegaTilde_BN_B * this->r_Sc1B_B;
-    Eigen::Vector3d rDot_Sc2B_B = this->rPrime_Sc2B_B + this->omegaTilde_BN_B * this->r_Sc2B_B;
+    this->rDot_Sc1B_B = this->rPrime_Sc1B_B + this->omegaTilde_BN_B * this->r_Sc1B_B;
+    this->rDot_Sc2B_B = this->rPrime_Sc2B_B + this->omegaTilde_BN_B * this->r_Sc2B_B;
 
     // Find rotational angular momentum contribution from hub
-    rotAngMomPntCContr_B = this->IS1PntSc1_B * this->omega_S1N_B + this->mass1 * this->rTilde_Sc1B_B * rDot_Sc1B_B
-        + this->IS2PntSc2_B * this->omega_S2N_B + this->mass2 * this->rTilde_Sc2B_B * rDot_Sc2B_B;
+    rotAngMomPntCContr_B = this->IS1PntSc1_B * this->omega_S1N_B + this->mass1 * this->rTilde_Sc1B_B * this->rDot_Sc1B_B
+        + this->IS2PntSc2_B * this->omega_S2N_B + this->mass2 * this->rTilde_Sc2B_B * this->rDot_Sc2B_B;
 
     // Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0 / 2.0 * this->omega_S1N_B.dot(this->IS1PntSc1_B * this->omega_S1N_B) + 1.0 / 2.0 * this->mass1 * rDot_Sc1B_B.dot(rDot_Sc1B_B)
-        + 1.0 / 2.0 * this->omega_S2N_B.dot(this->IS2PntSc2_B * this->omega_S2N_B) + 1.0 / 2.0 * this->mass2 * rDot_Sc2B_B.dot(rDot_Sc2B_B);
+    rotEnergyContr = 1.0 / 2.0 * this->omega_S1N_B.dot(this->IS1PntSc1_B * this->omega_S1N_B) + 1.0 / 2.0 * this->mass1 * this->rDot_Sc1B_B.dot(this->rDot_Sc1B_B)
+        + 1.0 / 2.0 * this->omega_S2N_B.dot(this->IS2PntSc2_B * this->omega_S2N_B) + 1.0 / 2.0 * this->mass2 * this->rDot_Sc2B_B.dot(this->rDot_Sc2B_B);
 
     return;
 }
@@ -454,8 +452,8 @@ void SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates()
     this->r_Sc2N_N = (Eigen::Vector3d)this->hubPosition->getState() + this->dcm_BN.transpose() * this->r_Sc2B_B;
 
     // Compute the inertial velocity vector
-    this->v_Sc1N_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * rDot_Sc1B_B;
-    this->v_Sc2N_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * rDot_Sc2B_B;
+    this->v_Sc1N_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * this->rDot_Sc1B_B;
+    this->v_Sc2N_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * this->rDot_Sc2B_B;
 
     return;
 }
