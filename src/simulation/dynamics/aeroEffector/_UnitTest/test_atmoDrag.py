@@ -26,6 +26,8 @@ import os, inspect
 import numpy as np
 import math
 
+from Basilisk import __path__
+
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -44,6 +46,7 @@ from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
+bskPath = __path__[0]
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -168,6 +171,20 @@ def run(show_plots, orbitCase, planetCase):
     mu = planet.mu
     # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+	
+	# Create the Spice interface and add the correct path to the ephemeris data
+    timeInitString = "2029 June 20 5:30:30.0"
+    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
+                                     timeInitString,
+                                     epochInMsg=True)
+    gravFactory.spiceObject.zeroBase = 'Earth'
+	
+	# Add the SPICE object to the simulation task list
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+	
+	# add spice input message to aeroEffector
+    aeroEffector.spiceInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
+    #aeroEffector.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[0])
 
     #
     #   setup orbit and simulation time

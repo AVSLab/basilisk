@@ -21,6 +21,8 @@
 #include "aeroDynamicEffector.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 AeroDynamicEffector::AeroDynamicEffector()
 {
@@ -29,8 +31,9 @@ AeroDynamicEffector::AeroDynamicEffector()
     this->coreParams.comOffset.setZero();
 	this->forceExternal_B.fill(0.0);
 	this->torqueExternalPntB_B.fill(0.0);
-	this->v_B.fill(0.0);
-	this->v_hat_B.fill(0.0);
+	this->u_B.fill(0.0);
+	this->u_hat_B.fill(0.0);
+	this->omega_PN_N.fill(0.0);
 
     return;
 }
@@ -70,19 +73,12 @@ atmospheric data.
 bool AeroDynamicEffector::ReadInputs()
 {
 	bool dataGood;
-    bool planetRead = false;
     this->atmoInData = this->atmoDensInMsg();
-    dataGood = this->atmoDensInMsg.isWritten();
-    if (this->planetPosInMsg.isLinked())
-    {
-        this->planetState = this->planetPosInMsg();
-        planetRead = this->planetPosInMsg.isWritten();
-        this->dcm_PN_dot = Eigen::Map<Eigen::Matrix3d>(&(this->planetState.J20002Pfix_dot[0][0]), 3, 3);
-    }
-    std::cout << "planetRead:" << planetRead << std::endl;
-    std::cout << "dcm_PN_dot" << dcm_PN_dot << std::endl;
+	this->planetState = this->spiceInMsg();
+	
+	dataGood = this->atmoDensInMsg.isWritten() && this->spiceInMsg.isWritten();
 
-    return(dataGood && planetRead);
+	return(dataGood);
 }
 
 /*!
@@ -93,19 +89,28 @@ bool AeroDynamicEffector::ReadInputs()
  */
 void AeroDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
+	this->hubPosition = states.getStateObject("hubPosition");
 	this->hubVelocity = states.getStateObject("hubVelocity");
 }
 
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
 */
 void AeroDynamicEffector::updateAeroDir(){
-    /* compute DCN [BN] */
+    /* compute DCM [BN] */
     Eigen::MRPd sigmaBN;
     sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
-    
-	this->v_B = dcm_BN*this->hubVelocity->getState(); // [m/s] sc velocity
-	this->v_hat_B = this->v_B / this->v_B.norm();
+	
+	/* compute planet-relative sc velocity */
+	Eigen::Vector3d r_N;
+	Eigen::Vector3d v_N;
+	Eigen::Vector3d u_N;
+	
+	r_N = this->hubPosition->getState(); // [m] sc radial position
+	v_N = this->hubVelocity->getState(); // [m/s] sc velocity
+	u_N = v_N - this->omega_PN_N.cross(r_N);
+	this->u_B = dcm_BN*u_N;
+	this->u_hat_B = this->u_B / this->u_B.norm();
 	
 	return;
 }
@@ -118,7 +123,7 @@ void AeroDynamicEffector::cannonballAero(){
   	this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
     
-  	this->forceExternal_B  = 0.5 * this->coreParams.dragCoeff * pow(this->v_B.norm(), 2.0) * this->coreParams.projectedArea * this->atmoInData.neutralDensity * (-1.0)*this->v_hat_B;
+  	this->forceExternal_B  = 0.5 * this->coreParams.dragCoeff * pow(this->u_B.norm(), 2.0) * this->coreParams.projectedArea * this->atmoInData.neutralDensity * (-1.0)*this->u_hat_B;
   	this->torqueExternalPntB_B = this->coreParams.comOffset.cross(forceExternal_B);
 
   	return;
@@ -130,6 +135,7 @@ selecting the model type based on the settable attribute "modelType."
 void AeroDynamicEffector::computeForceTorque(double integTime, double timeStep){
 	updateAeroDir();
 	cannonballAero();
+	
   	return;
 }
 
@@ -141,5 +147,34 @@ Naturally, this means that conditions are held piecewise-constant over an integr
 void AeroDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
 	ReadInputs();
+	convertEphemData();
 	return;
+}
+
+/*!
+    convert ephemeris data to get planetary rotation vector wrt inertial frame, in inertial components
+ */
+void AeroDynamicEffector::convertEphemData()
+{
+    Eigen::Matrix3d dcm_PN;
+    Eigen::Vector3d sigma_PN;
+    Eigen::Matrix3d dcm_PN_dot;
+    Eigen::Matrix3d omega_tilde_PN_P_eigen;
+    double omega_tilde_PN_P[3][3];
+    double omega_tilde_PN_P_array[9];
+	Eigen::Vector3d omega_PN_P;
+
+	/* Compute sigma_BN */
+	dcm_PN = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
+	sigma_PN = eigenMRPd2Vector3d(eigenC2MRP(dcm_PN));
+
+	/* Compute omega_BN_B */
+	dcm_PN_dot = cArray2EigenMatrix3d(*this->planetState.J20002Pfix_dot);
+	omega_tilde_PN_P_eigen = -dcm_PN_dot*dcm_PN.transpose();
+	eigenMatrix3d2CArray(omega_tilde_PN_P_eigen, omega_tilde_PN_P_array);
+	m33Copy(RECAST3X3 omega_tilde_PN_P_array, omega_tilde_PN_P);
+	omega_PN_P[0] = omega_tilde_PN_P[2][1];
+	omega_PN_P[1] = omega_tilde_PN_P[0][2];
+	omega_PN_P[2] = omega_tilde_PN_P[1][0];
+	this->omega_PN_N = dcm_PN*omega_PN_P;
 }

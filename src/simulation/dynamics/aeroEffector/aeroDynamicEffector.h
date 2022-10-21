@@ -29,6 +29,7 @@
 
 #include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/avsEigenMRP.h"
@@ -59,22 +60,29 @@ public:
     bool ReadInputs();
     void cannonballAero();
     void updateAeroDir();
+	void convertEphemData();
 
 public:
     AeroBaseData coreParams;                               //!< -- Struct used to hold aero parameters
     ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg;        //!< -- message used to read density inputs
     StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
+	StateData *hubPosition;
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
-    Eigen::Vector3d v_B;                                   //!< m/s local variable to hold the inertial velocity
-    Eigen::Vector3d v_hat_B;                               //!< -- Drag force direction in the inertial frame
+	Eigen::Vector3d u_B;
+	Eigen::Vector3d u_hat_B;
     BSKLogger bskLogger;                                   //!< -- BSK Logging
     Eigen::Matrix3d dcm_PN_dot;                            //!< rad/s DCM rate from inertial to planet-fixed frame
     ReadFunctor<SpicePlanetStateMsgPayload> planetPosInMsg;           //!< -- Class storage of ephemeris info from scheduled portion
+	Eigen::Vector3d omega_PN_N;
+	std::vector<Message<EphemerisMsgPayload>*> ephemOutMsgs; //!< vector of planet ephemeris output messages
+    ReadFunctor<SpicePlanetStateMsgPayload> spiceInMsg;    //!< planet spice state input message
 
 
 private:
     AtmoPropsMsgPayload atmoInData;
     SpicePlanetStateMsgPayload planetState;                //!< planet state message
+	std::vector<EphemerisMsgPayload> ephemOutBuffers;       //!< output message buffers
+    std::vector<SpicePlanetStateMsgPayload> spiceInBuffers; //!< spice input message copies
     
 };
 
