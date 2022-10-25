@@ -34,6 +34,8 @@ AeroDynamicEffector::AeroDynamicEffector()
 	this->u_B.fill(0.0);
 	this->u_hat_B.fill(0.0);
 	this->omega_PN_N.fill(0.0);
+	this->lift_hat_B.fill(0.0);
+	this->side_hat_B.fill(0.0);
 
     return;
 }
@@ -111,6 +113,12 @@ void AeroDynamicEffector::updateAeroDir(){
 	u_N = v_N - this->omega_PN_N.cross(r_N);
 	this->u_B = dcm_BN*u_N;
 	this->u_hat_B = this->u_B / this->u_B.norm();
+	
+	// dummy-define until we properly compute lift direction
+	this->lift_hat_B[1] = 1.0;
+	
+	// side force completes the set
+	this->side_hat_B = (-1.0) * this->u_hat_B.cross(this->lift_hat_B);
 	
 	return;
 }

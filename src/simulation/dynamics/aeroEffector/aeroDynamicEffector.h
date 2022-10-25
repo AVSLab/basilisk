@@ -70,6 +70,8 @@ public:
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
 	Eigen::Vector3d u_B;
 	Eigen::Vector3d u_hat_B;
+	Eigen::Vector3d lift_hat_B;
+	Eigen::Vector3d side_hat_B;
     BSKLogger bskLogger;                                   //!< -- BSK Logging
     Eigen::Matrix3d dcm_PN_dot;                            //!< rad/s DCM rate from inertial to planet-fixed frame
     ReadFunctor<SpicePlanetStateMsgPayload> planetPosInMsg;           //!< -- Class storage of ephemeris info from scheduled portion

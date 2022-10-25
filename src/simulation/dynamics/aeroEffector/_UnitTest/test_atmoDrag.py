@@ -89,7 +89,7 @@ def expAtmoComp(alt, baseDens, scaleHeight):
     dens = baseDens * math.exp(-alt/scaleHeight)
     return dens
 
-def cannonballAeroComp(dragCoeff, dens, area, vel, att):
+def cannonballAeroComp(dragCoeff, dens, area, vel, att, omega_p):
     dragDir_N = -vel / np.linalg.norm(vel)
     dcm_BN = RigidBodyKinematics.MRP2C(att)
     dragDir_B = dcm_BN.dot(dragDir_N)
@@ -165,10 +165,13 @@ def run(show_plots, orbitCase, planetCase):
 
     if planetCase == "Earth":
         planet = gravFactory.createEarth()
+        omega_p = np.array([0, 0, orbitalMotion.OMEGA_EARTH])
     elif planetCase == "Mars":
         planet = gravFactory.createMars()
         planet.isCentralBody = True          # ensure this is the central gravitational body
+        omega_p = np.array([0, 0, orbitalMotion.OMEGA_MARS])
     mu = planet.mu
+
     # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 	
@@ -184,9 +187,7 @@ def run(show_plots, orbitCase, planetCase):
 	
 	# add spice input message to aeroEffector
     aeroEffector.spiceInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
-    #aeroEffector.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[0])
 
-    #
     #   setup orbit and simulation time
     oe = orbitalMotion.ClassicElements()
 
@@ -284,7 +285,7 @@ def run(show_plots, orbitCase, planetCase):
         # print "Position data:", posData[ind,1:]
         # print "Velocity data:", velData[ind,1:]
         # print "Density data:", densData[ind,1]
-        refAeroForce[ind] = cannonballAeroComp(dragCoeff,densData[ind],projArea,velData[ind], attData[ind])
+        refAeroForce[ind] = cannonballAeroComp(dragCoeff,densData[ind],projArea,velData[ind], attData[ind], omega_p)
         # print "Reference drag data:", refAeroForce[ind,:]
         # print "Aero Data:", dragForce[ind,1:]
         # print ""
