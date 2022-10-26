@@ -236,7 +236,7 @@ void SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime)
     this->r_Sc2S2_B = this->dcm_BS2 * this->r_Sc2S2_S2;
     this->r_S2S1_B = this->dcm_BS1 * this->r_S2S1_S1;
     this->r_Sc2B_B = this->r_Sc2S2_B + this->r_S2S1_B + this->r_S1B_B;
-    this->r_ScB_B = (this->mass1 * this->r_Sc1B_B + this->mass2 * this->r_Sc2B_B) / (this->mass1 + this->mass2);
+    this->r_ScB_B = (this->mass1 * this->r_Sc1B_B + this->mass2 * this->r_Sc2B_B) / this->mass;
     this->effProps.rEff_CB_B = this->r_ScB_B;
 
     // Find the inertia of the hinged rigid bodies about point B
@@ -260,7 +260,7 @@ void SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime)
     this->rPrime_S2S1_B = this->omegaTilde_S1B_B * this->r_S2S1_B;
     this->rPrime_Sc2S1_B = this->rPrime_Sc2S2_B + this->rPrime_S2S1_B;
     this->rPrime_Sc2B_B = this->rPrime_Sc2S1_B;
-    this->rPrime_ScB_B = (this->mass1 * this->rPrime_Sc1B_B + this->mass2 * this->rPrime_Sc2B_B) / (this->mass1 + this->mass2);
+    this->rPrime_ScB_B = (this->mass1 * this->rPrime_Sc1B_B + this->mass2 * this->rPrime_Sc2B_B) / this->mass;
     this->effProps.rEffPrime_CB_B = this->rPrime_ScB_B;
 
     // Find the body-frame time derivative of the inertias of each spinner
@@ -317,12 +317,12 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
 
     // Define auxiliary inertia matrices
     Eigen::Matrix3d IS1PntS1_B = this->IS1PntSc1_B - this->mass1 * rTilde_Sc1S1_B * rTilde_Sc1S1_B;
-    Eigen::Matrix3d IS2PntS2_B = this->IS2PntSc2_B - this->mass1 * rTilde_Sc2S2_B * rTilde_Sc2S2_B;
-    Eigen::Matrix3d ISPntS1_B = IS1PntS1_B + IS2PntSc2_B - this->mass2 * rTilde_Sc2S1_B * rTilde_Sc2S1_B;
+    Eigen::Matrix3d IS2PntS2_B = this->IS2PntSc2_B - this->mass2 * rTilde_Sc2S2_B * rTilde_Sc2S2_B;
+    Eigen::Matrix3d ISPntS1_B = IS1PntS1_B + this->IS2PntSc2_B - this->mass2 * rTilde_Sc2S1_B * rTilde_Sc2S1_B;
     Eigen::Matrix3d IPrimeS1PntS1_B = this->IPrimeS1PntSc1_B - this->mass1 * (rPrimeTilde_Sc1S1_B * rTilde_Sc1S1_B + rTilde_Sc1S1_B * rPrimeTilde_Sc1S1_B);
     Eigen::Matrix3d IPrimeS2PntS1_B = this->IPrimeS2PntSc2_B - this->mass2 * (rPrimeTilde_Sc2S1_B * rTilde_Sc2S1_B + rTilde_Sc2S1_B * rPrimeTilde_Sc2S1_B);
-    Eigen::Matrix3d IPrimeS2PntS2_B = this->IPrimeS2PntSc2_B - this->mass2 * (rPrimeTilde_Sc2S2_B * rTilde_Sc2S2_B + rTilde_Sc2S2_B * rPrimeTilde_Sc2S2_B);
     Eigen::Matrix3d IPrimeSPntS1_B = IPrimeS1PntS1_B + IPrimeS2PntS1_B;
+    Eigen::Matrix3d IPrimeS2PntS2_B = this->IPrimeS2PntSc2_B - this->mass2 * (rPrimeTilde_Sc2S2_B * rTilde_Sc2S2_B + rTilde_Sc2S2_B * rPrimeTilde_Sc2S2_B);
 
     // Define and populate the mass matrix for thetaDDot
     Eigen::Matrix2d MTheta;
@@ -350,9 +350,8 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
         + (this->IS2PntSc2_B - this->mass2 * rTilde_Sc2S1_B * rTilde_Sc2S2_B) * this->omegaTilde_S1B_B * this->omega_S2S1_B
         + this->mass2 * (rTilde_Sc2S1_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * rTilde_Sc2S1_B) * this->rPrime_Sc2S1_B + this->mass2 * omegaTilde_S2S1_B * this->rPrime_Sc2S2_B
         + this->mass * rTilde_ScS1_B * this->omegaTilde_BN_B * rDot_S1B_B);
-    CThetaStar(1, 0) = this->u2 + this->s2Hat_B.transpose() * gravityTorquePntS2_B - this->s2Hat_B.transpose() * ((IPrimeS2PntS2_B + this->omegaTilde_BN_B * IPrimeS2PntS2_B) * this->omega_BN_B
-        + (IPrimeS2PntS2_B + this->omegaTilde_BN_B * IPrimeS2PntS2_B) * this->omega_S2B_B + IS2PntS2_B * this->omegaTilde_S1B_B * this->omega_S2S1_B
-        + this->mass2 * rTilde_Sc2S2_B * this->omegaTilde_BN_B * (this->rPrime_S2S1_B + rDot_S2S1_B + rDot_S1B_B));
+    CThetaStar(1, 0) = this->u2 + this->s2Hat_B.transpose() * gravityTorquePntS2_B - this->s2Hat_B.transpose() * ((IPrimeS2PntS2_B + this->omegaTilde_BN_B * IPrimeS2PntS2_B) * (this->omega_BN_B + this->omega_S2B_B)
+        + IS2PntS2_B * this->omegaTilde_S1B_B * this->omega_S2S1_B + this->mass2 * rTilde_Sc2S2_B * this->omegaTilde_BN_B * (this->rPrime_S2S1_B + rDot_S2S1_B + rDot_S1B_B));
 
     // Definethe ATheta, BTheta and CTheta matrices
     this->ATheta = MTheta.inverse() * AThetaStar;
@@ -374,7 +373,8 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
     backSubContr.vecRot = - (this->IPrimeS1PntSc1_B + this->omegaTilde_BN_B * this->IS1PntSc1_B) * this->omega_S1B_B - (this->IPrimeS2PntSc2_B + this->omegaTilde_BN_B * this->IS2PntSc2_B) * this->omega_S2B_B
         - (this->IS2PntSc2_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S2_B) * this->omegaTilde_S1B_B * this->omega_S2S1_B
         - this->mass1 * (this->rTilde_Sc1B_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * this->rTilde_Sc1B_B) * this->rPrime_Sc1B_B
-        - this->mass2 * (this->rTilde_Sc2B_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * this->rTilde_Sc2B_B) * this->rPrime_Sc2B_B - this->mass2 * this->rTilde_Sc2B_B * this->rPrime_Sc2S2_B
+        - this->mass2 * (this->rTilde_Sc2B_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * this->rTilde_Sc2B_B) * this->rPrime_Sc2B_B 
+        - this->mass2 * this->rTilde_Sc2B_B * this->rPrime_Sc2S2_B
         - (this->IS1PntSc1_B + this->IS2PntSc2_B - this->mass1 * this->rTilde_Sc1B_B * rTilde_Sc1S1_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S1_B) * this->s1Hat_B * this->CTheta.row(0)
         - (this->IS2PntSc2_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S2_B) * this->s2Hat_B * this->CTheta.row(1);        
     
