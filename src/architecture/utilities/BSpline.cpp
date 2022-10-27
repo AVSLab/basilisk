@@ -42,7 +42,7 @@ InputDataSet::InputDataSet(Eigen::VectorXd X1, Eigen::VectorXd X2, Eigen::Vector
     this->T_flag = false;
     this->AvgXDot_flag = false;
     this->W_flag = false;
-
+    
     uint64_t N1 = (uint64_t) X1.size();
     uint64_t N2 = (uint64_t) X2.size();
     uint64_t N3 = (uint64_t) X3.size();
