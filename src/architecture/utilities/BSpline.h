@@ -39,12 +39,20 @@ public:
     void setT(Eigen::VectorXd T);
     void setW(Eigen::VectorXd W);
     void setAvgXDot(double AvgXDot);
+    void setLS_Dot(bool LS_Dot);
+    
     double AvgXDot;                  //!< desired average velocity norm
     Eigen::VectorXd T;               //!< time tags: specifies at what time each waypoint is hit
     Eigen::VectorXd W;               //!< weight vector for the LS approximation
     Eigen::VectorXd X1;              //!< coordinate #1 of the waypoints
     Eigen::VectorXd X2;              //!< coordinate #2 of the waypoints
     Eigen::VectorXd X3;              //!< coordinate #3 of the waypoints
+    Eigen::VectorXd X1Dot;           //!< first derivative coordinate #1 of the waypoints
+    Eigen::VectorXd X2Dot;           //!< first derivative coordinate #2 of the waypoints
+    Eigen::VectorXd X3Dot;           //!< first derivativs coordinate #3 of the waypoints
+    Eigen::VectorXd X1Dot_des;       //!< coordinate #1 of the desired 1st derivatives (normalized)
+    Eigen::VectorXd X2Dot_des;       //!< coordinate #2 of the desired 2nd derivatives (normalized)
+    Eigen::VectorXd X3Dot_des;       //!< coordinate #3 of the desired 3rd derivatives (normalized)
     Eigen::Vector3d XDot_0;          //!< 3D vector containing the first derivative at starting point
     Eigen::Vector3d XDot_N;          //!< 3D vector containing the first derivative at final point
     Eigen::Vector3d XDDot_0;         //!< 3D vector containing the second derivative at starting point
@@ -56,9 +64,11 @@ public:
     bool XDot_N_flag;                //!< indicates that first derivative at final point has been specified
     bool XDDot_0_flag;               //!< indicates that second derivative at starting point has been specified
     bool XDDot_N_flag;               //!< indicates that second derivative at final point has been specified
+    bool LS_Dot;                     //!< indicates whether LS approximation is done with first derivative constraint, LS_Dot is false
+
 };
 
-//! @brief The OutputDataSet class is used as a data structure to contain the interpolated function and its first- and 
+//! @brief The OutputDataSet class is used as a data structure to contain the interpolated function and its first- and
 //! second-order derivatives, together with the time-tag vector T.
 class OutputDataSet {
 public:
@@ -77,6 +87,7 @@ public:
     Eigen::VectorXd XDD1;            //!< second derivative of coordinate #1 of the interpolated trajectory
     Eigen::VectorXd XDD2;            //!< second derivative of coordinate #2 of the interpolated trajectory
     Eigen::VectorXd XDD3;            //!< second derivative of coordinate #3 of the interpolated trajectory
+
     int P;                           //!< polynomial degree of the BSpline
     Eigen::VectorXd U;               //!< knot vector of the BSpline
     Eigen::VectorXd C1;              //!< coordinate #1 of the control points
@@ -86,6 +97,7 @@ public:
 
 void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output);
 
-void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Output);
+void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Output);
 
 void basisFunction(double t, Eigen::VectorXd U, int I, int P, double *NN, double *NN1, double *NN2);
+
