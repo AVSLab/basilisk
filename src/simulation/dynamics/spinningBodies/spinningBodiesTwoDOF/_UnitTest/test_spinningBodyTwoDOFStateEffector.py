@@ -86,7 +86,7 @@ def test_spinningBody(show_plots):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -96,12 +96,16 @@ def test_spinningBody(show_plots):
     # Define properties of spinning body
     spinningBody.mass1 = 100.0
     spinningBody.mass2 = 50.0
+    # spinningBody.mass2 = 1e-15
     spinningBody.IS1PntSc1_S1 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     spinningBody.IS2PntSc2_S2 = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
+    # spinningBody.IS2PntSc2_S2 = [[1e-15, 0.0, 0.0], [0.0, 1e-15, 0.0], [0.0, 0.0, 1e-15]]
     spinningBody.dcm_S10B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     spinningBody.dcm_S20S1 = [[0.0, 1.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 0.0, -1.0]]
     spinningBody.r_Sc1S1_S1 = [[0.5], [0.0], [1.0]]
-    spinningBody.r_Sc2S2_S2 = [[0.0], [0.0], [-1.0]]
+    # spinningBody.r_Sc1S1_S1 = [[0], [0], [1]]
+    spinningBody.r_Sc2S2_S2 = [[1.0], [0.0], [-1.0]]
+    # spinningBody.r_Sc2S2_S2 = [[0], [-1], [0]]
     spinningBody.r_S1B_B = [[1.5], [-0.5], [2.0]]
     spinningBody.r_S2S1_S1 = [[0.5], [-1.5], [-0.5]]
     spinningBody.s1Hat_S1 = [[0], [0], [1]]
@@ -156,7 +160,7 @@ def test_spinningBody(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, thetaData)
 
     # Setup and run the simulation
-    stopTime = 2.5
+    stopTime = 2
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
