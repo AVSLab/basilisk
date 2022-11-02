@@ -24,18 +24,17 @@
 
 import inspect
 import os
-
+import matplotlib.pyplot as plt
 import numpy
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.simulation import spacecraft, spinningBodyOneDOFStateEffector, gravityEffector
-from Basilisk.utilities import macros
+from Basilisk.architecture import messaging
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -43,9 +42,7 @@ from Basilisk.utilities import macros
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-
-
-def test_spinningBodyTest(show_plots):
+def spinningBodyTest(show_plots, cmdTorque):
     r"""
     **Validation Test Description**
 
@@ -66,18 +63,16 @@ def test_spinningBodyTest(show_plots):
 
     against their initial values.
     """
-    [testResults, testMessage] = spinningBody(show_plots)
+    [testResults, testMessage] = test_spinningBody(show_plots, cmdTorque)
     assert testResults < 1, testMessage
 
 
-def spinningBody(show_plots):
+@pytest.mark.parametrize("cmdTorque", [0.0])
+def test_spinningBody(show_plots, cmdTorque):
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-
-    scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -90,12 +85,26 @@ def spinningBody(show_plots):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
+    # Create the spacecraft module
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+
+    # Define mass properties of the rigid hub of the spacecraft
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+
+    # Set the initial values for the states
+    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
+    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+
     # Create two hinged rigid bodies
     spinningBody = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
 
     # Define properties of spinning body
     spinningBody.mass = 100.0
-    spinningBody.k = 10.0
     spinningBody.IPntSc_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     spinningBody.dcm_S0B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     spinningBody.r_ScS_S = [[0.5], [0.0], [1.0]]
@@ -108,16 +117,11 @@ def spinningBody(show_plots):
     # Add spinning body to spacecraft
     scObject.addStateEffector(spinningBody)
 
-    # Define mass properties of the rigid hub of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
-
-    # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    # Create the torque message
+    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
+    cmdArray.motorTorque = [cmdTorque]  # [Nm]
+    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
+    spinningBody.motorTorqueInMsg.subscribeTo(cmdMsg)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
@@ -260,4 +264,4 @@ def spinningBody(show_plots):
 
 
 if __name__ == "__main__":
-    spinningBody(True)
+    spinningBodyTest(True, 0)
