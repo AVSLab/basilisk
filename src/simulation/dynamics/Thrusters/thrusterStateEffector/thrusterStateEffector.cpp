@@ -298,11 +298,11 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
         // Apply dispersion to magnitude
         tmpThrustMag *= (1. + it->thrusterMagDisp);
         SingleThrusterForce = it->thrDir_B * tmpThrustMag;
-        this->forceOnBody_B = SingleThrusterForce + forceOnBody_B;
+        this->forceOnBody_B += SingleThrusterForce;
 
         //! - Compute the point B relative torque and aggregate into the composite body torque
         SingleThrusterTorque = it->thrLoc_B.cross(SingleThrusterForce);
-        this->torqueOnBodyPntB_B = SingleThrusterTorque + torqueOnBodyPntB_B;
+        this->torqueOnBodyPntB_B += SingleThrusterTorque + ops->ThrustFactor * it->MaxSwirlTorque * it->thrDir_B;
 
         if (!it->updateOnly) {
             //! - Add the mass depletion force contribution

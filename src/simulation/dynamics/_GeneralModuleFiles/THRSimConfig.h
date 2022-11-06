@@ -50,6 +50,7 @@ THRSimConfig
 	bool updateOnly = true;							//!< -- Use update only calculations
     char label[10];                                 //!< [-], label name of the TH device being simulated
     double cutoffFrequency;                         //!< [rad/s] cutoff frequency for first-order behavior
+    double MaxSwirlTorque;                          //!< [Nm] Steady state magnitude of the swirl torque produced by ionic thrusters
 }THRSimConfig;
 
 

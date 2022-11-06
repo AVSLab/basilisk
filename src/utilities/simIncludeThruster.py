@@ -34,6 +34,7 @@ except ImportError:
 
 class thrusterFactory(object):
     """Simulation Thruster Factory Class"""
+
     def __init__(self):
         self.useMinPulseTime = True
         self.thrusterList = OrderedDict()
@@ -65,18 +66,23 @@ class thrusterFactory(object):
                 thruster dispersion percentage
             MinOnTime: float
                 thruster minimum on time
+            cutoffFrequency: float
+                frequency of first-order filter dynamics
+            swirlTorque: float
+                constant momentum from ionic thrusters
 
         """
         # create the blank thruster object
         TH = thrusterDynamicEffector.THRSimConfig()
 
         # set default thruster values
-        TH.areaNozzle = 0.1         # [m^2]
-        TH.steadyIsp = 100          # [s]
-        TH.MaxThrust = 0.200        # [N]
-        TH.thrusterMagDisp = 0.0    # [%]
-        TH.MinOnTime = 0.020        # [s]
-        TH.cutoffFrequency = 10  # [rad/s]
+        TH.areaNozzle = 0.1  # [m^2]
+        TH.steadyIsp = 100  # [s]
+        TH.MaxThrust = 0.200  # [N]
+        TH.thrusterMagDisp = 0.0  # [%]
+        TH.MinOnTime = 0.020  # [s]
+        TH.cutoffFrequency = 10.0  # [rad/s]
+        TH.MaxSwirlTorque = 0.0  # [Nm]
 
         # populate the thruster object with the type specific parameters
         try:
@@ -110,6 +116,14 @@ class thrusterFactory(object):
                 exit(1)
             else:
                 TH.MaxThrust = varMaxThrust
+
+        if 'MaxSwirlTorque' in kwargs:
+            varMaxSwirlTorque = kwargs['MaxSwirlTorque']
+            if not isinstance(varMaxSwirlTorque, (float)):
+                print('ERROR: MaxSwirlTorque must be a float argument')
+                exit(1)
+            else:
+                TH.MaxSwirlTorque = varMaxSwirlTorque
 
         if 'thrusterMagDisp' in kwargs:
             varThrusterMagDisp = kwargs['thrusterMagDisp']
@@ -162,7 +176,8 @@ class thrusterFactory(object):
         if norm > 1e-10:
             tHat_B = tHat_B / norm
         else:
-            print('Error: Thruster ' + sys._getframe().f_code.co_name + ' direction tHat input must be non-zero 3x1 vector')
+            print(
+                'Error: Thruster ' + sys._getframe().f_code.co_name + ' direction tHat input must be non-zero 3x1 vector')
             exit(1)
         TH.thrDir_B = [[tHat_B[0]], [tHat_B[1]], [tHat_B[2]]]
 
@@ -248,7 +263,7 @@ class thrusterFactory(object):
     #
     #   This is a MOOG mono-propellant thruster
     #
-    def MOOG_Monarc_1(self,TH):
+    def MOOG_Monarc_1(self, TH):
         # maximum thrust [N]
         TH.MaxThrust = 0.9
         # minimum thruster on time [s]
@@ -269,7 +284,7 @@ class thrusterFactory(object):
     #
     #   This is a MOOG mono-propellant thruster
     #
-    def MOOG_Monarc_5(self,TH):
+    def MOOG_Monarc_5(self, TH):
         # maximum thrust [N]
         TH.MaxThrust = 4.5
         # minimum thruster on time [s]
@@ -277,7 +292,7 @@ class thrusterFactory(object):
         # Isp value [s]
         TH.steadyIsp = 226.1
 
-        TH.areaNozzle = 0.0020 # [m^2]
+        TH.areaNozzle = 0.0020  # [m^2]
 
         return
 
@@ -290,7 +305,7 @@ class thrusterFactory(object):
     #
     #   This is a MOOG mono-propellant thruster
     #
-    def MOOG_Monarc_22_6(self,TH):
+    def MOOG_Monarc_22_6(self, TH):
         # maximum thrust [N]
         TH.MaxThrust = 22.0
         # minimum thruster on time [s]
@@ -298,7 +313,7 @@ class thrusterFactory(object):
         # Isp value [s]
         TH.steadyIsp = 229.5
 
-        TH.areaNozzle = 0.0045 # [m^2]
+        TH.areaNozzle = 0.0045  # [m^2]
 
         return
 
@@ -311,7 +326,7 @@ class thrusterFactory(object):
     #
     #   This is a MOOG mono-propellant thruster
     #
-    def MOOG_Monarc_22_12(self,TH):
+    def MOOG_Monarc_22_12(self, TH):
         # maximum thrust [N]
         TH.MaxThrust = 22.0
         # minimum thruster on time [s]
@@ -319,7 +334,7 @@ class thrusterFactory(object):
         # Isp value [s]
         TH.steadyIsp = 228.1
 
-        TH.areaNozzle = 0.0088 # [m^2]
+        TH.areaNozzle = 0.0088  # [m^2]
 
         return
 
@@ -332,7 +347,7 @@ class thrusterFactory(object):
     #
     #   This is a MOOG mono-propellant thruster
     #
-    def MOOG_Monarc_90LT(self,TH):
+    def MOOG_Monarc_90LT(self, TH):
         # maximum thrust [N]
         TH.MaxThrust = 90.0
         # minimum thruster on time [s]
@@ -340,7 +355,7 @@ class thrusterFactory(object):
         # Isp value [s]
         TH.steadyIsp = 232.1
 
-        TH.areaNozzle = 0.0222 # [m^2]
+        TH.areaNozzle = 0.0222  # [m^2]
 
         return
 
@@ -352,7 +367,7 @@ class thrusterFactory(object):
     #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #   This is a MOOG mono-propellant thruster
     #
-    def MOOG_Monarc_90HT(self,TH):
+    def MOOG_Monarc_90HT(self, TH):
         # maximum thrust [N]
         TH.MaxThrust = 116.0
         # minimum thruster on time [s]
@@ -360,7 +375,7 @@ class thrusterFactory(object):
         # Isp value [s]
         TH.steadyIsp = 234.0
 
-        TH.areaNozzle = 0.0222 # [m^2]
+        TH.areaNozzle = 0.0222  # [m^2]
 
         return
 
@@ -373,7 +388,7 @@ class thrusterFactory(object):
     #
     #   This is a MOOG mono-propellant thruster
     #
-    def MOOG_Monarc_445(self,TH):
+    def MOOG_Monarc_445(self, TH):
         # maximum thrust [N]
         TH.MaxThrust = 445.0
         # minimum thruster on time [s]
@@ -381,11 +396,25 @@ class thrusterFactory(object):
         # Isp value [s]
         TH.steadyIsp = 234.0
 
-        TH.areaNozzle = 0.06881 # [m^2]
+        TH.areaNozzle = 0.06881  # [m^2]
 
         return
 
-    def TEST_Thruster(self,TH):
+    def SEP(self, TH):
+        # maximum thrust [N]
+        TH.MaxThrust = 0.030
+        # minimum thruster on time [s]
+        TH.MinOnTime = 0.025
+        # Isp value [s]
+        TH.steadyIsp = 3000.0
+        # maximum swirl torque [Nm]
+        TH.MaxSwirlTorque = 0.05
+
+        TH.areaNozzle = 0.06881  # [m^2]
+
+        return
+
+    def TEST_Thruster(self, TH):
         # maximum thrust [N]
         TH.MaxThrust = 0.9
         # minimum thruster on time [s]
@@ -397,7 +426,7 @@ class thrusterFactory(object):
 
         return
 
-    def Blank_Thruster(self,TH):
+    def Blank_Thruster(self, TH):
         # this method doesn't set any thruster properties.  Rather, it is assumed that all thruster
         # properties are defined explicitly in the create function, or external to the create function
 

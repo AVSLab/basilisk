@@ -236,12 +236,12 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
         // Apply dispersion to magnitude
         tmpThrustMag *= (1. + it->thrusterMagDisp);
         SingleThrusterForce = it->thrDir_B*tmpThrustMag;
-        this->forceExternal_B = SingleThrusterForce + forceExternal_B;
+        this->forceExternal_B += SingleThrusterForce;
         
         //! - Compute the point B relative torque and aggregate into the composite body torque
         SingleThrusterTorque = it->thrLoc_B.cross(SingleThrusterForce);
-        this->torqueExternalPntB_B = SingleThrusterTorque + torqueExternalPntB_B;
-
+        this->torqueExternalPntB_B += SingleThrusterTorque + ops->ThrustFactor * it->MaxSwirlTorque * it->thrDir_B;
+        
 		if (!it->updateOnly) {
 			//! - Add the mass depletion force contribution
 			mDotNozzle = 0.0;
