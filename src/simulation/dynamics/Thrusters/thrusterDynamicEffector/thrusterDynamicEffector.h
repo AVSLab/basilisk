@@ -30,6 +30,7 @@
 
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
@@ -63,6 +64,7 @@ public:
 public:
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
+    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< (optional) vector of body states message where the thrusters attach to
 
     int stepsInRamp;                               //!< class variable
     std::vector<THRSimConfig> thrusterData; //!< -- Thruster information
@@ -73,11 +75,14 @@ public:
 		std::vector<THRTimePair> *thrRamp);
 	StateData *hubSigma;                           //!< class variable
     StateData *hubOmega;                           //!< class varaible
+    StateData* hubPosition;        //!< class variable
+    StateData* hubVelocity;        //!< class variable
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
+    SCStatesMsgPayload attachedBodyBuffer;
     uint64_t prevCommandTime;                       //!< -- Time for previous valid thruster firing
 
 };

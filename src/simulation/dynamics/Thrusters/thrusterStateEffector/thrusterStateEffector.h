@@ -29,6 +29,7 @@
 
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
@@ -55,6 +56,7 @@ public:
 
 
     void addThruster(THRSimConfig *newThruster); //!< -- Add a new thruster to the thruster set
+    void attachBody(Message<SCStatesMsgPayload>* bodyStateMsg);    //!< -- Connect a thruster to a body other than the hub
     void ConfigureThrustRequests();
 
 public:
@@ -63,6 +65,7 @@ public:
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
     std::vector<THRSimConfig> thrusterData; //!< -- Thruster information
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
+    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< (optional) vector of body states message where the thrusters attach to
 
     // State information
     std::vector<double> kappaInit;                //!< [] Vector of initial thruster states
@@ -70,7 +73,9 @@ public:
 
     // State structures
 	StateData *hubSigma;        //!< class variable
-    StateData *hubOmega;        //!< class varaible
+    StateData *hubOmega;        //!< class variable
+    StateData* hubPosition;        //!< class variable
+    StateData* hubVelocity;        //!< class variable
     StateData* kappaState;      //!< -- state manager of theta for hinged rigid body
     BSKLogger bskLogger;        //!< -- BSK Logging
 
@@ -80,6 +85,7 @@ public:
 private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
+    SCStatesMsgPayload attachedBodyBuffer;
     double prevCommandTime;                       //!< [s] -- Time for previous valid thruster firing
     static uint64_t effectorID;    //!< [] ID number of this panel
 

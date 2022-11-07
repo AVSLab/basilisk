@@ -49,6 +49,8 @@ namespace std {
 %include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
 %include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
 
 %pythoncode %{
 import sys
