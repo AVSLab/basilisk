@@ -177,6 +177,16 @@ class rwFactory(object):
             print('ERROR: RW type ' + rwType + ' is not implemented')
             exit(1)
 
+        if 'u_min' in kwargs:
+            varu_min = kwargs['u_min']
+            if not isinstance(varu_min, float):
+                print('ERROR: u_min must be a FLOAT argument')
+                exit(1)
+            RW.u_min = varu_min
+        if RW.u_min <= 0.0 and varUseMinTorque:
+            print('ERROR: RW is being setup with non-positive u_min value with varUseMinTorque set to True')
+            exit(1)
+
         if 'u_max' in kwargs:
             varu_max = kwargs['u_max']
             if not isinstance(varu_max, float):
