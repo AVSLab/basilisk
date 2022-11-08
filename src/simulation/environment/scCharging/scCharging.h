@@ -23,6 +23,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/PlasmaFluxMsgPayload.h"
 #include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
@@ -47,12 +48,16 @@ private:
     
 public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of spacecraft state input messages
+    ReadFunctor<PlasmaFluxMsgPayload> plasmaFluxInMsg; //!< plasma flux input messages
     std::vector<ReadFunctor<VoltMsgPayload>> voltInMsgs;     //!< vector of voltage input messages
 
     BSKLogger bskLogger;                                        //!< -- BSK Logging
 
 private:
     std::vector<double> volt;                                   //!< [V] input voltage for each spacecrat object
+    Eigen::VectorXd energies;                                   //!< [eV] particle energies
+    Eigen::VectorXd electronFlux;                               //!< [cm^-2 s^-1 sr^-2 eV^-1] electron flux
+    Eigen::VectorXd ionFlux;                                    //!< [cm^-2 s^-1 sr^-2 eV^-1] ion flux
     std::vector<Eigen::Vector3d> r_BN_NList;                    //!< [m] list of inertial satellite position vectors
     std::vector<Eigen::MRPd> sigma_BNList;                      //!< [m] list of satellite MRP orientations
 };

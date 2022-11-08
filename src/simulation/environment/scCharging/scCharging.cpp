@@ -41,14 +41,22 @@ ScCharging::~ScCharging()
 void ScCharging::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
-    
+    if (!this->plasmaFluxInMsg.isLinked())
+    {
+        bskLogger.bskLog(BSK_ERROR, "ScCharging.plasmaFluxInMsg was not linked.");
+    }
 }
 
 /*!  Read in the input messages
  */
 void ScCharging::readMessages()
 {
-    
+    /*! - read in plasma flux  message (required) */
+    PlasmaFluxMsgPayload plasmaFluxMsgData;
+    plasmaFluxMsgData = this->plasmaFluxInMsg();
+    this->energies = cArray2EigenMatrixXd(plasmaFluxMsgData.energies,MAX_PLASMA_FLUX_SIZE,1);
+    this->electronFlux = cArray2EigenMatrixXd(plasmaFluxMsgData.meanElectronFlux,MAX_PLASMA_FLUX_SIZE,1);
+    this->ionFlux = cArray2EigenMatrixXd(plasmaFluxMsgData.meanIonFlux,MAX_PLASMA_FLUX_SIZE,1);
 }
 
 
