@@ -63,7 +63,7 @@ public:
 
 
     void addThruster(THRSimConfig *newThruster); //!< -- Add a new thruster to the thruster set
-    void attachBody(Message<SCStatesMsgPayload>* bodyStateMsg);    //!< -- Connect a thruster to a body other than the hub
+    void connectAttachedBody(Message<SCStatesMsgPayload>* bodyStateMsg);    //!< -- Connect a thruster to a body other than the hub
     void ConfigureThrustRequests();
     void UpdateThrusterProperties();
 

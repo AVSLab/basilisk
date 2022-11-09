@@ -24,8 +24,8 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.simulation import spacecraft, thrusterStateEffector, svIntegrators
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk, simulationArchTypes
+from Basilisk.simulation import spacecraft, thrusterStateEffector
 from Basilisk.architecture import messaging
 import matplotlib.pyplot as plt
 
@@ -59,17 +59,18 @@ def thrusterEffectorAllTests(show_plots):
 # @pytest.mark.xfail(True)
 
 
-@pytest.mark.parametrize("thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate", [
-    (1, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01)),
-    (1, 1., 0.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01)),
-    (1, 0., 2.0, 60., -15., [[-1.125], [0.5], [-2.0]], 0.0, macros.sec2nano(0.01)),
-    (1, 1., 0.0, 60., -15., [[-1.125], [0.5], [-2.0]], 0.0, macros.sec2nano(0.01)),
-    (2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01)),
-    (2, 1., 0.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01)),
-    (2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 2.0, macros.sec2nano(0.01))
+@pytest.mark.parametrize("thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate, attachBody", [
+    (1, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 1 thruster, thrust on
+    (1, 1., 0.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 1 thruster, thrust off
+    (1, 0., 2.0, 60., -15., [[-1.125], [0.5], [-2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 1 thruster, thrust on, different orientation and location
+    (1, 1., 0.0, 60., -15., [[-1.125], [0.5], [-2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 1 thruster, thrust off, different orientation and location
+    (2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 2 thrusters, thrust on
+    (2, 1., 0.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 2 thrusters, thrust off
+    (2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 2.0, macros.sec2nano(0.01), "OFF"),  # 2 thrusters, thrust on, swirl torque
+    (1, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "ON")  # attached body
 ])
 # provide a unique test method name, starting with test_
-def test_unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate):
+def test_unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate, attachBody):
     r"""
     **Validation Test Description**
 
@@ -120,12 +121,12 @@ def test_unitThrusters(testFixture, show_plots, thrustNumber, initialConditions,
     """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle,
-                                               lat_angle, location, swirlTorque, rate)
+                                               lat_angle, location, swirlTorque, rate, attachBody)
     assert testResults < 1, testMessage
 
 
 # Run the test
-def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate):
+def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate, attachBody):
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
@@ -136,10 +137,14 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     testRate = int(rate)  # Parametrized rate of test
 
     # Create the process and task
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    testProc = TotalSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(TotalSim.CreateNewTask(unitTaskName, testRate))
+    unitTaskName1 = "unitTask1"  # arbitrary name (don't change)
+    unitTaskName2 = "unitTask2"  # arbitrary name (don't change)
+    unitProcessName1 = "TestProcess1"  # arbitrary name (don't change)
+    unitProcessName2 = "TestProcess2"  # arbitrary name (don't change)
+    testProc1 = TotalSim.CreateNewProcess(unitProcessName1, 10)
+    testProc1.addTask(TotalSim.CreateNewTask(unitTaskName1, testRate))
+    testProc2 = TotalSim.CreateNewProcess(unitProcessName2, 0)
+    testProc2.addTask(TotalSim.CreateNewTask(unitTaskName2, testRate))
 
     # Create the spacecraft object
     scObject = spacecraft.Spacecraft()
@@ -198,6 +203,26 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
         loc2 = np.array([thruster2.thrLoc_B[0][0], thruster2.thrLoc_B[1][0], thruster2.thrLoc_B[2][0]])
         dir2 = np.array([thruster2.thrDir_B[0][0], thruster2.thrDir_B[1][0], thruster2.thrDir_B[2][0]])
 
+    if attachBody == "ON":
+        # Create the process and task that contains the Python modules
+        pyTaskName = "pyTask"
+        pyProcessName = "pyProcess"
+        pyModulesProcess = TotalSim.CreateNewPythonProcess(pyProcessName, 5)
+        pyModulesProcess.createPythonTask(pyTaskName, testRate, True, 1)
+
+        # Create the module
+        pyModule = attachedBodyModule("attachedBody", True, 100)
+        pyModulesProcess.addModelToTask(pyTaskName, pyModule)
+
+        # Attach messages
+        pyModule.scInMsg.subscribeTo(scObject.scStateOutMsg)
+        thrusterSet.connectAttachedBody(pyModule.bodyOutMsg)
+
+        # Update the direction and location of the thruster
+        dcm_FB = np.array([[-1, 0, 0], [0, 1, 0], [0, 0, -1]])
+        dir1 = np.transpose(dcm_FB).dot(dir1)
+        loc1 = np.transpose(dcm_FB).dot(loc1) + [0, 0, 1]
+
     # Set the initial conditions
     thrusterSet.kappaInit = messaging.DoubleVector([initialConditions])
 
@@ -208,9 +233,9 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     dataRec = thrusterSet.thrusterOutMsgs[0].recorder(testRate)
 
     # Add both modules and the recorder to tasks
-    TotalSim.AddModelToTask(unitTaskName, scObject)
-    TotalSim.AddModelToTask(unitTaskName, thrusterSet)
-    TotalSim.AddModelToTask(unitTaskName, dataRec)
+    TotalSim.AddModelToTask(unitTaskName1, scObject)
+    TotalSim.AddModelToTask(unitTaskName2, thrusterSet)
+    TotalSim.AddModelToTask(unitTaskName2, dataRec)
 
     #  Define the start of the thrust and its duration
     thrDurationTime = macros.sec2nano(2.0)
@@ -329,5 +354,83 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     return [testFailCount, ''.join(testMessages)]
 
 
+class attachedBodyModule(simulationArchTypes.PythonModelClass):
+    """
+    This class inherits from the `PythonModelClass` available in the ``simulationArchTypes`` module.
+    The `PythonModelClass` is the parent class which your Python BSK modules must inherit.
+    The class uses the following
+    virtual functions:
+
+    #. ``reset``: The method that will initialize any persistent data in your model to a common
+       "ready to run" state (e.g. filter states, integral control sums, etc).
+    #. ``updateState``: The method that will be called at the rate specified
+       in the PythonTask that was created in the input file.
+
+    Additionally, your class should ensure that in the ``__init__`` method, your call the super
+    ``__init__`` method for the class so that the base class' constructor also gets called to
+    initialize the model-name, activity, moduleID, and other important class members:
+
+    .. code-block:: python
+
+        super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
+
+    You class must implement the above four functions. Beyond these four functions you class
+    can complete any other computations you need (``Numpy``, ``matplotlib``, vision processing
+    AI, whatever).
+    """
+    def __init__(self, modelName, modelActive=True, modelPriority=-1):
+        super(attachedBodyModule, self).__init__(modelName, modelActive, modelPriority)
+
+        # Input spacecraft state structure message
+        self.scInMsg = messaging.SCStatesMsgReader()
+
+        # Output body state message
+        self.bodyOutMsg = messaging.SCStatesMsg()
+
+    def reset(self, currentTime):
+        """
+        :return: none
+        """
+        return
+
+    def updateState(self, currentTime):
+        """
+        The updateState method is the cyclical worker method for a given Basilisk class.  It
+        will get called periodically at the rate specified in the Python task that the model is
+        attached to.  It persists and anything can be done inside of it.  If you have realtime
+        requirements though, be careful about how much processing you put into a Python updateState
+        method.  You could easily detonate your sim's ability to run in realtime.
+
+        :param currentTime: current simulation time in nano-seconds
+        :return: none
+        """
+        # Read input message
+        scMsgBuffer = self.scInMsg()
+
+        # Create output message buffer
+        bodyOutMsgBuffer = messaging.SCStatesMsgPayload()
+
+        # Grab the spacecraft hub states
+        sigma_BN = scMsgBuffer.sigma_BN
+        dcm_BN = rbk.MRP2C(sigma_BN)
+        omega_BN_B = scMsgBuffer.omega_BN_B
+        r_BN_N = scMsgBuffer.r_BN_N
+
+        # Compute the attached body states relative to the hub
+        dcm_FB = np.array([[-1, 0, 0], [0, 1, 0], [0, 0, -1]])
+        sigma_FB = rbk.C2MRP(dcm_FB)
+        sigma_FN = rbk.addMRP(np.array(sigma_BN), sigma_FB)
+        omega_FB_F = dcm_FB.dot(omega_BN_B)
+        r_FN_N = r_BN_N + np.transpose(dcm_BN).dot(np.array([0, 0, 1]))
+
+        # Write the output message information
+        bodyOutMsgBuffer.sigma_BN = sigma_FN
+        bodyOutMsgBuffer.omega_BN_B = omega_FB_F
+        bodyOutMsgBuffer.r_BN_N = r_FN_N
+        self.bodyOutMsg.write(bodyOutMsgBuffer, currentTime, self.moduleID)
+
+        return
+
+
 if __name__ == "__main__":
-    unitThrusters(ResultsStore(), True, 1, 0.0, 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01))
+    unitThrusters(ResultsStore(), False, 1, 1., 0.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "OFF")

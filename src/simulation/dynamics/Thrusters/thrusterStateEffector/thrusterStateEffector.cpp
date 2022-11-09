@@ -79,8 +79,12 @@ void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos)
     this->NewThrustCmds.clear();
     this->NewThrustCmds.insert(this->NewThrustCmds.begin(), this->thrusterData.size(), 0.0);
 
+    // Reset the mas flow value
     this->mDotTotal = 0.0;
 
+    // Call this method to set the thruster properties at the first time step
+    this->UpdateThrusterProperties();
+    
     return;
 }
 
@@ -234,7 +238,7 @@ void ThrusterStateEffector::UpdateThrusterProperties()
         {
             // Reset attached body variables
             omega_FN_F = omega_BN_B;
-            r_FN_N = r_BN_N;;
+            r_FN_N = r_BN_N;
 
             // Compute the DCM between the attached body and the hub
             dcm_BF.setIdentity();
@@ -244,7 +248,6 @@ void ThrusterStateEffector::UpdateThrusterProperties()
         this->bodyToHubInfo.at(index).r_FB_B = dcm_BN * (r_FN_N - r_BN_N);
         this->bodyToHubInfo.at(index).dcm_BF = dcm_BF;
         this->bodyToHubInfo.at(index).omega_FB_B = dcm_BF * omega_FN_F - omega_BN_B;
-
     }
 
 }
@@ -267,7 +270,7 @@ void ThrusterStateEffector::addThruster(THRSimConfig* newThruster)
     this->bodyToHubInfo.push_back(attachedBodyToHub);
 }
 
-void ThrusterStateEffector::attachBody(Message<SCStatesMsgPayload>* bodyStateMsg)
+void ThrusterStateEffector::connectAttachedBody(Message<SCStatesMsgPayload>* bodyStateMsg)
 {
     // Save the incoming body message
     this->attachedBodyInMsgs.push_back(bodyStateMsg->addSubscriber());
