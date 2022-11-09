@@ -37,6 +37,13 @@
 #include <vector>
 
 
+ /*! attached body to hub information structure*/
+struct BodyToHubInfo {
+    Eigen::Vector3d r_FB_B;       
+    Eigen::Vector3d omega_FB_B;
+    Eigen::Matrix3d dcm_BF;
+};
+
 
 /*! @brief thruster dynamic effector class */
 class ThrusterStateEffector: public StateEffector, public SysModel {
@@ -58,6 +65,7 @@ public:
     void addThruster(THRSimConfig *newThruster); //!< -- Add a new thruster to the thruster set
     void attachBody(Message<SCStatesMsgPayload>* bodyStateMsg);    //!< -- Connect a thruster to a body other than the hub
     void ConfigureThrustRequests();
+    void UpdateThrusterProperties();
 
 public:
     // Input and output messages
@@ -86,6 +94,7 @@ private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
     SCStatesMsgPayload attachedBodyBuffer;
+    std::vector<BodyToHubInfo> bodyToHubInfo;
     double prevCommandTime;                       //!< [s] -- Time for previous valid thruster firing
     static uint64_t effectorID;    //!< [] ID number of this panel
 

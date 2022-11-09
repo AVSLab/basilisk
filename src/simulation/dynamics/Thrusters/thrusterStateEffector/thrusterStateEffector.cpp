@@ -186,6 +186,69 @@ void ThrusterStateEffector::ConfigureThrustRequests()
     return;
 }
 
+/*! This method is used to update the location and orientation of the thrusters 
+* at every UpdateState call when the thrusters are attached to a body other than 
+* the hub.
+ @return void
+ */
+void ThrusterStateEffector::UpdateThrusterProperties()
+{
+    // Save hub variables
+    Eigen::Vector3d r_BN_N = this->hubPosition->getState();
+    Eigen::Vector3d rDot_BN_N = this->hubVelocity->getState();
+    Eigen::Vector3d omega_BN_B = this->hubOmega->getState();
+    Eigen::MRPd sigma_BN;
+    sigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
+    Eigen::Matrix3d dcm_BN = (sigma_BN.toRotationMatrix()).transpose();
+
+    // Define the variables related to which body the thruster is attached to
+    Eigen::MRPd sigma_FN;
+    Eigen::Matrix3d dcm_FN;
+    Eigen::Vector3d omega_FN_F;
+    Eigen::Vector3d r_FN_N;
+
+    // Define the relative variables between the attached body and the hub
+    Eigen::Matrix3d dcm_BF;
+
+    // Loop through all thrusters
+    std::vector<THRSimConfig>::iterator it;
+    int index;
+    for (it = this->thrusterData.begin(), index = 0; it != this->thrusterData.end(); it++, index++)
+    {
+        // Save the attached body variables
+        if (index < this->attachedBodyInMsgs.size())
+        {
+            // Save to buffer
+            this->attachedBodyBuffer = this->attachedBodyInMsgs.at(index)();
+
+            // Grab attached body variables
+            sigma_FN = cArray2EigenVector3d(attachedBodyBuffer.sigma_BN);
+            omega_FN_F = cArray2EigenVector3d(attachedBodyBuffer.omega_BN_B);
+            r_FN_N = cArray2EigenVector3d(attachedBodyBuffer.r_BN_N);
+
+            // Compute the DCM between the attached body and the hub
+            dcm_FN = (sigma_FN.toRotationMatrix()).transpose();
+            dcm_BF = dcm_BN * dcm_FN.transpose();
+        }
+        else
+        {
+            // Reset attached body variables
+            omega_FN_F = omega_BN_B;
+            r_FN_N = r_BN_N;;
+
+            // Compute the DCM between the attached body and the hub
+            dcm_BF.setIdentity();
+        }
+
+        // Populate the relative state structure
+        this->bodyToHubInfo.at(index).r_FB_B = dcm_BN * (r_FN_N - r_BN_N);
+        this->bodyToHubInfo.at(index).dcm_BF = dcm_BF;
+        this->bodyToHubInfo.at(index).omega_FB_B = dcm_BF * omega_FN_F - omega_BN_B;
+
+    }
+
+}
+
 void ThrusterStateEffector::addThruster(THRSimConfig* newThruster)
 {
     this->thrusterData.push_back(*newThruster);
@@ -198,10 +261,15 @@ void ThrusterStateEffector::addThruster(THRSimConfig* newThruster)
     // Set the initial condition
     double state = 0.0;
     this->kappaInit.push_back(state);
+
+    // Add space for the conversion from body to hub
+    BodyToHubInfo attachedBodyToHub;
+    this->bodyToHubInfo.push_back(attachedBodyToHub);
 }
 
 void ThrusterStateEffector::attachBody(Message<SCStatesMsgPayload>* bodyStateMsg)
 {
+    // Save the incoming body message
     this->attachedBodyInMsgs.push_back(bodyStateMsg->addSubscriber());
 
     return;
@@ -275,31 +343,15 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
 
 void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
 {
-    // Loop variables
-    std::vector<THRSimConfig>::iterator it;
-    THROperation* ops;
+    // Save omega_BN_B
+    Eigen::Vector3d omegaLocal_BN_B = omega_BN_B;
 
     // Force and torque variables
     Eigen::Vector3d SingleThrusterForce;
     Eigen::Vector3d SingleThrusterTorque;
     double tmpThrustMag = 0;
 
-    // Save hub variables
-    Eigen::MRPd sigmaLocal_BN;
-    sigmaLocal_BN = (Eigen::Vector3d) this->hubSigma->getState();
-    Eigen::Matrix3d dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
-    Eigen::Vector3d omegaLocal_BN_B = omega_BN_B;
-    Eigen::Vector3d rLocal_BN_N = this->hubPosition->getState();
-    Eigen::Vector3d omegaLocal_BN_N = this->hubVelocity->getState();
-
-    // Define the variables related to which body the thruster is attached to
-    Eigen::MRPd sigma_FN;
-    Eigen::Matrix3d dcm_FN;
-    Eigen::Vector3d omega_FN_F;
-    Eigen::Vector3d r_FN_N;
-
-    // Define the relative variables between the attached body and the hub
-    Eigen::Matrix3d dcm_BF;
+    // Auxiliary variables to convert direction and location from F to B
     Eigen::Vector3d thrustDirection_B;
     Eigen::Vector3d thrustLocation_B;
     
@@ -317,41 +369,20 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
 
     axesWeightMatrix << 2, 0, 0, 0, 1, 0, 0, 0, 1;
 
+    // Loop variables
+    std::vector<THRSimConfig>::iterator it;
+    THROperation* ops;
+
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
     int index;
-    for (it = this->thrusterData.begin(),index = 0; it != this->thrusterData.end(); it++, index++)
+    for (it = this->thrusterData.begin(), index = 0; it != this->thrusterData.end(); it++, index++)
     {
         // Save the thruster ops information
         ops = &it->ThrustOps;
 
-        // Save the attached body variables
-        if (index < this->attachedBodyInMsgs.size())
-        {
-            // Save to buffer
-            this->attachedBodyBuffer = this->attachedBodyInMsgs[index]();
-
-            // Grab attached body variables
-            sigma_FN = cArray2EigenVector3d(attachedBodyBuffer.sigma_BN);
-            omega_FN_F = cArray2EigenVector3d(attachedBodyBuffer.omega_BN_B);
-            r_FN_N = cArray2EigenVector3d(attachedBodyBuffer.r_BN_N);
-
-            // Compute the DCM between the attached body and the hub
-            dcm_FN = (sigma_FN.toRotationMatrix()).transpose();
-            dcm_BF = dcm_BN * dcm_FN.transpose();
-        }
-        else
-        {
-            // Reset attached body variables
-            omega_FN_F = omegaLocal_BN_B;
-            r_FN_N = rLocal_BN_N;;
-
-            // Compute the DCM between the attached body and the hub
-            dcm_BF.setIdentity();
-        }
-
         // Compute the thruster properties wrt the hub (note that B refers to the F frame when extracting from the thruster info)
-        thrustDirection_B = dcm_BF * it->thrDir_B;
-        thrustLocation_B = dcm_BN * (r_FN_N - rLocal_BN_N) + dcm_BF * it->thrLoc_B;
+        thrustDirection_B = this->bodyToHubInfo.at(index).dcm_BF * it->thrDir_B;
+        thrustLocation_B = this->bodyToHubInfo.at(index).r_FB_B + this->bodyToHubInfo.at(index).dcm_BF * it->thrLoc_B;
 
         //! - For each thruster, aggregate the current thrust direction into composite body force
         tmpThrustMag = it->MaxThrust * ops->ThrustFactor;
@@ -371,7 +402,7 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
             {
                 mDotNozzle = it->MaxThrust / (EARTH_GRAV * it->steadyIsp);
             }
-            this->forceOnBody_B += 2 * mDotNozzle * (dcm_BF * omega_FN_F).cross(thrustLocation_B);
+            this->forceOnBody_B += 2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B).cross(thrustLocation_B);
 
             //! - Add the mass depletion torque contribution
             BM1 = thrustDirection_B;
@@ -381,7 +412,7 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
             BMj.col(1) = BM2;
             BMj.col(2) = BM3;
             this->torqueOnBodyPntB_B += mDotNozzle * (eigenTilde(thrustDirection_B) * eigenTilde(thrustDirection_B).transpose()
-                + it->areaNozzle / (4 * M_PI) * BMj * axesWeightMatrix * BMj.transpose()) * (dcm_BF * omega_FN_F);
+                + it->areaNozzle / (4 * M_PI) * BMj * axesWeightMatrix * BMj.transpose()) * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B);
 
         }
         // - Save force and torque values for messages
@@ -440,5 +471,6 @@ void ThrusterStateEffector::UpdateState(uint64_t CurrentSimNanos)
     {
         this->ConfigureThrustRequests();
     }
+    this->UpdateThrusterProperties();
     this->writeOutputStateMessages(CurrentSimNanos);
 }
