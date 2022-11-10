@@ -731,4 +731,4 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    unitThrusters(ResultsStore(), True, "ON", 1, 5.0, 30.,  15.,[[1.125], [0.5], [2.0]], 1E8, "ON", "OFF", 0.0)
+    unitThrusters(ResultsStore(), True, "OFF", 1, 5.0, 30.,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0)

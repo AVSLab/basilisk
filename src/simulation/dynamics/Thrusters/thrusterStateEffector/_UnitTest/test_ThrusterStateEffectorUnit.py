@@ -210,8 +210,12 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
         pyModulesProcess = TotalSim.CreateNewPythonProcess(pyProcessName, 5)
         pyModulesProcess.createPythonTask(pyTaskName, testRate, True, 1)
 
+        # Set up the dcm and location
+        dcm_BF = np.array([[-1, 0, 0], [0, 1, 0], [0, 0, -1]])
+        r_FB_B = [0, 0, 1]
+
         # Create the module
-        pyModule = attachedBodyModule("attachedBody", True, 100)
+        pyModule = attachedBodyModule("attachedBody", dcm_BF, r_FB_B, True, 100)
         pyModulesProcess.addModelToTask(pyTaskName, pyModule)
 
         # Attach messages
@@ -219,9 +223,8 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
         thrusterSet.connectAttachedBody(pyModule.bodyOutMsg)
 
         # Update the direction and location of the thruster
-        dcm_FB = np.array([[-1, 0, 0], [0, 1, 0], [0, 0, -1]])
-        dir1 = np.transpose(dcm_FB).dot(dir1)
-        loc1 = np.transpose(dcm_FB).dot(loc1) + [0, 0, 1]
+        dir1 = dcm_BF.dot(dir1)
+        loc1 = dcm_BF.dot(loc1) + r_FB_B
 
     # Set the initial conditions
     thrusterSet.kappaInit = messaging.DoubleVector([initialConditions])
@@ -355,30 +358,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
 
 
 class attachedBodyModule(simulationArchTypes.PythonModelClass):
-    """
-    This class inherits from the `PythonModelClass` available in the ``simulationArchTypes`` module.
-    The `PythonModelClass` is the parent class which your Python BSK modules must inherit.
-    The class uses the following
-    virtual functions:
-
-    #. ``reset``: The method that will initialize any persistent data in your model to a common
-       "ready to run" state (e.g. filter states, integral control sums, etc).
-    #. ``updateState``: The method that will be called at the rate specified
-       in the PythonTask that was created in the input file.
-
-    Additionally, your class should ensure that in the ``__init__`` method, your call the super
-    ``__init__`` method for the class so that the base class' constructor also gets called to
-    initialize the model-name, activity, moduleID, and other important class members:
-
-    .. code-block:: python
-
-        super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
-
-    You class must implement the above four functions. Beyond these four functions you class
-    can complete any other computations you need (``Numpy``, ``matplotlib``, vision processing
-    AI, whatever).
-    """
-    def __init__(self, modelName, modelActive=True, modelPriority=-1):
+    def __init__(self, modelName, dcm_BF, r_FB_B, modelActive=True, modelPriority=-1):
         super(attachedBodyModule, self).__init__(modelName, modelActive, modelPriority)
 
         # Input spacecraft state structure message
@@ -387,23 +367,15 @@ class attachedBodyModule(simulationArchTypes.PythonModelClass):
         # Output body state message
         self.bodyOutMsg = messaging.SCStatesMsg()
 
+        # Save dcm and location
+        self.dcm_BF = dcm_BF
+        self.r_FB_B = r_FB_B
+
     def reset(self, currentTime):
-        """
-        :return: none
-        """
+
         return
 
     def updateState(self, currentTime):
-        """
-        The updateState method is the cyclical worker method for a given Basilisk class.  It
-        will get called periodically at the rate specified in the Python task that the model is
-        attached to.  It persists and anything can be done inside of it.  If you have realtime
-        requirements though, be careful about how much processing you put into a Python updateState
-        method.  You could easily detonate your sim's ability to run in realtime.
-
-        :param currentTime: current simulation time in nano-seconds
-        :return: none
-        """
         # Read input message
         scMsgBuffer = self.scInMsg()
 
@@ -417,11 +389,11 @@ class attachedBodyModule(simulationArchTypes.PythonModelClass):
         r_BN_N = scMsgBuffer.r_BN_N
 
         # Compute the attached body states relative to the hub
-        dcm_FB = np.array([[-1, 0, 0], [0, 1, 0], [0, 0, -1]])
+        dcm_FB = np.transpose(self.dcm_BF)
         sigma_FB = rbk.C2MRP(dcm_FB)
         sigma_FN = rbk.addMRP(np.array(sigma_BN), sigma_FB)
         omega_FB_F = dcm_FB.dot(omega_BN_B)
-        r_FN_N = r_BN_N + np.transpose(dcm_BN).dot(np.array([0, 0, 1]))
+        r_FN_N = r_BN_N + np.transpose(dcm_BN).dot(np.array(self.r_FB_B))
 
         # Write the output message information
         bodyOutMsgBuffer.sigma_BN = sigma_FN

@@ -37,7 +37,12 @@
 #include <Eigen/Dense>
 #include <vector>
 
-
+ /*! attached body to hub information structure*/
+struct BodyToHubInfo {
+    Eigen::Vector3d r_FB_B;
+    Eigen::Vector3d omega_FB_B;
+    Eigen::Matrix3d dcm_BF;
+};
 
 
 /*! @brief thruster dynamic effector class */
@@ -51,6 +56,7 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     //! Add a new thruster to the thruster set
     void addThruster(THRSimConfig *newThruster);
+    void connectAttachedBody(Message<SCStatesMsgPayload>* bodyStateMsg);    //!< -- Connect a thruster to a body other than the hub
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
@@ -59,6 +65,7 @@ public:
                              double currentTime);
     void ComputeThrusterShut(THRSimConfig *CurrentThruster,
                              double currentTime);
+    void UpdateThrusterProperties();
     
 
 public:
@@ -83,6 +90,7 @@ private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
     SCStatesMsgPayload attachedBodyBuffer;
+    std::vector<BodyToHubInfo> bodyToHubInfo;
     uint64_t prevCommandTime;                       //!< -- Time for previous valid thruster firing
 
 };
