@@ -96,13 +96,13 @@ OutputDataSet::~OutputDataSet()
 /*! This method returns x, xDot and xDDot at the desired input time T */
 void OutputDataSet::getData(double T, double x[3], double xDot[3], double xDDot[3])
 {
-    int N = this->T.size()-1;
+    int N = (int) this->T.size() - 1;
     double Ttot = this->T[N];
 
     // if T < Ttot calculalte the values
     if (T <= Ttot) {
         double t = T / Ttot;
-        int Q = this->C1.size();
+        int Q = (int) this->C1.size();
         Eigen::VectorXd NN(Q), NN1(Q), NN2(Q);
         basisFunction(t, this->U, Q, this->P, &NN[0], &NN1[0], &NN2[0]);
         x[0] = NN.dot(this->C1);
@@ -133,13 +133,13 @@ void OutputDataSet::getData(double T, double x[3], double xDot[3], double xDDot[
 /*! It is designed to be accessible from Python */
 double OutputDataSet::getStates(double T, int derivative, int index)
 {
-    int N = this->T.size()-1;
+    int N = (int) this->T.size()-1;
     double Ttot = this->T[N];
 
     // if T < Ttot calculalte the values
     if (T <= Ttot) {
         double t = T / Ttot;
-        int Q = this->C1.size();
+        int Q = (int) this->C1.size();
         Eigen::VectorXd NN(Q), NN1(Q), NN2(Q);
         basisFunction(t, this->U, Q, this->P, &NN[0], &NN1[0], &NN2[0]);
 

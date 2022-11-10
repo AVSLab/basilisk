@@ -107,11 +107,11 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
     vScale(1E-6, configData->covar, PIXLINE_DYN_STATES*PIXLINE_N_STATES + PIXLINE_DYN_STATES, configData->covar); // Convert to km
     
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
-    badUpdate += ukfCholDecomp(configData->sBar, configData->numStates,
-                               configData->numStates, tempMatrix);
+    badUpdate += ukfCholDecomp(configData->sBar, (int) configData->numStates,
+                               (int) configData->numStates, tempMatrix);
     
-    badUpdate += ukfCholDecomp(configData->qNoise, configData->numStates,
-                               configData->numStates, configData->sQnoise);
+    badUpdate += ukfCholDecomp(configData->qNoise, (int) configData->numStates,
+                               (int) configData->numStates, configData->sQnoise);
     
     mCopy(tempMatrix, configData->numStates, configData->numStates,
           configData->sBar);
@@ -374,8 +374,8 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
            procNoise, configData->numStates*configData->numStates
            *sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numStates,
-                configData->countHalfSPs, rAT);
+    ukfQRDJustR(AT, (int) (2 * configData->countHalfSPs + configData->numStates),
+                (int) configData->countHalfSPs, rAT);
     
     mCopy(rAT, configData->numStates, configData->numStates, sBarT);
     mTranspose(sBarT, configData->numStates, configData->numStates,
@@ -386,7 +386,7 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
     vScale(-1.0, configData->xBar, configData->numStates, xErr);
     vAdd(xErr, configData->numStates, &configData->SP[0], xErr);
     badUpdate += ukfCholDownDate(configData->sBar, xErr, configData->wC[0],
-                                 configData->numStates, sBarUp);
+                                 (int) configData->numStates, sBarUp);
     
     
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
@@ -548,8 +548,8 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
            cholNoise, configData->numObs*configData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
      current Sy matrix*/
-    ukfQRDJustR(AT, 2*configData->countHalfSPs+configData->numObs,
-                configData->numObs, rAT);
+    ukfQRDJustR(AT, (int) (2*configData->countHalfSPs+configData->numObs),
+                (int) configData->numObs, rAT);
     
     mCopy(rAT, configData->numObs, configData->numObs, syT);
     mTranspose(syT, configData->numObs, configData->numObs, sy);
@@ -558,7 +558,7 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
     vScale(-1.0, yBar, configData->numObs, tempYVec);
     vAdd(tempYVec, configData->numObs, &(configData->yMeas[0]), tempYVec);
     badUpdate += ukfCholDownDate(sy, tempYVec, configData->wC[0],
-                                 configData->numObs, updMat);
+                                 (int) configData->numObs, updMat);
     
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, configData->numObs, configData->numObs, sy);
@@ -584,11 +584,11 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
      The Sy matrix is lower triangular, we can do a back-sub inversion instead of
      a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that
      multiplication is done (equation 27), we have the Kalman Gain.*/
-    ukfUInv(syT, configData->numObs, configData->numObs, syInv);
+    ukfUInv(syT, (int) configData->numObs, (int) configData->numObs, syInv);
     
     mMultM(pXY, configData->numStates, configData->numObs, syInv,
            configData->numObs, configData->numObs, kMat);
-    ukfLInv(sy, configData->numObs, configData->numObs, syInv);
+    ukfLInv(sy, (int) configData->numObs, (int) configData->numObs, syInv);
     mMultM(kMat, configData->numStates, configData->numObs, syInv,
            configData->numObs, configData->numObs, kMat);
     
@@ -613,7 +613,7 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
     for(i=0; i<configData->numObs; i++)
     {
         vCopy(&(Umat[i*configData->numStates]), configData->numStates, Ucol);
-        badUpdate += ukfCholDownDate(configData->sBar, Ucol, -1.0, configData->numStates, sBarT);
+        badUpdate += ukfCholDownDate(configData->sBar, Ucol, -1.0, (int) configData->numStates, sBarT);
         mCopy(sBarT, configData->numStates, configData->numStates,
               configData->sBar);
     }

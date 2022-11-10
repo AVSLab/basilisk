@@ -154,7 +154,7 @@ void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
     
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = configData->timeTag;
-    sunlineDataOutBuffer.numObs = configData->numObs;
+    sunlineDataOutBuffer.numObs = (int) configData->numObs;
     memmove(sunlineDataOutBuffer.covar, configData->covar,
             SKF_N_STATES_HALF*SKF_N_STATES_HALF*sizeof(double));
     memmove(sunlineDataOutBuffer.state, configData->state, SKF_N_STATES*sizeof(double));
@@ -338,17 +338,17 @@ void sunlineMeasUpdate(okeefeEKFConfig *configData, double updateTime)
     configData->numObs = (size_t) numObsInt;
     
     /*! - Compute the Kalman Gain. */
-    sunlineKalmanGainOkeefe(configData->covarBar, configData->measMat, configData->qObsVal, configData->numObs, configData->kalmanGain);
+    sunlineKalmanGainOkeefe(configData->covarBar, configData->measMat, configData->qObsVal, (int) configData->numObs, configData->kalmanGain);
     
     /* Logic to switch from EKF to CKF. If the covariance is too large, switching references through an EKF could lead to filter divergence in extreme cases. In order to remedy this, past a certain infinite norm of the covariance, we update with a CKF in order to bring down the covariance. */
     
     if (vMaxAbs(configData->covar, SKF_N_STATES_HALF*SKF_N_STATES_HALF) > configData->eKFSwitch){
     /*! - Compute the update with a CKF */
-    sunlineCKFUpdateOkeefe(configData->xBar, configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->x,configData->covar);
+    sunlineCKFUpdateOkeefe(configData->xBar, configData->kalmanGain, configData->covarBar, configData->qObsVal, (int) configData->numObs, configData->yMeas, configData->measMat, configData->x,configData->covar);
     }
     else{
     /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
-    okeefeEKFUpdate(configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->state, configData->x, configData->covar);
+    okeefeEKFUpdate(configData->kalmanGain, configData->covarBar, configData->qObsVal, (int) configData->numObs, configData->yMeas, configData->measMat, configData->state, configData->x, configData->covar);
     }
 }
 

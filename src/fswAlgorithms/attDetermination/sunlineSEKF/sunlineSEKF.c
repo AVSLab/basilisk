@@ -171,7 +171,7 @@ void Update_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
 
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = configData->timeTag;
-    sunlineDataOutBuffer.numObs = configData->numObs;
+    sunlineDataOutBuffer.numObs = (int) configData->numObs;
     memmove(sunlineDataOutBuffer.covar, configData->covar,
             EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.state, states_BN, EKF_N_STATES_SWITCH*sizeof(double));

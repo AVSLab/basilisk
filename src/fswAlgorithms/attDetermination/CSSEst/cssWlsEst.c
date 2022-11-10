@@ -233,7 +233,7 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
             mSetIdentity(W, configData->numActiveCss, configData->numActiveCss);
         }
         /*! -# Get least squares fit for sun pointing vector*/
-        status = computeWlsmn((size_t) configData->numActiveCss, H, W, y,
+        status = computeWlsmn((int) configData->numActiveCss, H, W, y,
                               sunlineOutBuffer.vehSunPntBdy);
         computeWlsResiduals(InputBuffer.CosValue, &configData->cssConfigInBuffer,
                             sunlineOutBuffer.vehSunPntBdy, configData->filtStatus.postFitRes);

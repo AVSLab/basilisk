@@ -213,7 +213,7 @@ void ThrusterStateEffector::linkInStates(DynParamManager& states){
 void ThrusterStateEffector::registerStates(DynParamManager& states)
 {
     // - Register the states associated with thruster - kappa
-    this->kappaState = states.registerState(this->thrusterData.size(), 1, this->nameOfKappaState);
+    this->kappaState = states.registerState((uint32_t) this->thrusterData.size(), 1, this->nameOfKappaState);
     Eigen::MatrixXd kappaInitMatrix(this->thrusterData.size(), 1);
     // Loop through all thrusters to initialize each state variable
     for (uint64_t i = 0; i < this->thrusterData.size(); i++) {

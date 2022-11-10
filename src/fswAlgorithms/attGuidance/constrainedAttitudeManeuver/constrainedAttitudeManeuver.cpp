@@ -719,7 +719,7 @@ void ConstrainedAttitudeManeuver::spline()
 		interpolate(this->Input, 100, 4, &this->Output);
 	}
 	else if (this->BSplineType == 1) {
-		approximate(this->Input, 100, this->Input.X1.size(), 4, &this->Output);  // review
+		approximate(this->Input, 100, (int) this->Input.X1.size(), 4, &this->Output);  // review
 	}
 	else {
 		bskLogger.bskLog(BSK_ERROR, "ConstraintAttitudeManeuver: BSplineType has not been specified.");
@@ -765,7 +765,7 @@ double ConstrainedAttitudeManeuver::effortEvaluation()
 	double L_a[3], L_b[3];
 	computeTorque(0, this->vehicleConfigMsgBuffer.ISCPntB_B, L_a);
 
-	N = this->Output.T.size();
+	N = (int) this->Output.T.size();
 	for (int n = 0; n < N-1; n++) {
 		computeTorque(n+1, this->vehicleConfigMsgBuffer.ISCPntB_B, L_b);
 		l_a = v3Norm(L_a);
