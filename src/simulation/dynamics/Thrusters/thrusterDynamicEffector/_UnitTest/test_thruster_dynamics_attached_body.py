@@ -45,52 +45,7 @@ def thrusterEffectorAllTests(show_plots):
 # provide a unique test method name, starting with test_
 def test_unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     r"""
-    **Validation Test Description**
-
-    This unit test script tests the stateEffector implementation of thrusters. It sets up the thruster module and runs
-    a combination of 6 different scenarios. Each scenario uses either one or two thrusters, while also changing the
-    thruster's locations and whether thruster 1 is firing or not.
-
-    For information on how the thruster module works and what the closed-form solution for the ``thrustFactor`` variable
-    is, see :ref:`thrusterStateEffector`. Given the ``thrustFactor`` :math:`\kappa`, the thrust is computed as follows:
-
-    .. math::
-        \textbf{F} = \kappa \cdot F_{max} \cdot \hat{n}
-
-    where :math:`\hat{n}` is the thruster's direction vector. The torque is computed by:
-
-    .. math::
-        \textbf{T} = \textbf{r}\times\textbf{F}
-
-    where :math:`\textbf{r}` corresponds to the thruster's position relative to the spacecraft's center of mass. The
-    mass flow rate is given by:
-
-    .. math::
-        \dot{m} = \dfrac{F}{g\cdot I_{sp}}
-
-    where :math:`g` is Earth's gravitational acceleration and :math:`I_{sp}` is the thruster's specific impulse.
-
-    **Test Parameters**
-
-    Args:
-        thrustNumber (int): number of thrusters used in the simulation
-        initialConditions (float): initial value of the ``thrustFactor`` variable for thruster 1. Thruster always starts
-        off.
-        duration (float): duration of the thrust in seconds.
-        long_angle (float): longitude angle in degrees for thruster 1. Thruster 2 is also impacted by this value.
-        lat_angle (float): latitude angle in degrees for thruster 1. Thruster 2 is also impacted by this value.
-        location (float): location of thruster 1.
-        rate (int): simulation rate in nanoseconds.
-
-    **Description of Variables Being Tested**
-
-    In this file we are checking the values of the variables
-
-    - ``thrForce``
-    - ``thrTorque``
-    - ``mDot``
-
-    All these variables are compared to the true values from the closed-form expressions given in :ref:`thrusterStateEffector`.
+    This unit test checks the functionality of attaching a dynamic thruster to a body other than the hub.
     """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitThrusters(show_plots, long_angle, lat_angle, location, rate)
