@@ -237,11 +237,11 @@ def run():
     scContact.maxPosError = 1e-4
     scContact.simTimeStep = 0.01
     scContact.slipTolerance = 1e-6
-    scContact.collisionIntegrationStep = 1e-4
-    scContact.maxBoundingBoxDim = 0.7
+    scContact.collisionIntegrationStep = 1e-5
+    scContact.maxBoundingBoxDim = 0.5
     scContact.minBoundingBoxDim = 0.01
-    scContact.boundingBoxFF = 1
-    scContact.LoadSpacecraftBody("cube2.obj", scObject.ModelTag, scObject.scStateOutMsg, scObject.scMassOutMsg, 1.0, 1.0, 0.0)
+    scContact.boundingBoxFF = 1.2
+    scContact.LoadSpacecraftBody("highrescube.obj", scObject.ModelTag, scObject.scStateOutMsg, scObject.scMassOutMsg, 1.0, 1.0, 0.0)
     # scContact.LoadMainBody("Lander.obj")
     # scContact.mainBody.modelTag = scObject.ModelTag
     # scContact.mainBody.boundingRadius = 3.5
@@ -252,11 +252,11 @@ def run():
     # staticObjectMsg.PositionVector = [3.5, 2.01, 2.01]
     staticObjectMsg.PositionVector = [0.0, 0.0, 0.0]
     staticObjectMsg.VelocityVector = [0., 0., 0.]
-    staticObjectMsg.J20002Pfix = np.identity(3)
+    staticObjectMsg.J20002Pfix = np.identity(3) #RigidBodyKinematics.Mi(np.deg2rad(90),3)
     stObMsg = messaging.SpicePlanetStateMsg().write(staticObjectMsg)
 
 
-    scContact.AddSpiceBody("cube2.obj", stObMsg, 1.0, 1.0, 0.0)
+    scContact.AddSpiceBody("highrescube.obj", stObMsg, 1.0, 1.0, 0.0)
     # scContact.AddOtherBody("surface.obj", stObMsg, 5.0, 1.0, 1.0)
     # scContact.externalBodies[0].states.r_BN_N = [[3.5], [2.0], [2.0]]  # m   - r_CN_N
     # scContact.externalBodies[0].states.v_BN_N = [[0.0], [0.0], [0.0]]  # m/s - v_CN_N
@@ -293,14 +293,14 @@ def run():
     # scObject.hub.omega_BN_BInit = [[0.0], [0.1], [0.0]]  # rad/s - omega_CN_B
 
     # scObject.hub.r_CN_NInit = [[2.01], [1.7], [1.7]]  # m   - r_CN_N
-    # scObject.hub.v_CN_NInit = [[3.5], [0.0], [0.0]]  # m/s - v_CN_N
+    # scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]  # m/s - v_CN_N
     # scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.3]]  # sigma_CN_B
     # scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
 
-    # scObject.hub.r_CN_NInit = [[1.51], [1.7], [1.7]]  # m   - r_CN_N
+    # scObject.hub.r_CN_NInit = [[0.0], [0.0], [1.05]]  # m   - r_CN_N
     scObject.hub.v_CN_NInit = [[0.0], [0.0], [-2.0]]  # m/s - v_CN_N
     # scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_CN_B
-    # scObject.hub.omega_BN_BInit = [[0.1], [0.1], [0.1]]  # rad/s - omega_CN_B
+    # scObject.hub.omega_BN_BInit = [[0.0], [1.0], [0.0]]  # rad/s - omega_CN_B
 
     mrp = RigidBodyKinematics.C2MRP(RigidBodyKinematics.Mi(0.2, 2))
     scObject.hub.r_CN_NInit = [[0.0], [0.0], [1.5]]  # m   - r_CN_N
