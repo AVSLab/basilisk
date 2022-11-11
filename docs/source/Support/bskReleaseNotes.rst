@@ -35,6 +35,7 @@ Version |release|
 - Made the external module custom message definitions work again with the
   latest build system.
 - Fixed the custom RW in :ref:`simIncludeRW` to store the information regarding u_min in the RW class.
+- provide support for the swig 4.1 software
 
 
 Version 2.1.4 (Oct. 1, 2022)
