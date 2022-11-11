@@ -46,9 +46,9 @@ TabularAtmosphere::~TabularAtmosphere()
 */
 void TabularAtmosphere::customReset(uint64_t CurrentClock)
 {
-    this->altList_length = this->altList.size();
-    this->rhoList_length = this->rhoList.size();
-    this->tempList_length = this->tempList.size();
+    this->altList_length = (int) this->altList.size();
+    this->rhoList_length = (int) this->rhoList.size();
+    this->tempList_length = (int) this->tempList.size();
     
 
     if((this->altList_length != this->rhoList_length) || (this->altList_length != this->tempList_length)){

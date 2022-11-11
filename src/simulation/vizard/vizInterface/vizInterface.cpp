@@ -288,7 +288,7 @@ void VizInterface::ReadBSKMessages()
                     DeviceCmdMsgPayload onOffCmdMsgBuffer;
                     onOffCmdMsgBuffer = scIt->lightList[idx]->onOffCmdInMsg();
                     if(scIt->lightList[idx]->onOffCmdInMsg.isWritten()){
-                        scIt->lightList[idx]->lightOn = onOffCmdMsgBuffer.deviceCmd;
+                        scIt->lightList[idx]->lightOn = (int) onOffCmdMsgBuffer.deviceCmd;
                     }
                 }
             }
@@ -813,7 +813,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 for (uint64_t j=0; j<scIt->genericSensorList[idx]->color.size(); j++) {
                     gs->add_color(scIt->genericSensorList[idx]->color[j]);
                 }
-                gs->set_activitystatus(scIt->genericSensorList[idx]->genericSensorCmd);
+                gs->set_activitystatus((int) scIt->genericSensorList[idx]->genericSensorCmd);
             }
 
             // Write Ellipsoid messages

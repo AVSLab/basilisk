@@ -222,7 +222,7 @@ void Albedo::UpdateState(uint64_t CurrentSimNanos)
     this->albOutData.clear();
     std::vector<SpicePlanetStateMsgPayload>::iterator planetIt;
     int idx;
-    for (long unsigned int instIdx = 0; instIdx < this->albOutMsgs.size(); instIdx++)
+    for (int instIdx = 0; instIdx < this->albOutMsgs.size(); instIdx++)
     {
         idx = 0;
         double tmpTot[4] = {};
@@ -461,8 +461,8 @@ void Albedo::evaluateAlbedoModel(int idx)
             }
             array.push_back(v);
         }
-        numLat = array.size();
-        numLon = array[0].size();
+        numLat = (int) array.size();
+        numLon = (int) array[0].size();
         //! - Compare if the numLat/numLon are not zero
         if (!numLat || !numLon) {
             bskLogger.bskLog(BSK_ERROR, "Albedo Module (evaluateAlbedoModel): There has been an error in reading albedo data from (%s).", fileName.c_str());

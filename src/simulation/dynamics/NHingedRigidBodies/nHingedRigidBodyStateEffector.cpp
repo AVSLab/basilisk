@@ -94,9 +94,9 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
         this->totalMass += PanelIt->mass;
         it += 1;
     }
-    this->thetaState = states.registerState(this->PanelVec.size(), 1, this->nameOfThetaState);
+    this->thetaState = states.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaState);
     this->thetaState->setState(thetaInitMatrix);
-    this->thetaDotState = states.registerState(this->PanelVec.size(), 1, this->nameOfThetaDotState);
+    this->thetaDotState = states.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaDotState);
     this->thetaDotState->setState(thetaDotInitMatrix);
 
     return;

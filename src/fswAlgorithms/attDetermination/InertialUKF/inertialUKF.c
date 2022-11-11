@@ -116,10 +116,10 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
           configData->covar);
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
     badUpdate += ukfCholDecomp(configData->sBar, (int32_t) configData->numStates,
-                  configData->numStates, tempMatrix);
+                  (int32_t) configData->numStates, tempMatrix);
     
-    badUpdate += ukfCholDecomp(configData->qNoise, configData->numStates,
-                  configData->numStates, configData->sQnoise);
+    badUpdate += ukfCholDecomp(configData->qNoise, (int32_t) configData->numStates,
+                               (int32_t) configData->numStates, configData->sQnoise);
 
     mCopy(tempMatrix, configData->numStates, configData->numStates,
           configData->sBar);
@@ -414,7 +414,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 	for (i = 0; i<configData->countHalfSPs; i++)
 	{
         /*! - Adding covariance columns from sigma points*/
-		Index = i + 1;
+		Index = (int) i + 1;
 		spPtr = &(configData->SP[Index* (int) configData->numStates]);
 		vCopy(&sBarT[i* (int) configData->numStates], configData->numStates, spPtr);
 		vScale(configData->gamma, spPtr, configData->numStates, spPtr);
@@ -423,7 +423,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 		vScale(configData->wM[Index], spPtr, configData->numStates, xComp);
 		vAdd(xComp, configData->numStates, configData->xBar, configData->xBar);
 		/*! - Subtracting covariance columns from sigma points*/
-		Index = i + 1 + (int) configData->countHalfSPs;
+		Index = (int) i + 1 + (int) configData->countHalfSPs;
         spPtr = &(configData->SP[Index* (int) configData->numStates]);
         vCopy(&sBarT[i* (int) configData->numStates], configData->numStates, spPtr);
         vScale(-configData->gamma, spPtr, configData->numStates, spPtr);
@@ -462,8 +462,8 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 		procNoise, configData->numStates*configData->numStates
         *sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numStates,
-                configData->countHalfSPs, rAT);
+    ukfQRDJustR(AT, (int32_t) (2 * configData->countHalfSPs + configData->numStates),
+                (int32_t) configData->countHalfSPs, rAT);
 
     mCopy(rAT, configData->numStates, configData->numStates, sBarT);
     mTranspose(sBarT, configData->numStates, configData->numStates,
@@ -474,7 +474,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
     vScale(-1.0, configData->xBar, configData->numStates, xErr);
     vAdd(xErr, configData->numStates, &configData->SP[0], xErr);
     badUpdate += ukfCholDownDate(configData->sBar, xErr, configData->wC[0],
-        configData->numStates, sBarUp);
+                                 (int32_t) configData->numStates, sBarUp);
 
     
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
@@ -673,13 +673,13 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
         decomposition of the observation variance matrix constructed for our number 
         of observations*/
-    badUpdate += ukfCholDecomp(configData->STDatasStruct.STMessages[currentST].noise, configData->numObs, configData->numObs, qChol);
+    badUpdate += ukfCholDecomp(configData->STDatasStruct.STMessages[currentST].noise, (int32_t) configData->numObs, (int32_t) configData->numObs, qChol);
     memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),
            qChol, configData->numObs*configData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
-    ukfQRDJustR(AT, 2*configData->countHalfSPs+configData->numObs,
-                configData->numObs, rAT);
+    ukfQRDJustR(AT, (int32_t) (2*configData->countHalfSPs+configData->numObs),
+                (int32_t) configData->numObs, rAT);
 
     mCopy(rAT, configData->numObs, configData->numObs, syT);
     mTranspose(syT, configData->numObs, configData->numObs, sy);
@@ -688,7 +688,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     vScale(-1.0, yBar, configData->numObs, tempYVec);
     vAdd(tempYVec, configData->numObs, &(configData->yMeas[0]), tempYVec);
     badUpdate += ukfCholDownDate(sy, tempYVec, configData->wC[0],
-                    configData->numObs, updMat);
+                                 (int32_t) configData->numObs, updMat);
 
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, configData->numObs, configData->numObs, sy);
@@ -714,11 +714,11 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
           The Sy matrix is lower triangular, we can do a back-sub inversion instead of 
           a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that 
           multiplication is done (equation 27), we have the Kalman Gain.*/
-    badUpdate += ukfUInv(syT, configData->numObs, configData->numObs, syInv);
+    badUpdate += ukfUInv(syT, (int32_t) configData->numObs, (int32_t) configData->numObs, syInv);
     
     mMultM(pXY, configData->numStates, configData->numObs, syInv,
            configData->numObs, configData->numObs, kMat);
-    badUpdate += ukfLInv(sy, configData->numObs, configData->numObs, syInv);
+    badUpdate += ukfLInv(sy, (int32_t) configData->numObs, (int32_t) configData->numObs, syInv);
     mMultM(kMat, configData->numStates, configData->numObs, syInv,
            configData->numObs, configData->numObs, kMat);
     
@@ -740,7 +740,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     for(i=0; i<configData->numObs; i++)
     {
         vCopy(&(Umat[i*configData->numStates]), configData->numStates, Ucol);
-        badUpdate += ukfCholDownDate(configData->sBar, Ucol, -1.0, configData->numStates, sBarT);
+        badUpdate += ukfCholDownDate(configData->sBar, Ucol, -1.0, (int32_t) configData->numStates, sBarT);
         mCopy(sBarT, configData->numStates, configData->numStates,
             configData->sBar);
     }

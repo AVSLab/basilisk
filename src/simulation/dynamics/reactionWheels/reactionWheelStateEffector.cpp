@@ -81,10 +81,10 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
         this->numRW++;
     }
     
-	this->OmegasState = states.registerState(this->numRW, 1, this->nameOfReactionWheelOmegasState);
+	this->OmegasState = states.registerState((uint32_t) this->numRW, 1, this->nameOfReactionWheelOmegasState);
 
 	if (numRWJitter > 0) {
-		this->thetasState = states.registerState(this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
+		this->thetasState = states.registerState((uint32_t) this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
 	}
 
     this->OmegasState->setState(omegasForInit);

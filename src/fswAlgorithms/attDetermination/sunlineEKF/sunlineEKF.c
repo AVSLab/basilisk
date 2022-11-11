@@ -325,7 +325,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double dt, double *dynMat)
 void sunlineMeasUpdate(sunlineEKFConfig *configData, double updateTime)
 {
     /*! - Compute the valid observations and the measurement model for all observations*/
-    sunlineHMatrixYMeas(configData->state, configData->numCSSTotal, configData->cssSensorInBuffer.CosValue, configData->sensorUseThresh, configData->cssNHat_B, configData->CBias, configData->obs, configData->yMeas, &(configData->numObs), configData->measMat);
+    sunlineHMatrixYMeas(configData->state, (int) configData->numCSSTotal, configData->cssSensorInBuffer.CosValue, configData->sensorUseThresh, configData->cssNHat_B, configData->CBias, configData->obs, configData->yMeas, &(configData->numObs), configData->measMat);
     
     /*! - Compute the Kalman Gain. */
     sunlineKalmanGain(configData->covarBar, configData->measMat, configData->qObsVal, configData->numObs, configData->kalmanGain);

@@ -125,11 +125,11 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     mCopy(configData->covar, configData->numStates, configData->numStates,
           configData->sBar);
     badUpdate += ukfCholDecomp(configData->sBar, (int32_t) configData->numStates,
-                  configData->numStates, tempMatrix);
+                               (int32_t) configData->numStates, tempMatrix);
     mCopy(tempMatrix, configData->numStates, configData->numStates,
           configData->sBar);
     badUpdate += ukfCholDecomp(configData->qNoise, (int32_t)configData->numStates,
-                  configData->numStates, configData->sQnoise);
+                               (int32_t) configData->numStates, configData->sQnoise);
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
 
@@ -251,7 +251,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = configData->timeTag;
-    sunlineDataOutBuffer.numObs = configData->numObs;
+    sunlineDataOutBuffer.numObs = (int) configData->numObs;
     memmove(sunlineDataOutBuffer.covar, configData->covar,
             SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.state, states_BN, SKF_N_STATES_SWITCH*sizeof(double));
@@ -374,8 +374,8 @@ int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 		procNoise, configData->numStates*configData->numStates
         *sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numStates,
-                configData->countHalfSPs, rAT);
+    ukfQRDJustR(AT, (int32_t) (2 * configData->countHalfSPs + configData->numStates),
+                (int32_t) configData->countHalfSPs, rAT);
     mCopy(rAT, configData->numStates, configData->numStates, sBarT);
     mTranspose(sBarT, configData->numStates, configData->numStates,
         configData->sBar);
@@ -385,7 +385,7 @@ int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
     vScale(-1.0, configData->xBar, configData->numStates, xErr);
     vAdd(xErr, configData->numStates, &configData->SP[0], xErr);
     badUpdate += ukfCholDownDate(configData->sBar, xErr, configData->wC[0],
-        configData->numStates, sBarUp);
+                                 (int32_t) configData->numStates, sBarUp);
     
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
     mCopy(sBarUp, configData->numStates, configData->numStates, configData->sBar);
@@ -539,13 +539,13 @@ int sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
     mSetIdentity(configData->qObs, configData->numObs, configData->numObs);
     mScale(configData->qObsVal, configData->qObs, configData->numObs,
            configData->numObs, configData->qObs);
-    ukfCholDecomp(configData->qObs, configData->numObs, configData->numObs, qChol);
+    ukfCholDecomp(configData->qObs, (int32_t) configData->numObs, (int32_t) configData->numObs, qChol);
     memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),
            qChol, configData->numObs*configData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
-    ukfQRDJustR(AT, 2*configData->countHalfSPs+configData->numObs,
-                configData->numObs, rAT);
+    ukfQRDJustR(AT, (int32_t) (2*configData->countHalfSPs+configData->numObs),
+                (int32_t) configData->numObs, rAT);
     mCopy(rAT, configData->numObs, configData->numObs, syT);
     mTranspose(syT, configData->numObs, configData->numObs, sy);
     /*! - Shift the matrix over by the difference between the 0th SP-based measurement 
@@ -553,7 +553,7 @@ int sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
     vScale(-1.0, yBar, configData->numObs, tempYVec);
     vAdd(tempYVec, configData->numObs, &(configData->yMeas[0]), tempYVec);
     badUpdate += ukfCholDownDate(sy, tempYVec, configData->wC[0],
-                    configData->numObs, updMat);
+                                 (int32_t) configData->numObs, updMat);
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, configData->numObs, configData->numObs, sy);
     mTranspose(sy, configData->numObs, configData->numObs, syT);
@@ -578,11 +578,11 @@ int sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
           The Sy matrix is lower triangular, we can do a back-sub inversion instead of 
           a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that 
           multiplication is done (equation 27), we have the Kalman Gain.*/
-    badUpdate += ukfUInv(syT, configData->numObs, configData->numObs, syInv);
+    badUpdate += ukfUInv(syT, (int32_t) configData->numObs, (int32_t) configData->numObs, syInv);
     
     mMultM(pXY, configData->numStates, configData->numObs, syInv,
            configData->numObs, configData->numObs, kMat);
-    badUpdate += ukfLInv(sy, configData->numObs, configData->numObs, syInv);
+    badUpdate += ukfLInv(sy, (int32_t) configData->numObs, (int32_t) configData->numObs, syInv);
     mMultM(kMat, configData->numStates, configData->numObs, syInv,
            configData->numObs, configData->numObs, kMat);
     
@@ -604,7 +604,7 @@ int sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
     for(i=0; i<configData->numObs; i++)
     {
         vCopy(&(Umat[i*configData->numStates]), configData->numStates, Ucol);
-        badUpdate += ukfCholDownDate(configData->sBar, Ucol, -1.0, configData->numStates, sBarT);
+        badUpdate += ukfCholDownDate(configData->sBar, Ucol, -1.0, (int32_t) configData->numStates, sBarT);
         mCopy(sBarT, configData->numStates, configData->numStates,
               configData->sBar);
     }

@@ -125,7 +125,7 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUs
     for (uint64_t i = 0; i < this->storageUnitMsgsBuffer.back().storedData.size(); i++) {
         if (this->storageUnitMsgsBuffer.back().storedData[i] > maxVal) {
             maxVal = this->storageUnitMsgsBuffer.back().storedData[i];
-            maxIndex = i;
+            maxIndex = (int) i;
         }
     }
 

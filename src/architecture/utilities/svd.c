@@ -124,7 +124,7 @@ int svdcmp(double *mx, size_t dim1, size_t dim2, double *w, double *v) {
         anorm = DMAX(anorm, (fabs(w[i]) + fabs(rv1[i])));
     }
 
-    for (i = dim2 - 1; i >= 0; i--) {
+    for (i = (int) dim2 - 1; i >= 0; i--) {
         if (i < dim2 - 1) {
             if (g) {
                 for (j = l; j < dim2; j++)
@@ -144,7 +144,7 @@ int svdcmp(double *mx, size_t dim1, size_t dim2, double *w, double *v) {
         l = i;
     }
 
-    for (i = IMIN(dim1,dim2) - 1; i >= 0; i--) {
+    for (i = IMIN((int) dim1, (int) dim2) - 1; i >= 0; i--) {
         l = i + 1;
         g = w[i];
         for (j = l; j < dim2; j++)
@@ -166,7 +166,7 @@ int svdcmp(double *mx, size_t dim1, size_t dim2, double *w, double *v) {
         ++mx[MXINDEX(dim2, i, i)];
     }
 
-    for (k = dim2 - 1; k >= 0; k--) {
+    for (k = (int) dim2 - 1; k >= 0; k--) {
         for (its = 0; its < 30; its++) {
             flag = 1;
             for (l = k; l >= 0; l--) {

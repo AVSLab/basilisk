@@ -21,6 +21,7 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
+#include <stdio.h>
 
 /*! This method initializes the configData for the nav aggregation algorithm.
     It initializes the output messages in the messaging system.
@@ -47,7 +48,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
     /*! - ensure incoming message counters are not larger than MAX_AGG_NAV_MSG */
     if (configData->attMsgCount > MAX_AGG_NAV_MSG) {
         char info[MAX_LOGGING_LENGTH];
-        sprintf(info, "The attitude message count %d is larger than allowed (%d). Setting count to max value.",
+        snprintf(info, MAX_LOGGING_LENGTH, "The attitude message count %d is larger than allowed (%d). Setting count to max value.",
                   configData->attMsgCount, MAX_AGG_NAV_MSG);
         _bskLog(configData->bskLogger, BSK_ERROR, info);
 

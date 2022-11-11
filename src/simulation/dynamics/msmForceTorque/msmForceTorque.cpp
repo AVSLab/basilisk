@@ -61,7 +61,7 @@ void MsmForceTorque::Reset(uint64_t CurrentSimNanos)
         }
     }
     
-    this->numSat = this->scStateInMsgs.size();
+    this->numSat = (uint32_t) this->scStateInMsgs.size();
     if (this->numSat < 2) {
         bskLogger.bskLog(BSK_ERROR, "MsmForceTorque must have 2 or more spacecraft components added. You added %lu.", this->numSat);
     }

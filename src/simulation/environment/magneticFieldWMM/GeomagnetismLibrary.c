@@ -2314,10 +2314,10 @@ int MAG_readMagneticModel_SHDF(char *filename, MAGtype_MagneticModel *(*magnetic
             for(i = 0; i < NOOFPARAMS; i++)
             {
 
-                paramkeylength = strlen(paramkeys[i]);
+                paramkeylength = (int) strlen(paramkeys[i]);
                 if(!strncmp(line, paramkeys[i], paramkeylength))
                 {
-                    paramvaluelength = strlen(line) - paramkeylength;
+                    paramvaluelength = (int) strlen(line) - paramkeylength;
                     strncpy(paramvalue, line + paramkeylength, paramvaluelength);
                     paramvalue[paramvaluelength] = '\0';
                     strcpy(paramvalues[i], paramvalue);
@@ -3051,7 +3051,7 @@ int MAG_GetUTMParameters(double Latitude,
                 *CentralMeridian = (6 * temp_zone - 183) * M_PI / 180.0;
             else
                 *CentralMeridian = (6 * temp_zone + 177) * M_PI / 180.0;
-            *Zone = temp_zone;
+            *Zone = (int) temp_zone;
             if(Latitude < 0) *Hemisphere = 'S';
             else *Hemisphere = 'N';
         }
