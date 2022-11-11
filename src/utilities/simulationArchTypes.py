@@ -70,6 +70,7 @@ class TaskBaseClass(object):
 
 
 class PythonModelClass(object):
+    idCounter = 1
     def __init__(self, modelName, modelActive=True, modelPriority=-1):
         # The modelName is a unique identifier (unique to simulation) passed
         # in to a class.
@@ -79,7 +80,8 @@ class PythonModelClass(object):
         # The moduleID is a numeric identifier used to track message usage in
         # a given simulation.
         # Note: python modules get negative ID numbers
-        self.moduleID = -moduleIdGenerator.ModuleIdGenerator_GetInstance().checkoutModuleID()
+        self.moduleID = -PythonModelClass.idCounter
+        PythonModelClass.idCounter = PythonModelClass.idCounter + 1
         # The modelPriority variable is the setting for which models get run
         # first.  Higher priority indicates that a model will get run sooner.
         self.modelPriority = modelPriority
