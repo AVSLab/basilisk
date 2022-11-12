@@ -119,7 +119,8 @@ def BSplineTestFunction(P, XDot_flag, XDDot_flag, accuracy):
 
     Output = BSpline.OutputDataSet()
     BSpline.interpolate(Input, 101, P, Output)
-
+    
+    
     for i in range(len(Output.T)):
         for j in range(len(Input.T)):
             if abs(Output.T[i][0] - Input.T[j][0]) < accuracy:

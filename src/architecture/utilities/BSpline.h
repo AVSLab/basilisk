@@ -36,10 +36,11 @@ public:
     void setXDot_N(Eigen::Vector3d XDot_N);
     void setXDDot_0(Eigen::Vector3d XDDot_0);
     void setXDDot_N(Eigen::Vector3d XDDot_N);
+    void setXDot_des(Eigen::VectorXd X1Dot_des,Eigen::VectorXd X2Dot_des,Eigen::VectorXd X3Dot_des);
     void setT(Eigen::VectorXd T);
     void setW(Eigen::VectorXd W);
     void setAvgXDot(double AvgXDot);
-    void setLS_Dot(bool LS_Dot);
+    void setLS_Dot();
     
     double AvgXDot;                  //!< desired average velocity norm
     Eigen::VectorXd T;               //!< time tags: specifies at what time each waypoint is hit
@@ -51,7 +52,7 @@ public:
     Eigen::VectorXd X2Dot;           //!< first derivative coordinate #2 of the waypoints
     Eigen::VectorXd X3Dot;           //!< first derivativs coordinate #3 of the waypoints
     Eigen::VectorXd X1Dot_des;       //!< coordinate #1 of the desired 1st derivatives (normalized)
-    Eigen::VectorXd X2Dot_des;       //!< coordinate #2 of the desired 2nd derivatives (normalized)
+    Eigen::VectorXd X2Dot_des;       //!< coordinate #2 of the desired 2nd derivatives (normalized
     Eigen::VectorXd X3Dot_des;       //!< coordinate #3 of the desired 3rd derivatives (normalized)
     Eigen::Vector3d XDot_0;          //!< 3D vector containing the first derivative at starting point
     Eigen::Vector3d XDot_N;          //!< 3D vector containing the first derivative at final point
@@ -78,6 +79,7 @@ public:
     double getStates(double t, int derivative,  int index);
     
     Eigen::VectorXd T;               //!< time tags for each point of the interpolated trajectory
+    Eigen::VectorXd T_way_calc;      //!< time tags calculated for the waypoints when T_flag = false
     Eigen::VectorXd X1;              //!< coordinate #1 of the interpolated trajectory
     Eigen::VectorXd X2;              //!< coordinate #2 of the interpolated trajectory
     Eigen::VectorXd X3;              //!< coordinate #3 of the interpolated trajectory

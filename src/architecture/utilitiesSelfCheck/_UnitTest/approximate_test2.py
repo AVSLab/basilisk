@@ -44,7 +44,7 @@ def test_BSpline(show_plots,P,n,XDot_flag,XDDot_flag,accuracy):
     r"""
     **Validation Test Description**
 
-    This unit test script tests the capability of the BSpline function to correctly interpolate 
+    This unit test script tests the capability of the BSpline function to correctly interpolate
     a series of points in 3 dimensions.
     The coordinates of these 7 points are stored in 3 numpy arrays:
 
@@ -54,8 +54,8 @@ def test_BSpline(show_plots,P,n,XDot_flag,XDDot_flag,accuracy):
 
     X3 = np.array([3, 2, 1, 2, 3, 4, 5]).
 
-    The input arrays are initialized through ``Input = BSpline.InputDataSet(X1, X2, X3)``. 
-    The time tags at which each waypoint is to be hit are provided through ``Input.setT([0, 2, 3, 5, 7, 8, 10])``. 
+    The input arrays are initialized through ``Input = BSpline.InputDataSet(X1, X2, X3)``.
+    The time tags at which each waypoint is to be hit are provided through ``Input.setT([0, 2, 3, 5, 7, 8, 10])``.
     Alternatively, it is possible to specify the average velocity norm through ``Input.setAvgXDot()``.
     The endpoint derivatives are specified through the methods:
 
@@ -70,7 +70,7 @@ def test_BSpline(show_plots,P,n,XDot_flag,XDDot_flag,accuracy):
 
     - N is the desired number of equally spaced data points in the interpolated function;
     
-    - P is the polynomial order of the B-Spline function. The order should be at least 3 when first-order derivatives are specified, 
+    - P is the polynomial order of the B-Spline function. The order should be at least 3 when first-order derivatives are specified,
       and 5 when second-order derivatives are specified. The maximum oder is P = n + k - 1, with n being the number of waypoints and k
       being the number of endpoint derivatives that are being specified.
 
@@ -91,7 +91,7 @@ def test_BSpline(show_plots,P,n,XDot_flag,XDDot_flag,accuracy):
         
     **Description of Variables Being Tested**
 
-    This unit test checks the correctness of the interpolated function: 
+    This unit test checks the correctness of the interpolated function:
     - a check is performed on whether or not each waypoint is hit at the specified time;
     - when the derivatives are specified, it checks whether the starting point derivative actually matches the input derivative.
     """
@@ -114,7 +114,7 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     X3 = np.array([3, 2, 1, 2, 3, 4, 5])
 
     Input = BSpline.InputDataSet(X1, X2, X3)
-    Input.setT([0, 2, 3, 5, 7, 8, 10])
+    #Input.setT([0, 2, 3, 5, 7, 8, 10])
     
     if XDot_flag:
         Input.setXDot_0([0, 0, 0])
@@ -128,33 +128,33 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     
     # Obtain End Indices of Input and Output Structure Time Stamp
     i = len(Output.T)-1
-    j = len(Input.T)-1
+    j = len(Output.T_way_calc)-1
     
     
     # Check the accuracy of Start and End Attitudes
-    if abs(Output.T[0][0] - Input.T[0][0]) < accuracy:
+    #if abs(Output.T[0][0] - Input.T[0][0]) < accuracy:
     
-        # Start Attitude
-        if not abs(Output.X1[0][0] - X1[0]) < accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Input.T[0][0]))
-        if not abs(Output.X2[0][0] - X2[0]) < accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Input.T[0][0]))
-        if not abs(Output.X3[0][0] - X3[0]) < accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Input.T[0][0]))
-            
-        # End Attitude
-        if not abs(Output.X1[i][0] - X1[j]) < accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Input.T[j][0]))
-        if not abs(Output.X2[i][0] - X2[j]) < accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Input.T[j][0]))
-        if not abs(Output.X3[i][0] - X3[j]) < accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Input.T[j][0]))
+    # Start Attitude
+    if not abs(Output.X1[0][0] - X1[0]) < accuracy:
+        testFailCount += 1
+        testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Output.T_way_calc[0][0]))
+    if not abs(Output.X2[0][0] - X2[0]) < accuracy:
+        testFailCount += 1
+        testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Output.T_way_calc[0][0]))
+    if not abs(Output.X3[0][0] - X3[0]) < accuracy:
+        testFailCount += 1
+        testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Output.T_way_calc[0][0]))
+        
+    # End Attitude
+    if not abs(Output.X1[i][0] - X1[j]) < accuracy:
+        testFailCount += 1
+        testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Output.T_way_calc[j][0]))
+    if not abs(Output.X2[i][0] - X2[j]) < accuracy:
+        testFailCount += 1
+        testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Output.T_way_calc[j][0]))
+    if not abs(Output.X3[i][0] - X3[j]) < accuracy:
+        testFailCount += 1
+        testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Output.T_way_calc[j][0]))
 
     # Check the accuracy of Start and End First Derivatives
     if XDot_flag:
@@ -172,33 +172,33 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at end point".format(P))
     
     
+    # The outputs are successful, need to figure out how to plot the answer.
+    print(len(Output.T_way_calc))
     
-    
-    # Plotting Attitudes Code:
-    plt.scatter(Input.T,X1,c = 'b')
+        # Plotting Attitudes Code:
+    plt.scatter(Output.T_way_calc,X1,c = 'b')
     plt.plot(Output.T,Output.X1,c = 'r')
     plt.title("X1 MRP Attitude vs Time")
     plt.xlabel("Time [s]")
     plt.ylabel("X1 MRP Attitude")
     plt.legend(["Way Points","LS Approximation"])
     plt.show()
-    plt.scatter(Input.T,X2,c = 'b')
+    plt.scatter(Output.T_way_calc,X2,c = 'b')
     plt.plot(Output.T,Output.X2,c = 'r')
     plt.title("X2 MRP vs Time")
     plt.xlabel("Time [s]")
     plt.ylabel("X2 MRP Attitude")
     plt.legend(["Way Points","LS Approximation"])
     plt.show()
-    plt.scatter(Input.T,X3,c = 'b')
+    plt.scatter(Output.T_way_calc,X3,c = 'b')
     plt.plot(Output.T,Output.X3,c = 'r')
     plt.title("X3 MRP vs Time")
     plt.xlabel("Time [s]")
     plt.ylabel("X3 MRP Attitude")
     plt.legend(["Way Points","LS Approximation"])
     plt.show()
-   
-    # Plotting First Derivative Codes
     
+   
     
     return
 
@@ -213,4 +213,5 @@ if __name__ == "__main__":
         8,       # control points
         True,    # XDot_flag
         False,    # XDDot_flag
-        1e-6)     
+        1e-6)
+

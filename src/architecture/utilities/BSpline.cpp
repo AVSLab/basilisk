@@ -82,7 +82,11 @@ void InputDataSet::setAvgXDot(double AvgXDot) {this->AvgXDot = AvgXDot; this->Av
 void InputDataSet::setW(Eigen::VectorXd W) {this->W = W; this->W_flag = true; return;}
 
 /*! Set LS_dot to true which means first derivative LS approximation occurs (optional) */
-void InputDataSet::setLS_Dot(bool LS_Dot) {this->LS_Dot = true; return;}
+void InputDataSet::setLS_Dot() {this->LS_Dot = true; return;}
+
+/*! Fill in the desired first derivative coordinates (optional), only if LS_Dot is true */
+void InputDataSet::setXDot_des(Eigen::VectorXd X1Dot_des,Eigen::VectorXd X2Dot_des,Eigen::VectorXd X3Dot_des) {this->X1Dot_des = X1Dot_des;this->X2Dot_des = X2Dot_des;this->X3Dot_des = X3Dot_des; return;}
+
 
 
 
@@ -264,7 +268,7 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
             T[n] = T[n] / T[q] * S / Input.AvgXDot;
         }
     }
-
+    
     double Ttot = T[q];
 
     // build uk vector: normalized waypoint time tags
@@ -447,7 +451,12 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             T[b] = T[b] / T[q] * S / Input.AvgXDot;
         }
     }
-
+    
+    // Need to access the timestaps for the waypoints for the final graph
+    if (Input.T_flag == false) {
+        Output->T_way_calc = T;
+    }
+    
     double Ttot = T[q];
     
     std::cout << "The value of S is "<<S<<std::endl;
@@ -693,6 +702,8 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         
         // LS approximation with first derivative constraint
     else {
+        
+        std::cout<<"Entered else condition successfully"<<std::endl;
     //Applying Correction Factor
     //Just the tq in order to correct
         for (int i = 0; i < q-2; i++) {
@@ -700,6 +711,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             Input.X2Dot[i] = Input.X2Dot_des[i]*Ttot;
             Input.X3Dot[i] = Input.X3Dot_des[i]*Ttot;
         }
+        std::cout<<"Passed this phase"<<std::endl;
 
     //Reset LS problem, calculating rhokD vectors but with NN1
         Eigen::VectorXd rhok1D(2*q-2),rhok2D(2*q-2),rhok3D(2*q-2);
@@ -748,7 +760,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             if (Input.XDDot_0_flag == true) {k += 1;}
             for (int e = 0; e < n-K-1; e++) {
                 ND(d,e) = NN[k+e];
-                std::cout<<"ND matrix terms"<<std::endl;
+                std::cout<<"ND print condition 2"<<std::endl;
                 std::cout<<ND(d,e)<<std::endl;
             }
         }
