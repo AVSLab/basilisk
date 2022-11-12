@@ -170,17 +170,28 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at end point".format(P))
     
     
-    
-    # Plotting Code:
-    #plt.plot(Input.T,X1,c = 'b')
-    #plt.plot(Output.T,Output.X1,c = 'r')
-    #plt.show()
-    #plt.plot(Input.T,X2,c = 'b')
-    #plt.plot(Output.T,Output.X2,c = 'r')
-    #plt.show()
-    #plt.plot(Input.T,X3,c = 'b')
-    #plt.plot(Output.T,Output.X3,c = 'r')
-
+    # Plotting Attitudes Code:
+    plt.scatter(Input.T,X1,c = 'b')
+    plt.plot(Output.T,Output.X1,c = 'r')
+    plt.title("X1 MRP Attitude vs Time")
+    plt.xlabel("Time [s]")
+    plt.ylabel("X1 MRP Attitude")
+    plt.legend(["Way Points","LS Approximation"])
+    plt.show()
+    plt.scatter(Input.T,X2,c = 'b')
+    plt.plot(Output.T,Output.X2,c = 'r')
+    plt.title("X2 MRP vs Time")
+    plt.xlabel("Time [s]")
+    plt.ylabel("X2 MRP Attitude")
+    plt.legend(["Way Points","LS Approximation"])
+    plt.show()
+    plt.scatter(Input.T,X3,c = 'b')
+    plt.plot(Output.T,Output.X3,c = 'r')
+    plt.title("X3 MRP vs Time")
+    plt.xlabel("Time [s]")
+    plt.ylabel("X3 MRP Attitude")
+    plt.legend(["Way Points","LS Approximation"])
+    plt.show()
    
     
     
