@@ -82,15 +82,15 @@ def test_unitThrusters(testFixture, show_plots, thrustNumber, initialConditions,
     is, see :ref:`thrusterStateEffector`. Given the ``thrustFactor`` :math:`\kappa`, the thrust is computed as follows:
 
     .. math::
-        \textbf{F} = \kappa \cdot F_{max} \cdot \hat{n}
+        \textbf{F} = \kappa \cdot F_{\mathrm{max}} \cdot \hat{n}
 
     where :math:`\hat{n}` is the thruster's direction vector. The torque is computed by:
 
     .. math::
-        \textbf{T} = \textbf{r}\times\textbf{F}
+        \textbf{T} = \textbf{r}\times\textbf{F} + \kappa \cdot T_{\mathrm{maxSwirl}} \cdot \hat{n}
 
-    where :math:`\textbf{r}` corresponds to the thruster's position relative to the spacecraft's center of mass. The
-    mass flow rate is given by:
+    where :math:`\textbf{r}` corresponds to the thruster's position relative to the spacecraft's center of mass and the
+    second term represents the swirl torque. The mass flow rate is given by:
 
     .. math::
         \dot{m} = \dfrac{F}{g\cdot I_{sp}}
@@ -107,7 +107,9 @@ def test_unitThrusters(testFixture, show_plots, thrustNumber, initialConditions,
         long_angle (float): longitude angle in degrees for thruster 1. Thruster 2 is also impacted by this value.
         lat_angle (float): latitude angle in degrees for thruster 1. Thruster 2 is also impacted by this value.
         location (float): location of thruster 1.
+        swirlTorque (float): maximum value of the swirl torque on the thruster.
         rate (int): simulation rate in nanoseconds.
+        attachBody (flag): whether the thruster is attached to the hub or to a different body.
 
     **Description of Variables Being Tested**
 
