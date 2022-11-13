@@ -38,9 +38,12 @@ provides information on what this message is used for.
     * - cmdsInMsg
       - :ref:`THRArrayOnTimeCmdMsgPayload`
       - (optional) input message with thruster commands. If not connected the thruster commands are set to zero.
+    * - attachedBodyInMsgs
+      - :ref:`SCStatesMsgPayload`
+      - (optional) input message vector of states of the bodies attached to the thruster.
     * - thrusterOutMsgs
       - :ref:`THROutputMsgPayload`
       - output message vector for thruster data
 
 .. note::
-  The dynamic behaviour of this module is governed by the variables inside :ref:`THRTimePair`, which determine the on and off-ramp characeteristics. The default behaviour is to not have on and off-ramps active. The ``cutoffFrequency`` variable inside :ref:`THRSimConfig` has no impact on this module and is instead supposed to be used to determine the dynamic behaviour within :ref:`thrusterStateEffector`.
+  The dynamic behaviour of this module is governed by the variables inside :ref:`THRTimePair`, which determine the on and off-ramp characteristics. The default behaviour is to not have on and off-ramps active. The ``cutoffFrequency`` variable inside :ref:`THRSimConfig` has no impact on this module and is instead supposed to be used to determine the dynamic behaviour within :ref:`thrusterStateEffector`.

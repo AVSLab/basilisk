@@ -3,8 +3,7 @@ Executive Summary
 -----------------
 
 This module provides an implementation of the behavior of thrusters. Thrusters are modeled dynamically using a first-order ordinary differential equation, which is compatible with variable time step integrators.
-With this module, there are now two different thruster implementations. See :ref:`thrusterDynamicEffector` for the previous version, which implemented thrusters using on and off-ramps, although not compatible with variable 
-time step integrators.
+With this module, there are now two different thruster implementations. See :ref:`thrusterDynamicEffector` for the previous version, which implemented thrusters using on and off-ramps, although not compatible with variable time step integrators.
 
 Message Connection Descriptions
 -------------------------------
@@ -22,6 +21,9 @@ provides information on what this message is used for.
     * - cmdsInMsg
       - :ref:`THRArrayOnTimeCmdMsgPayload`
       - (optional) input message with thruster commands. If not connected the thruster commands are set to zero.
+    * - attachedBodyInMsgs
+      - :ref:`SCStatesMsgPayload`
+      - (optional) input message vector of states of the bodies attached to the thruster.
     * - thrusterOutMsgs
       - :ref:`THROutputMsgPayload`
       - output message vector for thruster data
