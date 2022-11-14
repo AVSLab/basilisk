@@ -43,9 +43,9 @@ process and task list.  This is done with the commands::
     pyModulesProcess = scSim.CreateNewPythonProcess(pyProcessName, 9)
     pyModulesProcess.createPythonTask(pyTaskName, simulationTimeStep, True, -1)
 
-Note that the regular dynamics process has a priority of ``10``, thus the python module process with priority of ``9``
-will be evaluated after the dynamics process.  If additional C or C++ modules needed to be evaluated,
-then these would be added in a 3rd process with a lower priority to execute after the python modules.
+Note that the python processes are always evaluated after the regular C/C++ processes.  Thus, the priority number
+only controls the order of the python processes, not the python process execution relative to regular
+Basilisk processes.
 
 Creating an instance of the Python module is done with the code::
 
