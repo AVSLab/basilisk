@@ -13,7 +13,6 @@ Version |release|
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found
   when opNav is included.
   The code compiles, but auto-completion etc. doesn't work in that module.
-- Python processes are always run after standard C/C++ processes, regardless of priority. Priority is still respected among Python processes, but these will always run after conventional processes.
 
 Version 2.1.4
 -------------
