@@ -36,7 +36,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("P", [5, 6])
 @pytest.mark.parameterize("n",[8,10]) # Add parameter variation for n
-@pytest.mark.parametrize("XDot_flag", [False, True])
+@pytest.mark.parametrize("XDot_flag", [True, False])
 @pytest.mark.parametrize("XDDot_flag", [False, True])
 @pytest.mark.parametrize("accuracy", [1e-6])
 
@@ -112,54 +112,67 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     X1 = np.array([0, 1, 2, 3, 4, 5, 6])
     X2 = np.array([5, 4, 3, 2, 1, 0, 1])
     X3 = np.array([3, 2, 1, 2, 3, 4, 5])
+    
     # Set Derivatives
-    X1Dot = np.array([0, 0.2, 0.4, 0.3, 0.6, 0, 0])
+    X1Dot = np.array([0.2, 0.2, 0.4, 0.3, 0.6, 0, 0])
     X2Dot = np.array([0, 0, 0.2, 0.1, 0.8, 1, 0])
     X3Dot = np.array([0, 1, 0.5, 0.7, 0.2, 1, 0])
-
+    
+    # Input Attitudes,Derivatives and Time
     Input = BSpline.InputDataSet(X1, X2, X3)
     Input.setXDot(X1Dot,X2Dot,X3Dot)
     #Input.setT([0, 2, 3, 5, 7, 8, 10])
     
+    # Set EndPoints:
     if XDot_flag:
-        Input.setXDot_0([0, 0, 0])
+        Input.setXDot_0([0.2, 0, 0])
         Input.setXDot_N([0, 0, 0])
+        print("Check")
+
     if XDDot_flag:
         Input.setXDDot_0([0, 0, 0])
         Input.setXDDot_N([0.2, 0, 0])
     
+    Input.setAvgXDot(3)
+    Input.setLS_Dot()
+    X1Dot_des = np.array([1, 3, 0, 2, 1, 3, 1])/Input.AvgXDot
+    X2Dot_des = np.array([2, 0, 3, 1, 2, 0, 2])/Input.AvgXDot
+    X3Dot_des = np.array([2, 0, 0, 2, 2, 0, 2])/Input.AvgXDot
+    
+    
+    Input.setXDot_des(X1Dot_des,X2Dot_des,X3Dot_des)
     Output = BSpline.OutputDataSet()
     BSpline.approximate(Input,101,n,P,Output) # Change 1: Test approximate function first
-    
+        
     # Obtain End Indices of Input and Output Structure Time Stamp
     i = len(Output.T)-1
-    j = len(Output.T_way_calc)-1
+    j = len(Input.T)-1
     
     
     # Check the accuracy of Start and End Attitudes
-    #if abs(Output.T[0][0] - Input.T[0][0]) < accuracy:
+    if abs(Output.T[0][0] - Output.T_way_calc[0][0]) < accuracy:
     
-    # Start Attitude
-    if not abs(Output.X1[0][0] - X1[0]) < accuracy:
-        testFailCount += 1
-        testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Output.T_way_calc[0][0]))
-    if not abs(Output.X2[0][0] - X2[0]) < accuracy:
-        testFailCount += 1
-        testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Output.T_way_calc[0][0]))
-    if not abs(Output.X3[0][0] - X3[0]) < accuracy:
-        testFailCount += 1
-        testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Output.T_way_calc[0][0]))
-        
-    # End Attitude
-    if not abs(Output.X1[i][0] - X1[j]) < accuracy:
-        testFailCount += 1
-        testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Output.T_way_calc[j][0]))
-    if not abs(Output.X2[i][0] - X2[j]) < accuracy:
-        testFailCount += 1
-        testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Output.T_way_calc[j][0]))
-    if not abs(Output.X3[i][0] - X3[j]) < accuracy:
-        testFailCount += 1
-        testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Output.T_way_calc[j][0]))
+        # Start Attitude
+        if not abs(Output.X1[0][0] - X1[0]) < accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Input.T[0][0]))
+        if not abs(Output.X2[0][0] - X2[0]) < accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Input.T[0][0]))
+        if not abs(Output.X3[0][0] - X3[0]) < accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Input.T[0][0]))
+            
+        # End Attitude
+        if not abs(Output.X1[i][0] - X1[j]) < accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Input.T[j][0]))
+        if not abs(Output.X2[i][0] - X2[j]) < accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Input.T[j][0]))
+        if not abs(Output.X3[i][0] - X3[j]) < accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Input.T[j][0]))
 
     # Check the accuracy of Start and End First Derivatives
     if XDot_flag:
@@ -176,11 +189,10 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at end point".format(P))
     
+    print("The length of the attitude output vector is",len(Output.X1))
+    print("The length of the attitude output vector is",len(Output.T))
     
-    # The outputs are successful, need to figure out how to plot the answer.
-    print(len(Output.T_way_calc))
-    
-        # Plotting Attitudes Code:
+    # Plotting Attitudes Code:
     plt.scatter(Output.T_way_calc,X1,c = 'b')
     plt.plot(Output.T,Output.X1,c = 'r')
     plt.title("X1 MRP Attitude vs Time")
@@ -202,8 +214,8 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     plt.ylabel("X3 MRP Attitude")
     plt.legend(["Way Points","LS Approximation"])
     plt.show()
-    
-        # Plotting First Derivative Codes
+   
+    # Plotting First Derivative Codes
     plt.scatter(Output.T_way_calc,Input.X1Dot,c = 'b')
     plt.plot(Output.T,Output.XD1,c = 'r')
     plt.title("X1 Dot vs Time")
@@ -226,10 +238,7 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     plt.legend(["Way Points X3 Dot","Interpolated X3 Dot"])
     plt.show()
     
-   
-    
     return
-
 
 #
 # This statement below ensures that the unitTestScript can be run as a
@@ -242,4 +251,3 @@ if __name__ == "__main__":
         True,    # XDot_flag
         False,    # XDDot_flag
         1e-6)
-

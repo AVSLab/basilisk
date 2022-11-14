@@ -36,6 +36,7 @@ public:
     void setXDot_N(Eigen::Vector3d XDot_N);
     void setXDDot_0(Eigen::Vector3d XDDot_0);
     void setXDDot_N(Eigen::Vector3d XDDot_N);
+    void setXDot(Eigen::VectorXd X1Dot,Eigen::VectorXd X2Dot,Eigen::VectorXd X3Dot);
     void setXDot_des(Eigen::VectorXd X1Dot_des,Eigen::VectorXd X2Dot_des,Eigen::VectorXd X3Dot_des);
     void setT(Eigen::VectorXd T);
     void setW(Eigen::VectorXd W);

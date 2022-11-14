@@ -87,6 +87,8 @@ void InputDataSet::setLS_Dot() {this->LS_Dot = true; return;}
 /*! Fill in the desired first derivative coordinates (optional), only if LS_Dot is true */
 void InputDataSet::setXDot_des(Eigen::VectorXd X1Dot_des,Eigen::VectorXd X2Dot_des,Eigen::VectorXd X3Dot_des) {this->X1Dot_des = X1Dot_des;this->X2Dot_des = X2Dot_des;this->X3Dot_des = X3Dot_des; return;}
 
+void InputDataSet::setXDot(Eigen::VectorXd X1Dot,Eigen::VectorXd X2Dot,Eigen::VectorXd X3Dot)
+    {this->X1Dot = X1Dot;this->X2Dot = X2Dot; this->X3Dot = X3Dot; return;}
 
 
 
@@ -430,7 +432,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     
     // q = number of waypoints - 1
     int q = (int) Input.X1.size() - 1;
-    
+
     std::cout << "The value of q is "<<q<<std::endl;
         
     // T = time tags; if not specified, it is computed from a cartesian distance assuming a constant velocity norm on average
@@ -704,15 +706,21 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     else {
         
         std::cout<<"Entered else condition successfully"<<std::endl;
+        std::cout<<Input.X1Dot_des[0]<<std::endl;
+        std::cout<<Input.X2Dot_des[0]<<std::endl;
+        std::cout<<Input.X3Dot_des[0]<<std::endl;
     //Applying Correction Factor
     //Just the tq in order to correct
-        for (int i = 0; i < q-2; i++) {
+        for (int i = 0; i < q; i++) { // made a change to this index
+            std::cout<<"index of i is"<<i<<std::endl;
+            std::cout<<"value of i is"<<Input.X1Dot_des[i]<<std::endl;
             Input.X1Dot[i] = Input.X1Dot_des[i]*Ttot;
             Input.X2Dot[i] = Input.X2Dot_des[i]*Ttot;
             Input.X3Dot[i] = Input.X3Dot_des[i]*Ttot;
         }
         std::cout<<"Passed this phase"<<std::endl;
-
+        std::cout<<q<<std::endl;
+        
     //Reset LS problem, calculating rhokD vectors but with NN1
         Eigen::VectorXd rhok1D(2*q-2),rhok2D(2*q-2),rhok3D(2*q-2);
             

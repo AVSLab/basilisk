@@ -108,12 +108,18 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-
+    
+    # Set Attitudes
     X1 = np.array([0, 1, 2, 3, 4, 5, 6])
     X2 = np.array([5, 4, 3, 2, 1, 0, 1])
     X3 = np.array([3, 2, 1, 2, 3, 4, 5])
+    # Set Derivatives
+    X1Dot = np.array([0.2, 0.2, 0.4, 0.3, 0.6, 0, 0])
+    X2Dot = np.array([0, 0, 0.2, 0.1, 0.8, 1, 0])
+    X3Dot = np.array([0, 1, 0.5, 0.7, 0.2, 1, 0])
 
     Input = BSpline.InputDataSet(X1, X2, X3)
+    Input.setXDot(X1Dot,X2Dot,X3Dot)
     Input.setT([0, 2, 3, 5, 7, 8, 10])
     
     if XDot_flag:
@@ -198,8 +204,27 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     plt.show()
    
     # Plotting First Derivative Codes
-    
-    
+    plt.scatter(Input.T,Input.X1Dot,c = 'b')
+    plt.plot(Output.T,Output.XD1,c = 'r')
+    plt.title("X1 Dot vs Time")
+    plt.xlabel("Time [s]")
+    plt.ylabel("X1 Dot")
+    plt.legend(["Way Points X1 Dot ","Interpolated X1 Dot"])
+    plt.show()
+    plt.scatter(Input.T,Input.X2Dot,c = 'b')
+    plt.plot(Output.T,Output.XD2,c = 'r')
+    plt.title("X2 Dot vs Time")
+    plt.xlabel("Time [s]")
+    plt.ylabel("X2 Dot")
+    plt.legend(["Way Points X2 Dot","Interpolated X2 Dot"])
+    plt.show()
+    plt.scatter(Input.T,Input.X3Dot,c = 'b')
+    plt.plot(Output.T,Output.XD3,c = 'r')
+    plt.title("X3 Dot vs Time")
+    plt.xlabel("Time [s]")
+    plt.ylabel("X3 Dot")
+    plt.legend(["Way Points X3 Dot","Interpolated X3 Dot"])
+    plt.show()
     return
 
 
