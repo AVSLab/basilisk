@@ -201,12 +201,12 @@ void ThrusterDynamicEffector::UpdateThrusterProperties()
     Eigen::Matrix3d dcm_BF;
 
     // Loop through all thrusters
-    std::vector<THRSimConfig>::iterator it;
+    std::vector<ReadFunctor<SCStatesMsgPayload>>::iterator it;
     int index;
-    for (it = this->thrusterData.begin(), index = 0; it != this->thrusterData.end(); it++, index++)
+    for (it = this->attachedBodyInMsgs.begin(), index = 0; it != this->attachedBodyInMsgs.end(); it++, index++)
     {
-        // Save the attached body variables
-        if (index < this->attachedBodyInMsgs.size())
+        // Check if the message is linked, and if so do the conversion
+        if (it->isLinked() && it->isWritten())
         {
             // Save to buffer
             this->attachedBodyBuffer = this->attachedBodyInMsgs.at(index)();
@@ -219,23 +219,13 @@ void ThrusterDynamicEffector::UpdateThrusterProperties()
             // Compute the DCM between the attached body and the hub
             dcm_FN = (sigma_FN.toRotationMatrix()).transpose();
             dcm_BF = dcm_BN * dcm_FN.transpose();
-        }
-        else
-        {
-            // Reset attached body variables
-            omega_FN_F = omega_BN_B;
-            r_FN_N = r_BN_N;
 
-            // Compute the DCM between the attached body and the hub
-            dcm_BF.setIdentity();
+            // Populate the relative state structure
+            this->bodyToHubInfo.at(index).r_FB_B = dcm_BN * (r_FN_N - r_BN_N);
+            this->bodyToHubInfo.at(index).dcm_BF = dcm_BF;
+            this->bodyToHubInfo.at(index).omega_FB_B = dcm_BF * omega_FN_F - omega_BN_B;
         }
-
-        // Populate the relative state structure
-        this->bodyToHubInfo.at(index).r_FB_B = dcm_BN * (r_FN_N - r_BN_N);
-        this->bodyToHubInfo.at(index).dcm_BF = dcm_BF;
-        this->bodyToHubInfo.at(index).omega_FB_B = dcm_BF * omega_FN_F - omega_BN_B;
     }
-
 }
 
 /*! This method is used to link the states to the thrusters
@@ -348,24 +338,45 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
     prevFireTime = integTime;
 }
 
-void ThrusterDynamicEffector::addThruster(THRSimConfig *newThruster)
+void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster)
 {
     this->thrusterData.push_back(*newThruster);
 
-    /* create corresponding output message */
-    Message<THROutputMsgPayload> *msg;
+    // Create corresponding output message
+    Message<THROutputMsgPayload>* msg;
     msg = new Message<THROutputMsgPayload>;
     this->thrusterOutMsgs.push_back(msg);
 
-    // Add space for the conversion from body to hub
+    // Push back an empty message
+    ReadFunctor<SCStatesMsgPayload> emptyReadFunctor;
+    this->attachedBodyInMsgs.push_back(emptyReadFunctor);
+
+    // Add space for the conversion from body to hub and populate it with default values
     BodyToHubInfo attachedBodyToHub;
+    attachedBodyToHub.dcm_BF.setIdentity();
+    attachedBodyToHub.r_FB_B.setZero();
+    attachedBodyToHub.omega_FB_B.setZero();
     this->bodyToHubInfo.push_back(attachedBodyToHub);
 }
 
-void ThrusterDynamicEffector::connectAttachedBody(Message<SCStatesMsgPayload>* bodyStateMsg)
+void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg)
 {
+    this->thrusterData.push_back(*newThruster);
+
+    // Create corresponding output message
+    Message<THROutputMsgPayload>* msg;
+    msg = new Message<THROutputMsgPayload>;
+    this->thrusterOutMsgs.push_back(msg);
+
     // Save the incoming body message
     this->attachedBodyInMsgs.push_back(bodyStateMsg->addSubscriber());
+
+    // Add space for the conversion from body to hub and populate it with default values
+    BodyToHubInfo attachedBodyToHub;
+    attachedBodyToHub.dcm_BF.setIdentity();
+    attachedBodyToHub.r_FB_B.setZero();
+    attachedBodyToHub.omega_FB_B.setZero();
+    this->bodyToHubInfo.push_back(attachedBodyToHub);
 
     return;
 }
@@ -385,8 +396,7 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
         mDotSingle = 0.0;
         if(it->steadyIsp * ops->IspFactor > 0.0)
         {
-            mDotSingle = it->MaxThrust*ops->ThrustFactor/(EARTH_GRAV *
-                                                          it->steadyIsp * ops->IspFactor);
+            mDotSingle = it->MaxThrust * ops->ThrustFactor / (EARTH_GRAV * it->steadyIsp * ops->IspFactor);
         }
         this->mDotTotal += mDotSingle;
     }

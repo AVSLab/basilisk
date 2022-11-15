@@ -55,23 +55,20 @@ public:
     void computeStateContribution(double integTime);
     void Reset(uint64_t CurrentSimNanos);
     //! Add a new thruster to the thruster set
-    void addThruster(THRSimConfig *newThruster);
-    void connectAttachedBody(Message<SCStatesMsgPayload>* bodyStateMsg);    //!< -- Connect a thruster to a body other than the hub
+    void addThruster(THRSimConfig* newThruster);
+    void addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< -- (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double currentTime);
-    void ComputeThrusterFire(THRSimConfig *CurrentThruster,
-                             double currentTime);
-    void ComputeThrusterShut(THRSimConfig *CurrentThruster,
-                             double currentTime);
+    void ComputeThrusterFire(THRSimConfig *CurrentThruster, double currentTime);
+    void ComputeThrusterShut(THRSimConfig *CurrentThruster, double currentTime);
     void UpdateThrusterProperties();
     
 
 public:
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
-    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< (optional) vector of body states message where the thrusters attach to
 
     int stepsInRamp;                               //!< class variable
     std::vector<THRSimConfig> thrusterData; //!< -- Thruster information
@@ -89,8 +86,11 @@ public:
 private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
+
+    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< (optional) vector of body states message where the thrusters attach to
     SCStatesMsgPayload attachedBodyBuffer;
     std::vector<BodyToHubInfo> bodyToHubInfo;
+
     uint64_t prevCommandTime;                       //!< -- Time for previous valid thruster firing
 
 };

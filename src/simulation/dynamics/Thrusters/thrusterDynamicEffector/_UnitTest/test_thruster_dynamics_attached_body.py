@@ -117,7 +117,6 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     thruster.MinOnTime = 0.006
     thruster.cutoffFrequency = 5
     thruster.MaxSwirlTorque = 0.0
-    thrusterSet.addThruster(thruster)
 
     # Create the process and task that contains the Python modules
     pyTaskName = "pyTask"
@@ -135,7 +134,7 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
 
     # Attach messages
     pyModule.scInMsg.subscribeTo(scObject.scStateOutMsg)
-    thrusterSet.connectAttachedBody(pyModule.bodyOutMsg)
+    thrusterSet.addThruster(thruster, pyModule.bodyOutMsg)
 
     # Define the location and direction with respect to the platform
     loc = np.array([thruster.thrLoc_B[0][0], thruster.thrLoc_B[1][0], thruster.thrLoc_B[2][0]])
@@ -229,6 +228,7 @@ class attachedBodyModule(simulationArchTypes.PythonModelClass):
 
         # Input spacecraft state structure message
         self.scInMsg = messaging.SCStatesMsgReader()
+        self.scMsgBuffer = None
 
         # Output body state message
         self.bodyOutMsg = messaging.SCStatesMsg()
@@ -242,16 +242,22 @@ class attachedBodyModule(simulationArchTypes.PythonModelClass):
 
     def updateState(self, currentTime):
         # Read input message
-        scMsgBuffer = self.scInMsg()
+        self.scMsgBuffer = self.scInMsg()
 
+        # Write output message
+        self.writeOutputMsg(currentTime)
+
+        return
+
+    def writeOutputMsg(self, currentTime):
         # Create output message buffer
         bodyOutMsgBuffer = messaging.SCStatesMsgPayload()
 
         # Grab the spacecraft hub states
-        sigma_BN = scMsgBuffer.sigma_BN
+        sigma_BN = self.scMsgBuffer.sigma_BN
         dcm_BN = rbk.MRP2C(sigma_BN)
-        omega_BN_B = scMsgBuffer.omega_BN_B
-        r_BN_N = scMsgBuffer.r_BN_N
+        omega_BN_B = self.scMsgBuffer.omega_BN_B
+        r_BN_N = self.scMsgBuffer.r_BN_N
 
         # Compute the attached body states relative to the hub
         dcm_FB = np.transpose(self.dcm_BF)
@@ -265,8 +271,6 @@ class attachedBodyModule(simulationArchTypes.PythonModelClass):
         bodyOutMsgBuffer.omega_BN_B = omega_FB_F
         bodyOutMsgBuffer.r_BN_N = r_FN_N
         self.bodyOutMsg.write(bodyOutMsgBuffer, currentTime, self.moduleID)
-
-        return
 
 
 if __name__ == "__main__":
