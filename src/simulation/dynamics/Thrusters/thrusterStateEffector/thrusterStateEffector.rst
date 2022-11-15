@@ -21,9 +21,6 @@ provides information on what this message is used for.
     * - cmdsInMsg
       - :ref:`THRArrayOnTimeCmdMsgPayload`
       - (optional) input message with thruster commands. If not connected the thruster commands are set to zero.
-    * - attachedBodyInMsgs
-      - :ref:`SCStatesMsgPayload`
-      - (optional) input message vector of states of the bodies attached to the thruster.
     * - thrusterOutMsgs
       - :ref:`THROutputMsgPayload`
       - output message vector for thruster data

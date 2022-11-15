@@ -23,8 +23,13 @@ A common set up for thrusters, contains:
   \item[-]   \texttt{thruster1.MaxSwirlTorque = 0.5}: Set the maximum swirl torque
   \item[-]   \texttt{thruster1.steadyIsp = 226.7}: Set the $I_{sp}$
   \item[-]   \texttt{thruster1.MinOnTime = 0.006}: Set the minimum on time
-  \item[-]   \texttt{thrusterSet.connectAttachedBody(bodyStatesMsg)}
   \item[-]   \texttt{thrusterSet.addThruster(thruster1)}: Add thruster to the Dyn Effector
+\end{itemize}
+
+If attaching the thruster to a body, the last line is instead:
+
+\begin{itemize}
+     \item[-]   \texttt{thrusterSet.addThruster(thruster1, bodyStatesMsg)}: Add thruster to the Dyn Effector and attach it to a different body through the states message
 \end{itemize}
 
 If setting up a ramp, the user must also perform this:

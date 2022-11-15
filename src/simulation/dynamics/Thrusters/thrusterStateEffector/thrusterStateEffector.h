@@ -82,7 +82,6 @@ public:
 	StateData *hubSigma;        //!< class variable
     StateData *hubOmega;        //!< class variable
     StateData* hubPosition;        //!< class variable
-    StateData* hubVelocity;        //!< class variable
     StateData* kappaState;      //!< -- state manager of theta for hinged rigid body
     BSKLogger bskLogger;        //!< -- BSK Logging
 

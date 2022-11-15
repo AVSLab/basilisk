@@ -199,13 +199,12 @@ void ThrusterStateEffector::UpdateThrusterProperties()
 {
     // Save hub variables
     Eigen::Vector3d r_BN_N = this->hubPosition->getState();
-    Eigen::Vector3d rDot_BN_N = this->hubVelocity->getState();
     Eigen::Vector3d omega_BN_B = this->hubOmega->getState();
     Eigen::MRPd sigma_BN;
     sigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = (sigma_BN.toRotationMatrix()).transpose();
 
-    // Define the variables related to which body the thruster is attached to
+    // Define the variables related to which body the thruster is attached to. The F frame represents the platform body where the thruster attaches to
     Eigen::MRPd sigma_FN;
     Eigen::Matrix3d dcm_FN;
     Eigen::Vector3d omega_FN_F;
@@ -301,7 +300,6 @@ void ThrusterStateEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
 	this->hubOmega = states.getStateObject("hubOmega");
     this->hubPosition = states.getStateObject("hubPosition");
-    this->hubVelocity = states.getStateObject("hubVelocity");
 }
 
 /*! This method allows the thruster state effector to register its state kappa with the dyn param manager */

@@ -80,7 +80,6 @@ public:
 	StateData *hubSigma;                           //!< class variable
     StateData *hubOmega;                           //!< class varaible
     StateData* hubPosition;        //!< class variable
-    StateData* hubVelocity;        //!< class variable
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:

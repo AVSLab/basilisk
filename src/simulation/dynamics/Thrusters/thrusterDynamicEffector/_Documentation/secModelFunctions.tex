@@ -21,7 +21,7 @@ The Thruster module assumes that the thruster is thrusting exactly along it's th
 
 The mass flow rate is considered to be constant as long as the thrusters are activated. Even in a ramp scenario, we assume that the mass is lost, without contributing to the thrust. Mass flow is therefore the same as long as the valve is open.
 
-When attaching a thruster to a body different than the hub, its location and orientation need to be converted back to the hub's $\mathcal{B}$ frame. This happens at the dynamics rate within the $\texttt{UpdateState}$ function. Therefore, the body to where a thruster is attached to is kept in place for the duration of an integration step, being updated only after all the intermediate integrator calls have been made.
+When attaching a thruster to a body different than the hub, its location and orientation need to be converted back to the hub's $\mathcal{B}$ frame. This happens at the dynamics rate within the $\texttt{UpdateState}$ function. Therefore, the body to where a thruster is attached to is kept in place for the entire duration of the integration step, being updated only after all the intermediate integrator calls have been made. The user can choose to attach each thruster to the hub or not, but has to be careful about calling the correct version of the $\texttt{addThruster}$ function. The function with one argument attaches the thruster to the hub, whereas the version with two arguments attaches it to the body through a state message.
 
 The swirl torque present in ion thrusters is assumed to be aligned with the thruster's axis and is proportional to the current thrust factor.
 
