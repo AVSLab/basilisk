@@ -62,8 +62,8 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
 
 
-    void addThruster(THRSimConfig *newThruster); //!< -- Add a new thruster to the thruster set
-    void connectAttachedBody(Message<SCStatesMsgPayload>* bodyStateMsg);    //!< -- Connect a thruster to a body other than the hub
+    void addThruster(THRSimConfig* newThruster); //!< -- Add a new thruster to the thruster set
+    void addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< -- (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
     void ConfigureThrustRequests();
     void UpdateThrusterProperties();
 
@@ -73,7 +73,6 @@ public:
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
     std::vector<THRSimConfig> thrusterData; //!< -- Thruster information
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
-    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< (optional) vector of body states message where the thrusters attach to
 
     // State information
     std::vector<double> kappaInit;                //!< [] Vector of initial thruster states
@@ -92,12 +91,15 @@ public:
 
 private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
+
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
+
+    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< vector of body states message where the thrusters attach to
     SCStatesMsgPayload attachedBodyBuffer;
     std::vector<BodyToHubInfo> bodyToHubInfo;
+
     double prevCommandTime;                       //!< [s] -- Time for previous valid thruster firing
     static uint64_t effectorID;    //!< [] ID number of this panel
-
 };
 
 

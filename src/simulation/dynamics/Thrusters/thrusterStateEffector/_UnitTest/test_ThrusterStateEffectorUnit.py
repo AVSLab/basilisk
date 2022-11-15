@@ -67,7 +67,7 @@ def thrusterEffectorAllTests(show_plots):
     (2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 2 thrusters, thrust on
     (2, 1., 0.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 2 thrusters, thrust off
     (2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 2.0, macros.sec2nano(0.01), "OFF"),  # 2 thrusters, thrust on, swirl torque
-    (1, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "ON")  # attached body
+    (2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "ON")  # 2 thrusters, attached body
 ])
 # provide a unique test method name, starting with test_
 def test_unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate, attachBody):
@@ -138,6 +138,8 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     TotalSim = SimulationBaseClass.SimBaseClass()
     testRate = int(rate)  # Parametrized rate of test
 
+    # breakpoint()
+
     # Create the process and task
     unitTaskName1 = "unitTask1"  # arbitrary name (don't change)
     unitTaskName2 = "unitTask2"  # arbitrary name (don't change)
@@ -200,38 +202,41 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
         thruster2.steadyIsp = 226.7
         thruster2.MinOnTime = 0.006
         thruster2.cutoffFrequency = 2
-        thrusterSet.addThruster(thruster2)
 
         loc2 = np.array([thruster2.thrLoc_B[0][0], thruster2.thrLoc_B[1][0], thruster2.thrLoc_B[2][0]])
         dir2 = np.array([thruster2.thrDir_B[0][0], thruster2.thrDir_B[1][0], thruster2.thrDir_B[2][0]])
 
-    if attachBody == "ON":
-        # Create the process and task that contains the Python modules
-        pyTaskName = "pyTask"
-        pyProcessName = "pyProcess"
-        pyModulesProcess = TotalSim.CreateNewPythonProcess(pyProcessName, 5)
-        pyModulesProcess.createPythonTask(pyTaskName, testRate, True, 1)
+        if attachBody == "ON":
+            # Create the process and task that contains the Python modules
+            pyTaskName = "pyTask"
+            pyProcessName = "pyProcess"
+            pyModulesProcess = TotalSim.CreateNewPythonProcess(pyProcessName, 5)
+            pyModulesProcess.createPythonTask(pyTaskName, testRate, True, 1)
 
-        # Set up the dcm and location
-        dcm_BF = np.array([[-1, 0, 0], [0, 1, 0], [0, 0, -1]])
-        r_FB_B = [0, 0, 1]
+            # Set up the dcm and location
+            dcm_BF = np.array([[-1, 0, 0], [0, 1, 0], [0, 0, -1]])
+            r_FB_B = [0, 0, 1]
 
-        # Create the module
-        pyModule = attachedBodyModule("attachedBody", dcm_BF, r_FB_B, True, 100)
-        pyModulesProcess.addModelToTask(pyTaskName, pyModule)
+            # Create the module
+            pyModule = attachedBodyModule("attachedBody", dcm_BF, r_FB_B, True, 100)
+            pyModulesProcess.addModelToTask(pyTaskName, pyModule)
 
-        # Attach messages
-        pyModule.scInMsg.subscribeTo(scObject.scStateOutMsg)
-        thrusterSet.connectAttachedBody(pyModule.bodyOutMsg)
+            # Attach messages
+            pyModule.scInMsg.subscribeTo(scObject.scStateOutMsg)
 
-        # Update the direction and location of the thruster
-        dir1 = dcm_BF.dot(dir1)
-        loc1 = dcm_BF.dot(loc1) + r_FB_B
+            # Update the direction and location of the thruster
+            dir2 = dcm_BF.dot(dir2)
+            loc2 = dcm_BF.dot(loc2) + r_FB_B
+
+            # Attach thruster
+            thrusterSet.addThruster(thruster2, pyModule.bodyOutMsg)
+        else:
+            thrusterSet.addThruster(thruster2)
 
     # Set the initial conditions
     thrusterSet.kappaInit = messaging.DoubleVector([initialConditions])
 
-    # Add the thrusters to the spacecraft
+    # Attach thrusters and add the effector to the spacecraft
     scObject.addStateEffector(thrusterSet)
 
     # Save state
@@ -289,7 +294,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     # Generate the truth data (force, torque and mass rate)
     expectedThrustData = np.zeros([3, np.shape(thrForce)[0]])
     expectedTorqueData = np.zeros([3, np.shape(thrTorque)[0]])
-    expectedMDot = np.zeros([np.shape(mDot)[0], 1])
+    expectedMDot = np.zeros([1, np.shape(mDot)[0]])
     for i in range(np.shape(thrForce)[0]):
         if thrustNumber == 1:
             # Compute the thrust force
@@ -304,7 +309,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
             # Compute the torque
             expectedTorqueData[0:3, i] = np.cross(loc1, force1) + thrustFactor1 * swirlTorque * dir1
             # Compute the mass flow rate
-            expectedMDot[i, 0] = thruster1.MaxThrust / (g * Isp)
+            expectedMDot[0, i] = thruster1.MaxThrust / (g * Isp)
         else:
             # Compute the thrust force
             if duration == 0.:
@@ -322,30 +327,29 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
             # Compute the torque
             expectedTorqueData[0:3, i] = np.cross(loc1, force1) + thrustFactor1 * swirlTorque * dir1 + np.cross(loc2, force2)
             # Compute the mass flow rate
-            expectedMDot[i, 0] = (thruster1.MaxThrust + thruster2.MaxThrust) / (g * Isp)
+            expectedMDot[0, i] = (thruster1.MaxThrust + thruster2.MaxThrust) / (g * Isp)
 
     # Modify expected values for comparison and define errorTolerance
     TruthForce = np.transpose(expectedThrustData)
     TruthTorque = np.transpose(expectedTorqueData)
+    TruthMDot = np.transpose(expectedMDot)
     ErrTolerance = 1E-3
 
-    # Compare Force values
+    # Compare Force values (exclude first element because of python process priority)
     thrForce = np.delete(thrForce, 0, axis=1)  # remove time column
-    testFailCount, testMessages = unitTestSupport.compareArray(TruthForce, thrForce, ErrTolerance, "Force",
+    testFailCount, testMessages = unitTestSupport.compareArray(TruthForce[1:, :], thrForce[1:, :], ErrTolerance, "Force",
                                                                testFailCount, testMessages)
 
-    # Compare Torque values
+    # Compare Torque values (exclude first element because of python process priority)
     thrTorque = np.delete(thrTorque, 0, axis=1)  # remove time column
-    testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance, "Torque",
+    testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque[1:, :], thrTorque[1:, :], ErrTolerance, "Torque",
                                                                testFailCount, testMessages)
 
     # Compare mass flow rate values
     mDot = np.delete(mDot, 0, axis=1)
     ErrTolerance = 1E-6
-    for i in range(0, len(np.array(mDot))):
-        if not unitTestSupport.isArrayEqual(np.array(mDot)[i, :], expectedMDot[i, :], 1, ErrTolerance):
-            testFailCount += 1
-            testMessages.append('M dot failure')
+    testFailCount, testMessages = unitTestSupport.compareArray(np.transpose(TruthMDot), np.transpose(mDot), ErrTolerance, "MDot",
+                                                               testFailCount, testMessages)
 
     if testFailCount == 0:
         print("PASSED")
@@ -365,6 +369,7 @@ class attachedBodyModule(simulationArchTypes.PythonModelClass):
 
         # Input spacecraft state structure message
         self.scInMsg = messaging.SCStatesMsgReader()
+        self.scMsgBuffer = None
 
         # Output body state message
         self.bodyOutMsg = messaging.SCStatesMsg()
@@ -379,16 +384,22 @@ class attachedBodyModule(simulationArchTypes.PythonModelClass):
 
     def updateState(self, currentTime):
         # Read input message
-        scMsgBuffer = self.scInMsg()
+        self.scMsgBuffer = self.scInMsg()
 
+        # Write output message
+        self.writeOutputMsg(currentTime)
+
+        return
+
+    def writeOutputMsg(self, currentTime):
         # Create output message buffer
         bodyOutMsgBuffer = messaging.SCStatesMsgPayload()
 
         # Grab the spacecraft hub states
-        sigma_BN = scMsgBuffer.sigma_BN
+        sigma_BN = self.scMsgBuffer.sigma_BN
         dcm_BN = rbk.MRP2C(sigma_BN)
-        omega_BN_B = scMsgBuffer.omega_BN_B
-        r_BN_N = scMsgBuffer.r_BN_N
+        omega_BN_B = self.scMsgBuffer.omega_BN_B
+        r_BN_N = self.scMsgBuffer.r_BN_N
 
         # Compute the attached body states relative to the hub
         dcm_FB = np.transpose(self.dcm_BF)
@@ -403,8 +414,6 @@ class attachedBodyModule(simulationArchTypes.PythonModelClass):
         bodyOutMsgBuffer.r_BN_N = r_FN_N
         self.bodyOutMsg.write(bodyOutMsgBuffer, currentTime, self.moduleID)
 
-        return
-
 
 if __name__ == "__main__":
-    unitThrusters(ResultsStore(), False, 1, 1., 0.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "OFF")
+    unitThrusters(ResultsStore(), False, 2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "ON")
