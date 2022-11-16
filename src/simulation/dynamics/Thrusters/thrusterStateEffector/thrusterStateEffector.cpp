@@ -81,9 +81,6 @@ void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos)
 
     // Reset the mas flow value
     this->mDotTotal = 0.0;
-
-    // Call this method to set the thruster properties at the first time step
-    this->UpdateThrusterProperties();
     
     return;
 }
