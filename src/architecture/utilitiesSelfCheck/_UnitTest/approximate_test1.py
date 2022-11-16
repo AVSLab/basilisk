@@ -36,7 +36,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("P", [5, 6])
 @pytest.mark.parameterize("n",[8,10]) # Add parameter variation for n
-@pytest.mark.parametrize("XDot_flag", [True, False])
+@pytest.mark.parametrize("XDot_flag", [False, True])
 @pytest.mark.parametrize("XDDot_flag", [False, True])
 @pytest.mark.parametrize("accuracy", [1e-6])
 
@@ -44,7 +44,7 @@ def test_BSpline(show_plots,P,n,XDot_flag,XDDot_flag,accuracy):
     r"""
     **Validation Test Description**
 
-    This unit test script tests the capability of the BSpline function to correctly interpolate
+    This unit test script tests the capability of the BSpline function to correctly interpolate 
     a series of points in 3 dimensions.
     The coordinates of these 7 points are stored in 3 numpy arrays:
 
@@ -54,8 +54,8 @@ def test_BSpline(show_plots,P,n,XDot_flag,XDDot_flag,accuracy):
 
     X3 = np.array([3, 2, 1, 2, 3, 4, 5]).
 
-    The input arrays are initialized through ``Input = BSpline.InputDataSet(X1, X2, X3)``.
-    The time tags at which each waypoint is to be hit are provided through ``Input.setT([0, 2, 3, 5, 7, 8, 10])``.
+    The input arrays are initialized through ``Input = BSpline.InputDataSet(X1, X2, X3)``. 
+    The time tags at which each waypoint is to be hit are provided through ``Input.setT([0, 2, 3, 5, 7, 8, 10])``. 
     Alternatively, it is possible to specify the average velocity norm through ``Input.setAvgXDot()``.
     The endpoint derivatives are specified through the methods:
 
@@ -70,7 +70,7 @@ def test_BSpline(show_plots,P,n,XDot_flag,XDDot_flag,accuracy):
 
     - N is the desired number of equally spaced data points in the interpolated function;
     
-    - P is the polynomial order of the B-Spline function. The order should be at least 3 when first-order derivatives are specified,
+    - P is the polynomial order of the B-Spline function. The order should be at least 3 when first-order derivatives are specified, 
       and 5 when second-order derivatives are specified. The maximum oder is P = n + k - 1, with n being the number of waypoints and k
       being the number of endpoint derivatives that are being specified.
 
@@ -91,7 +91,7 @@ def test_BSpline(show_plots,P,n,XDot_flag,XDDot_flag,accuracy):
         
     **Description of Variables Being Tested**
 
-    This unit test checks the correctness of the interpolated function:
+    This unit test checks the correctness of the interpolated function: 
     - a check is performed on whether or not each waypoint is hit at the specified time;
     - when the derivatives are specified, it checks whether the starting point derivative actually matches the input derivative.
     """
@@ -108,41 +108,30 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
+    
     # Set Attitudes
     X1 = np.array([0, 1, 2, 3, 4, 5, 6])
     X2 = np.array([5, 4, 3, 2, 1, 0, 1])
     X3 = np.array([3, 2, 1, 2, 3, 4, 5])
-    
     # Set Derivatives
     X1Dot = np.array([0.2, 0.2, 0.4, 0.3, 0.6, 0, 0])
     X2Dot = np.array([0, 0, 0.2, 0.1, 0.8, 1, 0])
     X3Dot = np.array([0, 1, 0.5, 0.7, 0.2, 1, 0])
-    
-    # Input Attitudes,Derivatives and Time
+
     Input = BSpline.InputDataSet(X1, X2, X3)
     Input.setXDot(X1Dot,X2Dot,X3Dot)
     Input.setT([0, 2, 3, 5, 7, 8, 10])
     
-    # Set EndPoints:
     if XDot_flag:
         Input.setXDot_0([0.2, 0, 0])
         Input.setXDot_N([0, 0, 0])
-        print("Check")
-
     if XDDot_flag:
         Input.setXDDot_0([0, 0, 0])
         Input.setXDDot_N([0.2, 0, 0])
     
-    Input.setLS_Dot()
-    X1Dot_des = np.array([1, 3, 0, 2, 1, 3, 1])/Input.AvgXDot
-    X2Dot_des = np.array([2, 0, 3, 1, 2, 0, 2])/Input.AvgXDot
-    X3Dot_des = np.array([2, 0, 0, 2, 2, 0, 2])/Input.AvgXDot
-    
-    
-    Input.setXDot_des(X1Dot_des,X2Dot_des,X3Dot_des)
     Output = BSpline.OutputDataSet()
     BSpline.approximate(Input,101,n,P,Output) # Change 1: Test approximate function first
-        
+    
     # Obtain End Indices of Input and Output Structure Time Stamp
     i = len(Output.T)-1
     j = len(Input.T)-1
@@ -188,26 +177,26 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at end point".format(P))
     
-    print("The length of the attitude output vector is",len(Output.X1))
-    print("The length of the attitude output vector is",len(Output.T))
-
-       # Plotting Attitudes Code:
+    
+    
+    
+    # Plotting Attitudes Code:
     fig, axs = plt.subplots(3)
     axs[0].scatter(Input.T,X1,c = 'b')
-    axs[0].plot(Output.T,Output.X1,c = 'k')
+    axs[0].plot(Output.T,Output.X1,c = 'r')
     fig.suptitle("Attitudes vs Time")
     axs[0].set_xlabel("Time [s]")
     axs[0].set_ylabel("X1 Attitude")
     axs[0].legend(["Way Points","LS Approximation"])
     
     axs[1].scatter(Input.T,X2,c = 'b')
-    axs[1].plot(Output.T,Output.X2,c = 'k')
+    axs[1].plot(Output.T,Output.X2,c = 'r')
     axs[1].set_xlabel("Time [s]")
     axs[1].set_ylabel("X2 Attitude")
     axs[1].legend(["Way Points","LS Approximation"])
     
     axs[2].scatter(Input.T,X3,c = 'b')
-    axs[2].plot(Output.T,Output.X3,c = 'k')
+    axs[2].plot(Output.T,Output.X3,c = 'r')
     axs[2].set_xlabel("Time [s]")
     axs[2].set_ylabel("X3 Attitude")
     axs[2].legend(["Way Points","LS Approximation"])
@@ -217,27 +206,27 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     # Plotting First Derivative Codes
     fig, axs = plt.subplots(3)
     axs[0].scatter(Input.T,X1Dot,c = 'b')
-    axs[0].plot(Output.T,Output.XD1,c = 'k')
+    axs[0].plot(Output.T,Output.XD1,c = 'r')
     fig.suptitle("X Dots vs Time")
     axs[0].set_xlabel("Time [s]")
     axs[0].set_ylabel("X1 Dot")
     axs[0].legend(["Way Points","LS Approximation"])
     
     axs[1].scatter(Input.T,X2Dot,c = 'b')
-    axs[1].plot(Output.T,Output.XD2,c = 'k')
+    axs[1].plot(Output.T,Output.XD2,c = 'r')
     axs[1].set_xlabel("Time [s]")
     axs[1].set_ylabel("X2 Dot")
     axs[1].legend(["Way Points","LS Approximation"])
     
     axs[2].scatter(Input.T,X3Dot,c = 'b')
-    axs[2].plot(Output.T,Output.XD3,c = 'k')
+    axs[2].plot(Output.T,Output.XD3,c = 'r')
     axs[2].set_xlabel("Time [s]")
     axs[2].set_ylabel("X3 Dot")
     axs[2].legend(["Way Points","LS Approximation"])
     fig.tight_layout()
     plt.show()
-    
     return
+
 
 #
 # This statement below ensures that the unitTestScript can be run as a
@@ -249,5 +238,4 @@ if __name__ == "__main__":
         8,       # control points
         True,    # XDot_flag
         False,    # XDDot_flag
-        1e-6)
-
+        1e-6)     

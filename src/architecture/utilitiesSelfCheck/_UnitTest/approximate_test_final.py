@@ -120,10 +120,21 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
 
     Input = BSpline.InputDataSet(X1, X2, X3)
     Input.setXDot(X1Dot,X2Dot,X3Dot)
+    
+    print("Enter which case you would like to test.")
+    
+    print("Case 1: input time provided, No LSpline xDot approximation (red)")
+    
+    print("Case 2: No input time provided, No LSpline xDot approximation (yellow)")
+    
+    print("Case 3: input time provided, LSpline xDot approximation (black)")
+    
+    print("Case 4: No input time provided, LSpline xDot approximation (green)")
+    
     Input.setT([0, 2, 3, 5, 7, 8, 10])
     
     if XDot_flag:
-        Input.setXDot_0([0, 0, 0])
+        Input.setXDot_0([0.2, 0, 0])
         Input.setXDot_N([0, 0, 0])
     if XDDot_flag:
         Input.setXDDot_0([0, 0, 0])
@@ -181,49 +192,49 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     
     
     # Plotting Attitudes Code:
-    plt.scatter(Input.T,X1,c = 'b')
-    plt.plot(Output.T,Output.X1,c = 'r')
-    plt.title("X1 MRP Attitude vs Time")
-    plt.xlabel("Time [s]")
-    plt.ylabel("X1 MRP Attitude")
-    plt.legend(["Way Points","LS Approximation"])
-    plt.show()
-    plt.scatter(Input.T,X2,c = 'b')
-    plt.plot(Output.T,Output.X2,c = 'r')
-    plt.title("X2 MRP vs Time")
-    plt.xlabel("Time [s]")
-    plt.ylabel("X2 MRP Attitude")
-    plt.legend(["Way Points","LS Approximation"])
-    plt.show()
-    plt.scatter(Input.T,X3,c = 'b')
-    plt.plot(Output.T,Output.X3,c = 'r')
-    plt.title("X3 MRP vs Time")
-    plt.xlabel("Time [s]")
-    plt.ylabel("X3 MRP Attitude")
-    plt.legend(["Way Points","LS Approximation"])
+    fig, axs = plt.subplots(3)
+    axs[0].scatter(Input.T,X1,c = 'b')
+    axs[0].plot(Output.T,Output.X1,c = 'r')
+    fig.suptitle("Attitudes vs Time")
+    axs[0].set_xlabel("Time [s]")
+    axs[0].set_ylabel("X1 Attitude")
+    axs[0].legend(["Way Points","LS Approximation"])
+    
+    axs[1].scatter(Input.T,X2,c = 'b')
+    axs[1].plot(Output.T,Output.X2,c = 'r')
+    axs[1].set_xlabel("Time [s]")
+    axs[1].set_ylabel("X2 Attitude")
+    axs[1].legend(["Way Points","LS Approximation"])
+    
+    axs[2].scatter(Input.T,X3,c = 'b')
+    axs[2].plot(Output.T,Output.X3,c = 'r')
+    axs[2].set_xlabel("Time [s]")
+    axs[2].set_ylabel("X3 Attitude")
+    axs[2].legend(["Way Points","LS Approximation"])
+    fig.tight_layout()
     plt.show()
    
     # Plotting First Derivative Codes
-    plt.scatter(Input.T,Input.X1Dot,c = 'b')
-    plt.plot(Output.T,Output.XD1,c = 'r')
-    plt.title("X1 Dot vs Time")
-    plt.xlabel("Time [s]")
-    plt.ylabel("X1 Dot")
-    plt.legend(["Way Points X1 Dot ","Interpolated X1 Dot"])
-    plt.show()
-    plt.scatter(Input.T,Input.X2Dot,c = 'b')
-    plt.plot(Output.T,Output.XD2,c = 'r')
-    plt.title("X2 Dot vs Time")
-    plt.xlabel("Time [s]")
-    plt.ylabel("X2 Dot")
-    plt.legend(["Way Points X2 Dot","Interpolated X2 Dot"])
-    plt.show()
-    plt.scatter(Input.T,Input.X3Dot,c = 'b')
-    plt.plot(Output.T,Output.XD3,c = 'r')
-    plt.title("X3 Dot vs Time")
-    plt.xlabel("Time [s]")
-    plt.ylabel("X3 Dot")
-    plt.legend(["Way Points X3 Dot","Interpolated X3 Dot"])
+    fig, axs = plt.subplots(3)
+    axs[0].scatter(Input.T,X1Dot,c = 'b')
+    axs[0].plot(Output.T,Output.XD1,c = 'r')
+    fig.suptitle("X Dots vs Time")
+    axs[0].set_xlabel("Time [s]")
+    axs[0].set_ylabel("X1 Dot")
+    axs[0].legend(["Way Points","LS Approximation"])
+    
+    axs[1].scatter(Input.T,X2Dot,c = 'b')
+    axs[1].plot(Output.T,Output.XD2,c = 'r')
+    axs[1].set_xlabel("Time [s]")
+    axs[1].set_ylabel("X2 Dot")
+    axs[1].legend(["Way Points","LS Approximation"])
+    
+    axs[2].scatter(Input.T,X3Dot,c = 'b')
+    axs[2].plot(Output.T,Output.XD3,c = 'r')
+    axs[2].set_xlabel("Time [s]")
+    axs[2].set_ylabel("X3 Dot")
+    axs[2].legend(["Way Points","LS Approximation"])
+    fig.tight_layout()
     plt.show()
     return
 
