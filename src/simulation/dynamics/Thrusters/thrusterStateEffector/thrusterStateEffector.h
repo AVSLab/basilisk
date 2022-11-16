@@ -79,9 +79,9 @@ public:
     std::string nameOfKappaState;    //!< -- Identifier for the kappa state data container
 
     // State structures
-	StateData *hubSigma;        //!< class variable
-    StateData *hubOmega;        //!< class variable
-    StateData* hubPosition;        //!< class variable
+	StateData *hubSigma;        //!< pointer to hub attitude states
+    StateData *hubOmega;        //!< pointer to hub angular velocity states
+    StateData* hubPosition;        //!< pointer to hub position states
     StateData* kappaState;      //!< -- state manager of theta for hinged rigid body
     BSKLogger bskLogger;        //!< -- BSK Logging
 

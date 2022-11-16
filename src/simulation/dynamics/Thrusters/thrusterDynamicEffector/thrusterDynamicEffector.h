@@ -39,9 +39,9 @@
 
  /*! attached body to hub information structure*/
 struct BodyToHubInfo {
-    Eigen::Vector3d r_FB_B;
-    Eigen::Vector3d omega_FB_B;
-    Eigen::Matrix3d dcm_BF;
+    Eigen::Vector3d r_FB_B;         /*! position vector of the frame F relative to frame B */
+    Eigen::Vector3d omega_FB_B;     /*! angular velocity of F relative to B */
+    Eigen::Matrix3d dcm_BF;         /*! DCM of B relative to F */
 };
 
 
@@ -77,16 +77,16 @@ public:
     double prevFireTime;                           //!< s  Previous thruster firing time
 	double thrFactorToTime(THRSimConfig *thrData,
 		std::vector<THRTimePair> *thrRamp);
-	StateData *hubSigma;                           //!< class variable
-    StateData *hubOmega;                           //!< class varaible
-    StateData* hubPosition;        //!< class variable
+	StateData *hubSigma;                           //!< pointer to the hub attitude states
+    StateData *hubOmega;                           //!< pointer to the hub angular velocity states
+    StateData *hubPosition;                        //!< pointer to the hub position states
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
 
-    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< (optional) vector of body states message where the thrusters attach to
+    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< vector of body states message where the thrusters attach to
     SCStatesMsgPayload attachedBodyBuffer;
     std::vector<BodyToHubInfo> bodyToHubInfo;
 
