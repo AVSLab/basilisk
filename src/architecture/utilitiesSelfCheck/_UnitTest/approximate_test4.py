@@ -133,7 +133,7 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
         Input.setXDDot_0([0, 0, 0])
         Input.setXDDot_N([0.2, 0, 0])
     
-    Input.setAvgXDot(3)
+    #Input.setAvgXDot(3)
     Input.setLS_Dot()
     X1Dot_des = np.array([1, 3, 0, 2, 1, 3, 1])/Input.AvgXDot
     X2Dot_des = np.array([2, 0, 3, 1, 2, 0, 2])/Input.AvgXDot

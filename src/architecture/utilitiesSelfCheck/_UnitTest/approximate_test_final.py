@@ -241,10 +241,301 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             plt.show()
         case "B":
             print("Case B")
+            BSpline.approximate(Input,101,n,P,Output)
+            # Obtain End Indices of Input and Output Structure Time Stamp
+            i = len(Output.T)-1
+            j = len(Output.T_way_calc)-1
+        # Check the accuracy of Start and End Attitudes
+            if abs(Output.T_way_calc[0][0] - Output.T[0][0]) < accuracy:
+            
+                # Start Attitude
+                if not abs(Output.X1[0][0] - X1[0]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Output.T_way_calc[0][0]))
+                if not abs(Output.X2[0][0] - X2[0]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Output.T_way_calc[0][0]))
+                if not abs(Output.X3[0][0] - X3[0]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Output.T_way_calc[0][0]))
+                
+                # End Attitude
+                if not abs(Output.X1[i][0] - X1[j]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Output.T_way_calc[j][0]))
+                if not abs(Output.X2[i][0] - X2[j]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Output.T_way_calc[j][0]))
+                if not abs(Output.X3[i][0] - X3[j]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Output.T_way_calc[j][0]))
+
+            # Check the accuracy of Start and End First Derivatives
+            if XDot_flag:
+                if not ((abs(Output.XD1[0][0]-Input.XDot_0[0][0]) < accuracy) and
+                        (abs(Output.XD2[0][0]-Input.XDot_0[1][0]) < accuracy) and
+                        (abs(Output.XD3[0][0]-Input.XDot_0[2][0]) < accuracy)):
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at starting point".format(P))
+                    
+            # Check the accuracy of End First Derivatives
+                if not ((abs(Output.XD1[i][0]-Input.XDot_N[0][0]) < accuracy) and
+                        (abs(Output.XD2[i][0]-Input.XDot_N[1][0]) < accuracy) and
+                        (abs(Output.XD3[i][0]-Input.XDot_N[2][0]) < accuracy)):
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at end point".format(P))
+            
+            
+            # The outputs are successful, need to figure out how to plot the answer.
+            #print(len(Output.T_way_calc))
+            
+            # Plotting Attitudes Code:
+            fig, axs = plt.subplots(3)
+            axs[0].scatter(Output.T_way_calc,X1,c = 'b')
+            axs[0].plot(Output.T,Output.X1,c = 'y')
+            fig.suptitle("Attitudes vs Time")
+            axs[0].set_xlabel("Time [s]")
+            axs[0].set_ylabel("X1 Attitude")
+            axs[0].legend(["Way Points","LS Approximation"])
+            
+            axs[1].scatter(Output.T_way_calc,X2,c = 'b')
+            axs[1].plot(Output.T,Output.X2,c = 'y')
+            axs[1].set_xlabel("Time [s]")
+            axs[1].set_ylabel("X2 Attitude")
+            axs[1].legend(["Way Points","LS Approximation"])
+            
+            axs[2].scatter(Output.T_way_calc,X3,c = 'b')
+            axs[2].plot(Output.T,Output.X3,c = 'y')
+            axs[2].set_xlabel("Time [s]")
+            axs[2].set_ylabel("X3 Attitude")
+            axs[2].legend(["Way Points","LS Approximation"])
+            fig.tight_layout()
+            plt.show()
+           
+            # Plotting First Derivative Codes
+            fig, axs = plt.subplots(3)
+            axs[0].scatter(Output.T_way_calc,X1Dot,c = 'b')
+            axs[0].plot(Output.T,Output.XD1,c = 'y')
+            fig.suptitle("X Dots vs Time")
+            axs[0].set_xlabel("Time [s]")
+            axs[0].set_ylabel("X1 Dot")
+            axs[0].legend(["Way Points","LS Approximation"])
+            
+            axs[1].scatter(Output.T_way_calc,X2Dot,c = 'b')
+            axs[1].plot(Output.T,Output.XD2,c = 'y')
+            axs[1].set_xlabel("Time [s]")
+            axs[1].set_ylabel("X2 Dot")
+            axs[1].legend(["Way Points","LS Approximation"])
+            
+            axs[2].scatter(Output.T_way_calc,X3Dot,c = 'b')
+            axs[2].plot(Output.T,Output.XD3,c = 'y')
+            axs[2].set_xlabel("Time [s]")
+            axs[2].set_ylabel("X3 Dot")
+            axs[2].legend(["Way Points","LS Approximation"])
+            fig.tight_layout()
+            plt.show()
         case "C":
             print("Case C")
+            Input.setLS_Dot()
+            X1Dot_des = np.array([1, 3, 0, 2, 1, 3, 1])/Input.AvgXDot
+            X2Dot_des = np.array([2, 0, 3, 1, 2, 0, 2])/Input.AvgXDot
+            X3Dot_des = np.array([2, 0, 0, 2, 2, 0, 2])/Input.AvgXDot
+            Input.setXDot_des(X1Dot_des,X2Dot_des,X3Dot_des)
+            Input.setT([0, 2, 3, 5, 7, 8, 10])
+            BSpline.approximate(Input,101,n,P,Output)
+            
+            # Obtain End Indices of Input and Output Structure Time Stamp
+            i = len(Output.T)-1
+            j = len(Input.T)-1
+            # Check the accuracy of Start and End Attitudes
+            if abs(Output.T[0][0] - Input.T[0][0]) < accuracy:
+            
+                # Start Attitude
+                if not abs(Output.X1[0][0] - X1[0]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Input.T[0][0]))
+                if not abs(Output.X2[0][0] - X2[0]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Input.T[0][0]))
+                if not abs(Output.X3[0][0] - X3[0]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Input.T[0][0]))
+                    
+                # End Attitude
+                if not abs(Output.X1[i][0] - X1[j]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Input.T[j][0]))
+                if not abs(Output.X2[i][0] - X2[j]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Input.T[j][0]))
+                if not abs(Output.X3[i][0] - X3[j]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Input.T[j][0]))
+
+            # Check the accuracy of Start and End First Derivatives
+            if XDot_flag:
+                if not ((abs(Output.XD1[0][0]-Input.XDot_0[0][0]) < accuracy) and
+                        (abs(Output.XD2[0][0]-Input.XDot_0[1][0]) < accuracy) and
+                        (abs(Output.XD3[0][0]-Input.XDot_0[2][0]) < accuracy)):
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at starting point".format(P))
+                    
+            # Check the accuracy of End First Derivatives
+                if not ((abs(Output.XD1[i][0]-Input.XDot_N[0][0]) < accuracy) and
+                        (abs(Output.XD2[i][0]-Input.XDot_N[1][0]) < accuracy) and
+                        (abs(Output.XD3[i][0]-Input.XDot_N[2][0]) < accuracy)):
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at end point".format(P))
+
+            
+            # Plotting Attitudes Code:
+            fig, axs = plt.subplots(3)
+            axs[0].scatter(Input.T,X1,c = 'b')
+            axs[0].plot(Output.T,Output.X1,c = 'r')
+            fig.suptitle("Attitudes vs Time")
+            axs[0].set_xlabel("Time [s]")
+            axs[0].set_ylabel("X1 Attitude")
+            axs[0].legend(["Way Points","LS Approximation"])
+            
+            axs[1].scatter(Input.T,X2,c = 'b')
+            axs[1].plot(Output.T,Output.X2,c = 'r')
+            axs[1].set_xlabel("Time [s]")
+            axs[1].set_ylabel("X2 Attitude")
+            axs[1].legend(["Way Points","LS Approximation"])
+            
+            axs[2].scatter(Input.T,X3,c = 'b')
+            axs[2].plot(Output.T,Output.X3,c = 'r')
+            axs[2].set_xlabel("Time [s]")
+            axs[2].set_ylabel("X3 Attitude")
+            axs[2].legend(["Way Points","LS Approximation"])
+            fig.tight_layout()
+            plt.show()
+           
+            # Plotting First Derivative Codes
+            fig, axs = plt.subplots(3)
+            axs[0].scatter(Input.T,X1Dot,c = 'b')
+            axs[0].plot(Output.T,Output.XD1,c = 'r')
+            fig.suptitle("X Dots vs Time")
+            axs[0].set_xlabel("Time [s]")
+            axs[0].set_ylabel("X1 Dot")
+            axs[0].legend(["Way Points","LS Approximation"])
+            
+            axs[1].scatter(Input.T,X2Dot,c = 'b')
+            axs[1].plot(Output.T,Output.XD2,c = 'r')
+            axs[1].set_xlabel("Time [s]")
+            axs[1].set_ylabel("X2 Dot")
+            axs[1].legend(["Way Points","LS Approximation"])
+            
+            axs[2].scatter(Input.T,X3Dot,c = 'b')
+            axs[2].plot(Output.T,Output.XD3,c = 'r')
+            axs[2].set_xlabel("Time [s]")
+            axs[2].set_ylabel("X3 Dot")
+            axs[2].legend(["Way Points","LS Approximation"])
+            fig.tight_layout()
+            plt.show()
         case "D":
             print("Case D")
+            Input.setLS_Dot()
+            X1Dot_des = np.array([1, 3, 0, 2, 1, 3, 1])/Input.AvgXDot
+            X2Dot_des = np.array([2, 0, 3, 1, 2, 0, 2])/Input.AvgXDot
+            X3Dot_des = np.array([2, 0, 0, 2, 2, 0, 2])/Input.AvgXDot
+            Input.setXDot_des(X1Dot_des,X2Dot_des,X3Dot_des)
+            
+            BSpline.approximate(Input,101,n,P,Output) # Change 1: Test approximate function first
+        
+            # Obtain End Indices of Input and Output Structure Time Stamp
+            i = len(Output.T)-1
+            j = len(Input.T)-1
+            
+            
+            # Check the accuracy of Start and End Attitudes
+            if abs(Output.T[0][0] - Output.T_way_calc[0][0]) < accuracy:
+            
+                # Start Attitude
+                if not abs(Output.X1[0][0] - X1[0]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Input.T[0][0]))
+                if not abs(Output.X2[0][0] - X2[0]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Input.T[0][0]))
+                if not abs(Output.X3[0][0] - X3[0]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Input.T[0][0]))
+                    
+                # End Attitude
+                if not abs(Output.X1[i][0] - X1[j]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Input.T[j][0]))
+                if not abs(Output.X2[i][0] - X2[j]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Input.T[j][0]))
+                if not abs(Output.X3[i][0] - X3[j]) < accuracy:
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Input.T[j][0]))
+
+            # Check the accuracy of Start and End First Derivatives
+            if XDot_flag:
+                if not ((abs(Output.XD1[0][0]-Input.XDot_0[0][0]) < accuracy) and
+                        (abs(Output.XD2[0][0]-Input.XDot_0[1][0]) < accuracy) and
+                        (abs(Output.XD3[0][0]-Input.XDot_0[2][0]) < accuracy)):
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at starting point".format(P))
+                    
+            # Check the accuracy of End First Derivatives
+                if not ((abs(Output.XD1[i][0]-Input.XDot_N[0][0]) < accuracy) and
+                        (abs(Output.XD2[i][0]-Input.XDot_N[1][0]) < accuracy) and
+                        (abs(Output.XD3[i][0]-Input.XDot_N[2][0]) < accuracy)):
+                    testFailCount += 1
+                    testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at end point".format(P))
+            
+            #print("The length of the attitude output vector is",len(Output.X1))
+            #print("The length of the attitude output vector is",len(Output.T))
+            
+            # Plotting Attitudes Code:
+            fig, axs = plt.subplots(3)
+            axs[0].scatter(Output.T_way_calc,X1,c = 'b')
+            axs[0].plot(Output.T,Output.X1,c = 'g')
+            fig.suptitle("Attitudes vs Time")
+            axs[0].set_xlabel("Time [s]")
+            axs[0].set_ylabel("X1 Attitude")
+            axs[0].legend(["Way Points","LS Approximation"])
+            
+            axs[1].scatter(Output.T_way_calc,X2,c = 'b')
+            axs[1].plot(Output.T,Output.X2,c = 'g')
+            axs[1].set_xlabel("Time [s]")
+            axs[1].set_ylabel("X2 Attitude")
+            axs[1].legend(["Way Points","LS Approximation"])
+            
+            axs[2].scatter(Output.T_way_calc,X3,c = 'b')
+            axs[2].plot(Output.T,Output.X3,c = 'g')
+            axs[2].set_xlabel("Time [s]")
+            axs[2].set_ylabel("X3 Attitude")
+            axs[2].legend(["Way Points","LS Approximation"])
+            fig.tight_layout()
+            plt.show()
+           
+            # Plotting First Derivative Codes
+            fig, axs = plt.subplots(3)
+            axs[0].scatter(Output.T_way_calc,X1Dot,c = 'b')
+            axs[0].plot(Output.T,Output.XD1,c = 'g')
+            fig.suptitle("X Dots vs Time")
+            axs[0].set_xlabel("Time [s]")
+            axs[0].set_ylabel("X1 Dot")
+            axs[0].legend(["Way Points","LS Approximation"])
+            
+            axs[1].scatter(Output.T_way_calc,X2Dot,c = 'b')
+            axs[1].plot(Output.T,Output.XD2,c = 'g')
+            axs[1].set_xlabel("Time [s]")
+            axs[1].set_ylabel("X2 Dot")
+            axs[1].legend(["Way Points","LS Approximation"])
+            
+            axs[2].scatter(Output.T_way_calc,X3Dot,c = 'b')
+            axs[2].plot(Output.T,Output.XD3,c = 'g')
+            axs[2].set_xlabel("Time [s]")
+            axs[2].set_ylabel("X3 Dot")
+            axs[2].legend(["Way Points","LS Approximation"])
+            fig.tight_layout()
+            plt.show()
     return
 
 

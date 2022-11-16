@@ -700,8 +700,8 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     //Applying Correction Factor
     //Just the tq in order to correct
         for (int i = 0; i < q; i++) { // made a change to this index
-            std::cout<<"index of i is"<<i<<std::endl;
-            std::cout<<"value of i is"<<Input.X1Dot_des[i]<<std::endl;
+            //std::cout<<"index of i is"<<i<<std::endl;
+            //std::cout<<"value of i is"<<Input.X1Dot_des[i]<<std::endl;
             Input.X1Dot[i] = Input.X1Dot_des[i]*Ttot;
             Input.X2Dot[i] = Input.X2Dot_des[i]*Ttot;
             Input.X3Dot[i] = Input.X3Dot_des[i]*Ttot;
@@ -775,7 +775,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             if (Input.XDot_0_flag == true) {k += 1;}
             if (Input.XDDot_0_flag == true) {k += 1;}
             for (int e = 0; e < n-K-1; e++) {
-                std::cout<<"ND_2 matrix terms"<<std::endl;
+                //std::cout<<"ND_2 matrix terms"<<std::endl;
                 ND_2(d,e) = NN1[k+e];
                 //std::cout<<ND_2(d,e)<<std::endl;
             }
