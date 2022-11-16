@@ -25,15 +25,18 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
 #include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
+#include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include <vector>
+
 
 
 
@@ -54,8 +57,10 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
 
 
-    void addThruster(THRSimConfig *newThruster); //!< -- Add a new thruster to the thruster set
+    void addThruster(THRSimConfig* newThruster); //!< -- Add a new thruster to the thruster set
+    void addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< -- (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
     void ConfigureThrustRequests();
+    void UpdateThrusterProperties();
 
 public:
     // Input and output messages
@@ -69,8 +74,9 @@ public:
     std::string nameOfKappaState;    //!< -- Identifier for the kappa state data container
 
     // State structures
-	StateData *hubSigma;        //!< class variable
-    StateData *hubOmega;        //!< class varaible
+	StateData *hubSigma;        //!< pointer to hub attitude states
+    StateData *hubOmega;        //!< pointer to hub angular velocity states
+    StateData* hubPosition;        //!< pointer to hub position states
     StateData* kappaState;      //!< -- state manager of theta for hinged rigid body
     BSKLogger bskLogger;        //!< -- BSK Logging
 
@@ -79,10 +85,15 @@ public:
 
 private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
+
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
+
+    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< vector of body states message where the thrusters attach to
+    SCStatesMsgPayload attachedBodyBuffer;
+    std::vector<BodyToHubInfo> bodyToHubInfo;
+
     double prevCommandTime;                       //!< [s] -- Time for previous valid thruster firing
     static uint64_t effectorID;    //!< [] ID number of this panel
-
 };
 
 

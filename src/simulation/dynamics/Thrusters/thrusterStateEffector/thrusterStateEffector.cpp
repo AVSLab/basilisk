@@ -79,8 +79,9 @@ void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos)
     this->NewThrustCmds.clear();
     this->NewThrustCmds.insert(this->NewThrustCmds.begin(), this->thrusterData.size(), 0.0);
 
+    // Reset the mas flow value
     this->mDotTotal = 0.0;
-
+    
     return;
 }
 
@@ -156,7 +157,6 @@ void ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
  active.  Note that for unit testing purposes you can insert firings directly
  into NewThrustCmds.
  @return void
- @param currentTime The current simulation time converted to a double
  */
 void ThrusterStateEffector::ConfigureThrustRequests()
 {
@@ -184,13 +184,65 @@ void ThrusterStateEffector::ConfigureThrustRequests()
         *CmdIt = 0.0;
     }
 
+    return;
+}
+
+/*! This method is used to update the location and orientation of the thrusters 
+* at every UpdateState call when the thrusters are attached to a body other than 
+* the hub.
+ @return void
+ */
+void ThrusterStateEffector::UpdateThrusterProperties()
+{
+    // Save hub variables
+    Eigen::Vector3d r_BN_N = this->hubPosition->getState();
+    Eigen::Vector3d omega_BN_B = this->hubOmega->getState();
+    Eigen::MRPd sigma_BN;
+    sigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
+    Eigen::Matrix3d dcm_BN = (sigma_BN.toRotationMatrix()).transpose();
+
+    // Define the variables related to which body the thruster is attached to. The F frame represents the platform body where the thruster attaches to
+    Eigen::MRPd sigma_FN;
+    Eigen::Matrix3d dcm_FN;
+    Eigen::Vector3d omega_FN_F;
+    Eigen::Vector3d r_FN_N;
+
+    // Define the relative variables between the attached body and the hub
+    Eigen::Matrix3d dcm_BF;
+
+    // Loop through all thrusters
+    std::vector<ReadFunctor<SCStatesMsgPayload>>::iterator it;
+    int index;
+    for (it = this->attachedBodyInMsgs.begin(), index = 0; it != this->attachedBodyInMsgs.end(); it++, index++)
+    {
+        // Check if the message is linked, and if so do the conversion
+        if (it->isLinked() && it->isWritten())
+        {
+            // Save to buffer
+            this->attachedBodyBuffer = this->attachedBodyInMsgs.at(index)();
+
+            // Grab attached body variables
+            sigma_FN = cArray2EigenVector3d(attachedBodyBuffer.sigma_BN);
+            omega_FN_F = cArray2EigenVector3d(attachedBodyBuffer.omega_BN_B);
+            r_FN_N = cArray2EigenVector3d(attachedBodyBuffer.r_BN_N);
+
+            // Compute the DCM between the attached body and the hub
+            dcm_FN = (sigma_FN.toRotationMatrix()).transpose();
+            dcm_BF = dcm_BN * dcm_FN.transpose();
+
+            // Populate the relative state structure
+            this->bodyToHubInfo.at(index).r_FB_B = dcm_BN * (r_FN_N - r_BN_N);
+            this->bodyToHubInfo.at(index).dcm_BF = dcm_BF;
+            this->bodyToHubInfo.at(index).omega_FB_B = dcm_BF * omega_FN_F - omega_BN_B;
+        }
+    }
 }
 
 void ThrusterStateEffector::addThruster(THRSimConfig* newThruster)
 {
     this->thrusterData.push_back(*newThruster);
 
-    /* create corresponding output message */
+    // Create corresponding output message
     Message<THROutputMsgPayload>* msg;
     msg = new Message<THROutputMsgPayload>;
     this->thrusterOutMsgs.push_back(msg);
@@ -198,6 +250,43 @@ void ThrusterStateEffector::addThruster(THRSimConfig* newThruster)
     // Set the initial condition
     double state = 0.0;
     this->kappaInit.push_back(state);
+
+    // Push back an empty message
+    ReadFunctor<SCStatesMsgPayload> emptyReadFunctor;
+    this->attachedBodyInMsgs.push_back(emptyReadFunctor);
+
+    // Add space for the conversion from body to hub and populate it with default values
+    BodyToHubInfo attachedBodyToHub;
+    attachedBodyToHub.dcm_BF.setIdentity();
+    attachedBodyToHub.r_FB_B.setZero();
+    attachedBodyToHub.omega_FB_B.setZero();
+    this->bodyToHubInfo.push_back(attachedBodyToHub);
+}
+
+void ThrusterStateEffector::addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg)
+{
+    this->thrusterData.push_back(*newThruster);
+
+    // Create corresponding output message
+    Message<THROutputMsgPayload>* msg;
+    msg = new Message<THROutputMsgPayload>;
+    this->thrusterOutMsgs.push_back(msg);
+
+    // Set the initial condition
+    double state = 0.0;
+    this->kappaInit.push_back(state);
+
+    // Save the incoming body message
+    this->attachedBodyInMsgs.push_back(bodyStateMsg->addSubscriber());
+
+    // Add space for the conversion from body to hub and populate it with default values
+    BodyToHubInfo attachedBodyToHub;
+    attachedBodyToHub.dcm_BF.setIdentity();
+    attachedBodyToHub.r_FB_B.setZero();
+    attachedBodyToHub.omega_FB_B.setZero();
+    this->bodyToHubInfo.push_back(attachedBodyToHub);
+
+    return;
 }
 
 /*! This method is used to link the states to the thrusters
@@ -207,6 +296,7 @@ void ThrusterStateEffector::addThruster(THRSimConfig* newThruster)
 void ThrusterStateEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
 	this->hubOmega = states.getStateObject("hubOmega");
+    this->hubPosition = states.getStateObject("hubPosition");
 }
 
 /*! This method allows the thruster state effector to register its state kappa with the dyn param manager */
@@ -266,43 +356,57 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
 
 void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
 {
-    std::vector<THRSimConfig>::iterator it;
-    THROperation* ops;
+    // Save omega_BN_B
+    Eigen::Vector3d omegaLocal_BN_B = omega_BN_B;
+
+    // Force and torque variables
     Eigen::Vector3d SingleThrusterForce;
     Eigen::Vector3d SingleThrusterTorque;
-    Eigen::Vector3d CoMRelPos;
-    Eigen::Vector3d omegaLocal_BN_B;
+    double tmpThrustMag = 0;
+
+    // Auxiliary variables to convert direction and location from F to B
+    Eigen::Vector3d thrustDirection_B;
+    Eigen::Vector3d thrustLocation_B;
+    
+    // Expelled momentum variables
     Eigen::Matrix3d BMj;
     Eigen::Matrix3d	axesWeightMatrix;
     Eigen::Vector3d BM1, BM2, BM3;
-    double tmpThrustMag = 0;
     double mDotNozzle;
 
     //! - Zero out the structure force/torque for the thruster set
     // MassProps are missing, so setting CoM to zero momentarily
-    CoMRelPos.setZero();
     this->forceOnBody_B.setZero();
     this->torqueOnBodyPntB_B.setZero();
     this->torqueOnBodyPntC_B.setZero();
 
-    omegaLocal_BN_B = hubOmega->getState();
     axesWeightMatrix << 2, 0, 0, 0, 1, 0, 0, 0, 1;
 
+    // Loop variables
+    std::vector<THRSimConfig>::iterator it;
+    THROperation* ops;
+
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
-    for (it = this->thrusterData.begin(); it != this->thrusterData.end(); it++)
+    int index;
+    for (it = this->thrusterData.begin(), index = 0; it != this->thrusterData.end(); it++, index++)
     {
+        // Save the thruster ops information
         ops = &it->ThrustOps;
+
+        // Compute the thruster properties wrt the hub (note that B refers to the F frame when extracting from the thruster info)
+        thrustDirection_B = this->bodyToHubInfo.at(index).dcm_BF * it->thrDir_B;
+        thrustLocation_B = this->bodyToHubInfo.at(index).r_FB_B + this->bodyToHubInfo.at(index).dcm_BF * it->thrLoc_B;
 
         //! - For each thruster, aggregate the current thrust direction into composite body force
         tmpThrustMag = it->MaxThrust * ops->ThrustFactor;
         // Apply dispersion to magnitude
         tmpThrustMag *= (1. + it->thrusterMagDisp);
-        SingleThrusterForce = it->thrDir_B * tmpThrustMag;
-        this->forceOnBody_B = SingleThrusterForce + forceOnBody_B;
+        SingleThrusterForce = tmpThrustMag * thrustDirection_B;
+        this->forceOnBody_B += SingleThrusterForce;
 
         //! - Compute the point B relative torque and aggregate into the composite body torque
-        SingleThrusterTorque = it->thrLoc_B.cross(SingleThrusterForce);
-        this->torqueOnBodyPntB_B = SingleThrusterTorque + torqueOnBodyPntB_B;
+        SingleThrusterTorque = thrustLocation_B.cross(SingleThrusterForce) + ops->ThrustFactor * it->MaxSwirlTorque * thrustDirection_B;
+        this->torqueOnBodyPntB_B += SingleThrusterTorque;
 
         if (!it->updateOnly) {
             //! - Add the mass depletion force contribution
@@ -311,17 +415,17 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
             {
                 mDotNozzle = it->MaxThrust / (EARTH_GRAV * it->steadyIsp);
             }
-            this->forceOnBody_B += 2 * mDotNozzle * omegaLocal_BN_B.cross(it->thrLoc_B);
+            this->forceOnBody_B += 2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B).cross(thrustLocation_B);
 
             //! - Add the mass depletion torque contribution
-            BM1 = it->thrDir_B;
+            BM1 = thrustDirection_B;
             BM2 << -BM1(1), BM1(0), BM1(2);
             BM3 = BM1.cross(BM2);
             BMj.col(0) = BM1;
             BMj.col(1) = BM2;
             BMj.col(2) = BM3;
-            this->torqueOnBodyPntB_B += mDotNozzle * (eigenTilde(it->thrDir_B) * eigenTilde(it->thrDir_B).transpose()
-                + it->areaNozzle / (4 * M_PI) * BMj * axesWeightMatrix * BMj.transpose()) * omegaLocal_BN_B;
+            this->torqueOnBodyPntB_B += mDotNozzle * (eigenTilde(thrustDirection_B) * eigenTilde(thrustDirection_B).transpose()
+                + it->areaNozzle / (4 * M_PI) * BMj * axesWeightMatrix * BMj.transpose()) * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B);
 
         }
         // - Save force and torque values for messages
@@ -380,5 +484,6 @@ void ThrusterStateEffector::UpdateState(uint64_t CurrentSimNanos)
     {
         this->ConfigureThrustRequests();
     }
+    this->UpdateThrusterProperties();
     this->writeOutputStateMessages(CurrentSimNanos);
 }

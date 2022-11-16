@@ -26,16 +26,17 @@
 #include "simulation/dynamics/_GeneralModuleFiles/THRTimePair.h"
 #include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
 #include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
+#include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include <vector>
-
 
 
 
@@ -49,15 +50,15 @@ public:
     void computeStateContribution(double integTime);
     void Reset(uint64_t CurrentSimNanos);
     //! Add a new thruster to the thruster set
-    void addThruster(THRSimConfig *newThruster);
+    void addThruster(THRSimConfig* newThruster);
+    void addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< -- (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double currentTime);
-    void ComputeThrusterFire(THRSimConfig *CurrentThruster,
-                             double currentTime);
-    void ComputeThrusterShut(THRSimConfig *CurrentThruster,
-                             double currentTime);
+    void ComputeThrusterFire(THRSimConfig *CurrentThruster, double currentTime);
+    void ComputeThrusterShut(THRSimConfig *CurrentThruster, double currentTime);
+    void UpdateThrusterProperties();
     
 
 public:
@@ -71,13 +72,19 @@ public:
     double prevFireTime;                           //!< s  Previous thruster firing time
 	double thrFactorToTime(THRSimConfig *thrData,
 		std::vector<THRTimePair> *thrRamp);
-	StateData *hubSigma;                           //!< class variable
-    StateData *hubOmega;                           //!< class varaible
+	StateData *hubSigma;                           //!< pointer to the hub attitude states
+    StateData *hubOmega;                           //!< pointer to the hub angular velocity states
+    StateData *hubPosition;                        //!< pointer to the hub position states
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
+
+    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< vector of body states message where the thrusters attach to
+    SCStatesMsgPayload attachedBodyBuffer;
+    std::vector<BodyToHubInfo> bodyToHubInfo;
+
     uint64_t prevCommandTime;                       //!< -- Time for previous valid thruster firing
 
 };

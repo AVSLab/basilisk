@@ -24,6 +24,8 @@ The scaling factor yielding the thrust.
 \item The minimum On time: $t_{\mathrm{min}} = 0.006$s
 
 The minimum time that the thruster can be fired.
+
+\item The maximum swirl torque: $T_{\mathrm{maxSwirl}} = 0.5$ Nm
 \end{itemize}
 
 \subsection{Test sections}
@@ -58,9 +60,10 @@ up into several parts, and the mass flow rate is tested at each of these subtest
 \item{\underline{Ramp down firing:} A thruster is fired during the middle of its ramp down 
    to ensure that it picks up at that point in its ramp-up curve and reaches 
    steady state correctly.}
+\item{\underline{Swirl torque:} A thruster is fired with swirl torque active to make sure that the additional torque about the thrust axis is accounted for.}
 \end{enumerate}
 
-These scenarios create a set of different runs. These are run in the same test using pytest parameters. Therefore 12 different parameter sets were created to cover all of the listed parts.
+These scenarios create a set of different runs. These are run in the same test using pytest parameters. Therefore 13 different parameter sets were created to cover all of the listed parts.
 
 \subsection{Test success criteria}
 
@@ -90,7 +93,7 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\item{\underline{With one thruster}}: The forces are simply the projections of the thrust force on the axes of interest. The torque along $x$ is the arm along $z$ times the projection of the force along $y$, the torque along $z$ is the arm along $x$ times the projection of the force along $y$, the torque along $z$ is the arm along $x$ times the projection of the force along $y$. 
 	
 	\begin{align}
-		\leftexp{B}{\bm F} =\leftexp{B}{\begin{pmatrix} F_x, & F_y & F_z \end{pmatrix}}^T&\hspace{1cm} \leftexp{B}{\bm T} =\leftexp{B}{\bm r} \times \leftexp{B}{\bm F}  \\
+		\leftexp{B}{\bm F} =\leftexp{B}{\begin{pmatrix} F_x, & F_y & F_z \end{pmatrix}}^T&\hspace{1cm} \leftexp{B}{\bm T} =\leftexp{B}{\bm r} \times \leftexp{B}{\bm F} +  \leftexp{B}{\bm T}_{\mathrm{swirl}}\\
 	\end{align}
 	
 	
