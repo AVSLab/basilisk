@@ -26,6 +26,7 @@
 #include "simulation/dynamics/_GeneralModuleFiles/THRTimePair.h"
 #include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
 #include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
+#include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
@@ -37,12 +38,6 @@
 #include <Eigen/Dense>
 #include <vector>
 
- /*! attached body to hub information structure*/
-struct BodyToHubInfo {
-    Eigen::Vector3d r_FB_B;         /*! position vector of the frame F relative to frame B */
-    Eigen::Vector3d omega_FB_B;     /*! angular velocity of F relative to B */
-    Eigen::Matrix3d dcm_BF;         /*! DCM of B relative to F */
-};
 
 
 /*! @brief thruster dynamic effector class */
