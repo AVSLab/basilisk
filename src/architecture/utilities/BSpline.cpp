@@ -433,7 +433,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     // q = number of waypoints - 1
     int q = (int) Input.X1.size() - 1;
 
-    std::cout << "The value of q is "<<q<<std::endl;
+    //std::cout << "The value of q is "<<q<<std::endl;
         
     // T = time tags; if not specified, it is computed from a cartesian distance assuming a constant velocity norm on average
     Eigen::VectorXd T(q+1);
@@ -461,8 +461,8 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     
     double Ttot = T[q];
     
-    std::cout << "The value of S is "<<S<<std::endl;
-    std::cout << "The value of T is "<<T[2]<<std::endl;
+    //std::cout << "The value of S is "<<S<<std::endl;
+    //std::cout << "The value of T is "<<T[2]<<std::endl;
 
 
     // build uk vector: normalized waypoint time tags
@@ -471,7 +471,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         uk[c] = T[c] / Ttot;
     }
     
-    std::cout << "The value of uk is "<<uk[2]<<std::endl;
+    //std::cout << "The value of uk is "<<uk[2]<<std::endl;
 
     
     // The maximum polynomial order is N + K. If a higher order is requested, print a BSK_ERROR
@@ -496,7 +496,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         U[n+p+1] = 1;
     }
     
-    std::cout << "The value of U is "<<U[2]<<std::endl;
+    //std::cout << "The value of U is "<<U[2]<<std::endl;
 
     // K = number of endpoint derivatives
     int K = 0;
@@ -567,20 +567,20 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     T2[i] = Input.X2[q];
     T3[i] = Input.X3[q];
     
-    for (int y = 0; y < K+2; y++) {
-        for (int z = 0; z < K+2; z++) {
-            std::cout<<MD(y,z)<<std::endl;
-        }
-    }
+//    for (int y = 0; y < K+2; y++) {
+//        for (int z = 0; z < K+2; z++) {
+//            std::cout<<MD(y,z)<<std::endl;
+//        }
+//    }
 
     // solve linear systems
     Eigen::MatrixXd B = MD.inverse();
     
-    for ( int y = 0; y < K+2; y++) {
-        for ( int z = 0; z < K+2; z++) {
-            std::cout<<B(y,z)<<std::endl;
-        }
-    }
+//    for ( int y = 0; y < K+2; y++) {
+//        for ( int z = 0; z < K+2; z++) {
+//            std::cout<<B(y,z)<<std::endl;
+//        }
+//    }
     
     
     Eigen::VectorXd C1_1 = B * T1;
@@ -616,19 +616,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         }
     }
     
-    for (int c = 1; c < q; c++) {
-        std::cout<<rhok1[c]<<std::endl;
-    }
-    
-    for (int c = 1; c < q; c++) {
-        std::cout<<rhok2[c]<<std::endl;
-    }
-    
-    for (int c = 1; c < q; c++) {
-        std::cout<<rhok3[c]<<std::endl;
-    }
-    
-    std::cout<<"Printing rhok is done"<<std::endl;
+    //std::cout<<"Printing rhok is done"<<std::endl;
     
         
     
@@ -652,8 +640,8 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             if (Input.XDDot_0_flag == true) {k += 1;}
             for (int e = 0; e < n-K-1; e++) {
                 ND(d,e) = NN[k+e];
-                std::cout<<"ND print condition 1"<<std::endl;
-                std::cout<<ND(d,e)<<std::endl;
+//                std::cout<<"ND print condition 1"<<std::endl;
+//                std::cout<<ND(d,e)<<std::endl;
             }
         }
 
@@ -681,21 +669,21 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         rho2 = B * rhok2;
         rho3 = B * rhok3;
             
-        for (int c = 1; c < n-K-1; c++) {
-            std::cout<<"rho1 outputs"<<std::endl;
-            std::cout<<rho1[c]<<std::endl;
-            }
-            
-            
-        for (int c = 1; c < n-K-1; c++) {
-            std::cout<<"rho2 outputs"<<std::endl;
-            std::cout<<rho2[c]<<std::endl;
-            }
-            
-        for (int c = 1; c < n-K-1; c++) {
-            std::cout<<"rho3 outputs"<<std::endl;
-            std::cout<<rho3[c]<<std::endl;
-            }
+//        for (int c = 1; c < n-K-1; c++) {
+//            std::cout<<"rho1 outputs"<<std::endl;
+//            std::cout<<rho1[c]<<std::endl;
+//            }
+//
+//
+//        for (int c = 1; c < n-K-1; c++) {
+//            std::cout<<"rho2 outputs"<<std::endl;
+//            std::cout<<rho2[c]<<std::endl;
+//            }
+//
+//        for (int c = 1; c < n-K-1; c++) {
+//            std::cout<<"rho3 outputs"<<std::endl;
+//            std::cout<<rho3[c]<<std::endl;
+//            }
             
         NWN = B * ND;
         NWN_inv = NWN.inverse();
@@ -705,10 +693,10 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         // LS approximation with first derivative constraint
     else {
         
-        std::cout<<"Entered else condition successfully"<<std::endl;
-        std::cout<<Input.X1Dot_des[0]<<std::endl;
-        std::cout<<Input.X2Dot_des[0]<<std::endl;
-        std::cout<<Input.X3Dot_des[0]<<std::endl;
+//        std::cout<<"Entered else condition successfully"<<std::endl;
+//        std::cout<<Input.X1Dot_des[0]<<std::endl;
+//        std::cout<<Input.X2Dot_des[0]<<std::endl;
+//        std::cout<<Input.X3Dot_des[0]<<std::endl;
     //Applying Correction Factor
     //Just the tq in order to correct
         for (int i = 0; i < q; i++) { // made a change to this index
@@ -718,8 +706,8 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             Input.X2Dot[i] = Input.X2Dot_des[i]*Ttot;
             Input.X3Dot[i] = Input.X3Dot_des[i]*Ttot;
         }
-        std::cout<<"Passed this phase"<<std::endl;
-        std::cout<<q<<std::endl;
+//        std::cout<<"Passed this phase"<<std::endl;
+//        std::cout<<q<<std::endl;
         
     //Reset LS problem, calculating rhokD vectors but with NN1
         Eigen::VectorXd rhok1D(2*q-2),rhok2D(2*q-2),rhok3D(2*q-2);
@@ -768,8 +756,8 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             if (Input.XDDot_0_flag == true) {k += 1;}
             for (int e = 0; e < n-K-1; e++) {
                 ND(d,e) = NN[k+e];
-                std::cout<<"ND print condition 2"<<std::endl;
-                std::cout<<ND(d,e)<<std::endl;
+                //std::cout<<"ND print condition 2"<<std::endl;
+                //std::cout<<ND(d,e)<<std::endl;
             }
         }
         
@@ -789,7 +777,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             for (int e = 0; e < n-K-1; e++) {
                 std::cout<<"ND_2 matrix terms"<<std::endl;
                 ND_2(d,e) = NN1[k+e];
-                std::cout<<ND_2(d,e)<<std::endl;
+                //std::cout<<ND_2(d,e)<<std::endl;
             }
         }
         
