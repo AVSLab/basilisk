@@ -36,7 +36,7 @@ Version |release|
   latest build system.
 - Fixed the custom RW in :ref:`simIncludeRW` to store the information regarding u_min in the RW class.
 - provide support for the swig 4.1 software
-- Added the ability to connect a thruster to a moving body different than the hub.
+- Added the ability in both :ref:`thrusterDynamicEffector` and :ref:`thrusterStateEffector` to connect a thruster to a moving body different than the hub.
 - The thrusters now have an additional variable called ``MaxSwirlTorque``. Useful for ion thrusters, it adds a torque about the thrust axis proportional to the current thrust factor.
 
 

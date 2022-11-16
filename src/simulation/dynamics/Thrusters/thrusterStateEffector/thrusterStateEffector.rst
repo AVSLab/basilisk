@@ -31,9 +31,9 @@ Detailed Module Description
 
 The functionalities of this thruster implementation are identical to the ones seen in :ref:`thrusterDynamicEffector`. For a general description of the thruster implementation in Basilisk, namely how the forces and torques are computed, see that module's documentation.
 
-The main difference between the two thruster implementations comes from how the ``thrustFactor`` is computed and updated at each timestep. The ``thrustFactor`` is a parameter specific to each thruster and ranges from 0 to 1. It defines what the current magnitude of the thrust is: at 0 the thruster is off, and at 1 the thruster is at ``maxThrust``. While the previous thruster module computed the ``thrustFactor`` using on and off-ramps at the beginning and end of the thrusting maneuver, respectively, with a constant steady-state value of 1 in-between, this module updates that value through a first-order ordinary differencial equation.
+The main difference between the two thruster implementations comes from how the ``thrustFactor`` is computed and updated at each timestep. The ``thrustFactor`` is a parameter specific to each thruster and ranges from 0 to 1. It defines what the current magnitude of the thrust is: at 0 the thruster is off, and at 1 the thruster is at ``maxThrust``. While the previous thruster module computed the ``thrustFactor`` using on and off-ramps at the beginning and end of the thrusting maneuver, respectively, with a constant steady-state value of 1 in-between, this module updates that value through a first-order ordinary differential equation.
 
-The state variable used in this state effector is :math:`\kappa`, which is a vector of ``thrustFactors`` for each thruster. As with the old thruster module, the ``addThruster`` method augments the vector of thruster inside the module. However, for this module the state vector :math:`\kappa` is also augmented in this method. 
+The state variable used in this state effector is :math:`\kappa`, which is a vector of ``thrustFactors`` for each thruster. As with :ref:`thrusterDynamicEffector`, the ``addThruster()`` method augments the vector of thruster inside the module. However, for this module the state vector :math:`\kappa` is also augmented in this method.
 
 Let :math:`\kappa_i` correspond to the ``thrustFactor`` of the i-th thruster. It has two governing differential equations, depending on whether a thrust command is present or not. The differential equation when thrusting is given by
 
@@ -53,6 +53,15 @@ While the value of :math:`\kappa_i` for each thruster is computed numerically by
   \kappa_i(t) = 1 + (\kappa_{0,i}-1)e^{-\omega t}, \qquad \kappa_i(t) = \kappa_{0,i}e^{-\omega t}
 
 where :math:`\kappa_{0,i}` corresponds to the initial conditions of the ``thrusterFactor`` variable for the i-th particular thruster.
+
+If the thruster is added to an auxiliary body :math:`F` connect to the main body :math:`B`, then this is accomplished
+using::
+
+    thrusterSet.addThruster(thruster1, bodyStatesMsg)
+
+where ``thruster1`` is the thruster being added, and ``bodyStatesMsg`` is the state output message of
+the platform :math:`F`.  In the ``Update()`` routine the position of the platform :math:`F` relative
+to math:`B` is recomputed each time step.  If the thruster is added
 
 
 Model Assumptions and Limitations
