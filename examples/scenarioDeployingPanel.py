@@ -161,23 +161,25 @@ def run(show_plots):
 
     # configure panels
     panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    panel1.ModelTag = "panel1"
     panel1.mass = 100.0
     panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     panel1.d = 1.5  
     panel1.k = 200.
     panel1.c = 20.  
-    panel1.r_HB_B = [[.05], [0.0], [1.0]]
+    panel1.r_HB_B = [[-.5], [0.0], [-1.0]]
     panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     panel1.thetaInit = -np.pi
     panel1.thetaDotInit = 0
 
     panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    panel2.ModelTag = "panel2"
     panel2.mass = 100.0
     panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     panel2.d = 1.5  
     panel2.k = 200.
     panel2.c = 20.  
-    panel2.r_HB_B = [[.05], [0.0], [1.0]]
+    panel2.r_HB_B = [[.5], [0.0], [-1.0]]
     panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     panel2.thetaInit = -np.pi
     panel2.thetaDotInit = 0
@@ -188,14 +190,14 @@ def run(show_plots):
     profiler1.startTime = macros.sec2nano(5) # [ns] start the deployment
     profiler1.endTime = macros.sec2nano(85) # [ns]
     profiler1.startTheta = -np.pi # [rad] starting angle in radians
-    profiler1.endTheta = 0 # [rad]
+    profiler1.endTheta = -np.pi/2 # [rad]
 
     profiler2 = hingedBodyLinearProfiler.HingedBodyLinearProfiler()
     profiler2.ModelTag = "deploymentProfiler2"
     profiler2.startTime = macros.sec2nano(100) # [ns] start the deployment
     profiler2.endTime = macros.sec2nano(164) # [ns]
     profiler2.startTheta = -np.pi # [rad] starting angle in radians
-    profiler2.endTheta = -np.pi/5 # [rad] ending angle is not all the way deployed
+    profiler2.endTheta = -np.pi/1.75 # [rad] ending angle is not all the way deployed
 
     panel1.hingedRigidBodyRefMsg.subscribeTo(profiler1.hingedRigidBodyReferenceOutMsg)
     panel2.hingedRigidBodyRefMsg.subscribeTo(profiler2.hingedRigidBodyReferenceOutMsg)
@@ -278,10 +280,23 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, pwr1Log)
     scSim.AddModelToTask(simTaskName, pwr2Log)
 
+    scBodyList = {}
+    scBodyList[panel1.ModelTag] = panel1.hingedRigidBodyConfigLogOutMsg
+    scBodyList[panel2.ModelTag] = panel2.hingedRigidBodyConfigLogOutMsg
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                              # saveFile=__file__
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , bodyList=[scBodyList]
+                                              # , saveFile=__file__
                                               )
+    vizSupport.createCustomModel(viz
+                                 , simBodiesToModify=[panel1.ModelTag]
+                                 , modelPath="CUBE"
+                                 , scale=[3, 1, 0.1])
+    vizSupport.createCustomModel(viz
+                                 , simBodiesToModify=[panel2.ModelTag]
+                                 , modelPath="CUBE"
+                                 , scale=[3, 1, 0.1])
+    viz.settings.orbitLinesOn = -1
 
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)
