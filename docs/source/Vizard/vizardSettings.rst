@@ -1586,3 +1586,45 @@ then lists of lists are required::
                                               , saveFile=fileName
                                               , genericSensorList=[ None, [gncEllipsoid] ]
                                               )
+
+Displaying Time Varying Components of a Spacecraft
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The spacecraft may have rigid body components attached whose positin and orientation varies with time.  One
+example would be :ref:`hingedRigidBodyStateEffector` where a rigid body is hinged about a body fixed axis.
+These effectors output a spacecraft state message containing its inertial position and orientation
+information.  This allow Vizard to show this rigid body as a separate spacecraft object.
+
+.. note::
+
+    Currently the support for time varying spacecraft components is limited.  Their body-relative
+    position and orientation can be shown, but each component is treated as an independent spacecraft
+    object.  Thus, for example, if the orbit lines are shown, each body component has its own orbit
+    line drawn.
+
+To show these time-varying body components, the argument ``bodyList`` is provided to ``enableUnityVisualization``::
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
+                                              , saveFile=fileName
+                                              , bodyList=[ None, panelList ]
+                                              )
+
+The ``bodyList`` is a list of dictionary lists where the dictionary key is the component name, and the
+dictionary item is the  message containing the component inertial states.  The length of ``bodyList``
+must match the length of the list of spacecraft objects.  Information must be provided for each
+spacecraft. If a spacecraft has no time varying components then provide the argument ``None``.
+
+For example, assume a simulation has 2 spacecraft where the second spacecraft contains two time varying
+panels.  This could be visualized using::
+
+    scBodyList = {}
+    scBodyList[panel1.ModelTag] = panel1.hingedRigidBodyConfigLogOutMsg
+    scBodyList[panel2.ModelTag] = panel2.hingedRigidBodyConfigLogOutMsg
+
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject1, scObject2]
+                                              , bodyList=[None, scBodyList]
+                                              , saveFile=__file__
+                                              )
+
+By default each component will be given the default ``bsk-Sat`` shape.  It is recommended that a
+custom model is assigned to each component.  See the scenario :ref:`scenarioDeployingPanel` for
+an example on how to illustrate deploying panels in Vizard.
