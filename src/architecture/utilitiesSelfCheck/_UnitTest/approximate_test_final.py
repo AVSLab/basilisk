@@ -35,7 +35,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("P", [5, 6])
-@pytest.mark.parameterize("n",[8,10]) # Add parameter variation for n
+@pytest.mark.parameterize("n",[3]) # Add parameter variation for n
 @pytest.mark.parametrize("XDot_flag", [False, True])
 @pytest.mark.parametrize("XDDot_flag", [False, True])
 @pytest.mark.parametrize("accuracy", [1e-6])
@@ -242,6 +242,7 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
         case "B":
             print("Case B")
             BSpline.approximate(Input,101,n,P,Output)
+            Input.setAvgXDot(0.3)
             # Obtain End Indices of Input and Output Structure Time Stamp
             i = len(Output.T)-1
             j = len(Output.T_way_calc)-1
@@ -337,6 +338,8 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
         case "C":
             print("Case C")
             Input.setLS_Dot()
+            Input.setAvgXDot(0.3)
+            print(Input.AvgXDot)
             X1Dot_des = np.array([1, 3, 0, 2, 1, 3, 1])/Input.AvgXDot
             X2Dot_des = np.array([2, 0, 3, 1, 2, 0, 2])/Input.AvgXDot
             X3Dot_des = np.array([2, 0, 0, 2, 2, 0, 2])/Input.AvgXDot
@@ -436,6 +439,8 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
         case "D":
             print("Case D")
             Input.setLS_Dot()
+            Input.setAvgXDot(0.3)
+            print(Input.AvgXDot)
             X1Dot_des = np.array([1, 3, 0, 2, 1, 3, 1])/Input.AvgXDot
             X2Dot_des = np.array([2, 0, 3, 1, 2, 0, 2])/Input.AvgXDot
             X3Dot_des = np.array([2, 0, 0, 2, 2, 0, 2])/Input.AvgXDot
@@ -545,8 +550,8 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
 #
 if __name__ == "__main__":
     BSplineTestFunction(
-        5,        # polynomial order
-        8,       # control points
+        4,        # polynomial order
+        6,       # control points
         True,    # XDot_flag
         False,    # XDDot_flag
         1e-6)     
