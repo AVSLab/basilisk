@@ -299,7 +299,7 @@ void SpinningBodyStateEffector::updateEnergyMomContributions(double integTime, E
     rotAngMomPntCContr_B = this->IPntSc_B * this->omega_SN_B + this->mass * this->rTilde_ScB_B * this->rDot_ScB_B;
 
     // Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0 / 2.0 * this->omega_SN_B.dot(this->IPntSc_B * this->omega_SN_B) + 1.0 / 2.0 * this->mass * this->rDot_ScB_B.dot(this->rDot_ScB_B) + 1.0 / 2.0 * this->k * this->theta;
+    rotEnergyContr = 1.0 / 2.0 * this->omega_SN_B.dot(this->IPntSc_B * this->omega_SN_B) + 1.0 / 2.0 * this->mass * this->rDot_ScB_B.dot(this->rDot_ScB_B) + 1.0 / 2.0 * this->k * this->theta * this->theta;
 
     return;
 }
