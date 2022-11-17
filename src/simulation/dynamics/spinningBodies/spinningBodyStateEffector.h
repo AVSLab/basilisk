@@ -37,6 +37,8 @@
 class SpinningBodyStateEffector: public StateEffector, public SysModel {
 public:
     double mass;                                                //!< [kg] mass of spinning body
+    double k;
+    double c;
     double thetaInit;                                           //!< [rad] initial spinning body angle
     double thetaDotInit;                                        //!< [rad/s] initial spinning body angle rate
     std::string nameOfThetaState;                               //!< -- identifier for the theta state data container

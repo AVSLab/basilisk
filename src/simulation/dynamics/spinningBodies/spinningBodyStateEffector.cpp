@@ -45,6 +45,8 @@ SpinningBodyStateEffector::SpinningBodyStateEffector()
     this->r_SB_B.setZero();
     this->sHat_S.setZero();
     this->u = 0.0;
+    this->k = 1.0;
+    this->c = 0.0;
     
     this->nameOfThetaState = "spinningBodyTheta" + std::to_string(this->effectorID);
     this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(this->effectorID);
@@ -237,7 +239,7 @@ void SpinningBodyStateEffector::updateContributions(double integTime, BackSubMat
     rDot_SB_B = this->omegaTilde_BN_B * this->r_SB_B;
     gravityTorquePntS_B = rTilde_ScS_B * this->mass * g_B;
     this->cTheta = (this->sHat_B.dot(gravityTorquePntS_B - omegaTilde_SN_B * IPntS_B * this->omega_SN_B
-        - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B -  this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * rDot_SB_B) + this->u) / this->dTheta;
+        - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B -  this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * rDot_SB_B) + this->u - this->k * this->theta - this->c * this->thetaDot) / this->dTheta;
 
     // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
     // Translation contributions
@@ -297,7 +299,7 @@ void SpinningBodyStateEffector::updateEnergyMomContributions(double integTime, E
     rotAngMomPntCContr_B = this->IPntSc_B * this->omega_SN_B + this->mass * this->rTilde_ScB_B * this->rDot_ScB_B;
 
     // Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0 / 2.0 * this->omega_SN_B.dot(this->IPntSc_B * this->omega_SN_B) + 1.0 / 2.0 * this->mass * this->rDot_ScB_B.dot(this->rDot_ScB_B);
+    rotEnergyContr = 1.0 / 2.0 * this->omega_SN_B.dot(this->IPntSc_B * this->omega_SN_B) + 1.0 / 2.0 * this->mass * this->rDot_ScB_B.dot(this->rDot_ScB_B) + 1.0 / 2.0 * this->k * this->theta;
 
     return;
 }
