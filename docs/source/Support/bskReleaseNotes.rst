@@ -38,6 +38,7 @@ Version |release|
 - provide support for the swig 4.1 software
 - Added the ability in both :ref:`thrusterDynamicEffector` and :ref:`thrusterStateEffector` to connect a thruster to a moving body different than the hub.
 - The thrusters now have an additional variable called ``MaxSwirlTorque``. Useful for ion thrusters, it adds a torque about the thrust axis proportional to the current thrust factor.
+- Added a torsional spring and damper to the :ref:`SpinningBodyStateEffector` module.
 
 
 Version 2.1.4 (Oct. 1, 2022)
