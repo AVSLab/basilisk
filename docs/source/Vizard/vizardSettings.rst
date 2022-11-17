@@ -26,7 +26,13 @@ ambient lighting the following code is used:
 
 Here ``scObject`` is a :ref:`spacecraft` instance.  This can also be a list of spacecraft objects
 for a multi-satellite simulation.
-The spacecraft names are pulled from `scObject.ModelTag`.
+
+.. code-block:: python
+
+	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject1, scObject2, scObject3]
+	                                          , saveFile=fileName)
+
+The spacecraft names are pulled from ``scObject.ModelTag``.
 If a setting is not provided, then the Vizard
 defaults are used. This allows the user to specify just a few or a lot
 of settings, as is appropriate.
