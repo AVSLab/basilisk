@@ -56,6 +56,8 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
 #. Define all physical parameters for a Spinning Body. For example::
 
     spinningBody.mass = 100.0
+    spinningBody.k = 2
+    spinningBody.c = 0.5
     spinningBody.IPntSc_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     spinningBody.dcm_S0B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     spinningBody.r_ScS_S = [[0.5], [0.0], [1.0]]
