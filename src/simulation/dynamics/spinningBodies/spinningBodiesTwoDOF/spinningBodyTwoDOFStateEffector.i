@@ -45,8 +45,6 @@ struct ArrayMotorTorqueMsg_C;
 %include "architecture/msgPayloadDefC/SpinningBodyMsgPayload.h"
 struct SpinningBodyMsg_C;
 
-%template(spinningBodyOutMsgs) std::vector<Message<SpinningBodyMsgPayload>*>;
-
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
