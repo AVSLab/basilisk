@@ -85,7 +85,6 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-
 from Basilisk import __path__
 
 bskPath = __path__[0]
@@ -98,6 +97,7 @@ from Basilisk.simulation import hingedRigidBodyStateEffector, simpleSolarPanel
 from Basilisk.simulation import hingedBodyLinearProfiler, hingedRigidBodyMotor
 from Basilisk.architecture import messaging
 import math
+
 
 def run(show_plots):
     """
@@ -136,7 +136,7 @@ def run(show_plots):
     # create sun position message
     sunMessage = messaging.SpicePlanetStateMsgPayload()
     sunMessage.PlanetName = "Sun"
-    sunMessage.PositionVector = [0, orbitalMotion.AU*1000, 0]
+    sunMessage.PositionVector = [0, orbitalMotion.AU * 1000, 0]
     sunStateMsg = messaging.SpicePlanetStateMsg().write(sunMessage)
 
     # setup the orbit using classical orbit elements
@@ -156,28 +156,30 @@ def run(show_plots):
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
     # point the body 3 axis towards the sun in the inertial n2 direction
-    scObject.hub.sigma_BNInit = [[math.tan(-90./4.*macros.D2R)], [0.0], [0.0]]  # sigma_BN_B
+    scObject.hub.sigma_BNInit = [[math.tan(-90. / 4. * macros.D2R)], [0.0], [0.0]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
 
     # configure panels
     panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    panel1.ModelTag = "panel1"
     panel1.mass = 100.0
     panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     panel1.d = 1.5  
     panel1.k = 200.
     panel1.c = 20.  
-    panel1.r_HB_B = [[.05], [0.0], [1.0]]
+    panel1.r_HB_B = [[-.5], [0.0], [-1.0]]
     panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     panel1.thetaInit = -np.pi
     panel1.thetaDotInit = 0
 
     panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    panel2.ModelTag = "panel2"
     panel2.mass = 100.0
     panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     panel2.d = 1.5  
     panel2.k = 200.
     panel2.c = 20.  
-    panel2.r_HB_B = [[.05], [0.0], [1.0]]
+    panel2.r_HB_B = [[.5], [0.0], [-1.0]]
     panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     panel2.thetaInit = -np.pi
     panel2.thetaDotInit = 0
@@ -185,17 +187,17 @@ def run(show_plots):
     # profilers
     profiler1 = hingedBodyLinearProfiler.HingedBodyLinearProfiler()
     profiler1.ModelTag = "deploymentProfiler"
-    profiler1.startTime = macros.sec2nano(5) # [ns] start the deployment
-    profiler1.endTime = macros.sec2nano(85) # [ns]
-    profiler1.startTheta = -np.pi # [rad] starting angle in radians
-    profiler1.endTheta = 0 # [rad]
+    profiler1.startTime = macros.sec2nano(5)  # [ns] start the deployment
+    profiler1.endTime = macros.sec2nano(85)  # [ns]
+    profiler1.startTheta = -np.pi  # [rad] starting angle in radians
+    profiler1.endTheta = -np.pi / 2  # [rad]
 
     profiler2 = hingedBodyLinearProfiler.HingedBodyLinearProfiler()
     profiler2.ModelTag = "deploymentProfiler2"
-    profiler2.startTime = macros.sec2nano(100) # [ns] start the deployment
-    profiler2.endTime = macros.sec2nano(164) # [ns]
-    profiler2.startTheta = -np.pi # [rad] starting angle in radians
-    profiler2.endTheta = -np.pi/5 # [rad] ending angle is not all the way deployed
+    profiler2.startTime = macros.sec2nano(100)  # [ns] start the deployment
+    profiler2.endTime = macros.sec2nano(164)  # [ns]
+    profiler2.startTheta = -np.pi  # [rad] starting angle in radians
+    profiler2.endTheta = -np.pi / 1.75  # [rad] ending angle is not all the way deployed
 
     panel1.hingedRigidBodyRefMsg.subscribeTo(profiler1.hingedRigidBodyReferenceOutMsg)
     panel2.hingedRigidBodyRefMsg.subscribeTo(profiler2.hingedRigidBodyReferenceOutMsg)
@@ -203,13 +205,13 @@ def run(show_plots):
     # motors
     motor1 = hingedRigidBodyMotor.HingedRigidBodyMotor()
     motor1.ModelTag = "hingedRigidBodyMotor"
-    motor1.K = 20 # proportional gain constant
-    motor1.P = 10 # derivative gain constant
+    motor1.K = 20  # proportional gain constant
+    motor1.P = 10  # derivative gain constant
 
     motor2 = hingedRigidBodyMotor.HingedRigidBodyMotor()
     motor2.ModelTag = "hingedRigidBodyMotor2"
-    motor2.K = 20 # proportional gain constant
-    motor2.P = 10 # derivative gain constant
+    motor2.K = 20  # proportional gain constant
+    motor2.P = 10  # derivative gain constant
 
     motor1.hingedBodyStateSensedInMsg.subscribeTo(panel1.hingedRigidBodyOutMsg)
     motor1.hingedBodyStateReferenceInMsg.subscribeTo(profiler1.hingedRigidBodyReferenceOutMsg)
@@ -278,10 +280,23 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, pwr1Log)
     scSim.AddModelToTask(simTaskName, pwr2Log)
 
+    scBodyList = {}
+    scBodyList[panel1.ModelTag] = panel1.hingedRigidBodyConfigLogOutMsg
+    scBodyList[panel2.ModelTag] = panel2.hingedRigidBodyConfigLogOutMsg
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                              # saveFile=__file__
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , bodyList=[scBodyList]
+                                              # , saveFile=__file__
                                               )
+    vizSupport.createCustomModel(viz
+                                 , simBodiesToModify=[panel1.ModelTag]
+                                 , modelPath="CUBE"
+                                 , scale=[3, 1, 0.1])
+    vizSupport.createCustomModel(viz
+                                 , simBodiesToModify=[panel2.ModelTag]
+                                 , modelPath="CUBE"
+                                 , scale=[3, 1, 0.1])
+    viz.settings.orbitLinesOn = -1
 
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)
@@ -313,11 +328,10 @@ def run(show_plots):
     return figureList
 
 
-def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN, 
+def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN,
                panel1thetaLog, panel1thetaDotLog,
-               panel2thetaLog, panel2thetaDotLog, 
+               panel2thetaLog, panel2thetaDotLog,
                pwrLog1, pwrLog2):
-
     plt.close("all")  # clears out plots from earlier test runs
 
     # sigma B/N
@@ -395,7 +409,6 @@ def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN,
     plt.legend(loc='lower right')
     pltName = fileName + str(figCounter)
     figureList[pltName] = plt.figure(figCounter)
-
 
     return figureList
 
