@@ -53,11 +53,15 @@ SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector()
     this->u1 = 0.0;
     this->u2 = 0.0;
 
-    // Create the output vector
-    Message<SCStatesMsgPayload>* msg;
-    msg = new Message<SCStatesMsgPayload>;
-    this->spinningBodyConfigLogOutMsg.push_back(msg);
-    this->spinningBodyConfigLogOutMsg.push_back(msg);
+    // Create the output vectors
+    Message<SCStatesMsgPayload>* statesMsg;
+    statesMsg = new Message<SCStatesMsgPayload>;
+    this->spinningBodyConfigLogOutMsgs.push_back(statesMsg);
+    this->spinningBodyConfigLogOutMsgs.push_back(statesMsg);
+    Message<SpinningBodyMsgPayload>* spinnerMsg;
+    spinnerMsg = new Message<SpinningBodyMsgPayload>;
+    this->spinningBodyOutMsgs.push_back(spinnerMsg);
+    this->spinningBodyOutMsgs.push_back(spinnerMsg);
     
     this->nameOfTheta1State = "spinningBodyTheta1" + std::to_string(this->effectorID);
     this->nameOfTheta1DotState = "spinningBodyTheta1Dot" + std::to_string(this->effectorID);
@@ -74,8 +78,11 @@ uint64_t SpinningBodyTwoDOFStateEffector::effectorID = 1;
 SpinningBodyTwoDOFStateEffector::~SpinningBodyTwoDOFStateEffector()
 {
     // Free memory to avoid errors
-    for (long unsigned int c = 0; c < this->spinningBodyConfigLogOutMsg.size(); c++) {
-        free(this->spinningBodyConfigLogOutMsg.at(c));
+    for (long unsigned int c = 0; c < this->spinningBodyConfigLogOutMsgs.size(); c++) {
+        free(this->spinningBodyConfigLogOutMsgs.at(c));
+    }
+    for (long unsigned int c = 0; c < this->spinningBodyOutMsgs.size(); c++) {
+        free(this->spinningBodyOutMsgs.at(c));
     }
 
     this->effectorID = 1;    /* reset the panel ID*/
@@ -111,39 +118,44 @@ void SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock)
 void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     // Write out the spinning body output messages
-    if (this->spinningBodyOutMsg.isLinked()) {
-        SpinningBodyTwoDOFMsgPayload spinningBodyBuffer;
-        spinningBodyBuffer = this->spinningBodyOutMsg.zeroMsgPayload;
-        spinningBodyBuffer.theta1 = this->theta1;
-        spinningBodyBuffer.theta2 = this->theta2;
-        spinningBodyBuffer.theta1Dot = this->theta1Dot;
-        spinningBodyBuffer.theta2Dot = this->theta2Dot;
-        this->spinningBodyOutMsg.write(&spinningBodyBuffer, this->moduleID, CurrentClock);
+    if (this->spinningBodyOutMsgs[0]->isLinked()) {
+        SpinningBodyMsgPayload spinningBodyBuffer;
+        spinningBodyBuffer = this->spinningBodyOutMsgs[0]->zeroMsgPayload;
+        spinningBodyBuffer.theta = this->theta1;
+        spinningBodyBuffer.thetaDot = this->theta1Dot;
+        this->spinningBodyOutMsgs[0]->write(&spinningBodyBuffer, this->moduleID, CurrentClock);
+    }
+    if (this->spinningBodyOutMsgs[1]->isLinked()) {
+        SpinningBodyMsgPayload spinningBodyBuffer;
+        spinningBodyBuffer = this->spinningBodyOutMsgs[0]->zeroMsgPayload;
+        spinningBodyBuffer.theta = this->theta2;
+        spinningBodyBuffer.thetaDot = this->theta2Dot;
+        this->spinningBodyOutMsgs[1]->write(&spinningBodyBuffer, this->moduleID, CurrentClock);
     }
 
     // Write out the spinning body state config log message
-    if (this->spinningBodyConfigLogOutMsg[0]->isLinked()) {
+    if (this->spinningBodyConfigLogOutMsgs[0]->isLinked()) {
         SCStatesMsgPayload configLogMsg;
-        configLogMsg = this->spinningBodyConfigLogOutMsg[0]->zeroMsgPayload;
+        configLogMsg = this->spinningBodyConfigLogOutMsgs[0]->zeroMsgPayload;
 
         // Logging the S frame is the body frame B of that object
         eigenVector3d2CArray(this->r_Sc1N_N, configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_Sc1N_N, configLogMsg.v_BN_N);
         eigenVector3d2CArray(this->sigma_S1N, configLogMsg.sigma_BN);
         eigenVector3d2CArray(this->omega_S1N_S, configLogMsg.omega_BN_B);
-        this->spinningBodyConfigLogOutMsg[0]->write(&configLogMsg, this->moduleID, CurrentClock);
+        this->spinningBodyConfigLogOutMsgs[0]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 
-    if (this->spinningBodyConfigLogOutMsg[1]->isLinked()) {
+    if (this->spinningBodyConfigLogOutMsgs[1]->isLinked()) {
         SCStatesMsgPayload configLogMsg;
-        configLogMsg = this->spinningBodyConfigLogOutMsg[1]->zeroMsgPayload;
+        configLogMsg = this->spinningBodyConfigLogOutMsgs[1]->zeroMsgPayload;
 
         // Logging the S frame is the body frame B of that object
         eigenVector3d2CArray(this->r_Sc2N_N, configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_Sc2N_N, configLogMsg.v_BN_N);
         eigenVector3d2CArray(this->sigma_S2N, configLogMsg.sigma_BN);
         eigenVector3d2CArray(this->omega_S2N_S, configLogMsg.omega_BN_B);
-        this->spinningBodyConfigLogOutMsg[1]->write(&configLogMsg, this->moduleID, CurrentClock);
+        this->spinningBodyConfigLogOutMsgs[1]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 
 }
