@@ -36,29 +36,33 @@
 /*! @brief spinning body state effector class */
 class SpinningBodyTwoDOFStateEffector: public StateEffector, public SysModel {
 public:
-    double mass1;                                                //!< [kg] mass of spinning body
-    double mass2;                                                //!< [kg] mass of spinning body
-    double theta1Init;                                           //!< [rad] initial spinning body angle
-    double theta1DotInit;                                        //!< [rad/s] initial spinning body angle rate
-    double theta2Init;                                           //!< [rad] initial spinning body angle
-    double theta2DotInit;                                        //!< [rad/s] initial spinning body angle rate
-    std::string nameOfTheta1State;                               //!< -- identifier for the theta state data container
-    std::string nameOfTheta1DotState;                            //!< -- identifier for the thetaDot state data container
-    std::string nameOfTheta2State;                               //!< -- identifier for the theta state data container
-    std::string nameOfTheta2DotState;                            //!< -- identifier for the thetaDot state data container
-    Eigen::Vector3d r_S1B_B;                                     //!< [m] vector pointing from body frame B origin to spinning frame S origin in B frame components
-    Eigen::Vector3d r_S2S1_S1;                                     //!< [m] vector pointing from body frame B origin to spinning frame S origin in B frame components
-    Eigen::Vector3d r_Sc1S1_S1;                                    //!< [m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in S frame components
-    Eigen::Vector3d r_Sc2S2_S2;                                    //!< [m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in S frame components
-    Eigen::Vector3d s1Hat_S1;                                     //!< -- spinning axis in S frame components.
-    Eigen::Vector3d s2Hat_S2;                                     //!< -- spinning axis in S frame components.
-    Eigen::Matrix3d IS1PntSc1_S1;                                   //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
-    Eigen::Matrix3d IS2PntSc2_S2;                                   //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
-    Eigen::Matrix3d dcm_S10B;                                    //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
-    Eigen::Matrix3d dcm_S20S1;                                    //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
-    std::vector<Message<SpinningBodyMsgPayload>*> spinningBodyOutMsgs;         //!< state output message
-    std::vector<Message<SCStatesMsgPayload>*> spinningBodyConfigLogOutMsgs;    //!< spinning body state config log message
-    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< -- (optional) motor torque input message name
+    double mass1;                                               //!< [kg] mass of spinning body
+    double mass2;                                               //!< [kg] mass of spinning body
+    double k1;                                                  //!< [N-m/rad] torsional spring constant for first rotation axis
+    double k2;                                                  //!< [N-m/rad] torsional spring constant for second rotation axis
+    double c1;                                                  //!< [N-m-s/rad] rotational damping coefficient for first rotation axis
+    double c2;                                                  //!< [N-m-s/rad] rotational damping coefficient for second rotation axis
+    double theta1Init;                                          //!< [rad] initial spinning body angle
+    double theta1DotInit;                                       //!< [rad/s] initial spinning body angle rate
+    double theta2Init;                                          //!< [rad] initial spinning body angle
+    double theta2DotInit;                                       //!< [rad/s] initial spinning body angle rate
+    std::string nameOfTheta1State;                              //!< -- identifier for the theta state data container
+    std::string nameOfTheta1DotState;                           //!< -- identifier for the thetaDot state data container
+    std::string nameOfTheta2State;                              //!< -- identifier for the theta state data container
+    std::string nameOfTheta2DotState;                           //!< -- identifier for the thetaDot state data container
+    Eigen::Vector3d r_S1B_B;                                    //!< [m] vector pointing from body frame B origin to spinning frame S origin in B frame components
+    Eigen::Vector3d r_S2S1_S1;                                  //!< [m] vector pointing from body frame B origin to spinning frame S origin in B frame components
+    Eigen::Vector3d r_Sc1S1_S1;                                 //!< [m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in S frame components
+    Eigen::Vector3d r_Sc2S2_S2;                                 //!< [m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in S frame components
+    Eigen::Vector3d s1Hat_S1;                                   //!< -- spinning axis in S frame components.
+    Eigen::Vector3d s2Hat_S2;                                   //!< -- spinning axis in S frame components.
+    Eigen::Matrix3d IS1PntSc1_S1;                               //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
+    Eigen::Matrix3d IS2PntSc2_S2;                               //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
+    Eigen::Matrix3d dcm_S10B;                                   //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
+    Eigen::Matrix3d dcm_S20S1;                                  //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
+    std::vector<Message<SpinningBodyMsgPayload>*> spinningBodyOutMsgs;          //!< state output message
+    std::vector<Message<SCStatesMsgPayload>*> spinningBodyConfigLogOutMsgs;     //!< spinning body state config log message
+    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;                   //!< -- (optional) motor torque input message name
     BSKLogger bskLogger;                                        //!< -- BSK Logging
 
 private:

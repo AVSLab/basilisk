@@ -162,7 +162,7 @@ def test_spinningBody(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, theta2Data)
 
     # Setup and run the simulation
-    stopTime = 2
+    stopTime = 20
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 

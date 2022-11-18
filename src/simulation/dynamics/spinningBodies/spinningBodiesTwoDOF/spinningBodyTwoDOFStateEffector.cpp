@@ -52,6 +52,10 @@ SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector()
     this->s2Hat_S2.setZero();
     this->u1 = 0.0;
     this->u2 = 0.0;
+    this->k1 = 1.0;
+    this->k2 = 1.0;
+    this->c1 = 0.0;
+    this->c2 = 0.0;
 
     // Create the output vectors
     Message<SCStatesMsgPayload>* statesMsg;
@@ -352,7 +356,7 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
     Eigen::Vector3d gravityTorquePntS1_B = rTilde_ScS1_B * this->mass * g_B;
     Eigen::Vector3d gravityTorquePntS2_B = rTilde_Sc2S2_B * this->mass2 * g_B;
     Eigen::Vector2d CThetaStar;
-    CThetaStar(0,0) = this->u1 + this->s1Hat_B.transpose() * gravityTorquePntS1_B 
+    CThetaStar(0,0) = this->u1 - this->k1 * this->theta1 - this->c1 * this->theta1Dot + this->s1Hat_B.transpose() * gravityTorquePntS1_B 
         - this->s1Hat_B.transpose() * ((IPrimeSPntS1_B + this->omegaTilde_BN_B * ISPntS1_B) * this->omega_BN_B 
         + (this->IPrimeS1PntSc1_B + this->omegaTilde_BN_B * this->IS1PntSc1_B) * this->omega_S1B_B 
         + (this->IPrimeS2PntSc2_B + this->omegaTilde_BN_B * this->IS2PntSc2_B) * this->omega_S2B_B 
@@ -361,7 +365,7 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
         + this->mass2 * (rTilde_Sc2S1_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * rTilde_Sc2S1_B) * this->rPrime_Sc2S1_B 
         + this->mass2 * rTilde_Sc2S1_B * omegaTilde_S2S1_B * this->rPrime_Sc2S2_B
         + this->mass * rTilde_ScS1_B * this->omegaTilde_BN_B * rDot_S1B_B);
-    CThetaStar(1, 0) = this->u2 + this->s2Hat_B.transpose() * gravityTorquePntS2_B
+    CThetaStar(1, 0) = this->u2 - this->k2 * this->theta2 - this->c2 * this->theta2Dot + this->s2Hat_B.transpose() * gravityTorquePntS2_B
         - this->s2Hat_B.transpose() * ((IPrimeS2PntS2_B + this->omegaTilde_BN_B * IS2PntS2_B) * (this->omega_S2B_B + this->omega_BN_B)
         + IS2PntS2_B * this->omegaTilde_S1B_B * this->omega_S2S1_B + this->mass2 * rTilde_Sc2S2_B * omegaTilde_S1N_B * this->rPrime_S2S1_B 
         + this->mass2 * rTilde_Sc2S2_B * this->omegaTilde_BN_B * (rDot_S2S1_B + rDot_S1B_B));
@@ -436,8 +440,8 @@ void SpinningBodyTwoDOFStateEffector::updateEnergyMomContributions(double integT
         + this->IS2PntSc2_B * this->omega_S2N_B + this->mass2 * this->rTilde_Sc2B_B * this->rDot_Sc2B_B;
 
     // Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0 / 2.0 * this->omega_S1N_B.dot(this->IS1PntSc1_B * this->omega_S1N_B) + 1.0 / 2.0 * this->mass1 * this->rDot_Sc1B_B.dot(this->rDot_Sc1B_B)
-        + 1.0 / 2.0 * this->omega_S2N_B.dot(this->IS2PntSc2_B * this->omega_S2N_B) + 1.0 / 2.0 * this->mass2 * this->rDot_Sc2B_B.dot(this->rDot_Sc2B_B);
+    rotEnergyContr = 1.0 / 2.0 * this->omega_S1N_B.dot(this->IS1PntSc1_B * this->omega_S1N_B) + 1.0 / 2.0 * this->mass1 * this->rDot_Sc1B_B.dot(this->rDot_Sc1B_B) + 1.0 / 2.0 * this->k1 * this->theta1 * this->theta1
+        + 1.0 / 2.0 * this->omega_S2N_B.dot(this->IS2PntSc2_B * this->omega_S2N_B) + 1.0 / 2.0 * this->mass2 * this->rDot_Sc2B_B.dot(this->rDot_Sc2B_B) + 1.0 / 2.0 * this->k2 * this->theta2 * this->theta2;
 
     return;
 }
