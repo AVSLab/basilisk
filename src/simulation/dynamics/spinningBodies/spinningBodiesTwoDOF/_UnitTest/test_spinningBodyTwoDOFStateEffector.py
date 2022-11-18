@@ -156,8 +156,10 @@ def test_spinningBody(show_plots):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
 
     # Add states to log
-    thetaData = spinningBody.spinningBodyOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, thetaData)
+    theta1Data = spinningBody.spinningBodyOutMsgs[0].recorder()
+    theta2Data = spinningBody.spinningBodyOutMsgs[1].recorder()
+    unitTestSim.AddModelToTask(unitTaskName, theta1Data)
+    unitTestSim.AddModelToTask(unitTaskName, theta2Data)
 
     # Setup and run the simulation
     stopTime = 2
@@ -169,10 +171,10 @@ def test_spinningBody(show_plots):
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
-    theta1 = thetaData.theta1
-    theta2 = thetaData.theta2
-    theta1Dot = thetaData.theta1Dot
-    theta2Dot = thetaData.theta2Dot
+    theta1 = theta1Data.theta
+    theta1Dot = theta1Data.thetaDot
+    theta2 = theta2Data.theta
+    theta2Dot = theta2Data.thetaDot
 
     # Setup the conservation quantities
     initialOrbAngMom_N = [[orbAngMom_N[0, 1], orbAngMom_N[0, 2], orbAngMom_N[0, 3]]]
@@ -216,25 +218,25 @@ def test_spinningBody(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(thetaData.times() * 1e-9, theta1)
+    plt.plot(theta1Data.times() * 1e-9, theta1)
     plt.xlabel('time (s)')
     plt.ylabel('theta1')
 
     plt.figure()
     plt.clf()
-    plt.plot(thetaData.times() * 1e-9, theta1Dot)
+    plt.plot(theta1Data.times() * 1e-9, theta1Dot)
     plt.xlabel('time (s)')
     plt.ylabel('theta1Dot')
 
     plt.figure()
     plt.clf()
-    plt.plot(thetaData.times() * 1e-9, theta2)
+    plt.plot(theta2Data.times() * 1e-9, theta2)
     plt.xlabel('time (s)')
     plt.ylabel('theta2')
 
     plt.figure()
     plt.clf()
-    plt.plot(thetaData.times() * 1e-9, theta2Dot)
+    plt.plot(theta2Data.times() * 1e-9, theta2Dot)
     plt.xlabel('time (s)')
     plt.ylabel('theta2Dot')
 
