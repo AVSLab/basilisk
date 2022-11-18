@@ -139,6 +139,7 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     
         case "A":
             print("Case A")
+            Input.setAvgXDot(0.3)
             Input.setT([0, 2, 3, 5, 7, 8, 10])
             BSpline.approximate(Input,101,n,P,Output)
             
@@ -210,6 +211,31 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             axs[2].legend(["Way Points","LS Approximation"])
             fig.tight_layout()
             plt.show()
+            
+            # Plotting XDots Code:
+            fig, axs2 = plt.subplots(3)
+            axs2[0].scatter(Input.T,Output.X1_prime,c = 'b')
+            axs2[0].plot(Output.T,Output.XD1,c = 'r')
+            fig.suptitle("X Dots vs Time")
+            axs2[0].set_xlabel("Time [s]")
+            axs2[0].set_ylabel("X1 Dot")
+            axs2[0].legend(["Way Points","LS Approximation"])
+            
+            axs2[1].scatter(Input.T,Output.X2_prime,c = 'b')
+            axs2[1].plot(Output.T,Output.XD2,c = 'r')
+            axs2[1].set_xlabel("Time [s]")
+            axs2[1].set_ylabel("X2 Dot")
+            axs2[1].legend(["Way Points","LS Approximation"])
+            
+            axs2[2].scatter(Input.T,Output.X3_prime,c = 'b')
+            axs2[2].plot(Output.T,Output.XD3,c = 'r')
+            axs2[2].set_xlabel("Time [s]")
+            axs2[2].set_ylabel("X3 Dot")
+            axs2[2].legend(["Way Points","LS Approximation"])
+            
+            fig.tight_layout()
+            plt.show()
+            
         case "B":
             print("Case B")
             BSpline.approximate(Input,101,n,P,Output)

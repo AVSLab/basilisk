@@ -425,6 +425,9 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     
     // q = number of waypoints - 1
     int q = (int) Input.X1.size() - 1;
+    
+    std::cout<< "Check 2"<<std::endl;
+
 
     //std::cout << "The value of q is "<<q<<std::endl;
         
@@ -465,6 +468,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     }
     
     //std::cout << "The value of uk is "<<uk[2]<<std::endl;
+    
 
     
     // The maximum polynomial order is N + K. If a higher order is requested, print a BSK_ERROR
@@ -489,15 +493,18 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         U[n+p+1] = 1;
     }
     
+    std::cout<< "Check 3"<<std::endl;
+    
     //std::cout << "The value of U is "<<U[2]<<std::endl;
     
     // Calculate 1st Derivatives:
     
-    Eigen::VectorXd X1_primehat(q);
-    Eigen::VectorXd X2_primehat(q);
-    Eigen::VectorXd X3_primehat(q);
+    Eigen::VectorXd X1_primehat(q+1);
+    std::cout<< "Check 3a"<<std::endl;
+    Eigen::VectorXd X2_primehat(q+1);
+    Eigen::VectorXd X3_primehat(q+1);
 
-    int index = 0;
+    int index = 1;
     
     // Calculate X Prime Hat Derivatives
     
@@ -506,12 +513,18 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         X1_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X1[k]-Input.X1[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X1[k+1]-Input.X1[k])/(uk[k+1]-uk[k]);
         X2_primehat[index] =(uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X2[k]-Input.X2[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X2[k+1]-Input.X2[k])/(uk[k+1]-uk[k]);
         X3_primehat[index] =(uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X3[k]-Input.X3[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X3[k+1]-Input.X3[k])/(uk[k+1]-uk[k]);
+        std::cout<<"The value of index is"<<index<<std::endl;
         index++;
     }
     
+    std::cout<< "Check 5"<<std::endl;
+
+    
     // Set Initial Derivative
     X1_primehat[0] = Input.XDot_0[0];
+    std::cout<< X1_primehat[0]<<std::endl;
     X2_primehat[0] = Input.XDot_0[1];
+    std::cout<< X2_primehat[0]+1<<std::endl;
     X3_primehat[0] = Input.XDot_0[2];
     
     // Set Final Derivative
@@ -519,17 +532,39 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     X2_primehat[q-1] = Input.XDot_N[1];
     X3_primehat[q-1] = Input.XDot_N[2];
     
+    std::cout<< "Check 6"<<std::endl;
+    
     // Calculate X Prime Derivatives
-    for (int k = 0;k<q;k++) {
-        int a = int(X1_primehat[0]);
-        int b = int(X2_primehat[0]);
-        int c = int(X3_primehat[0]);
+    Eigen::VectorXd X1_prime(q+1),X2_prime(q+1),X3_prime(q+1);
+    for (int k = 0;k<q+1;k++) {
+        std::cout<< "Check a"<<std::endl;
+        int a = int(X1_primehat[k]);
+        std::cout<< "Check b"<<std::endl;
+        int b = int(X2_primehat[k]);
+        std::cout<< "Check c"<<std::endl;
+        int c = int(X3_primehat[k]);
+        std::cout<< "Check d"<<std::endl;
         int mag = (a^2+b^2+c^2)^(1/2);
-        Output->X1_prime[k] =X1_primehat[k]/mag*Input.AvgXDot*Ttot;
-        Output->X2_prime[k] = X2_primehat[k]/mag*Input.AvgXDot*Ttot;
-        Output->X3_prime[k] = X3_primehat[k]/mag*Input.AvgXDot*Ttot;
+        mag = double(mag);
+        std::cout<< "Check e"<<std::endl;
+        std::cout<< "mag: "<<mag<<std::endl;
+        std::cout<<"Average X Dot"<<Input.AvgXDot<<std::endl;
+        std::cout<<(X1_primehat[k])<<std::endl;
+        double temp =Input.AvgXDot*Ttot/mag;
+        double result = double(X1_primehat[k]*temp);
+        std::cout<<result<<std::endl;
+        std::cout<< "Check here "<<std::endl;
+        X1_prime[k] =result;
+        std::cout<< "Check f"<<std::endl;
+        X2_prime[k] = X2_primehat[k]*temp;
+        std::cout<< "Check g"<<std::endl;
+        X3_prime[k] = X3_primehat[k]*temp;
+        std::cout<< "Check h"<<std::endl;
     }
     
+    
+    std::cout<< "Check 6a"<<std::endl;
+        
     // K = number of endpoint derivatives
     int K = 0;
     if (Input.XDot_0_flag == true) {K += 1;}
@@ -599,6 +634,8 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     T2[i] = Input.X2[q];
     T3[i] = Input.X3[q];
     
+    std::cout<< "Check 6b"<<std::endl;
+    
 //    for (int y = 0; y < K+2; y++) {
 //        for (int z = 0; z < K+2; z++) {
 //            std::cout<<MD(y,z)<<std::endl;
@@ -652,7 +689,8 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     
         
     
-    
+    std::cout<< "Check 7"<<std::endl;
+
     
         // Split code based on whether LS approximation is done with first derivative constraints or not
         
@@ -743,9 +781,9 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         //Change these to C3_1,C2_1 along with C1_1
         for (int c = q-1; c < 2*q-2; c++) {
             basisFunction(uk[c], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
-            rhok1D[c-1] = Output->X1_prime[c] - NN1[0]*C1_1[0] - NN1[n]*C1_1[K+1];
-            rhok2D[c-1] = Output->X2_prime[c] - NN1[0]*C2_1[0] - NN1[n]*C2_1[K+1];
-            rhok3D[c-1] = Output->X3_prime[c] - NN1[0]*C3_1[0] - NN1[n]*C3_1[K+1];
+            rhok1D[c-1] = X1_prime[c] - NN1[0]*C1_1[0] - NN1[n]*C1_1[K+1];
+            rhok2D[c-1] = X2_prime[c] - NN1[0]*C2_1[0] - NN1[n]*C2_1[K+1];
+            rhok3D[c-1] = X3_prime[c] - NN1[0]*C3_1[0] - NN1[n]*C3_1[K+1];
             if (Input.XDot_0_flag == true) {
                 rhok1D[c-1] -= NN1[1]*C1_1[1];
                 rhok2D[c-1] -= NN1[1]*C2_1[1];
@@ -867,6 +905,17 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     Output->C1 = C1;
     Output->C2 = C2;
     Output->C3 = C3;
+    
+    for (int a=0;a<q+1;a++){
+        X1_prime[a] = X1_prime[a]/Ttot;
+        X2_prime[a] = X2_prime[a]/Ttot;
+        X3_prime[a] = X3_prime[a]/Ttot;
+    }
+        
+    
+    Output->X1_prime = X1_prime;
+    Output->X2_prime = X2_prime;
+    Output->X3_prime = X3_prime;
 
     double dt = 1.0 / (Num - 1);
     double t = 0;
@@ -895,7 +944,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         Output->XDD3[i] = NN2.dot(C3) / pow(Ttot,2);
         t += dt;
     }
-
+    std::cout<<"Approximate done";
     return;
 }
 

@@ -76,17 +76,17 @@ public:
     Eigen::VectorXd X1;              //!< coordinate #1 of the interpolated trajectory
     Eigen::VectorXd X2;              //!< coordinate #2 of the interpolated trajectory
     Eigen::VectorXd X3;              //!< coordinate #3 of the interpolated trajectory
+    Eigen::VectorXd X1_prime;        //!< first derivative of coordinate #1 of the way points
+    Eigen::VectorXd X2_prime;        //!< first derivative of coordinate #2 of the way  points
+    Eigen::VectorXd X3_prime;        //!< first derivative of coordinate #3 of the way points
     Eigen::VectorXd XD1;             //!< first derivative of coordinate #1 of the interpolated trajectory
-    Eigen::VectorXd X1_prime;        //!< first derivative of coordinate #1 of the interpolated trajectory
-    Eigen::VectorXd X2_prime;        //!< first derivative of coordinate #1 of the interpolated trajectory
-    Eigen::VectorXd X3_prime;        //!< first derivative of coordinate #1 of the interpolated trajectory
     Eigen::VectorXd XD2;             //!< first derivative of coordinate #2 of the interpolated trajectory
     Eigen::VectorXd XD3;             //!< first derivative of coordinate #3 of the interpolated trajectory
     Eigen::VectorXd XDD1;            //!< second derivative of coordinate #1 of the interpolated trajectory
     Eigen::VectorXd XDD2;            //!< second derivative of coordinate #2 of the interpolated trajectory
     Eigen::VectorXd XDD3;            //!< second derivative of coordinate #3 of the interpolated trajectory
-
     int P;                           //!< polynomial degree of the BSpline
+    double Ttot;                     //!< the last time value of the time vector
     Eigen::VectorXd U;               //!< knot vector of the BSpline
     Eigen::VectorXd C1;              //!< coordinate #1 of the control points
     Eigen::VectorXd C2;              //!< coordinate #2 of the control points
