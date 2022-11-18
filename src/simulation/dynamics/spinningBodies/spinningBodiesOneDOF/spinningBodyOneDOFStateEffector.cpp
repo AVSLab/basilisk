@@ -236,7 +236,7 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime, Back
     Eigen::Vector3d gravityTorquePntS_B;
     rDot_SB_B = this->omegaTilde_BN_B * this->r_SB_B;
     gravityTorquePntS_B = rTilde_ScS_B * this->mass * g_B;
-    this->cTheta = (this->u + this->sHat_B.dot(gravityTorquePntS_B - omegaTilde_SN_B * IPntS_B * this->omega_SN_B
+    this->cTheta = (this->u - this->k * this->theta - this->c * this->thetaDot + this->sHat_B.dot(gravityTorquePntS_B - omegaTilde_SN_B * IPntS_B * this->omega_SN_B
         - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B -  this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * rDot_SB_B)) / this->dTheta;
 
     // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
