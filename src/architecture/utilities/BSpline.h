@@ -36,8 +36,6 @@ public:
     void setXDot_N(Eigen::Vector3d XDot_N);
     void setXDDot_0(Eigen::Vector3d XDDot_0);
     void setXDDot_N(Eigen::Vector3d XDDot_N);
-    void setXDot(Eigen::VectorXd X1Dot,Eigen::VectorXd X2Dot,Eigen::VectorXd X3Dot);
-    void setXDot_des(Eigen::VectorXd X1Dot_des,Eigen::VectorXd X2Dot_des,Eigen::VectorXd X3Dot_des);
     void setT(Eigen::VectorXd T);
     void setW(Eigen::VectorXd W);
     void setAvgXDot(double AvgXDot);
@@ -49,12 +47,6 @@ public:
     Eigen::VectorXd X1;              //!< coordinate #1 of the waypoints
     Eigen::VectorXd X2;              //!< coordinate #2 of the waypoints
     Eigen::VectorXd X3;              //!< coordinate #3 of the waypoints
-    Eigen::VectorXd X1Dot;           //!< first derivative coordinate #1 of the waypoints
-    Eigen::VectorXd X2Dot;           //!< first derivative coordinate #2 of the waypoints
-    Eigen::VectorXd X3Dot;           //!< first derivativs coordinate #3 of the waypoints
-    Eigen::VectorXd X1Dot_des;       //!< coordinate #1 of the desired 1st derivatives (normalized)
-    Eigen::VectorXd X2Dot_des;       //!< coordinate #2 of the desired 2nd derivatives (normalized
-    Eigen::VectorXd X3Dot_des;       //!< coordinate #3 of the desired 3rd derivatives (normalized)
     Eigen::Vector3d XDot_0;          //!< 3D vector containing the first derivative at starting point
     Eigen::Vector3d XDot_N;          //!< 3D vector containing the first derivative at final point
     Eigen::Vector3d XDDot_0;         //!< 3D vector containing the second derivative at starting point
@@ -85,6 +77,9 @@ public:
     Eigen::VectorXd X2;              //!< coordinate #2 of the interpolated trajectory
     Eigen::VectorXd X3;              //!< coordinate #3 of the interpolated trajectory
     Eigen::VectorXd XD1;             //!< first derivative of coordinate #1 of the interpolated trajectory
+    Eigen::VectorXd X1_prime;        //!< first derivative of coordinate #1 of the interpolated trajectory
+    Eigen::VectorXd X2_prime;        //!< first derivative of coordinate #1 of the interpolated trajectory
+    Eigen::VectorXd X3_prime;        //!< first derivative of coordinate #1 of the interpolated trajectory
     Eigen::VectorXd XD2;             //!< first derivative of coordinate #2 of the interpolated trajectory
     Eigen::VectorXd XD3;             //!< first derivative of coordinate #3 of the interpolated trajectory
     Eigen::VectorXd XDD1;            //!< second derivative of coordinate #1 of the interpolated trajectory

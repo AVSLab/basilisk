@@ -84,13 +84,6 @@ void InputDataSet::setW(Eigen::VectorXd W) {this->W = W; this->W_flag = true; re
 /*! Set LS_dot to true which means first derivative LS approximation occurs (optional) */
 void InputDataSet::setLS_Dot() {this->LS_Dot = true; return;}
 
-/*! Fill in the desired first derivative coordinates (optional), only if LS_Dot is true */
-void InputDataSet::setXDot_des(Eigen::VectorXd X1Dot_des,Eigen::VectorXd X2Dot_des,Eigen::VectorXd X3Dot_des) {this->X1Dot_des = X1Dot_des;this->X2Dot_des = X2Dot_des;this->X3Dot_des = X3Dot_des; return;}
-
-void InputDataSet::setXDot(Eigen::VectorXd X1Dot,Eigen::VectorXd X2Dot,Eigen::VectorXd X3Dot)
-    {this->X1Dot = X1Dot;this->X2Dot = X2Dot; this->X3Dot = X3Dot; return;}
-
-
 
 /*! This constructor initializes an Output structure for BSpline interpolation */
 OutputDataSet::OutputDataSet()
@@ -497,7 +490,46 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     }
     
     //std::cout << "The value of U is "<<U[2]<<std::endl;
+    
+    // Calculate 1st Derivatives:
+    
+    Eigen::VectorXd X1_primehat(q);
+    Eigen::VectorXd X2_primehat(q);
+    Eigen::VectorXd X3_primehat(q);
 
+    int index = 0;
+    
+    // Calculate X Prime Hat Derivatives
+    
+    //Central Finite Derivatives
+    for (int k = 1;k<q-1;k++) {
+        X1_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X1[k]-Input.X1[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X1[k+1]-Input.X1[k])/(uk[k+1]-uk[k]);
+        X2_primehat[index] =(uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X2[k]-Input.X2[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X2[k+1]-Input.X2[k])/(uk[k+1]-uk[k]);
+        X3_primehat[index] =(uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X3[k]-Input.X3[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X3[k+1]-Input.X3[k])/(uk[k+1]-uk[k]);
+        index++;
+    }
+    
+    // Set Initial Derivative
+    X1_primehat[0] = Input.XDot_0[0];
+    X2_primehat[0] = Input.XDot_0[1];
+    X3_primehat[0] = Input.XDot_0[2];
+    
+    // Set Final Derivative
+    X1_primehat[q-1] = Input.XDot_N[0];
+    X2_primehat[q-1] = Input.XDot_N[1];
+    X3_primehat[q-1] = Input.XDot_N[2];
+    
+    // Calculate X Prime Derivatives
+    for (int k = 0;k<q;k++) {
+        int a = int(X1_primehat[0]);
+        int b = int(X2_primehat[0]);
+        int c = int(X3_primehat[0]);
+        int mag = (a^2+b^2+c^2)^(1/2);
+        Output->X1_prime[k] =X1_primehat[k]/mag*Input.AvgXDot*Ttot;
+        Output->X2_prime[k] = X2_primehat[k]/mag*Input.AvgXDot*Ttot;
+        Output->X3_prime[k] = X3_primehat[k]/mag*Input.AvgXDot*Ttot;
+    }
+    
     // K = number of endpoint derivatives
     int K = 0;
     if (Input.XDot_0_flag == true) {K += 1;}
@@ -697,15 +729,6 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
 //        std::cout<<Input.X1Dot_des[0]<<std::endl;
 //        std::cout<<Input.X2Dot_des[0]<<std::endl;
 //        std::cout<<Input.X3Dot_des[0]<<std::endl;
-    //Applying Correction Factor
-    //Just the tq in order to correct
-        for (int i = 0; i < q; i++) { // made a change to this index
-            //std::cout<<"index of i is"<<i<<std::endl;
-            //std::cout<<"value of i is"<<Input.X1Dot_des[i]<<std::endl;
-            Input.X1Dot[i] = Input.X1Dot_des[i]*Ttot;
-            Input.X2Dot[i] = Input.X2Dot_des[i]*Ttot;
-            Input.X3Dot[i] = Input.X3Dot_des[i]*Ttot;
-        }
 //        std::cout<<"Passed this phase"<<std::endl;
 //        std::cout<<q<<std::endl;
         
@@ -720,9 +743,9 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         //Change these to C3_1,C2_1 along with C1_1
         for (int c = q-1; c < 2*q-2; c++) {
             basisFunction(uk[c], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
-            rhok1D[c-1] = Input.X1Dot[c] - NN1[0]*C1_1[0] - NN1[n]*C1_1[K+1];
-            rhok2D[c-1] = Input.X1Dot[c] - NN1[0]*C2_1[0] - NN1[n]*C2_1[K+1];
-            rhok3D[c-1] = Input.X1Dot[c] - NN1[0]*C3_1[0] - NN1[n]*C3_1[K+1];
+            rhok1D[c-1] = Output->X1_prime[c] - NN1[0]*C1_1[0] - NN1[n]*C1_1[K+1];
+            rhok2D[c-1] = Output->X2_prime[c] - NN1[0]*C2_1[0] - NN1[n]*C2_1[K+1];
+            rhok3D[c-1] = Output->X3_prime[c] - NN1[0]*C3_1[0] - NN1[n]*C3_1[K+1];
             if (Input.XDot_0_flag == true) {
                 rhok1D[c-1] -= NN1[1]*C1_1[1];
                 rhok2D[c-1] -= NN1[1]*C2_1[1];

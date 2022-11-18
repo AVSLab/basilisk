@@ -112,10 +112,6 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     X1 = np.array([0, 1, 2, 3, 4, 5, 6])
     X2 = np.array([5, 4, 3, 2, 1, 0, 1])
     X3 = np.array([3, 2, 1, 2, 3, 4, 5])
-    # Set Derivatives
-    X1Dot = np.array([0.2, 0.2, 0.4, 0.3, 0.6, 0, 0])
-    X2Dot = np.array([0, 0, 0.2, 0.1, 0.8, 1, 0])
-    X3Dot = np.array([0, 1, 0.5, 0.7, 0.2, 1, 0])
     
     Input = BSpline.InputDataSet(X1, X2, X3)
     Output = BSpline.OutputDataSet()
@@ -126,8 +122,6 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
     if XDDot_flag:
         Input.setXDDot_0([0, 0, 0])
         Input.setXDDot_N([0.2, 0, 0])
-
-    Input.setXDot(X1Dot,X2Dot,X3Dot)
     
     print("Enter which case you would like to test.")
     
@@ -216,29 +210,6 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             axs[2].legend(["Way Points","LS Approximation"])
             fig.tight_layout()
             plt.show()
-           
-            # Plotting First Derivative Codes
-            fig, axs = plt.subplots(3)
-            axs[0].scatter(Input.T,X1Dot,c = 'b')
-            axs[0].plot(Output.T,Output.XD1,c = 'r')
-            fig.suptitle("X Dots vs Time")
-            axs[0].set_xlabel("Time [s]")
-            axs[0].set_ylabel("X1 Dot")
-            axs[0].legend(["Way Points","LS Approximation"])
-            
-            axs[1].scatter(Input.T,X2Dot,c = 'b')
-            axs[1].plot(Output.T,Output.XD2,c = 'r')
-            axs[1].set_xlabel("Time [s]")
-            axs[1].set_ylabel("X2 Dot")
-            axs[1].legend(["Way Points","LS Approximation"])
-            
-            axs[2].scatter(Input.T,X3Dot,c = 'b')
-            axs[2].plot(Output.T,Output.XD3,c = 'r')
-            axs[2].set_xlabel("Time [s]")
-            axs[2].set_ylabel("X3 Dot")
-            axs[2].legend(["Way Points","LS Approximation"])
-            fig.tight_layout()
-            plt.show()
         case "B":
             print("Case B")
             BSpline.approximate(Input,101,n,P,Output)
@@ -309,29 +280,6 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             axs[2].plot(Output.T,Output.X3,c = 'y')
             axs[2].set_xlabel("Time [s]")
             axs[2].set_ylabel("X3 Attitude")
-            axs[2].legend(["Way Points","LS Approximation"])
-            fig.tight_layout()
-            plt.show()
-           
-            # Plotting First Derivative Codes
-            fig, axs = plt.subplots(3)
-            axs[0].scatter(Output.T_way_calc,X1Dot,c = 'b')
-            axs[0].plot(Output.T,Output.XD1,c = 'y')
-            fig.suptitle("X Dots vs Time")
-            axs[0].set_xlabel("Time [s]")
-            axs[0].set_ylabel("X1 Dot")
-            axs[0].legend(["Way Points","LS Approximation"])
-            
-            axs[1].scatter(Output.T_way_calc,X2Dot,c = 'b')
-            axs[1].plot(Output.T,Output.XD2,c = 'y')
-            axs[1].set_xlabel("Time [s]")
-            axs[1].set_ylabel("X2 Dot")
-            axs[1].legend(["Way Points","LS Approximation"])
-            
-            axs[2].scatter(Output.T_way_calc,X3Dot,c = 'b')
-            axs[2].plot(Output.T,Output.XD3,c = 'y')
-            axs[2].set_xlabel("Time [s]")
-            axs[2].set_ylabel("X3 Dot")
             axs[2].legend(["Way Points","LS Approximation"])
             fig.tight_layout()
             plt.show()
@@ -410,29 +358,6 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             axs[2].plot(Output.T,Output.X3,c = 'r')
             axs[2].set_xlabel("Time [s]")
             axs[2].set_ylabel("X3 Attitude")
-            axs[2].legend(["Way Points","LS Approximation"])
-            fig.tight_layout()
-            plt.show()
-           
-            # Plotting First Derivative Codes
-            fig, axs = plt.subplots(3)
-            axs[0].scatter(Input.T,X1Dot,c = 'b')
-            axs[0].plot(Output.T,Output.XD1,c = 'r')
-            fig.suptitle("X Dots vs Time")
-            axs[0].set_xlabel("Time [s]")
-            axs[0].set_ylabel("X1 Dot")
-            axs[0].legend(["Way Points","LS Approximation"])
-            
-            axs[1].scatter(Input.T,X2Dot,c = 'b')
-            axs[1].plot(Output.T,Output.XD2,c = 'r')
-            axs[1].set_xlabel("Time [s]")
-            axs[1].set_ylabel("X2 Dot")
-            axs[1].legend(["Way Points","LS Approximation"])
-            
-            axs[2].scatter(Input.T,X3Dot,c = 'b')
-            axs[2].plot(Output.T,Output.XD3,c = 'r')
-            axs[2].set_xlabel("Time [s]")
-            axs[2].set_ylabel("X3 Dot")
             axs[2].legend(["Way Points","LS Approximation"])
             fig.tight_layout()
             plt.show()
@@ -515,29 +440,6 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             axs[2].plot(Output.T,Output.X3,c = 'g')
             axs[2].set_xlabel("Time [s]")
             axs[2].set_ylabel("X3 Attitude")
-            axs[2].legend(["Way Points","LS Approximation"])
-            fig.tight_layout()
-            plt.show()
-           
-            # Plotting First Derivative Codes
-            fig, axs = plt.subplots(3)
-            axs[0].scatter(Output.T_way_calc,X1Dot,c = 'b')
-            axs[0].plot(Output.T,Output.XD1,c = 'g')
-            fig.suptitle("X Dots vs Time")
-            axs[0].set_xlabel("Time [s]")
-            axs[0].set_ylabel("X1 Dot")
-            axs[0].legend(["Way Points","LS Approximation"])
-            
-            axs[1].scatter(Output.T_way_calc,X2Dot,c = 'b')
-            axs[1].plot(Output.T,Output.XD2,c = 'g')
-            axs[1].set_xlabel("Time [s]")
-            axs[1].set_ylabel("X2 Dot")
-            axs[1].legend(["Way Points","LS Approximation"])
-            
-            axs[2].scatter(Output.T_way_calc,X3Dot,c = 'b')
-            axs[2].plot(Output.T,Output.XD3,c = 'g')
-            axs[2].set_xlabel("Time [s]")
-            axs[2].set_ylabel("X3 Dot")
             axs[2].legend(["Way Points","LS Approximation"])
             fig.tight_layout()
             plt.show()
