@@ -134,7 +134,7 @@ def run():
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(0.02)
+    simulationTime = macros.sec2nano(1.0)
 
     #
     #  create the simulation process
@@ -150,88 +150,30 @@ def run():
     scObject.ModelTag = "Primary"
     integratorObject = svIntegrators.svIntegratorRKF45(scObject)
     scObject.setIntegrator(integratorObject)
-    # define the simulation inertia
-    # mMainBody = 95.0
-    # xDimMainBody = 2.0
-    # yDimMainBody = 1.0
-    # zDimMainBody = 0.6
-    # posMainBody = np.array([0.0, 0.0, 0.2])
-    # IMainBody = np.array([[((1. / 12.) * mMainBody * ((yDimMainBody ** 2.) + (zDimMainBody ** 2.))), 0., 0.],
-    #      [0., ((1. / 12.) * mMainBody * ((xDimMainBody ** 2.) + (zDimMainBody ** 2.))), 0.],
-    #      [0., 0., ((1. / 12.) * mMainBody * ((xDimMainBody ** 2.) + (yDimMainBody ** 2.)))]]) - mMainBody * np.array(RigidBodyKinematics.v3Tilde(-posMainBody)) @ np.array(
-    #     RigidBodyKinematics.v3Tilde(-posMainBody)).transpose()
-    #
-    # mLeftLeg = 5.0
-    # xLeftLeg = 1.0
-    # yLeftLeg = 0.2
-    # zLeftLeg = 0.2
-    # posLeftLeg = np.array([1.0, 0, -0.3])
-    # dcmLeftLeg = RigidBodyKinematics.Mi(np.deg2rad(45.), 2)
-    # ILeftLeg = dcmLeftLeg @ np.array([[((1. / 12.) * mLeftLeg * ((yLeftLeg ** 2.) + (zLeftLeg ** 2.))), 0., 0.],
-    #      [0., ((1. / 12.) * mLeftLeg * ((xLeftLeg ** 2.) + (zLeftLeg ** 2.))), 0.],
-    #      [0., 0., ((1. / 12.) * mLeftLeg * ((xLeftLeg ** 2.) + (yLeftLeg ** 2.)))]]) @ dcmLeftLeg.transpose() \
-    #            + mLeftLeg * np.array(RigidBodyKinematics.v3Tilde(-posLeftLeg)) @ np.array(
-    #     RigidBodyKinematics.v3Tilde(-posLeftLeg)).transpose()
-    #
-    # mRightLeg = 5.0
-    # xRightLeg = 1.0
-    # yRightLeg = 0.2
-    # zRightLeg = 0.2
-    # posRightLeg = np.array([-1.0, 0, -0.3])
-    # dcmRightLeg = RigidBodyKinematics.Mi(np.deg2rad(-45.), 2)
-    # IRightLeg = dcmRightLeg @ np.array([[((1. / 12.) * mRightLeg * ((yRightLeg ** 2.) + (zRightLeg ** 2.))), 0., 0.],
-    #                                   [0., ((1. / 12.) * mRightLeg * ((xRightLeg ** 2.) + (zRightLeg ** 2.))), 0.],
-    #                                   [0., 0., ((1. / 12.) * mRightLeg * (
-    #                                               (xRightLeg ** 2.) + (yRightLeg ** 2.)))]]) @ dcmRightLeg.transpose() \
-    #            + mRightLeg * np.array(RigidBodyKinematics.v3Tilde(-posRightLeg)) @ np.array(
-    #     RigidBodyKinematics.v3Tilde(-posRightLeg)).transpose()
-    #
-    # mLeftFoot = 10.0
-    # xLeftFoot = 1.0
-    # yLeftFoot = 1.4
-    # zLeftFoot = 0.4
-    # posLeftFoot = np.array([1.5, 0, -0.8])
-    # ILeftFoot = np.array([[((1. / 12.) * mLeftFoot * ((yLeftFoot ** 2.) + (zLeftFoot ** 2.))), 0., 0.],
-    #                                     [0., ((1. / 12.) * mLeftFoot * ((xLeftFoot ** 2.) + (zLeftFoot ** 2.))), 0.],
-    #                                     [0., 0., ((1. / 12.) * mLeftFoot * (
-    #                                             (xLeftFoot ** 2.) + (yLeftFoot ** 2.)))]]) \
-    #             + mLeftFoot * np.array(RigidBodyKinematics.v3Tilde(-posLeftFoot)) @ np.array(
-    #     RigidBodyKinematics.v3Tilde(-posLeftFoot)).transpose()
-    #
-    # mRightFoot = 10.0
-    # xRightFoot = 1.0
-    # yRightFoot = 1.4
-    # zRightFoot = 0.4
-    # posRightFoot = np.array([-1.5, 0, -0.8])
-    # IRightFoot = np.array([[((1. / 12.) * mRightFoot * ((yRightFoot ** 2.) + (zRightFoot ** 2.))), 0., 0.],
-    #                       [0., ((1. / 12.) * mRightFoot * ((xRightFoot ** 2.) + (zRightFoot ** 2.))), 0.],
-    #                       [0., 0., ((1. / 12.) * mRightFoot * (
-    #                               (xRightFoot ** 2.) + (yRightFoot ** 2.)))]]) \
-    #             + mRightFoot * np.array(RigidBodyKinematics.v3Tilde(-posRightFoot)) @ np.array(
-    #     RigidBodyKinematics.v3Tilde(-posRightFoot)).transpose()
-    #
-    # CoMLander = (mMainBody * posMainBody + mLeftLeg * posLeftLeg + mRightLeg * posRightLeg + mLeftFoot * posLeftFoot + mRightFoot * posRightFoot) / (
-    #     mMainBody + mRightFoot + mLeftFoot + mLeftLeg + mRightLeg)
 
     scObject.hub.mHub = 5.0  # kg - spacecraft mass
     I = [((1./6.)*scObject.hub.mHub*4.), 0., 0.,
          0., ((1./6.)*scObject.hub.mHub*4.), 0.,
          0., 0., ((1./6.)*scObject.hub.mHub*4.)]
 
-    # I = [((1. / 6.) * scObject.hub.mHub * 9.), 0., 0.,
-    #      0., ((1. / 6.) * scObject.hub.mHub * 9.), 0.,
-    #      0., 0., ((1. / 6.) * scObject.hub.mHub * 9.)]
-
-    # IAll = IMainBody + ILeftFoot + ILeftLeg + IRightFoot + IRightLeg
-    # I = [IAll[0, 0], IAll[0, 1], IAll[0, 2],
-    #      IAll[1, 0], IAll[1, 1], IAll[1, 2],
-    #      IAll[2, 0], IAll[2, 1], IAll[2, 2]]
-    # scObject.hub.mHub = mMainBody + mRightLeg + mLeftLeg + mLeftFoot + mRightFoot
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
+    scSim.AddModelToTask(simTaskName, scObject, None, 10)
 
+    scObject2 = spacecraft.Spacecraft()
+    scObject2.ModelTag = "Secondary"
+    integratorObject2 = svIntegrators.svIntegratorRKF45(scObject2)
+    scObject2.setIntegrator(integratorObject2)
 
-    scSim.AddModelToTask(simTaskName, scObject, None, 1)
+    scObject2.hub.mHub = 5.0  # kg - spacecraft mass
+    I = [((1. / 6.) * scObject2.hub.mHub * 4.), 0., 0.,
+         0., ((1. / 6.) * scObject2.hub.mHub * 4.), 0.,
+         0., 0., ((1. / 6.) * scObject2.hub.mHub * 4.)]
+
+    scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+
+    scSim.AddModelToTask(simTaskName, scObject2, None, 1)
+
 
     scContact = RigidBodyContactEffector.RigidBodyContactEffector()
     scContact.maxPosError = 1e-4
@@ -242,37 +184,31 @@ def run():
     scContact.minBoundingBoxDim = 0.01
     scContact.boundingBoxFF = 1.2
     scContact.LoadSpacecraftBody("highrescube.obj", scObject.ModelTag, scObject.scStateOutMsg, scObject.scMassOutMsg, 1.0, 1.0, 0.0)
+    scContact.LoadSpacecraftBody("highrescube.obj", scObject2.ModelTag, scObject2.scStateOutMsg, scObject2.scMassOutMsg,
+                                 1.0, 1.0, 0.0)
     # scContact.LoadMainBody("Lander.obj")
     # scContact.mainBody.modelTag = scObject.ModelTag
     # scContact.mainBody.boundingRadius = 3.5
     # scContact.mainBody.boundingRadius = 1.5
 
 
-    staticObjectMsg = messaging.SpicePlanetStateMsgPayload()
-    # staticObjectMsg.PositionVector = [3.5, 2.01, 2.01]
-    staticObjectMsg.PositionVector = [0.0, 0.0, 0.0]
-    staticObjectMsg.VelocityVector = [0., 0., 0.]
-    staticObjectMsg.J20002Pfix = np.identity(3) #RigidBodyKinematics.Mi(np.deg2rad(90),3)
-    stObMsg = messaging.SpicePlanetStateMsg().write(staticObjectMsg)
+    # staticObjectMsg = messaging.SpicePlanetStateMsgPayload()
+    # # staticObjectMsg.PositionVector = [3.5, 2.01, 2.01]
+    # staticObjectMsg.PositionVector = [0.0, 0.0, 0.0]
+    # staticObjectMsg.VelocityVector = [0., 0., 0.]
+    # staticObjectMsg.J20002Pfix = np.identity(3) #RigidBodyKinematics.Mi(np.deg2rad(90),3)
+    # stObMsg = messaging.SpicePlanetStateMsg().write(staticObjectMsg)
+    # scContact.AddSpiceBody("highrescube.obj", stObMsg, 1.0, 1.0, 0.0)
 
-
-    scContact.AddSpiceBody("highrescube.obj", stObMsg, 1.0, 1.0, 0.0)
-    # scContact.AddOtherBody("surface.obj", stObMsg, 5.0, 1.0, 1.0)
-    # scContact.externalBodies[0].states.r_BN_N = [[3.5], [2.0], [2.0]]  # m   - r_CN_N
-    # scContact.externalBodies[0].states.v_BN_N = [[0.0], [0.0], [0.0]]  # m/s - v_CN_N
-    # scContact.externalBodies[0].states.sigma_BN = [[0.0], [0.0], [0.0]]  # sigma_CN_B
-    # scContact.externalBodies[0].states.omega_BN_B = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
-    # scContact.externalBodies[0].states.c_B = [[0.0], [0.0], [0.0]]
-    # I2 = np.array([[((1. / 6.) * 2000. * 4.), 0., 0.],
-    #       [0., ((1. / 6.) * 2000. * 4.), 0.],
-    #       [0., 0, ((1. / 6.) * 2000. * 4.)]])
-    # scContact.Bodies[1].states.m_SC = 2000.
-    # scContact.Bodies[1].states.ISCPntB_B = unitTestSupport.np2EigenMatrix3d(I2)
-    # scContact.Bodies[1].states.ISCPntB_B_inv = unitTestSupport.np2EigenMatrix3d(np.invert(I2))
 
     scObject.addDynamicEffector(scContact)
+    scObject2.addDynamicEffector(scContact)
     scSim.AddModelToTask(simTaskName, scContact)
 
+    scObject2.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]  # m   - r_CN_N
+    scObject2.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]  # m/s - v_CN_N
+    scObject2.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_CN_B
+    scObject2.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
 
     #
     #   Setup data logging before the simulation is initialized
@@ -281,6 +217,9 @@ def run():
     samplingTime = macros.sec2nano(1 / 60) #simulationTime // (numDataPoints - 1)
     scStateRec = scObject.scStateOutMsg.recorder()
     scSim.AddModelToTask(simTaskName, scStateRec)
+
+    scStateRec2 = scObject2.scStateOutMsg.recorder()
+    scSim.AddModelToTask(simTaskName, scStateRec2)
 
     # scObject.hub.r_CN_NInit = [[1.51], [1.5], [1.5]]  # m   - r_CN_N
     # scObject.hub.v_CN_NInit = [[0.2], [0.0], [0.0]]  # m/s - v_CN_N
@@ -323,29 +262,31 @@ def run():
     scSim.ExecuteSimulation()
 
     rNData1 = scStateRec.r_CN_N
-    # rNData2 = scSim.pullMessageLogData(scObject2.scStateOutMsgName + '.r_CN_N', list(range(3)))
     vNData1 = scStateRec.v_CN_N
-    # vNData2 = scSim.pullMessageLogData(scObject2.scStateOutMsgName + '.v_CN_N', list(range(3)))
     sigmaData1 = scStateRec.sigma_BN
-    # sigmaData2 = scSim.pullMessageLogData(scObject2.scStateOutMsgName + '.sigma_BN', list(range(3)))
     omegaData1 = scStateRec.omega_BN_B
-    # omegaData2 = scSim.pullMessageLogData(scObject2.scStateOutMsgName + '.omega_BN_B', list(range(3)))
-    rNData2 = []
-    vNData2 = []
-    sigmaData2 = []
-    omegaData2 = []
+
+    rNData2 = scStateRec2.r_CN_N
+    vNData2 = scStateRec2.v_CN_N
+    sigmaData2 = scStateRec2.sigma_BN
+    omegaData2 = scStateRec2.omega_BN_B
+
+    # rNData2 = []
+    # vNData2 = []
+    # sigmaData2 = []
+    # omegaData2 = []
     mainPath = []
     otherPath = []
-    for ii in range(rNData1.shape[0]):
-        rNData2.append(staticObjectMsg.PositionVector)
-        vNData2.append([0., 0., 0.])
-        sigmaData2.append([0., 0., 0.])
-        omegaData2.append([0., 0., 0.])
+    # for ii in range(rNData1.shape[0]):
+    #     rNData2.append(staticObjectMsg.PositionVector)
+    #     vNData2.append([0., 0., 0.])
+    #     sigmaData2.append([0., 0., 0.])
+    #     omegaData2.append([0., 0., 0.])
 
-    rNData2 = np.asarray(rNData2)
-    vNData2 = np.asarray(vNData2)
-    sigmaData2 = np.asarray(sigmaData2)
-    omegaData2 = np.asarray(omegaData2)
+    # rNData2 = np.asarray(rNData2)
+    # vNData2 = np.asarray(vNData2)
+    # sigmaData2 = np.asarray(sigmaData2)
+    # omegaData2 = np.asarray(omegaData2)
 
     for ii in range(0, rNData1.shape[0], 10):
         mainPath.append(np.array([rNData1[ii, 0], rNData1[ii, 1], rNData1[ii, 2],
@@ -368,7 +309,12 @@ def run():
         kineticData1.append(
             0.5 * scObject.hub.mHub * (np.linalg.norm(vNData1[ii, :]) ** 2) + 0.5 * omegaData1[ii, :]
                             @ scObject.hub.IHubPntBc_B @ omegaData1[ii, :] )
-        totalKinetic.append( np.sqrt(kineticData1[ii]))
+
+        kineticData2.append(
+            0.5 * scObject2.hub.mHub * (np.linalg.norm(vNData2[ii, :]) ** 2) + 0.5 * omegaData2[ii, :]
+            @ scObject2.hub.IHubPntBc_B @ omegaData2[ii, :])
+
+        totalKinetic.append( np.sqrt(kineticData1[ii] + kineticData2[ii]))
         relVel.append(np.linalg.norm(vNData1[ii, :]) - np.linalg.norm(vNData2[ii, :]))
 
     print(totalKinetic[-1] / totalKinetic[0])

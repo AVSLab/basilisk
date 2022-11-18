@@ -176,8 +176,10 @@ typedef struct{
     ReadFunctor<SCMassPropsMsgPayload> scMassStateInMsg;
     SCStatesMsgPayload stateInBuffer;           //!< -- Body state buffer
     SCMassPropsMsgPayload massStateInBuffer;    //!< -- Body mass state buffer
-    Eigen::Vector3d forceExternal_N;
-    Eigen::Vector3d torqueExternalPntB_B;
+    std::vector<Eigen::Vector3d> forceExternal_N;
+    std::vector<Eigen::Vector3d> torqueExternalPntB_B;
+    std::vector<double> impactTimes;
+    std::vector<double> impactTimeSteps;
 }geometry;
 
 /*! @brief Rigid Body Contact state effector class */
@@ -207,8 +209,10 @@ private:
     bool lockedToRand;
     double timeFound;
     double integrateTimeStep;
-    
-    bool justOneTime = false;
+    bool newMacroTimeStep;
+    double topTime;
+    double topTimeStep;
+    bool secondInter;
     
 public:
     geometry mainBody;
@@ -228,6 +232,7 @@ public:
     double minBoundingBoxDim;
     double boundingBoxFF;
     double maxTimeStep;
+    double timeSynchTol;
     
     
     

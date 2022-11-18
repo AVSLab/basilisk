@@ -33,11 +33,13 @@ RigidBodyContactEffector::RigidBodyContactEffector()
     this->isOverlap = false;
     this->mainBody.boundingRadius = 0.0;
     this->mainBody.collisionPoints.clear();
-    this->currentBodyInCycle = 0;
+    this->currentBodyInCycle = -1;
     this->numBodies = 0;
     this->boundingBoxFF = 1.0;
     this->minBoundingBoxDim = 0.005;
     this->maxTimeStep = 0.001;
+    this->timeSynchTol = 1e-9;
+    this->newMacroTimeStep = true;
     return;
 }
 
@@ -54,7 +56,7 @@ void RigidBodyContactEffector::Reset()
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
-    this->currentBodyInCycle = 0;
+    this->currentBodyInCycle = -1;
     
 }
 
@@ -412,7 +414,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
         minZ = 1E15;
         for (int ii=0; ii < convHullPoints.size(); ++ii)
         {
-            std::cout << convHullPoints[ii][0] << " " << convHullPoints[ii][1] << " " << convHullPoints[ii][2] << std::endl;
+//            std::cout << convHullPoints[ii][0] << " " << convHullPoints[ii][1] << " " << convHullPoints[ii][2] << std::endl;
             if (convHullPoints[ii][0] > maxX)
             {
                 maxX = convHullPoints[ii][0];
@@ -440,7 +442,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
         }
         centroid << (maxX + minX)/2.0, (maxY + minY)/2.0, (maxZ + minZ)/2.0;
         
-        std::cout << std::endl << centroid << std::endl;
+//        std::cout << std::endl << centroid << std::endl;
         maxX = this->minBoundingBoxDim;
         maxY = this->minBoundingBoxDim;
         maxZ = this->minBoundingBoxDim;
@@ -463,7 +465,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
         
         polyhedron[shapeIt].centroid = centroid;
         polyhedron[shapeIt].boundingBox << maxX, maxY, maxZ;
-        std::cout << maxX << " " << maxY << " " << maxZ << std::endl << std::endl;
+//        std::cout << maxX << " " << maxY << " " << maxZ << std::endl << std::endl;
         
         
         for (int faceIt=0; faceIt<polyhedron[shapeIt].faceTriangles.size(); ++faceIt)
@@ -533,22 +535,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
 /*! This method allows the RB Contact state effector to have access to the hub states and gravity*/
 void RigidBodyContactEffector::linkInStates(DynParamManager& statesIn)
 {
-//    while (this->Bodies[this->currentBodyInCycle].isSpice)
-//    {
-//        this->currentBodyInCycle++;
-//    }
-//
-//    this->Bodies[this->currentBodyInCycle].hubState.hubPosition = statesIn.getStateObject("hubPosition");
-//    this->Bodies[this->currentBodyInCycle].hubState.hubSigma = statesIn.getStateObject("hubSigma");
-//    this->Bodies[this->currentBodyInCycle].hubState.hubOmega_BN_N = statesIn.getStateObject("hubOmega");
-//    this->Bodies[this->currentBodyInCycle].hubState.hubVelocity = statesIn.getStateObject("hubVelocity");
-//    this->Bodies[this->currentBodyInCycle].hubState.r_BN_N = statesIn.getPropertyReference( "r_BN_N");
-//    this->Bodies[this->currentBodyInCycle].hubState.v_BN_N = statesIn.getPropertyReference( "v_BN_N");
-//    this->Bodies[this->currentBodyInCycle].hubState.m_SC = statesIn.getPropertyReference( "m_SC");
-//    this->Bodies[this->currentBodyInCycle].hubState.ISCPntB_B = statesIn.getPropertyReference( "inertiaSC");
-//    this->Bodies[this->currentBodyInCycle].hubState.c_B = statesIn.getPropertyReference( "centerOfMassSC");
-//
-//    this->currentBodyInCycle++;
+
 }
 
 /*! This method computes the Forces on Torque on the Spacecraft Body.
@@ -637,24 +624,50 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     
     std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts;
     
-    if (this->justOneTime){
-        return;
+    if (this->newMacroTimeStep)
+    {
+        this->topTime = currentTime;
+        this->topTimeStep = timeStep;
+        this->newMacroTimeStep = false;
+        this->secondInter = false;
     }
     
-    for (int groupIt1=0; groupIt1 < this->closeBodies.size(); ++groupIt1)
+    if ((abs(this->topTime - currentTime) < 1e-15) && (abs(this->topTimeStep - timeStep) < 1e-15))
     {
+        std::cout << this->topTime << "/" << currentTime << " " << this->topTimeStep << "/" << timeStep << std::endl;
+        if (this->secondInter)
+        {
+            this->secondInter = false;
+        }else
+        {
+            this->currentBodyInCycle++;
+            if (this->Bodies[this->currentBodyInCycle].isSpice == true)
+            {
+                this->currentBodyInCycle++;
+            }
+            this->secondInter = true;
+            this->responseFound = false;
+            this->lockedToRand = false;
+        }
+    }
+    
+    std::cout << this->currentBodyInCycle << std::endl << std::endl;
+    
+    for (int groupIt1=0; groupIt1 < this->closeBodies.size(); groupIt1++)
+    {
+        if (this->closeBodies[groupIt1][0] != this->currentBodyInCycle)
+        {
+            continue;
+        }
         if (this->responseFound)
         {
             if ((this->timeFound >= currentTime) && (abs(timeStep - this->integrateTimeStep) < 1e-15))
             {
-                this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N;// / timeStep;
-                this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B;// / timeStep;
-                //this->integrateTimeStep = timeStep;
-                std::cout << "again" << std::endl;
+                this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N.back();
+                this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B.back();
                 return;
             }
             this->responseFound = false;
-            this->justOneTime = true;
             return;
         }
         
@@ -1010,46 +1023,6 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                                     this->currentMinError = contactError;
                                 }
                             }
-                        }else if (intersectFlag == 1)
-                        {
-                            contactError = (contactPoint - contactPoint2).norm();
-                            if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-10)))
-                            {
-                                alreadyFound = false;
-                                for (int impInd=0; impInd < impacts.size(); impInd++){
-                                    if (((contactPoint - std::get<0>(impacts[impInd])).norm() < 1e-3) || ((contactPoint2 - std::get<1>(impacts[impInd])).norm() < 1e-3))
-                                    {
-                                        alreadyFound = true;
-                                        if (impInd == maxErrorInd)
-                                        {
-                                            currentMaxError = this->currentMinError;
-                                        }
-//                                        impacts.erase(impacts.begin()+impInd);
-                                        break;
-                                    }
-                                }
-                                //if (alreadyFound) continue;
-                                
-                                contactNormal_N = ((faceLegInterval1.lower).cross(faceLegInterval2.lower)).normalized();
-                                contactVelocity_N = (body1Current.v_BN_N + body1Current.dcm_NB * (body1Current.omegaTilde_BN_B * body1Current.dcm_BN * (contactPoint - body1Current.r_BN_N))) - (body2Current.v_BN_N + body2Current.dcm_NB * (body2Current.omegaTilde_BN_B * body2Current.dcm_BN * (contactPoint2 - body2Current.r_BN_N)));
-                                if ((contactNormal_N.dot(std::get<2>(body2EdgeInter[vertInd2])) < 1e-12) && (contactNormal_N.dot(std::get<3>(body2EdgeInter[vertInd2])) < 1e-12))
-                                {
-                                    contactNormal_N = -contactNormal_N;
-                                }
-                                if (contactVelocity_N.dot(contactNormal_N) > 0)
-                                {
-                                    continue;
-                                }
-                                impacts.push_back(std::make_tuple(contactPoint, contactPoint2, contactNormal_N));
-//                                std::cout << "Edge 1: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
-                                if (contactError > currentMaxError)
-                                {
-                                    currentMaxError = contactError;
-                                    maxErrorInd = impacts.size()-1;
-                                }else{
-                                    this->currentMinError = contactError;
-                                }
-                            }
                         }
                     }
                 }
@@ -1086,7 +1059,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             this->forceExternal_N[0] = ((std::rand() % 1000) + 1000.0) / timeStep;
             this->forceExternal_N[1] = ((std::rand() % 1000) + 1000.0) / timeStep;
             this->forceExternal_N[2] = ((std::rand() % 1000) + 1000.0) / timeStep;
-            this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N = -this->forceExternal_N;
+//            this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N = -this->forceExternal_N;
             this->torqueExternalPntB_B[0] = ((std::rand() % 1000) + 1000.0) / timeStep;
             this->torqueExternalPntB_B[1] = ((std::rand() % 1000) + 1000.0) / timeStep;
             this->torqueExternalPntB_B[2] = ((std::rand() % 1000) + 1000.0) / timeStep;
@@ -1098,7 +1071,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         }
         for (int impNum=0; impNum < numImpacts; impNum++)
         {
-            std::cout << std::get<0>(impacts[impNum]) << std::endl << std::get<2>(impacts[impNum]) << std::endl << std::endl;
+
             // Create local contact frame
             cHat_3 = (std::get<2>(impacts[impNum])).normalized();
             //std::cout << std::get<2>(impacts[impNum])[0] << " " << std::get<2>(impacts[impNum])[1] << " " << std::get<2>(impacts[impNum])[2] << std::endl;
@@ -1157,48 +1130,6 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             }
         }
         
-        // Solve for the critical values of friction and sliding direction
-//        if (impacts.size() == 1)
-//        {
-//            f_vals.push_back(sqrt((pow(M_tot(0,1) * M_tot(1,2) - M_tot(1,1) * M_tot(0,2), 2) + pow(M_tot(1,0) * M_tot(0,2) - M_tot(0,0) * M_tot(1,2), 2)) / pow(M_tot(0,0) * M_tot(1,1) - M_tot(0,1) * M_tot(1,0), 2)));
-//
-//            phi_vals.push_back(atan2(M_tot(0,0) * M_tot(1,2) - M_tot(1,0) * M_tot(0,2), M_tot(1,1) * M_tot(0,2) - M_tot(0,1) * M_tot(1,3)));
-//        }else
-//        {
-//            M_inv = M_tot.completeOrthogonalDecomposition().pseudoInverse();
-//            M_inv_red1 = Eigen::MatrixXd::Zero(3*numImpacts, numImpacts);
-//            tempSel = 2;
-//            for (int ii=0; ii < numImpacts; ii++)
-//            {
-//                M_inv_red1.block(0, ii, 3*numImpacts, 1) = M_inv.block(0, tempSel, 3*numImpacts, 1);
-//                tempSel += 3;
-//            }
-//            M_inv_red2 = Eigen::MatrixXd::Zero(numImpacts, numImpacts);
-//            tempSel = 2;
-//            for (int ii=0; ii < numImpacts; ii++)
-//            {
-//                M_inv_red2.block(ii, 0, 1, numImpacts) = M_inv_red1.block(tempSel, 0, 1, numImpacts);
-//                tempSel += 3;
-//            }
-//
-//            dv3dj = M_inv_red2.completeOrthogonalDecomposition().pseudoInverse() * Eigen::VectorXd::Ones(numImpacts);
-//            tempVec = Eigen::VectorXd::Zero(3*numImpacts);
-//            tempSel = 2;
-//            for (int ii=0; ii < numImpacts; ii++)
-//            {
-//                tempVec(tempSel) = dv3dj(ii);
-//                tempSel += 3;
-//            }
-//
-//            tempVec = M_inv * tempVec;
-//            tempSel = 0;
-//            for (int ii=0; ii < numImpacts; ii++)
-//            {
-//                f_vals.push_back(sqrt(pow(tempVec(tempSel), 2) + pow(tempVec(tempSel+1), 2)));
-//                phi_vals.push_back(atan2(tempVec(tempSel+1), tempVec(tempSel)));
-//                tempSel += 3;
-//            }
-//        }
         
         // Create the initial collision state
         X_c = Eigen::VectorXd::Zero(numImpacts * 8);
@@ -1266,8 +1197,8 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         for (int impNum=0; impNum < numImpacts; impNum++)
         {
             impulse_Body1_N = dcm_CN[impNum].transpose() * X_c.segment(numImpacts * 3 + impNum * 3, 3);
-            forceExternalOther_N -= impulse_Body1_N / timeStep;
-            torqueExternalOtherPntB_B -= body2Current.dcm_BN * (std::get<1>(impacts[impNum]) - body2Current.r_BN_N).cross(impulse_Body1_N / timeStep);
+            forceExternalOther_N -= impulse_Body1_N;// / timeStep;
+            torqueExternalOtherPntB_B -= body2Current.dcm_BN * (std::get<1>(impacts[impNum]) - body2Current.r_BN_N).cross(impulse_Body1_N);// / timeStep);
             this->forceExternal_N += impulse_Body1_N / timeStep;
             this->torqueExternalPntB_B += body1Current.dcm_BN * (std::get<0>(impacts[impNum]) - body1Current.r_BN_N).cross(impulse_Body1_N / timeStep);
         }
@@ -1280,16 +1211,87 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             this->responseFound = true;
             this->timeFound = currentTime + timeStep + 1.0e-15;
             this->integrateTimeStep = timeStep;
-            this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N = this->forceExternal_N;
-            this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N = forceExternalOther_N;
-            this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B = this->torqueExternalPntB_B;
-            this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B = torqueExternalOtherPntB_B;
+            this->Bodies[this->closeBodies[groupIt1][0]].forceExternal_N.push_back(this->forceExternal_N);
+            this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N.push_back(forceExternalOther_N);
+            this->Bodies[this->closeBodies[groupIt1][0]].torqueExternalPntB_B.push_back(this->torqueExternalPntB_B);
+            this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B.push_back(torqueExternalOtherPntB_B);
+            this->Bodies[this->closeBodies[groupIt1][1]].impactTimes.push_back(currentTime);
+            this->Bodies[this->closeBodies[groupIt1][1]].impactTimeSteps.push_back(timeStep);
         }
-        this->forceExternal_N = this->forceExternal_N;// / timeStep;
-        this->torqueExternalPntB_B = this->torqueExternalPntB_B;// / timeStep;
         return;
     }
     
+    
+    for (int groupIt1=0; groupIt1 < this->closeBodies.size(); groupIt1++)
+    {
+        if (this->closeBodies[groupIt1][1] != this->currentBodyInCycle)
+        {
+            continue;
+        }
+        
+        if (this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N.empty())
+        {
+            return;
+        }
+        
+        if (this->responseFound)
+        {
+            if ((this->timeFound >= currentTime) && (abs(timeStep - this->integrateTimeStep) < 1e-15))
+            {
+                this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N[0] / this->integrateTimeStep;
+                this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B[0] / this->integrateTimeStep;
+                std::cout << "again" << std::endl;
+                return;
+            }
+            this->responseFound = false;
+            this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N.erase(this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N.begin());
+            this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B.erase(this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B.begin());
+            this->Bodies[this->closeBodies[groupIt1][1]].impactTimes.erase(this->Bodies[this->closeBodies[groupIt1][1]].impactTimes.begin());
+            this->Bodies[this->closeBodies[groupIt1][1]].impactTimeSteps.erase(this->Bodies[this->closeBodies[groupIt1][1]].impactTimeSteps.begin());
+            return;
+        }
+        
+        if (this->lockedToRand)
+        {
+            if ((this->timeFound >= currentTime) && (abs(timeStep - this->integrateTimeStep) < 1e-15))
+            {
+                this->forceExternal_N[0] = ((std::rand() % 1000) + 1000.0) / timeStep;
+                this->forceExternal_N[1] = ((std::rand() % 1000) + 1000.0) / timeStep;
+                this->forceExternal_N[2] = ((std::rand() % 1000) + 1000.0) / timeStep;
+                this->torqueExternalPntB_B[0] = ((std::rand() % 1000) + 1000.0) / timeStep;
+                this->torqueExternalPntB_B[1] = ((std::rand() % 1000) + 1000.0) / timeStep;
+                this->torqueExternalPntB_B[2] = ((std::rand() % 1000) + 1000.0) / timeStep;
+                return;
+            }
+            this->lockedToRand = false;
+        }
+        
+        
+        if ((abs(currentTime - this->Bodies[this->closeBodies[groupIt1][1]].impactTimes[0]) < this->timeSynchTol) && (abs(timeStep - this->Bodies[this->closeBodies[groupIt1][1]].impactTimeSteps[0]) < this->timeSynchTol))
+        {
+            this->responseFound = true;
+            this->timeFound = currentTime + timeStep + 1.0e-15;
+            this->integrateTimeStep = timeStep;
+            this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N[0] / this->integrateTimeStep;
+            this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B[0] / this->integrateTimeStep;
+            return;
+        }
+        std::cout << (currentTime + timeStep) << " " << this->Bodies[this->closeBodies[groupIt1][1]].impactTimes[0] << std::endl;
+        
+        if ((currentTime + timeStep) > this->Bodies[this->closeBodies[groupIt1][1]].impactTimes[0])
+        {
+            this->lockedToRand = true;
+            this->timeFound = currentTime + timeStep + 1.0e-15;
+            this->integrateTimeStep = timeStep;
+            this->forceExternal_N[0] = ((std::rand() % 1000) + 1000.0) / timeStep;
+            this->forceExternal_N[1] = ((std::rand() % 1000) + 1000.0) / timeStep;
+            this->forceExternal_N[2] = ((std::rand() % 1000) + 1000.0) / timeStep;
+            this->torqueExternalPntB_B[0] = ((std::rand() % 1000) + 1000.0) / timeStep;
+            this->torqueExternalPntB_B[1] = ((std::rand() % 1000) + 1000.0) / timeStep;
+            this->torqueExternalPntB_B[2] = ((std::rand() % 1000) + 1000.0) / timeStep;
+            return;
+        }
+    }
 
 }
 
@@ -1349,13 +1351,18 @@ void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
     this->currentMinError = 1.0;
     this->responseFound = false;
     this->lockedToRand = false;
+    this->newMacroTimeStep = true;
+    this->currentBodyInCycle = -1;
     
     this->ReadInputs();
     this->ExtractFromBuffer();
     
     for (int bodyIt=0; bodyIt<this->numBodies; ++bodyIt)
     {
-        
+        this->Bodies[bodyIt].forceExternal_N.clear();
+        this->Bodies[bodyIt].torqueExternalPntB_B.clear();
+        this->Bodies[bodyIt].impactTimes.clear();
+        this->Bodies[bodyIt].impactTimeSteps.clear();
         if (this->Bodies[bodyIt].isSpice == true)
         {
             this->Bodies[bodyIt].futureStates.r_BN_N = this->Bodies[bodyIt].states.r_BN_N + this->Bodies[bodyIt].states.v_BN_N * this->simTimeStep;
@@ -1463,6 +1470,7 @@ void RigidBodyContactEffector::CheckBoundingSphere()
             bodyDistance = this->IntervalDotProduct(bodyDifference, bodyDifference);
             
             if ((sqrt(abs(bodyDistance[0])) < (this->Bodies[bodyIt1].boundingRadius + this->Bodies[bodyIt2].boundingRadius)) || (sqrt(abs(bodyDistance[1])) < (this->Bodies[bodyIt1].boundingRadius + this->Bodies[bodyIt2].boundingRadius)))
+                std::cout << bodyIt1 << " " << bodyIt2 << std::endl;
                 this->closeBodies.push_back(bodyPair);
         }
         
