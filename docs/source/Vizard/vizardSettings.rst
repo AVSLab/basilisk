@@ -25,7 +25,7 @@ ambient lighting the following code is used:
 	viz.settings.ambient = 0.5
 
 Here ``scObject`` is a :ref:`spacecraft` instance.  This can also be a list of spacecraft objects
-for a multi-satellite simulation.
+for a multi-satellite simulation:
 
 .. code-block:: python
 
@@ -1595,17 +1595,18 @@ then lists of lists are required::
 
 Displaying Time Varying Components of a Spacecraft
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The spacecraft may have rigid body components attached whose positin and orientation varies with time.  One
+The spacecraft may have rigid body components attached whose position and orientation varies with time.  One
 example would be :ref:`hingedRigidBodyStateEffector` where a rigid body is hinged about a body fixed axis.
 These effectors output a spacecraft state message containing its inertial position and orientation
-information.  This allow Vizard to show this rigid body as a separate spacecraft object.
+information.  This allows Vizard to show this rigid body as a separate spacecraft object.
 
 .. note::
 
     Currently the support for time varying spacecraft components is limited.  Their body-relative
     position and orientation can be shown, but each component is treated as an independent spacecraft
     object.  Thus, for example, if the orbit lines are shown, each body component has its own orbit
-    line drawn.
+    line drawn. Moreover, each body component will have its own axis shown when ``View/All Spacecraft CS``
+    option is selected.
 
 To show these time-varying body components, the argument ``bodyList`` is provided to ``enableUnityVisualization``::
 

@@ -1432,7 +1432,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
 
         # process spacecraft ellipsoids
         if bodyScList:
-            if bodyScList[c] is not None:  # extra bodie(s) have been added to this spacecraft
+            if bodyScList[c] is not None:  # extra body(ies) have been added to this spacecraft
                 for tag, msg in bodyScList[c].items():
                     bodyData = vizInterface.VizSpacecraftData()
                     bodyData.spacecraftName = tag

@@ -85,7 +85,6 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-
 from Basilisk import __path__
 
 bskPath = __path__[0]
@@ -98,6 +97,7 @@ from Basilisk.simulation import hingedRigidBodyStateEffector, simpleSolarPanel
 from Basilisk.simulation import hingedBodyLinearProfiler, hingedRigidBodyMotor
 from Basilisk.architecture import messaging
 import math
+
 
 def run(show_plots):
     """
@@ -136,7 +136,7 @@ def run(show_plots):
     # create sun position message
     sunMessage = messaging.SpicePlanetStateMsgPayload()
     sunMessage.PlanetName = "Sun"
-    sunMessage.PositionVector = [0, orbitalMotion.AU*1000, 0]
+    sunMessage.PositionVector = [0, orbitalMotion.AU * 1000, 0]
     sunStateMsg = messaging.SpicePlanetStateMsg().write(sunMessage)
 
     # setup the orbit using classical orbit elements
@@ -156,7 +156,7 @@ def run(show_plots):
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
     # point the body 3 axis towards the sun in the inertial n2 direction
-    scObject.hub.sigma_BNInit = [[math.tan(-90./4.*macros.D2R)], [0.0], [0.0]]  # sigma_BN_B
+    scObject.hub.sigma_BNInit = [[math.tan(-90. / 4. * macros.D2R)], [0.0], [0.0]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
 
     # configure panels
@@ -187,17 +187,17 @@ def run(show_plots):
     # profilers
     profiler1 = hingedBodyLinearProfiler.HingedBodyLinearProfiler()
     profiler1.ModelTag = "deploymentProfiler"
-    profiler1.startTime = macros.sec2nano(5) # [ns] start the deployment
-    profiler1.endTime = macros.sec2nano(85) # [ns]
-    profiler1.startTheta = -np.pi # [rad] starting angle in radians
-    profiler1.endTheta = -np.pi/2 # [rad]
+    profiler1.startTime = macros.sec2nano(5)  # [ns] start the deployment
+    profiler1.endTime = macros.sec2nano(85)  # [ns]
+    profiler1.startTheta = -np.pi  # [rad] starting angle in radians
+    profiler1.endTheta = -np.pi / 2  # [rad]
 
     profiler2 = hingedBodyLinearProfiler.HingedBodyLinearProfiler()
     profiler2.ModelTag = "deploymentProfiler2"
-    profiler2.startTime = macros.sec2nano(100) # [ns] start the deployment
-    profiler2.endTime = macros.sec2nano(164) # [ns]
-    profiler2.startTheta = -np.pi # [rad] starting angle in radians
-    profiler2.endTheta = -np.pi/1.75 # [rad] ending angle is not all the way deployed
+    profiler2.startTime = macros.sec2nano(100)  # [ns] start the deployment
+    profiler2.endTime = macros.sec2nano(164)  # [ns]
+    profiler2.startTheta = -np.pi  # [rad] starting angle in radians
+    profiler2.endTheta = -np.pi / 1.75  # [rad] ending angle is not all the way deployed
 
     panel1.hingedRigidBodyRefMsg.subscribeTo(profiler1.hingedRigidBodyReferenceOutMsg)
     panel2.hingedRigidBodyRefMsg.subscribeTo(profiler2.hingedRigidBodyReferenceOutMsg)
@@ -205,13 +205,13 @@ def run(show_plots):
     # motors
     motor1 = hingedRigidBodyMotor.HingedRigidBodyMotor()
     motor1.ModelTag = "hingedRigidBodyMotor"
-    motor1.K = 20 # proportional gain constant
-    motor1.P = 10 # derivative gain constant
+    motor1.K = 20  # proportional gain constant
+    motor1.P = 10  # derivative gain constant
 
     motor2 = hingedRigidBodyMotor.HingedRigidBodyMotor()
     motor2.ModelTag = "hingedRigidBodyMotor2"
-    motor2.K = 20 # proportional gain constant
-    motor2.P = 10 # derivative gain constant
+    motor2.K = 20  # proportional gain constant
+    motor2.P = 10  # derivative gain constant
 
     motor1.hingedBodyStateSensedInMsg.subscribeTo(panel1.hingedRigidBodyOutMsg)
     motor1.hingedBodyStateReferenceInMsg.subscribeTo(profiler1.hingedRigidBodyReferenceOutMsg)
@@ -328,11 +328,10 @@ def run(show_plots):
     return figureList
 
 
-def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN, 
+def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN,
                panel1thetaLog, panel1thetaDotLog,
-               panel2thetaLog, panel2thetaDotLog, 
+               panel2thetaLog, panel2thetaDotLog,
                pwrLog1, pwrLog2):
-
     plt.close("all")  # clears out plots from earlier test runs
 
     # sigma B/N
@@ -410,7 +409,6 @@ def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN,
     plt.legend(loc='lower right')
     pltName = fileName + str(figCounter)
     figureList[pltName] = plt.figure(figCounter)
-
 
     return figureList
 
