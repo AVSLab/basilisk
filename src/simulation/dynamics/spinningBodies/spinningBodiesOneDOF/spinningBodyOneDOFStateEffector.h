@@ -56,6 +56,7 @@ public:
 private:
     static uint64_t effectorID;         //!< [] ID number of this panel
     double u;                           //!< [N-m] optional motor torque
+    int lockFlag;                       //!< [] flag for locking the rotation axis
 
     // Terms needed for back substitution
     Eigen::Vector3d aTheta;             //!< -- rDDot_BN term for back substitution
