@@ -42,7 +42,7 @@ from Basilisk.architecture import messaging
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def spinningBodyTest(show_plots, cmdTorque):
+def spinningBodyTest(show_plots, cmdTorque, lock):
     r"""
     **Validation Test Description**
 
@@ -63,12 +63,15 @@ def spinningBodyTest(show_plots, cmdTorque):
 
     against their initial values.
     """
-    [testResults, testMessage] = test_spinningBody(show_plots, cmdTorque)
+    [testResults, testMessage] = test_spinningBody(show_plots, cmdTorque, lock)
     assert testResults < 1, testMessage
 
 
-@pytest.mark.parametrize("cmdTorque", [0.0])
-def test_spinningBody(show_plots, cmdTorque):
+@pytest.mark.parametrize("cmdTorque, lock", [
+                         (0.0, False),
+                         (0.0, True)
+                         ])
+def test_spinningBody(show_plots, cmdTorque, lock):
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
@@ -112,6 +115,8 @@ def test_spinningBody(show_plots, cmdTorque):
     spinningBody.sHat_S = [[0], [0], [1]]
     spinningBody.thetaInit = 5 * macros.D2R
     spinningBody.thetaDotInit = 1 * macros.D2R
+    if lock:
+        spinningBody.thetaDotInit = 0.0
     spinningBody.ModelTag = "SpinningBody"
 
     # Add spinning body to spacecraft
@@ -120,6 +125,8 @@ def test_spinningBody(show_plots, cmdTorque):
     # Create the torque message
     cmdArray = messaging.ArrayMotorTorqueMsgPayload()
     cmdArray.motorTorque = [cmdTorque]  # [Nm]
+    if lock:
+        cmdArray.motorLockFlag = [1]
     cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
     spinningBody.motorTorqueInMsg.subscribeTo(cmdMsg)
 
@@ -264,4 +271,4 @@ def test_spinningBody(show_plots, cmdTorque):
 
 
 if __name__ == "__main__":
-    spinningBodyTest(True, 0)
+    spinningBodyTest(True, 0.0, True)
