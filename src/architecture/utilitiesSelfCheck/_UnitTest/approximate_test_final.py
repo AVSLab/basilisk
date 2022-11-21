@@ -118,7 +118,7 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
 
     if XDot_flag:
         Input.setXDot_0([0.2, 0, 0])
-        Input.setXDot_N([0, 0, 0])
+        Input.setXDot_N([0, 0, 0.2])
     if XDDot_flag:
         Input.setXDDot_0([0, 0, 0])
         Input.setXDDot_N([0.2, 0, 0])
@@ -188,6 +188,36 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
                     testFailCount += 1
                     testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at end point".format(P))
 
+            print("Compare X1 Dot Start values")
+            print(Output.X1_prime[0])
+            print(Output.XD1[0])
+            print(Input.XDot_0[0][0])
+            print("Compare X2 Dot Start values")
+            print(Output.X2_prime[0])
+            print(Output.XD2[0])
+            print(Input.XDot_0[1][0])
+            print("Compare X3 Dot Start values")
+            print(Output.X3_prime[0])
+            print(Output.XD3[0])
+            print(Input.XDot_0[2][0])
+            
+            
+            
+            print("Compare X1 Dot End values")
+            k = len(Output.X1_prime)-1
+            print(Output.X1_prime[k])
+            print(Output.XD1[i])
+            print(Input.XDot_N[0][0])
+            print("Compare X2 Dot End values")
+            print(Output.X2_prime[k])
+            print(Output.XD2[i])
+            print(Input.XDot_N[1][0])
+            print("Compare X3 Dot End values")
+            print(Output.X3_prime[k])
+            print(Output.XD3[i])
+            print(Input.XDot_N[2][0])
+            
+            
             
             # Plotting Attitudes Code:
             fig, axs = plt.subplots(3)
@@ -232,7 +262,6 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             axs2[2].set_xlabel("Time [s]")
             axs2[2].set_ylabel("X3 Dot")
             axs2[2].legend(["Way Points","LS Approximation"])
-            
             fig.tight_layout()
             plt.show()
             
@@ -243,6 +272,7 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             # Obtain End Indices of Input and Output Structure Time Stamp
             i = len(Output.T)-1
             j = len(Output.T_way_calc)-1
+            
         # Check the accuracy of Start and End Attitudes
             if abs(Output.T_way_calc[0][0] - Output.T[0][0]) < accuracy:
             
@@ -283,6 +313,34 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
                     testFailCount += 1
                     testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at end point".format(P))
             
+            print("Compare X1 Dot Start values")
+            print(Output.X1_prime[0])
+            print(Output.XD1[0])
+            print(Input.XDot_0[0][0])
+            print("Compare X2 Dot Start values")
+            print(Output.X2_prime[0])
+            print(Output.XD2[0])
+            print(Input.XDot_0[1][0])
+            print("Compare X3 Dot Start values")
+            print(Output.X3_prime[0])
+            print(Output.XD3[0])
+            print(Input.XDot_0[2][0])
+            
+            
+            
+            print("Compare X1 Dot End values")
+            k = len(Output.X1_prime)-1
+            print(Output.X1_prime[k])
+            print(Output.XD1[i])
+            print(Input.XDot_N[0][0])
+            print("Compare X2 Dot End values")
+            print(Output.X2_prime[k])
+            print(Output.XD2[i])
+            print(Input.XDot_N[1][0])
+            print("Compare X3 Dot End values")
+            print(Output.X3_prime[k])
+            print(Output.XD3[i])
+            print(Input.XDot_N[2][0])
             
             # The outputs are successful, need to figure out how to plot the answer.
             #print(len(Output.T_way_calc))
@@ -309,15 +367,35 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             axs[2].legend(["Way Points","LS Approximation"])
             fig.tight_layout()
             plt.show()
+            
+            # Plotting XDots Code:
+            fig, axs2 = plt.subplots(3)
+            axs2[0].scatter(Output.T_way_calc,Output.X1_prime,c = 'b')
+            axs2[0].plot(Output.T,Output.XD1,c = 'y')
+            fig.suptitle("X Dots vs Time")
+            axs2[0].set_xlabel("Time [s]")
+            axs2[0].set_ylabel("X1 Dot")
+            axs2[0].legend(["Way Points","LS Approximation"])
+            
+            axs2[1].scatter(Output.T_way_calc,Output.X2_prime,c = 'b')
+            axs2[1].plot(Output.T,Output.XD2,c = 'y')
+            axs2[1].set_xlabel("Time [s]")
+            axs2[1].set_ylabel("X2 Dot")
+            axs2[1].legend(["Way Points","LS Approximation"])
+            
+            axs2[2].scatter(Output.T_way_calc,Output.X3_prime,c = 'b')
+            axs2[2].plot(Output.T,Output.XD3,c = 'y')
+            axs2[2].set_xlabel("Time [s]")
+            axs2[2].set_ylabel("X3 Dot")
+            axs2[2].legend(["Way Points","LS Approximation"])
+            fig.tight_layout()
+            plt.show()
+            
         case "C":
             print("Case C")
             Input.setLS_Dot()
             Input.setAvgXDot(0.3)
             print(Input.AvgXDot)
-            X1Dot_des = np.array([1, 3, 0, 2, 1, 3, 1])/Input.AvgXDot
-            X2Dot_des = np.array([2, 0, 3, 1, 2, 0, 2])/Input.AvgXDot
-            X3Dot_des = np.array([2, 0, 0, 2, 2, 0, 2])/Input.AvgXDot
-            Input.setXDot_des(X1Dot_des,X2Dot_des,X3Dot_des)
             Input.setT([0, 2, 3, 5, 7, 8, 10])
             BSpline.approximate(Input,101,n,P,Output)
             
@@ -363,40 +441,94 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
                         (abs(Output.XD3[i][0]-Input.XDot_N[2][0]) < accuracy)):
                     testFailCount += 1
                     testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at end point".format(P))
-
             
+            
+            print("Compare X1 Dot Start values")
+            print(Output.X1_prime[0])
+            print(Output.XD1[0])
+            print(Input.XDot_0[0][0])
+            print("Compare X2 Dot Start values")
+            print(Output.X2_prime[0])
+            print(Output.XD2[0])
+            print(Input.XDot_0[1][0])
+            print("Compare X3 Dot Start values")
+            print(Output.X3_prime[0])
+            print(Output.XD3[0])
+            print(Input.XDot_0[2][0])
+            
+            
+            
+            print("Compare X1 Dot End values")
+            k = len(Output.X1_prime)-1
+            print(Output.X1_prime[k])
+            print(Output.XD1[i])
+            print(Input.XDot_N[0][0])
+            print("Compare X2 Dot End values")
+            print(Output.X2_prime[k])
+            print(Output.XD2[i])
+            print(Input.XDot_N[1][0])
+            print("Compare X3 Dot End values")
+            print(Output.X3_prime[k])
+            print(Output.XD3[i])
+            print(Input.XDot_N[2][0])
+                    
+                    
             # Plotting Attitudes Code:
             fig, axs = plt.subplots(3)
             axs[0].scatter(Input.T,X1,c = 'b')
-            axs[0].plot(Output.T,Output.X1,c = 'r')
+            axs[0].plot(Output.T,Output.X1,c = 'k')
             fig.suptitle("Attitudes vs Time")
             axs[0].set_xlabel("Time [s]")
             axs[0].set_ylabel("X1 Attitude")
             axs[0].legend(["Way Points","LS Approximation"])
             
             axs[1].scatter(Input.T,X2,c = 'b')
-            axs[1].plot(Output.T,Output.X2,c = 'r')
+            axs[1].plot(Output.T,Output.X2,c = 'k')
             axs[1].set_xlabel("Time [s]")
             axs[1].set_ylabel("X2 Attitude")
             axs[1].legend(["Way Points","LS Approximation"])
             
             axs[2].scatter(Input.T,X3,c = 'b')
-            axs[2].plot(Output.T,Output.X3,c = 'r')
+            axs[2].plot(Output.T,Output.X3,c = 'k')
             axs[2].set_xlabel("Time [s]")
             axs[2].set_ylabel("X3 Attitude")
             axs[2].legend(["Way Points","LS Approximation"])
             fig.tight_layout()
             plt.show()
+            
+            # Plotting XDots Code:
+            fig, axs2 = plt.subplots(3)
+            axs2[0].scatter(Input.T,Output.X1_prime,c = 'b')
+            print("Compare values")
+            print(Output.X1_prime[0])
+            print(Output.XD1[0])
+            axs2[0].plot(Output.T,Output.XD1,c = 'k')
+            fig.suptitle("X Dots vs Time")
+            axs2[0].set_xlabel("Time [s]")
+            axs2[0].set_ylabel("X1 Dot")
+            axs2[0].legend(["Way Points","LS Approximation"])
+            
+            axs2[1].scatter(Input.T,Output.X2_prime,c = 'b')
+            axs2[1].plot(Output.T,Output.XD2,c = 'k')
+            axs2[1].set_xlabel("Time [s]")
+            axs2[1].set_ylabel("X2 Dot")
+            axs2[1].legend(["Way Points","LS Approximation"])
+            
+            axs2[2].scatter(Input.T,Output.X3_prime,c = 'b')
+            axs2[2].plot(Output.T,Output.XD3,c = 'k')
+            axs2[2].set_xlabel("Time [s]")
+            axs2[2].set_ylabel("X3 Dot")
+            axs2[2].legend(["Way Points","LS Approximation"])
+            fig.tight_layout()
+            plt.show()
+
+            
+           
         case "D":
             print("Case D")
             Input.setLS_Dot()
             Input.setAvgXDot(0.3)
             print(Input.AvgXDot)
-            X1Dot_des = np.array([1, 3, 0, 2, 1, 3, 1])/Input.AvgXDot
-            X2Dot_des = np.array([2, 0, 3, 1, 2, 0, 2])/Input.AvgXDot
-            X3Dot_des = np.array([2, 0, 0, 2, 2, 0, 2])/Input.AvgXDot
-            Input.setXDot_des(X1Dot_des,X2Dot_des,X3Dot_des)
-            
             BSpline.approximate(Input,101,n,P,Output) # Change 1: Test approximate function first
         
             # Obtain End Indices of Input and Output Structure Time Stamp
@@ -447,6 +579,38 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             #print("The length of the attitude output vector is",len(Output.X1))
             #print("The length of the attitude output vector is",len(Output.T))
             
+            for c in range(len(Output.X1_prime)):
+                print("X1_prime values",Output.X1_prime[c])
+            
+            print("Compare X1 Dot Start values")
+            print(Output.X1_prime[0])
+            print(Output.XD1[0])
+            print(Input.XDot_0[0][0])
+            print("Compare X2 Dot Start values")
+            print(Output.X2_prime[0])
+            print(Output.XD2[0])
+            print(Input.XDot_0[1][0])
+            print("Compare X3 Dot Start values")
+            print(Output.X3_prime[0])
+            print(Output.XD3[0])
+            print(Input.XDot_0[2][0])
+            
+            
+            
+            print("Compare X1 Dot End values")
+            k = len(Output.X1_prime)-1
+            print(Output.X1_prime[k])
+            print(Output.XD1[i])
+            print(Input.XDot_N[0][0])
+            print("Compare X2 Dot End values")
+            print(Output.X2_prime[k])
+            print(Output.XD2[i])
+            print(Input.XDot_N[1][0])
+            print("Compare X3 Dot End values")
+            print(Output.X3_prime[k])
+            print(Output.XD3[i])
+            print(Input.XDot_N[2][0])
+            
             # Plotting Attitudes Code:
             fig, axs = plt.subplots(3)
             axs[0].scatter(Output.T_way_calc,X1,c = 'b')
@@ -469,6 +633,30 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
             axs[2].legend(["Way Points","LS Approximation"])
             fig.tight_layout()
             plt.show()
+            
+            
+            # Plotting XDots Code:
+            fig, axs2 = plt.subplots(3)
+            axs2[0].scatter(Output.T_way_calc,Output.X1_prime,c = 'b')
+            axs2[0].plot(Output.T,Output.XD1,c = 'g')
+            fig.suptitle("X Dots vs Time")
+            axs2[0].set_xlabel("Time [s]")
+            axs2[0].set_ylabel("X1 Dot")
+            axs2[0].legend(["Way Points","LS Approximation"])
+            
+            axs2[1].scatter(Output.T_way_calc,Output.X2_prime,c = 'b')
+            axs2[1].plot(Output.T,Output.XD2,c = 'g')
+            axs2[1].set_xlabel("Time [s]")
+            axs2[1].set_ylabel("X2 Dot")
+            axs2[1].legend(["Way Points","LS Approximation"])
+            
+            axs2[2].scatter(Output.T_way_calc,Output.X3_prime,c = 'b')
+            axs2[2].plot(Output.T,Output.XD3,c = 'g')
+            axs2[2].set_xlabel("Time [s]")
+            axs2[2].set_ylabel("X3 Dot")
+            axs2[2].legend(["Way Points","LS Approximation"])
+            fig.tight_layout()
+            plt.show()
     return
 
 
@@ -478,7 +666,7 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
 #
 if __name__ == "__main__":
     BSplineTestFunction(
-        4,        # polynomial order
+        5,        # polynomial order
         6,       # control points
         True,    # XDot_flag
         False,    # XDDot_flag

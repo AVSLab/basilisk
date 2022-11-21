@@ -499,12 +499,11 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     
     // Calculate 1st Derivatives:
     
-    Eigen::VectorXd X1_primehat(q+1);
-    std::cout<< "Check 3a"<<std::endl;
-    Eigen::VectorXd X2_primehat(q+1);
-    Eigen::VectorXd X3_primehat(q+1);
+    Eigen::VectorXd X1_primehat(q-1);
+    Eigen::VectorXd X2_primehat(q-1);
+    Eigen::VectorXd X3_primehat(q-1);
 
-    int index = 1;
+    int index = 0;
     
     // Calculate X Prime Hat Derivatives
     
@@ -513,53 +512,58 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         X1_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X1[k]-Input.X1[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X1[k+1]-Input.X1[k])/(uk[k+1]-uk[k]);
         X2_primehat[index] =(uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X2[k]-Input.X2[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X2[k+1]-Input.X2[k])/(uk[k+1]-uk[k]);
         X3_primehat[index] =(uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X3[k]-Input.X3[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X3[k+1]-Input.X3[k])/(uk[k+1]-uk[k]);
-        std::cout<<"The value of index is"<<index<<std::endl;
         index++;
     }
     
-    std::cout<< "Check 5"<<std::endl;
-
-    
-    // Set Initial Derivative
-    X1_primehat[0] = Input.XDot_0[0];
-    std::cout<< X1_primehat[0]<<std::endl;
-    X2_primehat[0] = Input.XDot_0[1];
-    std::cout<< X2_primehat[0]+1<<std::endl;
-    X3_primehat[0] = Input.XDot_0[2];
-    
-    // Set Final Derivative
-    X1_primehat[q-1] = Input.XDot_N[0];
-    X2_primehat[q-1] = Input.XDot_N[1];
-    X3_primehat[q-1] = Input.XDot_N[2];
-    
-    std::cout<< "Check 6"<<std::endl;
     
     // Calculate X Prime Derivatives
     Eigen::VectorXd X1_prime(q+1),X2_prime(q+1),X3_prime(q+1);
-    for (int k = 0;k<q+1;k++) {
-        std::cout<< "Check a"<<std::endl;
-        int a = int(X1_primehat[k]);
-        std::cout<< "Check b"<<std::endl;
-        int b = int(X2_primehat[k]);
-        std::cout<< "Check c"<<std::endl;
-        int c = int(X3_primehat[k]);
-        std::cout<< "Check d"<<std::endl;
-        int mag = (a^2+b^2+c^2)^(1/2);
-        mag = double(mag);
-        std::cout<< "Check e"<<std::endl;
+    
+    // Set Initial Derivative
+    X1_prime[0] = Input.XDot_0[0];
+    X2_prime[0] = Input.XDot_0[1];
+    X3_prime[0] = Input.XDot_0[2];
+    
+    // Set Final Derivative
+    X1_prime[q] = Input.XDot_N[0];
+    X2_prime[q] = Input.XDot_N[1];
+    X3_prime[q] = Input.XDot_N[2];
+    
+
+    for (int k = 1;k<q;k++) {
+        //std::cout<< "Check a"<<std::endl;
+        double a = double(X1_primehat[k]);
+        std::cout<<a<<std::endl;
+        //std::cout<< "Check b"<<std::endl;
+        double b = double(X2_primehat[k]);
+        std::cout<<b<<std::endl;
+       //std::cout<< "Check c"<<std::endl;
+        double c = double(X3_primehat[k]);
+        std::cout<<c<<std::endl;
+        //std::cout<< "Check d"<<std::endl;
+        double mag = pow(a,2.0)+pow(b,2.0)+pow(c,2.0);
+        mag = pow(mag,0.5);
+        mag = abs((mag));
+        //std::cout<< "Check e"<<std::endl;
         std::cout<< "mag: "<<mag<<std::endl;
-        std::cout<<"Average X Dot"<<Input.AvgXDot<<std::endl;
-        std::cout<<(X1_primehat[k])<<std::endl;
-        double temp =Input.AvgXDot*Ttot/mag;
-        double result = double(X1_primehat[k]*temp);
-        std::cout<<result<<std::endl;
-        std::cout<< "Check here "<<std::endl;
-        X1_prime[k] =result;
-        std::cout<< "Check f"<<std::endl;
+        //std::cout<<"Average X Dot"<<Input.AvgXDot<<std::endl;
+        //std::cout<<(X1_primehat[k])<<std::endl;
+        double temp;
+        if (mag != 0) {
+            temp =Input.AvgXDot*Ttot/mag;
+        }
+        else {
+            temp = 0;
+        }
+        //double result = double(X1_primehat[k]*temp);
+        //std::cout<<result<<std::endl;
+        //std::cout<< "Check here "<<std::endl;
+        X1_prime[k] = X1_primehat[k]*temp;
+        //std::cout<< "Check f"<<std::endl;
         X2_prime[k] = X2_primehat[k]*temp;
-        std::cout<< "Check g"<<std::endl;
+        //std::cout<< "Check g"<<std::endl;
         X3_prime[k] = X3_primehat[k]*temp;
-        std::cout<< "Check h"<<std::endl;
+        //std::cout<< "Check h"<<std::endl;
     }
     
     
@@ -906,7 +910,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     Output->C2 = C2;
     Output->C3 = C3;
     
-    for (int a=0;a<q+1;a++){
+    for (int a=1;a<q;a++){
         X1_prime[a] = X1_prime[a]/Ttot;
         X2_prime[a] = X2_prime[a]/Ttot;
         X3_prime[a] = X3_prime[a]/Ttot;
