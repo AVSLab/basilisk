@@ -66,9 +66,11 @@ public:
     BSKLogger bskLogger;                                        //!< -- BSK Logging
 
 private:
-    static uint64_t effectorID;         //!< [] ID number of this panel
-    double u1;                           //!< [N-m] optional motor torque
-    double u2;
+    static uint64_t effectorID;             //!< [] ID number of this panel
+    double u1;                              //!< [N-m] optional motor torque
+    double u2;                              //!< [N-m] optional motor torque
+    int lockFlag1;                          //!< [] flag for locking the first rotation axis
+    int lockFlag2;                          //!< [] flag for locking the second rotation axis
     double mass;
 
     // Terms needed for back substitution

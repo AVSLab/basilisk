@@ -160,14 +160,13 @@ void SpinningBodyOneDOFStateEffector::updateEffectorMassProps(double integTime)
     // Lock the axis if the flag is set to 1
     if (this->lockFlag == 1)
     {
-        Eigen::MatrixXd zeroMatrix(1, 1);
-        this->thetaDotState->setState(zeroMatrix.setZero());
+        Eigen::MatrixXd zeroMatrix = Eigen::MatrixXd::Constant(1, 1, 0.0);
+        this->thetaDotState->setState(zeroMatrix);
     }
 
     // Grab current states
     this->theta = this->thetaState->getState()(0, 0);
     this->thetaDot = this->thetaDotState->getState()(0, 0);
-    
 
     // Compute the DCM from S frame to B frame and write sHat in B frame
     double dcm_S0S[3][3];
@@ -285,9 +284,9 @@ void SpinningBodyOneDOFStateEffector::computeDerivatives(double integTime, Eigen
     // Lock the axis if the flag is set to 1
     if (this->lockFlag == 1)
     {
-        Eigen::MatrixXd zeroMatrix(1, 1);
-        this->thetaState->setDerivative(zeroMatrix.setZero());
-        this->thetaDotState->setDerivative(zeroMatrix.setZero());
+        Eigen::MatrixXd zeroMatrix = Eigen::MatrixXd::Constant(1, 1, 0.0);
+        this->thetaState->setDerivative(zeroMatrix);
+        this->thetaDotState->setDerivative(zeroMatrix);
 
         return;
     }
