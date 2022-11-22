@@ -128,16 +128,19 @@ def run(show_plots):
 
     # setup Earth Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    planet = gravFactory.createEarth()
-    planet.isCentralBody = True
-    mu = planet.mu
+
+    gravBodies = gravFactory.createBodies(['earth', 'sun'])
+    gravBodies['earth'].isCentralBody = True
+    mu = gravBodies['earth'].mu
+    sun = 1
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
-    # create sun position message
-    sunMessage = messaging.SpicePlanetStateMsgPayload()
-    sunMessage.PlanetName = "Sun"
-    sunMessage.PositionVector = [0, orbitalMotion.AU * 1000, 0]
-    sunStateMsg = messaging.SpicePlanetStateMsg().write(sunMessage)
+    timeInitString = "2012 MAY 1 00:28:30.0"
+    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
+                                     timeInitString,
+                                     epochInMsg=True)
+    gravFactory.spiceObject.zeroBase = 'earth'
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -233,7 +236,7 @@ def run(show_plots):
     solarPanel1.panelArea = 2.0  # m^2
     solarPanel1.panelEfficiency = 0.9  # 90% efficiency in power generation
     solarPanel1.stateInMsg.subscribeTo(panel1.hingedRigidBodyConfigLogOutMsg)
-    solarPanel1.sunInMsg.subscribeTo(sunStateMsg)
+    solarPanel1.sunInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[sun])
 
     solarPanel2 = simpleSolarPanel.SimpleSolarPanel()
     solarPanel2.ModelTag = "pwr2"
@@ -241,7 +244,7 @@ def run(show_plots):
     solarPanel2.panelArea = 2.0  # m^2
     solarPanel2.panelEfficiency = 0.9  # 90% efficiency in power generation
     solarPanel2.stateInMsg.subscribeTo(panel2.hingedRigidBodyConfigLogOutMsg)
-    solarPanel2.sunInMsg.subscribeTo(sunStateMsg)
+    solarPanel2.sunInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[sun])
     #
     # add modules to simulation task list
     #
@@ -286,7 +289,7 @@ def run(show_plots):
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                               , bodyList=[scBodyList]
-                                              # , saveFile=__file__
+                                              , saveFile=__file__
                                               )
     vizSupport.createCustomModel(viz
                                  , simBodiesToModify=[panel1.ModelTag]
