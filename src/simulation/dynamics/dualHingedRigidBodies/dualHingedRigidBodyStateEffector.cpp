@@ -119,7 +119,8 @@ void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 
     this->sigma_BNState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
     this->omega_BN_BState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
-    this->r_BN_NState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubPosition");
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
     this->v_BN_NState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubVelocity");
 
     return;
@@ -433,17 +434,17 @@ void DualHingedRigidBodyStateEffector::computePanelInertialStates()
 
     // inertial position vectors
     Eigen::Vector3d r_PN_N;
-    r_PN_N = (Eigen::Vector3d)this->r_BN_NState->getState();
+    r_PN_N = (Eigen::Vector3d)(*this->inertialPositionProperty);
     this->r_SN_N[0] = (dcm_NP * this->r_S1P_P) + r_PN_N;
     this->r_SN_N[1] = (dcm_NP * this->r_S2P_P) + r_PN_N;
 
     // inertial velocity vectors
     Eigen::Vector3d omega_S1N_P = this->theta1Dot * this->sHat12_P + omega_PN_P;
-    this->v_SN_N[0] = (Eigen::Vector3d)this->v_BN_NState->getState()
+    this->v_SN_N[0] = (Eigen::Vector3d)(*this->inertialVelocityProperty)
                     + omega_S1N_P.cross( -this->d1 * this->sHat11_P)
                     + omega_PN_P.cross(this->r_H1P_P);
     Eigen::Vector3d omega_S2N_P = this->theta2Dot * this->sHat22_P + omega_S1N_P;
-    this->v_SN_N[1] = (Eigen::Vector3d)this->v_BN_NState->getState()
+    this->v_SN_N[1] = (Eigen::Vector3d)(*this->inertialVelocityProperty)
                     + omega_S2N_P.cross( -this->d2 * this->sHat21_P)
                     + omega_S1N_P.cross( -this->l1 * this->sHat11_P)
                     + omega_PN_P.cross(this->r_H1P_P);

@@ -39,6 +39,9 @@ Version |release|
 - Added the ability in both :ref:`thrusterDynamicEffector` and :ref:`thrusterStateEffector` to connect a thruster to a moving body different than the hub.
 - The thrusters now have an additional variable called ``MaxSwirlTorque``. Useful for ion thrusters, it adds a torque about the thrust axis proportional to the current thrust factor.
 - Added a torsional spring and damper to the :ref:`SpinningBodyStateEffector` module.
+- Updated :ref:`hingedRigidBodyStateEffector` and :ref:`dualHingedRigidBodyStateEffector` such that
+  the effector inertial states are relative to the inertial frame of the simulation, not the
+  central body frame.
 
 
 Version 2.1.4 (Oct. 1, 2022)
