@@ -42,7 +42,7 @@ Version |release|
 - Updated :ref:`hingedRigidBodyStateEffector` and :ref:`dualHingedRigidBodyStateEffector` such that
   the effector inertial states are relative to the inertial frame of the simulation, not the
   central body frame.
-
+- Added ``color`` keyword support to the ``vizSupport.createCustomModel()`` method
 
 Version 2.1.4 (Oct. 1, 2022)
 ----------------------------
