@@ -61,10 +61,12 @@ SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector()
     Message<SCStatesMsgPayload>* statesMsg;
     statesMsg = new Message<SCStatesMsgPayload>;
     this->spinningBodyConfigLogOutMsgs.push_back(statesMsg);
+    statesMsg = new Message<SCStatesMsgPayload>;
     this->spinningBodyConfigLogOutMsgs.push_back(statesMsg);
     Message<SpinningBodyMsgPayload>* spinnerMsg;
     spinnerMsg = new Message<SpinningBodyMsgPayload>;
     this->spinningBodyOutMsgs.push_back(spinnerMsg);
+    spinnerMsg = new Message<SpinningBodyMsgPayload>;
     this->spinningBodyOutMsgs.push_back(spinnerMsg);
     
     this->nameOfTheta1State = "spinningBodyTheta1" + std::to_string(this->effectorID);
@@ -112,7 +114,7 @@ void SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock)
         bskLogger.bskLog(BSK_ERROR, "Norm of s2Hat must be greater than 0. s1Hat may not have been set by the user.");
     }
 
-    // check dcm roerties
+    // check dcm properties
 
     return;
 }
@@ -122,16 +124,15 @@ void SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock)
 void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     // Write out the spinning body output messages
+    SpinningBodyMsgPayload spinningBodyBuffer;
     if (this->spinningBodyOutMsgs[0]->isLinked()) {
-        SpinningBodyMsgPayload spinningBodyBuffer;
         spinningBodyBuffer = this->spinningBodyOutMsgs[0]->zeroMsgPayload;
         spinningBodyBuffer.theta = this->theta1;
         spinningBodyBuffer.thetaDot = this->theta1Dot;
         this->spinningBodyOutMsgs[0]->write(&spinningBodyBuffer, this->moduleID, CurrentClock);
     }
     if (this->spinningBodyOutMsgs[1]->isLinked()) {
-        SpinningBodyMsgPayload spinningBodyBuffer;
-        spinningBodyBuffer = this->spinningBodyOutMsgs[0]->zeroMsgPayload;
+        spinningBodyBuffer = this->spinningBodyOutMsgs[1]->zeroMsgPayload;
         spinningBodyBuffer.theta = this->theta2;
         spinningBodyBuffer.thetaDot = this->theta2Dot;
         this->spinningBodyOutMsgs[1]->write(&spinningBodyBuffer, this->moduleID, CurrentClock);
