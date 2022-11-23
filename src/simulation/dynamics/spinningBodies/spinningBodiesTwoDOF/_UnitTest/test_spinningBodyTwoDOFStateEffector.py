@@ -24,18 +24,17 @@
 
 import inspect
 import os
-
+import pytest
 import numpy
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
 from Basilisk.simulation import spacecraft, spinningBodyTwoDOFStateEffector, gravityEffector
-from Basilisk.utilities import macros
+from Basilisk.architecture import messaging
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -45,7 +44,7 @@ from Basilisk.utilities import macros
 # provide a unique test method name, starting with test_
 
 
-def spinningBodyTest(show_plots):
+def spinningBodyTest(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
     r"""
     **Validation Test Description**
 
@@ -66,11 +65,17 @@ def spinningBodyTest(show_plots):
 
     against their initial values.
     """
-    [testResults, testMessage] = test_spinningBody(show_plots)
+    [testResults, testMessage] = test_spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2)
     assert testResults < 1, testMessage
 
 
-def test_spinningBody(show_plots):
+@pytest.mark.parametrize("cmdTorque1, lock1, cmdTorque2, lock2", [
+    (0.0, False, 0.0, False),
+    (0.0, True, 0.0, False),
+    (0.0, False, 0.0, True),
+    (0.0, True, 0.0, True)
+])
+def test_spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
@@ -112,12 +117,30 @@ def test_spinningBody(show_plots):
     spinningBody.s2Hat_S2 = [[0], [-1], [0]]
     spinningBody.theta1Init = 5 * macros.D2R
     spinningBody.theta2Init = -1 * macros.D2R
-    spinningBody.theta1DotInit = 1 * macros.D2R
-    spinningBody.theta2DotInit = 0.5 * macros.D2R
+    if lock1:
+        spinningBody.theta1DotInit = 0 * macros.D2R
+    else:
+        spinningBody.theta1DotInit = 1 * macros.D2R
+    if lock2:
+        spinningBody.theta2DotInit = 0 * macros.D2R
+    else:
+        spinningBody.theta2DotInit = 0.5 * macros.D2R
     spinningBody.ModelTag = "SpinningBody"
 
     # Add spinning body to spacecraft
     scObject.addStateEffector(spinningBody)
+
+    # Create the torque message for the lower body
+    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
+    cmdArray.motorTorque = [cmdTorque1, cmdTorque2]  # [Nm]
+    lockFlag = [0, 0]
+    if lock1:
+        lockFlag[0] = 1
+    if lock2:
+        lockFlag[1] = 1
+    cmdArray.motorLockFlag = lockFlag
+    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
+    spinningBody.motorTorqueInMsg.subscribeTo(cmdMsg)
 
     # Define mass properties of the rigid hub of the spacecraft
     scObject.hub.mHub = 750.0
@@ -162,7 +185,7 @@ def test_spinningBody(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, theta2Data)
 
     # Setup and run the simulation
-    stopTime = 20
+    stopTime = 2
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
@@ -287,4 +310,4 @@ def test_spinningBody(show_plots):
 
 
 if __name__ == "__main__":
-    spinningBodyTest(True)
+    spinningBodyTest(True, 0.0, True, 0.0, False)
