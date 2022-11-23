@@ -15,6 +15,7 @@ package vizProtobufferMessage;
 message VizMessage{
     
     message EpochDateTime{
+        //FIELDS 1-6 FIRST MESSAGE ONLY
         int32 year = 1;  //default: 2019
         int32 month = 2; //default: 1
         int32 day = 3;   //default: 1
@@ -23,13 +24,15 @@ message VizMessage{
         double seconds = 6; //default: 0.00
     }
 
-    message TimeStamp{
+    message TimeStamp{//REQUIRED EVERY TIME STEP
+        // FIELDS 1-2 SENT EVERY TIMESTEP
         int64 frameNumber = 1; //Current message's index
         double simTimeElapsed = 2; //Elapsed time since sim start
     }
 
     //CelestialBody messages will carry position, velocity, and rotation data for all celestial bodies to visualized in the current run (including sun, planets, and moon)
     message CelestialBody{
+        //FIELDS 1-4 EVERY TIMESTEP, FIELDS 5-8 NEED ONLY BE SENT FIRST MESSAGE
         string bodyName = 1;
         repeated double position = 2;   //SpicePlanetStateSimMsg.PositionVector
         repeated double velocity = 3;   //SpicePlanetStateSimMsg.VelocityVector
@@ -42,6 +45,10 @@ message VizMessage{
   
     //Spacecraft message carry spacecraft position, velocity, and rotation data and proto messages for actuators and sensors
     message Spacecraft{
+        //FIELDS 1-4 EVERY TIMESTEP,
+        //FIELDS 5-8, 10-12, 17-18 EVERY TIMESTEP IF THESE COMPONENTS ARE PRESENT IN SIM
+        //FIELDS 9, 13, 16 NEED ONLY BE SENT IN FIRST MESSAGE
+        //FIELDS 14-15 OPTIONAL FIELDS THAT CAN BE UPDATED EVERY TIMESTEP IF DESIRED, BUT NEED NEVER BE INCLUDED
         string spacecraftName = 1;
         repeated double position = 2;  //SCStatesMsg.r_BN_N
         repeated double velocity = 3;  //SCStatesMsg.v_BN_N
@@ -63,7 +70,10 @@ message VizMessage{
         repeated Ellipsoid ellipsoids = 18; //(Optional) Ellipsoid Heads Up Displays
 }
 
-    message ReactionWheel{
+    message ReactionWheel{ //ONLY REQUIRED IF RW HUD/PANEL DESIRED
+        //FIELDS 2, 4 ONLY IN FIRST MESSAGE
+        //FIELDS 5, 6 EVERY MESSAGE
+        //FIELDS 7, 8 OPTIONAL, IF USED ONLY READ IN FIRST MESSAGE
         repeated double position = 2; // [m] position of the reaction wheel in body frame components. Note that this is not currently populated or used in Basilisk
         repeated double spinAxisVector = 4; // reaction wheel spin axis in body frame components
         double wheelSpeed = 5;  //[rad/s] RWSpeedIntMsg.wheelSpeeds
@@ -72,7 +82,9 @@ message VizMessage{
         double maxTorque = 8; //[N m] (Optional) maximum RW torque capability
     }
 
-    message Thruster{
+    message Thruster{ //ONLY REQUIRED IF THRUSTER HUD/PANEL DESIRED
+        //FIELDS 2, 4, 6, 8 ONLY IN FIRST MESSAGE
+        //FIELDS 5 & 9 EVERY MESSAGE
         repeated double position = 2;
         repeated double thrustVector = 4;
         double currentThrust = 5;
@@ -82,7 +94,9 @@ message VizMessage{
         repeated int32 color = 9; //Send desired RGBA as values between 0 and 255
     }
 
-    message CoarseSunSensor{
+    message CoarseSunSensor{//ONLY REQUIRED IF CSS HUD/PANEL DESIRED
+        //FIELDS 2-4, 6-8 ONLY IN FIRST MESSAGE
+        //FIELD 5 EVERY MESSAGE
         repeated double position = 2; // [m] position of the CSS in body frame
         double fieldOfView = 3; //[deg] angle is measured edge-to-edge
         repeated double normalVector = 4;
@@ -92,7 +106,9 @@ message VizMessage{
         double minMsmt = 8;
     }
     
-    message GenericSensor{
+    message GenericSensor{ //ONLY REQUIRED IF GENERIC SENSOR HUD DESIRED
+        //FIELDS 2-4, 7-9 ONLY IN FIRST MESSAGE
+        //FIELDS 5,6 OPTIONAL, BUT CAN BE UPDATED IN EVERY MESSAGE
         repeated double position = 2; // [m] position of the sensor in body frame
         repeated double fieldOfView = 3; //[deg] Sensor will be assumed to be circular if Field of View has single entry, rectangular (width x height) if two values are provided, angle is measured edge-to-edge
         repeated double normalVector = 4;  // [] normal vector of the sensor bore sight axis
@@ -103,7 +119,10 @@ message VizMessage{
         string label = 9; // (Optional) string to display on sensor label
     }
     
-    message GenericStorage{
+    message GenericStorage{ //ONLY REQUIRED IF GENERIC STORAGE PANEL DESIRED
+        //FIELDS 2, 5 ONLY IN FIRST MESSAGE
+        //FIELDS 3, 4 EVERY MESSAGE
+        //FIELDS 6,7 OPTIONAL, ONLY CHECKED IN FIRST MESSAGE
         string label = 2; //Name of storage device
         double currentValue = 3; // current absolute value of the storage device
         double maxValue = 4; // maximum absolute value of the storage device
@@ -112,7 +131,9 @@ message VizMessage{
         repeated int32 thresholds = 7; //(Optional) Percentages of maxValue at which to change color, note that there should be one fewer threshold values than colors
     }
     
-    message Light{
+    message Light{//ONLY REQUIRED IF LIGHT DESIRED
+        // FIELDS 1-4,6-14 ONLY IN FIRST MESSAGE
+        // FIELD 5 OPTIONAL, BUT CAN BE CHANGED EVERY MESSAGE
         string label = 1; //[Optional] Name to use to identify light
         repeated double position = 2; // [m] position of the light in body frame
         double fieldOfView = 3; //[deg] angle is measured edge-to-edge
@@ -129,7 +150,9 @@ message VizMessage{
         double lensFlareFadeSpeed = 14; //(Optional) Speed with which the lens flare fades, default is 10.0
     }
     
-    message Transceiver{
+    message Transceiver{//ONLY REQUIRED IF TRANSCEIVER DESIRED
+        //FIELDS 2-4, 8,9 ONLY FIRST MESSAGE
+        //FIELDS 5, 6, 10 OPTIONAL, BUT CHECKED EVERY MESSAGE
         repeated double position = 2; // [m] position of the transceiver in body frame
         double fieldOfView = 3; //[deg] angle is measured edge-to-edge
         repeated double normalVector = 4;  // [] normal vector of the transceiver bore sight axis
@@ -140,7 +163,8 @@ message VizMessage{
         int32 animationSpeed = 10; //(Optional) Set transmission animation speed to a value between 1(slowest) to 10 (fastest), or 0 to use viz default
     }
 
-    message CameraConfig{
+    message CameraConfig{//ONLY REQUIRED IF CUSTOM CAMERA DESIRED
+        // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE
         int64 cameraID = 1;  //[-] ID of the camera that took the snapshot
         string parentName = 2;  //[-] Name of the parent body to which the camera should be attached
         double fieldOfView = 3;  //[deg] Camera Field of View edge-to-edge along camera y axis
@@ -160,13 +184,16 @@ message VizMessage{
     }
 
     
-    message PointLine{
+    message PointLine{//ONLY NEEDED IF POINT-LINES DESIRED
+        //IF POINT-LINE CREATED IN LIVEVIZSETTINGS, WILL BE UPDATED EVERY MESSAGE
+        //IF POINT-LINE CREATED IN VIZSETTINGSPB, CHECKED ONLY AT START
         string fromBodyName = 1; //Can be spacecraft, celestial body, or ground location
         string toBodyName = 2; //Can be spacecraft, celestial body, or ground location
         repeated int32 lineColor = 3; //Send desired RGBA as values between 0 and 255
     }
     
-    message KeepOutInCone{
+    message KeepOutInCone{//ONLY NEEDED IF KEEP OUT CONE DESIRED
+        // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE
         bool isKeepIn = 1; //True -> keep in cone created, False -> keep out cone created
         repeated double position = 2; //relative to from body coordinate frame
         repeated double normalVector = 3;
@@ -179,6 +206,7 @@ message VizMessage{
     }
     
     message StandardCameraSettings{
+        // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, ONLY NEEDED IF STANDARD CAMERA PANEL AUTOMATIC SET-UP IS DESIRED
         string spacecraftName = 1; //Body to attach camera to (default is the first spacecraft in messages)
 //        bool viewPanel = 2; //False (default) -> panel is not visible on screen
         int32 setMode = 3; // 0 -> body targeting, 1 -> pointing vector
@@ -192,6 +220,7 @@ message VizMessage{
     }
 
     message ActuatorSettings{
+        // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, NONE ARE REQUIRED
         string spacecraftName = 1; //Which spacecraft's actuators to set
         int32 viewThrusterPanel = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 viewThrusterHUD = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -202,6 +231,7 @@ message VizMessage{
     }
     
     message InstrumentSettings{
+        // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, NONE ARE REQUIRED
         string spacecraftName = 1; //Which spacecraft's instruments to set
         int32 viewCSSPanel = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 viewCSSCoverage = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -214,6 +244,7 @@ message VizMessage{
     }
     
     message CustomModel{
+        // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, ONLY NEEDED IF A CUSTOM MODEL IS BEING APPLIED
         string modelPath = 1; //Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape or "HI_DEF_SPHERE" to use the high vertex count icosphere
         repeated string simBodiesToModify = 2; //Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" in the first string to apply custom model to all spacecraft in simulation
         repeated double offset = 3; //meters
@@ -222,14 +253,17 @@ message VizMessage{
         string customTexturePath = 6; //(Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
         string normalMapPath = 7; //(Optional) Path to the normal map for the customTexture
         int32 shader = 8; //(Optional) Value of -1 (protobuffer default) or 0 to use the viz default: Unity Specular Standard Shader, 1 for Unity Standard Shader
+        repeated int32 color = 9; // (optional) Send desired RGBA as values between 0 and 255, default is gray, and will be applied to the albedo color setting
     }
 
     message LiveVizSettingsPb{
+        // ALL FIELDS CHECKED EVERY MESSAGE, ONLY NEEDED IF THESE SETTINGS ARE DESIRED
         repeated PointLine targetLines = 1; // list of lines between 2 scenario targets.  This list is redrawn on each update step, so the line properties can change with time.
         string relativeOrbitChief = 2; // If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
     }
 
     message VizSettingsPb{
+        // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, ONLY THE SETTINGS THE USER WANTS HAVE TO BE SET
         double ambient = 1; //Value of -1 to use viz default or specify value between 0 and 1
         int32 orbitLinesOn = 2; // Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
         int32 spacecraftCSon = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -282,7 +316,10 @@ message VizMessage{
         double spacecraftHelioViewSizeMultiplier = 49; // Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
     }
     
-    message MultiSphere{
+    message MultiSphere{ //ONLY NEEDED IF MSM DESIRED
+        //FIELDS 1-3, 5 CHEKED FIRST MESSAGE ONLY
+        //FIELD 4, CHECKED EVERY MESSAGE
+        //FIELDS 6, 7 OPTIONAL, CHECKED FIRST MESSAGE ONLY
         int32 isOn = 1; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         repeated double position = 2; //[m] position in the body frame
         double radius = 3; //[m] radius of the sphere
@@ -292,7 +329,8 @@ message VizMessage{
         repeated int32 negativeColor = 7; // (optional) Send desired RGBA as values between 0 and 255, default is white
     }
     
-    message Location{
+    message Location{ //ONLY NEEDED IF LOCATION DESIRED
+        // ALL FIELDS CHECKED EVERY MESSAGE
         string stationName = 1; // location text label
         string parentBodyName = 2; // name of the parent body P (spacecraft or planet) on which the location G is positioned
         repeated double r_GP_P = 3; //[m] Position of G relative to parent body frame P
@@ -302,7 +340,8 @@ message VizMessage{
         double range = 7; // [m] Value of 0 (protobuffer default) to use viz default
     }
 
-    message Ellipsoid{
+    message Ellipsoid{//ONLY NEEDED IF ELLIPSOID DESIRED
+        // ALL FIELDS CHECKED EVERY MESSAGE
         int32 isOn =1; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 useBodyFrame = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         repeated double position = 3; //[m] Position of ellipsoid center in xyz (if using body frame) or r-theta-h (if Hill frame)
@@ -311,14 +350,14 @@ message VizMessage{
         int32 showGridLines = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
     
-    TimeStamp currentTime = 1;
-    repeated CelestialBody celestialBodies = 2;
-    repeated Spacecraft spacecraft = 3;
-    repeated CameraConfig cameras = 4;
+    TimeStamp currentTime = 1; //CHECKED EVERY MESSAGE
+    repeated CelestialBody celestialBodies = 2; //CHECKED EVERY MESSAGE
+    repeated Spacecraft spacecraft = 3; //CHECKED EVERY MESSAGE
+    repeated CameraConfig cameras = 4; //CHECKED FIRST MESSAGE ONLY
     //repeated cameraImage cameraImages = 5;
     //repeated ImageRequest imageRequests = 6;
-    VizSettingsPb settings = 7;
-    EpochDateTime epoch = 8;
-    repeated Location locations = 9;
-    LiveVizSettingsPb liveSettings = 10;
+    VizSettingsPb settings = 7; //CHECKED FIRST MESSAGE ONLY
+    EpochDateTime epoch = 8; //CHECKED FIRST MESSAGE ONLY
+    repeated Location locations = 9; //CHECKED EVERY MESSAGE
+    LiveVizSettingsPb liveSettings = 10; //CHECKED EVERY MESSAGE
 }
