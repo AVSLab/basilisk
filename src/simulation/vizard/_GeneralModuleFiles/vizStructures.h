@@ -140,6 +140,7 @@ CustomModel
     std::string customTexturePath;          //!< (Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
     std::string normalMapPath;              //!< (Optional) Path to the normal map for the customTexture
     int shader=-1;                          //!< (Optional) Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
+    std::vector<int> color;                 //!< [] Send desired RGBA as values between 0 and 255, default is gray, and will be applied to the albedo color setting
 }CustomModel;
 
 /*! Structure defining ground location information

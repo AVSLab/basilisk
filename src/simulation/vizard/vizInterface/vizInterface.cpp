@@ -639,6 +639,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             cm->set_customtexturepath(cmp->customTexturePath);
             cm->set_normalmappath(cmp->normalMapPath);
             cm->set_shader(cmp->shader);
+            for (size_t i=0; i<cmp->color.size(); i++) {
+                cm->add_color(cmp->color[i]);
+            }
+
         }
 
         // define camera settings

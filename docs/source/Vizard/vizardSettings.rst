@@ -657,7 +657,7 @@ An sample is shown in the following screen capture.
    :align: center
    :scale: 80 %
 
-This functionality can be controlled by using the ‘createCustomModel’ helper method.
+This functionality can be controlled by using the ``createCustomModel()`` helper method.
 
 .. code-block::
 
@@ -722,6 +722,11 @@ The following table illustrates the arguments for the ``createCustomModel`` meth
       -
       - No, default is -1
       - Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
+    * - ``color``
+      - int(4)
+      -
+      - No
+      - RGBA as values between 0 and 255, default is gray, and will be applied to the albedo color setting
 
 
 Specifying the Spacecraft Sprite Representation

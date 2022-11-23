@@ -289,16 +289,19 @@ def run(show_plots):
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                               , bodyList=[scBodyList]
-                                              , saveFile=__file__
+                                              # , saveFile=__file__
                                               )
+
     vizSupport.createCustomModel(viz
                                  , simBodiesToModify=[panel1.ModelTag]
                                  , modelPath="CUBE"
-                                 , scale=[3, 1, 0.1])
+                                 , scale=[3, 1, 0.1]
+                                 , color=vizSupport.toRGBA255("blue"))
     vizSupport.createCustomModel(viz
                                  , simBodiesToModify=[panel2.ModelTag]
                                  , modelPath="CUBE"
-                                 , scale=[3, 1, 0.1])
+                                 , scale=[3, 1, 0.1]
+                                 , color=vizSupport.toRGBA255("blue"))
     viz.settings.orbitLinesOn = -1
 
     scSim.InitializeSimulation()

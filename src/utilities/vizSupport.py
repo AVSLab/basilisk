@@ -283,6 +283,7 @@ def updateTargetLineList(viz):
     viz.liveSettings.targetLineList = vizInterface.PointLineConfig(targetLineList)
     return
 
+
 customModelList = []
 def createCustomModel(viz, **kwargs):
     if not vizFound:
@@ -293,7 +294,7 @@ def createCustomModel(viz, **kwargs):
 
     unitTestSupport.checkMethodKeyword(
         ['modelPath', 'simBodiesToModify', 'offset', 'rotation', 'scale', 'customTexturePath',
-         'normalMapPath', 'shader'],
+         'normalMapPath', 'shader', 'color'],
         kwargs)
 
     if 'modelPath' in kwargs:
@@ -389,6 +390,16 @@ def createCustomModel(viz, **kwargs):
             exit(1)
 
         vizElement.shader = shaderVariable
+
+    if 'color' in kwargs:
+        colorVariable = kwargs['color']
+        if not isinstance(colorVariable, list):
+            print('ERROR: vizSupport: color must be a list of 4 integers')
+            exit(1)
+        if len(colorVariable) != 4:
+            print('ERROR: vizSupport: offset must be list of 4 integers')
+            exit(1)
+        vizElement.color = vizInterface.IntVector(colorVariable)
 
     customModelList.append(vizElement)
     del viz.settings.customModelList[:]  # clear settings list to replace it with updated list
