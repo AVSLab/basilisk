@@ -261,6 +261,12 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
 
 @pytest.mark.parametrize("useScPlus", [True, False])
 def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
+    """Module Unit Test"""
+    [testResults, testMessage] = dualHingedRigidBodyMotorTorque(show_plots, useScPlus)
+    assert testResults < 1, testMessage
+
+
+def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -515,11 +521,9 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
         testFailCount += 1
         testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 2 omega_S2N_B config log test")
 
-
     if testFailCount == 0:
         print("PASSED: " + " Dual Hinged Rigid Body integrated test with motor torques")
 
-    assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
@@ -529,4 +533,4 @@ def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
 
 if __name__ == "__main__":
     dualHingedRigidBodyTest(True, False, 'NoGravity')
-    # test_dualHingedRigidBodyMotorTorque(True, True)
+    # dualHingedRigidBodyMotorTorque(True, True)

@@ -31,21 +31,18 @@ from Basilisk.simulation import simpleInstrument
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 
-# update "module" in this function name to reflect the module name
-def test_module():
+
+
+@pytest.mark.parametrize("function", ["checkDefault"
+                                      , "checkStatus"
+                                      ])
+def test_simpleInstrumentAll(show_plots, function):
     """Module Unit Test"""
-    # each test method requires a single assert method to be called
-
-    default_results, default_message = testDefault()
-    status_results, status_message = testStatus()
-
-    testResults = sum([default_results, status_results])
-    testMessage = [default_message, status_message]
-
+    [testResults, testMessage] = eval(function + '()')
     assert testResults < 1, testMessage
 
 
-def testDefault():
+def checkDefault():
     """
     **Validation Test Description**
 
@@ -106,7 +103,7 @@ def testDefault():
     return [testFailCount, ''.join(testMessages)]
 
 
-def testStatus():
+def checkStatus():
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -172,5 +169,5 @@ def testStatus():
 # stand-alone python script
 #
 if __name__ == "__main__":
-    # testDefault()
-    testStatus()
+    # checkDefault()
+    checkStatus()

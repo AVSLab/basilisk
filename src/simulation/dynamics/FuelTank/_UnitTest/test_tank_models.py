@@ -31,20 +31,40 @@ path = os.path.dirname(os.path.abspath(filename))
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def allTest_tankModelTest(show_plots):
+
+
+def test_tankModelConstantVolume(show_plots=False):
     """Module Unit Test"""
-    [testResults, testMessage] = test_tankModelConstantVolume(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_tankModelConstantDensity(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_tankModelEmptying(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_tankModelUniformBurn(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_tankModelCentrifugalBurn(show_plots)
+    [testResults, testMessage] = tankModelConstantVolume(show_plots)
     assert testResults < 1, testMessage
 
-def test_tankModelConstantVolume(show_plots):
+
+def test_tankModelConstantDensity(show_plots=False):
+    """Module Unit Test"""
+    [testResults, testMessage] = tankModelConstantDensity(show_plots)
+    assert testResults < 1, testMessage
+
+
+def test_tankModelEmptying(show_plots=False):
+    """Module Unit Test"""
+    [testResults, testMessage] = tankModelEmptying(show_plots)
+    assert testResults < 1, testMessage
+
+
+def test_tankModelUniformBurn(show_plots=False):
+    """Module Unit Test"""
+    [testResults, testMessage] = tankModelUniformBurn(show_plots)
+    assert testResults < 1, testMessage
+
+
+def test_tankModelCentrifugalBurn(show_plots=False):
+    """Module Unit Test"""
+    [testResults, testMessage] = tankModelCentrifugalBurn(show_plots)
+    assert testResults < 1, testMessage
+
+
+def tankModelConstantVolume(show_plots):
+    """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -131,7 +151,7 @@ def test_tankModelConstantVolume(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_tankModelConstantDensity(show_plots):
+def tankModelConstantDensity(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -219,7 +239,7 @@ def test_tankModelConstantDensity(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_tankModelEmptying(show_plots):
+def tankModelEmptying(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -306,7 +326,7 @@ def test_tankModelEmptying(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_tankModelUniformBurn(show_plots):
+def tankModelUniformBurn(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -395,7 +415,7 @@ def test_tankModelUniformBurn(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-def test_tankModelCentrifugalBurn(show_plots):
+def tankModelCentrifugalBurn(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -496,6 +516,6 @@ def passFail(testFailCountInput, snippetName):
 
 
 if __name__ == "__main__":
-    # test_tankModelConstantVolume(True)
-    test_tankModelConstantDensity(True)
-    # test_tankModelEmptying(False)
+    # tankModelConstantVolume(True)
+    tankModelConstantDensity(True)
+    # tankModelEmptying(False)

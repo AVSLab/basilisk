@@ -39,13 +39,17 @@ from Basilisk.simulation import extForceTorque
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def extForceBodyAndTorqueAllTest():
-    [testResults, testMessage] = test_extForceBodyAndTorque()
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_extForceInertialAndTorque()
+
+@pytest.mark.parametrize("function", ["extForceBodyAndTorque"
+                                      , "extForceInertialAndTorque"
+                                      ])
+def test_ForceBodyAndTorqueAllTest(show_plots, function):
+    """Module Unit Test"""
+    [testResults, testMessage] = eval(function + '()')
     assert testResults < 1, testMessage
 
-def test_extForceBodyAndTorque():
+
+def extForceBodyAndTorque():
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -140,7 +144,7 @@ def test_extForceBodyAndTorque():
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_extForceInertialAndTorque():
+def extForceInertialAndTorque():
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -235,4 +239,4 @@ def test_extForceInertialAndTorque():
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_extForceBodyAndTorque()
+    extForceBodyAndTorque()

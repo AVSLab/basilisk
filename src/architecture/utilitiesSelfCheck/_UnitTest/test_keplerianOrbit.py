@@ -37,8 +37,13 @@ import numpy as np
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-
 def test_unitKeplerianOrbit(show_plots=False):
+    """Module Unit Test"""
+    [testResults, testMessage] = unitKeplerianOrbit(show_plots)
+    assert testResults < 1, testMessage
+
+
+def unitKeplerianOrbit(show_plots=False):
     """
     Unit Test Keplerian Orbit object
 
@@ -142,4 +147,4 @@ def test_unitKeplerianOrbit(show_plots=False):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_unitKeplerianOrbit()
+    unitKeplerianOrbit()

@@ -38,19 +38,24 @@ from Basilisk.simulation import planetEphemeris
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import messaging
+import pytest
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def gravityEffectorAllTest(show_plots):
-    [testResults, testMessage] = test_singleGravityBody(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_multiBodyGravity(show_plots)
+@pytest.mark.parametrize("function", ["singleGravityBody"
+                                      , "multiBodyGravity"
+                                      , "polyGravityBody"
+                                      ])
+def test_gravityEffectorAllTest(show_plots, function):
+    """Module Unit Test"""
+    [testResults, testMessage] = eval(function + '(show_plots)')
     assert testResults < 1, testMessage
 
-def test_singleGravityBody(show_plots):
+
+def singleGravityBody(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -181,7 +186,7 @@ def test_singleGravityBody(show_plots):
 
     return [testFailCount, ''.join(testMessages)]
 
-def test_multiBodyGravity(show_plots):
+def multiBodyGravity(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -305,7 +310,7 @@ def test_multiBodyGravity(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-def test_polyGravityBody(show_plots):
+def polyGravityBody(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -445,6 +450,6 @@ def test_polyGravityBody(show_plots):
 
 if __name__ == "__main__":
     # gravityEffectorAllTest(False)
-    test_singleGravityBody(True)
-    # test_multiBodyGravity(True)
-    test_polyGravityBody(True)
+    singleGravityBody(True)
+    # multiBodyGravity(True)
+    polyGravityBody(True)

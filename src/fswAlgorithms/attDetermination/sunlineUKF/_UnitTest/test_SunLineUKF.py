@@ -57,14 +57,17 @@ def setupFilterData(filterObject):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_all_sunline_kf(show_plots):
+
+
+@pytest.mark.parametrize("function", ["sunline_utilities_test"
+                                      , "checkStatePropSunLine"
+                                      , "checkStateUpdateSunLine"
+                                      ])
+def test_all_sunline_kf(show_plots, function):
     """Module Unit Test"""
-    [testResults, testMessage] = sunline_utilities_test(show_plots)
+    [testResults, testMessage] = eval(function + '(show_plots)')
     assert testResults < 1, testMessage
-    [testResults, testMessage] = testStatePropSunLine(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = testStateUpdateSunLine(show_plots)
-    assert testResults < 1, testMessage
+
 
 def sunline_utilities_test(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -332,7 +335,7 @@ def sunline_utilities_test(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def testStateUpdateSunLine(show_plots):
+def checkStateUpdateSunLine(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -466,7 +469,9 @@ def testStateUpdateSunLine(show_plots):
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
-def testStatePropSunLine(show_plots):
+
+
+def checkStatePropSunLine(show_plots):
 
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -516,7 +521,6 @@ def testStatePropSunLine(show_plots):
 
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'prop', show_plots)
     FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'prop', show_plots)
-
 
     for i in range(6):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):

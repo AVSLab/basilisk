@@ -39,17 +39,20 @@ import ctypes
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def stateArchitectureAllTest(show_plots):
-    [testResults, testMessage] = test_stateData(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_stateArchitecture(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_stateProperties(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_EigenConversions(show_plots)
+
+
+@pytest.mark.parametrize("function", ["stateData"
+                                      , "stateArchitectureTest"
+                                      , "stateProperties"
+                                      , "EigenConversions"
+                                      ])
+def test_stateArchitectureAllTests(show_plots, function):
+    """Module Unit Test"""
+    [testResults, testMessage] = eval(function + '(show_plots)')
     assert testResults < 1, testMessage
 
-def test_stateData(show_plots):
+
+def stateData(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -134,7 +137,7 @@ def test_stateData(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_stateProperties(show_plots):
+def stateProperties(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -192,7 +195,7 @@ def test_stateProperties(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_stateArchitecture(show_plots):
+def stateArchitectureTest(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -262,7 +265,7 @@ def test_stateArchitecture(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_EigenConversions(show_plots):
+def EigenConversions(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the

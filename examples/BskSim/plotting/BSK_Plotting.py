@@ -109,14 +109,10 @@ def plot_trackingError(timeAxis, sigma_BR, omega_BR_B, id=None):
 
 
 def plot_attitudeGuidance(timeAxis, sigma_RN, omega_RN_N, id=None):
-    plt.figure(id)
-    plt.subplot(211)
     plot_sigma(timeAxis, sigma_RN, id)
     plt.ylim([-1.0, 1.0])
     plt.title(r'Ref Att: $\sigma_{RN}$')
 
-    plt.subplot(212)
-    #plt.figure()
     plot_omega(timeAxis, omega_RN_N, id)
     plt.title(r'Ref Rate: $^N{\omega_{RN}}$')
     return
@@ -124,12 +120,9 @@ def plot_attitudeGuidance(timeAxis, sigma_RN, omega_RN_N, id=None):
 
 def plot_rotationalNav(timeAxis, sigma_BN, omega_BN_B, id=None):
     plt.figure()
-    plt.subplot(211)
     plot_sigma(timeAxis, sigma_BN, id)
     plt.title(r'Sc Att: $\sigma_{BN}$')
 
-    plt.subplot(212)
-    #plt.figure(id)
     plot_omega(timeAxis, omega_BN_B, id)
     plt.title(r'Sc Rate: $^B{\omega_{BN}}$')
     return
