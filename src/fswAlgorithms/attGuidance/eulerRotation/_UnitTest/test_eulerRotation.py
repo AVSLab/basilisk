@@ -23,6 +23,7 @@
 #
 
 import numpy as np
+import pytest
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
@@ -36,15 +37,17 @@ from Basilisk.architecture import messaging
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def all_test_eulerRotation(show_plots):
+
+@pytest.mark.parametrize("function", ["run"
+                                      , "run2"
+                                      ])
+def test_all_test_eulerRotation(show_plots, function):
     """Module Unit Test"""
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = test_run(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_run2(show_plots)
+    [testResults, testMessage] = eval(function + '(show_plots)')
     assert testResults < 1, testMessage
 
-def test_run(show_plots):
+
+def run(show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -176,7 +179,7 @@ def test_run(show_plots):
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
-def test_run2(show_plots):
+def run2(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -310,5 +313,5 @@ def test_run2(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    all_test_eulerRotation(False)
-    # test_run(False)
+    test_all_test_eulerRotation(False)
+    # run(False)

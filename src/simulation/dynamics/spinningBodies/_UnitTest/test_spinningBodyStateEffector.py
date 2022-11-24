@@ -45,7 +45,7 @@ from Basilisk.utilities import macros
 # provide a unique test method name, starting with test_
 
 
-def spinningBodyTest(show_plots):
+def test_spinningBodyTest(show_plots):
     r"""
     **Validation Test Description**
 
@@ -66,11 +66,11 @@ def spinningBodyTest(show_plots):
 
     against their initial values.
     """
-    [testResults, testMessage] = test_spinningBody(show_plots)
+    [testResults, testMessage] = spinningBody(show_plots)
     assert testResults < 1, testMessage
 
 
-def test_spinningBody(show_plots):
+def spinningBody(show_plots):
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
@@ -260,4 +260,4 @@ def test_spinningBody(show_plots):
 
 
 if __name__ == "__main__":
-    spinningBodyTest(True)
+    spinningBody(True)

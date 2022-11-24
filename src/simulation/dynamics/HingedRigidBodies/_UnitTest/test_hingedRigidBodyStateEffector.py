@@ -44,29 +44,23 @@ from Basilisk.architecture import messaging
 # provide a unique test method name, starting with test_
 
 
-
-
-def hingedRigidBodyAllTest(show_plots):
+@pytest.mark.parametrize("function", ["hingedRigidBodyGravity", "hingedRigidBodyNoGravity"
+                                      , "hingedRigidBodyNoGravityDamping", "hingedRigidBodyThetaSS"
+                                      , "hingedRigidBodyFrequencyAmp"
+                                      , "hingedRigidBodyLagrangVsBasilisk"
+                                      ])
+def test_hingedRigidBody(show_plots, function):
     """Module Unit Test"""
-    [testResults, testMessage] = test_hingedRigidBodyGravity(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_hingedRigidBodyNoGravity(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_hingedRigidBodyNoGravityDamping(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_hingedRigidBodyThetaSS(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_hingedRigidBodyFrequencyAmp(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_hingedRigidBodyLagrangVsBasilisk(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_hingedRigidBodyMotorTorque(show_plots, True)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_hingedRigidBodyMotorTorque(show_plots, False)
+    [testResults, testMessage] = eval(function + '(show_plots)')
     assert testResults < 1, testMessage
 
+@pytest.mark.parametrize("useScPlus", [True, False])
+def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
+    """Module Unit Test"""
+    [testResults, testMessage] = hingedRigidBodyMotorTorque(show_plots, useScPlus)
+    assert testResults < 1, testMessage
 
-def test_hingedRigidBodyGravity(show_plots):
+def hingedRigidBodyGravity(show_plots):
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
@@ -289,7 +283,7 @@ def test_hingedRigidBodyGravity(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-def test_hingedRigidBodyNoGravity(show_plots):
+def hingedRigidBodyNoGravity(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -517,7 +511,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-def test_hingedRigidBodyNoGravityDamping(show_plots):
+def hingedRigidBodyNoGravityDamping(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -703,7 +697,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-def test_hingedRigidBodyThetaSS(show_plots):
+def hingedRigidBodyThetaSS(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -892,7 +886,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-def test_hingedRigidBodyFrequencyAmp(show_plots):
+def hingedRigidBodyFrequencyAmp(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -1171,8 +1165,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-@pytest.mark.parametrize("useScPlus", [True, False])
-def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
+def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -1412,7 +1405,7 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     return [testFailCount, ''.join(testMessages)]
 
 
-def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
+def hingedRigidBodyLagrangVsBasilisk(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -1863,4 +1856,4 @@ if __name__ == "__main__":
     # test_hingedRigidBodyThetaSS(True)
     # test_hingedRigidBodyFrequencyAmp(True)
     # test_hingedRigidBodyMotorTorque(True, True)
-    test_hingedRigidBodyLagrangVsBasilisk(True)
+    hingedRigidBodyLagrangVsBasilisk(True)

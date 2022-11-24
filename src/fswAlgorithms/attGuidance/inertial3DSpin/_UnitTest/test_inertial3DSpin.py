@@ -24,6 +24,7 @@
 
 
 import numpy as np
+import pytest
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
@@ -38,16 +39,17 @@ from Basilisk.architecture import messaging
 # uncomment this line if this test has an expected failure, adjust message as needed
 #@pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def all_inertial3DSpin(show_plots):
+
+@pytest.mark.parametrize("function", ["subModuleTestFunction"
+                                      , "subModuleTestFunction2"
+                                      ])
+def test_stateArchitectureAllTests(show_plots, function):
     """Module Unit Test"""
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = test_subModuleTestFunction(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_subModuleTestFunction2(show_plots)
+    [testResults, testMessage] = eval(function + '(show_plots)')
     assert testResults < 1, testMessage
 
 
-def test_subModuleTestFunction(show_plots):
+def subModuleTestFunction(show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -177,7 +179,7 @@ def test_subModuleTestFunction(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-def test_subModuleTestFunction2(show_plots):
+def subModuleTestFunction2(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -322,4 +324,4 @@ def test_subModuleTestFunction2(show_plots):
 #
 if __name__ == "__main__":
     # all_inertial3DSpin(False)
-    test_subModuleTestFunction2(False)
+    subModuleTestFunction2(False)

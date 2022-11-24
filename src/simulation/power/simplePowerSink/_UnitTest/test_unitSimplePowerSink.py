@@ -38,21 +38,18 @@ from Basilisk.simulation import simplePowerSink
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 
-# update "module" in this function name to reflect the module name
-def allTest_module():
+
+
+@pytest.mark.parametrize("function", ["defaultPowerSink"
+                                      , "statusPowerSink"
+                                      ])
+def test_allTest_SimplePowerSink(show_plots, function):
     """Module Unit Test"""
-    # each test method requires a single assert method to be called
-
-    default_results, default_message = test_default()
-    status_results, status_message = test_status()
-
-    testResults = sum([default_results, status_results])
-    testMessage = [default_message, status_message]
-
+    [testResults, testMessage] = eval(function + '()')
     assert testResults < 1, testMessage
 
 
-def test_default():
+def defaultPowerSink():
     """Module Unit Test"""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -103,7 +100,7 @@ def test_default():
     return [testFailCount, ''.join(testMessages)]
 
 
-def test_status():
+def statusPowerSink():
     """Module Unit Test"""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -171,5 +168,5 @@ def test_status():
 # stand-alone python script
 #
 if __name__ == "__main__":
-    allTest_module()
+    test_allTest_SimplePowerSink()
     # test_default()

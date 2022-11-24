@@ -42,13 +42,16 @@ orbitVelAccuracy = 0.01
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def chebyPosFitAllTest(show_plots):
-    [testResults, testMessage] = test_sineCosine(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_earthOrbitFit(show_plots)
+@pytest.mark.parametrize("function", ["sineCosine"
+                                      , "earthOrbitFit"
+                                      ])
+def test_chebyPosFitAllTest(show_plots, function):
+    """Module Unit Test"""
+    [testResults, testMessage] = eval(function + '(show_plots)')
     assert testResults < 1, testMessage
 
-def test_sineCosine(show_plots):
+
+def sineCosine(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -142,7 +145,7 @@ def test_sineCosine(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_earthOrbitFit(show_plots):
+def earthOrbitFit(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -251,4 +254,4 @@ def test_earthOrbitFit(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    chebyPosFitAllTest(True)
+    test_chebyPosFitAllTest(True)

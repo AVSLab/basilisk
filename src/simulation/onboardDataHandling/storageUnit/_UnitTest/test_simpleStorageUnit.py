@@ -32,11 +32,11 @@ from Basilisk.utilities import macros
 
 def test_module(show_plots):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = testStorage_limits(show_plots)
+    [testResults, testMessage] = checkStorage_limits(show_plots)
     assert testResults < 1, testMessage
 
 
-def testStorage_limits(show_plots):
+def checkStorage_limits(show_plots):
     """
     Tests:
 
@@ -124,4 +124,4 @@ def testStorage_limits(show_plots):
 
 
 if __name__ == "__main__":
-    print(testStorage_limits(False))
+    print(checkStorage_limits(False))

@@ -83,5 +83,5 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
 
-    return [testFailCount, ''.join(testMessages)]
+    assert testFailCount < 1, testMessages
 

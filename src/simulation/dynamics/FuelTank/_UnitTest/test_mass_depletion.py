@@ -36,15 +36,17 @@ path = os.path.dirname(os.path.abspath(filename))
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def massDepletionTest(show_plots, thrusterType):
-    [testResults, testMessage] = test_massDepletionTest(show_plots, thrusterType)
-    assert testResults < 1, testMessage
-
 @pytest.mark.parametrize("thrusterType", [
     "dynamicEffector", "stateEffector"
 ])
-# @pytest.mark.xfail #Currently not sure if this is valid or not
 def test_massDepletionTest(show_plots, thrusterType):
+    """Module Unit Test"""
+    [testResults, testMessage] = massDepletionTest(show_plots, thrusterType)
+    assert testResults < 1, testMessage
+
+
+# @pytest.mark.xfail #Currently not sure if this is valid or not
+def massDepletionTest(show_plots, thrusterType):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the

@@ -43,23 +43,28 @@ def addTimeColumn(time, data):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def spacecraftAllTest(show_plots):
-    [testResults, testMessage] = test_SCTranslation(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_SCTransAndRotation(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_SCRotation(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_SCTransBOE(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_SCPointBVsPointC(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_scAttRef(show_plots, 1e-3)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = test_scAccumDV()
+
+
+@pytest.mark.parametrize("function", ["SCTranslation"
+                                      , "SCTransAndRotation"
+                                      , "SCRotation"
+                                      , "SCTransBOE"
+                                      , "SCPointBVsPointC"
+                                      , "scOptionalRef"
+                                      , "scAccumDV"
+                                      ])
+def test_spacecraftAllTest(show_plots, function):
+    """Module Unit Test"""
+    if function == "scOptionalRef":
+        [testResults, testMessage] = eval(function + '(show_plots, 1e-3)')
+    elif function == "scAccumDV":
+        [testResults, testMessage] = eval(function + '()')
+    else:
+        [testResults, testMessage] = eval(function + '(show_plots)')
     assert testResults < 1, testMessage
 
-def test_SCTranslation(show_plots):
+
+def SCTranslation(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -192,7 +197,7 @@ def test_SCTranslation(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_SCTransAndRotation(show_plots):
+def SCTransAndRotation(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -373,7 +378,7 @@ def test_SCTransAndRotation(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_SCRotation(show_plots):
+def SCRotation(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -598,7 +603,7 @@ def test_SCRotation(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_SCTransBOE(show_plots):
+def SCTransBOE(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -745,7 +750,7 @@ def test_SCTransBOE(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_SCPointBVsPointC(show_plots):
+def SCPointBVsPointC(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -909,7 +914,7 @@ def test_SCPointBVsPointC(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 @pytest.mark.parametrize("accuracy", [1e-3])
-def test_scOptionalRef(show_plots, accuracy):
+def scOptionalRef(show_plots, accuracy):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -1015,7 +1020,7 @@ def test_scOptionalRef(show_plots, accuracy):
 
     return [testFailCount, ''.join(testMessages)]
 
-def test_scAccumDV():
+def scAccumDV():
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -1092,10 +1097,10 @@ def test_scAccumDV():
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    # test_scAttRef(True, 1e-3)
-    # test_SCTranslation(True)
-    # test_SCTransAndRotation(True)
-    # test_SCRotation(True)
-    # test_SCTransBOE(True)
-    # test_SCPointBVsPointC(True)
-    test_scOptionalRef(True, 0.001)
+    # scAttRef(True, 1e-3)
+    # SCTranslation(True)
+    # SCTransAndRotation(True)
+    # SCRotation(True)
+    # SCTransBOE(True)
+    # SCPointBVsPointC(True)
+    scOptionalRef(True, 0.001)

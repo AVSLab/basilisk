@@ -33,11 +33,11 @@ from Basilisk.architecture import messaging
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def thrusterIntegratedTest(show_plots):
-    [testResults, testMessage] = test_thrusterIntegratedTest(show_plots)
+def test_thrusterIntegratedTest(show_plots):
+    [testResults, testMessage] = thrusterIntegratedTest(show_plots)
     assert testResults < 1, testMessage
 
-def test_thrusterIntegratedTest(show_plots):
+def thrusterIntegratedTest(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
