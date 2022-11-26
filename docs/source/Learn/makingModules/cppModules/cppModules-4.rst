@@ -56,12 +56,15 @@ The line ``%include "swig_conly_data.i"`` enables the python interface to read a
     Interface with module Eigen vectors and matrices
 
 
-If you have to interact with a standard vector of input or output messages, the vector interface must also be defined.  Assume the message is of type ``SomeMsg``.  The at the end of the ``*.i`` file add the definition for vectors of output or input messages using:
+If you have to interact with a standard vector of input or output messages, running ``python conanfile.py`` will
+auto-create the required python interfaces to vectors of output messages, vector of output message pointers,
+as well as vectors of input messages. Assume the message is of type ``SomeMsg``. After running
+``python conanfile.py`` the folling swig interfaces are defined:
 
 .. code:: cpp
 
-    %template(MoreOutMsgsVector) std::vector<Message<SomeMsgPayload>*>;
-    %template(MoreInMsgsVector) std::vector<ReadFunctor<SomeMsgPayload>>;
+    %template(SomeMsgOutMsgsVector) std::vector<Message<SomeMsgPayload>>;
+    %template(SomeMsgOutMsgsPtrVector) std::vector<Message<SomeMsgPayload>*>;
+    %template(SomeMsgInMsgsVector) std::vector<ReadFunctor<SomeMsgPayload>>;
 
-If the vector of messages is used across multiple Basilisk modules, you can add the vector of messages interface definition to the end of the ``src/architecture/messaging/messaging.i`` file.  This way this definition is available through the ``messaging`` package.
-
+These message definitions can all be access via ``messaging`` package.
