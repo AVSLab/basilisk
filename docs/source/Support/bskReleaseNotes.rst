@@ -43,6 +43,8 @@ Version |release|
   the effector inertial states are relative to the inertial frame of the simulation, not the
   central body frame.
 - Added ``color`` keyword support to the ``vizSupport.createCustomModel()`` method
+- Updated :ref:`cppModules-4` to explain how now the swig interface to vectors of input/output messages
+  are now auto-generated when making Basilisk project
 
 Version 2.1.4 (Oct. 1, 2022)
 ----------------------------
