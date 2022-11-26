@@ -889,12 +889,14 @@ def createCameraConfigMsg(viz, **kwargs):
         ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'cameraPos_B', 'sigma_CB', 'skyBox', 'postProcessingOn', 'ppFocusDistance', 'ppAperture', 'ppFocalLength', 'ppMaxBlurSize'],
         kwargs)
 
+    cameraConfigMsgPayload = messaging.CameraConfigMsgPayload()
+
     if 'cameraID' in kwargs:
         val = kwargs['cameraID']
         if not isinstance(val, int) or val < 0:
             print('ERROR: vizSupport: cameraID must be non-negative integer value.')
             exit(1)
-        viz.cameraConfigBuffer.cameraID = val
+        cameraConfigMsgPayload.cameraID = val
     else:
         print('ERROR: vizSupport: cameraID must be defined in createCameraConfigMsg()')
         exit(1)
@@ -904,16 +906,16 @@ def createCameraConfigMsg(viz, **kwargs):
         if not isinstance(val, basestring):
             print('ERROR: vizSupport: parentName must be a string')
             exit(1)
-        viz.cameraConfigBuffer.parentName = val
+        cameraConfigMsgPayload.parentName = val
     else:
-        viz.cameraConfigBuffer.parentName = firstSpacecraftName
+        cameraConfigMsgPayload.parentName = firstSpacecraftName
 
     if 'fieldOfView' in kwargs:
         val = kwargs['fieldOfView']
         if not isinstance(val, float):
             print('ERROR: vizSupport: fieldOfView must be a float in radians')
             exit(1)
-        viz.cameraConfigBuffer.fieldOfView = val
+        cameraConfigMsgPayload.fieldOfView = val
     else:
         print('ERROR: vizSupport: fieldOfView must be defined in createCameraConfigMsg()')
         exit(1)
@@ -929,7 +931,7 @@ def createCameraConfigMsg(viz, **kwargs):
         if not isinstance(val[0], int) or not isinstance(val[1], int):
             print('ERROR: vizSupport: resolution list ' + str(val) + ' must contain integers')
             exit(1)
-        viz.cameraConfigBuffer.resolution = val
+        cameraConfigMsgPayload.resolution = val
     else:
         print('ERROR: vizSupport: resolution must be defined in createCameraConfigMsg()')
         exit(1)
@@ -939,7 +941,7 @@ def createCameraConfigMsg(viz, **kwargs):
         if not isinstance(val, float) or val < 0:
             print('ERROR: vizSupport: renderRate ' + str(val) + ' must be positive float value in units of seconds.')
             exit(1)
-        viz.cameraConfigBuffer.renderRate = int(val * 1e9)     # convert to nano-seconds
+        cameraConfigMsgPayload.renderRate = int(val * 1e9)     # convert to nano-seconds
 
     if 'cameraPos_B' in kwargs:
         val = kwargs['cameraPos_B']
@@ -952,7 +954,7 @@ def createCameraConfigMsg(viz, **kwargs):
         if not isinstance(val[0], float) or not isinstance(val[1], float) or not isinstance(val[2], float):
             print('ERROR: vizSupport: cameraPos_B list ' + str(val) + ' must contain floats')
             exit(1)
-        viz.cameraConfigBuffer.cameraPos_B = val
+        cameraConfigMsgPayload.cameraPos_B = val
     else:
         print('ERROR: vizSupport: cameraPos_B must be defined in createCameraConfigMsg()')
         exit(1)
@@ -968,7 +970,7 @@ def createCameraConfigMsg(viz, **kwargs):
         if not isinstance(val[0], float) or not isinstance(val[1], float) or not isinstance(val[2], float):
             print('ERROR: vizSupport: sigma_CB list ' + str(val) + ' must contain floats')
             exit(1)
-        viz.cameraConfigBuffer.sigma_CB = val
+        cameraConfigMsgPayload.sigma_CB = val
     else:
         print('ERROR: vizSupport: sigma_CB must be defined in createCameraConfigMsg()')
         exit(1)
@@ -978,44 +980,48 @@ def createCameraConfigMsg(viz, **kwargs):
         if not isinstance(val, basestring):
             print('ERROR: vizSupport: skyBox must be a string')
             exit(1)
-        viz.cameraConfigBuffer.skyBox = val
+        cameraConfigMsgPayload.skyBox = val
     else:
-        viz.cameraConfigBuffer.skyBox = ""
+        cameraConfigMsgPayload.skyBox = ""
 
     if 'postProcessingOn' in kwargs:
         val = kwargs['postProcessingOn']
         if not isinstance(val, int) or val < 0:
             print('ERROR: vizSupport: postProcessingOn must be non-negative integer value.')
             exit(1)
-        viz.cameraConfigBuffer.postProcessingOn = val
+        cameraConfigMsgPayload.postProcessingOn = val
 
     if 'ppFocusDistance' in kwargs:
         val = kwargs['ppFocusDistance']
         if not isinstance(val, float) or val < 0:
             print('ERROR: vizSupport: ppFocusDistance ' + str(val) + ' must be 0 or greater than 0.1.')
             exit(1)
-        viz.cameraConfigBuffer.ppFocusDistance = int(val)
+        cameraConfigMsgPayload.ppFocusDistance = int(val)
 
     if 'ppAperture' in kwargs:
         val = kwargs['ppAperture']
         if not isinstance(val, float) or val < 0 or val > 32:
             print('ERROR: vizSupport: ppAperture ' + str(val) + ' must be 0 or with [0.05, 32].')
             exit(1)
-        viz.cameraConfigBuffer.ppAperture = int(val)
+        cameraConfigMsgPayload.ppAperture = int(val)
 
     if 'ppFocalLength' in kwargs:
         val = kwargs['ppFocalLength']
         if not isinstance(val, float) or val < 0 or val > 0.3:
             print('ERROR: vizSupport: ppFocalLength ' + str(val) + ' must be 0 or with [0.001, 0.3] meters.')
             exit(1)
-        viz.cameraConfigBuffer.ppFocalLength = int(val)
+        cameraConfigMsgPayload.ppFocalLength = int(val)
 
     if 'ppMaxBlurSize' in kwargs:
         val = kwargs['ppMaxBlurSize']
         if not isinstance(val, int) or val < 0 or val > 4:
             print('ERROR: vizSupport: ppMaxBlurSize must be non-negative integer value between [0, 4].')
             exit(1)
-        viz.cameraConfigBuffer.ppMaxBlurSize = val
+        cameraConfigMsgPayload.ppMaxBlurSize = val
+
+    cameraConfigMsg = messaging.CameraConfigMsg().write(cameraConfigMsgPayload)
+    cameraConfigMsg.this.disown()
+    viz.addCamMsgToModule(cameraConfigMsg)
 
     return
 
