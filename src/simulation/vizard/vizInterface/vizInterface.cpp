@@ -38,11 +38,6 @@ VizInterface::VizInterface()
     this->liveStream = false;
     this->FrameNumber= -1;
 
-    this->cameraConfigBuffer = this->cameraConfInMsg.zeroMsgPayload;
-    this->cameraConfigBuffer.cameraID = -1;
-    strcpy(this->cameraConfigBuffer.skyBox, "");
-    this->cameraConfigBuffer.renderRate = 0;
-
     this->firstPass = 0;
     
     this->comProtocol = "tcp";
@@ -56,6 +51,10 @@ VizInterface::VizInterface()
  */
 VizInterface::~VizInterface()
 {
+    for (size_t c=0; c<this->opnavImageOutMsgs.size(); c++) {
+        delete this->opnavImageOutMsgs.at(c);
+    }
+
     return;
 }
 
@@ -159,9 +158,11 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
     }
 
     /* Check Camera input messages */
-    if (this->cameraConfInMsg.isLinked()) {
-        this->cameraConfMsgStatus.dataFresh = false;
-        this->cameraConfMsgStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
+        if (this->cameraConfInMsgs[camCounter].isLinked()) {
+            this->cameraConfMsgStatus[camCounter].dataFresh = false;
+            this->cameraConfMsgStatus[camCounter].lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+        }
     }
 
     /* Check Spice input message */
@@ -374,15 +375,17 @@ void VizInterface::ReadBSKMessages()
     } /* end of scIt loop */
 
     /*! Read incoming camera config msg */
-    if (this->cameraConfInMsg.isLinked()){
-        CameraConfigMsgPayload localCameraConfigArray;
-        localCameraConfigArray = this->cameraConfInMsg();
-        if(this->cameraConfInMsg.isWritten() &&
-           this->cameraConfInMsg.timeWritten() != this->cameraConfMsgStatus.lastTimeTag){
-            this->cameraConfMsgStatus.lastTimeTag = this->cameraConfInMsg.timeWritten();
-            this->cameraConfMsgStatus.dataFresh = true;
+    for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
+        if (this->cameraConfInMsgs[camCounter].isLinked()){
+            CameraConfigMsgPayload localCameraConfigArray;
+            localCameraConfigArray = this->cameraConfInMsgs[camCounter]();
+            if(this->cameraConfInMsgs[camCounter].isWritten() &&
+               this->cameraConfInMsgs[camCounter].timeWritten() != this->cameraConfMsgStatus[camCounter].lastTimeTag){
+                this->cameraConfMsgStatus[camCounter].lastTimeTag = this->cameraConfInMsgs[camCounter].timeWritten();
+                this->cameraConfMsgStatus[camCounter].dataFresh = true;
+            }
+            this->cameraConfigBuffers[camCounter] = localCameraConfigArray;
         }
-        this->cameraConfigBuffer = localCameraConfigArray;
     }
 
     /*! Read incoming epoch msg */
@@ -940,29 +943,31 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     /*! Write camera output msg */
-    if ((this->cameraConfInMsg.isLinked() && this->cameraConfMsgStatus.dataFresh)
-        || this->cameraConfigBuffer.cameraID >= 0){
-        /*! This corrective rotation allows unity to place the camera as is expected by the python setting. Unity has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame: z point, x horizontal, y vertical (down) */
-        double sigma_CuC[3], unityCameraMRP[3]; /*! Cu is the unity Camera frame */
-        v3Set(1./3, 1./3, -1./3, sigma_CuC);
-        addMRP(this->cameraConfigBuffer.sigma_CB, sigma_CuC, unityCameraMRP);
-        vizProtobufferMessage::VizMessage::CameraConfig* camera = message->add_cameras();
-        for (int j=0; j<3; j++){
-            if (j < 2){
-            camera->add_resolution(this->cameraConfigBuffer.resolution[j]);
-            }
-            camera->add_cameradir_b(unityCameraMRP[j]);
-            camera->add_camerapos_b(this->cameraConfigBuffer.cameraPos_B[j]);            }
-        camera->set_renderrate(this->cameraConfigBuffer.renderRate);        // Unity expects nano-seconds between images
-        camera->set_cameraid(this->cameraConfigBuffer.cameraID);
-        camera->set_fieldofview(this->cameraConfigBuffer.fieldOfView*R2D);  // Unity expects degrees
-        camera->set_skybox(this->cameraConfigBuffer.skyBox);
-        camera->set_parentname(this->cameraConfigBuffer.parentName);
-        camera->set_postprocessingon(this->cameraConfigBuffer.postProcessingOn);
-        camera->set_ppfocusdistance(this->cameraConfigBuffer.ppFocusDistance);
-        camera->set_ppaperture(this->cameraConfigBuffer.ppAperture);
-        camera->set_ppfocallength(this->cameraConfigBuffer.ppFocalLength*1000.); // Unity expects mm
-        camera->set_ppmaxblursize(this->cameraConfigBuffer.ppMaxBlurSize);
+    for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++){
+        if ((this->cameraConfInMsgs[camCounter].isLinked() && this->cameraConfMsgStatus[camCounter].dataFresh)
+            || this->cameraConfigBuffers[camCounter].cameraID >= 0){
+            /*! This corrective rotation allows unity to place the camera as is expected by the python setting. Unity has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame: z point, x horizontal, y vertical (down) */
+            double sigma_CuC[3], unityCameraMRP[3]; /*! Cu is the unity Camera frame */
+            v3Set(1./3, 1./3, -1./3, sigma_CuC);
+            addMRP(this->cameraConfigBuffers[camCounter].sigma_CB, sigma_CuC, unityCameraMRP);
+            vizProtobufferMessage::VizMessage::CameraConfig* camera = message->add_cameras();
+            for (int j=0; j<3; j++){
+                if (j < 2){
+                    camera->add_resolution(this->cameraConfigBuffers[camCounter].resolution[j]);
+                }
+                camera->add_cameradir_b(unityCameraMRP[j]);
+                camera->add_camerapos_b(this->cameraConfigBuffers[camCounter].cameraPos_B[j]);            }
+            camera->set_renderrate(this->cameraConfigBuffers[camCounter].renderRate);        // Unity expects nano-seconds between images
+            camera->set_cameraid(this->cameraConfigBuffers[camCounter].cameraID);
+            camera->set_fieldofview(this->cameraConfigBuffers[camCounter].fieldOfView*R2D);  // Unity expects degrees
+            camera->set_skybox(this->cameraConfigBuffers[camCounter].skyBox);
+            camera->set_parentname(this->cameraConfigBuffers[camCounter].parentName);
+            camera->set_postprocessingon(this->cameraConfigBuffers[camCounter].postProcessingOn);
+            camera->set_ppfocusdistance(this->cameraConfigBuffers[camCounter].ppFocusDistance);
+            camera->set_ppaperture(this->cameraConfigBuffers[camCounter].ppAperture);
+            camera->set_ppfocallength(this->cameraConfigBuffers[camCounter].ppFocalLength*1000.); // Unity expects mm
+            camera->set_ppmaxblursize(this->cameraConfigBuffers[camCounter].ppMaxBlurSize);
+        }
     }
 
     /*! Write spice output msgs */
@@ -998,8 +1003,16 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         /*! Enter in lock-step with the vizard to simulate a camera */
         /*!--OpNavMode set to 1 is to stay in lock-step with the viz at all time steps. It is a slower run, but provides visual capabilities during OpNav */
         /*!--OpNavMode set to 2 is a faster mode in which the viz only steps forward to the BSK time step if an image is requested. This is a faster run but nothing can be visualized post-run */
+        bool opNavMode2Status = false;
+        if (this->opNavMode == 2) {
+            for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
+                if ((CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 && this->cameraConfigBuffers[camCounter].isOn == 1) ||this->firstPass < 11) {
+                    opNavMode2Status = true;
+                }
+            }
+        }
         if (this->opNavMode == 1
-            ||(this->opNavMode == 2 && ((CurrentSimNanos%this->cameraConfigBuffer.renderRate == 0 && this->cameraConfigBuffer.isOn == 1) ||this->firstPass < 11))
+            ||(this->opNavMode == 2 && opNavMode2Status)
             || this->liveStream
             ){
             // Receive pong
@@ -1034,68 +1047,71 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_send(&empty_frame2, requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&request_buffer, requester_socket, 0);
             
-            /*! - If the camera is requesting periodic images, request them */
-            if (this->opNavMode > 0 &&
-                CurrentSimNanos%this->cameraConfigBuffer.renderRate == 0 &&
-                this->cameraConfigBuffer.isOn == 1)
-            {
-                char buffer[10];
-                zmq_recv(requester_socket, buffer, 10, 0);
-                /*! -- Send request */
-                void* img_message = malloc(13 * sizeof(char));
-                memcpy(img_message, "REQUEST_IMAGE", 13);
-                zmq_msg_t img_request;
-                zmq_msg_init_data(&img_request, img_message, 13, message_buffer_deallocate, NULL);
-                zmq_msg_send(&img_request, requester_socket, 0);
-                
-                zmq_msg_t length;
-                zmq_msg_t image;
-                zmq_msg_init(&length);
-                zmq_msg_init(&image);
-                if (this->bskImagePtr != NULL) {
-                    /*! If the permanent image buffer is not populated, it will be equal to null*/
-                    free(this->bskImagePtr);
-                    this->bskImagePtr = NULL;
+            for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
+                /*! - If the camera is requesting periodic images, request them */
+                if (this->opNavMode > 0 &&
+                    CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 &&
+                    this->cameraConfigBuffers[camCounter].isOn == 1)
+                {
+                    char buffer[10];
+                    zmq_recv(requester_socket, buffer, 10, 0);
+                    /*! -- Send request */
+                    void* img_message = malloc(13 * sizeof(char));
+                    memcpy(img_message, "REQUEST_IMAGE", 13);
+                    zmq_msg_t img_request;
+                    zmq_msg_init_data(&img_request, img_message, 13, message_buffer_deallocate, NULL);
+                    zmq_msg_send(&img_request, requester_socket, 0);
+                    
+                    zmq_msg_t length;
+                    zmq_msg_t image;
+                    zmq_msg_init(&length);
+                    zmq_msg_init(&image);
+                    if (this->bskImagePtr != NULL) {
+                        /*! If the permanent image buffer is not populated, it will be equal to null*/
+                        free(this->bskImagePtr);
+                        this->bskImagePtr = NULL;
+                    }
+                    zmq_msg_recv(&length, requester_socket, 0);
+                    zmq_msg_recv(&image, requester_socket, 0);
+                    
+                    int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
+                    void *imagePoint= zmq_msg_data(&image);
+                    int32_t length_unswapped = *lengthPoint;
+                    /*! --  Endianness switch for the length of the buffer */
+                    int32_t imageBufferLength =((length_unswapped>>24)&0xff) | // move byte 3 to byte 0
+                    ((length_unswapped<<8)&0xff0000) | // move byte 1 to byte 2
+                    ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
+                    ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
+                    
+                    /*!-Copy the image buffer pointer, so that it does not get freed by ZMQ*/
+                    this->bskImagePtr = malloc(imageBufferLength*sizeof(char));
+                    memcpy(this->bskImagePtr, imagePoint, imageBufferLength*sizeof(char));
+                    
+                    /*! -- Write out the image information to the Image message */
+                    CameraImageMsgPayload imageData;
+                    imageData.timeTag = CurrentSimNanos;
+                    imageData.valid = 0;
+                    imageData.imagePointer = this->bskImagePtr;
+                    imageData.imageBufferLength = imageBufferLength;
+                    imageData.cameraID = this->cameraConfigBuffers[camCounter].cameraID;
+                    imageData.imageType = 4;
+                    if (imageBufferLength>0){imageData.valid = 1;}
+                    printf("HPS: camera: %zu\n", camCounter);
+                    this->opnavImageOutMsgs[camCounter]->write(&imageData, this->moduleID, CurrentSimNanos);
+                    
+                    /*! -- Clean the messages to avoid memory leaks */
+                    zmq_msg_close(&length);
+                    zmq_msg_close(&image);
+                    
+                    /*! -- Ping the Viz back to continue the lock-step */
+                    void* keep_alive = malloc(4 * sizeof(char));
+                    memcpy(keep_alive, "PING", 4);
+                    zmq_msg_t request_life;
+                    zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
+                    zmq_msg_send(&request_life, this->requester_socket, 0);
+                    return;
+                    
                 }
-                zmq_msg_recv(&length, requester_socket, 0);
-                zmq_msg_recv(&image, requester_socket, 0);
-                
-                int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
-                void *imagePoint= zmq_msg_data(&image);
-                int32_t length_unswapped = *lengthPoint;
-                /*! --  Endianness switch for the length of the buffer */
-                int32_t imageBufferLength =((length_unswapped>>24)&0xff) | // move byte 3 to byte 0
-                ((length_unswapped<<8)&0xff0000) | // move byte 1 to byte 2
-                ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
-                ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
-                
-                /*!-Copy the image buffer pointer, so that it does not get freed by ZMQ*/
-                this->bskImagePtr = malloc(imageBufferLength*sizeof(char));
-                memcpy(this->bskImagePtr, imagePoint, imageBufferLength*sizeof(char));
-                
-                /*! -- Write out the image information to the Image message */
-                CameraImageMsgPayload imageData;
-                imageData.timeTag = CurrentSimNanos;
-                imageData.valid = 0;
-                imageData.imagePointer = this->bskImagePtr;
-                imageData.imageBufferLength = imageBufferLength;
-                imageData.cameraID = this->cameraConfigBuffer.cameraID;
-                imageData.imageType = 4;
-                if (imageBufferLength>0){imageData.valid = 1;}
-                this->opnavImageOutMsg.write(&imageData, this->moduleID, CurrentSimNanos);
-
-                /*! -- Clean the messages to avoid memory leaks */
-                zmq_msg_close(&length);
-                zmq_msg_close(&image);
-                
-                /*! -- Ping the Viz back to continue the lock-step */
-                void* keep_alive = malloc(4 * sizeof(char));
-                memcpy(keep_alive, "PING", 4);
-                zmq_msg_t request_life;
-                zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
-                zmq_msg_send(&request_life, this->requester_socket, 0);
-                return;
-                
             }
             
         }
@@ -1122,6 +1138,30 @@ void VizInterface::UpdateState(uint64_t CurrentSimNanos)
         WriteProtobuffer(CurrentSimNanos);
     }
 
+}
+
+/*! Method to add a Vizard instrument camera module to vizInterface
+ @param tmpMsg Camera configuration msg
+ */
+void VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg)
+{
+    /* add the message reader to the vector of input messages */
+    this->cameraConfInMsgs.push_back(tmpMsg->addSubscriber());
+
+    /* expand vector of camera status and data buffer information */
+    MsgCurrStatus tmpStatusMsg = {};
+    this->cameraConfMsgStatus.push_back(tmpStatusMsg);
+
+    CameraConfigMsgPayload tmpCamConfigMsg = {};
+    tmpCamConfigMsg.cameraID = -1;
+    strcpy(tmpCamConfigMsg.skyBox, "");
+    tmpCamConfigMsg.renderRate = 0;
+    this->cameraConfigBuffers.push_back(tmpCamConfigMsg);
+
+    /* create output message */
+    Message<CameraImageMsgPayload> *msg;
+    msg = new Message<CameraImageMsgPayload>;
+    this->opnavImageOutMsgs.push_back(msg);
 }
 
 

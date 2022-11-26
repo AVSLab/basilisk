@@ -52,13 +52,14 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadBSKMessages();
     void WriteProtobuffer(uint64_t CurrentSimNanos);
+    void addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg);
 
 public:
     std::vector<VizSpacecraftData> scData;      //!< [-] vector of spacecraft data containers
     std::vector <ReadFunctor<SpicePlanetStateMsgPayload>> spiceInMsgs;   //!< [-] vector of input messages of planet Spice data
     std::vector<LocationPbMsg *> locations;       //!< [] vector of ground or spacecraft locations
     std::vector<GravBodyInfo> gravBodyInformation; //!< [-] vector of gravitational body info
-    Message<CameraImageMsgPayload> opnavImageOutMsg;  //!< Image output message
+    std::vector<Message<CameraImageMsgPayload>*> opnavImageOutMsgs;  //!< vector of vizard instrument camera output messages
     int opNavMode;                              /*!< [int] Set non-zero positive value  if Unity/Viz couple in direct
                                                  communication. (1 - regular opNav, 2 - performance opNav) */
     bool saveFile;                              //!< [Bool] Set True if Vizard should save a file of the data.
@@ -66,9 +67,9 @@ public:
     void* bskImagePtr;                          /*!< [RUN] Permanent pointer for the image to be used in BSK
                                                      without relying on ZMQ because ZMQ will free it (whenever, who knows) */
 
-    ReadFunctor<CameraConfigMsgPayload> cameraConfInMsg;        //!< [-] msg of incoming camera data
-    MsgCurrStatus cameraConfMsgStatus;                          //!< [-] msg status of incoming camera data
-    CameraConfigMsgPayload cameraConfigBuffer;                 //!< [-] Camera config buffer
+    std::vector<ReadFunctor<CameraConfigMsgPayload>> cameraConfInMsgs;        //!< [-] vector of incoming camera data messages
+    std::vector<MsgCurrStatus> cameraConfMsgStatus;                           //!< [-] vector of msg status of incoming camera data
+    std::vector<CameraConfigMsgPayload> cameraConfigBuffers;                  //!< [-] vector of Camera config buffers
         
     int64_t FrameNumber;                        //!< Number of frames that have been updated for TimeStamp message
     std::string protoFilename;                  //!< Filename for where to save the protobuff message
