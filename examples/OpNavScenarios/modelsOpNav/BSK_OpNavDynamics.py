@@ -108,7 +108,7 @@ class BSKDynamicModels():
     # These are module-initialization methods
 
     def SetCamera(self):
-        self.cameraMod.imageInMsg.subscribeTo(self.vizInterface.opnavImageOutMsg)
+        self.cameraMod.imageInMsg.subscribeTo(self.vizInterface.opnavImageOutMsgs[0])
         self.cameraMod.saveImages = 0
         # Note, if the `saveDir` variable is a path to a file, then the folders must already exist
         # for the image saving to work.
@@ -144,7 +144,7 @@ class BSKDynamicModels():
             , rwEffectorList=[self.rwStateEffector]
             )
         # setup OpNav behavior by connecting camera module config message
-        self.vizInterface.cameraConfInMsg.subscribeTo(self.cameraMod.cameraConfigOutMsg)
+        self.vizInterface.addCamMsgToModule(self.cameraMod.cameraConfigOutMsg)
         self.vizInterface.opNavMode = 2
         self.vizInterface.settings.skyBox = "black"
         self.vizInterface.settings.ambient = 0.5
