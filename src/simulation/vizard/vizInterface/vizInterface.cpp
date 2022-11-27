@@ -1096,7 +1096,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     imageData.cameraID = this->cameraConfigBuffers[camCounter].cameraID;
                     imageData.imageType = 4;
                     if (imageBufferLength>0){imageData.valid = 1;}
-                    printf("HPS: camera: %zu\n", camCounter);
                     this->opnavImageOutMsgs[camCounter]->write(&imageData, this->moduleID, CurrentSimNanos);
                     
                     /*! -- Clean the messages to avoid memory leaks */
