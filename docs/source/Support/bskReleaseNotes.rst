@@ -34,17 +34,29 @@ Version |release|
 -----------------
 - Made the external module custom message definitions work again with the
   latest build system.
-- Fixed the custom RW in :ref:`simIncludeRW` to store the information regarding u_min in the RW class.
+- Fixed the custom RW in :ref:`simIncludeRW` to store the information regarding ``u_min`` in the RW class.
 - provide support for the swig 4.1 software
 - Added the ability in both :ref:`thrusterDynamicEffector` and :ref:`thrusterStateEffector` to connect a thruster to a moving body different than the hub.
 - The thrusters now have an additional variable called ``MaxSwirlTorque``. Useful for ion thrusters, it adds a torque about the thrust axis proportional to the current thrust factor.
 - Added a torsional spring and damper to the :ref:`SpinningBodyStateEffector` module.
+- Added support for having multiple Vizard instrument cameras setup in :ref:`vizInterface`
+
+.. warning::
+
+    The support for having multiple Vizard instrument cameras requires a change in :ref:`vizInterface`,
+    and thus breaks existing code that using direct Vizard communication.  The
+    image output message is now a vector of output messages, and the ``cameraConfigBuffer`` class variable
+    can no longer be set directly.  Rather, the camera configuration message should be added
+    using the ``viz.addCamMsgToModule()``, or the message can be created and added using the convenience method
+    ``vizSupport.createCameraConfigMsg()``.
+
 - Updated :ref:`hingedRigidBodyStateEffector` and :ref:`dualHingedRigidBodyStateEffector` such that
   the effector inertial states are relative to the inertial frame of the simulation, not the
   central body frame.
 - Added ``color`` keyword support to the ``vizSupport.createCustomModel()`` method
 - Updated :ref:`cppModules-4` to explain how now the swig interface to vectors of input/output messages
   are now auto-generated when making Basilisk project
+
 
 Version 2.1.4 (Oct. 1, 2022)
 ----------------------------

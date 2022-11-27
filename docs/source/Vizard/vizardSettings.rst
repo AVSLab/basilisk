@@ -539,16 +539,18 @@ the arguments for the ``createStandardCamera`` method.
    :align: center
    :width: 90 %
 
-It is also possible to create a custom instrument camera view for opNav mode which points in an
-arbitrary direction as illustrate in the image above. Such a camera can be created by
-connecting ``vizSupport.cameraConfInMsg`` to a message of type :ref:`CameraConfigMsgPayload`,
-or by assigning appropirate values to the ``vizSupport.cameraConfigBuffer``
-message payload directly.  If a message is connected then any values set directly
-will be overridden by the input message values.
+It is also possible to create one or more custom instrument camera view for ``opNav`` mode which points in an
+arbitrary direction as illustrate in the image above. Such a camera can be created first creating the camera
+configuration message ``camMsg`` of type :ref:`CameraConfigMsgPayload` and then adding this to :ref:`vizInterface`
+through the command::
 
-The following
-helper method is an example of how such an instrument camera message can be
-created directly::
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject)
+    viz.addCamMsgToModule(camMsg)
+
+If ``addCamMsgToModule()`` is called multiple times then multiple Vizard instrument cameras are created.
+
+The following helper method is an example of how such an instrument camera message can be
+created directly and added to :ref:`vizInterface` directly::
 
    vizSupport.createCameraConfigMsg(viz, cameraID=1, fieldOfView=10 * macros.D2R,
                                         resolution=[1024, 1024], renderRate=macros.sec2nano(10),

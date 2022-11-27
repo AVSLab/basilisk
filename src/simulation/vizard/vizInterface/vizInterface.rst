@@ -25,12 +25,10 @@ The following messages are set directly within ``vizInterface``.  Additional mes
     * - Parameter
       - Default
       - Description
-    * - opnavImageOutMsg
+    * - opnavImageOutMsgs
       - :ref:`CameraImageMsgPayload`
-      - (optional) Image output message
-    * - cameraConfInMsg
-      - :ref:`CameraConfigMsgPayload`
-      - (optional) msg of incoming camera data
+      - (optional) vector of Image output messages, the corresponding camera configuration input message is setup 
+        through ``vizInterface.addCamMsgToModule(msg)``
     * - epochInMsg
       - :ref:`EpochMsgPayload`
       - (optional) simulation epoch date/time input msg
@@ -38,7 +36,7 @@ The following messages are set directly within ``vizInterface``.  Additional mes
       - :ref:`SpicePlanetStateMsgPayload`
       - (optional) vector of input messages of planet Spice data
 
-The ``VizSpacecraftData`` structure contains a range of input messages for each spacecraft added.
+The ``VizSpacecraftData`` structure, defined in :ref:`vizStructures`, contains a range of input messages for each spacecraft added.
 
 .. list-table:: ``VizSpacecraftData`` input messages per spacecraft
     :widths: 25 25 50
