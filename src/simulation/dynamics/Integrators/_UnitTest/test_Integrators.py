@@ -185,7 +185,6 @@ def run(doUnitTests, show_plots, integratorCase):
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
     # draw the planet
     fig = plt.gcf()
-    fig.set_layout_engine('tight')
     ax = fig.gca()
     planetColor = '#008800'
     planetRadius = earth.radEquator / 1000
