@@ -1057,7 +1057,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     zmq_recv(requester_socket, buffer, 10, 0);
                     /*! -- Send request */
                     void* img_message = malloc(13 * sizeof(char));
-                    memcpy(img_message, "REQUEST_IMAGE", 13);
+                    std::string cmdMsg = "REQUEST_IMAGE_";
+                    cmdMsg += std::to_string(this->cameraConfigBuffers[camCounter].cameraID);
+                    memcpy(img_message, cmdMsg.c_str(), cmdMsg.length());
                     zmq_msg_t img_request;
                     zmq_msg_init_data(&img_request, img_message, 13, message_buffer_deallocate, NULL);
                     zmq_msg_send(&img_request, requester_socket, 0);
