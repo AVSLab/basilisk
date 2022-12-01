@@ -493,7 +493,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         U[n+p+1] = 1;
     }
     
-    std::cout<< "Check 3"<<std::endl;
+    //std::cout<< "Check 3"<<std::endl;
     
     //std::cout << "The value of U is "<<U[2]<<std::endl;
     
@@ -533,19 +533,19 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     for (int k = 1;k<q;k++) {
         //std::cout<< "Check a"<<std::endl;
         double a = double(X1_primehat[k]);
-        std::cout<<a<<std::endl;
+        //std::cout<<a<<std::endl;
         //std::cout<< "Check b"<<std::endl;
         double b = double(X2_primehat[k]);
-        std::cout<<b<<std::endl;
+        //std::cout<<b<<std::endl;
        //std::cout<< "Check c"<<std::endl;
         double c = double(X3_primehat[k]);
-        std::cout<<c<<std::endl;
+        //std::cout<<c<<std::endl;
         //std::cout<< "Check d"<<std::endl;
         double mag = pow(a,2.0)+pow(b,2.0)+pow(c,2.0);
         mag = pow(mag,0.5);
         mag = abs((mag));
         //std::cout<< "Check e"<<std::endl;
-        std::cout<< "mag: "<<mag<<std::endl;
+        //std::cout<< "mag: "<<mag<<std::endl;
         //std::cout<<"Average X Dot"<<Input.AvgXDot<<std::endl;
         //std::cout<<(X1_primehat[k])<<std::endl;
         double temp;
@@ -567,7 +567,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     }
     
     
-    std::cout<< "Check 6a"<<std::endl;
+    //std::cout<< "Check 6a"<<std::endl;
         
     // K = number of endpoint derivatives
     int K = 0;
@@ -693,7 +693,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     
         
     
-    std::cout<< "Check 7"<<std::endl;
+    //std::cout<< "Check 7"<<std::endl;
 
     
         // Split code based on whether LS approximation is done with first derivative constraints or not
@@ -948,7 +948,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         Output->XDD3[i] = NN2.dot(C3) / pow(Ttot,2);
         t += dt;
     }
-    std::cout<<"Approximate done";
+    std::cout<<"Approximate done"<<std::endl;
     return;
 }
 
