@@ -190,13 +190,15 @@ def test_spinningBody(show_plots, cmdTorque, lock):
              orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 2] - orbAngMom_N[0, 2]) / orbAngMom_N[0, 2],
              orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3])
     plt.xlabel('time (s)')
-    plt.ylabel('Orbital Angular Momentum Relative Difference')
+    plt.ylabel('Relative Difference')
+    plt.title('Orbital Angular Momentum')
 
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:, 0] * 1e-9, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1])
     plt.xlabel('time (s)')
-    plt.ylabel('Orbital Energy Relative Difference')
+    plt.ylabel('Relative Difference')
+    plt.title('Orbital Energy')
 
     plt.figure()
     plt.clf()
@@ -204,13 +206,15 @@ def test_spinningBody(show_plots, cmdTorque, lock):
              rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]) / rotAngMom_N[0, 2],
              rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]) / rotAngMom_N[0, 3])
     plt.xlabel('time (s)')
-    plt.ylabel('Rotational Angular Momentum Relative Difference')
+    plt.ylabel('Relative Difference')
+    plt.title('Rotational Angular Momentum')
 
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:, 0] * 1e-9, (rotEnergy[:, 1] - rotEnergy[0, 1]) / rotEnergy[0, 1])
     plt.xlabel('time (s)')
-    plt.ylabel('Rotational Energy Relative Difference')
+    plt.ylabel('Relative Difference')
+    plt.title('Rotational Energy')
 
     plt.figure()
     plt.clf()
@@ -271,4 +275,4 @@ def test_spinningBody(show_plots, cmdTorque, lock):
 
 
 if __name__ == "__main__":
-    spinningBodyTest(True, 0.0, True)
+    spinningBodyTest(True, 0.0, False)
