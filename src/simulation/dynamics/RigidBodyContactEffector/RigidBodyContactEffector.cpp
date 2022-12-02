@@ -30,9 +30,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! This is the constructor, setting variables to default values */
 RigidBodyContactEffector::RigidBodyContactEffector()
 {
-    this->isOverlap = false;
-    this->mainBody.boundingRadius = 0.0;
-    this->mainBody.collisionPoints.clear();
     this->currentBodyInCycle = -1;
     this->numBodies = 0;
     this->boundingBoxFF = 1.0;
@@ -60,12 +57,19 @@ void RigidBodyContactEffector::Reset()
     
 }
 
-/*! This method uses TinyOBJLoader to load the primary body primitives.
+/*! This method uses TinyOBJLoader to load the spacecraft body primitives.
 @return void
-@param objFile The .obj file associated with the primary body
- */
+@param objFile The .obj file associated with the spacecraft body
+@param modelTag The modelTag of the spacecraft
+@param scStateMsg The SCStateOutMsg from the spacecraft object
+@param scMassStateMsg The SCMassStateOutMsg from the spacecraft object
+@param boundingRadius The primary bounding radius around the spacecraft, used for the first step of coarse collision detection
+@param coefRestitution The Coefficient of Restitution between this spacecraft and another object. For sims with more than two bodies in play, this code will have to change to be a map between the various bodies
+@param coefFriction The Coefficient of Friction between this spacecraft and another object. For sims with more than two bodies in play, this code will have to change to be a map between the various bodies
+*/
 void RigidBodyContactEffector::LoadSpacecraftBody(const char *objFile, std::string modelTag, Message<SCStatesMsgPayload> *scStateMsg, Message<SCMassPropsMsgPayload> *scMassStateMsg, double boundingRadius, double coefRestitution, double coefFriction)
 {
+    // - Create the geometry struct for this object and populate it
     geometry body;
     body.boundingRadius = boundingRadius;
     body.coefRestitution = coefRestitution;
@@ -94,17 +98,17 @@ void RigidBodyContactEffector::LoadSpacecraftBody(const char *objFile, std::stri
     return;
 }
 
-/*! This method uses TinyOBJLoader to load non-primary body primitives.
+/*! This method uses TinyOBJLoader to load Spice object body primitives.
 @return void
-@param objFile The .obj file associated with this non-primary body
-@param modelTag Name of the model associated with this body
-@param scStateInMsgName The SpacecraftPlus message name for this body
-@param scMassStateInMsgName The mass properties message name for this body
-@param boundingRadius The radius of this body's bounding sphere, for primary collision detection
-@param coefRestitution The Coefficient of Restitution between this body and the primary body
+@param objFile The .obj file associated with this Spice object
+@param planetSpiceMsg The SpicePlanetStateMsg of this Spice object
+@param boundingRadius The primary bounding radius around the object, used for the first step of coarse collision detection
+@param coefRestitution The Coefficient of Restitution between this object and another object. For sims with more than two bodies in play, this code will have to change to be a map between the various bodies
+@param coefFriction The Coefficient of Friction between this object and another object. For sims with more than two bodies in play, this code will have to change to be a map between the various bodies
 */
 void RigidBodyContactEffector::AddSpiceBody(const char *objFile, Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double boundingRadius, double coefRestitution, double coefFriction)
 {
+    // - Create the geometry struct for this object and populate it
     geometry body;
     body.boundingRadius = boundingRadius;
     body.coefRestitution = coefRestitution;
@@ -112,7 +116,6 @@ void RigidBodyContactEffector::AddSpiceBody(const char *objFile, Message<SpicePl
     body.planetInMsg.subscribeTo(planetSpiceMsg);
     body.isSpice = true;
     
-//    externalBody.modelTag = modelTag;
     std::vector<tinyobj::material_t> materials;
     std::string warn;
     std::string err;
@@ -132,8 +135,8 @@ void RigidBodyContactEffector::AddSpiceBody(const char *objFile, Message<SpicePl
     return;
 }
 
-/*! This method organizes primitive information from a .obj file into the half edge format.
-@return The body in half edge format
+/*! This method organizes primitive information from a .obj file into coarse collision detection groups with the half edge format.
+@return The body components in half edge format
 @param vertices An ordered list of all vertices in the body
 @param shapes The .obj formatted information of each polyhedron in the body
 */
@@ -177,19 +180,25 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
     std::vector<int> shapeIndices;
     std::set<int> totalSet;
     
+    // - Loop through each group of the .obj file (some .obj's will have groups, some won't)
     for (int shapeIt=0; shapeIt<shapes.size(); shapeIt++)
     {
+        // - Loop through each defined face of the .obj group
         indexOffset = 0;
         for (int faceIt=0; faceIt<shapes[shapeIt].mesh.num_face_vertices.size(); faceIt++)
         {
+            // - Temporarily organize the vertex indicies of this face into a vector
             tempTriangle.clear();
-            v1 =  vertices[shapes[shapeIt].mesh.indices[indexOffset+1].vertex_index] - vertices[shapes[shapeIt].mesh.indices[indexOffset+0].vertex_index];
-            v2 = vertices[shapes[shapeIt].mesh.indices[indexOffset+2].vertex_index] - vertices[shapes[shapeIt].mesh.indices[indexOffset+1].vertex_index];
-            faceNormal = v1.cross(v2);
-            faceNormal.normalize();
             tempTriangle.push_back(shapes[shapeIt].mesh.indices[indexOffset+0].vertex_index);
             tempTriangle.push_back(shapes[shapeIt].mesh.indices[indexOffset+1].vertex_index);
             tempTriangle.push_back(shapes[shapeIt].mesh.indices[indexOffset+2].vertex_index);
+            // - Sometimes .obj files do not contain normal vectors for the face, but they alwways order face vertices counter-clockwise. We use this to define the normal vector.
+            v1 = vertices[shapes[shapeIt].mesh.indices[indexOffset+1].vertex_index] - vertices[shapes[shapeIt].mesh.indices[indexOffset+0].vertex_index];
+            v2 = vertices[shapes[shapeIt].mesh.indices[indexOffset+2].vertex_index] - vertices[shapes[shapeIt].mesh.indices[indexOffset+1].vertex_index];
+            faceNormal = v1.cross(v2);
+            faceNormal.normalize();
+            
+            // - We want to create a centroid and a bounding box around each face, to use for coarse collision detection
             centroid = (vertices[shapes[shapeIt].mesh.indices[indexOffset].vertex_index] + vertices[shapes[shapeIt].mesh.indices[indexOffset+1].vertex_index] + vertices[shapes[shapeIt].mesh.indices[indexOffset+2].vertex_index]) / 3.0;
             maxX = 0;
             maxY = 0;
@@ -228,6 +237,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
         
     }
     
+    // - This nest of loops creates a mapping to each face for all the faces connected to it
     for ( int ii=0; ii<allConnections.size(); ii++)
     {
         if (std::find(allConnections[ii].begin(), allConnections[ii].end(), -1) != allConnections[ii].end())
@@ -263,7 +273,6 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
                 }
             }
             
-            
             for ( int jj=0; jj<3; jj++)
             {
                 if (std::find(allConnections.at(allConnections[ii][jj]).begin(), allConnections.at(allConnections[ii][jj]).end(), -1) == allConnections.at(allConnections[ii][jj]).end())
@@ -275,11 +284,14 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
         }
     }
     
+    // - Sort the faces based off of their distance from the object origin. We are going to group the faces starting with the furthest face
     std::sort(ungroupedFaces.begin(), ungroupedFaces.end(),
               [faceMaxDist] (int const& f1, int const& f2) -> bool
               {
                 return faceMaxDist[f1] > faceMaxDist[f2];
               });
+    
+    // - Each iteration of this loop grabs the furthest ungrouped face and creates a group using the connection map, up to a maximum group size (in meters)
     while (!ungroupedFaces.empty())
     {
         boundingGroup.faceTriangles.clear();
@@ -289,6 +301,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
         facesInGroup.clear();
         verticesInGroup.clear();
         
+        // - Add the current furthest ungrouped face to a fresh group
         boundingGroup.faceTriangles.push_back(allFaces[ungroupedFaces[0]]);
         boundingGroup.faceNormals.push_back(allNormals[ungroupedFaces[0]]);
         boundingGroup.faceCentroids.push_back(allCentroids[ungroupedFaces[0]]);
@@ -300,11 +313,14 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
         }
         ungroupedFaces.erase(ungroupedFaces.begin());
         
+        // - Look for the next closest ungrouped face to the current group, until the maximum group dimension is reached
         searchingForCloseFace = true;
         while (searchingForCloseFace)
         {
             adjacentFacesToGroup.clear();
             adjacentDistsToGroup.clear();
+            
+            // - Find all the faces currently adjacent to this group
             for (int ii=0; ii < facesInGroup.size(); ++ii)
             {
                 for (int jj=0; jj < 3; ++jj)
@@ -317,6 +333,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
                 }
             }
             
+            // - Loop through each adjacent face and find the maximum distance between its vertices and the vertices already in the group
             adjacentDistsToGroup.resize(adjacentFacesToGroup.size());
             for (int ii=0; ii < adjacentFacesToGroup.size(); ++ii)
             {
@@ -334,15 +351,16 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
                 {
                     adjacentDistsToGroup[ii] = *std::max_element(indivMaxDists.begin(), indivMaxDists.end());
                 }
-                
             }
             
+            // - If the max distance between any of the vertices in this group would exceed the maximum length by adding any of the adjacent faces, then stop adding faces to this group
             if (*std::min_element(adjacentDistsToGroup.begin(), adjacentDistsToGroup.end()) >= this->maxBoundingBoxDim)
             {
                 searchingForCloseFace = false;
                 continue;
             }
             
+            // - Add the adjacent face with the closest set of vertices to the group
             faceCounter = std::distance(adjacentDistsToGroup.begin(), std::min_element(adjacentDistsToGroup.begin(), adjacentDistsToGroup.end()));
             boundingGroup.faceTriangles.push_back(allFaces[adjacentFacesToGroup[faceCounter]]);
             boundingGroup.faceNormals.push_back(allNormals[adjacentFacesToGroup[faceCounter]]);
@@ -359,27 +377,17 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
             {
                 searchingForCloseFace = false;
             }
-//            indivMaxDists.clear();
-//            for (int ii=0; ii < verticesInGroup.size()-1; ++ii)
-//            {
-//                for (int jj=ii+1; jj < verticesInGroup.size(); ++jj)
-//                {
-//                    indivMaxDists.push_back((verticesInGroup[ii] - verticesInGroup[jj]).norm());
-//                }
-//            }
-//            if (*std::max_element(indivMaxDists.begin(), indivMaxDists.end()) >= this->maxBoundingBoxDim)
-//            {
-//                searchingForCloseFace = false;
-//            }
         }
         
         polyhedron.push_back(boundingGroup);
     }
     
+    // - Loop through each set of grouped faces, and organize their contents into the half-edge format
     for (int shapeIt=0; shapeIt<polyhedron.size(); ++shapeIt)
     {
         facesInGroup.clear();
         verticesInGroup.clear();
+        // - Create a vector of unique vertex indicies
         for (int ii=0; ii < polyhedron[shapeIt].faceTriangles.size(); ++ii)
         {
             for (int jj=0; jj < 3; ++jj)
@@ -392,6 +400,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
             }
         }
         
+        // - Create a convex hull for this group
         convHullPoints = findConvexHull(verticesInGroup);
         if (convHullPoints.size() == 0)
         {
@@ -399,12 +408,6 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
         }
         centroid << 0.0, 0.0, 0.0;
         
-//        for (int ii=0; ii < convHullPoints.size(); ++ii)
-//        {
-//            centroid += convHullPoints[ii];
-//            std::cout << convHullPoints[ii] << std::endl;
-//        }
-//        centroid = centroid / convHullPoints.size();
         
         maxX = -1E15;
         maxY = -1E15;
@@ -412,65 +415,36 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
         minX = 1E15;
         minY = 1E15;
         minZ = 1E15;
+        // - Find the geometric centroid of a box made from this convex hull
         for (int ii=0; ii < convHullPoints.size(); ++ii)
         {
-//            std::cout << convHullPoints[ii][0] << " " << convHullPoints[ii][1] << " " << convHullPoints[ii][2] << std::endl;
-            if (convHullPoints[ii][0] > maxX)
-            {
-                maxX = convHullPoints[ii][0];
-            }
-            if (convHullPoints[ii][1] > maxY)
-            {
-                maxY = convHullPoints[ii][1];
-            }
-            if (convHullPoints[ii][2] > maxZ)
-            {
-                maxZ = convHullPoints[ii][2];
-            }
-            if (convHullPoints[ii][0] < minX)
-            {
-                minX = convHullPoints[ii][0];
-            }
-            if (convHullPoints[ii][1] < minY)
-            {
-                minY = convHullPoints[ii][1];
-            }
-            if (convHullPoints[ii][2] < minZ)
-            {
-                minZ = convHullPoints[ii][2];
-            }
+            if (convHullPoints[ii][0] > maxX){maxX = convHullPoints[ii][0];}
+            if (convHullPoints[ii][1] > maxY){maxY = convHullPoints[ii][1];}
+            if (convHullPoints[ii][2] > maxZ){maxZ = convHullPoints[ii][2];}
+            if (convHullPoints[ii][0] < minX){minX = convHullPoints[ii][0];}
+            if (convHullPoints[ii][1] < minY){minY = convHullPoints[ii][1];}
+            if (convHullPoints[ii][2] < minZ){minZ = convHullPoints[ii][2];}
         }
         centroid << (maxX + minX)/2.0, (maxY + minY)/2.0, (maxZ + minZ)/2.0;
         
-//        std::cout << std::endl << centroid << std::endl;
+        // - Find the maximum bounding box directions for this group
         maxX = this->minBoundingBoxDim;
         maxY = this->minBoundingBoxDim;
         maxZ = this->minBoundingBoxDim;
         for (int ii=0; ii < convHullPoints.size(); ++ii)
         {
             v1 = convHullPoints[ii] - centroid;
-            if (abs(v1[0]) > maxX)
-            {
-                maxX = abs(v1[0]);
-            }
-            if (abs(v1[1]) > maxY)
-            {
-                maxY = abs(v1[1]);
-            }
-            if (abs(v1[2]) > maxZ)
-            {
-                maxZ = abs(v1[2]);
-            }
+            if (abs(v1[0]) > maxX){maxX = abs(v1[0]);}
+            if (abs(v1[1]) > maxY){maxY = abs(v1[1]);}
+            if (abs(v1[2]) > maxZ){maxZ = abs(v1[2]);}
         }
         
         polyhedron[shapeIt].centroid = centroid;
         polyhedron[shapeIt].boundingBox << maxX, maxY, maxZ;
-//        std::cout << maxX << " " << maxY << " " << maxZ << std::endl << std::endl;
         
-        
+        // - Identify all edges in this group, and assign unique vertices between all sets
         for (int faceIt=0; faceIt<polyhedron[shapeIt].faceTriangles.size(); ++faceIt)
         {
-            
             for ( int inx=0; inx<2; ++inx)
             {
                 polyhedron[shapeIt].uniqueVertIndices.push_back(polyhedron[shapeIt].faceTriangles[faceIt][inx]);
@@ -480,7 +454,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
                 shapeIndices.push_back(shapeIt);
             }
             polyhedron[shapeIt].uniqueVertIndices.push_back(polyhedron[shapeIt].faceTriangles[faceIt][2]);
-            std::vector<int> edgeGroup = { polyhedron[shapeIt].faceTriangles[faceIt][2], polyhedron[shapeIt].faceTriangles[faceIt][0]};
+            std::vector<int> edgeGroup = {polyhedron[shapeIt].faceTriangles[faceIt][2], polyhedron[shapeIt].faceTriangles[faceIt][0]};
             edgeIndices.push_back(edgeGroup);
             faceIndices.push_back(faceIt);
             shapeIndices.push_back(shapeIt);
@@ -493,9 +467,9 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
                                 std::inserter(newSet, newSet.begin()));
         polyhedron[shapeIt].uniqueVertIndices.assign(newSet.begin(), newSet.end());
         totalSet.insert(uniqueSet.begin(), uniqueSet.end());
-        
     }
     
+    // - Group up every edge in the whole object, such that duplicate edges are next to each other, i.e. (indx1<-->indx2),(indx2<-->indx1)
     for ( int edgeIt=0; edgeIt<edgeIndices.size(); ++edgeIt)
     {
         searchEdge[0] = edgeIndices[edgeIt][1];
@@ -522,6 +496,7 @@ std::vector<halfEdge> RigidBodyContactEffector::ComputeHalfEdge(std::vector<Eige
         }
     }
     
+    // - Save the non-duplicate edges, as well as the two faces they belong to
     for ( int edgeIt=0; edgeIt<edgeIndices.size(); edgeIt=edgeIt+2)
     {
         polyhedron[shapeIndices[edgeIt]].edgeIndices.push_back(edgeIndices[edgeIt]);
@@ -538,6 +513,8 @@ void RigidBodyContactEffector::linkInStates(DynParamManager& statesIn)
 
 }
 
+
+
 /*! This method computes the Forces on Torque on the Spacecraft Body.
 @return void
 @param integTime Integration time
@@ -548,7 +525,6 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
-    //td::cout << currentTime << std::endl;
     
     Eigen::Vector3d forceExternalOther_N;
     Eigen::Vector3d torqueExternalOtherPntB_B;
@@ -588,7 +564,6 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     this->currentMinError = 100.0;
     int maxErrorInd=-1;
     int numImpacts;
-    bool alreadyFound;
     
     Eigen::Vector3d cHat_1;
     Eigen::Vector3d cHat_2;
@@ -606,8 +581,6 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     Eigen::MatrixXd M_inv;
     Eigen::MatrixXd M_inv_red1;
     Eigen::MatrixXd M_inv_red2;
-    std::vector<double> f_vals;
-    std::vector<double> phi_vals;
     Eigen::VectorXd dv3dj;
     Eigen::VectorXd tempVec;
     
@@ -615,7 +588,6 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
     bool energyMet;
     int currLoop;
     int loopMax = 1e9;
-    double colIntStep;
     Eigen::VectorXd k1;
     Eigen::VectorXd k2;
     Eigen::VectorXd k3;
@@ -829,26 +801,23 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                         
                         if (intersectFlag == 1)
                         {
-                            //contactError = (contactPoint - body2VertInter[vertInd].lower).norm();
                             if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-15)))
                             {
-                                alreadyFound = false;
-//                                for (int impInd=0; impInd < impacts.size(); impInd++){
-//                                    if (((contactPoint - std::get<0>(impacts[impInd])).norm() < 1e-3) || ((body2UniqueVertInter[vertInd].lower - std::get<1>(impacts[impInd])).norm() < 1e-3))
-//                                    {
-//                                        alreadyFound = true;
-//                                        if (impInd == maxErrorInd)
-//                                        {
-//                                            currentMaxError = this->currentMinError;
-//                                        }
-//                                        impacts.erase(impacts.begin()+impInd);
-//                                        break;
-//                                    }
-//                                }
-                                //if (alreadyFound) continue;
+                                for (int impInd=0; impInd < impacts.size(); impInd++){
+                                    if (((contactPoint - std::get<0>(impacts[impInd])).norm() < 1e-3) || ((body2UniqueVertInter[vertInd].lower - std::get<1>(impacts[impInd])).norm() < 1e-3))
+                                    {
+                                        if (impInd == maxErrorInd)
+                                        {
+                                            currentMaxError = this->currentMinError;
+                                        }
+                                        impacts.erase(impacts.begin()+impInd);
+                                        break;
+                                    }
+                                }
+
                                 impacts.push_back(std::make_tuple(contactPoint, body2UniqueVertInter[vertInd].lower, body1Current.dcm_NB * -this->Bodies[this->closeBodies[groupIt1][0]].polyhedron[std::get<0>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceNormals[faceInd]));
                                 usedVerts.push_back(vertInd);
-//                                std::cout << "Face 1 Verts 2: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
+
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
@@ -913,24 +882,23 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                         {
                             if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-15)))
                             {
-                                alreadyFound = false;
-//                                for (int impInd=0; impInd < impacts.size(); impInd++){
-//                                    if (((body1UniqueVertInter[vertInd].lower - std::get<0>(impacts[impInd])).norm() < 1e-3) || ((contactPoint - std::get<1>(impacts[impInd])).norm() < 1e-3))
-//                                    {
-//                                        alreadyFound = true;
-//                                        if (impInd == maxErrorInd)
-//                                        {
-//                                            currentMaxError = this->currentMinError;
-//                                        }
-//                                        impacts.erase(impacts.begin()+impInd);
-//                                        break;
-//                                    }
-//                                }
-                                //if (alreadyFound) continue;
+
+                                for (int impInd=0; impInd < impacts.size(); impInd++){
+                                    if (((body1UniqueVertInter[vertInd].lower - std::get<0>(impacts[impInd])).norm() < 1e-3) || ((contactPoint - std::get<1>(impacts[impInd])).norm() < 1e-3))
+                                    {
+                                        if (impInd == maxErrorInd)
+                                        {
+                                            currentMaxError = this->currentMinError;
+                                        }
+                                        impacts.erase(impacts.begin()+impInd);
+                                        break;
+                                    }
+                                }
+
                                 
                                 impacts.push_back(std::make_tuple(body1UniqueVertInter[vertInd].lower, contactPoint, body2Current.dcm_NB * this->Bodies[this->closeBodies[groupIt1][1]].polyhedron[std::get<1>(this->Bodies[this->closeBodies[groupIt1][0]].coarseSearchList.overlaps[polyPairInd])].faceNormals[faceInd]));
                                 usedVerts.push_back(vertInd);
-//                                std::cout << "Face 2 Verts 1: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
+
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
@@ -978,27 +946,21 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                             contactError = (contactPoint - contactPoint2).norm();
                             if ((contactError <= this->maxPosError) || (contactError <= (this->currentMinError + 1e-15)))
                             {
-                                alreadyFound = false;
-//                                for (int impInd=0; impInd < impacts.size(); impInd++){
-//                                    if (((contactPoint - std::get<0>(impacts[impInd])).norm() < 1e-3) || ((contactPoint2 - std::get<1>(impacts[impInd])).norm() < 1e-3))
-//                                    {
-//                                        alreadyFound = true;
-//                                        if (impInd == maxErrorInd)
-//                                        {
-//                                            currentMaxError = this->currentMinError;
-//                                        }
-//                                        impacts.erase(impacts.begin()+impInd);
-//                                        break;
-//                                    }
-//                                }
-                                //if (alreadyFound) continue;
-//                                contactNormal_N = ((contactPoint - contactPoint2) * 1.0e6).normalized();
-//                                contactNormal_N = (std::get<2>(body2EdgeInter[vertInd2]) + std::get<3>(body2EdgeInter[vertInd2])).normalized();
+
+                                for (int impInd=0; impInd < impacts.size(); impInd++){
+                                    if (((contactPoint - std::get<0>(impacts[impInd])).norm() < 1e-3) || ((contactPoint2 - std::get<1>(impacts[impInd])).norm() < 1e-3))
+                                    {
+                                        if (impInd == maxErrorInd)
+                                        {
+                                            currentMaxError = this->currentMinError;
+                                        }
+                                        impacts.erase(impacts.begin()+impInd);
+                                        break;
+                                    }
+                                }
+
                                 contactVelocity_N = (body1Current.v_BN_N + body1Current.dcm_NB * (body1Current.omegaTilde_BN_B * body1Current.dcm_BN * (contactPoint - body1Current.r_BN_N))) - (body2Current.v_BN_N + body2Current.dcm_NB * (body2Current.omegaTilde_BN_B * body2Current.dcm_BN * (contactPoint2 - body2Current.r_BN_N)));
-//                                if (contactVelocity_N.dot(contactNormal_N) > 0)
-//                                {
-//                                    continue;
-//                                }
+
                                 if ((contactVelocity_N.dot(std::get<2>(body2EdgeInter[vertInd2])) < -1e-12) && (contactVelocity_N.dot(std::get<3>(body2EdgeInter[vertInd2])) < -1e-12))
                                 {
                                     contactNormal_N = (std::get<2>(body2EdgeInter[vertInd2]) + std::get<3>(body2EdgeInter[vertInd2])).normalized();
@@ -1011,10 +973,9 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
                                 }else{
                                     continue;
                                 }
-//                                impacts.push_back(std::make_tuple(contactPoint, contactPoint2, (-contactVelocity_N).normalized()));
+
                                 impacts.push_back(std::make_tuple(contactPoint, contactPoint2, contactNormal_N));
-//                                impacts.push_back(std::make_tuple(contactPoint, contactPoint2, ((contactPoint - contactPoint2) * 1.0e6).normalized()));
-//                                std::cout << "Edge 0: " << std::get<2>(impacts.back())[0] << " " << std::get<2>(impacts.back())[1] << " " << std::get<2>(impacts.back())[2] << std::endl;
+
                                 if (contactError > currentMaxError)
                                 {
                                     currentMaxError = contactError;
@@ -1031,8 +992,6 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         
         // Calculate total impact begin
         numImpacts = impacts.size();
-        //std::cout << this->currentMinError << std::endl;
-        //std::cout << numImpacts << std::endl;
         if (numImpacts == 0)
         {
             this->lockedToRand = true;
@@ -1059,11 +1018,9 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             this->forceExternal_N[0] = ((std::rand() % 1000) + 1000.0) / timeStep;
             this->forceExternal_N[1] = ((std::rand() % 1000) + 1000.0) / timeStep;
             this->forceExternal_N[2] = ((std::rand() % 1000) + 1000.0) / timeStep;
-//            this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N = -this->forceExternal_N;
             this->torqueExternalPntB_B[0] = ((std::rand() % 1000) + 1000.0) / timeStep;
             this->torqueExternalPntB_B[1] = ((std::rand() % 1000) + 1000.0) / timeStep;
             this->torqueExternalPntB_B[2] = ((std::rand() % 1000) + 1000.0) / timeStep;
-//            this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B = -this->torqueExternalPntB_B;
             this->lockedToRand = true;
             this->timeFound = currentTime + timeStep + 1.0e-15;
             this->integrateTimeStep = timeStep;
@@ -1074,7 +1031,6 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
 
             // Create local contact frame
             cHat_3 = (std::get<2>(impacts[impNum])).normalized();
-            //std::cout << std::get<2>(impacts[impNum])[0] << " " << std::get<2>(impacts[impNum])[1] << " " << std::get<2>(impacts[impNum])[2] << std::endl;
             cHat_1 = cHat_3.cross(body2Current.dcm_NB * zDirection);
             if (cHat_1.norm() < 1e-9)
             {
@@ -1151,25 +1107,16 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         // Integrate the collision state until the restitution energy conditions are met
         energyMet = false;
         currLoop = 0;
-//        if ((currentMaxError <= this->maxPosError))
-//        {
-            loopMax = 1e9;
-            colIntStep = this->collisionIntegrationStep;
-//        }else
-//        {
-//            loopMax = 1e6;
-//            colIntStep = 1e-2;
-//        }
-        std::cout << "Entering Impule Integration" << std::endl;
+        loopMax = 1e9;
         while (!energyMet)
         {
             currLoop++;
             // Use RK4 to integrate the collision state
-            k1 = this->CollisionStateDerivative(X_c, impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
-            k2 = this->CollisionStateDerivative(X_c + colIntStep * (k1 / 2.0), impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
-            k3 = this->CollisionStateDerivative(X_c + colIntStep * (k2 / 2.0), impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
-            k4 = this->CollisionStateDerivative(X_c + colIntStep * k3, impacts, f_vals, phi_vals, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
-            X_c = X_c + (colIntStep / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
+            k1 = this->CollisionStateDerivative(X_c, impacts, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
+            k2 = this->CollisionStateDerivative(X_c + this->collisionIntegrationStep * (k1 / 2.0), impacts, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
+            k3 = this->CollisionStateDerivative(X_c + this->collisionIntegrationStep * (k2 / 2.0), impacts, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
+            k4 = this->CollisionStateDerivative(X_c + this->collisionIntegrationStep * k3, impacts, M_tot, this->Bodies[this->closeBodies[groupIt1][0]].coefRestitution, this->Bodies[this->closeBodies[groupIt1][0]].coefFriction);
+            X_c = X_c + (this->collisionIntegrationStep / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
             
             energyMet = true;
             // Check if there are any contact points that have not met the restitution energy requirements
@@ -1197,17 +1144,14 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
         for (int impNum=0; impNum < numImpacts; impNum++)
         {
             impulse_Body1_N = dcm_CN[impNum].transpose() * X_c.segment(numImpacts * 3 + impNum * 3, 3);
-            forceExternalOther_N -= impulse_Body1_N;// / timeStep;
-            torqueExternalOtherPntB_B -= body2Current.dcm_BN * (std::get<1>(impacts[impNum]) - body2Current.r_BN_N).cross(impulse_Body1_N);// / timeStep);
+            forceExternalOther_N -= impulse_Body1_N;
+            torqueExternalOtherPntB_B -= body2Current.dcm_BN * (std::get<1>(impacts[impNum]) - body2Current.r_BN_N).cross(impulse_Body1_N);
             this->forceExternal_N += impulse_Body1_N / timeStep;
             this->torqueExternalPntB_B += body1Current.dcm_BN * (std::get<0>(impacts[impNum]) - body1Current.r_BN_N).cross(impulse_Body1_N / timeStep);
         }
         
         if (currentMaxError <= this->maxPosError)
         {
-            std::cout << this->forceExternal_N << std::endl;
-            std::cout << this->torqueExternalPntB_B << std::endl;
-            std::cout << std::endl << timeStep << std::endl;
             this->responseFound = true;
             this->timeFound = currentTime + timeStep + 1.0e-15;
             this->integrateTimeStep = timeStep;
@@ -1240,7 +1184,6 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
             {
                 this->forceExternal_N = this->Bodies[this->closeBodies[groupIt1][1]].forceExternal_N[0] / this->integrateTimeStep;
                 this->torqueExternalPntB_B = this->Bodies[this->closeBodies[groupIt1][1]].torqueExternalPntB_B[0] / this->integrateTimeStep;
-                std::cout << "again" << std::endl;
                 return;
             }
             this->responseFound = false;
@@ -1295,7 +1238,7 @@ void RigidBodyContactEffector::computeForceTorque(double currentTime, double tim
 
 }
 
-Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::VectorXd X_c, std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts, std::vector<double> f_vals, std::vector<double> phi_vals, Eigen::MatrixXd M_tot, double coefRes, double coefFric)
+Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::VectorXd X_c, std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts, Eigen::MatrixXd M_tot, double coefRes, double coefFric)
 {
     Eigen::VectorXd Xdot_c = Eigen::VectorXd::Zero(X_c.size());
     double phi;
@@ -1306,18 +1249,10 @@ Eigen::VectorXd RigidBodyContactEffector::CollisionStateDerivative( Eigen::Vecto
     {
         if (X_c(numImpacts * 6 + impNum * 2 + 1) < (-1.0 * (pow(coefRes, 2.0) * X_c(numImpacts * 6 + impNum * 2))))
         {
-//            if (sqrt(pow(X_c(impNum * 3), 2) + pow(X_c(impNum * 3 + 1), 2)) < 1.0e-6)
-//            {
-//                Xdot_c(numImpacts * 3 + impNum * 3) = -f_vals[impNum] * cos(phi_vals[impNum]);
-//                Xdot_c(numImpacts * 3 + impNum * 3 + 1) = -f_vals[impNum] * sin(phi_vals[impNum]);
-//                Xdot_c(numImpacts * 3 + impNum * 3 + 2) = 1.0;
-//            }else
-//            {
-                phi = atan2(X_c(impNum * 3 + 1), X_c(impNum * 3));
-                Xdot_c(numImpacts * 3 + impNum * 3) = -coefFric * cos(phi);
-                Xdot_c(numImpacts * 3 + impNum * 3 + 1) = -coefFric * sin(phi);
-                Xdot_c(numImpacts * 3 + impNum * 3 + 2) = 1.0;
-//            }
+            phi = atan2(X_c(impNum * 3 + 1), X_c(impNum * 3));
+            Xdot_c(numImpacts * 3 + impNum * 3) = -coefFric * cos(phi);
+            Xdot_c(numImpacts * 3 + impNum * 3 + 1) = -coefFric * sin(phi);
+            Xdot_c(numImpacts * 3 + impNum * 3 + 2) = 1.0;
         }
         
         if (X_c(impNum * 3 + 2) < 0)
@@ -1380,8 +1315,6 @@ void RigidBodyContactEffector::UpdateState(uint64_t CurrentSimNanos)
     this->closeBodies.clear();
     this->CheckBoundingSphere();
     this->CheckBoundingBox();
-//    std::cout << CurrentSimNanos*NANO2SEC << std::endl;
-//    this->computeForceTorque(CurrentSimNanos*NANO2SEC, this->simTimeStep);
     
     return;
 }
@@ -1402,7 +1335,6 @@ void RigidBodyContactEffector::ReadInputs()
             this->Bodies[bodyIt].stateInBuffer = this->Bodies[bodyIt].scStateInMsg();
             this->Bodies[bodyIt].massStateInBuffer = this->Bodies[bodyIt].scMassStateInMsg();
         }
-        
     }
 
     return;
@@ -1441,8 +1373,6 @@ void RigidBodyContactEffector::ExtractFromBuffer()
             this->Bodies[bodyIt].states.dcm_BN = this->Bodies[bodyIt].states.dcm_NB.transpose();
             this->Bodies[bodyIt].states.omegaTilde_BN_B = eigenTilde(this->Bodies[bodyIt].states.omega_BN_B);
         }
-        
-        
     }
     return;
 }
@@ -1470,10 +1400,8 @@ void RigidBodyContactEffector::CheckBoundingSphere()
             bodyDistance = this->IntervalDotProduct(bodyDifference, bodyDifference);
             
             if ((sqrt(abs(bodyDistance[0])) < (this->Bodies[bodyIt1].boundingRadius + this->Bodies[bodyIt2].boundingRadius)) || (sqrt(abs(bodyDistance[1])) < (this->Bodies[bodyIt1].boundingRadius + this->Bodies[bodyIt2].boundingRadius)))
-                std::cout << bodyIt1 << " " << bodyIt2 << std::endl;
                 this->closeBodies.push_back(bodyPair);
         }
-        
     }
     return;
 }

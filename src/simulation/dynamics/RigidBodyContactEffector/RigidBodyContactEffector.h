@@ -43,48 +43,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
-/*! Struct for holding edge penetration information.*/
-typedef struct{
-    std::vector<std::vector<int>> edgePair;     //!< -- Vertex indicies for pair of intersecting edges
-    double separation;                          //!< [m] Distance between edges
-}edgeQuery;
-
-/*! Struct for holding face/vertex penetration information.*/
-typedef struct{
-    int faceIndex;                              //!< -- Identifier for which face is being intersected
-    int supportIndex;                           //!< -- Index for penetrating vertex
-    double separation;                          //!< [m] Distance between vertex and face
-}faceQuery;
-
-/*! Struct for holding information about a collision.*/
-typedef struct{
-    double timeToContact;                       //!< [s] Time until collision
-    double area;                                //!< [m^2] Area of collision face
-    int otherBodyIndex;                         //!< -- Index of external body being collided with
-    Eigen::Vector3d mainContactPoint;           //!< -- Point of contact on main body
-    Eigen::Vector3d otherContactPoint;          //!< -- Point of contact of external body
-    Eigen::Vector3d contactNormal;              //!< -- Normal vector of collision (from main body)
-    Eigen::Matrix3d dcm_CB;
-    std::vector<Eigen::Matrix3d> MSCPntC_B;
-    double critSlideDir;
-    double critCoeffFric;
-    double slipReverseDir;
-    bool slipHitZero;
-    Eigen::Vector3d force_N;
-    Eigen::Vector3d torque_B;
-    double penetrationEnergy;
-}contactDetail;
-
-/*! Struct for holding information about a penetration.*/
-typedef struct{
-    int otherBodyIndex;                         //!< -- Index of external body being penetrated
-    int contactCase;                            //!< -- Type of penetration (face/vertex, vertex/face, edge/edge)
-    Eigen::Vector3d mainContactPoint;           //!< -- Point of contact on main body
-    Eigen::Vector3d otherContactPoint;          //!< -- Point of contact on external body
-    Eigen::Vector3d springLine_N;               //!< -- Direction of restoring force
-    faceQuery faceData;                         //!< -- Face penetration information
-    edgeQuery edgeData;                         //!< -- Edge penetration information
-}penetrationDetail;
 
 typedef struct{
     std::tuple<int, int> parentIndices;
@@ -155,17 +113,12 @@ typedef struct{
     double boundingRadius;                      //!< [m] Radius of body bounding sphere
     double coefRestitution;                     //!< -- Coefficient of Restitution between external body and main body
     double coefFriction;
-    double springConstant;                      //!< -- Spring constant between external body and main body
-    double dampingConstant;                     //!< -- Damping constant between external body and main body
     std::string objFile;                        //!< -- File name for the .obj file pertaining to body
     tinyobj::attrib_t attrib;                   //!< -- Attribute conversion from TinyOBJLoader
     std::vector<Eigen::Vector3d> vertices;      //!< -- All verticies in the body
     std::vector<tinyobj::shape_t> shapes;       //!< -- Polyhedra data from TinyOBJLoader
     std::vector<halfEdge> polyhedron;           //!< -- Half edge converted polyhedra data
-    std::vector<std::vector<contactDetail>> collisionPoints;//!< -- Current collision data
-    std::vector<penetrationDetail> penetrationData;//!< -- Current penetration data
     boundingBoxDetail coarseSearchList;
-    linkedStates hubState;                      //!< -- Linked states for the body
     dynamicData states;                         //!< -- Extracted states for the body
     dynamicData futureStates;
     std::string modelTag;                       //!< -- Name of body's model tag
@@ -215,15 +168,9 @@ private:
     bool secondInter;
     
 public:
-    geometry mainBody;
-    
     std::vector<geometry> Bodies;
     int numBodies;
     int currentBody;
-    bool isOverlap;
-    bool overlapFace1;
-    bool overlapFace2;
-    bool overlapEdge;
     double maxPosError;
     double slipTolerance;
     double simTimeStep;
@@ -238,7 +185,7 @@ public:
     
     
 private:
-    Eigen::VectorXd CollisionStateDerivative(Eigen::VectorXd X_c, std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts, std::vector<double> f_vals, std::vector<double> phi_vals, Eigen::MatrixXd M_tot, double coefRes, double coefFric);
+    Eigen::VectorXd CollisionStateDerivative(Eigen::VectorXd X_c, std::vector<std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d>> impacts, Eigen::MatrixXd M_tot, double coefRes, double coefFric);
     bool SeparatingPlane(vectorInterval displacementInterval, vectorInterval candidateInterval, indivBoundingBox box1, indivBoundingBox box2);
   
     std::vector<halfEdge> ComputeHalfEdge(std::vector<Eigen::Vector3d> vertices, std::vector<tinyobj::shape_t> shapes);
