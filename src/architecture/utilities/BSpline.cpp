@@ -661,16 +661,22 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     Eigen::VectorXd C3_1 = B * T3;
         
     // populate Rk vectors with the base points for LS minimization
-    Eigen::VectorXd rhok1(q-1), rhok2(q-1), rhok3(q-1);
+    Eigen::VectorXd rhok1(2*q-2), rhok2(2*q-2), rhok3(2*q-2);
     for (int c = 1; c < q; c++) {
         basisFunction(uk[c], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
         rhok1[c-1] = Input.X1[c] - NN[0]*C1_1[0] - NN[n]*C1_1[K+1];
+        rhok1[c+q-2] = X1_prime[c] - NN1[0]*C1_1[0] - NN1[n]*C1_1[K+1];
         rhok2[c-1] = Input.X2[c] - NN[0]*C2_1[0] - NN[n]*C2_1[K+1];
+        rhok2[c+q-2] = X2_prime[c] - NN1[0]*C2_1[0] - NN1[n]*C2_1[K+1];
         rhok3[c-1] = Input.X3[c] - NN[0]*C3_1[0] - NN[n]*C3_1[K+1];
+        rhok3[c+q-2] = X3_prime[c] - NN1[0]*C3_1[0] - NN1[n]*C3_1[K+1];
         if (Input.XDot_0_flag == true) {
             rhok1[c-1] -= NN[1]*C1_1[1];
+            rhok2[c+q-2] -= NN1[1]*C1_1[1];
             rhok2[c-1] -= NN[1]*C2_1[1];
+            rhok2[c+q-2] -= NN1[1]*C2_1[1];
             rhok3[c-1] -= NN[1]*C3_1[1];
+            rhok3[c+q-2] -= NN1[1]*C3_1[1];
         }
         if (Input.XDDot_0_flag == true) {
             rhok1[c-1] -= NN[2]*C1_1[2];
@@ -684,8 +690,11 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         }
         if (Input.XDot_N_flag == true) {
             rhok1[c-1] -= NN[n-1]*C1_1[K];
+            rhok1[c+q-2]-= NN1[n-1]*C1_1[K];
             rhok2[c-1] -= NN[n-1]*C2_1[K];
+            rhok2[c+q-2]-= NN1[n-1]*C2_1[K];
             rhok3[c-1] -= NN[n-1]*C3_1[K];
+            rhok3[c+q-2]-= NN1[n-1]*C3_1[K];
         }
     }
     
@@ -738,26 +747,19 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         }
 
         B = ND.transpose() * W;
-        
-        rho1 = B * rhok1;
-        rho2 = B * rhok2;
-        rho3 = B * rhok3;
             
-//        for (int c = 1; c < n-K-1; c++) {
-//            std::cout<<"rho1 outputs"<<std::endl;
-//            std::cout<<rho1[c]<<std::endl;
-//            }
-//
-//
-//        for (int c = 1; c < n-K-1; c++) {
-//            std::cout<<"rho2 outputs"<<std::endl;
-//            std::cout<<rho2[c]<<std::endl;
-//            }
-//
-//        for (int c = 1; c < n-K-1; c++) {
-//            std::cout<<"rho3 outputs"<<std::endl;
-//            std::cout<<rho3[c]<<std::endl;
-//            }
+        Eigen::VectorXd rhok1_short(q-1),rhok2_short(q-1),rhok3_short(q-1);
+            
+            
+        for (int c = 1; c <q; c++) {
+            rhok1_short[c] = rhok1[c];
+            rhok2_short[c] = rhok2[c];
+            rhok3_short[c] = rhok3[c];
+            }
+        
+        rho1 = B * rhok1_short;
+        rho2 = B * rhok2_short;
+        rho3 = B * rhok3_short;
             
         NWN = B * ND;
         NWN_inv = NWN.inverse();
@@ -774,41 +776,39 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
 //        std::cout<<"Passed this phase"<<std::endl;
 //        std::cout<<q<<std::endl;
         
-    //Reset LS problem, calculating rhokD vectors but with NN1
-        Eigen::VectorXd rhok1D(2*q-2),rhok2D(2*q-2),rhok3D(2*q-2);
             
-        for (i = 0;i <q-1;i++) {
-                rhok1D[i] = rhok1[i];
-                rhok2D[i] = rhok2[i];
-                rhok3D[i] = rhok3[i];
-            }
-        //Change these to C3_1,C2_1 along with C1_1
-        for (int c = q-1; c < 2*q-2; c++) {
-            basisFunction(uk[c], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
-            rhok1D[c-1] = X1_prime[c] - NN1[0]*C1_1[0] - NN1[n]*C1_1[K+1];
-            rhok2D[c-1] = X2_prime[c] - NN1[0]*C2_1[0] - NN1[n]*C2_1[K+1];
-            rhok3D[c-1] = X3_prime[c] - NN1[0]*C3_1[0] - NN1[n]*C3_1[K+1];
-            if (Input.XDot_0_flag == true) {
-                rhok1D[c-1] -= NN1[1]*C1_1[1];
-                rhok2D[c-1] -= NN1[1]*C2_1[1];
-                rhok3D[c-1] -= NN1[1]*C3_1[1];
-            }
-            if (Input.XDDot_0_flag == true) {
-                rhok1D[c-1] -= NN1[2]*C1_1[2];
-                rhok2D[c-1] -= NN1[2]*C2_1[2];
-                rhok3D[c-1] -= NN1[2]*C3_1[2];
-            }
-            if (Input.XDDot_N_flag == true) {
-                rhok1D[c-1] -= NN1[n-2]*C1_1[K-1];
-                rhok2D[c-1] -= NN1[n-2]*C2_1[K-1];
-                rhok3D[c-1] -= NN1[n-2]*C3_1[K-1];
-            }
-            if (Input.XDot_N_flag == true) {
-                rhok1D[c-1] -= NN1[n-1]*C1_1[K];
-                rhok2D[c-1] -= NN1[n-1]*C2_1[K];
-                rhok3D[c-1] -= NN1[n-1]*C3_1[K];
-            }
-        }
+//        for (i = 0;i <q-1;i++) {
+//                rhok1D[i] = rhok1[i];
+//                rhok2D[i] = rhok2[i];
+//                rhok3D[i] = rhok3[i];
+//            }
+//        //Change these to C3_1,C2_1 along with C1_1
+//        for (int c = q-1; c < 2*q-2; c++) {
+//            basisFunction(uk[c], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
+//            rhok1D[c-1] = X1_prime[c] - NN1[0]*C1_1[0] - NN1[n]*C1_1[K+1];
+//            rhok2D[c-1] = X2_prime[c] - NN1[0]*C2_1[0] - NN1[n]*C2_1[K+1];
+//            rhok3D[c-1] = X3_prime[c] - NN1[0]*C3_1[0] - NN1[n]*C3_1[K+1];
+//            if (Input.XDot_0_flag == true) {
+//                rhok1D[c-1] -= NN1[1]*C1_1[1];
+//                rhok2D[c-1] -= NN1[1]*C2_1[1];
+//                rhok3D[c-1] -= NN1[1]*C3_1[1];
+//            }
+//            if (Input.XDDot_0_flag == true) {
+//                rhok1D[c-1] -= NN1[2]*C1_1[2];
+//                rhok2D[c-1] -= NN1[2]*C2_1[2];
+//                rhok3D[c-1] -= NN1[2]*C3_1[2];
+//            }
+//            if (Input.XDDot_N_flag == true) {
+//                rhok1D[c-1] -= NN1[n-2]*C1_1[K-1];
+//                rhok2D[c-1] -= NN1[n-2]*C2_1[K-1];
+//                rhok3D[c-1] -= NN1[n-2]*C3_1[K-1];
+//            }
+//            if (Input.XDot_N_flag == true) {
+//                rhok1D[c-1] -= NN1[n-1]*C1_1[K];
+//                rhok2D[c-1] -= NN1[n-1]*C2_1[K];
+//                rhok3D[c-1] -= NN1[n-1]*C3_1[K];
+//            }
+//        }
         
         // new ND matrix is twice as large, will have to superimpose the previous ND matrix on this one
         Eigen::MatrixXd ND_2(2*q-2,n-K-1);
@@ -865,9 +865,9 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         }
         
         B = ND_2.transpose() * W_2;
-        rho1 = B * rhok1D;
-        rho2 = B * rhok2D;
-        rho3 = B * rhok3D;
+        rho1 = B * rhok1;
+        rho2 = B * rhok2;
+        rho3 = B * rhok3;
         
         NWN = B * ND_2;
         NWN_inv = NWN.inverse();
