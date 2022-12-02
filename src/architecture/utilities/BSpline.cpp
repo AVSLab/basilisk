@@ -17,6 +17,8 @@
 
  */
 
+// Checking comment
+
 #include "BSpline.h"
 #include <architecture/utilities/avsEigenSupport.h>
 #include <iostream>
