@@ -117,17 +117,11 @@ void SpinningBodyOneDOFStateEffector::prependSpacecraftNameToStates()
 /*! This method allows the SB state effector to have access to the hub states and gravity*/
 void SpinningBodyOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
 {
-    // - Get access to the hub's sigma_BN, omegaBN_B and velocity needed for dynamic coupling and gravity
-    std::string tmpMsgName;
-    tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassSC";
-    this->c_B = statesIn.getPropertyReference(tmpMsgName);
-    tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassPrimeSC";
-    this->cPrime_B = statesIn.getPropertyReference(tmpMsgName);
-
+    // - Get access to the hub's sigma_BN, omegaBN_B and velocity needed for dynamic coupling
     this->hubSigma = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
     this->hubOmega = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
-    this->hubPosition = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubPosition");
-    this->hubVelocity = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubVelocity");
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
 
     return;
 }
@@ -343,10 +337,10 @@ void SpinningBodyOneDOFStateEffector::computeSpinningBodyInertialStates()
     this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
 
     // inertial position vector
-    this->r_ScN_N = (Eigen::Vector3d)this->hubPosition->getState() + this->dcm_BN.transpose() * this->r_ScB_B;
+    this->r_ScN_N = (Eigen::Vector3d)(*this->inertialPositionProperty) + this->dcm_BN.transpose() * this->r_ScB_B;
 
     // inertial velocity vector
-    this->v_ScN_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * this->rDot_ScB_B;
+    this->v_ScN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty) + this->dcm_BN.transpose() * this->rDot_ScB_B;
 
     return;
 }

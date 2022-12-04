@@ -181,8 +181,8 @@ void SpinningBodyTwoDOFStateEffector::linkInStates(DynParamManager& statesIn)
 {
     this->hubSigma = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
     this->hubOmega = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
-    this->hubPosition = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubPosition");
-    this->hubVelocity = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubVelocity");
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
 
     return;
 }
@@ -501,12 +501,12 @@ void SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates()
     this->sigma_S2N = eigenMRPd2Vector3d(eigenC2MRP(dcm_S2N));
 
     // Compute the inertial position vector
-    this->r_Sc1N_N = (Eigen::Vector3d)this->hubPosition->getState() + this->dcm_BN.transpose() * this->r_Sc1B_B;
-    this->r_Sc2N_N = (Eigen::Vector3d)this->hubPosition->getState() + this->dcm_BN.transpose() * this->r_Sc2B_B;
+    this->r_Sc1N_N = (Eigen::Vector3d)(*this->inertialPositionProperty) + this->dcm_BN.transpose() * this->r_Sc1B_B;
+    this->r_Sc2N_N = (Eigen::Vector3d)(*this->inertialPositionProperty) + this->dcm_BN.transpose() * this->r_Sc2B_B;
 
     // Compute the inertial velocity vector
-    this->v_Sc1N_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * this->rDot_Sc1B_B;
-    this->v_Sc2N_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * this->rDot_Sc2B_B;
+    this->v_Sc1N_N = (Eigen::Vector3d)(*this->inertialVelocityProperty) + this->dcm_BN.transpose() * this->rDot_Sc1B_B;
+    this->v_Sc2N_N = (Eigen::Vector3d)(*this->inertialVelocityProperty) + this->dcm_BN.transpose() * this->rDot_Sc2B_B;
 
     return;
 }
