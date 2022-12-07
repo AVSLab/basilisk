@@ -18,16 +18,13 @@
 */
 
 #include "meanOEFeedback.h"
-
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include <math.h>
+#include <string.h>
+
 
 static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgPayload chiefTransMsg,
                                   NavTransMsgPayload deputyTransMsg, CmdForceInertialMsgPayload *forceMsg);

@@ -23,20 +23,12 @@
 
 /* modify the path to reflect the new module names */
 #include "etSphericalControl.h"
-
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-
-/*
- Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
- */
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-
+#include <math.h>
+#include <string.h>
 
 
 /*!

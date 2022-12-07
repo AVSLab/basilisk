@@ -20,17 +20,14 @@
 #ifndef planetEphemeris_H
 #define planetEphemeris_H
 
-#include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/messaging/messaging.h"
-
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/orbitalMotion.h"
-#include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
-
+#include <vector>
 
 /*! @brief planet ephemeris class */
 class PlanetEphemeris: public SysModel {

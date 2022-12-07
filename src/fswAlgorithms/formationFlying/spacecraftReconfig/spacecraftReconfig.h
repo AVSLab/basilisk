@@ -20,17 +20,16 @@
 #ifndef _SPACECRAFT_RECONFIG_H_
 #define _SPACECRAFT_RECONFIG_H_
 
-#include <stdint.h>
-
-#include "cMsgCInterface/NavTransMsg_C.h"
-#include "cMsgCInterface/THRArrayConfigMsg_C.h"
-#include "cMsgCInterface/AttRefMsg_C.h"
-#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
-#include "cMsgCInterface/VehicleConfigMsg_C.h"
-#include "cMsgCInterface/ReconfigBurnArrayInfoMsg_C.h"
-
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/orbitalMotion.h"
+#include "cMsgCInterface/AttRefMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/THRArrayConfigMsg_C.h"
+#include "cMsgCInterface/THRArrayOnTimeCmdMsg_C.h"
+#include "cMsgCInterface/ReconfigBurnArrayInfoMsg_C.h"
+#include "cMsgCInterface/VehicleConfigMsg_C.h"
+#include <stdint.h>
+
 
 /*! @brief Data structure for the MRP feedback attitude control routine. */
 typedef struct {

@@ -22,18 +22,18 @@
 #define SMALLBODYNAVEKF_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/orbitalMotion.h"
+#include "cMsgCInterface/EphemerisMsg_C.h"
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/NavAttMsg_C.h"
-#include "cMsgCInterface/EphemerisMsg_C.h"
-#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 #include "cMsgCInterface/SmallBodyNavMsg_C.h"
-#include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/utilities/orbitalMotion.h"
-#include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief This module estimates relative spacecraft position and velocity with respect to the body, attitude and attitude rate of the body wrt. the inertial frame, and the attitude and attitude rate of the spacecraft with respect to the inertial frame
  */

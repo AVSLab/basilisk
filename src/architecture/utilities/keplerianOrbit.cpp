@@ -18,8 +18,9 @@
  */
 
 #include "keplerianOrbit.h"
-#include <architecture/utilities/avsEigenSupport.h>
-#include <architecture/utilities/linearAlgebra.h>
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 /*! This constructor initialized to an arbitrary orbit */
 KeplerianOrbit::KeplerianOrbit()

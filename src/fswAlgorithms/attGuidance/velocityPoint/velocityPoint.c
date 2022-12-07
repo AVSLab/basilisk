@@ -22,18 +22,11 @@
  
  */
 
-
 #include "fswAlgorithms/attGuidance/velocityPoint/velocityPoint.h"
-#include <string.h>
-#include <math.h>
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "architecture/utilities/macroDefinitions.h"
-
-/* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-
-#include "architecture/utilities/astroConstants.h"
+#include <math.h>
+#include <string.h>
 
 
 /*! self init method

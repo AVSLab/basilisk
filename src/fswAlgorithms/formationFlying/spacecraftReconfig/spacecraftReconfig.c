@@ -18,13 +18,11 @@
 */
 
 #include "spacecraftReconfig.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include <math.h>
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-
 
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the

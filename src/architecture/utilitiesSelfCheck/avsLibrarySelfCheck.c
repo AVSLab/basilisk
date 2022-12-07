@@ -17,15 +17,13 @@
 
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
+#include "avsLibrarySelfCheck.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "avsLibrarySelfCheck.h"
+#include <math.h>
+#include <stdio.h>
 
 
 int isEqual(double a, double b, double accuracy)
