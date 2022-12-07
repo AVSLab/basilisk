@@ -31,8 +31,8 @@
 
 static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgPayload chiefTransMsg,
                                   NavTransMsgPayload deputyTransMsg, CmdForceInertialMsgPayload *forceMsg);
-static void calc_B_cl(double mu, classicElements oe_cl, double B[6][3]);
 static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]);
+static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]);
 static double adjust_range(double lower, double upper, double angle);
 
 /*! This method initializes the configData for this module.
@@ -113,11 +113,11 @@ void Update_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, 
 static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgPayload chiefTransMsg,
                                   NavTransMsgPayload deputyTransMsg, CmdForceInertialMsgPayload *forceMsg) {
     // position&velocity to osculating classic orbital elements
-    classicElements oe_cl_osc_c, oe_cl_osc_d;
+    ClassicElements oe_cl_osc_c, oe_cl_osc_d;
     rv2elem(configData->mu, chiefTransMsg.r_BN_N, chiefTransMsg.v_BN_N, &oe_cl_osc_c);
     rv2elem(configData->mu, deputyTransMsg.r_BN_N, deputyTransMsg.v_BN_N, &oe_cl_osc_d);
     // osculating classic oe to mean classic oe
-    classicElements oe_cl_mean_c, oe_cl_mean_d;
+    ClassicElements oe_cl_mean_c, oe_cl_mean_d;
     clMeanOscMap(configData->req, configData->J2, &oe_cl_osc_c, &oe_cl_mean_c, -1);
     clMeanOscMap(configData->req, configData->J2, &oe_cl_osc_d, &oe_cl_mean_d, -1);
     // calculate necessary Force in LVLH frame
@@ -183,7 +183,7 @@ static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgP
  @param oe_cl nonsingular orbital elements
  @param B
  */
-static void calc_B_cl(double mu, classicElements oe_cl, double B[6][3]) {
+static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]) {
     // define parameters necessary to calculate Bmatrix
     double a = oe_cl.a;
     double e = oe_cl.e;

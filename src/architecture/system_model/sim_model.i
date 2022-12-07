@@ -82,5 +82,4 @@ namespace std {
 %include "architecture/utilities/linearAlgebra.h"
 %include "architecture/utilities/rigidBodyKinematics.h"
 %include "architecture/utilities/orbitalMotion.h"
-%include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"
 %include "sim_model.h"

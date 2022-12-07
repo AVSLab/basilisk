@@ -234,7 +234,7 @@ void calc_RelativeMotionControl(etSphericalControlConfig *configData, NavTransMs
     double phiDot = XDot[2];
     // control matrices [F] and [G]
     double mu = configData->mu; // [m^3/s^2] Earth's gravitational parameter
-    classicElements elements;
+    ClassicElements elements;
     rv2elem(mu, servicerTransInMsgBuffer.r_BN_N, servicerTransInMsgBuffer.v_BN_N, &elements);
     double a = elements.a;
     double n = sqrt(mu/a/a/a); // mean motion

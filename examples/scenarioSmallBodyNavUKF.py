@@ -88,6 +88,7 @@ import math
 
 from mpl_toolkits.mplot3d import Axes3D
 
+from Basilisk.architecture import sim_model
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import orbitalMotion
@@ -320,7 +321,7 @@ def run(show_plots):
 
     # specify small body o.e. and rotational state January 21st, 2022
     # https://ssd.jpl.nasa.gov/horizons.cgi#results
-    oeAsteroid = planetEphemeris.ClassicElementsMsgPayload()
+    oeAsteroid = sim_model.ClassicElements()
     oeAsteroid.a = 2.3612 * orbitalMotion.AU * 1000  # meters
     oeAsteroid.e = 0.08823
     oeAsteroid.i = 7.1417*macros.D2R

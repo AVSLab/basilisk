@@ -30,7 +30,7 @@
 class KeplerianOrbit {
 public:
     KeplerianOrbit();
-    KeplerianOrbit(classicElements oe, const double mu);
+    KeplerianOrbit(ClassicElements oe, const double mu);
     KeplerianOrbit(const KeplerianOrbit &orig);
     ~KeplerianOrbit();
 
@@ -59,7 +59,7 @@ public:
     double p() const;
     double rDot() const;
     double c3() const;
-    classicElements oe();
+    ClassicElements oe();
     void set_mu(const double mu);
     void set_a(double a);
     void set_e(double e);

@@ -46,7 +46,7 @@ public:
 public:
     std::vector<Message<SpicePlanetStateMsgPayload>*> planetOutMsgs; //!< -- vector of planet state output messages
 
-    std::vector<classicElements>planetElements; //!< -- Vector of planet classical orbit elements
+    std::vector<ClassicElements>planetElements; //!< -- Vector of planet classical orbit elements
 
     std::vector<double> rightAscension;         //!< [r] right ascension of the north pole rotation axis (pos. 3-axis)
     std::vector<double> declination;            //!< [r] Declination of the north pole rotation axis (neg. 2-axis)

@@ -111,8 +111,8 @@ void FormationBarycenter::computeBaricenter() {
             barycenterVelocity[n] /= totalMass;
         }
     } else {
-        classicElements orbitElements = {}; // zero the orbit elements first
-        classicElements tempElements;
+        ClassicElements orbitElements = {}; // zero the orbit elements first
+        ClassicElements tempElements;
         double OmegaSineSum = 0;
         double OmegaCosineSum = 0;
         double omegaSineSum = 0;

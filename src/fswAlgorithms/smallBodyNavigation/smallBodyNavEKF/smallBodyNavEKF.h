@@ -121,7 +121,7 @@ private:
     Eigen::Matrix3d o_hat_3_tilde;  //!< Tilde matrix of the third asteroid orbit frame base vector
     Eigen::Vector3d o_hat_1;  //!< First asteroid orbit frame base vector
     Eigen::MatrixXd I;  //!< 3 x 3 identity matrix
-    classicElements oe_ast;  //!< Orbital elements of the asteroid
+    ClassicElements oe_ast;  //!< Orbital elements of the asteroid
     double F_dot;  //!< Time rate of change of true anomaly
     double F_ddot;  //!< Second time derivative of true anomaly
     Eigen::Matrix3d dcm_ON;  //!< DCM from the inertial frame to the small-body's hill frame

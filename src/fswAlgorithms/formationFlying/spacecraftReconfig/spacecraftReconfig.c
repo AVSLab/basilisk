@@ -151,7 +151,7 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
                      uint64_t callTime, int64_t moduleID)
 {
     /* conversion from r,v to classical orbital elements */
-    classicElements oe_c, oe_d;
+    ClassicElements oe_c, oe_d;
     rv2elem(configData->mu,chiefTransMsgBuffer.r_BN_N,chiefTransMsgBuffer.v_BN_N,&oe_c);
     rv2elem(configData->mu,deputyTransMsgBuffer.r_BN_N,deputyTransMsgBuffer.v_BN_N,&oe_d);
 
@@ -332,8 +332,8 @@ int CompareTime(const void * n1, const void * n2)
  @param thrustConfigMsgBuffer
  @param vehicleConfigMsgBuffer deputy's vehicle config information
  */
-void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
-                          classicElements oe_d, THRArrayConfigMsgPayload thrustConfigMsgBuffer, VehicleConfigMsgPayload vehicleConfigMsgBuffer)
+void ScheduleDV(spacecraftReconfigConfig *configData, ClassicElements oe_c,
+                          ClassicElements oe_d, THRArrayConfigMsgPayload thrustConfigMsgBuffer, VehicleConfigMsgPayload vehicleConfigMsgBuffer)
 {
     // calculation necessary variables
     double da     = oe_d.a - oe_c.a;
@@ -489,7 +489,7 @@ void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
     double M_d_dvrtp = M_d + configData->burnArrayInfoOutMsgBuffer.burnArray[0].t*n;
     double E_d_dvrtp = M2E(M_d_dvrtp, oe_d.e);
     double f_d_dvrtp = E2f(E_d_dvrtp, oe_d.e);
-    classicElements oe_d_dvrtp;
+    ClassicElements oe_d_dvrtp;
     oe_d_dvrtp   = oe_d;
     oe_d_dvrtp.f = f_d_dvrtp;
     double rVec_d_dvrtp[3], vVec_d_dvrtp[3], hVec_d_dvrtp[3],tVec_d_dvrtp[3];
@@ -525,7 +525,7 @@ void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
     double M_d_dvrta = M_d + configData->burnArrayInfoOutMsgBuffer.burnArray[1].t*n;
     double E_d_dvrta = M2E(M_d_dvrta, oe_d.e);
     double f_d_dvrta = E2f(E_d_dvrta, oe_d.e);
-    classicElements oe_d_dvrta;
+    ClassicElements oe_d_dvrta;
     oe_d_dvrta   = oe_d;
     oe_d_dvrta.f = f_d_dvrta;
     double rVec_d_dvrta[3], vVec_d_dvrta[3], hVec_d_dvrta[3],tVec_d_dvrta[3];
@@ -561,7 +561,7 @@ void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
     double M_d_dvn = M_d + configData->burnArrayInfoOutMsgBuffer.burnArray[2].t*n;
     double E_d_dvn = M2E(M_d_dvn, oe_d.e);
     double f_d_dvn = E2f(E_d_dvn, oe_d.e);
-    classicElements oe_d_dvn;
+    ClassicElements oe_d_dvn;
     oe_d_dvn = oe_d;
     oe_d_dvn.f = f_d_dvn;
     double rVec_d_dvn[3], vVec_d_dvn[3], hVec_d_dvn[3];

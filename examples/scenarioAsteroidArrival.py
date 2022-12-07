@@ -56,7 +56,7 @@ Next, the module is configured by specifying the orbital parameters of Bennu::
     G = 6.67408 * (10 ** -11)  # m^3 / kg*s^2
     massBennu = 7.329 * (10 ** 10)  # kg
     mu = G * massBennu  # Bennu grav. parameter, m^3/s^2
-    oeAsteroid = planetEphemeris.ClassicElementsMsgPayload()
+    oeAsteroid = sim_model.ClassicElementsMsgPayload()
     oeAsteroid.a = 1.1264 * orbitalMotion.AU * 1000  # m
     oeAsteroid.e = 0.20375
     oeAsteroid.i = 6.0349 * macros.D2R
@@ -205,6 +205,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody,
 from Basilisk.simulation import spacecraft, extForceTorque, simpleNav, ephemerisConverter, planetEphemeris
 from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, locationPointing
 from Basilisk.architecture import messaging
+from Basilisk.architecture import sim_model
 
 try:
     from Basilisk.simulation import vizInterface
@@ -257,7 +258,7 @@ def run(show_plots):
     G = 6.67408 * (10 ** -11)  # m^3 / kg*s^2
     massBennu = 7.329 * (10 ** 10)  # kg
     mu = G * massBennu  # Bennu grav. parameter, m^3/s^2
-    oeAsteroid = planetEphemeris.ClassicElementsMsgPayload()
+    oeAsteroid = sim_model.ClassicElements()
     oeAsteroid.a = 1.1264 * orbitalMotion.AU * 1000  # m
     oeAsteroid.e = 0.20375
     oeAsteroid.i = 6.0349 * macros.D2R

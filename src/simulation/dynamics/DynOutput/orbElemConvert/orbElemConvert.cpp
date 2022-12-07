@@ -93,7 +93,18 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
  */
 void OrbElemConvert::Elements2Cartesian()
 {
-    elem2rv(mu, &CurrentElem, r_N, v_N);
+    std::unique_ptr<ClassicElements> classicElements(new ClassicElements);
+    classicElements->a = this->CurrentElem.a;
+    classicElements->e = this->CurrentElem.e;
+    classicElements->i = this->CurrentElem.i;
+    classicElements->Omega = this->CurrentElem.Omega;
+    classicElements->omega = this->CurrentElem.omega;
+    classicElements->f = this->CurrentElem.f;
+    classicElements->rmag = this->CurrentElem.rmag;
+    classicElements->alpha = this->CurrentElem.alpha;
+    classicElements->rPeriap = this->CurrentElem.rPeriap;
+    classicElements->rApoap = this->CurrentElem.rApoap;
+    elem2rv(mu, static_cast<const ClassicElements *>(classicElements.get()), r_N, v_N);
 }
 
 /*! The name kind of says it all right?  Converts pos/vel to CurrentElem.
@@ -101,7 +112,18 @@ void OrbElemConvert::Elements2Cartesian()
  */
 void OrbElemConvert::Cartesian2Elements()
 {
-    rv2elem(mu, r_N, v_N, &CurrentElem);
+    std::unique_ptr<ClassicElements> classicElements(new ClassicElements);
+    rv2elem(mu, r_N, v_N, classicElements.get());
+    this->CurrentElem.a = classicElements->a;
+    this->CurrentElem.e = classicElements->e;
+    this->CurrentElem.i = classicElements->i;
+    this->CurrentElem.Omega = classicElements->Omega;
+    this->CurrentElem.omega = classicElements->omega;
+    this->CurrentElem.f = classicElements->f;
+    this->CurrentElem.rmag = classicElements->rmag;
+    this->CurrentElem.alpha = classicElements->alpha;
+    this->CurrentElem.rPeriap = classicElements->rPeriap;
+    this->CurrentElem.rApoap = classicElements->rApoap;
 }
 
 /*! This method reads the input message in from the system and sets the
@@ -153,3 +175,5 @@ void OrbElemConvert::UpdateState(uint64_t CurrentSimNanos)
     //! Write out the current output for current time
     WriteOutputMessages(CurrentSimNanos);
 }
+
+

@@ -1683,7 +1683,7 @@ int testOrbitalElements(double accuracy)
     double v[3];
     double r2[3];
     double v3_2[3];
-    classicElements elements;
+    ClassicElements elements;
     double eps2;
 
     eps2 = 1e-12 * 0.5;
@@ -2029,7 +2029,7 @@ int testOrbitalElements(double accuracy)
     elements.f     = 0.2;
     double req = 300.0;
     double J2 = 1e-3;
-    classicElements elements_p;
+    ClassicElements elements_p;
     clMeanOscMap(req, J2, &elements, &elements_p, 1);
     if(!isEqualRel(elements_p.a, 1000.07546442015950560744386166334152, accuracy)
        || !isEqual(elements_p.e, 0.20017786852908628358882481279579, accuracy)

@@ -74,7 +74,7 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_
     int i;
     TDBVehicleClockCorrelationMsgPayload localCorr;
     EphemerisMsgPayload tmpOutputState;
-    classicElements orbEl;
+    ClassicElements orbEl;
 
     tmpOutputState = EphemerisMsg_C_zeroMsgPayload();
 

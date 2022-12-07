@@ -92,7 +92,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     timeHistory = numpy.linspace(etStart, etEnd, numCurvePoints)
     posCArray = pyswice.new_doubleArray(3)
     velCArray = pyswice.new_doubleArray(3)
-    orbEl = messaging.ClassicElementsMsgPayload()
+    orbEl = sim_model.ClassicElements()
     rpArray = []
     eccArray = []
     incArray = []

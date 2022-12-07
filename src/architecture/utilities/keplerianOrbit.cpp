@@ -28,7 +28,7 @@ KeplerianOrbit::KeplerianOrbit()
 }
 
 /*! The constructor requires orbital elements and a gravitational constant value */
-KeplerianOrbit::KeplerianOrbit(classicElements oe, const double mu) : mu(mu),
+KeplerianOrbit::KeplerianOrbit(ClassicElements oe, const double mu) : mu(mu),
                                                                       semi_major_axis(oe.a),
                                                                       eccentricity(oe.e),
                                                                       inclination(oe.i),
@@ -138,8 +138,8 @@ void KeplerianOrbit::set_f(double f){this->true_anomaly = f; this->change_f();};
 /*! This method returns the orbital element set for the orbit
  @return classicElements oe
  */
-classicElements KeplerianOrbit::oe(){
-    classicElements elements;
+ClassicElements KeplerianOrbit::oe(){
+    ClassicElements elements;
     elements.a = this->semi_major_axis;
     elements.e = this->eccentricity;
     elements.i = this->inclination;
@@ -170,7 +170,7 @@ void KeplerianOrbit::change_orbit(){
 void KeplerianOrbit::change_f(){
     double r[3];
     double v[3];
-    classicElements oe = this->oe(); //
+    ClassicElements oe = this->oe(); //
     elem2rv(this->mu, &oe, r, v); //
     this->position_BP_P = cArray2EigenVector3d(r); //
     this->velocity_BP_P = cArray2EigenVector3d(v); //

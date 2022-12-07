@@ -40,6 +40,7 @@ from Basilisk.simulation import planetEphemeris
 from Basilisk.utilities import macros
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
+from Basilisk.architecture import sim_model
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -94,7 +95,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
 
     mu = orbitalMotion.MU_SUN*1000.*1000.*1000  # m^3/s^2
     # setup planet ephemeris states
-    oeEarth = planetEphemeris.ClassicElementsMsgPayload()
+    oeEarth = sim_model.ClassicElements()
     oeEarth.a = planetEphemeris.SMA_EARTH*1000  # meters
     oeEarth.e = 0.001
     oeEarth.i = 10.0*macros.D2R
@@ -102,7 +103,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
     oeEarth.omega = 20.0*macros.D2R
     oeEarth.f = 90.0*macros.D2R
 
-    oeVenus = planetEphemeris.ClassicElementsMsgPayload()
+    oeVenus = sim_model.ClassicElements()
     oeVenus.a = planetEphemeris.SMA_VENUS*1000  # meters
     oeVenus.e = 0.001
     oeVenus.i = 5.0*macros.D2R

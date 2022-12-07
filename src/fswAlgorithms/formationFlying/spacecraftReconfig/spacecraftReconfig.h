@@ -75,8 +75,8 @@ extern "C" {
                              uint64_t callTime, int64_t moduleID);
     double AdjustRange(double lower, double upper, double angle);
     int CompareTime(const void * n1, const void * n2);
-    void ScheduleDV(spacecraftReconfigConfig *configData, classicElements oe_c,
-                         classicElements oe_d, THRArrayConfigMsgPayload thrustConfigMsgBuffer, VehicleConfigMsgPayload vehicleConfigMsgBuffer);
+    void ScheduleDV(spacecraftReconfigConfig *configData, ClassicElements oe_c,
+                         ClassicElements oe_d, THRArrayConfigMsgPayload thrustConfigMsgBuffer, VehicleConfigMsgPayload vehicleConfigMsgBuffer);
 
 #ifdef __cplusplus
 }

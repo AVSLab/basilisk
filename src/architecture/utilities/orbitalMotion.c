@@ -376,7 +376,7 @@ double N2H(double N, double e)
  *   rVec = position vector
  *   vVec = velocity vector
  */
-void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
+void elem2rv(double mu, const ClassicElements *elements, double *rVec, double *vVec)
 {
     double e;                   /* eccentricty */
     double a;                   /* semi-major axis */
@@ -471,7 +471,7 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
  * Outputs:
  *   elements = orbital elements
  */
-void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
+void rv2elem(double mu, double *rVec, double *vVec, ClassicElements *elements)
 {
     double hVec[3];             /* orbit angular momentum vector */
     double ihHat[3];            /* normalized orbit angular momentum vector */
@@ -919,7 +919,7 @@ void solarRad(double A, double m, double *sunvec, double *arvec)
 }
 
 /*! maps classical mean orbit elements to Osculating elements */
-void clMeanOscMap(double req, double J2, classicElements *elements, classicElements *elements_p, double sgn) {
+void clMeanOscMap(double req, double J2, const ClassicElements *elements, ClassicElements *elements_p, double sgn) {
     // Classical orbital elements = (a,e,i,Omega,omega,f)
     // First-order J2 Mapping Between Mean and Osculating Orbital Elements
     // sgn=1:mean2osc, sgn=-1:osc2mean
@@ -1000,7 +1000,7 @@ void clMeanOscMap(double req, double J2, classicElements *elements, classicEleme
 }
 
 /*! maps from classical orbit elements to equinoctial elements */
-void clElem2eqElem(classicElements *elements_cl, equinoctialElements *elements_eq) {
+void clElem2eqElem(const ClassicElements *elements_cl, equinoctialElements *elements_eq) {
     // conversion
     // from classical orbital elements (a,e,i,Omega,omega,f)
     // to equinoctial orbital elements (a,P1,P2,Q1,Q2,l,L)

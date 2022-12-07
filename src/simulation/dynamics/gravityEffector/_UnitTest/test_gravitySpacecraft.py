@@ -38,6 +38,7 @@ from Basilisk.simulation import planetEphemeris
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import messaging
+from Basilisk.architecture import sim_model
 import pytest
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -339,7 +340,7 @@ def polyGravityBody(show_plots):
     DynUnitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, macros.sec2nano(intTime)))
 
     # specify orbit of polyhedral body
-    oePolyBody = planetEphemeris.ClassicElementsMsgPayload()
+    oePolyBody = sim_model.ClassicElements()
     oePolyBody.a = 2.3612 * orbitalMotion.AU * 1000
     oePolyBody.e = 0
     oePolyBody.i = 0*macros.D2R
