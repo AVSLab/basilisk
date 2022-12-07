@@ -2049,7 +2049,7 @@ int testOrbitalElements(double accuracy)
     elements.Omega = 0.15;
     elements.omega = 0.5;
     elements.f     = 0.2;
-    equinoctialElements elements_eq;
+    EquinoctialElements elements_eq;
     clElem2eqElem(&elements, &elements_eq);
     if(!isEqualRel(elements_eq.a, 1000.00000000000000000000000000000000, accuracy)
        || !isEqual(elements_eq.P1, 0.12103728114720790909331071816268, accuracy)

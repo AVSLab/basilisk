@@ -31,8 +31,8 @@
 
 static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgPayload chiefTransMsg,
                                   NavTransMsgPayload deputyTransMsg, CmdForceInertialMsgPayload *forceMsg);
-static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]);
 static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]);
+static void calc_B_eq(double mu, EquinoctialElements oe_eq, double B[6][3]);
 static double adjust_range(double lower, double upper, double angle);
 
 /*! This method initializes the configData for this module.
@@ -144,7 +144,7 @@ static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgP
         calc_B_cl(configData->mu, oe_cl_mean_d, B);
     } else if (configData->oeType == 1) {
         // mean classic oe to mean equinoctial oe
-        equinoctialElements oe_eq_mean_c, oe_eq_mean_d;
+        EquinoctialElements oe_eq_mean_c, oe_eq_mean_d;
         clElem2eqElem(&oe_cl_mean_c, &oe_eq_mean_c);
         clElem2eqElem(&oe_cl_mean_d, &oe_eq_mean_d);
         // calculate equinoctial oed (da,dP1,dP2,dQ1,dQ2,dl)
@@ -237,7 +237,7 @@ static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]) {
  @param oe_eq nonsingular orbital elements
  @param B
  */
-static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]) {
+static void calc_B_eq(double mu, EquinoctialElements oe_eq, double B[6][3]) {
     // define parameters necessary to calculate Bmatrix
     double a = oe_eq.a;
     double P1 = oe_eq.P1;

@@ -1000,7 +1000,7 @@ void clMeanOscMap(double req, double J2, const ClassicElements *elements, Classi
 }
 
 /*! maps from classical orbit elements to equinoctial elements */
-void clElem2eqElem(const ClassicElements *elements_cl, equinoctialElements *elements_eq) {
+void clElem2eqElem(const ClassicElements *elements_cl, EquinoctialElements *elements_eq) {
     // conversion
     // from classical orbital elements (a,e,i,Omega,omega,f)
     // to equinoctial orbital elements (a,P1,P2,Q1,Q2,l,L)

@@ -57,7 +57,7 @@ typedef struct {
     double rApoap;    //!< Radius if apoapsis (extra)
 } ClassicElements;
 
-/*! equinoctial elment struct definition */
+/*! equinoctial element struct definition */
 typedef struct {
     double a;   //!< semi-major axis
     double P1;  //!< e*sin(omega+Omega)
@@ -66,7 +66,7 @@ typedef struct {
     double Q2;  //!< tan(i/2)*cos(Omega)
     double l;   //!< Omega+omega+M
     double L;   //!< Omega+omega+f
-} equinoctialElements;
+} EquinoctialElements;
 
     /*
      E = eccentric anomaly
@@ -87,7 +87,7 @@ typedef struct {
     void    elem2rv(double mu, const ClassicElements *elements, double *rVec, double *vVec);
     void    rv2elem(double mu, double *rVec, double *vVec, ClassicElements *elements);
     void    clMeanOscMap(double req, double J2, const ClassicElements *elements, ClassicElements *elements_p, double sgn);
-    void    clElem2eqElem(const ClassicElements *elements_cl, equinoctialElements *elements_eq);
+    void    clElem2eqElem(const ClassicElements *elements_cl, EquinoctialElements *elements_eq);
 
     void    hillFrame(double *rc_N, double *vc_N, double HN[3][3]);
     void    hill2rv(double *rc_N, double *vc_N, double *rho_H, double *rhoPrime_H, double *rd_N, double *vd_N);
