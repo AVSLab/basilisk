@@ -18,15 +18,12 @@
  */
 
 #include "orbitalMotion.h"
-
-#include <math.h>
-#include <stdio.h>
-#include <stdarg.h>
-
 #include "linearAlgebra.h"
 #include "astroConstants.h"
 #include "architecture/utilities/bsk_Print.h"
-#include "rigidBodyKinematics.h"
+#include <math.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 
 /*!
