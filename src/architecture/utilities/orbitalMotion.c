@@ -101,7 +101,7 @@ void  hill2rv(double *rc_N, double *vc_N, double *rho_H, double *rhoPrime_H, dou
  *   rho_H: deputy Hill position vector
  *   rhoPrime_H: deputy Hill velocity vector
  */
-void    rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *rho_H, double *rhoPrime_H)
+void rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *rho_H, double *rhoPrime_H)
 {
     double HN[3][3];        /* DCM of Hill frame relative to inertial */
     double hVec_N[3];       /* orbit angular momentum vector */
@@ -148,7 +148,7 @@ double E2f(double Ecc, double e)
         f = 2 * atan2(sqrt(1 + e) * sin(Ecc / 2), sqrt(1 - e) * cos(Ecc / 2));
     } else {
         f = NAN;
-        BSK_PRINT(MSG_ERROR, "E2f() received e = %g. The value of e should be 0 <= e < 1.", e);
+        BSK_PRINT(MSG_ERROR, "E2f() received e = %g. The value of e should be 0 <= e < 1.", e)
     }
 
     return f;
@@ -172,7 +172,7 @@ double E2M(double Ecc, double e)
         M = Ecc - e * sin(Ecc);
     } else {
         M = NAN;
-        BSK_PRINT(MSG_ERROR, "E2M() received e = %g. The value of e should be 0 <= e < 1.", e);
+        BSK_PRINT(MSG_ERROR, "E2M() received e = %g. The value of e should be 0 <= e < 1.", e)
     }
 
     return M;
@@ -196,7 +196,7 @@ double f2E(double f, double e)
         Ecc = 2 * atan2(sqrt(1 - e) * sin(f / 2), sqrt(1 + e) * cos(f / 2));
     } else {
         Ecc = NAN;
-        BSK_PRINT(MSG_ERROR, "f2E() received e = %g. The value of e should be 0 <= e < 1.", e);
+        BSK_PRINT(MSG_ERROR, "f2E() received e = %g. The value of e should be 0 <= e < 1.", e)
     }
 
     return Ecc;
@@ -219,7 +219,7 @@ double f2H(double f, double e)
         H = 2 * atanh(sqrt((e - 1) / (e + 1)) * tan(f / 2));
     } else {
         H = NAN;
-        BSK_PRINT(MSG_ERROR, "f2H() received e = %g. The value of e should be 1 < e.", e);
+        BSK_PRINT(MSG_ERROR, "f2H() received e = %g. The value of e should be 1 < e.", e)
     }
 
     return H;
@@ -242,7 +242,7 @@ double H2f(double H, double e)
         f = 2 * atan(sqrt((e + 1) / (e - 1)) * tanh(H / 2));
     } else {
         f = NAN;
-        BSK_PRINT(MSG_ERROR, "H2f() received e = %g. The value of e should be 1 < e.", e);
+        BSK_PRINT(MSG_ERROR, "H2f() received e = %g. The value of e should be 1 < e.", e)
     }
 
     return f;
@@ -265,7 +265,7 @@ double H2N(double H, double e)
         N = e * sinh(H) - H;
     } else {
         N = NAN;
-        BSK_PRINT(MSG_ERROR, "H2N() received e = %g. The value of e should be 1 < e.", e);
+        BSK_PRINT(MSG_ERROR, "H2N() received e = %g. The value of e should be 1 < e.", e)
     }
 
     return N;
@@ -294,13 +294,13 @@ double M2E(double M, double e)
             dE = (E1 - e * sin(E1) - M) / (1 - e * cos(E1));
             E1 -= dE;
             if(++count > max) {
-                BSK_PRINT(MSG_ERROR, "iteration error in M2E(%f,%f)", M, e);
+                BSK_PRINT(MSG_ERROR, "iteration error in M2E(%f,%f)", M, e)
                 dE = 0.;
             }
         }
     } else {
         E1 = NAN;
-        BSK_PRINT(MSG_ERROR, "M2E() received e = %g. The value of e should be 0 <= e < 1.", e);
+        BSK_PRINT(MSG_ERROR, "M2E() received e = %g. The value of e should be 0 <= e < 1.", e)
     }
 
     return E1;
@@ -332,13 +332,13 @@ double N2H(double N, double e)
             dH = (e * sinh(H1) - H1 - N) / (e * cosh(H1) - 1);
             H1 -= dH;
             if(++count > max) {
-                BSK_PRINT(MSG_ERROR, "iteration error in N2H(%f,%f)", N, e);
+                BSK_PRINT(MSG_ERROR, "iteration error in N2H(%f,%f)", N, e)
                 dH = 0.;
             }
         }
     } else {
         H1 = NAN;
-        BSK_PRINT(MSG_ERROR, "N2H() received e = %g. The value of e should be e > 1.", e);
+        BSK_PRINT(MSG_ERROR, "N2H() received e = %g. The value of e should be e > 1.", e)
     }
 
     return H1;
@@ -640,7 +640,7 @@ double debyeLength(double alt)
         debyedist = 0.1 * alt - 2999.7;
         return debyedist;
     } else if((alt < 200.0) || (alt > 35000.0)) {
-        BSK_PRINT(MSG_ERROR, "debyeLength() received alt = %g\nThe value of alt should be in the range of [200 35000]", alt);
+        BSK_PRINT(MSG_ERROR, "debyeLength() received alt = %g\nThe value of alt should be in the range of [200 35000]", alt)
         debyedist = NAN;
         return debyedist;
     }
@@ -689,7 +689,7 @@ void atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec,
 
     /* Checking if user supplied a orbital position is inside the earth */
     if(alt <= 0.) {
-        BSK_PRINT(MSG_ERROR, "atmosphericDrag() received rvec = [%g %g %g]The value of rvec should produce a positive altitude for the Earth.",  rvec[1], rvec[2], rvec[3]);
+        BSK_PRINT(MSG_ERROR, "atmosphericDrag() received rvec = [%g %g %g]The value of rvec should produce a positive altitude for the Earth.",  rvec[1], rvec[2], rvec[3])
         v3Set(NAN, NAN, NAN, advec);
         return;
     }
@@ -832,7 +832,7 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
 
     /* Error Checking */
     if((num < 2) || (num > 6)) {
-        BSK_PRINT(MSG_ERROR, "jPerturb() received num = %d. The value of num should be 2 <= num <= 6.", num);
+        BSK_PRINT(MSG_ERROR, "jPerturb() received num = %d. The value of num should be 2 <= num <= 6.", num)
         v3Set(NAN, NAN, NAN, ajtot);
         return;
     }
