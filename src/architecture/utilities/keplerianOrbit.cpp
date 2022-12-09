@@ -33,7 +33,6 @@ KeplerianOrbit::KeplerianOrbit()
     this->right_ascension = 0.0;
     this->mu = MU_EARTH;
     this->change_orbit();
-    return;
 }
 
 /*! The constructor requires orbital elements and a planet */
@@ -47,7 +46,6 @@ KeplerianOrbit::KeplerianOrbit(classicElements oe, GravBodyData* planet){
     this->right_ascension = oe.Omega;
     this->mu = planet->mu;
     this->change_orbit();
-    return;
 }
 
 /*! The copy constructor works with python copy*/
@@ -61,13 +59,11 @@ KeplerianOrbit::KeplerianOrbit(const KeplerianOrbit &orig){
     this->mu = orig.mu;
     this->planet = orig.planet;
     this->change_orbit();
-    return;
 }
 
 /*! Generic Destructor */
 KeplerianOrbit::~KeplerianOrbit()
 {
-    return;
 }
 
 /*!
@@ -179,7 +175,6 @@ void KeplerianOrbit::change_orbit(){
     this->orbital_energy = -this->mu / 2 / this->a();
     this->r_apogee = this->a() * (1 + this->e());
     this->r_perigee = this->a() * (1 - this->e());
-    return;
 }
 /*! This method only changes the outputs dependent on true anomaly so that one
  * orbit may be queried at various points along the orbit*/
@@ -195,14 +190,12 @@ void KeplerianOrbit::change_f(){
     this->eccentric_anomaly = safeAcos((this->e() + cos(this->f()) / (1 + this->e() * cos(this->f())))); //
     this->mean_anomaly = this->E() - this->e() * sin(this->E()); //
     this->flight_path_angle = safeAcos(sqrt((1 - pow(this->e(), 2)) / (1 - pow(this->e(), 2)*pow(cos(this->E()), 2)))); //
-    return;
 }
 
 /*! This method sets the planet being orbited */
 void KeplerianOrbit::set_planet(GravBodyData *plt){
     this->planet = plt;
     this->mu = plt->mu;
-    return;
 }
 
 
