@@ -26,7 +26,6 @@
 # Creation Date:  Sept 10 2019
 #
 
-import pytest
 import os, inspect
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import orbitalMotion
