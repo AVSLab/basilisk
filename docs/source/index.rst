@@ -206,6 +206,5 @@ Related Publications
    Vizard/VizardDownload
    Vizard/VizardReleaseNotes
    Vizard/VizardGUI
-   Vizard/vizardSettings
-   Vizard/vizardCommandLine
+   Vizard/vizardAdvanced/index
    Vizard/vizardGallery
