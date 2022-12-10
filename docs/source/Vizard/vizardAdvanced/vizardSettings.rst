@@ -1430,6 +1430,8 @@ The light command state can also be set directly from python using::
 However, if the input message is specified then this value is replaced with the content of the input message.
 
 
+.. _specifySpacecraftCAD_label:
+
 Specifying the Spacecraft CAD Model to use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The spacecraft Vizard data supports the use of ``modelDictionaryKey`` to override the default spacecraft shape
@@ -1475,7 +1477,9 @@ user can also just provide a simple string path value instead of a list of strin
 The image can be a ``jpg`` or ``png`` image and should have square dimensions, such as being 256x256
 in size.
 
-Specifying the Celestial Object CAD Model to use
+.. _specifyCelestialCAD_label:
+
+Specifying the Celestial Object CAD Model to Use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The gravity body data structure
 contains a ``modelDictionaryKey`` string which can specify what CAD model to use.  By default Vizard uses
