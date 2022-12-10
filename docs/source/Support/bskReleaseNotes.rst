@@ -56,6 +56,8 @@ Version |release|
 - Added ``color`` keyword support to the ``vizSupport.createCustomModel()`` method
 - Updated :ref:`cppModules-4` to explain how now the swig interface to vectors of input/output messages
   are now auto-generated when making Basilisk project
+- added documentation about creating and importing custom Unity addressable assets
+  in :ref:`vizardCustomUnityModels`.
 
 
 Version 2.1.4 (Oct. 1, 2022)
