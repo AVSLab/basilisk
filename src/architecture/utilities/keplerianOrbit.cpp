@@ -18,20 +18,12 @@
  */
 
 #include "keplerianOrbit.h"
-#include "architecture/utilities/astroConstants.h"
 #include <architecture/utilities/avsEigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 
 /*! This constructor initialized to an arbitrary orbit */
 KeplerianOrbit::KeplerianOrbit()
 {
-    this->semi_major_axis = 1E5;
-    this->eccentricity = 1E-5;
-    this->inclination = 0.0;
-    this->true_anomaly = 0.0;
-    this->argument_of_periapsis = 0.0;
-    this->right_ascension = 0.0;
-    this->mu = MU_EARTH;
     this->change_orbit();
 }
 
@@ -67,14 +59,14 @@ KeplerianOrbit::~KeplerianOrbit()
 /*!
     body position vector relative to planet
  */
-Eigen::Vector3d KeplerianOrbit::r_BP_P(){
+Eigen::Vector3d KeplerianOrbit::r_BP_P() const {
     return this->position_BP_P;
 }
 
 /*!
     body velocity vector relative to planet
  */
-Eigen::Vector3d KeplerianOrbit::v_BP_P(){
+Eigen::Vector3d KeplerianOrbit::v_BP_P() const{
     return this->velocity_BP_P;
 
 }
@@ -82,52 +74,52 @@ Eigen::Vector3d KeplerianOrbit::v_BP_P(){
 /*!
     angular momentum of body relative to planet
  */
-Eigen::Vector3d KeplerianOrbit::h_BP_P(){
+Eigen::Vector3d KeplerianOrbit::h_BP_P() const{
     return this->orbital_angular_momentum_P;
 }
 
 /*! return mean anomaly angle */
-double KeplerianOrbit::M(){return this->mean_anomaly;}
+double KeplerianOrbit::M() const {return this->mean_anomaly;}
 /*! return mean orbit rate */
-double KeplerianOrbit::n(){return this->mean_motion;};                              //!< return mean orbit rate
+double KeplerianOrbit::n() const {return this->mean_motion;};                              //!< return mean orbit rate
 /*! return orbit period */
-double KeplerianOrbit::P(){return this->orbital_period;};                           //!< return orbital period
+double KeplerianOrbit::P() const {return this->orbital_period;};                           //!< return orbital period
 /*! return true anomaly */
-double KeplerianOrbit::f(){return this->true_anomaly;};                             //!< return true anomaly
+double KeplerianOrbit::f() const {return this->true_anomaly;};                             //!< return true anomaly
 /*! return true anomaly rate */
-double KeplerianOrbit::fDot(){return this->true_anomaly_rate;};
+double KeplerianOrbit::fDot() const {return this->true_anomaly_rate;};
 /*! return right ascencion of the ascending node */
-double KeplerianOrbit::RAAN(){return this->right_ascension;};
+double KeplerianOrbit::RAAN() const {return this->right_ascension;};
 /*! return argument of periapses */
-double KeplerianOrbit::omega(){return this->argument_of_periapsis;};
+double KeplerianOrbit::omega() const {return this->argument_of_periapsis;};
 /*! return inclination angle */
-double KeplerianOrbit::i(){return this->inclination;};
+double KeplerianOrbit::i() const {return this->inclination;};
 /*! return eccentricty */
-double KeplerianOrbit::e(){return this->eccentricity;};
+double KeplerianOrbit::e() const {return this->eccentricity;};
 /*! return semi-major axis */
-double KeplerianOrbit::a(){return this->semi_major_axis;};
+double KeplerianOrbit::a() const {return this->semi_major_axis;};
 /*! return orbital angular momentum magnitude */
-double KeplerianOrbit::h(){return this->h_BP_P().norm();};
+double KeplerianOrbit::h() const {return this->h_BP_P().norm();};
 /*! return orbital energy */
 double KeplerianOrbit::Energy(){return this->orbital_energy;};
 /*! return orbit radius */
-double KeplerianOrbit::r(){return this->r_BP_P().norm();};
+double KeplerianOrbit::r() const {return this->r_BP_P().norm();};
 /*! return velocity magnitude */
-double KeplerianOrbit::v(){return this->v_BP_P().norm();};
+double KeplerianOrbit::v() const {return this->v_BP_P().norm();};
 /*! return radius at apoapses */
-double KeplerianOrbit::r_a(){return this->r_apogee;};
+double KeplerianOrbit::r_a() const {return this->r_apogee;};
 /*! return radius at periapses */
-double KeplerianOrbit::r_p(){return this->r_perigee;};
+double KeplerianOrbit::r_p() const {return this->r_perigee;};
 /*! return flight path angle */
-double KeplerianOrbit::fpa(){return this->flight_path_angle;};
+double KeplerianOrbit::fpa() const {return this->flight_path_angle;};
 /*! return eccentric anomaly angle */
-double KeplerianOrbit::E(){return this->eccentric_anomaly;};
+double KeplerianOrbit::E() const {return this->eccentric_anomaly;};
 /*! return semi-latus rectum or the parameter */
-double KeplerianOrbit::p(){return this->semi_parameter;};
+double KeplerianOrbit::p() const {return this->semi_parameter;};
 /*! return radius rate */
-double KeplerianOrbit::rDot(){return this->radial_rate;};
+double KeplerianOrbit::rDot() const {return this->radial_rate;};
 /*! return escape velocity */
-double KeplerianOrbit::c3(){return this->v_infinity;};
+double KeplerianOrbit::c3() const {return this->v_infinity;};
 
 /*! set semi-major axis */
 void KeplerianOrbit::set_a(double a){this->semi_major_axis = a; this->change_orbit();};
@@ -185,7 +177,7 @@ void KeplerianOrbit::change_f(){
     this->velocity_BP_P = cArray2EigenVector3d(v); //
     this->true_anomaly_rate = this->n() * pow(this->a(), 2) * sqrt(1 - pow(this->e(), 2)) / pow(this->r(), 2); //
     this->radial_rate = this->r() * this->fDot() * this->e() * sin(this->f()) / (1 + this->e() * cos(this->f())); //
-    this->eccentric_anomaly = safeAcos((this->e() + cos(this->f()) / (1 + this->e() * cos(this->f())))); //
+    this->eccentric_anomaly = safeAcos(this->e() + cos(this->f()) / (1 + this->e() * cos(this->f()))); //
     this->mean_anomaly = this->E() - this->e() * sin(this->E()); //
     this->flight_path_angle = safeAcos(sqrt((1 - pow(this->e(), 2)) / (1 - pow(this->e(), 2)*pow(cos(this->E()), 2)))); //
 }
