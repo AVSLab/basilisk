@@ -329,7 +329,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
 {
     this->CurrentSimNanos = CurrentSimNanos;
     std::string localPath;
-    CameraImageMsgPayload imageBuffer;
+    CameraImageMsgPayload imageBuffer = {};
     CameraImageMsgPayload imageOut;
     CameraConfigMsgPayload cameraMsg;
 

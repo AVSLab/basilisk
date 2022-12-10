@@ -87,6 +87,7 @@ class BSKDynamicModels():
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
         self.thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
         self.cameraMod = camera.Camera()
+        self.cameraMod2 = camera.Camera()
         self.ephemObject = ephemerisConverter.EphemerisConverter()
 
         # Initialize all modules
@@ -103,16 +104,26 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, None, 300)
         SimBase.AddModelToTask(self.taskName, self.vizInterface, None, 100)
         SimBase.AddModelToTask(self.taskCamera, self.cameraMod, None, 99)
+        SimBase.AddModelToTask(self.taskCamera, self.cameraMod2, None, 99)
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
 
     def SetCamera(self):
-        self.cameraMod.imageInMsg.subscribeTo(self.vizInterface.opnavImageOutMsg)
+        self.cameraMod.imageInMsg.subscribeTo(self.vizInterface.opnavImageOutMsgs[0])
+        self.cameraMod.ModelTag = "instrument"
+        self.cameraMod.cameraIsOn = 1
+        self.cameraMod.cameraID = 1
         self.cameraMod.saveImages = 0
-        # Note, if the `saveDir` variable is a path to a file, then the folders must already exist
-        # for the image saving to work.
-        self.cameraMod.saveDir = 'Test/'
+        # Note, the `saveDir` variable is a path to a file.  This file name is then
+        # appended with the frame number.
+        imgFolder = os.path.abspath(os.path.dirname(__file__)) + "/img/"
+        imgFileName = "cameraImages"
+        self.cameraMod.saveDir = imgFolder + imgFileName
+        if self.cameraMod.saveImages:
+            if not os.path.exists(imgFolder):
+                os.makedirs(imgFolder)
+            print("Saving camera ID:" + str(self.cameraMod.cameraID) + " Images to: " + self.cameraMod.saveDir)
 
         # Noise parameters
         # self.cameraMod.gaussian = 2
@@ -122,8 +133,6 @@ class BSKDynamicModels():
         self.cameraMod.blurParam = 3
 
         # Camera config
-        self.cameraMod.cameraIsOn = 1
-        self.cameraMod.cameraID = 1
         self.cameraRate = 60
         self.cameraMod.renderRate = int(mc.sec2nano(self.cameraRate))  # in
         self.cameraMRP_CB = [0., 0., 0.]  # Arbitrary camera orientation
@@ -137,6 +146,35 @@ class BSKDynamicModels():
         self.cameraMod.skyBox = 'black'
         self.cameraFocal = self.cameraSize[1]/2./np.tan(self.cameraMod.fieldOfView/2.)  # in m
 
+    def SetCamera2(self):
+        # this 2nd camera is setup, but not used in the FSW image processing
+        self.cameraMod2.imageInMsg.subscribeTo(self.vizInterface.opnavImageOutMsgs[1])
+        self.cameraMod2.ModelTag = "cam2"
+        self.cameraMod2.cameraIsOn = 1
+        self.cameraMod2.cameraID = 3
+        self.cameraMod2.saveImages = 0
+
+        self.cameraMod2.UpdateState(0)
+
+        imgFolder = os.path.abspath(os.path.dirname(__file__)) + "/imgTest/"
+        imgFileName = "instr2Images"
+        self.cameraMod2.saveDir = imgFolder + imgFileName
+        if self.cameraMod2.saveImages:
+            if not os.path.exists(imgFolder):
+                os.makedirs(imgFolder)
+            print("Saving camera ID:" + str(self.cameraMod2.cameraID) + " Images to: " + self.cameraMod2.saveDir)
+
+        self.cameraMod2.blurParam = 3
+
+        # Camera config
+        self.cameraMod2.renderRate = int(mc.sec2nano(self.cameraRate))  # in
+        self.cameraMod2.sigma_CB = [0., 0.5, 0.]
+        self.cameraMod2.cameraPos_B = [0., 0.2, 2.2]  # in meters
+        self.cameraMod2.resolution = self.cameraRez
+        self.cameraMod2.fieldOfView = np.deg2rad(55)
+        self.cameraMod2.parentName = self.scObject.ModelTag
+        self.cameraMod2.skyBox = 'black'
+
     def SetVizInterface(self, SimBase):
         self.vizInterface = vizSupport.enableUnityVisualization(
             SimBase, self.taskName, [self.scObject]
@@ -144,7 +182,8 @@ class BSKDynamicModels():
             , rwEffectorList=[self.rwStateEffector]
             )
         # setup OpNav behavior by connecting camera module config message
-        self.vizInterface.cameraConfInMsg.subscribeTo(self.cameraMod.cameraConfigOutMsg)
+        self.vizInterface.addCamMsgToModule(self.cameraMod.cameraConfigOutMsg)
+        self.vizInterface.addCamMsgToModule(self.cameraMod2.cameraConfigOutMsg)
         self.vizInterface.opNavMode = 2
         self.vizInterface.settings.skyBox = "black"
         self.vizInterface.settings.ambient = 0.5
@@ -348,5 +387,6 @@ class BSKDynamicModels():
         self.SetVizInterface(SimBase)
         self.SetEphemConvert()
         self.SetCamera()
+        self.SetCamera2()
 
 

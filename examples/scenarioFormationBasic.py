@@ -432,6 +432,7 @@ def run(show_plots):
                                                   , lightList=[[servicerLight], None, None]
                                                   # , saveFile=fileName,
                                                   )
+        # setup one-way instrument camera by having frameRate be 0
         vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
                                          cameraID=1, fieldOfView=40 * macros.D2R,
                                          resolution=[1024, 1024], renderRate=0.,

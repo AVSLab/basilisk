@@ -253,6 +253,7 @@ def run(showPlots, simTime=None):
     TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
 
+    # this overrides `saveImages` setup in BSK_OpNavDynamics
     TheBSKSim.get_DynModel().cameraMod.saveImages = 0
     # opNavMode 1 is used for viewing the spacecraft as it navigates, opNavMode 2 is for headless camera simulation
     TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
