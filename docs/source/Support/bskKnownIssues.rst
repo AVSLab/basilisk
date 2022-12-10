@@ -15,6 +15,8 @@ Version |release|
   The code compiles, but auto-completion etc. doesn't work in that module.
 - :ref:`hingedRigidBodyStateEffector` and :ref:`dualHingedRigidBodyStateEffector` module inertial state outputs are relative to the central gravity body,
   not the inertial frame.  This is now corrected.
+- Adding an instrument camera to :ref:`vizInterface` has changed.  See :ref:`vizardSettings` on how
+  to use the new method ``addCamMsgToModule()``.
 
 Version 2.1.4
 -------------
