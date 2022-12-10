@@ -66,7 +66,9 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
 {
     if (this->opNavMode > 0 || this->liveStream){
         /* setup zeroMQ */
-        this->bskImagePtr = NULL;
+        for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
+            this->bskImagePtrs[camCounter] = NULL;
+        }
         this->context = zmq_ctx_new();
         this->requester_socket = zmq_socket(this->context, ZMQ_REQ);
         zmq_connect(this->requester_socket, (this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber).c_str());
@@ -1003,16 +1005,16 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         /*! Enter in lock-step with the vizard to simulate a camera */
         /*!--OpNavMode set to 1 is to stay in lock-step with the viz at all time steps. It is a slower run, but provides visual capabilities during OpNav */
         /*!--OpNavMode set to 2 is a faster mode in which the viz only steps forward to the BSK time step if an image is requested. This is a faster run but nothing can be visualized post-run */
-        bool opNavMode2Status = false;
+        bool opNavModeStatus = false;
         if (this->opNavMode == 2) {
             for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
                 if ((CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 && this->cameraConfigBuffers[camCounter].isOn == 1) ||this->firstPass < 11) {
-                    opNavMode2Status = true;
+                    opNavModeStatus = true;
                 }
             }
         }
         if (this->opNavMode == 1
-            ||(this->opNavMode == 2 && opNavMode2Status)
+            ||(this->opNavMode == 2 && opNavModeStatus)
             || this->liveStream
             ){
             // Receive pong
@@ -1042,77 +1044,29 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_init(&empty_frame2);
             zmq_msg_init_data(&request_buffer, serialized_message,byteCount, message_buffer_deallocate, NULL);
 
-            zmq_msg_send(&request_header, requester_socket, ZMQ_SNDMORE);
-            zmq_msg_send(&empty_frame1, requester_socket, ZMQ_SNDMORE);
-            zmq_msg_send(&empty_frame2, requester_socket, ZMQ_SNDMORE);
-            zmq_msg_send(&request_buffer, requester_socket, 0);
-            
+            zmq_msg_send(&request_header, this->requester_socket, ZMQ_SNDMORE);
+            zmq_msg_send(&empty_frame1, this->requester_socket, ZMQ_SNDMORE);
+            zmq_msg_send(&empty_frame2, this->requester_socket, ZMQ_SNDMORE);
+            zmq_msg_send(&request_buffer, this->requester_socket, 0);
+
+
             for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
                 /*! - If the camera is requesting periodic images, request them */
                 if (this->opNavMode > 0 &&
                     CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 &&
                     this->cameraConfigBuffers[camCounter].isOn == 1)
                 {
-                    char buffer[10];
-                    zmq_recv(requester_socket, buffer, 10, 0);
-                    /*! -- Send request */
-                    void* img_message = malloc(13 * sizeof(char));
-                    std::string cmdMsg = "REQUEST_IMAGE_";
-                    cmdMsg += std::to_string(this->cameraConfigBuffers[camCounter].cameraID);
-                    memcpy(img_message, cmdMsg.c_str(), cmdMsg.length());
-                    zmq_msg_t img_request;
-                    zmq_msg_init_data(&img_request, img_message, 13, message_buffer_deallocate, NULL);
-                    zmq_msg_send(&img_request, requester_socket, 0);
-                    
-                    zmq_msg_t length;
-                    zmq_msg_t image;
-                    zmq_msg_init(&length);
-                    zmq_msg_init(&image);
-                    if (this->bskImagePtr != NULL) {
-                        /*! If the permanent image buffer is not populated, it will be equal to null*/
-                        free(this->bskImagePtr);
-                        this->bskImagePtr = NULL;
-                    }
-                    zmq_msg_recv(&length, requester_socket, 0);
-                    zmq_msg_recv(&image, requester_socket, 0);
-                    
-                    int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
-                    void *imagePoint= zmq_msg_data(&image);
-                    int32_t length_unswapped = *lengthPoint;
-                    /*! --  Endianness switch for the length of the buffer */
-                    int32_t imageBufferLength =((length_unswapped>>24)&0xff) | // move byte 3 to byte 0
-                    ((length_unswapped<<8)&0xff0000) | // move byte 1 to byte 2
-                    ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
-                    ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
-                    
-                    /*!-Copy the image buffer pointer, so that it does not get freed by ZMQ*/
-                    this->bskImagePtr = malloc(imageBufferLength*sizeof(char));
-                    memcpy(this->bskImagePtr, imagePoint, imageBufferLength*sizeof(char));
-                    
-                    /*! -- Write out the image information to the Image message */
-                    CameraImageMsgPayload imageData;
-                    imageData.timeTag = CurrentSimNanos;
-                    imageData.valid = 0;
-                    imageData.imagePointer = this->bskImagePtr;
-                    imageData.imageBufferLength = imageBufferLength;
-                    imageData.cameraID = this->cameraConfigBuffers[camCounter].cameraID;
-                    imageData.imageType = 4;
-                    if (imageBufferLength>0){imageData.valid = 1;}
-                    this->opnavImageOutMsgs[camCounter]->write(&imageData, this->moduleID, CurrentSimNanos);
-                    
-                    /*! -- Clean the messages to avoid memory leaks */
-                    zmq_msg_close(&length);
-                    zmq_msg_close(&image);
-                    
-                    /*! -- Ping the Viz back to continue the lock-step */
-                    void* keep_alive = malloc(4 * sizeof(char));
-                    memcpy(keep_alive, "PING", 4);
-                    zmq_msg_t request_life;
-                    zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
-                    zmq_msg_send(&request_life, this->requester_socket, 0);
-                    return;
-                    
+                    this->requestImage(camCounter, CurrentSimNanos);
                 }
+            }
+            if (opNavModeStatus) {
+                /*! -- Ping the Viz back to continue the lock-step */
+                void* keep_alive = malloc(4 * sizeof(char));
+                memcpy(keep_alive, "PING", 4);
+                zmq_msg_t request_life;
+                zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
+                zmq_msg_send(&request_life, this->requester_socket, 0);
+                return;
             }
             
         }
@@ -1163,7 +1117,69 @@ void VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg)
     Message<CameraImageMsgPayload> *msg;
     msg = new Message<CameraImageMsgPayload>;
     this->opnavImageOutMsgs.push_back(msg);
+
+    /* create image pointer */
+    void *imgPtr = NULL;
+    this->bskImagePtrs.push_back(imgPtr);
 }
+
+
+/*! Requests an image from Vizard and stores it in the image output message
+ */
+void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
+{
+    char buffer[10];
+    zmq_recv(this->requester_socket, buffer, 10, 0);
+    /*! -- Send request */
+    std::string cmdMsg = "REQUEST_IMAGE_";
+    cmdMsg += std::to_string(this->cameraConfigBuffers[camCounter].cameraID);
+    void* img_message = malloc(cmdMsg.length() * sizeof(char));
+    memcpy(img_message, cmdMsg.c_str(), cmdMsg.length());
+    zmq_msg_t img_request;
+    zmq_msg_init_data(&img_request, img_message, cmdMsg.length(), message_buffer_deallocate, NULL);
+    zmq_msg_send(&img_request, this->requester_socket, 0);
+
+    zmq_msg_t length;
+    zmq_msg_t image;
+    zmq_msg_init(&length);
+    zmq_msg_init(&image);
+    if (this->bskImagePtrs[camCounter] != NULL) {
+        /*! If the permanent image buffer is not populated, it will be equal to null*/
+        free(this->bskImagePtrs[camCounter]);
+        this->bskImagePtrs[camCounter] = NULL;
+    }
+    zmq_msg_recv(&length, this->requester_socket, 0);
+    zmq_msg_recv(&image, this->requester_socket, 0);
+
+    int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
+    void *imagePoint= zmq_msg_data(&image);
+    int32_t length_unswapped = *lengthPoint;
+    /*! --  Endianness switch for the length of the buffer */
+    int32_t imageBufferLength =((length_unswapped>>24)&0xff) | // move byte 3 to byte 0
+                                ((length_unswapped<<8)&0xff0000) | // move byte 1 to byte 2
+                                ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
+                                ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
+
+    /*!-Copy the image buffer pointer, so that it does not get freed by ZMQ*/
+    this->bskImagePtrs[camCounter] = malloc(imageBufferLength*sizeof(char));
+    memcpy(this->bskImagePtrs[camCounter], imagePoint, imageBufferLength*sizeof(char));
+
+    /*! -- Write out the image information to the Image message */
+    CameraImageMsgPayload imageData = {};
+    imageData.timeTag = CurrentSimNanos;
+    imageData.valid = 0;
+    imageData.imagePointer = this->bskImagePtrs[camCounter];
+    imageData.imageBufferLength = imageBufferLength;
+    imageData.cameraID = this->cameraConfigBuffers[camCounter].cameraID;
+    imageData.imageType = 4;
+    if (imageBufferLength>0){imageData.valid = 1;}
+    this->opnavImageOutMsgs[camCounter]->write(&imageData, this->moduleID, CurrentSimNanos);
+
+    /*! -- Clean the messages to avoid memory leaks */
+    zmq_msg_close(&length);
+    zmq_msg_close(&image);
+}
+
 
 
 /*! A cleaning method to ensure the message buffers are wiped clean.

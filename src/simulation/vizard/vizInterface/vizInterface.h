@@ -64,7 +64,7 @@ public:
                                                  communication. (1 - regular opNav, 2 - performance opNav) */
     bool saveFile;                              //!< [Bool] Set True if Vizard should save a file of the data.
     bool liveStream;                            //!< [Bool] Set True if Vizard should receive a live stream of BSK data.
-    void* bskImagePtr;                          /*!< [RUN] Permanent pointer for the image to be used in BSK
+    std::vector<void* >bskImagePtrs;            /*!< [RUN] vector of permanent pointers for the images to be used in BSK
                                                      without relying on ZMQ because ZMQ will free it (whenever, who knows) */
 
     std::vector<ReadFunctor<CameraConfigMsgPayload>> cameraConfInMsgs;        //!< [-] vector of incoming camera data messages
@@ -96,6 +96,8 @@ private:
     std::vector<MsgCurrStatus>spiceInMsgStatus;             //!< [-] status of the incoming planets' spice data messages
     std::vector <SpicePlanetStateMsgPayload> spiceMessage;  //!< [-] Spice message copies
     std::ofstream *outputStream;                            //!< [-] Output file stream opened in reset
+    void requestImage(size_t camCounter, uint64_t CurrentSimNanos);  //!<   request image from Vizard and store it in output img msg
+
 };
 
 #endif /* VIZ_INTERFACE_H */
