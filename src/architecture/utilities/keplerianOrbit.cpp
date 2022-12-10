@@ -28,26 +28,25 @@ KeplerianOrbit::KeplerianOrbit()
 }
 
 /*! The constructor requires orbital elements and a gravitational constant value */
-KeplerianOrbit::KeplerianOrbit(classicElements oe, const double mu){
-    this->semi_major_axis = oe.a;
-    this->eccentricity = oe.e;
-    this->inclination = oe.i;
-    this->true_anomaly = oe.f;
-    this->argument_of_periapsis = oe.omega;
-    this->right_ascension = oe.Omega;
-    this->mu = mu;
+KeplerianOrbit::KeplerianOrbit(classicElements oe, const double mu) : mu(mu),
+                                                                      semi_major_axis(oe.a),
+                                                                      eccentricity(oe.e),
+                                                                      inclination(oe.i),
+                                                                      argument_of_periapsis(oe.omega),
+                                                                      right_ascension(oe.Omega),
+                                                                      true_anomaly(oe.f){
     this->change_orbit();
 }
 
 /*! The copy constructor works with python copy*/
-KeplerianOrbit::KeplerianOrbit(const KeplerianOrbit &orig){
-    this->semi_major_axis = orig.semi_major_axis;
-    this->eccentricity = orig.eccentricity;
-    this->inclination = orig.inclination;
-    this->true_anomaly = orig.true_anomaly;
-    this->argument_of_periapsis = orig.argument_of_periapsis;
-    this->right_ascension = orig.right_ascension;
-    this->mu = orig.mu;
+KeplerianOrbit::KeplerianOrbit(const KeplerianOrbit &orig) : mu(orig.mu),
+                                                             semi_major_axis(orig.a()),
+                                                             eccentricity(orig.e()),
+                                                             inclination(orig.i()),
+                                                             argument_of_periapsis(orig.omega()),
+                                                             right_ascension(orig.RAAN()),
+                                                             true_anomaly(orig.f())
+{
     this->change_orbit();
 }
 
