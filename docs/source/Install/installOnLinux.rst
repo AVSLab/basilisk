@@ -23,6 +23,12 @@ In order to run Basilisk, the following software will be necessary. This documen
 -  (Optional) Get the `GitKraken <https://www.gitkraken.com>`__
    application to be able to pull and manage a copy of Basilisk
 
+.. caution::
+
+    Building Basilisk on Linux using Intel processors is being regularly tested.
+    With Basilisk version 2.1.5 we added
+    experimental support for Linux on ARM processors.  However, this option is not currently
+    tested on a regular manner.
 
 Dependencies
 ------------
