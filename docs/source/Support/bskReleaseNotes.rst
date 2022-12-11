@@ -58,6 +58,8 @@ Version |release|
   are now auto-generated when making Basilisk project
 - added documentation about creating and importing custom Unity addressable assets
   in :ref:`vizardCustomUnityModels`.
+- fixed :ref:`scenarioAttLocPoint` to display the Earth location and the associated cone
+  again in Vizard.  Updated :ref:`vizardSettings` description of ``addLocation()`` method.
 
 
 Version 2.1.4 (Oct. 1, 2022)

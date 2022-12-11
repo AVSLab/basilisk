@@ -838,6 +838,9 @@ field of view of this location.  Vizard can illustrate this ground location usin
                            , range=1000.0
                            )
 
+If you used the gravity factor to generate the planet states, you can pull the planet name
+by using ``earth.displayName`` as shown in :ref:`scenarioAttLocPoint`.
+
 The following table lists all required and optional arguments that can be provided to ``addLocation``:
 
 .. list-table:: Location Parameter Options
