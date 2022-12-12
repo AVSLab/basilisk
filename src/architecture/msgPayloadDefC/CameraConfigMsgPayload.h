@@ -40,6 +40,7 @@ typedef struct {
     double ppAperture;          //!<  (Optional) Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to turn off this parameter entirely.
     double ppFocalLength;       //!< [m] (Optional) Valid setting range: 0.001m to 0.3m. Value of 0 to turn off this parameter entirely.
     int ppMaxBlurSize;          //!< (Optional) Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to turn off this parameter entirely.
+    int updateCameraParameters; //!< If true, commands camera to update Instrument Camera to current message's parameters
 }CameraConfigMsgPayload;
 
 #endif

@@ -164,13 +164,12 @@ message VizMessage{
     }
 
     message CameraConfig{//ONLY REQUIRED IF CUSTOM CAMERA DESIRED
-        // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE
+        // ALL FIELDS CAN BE CHECKED IN ANY MESSAGE IF AN OPNAV IMAGE REQUEST IS RECEIVED WITH THE MESSAGE
         int64 cameraID = 1;  //[-] ID of the camera that took the snapshot
         string parentName = 2;  //[-] Name of the parent body to which the camera should be attached
         double fieldOfView = 3;  //[deg] Camera Field of View edge-to-edge along camera y axis
         repeated int64 resolution = 4;  //[pixels] Desired image width and height
-//        double focalLength = 5;   // [mm] Camera Focal Length
-//        repeated double sensorSize = 6;  //[mm] Size of the camera sensor-paired with resolution gives you pixel size
+        bool updateCameraParameters = 5; // If true, commands camera to update Instrument Camera to current message's parameters
         repeated double cameraPos_B = 7;  //[m] Camera position in body frame
         repeated double cameraDir_B = 8;  //[-] Rotation to the camera frame MRP
         uint64 renderRate = 9;  //[ns] Sim elapsed time between saved camera images
