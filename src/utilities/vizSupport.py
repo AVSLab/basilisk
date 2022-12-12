@@ -886,7 +886,7 @@ def createCameraConfigMsg(viz, **kwargs):
         return
     global firstSpacecraftName
     unitTestSupport.checkMethodKeyword(
-        ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'cameraPos_B', 'sigma_CB', 'skyBox', 'postProcessingOn', 'ppFocusDistance', 'ppAperture', 'ppFocalLength', 'ppMaxBlurSize'],
+        ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'cameraPos_B', 'sigma_CB', 'skyBox', 'postProcessingOn', 'ppFocusDistance', 'ppAperture', 'ppFocalLength', 'ppMaxBlurSize', 'updateCameraParameters'],
         kwargs)
 
     cameraConfigMsgPayload = messaging.CameraConfigMsgPayload()
@@ -1018,6 +1018,15 @@ def createCameraConfigMsg(viz, **kwargs):
             print('ERROR: vizSupport: ppMaxBlurSize must be non-negative integer value between [0, 4].')
             exit(1)
         cameraConfigMsgPayload.ppMaxBlurSize = val
+
+    if 'updateCameraParameters' in kwargs:
+        val = kwargs['updateCameraParameters']
+        if not isinstance(val, int) or val < 0:
+            print('ERROR: vizSupport: updateCameraParameters must be 0 or 1.')
+            exit(1)
+        cameraConfigMsgPayload.cameraID = val
+    else:
+        cameraConfigMsgPayload.cameraID = 0
 
     cameraConfigMsg = messaging.CameraConfigMsg().write(cameraConfigMsgPayload)
     cameraConfigMsg.this.disown()

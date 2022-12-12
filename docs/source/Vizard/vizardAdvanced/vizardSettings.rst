@@ -646,6 +646,12 @@ The following table illustrates the possible variables for the
       -
       - No
       - Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh.
+    * - ``updateCameraParameters``
+      - int
+      -
+      - No
+      - If true, commands camera to update Instrument Camera to current message's parameters
+
 
 
 
