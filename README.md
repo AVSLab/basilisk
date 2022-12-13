@@ -19,7 +19,6 @@ The following links contain installation instructions for the supported platform
 ### Basilisk Development guidelines ###
 
 * [Coding Guidelines](http://hanspeterschaub.info/basilisk/Support/Developer/CodingGuidlines.html)
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 
 ### Getting Started
