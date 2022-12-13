@@ -30,8 +30,8 @@ Basilisk Release Notes
         - support a way to do thread-safe messaging
 
 
-Version |release|
------------------
+Version |release| (Dec. 13, 2022)
+---------------------------------
 - Made the external module custom message definitions work again with the
   latest build system.
 - Fixed the custom RW in :ref:`simIncludeRW` to store the information regarding ``u_min`` in the RW class.
@@ -63,6 +63,7 @@ Version |release|
 - Added experimental support to build Basilisk on Linux with a computer using an ARM processor.
 - Updated :ref:`CameraConfigMsgPayload` to support the Vizard flag ``updateCameraParameters`` which
   allows the camera parameters to be updated live.
+- Updated documentation to discuss downloading Basilisk from GitHub
 
 
 Version 2.1.4 (Oct. 1, 2022)
@@ -719,7 +720,6 @@ Version 1.7.4
 - Added a message to the heading estimator in order to perform OpNav pointing
 - added a general message to the Sphinx HTML documentation landing page
 - updated the :ref:`bskModuleCheckoutList` with updated information and expectations
-- added a new help page on :ref:`makeBskFork`
 - Added a fault detection module for optical navigation
 - Added camera module to own the message and to add corruptions to images
 - Added a new support document :ref:`makingNewBskModule` on getting started writing BSK modules

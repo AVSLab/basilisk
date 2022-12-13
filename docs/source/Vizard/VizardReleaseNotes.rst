@@ -15,6 +15,35 @@ Release Notes
     - visualize MSM charge values
     - load custom Unity generated spacecraft and celestial body models at run time
 
+**Version 2.1.2 (Dec. 13, 2022)**
+
+- added instructions and public Unity project allowing users to import custom models and export them into Unity Addressable bundles that can be imported at runtime by Vizard by using the ``modelDictionaryKey`` setting in both Celestial Bodies and Spacecraft objects
+
+- fixed bug with ``OBJ`` imported models when applied to celestial body whose equatorial radius is set. Now if radius is set the model will be scaled such that largest dimension will equal the equatorial radius. If radius is not set, the model will be scaled to the settings specified by the user and then the model’s extents will be assumed to be the desired size of the celestial body in kilometers.
+
+- added clarifying text to the Adjust Object/Adjust Model panel to help users understand how the model will be handled internally by Vizard
+
+- added support for use of multiple Instrument Cameras in ``opNav`` mode
+
+- added support for new field “Color” in CustomModel import message: Vizard changes the albedo color of the imported model’s material to what is specified by user
+
+- moved playback speed +/- controls to fix bug on Windows machines when Vizard was maximized and the +/-buttons became inoperable
+
+- removed orbit lines layer from Standard Camera views (orbit lines will not be visible in any camera panels, only in the main view)
+
+- added Light marker spheres to visible layers in Standard and Instrument Camera views
+
+- fixed bug where true path and osculating orbit lines when using a small sat (minimum extent < 1 m) were not drawing at proper scaling
+
+.. warning::
+
+    - small sats whose minimum extent is < 1 m require the spacecraft local view scale to be increased from 1m being 1 Unity Unit to 1m being(1/minimum extent) Unity Units to properly calculate self-shadowing on the model. At present, a way to correctly scale the Instrument Camera post processing settings for small sat scaling has not been found and a solution is in work.
+
+    - native File Browser plugin does not support users running Vizard on Linux Ubuntu with Wayland. The plugin developer provides this work-around. To add support for Wayland, please create a shell-script that starts your application with X11 as backend, like this: ``GDK_BACKEND=x11 ./<applicationName>.x86_64`` or ``GDK_BACKEND=x11 ./<applicationName>.x64``
+
+
+
+
 **Version 2.1.1 (Oct. 1, 2022)**
 
 - added support for loading spacecraft and celestial body models created by users
