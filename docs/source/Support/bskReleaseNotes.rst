@@ -30,8 +30,13 @@ Basilisk Release Notes
         - support a way to do thread-safe messaging
 
 
-Version |release| (Dec. 13, 2022)
----------------------------------
+Version |release|
+-----------------
+- text here
+
+
+Version 2.1.5 (Dec. 13, 2022)
+-----------------------------
 - Made the external module custom message definitions work again with the
   latest build system.
 - Fixed the custom RW in :ref:`simIncludeRW` to store the information regarding ``u_min`` in the RW class.
