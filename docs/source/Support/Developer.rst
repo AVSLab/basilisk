@@ -10,7 +10,6 @@ The following support files help with writing Basilisk modules.
 
    Developer/CodingGuidlines
    Developer/Debugging
-   Developer/makeBskFork
    Developer/makingNewBskModule
    Developer/addSphinxDoc
    Developer/bskModuleCheckoutList
