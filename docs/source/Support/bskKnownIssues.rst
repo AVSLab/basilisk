@@ -10,6 +10,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- text here
+
+Version 2.1.5
+-------------
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found
   when opNav is included.
   The code compiles, but auto-completion etc. doesn't work in that module.
