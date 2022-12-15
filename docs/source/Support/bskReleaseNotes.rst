@@ -42,6 +42,7 @@ Version |release|
   includes, dependencies, and compiler flags. For an example of the implications of this refactor review the before
   and after of the ``src/cmake/usingOpenCV.cmake`` file.
 - updated :ref:`unitTestSupport` to create the file path in a platform agnostic manner
+- Created a :ref:`sensorThermal` module to model the temperature of a sensor using radiative heat transfer
 
 Version 2.1.6 (Jan. 21, 2023)
 -----------------------------
