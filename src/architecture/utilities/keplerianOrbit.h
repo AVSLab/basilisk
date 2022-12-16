@@ -20,7 +20,6 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include <architecture/utilities/orbitalMotion.h>
 
 
@@ -30,7 +29,7 @@
 class KeplerianOrbit {
 public:
     KeplerianOrbit();
-    KeplerianOrbit(classicElements oe, GravBodyData* planet);
+    KeplerianOrbit(classicElements oe, const double mu);
     KeplerianOrbit(const KeplerianOrbit &orig);
     ~KeplerianOrbit();
 
@@ -60,7 +59,7 @@ public:
     double rDot();
     double c3();
     classicElements oe();
-    void set_planet(GravBodyData* plt);
+    void set_mu(const double mu);
     void set_a(double a);
     void set_e(double e);
     void set_i(double i);
@@ -69,7 +68,6 @@ public:
     void set_f(double f);
     
 private:
-    GravBodyData* planet;
     double mu;
     double semi_major_axis; 
     double eccentricity;

@@ -35,16 +35,15 @@ KeplerianOrbit::KeplerianOrbit()
     this->change_orbit();
 }
 
-/*! The constructor requires orbital elements and a planet */
-KeplerianOrbit::KeplerianOrbit(classicElements oe, GravBodyData* planet){
-    this->set_planet(planet);
+/*! The constructor requires orbital elements and a gravitational constant value */
+KeplerianOrbit::KeplerianOrbit(classicElements oe, const double mu){
     this->semi_major_axis = oe.a;
     this->eccentricity = oe.e;
     this->inclination = oe.i;
     this->true_anomaly = oe.f;
     this->argument_of_periapsis = oe.omega;
     this->right_ascension = oe.Omega;
-    this->mu = planet->mu;
+    this->mu = mu;
     this->change_orbit();
 }
 
@@ -57,7 +56,6 @@ KeplerianOrbit::KeplerianOrbit(const KeplerianOrbit &orig){
     this->argument_of_periapsis = orig.argument_of_periapsis;
     this->right_ascension = orig.right_ascension;
     this->mu = orig.mu;
-    this->planet = orig.planet;
     this->change_orbit();
 }
 
@@ -192,10 +190,9 @@ void KeplerianOrbit::change_f(){
     this->flight_path_angle = safeAcos(sqrt((1 - pow(this->e(), 2)) / (1 - pow(this->e(), 2)*pow(cos(this->E()), 2)))); //
 }
 
-/*! This method sets the planet being orbited */
-void KeplerianOrbit::set_planet(GravBodyData *plt){
-    this->planet = plt;
-    this->mu = plt->mu;
+/*! This method sets the gravitational constants of the body being orbited */
+void KeplerianOrbit::set_mu(const double mu){
+    this->mu = mu;
 }
 
 

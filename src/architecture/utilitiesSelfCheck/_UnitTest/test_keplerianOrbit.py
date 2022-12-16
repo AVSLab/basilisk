@@ -27,7 +27,6 @@
 #
 
 import os, inspect
-from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import orbitalMotion
 from Basilisk.architecture import keplerianOrbit
 from copy import copy
@@ -80,9 +79,7 @@ def unitKeplerianOrbit(show_plots=False):
 
     # constructor with arguments
     oe = orb.oe()
-    earth = gravityEffector.GravBodyData()
-    earth.mu = orbitalMotion.MU_EARTH
-    orb2 = keplerianOrbit.KeplerianOrbit(oe, earth)
+    orb2 = keplerianOrbit.KeplerianOrbit(oe, orbitalMotion.MU_EARTH)
     assert orb2.r_BP_P() == orb.r_BP_P()
     if not orb2.r_BP_P() == orb.r_BP_P():
         testFailCount += 1
