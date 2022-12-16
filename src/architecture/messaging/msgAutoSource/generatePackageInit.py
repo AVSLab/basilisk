@@ -1,6 +1,4 @@
-import parse
-import os,errno
-import shutil
+import os
 import sys
 
 path = os.path.dirname(os.path.abspath(__file__))
