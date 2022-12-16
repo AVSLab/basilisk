@@ -32,7 +32,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Refactored :ref:`keplerianOrbit` to not depend on the ``gravityEffector`` class
+- Updated Basilisk install documentation to discuss accessing source code from GitHub.com
 
 
 Version 2.1.5 (Dec. 13, 2022)
