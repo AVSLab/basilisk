@@ -10,12 +10,7 @@ Download Source Code
 .. important::
 
     The Basilisk repo has moved from BitBucket to GitHub.  If you already downloaded the source
-    code, you don't need to download the repo again.  Rather, using the terminal change your directory
-    to be  the Basilisk source code root folder, and then execute the command::
-
-        git remote set-url origin https://git-repo/new-repository.git
-
-    This will point your copy to the new repo.
+    code, it is recommended that you download a fresh copy.
 
 .. image:: ../_images/static/Basilisk-Logo.png
    :align: right
