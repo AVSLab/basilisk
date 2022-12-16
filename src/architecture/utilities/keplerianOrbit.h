@@ -20,8 +20,8 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include <architecture/utilities/orbitalMotion.h>
+#include "architecture/utilities/astroConstants.h"
 
 
 //! @brief The KeplerianOrbit class represents an elliptical orbit and provides a coherent set of
@@ -30,37 +30,37 @@
 class KeplerianOrbit {
 public:
     KeplerianOrbit();
-    KeplerianOrbit(classicElements oe, GravBodyData* planet);
+    KeplerianOrbit(classicElements oe, const double mu);
     KeplerianOrbit(const KeplerianOrbit &orig);
     ~KeplerianOrbit();
 
 
-    Eigen::Vector3d r_BP_P();              //!< body position vector relative to planet
-    Eigen::Vector3d v_BP_P();              //!< body velocity vector relative to planet
-    Eigen::Vector3d h_BP_P(); //!< angular momentum of body relative to planet
-    double M();
-    double n();
-    double P();
-    double f();
-    double fDot();
-    double RAAN();
-    double omega();
-    double i();
-    double e();
-    double a();
-    double h();
+    Eigen::Vector3d r_BP_P() const;              //!< body position vector relative to planet
+    Eigen::Vector3d v_BP_P() const;              //!< body velocity vector relative to planet
+    Eigen::Vector3d h_BP_P() const; //!< angular momentum of body relative to planet
+    double M() const;
+    double n() const;
+    double P() const;
+    double f() const;
+    double fDot() const;
+    double RAAN() const;
+    double omega() const;
+    double i() const;
+    double e() const;
+    double a() const;
+    double h() const;
     double Energy();
-    double r();
-    double v();
-    double r_a();
-    double r_p();
-    double fpa();
-    double E();
-    double p();
-    double rDot();
-    double c3();
+    double r() const;
+    double v() const;
+    double r_a() const;
+    double r_p() const;
+    double fpa() const;
+    double E() const;
+    double p() const;
+    double rDot() const;
+    double c3() const;
     classicElements oe();
-    void set_planet(GravBodyData* plt);
+    void set_mu(const double mu);
     void set_a(double a);
     void set_e(double e);
     void set_i(double i);
@@ -69,27 +69,26 @@ public:
     void set_f(double f);
     
 private:
-    GravBodyData* planet;
-    double mu;
-    double semi_major_axis; 
-    double eccentricity;
-    double inclination;
-    double argument_of_periapsis;
-    double right_ascension;
-    double true_anomaly;
-    double true_anomaly_rate;
-    double orbital_period;
-    double orbital_energy;
-    double v_infinity;
-    double orbit_radius;
-    double radial_rate;
-    double r_apogee;
-    double r_perigee;
-    double semi_parameter;
-    double flight_path_angle;
-    double eccentric_anomaly;
-    double mean_motion;
-    double mean_anomaly;
+    double mu = MU_EARTH;
+    double semi_major_axis = 1E5;
+    double eccentricity = 1E-5;
+    double inclination{};
+    double argument_of_periapsis{};
+    double right_ascension{};
+    double true_anomaly{};
+    double true_anomaly_rate{};
+    double orbital_period{};
+    double orbital_energy{};
+    double v_infinity{};
+    double orbit_radius{};
+    double radial_rate{};
+    double r_apogee{};
+    double r_perigee{};
+    double semi_parameter{};
+    double flight_path_angle{};
+    double eccentric_anomaly{};
+    double mean_motion{};
+    double mean_anomaly{};
     Eigen::Vector3d orbital_angular_momentum_P;
     Eigen::Vector3d position_BP_P;
     Eigen::Vector3d velocity_BP_P;
