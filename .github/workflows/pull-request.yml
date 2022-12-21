@@ -187,6 +187,7 @@ jobs:
       - name: "Build basilisk"
         run: | 
               export PATH=`"${pythonLocation}"`:$PATH
+              echo $PATH
               source .venv/bin/activate && python conanfile.py
       - name: "Run pytest"
         run: source .venv/bin/activate && cd src && pytest -n 3 -m "not scenarioTest"
