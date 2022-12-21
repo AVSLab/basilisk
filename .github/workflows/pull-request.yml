@@ -130,3 +130,63 @@ jobs:
           venv\Scripts\activate
           cd src\fswAlgorithms
           (Get-ChildItem -Directory).FullName | ForEach-Object { cd $_; pytest -n 2; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}}
+
+  build-macos:
+    name: Build Macos
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: ["3.9"]
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+#          cache: 'pip'
+      - name: Cache conan packages
+        id: cache-conan
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-conan-packages
+        with:
+          # conan cache files are stored in `~/.conan` on Linux/macOS
+          path: ~/.conan
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+      - name: Cache pip modules
+        id: cache-pip
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-pip-modules
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/bskPkgRequired.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: "Install swig and cmake"
+        run: brew update
+#      - name: "Install swig and cmake"
+#        run: brew doctor
+      - name: "Install swig and cmake"
+        run: brew install swig cmake && brew link cmake
+#        run: |
+#            brew update
+#            brew doctor
+#            brew install swig cmake && brew link cmake
+      - name: "Create python virtual env"
+        run: python -m venv .venv
+      - name: "Install wheel and conan package"
+        run: source .venv/bin/activate && pip install wheel conan && pip install pytest-xdist
+      - name: "Build basilisk"
+        run: | 
+              export PATH=`"${pythonLocation}"`:$PATH
+              source .venv/bin/activate && python conanfile.py
+      - name: "Run pytest"
+        run: source .venv/bin/activate && cd src && pytest -n 3 -m "not scenarioTest"
