@@ -73,6 +73,81 @@ jobs:
           path: ctest/ctest-results-${{ matrix.python-version }}.json
         if: ${{ always() }}
 
+  build-macos:
+    name: Build Macos
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: ["3.9"]
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: nschloe/action-checkout-with-lfs-cache@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+#          cache: 'pip'
+#      - name: Cache conan packages
+#        id: cache-conan
+#        uses: actions/cache@v3
+#        env:
+#          cache-name: cache-conan-packages
+#        with:
+#          # conan cache files are stored in `~/.conan` on Linux/macOS
+#          path: ~/.conan
+#          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
+#          restore-keys: |
+#            ${{ runner.os }}-build-${{ env.cache-name }}-
+#      - name: Cache pip modules
+#        id: cache-pip
+#        uses: actions/cache@v3
+#        env:
+#          cache-name: cache-pip-modules
+#        with:
+#          path: ~/.cache/pip
+#          key: ${{ runner.os }}-pip-${{ hashFiles('**/bskPkgRequired.txt') }}
+#          restore-keys: |
+#            ${{ runner.os }}-pip-
+      - name: "Install python packages"
+        run: pip install wheel conan pytest-xdist
+      - name: "Install swig and cmake"
+        run: brew update
+      - name: "Install swig and cmake"
+        run: brew install swig cmake && brew link cmake
+      - name: "Create python virtual env"
+        run: python -m venv .venv
+      - name: "Install wheel and conan package"
+        run: source .venv/bin/activate && pip install wheel conan==1.59.0 && pip install pytest-xdist
+      - name: "Build basilisk"
+        run: | 
+              export PATH=${{env.Python_ROOT_DIR}}:$PATH
+              echo $PATH
+              source .venv/bin/activate && python conanfile.py
+      - name: "Run Python Tests"
+        run: |
+          source .venv/bin/activate
+          cd src && pytest -n 2 -m "not scenarioTest" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+      - name: "Upload pytest test results"
+        uses: actions/upload-artifact@v3
+        with:
+          name: pytest-results-${{ matrix.python-version }}
+          path: junit/test-results-${{ matrix.python-version }}.xml
+        # Use always() to always run this step to publish test results when there are test failures
+        if: ${{ always() }}
+      - name: "Run C/C++ Tests"
+        working-directory: ./dist3
+        run: ctest --gtest_output "json:../ctest/ctest-results-linux-${{ matrix.python-version }}.json"
+      - name: "Upload Google Test CTest results"
+        uses: actions/upload-artifact@v3
+        with:
+          name: ctest-results-${{ matrix.python-version }}
+          path: ctest/ctest-results-${{ matrix.python-version }}.json
+        if: ${{ always() }}
+
   build-windows:
     name: Build Windows
     runs-on: windows-2019
@@ -120,7 +195,7 @@ jobs:
         run: |
           venv\Scripts\activate
           python conanfile.py
-      - name: "Test Simulation Python"
+      - name: "Python Simulation Tests"
         shell: pwsh
         run: |
           Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name MPLBACKEND -Value ${MPLBACKEND}
