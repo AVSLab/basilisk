@@ -186,7 +186,7 @@ jobs:
         run: source .venv/bin/activate && pip install wheel conan && pip install pytest-xdist
       - name: "Build basilisk"
         run: | 
-              export PATH=`"${pythonLocation}"`:$PATH
+              export PATH=`"${env.Python_ROOT_DIR}"`:$PATH
               echo $PATH
               source .venv/bin/activate && python conanfile.py
       - name: "Run pytest"
