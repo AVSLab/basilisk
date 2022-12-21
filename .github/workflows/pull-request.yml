@@ -1,10 +1,7 @@
 name: "Pull Request Test"
 
 on:
-  push:
-    branches: [ "develop" ]
   pull_request:
-    branches: [ "develop" ]
 
 jobs:
   build-linux:
@@ -66,3 +63,70 @@ jobs:
           path: junit/test-results-${{ matrix.python-version }}.xml
         # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        python-version: ["3.9"]
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    env:
+      MPLBACKEND: agg
+    steps:
+      - name: Checkout code
+        uses: nschloe/action-checkout-with-lfs-cache@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: '**/bskPkgRequired.txt'
+      - name: Choco help
+        uses: crazy-max/ghaction-chocolatey@v2
+        with:
+          args: -h
+      - name: "Install swig and cmake"
+        shell: pwsh
+        run: choco install swig cmake -y
+      - name: "Create python virtual env"
+        shell: pwsh
+        run: python -m venv venv
+      - name: "Install wheel and conan package"
+        shell: pwsh
+        run: |
+            venv\Scripts\activate
+            pip install wheel conan parse six pytest-xdist
+      - name: "Add basilisk and cmake path to env path"
+        shell: pwsh
+        run: |
+          $oldpath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
+          $newpath = “$oldpath;${{ env.GITHUB_WORKSPACE }}\dist3\Basilisk;C:\Program Files\CMake\bin”
+          Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
+      - name: "Build basilisk"
+        shell: pwsh
+        run: |
+          venv\Scripts\activate
+          python conanfile.py
+      - name: "Test Simulation"
+        shell: pwsh
+        run: |
+          Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name MPLBACKEND -Value ${MPLBACKEND}
+          venv\Scripts\activate
+          cd src\simulation
+          (Get-ChildItem -Directory).FullName | ForEach-Object { cd $_; pytest -n 2 -m "not scenarioTest"; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}}
+      - name: "Test Architecture"
+        shell: pwsh
+        run: |
+          venv\Scripts\activate
+          cd src\architecture
+          (Get-ChildItem -Directory).FullName | ForEach-Object { cd $_; pytest -n 2; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}}
+      - name: "Test fswAlgorithms"
+        shell: pwsh
+        run: |
+          venv\Scripts\activate
+          cd src\fswAlgorithms
+          (Get-ChildItem -Directory).FullName | ForEach-Object { cd $_; pytest -n 2; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}}

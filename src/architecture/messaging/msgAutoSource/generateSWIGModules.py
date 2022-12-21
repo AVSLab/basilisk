@@ -1,4 +1,4 @@
-import sys, os
+import sys
 
 if __name__ == "__main__":
      moduleOutputPath = sys.argv[1]
