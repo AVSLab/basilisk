@@ -52,7 +52,12 @@ To redirect the output of a C++ module ``someCppModule`` to this stand-alone mes
     someCppModule.dataOutMsg = cppStandAloneMsg
 
 
-If you want to record the output of ``someCModule`` be sure to record ``cStandAloneMsg`` instead of ``someCModule.dataOutMsg``.  The later is no longer being written to.  In C++ we are setting ``cppStandAloneMsg`` equal to ``someCppModule.dataOutMsg``.  Here recording either will give the same result.
+.. note::
+
+    If you want to record the output of ``someCModule`` be sure to record ``cStandAloneMsg``
+    instead of ``someCModule.dataOutMsg``.  The later is no longer being written to.  In C++
+    we are setting ``cppStandAloneMsg`` equal to ``someCppModule.dataOutMsg``.  Here recording either
+    will give the same result.
 
 To see the message states of both the module internal message objects and the stand-alone messages, the sample script shows how to use ``.read()`` to read the current state of the message object.  This will return a copy of the message payload structure.  The same method can be used to access both C and C++ wrapped messages.  After executing the script you should see the following terminal output:
 
