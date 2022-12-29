@@ -64,9 +64,15 @@ After the simulation completes, the recorded data is stored inside the ``msgRec`
 
 Clearing the Message Recorder Data Log
 --------------------------------------
-Note that the messager recorder will continuously add message data to its internal data vectors.  If you start and stop the simulation, pull the data, resume the simulation and so on, this message data recording process is cumulative.  If you stop the simulation and want to clear the message recorder data log so that only new data is recorded, you can clear the message recorder module data buffer using the ``.clear()`` method.  For example, assume a message recorder ``scRec`` has been setup and needs to be cleared, this is done with::
+Note that the message recorder will continuously add message data to its internal data vectors.  If you start and stop the simulation, pull the data, resume the simulation and so on, this message data recording process is cumulative.  If you stop the simulation and want to clear the message recorder data log so that only new data is recorded, you can clear the message recorder module data buffer using the ``.clear()`` method.  For example, assume a message recorder ``scRec`` has been setup and needs to be cleared, this is done with::
 
     scRec.clear()
 
+Reading the Current Value of a Message
+--------------------------------------
+If you have a message `msg` and want to pull a current copy of the message data or payload, you can use
+this method on both C and C++ wrapped message objects::
+
+    msgCopy = msg.read()
 
 
