@@ -142,7 +142,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void linkInStates(DynParamManager& statesIn); //!< class method
     void registerProperties(DynParamManager& statesIn);
-    void computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N);
+    Eigen::Vector3d computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N);
     void updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N);
     void updateEnergyContributions(Eigen::Vector3d r_CN_N, double & orbPotEnergyContr);  //!< -- Orbital Potential Energy Contributions
     void setGravBodies(std::vector<GravBodyData *> gravBodies); //!< class method

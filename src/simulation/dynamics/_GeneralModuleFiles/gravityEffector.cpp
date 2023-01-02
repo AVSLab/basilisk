@@ -641,7 +641,6 @@ void GravityEffector::registerProperties(DynParamManager& statesIn)
 {
     Eigen::Vector3d gravInit;
     gravInit.fill(0.0);
-    this->gravProperty = statesIn.createProperty(this->vehicleGravityPropName, gravInit);
     this->inertialPositionProperty = statesIn.createProperty(this->inertialPositionPropName, gravInit);
     this->inertialVelocityProperty = statesIn.createProperty(this->inertialVelocityPropName, gravInit);
 
@@ -663,7 +662,7 @@ void GravityEffector::linkInStates(DynParamManager& statesIn)
     @param r_cF_N is position of center of mass of s/c wrt frame it is stored/integrated in in spacecraft
     @param rDot_cF_N is the derivative of above
 */
-void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N)
+Eigen::Vector3d GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N)
 {
     std::vector<GravBodyData *>::iterator it;
     uint64_t systemClock = (uint64_t) this->timeCorr->data()[0];
@@ -702,7 +701,7 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
         (*((*it)->muPlanet))(0,0) = (*it)->mu;
     }
 
-    *this->gravProperty = rDotDot_cF_N;
+    return rDotDot_cF_N;
 }
 /*!
     Calculate gravitational acceleration of s/c wrt inertial (no central body) or wrt central body
