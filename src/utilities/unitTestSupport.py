@@ -101,7 +101,7 @@ def isArrayEqual(result, truth, dim, accuracy):
 
 
 def isArrayEqualRelative(result, truth, dim, accuracy):
-    """Compare relative accuracy of two arracy"""
+    """Compare relative accuracy of two arrays"""
     # the result array is of dimension dim, no time stamp
     # the truth array is of dimesion dim, no time stamp
     if dim < 1:
@@ -164,10 +164,10 @@ def compareVector(trueStates, dataStates, accuracy, msg, testFailCount, testMess
 
 def compareArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
     """Compare two arrays size and values and check absolute accuracy"""
-    if (len(trueStates) != len(dataStates)):
+    if len(trueStates) != len(dataStates):
         testFailCount += 1
         testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
-    elif (len(trueStates) == 0 or len(dataStates) == 0):
+    elif len(trueStates) == 0 or len(dataStates) == 0:
         testFailCount += 1
         testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
     else:
