@@ -1098,6 +1098,75 @@ def scAccumDV():
 
     return [testFailCount, ''.join(testMessages)]
 
+def centerOfMassOffset(show_plots):
+    # initialize simulation class
+    simBase = SimulationBaseClass.SimBaseClass()
+    simBase.SetProgressBar(True)
+
+    # simulation timestep
+    timeStep = macros.sec2nano(0.1)
+
+    # dynamics process and task
+    dynProcess = simBase.CreateNewProcess('dynProcess')
+    dynProcess.addTask(simBase.CreateNewTask('dynTask', timeStep))
+
+    # setup spacecraft 1
+    sc1 = spacecraft.Spacecraft()
+    sc1.ModelTag = 'sc1'
+    sc1.hub.r_CN_NInit = [5934995.24851425, 3426599.73774316, -76.8354385320663]
+    sc1.hub.v_CN_NInit = [491.178336784587, -850.601844642852, 7562.94203681626]
+    sc1.hub.omega_BN_BInit = [2.0, 2.0, 2.0]
+    sc1.hub.r_BcB_B = [1.0, 0.0, 0.0]
+
+    # setup spacecraft 2
+    sc2 = spacecraft.Spacecraft()
+    sc2.ModelTag = 'sc2'
+    sc2.hub.r_CN_NInit = [5934995.24851425, 3426599.73774316, -76.8354385320663]
+    sc2.hub.v_CN_NInit = [491.178336784587, -850.601844642852, 7562.94203681626]
+    sc2.hub.omega_BN_BInit = [2.0, 2.0, 2.0]
+
+    # gravity
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True
+    sc1.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    sc2.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+
+    # data logging
+    sc1StateRecorder = sc1.scStateOutMsg.recorder()
+    sc2StateRecorder = sc2.scStateOutMsg.recorder()
+    # sc1RWRecorder = sc1_rwStateEffector.rwSpeedOutMsg.recorder()
+    # sc2RWRecorder = sc2_rwStateEffector.rwSpeedOutMsg.recorder()
+
+    # add models to tasks
+    simBase.AddModelToTask('dynTask', sc1)
+    simBase.AddModelToTask('dynTask', sc2)
+    simBase.AddModelToTask('dynTask', sc1StateRecorder)
+    simBase.AddModelToTask('dynTask', sc2StateRecorder)
+    # simBase.AddModelToTask('dynTask', sc1RWRecorder)
+    # simBase.AddModelToTask('dynTask', sc2RWRecorder)
+
+    # execute simulation
+    simBase.InitializeSimulation()
+    simBase.ConfigureStopTime(int(2400. * macros.sec2nano(1)))
+    simBase.ExecuteSimulation()
+
+    # retrieve the logged data
+    t = sc1StateRecorder.times() * macros.NANO2SEC
+    sc1_r_CN_N = sc1StateRecorder.r_CN_N
+    sc2_r_CN_N = sc2StateRecorder.r_CN_N
+
+    # figure: position error
+    fig = plt.Figure()
+    plt.plot(t, sc1_r_CN_N[:, 0] - sc2_r_CN_N[:, 0])
+
+    plt.plot(t, sc1_r_CN_N[:, 1] - sc2_r_CN_N[:, 1])
+
+    plt.plot(t, sc1_r_CN_N[:, 2] - sc2_r_CN_N[:, 2])
+    if show_plots:
+        plt.show()
+        plt.close('all')
+
 if __name__ == "__main__":
     # scAttRef(True, 1e-3)
     # SCTranslation(True)
@@ -1105,4 +1174,5 @@ if __name__ == "__main__":
     # SCRotation(True)
     # SCTransBOE(True)
     # SCPointBVsPointC(True)
-    scOptionalRef(True, 0.001)
+    #scOptionalRef(True, 0.001)
+    centerOfMassOffset(True)
