@@ -109,7 +109,6 @@ private:
     Eigen::MatrixXd *cPrime_B;           //!< [m/s] Body time derivative of c_B
     Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
     Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
-    Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::MatrixXd *sysTime;            //!< [s] System time
 
 private:
