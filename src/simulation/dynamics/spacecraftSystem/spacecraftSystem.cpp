@@ -134,7 +134,6 @@ void SpacecraftUnit::linkInStatesSC(DynParamManager& statesIn)
     // - Get access to the hubs position and velocity in the property manager
     this->inertialPositionProperty = statesIn.getPropertyReference(this->gravField.inertialPositionPropName);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->gravField.inertialVelocityPropName);
-    this->g_N = statesIn.getPropertyReference(this->gravField.vehicleGravityPropName);
 
     return;
 }
@@ -181,7 +180,7 @@ void SpacecraftUnit::initializeDynamicsSC(DynParamManager& statesIn)
         (*stateIt)->prependSpacecraftNameToStates();
     }
 
-    // - Register the gravity properties with the dynManager, 'erbody wants g_N!
+    // - Register the gravity properties with the dynManager
     this->gravField.registerProperties(statesIn);
 
     // - Register the hub states
@@ -668,7 +667,7 @@ void SpacecraftSystem::equationsOfMotionSC(double integTimeSeconds, double timeS
     Eigen::Vector3d rLocal_CN_N = spacecraft.hubR_N->getState() + dcm_NB*(*spacecraft.c_B);
     Eigen::Vector3d vLocal_CN_N = spacecraft.hubV_N->getState() + dcm_NB*(*spacecraft.cDot_B);
 
-    spacecraft.gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
+    Eigen::Vector3d gLocal_N = spacecraft.gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
 
     // - Loop through dynEffectors to compute force and torque on the s/c
     std::vector<DynamicEffector*>::iterator dynIt;
@@ -695,7 +694,7 @@ void SpacecraftSystem::equationsOfMotionSC(double integTimeSeconds, double timeS
         spacecraft.backSubMatricesContributions.vecRot.setZero();
 
         // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-        (*it)->updateContributions(integTimeSeconds, spacecraft.backSubMatricesContributions, spacecraft.hubSigma->getState(), spacecraft.hubOmega_BN_B->getState(), *spacecraft.g_N);
+        (*it)->updateContributions(integTimeSeconds, spacecraft.backSubMatricesContributions, spacecraft.hubSigma->getState(), spacecraft.hubOmega_BN_B->getState());
         spacecraft.hub.hubBackSubMatrices.matrixA += spacecraft.backSubMatricesContributions.matrixA;
         spacecraft.hub.hubBackSubMatrices.matrixB += spacecraft.backSubMatricesContributions.matrixB;
         spacecraft.hub.hubBackSubMatrices.matrixC += spacecraft.backSubMatricesContributions.matrixC;
@@ -727,9 +726,6 @@ void SpacecraftSystem::equationsOfMotionSC(double integTimeSeconds, double timeS
     // - Map external force_N to the body frame
     Eigen::Vector3d sumForceExternalMappedToB;
     sumForceExternalMappedToB = dcm_NB.transpose()*spacecraft.sumForceExternal_N;
-
-    // - Edit both v_trans and v_rot with gravity and external force and torque
-    Eigen::Vector3d gLocal_N = *spacecraft.g_N;
 
     // -  Make additional contributions to the matrices from the hub
 
@@ -781,7 +777,7 @@ void SpacecraftSystem::equationsOfMotionSystem(double integTimeSeconds, double t
     Eigen::Vector3d rLocal_CN_N = this->primaryCentralSpacecraft.hubR_N->getState() + dcm_NB*(*this->primaryCentralSpacecraft.c_B);
     Eigen::Vector3d vLocal_CN_N = this->primaryCentralSpacecraft.hubV_N->getState() + dcm_NB*(*this->primaryCentralSpacecraft.cDot_B);
 
-    this->primaryCentralSpacecraft.gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
+    Eigen::Vector3d gLocal_N = this->primaryCentralSpacecraft.gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
 
     // - Loop through dynEffectors to compute force and torque on the s/c
     std::vector<DynamicEffector*>::iterator dynIt;
@@ -823,7 +819,7 @@ void SpacecraftSystem::equationsOfMotionSystem(double integTimeSeconds, double t
         this->primaryCentralSpacecraft.backSubMatricesContributions.vecRot.setZero();
 
         // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-        (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions, this->primaryCentralSpacecraft.hubSigma->getState(), this->primaryCentralSpacecraft.hubOmega_BN_B->getState(), *this->primaryCentralSpacecraft.g_N);
+        (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions, this->primaryCentralSpacecraft.hubSigma->getState(), this->primaryCentralSpacecraft.hubOmega_BN_B->getState());
         this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixA;
         this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixB += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixB;
         this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixC += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixC;
@@ -847,7 +843,7 @@ void SpacecraftSystem::equationsOfMotionSystem(double integTimeSeconds, double t
             this->primaryCentralSpacecraft.backSubMatricesContributions.vecRot.setZero();
 
             // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-            (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions, this->primaryCentralSpacecraft.hubSigma->getState(), this->primaryCentralSpacecraft.hubOmega_BN_B->getState(), *this->primaryCentralSpacecraft.g_N);
+            (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions, this->primaryCentralSpacecraft.hubSigma->getState(), this->primaryCentralSpacecraft.hubOmega_BN_B->getState());
             this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixA;
             this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixB += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixB;
             this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixC += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixC;
@@ -880,9 +876,6 @@ void SpacecraftSystem::equationsOfMotionSystem(double integTimeSeconds, double t
     // - Map external force_N to the body frame
     Eigen::Vector3d sumForceExternalMappedToB;
     sumForceExternalMappedToB = dcm_NB.transpose()*this->primaryCentralSpacecraft.sumForceExternal_N;
-
-    // - Edit both v_trans and v_rot with gravity and external force and torque
-    Eigen::Vector3d gLocal_N = *this->primaryCentralSpacecraft.g_N;
 
     // -  Make additional contributions to the matrices from the hub
 
