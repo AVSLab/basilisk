@@ -63,7 +63,7 @@ void StateEffector::receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen:
 /*! This method is strictly for the back-substituion method for computing the dynamics of the spacecraft. The back-sub
  method first computes rDDot_BN_N and omegaDot_BN_B for the spacecraft using these contributions from the state 
  effectors. Then computeDerivatives is called to compute the stateEffectors derivatives using rDDot_BN_N omegaDot_BN_B*/
-void StateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void StateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B)
 {
     return;
 }
