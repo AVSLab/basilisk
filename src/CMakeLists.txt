@@ -558,7 +558,7 @@ if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
     generate_package_libraries("${EXTERNAL_MODULES_PATH}" "${AllLibs}")
   endif()
   generate_package_targets("${EXTERNAL_MODULE_TARGETS}" "${AllLibs}" "ExternalModules")
-endif(NOT "${EXTERNAL_MODULE_PATH}" STREQUAL "")
+endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
 # The quotations around DYN_TARGETS informs function that it is a list
 generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation")
