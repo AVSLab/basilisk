@@ -33,7 +33,7 @@ function(generate_messages searchDir generateCCode)
         SOURCE ${COMP_OUT_NAME}
         PROPERTY SWIG_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}/../" "-I${CMAKE_CURRENT_SOURCE_DIR}/../../"
                  "-I${CMAKE_BINARY_DIR}/autoSource/" "-I${PYTHON_INCLUDE_PATH}")
-    endif(NOT "${EXTERNAL_MODULE_PATH}" STREQUAL "")
+    endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
     include_directories(${PYTHON_INCLUDE_PATH})
     include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../")
@@ -77,7 +77,7 @@ else()
             "../../msgPayloadDefC/" "../../msgPayloadDefCpp/"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
     VERBATIM)
-endif(NOT "${EXTERNAL_MODULE_PATH}" STREQUAL "")
+endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
 # Custom target for establishing dependency
 add_custom_target(swigtrick DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py)
