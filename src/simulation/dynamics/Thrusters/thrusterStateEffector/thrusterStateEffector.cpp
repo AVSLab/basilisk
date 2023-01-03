@@ -195,7 +195,7 @@ void ThrusterStateEffector::ConfigureThrustRequests()
 void ThrusterStateEffector::UpdateThrusterProperties()
 {
     // Save hub variables
-    Eigen::Vector3d r_BN_N = this->hubPosition->getState();
+    Eigen::Vector3d r_BN_N = (Eigen::Vector3d)*this->inertialPositionProperty;
     Eigen::Vector3d omega_BN_B = this->hubOmega->getState();
     Eigen::MRPd sigma_BN;
     sigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
@@ -296,7 +296,7 @@ void ThrusterStateEffector::addThruster(THRSimConfig* newThruster, Message<SCSta
 void ThrusterStateEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
 	this->hubOmega = states.getStateObject("hubOmega");
-    this->hubPosition = states.getStateObject("hubPosition");
+    this->inertialPositionProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
 }
 
 /*! This method allows the thruster state effector to register its state kappa with the dyn param manager */

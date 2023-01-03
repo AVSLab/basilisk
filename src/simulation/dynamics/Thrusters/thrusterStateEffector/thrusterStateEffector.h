@@ -76,8 +76,9 @@ public:
     // State structures
 	StateData *hubSigma;        //!< pointer to hub attitude states
     StateData *hubOmega;        //!< pointer to hub angular velocity states
-    StateData* hubPosition;        //!< pointer to hub position states
     StateData* kappaState;      //!< -- state manager of theta for hinged rigid body
+    Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+
     BSKLogger bskLogger;        //!< -- BSK Logging
 
     // Mass flow rate
