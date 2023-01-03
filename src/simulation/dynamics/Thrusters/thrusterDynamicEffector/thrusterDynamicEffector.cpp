@@ -184,7 +184,7 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 void ThrusterDynamicEffector::UpdateThrusterProperties()
 {
     // Save hub variables
-    Eigen::Vector3d r_BN_N = this->hubPosition->getState();
+    Eigen::Vector3d r_BN_N = (Eigen::Vector3d)*this->inertialPositionProperty;
     Eigen::Vector3d omega_BN_B = this->hubOmega->getState();
     Eigen::MRPd sigma_BN;
     sigma_BN = (Eigen::Vector3d)this->hubSigma->getState();
@@ -234,7 +234,7 @@ void ThrusterDynamicEffector::UpdateThrusterProperties()
 void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
 	this->hubOmega = states.getStateObject("hubOmega");
-    this->hubPosition = states.getStateObject("hubPosition");
+    this->inertialPositionProperty = states.getPropertyReference("r_BN_N");
 }
 
 /*! This method computes the Forces on Torque on the Spacecraft Body.
