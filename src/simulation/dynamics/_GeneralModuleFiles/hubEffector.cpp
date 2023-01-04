@@ -61,7 +61,6 @@ HubEffector::~HubEffector()
  these values in the computeDerivatives method call */
 void HubEffector::linkInStates(DynParamManager& statesIn)
 {
-    this->g_N = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "g_N");
     return;
 }
 
@@ -137,7 +136,6 @@ void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_
     rDotLocal_BN_N = velocityState->getState();
     sigmaLocal_BN = (Eigen::Vector3d )sigmaState->getState();
     omegaLocal_BN_B = omegaState->getState();
-    gLocal_N = *this->g_N;
 
     // - Set kinematic derivative
     sigmaState->setDerivative(1.0/4.0*sigmaLocal_BN.Bmat()*omegaLocal_BN_B);
