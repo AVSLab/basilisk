@@ -177,7 +177,8 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     #  Create a Simulation
     testRate = int(rate) # Parametrized rate of test
     TotalSim = SimulationBaseClass.SimBaseClass()
-    #Create a new process for the unit test task and add the module to tasking
+
+    # Create a new process for the unit test task and add the module to tasking
     testProc = TotalSim.CreateNewProcess(unitProcessName)
     testProc.addTask(TotalSim.CreateNewTask(unitTaskName, testRate))
     TotalSim.AddModelToTask(unitTaskName, thrusterSet)
@@ -209,6 +210,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     TotalSim.InitializeSimulation()
 
     #Configure the hub and link states
+    TotalSim.newManager.createProperty("r_BN_N", [[0], [0], [0]])  # manually create the property
     TotalSim.scObject.hub.registerStates(TotalSim.newManager)
     thrusterSet.linkInStates(TotalSim.newManager)
 

@@ -34,6 +34,7 @@ Version |release|
 -----------------
 - Refactored :ref:`keplerianOrbit` to not depend on the ``gravityEffector`` class
 - Updated Basilisk install documentation to discuss accessing source code from GitHub.com
+- Fixed an issue where attaching a thruster to a body different than the hub when using ``zeroBase`` would yield very large offsets.
 
 
 Version 2.1.5 (Dec. 13, 2022)

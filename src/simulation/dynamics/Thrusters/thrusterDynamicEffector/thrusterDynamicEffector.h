@@ -74,7 +74,8 @@ public:
 		std::vector<THRTimePair> *thrRamp);
 	StateData *hubSigma;                           //!< pointer to the hub attitude states
     StateData *hubOmega;                           //!< pointer to the hub angular velocity states
-    StateData *hubPosition;                        //!< pointer to the hub position states
+    Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
