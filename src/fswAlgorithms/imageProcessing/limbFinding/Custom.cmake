@@ -1,6 +1,1 @@
-if(BUILD_OPNAV)
-  include(usingOpenCV)
-else()
-  message("SKIPPED: ${TARGET_NAME}")
-  set(CUSTOM_DEPENDENCIES_HANDLED 1)
-endif()
+include(usingOpenCV)
