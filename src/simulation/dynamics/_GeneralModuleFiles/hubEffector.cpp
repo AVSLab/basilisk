@@ -132,7 +132,6 @@ void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_
     Eigen::Vector3d omegaLocal_BN_B;
     Eigen::Vector3d cLocal_B;
     Eigen::Vector3d cPrimeLocal_B;
-    Eigen::Vector3d gLocal_N;
     rDotLocal_BN_N = velocityState->getState();
     sigmaLocal_BN = (Eigen::Vector3d )sigmaState->getState();
     omegaLocal_BN_B = omegaState->getState();
@@ -157,10 +156,6 @@ void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_
 
     // - Solve for rDDot_BN_N
     velocityState->setDerivative(dcm_NB*hubBackSubMatrices.matrixA.inverse()*(hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB*omegaDotLocal_BN_B));
-
-    // - Set gravity velocity derivatives
-    gravVelocityState->setDerivative(gLocal_N);
-    gravVelocityBcState->setDerivative(gLocal_N);
 
     // - Set kinematic derivative
     posState->setDerivative(rDotLocal_BN_N);
