@@ -45,6 +45,8 @@ public:
     Eigen::Vector3d sigma_BNInit;        //!< -- Initial attitude of the spacecraft wrt base
     Eigen::Vector3d omega_BN_BInit;      //!< [r/s] Initial attitude rate of the spacecraf wrt base
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    StateData *gravVelocityState;        //!< [-] State data container for hub gravitational velocity
+    StateData *gravVelocityBcState;      //!< [-] State data container for point Bc gravitational velocity
 
 public:
     HubEffector();                       //!< -- Contructor
@@ -66,8 +68,6 @@ private:
     StateData *velocityState;            //!< [-] State data container for hub velocity
     StateData *sigmaState;               //!< [-] State data container for hub sigma_BN
     StateData *omegaState;               //!< [-] State data container for hub omegaBN_B
-    StateData *gravVelocityState;        //!< [-] State data container for hub gravitational velocity
-    StateData *gravVelocityBcState;      //!< [-] State data container for point Bc gravitational velocity
 };
 
 #endif /* HUB_EFFECTOR_H */
