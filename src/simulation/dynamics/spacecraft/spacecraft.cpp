@@ -441,6 +441,11 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     this->hub.hubBackSubMatrices.vecTrans += gravityForce_B + sumForceExternalMappedToB + this->sumForceExternal_B;
     this->hub.hubBackSubMatrices.vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
 
+    // Set the hub's gravitational acceleration states
+    // - Set gravity velocity derivatives
+    hub.gravVelocityState->setDerivative(gLocal_N);
+    hub.gravVelocityBcState->setDerivative(gLocal_N);
+    
     // - Compute the derivatives of the hub states before looping through stateEffectors
     this->hub.computeDerivatives(integTimeSeconds, this->hubV_N->getStateDeriv(), this->hubOmega_BN_B->getStateDeriv(), this->hubSigma->getState());
 
