@@ -39,8 +39,8 @@ list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/conan")
 
-option(BUILD_VIZINTERFACE "Build VizInterface Module" ON)
-option(BUILD_OPNAV "Build OpNav Modules" OFF)
+include(bskTargetExcludeBuildOptions)
+
 
 # ! create_symlinks : create symlinks to support files in source rather than keeping them in dist The function takes one
 # required argument and N optional arguments. \argn: a list of supporting file paths
@@ -287,15 +287,9 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
     get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
 
-    # Collect any external dependencies
-    set(CUSTOM_DEPENDENCIES)
-    set(CUSTOM_DEPENDENCIES_HANDLED)
-    if(EXISTS "${CMAKE_SOURCE_DIR}/${PARENT_DIR}/Custom.cmake")
-      message(STATUS "Including Custom Build Steps for: ${TARGET_FILE}")
-      include("${PARENT_DIR}/Custom.cmake")
-    endif()
-    if(CUSTOM_DEPENDENCIES_HANDLED)
-      continue()
+    if(${TARGET_NAME} IN_LIST EXCLUDED_BSK_TARGETS)
+      message("Skipped Target: ${TARGET_NAME}")
+        continue()
     endif()
 
     # Grab the target source files
@@ -335,6 +329,14 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
               "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}" # _wrap.c/.cxx file
               OUTPUT_DIR
               "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}") # generated .py file
+
+    # Collect any external dependencies
+    set(CUSTOM_DEPENDENCIES_HANDLED)
+    set(CUSTOM_DEPENDENCIES)
+    if(EXISTS "${CMAKE_SOURCE_DIR}/${PARENT_DIR}/Custom.cmake")
+      message(STATUS "Including custom Custom.cmake for: ${TARGET_FILE}")
+      include("${PARENT_DIR}/Custom.cmake")
+    endif()
 
     # Add any custom user defined targets to the build aka external library
     foreach(CUSTOM_LIB ${CUSTOM_DEPENDENCIES})
