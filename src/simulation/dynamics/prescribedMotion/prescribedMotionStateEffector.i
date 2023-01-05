@@ -34,6 +34,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 %include "prescribedMotionStateEffector.h"
 
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
+struct PrescribedMotionMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
