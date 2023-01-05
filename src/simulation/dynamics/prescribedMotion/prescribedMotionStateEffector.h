@@ -32,10 +32,70 @@
 /*! @brief prescribed motion state effector class */
 class PrescribedMotionStateEffector: public StateEffector, public SysModel {
 public:
+    double mass;                                        //!< [kg] Effector mass
+    Eigen::Matrix3d IPntFc_F;                           //!< [kg-m^2] Inertia of the effector about its center of mass in F frame components
+    Eigen::Vector3d r_MB_B;                             //!< [m] Position of point M relative to point B in B frame components
+    Eigen::Vector3d r_FcF_F;                            //!< [m] Position of the effector center of mass relative to point F in F frame components
+    Eigen::Vector3d omega_MB_B;                         //!< [rad/s] Angular velocity of frame M with respect to frame B in B frame components
+    Eigen::Vector3d omegaPrime_MB_B;                    //!< [rad/s^2] B frame time derivative of omega_MB_B in B frame components
+    Eigen::MRPd sigma_MB;                               //!< MRP attitude of frame M relative to frame B
+
+    // Prescribed parameters
+    Eigen::Vector3d r_FM_M;                             //!< [m] Position of point F relative to point M in M frame components
+    Eigen::Vector3d rPrime_FM_M;                        //!< [m/s] B frame time derivative of r_FM_M in M frame components
+    Eigen::Vector3d rPrimePrime_FM_M;                   //!< [m/s^2] B frame time derivative of rPrime_FM_M in M frame components
+    Eigen::Vector3d omega_FM_F;                         //!< [rad/s] Angular velocity of frame F relative to frame M in F frame components
+    Eigen::Vector3d omegaPrime_FM_F;                    //!< [rad/s^2] B frame time derivative of omega_FM_F in F frame components
+    Eigen::MRPd sigma_FM;                               //!< MRP attitude of frame F relative to frame M
+
     ReadFunctor<PrescribedMotionMsgPayload> prescribedMotionInMsg;      //!< Input message for the effector's prescribed states
     Message<PrescribedMotionMsgPayload> prescribedMotionOutMsg;         //!< Output message for the effector's prescribed states
     Message<SCStatesMsgPayload> prescribedMotionConfigLogOutMsg;        //!< Output config log message for the effector's states
+
 private:
+    static uint64_t effectorID;                                         //!< ID number of this panel
+
+    // Given quantities from user in python
+    Eigen::Matrix3d IPntFc_B;                           //!< [kg-m^2] Inertia of the effector about its center of mass in B frame components
+    Eigen::Vector3d r_FB_B;                             //!< [m] Position of point F relative to point B in B frame components
+    Eigen::Vector3d r_FcF_B;                            //!< [m] Position of the effector center of mass relative to point F in B frame components
+
+    // Prescribed parameters in body frame components
+    Eigen::Vector3d r_FM_B;                             //!< [m] Position of point F relative to point M in B frame components
+    Eigen::Vector3d rPrime_FM_B;                        //!< [m/s] B frame time derivative of position r_FM_B in B frame components
+    Eigen::Vector3d rPrimePrime_FM_B;                   //!< [m/s^2] B frame time derivative of rPrime_FM_B in B frame components
+    Eigen::Vector3d omega_FM_B;                         //!< [rad/s] Angular velocity of F frame relative to the M frame in B frame components
+    Eigen::Vector3d omegaPrime_FM_B;                    //!< [rad/s^2] B frame time derivative of omega_FB_B in B frame components
+    Eigen::Vector3d omega_FB_B;                         //!< [rad/s] Angular velocity of frame F relative to frame B in B frame components
+    Eigen::Vector3d omegaPrime_FB_B;                    //!< [rad/s^2] B frame time derivative of omega_FB_B in B frame components
+
+    // Other vector quantities
+    Eigen::Vector3d r_FcM_B;                            //!< [m] Position of frame F center of mass relative to point M in B frame components
+    Eigen::Vector3d r_FcB_B;                            //!< [m] Position of frame F center of mass relative to point B in B frame components
+    Eigen::Vector3d rPrime_FcM_B;                       //!< [m/s] B frame time derivative of r_FcM_B in B frame components
+    Eigen::Vector3d rPrime_FcB_B;                       //!< [m/s] B frame time derivative of r_FcB_B in B frame components
+    Eigen::Vector3d rPrimePrime_FcB_B;                  //!< [m/s^2] B frame time derivative of rPrime_FcB_B in B frame components
+    Eigen::Vector3d omega_BN_B;                         //!< [rad/s] Angular velocity of frame B relative to the inertial frame in B frame components
+    Eigen::Vector3d omega_FN_B;                         //!< [rad/s] Angular velocity of frame F relative to the inertial frame in B frame components
+    Eigen::Vector3d rDot_FcB_B;                         //!< [m/s] Inertial time derivative of r_FcB_B in B frame components
+    Eigen::MRPd sigma_BN;                               //!< MRP attitude of frame B relative to the inertial frame
+
+    // DCMs
+    Eigen::Matrix3d dcm_BN;                             //!< DCM from inertial frame to frame B
+    Eigen::Matrix3d dcm_BM;                             //!< DCM from frame M to frame B
+    Eigen::Matrix3d dcm_FM;                             //!< DCM from frame M to frame F
+    Eigen::Matrix3d dcm_BF;                             //!< DCM from frame F to frame B
+
+    // Other matrix quantities
+    Eigen::Matrix3d rTilde_FcB_B;                       //!< [m] Tilde cross product matrix of r_FcB_B
+    Eigen::Matrix3d omegaTilde_BN_B;                    //!< [rad/s] Tilde cross product matrix of omega_BN_B
+    Eigen::Matrix3d omegaTilde_FB_B;                    //!< [rad/s] Tilde cross product matrix of omega_FB_B
+
+    // Effector properties relative to the inertial frame
+    Eigen::Vector3d r_FcN_N;                            //!< [m] Position of frame F center of mass relative to the inertial frame in inertial frame components
+    Eigen::Vector3d v_FcN_N;                            //!< [m/s] Inertial velocity of frame F center of mass relative to the inertial frame in inertial frame components
+    Eigen::Vector3d sigma_FN;                           //!< MRP attitude of frame F relative to the inertial frame
+    Eigen::Vector3d omega_FN_F;                         //!< [rad/s] Angular velocity of frame F relative to the inertial frame in F frame components
 
     // Hub states
     StateData *hubSigma;                                //!< Hub attitude relative to the inertial frame represented by MRP

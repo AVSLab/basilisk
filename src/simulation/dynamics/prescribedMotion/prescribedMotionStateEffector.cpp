@@ -24,7 +24,29 @@
 /*! This is the constructor, setting variables to default values. */
 PrescribedMotionStateEffector::PrescribedMotionStateEffector()
 {
+    // Zero the mass props and mass prop rate contributions
+    this->effProps.mEff = 0.0;
+    this->effProps.rEff_CB_B.fill(0.0);
+    this->effProps.IEffPntB_B.fill(0.0);
+    this->effProps.rEffPrime_CB_B.fill(0.0);
+    this->effProps.IEffPrimePntB_B.fill(0.0);
 
+    // Initialize the prescribed variables
+    this->r_FM_M.setZero();
+    this->rPrime_FM_M.setZero();
+    this->rPrimePrime_FM_M.setZero();
+    this->omega_FM_F.setZero();
+    this->omegaPrime_FM_F.setZero();
+    this->sigma_FM.setIdentity();
+
+    // Initialize the other module variables
+    this->mass = 0.0;
+    this->IPntFc_F.Identity();
+    this->r_MB_B.setZero();
+    this->r_FcF_F.setZero();
+    this->omega_MB_B.setZero();
+    this->omegaPrime_MB_B.setZero();
+    this->sigma_MB.setIdentity();
 }
 
 /*! This is the destructor. */
