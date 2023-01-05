@@ -25,6 +25,7 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief prescribed motion state effector class */
 class PrescribedMotionStateEffector: public StateEffector, public SysModel {
@@ -32,6 +33,8 @@ public:
     ReadFunctor<PrescribedMotionMsgPayload> prescribedMotionInMsg;      //!< Input message for the effector's prescribed states
     Message<PrescribedMotionMsgPayload> prescribedMotionOutMsg;         //!< Output message for the effector's prescribed states
     Message<SCStatesMsgPayload> prescribedMotionConfigLogOutMsg;        //!< Output config log message for the effector's states
+
+    BSKLogger bskLogger;                                                //!< BSK Logging
 private:
 
 public:
