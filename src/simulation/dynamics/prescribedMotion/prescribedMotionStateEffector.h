@@ -22,10 +22,13 @@
 
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenMRP.h"
 
 /*! @brief prescribed motion state effector class */
 class PrescribedMotionStateEffector: public StateEffector, public SysModel {
@@ -36,6 +39,12 @@ public:
 
     BSKLogger bskLogger;                                                //!< BSK Logging
 private:
+
+    // Hub states
+    StateData *hubSigma;                                //!< Hub attitude relative to the inertial frame represented by MRP
+    StateData *hubOmega;                                //!< [rad/s] Hub angular velocity in B frame components relative to the inertial frame
+    Eigen::MatrixXd* inertialPositionProperty;          //!< [m] r_N Inertial position relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialVelocityProperty;          //!< [m] v_N Inertial velocity relative to system spice zeroBase/refBase
 
 public:
     PrescribedMotionStateEffector();                        //!< Constructor

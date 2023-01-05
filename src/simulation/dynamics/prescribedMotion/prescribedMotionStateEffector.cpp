@@ -18,6 +18,8 @@
  */
 
 #include "prescribedMotionStateEffector.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include <string>
 
 /*! This is the constructor, setting variables to default values */
 PrescribedMotionStateEffector::PrescribedMotionStateEffector()
@@ -53,6 +55,12 @@ void PrescribedMotionStateEffector::prependSpacecraftNameToStates()
 /*! This method allows the effector to have access to the hub states */
 void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
 {
+    // Get access to the hub states needed for dynamic coupling
+    this->hubSigma = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
+    this->hubOmega = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
+
     return;
 }
 
