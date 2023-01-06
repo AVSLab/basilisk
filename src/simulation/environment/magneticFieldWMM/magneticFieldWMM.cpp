@@ -125,7 +125,7 @@ void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *g
 double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
 {
     double decimalYear;                 // [years]  fraction year date/time format
-    struct tm localDateTime;            // []       date/time structure
+    struct tm localDateTime{};            // []       date/time structure
 
     //! - compute current decimalYear value
     MAGtype_Date calendar;
@@ -210,10 +210,10 @@ void MagneticFieldWMM::cleanupEarthMagFieldModel()
 
 void MagneticFieldWMM::computeWmmField(double decimalYear, double phi, double lambda, double h, double B_M[3])
 {
-    MAGtype_CoordSpherical      coordSpherical;
-    MAGtype_CoordGeodetic       coordGeodetic;
-    MAGtype_GeoMagneticElements geoMagneticElements;
-    MAGtype_GeoMagneticElements errors;
+    MAGtype_CoordSpherical      coordSpherical{};
+    MAGtype_CoordGeodetic       coordGeodetic{};
+    MAGtype_GeoMagneticElements geoMagneticElements{};
+    MAGtype_GeoMagneticElements errors{};
 
     this->userDate.DecimalYear = decimalYear;
 
