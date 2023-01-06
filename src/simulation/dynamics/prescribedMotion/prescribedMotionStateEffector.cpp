@@ -194,7 +194,26 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 */
 void PrescribedMotionStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
+    // Compute dcm_BN
+    this->sigma_BN = sigma_BN;
+    this->dcm_BN = (this->sigma_BN.toRotationMatrix()).transpose();
 
+    // Define omega_BN_B
+    this->omega_BN_B = omega_BN_B;
+    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
+
+    // Define omegaPrimeTilde_FB_B
+    Eigen::Matrix3d omegaPrimeTilde_FB_B = eigenTilde(this->omegaPrime_FB_B);
+
+    // Compute rPrimePrime_FcB_B
+    this->rPrimePrime_FcB_B = (omegaPrimeTilde_FB_B + this->omegaTilde_FB_B * this->omegaTilde_FB_B) * this->r_FcF_B + this->rPrimePrime_FM_B;
+
+    // Translation contributions
+    backSubContr.vecTrans = -this->mass * this->rPrimePrime_FcB_B;
+
+    // Rotation contributions
+    Eigen::Matrix3d IPrimePntFc_B = this->omegaTilde_FB_B * this->IPntFc_B - this->IPntFc_B * this->omegaTilde_FB_B;
+    backSubContr.vecRot = - (this->mass * this->rTilde_FcB_B * this->rPrimePrime_FcB_B)  - (IPrimePntFc_B + this->omegaTilde_BN_B * this->IPntFc_B ) * this->omega_FB_B - this->IPntFc_B * this->omegaPrime_FB_B - this->mass * this->omegaTilde_BN_B * rTilde_FcB_B * this->rPrime_FcB_B;
 }
 
 /*! This method is empty because the equations of motion of the effector are prescribed.
