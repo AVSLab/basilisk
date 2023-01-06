@@ -34,8 +34,6 @@ MagneticFieldWMM::MagneticFieldWMM()
     this->planetRadius = REQ_EARTH*1000.;   // must be the radius of Earth for WMM
     this->magneticModels[0] = nullptr;      // a nullptr means no WMM coefficients have been loaded
     this->epochDateFractionalYear = -1;     // negative value means this variable has not been set
-
-    return;
 }
 
 /*! Clean up any memory allocations.
@@ -46,8 +44,6 @@ MagneticFieldWMM::~MagneticFieldWMM()
     if (this->magneticModels[0] != nullptr) {
         cleanupEarthMagFieldModel();
     }
-
-    return;
 }
 
 
@@ -70,8 +66,6 @@ void MagneticFieldWMM::customReset(uint64_t CurrentClock)
 
     //! - Initialize the WMM evaluation routines
     initializeWmm(this->dataPath.c_str());
-
-    return;
 }
 
 /*! Custom customSetEpochFromVariable() method.  This allows specifying epochDateFractionYear directly from Python.  If an epoch message is set then this variable is not used.
@@ -83,8 +77,6 @@ void MagneticFieldWMM::customSetEpochFromVariable()
     if (this->epochDateFractionalYear > 0.0) {
         decimalYear2Gregorian(this->epochDateFractionalYear, &this->epochDateTime);
     }
-
-    return;
 }
 
 /*! Convert a fraction year double value into a time structure with gregorian date/time information
@@ -125,8 +117,6 @@ void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *g
 
     //! - make sure a proper time structure is setup
     mktime(&this->epochDateTime);
-
-    return;
 }
 
 /*! Convert a time structure with gregorian date/time information into a fraction year value.
@@ -205,8 +195,6 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, 
     m33MultM33(M3, M2, PM);
     m33tMultM33(this->planetState.J20002Pfix, PM, NM);
     m33MultV3(NM, B_M, msg->magField_N);
-
-    return;
 }
 
 
@@ -253,8 +241,6 @@ void MagneticFieldWMM::computeWmmField(double decimalYear, double phi, double la
     v3Set(geoMagneticElements.X, geoMagneticElements.Y, geoMagneticElements.Z, B_M);
 
     v3Scale(1e-9, B_M, B_M); /* convert nano-Tesla to Tesla */
-
-    return;
 }
 
 
