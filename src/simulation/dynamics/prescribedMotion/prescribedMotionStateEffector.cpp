@@ -205,4 +205,7 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t CurrentSimNanos)
         this->omegaPrime_FM_F = cArray2EigenVector3d(incomingPrescribedStates.omegaPrime_FM_F);
         this->sigma_FM = cArray2EigenVector3d(incomingPrescribedStates.sigma_FM);
     }
+
+    // Call the method to write the output messages
+    this->writeOutputStateMessages(CurrentSimNanos);
 }
