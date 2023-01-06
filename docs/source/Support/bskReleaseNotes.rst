@@ -38,6 +38,8 @@ Version |release|
 - Added documentation in :ref:`bskPrinciples-4` on how to read the current message values
 - Highlighted the challege of setting up a ``recorder`` on a re-directed message in :ref:`bskPrinciples-7`
 - added the ability to add a ``recorder()`` to a C-wrapped module input message
+- Fix an issue in in :ref:`magneticFieldWMM` where a fixed width array holding a file path would result in a cutoff
+    path when basilisk is located in a directory path of greater than 100 characters.
 
 
 Version 2.1.5 (Dec. 13, 2022)

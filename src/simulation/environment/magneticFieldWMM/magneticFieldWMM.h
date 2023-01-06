@@ -16,8 +16,6 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-
-
 #ifndef WMM_MAGNETIC_FIELD_H
 #define WMM_MAGNETIC_FIELD_H
 
@@ -29,7 +27,7 @@
 #include "architecture/utilities/astroConstants.h"
 #include "GeomagnetismHeader.h"
 #include "architecture/utilities/bskLogging.h"
-#include <time.h>
+#include <ctime>
 
 /*! @brief magnetic field WMM class */
 class MagneticFieldWMM:  public MagneticFieldBase {
@@ -39,21 +37,21 @@ public:
 
 private:
     void evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime);
-    void initializeWmm(const char *dataPath);
+    void initializeWmm();
     void cleanupEarthMagFieldModel();
     void computeWmmField(double decimalYear, double phi, double lambda, double h, double B_M[3]);
     void customReset(uint64_t CurrentClock);
     void customSetEpochFromVariable();
     void decimalYear2Gregorian(double fractionalYear, struct tm *gregorian);
     double gregorian2DecimalYear(double currentTime);
+
 public:
     std::string dataPath;                   //!< -- String with the path to the WMM coefficient file
     double      epochDateFractionalYear;    //!< Specified epoch date as a fractional year
-    BSKLogger bskLogger;                      //!< -- BSK Logging
-
+    BSKLogger bskLogger;                    //!< -- BSK Logging
 
 private:
-    MAGtype_MagneticModel * magneticModels[1];
+    MAGtype_MagneticModel *magneticModels[1];
     MAGtype_MagneticModel *timedMagneticModel;
     MAGtype_Ellipsoid      ellip;
     MAGtype_Geoid          geoid;
