@@ -134,7 +134,52 @@ void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
 */
 void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 {
+    // Give the mass of the prescribed body to the effProps mass
+    this->effProps.mEff = this->mass;
 
+    // Compute dcm_BM
+    this->dcm_BM = this->sigma_MB.toRotationMatrix();
+
+    // Compute dcm_FM
+    this->dcm_FM = (this->sigma_FM.toRotationMatrix()).transpose();
+
+    // Compute dcm_BF
+    this->dcm_BF = this->dcm_BM * this->dcm_FM.transpose();
+
+    // Compute omega_FB_B given the user inputs omega_MB_M and omega_FM_F
+    this->omega_FM_B = this->dcm_BF * this->omega_FM_F;
+    this->omega_FB_B = this->omega_FM_B + this->omega_MB_B;
+
+    // Compute omegaPrime_FB_B given the user inputs
+    this->omegaTilde_FB_B = eigenTilde(this->omega_FB_B);
+    this->omegaPrime_FM_B = this->dcm_BF * this->omegaPrime_FM_F;
+    this->omegaPrime_FB_B = this->omegaPrime_FM_B + this->omegaTilde_FB_B * this->omega_FM_B;
+
+    // Convert the prescribed variables to the B frame
+    this->r_FM_B = this->dcm_BM * this->r_FM_M;
+    this->rPrime_FM_B = this->dcm_BM * this->rPrime_FM_M;
+    this->rPrimePrime_FM_B = this->dcm_BM * this->rPrimePrime_FM_M;
+
+    // Compute the effector's CoM with respect to point B
+    this->r_FB_B = this->r_FM_B + this->r_MB_B;
+    this->r_FcF_B = this->dcm_BF * this->r_FcF_F;
+    this->r_FcB_B = this->r_FcF_B + this->r_FB_B;
+    this->effProps.rEff_CB_B = this->r_FcB_B;
+
+    // Find the effector inertia about point B
+    this->rTilde_FcB_B = eigenTilde(this->r_FcB_B);
+    this->IPntFc_B = this->dcm_BF * this->IPntFc_F * this->dcm_BF.transpose();
+    this->effProps.IEffPntB_B = this->IPntFc_B - this->mass * this->rTilde_FcB_B * this->rTilde_FcB_B;
+
+    // Find the B frame time derivative of r_FcB_B
+    this->omegaTilde_FB_B = eigenTilde(this->omega_FB_B);
+    this->rPrime_FcB_B = this->omegaTilde_FB_B * this->r_FcF_B + this->rPrime_FM_B;
+    this->effProps.rEffPrime_CB_B = this->rPrime_FcB_B;
+
+    // Find the B frame time derivative of IPntFc_B
+    Eigen::Matrix3d rPrimeTilde_FcB_B = eigenTilde(this->rPrime_FcB_B);
+    this->effProps.IEffPrimePntB_B = this->omegaTilde_FB_B* this->IPntFc_B - this->IPntFc_B * this->omegaTilde_FB_B
+        + this->mass * (rPrimeTilde_FcB_B * this->rTilde_FcB_B.transpose() + this->rTilde_FcB_B * rPrimeTilde_FcB_B.transpose());
 }
 
 /*! This method allows the state effector to give its contributions to the matrices needed for the back-sub.
