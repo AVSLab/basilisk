@@ -224,10 +224,6 @@ void MagneticFieldWMM::computeWmmField(double decimalYear, double phi, double la
     coordGeodetic.HeightAboveEllipsoid = h; /* km */
 
     this->geoid.UseGeoid = 0;
-    /* If height is given above MSL */
-    //coordGeodetic.HeightAboveGeoid = h; /* km */
-    //geoid.UseGeoid = 1;
-    //MAG_ConvertGeoidToEllipsoidHeight(&coordGeodetic, &geoid);
 
     /* Convert from geodetic to Spherical Equations: 17-18, WMM Technical report */
     MAG_GeodeticToSpherical(this->ellip, coordGeodetic, &coordSpherical);
