@@ -48,12 +48,18 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->omegaPrime_MB_B.setZero();
     this->sigma_MB.setIdentity();
 
+    this->effectorID++;
+
     return;
 }
+
+uint64_t PrescribedMotionStateEffector::effectorID = 1;
 
 /*! This is the destructor, nothing to report here */
 PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
 {
+    this->effectorID = 1;    /* reset the panel ID*/
+
     return;
 }
 
