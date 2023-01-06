@@ -240,7 +240,19 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime, Eigen::
 */
 void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
+    // Update omega_BN_B and omega_FN_B
+    this->omega_BN_B = omega_BN_B;
+    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
+    this->omega_FN_B = this->omega_FB_B + this->omega_BN_B;
 
+    // Compute rDot_FcB_B
+    this->rDot_FcB_B = this->rPrime_FcB_B + this->omegaTilde_BN_B * this->r_FcB_B;
+
+    // Find the rotational angular momentum contribution from hub
+    rotAngMomPntCContr_B = this->IPntFc_B * this->omega_FN_B + this->mass * this->rTilde_FcB_B * this->rDot_FcB_B;
+
+    // Find the rotational energy contribution from the hub
+    rotEnergyContr = 0.5 * this->omega_FN_B.dot(this->IPntFc_B * this->omega_FN_B) + 0.5 * this->mass * this->rDot_FcB_B.dot(this->rDot_FcB_B);
 }
 
 /*! This method computes the effector states relative to the inertial frame.
