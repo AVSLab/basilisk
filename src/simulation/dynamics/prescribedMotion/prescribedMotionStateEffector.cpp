@@ -165,5 +165,16 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 */
 void PrescribedMotionStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-
+    // Read the input message if it is linked and written
+    if (this->prescribedMotionInMsg.isLinked() && this->prescribedMotionInMsg.isWritten())
+    {
+        PrescribedMotionMsgPayload incomingPrescribedStates;
+        incomingPrescribedStates = this->prescribedMotionInMsg();
+        this->r_FM_M = cArray2EigenVector3d(incomingPrescribedStates.r_FM_M);
+        this->rPrime_FM_M = cArray2EigenVector3d(incomingPrescribedStates.rPrime_FM_M);
+        this->rPrimePrime_FM_M = cArray2EigenVector3d(incomingPrescribedStates.rPrimePrime_FM_M);
+        this->omega_FM_F = cArray2EigenVector3d(incomingPrescribedStates.omega_FM_F);
+        this->omegaPrime_FM_F = cArray2EigenVector3d(incomingPrescribedStates.omegaPrime_FM_F);
+        this->sigma_FM = cArray2EigenVector3d(incomingPrescribedStates.sigma_FM);
+    }
 }
