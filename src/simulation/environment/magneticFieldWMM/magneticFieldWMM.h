@@ -37,7 +37,7 @@ public:
 
 private:
     void evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime);
-    void initializeWmm(const char *dataPath);
+    void initializeWmm();
     void cleanupEarthMagFieldModel();
     void computeWmmField(double decimalYear, double phi, double lambda, double h, double B_M[3]);
     void customReset(uint64_t CurrentClock);

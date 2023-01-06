@@ -22,8 +22,6 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "EGM9615.h"
 
-#define MAX_CHAR_LENGTH 100
-
 /*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
  @return void
  */
@@ -63,7 +61,7 @@ void MagneticFieldWMM::customReset(uint64_t CurrentClock)
     }
 
     //! - Initialize the WMM evaluation routines
-    initializeWmm(this->dataPath.c_str());
+    initializeWmm();
 }
 
 /*! Custom customSetEpochFromVariable() method.  This allows specifying epochDateFractionYear directly from Python.  If an epoch message is set then this variable is not used.
@@ -234,16 +232,16 @@ void MagneticFieldWMM::computeWmmField(double decimalYear, double phi, double la
     v3Scale(1e-9, B_M, B_M); /* convert nano-Tesla to Tesla */
 }
 
-void MagneticFieldWMM::initializeWmm(const char *dataPath)
+void MagneticFieldWMM::initializeWmm()
 {
-    char fileName[MAX_CHAR_LENGTH];
     int nMax = 0;
     int nTerms;
+    auto fileName = this->dataPath + "WMM.COF";
 
-    strcpy(fileName, dataPath);
-    strcat(fileName, "WMM.COF");
-    if (!MAG_robustReadMagModels(fileName, &(this->magneticModels), 1)) {
-        bskLogger.bskLog(BSK_ERROR, "WMM unable to load file %s", fileName);
+    if (!MAG_robustReadMagModels(const_cast<char*>(fileName.c_str()),
+                                 &(this->magneticModels),
+                                 1)) {
+        bskLogger.bskLog(BSK_ERROR, "WMM unable to load file %s", fileName.c_str());
         return;
     }
 
