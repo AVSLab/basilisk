@@ -24,7 +24,6 @@
 
 #define MAX_CHAR_LENGTH 100
 
-
 /*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
  @return void
  */
@@ -45,7 +44,6 @@ MagneticFieldWMM::~MagneticFieldWMM()
         cleanupEarthMagFieldModel();
     }
 }
-
 
 /*! Custom Reset() method.  This loads the WMM coefficient file and gets the model setup.
  @return void
@@ -89,7 +87,7 @@ void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *g
     char Error[255];
     calendar.DecimalYear = this->epochDateFractionalYear;
     MAG_YearToDate(&calendar);
-    gregorian->tm_year = calendar.Year- 1900;
+    gregorian->tm_year = calendar.Year - 1900;
     gregorian->tm_mon = calendar.Month - 1;
     gregorian->tm_mday = calendar.Day;
 
@@ -102,15 +100,15 @@ void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *g
     //! - determine missing hours
     MAG_DateToYear(&calendar, Error);
     double diff = this->epochDateFractionalYear - calendar.DecimalYear;
-    this->epochDateTime.tm_hour = (int) round(diff*(24.*daysInYear));
+    this->epochDateTime.tm_hour = (int) round(diff * (24. * daysInYear));
     diff -= this->epochDateTime.tm_hour / ( 24. * daysInYear);
 
     //! - determine missing minutes
-    this->epochDateTime.tm_min = (int) round(diff*(24.*60*daysInYear));
+    this->epochDateTime.tm_min = (int) round(diff * (24. * 60 * daysInYear));
     diff -= this->epochDateTime.tm_min / (24. * 60 * daysInYear);
 
     //! - determine missing seconds
-    this->epochDateTime.tm_sec = (int) round(diff*(24.*60*60*daysInYear));
+    this->epochDateTime.tm_sec = (int) round(diff * (24. * 60 * 60 * daysInYear));
 
     //! - ensure that daylight saving flag is off
     this->epochDateTime.tm_isdst = 0;
@@ -154,7 +152,6 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
     return decimalYear;
 }
 
-
 /*! This method is evaluates the centered dipole magnetic field model.
  @param msg magnetic field message structure
  @param currentTime current time (s)
@@ -197,7 +194,6 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, 
     m33MultV3(NM, B_M, msg->magField_N);
 }
 
-
 /*! Performs memory cleanup necessary for magnetic field models
  @return void
  */
@@ -206,7 +202,6 @@ void MagneticFieldWMM::cleanupEarthMagFieldModel()
     MAG_FreeMagneticModelMemory(timedMagneticModel);
     MAG_FreeMagneticModelMemory(magneticModels[0]);
 }
-
 
 void MagneticFieldWMM::computeWmmField(double decimalYear, double phi, double lambda, double h, double B_M[3])
 {
@@ -238,7 +233,6 @@ void MagneticFieldWMM::computeWmmField(double decimalYear, double phi, double la
 
     v3Scale(1e-9, B_M, B_M); /* convert nano-Tesla to Tesla */
 }
-
 
 void MagneticFieldWMM::initializeWmm(const char *dataPath)
 {
