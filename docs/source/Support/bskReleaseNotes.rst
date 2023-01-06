@@ -35,6 +35,9 @@ Version |release|
 - Refactored :ref:`keplerianOrbit` to not depend on the ``gravityEffector`` class
 - Updated Basilisk install documentation to discuss accessing source code from GitHub.com
 - Fixed an issue where attaching a thruster to a body different than the hub when using ``zeroBase`` would yield very large offsets.
+- Added documentation in :ref:`bskPrinciples-4` on how to read the current message values
+- Highlighted the challege of setting up a ``recorder`` on a re-directed message in :ref:`bskPrinciples-7`
+- added the ability to add a ``recorder()`` to a C-wrapped module input message
 
 
 Version 2.1.5 (Dec. 13, 2022)
