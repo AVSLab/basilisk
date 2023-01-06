@@ -172,7 +172,7 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, 
     double M2[3][3];                    // []    2nd axis rotation DCM
     double M3[3][3];                    // []    3rd axis rotation DCM
 
-    if (this->magneticModels[0] == NULL) {
+    if (this->magneticModels[0] == nullptr) {
         // no magnetic field was setup, set field to zero and return
         v3SetZero(msg->magField_N);
         return;
@@ -263,7 +263,7 @@ void MagneticFieldWMM::initializeWmm(const char *dataPath)
     nTerms = ((nMax + 1) * (nMax + 2) / 2);
     /* For storing the time modified WMM Model parameters */
     this->timedMagneticModel = MAG_AllocateModelMemory(nTerms);
-    if(this->magneticModels[0] == NULL || this->timedMagneticModel == NULL) {
+    if(this->magneticModels[0] == nullptr || this->timedMagneticModel == nullptr) {
         MAG_Error(2);
     }
     /* Set default values and constants */
