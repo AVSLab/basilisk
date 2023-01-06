@@ -27,7 +27,7 @@
 #include "architecture/utilities/astroConstants.h"
 #include "GeomagnetismHeader.h"
 #include "architecture/utilities/bskLogging.h"
-#include <time.h>
+#include <ctime>
 
 /*! @brief magnetic field WMM class */
 class MagneticFieldWMM:  public MagneticFieldBase {
