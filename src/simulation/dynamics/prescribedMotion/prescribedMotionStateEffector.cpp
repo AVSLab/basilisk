@@ -74,7 +74,21 @@ void PrescribedMotionStateEffector::Reset(uint64_t CurrentClock)
 */
 void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
-
+    // Write the prescribed motion output message if it is linked
+    if (this->prescribedMotionOutMsg.isLinked())
+    {
+        PrescribedMotionMsgPayload prescribedMotionBuffer;
+        prescribedMotionBuffer = this->prescribedMotionOutMsg.zeroMsgPayload;
+        eigenVector3d2CArray(this->r_FM_M, prescribedMotionBuffer.r_FM_M);
+        eigenVector3d2CArray(this->rPrime_FM_M, prescribedMotionBuffer.rPrime_FM_M);
+        eigenVector3d2CArray(this->rPrimePrime_FM_M, prescribedMotionBuffer.rPrimePrime_FM_M);
+        eigenVector3d2CArray(this->omega_FM_F, prescribedMotionBuffer.omega_FM_F);
+        eigenVector3d2CArray(this->omegaPrime_FM_F, prescribedMotionBuffer.omegaPrime_FM_F);
+        Eigen::Vector3d sigma_FM_loc;
+        sigma_FM_loc = eigenMRPd2Vector3d(this->sigma_FM);
+        eigenVector3d2CArray(sigma_FM_loc, prescribedMotionBuffer.sigma_FM);
+        this->prescribedMotionOutMsg.write(&prescribedMotionBuffer, this->moduleID, CurrentClock);
+    }
 }
 
 /*! This method allows the effector to have access to the hub states.
