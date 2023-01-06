@@ -89,6 +89,20 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t CurrentClo
         eigenVector3d2CArray(sigma_FM_loc, prescribedMotionBuffer.sigma_FM);
         this->prescribedMotionOutMsg.write(&prescribedMotionBuffer, this->moduleID, CurrentClock);
     }
+
+    // Write the config log message if it is linked
+    if (this->prescribedMotionConfigLogOutMsg.isLinked())
+    {
+        SCStatesMsgPayload configLogMsg;
+        configLogMsg = this->prescribedMotionConfigLogOutMsg.zeroMsgPayload;
+
+        // Note that the configLogMsg B frame represents the effector body frame (frame F)
+        eigenVector3d2CArray(this->r_FcN_N, configLogMsg.r_BN_N);
+        eigenVector3d2CArray(this->v_FcN_N, configLogMsg.v_BN_N);
+        eigenVector3d2CArray(this->sigma_FN, configLogMsg.sigma_BN);
+        eigenVector3d2CArray(this->omega_FN_F, configLogMsg.omega_BN_B);
+        this->prescribedMotionConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
+    }
 }
 
 /*! This method allows the effector to have access to the hub states.
