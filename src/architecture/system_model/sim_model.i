@@ -19,9 +19,6 @@
 %module sim_model
 %{
    #include "sim_model.h"
-   #include "architecture/utilities/linearAlgebra.h"
-   #include "architecture/utilities/rigidBodyKinematics.h"
-   #include "architecture/utilities/orbitalMotion.h"
 %}
 
 %include "std_vector.i"
@@ -79,8 +76,4 @@ namespace std {
 %include "sys_model_task.h"
 %include "sys_model.h"
 %include "sys_process.h"
-%include "architecture/utilities/linearAlgebra.h"
-%include "architecture/utilities/rigidBodyKinematics.h"
-%include "architecture/utilities/orbitalMotion.h"
-%include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"
 %include "sim_model.h"

@@ -23,11 +23,11 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import oeStateEphem
-from Basilisk.architecture import sim_model
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import orbitalMotion
 from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -90,9 +90,8 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     tdrssPosList = []
     tdrssVelList = []
     timeHistory = numpy.linspace(etStart, etEnd, numCurvePoints)
-    posCArray = pyswice.new_doubleArray(3)
-    velCArray = pyswice.new_doubleArray(3)
-    orbEl = messaging.ClassicElementsMsgPayload()
+    position = numpy.array(3)
+    velocity = numpy.array(3)
     rpArray = []
     eccArray = []
     incArray = []
@@ -105,19 +104,18 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     for timeVal in timeHistory:
         stringCurrent = pyswice.et2utc_c(timeVal, 'C', 4, 1024, "Yo")
         stateOut = spkRead('-221', stringCurrent, integFrame, zeroBase)
-        for i in range(3):
-            pyswice.doubleArray_setitem(posCArray, i, stateOut[i]*1000.0)
-            pyswice.doubleArray_setitem(velCArray, i, stateOut[i+3]*1000.0)
-        sim_model.rv2elem(centralBodyMu, posCArray, velCArray, orbEl)
-        tdrssPosList.append([stateOut[0]*1000.0, stateOut[1]*1000.0, stateOut[2]*1000.0] )
-        tdrssVelList.append([stateOut[3]*1000.0, stateOut[4]*1000.0, stateOut[5]*1000.0] )
+        position = stateOut[0:3]*1000.0
+        velocity = stateOut[3:6]*1000.0
+        orbEl = orbitalMotion.rv2elem(centralBodyMu, position, velocity)
+        tdrssPosList.append(position)
+        tdrssVelList.append(velocity)
         rpArray.append(orbEl.rPeriap)
         eccArray.append(orbEl.e)
         incArray.append(orbEl.i)
         OmegaArray.append(orbEl.Omega)
         omegaArray.append(orbEl.omega)
         if anomFlag == 1:
-            currentAnom = sim_model.E2M(sim_model.f2E(orbEl.f,orbEl.e),orbEl.e)
+            currentAnom = orbitalMotion.E2M(orbitalMotion.f2E(orbEl.f,orbEl.e),orbEl.e)
         else:
             currentAnom = orbEl.f
         if currentAnom < anomPrev:
