@@ -22,6 +22,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "architecture/utilities/bskLogging.h"
+#include "cMsgCInterface/SpinningBodyMsg_C.h"
+#include "cMsgCInterface/PrescribedMotionMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
@@ -49,6 +51,11 @@ typedef struct {
     double b;                                                   //!< Parabolic constant for the second half of the maneuver
 
     BSKLogger *bskLogger;                                       //!< BSK Logging
+
+    /* Messages */
+    SpinningBodyMsg_C    spinningBodyInMsg;                     //!< Input msg for the spinning body reference angle and angle rate
+    SpinningBodyMsg_C    spinningBodyOutMsg;                    //!< Output msg for the spinning body angle and angle rate
+    PrescribedMotionMsg_C prescribedMotionOutMsg;               //!< Output msg for the spinning body prescribed states
 
 }PrescribedRot1DOFConfig;
 

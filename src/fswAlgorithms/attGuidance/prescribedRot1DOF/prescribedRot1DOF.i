@@ -31,6 +31,11 @@
 
 %include "prescribedRot1DOF.h"
 
+%include "architecture/msgPayloadDefC/SpinningBodyMsgPayload.h"
+struct SpinningBodyMsg_C;
+%include "architecture/msgPayloadDefC/prescribedMotionMsgPayload.h"
+struct PrescribedMotionMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
