@@ -20,6 +20,8 @@
 /* Import the module header file */
 #include "prescribedRot1DOF.h"
 
+/* Other required files to import */
+#include <stdbool.h>
 
 /*! This method initializes the output messages and other parameters for this module.
  @return void
@@ -28,6 +30,16 @@
  */
 void SelfInit_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, int64_t moduleID)
 {
+    // Initialize the output messages
+    PrescribedMotionMsg_C_init(&configData->prescribedMotionOutMsg);
+    SpinningBodyMsg_C_init(&configData->spinningBodyOutMsg);
+
+    // Set the initial time
+    configData->tInit = 0.0;
+
+    // Set the initial convergence to true to enter the required loop in Update_prescribedRot1DOF() on the first pass
+    configData->convergence = true;
+
 }
 
 
