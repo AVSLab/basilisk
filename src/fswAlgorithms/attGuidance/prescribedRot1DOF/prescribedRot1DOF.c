@@ -22,6 +22,9 @@
 
 /* Other required files to import */
 #include <stdbool.h>
+#include <math.h>
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 /*! This method initializes the output messages and other parameters for this module.
  @return void
@@ -68,4 +71,119 @@ The prescribed states are then written to the output message.
 */
 void Update_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // Create the buffer messages
+    SpinningBodyMsgPayload spinningBodyIn;
+    SpinningBodyMsgPayload spinningBodyOut;
+    PrescribedMotionMsgPayload prescribedMotionOut;
+
+    // Zero the output messages
+    spinningBodyOut = SpinningBodyMsg_C_zeroMsgPayload();
+    prescribedMotionOut = PrescribedMotionMsg_C_zeroMsgPayload();
+
+    // Read the input message
+    spinningBodyIn = SpinningBodyMsg_C_zeroMsgPayload();
+    if (SpinningBodyMsg_C_isWritten(&configData->spinningBodyInMsg))
+    {
+        spinningBodyIn = SpinningBodyMsg_C_read(&configData->spinningBodyInMsg);
+    }
+
+    /* This loop is entered (a) initially and (b) when each attitude maneuver is complete. The reference angle is updated
+    even if a new message is not written */
+    if (SpinningBodyMsg_C_timeWritten(&configData->spinningBodyInMsg) <= callTime && configData->convergence)
+    {
+        // Store the initial time as the current simulation time
+        configData->tInit = callTime*1e-9;
+
+        // Calculate the current ange and angle rate
+        double prv_FM_array[3];
+        MRP2PRV(configData->sigma_FM, prv_FM_array);
+        configData->thetaInit = v3Dot(prv_FM_array, configData->rotAxis_M);
+        configData->thetaDotInit = v3Norm(configData->omega_FM_F);
+
+        // Store the reference angle and reference angle rate
+        configData->thetaRef = spinningBodyIn.theta;
+        configData->thetaDotRef = spinningBodyIn.thetaDot;
+
+        // Define temporal information for the maneuver
+        double convTime = sqrt(((0.5 * fabs(configData->thetaRef - configData->thetaInit)) * 8) / configData->thetaDDotMax);
+        configData->tf = configData->tInit + convTime;
+        configData->ts = configData->tInit + convTime / 2;
+
+        // Define the parabolic constants for the first and second half of the maneuver
+        configData->a = 0.5 * (configData->thetaRef - configData->thetaInit) / ((configData->ts - configData->tInit) * (configData->ts - configData->tInit));
+        configData->b = -0.5 * (configData->thetaRef - configData->thetaInit) / ((configData->ts - configData->tf) * (configData->ts - configData->tf));
+
+        // Set the convergence to false until the attitude maneuver is complete
+        configData->convergence = false;
+    }
+
+    // Store the current simulation time
+    double t = callTime*1e-9;
+
+    // Define the scalar prescribed states
+    double thetaDDot;
+    double thetaDot;
+    double theta;
+
+    // Compute the prescribed scalar states at the current simulation time
+    if ((t < configData->ts || t == configData->ts) && configData->tf - configData->tInit != 0) // Entered during the first half of the maneuver
+    {
+        thetaDDot = configData->thetaDDotMax;
+        thetaDot = thetaDDot * (t - configData->tInit) + configData->thetaDotInit;
+        theta = configData->a * (t - configData->tInit) * (t - configData->tInit) + configData->thetaInit;
+    }
+    else if ( t > configData->ts && t <= configData->tf && configData->tf - configData->tInit != 0) // Entered during the second half of the maneuver
+    {
+        thetaDDot = -1 * configData->thetaDDotMax;
+        thetaDot = thetaDDot * (t - configData->tInit) + configData->thetaDotInit - thetaDDot * (configData->tf - configData->tInit);
+        theta = configData->b * (t - configData->tf) * (t - configData->tf) + configData->thetaRef;
+    }
+    else // Entered when the maneuver is complete
+    {
+        thetaDDot = 0.0;
+        thetaDot = configData->thetaDotRef;
+        theta = configData->thetaRef;
+        configData->convergence = true;
+    }
+
+    // Determine the prescribed parameters: omega_FM_F and omegaPrime_FM_F
+    v3Normalize(configData->rotAxis_M, configData->rotAxis_M);
+    v3Scale(thetaDot, configData->rotAxis_M, configData->omega_FM_F);
+    v3Scale(thetaDDot, configData->rotAxis_M, configData->omegaPrime_FM_F);
+
+    // Determine dcm_FF0
+    double dcm_FF0[3][3];
+    double prv_FF0_array[3];
+    double theta_FF0 = theta - configData->thetaInit;
+    v3Scale(theta_FF0, configData->rotAxis_M, prv_FF0_array);
+    PRV2C(prv_FF0_array, dcm_FF0);
+
+    // Determine dcm_F0M
+    double dcm_F0M[3][3];
+    double prv_F0M_array[3];
+    v3Scale(configData->thetaInit, configData->rotAxis_M, prv_F0M_array);
+    PRV2C(prv_F0M_array, dcm_F0M);
+
+    // Determine dcm_FM
+    double dcm_FM[3][3];
+    m33MultM33(dcm_FF0, dcm_F0M, dcm_FM);
+
+    // Determine the prescribed parameter: sigma_FM
+    C2MRP(dcm_FM, configData->sigma_FM);
+
+    // Copy the module variables to the prescribedMotionOut output message
+    v3Copy(configData->r_FM_M, prescribedMotionOut.r_FM_M);
+    v3Copy(configData->rPrime_FM_M, prescribedMotionOut.rPrime_FM_M);
+    v3Copy(configData->rPrimePrime_FM_M, prescribedMotionOut.rPrimePrime_FM_M);
+    v3Copy(configData->omega_FM_F, prescribedMotionOut.omega_FM_F);
+    v3Copy(configData->omegaPrime_FM_F, prescribedMotionOut.omegaPrime_FM_F);
+    v3Copy(configData->sigma_FM, prescribedMotionOut.sigma_FM);
+
+    // Copy the local scalar variables to the spinningBodyOut output message
+    spinningBodyOut.theta = theta;
+    spinningBodyOut.thetaDot = thetaDot;
+
+    // Write the output messages
+    SpinningBodyMsg_C_write(&spinningBodyOut, &configData->spinningBodyOutMsg, moduleID, callTime);
+    PrescribedMotionMsg_C_write(&prescribedMotionOut, &configData->prescribedMotionOutMsg, moduleID, callTime);
 }
