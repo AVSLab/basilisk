@@ -39,9 +39,6 @@ splitPath = path.split('fswAlgorithms')
 from Basilisk import __path__
 bskPath = __path__[0]
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-
 orbitPosAccuracy = 10000.0
 orbitVelAccuracy = 1.0
 unitTestSupport.writeTeXSnippet("tolerancePosValue", str(orbitPosAccuracy), path)
