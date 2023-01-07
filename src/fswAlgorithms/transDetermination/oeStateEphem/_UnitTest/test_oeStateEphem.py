@@ -16,19 +16,22 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import os, inspect
-import numpy
+import inspect
 import math
+import os
+
+import matplotlib.pyplot as plt
+import numpy
 import pytest
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import oeStateEphem
 from Basilisk.topLevelModules import pyswice
-from Basilisk.utilities.pyswice_spk_utilities import spkRead
-import matplotlib.pyplot as plt
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.architecture import messaging
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities.pyswice_spk_utilities import spkRead
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
