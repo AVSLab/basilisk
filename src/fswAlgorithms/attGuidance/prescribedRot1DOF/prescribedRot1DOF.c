@@ -51,6 +51,11 @@ void SelfInit_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, int64_t mod
 */
 void Reset_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // Check if the required input message is linked
+    if (!SpinningBodyMsg_C_isLinked(&configData->spinningBodyInMsg))
+    {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: prescribedRot1DOF.spinningBodyInMsg wasn't connected.");
+    }
 }
 
 
