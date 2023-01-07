@@ -2,28 +2,62 @@ cmake_minimum_required(VERSION 3.14)
 
 if(BUILD_VIZINTERFACE)
     find_package(protobuf CONFIG REQUIRED)
-    message(STATUS "Generating protobuffers")
+    message(STATUS "Scanning ${CMAKE_CURRENT_SOURCE_DIR} for protobuf interface definitions")
 
-    #file(GLOB PROTOBUF_DEFINITION_FILES "*.proto")
-    #set(PROTOBUF_INPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/utilties/vizProto")
-    #set(PROTOBUF_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/utilities/vizProtobuffer/")
-    #foreach(file ${PROTOBUF_DEFINITION_FILES})
-    #set(PROTOBUF_ARGUMENTS "protoc --proto_path=\"${PROTOBUF_INPUT_DIRECTORY}\" --cpp_out=\"${PROTOBUF_OUTPUT_DIRECTORY}\" \"${vizMessage.proto}\"")
-    #execute_process(COMMAND ${PROTOBUF_OUTPUT_DIRECTORY}
-    #endforeach()
-    file(GLOB PROTO_SRC "vizMessage.pb.cc" "vizMessage.hpp")
-    add_library(protocode ${PROTO_SRC})
-    target_link_libraries(protocode protobuf::protobuf)
+     find_program(PROTOC_EXE
+         NAMES protoc
+         PATHS ENV
+         PATH NO_DEFAULT_PATH
+     )
 
-    set_target_properties(protocode PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
-    set_target_properties(protocode PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
-    set_target_properties(protocode PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+     add_custom_target(GeneratedProtobufMessages
+        DEPENDS "${PROTOC_EXE}"
+     )
 
-    set_target_properties(protocode PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
-    set_target_properties(protocode PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
-    set_target_properties(protocode PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+     file(GLOB PROTO_DEFS "${CMAKE_CURRENT_SOURCE_DIR}/*.proto")
 
-    set_target_properties(protocode PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
-    set_target_properties(protocode PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
-    set_target_properties(protocode PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+     foreach(PROTO_DEF ${PROTO_DEFS})
+         get_filename_component(PROTO_TARGET "${PROTO_DEF}" NAME_WE)
+
+         add_custom_command(TARGET GeneratedProtobufMessages PRE_BUILD
+             COMMAND "${PROTOC_EXE}" "--proto_path=${CMAKE_CURRENT_SOURCE_DIR}" "--cpp_out=${CMAKE_CURRENT_SOURCE_DIR}" "${PROTO_DEF}"
+             BYPRODUCTS "${CMAKE_CURRENT_SOURCE_DIR}/${PROTO_TARGET}.pb.cc" "${CMAKE_CURRENT_SOURCE_DIR}/${PROTO_TARGET}.pb.h"
+             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+             COMMENT "Generating protobuf (C++): ${PROTO_TARGET}"
+         )
+
+         message(STATUS "Defining protobuf interface library target: ${PROTO_TARGET}")
+
+         add_library(${PROTO_TARGET}
+             "${CMAKE_CURRENT_SOURCE_DIR}/${PROTO_TARGET}.pb.cc"
+         )
+         add_dependencies(${PROTO_TARGET} GeneratedProtobufMessages)
+         target_include_directories(${PROTO_TARGET}
+             PUBLIC
+                 "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+                 "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+         )
+
+         target_link_libraries(${PROTO_TARGET}
+             PUBLIC
+                 protobuf::protobuf
+         )
+
+         set_target_properties(${PROTO_TARGET} PROPERTIES
+             CXX_STANDARD 11
+             POSITION_INDEPENDENT_CODE ON
+         )
+
+         set_target_properties(${PROTO_TARGET} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+         set_target_properties(${PROTO_TARGET} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+         set_target_properties(${PROTO_TARGET} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+
+         set_target_properties(${PROTO_TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+         set_target_properties(${PROTO_TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+         set_target_properties(${PROTO_TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+
+         set_target_properties(${PROTO_TARGET} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+         set_target_properties(${PROTO_TARGET} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
+         set_target_properties(${PROTO_TARGET} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+     endforeach()
 endif()
