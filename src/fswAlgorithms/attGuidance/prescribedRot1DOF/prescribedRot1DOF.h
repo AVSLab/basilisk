@@ -20,9 +20,12 @@
 #define _PRESCRIBEDROT1DOF_
 
 #include <stdint.h>
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
+
+    BSKLogger *bskLogger;                                       //!< BSK Logging
 
 }PrescribedRot1DOFConfig;
 
