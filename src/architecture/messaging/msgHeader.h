@@ -16,8 +16,8 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
         OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#ifndef msg2Header_h
-#define msg2Header_h
+#ifndef msgHeader_h
+#define msgHeader_h
 
 /*! @brief message system 2 header information structure */
 typedef struct {
@@ -25,6 +25,6 @@ typedef struct {
     int64_t isWritten;      //!< flag if the message conntent has ever been written
     uint64_t timeWritten;   //!< [ns] time the message was written
     int64_t moduleID;       //!< ID of the module who wrote the message, negative value for Python module, non-negative for C/C++ modules
-}Msg2Header;
+}MsgHeader;
 
-#endif /* msg2Header_h */
+#endif /* msgHeader_h */

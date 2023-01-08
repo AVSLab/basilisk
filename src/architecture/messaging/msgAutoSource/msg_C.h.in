@@ -3,14 +3,14 @@
 
 #include <stdint.h>
 #include "architecture/{structHeader}"
-#include "architecture/messaging/msg2Header.h"
+#include "architecture/messaging/msgHeader.h"
 
 //! structure definition
 typedef struct {{
-    Msg2Header header;              //!< message header, zero'd on construction
+    MsgHeader header;              //!< message header, zero'd on construction
     {type}Payload payload;		        //!< message copy, zero'd on construction
     {type}Payload *payloadPointer;	    //!< pointer to message
-    Msg2Header *headerPointer;      //!< pointer to message header
+    MsgHeader *headerPointer;      //!< pointer to message header
 }} {type}_C;
 
 #ifdef __cplusplus

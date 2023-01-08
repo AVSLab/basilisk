@@ -2,7 +2,7 @@
 #include "cMsgCInterface/{type}_C.h"
 %}}
 %include "cMsgCInterface/{type}_C.h"
-%include "architecture/messaging/msg2Header.h"
+%include "architecture/messaging/msgHeader.h"
 typedef struct {type};
 %extend {type}_C {{
     %pythoncode %{{

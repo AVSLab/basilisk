@@ -100,7 +100,7 @@ int64_t {type}_C_moduleID({type}_C *data) {{
 //! method description
 void {type}_cpp_subscribe({type}_C *subscriber, void* source){{
     Message<{type}Payload>* source_t = (Message<{type}Payload>*) source;
-    Msg2Header *msgPtr;
+    MsgHeader *msgPtr;
     subscriber->payloadPointer = source_t->subscribeRaw(&(msgPtr));
     subscriber->headerPointer = msgPtr;
     subscriber->header.isLinked = 1;    // set input message as linked
@@ -111,7 +111,7 @@ void {type}_cpp_subscribe({type}_C *subscriber, void* source){{
 //! Cpp interface to check if subscriber is indeed subscribed to a message (1: subscribed, 0: not subscribed)
 int8_t {type}_cpp_isSubscribedTo({type}_C *subscriber, void* source) {{
 
-    Msg2Header *dummyMsgPtr;
+    MsgHeader *dummyMsgPtr;
     Message<{type}Payload>* source_t = (Message<{type}Payload>*) source;
     int8_t firstCheck = (subscriber->payloadPointer == source_t->getMsgPointers(&(dummyMsgPtr)));
     int8_t secondCheck = (subscriber->headerPointer == dummyMsgPtr);
