@@ -56,6 +56,18 @@ void eigenVector3d2CArray(Eigen::Vector3d & inMat, double *outArray)
 	memcpy(outArray, inMat.data(), 3 * sizeof(double));
 }
 
+/*! This function provides a direct conversion between an MRP and an
+output C array. We are providing this function to save on the inline conversion
+and the transpose that would have been performed by the general case.
+@return void
+@param inMat The source Eigen MRP that we are converting
+@param outArray The destination array we copy in to
+*/
+void eigenMRPd2CArray(Eigen::Vector3d& inMat, double* outArray)
+{
+    memcpy(outArray, inMat.data(), 3 * sizeof(double));
+}
+
 
 /*! This function provides a direct conversion between a 3x3 matrix and an
 output C array.  We are providing this function to save on the inline conversion
@@ -98,6 +110,20 @@ in order to save an unnecessary conversion between types
 Eigen::Vector3d cArray2EigenVector3d(double *inArray)
 {
     return Eigen::Map<Eigen::Vector3d>(inArray, 3, 1);
+}
+
+/*! This function performs the conversion between an input C array
+3-vector and an output Eigen MRPd. This function is provided
+in order to save an unnecessary conversion between types
+@return Eigen::MRPd
+@param inArray The input array (row-major)
+*/
+Eigen::MRPd cArray2EigenMRPd(double* inArray)
+{
+    Eigen::MRPd sigma_Eigen;
+    sigma_Eigen = cArray2EigenVector3d(inArray);
+
+    return sigma_Eigen;
 }
 
 
