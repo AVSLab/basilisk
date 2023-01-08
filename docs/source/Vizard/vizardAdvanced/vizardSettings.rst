@@ -172,6 +172,9 @@ default setting for that behavior.
       - double
       - Control the display size of spacecraft in the Solar System View, values greater than 0, use negative
         value to use viz default
+    * - ``forceStartAtSpacecraftLocalView``
+      - int
+      - Require Vizard to start up in spacecraft-view on start up
     * - ``showLocationCommLines``
       - int
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -335,6 +338,14 @@ The following table includes the keyword options for this method.
       - No
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     * - ``showTransceiverFrustrum``
+      - Boolean
+      - No
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``showGenericStoragePanel``
+      - Boolean
+      - No
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``showMultiSphereLabels``
       - Boolean
       - No
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -1655,3 +1666,106 @@ panels.  This could be visualized using::
 By default each component will be given the default ``bsk-Sat`` shape.  It is recommended that a
 custom model is assigned to each component.  See the scenario :ref:`scenarioDeployingPanel` for
 an example on how to illustrate deploying panels in Vizard.
+
+
+
+Displaying Multi-Sphere-Model (MSM) Charging Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In the paper entitled "Multi-Sphere Method
+for Modeling Electrostatic Forces and Torques", see http://dx.doi.org/10.1016/j.asr.2012.08.014,
+a method is introduced to
+approximate the electrostatic charging on a spacecraft through a series of spheres.  Each
+sphere has a spacecraft-fixed location and radius.  Vizard can display such spheres
+and color them using the current sphere charge value.  See :ref:`scenarioDebrisReorbitET`
+for an example of this visualization tool being used.
+
+The MSM information is added using the ``enableUnityVisualization()`` method with the
+keyword ``msmInfoList``.  This information must be provided for each spacecraft in the
+simulation as a list of ``vizInterface.MultiSphereInfo()`` structures.
+Each craft can use a different MSM setup.  If the spacecraft has no MSM model then
+use ``None`` in the list for that spacecraft.
+
+The ``MultiSphereInfo`` structure contains the input message ``msmChargeInMsg``
+where the spacecraft sphere charge values are read in from.  It also
+contains a vector of MSM configuration information structures of
+type ``MultiSphere``.  The following list show all ``MultiSphere`` structure
+variables.
+
+.. list-table:: ``MultiSphere`` variables
+    :widths: 20 10 10 10 100
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Units
+      - Required
+      - Description
+    * - ``isOn``
+      - int
+      -
+      - No
+      - Flag indicating if the MSM is on (1) or off (-1).  0 is the default value
+        with the object shown.
+    * - ``position``
+      - double(3)
+      - meters
+      - Yes
+      - MSM sphere position in the body frame
+    * - ``radius``
+      - double
+      - meter
+      - Yes
+      - radius of the sphere
+    * - ``currentValue``
+      - double
+      - Coulomb
+      - No
+      - (optional) Current charge value of the MSM sphere.  If the ``msmChargeInMsg``
+        is connected, then the content of the message overrides the value set
+        in python.
+    * - ``maxValue``
+      - double
+      - Coulomb
+      - Yes
+      - maximum sphere charge value
+    * - ``positiveColor``
+      - int(4)
+      -
+      - No
+      - desired RGBA as values between 0 and 255, default is green
+    * - ``negativeColor``
+      - int(4)
+      -
+      - No
+      - desired RGBA as values between 0 and 255, default is red
+    * - ``neutralOpacity``
+      - int
+      -
+      - No
+      - desired opacity value between 0 and 255 for when charge is neutral.  Default
+        is -1 which yield the Vizard default opacity value.
+
+
+The following code illustrates how to add support for visualizing
+MSM charge values in Vizard.  Here a single spacecraft is simulated with
+an :ref:`msmForceTorque` to emulate the charging.  The charge values are read in from an input
+message.  The MSM body-fixed positions are stored in the list ``spPosListDebris``, while
+the MSM radii are stored in the list ``rListDebris``.  The sample code is::
+
+    msmInfoDebris = vizInterface.MultiSphereInfo()
+    msmInfoDebris.msmChargeInMsg.subscribeTo(MSMmodule.chargeMsmOutMsgs[0])
+    msmDebrisList = []
+    for (pos, rad) in zip(spPosListDebris, rListDebris):
+        msmDebris = vizInterface.MultiSphere()
+        msmDebris.position = pos
+        msmDebris.radius = rad
+        msmDebris.maxValue = 30e-6  # Coulomb
+        msmDebrisList.append(msmDebris)
+    msmInfoDebris.msmList = vizInterface.MultiSphereVector(msmDebrisList)
+
+    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObjectDebris]
+                                              , saveFile=fileName
+                                              , msmInfoList=[msmInfoDebris]
+                                              )
+
+
