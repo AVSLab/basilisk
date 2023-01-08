@@ -519,7 +519,7 @@ def run(show_plots):
         servicerVel.setState(unitTestSupport.np2EigenVectorXd(vd))
 
     #
-    #   configure a simulation stop time time and execute the simulation run
+    #   configure a simulation stop time and execute the simulation run
     #
     fswHillPointing()
     relOrbDrift()

@@ -404,7 +404,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # cross_init() and reset() routines on each module.
     scSim.InitializeSimulation()
 
-    # configure a simulation stop time time and execute the simulation run
+    # configure a simulation stop time and execute the simulation run
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 

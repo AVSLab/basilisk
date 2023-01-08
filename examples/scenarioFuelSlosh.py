@@ -340,7 +340,7 @@ def run(show_plots, damping_parameter, timeStep):
             ".dynManager.getStateObject('linearSpringMassDamperRho3').getState()", simulationTimeStep, 0, 0, 'double')
 
     #
-    #   configure a simulation stop time time and execute the simulation run
+    #   configure a simulation stop time and execute the simulation run
     #
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()

@@ -279,7 +279,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     scSim.InitializeSimulation()
 
     #
-    #   configure a simulation stop time time and execute the simulation run
+    #   configure a simulation stop time and execute the simulation run
     #
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()

@@ -426,7 +426,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #   and reset() routines on each module.
     scSim.InitializeSimulation()
 
-    #   configure a simulation stop time time and execute the simulation run
+    #   configure a simulation stop time and execute the simulation run
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
     # Note that this module simulates both the translational and rotational motion of the spacecraft.

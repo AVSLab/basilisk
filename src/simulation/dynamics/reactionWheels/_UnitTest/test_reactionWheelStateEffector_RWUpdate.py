@@ -176,7 +176,7 @@ def RWUpdateTest(show_plots, accuracy):
     RW2.u_min = 0.2
     RW3.u_min = 0.2
 
-    # configure a simulation stop time time and execute the simulation run
+    # configure a simulation stop time and execute the simulation run
     unitTestSim.ConfigureStopTime(simulationTime)
     unitTestSim.ExecuteSimulation()
     numTests += 1
@@ -196,7 +196,7 @@ def RWUpdateTest(show_plots, accuracy):
     RW2.u_min = 0.05
     RW3.u_min = 0.05
 
-    # reconfigure a simulation stop time time and re-execute the simulation run
+    # reconfigure a simulation stop time and re-execute the simulation run
     unitTestSim.ConfigureStopTime(2*simulationTime)
     unitTestSim.ExecuteSimulation()
     numTests += 1
@@ -216,7 +216,7 @@ def RWUpdateTest(show_plots, accuracy):
     RW2.Omega_max = 100*macros.RPM
     RW3.Omega_max = 100*macros.RPM
 
-    # reconfigure a simulation stop time time and re-execute the simulation run
+    # reconfigure a simulation stop time and re-execute the simulation run
     unitTestSim.ConfigureStopTime(3*simulationTime)
     unitTestSim.ExecuteSimulation()
     numTests += 1

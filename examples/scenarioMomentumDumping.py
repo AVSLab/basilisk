@@ -420,7 +420,7 @@ def run(show_plots):
     # cross_init() and reset() routines on each module.
     scSim.InitializeSimulation()
 
-    # configure a simulation stop time time and execute the simulation run
+    # configure a simulation stop time and execute the simulation run
     scSim.ConfigureStopTime(macros.sec2nano(10.0))
     scSim.ExecuteSimulation()
 

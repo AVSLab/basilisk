@@ -214,7 +214,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
             "spacecraftBody.dynManager.getStateObject('sphericalPendulumMass2').getState()", simulationTimeStep, 0, 0, 'double')
 
     #
-    #   configure a simulation stop time time and execute the simulation run
+    #   configure a simulation stop time and execute the simulation run
     #
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()

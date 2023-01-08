@@ -681,7 +681,7 @@ def run(show_plots):
     #   initialize Simulation
     scSim.InitializeSimulation()
 
-    #   configure a simulation stop time time and execute the simulation run
+    #   configure a simulation stop time and execute the simulation run
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 

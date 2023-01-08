@@ -111,7 +111,7 @@ def myCreationFunction():
     sim.msgRecList[retainedMessageName] = scObject.scStateOutMsg.recorder(retainedRate)
     sim.AddModelToTask(simTaskName, sim.msgRecList[retainedMessageName])
 
-    #   configure a simulation stop time time and execute the simulation run
+    #   configure a simulation stop time and execute the simulation run
     sim.ConfigureStopTime(simulationTime)
 
     return sim
