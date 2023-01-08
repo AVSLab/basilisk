@@ -246,13 +246,13 @@ public:
     //! -- Use this to record C messages
     Recorder(void* message, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
-        Msg2Header msgHeader;
 
-        Msg2Header* pt = (Msg2Header *) message;
+        Msg2Header* msgPt = (Msg2Header *) message;
+        Msg2Header *pt = msgPt;
         messageType* payloadPointer;
         payloadPointer = (messageType *) (++pt);
 
-        this->readMessage = ReadFunctor<messageType>(payloadPointer, &msgHeader);
+        this->readMessage = ReadFunctor<messageType>(payloadPointer, msgPt);
         this->ModelTag = "Rec:";
         Message<messageType> tempMsg;
         std::string msgName = typeid(tempMsg).name();
