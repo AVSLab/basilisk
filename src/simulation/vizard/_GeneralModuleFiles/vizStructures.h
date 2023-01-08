@@ -123,6 +123,7 @@ InstrumentGuiSettings
     int showTransceiverLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showTransceiverFrustrum=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showGenericStoragePanel=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showMultiSphereLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }InstrumentGuiSettings;
 
 /*! Structure defining a custom CAD model to load to represent a simulation object.
@@ -235,8 +236,9 @@ MultiSphere
     double radius;                      //!< [m] radius of the sphere
     double currentValue;                //!< [Coulomb] current sphere charge value
     double maxValue;                    //!< [Coulomb] maximum sphere charge value
-    std::vector<int> positiveColor;     //!< (optional) Send desired RGBA as values between 0 and 255, default is white
-    std::vector<int> negativeColor;     //!< (optional) Send desired RGBA as values between 0 and 255, default is white
+    std::vector<int> positiveColor;     //!< (optional) Send desired RGBA as values between 0 and 255, default is green
+    std::vector<int> negativeColor;     //!< (optional) Send desired RGBA as values between 0 and 255, default is red
+    int neutralOpacity=-1;              //!< (optional) Send desired opacity value between 0 and 255 for when charge is neutral
 }MultiSphere;
 
 /*! Structure defining Multi-Sphere-Method (MSM) information
@@ -382,6 +384,7 @@ VizSettings
     double spacecraftShadowBrightness = -1.0;       //!< Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
     double spacecraftSizeMultiplier = -1; //!< Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0, use negative value to use viz default
     double spacecraftHelioViewSizeMultiplier = -1; //!< Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
+    int forceStartAtSpacecraftLocalView = -1; //!< Require Vizard to start up in spacecraft-view on start up
 
     int32_t showLocationCommLines = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int32_t showLocationCones = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true

@@ -240,6 +240,7 @@ message VizMessage{
         int32 showTransceiverLabels = 7; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showTransceiverFrustrum = 8; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showGenericStoragePanel = 9; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showMultiSphereLabels = 10; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
     
     message CustomModel{
@@ -313,19 +314,21 @@ message VizMessage{
         double celestialBodyHelioViewSizeMultiplier = 47; // Control the display size of celestial bodies in the Solar System View, values greater than 0, use negative value to use viz default
         int32 showMissionTime = 48; //Toggle to show Mission Time instead of Sim Elapsed Time, -1 for false, 0 for viz default, 1 for true
         double spacecraftHelioViewSizeMultiplier = 49; // Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
+        int32 forceStartAtSpacecraftLocalView = 50; // Require Vizard to start up in spacecraft-view on start up
     }
     
     message MultiSphere{ //ONLY NEEDED IF MSM DESIRED
-        //FIELDS 1-3, 5 CHEKED FIRST MESSAGE ONLY
-        //FIELD 4, CHECKED EVERY MESSAGE
-        //FIELDS 6, 7 OPTIONAL, CHECKED FIRST MESSAGE ONLY
+        //FIELDS 2,3, 5 CHECKED FIRST MESSAGE ONLY
+        //FIELD 1,4 CHECKED EVERY MESSAGE
+        //FIELDS 6, 7,8  OPTIONAL, CHECKED FIRST MESSAGE ONLY
         int32 isOn = 1; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         repeated double position = 2; //[m] position in the body frame
         double radius = 3; //[m] radius of the sphere
         double currentValue = 4; // [Coulomb] current sphere charge value
         double maxValue = 5; // [Coulomb] maximum sphere charge value
-        repeated int32 positiveColor = 6; // (optional) Send desired RGBA as values between 0 and 255, default is white
-        repeated int32 negativeColor = 7; // (optional) Send desired RGBA as values between 0 and 255, default is white
+        repeated int32 positiveColor = 6; // (optional) Send desired RGBA as values between 0 and 255, default is green
+        repeated int32 negativeColor = 7; // (optional) Send desired RGBA as values between 0 and 255, default is red
+        int32 neutralOpacity = 8; // (optional) Send desired opacity value between 0 and 255 for when charge is neutral, negative value yields default
     }
     
     message Location{ //ONLY NEEDED IF LOCATION DESIRED
