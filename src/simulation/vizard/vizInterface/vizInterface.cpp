@@ -589,6 +589,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_spacecraftshadowbrightness(this->settings.spacecraftShadowBrightness);
         vizSettings->set_spacecraftsizemultiplier(this->settings.spacecraftSizeMultiplier);
         vizSettings->set_spacecrafthelioviewsizemultiplier(this->settings.spacecraftHelioViewSizeMultiplier);
+        vizSettings->set_forcestartatspacecraftlocalview(this->settings.forceStartAtSpacecraftLocalView);
         vizSettings->set_showlocationcommlines(this->settings.showLocationCommLines);
         vizSettings->set_showlocationcones(this->settings.showLocationCones);
         vizSettings->set_showlocationlabels(this->settings.showLocationLabels);
@@ -922,7 +923,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 scp->add_truetrajectorylinecolor(scIt->trueTrajectoryLineColor[i]);
             }
 
-            // Write generic storage device messages
+            // Write Multi-Sphere-Model messages
             for (size_t idx =0; idx < (size_t) scIt->msmInfo.msmList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::MultiSphere* msmp = scp->add_multispheres();
 
@@ -939,6 +940,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 for (uint64_t j=0; j<scIt->msmInfo.msmList[idx]->negativeColor.size(); j++) {
                     msmp->add_negativecolor(scIt->msmInfo.msmList[idx]->negativeColor[j]);
                 }
+                msmp->set_neutralopacity(scIt->msmInfo.msmList[idx]->neutralOpacity);
             }
 
         }
