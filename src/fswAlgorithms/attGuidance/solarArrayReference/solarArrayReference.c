@@ -27,6 +27,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 
 /*!
@@ -156,4 +157,18 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
             spinningBodyRefOut.theta = spinningBodyIn.theta + thetaR - thetaC;
         }
     }
+
+    /*! implement finite differences to compute thetaDotR */
+    double dt;
+    if (configData->count == 0) {
+        spinningBodyRefOut.thetaDot = 0;
+    }
+    else {
+        dt = (double) (callTime - configData->priorT) * NANO2SEC;
+        spinningBodyRefOut.thetaDot = (thetaR - configData->priorThetaR) / dt;
+    }
+    // update stored variables
+    configData->priorThetaR = thetaR;
+    configData->priorT = callTime;
+    configData->count += 1;
 }
