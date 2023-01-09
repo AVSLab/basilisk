@@ -32,7 +32,9 @@
 typedef struct {
 
     /* declare these user-defined quantities */
-    int bodyFrame;                  //!< flag = 1: compute theta reference based on current attitude instead of attitude reference
+    double a1_B[3];                 //!< solar array drive axis in body frame coordinates
+    double a2_B[3];                 //!< solar array surface normal at zero rotation
+    int    bodyFrame;               //!< flag = 1: compute theta reference based on current attitude instead of attitude reference
 
     /* declare module IO interfaces */
     NavAttMsg_C         attNavInMsg;               //!< input msg measured attitude
