@@ -36,6 +36,11 @@ typedef struct {
     double a2_B[3];                 //!< solar array surface normal at zero rotation
     int    bodyFrame;               //!< flag = 1: compute theta reference based on current attitude instead of attitude reference
 
+    /* declare these variables for internal computations */
+    int                 count;                    //!< counter variable for finite differences
+    uint64_t            priorT;                   //!< prior call time for finite differences
+    double              priorThetaR;              //!< prior output msg for finite differences
+
     /* declare module IO interfaces */
     NavAttMsg_C         attNavInMsg;               //!< input msg measured attitude
     AttRefMsg_C         attRefInMsg;               //!< input attitude reference message
