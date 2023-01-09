@@ -90,7 +90,7 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
     /*! read the solar array angle message */
     spinningBodyIn = SpinningBodyMsg_C_read(&configData->spinningBodyInMsg);
 
-    /* read Sun direction in B frame from the attNav message and map it to R frame */
+    /*! read Sun direction in B frame from the attNav message and map it to R frame */
     double rS_B[3], rS_R[3], BN[3][3], RN[3][3], RB[3][3];
     v3Normalize(attNavIn.vehSunPntBdy, rS_B);
     switch (configData->bodyFrame) {
@@ -109,4 +109,22 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
         default:
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: solarArrayAngle.bodyFrame input can be either 0 or 1.");
     }
+
+    /*! store solar array drive axis and solar array normal axis at zero rotation */
+    double a1_R[3], a2_R[3], a3_R[3], a1_R_prime[3], a2_R_prime[3];
+    v3Normalize(configData->a1_B, a1_R);
+    v3Cross(a1_R, configData->a2_B, a3_R);
+    v3Normalize(a3_R, a3_R);
+    v3Cross(a3_R, a1_R, a2_R);
+
+    /* compute a2_R_prime */
+    double dotP = v3Dot(a1_R, rS_R);
+    for (int n = 0; n < 3; n++) {
+        a2_R_prime[n] = rS_R[n] - dotP * a1_R[n];
+    }
+    v3Normalize(a2_R_prime, a2_R_prime);
+
+    /* compute a1_R_prime */
+    v3Cross(a2_R, a2_R_prime, a1_R_prime);
+    
 }
