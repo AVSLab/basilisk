@@ -117,14 +117,43 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
     v3Normalize(a3_R, a3_R);
     v3Cross(a3_R, a1_R, a2_R);
 
-    /* compute a2_R_prime */
+    /*! compute a2_R_prime */
     double dotP = v3Dot(a1_R, rS_R);
     for (int n = 0; n < 3; n++) {
         a2_R_prime[n] = rS_R[n] - dotP * a1_R[n];
     }
     v3Normalize(a2_R_prime, a2_R_prime);
 
-    /* compute a1_R_prime */
+    /*! compute a1_R_prime */
     v3Cross(a2_R, a2_R_prime, a1_R_prime);
-    
+
+    /*! compute current rotation angle thetaC from input msg */
+    double thetaC, sinThetaC, cosThetaC;
+    // clip theta current between 0 and 2*pi
+    sinThetaC = sin(spinningBodyIn.theta);
+    cosThetaC = cos(spinningBodyIn.theta);
+    thetaC = atan2(sinThetaC, cosThetaC);
+
+    /*! compute reference angle thetaR and store in buffer msg */
+    double thetaR;
+    if (v3Norm(a2_R_prime) < EPS) {
+        spinningBodyRefOut.theta = spinningBodyIn.theta;
+    }
+    else {
+        thetaR = acos( fmin(fmax(v3Dot(a2_R, a2_R_prime),-1),1) );
+        // if a1_R and a1_R_prime are opposite, take the negative of thetaR
+        if (v3Dot(a1_R, a1_R_prime) < 0) {
+            thetaR = -thetaR;
+        }
+        // always make the absolute difference |thetaR-thetaC| smaller that 2*pi
+        if (thetaR - thetaC > MPI) {
+            spinningBodyRefOut.theta = spinningBodyIn.theta + thetaR - thetaC - 2*MPI;
+        }
+        else if (thetaR - thetaC < - MPI) {
+            spinningBodyRefOut.theta = spinningBodyIn.theta + thetaR - thetaC + 2*MPI;
+        }
+        else {
+            spinningBodyRefOut.theta = spinningBodyIn.theta + thetaR - thetaC;
+        }
+    }
 }
