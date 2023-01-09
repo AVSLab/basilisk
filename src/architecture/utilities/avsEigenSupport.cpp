@@ -274,7 +274,10 @@ Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd mrp)
 */
 double newtonRaphsonSolve(const double& initialEstimate, const double& accuracy, const std::function<double(double)>& f, const std::function<double(double)>& fPrime) {
 	double currentEstimate = initialEstimate;
-	for (int i = 0; i < 100 && std::abs(f(currentEstimate)) > accuracy; i++) {
+	for (int i = 0; i < 100; i++) {
+        if (std::abs(f(currentEstimate)) < accuracy)
+            break;
+
 		double functionVal = f(currentEstimate);
 		double functionDeriv = fPrime(currentEstimate);
 		currentEstimate = currentEstimate - functionVal/functionDeriv;
