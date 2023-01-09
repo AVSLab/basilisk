@@ -72,5 +72,21 @@ void Reset_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t c
 */
 void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    
+     /*! - Create buffer messages */
+    NavAttMsgPayload         attNavIn;
+    AttRefMsgPayload         attRefIn;
+    SpinningBodyMsgPayload   spinningBodyIn;
+    SpinningBodyMsgPayload   spinningBodyRefOut;
+
+    /*! - zero the output message */
+    spinningBodyRefOut = SpinningBodyMsg_C_zeroMsgPayload();
+
+    /*! read the attitude navigation message */
+    attNavIn = NavAttMsg_C_read(&configData->attNavInMsg);
+
+    /*! read the attitude reference message */
+    attRefIn = AttRefMsg_C_read(&configData->attRefInMsg);
+
+    /*! read the solar array angle message */
+    spinningBodyIn = SpinningBodyMsg_C_read(&configData->spinningBodyInMsg);
 }
