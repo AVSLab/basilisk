@@ -31,6 +31,9 @@
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
 
+    /* declare these user-defined quantities */
+    int bodyFrame;                  //!< flag = 1: compute theta reference based on current attitude instead of attitude reference
+
     /* declare module IO interfaces */
     NavAttMsg_C         attNavInMsg;               //!< input msg measured attitude
     AttRefMsg_C         attRefInMsg;               //!< input attitude reference message
