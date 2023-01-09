@@ -171,4 +171,7 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
     configData->priorThetaR = thetaR;
     configData->priorT = callTime;
     configData->count += 1;
+
+    /* write output message */
+    SpinningBodyMsg_C_write(&spinningBodyRefOut, &configData->spinningBodyRefOutMsg, moduleID, callTime);
 }
