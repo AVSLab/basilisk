@@ -50,7 +50,18 @@ void SelfInit_solarArrayReference(solarArrayReferenceConfig *configData, int64_t
 */
 void Reset_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-
+    // check if the required input message is included
+    if (!NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: solarArrayReference.attNavInMsg wasn't connected.");
+    }
+    // check if the required input message is included
+    if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: solarArrayReference.attRefInMsg wasn't connected.");
+    }
+    // check if the required input message is included
+    if (!SpinningBodyMsg_C_isLinked(&configData->spinningBodyInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: solarArrayReference.spinningBodyInMsg wasn't connected.");
+    }
 }
 
 /*! This method computes the updated rotation angle reference based on current attitude, reference attitude, and current rotation angle
