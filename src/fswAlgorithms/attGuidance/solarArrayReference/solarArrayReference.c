@@ -89,4 +89,24 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
 
     /*! read the solar array angle message */
     spinningBodyIn = SpinningBodyMsg_C_read(&configData->spinningBodyInMsg);
+
+    /* read Sun direction in B frame from the attNav message and map it to R frame */
+    double rS_B[3], rS_R[3], BN[3][3], RN[3][3], RB[3][3];
+    v3Normalize(attNavIn.vehSunPntBdy, rS_B);
+    switch (configData->bodyFrame) {
+
+        case 0:
+        MRP2C(attNavIn.sigma_BN, BN);
+        MRP2C(attRefIn.sigma_RN, RN);
+        m33MultM33t(RN, BN, RB);
+        m33MultV3(RB, rS_B, rS_R);
+        break;
+
+        case 1:
+        v3Copy(rS_B, rS_R);
+        break;
+
+        default:
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: solarArrayAngle.bodyFrame input can be either 0 or 1.");
+    }
 }
