@@ -22,10 +22,16 @@
 /*! Include the required files. */
 #include <stdint.h>
 #include "architecture/utilities/bskLogging.h"
+#include "cMsgCInterface/HingedRigidBodyMsg_C.h"
+#include "cMsgCInterface/PrescribedMotionMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct
 {
+    /* Declare the module input-output messages */
+    HingedRigidBodyMsg_C    spinningBodyRef1InMsg;                //!< Input msg for the first reference angle and angle rate
+    HingedRigidBodyMsg_C    spinningBodyRef2InMsg;                //!< Input msg for the second reference angles and angle rate
+    PrescribedMotionMsg_C prescribedMotionOutMsg;              //!< Output msg for the profiled prescribed states
 
     BSKLogger *bskLogger;                                      //!< BSK Logging
 
