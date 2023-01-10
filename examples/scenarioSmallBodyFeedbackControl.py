@@ -513,7 +513,7 @@ def run(show_plots):
     waypointFeedback.K1 = unitTestSupport.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
     waypointFeedback.K2 = unitTestSupport.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
 
-    # configure a simulation stop time time and execute the simulation run
+    # configure a simulation stop time and execute the simulation run
     scSim.ConfigureStopTime(simulationTime_1)
     scSim.ExecuteSimulation()
 

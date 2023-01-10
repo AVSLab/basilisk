@@ -184,7 +184,7 @@ def TestDragCalculation():
     scSim.AddVariableForLogging(newDrag.ModelTag + ".torqueExternalPntB_B",
                                       simulationTimeStep, 0, 2, 'double')
 
-    #   configure a simulation stop time time and execute the simulation run
+    #   configure a simulation stop time and execute the simulation run
     #
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
@@ -339,7 +339,7 @@ def TestShadowCalculation():
     scSim.AddVariableForLogging(newDrag.ModelTag + ".torqueExternalPntB_B",
                                 simulationTimeStep, 0, 2, 'double')
 
-    #   configure a simulation stop time time and execute the simulation run
+    #   configure a simulation stop time and execute the simulation run
     #
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()

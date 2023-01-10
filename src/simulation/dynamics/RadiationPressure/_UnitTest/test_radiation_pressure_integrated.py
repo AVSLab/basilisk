@@ -130,7 +130,7 @@ def radiationPressureIntegratedTest(show_plots):
     sim.InitializeSimulation()
 
     #
-    #   configure a simulation stop time time and execute the simulation run
+    #   configure a simulation stop time and execute the simulation run
     #
     sim.ConfigureStopTime(simulationTime)
     sim.ExecuteSimulation()
