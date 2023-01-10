@@ -21,10 +21,14 @@
 
 /*! Include the required files. */
 #include <stdint.h>
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct
 {
+
+    BSKLogger *bskLogger;                                      //!< BSK Logging
+
 }PrescribedRot2DOFConfig;
 
 #ifdef __cplusplus
