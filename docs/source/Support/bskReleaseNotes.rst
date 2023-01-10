@@ -39,9 +39,13 @@ Version |release|
 - Highlighted the challege of setting up a ``recorder`` on a re-directed message in :ref:`bskPrinciples-7`
 - added the ability to add a ``recorder()`` to a C-wrapped module input message
 - Fix an issue in in :ref:`magneticFieldWMM` where a fixed width array holding a file path would result in a cutoff
-    path when basilisk is located in a directory path of greater than 100 characters.
+  path when basilisk is located in a directory path of greater than 100 characters.
 - Updated the build system to use newer versions of ``eigen``, ``protobuf``, ``cppzmq``
   and ``opencv``.  This corrects some build issues with new compilers.
+- The ``linearAlgebra``, ``rigidBodyKinematics``, ``orbitalMotion`` were mistakenly exposed as part of the
+  :ref:`sim_model` module's API. They have been removed and the functions they provided are still found in
+  ``Basilisk.utilities.orbitalMotion``, ``Basilisk.architecture.linearAlgebra``, and
+  ``Basilisk.architecture.rigidBodyKinematics``.
 
 
 Version 2.1.5 (Dec. 13, 2022)
