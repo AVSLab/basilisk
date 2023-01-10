@@ -272,8 +272,7 @@ Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd mrp)
 @param f Function to find the zero of
 @param fPrime First derivative of the function
 */
-double newtonRaphsonSolve(double initialEstimate, double accuracy, std::function< double(double) >& f, std::function<
-                          double(double) >& fPrime) {
+double newtonRaphsonSolve(const double& initialEstimate, const double& accuracy, const std::function<double(double)>& f, const std::function<double(double)>& fPrime) {
 	double currentEstimate = initialEstimate;
 	for (int i = 0; i < 100 && std::abs(f(currentEstimate)) > accuracy; i++) {
 		double functionVal = f(currentEstimate);
