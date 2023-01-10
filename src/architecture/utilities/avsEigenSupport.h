@@ -56,7 +56,7 @@ Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd vec);
 Eigen::MRPd eigenC2MRP(Eigen::Matrix3d);
 
 //!@brief solves for the zero of the provided function
-double newtonRaphsonSolve(double initialEstimate, double accuracy, std::function< double(double) >& f, std::function< double(double) >& fPrime);
+double newtonRaphsonSolve(const double& initialEstimate, const double& accuracy, const std::function<double(double)>& f, const std::function<double(double)>& fPrime);
 
 
 #endif /* _AVSEIGENSUPPORT_ */
