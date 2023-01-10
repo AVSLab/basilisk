@@ -27,6 +27,7 @@
  */
 void SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, int64_t moduleID)
 {
+    PrescribedMotionMsg_C_init(&configData->prescribedMotionOutMsg);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
