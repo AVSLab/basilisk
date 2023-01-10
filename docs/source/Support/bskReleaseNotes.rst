@@ -40,6 +40,8 @@ Version |release|
 - added the ability to add a ``recorder()`` to a C-wrapped module input message
 - Fix an issue in in :ref:`magneticFieldWMM` where a fixed width array holding a file path would result in a cutoff
     path when basilisk is located in a directory path of greater than 100 characters.
+- Updated the build system to use newer versions of ``eigen``, ``protobuf``, ``cppzmq``
+  and ``opencv``.  This corrects some build issues with new compilers.
 
 
 Version 2.1.5 (Dec. 13, 2022)

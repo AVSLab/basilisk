@@ -55,7 +55,7 @@ class BasiliskConan(ConanFile):
     version = f.read()
     f.close()
     generators = "cmake_find_package_multi"
-    requires = "eigen/3.3.7"
+    requires = "eigen/3.3.9"
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
     license = "ISC"
@@ -108,25 +108,13 @@ class BasiliskConan(ConanFile):
             except:
                 pass
 
-    try:
-        consoleReturn = str(subprocess.check_output(["conan", "remote", "list", "--raw"]))
-        conanRepos = ["bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan"
-                      ]
-        for item in conanRepos:
-            if item not in consoleReturn:
-                print("Configuring: " + statusColor + item + endColor)
-                cmdString = ["conan", "remote", "add"] + item.split(" ")
-                subprocess.check_call(cmdString)
-    except:
-        print("conan: " + failColor + "Error configuring conan repo information." + endColor)
     print(statusColor + "Checking conan configuration:" + endColor + " Done")
 
     try:
-        # enable this flag for the bincrafters repo to be available.
+        # enable this flag for access revised conan modules.
         subprocess.check_output(["conan", "config", "set", "general.revisions_enabled=1"])
     except:
         pass
-
 
     def system_requirements(self):
         reqFile = open('docs/source/bskPkgRequired.txt', 'r')
@@ -184,22 +172,13 @@ class BasiliskConan(ConanFile):
     def requirements(self):
         if self.options.opNav:
             self.requires.add("pcre/8.45")
-            self.requires.add("gettext/0.21")
-            self.requires.add("libiconv/1.17")
-            self.requires.add("harfbuzz/4.3.0")
-            self.requires.add("libpng/1.6.38")
-            self.requires.add("freetype/2.12.1")
-            self.requires.add("glib/2.70.0")
-            self.requires.add("opencv/4.1.1@conan/stable")
-            self.requires.add("zlib/1.2.12")
-            self.requires.add("bzip2/1.0.8")
-            self.options['opencv'].jasper = False
+            self.requires.add("opencv/4.1.2")
+            self.requires.add("zlib/1.2.13")
 
         if self.options.vizInterface or self.options.opNav:
             self.requires.add("libsodium/1.0.18")
-            self.requires.add("protobuf/3.5.2@bincrafters/stable")
-            self.requires.add("cppzmq/4.3.0@bincrafters/stable")
-            self.requires.add("protoc_installer/3.5.2@bincrafters/stable")
+            self.requires.add("protobuf/3.17.1")
+            self.requires.add("cppzmq/4.5.0")
 
     def configure(self):
         if self.options.clean:
@@ -263,15 +242,6 @@ class BasiliskConan(ConanFile):
         bskPath = os.getcwd()
         os.chdir(os.path.join(bskPath, "src/architecture/messaging/msgAutoSource"))
         self.generateMessageModules(bskPath)
-        if self.options.vizInterface:
-            # build the protobuffer support files
-            bskPath = os.getcwd()
-            os.chdir(os.path.join(bskPath, 'src', 'utilities', 'vizProtobuffer'))
-            print(statusColor + "Building protobuffer interface files:" + endColor, end=" ")
-            cmdString = ["protoc", "--cpp_out=./", "vizMessage.proto"]
-            subprocess.check_call(cmdString)
-            print("Done")
-            os.chdir(bskPath)
 
         if self.options.pathToExternalModules:
             print(statusColor + "Including External Folder: " + endColor + str(self.options.pathToExternalModules))
