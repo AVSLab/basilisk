@@ -53,6 +53,7 @@ Version |release|
   system.
 - Updated :ref:`scenarioGroundLocationImaging` to properly save off the ground location
   information for Vizard
+- Added a new helper function to convert C arrays to ``Eigen::MRPd`` and vice-versa inside ``avsEigenSupport``.
 
 
 Version 2.1.5 (Dec. 13, 2022)
