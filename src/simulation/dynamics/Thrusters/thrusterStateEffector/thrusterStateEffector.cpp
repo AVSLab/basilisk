@@ -222,7 +222,7 @@ void ThrusterStateEffector::UpdateThrusterProperties()
             this->attachedBodyBuffer = this->attachedBodyInMsgs.at(index)();
 
             // Grab attached body variables
-            sigma_FN = cArray2EigenVector3d(attachedBodyBuffer.sigma_BN);
+            sigma_FN = cArray2EigenMRPd(attachedBodyBuffer.sigma_BN);
             omega_FN_F = cArray2EigenVector3d(attachedBodyBuffer.omega_BN_B);
             r_FN_N = cArray2EigenVector3d(attachedBodyBuffer.r_BN_N);
 
