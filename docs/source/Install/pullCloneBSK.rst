@@ -22,7 +22,7 @@ As this is the raw source code, you need to
 next :ref:`install <bskInstall>` and compile the code before you can run it.
 
 
-The Basilisk frameworke is developed using the Git version control system.  The following directions explain how to
+The Basilisk framework is developed using the Git version control system.  The following directions explain how to
 clone or pull a copy from the repository.
 
 #. If you have not already installed ``lfs`` (Large File Storage) system, go to `Git LFS Support Page <https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage>`__ to download and install ``lfs`` before pulling the Basilisk repo.
@@ -32,7 +32,7 @@ clone or pull a copy from the repository.
 #. Use a browser to go to the `Basilisk GitHub
    Repository <https://github.com/AVSLab/basilisk>`__
 
-#. In the "Quick setup" sectin select the ``https`` option instead of the ssh option
+#. In the "Quick setup" section select the ``https`` option instead of the ssh option
 
 #. Copy the project url ``https://github.com/AVSLab/basilisk.git`` from the GitHub clone panel
    
