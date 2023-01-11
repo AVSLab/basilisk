@@ -28,12 +28,16 @@
 void eigenMatrixXd2CArray(Eigen::MatrixXd inMat, double *outArray);
 //!@brief Rapid conversion between 3-vector and output array
 void eigenVector3d2CArray(Eigen::Vector3d & inMat, double *outArray);
+//!@brief Rapid conversion between MRP and output array
+void eigenMRPd2CArray(Eigen::Vector3d& inMat, double* outArray);
 //!@brief Rapid conversion between 3x3 matrix and output array
 void eigenMatrix3d2CArray(Eigen::Matrix3d & inMat, double *outArray);
 //!@brief General conversion between a C array and an Eigen matrix
 Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols);
 //!@brief Specific conversion between a C array and an Eigen 3-vector
 Eigen::Vector3d cArray2EigenVector3d(double *inArray);
+//!@brief Specific conversion between a C array and an Eigen MRPs
+Eigen::MRPd cArray2EigenMRPd(double* inArray);
 //!@brief Specfici conversion between a C array and an Eigen 3x3 matrix
 Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray);
 //!@brief Specfici conversion between a C 2D array and an Eigen 3x3 matrix
@@ -52,7 +56,7 @@ Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd vec);
 Eigen::MRPd eigenC2MRP(Eigen::Matrix3d);
 
 //!@brief solves for the zero of the provided function
-double newtonRaphsonSolve(double initialEstimate, double accuracy, std::function< double(double) >& f, std::function< double(double) >& fPrime);
+double newtonRaphsonSolve(const double& initialEstimate, const double& accuracy, const std::function<double(double)>& f, const std::function<double(double)>& fPrime);
 
 
 #endif /* _AVSEIGENSUPPORT_ */

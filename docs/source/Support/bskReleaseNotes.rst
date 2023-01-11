@@ -51,6 +51,7 @@ Version |release|
 - Updated :ref:`pullCloneBSK` to ask the user to first install ``lfs`` before pulling a copy
   of the Basilisk repo due to some large files being stored in the GitHub large file storage
   system.
+- Added a new helper function to convert C arrays to ``Eigen::MRPd`` and vice-versa inside ``avsEigenSupport``.
 
 
 Version 2.1.5 (Dec. 13, 2022)
