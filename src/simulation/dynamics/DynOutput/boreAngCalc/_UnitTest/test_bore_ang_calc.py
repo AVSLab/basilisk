@@ -141,7 +141,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
 
     # Execute simulation
     TotalSim.InitializeSimulation()
-    TotalSim.AddVariableForLogging(BACObject.ModelTag + ".boreVecPoint", 1, 0, 2, "double")
+    TotalSim.AddVariableForLogging(BACObject.ModelTag + ".boreVec_Po", 1, 0, 2, "double")
     TotalSim.ExecuteSimulation()
     ###################################################################################################################
     #
@@ -149,7 +149,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
 
     simMiss = dataLog.missAngle
     simAz = dataLog.azimuth
-    simBoreVecPt = TotalSim.GetLogVariableData(BACObject.ModelTag + ".boreVecPoint")
+    simBoreVecPt = TotalSim.GetLogVariableData(BACObject.ModelTag + ".boreVec_Po")
 
     # Truth values
     dcm_BN = RigidBodyKinematics.MRP2C(stateMessage.sigma_BN)
@@ -178,7 +178,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     dcm_BPo = numpy.dot(dcm_BN, dcm_PoN.transpose())
     vecBore_B = numpy.zeros((3, 1))
     for i in range(3):
-        vecBore_B[i, 0] = BACObject.boreVec_B[i]
+        vecBore_B[i, 0] = BACObject.boreVec_B[i][0]
     boreVecPoint = numpy.dot(numpy.transpose(dcm_BPo), vecBore_B)
     boreVecPoint_1 = []
     for i in range(3):
@@ -196,7 +196,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
 
     testFailCount, testMessages = unitTestSupport.compareArray(boreVecPoint_final, simBoreVecPt_final,
                                                                AllowTolerance,
-                                                               "Calculating the vector boreVecPoint.",
+                                                               "Calculating the vector boreVec_Po.",
                                                                testFailCount, testMessages)
     # Truth values
     #boreVecPoint_1 = [0.0, 1.0, 0.0]
@@ -205,6 +205,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     baselinePoint = numpy.array(baselinePoint)
     dotValue = numpy.dot(boreVecPoint_1, baselinePoint)
     r_N = numpy.dot(numpy.transpose(dcm_BN), BACObject.boreVec_B)
+    r_N = [item for sublist in r_N for item in sublist]
     baselineProj = numpy.dot(numpy.transpose(dcm_PoN), baselinePoint)
     dotValue_2 = numpy.dot(r_N, baselineProj)
     boresightMissAng = numpy.arccos(dotValue)
