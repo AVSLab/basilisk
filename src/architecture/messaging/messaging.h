@@ -20,7 +20,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <vector>
-#include "architecture/messaging/msg2Header.h"
+#include "architecture/messaging/msgHeader.h"
 #include "architecture/utilities/bskLogging.h"
 #include <typeinfo>
 #include <stdlib.h>
@@ -37,7 +37,7 @@ template<typename messageType>
 class ReadFunctor{
 private:
     messageType* payloadPointer;    //!< -- pointer to the incoming msg data
-    Msg2Header *headerPointer;      //!< -- pointer to the incoming msg header
+    MsgHeader *headerPointer;      //!< -- pointer to the incoming msg header
     bool initialized;               //!< -- flag indicating if the input message is connect to another message
     
 public:
@@ -50,7 +50,7 @@ public:
     ReadFunctor() : initialized(false) {};
 
     //! constructor
-    ReadFunctor(messageType* payloadPtr, Msg2Header *headerPtr) : payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true){};
+    ReadFunctor(messageType* payloadPtr, MsgHeader *headerPtr) : payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true){};
 
     //! constructor
     const messageType& operator()(){
@@ -104,11 +104,11 @@ public:
     //! subscribe to a C message
     void subscribeToC(void* source){
         // this method works by knowing that the first member of a C message is the header.
-        this->headerPointer = (Msg2Header*) source;
+        this->headerPointer = (MsgHeader*) source;
 
         // advance the address to connect to C-wrapped message payload
         // this assumes the header memory is aligned with 0 additional padding
-        Msg2Header* pt = this->headerPointer;
+        MsgHeader* pt = this->headerPointer;
         this->payloadPointer = (messageType *) (++pt);
 
 
@@ -127,8 +127,8 @@ public:
     //! Check if self has been subscribed to a C message
     uint8_t isSubscribedToC(void *source){
         
-        int8_t firstCheck = (this->headerPointer == (Msg2Header*) source);
-        Msg2Header* pt = this->headerPointer;
+        int8_t firstCheck = (this->headerPointer == (MsgHeader*) source);
+        MsgHeader* pt = this->headerPointer;
         int8_t secondCheck = (this->payloadPointer == (messageType *) (++pt));
 
         return (this->initialized && firstCheck && secondCheck);
@@ -137,7 +137,7 @@ public:
     //! Check if self has been subscribed to a Cpp message
     uint8_t isSubscribedTo(Message<messageType> *source){
         
-        Msg2Header *dummyMsgPtr;
+        MsgHeader *dummyMsgPtr;
         int8_t firstCheck = (this->payloadPointer == source->getMsgPointers(&(dummyMsgPtr)));
         int8_t secondCheck = (this->headerPointer == dummyMsgPtr);
 
@@ -154,12 +154,12 @@ template<typename messageType>
 class WriteFunctor{
 private:
     messageType* payloadPointer;    //!< pointer to the message payload
-    Msg2Header* headerPointer;      //!< pointer to the message header
+    MsgHeader* headerPointer;       //!< pointer to the message header
 public:
     //! write functor constructor
     WriteFunctor(){};
     //! write functor constructor
-    WriteFunctor(messageType* payloadPointer, Msg2Header *headerPointer) : payloadPointer(payloadPointer), headerPointer(headerPointer){};
+    WriteFunctor(messageType* payloadPointer, MsgHeader *headerPointer) : payloadPointer(payloadPointer), headerPointer(headerPointer){};
     //! write functor constructor
     void operator()(messageType *payload, int64_t moduleID, uint64_t callTime){
         *this->payloadPointer = *payload;
@@ -180,7 +180,7 @@ template<typename messageType>
 class Message{
 private:
     messageType payload = {};   //!< struct defining message payload, zero'd on creation
-    Msg2Header header = {};     //!< struct defining the message header, zero'd on creation
+    MsgHeader header = {};      //!< struct defining the message header, zero'd on creation
     ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload, &header);  //!< read functor instance
 public:
     //! write functor to this message
@@ -190,10 +190,10 @@ public:
     //! -- request write rights.
     WriteFunctor<messageType> addAuthor();
     //! for plain ole c modules
-    messageType* subscribeRaw(Msg2Header **msgPtr);
+    messageType* subscribeRaw(MsgHeader **msgPtr);
 
     //! for plain ole c modules
-    messageType* getMsgPointers(Msg2Header **msgPtr);
+    messageType* getMsgPointers(MsgHeader **msgPtr);
 
     //! Recorder object
     Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
@@ -220,14 +220,14 @@ WriteFunctor<messageType> Message<messageType>::addAuthor(){
 }
 
 template<typename messageType>
-messageType* Message<messageType>::subscribeRaw(Msg2Header **msgPtr){
+messageType* Message<messageType>::subscribeRaw(MsgHeader **msgPtr){
     *msgPtr = &this->header;
     this->header.isLinked = 1;
     return &this->payload;
 }
 
 template<typename messageType>
-messageType* Message<messageType>::getMsgPointers(Msg2Header **msgPtr){
+messageType* Message<messageType>::getMsgPointers(MsgHeader **msgPtr){
     *msgPtr = &this->header;
     return &this->payload;
 }
@@ -246,13 +246,13 @@ public:
     //! -- Use this to record C messages
     Recorder(void* message, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
-        Msg2Header msgHeader;
 
-        Msg2Header* pt = (Msg2Header *) message;
+        MsgHeader* msgPt = (MsgHeader *) message;
+        MsgHeader *pt = msgPt;
         messageType* payloadPointer;
         payloadPointer = (messageType *) (++pt);
 
-        this->readMessage = ReadFunctor<messageType>(payloadPointer, &msgHeader);
+        this->readMessage = ReadFunctor<messageType>(payloadPointer, msgPt);
         this->ModelTag = "Rec:";
         Message<messageType> tempMsg;
         std::string msgName = typeid(tempMsg).name();

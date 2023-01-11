@@ -46,6 +46,8 @@ Version |release|
   :ref:`sim_model` module's API. They have been removed and the functions they provided are still found in
   ``Basilisk.utilities.orbitalMotion``, ``Basilisk.architecture.linearAlgebra``, and
   ``Basilisk.architecture.rigidBodyKinematics``.
+- Fixed an issued recording the ``timeWritten`` information of a C-wrapped message
+  with a ``recorder()`` module.
 
 
 Version 2.1.5 (Dec. 13, 2022)
