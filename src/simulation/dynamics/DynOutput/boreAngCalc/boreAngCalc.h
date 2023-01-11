@@ -22,13 +22,15 @@
 
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <Eigen/Dense>
 
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/BoreAngleMsgPayload.h"
 #include "architecture/messaging/messaging.h"
-
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 
 /*! @brief A class to perform a range of boresight related calculations.
@@ -50,11 +52,11 @@ public:
     ReadFunctor<SpicePlanetStateMsgPayload> celBodyInMsg;   //!< (-) celestial body state msg at which we pointing at
     Message<BoreAngleMsgPayload> angOutMsg;                 //!< (-) bore sight output message
 
-    double boreVec_B[3];              //!< (-) boresight vector in structure
-    double boreVecPoint[3];           //!< (-) pointing vector in the target relative point frame
     BoreAngleMsgPayload boresightAng; //!< (-) Boresight angles relative to target
     bool inputsGood;                  //!< (-) Flag indicating that inputs were read correctly
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    Eigen::Vector3d boreVec_B;                //!< (-) boresight vector in structure
+    Eigen::Vector3d boreVec_Po;             //!< (-) pointing vector in the target relative point frame
 
 private:
     SpicePlanetStateMsgPayload localPlanet;//!< (-) planet that we are pointing at

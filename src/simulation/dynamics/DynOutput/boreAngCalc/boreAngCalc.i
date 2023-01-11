@@ -23,6 +23,7 @@
 
 %include "cmalloc.i"
 %include "std_string.i"
+%include "swig_eigen.i"
 
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *

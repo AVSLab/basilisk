@@ -29,7 +29,7 @@
 BoreAngCalc::BoreAngCalc()
 {
     CallCounts = 0;
-    boreVecPoint[0] = boreVecPoint[1] = boreVecPoint[2]  = 0.0;
+    this->boreVec_Po.setZero();
     this->localPlanet = this->celBodyInMsg.zeroMsgPayload;
     this->localState = this->scStateInMsg.zeroMsgPayload;
     return;
@@ -86,30 +86,30 @@ void BoreAngCalc::ReadInputs()
     @return void
 */
 void BoreAngCalc::computeAxisPoint()
-{
-    double dcm_BN[3][3];                /*!< dcm, inertial to body frame */
-    double dcm_PoN[3][3];               /*!< dcm, inertial to Point frame */
-    double dcm_BPo[3][3];               /*!< dcm, Point to body frame */
-    double relPosVector[3];
-    double relVelVector[3];
-    double secPointVector[3];
-    double primPointVector[3];
-    
-    MRP2C(localState.sigma_BN, dcm_BN);
-    v3Subtract(localPlanet.PositionVector, localState.r_BN_N, relPosVector);
-    v3Subtract(localPlanet.VelocityVector, localState.v_BN_N, relVelVector);
-    v3Cross(relPosVector, relVelVector, secPointVector);
-    v3Normalize(secPointVector, secPointVector);
-    v3Normalize(relPosVector, primPointVector);
-    v3Copy(primPointVector, &(dcm_PoN[0][0]));
-    v3Cross(primPointVector, secPointVector, &(dcm_PoN[2][0]));
-    v3Normalize(&(dcm_PoN[2][0]), &(dcm_PoN[2][0]));
-    v3Cross(&(dcm_PoN[2][0]), &(dcm_PoN[0][0]),
-            &(dcm_PoN[1][0]));
-    m33MultM33t(dcm_BN, dcm_PoN, dcm_BPo);
-    Eigen::MatrixXd vecBore_B = Eigen::Map<Eigen::MatrixXd>(boreVec_B, 3, 1);
-    m33tMultV3(dcm_BPo, vecBore_B.data(), boreVecPoint);
-    
+{             
+    // Convert planet and body data to Eigen variables
+    Eigen::Vector3d r_BN_N = cArray2EigenVector3d(this->localState.r_BN_N);
+    Eigen::Vector3d v_BN_N = cArray2EigenVector3d(this->localState.v_BN_N);
+    Eigen::Vector3d planetPositionVector = cArray2EigenVector3d(this->localPlanet.PositionVector);
+    Eigen::Vector3d planetVelocityVector = cArray2EigenVector3d(this->localPlanet.VelocityVector);
+
+    // Compute the relative vectors
+    Eigen::Vector3d relPosVector = planetPositionVector - r_BN_N;
+    Eigen::Vector3d primPointVector = relPosVector.normalized();
+    Eigen::Vector3d relVelVector = planetVelocityVector - v_BN_N;
+    Eigen::Vector3d secPointVector = relPosVector.cross(relVelVector).normalized();
+
+    // Calculate the inertial to point DCM
+    Eigen::Matrix3d dcm_PoN;  /*!< dcm, inertial to Point frame */
+    dcm_PoN.row(0) = primPointVector.transpose();
+    dcm_PoN.row(2) = primPointVector.cross(secPointVector).normalized();
+    dcm_PoN.row(1) = dcm_PoN.row(2).cross(dcm_PoN.row(0));
+
+    // Compute the point to body frame DCM and convert the boresight vector to the Po frame
+    Eigen::MRPd sigma_BN = cArray2EigenMRPd(this->localState.sigma_BN);
+    Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();  /*!< dcm, inertial to body frame */
+    Eigen::Matrix3d dcm_BPo = dcm_BN * dcm_PoN.transpose();  /*!< dcm, Point to body frame */
+    this->boreVec_Po = dcm_BPo.transpose() * this->boreVec_B;
 }
 /*! This method computes the output structure for messaging. The miss angle is 
     absolute distance between the desired body point and the specified structural 
@@ -121,14 +121,15 @@ void BoreAngCalc::computeOutputData()
 {
     // Define epsilon that will avoid atan2 giving a NaN.
     double eps = 1e-10;
-    double baselinePoint[3] = {1.0, 0.0, 0.0};
-    double dotValue = v3Dot(this->boreVecPoint, baselinePoint);
+
+    Eigen::Vector3d baselinePoint(1.0, 0.0, 0.0);
+    double dotValue = this->boreVec_Po.dot(baselinePoint);
     this->boresightAng.missAngle = fabs(safeAcos(dotValue));
-    if(fabs(this->boreVecPoint[1]) < eps){
+    if (fabs(this->boreVec_Po(1)) < eps) {
         this->boresightAng.azimuth = 0.0;
     }
     else {
-        this->boresightAng.azimuth = atan2(this->boreVecPoint[2], this->boreVecPoint[1]);
+        this->boresightAng.azimuth = atan2(this->boreVec_Po(2), this->boreVec_Po(1));
     }
 }
 
