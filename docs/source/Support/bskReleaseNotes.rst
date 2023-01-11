@@ -48,6 +48,9 @@ Version |release|
   ``Basilisk.architecture.rigidBodyKinematics``.
 - Fixed an issued recording the ``timeWritten`` information of a C-wrapped message
   with a ``recorder()`` module.
+- Updated :ref:`pullCloneBSK` to ask the user to first install ``lfs`` before pulling a copy
+  of the Basilisk repo due to some large files being stored in the GitHub large file storage
+  system.
 
 
 Version 2.1.5 (Dec. 13, 2022)
