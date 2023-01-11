@@ -20,10 +20,6 @@
 #include "simulation/dynamics/DynOutput/boreAngCalc/boreAngCalc.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "Eigen/Dense"
-#include <math.h>
-#include <cstring>
-#include <iostream>
 
 //! The constructor.  Note that you have to overwrite the message names.
 BoreAngCalc::BoreAngCalc()

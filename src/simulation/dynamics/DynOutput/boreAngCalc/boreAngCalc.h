@@ -21,9 +21,9 @@
 #define BORE_ANG_CALC_H
 
 #include <vector>
-#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
 
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/BoreAngleMsgPayload.h"
