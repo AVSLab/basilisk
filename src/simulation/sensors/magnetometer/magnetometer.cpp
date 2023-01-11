@@ -107,7 +107,7 @@ void Magnetometer::computeMagData()
     Eigen::MRPd sigma_BN;
     //! - Magnetic field vector in inertial frame using a magnetic field model (WMM, Dipole, etc.)
     tam_N = cArray2EigenVector3d(this->magData.magField_N);
-    sigma_BN = cArray2EigenVector3d(this->stateCurrent.sigma_BN);
+    sigma_BN = cArray2EigenMRPd(this->stateCurrent.sigma_BN);
     //! - Get the inertial to sensor frame transformation information and convert tam_N to tam_S
     dcm_BN = sigma_BN.toRotationMatrix().transpose();
     this->tam_S = this->dcm_SB * dcm_BN * tam_N;

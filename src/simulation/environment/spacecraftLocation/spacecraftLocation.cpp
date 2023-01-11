@@ -160,8 +160,7 @@ void SpacecraftLocation::computeAccess()
     this->r_PN_N = cArray2EigenVector3d(this->planetState.PositionVector);
     
     // compute primary spacecraft relative to planet
-    Eigen::MRPd sigma_BN;
-    sigma_BN = cArray2EigenVector3d(this->primaryScStatesBuffer.sigma_BN);
+    Eigen::MRPd sigma_BN = cArray2EigenMRPd(this->primaryScStatesBuffer.sigma_BN);
     Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();
     r_LP_P = this->dcm_PN * (this->r_BN_N + dcm_NB * this->r_LB_B - this->r_PN_N);
     
