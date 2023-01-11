@@ -249,7 +249,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     find_package(SWIG REQUIRED)
     include(UseSWIG REQUIRED)
     # find_package(PythonLibs 3 REQUIRED)
-    find_package(Python3 REQUIRED)
+    find_package(Python3 REQUIRED PATHS /Users/runner/work/basilisk/basilisk/.venv/bin/python3)
     
     if(TARGET_LIST)
         string(REPLACE "/" ";" DirList "${TARGET_LIST}")
@@ -379,7 +379,7 @@ endfunction(generate_package_targets)
 # Start of main projection configuration
 #find_package(PythonInterp 3 REQUIRED)
 #find_package(PythonLibs 3 REQUIRED)
-find_package(Python3 REQUIRED)
+find_package(Python3 REQUIRED PATHS /Users/runner/work/basilisk/basilisk/.venv/bin/python3)
 
 #TODO: Remove the global link-libraries call
 find_package(Eigen3 CONFIG REQUIRED)
