@@ -188,8 +188,6 @@ jobs:
         run: | 
               export PATH=`"${env.Python_ROOT_DIR}"`:$PATH
               echo $PATH
-              export PYTHON_INCLUDE_DIRS=`"${env.Python_ROOT_DIR}/lib"`:$PYTHON_INCLUDE_DIRS
-              echo $PYTHON_INCLUDE_DIRS
               source .venv/bin/activate && python conanfile.py
       - name: "Run pytest"
         run: source .venv/bin/activate && cd src && pytest -n 3 -m "not scenarioTest"
