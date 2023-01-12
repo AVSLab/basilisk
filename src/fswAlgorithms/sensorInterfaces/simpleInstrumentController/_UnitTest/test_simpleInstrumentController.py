@@ -46,7 +46,14 @@ from matplotlib import pyplot as plt
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_simple_instrument_controller(show_plots):
+
+tests = [(0, 0, 0, True), # rate disabled
+         (0, 0.01, 0.1, True), # rate disabled, rate noncompliant
+         (1, 0.01, 0.001, True), # rate enabled, rate compliant
+         (1, 0.01, 0.1, False) # rate enabled, rate noncompliant
+        ]
+@pytest.mark.parametrize('use_rate_limit,rate_limit,omega_mag,expected_success', tests)
+def test_simple_instrument_controller(show_plots, use_rate_limit, rate_limit, omega_mag, expected_success):
     r"""
     **Validation Test Description**
 
@@ -57,14 +64,19 @@ def test_simple_instrument_controller(show_plots):
     2. If the controller does not image until the imaged variable is reset to 0
 
     3. If the controller sends an image command again after the imaged variable has been reset to 0
+
+    4. If the rate tolerance limit only effects operation when enabled, and effects operation in the expected manner.
     """
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
-    [testResults, testMessage] = simpleInstrumentControllerTestFunction(show_plots)
-    assert testResults < 1, testMessage
+    [testResults, testMessage] = simpleInstrumentControllerTestFunction(show_plots, use_rate_limit, rate_limit, omega_mag)
+    if expected_success:
+        assert testResults < 1, testMessage
+    else:
+        assert testResults != 0, testMessage
 
 
-def simpleInstrumentControllerTestFunction(show_plots):
+def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_limit=0.01, omega_mag=0.001):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"
@@ -90,6 +102,8 @@ def simpleInstrumentControllerTestFunction(show_plots):
 
     # Initialize the test module configuration data
     moduleConfig.attErrTolerance = 0.1                           # set the attitude error tolerance
+    moduleConfig.rateErrTolerance = rate_limit                   # set the attitude rate error tolerance
+    moduleConfig.useRateTolerance = use_rate_limit               # enable attitude rate error tolerance
 
     # Create and write the ground location access message
     inputAccessMsgData = messaging.AccessMsgPayload()
@@ -99,6 +113,7 @@ def simpleInstrumentControllerTestFunction(show_plots):
     # Create and write the attitude guidance message
     inputAttGuidMsgData = messaging.AttGuidMsgPayload()
     inputAttGuidMsgData.sigma_BR = [0.01, 0.01, 0.01]
+    inputAttGuidMsgData.omega_BR_B = [omega_mag, 0.0, 0.0]
     inputAttGuidMsg = messaging.AttGuidMsg().write(inputAttGuidMsgData)
 
     # Setup logging on the test module output message so that we get all the writes to it

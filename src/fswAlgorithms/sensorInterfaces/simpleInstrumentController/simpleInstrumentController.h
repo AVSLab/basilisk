@@ -32,6 +32,8 @@
 typedef struct {
     /* User configurable variables */
     double attErrTolerance; //!< Normalized MRP attitude error tolerance
+    unsigned int useRateTolerance; //!< Flag to enable rate error tolerance
+    double rateErrTolerance; //!< Rate error tolerance in rad/s
     unsigned int imaged;    //!< Indicator for whether or not the image has already been captured
 
     /* declare module IO interfaces */

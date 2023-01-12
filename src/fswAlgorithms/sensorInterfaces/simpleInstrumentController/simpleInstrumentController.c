@@ -69,6 +69,7 @@ void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configDa
 void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     double sigma_BR_norm; //!< Norm of sigma_BR
+    double omega_BR_norm; //!< Norm of omega_BR
 
     /* Local copies of the msg buffers*/
     AccessMsgPayload accessInMsgBuffer;  //!< local copy of input message buffer
@@ -82,14 +83,18 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configD
     accessInMsgBuffer = AccessMsg_C_read(&configData->locationAccessInMsg);
     attGuidInMsgBuffer = AttGuidMsg_C_read(&configData->attGuidInMsg);
 
-    // Compute the norm of the attitude error
+    // Compute the norms of the attitude and rate errors
     sigma_BR_norm = v3Norm(attGuidInMsgBuffer.sigma_BR);
+    omega_BR_norm = v3Norm(attGuidInMsgBuffer.omega_BR_B);
 
     // If the target has not been imaged
     if (!configData->imaged) {
-        /* If the attitude error is less than the tolerance and the groundLocation is accessible, turn on the instrument and
-        set the imaged indicator to 1*/
-        if ((sigma_BR_norm <= configData->attErrTolerance) && (accessInMsgBuffer.hasAccess)) {
+        /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the rate
+        error is less than the tolerance, turn on the instrument and set the imaged indicator to 1*/
+        if ((sigma_BR_norm <= configData->attErrTolerance)
+            && (!configData->useRateTolerance || (omega_BR_norm <= configData->rateErrTolerance)) // Check rate tolerance if useRateTolerance enabled
+            && (accessInMsgBuffer.hasAccess))
+        {
             deviceCmdOutMsgBuffer.deviceCmd = 1;
             configData->imaged = 1;
             // Otherwise, turn off the instrument
