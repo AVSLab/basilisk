@@ -421,7 +421,7 @@ def run(show_plots):
 
         # Add the Boulder target
         vizSupport.addLocation(viz, stationName="Boulder Target"
-                               , parentBodyName=earth.planetName
+                               , parentBodyName=earth.displayName
                                , r_GP_P=imagingTarget.r_LP_P_Init
                                , fieldOfView=np.radians(160.)
                                , color='pink'
@@ -433,7 +433,7 @@ def run(show_plots):
 
         # Add the Santiago target
         vizSupport.addLocation(viz, stationName="Santiago Target"
-                               , parentBodyName=earth.planetName
+                               , parentBodyName=earth.displayName
                                , r_GP_P=[[1761771.6422437236], [-5022201.882030934], [-3515898.6046771165]]
                                , fieldOfView=np.radians(160.)
                                , color='pink'
@@ -442,7 +442,7 @@ def run(show_plots):
 
         # Add the Santiago target
         vizSupport.addLocation(viz, stationName="Singapore Station"
-                               , parentBodyName=earth.planetName
+                               , parentBodyName=earth.displayName
                                , r_GP_P=singaporeStation.r_LP_P_Init
                                , fieldOfView=np.radians(160.)
                                , color='green'
