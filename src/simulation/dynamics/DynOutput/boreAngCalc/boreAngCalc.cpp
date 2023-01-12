@@ -48,8 +48,15 @@ void BoreAngCalc::Reset(uint64_t CurrentSimNanos)
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "boreAngCalc.scStateInMsg was not linked.");
     }
-    if (!this->celBodyInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "boreAngCalc.celBodyInMsg was not linked.");
+
+    if (this->celBodyInMsg.isLinked()) {
+        this->useCelestialHeading = true;
+    }
+    else if (this->inertialHeadingVec_N.norm() > 1e-8) {
+        this->useInertialHeading = true;
+    }
+    else {
+        bskLogger.bskLog(BSK_ERROR, "Either boreAngCalc.celBodyInMsg was not linked or boreAngCalc.inertialHeadingVec_N was not set.");
     }
 
 }
@@ -71,10 +78,13 @@ void BoreAngCalc::ReadInputs()
 {
     //! - Read the input message into the correct pointer
     this->localState = this->scStateInMsg();
-    this->localPlanet = this->celBodyInMsg();
-
-    this->inputsGood = this->scStateInMsg.isWritten();
-    this->inputsGood &= this->celBodyInMsg.isWritten();
+    bool celBodyMsgGood = false;
+    if (this->useCelestialHeading) {
+        this->localPlanet = this->celBodyInMsg();
+        celBodyMsgGood = this->celBodyInMsg.isWritten();
+    }
+    
+    this->inputsGood = this->scStateInMsg.isWritten() && (celBodyMsgGood || this->useInertialHeading);
 }
 
 /*! This method computes the vector specified in the input file in the LVLH 
@@ -161,10 +171,16 @@ void BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)
     //! - Read the input message and convert it over appropriately depending on switch
     ReadInputs();
    
-    if(inputsGood)
+    if(this->inputsGood)
     { 
-        computeAxisPoint();
-        computeOutputData();
+        if (this->useCelestialHeading)
+        {
+            this->computeCelestialAxisPoint();
+            this->computeCelestialOutputData();
+        }
+        else {
+            this->computeInertialOutputData();
+        }
     }
     
     //! Write out the current output for current time
