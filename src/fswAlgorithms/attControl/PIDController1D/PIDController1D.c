@@ -45,7 +45,14 @@ void SelfInit_PIDController1D(PIDController1DConfig *configData, int64_t moduleI
 */
 void Reset_PIDController1D(PIDController1DConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-
+    // check if the required input message is included
+    if (!SpinningBodyMsg_C_isLinked(&configData->spinningBodyInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: solarArrayAngle.spinningBodyInMsg wasn't connected.");
+    }
+    // check if the required input message is included
+    if (!SpinningBodyMsg_C_isLinked(&configData->spinningBodyRefInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: solarArrayAngle.spinningBodyRefInMsg wasn't connected.");
+    }
 }
 
 /*! This method computes the control torque to the solar array drive based on a PD control law
