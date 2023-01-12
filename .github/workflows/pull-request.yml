@@ -184,6 +184,11 @@ jobs:
         run: python -m venv .venv
       - name: "Install wheel and conan package"
         run: source .venv/bin/activate && pip install wheel conan && pip install pytest-xdist
+      - name: "Set Python3 Paths"
+        run: |
+              export PYTHON_EXECUTABLE=`"${env.Python_ROOT_DIR}"`:$PYTHON_EXECUTABLE
+              export PYTHON_LIBRARY=`"${env.Python_ROOT_DIR}"`:$PYTHON_LIBRARY
+              export PYTHON_LIBRARIES=`"${env.Python_ROOT_DIR}"`:$PYTHON_LIBRARIES            
       - name: "Build basilisk"
         run: | 
               export PATH=`"${env.Python_ROOT_DIR}"`:$PATH
