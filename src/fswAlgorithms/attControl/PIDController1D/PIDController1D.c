@@ -53,6 +53,10 @@ void Reset_PIDController1D(PIDController1DConfig *configData, uint64_t callTime,
     if (!SpinningBodyMsg_C_isLinked(&configData->spinningBodyRefInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: solarArrayAngle.spinningBodyRefInMsg wasn't connected.");
     }
+
+    /*! initialize module parameters to compute integral error via trapezoid integration */
+    configData->priorTime = 0;
+    configData->intError = 0;
 }
 
 /*! This method computes the control torque to the solar array drive based on a PD control law
@@ -87,6 +91,4 @@ void Update_PIDController1D(PIDController1DConfig *configData, uint64_t callTime
     K = configData->K;
     P = configData->P;
     I = configData->I;
-
-    
 }

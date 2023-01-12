@@ -28,12 +28,17 @@
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
 
-    /* declare these quantities that will eventually become input modules */
+    /*! declare these user-defined input parameters */
     double K;                 //!< proportional gain
     double P;                 //!< derivative gain
     double I;                 //!< integral gain
 
-    /* declare module IO interfaces */
+    /*! declare these variables for internal computations */
+    uint64_t priorTime;       //!< prior function call time for trapezoid integration
+    double   priorThetaError; //!< theta error at prior function call
+    double   intError;        //!< integral error
+
+    /*! declare module IO interfaces */
     SpinningBodyMsg_C      spinningBodyInMsg;      //!< input spinning body message
     SpinningBodyMsg_C      spinningBodyRefInMsg;   //!< output msg containing spinning body target angle and angle rate
     ArrayMotorTorqueMsg_C  motorTorqueOutMsg;      //!< output msg containing the motor torque to the array drive
