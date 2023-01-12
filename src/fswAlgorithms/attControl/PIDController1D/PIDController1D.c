@@ -63,5 +63,17 @@ void Reset_PIDController1D(PIDController1DConfig *configData, uint64_t callTime,
 */
 void Update_PIDController1D(PIDController1DConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    /*! - Create buffer messages */
+    SpinningBodyMsgPayload      spinningBodyIn;
+    SpinningBodyMsgPayload      spinningBodyRefIn;
+    ArrayMotorTorqueMsgPayload  motorTorqueOut;
 
+    /*! - zero the output message */
+    motorTorqueOut = ArrayMotorTorqueMsg_C_zeroMsgPayload();
+
+    /*! read the solar array angle message */
+    spinningBodyIn = SpinningBodyMsg_C_read(&configData->spinningBodyInMsg);
+
+    /*! read the solar array reference angle message */
+    spinningBodyRefIn = SpinningBodyMsg_C_read(&configData->spinningBodyRefInMsg);
 }
