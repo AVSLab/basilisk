@@ -76,4 +76,17 @@ void Update_PIDController1D(PIDController1DConfig *configData, uint64_t callTime
 
     /*! read the solar array reference angle message */
     spinningBodyRefIn = SpinningBodyMsg_C_read(&configData->spinningBodyRefInMsg);
+
+    /*! compute angle error and error rate */
+    double thetaError, thetaErrorDot;
+    thetaError    = spinningBodyRefIn.theta - spinningBodyIn.theta;
+    thetaErrorDot = spinningBodyRefIn.thetaDot - spinningBodyIn.thetaDot;
+
+    /*! extract gains from input */
+    double K, P, I;
+    K = configData->K;
+    P = configData->P;
+    I = configData->I;
+
+    
 }
