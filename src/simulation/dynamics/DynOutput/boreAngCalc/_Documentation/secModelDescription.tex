@@ -51,6 +51,8 @@ From there, the boresight vector is multiplied by the baseline vector in the poi
  	M = \arccos(\bm O \cdot \bm L)
 \end{equation}
 
+Alternatively, the basline vector can be defined in the inertial frame instead of using the pointing frame defined above. In this case, the basline vector is projected onto the body frame first, and then the same equation in \ref{eq:missAng} is used to compute the miss angle.
+
 \begin{figure}[H]
 	\centerline{
 		 \includegraphics[height = 2.5in]{Figures/azi.JPG}
@@ -65,3 +67,5 @@ The azimuth angle is calculated by passing the product of the last two component
  	\label{eq:azAng}
  	A = \arctan\bigg(\frac{\bm O_{\hat k}}{\bm O_{\hat j}}\bigg)
 \end{equation}
+
+For the case where the inertial heading is used, the azimuth angle is undefined and set to zero.

@@ -28,6 +28,10 @@ Then the azimuth angle was calculated using the same method as in the model. Aga
 	\end{tabular}
 \end{table}
 
+As for the case where the inertial heading is used, a similar procedure is applied. In this case, only the miss angle is verified. First, the inertial heading is computed in the body frame, and then the miss angle is computed using the body heading frame as well. Only the miss angle is checked, since the azimuth is ill-defined.
+
+Similarly to the celestial body test case, multiple different inputs are used to parameterize the test. The different inputs consist of different inertial headings, along with different spacecraft attitudes. The body heading vector is assumed to always be pointing in the body-frame x direction.
+
 \section{Test Parameters}
 
 \begin{table}[htbp]

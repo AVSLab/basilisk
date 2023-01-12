@@ -22,7 +22,7 @@ provides information on what this message is used for.
       - spacecraft state input message
     * - celBodyInMsg
       - :ref:`SpicePlanetStateMsgPayload`
-      - celestial body state msg at which we pointing at
+      - (optional) celestial body state msg at which we pointing at
     * - angOutMsg
       - :ref:`BoreAngleMsgPayload`
       - bore sight output message

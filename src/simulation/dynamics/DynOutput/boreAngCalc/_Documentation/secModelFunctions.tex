@@ -1,8 +1,11 @@
 \section{Model Functions}
 \begin{itemize}
-	\item \textbf{Compute Output Data}: This method computes the output structure for messaging. The miss angle is absolute distance between the desired body point and the specified structural vector. The azimuth angle is the angle between the y pointing axis and the desired pointing vector projected into the y/z plane.
+	\item \textbf{Compute Celestial Output Data}: This method computes the output structure for messaging. The miss angle is absolute distance between the desired body point and the specified structural vector. The azimuth angle is the angle between the y pointing axis and the desired pointing vector projected into the y/z plane.
+	\item  \textbf{Compute Inertial Output Data}: This method computes the output structure for messaging. The miss angle is absolute distance between the desired body pointing vector and the specified inertial heading vector.
 \end{itemize}
 
 \section{Model Assumptions and Limitations}
 
-When the miss angle goes to 0$^{\circ}$ the azimuth angle is ill defined. The model will default to setting the azimuth angle to 0$^{\circ}$ 
+When the miss angle goes to 0$^{\circ}$ the azimuth angle is ill defined. The model will default to setting the azimuth angle to 0$^{\circ}$. This also occurs when an inertial heading is used instead of the celestial body.
+
+The module defaults to using the celestial body to compute the miss and azimuth angles. This means that when a celestial body message is provided along with an inertial heading, it will output the results using the celestial body data.
