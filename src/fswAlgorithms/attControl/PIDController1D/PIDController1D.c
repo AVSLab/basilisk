@@ -23,6 +23,8 @@
 #include "string.h"
 #include <math.h>
 
+/* Support files */
+#include "architecture/utilities/macroDefinitions.h"
 
 /*!
     This method initializes the output messages for this module.
@@ -91,4 +93,15 @@ void Update_PIDController1D(PIDController1DConfig *configData, uint64_t callTime
     K = configData->K;
     P = configData->P;
     I = configData->I;
+
+    /*! compute integral term */
+    double dt;
+    if (callTime != 0) {
+        dt = (callTime - configData->priorTime) * NANO2SEC;
+        configData->intError += (thetaError + configData->priorThetaError) * dt / 2;
+    }
+
+    /*! update stored quantities */
+    configData->priorThetaError = thetaError;
+    configData->priorTime = callTime;
 }
