@@ -179,6 +179,8 @@ class BasiliskConan(ConanFile):
                                                          sys.version_info.minor, sys.version_info.micro)
                   + " is acceptable for Basilisk" + endColor)
 
+        print(statusColor + "ENVIRONMENT: " + str(os.environ.keys()) + endColor)
+
         print("\n")
 
     def requirements(self):
