@@ -291,6 +291,7 @@ class BasiliskConan(ConanFile):
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
         cmake.definitions["EXTERNAL_MODULES_PATH"] = self.options.pathToExternalModules
         cmake.definitions["PYTHON_VERSION"] = sys.version_info.major + 0.1*sys.version_info.minor
+        print('cmake.definitions["PYTHON_VERSION"] = major {0} minor {1}'.format(sys.version_info.major, 0.1*sys.version_info.minor))
         cmake.parallel = True
         print(statusColor + "Configuring cmake..." + endColor)
         cmake.configure()
@@ -365,7 +366,7 @@ if __name__ == "__main__":
     if is_running_virtual_env() or platform.system() == "Windows":
         conanCmdString.append('python -m conans.conan install . --build=missing')
     else:
-        conanCmdString.append('python3 -m conans.conan install . --build=missing')
+        conanCmdString.append('python3 -m conans.conan install .')
     conanCmdString.append(' -s build_type=' + str(args.buildType))
     conanCmdString.append(' -if ' + buildFolderName)
     if args.generator:
