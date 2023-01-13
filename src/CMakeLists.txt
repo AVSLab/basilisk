@@ -248,6 +248,14 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
     find_package(SWIG REQUIRED)
     include(UseSWIG REQUIRED)
+
+    if (NOT DEFINED Python_FIND_REGISTRY)
+        set(Python_FIND_REGISTRY "LAST")
+    endif ()
+    if (NOT DEFINED Python_FIND_FRAMEWORK)
+        set(Python_FIND_FRAMEWORK "LAST")
+    endif ()
+
     find_package(PythonLibs 3 REQUIRED)
     
     if(TARGET_LIST)
@@ -376,6 +384,12 @@ endfunction(generate_package_targets)
 
 
 # Start of main projection configuration
+if (NOT DEFINED Python_FIND_REGISTRY)
+        set(Python_FIND_REGISTRY "LAST")
+endif ()
+if (NOT DEFINED Python_FIND_FRAMEWORK)
+    set(Python_FIND_FRAMEWORK "LAST")
+endif ()
 find_package(PythonInterp 3 REQUIRED)
 find_package(PythonLibs 3 REQUIRED)
 
