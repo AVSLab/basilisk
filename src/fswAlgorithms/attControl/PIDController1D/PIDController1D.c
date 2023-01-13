@@ -104,4 +104,11 @@ void Update_PIDController1D(PIDController1DConfig *configData, uint64_t callTime
     /*! update stored quantities */
     configData->priorThetaError = thetaError;
     configData->priorTime = callTime;
+
+    /*! compute torque */
+    double T = K * thetaError + P * thetaErrorDot + I * configData->intError;
+    motorTorqueOut.motorTorque[0] = T;
+
+    /*! write output message */
+    ArrayMotorTorqueMsg_C_write(&motorTorqueOut, &configData->motorTorqueOutMsg, moduleID, callTime);
 }
