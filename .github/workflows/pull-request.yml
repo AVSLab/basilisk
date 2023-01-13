@@ -190,9 +190,10 @@ jobs:
               export PYTHON_LIBRARY=${{env.Python_ROOT_DIR}}:$PYTHON_LIBRARY
               export PYTHON_LIBRARIES=${{env.Python_ROOT_DIR}}:$PYTHON_LIBRARIES
       - name: "Build basilisk"
-        run: | 
-              export PATH=${{env.Python_ROOT_DIR}}:$PATH
+        run: |
+              echo "${{env.Python_ROOT_DIR}}" >> $GITHUB_PATH
               echo $PATH
+              echo $GITHUB_PATH
               source .venv/bin/activate && python conanfile.py
       - name: "Run pytest"
         run: source .venv/bin/activate && cd src && pytest -n 3 -m "not scenarioTest"
