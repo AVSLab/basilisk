@@ -191,7 +191,7 @@ jobs:
               export PYTHON_LIBRARIES=`"${env.Python_ROOT_DIR}"`:$PYTHON_LIBRARIES            
       - name: "Build basilisk"
         run: | 
-              export PATH="${env.Python_ROOT_DIR}":$PATH
+              export PATH=${{env.Python_ROOT_DIR}}:$PATH
               echo $PATH
               source .venv/bin/activate && python conanfile.py
       - name: "Run pytest"
