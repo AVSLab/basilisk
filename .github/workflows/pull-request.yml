@@ -149,27 +149,27 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 #          cache: 'pip'
-      - name: Cache conan packages
-        id: cache-conan
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-conan-packages
-        with:
-          # conan cache files are stored in `~/.conan` on Linux/macOS
-          path: ~/.conan
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-      - name: Cache pip modules
-        id: cache-pip
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-pip-modules
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/bskPkgRequired.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+#      - name: Cache conan packages
+#        id: cache-conan
+#        uses: actions/cache@v3
+#        env:
+#          cache-name: cache-conan-packages
+#        with:
+#          # conan cache files are stored in `~/.conan` on Linux/macOS
+#          path: ~/.conan
+#          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
+#          restore-keys: |
+#            ${{ runner.os }}-build-${{ env.cache-name }}-
+#      - name: Cache pip modules
+#        id: cache-pip
+#        uses: actions/cache@v3
+#        env:
+#          cache-name: cache-pip-modules
+#        with:
+#          path: ~/.cache/pip
+#          key: ${{ runner.os }}-pip-${{ hashFiles('**/bskPkgRequired.txt') }}
+#          restore-keys: |
+#            ${{ runner.os }}-pip-
       - name: "Install swig and cmake"
         run: brew update
 #      - name: "Install swig and cmake"
