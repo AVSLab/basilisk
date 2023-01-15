@@ -128,11 +128,10 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
 void Spacecraft::readOptionalRefMsg()
 {
     if (this->attRefInMsg.isLinked()) {
-        Eigen::MRPd sigma_BN;
         Eigen::Vector3d omega_BN_B;
         AttRefMsgPayload attRefMsgBuffer;
         attRefMsgBuffer = this->attRefInMsg();
-        sigma_BN = cArray2EigenVector3d(attRefMsgBuffer.sigma_RN);
+        Eigen::MRPd sigma_BN = cArray2EigenMRPd(attRefMsgBuffer.sigma_RN);
         Eigen::Vector3d omega_BN_N = cArray2EigenVector3d(attRefMsgBuffer.omega_RN_N);
         Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
         omega_BN_B = dcm_BN * omega_BN_N;
