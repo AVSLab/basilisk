@@ -95,27 +95,27 @@ void BoreAngCalc::ReadInputs()
 void BoreAngCalc::computeCelestialAxisPoint()
 {             
     // Convert planet and body data to Eigen variables
-    Eigen::Vector3d r_BN_N = cArray2EigenVector3d(this->localState.r_BN_N);
-    Eigen::Vector3d v_BN_N = cArray2EigenVector3d(this->localState.v_BN_N);
-    Eigen::Vector3d planetPositionVector = cArray2EigenVector3d(this->localPlanet.PositionVector);
-    Eigen::Vector3d planetVelocityVector = cArray2EigenVector3d(this->localPlanet.VelocityVector);
+    Eigen::Vector3d r_BN_N = cArray2EigenVector3d(this->localState.r_BN_N); // spacecraft's inertial position
+    Eigen::Vector3d v_BN_N = cArray2EigenVector3d(this->localState.v_BN_N); // spacecraft''s inertial velocity
+    Eigen::Vector3d r_PN_N = cArray2EigenVector3d(this->localPlanet.PositionVector);    // planet's inertial position
+    Eigen::Vector3d v_PN_N = cArray2EigenVector3d(this->localPlanet.VelocityVector);    // planet's inertial velocity
 
     // Compute the relative vectors
-    Eigen::Vector3d relPosVector = planetPositionVector - r_BN_N;
-    Eigen::Vector3d primPointVector = relPosVector.normalized();
-    Eigen::Vector3d relVelVector = planetVelocityVector - v_BN_N;
-    Eigen::Vector3d secPointVector = relPosVector.cross(relVelVector).normalized();
+    Eigen::Vector3d r_PB_N = r_PN_N - r_BN_N;   // relative position vector
+    Eigen::Vector3d rHat_PB_N = r_PB_N.normalized();    // unit vector for relative position
+    Eigen::Vector3d v_PB_N = v_PN_N - v_BN_N;   // relative velocity vector
+    Eigen::Vector3d secHat_N = r_PB_N.cross(v_PB_N).normalized();   // perpendicular unit vector
 
     // Calculate the inertial to point DCM
-    Eigen::Matrix3d dcm_PoN;  /*!< dcm, inertial to Point frame */
-    dcm_PoN.row(0) = primPointVector.transpose();
-    dcm_PoN.row(2) = primPointVector.cross(secPointVector).normalized();
+    Eigen::Matrix3d dcm_PoN;  // dcm, inertial to point frame
+    dcm_PoN.row(0) = rHat_PB_N.transpose();
+    dcm_PoN.row(2) = rHat_PB_N.cross(secHat_N).normalized();
     dcm_PoN.row(1) = dcm_PoN.row(2).cross(dcm_PoN.row(0));
 
     // Compute the point to body frame DCM and convert the boresight vector to the Po frame
-    Eigen::MRPd sigma_BN = cArray2EigenMRPd(this->localState.sigma_BN);
-    Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();  /*!< dcm, inertial to body frame */
-    Eigen::Matrix3d dcm_BPo = dcm_BN * dcm_PoN.transpose();  /*!< dcm, Point to body frame */
+    Eigen::MRPd sigma_BN = cArray2EigenMRPd(this->localState.sigma_BN); // mrp, inertial to body frame
+    Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();   // dcm, inertial to body frame
+    Eigen::Matrix3d dcm_BPo = dcm_BN * dcm_PoN.transpose(); // dcm, point to body frame
     this->boreVec_Po = dcm_BPo.transpose() * this->boreVec_B;
 }
 
@@ -148,11 +148,11 @@ void BoreAngCalc::computeCelestialOutputData()
 void BoreAngCalc::computeInertialOutputData()
 {
     // Compute the DCM from inertial do body frame
-    Eigen::MRPd sigma_BN = cArray2EigenMRPd(this->localState.sigma_BN);
-    Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();  /*!< dcm, inertial to body frame */
+    Eigen::MRPd sigma_BN = cArray2EigenMRPd(this->localState.sigma_BN); // mrp, inertial to body frame
+    Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();   // dcm, inertial to body frame
 
     // Calculate the inertial heading vector
-    Eigen::Vector3d inertialHeadingVec_B = dcm_BN * this->inertialHeadingVec_N;
+    Eigen::Vector3d inertialHeadingVec_B = dcm_BN * this->inertialHeadingVec_N; // inertial heading written in the body frame
     double dotValue = this->boreVec_B.dot(inertialHeadingVec_B);
     this->boresightAng.missAngle = fabs(safeAcos(dotValue));
 
