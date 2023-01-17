@@ -285,15 +285,3 @@ double newtonRaphsonSolve(const double& initialEstimate, const double& accuracy,
 	return currentEstimate;
 }
 
-
-/*! This function solves for the zero of the passed function using the Bisection Method
-@return double
-@param interval The interval to use for the bisection method. Note that the root of the function must be inside this interval
-@param accuracy The desired upper bound for the error
-@param f Function to find the zero of
-*/
-double bisectionSolve(double *interval, double accuracy, std::function< double(double) >& f) {
-    double currentEstimate = (interval[0] + interval[1])/2;
-    // bisection algorithm goes here
-    return currentEstimate;
-}
