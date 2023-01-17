@@ -25,7 +25,12 @@
 BoreAngCalc::BoreAngCalc()
 {
     CallCounts = 0;
+
+    // Initialize the pointing vectors
     this->boreVec_Po.setZero();
+    this->inertialHeadingVec_N.setZero();
+
+    // Zero the payloads
     this->localPlanet = this->celBodyInMsg.zeroMsgPayload;
     this->localState = this->scStateInMsg.zeroMsgPayload;
 }
@@ -77,7 +82,7 @@ void BoreAngCalc::ReadInputs()
     is used later to compute how far off that vector is in an angular sense.
     @return void
 */
-void BoreAngCalc::computeAxisPoint()
+void BoreAngCalc::computeCelestialAxisPoint()
 {             
     // Convert planet and body data to Eigen variables
     Eigen::Vector3d r_BN_N = cArray2EigenVector3d(this->localState.r_BN_N);
@@ -103,13 +108,14 @@ void BoreAngCalc::computeAxisPoint()
     Eigen::Matrix3d dcm_BPo = dcm_BN * dcm_PoN.transpose();  /*!< dcm, Point to body frame */
     this->boreVec_Po = dcm_BPo.transpose() * this->boreVec_B;
 }
-/*! This method computes the output structure for messaging. The miss angle is 
-    absolute distance between the desired body point and the specified structural 
-    vector.  The aximuth angle is the angle between the y pointing axis and the 
+
+/*! This method computes the output structure for messaging. The miss angle is
+    absolute distance between the desired body point and the specified structural
+    vector.  The aximuth angle is the angle between the y pointing axis and the
     desired pointing vector projected into the y/z plane.
     @return void
 */
-void BoreAngCalc::computeOutputData()
+void BoreAngCalc::computeCelestialOutputData()
 {
     // Define epsilon that will avoid atan2 giving a NaN.
     double eps = 1e-10;
@@ -123,6 +129,25 @@ void BoreAngCalc::computeOutputData()
     else {
         this->boresightAng.azimuth = atan2(this->boreVec_Po(2), this->boreVec_Po(1));
     }
+}
+
+/*! This method computes the output structure for messaging. The miss angle is 
+    computed using the body heading and the provided inertial heading
+    @return void
+*/
+void BoreAngCalc::computeInertialOutputData()
+{
+    // Compute the DCM from inertial do body frame
+    Eigen::MRPd sigma_BN = cArray2EigenMRPd(this->localState.sigma_BN);
+    Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();  /*!< dcm, inertial to body frame */
+
+    // Calculate the inertial heading vector
+    Eigen::Vector3d inertialHeadingVec_B = dcm_BN * this->inertialHeadingVec_N;
+    double dotValue = this->boreVec_B.dot(inertialHeadingVec_B);
+    this->boresightAng.missAngle = fabs(safeAcos(dotValue));
+
+    // Azimuth is undefined, so we set it to 0
+    this->boresightAng.azimuth = 0.0;
 }
 
 /*! This method is the main carrier for the boresight calculation routine.  If it detects

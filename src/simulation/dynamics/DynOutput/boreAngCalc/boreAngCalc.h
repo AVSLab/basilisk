@@ -42,8 +42,9 @@ public:
     
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
-    void computeAxisPoint();
-    void computeOutputData();
+    void computeCelestialAxisPoint();
+    void computeCelestialOutputData();
+    void computeInertialOutputData();
     void WriteOutputMessages(uint64_t CurrentClock);
     void ReadInputs();
     
@@ -53,6 +54,7 @@ public:
 
     Eigen::Vector3d boreVec_B;                //!< (-) boresight vector in structure
     Eigen::Vector3d boreVec_Po;             //!< (-) pointing vector in the target relative point frame
+    Eigen::Vector3d inertialHeadingVec_N;     //!< (-) inertial boresight vector
 
 private:
     SpicePlanetStateMsgPayload localPlanet;//!< (-) planet that we are pointing at
@@ -60,6 +62,8 @@ private:
 
     BoreAngleMsgPayload boresightAng = {};   //!< (-) Boresight angles relative to target
     bool inputsGood = false;                    //!< (-) Flag indicating that inputs were read correctly
+    bool useCelestialHeading = false;                    //!< (-) Flag indicating that the module should use the celestial body heading
+    bool useInertialHeading = false;            //!< (-) Flag indicating that the module should use the inertial heading
     BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 
