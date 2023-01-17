@@ -438,8 +438,8 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 
     Eigen::Vector3d gravityForce_B;
     gravityForce_B = dcm_NB.transpose()*gravityForce_N;
-    this->hub.hubBackSubMatrices.vecTrans += gravityForce_B + sumForceExternalMappedToB + this->sumForceExternal_B;
-    this->hub.hubBackSubMatrices.vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
+    this->hub.hubBackSubMatrices.vecTrans += sumForceExternalMappedToB + this->sumForceExternal_B;
+    this->hub.hubBackSubMatrices.vecRot += this->sumTorquePntB_B;
 
     // Set the hub's gravitational acceleration states
     // - Set gravity velocity derivatives
