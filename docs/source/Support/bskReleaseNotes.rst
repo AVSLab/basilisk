@@ -56,6 +56,8 @@ Version |release|
 - Updated :ref:`spinningBodyStateEffector` to use the :ref:`HingedRigidBodyMsgPayload` output message type for compatibility with other modules
 - Added the ability to set an inertial heading in the :ref:`boreAngCalc` module. Changed the internal module logic to use ``Eigen`` library variables and functions instead of C-style arrays and methods.
 - Added support for Vizard v2.1.3
+- Updated :ref:`simpleInstrumentController` to provide the option to consider the angular velocity tracking error norm
+  when considering to take an image.
 
 
 Version 2.1.5 (Dec. 13, 2022)

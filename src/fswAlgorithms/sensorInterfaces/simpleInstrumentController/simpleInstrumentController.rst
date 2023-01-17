@@ -1,8 +1,8 @@
 Executive Summary
 -----------------
 This module generates a command in the form of a :ref:`DeviceCmdMsgPayload` that turns on a :ref:`simpleInstrument`
-if the spacecraft a.) has access to a :ref:`groundLocation` and b.) the associated attitude error from an attitude
-guidance message is within the given tolerance.
+if the spacecraft a.) has access to a :ref:`groundLocation` and b.) the associated attitude error and attitude rate
+error from an attitude guidance message is within the given tolerance.
 
 Message Connection Descriptions
 -------------------------------
@@ -49,3 +49,6 @@ It must be set at the beginning of the sim.
 The ``imaged`` variable is always initialized to 0 (i.e. the target has not been imaged). However, if the simulation
 is stopped and restarted again this variable should be reinitialized to 0 in between. If it is not and the previous
 target was imaged, the new target will not be imaged.
+
+Optionally, attitude rate error checking may be enabled by setting ``useRateTolerance`` to ``1``. If enabled,
+``rateErrTolerance`` should be set to the norm of the acceptable attitude rate error in rad/s when imaging.
