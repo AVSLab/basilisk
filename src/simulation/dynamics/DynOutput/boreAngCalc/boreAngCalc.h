@@ -47,20 +47,20 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     void ReadInputs();
     
-public:
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;       //!< (-) spacecraft state input message
     ReadFunctor<SpicePlanetStateMsgPayload> celBodyInMsg;   //!< (-) celestial body state msg at which we pointing at
     Message<BoreAngleMsgPayload> angOutMsg;                 //!< (-) bore sight output message
 
-    BoreAngleMsgPayload boresightAng; //!< (-) Boresight angles relative to target
-    bool inputsGood;                  //!< (-) Flag indicating that inputs were read correctly
-    BSKLogger bskLogger;                      //!< -- BSK Logging
     Eigen::Vector3d boreVec_B;                //!< (-) boresight vector in structure
     Eigen::Vector3d boreVec_Po;             //!< (-) pointing vector in the target relative point frame
 
 private:
     SpicePlanetStateMsgPayload localPlanet;//!< (-) planet that we are pointing at
     SCStatesMsgPayload localState;   //!< (-) observed state of the spacecraft
+
+    BoreAngleMsgPayload boresightAng = {};   //!< (-) Boresight angles relative to target
+    bool inputsGood = false;                    //!< (-) Flag indicating that inputs were read correctly
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 
 

@@ -28,14 +28,10 @@ BoreAngCalc::BoreAngCalc()
     this->boreVec_Po.setZero();
     this->localPlanet = this->celBodyInMsg.zeroMsgPayload;
     this->localState = this->scStateInMsg.zeroMsgPayload;
-    return;
 }
 
-//! The destructor.  So tired of typing this.
-BoreAngCalc::~BoreAngCalc()
-{
-    return;
-}
+//! The destructor.
+BoreAngCalc::~BoreAngCalc() = default;
 
 
 /*! This method is used to reset the module.
