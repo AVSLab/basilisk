@@ -56,6 +56,13 @@ The module
 contains further information on this module's function,
 how to run it, as well as testing.
 
+.. note::
+
+    In contrast to :ref:`spinningBodyStateEffector`, this module assumes:
+
+    - rigid body inertia matrix is diagonal as seen in the hinged body :math:`\cal S` frame
+    - the center of mass lies on the :math:`\hat{\bf s}_1` axis
+
 Module Testing
 ^^^^^^^^^^^^^^
 The integrated tests has six scenarios it is testing. The first three are: one with gravity and no damping, one without gravity and without damping, and one without gravity with damping. These first three tests are verifying energy and momentum conservation. In the first two cases orbital energy, orbital momentum, rotational energy, and rotational angular momentum should all be conserved. In the third case orbital momentum, orbital energy, and rotational momentum should be conserved. This integrated test validates for all three scenarios that all of these parameters are conserved. The fourth scenario is verifying that the steady state deflection while a constant force is being applied matches the back of the envelope (BOE) calculation. The fifth scenario applies a constant force and removes the force and the test verifies that the frequency and amplitude match the BOE calculations. And the sixth scenario verifies that Basilisk gives identical results to a planar Lagrangian dynamical system created independently.
