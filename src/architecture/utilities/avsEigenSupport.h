@@ -58,5 +58,7 @@ Eigen::MRPd eigenC2MRP(Eigen::Matrix3d);
 //!@brief solves for the zero of the provided function
 double newtonRaphsonSolve(const double& initialEstimate, const double& accuracy, const std::function<double(double)>& f, const std::function<double(double)>& fPrime);
 
+//!@brief solves for the zero of the provided function using Bisection
+double bisectionSolve(double *interval, double accuracy, std::function< double(double) >& f);
 
 #endif /* _AVSEIGENSUPPORT_ */
