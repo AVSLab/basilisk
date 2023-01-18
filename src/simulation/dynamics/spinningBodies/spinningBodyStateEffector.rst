@@ -17,7 +17,7 @@ The following table lists all the module input and output messages.  The module 
       - Msg Type
       - Description
     * - spinningBodyOutMsg
-      - :ref:`SpinningBodyMsgPayload`
+      - :ref:`HingedRigidBodyMsgPayload`
       - Output message containing the spinning body state angle and angle rate
     * - motorTorqueInMsg
       - :ref:`ArrayMotorTorqueMsgPayload`
