@@ -1,0 +1,25 @@
+\section{User Guide}
+
+The module can use either a celestial body message or an inertial heading set by the user. It defaults to using the celestial body message if both the message and the heading are configured.
+
+A common setup for both cases contains:
+
+\begin{itemize}
+  \item[-]      \texttt{BACObject = boreAngCalc.BoreAngCalc()}: Construct the boreAngCalc module
+  \item[-]   \texttt{BACObject.ModelTag = "solarArrayBoresight"}: Set the model tag
+  \item[-]   \texttt{BACObject.boreVec\_B = boreVec\_B}: Set the body frame boresight vector assuming it is assigned to variable \texttt{boreVec\_B}
+  \item[-]   \texttt{BACObject.scStateInMsg.subscribeTo(scMsg)}: Attach the spacecraft's state message from \texttt{scMsg}
+  \item[-]   \texttt{TotalSim.AddModelToTask(unitTaskName, BACObject)}: Attach the module to a task
+\end{itemize}
+
+If using the celestial body message, then:
+
+\begin{itemize}
+     \item[-]   \texttt{BACObject.celBodyInMsg.subscribeTo(celBodyMsg)}: Attach the celestial body message of type \texttt{SpicePlanetStateMsg()}
+\end{itemize}
+
+If using the inertial heading, then:
+
+\begin{itemize}
+     \item[-]   \texttt{BACObject.inertialHeadingVec\_N = inertialHeading}: Define the inertial heading
+\end{itemize}
