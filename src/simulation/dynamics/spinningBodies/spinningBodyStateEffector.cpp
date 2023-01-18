@@ -85,7 +85,7 @@ void SpinningBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     // Write out the spinning body output messages
     if (this->spinningBodyOutMsg.isLinked()) {
-        SpinningBodyMsgPayload spinningBodyBuffer;
+        HingedRigidBodyMsgPayload spinningBodyBuffer;
         spinningBodyBuffer = this->spinningBodyOutMsg.zeroMsgPayload;
         spinningBodyBuffer.theta = this->theta;
         spinningBodyBuffer.thetaDot = this->thetaDot;

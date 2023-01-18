@@ -54,6 +54,8 @@ Version |release|
 - Updated :ref:`scenarioGroundLocationImaging` to properly save off the ground location
   information for Vizard
 - Added a new helper function to convert C arrays to ``Eigen::MRPd`` and vice-versa inside ``avsEigenSupport``.
+- Updated :ref:`spinningBodyStateEffector` to use the :ref:`HingedRigidBodyMsgPayload` output message type for compatibility with other modules
+
 
 
 Version 2.1.5 (Dec. 13, 2022)
