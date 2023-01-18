@@ -285,3 +285,41 @@ double newtonRaphsonSolve(const double& initialEstimate, const double& accuracy,
 	return currentEstimate;
 }
 
+/*! This function solves for the zero of the passed function using the Bisection Method
+@return double
+@param interval The interval to use for the bisection method. Note that the root of the function must be inside this interval
+@param accuracy The desired upper bound for the error
+@param f Function to find the zero of
+*/
+double bisectionSolve(double *interval, double accuracy, std::function< double(double) >& f) {
+    BSKLogger bskLogger;
+    double currentEstimate = 0.0;
+    double left = interval[0];
+    double right = interval[1];
+    // check if interval is good
+    if (left > right){
+        bskLogger.bskLog(BSK_ERROR,"Interval must be from left to right");
+        return NAN;
+    }
+    // check if interval has opposite signs
+    if ((f(left)*f(right)) > 0){
+        bskLogger.bskLog(BSK_ERROR,"Interval must have opposite signs");
+        return NAN;
+    }
+    // find root
+    while ((right - left) >= accuracy){
+        // midpoint
+        currentEstimate = (left + right) / 2.0;
+        // if midpoint is root, root is found
+        if (f(currentEstimate) == 0.0){
+            break;
+        }
+        else if (f(left)*f(currentEstimate) < 0.0){
+            right = currentEstimate;
+        }
+        else{
+            left = currentEstimate;
+        }
+    }
+    return currentEstimate;
+}
