@@ -45,7 +45,12 @@ void SelfInit_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData,
 */
 void Reset_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-
+    if (!HingedRigidBodyMsg_C_isLinked(&configData->hingedRigidBodyInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: solarArrayAngle.hingedRigidBodyInMsg wasn't connected.");
+    }
+    if (!HingedRigidBodyMsg_C_isLinked(&configData->hingedRigidBodyRefInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: solarArrayAngle.hingedRigidBodyRefInMsg wasn't connected.");
+    }
 }
 
 /*! This method computes the control torque to the solar array drive based on a PD control law
