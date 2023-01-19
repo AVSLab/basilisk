@@ -23,6 +23,8 @@
 #include "string.h"
 #include <math.h>
 
+/* Support files */
+#include "architecture/utilities/macroDefinitions.h"
 
 /*!
     This method initializes the output messages for this module.
@@ -51,6 +53,11 @@ void Reset_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, ui
     if (!HingedRigidBodyMsg_C_isLinked(&configData->hingedRigidBodyRefInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: solarArrayAngle.hingedRigidBodyRefInMsg wasn't connected.");
     }
+
+    /*! initialize module parameters to compute integral error via trapezoid integration */
+    configData->priorTime = 0;
+    configData->priorThetaError = 0;
+    configData->intError = 0;
 }
 
 /*! This method computes the control torque to the solar array drive based on a PD control law
@@ -61,5 +68,35 @@ void Reset_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, ui
 */
 void Update_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    /*! - Create and assign buffer messages */
+    ArrayMotorTorqueMsgPayload motorTorqueOut = ArrayMotorTorqueMsg_C_zeroMsgPayload();
+    HingedRigidBodyMsgPayload  hingedRigidBodyIn = HingedRigidBodyMsg_C_read(&configData->hingedRigidBodyInMsg);
+    HingedRigidBodyMsgPayload  hingedRigidBodyRefIn = HingedRigidBodyMsg_C_read(&configData->hingedRigidBodyRefInMsg);
 
+    /*! compute angle error and error rate */
+    double thetaError    = hingedRigidBodyRefIn.theta - hingedRigidBodyIn.theta;
+    double thetaErrorDot = hingedRigidBodyRefIn.thetaDot - hingedRigidBodyIn.thetaDot;
+
+    /*! extract gains from input */
+    double K = configData->K;
+    double P = configData->P;
+    double I = configData->I;
+
+    /*! compute integral term */
+    double dt;
+    if (callTime != 0) {
+        dt = (callTime - configData->priorTime) * NANO2SEC;
+        configData->intError += (thetaError + configData->priorThetaError) * dt / 2;
+    }
+
+    /*! update stored quantities */
+    configData->priorThetaError = thetaError;
+    configData->priorTime = callTime;
+
+    /*! compute torque */
+    double T = K * thetaError + P * thetaErrorDot + I * configData->intError;
+    motorTorqueOut.motorTorque[0] = T;
+
+    /*! write output message */
+    ArrayMotorTorqueMsg_C_write(&motorTorqueOut, &configData->motorTorqueOutMsg, moduleID, callTime);
 }

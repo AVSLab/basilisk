@@ -33,6 +33,11 @@ typedef struct {
     double P;                 //!< derivative gain
     double I;                 //!< integral gain
 
+    /*! declare these variables for internal computations */
+    uint64_t priorTime;       //!< prior function call time for trapezoid integration
+    double   priorThetaError; //!< theta error at prior function call
+    double   intError;        //!< integral error
+
     /* declare module IO interfaces */
     HingedRigidBodyMsg_C   hingedRigidBodyInMsg;      //!< input spinning body message
     HingedRigidBodyMsg_C   hingedRigidBodyRefInMsg;   //!< output msg containing spinning body target angle and angle rate
