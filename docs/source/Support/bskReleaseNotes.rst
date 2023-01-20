@@ -14,8 +14,8 @@ Basilisk Release Notes
 .. Danger::
 
    This next generation of Basilisk 2.0+ introduces a new messaging system and file architecture.  As a result
-   using BSK2 requires upgrading existing Basilisk simulation scripts (see :ref:`migratingToBsk2`) and C/C++ modules
-   (see :ref:`migratingModuleToBsk2`) to be used with 2.0 and onwards.  All unit test and example scenario scripts
+   using BSK2 requires upgrading existing Basilisk 1.x simulation scripts (see :ref:`migratingToBsk2`) and C/C++ modules
+   (see :ref:`migratingModuleToBsk2`) to be used with 2.x and onwards.  All unit test and example scenario scripts
    are updated and form a good source for examples on how to use the new software framework.
 
 .. sidebar:: In Progress Features
@@ -25,9 +25,8 @@ Basilisk Release Notes
     - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
       CAD asteroid or lunar surface terrain.
     - spacecraft charging related modules
-    - Basilisk 2.2 that includes:
-
-        - support a way to do thread-safe messaging
+    - ability to integrate dynamics of multiple spacecraft simultaneously
+    - support a way to do thread-safe messaging
 
 
 Version |release|
@@ -56,6 +55,7 @@ Version |release|
 - Added a new helper function to convert C arrays to ``Eigen::MRPd`` and vice-versa inside ``avsEigenSupport``.
 - Updated :ref:`spinningBodyStateEffector` to use the :ref:`HingedRigidBodyMsgPayload` output message type for compatibility with other modules
 - Added the ability to set an inertial heading in the :ref:`boreAngCalc` module. Changed the internal module logic to use ``Eigen`` library variables and functions instead of C-style arrays and methods.
+- Added support for Vizard v2.1.3
 
 
 Version 2.1.5 (Dec. 13, 2022)
