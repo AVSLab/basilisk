@@ -327,9 +327,9 @@ def run(show_plots):
             msmDebris.isOn = 1
             msmDebris.maxValue = 30e-6  # Coulomb
             msmDebris.currentValue = 4e-6  # Coulomb
+            msmDebris.neutralOpacity = 50  # opacity value between 0 and 255
             msmDebrisList.append(msmDebris)
         msmInfoDebris.msmList = vizInterface.MultiSphereVector(msmDebrisList)
-
 
         viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObjectServicer, scObjectDebris]
                                                   # , saveFile=fileName

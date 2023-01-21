@@ -15,6 +15,12 @@ Release Notes
     - visualize MSM charge values
     - load custom Unity generated spacecraft and celestial body models at run time
 
+**Version 2.1.3 (Jan. 20, 2023)**
+
+- added support for Settings flag `ForceStartAtSpacecraftLocalView`. If this flag is set to 1, the main camera will stay in the spacecraft local view and has been improved to allow zooming out to very large distances from the camera target spacecraft. Vizard will remain locked in spacecraft local view unless a non-spacecraft camera target is selected.
+- added MultiSphere support to `VizMessage.proto` and support visualizing the MultiSpheres on a spacecraft.
+
+
 **Version 2.1.2 (Dec. 13, 2022)**
 
 - added instructions and public Unity project allowing users to import custom models and export them into Unity Addressable bundles that can be imported at runtime by Vizard by using the ``modelDictionaryKey`` setting in both Celestial Bodies and Spacecraft objects
