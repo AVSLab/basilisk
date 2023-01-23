@@ -35,3 +35,25 @@ ScCharging::ScCharging()
 ScCharging::~ScCharging()
 {
 }
+
+/*!   Add spacecraft to charging module
+ @return void
+ @param tmpScMsg spacecraft state input message
+ */
+void ScCharging::addSpacecraft(Message<SCStatesMsgPayload> *tmpScMsg)
+{
+    /* add the message reader to the vector of input spacecraft state messages */
+    this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
+    
+    Eigen::Vector3d zero;
+    zero << 0.0, 0.0, 0.0;
+    this->r_BN_NList.push_back(zero);
+    Eigen::MRPd zeroMRP;
+    zeroMRP = zero;
+    this->sigma_BNList.push_back(zeroMRP);
+        
+    /* create output message objects */
+    Message<VoltMsgPayload> *msgVolt;
+    msgVolt = new Message<VoltMsgPayload>;
+    this->voltOutMsgs.push_back(msgVolt);
+}

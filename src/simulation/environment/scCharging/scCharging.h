@@ -41,11 +41,22 @@ public:
     // Constructor And Destructor
     ScCharging();
     ~ScCharging();
+    
+    // Methods
+    void addSpacecraft(Message<SCStatesMsgPayload> *tmpScMsg);
 
 // public variables
 public:
+    std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of spacecraft state input messages
+    
+    std::vector<Message<VoltMsgPayload>*> voltOutMsgs;     //!< vector of voltage output messages
+    
     BSKLogger bskLogger;                                        //!< -- BSK Logging
 
+// private variables
+private:
+    std::vector<Eigen::Vector3d> r_BN_NList;                    //!< [m] list of inertial satellite position vectors
+    std::vector<Eigen::MRPd> sigma_BNList;                      //!< [m] list of satellite MRP orientations
 };
 
 
