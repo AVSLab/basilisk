@@ -33,6 +33,13 @@
 %include "sys_model.h"
 %include "scCharging.h"
 
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/PlasmaFluxMsgPayload.h"
+struct PlasmaFluxMsg_C;
+%include "architecture/msgPayloadDefC/VoltMsgPayload.h"
+struct VoltMsg_C;
+
 
 
 

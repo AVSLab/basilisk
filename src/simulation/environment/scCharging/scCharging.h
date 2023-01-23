@@ -25,6 +25,9 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/PlasmaFluxMsgPayload.h"
+#include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 #include <vector>
 #include <Eigen/Dense>
 
