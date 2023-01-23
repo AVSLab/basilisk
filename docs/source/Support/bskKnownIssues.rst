@@ -10,6 +10,11 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- text here
+
+
+Version 2.1.6
+-------------
 - in :ref:`boreAngCalc`, the variable ``boreVecPoint`` is now called ``boreVec_Po``.
 
 Version 2.1.5

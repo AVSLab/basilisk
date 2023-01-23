@@ -29,9 +29,10 @@ Basilisk Release Notes
     - support a way to do thread-safe messaging
 
 
-..
-  Version |release|
-  -----------------
+
+Version |release|
+-----------------
+- text here
 
 Version 2.1.6 (Jan. 21, 2023)
 -----------------------------
