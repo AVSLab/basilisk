@@ -159,11 +159,11 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     list(APPEND AllLibs ${LIB_NAME})
 
     # Link all necessary libraries
-    target_link_libraries(${LIB_NAME} ArchitectureUtilities)
-    target_link_libraries(${LIB_NAME} ModuleIdGenerator)
-    target_link_libraries(${LIB_NAME} cMsgCInterface)
-    target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
-    target_link_libraries(${LIB_NAME} Eigen3::Eigen3)
+    target_link_libraries(${LIB_NAME} PUBLIC ArchitectureUtilities)
+    target_link_libraries(${LIB_NAME} PRIVATE ModuleIdGenerator)
+    target_link_libraries(${LIB_NAME} PUBLIC cMsgCInterface)
+    target_link_libraries(${LIB_NAME} PRIVATE ${PYTHON_LIBRARIES})
+    target_link_libraries(${LIB_NAME} PRIVATE Eigen3::Eigen3)
 
     # define build location, IDE generation specifications
     set_target_properties(${LIB_NAME} PROPERTIES FOLDER ${PARENT_DIR})
@@ -340,7 +340,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
     # Add any custom user defined targets to the build aka external library
     foreach(CUSTOM_LIB ${CUSTOM_DEPENDENCIES})
-      target_link_libraries(${TARGET_NAME} ${CUSTOM_LIB})
+      target_link_libraries(${TARGET_NAME} PRIVATE ${CUSTOM_LIB})
     endforeach()
 
     target_include_directories(${TARGET_NAME} PRIVATE ${PYTHON_INCLUDE_PATH}) # Exposes python.h to wrap.c(xx) file
@@ -355,7 +355,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
     # Link all necessary libraries
     foreach(LIB ${LIB_DEP_LIST})
-      target_link_libraries(${TARGET_NAME} ${LIB})
+      target_link_libraries(${TARGET_NAME} PRIVATE ${LIB})
     endforeach()
 
     if(${MODULE_DIR} STREQUAL "ExternalModules")
