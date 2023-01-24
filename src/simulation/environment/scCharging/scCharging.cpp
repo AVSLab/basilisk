@@ -130,3 +130,23 @@ double ScCharging::interp(double x0, double x1, double y0, double y1, double x)
     double y = y0 + ((y1-y0)/(x1-x0)) * (x - x0);
     return y;
 }
+
+/*!  This function computes the integral of the passed function using trapezoidal integration
+ @return double
+ @param f function to compute the integral of
+ @param a lower limit of integration
+ @param b upper limit of integration
+ @param N number of trapezoids to use
+ */
+double ScCharging::trapz(std::function< double(double) >& f, double a, double b, int N)
+{
+    double h = (b-a)/N;    // trapezoid width
+    double sum = 0;
+    
+    for (int i=1; i < N; i++) {
+        sum += f(i*h);
+    }
+
+    double integral = h * (sum + (f(a)+f(b))/2.0);
+    return integral;
+}
