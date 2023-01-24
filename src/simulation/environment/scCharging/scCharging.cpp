@@ -40,6 +40,31 @@ ScCharging::~ScCharging()
     }
 }
 
+/*! This method is used to reset the module and checks that required input messages are connect.
+ @return void
+ @param CurrentSimNanos current simulation time in nano-seconds
+*/
+void ScCharging::Reset(uint64_t CurrentSimNanos)
+{
+    // check that required input messages are connected
+    if (!this->plasmaFluxInMsg.isLinked())
+    {
+        bskLogger.bskLog(BSK_ERROR, "ScCharging.plasmaFluxInMsg was not linked.");
+    }
+    
+    for (long unsigned int c=0; c < this->scStateInMsgs.size(); c++ ){
+        if (!this->scStateInMsgs.at(c).isLinked()) {
+            bskLogger.bskLog(BSK_ERROR, "ScCharging.scStateInMsgs[%d] was not linked.", c);
+        }
+    }
+    
+    // check for other requirements for this module
+    this->numSat = (uint32_t) this->scStateInMsgs.size();
+    if (this->numSat < 1) {
+        bskLogger.bskLog(BSK_ERROR, "ScCharging must have 1 or more spacecraft added. You added %lu.", this->numSat);
+    }
+}
+
 /*!   Add spacecraft to charging module
  @return void
  @param tmpScMsg spacecraft state input message

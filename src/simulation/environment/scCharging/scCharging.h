@@ -43,6 +43,7 @@ public:
     ~ScCharging();
     
     // Methods
+    void Reset(uint64_t CurrentSimNanos);
     void addSpacecraft(Message<SCStatesMsgPayload> *tmpScMsg);
 
 // private functions
