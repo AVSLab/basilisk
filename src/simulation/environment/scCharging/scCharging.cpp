@@ -117,3 +117,16 @@ void ScCharging::readMessages()
         this->sigma_BNList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.sigma_BN);
     }
 }
+
+/*!  This function performs linear interpolation between the provided values
+ @return double
+ @param x0 data point 0
+ @param x1 data point 1
+ @param y0 function value for data point 0
+ @param y1 function value for data point 1
+ */
+double ScCharging::interp(double x0, double x1, double y0, double y1, double x)
+{
+    double y = y0 + ((y1-y0)/(x1-x0)) * (x - x0);
+    return y;
+}
