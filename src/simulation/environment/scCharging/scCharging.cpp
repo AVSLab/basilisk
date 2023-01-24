@@ -34,6 +34,10 @@ ScCharging::ScCharging()
 /*! Module Destructor */
 ScCharging::~ScCharging()
 {
+    /* free up output message objects */
+    for (long unsigned int c=0; c<this->voltOutMsgs.size(); c++) {
+        delete this->voltOutMsgs.at(c);
+    }
 }
 
 /*!   Add spacecraft to charging module
