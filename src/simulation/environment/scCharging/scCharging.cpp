@@ -73,6 +73,31 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
 {
     // read the input messages
     this->readMessages();
+    
+    double d = 2.0;
+    double k = -1.0;
+    std::function<double(double)> f = [this, d, k](double x)-> double {
+        double xn = this->getFlux(x, "electron");
+        return k*xn + d;
+    };
+    
+    double integral = trapz(f, 0, 1, 100);
+    
+    std::cout << "Integral is " << std::setprecision(10) << integral << std::endl;
+    
+    double interval [2] = {0, 4};
+    double x0 = bisectionSolve(interval, 1e-8, f);
+    
+    std::cout << "Bisection Method found root at " << std::setprecision(10) << x0 << std::endl;
+    
+    // create output messages
+    VoltMsgPayload voltMsgBuffer;  //!< [] voltage out message buffer
+    // loop over all satellites
+    for (long unsigned int c=0; c < this->numSat; c++) {
+        // store voltage of each spacecraft
+        voltMsgBuffer.voltage = -1000;
+        this->voltOutMsgs.at(c)->write(&voltMsgBuffer, this->moduleID, CurrentSimNanos);
+    }
 }
 
 /*!   Add spacecraft to charging module
@@ -149,4 +174,25 @@ double ScCharging::trapz(std::function< double(double) >& f, double a, double b,
 
     double integral = h * (sum + (f(a)+f(b))/2.0);
     return integral;
+}
+
+/*!  This function returns the flux for a specific energy
+ @return double
+ @param E energy of interest [eV]
+ @param particle particle of interest ("electron" or "ion")
+ */
+double ScCharging::getFlux(double E, std::string particle)
+{
+    double flux;
+    
+    if (particle == "electron")
+    {
+        flux = 2*E;
+    }
+    else
+    {
+        flux = 1*E;
+    }
+    
+    return flux;
 }

@@ -52,6 +52,7 @@ private:
     void readMessages();
     double interp(double x0, double x1, double y0, double y1, double x);
     double trapz(std::function< double(double) >& f, double a, double b, int N);
+    double getFlux(double E, std::string particle);
 
 // public variables
 public:
