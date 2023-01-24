@@ -55,7 +55,7 @@ jobs:
       - name: "Run Test"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n 2 -m "not scenarioTest" --junitxml=junit/test-results.xml
+          cd src && pytest -n 2 -m "not scenarioTest" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
       - name: Upload pytest test results
         uses: actions/upload-artifact@v3
         with:
