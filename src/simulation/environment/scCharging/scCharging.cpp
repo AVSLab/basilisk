@@ -57,3 +57,24 @@ void ScCharging::addSpacecraft(Message<SCStatesMsgPayload> *tmpScMsg)
     msgVolt = new Message<VoltMsgPayload>;
     this->voltOutMsgs.push_back(msgVolt);
 }
+
+/*!  Read in the input messages
+ @return void
+ */
+void ScCharging::readMessages()
+{
+    PlasmaFluxMsgPayload PlasmaFluxInMsgBuffer;          //!< local copy of plasma flux input message buffer
+    SCStatesMsgPayload scStateInMsgsBuffer;     //!< local copy of spacecraft state input message buffer
+    long unsigned int c;                        //!< spacecraft loop counter
+        
+    PlasmaFluxInMsgBuffer = this->plasmaFluxInMsg();
+    this->energies = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.energies,MAX_PLASMA_FLUX_SIZE,1);
+    this->electronFlux = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.meanElectronFlux,MAX_PLASMA_FLUX_SIZE,1);
+    this->ionFlux = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.meanIonFlux,MAX_PLASMA_FLUX_SIZE,1);
+    
+    for (c = 0; c < this->numSat; c++) {
+        scStateInMsgsBuffer = this->scStateInMsgs.at(c)();
+        this->r_BN_NList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.r_BN_N);
+        this->sigma_BNList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.sigma_BN);
+    }
+}
