@@ -44,6 +44,7 @@ public:
     
     // Methods
     void Reset(uint64_t CurrentSimNanos);
+    void UpdateState(uint64_t CurrentSimNanos);
     void addSpacecraft(Message<SCStatesMsgPayload> *tmpScMsg);
 
 // private functions

@@ -65,6 +65,16 @@ void ScCharging::Reset(uint64_t CurrentSimNanos)
     }
 }
 
+/*! This is the main method that gets called every time the module is updated.  Calculates total current and finds equilibrium potential.
+ @return void
+ @param CurrentSimNanos current simulation time in nano-seconds
+*/
+void ScCharging::UpdateState(uint64_t CurrentSimNanos)
+{
+    // read the input messages
+    this->readMessages();
+}
+
 /*!   Add spacecraft to charging module
  @return void
  @param tmpScMsg spacecraft state input message
