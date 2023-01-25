@@ -33,6 +33,7 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - Created fsw :ref:`hingedRigidBodyPIDMotor` to compute the commanded torque to :ref:`spinningBodyStateEffector` using a propotional-integral-derivative controller.
+- Added :ref:`torqueScheduler` to combine two :ref:`ArrayMotorTorqueMsgPayload` into one and implement effector locking logic.
 
 Version 2.1.6 (Jan. 21, 2023)
 -----------------------------
