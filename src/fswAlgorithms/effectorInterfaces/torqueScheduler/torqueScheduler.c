@@ -42,6 +42,14 @@ void SelfInit_torqueScheduler(torqueSchedulerConfig *configData, int64_t moduleI
 */
 void Reset_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    if (!ArrayMotorTorqueMsg_C_isLinked(&configData->motorTorque1InMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "torqueScheduler.motorTorque1InMsg wasn't connected.");
+    }
+    if (!ArrayMotorTorqueMsg_C_isLinked(&configData->motorTorque2InMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "torqueScheduler.motorTorque2InMsg wasn't connected.");
+    }
+
+    configData->t0 = callTime;
 }
 
 /*! This method computes the control torque to the solar array drive based on a PD control law
