@@ -60,4 +60,59 @@ void Reset_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime,
 */
 void Update_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    /*! - Create and assign buffer messages */
+    ArrayMotorTorqueMsgPayload  motorTorque1In  = ArrayMotorTorqueMsg_C_read(&configData->motorTorque1InMsg);
+    ArrayMotorTorqueMsgPayload  motorTorque2In  = ArrayMotorTorqueMsg_C_read(&configData->motorTorque2InMsg);
+    ArrayMotorTorqueMsgPayload  motorTorqueOut  = ArrayMotorTorqueMsg_C_zeroMsgPayload();
+    ArrayEffectorLockMsgPayload effectorLockOut = ArrayEffectorLockMsg_C_zeroMsgPayload();
+
+    /*! compute current time from Reset call */
+    double t = ((callTime - configData->t0) * NANO2SEC);
+
+    /*! populate output torque msg */
+    motorTorqueOut.motorTorque[0] = motorTorque1In.motorTorque[0];
+    motorTorqueOut.motorTorque[1] = motorTorque2In.motorTorque[0];
+    
+    switch (configData->lockFlag) {
+
+        case 0:
+            effectorLockOut.effectorLockFlag[0] = 0;
+            effectorLockOut.effectorLockFlag[1] = 0;
+            break;
+
+        case 1:
+            if (t > configData->tSwitch) {
+                effectorLockOut.effectorLockFlag[0] = 1;
+                effectorLockOut.effectorLockFlag[1] = 0;
+            }
+            else {
+                effectorLockOut.effectorLockFlag[0] = 0;
+                effectorLockOut.effectorLockFlag[1] = 1;
+            }
+            break;
+
+        case 2:
+            if (t > configData->tSwitch) {
+                effectorLockOut.effectorLockFlag[0] = 0;
+                effectorLockOut.effectorLockFlag[1] = 1;
+            }
+            else {
+                effectorLockOut.effectorLockFlag[0] = 1;
+                effectorLockOut.effectorLockFlag[1] = 0;
+            }
+            break;
+
+        case 3:
+            effectorLockOut.effectorLockFlag[0] = 1;
+            effectorLockOut.effectorLockFlag[1] = 1;
+            break;
+
+        default:
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: torqueScheduler.lockFlag has to be an integer between 0 and 3.");
+
+    }
+
+    /* write output messages */
+    ArrayMotorTorqueMsg_C_write(&motorTorqueOut, &configData->motorTorqueOutMsg, moduleID, callTime);
+    ArrayEffectorLockMsg_C_write(&effectorLockOut, &configData->effectorLockOutMsg, moduleID, callTime);
 }
