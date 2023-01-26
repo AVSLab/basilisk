@@ -34,6 +34,14 @@ Version |release|
 -----------------
 - Created fsw :ref:`hingedRigidBodyPIDMotor` to compute the commanded torque to :ref:`spinningBodyStateEffector` using a propotional-integral-derivative controller.
 - Added :ref:`torqueScheduler` to combine two :ref:`ArrayMotorTorqueMsgPayload` into one and implement effector locking logic.
+- Refactored how ``Custom.cmake`` files are included and how they are to be constructed. ``Custom.cmake`` files
+  should no longer include an include guard (e.g. ``if(BUILD_OPNAV) ... endif(BUILD_OPNAV)`` ). Rather, to add
+  optionally compile a module, its directory name should be added to a list in
+  ``src/cmake/bskTargetExcludeBuildOptions.cmake``. Most importantly, the build target is now accessible within the
+  a ``Custom.cmake`` file as ``${TARGET_NAME}``. This enables appropriate modularization of build target specific
+  includes, dependencies, and compiler flags. For an example of the implications of this refactor review the before
+  and after of the ``src/cmake/usingOpenCV.cmake`` file.
+
 
 Version 2.1.6 (Jan. 21, 2023)
 -----------------------------
