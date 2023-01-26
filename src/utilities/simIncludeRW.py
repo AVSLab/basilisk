@@ -26,10 +26,7 @@ import numpy
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    from collections import OrderedDict
+from collections import OrderedDict
 
 class rwFactory(object):
     """

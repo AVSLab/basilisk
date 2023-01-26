@@ -20,10 +20,8 @@
 # Import some architectural stuff that we will probably always use
 import sys, os, ast
 import matplotlib.pyplot as plt
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    from collections import OrderedDict
+from collections import OrderedDict
+
 
 # Point the path to the module storage area
 
