@@ -47,7 +47,7 @@ message VizMessage{
     message Spacecraft{
         //FIELDS 1-4 EVERY TIMESTEP,
         //FIELDS 5-8, 10-12, 17-18 EVERY TIMESTEP IF THESE COMPONENTS ARE PRESENT IN SIM
-        //FIELDS 9, 13, 16 NEED ONLY BE SENT IN FIRST MESSAGE
+        //FIELDS 9, 13, 16, 19 NEED ONLY BE SENT IN FIRST MESSAGE
         //FIELDS 14-15 OPTIONAL FIELDS THAT CAN BE UPDATED EVERY TIMESTEP IF DESIRED, BUT NEED NEVER BE INCLUDED
         string spacecraftName = 1;
         repeated double position = 2;  //SCStatesMsg.r_BN_N
@@ -68,6 +68,7 @@ message VizMessage{
         string logoTexture = 16; //Path to image texture to be used to customize built-in spacecraft models
         repeated MultiSphere multiSpheres = 17; // (Optional) Multi-Sphere-Model (MSM) charging model information
         repeated Ellipsoid ellipsoids = 18; //(Optional) Ellipsoid Heads Up Displays
+        string parentSpacecraftName = 19; // Name of the main spacecraft body that this spacecraft object should be considered a component of. Required if this spacecraft object is a subcomponent of a larger craft (i.e. deployable solar panel)
 }
 
     message ReactionWheel{ //ONLY REQUIRED IF RW HUD/PANEL DESIRED

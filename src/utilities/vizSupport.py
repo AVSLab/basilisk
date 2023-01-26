@@ -17,26 +17,22 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-
-#
-#   Unit Test Support Script
-#
-import os
-
 import numpy as np
+import os
 from Basilisk import __path__
+from Basilisk.architecture import messaging
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import unitTestSupport
 from matplotlib import colors
 from matplotlib.colors import is_color_like
-
-bskPath = __path__[0]
-from Basilisk.architecture import messaging
 
 try:
     from Basilisk.simulation import vizInterface
     vizFound = True
 except ImportError:
     vizFound = False
+
+bskPath = __path__[0]
 
 firstSpacecraftName = ''
 
@@ -1140,6 +1136,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     # ensure the spacecraft object list is a list
     if not isinstance(scList, list):
         scList = [scList]
+    scListLength = len(scList)
 
     firstSpacecraftName = scList[0].ModelTag
 
@@ -1149,7 +1146,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         rwEffectorScList = kwargs['rwEffectorList']
         if not isinstance(rwEffectorScList, list):
             rwEffectorScList = [rwEffectorScList]
-        if len(rwEffectorScList) != len(scList):
+        if len(rwEffectorScList) != scListLength:
             print('ERROR: vizSupport: rwEffectorList should have the same length as the number of spacecraft')
             exit(1)
 
@@ -1158,7 +1155,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         thrEffectorScList = kwargs['thrEffectorList']
         if not isinstance(thrEffectorScList, list):
             thrEffectorScList = [[thrEffectorScList]]
-        if len(thrEffectorScList) != len(scList):
+        if len(thrEffectorScList) != scListLength:
             print('ERROR: vizSupport: thrEffectorList should have the same length as the number of spacecraft')
             exit(1)
     thrColorsScList = False
@@ -1171,7 +1168,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                     colorCheck = False
             if colorCheck:
                 thrColorsScList = [[thrColorsScList]]
-        if len(thrColorsScList) != len(scList):
+        if len(thrColorsScList) != scListLength:
             print('ERROR: vizSupport: thrColors should have the same length as the number of spacecraft')
             exit(1)
 
@@ -1180,7 +1177,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         cssScList = kwargs['cssList']
         if not isinstance(cssScList, list):
             cssScList = [[cssScList]]
-        if len(cssScList) != len(scList):
+        if len(cssScList) != scListLength:
             print('ERROR: vizSupport: cssList should have the same length as the number '
                   'of spacecraft and contain lists of CSSs')
             exit(1)
@@ -1190,7 +1187,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         gsScList = kwargs['genericSensorList']
         if not isinstance(gsScList, list):
             gsScList = [[gsScList]]
-        if len(gsScList) != len(scList):
+        if len(gsScList) != scListLength:
             print('ERROR: vizSupport: genericSensorList should have the same length as the '
                   'number of spacecraft and contain lists of generic sensors')
             exit(1)
@@ -1200,7 +1197,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         elScList = kwargs['ellipsoidList']
         if not isinstance(elScList, list):
             elScList = [[elScList]]
-        if len(elScList) != len(scList):
+        if len(elScList) != scListLength:
             print('ERROR: vizSupport: ellipsoidList should have the same length as the '
                   'number of spacecraft and contain lists of generic sensors')
             exit(1)
@@ -1210,7 +1207,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         liScList = kwargs['lightList']
         if not isinstance(liScList, list):
             liScList = [[liScList]]
-        if len(liScList) != len(scList):
+        if len(liScList) != scListLength:
             print('ERROR: vizSupport: lightList should have the same length as the '
                   'number of spacecraft and contain lists of light devices')
             exit(1)
@@ -1220,7 +1217,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         gsdScList = kwargs['genericStorageList']
         if not isinstance(gsdScList, list):
             gsdScList = [[gsdScList]]
-        if len(gsdScList) != len(scList):
+        if len(gsdScList) != scListLength:
             print('ERROR: vizSupport: genericStorageList should have the same length as the '
                   'number of spacecraft and contain lists of generic sensors')
             exit(1)
@@ -1230,7 +1227,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         tcScList = kwargs['transceiverList']
         if not isinstance(tcScList, list):
             tcScList = [[tcScList]]
-        if len(tcScList) != len(scList):
+        if len(tcScList) != scListLength:
             print('ERROR: vizSupport: tcScList should have the same length as the '
                   'number of spacecraft and contain lists of transceivers')
             exit(1)
@@ -1240,7 +1237,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         spriteScList = kwargs['spriteList']
         if not isinstance(spriteScList, list):
             spriteScList = [spriteScList]
-        if len(spriteScList) != len(scList):
+        if len(spriteScList) != scListLength:
             print('ERROR: vizSupport: spriteScList should have the same length as the '
                   'number of spacecraft and contain lists of transceivers')
             exit(1)
@@ -1250,7 +1247,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         modelDictionaryKeyList = kwargs['modelDictionaryKeyList']
         if not isinstance(modelDictionaryKeyList, list):
             modelDictionaryKeyList = [modelDictionaryKeyList]
-        if len(modelDictionaryKeyList) != len(scList):
+        if len(modelDictionaryKeyList) != scListLength:
             print('ERROR: vizSupport: modelDictionaryKeyList should have the same length as the '
                   'number of spacecraft and contain lists of transceivers')
             exit(1)
@@ -1260,7 +1257,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         logoTextureList = kwargs['logoTextureList']
         if not isinstance(logoTextureList, list):
             logoTextureList = [logoTextureList]
-        if len(logoTextureList) != len(scList):
+        if len(logoTextureList) != scListLength:
             print('ERROR: vizSupport: logoTextureList should have the same length as the '
                   'number of spacecraft and contain lists of transceivers')
             exit(1)
@@ -1268,7 +1265,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     oscOrbitColorList = False
     if 'oscOrbitColorList' in kwargs:
         oscOrbitColorList = kwargs['oscOrbitColorList']
-        if len(oscOrbitColorList) != len(scList):
+        if len(oscOrbitColorList) != scListLength:
             print('ERROR: vizSupport: oscOrbitColorList should have the same length as the '
                   'number of spacecraft and contain lists of transceivers')
             exit(1)
@@ -1286,7 +1283,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     trueOrbitColorList = False
     if 'trueOrbitColorList' in kwargs:
         trueOrbitColorList = kwargs['trueOrbitColorList']
-        if len(trueOrbitColorList) != len(scList):
+        if len(trueOrbitColorList) != scListLength:
             print('ERROR: vizSupport: trueOrbitColorList should have the same length as the '
                   'number of spacecraft and contain lists of transceivers')
             exit(1)
@@ -1306,7 +1303,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         msmInfoList = kwargs['msmInfoList']
         if not isinstance(msmInfoList, list):
             msmInfoList = [msmInfoList]
-        if len(msmInfoList) != len(scList):
+        if len(msmInfoList) != scListLength:
             print('ERROR: vizSupport: msmInfoList should have the same length as the '
                   'number of spacecraft')
             exit(1)
@@ -1314,7 +1311,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     bodyScList = False
     if 'bodyList' in kwargs:
         bodyScList = kwargs['bodyList']
-        if len(bodyScList) != len(scList):
+        if len(bodyScList) != scListLength:
             print('ERROR: vizSupport: bodyScList should have the same length as the '
                   'number of spacecraft and contain lists of generic sensors')
             exit(1)
@@ -1325,32 +1322,42 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     spiceMsgList = []
     vizMessenger.scData.clear()
     c = 0
+    spacecraftParentName = ""
+
     for sc in scList:
         # create spacecraft information container
         scData = vizInterface.VizSpacecraftData()
 
-        # set spacecraft name
-        scData.spacecraftName = sc.ModelTag
-
         # link to spacecraft state message
-        scData.scStateInMsg.subscribeTo(sc.scStateOutMsg)
+        if isinstance(sc, type(spacecraft.Spacecraft())):
+            # set spacecraft name
+            scData.spacecraftName = sc.ModelTag
+            spacecraftParentName = sc.ModelTag
+            scData.scStateInMsg.subscribeTo(sc.scStateOutMsg)
 
-        # link to celestial bodies information
-        for gravBody in sc.gravField.gravBodies:
-            # check if the celestial object has already been added
-            if gravBody.planetName not in planetNameList:
-                planetNameList.append(gravBody.planetName)
-                planetInfo = vizInterface.GravBodyInfo()
-                if gravBody.displayName == "":
-                    planetInfo.bodyName = gravBody.planetName
-                else:
-                    planetInfo.bodyName = gravBody.displayName
-                planetInfo.mu = gravBody.mu
-                planetInfo.radEquator = gravBody.radEquator
-                planetInfo.radiusRatio = gravBody.radiusRatio
-                planetInfo.modelDictionaryKey = gravBody.modelDictionaryKey
-                planetInfoList.append(planetInfo)
-                spiceMsgList.append(gravBody.planetBodyInMsg)
+            # link to celestial bodies information
+            for gravBody in sc.gravField.gravBodies:
+                # check if the celestial object has already been added
+                if gravBody.planetName not in planetNameList:
+                    planetNameList.append(gravBody.planetName)
+                    planetInfo = vizInterface.GravBodyInfo()
+                    if gravBody.displayName == "":
+                        planetInfo.bodyName = gravBody.planetName
+                    else:
+                        planetInfo.bodyName = gravBody.displayName
+                    planetInfo.mu = gravBody.mu
+                    planetInfo.radEquator = gravBody.radEquator
+                    planetInfo.radiusRatio = gravBody.radiusRatio
+                    planetInfo.modelDictionaryKey = gravBody.modelDictionaryKey
+                    planetInfoList.append(planetInfo)
+                    spiceMsgList.append(gravBody.planetBodyInMsg)
+        else:
+            # the scList object is an effector belonging to the parent spacecraft
+            scData.parentSpacecraftName = spacecraftParentName
+            ModelTag = sc[0]
+            effStateOutMsg = sc[1]
+            scData.spacecraftName = ModelTag
+            scData.scStateInMsg.subscribeTo(effStateOutMsg)
 
         # process RW effectors
         if rwEffectorScList:
@@ -1460,21 +1467,16 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             if trueOrbitColorList[c] is not None:
                 scData.trueTrajectoryLineColor = vizInterface.IntVector(trueOrbitColorList[c])
 
+        if trueOrbitColorInMsgList:
+            if trueOrbitColorInMsgList[c] is not None:
+                scData.trueTrajectoryLineColorInMsg = trueOrbitColorInMsgList[c]
+
         # process MSM information
         if msmInfoList:
             if msmInfoList[c] is not None:  # MSM have been added to this spacecraft
                 scData.msmInfo = msmInfoList[c]
 
         vizMessenger.scData.push_back(scData)
-
-        # process spacecraft ellipsoids
-        if bodyScList:
-            if bodyScList[c] is not None:  # extra body(ies) have been added to this spacecraft
-                for tag, msg in bodyScList[c].items():
-                    bodyData = vizInterface.VizSpacecraftData()
-                    bodyData.spacecraftName = tag
-                    bodyData.scStateInMsg.subscribeTo(msg)
-                    vizMessenger.scData.push_back(bodyData)
 
         c += 1
 
