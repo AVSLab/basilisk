@@ -31,10 +31,10 @@ typedef struct {
 
     /* declare these user-defined inputs */
     int    lockFlag;                               //!< flag to control the scheduler logic
-    double tSwitch;                                //!< [s] time at which controller switches to second angle
+    double tSwitch;                                //!< [s] time span after t0 at which controller switches to second angle
 
     /* declare this quantity that is a module internal variable */
-    uint64_t t0;
+    uint64_t t0;                                   //!< [ns] epoch time where module is reset
 
     /* declare module IO interfaces */
     ArrayMotorTorqueMsg_C  motorTorque1InMsg;      //!< input motor torque message #1
