@@ -301,6 +301,7 @@ VizSpacecraftData
 //@endcond
 {
     std::string spacecraftName = "bsk-Sat";                     //!< [-] Name of the spacecraft.
+    std::string parentSpacecraftName = "";                      //!< [-] Name of parent spacecraft object for multi-body spacecraft
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;               //!< [-] msg of incoming spacecraft data
     MsgCurrStatus scStateInMsgStatus;                           //!< [-] (Private) status of the incoming spacecraft  data message
     SCStatesMsgPayload scStateMsgBuffer;                          //!< [-] (Private) s/c state message data

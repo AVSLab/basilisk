@@ -281,12 +281,11 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, pwr1Log)
     scSim.AddModelToTask(simTaskName, pwr2Log)
 
-    scBodyList = {}
-    scBodyList[panel1.ModelTag] = panel1.hingedRigidBodyConfigLogOutMsg
-    scBodyList[panel2.ModelTag] = panel2.hingedRigidBodyConfigLogOutMsg
-
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              , bodyList=[scBodyList]
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName,
+                                              [scObject
+                                                  , [panel1.ModelTag, panel1.hingedRigidBodyConfigLogOutMsg]
+                                                  , [panel2.ModelTag, panel2.hingedRigidBodyConfigLogOutMsg]
+                                               ]
                                               # , saveFile=__file__
                                               )
 
