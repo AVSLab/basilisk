@@ -19,7 +19,6 @@
 '''
 import os
 import sys
-import six
 
 from setuptools import Command, setup
 from setuptools.command.test import test as TestCommand
@@ -62,7 +61,7 @@ class PyTestCommand(TestCommand):
 
 class CleanCommand(Command):
     # Custom command to clean up
-    description = "Custom clean command that removes dist/build and artifacts"
+    description = "Custom clean command that removes dist3/build and artifacts"
     user_options = []
 
     def initialize_options(self):
@@ -95,11 +94,11 @@ class CMakeBuildCommand(Command):
     def run(self):
         assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
         print("Making distribution directory")
-        runCommand("mkdir dist/")
-        print("Executing CMake build into dist/ directory")
+        runCommand("mkdir dist3/")
+        print("Executing CMake build into dist3/ directory")
         # if we switch to using mostly setup.py for the build, install will not be done by CMake
         print("This also will install Basilisk locally...")
-        runCommand("cmake -G Xcode ../src/", "dist/")
+        runCommand("cmake -G Xcode ../src/", "dist3/")
 
 
 class XCodeBuildCommand(Command):
@@ -114,8 +113,8 @@ class XCodeBuildCommand(Command):
 
     def run(self):
         assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
-        print("Executing XCode build into dist/ directory")
-        runCommand("xcodebuild -project dist/basilisk.xcodeproj -target ALL_BUILD")
+        print("Executing XCode build into dist3/ directory")
+        runCommand("xcodebuild -project dist3/basilisk.xcodeproj -target ALL_BUILD")
 
 
 # Lint command
@@ -152,10 +151,7 @@ class BuildDocsCommand(Command):
         print("Building documentation")
         runCommand("make html", "docs/source")
 
-if six.PY3:
-    package_dir = "dist3"
-else:
-    package_dir = "dist"
+package_dir = "dist3"
 
 f = open('docs/source/bskVersion.txt', 'r')
 bskVersion = f.read().strip()

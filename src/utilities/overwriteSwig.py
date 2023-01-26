@@ -17,7 +17,6 @@
 #
 import os
 import sys
-import six
 
 from time import sleep
 from shutil import move

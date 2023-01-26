@@ -19,7 +19,6 @@
 
 # Import some architectural stuff that we will probably always use
 import sys, os, ast
-import six
 import matplotlib.pyplot as plt
 try:
     from collections.abc import OrderedDict
@@ -423,12 +422,9 @@ class SimBaseClass:
         Subname = Subname.join(SplitName[1:])
         NoDotName = ''
         NoDotName = NoDotName.join(SplitName)
-        if six.PY2:
-            NoDotName = NoDotName.translate(None, "[]'()")
-        else:
-            tr = str.maketrans("","", "[]'()")
-            NoDotName = NoDotName.translate(tr)
-            #NoDotName = NoDotName.translate({ord(c): None for c in "[]'()"})
+        tr = str.maketrans("","", "[]'()")
+        NoDotName = NoDotName.translate(tr)
+        #NoDotName = NoDotName.translate({ord(c): None for c in "[]'()"})
         inv_map = {v: k for k, v in list(self.NameReplace.items())}
         if SplitName[0] in inv_map:
             LogName = inv_map[SplitName[0]] + '.' + Subname
@@ -713,11 +709,7 @@ class SimBaseClass:
         algList = parseDirList(dirList)
 
         # if the package has different levels we need to access the correct level of the package
-        if six.PY2:
-            level = -1
-        else:
-            level = 0
-        currMod = __import__(module, globals(), locals(), [], level)
+        currMod = __import__(module, globals(), locals(), [], 0)
 
         moduleString = "currMod."
         moduleNames = module.split(".")

@@ -25,7 +25,6 @@
 
 import pytest
 import numpy as np
-import six
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
