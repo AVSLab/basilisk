@@ -1631,37 +1631,26 @@ example would be :ref:`hingedRigidBodyStateEffector` where a rigid body is hinge
 These effectors output a spacecraft state message containing its inertial position and orientation
 information.  This allows Vizard to show this rigid body as a separate spacecraft object.
 
-.. note::
+To show these time-varying body components such as :ref:`hingedRigidBodyStateEffector`,
+:ref:`spinningBodyOneDOFStateEffector` or :ref:`dualHingedRigidBodyStateEffector` , the BSK modules can be
+added to the ``enableUnityVisualization`` spacecraft list.  The parent spacecraft object
+should be listed first, followed by the spacecraft effector objects as a list of
+the effector name and effector state output message.  Let ``panel1`` and ``panel2``
+be instances of :ref:`hingedRigidBodyStateEffector` which are attached to spacecraft ``scObject``,
+all three components can be visualized using::
 
-    Currently the support for time varying spacecraft components is limited.  Their body-relative
-    position and orientation can be shown, but each component is treated as an independent spacecraft
-    object.  Thus, for example, if the orbit lines are shown, each body component has its own orbit
-    line drawn. Moreover, each body component will have its own axis shown when ``View/All Spacecraft CS``
-    option is selected.
-
-To show these time-varying body components, the argument ``bodyList`` is provided to ``enableUnityVisualization``::
-
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject
+                                                                    , [panel1.ModelTag, panel1.hingedRigidBodyConfigLogOutMsg]
+                                                                    , [panel2.ModelTag, panel2.hingedRigidBodyConfigLogOutMsg]
+                                                                   ]
                                               , saveFile=fileName
-                                              , bodyList=[ None, panelList ]
                                               )
 
-The ``bodyList`` is a list of dictionary lists where the dictionary key is the component name, and the
-dictionary item is the  message containing the component inertial states.  The length of ``bodyList``
-must match the length of the list of spacecraft objects.  Information must be provided for each
-spacecraft. If a spacecraft has no time varying components then provide the argument ``None``.
-
-For example, assume a simulation has 2 spacecraft where the second spacecraft contains two time varying
-panels.  This could be visualized using::
-
-    scBodyList = {}
-    scBodyList[panel1.ModelTag] = panel1.hingedRigidBodyConfigLogOutMsg
-    scBodyList[panel2.ModelTag] = panel2.hingedRigidBodyConfigLogOutMsg
-
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject1, scObject2]
-                                              , bodyList=[None, scBodyList]
-                                              , saveFile=__file__
-                                              )
+Each effector is treated like a Vizard spacecraft object.  This means it is possible to add CSS,
+lights etc. to the panel objects as you do with the primary spacecraft.
+Note that the device list length must match that of the rigid body objects being
+sent to Vizard.  In the above example, this means Vizard is seeing 3 objects and the ``lightList``, for
+example, would need to contain three entrees.
 
 By default each component will be given the default ``bsk-Sat`` shape.  It is recommended that a
 custom model is assigned to each component.  See the scenario :ref:`scenarioDeployingPanel` for
