@@ -17,9 +17,12 @@
 #
 
 
-import sys, os, inspect
-import pytest
+import inspect
+import os
+import sys
+
 import numpy as np
+import pytest
 from Basilisk.utilities import unitTestSupport
 
 # Get current file path

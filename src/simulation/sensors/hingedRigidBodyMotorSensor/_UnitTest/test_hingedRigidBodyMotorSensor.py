@@ -17,16 +17,15 @@
 # 
 # 
 
-import pytest
 import matplotlib.pyplot as plt
 import numpy as np
-import math
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
+import pytest
 from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
 from Basilisk.simulation import hingedRigidBodyMotorSensor
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport
+
 
 @pytest.mark.parametrize("thetaNoiseStd, thetaDotNoiseStd, accuracy", [(0.0, 0.0, 1.0e-12)])
 @pytest.mark.parametrize("thetaBias, thetaDotBias",[(0,0), (-.1,.1), (.2,-.01)])

@@ -15,8 +15,8 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-from Basilisk.architecture import messaging
 import numpy
+from Basilisk.architecture import messaging
 
 #
 #   FSW Setup Utilities for RW

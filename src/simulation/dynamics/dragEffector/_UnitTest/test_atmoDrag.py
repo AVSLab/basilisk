@@ -22,25 +22,23 @@
 # Creation Date:  Jan 18, 2017
 #
 
-import os, inspect
-import numpy as np
+import inspect
 import math
+import os
 
-
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-
+import numpy as np
+# print dir(exponentialAtmosphere)
+from Basilisk.simulation import dragDynamicEffector
+from Basilisk.simulation import exponentialAtmosphere, simpleNav
 # import simulation related support
 from Basilisk.simulation import spacecraft
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import exponentialAtmosphere, simpleNav
 from Basilisk.utilities import unitTestSupport, RigidBodyKinematics
-#print dir(exponentialAtmosphere)
-from Basilisk.simulation import dragDynamicEffector
-from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

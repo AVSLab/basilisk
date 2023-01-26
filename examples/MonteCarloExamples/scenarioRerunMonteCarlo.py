@@ -27,7 +27,8 @@ This script is a basic demonstration of a script that can be used to rerun a set
 """
 
 import inspect
-import os, sys
+import os
+import sys
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller
 from Basilisk.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy

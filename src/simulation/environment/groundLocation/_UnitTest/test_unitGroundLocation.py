@@ -14,21 +14,22 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import os, inspect
+import inspect
+import os
+
 import numpy as np
 import pytest
-from matplotlib import pyplot as plt
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
+from Basilisk import __path__
 from Basilisk.architecture import messaging
 from Basilisk.simulation import groundLocation
 from Basilisk.simulation import spacecraft
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport
-from Basilisk import __path__
+from matplotlib import pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -307,8 +308,6 @@ def plot_geometry(groundLocation, scLocations, minimumElevation):
     ax.scatter(groundLocation[0],groundLocation[1],groundLocation[2], color="r", s=100)
 
     # draw a vector
-    from matplotlib.patches import FancyArrowPatch
-    from mpl_toolkits.mplot3d import proj3d
 
     for location in scLocations:
         ax.scatter(location[0],location[1],location[2],color='k',s=100)

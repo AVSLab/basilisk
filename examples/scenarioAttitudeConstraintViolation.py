@@ -134,26 +134,20 @@ obtained by increasing the field of view of the star tracker to 30 deg.
 
 """
 
-
-import sys
 import os
-import numpy as np
 from datetime import datetime
-from datetime import timedelta
 
 import matplotlib.pyplot as plt
 import matplotlib.transforms as mtransforms
-from copy import copy
-
+import numpy as np
+from Basilisk import __path__
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, inertial3D, rwMotorTorque)
 from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, spacecraft, boreAngCalc)
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
-from Basilisk.architecture import messaging
 
-
-from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

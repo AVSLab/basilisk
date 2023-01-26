@@ -26,14 +26,11 @@ but are shown when the scenario is run with python. Saving is left to the user's
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib.patches import Ellipse
 import numpy as np
 # import scipy.optimize
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport
-
+from matplotlib.patches import Ellipse
 
 color_x = 'dodgerblue'
 color_y = 'salmon'

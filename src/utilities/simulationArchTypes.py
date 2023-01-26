@@ -20,7 +20,7 @@
 
 from Basilisk.architecture import sim_model
 from Basilisk.architecture import sys_model_task
-from Basilisk.architecture import moduleIdGenerator
+
 
 class ProcessBaseClass(object):
     """Class for a BSK process"""

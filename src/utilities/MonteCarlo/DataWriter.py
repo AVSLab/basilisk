@@ -1,8 +1,10 @@
 import multiprocessing as mp
-import pandas as pd
-import numpy as np
-import pickle
 import os
+import pickle
+
+import numpy as np
+import pandas as pd
+
 
 class DataWriter(mp.Process):
     """ Class to be launched as separate process to pull data from queue and write out to .csv dataFrames

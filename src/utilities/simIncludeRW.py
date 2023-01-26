@@ -21,12 +21,12 @@
 #
 
 import sys
-import numpy
-
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
-
 from collections import OrderedDict
+
+import numpy
+from Basilisk.architecture import messaging
+from Basilisk.utilities import macros
+
 
 class rwFactory(object):
     """

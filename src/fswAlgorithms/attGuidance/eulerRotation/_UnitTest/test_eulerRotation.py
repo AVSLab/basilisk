@@ -24,13 +24,13 @@
 
 import numpy as np
 import pytest
-
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import eulerRotation  # import the module that is to be tested
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import eulerRotation                    # import the module that is to be tested
 from Basilisk.utilities import macros as mc
-from Basilisk.architecture import messaging
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

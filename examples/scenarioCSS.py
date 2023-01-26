@@ -159,29 +159,25 @@ The resulting simulation results are shown below to be identical to the first se
 # Creation Date:  July 21, 2017
 #
 
-import sys
 import os
-import numpy as np
 
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.simulation import coarseSunSensor
-from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import vizSupport
-
-# import simulation related support
-from Basilisk.simulation import spacecraft
-
-# import message declarations
-from Basilisk.architecture import messaging
-import copy
-
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+# import message declarations
+from Basilisk.architecture import messaging
+from Basilisk.simulation import coarseSunSensor
+# import simulation related support
+from Basilisk.simulation import spacecraft
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion as om
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import vizSupport
+
 bskPath = __path__[0]
 
 

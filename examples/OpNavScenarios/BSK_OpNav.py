@@ -97,12 +97,15 @@ the scenario is run with python. Saving is left to the user's discretion.
 """
 
 
+# Get current file path
+import inspect
+import os
+import subprocess
+import sys
+
 # Import architectural modules
 from Basilisk.utilities import SimulationBaseClass
 
-# Get current file path
-import sys, os, inspect
-import subprocess
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 

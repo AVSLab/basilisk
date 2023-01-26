@@ -16,8 +16,8 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from Basilisk.utilities import macros
 import numpy as np
+from Basilisk.utilities import macros
 
 
 def exponentialAtmosphere(atmosModule, name):

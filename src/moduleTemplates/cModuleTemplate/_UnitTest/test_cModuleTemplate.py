@@ -24,18 +24,18 @@
 #   Creation Date:      Month Day, Year
 #
 
-import pytest
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
-# Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.moduleTemplates import cModuleTemplate                 # import the module that is to be tested
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging                      # import the message definitions
 import numpy as np
 from Basilisk.architecture import bskLogging
+from Basilisk.architecture import messaging  # import the message definitions
+from Basilisk.moduleTemplates import cModuleTemplate  # import the module that is to be tested
+# Import all of the modules that we are going to be called in this simulation
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

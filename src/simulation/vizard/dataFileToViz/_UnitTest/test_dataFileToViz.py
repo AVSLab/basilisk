@@ -26,20 +26,20 @@
 
 
 import os
-import pytest
-import numpy as np
 
+import numpy as np
+import pytest
+from Basilisk.architecture import bskLogging
+from Basilisk.architecture import messaging
+from Basilisk.simulation import dataFileToViz
+from Basilisk.simulation import spacecraft
+from Basilisk.utilities import RigidBodyKinematics as rbk
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import dataFileToViz
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
-from Basilisk.architecture import bskLogging
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.simulation import spacecraft
-from Basilisk.architecture import messaging
 
 try:
     from Basilisk.simulation import vizInterface

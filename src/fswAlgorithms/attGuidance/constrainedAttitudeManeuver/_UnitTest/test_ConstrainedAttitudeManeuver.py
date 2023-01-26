@@ -26,20 +26,17 @@
 
 
 import os
-import pytest
-import numpy as np
 
-# Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms import constrainedAttitudeManeuver
-from Basilisk.utilities import macros
-from Basilisk.architecture import bskLogging
-from Basilisk.utilities import RigidBodyKinematics as rbk
+import numpy as np
+import pytest
 from Basilisk.architecture import BSpline
 from Basilisk.architecture import messaging
-
-import matplotlib.pyplot as plt
+from Basilisk.fswAlgorithms import constrainedAttitudeManeuver
+from Basilisk.utilities import RigidBodyKinematics as rbk
+# Import all of the modules that we are going to be called in this simulation
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport
 
 path = os.path.dirname(os.path.abspath(__file__))
 dataFileName = None

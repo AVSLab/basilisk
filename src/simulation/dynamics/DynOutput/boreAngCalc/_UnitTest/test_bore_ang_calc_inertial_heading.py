@@ -24,13 +24,13 @@
 # Creation Date:  Jan. 12, 2023
 #
 import math
-import pytest
-import numpy as np
 import os
 
-from Basilisk.utilities import SimulationBaseClass, macros as mc, RigidBodyKinematics as rbk, unitTestSupport
-from Basilisk.simulation import boreAngCalc
+import numpy as np
+import pytest
 from Basilisk.architecture import messaging
+from Basilisk.simulation import boreAngCalc
+from Basilisk.utilities import SimulationBaseClass, macros as mc, RigidBodyKinematics as rbk, unitTestSupport
 
 path = os.path.dirname(os.path.abspath(__file__))
 

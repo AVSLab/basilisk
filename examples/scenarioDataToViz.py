@@ -69,13 +69,13 @@ Illustration of Simulation Results
 #
 
 import os
+
 import matplotlib.pyplot as plt
 import numpy as np
-
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
-from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import dataFileToViz
 from Basilisk.simulation import spacecraft
+from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
+from Basilisk.utilities import unitTestSupport
 
 try:
     from Basilisk.simulation import vizInterface

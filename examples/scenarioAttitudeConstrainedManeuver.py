@@ -92,21 +92,18 @@ constraints for both the sun sensors. The following simulation shows how all the
 """
 
 import os
-import numpy as np
-from datetime import datetime
 
 import matplotlib.pyplot as plt
 import matplotlib.transforms as mtransforms
-
+import numpy as np
+from Basilisk import __path__
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, constrainedAttitudeManeuver, rwMotorTorque)
 from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, spacecraft, boreAngCalc)
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
-from Basilisk.architecture import messaging
 
-
-from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

@@ -17,15 +17,16 @@
 #
 
 import math
-from Basilisk.utilities import macros as mc
+
+import numpy as np
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (inertial3D, attTrackingError, mrpFeedback,
                                     rwMotorTorque,
                                     spacecraftPointing)
-import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW
-from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging
+from Basilisk.utilities import macros as mc
+
 
 class BSKFswModels():
     def __init__(self, SimBase, fswRate):

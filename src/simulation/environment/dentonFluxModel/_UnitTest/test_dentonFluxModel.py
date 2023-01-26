@@ -21,11 +21,13 @@
 #   Author:             Julian Hammerl
 #   Creation Date:      December 12, 2021
 #
+import inspect
 import math
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-import os, inspect
 from Basilisk import __path__
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

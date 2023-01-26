@@ -16,13 +16,10 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import sys
+from Basilisk.architecture import bskLogging
+from Basilisk.moduleTemplates import cModuleTemplate
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.moduleTemplates import cModuleTemplate
-from Basilisk.architecture import messaging
-from Basilisk.architecture import bskLogging
-
 from Basilisk.utilities import unitTestSupport as uts
 
 

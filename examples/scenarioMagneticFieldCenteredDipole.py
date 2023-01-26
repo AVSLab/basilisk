@@ -147,14 +147,14 @@ fields are attached. One model acts above 1.3 Earth radius, and the other below 
 # Creation Date:  March 16, 2019
 #
 
-import sys
 import os
-import numpy as np
 
 import matplotlib.pyplot as plt
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 bskPath = __path__[0]
 # import simulation related support
 from Basilisk.simulation import spacecraft
@@ -164,7 +164,6 @@ from Basilisk.simulation import magneticFieldCenteredDipole
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
 from Basilisk.utilities import simSetPlanetEnvironment
-from Basilisk.architecture import messaging
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport

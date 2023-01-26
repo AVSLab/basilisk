@@ -17,15 +17,13 @@
 
 
 
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spiceInterface
-from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation.gravityEffector import loadGravFromFile as loadGravFromFile_python
-from Basilisk.simulation.gravityEffector import loadPolyFromFile as loadPolyFromFile_python
-from Basilisk.architecture import messaging
-
 from collections import OrderedDict
 
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import spiceInterface
+from Basilisk.simulation.gravityEffector import loadGravFromFile as loadGravFromFile_python
+from Basilisk.simulation.gravityEffector import loadPolyFromFile as loadPolyFromFile_python
+from Basilisk.utilities import unitTestSupport
 
 
 class gravBodyFactory(object):

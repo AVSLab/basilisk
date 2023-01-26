@@ -17,14 +17,15 @@
 # 
 # 
 
-import pytest
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import attRefCorrection
 import math
+
+import pytest
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import attRefCorrection
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport
+
 
 @pytest.mark.parametrize("accuracy", [1e-12])
 

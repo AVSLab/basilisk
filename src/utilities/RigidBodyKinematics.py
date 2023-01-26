@@ -18,11 +18,11 @@
 
 
 
+import math
+
 # Import required modules:
 import numpy as np
 from numpy import linalg as la
-import math
-
 
 M_PI = np.pi
 D2R = M_PI / 180.

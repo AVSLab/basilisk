@@ -18,13 +18,15 @@
 
 
 
+import os
+
 import matplotlib.pyplot as plt
 import numpy
-import os
+from Basilisk.architecture import messaging
 from Basilisk.simulation import simpleVoltEstimator
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

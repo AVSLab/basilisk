@@ -81,10 +81,9 @@ The second panel also generates power, but stops short of full deployment and th
 #
 
 import os
-import numpy as np
 
 import matplotlib.pyplot as plt
-
+import numpy as np
 from Basilisk import __path__
 
 bskPath = __path__[0]
@@ -95,7 +94,6 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 from Basilisk.simulation import hingedRigidBodyStateEffector, simpleSolarPanel
 from Basilisk.simulation import hingedBodyLinearProfiler, hingedRigidBodyMotor
-from Basilisk.architecture import messaging
 import math
 
 

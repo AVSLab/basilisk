@@ -95,31 +95,28 @@ resulting position coordinates and trajectories differences are shown below.
 #
 
 import os
-import numpy as np
 from datetime import datetime
 from datetime import timedelta
 
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 import matplotlib
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import astroFunctions
-
+import matplotlib.pyplot as plt
+import numpy as np
+from Basilisk import __path__
 # import simulation related support
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging
-
-# attempt to import vizard
-from Basilisk.utilities import vizSupport
-
 # Used to get the location of supporting data.
 from Basilisk.topLevelModules import pyswice
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import astroFunctions
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+# attempt to import vizard
+from Basilisk.utilities import vizSupport
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
-from Basilisk import __path__
+
 bskPath = __path__[0]
 
 fileName = os.path.basename(os.path.splitext(__file__)[0])

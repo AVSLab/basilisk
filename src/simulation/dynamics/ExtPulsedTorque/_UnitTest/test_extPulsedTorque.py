@@ -23,13 +23,13 @@
 #   Creation Date:  March 26, 2017
 #
 
-import pytest
 import numpy as np
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.utilities import macros
+import pytest
 from Basilisk.simulation import ExtPulsedTorque
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

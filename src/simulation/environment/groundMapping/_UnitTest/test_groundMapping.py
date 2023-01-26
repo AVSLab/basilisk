@@ -17,15 +17,15 @@
 # 
 # 
 
-import pytest
-import numpy as np
 import math
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
+import numpy as np
 from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
 from Basilisk.simulation import groundMapping
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport
+
 
 def test_groundMapping():
     r"""

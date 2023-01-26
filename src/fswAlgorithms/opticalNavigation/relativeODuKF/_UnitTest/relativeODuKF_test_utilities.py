@@ -15,20 +15,17 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-import sys, os, inspect
+import inspect
+import os
+
 import numpy as np
 from Basilisk.utilities import unitTestSupport
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('fswAlgorithms')
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib.patches import Ellipse
-
 
 color_x = 'dodgerblue'
 color_y = 'salmon'

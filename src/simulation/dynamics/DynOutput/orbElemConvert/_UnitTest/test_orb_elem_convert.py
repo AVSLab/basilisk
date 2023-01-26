@@ -16,12 +16,14 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import pytest
-import os
 import inspect
-import matplotlib.pyplot as plt
 import math
+import os
+
+import matplotlib.pyplot as plt
 import numpy
+import pytest
+
 #
 # orb_elem_convert Unit Test
 #

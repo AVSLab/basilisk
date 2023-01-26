@@ -4,9 +4,9 @@
 #   Creation Date:      October 5, 2018
 #
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, fswSetupThrusters
-from Basilisk.fswAlgorithms import thrustRWDesat
 from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import thrustRWDesat
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, fswSetupThrusters
 
 
 def test_thrustRWDesat():

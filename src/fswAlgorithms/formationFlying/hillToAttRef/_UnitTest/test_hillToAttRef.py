@@ -1,18 +1,15 @@
 
 #   3rd party / std lib imports
-import pytest
-import os, inspect
 import numpy as np
-
-#   Utilities/macros
-from Basilisk.utilities import SimulationBaseClass as sbc 
-from Basilisk.utilities import macros, unitTestSupport
-from Basilisk.utilities import RigidBodyKinematics as rbk 
-from Basilisk.utilities import orbitalMotion as om 
-
+import pytest
+from Basilisk.architecture import messaging
 #   Modules to test
 from Basilisk.fswAlgorithms import hillToAttRef
-from Basilisk.architecture import messaging
+#   Utilities/macros
+from Basilisk.utilities import SimulationBaseClass as sbc
+from Basilisk.utilities import macros
+
+
 #from Basilisk.simulation import simFswInterfaceMessages
 
 @pytest.mark.parametrize("msg_type", ['AttRefMsg','NavAttMsg'])

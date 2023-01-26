@@ -123,13 +123,14 @@ The following images illustrate the expected simulation run returns for a range 
 # Creation Date:  March 16, 2019
 #
 
-import os, inspect
-import numpy as np
+import os
 
 import matplotlib.pyplot as plt
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -141,7 +142,6 @@ from Basilisk.simulation import magneticFieldWMM
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
-from Basilisk.architecture import messaging
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport

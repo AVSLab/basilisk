@@ -16,8 +16,9 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 import numpy as np
-from numpy import linalg as la
 from Basilisk.fswAlgorithms import rwMotorTorque
+from numpy import linalg as la
+
 
 def controlAxes3D():
     C = np.array([

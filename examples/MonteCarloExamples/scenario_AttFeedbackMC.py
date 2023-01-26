@@ -32,8 +32,9 @@ further discussion and instructions.
 
 import inspect
 import os
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
@@ -47,7 +48,7 @@ import sys
 from Basilisk.utilities.MonteCarlo.Controller import Controller
 from Basilisk.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
-                                                       NormalVectorCartDispersion, InertiaTensorDispersion)
+                                                       NormalVectorCartDispersion)
 
 sys.path.append(path+"/../BskSim/scenarios/")
 import scenario_AttFeedback

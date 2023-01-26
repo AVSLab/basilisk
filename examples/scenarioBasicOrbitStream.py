@@ -71,12 +71,13 @@ This way a 10s simulation time step will take 0.2 seconds with the 50x speed up 
 #
 
 import os
-import numpy as np
 
 import matplotlib.pyplot as plt
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -87,7 +88,6 @@ from Basilisk.simulation import spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 from Basilisk.simulation import simSynch
-from Basilisk.architecture import messaging
 
 
 def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, planetCase):

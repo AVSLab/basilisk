@@ -18,14 +18,16 @@
 
 
 
-import matplotlib.pyplot as plt
-import numpy
 import math
 import os
+
+import matplotlib.pyplot as plt
+import numpy
+from Basilisk.architecture import messaging
 from Basilisk.simulation import simpleNav
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging
+
 
 def listNorm(inputList):
    normValue = 0.0

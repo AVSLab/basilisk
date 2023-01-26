@@ -16,9 +16,10 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import pytest
-import os
 import inspect
+import os
+
+import pytest
 
 #
 # Spice Unit Test
@@ -41,7 +42,6 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 import numpy
 from Basilisk.simulation import spiceInterface
-from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 import matplotlib.pyplot as plt
 

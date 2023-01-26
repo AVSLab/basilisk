@@ -57,10 +57,11 @@ scale of terminal errors as a function of atmospheric density and maneuver basel
 """
 
 import multiprocessing as mp
+import os
+import pickle
+
 import numpy as np
 from matplotlib import pyplot as plt
-import pickle
-import os
 
 from scenarioDragRendezvous import drag_simulator
 
@@ -137,8 +138,6 @@ def results_to_ranges_and_plot(results_list):
     return init_relpos, init_relvel, pos_errs, vel_errs, dens_list, fig
 
 def comparison_sweep(savePickle):
-
-    from matplotlib import cm
 
     with open("lqr_sweep_results.pickle", "rb") as fp:
         lqr_sim_results = pickle.load(fp)

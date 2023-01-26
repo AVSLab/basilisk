@@ -6,8 +6,9 @@ Created on Sun Oct 24 19:59:42 2021
 @author: mikaelafelix
 """
 
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 
 def readAtmTable(filename,typename):
     if typename.lower() == 'earthgram':

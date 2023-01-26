@@ -31,7 +31,6 @@ import os
 import sys
 
 import pytest
-
 from Basilisk.utilities import unitTestSupport
 
 # Get current file path

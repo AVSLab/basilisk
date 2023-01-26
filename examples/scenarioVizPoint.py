@@ -94,8 +94,10 @@ The second control scenario points the spacecraft towards Mars on a Mars orbit.
 #
 
 import os
+
 import numpy as np
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 fileNamePath = os.path.abspath(__file__)

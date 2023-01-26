@@ -27,12 +27,14 @@
 # Creation Date:  Dec. 20, 2016
 #
 
+import inspect
+import math
 # @cond DOXYGEN_IGNORE
 import os
+
 import numpy as np
-import math
 import pytest
-import inspect
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')

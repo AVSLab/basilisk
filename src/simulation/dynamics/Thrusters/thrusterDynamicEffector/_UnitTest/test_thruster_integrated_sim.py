@@ -15,18 +15,16 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import pytest
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.utilities import macros
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spiceInterface
-from Basilisk.utilities import simIncludeThruster
-from Basilisk.simulation import thrusterDynamicEffector
-from Basilisk.simulation import fuelTank
 from Basilisk.architecture import messaging
+from Basilisk.simulation import fuelTank
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import spacecraft
+from Basilisk.simulation import thrusterDynamicEffector
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import simIncludeThruster
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

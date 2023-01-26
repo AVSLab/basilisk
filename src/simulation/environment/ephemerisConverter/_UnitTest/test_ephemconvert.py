@@ -24,16 +24,16 @@
 #
 
 import numpy as np
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import spiceInterface
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.utilities import macros
-from Basilisk.utilities import RigidBodyKinematics
 from Basilisk import __path__
+from Basilisk.simulation import ephemerisConverter
+from Basilisk.simulation import spiceInterface
+from Basilisk.utilities import RigidBodyKinematics
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport
+
 bskPath = __path__[0]
 
-from Basilisk.architecture import messaging
 
 # provide a unique test method name, starting with test_
 def test_ephemConvert(show_plots):

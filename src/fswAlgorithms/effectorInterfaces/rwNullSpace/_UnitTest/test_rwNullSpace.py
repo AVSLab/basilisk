@@ -4,12 +4,14 @@
 #   Creation Date:      October 5, 2018
 #
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms import rwNullSpace
-from Basilisk.architecture import messaging
-import pytest
+import inspect
+import os
+
 import numpy as np
-import os, inspect
+import pytest
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import rwNullSpace
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from numpy.linalg import inv
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

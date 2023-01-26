@@ -73,8 +73,8 @@ The following image illustrates the expected visualization of this simulation sc
 # Creation Date: Feb. 4 2022
 #
 
-import os
 import inspect
+import os
 
 from Basilisk import __path__
 

@@ -17,6 +17,7 @@
 #
 
 
+import numpy
 # -------------------------------------------------------------
 #
 # ... SPKReader.py
@@ -40,9 +41,8 @@
 # ...                  ADCS Team
 # ...
 # --------------------------------------------------------------
-import sys, os, inspect
 from Basilisk.topLevelModules import pyswice
-import numpy
+
 
 def spkRead(target, time, ref, observer):
     """Spice spk read method"""

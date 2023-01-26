@@ -23,11 +23,14 @@ This script is base BSK Sim script used for the MC examples.
 
 """
 
-from Basilisk.utilities import orbitalMotion, macros, vizSupport
-import numpy as np
-
 # Get current file path
-import sys, os, inspect
+import inspect
+import os
+import sys
+
+import numpy as np
+from Basilisk.utilities import orbitalMotion, macros, vizSupport
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 

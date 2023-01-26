@@ -17,28 +17,23 @@
 
 
 
+import array
+import inspect
 # Import some architectural stuff that we will probably always use
-import sys, os, ast
-import matplotlib.pyplot as plt
+import os
+import sys
+import xml.etree.ElementTree as ET
 from collections import OrderedDict
 
+import matplotlib.pyplot as plt
+import numpy as np
+from Basilisk.architecture import alg_contain
+from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
+from Basilisk.utilities import simulationArchTypes
+from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
 
 # Point the path to the module storage area
-
-
-from Basilisk.architecture import sim_model
-from Basilisk.architecture import alg_contain
-import numpy as np
-import array
-import xml.etree.ElementTree as ET
-import inspect
-import threading
-from time import sleep
-
-from Basilisk.utilities import simulationArchTypes
-from Basilisk.architecture import bskLogging
-from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
-import warnings
 
 
 # define ASCI color codes

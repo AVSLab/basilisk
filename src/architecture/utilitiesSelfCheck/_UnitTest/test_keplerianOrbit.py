@@ -26,11 +26,13 @@
 # Creation Date:  Sept 10 2019
 #
 
-import os, inspect
-from Basilisk.utilities import orbitalMotion
-from Basilisk.architecture import keplerianOrbit
+import inspect
+import os
 from copy import copy
+
 import numpy as np
+from Basilisk.architecture import keplerianOrbit
+from Basilisk.utilities import orbitalMotion
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

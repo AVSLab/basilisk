@@ -21,10 +21,6 @@
 #   FSW Setup Utilities for Thrusters
 #
 
-import sys, os, inspect
-import math
-import numpy
-
 from Basilisk.architecture import messaging
 
 

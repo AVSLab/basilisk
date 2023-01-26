@@ -17,10 +17,10 @@
 #
 
 
-from Basilisk.utilities.pyswice_spk_utilities import spkRead
-from Basilisk.topLevelModules import pyswice
-
 from Basilisk import __path__
+from Basilisk.topLevelModules import pyswice
+from Basilisk.utilities.pyswice_spk_utilities import spkRead
+
 bskPath = __path__[0]
 
 def planetPositionVelocity(planetName, time, ephemerisPath = '/supportData/EphemerisData/pck00010.tpc', observer = 'SSB', frame = 'J2000'):

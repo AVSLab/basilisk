@@ -4,14 +4,16 @@
 #   Creation Date:      October 5, 2018
 #
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms import dvAccumulation
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
-import numpy as np
+import inspect
+import os
 
+import numpy as np
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import dvAccumulation
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport
+from Basilisk.utilities import macros
 from numpy import random
-import os, inspect
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 

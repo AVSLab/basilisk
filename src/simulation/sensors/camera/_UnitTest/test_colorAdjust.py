@@ -20,10 +20,12 @@
 # Creation Date:      April 30, 2020
 
 
-import pytest
-import os, inspect
 import colorsys
+import inspect
 import math
+import os
+
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -40,7 +42,7 @@ except ImportError:
     reasonErr = "python Pillow package not installed---can't test Cameras module"
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport
+from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 

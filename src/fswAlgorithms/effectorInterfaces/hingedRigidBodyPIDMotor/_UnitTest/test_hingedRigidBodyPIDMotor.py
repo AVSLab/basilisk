@@ -24,9 +24,11 @@
 #   Creation Date:      January 12, 2023
 #
 
-import pytest
-import os, inspect, random
+import inspect
+import os
+
 import numpy as np
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

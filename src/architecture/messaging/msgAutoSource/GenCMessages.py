@@ -1,9 +1,12 @@
 # Generate C code messages that are compatible with cpp functor based system
-import parse
-import os,errno
-import shutil
 import argparse
+import errno
+import os
+import shutil
 from sys import platform
+
+import parse
+
 
 class GenerateMessages:
 

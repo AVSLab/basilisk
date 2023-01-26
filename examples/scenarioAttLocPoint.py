@@ -64,36 +64,32 @@ The following 2 plots illustrate the 2D pointing error and the external attitude
 #
 
 import os
-import numpy as np
 
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-
-# import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import extForceTorque
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import groundLocation
-from Basilisk.utilities import astroFunctions
-
-# import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.fswAlgorithms import locationPointing
-
-# import message declarations
-from Basilisk.architecture import messaging
-
-# attempt to import vizard
-from Basilisk.utilities import vizSupport
-
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+# import message declarations
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import locationPointing
+# import FSW Algorithm related support
+from Basilisk.fswAlgorithms import mrpFeedback
+from Basilisk.simulation import extForceTorque
+from Basilisk.simulation import groundLocation
+from Basilisk.simulation import simpleNav
+# import simulation related support
+from Basilisk.simulation import spacecraft
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import astroFunctions
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+# attempt to import vizard
+from Basilisk.utilities import vizSupport
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

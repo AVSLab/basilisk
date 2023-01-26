@@ -43,19 +43,20 @@ When the simulation completes a plot is shown with the access times illustrated.
 # Creation Date:  Dec. 29, 2019
 #
 
-import numpy as np
+import copy
 import os
+
 import matplotlib.pyplot as plt
+import numpy as np
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, hillPoint)
+from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav, spacecraft
+from Basilisk.simulation import spacecraftLocation
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 unitTestSupport, vizSupport)
-from Basilisk.simulation import spacecraftLocation
-from Basilisk.simulation import extForceTorque
-from Basilisk.architecture import messaging
 
-import copy
 try:
     from Basilisk.simulation import vizInterface
     vizFound = True

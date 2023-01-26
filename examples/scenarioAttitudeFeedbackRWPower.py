@@ -80,22 +80,23 @@ how this will reduce the overall maneuver energy requirements.
 # Creation Date:  Jan. 26, 2020
 #
 
-import numpy as np
 import os
-import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
-                                    inertial3D, rwMotorTorque)
-from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, unitTestSupport, vizSupport)
-from Basilisk.simulation import ReactionWheelPower
-from Basilisk.simulation import simpleBattery
-from Basilisk.architecture import messaging
 
+import matplotlib.pyplot as plt
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
+                                    inertial3D, rwMotorTorque)
+from Basilisk.simulation import ReactionWheelPower
+from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft
+from Basilisk.simulation import simpleBattery
+from Basilisk.utilities import (SimulationBaseClass, macros,
+                                orbitalMotion, simIncludeGravBody,
+                                simIncludeRW, unitTestSupport, vizSupport)
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

@@ -23,8 +23,9 @@
 #   Creation Date:  Jan 18, 2018
 #   Note that all of this test is really in c++. This script is just a pytest access to those tests.
 
-import pytest
 import os
+
+import pytest
 from Basilisk.architecture import saturateCheck
 from Basilisk.utilities import unitTestSupport
 

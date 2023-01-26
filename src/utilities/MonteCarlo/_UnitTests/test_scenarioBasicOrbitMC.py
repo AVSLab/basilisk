@@ -15,8 +15,8 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-import os
 import inspect  # Don't worry about this, standard stuff plus file discovery
+import os
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -39,7 +39,6 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import SimulationBaseClass
 import shutil
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
 import numpy as np
 import pytest
 

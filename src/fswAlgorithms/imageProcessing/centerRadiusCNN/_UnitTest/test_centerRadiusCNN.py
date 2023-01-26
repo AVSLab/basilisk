@@ -23,9 +23,11 @@
 #   Creation Date:      January 10, 2020
 #
 
-import pytest
-import os, inspect
+import inspect
+import os
+
 import numpy as np
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -44,7 +46,6 @@ except ImportError:
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
 
 try:
     from Basilisk.fswAlgorithms import centerRadiusCNN

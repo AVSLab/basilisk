@@ -145,9 +145,10 @@ Illustration of Simulation Results
 import inspect
 import math
 import os
-import numpy as np
 import shutil
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])

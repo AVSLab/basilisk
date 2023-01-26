@@ -15,16 +15,17 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import os, inspect
+import inspect
+import os
+
 import numpy as np
 import pytest
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import orbitalMotion
 from Basilisk.architecture import messaging
 from Basilisk.simulation import spacecraftLocation
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

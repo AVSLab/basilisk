@@ -27,9 +27,12 @@
 #
 
 
-import sys, os, inspect
-import pytest
 import importlib
+import inspect
+import os
+import sys
+
+import pytest
 from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

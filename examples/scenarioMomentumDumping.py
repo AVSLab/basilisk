@@ -82,20 +82,18 @@ software simulation time step of 1 s, this means that firings are 100 seconds ap
 """
 
 import os
-import numpy as np
 
 import matplotlib.pyplot as plt
-
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, inertial3D, rwMotorTorque, 
-                                     thrMomentumManagement, thrForceMapping, thrMomentumDumping)
+import numpy as np
+from Basilisk import __path__
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, inertial3D, rwMotorTorque,
+                                    thrMomentumManagement, thrForceMapping, thrMomentumDumping)
 from Basilisk.simulation import (reactionWheelStateEffector, thrusterDynamicEffector, simpleNav, spacecraft)
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, simIncludeThruster, unitTestSupport, vizSupport)
-from Basilisk.architecture import messaging
 
-
-from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

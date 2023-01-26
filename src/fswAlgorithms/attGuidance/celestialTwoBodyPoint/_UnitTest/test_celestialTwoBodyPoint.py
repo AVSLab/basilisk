@@ -23,18 +23,19 @@
 #   Creation Date:      May 11, 2016
 #
 
-import os, inspect
+import inspect
+import os
+
 import numpy as np
-from numpy import linalg as la
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import celestialTwoBodyPoint  # module that is to be tested
+from Basilisk.utilities import RigidBodyKinematics as rbk
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import celestialTwoBodyPoint  # module that is to be tested
-from Basilisk.utilities import macros
 from Basilisk.utilities import astroFunctions as af
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging
-
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from numpy import linalg as la
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

@@ -5,7 +5,10 @@
 #
 
 
-import os, inspect, pytest
+import inspect
+import os
+import pytest
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 

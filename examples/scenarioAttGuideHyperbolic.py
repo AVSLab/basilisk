@@ -117,18 +117,18 @@ to point the correct face of the spacecraft along the negative V-bar.
 #
 
 import os
-import numpy as np
 
 import matplotlib.pyplot as plt
+import numpy as np
+# The path to the location of Basilisk
+# Used to get the location of supporting data.
+from Basilisk import __path__
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint
 from Basilisk.simulation import extForceTorque, simpleNav, spacecraft
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
 from Basilisk.utilities import vizSupport
-from Basilisk.architecture import messaging
 
-# The path to the location of Basilisk
-# Used to get the location of supporting data.
-from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

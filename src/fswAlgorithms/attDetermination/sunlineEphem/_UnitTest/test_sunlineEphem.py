@@ -22,17 +22,18 @@
 #   Creation Date:      November 30, 2018
 #
 
+import matplotlib.pyplot as plt
+import numpy as np
 import pytest
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
-
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import sunlineEphem  # import the module that is to be tested
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import sunlineEphem  # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
-import numpy as np
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
+
+# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
 
 class DataStore:

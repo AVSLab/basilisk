@@ -63,19 +63,18 @@ Illustration of Simulation Results
 # Creation Date:  January 19, 2022
 #
 
-import numpy as np
+import copy
+import csv
 import math
 import os
+
 import matplotlib.pyplot as plt
-import matplotlib as mpl
+import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.simulation import spacecraft, extForceTorque, msmForceTorque
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 unitTestSupport, RigidBodyKinematics, vizSupport, SpherePlot)
-import csv
-import copy
-
 
 try:
     from Basilisk.simulation import vizInterface

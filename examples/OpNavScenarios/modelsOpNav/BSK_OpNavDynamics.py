@@ -27,21 +27,22 @@ the instantiation of :ref:`vizInterface`, and the camera module.
 """
 
 
+import inspect
+import math
+import os
+
 import numpy as np
-import math, os, inspect
-from Basilisk.utilities import macros as mc
-from Basilisk.utilities import unitTestSupport
+from Basilisk import __path__
 from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
                                  reactionWheelStateEffector, coarseSunSensor, eclipse,
                                  thrusterDynamicEffector, ephemerisConverter, vizInterface,
                                  camera)
-from Basilisk.utilities import simIncludeThruster, simIncludeRW, simIncludeGravBody
-from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.topLevelModules import pyswice
-from Basilisk import __path__
-
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import macros as mc
+from Basilisk.utilities import simIncludeThruster, simIncludeRW, simIncludeGravBody
+from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
-from Basilisk.architecture import messaging
 
 bskPath = __path__[0]
 filename = inspect.getframeinfo(inspect.currentframe()).filename

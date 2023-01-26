@@ -61,32 +61,29 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 # Creation Date:  March 28th, 2022
 #
 
+import math
 import os
+
 import matplotlib.pyplot as plt
 import numpy as np
-import math
-
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeRW
-
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import planetEphemeris
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import planetNav
-from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.simulation import radiationPressure
-from Basilisk.simulation import extForceTorque
-
-from Basilisk.fswAlgorithms import mrpFeedback
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import attTrackingError
+from Basilisk.fswAlgorithms import inertial3D
+from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.fswAlgorithms import smallBodyWaypointFeedback
-from Basilisk.fswAlgorithms import inertial3D
-
-from Basilisk.architecture import messaging
+from Basilisk.simulation import ephemerisConverter
+from Basilisk.simulation import extForceTorque
+from Basilisk.simulation import planetEphemeris
+from Basilisk.simulation import planetNav
+from Basilisk.simulation import radiationPressure
+from Basilisk.simulation import reactionWheelStateEffector
+from Basilisk.simulation import simpleNav
+from Basilisk.simulation import spacecraft
+from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeRW
+from Basilisk.utilities import unitTestSupport
 
 try:
     from Basilisk.simulation import vizInterface
@@ -492,7 +489,6 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, requested_control_recorder)
     scSim.AddModelToTask(simTaskName, attitude_error_recorder)
 
-    from datetime import datetime
     fileName = 'scenarioSmallBodyFeedbackControl'
 
     vizInterface = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject

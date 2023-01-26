@@ -16,14 +16,15 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-# Import architectural modules
-from Basilisk.utilities import SimulationBaseClass, macros as mc
+# Get current file path
+import inspect
+import os
+import sys
 
 from Basilisk import __path__
 from Basilisk.fswAlgorithms import formationBarycenter
-
-# Get current file path
-import sys, os, inspect
+# Import architectural modules
+from Basilisk.utilities import SimulationBaseClass, macros as mc
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

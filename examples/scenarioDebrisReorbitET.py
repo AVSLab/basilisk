@@ -66,17 +66,16 @@ Illustration of Simulation Results
 # Creation Date:  May 20, 2021
 #
 
-import numpy as np
-import math
 import os
+
 import matplotlib.pyplot as plt
+import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import etSphericalControl
 from Basilisk.simulation import simpleNav, spacecraft, extForceTorque, msmForceTorque
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 unitTestSupport, vizSupport)
-import copy
 
 try:
     from Basilisk.simulation import vizInterface

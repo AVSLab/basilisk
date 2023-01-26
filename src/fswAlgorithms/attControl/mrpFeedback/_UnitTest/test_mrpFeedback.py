@@ -21,25 +21,17 @@
 #   Author:             Hanspeter Schaub
 #   Creation Date:      December 18, 2015
 #
-import pytest
-import sys, os, inspect
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
-
-
-
-
-
-
-
-
-#   Import all of the modules that we are going to call in this simulation
-
+import pytest
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.architecture import messaging
+
+
+#   Import all of the modules that we are going to call in this simulation
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

@@ -18,7 +18,6 @@
 import os
 import sys
 
-from time import sleep
 from shutil import move
 from tempfile import mkstemp
 

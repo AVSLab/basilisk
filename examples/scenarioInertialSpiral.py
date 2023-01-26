@@ -78,7 +78,9 @@ against time as well as against each other to show the resulting spiral.
 #
 
 import os
+
 import numpy as np
+
 np.set_printoptions(precision=16)
 
 # import general simulation support files

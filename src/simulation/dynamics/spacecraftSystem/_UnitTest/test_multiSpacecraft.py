@@ -16,7 +16,9 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import os, inspect
+import inspect
+import os
+
 import numpy
 import pytest
 
@@ -30,7 +32,7 @@ from Basilisk.simulation import spacecraftSystem
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import hingedRigidBodyStateEffector
-from Basilisk.architecture import messaging
+
 
 def addTimeColumn(time, data):
     return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))

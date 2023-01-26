@@ -22,17 +22,19 @@
 #   Creation Date: May 28, 2020
 #
 
-import pytest
 import os
+
 import numpy as np
+import pytest
+from Basilisk import __path__
+from Basilisk.architecture import messaging
+from Basilisk.simulation import albedo
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.simulation import albedo
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging
-from Basilisk import __path__
+from Basilisk.utilities import unitTestSupport
+
 bskPath = __path__[0]
 
 path = os.path.dirname(os.path.abspath(__file__))

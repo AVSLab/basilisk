@@ -73,9 +73,10 @@ Illustration of Simulation Results
 # Author:   Hanspeter Schaub
 # Creation Date:  Nov. 19, 2016
 #
-import sys
 import os
+
 import numpy as np
+
 np.set_printoptions(precision=16)
 
 # import general simulation support files

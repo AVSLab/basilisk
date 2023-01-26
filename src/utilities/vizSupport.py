@@ -21,12 +21,14 @@
 #
 #   Unit Test Support Script
 #
-import sys, os
+import os
+
+import numpy as np
+from Basilisk import __path__
+from Basilisk.utilities import unitTestSupport
 from matplotlib import colors
 from matplotlib.colors import is_color_like
-import numpy as np
-from Basilisk.utilities import unitTestSupport
-from Basilisk import __path__
+
 bskPath = __path__[0]
 from Basilisk.architecture import messaging
 

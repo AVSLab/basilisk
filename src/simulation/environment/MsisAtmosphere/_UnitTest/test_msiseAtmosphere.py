@@ -25,22 +25,21 @@
 # Creation Date:  Jan 18, 2017
 #
 
-import os, inspect
+import inspect
+import os
+
 import numpy as np
 import pytest
-
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
+from Basilisk.architecture import messaging
 from Basilisk.simulation import msisAtmosphere
-
 # import simulation related support
 from Basilisk.simulation import spacecraft
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging
-
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

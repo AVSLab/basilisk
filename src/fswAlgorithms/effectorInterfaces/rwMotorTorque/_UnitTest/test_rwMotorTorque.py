@@ -22,14 +22,13 @@
 #   Creation Date:      July 4, 2016
 #
 
-import pytest
-
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import rwMotorTorque
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)

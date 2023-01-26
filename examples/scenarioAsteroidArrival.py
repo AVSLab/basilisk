@@ -194,9 +194,10 @@ The following image illustrates the expected visualization of this simulation sc
 
 import os
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

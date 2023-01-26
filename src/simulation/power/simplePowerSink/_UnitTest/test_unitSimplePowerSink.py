@@ -23,8 +23,10 @@
 #   Creation Date:      July 17th 2019
 #
 
+import inspect
+import os
+
 import pytest
-import os, inspect
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

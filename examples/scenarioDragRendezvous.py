@@ -74,24 +74,21 @@ Time trajectories of the in-plane Hill components of the Deputy are shown here:
 """
 
 import os
-import copy
 import time
 
-import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
-
+import numpy as np
+from Basilisk import __path__
+from Basilisk.fswAlgorithms import hillStateConverter, hillToAttRef, hillPoint
+from Basilisk.simulation import spacecraft, facetDragDynamicEffector, simpleNav, exponentialAtmosphere
+from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
 
-from Basilisk.simulation import spacecraft, facetDragDynamicEffector, simpleNav, exponentialAtmosphere
-from Basilisk.fswAlgorithms import hillStateConverter, hillToAttRef, hillPoint
-from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

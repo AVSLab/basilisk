@@ -16,9 +16,12 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import sys, os, inspect
-import numpy
+import inspect
+import os
+import sys
+
 import matplotlib.pyplot as plt
+import numpy
 import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -33,7 +36,7 @@ from Basilisk.simulation import spacecraft
 from Basilisk.simulation import nHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+
 
 @pytest.mark.parametrize("testCase", [
     ('NoGravity'),

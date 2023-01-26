@@ -24,10 +24,12 @@
 #
 
 # import pytest
-import os, inspect
+import inspect
+import os
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-import matplotlib.pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

@@ -22,8 +22,9 @@
 #   Creation Date:  August 11, 2017
 #
 
+import os
+
 import pytest
-import os, inspect
 from Basilisk.architecture import avsLibrarySelfCheck
 from Basilisk.utilities import unitTestSupport
 

@@ -31,13 +31,16 @@ The script can be run at full length by calling::
     python3 scenario_OpNavHeading.py
 
 """
+# Get current file path
+import inspect
+import os
+import sys
+import time
+
+from Basilisk.utilities import RigidBodyKinematics as rbk
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
-from Basilisk.utilities import RigidBodyKinematics as rbk
 
-
-# Get current file path
-import sys, os, inspect, time
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 

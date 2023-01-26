@@ -196,11 +196,10 @@ In this simulation setup the planet's spherical harmonics are turned on.
 #
 
 import os
-import numpy as np
-
-import matplotlib.pyplot as plt
 from copy import copy
 
+import matplotlib.pyplot as plt
+import numpy as np
 # To play with any scenario scripts as tutorials, you should make a copy of them into a custom folder
 # outside of the Basilisk directory.
 #
@@ -208,6 +207,7 @@ from copy import copy
 # After installing, you can find the installed location of Basilisk by opening a python interpreter and
 # running the commands:
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -223,7 +223,6 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 
 # always import the Basilisk messaging support
-from Basilisk.architecture import messaging
 
 def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     """

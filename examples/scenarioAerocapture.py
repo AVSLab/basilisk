@@ -78,24 +78,24 @@ captured by the planet.
 """
 
 import os
-import numpy as np
 
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-
+import numpy as np
+# The path to the location of Basilisk
+# Used to get the location of supporting data.
+from Basilisk import __path__
+from Basilisk.simulation import dragDynamicEffector
 # import simulation related support
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import tabularAtmosphere, simpleNav
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import dragDynamicEffector
-from Basilisk.architecture import messaging
-from Basilisk.utilities.readAtmTable import readAtmTable
 from Basilisk.utilities import vizSupport
-
+from Basilisk.utilities.readAtmTable import readAtmTable
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -104,13 +104,8 @@ from Basilisk.utilities import vizSupport
 # Author:   Mikaela Felix and Hanspeter Schaub
 # Creation Date:  May 17, 2022
 #
-
 # filename = inspect.getframeinfo(inspect.currentframe()).filename
 # path = os.path.dirname(os.path.abspath(filename))
-
-# The path to the location of Basilisk
-# Used to get the location of supporting data.
-from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

@@ -16,11 +16,14 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+# Get current file path
+import inspect
+import os
+import sys
+
 # Import architectural modules
 from Basilisk.utilities import SimulationBaseClass
 
-# Get current file path
-import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 

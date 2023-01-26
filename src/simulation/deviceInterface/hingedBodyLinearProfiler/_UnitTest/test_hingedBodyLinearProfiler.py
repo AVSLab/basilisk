@@ -17,15 +17,15 @@
 # 
 # 
 
-import pytest
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
-from Basilisk.simulation import hingedBodyLinearProfiler
 from math import pi
+
 import numpy as np
+import pytest
+from Basilisk.simulation import hingedBodyLinearProfiler
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport
+
 
 @pytest.mark.parametrize("startTime, endTime, startTheta, endTheta", [
      (macros.sec2nano(1), macros.sec2nano(2), 0, pi/180)

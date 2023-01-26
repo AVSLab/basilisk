@@ -18,14 +18,12 @@
 
 
 import pytest
-
+from Basilisk.architecture import messaging
+from Basilisk.simulation import coarseSunSensor
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
-
 from Basilisk.utilities import macros
-from Basilisk.simulation import coarseSunSensor
-from Basilisk.architecture import messaging
+from Basilisk.utilities import unitTestSupport
 
 
 @pytest.mark.parametrize("accuracy", [1e-12])

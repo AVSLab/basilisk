@@ -16,7 +16,9 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import os, inspect
+import inspect
+import os
+
 import matplotlib.pyplot as plt
 import numpy
 import pytest

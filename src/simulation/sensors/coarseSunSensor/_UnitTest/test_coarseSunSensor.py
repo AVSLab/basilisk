@@ -29,15 +29,16 @@
 #
 
 import os
-import pytest
+
 import numpy as np
-from matplotlib import pyplot as plt
+import pytest
+from Basilisk.architecture import messaging
+from Basilisk.simulation import coarseSunSensor
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.simulation import coarseSunSensor
-from Basilisk.architecture import messaging
+from Basilisk.utilities import unitTestSupport
+from matplotlib import pyplot as plt
 
 path = os.path.dirname(os.path.abspath(__file__))
 

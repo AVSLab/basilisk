@@ -25,8 +25,11 @@
 # Creation Date:  Nov. 19, 2016
 #
 
+import inspect
+import os
+import sys
+
 import pytest
-import os, inspect, sys
 from Basilisk.utilities import unitTestSupport
 
 # Get current file path

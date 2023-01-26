@@ -15,21 +15,17 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-import numpy
-import pytest
 import math
 
-
-
-
-
-
-
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import sunlineUKF
+import numpy
+import pytest
 from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import sunlineUKF
+from Basilisk.utilities import SimulationBaseClass, macros
+
 import SunLineuKF_test_utilities as FilterPlots
+
 
 def addTimeColumn(time, data):
     return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))

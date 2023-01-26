@@ -17,16 +17,16 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import numpy as np
-import pytest
 import math
 
-from Basilisk.utilities import SimulationBaseClass, macros
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import headingSuKF
+import numpy as np
 from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import headingSuKF
+from Basilisk.utilities import SimulationBaseClass, macros
 
 import headingSuKF_test_utilities as FilterPlots
+
 
 def setupFilterData(filterObject):
 

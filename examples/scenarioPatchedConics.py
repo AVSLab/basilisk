@@ -97,10 +97,9 @@ Jupiter centered fly-by, and a heliocentric log plot of the entire transfer.
 #
 
 import os
-import numpy as np
-
 
 import matplotlib.pyplot as plt
+import numpy as np
 from Basilisk import __path__
 
 bskPath = __path__[0]

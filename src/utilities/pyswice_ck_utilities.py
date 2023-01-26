@@ -17,15 +17,12 @@
 
 
 
-import sys, os, inspect #Don't worry about this, standard stuff plus file discovery
+import os  # Don't worry about this, standard stuff plus file discovery
 
-
-
-
-
-from Basilisk.topLevelModules import pyswice
 import numpy
+from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities import RigidBodyKinematics
+
 
 def ckWrite(handle, time, MRPArray, avArray, startSeg, sc = -62, rf = "J2000"):
     """

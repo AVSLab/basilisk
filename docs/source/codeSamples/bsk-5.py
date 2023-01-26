@@ -17,12 +17,13 @@
 #
 
 import sys
+
+import matplotlib.pyplot as plt
+from Basilisk.architecture import messaging
+from Basilisk.moduleTemplates import cppModuleTemplate
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.moduleTemplates import cppModuleTemplate
-from Basilisk.architecture import messaging
 from Basilisk.utilities import unitTestSupport
-import matplotlib.pyplot as plt
 
 
 def run():

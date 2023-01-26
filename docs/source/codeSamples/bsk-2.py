@@ -16,10 +16,11 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
 from Basilisk.moduleTemplates import cModuleTemplate
 from Basilisk.moduleTemplates import cppModuleTemplate
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+
 
 def run():
     """

@@ -128,20 +128,18 @@ When starting at L4 or L5, the spacecraft remains near the stable equilibrium po
 #
 
 import os
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from datetime import datetime, timedelta
 
-from Basilisk.simulation import spacecraft
+import matplotlib.pyplot as plt
+import numpy as np
+from Basilisk import __path__
 from Basilisk.simulation import orbElemConvert
+from Basilisk.simulation import spacecraft
+from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
-from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
-from Basilisk.architecture import messaging
 
-from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

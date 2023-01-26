@@ -74,36 +74,33 @@ The following plots illustrate the 2D pointing error, access data, image command
 #
 
 import os
-import numpy as np
 
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-
-# import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import extForceTorque
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import groundLocation
-from Basilisk.utilities import astroFunctions
-from Basilisk.simulation import spaceToGroundTransmitter
-from Basilisk.simulation import simpleInstrument
-from Basilisk.simulation import partitionedStorageUnit
-
-# import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.fswAlgorithms import locationPointing
-from Basilisk.fswAlgorithms import simpleInstrumentController
-
+import numpy as np
 # import message declarations
 from Basilisk.architecture import messaging
-
+from Basilisk.fswAlgorithms import locationPointing
+# import FSW Algorithm related support
+from Basilisk.fswAlgorithms import mrpFeedback
+from Basilisk.fswAlgorithms import simpleInstrumentController
+from Basilisk.simulation import extForceTorque
+from Basilisk.simulation import groundLocation
+from Basilisk.simulation import partitionedStorageUnit
+from Basilisk.simulation import simpleInstrument
+from Basilisk.simulation import simpleNav
+from Basilisk.simulation import spaceToGroundTransmitter
+# import simulation related support
+from Basilisk.simulation import spacecraft
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import astroFunctions
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
+
 try:
     from Basilisk.simulation import vizInterface
     vizFound = True

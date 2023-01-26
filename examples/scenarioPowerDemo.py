@@ -72,7 +72,9 @@ battery begins to rebuild.
 
 """
 
-import os, inspect
+import inspect
+import os
+
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -92,7 +94,6 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import astroFunctions
-from Basilisk.architecture import messaging
 
 from Basilisk import __path__
 bskPath = __path__[0]

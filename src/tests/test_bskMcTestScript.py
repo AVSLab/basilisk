@@ -26,10 +26,14 @@
 #
 
 
-import sys, os, inspect, platform
-import pytest
-import shutil
 import importlib
+import inspect
+import os
+import platform
+import shutil
+import sys
+
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

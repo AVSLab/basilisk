@@ -26,7 +26,10 @@
 # Creation Date:  Dec. 14, 2016
 #
 
-import sys, os, inspect
+import inspect
+import os
+import sys
+
 import pytest
 from Basilisk.utilities import unitTestSupport
 

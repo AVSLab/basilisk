@@ -1,5 +1,5 @@
-from tqdm import tqdm
 from colorama import Fore
+from tqdm import tqdm
 
 
 class SimulationProgressBar:

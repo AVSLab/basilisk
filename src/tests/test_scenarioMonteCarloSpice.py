@@ -22,7 +22,11 @@
 # Purpose:  Integrated test of the MonteCarlo module with Spice usage.
 #
 
-import sys, os, inspect, platform
+import inspect
+import os
+import platform
+import sys
+
 import pytest
 
 # Get current file path

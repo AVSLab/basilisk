@@ -23,9 +23,11 @@
 #   Creation Date:      January 15, 2016
 #
 
-import pytest
-import os, inspect
+import inspect
+import os
+
 import numpy as np
+
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

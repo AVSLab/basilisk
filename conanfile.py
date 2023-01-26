@@ -1,11 +1,12 @@
-import os, sys
+import argparse
+import os
 import platform
+import shutil
+import subprocess
+import sys
 from datetime import datetime
 
-import shutil
-import argparse
 import pkg_resources
-import subprocess
 
 sys.path.insert(1, './src/utilities/')
 import makeDraftModule

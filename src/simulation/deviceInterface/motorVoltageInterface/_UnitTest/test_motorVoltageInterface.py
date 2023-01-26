@@ -23,21 +23,16 @@
 #   Creation Date:      February 13, 2021
 #
 
-import pytest
-import os, inspect
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
+import inspect
+import os
+
 import numpy as np
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
-
-
-def addTimeColumn(time, data):
-    return np.transpose(np.vstack([[time], np.transpose(data)]))
-
-
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
@@ -45,6 +40,10 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.simulation import motorVoltageInterface           # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
+
+
+def addTimeColumn(time, data):
+    return np.transpose(np.vstack([[time], np.transpose(data)]))
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)

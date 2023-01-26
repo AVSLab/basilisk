@@ -83,31 +83,28 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 # Creation Date:  July 14th, 2021
 #
 
+import math
 import os
+
 import matplotlib.pyplot as plt
 import numpy as np
-import math
-
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import attTrackingError
+from Basilisk.fswAlgorithms import hillPoint
+from Basilisk.fswAlgorithms import mrpFeedback
+from Basilisk.fswAlgorithms import rwMotorTorque
+from Basilisk.fswAlgorithms import smallBodyNavEKF
+from Basilisk.simulation import ephemerisConverter
+from Basilisk.simulation import planetEphemeris
+from Basilisk.simulation import planetNav
+from Basilisk.simulation import radiationPressure
+from Basilisk.simulation import reactionWheelStateEffector
+from Basilisk.simulation import simpleNav
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeRW
-
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import planetEphemeris
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import planetNav
-from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.simulation import radiationPressure
-
-from Basilisk.fswAlgorithms import smallBodyNavEKF
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.fswAlgorithms import hillPoint
-from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import rwMotorTorque
-
-from Basilisk.architecture import messaging
+from Basilisk.utilities import unitTestSupport
 
 try:
     from Basilisk.simulation import vizInterface

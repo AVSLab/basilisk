@@ -16,14 +16,14 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import pytest
-
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, unitTestSupport
-from Basilisk.fswAlgorithms import pixelLineBiasUKF  # import the module that is to be tested
-from Basilisk.utilities import RigidBodyKinematics as rbk
-import pixelLineBias_test_utilities as FilterPlots
 import numpy as np
 from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import pixelLineBiasUKF  # import the module that is to be tested
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
+
+import pixelLineBias_test_utilities as FilterPlots
+
 
 def addTimeColumn(time, data):
     return np.transpose(np.vstack([[time], np.transpose(data)]))
