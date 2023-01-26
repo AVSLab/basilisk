@@ -34,10 +34,6 @@ import xml.etree.ElementTree as ET
 import inspect
 import threading
 from time import sleep
-try:
-   set
-except NameError:
-   from sets import Set as set
 
 from Basilisk.utilities import simulationArchTypes
 from Basilisk.architecture import bskLogging
