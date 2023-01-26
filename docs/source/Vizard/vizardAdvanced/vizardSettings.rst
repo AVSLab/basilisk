@@ -805,6 +805,18 @@ one entry per spacecraft.  If a spacecraft has no RW devices, then add ``None`` 
 If custom RW state output messages are used, then the ``scData.rwInMsgs`` can be specified directly.  This case
 is employed in the test script :ref:`test_dataFileToViz`.
 
+Specifying CSS Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+To include a cluster clusters of CSS sensors to the spacecraft,
+call ``vizSupport.enableUnityVisualization()`` with the additional argument::
+
+    cssList=[cssDeviceList]
+
+Here ``cssDeviceList`` is a list of :ref:`CoarseSunSensor` objects.  The length of ``cssDeviceList``
+must match the number of spacecraft being modeled.  If a spacecraft has no CSS devices, then use
+the ``None`` label.  See :ref:`scenarioCSS` for an example of CSS devices being visualized in Vizard.
+
+
 Specifying Thruster Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The simplest method to include the clusters of thrusters of a one more spacecraft in the Vizard data file is to
