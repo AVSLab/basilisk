@@ -31,10 +31,11 @@ The script can be called by running::
 
 
 
-import os
-import inspect
-import scenario_CNNImages as scenario
 import csv
+import inspect
+import os
+
+import scenario_CNNImages as scenario
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

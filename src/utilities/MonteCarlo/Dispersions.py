@@ -17,12 +17,13 @@
 
 
 
-import random
-import numpy as np
 import abc
+import collections
+import random
+
+import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import orbitalMotion
-import collections
 
 
 class SingleVariableDispersion(object):

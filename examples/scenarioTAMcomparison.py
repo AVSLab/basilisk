@@ -112,13 +112,13 @@ Illustration of Simulation Results
 #
 
 import os
-import numpy as np
 
 import matplotlib.pyplot as plt
-
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -133,7 +133,6 @@ from Basilisk.simulation import magnetometer
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
 from Basilisk.utilities import simSetPlanetEnvironment
-from Basilisk.architecture import messaging
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport

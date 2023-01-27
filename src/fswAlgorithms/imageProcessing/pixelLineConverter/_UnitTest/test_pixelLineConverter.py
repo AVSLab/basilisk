@@ -4,13 +4,15 @@
 #   Creation Date:      May 16, 2019
 #
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+import inspect
+import os
+
+import numpy as np
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import pixelLineConverter
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 
-import os, inspect
-import numpy as np
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 

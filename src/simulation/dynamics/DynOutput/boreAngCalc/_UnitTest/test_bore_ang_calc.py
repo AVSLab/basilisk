@@ -27,15 +27,16 @@
 # Creation Date:  Jun. 30, 2017
 #
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import boreAngCalc
-from Basilisk.utilities import macros
-from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging
-import pytest
-import numpy
 import os
+
+import numpy
+import pytest
+from Basilisk.architecture import messaging
+from Basilisk.simulation import boreAngCalc
+from Basilisk.utilities import RigidBodyKinematics
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport
 
 path = os.path.dirname(os.path.abspath(__file__))
 

@@ -23,18 +23,15 @@
 #   Author:             Henry Macanas
 #   Creation Date:      02 23, 2021
 #
-import pytest
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
-
+from Basilisk.architecture import bskLogging
+from Basilisk.architecture import messaging  # import the message definitions
+from Basilisk.fswAlgorithms import mtbMomentumManagement  # import the module that is to be tested
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import mtbMomentumManagement                 # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging                      # import the message definitions
-from Basilisk.architecture import bskLogging
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 # CONSTANTS
 MAX_EFF_CNT = 36

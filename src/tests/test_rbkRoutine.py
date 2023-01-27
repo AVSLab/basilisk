@@ -20,7 +20,6 @@
 
 import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
-import pytest
 
 R2D = 180.0 / np.pi  # [deg]
 D2R = np.pi / 180.0  # [rad]

@@ -17,12 +17,10 @@
 #
 
 import numpy as np
-
-from Basilisk.utilities import macros as mc, simIncludeGravBody
+from Basilisk import __path__
 from Basilisk.simulation import ephemerisConverter, groundLocation, eclipse
 from Basilisk.topLevelModules import pyswice
-
-from Basilisk import __path__
+from Basilisk.utilities import macros as mc, simIncludeGravBody
 
 bskPath = __path__[0]
 

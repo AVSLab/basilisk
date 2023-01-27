@@ -16,9 +16,9 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import pytest
-import os
 import inspect
+import os
+
 import numpy as np
 
 #
@@ -39,7 +39,6 @@ bskPath = __path__[0]
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import spiceInterface
-from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 
 # provide a unique test method name, starting with test_

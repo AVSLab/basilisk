@@ -21,20 +21,16 @@
 #
 #   Unit Test Support Script
 #
-import sys, os
+import os
+
+import numpy as np
+from Basilisk import __path__
+from Basilisk.utilities import unitTestSupport
 from matplotlib import colors
 from matplotlib.colors import is_color_like
-import numpy as np
-from Basilisk.utilities import unitTestSupport
-from Basilisk import __path__
+
 bskPath = __path__[0]
 from Basilisk.architecture import messaging
-
-# set the string type that works with Python 2 and 3
-try:
-  basestring
-except NameError:
-  basestring = str
 
 try:
     from Basilisk.simulation import vizInterface
@@ -45,7 +41,7 @@ except ImportError:
 firstSpacecraftName = ''
 
 def toRGBA255(color, alpha=None):
-    if isinstance(color, basestring):
+    if isinstance(color, str):
         # convert color name to 4D array of values with 0-255
         if is_color_like(color):
 
@@ -76,7 +72,7 @@ def setSprite(shape, **kwargs):
         kwargs)
     shapeList = ["CIRCLE", "SQUARE", "TRIANGLE", "STAR", "bskSat"]
 
-    if not isinstance(shape, basestring):
+    if not isinstance(shape, str):
         print("In setSprite() the shape argument must be a string using " + str(shapeList))
         exit(1)
 
@@ -114,7 +110,7 @@ def addLocation(viz, **kwargs):
 
     if 'stationName' in kwargs:
         stationName = kwargs['stationName']
-        if not isinstance(stationName, basestring):
+        if not isinstance(stationName, str):
             print('ERROR: stationName must be a string')
             exit(1)
         vizElement.stationName = stationName
@@ -124,7 +120,7 @@ def addLocation(viz, **kwargs):
 
     if 'parentBodyName' in kwargs:
         parentBodyName = kwargs['parentBodyName']
-        if not isinstance(parentBodyName, basestring):
+        if not isinstance(parentBodyName, str):
             print('ERROR: parentBodyName must be a string')
             exit(1)
         vizElement.parentBodyName = parentBodyName
@@ -208,7 +204,7 @@ def createPointLine(viz, **kwargs):
 
     if 'fromBodyName' in kwargs:
         fromName = kwargs['fromBodyName']
-        if not isinstance(fromName, basestring):
+        if not isinstance(fromName, str):
             print('ERROR: vizSupport: fromBodyName must be a string')
             exit(1)
         vizElement.fromBodyName = fromName
@@ -217,7 +213,7 @@ def createPointLine(viz, **kwargs):
 
     if 'toBodyName' in kwargs:
         toName = kwargs['toBodyName']
-        if not isinstance(toName, basestring):
+        if not isinstance(toName, str):
             print('ERROR: vizSupport: toBodyName must be a string')
             exit(1)
         vizElement.toBodyName = toName
@@ -250,7 +246,7 @@ def createTargetLine(viz, **kwargs):
 
     if 'fromBodyName' in kwargs:
         fromName = kwargs['fromBodyName']
-        if not isinstance(fromName, basestring):
+        if not isinstance(fromName, str):
             print('ERROR: vizSupport: fromBodyName must be a string')
             exit(1)
         vizElement.fromBodyName = fromName
@@ -259,7 +255,7 @@ def createTargetLine(viz, **kwargs):
 
     if 'toBodyName' in kwargs:
         toName = kwargs['toBodyName']
-        if not isinstance(toName, basestring):
+        if not isinstance(toName, str):
             print('ERROR: vizSupport: toBodyName must be a string')
             exit(1)
         vizElement.toBodyName = toName
@@ -299,7 +295,7 @@ def createCustomModel(viz, **kwargs):
 
     if 'modelPath' in kwargs:
         modelPathName = kwargs['modelPath']
-        if not isinstance(modelPathName, basestring):
+        if not isinstance(modelPathName, str):
             print('ERROR: vizSupport: modelPath must be a string')
             exit(1)
         if len(modelPathName) == 0:
@@ -319,7 +315,7 @@ def createCustomModel(viz, **kwargs):
             print('ERROR: vizSupport: simBodiesToModify must be a non-empty list of strings')
             exit(1)
         for item in simBodiesList:
-            if not isinstance(item, basestring):
+            if not isinstance(item, str):
                 print('ERROR: vizSupport: the simBody name must be a string, not ' + str(item))
                 exit(1)
         vizElement.simBodiesToModify = vizInterface.StringVector(simBodiesList)
@@ -364,7 +360,7 @@ def createCustomModel(viz, **kwargs):
 
     if 'customTexturePath' in kwargs:
         customTexturePathName = kwargs['customTexturePath']
-        if not isinstance(customTexturePathName, basestring):
+        if not isinstance(customTexturePathName, str):
             print('ERROR: vizSupport: customTexturePath must be a string')
             exit(1)
         vizElement.customTexturePath = customTexturePathName
@@ -373,7 +369,7 @@ def createCustomModel(viz, **kwargs):
 
     if 'normalMapPath' in kwargs:
         normalMapPathName = kwargs['normalMapPath']
-        if not isinstance(normalMapPathName, basestring):
+        if not isinstance(normalMapPathName, str):
             print('ERROR: vizSupport: normalMapPath must be a string')
             exit(1)
         vizElement.normalMapPath = normalMapPathName
@@ -455,7 +451,7 @@ def setActuatorGuiSetting(viz, **kwargs):
 
     if 'spacecraftName' in kwargs:
         scName = kwargs['spacecraftName']
-        if not isinstance(scName, basestring):
+        if not isinstance(scName, str):
             print('ERROR: vizSupport: spacecraftName must be a string')
             exit(1)
         vizElement.spacecraftName = scName
@@ -568,7 +564,7 @@ def setInstrumentGuiSetting(viz, **kwargs):
 
     if 'spacecraftName' in kwargs:
         scName = kwargs['spacecraftName']
-        if not isinstance(scName, basestring):
+        if not isinstance(scName, str):
             print('ERROR: vizSupport: spacecraftName must be a string')
             exit(1)
         vizElement.spacecraftName = scName
@@ -704,7 +700,7 @@ def createConeInOut(viz, **kwargs):
 
     if 'fromBodyName' in kwargs:
         fromName = kwargs['fromBodyName']
-        if not isinstance(fromName, basestring):
+        if not isinstance(fromName, str):
             print('ERROR: vizSupport: fromBodyName must be a string')
             exit(1)
         vizElement.fromBodyName = fromName
@@ -713,7 +709,7 @@ def createConeInOut(viz, **kwargs):
 
     if 'toBodyName' in kwargs:
         toName = kwargs['toBodyName']
-        if not isinstance(toName, basestring):
+        if not isinstance(toName, str):
             print('ERROR: vizSupport: toBodyName must be a string')
             exit(1)
         vizElement.toBodyName = toName
@@ -778,7 +774,7 @@ def createConeInOut(viz, **kwargs):
 
     if 'coneName' in kwargs:
         coneName = kwargs['coneName']
-        if not isinstance(coneName, basestring):
+        if not isinstance(coneName, str):
             print('ERROR: vizSupport: coneName must be a string')
             exit(1)
         vizElement.coneName = coneName
@@ -807,7 +803,7 @@ def createStandardCamera(viz, **kwargs):
 
     if 'spacecraftName' in kwargs:
         scName = kwargs['spacecraftName']
-        if not isinstance(scName, basestring):
+        if not isinstance(scName, str):
             print('ERROR: vizSupport: spacecraftName must be a string, you provided ' + str(scName))
             exit(1)
         cam.spacecraftName = scName
@@ -851,7 +847,7 @@ def createStandardCamera(viz, **kwargs):
             print('ERROR: vizSupport: bodyTarget does not apply in pointing vector mode')
             exit(1)
         bodyTargetName = kwargs['bodyTarget']
-        if not isinstance(bodyTargetName, basestring):
+        if not isinstance(bodyTargetName, str):
             print('ERROR: vizSupport: targetBodyName must be a string')
             exit(1)
         cam.bodyTarget = bodyTargetName
@@ -884,7 +880,7 @@ def createStandardCamera(viz, **kwargs):
 
     if 'displayName' in kwargs:
         displayName = kwargs['displayName']
-        if not isinstance(displayName, basestring):
+        if not isinstance(displayName, str):
             print('ERROR: vizSupport: createStandardCamera: displayName must be a string')
             exit(1)
         cam.displayName = displayName
@@ -918,7 +914,7 @@ def createCameraConfigMsg(viz, **kwargs):
 
     if 'parentName' in kwargs:
         val = kwargs['parentName']
-        if not isinstance(val, basestring):
+        if not isinstance(val, str):
             print('ERROR: vizSupport: parentName must be a string')
             exit(1)
         cameraConfigMsgPayload.parentName = val
@@ -992,7 +988,7 @@ def createCameraConfigMsg(viz, **kwargs):
 
     if 'skyBox' in kwargs:
         val = kwargs['skyBox']
-        if not isinstance(val, basestring):
+        if not isinstance(val, str):
             print('ERROR: vizSupport: skyBox must be a string')
             exit(1)
         cameraConfigMsgPayload.skyBox = val

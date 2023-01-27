@@ -26,11 +26,12 @@
 #
 
 
-import sys
-import pytest
-import subprocess
-from pathlib import Path
 import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

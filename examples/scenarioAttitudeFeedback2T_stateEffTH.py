@@ -90,42 +90,36 @@ Illustration of Simulation Results
 #
 
 import os
-import numpy as np
 
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.architecture import sim_model
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import fswSetupThrusters
-from Basilisk.utilities import simIncludeThruster
-
-# import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import extForceTorque
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import thrusterStateEffector, thrusterDynamicEffector
-from Basilisk.simulation import svIntegrators
-
-# import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.fswAlgorithms import inertial3D
-from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import thrForceMapping
-from Basilisk.fswAlgorithms import thrFiringSchmitt
-
-# import message declarations
-from Basilisk.architecture import messaging
-
-# attempt to import vizard
-from Basilisk.utilities import vizSupport
-
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+# import message declarations
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import attTrackingError
+from Basilisk.fswAlgorithms import inertial3D
+# import FSW Algorithm related support
+from Basilisk.fswAlgorithms import mrpFeedback
+from Basilisk.fswAlgorithms import thrFiringSchmitt
+from Basilisk.fswAlgorithms import thrForceMapping
+from Basilisk.simulation import extForceTorque
+from Basilisk.simulation import simpleNav
+# import simulation related support
+from Basilisk.simulation import spacecraft
+from Basilisk.simulation import svIntegrators
+from Basilisk.simulation import thrusterStateEffector
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import fswSetupThrusters
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import simIncludeThruster
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+# attempt to import vizard
+from Basilisk.utilities import vizSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

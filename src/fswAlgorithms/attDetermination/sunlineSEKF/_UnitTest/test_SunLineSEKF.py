@@ -24,12 +24,13 @@
 
 import numpy as np
 import pytest
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import sunlineSEKF
 from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import sunlineSEKF
+from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros, RigidBodyKinematics
+
 import SunLineSEKF_test_utilities as FilterPlots
+
 
 def addTimeColumn(time, data):
     return np.transpose(np.vstack([[time], np.transpose(data)]))

@@ -23,13 +23,12 @@
 #   Creation Date:  November 14, 2016
 #
 
-import pytest
 import numpy as np
-
-
-from Basilisk.utilities import macros
-from Basilisk.simulation import vscmgStateEffector
+import pytest
 from Basilisk.architecture import messaging
+from Basilisk.simulation import vscmgStateEffector
+from Basilisk.utilities import macros
+
 
 # methods
 def listStack(vec,simStopTime,unitProcRate):

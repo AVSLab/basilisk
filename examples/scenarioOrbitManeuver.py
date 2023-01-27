@@ -93,26 +93,23 @@ in textbooks such as `Analytical Mechanics of Space Systems
 # Creation Date:  Nov. 26, 2016
 #
 
-import os
-import numpy as np
 import math
+import os
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging
-
-# attempt to import vizard
-from Basilisk.utilities import vizSupport
-
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+from Basilisk.simulation import spacecraft
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+# attempt to import vizard
+from Basilisk.utilities import vizSupport
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

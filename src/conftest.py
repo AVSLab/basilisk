@@ -16,11 +16,13 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import pytest
-import os, inspect
+import inspect
+import os
 import shutil
-import sys
 import subprocess
+import sys
+
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

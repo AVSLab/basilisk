@@ -125,22 +125,19 @@ The same plots are generated using the MSIS model:
 #
 
 import os
-import numpy as np
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
+import numpy as np
+# The path to the location of Basilisk, used to get the location of supporting data
+from Basilisk import __path__
+# always import the Basilisk messaging support
+from Basilisk.architecture import messaging
+# import atmosphere and drag modules
+from Basilisk.simulation import exponentialAtmosphere, msisAtmosphere, dragDynamicEffector
 # import simulation related support
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport, simSetPlanetEnvironment)
-
-# import atmosphere and drag modules
-from Basilisk.simulation import exponentialAtmosphere, msisAtmosphere, dragDynamicEffector
-
-# always import the Basilisk messaging support
-from Basilisk.architecture import messaging
-
-# The path to the location of Basilisk, used to get the location of supporting data
-from Basilisk import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

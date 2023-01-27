@@ -75,26 +75,25 @@ The following plots illustrate the sensed magnetic field as well as the TAM comm
 # Creation Date:  June 22, 2021
 #
 
-import sys
-import numpy as np
 import os
+
 import matplotlib.pyplot as plt
-
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
-                                    inertial3D, rwMotorTorque,
-                                    tamComm, mtbMomentumManagement)
-from Basilisk.simulation import (reactionWheelStateEffector, 
-                                 simpleNav,
-                                 magneticFieldWMM, magnetometer, MtbEffector,
-                                 spacecraft)
-from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, unitTestSupport, vizSupport)
-from Basilisk.architecture import messaging
-
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
+                                    inertial3D, rwMotorTorque,
+                                    tamComm, mtbMomentumManagement)
+from Basilisk.simulation import (reactionWheelStateEffector,
+                                 simpleNav,
+                                 magneticFieldWMM, magnetometer, MtbEffector,
+                                 spacecraft)
+from Basilisk.utilities import (SimulationBaseClass, macros,
+                                orbitalMotion, simIncludeGravBody,
+                                simIncludeRW, unitTestSupport, vizSupport)
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

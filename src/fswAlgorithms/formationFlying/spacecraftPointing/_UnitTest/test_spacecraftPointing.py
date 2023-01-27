@@ -29,8 +29,10 @@
 # the angular velocity (omega_RN_N) and the angular acceleration (domega_RN_N) are calculated. The outcomes are compared
 # to the expected outcome of the module.
 
+import inspect
+import os
+
 import pytest
-import os, inspect
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

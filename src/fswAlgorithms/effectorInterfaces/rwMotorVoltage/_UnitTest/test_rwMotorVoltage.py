@@ -22,16 +22,11 @@
 #   Creation Date:      January 16, 2017
 #
 
-import pytest
-import os, inspect
+import inspect
+import os
+
 import numpy as np
-
-
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-
-def addTimeColumn(time, data):
-    return np.transpose(np.vstack([[time], np.transpose(data)]))
+import pytest
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
@@ -40,6 +35,13 @@ from Basilisk.fswAlgorithms import rwMotorVoltage
 from Basilisk.utilities import fswSetupRW
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
+
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+
+def addTimeColumn(time, data):
+    return np.transpose(np.vstack([[time], np.transpose(data)]))
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)

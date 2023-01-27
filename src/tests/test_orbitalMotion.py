@@ -17,9 +17,8 @@
 #
 
 
-from Basilisk.utilities import orbitalMotion
 import numpy as np
-import pytest
+from Basilisk.utilities import orbitalMotion
 
 a_tol = 1e-14  # array tolerance
 s_tol = 1e-6  # scale tolerance

@@ -17,16 +17,15 @@
 # 
 # 
 
-import pytest
 import numpy as np
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
 from Basilisk.fswAlgorithms import smallBodyWaypointFeedback
 from Basilisk.simulation import planetEphemeris
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import unitTestSupport
+
 
 # @pytest.mark.parametrize("accuracy", [1e-12])
 # @pytest.mark.parametrize("param1, param2", [

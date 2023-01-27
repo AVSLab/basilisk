@@ -150,11 +150,14 @@ Illustration of Simulation Results
 
 """
 
+# Get current file path
+import inspect
+import os
+import sys
+
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
 
-# Get current file path
-import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 

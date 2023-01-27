@@ -16,12 +16,14 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import numpy
-import pytest
 import math
 
-from Basilisk.fswAlgorithms import sunlineSuKF
+import numpy
+import pytest
+
 from Basilisk.fswAlgorithms import inertialUKF
+from Basilisk.fswAlgorithms import sunlineSuKF
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -30,7 +32,6 @@ from Basilisk.fswAlgorithms import inertialUKF
 # provide a unique test method name, starting with test_
 
 @pytest.mark.parametrize("filterModule", [('inertialUKF'), ('sunlineSuKF')])
-
 def test_all_utilities_ukf(show_plots, filterModule):
     """Test the filter utilities"""
     [testResults, testMessage] = utilities_nominal(filterModule)

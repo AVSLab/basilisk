@@ -24,7 +24,9 @@
 #   Creation Date:      January 23, 2020
 #
 
-import os, inspect
+import inspect
+import os
+
 import numpy as np
 import pytest
 

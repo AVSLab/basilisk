@@ -125,15 +125,15 @@ Illustration of Simulation Results
 
 """
 
+import copy
 # Get current file path
 import inspect
 import os
 import sys
-import copy
 
+from Basilisk.architecture import messaging
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
-from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

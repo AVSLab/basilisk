@@ -34,7 +34,9 @@ can be found in :ref:`bskLogging`.
 #   Creation Date:      Month Day, Year
 #
 
-import os, inspect
+import inspect
+import os
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
@@ -42,7 +44,6 @@ splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 from Basilisk.moduleTemplates import cModuleTemplate
 from Basilisk.utilities import macros
 from Basilisk.architecture import bskLogging

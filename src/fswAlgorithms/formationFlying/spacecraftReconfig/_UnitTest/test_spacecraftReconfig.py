@@ -25,15 +25,15 @@
 #
 
 import pytest
-import itertools
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import spacecraftReconfig  # import the module that is to be tested
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.fswAlgorithms import spacecraftReconfig  # import the module that is to be tested
-from Basilisk.architecture import messaging
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

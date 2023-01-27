@@ -24,10 +24,12 @@
 # Creation Date:  July 21, 2017
 #
 
-import sys, os, inspect
+import inspect
+import os
+import sys
+
 import pytest
 from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import macros
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename

@@ -80,13 +80,13 @@ Illustration of Simulation Results
 #
 
 import os
-import matplotlib.pyplot as plt
 
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import orbitalMotion
-from Basilisk.simulation import spacecraft
+import matplotlib.pyplot as plt
 from Basilisk.simulation import planetEphemeris
+from Basilisk.simulation import spacecraft
+from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import unitTestSupport
 
 try:
     from Basilisk.simulation import vizInterface

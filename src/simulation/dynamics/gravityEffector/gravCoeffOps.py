@@ -16,7 +16,9 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 import csv
+
 from Basilisk.architecture import sim_model
+
 
 def loadGravFromFile(fileName, spherHarm, maxDeg=2):
 

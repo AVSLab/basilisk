@@ -22,7 +22,9 @@
 #   Author:             Hanspeter Schaub
 #   Creation Date:      July 4, 2016
 #
-import os, inspect
+import inspect
+import os
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 

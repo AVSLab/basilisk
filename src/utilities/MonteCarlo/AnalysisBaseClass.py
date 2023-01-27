@@ -1,9 +1,11 @@
-import sys, os, inspect
-import pandas as pd
-import numpy as np
-import time
 import glob
+import os
+import time
+
+import numpy as np
+import pandas as pd
 from Basilisk.utilities import macros
+
 try:
     import holoviews as hv
     from Basilisk.utilities.datashader_utilities import DS_Plot, curve_per_df_component

@@ -84,10 +84,9 @@ found with the predicted times when the rotating panel will yield CSS signals an
 #
 
 import os
-import numpy as np
 
 import matplotlib.pyplot as plt
-
+import numpy as np
 # To play with any scenario scripts as tutorials, you should make a copy of them into a custom folder
 # outside of the Basilisk directory.
 #

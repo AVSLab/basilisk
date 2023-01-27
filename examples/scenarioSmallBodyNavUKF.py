@@ -81,27 +81,21 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 # Creation Date:  March 7th, 2022
 #
 
+import math
 import os
+
 import matplotlib.pyplot as plt
 import numpy as np
-import math
-
-from mpl_toolkits.mplot3d import Axes3D
-
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import RigidBodyKinematics
-
+from Basilisk.fswAlgorithms import smallBodyNavUKF
 from Basilisk.simulation import ephemerisConverter
 from Basilisk.simulation import planetEphemeris
 from Basilisk.simulation import planetNav
-from Basilisk.simulation import spacecraft
 from Basilisk.simulation import simpleNav
-
-from Basilisk.fswAlgorithms import smallBodyNavUKF
-
-from Basilisk.architecture import messaging
+from Basilisk.simulation import spacecraft
+from Basilisk.utilities import RigidBodyKinematics
+from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody)
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import unitTestSupport
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.

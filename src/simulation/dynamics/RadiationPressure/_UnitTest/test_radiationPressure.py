@@ -27,10 +27,12 @@
 # Creation Date:  Feb. 9, 2017
 #
 
+import inspect
 import os
+
 import numpy as np
 import pytest
-import inspect
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')

@@ -17,15 +17,14 @@
 # 
 # 
 
-import pytest
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros, orbitalMotion
-from Basilisk.fswAlgorithms import smallBodyNavEKF
 import numpy as np
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import smallBodyNavEKF
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros, orbitalMotion
+from Basilisk.utilities import unitTestSupport
 from matplotlib import pyplot as plt
+
 
 def test_smallBodyNavEKF(show_plots):
     r"""

@@ -18,18 +18,15 @@
 
 import math
 
-from Basilisk.utilities import macros as mc
-
+import numpy as np
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, mrpFeedback,
                                     rwMotorTorque,
                                     velocityPoint, mrpSteering, rateServoFullNonlinear,
                                     sunSafePoint, cssWlsEst)
-
-import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW
-
-from Basilisk.architecture import messaging
+from Basilisk.utilities import macros as mc
 
 
 class BSKFswModels:

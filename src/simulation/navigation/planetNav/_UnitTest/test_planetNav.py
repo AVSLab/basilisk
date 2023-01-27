@@ -17,15 +17,15 @@
 # 
 # 
 
-import pytest
+import math
 
 import matplotlib.pyplot as plt
 import numpy
-import math
+from Basilisk.architecture import messaging
 from Basilisk.simulation import planetNav
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+
 
 def test_planetNav(show_plots):
     r"""

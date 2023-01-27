@@ -16,23 +16,14 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import sys, os, inspect
-import numpy
 import pytest
-import math
-
-
-
-
-
-
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import macros
-from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import spacecraft
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

@@ -26,7 +26,9 @@
 #
 
 
-import os, inspect
+import inspect
+import os
+
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -48,7 +50,8 @@ from Basilisk.simulation import facetDragDynamicEffector
 from Basilisk.simulation import simpleNav
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging
+
+
 #print dir(exponentialAtmosphere)
 
 

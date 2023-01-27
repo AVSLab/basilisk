@@ -25,9 +25,9 @@ This script is used to create a Basilisk module folder given the basic I/O and n
 """
 
 import os
+import re
 import shutil
 from datetime import datetime
-import re
 
 # assumes this script is in .../basilisk/src/utilities
 pathToSrc = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

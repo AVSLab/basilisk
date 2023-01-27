@@ -24,9 +24,11 @@
 #   Creation Date:      Month Day, Year
 #
 
-import pytest
-import os, inspect
+import inspect
+import os
+
 import numpy as np
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -36,11 +38,9 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.simulation import simpleMassProps
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging  # import the message definitions
-from Basilisk.architecture import bskLogging
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.

@@ -102,13 +102,13 @@ Illustration of Simulation Results
 #
 
 import os
-import numpy as np
 
 import matplotlib.pyplot as plt
+import numpy as np
+from Basilisk import __path__
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-
-from Basilisk import __path__
 bskPath = __path__[0]
 
 
@@ -125,7 +125,6 @@ from Basilisk.utilities import simSetPlanetEnvironment
 
 # import simulation related support
 from Basilisk.simulation import spacecraft
-from Basilisk.architecture import messaging
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport

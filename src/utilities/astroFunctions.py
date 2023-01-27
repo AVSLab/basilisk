@@ -17,9 +17,9 @@
 #
 
 
+import matplotlib.pyplot as plt
 import numpy as np
 from numpy import linalg as la
-import matplotlib.pyplot as plt
 
 # Useful conversions
 R2D = 180.0 /np.pi           # [deg]

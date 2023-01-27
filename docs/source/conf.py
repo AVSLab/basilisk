@@ -8,16 +8,15 @@
 
 # -- Path setup --------------------------------------------------------------
 
+import datetime
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
 import sys
-import numpy as np
-import sphinx_rtd_theme
-import datetime
 
+import numpy as np
 
 # -- Project information -----------------------------------------------------
 

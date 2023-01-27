@@ -25,7 +25,10 @@
 # Creation Date:  September 23, 2019
 #
 
-import sys, os, inspect
+import inspect
+import os
+import sys
+
 import pytest
 from Basilisk.utilities import unitTestSupport
 

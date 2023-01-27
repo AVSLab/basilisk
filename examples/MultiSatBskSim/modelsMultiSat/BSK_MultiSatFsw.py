@@ -16,13 +16,13 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from Basilisk.utilities import (macros as mc, fswSetupThrusters)
-from Basilisk.fswAlgorithms import (inertial3D, locationPointing, attTrackingError, mrpFeedback,
-                                    rwMotorTorque, spacecraftReconfig)
-from Basilisk.architecture import messaging
+import itertools
 
 import numpy as np
-import itertools
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import (inertial3D, locationPointing, attTrackingError, mrpFeedback,
+                                    rwMotorTorque, spacecraftReconfig)
+from Basilisk.utilities import (macros as mc, fswSetupThrusters)
 
 
 class BSKFswModels:

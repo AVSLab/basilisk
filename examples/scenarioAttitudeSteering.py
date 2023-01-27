@@ -134,43 +134,38 @@ similar in performance to a standard proportional-derivative or PD feedback cont
 # Creation Date:  Jan. 7, 2017
 #
 
-import sys
 import os
-import numpy as np
 
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-
-# import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import simIncludeRW
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.simulation import extForceTorque
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import RigidBodyKinematics as rb
-
-# import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpSteering
-from Basilisk.fswAlgorithms import rateServoFullNonlinear
-from Basilisk.fswAlgorithms import hillPoint
-from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import rwMotorTorque
-from Basilisk.utilities import fswSetupRW
-
-# import message declarations
-from Basilisk.architecture import messaging
-
-# attempt to import vizard
-from Basilisk.utilities import vizSupport
-
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+# import message declarations
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import attTrackingError
+from Basilisk.fswAlgorithms import hillPoint
+# import FSW Algorithm related support
+from Basilisk.fswAlgorithms import mrpSteering
+from Basilisk.fswAlgorithms import rateServoFullNonlinear
+from Basilisk.fswAlgorithms import rwMotorTorque
+from Basilisk.simulation import extForceTorque
+from Basilisk.simulation import reactionWheelStateEffector
+from Basilisk.simulation import simpleNav
+# import simulation related support
+from Basilisk.simulation import spacecraft
+from Basilisk.utilities import RigidBodyKinematics as rb
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import fswSetupRW
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion as om
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import simIncludeRW
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+# attempt to import vizard
+from Basilisk.utilities import vizSupport
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

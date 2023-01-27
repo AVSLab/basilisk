@@ -22,12 +22,12 @@
 
 import numpy as np
 import pytest
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import sunlineEKF
-from Basilisk.utilities import macros
-import SunLineEKF_test_utilities as FilterPlots
 from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import sunlineEKF
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+
+import SunLineEKF_test_utilities as FilterPlots
 
 
 def addTimeColumn(time, data):

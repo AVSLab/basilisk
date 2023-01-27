@@ -30,17 +30,16 @@ the ``modeRequest`` definitions which enable all the tasks necessary to perform 
 
 
 import math
-import numpy as np
 
-from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, mrpFeedback,
-                                    rwMotorTorque, opNavPoint, velocityPoint,
-                                    cssWlsEst, headingSuKF, relativeODuKF, horizonOpNav,
+import numpy as np
+from Basilisk import __path__
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import (hillPoint, attTrackingError, mrpFeedback,
+                                    rwMotorTorque, opNavPoint, headingSuKF, relativeODuKF, horizonOpNav,
                                     pixelLineConverter, faultDetection, pixelLineBiasUKF)
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import fswSetupRW, unitTestSupport, orbitalMotion, macros
-from Basilisk.architecture import messaging
+from Basilisk.utilities import fswSetupRW, orbitalMotion, macros
 
-from Basilisk import __path__
 bskPath = __path__[0]
 
 try:

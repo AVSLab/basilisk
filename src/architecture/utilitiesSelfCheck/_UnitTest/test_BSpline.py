@@ -24,11 +24,12 @@
 # Creation Date:  Oct 10 2021
 #
 
-import pytest
-import os, inspect
-from Basilisk.architecture import BSpline
-import numpy as np
+import inspect
+import os
 
+import numpy as np
+import pytest
+from Basilisk.architecture import BSpline
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

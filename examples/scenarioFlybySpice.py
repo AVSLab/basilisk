@@ -241,10 +241,10 @@ The following image illustrates the expected visualization of this simulation sc
 # Creation Date: February 5 2022
 #
 
-import os
-import numpy as np
 import inspect
+import os
 
+import numpy as np
 from Basilisk import __path__
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

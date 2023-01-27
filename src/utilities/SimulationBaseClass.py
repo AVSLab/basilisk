@@ -17,35 +17,23 @@
 
 
 
+import array
+import inspect
 # Import some architectural stuff that we will probably always use
-import sys, os, ast
-import six
+import os
+import sys
+import xml.etree.ElementTree as ET
+from collections import OrderedDict
+
 import matplotlib.pyplot as plt
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    from collections import OrderedDict
+import numpy as np
+from Basilisk.architecture import alg_contain
+from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
+from Basilisk.utilities import simulationArchTypes
+from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
 
 # Point the path to the module storage area
-
-
-from Basilisk.architecture import sim_model
-from Basilisk.architecture import alg_contain
-import numpy as np
-import array
-import xml.etree.ElementTree as ET
-import inspect
-import threading
-from time import sleep
-try:
-   set
-except NameError:
-   from sets import Set as set
-
-from Basilisk.utilities import simulationArchTypes
-from Basilisk.architecture import bskLogging
-from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
-import warnings
 
 
 # define ASCI color codes
@@ -423,12 +411,9 @@ class SimBaseClass:
         Subname = Subname.join(SplitName[1:])
         NoDotName = ''
         NoDotName = NoDotName.join(SplitName)
-        if six.PY2:
-            NoDotName = NoDotName.translate(None, "[]'()")
-        else:
-            tr = str.maketrans("","", "[]'()")
-            NoDotName = NoDotName.translate(tr)
-            #NoDotName = NoDotName.translate({ord(c): None for c in "[]'()"})
+        tr = str.maketrans("","", "[]'()")
+        NoDotName = NoDotName.translate(tr)
+        #NoDotName = NoDotName.translate({ord(c): None for c in "[]'()"})
         inv_map = {v: k for k, v in list(self.NameReplace.items())}
         if SplitName[0] in inv_map:
             LogName = inv_map[SplitName[0]] + '.' + Subname
@@ -713,11 +698,7 @@ class SimBaseClass:
         algList = parseDirList(dirList)
 
         # if the package has different levels we need to access the correct level of the package
-        if six.PY2:
-            level = -1
-        else:
-            level = 0
-        currMod = __import__(module, globals(), locals(), [], level)
+        currMod = __import__(module, globals(), locals(), [], 0)
 
         moduleString = "currMod."
         moduleNames = module.split(".")

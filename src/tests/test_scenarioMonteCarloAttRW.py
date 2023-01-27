@@ -23,10 +23,11 @@
 #           scenarioAttitudeFeedbackRW with dispersed initial parameters
 #
 
-import sys, os, inspect
-import warnings
-import pytest
+import inspect
+import os
+import sys
 
+import pytest
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename

@@ -134,27 +134,25 @@ Illustration of Simulation Results
 #
 
 import os
-import numpy as np
 
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros, simIncludeGravBody
-from Basilisk.simulation import coarseSunSensor
-from Basilisk.simulation import albedo
-from Basilisk.simulation import eclipse
-from Basilisk.utilities import orbitalMotion as om
-
-# import simulation related support
-from Basilisk.simulation import spacecraft
-
-# import message declarations
-from Basilisk.architecture import messaging
-
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+# import message declarations
+from Basilisk.architecture import messaging
+from Basilisk.simulation import albedo
+from Basilisk.simulation import coarseSunSensor
+from Basilisk.simulation import eclipse
+# import simulation related support
+from Basilisk.simulation import spacecraft
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros, simIncludeGravBody
+from Basilisk.utilities import orbitalMotion as om
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
 bskPath = __path__[0]
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 

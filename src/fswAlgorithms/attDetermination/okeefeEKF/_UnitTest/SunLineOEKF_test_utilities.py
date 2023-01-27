@@ -15,10 +15,12 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-import os, inspect
+import inspect
+import os
+
+import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

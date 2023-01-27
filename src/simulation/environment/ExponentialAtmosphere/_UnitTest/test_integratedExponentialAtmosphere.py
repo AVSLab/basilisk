@@ -17,9 +17,11 @@
 
 
 
-import os, inspect
-import numpy as np
+import inspect
 import math
+import os
+
+import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -34,7 +36,6 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging
 
 
 def test_unitExponentialAtmosphere():

@@ -27,12 +27,15 @@
 #
 
 
-import sys, os, inspect
-import pytest
-import importlib
-from Basilisk.utilities import unitTestSupport
 import fnmatch
+import importlib
+import inspect
+import os
+import sys
+
+import pytest
 from Basilisk.architecture import bskLogging
+from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

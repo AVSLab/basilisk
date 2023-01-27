@@ -34,9 +34,7 @@ import os
 import inspect
 # import scenario_LimbAttOD as scenario
 import scenario_OpNavAttODMC as scenario
-from BSK_OpNav import BSKSim, BSKScenario
-import BSK_OpNavDynamics, BSK_OpNavFsw
-import subprocess, signal
+from BSK_OpNav import BSKSim
 
 Sim = BSKSim()
 viz_path = Sim.vizPath
@@ -51,7 +49,6 @@ from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import OrbitalElementDispersion, UniformDispersion
 # import simulation related support
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np

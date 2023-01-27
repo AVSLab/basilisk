@@ -26,10 +26,11 @@
 #
 
 
-import sys, os, inspect
+import inspect
+import os
+import sys
+
 import pytest
-import importlib
-from Basilisk.utilities import unitTestSupport
 
 # Get the current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename

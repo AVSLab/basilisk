@@ -23,19 +23,19 @@
 #   Creation Date:      July 4, 2016
 #
 
-import pytest
 
+import inspect
+import os
+
+import numpy as np
+import pytest
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import thrForceMapping
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import thrForceMapping
-from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.architecture import messaging
-
-
-import os, inspect
-import numpy as np
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

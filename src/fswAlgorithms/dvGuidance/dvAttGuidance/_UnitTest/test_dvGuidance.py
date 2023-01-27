@@ -4,13 +4,16 @@
 #   Creation Date:      October 5, 2018
 #
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import dvGuidance
-from Basilisk.architecture import messaging
+import inspect
+import os
+
 import matplotlib.pyplot as plt
-import os, inspect
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import dvGuidance
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 

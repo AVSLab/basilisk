@@ -138,14 +138,14 @@ spacecraft is plotted per simulation.
 import copy
 # Get current file path
 import inspect
+import math
 import os
 import sys
-import numpy as np
-import math
 
+import numpy as np
+from Basilisk.architecture import messaging
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport, RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

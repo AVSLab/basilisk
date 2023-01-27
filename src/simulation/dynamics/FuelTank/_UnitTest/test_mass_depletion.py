@@ -14,18 +14,20 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import os, inspect, pytest
+import inspect
+import os
+import pytest
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import gravityEffector
-from Basilisk.utilities import simIncludeThruster
-from Basilisk.simulation import thrusterDynamicEffector, thrusterStateEffector
-from Basilisk.simulation import fuelTank
 from Basilisk.architecture import messaging
+from Basilisk.simulation import fuelTank
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import spacecraft
+from Basilisk.simulation import thrusterDynamicEffector, thrusterStateEffector
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import simIncludeThruster
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

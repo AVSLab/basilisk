@@ -19,12 +19,11 @@
 
 import numpy as np
 import pytest
-
-from Basilisk.simulation import solarFlux
 from Basilisk.architecture import messaging
-from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import unitTestSupport
+from Basilisk.simulation import solarFlux
 from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import orbitalMotion as om
+
 
 @pytest.mark.parametrize("positionFactor, shadowFactor, eclipseMsgName, relTol", [(np.sqrt(2), 0.5, "eclipse_data_0", 1e-8), (np.sqrt(2), 0.5, "", 1e-8)])
 def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, relTol):

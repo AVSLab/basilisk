@@ -24,16 +24,18 @@
 # Creation Date:  June 11, 2018
 #
 
-import numpy as np
-import matplotlib.pyplot as plt
 import os
+
+import matplotlib.pyplot as plt
+import numpy as np
 from Basilisk import __path__
+
 bskPath = __path__[0]
 from Basilisk.simulation import spacecraft, radiationPressure
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 unitTestSupport)
 from Basilisk.utilities.simIncludeGravBody import gravBodyFactory
-from Basilisk.architecture import messaging
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

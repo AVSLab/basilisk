@@ -141,31 +141,29 @@ similar to a weight hanging from a spring on Earth.
 # Creation Date:  Jul. 17, 2017
 #
 
-import sys
 import os
-import numpy as np
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass  # The class which contains the basilisk simuation environment
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.utilities import macros  # Some unit conversions
-from Basilisk.utilities import orbitalMotion
-# import simulation related support
-from Basilisk.simulation import \
-    spacecraft  # The base of any spacecraft simulation which deals with spacecraft dynamics
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import hingedRigidBodyStateEffector
-# Allows for forces to act on the spacecraft without adding an effector like a thruster
-from Basilisk.simulation import extForceTorque
+
 # import non-basilisk libraries
 import matplotlib.pyplot as plt
-from Basilisk.architecture import messaging
-
-# attempt to import vizard
-from Basilisk.utilities import vizSupport
-
+import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+# Allows for forces to act on the spacecraft without adding an effector like a thruster
+from Basilisk.simulation import extForceTorque
+from Basilisk.simulation import hingedRigidBodyStateEffector
+# import simulation related support
+from Basilisk.simulation import \
+    spacecraft  # The base of any spacecraft simulation which deals with spacecraft dynamics
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass  # The class which contains the basilisk simuation environment
+from Basilisk.utilities import macros  # Some unit conversions
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+# attempt to import vizard
+from Basilisk.utilities import vizSupport
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

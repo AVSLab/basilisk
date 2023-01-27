@@ -261,7 +261,6 @@ The post fit residuals, show a fully functional filter, with no issues of observ
 
 
 import numpy as np
-import time
 
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -271,7 +270,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
-from Basilisk.simulation import spacecraft, spiceInterface, coarseSunSensor
+from Basilisk.simulation import spacecraft, coarseSunSensor
 from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, sunlineSuKF
 from Basilisk.architecture import messaging
 

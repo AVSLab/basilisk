@@ -275,22 +275,21 @@ the balanced RW case.  But there is a distinct numerical difference.
 # Creation Date:  Jan. 7, 2017
 #
 
-import sys
-import numpy as np
 import os
+
 import matplotlib.pyplot as plt
+import numpy as np
+# The path to the location of Basilisk
+# Used to get the location of supporting data.
+from Basilisk import __path__
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     inertial3D, rwMotorTorque, rwMotorVoltage)
-
 from Basilisk.simulation import reactionWheelStateEffector, motorVoltageInterface, simpleNav, spacecraft
 from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
-from Basilisk.architecture import messaging
 
-# The path to the location of Basilisk
-# Used to get the location of supporting data.
-from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

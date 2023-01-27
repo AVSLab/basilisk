@@ -15,8 +15,6 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-import pytest
-import sys, os, inspect
 
 #
 # Orb_Elem_Convert Support Script
@@ -35,12 +33,12 @@ import sys, os, inspect
 
 
 
+import math
+
+import matplotlib.pyplot as plt
 # @cond DOXYGEN_IGNORE
 import numpy
-import matplotlib.pyplot as plt
-import math
 from Basilisk.utilities import macros as mc
-
 
 a = 10000000.0
 e = 0.99

@@ -22,14 +22,11 @@
 #
 
 import sys
+from collections import OrderedDict
+
 import numpy
 from Basilisk.architecture import messaging
 from Basilisk.simulation import thrusterDynamicEffector
-
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    from collections import OrderedDict
 
 
 class thrusterFactory(object):

@@ -16,20 +16,15 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-
-
-
-
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import mrpSteering  # import the module that is to be tested
 from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
+from Basilisk.fswAlgorithms import mrpSteering  # import the module that is to be tested
 from Basilisk.utilities import RigidBodyKinematics
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 
 @pytest.mark.parametrize("K1", [0.15, 0])

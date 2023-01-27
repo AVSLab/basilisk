@@ -82,17 +82,16 @@ Plots below illustrate the scenario results for the inertial position states and
 #
 
 import os
-import numpy as np
-
 
 import matplotlib.pyplot as plt
+import numpy as np
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 from Basilisk.simulation import spacecraft, gravityEffector
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
-from Basilisk.architecture import messaging
 from Basilisk.utilities import vizSupport
 
 def run(show_plots):

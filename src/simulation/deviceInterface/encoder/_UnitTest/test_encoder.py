@@ -24,9 +24,11 @@
 #   Creation Date:      March 4, 2021
 #
 
-import pytest
-import os, inspect
+import inspect
+import os
+
 import numpy as np
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

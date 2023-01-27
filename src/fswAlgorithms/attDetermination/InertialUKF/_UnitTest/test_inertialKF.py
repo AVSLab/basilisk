@@ -15,16 +15,17 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-import numpy
-import math, inspect, os
+import inspect
+import math
+import os
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import inertialUKF  # import the module that is to be tested
-from Basilisk.utilities import macros
+import numpy
 from Basilisk.architecture import messaging
-
+from Basilisk.fswAlgorithms import inertialUKF  # import the module that is to be tested
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

@@ -19,12 +19,12 @@
 '''
 import numpy
 import pytest
-
-from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
-from Basilisk.fswAlgorithms import sunlineSuKF  # import the module that is to be tested
 from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import sunlineSuKF  # import the module that is to be tested
+from Basilisk.utilities import SimulationBaseClass, macros
 
 import SunLineSuKF_test_utilities as FilterPlots
+
 
 def addTimeColumn(time, data):
     return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))

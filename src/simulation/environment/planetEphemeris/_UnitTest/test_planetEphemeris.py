@@ -22,9 +22,11 @@
 #   Creation Date:      April 24, 2019
 #
 
-import pytest
-import os, inspect
+import inspect
+import os
+
 import numpy as np
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -39,7 +41,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.simulation import planetEphemeris
 from Basilisk.utilities import macros
 from Basilisk.architecture import bskLogging
-from Basilisk.architecture import messaging
+
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)

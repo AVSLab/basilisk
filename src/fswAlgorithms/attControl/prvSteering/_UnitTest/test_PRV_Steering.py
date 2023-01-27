@@ -21,19 +21,18 @@
 #   Author:             Hanspeter Schaub
 #   Creation Date:      December 18, 2015
 #
-import pytest
+import matplotlib.pyplot as plt
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
-
-
+import pytest
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import prvSteering
+from Basilisk.fswAlgorithms import rateServoFullNonlinear
 #   Import all of the modules that we are going to call in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
-import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import prvSteering
-from Basilisk.fswAlgorithms import rateServoFullNonlinear
-from Basilisk.architecture import messaging
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

@@ -66,25 +66,23 @@ This resulting feedback control error is shown below.
 """
 
 
-import numpy as np
 import math
-import matplotlib.pyplot as plt
 import os
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import vizSupport
-from Basilisk.architecture import sim_model
-from Basilisk.simulation import spacecraft
+import matplotlib.pyplot as plt
+import numpy as np
+from Basilisk import __path__
+from Basilisk.fswAlgorithms import meanOEFeedback
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
-from Basilisk.fswAlgorithms import meanOEFeedback
-from Basilisk.architecture import messaging
+from Basilisk.simulation import spacecraft
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import vizSupport
 
-from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

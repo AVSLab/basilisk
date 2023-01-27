@@ -19,8 +19,8 @@
 
 
 # import required modules:
-import sys
 import math
+
 import numpy as np
 from numpy import linalg as la
 

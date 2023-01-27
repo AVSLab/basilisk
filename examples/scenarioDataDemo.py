@@ -67,25 +67,23 @@ demonstrate the data stored, generated, and downlinked.
 
 
 """
-import os, inspect
+import os
+
 import numpy as np
-from matplotlib import pyplot as plt
-
-
-# Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
+from Basilisk import __path__
 from Basilisk.simulation import partitionedStorageUnit
-from Basilisk.simulation import simpleStorageUnit
 from Basilisk.simulation import simpleInstrument
+from Basilisk.simulation import simpleStorageUnit
 from Basilisk.simulation import simpleTransmitter
 from Basilisk.simulation import spacecraft
+# Import all of the modules that we are going to be called in this simulation
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import astroFunctions
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import astroFunctions
-from Basilisk.architecture import messaging
+from matplotlib import pyplot as plt
 
-from Basilisk import __path__
 bskPath = __path__[0]
 path = os.path.dirname(os.path.abspath(__file__))
 

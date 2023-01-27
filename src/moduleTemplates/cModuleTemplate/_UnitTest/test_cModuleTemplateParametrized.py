@@ -24,9 +24,11 @@
 #   Creation Date:      Month Day, Year
 #
 
-import pytest
-import os, inspect
+import inspect
+import os
+
 import numpy as np
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -46,7 +48,6 @@ import matplotlib.pyplot as plt
 from Basilisk.moduleTemplates import cModuleTemplate                # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging                      # import the message definitions
-from Basilisk.utilities import vizSupport
 from Basilisk.architecture import bskLogging
 
 

@@ -83,18 +83,19 @@ saturated, and the attitude still eventually stabilizes.
 # Creation Date:  Dec. 29, 2019
 #
 
-import numpy as np
+import copy
 import os
+
 import matplotlib.pyplot as plt
+import numpy as np
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     rwMotorTorque, hillPoint)
 from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
-from Basilisk.architecture import messaging
 
-import copy
 try:
     from Basilisk.simulation import vizInterface
     vizFound = True

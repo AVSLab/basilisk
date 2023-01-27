@@ -24,9 +24,10 @@
 #   Creation Date:      Feb 11, 2022
 #
 
-import pytest
 import os
+
 import numpy as np
+import pytest
 from Basilisk import __path__
 
 bskPath = __path__[0]

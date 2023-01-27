@@ -16,15 +16,13 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-
-import pytest
-
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
-from Basilisk.fswAlgorithms import relativeODuKF  # import the module that is to be tested
+import numpy as np
 from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import relativeODuKF  # import the module that is to be tested
+from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
 
 import relativeODuKF_test_utilities as FilterPlots
-import numpy as np
+
 
 def addTimeColumn(time, data):
     return np.transpose(np.vstack([[time], np.transpose(data)]))

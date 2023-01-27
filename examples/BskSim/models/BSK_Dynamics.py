@@ -17,18 +17,17 @@
 #
 
 import numpy as np
-from Basilisk.utilities import macros as mc
-from Basilisk.utilities import unitTestSupport as sp
+from Basilisk import __path__
+from Basilisk.simulation import ephemerisConverter
 from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
                                  reactionWheelStateEffector, coarseSunSensor, eclipse)
 from Basilisk.simulation import thrusterDynamicEffector
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import simIncludeRW, simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging
+from Basilisk.utilities import macros as mc
+from Basilisk.utilities import simIncludeRW, simIncludeGravBody
+from Basilisk.utilities import simIncludeThruster
+from Basilisk.utilities import unitTestSupport as sp
 
-from Basilisk import __path__
 bskPath = __path__[0]
 
 

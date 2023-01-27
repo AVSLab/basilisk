@@ -16,16 +16,9 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 import numpy as np
-from numpy import linalg as la
 from numpy import sin, cos
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+
 np.set_printoptions(precision=12)
-import sys, os, inspect
-
-
-
-
 
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import macros as mc

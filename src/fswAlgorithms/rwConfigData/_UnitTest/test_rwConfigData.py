@@ -4,13 +4,13 @@
 #   Creation Date:      October 5, 2018
 #
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import rwConfigData
-from Basilisk.architecture import messaging
-
 import numpy as np
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import rwConfigData
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
 
 def test_rwConfigData():
     """Module Unit Test"""

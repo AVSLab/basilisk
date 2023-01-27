@@ -17,21 +17,21 @@
 # 
 # 
 
-import pytest
 import os
-import numpy as np
+
 import matplotlib.pyplot as plt
-
-from Basilisk.simulation import spacecraft, magneticFieldWMM
-from Basilisk.utilities import SimulationBaseClass, simIncludeGravBody, orbitalMotion, RigidBodyKinematics
-from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
-from Basilisk.simulation import MtbEffector
-
+import numpy as np
+import pytest
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+from Basilisk.architecture import messaging
+from Basilisk.simulation import MtbEffector
+from Basilisk.simulation import spacecraft, magneticFieldWMM
+from Basilisk.utilities import SimulationBaseClass, simIncludeGravBody, orbitalMotion, RigidBodyKinematics
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

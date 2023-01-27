@@ -54,10 +54,11 @@ demonstrate the data stored, generated, and downlinked.
 .. image:: /_images/Scenarios/scenarioGroundPassStorage.svg
    :align: center
 """
-import os, inspect
+import inspect
+import os
+
 import numpy as np
 from matplotlib import pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -75,7 +76,6 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import astroFunctions
-from Basilisk.architecture import messaging
 
 from Basilisk import __path__
 bskPath = __path__[0]

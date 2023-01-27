@@ -23,22 +23,21 @@
 # Creation Date:  Dec. 14, 2016
 #
 
-import pytest
-import os
 import inspect
-import numpy as np
+import os
 
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
+import numpy as np
+import pytest
 # import simulation related support
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
-from Basilisk.architecture import messaging
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename

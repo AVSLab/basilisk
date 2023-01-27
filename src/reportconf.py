@@ -22,12 +22,13 @@ the user has pytest-html installed. It is used to customize the contents of
 the pytest-html report and control where it is written.
 """
 
-import pytest
-import matplotlib.pyplot as plt
 import os
 import sys
-import time
 import textwrap
+import time
+
+import matplotlib.pyplot as plt
+import pytest
 
 make_report = ('--report' in sys.argv)
 report_dir = 'tests/report/'  # relative to current folder

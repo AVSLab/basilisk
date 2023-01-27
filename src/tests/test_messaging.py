@@ -27,14 +27,9 @@
 #
 
 
-import sys, os, inspect
-import pytest
-from Basilisk.utilities import unitTestSupport
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 
-import glob
-import Basilisk
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

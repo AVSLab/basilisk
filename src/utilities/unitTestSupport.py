@@ -15,18 +15,17 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-#
-#   Unit Test Support Script
-#
+import errno
 import math
-import os, errno
-import numpy as np
-import matplotlib as mpl
+import os
 from datetime import datetime, timedelta
+
+import matplotlib as mpl
+import numpy as np
+import pytest
+from Basilisk.architecture import bskUtilities
 from Basilisk.architecture import messaging
 from Basilisk.topLevelModules import pyswice
-from Basilisk.architecture import bskUtilities
-import pytest
 
 mpl.rc("figure", facecolor="white")
 mpl.rc('xtick', labelsize=9)

@@ -17,14 +17,12 @@
 # 
 # 
 
-import pytest
 import numpy as np
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
 from Basilisk.simulation import mappingInstrument
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+
 
 def test_mappingInstrument():
     r"""

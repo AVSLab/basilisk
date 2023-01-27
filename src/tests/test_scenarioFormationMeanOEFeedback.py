@@ -16,10 +16,11 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import pytest
+import inspect
 import os
 import sys
-import inspect
+
+import pytest
 from Basilisk.utilities import unitTestSupport
 
 # Get current file path

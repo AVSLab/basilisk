@@ -16,10 +16,10 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import os, inspect
-import numpy
-import csv
+import inspect
+import os
 
+import numpy
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -37,7 +37,6 @@ from Basilisk.simulation import ephemerisConverter
 from Basilisk.simulation import planetEphemeris
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging
 import pytest
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

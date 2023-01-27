@@ -4,12 +4,14 @@
 #   Creation Date:      October 16, 2018
 #
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms import ephemNavConverter
-from Basilisk.utilities import astroFunctions
-from Basilisk.architecture import messaging
+import inspect
+import os
 
-import os, inspect
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import ephemNavConverter
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.utilities import astroFunctions
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 

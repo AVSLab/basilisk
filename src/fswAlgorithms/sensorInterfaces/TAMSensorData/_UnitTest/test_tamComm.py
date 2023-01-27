@@ -23,8 +23,9 @@
 #   Creation Date:      October 22, 2019
 #
 
-import pytest
-import os, inspect
+import inspect
+import os
+
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

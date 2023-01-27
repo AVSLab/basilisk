@@ -1,10 +1,10 @@
-import numpy as np
-
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-from Basilisk.utilities import  RigidBodyKinematics
-
 import copy
+
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+from Basilisk.utilities import RigidBodyKinematics
+
 
 def plotSpheres(posDataL_N, posDataF_N, attDataL_N, attDataF_N, spPosListLeader_H, rListLeader,
                LeaderSpCharges, spPosListFollower_H, rListFollower, FollowerSpCharges):

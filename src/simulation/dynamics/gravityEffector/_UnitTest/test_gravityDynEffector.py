@@ -16,8 +16,10 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import os, inspect
+import inspect
 import math
+import os
+
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

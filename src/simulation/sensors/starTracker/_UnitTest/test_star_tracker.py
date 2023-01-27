@@ -23,16 +23,15 @@
 #   Creation Date:  October 12, 2016
 #
 
-import pytest
 import numpy as np
-import six
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.utilities import macros
-from Basilisk.utilities import RigidBodyKinematics as rbk
+import pytest
 from Basilisk.architecture import messaging
 from Basilisk.simulation import starTracker
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
 
 # methods
 def listStack(vec,simStopTime,unitProcRate):

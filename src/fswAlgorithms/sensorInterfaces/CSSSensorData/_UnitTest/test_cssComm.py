@@ -4,15 +4,15 @@
 #   Creation Date:      October 4, 2018
 #   Updated On:         February 10, 2019
 #
+import inspect
+import os
+
 import pytest
-
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import cssComm
 from Basilisk.architecture import messaging
-
-import os, inspect
+from Basilisk.fswAlgorithms import cssComm
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

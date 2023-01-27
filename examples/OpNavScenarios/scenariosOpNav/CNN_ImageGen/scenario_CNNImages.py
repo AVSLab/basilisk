@@ -22,13 +22,16 @@ Overview
 This script is called by OpNavScenarios/CNN_ImageGen/OpNavMonteCarlo.py in order to generate images.
 
 """
+# Get current file path
+import inspect
+import os
+import subprocess
+import sys
+
+from Basilisk.utilities import RigidBodyKinematics as rbk
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
-from Basilisk.utilities import RigidBodyKinematics as rbk
 
-
-# Get current file path
-import sys, os, inspect, subprocess
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
@@ -37,7 +40,6 @@ sys.path.append(path + '/../..')
 from BSK_OpNav import BSKSim, BSKScenario
 import BSK_OpNavDynamics, BSK_OpNavFsw
 import numpy as np
-from sys import platform
 
 # Import plotting file for your scenario
 sys.path.append(path + '/../../plottingOpNav')
