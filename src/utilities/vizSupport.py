@@ -37,6 +37,7 @@ bskPath = __path__[0]
 firstSpacecraftName = ''
 
 def toRGBA255(color, alpha=None):
+    answer = [0, 0, 0, 0]
     if isinstance(color, str):
         # convert color name to 4D array of values with 0-255
         if is_color_like(color):
@@ -124,6 +125,7 @@ def addLocation(viz, **kwargs):
         print("ERROR: parentBodyName argument must be provided to addLocation")
         exit(1)
 
+    r_GP_P = [0, 0, 0]
     if 'r_GP_P' in kwargs:
         r_GP_P = kwargs['r_GP_P']
         if not isinstance(r_GP_P, list):
