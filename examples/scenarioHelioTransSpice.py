@@ -160,8 +160,13 @@ def run():
 
     # Configure Vizard settings
     if vizSupport.vizFound:
+        colorMsgContent = messaging.ColorMsgPayload()
+        colorMsgContent.colorRGBA = vizSupport.toRGBA255("Yellow")
+        colorMsg = messaging.ColorMsg().write(colorMsgContent)
+
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                                   , oscOrbitColorList=[vizSupport.toRGBA255("Magenta")]
+                                                  , trueOrbitColorInMsgList=colorMsg.addSubscriber()
                                                   # , saveFile=__file__
                                                   )
         viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
@@ -175,6 +180,13 @@ def run():
     # Initialize and execute simulation
     scSim.InitializeSimulation()
     day = 60 * 60 * 24  # sec
+    simulationTime = macros.sec2nano(0.5 * 365 * day)
+    scSim.ConfigureStopTime(simulationTime)
+    scSim.ExecuteSimulation()
+
+    # change true orbit line color
+    colorMsgContent.colorRGBA = vizSupport.toRGBA255("Cyan")
+    colorMsg.write(colorMsgContent)
     simulationTime = macros.sec2nano(4.5 * 365 * day)
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
