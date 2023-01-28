@@ -271,6 +271,18 @@ void VizInterface::ReadBSKMessages()
         }
         }
 
+        /* read in true trajectory line color if connected */
+        if (scIt->trueTrajectoryLineColorInMsg.isLinked()) {
+            if (scIt->trueTrajectoryLineColorInMsg.isWritten()) {
+                ColorMsgPayload colorMsg;
+                colorMsg = scIt->trueTrajectoryLineColorInMsg();
+                scIt->trueTrajectoryLineColor.clear();
+                for (int i=0; i<4; i++) {
+                    scIt->trueTrajectoryLineColor.push_back(colorMsg.colorRGBA[i]);
+                }
+            }
+        }
+
         /* read in generic sensor cmd value */
         {
             for (size_t idx=0;idx< (size_t) scIt->genericSensorList.size(); idx++) {
