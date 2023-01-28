@@ -75,18 +75,20 @@ The following image illustrates the expected visualization of this simulation sc
 
 import inspect
 import os
-
 from Basilisk import __path__
+from Basilisk.architecture import messaging
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import spacecraft
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import vizSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
-
-from Basilisk.simulation import spacecraft, gravityEffector
-from Basilisk.utilities import SimulationBaseClass, macros, simIncludeGravBody, unitTestSupport
-from Basilisk.architecture import messaging
-from Basilisk.utilities import vizSupport
 
 def run():
     """
