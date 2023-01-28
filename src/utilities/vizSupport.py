@@ -1099,6 +1099,9 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     trueOrbitColorList:
         list of spacecraft true or actual orbit colors.  Can be 4 RGBA integer value (0-255), a color string, or
         ``None`` if default values should be used.  The array must be of the length of the spacecraft list
+    trueOrbitColorInMsgList:
+        list of color messages to read and provide the true orbit color at each time step.  This overwrites
+        the values set with trueOrbitColorList.
     msmInfoList:
         list of MSM configuration messages
     ellipsoidList:
@@ -1124,7 +1127,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList',
          'genericSensorList', 'transceiverList', 'genericStorageList', 'lightList', 'spriteList',
          'modelDictionaryKeyList', 'oscOrbitColorList', 'trueOrbitColorList', 'logoTextureList',
-         'msmInfoList', 'ellipsoidList'],
+         'msmInfoList', 'ellipsoidList', 'trueOrbitColorInMsgList'],
         kwargs)
 
     # setup the Vizard interface module
@@ -1304,6 +1307,16 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             msmInfoList = [msmInfoList]
         if len(msmInfoList) != scListLength:
             print('ERROR: vizSupport: msmInfoList should have the same length as the '
+                  'number of spacecraft')
+            exit(1)
+
+    trueOrbitColorInMsgList = False
+    if 'trueOrbitColorInMsgList' in kwargs:
+        trueOrbitColorInMsgList = kwargs['trueOrbitColorInMsgList']
+        if not isinstance(trueOrbitColorInMsgList, list):
+            trueOrbitColorInMsgList = [trueOrbitColorInMsgList]
+        if len(trueOrbitColorInMsgList) != scListLength:
+            print('ERROR: vizSupport: trueOrbitColorInMsgList should have the same length as the '
                   'number of spacecraft')
             exit(1)
 
