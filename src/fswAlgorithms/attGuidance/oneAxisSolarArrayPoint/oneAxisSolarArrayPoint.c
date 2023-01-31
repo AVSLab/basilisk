@@ -47,7 +47,50 @@ void SelfInit_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, i
 */
 void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    if (!NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, " oneAxisSolarArrayPoint.attNavInMsg wasn't connected.");
+    }
 
+    // check how the input body heading is provided
+    if (BodyHeadingMsg_C_isLinked(&configData->bodyHeadingInMsg)) {
+        configData->bodyAxisInput = inputBodyHeadingMsg;
+    }
+    else {
+        if (v3Norm(configData->h1Hat_B) > EPS) {
+            configData->bodyAxisInput = inputBodyHeadingParameter;
+        }
+        else {
+            _bskLog(configData->bskLogger, BSK_ERROR, " oneAxisSolarArrayPoint.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified.");
+        }
+    }
+
+    // check how the input inertial heading is provided
+    if (InertialHeadingMsg_C_isLinked(&configData->inertialHeadingInMsg) && !EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
+        configData->inertialAxisInput = inputInertialHeadingMsg;
+    }
+    else if (!InertialHeadingMsg_C_isLinked(&configData->inertialHeadingInMsg) && EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
+        if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
+            _bskLog(configData->bskLogger, BSK_ERROR, " oneAxisSolarArrayPoint.ephemerisInMsg was specified but oneAxisSolarArrayPoint.transNavInMsg was not.");
+        }
+        else {
+            configData->inertialAxisInput = inputEphemerisMsg;
+        }
+    }
+    else if (InertialHeadingMsg_C_isLinked(&configData->inertialHeadingInMsg) && EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
+        configData->inertialAxisInput = inputInertialHeadingMsg;
+        _bskLog(configData->bskLogger, BSK_WARNING, " both oneAxisSolarArrayPoint.inertialHeadingInMsg and oneAxisSolarArrayPoint.ephemerisInMsg were linked. Inertial heading is computed from oneAxisSolarArrayPoint.inertialHeadingInMsg");
+    }
+    else {
+        if (v3Norm(configData->hHat_N) > EPS) {
+            configData->inertialAxisInput = inputInertialHeadingParameter;
+        }
+        else {
+            _bskLog(configData->bskLogger, BSK_ERROR, " neither oneAxisSolarArrayPoint.inertialHeadingInMsg nor oneAxisSolarArrayPoint.ephemerisInMsg were connected and no inertial heading h_N was specified.");
+        }
+    }
+
+    // set updateCallCount to zero
+    configData->updateCallCount = 0;
 }
 
 /*! The Update() function computes the reference MRP attitude, reference angular rate and acceleration
