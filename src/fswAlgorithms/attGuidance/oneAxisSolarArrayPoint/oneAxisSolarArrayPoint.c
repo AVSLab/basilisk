@@ -55,30 +55,27 @@ void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint
     if (BodyHeadingMsg_C_isLinked(&configData->bodyHeadingInMsg)) {
         configData->bodyAxisInput = inputBodyHeadingMsg;
     }
-    else {
-        if (v3Norm(configData->h1Hat_B) > EPS) {
+    else if (v3Norm(configData->h1Hat_B) > EPS) {
             configData->bodyAxisInput = inputBodyHeadingParameter;
-        }
-        else {
+    }
+    else {
             _bskLog(configData->bskLogger, BSK_ERROR, " oneAxisSolarArrayPoint.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified.");
-        }
     }
 
     // check how the input inertial heading is provided
-    if (InertialHeadingMsg_C_isLinked(&configData->inertialHeadingInMsg) && !EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
+    if (InertialHeadingMsg_C_isLinked(&configData->inertialHeadingInMsg)) {
         configData->inertialAxisInput = inputInertialHeadingMsg;
+        if (EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
+            _bskLog(configData->bskLogger, BSK_WARNING, " both oneAxisSolarArrayPoint.inertialHeadingInMsg and oneAxisSolarArrayPoint.ephemerisInMsg were linked. Inertial heading is computed from oneAxisSolarArrayPoint.inertialHeadingInMsg");
+        }
     }
-    else if (!InertialHeadingMsg_C_isLinked(&configData->inertialHeadingInMsg) && EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
+    else if (EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
         if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
             _bskLog(configData->bskLogger, BSK_ERROR, " oneAxisSolarArrayPoint.ephemerisInMsg was specified but oneAxisSolarArrayPoint.transNavInMsg was not.");
         }
         else {
             configData->inertialAxisInput = inputEphemerisMsg;
         }
-    }
-    else if (InertialHeadingMsg_C_isLinked(&configData->inertialHeadingInMsg) && EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
-        configData->inertialAxisInput = inputInertialHeadingMsg;
-        _bskLog(configData->bskLogger, BSK_WARNING, " both oneAxisSolarArrayPoint.inertialHeadingInMsg and oneAxisSolarArrayPoint.ephemerisInMsg were linked. Inertial heading is computed from oneAxisSolarArrayPoint.inertialHeadingInMsg");
     }
     else {
         if (v3Norm(configData->hHat_N) > EPS) {
@@ -101,5 +98,60 @@ void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint
 */
 void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    /*! create and zero the output message */
+    AttRefMsgPayload attRefOut = AttRefMsg_C_zeroMsgPayload();
 
+    /*! read and allocate the attitude navigation message */
+    NavAttMsgPayload attNavIn = NavAttMsg_C_read(&configData->attNavInMsg);
+
+    /*! get requested heading in inertial frame */
+    double hReqHat_N[3];
+    if (configData->inertialAxisInput == inputInertialHeadingParameter) {
+        v3Normalize(configData->hHat_N, hReqHat_N);
+    }
+    else if (configData->inertialAxisInput == inputInertialHeadingMsg) {
+        InertialHeadingMsgPayload inertialHeadingIn = InertialHeadingMsg_C_read(&configData->inertialHeadingInMsg);
+        v3Normalize(inertialHeadingIn.rHat_XN_N, hReqHat_N);
+    }
+    else if (configData->inertialAxisInput == inputEphemerisMsg) {
+        EphemerisMsgPayload ephemerisIn = EphemerisMsg_C_read(&configData->ephemerisInMsg);
+        NavTransMsgPayload transNavIn = NavTransMsg_C_read(&configData->transNavInMsg);
+        v3Subtract(ephemerisIn.r_BdyZero_N, transNavIn.r_BN_N, hReqHat_N);
+        v3Normalize(hReqHat_N, hReqHat_N);
+    }
+
+    /*! get body frame heading */
+    double hRefHat_B[3];
+    if (configData->bodyAxisInput == inputBodyHeadingParameter) {
+        v3Normalize(configData->h1Hat_B, hRefHat_B);
+    }
+    else if (configData->bodyAxisInput == inputBodyHeadingMsg) {
+        BodyHeadingMsgPayload bodyHeadingIn = BodyHeadingMsg_C_read(&configData->bodyHeadingInMsg);
+        v3Normalize(bodyHeadingIn.rHat_XB_B, hRefHat_B);
+    }
+    
+    /*! define the body frame orientation DCM BN */
+    double BN[3][3];
+    MRP2C(attNavIn.sigma_BN, BN);
+
+    /*! get the solar array drive direction in body frame coordinates */
+    double a1Hat_B[3];
+    v3Normalize(configData->a1Hat_B, a1Hat_B);
+
+    /*! get the second body frame direction */
+    double a2Hat_B[3];
+    if (v3Norm(configData->a2Hat_B) > EPS) {
+        v3Normalize(configData->a2Hat_B, a2Hat_B);
+    }
+    else {
+        v3SetZero(a2Hat_B);
+    }
+
+    /*! read Sun direction in B frame from the attNav message */
+    double rHat_SB_B[3];
+    v3Copy(attNavIn.vehSunPntBdy, rHat_SB_B);
+
+    /*! map requested heading into B frame */
+    double hReqHat_B[3];
+    m33MultV3(BN, hReqHat_N, hReqHat_B);
 }
