@@ -154,4 +154,221 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
     /*! map requested heading into B frame */
     double hReqHat_B[3];
     m33MultV3(BN, hReqHat_N, hReqHat_B);
+
+    /*! compute the total rotation DCM */
+    double RN[3][3];
+    computeFinalRotation(configData->alignmentPriority, BN, rHat_SB_B, hRefHat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
+
+    /*! compute the relative rotation DCM and Sun direction in relative frame */
+    double RB[3][3];
+    m33MultM33t(RN, BN, RB);
+    double rHat_SB_R1[3];
+    m33MultV3(RB, rHat_SB_B, rHat_SB_R1);
+
+    /*! compute reference MRP */
+    double sigma_RN[3];
+    C2MRP(RN, sigma_RN);
+
+    if (v3Norm(configData->h2Hat_B) > EPS) {
+        // compute second reference frame
+        computeFinalRotation(configData->alignmentPriority, BN, rHat_SB_B, configData->h2Hat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
+        
+        // compute the relative rotation DCM and Sun direction in relative frame
+        m33MultM33t(RN, BN, RB);
+        double rHat_SB_R2[3];
+        m33MultV3(RB, rHat_SB_B, rHat_SB_R2);
+
+        double dotP_1 = v3Dot(rHat_SB_R1, a2Hat_B);
+        double dotP_2 = v3Dot(rHat_SB_R2, a2Hat_B);
+        if (dotP_2 > dotP_1 && fabs(dotP_2 - dotP_1) > EPS) {
+            // if second reference frame gives a better result, save this as reference MRP set
+            C2MRP(RN, sigma_RN);
+        }
+    }
+    v3Copy(sigma_RN, attRefOut.sigma_RN);
 }
+
+/*! This helper function computes the first rotation that aligns the body heading with the inertial heading */
+void computeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3][3])
+{
+    /*! compute principal rotation angle (phi) and vector (e_phi) for the first rotation */
+    double phi = acos( fmin( fmax( v3Dot(hRefHat_B, hReqHat_B), -1 ), 1 ) );
+    double e_phi[3];
+    v3Cross(hRefHat_B, hReqHat_B, e_phi);
+    // If phi = PI, e_phi can be any vector perpendicular to hRefHat_B
+    if (fabs(phi-MPI) < EPS) {
+        phi = MPI;
+        v3Perpendicular(hRefHat_B, e_phi);
+    }
+    else if (fabs(phi) < EPS) {
+        phi = 0;
+    }
+    // normalize e_phi
+    v3Normalize(e_phi, e_phi);
+
+    /*! define first rotation R1B */
+    double PRV_phi[3];
+    v3Scale(phi, e_phi, PRV_phi);
+    PRV2C(PRV_phi, R1B);
+}
+
+/*! This helper function computes the second rotation that achieves the best incidence on the solar arrays maintaining the heading alignment */
+void computeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1Hat_B[3], double a2Hat_B[3], double R2R1[3][3])
+{
+    /*! define second rotation vector to coincide with the thrust direction in B coordinates */
+    double e_psi[3];
+    v3Copy(hRefHat_B, e_psi);
+
+    /*! define the coefficients of the quadratic equation A, B and C */
+    double b3[3];
+    v3Cross(rHat_SB_R1, e_psi, b3);
+    double A = 2 * v3Dot(rHat_SB_R1, e_psi) * v3Dot(e_psi, a1Hat_B) - v3Dot(a1Hat_B, rHat_SB_R1);
+    double B = 2 * v3Dot(a1Hat_B, b3);
+    double C = v3Dot(a1Hat_B, rHat_SB_R1);
+    double Delta = B * B - 4 * A * C;
+
+    /*! get the body direction that must be kept close to Sun and compute the coefficients of the quadratic equation E, F and G */
+    double E = 2 * v3Dot(rHat_SB_R1, e_psi) * v3Dot(e_psi, a2Hat_B) - v3Dot(a2Hat_B, rHat_SB_R1);
+    double F = 2 * v3Dot(a2Hat_B, b3);
+    double G = v3Dot(a2Hat_B, rHat_SB_R1);
+
+    /*! compute exact solution or best solution depending on Delta */
+    double t, t1, t2, y, y1, y2, psi;
+    if (fabs(A) < EPS) {
+        if (fabs(B) < EPS) {
+            // zero-th order equation has no solution 
+            // the solution of the minimum problem is psi = MPI
+            psi = MPI;
+        }
+        else {
+            // first order equation
+            t = - C / B;
+            psi = 2*atan(t);
+        }
+    }
+    else {
+        if (Delta < 0) {
+            // second order equation has no solution 
+            // the solution of the minimum problem is found
+            if (fabs(B) < EPS) {
+                t = 0.0;
+            }
+            else {
+                double q = (A-C) / B;
+                t1 = (q + sqrt(q*q + 1));
+                t2 = (q - sqrt(q*q + 1));
+                y1 = (A*t1*t1 + B*t1 + C) / (1 + t1*t1);
+                y2 = (A*t2*t2 + B*t2 + C) / (1 + t2*t2);
+
+                // choose which returns a smaller fcn value between t1 and t2
+                t = t1;
+                if (fabs(y2) < fabs(y1)) {
+                    t = t2;
+                }
+            }
+            psi = 2*atan(t);
+            y = (A*t*t + B*t + C) / (1 + t*t);
+            // check if the absolute fcn minimum is for psi = MPI
+            if (fabs(A) < fabs(y)) {
+                psi = MPI;
+            }
+        }
+        else {
+            // solution of the quadratic equation
+            t1 = (-B + sqrt(Delta)) / (2*A);
+            t2 = (-B - sqrt(Delta)) / (2*A);
+
+            // choose between t1 and t2 according to a2Hat
+            t = t1;            
+            if (fabs(v3Dot(hRefHat_B, a2Hat_B)-1) > EPS) {
+                y1 = (E*t1*t1 + F*t1 + G) / (1 + t1*t1);
+                y2 = (E*t2*t2 + F*t2 + G) / (1 + t2*t2);
+                if (y2 - y1 > EPS) {
+                    t = t2;
+                }
+            }
+            psi = 2*atan(t);
+        }
+    }
+
+    /*! compute second rotation R2R1 */
+    double PRV_psi[3];
+    v3Scale(psi, e_psi, PRV_psi);
+    PRV2C(PRV_psi, R2R1);
+}
+
+/*! This helper function computes the third rotation that breaks the heading alignment if needed, to achieve maximum incidence on solar arrays */
+void computeThirdRotation(int alignmentPriority, double hRefHat_B[3], double rHat_SB_R2[3], double a1Hat_B[3], double R3R2[3][3])
+{
+    double PRV_theta[3];
+
+    if (alignmentPriority == prioritizeAxisAlignment) {
+        for (int i = 0; i < 3; i++) {
+            PRV_theta[i] = 0;
+        }
+    }
+    else {
+        double sTheta = v3Dot(rHat_SB_R2, a1Hat_B);
+        double theta = asin( fmin( fmax( fabs(sTheta), -1 ), 1 ) );
+        if (fabs(theta) < EPS) {
+            // if Sun direction and solar array drive are already perpendicular, third rotation is null
+            for (int i = 0; i < 3; i++) {
+            PRV_theta[i] = 0;
+            }
+        }
+        else {
+            // if Sun direction and solar array drive are not perpendicular, project solar array drive a1Hat_B onto perpendicular plane (aPHat_B) and compute third rotation
+            double e_theta[3], aPHat_B[3];
+            if (fabs(fabs(theta)-MPI/2) > EPS) {
+                for (int i = 0; i < 3; i++) {
+                    aPHat_B[i] = (a1Hat_B[i] - sTheta * rHat_SB_R2[i]) / (1 - sTheta * sTheta);
+                }
+                v3Cross(a1Hat_B, aPHat_B, e_theta);
+            }
+            else {
+                // rotate about the axis that minimizes variation in hRefHat_B direction
+                v3Cross(rHat_SB_R2, hRefHat_B, aPHat_B);
+                if (v3Norm(aPHat_B) < EPS) {
+                    v3Perpendicular(rHat_SB_R2, aPHat_B);
+                }
+                v3Cross(a1Hat_B, aPHat_B, e_theta);
+            }
+            v3Normalize(e_theta, e_theta);
+            v3Scale(theta, e_theta, PRV_theta);
+        }
+    }
+
+    /*! compute third rotation R3R2 */
+    PRV2C(PRV_theta, R3R2);
+}
+
+/*! This helper function computes the final rotation as a product of the first three DCMs */
+void computeFinalRotation(int alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3])
+{
+    /*! compute the first rotation DCM */
+    double R1B[3][3];
+    computeFirstRotation(hRefHat_B, hReqHat_B, R1B);
+
+    /*! compute Sun direction vector in R1 frame coordinates */
+    double rHat_SB_R1[3];
+    m33MultV3(R1B, rHat_SB_B, rHat_SB_R1);
+
+    /*! compute the second rotation DCM */
+    double R2R1[3][3];
+    computeSecondRotation(hRefHat_B, rHat_SB_R1, a1Hat_B, a2Hat_B, R2R1);
+
+    /* compute Sun direction in R2 frame components */
+    double rHat_SB_R2[3];
+    m33MultV3(R2R1, rHat_SB_R1, rHat_SB_R2);
+
+    /*! compute the third rotation DCM */
+    double R3R2[3][3];
+    computeThirdRotation(alignmentPriority, hRefHat_B, rHat_SB_R2, a1Hat_B, R3R2);
+
+    /*! compute reference frames w.r.t inertial frame */
+    double R1N[3][3], R2N[3][3];
+    m33MultM33(R1B, BN, R1N);
+    m33MultM33(R2R1, R1N, R2N);
+    m33MultM33(R3R2, R2N, RN);
+}
+
