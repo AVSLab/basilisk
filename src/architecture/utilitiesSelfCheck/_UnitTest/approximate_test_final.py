@@ -530,8 +530,8 @@ def BSplineTestFunction(P,n,XDot_flag, XDDot_flag,accuracy):
                
             case "D":
                 print("Case D")
-                Input.setLS_Dot()
                 Input.setAvgXDot(0.3)
+                #Input.setLS_Dot()
                 print(Input.AvgXDot)
                 BSpline.approximate(Input,101,n,P,Output) # Change 1: Test approximate function first
             
