@@ -25,6 +25,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 
 /*! This method initializes the output messages for this module.
@@ -186,6 +187,75 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
         }
     }
     v3Copy(sigma_RN, attRefOut.sigma_RN);
+
+    /*! compute reference MRP derivatives via finite differences */
+    // read sigma at t-1 and switch it if needed
+    double sigma_RN_1[3];
+    v3Copy(configData->sigma_RN_1, sigma_RN_1);
+    double delSigma[3];
+    v3Subtract(sigma_RN, sigma_RN_1, delSigma);
+    if (v3Norm(delSigma) > 1) {
+        MRPshadow(sigma_RN_1, sigma_RN_1);
+    }
+    // read sigma at t-2 and switch it if needed
+    double sigma_RN_2[3];
+    v3Copy(configData->sigma_RN_2, sigma_RN_2);
+    v3Subtract(sigma_RN_1, sigma_RN_2, delSigma);
+    if (v3Norm(delSigma) > 1) {
+        MRPshadow(sigma_RN_2, sigma_RN_2);
+    }
+    // if first update call, derivatives are set to zero
+    double T1Seconds;
+    double T2Seconds;
+    double sigmaDot_RN[3];
+    double sigmaDDot_RN[3];
+    if (configData->updateCallCount == 0) {
+        v3SetZero(sigmaDot_RN);
+        v3SetZero(sigmaDDot_RN);
+        // store information for next time step
+        configData->T1NanoSeconds = callTime;
+        v3Copy(sigma_RN, configData->sigma_RN_1);
+    }
+    // if second update call, derivatives are computed with first order finite differences
+    else if (configData->updateCallCount == 1) {
+        T1Seconds = (configData->T1NanoSeconds - callTime) * NANO2SEC;
+        for (int j = 0; j < 3; j++) {
+            sigmaDot_RN[j] = (sigma_RN_1[j] - sigma_RN[j]) / T1Seconds;
+        }
+        v3SetZero(sigmaDDot_RN);
+        // store information for next time step
+        configData->T2NanoSeconds = configData->T1NanoSeconds;
+        configData->T1NanoSeconds = callTime;
+        v3Copy(configData->sigma_RN_1, configData->sigma_RN_2);
+        v3Copy(sigma_RN, configData->sigma_RN_1);
+    }
+    // if third update call or higher, derivatives are computed with second order finite differences
+    else {
+        T1Seconds = (configData->T1NanoSeconds - callTime) * NANO2SEC;
+        T2Seconds = (configData->T2NanoSeconds - callTime) * NANO2SEC;
+        for (int j = 0; j < 3; j++) {
+            sigmaDot_RN[j] = ((sigma_RN_1[j]*T2Seconds*T2Seconds - sigma_RN_2[j]*T1Seconds*T1Seconds) / (T2Seconds - T1Seconds) - sigma_RN[j] * (T2Seconds + T1Seconds)) / T1Seconds / T2Seconds;
+            sigmaDDot_RN[j] = 2 * ((sigma_RN_1[j]*T2Seconds - sigma_RN_2[j]*T1Seconds) / (T1Seconds - T2Seconds) + sigma_RN[j]) / T1Seconds / T2Seconds;
+        }
+        // store information for next time step
+        configData->T2NanoSeconds = configData->T1NanoSeconds;
+        configData->T1NanoSeconds = callTime;
+        v3Copy(configData->sigma_RN_1, configData->sigma_RN_2);
+        v3Copy(sigma_RN, configData->sigma_RN_1);
+    }
+    configData->updateCallCount += 1;
+
+    /*! compute angular rates and accelerations in R frame */
+    double omega_RN_R[3], omegaDot_RN_R[3];
+    dMRP2Omega(sigma_RN, sigmaDot_RN, omega_RN_R);
+    ddMRP2dOmega(sigma_RN, sigmaDot_RN, sigmaDDot_RN, omegaDot_RN_R);
+
+    /*! compute angular rates and accelerations in N frame and store in buffer msg */
+    m33tMultV3(RN, omega_RN_R, attRefOut.omega_RN_N);
+    m33tMultV3(RN, omegaDot_RN_R, attRefOut.domega_RN_N);
+
+    /*! write output message */
+    AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, moduleID, callTime);
 }
 
 /*! This helper function computes the first rotation that aligns the body heading with the inertial heading */
