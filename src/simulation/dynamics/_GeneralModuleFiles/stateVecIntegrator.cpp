@@ -23,7 +23,7 @@
 /*! @brief Constructor */
 StateVecIntegrator::StateVecIntegrator(DynamicObject* dyn)
 {
-    this->dynPtr = dyn;
+    this->dynPtrs.push_back(dyn);
     
     return;
 }
@@ -31,6 +31,6 @@ StateVecIntegrator::StateVecIntegrator(DynamicObject* dyn)
 /*! @brief Destructor */
 StateVecIntegrator::~StateVecIntegrator(void)
 {
-    this->dynPtr = nullptr;
+    this->dynPtrs.clear();
     return;
 }
