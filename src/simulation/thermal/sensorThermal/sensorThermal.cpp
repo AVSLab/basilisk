@@ -28,6 +28,18 @@ SensorThermal::SensorThermal(){
     this->S = 1366; //! - Solar constant at 1AU
     this->boltzmannConst = 5.76051e-8;  //! -  Boltzmann constant
     this->CurrentSimSecondsOld = 0;
+
+    // Initialize fault parameers
+    this->senNoiseStd = 0.0;
+    this->senBias = 0.0;
+    this->walkBounds = 1E-15; //don't allow random walk by default
+    this->noiseModel = GaussMarkov(1, this->RNGSeed);
+    this->faultState = TEMP_FAULT_NOMINAL;
+    this->pastValue = 0.0;
+    this->stuckValue = 0.0;
+    this->spikeProbability = 0.1;
+    this->spikeAmount = 2.0;
+
     return;
 
 }
@@ -63,6 +75,9 @@ void SensorThermal::Reset(uint64_t CurrentClock) {
     } else {
         bskLogger.bskLog(BSK_ERROR, "The nHat_B must be set to a non-zero vector");
     }
+    if (this->spikeProbability > 1.0 || this->spikeProbability < 0.0) {
+        bskLogger.bskLog(BSK_ERROR, "The probability of temperature spike on fault must be between 0 and 1.");
+    }
     // check if required input messages are connected
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "sensorThermal.sunInMsg was not linked.");
@@ -71,7 +86,30 @@ void SensorThermal::Reset(uint64_t CurrentClock) {
         bskLogger.bskLog(BSK_ERROR, "sensorThermal.stateInMsg was not linked.");
     }
 
-    this->T = this->T_0;
+    Eigen::VectorXd nMatrix;
+    Eigen::VectorXd pMatrix;
+    Eigen::VectorXd bounds;
+    nMatrix.resize(1,1);
+    pMatrix.resize(1,1);
+    bounds.resize(1,1);
+    
+    this->noiseModel.setRNGSeed(this->RNGSeed);
+    
+    nMatrix(0,0) = this->senNoiseStd*1.5;
+    this->noiseModel.setNoiseMatrix(nMatrix);
+    
+    bounds(0,0) = this->walkBounds;
+    this->noiseModel.setUpperBounds(bounds);
+    
+    pMatrix(0,0) = 1.;
+    this->noiseModel.setPropMatrix(pMatrix);
+
+
+    this->trueT = this->T_0;
+
+    this->spikeProbabilityGenerator.seed((unsigned int)this->RNGSeed);
+    //this->spikeProbabilityDistribution.a = 0.0;
+    //this->spikeProbabilityDistribution.b = 1.0;
 
     return;
 }
@@ -178,6 +216,40 @@ void SensorThermal::computeSunData()
     }
 }
 
+void SensorThermal::applySensorErrors()
+{
+    // apply noise and bias
+    double sensorError;
+    if(this->senNoiseStd <= 0.0){
+        sensorError = this->senBias;
+    } else {
+        // get current error from gaussMarkov random number generator
+        this->noiseModel.computeNextState();
+        Eigen::VectorXd currentErrorEigen = this->noiseModel.getCurrentState();
+        double sensorNoise = currentErrorEigen.coeff(0,0);
+        sensorError = this->senBias + sensorNoise;
+    }
+
+    this->sensedT = this->trueT + sensorError;
+        
+    if(this->faultState == TEMP_FAULT_STUCK_VALUE){ // stuck at specified value
+        this->sensedT = this->stuckValue;
+    } else if (this->faultState == TEMP_FAULT_STUCK_CURRENT){ // stuck at last value before flag turned on
+        this->sensedT = this->pastValue; 
+    } else if (this->faultState == TEMP_FAULT_SPIKING){ // spiking periodically with specified probability
+        // have to make a new distribution every time because SWIG can't parse putting this in the H file....?
+        std::uniform_real_distribution<double> spikeProbabilityDistribution(0.0,1.0); 
+        double n = spikeProbabilityDistribution(spikeProbabilityGenerator); // draw from uniform distribution
+        if (n <= this->spikeProbability) { // if drawn number within probability of spiking
+            this->sensedT = this->sensedT*this->spikeAmount;
+        }
+    } else { // Nominal
+
+    }
+
+    this->pastValue = this->sensedT; // update past value
+    
+}
 /*! This method evaluates the thermal model. This is evaluated in five steps:
 1. Computing the projected area of the sensor exposed to the sun using this->computeSunData();
 2. Computing the incoming thermal power from the sun
@@ -195,19 +267,22 @@ void SensorThermal::evaluateThermalModel(uint64_t CurrentSimSeconds) {
     this->Q_in = this->shadowFactor * this->S * this->projectedArea * this->sensorAbsorptivity + this->sensorPowerDraw * this->sensorStatus;
 
     //! - Compute Q_out
-    this->Q_out = this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->T + 273.15), 4);
+    this->Q_out = this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->trueT + 273.15), 4);
 
     //! - Compute change in energy using Euler integration
     double dT = (this->Q_in - this->Q_out)/(this->sensorSpecificHeat*this->sensorMass);
 
     //! - Compute the current temperature
-    this->T = this->T + dT*(CurrentSimSeconds - this->CurrentSimSecondsOld);
+    this->trueT = this->trueT + dT*(CurrentSimSeconds - this->CurrentSimSecondsOld);
 
     //! - Set the old CurrentSimSeconds to the current timestep
     this->CurrentSimSecondsOld = CurrentSimSeconds;
 
+    //! - Apply sensor errors
+    this->applySensorErrors();
+
     //! - Write to the message buffer
-    this->temperatureMsgBuffer.temperature = this->T;
+    this->temperatureMsgBuffer.temperature = this->sensedT;
 
     return;
 }
