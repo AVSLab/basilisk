@@ -47,12 +47,16 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->omega_MB_B.setZero();
     this->omegaPrime_MB_B.setZero();
     this->sigma_MB.setIdentity();
+
+    PrescribedMotionStateEffector::effectorID++;
 }
+
+uint64_t PrescribedMotionStateEffector::effectorID = 1;
 
 /*! This is the destructor. */
 PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
 {
-
+    PrescribedMotionStateEffector::effectorID = 1;
 }
 
 /*! This method is used to reset the module.
