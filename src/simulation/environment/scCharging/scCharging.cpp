@@ -143,6 +143,34 @@ void ScCharging::readMessages()
     }
 }
 
+double ScCharging::electronCurrent(double phi, double q0, double A, double E)
+{
+    double constant = q0 * 2 * M_PI * A; // constant multiplier for integral
+    
+    // find data values necessary for linear interpolation
+//    int n = sizeof(electronFlux)/sizeof(electronFlux[0]);
+//    double acceptableOffset = 1;
+//    int x0 = interpSorter(electronFlux, n, E, acceptableOffset), x1 = x0 + 1;
+//    double y0 = electronFlux[x0], y1 = electronFlux[x1];
+    // linearly interpolate flux distribution value for given energy
+//    double fluxDist = interp(x0, x1, y0, y1, E);
+    
+    // reassign all electron flux < 50 eV to the flux at 50 eV
+//    if (fluxDist < 50){
+//        fluxDist = electronFlux[0];
+//    }
+
+    // term to be integrated by trapz
+//    std::function<double(double)> integrand = [&](double E){return E/(E - phi) * fluxDist;};
+    // integral bounds
+    double lowerBound = 0, upperBound = 40000 + phi;
+    // integral calculated with trapz
+//    double integral = trapz(integrand, lowerBound, upperBound, 100);
+    
+    double Ie = constant + lowerBound + upperBound;
+    return Ie;
+}
+
 /*!  This function performs linear interpolation between the provided values
  @return double
  @param x0 data point 0
