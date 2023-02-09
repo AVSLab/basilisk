@@ -17,8 +17,8 @@
 
  */
 
-#ifndef SPINNING_BODY_STATE_EFFECTOR_H
-#define SPINNING_BODY_STATE_EFFECTOR_H
+#ifndef SPINNING_BODY_ONE_DOF_STATE_EFFECTOR_H
+#define SPINNING_BODY_ONE_DOF_STATE_EFFECTOR_H
 
 #include <Eigen/Dense>
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
@@ -34,7 +34,7 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief spinning body state effector class */
-class SpinningBodyStateEffector: public StateEffector, public SysModel {
+class spinningBodyOneDOFStateEffector: public StateEffector, public SysModel {
 public:
     double mass;                                                //!< [kg] mass of spinning body
     double k;                                                   //!< [N-m/rad] torsional spring constant
@@ -50,7 +50,7 @@ public:
     Eigen::Matrix3d dcm_S0B;                                    //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
     Message<HingedRigidBodyMsgPayload> spinningBodyOutMsg;      //!< state output message
     Message<SCStatesMsgPayload> spinningBodyConfigLogOutMsg;    //!< spinning body state config log message
-    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< -- (optional) motor torque input message name
+    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;   //!< -- (optional) motor torque input message name
     BSKLogger bskLogger;                                        //!< -- BSK Logging
 
 private:
@@ -102,8 +102,8 @@ private:
     Eigen::MatrixXd *cPrime_B;          //!< [m/s] body time derivative of vector c_B in B frame components
 
 public:
-    SpinningBodyStateEffector();    //!< -- Contructor
-    ~SpinningBodyStateEffector();   //!< -- Destructor
+    spinningBodyOneDOFStateEffector();    //!< -- Contructor
+    ~spinningBodyOneDOFStateEffector();   //!< -- Destructor
     void Reset(uint64_t CurrentClock);                   //!< -- Method for reset
     void writeOutputStateMessages(uint64_t CurrentClock);   //!< -- Method for writing the output messages
 	void UpdateState(uint64_t CurrentSimNanos);             //!< -- Method for updating information
@@ -121,4 +121,4 @@ private:
 };
 
 
-#endif /* SPINNING_BODY_STATE_EFFECTOR_H */
+#endif /* SPINNING_BODY_ONE_DOF_STATE_EFFECTOR_H */
