@@ -75,7 +75,7 @@ private:
     SpicePlanetStateMsgPayload sunData;         //!< [-] sun message input buffer
     SCStatesMsgPayload stateCurrent;            //!< [-] Current spacecraft state
     double shadowFactor;                        //!< [-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible)
-    double T;                                   //!< [C] Current temperature
+    double sensorTemp;                          //!< [C] Current temperature
     double Q_in;                                //!< [W] Current power in
     double Q_out;                               //!< [W] Current power out
     double S;                                   //!< [W/m^2] Solar constant

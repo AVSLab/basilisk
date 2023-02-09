@@ -71,7 +71,7 @@ void SensorThermal::Reset(uint64_t CurrentClock) {
         bskLogger.bskLog(BSK_ERROR, "sensorThermal.stateInMsg was not linked.");
     }
 
-    this->T = this->T_0;
+    this->sensorTemp = this->T_0;
 
     return;
 }
@@ -195,19 +195,19 @@ void SensorThermal::evaluateThermalModel(uint64_t CurrentSimSeconds) {
     this->Q_in = this->shadowFactor * this->S * this->projectedArea * this->sensorAbsorptivity + this->sensorPowerDraw * this->sensorStatus;
 
     //! - Compute Q_out
-    this->Q_out = this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->T + 273.15), 4);
+    this->Q_out = this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->sensorTemp + 273.15), 4);
 
     //! - Compute change in energy using Euler integration
     double dT = (this->Q_in - this->Q_out)/(this->sensorSpecificHeat*this->sensorMass);
 
     //! - Compute the current temperature
-    this->T = this->T + dT*(CurrentSimSeconds - this->CurrentSimSecondsOld);
+    this->sensorTemp = this->sensorTemp + dT*(CurrentSimSeconds - this->CurrentSimSecondsOld);
 
     //! - Set the old CurrentSimSeconds to the current timestep
     this->CurrentSimSecondsOld = CurrentSimSeconds;
 
     //! - Write to the message buffer
-    this->temperatureMsgBuffer.temperature = this->T;
+    this->temperatureMsgBuffer.temperature = this->sensorTemp;
 
     return;
 }
