@@ -41,6 +41,8 @@ from Basilisk.architecture.swig_common_model import *
 struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;
+%include "architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.h"
+struct ArrayEffectorLockMsg_C;
 %include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 struct SpinningBodyMsg_C;
 

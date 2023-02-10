@@ -159,6 +159,13 @@ void spinningBodyOneDOFStateEffector::updateEffectorMassProps(double integTime)
     // Give the mass of the spinning body to the effProps mass
     this->effProps.mEff = this->mass;
 
+    // Lock the axis if the flag is set to 1
+    if (this->lockFlag == 1)
+    {
+        Eigen::MatrixXd zeroMatrix = Eigen::MatrixXd::Constant(1, 1, 0.0);
+        this->thetaDotState->setState(zeroMatrix);
+    }
+
     // Grab current states
     this->theta = this->thetaState->getState()(0, 0);
     this->thetaDot = this->thetaDotState->getState()(0, 0);
@@ -223,24 +230,34 @@ void spinningBodyOneDOFStateEffector::updateContributions(double integTime, Back
     Eigen::Matrix3d rTilde_ScS_B = eigenTilde(this->r_ScS_B);
     Eigen::Matrix3d IPntS_B = this->IPntSc_B - this->mass * rTilde_ScS_B * rTilde_ScS_B;
 
-    // Define auxiliary variable dTheta
-    this->dTheta = this->sHat_B.transpose() * IPntS_B * this->sHat_B;
 
-    // Define aTheta
-    this->aTheta = this->mass * rTilde_ScS_B * this->sHat_B / this->dTheta;
 
-    // Define bTheta
-    Eigen::Matrix3d rTilde_SB_B = eigenTilde(this->r_SB_B);
-    this->bTheta = -(IPntS_B - this->mass * rTilde_SB_B * rTilde_ScS_B) * this->sHat_B / this->dTheta;
+    // Define auxiliary variable mTheta
+    this->mTheta = this->sHat_B.transpose() * IPntS_B * this->sHat_B;
 
-    // Define cTheta with gravity gradient torque
-    Eigen::Vector3d rDot_SB_B;
-    Eigen::Vector3d gravityTorquePntS_B;
-    rDot_SB_B = this->omegaTilde_BN_B * this->r_SB_B;
-    gravityTorquePntS_B = rTilde_ScS_B * this->mass * g_B;
-    this->cTheta = (this->sHat_B.dot(gravityTorquePntS_B - omegaTilde_SN_B * IPntS_B * this->omega_SN_B
-        - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B -  this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * rDot_SB_B) + this->u - this->k * this->theta - this->c * this->thetaDot) / this->dTheta;
+    // Lock the axis if the flag is set to 1
+    if (this->lockFlag == 1)
+    {
+        // Define aTheta, bTheta and cTheta
+        this->aTheta.setZero();
+        this->bTheta.setZero();
+        this->cTheta = 0.0;
+    }
+    else {
+        // Define aTheta
+        this->aTheta = this->mass * rTilde_ScS_B * this->sHat_B / this->mTheta;
 
+        // Define bTheta
+        Eigen::Matrix3d rTilde_SB_B = eigenTilde(this->r_SB_B);
+        this->bTheta = -(IPntS_B - this->mass * rTilde_SB_B * rTilde_ScS_B) * this->sHat_B / this->mTheta;
+
+        // Define cTheta
+        Eigen::Vector3d rDot_SB_B = this->omegaTilde_BN_B * this->r_SB_B;
+        Eigen::Vector3d gravityTorquePntS_B = rTilde_ScS_B * this->mass * g_B;
+        this->cTheta = (this->u - this->k * this->theta - this->c * this->thetaDot + this->sHat_B.dot(gravityTorquePntS_B - omegaTilde_SN_B * IPntS_B * this->omega_SN_B
+            - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B - this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * rDot_SB_B)) / this->mTheta;
+    }
+ 
     // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
     // Translation contributions
     backSubContr.matrixA = -this->mass * rTilde_ScS_B * this->sHat_B * this->aTheta.transpose();
@@ -324,11 +341,18 @@ void spinningBodyOneDOFStateEffector::computeSpinningBodyInertialStates()
 /*! This method is used so that the simulation will ask SB to update messages */
 void spinningBodyOneDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-    //! - Zero the command buffer and read the incoming command array
+    //! - Read the incoming command array
     if (this->motorTorqueInMsg.isLinked() && this->motorTorqueInMsg.isWritten()) {
         ArrayMotorTorqueMsgPayload incomingCmdBuffer;
         incomingCmdBuffer = this->motorTorqueInMsg();
         this->u = incomingCmdBuffer.motorTorque[0];
+    }
+
+    //! - Read the incoming lock command array
+    if (this->motorLockInMsg.isLinked() && this->motorLockInMsg.isWritten()) {
+        ArrayEffectorLockMsgPayload incomingLockBuffer;
+        incomingLockBuffer = this->motorLockInMsg();
+        this->lockFlag = incomingLockBuffer.effectorLockFlag[0];
     }
 
     /* Compute spinning body inertial states */

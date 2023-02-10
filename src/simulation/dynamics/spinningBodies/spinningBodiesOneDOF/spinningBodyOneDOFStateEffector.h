@@ -27,6 +27,7 @@
 #include "architecture/utilities/avsEigenMRP.h"
 
 #include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 #include "architecture/messaging/messaging.h"
@@ -50,18 +51,20 @@ public:
     Eigen::Matrix3d dcm_S0B;                                    //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
     Message<HingedRigidBodyMsgPayload> spinningBodyOutMsg;      //!< state output message
     Message<SCStatesMsgPayload> spinningBodyConfigLogOutMsg;    //!< spinning body state config log message
-    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;   //!< -- (optional) motor torque input message name
     BSKLogger bskLogger;                                        //!< -- BSK Logging
+    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;   //!< -- (optional) motor torque input message
+    ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;    //!< -- (optional) motor lock flag input message
 
 private:
     static uint64_t effectorID;         //!< [] ID number of this panel
     double u;                           //!< [N-m] optional motor torque
+    int lockFlag = 0;                       //!< [] flag for locking the rotation axis
 
     // Terms needed for back substitution
     Eigen::Vector3d aTheta;             //!< -- rDDot_BN term for back substitution
     Eigen::Vector3d bTheta;             //!< -- omegaDot_BN term for back substitution
     double cTheta;                      //!< -- scalar term for back substitution
-    double dTheta;                      //!< -- auxiliary term for back substitution
+    double mTheta;                      //!< -- auxiliary term for back substitution
 
     // Vector quantities
     Eigen::Vector3d sHat_B;             //!< -- spinning axis in B frame components
