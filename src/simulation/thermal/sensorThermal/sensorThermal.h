@@ -47,7 +47,7 @@ private:
     void evaluateThermalModel(uint64_t CurrentSimSeconds);
     void computeSunData();
     void writeMessages(uint64_t CurrentClock);
-    bool readMessages();
+    void readMessages();
 
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< [-] sun data input message

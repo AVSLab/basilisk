@@ -76,22 +76,18 @@ void SensorThermal::Reset(uint64_t CurrentClock) {
     return;
 }
 
-bool SensorThermal::readMessages()
+void SensorThermal::readMessages()
 {
     //! - Zero ephemeris information
     this->sunData = sunInMsg.zeroMsgPayload;
     this->stateCurrent = stateInMsg.zeroMsgPayload;
 
-    //! - If we have a valid sun ID, read Sun ephemeris message
-    if(this->sunInMsg.isLinked())
-    {
-        this->sunData = this->sunInMsg();
-    }
-    //! - If we have a valid state ID, read vehicle state ephemeris message
-    if(this->stateInMsg.isLinked())
-    {
-        this->stateCurrent = this->stateInMsg();
-    }
+    //! Read Sun ephemeris message
+    this->sunData = this->sunInMsg();
+
+    //! Read vehicle state ephemeris message
+    this->stateCurrent = this->stateInMsg();
+
     //! - Read in optional sun eclipse input message 
     if(this->sunEclipseInMsg.isLinked()) {
         EclipseMsgPayload sunVisibilityFactor;          // sun visiblity input message
@@ -110,7 +106,7 @@ bool SensorThermal::readMessages()
         this->sensorStatus = 1;
     }
 
-    return(true);
+    return;
 }
 
 /*! Provides logic for running the read / compute / write operation that is the module's function.
@@ -119,15 +115,13 @@ bool SensorThermal::readMessages()
 void SensorThermal::UpdateState(uint64_t CurrentSimNanos)
 {
 
-    //! - Only update the thermal status if we were able to read in messages.
-    if(this->readMessages())
-    {
-        this->evaluateThermalModel(CurrentSimNanos*NANO2SEC);
-    } else {
-        /* if the read was not successful then zero the output message */
-        this->temperatureMsgBuffer = this->temperatureOutMsg.zeroMsgPayload;
-    }
+    //! - Read in messages
+    this->readMessages();
+    
+    //! - Evaluate model
+    this->evaluateThermalModel(CurrentSimNanos*NANO2SEC);
 
+    //! - Write output
     this->writeMessages(CurrentSimNanos);
 
     return;
