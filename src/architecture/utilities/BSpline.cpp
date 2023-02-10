@@ -469,9 +469,9 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         }
     
     // Need to access the timestaps for the waypoints for the final graph
-    if (Input.T_flag == false) {
-        Output->T_way_calc = T;
-    }
+    //if (Input.T_flag == false) {
+    Output->T_way_calc = T;
+    //}
     
     double Ttot = T[q];
     
@@ -834,67 +834,87 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         basisFunction(uk[c], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
         rhok1[c-1] = Input.X1[c] - NN[0]*C1_1[0] - NN[n]*C1_1[K+1];
         rhok1[c+q-2] = X1_prime[c] - NN1[0]*C1_1[0] - NN1[n]*C1_1[K+1];
-        std::cout<<"The value of c "<<c<<" and X1_prime[c] is "<<X1_prime[c]<<std::endl;
+        //std::cout<<"The value of c "<<c<<" and X1_prime[c] is "<<X1_prime[c]<<std::endl;
         rhok2[c-1] = Input.X2[c] - NN[0]*C2_1[0] - NN[n]*C2_1[K+1];
         rhok2[c+q-2] = X2_prime[c] - NN1[0]*C2_1[0] - NN1[n]*C2_1[K+1];
-        std::cout<<"The value of c "<<c<<" and X2_prime[c] is "<<X2_prime[c]<<std::endl;
+        //std::cout<<"The value of c "<<c<<" and X2_prime[c] is "<<X2_prime[c]<<std::endl;
         rhok3[c-1] = Input.X3[c] - NN[0]*C3_1[0] - NN[n]*C3_1[K+1];
         rhok3[c+q-2] = X3_prime[c] - NN1[0]*C3_1[0] - NN1[n]*C3_1[K+1];
-        std::cout<<"The value of c "<<c<<" and X3_prime[c] is "<<X3_prime[c]<<std::endl;
+        //std::cout<<"The value of c "<<c<<" and X3_prime[c] is "<<X3_prime[c]<<std::endl;
         if (Input.XDot_0_flag == true) {
-            std::cout<<"The initial value is rhok1[c-1] "<<rhok1[c-1]<<std::endl;
+            //std::cout<<"The initial value is rhok1[c-1] "<<rhok1[c-1]<<std::endl;
             rhok1[c-1] -= NN[1]*C1_1[1];
-            std::cout<<"The new value is rhok1[c-1]"<<rhok1[c-1]<<std::endl;
-            std::cout<<"The initial value is rhok2[c+q+2] "<<rhok2[c+q+2]<<std::endl;
-            rhok2[c+q-2] -= NN1[1]*C1_1[1];
-            std::cout<<"The new value is rhok2[c+q+2] "<<rhok2[c+q+2]<<std::endl;
-            std::cout<<"The new value is rhok2[c-1] "<<rhok2[c-1]<<std::endl;
+            //std::cout<<"The new value is rhok1[c-1]"<<rhok1[c-1]<<std::endl;
+            //std::cout<<"The initial value is rhok1[c+q+2] "<<rhok2[c+q-2]<<std::endl;
+            rhok1[c+q-2] -= NN1[1]*C1_1[1];
+            //std::cout<<"The new value is rhok1[c+q-2] "<<rhok2[c+q-2]<<std::endl;
+            //std::cout<<"The new value is rhok2[c-1] "<<rhok2[c-1]<<std::endl;
             rhok2[c-1] -= NN[1]*C2_1[1];
-            std::cout<<"The new value is rhok2[c-1] "<<rhok2[c-1]<<std::endl;
-            std::cout<<"The initial value is rhok2[c+q-2]"<<rhok2[c+q+2]<<std::endl;
+            //std::cout<<"The new value is rhok2[c-1] "<<rhok2[c-1]<<std::endl;
+            //std::cout<<"The initial value is rhok2[c+q-2]"<<rhok2[c+q-2]<<std::endl;
             rhok2[c+q-2] -= NN1[1]*C2_1[1];
-            std::cout<<"The new value is rhok2[c+q-2]"<<rhok2[c+q+2]<<std::endl;
-            std::cout<<"The initial value is rhok3[c-1]"<<rhok3[c-1]<<std::endl;
+            //std::cout<<"The new value is rhok2[c+q-2]"<<rhok2[c+q-2]<<std::endl;
+            //std::cout<<"The initial value is rhok3[c-1]"<<rhok3[c-1]<<std::endl;
             rhok3[c-1] -= NN[1]*C3_1[1];
-            std::cout<<"The new value is rhok3[c-1]"<<rhok3[c-1]<<std::endl;
-            std::cout<<"The initial value is rhok3[c+q-2]"<<rhok3[c+q-2]<<std::endl;
+            //std::cout<<"The new value is rhok3[c-1]"<<rhok3[c-1]<<std::endl;
+            //std::cout<<"The initial value is rhok3[c+q-2]"<<rhok3[c+q-2]<<std::endl;
             rhok3[c+q-2] -= NN1[1]*C3_1[1];
-            std::cout<<"The initial value is rhok3[c+q-2]"<<rhok3[c+q-2]<<std::endl;
+            //std::cout<<"The initial value is rhok3[c+q-2]"<<rhok3[c+q-2]<<std::endl;
         }
         if (Input.XDDot_0_flag == true) {
             rhok1[c-1] -= NN[2]*C1_1[2];
+            rhok1[c+q-2] -= NN1[2]*C1_1[2];
             rhok2[c-1] -= NN[2]*C2_1[2];
+            rhok2[c+q-2] -= NN1[2]*C2_1[2];
             rhok3[c-1] -= NN[2]*C3_1[2];
+            rhok3[c+q-2] -= NN1[2]*C3_1[2];
         }
         if (Input.XDDot_N_flag == true) {
             rhok1[c-1] -= NN[n-2]*C1_1[K-1];
+            rhok1[c+q-2] -= NN1[n-2]*C1_1[K-1];
             rhok2[c-1] -= NN[n-2]*C2_1[K-1];
+            rhok2[c+q-2] -= NN1[n-2]*C2_1[K-1];
             rhok3[c-1] -= NN[n-2]*C3_1[K-1];
+            rhok3[c+q-2] -= NN1[n-2]*C3_1[K-1];
         }
         if (Input.XDot_N_flag == true) {
-            std::cout<<"The initial value is rhok1[c-1] "<<rhok1[c-1]<<std::endl;
+            //std::cout<<"The initial value is rhok1[c-1] "<<rhok1[c-1]<<std::endl;
             rhok1[c-1] -= NN[n-1]*C1_1[K];
-            std::cout<<"The new value is rhok1[c-1] "<<rhok1[c-1]<<std::endl;
-            std::cout<<"The initial value is rhok1[c+q-2] "<<rhok1[c+q-2]<<std::endl;
+            //std::cout<<"The new value is rhok1[c-1] "<<rhok1[c-1]<<std::endl;
+            //std::cout<<"The initial value is rhok1[c+q-2] "<<rhok1[c+q-2]<<std::endl;
             rhok1[c+q-2]-= NN1[n-1]*C1_1[K];
-            std::cout<<"The new value is rhok1[c+q-2] "<<rhok1[c+q-2]<<std::endl;
-            std::cout<<"The initial value is rhok2[c-1]"<<rhok2[c-1]<<std::endl;
+            //std::cout<<"The new value is rhok1[c+q-2] "<<rhok1[c+q-2]<<std::endl;
+            //std::cout<<"The initial value is rhok2[c-1]"<<rhok2[c-1]<<std::endl;
             rhok2[c-1] -= NN[n-1]*C2_1[K];
-            std::cout<<"The new value is rhok2[c-1]"<<rhok2[c-1]<<std::endl;
-            std::cout<<"The initial value is rhok2[c+q-2]"<<rhok2[c+q-2]<<std::endl;
+            //std::cout<<"The new value is rhok2[c-1]"<<rhok2[c-1]<<std::endl;
+            //std::cout<<"The initial value is rhok2[c+q-2]"<<rhok2[c+q-2]<<std::endl;
             rhok2[c+q-2]-= NN1[n-1]*C2_1[K];
-            std::cout<<"The final value is rhok2[c+q-2]"<<rhok2[c+q-2]<<std::endl;
-            std::cout<<"The initial value is rhok3[c-1]"<<rhok3[c-1]<<std::endl;
+            //std::cout<<"The final value is rhok2[c+q-2]"<<rhok2[c+q-2]<<std::endl;
+            //std::cout<<"The initial value is rhok3[c-1]"<<rhok3[c-1]<<std::endl;
             rhok3[c-1] -= NN[n-1]*C3_1[K];
-            std::cout<<"The final value is rhok3[c-1]"<<rhok3[c-1]<<std::endl;
-            std::cout<<"The initial value is rhok3[c+q-2]"<<rhok3[c+q-2]<<std::endl;
+            //std::cout<<"The final value is rhok3[c-1]"<<rhok3[c-1]<<std::endl;
+            //std::cout<<"The initial value is rhok3[c+q-2]"<<rhok3[c+q-2]<<std::endl;
             rhok3[c+q-2]-= NN1[n-1]*C3_1[K];
-            std::cout<<"The final value is rhok3[c+q-2]"<<rhok3[c+q-2]<<std::endl;
+            //std::cout<<"The final value is rhok3[c+q-2]"<<rhok3[c+q-2]<<std::endl;
         }
     }
     
+    std::cout<<"NN[0]"<<NN[0]<<std::endl;
+    std::cout<<"NN[n]"<<NN[n]<<std::endl;
+    std::cout<<"NN[1]"<<NN[1]<<std::endl;
+    std::cout<<"NN[n-1]"<<NN[n-1]<<std::endl;
+    std::cout<<"NN1[0]"<<NN1[0]<<std::endl;
+    std::cout<<"NN1[n]"<<NN1[n]<<std::endl;
+    std::cout<<"NN1[1]"<<NN1[1]<<std::endl;
+    std::cout<<"NN1[n-1]"<<NN1[n-1]<<std::endl;
     
-    std::cout<<"Printing rhok vecotirs"<<std::endl;
+    for (int a=0;a<n;a++)
+        std::cout<<NN[a]<<" and "<<NN1[a]<<std::endl;
+    
+    
+    
+    
+    std::cout<<"Printing rhok vectors"<<std::endl;
     
     for ( int y = 0; y < 2*q-2; y++) {
         std::cout<<rhok1[y]<<","<<rhok2[y]<<","<<rhok3[y]<<std::endl;
@@ -909,6 +929,8 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         
         // LS approximation without first derivative constraint
         if (Input.LS_Dot == false){
+        
+            std::cout<<"Not constraining first derivative"<<std::endl;
 
         // populate LS matrix ND
         for (int d = 0; d < q-1; d++) {
@@ -945,11 +967,14 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             
         Eigen::VectorXd rhok1_short(q-1),rhok2_short(q-1),rhok3_short(q-1);
             
-            
-        for (int c = 1; c <q; c++) {
+        std::cout<<"Rhok short"<<std::endl;
+        for (int c = 0; c <q; c++) {
             rhok1_short[c] = rhok1[c];
+            std::cout<<rhok1_short[c]<<std::endl;
             rhok2_short[c] = rhok2[c];
+            std::cout<<rhok2_short[c]<<std::endl;
             rhok3_short[c] = rhok3[c];
+            std::cout<<rhok3_short[c]<<std::endl;
             }
         
         rho1 = B * rhok1_short;
@@ -1164,7 +1189,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     Output->C2 = C2;
     Output->C3 = C3;
     
-    for (int a=1;a<q;a++){
+    for (int a=0;a<q;a++){
         X1_prime[a] = X1_prime[a]/Ttot;
         X2_prime[a] = X2_prime[a]/Ttot;
         X3_prime[a] = X3_prime[a]/Ttot;
