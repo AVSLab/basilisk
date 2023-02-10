@@ -62,7 +62,7 @@ class LogBaseClass:
 class EventHandlerClass:
     """Event Handler Class"""
     def __init__(self, eventName, eventRate=int(1E9), eventActive=False,
-                 conditionList=[], actionList=[]):
+                 conditionList=[], actionList=[], terminal=False):
         self.eventName = eventName
         self.eventActive = eventActive
         self.eventRate = eventRate
@@ -72,6 +72,7 @@ class EventHandlerClass:
         self.prevTime = -1
         self.checkCall = None
         self.operateCall = None
+        self.terminal = terminal
 
     def methodizeEvent(self):
         if self.checkCall != None:
@@ -107,6 +108,8 @@ class EventHandlerClass:
                 self.eventActive = False
                 self.operateCall(parentSim)
                 self.occurCounter += 1
+                if self.terminal:
+                    parentSim.terminate = True
         return(nextTime)
 
 
@@ -183,6 +186,7 @@ class SimBaseClass:
         self.pyProcList = []
         self.StopTime = 0
         self.nextEventTime = 0
+        self.terminate = False
         self.NameReplace = {}
         self.VarLogList = {}
         self.eventMap = {}
@@ -519,7 +523,7 @@ class SimBaseClass:
 
     def ExecuteSimulation(self):
         """
-        run the simulation until the prescribed stop time.
+        run the simulation until the prescribed stop time or termination.
         """
         self.initializeEventChecks()
 
@@ -531,7 +535,7 @@ class SimBaseClass:
             pyProcPresent = True
             nextStopTime = self.pyProcList[0].nextCallTime()
         progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
-        while self.TotalSim.NextTaskTime <= self.StopTime:
+        while self.TotalSim.NextTaskTime <= self.StopTime and not self.terminate:
             if self.TotalSim.CurrentNanos >= self.nextEventTime >= 0:
                 self.nextEventTime = self.checkEvents()
                 self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
@@ -558,6 +562,7 @@ class SimBaseClass:
                 nextStopTime = nextLogTime
                 nextPriority = -1
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
+        self.terminate = False
         progressBar.markComplete()
         progressBar.close()
 
@@ -602,14 +607,14 @@ class SimBaseClass:
         self.indexParsed = True
 
     def createNewEvent(self, eventName, eventRate=int(1E9), eventActive=False,
-                       conditionList=[], actionList=[]):
+                       conditionList=[], actionList=[], terminal=False):
         """
         Create an event sequence that contains a series of tasks to be executed.
         """
         if (eventName in list(self.eventMap.keys())):
             return
         newEvent = EventHandlerClass(eventName, eventRate, eventActive,
-                                     conditionList, actionList)
+                                     conditionList, actionList, terminal)
         self.eventMap.update({eventName: newEvent})
 
     def initializeEventChecks(self):
