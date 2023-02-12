@@ -42,8 +42,6 @@ SpinningBodyOneDOFStateEffector::SpinningBodyOneDOFStateEffector()
     this->nameOfThetaState = "spinningBodyTheta" + std::to_string(this->effectorID);
     this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(this->effectorID);
     this->effectorID++; 
-
-    return;
 }
 
 uint64_t SpinningBodyOneDOFStateEffector::effectorID = 1;
@@ -52,8 +50,6 @@ uint64_t SpinningBodyOneDOFStateEffector::effectorID = 1;
 SpinningBodyOneDOFStateEffector::~SpinningBodyOneDOFStateEffector()
 {
     this->effectorID = 1;    /* reset the panel ID*/
-
-    return;
 }
 
 /*! This method is used to reset the module. */
@@ -66,8 +62,6 @@ void SpinningBodyOneDOFStateEffector::Reset(uint64_t CurrentClock)
     else {
         bskLogger.bskLog(BSK_ERROR, "Norm of sHat must be greater than 0. sHat may not have been set by the user.");
     }
-
-    return;
 }
 
 
@@ -95,7 +89,6 @@ void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
         this->spinningBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
     }
-
 }
 
 /*! This method prepends the name of the spacecraft for multi-spacecraft simulations.*/
@@ -103,8 +96,6 @@ void SpinningBodyOneDOFStateEffector::prependSpacecraftNameToStates()
 {
     this->nameOfThetaState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaState;
     this->nameOfThetaDotState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaDotState;
-
-    return;
 }
 
 /*! This method allows the SB state effector to have access to the hub states and gravity*/
@@ -121,8 +112,6 @@ void SpinningBodyOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
     this->hubOmega = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
     this->hubPosition = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubPosition");
     this->hubVelocity = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubVelocity");
-
-    return;
 }
 
 /*! This method allows the SB state effector to register its states: theta and thetaDot with the dynamic parameter manager */
@@ -139,8 +128,6 @@ void SpinningBodyOneDOFStateEffector::registerStates(DynParamManager& states)
     Eigen::MatrixXd thetaDotInitMatrix(1,1);
     thetaDotInitMatrix(0,0) = this->thetaDotInit;
     this->thetaDotState->setState(thetaDotInitMatrix);
-
-    return;
 }
 
 /*! This method allows the SB state effector to provide its contributions to the mass props and mass prop rates of the
@@ -193,8 +180,6 @@ void SpinningBodyOneDOFStateEffector::updateEffectorMassProps(double integTime)
     Eigen::Matrix3d rPrimeTilde_ScB_B = eigenTilde(this->rPrime_ScB_B);
     this->effProps.IEffPrimePntB_B = this->omegaTilde_SB_B* this->IPntSc_B - this->IPntSc_B *this->omegaTilde_SB_B
         - this->mass * (rPrimeTilde_ScB_B * this->rTilde_ScB_B + this->rTilde_ScB_B * rPrimeTilde_ScB_B);
-
-    return;
 }
 
 /*! This method allows the SB state effector to give its contributions to the matrices needed for the back-sub 
@@ -261,8 +246,6 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime, Back
     backSubContr.vecRot = -omegaTilde_SN_B * this->IPntSc_B * this->omega_SB_B - this->mass * this->omegaTilde_BN_B * this->rTilde_ScB_B * this->rPrime_ScB_B
         - this->mass * this->rTilde_ScB_B * this->omegaTilde_SB_B * this->rPrime_ScS_B
         - (this->IPntSc_B - this->mass * this->rTilde_ScB_B * rTilde_ScS_B) * this->sHat_B * this->cTheta;
-
-    return;
 }
 
 /*! This method is used to find the derivatives for the SB stateEffector: thetaDDot and the kinematic derivative */
@@ -286,9 +269,6 @@ void SpinningBodyOneDOFStateEffector::computeDerivatives(double integTime, Eigen
     Eigen::MatrixXd thetaDDot(1, 1);
     thetaDDot(0, 0) = this->aTheta.dot(rDDotLocal_BN_B) + this->bTheta.dot(omegaDotLocal_BN_B) + this->cTheta;
     this->thetaDotState->setDerivative(thetaDDot);
-    
-
-    return;
 }
 
 /*! This method is for calculating the contributions of the SB state effector to the energy and momentum of the spacecraft */
@@ -307,8 +287,6 @@ void SpinningBodyOneDOFStateEffector::updateEnergyMomContributions(double integT
 
     // Find rotational energy contribution from the hub
     rotEnergyContr = 1.0 / 2.0 * this->omega_SN_B.dot(this->IPntSc_B * this->omega_SN_B) + 1.0 / 2.0 * this->mass * this->rDot_ScB_B.dot(this->rDot_ScB_B) + 1.0 / 2.0 * this->k * this->theta * this->theta;
-
-    return;
 }
 
 /*! This method computes the spinning body states relative to the inertial frame */
@@ -324,8 +302,6 @@ void SpinningBodyOneDOFStateEffector::computeSpinningBodyInertialStates()
 
     // inertial velocity vector
     this->v_ScN_N = (Eigen::Vector3d)this->hubVelocity->getState() + this->dcm_BN.transpose() * this->rDot_ScB_B;
-
-    return;
 }
 
 /*! This method is used so that the simulation will ask SB to update messages */
@@ -349,6 +325,4 @@ void SpinningBodyOneDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
     this->computeSpinningBodyInertialStates();
 
     this->writeOutputStateMessages(CurrentSimNanos);
-
-    return;
 }
