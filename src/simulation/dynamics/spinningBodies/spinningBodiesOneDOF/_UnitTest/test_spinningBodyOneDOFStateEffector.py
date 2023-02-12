@@ -24,18 +24,17 @@
 
 import inspect
 import os
-
+import matplotlib.pyplot as plt
 import numpy
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
-from Basilisk.simulation import spacecraft, spinningBodyStateEffector, gravityEffector
-from Basilisk.utilities import macros
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.simulation import spacecraft, spinningBodyOneDOFStateEffector, gravityEffector
+from Basilisk.architecture import messaging
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
