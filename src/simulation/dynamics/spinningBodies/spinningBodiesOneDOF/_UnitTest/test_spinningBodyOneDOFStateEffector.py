@@ -42,9 +42,11 @@ from Basilisk.architecture import messaging
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-
-
-def test_spinningBodyTest(show_plots):
+@pytest.mark.parametrize("cmdTorque, lock", [
+    (0.0, False)
+    , (0.0, True)
+])
+def test_spinningBody(show_plots, cmdTorque, lock):
     r"""
     **Validation Test Description**
 
@@ -65,11 +67,11 @@ def test_spinningBodyTest(show_plots):
 
     against their initial values.
     """
-    [testResults, testMessage] = spinningBody(show_plots)
+    [testResults, testMessage] = spinningBody(show_plots, cmdTorque, lock)
     assert testResults < 1, testMessage
 
 
-def spinningBody(show_plots):
+def spinningBody(show_plots, cmdTorque, lock):
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
@@ -114,9 +116,20 @@ def spinningBody(show_plots):
     spinningBody.thetaInit = 5.0 * macros.D2R
     spinningBody.thetaDotInit = -1.0 * macros.D2R
     spinningBody.k = 1.0
+    if lock:
+        spinningBody.thetaDotInit = 0.0
+    spinningBody.ModelTag = "SpinningBody"
 
     # Add spinning body to spacecraft
     scObject.addStateEffector(spinningBody)
+
+    # Create the locking message
+    if lock:
+        lockArray = messaging.ArrayEffectorLockMsgPayload()
+        lockArray.effectorLockFlag = [1]
+        lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
+        spinningBody.motorLockInMsg.subscribeTo(lockMsg)
+
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, spinningBody)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
@@ -262,4 +275,4 @@ def spinningBody(show_plots):
 
 
 if __name__ == "__main__":
-    spinningBody(True)
+    spinningBody(True, 0.0, False)
