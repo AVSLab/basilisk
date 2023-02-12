@@ -35,7 +35,8 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief spinning body state effector class */
-class spinningBodyOneDOFStateEffector: public StateEffector, public SysModel {
+class SpinningBodyOneDOFStateEffector: public StateEffector, public SysModel {
+
 public:
     double mass;                                                //!< [kg] mass of spinning body
     double k;                                                   //!< [N-m/rad] torsional spring constant
