@@ -75,9 +75,6 @@ def spinningBody(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
-
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
@@ -89,23 +86,9 @@ def spinningBody(show_plots):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    # Create two hinged rigid bodies
-    spinningBody = spinningBodyStateEffector.SpinningBodyStateEffector()
-
-    # Define properties of spinning body
-    spinningBody.mass = 100.0
-    spinningBody.k = 10.0
-    spinningBody.IPntSc_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    spinningBody.dcm_S0B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    spinningBody.r_ScS_S = [[0.5], [0.0], [1.0]]
-    spinningBody.r_SB_B = [[1.5], [-0.5], [2.0]]
-    spinningBody.sHat_S = [[0], [0], [1]]
-    spinningBody.thetaInit = 5 * macros.D2R
-    spinningBody.thetaDotInit = 1 * macros.D2R
-    spinningBody.ModelTag = "SpinningBody"
-
-    # Add spinning body to spacecraft
-    scObject.addStateEffector(spinningBody)
+    # Create the spacecraft module
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
 
     # Define mass properties of the rigid hub of the spacecraft
     scObject.hub.mHub = 750.0
@@ -118,9 +101,25 @@ def spinningBody(show_plots):
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
+    # Create two hinged rigid bodies
+    spinningBody = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
+
+    # Define properties of spinning body
+    spinningBody.mass = 50.0
+    spinningBody.IPntSc_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
+    spinningBody.dcm_S0B = [[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]]
+    spinningBody.r_ScS_S = [[1.0], [0.0], [-1.0]]
+    spinningBody.r_SB_B = [[0.5], [-1.5], [-0.5]]
+    spinningBody.sHat_S = [[0], [-1], [0]]
+    spinningBody.thetaInit = 5.0 * macros.D2R
+    spinningBody.thetaDotInit = -1.0 * macros.D2R
+    spinningBody.k = 1.0
+
+    # Add spinning body to spacecraft
+    scObject.addStateEffector(spinningBody)
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, spinningBody)
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
 
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
