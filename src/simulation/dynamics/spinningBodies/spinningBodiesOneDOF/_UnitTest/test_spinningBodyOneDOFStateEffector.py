@@ -45,6 +45,7 @@ from Basilisk.architecture import messaging
 @pytest.mark.parametrize("cmdTorque, lock", [
     (0.0, False)
     , (0.0, True)
+    , (1.0, False)
 ])
 def test_spinningBody(show_plots, cmdTorque, lock):
     r"""
@@ -122,6 +123,12 @@ def spinningBody(show_plots, cmdTorque, lock):
 
     # Add spinning body to spacecraft
     scObject.addStateEffector(spinningBody)
+
+    # Create the torque message
+    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
+    cmdArray.motorTorque = [cmdTorque]  # [Nm]
+    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
+    spinningBody.motorTorqueInMsg.subscribeTo(cmdMsg)
 
     # Create the locking message
     if lock:
@@ -253,11 +260,13 @@ def spinningBody(show_plots, cmdTorque, lock):
             testMessages.append(
                 "FAILED: Spinning Body integrated test failed rotational angular momentum unit test")
 
-    for i in range(0, len(initialRotEnergy)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i], initialRotEnergy[i], 1, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spinning Body integrated test failed rotational energy unit test")
+    # Only check rotational energy if no torques are applied
+    if cmdTorque == 0.0:
+        for i in range(0, len(initialRotEnergy)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i], initialRotEnergy[i], 1, accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: Spinning Body integrated test failed rotational energy unit test")
 
     for i in range(0, len(initialOrbEnergy)):
         # check a vector values
