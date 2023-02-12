@@ -24,6 +24,8 @@
 #include <cstring>
 #include <fstream>
 #include <math.h>
+#include <algorithm>
+#include <vector>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -171,16 +173,44 @@ double ScCharging::electronCurrent(double phi, double q0, double A, double E)
     return Ie;
 }
 
-/*!  This function performs linear interpolation between the provided values
+/*!  This function takes in a given vector of data and an x-value and performs linear interpolation to find the closest corresponding y-value
  @return double
- @param x0 data point 0
- @param x1 data point 1
- @param y0 function value for data point 0
- @param y1 function value for data point 1
+ @param data vector containing datapoints to use in linear interpolation (y-values)
+ @param x x-value being linear interpolated to
  */
-double ScCharging::interp(double x0, double x1, double y0, double y1, double x)
+double ScCharging::interp(const std::vector<double>& data, double x)
 {
-    double y = y0 + ((y1-y0)/(x1-x0)) * (x - x0);
+//    // ensure data is in ascending order
+//    std::sort(data.begin(), data.end());
+//
+//    // get iterator >= given x's corresponding iterator
+//    auto iterator = std::lower_bound(data.begin(), data.end(), x);
+//    // if value is the smallest value in dataset
+//    if (iterator == data.begin()){
+//        std::cout << "Too low " << std::endl;
+//    }
+//    // find closest iterator to x
+//    double a = *(iterator - 1);
+//    double b = *(iterator);
+//    long closestIterator;
+//    if (fabs(x - a) < fabs(x - b)){
+//        closestIterator =  iterator - data.begin() - 1;
+//    }
+//    closestIterator = iterator - data.begin();
+//
+//    // check if closest iterator is above or below x and create bounds for linear interpolation
+//    double x0, x1, y0, y1;
+//    if ((data[closestIterator] - x) >= 0){     // found value greater than x
+//        x0 = closestIterator - 1, x1 = closestIterator;
+//        y0 = data[x0], y1 = data[x1];
+//    } else{     // found value less than x
+//        x0 = closestIterator, x1 = closestIterator + 1;
+//        y0 = data[x0], y1 = data[x1];
+//    }
+//    double y = y0 + ((y1-y0)/(x1-x0)) * (x - x0);
+//
+//    return y;
+    double y = 1;
     return y;
 }
 
