@@ -56,6 +56,20 @@ public:
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;   //!< -- (optional) motor torque input message
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;    //!< -- (optional) motor lock flag input message
 
+    SpinningBodyOneDOFStateEffector();  //!< -- Contructor
+    ~SpinningBodyOneDOFStateEffector(); //!< -- Destructor
+    void Reset(uint64_t CurrentClock);  //!< -- Method for reset
+    void writeOutputStateMessages(uint64_t CurrentClock);   //!< -- Method for writing the output messages
+    void UpdateState(uint64_t CurrentSimNanos);             //!< -- Method for updating information
+    void registerStates(DynParamManager& statesIn);         //!< -- Method for registering the SB states
+    void linkInStates(DynParamManager& states);             //!< -- Method for getting access to other states
+    void updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);   //!< -- Method for back-substitution contributions
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);                         //!< -- Method for SB to compute its derivatives
+    void updateEffectorMassProps(double integTime);         //!< -- Method for giving the s/c the HRB mass props and prop rates
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d& rotAngMomPntCContr_B, double& rotEnergyContr, Eigen::Vector3d omega_BN_B);         //!< -- Method for computing energy and momentum for SBs
+    void prependSpacecraftNameToStates();                   //!< Method used for multiple spacecraft
+    void computeSpinningBodyInertialStates();               //!< Method for computing the SB's states
+
 private:
     static uint64_t effectorID;         //!< [] ID number of this panel
     double u;                           //!< [N-m] optional motor torque
@@ -105,22 +119,6 @@ private:
     Eigen::MatrixXd *c_B;               //!< [m] vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd *cPrime_B;          //!< [m/s] body time derivative of vector c_B in B frame components
 
-public:
-    spinningBodyOneDOFStateEffector();    //!< -- Contructor
-    ~spinningBodyOneDOFStateEffector();   //!< -- Destructor
-    void Reset(uint64_t CurrentClock);                   //!< -- Method for reset
-    void writeOutputStateMessages(uint64_t CurrentClock);   //!< -- Method for writing the output messages
-	void UpdateState(uint64_t CurrentSimNanos);             //!< -- Method for updating information
-    void registerStates(DynParamManager& statesIn);         //!< -- Method for registering the SB states
-    void linkInStates(DynParamManager& states);             //!< -- Method for getting access to other states
-    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Method for back-substitution contributions
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);                         //!< -- Method for SB to compute its derivatives
-    void updateEffectorMassProps(double integTime);         //!< -- Method for giving the s/c the HRB mass props and prop rates
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B);       //!< -- Method for computing energy and momentum for SBs
-    void prependSpacecraftNameToStates();                   //!< Method used for multiple spacecraft
-    void computeSpinningBodyInertialStates();               //!< Method for computing the SB's states
-
-private:
 
 };
 
