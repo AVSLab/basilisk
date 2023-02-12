@@ -52,7 +52,6 @@ public:
     Eigen::Matrix3d dcm_S0B;                                    //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
     Message<HingedRigidBodyMsgPayload> spinningBodyOutMsg;      //!< state output message
     Message<SCStatesMsgPayload> spinningBodyConfigLogOutMsg;    //!< spinning body state config log message
-    BSKLogger bskLogger;                                        //!< -- BSK Logging
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;   //!< -- (optional) motor torque input message
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;    //!< -- (optional) motor lock flag input message
 
