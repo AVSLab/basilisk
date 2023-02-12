@@ -82,7 +82,7 @@ def spinningBody(show_plots):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -147,8 +147,8 @@ def spinningBody(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, thetaData)
 
     # Setup and run the simulation
-    stopTime = 2.5
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    stopTime = 25000 * testProcessRate
+    unitTestSim.ConfigureStopTime(stopTime)
     unitTestSim.ExecuteSimulation()
 
     # Extract the logged variables
