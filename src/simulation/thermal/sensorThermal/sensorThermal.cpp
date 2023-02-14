@@ -28,6 +28,7 @@ SensorThermal::SensorThermal(){
     this->S = 1366; //! - Solar constant at 1AU
     this->boltzmannConst = 5.76051e-8;  //! -  Boltzmann constant
     this->CurrentSimSecondsOld = 0;
+    this->sensorPowerStatus = 1; //! - Default is sensor turned on (0 for off)
     return;
 
 }
@@ -95,18 +96,13 @@ void SensorThermal::readMessages()
         this->shadowFactor = sunVisibilityFactor.shadowFactor;
     }
 
-    DeviceStatusMsgPayload statusMsg;
-
-    //! - read in the device status msg
+    //! if  the device status msg is connected, read in and update sensor power status
     if(this->sensorStatusInMsg.isLinked())
     {
+        DeviceStatusMsgPayload statusMsg;
         statusMsg = this->sensorStatusInMsg();
-        this->sensorStatus = statusMsg.deviceStatus;
-    } else {
-        this->sensorStatus = 1;
+        this->sensorPowerStatus = statusMsg.deviceStatus;
     }
-
-    return;
 }
 
 /*! Provides logic for running the read / compute / write operation that is the module's function.
@@ -124,7 +120,6 @@ void SensorThermal::UpdateState(uint64_t CurrentSimNanos)
     //! - Write output
     this->writeMessages(CurrentSimNanos);
 
-    return;
 }
 
 /*! This method writes out a message.
@@ -186,7 +181,7 @@ void SensorThermal::evaluateThermalModel(uint64_t CurrentSimSeconds) {
     this->computeSunData();
 
     //! - Compute Q_in
-    this->Q_in = this->shadowFactor * this->S * this->projectedArea * this->sensorAbsorptivity + this->sensorPowerDraw * this->sensorStatus;
+    this->Q_in = this->shadowFactor * this->S * this->projectedArea * this->sensorAbsorptivity + this->sensorPowerDraw * this->sensorPowerStatus;
 
     //! - Compute Q_out
     this->Q_out = this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->sensorTemp + 273.15), 4);

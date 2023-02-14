@@ -51,7 +51,7 @@ private:
 
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< [-] sun data input message
-    ReadFunctor<DeviceStatusMsgPayload> sensorStatusInMsg; //!< note status input message
+    ReadFunctor<DeviceStatusMsgPayload> sensorStatusInMsg; //!< optional sensor power status input message
     ReadFunctor<SCStatesMsgPayload> stateInMsg;     //!< [-] spacecraft state input message
     ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;     //!< [-] sun eclipse state input message
     Message<TemperatureMsgPayload> temperatureOutMsg; //!< output temperature message
@@ -59,7 +59,7 @@ public:
     Eigen::Vector3d nHat_B;                     //!< [-] Sensor normal unit vector relative to the spacecraft body frame.
 
     double sensorPowerDraw;                     //!< [W] Power consumed by the sensor (+).
-    uint64_t sensorStatus;                        //!< [-] Sensor status (0/1)
+    uint64_t sensorPowerStatus;                //!< [-] Sensor on/off status (0 off / 1 on)
     double sensorArea;                          //!< [m^2] Sensor area in meters squared
     double sensorAbsorptivity;                  //!< [-] Sensor absorptivity (between 0 and 1)
     double sensorEmissivity;                    //!< [-] Sensor emissivity (between 0 and 1)
