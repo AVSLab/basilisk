@@ -43,6 +43,7 @@ Version |release|
   and after of the ``src/cmake/usingOpenCV.cmake`` file.
 - updated :ref:`unitTestSupport` to create the file path in a platform agnostic manner
 - Created a :ref:`sensorThermal` module to model the temperature of a sensor using radiative heat transfer
+- Created a :ref:`tempMeasurement` module to add sensor noise/bias and fault capabilities to temperature readings
 
 Version 2.1.6 (Jan. 21, 2023)
 -----------------------------
