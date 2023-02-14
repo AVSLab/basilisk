@@ -47,11 +47,11 @@ private:
     void evaluateThermalModel(uint64_t CurrentSimSeconds);
     void computeSunData();
     void writeMessages(uint64_t CurrentClock);
-    bool readMessages();
+    void readMessages();
 
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< [-] sun data input message
-    ReadFunctor<DeviceStatusMsgPayload> sensorStatusInMsg; //!< note status input message
+    ReadFunctor<DeviceStatusMsgPayload> sensorStatusInMsg; //!< optional sensor power status input message
     ReadFunctor<SCStatesMsgPayload> stateInMsg;     //!< [-] spacecraft state input message
     ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;     //!< [-] sun eclipse state input message
     Message<TemperatureMsgPayload> temperatureOutMsg; //!< output temperature message
@@ -59,7 +59,7 @@ public:
     Eigen::Vector3d nHat_B;                     //!< [-] Sensor normal unit vector relative to the spacecraft body frame.
 
     double sensorPowerDraw;                     //!< [W] Power consumed by the sensor (+).
-    uint64_t sensorStatus;                        //!< [-] Sensor status (0/1)
+    uint64_t sensorPowerStatus;                //!< [-] Sensor on/off status (0 off / 1 on)
     double sensorArea;                          //!< [m^2] Sensor area in meters squared
     double sensorAbsorptivity;                  //!< [-] Sensor absorptivity (between 0 and 1)
     double sensorEmissivity;                    //!< [-] Sensor emissivity (between 0 and 1)
@@ -75,7 +75,7 @@ private:
     SpicePlanetStateMsgPayload sunData;         //!< [-] sun message input buffer
     SCStatesMsgPayload stateCurrent;            //!< [-] Current spacecraft state
     double shadowFactor;                        //!< [-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible)
-    double T;                                   //!< [C] Current temperature
+    double sensorTemp;                          //!< [C] Current temperature
     double Q_in;                                //!< [W] Current power in
     double Q_out;                               //!< [W] Current power out
     double S;                                   //!< [W/m^2] Solar constant

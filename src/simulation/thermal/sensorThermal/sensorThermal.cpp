@@ -28,6 +28,7 @@ SensorThermal::SensorThermal(){
     this->S = 1366; //! - Solar constant at 1AU
     this->boltzmannConst = 5.76051e-8;  //! -  Boltzmann constant
     this->CurrentSimSecondsOld = 0;
+    this->sensorPowerStatus = 1; //! - Default is sensor turned on (0 for off)
     return;
 
 }
@@ -71,27 +72,23 @@ void SensorThermal::Reset(uint64_t CurrentClock) {
         bskLogger.bskLog(BSK_ERROR, "sensorThermal.stateInMsg was not linked.");
     }
 
-    this->T = this->T_0;
+    this->sensorTemp = this->T_0;
 
     return;
 }
 
-bool SensorThermal::readMessages()
+void SensorThermal::readMessages()
 {
     //! - Zero ephemeris information
     this->sunData = sunInMsg.zeroMsgPayload;
     this->stateCurrent = stateInMsg.zeroMsgPayload;
 
-    //! - If we have a valid sun ID, read Sun ephemeris message
-    if(this->sunInMsg.isLinked())
-    {
-        this->sunData = this->sunInMsg();
-    }
-    //! - If we have a valid state ID, read vehicle state ephemeris message
-    if(this->stateInMsg.isLinked())
-    {
-        this->stateCurrent = this->stateInMsg();
-    }
+    //! Read Sun ephemeris message
+    this->sunData = this->sunInMsg();
+
+    //! Read vehicle state ephemeris message
+    this->stateCurrent = this->stateInMsg();
+
     //! - Read in optional sun eclipse input message 
     if(this->sunEclipseInMsg.isLinked()) {
         EclipseMsgPayload sunVisibilityFactor;          // sun visiblity input message
@@ -99,18 +96,13 @@ bool SensorThermal::readMessages()
         this->shadowFactor = sunVisibilityFactor.shadowFactor;
     }
 
-    DeviceStatusMsgPayload statusMsg;
-
-    //! - read in the device status msg
+    //! if  the device status msg is connected, read in and update sensor power status
     if(this->sensorStatusInMsg.isLinked())
     {
+        DeviceStatusMsgPayload statusMsg;
         statusMsg = this->sensorStatusInMsg();
-        this->sensorStatus = statusMsg.deviceStatus;
-    } else {
-        this->sensorStatus = 1;
+        this->sensorPowerStatus = statusMsg.deviceStatus;
     }
-
-    return(true);
 }
 
 /*! Provides logic for running the read / compute / write operation that is the module's function.
@@ -119,18 +111,15 @@ bool SensorThermal::readMessages()
 void SensorThermal::UpdateState(uint64_t CurrentSimNanos)
 {
 
-    //! - Only update the thermal status if we were able to read in messages.
-    if(this->readMessages())
-    {
-        this->evaluateThermalModel(CurrentSimNanos*NANO2SEC);
-    } else {
-        /* if the read was not successful then zero the output message */
-        this->temperatureMsgBuffer = this->temperatureOutMsg.zeroMsgPayload;
-    }
+    //! - Read in messages
+    this->readMessages();
+    
+    //! - Evaluate model
+    this->evaluateThermalModel(CurrentSimNanos*NANO2SEC);
 
+    //! - Write output
     this->writeMessages(CurrentSimNanos);
 
-    return;
 }
 
 /*! This method writes out a message.
@@ -192,22 +181,22 @@ void SensorThermal::evaluateThermalModel(uint64_t CurrentSimSeconds) {
     this->computeSunData();
 
     //! - Compute Q_in
-    this->Q_in = this->shadowFactor * this->S * this->projectedArea * this->sensorAbsorptivity + this->sensorPowerDraw * this->sensorStatus;
+    this->Q_in = this->shadowFactor * this->S * this->projectedArea * this->sensorAbsorptivity + this->sensorPowerDraw * this->sensorPowerStatus;
 
     //! - Compute Q_out
-    this->Q_out = this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->T + 273.15), 4);
+    this->Q_out = this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->sensorTemp + 273.15), 4);
 
     //! - Compute change in energy using Euler integration
     double dT = (this->Q_in - this->Q_out)/(this->sensorSpecificHeat*this->sensorMass);
 
     //! - Compute the current temperature
-    this->T = this->T + dT*(CurrentSimSeconds - this->CurrentSimSecondsOld);
+    this->sensorTemp = this->sensorTemp + dT*(CurrentSimSeconds - this->CurrentSimSecondsOld);
 
     //! - Set the old CurrentSimSeconds to the current timestep
     this->CurrentSimSecondsOld = CurrentSimSeconds;
 
     //! - Write to the message buffer
-    this->temperatureMsgBuffer.temperature = this->T;
+    this->temperatureMsgBuffer.temperature = this->sensorTemp;
 
     return;
 }
