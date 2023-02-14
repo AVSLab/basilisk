@@ -197,7 +197,7 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
     this->dcm_BN = (this->sigma_BN.toRotationMatrix()).transpose();
 
     // Map gravity to body frame
-    Eigen::Vector3d gLocal_N = g_N;
+    const Eigen::Vector3d& gLocal_N = g_N;
     Eigen::Vector3d g_B = this->dcm_BN * gLocal_N;
 
     // Define auxiliary variable mTheta
@@ -261,7 +261,7 @@ void SpinningBodyOneDOFStateEffector::computeDerivatives(double integTime,
     omegaDotLocal_BN_B = omegaDot_BN_B;
 
     // Find rDDotLoc_BN_B
-    Eigen::Vector3d rDDotLocal_BN_N = rDDot_BN_N;
+    const Eigen::Vector3d& rDDotLocal_BN_N = rDDot_BN_N;
     Eigen::Vector3d rDDotLocal_BN_B;
     rDDotLocal_BN_B = this->dcm_BN * rDDotLocal_BN_N;
 
