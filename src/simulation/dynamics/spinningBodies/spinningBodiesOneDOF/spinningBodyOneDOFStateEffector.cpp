@@ -39,9 +39,9 @@ SpinningBodyOneDOFStateEffector::SpinningBodyOneDOFStateEffector()
     this->r_SB_B.setZero();
     this->sHat_S.setZero();
 
-    this->nameOfThetaState = "spinningBodyTheta" + std::to_string(this->effectorID);
-    this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(this->effectorID);
-    this->effectorID++; 
+    this->nameOfThetaState = "spinningBodyTheta" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
+    this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
+    SpinningBodyOneDOFStateEffector::effectorID++;
 }
 
 uint64_t SpinningBodyOneDOFStateEffector::effectorID = 1;
@@ -49,7 +49,7 @@ uint64_t SpinningBodyOneDOFStateEffector::effectorID = 1;
 /*! This is the destructor, nothing to report here */
 SpinningBodyOneDOFStateEffector::~SpinningBodyOneDOFStateEffector()
 {
-    this->effectorID = 1;    /* reset the panel ID*/
+    SpinningBodyOneDOFStateEffector::effectorID = 1;
 }
 
 /*! This method is used to reset the module. */
