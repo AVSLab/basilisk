@@ -50,7 +50,18 @@ void SelfInit_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configD
 */
 void Reset_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, " thrusterPlatformReference.vehConfigInMsg wasn't connected.");
+    }
+    if (RWArrayConfigMsg_C_isLinked(&configData->rwConfigDataInMsg) && RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
+        configData->momentumDumping = Yes;
 
+        /*! - read in the RW configuration message */
+        configData->rwConfigParams = RWArrayConfigMsg_C_read(&configData->rwConfigDataInMsg);
+    }
+    else {
+        configData->momentumDumping = No;
+    }
 }
 
 
