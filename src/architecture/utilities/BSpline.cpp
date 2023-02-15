@@ -793,80 +793,27 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     else {
         
           std::cout<<"Constraining first derivative"<<std::endl;
-//        std::cout<<Input.X1Dot_des[0]<<std::endl;
-//        std::cout<<Input.X2Dot_des[0]<<std::endl;
-//        std::cout<<Input.X3Dot_des[0]<<std::endl;
-//        std::cout<<"Passed this phase"<<std::endl;
-//        std::cout<<q<<std::endl;
-        
-            
-//        for (i = 0;i <q-1;i++) {
-//                rhok1D[i] = rhok1[i];
-//                rhok2D[i] = rhok2[i];
-//                rhok3D[i] = rhok3[i];
-//            }
-//        //Change these to C3_1,C2_1 along with C1_1
-//        for (int c = q-1; c < 2*q-2; c++) {
-//            basisFunction(uk[c], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
-//            rhok1D[c-1] = X1_prime[c] - NN1[0]*C1_1[0] - NN1[n]*C1_1[K+1];
-//            rhok2D[c-1] = X2_prime[c] - NN1[0]*C2_1[0] - NN1[n]*C2_1[K+1];
-//            rhok3D[c-1] = X3_prime[c] - NN1[0]*C3_1[0] - NN1[n]*C3_1[K+1];
-//            if (Input.XDot_0_flag == true) {
-//                rhok1D[c-1] -= NN1[1]*C1_1[1];
-//                rhok2D[c-1] -= NN1[1]*C2_1[1];
-//                rhok3D[c-1] -= NN1[1]*C3_1[1];
-//            }
-//            if (Input.XDDot_0_flag == true) {
-//                rhok1D[c-1] -= NN1[2]*C1_1[2];
-//                rhok2D[c-1] -= NN1[2]*C2_1[2];
-//                rhok3D[c-1] -= NN1[2]*C3_1[2];
-//            }
-//            if (Input.XDDot_N_flag == true) {
-//                rhok1D[c-1] -= NN1[n-2]*C1_1[K-1];
-//                rhok2D[c-1] -= NN1[n-2]*C2_1[K-1];
-//                rhok3D[c-1] -= NN1[n-2]*C3_1[K-1];
-//            }
-//            if (Input.XDot_N_flag == true) {
-//                rhok1D[c-1] -= NN1[n-1]*C1_1[K];
-//                rhok2D[c-1] -= NN1[n-1]*C2_1[K];
-//                rhok3D[c-1] -= NN1[n-1]*C3_1[K];
-//            }
-//        }
         
         // new ND matrix is twice as large, will have to superimpose the previous ND matrix on this one
         Eigen::MatrixXd ND_2(2*q-2,n-K-1);
         
-        // populate LS matrix ND
-        for (int d = 0; d < q-1; d++) {
+        for (int d=0; d<q-1;d++) {
             basisFunction(uk[1+d], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
             int k = 1;
             if (Input.XDot_0_flag == true) {k += 1;}
             if (Input.XDDot_0_flag == true) {k += 1;}
             for (int e = 0; e < n-K-1; e++) {
-                ND(d,e) = NN[k+e];
-                //std::cout<<"ND print condition 2"<<std::endl;
-                //std::cout<<ND(d,e)<<std::endl;
+                ND_2(d,e) = NN[k+e];
+                ND_2(d+q-1,e) = NN1[k+e];
             }
         }
         
-        // populate LS matrix ND_2  with ND matrix in top half
-        for (int d = 0; d < q-1; d++) {
-            basisFunction(uk[1+d], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
-            for (int e = 0; e < n-K-1; e++) {
-                ND_2(d,e) = ND(d,e);
+         //Printing out results
+        for (int c = 0;c<2*q-2;c++) {
+            for (int q = 0; q<n-K-1;q++) {
+                std::cout<<ND_2(c,q)<<" ";
             }
-        }
-        
-        // calculate bottom half
-        for (int d = q-1; d < 2*q-2; d++) {
-            int k = 1;
-            if (Input.XDot_0_flag == true) {k += 1;}
-            if (Input.XDDot_0_flag == true) {k += 1;}
-            for (int e = 0; e < n-K-1; e++) {
-                //std::cout<<"ND_2 matrix terms"<<std::endl;
-                ND_2(d,e) = NN1[k+e];
-                //std::cout<<ND_2(d,e)<<std::endl;
-            }
+            std::cout<<std::endl;
         }
         
   
