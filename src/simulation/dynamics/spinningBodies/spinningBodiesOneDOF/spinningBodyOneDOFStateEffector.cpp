@@ -101,15 +101,7 @@ void SpinningBodyOneDOFStateEffector::prependSpacecraftNameToStates()
 /*! This method allows the SB state effector to have access to the hub states and gravity*/
 void SpinningBodyOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
 {
-    // - Get access to the hub's sigma_BN, omegaBN_B and velocity needed for dynamic coupling and gravity
-    std::string tmpMsgName;
-    tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassSC";
-    this->c_B = statesIn.getPropertyReference(tmpMsgName);
-    tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassPrimeSC";
-    this->cPrime_B = statesIn.getPropertyReference(tmpMsgName);
-
-    this->hubSigma = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
-    this->hubOmega = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
+    // - Get access to the hub's states needed for dynamic coupling
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
 }

@@ -110,14 +110,10 @@ private:
     // States
     double theta = 0.0;                           //!< [rad] spinning body angle
     double thetaDot = 0.0;                        //!< [rad/s] spinning body angle rate
-    StateData *hubSigma = nullptr;                //!< hub/inertial attitude represented by MRP
-    StateData *hubOmega = nullptr;                //!< hub/inertial angular velocity vector in B frame components
     Eigen::MatrixXd* inertialPositionProperty = nullptr;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty = nullptr;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     StateData *thetaState = nullptr;              //!< -- state manager of theta for spinning body
     StateData *thetaDotState = nullptr;           //!< -- state manager of thetaDot for spinning body
-    Eigen::MatrixXd *c_B = nullptr;               //!< [m] vector from point B to CoM of s/c in B frame components
-    Eigen::MatrixXd *cPrime_B = nullptr;          //!< [m/s] body time derivative of vector c_B in B frame components
 };
 
 
