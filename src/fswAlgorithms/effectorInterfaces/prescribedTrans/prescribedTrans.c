@@ -17,10 +17,7 @@
 
 */
 
-/*! Import the module header file */
 #include "prescribedTrans.h"
-
-/*! Import other required files */
 #include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>

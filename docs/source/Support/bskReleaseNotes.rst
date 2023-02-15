@@ -55,6 +55,9 @@ Version |release|
 - Added the ability to lock the axis on the :ref:`spinningBodyOneDOFStateEffector` module.
 - Added two new unit tests to :ref:`spinningBodyOneDOFStateEffector`.
 - Updated :ref:`magneticFieldWMM` to use the latest WMM coefficient file and evaluation software
+- Created a :ref:`prescribedTrans` fsw module to profile a prescribed translational maneuver for a secondary rigid body
+  connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+  :ref:`prescribedMotionStateEffector` dynamics module.
 
 
 Version 2.1.6 (Jan. 21, 2023)
