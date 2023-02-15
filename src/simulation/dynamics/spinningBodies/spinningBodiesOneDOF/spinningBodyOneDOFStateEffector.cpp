@@ -36,18 +36,12 @@ SpinningBodyOneDOFStateEffector::SpinningBodyOneDOFStateEffector()
     this->effProps.IEffPrimePntB_B.fill(0.0);
 
     // Initialize variables to working values
-    this->mass = 0.0;
-    this->thetaInit = 0.00;
-    this->thetaDotInit = 0.0;
-    this->IPntSc_S.Identity();
-    this->dcm_BS.Identity();
-    this->dcm_S0B.Identity();
+    this->IPntSc_S.setIdentity();
+    this->dcm_BS.setIdentity();
+    this->dcm_S0B.setIdentity();
     this->r_SB_B.setZero();
     this->sHat_S.setZero();
-    this->u = 0.0;
-    this->k = 1.0;
-    this->c = 0.0;
-    
+
     this->nameOfThetaState = "spinningBodyTheta" + std::to_string(this->effectorID);
     this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(this->effectorID);
     this->effectorID++; 

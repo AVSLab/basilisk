@@ -38,11 +38,11 @@
 class SpinningBodyOneDOFStateEffector: public StateEffector, public SysModel {
 
 public:
-    double mass;                                                //!< [kg] mass of spinning body
-    double k;                                                   //!< [N-m/rad] torsional spring constant
-    double c;                                                   //!< [N-m-s/rad] rotational damping coefficient
-    double thetaInit;                                           //!< [rad] initial spinning body angle
-    double thetaDotInit;                                        //!< [rad/s] initial spinning body angle rate
+    double mass = 1.0;                                          //!< [kg] mass of spinning body
+    double k = 0.0;                                             //!< [N-m/rad] torsional spring constant
+    double c = 0.0;                                             //!< [N-m-s/rad] rotational damping coefficient
+    double thetaInit = 0.0;                                     //!< [rad] initial spinning body angle
+    double thetaDotInit = 0.0;                                  //!< [rad/s] initial spinning body angle rate
     std::string nameOfThetaState;                               //!< -- identifier for the theta state data container
     std::string nameOfThetaDotState;                            //!< -- identifier for the thetaDot state data container
     Eigen::Vector3d r_SB_B;                                     //!< [m] vector pointing from body frame B origin to spinning frame S origin in B frame components
@@ -72,14 +72,14 @@ public:
 
 private:
     static uint64_t effectorID;         //!< [] ID number of this panel
-    double u;                           //!< [N-m] optional motor torque
-    int lockFlag = 0;                       //!< [] flag for locking the rotation axis
+    double u = 0.0;                     //!< [N-m] optional motor torque
+    int lockFlag = 0;                   //!< [] flag for locking the rotation axis
 
     // Terms needed for back substitution
     Eigen::Vector3d aTheta;             //!< -- rDDot_BN term for back substitution
     Eigen::Vector3d bTheta;             //!< -- omegaDot_BN term for back substitution
-    double cTheta;                      //!< -- scalar term for back substitution
-    double mTheta;                      //!< -- auxiliary term for back substitution
+    double cTheta = 0.0;                //!< -- scalar term for back substitution
+    double mTheta = 0.0;                //!< -- auxiliary term for back substitution
 
     // Vector quantities
     Eigen::Vector3d sHat_B;             //!< -- spinning axis in B frame components
@@ -108,18 +108,16 @@ private:
     Eigen::Vector3d omega_SN_S;         //!< [rad/s] inertial spinning body frame angular velocity vector
 
     // States
-    double theta;                       //!< [rad] spinning body angle
-    double thetaDot;                    //!< [rad/s] spinning body angle rate
-    StateData *hubSigma;                //!< hub/inertial attitude represented by MRP
-    StateData *hubOmega;                //!< hub/inertial angular velocity vector in B frame components
-    StateData *hubPosition;             //!< hub/inertial position vector in inertial frame components
-    StateData *hubVelocity;             //!< hub/inertial velocity vector in inertial frame components
-    StateData *thetaState;              //!< -- state manager of theta for spinning body
-    StateData *thetaDotState;           //!< -- state manager of thetaDot for spinning body
-    Eigen::MatrixXd *c_B;               //!< [m] vector from point B to CoM of s/c in B frame components
-    Eigen::MatrixXd *cPrime_B;          //!< [m/s] body time derivative of vector c_B in B frame components
-
-
+    double theta = 0.0;                           //!< [rad] spinning body angle
+    double thetaDot = 0.0;                        //!< [rad/s] spinning body angle rate
+    StateData *hubSigma = nullptr;                //!< hub/inertial attitude represented by MRP
+    StateData *hubOmega = nullptr;                //!< hub/inertial angular velocity vector in B frame components
+    StateData *hubPosition = nullptr;             //!< hub/inertial position vector in inertial frame components
+    StateData *hubVelocity = nullptr;             //!< hub/inertial velocity vector in inertial frame components
+    StateData *thetaState = nullptr;              //!< -- state manager of theta for spinning body
+    StateData *thetaDotState = nullptr;           //!< -- state manager of thetaDot for spinning body
+    Eigen::MatrixXd *c_B = nullptr;               //!< [m] vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd *cPrime_B = nullptr;          //!< [m/s] body time derivative of vector c_B in B frame components
 };
 
 
