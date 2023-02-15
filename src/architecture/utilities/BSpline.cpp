@@ -717,11 +717,11 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         }
     }
     
-//    std::cout<<"Printing rhok vectors"<<std::endl;
-//
-//    for ( int y = 0; y < 2*q-2; y++) {
-//        std::cout<<rhok1[y]<<","<<rhok2[y]<<","<<rhok3[y]<<std::endl;
-//    }
+    std::cout<<"Printing rhok vectors"<<std::endl;
+
+    for ( int y = 0; y < 2*q-2; y++) {
+        std::cout<<rhok1[y]<<","<<rhok2[y]<<","<<rhok3[y]<<std::endl;
+    }
     
         // Split code based on whether LS approximation is done with first derivative constraints or not
         
@@ -770,8 +770,8 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             
         Eigen::VectorXd rhok1_short(q-1),rhok2_short(q-1),rhok3_short(q-1);
             
-//        std::cout<<"Rhok short"<<std::endl;
-        for (int c = 0; c <q; c++) {
+//        std::cout<<"Rhok short"<<std::endl; // Change to q-1
+        for (int c = 0; c <q-1; c++) {
             rhok1_short[c] = rhok1[c];
 //            std::cout<<rhok1_short[c]<<std::endl;
             rhok2_short[c] = rhok2[c];
@@ -792,7 +792,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         // LS approximation with first derivative constraint
     else {
         
-//        std::cout<<"Entered else condition successfully"<<std::endl;
+          std::cout<<"Constraining first derivative"<<std::endl;
 //        std::cout<<Input.X1Dot_des[0]<<std::endl;
 //        std::cout<<Input.X2Dot_des[0]<<std::endl;
 //        std::cout<<Input.X3Dot_des[0]<<std::endl;
