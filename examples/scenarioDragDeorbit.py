@@ -23,8 +23,8 @@ Overview
 
 This scenario demonstrates how to set up a spacecraft orbiting Earth subject to atmospheric drag, causing it to
 deorbit. This is achieved using the :ref:`exponentialAtmosphere` or :ref:`msisAtmosphere` environment module and the
-:ref:`dragDynamicEffector` dynamics module. The simulation is repeatedly stepped on the order of minutes of sim time
-until the altitude falls below some threshold.
+:ref:`dragDynamicEffector` dynamics module. The simulation is executed until the altitude falls below some threshold,
+using a terminal event handler.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
@@ -75,7 +75,7 @@ the drag model::
 Illustration of Simulation Results
 ----------------------------------
 
-The following images illustrate the expected simulation run returns for a deorbit from 250 to 150 km with the
+The following images illustrate the expected simulation run returns for a deorbit from 250 to 100 km with the
 exponential model.
 
 The orbit is plotted in the orbital plane:
@@ -125,7 +125,6 @@ The same plots are generated using the MSIS model:
 #
 
 import os
-
 import matplotlib.pyplot as plt
 import numpy as np
 # The path to the location of Basilisk, used to get the location of supporting data
@@ -143,7 +142,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-def run(show_plots, initialAlt=250, deorbitAlt=180, model="exponential"):
+def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     """
     Initialize a satellite with drag and propagate until it falls below a deorbit altitude. Note that an excessively
     low deorbit_alt can lead to intersection with the Earth prior to deorbit being detected, causing some terms to blow
@@ -211,6 +210,7 @@ def run(show_plots, initialAlt=250, deorbitAlt=180, model="exponential"):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     scSim.AddModelToTask(simTaskName, scObject)
+    scSim.spacecraft = scObject
 
     # Link spacecraft to drag model
     atmo.addSpacecraftToModel(scObject.scStateOutMsg)
@@ -243,14 +243,8 @@ def run(show_plots, initialAlt=250, deorbitAlt=180, model="exponential"):
     # set the simulation time increments
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
     P = 2. * np.pi / n
-
-    # fraction of initial orbit period to step the simulation by
-    if model == "exponential":
-        orbit_frac = 0.1
-    elif model == "msis":
-        orbit_frac = 0.03  # msis deorbits more quickly
-    simulationTime = macros.sec2nano(orbit_frac * P)
-    numDataPoints = int(10000 * orbit_frac)  # per orbit_fraction at initial orbit conditions
+    simulationTime = macros.sec2nano(100 * P)
+    numDataPoints = 10000
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
 
     # Setup data logging before the simulation is initialized
@@ -259,6 +253,11 @@ def run(show_plots, initialAlt=250, deorbitAlt=180, model="exponential"):
     scSim.AddModelToTask(simTaskName, dataRec)
     scSim.AddModelToTask(simTaskName, dataAtmoLog)
     scSim.AddVariableForLogging('DragEff.forceExternal_B', samplingTime, StartIndex=0, StopIndex=2)
+
+    # Event to terminate the simulation
+    scSim.createNewEvent("Deorbited", simulationTimeStep, True,
+                         [f"np.linalg.norm(self.spacecraft.scStateOutMsg.read().r_BN_N) < {planet.radEquator + 1000 * deorbitAlt}"],
+                         [], terminal=True)
 
     # Vizard Visualization Option
     # ---------------------------
@@ -276,17 +275,9 @@ def run(show_plots, initialAlt=250, deorbitAlt=180, model="exponential"):
     # initialize Simulation
     scSim.InitializeSimulation()
 
-    # Repeatedly step the simulation ahead and break once deorbit altitude encountered
-    steps = 0
-    deorbited = False
-    while not deorbited:
-        steps += 1
-        scSim.ConfigureStopTime(steps * simulationTime)
-        scSim.ExecuteSimulation()
-        r = orbitalMotion.rv2elem(mu, dataRec.r_BN_N[-1], dataRec.v_BN_N[-1]).rmag
-        alt = (r - planet.radEquator) / 1000  # km
-        if alt < deorbitAlt or alt > 1e10:
-            deorbited = True
+    # Run the simulation
+    scSim.ConfigureStopTime(simulationTime)
+    scSim.ExecuteSimulation()
 
     # retrieve the logged data
     posData = dataRec.r_BN_N
@@ -368,6 +359,6 @@ if __name__ == "__main__":
     run(
         show_plots=True,
         initialAlt=250,
-        deorbitAlt=180,
+        deorbitAlt=100,
         model="msis"   # "msis", "exponential"
     )

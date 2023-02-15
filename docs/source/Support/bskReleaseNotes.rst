@@ -44,6 +44,8 @@ Version |release|
 - updated :ref:`unitTestSupport` to create the file path in a platform agnostic manner
 - Created a :ref:`sensorThermal` module to model the temperature of a sensor using radiative heat transfer
 - Created a :ref:`tempMeasurement` module to add sensor noise/bias and fault capabilities to temperature readings
+- Added a ``terminal`` flag to the event handlers that cause the simulation to terminate when triggered; demonstrated
+  use of flag in update to :ref:`scenarioDragDeorbit`.
 
 Version 2.1.6 (Jan. 21, 2023)
 -----------------------------
