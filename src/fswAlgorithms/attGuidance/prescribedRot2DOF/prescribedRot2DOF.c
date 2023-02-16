@@ -20,6 +20,10 @@
 /* Include the module header file. */
 #include "prescribedRot2DOF.h"
 
+/* Import other required files. */
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+
 /*! This method initializes the output message for this module.
  @return void
  @param configData The configuration data associated with this module
@@ -31,7 +35,8 @@ void SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, int64_t mod
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+ time varying states between function calls are reset to their default values. A check is also
+ performed to ensure the user sets the configurable module variables.
  @return void
  @param configData The configuration data associated with the module
  @param callTime [ns] Time the method is called
@@ -39,6 +44,38 @@ void SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, int64_t mod
 */
 void Reset_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    // Check if the required input messages are linked */
+    if (!HingedRigidBodyMsg_C_isLinked(&configData->spinningBodyRef1InMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.spinningBodyRef1InMsg wasn't connected.");
+    }
+
+    if (!HingedRigidBodyMsg_C_isLinked(&configData->spinningBodyRef2InMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.spinningBodyRef2InMsg wasn't connected.");
+    }
+
+    // Check that the user-configurable variables are set
+    if (configData->phiDDotMax < 0) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.phiDDotMax wasn't set.");
+    }
+
+    if (v3Norm(configData->rotAxis1_M) < 1e-6) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.rotAxis1_M wasn't set.");
+    }
+
+    if (v3Norm(configData->rotAxis2_F1) < 1e-6) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.rotAxis2_F1 wasn't set.");
+    }
+
+    // Store the initial time */
+    configData->maneuverStartTime = callTime * NANO2SEC;
+
+    // Set the initial convergence to true to properly enter the desired loop in the Update() method on the first pass
+    configData->isManeuverComplete = true;
+
+    // Zero the PRV angle variables
+    configData->phiRef = 0.0;
+    configData->phiRefAccum = 0.0;
+    configData->phiAccum = 0.0;
 }
 
 /*! This method profiles a 1DOF rotational trajectory given two rotation angles and rotation axes. The prescribed states
