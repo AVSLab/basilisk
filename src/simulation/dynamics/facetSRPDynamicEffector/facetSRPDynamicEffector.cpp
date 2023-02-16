@@ -18,10 +18,14 @@
  */
 
 #include "facetSRPDynamicEffector.h"
+#include <cmath>
 
 /*! The constructor initializes the member variables to zero. */
 FacetSRPDynamicEffector::FacetSRPDynamicEffector()
 {
+    this->forceExternal_B.fill(0.0);
+    this->torqueExternalPntB_B.fill(0.0);
+    this->numFacets = 0;
 }
 
 /*! The destructor. */
