@@ -28,6 +28,7 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 
 /*! @brief Faceted Solar Radiation Pressure Dynamic Effector */
 class FacetSRPDynamicEffector: public SysModel, public DynamicEffector
@@ -43,6 +44,8 @@ public:
     void addFacet(double area, double specCoeff, double diffCoeff, Eigen::Vector3d normal_B, Eigen::Vector3d locationPntB_B);  //!< Method for adding facets to the spacecraft geometry structure
 
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;                                                                               //!< Sun spice ephemeris input message
+    StateData *hubPosition;                                                                                                         //!< [m] Hub inertial position vector
+    StateData *hubSigma;                                                                                                            //!< MRP attitude of the hub B frame with respect to the inertial frame
 
 private:
 };
