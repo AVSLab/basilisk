@@ -41,7 +41,7 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
 
     // Initialize the other module variables
     this->mass = 0.0;
-    this->IPntFc_F.Identity();
+    this->IPntFc_F.setIdentity();
     this->r_MB_B.setZero();
     this->r_FcF_F.setZero();
     this->omega_MB_B.setZero();
