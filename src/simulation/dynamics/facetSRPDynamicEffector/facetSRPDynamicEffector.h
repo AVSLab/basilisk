@@ -26,6 +26,8 @@
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 
 /*! @brief Faceted Solar Radiation Pressure Dynamic Effector */
 class FacetSRPDynamicEffector: public SysModel, public DynamicEffector
@@ -39,6 +41,8 @@ public:
     void UpdateState(uint64_t currentSimNanos) override;            //!< Method for updating the effector states
     void writeOutputMessages(uint64_t currentClock);                //!< Method for writing the output messages
     void addFacet(double area, double specCoeff, double diffCoeff, Eigen::Vector3d normal_B, Eigen::Vector3d locationPntB_B);  //!< Method for adding facets to the spacecraft geometry structure
+
+    ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;                                                                               //!< Sun spice ephemeris input message
 
 private:
 };
