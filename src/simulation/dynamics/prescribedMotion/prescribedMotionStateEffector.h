@@ -32,6 +32,29 @@
 /*! @brief prescribed motion state effector class */
 class PrescribedMotionStateEffector: public StateEffector, public SysModel {
 public:
+    PrescribedMotionStateEffector();
+    ~PrescribedMotionStateEffector();
+    void Reset(uint64_t CurrentClock) override;                      //!< Method for reset
+    void writeOutputStateMessages(uint64_t CurrentClock) override;   //!< Method for writing the output messages
+	void UpdateState(uint64_t CurrentSimNanos) override;             //!< Method for updating the effector states
+    void registerStates(DynParamManager& statesIn) override;         //!< Method for registering the effector's states
+    void linkInStates(DynParamManager& states) override;             //!< Method for giving the effector access to hub states
+    void updateContributions(double integTime,
+                             BackSubMatrices & backSubContr,
+                             Eigen::Vector3d sigma_BN,
+                             Eigen::Vector3d omega_BN_B,
+                             Eigen::Vector3d g_N) override; //!< Method for computing the effector's back-substitution contributions
+    void computeDerivatives(double integTime,
+                            Eigen::Vector3d rDDot_BN_N,
+                            Eigen::Vector3d omegaDot_BN_B,
+                            Eigen::Vector3d sigma_BN) override; //!< Method for effector to compute its state derivatives
+    void updateEffectorMassProps(double integTime) override; //!< Method for calculating the effector mass props and prop rates
+    void updateEnergyMomContributions(double integTime,
+                                      Eigen::Vector3d & rotAngMomPntCContr_B,
+                                      double & rotEnergyContr,
+                                      Eigen::Vector3d omega_BN_B); //!< Method for computing the energy and momentum of the effector
+    void computePrescribedMotionInertialStates(); //!< Method for computing the effector's states relative to the inertial frame
+
     double mass;                                        //!< [kg] Effector mass
     Eigen::Matrix3d IPntFc_F;                           //!< [kg-m^2] Inertia of the effector about its center of mass in F frame components
     Eigen::Vector3d r_MB_B;                             //!< [m] Position of point M relative to point B in B frame components
@@ -102,20 +125,6 @@ private:
     StateData *hubOmega;                                //!< [rad/s] Hub angular velocity in B frame components relative to the inertial frame
     Eigen::MatrixXd* inertialPositionProperty;          //!< [m] r_N Inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty;          //!< [m] v_N Inertial velocity relative to system spice zeroBase/refBase
-
-public:
-    PrescribedMotionStateEffector();                        //!< Constructor
-    ~PrescribedMotionStateEffector();                       //!< Destructor
-    void Reset(uint64_t CurrentClock);                      //!< Method for reset
-    void writeOutputStateMessages(uint64_t CurrentClock);   //!< Method for writing the output messages
-	void UpdateState(uint64_t CurrentSimNanos);             //!< Method for updating the effector states
-    void registerStates(DynParamManager& statesIn);         //!< Method for registering the effector's states
-    void linkInStates(DynParamManager& states);             //!< Method for giving the effector access to hub states
-    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< Method for computing the effector's back-substitution contributions
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);                         //!< Method for effector to compute its state derivatives
-    void updateEffectorMassProps(double integTime);         //!< Method for calculating the effector mass props and prop rates
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B);       //!< Method for computing the energy and momentum of the effector
-    void computePrescribedMotionInertialStates();           //!< Method for computing the effector's states relative to the inertial frame
 };
 
 #endif /* PRESCRIBED_MOTION_STATE_EFFECTOR_H */

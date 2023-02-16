@@ -77,15 +77,14 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t CurrentClo
     // Write the prescribed motion output message if it is linked
     if (this->prescribedMotionOutMsg.isLinked())
     {
-        PrescribedMotionMsgPayload prescribedMotionBuffer;
-        prescribedMotionBuffer = this->prescribedMotionOutMsg.zeroMsgPayload;
+        PrescribedMotionMsgPayload prescribedMotionBuffer = this->prescribedMotionOutMsg.zeroMsgPayload;
         eigenVector3d2CArray(this->r_FM_M, prescribedMotionBuffer.r_FM_M);
         eigenVector3d2CArray(this->rPrime_FM_M, prescribedMotionBuffer.rPrime_FM_M);
         eigenVector3d2CArray(this->rPrimePrime_FM_M, prescribedMotionBuffer.rPrimePrime_FM_M);
         eigenVector3d2CArray(this->omega_FM_F, prescribedMotionBuffer.omega_FM_F);
         eigenVector3d2CArray(this->omegaPrime_FM_F, prescribedMotionBuffer.omegaPrime_FM_F);
-        Eigen::Vector3d sigma_FM_loc;
-        sigma_FM_loc = eigenMRPd2Vector3d(this->sigma_FM);
+
+        Eigen::Vector3d sigma_FM_loc = eigenMRPd2Vector3d(this->sigma_FM);
         eigenVector3d2CArray(sigma_FM_loc, prescribedMotionBuffer.sigma_FM);
         this->prescribedMotionOutMsg.write(&prescribedMotionBuffer, this->moduleID, CurrentClock);
     }
@@ -93,8 +92,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t CurrentClo
     // Write the config log message if it is linked
     if (this->prescribedMotionConfigLogOutMsg.isLinked())
     {
-        SCStatesMsgPayload configLogMsg;
-        configLogMsg = this->prescribedMotionConfigLogOutMsg.zeroMsgPayload;
+        SCStatesMsgPayload configLogMsg = this->prescribedMotionConfigLogOutMsg.zeroMsgPayload;
 
         // Note that the configLogMsg B frame represents the effector body frame (frame F)
         eigenVector3d2CArray(this->r_FcN_N, configLogMsg.r_BN_N);
@@ -178,8 +176,10 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 
     // Find the B frame time derivative of IPntFc_B
     Eigen::Matrix3d rPrimeTilde_FcB_B = eigenTilde(this->rPrime_FcB_B);
-    this->effProps.IEffPrimePntB_B = this->omegaTilde_FB_B* this->IPntFc_B - this->IPntFc_B * this->omegaTilde_FB_B
-        + this->mass * (rPrimeTilde_FcB_B * this->rTilde_FcB_B.transpose() + this->rTilde_FcB_B * rPrimeTilde_FcB_B.transpose());
+    this->effProps.IEffPrimePntB_B = this->omegaTilde_FB_B * this->IPntFc_B
+                                     - this->IPntFc_B * this->omegaTilde_FB_B
+                                     + this->mass * (rPrimeTilde_FcB_B * this->rTilde_FcB_B.transpose()
+                                     + this->rTilde_FcB_B * rPrimeTilde_FcB_B.transpose());
 }
 
 /*! This method allows the state effector to give its contributions to the matrices needed for the back-sub.
@@ -192,7 +192,11 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
  components
  @param g_N [m/s^2] Gravitational acceleration in N frame components
 */
-void PrescribedMotionStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void PrescribedMotionStateEffector::updateContributions(double integTime,
+                                                        BackSubMatrices & backSubContr,
+                                                        Eigen::Vector3d sigma_BN,
+                                                        Eigen::Vector3d omega_BN_B,
+                                                        Eigen::Vector3d g_N)
 {
     // Compute dcm_BN
     this->sigma_BN = sigma_BN;
@@ -213,10 +217,13 @@ void PrescribedMotionStateEffector::updateContributions(double integTime, BackSu
 
     // Rotation contributions
     Eigen::Matrix3d IPrimePntFc_B = this->omegaTilde_FB_B * this->IPntFc_B - this->IPntFc_B * this->omegaTilde_FB_B;
-    backSubContr.vecRot = - (this->mass * this->rTilde_FcB_B * this->rPrimePrime_FcB_B)  - (IPrimePntFc_B + this->omegaTilde_BN_B * this->IPntFc_B ) * this->omega_FB_B - this->IPntFc_B * this->omegaPrime_FB_B - this->mass * this->omegaTilde_BN_B * rTilde_FcB_B * this->rPrime_FcB_B;
+    backSubContr.vecRot = -(this->mass * this->rTilde_FcB_B * this->rPrimePrime_FcB_B)
+                          - (IPrimePntFc_B + this->omegaTilde_BN_B * this->IPntFc_B) * this->omega_FB_B
+                          - this->IPntFc_B * this->omegaPrime_FB_B
+                          - this->mass * this->omegaTilde_BN_B * rTilde_FcB_B * this->rPrime_FcB_B;
 }
 
-/*! This method is empty because the equations of motion of the effector are prescribed.
+/*!
  @return void
  @param integTime [s] Time the method is called
  @param rDDot_BN_N [m/s^2] Acceleration of the vector pointing from the inertial frame origin to the B frame origin,
@@ -225,7 +232,10 @@ void PrescribedMotionStateEffector::updateContributions(double integTime, BackSu
  inertial frame, expressed in B frame components
  @param sigma_BN Current B frame attitude with respect to the inertial frame
 */
-void PrescribedMotionStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
+void PrescribedMotionStateEffector::computeDerivatives(double integTime,
+                                                       Eigen::Vector3d rDDot_BN_N,
+                                                       Eigen::Vector3d omegaDot_BN_B,
+                                                       Eigen::Vector3d sigma_BN)
 {
     // This method is empty because the equations of motion of the effector are prescribed.
 }
@@ -238,7 +248,10 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime, Eigen::
  @param omega_BN_B [rad/s] Angular velocity of the B frame with respect to the inertial frame, expressed in B frame
  components
 */
-void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
+void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTime,
+                                                                 Eigen::Vector3d & rotAngMomPntCContr_B,
+                                                                 double & rotEnergyContr,
+                                                                 Eigen::Vector3d omega_BN_B)
 {
     // Update omega_BN_B and omega_FN_B
     this->omega_BN_B = omega_BN_B;
@@ -252,7 +265,8 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
     rotAngMomPntCContr_B = this->IPntFc_B * this->omega_FN_B + this->mass * this->rTilde_FcB_B * this->rDot_FcB_B;
 
     // Find the rotational energy contribution from the hub
-    rotEnergyContr = 0.5 * this->omega_FN_B.dot(this->IPntFc_B * this->omega_FN_B) + 0.5 * this->mass * this->rDot_FcB_B.dot(this->rDot_FcB_B);
+    rotEnergyContr = 0.5 * this->omega_FN_B.dot(this->IPntFc_B * this->omega_FN_B)
+                     + 0.5 * this->mass * this->rDot_FcB_B.dot(this->rDot_FcB_B);
 }
 
 /*! This method computes the effector states relative to the inertial frame.
@@ -260,16 +274,15 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
 */
 void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 {
-     // Compute the effector's attitude with respect to the inertial frame
-    Eigen::Matrix3d dcm_FN;
-    dcm_FN = (this->dcm_BF).transpose() * this->dcm_BN;
+    // Compute the effector's attitude with respect to the inertial frame
+    Eigen::Matrix3d dcm_FN = (this->dcm_BF).transpose() * this->dcm_BN;
     this->sigma_FN = eigenMRPd2Vector3d(eigenC2MRP(dcm_FN));
 
     // Compute the effector's inertial position vector
-    this->r_FcN_N = (Eigen::Vector3d)(*this->inertialPositionProperty) + this->dcm_BN.transpose() * this->r_FcB_B;
+    this->r_FcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_FcB_B;
 
     // Compute the effector's inertial velocity vector
-    this->v_FcN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty) + this->dcm_BN.transpose() * this->rDot_FcB_B;
+    this->v_FcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_FcB_B;
 }
 
 /*! This method updates the effector state at the dynamics frequency.
@@ -281,8 +294,7 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t CurrentSimNanos)
     // Read the input message if it is linked and written
     if (this->prescribedMotionInMsg.isLinked() && this->prescribedMotionInMsg.isWritten())
     {
-        PrescribedMotionMsgPayload incomingPrescribedStates;
-        incomingPrescribedStates = this->prescribedMotionInMsg();
+        PrescribedMotionMsgPayload incomingPrescribedStates = this->prescribedMotionInMsg();
         this->r_FM_M = cArray2EigenVector3d(incomingPrescribedStates.r_FM_M);
         this->rPrime_FM_M = cArray2EigenVector3d(incomingPrescribedStates.rPrime_FM_M);
         this->rPrimePrime_FM_M = cArray2EigenVector3d(incomingPrescribedStates.rPrimePrime_FM_M);
