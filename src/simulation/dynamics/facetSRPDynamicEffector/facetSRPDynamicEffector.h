@@ -29,6 +29,17 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/avsEigenMRP.h"
+
+/*! @brief Spacecraft Geometry Data */
+typedef struct {
+    std::vector<double> facetAreas;                                   //!< [m^2] Vector of facet areas
+    std::vector<double> facetSpecCoeffs;                              //!< Vector of facet spectral reflection optical coefficients
+    std::vector<double> facetDiffCoeffs;                              //!< Vector of facet diffuse reflection optical coefficients
+    std::vector<Eigen::Vector3d> facetNormals_B;                      //!< Vector of facet normals expressed in B frame components
+    std::vector<Eigen::Vector3d> facetLocationsPntB_B;                //!< [m] Vector of facet locations wrt point B in B frame components
+}FacetedSRPSpacecraftGeometryData;
 
 /*! @brief Faceted Solar Radiation Pressure Dynamic Effector */
 class FacetSRPDynamicEffector: public SysModel, public DynamicEffector
@@ -43,11 +54,14 @@ public:
     void writeOutputMessages(uint64_t currentClock);                //!< Method for writing the output messages
     void addFacet(double area, double specCoeff, double diffCoeff, Eigen::Vector3d normal_B, Eigen::Vector3d locationPntB_B);  //!< Method for adding facets to the spacecraft geometry structure
 
-    ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;                                                                               //!< Sun spice ephemeris input message
-    StateData *hubPosition;                                                                                                         //!< [m] Hub inertial position vector
-    StateData *hubSigma;                                                                                                            //!< MRP attitude of the hub B frame with respect to the inertial frame
+    ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;               //!< Sun spice ephemeris input message
+    uint64_t numFacets;                                             //!< Total number of spacecraft facets
+    Eigen::Vector3d r_SN_N;                                         //!< [m] Position vector of the Sun with respect to the inertial frame
+    StateData *hubPosition;                                         //!< [m] Hub inertial position vector
+    StateData *hubSigma;                                            //!< MRP attitude of the hub B frame with respect to the inertial frame
 
 private:
+    FacetedSRPSpacecraftGeometryData scGeometry;                    //!< Structure to hold the spacecraft facet data
 };
 
 #endif 
