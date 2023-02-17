@@ -50,18 +50,18 @@ bskPath = path.split('src')[0]
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue", [
-      (2015,   0,  80,   0,  6636.6,   -451.9,  54408.9)
-    , (2015,   0,   0, 120, 39521.1,    377.7, -11228.8)
-    , (2015,   0, -80, 240,  5796.3,  15759.1, -52927.1)
-    , (2015, 100,  80,   0,  6323.4,   -477.6,  52249.1)
-    , (2015, 100,   0, 120, 37538.1,    351.1, -10751.1)
-    , (2015, 100, -80, 240,  5612.2,  14789.3, -50385.8)
-    , (2017.5, 0, 80, 0, 6605.2, -298.7, 54506.3)
-    , (2017.5, 0, 0, 120, 39569.4, 252.3, -11067.9)
-    , (2017.5, 0, -80, 240, 5864.6, 15764.1, -52706.1)
-    , (2017.5, 100, 80, 0, 6294.3, -331.1, 52337.8)
-    , (2017.5, 100, 0, 120, 37584.4, 235.7, -10600.5)
-    , (2017.5, 100, -80, 240, 5674.9, 14793.1, -50179.5)
+      (2020,    0,  80,   0,  6570.4,   -146.3,  54606.0)
+    , (2020,    0,   0, 120, 39624.3,    109.9, -10932.5)
+    , (2020,    0, -80, 240,  5940.6,  15772.1, -52480.8)
+    , (2020,  100,  80,   0,  6261.8,   -185.5,  52429.1)
+    , (2020,  100,   0, 120, 37636.7,    104.9, -10474.8)
+    , (2020,  100, -80, 240,  5744.9,  14799.5, -49969.4)
+    , (2022.5,   0,  80,   0,  6529.9,     1.1,  54713.4)
+    , (2022.5,   0,   0, 120, 39684.7,   -42.2, -10809.5)
+    , (2022.5,   0, -80, 240,  6016.5, 15776.7, -52251.6)
+    , (2022.5, 100,  80,   0,  6224.0,   -44.5,  52527.0)
+    , (2022.5, 100,   0, 120, 37694.0,   -35.3, -10362.0)
+    , (2022.5, 100, -80, 240,  5815.0, 14803.0, -49755.3)
 ])
 @pytest.mark.parametrize("useDefault, useMsg", [
     (False, False)
@@ -232,14 +232,14 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
 if __name__ == "__main__":
     test_module(              # update "module" in function name
                  False,         # showplots
-                 2017.5,        # decimalYear
-                 100,             # Height (km)
-                 0,            # latitude (deg)
-                 120,             # longitude (deg)
-                 37584.4,        # BxTrue (nT)
-                 235.7,        # ByTrue (nT)
-                 -10600.5,       # BzTrue (nT)
-                 False,          # useDefault
+                 2020,        # decimalYear
+                 0,             # Height (km)
+                 80,            # latitude (deg)
+                 0,             # longitude (deg)
+                 6570.4,        # BxTrue (nT)
+                 -146.3,        # ByTrue (nT)
+                 54606.0,       # BzTrue (nT)
+                 True,          # useDefault
                  False,         # useMsg
                  False,         # useMinReach
                  False,         # useMaxReach
