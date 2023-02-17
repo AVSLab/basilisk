@@ -81,6 +81,8 @@ which are required for calculating SRP forces and torques.
 */
 void FacetSRPDynamicEffector::linkInStates(DynParamManager& states)
 {
+    this->hubSigma = states.getStateObject("hubSigma");
+    this->hubPosition = states.getStateObject("hubPosition");
 }
 
 /*! This method computes the body forces and torques for the SRP effector.
