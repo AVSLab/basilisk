@@ -29,19 +29,18 @@ import os
 import numpy as np
 import pytest
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-
-bskPath = path.split('src')[0]
-
-# Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import magneticFieldWMM
 from Basilisk.architecture import messaging
+from Basilisk.simulation import magneticFieldWMM
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+bskPath = path.split('src')[0]
+
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -69,11 +68,9 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
     , (False, True)
     , (True, True)
 ])
-@pytest.mark.parametrize("useMinReach", [ True, False])
-@pytest.mark.parametrize("useMaxReach", [ True, False])
-@pytest.mark.parametrize("usePlanetEphemeris", [ True, False])
-
-
+@pytest.mark.parametrize("useMinReach", [True, False])
+@pytest.mark.parametrize("useMaxReach", [True, False])
+@pytest.mark.parametrize("usePlanetEphemeris", [True, False])
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDefault, useMsg, useMinReach, useMaxReach, usePlanetEphemeris):
     """Module Unit Test"""
@@ -173,7 +170,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
 
     unitTestSim.TotalSim.SingleStepProcesses()
 
-    # This pulls the actual data log from the simulation run.
+    # This pulls the actual data log from the simulation run and converts to nano-Tesla
     mag0Data = dataLog0.magField_N*1e9
     mag1Data = dataLog1.magField_N*1e9
 
@@ -186,18 +183,15 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
         NM = np.dot(refPlanetDCM.transpose(), PM)
         magField_N = [np.dot(NM, B_M).tolist()]
 
-
         if radius < minReach:
             magField_N = [[0.0, 0.0, 0.0]]
-        if radius > maxReach and maxReach > 0:
+        if radius > maxReach > 0:
             magField_N = [[0.0, 0.0, 0.0]]
         return magField_N
-
 
     # compare the module results to the truth values
     accuracy = 1e-1
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
-
 
     # check the exponential atmosphere results
     #
@@ -213,7 +207,6 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
             trueMagField, mag1Data, accuracy, "SC1 mag vector",
             testFailCount, testMessages)
 
-
     #   print out success or failure message
     snippentName = "unitTestPassFail" + str(useDefault) + str(useMinReach) + str(useMaxReach) + str(usePlanetEphemeris)
     if testFailCount == 0:
@@ -226,9 +219,6 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
 
