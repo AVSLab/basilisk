@@ -66,6 +66,12 @@ void FacetSRPDynamicEffector::addFacet(double area,
                                        Eigen::Vector3d normal_B,
                                        Eigen::Vector3d locationPntB_B)
 {
+    this->scGeometry.facetAreas.push_back(area);
+    this->scGeometry.facetSpecCoeffs.push_back(specCoeff);
+    this->scGeometry.facetDiffCoeffs.push_back(diffCoeff);
+    this->scGeometry.facetNormals_B.push_back(normal_B);
+    this->scGeometry.facetLocationsPntB_B.push_back(locationPntB_B);
+    this->numFacets = this->numFacets + 1;
 }
 
 /*! This method is used to link the faceted SRP effector to the hub attitude and position,
