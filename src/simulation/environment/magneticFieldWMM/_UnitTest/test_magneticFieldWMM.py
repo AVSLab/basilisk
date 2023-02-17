@@ -71,15 +71,19 @@ bskPath = path.split('src')[0]
 @pytest.mark.parametrize("useMinReach", [True, False])
 @pytest.mark.parametrize("useMaxReach", [True, False])
 @pytest.mark.parametrize("usePlanetEphemeris", [True, False])
+@pytest.mark.parametrize("accuracy", [0.1])
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDefault, useMsg, useMinReach, useMaxReach, usePlanetEphemeris):
+def test_module(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue,
+                useDefault, useMsg, useMinReach, useMaxReach, usePlanetEphemeris, accuracy):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDefault, useMsg, useMinReach, useMaxReach, usePlanetEphemeris)
+    [testResults, testMessage] = run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue,
+                                     useDefault, useMsg, useMinReach, useMaxReach, usePlanetEphemeris, accuracy)
     assert testResults < 1, testMessage
 
 
-def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDefault, useMsg, useMinReach, useMaxReach, usePlanetEphemeris):
+def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDefault, useMsg, useMinReach,
+        useMaxReach, usePlanetEphemeris, accuracy):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -190,7 +194,6 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
         return magField_N
 
     # compare the module results to the truth values
-    accuracy = 1e-1
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
     # check the exponential atmosphere results
@@ -240,5 +243,6 @@ if __name__ == "__main__":
                  False,         # useMsg
                  False,         # useMinReach
                  False,         # useMaxReach
-                 False          # usePlanetEphemeris
+                 False,         # usePlanetEphemeris
+                 0.1            # accuracy
                )
