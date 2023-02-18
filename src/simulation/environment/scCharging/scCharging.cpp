@@ -135,7 +135,10 @@ void ScCharging::readMessages()
         
     PlasmaFluxInMsgBuffer = this->plasmaFluxInMsg();
     this->energies = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.energies,MAX_PLASMA_FLUX_SIZE,1);
-    this->electronFlux = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.meanElectronFlux,MAX_PLASMA_FLUX_SIZE,1);
+    //this->electronFlux = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.meanElectronFlux,MAX_PLASMA_FLUX_SIZE,1);
+    int n = sizeof(PlasmaFluxInMsgBuffer.meanElectronFlux) / sizeof(PlasmaFluxInMsgBuffer.meanElectronFlux[0]);
+    std::vector<double> electronFlux;
+    electronFlux.insert(electronFlux.begin(), PlasmaFluxInMsgBuffer.meanElectronFlux, PlasmaFluxInMsgBuffer.meanElectronFlux + n);
     this->ionFlux = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.meanIonFlux,MAX_PLASMA_FLUX_SIZE,1);
     
     for (c = 0; c < this->numSat; c++) {
@@ -148,26 +151,20 @@ void ScCharging::readMessages()
 double ScCharging::electronCurrent(double phi, double q0, double A, double E)
 {
     double constant = q0 * 2 * M_PI * A; // constant multiplier for integral
-    
-    // find data values necessary for linear interpolation
-//    int n = sizeof(electronFlux)/sizeof(electronFlux[0]);
-//    double acceptableOffset = 1;
-//    int x0 = interpSorter(electronFlux, n, E, acceptableOffset), x1 = x0 + 1;
-//    double y0 = electronFlux[x0], y1 = electronFlux[x1];
     // linearly interpolate flux distribution value for given energy
-//    double fluxDist = interp(x0, x1, y0, y1, E);
+    double fluxDist = interp(electronFlux, E);
     
     // reassign all electron flux < 50 eV to the flux at 50 eV
-//    if (fluxDist < 50){
-//        fluxDist = electronFlux[0];
-//    }
+    if (fluxDist < 50){
+        fluxDist = electronFlux[0];
+    }
 
     // term to be integrated by trapz
-//    std::function<double(double)> integrand = [&](double E){return E/(E - phi) * fluxDist;};
+    std::function<double(double)> integrand = [&](double E){return E/(E - phi) * fluxDist;};
     // integral bounds
     double lowerBound = 0, upperBound = 40000 + phi;
     // integral calculated with trapz
-//    double integral = trapz(integrand, lowerBound, upperBound, 100);
+    double integral = trapz(integrand, lowerBound, upperBound, 100);
     
     double Ie = constant + lowerBound + upperBound;
     return Ie;
@@ -180,37 +177,35 @@ double ScCharging::electronCurrent(double phi, double q0, double A, double E)
  */
 double ScCharging::interp(const std::vector<double>& data, double x)
 {
-//    // ensure data is in ascending order
-//    std::sort(data.begin(), data.end());
-//
-//    // get iterator >= given x's corresponding iterator
-//    auto iterator = std::lower_bound(data.begin(), data.end(), x);
-//    // if value is the smallest value in dataset
-//    if (iterator == data.begin()){
-//        std::cout << "Too low " << std::endl;
-//    }
-//    // find closest iterator to x
-//    double a = *(iterator - 1);
-//    double b = *(iterator);
-//    long closestIterator;
-//    if (fabs(x - a) < fabs(x - b)){
-//        closestIterator =  iterator - data.begin() - 1;
-//    }
-//    closestIterator = iterator - data.begin();
-//
-//    // check if closest iterator is above or below x and create bounds for linear interpolation
-//    double x0, x1, y0, y1;
-//    if ((data[closestIterator] - x) >= 0){     // found value greater than x
-//        x0 = closestIterator - 1, x1 = closestIterator;
-//        y0 = data[x0], y1 = data[x1];
-//    } else{     // found value less than x
-//        x0 = closestIterator, x1 = closestIterator + 1;
-//        y0 = data[x0], y1 = data[x1];
-//    }
-//    double y = y0 + ((y1-y0)/(x1-x0)) * (x - x0);
-//
-//    return y;
-    double y = 1;
+    // ensure data is in ascending order
+    std::sort(data.begin(), data.end());
+    
+    // get iterator >= given x's corresponding iterator
+    auto iterator = std::lower_bound(data.begin(), data.end(), x);
+    // if value is the smallest value in dataset
+    if (iterator == data.begin()){
+        std::cout << "Too low " << std::endl;
+    }
+    // find closest iterator to x
+    double a = *(iterator - 1);
+    double b = *(iterator);
+    long closestIterator;
+    if (fabs(x - a) < fabs(x - b)){
+        closestIterator =  iterator - data.begin() - 1;
+    }
+    closestIterator = iterator - data.begin();
+    
+    // check if closest iterator is above or below x and create bounds for linear interpolation
+    double x0, x1, y0, y1;
+    if ((data[closestIterator] - x) >= 0){     // found value greater than x
+        x0 = closestIterator - 1, x1 = closestIterator;
+        y0 = data[x0], y1 = data[x1];
+    } else{     // found value less than x
+        x0 = closestIterator, x1 = closestIterator + 1;
+        y0 = data[x0], y1 = data[x1];
+    }
+    double y = y0 + ((y1-y0)/(x1-x0)) * (x - x0);
+    
     return y;
 }
 

@@ -69,7 +69,8 @@ private:
     std::vector<Eigen::Vector3d> r_BN_NList;                    //!< [m] list of inertial satellite position vectors
     std::vector<Eigen::MRPd> sigma_BNList;                      //!< [m] list of satellite MRP orientations
     Eigen::VectorXd energies;                                   //!< [eV] particle energies
-    Eigen::VectorXd electronFlux;                               //!< [cm^-2 s^-1 sr^-2 eV^-1] electron flux
+    //Eigen::VectorXd electronFlux;                               //!< [cm^-2 s^-1 sr^-2 eV^-1] electron flux
+    std::vector<double> electronFlux;                           //!< [cm^-2 s^-1 sr^-2 eV^-1] electron flux
     Eigen::VectorXd ionFlux;                                    //!< [cm^-2 s^-1 sr^-2 eV^-1] ion flux
     unsigned int numSat;
     
