@@ -45,7 +45,6 @@
 class Spacecraft : public DynamicObject{
 public:
     uint64_t simTimePrevious;            //!< -- Previous simulation time
-    uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
     std::string sysTimePropertyName;     //!< -- Name of the system time property
     ReadFunctor<AttRefMsgPayload> attRefInMsg; //!< -- (optional) reference attitude input message name
     ReadFunctor<TransRefMsgPayload> transRefInMsg; //!< -- (optional) reference translation input message name
