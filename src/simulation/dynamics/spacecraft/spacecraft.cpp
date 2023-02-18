@@ -461,17 +461,28 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
  calculate the accumulated deltaV */
 void Spacecraft::integrateState(double integrateToThisTime)
 {
-    // - Find the time step
-	double localTimeStep = integrateToThisTime - this->timePrevious;
 
-	// - Find v_CN_N before integration for accumulated DV
+    this->preIntegration(integrateToThisTime);
+
+    this->integrator->integrate(this->timeBefore, this->localTimeStep);
+    
+    this->postIntegration(integrateToThisTime);
+
+}
+
+/*! Prepare for integration process
+ @param integrateToThisTime Time to integrate to
+ */
+void Spacecraft::preIntegration(double integrateToThisTime) {
+    this->localTimeStep = integrateToThisTime - this->timePrevious;
+
+    // - Find v_CN_N before integration for accumulated DV
     Eigen::Vector3d oldV_BN_N = this->hubV_N->getState();  // - V_BN_N before integration
     Eigen::Vector3d oldV_CN_N;  // - V_CN_N before integration
     Eigen::Vector3d oldC_B;     // - Center of mass offset before integration
-    Eigen::Vector3d oldOmega_BN_B;  // - angular rate of B wrt N in the Body frame
     Eigen::MRPd oldSigma_BN;    // - Sigma_BN before integration
     // - Get the angular rate, oldOmega_BN_B from the dyn manager
-    oldOmega_BN_B = this->hubOmega_BN_B->getState();
+    this->oldOmega_BN_B = this->hubOmega_BN_B->getState();
     // - Get center of mass, v_BN_N and dcm_NB from the dyn manager
     oldSigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
     // - Finally find v_CN_N
@@ -480,8 +491,14 @@ void Spacecraft::integrateState(double integrateToThisTime)
 
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
     this->hub.matchGravitytoVelocityState(oldV_CN_N); // Set gravity velocity to base velocity for DV estimation
-    double timeBefore = integrateToThisTime - localTimeStep;
-    this->integrator->integrate(timeBefore, localTimeStep);
+    this->timeBefore = integrateToThisTime - this->localTimeStep;
+
+}
+
+/*! Perform post-integration steps
+ @param integrateToThisTime Time to integrate to
+ */
+void Spacecraft::postIntegration(double integrateToThisTime) {
     this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
 
     // - Call mass properties to get current info on the mass props of the spacecraft
@@ -508,13 +525,13 @@ void Spacecraft::integrateState(double integrateToThisTime)
 
     // - non-conservative acceleration of the body frame in the body frame
     this->nonConservativeAccelpntB_B = (newDcm_NB.transpose()*(newV_BN_N -
-                                                               this->hubGravVelocity->getState()))/localTimeStep;
+                                                               this->hubGravVelocity->getState()))/this->localTimeStep;
 
     // - angular acceleration in the body frame
     Eigen::Vector3d newOmega_BN_B;
     newOmega_BN_B = this->hubOmega_BN_B->getState();
-    if (fabs(localTimeStep) > 1e-10) {
-        this->omegaDot_BN_B = (newOmega_BN_B - oldOmega_BN_B)/localTimeStep; //angular acceleration of B wrt N in the Body frame
+    if (fabs(this->localTimeStep) > 1e-10) {
+        this->omegaDot_BN_B = (newOmega_BN_B - this->oldOmega_BN_B)/this->localTimeStep; //angular acceleration of B wrt N in the Body frame
     } else {
         this->omegaDot_BN_B = {0., 0., .0};
     }
@@ -535,7 +552,7 @@ void Spacecraft::integrateState(double integrateToThisTime)
     // - Compute force and torque on the body due to stateEffectors
     this->calcForceTorqueFromStateEffectors(integrateToThisTime, newOmega_BN_B);
 
-    return;
+
 }
 
 /*! This method is used to find the total energy and momentum of the spacecraft. It finds the total orbital energy,

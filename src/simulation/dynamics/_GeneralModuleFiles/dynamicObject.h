@@ -45,6 +45,8 @@ public:
     virtual void equationsOfMotion(double t, double timeStep) = 0;     //!< -- This is computing F = Xdot(X,t)
     virtual void integrateState(double t) = 0;        //!< -- This method steps the state forward in time
     void setIntegrator(StateVecIntegrator *newIntegrator);  //!< -- Sets a new integrator
+    virtual void preIntegration(double callTime) = 0;       //!< -- method to perform pre-integration steps
+    virtual void postIntegration(double callTime) = 0;      //!< -- method to perform post-integration steps
 };
 
 
