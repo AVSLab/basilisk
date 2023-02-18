@@ -47,6 +47,7 @@ public:
     void setIntegrator(StateVecIntegrator *newIntegrator);  //!< -- Sets a new integrator
     virtual void preIntegration(double callTime) = 0;       //!< -- method to perform pre-integration steps
     virtual void postIntegration(double callTime) = 0;      //!< -- method to perform post-integration steps
+    bool isDynamicsSynced = false;                    //!< flag indicating that another spacecraft object is controlling the integration
 };
 
 
