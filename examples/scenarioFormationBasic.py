@@ -27,6 +27,10 @@ are taken from :ref:`scenarioAttitudeFeedbackRW`. The purpose of this script is 
 setup multiple satellites, and also show how to store the Basilisk simulation data to be able to visualize
 both satellite's motions within the :ref:`Vizard <vizard>` application.
 
+Note, this scenario also illustrates how to ensure that the differential equations of motion of
+the servicer and debris object are integrated at the same time.  This is not required in this scenario
+as there are no direct satellite-to-satellite dynamic interactions.
+
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioFormationBasic.py
@@ -226,6 +230,9 @@ def run(show_plots):
           0., 0, 450.]
     scObject2.hub.mHub = 350.0  # kg
     scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I2)
+    # this next step is not required, just a demonstration how we can ensure that
+    # the Servicer and Debris differential equations are integrated simultaneously
+    scObject.syncDynamicsIntegration(scObject2)
 
     # make another debris object */
     scObject3 = spacecraft.Spacecraft()
@@ -237,9 +244,9 @@ def run(show_plots):
     scObject3.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I3)
 
     # add spacecraft object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject, None, 1)
-    scSim.AddModelToTask(simTaskName, scObject2, None, 2)
-    scSim.AddModelToTask(simTaskName, scObject3, None, 3)
+    scSim.AddModelToTask(simTaskName, scObject)
+    scSim.AddModelToTask(simTaskName, scObject2)
+    scSim.AddModelToTask(simTaskName, scObject3)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
