@@ -460,12 +460,17 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
  calculate the accumulated deltaV */
 void Spacecraft::integrateState(double integrateToThisTime)
 {
+    int i;      // dynamic Object counter
 
-    this->preIntegration(integrateToThisTime);
+    for (i = 0; i < this->integrator->dynPtrs.size(); i++) {
+        this->integrator->dynPtrs.at(i)->preIntegration(integrateToThisTime);
+    }
 
     this->integrator->integrate(this->timeBefore, this->localTimeStep);
-    
-    this->postIntegration(integrateToThisTime);
+
+    for (i = 0; i < this->integrator->dynPtrs.size(); i++) {
+        this->integrator->dynPtrs.at(i)->postIntegration(integrateToThisTime);
+    }
 
 }
 
