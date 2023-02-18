@@ -35,7 +35,6 @@ Spacecraft::Spacecraft()
     this->currTimeStep = 0.0;
     this->timePrevious = 0.0;
     this->simTimePrevious = 0;
-    this->numOutMsgBuffers = 2;
     this->dvAccum_CN_B.setZero();
     this->dvAccum_BN_B.setZero();
 
