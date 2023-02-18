@@ -53,3 +53,12 @@ void DynamicObject::setIntegrator(StateVecIntegrator *newIntegrator)
 
     return;
 }
+
+
+/*! This method is used to connect the integration of another DynamicObject
+    to the integration of this spacecraft module */
+void DynamicObject::syncDynamicsIntegration(DynamicObject *dynPtr)
+{
+    this->integrator->dynPtrs.push_back(dynPtr);
+    dynPtr->isDynamicsSynced = true;
+}
