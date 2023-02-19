@@ -20,13 +20,8 @@
 
 #include "svIntegratorRKF45.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
-#include <stdio.h>
-#include <iostream>
-#include <Eigen/Dense>
 #include <vector>
 
-using namespace Eigen;
-using namespace std;
 
 svIntegratorRKF45::svIntegratorRKF45(DynamicObject* dyn) : StateVecIntegrator(dyn)
 {
@@ -73,13 +68,10 @@ svIntegratorRKF45::svIntegratorRKF45(DynamicObject* dyn) : StateVecIntegrator(dy
     // Set the default values for absolute and relative tolerance
     this->absTol = 1e-8;
     this->relTol = 1e-4;
-    
-    return;
 }
 
 svIntegratorRKF45::~svIntegratorRKF45()
 {
-    return;
 }
 
 /*<!
@@ -228,6 +220,4 @@ void svIntegratorRKF45::integrate(double currentTime, double timeStep)
             h = currentTime + timeStep - t;
         }
     }
-    
-    return;
 }

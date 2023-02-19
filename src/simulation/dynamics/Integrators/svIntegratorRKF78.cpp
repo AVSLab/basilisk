@@ -113,7 +113,6 @@ svIntegratorRKF78::svIntegratorRKF78(DynamicObject* dyn) : StateVecIntegrator(dy
     // Set the default values for absolute and relative tolerance
     this->absTol = 1e-8;
     this->relTol = 1e-4;
-    
 }
 
 svIntegratorRKF78::~svIntegratorRKF78()
@@ -266,6 +265,4 @@ void svIntegratorRKF78::integrate(double currentTime, double timeStep)
             h = currentTime + timeStep - t;
         }
     }
-
-    return;
 }
