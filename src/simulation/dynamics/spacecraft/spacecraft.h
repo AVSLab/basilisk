@@ -86,11 +86,10 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system
-    void integrateState(double time);       //!< -- This method steps the state forward one step in time
     void addStateEffector(StateEffector *newSateEffector);  //!< -- Attaches a stateEffector to the system
     void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
-    void preIntegration(double callTime);       //!< -- method to perform pre-integration steps
-    void postIntegration(double callTime);      //!< -- method to perform post-integration steps
+    void preIntegration(double callTime) final;       //!< -- method to perform pre-integration steps
+    void postIntegration(double callTime) final;      //!< -- method to perform post-integration steps
 
 private:
     StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
@@ -113,8 +112,6 @@ private:
     Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::MatrixXd *sysTime;            //!< [s] System time
 
-    double localTimeStep;                //!< [s] integration time step
-    double timeBefore;                   //!< [s] prior time value
     Eigen::Vector3d oldOmega_BN_B;       //!< [r/s] prior angular rate of B wrt N in the Body frame
 
 private:

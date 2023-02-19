@@ -62,3 +62,23 @@ void DynamicObject::syncDynamicsIntegration(DynamicObject *dynPtr)
     this->integrator->dynPtrs.push_back(dynPtr);
     dynPtr->isDynamicsSynced = true;
 }
+
+/*! This method is used to prepare the dynamic object to be integrate, integrate the states forward in time, and
+    finally perform the post-integration steps */
+void DynamicObject::integrateState(double integrateToThisTime)
+{
+    if (!this->isDynamicsSynced) {
+
+        int i;      // dynamic Object counter
+        for (i = 0; i < this->integrator->dynPtrs.size(); i++) {
+            this->integrator->dynPtrs.at(i)->preIntegration(integrateToThisTime);
+        }
+
+        this->integrator->integrate(this->timeBefore, this->localTimeStep);
+
+        for (i = 0; i < this->integrator->dynPtrs.size(); i++) {
+            this->integrator->dynPtrs.at(i)->postIntegration(integrateToThisTime);
+        }
+    }
+}
+
