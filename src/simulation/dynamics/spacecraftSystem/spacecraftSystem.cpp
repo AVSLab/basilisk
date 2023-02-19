@@ -919,25 +919,6 @@ void SpacecraftSystem::equationsOfMotionSystem(double integTimeSeconds, double t
     return;
 }
 
-/*! This method is used to integrate the state forward in time, switch MRPs, calculate energy and momentum, and 
- calculate the accumulated deltaV */
-void SpacecraftSystem::integrateState(double integrateToThisTime)
-{
-    if (!this->isDynamicsSynced) {
-
-        int i;      // dynamic Object counter
-        for (i = 0; i < this->integrator->dynPtrs.size(); i++) {
-            this->integrator->dynPtrs.at(i)->preIntegration(integrateToThisTime);
-        }
-
-        this->integrator->integrate(this->timeBefore, this->localTimeStep);
-
-        for (i = 0; i < this->integrator->dynPtrs.size(); i++) {
-            this->integrator->dynPtrs.at(i)->postIntegration(integrateToThisTime);
-        }
-    }
-}
-
 void SpacecraftSystem::findPriorStateInformation(SpacecraftUnit &spacecraft)
 {
     // - Find v_CN_N before integration for accumulated DV

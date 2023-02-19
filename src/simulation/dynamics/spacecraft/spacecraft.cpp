@@ -456,25 +456,6 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     return;
 }
 
-/*! This method is used to integrate the state forward in time, switch MRPs, calculate energy and momentum, and
- calculate the accumulated deltaV */
-void Spacecraft::integrateState(double integrateToThisTime)
-{
-    if (!this->isDynamicsSynced) {
-
-        int i;      // dynamic Object counter
-        for (i = 0; i < this->integrator->dynPtrs.size(); i++) {
-            this->integrator->dynPtrs.at(i)->preIntegration(integrateToThisTime);
-        }
-
-        this->integrator->integrate(this->timeBefore, this->localTimeStep);
-
-        for (i = 0; i < this->integrator->dynPtrs.size(); i++) {
-            this->integrator->dynPtrs.at(i)->postIntegration(integrateToThisTime);
-        }
-    }
-}
-
 /*! Prepare for integration process
  @param integrateToThisTime Time to integrate to
  */

@@ -43,12 +43,15 @@ public:
     virtual void computeEnergyMomentum(double t);     //!< -- Method to compute energy and momentum of the system
     virtual void UpdateState(uint64_t callTime) = 0;  //!< -- This hooks the dyn-object into Basilisk architecture
     virtual void equationsOfMotion(double t, double timeStep) = 0;     //!< -- This is computing F = Xdot(X,t)
-    virtual void integrateState(double t) = 0;        //!< -- This method steps the state forward in time
+    void integrateState(double t);                    //!< -- This method steps the state forward in time
     void setIntegrator(StateVecIntegrator *newIntegrator);  //!< -- Sets a new integrator
     virtual void preIntegration(double callTime) = 0;       //!< -- method to perform pre-integration steps
     virtual void postIntegration(double callTime) = 0;      //!< -- method to perform post-integration steps
     void syncDynamicsIntegration(DynamicObject *dynPtr);    //!< add another DynamicObject to be intregated simultaneously
     bool isDynamicsSynced = false;                    //!< flag indicating that another spacecraft object is controlling the integration
+    double localTimeStep;                             //!< [s] integration time step
+    double timeBefore;                                //!< [s] prior time value
+
 };
 
 
