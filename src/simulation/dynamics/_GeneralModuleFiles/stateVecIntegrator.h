@@ -35,8 +35,6 @@ public:
     virtual void integrate(double currentTime, double timeStep) = 0; //!< class method
     std::vector<DynamicObject*> dynPtrs; //!< This is an object that contains the method equationsOfMotion(), also known as the F function.
 
-protected:
-    DynamicObject* dynPtr; //!< This is an object that contains the method equationsOfMotion(), also known as the F function.
 };
 
 
