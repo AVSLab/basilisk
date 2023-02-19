@@ -154,6 +154,8 @@ public:
     std::vector<SpacecraftUnit*> unDockedSpacecraft; //!< -- vector of spacecraft currently detached from all other spacecraft
     int numberOfSCAttachedToPrimary;          //!< class variable 
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    double localTimeStep;                //!< [s] integration time step
+    double timeBefore;                   //!< [s] prior time value
 
 public:
     SpacecraftSystem();                    //!< -- Constructor
@@ -177,6 +179,8 @@ public:
     void attachSpacecraftToPrimary(SpacecraftUnit *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName);  //!< -- Attaches a spacecraft to the primary spacecraft chain
     void addSpacecraftUndocked(SpacecraftUnit *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
     void determineAttachedSCStates();  //!< class method
+    void preIntegration(double callTime);  //!< -- pre-integration steps
+    void postIntegration(double callTime);  //!< -- post-integration steps
 
 private:
     Eigen::MatrixXd *sysTime;            //!< [s] System time
