@@ -32,7 +32,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- Fixed CMake/conan case sensitivty issue when compiling Basilisk with `opNav`` flag set to `True`` on Linux platforms
+- Fixed CMake/conan case sensitivty issue when compiling Basilisk with `opNav` flag set to `True` on Linux platforms
 - Created fsw :ref:`hingedRigidBodyPIDMotor` to compute the commanded torque to :ref:`spinningBodyStateEffector` using a propotional-integral-derivative controller.
 - Added :ref:`torqueScheduler` to combine two :ref:`ArrayMotorTorqueMsgPayload` into one and implement effector locking logic.
 - Refactored how ``Custom.cmake`` files are included and how they are to be constructed. ``Custom.cmake`` files
