@@ -49,7 +49,7 @@ jobs:
       - name: "Create virtual Environment"
         run: python3 -m venv .venv
       - name: "Install wheel and conan package"
-        run: source .venv/bin/activate && pip3 install wheel conan pytest datashader holoviews pytest-xdist
+        run: source .venv/bin/activate && pip3 install wheel conan==1.59.0 pytest datashader holoviews pytest-xdist
       - name: "Build basilisk"
         run: source .venv/bin/activate && python3 conanfile.py
       - name: "Run Test"
@@ -99,7 +99,7 @@ jobs:
         shell: pwsh
         run: |
             venv\Scripts\activate
-            pip install wheel conan parse six pytest-xdist
+            pip install wheel conan==1.59.0 parse six pytest-xdist
       - name: "Add basilisk and cmake path to env path"
         shell: pwsh
         run: |
