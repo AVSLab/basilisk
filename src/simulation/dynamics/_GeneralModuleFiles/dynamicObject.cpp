@@ -56,7 +56,7 @@ void DynamicObject::setIntegrator(StateVecIntegrator *newIntegrator)
 
 
 /*! This method is used to connect the integration of another DynamicObject
-    to the integration of this spacecraft module */
+    to the integration of this DynamicObject */
 void DynamicObject::syncDynamicsIntegration(DynamicObject *dynPtr)
 {
     this->integrator->dynPtrs.push_back(dynPtr);
@@ -64,21 +64,19 @@ void DynamicObject::syncDynamicsIntegration(DynamicObject *dynPtr)
 }
 
 /*! This method is used to prepare the dynamic object to be integrate, integrate the states forward in time, and
-    finally perform the post-integration steps */
+    finally perform the post-integration steps.  This is only done if the DynamicObject integration is
+    not sync'd to another DynamicObject */
 void DynamicObject::integrateState(double integrateToThisTime)
 {
-    if (!this->isDynamicsSynced) {
+    if (this->isDynamicsSynced) return;
 
-        int i;      // dynamic Object counter
-        for (i = 0; i < this->integrator->dynPtrs.size(); i++) {
-            this->integrator->dynPtrs.at(i)->preIntegration(integrateToThisTime);
-        }
+    for (auto dynPtr : this->integrator->dynPtrs) {
+        dynPtr->preIntegration(integrateToThisTime);
+    }
 
-        this->integrator->integrate(this->timeBefore, this->localTimeStep);
+    this->integrator->integrate(this->timeBefore, this->timeStep);
 
-        for (i = 0; i < this->integrator->dynPtrs.size(); i++) {
-            this->integrator->dynPtrs.at(i)->postIntegration(integrateToThisTime);
-        }
+    for (auto dynPtr : this->integrator->dynPtrs) {
+        dynPtr->postIntegration(integrateToThisTime);
     }
 }
-
