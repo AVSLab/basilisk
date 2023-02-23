@@ -54,10 +54,10 @@ def test_RWUpdate(show_plots, accuracy):
     **Validation Test Description**
 
     The objective of this script is to test the functionality of changing the reaction wheel (RW) characteristics while
-    the simulation is running. It starts by testing the initial setup, and then does three additional tests: the first
-    two change the maximum allowed torque and the final one changes the current wheel speeds and maximum allowed wheel
-    speeds. All these tests rely on the fact that, when a maximum or minimum value is surpassed, the applied torque is
-    capped accordingly.
+    the simulation is running. It starts by testing the initial setup, and then does four additional tests: the first
+    two change the maximum allowed torque, the third one changes the maximum power limit, and the final one changes the 
+    current wheel speeds and maximum allowed wheel speeds. All these tests rely on the fact that, when a maximum or 
+    minimum value is surpassed, the applied torque is capped accordingly.
 
     As this test script is not parameterized, only one version of this script will run.
 
@@ -210,7 +210,30 @@ def RWUpdateTest(show_plots, accuracy):
     # Third test
     #
 
+    # reset the maximum torque values
+    RW1.P_max = 0.7
+    RW2.P_max = 0.7
+    RW3.P_max = 0.7
+    RW1.Omega = 7
+    RW2.Omega = -5
+    RW3.Omega = 2
+
+    # reconfigure a simulation stop time and re-execute the simulation run
+    unitTestSim.ConfigureStopTime(3*simulationTime)
+    unitTestSim.ExecuteSimulation()
+    numTests += 1
+
+    # expected output
+    trueTorque.append([0.1, 0.1, -0.3])
+
+    #
+    # Fourth test
+    #
+
     # reset the RW speed and set maximum values
+    RW1.P_max = -1
+    RW2.P_max = -1
+    RW3.P_max = -1
     RW1.Omega = 100*macros.RPM
     RW2.Omega = -200*macros.RPM
     RW3.Omega = 50*macros.RPM
@@ -219,7 +242,7 @@ def RWUpdateTest(show_plots, accuracy):
     RW3.Omega_max = 100*macros.RPM
 
     # reconfigure a simulation stop time and re-execute the simulation run
-    unitTestSim.ConfigureStopTime(3*simulationTime)
+    unitTestSim.ConfigureStopTime(4*simulationTime)
     unitTestSim.ExecuteSimulation()
     numTests += 1
 
@@ -257,7 +280,7 @@ def RWUpdateTest(show_plots, accuracy):
     return [testFailCount, ''.join(testMessages)]
 
 #
-# Run this unitTest as a stand-along python script
+# Run this unitTest as a standalone python script
 #
 if __name__ == "__main__":
     test_RWUpdate(
