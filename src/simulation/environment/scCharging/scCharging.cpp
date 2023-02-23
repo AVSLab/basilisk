@@ -19,6 +19,7 @@
 
 
 #include "simulation/environment/scCharging/scCharging.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include <iostream>
 #include <iomanip>
 #include <cstring>
@@ -135,10 +136,7 @@ void ScCharging::readMessages()
         
     PlasmaFluxInMsgBuffer = this->plasmaFluxInMsg();
     this->energies = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.energies,MAX_PLASMA_FLUX_SIZE,1);
-    //this->electronFlux = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.meanElectronFlux,MAX_PLASMA_FLUX_SIZE,1);
-    int n = sizeof(PlasmaFluxInMsgBuffer.meanElectronFlux) / sizeof(PlasmaFluxInMsgBuffer.meanElectronFlux[0]);
-    std::vector<double> electronFlux;
-    electronFlux.insert(electronFlux.begin(), PlasmaFluxInMsgBuffer.meanElectronFlux, PlasmaFluxInMsgBuffer.meanElectronFlux + n);
+    this->electronFlux = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.meanElectronFlux,MAX_PLASMA_FLUX_SIZE,1);
     this->ionFlux = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.meanIonFlux,MAX_PLASMA_FLUX_SIZE,1);
     
     for (c = 0; c < this->numSat; c++) {
@@ -152,13 +150,15 @@ double ScCharging::electronCurrent(double phi, double q0, double A, double E)
 {
     double constant = q0 * 2 * M_PI * A; // constant multiplier for integral
     // linearly interpolate flux distribution value for given energy
-    double fluxDist = interp(electronFlux, E);
-    
-    // reassign all electron flux < 50 eV to the flux at 50 eV
-    if (fluxDist < 50){
+    double electronArr[MAX_PLASMA_FLUX_SIZE];
+    eigenMatrixXd2CArray(electronFlux, electronArr); // convert electronFlux to array
+    int n = sizeof(electronArr) / sizeof(electronArr[0]);
+    std::vector<double> electronVec(electronArr, electronArr + n); // convert electronArr to vector
+    double fluxDist = interp(electronVec, E);
+    // reassign all electron flux < 50 eV to the lowest measured flux
+    if (fluxDist < 50.0){
         fluxDist = electronFlux[0];
     }
-
     // term to be integrated by trapz
     std::function<double(double)> integrand = [&](double E){return E/(E - phi) * fluxDist;};
     // integral bounds
@@ -166,7 +166,7 @@ double ScCharging::electronCurrent(double phi, double q0, double A, double E)
     // integral calculated with trapz
     double integral = trapz(integrand, lowerBound, upperBound, 100);
     
-    double Ie = constant + lowerBound + upperBound;
+    double Ie = constant * integral;
     return Ie;
 }
 
@@ -175,7 +175,7 @@ double ScCharging::electronCurrent(double phi, double q0, double A, double E)
  @param data vector containing datapoints to use in linear interpolation (y-values)
  @param x x-value being linear interpolated to
  */
-double ScCharging::interp(const std::vector<double>& data, double x)
+double ScCharging::interp(std::vector<double>& data, double x)
 {
     // ensure data is in ascending order
     std::sort(data.begin(), data.end());
@@ -194,7 +194,6 @@ double ScCharging::interp(const std::vector<double>& data, double x)
         closestIterator =  iterator - data.begin() - 1;
     }
     closestIterator = iterator - data.begin();
-    
     // check if closest iterator is above or below x and create bounds for linear interpolation
     double x0, x1, y0, y1;
     if ((data[closestIterator] - x) >= 0){     // found value greater than x
