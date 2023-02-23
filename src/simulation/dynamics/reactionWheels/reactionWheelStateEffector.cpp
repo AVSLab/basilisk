@@ -523,9 +523,16 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 		}
 
 		// minimum torque
-		if( std::abs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter]->u_min) {
+		if (std::abs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter]->u_min) {
 			CmdIt->u_cmd = 0.0;
 		}
+
+        // Power saturation
+        if (this->ReactionWheelData[RWIter]->P_max > 0) {
+            if (std::abs(CmdIt->u_cmd * this->ReactionWheelData[RWIter]->Omega) >= this->ReactionWheelData[RWIter]->P_max) {
+                CmdIt->u_cmd = std::copysign(this->ReactionWheelData[RWIter]->P_max / this->ReactionWheelData[RWIter]->Omega, CmdIt->u_cmd);
+            }
+        }
 
         // Speed saturation
         if (std::abs(this->ReactionWheelData[RWIter]->Omega) >= this->ReactionWheelData[RWIter]->Omega_max
