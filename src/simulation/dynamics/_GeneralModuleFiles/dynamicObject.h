@@ -49,7 +49,7 @@ public:
     virtual void postIntegration(double callTime) = 0;      //!< -- method to perform post-integration steps
     void syncDynamicsIntegration(DynamicObject *dynPtr);    //!< add another DynamicObject to be intregated simultaneously
     bool isDynamicsSynced = false;                    //!< flag indicating that another spacecraft object is controlling the integration
-    double localTimeStep;                             //!< [s] integration time step
+    double timeStep;                                  //!< [s] integration time step
     double timeBefore;                                //!< [s] prior time value
 
 };

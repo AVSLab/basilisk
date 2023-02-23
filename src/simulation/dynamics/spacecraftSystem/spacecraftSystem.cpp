@@ -1216,7 +1216,7 @@ void SpacecraftSystem::computeEnergyMomentumSystem(double time)
 void SpacecraftSystem::preIntegration(double integrateToThisTime) {
 
     // - Find the time step
-    this->localTimeStep = integrateToThisTime - this->timePrevious;
+    this->timeStep = integrateToThisTime - this->timePrevious;
 
     this->findPriorStateInformation(this->primaryCentralSpacecraft);
 
@@ -1228,7 +1228,7 @@ void SpacecraftSystem::preIntegration(double integrateToThisTime) {
     }
 
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
-    this->timeBefore = integrateToThisTime - this->localTimeStep;
+    this->timeBefore = integrateToThisTime - this->timeStep;
 
 }
 
@@ -1296,12 +1296,12 @@ void SpacecraftSystem::postIntegration(double integrateToThisTime) {
         this->updateSpacecraftMassProps(integrateToThisTime, (*(*spacecraftUnConnectedIt)));
     }
 
-    this->calculateDeltaVandAcceleration(this->primaryCentralSpacecraft, this->localTimeStep);
+    this->calculateDeltaVandAcceleration(this->primaryCentralSpacecraft, this->timeStep);
 
     // - Call for the rest of the spacecraft
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
-        this->calculateDeltaVandAcceleration((*(*spacecraftUnConnectedIt)), this->localTimeStep);
+        this->calculateDeltaVandAcceleration((*(*spacecraftUnConnectedIt)), this->timeStep);
     }
 
     // - Compute Energy and Momentum
