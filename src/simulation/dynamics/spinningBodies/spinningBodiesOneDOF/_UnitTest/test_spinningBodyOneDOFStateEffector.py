@@ -24,18 +24,17 @@
 
 import inspect
 import os
-
+import matplotlib.pyplot as plt
 import numpy
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
-from Basilisk.simulation import spacecraft, spinningBodyStateEffector, gravityEffector
-from Basilisk.utilities import macros
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.simulation import spacecraft, spinningBodyOneDOFStateEffector, gravityEffector
+from Basilisk.architecture import messaging
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -43,9 +42,12 @@ from Basilisk.utilities import macros
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-
-
-def test_spinningBodyTest(show_plots):
+@pytest.mark.parametrize("cmdTorque, lock", [
+    (0.0, False)
+    , (0.0, True)
+    , (1.0, False)
+])
+def test_spinningBody(show_plots, cmdTorque, lock):
     r"""
     **Validation Test Description**
 
@@ -66,18 +68,15 @@ def test_spinningBodyTest(show_plots):
 
     against their initial values.
     """
-    [testResults, testMessage] = spinningBody(show_plots)
+    [testResults, testMessage] = spinningBody(show_plots, cmdTorque, lock)
     assert testResults < 1, testMessage
 
 
-def spinningBody(show_plots):
+def spinningBody(show_plots, cmdTorque, lock):
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-
-    scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -86,27 +85,13 @@ def spinningBody(show_plots):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    # Create two hinged rigid bodies
-    spinningBody = spinningBodyStateEffector.SpinningBodyStateEffector()
-
-    # Define properties of spinning body
-    spinningBody.mass = 100.0
-    spinningBody.k = 10.0
-    spinningBody.IPntSc_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    spinningBody.dcm_S0B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    spinningBody.r_ScS_S = [[0.5], [0.0], [1.0]]
-    spinningBody.r_SB_B = [[1.5], [-0.5], [2.0]]
-    spinningBody.sHat_S = [[0], [0], [1]]
-    spinningBody.thetaInit = 5 * macros.D2R
-    spinningBody.thetaDotInit = 1 * macros.D2R
-    spinningBody.ModelTag = "SpinningBody"
-
-    # Add spinning body to spacecraft
-    scObject.addStateEffector(spinningBody)
+    # Create the spacecraft module
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
 
     # Define mass properties of the rigid hub of the spacecraft
     scObject.hub.mHub = 750.0
@@ -119,9 +104,42 @@ def spinningBody(show_plots):
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
+    # Create two hinged rigid bodies
+    spinningBody = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
+
+    # Define properties of spinning body
+    spinningBody.mass = 50.0
+    spinningBody.IPntSc_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
+    spinningBody.dcm_S0B = [[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]]
+    spinningBody.r_ScS_S = [[1.0], [0.0], [-1.0]]
+    spinningBody.r_SB_B = [[0.5], [-1.5], [-0.5]]
+    spinningBody.sHat_S = [[0], [-1], [0]]
+    spinningBody.thetaInit = 5.0 * macros.D2R
+    spinningBody.thetaDotInit = -1.0 * macros.D2R
+    spinningBody.k = 1.0
+    if lock:
+        spinningBody.thetaDotInit = 0.0
+    spinningBody.ModelTag = "SpinningBody"
+
+    # Add spinning body to spacecraft
+    scObject.addStateEffector(spinningBody)
+
+    # Create the torque message
+    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
+    cmdArray.motorTorque = [cmdTorque]  # [Nm]
+    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
+    spinningBody.motorTorqueInMsg.subscribeTo(cmdMsg)
+
+    # Create the locking message
+    if lock:
+        lockArray = messaging.ArrayEffectorLockMsgPayload()
+        lockArray.effectorLockFlag = [1]
+        lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
+        spinningBody.motorLockInMsg.subscribeTo(lockMsg)
+
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, spinningBody)
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
 
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
@@ -149,8 +167,8 @@ def spinningBody(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, thetaData)
 
     # Setup and run the simulation
-    stopTime = 2.5
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    stopTime = 25000 * testProcessRate
+    unitTestSim.ConfigureStopTime(stopTime)
     unitTestSim.ExecuteSimulation()
 
     # Extract the logged variables
@@ -179,13 +197,15 @@ def spinningBody(show_plots):
              orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 2] - orbAngMom_N[0, 2]) / orbAngMom_N[0, 2],
              orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3])
     plt.xlabel('time (s)')
-    plt.ylabel('Orbital Angular Momentum Relative Difference')
+    plt.ylabel('Relative Difference')
+    plt.title('Orbital Angular Momentum')
 
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:, 0] * 1e-9, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1])
     plt.xlabel('time (s)')
-    plt.ylabel('Orbital Energy Relative Difference')
+    plt.ylabel('Relative Difference')
+    plt.title('Orbital Energy')
 
     plt.figure()
     plt.clf()
@@ -193,13 +213,15 @@ def spinningBody(show_plots):
              rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]) / rotAngMom_N[0, 2],
              rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]) / rotAngMom_N[0, 3])
     plt.xlabel('time (s)')
-    plt.ylabel('Rotational Angular Momentum Relative Difference')
+    plt.ylabel('Relative Difference')
+    plt.title('Rotational Angular Momentum')
 
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:, 0] * 1e-9, (rotEnergy[:, 1] - rotEnergy[0, 1]) / rotEnergy[0, 1])
     plt.xlabel('time (s)')
-    plt.ylabel('Rotational Energy Relative Difference')
+    plt.ylabel('Relative Difference')
+    plt.title('Rotational Energy')
 
     plt.figure()
     plt.clf()
@@ -238,11 +260,13 @@ def spinningBody(show_plots):
             testMessages.append(
                 "FAILED: Spinning Body integrated test failed rotational angular momentum unit test")
 
-    for i in range(0, len(initialRotEnergy)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i], initialRotEnergy[i], 1, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spinning Body integrated test failed rotational energy unit test")
+    # Only check rotational energy if no torques are applied
+    if cmdTorque == 0.0:
+        for i in range(0, len(initialRotEnergy)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i], initialRotEnergy[i], 1, accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: Spinning Body integrated test failed rotational energy unit test")
 
     for i in range(0, len(initialOrbEnergy)):
         # check a vector values
@@ -260,4 +284,4 @@ def spinningBody(show_plots):
 
 
 if __name__ == "__main__":
-    spinningBody(True)
+    spinningBody(True, 0.0, False)
