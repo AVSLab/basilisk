@@ -52,6 +52,20 @@ in a 2:1 centered ellipse and a lead-follower configuration with the servicer re
 has a camera instrument attached that is pointing in the 3rd body axis direction.
 The servicer has a light attached to illuminate the debris object.
 
+By default, every :ref:`spacecraft` module instance will integrate its differential equations, and that of
+all the associated state and dynamics effectors, during the module ``Update()`` method.  Thus, the
+second spacecraft ODEs are integrated forward one time step after the first spacecraft, and so on.
+If you require
+both sets of spacecraft differential equations to be integrated at the same time, then the integration
+of the second spacecraft can be synchronized with the integration of the first spacecraft using::
+
+     scObject.syncDynamicsIntegration(scObject2)
+
+This is illustrated in this example script where the debris satellite integration is sync'd with that
+of the servicer satellite.  However, in this scenario this is not required as the ODEs of each spacecraft
+are independent of each other.  If an effector is used that is connected to both spacecraft, then this
+step will allow the effector force and torque evaluations to be properly applied to all sync'd objects.
+
 This simulation scripts illustrates how to use the :ref:`vizSupport` methods to record the simulation data such
 that it can be viewed in the Vizard visualization.
 
