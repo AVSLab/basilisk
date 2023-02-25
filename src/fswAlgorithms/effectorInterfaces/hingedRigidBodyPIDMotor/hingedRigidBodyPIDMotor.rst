@@ -1,7 +1,8 @@
 Executive Summary
 -----------------
 
-This module implements a simple Proportional-Integral-Derivative (PID) control law to provide the commanded torque to a :ref:`spinningBodyStateEffector`.
+This module implements a simple Proportional-Integral-Derivative (PID) control law to provide the commanded
+torque to a :ref:`spinningBodyOneDOFStateEffector`.
 
 
 Message Connection Descriptions
@@ -37,7 +38,7 @@ overdamped, or critically damped) depends on the choice of gains provided as inp
 Detailed Module Description
 ---------------------------
 For this module to operate, the user needs to provide control gains ``K``, ``P`` and ``I``. Let's define :math:`\theta_R` and :math:`\dot{\theta}_R` the reference angle and angle rate contained in the
-``hingedRigidBodyRefInMsg``, and :math:`\theta` and :math:`\dot{\theta}` the current solar array angle and angle rate contained in the ``hingedRigidBodyInMsg``, which is provided as an output of the :ref:`spinningBodyStateEffector`. The control torque is obtained as follows:
+``hingedRigidBodyRefInMsg``, and :math:`\theta` and :math:`\dot{\theta}` the current solar array angle and angle rate contained in the ``hingedRigidBodyInMsg``, which is provided as an output of the :ref:`spinningBodyOneDOFStateEffector`. The control torque is obtained as follows:
 
 .. math::
     T = K (\theta_R - \theta) + P (\dot{\theta}_R - \dot{\theta}) + I \int_0^t (\theta_R - \theta) \text{d}\tau.

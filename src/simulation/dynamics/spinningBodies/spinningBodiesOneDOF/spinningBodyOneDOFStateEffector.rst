@@ -50,13 +50,13 @@ User Guide
 ----------
 This section is to outline the steps needed to setup a Spinning Body State Effector in Python using Basilisk.
 
-#. Import the spinningBodyStateEffector class::
+#. Import the spinningBodyOneDOFStateEffector class::
 
-    from Basilisk.simulation import spinningBodyStateEffector
+    from Basilisk.simulation import spinningBodyOneDOFStateEffector
 
 #. Create an instantiation of a Spinning body::
 
-    spinningBody = spinningBodyStateEffector.SpinningBodyStateEffector()
+    spinningBody = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
 
 #. Define all physical parameters for a Spinning Body. For example::
 
