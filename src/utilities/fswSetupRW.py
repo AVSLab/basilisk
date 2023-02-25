@@ -88,12 +88,14 @@ def writeConfigMessage():
 
     return rwConfigMsg
 
+
 def clearSetup():
     global rwList
 
     rwList = []
 
     return
+
 
 def getNumOfDevices():
     return len(rwList)
