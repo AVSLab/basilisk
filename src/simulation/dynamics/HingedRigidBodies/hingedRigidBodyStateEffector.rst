@@ -58,7 +58,7 @@ how to run it, as well as testing.
 
 .. note::
 
-    In contrast to :ref:`spinningBodyStateEffector`, this module assumes:
+    In contrast to :ref:`spinningBodyOneDOFStateEffector`, this module assumes:
 
     - rigid body inertia matrix is diagonal as seen in the hinged body :math:`\cal S` frame
     - the center of mass lies on the :math:`\hat{\bf s}_1` axis
