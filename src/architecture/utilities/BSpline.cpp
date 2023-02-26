@@ -471,10 +471,10 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     double Ttot = T[q];
     
     
-    for (int a=0; a<q+1;a++) {
-        std::cout<<T[a]<<std::endl;
-    }
-    
+//    for (int a=0; a<q+1;a++) {
+//        std::cout<<T[a]<<std::endl;
+//    }
+//
 
     // build uk vector: normalized waypoint time tags
     Eigen::VectorXd uk(q+1);
@@ -516,19 +516,20 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     
     // Calculate 1st Derivatives:
     
-    Eigen::VectorXd X1_primehat(q-1);
-    Eigen::VectorXd X2_primehat(q-1);
-    Eigen::VectorXd X3_primehat(q-1);
+    Eigen::VectorXd X1_primehat(q+1);
+    Eigen::VectorXd X2_primehat(q+1);
+    Eigen::VectorXd X3_primehat(q+1);
 
     int index = 0;
     
     // Calculate X Prime Hat Derivatives
     
     //Central Finite Derivatives
-    for (int k = 1;k<q-1;k++) {
+    for (int k = 1;k<q;k++) {
         X1_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X1[k]-Input.X1[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X1[k+1]-Input.X1[k])/(uk[k+1]-uk[k]);
-        X2_primehat[index] =(uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X2[k]-Input.X2[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X2[k+1]-Input.X2[k])/(uk[k+1]-uk[k]);
-        X3_primehat[index] =(uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X3[k]-Input.X3[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X3[k+1]-Input.X3[k])/(uk[k+1]-uk[k]);
+        X2_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X2[k]-Input.X2[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X2[k+1]-Input.X2[k])/(uk[k+1]-uk[k]);
+        std::cout<<"X2_primehat"<<X2_primehat[index]<<std::endl;
+        X3_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X3[k]-Input.X3[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X3[k+1]-Input.X3[k])/(uk[k+1]-uk[k]);
         index++;
     }
     
@@ -556,11 +557,11 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         mag = abs((mag));
         double temp;
         if (mag != 0) {
-            std::cout<<"Non zero mag"<<std::endl;
+//            std::cout<<"Non zero mag"<<std::endl;
             temp =0.03*Ttot/mag;
         }
         else {
-            std::cout<<"zero mag"<<std::endl;
+//            std::cout<<"zero mag"<<std::endl;
             temp = 0;
         }
         X1_prime[k] = X1_primehat[k]*temp;
@@ -717,11 +718,11 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         }
     }
     
-    std::cout<<"Printing rhok vectors"<<std::endl;
+//    std::cout<<"Printing rhok vectors"<<std::endl;
 
-    for ( int y = 0; y < 2*q-2; y++) {
-        std::cout<<rhok1[y]<<","<<rhok2[y]<<","<<rhok3[y]<<std::endl;
-    }
+//    for ( int y = 0; y < 2*q-2; y++) {
+//        std::cout<<rhok1[y]<<","<<rhok2[y]<<","<<rhok3[y]<<std::endl;
+//    }
     
         // Split code based on whether LS approximation is done with first derivative constraints or not
         
@@ -809,12 +810,12 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         }
         
          //Printing out results
-        for (int c = 0;c<2*q-2;c++) {
-            for (int q = 0; q<n-K-1;q++) {
-                std::cout<<ND_2(c,q)<<" ";
-            }
-            std::cout<<std::endl;
-        }
+//        for (int c = 0;c<2*q-2;c++) {
+//            for (int q = 0; q<n-K-1;q++) {
+//                std::cout<<ND_2(c,q)<<" ";
+//            }
+//            std::cout<<std::endl;
+//        }
         
   
         
