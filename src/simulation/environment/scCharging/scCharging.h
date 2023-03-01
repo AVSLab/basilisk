@@ -50,8 +50,8 @@ public:
 // private functions
 private:
     void readMessages();
-    double electronCurrent(double phi, double q0, double A, double E);
-    double interp(std::vector<double>& data, double x);
+    double electronCurrent(double phi, double A);
+    double interp(std::vector<double>& xVector, std::vector<double>& yVector, double x);
     double trapz(std::function< double(double) >& f, double a, double b, int N);
     double getFlux(double E, std::string particle);
 

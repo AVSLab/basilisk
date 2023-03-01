@@ -27,6 +27,7 @@
 #include <math.h>
 #include <algorithm>
 #include <vector>
+#include <string>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -88,10 +89,29 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     
     std::cout << "Integral is " << std::setprecision(10) << integral << std::endl;
     
+    
+    //std::cout << "electron message is: " << electronFlux << std::endl;
+    double testArr[MAX_PLASMA_FLUX_SIZE];
+    eigenMatrixXd2CArray(electronFlux, testArr); // convert electronFlux to array
+    int j = sizeof(testArr) / sizeof(testArr[0]);
+    std::vector<double> testYVec(testArr, testArr + j); // convert electronArr to vector
+    
+    double testXArr[MAX_PLASMA_FLUX_SIZE];
+    eigenMatrixXd2CArray(energies, testXArr); // convert electronFlux to array
+    int pl = sizeof(testXArr) / sizeof(testXArr[0]);
+    std::vector<double> testXVec(testXArr, testXArr + pl); // convert electronArr to vector
+    
+    double interpTest = interp(testXVec, testYVec, 1.3257); // should return close 188959.1466
+    std::cout << "interpTest: " << interpTest << std::endl;
+    
+    
     double interval [2] = {0, 4};
     double x0 = bisectionSolve(interval, 1e-8, f);
     
     std::cout << "Bisection Method found root at " << std::setprecision(10) << x0 << std::endl;
+    
+    double ie = electronCurrent(-24810, 12.566370614359172);
+    std::cout<< "ie = " << ie << std::endl;
     
     // create output messages
     VoltMsgPayload voltMsgBuffer;  //!< [] voltage out message buffer
@@ -118,7 +138,7 @@ void ScCharging::addSpacecraft(Message<SCStatesMsgPayload> *tmpScMsg)
     Eigen::MRPd zeroMRP;
     zeroMRP = zero;
     this->sigma_BNList.push_back(zeroMRP);
-        
+    
     /* create output message objects */
     Message<VoltMsgPayload> *msgVolt;
     msgVolt = new Message<VoltMsgPayload>;
@@ -146,25 +166,36 @@ void ScCharging::readMessages()
     }
 }
 
-double ScCharging::electronCurrent(double phi, double q0, double A, double E)
+double ScCharging::electronCurrent(double phi, double A)
 {
-    double constant = q0 * 2 * M_PI * A; // constant multiplier for integral
-    // linearly interpolate flux distribution value for given energy
+    
+    std::cout << "electronFlux[-1]: " << electronFlux[-1] << std::endl;
+    std::cout << "electronFlux[0]: " << electronFlux[0] << std::endl;
+    
+    double constant = -Q0 * 2 * M_PI * (A/10000); // constant multiplier for integral
+
     double electronArr[MAX_PLASMA_FLUX_SIZE];
     eigenMatrixXd2CArray(electronFlux, electronArr); // convert electronFlux to array
     int n = sizeof(electronArr) / sizeof(electronArr[0]);
     std::vector<double> electronVec(electronArr, electronArr + n); // convert electronArr to vector
-    double fluxDist = interp(electronVec, E);
-    // reassign all electron flux < 50 eV to the lowest measured flux
-    if (fluxDist < 50.0){
-        fluxDist = electronFlux[0];
-    }
+    
+    double testXArr[MAX_PLASMA_FLUX_SIZE];
+    eigenMatrixXd2CArray(energies, testXArr); // convert electronFlux to array
+    int pl = sizeof(testXArr) / sizeof(testXArr[0]);
+    std::vector<double> testXVec(testXArr, testXArr + pl); // convert electronArr to vector
+    
     // term to be integrated by trapz
-    std::function<double(double)> integrand = [&](double E){return E/(E - phi) * fluxDist;};
+    std::function<double(double)> integrand = [&](double E){return (E/(E - phi)) * interp(testXVec, electronVec, E - phi);};
+//
+//    std::cout << "interp(lowerBound): " << interp(electronVec, 0) << std::endl;
+//    std::cout << "interp(upperBound + phi): " << interp(electronVec, 40000 + phi) << std::endl;
+    //std::cout<< "interp gives " << interp(electronVec, E - phi) << std::endl;
+    
     // integral bounds
-    double lowerBound = 0, upperBound = 40000 + phi;
+    double lowerBound = 0, upperBound = 1000000;
     // integral calculated with trapz
-    double integral = trapz(integrand, lowerBound, upperBound, 100);
+    double integral = trapz(integrand, lowerBound, upperBound, 1000);
+    std::cout<< "integral = " << integral << std::endl;
     
     double Ie = constant * integral;
     return Ie;
@@ -175,35 +206,32 @@ double ScCharging::electronCurrent(double phi, double q0, double A, double E)
  @param data vector containing datapoints to use in linear interpolation (y-values)
  @param x x-value being linear interpolated to
  */
-double ScCharging::interp(std::vector<double>& data, double x)
+double ScCharging::interp(std::vector<double>& xVector, std::vector<double>& yVector, double x)
 {
-    // ensure data is in ascending order
-    std::sort(data.begin(), data.end());
-    
     // get iterator >= given x's corresponding iterator
-    auto iterator = std::lower_bound(data.begin(), data.end(), x);
-    // if value is the smallest value in dataset
-    if (iterator == data.begin()){
-        std::cout << "Too low " << std::endl;
-    }
+    auto iterator = std::lower_bound(yVector.begin(), yVector.end(), x);
     // find closest iterator to x
     double a = *(iterator - 1);
     double b = *(iterator);
     long closestIterator;
     if (fabs(x - a) < fabs(x - b)){
-        closestIterator =  iterator - data.begin() - 1;
+        closestIterator =  iterator - yVector.begin() - 1;
     }
-    closestIterator = iterator - data.begin();
+    closestIterator = iterator - yVector.begin();
     // check if closest iterator is above or below x and create bounds for linear interpolation
-    double x0, x1, y0, y1;
-    if ((data[closestIterator] - x) >= 0){     // found value greater than x
-        x0 = closestIterator - 1, x1 = closestIterator;
-        y0 = data[x0], y1 = data[x1];
-    } else{     // found value less than x
-        x0 = closestIterator, x1 = closestIterator + 1;
-        y0 = data[x0], y1 = data[x1];
-    }
-    double y = y0 + ((y1-y0)/(x1-x0)) * (x - x0);
+    double indX0, indX1, y0, y1;
+    indX0 = closestIterator, indX1 = closestIterator + 1;
+    y0 = yVector[indX0], y1 = yVector[indX1];
+    
+//    std::cout << "interp x: " << x << std::endl;
+//    std::cout << "interp x0: " << xVector[indX0] << std::endl;
+//    std::cout << "interp x1: " << xVector[indX1] << std::endl;
+//    std::cout << "interp y0: " << y0 << std::endl;
+//    std::cout << "interp y1: " << y1 << std::endl;
+    
+    double y = y0 + ((y1-y0)/(xVector[indX1] - xVector[indX0])) * (x - xVector[indX0]);
+    
+//    std::cout << "interp y: " << y << std::endl;
     
     return y;
 }
@@ -225,6 +253,11 @@ double ScCharging::trapz(std::function< double(double) >& f, double a, double b,
     }
 
     double integral = h * (sum + (f(a)+f(b))/2.0);
+    
+    std::cout << "b: " << b << std::endl;
+    std::cout << "f(a): " << f(a) << std::endl;
+    std::cout << "f(b): " << f(b) << std::endl;
+    
     return integral;
 }
 
