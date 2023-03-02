@@ -172,7 +172,7 @@ double ScCharging::electronCurrent(double phi, double A)
     std::cout << "electronFlux[-1]: " << electronFlux[-1] << std::endl;
     std::cout << "electronFlux[0]: " << electronFlux[0] << std::endl;
     
-    double constant = -Q0 * 2 * M_PI * (A/10000); // constant multiplier for integral
+    double constant = -Q0 * A; // constant multiplier for integral
 
     double electronArr[MAX_PLASMA_FLUX_SIZE];
     eigenMatrixXd2CArray(electronFlux, electronArr); // convert electronFlux to array
@@ -183,16 +183,36 @@ double ScCharging::electronCurrent(double phi, double A)
     eigenMatrixXd2CArray(energies, testXArr); // convert electronFlux to array
     int pl = sizeof(testXArr) / sizeof(testXArr[0]);
     std::vector<double> testXVec(testXArr, testXArr + pl); // convert electronArr to vector
-    
+
+    std::function<double(double)> getFlux = [&](double E){
+        // find flux for given energy
+        double F = interp(testXVec, electronVec, E);
+        if (F < 0.){
+            // if flux is negative (due to extrapolation), set equal to zero
+            F = 0.;
+        }
+        return F;
+    };
+
     // term to be integrated by trapz
-    std::function<double(double)> integrand = [&](double E){return (E/(E - phi)) * interp(testXVec, electronVec, E - phi);};
+    std::function<double(double)> integrand = [&](double E){return (E/(E - phi)) * getFlux(E-phi);};
 //
 //    std::cout << "interp(lowerBound): " << interp(electronVec, 0) << std::endl;
 //    std::cout << "interp(upperBound + phi): " << interp(electronVec, 40000 + phi) << std::endl;
     //std::cout<< "interp gives " << interp(electronVec, E - phi) << std::endl;
     
     // integral bounds
-    double lowerBound = 0, upperBound = 1000000;
+    double lowerBound;
+    double upperBound;
+    if (phi < 0.){
+        lowerBound = 0.1;
+        upperBound = testXVec.back();
+    }
+    else{
+        lowerBound = 0.1 + abs(phi);
+        upperBound = testXVec.back() + abs(phi);
+    }
+//    double lowerBound = 0, upperBound = 1000000;
     // integral calculated with trapz
     double integral = trapz(integrand, lowerBound, upperBound, 1000);
     std::cout<< "integral = " << integral << std::endl;
@@ -208,29 +228,42 @@ double ScCharging::electronCurrent(double phi, double A)
  */
 double ScCharging::interp(std::vector<double>& xVector, std::vector<double>& yVector, double x)
 {
-    // get iterator >= given x's corresponding iterator
-    auto iterator = std::lower_bound(yVector.begin(), yVector.end(), x);
-    // find closest iterator to x
-    double a = *(iterator - 1);
-    double b = *(iterator);
-    long closestIterator;
-    if (fabs(x - a) < fabs(x - b)){
-        closestIterator =  iterator - yVector.begin() - 1;
+    // find the index corresponding to the first element in xVector that is greater than x
+    // (assumes xVector is sorted)
+    int idx1 = -1; // initialize as -1 (if no index can be found)
+    for (int c=0; c < xVector.size(); c++) {
+        if (xVector[c] > x){
+            idx1 = c;
+            break;
+        }
     }
-    closestIterator = iterator - yVector.begin();
-    // check if closest iterator is above or below x and create bounds for linear interpolation
-    double indX0, indX1, y0, y1;
-    indX0 = closestIterator, indX1 = closestIterator + 1;
-    y0 = yVector[indX0], y1 = yVector[indX1];
+    if (idx1 == -1){
+        // if no index can be found, x is greater than last element in xVector. Return last index
+        idx1 = xVector.size() - 1;
+    }
+    else if (idx1 == 0){
+        // increase index by one as idx0 = idx1 - 1.
+        idx1 = 1;
+    }
+
+    int indX0;
+    int indX1;
+    double y0;
+    double y1;
+    indX0 = idx1 - 1;
+    indX1 = idx1;
+    y0 = yVector[indX0];
+    y1 = yVector[indX1];
     
+    double y = y0 + ((y1-y0)/(xVector[indX1] - xVector[indX0])) * (x - xVector[indX0]);
+
+//    std::cout << "idx0: " << indX0 << std::endl;
+//    std::cout << "idx1: " << indX1 << std::endl;
 //    std::cout << "interp x: " << x << std::endl;
 //    std::cout << "interp x0: " << xVector[indX0] << std::endl;
 //    std::cout << "interp x1: " << xVector[indX1] << std::endl;
 //    std::cout << "interp y0: " << y0 << std::endl;
 //    std::cout << "interp y1: " << y1 << std::endl;
-    
-    double y = y0 + ((y1-y0)/(xVector[indX1] - xVector[indX0])) * (x - xVector[indX0]);
-    
 //    std::cout << "interp y: " << y << std::endl;
     
     return y;
