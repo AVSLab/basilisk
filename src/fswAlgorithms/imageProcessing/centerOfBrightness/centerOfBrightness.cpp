@@ -64,7 +64,7 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
     imageBuffer = this->imageInMsg.zeroMsgPayload;
     cobBuffer = this->opnavCOBOutMsg.zeroMsgPayload;
 
-    cv::Mat imageCV, blurred, imageGray;
+    cv::Mat imageCV;
     if (this->saveDir != ""){
         dirName = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
     }
@@ -95,32 +95,19 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
         this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, CurrentSimNanos);
         return;
     }
-    cv::cvtColor( imageCV, imageGray, cv::COLOR_BGR2GRAY);
-    cv::blur(imageGray, blurred, cv::Size(this->blurrSize,this->blurrSize) );
-    cv::threshold(blurred, imageCV, this->threshold, 255, cv::THRESH_BINARY);
-    
     std::vector<cv::Vec2i> locations;
-    /*! - Find all the non-zero pixels in the image*/
-    cv::findNonZero(imageCV, locations);
-    
-    cobBuffer.timeTag = this->sensorTimeTag;
-    cobBuffer.cameraID = imageBuffer.cameraID;
-    uint32_t weight, weightSum;
-    weightSum = 0;
+    locations = this->extractPixels(imageCV);
+
     /*!- If no lit pixels are found do not validate the image as a measurement */
     if ((int) locations.size() > 0){
-        for( int i = 0; i<(int) locations.size(); i++ )
-        {
-            /*! Individual pixel intensity used as the weight for the contribution to the solution*/
-            weight = (uint32_t)imageGray.at<unsigned char>(locations[i][1], locations[i][0]);
-            cobBuffer.centerOfBrightness[0] += weight*locations[i][0];
-            cobBuffer.centerOfBrightness[1] += weight*locations[i][1];
-            weightSum += weight; // weighted sum of all the pixels
-        }
+        Eigen::Vector2d cobCoordinates;
+        cobCoordinates = this->weightedCOB(locations);
 
         cobBuffer.valid = 1;
-        cobBuffer.centerOfBrightness[0]/=weightSum;
-        cobBuffer.centerOfBrightness[1]/=weightSum;
+        cobBuffer.timeTag = this->sensorTimeTag;
+        cobBuffer.cameraID = imageBuffer.cameraID;
+        cobBuffer.centerOfBrightness[0] = cobCoordinates[0];
+        cobBuffer.centerOfBrightness[1] = cobCoordinates[1];
         cobBuffer.pixelsFound =(int)locations.size();
     }
     

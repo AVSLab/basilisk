@@ -58,6 +58,7 @@ public:
     std::string saveDir;                //!< The name of the directory to save images
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for finding all non zero pixels*/
+    cv::Mat imageGray;                   //!< [cv mat] Gray scale image for weighting
     int32_t blurSize;                   //!< [px] Size of the bluring box in pixels
     int32_t threshold;                 //!< [px] Theshold value on whether or not to include the solution
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
