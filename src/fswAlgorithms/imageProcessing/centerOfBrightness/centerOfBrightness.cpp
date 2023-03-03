@@ -25,7 +25,7 @@ CenterOfBrightness::CenterOfBrightness()
 {
     this->filename = "";
     this->saveImages = 1;
-    this->blurrSize = 5;
+    this->blurSize = 5;
     this->threshold = 50;
     this->saveDir = "";
 }
@@ -48,7 +48,7 @@ void CenterOfBrightness::Reset(uint64_t CurrentSimNanos)
     }
 }
 
-/*! This module reads an OpNav image and extracts the weighted center of brightness. It performs a greyscale, a blurr,
+/*! This module reads an OpNav image and extracts the weighted center of brightness. It performs a grayscale, a blur,
  * and a threshold on the image before summing the weighted pixel intensities in order to average them with the
  * total detected intensity. This provides the center of brightness measurement (as well as the total number of
  * bright pixels)
