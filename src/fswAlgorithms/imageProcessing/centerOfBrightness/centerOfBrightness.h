@@ -46,6 +46,10 @@ public:
     
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
+
+private:
+    std::vector<cv::Vec2i> extractPixels(cv::Mat image);
+    Eigen::Vector2d weightedCOB(std::vector<cv::Vec2i> nonZeros);
     
 public:
     std::string filename;                //!< Filename for module to read an image directly

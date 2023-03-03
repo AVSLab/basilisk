@@ -129,3 +129,43 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
+/*! Method extracts the bright pixels (above a given threshold) by first grayscaling then bluring image.
+ @return std 2 vector of integers
+ @param image openCV matrix of the input image
+ */
+std::vector<cv::Vec2i> CenterOfBrightness::extractPixels(cv::Mat image)
+{
+    cv::Mat blured;
+    std::vector<cv::Vec2i> locations;
+
+    /*! - Grayscale, blur, and threshold iamge*/
+    cv::cvtColor(image, this->imageGray, cv::COLOR_BGR2GRAY);
+    cv::blur(this->imageGray, blured, cv::Size(this->blurSize,this->blurSize) );
+    cv::threshold(blured, image, this->threshold, 255, cv::THRESH_BINARY);
+
+    /*! - Find all the non-zero pixels in the image*/
+    cv::findNonZero(image, locations);
+
+    return locations;
+}
+
+/*! Method computes the weighted center of brightness out of the non-zero pixel coordinates.
+ @return Eigen 2 vector of pixel values
+ @param vector integer pixel coordinates of bright pixels
+ */
+Eigen::Vector2d CenterOfBrightness::weightedCOB(std::vector<cv::Vec2i> nonZeros)
+{
+    uint32_t weight, weightSum;
+    Eigen::Vector2d coordinates;
+    coordinates.setZero();
+    weightSum = 0;
+    for( int i = 0; i<(int) nonZeros.size(); i++ ) {
+        /*! Individual pixel intensity used as the weight for the contribution to the solution*/
+        weight = (uint32_t) this->imageGray.at<unsigned char>(nonZeros[i][1], nonZeros[i][0]);
+        coordinates[0] += weight * nonZeros[i][0];
+        coordinates[1] += weight * nonZeros[i][1];
+        weightSum += weight; // weighted sum of all the pixels
+    }
+    coordinates /= weightSum;
+    return coordinates;
+}
