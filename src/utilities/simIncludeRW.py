@@ -550,6 +550,30 @@ class rwFactory(object):
         RW.U_d = 1E-8 # Guestimate
 
         return
+    
+#added by Eman
+    def Rockwell_RSI215(self, RW):
+
+        RW.Omega_max = 2000.0 *macros.RPM  # maximum speed
+        RW.u_max = 0.215  # maximum RW torque [Nm]
+        RW.u_min = 0.00001  # minimum RW torque [Nm]
+        RW.fCoulomb = 0.0002  # static friction torque [Nm]
+
+        if self.maxMomentum > 0.0:
+            print('Rockwell_RSI215(maxMomentum) has a fixed maxMomentum value.  Custom value being replaced')
+        self.maxMomentum = 15     # Nms
+
+        # mass = RW rotor mass [kg]. Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
+        # U_s = static RW imbalance [kg*m]
+        # U_d = dynamic RW imbalance [kg*m^2]
+        RW.mass = 7.7 #kg
+        RW.U_s = 0.0015 #gm
+        RW.U_d = 0.02 #gm^2
+
+
+        return
+
+
 
     def custom(self, RW):
         """

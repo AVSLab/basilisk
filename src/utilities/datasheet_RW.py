@@ -121,8 +121,6 @@ def Honeywell_HR12(maxMomentum):
     There are 3 momentum capacity options for this RW type.  The maximum momentum
     capacity must be set prior to creating the HR12 RW type using::
 
-        options.maxMomentum = 12, 25 or 50
-
     :param maxMomentum:
     :return:
     """
@@ -151,5 +149,32 @@ def Honeywell_HR12(maxMomentum):
         U_d = 2.2E-7
     else:
         raise ValueError('Honeywell_HR12(maxMomentum) only has arg options maxMomentum = [large, medium, small]')
+
+    return (Omega_max, u_max, u_min, u_f, mass, U_s, U_d)
+
+#added by Eman
+def Rockwell_RSI215(maxMomentum):
+    """
+
+    RW Information Source:
+    http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
+
+    :param maxMomentum:
+    :return:
+    """
+    Omega_max = 2000.0 * mc.rpm2radsec  # maximum speed
+    u_max = 0.215  # maximum RW torque [Nm]
+    u_min = 0.00001  # minimum RW torque [Nm]
+    u_f = 0.0002  # static friction torque [Nm]
+
+    # mass = RW rotor mass [kg]. Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
+    # U_s = static RW imbalance [kg*m]
+    # U_d = dynamic RW imbalance [kg*m^2]
+    if maxMomentum == 15:
+        mass = 7.7 #kg
+        U_s = 0.0015 #gm
+        U_d = 0.02 #gm^2
+    else:
+        raise ValueError('Rockwell_RSI215(maxMomentum) only has only one argument option: 15 Nms')
 
     return (Omega_max, u_max, u_min, u_f, mass, U_s, U_d)
