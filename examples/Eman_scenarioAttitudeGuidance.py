@@ -138,21 +138,31 @@ import numpy as np
 from Basilisk import __path__
 # import message declarations
 from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import locationPointing
+# import FSW Algorithm related support
 from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import hillPoint
-# import FSW Algorithm related support
 from Basilisk.fswAlgorithms import mrpFeedback
+from Basilisk.fswAlgorithms import rwMotorTorque
+from Basilisk.fswAlgorithms import rwMotorVoltage
+from Basilisk.fswAlgorithms import inertial3D
+from Basilisk.simulation import groundLocation
+# import simulation related support
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
-# import simulation related support
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import RigidBodyKinematics
+from Basilisk.simulation import reactionWheelStateEffector
+from Basilisk.simulation import motorVoltageInterface
 # import general simulation support files
+from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import fswSetupRW
+from Basilisk.utilities import simIncludeRW
+from Basilisk.utilities import astroFunctions
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -224,7 +234,7 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
     plt.ylabel('Orientation Illustration')
 
 
-def run(show_plots, useAltBodyFrame):
+def run(show_plots, useJitterSimple, useAltBodyFrame):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -253,18 +263,16 @@ def run(show_plots, useAltBodyFrame):
     simulationTimeStep = macros.sec2nano(0.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    #
-    #   setup the simulation tasks/objects
-    #
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
-    # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
-    scObject.hub.mHub = 750.0  # kg - spacecraft mass
+    
+    # define the simulation inertia -MBZ
+    I = [455.38, 2.99, -8.08082,
+         2.99, 450.28, -0.5733578,
+         -8.08082, -0.5733578, 260.56]
+    scObject.hub.mHub = 719.942  # kg - spacecraft mass - MBZ 
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
@@ -284,12 +292,12 @@ def run(show_plots, useAltBodyFrame):
 
     #
     #   initialize Spacecraft States with initialization variables
-    #
+    #edited by Ahmed
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = 10000000.0  # meters
-    oe.e = 0.1
-    oe.i = 33.3 * macros.D2R
+    oe.a = 512044.6  # meters -MBZ
+    oe.e = 0.00074680
+    oe.i = 97.4 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
@@ -297,7 +305,49 @@ def run(show_plots, useAltBodyFrame):
     scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+    scObject.hub.omega_BN_BInit = [[0.02], [0.02], [0.02]]  # rad/s - omega_BN_B
+
+
+ # add RW devices
+    #
+    # Make a fresh RW factory instance, this is critical to run multiple times
+    rwFactory = simIncludeRW.rwFactory()
+
+    # store the RW dynamical model type
+    varRWModel = messaging.BalancedWheels
+    if useJitterSimple:
+        varRWModel = messaging.JitterSimple
+
+    # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
+    RW1 = rwFactory.create('Rockwell_RSI215', [1, 0, 0], maxMomentum=15.
+                           , RWModel=varRWModel
+                           )
+    RW2 = rwFactory.create('Rockwell_RSI215', [0, 1, 0], maxMomentum=15.
+                           , RWModel=varRWModel
+                           )
+    RW3 = rwFactory.create('Rockwell_RSI215', [0, 0, 1], maxMomentum=15.
+                           , rWB_B=[0.5, 0.5, 0.5]  # meters
+                           , RWModel=varRWModel
+                           )
+    RW4 = rwFactory.create('Rockwell_RSI215', [0, 0, 1], maxMomentum=15.
+                           , rWB_B=[0.5, 0.5, 0.5]  # meters
+                           , RWModel=varRWModel
+                           )
+    # In this simulation the RW objects RW1, RW2 or RW3 are not modified further.  However, you can over-ride
+    # any values generate in the `.create()` process using for example RW1.Omega_max = 100. to change the
+    # maximum wheel speed.
+
+    numRW = rwFactory.getNumOfDevices()
+
+    # create RW object container and tie to spacecraft object
+    rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
+    rwStateEffector.ModelTag = "RW_cluster"
+    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+
+    # add RW object array to the simulation process.  This is required for the UpdateState() method
+    # to be called which logs the RW states
+    scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
+
 
     # setup extForceTorque module
     # the control torque is read in through the messaging system
@@ -316,9 +366,40 @@ def run(show_plots, useAltBodyFrame):
     scSim.AddModelToTask(simTaskName, sNavObject)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
+    # Create the ground location
+    groundStation = groundLocation.GroundLocation()
+    groundStation.ModelTag = "MBRSCGroundStation"
+    groundStation.planetRadius = astroFunctions.E_radius*1e3  # meters
+    groundStation.specifyLocation(np.radians(25.225907), np.radians(55.465201), 11)
+    groundStation.minimumElevation = np.radians(10.)
+    groundStation.maximumRange = 1e9  # meters
+    groundStation.addSpacecraftToModel(scObject.scStateOutMsg)
+    scSim.AddModelToTask(simTaskName, groundStation)
+
+    #
+    #   setup the simulation tasks/objects
+    #
+    # setup MBRSC pointing guidance module
+    locPointConfig = locationPointing.locationPointingConfig()
+    locPointWrap = scSim.setModelDataWrap(locPointConfig)
+    locPointWrap.ModelTag = "locPoint"
+    scSim.AddModelToTask(simTaskName, locPointWrap, locPointConfig)
+    locPointConfig.pHat_B = [0, 0, 1]
+    locPointConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    locPointConfig.useBoresightRateDamping = 1
+    locPointConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    locPointConfig.locationInMsg.subscribeTo(groundStation.currentGroundStateOutMsg)
+
     #
     #   setup the FSW algorithm tasks
     #
+    # setup inertial3D guidance module
+    inertial3DConfig = inertial3D.inertial3DConfig()
+    inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
+    inertial3DWrap.ModelTag = "inertial3D"
+    scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
+    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+
 
     # setup hillPoint guidance module
     attGuidanceConfig = hillPoint.hillPointConfig()
@@ -353,9 +434,21 @@ def run(show_plots, useAltBodyFrame):
     mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
-
+    
     # connect torque command to external torque effector
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+
+    # # add module that maps the Lr control torque into the RW motor torques - Ahmed Added
+    # rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
+    # rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
+    # rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
+    # scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
+
+    # # Make the RW control all three body axes
+    # controlAxes_B = [
+    #     1, 0, 0, 0, 1, 0, 0, 0, 1
+    # ]
+    # rwMotorTorqueConfig.controlAxes_B = controlAxes_B
 
     #
     #   Setup data logging before the simulation is initialized
@@ -381,10 +474,48 @@ def run(show_plots, useAltBodyFrame):
     configDataMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
     mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=fileName
-                                              )
+    # fswSetupRW.clearSetup()
+    # for key, rw in rwFactory.rwList.items():
+    #     fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
+    # fswRwParamMsg1 = fswSetupRW.writeConfigMessage()
+
+    # # Second case: If the exact same RW configuration states are to be used by the simulation and fsw, then the
+    # # following helper function is convenient to extract the fsw RW configuration message from the
+    # # rwFactory setup earlier.
+    # fswRwParamMsg2 = rwFactory.getConfigMessage()
+    # fswRwParamMsg = fswRwParamMsg2
+
+    # vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
+
+    # # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+    #                                           , saveFile=fileName
+    #                                           )
+    # vizSupport.addLocation(viz, stationName="MBRSC Station"
+    #                            , parentBodyName=earth.displayName
+    #                            , r_GP_P=groundStation.r_LP_P_Init
+    #                            , fieldOfView=np.radians(160.)
+    #                            , color='pink'
+    #                            , range=2000.0*1000  # meters
+    #                            )
+    # viz.settings.spacecraftSizeMultiplier = 1.5
+    # viz.settings.showLocationCommLines = 1
+    # viz.settings.showLocationCones = 1
+    # viz.settings.showLocationLabels = 1
+
+    # link messages
+    # sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    # attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    # attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
+    # mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
+    # mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
+    # mrpControlConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    # mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    # rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    # rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    
+    # rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
+
 
     #
     #   initialize Simulation
@@ -446,5 +577,6 @@ def run(show_plots, useAltBodyFrame):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        True  # useAltBodyFrame
+        True,  # useJitterSample
+        True # useAltBodyFrame
     )

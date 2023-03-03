@@ -9,10 +9,10 @@ def create_rw_lists():
     """
     RWAGsMatrix = []
     RWAJsList = []
-    wheelJs = 50.0 / (6000.0 / 60.0 * math.pi * 2.0)
-    rwElAngle = 42.5 * math.pi / 180.0
+    wheelJs = 50.0 / (6000.0 / 60.0 * math.pi * 2.0) #check what this
+    rwElAngle = 60 * math.pi / 180.0 #Eman: changed
 
-    rwClockAngle = 45.0 * math.pi / 180.0
+    rwClockAngle = 225.0 * math.pi / 180.0 #rw1 in MBZ def (it was 45 for BSK)
     RWAJsList.extend([wheelJs])
     RWAGsMatrix.extend([
         math.sin(rwElAngle) * math.sin(rwClockAngle),
@@ -20,17 +20,17 @@ def create_rw_lists():
         -math.cos(rwElAngle)
     ])
 
-    rwClockAngle += 90.0 * math.pi / 180.0
+    rwClockAngle -= 90.0 * math.pi / 180.0 #rw2 in MBZ def (it was +=90 for BSK)
     RWAJsList.extend([wheelJs])
     RWAGsMatrix.extend([math.sin(rwElAngle) * math.sin(rwClockAngle),
                         -math.sin(rwElAngle) * math.cos(rwClockAngle), math.cos(rwElAngle)])
 
-    rwClockAngle += 180.0 * math.pi / 180.0
+    rwClockAngle -= 180.0 * math.pi / 180.0 #rw3 in MBZ def (it was +=180 for BSK)
     RWAJsList.extend([wheelJs])
     RWAGsMatrix.extend([math.sin(rwElAngle) * math.sin(rwClockAngle),
                         math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
 
-    rwClockAngle -= 90.0 * math.pi / 180.0
+    rwClockAngle += 90.0 * math.pi / 180.0 #rw1 in MBZ def (it was -=90 for BSK)
     RWAJsList.extend([wheelJs])
     RWAGsMatrix.extend([math.sin(rwElAngle) * math.sin(rwClockAngle),
                         -math.sin(rwElAngle) * math.cos(rwClockAngle), math.cos(rwElAngle)])
