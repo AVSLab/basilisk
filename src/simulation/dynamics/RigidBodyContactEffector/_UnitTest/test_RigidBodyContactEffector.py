@@ -21,6 +21,7 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+import pandas as pd
 import mpl_toolkits.mplot3d.axes3d as p3
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import matplotlib.animation as animation
@@ -178,15 +179,14 @@ def run():
     scContact = RigidBodyContactEffector.RigidBodyContactEffector()
     scContact.maxPosError = 1e-4
     scContact.simTimeStep = 0.01
-    scContact.slipTolerance = 1e-6
+    # scContact.slipTolerance = 1e-6 # not currently used
     scContact.collisionIntegrationStep = 1e-5
     scContact.maxBoundingBoxDim = 0.5
     scContact.minBoundingBoxDim = 0.01
-    scContact.boundingBoxFF = 1.2
+    scContact.boundingBoxFF = 1.2 # "fudge factor" (a multiplied value)
     scContact.LoadSpacecraftBody("highrescube.obj", scObject.ModelTag, scObject.scStateOutMsg, scObject.scMassOutMsg, 1.0, 1.0, 0.0)
     scContact.LoadSpacecraftBody("highrescube.obj", scObject2.ModelTag, scObject2.scStateOutMsg, scObject2.scMassOutMsg,
                                  1.0, 1.0, 0.0)
-    # scContact.LoadMainBody("Lander.obj")
     # scContact.mainBody.modelTag = scObject.ModelTag
     # scContact.mainBody.boundingRadius = 3.5
     # scContact.mainBody.boundingRadius = 1.5
@@ -220,6 +220,9 @@ def run():
 
     scStateRec2 = scObject2.scStateOutMsg.recorder()
     scSim.AddModelToTask(simTaskName, scStateRec2)
+
+    # these are trying out different initial states, for a complete unit test would want to try out different combinations of face on face, edge on edge, vertex to face etc.
+    #   also try out different restitutions, frictions, etc.
 
     # scObject.hub.r_CN_NInit = [[1.51], [1.5], [1.5]]  # m   - r_CN_N
     # scObject.hub.v_CN_NInit = [[0.2], [0.0], [0.0]]  # m/s - v_CN_N
@@ -270,6 +273,25 @@ def run():
     vNData2 = scStateRec2.v_CN_N
     sigmaData2 = scStateRec2.sigma_BN
     omegaData2 = scStateRec2.omega_BN_B
+
+    data = {
+        "rNData1 [m]": rNData1,
+        "vNData1 [m/s]": vNData1,
+        "sigmaData1": sigmaData1,
+        "omegaData1 [rad/s]": omegaData1,
+        "rNData2 [m]": rNData2,
+        "vNData2 [m/s]": vNData2,
+        "sigmaData2": sigmaData2,
+        "omegaData2 [rad/s]": omegaData2,
+    }
+
+    dfData = pd.DataFrame()
+    for var in data:
+        for axis in range(data[var].shape[1]):
+            col = pd.DataFrame({var: data[var][:,axis]})
+            dfData = pd.concat([dfData,col],axis=1)
+
+    dfData.to_csv('scData.csv')
 
     # rNData2 = []
     # vNData2 = []
