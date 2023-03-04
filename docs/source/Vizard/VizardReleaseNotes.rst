@@ -8,12 +8,11 @@ Release Notes
 .. sidebar:: In Progress Features
 
     - general GUI enhancements
-    - articulating CAD models
     - Add the rate gyro visualization
     - Alternate camera view points relative to non-spacecraft locations (lunar landing site, etc.)
     - Add magnetic torque bar visualization
-    - visualize MSM charge values
-    - load custom Unity generated spacecraft and celestial body models at run time
+    - Add range to target information
+    - Visualize aerobraking maneuvers
 
 
 **Version 2.1.4 (March 24, 2023)**
