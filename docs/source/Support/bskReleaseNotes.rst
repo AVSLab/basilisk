@@ -34,7 +34,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Created new way to define Python modules by inheriting from ``Basilisk.architecture.sysModel.SysModel``.
+  See :ref:`pyModules` for details.
+- Added the ability to integrate the ODE's of two or more Basilisk modules that are ``DynamicObject`` class
+  member at the same time.  See :ref:`bskPrinciples-9`
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------
@@ -69,7 +72,7 @@ Version 2.1.7 (March 24, 2023)
 - Added :ref:`thrusterPlatformReference` to align the dual-gimballed thruster with the system's center of mass, or at an offset thereof to perform momentum dumping.
 - Improved reliability of opNav scenario communication between :ref:`vizInterface` and Vizard
 - provide support or Vizard 2.1.4 features
-- Created new way to define Python modules by inheriting from ``Basilisk.architecture.sysModel.SysModel``. See :ref:`pyModules` for details.
+
 
 Version 2.1.6 (Jan. 21, 2023)
 -----------------------------
