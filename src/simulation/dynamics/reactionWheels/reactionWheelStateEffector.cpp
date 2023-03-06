@@ -438,6 +438,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		tmpRW.U_s = it->U_s;
 		tmpRW.U_d = it->U_d;
 		tmpRW.RWModel = it->RWModel;
+        tmpRW.P_max = it->P_max;
         eigenVector3d2CArray(it->gsHat_B, tmpRW.gsHat_B);
         eigenVector3d2CArray(it->rWB_B, tmpRW.rWB_B);
 		// Write out config data for eachreaction wheel
