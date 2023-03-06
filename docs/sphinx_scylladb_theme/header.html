@@ -1,0 +1,21 @@
+<header class="header">
+    <div class="header-logo">
+        <a href="https://nasa-ammos.github.io/aerie/">
+           <img src="{{ pathto('_static/img/logos/aerie-logo-light.svg', 1) }}" alt="Aerie Logo" />
+        </a>
+        <span class="header-logo__bar"></span>
+        <a class="header-logo__text" href="https://nasa-ammos.github.io/aerie/">
+            Aerie Documentation
+        </a>
+    </div>
+    <div class="header-navigation">
+           <ul class="dropdown menu scylla-dropdown scylla-dropdown&#45;&#45;header" data-dropdown-menu>
+          </ul>
+    </div>
+    <div class="header-search-box">
+        <div class="search-box" style="visibility: hidden">
+            <ci-search></ci-search>
+        </div>
+    </div>
+    {% include 'side-nav-toggle.html' %}
+</header>
