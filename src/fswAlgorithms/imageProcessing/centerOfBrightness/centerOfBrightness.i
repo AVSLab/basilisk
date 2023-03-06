@@ -35,6 +35,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
 struct CameraImageMsg_C;
 
+%include "architecture/msgPayloadDefCpp/OpNavCOBMsgPayload.h"
 
 %pythoncode %{
 import sys
