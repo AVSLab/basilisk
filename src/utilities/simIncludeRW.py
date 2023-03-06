@@ -115,6 +115,15 @@ class rwFactory(object):
             varMaxMomentum = 0.0              # default value
         self.maxMomentum = varMaxMomentum
 
+        if 'P_max' in kwargs:
+            varMaxPower = kwargs['P_max']
+            if not isinstance(varMaxPower, float):
+                print('ERROR: P_max must be a FLOAT argument')
+                exit(1)
+        else:
+            varMaxPower = -1.0              # default value turns off max power limit
+        RW.P_max = varMaxPower
+
         if 'fCoulomb' in kwargs:
             varfCoulomb = kwargs['fCoulomb']
             if not isinstance(varfCoulomb, float):
