@@ -55,6 +55,7 @@ Version |release|
 - Added the ability to lock the axis on the :ref:`spinningBodyOneDOFStateEffector` module.
 - Added two new unit tests to :ref:`spinningBodyOneDOFStateEffector`.
 - Updated :ref:`magneticFieldWMM` to use the latest WMM coefficient file and evaluation software
+- Added a :ref:`spinningBodyTwoDOFStateEffector` module that simulates a two-axis rotating rigid component.
 
 
 Version 2.1.6 (Jan. 21, 2023)
