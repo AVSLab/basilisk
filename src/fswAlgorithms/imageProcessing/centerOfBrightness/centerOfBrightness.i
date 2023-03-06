@@ -29,6 +29,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "sys_model.h"
 %include "swig_conly_data.i"
+%include "std_array.i"
 
 %include "centerOfBrightness.h"
 
