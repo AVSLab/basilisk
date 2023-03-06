@@ -23,11 +23,7 @@
 /*! The constructor for the CenterOfBrightness module. It also sets some default values at its creation.  */
 CenterOfBrightness::CenterOfBrightness()
 {
-    this->filename = "";
-    this->saveImages = 1;
-    this->blurSize = 5;
-    this->threshold = 50;
-    this->saveDir = "";
+    return;
 }
 
 /*! This is the destructor */
@@ -140,7 +136,8 @@ std::vector<cv::Vec2i> CenterOfBrightness::extractPixels(cv::Mat image)
  */
 Eigen::Vector2d CenterOfBrightness::weightedCOB(std::vector<cv::Vec2i> nonZeros)
 {
-    uint32_t weight, weightSum;
+    uint32_t weight;
+    uint32_t weightSum;
     Eigen::Vector2d coordinates;
     coordinates.setZero();
     weightSum = 0;
