@@ -65,11 +65,6 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
     cobBuffer = this->opnavCOBOutMsg.zeroMsgPayload;
 
     cv::Mat imageCV;
-    if (this->saveDir != ""){
-        dirName = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
-    }
-    else{dirName = "./"+ std::to_string(CurrentSimNanos*1E-9) + ".jpg";}
-    
     /*! - Read in the image*/
     if(this->imageInMsg.isLinked())
     {
@@ -84,17 +79,20 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
-        if (this->saveImages == 1){
-            if (!cv::imwrite(dirName, imageCV)) {
-                bskLogger.bskLog(BSK_WARNING, "CenterOfBrightness: wasn't able to save images.");
-            }
-        }
     }
     else{
         /*! - If no image is present, write zeros in message */
         this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, CurrentSimNanos);
         return;
     }
+    /*! - Save image to prescribed path if requested */
+    if (this->saveImages == 1) {
+        dirName = this->saveDir + std::to_string(CurrentSimNanos * 1E-9) + ".png";
+        if (!cv::imwrite(dirName, imageCV) && this->saveImages == 1) {
+            bskLogger.bskLog(BSK_WARNING, "CenterOfBrightness: wasn't able to save images.");
+        }
+    }
+
     std::vector<cv::Vec2i> locations;
     locations = this->extractPixels(imageCV);
 
