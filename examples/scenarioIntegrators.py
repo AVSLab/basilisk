@@ -47,7 +47,7 @@ python task list:
 The first line invokes an instance of the desired state vector integration module, and provides
 the dynamics module (spacecraft() in this case) as the input.  This specifies to the integrator
 module which other module will provide the ``equationOfMotion()`` function to evaluate the derivatives of
-the state vector.  The send line ties the integration module to the dynamics module.  After that we are
+the state vector.  The second line ties the integration module to the dynamics module.  After that we are
 done.
 
 The integrator scenario script is setup to evaluate the default integration method (RK4), a fourth-order variable time

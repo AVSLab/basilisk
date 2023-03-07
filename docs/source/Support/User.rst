@@ -10,7 +10,6 @@ The following support documents are for the Basilisk user who is seeking general
    :maxdepth: 2
 
    User/FAQ
-   User/FAQmacOS
    User/FAQwindows
    User/createHtmlDocumentation
    User/migratingToBsk2

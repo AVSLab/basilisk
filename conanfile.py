@@ -69,6 +69,10 @@ class BasiliskConan(ConanFile):
         print(failColor + "conan version " + conan_version + " is not compatible with Basilisk.")
         print("use version 1.40.1+ to work with the conan repo changes from 2021." + endColor)
         exit(0)
+    if conan_version > Version("1.59.0"):
+        print(failColor + "conan version " + conan_version + " is not compatible with Basilisk.")
+        print("use version 1.40.1 to 1.59.0 to work with the conan repo changes." + endColor)
+        exit(0)
 
     # ensure latest pip is installed
     if is_running_virtual_env() or platform.system() == "Windows":

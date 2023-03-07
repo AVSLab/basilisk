@@ -6,7 +6,9 @@ FAQ - Frequency Asked Questions
 
 The following Frequency Answer Questions are general and not operating system specific.
 
-
+#. Configure `PyCharm <https://www.jetbrains.com/pycharm/>`__ to auto-complete Basilisk commands and provide
+   module variables, see the
+   `PyCharm Support <https://www.jetbrains.com/help/pycharm/configuring-project-structure.html>`__ web page.
 
 #. How do I run ``pytest`` to ensure all unit and integrated tests still pass
 
@@ -45,5 +47,5 @@ The following Frequency Answer Questions are general and not operating system sp
    To really have a clean clean build you want to get rid of the `.conan` file that stores the dependencies
    for Basilisk.  To do this you
 
-     - delete the `.conan` folder in your home directory
+     - delete the ``.conan`` folder in your home directory
      - follow the regular build instructions in :ref:`configureBuild` using the ``clean`` flag

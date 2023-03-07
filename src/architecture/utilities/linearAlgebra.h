@@ -89,6 +89,7 @@ extern "C" {
     int     v3IsZero(double v[3], double accuracy);
     void    v3Print(FILE *pFile, const char *name, double v[3]);
     void    v3Cross(double v1[3], double v2[3], double result[3]);
+    void    v3Perpendicular(double v[3], double result[3]);
     void    v3Tilde(double v[3], double result[3][3]);
     void    v3Sort(double v[3], double result[3]);
     void    v3PrintScreen(const char *name, double v[3]);

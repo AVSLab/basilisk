@@ -32,7 +32,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- Created fsw :ref:`hingedRigidBodyPIDMotor` to compute the commanded torque to :ref:`spinningBodyStateEffector` using a propotional-integral-derivative controller.
+- Fixed ``CMake/conan`` case sensitivty issue when compiling Basilisk with ``opNav`` flag set to ``True`` on Linux platforms
+- Created fsw :ref:`hingedRigidBodyPIDMotor` to compute the commanded torque to :ref:`spinningBodyOneDOFStateEffector` using a proportional-integral-derivative controller.
 - Added :ref:`torqueScheduler` to combine two :ref:`ArrayMotorTorqueMsgPayload` into one and implement effector locking logic.
 - Refactored how ``Custom.cmake`` files are included and how they are to be constructed. ``Custom.cmake`` files
   should no longer include an include guard (e.g. ``if(BUILD_OPNAV) ... endif(BUILD_OPNAV)`` ). Rather, to add
@@ -41,6 +42,22 @@ Version |release|
   a ``Custom.cmake`` file as ``${TARGET_NAME}``. This enables appropriate modularization of build target specific
   includes, dependencies, and compiler flags. For an example of the implications of this refactor review the before
   and after of the ``src/cmake/usingOpenCV.cmake`` file.
+- updated :ref:`unitTestSupport` to create the file path in a platform agnostic manner
+- Created a :ref:`sensorThermal` module to model the temperature of a sensor using radiative heat transfer
+- Created a :ref:`tempMeasurement` module to add sensor noise/bias and fault capabilities to temperature readings
+- Added a ``terminal`` flag to the event handlers that cause the simulation to terminate when triggered; demonstrated
+  use of flag in update to :ref:`scenarioDragDeorbit`.
+- Created a :ref:`prescribedMotionStateEffector` dynamics module for appending rigid bodies with prescribed motion
+  to the spacecraft hub.
+- Added :ref:`solarArrayReference` to compute the reference angle and angle rate for a rotating solar array.
+- Update python dependency documentation and check to not use ``conan`` version 2.0.0 for now
+- Changed the ``SpinningBodyStateEffector`` module name to :ref:`spinningBodyOneDOFStateEffector`.
+- Added the ability to lock the axis on the :ref:`spinningBodyOneDOFStateEffector` module.
+- Added two new unit tests to :ref:`spinningBodyOneDOFStateEffector`.
+- Updated :ref:`magneticFieldWMM` to use the latest WMM coefficient file and evaluation software
+- Added a :ref:`spinningBodyTwoDOFStateEffector` module that simulates a two-axis rotating rigid component.
+- Created :ref:`oneAxisSolarArrayPoint` to generate the reference attitude for a spacecraft that needs to point a body-fixed 
+  axis along an inertial direction while ensuring maximum power generation on the solar arrays
 
 
 Version 2.1.6 (Jan. 21, 2023)
@@ -67,7 +84,7 @@ Version 2.1.6 (Jan. 21, 2023)
 - Updated :ref:`scenarioGroundLocationImaging` to properly save off the ground location
   information for Vizard
 - Added a new helper function to convert C arrays to ``Eigen::MRPd`` and vice-versa inside ``avsEigenSupport``.
-- Updated :ref:`spinningBodyStateEffector` to use the :ref:`HingedRigidBodyMsgPayload` output message type for compatibility with other modules
+- Updated ``SpinningBodyStateEffector`` to use the :ref:`HingedRigidBodyMsgPayload` output message type for compatibility with other modules
 - Added the ability to set an inertial heading in the :ref:`boreAngCalc` module. Changed the internal module logic to use ``Eigen`` library variables and functions instead of C-style arrays and methods.
 - Added support for Vizard v2.1.3
 - Updated :ref:`simpleInstrumentController` to provide the option to consider the angular velocity tracking error norm
@@ -82,7 +99,7 @@ Version 2.1.5 (Dec. 13, 2022)
 - provide support for the swig 4.1 software
 - Added the ability in both :ref:`thrusterDynamicEffector` and :ref:`thrusterStateEffector` to connect a thruster to a moving body different than the hub.
 - The thrusters now have an additional variable called ``MaxSwirlTorque``. Useful for ion thrusters, it adds a torque about the thrust axis proportional to the current thrust factor.
-- Added a torsional spring and damper to the :ref:`SpinningBodyStateEffector` module.
+- Added a torsional spring and damper to the ``SpinningBodyStateEffector`` module.
 - Added support for having multiple Vizard instrument cameras setup in :ref:`vizInterface`
 
 .. warning::
@@ -152,7 +169,7 @@ Version 2.1.4 (Oct. 1, 2022)
 - added new attitude pointing scenario :ref:`scenarioAttitudeFeedback2T_stateEffTH` that uses
   the new :ref:`thrusterStateEffector`
 - added ability to simulate faults within :ref:`coarseSunSensor` module
-- created a 1-DoF rotating rigid body class :ref:`SpinningBodyStateEffector`. It is built in a general way to simulate 
+- created a 1-DoF rotating rigid body class ``SpinningBodyStateEffector``. It is built in a general way to simulate 
   any effector with a single spinning axis.
 
 

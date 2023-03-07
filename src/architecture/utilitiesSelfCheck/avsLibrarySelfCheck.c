@@ -398,6 +398,15 @@ int testLinearAlgebra(double accuracy)
         errorCount++;
     }
 
+    v3Set(2, 1, 1, v3_0);
+    v3Set(-1, 1, 1, v3_1);
+    v3Normalize(v3_1, v3_1);
+    v3Perpendicular(v3_0, v3_2);
+    if(!v3IsEqual(v3_2, v3_1, accuracy)) {
+        printf("v3Perpendicular failed\n");
+        errorCount++;
+    }
+
     v3Set(1, 2, 3, v3_0);
     v3Tilde(v3_0, m33_0);
     m33Set(0, -3, 2,

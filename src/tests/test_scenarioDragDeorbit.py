@@ -48,8 +48,8 @@ import scenarioDragDeorbit
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("initialAlt, deorbitAlt, model", [
-    (250, 200, "exponential"),
-    (250, 200, "msis")
+    (250, 100, "exponential"),
+    (250, 100, "msis")
 ])
 @pytest.mark.scenarioTest
 def test_scenarioDragDeorbit(show_plots, initialAlt, deorbitAlt, model):
@@ -87,6 +87,6 @@ if __name__ == "__main__":
     test_scenarioDragDeorbit(
         False,  # show_plots
         initialAlt=250,
-        deorbitAlt=180,
+        deorbitAlt=100,
         model="msis"
     )

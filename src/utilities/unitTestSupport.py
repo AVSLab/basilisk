@@ -370,7 +370,7 @@ def writeTeXSnippet(snippetName, texSnippet, path):
 
 def saveScenarioFigure(figureName, plt, path, extension=".svg"):
     """save a python scenario result into the documentation image folder"""
-    imgFileName = path + "/../../docs/source/_images/Scenarios/" + figureName + extension
+    imgFileName = os.path.join(path, "..", "..", "docs", "source", "_images", "Scenarios", figureName + extension)
     if not os.path.exists(os.path.dirname(imgFileName)):
         try:
             os.makedirs(os.path.dirname(imgFileName))
@@ -382,7 +382,7 @@ def saveScenarioFigure(figureName, plt, path, extension=".svg"):
 
 def saveFigurePDF(figureName, plt, path):
     """Save a Figure as a PDF"""
-    figFileName = path + figureName + ".pdf"
+    figFileName = os.path.join(path, figureName + ".pdf")
     if not os.path.exists(os.path.dirname(figFileName)):
         try:
             os.makedirs(os.path.dirname(figFileName))
@@ -394,7 +394,7 @@ def saveFigurePDF(figureName, plt, path):
 
 def writeFigureLaTeX(figureName, caption, plt, format, path):
     """Save a figure and associated TeX code snippet"""
-    texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".tex"
+    texFileName = os.path.join(path, "..", "_Documentation", "AutoTeX", figureName + ".tex")
     if not os.path.exists(os.path.dirname(texFileName)):
         try:
             os.makedirs(os.path.dirname(texFileName))
