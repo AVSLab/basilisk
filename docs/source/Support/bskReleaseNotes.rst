@@ -56,6 +56,8 @@ Version |release|
 - Added two new unit tests to :ref:`spinningBodyOneDOFStateEffector`.
 - Updated :ref:`magneticFieldWMM` to use the latest WMM coefficient file and evaluation software
 - Added a :ref:`spinningBodyTwoDOFStateEffector` module that simulates a two-axis rotating rigid component.
+- Created :ref:`oneAxisSolarArrayPoint` to generate the reference attitude for a spacecraft that needs to point a body-fixed 
+  axis along an inertial direction while ensuring maximum power generation on the solar arrays
 
 
 Version 2.1.6 (Jan. 21, 2023)
