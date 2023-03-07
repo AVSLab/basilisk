@@ -427,8 +427,20 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     Output->P = P;
     
     // q = number of waypoints - 1
-    int q = (int) Input.X1.size() - 1;
+    int q = (int) Input.X1.size();
+    std::cout<<"The value of q  intially is "<<q<<std::endl;
     
+    q = (int) Input.X1.size() - 1;
+    
+    std::cout<<"The value of q then is"<<q<<std::endl;
+    
+    std::cout<<"The value of q-1 is "<<q-1<<std::endl;
+    
+    /*
+    std::cout<<"Printing Input W "<<std::endl;
+    for (int g = 0;g<2*q-2;g++)
+        std::cout<<Input.W[g]<<std::endl;
+    */
     
     
 //    for (int a = 0; a < q+1; a++) {
@@ -748,21 +760,26 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
 //                std::cout<<ND(d,e)<<std::endl;
             }
         }
-
+        std::cout<<"Printing weight vector"<<std::endl;
         // populate weight matrix W
         Eigen::MatrixXd W(q-1,q-1);
         for (int f = 0; f < q-1; f++) {
             for (int m = 0; m < q-1; m++) {
                 if (f == m) {
                     if (Input.W_flag) {
+                        std::cout<<"The value of f is "<<f<<" and the value of m is "<<m<<std::endl;
                         W(f,m) = Input.W[f+1];
+                        std::cout<<W(f,m)<<std::endl;
                     }
                     else {
                         W(f,m) = 1;
+                        std::cout<<W(f,m)<<std::endl;
+
                     }
                 }
                 else {
                     W(f,m) = 0;
+                    std::cout<<W(f,m)<<std::endl;
                 }
             }
         }
@@ -821,12 +838,15 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         
         
         // populate weight matrix W_2
+        std::cout<<"Printing weight vector"<<std::endl;
         Eigen::MatrixXd W_2(2*q-2,2*q-2);
         for (int f = 0; f < 2*q-2; f++) {
             for (int m = 0; m < 2*q-2; m++) {
                 if (f == m) {
                     if (Input.W_flag) {
+                        std::cout<<"The value of f is "<<f<<" and the value of m is "<<m<<std::endl;
                         W_2(f,m) = Input.W[f+1];
+                        std::cout<<W_2(f,m)<<std::endl;
                     }
                     else {
                         W_2(f,m) = 1;
