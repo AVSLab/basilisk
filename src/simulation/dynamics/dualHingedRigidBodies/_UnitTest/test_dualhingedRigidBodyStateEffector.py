@@ -78,7 +78,7 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
     unitTestSim.panel2 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
 
     # Define Variable for panel 1
-    unitTestSim.panel2.ModelTag = "panel1"
+    unitTestSim.panel1.ModelTag = "panel1"
     unitTestSim.panel1.mass1 = 50.0
     unitTestSim.panel1.IPntS1_S1 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
     unitTestSim.panel1.d1 = 0.75
