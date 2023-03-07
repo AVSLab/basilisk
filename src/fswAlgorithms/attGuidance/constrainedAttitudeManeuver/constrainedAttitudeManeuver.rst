@@ -56,20 +56,20 @@ interpolating curve is forced to pass through a larger number of waypoints. A hi
 
 Detailed Module Description
 ---------------------------
-A detailed explanation of the method implemented in this module can be found in `Calaon et al. <http://hanspeterschaub.info/Papers/Calaon2021.pdf>`__.
-To summarize, this module builds a 3D grid in MRP space, whose density is regulated by the input parameter ``N``. Each grid node corresponds to an attitude. An undirected
-graph is built with all the nodes that are constraint compliant. Two nodes are added to the graph:
+A detailed explanation of the method implemented in this module can be found in `R. Calaon and H. Schaub, "Constrained Attitude Maneuvering via Modified-Rodrigues-Parameter-Based
+Motion Planning Algorithms" <https://arc.aiaa.org/doi/abs/10.2514/1.A35294>`__. To summarize, this module builds a 3D grid in MRP space, whose density is regulated by the input
+parameter ``N``. Each grid node corresponds to an attitude. An undirected graph is built with all the nodes that are constraint compliant. Two nodes are added to the graph:
 
 - ``startNode`` whose coordinates :math:`\sigma_{BN,S}` correspond to the attitude of the spacecraft contained in the ``vehicleConfigInMsg``;
 - ``goalNode`` whose coordinates :math:`\sigma_{BN,G}` correspond to the desired target attitude at the end of the maneuver.
 
 Two different cost functions are used by the :math:`A^*` algorithm to search a valid path. The first is based on the total cartesian length of the path in MRP space. 
 The second is the effort-based cost function computed integrating the control torque norm over the interpolated trajectory obtained from a path., as explained in
-`Calaon et al. <http://hanspeterschaub.info/Papers/Calaon2021.pdf>`__. In both cases, the final reference passed to the Attitude Reference Message 
+`R. Calaon and H. Schaub <https://arc.aiaa.org/doi/abs/10.2514/1.A35294>`__. In both cases, the final reference passed to the Attitude Reference Message
 consists in the interpolated curve obtained from the optimal path computed by :math:`A^*`, based on the chosen cost function. Interpolation is performed using the 
 routine in :ref:`BSpline`.
 
-Note that this module does not implement the constant angular rate norm routine described in `Calaon et al. <http://hanspeterschaub.info/Papers/Calaon2021.pdf>`__.
+Note that this module does not implement the constant angular rate norm routine described in `R. Calaon and H. Schaub <https://arc.aiaa.org/doi/abs/10.2514/1.A35294>`__.
 The attitude, rates and accelerations provided to the Attitude Reference Message are those obtained directly from the BSpline interpolation.
 
 
