@@ -141,7 +141,7 @@ from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import locationPointing
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import hillPoint
+from Basilisk.fswAlgorithms import sunSafePoint
 from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.fswAlgorithms import rwMotorVoltage
@@ -401,18 +401,19 @@ def run(show_plots, useJitterSimple, useAltBodyFrame):
     inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
 
-    # setup hillPoint guidance module
-    attGuidanceConfig = hillPoint.hillPointConfig()
+    # setup sunSafePoint guidance module
+    attGuidanceConfig = sunSafePoint.sunSafePointConfig()
     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
-    attGuidanceWrap.ModelTag = "hillPoint"
-    attGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    attGuidanceWrap.ModelTag = "sunSafePoint"
+    # attGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     # if you want to connect attGuidanceConfig.celBodyInMsg, then you need a planet ephemeris message of
     # type EphemerisMsgPayload.  In this simulation the input message is not connected to create an empty planet
     # ephemeris message which puts the earth at (0,0,0) origin with zero speed.
-    CelBodyData = messaging.EphemerisMsgPayload() # make zero'd planet ephemeris message
-    celBodyInMsg = messaging.EphemerisMsg().write(CelBodyData)
-    attGuidanceConfig.celBodyInMsg.subscribeTo(celBodyInMsg)
+    CelBodyData = messaging.NavAttMsgPayload() # make zero'd planet ephemeris message
+    sunDirectionInMsg = messaging.NavAttMsg().write(CelBodyData)
+    attGuidanceConfig.sunDirectionInMsg.subscribeTo(sunDirectionInMsg)
     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
+    
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.attTrackingErrorConfig()
@@ -421,8 +422,10 @@ def run(show_plots, useJitterSimple, useAltBodyFrame):
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
     if useAltBodyFrame:
         attErrorConfig.sigma_R0R = [0, 1, 0]
-    attErrorConfig.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    #attErrorConfig.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
+    attErrorConfig.attGuidOutMsg.subscribeTo(attGuidanceConfig.attGuidanceOutMsg)
+    attErrorConfig.attNavInMsg.subscribeTo(attGuidanceConfig.sunDirectionInMsg)
+    attErrorConfig.attNavInMsg.subscribeTo(attGuidanceConfig.imuInMsg)
 
     # setup the MRP Feedback control module
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
@@ -521,6 +524,29 @@ def run(show_plots, useJitterSimple, useAltBodyFrame):
     #   initialize Simulation
     #
     scSim.InitializeSimulation()
+
+
+    # execute BSK for a single step:
+    dynProcess.disableAllTasks()
+    print("all tasks disabled")
+    scSim.TotalSim.SingleStepProcesses()
+    print("BSK executed a single simulation step")
+
+    scSim.enableTask("locPoint")
+    scSim.TotalSim.SingleStepProcesses()
+    print("BSK executed a single simulation step - locPoint")
+
+    scSim.disableTask("locPoint")
+    scSim.TotalSim.SingleStepProcesses()
+    print("locPoint task diabled")    
+
+    scSim.enableTask("sunSafePoint")
+    scSim.TotalSim.SingleStepProcesses()
+    print("BSK executed a single simulation step - SunSafe")
+
+    scSim.disableTask("sunSafePoint")
+    scSim.TotalSim.SingleStepProcesses()
+    print("sunSafePoint task diabled")  
 
     #
     #   configure a simulation stop time and execute the simulation run
