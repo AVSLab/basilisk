@@ -7,7 +7,7 @@ This model is used to approximate the behavior of a reaction wheel. Below is a l
 	\item Provides matrix contributions for the back substitution method
 	\item Compute it's derivatives for $\theta$ and $\Omega$
 	\item Adds energy and momentum contributions to the spacecraft
-	\item Convert commanded torque to applied torque. This takes into account friction, and minimum and maximum torque, and speed saturation
+	\item Convert commanded torque to applied torque. This takes into account friction, minimum and maximum torque, speed saturation, and power saturation
 	\item Write output messages for states like $\Omega$ and applied torque
 \end{itemize}
 
@@ -25,4 +25,5 @@ Below is a summary of the assumptions/limitations:
 	\item For fully-coupled imbalanced wheels the inertia off-diagonal terms, $J_{12}$ and $J_{23}$ are equal to zero and the remaining inertia off-diagonal term $J_{13}$ is found through the setting the dynamic imbalance parameter $U_d$: $J_{13} = U_d$. The center of mass offset, $d$, is found using the static imbalance parameter $U_s$: $d = \frac{U_s}{m_{\text{rw}}}$
 	\item The friction model is modeling static, Coulomb, and viscous friction. Other higher order effects of friction are not included. 
 	\item The speed saturation model only has one boundary, whereas in some reaction wheels once the speed boundary has been passed, the torque is turned off and won't turn back on until it spins down to another boundary. This model only can turn off and turn on the torque and the same boundary
+	\item The power saturation model assumes a fixed supplied power limit. This supplied power doesn't currently link to the dynamic power modules from the src/simulation/power folder.
 \end{itemize}

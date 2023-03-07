@@ -58,6 +58,8 @@ Version |release|
 - Added a :ref:`spinningBodyTwoDOFStateEffector` module that simulates a two-axis rotating rigid component.
 - Created :ref:`oneAxisSolarArrayPoint` to generate the reference attitude for a spacecraft that needs to point a body-fixed 
   axis along an inertial direction while ensuring maximum power generation on the solar arrays
+- Added a maximum power parameter ``maxPower`` to :ref:`reactionWheelStateEffector` for limiting supplied
+  power, independent of the modules in simulation/power.
 
 
 Version 2.1.6 (Jan. 21, 2023)
