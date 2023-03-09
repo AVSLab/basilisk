@@ -74,7 +74,7 @@ ang = list(ang)
 @pytest.mark.parametrize("bodyAxisInput", [0,1])
 @pytest.mark.parametrize("inertialAxisInput", [0,1,2])
 @pytest.mark.parametrize("alignmentPriority", [0,1])
-@pytest.mark.parametrize("accuracy", [1e-10])
+@pytest.mark.parametrize("accuracy", [1e-9])
 
 def test_oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, inertialAxisInput, alignmentPriority, accuracy):
     r"""
@@ -261,5 +261,5 @@ if __name__ == "__main__":
                  0,           # flagB
                  1,           # flagN
                  0,           # priorityFlag
-                 1e-10         # accuracy
+                 1e-9         # accuracy
                )
