@@ -56,7 +56,7 @@ void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint
     if (BodyHeadingMsg_C_isLinked(&configData->bodyHeadingInMsg)) {
         configData->bodyAxisInput = inputBodyHeadingMsg;
     }
-    else if (v3Norm(configData->h1Hat_B) > EPS) {
+    else if (v3Norm(configData->h1Hat_B) > ONE_AXIS_SA_EPS) {
             configData->bodyAxisInput = inputBodyHeadingParameter;
     }
     else {
@@ -79,7 +79,7 @@ void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint
         }
     }
     else {
-        if (v3Norm(configData->hHat_N) > EPS) {
+        if (v3Norm(configData->hHat_N) > ONE_AXIS_SA_EPS) {
             configData->inertialAxisInput = inputInertialHeadingParameter;
         }
         else {
@@ -141,7 +141,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
 
     /*! get the second body frame direction */
     double a2Hat_B[3];
-    if (v3Norm(configData->a2Hat_B) > EPS) {
+    if (v3Norm(configData->a2Hat_B) > ONE_AXIS_SA_EPS) {
         v3Normalize(configData->a2Hat_B, a2Hat_B);
     }
     else {
@@ -170,7 +170,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
     double sigma_RN[3];
     C2MRP(RN, sigma_RN);
 
-    if (v3Norm(configData->h2Hat_B) > EPS) {
+    if (v3Norm(configData->h2Hat_B) > ONE_AXIS_SA_EPS) {
         // compute second reference frame
         computeFinalRotation(configData->alignmentPriority, BN, rHat_SB_B, configData->h2Hat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
         
@@ -181,7 +181,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
 
         double dotP_1 = v3Dot(rHat_SB_R1, a2Hat_B);
         double dotP_2 = v3Dot(rHat_SB_R2, a2Hat_B);
-        if (dotP_2 > dotP_1 && fabs(dotP_2 - dotP_1) > EPS) {
+        if (dotP_2 > dotP_1 && fabs(dotP_2 - dotP_1) > ONE_AXIS_SA_EPS) {
             // if second reference frame gives a better result, save this as reference MRP set
             C2MRP(RN, sigma_RN);
         }
@@ -266,11 +266,11 @@ void computeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3
     double e_phi[3];
     v3Cross(hRefHat_B, hReqHat_B, e_phi);
     // If phi = PI, e_phi can be any vector perpendicular to hRefHat_B
-    if (fabs(phi-MPI) < EPS) {
+    if (fabs(phi-MPI) < ONE_AXIS_SA_EPS) {
         phi = MPI;
         v3Perpendicular(hRefHat_B, e_phi);
     }
-    else if (fabs(phi) < EPS) {
+    else if (fabs(phi) < ONE_AXIS_SA_EPS) {
         phi = 0;
     }
     // normalize e_phi
@@ -304,8 +304,8 @@ void computeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1H
 
     /*! compute exact solution or best solution depending on Delta */
     double t, t1, t2, y, y1, y2, psi;
-    if (fabs(A) < EPS) {
-        if (fabs(B) < EPS) {
+    if (fabs(A) < ONE_AXIS_SA_EPS) {
+        if (fabs(B) < ONE_AXIS_SA_EPS) {
             // zero-th order equation has no solution 
             // the solution of the minimum problem is psi = MPI
             psi = MPI;
@@ -320,7 +320,7 @@ void computeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1H
         if (Delta < 0) {
             // second order equation has no solution 
             // the solution of the minimum problem is found
-            if (fabs(B) < EPS) {
+            if (fabs(B) < ONE_AXIS_SA_EPS) {
                 t = 0.0;
             }
             else {
@@ -350,10 +350,10 @@ void computeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1H
 
             // choose between t1 and t2 according to a2Hat
             t = t1;            
-            if (fabs(v3Dot(hRefHat_B, a2Hat_B)-1) > EPS) {
+            if (fabs(v3Dot(hRefHat_B, a2Hat_B)-1) > ONE_AXIS_SA_EPS) {
                 y1 = (E*t1*t1 + F*t1 + G) / (1 + t1*t1);
                 y2 = (E*t2*t2 + F*t2 + G) / (1 + t2*t2);
-                if (y2 - y1 > EPS) {
+                if (y2 - y1 > ONE_AXIS_SA_EPS) {
                     t = t2;
                 }
             }
@@ -380,7 +380,7 @@ void computeThirdRotation(int alignmentPriority, double hRefHat_B[3], double rHa
     else {
         double sTheta = v3Dot(rHat_SB_R2, a1Hat_B);
         double theta = asin( fmin( fmax( fabs(sTheta), -1 ), 1 ) );
-        if (fabs(theta) < EPS) {
+        if (fabs(theta) < ONE_AXIS_SA_EPS) {
             // if Sun direction and solar array drive are already perpendicular, third rotation is null
             for (int i = 0; i < 3; i++) {
             PRV_theta[i] = 0;
@@ -389,7 +389,7 @@ void computeThirdRotation(int alignmentPriority, double hRefHat_B[3], double rHa
         else {
             // if Sun direction and solar array drive are not perpendicular, project solar array drive a1Hat_B onto perpendicular plane (aPHat_B) and compute third rotation
             double e_theta[3], aPHat_B[3];
-            if (fabs(fabs(theta)-MPI/2) > EPS) {
+            if (fabs(fabs(theta)-MPI/2) > ONE_AXIS_SA_EPS) {
                 for (int i = 0; i < 3; i++) {
                     aPHat_B[i] = (a1Hat_B[i] - sTheta * rHat_SB_R2[i]) / (1 - sTheta * sTheta);
                 }
@@ -398,7 +398,7 @@ void computeThirdRotation(int alignmentPriority, double hRefHat_B[3], double rHa
             else {
                 // rotate about the axis that minimizes variation in hRefHat_B direction
                 v3Cross(rHat_SB_R2, hRefHat_B, aPHat_B);
-                if (v3Norm(aPHat_B) < EPS) {
+                if (v3Norm(aPHat_B) < ONE_AXIS_SA_EPS) {
                     v3Perpendicular(rHat_SB_R2, aPHat_B);
                 }
                 v3Cross(a1Hat_B, aPHat_B, e_theta);
