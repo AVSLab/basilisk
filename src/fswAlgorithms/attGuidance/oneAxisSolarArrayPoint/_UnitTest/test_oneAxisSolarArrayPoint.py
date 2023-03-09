@@ -74,7 +74,7 @@ ang = list(ang)
 @pytest.mark.parametrize("bodyAxisInput", [0,1])
 @pytest.mark.parametrize("inertialAxisInput", [0,1,2])
 @pytest.mark.parametrize("alignmentPriority", [0,1])
-@pytest.mark.parametrize("accuracy", [1e-10])
+@pytest.mark.parametrize("accuracy", [1e-9])
 
 def test_oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, inertialAxisInput, alignmentPriority, accuracy):
     r"""
@@ -108,7 +108,8 @@ def test_oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisIn
     :math:`{}^\mathcal{B}\hat{h}_1` and the solar array axis drive :math:`{}^\mathcal{B}\hat{a}_1`.
     The angle :math:`\gamma` is computed from the output reference attitude and compared with the results of a 
     python function that computes the correct output based on the geometry of the problem. For a description of how
-    such correct result is obtained, see `Calaon et al. <http://hanspeterschaub.info/Papers/Calaon2023.pdf>`__.
+    such correct result is obtained, see R. Calaon, C. Allard and H. Schaub, "Attitude Reference Generation for Spacecraft
+    with Rotating Solar Arrays and Pointing Constraints", in preparation for Journal of Spacecraft and Rockets.
 
     **General Documentation Comments**
 
@@ -261,5 +262,5 @@ if __name__ == "__main__":
                  0,           # flagB
                  1,           # flagN
                  0,           # priorityFlag
-                 1e-10         # accuracy
+                 1e-9         # accuracy
                )

@@ -124,7 +124,7 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
     double thetaC = atan2(sinThetaC, cosThetaC);      // clip theta current between 0 and 2*pi
 
     /*! compute reference angle and store in buffer msg */
-    if (v3Norm(a2Hat_R) < EPS) {
+    if (v3Norm(a2Hat_R) < SA_REF_EPS) {
         // if norm(a2Hat_R) = 0, reference coincides with current angle
         hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta;
     }
