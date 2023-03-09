@@ -108,7 +108,8 @@ def test_oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisIn
     :math:`{}^\mathcal{B}\hat{h}_1` and the solar array axis drive :math:`{}^\mathcal{B}\hat{a}_1`.
     The angle :math:`\gamma` is computed from the output reference attitude and compared with the results of a 
     python function that computes the correct output based on the geometry of the problem. For a description of how
-    such correct result is obtained, see `Calaon et al. <http://hanspeterschaub.info/Papers/Calaon2023.pdf>`__.
+    such correct result is obtained, see R. Calaon, C. Allard and H. Schaub, "Attitude Reference Generation for Spacecraft
+    with Rotating Solar Arrays and Pointing Constraints", in preparation for Journal of Spacecraft and Rockets.
 
     **General Documentation Comments**
 
