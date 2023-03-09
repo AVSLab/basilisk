@@ -29,7 +29,7 @@
 #include "cMsgCInterface/EphemerisMsg_C.h"
 #include "cMsgCInterface/NavAttMsg_C.h"
 
-#define EPS 1e-12
+#define ONE_AXIS_SA_EPS 1e-12                    //!< accuracy to check if a variable is zero
 
 typedef enum alignmentPriority{
     prioritizeAxisAlignment = 0,
