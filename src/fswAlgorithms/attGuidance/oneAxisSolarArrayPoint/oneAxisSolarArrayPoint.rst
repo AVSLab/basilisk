@@ -36,7 +36,7 @@ provides information on what this message is used for.
 
 Detailed Module Description
 ---------------------------
-A detailed mathematical derivation of the equations applied by this module can be found in R. Calaon, C. Allard and H. Schaub, "Attitude Reference Generation for Spacecraft with Rotating Solar Arrays and Pointing Constraints," In preparation for Journal of Spacecraft and Rockets.
+A detailed mathematical derivation of the equations applied by this module can be found in R. Calaon, C. Allard and H. Schaub, "Attitude Reference Generation for Spacecraft with Rotating Solar Arrays and Pointing Constraints", in preparation for Journal of Spacecraft and Rockets.
 The input parameter ``alignmentPriority`` allows to choose whether the first or the second constraint is strictly enforced. When ``alignmentPriority = 0``, the body heading :math:`{}^\mathcal{B}\hat{h}` and the inertial heading :math:`{}^\mathcal{N}\hat{h}_\text{ref}` match exactly, while the incidence angle on the solar arrays is as close to optimal as possible. On the contrary, when ``alignmentPriority = 1``, the solar array drive :math:`{}^\mathcal{B}\hat{a}_1` is perpendicular to the Sun direction, to ensure maximum power generation, while the body heading and the inertial heading are as close to parallel as possible.
 
 Attention must be paid to how these pieces of input information is provided:
