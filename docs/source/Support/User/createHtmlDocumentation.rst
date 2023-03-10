@@ -14,7 +14,7 @@ The `Sphinx <https://pypi.org/project/Sphinx/>`__ and `Doxygen <http://doxygen.n
 Tool Requirements
 -----------------
 You need to have a command line version of Doxygen installed on your system. The Doxygen `download
-page <http://www.stack.nl/~dimitri/doxygen/download.html>`__ contains a range of pre-compiled binaries for many different platforms.
+page <https://www.doxygen.nl/download.html>`__ contains a range of pre-compiled binaries for many different platforms.
 
 On macOS the `Homebrew <https://brew.sh>`__ tool is also a very
 convenient method to install Doxygen by typing in the terminal::
