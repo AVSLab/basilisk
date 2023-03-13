@@ -22,13 +22,12 @@
 #include "string.h"
 #include <math.h>
 
-
-/* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/macroDefinitions.h"
 
+const double epsilon = 1e-12;                           // module tolerance for zero
 
 /*! This method initializes the output messages for this module.
  @return void
@@ -124,7 +123,7 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
     double thetaC = atan2(sinThetaC, cosThetaC);      // clip theta current between 0 and 2*pi
 
     /*! compute reference angle and store in buffer msg */
-    if (v3Norm(a2Hat_R) < SA_REF_EPS) {
+    if (v3Norm(a2Hat_R) < epsilon) {
         // if norm(a2Hat_R) = 0, reference coincides with current angle
         hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta;
     }
