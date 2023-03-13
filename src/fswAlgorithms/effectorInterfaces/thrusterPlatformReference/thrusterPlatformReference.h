@@ -72,6 +72,11 @@ extern "C" {
     void Reset_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configData, uint64_t callTime, int64_t moduleID);
     void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configData, uint64_t callTime, int64_t moduleID);
 
+    void computeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3]);
+    void computeSecondRotation(double r_CM_F[3], double r_TM_F[3], double r_CT_F[3], double T_F_hat[3], double FF1[3][3]);
+    void computeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3][3]);
+    void computeFinalRotation(double r_CM_M[3], double r_TM_F[3], double T_F[3], double FM[3][3]);
+
 #ifdef __cplusplus
 }
 #endif
