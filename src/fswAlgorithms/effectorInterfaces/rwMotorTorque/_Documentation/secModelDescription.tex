@@ -4,8 +4,12 @@
 \section{Model Description}
 
 \subsection{Module Input and Output Behavior}
-As illustrated in Figure~\ref{fig:moduleImg}, this module takes an attitude control torque $\leftexp{B}{\bm L_{r}}$ and maps the vector onto the specific control axes, $\hat{\bm c}_{i}$.  This allows only a subset of $\leftexp{B}{\bm L_{r}}$ to be implemented with the Reaction Wheels (RWs).  The next step is to map reduced control torque onto  the available RW spin axes,$\hat{\bm g}_{s_j}$. The module accounts for the availability of the reaction wheels in the case that not all wheels are functioning appropriately or are undergoing independent analysis.  
-
+As illustrated in Figure 1, this module takes an attitude control torque $\leftexp{B}{\bm L_{r}}$ and maps the vector onto the specific control axes, $\hat{\bm c}_{i}$.  This allows only a subset of $\leftexp{B}{\bm L_{r}}$ to be implemented with the Reaction Wheels (RWs).  The next step is to map reduced control torque onto  the available RW spin axes,$\hat{\bm g}_{s_j}$. The module accounts for the availability of the reaction wheels in the case that not all wheels are functioning appropriately or are undergoing independent analysis.  
+\begin{figure}[b]
+	\centering
+	\includegraphics[width=0.75\textwidth]{Figures/moduleImg.pdf}
+	\label{fig:moduleImg}\caption{}
+\end{figure}
 Assume in this documentation that the number of available RWs is $m$, while the number of desired control axes $\hat{\bm c}_{i}$ is $n$.  The number of installed RWs is $N$.
 
 The commanded torque message is a required input message and is read in every time step.  The RW configuration message is also required, but only read in during reset.  If the RW spin axes $\hat{\bm b}_{s_{i}}$ change then reset() must be called again.  The RW availability message is optional.  If the availability message is not used, then all installed RWs are assumed to be available.  The output message is always the array of RW motor torques.  
@@ -13,7 +17,7 @@ The commanded torque message is a required input message and is read in every ti
 
 
 \subsection{Torque Mapping}
-The {\tt rwMotorTorque} module receives a desired attitude control torque in the body frame $\leftexp{B}{\bm L}_r$.  This torque is the net control torque that should be applied to the spacecraft. Let $\hat{\bm g}_{s_{i}}$ be the individual RW spin axis, while $\bm u_{s}$ is the $m$-dimensional array of motor torques.  The $3\times m$ projection matrix $[G_{s}]$ then maps the control torque on motor torques using
+The {\tt rwMotorTorque} module receives a desired attitude control torque in the body frame $\leftexp{B}{\bm L}_r$. If two control torques are provided via the second optional control input message, these two are added together to compute $\leftexp{B}{\bm L}_r$. This torque is the net control torque that should be applied to the spacecraft. Let $\hat{\bm g}_{s_{i}}$ be the individual RW spin axis, while $\bm u_{s}$ is the $m$-dimensional array of motor torques.  The $3\times m$ projection matrix $[G_{s}]$ then maps the control torque on motor torques using
 \begin{equation}
 	\label{eq:rwtm1}
 	[G_{s}] \bm u_{s} = (-\leftexp{B}{\bm L}_r)
