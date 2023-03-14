@@ -43,7 +43,7 @@ typedef struct {
     /* declare module IO interfaces */
     ArrayMotorTorqueMsg_C rwMotorTorqueOutMsg;   //!< RW motor torque output message
     CmdTorqueBodyMsg_C vehControlInMsg;  //!<  vehicle control (Lr) Input message
-
+    CmdTorqueBodyMsg_C vehControlIn2Msg; //!<  optional vehicle control input message
     RWArrayConfigMsg_C rwParamsInMsg;    //!<  RW Array input message
     RWAvailabilityMsg_C rwAvailInMsg;     //!< optional RWs availability input message
 
