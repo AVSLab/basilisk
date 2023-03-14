@@ -25,6 +25,7 @@
 #include <vector>
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief Faceted Solar Radiation Pressure Dynamic Effector */
 class FacetSRPDynamicEffector: public SysModel, public DynamicEffector
