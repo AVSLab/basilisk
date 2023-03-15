@@ -20,6 +20,10 @@
 #include "facetSRPDynamicEffector.h"
 #include <cmath>
 
+const double speedLight = 299792458.0; //  [m/s] Speed of light
+const double AstU = 149597870700.0; // [m] Astronomical unit
+const double solarRadFlux = 1368.0; // [W/m^2] Solar radiation flux at 1 AU
+
 /*! The constructor initializes the member variables to zero. */
 FacetSRPDynamicEffector::FacetSRPDynamicEffector()
 {
@@ -92,6 +96,81 @@ void FacetSRPDynamicEffector::linkInStates(DynParamManager& states)
 */
 void FacetSRPDynamicEffector::computeForceTorque(double integTime, double timeStep)
 {
+    // Read the input message
+    SpicePlanetStateMsgPayload sunMsgBuffer;
+    sunMsgBuffer = sunInMsg.zeroMsgPayload;
+    sunMsgBuffer = this->sunInMsg();
+
+    // Calculate the Sun position with respect to the inertial frame, expressed in inertial frame components
+    this->r_SN_N = cArray2EigenVector3d(sunMsgBuffer.PositionVector);
+
+    // Compute dcm_BN using MRP transformation
+    Eigen::MRPd sigmaBN;
+    sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
+    Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
+
+    // Store the hub B frame position with respect to the inertial frame
+    Eigen::Vector3d r_BN_N = this->hubPosition->getState();
+
+    // Calculate the vector pointing from point B on the spacecraft to the Sun
+    Eigen::Vector3d r_SB_B = dcm_BN * (this->r_SN_N - r_BN_N);
+
+    // Calculate the unit vector pointing from point B on the spacecraft to the Sun
+    Eigen::Vector3d sHat = r_SB_B / r_SB_B.norm();
+
+    // Define local vectors for the facet force and torque storage
+    Eigen::Vector3d facetSRPForcePntB_B;
+    Eigen::Vector3d facetSRPTorquePntB_B;
+    Eigen::Vector3d totalSRPForcePntB_B;
+    Eigen::Vector3d totalSRPTorquePntB_B;
+
+    // Zero storage information
+    double projectedArea = 0.0;
+    double projectionTerm = 0.0;
+    facetSRPForcePntB_B.setZero();
+    facetSRPTorquePntB_B.setZero();
+    totalSRPForcePntB_B.setZero();
+    totalSRPTorquePntB_B.setZero();
+    this->forceExternal_B.setZero();
+    this->torqueExternalPntB_B.setZero();
+    
+    // Calculate the SRP pressure acting on point B
+    double numAU = AstU / r_SB_B.norm();
+    double SRPPressure = (solarRadFlux / speedLight) * numAU * numAU;
+
+    // Loop through the facets and calculate the SRP force and torque acting on point B
+    for(int i = 0; i < this->numFacets; i++)
+    {
+        projectionTerm = this->scGeometry.facetNormals_B[i].dot(sHat);
+        projectedArea = this->scGeometry.facetAreas[i] * projectionTerm;
+
+        if(projectedArea > 0.0){
+
+            // Calculate the incidence angle theta between the facet normal vector and the Sun-direction vector
+            double cosTheta = projectionTerm;
+            Eigen::Vector3d intermediate = sHat.cross(this->scGeometry.facetNormals_B[i]);
+            double sinTheta = intermediate.norm();
+            double theta = atan2(sinTheta, cosTheta);
+
+            // Compute the SRP force acting on the ith facet
+            facetSRPForcePntB_B = -SRPPressure * projectedArea * cos(theta)
+                                  * ( (1-this->scGeometry.facetSpecCoeffs[i])
+                                  * sHat + 2 * ( (this->scGeometry.facetDiffCoeffs[i] / 3)
+                                  + this->scGeometry.facetSpecCoeffs[i] * cos(theta))
+                                  * this->scGeometry.facetNormals_B[i] );
+
+            // Compute the SRP torque acting on the ith facet
+            facetSRPTorquePntB_B = this->scGeometry.facetLocationsPntB_B[i].cross(facetSRPForcePntB_B);
+
+            // Compute the total SRP force and torque acting on the spacecraft
+            totalSRPForcePntB_B = totalSRPForcePntB_B + facetSRPForcePntB_B;
+            totalSRPTorquePntB_B = totalSRPTorquePntB_B + facetSRPTorquePntB_B;
+        }
+    }
+
+    // Write the total SRP force and torque local variables to the dynamic effector variables
+    this->forceExternal_B = totalSRPForcePntB_B;
+    this->torqueExternalPntB_B = totalSRPTorquePntB_B;
 }
 
 /*! This is the UpdateState() method
