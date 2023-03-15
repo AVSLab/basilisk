@@ -241,9 +241,7 @@ double OutputDataSet::getStates(double T, int derivative, int index)
 void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
 {
     Output->P = P;
-    
-    std::cout << "interpolation has begun";
-    
+        
     // q = number of waypoints - 1
     int q = (int) Input.X1.size() - 1;
     
@@ -427,32 +425,15 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     Output->P = P;
     
     // q = number of waypoints - 1
-    int q = (int) Input.X1.size();
-    std::cout<<"The value of q  intially is "<<q<<std::endl;
-    
-    q = (int) Input.X1.size() - 1;
-    
-    std::cout<<"The value of q then is"<<q<<std::endl;
-    
-    std::cout<<"The value of q-1 is "<<q-1<<std::endl;
-    
-    /*
-    std::cout<<"Printing Input W "<<std::endl;
-    for (int g = 0;g<2*q-2;g++)
-        std::cout<<Input.W[g]<<std::endl;
-    */
-    
-    
-//    for (int a = 0; a < q+1; a++) {
-//        std::cout<<Input.X1[a]<<","<<Input.X2[a]<<","<<Input.X3[a]<<std::endl;
-//    }
-    
-
-    //std::cout << "The value of q is "<<q<<std::endl;
+    int q = (int) Input.X1.size() -1;
         
     // T = time tags; if not specified, it is computed from a cartesian distance assuming a constant velocity norm on average
     Eigen::VectorXd T(q+1);
+    
+    // Preset distance to 0
     double S = 0;
+    
+    // Case 1: Timestamps provided
     if (Input.T_flag == true) {
         T = Input.T;
         for (int a = 1; a < q+1; a++) {
@@ -460,7 +441,11 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             S += T[a] - T[a-1];
         }
         T = Input.T;
+        Input.AvgXDot = S/T[q];
     }
+    
+    
+    // Case 2: Timestamps not provided
     else {
         T[0] = 0;
         for (int a = 1; a < q+1; a++) {
@@ -475,18 +460,14 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     }
         }
     
-    // Need to access the timestaps for the waypoints for the final graph
-    //if (Input.T_flag == false) {
-    Output->T_way_calc = T;
-    //}
     
+    // Need to access the timestaps for the waypoints for the final graph
+    Output->T_way_calc = T;
+    
+    
+    //Obtain total time
     double Ttot = T[q];
     
-    
-//    for (int a=0; a<q+1;a++) {
-//        std::cout<<T[a]<<std::endl;
-//    }
-//
 
     // build uk vector: normalized waypoint time tags
     Eigen::VectorXd uk(q+1);
@@ -522,7 +503,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     }
     
     for (int p = 0; p < P+1; p++) {
-        U[n+p+1] = 1; // Got rid of the n here which fixed the error, now we are matching but next results are nan
+        U[n+p+1] = 1;
     }
     
     
@@ -540,7 +521,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     for (int k = 1;k<q;k++) {
         X1_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X1[k]-Input.X1[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X1[k+1]-Input.X1[k])/(uk[k+1]-uk[k]);
         X2_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X2[k]-Input.X2[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X2[k+1]-Input.X2[k])/(uk[k+1]-uk[k]);
-        std::cout<<"X2_primehat"<<X2_primehat[index]<<std::endl;
+        //std::cout<<"X2_primehat"<<X2_primehat[index]<<std::endl;
         X3_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X3[k]-Input.X3[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X3[k+1]-Input.X3[k])/(uk[k+1]-uk[k]);
         index++;
     }
@@ -569,11 +550,9 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         mag = abs((mag));
         double temp;
         if (mag != 0) {
-//            std::cout<<"Non zero mag"<<std::endl;
-            temp =0.03*Ttot/mag;
+            temp =Input.AvgXDot*Ttot/mag;
         }
         else {
-//            std::cout<<"zero mag"<<std::endl;
             temp = 0;
         }
         X1_prime[k] = X1_primehat[k]*temp;
@@ -665,32 +644,17 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         basisFunction(uk[c], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
         rhok1[c-1] = Input.X1[c] - NN[0]*C1_1[0] - NN[n]*C1_1[K+1];
         rhok1[c+q-2] = X1_prime[c] - NN1[0]*C1_1[0] - NN1[n]*C1_1[K+1];
-        //std::cout<<"The value of c "<<c<<" and X1_prime[c] is "<<X1_prime[c]<<std::endl;
         rhok2[c-1] = Input.X2[c] - NN[0]*C2_1[0] - NN[n]*C2_1[K+1];
         rhok2[c+q-2] = X2_prime[c] - NN1[0]*C2_1[0] - NN1[n]*C2_1[K+1];
-        //std::cout<<"The value of c "<<c<<" and X2_prime[c] is "<<X2_prime[c]<<std::endl;
         rhok3[c-1] = Input.X3[c] - NN[0]*C3_1[0] - NN[n]*C3_1[K+1];
         rhok3[c+q-2] = X3_prime[c] - NN1[0]*C3_1[0] - NN1[n]*C3_1[K+1];
-        //std::cout<<"The value of c "<<c<<" and X3_prime[c] is "<<X3_prime[c]<<std::endl;
         if (Input.XDot_0_flag == true) {
-            //std::cout<<"The initial value is rhok1[c-1] "<<rhok1[c-1]<<std::endl;
             rhok1[c-1] -= NN[1]*C1_1[1];
-            //std::cout<<"The new value is rhok1[c-1]"<<rhok1[c-1]<<std::endl;
-            //std::cout<<"The initial value is rhok1[c+q+2] "<<rhok2[c+q-2]<<std::endl;
             rhok1[c+q-2] -= NN1[1]*C1_1[1];
-            //std::cout<<"The new value is rhok1[c+q-2] "<<rhok2[c+q-2]<<std::endl;
-            //std::cout<<"The new value is rhok2[c-1] "<<rhok2[c-1]<<std::endl;
             rhok2[c-1] -= NN[1]*C2_1[1];
-            //std::cout<<"The new value is rhok2[c-1] "<<rhok2[c-1]<<std::endl;
-            //std::cout<<"The initial value is rhok2[c+q-2]"<<rhok2[c+q-2]<<std::endl;
             rhok2[c+q-2] -= NN1[1]*C2_1[1];
-            //std::cout<<"The new value is rhok2[c+q-2]"<<rhok2[c+q-2]<<std::endl;
-            //std::cout<<"The initial value is rhok3[c-1]"<<rhok3[c-1]<<std::endl;
             rhok3[c-1] -= NN[1]*C3_1[1];
-            //std::cout<<"The new value is rhok3[c-1]"<<rhok3[c-1]<<std::endl;
-            //std::cout<<"The initial value is rhok3[c+q-2]"<<rhok3[c+q-2]<<std::endl;
             rhok3[c+q-2] -= NN1[1]*C3_1[1];
-            //std::cout<<"The initial value is rhok3[c+q-2]"<<rhok3[c+q-2]<<std::endl;
         }
         if (Input.XDDot_0_flag == true) {
             rhok1[c-1] -= NN[2]*C1_1[2];
@@ -709,32 +673,15 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             rhok3[c+q-2] -= NN1[n-2]*C3_1[K-1];
         }
         if (Input.XDot_N_flag == true) {
-            //std::cout<<"The initial value is rhok1[c-1] "<<rhok1[c-1]<<std::endl;
             rhok1[c-1] -= NN[n-1]*C1_1[K];
-            //std::cout<<"The new value is rhok1[c-1] "<<rhok1[c-1]<<std::endl;
-            //std::cout<<"The initial value is rhok1[c+q-2] "<<rhok1[c+q-2]<<std::endl;
             rhok1[c+q-2]-= NN1[n-1]*C1_1[K];
-            //std::cout<<"The new value is rhok1[c+q-2] "<<rhok1[c+q-2]<<std::endl;
-            //std::cout<<"The initial value is rhok2[c-1]"<<rhok2[c-1]<<std::endl;
             rhok2[c-1] -= NN[n-1]*C2_1[K];
-            //std::cout<<"The new value is rhok2[c-1]"<<rhok2[c-1]<<std::endl;
-            //std::cout<<"The initial value is rhok2[c+q-2]"<<rhok2[c+q-2]<<std::endl;
             rhok2[c+q-2]-= NN1[n-1]*C2_1[K];
-            //std::cout<<"The final value is rhok2[c+q-2]"<<rhok2[c+q-2]<<std::endl;
-            //std::cout<<"The initial value is rhok3[c-1]"<<rhok3[c-1]<<std::endl;
             rhok3[c-1] -= NN[n-1]*C3_1[K];
-            //std::cout<<"The final value is rhok3[c-1]"<<rhok3[c-1]<<std::endl;
-            //std::cout<<"The initial value is rhok3[c+q-2]"<<rhok3[c+q-2]<<std::endl;
             rhok3[c+q-2]-= NN1[n-1]*C3_1[K];
-            //std::cout<<"The final value is rhok3[c+q-2]"<<rhok3[c+q-2]<<std::endl;
         }
     }
     
-//    std::cout<<"Printing rhok vectors"<<std::endl;
-
-//    for ( int y = 0; y < 2*q-2; y++) {
-//        std::cout<<rhok1[y]<<","<<rhok2[y]<<","<<rhok3[y]<<std::endl;
-//    }
     
         // Split code based on whether LS approximation is done with first derivative constraints or not
         
@@ -756,30 +703,23 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             if (Input.XDDot_0_flag == true) {k += 1;}
             for (int e = 0; e < n-K-1; e++) {
                 ND(d,e) = NN[k+e];
-//                std::cout<<"ND print condition 1"<<std::endl;
-//                std::cout<<ND(d,e)<<std::endl;
             }
         }
-        std::cout<<"Printing weight vector"<<std::endl;
         // populate weight matrix W
         Eigen::MatrixXd W(q-1,q-1);
         for (int f = 0; f < q-1; f++) {
             for (int m = 0; m < q-1; m++) {
                 if (f == m) {
                     if (Input.W_flag) {
-                        std::cout<<"The value of f is "<<f<<" and the value of m is "<<m<<std::endl;
                         W(f,m) = Input.W[f+1];
-                        std::cout<<W(f,m)<<std::endl;
                     }
                     else {
                         W(f,m) = 1;
-                        std::cout<<W(f,m)<<std::endl;
 
                     }
                 }
                 else {
                     W(f,m) = 0;
-                    std::cout<<W(f,m)<<std::endl;
                 }
             }
         }
@@ -788,14 +728,10 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             
         Eigen::VectorXd rhok1_short(q-1),rhok2_short(q-1),rhok3_short(q-1);
             
-//        std::cout<<"Rhok short"<<std::endl; // Change to q-1
         for (int c = 0; c <q-1; c++) {
             rhok1_short[c] = rhok1[c];
-//            std::cout<<rhok1_short[c]<<std::endl;
             rhok2_short[c] = rhok2[c];
-//            std::cout<<rhok2_short[c]<<std::endl;
             rhok3_short[c] = rhok3[c];
-//            std::cout<<rhok3_short[c]<<std::endl;
             }
         
         rho1 = B * rhok1_short;
@@ -826,27 +762,13 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
             }
         }
         
-         //Printing out results
-//        for (int c = 0;c<2*q-2;c++) {
-//            for (int q = 0; q<n-K-1;q++) {
-//                std::cout<<ND_2(c,q)<<" ";
-//            }
-//            std::cout<<std::endl;
-//        }
-        
-  
-        
-        
         // populate weight matrix W_2
-        std::cout<<"Printing weight vector"<<std::endl;
         Eigen::MatrixXd W_2(2*q-2,2*q-2);
         for (int f = 0; f < 2*q-2; f++) {
             for (int m = 0; m < 2*q-2; m++) {
                 if (f == m) {
                     if (Input.W_flag) {
-                        std::cout<<"The value of f is "<<f<<" and the value of m is "<<m<<std::endl;
                         W_2(f,m) = Input.W[f+1];
-                        std::cout<<W_2(f,m)<<std::endl;
                     }
                     else {
                         W_2(f,m) = 1;
