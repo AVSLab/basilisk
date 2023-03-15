@@ -173,6 +173,42 @@ void LambertSolver::findx()
     }
 }
 
+/*! This method computes the velocities at the initial and final position for a given free variable x
+    @param x free variable of Lambert's problem that satisfies the given time of flight
+    @return std::array<Eigen::Vector3d, 2>
+*/
+std::array<Eigen::Vector3d, 2> LambertSolver::computeVelocities(double x)
+{
+    double c = (this->r2vec - this->r1vec).norm(); // chord length
+    double r1 = this->r1vec.norm();
+    double r2 = this->r2vec.norm();
+    double s = 1.0/2.0*(r1+r2+c); // semiperimeter
+
+    double y = sqrt(1.0-pow(this->lambda,2)*(1.0-pow(x,2)));
+    double gamma = sqrt(this->mu * s/2);
+    double rho = (r1-r2)/c;
+    double sigma = sqrt(1.0-pow(rho,2));
+
+    // compute velocity components for v1vec and v2vec
+    double Vr1 = gamma*((this->lambda*y - x) - rho*(this->lambda*y+x))/r1;
+    double Vr2 = -gamma*((this->lambda*y - x) + rho*(this->lambda*y+x))/r2;
+    double Vt1 = gamma*sigma*(y+this->lambda*x)/r1;
+    double Vt2 = gamma*sigma*(y+this->lambda*x)/r2;
+
+    // get orbit frame unit vectors
+    Eigen::Vector3d i_r1 = this->Oframe1.at(0);
+    Eigen::Vector3d i_t1 = this->Oframe1.at(1);
+    Eigen::Vector3d i_r2 = this->Oframe2.at(0);
+    Eigen::Vector3d i_t2 = this->Oframe2.at(1);
+
+    // initial and final velocity of Lambert solution orbit
+    Eigen::Vector3d v1 = Vr1*i_r1 + Vt1*i_t1;
+    Eigen::Vector3d v2 = Vr2*i_r2 + Vt2*i_t2;
+
+    std::array<Eigen::Vector3d, 2> velocities = {v1, v2};
+    return velocities;
+}
+
 /*! This method computes the initial guess for the free variable x using the Gooding procedure
     @param lam lambda parameter that defines the problem geometry
     @param T non-dimensional time-of-flight
