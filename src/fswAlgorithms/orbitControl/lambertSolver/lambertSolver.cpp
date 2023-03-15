@@ -80,6 +80,56 @@ void LambertSolver::readMessages(){
     this->r2vec = cArray2EigenVector3d(lambertProblemInMsgBuffer.r2vec);
 }
 
+/*! This method writes the output messages each call of updateState
+    @param CurrentSimNanos current simulation time in nano-seconds
+    @return void
+*/
+void LambertSolver::writeMessages(uint64_t CurrentSimNanos){
+    // Make local copies of messages
+    LambertSolutionMsgPayload lambertSolutionOutMsgBuffer;
+    LambertPerformanceMsgPayload lambertPerformanceOutMsgBuffer;
+    // Always zero the output message buffers before assigning values
+    lambertSolutionOutMsgBuffer = this->lambertSolutionOutMsg.zeroMsgPayload;
+    lambertPerformanceOutMsgBuffer = this->lambertPerformanceOutMsg.zeroMsgPayload;
+
+    if (this->noSolution || (this->numberOfRevolutions > 0 && !this->multiRevSolution)){
+        // 1. if the transfer angle is 180 degrees, the two position vectors do not define a plane, so an infinite number of solutions exist. In this case, the module should not return any solutions.
+        // 2. transfer time is too short for multi-revolution solution, zero solutions exist. Neither solution is valid
+        lambertSolutionOutMsgBuffer.valid = 0;
+        lambertSolutionOutMsgBuffer.validSol2 = 0;
+    }
+    else if (this->numberOfRevolutions == 0){
+        // if zero orbits are completed, only one solution exists. Only populate information for 1st solution, 2nd solution remains zero message payload
+        eigenVector3d2CArray(this->vvecs.at(0), lambertSolutionOutMsgBuffer.v1);
+        eigenVector3d2CArray(this->vvecs.at(1), lambertSolutionOutMsgBuffer.v2);
+        lambertSolutionOutMsgBuffer.valid = 1; // solution 1 is valid
+
+        lambertPerformanceOutMsgBuffer.x = this->X;
+        lambertPerformanceOutMsgBuffer.numIter = this->numIter;
+        lambertPerformanceOutMsgBuffer.errX = this->errX;
+    }
+    else{
+        // if one or more orbits are completed, and the requested time of flight is long enough, two solutions exist
+        eigenVector3d2CArray(this->vvecs.at(0), lambertSolutionOutMsgBuffer.v1);
+        eigenVector3d2CArray(this->vvecs.at(1), lambertSolutionOutMsgBuffer.v2);
+        lambertSolutionOutMsgBuffer.valid = 1; // solution 1 is valid
+        eigenVector3d2CArray(this->vvecsSol2.at(0), lambertSolutionOutMsgBuffer.v1Sol2);
+        eigenVector3d2CArray(this->vvecsSol2.at(1), lambertSolutionOutMsgBuffer.v2Sol2);
+        lambertSolutionOutMsgBuffer.validSol2 = 1; // solution 2 is valid
+
+        lambertPerformanceOutMsgBuffer.x = this->X;
+        lambertPerformanceOutMsgBuffer.numIter = this->numIter;
+        lambertPerformanceOutMsgBuffer.errX = this->errX;
+        lambertPerformanceOutMsgBuffer.xSol2 = this->XSol2;
+        lambertPerformanceOutMsgBuffer.numIterSol2 = this->numIterSol2;
+        lambertPerformanceOutMsgBuffer.errXSol2 = this->errXSol2;
+    }
+
+    // Write to the output messages
+    this->lambertSolutionOutMsg.write(&lambertSolutionOutMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->lambertPerformanceOutMsg.write(&lambertPerformanceOutMsgBuffer, this->moduleID, CurrentSimNanos);
+}
+
 /*! This method computes the problem geometry for the given parameters of Lambert's problem. The orbit frame is also determined.
     @return void
 */

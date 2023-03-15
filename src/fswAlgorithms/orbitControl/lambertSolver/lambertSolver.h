@@ -52,6 +52,7 @@ public:
 
 private:
     void readMessages();
+    void writeMessages(uint64_t CurrentSimNanos);
     void problemGeometry();
     std::array<double, 2> goodingInitialGuess(double lambda, double T);
     std::array<double, 2> izzoInitialGuess(double lambda, double T);
@@ -76,6 +77,8 @@ private:
     bool noSolution{};              //!< boolean flag if no solution should be returned (in case of 180 deg transfer angle)
     std::array<Eigen::Vector3d, 3> Oframe1;    //!< array containing the orbit frame unit vectors at t0
     std::array<Eigen::Vector3d, 3> Oframe2;    //!< array containing the orbit frame unit vectors at t1
+    std::array<Eigen::Vector3d, 2> vvecs;      //!< array containing the velocity vector solutions at t0 and t1
+    std::array<Eigen::Vector3d, 2> vvecsSol2;  //!< array containing the velocity vector solutions at t0 and t1 (solution 2)
     double X{};                     //!< solution for free variable of Lambert's problem
     double XSol2{};                 //!< second solution for free variable of Lambert's problem
     int numIter{};                  //!< number of root finder iterations to find X
