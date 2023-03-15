@@ -79,3 +79,46 @@ void LambertSolver::readMessages(){
     this->r1vec = cArray2EigenVector3d(lambertProblemInMsgBuffer.r1vec);
     this->r2vec = cArray2EigenVector3d(lambertProblemInMsgBuffer.r2vec);
 }
+
+/*! This method computes the problem geometry for the given parameters of Lambert's problem. The orbit frame is also determined.
+    @return void
+*/
+void LambertSolver::problemGeometry()
+{
+    double c = (this->r2vec - this->r1vec).norm(); // chord length
+    double r1 = this->r1vec.norm();
+    double r2 = this->r2vec.norm();
+    double s = 1.0/2.0*(r1+r2+c); // semiperimeter
+
+    // lambda parameter
+    this->lambda = sqrt(1.0-c/s);
+    // non-dimensional time-of-flight
+    this->TOF = sqrt(2.0*this->mu/pow(s,3))*this->transferTime;
+
+    // compute orbit frame unit vectors
+
+    // radial direction at for initial and final position vector
+    Eigen::Vector3d i_r1 = this->r1vec/r1;
+    Eigen::Vector3d i_r2 = this->r2vec/r2;
+    // check alignment of the two position vectors
+    double sinTheta = i_r1.cross(i_r2).norm();
+    if (abs(sinTheta) < sin(this->alignmentThreshold * M_PI/180.)){
+        bskLogger.bskLog(BSK_WARNING, "lambertSolver: position vectors r1 and r2 are too aligned, that is, the angle between them is smaller than the angle alignmentThreshold (default: 1.0 degrees). They might not define a plane, so no solution is returned.");
+        this->noSolution = true;
+    }
+    // orbit normal direction
+    Eigen::Vector3d i_h = i_r1.cross(i_r2)/(i_r1.cross(i_r2).norm());
+
+    double sign = 1.0;
+    if (i_h(2) < 0.0){
+        // Transfer angle is greater than 180 degrees
+        this->lambda = -this->lambda;
+        sign = -sign;
+    }
+    // second unit vectors
+    Eigen::Vector3d i_t1 = i_h.cross(i_r1)*sign;
+    Eigen::Vector3d i_t2 = i_h.cross(i_r2)*sign;
+
+    this->Oframe1 = {i_r1, i_t1, i_h};
+    this->Oframe2 = {i_r2, i_t2, i_h};
+}

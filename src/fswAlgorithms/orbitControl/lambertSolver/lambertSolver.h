@@ -30,6 +30,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/astroConstants.h"
 #include <vector>
+#include <array>
 
 /*! @brief This module solves Lambert's problem using either the Gooding or the Izzo algorithm.
  */
@@ -47,8 +48,11 @@ public:
 
     BSKLogger bskLogger;                                                //!< -- BSK Logging
 
+    double alignmentThreshold = 1.0;                                    //!< [deg] minimum angle between position vectors such that they are not considered too aligned.
+
 private:
     void readMessages();
+    void problemGeometry();
 
     std::string solverName;         //!< name of lambert algorithm
     Eigen::Vector3d r1vec;          //!< position vector at t0
@@ -56,6 +60,11 @@ private:
     double transferTime{};          //!< time of flight between r1vec and r2vec (t1-t0)
     double mu{};                    //!< gravitational parameter
     int numberOfRevolutions{};      //!< number of revolutions
+    double TOF{};                   //!< non-dimensional time-of-flight constraint
+    double lambda{};                //!< parameter of Lambert"s problem that defines problem geometry
+    bool noSolution{};              //!< boolean flag if no solution should be returned (in case of 180 deg transfer angle)
+    std::array<Eigen::Vector3d, 3> Oframe1;    //!< array containing the orbit frame unit vectors at t0
+    std::array<Eigen::Vector3d, 3> Oframe2;    //!< array containing the orbit frame unit vectors at t1
 };
 
 #endif
