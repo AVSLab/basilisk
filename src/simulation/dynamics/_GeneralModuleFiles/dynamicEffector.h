@@ -35,10 +35,10 @@ public:
     
 public:
     Eigen::VectorXd stateDerivContribution; //!< -- DynamicEffectors contribution to a stateEffector
-    Eigen::Vector3d forceExternal_N;        //!< [N] External force applied by this effector in inertial components
-    Eigen::Vector3d forceExternal_B;        //!< [N] External force applied by this effector in body frame components
-    Eigen::Vector3d torqueExternalPntB_B;   //!< [Nm] External torque applied by this effector
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    Eigen::Vector3d forceExternal_N = Eigen::Vector3d::Zero();      //!< [N] External force applied by this effector in inertial components
+    Eigen::Vector3d forceExternal_B = Eigen::Vector3d::Zero();      //!< [N] External force applied by this effector in body frame components
+    Eigen::Vector3d torqueExternalPntB_B = Eigen::Vector3d::Zero(); //!< [Nm] External torque applied by this effector
+    BSKLogger bskLogger;                    //!< -- BSK Logging
 };
 
 
