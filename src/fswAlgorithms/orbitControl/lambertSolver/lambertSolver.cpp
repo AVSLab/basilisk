@@ -246,6 +246,44 @@ std::array<double, 3> LambertSolver::householder(double T, double x0, int N)
     return sol;
 }
 
+/*! This method includes a halley root-finder (2nd order householder) to find the free variable x that satisfies the time-of-flight constraint
+    @param T requested non-dimensional time-of-flight
+    @param x0 initial guess for x free variable of Lambert's problem that satisfies the given time of flight
+    @param N number of revolutions
+    @return std::array<double, 3>
+*/
+std::array<double, 3> LambertSolver::halley(double T, double x0, int N)
+{
+    double tol = 1e-8;
+    int iterMax = 8;
+    double xnew = 0.0; // initialize
+    int numIter = 0; // number of iterations
+    double err;
+
+    for (int j = 0; j < iterMax; ++j){
+        // compute non-dimensional time-of-flight T for given x
+        double tof = x2tof(x0, N, this->lambda);
+        // get derivatives of T
+        std::array<double, 3> DTs = dTdx(x0, tof, this->lambda);
+        double DT = DTs[0];
+        double D2T = DTs[1];
+
+        double delta = tof - T;
+        // compute new x using halley algorithm
+        xnew = x0 - delta*DT/(pow(DT,2) - delta*D2T/2.0);
+        err = abs(x0 - xnew);
+        x0 = xnew;
+        numIter += numIter;
+        if (err < tol){
+            break;
+        }
+    }
+
+    std::array<double, 3> sol = {xnew, static_cast<double>(numIter), err};
+
+    return sol;
+}
+
 /*! This method computes the hypergeometric function 2F1(a,b,c,z)
     @param z argument of hypergeometric function
     @return double

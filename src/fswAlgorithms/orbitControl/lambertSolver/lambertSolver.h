@@ -56,6 +56,7 @@ private:
     double x2tof(double x, int N, double lam);
     std::array<double, 3> dTdx(double x, double T, double lam);
     std::array<double, 3> householder(double T, double x0, int N);
+    std::array<double, 3> halley(double T, double x0, int N);
     double hypergeometricF(double z);
 
     std::string solverName;         //!< name of lambert algorithm
