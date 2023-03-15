@@ -174,6 +174,38 @@ double LambertSolver::x2tof(double x, int N, double lam)
     return tof;
 }
 
+/*! This method computes the derivatives of the time of flight curve T(x)
+    @param x free variable of Lambert's problem that satisfies the given time of flight
+    @param T requested non-dimensional time-of-flight
+    @param lam lambda parameter that defines the problem geometry
+    @return std::array<double, 3>
+*/
+std::array<double, 3> LambertSolver::dTdx(double x, double T, double lam)
+{
+    double DT; // dT/dx
+    double D2T; // d2T/dx2
+    double D3T; // d3T/dx3
+    if (abs(x - 1.0) < 1e-8){
+        // exact derivative for parabolic case
+        DT = 2.0/5.0*(pow(lam,5) - 1.0);
+        D2T = 0.0;
+        D3T = 0.0;
+    }
+    else{
+        double u = 1.0 - pow(x, 2);
+        double y = sqrt(1.0- pow(lam, 2) * u);
+        DT = 1.0/u*(3.0*T*x - 2.0 + 2.0 * pow(lam, 3) * x / y);
+        D2T = 1.0/u*(3.0*T + 5.0*x*DT + 2.0 * (1. - pow(lam, 2))
+                * pow(lam, 3) / pow(y, 3));
+        D3T = 1.0/u*(7.0*x*D2T + 8.0*DT - 6.0 * (1. - pow(lam, 2))
+                * pow(lam, 5) * x / pow(y, 5));
+    }
+
+    std::array<double, 3> DTs = {DT, D2T, D3T};
+
+    return DTs;
+}
+
 /*! This method computes the hypergeometric function 2F1(a,b,c,z)
     @param z argument of hypergeometric function
     @return double

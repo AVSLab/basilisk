@@ -54,6 +54,7 @@ private:
     void readMessages();
     void problemGeometry();
     double x2tof(double x, int N, double lam);
+    std::array<double, 3> dTdx(double x, double T, double lam);
     double hypergeometricF(double z);
 
     std::string solverName;         //!< name of lambert algorithm
