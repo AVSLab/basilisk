@@ -123,6 +123,56 @@ void LambertSolver::problemGeometry()
     this->Oframe2 = {i_r2, i_t2, i_h};
 }
 
+/*! This method finds the free variable x that satisfies the requested time of flight TOF.
+    @return void
+*/
+void LambertSolver::findx()
+{
+    // find x that satisfies time-of-flight constraint using numerical root finder
+    if (this->solverName == "Gooding"){
+        // get initial guess for iteration variable x
+        std::array<double, 2> x0 = goodingInitialGuess(this->lambda, this->TOF);
+        if (this->numberOfRevolutions > 0 && !this->multiRevSolution){
+            // if initial guess function determines that TOF is too short for multi-revolution solution to exist, return no solution
+            return;
+        }
+        // for Gooding algorithm use halley root finder
+        std::array<double, 3> solution = halley(this->TOF, x0[0], this->numberOfRevolutions);
+        this->X = solution[0];
+        this->numIter = int(solution[1]);
+        this->errX = solution[2];
+
+        if (this->numberOfRevolutions > 0){
+            // if one or more orbits are to be completed, two solutions exist. Find second solution
+            std::array<double, 3> solution_sol2 = halley(this->TOF, x0[1], this->numberOfRevolutions);
+            this->XSol2 = solution_sol2[0];
+            this->numIterSol2 = int(solution_sol2[1]);
+            this->errXSol2 = solution_sol2[2];
+        }
+    }
+    else if (this->solverName == "Izzo"){
+        // get initial guess for iteration variable x
+        std::array<double, 2> x0 = izzoInitialGuess(this->lambda, this->TOF);
+        if (this->numberOfRevolutions > 0 && !this->multiRevSolution){
+            // if initial guess function determines that TOF is too short for multi-revolution solution to exist, return no solution
+            return;
+        }
+        // for Izzo algorithm use 3rd order householder root finder
+        std::array<double, 3> solution = householder(this->TOF, x0[0], this->numberOfRevolutions);
+        this->X = solution[0];
+        this->numIter = int(solution[1]);
+        this->errX = solution[2];
+
+        if (this->numberOfRevolutions > 0){
+            // if one or more orbits are to be completed, two solutions exist. Find second solution
+            std::array<double, 3> solution_sol2 = householder(this->TOF, x0[1], this->numberOfRevolutions);
+            this->XSol2 = solution_sol2[0];
+            this->numIterSol2 = int(solution_sol2[1]);
+            this->errXSol2 = solution_sol2[2];
+        }
+    }
+}
+
 /*! This method computes the initial guess for the free variable x using the Gooding procedure
     @param lam lambda parameter that defines the problem geometry
     @param T non-dimensional time-of-flight

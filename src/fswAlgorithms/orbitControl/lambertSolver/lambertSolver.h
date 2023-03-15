@@ -55,6 +55,7 @@ private:
     void problemGeometry();
     std::array<double, 2> goodingInitialGuess(double lambda, double T);
     std::array<double, 2> izzoInitialGuess(double lambda, double T);
+    void findx();
     double x2tof(double x, int N, double lam);
     std::array<double, 3> dTdx(double x, double T, double lam);
     std::array<double, 3> householder(double T, double x0, int N);
@@ -74,6 +75,12 @@ private:
     bool noSolution{};              //!< boolean flag if no solution should be returned (in case of 180 deg transfer angle)
     std::array<Eigen::Vector3d, 3> Oframe1;    //!< array containing the orbit frame unit vectors at t0
     std::array<Eigen::Vector3d, 3> Oframe2;    //!< array containing the orbit frame unit vectors at t1
+    double X{};                     //!< solution for free variable of Lambert's problem
+    double XSol2{};                 //!< second solution for free variable of Lambert's problem
+    int numIter{};                  //!< number of root finder iterations to find X
+    int numIterSol2{};              //!< number of root finder iterations to find X_sol2
+    double errX{};                  //!< difference in X between last and second-to-last iteration
+    double errXSol2{};              //!< difference in X between last and second-to-last iteration (for X_sol2)
 };
 
 #endif
