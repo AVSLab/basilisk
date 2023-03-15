@@ -122,3 +122,83 @@ void LambertSolver::problemGeometry()
     this->Oframe1 = {i_r1, i_t1, i_h};
     this->Oframe2 = {i_r2, i_t2, i_h};
 }
+
+/*! This method computes the non-dimensional time of flight (TOF) for a given x
+    @param x free variable of Lambert's problem that satisfies the given time of flight
+    @param N number of revolutions
+    @param lam lambda parameter that defines the problem geometry
+    @return double
+*/
+double LambertSolver::x2tof(double x, int N, double lam)
+{
+    // if x is close to 1.0 (parabolic case), time-of-flight is computed according to Battin
+    double battin = 0.01;
+    double dist = abs(x - 1.0);
+    double u = 1.0 - pow(x, 2);
+    double y = sqrt(1.0- pow(lam, 2) * u);
+
+    double tof;
+    if (dist < 1e-8){
+        // exact time of flight for parabolic case
+
+        tof = 2.0/3.0*(1.0 - pow(lam,3));
+    }
+    else if (dist < battin){
+        // Use Battin formulation
+
+        double eta = y - lam * x;
+        double S1 = 0.5 * (1.0 - lam - x * eta);
+        double Q = 4.0 / 3.0 * hypergeometricF(S1);
+        tof = (pow(eta,3)*Q + 4.0 * lam * eta) / 2.0 + N * M_PI / (pow(abs(u), 1.5));
+    }
+    else{
+        // Use Lancaster formulation
+
+        double f = (y - lam * x) * sqrt(abs(u));
+        double g = x*y + lam * u;
+        double d;
+        if (u > 0.0){
+            // elliptic case
+            double psi = atan2(f,g);
+            d = psi + N*M_PI;
+        }
+        else{
+            // hyperbolic case
+            d = atanh(f/g);
+        }
+
+        // non-dimensional time-of-flight
+        tof = (d/sqrt(abs(u)) - x + lam * y) / u;
+    }
+
+    return tof;
+}
+
+/*! This method computes the hypergeometric function 2F1(a,b,c,z)
+    @param z argument of hypergeometric function
+    @return double
+*/
+double LambertSolver::hypergeometricF(double z)
+{
+    double tol = 1e-11;
+    double Sj = 1.0;
+    double Cj = 1.0;
+    double a = 3.0;
+    double b = 1.0;
+    double c = 2.5;
+
+    double Cj1;
+    double Sj1;
+    double err;
+    for (int j = 0; j <= 12; ++j){
+        Cj1 = Cj * (a + j) * (b + j) / (c + j) * z / (j + 1);
+        Sj1 = Sj + Cj1;
+        err = abs(Cj1);
+        Sj = Sj1;
+        Cj = Cj1;
+        if (err < tol){
+            break;
+        }
+    }
+    return Sj;
+}

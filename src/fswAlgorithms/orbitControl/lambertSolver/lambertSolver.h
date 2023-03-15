@@ -53,6 +53,8 @@ public:
 private:
     void readMessages();
     void problemGeometry();
+    double x2tof(double x, int N, double lam);
+    double hypergeometricF(double z);
 
     std::string solverName;         //!< name of lambert algorithm
     Eigen::Vector3d r1vec;          //!< position vector at t0
