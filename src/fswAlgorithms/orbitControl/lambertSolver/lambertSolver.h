@@ -46,6 +46,16 @@ public:
     Message<LambertPerformanceMsgPayload> lambertPerformanceOutMsg;     //!< lambert performance output message
 
     BSKLogger bskLogger;                                                //!< -- BSK Logging
+
+private:
+    void readMessages();
+
+    std::string solverName;         //!< name of lambert algorithm
+    Eigen::Vector3d r1vec;          //!< position vector at t0
+    Eigen::Vector3d r2vec;          //!< position vector at t1
+    double transferTime{};          //!< time of flight between r1vec and r2vec (t1-t0)
+    double mu{};                    //!< gravitational parameter
+    int numberOfRevolutions{};      //!< number of revolutions
 };
 
 #endif

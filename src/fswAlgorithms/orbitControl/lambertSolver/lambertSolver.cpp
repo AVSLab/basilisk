@@ -47,3 +47,35 @@ void LambertSolver::Reset(uint64_t CurrentSimNanos)
 void LambertSolver::UpdateState(uint64_t CurrentSimNanos)
 {
 }
+
+/*! This method reads the input messages each call of updateState. It also checks if the message contents are valid for this module.
+    @return void
+*/
+void LambertSolver::readMessages(){
+    LambertProblemMsgPayload lambertProblemInMsgBuffer = this->lambertProblemInMsg();
+
+    // check if input parameters are valid
+    if (lambertProblemInMsgBuffer.mu <= 0.0){
+        bskLogger.bskLog(BSK_ERROR, "lambertSolver: mu must be positive.");
+    } else {
+        this->mu = lambertProblemInMsgBuffer.mu;
+    }
+    if (lambertProblemInMsgBuffer.transferTime <= 0.0){
+        bskLogger.bskLog(BSK_ERROR, "lambertSolver: transferTime must be positive.");
+    } else {
+        this->transferTime = lambertProblemInMsgBuffer.transferTime;
+    }
+    if (lambertProblemInMsgBuffer.numRevolutions < 0){
+        bskLogger.bskLog(BSK_ERROR, "lambertSolver: numberOfRevolutions must be zero or positive.");
+    } else {
+        this->numberOfRevolutions = lambertProblemInMsgBuffer.numRevolutions;
+    }
+    if (!(strcmp(lambertProblemInMsgBuffer.solverName, "Gooding") == 0 || strcmp(lambertProblemInMsgBuffer.solverName, "Izzo") == 0)){
+        bskLogger.bskLog(BSK_ERROR, "lambertSolver: solverName must be either 'Gooding' or 'Izzo'.");
+    } else {
+        this->solverName.assign(lambertProblemInMsgBuffer.solverName);
+    }
+
+    this->r1vec = cArray2EigenVector3d(lambertProblemInMsgBuffer.r1vec);
+    this->r2vec = cArray2EigenVector3d(lambertProblemInMsgBuffer.r2vec);
+}
