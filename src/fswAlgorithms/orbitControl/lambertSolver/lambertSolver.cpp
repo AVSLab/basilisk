@@ -284,6 +284,41 @@ std::array<double, 3> LambertSolver::halley(double T, double x0, int N)
     return sol;
 }
 
+/*! This method computes the minimum non-dimensional time-of-flight Tmin such that solutions exist for the multi-revolution case using a halley root-finder
+    @param T0M initial guess for Tmin
+    @param N number of revolutions
+    @return double
+*/
+double LambertSolver::getTmin(double T0M, int N)
+{
+    double tol = 1e-5;
+    double iterMax = 12;
+    double xnew;
+    double tof = T0M;
+    double x0 = 0.0;
+
+    for (int j = 0; j < iterMax; ++j){
+        // get derivatives of T
+        std::array<double, 3> DTs = dTdx(x0, tof, this->lambda);
+        double DT = DTs[0];
+        double D2T = DTs[1];
+        double D3T = DTs[2];
+
+        // compute new x using halley algorithm
+        xnew = x0 - DT*D2T/(pow(D2T,2) - DT*D3T/2.0);
+        double err = abs(x0 - xnew);
+        x0 = xnew;
+        if (err < tol){
+            break;
+        }
+        // compute non-dimensional time-of-flight T for given x
+        tof = x2tof(xnew, N, this->lambda);
+    }
+    double Tmin = tof;
+
+    return Tmin;
+}
+
 /*! This method computes the hypergeometric function 2F1(a,b,c,z)
     @param z argument of hypergeometric function
     @return double
