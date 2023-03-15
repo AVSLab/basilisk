@@ -34,6 +34,10 @@ LambertSolver::~LambertSolver() = default;
 */
 void LambertSolver::Reset(uint64_t CurrentSimNanos)
 {
+    // check that required input messages are connected
+    if (!this->lambertProblemInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "lambertSolver.lambertProblemInMsg was not linked.");
+    }
 }
 
 /*! This is the main method that gets called every time the module is updated. It computes the solution of Lambert's problem.
