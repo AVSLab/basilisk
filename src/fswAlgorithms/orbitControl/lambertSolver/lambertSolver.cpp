@@ -46,6 +46,22 @@ void LambertSolver::Reset(uint64_t CurrentSimNanos)
 */
 void LambertSolver::UpdateState(uint64_t CurrentSimNanos)
 {
+    // read messages
+    this->readMessages();
+    // compute geometry of given Lambert problem
+    this->problemGeometry();
+    // find free variable x that satisfies the given time of flight
+    this->findx();
+
+    // compute velocity vector at initial and final position of Lambert's problem
+    this->vvecs = this->computeVelocities(this->X);
+    if (numberOfRevolutions > 0){
+        // if one or more orbits are to be completed, two solutions exist. Compute velocities for second solution
+        this->vvecsSol2 = this->computeVelocities(this->XSol2);
+    }
+
+    // write messages
+    this->writeMessages(CurrentSimNanos);
 }
 
 /*! This method reads the input messages each call of updateState. It also checks if the message contents are valid for this module.
