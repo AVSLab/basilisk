@@ -337,9 +337,15 @@ if __name__ == "__main__":
     # run conan install
     conanCmdString = list()
     if is_running_virtual_env() or platform.system() == "Windows":
-        conanCmdString.append('python -m conans.conan install . --build=missing')
+        conanCmdString.append('python -m conans.conan install . '
+                              '--build=missing '
+                              '-c tools.system.package_manager:mode=install '
+                              '-c tools.system.package_manager:sudo=True')
     else:
-        conanCmdString.append('python3 -m conans.conan install . --build=missing')
+        conanCmdString.append('python3 -m conans.conan install . '
+                              '--build=missing '
+                              '-c tools.system.package_manager:mode=install '
+                              '-c tools.system.package_manager:sudo=True')
     conanCmdString.append(' -s build_type=' + str(args.buildType))
     conanCmdString.append(' -if ' + buildFolderName)
     if args.generator:
