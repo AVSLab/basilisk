@@ -52,10 +52,13 @@ private:
     void readMessages();
     double electronCurrent(double phi, double A);
     double ionCurrent(double phi, double A);
+    double SEEelectronCurrent(double phi, double A);
+    double SEEionCurrent(double phi, double A);
+    double SEEbackscatteringCurrent(double phi, double A);
     double interp(Eigen::VectorXd& xVector, Eigen::VectorXd& yVector, double x);
     double trapz(std::function< double(double) >& f, double a, double b, int N);
-    double getFlux(double E, Eigen::VectorXd& energyVec, Eigen::VectorXd& particleVec, std::string particleType);
-    double getYield(double Y, std::vector<double>& energyVec, std::vector<double>& yieldVec, std::string yieldType);
+    double getFlux(double E, std::string particleType);
+    double getYield(double E, std::string yieldType);
 
 // public variables
 public:
