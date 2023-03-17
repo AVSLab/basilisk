@@ -176,14 +176,15 @@ class BasiliskConan(ConanFile):
 
     def requirements(self):
         if self.options.opNav:
-            self.requires.add("pcre/8.45@#563d050c69aaa0a61be46bb09ba5c23c")
-            self.requires.add("opencv/4.5.0@#ca322b38d4ce8d07965c13707c7c788f")
-            self.requires.add("zlib/1.2.13@#13c96f538b52e1600c40b88994de240f")
+            self.requires.add("pcre/8.45")
+            self.requires.add("opencv/4.1.2")
+            self.requires.add("zlib/1.2.13")
+            self.requires.add("xz_utils/5.4.0")
 
         if self.options.vizInterface or self.options.opNav:
-            self.requires.add("libsodium/1.0.18@#9e310e52ed60084484c5f640ab88883a")
-            self.requires.add("protobuf/3.21.9@#e998066606a66775c0fd370649e031fd")
-            self.requires.add("cppzmq/4.9.0@#a51a906f0a5abe1f6c0b4dd47ba5ff66")
+            self.requires.add("libsodium/1.0.18")
+            self.requires.add("protobuf/3.17.1")
+            self.requires.add("cppzmq/4.5.0")
 
     def configure(self):
         if self.options.clean:
@@ -336,9 +337,15 @@ if __name__ == "__main__":
     # run conan install
     conanCmdString = list()
     if is_running_virtual_env() or platform.system() == "Windows":
-        conanCmdString.append('python -m conans.conan install . --build=missing')
+        conanCmdString.append('python -m conans.conan install . '
+                              '--build=missing '
+                              '-c tools.system.package_manager:mode=install '
+                              '-c tools.system.package_manager:sudo=True')
     else:
-        conanCmdString.append('python3 -m conans.conan install . --build=missing')
+        conanCmdString.append('python3 -m conans.conan install . '
+                              '--build=missing '
+                              '-c tools.system.package_manager:mode=install '
+                              '-c tools.system.package_manager:sudo=True')
     conanCmdString.append(' -s build_type=' + str(args.buildType))
     conanCmdString.append(' -if ' + buildFolderName)
     if args.generator:
