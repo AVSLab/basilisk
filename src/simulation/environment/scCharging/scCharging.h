@@ -54,7 +54,7 @@ private:
     double ionCurrent(double phi, double A);
     double interp(std::vector<double>& xVector, std::vector<double>& yVector, double x);
     double trapz(std::function< double(double) >& f, double a, double b, int N);
-    double getFlux(double E, std::string particle);
+    double getFlux(double E, std::vector<double>& energyVec, std::vector<double>& particleVec, std::string particle);
 
 // public variables
 public:

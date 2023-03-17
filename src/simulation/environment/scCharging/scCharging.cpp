@@ -83,11 +83,6 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     double A = 12.566370614359172;
     
     std::function<double(double)> sumCurrents = [this, A](double phi)-> double {
-        
-//        std::cout << "Electron Current: " << electronCurrent(phi, A) << std::endl;
-//        std::cout << "Ion Current: " << ionCurrent(phi, A) << std::endl;
-//        std::cout << "Total Current: " << electronCurrent(phi, A) + ionCurrent(phi, A) << std::endl;
-        
         return electronCurrent(phi, A) + ionCurrent(phi, A);
     };
     
@@ -169,18 +164,8 @@ double ScCharging::electronCurrent(double phi, double A)
     int j = sizeof(energyArr) / sizeof(energyArr[0]);
     std::vector<double> energyVec(energyArr, energyArr + j); // convert energyArr to vector
 
-    std::function<double(double)> getFlux = [&](double E){
-        // find flux for given energy
-        double F = interp(energyVec, electronVec, E);
-        if (F < 0.){
-            // if flux is negative (due to extrapolation), set equal to zero
-            F = 0.;
-        }
-        return F;
-    };
-
     // term to be integrated by trapz
-    std::function<double(double)> integrand = [&](double E){return (E/(E - phi)) * getFlux(E - phi);};
+    std::function<double(double)> integrand = [&](double E){return (E/(E - phi)) * getFlux(E - phi, energyVec, electronVec, "electron");};
     
     // integral bounds
     double lowerBound;
@@ -198,9 +183,6 @@ double ScCharging::electronCurrent(double phi, double A)
     double integral = trapz(integrand, lowerBound, upperBound, 1000);
     
     double Ie = constant * integral;
-    
-    std::cout << "Function Ie: " << Ie << std::endl;
-    
     return Ie;
 }
 
@@ -221,20 +203,10 @@ double ScCharging::ionCurrent(double phi, double A)
     double energyArr[MAX_PLASMA_FLUX_SIZE];
     eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
     int j = sizeof(energyArr) / sizeof(energyArr[0]);
-    std::vector<double> energyVec(energyArr, energyArr + j); // convert energyArr to vector
-
-    std::function<double(double)> getFlux = [&](double E){
-        // find flux for given energy
-        double F = interp(energyVec, ionVec, E);
-        if (F < 0.){
-            // if flux is negative (due to extrapolation), set equal to zero
-            F = 0.;
-        }
-        return F;
-    };
+    std::vector<double> energyVec(energyArr, energyArr + j); // convert energyArr to vector=
 
     // term to be integrated by trapz
-    std::function<double(double)> integrand = [&](double E){return (E/(E + phi)) * getFlux(E + phi);};
+    std::function<double(double)> integrand = [&](double E){return (E/(E + phi)) * getFlux(E + phi, energyVec, ionVec, "ion");};
     
     // integral bounds
     double lowerBound;
@@ -251,14 +223,7 @@ double ScCharging::ionCurrent(double phi, double A)
     // integral calculated with trapz
     double integral = trapz(integrand, lowerBound, upperBound, 1000);
     
-    std::cout << "Ion Lower: " << lowerBound << std::endl;
-    std::cout << "Ion Upper: " << upperBound << std::endl;
-    std::cout << "Ion Integral: " << integral << std::endl;
-    
     double Ii = constant * integral;
-    
-    std::cout << "Function Ii: " << Ii << std::endl;
-    
     return Ii;
 }
 
@@ -314,27 +279,41 @@ double ScCharging::trapz(std::function< double(double) >& f, double a, double b,
     }
 
     double integral = h * (sum + (f(a)+f(b))/2.0);
-    
     return integral;
 }
 
 /*!  This function returns the flux for a specific energy
  @return double
  @param E energy of interest [eV]
+ @param energyVec vector containing data for energy values
+ @param particleVec vector containing data for respective particle's flux (particle defined by "particle" param)
  @param particle particle of interest ("electron" or "ion")
  */
-double ScCharging::getFlux(double E, std::string particle)
+double ScCharging::getFlux(double E, std::vector<double>& energyVec, std::vector<double>& particleVec, std::string particle)
 {
-    double flux;
-    
     if (particle == "electron")
     {
-        flux = 2*E;
+        // find flux for given energy
+        double flux = interp(energyVec, particleVec, E);
+        if (flux < 0.){
+            // if flux is negative (due to extrapolation), set equal to zero
+            flux = 0.;
+        }
+        return flux;
+    }
+    else if (particle == "ion")
+    {
+        // find flux for given energy
+        double flux = interp(energyVec, particleVec, E);
+        if (flux < 0.){
+            // if flux is negative (due to extrapolation), set equal to zero
+            flux = 0.;
+        }
+        return flux;
     }
     else
     {
-        flux = 1*E;
+        bskLogger.bskLog(BSK_ERROR, "ScCharging.getFlux: particle must be an electron or ion");
+        return NAN;
     }
-    
-    return flux;
 }
