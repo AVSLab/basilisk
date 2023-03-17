@@ -52,9 +52,10 @@ private:
     void readMessages();
     double electronCurrent(double phi, double A);
     double ionCurrent(double phi, double A);
-    double interp(std::vector<double>& xVector, std::vector<double>& yVector, double x);
+    double interp(Eigen::VectorXd& xVector, Eigen::VectorXd& yVector, double x);
     double trapz(std::function< double(double) >& f, double a, double b, int N);
-    double getFlux(double E, std::vector<double>& energyVec, std::vector<double>& particleVec, std::string particle);
+    double getFlux(double E, Eigen::VectorXd& energyVec, Eigen::VectorXd& particleVec, std::string particleType);
+    double getYield(double Y, std::vector<double>& energyVec, std::vector<double>& yieldVec, std::string yieldType);
 
 // public variables
 public:
@@ -71,7 +72,6 @@ private:
     std::vector<Eigen::MRPd> sigma_BNList;                      //!< [m] list of satellite MRP orientations
     Eigen::VectorXd energies;                                   //!< [eV] particle energies
     Eigen::VectorXd electronFlux;                               //!< [cm^-2 s^-1 sr^-2 eV^-1] electron flux
-    //std::vector<double> electronFlux;
     Eigen::VectorXd ionFlux;                                    //!< [cm^-2 s^-1 sr^-2 eV^-1] ion flux
     unsigned int numSat;
     

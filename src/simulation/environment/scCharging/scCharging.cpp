@@ -153,21 +153,16 @@ void ScCharging::readMessages()
 double ScCharging::electronCurrent(double phi, double A)
 {
     double constant = -Q0 * A; // constant multiplier for integral
-
-    double electronArr[MAX_PLASMA_FLUX_SIZE];
-    eigenMatrixXd2CArray(electronFlux, electronArr); // convert electronFlux to array
-    int n = sizeof(electronArr) / sizeof(electronArr[0]);
-    std::vector<double> electronVec(electronArr, electronArr + n); // convert electronArr to vector
     
-    double energyArr[MAX_PLASMA_FLUX_SIZE];
-    eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
-    int j = sizeof(energyArr) / sizeof(energyArr[0]);
-    std::vector<double> energyVec(energyArr, energyArr + j); // convert energyArr to vector
-
     // term to be integrated by trapz
-    std::function<double(double)> integrand = [&](double E){return (E/(E - phi)) * getFlux(E - phi, energyVec, electronVec, "electron");};
+    std::function<double(double)> integrand = [&](double E){return (E/(E - phi)) * getFlux(E - phi, energies, electronFlux, "electron");};
     
     // integral bounds
+    double energyArr[MAX_PLASMA_FLUX_SIZE];
+    eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
+    int n = sizeof(energyArr) / sizeof(energyArr[0]);
+    std::vector<double> energyVec(energyArr, energyArr + n); // convert energyArr to vector
+    
     double lowerBound;
     double upperBound;
     if (phi < 0.){
@@ -176,7 +171,7 @@ double ScCharging::electronCurrent(double phi, double A)
     }
     else{
         lowerBound = 0.1 + abs(phi);
-        upperBound = energyVec.back() + abs(phi);
+        upperBound =energyVec.back()+ abs(phi);
     }
     
     // integral calculated with trapz
@@ -195,20 +190,15 @@ double ScCharging::ionCurrent(double phi, double A)
 {
     double constant = Q0 * A; // constant multiplier for integral
 
-    double ionArr[MAX_PLASMA_FLUX_SIZE];
-    eigenMatrixXd2CArray(ionFlux, ionArr); // convert ionFlux to array
-    int n = sizeof(ionArr) / sizeof(ionArr[0]);
-    std::vector<double> ionVec(ionArr, ionArr + n); // convert ionArr to vector
-    
-    double energyArr[MAX_PLASMA_FLUX_SIZE];
-    eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
-    int j = sizeof(energyArr) / sizeof(energyArr[0]);
-    std::vector<double> energyVec(energyArr, energyArr + j); // convert energyArr to vector=
-
     // term to be integrated by trapz
-    std::function<double(double)> integrand = [&](double E){return (E/(E + phi)) * getFlux(E + phi, energyVec, ionVec, "ion");};
+    std::function<double(double)> integrand = [&](double E){return (E/(E + phi)) * getFlux(E + phi, energies, ionFlux, "ion");};
     
     // integral bounds
+    double energyArr[MAX_PLASMA_FLUX_SIZE];
+    eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
+    int n = sizeof(energyArr) / sizeof(energyArr[0]);
+    std::vector<double> energyVec(energyArr, energyArr + n); // convert energyArr to vector
+    
     double lowerBound;
     double upperBound;
     if (phi > 0.){
@@ -232,7 +222,7 @@ double ScCharging::ionCurrent(double phi, double A)
  @param data vector containing datapoints to use in linear interpolation (y-values)
  @param x x-value being linear interpolated to
  */
-double ScCharging::interp(std::vector<double>& xVector, std::vector<double>& yVector, double x)
+double ScCharging::interp(Eigen::VectorXd& xVector, Eigen::VectorXd& yVector, double x)
 {
     // find the index corresponding to the first element in xVector that is greater than x
     // (assumes xVector is sorted)
@@ -289,9 +279,9 @@ double ScCharging::trapz(std::function< double(double) >& f, double a, double b,
  @param particleVec vector containing data for respective particle's flux (particle defined by "particle" param)
  @param particle particle of interest ("electron" or "ion")
  */
-double ScCharging::getFlux(double E, std::vector<double>& energyVec, std::vector<double>& particleVec, std::string particle)
+double ScCharging::getFlux(double E, Eigen::VectorXd& energyVec, Eigen::VectorXd& particleVec, std::string particleType)
 {
-    if (particle == "electron")
+    if (particleType == "electron")
     {
         // find flux for given energy
         double flux = interp(energyVec, particleVec, E);
@@ -301,7 +291,7 @@ double ScCharging::getFlux(double E, std::vector<double>& energyVec, std::vector
         }
         return flux;
     }
-    else if (particle == "ion")
+    else if (particleType == "ion")
     {
         // find flux for given energy
         double flux = interp(energyVec, particleVec, E);
@@ -316,4 +306,17 @@ double ScCharging::getFlux(double E, std::vector<double>& energyVec, std::vector
         bskLogger.bskLog(BSK_ERROR, "ScCharging.getFlux: particle must be an electron or ion");
         return NAN;
     }
+}
+
+/*!  This function returns the flux for a specific energy
+ @return double
+ @param Y SEE yield
+ @param energyVec vector containing data for energy values
+ @param yieldVec vector containing data for respective particle's flux (particle defined by "particle" param)
+ @param particle particle of interest ("electron" or "ion")
+ */
+double getYield(double Y, std::vector<double>& energyVec, std::vector<double>& yieldVec, std::string yieldType)
+{
+    double a = 5;
+    return a;
 }
