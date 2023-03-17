@@ -298,12 +298,12 @@ double bisectionSolve(double *interval, double accuracy, std::function< double(d
     double right = interval[1];
     // check if interval is good
     if (left > right){
-        bskLogger.bskLog(BSK_ERROR,"Interval must be from left to right");
+        bskLogger.bskLog(BSK_ERROR,"avsEigenSupport.bisectionSolve: Interval must be from left to right");
         return NAN;
     }
     // check if interval has opposite signs
     if ((f(left)*f(right)) > 0){
-        bskLogger.bskLog(BSK_ERROR,"Interval must have opposite signs");
+        bskLogger.bskLog(BSK_ERROR,"avsEigenSupport.bisectionSolve: function values at interval bounds must have opposite signs");
         return NAN;
     }
     // find root

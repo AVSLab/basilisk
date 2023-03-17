@@ -78,40 +78,24 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     // read the input messages
     this->readMessages();
     
-    double d = 2.0;
-    double k = -1.0;
-    std::function<double(double)> f = [this, d, k](double x)-> double {
-        double xn = this->getFlux(x, "electron");
-        return k*xn + d;
+    // sum currents and find root
+    //double phi = -24810;
+    double A = 12.566370614359172;
+    
+    std::function<double(double)> sumCurrents = [this, A](double phi)-> double {
+        
+//        std::cout << "Electron Current: " << electronCurrent(phi, A) << std::endl;
+//        std::cout << "Ion Current: " << ionCurrent(phi, A) << std::endl;
+//        std::cout << "Total Current: " << electronCurrent(phi, A) + ionCurrent(phi, A) << std::endl;
+        
+        return electronCurrent(phi, A) + ionCurrent(phi, A);
     };
     
-    double integral = trapz(f, 0, 1, 100);
+    double interval [2] = {-1e8, 1e8};
     
-    std::cout << "Integral is " << std::setprecision(10) << integral << std::endl;
+    double equilibrium = bisectionSolve(interval, 1e-8, sumCurrents);
     
-    
-    //std::cout << "electron message is: " << electronFlux << std::endl;
-    double testArr[MAX_PLASMA_FLUX_SIZE];
-    eigenMatrixXd2CArray(electronFlux, testArr); // convert electronFlux to array
-    int j = sizeof(testArr) / sizeof(testArr[0]);
-    std::vector<double> testYVec(testArr, testArr + j); // convert electronArr to vector
-    
-    double testXArr[MAX_PLASMA_FLUX_SIZE];
-    eigenMatrixXd2CArray(energies, testXArr); // convert electronFlux to array
-    int pl = sizeof(testXArr) / sizeof(testXArr[0]);
-    std::vector<double> testXVec(testXArr, testXArr + pl); // convert electronArr to vector
-    
-    double interpTest = interp(testXVec, testYVec, 1.3257); // should return close 188959.1466
-    std::cout << "interpTest: " << interpTest << std::endl;
-    
-    
-    double interval [2] = {0, 4};
-    double x0 = bisectionSolve(interval, 1e-8, f);
-    
-    std::cout << "Bisection Method found root at " << std::setprecision(10) << x0 << std::endl;
-    
-    double ie = electronCurrent(-24810, 12.566370614359172);
-    std::cout<< "ie = " << ie << std::endl;
+    std::cout << "Equilibrium: " << std::setprecision(10) << equilibrium << std::endl;
     
     // create output messages
     VoltMsgPayload voltMsgBuffer;  //!< [] voltage out message buffer
@@ -166,12 +150,13 @@ void ScCharging::readMessages()
     }
 }
 
+/*!  This function takes in a given potential and area value and calculates the electron current
+ @return double
+ @param phi double defining value for spacecraft potential
+ @param A double defining value for area exposed to plasma
+ */
 double ScCharging::electronCurrent(double phi, double A)
 {
-    
-    std::cout << "electronFlux[-1]: " << electronFlux[-1] << std::endl;
-    std::cout << "electronFlux[0]: " << electronFlux[0] << std::endl;
-    
     double constant = -Q0 * A; // constant multiplier for integral
 
     double electronArr[MAX_PLASMA_FLUX_SIZE];
@@ -179,14 +164,14 @@ double ScCharging::electronCurrent(double phi, double A)
     int n = sizeof(electronArr) / sizeof(electronArr[0]);
     std::vector<double> electronVec(electronArr, electronArr + n); // convert electronArr to vector
     
-    double testXArr[MAX_PLASMA_FLUX_SIZE];
-    eigenMatrixXd2CArray(energies, testXArr); // convert electronFlux to array
-    int pl = sizeof(testXArr) / sizeof(testXArr[0]);
-    std::vector<double> testXVec(testXArr, testXArr + pl); // convert electronArr to vector
+    double energyArr[MAX_PLASMA_FLUX_SIZE];
+    eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
+    int j = sizeof(energyArr) / sizeof(energyArr[0]);
+    std::vector<double> energyVec(energyArr, energyArr + j); // convert energyArr to vector
 
     std::function<double(double)> getFlux = [&](double E){
         // find flux for given energy
-        double F = interp(testXVec, electronVec, E);
+        double F = interp(energyVec, electronVec, E);
         if (F < 0.){
             // if flux is negative (due to extrapolation), set equal to zero
             F = 0.;
@@ -195,30 +180,86 @@ double ScCharging::electronCurrent(double phi, double A)
     };
 
     // term to be integrated by trapz
-    std::function<double(double)> integrand = [&](double E){return (E/(E - phi)) * getFlux(E-phi);};
-//
-//    std::cout << "interp(lowerBound): " << interp(electronVec, 0) << std::endl;
-//    std::cout << "interp(upperBound + phi): " << interp(electronVec, 40000 + phi) << std::endl;
-    //std::cout<< "interp gives " << interp(electronVec, E - phi) << std::endl;
+    std::function<double(double)> integrand = [&](double E){return (E/(E - phi)) * getFlux(E - phi);};
     
     // integral bounds
     double lowerBound;
     double upperBound;
     if (phi < 0.){
         lowerBound = 0.1;
-        upperBound = testXVec.back();
+        upperBound = energyVec.back();
     }
     else{
         lowerBound = 0.1 + abs(phi);
-        upperBound = testXVec.back() + abs(phi);
+        upperBound = energyVec.back() + abs(phi);
     }
-//    double lowerBound = 0, upperBound = 1000000;
+    
     // integral calculated with trapz
     double integral = trapz(integrand, lowerBound, upperBound, 1000);
-    std::cout<< "integral = " << integral << std::endl;
     
     double Ie = constant * integral;
+    
+    std::cout << "Function Ie: " << Ie << std::endl;
+    
     return Ie;
+}
+
+/*!  This function takes in a given potential and area value and calculates the ion current
+ @return double
+ @param phi double defining value for spacecraft potential
+ @param A double defining value for area exposed to plasma
+ */
+double ScCharging::ionCurrent(double phi, double A)
+{
+    double constant = Q0 * A; // constant multiplier for integral
+
+    double ionArr[MAX_PLASMA_FLUX_SIZE];
+    eigenMatrixXd2CArray(ionFlux, ionArr); // convert ionFlux to array
+    int n = sizeof(ionArr) / sizeof(ionArr[0]);
+    std::vector<double> ionVec(ionArr, ionArr + n); // convert ionArr to vector
+    
+    double energyArr[MAX_PLASMA_FLUX_SIZE];
+    eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
+    int j = sizeof(energyArr) / sizeof(energyArr[0]);
+    std::vector<double> energyVec(energyArr, energyArr + j); // convert energyArr to vector
+
+    std::function<double(double)> getFlux = [&](double E){
+        // find flux for given energy
+        double F = interp(energyVec, ionVec, E);
+        if (F < 0.){
+            // if flux is negative (due to extrapolation), set equal to zero
+            F = 0.;
+        }
+        return F;
+    };
+
+    // term to be integrated by trapz
+    std::function<double(double)> integrand = [&](double E){return (E/(E + phi)) * getFlux(E + phi);};
+    
+    // integral bounds
+    double lowerBound;
+    double upperBound;
+    if (phi > 0.){
+        lowerBound = 0.1;
+        upperBound = energyVec.back();
+    }
+    else{
+        lowerBound = 0.1 + abs(phi);
+        upperBound = energyVec.back() + abs(phi);
+    }
+    
+    // integral calculated with trapz
+    double integral = trapz(integrand, lowerBound, upperBound, 1000);
+    
+    std::cout << "Ion Lower: " << lowerBound << std::endl;
+    std::cout << "Ion Upper: " << upperBound << std::endl;
+    std::cout << "Ion Integral: " << integral << std::endl;
+    
+    double Ii = constant * integral;
+    
+    std::cout << "Function Ii: " << Ii << std::endl;
+    
+    return Ii;
 }
 
 /*!  This function takes in a given vector of data and an x-value and performs linear interpolation to find the closest corresponding y-value
@@ -245,26 +286,13 @@ double ScCharging::interp(std::vector<double>& xVector, std::vector<double>& yVe
         // increase index by one as idx0 = idx1 - 1.
         idx1 = 1;
     }
-
-    int indX0;
-    int indX1;
-    double y0;
-    double y1;
-    indX0 = idx1 - 1;
-    indX1 = idx1;
-    y0 = yVector[indX0];
-    y1 = yVector[indX1];
     
+    // y vector indices and their corresponding y values
+    int indX0 = idx1 - 1, indX1 = idx1;
+    double y0 = yVector[indX0], y1 = yVector[indX1];
+    
+    // linear interpolation formula
     double y = y0 + ((y1-y0)/(xVector[indX1] - xVector[indX0])) * (x - xVector[indX0]);
-
-//    std::cout << "idx0: " << indX0 << std::endl;
-//    std::cout << "idx1: " << indX1 << std::endl;
-//    std::cout << "interp x: " << x << std::endl;
-//    std::cout << "interp x0: " << xVector[indX0] << std::endl;
-//    std::cout << "interp x1: " << xVector[indX1] << std::endl;
-//    std::cout << "interp y0: " << y0 << std::endl;
-//    std::cout << "interp y1: " << y1 << std::endl;
-//    std::cout << "interp y: " << y << std::endl;
     
     return y;
 }
@@ -286,10 +314,6 @@ double ScCharging::trapz(std::function< double(double) >& f, double a, double b,
     }
 
     double integral = h * (sum + (f(a)+f(b))/2.0);
-    
-    std::cout << "b: " << b << std::endl;
-    std::cout << "f(a): " << f(a) << std::endl;
-    std::cout << "f(b): " << f(b) << std::endl;
     
     return integral;
 }
