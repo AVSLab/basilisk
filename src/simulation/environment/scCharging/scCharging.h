@@ -65,6 +65,10 @@ public:
     std::vector<Message<VoltMsgPayload>*> voltOutMsgs;     //!< vector of voltage output messages
     
     BSKLogger bskLogger;                                        //!< -- BSK Logging
+    
+    Eigen::VectorXd yieldSEEelectron;                  //! < -- SEE yield (electron)
+    Eigen::VectorXd yieldSEEion;                  //! < -- SEE yield (ion)
+    Eigen::VectorXd yieldBackscattered;                  //! < -- SEE yield (backscatter)
 
 // private variables
 private:

@@ -102,6 +102,19 @@ def scChargingTestFunction(show_plots, accuracy):
     with open(filepath, 'r') as file:
         IonFluxData = np.loadtxt(file, delimiter=",", unpack=False)
 
+    # SEE yield due to electrons
+    filepath = path + '/Support/' + 'yieldSEEelectron.txt'
+    with open(filepath, 'r') as file:
+        yieldSEEelectronData = np.loadtxt(file, delimiter=",", unpack=False)
+    # SEE yield due to ions
+    filepath = path + '/Support/' + 'yieldSEEion.txt'
+    with open(filepath, 'r') as file:
+        yieldSEEionData = np.loadtxt(file, delimiter=",", unpack=False)
+    # backscatter yield
+    filepath = path + '/Support/' + 'yieldBackscattered.txt'
+    with open(filepath, 'r') as file:
+        yieldBackscatteredData = np.loadtxt(file, delimiter=",", unpack=False)
+
     # Configure input messages
     sc0StateInMsgData = messaging.SCStatesMsgPayload()
     sc0StateInMsgData.r_BN_N = r_B0N_N
@@ -116,6 +129,10 @@ def scChargingTestFunction(show_plots, accuracy):
     plasmaFluxInMsgData.meanElectronFlux = ElectronFluxData
     plasmaFluxInMsgData.meanIonFlux = IonFluxData
     plasmaFluxInMsg1 = messaging.PlasmaFluxMsg().write(plasmaFluxInMsgData)
+
+    module.yieldSEEelectron = yieldSEEelectronData
+    module.yieldSEEion = yieldSEEionData
+    module.yieldBackscattered = yieldBackscatteredData
 
     # add spacecraft to state
     module.addSpacecraft(sc0StateInMsg)
