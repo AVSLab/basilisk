@@ -84,7 +84,7 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     
     std::function<double(double)> sumCurrents = [this, A](double phi)-> double
     {
-        return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A);
+        return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A);
     };
     
     double interval [2] = {-1e8, 1e8};
@@ -295,10 +295,35 @@ double ScCharging::SEEionCurrent(double phi, double A)
  @param phi double defining value for spacecraft potential
  @param A double defining value for area exposed to plasma
  */
-double ScCharging::SEEbackscatteringCurrent(double phi, double A)
+double ScCharging::backscatteringCurrent(double phi, double A)
 {
-    double temp = 4;
-    return temp;
+    double constant = -Q0 * A; // constant multiplier for integral
+    
+    // term to be integrated by trapz
+    std::function<double(double)> integrand = [&](double E){return getYield(E, "backscattered") * (E/(E - phi)) * getFlux(E - phi, "electron");};
+    
+    // integral bounds
+    double energyArr[MAX_PLASMA_FLUX_SIZE];
+    eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
+    int n = sizeof(energyArr) / sizeof(energyArr[0]);
+    std::vector<double> energyVec(energyArr, energyArr + n); // convert energyArr to vector
+    
+    double lowerBound;
+    double upperBound;
+    if (phi < 0.){
+        lowerBound = 0.1;
+        upperBound = energyVec.back();
+    }
+    else{
+        lowerBound = 0.1 + abs(phi);
+        upperBound = energyVec.back()+ abs(phi);
+    }
+    
+    // integral calculated with trapz
+    double integral = trapz(integrand, lowerBound, upperBound, 1000);
+    
+    double Ib = constant * integral;
+    return Ib;
 }
 
 /*!  This function takes in a given vector of data and an x-value and performs linear interpolation to find the closest corresponding y-value
