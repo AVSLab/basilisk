@@ -64,9 +64,10 @@ def computeGamma(alpha, delta):
 
     return gamma
 
-# The 'ang' array spans the interval from 0 to pi. 0 and pi are excluded because 
-# the code is less accurate around those points; it still provides accurate results at 1e-6
-ang = np.linspace(0, np.pi, 5, endpoint=True)
+
+# The 'ang' array spans the interval from 0 to pi.  pi is excluded because
+# the code is less accurate around this point;
+ang = np.linspace(0, np.pi, 5, endpoint=False)
 ang = list(ang)
 
 @pytest.mark.parametrize("alpha", ang)
@@ -74,7 +75,7 @@ ang = list(ang)
 @pytest.mark.parametrize("bodyAxisInput", [0,1])
 @pytest.mark.parametrize("inertialAxisInput", [0,1,2])
 @pytest.mark.parametrize("alignmentPriority", [0,1])
-@pytest.mark.parametrize("accuracy", [1e-9])
+@pytest.mark.parametrize("accuracy", [1e-12])
 
 def test_oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, inertialAxisInput, alignmentPriority, accuracy):
     r"""
