@@ -248,6 +248,11 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
                 "bodyAxisInput = {}, inertialAxisInput = {} and priorityFlag = {}".format(
                     bodyAxisInput, inertialAxisInput, alignmentPriority))
 
+    if testFailCount:
+        print(testMessages)
+    else:
+        print("Unit Test Passed")
+
     return [testFailCount, ''.join(testMessages)]
 
 
