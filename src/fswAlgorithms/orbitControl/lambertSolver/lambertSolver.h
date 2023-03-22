@@ -53,6 +53,7 @@ public:
 private:
     void readMessages();
     void problemGeometry();
+    std::array<double, 2> goodingInitialGuess(double lambda, double T);
     double x2tof(double x, int N, double lam);
     std::array<double, 3> dTdx(double x, double T, double lam);
     std::array<double, 3> householder(double T, double x0, int N);
@@ -68,6 +69,7 @@ private:
     int numberOfRevolutions{};      //!< number of revolutions
     double TOF{};                   //!< non-dimensional time-of-flight constraint
     double lambda{};                //!< parameter of Lambert"s problem that defines problem geometry
+    bool multiRevSolution{};        //!< boolean flag if multi-revolution solutions exist or not
     bool noSolution{};              //!< boolean flag if no solution should be returned (in case of 180 deg transfer angle)
     std::array<Eigen::Vector3d, 3> Oframe1;    //!< array containing the orbit frame unit vectors at t0
     std::array<Eigen::Vector3d, 3> Oframe2;    //!< array containing the orbit frame unit vectors at t1
