@@ -229,6 +229,58 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T) {
     return x0;
 }
 
+/*! This method computes the initial guess for the free variable x using the Izzo procedure
+    @param lam lambda parameter that defines the problem geometry
+    @param T non-dimensional time-of-flight
+    @return std::array<double, 2>
+*/
+std::array<double, 2> LambertSolver::izzoInitialGuess(double lam, double T) {
+    // T for x=0 and zero revolution
+    double T00 = acos(lam) + lam * sqrt(1.0 - pow(lam, 2));
+    // T forx=1 (parabolic case)
+    double T1 = 2.0 / 3.0 * (1.0 - pow(lam, 3));
+    // T for x=0 and M revolutions
+    double T0M = T00 + this->numberOfRevolutions * M_PI;
+
+    double x0Sol1 = 0.0; // initial guess for solution 1
+    double x0Sol2 = 0.0; // initial guess for solution 2 (multi-revolutions only)
+
+    // initial guess procedure for Izzo algorithm
+    if (this->numberOfRevolutions == 0){
+        // zero revolution case
+        if (T >= T00){
+            x0Sol1 = pow(T00 / T, 2.0 / 3.0) - 1.0;
+        }
+        else if (T <= T1){
+            x0Sol1 = 5.0 / 2.0 * T1 * (T1 - T) / (T * (1.0 - pow(lam, 5))) + 1.0;
+        }
+        else{
+            x0Sol1 = pow(T00 / T, log(T1 / T00) / log(2.0)) - 1.0;
+        }
+    }
+    else{
+        // multi-revolution case
+        double Tmin = this->getTmin(T0M, this->numberOfRevolutions);
+        if (T < Tmin){
+            // if T < Tmin, no multi-revolution solution exists for the given time of flight T
+            this->multiRevSolution = false;
+            bskLogger.bskLog(BSK_WARNING, "lambertSolver: no multi-revolution solution exists for the given time of flight.");
+            std::array<double, 2> x0 = {0.0, 0.0};
+            return x0;
+        }
+        // if T > Tmin, two multi-revolution solutions exist for the given time of flight T (or one solution if T = Tmin)
+        this->multiRevSolution = true;
+
+        double term1 = pow((this->numberOfRevolutions*M_PI + M_PI)/(8.0*T),(2.0/3.0));
+        double term2 = pow((8.0*T)/(this->numberOfRevolutions*M_PI),(2.0/3.0));
+        x0Sol1 = (term1 - 1.0) / (term1 + 1.0);
+        x0Sol2 = (term2 - 1.0) / (term2 + 1.0);
+    }
+
+    std::array<double, 2> x0 = {x0Sol1, x0Sol2};
+    return x0;
+}
+
 /*! This method computes the non-dimensional time of flight (TOF) for a given x
     @param x free variable of Lambert's problem that satisfies the given time of flight
     @param N number of revolutions

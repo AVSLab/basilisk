@@ -54,6 +54,7 @@ private:
     void readMessages();
     void problemGeometry();
     std::array<double, 2> goodingInitialGuess(double lambda, double T);
+    std::array<double, 2> izzoInitialGuess(double lambda, double T);
     double x2tof(double x, int N, double lam);
     std::array<double, 3> dTdx(double x, double T, double lam);
     std::array<double, 3> householder(double T, double x0, int N);
