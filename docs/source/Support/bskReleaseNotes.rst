@@ -61,6 +61,8 @@ Version |release|
 - Added a maximum power parameter ``maxPower`` to :ref:`reactionWheelStateEffector` for limiting supplied
   power, independent of the modules in simulation/power.
 - Added :ref:`thrusterPlatformReference` to align the dual-gimballed thruster with the system's center of mass, or at an offset thereof to perform momentum dumping.
+- Improved reliability of opNav scenario communication between :ref:`vizInterface` and Vizard
+
 
 
 Version 2.1.6 (Jan. 21, 2023)
