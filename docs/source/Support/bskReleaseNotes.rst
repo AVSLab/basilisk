@@ -55,6 +55,12 @@ Version |release|
 - Added the ability to lock the axis on the :ref:`spinningBodyOneDOFStateEffector` module.
 - Added two new unit tests to :ref:`spinningBodyOneDOFStateEffector`.
 - Updated :ref:`magneticFieldWMM` to use the latest WMM coefficient file and evaluation software
+- Added a :ref:`spinningBodyTwoDOFStateEffector` module that simulates a two-axis rotating rigid component.
+- Created :ref:`oneAxisSolarArrayPoint` to generate the reference attitude for a spacecraft that needs to point a body-fixed 
+  axis along an inertial direction while ensuring maximum power generation on the solar arrays
+- Added a maximum power parameter ``maxPower`` to :ref:`reactionWheelStateEffector` for limiting supplied
+  power, independent of the modules in simulation/power.
+- Added :ref:`thrusterPlatformReference` to align the dual-gimballed thruster with the system's center of mass, or at an offset thereof to perform momentum dumping.
 
 
 Version 2.1.6 (Jan. 21, 2023)

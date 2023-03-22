@@ -1,7 +1,7 @@
 \section{Test Description and Success Criteria}
 The tests are located in \texttt{simulation/dynamics/reactionWheels/\_UnitTest/\newline
-test\_reactionWheelStateEffector\_integrated.py} \textbf{and} \texttt{simulation/dynamics/reactionWheels/\newline\_UnitTest/
-test\_reactionWheelStateEffector\_ConfigureRWRequests.py}. Depending on the test, there are different success criteria. These are outlined in the following subsections:
+test\_reactionWheelStateEffector\_integrated.py} \textbf{,} \texttt{simulation/dynamics/reactionWheels/\newline\_UnitTest/
+test\_reactionWheelStateEffector\_ConfigureRWRequests.py} \textbf{and} \texttt{simulation/\newline dynamics/reactionWheels/\_UnitTest/test\_reactionWheelStateEffector\_RWUpdate.py}. Depending on the test, there are different success criteria. These are outlined in the following subsections:
 \subsection{Balanced Wheels Scenario - Integrated Test}
 In this test the simulation is placed into orbit around Earth with point gravity, has 3 reaction wheels attached to the spacecraft, and the wheels are in ``Balanced" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
 \begin{itemize}
@@ -110,6 +110,28 @@ This test is ensuring that when the current reaction wheel speed is greater than
 \end{equation}
 
 The test requests a non-zero commanded torque $u_{\textnormal{cmd}}$, gives two possibilities for $\Omega$, one above $\Omega_{\textnormal{max}}$ and one below, and ensures that the correct values are being set for $u_s$.
+
+\subsection{Power Saturation - Unit Test}
+
+This test is ensuring that when the requested reaction wheel power is greater than or equal to the maximum allowable wheel power, the applied torque is limited based on the current wheel speed. The logic can be seen in the following equation:
+
+\begin{equation}
+\begin{gathered}
+\begin{aligned}
+&\textnormal{\textbf{if}}\quad \vert \Omega \cdot u_{\textnormal{cmd}} \vert >= P_{\text{max}} \textnormal \quad \textnormal{\textbf{then}}\\
+&\quad u_s = \textnormal{sign}(u_{\textnormal{cmd}})\cdot \vert P_{\text{max}}/\Omega \vert \\
+&\textnormal{\textbf{end if}}\\
+\end{aligned}
+\end{gathered}
+\label{eq:ballin3}
+\end{equation}
+
+The test requests a non-zero commanded torque $u_{\textnormal{cmd}}$ and gives three possibilities for $\Omega$. The test requests one above positive $P_{\text{max}}$, one above negative $P_{\text{max}}$, one below, and ensures that the correct values are being set for $u_s$.
+
+\subsection{Update - Unit Test}
+
+This test is ensuring the functionality of changing the reaction wheel (RW) characteristics while the simulation is running. It starts by testing the initial setup, and then does four additional tests: the first two change the maximum allowed torque, the third one changes the maximum power limit, and the final one changes the current wheel speeds and maximum allowed wheel speeds.
+All these tests rely on the fact that, when a maximum or minimum value is surpassed, the applied torque is capped accordingly. Successful change of parameters is confirmed by observing the corresponding change in supplied torque.
 
 \section{Test Parameters}
 

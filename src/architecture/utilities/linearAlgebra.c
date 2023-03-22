@@ -618,6 +618,28 @@ void v3Cross(double v1[3],
     result[2] = v1c[0] * v2c[1] - v1c[1] * v2c[0];
 }
 
+void v3Perpendicular(double v[3],
+                     double result[3])
+{
+    if (fabs(v[0]) > DB0_EPS) {
+        result[0] = -(v[1]+v[2]) / v[0];
+        result[1] = 1;
+        result[2] = 1;
+    }
+    else if (fabs(v[1]) > DB0_EPS) {
+        result[0] = 1;
+        result[1] = -(v[0]+v[2]) / v[1];
+        result[2] = 1;
+    }
+    else {
+        result[0] = 1;
+        result[1] = 1;
+        result[2] = -(v[0]+v[1]) / v[2];
+    }
+    v3Normalize(result, result);
+}
+
+
 void v3Tilde(double v[3],
              double result[3][3])
 {

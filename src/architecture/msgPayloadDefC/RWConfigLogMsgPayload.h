@@ -45,6 +45,7 @@ typedef struct {
     double u_min;               //!< [N-m], Min torque
     double u_f;                 //!< [N-m], Coulomb friction torque magnitude
     double Omega_max;           //!< [rad/s], max wheel speed
+    double P_max;               //!< [N-m/s], maximum wheel power
     double linearFrictionRatio; //!< [%] ratio relative to max speed value up to which the friction behaves linearly
     RWModels RWModel;           //!< [-], Type of imbalance model to use
 }RWConfigLogMsgPayload;
