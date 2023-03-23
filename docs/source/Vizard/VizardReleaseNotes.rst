@@ -8,17 +8,50 @@ Release Notes
 .. sidebar:: In Progress Features
 
     - general GUI enhancements
-    - articulating CAD models
     - Add the rate gyro visualization
     - Alternate camera view points relative to non-spacecraft locations (lunar landing site, etc.)
     - Add magnetic torque bar visualization
-    - visualize MSM charge values
-    - load custom Unity generated spacecraft and celestial body models at run time
+    - Add range to target information
+    - Visualize aerobraking maneuvers
+
+
+**Version 2.1.4 (March 24, 2023)**
+
+- support for changing the true path trajectory line color allowing a path line with multiple
+  colors that can be used to indicate phases of interest in the trajectory
+- added support for reflection probes on Custom spacecraft models imported via Addressables,
+  Vizard will detect any reflection probes included on the model and configure them to display
+  correctly with Vizard’s internal settings
+- added ``parentSpacecraftName`` field to the ``VizMessage.proto`` spacecraft message definition which
+  will allow the creation of effectors using the spacecraft message template. Providing a spacecraft
+  name in that field will indicate that the message belongs to an effector of that parent spacecraft.
+- added Vizard support for effectors including:
+
+  - not showing orbit lines for effectors
+  - adding a coordinate system toggle for effectors
+  - adding subdropdowns to the GUI to indicate which bodies are effectors and to reduce clutter
+    in the main body dropdown
+  - added parent spacecraft name to effector name on any HUD or panel toggles to clarify effector parent
+
+- fixed bug in thruster and transceiver particle systems that did not correctly scale for small sats
+- fixed bug in hemisphere mesh generation (used by CSS and location range) that would result in
+  failure if the field of view was very small
+- fixed bug where GenericSensor HUD was not correctly illuminated by the HUDShell lighting
+- fixed bug where CSS would incorrectly turn on after exiting Sprite mode when they should have
+  stayed off due to current settings
+- fixed bug in orbitLine template that would sometimes throw an error when reference was accessed
+  before being set
+- migrated Vizard to Unity Editor 2020.3.45f1
+- removed auto creation of the two standard camera panels, now camera panels will only be generated
+  when requested by user in the GUI or in messages
+- added support for spacecraft where no spacecraft name was specified in Basilisk, user will see an
+  error message in the VizConsole Log panel and Vizard will automatically name the spacecraft and continue to run
+
 
 **Version 2.1.3 (Jan. 20, 2023)**
 
-- added support for Settings flag `ForceStartAtSpacecraftLocalView`. If this flag is set to 1, the main camera will stay in the spacecraft local view and has been improved to allow zooming out to very large distances from the camera target spacecraft. Vizard will remain locked in spacecraft local view unless a non-spacecraft camera target is selected.
-- added MultiSphere support to `VizMessage.proto` and support visualizing the MultiSpheres on a spacecraft.
+- added support for Settings flag ``ForceStartAtSpacecraftLocalView``. If this flag is set to 1, the main camera will stay in the spacecraft local view and has been improved to allow zooming out to very large distances from the camera target spacecraft. Vizard will remain locked in spacecraft local view unless a non-spacecraft camera target is selected.
+- added MultiSphere support to ``VizMessage.proto`` and support visualizing the MultiSpheres on a spacecraft.
 
 
 **Version 2.1.2 (Dec. 13, 2022)**
