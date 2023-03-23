@@ -190,6 +190,7 @@ class BasiliskConan(ConanFile):
             self.requires.add("pcre/8.45")
             self.requires.add("opencv/4.1.2")
             self.requires.add("zlib/1.2.13")
+            self.requires.add("xz_utils/5.4.0")
 
         if self.options.vizInterface or self.options.opNav:
             self.requires.add("libsodium/1.0.18")
