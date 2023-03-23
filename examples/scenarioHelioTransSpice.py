@@ -75,18 +75,20 @@ The following image illustrates the expected visualization of this simulation sc
 
 import inspect
 import os
-
 from Basilisk import __path__
+from Basilisk.architecture import messaging
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import spacecraft
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import vizSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
-
-from Basilisk.simulation import spacecraft, gravityEffector
-from Basilisk.utilities import SimulationBaseClass, macros, simIncludeGravBody, unitTestSupport
-from Basilisk.architecture import messaging
-from Basilisk.utilities import vizSupport
 
 def run():
     """
@@ -158,8 +160,13 @@ def run():
 
     # Configure Vizard settings
     if vizSupport.vizFound:
+        colorMsgContent = messaging.ColorMsgPayload()
+        colorMsgContent.colorRGBA = vizSupport.toRGBA255("Yellow")
+        colorMsg = messaging.ColorMsg().write(colorMsgContent)
+
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                                   , oscOrbitColorList=[vizSupport.toRGBA255("Magenta")]
+                                                  , trueOrbitColorInMsgList=colorMsg.addSubscriber()
                                                   # , saveFile=__file__
                                                   )
         viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
@@ -173,6 +180,13 @@ def run():
     # Initialize and execute simulation
     scSim.InitializeSimulation()
     day = 60 * 60 * 24  # sec
+    simulationTime = macros.sec2nano(0.5 * 365 * day)
+    scSim.ConfigureStopTime(simulationTime)
+    scSim.ExecuteSimulation()
+
+    # change true orbit line color
+    colorMsgContent.colorRGBA = vizSupport.toRGBA255("Cyan")
+    colorMsg.write(colorMsgContent)
     simulationTime = macros.sec2nano(4.5 * 365 * day)
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()

@@ -18,6 +18,7 @@
 #include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 #include "architecture/msgPayloadDefC/PowerStorageStatusMsgPayload.h"
 #include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"
+#include "architecture/msgPayloadDefC/ColorMsgPayload.h"
 
 #include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
@@ -301,6 +302,7 @@ VizSpacecraftData
 //@endcond
 {
     std::string spacecraftName = "bsk-Sat";                     //!< [-] Name of the spacecraft.
+    std::string parentSpacecraftName = "";                      //!< [-] Name of parent spacecraft object for multi-body spacecraft
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;               //!< [-] msg of incoming spacecraft data
     MsgCurrStatus scStateInMsgStatus;                           //!< [-] (Private) status of the incoming spacecraft  data message
     SCStatesMsgPayload scStateMsgBuffer;                          //!< [-] (Private) s/c state message data
@@ -332,6 +334,7 @@ VizSpacecraftData
     std::string logoTexture = "";                               //!< (Optional) Path to image texture to be used to customize built-in spacecraft models
     std::vector<int> oscOrbitLineColor;                         //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
     std::vector<int>  trueTrajectoryLineColor;                  //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
+    ReadFunctor<ColorMsgPayload> trueTrajectoryLineColorInMsg;  //!< (Optional) Messages specifying true trajectory orbit line RGBA colors.  If connected, this replaces the values set in trueTrajectoryLineColor
     MultiSphereInfo msmInfo;                                    //!< (Optional) MSM configuration information
     std::vector<Ellipsoid *> ellipsoidList;                     //!< (Optional) ellipsoid about the spacecraft location
 }VizSpacecraftData;
