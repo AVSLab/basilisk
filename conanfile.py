@@ -83,7 +83,6 @@ class BasiliskConan(ConanFile):
     print(cmakeCmdString)
     os.system(cmakeCmdString)
 
-
     for opt, value in bskModuleOptionsBool.items():
         options.update({opt: [True, False]})
         default_options.update({opt: value})
@@ -112,6 +111,18 @@ class BasiliskConan(ConanFile):
 
             except:
                 pass
+
+    try:
+        consoleReturn = str(subprocess.check_output(["conan", "remote", "list", "--raw"]))
+        conanRepos = ["bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan"
+                      ]
+        for item in conanRepos:
+            if item not in consoleReturn:
+                print("Configuring: " + statusColor + item + endColor)
+                cmdString = ["conan", "remote", "add"] + item.split(" ")
+                subprocess.check_call(cmdString)
+    except:
+        print("conan: " + failColor + "Error configuring conan repo information." + endColor)
 
     print(statusColor + "Checking conan configuration:" + endColor + " Done")
 
@@ -179,11 +190,12 @@ class BasiliskConan(ConanFile):
             self.requires.add("pcre/8.45")
             self.requires.add("opencv/4.1.2")
             self.requires.add("zlib/1.2.13")
+            self.requires.add("xz_utils/5.4.0")
 
         if self.options.vizInterface or self.options.opNav:
             self.requires.add("libsodium/1.0.18")
             self.requires.add("protobuf/3.17.1")
-            self.requires.add("cppzmq/4.5.0")
+            self.requires.add("cppzmq/4.3.0@bincrafters/stable")
 
     def configure(self):
         if self.options.clean:
