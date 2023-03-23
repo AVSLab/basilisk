@@ -159,7 +159,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
 
     /*! compute the total rotation DCM */
     double RN[3][3];
-    computeFinalRotation(configData->alignmentPriority, BN, rHat_SB_B, hRefHat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
+    oasapComputeFinalRotation(configData->alignmentPriority, BN, rHat_SB_B, hRefHat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
 
     /*! compute the relative rotation DCM and Sun direction in relative frame */
     double RB[3][3];
@@ -173,7 +173,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
 
     if (v3Norm(configData->h2Hat_B) > epsilon) {
         // compute second reference frame
-        computeFinalRotation(configData->alignmentPriority, BN, rHat_SB_B, configData->h2Hat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
+        oasapComputeFinalRotation(configData->alignmentPriority, BN, rHat_SB_B, configData->h2Hat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
         
         // compute the relative rotation DCM and Sun direction in relative frame
         m33MultM33t(RN, BN, RB);
@@ -260,7 +260,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
 }
 
 /*! This helper function computes the first rotation that aligns the body heading with the inertial heading */
-void computeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3][3])
+void oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3][3])
 {
     /*! compute principal rotation angle (phi) and vector (e_phi) for the first rotation */
     double phi = acos( fmin( fmax( v3Dot(hRefHat_B, hReqHat_B), -1 ), 1 ) );
@@ -284,7 +284,7 @@ void computeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3
 }
 
 /*! This helper function computes the second rotation that achieves the best incidence on the solar arrays maintaining the heading alignment */
-void computeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1Hat_B[3], double a2Hat_B[3], double R2R1[3][3])
+void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1Hat_B[3], double a2Hat_B[3], double R2R1[3][3])
 {
     /*! define second rotation vector to coincide with the thrust direction in B coordinates */
     double e_psi[3];
@@ -369,7 +369,7 @@ void computeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1H
 }
 
 /*! This helper function computes the third rotation that breaks the heading alignment if needed, to achieve maximum incidence on solar arrays */
-void computeThirdRotation(int alignmentPriority, double hRefHat_B[3], double rHat_SB_R2[3], double a1Hat_B[3], double R3R2[3][3])
+void oasapComputeThirdRotation(int alignmentPriority, double hRefHat_B[3], double rHat_SB_R2[3], double a1Hat_B[3], double R3R2[3][3])
 {
     double PRV_theta[3];
 
@@ -414,11 +414,11 @@ void computeThirdRotation(int alignmentPriority, double hRefHat_B[3], double rHa
 }
 
 /*! This helper function computes the final rotation as a product of the first three DCMs */
-void computeFinalRotation(int alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3])
+void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3])
 {
     /*! compute the first rotation DCM */
     double R1B[3][3];
-    computeFirstRotation(hRefHat_B, hReqHat_B, R1B);
+    oasapComputeFirstRotation(hRefHat_B, hReqHat_B, R1B);
 
     /*! compute Sun direction vector in R1 frame coordinates */
     double rHat_SB_R1[3];
@@ -426,7 +426,7 @@ void computeFinalRotation(int alignmentPriority, double BN[3][3], double rHat_SB
 
     /*! compute the second rotation DCM */
     double R2R1[3][3];
-    computeSecondRotation(hRefHat_B, rHat_SB_R1, a1Hat_B, a2Hat_B, R2R1);
+    oasapComputeSecondRotation(hRefHat_B, rHat_SB_R1, a1Hat_B, a2Hat_B, R2R1);
 
     /* compute Sun direction in R2 frame components */
     double rHat_SB_R2[3];
@@ -434,7 +434,7 @@ void computeFinalRotation(int alignmentPriority, double BN[3][3], double rHat_SB
 
     /*! compute the third rotation DCM */
     double R3R2[3][3];
-    computeThirdRotation(alignmentPriority, hRefHat_B, rHat_SB_R2, a1Hat_B, R3R2);
+    oasapComputeThirdRotation(alignmentPriority, hRefHat_B, rHat_SB_R2, a1Hat_B, R3R2);
 
     /*! compute reference frames w.r.t inertial frame */
     double R1N[3][3], R2N[3][3];
