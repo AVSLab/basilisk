@@ -32,6 +32,10 @@ Basilisk Release Notes
 
 
 
+Version |release|
+-----------------
+- text here
+
 Version 2.1.7 (March 24, 2023)
 ------------------------------
 - Fixed ``CMake/conan`` case sensitivty issue when compiling Basilisk with ``opNav`` flag set to ``True`` on Linux platforms
