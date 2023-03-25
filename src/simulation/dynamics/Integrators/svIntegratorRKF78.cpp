@@ -135,7 +135,7 @@ void svIntegratorRKF78::integrate(double currentTime, double timeStep)
     std::map<std::string, StateData>::iterator itkMatrix;
     std::map<std::string, StateData>::iterator itError;
 
-    for (auto dynPtr : this->dynPtrs) {
+    for (const auto& dynPtr : this->dynPtrs) {
         stateOut.push_back(dynPtr->dynManager.getStateVector());  // copy current state variables
         stateInit.push_back(dynPtr->dynManager.getStateVector());  // copy current state variables
         errorMatrix.push_back(dynPtr->dynManager.getStateVector());  // copy current state variables
