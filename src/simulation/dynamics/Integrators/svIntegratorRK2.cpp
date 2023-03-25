@@ -42,7 +42,7 @@ void svIntegratorRK2::integrate(double currentTime, double timeStep)
     std::map<std::string, StateData>::iterator itOut;
     std::map<std::string, StateData>::iterator itInit;
 
-    for (auto dynPtr : dynPtrs) {
+    for (const auto& dynPtr : dynPtrs) {
         stateOut.push_back(dynPtr->dynManager.getStateVector());
         stateInit.push_back(dynPtr->dynManager.getStateVector());
         dynPtr->equationsOfMotion(currentTime, timeStep);
@@ -62,7 +62,7 @@ void svIntegratorRK2::integrate(double currentTime, double timeStep)
         }
     }
     
-    for (auto dynPtr : dynPtrs) {
+    for (const auto& dynPtr : dynPtrs) {
         dynPtr->equationsOfMotion(currentTime + timeStep, timeStep);
     }
     for (size_t i=0; i<dynPtrs.size(); i++) {

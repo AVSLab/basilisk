@@ -70,13 +70,13 @@ void DynamicObject::integrateState(double integrateToThisTime)
 {
     if (this->isDynamicsSynced) return;
 
-    for (auto dynPtr : this->integrator->dynPtrs) {
+    for (const auto& dynPtr : this->integrator->dynPtrs) {
         dynPtr->preIntegration(integrateToThisTime);
     }
 
     this->integrator->integrate(this->timeBefore, this->timeStep);
 
-    for (auto dynPtr : this->integrator->dynPtrs) {
+    for (const auto& dynPtr : this->integrator->dynPtrs) {
         dynPtr->postIntegration(integrateToThisTime);
     }
 }
