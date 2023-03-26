@@ -28,27 +28,39 @@ module is replaced with an equivalent python based BSK MRP PD control module.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
-    python3 scenarioAttitudePointingPy.py
+    python3 scenarioAttitudePointingPyDEPRECATED.py
 
 As with :ref:`scenarioAttitudePointing`, when
 the simulation completes 3 plots are shown for the MRP attitude history, the rate
 tracking errors, as well as the control torque vector.
 
-This script showcases the new way of creating Python modules.
-For the deprecated way, refer to :ref:`scenarioAttitudePointingPyDEPRECATED`.
+This script showcases the deprecated way of creating Python modules.
+For the newer way, refer to :ref:`scenarioAttitudePointingPy`.
 
 The MRP PD control module in this script is a class called ``PythonMRPPD``.  Note that it has the
 same setup and update routines as are found with a C/C++ Basilisk module.
-These Python modules behave exactly as other C++/C modules: they respect their
-given priority and can run before C++/C modules.
 
-Similarly to C++ modules, creating an instance of the Python module is done with the code::
+To use a Python module in a simulation script, not that the python modules must be added to a special python specific
+process and task list.  This is done with the commands::
 
-    pyMRPPD = PythonMRPPD()
-    pyMRPPD.ModelTag = "pyMRP_PD"
+    pyModulesProcess = scSim.CreateNewPythonProcess(pyProcessName, 9)
+    pyModulesProcess.createPythonTask(pyTaskName, simulationTimeStep, True, -1)
+
+Note that the python processes are always evaluated after the regular C/C++ processes.  Thus, the priority number
+only controls the order of the python processes, not the python process execution relative to regular
+Basilisk processes.
+
+Creating an instance of the Python module is done with the code::
+
+    pyMRPPD = PythonMRPPD("pyMRP_PD", True, 100)
     pyMRPPD.K = 3.5
     pyMRPPD.P = 30.0
-    scSim.AddModelToTask(simTaskName, pyMRPPD)
+    pyModulesProcess.addModelToTask(pyTaskName, pyMRPPD)
+
+The first argument is the module tag string, the second is a bool argument specifying if the module is active
+or note, and the last is the priority value for this module.  The next step is to configure the module
+variables as you do with any other Basilisk module.  Finally, the module is added to the special task
+list specifically for executing python modules.
 
 Illustration of Simulation Results
 ----------------------------------
@@ -61,10 +73,10 @@ Here a small initial tumble is simulated.  The
 resulting attitude and control torque histories are shown below.  The spacecraft quickly
 regains a stable orientation without tumbling past 180 degrees.
 
-.. image:: /_images/Scenarios/scenarioAttitudePointingPy1.svg
+.. image:: /_images/Scenarios/scenarioAttitudePointingPyDEPRECATED1.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioAttitudePointingPy2.svg
+.. image:: /_images/Scenarios/scenarioAttitudePointingPyDEPRECATED2.svg
    :align: center
 
 """
@@ -78,33 +90,36 @@ regains a stable orientation without tumbling past 180 degrees.
 #
 
 import os
-
-import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
-# Used to get the location of supporting data.
-from Basilisk import __path__
-# import message declarations
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import attTrackingError
+
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+import matplotlib.pyplot as plt
+from Basilisk.utilities import macros
+from Basilisk.utilities import simulationArchTypes
+
+# import simulation related support
+from Basilisk.simulation import spacecraft
+from Basilisk.simulation import extForceTorque
+from Basilisk.simulation import simpleNav
+
 # import FSW Algorithm related support
 # from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import inertial3D
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import simpleNav
-# import simulation related support
-from Basilisk.simulation import spacecraft
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.fswAlgorithms import attTrackingError
+
+# import message declarations
+from Basilisk.architecture import messaging
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
-from Basilisk.architecture import sysModel
 
+# The path to the location of Basilisk
+# Used to get the location of supporting data.
+from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
-
 
 def run(show_plots):
     """
@@ -123,6 +138,8 @@ def run(show_plots):
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
+    pyTaskName = "pyTask"
+    pyProcessName = "pyProcess"
 
     #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
@@ -138,6 +155,19 @@ def run(show_plots):
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+
+    # create the process and task that contains the Python modules
+    # The following line will trigger a deprecation warning
+    pyModulesProcess = scSim.CreateNewPythonProcess(pyProcessName, 9)
+    pyModulesProcess.createPythonTask(pyTaskName, simulationTimeStep, True, -1)
+
+    # In order to hide the deprecation warning, you may use
+    # the python "warnings" module:
+    # import warnings
+    # with warnings.catch_warnings():
+    #     warnings.filterwarnings("ignore", message="PythonProcess*", category=DeprecationWarning)
+    #     pyModulesProcess = scSim.CreateNewPythonProcess(pyProcessName, 9)
+    #     pyModulesProcess.createPythonTask(pyTaskName, simulationTimeStep, True, -1)
 
     #
     #   setup the simulation tasks/objects
@@ -190,11 +220,10 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
 
     # setup Python MRP PD control module
-    pyMRPPD = PythonMRPPD()
-    pyMRPPD.ModelTag = "pyMRP_PD"
+    pyMRPPD = PythonMRPPD("pyMRP_PD", True, 100)
     pyMRPPD.K = 3.5
     pyMRPPD.P = 30.0
-    scSim.AddModelToTask(simTaskName, pyMRPPD)
+    pyModulesProcess.addModelToTask(pyTaskName, pyMRPPD)
 
     #
     #   Setup data logging before the simulation is initialized
@@ -285,31 +314,32 @@ def run(show_plots):
     return figureList
 
 
-class PythonMRPPD(sysModel.SysModel):
+class PythonMRPPD(simulationArchTypes.PythonModelClass):
     """
-    This class inherits from the `SysModel` available in the ``Basilisk.architecture.sysModel`` module.
-    The `SysModel` is the parent class which your Python BSK modules must inherit.
+    This class inherits from the `PythonModelClass` available in the ``simulationArchTypes`` module.
+    The `PythonModelClass` is the parent class which your Python BSK modules must inherit.
     The class uses the following
     virtual functions:
 
-    #. ``Reset``: The method that will initialize any persistent data in your model to a common
+    #. ``reset``: The method that will initialize any persistent data in your model to a common
        "ready to run" state (e.g. filter states, integral control sums, etc).
-    #. ``UpdateState``: The method that will be called at the rate specified
+    #. ``updateState``: The method that will be called at the rate specified
        in the PythonTask that was created in the input file.
 
     Additionally, your class should ensure that in the ``__init__`` method, your call the super
-    ``__init__`` method for the class so that the base class' constructor also gets called:
+    ``__init__`` method for the class so that the base class' constructor also gets called to
+    initialize the model-name, activity, moduleID, and other important class members:
 
     .. code-block:: python
 
-        super(PythonMRPPD, self).__init__()
+        super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
 
     You class must implement the above four functions. Beyond these four functions you class
     can complete any other computations you need (``Numpy``, ``matplotlib``, vision processing
     AI, whatever).
     """
-    def __init__(self):
-        super(PythonMRPPD, self).__init__()
+    def __init__(self, modelName, modelActive=True, modelPriority=-1):
+        super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
 
         # Proportional gain term used in control
         self.K = 0
@@ -320,25 +350,25 @@ class PythonMRPPD(sysModel.SysModel):
         # Output body torque message name
         self.cmdTorqueOutMsg = messaging.CmdTorqueBodyMsg()
 
-    def Reset(self, CurrentSimNanos):
+    def reset(self, currentTime):
         """
-        The Reset method is used to clear out any persistent variables that need to get changed
+        The reset method is used to clear out any persistent variables that need to get changed
         when a task is restarted.  This method is typically only called once after selfInit/crossInit,
         but it should be written to allow the user to call it multiple times if necessary.
-        :param CurrentSimNanos: current simulation time in nano-seconds
+        :param currentTime: current simulation time in nano-seconds
         :return: none
         """
         return
 
-    def UpdateState(self, CurrentSimNanos):
+    def updateState(self, currentTime):
         """
         The updateState method is the cyclical worker method for a given Basilisk class.  It
-        will get called periodically at the rate specified in the task that the model is
+        will get called periodically at the rate specified in the Python task that the model is
         attached to.  It persists and anything can be done inside of it.  If you have realtime
-        requirements though, be careful about how much processing you put into a Python UpdateState
+        requirements though, be careful about how much processing you put into a Python updateState
         method.  You could easily detonate your sim's ability to run in realtime.
 
-        :param CurrentSimNanos: current simulation time in nano-seconds
+        :param currentTime: current simulation time in nano-seconds
         :return: none
         """
         # read input message
@@ -351,19 +381,17 @@ class PythonMRPPD(sysModel.SysModel):
         lrCmd = np.array(guidMsgBuffer.sigma_BR) * self.K + np.array(guidMsgBuffer.omega_BR_B) * self.P
         torqueOutMsgBuffer.torqueRequestBody = (-lrCmd).tolist()
 
-        self.cmdTorqueOutMsg.write(torqueOutMsgBuffer, CurrentSimNanos, self.moduleID)
+        self.cmdTorqueOutMsg.write(torqueOutMsgBuffer, currentTime, self.moduleID)
 
-        # All Python SysModels have self.bskLogger available
-        # The logger level flags (i.e. BSK_INFORMATION) may be
-        # accessed from sysModel
-        if False:
+        def print_output():
             """Sample Python module method"""
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"Time: {CurrentSimNanos * 1.0E-9} s")
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"TorqueRequestBody: {torqueOutMsgBuffer.torqueRequestBody}")
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"sigma_BR: {guidMsgBuffer.sigma_BR}")
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"omega_BR_B: {guidMsgBuffer.omega_BR_B}")
+            print(currentTime * 1.0E-9)
+            print(torqueOutMsgBuffer.torqueRequestBody)
+            print(guidMsgBuffer.sigma_BR)
+            print(guidMsgBuffer.omega_BR_B)
 
         return
+
 
 #
 # This statement below ensures that the unit test scrip can be run as a
