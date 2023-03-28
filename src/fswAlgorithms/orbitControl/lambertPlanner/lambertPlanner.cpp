@@ -60,3 +60,21 @@ void LambertPlanner::Reset(uint64_t currentSimNanos)
 void LambertPlanner::UpdateState(uint64_t currentSimNanos)
 {
 }
+
+/*! This method reads the input messages each call of updateState.
+    It also checks if the message contents are valid for this module.
+    @return void
+*/
+void LambertPlanner::readMessages()
+{
+    NavTransMsgPayload navTransInMsgBuffer = this->navTransInMsg();
+
+    if (this->maneuverTime - navTransInMsgBuffer.timeTag < 0.0){
+        bskLogger.bskLog(BSK_ERROR,
+                         "lambertPlanner: current time must be before maneuver time maneuverTime.");
+    } else {
+        this->time = navTransInMsgBuffer.timeTag;
+    }
+    this->r_N = cArray2EigenVector3d(navTransInMsgBuffer.r_BN_N);
+    this->v_N = cArray2EigenVector3d(navTransInMsgBuffer.v_BN_N);
+}
