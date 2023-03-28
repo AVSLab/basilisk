@@ -94,7 +94,7 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
     v3Add(configData->r_FM_F, configData->r_TF_F, r_TM_F);   // position of T w.r.t. M in F-frame coordinates
     
     double FM[3][3];
-    computeFinalRotation(r_CM_M, r_TM_F, configData->T_F, FM);
+    tprComputeFinalRotation(r_CM_M, r_TM_F, configData->T_F, FM);
 
     /*! compute net RW momentum */
     double vec3[3], hs_B[3], hs_M[3];
@@ -115,7 +115,7 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
     /*! recompute thrust direction and FM matrix based on offset */
     double r_CMd_M[3];
     v3Add(r_CM_M, d_M, r_CMd_M);
-    computeFinalRotation(r_CMd_M, r_TM_F, configData->T_F, FM);
+    tprComputeFinalRotation(r_CMd_M, r_TM_F, configData->T_F, FM);
 
     /*! extract theta1 and theta2 angles */
     hingedRigidBodyRef1Out.theta = atan2(FM[1][2], FM[1][1]);
@@ -151,7 +151,7 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
     CmdTorqueBodyMsg_C_write(&thrusterTorqueOut, &configData->thrusterTorqueOutMsg, moduleID, callTime);
 }
 
-void computeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3])
+void tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3])
 {
     // compute principal rotation angle phi
     double phi = acos( fmin( fmax( v3Dot(THat_F, rHat_CM_F), -1 ), 1 ) );
@@ -190,7 +190,7 @@ void computeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3
     PRV2C(PRV_phi, F1M);
 }
 
-void computeSecondRotation(double r_CM_F[3], double r_TM_F[3], double r_CT_F[3], double THat_F[3], double F2F1[3][3])
+void tprComputeSecondRotation(double r_CM_F[3], double r_TM_F[3], double r_CT_F[3], double THat_F[3], double F2F1[3][3])
 {
     // define offset vector aVec
     double aVec[3];
@@ -231,7 +231,7 @@ void computeSecondRotation(double r_CM_F[3], double r_TM_F[3], double r_CT_F[3],
     PRV2C(PRV_psi, F2F1);
 }
 
-void computeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3][3])
+void tprComputeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3][3])
 {
     double e1 = e_theta[0];  
     double e2 = e_theta[1];  
@@ -301,7 +301,7 @@ void computeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3][3]
     PRV2C(PRV_theta, F3F2);
 }
 
-void computeFinalRotation(double r_CM_M[3], double r_TM_F[3], double T_F[3], double FM[3][3])
+void tprComputeFinalRotation(double r_CM_M[3], double r_TM_F[3], double T_F[3], double FM[3][3])
 {
     /*! define unit vectors of CM direction in M coordinates and thrust direction in F coordinates */
     double rHat_CM_M[3];
@@ -313,7 +313,7 @@ void computeFinalRotation(double r_CM_M[3], double r_TM_F[3], double T_F[3], dou
 
     /*! compute first rotation to make T_F parallel to r_CM */
     double F1M[3][3];
-    computeFirstRotation(THat_F, rHat_CM_F, F1M);
+    tprComputeFirstRotation(THat_F, rHat_CM_F, F1M);
 
     /*! rotate r_CM_F */
     double r_CM_F[3];
@@ -325,7 +325,7 @@ void computeFinalRotation(double r_CM_M[3], double r_TM_F[3], double T_F[3], dou
 
     /*! compute second rotation to zero the offset between T_F and r_CT_F */
     double F2F1[3][3];
-    computeSecondRotation(r_CM_F, r_TM_F, r_CT_F, THat_F, F2F1);
+    tprComputeSecondRotation(r_CM_F, r_TM_F, r_CT_F, THat_F, F2F1);
 
     /*! define intermediate platform rotation F2M */
     double F2M[3][3];
@@ -336,7 +336,7 @@ void computeFinalRotation(double r_CM_M[3], double r_TM_F[3], double T_F[3], dou
     m33MultV3(F2M, r_CM_M, e_theta);
     v3Normalize(e_theta, e_theta);
     double F3F2[3][3];
-    computeThirdRotation(e_theta, F2M, F3F2);
+    tprComputeThirdRotation(e_theta, F2M, F3F2);
 
     /*! define final platform rotation FM */
     m33MultM33(F3F2, F2M, FM);

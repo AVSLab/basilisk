@@ -27,11 +27,17 @@ Basilisk Release Notes
     - spacecraft charging related modules
     - ability to integrate dynamics of multiple spacecraft simultaneously
     - support a way to do thread-safe messaging
+    - ability to integrate Python Basilisk modules in the same task and process as C/C++ modules
+    - automated documentation build system when code is pushed to the repo
 
 
 
 Version |release|
 -----------------
+- text here
+
+Version 2.1.7 (March 24, 2023)
+------------------------------
 - Fixed ``CMake/conan`` case sensitivty issue when compiling Basilisk with ``opNav`` flag set to ``True`` on Linux platforms
 - Created fsw :ref:`hingedRigidBodyPIDMotor` to compute the commanded torque to :ref:`spinningBodyOneDOFStateEffector` using a proportional-integral-derivative controller.
 - Added :ref:`torqueScheduler` to combine two :ref:`ArrayMotorTorqueMsgPayload` into one and implement effector locking logic.
