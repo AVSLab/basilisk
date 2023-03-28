@@ -54,6 +54,7 @@ public:
 
 private:
     void readMessages();
+    void writeMessages(uint64_t currentSimNanos);
     std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> propagate(
             const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
             std::array<double, 2> interval,
@@ -67,6 +68,8 @@ private:
     double time{}; //!< [s] Current vehicle time-tag associated with measurements
     Eigen::Vector3d r_N; //!< [m] Current inertial spacecraft position vector in inertial frame N components
     Eigen::Vector3d v_N; //!< [m/s] Current inertial velocity of the spacecraft in inertial frame N components
+    //!< [m] Expected inertial spacecraft position vector at maneuver time tm in inertial frame N components
+    Eigen::Vector3d rm_N;
 };
 
 #endif

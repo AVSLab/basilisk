@@ -79,6 +79,27 @@ void LambertPlanner::readMessages()
     this->v_N = cArray2EigenVector3d(navTransInMsgBuffer.v_BN_N);
 }
 
+/*! This method writes the output messages each call of updateState
+    @param currentSimNanos current simulation time in nano-seconds
+    @return void
+*/
+void LambertPlanner::writeMessages(uint64_t currentSimNanos)
+{
+    LambertProblemMsgPayload lambertProblemOutMsgBuffer;
+    lambertProblemOutMsgBuffer = this->lambertProblemOutMsg.zeroMsgPayload;
+
+    // Write message content
+    std::strcpy(lambertProblemOutMsgBuffer.solverName, this->solverName.c_str());
+    eigenVector3d2CArray(this->rm_N, lambertProblemOutMsgBuffer.r1vec);
+    eigenVector3d2CArray(this->r_TN_N, lambertProblemOutMsgBuffer.r2vec);
+    lambertProblemOutMsgBuffer.transferTime = this->finalTime - this->maneuverTime;
+    lambertProblemOutMsgBuffer.mu = this->mu;
+    lambertProblemOutMsgBuffer.numRevolutions = this->numRevolutions;
+
+    // Write to the output messages
+    this->lambertProblemOutMsg.write(&lambertProblemOutMsgBuffer, this->moduleID, currentSimNanos);
+}
+
 /*! This method integrates the provided equations of motion using Runge-Kutta 4 (RK4) and returns the time steps and
     state vectors at each time step.
     @param EOM equations of motion function to be propagated
