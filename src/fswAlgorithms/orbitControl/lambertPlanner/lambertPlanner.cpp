@@ -78,3 +78,63 @@ void LambertPlanner::readMessages()
     this->r_N = cArray2EigenVector3d(navTransInMsgBuffer.r_BN_N);
     this->v_N = cArray2EigenVector3d(navTransInMsgBuffer.v_BN_N);
 }
+
+/*! This method integrates the provided equations of motion using Runge-Kutta 4 (RK4) and returns the time steps and
+    state vectors at each time step.
+    @param EOM equations of motion function to be propagated
+    @param interval integration interval
+    @param X0 initial state
+    @param dt time step
+    @return std::pair<std::vector<double>, std::vector<Eigen::VectorXd>>
+*/
+std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertPlanner::propagate(
+        const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
+        std::array<double, 2> interval,
+        const Eigen::VectorXd& X0,
+        double dt)
+{
+    double t0 = interval[0];
+    double tf = interval[1];
+
+    std::vector<double> t = {t0};
+    std::vector<Eigen::VectorXd> X = {X0};
+
+    // propagate forward to tf
+    double N = ceil((tf-t0)/dt);
+    for (int c=0; c < N; c++) {
+        double step = std::min(dt,tf-t.at(c)); // for last time step, step size might be smaller than dt
+
+        Eigen::VectorXd Xnew = this->RK4(EOM, X.at(c), t.at(c), step);
+        double tnew = t.at(c) + step;
+
+        t.push_back(tnew);
+        X.push_back(Xnew);
+    }
+    std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> statesOut = {t,X};
+
+    return statesOut;
+}
+
+/*! This method provides the 4th order Runge-Kutta (RK4)
+    @param ODEfunction function handle that includes the equations of motion
+    @param X0 initial state
+    @param t0 initial time
+    @param dt time step
+    @return Eigen::VectorXd
+*/
+Eigen::VectorXd LambertPlanner::RK4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
+                                    const Eigen::VectorXd& X0,
+                                    double t0,
+                                    double dt)
+{
+    double h = dt;
+
+    Eigen::VectorXd k1 = ODEfunction(t0, X0);
+    Eigen::VectorXd k2 = ODEfunction(t0 + h/2., X0 + h*k1/2.);
+    Eigen::VectorXd k3 = ODEfunction(t0 + h/2., X0 + h*k2/2.);
+    Eigen::VectorXd k4 = ODEfunction(t0 + h, X0 + h*k3);
+
+    Eigen::VectorXd X = X0 + 1./6.*h*(k1 + 2.*k2 + 2.*k3 + k4);
+
+    return X;
+}

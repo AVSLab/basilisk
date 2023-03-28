@@ -54,6 +54,15 @@ public:
 
 private:
     void readMessages();
+    std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> propagate(
+            const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
+            std::array<double, 2> interval,
+            const Eigen::VectorXd& X0,
+            double dt);
+    Eigen::VectorXd RK4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
+                        const Eigen::VectorXd& X0,
+                        double t0,
+                        double dt);
 
     double time{}; //!< [s] Current vehicle time-tag associated with measurements
     Eigen::Vector3d r_N; //!< [m] Current inertial spacecraft position vector in inertial frame N components
