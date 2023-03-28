@@ -43,7 +43,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
       - name: "Install swig and cmake"
-        run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
+        run: sudo apt-get update && sudo apt-get install build-essential cmake gtk2.0 libgtk2.0-dev ninja-build swig -y
       - name: "Install python packages"
         run: sudo apt-get install python3-setuptools python3-tk
       - name: "Create virtual Environment"
