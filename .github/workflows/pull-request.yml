@@ -45,9 +45,12 @@ jobs:
       - name: "Install swig and cmake"
         run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
       - name: "Install python packages"
-        run: sudo apt-get install python3-setuptools python3-tk python3.9-venv
+        run: sudo apt-get install python3-setuptools python3-tk
       - name: "Create virtual Environment"
-        run: python3 -m venv .venv
+        run: |
+          python${{ matrix.python-version }} -m venv .venv
+          source .venv/bin/activate
+          echo "VIRTUAL ENV:" $VIRTUAL_ENV
       - name: "Install wheel and conan package"
         run: source .venv/bin/activate && pip3 install wheel conan==1.59.0 pytest datashader holoviews pytest-xdist
       - name: "Build basilisk"
