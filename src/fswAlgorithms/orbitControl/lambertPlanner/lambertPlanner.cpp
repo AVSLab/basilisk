@@ -59,6 +59,37 @@ void LambertPlanner::Reset(uint64_t currentSimNanos)
 */
 void LambertPlanner::UpdateState(uint64_t currentSimNanos)
 {
+    // read messages
+    this->readMessages();
+
+    // initial state vector
+    Eigen::VectorXd X0(this->r_N.rows()+this->v_N.rows(), this->r_N.cols());
+    X0 << this->r_N,
+            this->v_N;
+
+    // equations of motion (assuming two body point mass gravity)
+    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> EOM = [this](double t, Eigen::VectorXd state)
+    {
+        Eigen::VectorXd stateDerivative(state.size());
+
+        stateDerivative.segment(0,3) = state.segment(3, 3);
+        stateDerivative.segment(3, 3) = -this->mu/(pow(state.head(3).norm(),3)) * state.head(3);
+
+        return stateDerivative;
+    };
+
+    // propagate to obtain expected position at maneuver time tm
+    std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> states = this->propagate(
+            EOM,
+            {this->time, this->maneuverTime},
+            X0,
+            10);
+    std::vector<Eigen::VectorXd> X = states.second;
+    Eigen::VectorXd Xm = X.back();
+    this->rm_N = Xm.head(3);
+
+    // write messages
+    this->writeMessages(currentSimNanos);
 }
 
 /*! This method reads the input messages each call of updateState.
