@@ -189,6 +189,7 @@ class BasiliskConan(ConanFile):
         if self.options.opNav:
             self.requires.add("pcre/8.45")
             self.requires.add("opencv/4.1.2")
+            self.options['opencv'].with_ffmpeg = False
             self.requires.add("zlib/1.2.13")
             self.requires.add("xz_utils/5.4.0")
 
