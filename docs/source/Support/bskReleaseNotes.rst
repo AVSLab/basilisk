@@ -50,6 +50,7 @@ Version |release|
 - Bug fix made to :ref:`eclipse`: Saturn, Jupiter, Uranus, and Neptune radii were incorrectly being assigned the 
   radius of Mars.
 - Created :ref:`lambertSolver` module to solve Lambert's problem
+- Created :ref:`lambertPlanner` module to write the :ref:`lambertProblemMsgPayload` Lambert problem setup message
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------
