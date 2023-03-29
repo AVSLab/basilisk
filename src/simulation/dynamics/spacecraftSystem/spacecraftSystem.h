@@ -173,10 +173,11 @@ public:
     void equationsOfMotionSystem(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system
     void findPriorStateInformation(SpacecraftUnit& spacecraft);  //!< class method
     void calculateDeltaVandAcceleration(SpacecraftUnit& spacecraft, double localTimeStep); //!< class method
-    void integrateState(double time);       //!< -- This method steps the state forward one step in time
     void attachSpacecraftToPrimary(SpacecraftUnit *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName);  //!< -- Attaches a spacecraft to the primary spacecraft chain
     void addSpacecraftUndocked(SpacecraftUnit *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
     void determineAttachedSCStates();  //!< class method
+    void preIntegration(double callTime) final;  //!< -- pre-integration steps
+    void postIntegration(double callTime) final;  //!< -- post-integration steps
 
 private:
     Eigen::MatrixXd *sysTime;            //!< [s] System time

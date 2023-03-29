@@ -35,20 +35,16 @@ Spacecraft::Spacecraft()
     this->currTimeStep = 0.0;
     this->timePrevious = 0.0;
     this->simTimePrevious = 0;
-    this->numOutMsgBuffers = 2;
     this->dvAccum_CN_B.setZero();
     this->dvAccum_BN_B.setZero();
 
     // - Set integrator as RK4 by default
     this->integrator = new svIntegratorRK4(this);
-
-    return;
 }
 
 /*! This is the destructor, nothing to report here */
 Spacecraft::~Spacecraft()
 {
-    return;
 }
 
 
@@ -77,16 +73,12 @@ void Spacecraft::Reset(uint64_t CurrentSimNanos)
 void Spacecraft::addStateEffector(StateEffector *newStateEffector)
 {
     this->states.push_back(newStateEffector);
-
-    return;
 }
 
 /*! This method attaches a dynamicEffector to the dynamicObject */
 void Spacecraft::addDynamicEffector(DynamicEffector *newDynamicEffector)
 {
     this->dynEffectors.push_back(newDynamicEffector);
-
-    return;
 }
 
 /*! This is the method where the messages of the state of vehicle are written */
@@ -120,8 +112,6 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
     eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
     this->scMassOutMsg.write(&massStateOut, this->moduleID, clockTime);
-
-    return;
 }
 
 /*! If the optional attitude reference input message is set, then read in the reference attitude and set it for the hub*/
@@ -152,8 +142,6 @@ void Spacecraft::readOptionalRefMsg()
         this->hubR_N->setState(r_RN_N);
         this->hubV_N->setState(v_RN_N);
     }
-
-    return;
 }
 
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
@@ -185,8 +173,6 @@ void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
         (*it)->writeOutputStateMessages(CurrentSimNanos);
     }
     this->simTimePrevious = CurrentSimNanos;
-
-    return;
 }
 
 /*! This method allows the spacecraft to have access to the current state of the hub for MRP switching, writing
@@ -205,8 +191,6 @@ void Spacecraft::linkInStates(DynParamManager& statesIn)
     this->inertialPositionProperty = statesIn.getPropertyReference("r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference("v_BN_N");
     this->g_N = statesIn.getPropertyReference("g_N");
-
-    return;
 }
 
 /*! This method is used to initialize the simulation by registering all of the states, linking the dynamicEffectors,
@@ -288,8 +272,6 @@ void Spacecraft::initializeDynamics()
 
     // - Call equations of motion at time zero
     this->equationsOfMotion(0.0, 1.0);
-
-    return;
 }
 
 /*! This method is used to update the mass properties of the entire spacecraft using contributions from stateEffectors */
@@ -332,8 +314,6 @@ void Spacecraft::updateSCMassProps(double time)
     Eigen::Vector3d omegaLocal_BN_B = hubOmega_BN_B->getState();
     Eigen::Vector3d cLocal_B = (*this->c_B);
     (*this->cDot_B) = (*this->cPrime_B) + omegaLocal_BN_B.cross(cLocal_B);
-
-    return;
 }
 
 /*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of
@@ -453,25 +433,21 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     {
         (*it)->computeDerivatives(integTimeSeconds, this->hubV_N->getStateDeriv(), this->hubOmega_BN_B->getStateDeriv(), this->hubSigma->getState());
     }
-
-    return;
 }
 
-/*! This method is used to integrate the state forward in time, switch MRPs, calculate energy and momentum, and
- calculate the accumulated deltaV */
-void Spacecraft::integrateState(double integrateToThisTime)
-{
-    // - Find the time step
-	double localTimeStep = integrateToThisTime - this->timePrevious;
+/*! Prepare for integration process
+ @param integrateToThisTime Time to integrate to
+ */
+void Spacecraft::preIntegration(double integrateToThisTime) {
+    this->timeStep = integrateToThisTime - this->timePrevious;
 
-	// - Find v_CN_N before integration for accumulated DV
+    // - Find v_CN_N before integration for accumulated DV
     Eigen::Vector3d oldV_BN_N = this->hubV_N->getState();  // - V_BN_N before integration
     Eigen::Vector3d oldV_CN_N;  // - V_CN_N before integration
     Eigen::Vector3d oldC_B;     // - Center of mass offset before integration
-    Eigen::Vector3d oldOmega_BN_B;  // - angular rate of B wrt N in the Body frame
     Eigen::MRPd oldSigma_BN;    // - Sigma_BN before integration
     // - Get the angular rate, oldOmega_BN_B from the dyn manager
-    oldOmega_BN_B = this->hubOmega_BN_B->getState();
+    this->oldOmega_BN_B = this->hubOmega_BN_B->getState();
     // - Get center of mass, v_BN_N and dcm_NB from the dyn manager
     oldSigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
     // - Finally find v_CN_N
@@ -480,8 +456,13 @@ void Spacecraft::integrateState(double integrateToThisTime)
 
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
     this->hub.matchGravitytoVelocityState(oldV_CN_N); // Set gravity velocity to base velocity for DV estimation
-    double timeBefore = integrateToThisTime - localTimeStep;
-    this->integrator->integrate(timeBefore, localTimeStep);
+    this->timeBefore = integrateToThisTime - this->timeStep;
+}
+
+/*! Perform post-integration steps
+ @param integrateToThisTime Time to integrate to
+ */
+void Spacecraft::postIntegration(double integrateToThisTime) {
     this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
 
     // - Call mass properties to get current info on the mass props of the spacecraft
@@ -508,13 +489,13 @@ void Spacecraft::integrateState(double integrateToThisTime)
 
     // - non-conservative acceleration of the body frame in the body frame
     this->nonConservativeAccelpntB_B = (newDcm_NB.transpose()*(newV_BN_N -
-                                                               this->hubGravVelocity->getState()))/localTimeStep;
+                                                               this->hubGravVelocity->getState()))/this->timeStep;
 
     // - angular acceleration in the body frame
     Eigen::Vector3d newOmega_BN_B;
     newOmega_BN_B = this->hubOmega_BN_B->getState();
-    if (fabs(localTimeStep) > 1e-10) {
-        this->omegaDot_BN_B = (newOmega_BN_B - oldOmega_BN_B)/localTimeStep; //angular acceleration of B wrt N in the Body frame
+    if (fabs(this->timeStep) > 1e-10) {
+        this->omegaDot_BN_B = (newOmega_BN_B - this->oldOmega_BN_B)/this->timeStep; //angular acceleration of B wrt N in the Body frame
     } else {
         this->omegaDot_BN_B = {0., 0., .0};
     }
@@ -534,8 +515,6 @@ void Spacecraft::integrateState(double integrateToThisTime)
     }
     // - Compute force and torque on the body due to stateEffectors
     this->calcForceTorqueFromStateEffectors(integrateToThisTime, newOmega_BN_B);
-
-    return;
 }
 
 /*! This method is used to find the total energy and momentum of the spacecraft. It finds the total orbital energy,
@@ -616,8 +595,6 @@ void Spacecraft::computeEnergyMomentum(double time)
     // - Find rotational angular momentum for the spacecraft
     totRotAngMomPntC_B += -(*this->m_SC)(0,0)*(Eigen::Vector3d (*this->c_B)).cross(cDotLocal_B);
     this->totRotAngMomPntC_N = dcmLocal_NB*totRotAngMomPntC_B;
-
-    return;
 }
 
 /*! This method is used to find the force and torque that each stateEffector is applying to the spacecraft. These values
@@ -631,6 +608,4 @@ void Spacecraft::calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d 
     {
         (*it)->calcForceTorqueOnBody(time, omega_BN_B);
     }
-
-    return;
 }

@@ -23,14 +23,11 @@
 /*! @brief Constructor */
 StateVecIntegrator::StateVecIntegrator(DynamicObject* dyn)
 {
-    this->dynPtr = dyn;
-    
-    return;
+    this->dynPtrs.push_back(dyn);
 }
 
 /*! @brief Destructor */
 StateVecIntegrator::~StateVecIntegrator(void)
 {
-    this->dynPtr = nullptr;
-    return;
+    this->dynPtrs.clear();
 }
