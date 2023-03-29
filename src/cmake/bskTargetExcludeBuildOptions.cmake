@@ -5,5 +5,5 @@ endif()
 
 option(BUILD_OPNAV "Build OpNav Modules" OFF)
 if(NOT BUILD_OPNAV)
-  list(APPEND EXCLUDED_BSK_TARGETS "limbFinding" "centerRadiusCNN" "houghCircles" "camera")
+  list(APPEND EXCLUDED_BSK_TARGETS "limbFinding" "centerRadiusCNN" "houghCircles" "camera" "centerOfBrightness")
 endif()
