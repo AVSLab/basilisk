@@ -34,7 +34,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Created :ref:`lambertSolver` module to solve Lambert's problem
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------
