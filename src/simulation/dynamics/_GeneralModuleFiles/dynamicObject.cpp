@@ -19,39 +19,39 @@
 
 #include "dynamicObject.h"
 
-/*! This is the constructor, just setting the variables to zero */
-DynamicObject::DynamicObject()
-{
-    return;
-}
-
-/*! This is the destructor, nothing to report here */
-DynamicObject::~DynamicObject()
-{
-    return;
-}
-
-/*! This method initializes the stateEffectors and dynamicEffectors and links the necessarry components together */
-void DynamicObject::initializeDynamics()
-{
-    return;
-}
-
-/*! This method allows a dynamicObject to compute energy and momentum. Great for sim validation purposes */
-void DynamicObject::computeEnergyMomentum(double t)
-{
-    return;
-}
-
 /*! This method changes the integrator in use (Default integrator: RK4) */
 void DynamicObject::setIntegrator(StateVecIntegrator *newIntegrator)
 {
-    if (newIntegrator != nullptr) {
-        delete integrator;
-        integrator = newIntegrator;
+    if (this->isDynamicsSynced)
+    {
+        bskLogger.bskLog(BSK_WARNING, 
+            "You cannot set the integrator of a DynamicObject with synced integration. "
+            "If you want to change the integrator, change the integrator of the primary DynamicObject.");
+        return;
     }
 
-    return;
+    if (!newIntegrator)
+    {
+        bskLogger.bskLog(BSK_ERROR, "New integrator cannot be a null pointer");
+        return;
+    }
+    
+    if (newIntegrator->dynPtrs.at(0) != this)
+    {
+        bskLogger.bskLog(BSK_ERROR, "New integrator must have been created using this DynamicObject");
+        return;
+    }
+
+    // If there was already an integrator set, then whatever dynPtrs that the
+    // original integrator had take priority over the dynPtrs of newIntegrator
+    if (this->integrator)
+    {
+        newIntegrator->dynPtrs = std::move(this->integrator->dynPtrs);
+    }
+
+    delete this->integrator;
+
+    this->integrator = newIntegrator;
 }
 
 
