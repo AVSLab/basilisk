@@ -33,9 +33,3 @@ The integration type is determined by the integrator assigned to the primary ``D
 which the other ``DynamicObject`` integrations is synchronized.  By default this is the ``RK4``
 integrator.  It doesn't matter what integrator is assigned to the secondary ``DynamicObject`` instances,
 the integrator of the primary object is used.
-
-Assigning an integrator to ``DynamicObject`` using ``setIntegrator()``,
-as discussed in :ref:`scenarioIntegrators`, clears
-out the vector of objects being integrated. Thus, if the integrator needs to be changed to
-one other than the default ``RK4``, then this must be done before the
-``syncDynamicsIntegration()`` method is called.
