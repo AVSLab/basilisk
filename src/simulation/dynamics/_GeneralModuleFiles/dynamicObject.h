@@ -28,12 +28,13 @@
 #include "stateVecIntegrator.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/bskLogging.h"
+#include <memory>
 
 /*! @brief dynamic object class */
 class DynamicObject : public SysModel {
 public:
     DynParamManager dynManager;                       //!< -- Dynamics parameter manager for all effectors
-    StateVecIntegrator *integrator;                   //!< -- Integrator used to propagate state forward
+    std::shared_ptr<StateVecIntegrator> integrator;   //!< -- Integrator used to propagate state forward
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 public:
@@ -43,7 +44,7 @@ public:
     virtual void UpdateState(uint64_t callTime) = 0;  //!< -- This hooks the dyn-object into Basilisk architecture
     virtual void equationsOfMotion(double t, double timeStep) = 0;     //!< -- This is computing F = Xdot(X,t)
     void integrateState(double t);                    //!< -- This method steps the state forward in time
-    void setIntegrator(StateVecIntegrator *newIntegrator);  //!< -- Sets a new integrator
+    void setIntegrator(std::shared_ptr<StateVecIntegrator> newIntegrator);  //!< -- Sets a new integrator
     virtual void preIntegration(double callTime) = 0;       //!< -- method to perform pre-integration steps
     virtual void postIntegration(double callTime) = 0;      //!< -- method to perform post-integration steps
     void syncDynamicsIntegration(DynamicObject *dynPtr);    //!< add another DynamicObject to be intregated simultaneously

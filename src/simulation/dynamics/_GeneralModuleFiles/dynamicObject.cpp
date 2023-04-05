@@ -20,7 +20,7 @@
 #include "dynamicObject.h"
 
 /*! This method changes the integrator in use (Default integrator: RK4) */
-void DynamicObject::setIntegrator(StateVecIntegrator *newIntegrator)
+void DynamicObject::setIntegrator(std::shared_ptr<StateVecIntegrator> newIntegrator)
 {
     if (this->isDynamicsSynced)
     {
@@ -46,10 +46,8 @@ void DynamicObject::setIntegrator(StateVecIntegrator *newIntegrator)
     // original integrator had take priority over the dynPtrs of newIntegrator
     if (this->integrator)
     {
-        newIntegrator->dynPtrs = std::move(this->integrator->dynPtrs);
+        newIntegrator->dynPtrs = this->integrator->dynPtrs;
     }
-
-    delete this->integrator;
 
     this->integrator = newIntegrator;
 }

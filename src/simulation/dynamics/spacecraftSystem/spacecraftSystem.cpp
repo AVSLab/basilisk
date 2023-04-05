@@ -227,7 +227,7 @@ SpacecraftSystem::SpacecraftSystem()
     this->numOutMsgBuffers = 2;
 
     // - Set integrator as RK4 by default
-    this->integrator = new svIntegratorRK4(this);
+    this->integrator = std::make_shared<svIntegratorRK4>(this);
     this->numberOfSCAttachedToPrimary = 0;
 
     return;

@@ -39,7 +39,7 @@ Spacecraft::Spacecraft()
     this->dvAccum_BN_B.setZero();
 
     // - Set integrator as RK4 by default
-    this->integrator = new svIntegratorRK4(this);
+    this->integrator = std::make_shared<svIntegratorRK4>(this);
 }
 
 /*! This is the destructor, nothing to report here */
