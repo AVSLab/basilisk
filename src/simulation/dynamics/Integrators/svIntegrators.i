@@ -32,6 +32,13 @@
 from Basilisk.architecture.swig_common_model import *
 %}
 
+%include <std_shared_ptr.i>
+%shared_ptr(StateVecIntegrator)
+%shared_ptr(svIntegratorRK4)
+%shared_ptr(svIntegratorEuler)
+%shared_ptr(svIntegratorRK2)
+%shared_ptr(svIntegratorRKF45)
+%shared_ptr(svIntegratorRKF78)
 
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/stateVecIntegrator.h"
