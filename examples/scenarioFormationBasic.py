@@ -251,9 +251,8 @@ def run(show_plots):
     # Likewise, the following step is not required, as the default integrator
     # is already RK4. However, this illustrates that you can change the integrator
     # of the primary after calling sync, but not of the secondary!
-    integratorObject = svIntegrators.svIntegratorRK4(scObject)
-    scObject.setIntegrator(integratorObject)
-    # scObject2.setIntegrator(integratorObject) # <- Will raise an error!
+    scObject.setIntegrator(svIntegrators.svIntegratorRK4(scObject))
+    # scObject2.setIntegrator(svIntegrators.svIntegratorRK4(scObject2)) # <- Will raise an error!
 
     # make another debris object */
     scObject3 = spacecraft.Spacecraft()
