@@ -35,12 +35,9 @@ namespace std {
     %template(GravBodyVector) vector<GravBodyData *>;
 }
 
-%include "sys_model.h"
-%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
+%import "simulation/dynamics/_GeneralModuleFiles/dynamicObject.i"
 %include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 %include "spacecraft.h"
 
