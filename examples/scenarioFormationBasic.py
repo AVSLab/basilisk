@@ -109,7 +109,7 @@ import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     rwMotorTorque, hillPoint)
-from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft
+from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft, svIntegrators
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
@@ -247,6 +247,13 @@ def run(show_plots):
     # this next step is not required, just a demonstration how we can ensure that
     # the Servicer and Debris differential equations are integrated simultaneously
     scObject.syncDynamicsIntegration(scObject2)
+
+    # Likewise, the following step is not required, as the default integrator
+    # is already RK4. However, this illustrates that you can change the integrator
+    # of the primary after calling sync, but not of the secondary!
+    integratorObject = svIntegrators.svIntegratorRK4(scObject)
+    scObject.setIntegrator(integratorObject)
+    # scObject2.setIntegrator(integratorObject) # <- Will raise an error!
 
     # make another debris object */
     scObject3 = spacecraft.Spacecraft()
