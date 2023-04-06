@@ -164,7 +164,7 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
             double s_0 = (-s_BP_N.dot(s_HP_N))/s_HP_N.norm();
             double c_1 = s_0 + planetRadius/sin(f_1);
             double c_2 = s_0 - planetRadius/sin(f_2);
-            double l = sqrt(s*s - s_0*s_0);
+            double l = safeSqrt(s*s - s_0*s_0);
             double l_1 = c_1*tan(f_1);
             double l_2 = c_2*tan(f_2);
             
