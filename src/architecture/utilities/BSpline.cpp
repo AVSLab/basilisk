@@ -422,23 +422,31 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     // T = time tags; if not specified, it is computed from a cartesian distance assuming a constant velocity norm on average
     Eigen::VectorXd T(q+1);
     double S = 0;
+    
+    // Case 1: Timestamps provided
     if (Input.T_flag == true) {
+        for (int a = 1; a < q+1; a++) {
+            T[a] = T[a-1] + pow( (pow(Input.X1[a]-Input.X1[a-1], 2) + pow(Input.X2[a]-Input.X2[a-1], 2) + pow(Input.X3[a]-Input.X3[a-1], 2)), 0.5 );
+            S += T[a] - T[a-1];
+        }
         T = Input.T;
+        Input.AvgXDot = S/T[q];
     }
+       
+    // Case 2: Timestamps not provided
     else {
         T[0] = 0;
         for (int a = 1; a < q+1; a++) {
             T[a] = T[a-1] + pow( (pow(Input.X1[a]-Input.X1[a-1], 2) + pow(Input.X2[a]-Input.X2[a-1], 2) + pow(Input.X3[a]-Input.X3[a-1], 2)), 0.5 );
             S += T[a] - T[a-1];
-
+        }
+        if (Input.AvgXDot_flag == true) {
+            for (int b = 0; b < q+1; b++) {
+                T[b] = T[b] / T[q] * S / Input.AvgXDot;
+            }
         }
     }
-    if (Input.AvgXDot_flag == true) {
-        for (int b = 0; b < q+1; b++) {
-            T[b] = T[b] / T[q] * S / Input.AvgXDot;
-        }
-
-    }
+   
 
     double Ttot = T[q];
 
@@ -479,6 +487,58 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     for (int p = 0; p < P+1; p++) {
         U[n+p+1] = 1; // Got rid of the n here which fixed the error, now we are matching but next results are nan
     }
+    
+    // Calculate 1st Derivatives:
+    Eigen::VectorXd X1_primehat(q+1);
+    Eigen::VectorXd X2_primehat(q+1);
+    Eigen::VectorXd X3_primehat(q+1);
+    
+    int index = 0;
+    
+    // Calculate X Prime Hat Derivatives
+    
+    //Central Finite Derivatives
+    for (int k = 1;k<q;k++) {
+        X1_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X1[k]-Input.X1[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X1[k+1]-Input.X1[k])/(uk[k+1]-uk[k]);
+        X2_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X2[k]-Input.X2[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X2[k+1]-Input.X2[k])/(uk[k+1]-uk[k]);
+        X3_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X3[k]-Input.X3[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X3[k+1]-Input.X3[k])/(uk[k+1]-uk[k]);
+        index++;
+    }
+    
+    // Calculate X Prime Derivatives
+    Eigen::VectorXd X1_prime(q+1),X2_prime(q+1),X3_prime(q+1);
+    
+    // Set Initial Derivative
+    X1_prime[0] = Input.XDot_0[0];
+    X2_prime[0] = Input.XDot_0[1];
+    X3_prime[0] = Input.XDot_0[2];
+    
+    // Set Final Derivative
+    X1_prime[q] = Input.XDot_N[0];
+    X2_prime[q] = Input.XDot_N[1];
+    X3_prime[q] = Input.XDot_N[2];
+
+    for (int k = 1;k<q;k++) {
+        double a = double(X1_primehat[k]);
+        double b = double(X2_primehat[k]);
+        double c = double(X3_primehat[k]);
+        double mag = pow(a,2.0)+pow(b,2.0)+pow(c,2.0);
+        mag = pow(mag,0.5);
+        mag = abs((mag));
+        double temp;
+        if (mag != 0) {
+            temp =Input.AvgXDot*Ttot/mag;
+        }
+        else {
+            temp = 0;
+        }
+        X1_prime[k] = X1_primehat[k]*temp;
+        X2_prime[k] = X2_primehat[k]*temp;
+        X3_prime[k] = X3_primehat[k]*temp;
+    }
+
+
+
 
     // K = number of endpoint derivatives
     int K = 0;
@@ -564,27 +624,43 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     for (int c = 1; c < q; c++) {
         basisFunction(uk[c], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
         rhok1[c-1] = Input.X1[c] - NN[0]*C1_1[0] - NN[n]*C1_1[K+1];
+        rhok1[c+q-2] = X1_prime[c] - NN1[0]*C1_1[0] - NN1[n]*C1_1[K+1];
         rhok2[c-1] = Input.X2[c] - NN[0]*C2_1[0] - NN[n]*C2_1[K+1];
+        rhok2[c+q-2] = X2_prime[c] - NN1[0]*C2_1[0] - NN1[n]*C2_1[K+1];
         rhok3[c-1] = Input.X3[c] - NN[0]*C3_1[0] - NN[n]*C3_1[K+1];
+        rhok3[c+q-2] = X3_prime[c] - NN1[0]*C3_1[0] - NN1[n]*C3_1[K+1];
+        
         if (Input.XDot_0_flag == true) {
             rhok1[c-1] -= NN[1]*C1_1[1];
+            rhok1[c+q-2] -= NN1[1]*C1_1[1];
             rhok2[c-1] -= NN[1]*C2_1[1];
+            rhok2[c+q-2] -= NN1[1]*C2_1[1];
             rhok3[c-1] -= NN[1]*C3_1[1];
+            rhok3[c+q-2] -= NN1[1]*C3_1[1];
         }
         if (Input.XDDot_0_flag == true) {
             rhok1[c-1] -= NN[2]*C1_1[2];
+            rhok1[c+q-2] -= NN1[2]*C1_1[2];
             rhok2[c-1] -= NN[2]*C2_1[2];
+            rhok2[c+q-2] -= NN1[2]*C2_1[2];
             rhok3[c-1] -= NN[2]*C3_1[2];
+            rhok3[c+q-2] -= NN1[2]*C3_1[2];
         }
         if (Input.XDDot_N_flag == true) {
             rhok1[c-1] -= NN[n-2]*C1_1[K-1];
+            rhok1[c+q-2] -= NN1[n-2]*C1_1[K-1];
             rhok2[c-1] -= NN[n-2]*C2_1[K-1];
+            rhok2[c+q-2] -= NN1[n-2]*C2_1[K-1];
             rhok3[c-1] -= NN[n-2]*C3_1[K-1];
+            rhok3[c+q-2] -= NN1[n-2]*C3_1[K-1];
         }
         if (Input.XDot_N_flag == true) {
             rhok1[c-1] -= NN[n-1]*C1_1[K];
+            rhok1[c+q-2]-= NN1[n-1]*C1_1[K];
             rhok2[c-1] -= NN[n-1]*C2_1[K];
+            rhok2[c+q-2]-= NN1[n-1]*C2_1[K];
             rhok3[c-1] -= NN[n-1]*C3_1[K];
+            rhok3[c+q-2]-= NN1[n-1]*C3_1[K];
         }
     }
     
@@ -663,6 +739,17 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     Output->C1 = C1;
     Output->C2 = C2;
     Output->C3 = C3;
+    
+    // Dividing by the total time taken
+    for (int a=0;a<q;a++){
+        X1_prime[a] = X1_prime[a]/Ttot;
+        X2_prime[a] = X2_prime[a]/Ttot;
+        X3_prime[a] = X3_prime[a]/Ttot;
+    }
+    Output->X1_prime = X1_prime;
+    Output->X2_prime = X2_prime;
+    Output->X3_prime = X3_prime;
+
 
     double dt = 1.0 / (Num - 1);
     double t = 0;
