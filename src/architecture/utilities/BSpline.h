@@ -39,6 +39,7 @@ public:
     void setT(Eigen::VectorXd T);
     void setW(Eigen::VectorXd W);
     void setAvgXDot(double AvgXDot);
+    void setLS_Dot();
     
     double AvgXDot;                  //!<  average velocity norm
     Eigen::VectorXd T;               //!< time tags: specifies at what time each waypoint is hit
@@ -57,6 +58,8 @@ public:
     bool XDot_N_flag;                //!< indicates that first derivative at final point has been specified
     bool XDDot_0_flag;               //!< indicates that second derivative at starting point has been specified
     bool XDDot_N_flag;               //!< indicates that second derivative at final point has been specified
+    bool LS_Dot;                     //!< indicates whether LS approximation is done with first derivative constraint, LS_Dot is false
+
 };
 
 //! @brief The OutputDataSet class is used as a data structure to contain the interpolated function and its first- and 
@@ -69,6 +72,7 @@ public:
     double getStates(double t, int derivative,  int index);
     
     Eigen::VectorXd T;               //!< time tags for each point of the interpolated trajectory
+    Eigen::VectorXd T_way_calc;      //!< time tags calculated for the waypoints when T_flag = false
     Eigen::VectorXd X1;              //!< coordinate #1 of the interpolated trajectory
     Eigen::VectorXd X2;              //!< coordinate #2 of the interpolated trajectory
     Eigen::VectorXd X3;              //!< coordinate #3 of the interpolated trajectory

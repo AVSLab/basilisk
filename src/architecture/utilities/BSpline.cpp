@@ -81,6 +81,9 @@ void InputDataSet::setAvgXDot(double AvgXDot) {this->AvgXDot = AvgXDot; this->Av
 /*! Set the weights for each waypoint. Weights are used in the LS approximation */
 void InputDataSet::setW(Eigen::VectorXd W) {this->W = W; this->W_flag = true; return;}
 
+/*! Set LS_dot to true which means first derivative LS approximation occurs (optional) */
+void InputDataSet::setLS_Dot() {this->LS_Dot = true; return;}
+
 /*! This constructor initializes an Output structure for BSpline interpolation */
 OutputDataSet::OutputDataSet()
 {
@@ -448,6 +451,9 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     }
    
 
+    
+    Output->T_way_calc = T;
+
     double Ttot = T[q];
 
     // build uk vector: normalized waypoint time tags
@@ -537,7 +543,7 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         X3_prime[k] = X3_primehat[k]*temp;
     }
 
-
+    
 
 
     // K = number of endpoint derivatives
@@ -664,8 +670,17 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         }
     }
     
-    // populate LS matrix ND
+    // Split code based on whether LS approximation is done with first derivative constraints or not
+    
     Eigen::MatrixXd ND(q-1,n-K-1);
+    Eigen::VectorXd rho1(n-K-1), rho2(n-K-1), rho3(n-K-1);
+    Eigen::MatrixXd NWN(n-K-1,n-K-1), NWN_inv(n-K-1,n-K-1);
+    
+    
+    // LS approximation without first derivative constraint
+    if (Input.LS_Dot == false){
+
+    // populate LS matrix ND
     for (int a = 0; a < q-1; a++) {
         basisFunction(uk[1+a], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
         int k = 1;
@@ -694,16 +709,65 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         }
     }
 
-    Eigen::VectorXd rho1(n-K-1), rho2(n-K-1), rho3(n-K-1);
     B = ND.transpose() * W;
     rho1 = B * rhok1;
     rho2 = B * rhok2;
     rho3 = B * rhok3;
 
     // compute LS values R for the control points
-    Eigen::MatrixXd NWN(n-K-1,n-K-1), NWN_inv(n-K-1,n-K-1);
     NWN = B * ND;
     NWN_inv = NWN.inverse();
+    }
+    
+    
+    // LS approximation with first derivative constraint
+    else {
+    // new ND matrix is twice as large, will have to superimpose the previous ND matrix on this one
+    Eigen::MatrixXd ND_2(2*q-2,n-K-1);
+        
+        for (int d=0; d<q-1;d++) {
+            basisFunction(uk[1+d], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
+            int k = 1;
+            if (Input.XDot_0_flag == true) {k += 1;}
+            if (Input.XDDot_0_flag == true) {k += 1;}
+            for (int e = 0; e < n-K-1; e++) {
+                ND_2(d,e) = NN[k+e];
+                ND_2(d+q-1,e) = NN1[k+e];
+            }
+        }
+        
+        // populate weight matrix W_2
+        Eigen::MatrixXd W_2(2*q-2,2*q-2);
+        for (int f = 0; f < 2*q-2; f++) {
+            for (int m = 0; m < 2*q-2; m++) {
+                if (f == m) {
+                    if (Input.W_flag) {
+                        W_2(f,m) = Input.W[f+1];
+                    }
+                    else {
+                        W_2(f,m) = 1;
+                    }
+                }
+                else {
+                    W_2(f,m) = 0;
+                }
+            }
+        }
+
+        B = ND_2.transpose() * W_2;
+
+        rho1 = B * rhok1;
+        
+        rho2 = B * rhok2;
+        
+        rho3 = B * rhok3;
+        
+        NWN = B * ND_2;
+                
+        NWN_inv = NWN.inverse();
+
+    }
+
     Eigen::VectorXd C1_2 = NWN_inv * rho1;
     Eigen::VectorXd C2_2 = NWN_inv * rho2;
     Eigen::VectorXd C3_2 = NWN_inv * rho3;
