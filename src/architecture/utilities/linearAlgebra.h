@@ -254,6 +254,7 @@ extern "C" {
 
     double safeAcos(double x);
     double safeAsin(double x);
+    double safeSqrt(double x);
 
 #ifdef __cplusplus
 }

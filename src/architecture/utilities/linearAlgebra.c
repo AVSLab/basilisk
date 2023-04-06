@@ -2694,3 +2694,9 @@ double safeAsin (double x) {
     return asin (x) ;
 }
 
+double safeSqrt(double x) {
+    if (x < 0.0)
+        return 0.0;
+    return sqrt(x);
+}
+
