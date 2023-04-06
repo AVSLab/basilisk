@@ -158,9 +158,8 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
         if not unitTestSupport.isArrayEqual(forceOutput[i], trueVector[i], 3, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed "
-                                + moduleConfig.forceOutMsgName
                                 + ".forceRequestInertial" + " unit test at t="
-                                + str(forceOutput[i, 0]*macros.NANO2SEC) + "sec\n")
+                                + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
     #   print out success message if no error were found
     if testFailCount == 0:
