@@ -32,6 +32,11 @@
 #include <Eigen/Dense>
 
 #define Q0  1.60217663e-19  // elementary charge [C]
+#define TRAPZN 1000         // number of trapezoids used in numerical integrator
+#define Jph 40e-6           // photoelectron flux [micro-A/m^2]
+#define kTph 2              // ejected electron thermal energy [eV]
+#define Tsee 5              // secondary electron emission temperature [eV]
+#define Tb 5                // backscattering electron temperature [eV]
 
 /*! @brief This module computes the equilibrium electric potential of any spacecaft that are added to the module
  */
@@ -55,6 +60,7 @@ private:
     double SEEelectronCurrent(double phi, double A);
     double SEEionCurrent(double phi, double A);
     double backscatteringCurrent(double phi, double A);
+    double photoelectricCurrent(double phi, double A);
     double interp(Eigen::VectorXd& xVector, Eigen::VectorXd& yVector, double x);
     double trapz(std::function< double(double) >& f, double a, double b, int N);
     double getFlux(double E, std::string particleType);
@@ -63,15 +69,15 @@ private:
 // public variables
 public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of spacecraft state input messages
-    ReadFunctor<PlasmaFluxMsgPayload> plasmaFluxInMsg; //!< plasma flux input message
+    ReadFunctor<PlasmaFluxMsgPayload> plasmaFluxInMsg;          //!< plasma flux input message
     
-    std::vector<Message<VoltMsgPayload>*> voltOutMsgs;     //!< vector of voltage output messages
+    std::vector<Message<VoltMsgPayload>*> voltOutMsgs;          //!< vector of voltage output messages
     
     BSKLogger bskLogger;                                        //!< -- BSK Logging
     
-    Eigen::VectorXd yieldSEEelectron;                  //! < -- SEE yield (electron)
-    Eigen::VectorXd yieldSEEion;                  //! < -- SEE yield (ion)
-    Eigen::VectorXd yieldBackscattered;                  //! < -- SEE yield (backscatter)
+    Eigen::VectorXd yieldSEEelectron;                           //! < -- SEE yield (electron)
+    Eigen::VectorXd yieldSEEion;                                //! < -- SEE yield (ion)
+    Eigen::VectorXd yieldBackscattered;                         //! < -- SEE yield (backscatter)
 
 // private variables
 private:

@@ -87,10 +87,22 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
         return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A);
     };
     
+    // debugging
+    double phi = -26297.2901751303;
+    double Ie = electronCurrent(phi, A);
+    std::cout << "Ie: " << Ie << std::endl;
+    double Ii = ionCurrent(phi, A);
+    std::cout << "Ii: " << Ii << std::endl;
+    double Iseee = SEEelectronCurrent(phi, A);
+    std::cout << "Iseee: " << Iseee << std::endl;
+    double Iseei = SEEionCurrent(phi, A);
+    std::cout << "Iseei: " << Iseei << std::endl;
+    double Ibs = backscatteringCurrent(phi, A);
+    std::cout << "Ibs: " << Ibs << std::endl;
+    photoelectricCurrent(phi, A);
+    
     double interval [2] = {-1e8, 1e8};
-    
     double equilibrium = bisectionSolve(interval, 1e-8, sumCurrents);
-    
     std::cout << "Equilibrium: " << std::setprecision(10) << equilibrium << std::endl;
     
     // create output messages
@@ -130,7 +142,7 @@ void ScCharging::addSpacecraft(Message<SCStatesMsgPayload> *tmpScMsg)
  */
 void ScCharging::readMessages()
 {
-    PlasmaFluxMsgPayload PlasmaFluxInMsgBuffer;          //!< local copy of plasma flux input message buffer
+    PlasmaFluxMsgPayload PlasmaFluxInMsgBuffer; //!< local copy of plasma flux input message buffer
     SCStatesMsgPayload scStateInMsgsBuffer;     //!< local copy of spacecraft state input message buffer
     long unsigned int c;                        //!< spacecraft loop counter
         
@@ -159,24 +171,18 @@ double ScCharging::electronCurrent(double phi, double A)
     std::function<double(double)> integrand = [&](double E){return (E/(E - phi)) * getFlux(E - phi, "electron");};
     
     // integral bounds
-    double energyArr[MAX_PLASMA_FLUX_SIZE];
-    eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
-    int n = sizeof(energyArr) / sizeof(energyArr[0]);
-    std::vector<double> energyVec(energyArr, energyArr + n); // convert energyArr to vector
-    
     double lowerBound;
     double upperBound;
     if (phi < 0.){
         lowerBound = 0.1;
-        upperBound = energyVec.back();
-    }
-    else{
+        upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1];
+    } else{
         lowerBound = 0.1 + abs(phi);
-        upperBound = energyVec.back()+ abs(phi);
+        upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1] + abs(phi);
     }
     
     // integral calculated with trapz
-    double integral = trapz(integrand, lowerBound, upperBound, 1000);
+    double integral = trapz(integrand, lowerBound, upperBound, TRAPZN);
     
     double Ie = constant * integral;
     return Ie;
@@ -195,24 +201,18 @@ double ScCharging::ionCurrent(double phi, double A)
     std::function<double(double)> integrand = [&](double E){return (E/(E + phi)) * getFlux(E + phi, "ion");};
     
     // integral bounds
-    double energyArr[MAX_PLASMA_FLUX_SIZE];
-    eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
-    int n = sizeof(energyArr) / sizeof(energyArr[0]);
-    std::vector<double> energyVec(energyArr, energyArr + n); // convert energyArr to vector
-    
     double lowerBound;
     double upperBound;
     if (phi > 0.){
         lowerBound = 0.1;
-        upperBound = energyVec.back();
-    }
-    else{
+        upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1];
+    } else{
         lowerBound = 0.1 + abs(phi);
-        upperBound = energyVec.back() + abs(phi);
+        upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1] + abs(phi);
     }
     
     // integral calculated with trapz
-    double integral = trapz(integrand, lowerBound, upperBound, 1000);
+    double integral = trapz(integrand, lowerBound, upperBound, TRAPZN);
     
     double Ii = constant * integral;
     return Ii;
@@ -225,33 +225,38 @@ double ScCharging::ionCurrent(double phi, double A)
  */
 double ScCharging::SEEelectronCurrent(double phi, double A)
 {
-    double constant = -Q0 * A; // constant multiplier for integral
+    double constant = Q0 * A; // constant multiplier for integral
     
     // term to be integrated by trapz
     std::function<double(double)> integrand = [&](double E){return getYield(E, "electron") * (E/(E - phi)) * getFlux(E - phi, "electron");};
     
     // integral bounds
-    double energyArr[MAX_PLASMA_FLUX_SIZE];
-    eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
-    int n = sizeof(energyArr) / sizeof(energyArr[0]);
-    std::vector<double> energyVec(energyArr, energyArr + n); // convert energyArr to vector
-    
     double lowerBound;
     double upperBound;
     if (phi < 0.){
         lowerBound = 0.1;
-        upperBound = energyVec.back();
-    }
-    else{
+        upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1];
+    } else{
         lowerBound = 0.1 + abs(phi);
-        upperBound = energyVec.back()+ abs(phi);
+        upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1] + abs(phi);
     }
     
     // integral calculated with trapz
-    double integral = trapz(integrand, lowerBound, upperBound, 1000);
+    double integral = trapz(integrand, lowerBound, upperBound, TRAPZN);
     
+    // current before debris charge taken into account
     double ISEEe = constant * integral;
+    
     return ISEEe;
+//    // check if debris potential effects ISEEe
+//    if (ISEEe <= 0){
+//        return ISEEe;
+//    } else if (ISEEe > 0){
+//        return ISEEe * exp((-phi) / Tsee);
+//    } else{
+//        bskLogger.bskLog(BSK_ERROR, "ScCharging.SEEelectronCurrent: phi not a real number");
+//        return NAN;
+//    }
 }
 
 /*!  This function takes in a given potential and area value and calculates the SEE current due to ions
@@ -267,27 +272,32 @@ double ScCharging::SEEionCurrent(double phi, double A)
     std::function<double(double)> integrand = [&](double E){return getYield(E, "ion") * (E/(E + phi)) * getFlux(E + phi, "ion");};
     
     // integral bounds
-    double energyArr[MAX_PLASMA_FLUX_SIZE];
-    eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
-    int n = sizeof(energyArr) / sizeof(energyArr[0]);
-    std::vector<double> energyVec(energyArr, energyArr + n); // convert energyArr to vector
-    
     double lowerBound;
     double upperBound;
     if (phi > 0.){
         lowerBound = 0.1;
-        upperBound = energyVec.back();
-    }
-    else{
+        upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1];
+    } else{
         lowerBound = 0.1 + abs(phi);
-        upperBound = energyVec.back() + abs(phi);
+        upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1] + abs(phi);
     }
     
     // integral calculated with trapz
-    double integral = trapz(integrand, lowerBound, upperBound, 1000);
+    double integral = trapz(integrand, lowerBound, upperBound, TRAPZN);
     
+    // current before debris charge taken into account
     double ISEEi = constant * integral;
+    
     return ISEEi;
+//    // check if debris potential effects ISEEi
+//    if (ISEEi <= 0){
+//        return ISEEi;
+//    } else if (ISEEi > 0){
+//        return ISEEi * exp((-phi) / Tsee);
+//    } else{
+//        bskLogger.bskLog(BSK_ERROR, "ScCharging.SEEionCurrent: phi not a real number");
+//        return NAN;
+//    }
 }
 
 /*!  This function takes in a given potential and area value and calculates the SEE current due to backscattering
@@ -297,33 +307,64 @@ double ScCharging::SEEionCurrent(double phi, double A)
  */
 double ScCharging::backscatteringCurrent(double phi, double A)
 {
-    double constant = -Q0 * A; // constant multiplier for integral
+    double constant = Q0 * A; // constant multiplier for integral
     
     // term to be integrated by trapz
     std::function<double(double)> integrand = [&](double E){return getYield(E, "backscattered") * (E/(E - phi)) * getFlux(E - phi, "electron");};
     
     // integral bounds
-    double energyArr[MAX_PLASMA_FLUX_SIZE];
-    eigenMatrixXd2CArray(energies, energyArr); // convert energies to array
-    int n = sizeof(energyArr) / sizeof(energyArr[0]);
-    std::vector<double> energyVec(energyArr, energyArr + n); // convert energyArr to vector
-    
     double lowerBound;
     double upperBound;
     if (phi < 0.){
         lowerBound = 0.1;
-        upperBound = energyVec.back();
-    }
-    else{
+        upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1];
+    } else{
         lowerBound = 0.1 + abs(phi);
-        upperBound = energyVec.back()+ abs(phi);
+        upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1] + abs(phi);
     }
     
     // integral calculated with trapz
-    double integral = trapz(integrand, lowerBound, upperBound, 1000);
+    double integral = trapz(integrand, lowerBound, upperBound, TRAPZN);
     
-    double Ib = constant * integral;
-    return Ib;
+    // current before debris charge taken into account
+    double Ibs = constant * integral;
+//    std::cout << "before: " << Ibs << std::endl;
+//    std::cout << "phi: " << phi << std::endl;
+//    std::cout << "exp: " << exp((-phi) / Tsee) << std::endl;
+//
+    return Ibs;
+    
+//    // check if debris potential effects Ibs
+//    if (phi <= 0){
+////        std::cout << "<=" << std::endl;
+////        std::cout << "after: " << Ibs << std::endl;
+//        return Ibs;
+//    } else if (phi > 0){
+//        return Ibs * exp((-phi) / Tsee);
+////        std::cout << ">" << std::endl;
+//    } else{
+//        bskLogger.bskLog(BSK_ERROR, "ScCharging.backscatteringCurrent: phi not a real number");
+//        return NAN;
+//    }
+}
+
+/*!  This function takes in a given potential and area value and the photoelectric current
+ @return double
+ @param phi double defining value for spacecraft potential
+ @param A double defining value for area exposed to plasma
+ */
+double ScCharging::photoelectricCurrent(double phi, double A)
+{
+    double Ip;
+    if (phi > 0){
+        Ip = Jph * A * exp((-phi) / kTph);
+    } else if (phi <= 0){
+        Ip = Jph * A;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "ScCharging.photoelectricCurrent: phi not a real number");
+        Ip = NAN;
+    }
+    return Ip;
 }
 
 /*!  This function takes in a given vector of data and an x-value and performs linear interpolation to find the closest corresponding y-value
@@ -428,6 +469,7 @@ double ScCharging::getYield(double E, std::string yieldType)
             // if yield is negative (due to extrapolation), set equal to zero
             yield = 0.;
         }
+        //std::cout << "e yield: " << yield << ", e E value: " << E << std::endl;
         return yield;
     } else if (yieldType == "ion"){
         // find yield for given energy
