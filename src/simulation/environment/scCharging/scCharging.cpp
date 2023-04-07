@@ -247,16 +247,15 @@ double ScCharging::SEEelectronCurrent(double phi, double A)
     // current before debris charge taken into account
     double ISEEe = constant * integral;
     
-    return ISEEe;
-//    // check if debris potential effects ISEEe
-//    if (ISEEe <= 0){
-//        return ISEEe;
-//    } else if (ISEEe > 0){
-//        return ISEEe * exp((-phi) / Tsee);
-//    } else{
-//        bskLogger.bskLog(BSK_ERROR, "ScCharging.SEEelectronCurrent: phi not a real number");
-//        return NAN;
-//    }
+    // check if debris potential affects ISEEe
+    if (phi <= 0.){
+        return ISEEe;
+    } else if (phi > 0.){
+        return ISEEe * exp(-phi / Tsee);
+    } else{
+        bskLogger.bskLog(BSK_ERROR, "ScCharging.SEEelectronCurrent: phi not a real number");
+        return NAN;
+    }
 }
 
 /*!  This function takes in a given potential and area value and calculates the SEE current due to ions
@@ -288,16 +287,15 @@ double ScCharging::SEEionCurrent(double phi, double A)
     // current before debris charge taken into account
     double ISEEi = constant * integral;
     
-    return ISEEi;
-//    // check if debris potential effects ISEEi
-//    if (ISEEi <= 0){
-//        return ISEEi;
-//    } else if (ISEEi > 0){
-//        return ISEEi * exp((-phi) / Tsee);
-//    } else{
-//        bskLogger.bskLog(BSK_ERROR, "ScCharging.SEEionCurrent: phi not a real number");
-//        return NAN;
-//    }
+    // check if debris potential affects ISEEi
+    if (phi <= 0.){
+        return ISEEi;
+    } else if (phi > 0.){
+        return ISEEi * exp(-phi / Tsee);
+    } else{
+        bskLogger.bskLog(BSK_ERROR, "ScCharging.SEEionCurrent: phi not a real number");
+        return NAN;
+    }
 }
 
 /*!  This function takes in a given potential and area value and calculates the SEE current due to backscattering
@@ -328,24 +326,16 @@ double ScCharging::backscatteringCurrent(double phi, double A)
     
     // current before debris charge taken into account
     double Ibs = constant * integral;
-//    std::cout << "before: " << Ibs << std::endl;
-//    std::cout << "phi: " << phi << std::endl;
-//    std::cout << "exp: " << exp((-phi) / Tsee) << std::endl;
-//
-    return Ibs;
-    
-//    // check if debris potential effects Ibs
-//    if (phi <= 0){
-////        std::cout << "<=" << std::endl;
-////        std::cout << "after: " << Ibs << std::endl;
-//        return Ibs;
-//    } else if (phi > 0){
-//        return Ibs * exp((-phi) / Tsee);
-////        std::cout << ">" << std::endl;
-//    } else{
-//        bskLogger.bskLog(BSK_ERROR, "ScCharging.backscatteringCurrent: phi not a real number");
-//        return NAN;
-//    }
+
+    // check if debris potential affects Ibs
+    if (phi <= 0.){
+        return Ibs;
+    } else if (phi > 0.){
+        return Ibs * exp(-phi / Tsee);
+    } else{
+        bskLogger.bskLog(BSK_ERROR, "ScCharging.backscatteringCurrent: phi not a real number");
+        return NAN;
+    }
 }
 
 /*!  This function takes in a given potential and area value and the photoelectric current
@@ -357,7 +347,7 @@ double ScCharging::photoelectricCurrent(double phi, double A)
 {
     double Ip;
     if (phi > 0){
-        Ip = Jph * A * exp((-phi) / kTph);
+        Ip = Jph * A * exp(-phi / kTph);
     } else if (phi <= 0){
         Ip = Jph * A;
     } else {
