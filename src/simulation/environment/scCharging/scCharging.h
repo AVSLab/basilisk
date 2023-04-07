@@ -75,9 +75,9 @@ public:
     
     BSKLogger bskLogger;                                        //!< -- BSK Logging
     
-    Eigen::VectorXd yieldSEEelectron;                           //! < -- SEE yield (electron)
-    Eigen::VectorXd yieldSEEion;                                //! < -- SEE yield (ion)
-    Eigen::VectorXd yieldBackscattered;                         //! < -- SEE yield (backscatter)
+    Eigen::VectorXd yieldSEEelectron;                           //! < SEE yield (electron)
+    Eigen::VectorXd yieldSEEion;                                //! < SEE yield (ion)
+    Eigen::VectorXd yieldBackscattered;                         //! < SEE yield (backscatter)
 
 // private variables
 private:

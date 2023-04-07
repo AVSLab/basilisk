@@ -44,7 +44,7 @@ ScCharging::~ScCharging()
     }
 }
 
-/*! This method is used to reset the module and checks that required input messages are connect.
+/*! This method is used to reset the module and checks that required input messages are connected.
  @return void
  @param CurrentSimNanos current simulation time in nano-seconds
 */
@@ -78,14 +78,19 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     // read the input messages
     this->readMessages();
     
-    // sum currents and find root
-    //double phi = -24810;
+    // define area and interval
     double A = 12.566370614359172;
+    double interval [2] = {-1e8, 1e8};
     
+    // sum currents
     std::function<double(double)> sumCurrents = [this, A](double phi)-> double
     {
-        return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A);
+        return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A) + photoelectricCurrent(phi, A);
     };
+    
+    // find root
+    double equilibrium = bisectionSolve(interval, 1e-8, sumCurrents);
+    std::cout << "Equilibrium: " << std::setprecision(10) << equilibrium << std::endl;
     
     // debugging
     double phi = -26297.2901751303;
@@ -99,11 +104,8 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     std::cout << "Iseei: " << Iseei << std::endl;
     double Ibs = backscatteringCurrent(phi, A);
     std::cout << "Ibs: " << Ibs << std::endl;
-    photoelectricCurrent(phi, A);
-    
-    double interval [2] = {-1e8, 1e8};
-    double equilibrium = bisectionSolve(interval, 1e-8, sumCurrents);
-    std::cout << "Equilibrium: " << std::setprecision(10) << equilibrium << std::endl;
+    double Ip = photoelectricCurrent(phi, A);
+    std::cout << "Ip: " << Ip << std::endl;
     
     // create output messages
     VoltMsgPayload voltMsgBuffer;  //!< [] voltage out message buffer
@@ -161,7 +163,7 @@ void ScCharging::readMessages()
 /*!  This function takes in a given potential and area value and calculates the electron current
  @return double
  @param phi double defining value for spacecraft potential
- @param A double defining value for area exposed to plasma
+ @param A double defining value for area exposed to plasma [m^2]
  */
 double ScCharging::electronCurrent(double phi, double A)
 {
@@ -191,7 +193,7 @@ double ScCharging::electronCurrent(double phi, double A)
 /*!  This function takes in a given potential and area value and calculates the ion current
  @return double
  @param phi double defining value for spacecraft potential
- @param A double defining value for area exposed to plasma
+ @param A double defining value for area exposed to plasma [m^2]
  */
 double ScCharging::ionCurrent(double phi, double A)
 {
@@ -221,7 +223,7 @@ double ScCharging::ionCurrent(double phi, double A)
 /*!  This function takes in a given potential and area value and calculates the SEE current due to electrons
  @return double
  @param phi double defining value for spacecraft potential
- @param A double defining value for area exposed to plasma
+ @param A double defining value for area exposed to plasma [m^2]
  */
 double ScCharging::SEEelectronCurrent(double phi, double A)
 {
@@ -247,7 +249,7 @@ double ScCharging::SEEelectronCurrent(double phi, double A)
     // current before debris charge taken into account
     double ISEEe = constant * integral;
     
-    // check if debris potential affects ISEEe
+    // check how debris potential affects ISEEe
     if (phi <= 0.){
         return ISEEe;
     } else if (phi > 0.){
@@ -261,7 +263,7 @@ double ScCharging::SEEelectronCurrent(double phi, double A)
 /*!  This function takes in a given potential and area value and calculates the SEE current due to ions
  @return double
  @param phi double defining value for spacecraft potential
- @param A double defining value for area exposed to plasma
+ @param A double defining value for area exposed to plasma [m^2]
  */
 double ScCharging::SEEionCurrent(double phi, double A)
 {
@@ -287,7 +289,7 @@ double ScCharging::SEEionCurrent(double phi, double A)
     // current before debris charge taken into account
     double ISEEi = constant * integral;
     
-    // check if debris potential affects ISEEi
+    // check how debris potential affects ISEEi
     if (phi <= 0.){
         return ISEEi;
     } else if (phi > 0.){
@@ -301,7 +303,7 @@ double ScCharging::SEEionCurrent(double phi, double A)
 /*!  This function takes in a given potential and area value and calculates the SEE current due to backscattering
  @return double
  @param phi double defining value for spacecraft potential
- @param A double defining value for area exposed to plasma
+ @param A double defining value for area exposed to plasma [m^2]
  */
 double ScCharging::backscatteringCurrent(double phi, double A)
 {
@@ -327,7 +329,7 @@ double ScCharging::backscatteringCurrent(double phi, double A)
     // current before debris charge taken into account
     double Ibs = constant * integral;
 
-    // check if debris potential affects Ibs
+    // check how debris potential affects Ibs
     if (phi <= 0.){
         return Ibs;
     } else if (phi > 0.){
@@ -338,7 +340,7 @@ double ScCharging::backscatteringCurrent(double phi, double A)
     }
 }
 
-/*!  This function takes in a given potential and area value and the photoelectric current
+/*!  This function takes in a given potential and area value and calculates the current due to the photoelectric effect
  @return double
  @param phi double defining value for spacecraft potential
  @param A double defining value for area exposed to plasma
@@ -367,7 +369,7 @@ double ScCharging::interp(Eigen::VectorXd& xVector, Eigen::VectorXd& yVector, do
     // find the index corresponding to the first element in xVector that is greater than x
     // (assumes xVector is sorted)
     int idx1 = -1; // initialize as -1 (if no index can be found)
-    for (int c=0; c < xVector.size(); c++) {
+    for (int c=0; c < xVector.size(); c++){
         if (xVector[c] > x){
             idx1 = c;
             break;
@@ -404,7 +406,7 @@ double ScCharging::trapz(std::function< double(double) >& f, double a, double b,
     double h = (b-a)/N;    // trapezoid width
     double sum = 0;
     
-    for (int i=1; i < N; i++) {
+    for (int i=1; i < N; i++){
         sum += f(i*h);
     }
 
@@ -412,12 +414,10 @@ double ScCharging::trapz(std::function< double(double) >& f, double a, double b,
     return integral;
 }
 
-/*!  This function returns the flux for a specific energy
+/*!  This function returns the flux type for a given energy and impacting particle type
  @return double
  @param E energy of interest [eV]
- @param energyVec vector containing data for energy values
- @param particleVec vector containing data for respective particle's flux (particle defined by "particle" param)
- @param particle particle of interest ("electron" or "ion")
+ @param particleType particle of interest ("electron" or "ion")
  */
 double ScCharging::getFlux(double E, std::string particleType)
 {
@@ -443,12 +443,10 @@ double ScCharging::getFlux(double E, std::string particleType)
     }
 }
 
-/*!  This function returns the flux for a specific energy
+/*!  This function returns the yield for a given energy and yield type
  @return double
- @param Y SEE yield
- @param energyVec vector containing data for energy values
- @param yieldVec vector containing data for respective particle's flux (particle defined by "particle" param)
- @param particle particle of interest ("electron" or "ion")
+ @param E energy of interest [eV]
+ @param yieldType yield of interest ("electron", "ion", "backscattered")
  */
 double ScCharging::getYield(double E, std::string yieldType)
 {
@@ -459,7 +457,6 @@ double ScCharging::getYield(double E, std::string yieldType)
             // if yield is negative (due to extrapolation), set equal to zero
             yield = 0.;
         }
-        //std::cout << "e yield: " << yield << ", e E value: " << E << std::endl;
         return yield;
     } else if (yieldType == "ion"){
         // find yield for given energy
