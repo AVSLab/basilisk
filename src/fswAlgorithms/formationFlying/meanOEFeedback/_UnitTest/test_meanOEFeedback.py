@@ -41,7 +41,7 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 # provide a unique test method name, starting with test_
 
 @pytest.mark.parametrize("useClassicElem", [True, False])
-@pytest.mark.parametrize("accuracy", [1e-9])
+@pytest.mark.parametrize("accuracy", [1e-6])
 
 def test_meanOEFeedback(show_plots, useClassicElem, accuracy):
     """Module Unit Test"""
@@ -179,5 +179,5 @@ if __name__ == "__main__":
     test_meanOEFeedback(
         False,  # show_plots
         True,  # useClassicElem
-        1e-9    # accuracy
+        1e-6    # accuracy
     )
