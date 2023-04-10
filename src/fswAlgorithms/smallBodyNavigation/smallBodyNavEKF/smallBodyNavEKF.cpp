@@ -29,7 +29,7 @@
     values and initializes the various parts of the model */
 SmallBodyNavEKF::SmallBodyNavEKF()
 {
-    this->numStates = 18;
+    this->numStates = 12;
     this->mu_sun = 1.327124e20;
     this->o_hat_3_tilde.setZero();
     this->o_hat_3_tilde(0, 1) = -1;
@@ -63,7 +63,6 @@ SmallBodyNavEKF::~SmallBodyNavEKF()
 /*! Initialize C-wrapped output messages */
 void SmallBodyNavEKF::SelfInit(){
     NavTransMsg_C_init(&this->navTransOutMsgC);
-    NavAttMsg_C_init(&this->navAttOutMsgC);
     SmallBodyNavMsg_C_init(&this->smallBodyNavOutMsgC);
     EphemerisMsg_C_init(&this->asteroidEphemerisOutMsgC);
 }
@@ -97,14 +96,6 @@ void SmallBodyNavEKF::addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrus
     return;
 }
 
-/*! This method is used to add a rw to the filter.
-    @return void
-*/
-void SmallBodyNavEKF::addRWToFilter(Message<RWConfigLogMsgPayload> *tmpRWMsg){
-    this->rwInMsgs.push_back(tmpRWMsg->addSubscriber());
-    return;
-}
-
 /*! This method is used to read the input messages.
     @return void
 */
@@ -114,18 +105,6 @@ void SmallBodyNavEKF::readMessages(){
     this->navAttInMsgBuffer = this->navAttInMsg();
     this->asteroidEphemerisInMsgBuffer = this->asteroidEphemerisInMsg();
     this->sunEphemerisInMsgBuffer = this->sunEphemerisInMsg();
-
-    /* Read the RW messages */
-    RWConfigLogMsgPayload rwMsg;
-    this->rwConfigLogInMsgBuffer.clear();
-    if (this->rwInMsgs.size() > 0){
-        for (long unsigned int c = 0; c<this->rwInMsgs.size(); c++){
-            rwMsg = this->rwInMsgs.at(c)();
-            this->rwConfigLogInMsgBuffer.push_back(rwMsg);
-        }
-    } else {
-        bskLogger.bskLog(BSK_WARNING, "Small Body Nav EKF has no RW messages to read.");
-    }
 
     /* Read the thruster messages */
     THROutputMsgPayload thrusterMsg;
@@ -166,21 +145,10 @@ void SmallBodyNavEKF::predict(uint64_t CurrentSimNanos){
     r_SN_N = cArray2EigenVector3d(sunEphemerisInMsgBuffer.r_BdyZero_N);
     r_SO_O = dcm_ON*(r_SN_N - r_ON_N);  // small body to sun pos vector
 
-    /* Extract the speed and acceleration of the reaction wheels */
-    /* Assumes the RW spin axis is aligned with the body-frame axes*/
-    Omega_B.setZero(); // Set to zero in case no rws are used
-    Omega_dot_B.setZero(); // Set to zero in case no rws are used
-    for (long unsigned int c = 0; c < rwConfigLogInMsgBuffer.size(); c++){
-        Omega_B(c) = rwConfigLogInMsgBuffer[c].Omega;
-        Omega_dot_B(c) = rwConfigLogInMsgBuffer[c].u_current/rwConfigLogInMsgBuffer[c].Js;
-    }
-
     /* Compute the total thrust and torque from the thrusters */
     thrust_B.setZero(); // Set to zero in case no thrusters are used
-    torque_B.setZero(); // Set to zero in case no thrusters are used
     for (long unsigned int c = 0; c < thrusterInMsgBuffer.size(); c++) {
         thrust_B += cArray2EigenVector3d(thrusterInMsgBuffer[c].thrustForce_B);
-        torque_B += cArray2EigenVector3d(thrusterInMsgBuffer[c].thrustTorquePntB_B);
     }
 
     /* Compute aprior state estimate */
@@ -200,25 +168,19 @@ void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
     Eigen::Vector3d x_2;
     Eigen::Vector3d x_3;
     Eigen::Vector3d x_4;
-    Eigen::Vector3d x_5;
-    Eigen::Vector3d x_6;
 
     x_1 << x_hat_k.segment(0,3);
     x_2 << x_hat_k.segment(3,3);
     x_3 << x_hat_k.segment(6,3);
     x_4 << x_hat_k.segment(9,3);
-    x_5 << x_hat_k.segment(12,3);
-    x_6 << x_hat_k.segment(15,3);
 
     /* x1_dot */
     x_hat_dot_k.segment(0,3) = x_2;
 
     /* x2_dot */
     /* First compute dcm_OB, DCM from sc body-frame to orbit frame*/
-    double sigma_BN_array[3];
-    eigenVector3d2CArray(x_5, sigma_BN_array);
     double dcm_BN_meas[3][3];
-    MRP2C(sigma_BN_array, dcm_BN_meas);
+    MRP2C(this->navAttInMsgBuffer.sigma_BN, dcm_BN_meas);
     Eigen::Matrix3d dcm_OB;
     dcm_OB = dcm_ON*(cArray2EigenMatrixXd(*dcm_BN_meas, 3, 3).transpose());
     /* Now compute x2_dot */
@@ -234,16 +196,6 @@ void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
 
     /* x4_dot */
     x_hat_dot_k.segment(9,3) << 0, 0, 0;
-
-    /* x5_dot */
-    x_hat_dot_k.segment(12,3) = 0.25*((1-pow(x_5.norm(),2))*I + 2*eigenTilde(x_5) + 2*x_5*x_5.transpose())*x_6;
-
-    /* x6_dot */
-    x_hat_dot_k.segment(15,3) = -((IHubPntC_B+IWheelPntC_B).inverse())*(eigenTilde(x_6)*(IHubPntC_B+IWheelPntC_B)*x_6
-            + IWheelPntC_B*Omega_dot_B + eigenTilde(x_6)*IWheelPntC_B*Omega_B - torque_B);
-
-    Eigen::Vector3d term;
-    term = (IHubPntC_B+IWheelPntC_B).inverse()*(eigenTilde(x_6)*(IHubPntC_B+IWheelPntC_B)*x_6 + IWheelPntC_B*Omega_dot_B);
 
     /* Propagate the state using euler integration */
     x_hat_k1_ = x_hat_k + x_hat_dot_k*(CurrentSimNanos-prevTime)*NANO2SEC;
@@ -266,11 +218,9 @@ void SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos){
     @return void
  */
 void SmallBodyNavEKF::checkMRPSwitching(){
-    /* Create temporary values for sigma_BN, sigma_AN */
+    /* Create temporary values for sigma_AN */
     Eigen::Vector3d sigma_AN;
-    Eigen::Vector3d sigma_BN;
     sigma_AN << x_hat_k1_.segment(6,3);
-    sigma_BN << x_hat_k1_.segment(12,3);
 
     /* Create a shadow covariance matrix */
     Eigen::MatrixXd P_k1_s;
@@ -283,8 +233,6 @@ void SmallBodyNavEKF::checkMRPSwitching(){
     Lambda.block(3, 3, 3, 3).setIdentity();
     Lambda.block(6, 6, 3, 3).setIdentity();
     Lambda.block(9, 9, 3, 3).setIdentity();
-    Lambda.block(12, 12, 3, 3).setIdentity();
-    Lambda.block(15, 15, 3, 3).setIdentity();
 
     /* Check the attitude of the small body */
     if (sigma_AN.norm() > 1.0){
@@ -292,14 +240,6 @@ void SmallBodyNavEKF::checkMRPSwitching(){
         x_hat_k1_.segment(6, 3) = -sigma_AN/pow(sigma_AN.norm(), 2);
         /* Populate lambda block */
         Lambda.block(6, 6, 3, 3) = 2*sigma_AN*sigma_AN.transpose()/pow(sigma_AN.norm(), 4) - I/pow(sigma_AN.norm(), 2);
-    }
-
-    /* Check the attitude of the spacecraft */
-    if (sigma_BN.norm() > 1.0){
-        /* Switch MRPs */
-        x_hat_k1_.segment(12, 3) = -sigma_BN/pow(sigma_BN.norm(), 2);
-        /* Populate lambda block */
-        Lambda.block(12, 12, 3, 3) = 2*sigma_BN*sigma_BN.transpose()/pow(sigma_BN.norm(), 4) - I/pow(sigma_BN.norm(), 2);
     }
 
     /* Compute the new apriori covariance */
@@ -344,22 +284,6 @@ void SmallBodyNavEKF::measurementUpdate(){
     /* Small body attitude rate from the ephemeris msg */
     y_k1.segment(9, 3) = cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.omega_BN_B);
 
-    /* Spacecraft attitude from the navAttMsg*/
-    y_k1.segment(12, 3) = cArray2EigenVector3d(navAttInMsgBuffer.sigma_BN);
-
-    /* Check if the shadow set measurement must be considered, i.e. |sigma| > 1/3 */
-    if (y_k1.segment(12, 3).norm() > 1.0/3.0) {
-        /* Create a temporary shadow-set MRP representation */
-        Eigen::Vector3d sigma_BN_s = -y_k1.segment(12, 3)/pow(y_k1.segment(12, 3).norm(), 2);
-        /* Check to see if the shadow set gives a smaller residual */
-        if ((sigma_BN_s - x_hat_k1_.segment(12, 3)).norm() < (y_k1.segment(12, 3) - x_hat_k1_.segment(12, 3)).norm()){
-            y_k1.segment(12, 3) = sigma_BN_s;
-        }
-    }
-
-    /* Spacecraft rate from the navAttMsg*/
-    y_k1.segment(15, 3) = cArray2EigenVector3d(navAttInMsgBuffer.omega_BN_B);
-
     /* Update the state estimate */
     x_hat_k1 = x_hat_k1_ + K_k1*(y_k1 - x_hat_k1_);
 
@@ -383,15 +307,11 @@ void SmallBodyNavEKF::computeDynamicsMatrix(){
     Eigen::Vector3d x_2;
     Eigen::Vector3d x_3;
     Eigen::Vector3d x_4;
-    Eigen::Vector3d x_5;
-    Eigen::Vector3d x_6;
 
     x_1 << x_hat_k.segment(0,3);
     x_2 << x_hat_k.segment(3,3);
     x_3 << x_hat_k.segment(6,3);
     x_4 << x_hat_k.segment(9,3);
-    x_5 << x_hat_k.segment(12,3);
-    x_6 << x_hat_k.segment(15,3);
 
     /* First set the matrix to zero (many indices are zero) */
     A_k.setZero(this->numStates, this->numStates);
@@ -412,14 +332,6 @@ void SmallBodyNavEKF::computeDynamicsMatrix(){
     /* x_3 partial */
     A_k.block(6, 6, 3, 3) = 0.5*(x_3*x_4.transpose() - x_4*x_3.transpose() - eigenTilde(x_4) + (x_4.transpose()*x_3)*I);
     A_k.block(6, 9, 3, 3) = 0.25*((1-pow(x_3.norm(), 2))*I + 2*eigenTilde(x_3) + 3*x_3*x_3.transpose());
-
-    /* x_5 partial, skipping x_4 partial as it is zero */
-    A_k.block(12, 12, 3, 3) = 0.5*(x_5*x_6.transpose() - x_6*x_5.transpose() - eigenTilde(x_6) + (x_6.transpose()*x_5)*I);
-    A_k.block(12, 15, 3, 3) = 0.25*((1-pow(x_5.norm(), 2))*I + 2*eigenTilde(x_5) + 3*x_5*x_5.transpose());
-
-    /* x_6 partial */
-    A_k.block(15, 15, 3, 3) = -(IHubPntC_B+IWheelPntC_B).inverse() * (eigenTilde(x_6)*(IHubPntC_B+IWheelPntC_B)
-            - eigenTilde((IHubPntC_B+IWheelPntC_B)*x_6) - eigenTilde(IWheelPntC_B*Omega_B));
 }
 
 /*! This is the main method that gets called every time the module is updated.
@@ -441,13 +353,11 @@ void SmallBodyNavEKF::UpdateState(uint64_t CurrentSimNanos)
 void SmallBodyNavEKF::writeMessages(uint64_t CurrentSimNanos){
     /* Create output msg buffers */
     NavTransMsgPayload navTransOutMsgBuffer;
-    NavAttMsgPayload navAttOutMsgBuffer;
     SmallBodyNavMsgPayload smallBodyNavOutMsgBuffer;
     EphemerisMsgPayload asteroidEphemerisOutMsgBuffer;
 
     /* Zero the output message buffers before assigning values */
     navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
-    navAttOutMsgBuffer = this->navAttOutMsg.zeroMsgPayload;
     smallBodyNavOutMsgBuffer = this->smallBodyNavOutMsg.zeroMsgPayload;
     asteroidEphemerisOutMsgBuffer = this->asteroidEphemerisOutMsg.zeroMsgPayload;
 
@@ -456,12 +366,6 @@ void SmallBodyNavEKF::writeMessages(uint64_t CurrentSimNanos){
     eigenMatrixXd2CArray(cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N) + dcm_ON.transpose()*x_hat_k1.segment(0,3), navTransOutMsgBuffer.r_BN_N);
     eigenMatrixXd2CArray(cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.v_BdyZero_N) + dcm_ON.transpose()*x_hat_k1.segment(3,3), navTransOutMsgBuffer.v_BN_N);
     v3Copy(navTransOutMsgBuffer.vehAccumDV, navTransInMsgBuffer.vehAccumDV);  // Not an estimated parameter, pass through
-
-    /* Assign values to the nav att output message */
-    navAttOutMsgBuffer.timeTag = navAttInMsgBuffer.timeTag;
-    eigenMatrixXd2CArray(x_hat_k1.segment(12,3), navAttOutMsgBuffer.sigma_BN);
-    eigenMatrixXd2CArray(x_hat_k1.segment(15,3), navAttOutMsgBuffer.omega_BN_B);
-    v3Copy(navAttOutMsgBuffer.vehSunPntBdy, navAttInMsgBuffer.vehSunPntBdy); // Not an estimated parameter, pass through
 
     /* Assign values to the asteroid ephemeris output message */
     v3Copy(asteroidEphemerisOutMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.r_BdyZero_N);  // Not an estimated parameter
@@ -476,13 +380,11 @@ void SmallBodyNavEKF::writeMessages(uint64_t CurrentSimNanos){
 
     /* Write to the C++-wrapped output messages */
     this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->navAttOutMsg.write(&navAttOutMsgBuffer, this->moduleID, CurrentSimNanos);
     this->smallBodyNavOutMsg.write(&smallBodyNavOutMsgBuffer, this->moduleID, CurrentSimNanos);
     this->asteroidEphemerisOutMsg.write(&asteroidEphemerisOutMsgBuffer, this->moduleID, CurrentSimNanos);
 
     /* Write to the C-wrapped output messages */
     NavTransMsg_C_write(&navTransOutMsgBuffer, &this->navTransOutMsgC, this->moduleID, CurrentSimNanos);
-    NavAttMsg_C_write(&navAttOutMsgBuffer, &this->navAttOutMsgC, this->moduleID, CurrentSimNanos);
     SmallBodyNavMsg_C_write(&smallBodyNavOutMsgBuffer, &this->smallBodyNavOutMsgC, this->moduleID, CurrentSimNanos);
     EphemerisMsg_C_write(&asteroidEphemerisOutMsgBuffer, &this->asteroidEphemerisOutMsgC, this->moduleID, CurrentSimNanos);
 }
