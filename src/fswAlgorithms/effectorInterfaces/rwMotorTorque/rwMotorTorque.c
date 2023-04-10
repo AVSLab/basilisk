@@ -23,7 +23,6 @@
 
 #include "fswAlgorithms/effectorInterfaces/rwMotorTorque/rwMotorTorque.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <string.h>
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! This method creates the module output message.
