@@ -26,6 +26,7 @@
 #include "cMsgCInterface/NavAttMsg_C.h"
 #include "cMsgCInterface/EphemerisMsg_C.h"
 #include "cMsgCInterface/SmallBodyNavMsg_C.h"
+#include "cMsgCInterface/CmdForceBodyMsg_C.h"
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
@@ -60,6 +61,7 @@ public:
     ReadFunctor<NavAttMsgPayload> navAttInMsg;  //!< Attitude nav input message
     ReadFunctor<EphemerisMsgPayload> asteroidEphemerisInMsg;  //!< Small body ephemeris input message
     ReadFunctor<EphemerisMsgPayload> sunEphemerisInMsg;  //!< Sun ephemeris input message
+    ReadFunctor<CmdForceBodyMsgPayload> cmdForceBodyInMsg;  //!< Command force body in message
     std::vector<ReadFunctor<THROutputMsgPayload>> thrusterInMsgs;  //!< thruster input msg vector
 
     Message<NavTransMsgPayload> navTransOutMsg;  //!< Translational nav output message
@@ -90,10 +92,12 @@ private:
     EphemerisMsgPayload asteroidEphemerisInMsgBuffer;  //!< Message buffer for asteroid ephemeris
     EphemerisMsgPayload sunEphemerisInMsgBuffer;  //!< Message buffer for sun ephemeris
     std::vector<THROutputMsgPayload> thrusterInMsgBuffer; //!< Buffer for thruster force and torques
+    CmdForceBodyMsgPayload cmdForceBodyInMsgBuffer; //!< Buffer for the commanded force input
 
     uint64_t prevTime;  //!< Previous time, ns
     uint64_t numStates;  //!< Number of states
     Eigen::Vector3d thrust_B;  //!< Thrust expressed in body-frame components
+    Eigen::Vector3d cmdForce_B;  //!< External force expressed in body-frame components
     Eigen::VectorXd x_hat_dot_k;  //!< Rate of change of state estimate
     Eigen::VectorXd x_hat_k1_;  //!< Apriori state estimate for time k+1
     Eigen::VectorXd x_hat_k1;  //!< Update state estimate for time k+1
