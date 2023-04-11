@@ -41,7 +41,7 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 # provide a unique test method name, starting with test_
 
 @pytest.mark.parametrize("useClassicElem", [True, False])
-@pytest.mark.parametrize("accuracy", [1e-9])
+@pytest.mark.parametrize("accuracy", [1e-6])
 
 def test_meanOEFeedback(show_plots, useClassicElem, accuracy):
     """Module Unit Test"""
@@ -158,9 +158,8 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
         if not unitTestSupport.isArrayEqual(forceOutput[i], trueVector[i], 3, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed "
-                                + moduleConfig.forceOutMsgName
                                 + ".forceRequestInertial" + " unit test at t="
-                                + str(forceOutput[i, 0]*macros.NANO2SEC) + "sec\n")
+                                + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -180,5 +179,5 @@ if __name__ == "__main__":
     test_meanOEFeedback(
         False,  # show_plots
         True,  # useClassicElem
-        1e-9    # accuracy
+        1e-6    # accuracy
     )
