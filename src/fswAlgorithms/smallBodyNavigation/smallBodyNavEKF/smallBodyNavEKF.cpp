@@ -106,6 +106,13 @@ void SmallBodyNavEKF::readMessages(){
     this->asteroidEphemerisInMsgBuffer = this->asteroidEphemerisInMsg();
     this->sunEphemerisInMsgBuffer = this->sunEphemerisInMsg();
 
+    if (this->cmdForceBodyInMsg.isLinked()){
+        this->cmdForceBodyInMsgBuffer= this->cmdForceBodyInMsg();
+    } else{
+        this->cmdForceBodyInMsgBuffer = this->cmdForceBodyInMsg.zeroMsgPayload;
+    }
+
+
     /* Read the thruster messages */
     THROutputMsgPayload thrusterMsg;
     this->thrusterInMsgBuffer.clear();
@@ -117,6 +124,7 @@ void SmallBodyNavEKF::readMessages(){
     } else {
         bskLogger.bskLog(BSK_WARNING, "Small Body Nav EKF has no thruster messages to read.");
     }
+
 }
 
 /*! This method performs the KF prediction step
@@ -151,6 +159,11 @@ void SmallBodyNavEKF::predict(uint64_t CurrentSimNanos){
         thrust_B += cArray2EigenVector3d(thrusterInMsgBuffer[c].thrustForce_B);
     }
 
+    /* Add the commanded force */
+    if (this->cmdForceBodyInMsg.isLinked()) {
+        cmdForce_B = cArray2EigenVector3d(cmdForceBodyInMsgBuffer.forceRequestBody);
+    }
+
     /* Compute aprior state estimate */
     aprioriState(CurrentSimNanos);
 
@@ -182,14 +195,15 @@ void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
     double dcm_BN_meas[3][3];
     MRP2C(this->navAttInMsgBuffer.sigma_BN, dcm_BN_meas);
     Eigen::Matrix3d dcm_OB;
-    dcm_OB = dcm_ON*(cArray2EigenMatrixXd(*dcm_BN_meas, 3, 3).transpose());
+    dcm_OB = dcm_ON*(cArray2EigenMatrixXd(*dcm_BN_meas, 3, 3));
     /* Now compute x2_dot */
     x_hat_dot_k.segment(3,3) =
             -F_ddot*o_hat_3_tilde*x_1 - 2*F_dot*o_hat_3_tilde*x_2 -pow(F_dot,2)*o_hat_3_tilde*o_hat_3_tilde*x_1
             - mu_ast*x_1/pow(x_1.norm(), 3)
             + mu_sun*(3*(r_SO_O/r_SO_O.norm())*(r_SO_O/r_SO_O.norm()).transpose()-I)*x_1/pow(r_SO_O.norm(), 3)
             + C_SRP*P_0*(1+rho)*(A_sc/M_sc)*o_hat_1/pow(r_SO_O.norm(), 2)
-            + dcm_OB*thrust_B;
+            + dcm_OB*thrust_B/M_sc
+            + dcm_OB*cmdForce_B/M_sc;
 
     /* x3_dot */
     x_hat_dot_k.segment(6,3) = 0.25*((1-pow(x_3.norm(),2))*I + 2*eigenTilde(x_3) + 2*x_3*x_3.transpose())*x_4;
