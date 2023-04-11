@@ -48,6 +48,8 @@ SmallBodyNavEKF::SmallBodyNavEKF()
     this->P_k1_.setZero(this->numStates, this->numStates);
     this->P_k1.setZero(this->numStates, this->numStates);
     this->A_k.setIdentity(this->numStates, this->numStates);
+    this->Phi_k.setIdentity(this->numStates, this->numStates);
+    this->Phi_dot_k.setZero(this->numStates, this->numStates);
     this->L.setIdentity(this->numStates, this->numStates);
     this->M.setIdentity(this->numStates, this->numStates);
     this->H_k1.setIdentity(this->numStates, this->numStates);
@@ -220,11 +222,13 @@ void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
     @return void
 */
 void SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos){
-    /* Compute P_dot */
-    P_dot_k = A_k*P_k + P_k*(A_k.transpose()) + L*Q*L.transpose();
+    /* Propagate the STM using euler integration */
+    computeDynamicsMatrix();
+    Phi_dot_k = A_k*Phi_k;
+    Phi_k = Phi_k + Phi_dot_k*(CurrentSimNanos-prevTime)*NANO2SEC;
 
-    /* Compute the apriori covariance using euler integration */
-    P_k1_ = P_k + P_dot_k*(CurrentSimNanos-prevTime)*NANO2SEC;
+    /* Compute the apriori covariance */
+    P_k1_ = Phi_k*P_k*Phi_k.transpose() + L*Q*L.transpose();
 }
 
 /*! This method checks the propagated MRP states to see if they exceed a norm of 1. If they do, the appropriate
@@ -307,9 +311,6 @@ void SmallBodyNavEKF::measurementUpdate(){
     /* Assign the state estimate and covariance to k for the next iteration */
     x_hat_k = x_hat_k1;
     P_k = P_k1;
-
-    /* Update the state dynamics matrix, A, for the next iteration */
-    computeDynamicsMatrix();
 }
 
 /*! This method computes the state dynamics matrix, A, for the next iteration
@@ -339,7 +340,7 @@ void SmallBodyNavEKF::computeDynamicsMatrix(){
             - pow(F_dot, 2)*o_hat_3_tilde*o_hat_3_tilde
             - mu_ast/pow(x_1.norm(), 3)*I
             + 3*mu_ast*x_1*x_1.transpose()/pow(x_1.norm(), 5)
-            + mu_sun*(3*r_SO_O*r_SO_O.transpose() - I)/pow(r_SO_O.norm(), 3);
+            + mu_sun*(3*(r_SO_O*r_SO_O.transpose())/pow(r_SO_O.norm(), 2) - I)/pow(r_SO_O.norm(), 3);
 
     A_k.block(3, 3, 3, 3) = -2*F_dot*o_hat_3_tilde;
 
