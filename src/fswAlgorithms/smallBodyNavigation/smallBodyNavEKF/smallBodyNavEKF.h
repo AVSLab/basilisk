@@ -105,6 +105,8 @@ private:
     Eigen::MatrixXd P_k1_;  //!< Apriori estimation error covariance
     Eigen::MatrixXd P_k1;  //!< Updated estimation error covariance
     Eigen::MatrixXd A_k;  //!< State dynamics matrix
+    Eigen::MatrixXd Phi_k;  //!< State transition matrix
+    Eigen::MatrixXd Phi_dot_k;  //!< Rate of change of STM
     Eigen::MatrixXd L;  //!<
     Eigen::MatrixXd M;  //!<
     Eigen::MatrixXd H_k1;  //!< Jacobian of measurement model
