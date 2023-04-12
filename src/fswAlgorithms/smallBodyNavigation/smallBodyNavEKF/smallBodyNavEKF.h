@@ -53,8 +53,9 @@ private:
     void aprioriState(uint64_t CurrentSimNanos);  //!< Computes the apriori state
     void aprioriCovar(uint64_t CurrentSimNanos);  //!< Computes the apriori covariance
     void checkMRPSwitching();  //!< Checks the MRPs for switching
-    void computeDynamicsMatrix();  //!< Computes the new dynamics matrix, A_k
+    void computeDynamicsMatrix(Eigen::VectorXd x_hat);  //!< Computes the new dynamics matrix, A_k
     void measurementUpdate();  //!< Computes the measurement update for the EKF
+    void computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::MatrixXd Phi); //!< Computes the EOMs of the state and state transition matrix
 
 public:
     ReadFunctor<NavTransMsgPayload> navTransInMsg;  //!< Translational nav input message
@@ -111,6 +112,14 @@ private:
     Eigen::MatrixXd M;  //!<
     Eigen::MatrixXd H_k1;  //!< Jacobian of measurement model
     Eigen::MatrixXd I_full;  //!< numStates x numStates identity matrix
+    Eigen::VectorXd k1;  //!< k1 constant for RK4 integration
+    Eigen::VectorXd k2;  //!< k2 constant for RK4 integration
+    Eigen::VectorXd k3;  //!< k3 constant for RK4 integration
+    Eigen::VectorXd k4;  //!< k4 constant for RK4 integration
+    Eigen::MatrixXd k1_phi;  //!< k1 STM constant for RK4 integration
+    Eigen::MatrixXd k2_phi;  //!< k2 STM constant for RK4 integration
+    Eigen::MatrixXd k3_phi;  //!< k3 STM constant for RK4 integration
+    Eigen::MatrixXd k4_phi;  //!< k4 STM constant for RK4 integration
 
     double mu_sun;  //!< Gravitational parameter of the sun
     Eigen::Matrix3d o_hat_3_tilde;  //!< Tilde matrix of the third asteroid orbit frame base vector

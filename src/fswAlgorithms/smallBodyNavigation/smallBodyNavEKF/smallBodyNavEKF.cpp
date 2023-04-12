@@ -53,6 +53,14 @@ SmallBodyNavEKF::SmallBodyNavEKF()
     this->L.setIdentity(this->numStates, this->numStates);
     this->M.setIdentity(this->numStates, this->numStates);
     this->H_k1.setIdentity(this->numStates, this->numStates);
+    this->k1.setZero(this->numStates);
+    this->k2.setZero(this->numStates);
+    this->k3.setZero(this->numStates);
+    this->k4.setZero(this->numStates);
+    this->k1_phi.setZero(this->numStates, this->numStates);
+    this->k2_phi.setZero(this->numStates, this->numStates);
+    this->k3_phi.setZero(this->numStates, this->numStates);
+    this->k4_phi.setZero(this->numStates, this->numStates);
     this->prevTime = 0;
     return;
 }
@@ -173,21 +181,52 @@ void SmallBodyNavEKF::predict(uint64_t CurrentSimNanos){
     aprioriCovar(CurrentSimNanos);
 }
 
-/*! This method computes the apriori state estimate using euler integration
+/*! This method computes the apriori state estimate using RK4 integration
     @param CurrentSimNanos
     @return void
 */
 void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
+    /* First RK4 step */
+    computeEquationsOfMotion(x_hat_k, Phi_k);
+    k1 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
+    k1_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
+
+    /* Second RK4 step */
+    computeEquationsOfMotion(x_hat_k + k1/2, Phi_k + k1_phi/2);
+    k2 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
+    k2_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
+
+    /* Third RK4 step */
+    computeEquationsOfMotion(x_hat_k + k2/2, Phi_k + k2_phi/2);
+    k3 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
+    k3_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
+
+    /* Fourth RK4 step */
+    computeEquationsOfMotion(x_hat_k + k3, Phi_k + k3_phi);
+    k4 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
+    k4_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
+
+    /* Perform the RK4 integration on the dynamics and STM */
+    x_hat_k1_ = x_hat_k + (k1 + 2*k2 + 2*k3 + k4)/6;
+    Phi_k = Phi_k + (k1_phi + 2*k2_phi + 2*k3_phi + k4_phi)/6;
+}
+
+/*! This method calculates the EOMs of the state vector and state transition matrix
+    @param x_hat
+    @param Phi
+    @return void
+*/
+void SmallBodyNavEKF::computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::MatrixXd Phi){
     /* Create temporary state vectors for readability */
     Eigen::Vector3d x_1;
     Eigen::Vector3d x_2;
     Eigen::Vector3d x_3;
     Eigen::Vector3d x_4;
 
-    x_1 << x_hat_k.segment(0,3);
-    x_2 << x_hat_k.segment(3,3);
-    x_3 << x_hat_k.segment(6,3);
-    x_4 << x_hat_k.segment(9,3);
+    x_1 << x_hat.segment(0,3);
+    x_2 << x_hat.segment(3,3);
+    x_3 << x_hat.segment(6,3);
+    x_4 << x_hat.segment(9,3);
 
     /* x1_dot */
     x_hat_dot_k.segment(0,3) = x_2;
@@ -213,8 +252,9 @@ void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
     /* x4_dot */
     x_hat_dot_k.segment(9,3) << 0, 0, 0;
 
-    /* Propagate the state using euler integration */
-    x_hat_k1_ = x_hat_k + x_hat_dot_k*(CurrentSimNanos-prevTime)*NANO2SEC;
+    /* Re-compute the dynamics matrix and compute Phi_dot */
+    computeDynamicsMatrix(x_hat);
+    Phi_dot_k = A_k*Phi;
 }
 
 /*! This method compute the apriori estimation error covariance through euler integration
@@ -222,11 +262,6 @@ void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
     @return void
 */
 void SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos){
-    /* Propagate the STM using euler integration */
-    computeDynamicsMatrix();
-    Phi_dot_k = A_k*Phi_k;
-    Phi_k = Phi_k + Phi_dot_k*(CurrentSimNanos-prevTime)*NANO2SEC;
-
     /* Compute the apriori covariance */
     P_k1_ = Phi_k*P_k*Phi_k.transpose() + L*Q*L.transpose();
 }
@@ -316,17 +351,17 @@ void SmallBodyNavEKF::measurementUpdate(){
 /*! This method computes the state dynamics matrix, A, for the next iteration
     @return void
 */
-void SmallBodyNavEKF::computeDynamicsMatrix(){
+void SmallBodyNavEKF::computeDynamicsMatrix(Eigen::VectorXd x_hat){
     /* Create temporary state vectors for readability */
     Eigen::Vector3d x_1;
     Eigen::Vector3d x_2;
     Eigen::Vector3d x_3;
     Eigen::Vector3d x_4;
 
-    x_1 << x_hat_k.segment(0,3);
-    x_2 << x_hat_k.segment(3,3);
-    x_3 << x_hat_k.segment(6,3);
-    x_4 << x_hat_k.segment(9,3);
+    x_1 << x_hat.segment(0,3);
+    x_2 << x_hat.segment(3,3);
+    x_3 << x_hat.segment(6,3);
+    x_4 << x_hat.segment(9,3);
 
     /* First set the matrix to zero (many indices are zero) */
     A_k.setZero(this->numStates, this->numStates);
