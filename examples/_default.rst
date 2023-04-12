@@ -60,6 +60,7 @@ Attitude Guidance
 
    Hill Frame Pointing on Elliptic Orbit <scenarioAttitudeGuidance>
    Velocity Frame Pointing on Hyperbolic Orbit <scenarioAttGuideHyperbolic>
+   Hill Frame Pointing on Hyperbolic Orbit <scenarioFlybyPoint>
    Pointing at Earth Location <scenarioAttLocPoint>
    Prescribing the spacecraft orientation <scenarioAttitudePrescribed>
    Layered spiral attitude guidance <scenarioInertialSpiral>
