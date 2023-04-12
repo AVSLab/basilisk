@@ -107,10 +107,16 @@ void SmallBodyNavEKF::addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrus
 }
 
 /*! This method is used to read the input messages.
+    @param CurrentSimNanos
     @return void
 */
-void SmallBodyNavEKF::readMessages(){
+void SmallBodyNavEKF::readMessages(uint64_t CurrentSimNanos){
     /* Read in the input messages */
+    if ((this->navTransInMsg.timeWritten() + this->navAttInMsg.timeWritten() + this->asteroidEphemerisInMsg.timeWritten() - 3*CurrentSimNanos) == 0){
+        this->newMeasurements = true;
+    } else {
+        this->newMeasurements = false;
+    }
     this->navTransInMsgBuffer = this->navTransInMsg();
     this->navAttInMsgBuffer = this->navAttInMsg();
     this->asteroidEphemerisInMsgBuffer = this->asteroidEphemerisInMsg();
@@ -389,10 +395,17 @@ void SmallBodyNavEKF::computeDynamicsMatrix(Eigen::VectorXd x_hat){
 */
 void SmallBodyNavEKF::UpdateState(uint64_t CurrentSimNanos)
 {
-    this->readMessages();
+    this->readMessages(CurrentSimNanos);
     this->predict(CurrentSimNanos);
     this->checkMRPSwitching();
-    this->measurementUpdate();
+    if (this->newMeasurements){
+        /* Run the measurement update */
+        this->measurementUpdate();
+    }
+    else{
+        /* Assign the apriori state estimate and covariance to k for the next iteration */
+        x_hat_k = x_hat_k1_;
+    }
     this->writeMessages(CurrentSimNanos);
     prevTime = CurrentSimNanos;
 }
@@ -413,20 +426,24 @@ void SmallBodyNavEKF::writeMessages(uint64_t CurrentSimNanos){
 
     /* Assign values to the nav trans output message */
     navTransOutMsgBuffer.timeTag = navTransInMsgBuffer.timeTag;
-    eigenMatrixXd2CArray(cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N) + dcm_ON.transpose()*x_hat_k1.segment(0,3), navTransOutMsgBuffer.r_BN_N);
-    eigenMatrixXd2CArray(cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.v_BdyZero_N) + dcm_ON.transpose()*x_hat_k1.segment(3,3), navTransOutMsgBuffer.v_BN_N);
+    eigenMatrixXd2CArray(cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N) + dcm_ON.transpose()*x_hat_k.segment(0,3), navTransOutMsgBuffer.r_BN_N);
+    eigenMatrixXd2CArray(cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.v_BdyZero_N) + dcm_ON.transpose()*x_hat_k.segment(3,3), navTransOutMsgBuffer.v_BN_N);
     v3Copy(navTransOutMsgBuffer.vehAccumDV, navTransInMsgBuffer.vehAccumDV);  // Not an estimated parameter, pass through
 
     /* Assign values to the asteroid ephemeris output message */
     v3Copy(asteroidEphemerisOutMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.r_BdyZero_N);  // Not an estimated parameter
     v3Copy(asteroidEphemerisOutMsgBuffer.v_BdyZero_N, asteroidEphemerisInMsgBuffer.v_BdyZero_N);  // Not an estimated parameter
-    eigenMatrixXd2CArray(x_hat_k1.segment(6,3), asteroidEphemerisOutMsgBuffer.sigma_BN);
-    eigenMatrixXd2CArray(x_hat_k1.segment(9,3), asteroidEphemerisOutMsgBuffer.omega_BN_B);
+    eigenMatrixXd2CArray(x_hat_k.segment(6,3), asteroidEphemerisOutMsgBuffer.sigma_BN);
+    eigenMatrixXd2CArray(x_hat_k.segment(9,3), asteroidEphemerisOutMsgBuffer.omega_BN_B);
     asteroidEphemerisOutMsgBuffer.timeTag = asteroidEphemerisInMsgBuffer.timeTag;
 
     /* Assign values to the small body navigation output message */
-    eigenMatrixXd2CArray(x_hat_k1, smallBodyNavOutMsgBuffer.state);
-    eigenMatrixXd2CArray(P_k1, *smallBodyNavOutMsgBuffer.covar);
+    eigenMatrixXd2CArray(x_hat_k, smallBodyNavOutMsgBuffer.state);
+    if (this->newMeasurements) {
+        eigenMatrixXd2CArray(P_k, *smallBodyNavOutMsgBuffer.covar);
+    } else {
+        eigenMatrixXd2CArray(P_k1_, *smallBodyNavOutMsgBuffer.covar);
+    }
 
     /* Write to the C++-wrapped output messages */
     this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, CurrentSimNanos);
