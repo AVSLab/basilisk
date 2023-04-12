@@ -40,6 +40,7 @@ public:
     void setW(Eigen::VectorXd W);
     void setAvgXDot(double AvgXDot);
     void setLS_Dot();
+    void setX_primes(Eigen::VectorXd X1_prime, Eigen::VectorXd X2_prime, Eigen::VectorXd X3_prime);
     
     double AvgXDot;                  //!<  average velocity norm
     Eigen::VectorXd T;               //!< time tags: specifies at what time each waypoint is hit
@@ -47,6 +48,9 @@ public:
     Eigen::VectorXd X1;              //!< coordinate #1 of the waypoints
     Eigen::VectorXd X2;              //!< coordinate #2 of the waypoints
     Eigen::VectorXd X3;              //!< coordinate #3 of the waypoints
+    Eigen::VectorXd X1_prime;        //!< first derivative #1 of the waypoints
+    Eigen::VectorXd X2_prime;        //!< first derivative #2 of the waypoints
+    Eigen::VectorXd X3_prime;        //!< first derivative #3 of the waypoints
     Eigen::Vector3d XDot_0;          //!< 3D vector containing the first derivative at starting point
     Eigen::Vector3d XDot_N;          //!< 3D vector containing the first derivative at final point
     Eigen::Vector3d XDDot_0;         //!< 3D vector containing the second derivative at starting point
@@ -59,6 +63,8 @@ public:
     bool XDDot_0_flag;               //!< indicates that second derivative at starting point has been specified
     bool XDDot_N_flag;               //!< indicates that second derivative at final point has been specified
     bool LS_Dot;                     //!< indicates whether LS approximation is done with first derivative constraint, LS_Dot is false
+    bool X_prov;                     //!< indicates whether  X_primes  are provided or not, X_prov is false
+
 
 };
 

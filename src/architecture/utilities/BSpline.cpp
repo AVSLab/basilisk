@@ -42,6 +42,7 @@ InputDataSet::InputDataSet(Eigen::VectorXd X1, Eigen::VectorXd X2, Eigen::Vector
     this->T_flag = false;
     this->AvgXDot_flag = false;
     this->W_flag = false;
+    this->X_prov  = false;
 
     uint64_t N1 = (uint64_t) X1.size();
     uint64_t N2 = (uint64_t) X2.size();
@@ -83,6 +84,8 @@ void InputDataSet::setW(Eigen::VectorXd W) {this->W = W; this->W_flag = true; re
 
 /*! Set LS_dot to true which means first derivative LS approximation occurs (optional) */
 void InputDataSet::setLS_Dot() {this->LS_Dot = true; return;}
+
+void InputDataSet::setX_primes(Eigen::VectorXd X1_prime, Eigen::VectorXd X2_prime, Eigen::VectorXd X3_prime) {this->X_prov = true; this->X1_prime = X1_prime;this->X2_prime = X2_prime;this->X3_prime = X3_prime; return;};
 
 /*! This constructor initializes an Output structure for BSpline interpolation */
 OutputDataSet::OutputDataSet()
@@ -494,57 +497,66 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         U[n+p+1] = 1; // Got rid of the n here which fixed the error, now we are matching but next results are nan
     }
     
-    // Calculate 1st Derivatives:
-    Eigen::VectorXd X1_primehat(q+1);
-    Eigen::VectorXd X2_primehat(q+1);
-    Eigen::VectorXd X3_primehat(q+1);
-    
-    int index = 0;
-    
-    // Calculate X Prime Hat Derivatives
-    
-    //Central Finite Derivatives
-    for (int k = 1;k<q;k++) {
-        X1_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X1[k]-Input.X1[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X1[k+1]-Input.X1[k])/(uk[k+1]-uk[k]);
-        X2_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X2[k]-Input.X2[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X2[k+1]-Input.X2[k])/(uk[k+1]-uk[k]);
-        X3_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X3[k]-Input.X3[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X3[k+1]-Input.X3[k])/(uk[k+1]-uk[k]);
-        index++;
-    }
-    
     // Calculate X Prime Derivatives
     Eigen::VectorXd X1_prime(q+1),X2_prime(q+1),X3_prime(q+1);
     
-    // Set Initial Derivative
-    X1_prime[0] = Input.XDot_0[0];
-    X2_prime[0] = Input.XDot_0[1];
-    X3_prime[0] = Input.XDot_0[2];
-    
-    // Set Final Derivative
-    X1_prime[q] = Input.XDot_N[0];
-    X2_prime[q] = Input.XDot_N[1];
-    X3_prime[q] = Input.XDot_N[2];
+    // Waypoint XPrimes not provided
+    if (Input.X_prov == false) {
+        // Calculate 1st Derivatives:
+        Eigen::VectorXd X1_primehat(q+1);
+        Eigen::VectorXd X2_primehat(q+1);
+        Eigen::VectorXd X3_primehat(q+1);
+        
+        int index = 0;
+        
+        // Calculate X Prime Hat Derivatives
+        
+        //Central Finite Derivatives
+        for (int k = 1;k<q;k++) {
+            X1_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X1[k]-Input.X1[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X1[k+1]-Input.X1[k])/(uk[k+1]-uk[k]);
+            X2_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X2[k]-Input.X2[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X2[k+1]-Input.X2[k])/(uk[k+1]-uk[k]);
+            X3_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(Input.X3[k]-Input.X3[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(Input.X3[k+1]-Input.X3[k])/(uk[k+1]-uk[k]);
+            index++;
+        }
+        
+        // Set Initial Derivative
+        X1_prime[0] = Input.XDot_0[0];
+        X2_prime[0] = Input.XDot_0[1];
+        X3_prime[0] = Input.XDot_0[2];
+        
+        // Set Final Derivative
+        X1_prime[q] = Input.XDot_N[0];
+        X2_prime[q] = Input.XDot_N[1];
+        X3_prime[q] = Input.XDot_N[2];
 
-    for (int k = 1;k<q;k++) {
-        double a = double(X1_primehat[k]);
-        double b = double(X2_primehat[k]);
-        double c = double(X3_primehat[k]);
-        double mag = pow(a,2.0)+pow(b,2.0)+pow(c,2.0);
-        mag = pow(mag,0.5);
-        mag = abs((mag));
-        double temp;
-        if (mag != 0) {
-            temp =Input.AvgXDot*Ttot/mag;
+        for (int k = 1;k<q;k++) {
+            double a = double(X1_primehat[k]);
+            double b = double(X2_primehat[k]);
+            double c = double(X3_primehat[k]);
+            double mag = pow(a,2.0)+pow(b,2.0)+pow(c,2.0);
+            mag = pow(mag,0.5);
+            mag = abs((mag));
+            double temp;
+            if (mag != 0) {
+                temp =Input.AvgXDot*Ttot/mag;
+            }
+            else {
+                temp = 0;
+            }
+            X1_prime[k] = X1_primehat[k]*temp;
+            X2_prime[k] = X2_primehat[k]*temp;
+            X3_prime[k] = X3_primehat[k]*temp;
         }
-        else {
-            temp = 0;
-        }
-        X1_prime[k] = X1_primehat[k]*temp;
-        X2_prime[k] = X2_primehat[k]*temp;
-        X3_prime[k] = X3_primehat[k]*temp;
     }
-
     
-
+    // Waypoint XPrimes provided
+    else {
+        for (int e=0 ;e<q+1;e++) {
+            X1_prime[e] = Input.X1_prime[e];
+            X2_prime[e] = Input.X2_prime[e];
+            X3_prime[e] = Input.X3_prime[e];
+        }
+    }
 
     // K = number of endpoint derivatives
     int K = 0;
@@ -680,43 +692,43 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     // LS approximation without first derivative constraint
     if (Input.LS_Dot == false){
 
-    // populate LS matrix ND
-    for (int a = 0; a < q-1; a++) {
-        basisFunction(uk[1+a], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
-        int k = 1;
-        if (Input.XDot_0_flag == true) {k += 1;}
-        if (Input.XDDot_0_flag == true) {k += 1;}
-        for (int b = 0; b < n-K-1; b++) {
-            ND(a,b) = NN[k+b];
+        // populate LS matrix ND
+        for (int a = 0; a < q-1; a++) {
+            basisFunction(uk[1+a], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
+            int k = 1;
+            if (Input.XDot_0_flag == true) {k += 1;}
+            if (Input.XDDot_0_flag == true) {k += 1;}
+            for (int b = 0; b < n-K-1; b++) {
+                ND(a,b) = NN[k+b];
+            }
         }
-    }
 
-    // populate weight matrix W
-    Eigen::MatrixXd W(q-1,q-1);
-    for (int y = 0; y < q-1; y++) {
-        for (int m = 0; m < q-1; m++) {
-            if (y == m) {
-                if (Input.W_flag) {
-                    W(y,m) = Input.W[y+1];
+        // populate weight matrix W
+        Eigen::MatrixXd W(q-1,q-1);
+        for (int y = 0; y < q-1; y++) {
+            for (int m = 0; m < q-1; m++) {
+                if (y == m) {
+                    if (Input.W_flag) {
+                        W(y,m) = Input.W[y+1];
+                    }
+                    else {
+                        W(y,m) = 1;
+                    }
                 }
                 else {
-                    W(y,m) = 1;
+                    W(y,m) = 0;
                 }
             }
-            else {
-                W(y,m) = 0;
-            }
         }
-    }
 
-    B = ND.transpose() * W;
-    rho1 = B * rhok1;
-    rho2 = B * rhok2;
-    rho3 = B * rhok3;
+        B = ND.transpose() * W;
+        rho1 = B * rhok1;
+        rho2 = B * rhok2;
+        rho3 = B * rhok3;
 
-    // compute LS values R for the control points
-    NWN = B * ND;
-    NWN_inv = NWN.inverse();
+        // compute LS values R for the control points
+        NWN = B * ND;
+        NWN_inv = NWN.inverse();
     }
     
     
@@ -755,17 +767,13 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
         }
 
         B = ND_2.transpose() * W_2;
-
         rho1 = B * rhok1;
-        
         rho2 = B * rhok2;
-        
         rho3 = B * rhok3;
         
+        // compute LS values R for the control points
         NWN = B * ND_2;
-                
         NWN_inv = NWN.inverse();
-
     }
 
     Eigen::VectorXd C1_2 = NWN_inv * rho1;
