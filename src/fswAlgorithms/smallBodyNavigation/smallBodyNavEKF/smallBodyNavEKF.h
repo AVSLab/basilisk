@@ -47,7 +47,7 @@ public:
     void addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrusterMsg);  //!< Adds thruster message
 
 private:
-    void readMessages();  //!< Reads input messages
+    void readMessages(uint64_t CurrentSimNanos);  //!< Reads input messages
     void writeMessages(uint64_t CurrentSimNanos);  //!< Writes output messages
     void predict(uint64_t CurrentSimNanos);  //!< Prediction step of Kalman filter
     void aprioriState(uint64_t CurrentSimNanos);  //!< Computes the apriori state
@@ -120,6 +120,7 @@ private:
     Eigen::MatrixXd k2_phi;  //!< k2 STM constant for RK4 integration
     Eigen::MatrixXd k3_phi;  //!< k3 STM constant for RK4 integration
     Eigen::MatrixXd k4_phi;  //!< k4 STM constant for RK4 integration
+    bool newMeasurements;  //! Keeps track of whether or not new measurements have been written
 
     double mu_sun;  //!< Gravitational parameter of the sun
     Eigen::Matrix3d o_hat_3_tilde;  //!< Tilde matrix of the third asteroid orbit frame base vector
