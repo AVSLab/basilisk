@@ -31,7 +31,7 @@ def test_smallBodyNavEKF(show_plots):
     **Validation Test Description**
 
     This unit test checks that the filter converges to a constant state estimate under the presence of static measurements.
-    No reaction wheels or thrusters are used, but a message for each is created and connected to avoid warnings.
+    No thrusters are used, but a message for each is created and connected to avoid warnings.
 
     **Test Parameters**
 
