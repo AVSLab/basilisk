@@ -41,6 +41,7 @@ Version |release|
 - updated ZMQ version to 4.5.0.  For 2-way communication with ``opNav`` modules talking to Vizard
   then Vizard 2.1.5 or newer should be used.  This also removes the need for the legacy bincrafters code repo.
   Delete ``~/.conan`` folder if you run into ``conan`` issues.
+- The Basilisk project C++ version is advanced from C++11 to C++17
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------
