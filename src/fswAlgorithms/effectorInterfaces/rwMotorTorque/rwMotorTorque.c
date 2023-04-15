@@ -23,7 +23,6 @@
 
 #include "fswAlgorithms/effectorInterfaces/rwMotorTorque/rwMotorTorque.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <string.h>
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! This method creates the module output message.
@@ -91,6 +90,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
 {
     RWAvailabilityMsgPayload wheelsAvailability;    /*!< Msg containing RW availability */
     CmdTorqueBodyMsgPayload LrInputMsg;             /*!< Msg containing Lr control torque */
+    CmdTorqueBodyMsgPayload LrInput2Msg;            /*!< Msg containing optional Lr control torque */
     ArrayMotorTorqueMsgPayload rwMotorTorques;      /*!< Msg struct to store the output message */
     double Lr_B[3];                             /*!< [Nm]    commanded ADCS control torque in body frame*/
     double Lr_C[3];                             /*!< [Nm]    commanded ADCS control torque projected onto control axes */
@@ -111,6 +111,12 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
     /*! - Read the input messages */
     LrInputMsg = CmdTorqueBodyMsg_C_read(&configData->vehControlInMsg);
     v3Copy(LrInputMsg.torqueRequestBody, Lr_B);
+
+    /*! - Check if the optional second message is provided */
+    if (CmdTorqueBodyMsg_C_isLinked(&configData->vehControlIn2Msg)) {
+        LrInput2Msg = CmdTorqueBodyMsg_C_read(&configData->vehControlIn2Msg);
+        v3Add(Lr_B, LrInput2Msg.torqueRequestBody, Lr_B);
+    }
 
     /*! - Check if RW availability message is available */
     if (RWAvailabilityMsg_C_isLinked(&configData->rwAvailInMsg))

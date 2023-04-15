@@ -52,18 +52,19 @@ from Support import results_rwMotorTorque
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("numControlAxes", [0, 1, 2, 3])
 @pytest.mark.parametrize("numWheels", [2, 4, messaging.MAX_EFF_CNT])
+@pytest.mark.parametrize("numInputCmdTorques", [1, 2])
 @pytest.mark.parametrize("RWAvailMsg",["NO", "ON", "OFF", "MIXED"])
 
 
 # update "module" in this function name to reflect the module name
-def test_rwMotorTorque(show_plots, numControlAxes, numWheels, RWAvailMsg):
+def test_rwMotorTorque(show_plots, numControlAxes, numWheels, numInputCmdTorques, RWAvailMsg):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg)
+    [testResults, testMessage] = rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques, RWAvailMsg)
     assert testResults < 1, testMessage
 
 
-def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
+def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques, RWAvailMsg):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -115,6 +116,12 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     requestedTorque = [1.0, -0.5, 0.7] # Set up a list as a 3-vector
     inputMessageData.torqueRequestBody = requestedTorque # write torque request to input message
     cmdTorqueInMsg = messaging.CmdTorqueBodyMsg().write(inputMessageData)
+
+    if numInputCmdTorques == 2:
+        inputMessageData2 = messaging.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
+        requestedTorque2 = [0.0, 0.0, 0.0]                       # Set up a list as a 3-vector
+        inputMessageData2.torqueRequestBody = requestedTorque2   # write torque request to input message
+        cmdTorqueIn2Msg = messaging.CmdTorqueBodyMsg().write(inputMessageData2)
 
     # wheelConfigData message
     rwConfigParams = messaging.RWArrayConfigMsgPayload()
@@ -197,6 +204,8 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
 
     # connect messages
     moduleConfig.vehControlInMsg.subscribeTo(cmdTorqueInMsg)
+    if numInputCmdTorques == 2:
+        moduleConfig.vehControlIn2Msg.subscribeTo(cmdTorqueIn2Msg)
     moduleConfig.rwParamsInMsg.subscribeTo(rwConfigInMsg)
 
     # Need to call the self-init and cross-init methods
@@ -284,5 +293,6 @@ if __name__ == "__main__":
     test_rwMotorTorque(False,
                 3,      # numControlAxes
                 36,      # numWheels
+                2,      # numInputCmdTorques
                 "NO"    # RWAvailMsg ("NO", "ON", "OFF")
                )

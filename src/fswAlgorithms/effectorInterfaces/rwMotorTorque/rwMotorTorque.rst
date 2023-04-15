@@ -26,6 +26,9 @@ provides information on what this message is used for.
     * - vehControlInMsg
       - :ref:`CmdTorqueBodyMsgPayload`
       - commanded vehicle control torque input message
+    * - vehControlIn2Msg
+      - :ref:`CmdTorqueBodyMsgPayload`
+      - (optional) additional commanded vehicle control torque input message
     * - rwParamsInMsg
       - :ref:`RWArrayConfigMsgPayload`
       - RW array configuration input message
