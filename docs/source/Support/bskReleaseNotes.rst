@@ -38,6 +38,9 @@ Version |release|
   See :ref:`pyModules` for details.
 - Added the ability to integrate the ODE's of two or more Basilisk modules that are ``DynamicObject`` class
   member at the same time.  See :ref:`bskPrinciples-9`
+- updated ZMQ version to 4.5.0.  For 2-way communication with ``opNav`` modules talking to Vizard
+  then Vizard 2.1.5 or newer should be used.  This also removes the need for the legacy bincrafters code repo.
+  Delete ``~/.conan`` folder if you run into ``conan`` issues.
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------

@@ -110,18 +110,6 @@ class BasiliskConan(ConanFile):
             except:
                 pass
 
-    try:
-        consoleReturn = str(subprocess.check_output(["conan", "remote", "list", "--raw"]))
-        conanRepos = ["bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan"
-                      ]
-        for item in conanRepos:
-            if item not in consoleReturn:
-                print("Configuring: " + statusColor + item + endColor)
-                cmdString = ["conan", "remote", "add"] + item.split(" ")
-                subprocess.check_call(cmdString)
-    except:
-        print("conan: " + failColor + "Error configuring conan repo information." + endColor)
-
     print(statusColor + "Checking conan configuration:" + endColor + " Done")
 
     try:
@@ -193,7 +181,7 @@ class BasiliskConan(ConanFile):
         if self.options.vizInterface or self.options.opNav:
             self.requires.add("libsodium/1.0.18")
             self.requires.add("protobuf/3.17.1")
-            self.requires.add("cppzmq/4.3.0@bincrafters/stable")
+            self.requires.add("cppzmq/4.5.0")
 
     def configure(self):
         if self.options.clean:
