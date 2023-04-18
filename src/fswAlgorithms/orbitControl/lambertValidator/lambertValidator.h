@@ -62,6 +62,47 @@ public:
     Eigen::MatrixXd uncertaintyStates;
     double uncertaintyDV = 1; //!< [%] uncertainty of the Delta-V magnitude
     double dvConvergenceTolerance = 1e-3; //!< [m/s] tolerance on difference between DeltaV solutions between time steps
+
+private:
+    void readMessages();
+    void writeMessages(uint64_t currentSimNanos);
+    std::array<Eigen::VectorXd, NUM_INITIALSTATES> getInitialStates();
+    void countViolations(std::array<Eigen::VectorXd, NUM_INITIALSTATES> initialStates);
+    void checkConstraintViolations(std::vector<double> t, std::vector<Eigen::VectorXd> X);
+    bool checkPerformance() const;
+    std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> propagate(
+            const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
+            std::array<double, 2> interval,
+            const Eigen::VectorXd& X0,
+            double dt);
+    Eigen::VectorXd RK4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
+                        const Eigen::VectorXd& X0,
+                        double t0,
+                        double dt);
+
+    double time{}; //!< [s] Current vehicle time-tag associated with measurements
+    Eigen::Vector3d r_N; //!< [m] Current inertial spacecraft position vector in inertial frame N components
+    Eigen::Vector3d v_N; //!< [m/s] Current inertial velocity of the spacecraft in inertial frame N components
+    double mu{}; //!< [m^3 s^-2] gravitational parameter
+    //!< [m] Targeted position vector with respect to celestial body at finalTime, in N frame components
+    Eigen::Vector3d r_TN_N;
+    Eigen::Vector3d vLambert_N; //!< [m/s] Lambert velocity solution at maneuver time in inertial frame N components
+    int validLambert{}; //!< [-] valid Lambert solution if 1, not if 0
+    double xLambert{}; //!< [-] solution for free variable (iteration variable) of Lambert problem
+    int numIterLambert{}; //!< [-] number of root-finder iterations to find x
+    double errXLambert{}; //!< [-] difference in x between last and second-to-last iteration
+    double prevLambertSolutionX = 0; //!< [-] solution of Lambert problem from previous time step
+    Eigen::Vector3d prevDv_N{}; //!< solution for Delta-V from previous time step
+    //!< [m] Expected inertial spacecraft position vector at maneuver time tm in inertial frame N components
+    Eigen::Vector3d rm_N;
+    //!< [m/s] Expected inertial spacecraft velocity vector at maneuver time tm in inertial frame N components
+    Eigen::Vector3d vm_N;
+    Eigen::Vector3d dv_N; //!< [m/s] requested Delta-V in N frame components
+    Eigen::Matrix3d dcm_HN; //!< [-] direction cosine matrix (DCM) from inertial frame N to Hill frame H
+    int violationsDistanceTarget = 0; //!< [-] number of violations of the maxDistanceTarget constraint
+    int violationsOrbitRadius = 0; //!< [-] number of violations of the minOrbitRadius constraint
+    double timestep = 10.; //!< [s] time step used for RK4 propagation
+    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> EOM_2BP; //!< equations of motion to be used for RK4
 };
 
 #endif
