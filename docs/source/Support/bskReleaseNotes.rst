@@ -46,6 +46,8 @@ Version |release|
   with_ade graph manipulations framework, with_tiff generate image in TIFF format, with_openexr generate image in EXR
   format, with_quirc QR code lib. Users that have Basilisk control the build of these modules through the External
   Modules CMake integration will need to manual toggle these OpenCV build options.
+- Updated :ref:`SmallBodyNavEKF` with several bug fixes. Removed spacecraft attitude estimation component.
+
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------

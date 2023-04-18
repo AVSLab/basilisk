@@ -40,9 +40,8 @@ struct NavAttMsg_C;
 struct EphemerisMsg_C;
 %include "architecture/msgPayloadDefC/SmallBodyNavMsgPayload.h"
 struct SmallBodyNavMsg_C;
-%include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
-struct RWConfigLogMsg_C;
-%include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
+%include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
+struct CmdForceBodyMsg_C;
 
 %pythoncode %{
 import sys

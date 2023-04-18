@@ -1,12 +1,11 @@
 Executive Summary
 -----------------
 This module provides a navigation solution for a spacecraft about a small body. A hybrid extended Kalman filter
-estimates relative spacecraft position and velocity with respect to the small body, attitude and attitude rate of the
-asteroid's body frame with respect to the inertial frame, and the attitude and attitude rate of the spacecraft with
-respect to the inertial frame.
+estimates relative spacecraft position and velocity with respect to the small body and the attitude and attitude rate of
+the asteroid's body frame with respect to the inertial frame.
 
 This module is only meant to provide a somewhat representative autonomous small body proximity operations navigation solution
-for attitude control modules or POMDP solvers. Therefore, realistic measurement modules do not exist to support this module, and
+for POMDP solvers. Therefore, realistic measurement modules do not exist to support this module, and
 not every source of uncertainty in the problem is an estimated parameter. Future work will build upon this filter.
 
 Message Connection Descriptions
@@ -45,24 +44,18 @@ with ``...OutMsgC``.
     * - sunEphemerisInMsg
       - :ref:`EphemerisMsgPayload`
       - Sun ephemeris input message
-    * - rwInMsgs
-      - :ref:`RWConfigLogMsgPayload`
-      - Vector of reaction wheel input messages
     * - thrusterInMsgs
       - :ref:`THROutputMsgPayload`
       - Vector of thruster input messages
+    * - cmdForceBodyInMsg
+      - :ref:`cmdForceBodyMsgPayload`
+      - Commanded force input
     * - navTransOutMsg
       - :ref:`NavTransMsgPayload`
       - Translational nav output message
     * - navTransOutMsgC
       - :ref:`NavTransMsgPayload`
       - C-wrapped translational nav output message
-    * - navAttOutMsg
-      - :ref:`NavAttMsgPayload`
-      - Attitude nav output message
-    * - navAttOutMsgC
-      - :ref:`NavAttMsgPayload`
-      - C-wrapped attitude nav output message
     * - smallBodyNavOutMsg
       - :ref:`SmallBodyNavMsgPayload`
       - Small body nav output msg - states and covariances
@@ -80,8 +73,8 @@ Detailed Module Description
 ---------------------------
 General Function
 ^^^^^^^^^^^^^^^^
-The ``smallBodyNavEKF()`` module provides a complete state estimate for a spacecraft in proximity of a small body. The
-relative spacecraft position and velocity, spacecraft attitude and rate, and small body attitude and rate are estimated
+The ``smallBodyNavEKF()`` module provides a state estimate for a spacecraft in proximity of a small body. The
+relative spacecraft position and velocity and small body attitude and rate are estimated
 by the filter. The filter assumes full observability of each state. The "measurements" are typically messages written
 out by :ref:`simpleNav` and :ref:`planetNav` modules. However, future developers can implement measurement models
 that adhere to the required I/O format. The full state vector may be found below:
@@ -94,17 +87,13 @@ that adhere to the required I/O format. The full state vector may be found below
     \mathbf{x}_1\\
     \mathbf{x}_2\\
     \mathbf{x}_3\\
-    \mathbf{x}_4\\
-    \mathbf{x}_5\\
-    \mathbf{x}_6
+    \mathbf{x}_4
     \end{bmatrix}=
     \begin{bmatrix}
     {}^O\mathbf{r}_{S/O} \\
     {}^O\dot{\mathbf{r}}_{S/O} \\
     \boldsymbol{\sigma}_{AN} \\
-    {}^A\boldsymbol{\omega}_{AN} \\
-    \boldsymbol{\sigma}_{BN} \\
-    {}^B\boldsymbol{\omega}_{BN}
+    {}^A\boldsymbol{\omega}_{AN}
     \end{bmatrix}
 
 The associated frame definitions may be found in the following table.
@@ -142,20 +131,27 @@ and :math:`P_0` are initialized by the user. The dynamics matrix :math:`A_0` is 
 
     P_k = P_0
 
-The state estimate :math:`\hat{\mathbf{x}}_{k+1}` and estimation error covariance :math:`P_{k+1}` are then computed by propagating the equations below:
+The apriori state estimate :math:`\hat{\mathbf{x}}_{k+1}^-` and STM :math:`\Phi(k+1,k)` are propagated using the equations below:
 
 .. math::
     :label: eq:predict_state
 
     \dot{\hat{\mathbf{x}}}_{k} = f(\hat{\mathbf{x}}_k, \mathbf{u}_k, w_k, t_k)
 
+.. math::
+    :label: eq:stm_dot
+
+    \dot{\Phi}(k+1,k) = A_{k+1}\Phi(k+1,k)
+
+The apriori estimation error covariance :math:`P_{k+1}^-` is then computed by propagating the equations below:
 
 .. math::
     :label: eq:predict_covar
 
-    \dot{P}_k = A_kP_k + P_kA_k^T + L_kQ_kL_k^T
+    P_{k+1}^- = \Phi(k+1, k) P_k^+ \Phi(k+1, k)^T + L_kQ_kL_k^T
 
-The measurements are read into the module and the state and covariance are updated as follows:
+The measurements are read into the module and the state and covariance are updated using the equation below. If no
+new measurements are present, the filter skips this step and writes out the apriori state estimate and covariance.
 
 .. math::
     :label: eq:kalman_gain
@@ -201,16 +197,6 @@ constant rate.
 
     \dot{\mathbf{x}}_4 = {}^A\dot{\boldsymbol{\omega}}_{A/N} = \mathbf{0}
 
-.. math::
-    :label: eq:smn_x_dot_5
-
-    \dot{\mathbf{x}}_5 = \dot{\boldsymbol{\sigma}}_{B/N} = \dfrac{1}{4} \Bigr [ \Bigr ( 1-||\mathbf{x}_5||^2 \Bigr ) [I_{3 \times 3}] + 2[\tilde{\mathbf{x}}_5] + 2\mathbf{x}_5\mathbf{x}_5^T \Bigr]\mathbf{x}_6
-
-.. math::
-    :label: eq:smn_x_dot_6
-
-    \dot{\mathbf{x}}_6 = {}^B\dot{\boldsymbol{\omega}}_{B/N} = -[I_T]^{-1} \Bigr([\tilde{\mathbf{x}}_6][I_T]\mathbf{x}_6 + [I_W]{}^B\dot{\boldsymbol{\Omega}} + [\tilde{\mathbf{x}}_6][I_W]{}^B\boldsymbol{\Omega} -\sum_j^J{}^B\mathbf{L}_{T_j}\Bigr )
-
 Note that the MRP switching is checked following the procedure outlined in `Karlgaard <https://link.springer.com/content/pdf/10.1007/BF03321529.pdf>`__.
 
 The derivation of the state dynamics matrix :math:`A` is not shown here for brevity.
@@ -221,10 +207,7 @@ Module Assumptions and Limitations
 
 The module assumptions and limitations are listed below:
 
- - The reaction wheels' spin axes are aligned with the body-frame axes of the spacecraft
- - Only three reaction wheels are used for attitude control
- - The reaction wheels must be added in the order of the body-frame axes, i.e. 1-2-3
- - Currently, the prediction and update rates occur at the same frequency
+ - The spacecraft's attitude and rate are perfectly known
  - The small body's position and velocity in the inertial frame are perfectly known
  - Please refer to the cited works for specific assumptions about the filter dynamics
  - The matrix :math:`H_{k+1}` is identity
@@ -235,8 +218,6 @@ The user then must set the following module variables:
 
 - ``A_sc``, the area of the spacecraft in :math:`\text{m}^2`
 - ``M_sc``, the mass of the spacecraft in kg
-- ``IHubPntC_B``, the inertia of the spacecraft
-- ``IWheelPntC_B``, the inertia of the reaction wheels
 - ``mu_ast``, the gravitational constant of the small body in :math:`\text{m}^3/\text{s}^2`
 - ``Q``, the process noise covariances
 - ``R``, the measurement noise covariance
@@ -244,5 +225,4 @@ The user then must set the following module variables:
 - ``P_k`` to initialize :math:`P_0`
 
 
-The user must connect to each input message described in Table 1. While the `rwInMsgs` and `thrusterInMsgs` are optional, BSK
-will throw a warning if they are not connected.
+The user must connect to each input message described in Table 1.
