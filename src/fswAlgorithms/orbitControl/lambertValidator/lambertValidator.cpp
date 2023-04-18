@@ -69,6 +69,54 @@ void LambertValidator::Reset(uint64_t currentSimNanos)
 */
 void LambertValidator::UpdateState(uint64_t currentSimNanos)
 {
+    // read messages
+    this->readMessages();
+
+    // initial state vector
+    Eigen::VectorXd X0(this->r_N.rows()+this->v_N.rows(), this->r_N.cols());
+    X0 << this->r_N,
+            this->v_N;
+
+    // equations of motion (assuming two body point mass gravity)
+    this->EOM_2BP = [this](double t, Eigen::VectorXd state)
+    {
+        Eigen::VectorXd stateDerivative(state.size());
+
+        stateDerivative.segment(0,3) = state.segment(3, 3);
+        stateDerivative.segment(3, 3) = -this->mu/(pow(state.head(3).norm(),3)) * state.head(3);
+
+        return stateDerivative;
+    };
+
+    // propagate to obtain expected position at maneuver time
+    std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> states = this->propagate(
+            this->EOM_2BP,
+            {this->time, this->maneuverTime},
+            X0,
+            10);
+    std::vector<Eigen::VectorXd> X = states.second;
+    Eigen::VectorXd Xm = X.back();
+    this->rm_N = Xm.head(3);
+    this->vm_N = Xm.tail(3);
+
+    // compute required Delta-V vector
+    this->dv_N = this->vLambert_N - this->vm_N;
+
+    // only propagate the perturbed initial states if Lambert solution is valid in order to safe computation effort
+    if (validLambert == 1) {
+        std::array<Eigen::VectorXd, NUM_INITIALSTATES> initialStates = this->getInitialStates();
+        // check if any of the perturbed initial states violates the given constraints
+        this->countViolations(initialStates);
+    }
+
+    // write messages
+    this->writeMessages(currentSimNanos);
+
+    /* update information about previous time step.
+       Delta-V vector corresponds to computed Delta-V vector, not the commanded Delta-V written to the message
+       (which is zeroed if constraints are violated) */
+    this->prevLambertSolutionX = this->xLambert;
+    this->prevDv_N = this->dv_N;
 }
 
 /*! This method reads the input messages each call of updateState.
