@@ -42,6 +42,10 @@ Version |release|
   then Vizard 2.1.5 or newer should be used.  This also removes the need for the legacy bincrafters code repo.
   Delete ``~/.conan`` folder if you run into ``conan`` issues.
 - The Basilisk project C++ version is advanced from C++11 to C++17
+- Disabled the following build options in the conan included OpenCV dependency; with_ffmpeg video frame encoding lib,
+  with_ade graph manipulations framework, with_tiff generate image in TIFF format, with_openexr generate image in EXR
+  format, with_quirc QR code lib. Users that have Basilisk control the build of these modules through the External
+  Modules CMake integration will need to manual toggle these OpenCV build options.
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------
