@@ -49,6 +49,7 @@ Version |release|
 - Updated :ref:`SmallBodyNavEKF` with several bug fixes. Removed spacecraft attitude estimation component.
 - Bug fix made to :ref:`eclipse`: Saturn, Jupiter, Uranus, and Neptune radii were incorrectly being assigned the 
   radius of Mars. 
+- Added custom planet name to :ref:`eclipse` in case the user wants to use a body not contained within the module.
 
 
 Version 2.1.7 (March 24, 2023)
