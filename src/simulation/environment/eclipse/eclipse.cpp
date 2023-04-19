@@ -276,13 +276,13 @@ double Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName)
     } else if (planetSpiceName == "mars") {
         return REQ_MARS*1000.0;
     } else if (planetSpiceName == "jupiter barycenter") {
-        return REQ_MARS*1000.0;
+        return REQ_JUPITER*1000.0;
     } else if (planetSpiceName == "saturn") {
-        return REQ_MARS*1000.0;
+        return REQ_SATURN*1000.0;
     } else if (planetSpiceName == "uranus") {
-        return REQ_MARS*1000.0;
+        return REQ_URANUS*1000.0;
     } else if (planetSpiceName == "neptune") {
-        return REQ_MARS*1000.0;
+        return REQ_NEPTUNE*1000.0;
     } else {
         bskLogger.bskLog(BSK_ERROR, "Eclipse: unrecognized planetSpiceName.");
         return 1.0;
