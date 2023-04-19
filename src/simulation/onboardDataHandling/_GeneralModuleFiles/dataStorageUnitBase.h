@@ -61,6 +61,7 @@ public:
     Message<DataStorageStatusMsgPayload> storageUnitDataOutMsg; //!< Vector of message names to be written out by the storage unit
     double storageCapacity; //!< Storage capacity of the storage unit
     BSKLogger bskLogger;    //!< logging variable
+    bool useNameIndex = false;  //!< Flag denoting whether or not to use the data name as the index
 
 protected:
     DataStorageStatusMsgPayload storageStatusMsg; //!< class variable
