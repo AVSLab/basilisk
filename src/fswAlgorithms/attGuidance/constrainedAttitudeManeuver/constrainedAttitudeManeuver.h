@@ -113,7 +113,7 @@ public:
 
 public:
     int N;                                                                          //!< Fineness level of discretization
-    int BSplineType;                                                                //!< 0 for interpolation; 1 for LS approximation
+    int BSplineType;                                                                //!< 0 for interpolation; 1 for LS approximation, 2 for LS approximation w/ constrained 1st derivatives
     int costFcnType;                                                                //!< 0 for minimum distance path; 1 for minimum control effort path
     double sigma_BN_goal[3];                                                        //!< Initial S/C attitude
     double omega_BN_B_goal[3];                                                      //!< Initial S/C angular rate

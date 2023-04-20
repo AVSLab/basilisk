@@ -721,6 +721,15 @@ void ConstrainedAttitudeManeuver::spline()
 	else if (this->BSplineType == 1) {
 		approximate(this->Input, 100, (int) this->Input.X1.size(), 4, &this->Output);  // review
 	}
+    // else if (this->BSplineType == 2) {
+        // implement equation (34) for central finite differences to compute X_hat_prime
+
+        // implement equation (36) correcting finite differences scaling by (this->avgOmega * this->Input.T[end])
+
+        // this->Input.setLS_Dot( )
+
+        // approximate(this->Input, 100, (int) this->Input.X1.size(), 4, &this->Output);
+    // }
 	else {
 		bskLogger.bskLog(BSK_ERROR, "ConstraintAttitudeManeuver: BSplineType has not been specified.");
 	}
