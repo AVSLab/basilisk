@@ -37,6 +37,9 @@
 #define kTph 2              // ejected electron thermal energy [eV]
 #define Tsee 5              // secondary electron emission temperature [eV]
 #define Tb 5                // backscattering electron temperature [eV]
+#define alphaEB 1           // expansion and deflection of electron beam coefficient
+#define IEB 2               // current due to electron beam [mA]
+#define EEB 30              // energy of electron beam [keV]
 
 /*! @brief This module computes the equilibrium electric potential of any spacecaft that are added to the module
  */
@@ -61,6 +64,9 @@ private:
     double SEEionCurrent(double phi, double A);
     double backscatteringCurrent(double phi, double A);
     double photoelectricCurrent(double phi, double A);
+    double electronBeamCurrent(double phiS, double phiT, double A, std::string craftType);
+    double SEEelectronBeamCurrent(double phi, double A);
+    double electronBeamBackscattering(double phi, double A);
     double interp(Eigen::VectorXd& xVector, Eigen::VectorXd& yVector, double x);
     double trapz(std::function< double(double) >& f, double a, double b, int N);
     double getFlux(double E, std::string particleType);

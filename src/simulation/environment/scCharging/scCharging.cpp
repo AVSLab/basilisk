@@ -359,6 +359,41 @@ double ScCharging::photoelectricCurrent(double phi, double A)
     return Ip;
 }
 
+
+double ScCharging::electronBeamCurrent(double phiS, double phiT, double A, std::string craftType)
+{
+    double IEBs;    // current in servicer due to electron beam
+    double IEBt;    // current in target due to electron beam
+    
+    // find respective craft type's current due to electron beam
+    if (craftType == "servicer"){   // servicer current
+        if (EEB > (phiS - phiT)){
+            IEBs = IEB;
+        } else if (EEB <= (phiS - phiT)){
+            IEBs = 0;
+        } else {
+            bskLogger.bskLog(BSK_ERROR, "ScCharging.electronBeamCurrent: EEB not a real number");
+            IEBs = NAN;
+        }
+        return IEBs;
+    } else if (craftType == "target"){  // target current
+        if (EEB > (phiS - phiT)){
+            IEBt = -alphaEB * IEB;
+        } else if (EEB <= (phiS - phiT)){
+            IEBt = 0;
+        } else {
+            bskLogger.bskLog(BSK_ERROR, "ScCharging.electronBeamCurrent: EEB not a real number");
+            IEBt = NAN;
+        }
+        return IEBt;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "ScCharging.electronBeamCurrent: incorrect craftType."
+                         "Must specify 'servicer' or 'target'");
+        return NAN;
+    }
+}
+
+
 /*!  This function takes in a given vector of data and an x-value and performs linear interpolation to find the closest corresponding y-value
  @return double
  @param data vector containing datapoints to use in linear interpolation (y-values)
@@ -369,7 +404,7 @@ double ScCharging::interp(Eigen::VectorXd& xVector, Eigen::VectorXd& yVector, do
     // find the index corresponding to the first element in xVector that is greater than x
     // (assumes xVector is sorted)
     int idx1 = -1; // initialize as -1 (if no index can be found)
-    for (int c=0; c < xVector.size(); c++){
+    for (int c = 0; c < xVector.size(); c++){
         if (xVector[c] > x){
             idx1 = c;
             break;
