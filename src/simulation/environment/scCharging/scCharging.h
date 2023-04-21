@@ -64,9 +64,9 @@ private:
     double SEEionCurrent(double phi, double A);
     double backscatteringCurrent(double phi, double A);
     double photoelectricCurrent(double phi, double A);
-    double electronBeamCurrent(double phiS, double phiT, double A, std::string craftType);
-    double SEEelectronBeamCurrent(double phi, double A);
-    double electronBeamBackscattering(double phi, double A);
+    double electronBeamCurrent(double phiS, double phiT, std::string craftType);
+    double SEEelectronBeamCurrent(double phiS, double phiT);
+    double electronBeamBackscattering(double phiS, double phiT);
     double interp(Eigen::VectorXd& xVector, Eigen::VectorXd& yVector, double x);
     double trapz(std::function< double(double) >& f, double a, double b, int N);
     double getFlux(double E, std::string particleType);
@@ -84,6 +84,9 @@ public:
     Eigen::VectorXd yieldSEEelectron;                           //! < SEE yield (electron)
     Eigen::VectorXd yieldSEEion;                                //! < SEE yield (ion)
     Eigen::VectorXd yieldBackscattered;                         //! < SEE yield (backscatter)
+    
+    double IEBs = NAN;                                          //! < current due to electron beam in servicer
+    double IEBt = NAN;                                          //! < current due to electron beam in target
 
 // private variables
 private:

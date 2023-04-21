@@ -85,6 +85,7 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     // sum currents
     std::function<double(double)> sumCurrents = [this, A](double phi)-> double
     {
+        // target sum
         return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A) + photoelectricCurrent(phi, A);
     };
     
@@ -93,19 +94,30 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     std::cout << "Equilibrium: " << std::setprecision(10) << equilibrium << std::endl;
     
     // debugging
-    double phi = -26297.2901751303;
-    double Ie = electronCurrent(phi, A);
+    double phiT = -26297.2901751303;
+    double phiS = -26300.0;
+    double Ie = electronCurrent(phiT, A);
     std::cout << "Ie: " << Ie << std::endl;
-    double Ii = ionCurrent(phi, A);
+    double Ii = ionCurrent(phiT, A);
     std::cout << "Ii: " << Ii << std::endl;
-    double Iseee = SEEelectronCurrent(phi, A);
+    double Iseee = SEEelectronCurrent(phiT, A);
     std::cout << "Iseee: " << Iseee << std::endl;
-    double Iseei = SEEionCurrent(phi, A);
+    double Iseei = SEEionCurrent(phiT, A);
     std::cout << "Iseei: " << Iseei << std::endl;
-    double Ibs = backscatteringCurrent(phi, A);
+    double Ibs = backscatteringCurrent(phiT, A);
     std::cout << "Ibs: " << Ibs << std::endl;
-    double Ip = photoelectricCurrent(phi, A);
+    double Ip = photoelectricCurrent(phiT, A);
     std::cout << "Ip: " << Ip << std::endl;
+    electronBeamCurrent(phiS, phiT, "servicer");
+    electronBeamCurrent(phiS, phiT, "target");
+    std::cout << "IEBs: " << IEBs << std::endl;
+    std::cout << "IEBt: " << IEBt << std::endl;
+    double SEEEB = SEEelectronBeamCurrent(phiS, phiT);
+    std::cout << "SEEEB: " << SEEEB << std::endl;
+    double IbsEB = electronBeamBackscattering(phiS, phiT);
+    std::cout << "IbsEB: " << IbsEB << std::endl;
+    
+    
     
     // create output messages
     VoltMsgPayload voltMsgBuffer;  //!< [] voltage out message buffer
@@ -360,17 +372,14 @@ double ScCharging::photoelectricCurrent(double phi, double A)
 }
 
 
-double ScCharging::electronBeamCurrent(double phiS, double phiT, double A, std::string craftType)
+double ScCharging::electronBeamCurrent(double phiS, double phiT, std::string craftType)
 {
-    double IEBs;    // current in servicer due to electron beam
-    double IEBt;    // current in target due to electron beam
-    
     // find respective craft type's current due to electron beam
     if (craftType == "servicer"){   // servicer current
         if (EEB > (phiS - phiT)){
             IEBs = IEB;
         } else if (EEB <= (phiS - phiT)){
-            IEBs = 0;
+            IEBs = 0.;
         } else {
             bskLogger.bskLog(BSK_ERROR, "ScCharging.electronBeamCurrent: EEB not a real number");
             IEBs = NAN;
@@ -380,7 +389,7 @@ double ScCharging::electronBeamCurrent(double phiS, double phiT, double A, std::
         if (EEB > (phiS - phiT)){
             IEBt = -alphaEB * IEB;
         } else if (EEB <= (phiS - phiT)){
-            IEBt = 0;
+            IEBt = 0.;
         } else {
             bskLogger.bskLog(BSK_ERROR, "ScCharging.electronBeamCurrent: EEB not a real number");
             IEBt = NAN;
@@ -393,6 +402,21 @@ double ScCharging::electronBeamCurrent(double phiS, double phiT, double A, std::
     }
 }
 
+double ScCharging::SEEelectronBeamCurrent(double phiS, double phiT)
+{
+    double Eeff = EEB - phiS + phiT;
+    std::cout << "SEEB Eeff: " << Eeff << std::endl;
+    double ISEEEB = getYield(Eeff, "electron") * IEBt;
+    return ISEEEB;
+}
+
+double ScCharging::electronBeamBackscattering(double phiS, double phiT)
+{
+    double Eeff = EEB - phiS + phiT;
+    std::cout << "bs Eeff: " << Eeff << std::endl;
+    double IbsEB = getYield(Eeff, "backscattered") * IEBt;
+    return IbsEB;
+}
 
 /*!  This function takes in a given vector of data and an x-value and performs linear interpolation to find the closest corresponding y-value
  @return double
