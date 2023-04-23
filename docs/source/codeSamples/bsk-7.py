@@ -50,6 +50,7 @@ def run():
     # create stand-alone message with a C interface and re-direct
     # the C module output message writing to this stand-alone message
     cMsg = messaging.CModuleTemplateMsg_C()
+    cMsg.write(messaging.CModuleTemplateMsgPayload())
     messaging.CModuleTemplateMsg_C_addAuthor(mod1.dataOutMsg, cMsg)
 
     # create stand-along message with a C++ interface and re-direct
