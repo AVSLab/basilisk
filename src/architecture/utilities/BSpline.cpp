@@ -85,7 +85,7 @@ void InputDataSet::setW(Eigen::VectorXd W) {this->W = W; this->W_flag = true; re
 /*! Set LS_dot to true which means first derivative LS approximation occurs (optional) */
 void InputDataSet::setLS_Dot() {this->LS_Dot = true; return;}
 
-void InputDataSet::setX_primes(Eigen::VectorXd X1_prime, Eigen::VectorXd X2_prime, Eigen::VectorXd X3_prime) {this->X_prov = true; this->X1_prime = X1_prime;this->X2_prime = X2_prime;this->X3_prime = X3_prime; return;};
+void InputDataSet::setX_primes(Eigen::VectorXd X1_prime, Eigen::VectorXd X2_prime, Eigen::VectorXd X3_prime) {this->X_prov = true; this->X1_prime = X1_prime;this->X2_prime = X2_prime;this->X3_prime = X3_prime;this->LS_Dot = true;return;};
 
 /*! This constructor initializes an Output structure for BSpline interpolation */
 OutputDataSet::OutputDataSet()
@@ -734,8 +734,8 @@ void approximate(InputDataSet Input, int Num, int n, int P, OutputDataSet *Outpu
     
     // LS approximation with first derivative constraint
     else {
-    // new ND matrix is twice as large, will have to superimpose the previous ND matrix on this one
-    Eigen::MatrixXd ND_2(2*q-2,n-K-1);
+        // new ND matrix is twice as large, will have to superimpose the previous ND matrix on this one
+        Eigen::MatrixXd ND_2(2*q-2,n-K-1);
         
         for (int d=0; d<q-1;d++) {
             basisFunction(uk[1+d], U, n+1, P, &NN[0], &NN1[0], &NN2[0]);
