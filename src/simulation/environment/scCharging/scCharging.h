@@ -28,6 +28,7 @@
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/PlasmaFluxMsgPayload.h"
 #include "architecture/msgPayloadDefC/VoltMsgPayload.h"
+#include "simulation/environment/scCharging/chargedSpaceCraft.h"
 #include <vector>
 #include <Eigen/Dense>
 

@@ -26,7 +26,6 @@
 #include <fstream>
 #include <math.h>
 #include <algorithm>
-#include <vector>
 #include <string>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -94,28 +93,33 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     std::cout << "Equilibrium: " << std::setprecision(10) << equilibrium << std::endl;
     
     // debugging
-    double phiT = -26297.2901751303;
-    double phiS = -26300.0;
-    double Ie = electronCurrent(phiT, A);
-    std::cout << "Ie: " << Ie << std::endl;
-    double Ii = ionCurrent(phiT, A);
-    std::cout << "Ii: " << Ii << std::endl;
-    double Iseee = SEEelectronCurrent(phiT, A);
-    std::cout << "Iseee: " << Iseee << std::endl;
-    double Iseei = SEEionCurrent(phiT, A);
-    std::cout << "Iseei: " << Iseei << std::endl;
-    double Ibs = backscatteringCurrent(phiT, A);
-    std::cout << "Ibs: " << Ibs << std::endl;
-    double Ip = photoelectricCurrent(phiT, A);
-    std::cout << "Ip: " << Ip << std::endl;
-    electronBeamCurrent(phiS, phiT, "servicer");
-    electronBeamCurrent(phiS, phiT, "target");
-    std::cout << "IEBs: " << IEBs << std::endl;
-    std::cout << "IEBt: " << IEBt << std::endl;
-    double SEEEB = SEEelectronBeamCurrent(phiS, phiT);
-    std::cout << "SEEEB: " << SEEEB << std::endl;
-    double IbsEB = electronBeamBackscattering(phiS, phiT);
-    std::cout << "IbsEB: " << IbsEB << std::endl;
+//    double phiT = -26297.2901751303;
+//    double phiS = -26300.0;
+//    double Ie = electronCurrent(phiT, A);
+//    std::cout << "Ie: " << Ie << std::endl;
+//    double Ii = ionCurrent(phiT, A);
+//    std::cout << "Ii: " << Ii << std::endl;
+//    double Iseee = SEEelectronCurrent(phiT, A);
+//    std::cout << "Iseee: " << Iseee << std::endl;
+//    double Iseei = SEEionCurrent(phiT, A);
+//    std::cout << "Iseei: " << Iseei << std::endl;
+//    double Ibs = backscatteringCurrent(phiT, A);
+//    std::cout << "Ibs: " << Ibs << std::endl;
+//    double Ip = photoelectricCurrent(phiT, A);
+//    std::cout << "Ip: " << Ip << std::endl;
+//    electronBeamCurrent(phiS, phiT, "servicer");
+//    electronBeamCurrent(phiS, phiT, "target");
+//    std::cout << "IEBs: " << IEBs << std::endl;
+//    std::cout << "IEBt: " << IEBt << std::endl;
+//    double SEEEB = SEEelectronBeamCurrent(phiS, phiT);
+//    std::cout << "SEEEB: " << SEEEB << std::endl;
+//    double IbsEB = electronBeamBackscattering(phiS, phiT);
+//    std::cout << "IbsEB: " << IbsEB << std::endl;
+    
+    // chargedSpaceCraft testing
+    chargedSpaceCraft testCraft1;
+    testCraft1.A = A;
+    std::cout << testCraft1.A << std::endl;
     
     
     
