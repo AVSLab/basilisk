@@ -93,28 +93,32 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     std::cout << "Equilibrium: " << std::setprecision(10) << equilibrium << std::endl;
     
     // debugging
-//    double phiT = -26297.2901751303;
-//    double phiS = -26300.0;
-//    double Ie = electronCurrent(phiT, A);
-//    std::cout << "Ie: " << Ie << std::endl;
-//    double Ii = ionCurrent(phiT, A);
-//    std::cout << "Ii: " << Ii << std::endl;
-//    double Iseee = SEEelectronCurrent(phiT, A);
-//    std::cout << "Iseee: " << Iseee << std::endl;
-//    double Iseei = SEEionCurrent(phiT, A);
-//    std::cout << "Iseei: " << Iseei << std::endl;
-//    double Ibs = backscatteringCurrent(phiT, A);
-//    std::cout << "Ibs: " << Ibs << std::endl;
-//    double Ip = photoelectricCurrent(phiT, A);
-//    std::cout << "Ip: " << Ip << std::endl;
-//    electronBeamCurrent(phiS, phiT, "servicer");
-//    electronBeamCurrent(phiS, phiT, "target");
-//    std::cout << "IEBs: " << IEBs << std::endl;
-//    std::cout << "IEBt: " << IEBt << std::endl;
-//    double SEEEB = SEEelectronBeamCurrent(phiS, phiT);
-//    std::cout << "SEEEB: " << SEEEB << std::endl;
-//    double IbsEB = electronBeamBackscattering(phiS, phiT);
-//    std::cout << "IbsEB: " << IbsEB << std::endl;
+    double phiT = -26297.2901751303;
+    double phiS = -26300.0;
+    double alphaEB = 1;
+    double IEB = 2;
+    double EEB = 30;
+    
+    double Ie = electronCurrent(phiT, A);
+    std::cout << "Ie: " << Ie << std::endl;
+    double Ii = ionCurrent(phiT, A);
+    std::cout << "Ii: " << Ii << std::endl;
+    double Iseee = SEEelectronCurrent(phiT, A);
+    std::cout << "Iseee: " << Iseee << std::endl;
+    double Iseei = SEEionCurrent(phiT, A);
+    std::cout << "Iseei: " << Iseei << std::endl;
+    double Ibs = backscatteringCurrent(phiT, A);
+    std::cout << "Ibs: " << Ibs << std::endl;
+    double Ip = photoelectricCurrent(phiT, A);
+    std::cout << "Ip: " << Ip << std::endl;
+    double IEBs = electronBeamCurrent(phiS, phiT, "servicer", EEB, IEB, alphaEB);
+    double IEBt = electronBeamCurrent(phiS, phiT, "target", EEB, IEB, alphaEB);
+    std::cout << "IEBs: " << IEBs << std::endl;
+    std::cout << "IEBt: " << IEBt << std::endl;
+    double SEEEB = SEEelectronBeamCurrent(phiS, phiT, EEB, IEB, alphaEB);
+    std::cout << "SEEEB: " << SEEEB << std::endl;
+    double IbsEB = electronBeamBackscattering(phiS, phiT, EEB, IEB, alphaEB);
+    std::cout << "IbsEB: " << IbsEB << std::endl;
     
     // chargedSpaceCraft testing
     chargedSpaceCraft testCraft1;
@@ -376,8 +380,9 @@ double ScCharging::photoelectricCurrent(double phi, double A)
 }
 
 
-double ScCharging::electronBeamCurrent(double phiS, double phiT, std::string craftType)
+double ScCharging::electronBeamCurrent(double phiS, double phiT, std::string craftType, double EEB, double IEB, double alphaEB)
 {
+    double IEBs, IEBt;
     // find respective craft type's current due to electron beam
     if (craftType == "servicer"){   // servicer current
         if (EEB > (phiS - phiT)){
@@ -406,19 +411,19 @@ double ScCharging::electronBeamCurrent(double phiS, double phiT, std::string cra
     }
 }
 
-double ScCharging::SEEelectronBeamCurrent(double phiS, double phiT)
+double ScCharging::SEEelectronBeamCurrent(double phiS, double phiT, double EEB, double IEB, double alphaEB)
 {
     double Eeff = EEB - phiS + phiT;
     std::cout << "SEEB Eeff: " << Eeff << std::endl;
-    double ISEEEB = getYield(Eeff, "electron") * IEBt;
+    double ISEEEB = getYield(Eeff, "electron") * electronBeamCurrent(phiS, phiT, "target", EEB, IEB, alphaEB);
     return ISEEEB;
 }
 
-double ScCharging::electronBeamBackscattering(double phiS, double phiT)
+double ScCharging::electronBeamBackscattering(double phiS, double phiT, double EEB, double IEB, double alphaEB)
 {
     double Eeff = EEB - phiS + phiT;
     std::cout << "bs Eeff: " << Eeff << std::endl;
-    double IbsEB = getYield(Eeff, "backscattered") * IEBt;
+    double IbsEB = getYield(Eeff, "backscattered") * electronBeamCurrent(phiS, phiT, "target", EEB, IEB, alphaEB);
     return IbsEB;
 }
 
