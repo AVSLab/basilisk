@@ -719,17 +719,96 @@ void ConstrainedAttitudeManeuver::spline()
 		interpolate(this->Input, 100, 4, &this->Output);
 	}
 	else if (this->BSplineType == 1) {
-		approximate(this->Input, 100, (int) this->Input.X1.size(), 4, &this->Output);  // review
+		approximate(this->Input, 100, (int) this->Input.X1.size()+2, 4, &this->Output);  // review
 	}
-    // else if (this->BSplineType == 2) {
+    else if (this->BSplineType == 2) {
+        
+        // q = number of waypoints - 1
+        int q = int(this->Input.X1.size()-1);
+        
+        // build uk vector: normalized waypoint time tags
+        Eigen::VectorXd uk(q+1);
+    
+        // Access time vector
+        Eigen::VectorXd T = this->Input.T;
+        
+        // Obtain total time
+        double Ttot = double(this->Input.T[q]);
+                
+
+        // Normalized time vector
+        for (int c = 0; c < q+1; c++) {
+            uk[c] = T[c] / Ttot;
+        }
+        
+        // Attitudes
+        Eigen::VectorXd X1 = this->Input.X1;
+        Eigen::VectorXd X2 = this->Input.X2;
+        Eigen::VectorXd X3 = this->Input.X3;
+
         // implement equation (34) for central finite differences to compute X_hat_prime
-
+        Eigen::VectorXd X1_primehat(q+1);
+        Eigen::VectorXd X2_primehat(q+1);
+        Eigen::VectorXd X3_primehat(q+1);
+        
+        
+        int index = 0;
+        
+        for (int k = 1;k<q;k++) {
+            X1_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(X1[k]-X1[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(X1[k+1]-X1[k])/(uk[k+1]-uk[k]);
+            X2_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(X2[k]-X2[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(X2[k+1]-X2[k])/(uk[k+1]-uk[k]);
+            X3_primehat[index] = (uk[k+1]-uk[k])/(uk[k+1]-uk[k-1])*(X3[k]-X3[k-1])/(uk[k]-uk[k-1])+(uk[k]-uk[k-1])/(uk[k+1]-uk[k-1])*(X3[k+1]-X3[k])/(uk[k+1]-uk[k]);
+            index++;
+        }
+            
         // implement equation (36) correcting finite differences scaling by (this->avgOmega * this->Input.T[end])
+        
+        Eigen::VectorXd X1_prime(q+1);
+        Eigen::VectorXd X2_prime(q+1);
+        Eigen::VectorXd X3_prime(q+1);
+        
+        // Set Initial Derivative
+        X1_prime[0] = sDot_s[0];
+        X2_prime[0] = sDot_s[1];
+        X3_prime[0] = sDot_s[2];
+        
+        // Set Final Derivative
+        X1_prime[q] = sDot_g[0];
+        X2_prime[q] = sDot_g[1];
+        X3_prime[q] = sDot_g[2];
+    
 
-        // this->Input.setLS_Dot( )
+        for (int k = 1;k<q;k++) {
+            
+            // prime magnitudes
+            double mag_prime = pow(double(X1_primehat[k]),2.0)+pow(double(X2_primehat[k]),2.0)+pow(double(X3_primehat[k]),2.0);
+            mag_prime = pow(mag_prime,0.5);
+            mag_prime = abs((mag_prime));
+            
+            // attitude magnitudes
+            double mag_att = pow(double(X1[k]),2.0)+pow(double(X2[k]),2.0)+pow(double(X3[k]),2.0);
+            mag_att= pow(mag_att,0.5);
+            mag_att = abs((mag_att));
+            
+            
+            double temp;
+            if (mag_prime != 0) {
+                temp = (this->avgOmega)*Ttot/mag_prime*(1+pow(mag_att,2))/4;
+            }
+            else {
+                temp = 0;
+            }
+            X1_prime[k] = X1_primehat[k]*temp;
+            X2_prime[k] = X2_primehat[k]*temp;
+            X3_prime[k] = X3_primehat[k]*temp;
+        }
+        
+        
+        this->Input.setX_primes(X1_prime,X2_prime,X3_prime);
 
-        // approximate(this->Input, 100, (int) this->Input.X1.size(), 4, &this->Output);
-    // }
+        approximate(this->Input, 100, (int) this->Input.X1.size()+2, 4, &this->Output);
+     }
+    
 	else {
 		bskLogger.bskLog(BSK_ERROR, "ConstraintAttitudeManeuver: BSplineType has not been specified.");
 	}
