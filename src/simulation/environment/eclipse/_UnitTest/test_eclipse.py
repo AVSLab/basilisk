@@ -236,9 +236,9 @@ def unitEclipse(show_plots, eclipseCondition, planet):
 
     eclipseObject = eclipse.Eclipse()
     eclipseObject.addSpacecraftToModel(scObject_0.scStateOutMsg)
-    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[0])   # earth
-    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[1])   # mars
     eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[3])   # venus
+    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[1])   # mars
+    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[0])   # earth
     eclipseObject.sunInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[2])   # sun
 
     unitTestSim.AddModelToTask(testTaskName, eclipseObject)
