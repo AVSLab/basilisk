@@ -78,62 +78,80 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     this->readMessages();
     
     // define area and interval
-    double A = 12.566370614359172;
+    double a = 12.566370614359172;
     double interval [2] = {-1e8, 1e8};
     
     // sum currents
-    std::function<double(double)> sumCurrents = [this, A](double phi)-> double
+    std::function<double(double)> sumCurrents1 = [this, a](double phi)-> double
     {
-        // target sum
-        return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A) + photoelectricCurrent(phi, A);
+        return electronCurrent(phi, a) + ionCurrent(phi, a) + SEEelectronCurrent(phi, a) + SEEionCurrent(phi, a) + backscatteringCurrent(phi, a) + photoelectricCurrent(phi, a);
     };
-    
-    // find root
-    double equilibrium = bisectionSolve(interval, 1e-8, sumCurrents);
-    std::cout << "Equilibrium: " << std::setprecision(10) << equilibrium << std::endl;
+
+//    // find root
+    double equilibrium1 = bisectionSolve(interval, 1e-8, sumCurrents1);
+    std::cout << "Equilibrium1 : " << std::setprecision(10) << equilibrium1 << std::endl;
+
     
     // debugging
-    double phiT = -26297.2901751303;
-    double phiS = -26300.0;
-    double alphaEB = 1;
-    double IEB = 2;
-    double EEB = 30;
+//    double phiT = -26297.2901751303;
+//    double phiS = -26300.0;
+//    double alphaEB = 1;
+//    double IEB = 2;
+//    double EEB = 30;
     
-    double Ie = electronCurrent(phiT, A);
-    std::cout << "Ie: " << Ie << std::endl;
-    double Ii = ionCurrent(phiT, A);
-    std::cout << "Ii: " << Ii << std::endl;
-    double Iseee = SEEelectronCurrent(phiT, A);
-    std::cout << "Iseee: " << Iseee << std::endl;
-    double Iseei = SEEionCurrent(phiT, A);
-    std::cout << "Iseei: " << Iseei << std::endl;
-    double Ibs = backscatteringCurrent(phiT, A);
-    std::cout << "Ibs: " << Ibs << std::endl;
-    double Ip = photoelectricCurrent(phiT, A);
-    std::cout << "Ip: " << Ip << std::endl;
-    double IEBs = electronBeamCurrent(phiS, phiT, "servicer", EEB, IEB, alphaEB);
-    double IEBt = electronBeamCurrent(phiS, phiT, "target", EEB, IEB, alphaEB);
-    std::cout << "IEBs: " << IEBs << std::endl;
-    std::cout << "IEBt: " << IEBt << std::endl;
-    double SEEEB = SEEelectronBeamCurrent(phiS, phiT, EEB, IEB, alphaEB);
-    std::cout << "SEEEB: " << SEEEB << std::endl;
-    double IbsEB = electronBeamBackscattering(phiS, phiT, EEB, IEB, alphaEB);
-    std::cout << "IbsEB: " << IbsEB << std::endl;
+//    double Ie = electronCurrent(phiT, A);
+//    std::cout << "Ie: " << Ie << std::endl;
+//    double Ii = ionCurrent(phiT, A);
+//    std::cout << "Ii: " << Ii << std::endl;
+//    double Iseee = SEEelectronCurrent(phiT, A);
+//    std::cout << "Iseee: " << Iseee << std::endl;
+//    double Iseei = SEEionCurrent(phiT, A);
+//    std::cout << "Iseei: " << Iseei << std::endl;
+//    double Ibs = backscatteringCurrent(phiT, A);
+//    std::cout << "Ibs: " << Ibs << std::endl;
+//    double Ip = photoelectricCurrent(phiT, A);
+//    std::cout << "Ip: " << Ip << std::endl;
+//    double IEBs = electronBeamCurrent(phiS, phiT, "servicer", EEB, IEB, alphaEB);
+//    double IEBt = electronBeamCurrent(phiS, phiT, "target", EEB, IEB, alphaEB);
+//    std::cout << "IEBs: " << IEBs << std::endl;
+//    std::cout << "IEBt: " << IEBt << std::endl;
+//    double SEEEB = SEEelectronBeamCurrent(phiS, phiT, EEB, IEB, alphaEB);
+//    std::cout << "SEEEB: " << SEEEB << std::endl;
+//    double IbsEB = electronBeamBackscattering(phiS, phiT, EEB, IEB, alphaEB);
+//    std::cout << "IbsEB: " << IbsEB << std::endl;
     
     // chargedSpaceCraft testing
-    chargedSpaceCraft testCraft1;
-    testCraft1.A = A;
-    std::cout << testCraft1.A << std::endl;
+    chargedSpaceCraft spaceCrafts[this->numSat];
     
+    spaceCrafts[0].name = "testCraft1";
+    spaceCrafts[0].ID = 1;
+    spaceCrafts[0].A = a;
+    spaceCrafts[0].A_sunlit = a/2;
     
+    spaceCrafts[1].name = "testCraft2";
+    spaceCrafts[1].ID = 2;
+    spaceCrafts[1].A = a*10;
+    spaceCrafts[1].A_sunlit = a;
     
     // create output messages
     VoltMsgPayload voltMsgBuffer;  //!< [] voltage out message buffer
     // loop over all satellites
-    for (long unsigned int c=0; c < this->numSat; c++) {
+    for (long unsigned int c = 0; c < this->numSat; c++) {
         // store voltage of each spacecraft
         voltMsgBuffer.voltage = -1000;
         this->voltOutMsgs.at(c)->write(&voltMsgBuffer, this->moduleID, CurrentSimNanos);
+        
+        // testing
+        double equilibriums[this->numSat];
+        double A = spaceCrafts[c].A;
+        double A_sunlit = spaceCrafts[c].A_sunlit;
+        
+        std::function<double(double)> sumCurrents = [&](double phi)-> double
+        {
+            return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A) + photoelectricCurrent(phi, A_sunlit);
+        };
+        equilibriums[c] = bisectionSolve(interval, 1e-8, sumCurrents);
+        std::cout << spaceCrafts[c].name << " equilibrium: " << equilibriums[c] << std::endl;
     }
 }
 

@@ -35,6 +35,7 @@ public:
     int priority;                           //! < value assigning order in which spacecraft equilibrium potential is calculated
     
     double A;                               //! < surface area of spacecraft
+    double A_sunlit;                        //! < surface area of spacecraft used in photoelectric current
 // private variables
 private:
     
