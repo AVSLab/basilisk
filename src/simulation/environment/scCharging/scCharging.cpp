@@ -82,14 +82,14 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     double interval [2] = {-1e8, 1e8};
     
     // sum currents
-    std::function<double(double)> sumCurrents1 = [this, a](double phi)-> double
-    {
-        return electronCurrent(phi, a) + ionCurrent(phi, a) + SEEelectronCurrent(phi, a) + SEEionCurrent(phi, a) + backscatteringCurrent(phi, a) + photoelectricCurrent(phi, a);
-    };
+//    std::function<double(double)> sumCurrents1 = [this, a](double phi)-> double
+//    {
+//        return electronCurrent(phi, a) + ionCurrent(phi, a) + SEEelectronCurrent(phi, a) + SEEionCurrent(phi, a) + backscatteringCurrent(phi, a) + photoelectricCurrent(phi, a);
+//    };
 
 //    // find root
-    double equilibrium1 = bisectionSolve(interval, 1e-8, sumCurrents1);
-    std::cout << "Equilibrium1 : " << std::setprecision(10) << equilibrium1 << std::endl;
+//    double equilibrium1 = bisectionSolve(interval, 1e-8, sumCurrents1);
+//    std::cout << "Equilibrium1 : " << std::setprecision(10) << equilibrium1 << std::endl;
 
     
     // debugging
@@ -125,13 +125,41 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     
     spaceCrafts[0].name = "testCraft1";
     spaceCrafts[0].ID = 1;
+    spaceCrafts[0].priority = 1;
     spaceCrafts[0].A = a;
     spaceCrafts[0].A_sunlit = a/2;
     
     spaceCrafts[1].name = "testCraft2";
     spaceCrafts[1].ID = 2;
+    spaceCrafts[1].priority = 2;
     spaceCrafts[1].A = a*10;
     spaceCrafts[1].A_sunlit = a;
+    
+    // testing priority sorting
+    // testing
+    int orderByID[this->numSat];
+    for (int n = 0; n < this->numSat; n++) {
+        orderByID[n] = spaceCrafts[n].ID;
+    }
+    
+    std::cout << "ID's: " << orderByID[0] << ", " << orderByID[1] << std::endl;
+    
+    int minInd;
+    for (int k = 0; k < this->numSat - 1; k++) {
+        minInd = k;
+        for (int m = k + 1; m < this->numSat; m++) {
+            if (spaceCrafts[m].priority > spaceCrafts[minInd].priority) {
+                minInd = m;
+            }
+        }
+        if (minInd != k) {
+            int temp = orderByID[minInd];
+            orderByID[minInd] = orderByID[k];
+            orderByID[k] = temp;
+        }
+    }
+    
+    std::cout << "sorted ID's: " << orderByID[0] << ", " << orderByID[1] << std::endl;
     
     // create output messages
     VoltMsgPayload voltMsgBuffer;  //!< [] voltage out message buffer
@@ -142,6 +170,7 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
         this->voltOutMsgs.at(c)->write(&voltMsgBuffer, this->moduleID, CurrentSimNanos);
         
         // testing
+        
         double equilibriums[this->numSat];
         double A = spaceCrafts[c].A;
         double A_sunlit = spaceCrafts[c].A_sunlit;
