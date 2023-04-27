@@ -24,13 +24,10 @@
 
 svIntegratorEuler::svIntegratorEuler(DynamicObject* dyn) : StateVecIntegrator(dyn)
 {
-    
-    return;
 }
 
 svIntegratorEuler::~svIntegratorEuler()
 {
-    return;
 }
 
 /*!
@@ -41,23 +38,32 @@ svIntegratorEuler::~svIntegratorEuler()
  */
 void svIntegratorEuler::integrate(double currentTime, double timeStep)
 {
-	StateVector stateOut;
-	StateVector stateInit;
-	std::map<std::string, StateData>::iterator it;
-	std::map<std::string, StateData>::iterator itOut;
-	std::map<std::string, StateData>::iterator itInit;
-	stateOut = dynPtr->dynManager.getStateVector();
-	stateInit = dynPtr->dynManager.getStateVector();
-	dynPtr->equationsOfMotion(currentTime, timeStep);
-	for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
-	{
-		itOut->second.setDerivative(it->second.getStateDeriv());
-		itOut->second.propagateState(timeStep);
-	}
+    std::vector<StateVector> stateOut;
+    std::vector<StateVector> stateInit;
+    std::map<std::string, StateData>::iterator it;
+    std::map<std::string, StateData>::iterator itOut;
+    std::map<std::string, StateData>::iterator itInit;
 
-	dynPtr->dynManager.updateStateVector(stateOut);	
+    for (const auto& dynPtr : this->dynPtrs) {
+        stateOut.push_back(dynPtr->dynManager.getStateVector());
+        stateInit.push_back(dynPtr->dynManager.getStateVector());
+        dynPtr->equationsOfMotion(currentTime, timeStep);
+    }
+    for (size_t i=0; i<dynPtrs.size(); i++) {
+        for (it = dynPtrs.at(i)->dynManager.stateContainer.stateMap.begin(),
+             itOut = stateOut.at(i).stateMap.begin(),
+             itInit = stateInit.at(i).stateMap.begin();
+             it != dynPtrs.at(i)->dynManager.stateContainer.stateMap.end();
+             it++,
+             itOut++,
+             itInit++)
+        {
+            itOut->second.setDerivative(it->second.getStateDeriv());
+            itOut->second.propagateState(timeStep);
+        }
+    }
 
-    return;
+    for (size_t i=0; i<dynPtrs.size(); i++) {
+        dynPtrs.at(i)->dynManager.updateStateVector(stateOut.at(i));
+    }
 }
-
-

@@ -378,6 +378,12 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         ElemDiff = [(a - aOut), (e - eOut), (i - iOut), (AN - ANOut), (AP - APOut), (f - fOut)]
         ElemDiffcsv = numpy.asarray(ElemDiff)
         for g in range(6):
+            # check for angle roll over with 2*pi
+            if g > 2:
+                if abs(ElemDiff[g] - 2 * math.pi) < epsDiff:
+                    ElemDiff[g] -= 2 * math.pi
+                elif abs(ElemDiff[g] + 2 * math.pi) < epsDiff:
+                    ElemDiff[g] += 2 * math.pi
             if abs(ElemDiff[g]) > epsDiff:
                 testMessages.append(" FAILED: Sim Orbital Element " + str(g))
                 testFailCount2 += 1
@@ -391,6 +397,12 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
 
     ElemMsgDiff = [(aOut - aMsg), (eOut - eMsg), (iOut - iMsg), (ANOut - ANMsg), (APOut - APMsg), (fOut - fMsg)]
     for g in range(6):
+        # check for angle roll over with 2*pi
+        if g > 2:
+            if abs(ElemDiff[g] - 2 * math.pi) < epsDiff:
+                ElemDiff[g] -= 2 * math.pi
+            elif abs(ElemDiff[g] + 2 * math.pi) < epsDiff:
+                ElemDiff[g] += 2 * math.pi
         if abs(ElemMsgDiff[g]) > 0:
             testMessages.append(" FAILED: Orbital Element Message " + str(g))
             testFailCount2 += 1
@@ -480,6 +492,12 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     ElemCalcDiff = [(aO - aOut), (eO - eOut), (iO - iOut), (Omega - ANOut), (omega - APOut), (fOut - fOut)]
     ElemCalcDiffcsv = numpy.asarray(ElemCalcDiff)
     for g in range(6):
+        # check for angle roll over with 2*pi
+        if g > 2:
+            if abs(ElemCalcDiff[g] - 2 * math.pi) < epsDiff:
+                ElemCalcDiff[g] -= 2 * math.pi
+            elif abs(ElemCalcDiff[g] + 2 * math.pi) < epsDiff:
+                ElemCalcDiff[g] += 2 * math.pi
         if abs(ElemCalcDiff[g]) > epsDiff:
             testMessages.append(" FAILED: Calculated Orbital Element " + str() + str(g))
             testFailCount2 += 1
@@ -563,5 +581,5 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    orbElem(10000000.0, 0.01, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15, 0, True
+    orbElem(10000000.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 0, True
                           )

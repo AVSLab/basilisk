@@ -27,6 +27,10 @@ are taken from :ref:`scenarioAttitudeFeedbackRW`. The purpose of this script is 
 setup multiple satellites, and also show how to store the Basilisk simulation data to be able to visualize
 both satellite's motions within the :ref:`Vizard <vizard>` application.
 
+Note, this scenario also illustrates how to ensure that the differential equations of motion of
+the servicer and debris object are integrated at the same time.  This is not required in this scenario
+as there are no direct satellite-to-satellite dynamic interactions.
+
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioFormationBasic.py
@@ -47,6 +51,20 @@ is that here :ref:`hillPoint` is used to align the spacecraft with the Hill fram
 in a 2:1 centered ellipse and a lead-follower configuration with the servicer respectively.  The servicer camera
 has a camera instrument attached that is pointing in the 3rd body axis direction.
 The servicer has a light attached to illuminate the debris object.
+
+By default, every :ref:`spacecraft` module instance will integrate its differential equations, and that of
+all the associated state and dynamics effectors, during the module ``Update()`` method.  Thus, the
+second spacecraft ODEs are integrated forward one time step after the first spacecraft, and so on.
+If you require
+both sets of spacecraft differential equations to be integrated at the same time, then the integration
+of the second spacecraft can be synchronized with the integration of the first spacecraft using::
+
+     scObject.syncDynamicsIntegration(scObject2)
+
+This is illustrated in this example script where the debris satellite integration is sync'd with that
+of the servicer satellite.  However, in this scenario this is not required as the ODEs of each spacecraft
+are independent of each other.  If an effector is used that is connected to both spacecraft, then this
+step will allow the effector force and torque evaluations to be properly applied to all sync'd objects.
 
 This simulation scripts illustrates how to use the :ref:`vizSupport` methods to record the simulation data such
 that it can be viewed in the Vizard visualization.
@@ -91,7 +109,7 @@ import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     rwMotorTorque, hillPoint)
-from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft
+from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft, svIntegrators
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
@@ -226,6 +244,16 @@ def run(show_plots):
           0., 0, 450.]
     scObject2.hub.mHub = 350.0  # kg
     scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I2)
+    # this next step is not required, just a demonstration how we can ensure that
+    # the Servicer and Debris differential equations are integrated simultaneously
+    scObject.syncDynamicsIntegration(scObject2)
+
+    # Likewise, the following step is not required, as the default integrator
+    # is already RK4. However, this illustrates that you can change the integrator
+    # of the primary after calling sync, but not of the secondary!
+    integratorObject = svIntegrators.svIntegratorRK4(scObject)
+    scObject.setIntegrator(integratorObject)
+    # scObject2.setIntegrator(integratorObject) # <- Will raise an error!
 
     # make another debris object */
     scObject3 = spacecraft.Spacecraft()
@@ -237,9 +265,9 @@ def run(show_plots):
     scObject3.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I3)
 
     # add spacecraft object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject, None, 1)
-    scSim.AddModelToTask(simTaskName, scObject2, None, 2)
-    scSim.AddModelToTask(simTaskName, scObject3, None, 3)
+    scSim.AddModelToTask(simTaskName, scObject)
+    scSim.AddModelToTask(simTaskName, scObject2)
+    scSim.AddModelToTask(simTaskName, scObject3)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()

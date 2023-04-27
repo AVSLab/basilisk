@@ -34,6 +34,21 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Created new way to define Python modules by inheriting from ``Basilisk.architecture.sysModel.SysModel``.
+  See :ref:`pyModules` for details.
+- Added the ability to integrate the ODE's of two or more Basilisk modules that are ``DynamicObject`` class
+  member at the same time.  See :ref:`bskPrinciples-9`
+- updated ZMQ version to 4.5.0.  For 2-way communication with ``opNav`` modules talking to Vizard
+  then Vizard 2.1.5 or newer should be used.  This also removes the need for the legacy bincrafters code repo.
+  Delete ``~/.conan`` folder if you run into ``conan`` issues.
+- The Basilisk project C++ version is advanced from C++11 to C++17
+- Disabled the following build options in the conan included OpenCV dependency; with_ffmpeg video frame encoding lib,
+  with_ade graph manipulations framework, with_tiff generate image in TIFF format, with_openexr generate image in EXR
+  format, with_quirc QR code lib. Users that have Basilisk control the build of these modules through the External
+  Modules CMake integration will need to manual toggle these OpenCV build options.
+- Updated :ref:`SmallBodyNavEKF` with several bug fixes. Removed spacecraft attitude estimation component.
+- Bug fix made to :ref:`eclipse`: Saturn, Jupiter, Uranus, and Neptune radii were incorrectly being assigned the 
+  radius of Mars.
 - Created :ref:`lambertSolver` module to solve Lambert's problem
 
 Version 2.1.7 (March 24, 2023)
@@ -55,6 +70,12 @@ Version 2.1.7 (March 24, 2023)
   use of flag in update to :ref:`scenarioDragDeorbit`.
 - Created a :ref:`prescribedMotionStateEffector` dynamics module for appending rigid bodies with prescribed motion
   to the spacecraft hub.
+- Created a :ref:`prescribedRot1DOF` fsw module to profile a prescribed rotational maneuver for a secondary rigid body
+  connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+  :ref:`prescribedMotionStateEffector` dynamics module.
+- Created a :ref:`prescribedTrans` fsw module to profile a prescribed translational maneuver for a secondary rigid body
+  connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+  :ref:`prescribedMotionStateEffector` dynamics module.
 - Added :ref:`solarArrayReference` to compute the reference angle and angle rate for a rotating solar array.
 - Update python dependency documentation and check to not use ``conan`` version 2.0.0 for now
 - Changed the ``SpinningBodyStateEffector`` module name to :ref:`spinningBodyOneDOFStateEffector`.
