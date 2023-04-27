@@ -24,6 +24,7 @@ import os
 import sys
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -374,6 +375,15 @@ class SimBaseClass:
         :param priority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return: simulationArchTypes.PythonProcessClass object
         """
+        warnings.warn(
+            "BSK Deprecation: "
+            "PythonProcess and Python modules that inherit from "
+            "simulationArchTypes.PythonModelClass are deprecated. "
+            "See examples/scenarioAttitudePointingPy for details.",
+            category=DeprecationWarning,
+            stacklevel=2
+        )
+
         proc = simulationArchTypes.PythonProcessClass(procName, priority)
         i=0;
         for procLoc in self.pyProcList:

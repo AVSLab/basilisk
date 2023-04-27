@@ -164,7 +164,7 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
             double s_0 = (-s_BP_N.dot(s_HP_N))/s_HP_N.norm();
             double c_1 = s_0 + planetRadius/sin(f_1);
             double c_2 = s_0 - planetRadius/sin(f_2);
-            double l = sqrt(s*s - s_0*s_0);
+            double l = safeSqrt(s*s - s_0*s_0);
             double l_1 = c_1*tan(f_1);
             double l_2 = c_2*tan(f_2);
             
@@ -276,13 +276,13 @@ double Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName)
     } else if (planetSpiceName == "mars") {
         return REQ_MARS*1000.0;
     } else if (planetSpiceName == "jupiter barycenter") {
-        return REQ_MARS*1000.0;
+        return REQ_JUPITER*1000.0;
     } else if (planetSpiceName == "saturn") {
-        return REQ_MARS*1000.0;
+        return REQ_SATURN*1000.0;
     } else if (planetSpiceName == "uranus") {
-        return REQ_MARS*1000.0;
+        return REQ_URANUS*1000.0;
     } else if (planetSpiceName == "neptune") {
-        return REQ_MARS*1000.0;
+        return REQ_NEPTUNE*1000.0;
     } else {
         bskLogger.bskLog(BSK_ERROR, "Eclipse: unrecognized planetSpiceName.");
         return 1.0;

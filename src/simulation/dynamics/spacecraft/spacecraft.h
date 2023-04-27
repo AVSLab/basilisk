@@ -45,7 +45,6 @@
 class Spacecraft : public DynamicObject{
 public:
     uint64_t simTimePrevious;            //!< -- Previous simulation time
-    uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
     std::string sysTimePropertyName;     //!< -- Name of the system time property
     ReadFunctor<AttRefMsgPayload> attRefInMsg; //!< -- (optional) reference attitude input message name
     ReadFunctor<TransRefMsgPayload> transRefInMsg; //!< -- (optional) reference translation input message name
@@ -87,9 +86,10 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system
-    void integrateState(double time);       //!< -- This method steps the state forward one step in time
     void addStateEffector(StateEffector *newSateEffector);  //!< -- Attaches a stateEffector to the system
     void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
+    void preIntegration(double callTime) final;       //!< -- method to perform pre-integration steps
+    void postIntegration(double callTime) final;      //!< -- method to perform post-integration steps
 
 private:
     StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
@@ -111,6 +111,8 @@ private:
     Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
     Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::MatrixXd *sysTime;            //!< [s] System time
+
+    Eigen::Vector3d oldOmega_BN_B;       //!< [r/s] prior angular rate of B wrt N in the Body frame
 
 private:
     void readOptionalRefMsg();                  //!< -- Read the optional attitude or translational reference input message and set the reference states
