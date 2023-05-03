@@ -173,7 +173,10 @@ Module Assumptions and Limitations
 - **Planets:** The allowed Spice planet names for use as occulting bodies are:
 
   - ``mercury``, ``venus``, ``earth``, ``mars``, ``mars barycenter``, ``jupiter barycenter``, ``saturn``,
-    ``neptune``, ``uranus``
+    ``neptune``, ``uranus``, ``custom``
+- **Custom Body:** This module allows for the use of a single custom body, defined by the name ``custom``. The name of
+  the :ref:`SpicePlanetStateMsgPayload` must be set to ``custom``, and the variable ``rEqCustom`` must be set to
+  some positive value in meters.
 - **Sun and Planet States:** The data defining the sun and planet states is obtained through an external Spice package.
   Errors may be derived from this package but will be small.
 - **Spacecraft States:** Spacecraft states must be input as Cartesian vectors. In the test, a conversion from orbital

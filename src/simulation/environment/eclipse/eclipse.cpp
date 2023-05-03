@@ -25,6 +25,7 @@
 
 Eclipse::Eclipse()
 {
+    rEqCustom = -1.0;
     return;
 }
 
@@ -283,6 +284,13 @@ double Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName)
         return REQ_URANUS*1000.0;
     } else if (planetSpiceName == "neptune") {
         return REQ_NEPTUNE*1000.0;
+    } else if (planetSpiceName == "custom") {
+        if (rEqCustom <= 0.0) {
+            bskLogger.bskLog(BSK_ERROR, "Eclipse: Invalid rEqCustom set.");
+            return 1.0;
+        } else {
+            return rEqCustom;
+        }
     } else {
         bskLogger.bskLog(BSK_ERROR, "Eclipse: unrecognized planetSpiceName.");
         return 1.0;
