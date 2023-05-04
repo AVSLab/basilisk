@@ -707,7 +707,7 @@ def run(show_plots):
     x_0[3:6] = np.array([1.475, -0.176, 0.894])
     x_0[6:9] = np.array([-0.58, 0.615, 0.125])
     x_0[11] = 0.0004
-    smallBodyNav.x_hat_k = unitTestSupport.np2EigenVectorXd(x_0)
+    smallBodyNav.x_hat_k = x_0
     # Set the covariance to something large
     smallBodyNav.P_k = (0.1*np.identity(12)).tolist()
 
