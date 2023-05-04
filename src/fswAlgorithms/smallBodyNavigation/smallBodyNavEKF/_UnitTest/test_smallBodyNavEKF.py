@@ -70,7 +70,7 @@ def smallBodyNavEKFTestFunction(show_plots):
     bennu_velocity = np.sqrt(orbitalMotion.MU_SUN*(1000.**3)/bennu_radius) # m/s, assumes circular orbit
 
     x_0 = [2010., 1510., 1010., 0., 2., 0., 0.14, 0., 0., 0., 0., 0.]
-    module.x_hat_k = unitTestSupport.np2EigenVectorXd(x_0)
+    module.x_hat_k = x_0
     module.P_k = (0.1*np.identity(12)).tolist()
 
     # Configure blank module input messages
@@ -194,5 +194,3 @@ def smallBodyNavEKFTestFunction(show_plots):
 
 if __name__ == "__main__":
     test_smallBodyNavEKF(True)
-
-

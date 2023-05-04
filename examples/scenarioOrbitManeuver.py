@@ -240,7 +240,7 @@ def run(show_plots, maneuverCase):
         vVt = vVt - (1. - np.cos(Delta_i)) * v0 * vHat + np.sin(Delta_i) * v0 * hHat
 
         # After computing the maneuver specific Delta_v's, the state managers velocity is updated through
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        velRef.setState(vVt)
         T2 = macros.sec2nano(P * 0.25)
     else:
         # Hohmann Transfer to GEO
@@ -253,7 +253,7 @@ def run(show_plots, maneuverCase):
         vHat = vVt / v0
         vVt = vVt + vHat * (v0p - v0)
         # After computing the maneuver specific Delta_v's, the state managers velocity is updated through
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        velRef.setState(vVt)
 
     # To start up the simulation again, note that the total simulation time must be provided,
     # not just the next incremental simulation time.
@@ -274,7 +274,7 @@ def run(show_plots, maneuverCase):
         vHat = np.cross(hHat, rHat)
         v0 = np.dot(vHat, vVt)
         vVt = vVt - (1. - np.cos(Delta_i)) * v0 * vHat + np.sin(Delta_i) * v0 * hHat
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        velRef.setState(vVt)
         T3 = macros.sec2nano(P * 0.25)
     else:
         # Hohmann Transfer to GEO
@@ -284,7 +284,7 @@ def run(show_plots, maneuverCase):
         T3 = macros.sec2nano(0.25 * (np.pi) / n1)
         vHat = vVt / v1
         vVt = vVt + vHat * (v1p - v1)
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        velRef.setState(vVt)
 
     # run simulation for 3rd chunk
     scSim.ConfigureStopTime(simulationTime + T2 + T3)

@@ -261,7 +261,7 @@ def run(show_plots, useCentral):
     groundMap = groundMapping.GroundMapping()
     groundMap.ModelTag = "groundMapping"
     for map_idx in range(N):
-        groundMap.addPointToModel(unitTestSupport.np2EigenVectorXd(mapping_points[map_idx,:]))
+        groundMap.addPointToModel(mapping_points[map_idx,:])
     groundMap.minimumElevation = np.radians(45.)
     groundMap.maximumRange = 1e9
     groundMap.cameraPos_B = [0, 0, 0]

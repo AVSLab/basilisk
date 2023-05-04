@@ -69,8 +69,8 @@ def groundMappingTestFunction():
     # Create the initial imaging target
     groundMap = groundMapping.GroundMapping()
     groundMap.ModelTag = "groundMapping"
-    groundMap.addPointToModel(unitTestSupport.np2EigenVectorXd([0., -0.1, 0.]))
-    groundMap.addPointToModel(unitTestSupport.np2EigenVectorXd([0., 0., math.tan(np.radians(22.5))+0.1]))
+    groundMap.addPointToModel([0., -0.1, 0.])
+    groundMap.addPointToModel([0., 0., math.tan(np.radians(22.5))+0.1])
     groundMap.minimumElevation = np.radians(45.)
     groundMap.maximumRange = 1e9
     groundMap.cameraPos_B = [0, 0, 0]
@@ -120,5 +120,3 @@ def groundMappingTestFunction():
 
 if __name__ == "__main__":
     test_groundMapping()
-
-
