@@ -50,6 +50,7 @@ Version |release|
 - Bug fix made to :ref:`eclipse`: Saturn, Jupiter, Uranus, and Neptune radii were incorrectly being assigned the 
   radius of Mars. 
 - Added custom planet name to :ref:`eclipse` in case the user wants to use a body not contained within the module.
+- Removed all instances of using ``unitTestSupport.np2EigenVectorXd()``, as this function is now unneeded.
 
 
 Version 2.1.7 (March 24, 2023)
