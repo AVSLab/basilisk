@@ -610,7 +610,7 @@ def run(show_plots):
     # Apply a delta V and set the new velocity state in the circular capture orbit
     vHat = vN / np.linalg.norm(vN)
     vN = vN + Delta_V_Parking_Orbit * vHat
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))
+    velRef.setState(vN)
 
     # Travel in a circular orbit at r0, incorporating several attitude pointing modes
     runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
@@ -634,7 +634,7 @@ def run(show_plots):
     vHat = vN / vData
     vVt = vN + vHat * (v0p - vData)
     # Update state manager's velocity
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+    velRef.setState(vVt)
 
     # Run thruster burn mode along with sun-pointing during the transfer orbit
     runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
@@ -652,7 +652,7 @@ def run(show_plots):
     vHat = vN / vData
     vVt2 = vN + vHat * (v1p - vData)
     # Update state manager's velocity
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vVt2))
+    velRef.setState(vVt2)
 
     # Run thruster burn visualization along with attitude pointing modes
     runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
@@ -672,7 +672,7 @@ def run(show_plots):
     vHat = vN / vData
     vVt = vN + vHat * (v2p - vData)
     # Update state manager's velocity
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+    velRef.setState(vVt)
 
     # Run thruster burn section with science pointing mode
     runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
@@ -690,7 +690,7 @@ def run(show_plots):
     vHat = vN / vData
     vVt = vN + vHat * (v3p - vData)
     # Update state manager's velocity
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+    velRef.setState(vVt)
 
     # Run thruster visualization with science pointing mode
     runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
@@ -708,7 +708,7 @@ def run(show_plots):
     vHat = vN / vData
     vVt = vN + vHat * (v3p - vData)
     # Update state manager's velocity
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+    velRef.setState(vVt)
 
     # Run thruster visualization with science-pointing mode
     runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
@@ -776,4 +776,3 @@ if __name__ == "__main__":
     run(
         True  # show_plots
     )
-

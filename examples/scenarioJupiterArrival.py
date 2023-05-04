@@ -223,7 +223,7 @@ def run(show_plots):
     # Apply delta V and set new velocity state
     vHat = vN / np.linalg.norm(vN)
     vN = vN + Delta_V_Parking_Orbit*vHat
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))
+    velRef.setState(vN)
     
     # Run the simulation for 2nd chunk
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(300000))
@@ -303,4 +303,3 @@ if __name__ == "__main__":
     run(
         True  # show_plots
     )
-

@@ -367,14 +367,14 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         T2 = macros.sec2nano(1000.)
         # Set second spacecraft states for decrease in altitude
         vVt = vVt + [0.0, 375300, 0.0]  # m - v_CN_N
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        velRef.setState(vVt)
         scSim.ConfigureStopTime(T1 + T2)
         scSim.ExecuteSimulation()
         # get the current spacecraft states
         T3 = macros.sec2nano(500.)
         # Set second spacecraft states for decrease in altitude
         vVt = [0.0, 0.0, 0.0]  # m - v_CN_N
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        velRef.setState(vVt)
         scSim.ConfigureStopTime(T1 + T2 + T3)
         scSim.ExecuteSimulation()
         simulationTime = T1 + T2 + T3

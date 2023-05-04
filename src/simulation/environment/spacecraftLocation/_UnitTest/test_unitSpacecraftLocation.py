@@ -76,7 +76,7 @@ def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange, cone):
     if maxRange:
         module.maximumRange = maxRange
     if cone != 0:
-        module.aHat_B = unitTestSupport.np2EigenVectorXd([0, 0, cone])
+        module.aHat_B = [0, 0, cone]
         module.theta = 80. * macros.D2R
 
     scSim.AddModelToTask(simTaskName, module)
@@ -159,4 +159,3 @@ if __name__ == '__main__':
         , -7000.*1000 # max range
         , 1            # cone case, 0-> no cone, 1 -> [0, 1, 0], -1 -> [0, -1, 0]
         )
-
