@@ -166,26 +166,29 @@ def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, para
     trueIonFluxData = np.array([0.0] * messaging.MAX_PLASMA_FLUX_SIZE)
     with open(filepath, 'r') as file:
         rows = np.loadtxt(file, delimiter=",", unpack=False)
+        # true flux data provided by Denton is in Units of [cm^-2 s^-1 sr^-2 eV^-1], but DentonFluxModel converts it to
+        # [m^-2 s^-1 sr^-2 eV^-1]. Need to multiply by 1e4
         trueEnergyData[0:module.numOutputEnergies] = rows[0]
-        trueElectronFluxData[0:module.numOutputEnergies] = 10.**(rows[1])
-        trueIonFluxData[0:module.numOutputEnergies] = 10.**(rows[2])
+        trueElectronFluxData[0:module.numOutputEnergies] = 10.**(rows[1]) * 1e4
+        trueIonFluxData[0:module.numOutputEnergies] = 10.**(rows[2]) * 1e4
 
     # make sure module output data is correct
     ParamsString = ' for Kp-Index=' + param1_Kp + ', LT=' + str(param2_LT)
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        trueEnergyData, energyData, accuracy, ('electron and ion energies' + ParamsString),
+        trueEnergyData, energyData, accuracy * 1e4, ('particle energies' + ParamsString),
         testFailCount, testMessages)
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        trueElectronFluxData, electronFluxData, accuracy, ('electron and ion energies' + ParamsString),
+        trueElectronFluxData, electronFluxData, accuracy * 1e4, ('electron flux' + ParamsString),
         testFailCount, testMessages)
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        trueIonFluxData, ionFluxData, accuracy, ('electron and ion energies' + ParamsString),
+        trueIonFluxData, ionFluxData, accuracy * 1e4, ('ion flux' + ParamsString),
         testFailCount, testMessages)
 
     # print out success or failure message
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)
-        print("This test uses an accuracy value of " + str(accuracy) + " (true values don't have higher precision)")
+        print("This test uses an accuracy value of " + str(accuracy * 1e4) +
+              " (true values don't have higher precision)")
     else:
         print("FAILED " + module.ModelTag)
         print(testMessages)

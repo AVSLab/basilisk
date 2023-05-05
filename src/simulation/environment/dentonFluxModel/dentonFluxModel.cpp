@@ -235,8 +235,8 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         flux12 = this->mean_e_flux[this->kpIndexCounter][eHigherIndex][localTimeFloor];
         flux13 = this->mean_e_flux[this->kpIndexCounter][eLowerIndex][localTimeCeil];
         flux14 = this->mean_e_flux[this->kpIndexCounter][eHigherIndex][localTimeCeil];
-        
-        // ELECTRON: Find flux
+
+        // ELECTRON: Find flux (differential flux in units of [cm^-2 s^-1 sr^-2 eV^-1])
         finalElec = bilinear(localTimeFloor, localTimeCeil, logEnElec[eLowerIndex], logEnElec[eHigherIndex],
                              logInputEnergy, flux11, flux12, flux13, flux14);
         finalElec = pow(10.0, finalElec);
@@ -246,15 +246,15 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         flux12 = this->mean_i_flux[this->kpIndexCounter][iHigherIndex][localTimeFloor];
         flux13 = this->mean_i_flux[this->kpIndexCounter][iLowerIndex][localTimeCeil];
         flux14 = this->mean_i_flux[this->kpIndexCounter][iHigherIndex][localTimeCeil];
-        
-        // ION: Find flux
+
+        // ION: Find flux (differential flux in units of [cm^-2 s^-1 sr^-2 eV^-1])
         finalIon = bilinear(localTimeFloor, localTimeCeil, logEnProt[iLowerIndex], logEnProt[iHigherIndex],
                             logInputEnergy, flux11, flux12, flux13, flux14);
         finalIon = pow(10.0, finalIon);
         
-        // Store the output message
-        fluxOutMsgBuffer.meanElectronFlux[i] = finalElec;
-        fluxOutMsgBuffer.meanIonFlux[i] = finalIon;
+        // Store the output message (differential flux in units of [m^-2 s^-1 sr^-2 eV^-1])
+        fluxOutMsgBuffer.meanElectronFlux[i] = finalElec * 1e4;
+        fluxOutMsgBuffer.meanIonFlux[i] = finalIon * 1e4;
         fluxOutMsgBuffer.energies[i] = inputEnergies[i];
     }
     
