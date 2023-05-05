@@ -23,7 +23,8 @@
 class chargedSpaceCraft: public SysModel {
 // public functions
 public:
-
+    void setID(std::string IDtype, int inputID);              //! < setter function for ID
+    int getID(std::string IDtype);                            //! < getter function for ID
 // private functions
 private:
 
@@ -31,14 +32,22 @@ private:
 // public variables
 public:
     std::string name;                       //! < spacecraft name
-    int ID;                                 //! < integer corresponding to spacecraft
     int priority;                           //! < value assigning order in which spacecraft equilibrium potential is calculated
+    
+    std::string electronGunScName;          //! name of the spacecraft that emits an electron beam
+    bool emitsEB;                           //! boolean that tells whether or not the craft emits an electron beam
+    struct {
+        double alphaEB;
+        double currentEB;
+        double energyEB;
+    } electronGun;
     
     double A;                               //! < surface area of spacecraft
     double A_sunlit;                        //! < surface area of spacecraft used in photoelectric current
 // private variables
 private:
-    
+    int ID;                                 //! < integer corresponding to spacecraft
+    int electronGunScID;                    //! ID of the spacecraft that emits an electron beam
 };
 
 #endif /* chargedSpaceCraft_h */

@@ -81,106 +81,111 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     double a = 12.566370614359172;
     double interval [2] = {-1e8, 1e8};
     
-    // sum currents
-//    std::function<double(double)> sumCurrents1 = [this, a](double phi)-> double
-//    {
-//        return electronCurrent(phi, a) + ionCurrent(phi, a) + SEEelectronCurrent(phi, a) + SEEionCurrent(phi, a) + backscatteringCurrent(phi, a) + photoelectricCurrent(phi, a);
-//    };
-
-//    // find root
-//    double equilibrium1 = bisectionSolve(interval, 1e-8, sumCurrents1);
-//    std::cout << "Equilibrium1 : " << std::setprecision(10) << equilibrium1 << std::endl;
-
-    
-    // debugging
-//    double phiT = -26297.2901751303;
-//    double phiS = -26300.0;
-//    double alphaEB = 1;
-//    double IEB = 2;
-//    double EEB = 30;
-    
-//    double Ie = electronCurrent(phiT, A);
-//    std::cout << "Ie: " << Ie << std::endl;
-//    double Ii = ionCurrent(phiT, A);
-//    std::cout << "Ii: " << Ii << std::endl;
-//    double Iseee = SEEelectronCurrent(phiT, A);
-//    std::cout << "Iseee: " << Iseee << std::endl;
-//    double Iseei = SEEionCurrent(phiT, A);
-//    std::cout << "Iseei: " << Iseei << std::endl;
-//    double Ibs = backscatteringCurrent(phiT, A);
-//    std::cout << "Ibs: " << Ibs << std::endl;
-//    double Ip = photoelectricCurrent(phiT, A);
-//    std::cout << "Ip: " << Ip << std::endl;
-//    double IEBs = electronBeamCurrent(phiS, phiT, "servicer", EEB, IEB, alphaEB);
-//    double IEBt = electronBeamCurrent(phiS, phiT, "target", EEB, IEB, alphaEB);
-//    std::cout << "IEBs: " << IEBs << std::endl;
-//    std::cout << "IEBt: " << IEBt << std::endl;
-//    double SEEEB = SEEelectronBeamCurrent(phiS, phiT, EEB, IEB, alphaEB);
-//    std::cout << "SEEEB: " << SEEEB << std::endl;
-//    double IbsEB = electronBeamBackscattering(phiS, phiT, EEB, IEB, alphaEB);
-//    std::cout << "IbsEB: " << IbsEB << std::endl;
-    
-    // chargedSpaceCraft testing
+    /* Create and populate all instances of chargedSpaceCraft objects */
     chargedSpaceCraft spaceCrafts[this->numSat];
     
-    spaceCrafts[0].name = "testCraft1";
-    spaceCrafts[0].ID = 1;
-    spaceCrafts[0].priority = 1;
-    spaceCrafts[0].A = a;
-    spaceCrafts[0].A_sunlit = a/2;
+    // define spacecraft member values (user inputs)
+    std::string names[] = {"target", "servicer"}; //!< all craft names
+    std::string electronGunCrafts[] = {"servicer"};   //!< names off all e- gun equipped craft
+    double alphaEB = 1.1;   //!< electron gun variable
+    double currentEB = 4.5; //!< electron gun variable
+    double energyEB = 3.3;  //!< electron gun variable
+    double electronGunParameters[][3] = {{alphaEB, currentEB, energyEB}};
+    int priorities[] = {1, 2};
+    double Avec[] = {a, a*10};
+    double A_sunlitVec[] = {a/2, a};
     
-    spaceCrafts[1].name = "testCraft2";
-    spaceCrafts[1].ID = 2;
-    spaceCrafts[1].priority = 2;
-    spaceCrafts[1].A = a*10;
-    spaceCrafts[1].A_sunlit = a;
-    
-    // testing priority sorting
-    // testing
-    int orderByID[this->numSat];
+    // populate object members
+    for (int w = 0; w < this->numSat; w++) {
+        // assign each object an ID
+        spaceCrafts[w].setID("ID", w);
+        
+        // give object members values as defined by user
+        spaceCrafts[w].name = names[w];
+        spaceCrafts[w].priority = priorities[w];
+        spaceCrafts[w].A = Avec[w];
+        spaceCrafts[w].A_sunlit = A_sunlitVec[w];
+        
+        // fill out electron gun values for objects that emit EB
+        for (int p = 0; p < (sizeof(electronGunCrafts) / sizeof(electronGunCrafts[0])); p++) {
+            // populates EB values if has electron gun, otherwise sets all values to NAN
+            if (names[w] == electronGunCrafts[p]) {
+                spaceCrafts[w].setID("electronGunID", spaceCrafts[w].getID("ID"));
+                spaceCrafts[w].emitsEB = true;
+                spaceCrafts[w].electronGun.alphaEB = electronGunParameters[w][0];
+                spaceCrafts[w].electronGun.currentEB = electronGunParameters[w][1];
+                spaceCrafts[w].electronGun.energyEB = electronGunParameters[w][2];
+            } else {
+                spaceCrafts[w].emitsEB = false;
+                spaceCrafts[w].electronGun.alphaEB = NAN;
+                spaceCrafts[w].electronGun.currentEB = NAN;
+                spaceCrafts[w].electronGun.energyEB = NAN;
+            }
+        }
+    };
+
+    int orderByPriority[this->numSat];      //!< unsorted array of spacecraft ID's
     for (int n = 0; n < this->numSat; n++) {
-        orderByID[n] = spaceCrafts[n].ID;
+        orderByPriority[n] = spaceCrafts[n].getID("ID");
     }
-    
-    std::cout << "ID's: " << orderByID[0] << ", " << orderByID[1] << std::endl;
-    
+    // selection sort priority array from highest to lowest priority
     int minInd;
     for (int k = 0; k < this->numSat - 1; k++) {
-        minInd = k;
+        minInd = k;     //!< index of lowest valued element
         for (int m = k + 1; m < this->numSat; m++) {
             if (spaceCrafts[m].priority > spaceCrafts[minInd].priority) {
                 minInd = m;
             }
         }
         if (minInd != k) {
-            int temp = orderByID[minInd];
-            orderByID[minInd] = orderByID[k];
-            orderByID[k] = temp;
+            int temp = orderByPriority[minInd];
+            orderByPriority[minInd] = orderByPriority[k];
+            orderByPriority[k] = temp;
+        }
+    }
+    /* Error messages for user inputs (need to move to Reset) */
+    // notifies user there are more craft specified to emit an EB than there are craft
+    if ((sizeof(electronGunCrafts) / sizeof(electronGunCrafts[0])) > this->numSat) {
+        bskLogger.bskLog(BSK_ERROR, "ScCharging.Reset: More craft equipped with electron gun than total craft");
+    }
+    // notifies user that input priority settings are incorrect
+    for (int z = 0; z < this->numSat; z++) {
+        if ((spaceCrafts[z].priority > spaceCrafts[z + 1].priority) && (!spaceCrafts[z].emitsEB) && (spaceCrafts[z + 1].priority)) {
+            bskLogger.bskLog(BSK_ERROR, "ScCharging.Reset: One or more target crafts designated higher priority than servicer craft");
         }
     }
     
-    std::cout << "sorted ID's: " << orderByID[0] << ", " << orderByID[1] << std::endl;
-    
-    // create output messages
+    double equilibriums[this->numSat];  //!< equilibriums for each craft [eV]
     VoltMsgPayload voltMsgBuffer;  //!< [] voltage out message buffer
+
     // loop over all satellites
     for (long unsigned int c = 0; c < this->numSat; c++) {
         // store voltage of each spacecraft
         voltMsgBuffer.voltage = -1000;
         this->voltOutMsgs.at(c)->write(&voltMsgBuffer, this->moduleID, CurrentSimNanos);
         
-        // testing
+        // index of craft based on priority
+        int ID = orderByPriority[c];
         
-        double equilibriums[this->numSat];
-        double A = spaceCrafts[c].A;
-        double A_sunlit = spaceCrafts[c].A_sunlit;
+        // values required for sumCurrents
+        double A = spaceCrafts[ID].A;
+        double A_sunlit = spaceCrafts[ID].A_sunlit;
         
+        // function that sums all calculated currents to be fed to bisectionSolve
         std::function<double(double)> sumCurrents = [&](double phi)-> double
         {
+            if (spaceCrafts[ID].emitsEB) {
             return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A) + photoelectricCurrent(phi, A_sunlit);
+            } else if (!spaceCrafts[ID].emitsEB) {
+                return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A) + photoelectricCurrent(phi, A_sunlit) + SEEelectronBeamCurrent(equilibriums[0], 0, spaceCrafts[orderByPriority[0]].electronGun.energyEB, spaceCrafts[orderByPriority[0]].electronGun.currentEB, spaceCrafts[orderByPriority[0]].electronGun.alphaEB) + electronBeamBackscattering(equilibriums[0], 0, spaceCrafts[orderByPriority[0]].electronGun.energyEB, spaceCrafts[orderByPriority[0]].electronGun.currentEB, spaceCrafts[orderByPriority[0]].electronGun.alphaEB);
+            } else {
+                bskLogger.bskLog(BSK_ERROR, "ScCharging.UpdateState: EB emission boolean not specified");
+                return NAN;
+            }
         };
+        // find equilibrium
         equilibriums[c] = bisectionSolve(interval, 1e-8, sumCurrents);
-        std::cout << spaceCrafts[c].name << " equilibrium: " << equilibriums[c] << std::endl;
+        std::cout << spaceCrafts[ID].name << " equilibrium: " << equilibriums[c] << std::endl;
     }
 }
 
@@ -461,7 +466,6 @@ double ScCharging::electronBeamCurrent(double phiS, double phiT, std::string cra
 double ScCharging::SEEelectronBeamCurrent(double phiS, double phiT, double EEB, double IEB, double alphaEB)
 {
     double Eeff = EEB - phiS + phiT;
-    std::cout << "SEEB Eeff: " << Eeff << std::endl;
     double ISEEEB = getYield(Eeff, "electron") * electronBeamCurrent(phiS, phiT, "target", EEB, IEB, alphaEB);
     return ISEEEB;
 }
@@ -469,7 +473,6 @@ double ScCharging::SEEelectronBeamCurrent(double phiS, double phiT, double EEB, 
 double ScCharging::electronBeamBackscattering(double phiS, double phiT, double EEB, double IEB, double alphaEB)
 {
     double Eeff = EEB - phiS + phiT;
-    std::cout << "bs Eeff: " << Eeff << std::endl;
     double IbsEB = getYield(Eeff, "backscattered") * electronBeamCurrent(phiS, phiT, "target", EEB, IEB, alphaEB);
     return IbsEB;
 }
