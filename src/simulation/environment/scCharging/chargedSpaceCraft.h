@@ -44,6 +44,9 @@ public:
     
     double A;                               //! < surface area of spacecraft
     double A_sunlit;                        //! < surface area of spacecraft used in photoelectric current
+
+    BSKLogger bskLogger;                    //!< -- BSK Logging
+
 // private variables
 private:
     int ID;                                 //! < integer corresponding to spacecraft
