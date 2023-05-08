@@ -31,7 +31,7 @@
 
 // Sometimes, the %typemap(out) cannot be used in an 'optimal' way. We are okay
 // with this as it is only a speed penalty in some special cases.
-#pragma SWIG nowarn=475
+#pragma SWIG nowarn=474
 
 %fragment("static_fail", "header") {
 template<class>
