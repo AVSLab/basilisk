@@ -144,40 +144,35 @@ PyObject * castCToPy(T input)
 Converts from one rotation type to other (for example, MRPd to Quaterniond).
 */
 template<class From, class To>
-To rotationConversion(const From& input)
+struct RotationCoversion
 {
-    // If we can convert from the type From to To, then just return input
-    // and let the implicit coversion handle the transformation
-    if constexpr (std::is_convertible_v<From, To>) {
-        return input;
-    }
-    // If we can convert the input to an MRPd, and from there to a rotation
-    // matrix, and from there to the To type, then do that
-    else if constexpr (
-        std::is_convertible_v<From, Eigen::MRPd>
-        && std::is_convertible_v<
-            decltype(std::declval<Eigen::MRPd>().toRotationMatrix()), 
-            To
-        >
-    ) {
-        return ((Eigen::MRPd) input).toRotationMatrix();
-    }
-    // If we can convert the input to a Quaterniond, and from there to a rotation
-    // matrix, and from there to the To type, then do that
-    else if constexpr (
-        std::is_convertible_v<From, Eigen::Quaterniond>
-        && std::is_convertible_v<
-            decltype(std::declval<Eigen::Quaterniond>().toRotationMatrix()), 
-            To
-        >    
-    ) {
-        return ((Eigen::Quaterniond) input).toRotationMatrix();
-    }
-    else {
-        assert(false); // No conversion function defined
-        return {};
-    }
-}
+    inline static To convert(const From& input) {return To{ input };};
+};
+
+template<class To>
+struct RotationCoversion<Eigen::Vector3d, To>
+{
+    inline static To convert(const Eigen::Vector3d& input) {return To{(Eigen::MRPd{input}).toRotationMatrix() };};
+};
+
+template<class To>
+struct RotationCoversion<Eigen::Vector4d, To>
+{ 
+    inline static To convert(const Eigen::Vector4d& input) {return To{ (Eigen::Quaterniond{ input[0], input[1], input[2], input[3] }).toRotationMatrix() };};
+};
+
+template<>
+struct RotationCoversion<Eigen::Vector3d, Eigen::MRPd>
+{
+    inline static Eigen::MRPd convert(const Eigen::Vector3d& input) {return Eigen::MRPd{ input };};
+};
+
+template<>
+struct RotationCoversion<Eigen::Vector4d, Eigen::Quaterniond>
+{
+    inline static Eigen::Quaterniond convert(const Eigen::Vector4d& input) {return Eigen::Quaterniond{ input[0], input[1], input[2], input[3] };};
+};
+
 }
 
 %fragment("getInputSize", "header")
@@ -329,15 +324,15 @@ T pyObjToRotation(PyObject *input)
 
     if (numberRows == 3 && numberColumns == 1)
     {
-        return rotationConversion<Eigen::Vector3d, T>(pyObjToEigenMatrix<Eigen::Vector3d>(input));
+        return RotationCoversion<Eigen::Vector3d, T>::convert(pyObjToEigenMatrix<Eigen::Vector3d>(input));
     }
     else if (numberRows == 4 && numberColumns == 1)
     {
-        return rotationConversion<Eigen::Vector4d, T>(pyObjToEigenMatrix<Eigen::Vector4d>(input));
+        return RotationCoversion<Eigen::Vector4d, T>::convert(pyObjToEigenMatrix<Eigen::Vector4d>(input));
     }
     else if (numberRows == 3 && numberColumns == 3)
     {
-        return rotationConversion<Eigen::Matrix3d, T>(pyObjToEigenMatrix<Eigen::Matrix3d>(input));
+        return RotationCoversion<Eigen::Matrix3d, T>::convert(pyObjToEigenMatrix<Eigen::Matrix3d>(input));
     }
     else
     {
@@ -368,6 +363,20 @@ void fillPyObjList(PyObject *input, const T& value)
         PyList_Append(input, locRow);
     }
 }
+
+// Eigen::MRPd and Eigen::Quaterniond need to be converted first to Eigen::Matrix
+template<>
+void fillPyObjList<Eigen::MRPd>(PyObject *input, const Eigen::MRPd& value)
+{
+    return fillPyObjList(input, value.vec());
+}
+
+template<>
+void fillPyObjList<Eigen::Quaterniond>(PyObject *input, const Eigen::Quaterniond& value)
+{
+    return fillPyObjList<Eigen::Vector4d>(input, {value.w(), value.x(), value.y(), value.z()});
+}
+
 }
 
 %define EIGEN_MAT_WRAP(type, typeCheckPrecedence)
@@ -468,7 +477,7 @@ void fillPyObjList(PyObject *input, const T& value)
 
 %typemap(out, optimal="1", fragment="fillPyObjList") type {
     $result = PyList_New(0);
-    fillPyObjList($result, ($1).vec());
+    fillPyObjList($result, $1);
     if (PyErr_Occurred()) SWIG_fail;
 }
 
@@ -480,7 +489,7 @@ void fillPyObjList(PyObject *input, const T& value)
     else
     {
         $result = PyList_New(0);
-        fillPyObjList($result, (*$1).vec());
+        fillPyObjList($result, *$1);
     }
     if (PyErr_Occurred()) SWIG_fail;
 }
