@@ -58,6 +58,8 @@ Version |release|
   :ref:`prescribedMotionStateEffector` dynamics module.
 - Corrected default value of ``accuracyNanos`` in :ref:`simSynch` to be 0.01 seconds.
 - Added a deprecation system for Basilisk. For developers, see :ref:`deprecatingCode`.
+- Changed the units of plasma flux in :ref:`dentonFluxModel` and :ref:`PlasmaFluxMsgPayload` from
+  [cm^-2 s^-1 sr^-2 eV^-1] to [m^-2 s^-1 sr^-2 eV^-1], because m^-2 is used more frequently in computations
 
 
 Version 2.1.7 (March 24, 2023)
