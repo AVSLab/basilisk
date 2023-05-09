@@ -29,8 +29,6 @@ extern "C" {
 
 int testLinearAlgebra(double accuracy);
 int testOrbitalAnomalies(double accuracy);
-int testOrbitalElements(double accuracy);
-int testOrbitalEnvironment(double accuracy);
 int testOrbitalHill(double accuracy);
 int testRigidBodyKinematics(double accuracy);
 
