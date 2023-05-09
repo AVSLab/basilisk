@@ -6,6 +6,10 @@ add_executable(test_gaussMarkov test_gaussMarkov.cpp)
 target_link_libraries(test_gaussMarkov GTest::gtest_main)
 target_link_libraries(test_gaussMarkov ArchitectureUtilities)
 
+add_executable(test_orbitalMotion test_orbitalMotion.cpp)
+target_link_libraries(test_orbitalMotion GTest::gtest_main)
+target_link_libraries(test_orbitalMotion ArchitectureUtilities)
+
 add_executable(test_saturate test_saturate.cpp)
 target_link_libraries(test_saturate GTest::gtest_main)
 target_link_libraries(test_saturate ArchitectureUtilities)
@@ -16,4 +20,5 @@ endif()
 
 gtest_discover_tests(test_discretize)
 gtest_discover_tests(test_gaussMarkov)
+gtest_discover_tests(test_orbitalMotion)
 gtest_discover_tests(test_saturate)
