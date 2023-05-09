@@ -692,3 +692,6 @@ if(TARGET _thrusterDynamicEffector)
 elseif(TARGET thrusterDynamicEffector)
   add_dependencies(OverwriteSwig thrusterDynamicEffector vscmgStateEffector reactionWheelStateEffector)
 endif()
+
+# Tests targets
+add_subdirectory("architecture/utilities/tests")
