@@ -25,26 +25,8 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/tests/unitTestComparators.h"
 #include "avsLibrarySelfCheck.h"
-
-
-int isEqual(double a, double b, double accuracy)
-{
-    if(fabs(a - b) > accuracy) {
-        return 0;
-    }
-    return 1;
-}
-
-int isEqualRel(double a, double b, double accuracy)
-{
-    if(fabs(a - b)/fabs(a) > accuracy) {
-        return 0;
-    }
-    return 1;
-}
-
-
 
 int testLinearAlgebra(double accuracy)
 {
