@@ -26,6 +26,8 @@
 
 %include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;
+%include "architecture/msgPayloadDefC/THRConfigMsgPayload.h"
+struct THRConfigMsg_C;
 %include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;
 %include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
