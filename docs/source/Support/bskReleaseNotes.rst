@@ -57,6 +57,7 @@ Version |release|
   body connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
   :ref:`prescribedMotionStateEffector` dynamics module.
 - Corrected default value of ``accuracyNanos`` in :ref:`simSynch` to be 0.01 seconds.
+- Added a deprecation system for Basilisk. For developers, see :ref:`deprecatingCode`.
 
 
 Version 2.1.7 (March 24, 2023)
