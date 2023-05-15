@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -32,12 +32,13 @@ import sys
 
 import pytest
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import deprecated
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioAttitudePointingPyDEPRECATED
 
 
@@ -45,6 +46,7 @@ import scenarioAttitudePointingPyDEPRECATED
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
+
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
@@ -58,7 +60,9 @@ def test_bskAttitudePointingPD(show_plots):
     testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioAttitudePointingPyDEPRECATED.run(show_plots)
+        # Ignore the deprecation warning, as this is expected
+        with deprecated.ignore("run"):
+            figureList = scenarioAttitudePointingPyDEPRECATED.run(show_plots)
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)
