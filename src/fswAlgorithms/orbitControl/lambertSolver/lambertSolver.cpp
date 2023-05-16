@@ -40,7 +40,8 @@ void LambertSolver::Reset(uint64_t CurrentSimNanos)
     }
 }
 
-/*! This is the main method that gets called every time the module is updated. It computes the solution of Lambert's problem.
+/*! This is the main method that gets called every time the module is updated.
+    It computes the solution of Lambert's problem.
     @param CurrentSimNanos current simulation time in nano-seconds
     @return void
 */
@@ -64,7 +65,8 @@ void LambertSolver::UpdateState(uint64_t CurrentSimNanos)
     this->writeMessages(CurrentSimNanos);
 }
 
-/*! This method reads the input messages each call of updateState. It also checks if the message contents are valid for this module.
+/*! This method reads the input messages each call of updateState. It also checks if the message contents are valid for
+    this module.
     @return void
 */
 void LambertSolver::readMessages(){
@@ -86,7 +88,9 @@ void LambertSolver::readMessages(){
     } else {
         this->numberOfRevolutions = lambertProblemInMsgBuffer.numRevolutions;
     }
-    if (!(strcmp(lambertProblemInMsgBuffer.solverName, "Gooding") == 0 || strcmp(lambertProblemInMsgBuffer.solverName, "Izzo") == 0)){
+    if (!(strcmp(lambertProblemInMsgBuffer.solverName, "Gooding") == 0 ||
+          strcmp(lambertProblemInMsgBuffer.solverName, "Izzo") == 0))
+    {
         bskLogger.bskLog(BSK_ERROR, "lambertSolver: solverName must be either 'Gooding' or 'Izzo'.");
     } else {
         this->solverName.assign(lambertProblemInMsgBuffer.solverName);
@@ -109,13 +113,16 @@ void LambertSolver::writeMessages(uint64_t CurrentSimNanos){
     lambertPerformanceOutMsgBuffer = this->lambertPerformanceOutMsg.zeroMsgPayload;
 
     if (this->noSolution || (this->numberOfRevolutions > 0 && !this->multiRevSolution)){
-        // 1. if the transfer angle is 180 degrees, the two position vectors do not define a plane, so an infinite number of solutions exist. In this case, the module should not return any solutions.
-        // 2. transfer time is too short for multi-revolution solution, zero solutions exist. Neither solution is valid
+        /*  1. if the transfer angle is 180 degrees, the two position vectors do not define a plane, so an infinite
+            number of solutions exist. In this case, the module should not return any solutions.
+            2. transfer time is too short for multi-revolution solution, zero solutions exist.
+            Neither solution is valid */
         lambertSolutionOutMsgBuffer.valid = 0;
         lambertSolutionOutMsgBuffer.validSol2 = 0;
     }
     else if (this->numberOfRevolutions == 0){
-        // if zero orbits are completed, only one solution exists. Only populate information for 1st solution, 2nd solution remains zero message payload
+        // if zero orbits are completed, only one solution exists.
+        // Only populate information for 1st solution, 2nd solution remains zero message payload
         eigenVector3d2CArray(this->vvecs.at(0), lambertSolutionOutMsgBuffer.v1);
         eigenVector3d2CArray(this->vvecs.at(1), lambertSolutionOutMsgBuffer.v2);
         lambertSolutionOutMsgBuffer.valid = 1; // solution 1 is valid
@@ -146,7 +153,8 @@ void LambertSolver::writeMessages(uint64_t CurrentSimNanos){
     this->lambertPerformanceOutMsg.write(&lambertPerformanceOutMsgBuffer, this->moduleID, CurrentSimNanos);
 }
 
-/*! This method computes the problem geometry for the given parameters of Lambert's problem. The orbit frame is also determined.
+/*! This method computes the problem geometry for the given parameters of Lambert's problem.
+    The orbit frame is also determined.
     @return void
 */
 void LambertSolver::problemGeometry()
@@ -169,7 +177,10 @@ void LambertSolver::problemGeometry()
     // check alignment of the two position vectors
     double sinTheta = i_r1.cross(i_r2).norm();
     if (abs(sinTheta) < sin(this->alignmentThreshold * M_PI/180.)){
-        bskLogger.bskLog(BSK_WARNING, "lambertSolver: position vectors r1 and r2 are too aligned, that is, the angle between them is smaller than the angle alignmentThreshold (default: 1.0 degrees). They might not define a plane, so no solution is returned.");
+        bskLogger.bskLog(BSK_WARNING,
+                         "lambertSolver: position vectors r1 and r2 are too aligned, that is, the angle between "
+                         "them is smaller than the angle alignmentThreshold (default: 1.0 degrees). "
+                         "They might not define a plane, so no solution is returned.");
         this->noSolution = true;
     }
     // orbit normal direction
@@ -199,7 +210,8 @@ void LambertSolver::findx()
         // get initial guess for iteration variable x
         std::array<double, 2> x0 = goodingInitialGuess(this->lambda, this->TOF);
         if (this->numberOfRevolutions > 0 && !this->multiRevSolution){
-            // if initial guess function determines that TOF is too short for multi-revolution solution to exist, return no solution
+            // if initial guess function determines that TOF is too short for multi-revolution solution to exist,
+            // return no solution
             return;
         }
         // for Gooding algorithm use halley root finder
@@ -220,7 +232,8 @@ void LambertSolver::findx()
         // get initial guess for iteration variable x
         std::array<double, 2> x0 = izzoInitialGuess(this->lambda, this->TOF);
         if (this->numberOfRevolutions > 0 && !this->multiRevSolution){
-            // if initial guess function determines that TOF is too short for multi-revolution solution to exist, return no solution
+            // if initial guess function determines that TOF is too short for multi-revolution solution to exist,
+            // return no solution
             return;
         }
         // for Izzo algorithm use 3rd order householder root finder
@@ -322,7 +335,7 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T) {
     } else {
         // multi-revolution case
         double x_M_pi = 4.0 / (3.0 * M_PI * (2 * this->numberOfRevolutions + 1));
-        double x_M; // x that corresponds to Tmin (the minimum TOF for two solutions to exist, otherwise zero solutions exist)
+        double x_M; // x that corresponds to Tmin (minimum TOF for 2 solutions to exist, otherwise zero solutions exist)
         if (theta <= M_PI) {
             x_M = x_M_pi * pow(theta / M_PI, 1.0 / 8.0);
         } else {
@@ -340,7 +353,7 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T) {
             std::array<double, 2> x0 = {0.0, 0.0};
             return x0;
         }
-        // if T >= Tmin, two multi-revolution solutions exist for the given time of flight T (or one solution if T = Tmin)
+        // if T >= Tmin, two multi-revolution solutions exist for given time of flight T (or one solution if T = Tmin)
         this->multiRevSolution = true;
 
         // get derivatives of T at x_M
@@ -416,11 +429,12 @@ std::array<double, 2> LambertSolver::izzoInitialGuess(double lam, double T) {
         if (T < Tmin){
             // if T < Tmin, no multi-revolution solution exists for the given time of flight T
             this->multiRevSolution = false;
-            bskLogger.bskLog(BSK_WARNING, "lambertSolver: no multi-revolution solution exists for the given time of flight.");
+            bskLogger.bskLog(BSK_WARNING,
+                             "lambertSolver: no multi-revolution solution exists for the given time of flight.");
             std::array<double, 2> x0 = {0.0, 0.0};
             return x0;
         }
-        // if T > Tmin, two multi-revolution solutions exist for the given time of flight T (or one solution if T = Tmin)
+        // if T > Tmin, two multi-revolution solutions exist for given time of flight T (or one solution if T = Tmin)
         this->multiRevSolution = true;
 
         double term1 = pow((this->numberOfRevolutions*M_PI + M_PI)/(8.0*T),(2.0/3.0));
@@ -516,7 +530,8 @@ std::array<double, 3> LambertSolver::dTdx(double x, double T, double lam)
     return DTs;
 }
 
-/*! This method includes a 3rd order householder root-finder to find the free variable x that satisfies the time-of-flight constraint
+/*! This method includes a 3rd order householder root-finder to find the free variable x that satisfies the
+    time-of-flight constraint.
     @param T requested non-dimensional time-of-flight
     @param x0 initial guess for x free variable of Lambert's problem that satisfies the given time of flight
     @param N number of revolutions
@@ -556,7 +571,8 @@ std::array<double, 3> LambertSolver::householder(double T, double x0, int N)
     return sol;
 }
 
-/*! This method includes a halley root-finder (2nd order householder) to find the free variable x that satisfies the time-of-flight constraint
+/*! This method includes a halley root-finder (2nd order householder) to find the free variable x that satisfies the
+    time-of-flight constraint
     @param T requested non-dimensional time-of-flight
     @param x0 initial guess for x free variable of Lambert's problem that satisfies the given time of flight
     @param N number of revolutions
@@ -594,7 +610,8 @@ std::array<double, 3> LambertSolver::halley(double T, double x0, int N)
     return sol;
 }
 
-/*! This method computes the minimum non-dimensional time-of-flight Tmin such that solutions exist for the multi-revolution case using a halley root-finder
+/*! This method computes the minimum non-dimensional time-of-flight Tmin such that solutions exist for the
+    multi-revolution case using a halley root-finder
     @param T0M initial guess for Tmin
     @param N number of revolutions
     @return double

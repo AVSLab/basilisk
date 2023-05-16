@@ -53,14 +53,14 @@ public:
 
     BSKLogger bskLogger;                                                    //!< -- BSK Logging
 
-    double lambertSolutionSpecifier = 1; //!< [s] which Lambert solution (1 or 2), if applicable, should be used
+    double lambertSolutionSpecifier = 1; //!< [-] which Lambert solution (1 or 2), if applicable, should be used
     double finalTime{}; //!< [s] time at which target position should be reached
     double maneuverTime{}; //!< [s] time at which maneuver should be executed
     double maxDistanceTarget{}; //!< [m] maximum acceptable distance from target location at final time
     double minOrbitRadius{}; //!< [m] minimum acceptable orbit radius
     //!< 6x6 matrix square root of the covariance matrix to apply errors with, in Hill (Orbit) frame components
     Eigen::MatrixXd uncertaintyStates;
-    double uncertaintyDV = 1; //!< [%] uncertainty of the Delta-V magnitude
+    double uncertaintyDV = 0.1; //!< [m/s] uncertainty of the Delta-V magnitude
     double dvConvergenceTolerance = 1e-3; //!< [m/s] tolerance on difference between DeltaV solutions between time steps
 
 private:

@@ -17,17 +17,16 @@
 # 
 #
 import copy
+import itertools
+import math
 
 import numpy as np
-import math
-import itertools
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import lambertValidator
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
 
 # parameters
 DVs = np.array([[1., 3., 4.], [500., -100., 200.]])
@@ -191,9 +190,6 @@ def countViolations(initialStates, muBody, tm, tf, r_TN_N, maxDistanceTarget, mi
 
 
 def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_errX, accuracy):
-    testFailCount = 0
-    testMessages = []
-
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -373,10 +369,16 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
         unitTestSim.ExecuteSimulation()
 
         initialStates = getInitialStates(r1_BN_N, v1_BN_N, dv_N * scaler[i], errStates, errDV)
-        violationsDistanceTarget, violationsOrbitRadius = countViolations(initialStates, muBody, tm, tf, r3_BN_N, maxDistanceTarget, minOrbitRadius)
+        violationsDistanceTarget, violationsOrbitRadius = countViolations(initialStates, muBody, tm, tf, r3_BN_N,
+                                                                          maxDistanceTarget, minOrbitRadius)
 
         # true values
-        if violationsDistanceTarget == 0 and violationsOrbitRadius == 0 and scaler[i] == scaler[i-1] and tm <= tf and numIter < 6 and errX < 1.e-8:
+        if violationsDistanceTarget == 0 and \
+                violationsOrbitRadius == 0 and \
+                scaler[i] == scaler[i-1] and \
+                tm <= tf and \
+                numIter < 6 and \
+                errX < 1.e-8:
             dvTrue = np.append(dvTrue, [dv_N * scaler[i]], axis=0)
             burnStartTimeTrue = np.append(burnStartTimeTrue, macros.sec2nano(tm))
         else:

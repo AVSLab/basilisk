@@ -17,9 +17,9 @@
 # 
 #
 import copy
+import itertools
 
 import numpy as np
-import itertools
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import lambertPlanner
