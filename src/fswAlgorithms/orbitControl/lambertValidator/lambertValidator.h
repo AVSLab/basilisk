@@ -62,6 +62,7 @@ public:
     Eigen::MatrixXd uncertaintyStates;
     double uncertaintyDV = 0.1; //!< [m/s] uncertainty of the Delta-V magnitude
     double dvConvergenceTolerance = 1e-3; //!< [m/s] tolerance on difference between DeltaV solutions between time steps
+    bool ignoreConstraintViolations = false; //!< override flag to write DV message despite constraint violations
 
 private:
     void readMessages();

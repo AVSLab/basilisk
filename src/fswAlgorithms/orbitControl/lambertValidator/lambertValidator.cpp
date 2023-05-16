@@ -103,7 +103,8 @@ void LambertValidator::UpdateState(uint64_t currentSimNanos)
     this->dv_N = this->vLambert_N - this->vm_N;
 
     // only propagate the perturbed initial states if Lambert solution is valid in order to safe computation effort
-    if (validLambert == 1) {
+    // also skip propagation of perturbed initial states if the constraint violations should be ignored anyway
+    if (this->validLambert == 1 && !this->ignoreConstraintViolations) {
         std::array<Eigen::VectorXd, NUM_INITIALSTATES> initialStates = this->getInitialStates();
         // check if any of the perturbed initial states violates the given constraints
         this->countViolations(initialStates);
@@ -357,14 +358,18 @@ bool LambertValidator::checkPerformance() const
     bool goodSolution = false;
 
     /* Delta-V should only be commanded if Lambert solution is valid, converged, and resulting trajectory
-       doesn't violate any constraints */
-    if (this->validLambert == 1 &&
+       doesn't violate any constraints.
+       Also return good solution if constraint violations (and convergence) should be ignored,
+       as long as the Lambert solution is valid. */
+    if ((this->validLambert == 1 &&
         this->numIterLambert < 6 && // Lambert module should usually take only 2-3 iterations
         abs(this->errXLambert) < 1e-8 &&
         abs(solutionDifference) < 1e-2 &&
         abs(dvDifference) < dvConvergenceTolerance &&
         this->violationsDistanceTarget == 0 &&
         this->violationsOrbitRadius == 0)
+        ||
+        (this->validLambert == 1 && this->ignoreConstraintViolations))
     {
         goodSolution = true;
     }
