@@ -29,10 +29,10 @@ LambertSolver::LambertSolver() = default;
 LambertSolver::~LambertSolver() = default;
 
 /*! This method is used to reset the module and checks that required input messages are connected.
-    @param CurrentSimNanos current simulation time in nano-seconds
+    @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSolver::Reset(uint64_t CurrentSimNanos)
+void LambertSolver::Reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
@@ -42,10 +42,10 @@ void LambertSolver::Reset(uint64_t CurrentSimNanos)
 
 /*! This is the main method that gets called every time the module is updated.
     It computes the solution of Lambert's problem.
-    @param CurrentSimNanos current simulation time in nano-seconds
+    @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSolver::UpdateState(uint64_t CurrentSimNanos)
+void LambertSolver::UpdateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();
@@ -62,7 +62,7 @@ void LambertSolver::UpdateState(uint64_t CurrentSimNanos)
     }
 
     // write messages
-    this->writeMessages(CurrentSimNanos);
+    this->writeMessages(currentSimNanos);
 }
 
 /*! This method reads the input messages each call of updateState. It also checks if the message contents are valid for
@@ -101,10 +101,10 @@ void LambertSolver::readMessages(){
 }
 
 /*! This method writes the output messages each call of updateState
-    @param CurrentSimNanos current simulation time in nano-seconds
+    @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSolver::writeMessages(uint64_t CurrentSimNanos){
+void LambertSolver::writeMessages(uint64_t currentSimNanos){
     // Make local copies of messages
     LambertSolutionMsgPayload lambertSolutionOutMsgBuffer;
     LambertPerformanceMsgPayload lambertPerformanceOutMsgBuffer;
@@ -149,8 +149,8 @@ void LambertSolver::writeMessages(uint64_t CurrentSimNanos){
     }
 
     // Write to the output messages
-    this->lambertSolutionOutMsg.write(&lambertSolutionOutMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->lambertPerformanceOutMsg.write(&lambertPerformanceOutMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->lambertSolutionOutMsg.write(&lambertSolutionOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->lambertPerformanceOutMsg.write(&lambertPerformanceOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This method computes the problem geometry for the given parameters of Lambert's problem.

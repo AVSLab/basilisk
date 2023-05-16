@@ -39,8 +39,8 @@ public:
     LambertSolver();
     ~LambertSolver();
 
-    void Reset(uint64_t CurrentSimNanos) override;
-    void UpdateState(uint64_t CurrentSimNanos) override;
+    void Reset(uint64_t currentSimNanos) override;
+    void UpdateState(uint64_t currentSimNanos) override;
 
     ReadFunctor<LambertProblemMsgPayload> lambertProblemInMsg;          //!< lambert problem input message
     Message<LambertSolutionMsgPayload> lambertSolutionOutMsg;           //!< lambert solution output message
@@ -53,7 +53,7 @@ public:
 
 private:
     void readMessages();
-    void writeMessages(uint64_t CurrentSimNanos);
+    void writeMessages(uint64_t currentSimNanos);
     void problemGeometry();
     std::array<double, 2> goodingInitialGuess(double lambda, double T);
     std::array<double, 2> izzoInitialGuess(double lambda, double T);
