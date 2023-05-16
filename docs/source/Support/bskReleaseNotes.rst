@@ -53,6 +53,7 @@ Version |release|
 - Created :ref:`lambertPlanner` module to write the :ref:`lambertProblemMsgPayload` Lambert problem setup message
 - Created :ref:`lambertValidator` module to check if the solution from the :ref:`lambertSolver` module violates any
   constraints before a Delta-V is commanded.
+- Added :ref:`scenarioLambertSolver` scenario to illustrate the Lambert solver module package
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------
