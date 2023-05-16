@@ -542,7 +542,7 @@ std::array<double, 3> LambertSolver::householder(double T, double x0, int N)
     double tol = 1e-8;
     int iterMax = 8;
     double xnew = 0.0; // initialize
-    int numIter = 0; // number of iterations
+    int nIter = 0; // number of iterations
     double err;
 
     for (int j = 0; j < iterMax; ++j){
@@ -557,16 +557,16 @@ std::array<double, 3> LambertSolver::householder(double T, double x0, int N)
         double delta = tof - T;
         // compute new x using 3rd order householder algorithm
         xnew = x0 - delta*(pow(DT,2) - delta*D2T/2.0)/(DT*(pow(DT,2) - delta*D2T)
-                + D3T*pow(delta,2)/6.0);
+                                                       + D3T*pow(delta,2)/6.0);
 
         err = abs(x0 - xnew);
         x0 = xnew;
-        numIter += numIter;
+        nIter += 1;
         if (err < tol){
             break;
         }
     }
-    std::array<double, 3> sol = {xnew, static_cast<double>(numIter), err};
+    std::array<double, 3> sol = {xnew, static_cast<double>(nIter), err};
 
     return sol;
 }
@@ -583,7 +583,7 @@ std::array<double, 3> LambertSolver::halley(double T, double x0, int N)
     double tol = 1e-8;
     int iterMax = 8;
     double xnew = 0.0; // initialize
-    int numIter = 0; // number of iterations
+    int nIter = 0; // number of iterations
     double err;
 
     for (int j = 0; j < iterMax; ++j){
@@ -599,13 +599,13 @@ std::array<double, 3> LambertSolver::halley(double T, double x0, int N)
         xnew = x0 - delta*DT/(pow(DT,2) - delta*D2T/2.0);
         err = abs(x0 - xnew);
         x0 = xnew;
-        numIter += numIter;
+        nIter += 1;
         if (err < tol){
             break;
         }
     }
 
-    std::array<double, 3> sol = {xnew, static_cast<double>(numIter), err};
+    std::array<double, 3> sol = {xnew, static_cast<double>(nIter), err};
 
     return sol;
 }
