@@ -25,7 +25,6 @@ from Basilisk.fswAlgorithms import lambertSolver
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
 
 from fswAlgorithms.orbitControl.lambertSolver._UnitTest.Support.IzzoLambert import *
 
@@ -83,16 +82,10 @@ def test_lambertSolver(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_ang
 
     For the multi-revolution case, the solution for the free variable x is also tested.
     """
-    [testResults, testMessages] = lambertSolverTestFunction(show_plots, p1_solver, p2_revs,
-                                                            p3_times, p4_eccs, p5_angles, p6_align, accuracy)
-    assert testResults < 1, testMessages
+    lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy)
 
 
 def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy):
-    """This test checks for a large force return when far away from the waypoint"""
-    testFailCount = 0
-    testMessages = []
-
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -251,42 +244,72 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
         xTrueSol2 = 0.
 
     # make sure module output data is correct
-    ParamsString = ' for solver=' + p1_solver + ', rev=' + str(p2_revs) + ', time=' + str(p3_times) + \
-                   ', eccentricity=' + str(p4_eccs) + ', angle=' + str(p5_angles) + ', alignmentThreshold=' + \
-                   str(p6_align) + ', accuracy=' + str(accuracy)
+    paramsString = ' for solver={}, rev={}, time={}, eccentricity={}, angle={}, alignmentThreshold={}, ' \
+                   'accuracy={}'.format(
+                    str(p1_solver),
+                    str(p2_revs),
+                    str(p3_times),
+                    str(p4_eccs),
+                    str(p5_angles),
+                    str(p6_align),
+                    str(accuracy))
 
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        v1True, v1, accuracy, ('Variable: v1,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        v2True, v2, accuracy, ('Variable: v2,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        np.array([validFlagTrue]), np.array([validFlag]), accuracy, ('Variable: validFlag,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        v1TrueSol2, v1Sol2, accuracy, ('Variable: v1Sol2,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        v2TrueSol2, v2Sol2, accuracy, ('Variable: v2Sol2,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        np.array([validFlagTrueSol2]), np.array([validFlagSol2]), accuracy, ('Variable: validFlagSol2,' + ParamsString),
-        testFailCount, testMessages)
+    np.testing.assert_allclose(v1,
+                               v1True,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: v1,' + paramsString),
+                               verbose=True)
 
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        np.array([xTrue]), np.array([x]), accuracy, ('Variable: x,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        np.array([xTrueSol2]), np.array([xSol2]), accuracy, ('Variable: xSol2,' + ParamsString),
-        testFailCount, testMessages)
+    np.testing.assert_allclose(v2,
+                               v2True,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: v2,' + paramsString),
+                               verbose=True)
 
-    if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
-    else:
-        print(testMessages)
+    np.testing.assert_allclose(validFlag,
+                               validFlagTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: validFlag,' + paramsString),
+                               verbose=True)
 
-    return [testFailCount, "".join(testMessages)]
+    np.testing.assert_allclose(v1Sol2,
+                               v1TrueSol2,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: v1Sol2,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(v2Sol2,
+                               v2TrueSol2,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: v2Sol2,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(validFlagSol2,
+                               validFlagTrueSol2,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: validFlagSol2,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(x,
+                               xTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: x,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(xSol2,
+                               xTrueSol2,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: xSol2,' + paramsString),
+                               verbose=True)
+
 
 if __name__ == "__main__":
     test_lambertSolver(False, solver[1], revs[0],

@@ -26,7 +26,6 @@ from Basilisk.fswAlgorithms import lambertPlanner
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
 
 # parameters
 revs = [0, 1, 4]
@@ -65,14 +64,10 @@ def test_lambertPlanner(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accuracy):
     true value for r1vec is obtained by solving Kepler's equation using from current time to maneuver time and the given
     orbit elements.
     """
-    [testResults, testMessages] = lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accuracy)
-    assert testResults < 1, testMessages
+    lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accuracy)
 
 
 def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accuracy):
-    testFailCount = 0
-    testMessages = []
-
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -179,36 +174,49 @@ def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accur
     numRevolutionsTrue = revs
 
     # make sure module output data is correct
-    ParamsString = ' for rev=' + str(p1_revs) + ', maneuver time=' + str(p2_tm) + ', final time=' + str(p3_tf) + \
-                   ', eccentricity=' + str(p4_eccs) + ', accuracy=' + str(accuracy)
+    paramsString = ' for rev={}, maneuver time={}, final time={}, eccentricity={}, accuracy={}'.format(
+        str(p1_revs),
+        str(p2_tm),
+        str(p3_tf),
+        str(p4_eccs),
+        str(accuracy))
 
-    if not solverName == solverNameTrue:
-        testFailCount += 1
-        testMessages.append("FAILED: " + ('Variable: solverName,' + ParamsString) + "\n")
+    np.testing.assert_string_equal(solverName, solverNameTrue)
 
-    testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
-        r1vecTrue, r1vec, accuracy, ('Variable: r1vec,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
-        r2vecTrue, r2vec, accuracy, ('Variable: r2vec,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        np.array([transferTimeTrue]), np.array([transferTime]), accuracy, ('Variable: transferTime,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        np.array([muTrue]), np.array([mu]), accuracy, ('Variable: mu,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        np.array([numRevolutionsTrue]), np.array([numRevolutions]), accuracy,
-        ('Variable: numRevolutions,' + ParamsString),
-        testFailCount, testMessages)
+    np.testing.assert_allclose(r1vec,
+                               r1vecTrue,
+                               rtol=accuracy,
+                               atol=0,
+                               err_msg=('Variable: r1vec,' + paramsString),
+                               verbose=True)
 
-    if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
-    else:
-        print(testMessages)
+    np.testing.assert_allclose(r2vec,
+                               r2vecTrue,
+                               rtol=accuracy,
+                               atol=0,
+                               err_msg=('Variable: r2vec,' + paramsString),
+                               verbose=True)
 
-    return [testFailCount, "".join(testMessages)]
+    np.testing.assert_allclose(transferTime,
+                               transferTimeTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: transferTime,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(mu,
+                               muTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: mu,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(numRevolutions,
+                               numRevolutionsTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: numRevolutions,' + paramsString),
+                               verbose=True)
 
 
 if __name__ == "__main__":
