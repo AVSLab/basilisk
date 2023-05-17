@@ -251,10 +251,12 @@ def sphericalHarmonics(show_plots):
     snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
-    gravOutMax = spherHarm.computeField([[0.0], [0.0], [(6378.1363)*1.0E3]], 100, True)
-    if gravOutMax != gravOut:
+    try:
+        spherHarm.computeField([[0.0], [0.0], [(6378.1363)*1.0E3]], 100, True)
         testFailCount += 1
         testMessages.append("Gravity ceiling not enforced correctly")
+    except RuntimeError:
+        pass # Great! We threw an error
 
     if testFailCount == 0:
         passFailText = 'PASSED'
@@ -471,6 +473,7 @@ def multiBodyGravity(show_plots):
     localPlanetEditor = messaging.SpicePlanetStateMsgPayload()
     localPlanetEditor.PositionVector = [om.AU/10., 0., 0.]
     localPlanetEditor.VelocityVector = [0., 0., 0.]
+    localPlanetEditor.J20002Pfix = np.identity(3)
 
     #Grav Body 1 is twice the size of the other two
     gravBody1 = gravityEffector.GravBodyData()
@@ -486,6 +489,7 @@ def multiBodyGravity(show_plots):
     allGrav.gravBodies = gravityEffector.GravBodyVector([gravBody1])
     allGrav.linkInStates(newManager)
     allGrav.registerProperties(newManager)
+    allGrav.Reset(0)
     multiSim.AddModelToTask(unitTaskName, allGrav)
     posVelSig = [[0.], [0.], [0.]]
     allGrav.computeGravityField(posVelSig, posVelSig) #compute acceleration only considering the first body.
@@ -511,6 +515,7 @@ def multiBodyGravity(show_plots):
     allGrav2.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2])
     allGrav2.linkInStates(newManager)
     allGrav2.registerProperties(newManager)
+    allGrav2.Reset(0)
     multiSim.AddModelToTask(unitTaskName, allGrav2)
     allGrav2.computeGravityField(posVelSig, posVelSig) #compute acceleration considering the first and second bodies.
     step2 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
@@ -530,6 +535,7 @@ def multiBodyGravity(show_plots):
     allGrav3.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2, gravBody3])
     allGrav3.linkInStates(newManager)
     allGrav3.registerProperties(newManager)
+    allGrav3.Reset(0)
     multiSim.AddModelToTask(unitTaskName, allGrav3)
     allGrav3.computeGravityField(posVelSig, posVelSig) #comput acceleration considering all three bodies
     step3 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
