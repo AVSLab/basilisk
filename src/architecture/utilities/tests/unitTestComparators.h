@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,25 +17,25 @@
 
  */
 
-%module gaussMarkovCheck
-%{
-    #include "gaussMarkovCheck.h"
-%}
+#ifndef UNITTESTCOMPARATORS_H
+#define UNITTESTCOMPARATORS_H
 
-%include "swig_conly_data.i"
+#include <math.h>
 
-%pythoncallback;
-int testGaussMarkov();
-%nopythoncallback;
+int isEqual(double a, double b, double accuracy)
+{
+    if(fabs(a - b) > accuracy) {
+        return 0;
+    }
+    return 1;
+}
 
-%ignore testGaussMarkov;
+int isEqualRel(double a, double b, double accuracy)
+{
+    if(fabs(a - b)/fabs(a) > accuracy) {
+        return 0;
+    }
+    return 1;
+}
 
-%include "gaussMarkovCheck.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
-
-
+#endif //UNITTESTCOMPARATORS_H

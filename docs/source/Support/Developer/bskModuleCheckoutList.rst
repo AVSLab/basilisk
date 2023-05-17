@@ -14,8 +14,10 @@ Make sure the branch is up to date and rebased on the latest develop code before
 Building Basilisk and Testing
 -----------------------------
 
--   Do a clean build of Basilisk and make sure all code compiles as expected (see :ref:`FAQ <FAQ>` on how to do a clean build)
--   From the ``src`` directory, run ``pytest`` and ensure all tests are passing as expected (see :ref:`installOptionalPackages` for info on installing and running ``pytest``)
+-   Do a clean build of Basilisk and make sure all code compiles as expected (see :ref:`FAQ <FAQ>` on how to do a
+    clean build)
+-   From the project root directory, run ``python run_all_test.py`` and ensure all python and C/C++ tests are passing
+    as expected (see :ref:`installOptionalPackages` for info on installing and running ``pytest``)
 
 Style and Formatting
 --------------------
