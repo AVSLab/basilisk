@@ -342,10 +342,8 @@ def run(show_plots):
     mu = 17.2882449693*1e9 # m^3/s^2
     asteroid = gravFactory.createCustomGravObject("vesta", mu, radEquator=265*1000)
     asteroid.isCentralBody = True
-    asteroid.useSphericalHarmParams = True
     nSpherHarm = 14
-    simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/VESTA20H.txt',
-                                        asteroid.spherHarm, nSpherHarm)
+    asteroid.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/VESTA20H.txt', nSpherHarm)
     asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])
 
     # create an ephemeris converter
