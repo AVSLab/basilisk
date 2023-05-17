@@ -53,6 +53,10 @@ Version |release|
 - Removed all instances of using ``unitTestSupport.np2EigenVectorXd()``, as this function is now unneeded.
 - Created a :ref:`facetSRPDynamicEffector` dynamics module to calculate the B frame SRP force and torque acting on a static spacecraft.
 - Google Test C/C++ testing framework added
+- Refactored ``GravityEffector``. Adding custom gravity models can now be done by subclassing ``GravityModel``. The
+  utility method ``useSphericalHarmonicsGravityModel`` has been added to planetary body objects, which makes the body
+  use spherical harmonics and loads them from a file with a single command. Similarly, the methods ``usePolyhedralGravityModel``
+  and ``usePointMassGravityModel`` have been added.
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------
