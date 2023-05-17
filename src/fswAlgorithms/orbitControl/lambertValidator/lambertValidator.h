@@ -27,6 +27,7 @@
 #include "architecture/msgPayloadDefC/LambertSolutionMsgPayload.h"
 #include "architecture/msgPayloadDefC/LambertPerformanceMsgPayload.h"
 #include "architecture/msgPayloadDefC/DvBurnCmdMsgPayload.h"
+#include "architecture/msgPayloadDefC/LambertValidatorMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -50,6 +51,7 @@ public:
     ReadFunctor<LambertSolutionMsgPayload> lambertSolutionInMsg;            //!< lambert solution input message
     ReadFunctor<LambertPerformanceMsgPayload> lambertPerformanceInMsg;      //!< lambert performance input message
     Message<DvBurnCmdMsgPayload> dvBurnCmdOutMsg;                           //!< Delta-V burn command message
+    Message<LambertValidatorMsgPayload> lambertValidatorOutMsg;             //!< Lambert Validator results message
 
     BSKLogger bskLogger;                                                    //!< -- BSK Logging
 
@@ -104,6 +106,9 @@ private:
     int violationsOrbitRadius = 0; //!< [-] number of violations of the minOrbitRadius constraint
     double timestep = 10.; //!< [s] time step used for RK4 propagation
     std::function<Eigen::VectorXd(double, Eigen::VectorXd)> EOM_2BP; //!< equations of motion to be used for RK4
+    int maxNumIterLambert = 6; //!< [-] maximum number of iterations for Lambert solver root finder to find x
+    double xToleranceLambert = 1e-8; //!< [-] tolerance for Lambert solver root finder to find x
+    double xConvergenceTolerance = 1e-2; //!< [-] tolerance on difference between x solutions between time steps
 };
 
 #endif
