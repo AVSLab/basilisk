@@ -16,13 +16,18 @@ The following Frequency Answer Questions are general and not operating system sp
 
 #. How can I run ``pytest`` faster?
 
-    Glad you asked. While Basilisk is a single threaded simulation, it is possible to run ``pytest`` in a multi-threaded manner::
+    One can distribute python tests across multiple processes. This is achieved with the ``pytest-xdist``
+    package using::
 
-        pip3 install pytest-xdist
+       pip3 install pytest-xdist
 
-    After installing this utility you now run the multi-threaded version of ``pytest`` for 8 threads using::
+    After installing this package you can now pytest such that it distribute tests across multi-processes.
+    ``pytest`` for 8 processes using::
 
-        python3 -m pytest -n 8
+       python3 -m pytest -n 8
+
+    or replace `8` with either the number of processors (virtual or otherwise) of your host machine, or "auto" to use all
+    available processors.
 
 #. How can I used ``pytest`` to generate a Basilisk validation HTML report?
 

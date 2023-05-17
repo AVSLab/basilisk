@@ -285,4 +285,30 @@ Example build commands forArch x64, MSVC Year 2019, MSVC Version 16::
 
     cmake -G “Visual Studio 15 2017 Win64” ../src -DCMAKE_BUILD_TYPE=Release
 
+Running Project Tests
+---------------------
 
+The project employs two testing frameworks Pytest for python executed tests and Google Test for C/C++ executed
+tests.
+
+To run all tests execute the following from the project root directory
+
+.. code-block:: console
+
+    python run_all_test.py
+
+To run only the python tests
+
+.. code-block:: console
+
+    cd src
+    pytest
+
+To run only the C/C++ tests
+
+.. code-block:: console
+
+    cd dist3
+    ctest
+
+or on macos `ctest -C <Release or Debug>`
