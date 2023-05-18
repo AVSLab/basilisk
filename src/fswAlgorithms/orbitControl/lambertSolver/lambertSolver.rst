@@ -70,7 +70,7 @@ The lambert problem input message is either created as a standalone message in p
 .. code-block:: python
 
     lambertProblemInMsgData = messaging.LambertProblemMsgPayload()
-    lambertProblemInMsgData.solverName = "Izzo"
+    lambertProblemInMsgData.solverMethod = messaging.IZZO
     lambertProblemInMsgData.r1vec = np.array([10000. * 1000, 0. ,0.])
     lambertProblemInMsgData.r2vec = np.array([0., 8000. * 1000,0.])
     lambertProblemInMsgData.transferTime = 10000.

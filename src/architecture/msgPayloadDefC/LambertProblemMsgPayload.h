@@ -20,11 +20,14 @@
 #ifndef LAMBERT_PROBLEM_MESSAGE_H
 #define LAMBERT_PROBLEM_MESSAGE_H
 
-#define MAX_STRING_LENGTH 256
+typedef enum {
+    IZZO,
+    GOODING
+} SolverMethod;
 
 /*! @brief Structure used to define the input for Lambert problem */
 typedef struct {
-    char solverName[MAX_STRING_LENGTH]; //!< [-] name of lambert algorithm
+    SolverMethod solverMethod;          //!< [-] lambert solver algorithm (GOODING or IZZO)
     double r1vec[3];                    //!< [m] position vector at t0
     double r2vec[3];                    //!< [m] position vector at t1
     double transferTime;                //!< [s] time of flight between r1vec and r2vec (t1-t0)

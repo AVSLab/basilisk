@@ -88,14 +88,7 @@ void LambertSolver::readMessages(){
     } else {
         this->numberOfRevolutions = lambertProblemInMsgBuffer.numRevolutions;
     }
-    if (!(strcmp(lambertProblemInMsgBuffer.solverName, "Gooding") == 0 ||
-          strcmp(lambertProblemInMsgBuffer.solverName, "Izzo") == 0))
-    {
-        bskLogger.bskLog(BSK_ERROR, "lambertSolver: solverName must be either 'Gooding' or 'Izzo'.");
-    } else {
-        this->solverName.assign(lambertProblemInMsgBuffer.solverName);
-    }
-
+    this->solverMethod = lambertProblemInMsgBuffer.solverMethod;
     this->r1vec = cArray2EigenVector3d(lambertProblemInMsgBuffer.r1vec);
     this->r2vec = cArray2EigenVector3d(lambertProblemInMsgBuffer.r2vec);
 }
@@ -206,7 +199,7 @@ void LambertSolver::problemGeometry()
 void LambertSolver::findx()
 {
     // find x that satisfies time-of-flight constraint using numerical root finder
-    if (this->solverName == "Gooding"){
+    if (this->solverMethod == GOODING){
         // get initial guess for iteration variable x
         std::array<double, 2> x0 = goodingInitialGuess(this->lambda, this->TOF);
         if (this->numberOfRevolutions > 0 && !this->multiRevSolution){
@@ -228,7 +221,7 @@ void LambertSolver::findx()
             this->errXSol2 = solution_sol2[2];
         }
     }
-    else if (this->solverName == "Izzo"){
+    else if (this->solverMethod == IZZO){
         // get initial guess for iteration variable x
         std::array<double, 2> x0 = izzoInitialGuess(this->lambda, this->TOF);
         if (this->numberOfRevolutions > 0 && !this->multiRevSolution){

@@ -76,7 +76,7 @@ def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accur
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    solver = "Izzo"
+    solver = messaging.IZZO
     muBody = 3.986004418e14
     t0 = 100.
     revs = p1_revs
@@ -132,12 +132,12 @@ def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accur
     # setup module to be tested
     module = lambertPlanner.LambertPlanner()
     module.ModelTag = "lambertPlanner"
-    module.solverName = solver
     module.r_TN_N = targetPosition
     module.finalTime = tf
     module.maneuverTime = tm
     module.mu = muBody
     module.numRevolutions = p1_revs
+    module.useSolverIzzoMethod()
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure input messages
@@ -158,20 +158,30 @@ def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accur
     unitTestSim.TotalSim.SingleStepProcesses()
 
     # pull module data
-    solverName = lambertProblemOutMsgRec.solverName[0]
+    solverMethod = lambertProblemOutMsgRec.solverMethod[0]
     r1vec = lambertProblemOutMsgRec.r1vec[0]
     r2vec = lambertProblemOutMsgRec.r2vec[0]
     transferTime = lambertProblemOutMsgRec.transferTime[0]
     mu = lambertProblemOutMsgRec.mu[0]
     numRevolutions = lambertProblemOutMsgRec.numRevolutions[0]
 
+    if solverMethod == messaging.GOODING:
+        solverName = "Gooding"
+    elif solverMethod == messaging.IZZO:
+        solverName = "Izzo"
+
     # true values
-    solverNameTrue = solver
+    solverMethodTrue = solver
     r1vecTrue = rm_BN_N
     r2vecTrue = targetPosition
     transferTimeTrue = tf - tm
     muTrue = muBody
     numRevolutionsTrue = revs
+
+    if solverMethodTrue == messaging.GOODING:
+        solverNameTrue = "Gooding"
+    elif solverMethodTrue == messaging.IZZO:
+        solverNameTrue = "Izzo"
 
     # make sure module output data is correct
     paramsString = ' for rev={}, maneuver time={}, final time={}, eccentricity={}, accuracy={}'.format(

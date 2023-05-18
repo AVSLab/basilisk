@@ -222,7 +222,6 @@ def run(show_plots):
     # set up Lambert planner
     lamPlanner = lambertPlanner.LambertPlanner()
     lamPlanner.ModelTag = "lambertPlanner"
-    lamPlanner.solverName = "Izzo"
     lamPlanner.r_TN_N = r_TN_N
     lamPlanner.finalTime = tf
     lamPlanner.maneuverTime = tm

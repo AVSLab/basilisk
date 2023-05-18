@@ -40,12 +40,14 @@ public:
     void Reset(uint64_t currentSimNanos) override;
     void UpdateState(uint64_t currentSimNanos) override;
 
+    void useSolverIzzoMethod();
+    void useSolverGoodingMethod();
+
     ReadFunctor<NavTransMsgPayload> navTransInMsg;                      //!< translational navigation input message
     Message<LambertProblemMsgPayload> lambertProblemOutMsg;             //!< lambert problem output message
 
     BSKLogger bskLogger;                                                //!< -- BSK Logging
 
-    std::string solverName; //!< name of lambert algorithm
     Eigen::Vector3d r_TN_N; //!< [m] targeted position vector with respect to celestial body at finalTime, in N frame
     double finalTime{}; //!< [s] time at which target position should be reached
     double maneuverTime{}; //!< [s] time at which maneuver should be executed
@@ -65,6 +67,7 @@ private:
                         double t0,
                         double dt);
 
+    SolverMethod solverMethod; //!< lambert solver algorithm (GOODING or IZZO)
     double time{}; //!< [s] Current vehicle time-tag associated with measurements
     Eigen::Vector3d r_N; //!< [m] Current inertial spacecraft position vector in inertial frame N components
     Eigen::Vector3d v_N; //!< [m/s] Current inertial velocity of the spacecraft in inertial frame N components

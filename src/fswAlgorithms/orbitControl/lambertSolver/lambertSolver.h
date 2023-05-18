@@ -66,7 +66,7 @@ private:
     double getTmin(double T0M, int N);
     double hypergeometricF(double z);
 
-    std::string solverName; //!< name of lambert algorithm
+    SolverMethod solverMethod; //!< lambert solver algorithm (GOODING or IZZO)
     Eigen::Vector3d r1vec; //!< position vector at t0
     Eigen::Vector3d r2vec; //!< position vector at t1
     double transferTime{}; //!< time of flight between r1vec and r2vec (t1-t0)

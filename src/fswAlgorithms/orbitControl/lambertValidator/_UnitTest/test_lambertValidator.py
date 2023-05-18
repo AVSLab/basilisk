@@ -198,7 +198,7 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    solver = "Izzo"
+    solverMethod = messaging.IZZO
     muBody = 3.986004418e14
     t0 = 0.
     tm = p2_tm
@@ -310,7 +310,7 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
     navTransInMsg = messaging.NavTransMsg().write(navTransInMsgData)
 
     lambertProblemInMsgData = messaging.LambertProblemMsgPayload()
-    lambertProblemInMsgData.solverName = solver
+    lambertProblemInMsgData.solverMethod = solverMethod
     lambertProblemInMsgData.r1vec = r1_BN_N
     lambertProblemInMsgData.r2vec = r3_BN_N
     lambertProblemInMsgData.transferTime = tf-tm

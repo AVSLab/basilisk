@@ -156,9 +156,14 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
     r2vec = r2_N
     revs = p2_revs
 
+    if solverName == "Gooding":
+        solverMethod = messaging.GOODING
+    elif solverName == "Izzo":
+        solverMethod = messaging.IZZO
+
     # Configure input messages
     lambertProblemInMsgData = messaging.LambertProblemMsgPayload()
-    lambertProblemInMsgData.solverName = solverName
+    lambertProblemInMsgData.solverMethod = solverMethod
     lambertProblemInMsgData.r1vec = r1vec
     lambertProblemInMsgData.r2vec = r2vec
     lambertProblemInMsgData.transferTime = time
