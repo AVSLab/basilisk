@@ -39,12 +39,12 @@ double computeDtInSeconds(uint64_t lhs, uint64_t rhs)
 } // namespace
 
 GravBodyData::GravBodyData()
-    : localPlanet{std::invoke([]() {
+    : gravityModel{std::make_shared<PointMassGravityModel>()}, 
+      localPlanet{std::invoke([]() {
           SpicePlanetStateMsgPayload payload{};
           m33SetIdentity(payload.J20002Pfix); // Initialize rotation matrix to identity
           return payload;
-      })},
-      gravityModel{std::make_shared<PointMassGravityModel>()}
+      })}
 {
 }
 
