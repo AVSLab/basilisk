@@ -222,7 +222,7 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
     mu = planet.mu
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Set up a circular orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()

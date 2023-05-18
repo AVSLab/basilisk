@@ -260,7 +260,7 @@ def run(show_plots, useDVThrusters):
     mu = earth.mu
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # setup extForceTorque module
     # the control torque is read in through the messaging system

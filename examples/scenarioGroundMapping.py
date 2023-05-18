@@ -211,11 +211,11 @@ def run(show_plots, useCentral):
     mu = earth.mu
 
     timeInitString = '2020 MAY 21 18:28:03 (UTC)'
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', timeInitString)
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString)
+    scSim.AddModelToTask(simTaskName, spiceObject, None, -1)
 
     # Attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -268,7 +268,7 @@ def run(show_plots, useCentral):
     groundMap.nHat_B = [0, 0, 1]
     groundMap.halfFieldOfView = np.radians(22.5)
     groundMap.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    groundMap.planetInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
+    groundMap.planetInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
     scSim.AddModelToTask(simTaskName, groundMap, ModelPriority=1)
 
     # Create the mapping instrument
@@ -290,7 +290,7 @@ def run(show_plots, useCentral):
     # Create the ephemeris converter module
     ephemConverter = ephemerisConverter.EphemerisConverter()
     ephemConverter.ModelTag = "ephemConverter"
-    ephemConverter.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[0])
+    ephemConverter.addSpiceInputMsg(spiceObject.planetStateOutMsgs[0])
     scSim.AddModelToTask(simTaskName, ephemConverter)
 
     # Setup nadir pointing guidance module
@@ -329,7 +329,7 @@ def run(show_plots, useCentral):
     snAttLog = sNavObject.attOutMsg.recorder()
     snTransLog = sNavObject.transOutMsg.recorder()
     scLog = scObject.scStateOutMsg.recorder()
-    planetLog = gravFactory.spiceObject.planetStateOutMsgs[0].recorder()
+    planetLog = spiceObject.planetStateOutMsgs[0].recorder()
     storageLog = storageUnit.storageUnitDataOutMsg.recorder()
 
     # Setup the logging for the mapping locations

@@ -291,8 +291,7 @@ def run(show_plots):
 
     # Create additional gravitational bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    gravFactory.createBodies(["earth", "sun"])
-    sun = gravFactory.gravBodies["sun"]
+    gravFactory.createBodies("earth", "sun")
 
     # Set gravity body index values
     earthIdx = 0
@@ -301,12 +300,10 @@ def run(show_plots):
 
     # Create and configure the default SPICE support module. The first step is to store
     # the date and time of the start of the simulation.
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
 
     # Add the SPICE object to the simulation task list
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+    scSim.AddModelToTask(simTaskName, spiceObject)
 
     # Create the asteroid custom gravitational body
     asteroid = gravFactory.createCustomGravObject("bennu", mu
@@ -321,15 +318,15 @@ def run(show_plots):
     scObject.ModelTag = "bskSat"
 
     # Connect all gravitational bodies to the spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
     scSim.AddModelToTask(simTaskName, scObject)
 
     # Create an ephemeris converter to convert messages of type
     # 'SpicePlanetStateMsgPayload' to 'EphemerisMsgPayload'
     ephemObject = ephemerisConverter.EphemerisConverter()
     ephemObject.ModelTag = 'EphemData'
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[earthIdx])
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[sunIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[earthIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[sunIdx])
     # Recall the asteroid was not created with Spice.
     ephemObject.addSpiceInputMsg(gravBodyEphem.planetOutMsgs[0])
     scSim.AddModelToTask(simTaskName, ephemObject)

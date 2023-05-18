@@ -145,17 +145,16 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
         planet = gravFactory.createMarsBarycenter()
         planet.isCentralBody = True           # ensure this is the central gravitational body
         if useSphericalHarmonics:
-            planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM2BData.txt', 100)
-
+            planet.useSphericalHarmonicsGravityModel(100)
     else:  # Earth
         planet = gravFactory.createEarth()
         planet.isCentralBody = True          # ensure this is the central gravitational body
         if useSphericalHarmonics:
-            planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt', 2)
+            planet.useSphericalHarmonicsGravityModel(2)
     mu = planet.mu
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     #
     #   setup orbit and simulation time
@@ -330,6 +329,6 @@ if __name__ == "__main__":
         True,        # liveStream
         1.0,         # time step (s)
         'LEO',       # orbit Case (LEO, GTO, GEO)
-        False,       # useSphericalHarmonics
+        True,       # useSphericalHarmonics
         'Earth'      # planetCase (Earth, Mars)
     )

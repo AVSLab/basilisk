@@ -182,7 +182,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     req = planet.radEquator
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     if planetCase == 'Jupiter':
         magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module

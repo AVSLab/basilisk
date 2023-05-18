@@ -250,7 +250,7 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         scObject.hub.v_CN_NInit = vN  # m - v_CN_N
         scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_BN_B
         scObject.hub.omega_BN_BInit = [[0.0], [0.0], [.5 * macros.D2R]]  # rad/s - omega_BN_B
-        scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+        gravFactory.addBodiesTo(scObject)
 
     # Add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
