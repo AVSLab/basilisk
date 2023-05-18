@@ -61,7 +61,7 @@ Again, due to the noise of the measured spacecraft state, the Delta-V changes sl
 .. image:: /_images/Scenarios/scenarioLambertSolver5.svg
    :align: center
 
-Finally, the following three figures show the performance message content of the Lambert solver module,
+The following three figures show the performance message content of the Lambert solver module,
 including the solution of the iteration variable x, the number of iterations it took to find x, and the change in x
 between the last and second to last root-finder iteration.
 
@@ -72,6 +72,14 @@ between the last and second to last root-finder iteration.
    :align: center
 
 .. image:: /_images/Scenarios/scenarioLambertSolver8.svg
+   :align: center
+
+Finally, the last figure shows the failedDvSolutionConvergence flag of the :ref:`lambertValidatorMsgPayload`, which is 1
+if the lambert validator returned a zeroed Delta-V if the Delta-V solution is too different from the previous time step,
+and 0 otherwise. At the very first time step, the flag is equal to 1, because it is the first time step so the solution
+has not converged it. At all subsequent time steps, the flag is equal to 0.
+
+.. image:: /_images/Scenarios/scenarioLambertSolver9.svg
    :align: center
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
@@ -257,12 +265,14 @@ def run(show_plots):
     lamSolution_recorder = lamSolver.lambertSolutionOutMsg.recorder()
     lamPerf_recorder = lamSolver.lambertPerformanceOutMsg.recorder()
     dvCmd_recorder = lamValidator.dvBurnCmdOutMsg.recorder()
+    lamVal_recorder = lamValidator.lambertValidatorOutMsg.recorder()
     scSim.AddModelToTask(dynTaskName, sc_truth_recorder)
     scSim.AddModelToTask(dynTaskName, sc_meas_recorder)
     scSim.AddModelToTask(fswTaskName, lamProblem_recorder)
     scSim.AddModelToTask(fswTaskName, lamSolution_recorder)
     scSim.AddModelToTask(fswTaskName, lamPerf_recorder)
     scSim.AddModelToTask(fswTaskName, dvCmd_recorder)
+    scSim.AddModelToTask(fswTaskName, lamVal_recorder)
 
     # Vizard Visualization Option
     # ---------------------------
@@ -315,6 +325,7 @@ def run(show_plots):
     numIter = lamPerf_recorder.numIter
     errX = lamPerf_recorder.errX
     dv_N = dvCmd_recorder.dvInrtlCmd
+    failedDvSolutionConvergence = lamVal_recorder.failedDvSolutionConvergence
 
     #
     #   plot the results
@@ -359,6 +370,10 @@ def run(show_plots):
     plot_errX(np.append(timeFSW, time[-1]), np.append(errX, [np.nan]))
     pltName = fileName + "8"
     figureList[pltName] = plt.figure(8)
+
+    plot_failedDvConvergence(np.append(timeFSW, time[-1]), np.append(failedDvSolutionConvergence, [np.nan]))
+    pltName = fileName + "9"
+    figureList[pltName] = plt.figure(9)
 
     if show_plots:
         plt.show()
@@ -533,6 +548,21 @@ def plot_errX(time, errX):
     plt.xlabel('Time [sec]')
     plt.ylabel('x error')
     plt.title('Lambert Solver Performance: Error in x')
+
+    plt.xlim([time[0], time[-1]])
+
+
+def plot_failedDvConvergence(time, failedDvSolutionConvergence):
+    """Plot the failedDvSolutionConvergence flag."""
+    plt.figure()
+    plt.gcf()
+    plt.ticklabel_format(useOffset=False)
+
+    plt.plot(time, failedDvSolutionConvergence)
+
+    plt.xlabel('Time [sec]')
+    plt.ylabel('Failed Dv Convergence Flag')
+    plt.title('Lambert Validator: Failed Delta-V convergence (true if 1)')
 
     plt.xlim([time[0], time[-1]])
 
