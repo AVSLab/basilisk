@@ -20,6 +20,7 @@
 %module(package="Basilisk.simulation") polyhedralGravityModel
 %{
    #include "simulation/dynamics/gravityEffector/polyhedralGravityModel.h"
+   #include <memory>
 %}
 
 %include "swig_eigen.i"

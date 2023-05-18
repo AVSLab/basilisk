@@ -20,6 +20,7 @@
 %module(package="Basilisk.simulation") pointMassGravityModel
 %{
    #include "simulation/dynamics/_GeneralModuleFiles/pointMassGravityModel.h"
+   #include <memory>
 %}
 
 %include "swig_eigen.i"

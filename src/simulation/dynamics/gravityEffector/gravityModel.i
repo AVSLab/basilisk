@@ -20,6 +20,7 @@
 %module(package="Basilisk.simulation") gravityModel
 %{
    #include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
+   #include <memory>
 %}
 
 %pythoncode %{

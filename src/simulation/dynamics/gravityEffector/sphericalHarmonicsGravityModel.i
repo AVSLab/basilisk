@@ -20,6 +20,7 @@
 %module(package="Basilisk.simulation") sphericalHarmonicsGravityModel
 %{
    #include "simulation/dynamics/gravityEffector/sphericalHarmonicsGravityModel.h"
+   #include <memory>
 %}
 
 %include "exception.i"
