@@ -376,7 +376,6 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
         if violationsDistanceTarget == 0 and \
                 violationsOrbitRadius == 0 and \
                 scaler[i] == scaler[i-1] and \
-                tm <= tf and \
                 numIter < 6 and \
                 errX < 1.e-8:
             dvTrue = np.append(dvTrue, [dv_N * scaler[i]], axis=0)

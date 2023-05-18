@@ -152,9 +152,13 @@ std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertPlanner::pro
     std::vector<Eigen::VectorXd> X = {X0};
 
     // propagate forward to tf
-    double N = ceil((tf-t0)/dt);
+    double N = ceil(abs(tf-t0)/dt);
     for (int c=0; c < N; c++) {
-        double step = std::min(dt,tf-t.at(c)); // for last time step, step size might be smaller than dt
+        double step = std::min(dt,abs(tf-t.at(c))); // for last time step, step size might be smaller than dt
+        // special case for backwards propagation
+        if (tf < t0) {
+            step = -step;
+        }
 
         Eigen::VectorXd Xnew = this->RK4(EOM, X.at(c), t.at(c), step);
         double tnew = t.at(c) + step;
