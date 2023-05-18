@@ -32,7 +32,7 @@ from Basilisk.simulation.sphericalHarmonicsGravityModel import SphericalHarmonic
 Polyhedral = PolyhedralGravityModel
 SphericalHarmonics = SphericalHarmonicsGravityModel
 
-from typing import Optional, Union
+from typing import Optional, Union, overload
 
 %}
 
@@ -144,6 +144,18 @@ struct SpicePlanetStateMsg_C;
     def usePointMassGravityModel(self):
         self.gravityModel = PointMassGravityModel()
 
+    @overload
+    def useSphericalHarmonicsGravityModel(self, maxDeg: int):
+        """Makes the GravBodyData use Spherical Harmonics as its gravity model.
+
+        Uses the default spherical harmonics data file for this body. This is
+        only available for some select bodies, such as the Earth and Mars. 
+
+        Args:
+            maxDeg (int): The maximum degree to use in the spherical harmonics.
+        """
+
+    @overload
     def useSphericalHarmonicsGravityModel(self, file: str, maxDeg: int):
         """Makes the GravBodyData use Spherical Harmonics as its gravity model.
 
@@ -152,6 +164,31 @@ struct SpicePlanetStateMsg_C;
                 JPL format.
             maxDeg (int): The maximum degree to use in the spherical harmonics.
         """
+
+    def useSphericalHarmonicsGravityModel(self, *args, **kwargs):
+        if len(args) == 1 and len(kwargs) == 0:
+            maxDeg = args[0]
+            file = None
+        elif len(args) == 0 and "maxDeg" in kwargs:
+            maxDeg = kwargs["maxDeg"]
+            file = None
+        elif len(args) == 1 and "maxDeg" in kwargs:
+            file = args[0]
+            maxDeg = kwargs["maxDeg"]
+        elif len(args) == 2:
+            file, maxDeg = args
+        elif "file" in kwargs and "maxDeg" in kwargs:
+            file = kwargs["file"]
+            maxDeg = kwargs["maxDeg"]
+        else:
+            raise TypeError("useSphericalHarmonicsGravityModel expects 1 or 2 arguments: (maxDeg: int) or (file: str, maxDeg: int)")
+
+        if file is None:
+            file = getattr(self, "_defaultSphericalHarmonicsFile", None)
+        
+        if file is None:
+            raise TypeError("If no 'file' argument is set, the body must have a default spherical harmonics file (which only some bodies have, like Earth and Mars)")
+            
         self.gravityModel = SphericalHarmonicsGravityModel().loadFromFile(file, maxDeg)
 
     def usePolyhedralGravityModel(self, file: str):
