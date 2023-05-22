@@ -96,7 +96,8 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
 
     Args:
         show_plots (bool): Determines if the script should display plots
-        livePlots (bool): Determines if the script should use live plotting
+        liveStream (bool): Determines if the script should use live data streaming
+        timeStep (double): Integration update time in seconds
         orbitCase (str):
 
             ======  ============================
