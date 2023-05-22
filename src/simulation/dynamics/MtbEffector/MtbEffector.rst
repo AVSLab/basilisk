@@ -22,12 +22,6 @@ provides information on what this message is used for.
     * - magInMsg
       - :ref:`MagneticFieldMsgPayload`
       - input msg for magnetic field data in inertial frame N
-    * - cmdTorqueInMsg
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - input msg for commanded torque in B frame
-    * - cmdTorqueOutMsg
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - output msg for commanded force in B frame
 
 
 User Guide
