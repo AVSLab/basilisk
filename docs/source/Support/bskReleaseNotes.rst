@@ -56,6 +56,7 @@ Version |release|
 - Created a :ref:`prescribedRot2DOF` fsw module to profile a prescribed 2 DOF rotational maneuver for a secondary rigid
   body connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
   :ref:`prescribedMotionStateEffector` dynamics module.
+- Corrected default value of ``accuracyNanos`` in :ref:`simSynch` to be 0.01 seconds.
 
 
 Version 2.1.7 (March 24, 2023)
