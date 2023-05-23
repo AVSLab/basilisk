@@ -38,7 +38,7 @@ While this works for a small number of spacecraft, it is not easily scalable. Th
 way of adding spacecraft that can be either homogeneous or heterogeneous (different dynamics and flight software modules
 from one another). Another advantage of these changes is that the simulation now has a separate process for the
 environment, dynamics and FSW. When Basilisk supports multi-threading the process evaluation, this will
-greatly reducing the time it takes to run the simulation with a large number of spacecraft.
+greatly reduce the time it takes to run the simulation with a large number of spacecraft.
 
 In line with these changes, the environment is not embedded into the dynamics class, as each spacecraft has its own
 dynamics class. Therefore, a new environment class has also been created, where any changes can be made to accommodate
