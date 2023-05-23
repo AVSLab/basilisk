@@ -163,7 +163,7 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
 
     Args:
         show_plots (bool): Determines if the script should display plots.
-		albedoData (bool): Flag indicating if the albedo data based model should be used.
+        albedoData (bool): Flag indicating if the albedo data based model should be used.
         multipleInstrument (bool): Flag indicating if multiple instrument should be used.
         multiplePlanet (bool): Flag specifying if multiple planets should be used.
         useEclipse (bool): Flag indicating if the partial eclipse at the incremental area is considered.

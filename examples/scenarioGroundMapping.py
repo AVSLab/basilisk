@@ -171,7 +171,7 @@ def run(show_plots, useCentral):
 
     Args:
         show_plots (bool): Determines if the script should display plots
-
+        useCentral (bool): Flag if the Earth is the central body or not
     """
 
     # Create simulation variable names

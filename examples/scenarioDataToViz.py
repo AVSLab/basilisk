@@ -95,7 +95,7 @@ def run(show_plots, attType):
 
     Args:
         show_plots (bool): Determines if the script should display plots
-
+        attType (int): Specify if MRP (0) or Quaternions (1) are used
     """
 
     path = os.path.dirname(os.path.abspath(__file__))

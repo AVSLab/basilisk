@@ -332,7 +332,7 @@ def run(show_plots, numberSpacecraft, environment):
     Args:
         show_plots (bool): Determines if the script should display plots
         numberSpacecraft (int): Number of spacecraft in the simulation
-        environment ("Earth", "Mercury"): Chooses which environment to set the simulation in
+        environment (string): Chooses which environment to set the simulation in.  Options are "Earth" or "Mercury"
 
     """
 

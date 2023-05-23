@@ -238,8 +238,8 @@ def run(show_plots, numberSpacecraft, environment, numThreads):
     Args:
         show_plots (bool): Determines if the script should display plots
         numberSpacecraft (int): Number of spacecraft in the simulation
-        environment ("Earth", "Mercury"): Chooses which environment to set the simulation in
-        number of threads
+        environment (string): Chooses which environment to set the simulation in. Options are "Earth" or "Mercury"
+        numThreads (int): number of threads
     """
 
     # Configure a scenario in the base simulation
