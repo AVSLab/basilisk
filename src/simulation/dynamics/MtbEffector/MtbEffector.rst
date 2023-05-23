@@ -18,16 +18,16 @@ provides information on what this message is used for.
       - Description
     * - mtbCmdInMsg
       - :ref:`MTBCmdMsgPayload`
-      - input msgfor commanded mtb dipole array in the magnetic torque bar frame T
+      - input msg for commanded Magnetic Torque Bar (MTB) dipole array in the magnetic torque bar frame `T`
     * - magInMsg
       - :ref:`MagneticFieldMsgPayload`
-      - input msg for magnetic field data in inertial frame N
-    * - cmdTorqueInMsg
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - input msg for commanded torque in B frame
-    * - cmdTorqueOutMsg
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - output msg for commanded force in B frame
+      - input msg for magnetic field data in inertial frame `N`
+    * - mtbParamsInMsg
+      - :ref:`MTBArrayConfigMsgPayload`
+      - input msg for layout of magnetic torque bars
+    * - mtbOutMsg
+      - :ref:`MagneticFieldMsgPayload`
+      - output message containing net torque produced by the torque bars in body frame `B` components
 
 
 User Guide

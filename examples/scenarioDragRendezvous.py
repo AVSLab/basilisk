@@ -123,12 +123,15 @@ lqr_gain_set = np.load(dataFileName)['arr_0.npy']
 
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-def setup_spacecraft_plant(rN, vN, modelName,):
+def setup_spacecraft_plant(rN, vN, modelName):
     """
     Convenience function to set up a spacecraft and its associated dragEffector and simpleNav module.
-    :param rN:
-    :param vN:
-    :return:
+
+    Args:
+        rN (float(3)): Inertial position vector
+        vN (float(3)): Inertial velocity vector
+        modelName (string): String specifying the spacecraft name
+
     """
 
     scObject = spacecraft.Spacecraft()
