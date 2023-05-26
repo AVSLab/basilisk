@@ -20,6 +20,7 @@ from Basilisk.moduleTemplates import cModuleTemplate
 from Basilisk.moduleTemplates import cppModuleTemplate
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.architecture import messaging
 
 
 def run():
