@@ -103,7 +103,8 @@ void LambertValidator::UpdateState(uint64_t currentSimNanos)
     this->dv_N = this->vLambert_N - this->vm_N;
 
     // only propagate the perturbed initial states if Lambert solution is valid in order to safe computation effort
-    if (validLambert == 1) {
+    // also skip propagation of perturbed initial states if the constraint violations should be ignored anyway
+    if (this->validLambert == 1 && !this->ignoreConstraintViolations) {
         std::array<Eigen::VectorXd, NUM_INITIALSTATES> initialStates = this->getInitialStates();
         // check if any of the perturbed initial states violates the given constraints
         this->countViolations(initialStates);
@@ -179,6 +180,8 @@ void LambertValidator::writeMessages(uint64_t currentSimNanos)
 {
     DvBurnCmdMsgPayload dvBurnCmdOutMsgBuffer;
     dvBurnCmdOutMsgBuffer = this->dvBurnCmdOutMsg.zeroMsgPayload;
+    LambertValidatorMsgPayload lambertValidatorMsgBuffer;
+    lambertValidatorMsgBuffer = this->lambertValidatorOutMsg.zeroMsgPayload;
 
     // DV Rotation vector and rotation magnitude not used by this module. Set to arbitrary unit vector and zero.
     Eigen::Vector3d dvRotVecUnit;
@@ -190,7 +193,7 @@ void LambertValidator::writeMessages(uint64_t currentSimNanos)
     // check if any constraints are violated and if the Lambert solution converged
     bool goodSolution = this->checkPerformance();
 
-    // Write message content only if all checks on performance and violations were passed
+    // Write Delta-V message content only if all checks on performance and violations were passed
     if (goodSolution) {
         eigenVector3d2CArray(this->dv_N, dvBurnCmdOutMsgBuffer.dvInrtlCmd);
         eigenVector3d2CArray(dvRotVecUnit, dvBurnCmdOutMsgBuffer.dvRotVecUnit);
@@ -198,8 +201,43 @@ void LambertValidator::writeMessages(uint64_t currentSimNanos)
         dvBurnCmdOutMsgBuffer.burnStartTime = burnStartTime;
     }
 
+    // difference of Lambert solution w.r.t. previous time step
+    double solutionDifference = xLambert - prevLambertSolutionX;
+    double dvDifference = (dv_N - prevDv_N).norm();
+
+    // Lambert Validator Message content: specify why no Delta-V command was returned
+    if (this->validLambert != 1) {
+        lambertValidatorMsgBuffer.failedValidLambert = 1;
+    }
+    if (this->numIterLambert >= this->maxNumIterLambert) {
+        lambertValidatorMsgBuffer.failedNumIterationsLambert = 1;
+    }
+    if (abs(this->errXLambert) >= this->xToleranceLambert) {
+        lambertValidatorMsgBuffer.failedXToleranceLambert = 1;
+    }
+    if (abs(solutionDifference) >= this->xConvergenceTolerance) {
+        lambertValidatorMsgBuffer.failedXSolutionConvergence = 1;
+    }
+    if (abs(dvDifference) >= this->dvConvergenceTolerance) {
+        lambertValidatorMsgBuffer.failedDvSolutionConvergence = 1;
+    }
+    if (this->violationsDistanceTarget != 0) {
+        lambertValidatorMsgBuffer.failedDistanceTargetConstraint = 1;
+    }
+    if (this->violationsOrbitRadius != 0) {
+        lambertValidatorMsgBuffer.failedOrbitRadiusConstraint = 1;
+    }
+    // Lambert Validator Message content: extra information
+    lambertValidatorMsgBuffer.xSolutionDifference = solutionDifference;
+    lambertValidatorMsgBuffer.dvSolutionDifference = dvDifference;
+    lambertValidatorMsgBuffer.violationsDistanceTarget = this->violationsDistanceTarget;
+    lambertValidatorMsgBuffer.violationsOrbitRadius = this->violationsOrbitRadius;
+    // Delta-V vector that would be returned if all checks passed
+    eigenVector3d2CArray(this->dv_N, lambertValidatorMsgBuffer.dv);
+
     // Write to the output messages
     this->dvBurnCmdOutMsg.write(&dvBurnCmdOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->lambertValidatorOutMsg.write(&lambertValidatorMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This method creates the initial state vectors that will be propagated by the module
@@ -312,14 +350,6 @@ void LambertValidator::countViolations(std::array<Eigen::VectorXd, NUM_INITIALST
 
         this->checkConstraintViolations(t, X);
     }
-
-    if (this->violationsDistanceTarget > 0 || this->violationsOrbitRadius > 0) {
-        std::string text = "lambertValidator: There were "
-                + std::to_string(this->violationsDistanceTarget) + " violations of the target distance constraint and "
-                + std::to_string(this->violationsOrbitRadius) + " violations of the orbit radius constraint. "
-                + "Thus, the commanded Delta-V is zero.";
-        bskLogger.bskLog(BSK_WARNING, text.c_str());
-    }
 }
 
 /*! This method checks if the provided trajectory violates any constraints
@@ -357,14 +387,19 @@ bool LambertValidator::checkPerformance() const
     bool goodSolution = false;
 
     /* Delta-V should only be commanded if Lambert solution is valid, converged, and resulting trajectory
-       doesn't violate any constraints */
-    if (this->validLambert == 1 &&
-        this->numIterLambert < 6 && // Lambert module should usually take only 2-3 iterations
-        abs(this->errXLambert) < 1e-8 &&
-        abs(solutionDifference) < 1e-2 &&
-        abs(dvDifference) < dvConvergenceTolerance &&
+       doesn't violate any constraints.
+       Also return good solution if constraint violations (and convergence) should be ignored,
+       as long as the Lambert solution is valid. */
+    if ((this->validLambert == 1 &&
+        this->numIterLambert < this->maxNumIterLambert && // Lambert module should usually take only 2-3 iterations,
+        // so maxNumIterLambert is intentionally lower than in lambertSolver module
+        abs(this->errXLambert) < this->xToleranceLambert &&
+        abs(solutionDifference) < this->xConvergenceTolerance &&
+        abs(dvDifference) < this->dvConvergenceTolerance &&
         this->violationsDistanceTarget == 0 &&
         this->violationsOrbitRadius == 0)
+        ||
+        (this->validLambert == 1 && this->ignoreConstraintViolations))
     {
         goodSolution = true;
     }
@@ -393,9 +428,13 @@ std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertValidator::p
     std::vector<Eigen::VectorXd> X = {X0};
 
     // propagate forward to tf
-    double N = ceil((tf-t0)/dt);
+    double N = ceil(abs(tf-t0)/dt);
     for (int c=0; c < N; c++) {
-        double step = std::min(dt,tf-t.at(c)); // for last time step, step size might be smaller than dt
+        double step = std::min(dt,abs(tf-t.at(c))); // for last time step, step size might be smaller than dt
+        // special case for backwards propagation
+        if (tf < t0) {
+            step = -step;
+        }
 
         Eigen::VectorXd Xnew = this->RK4(EOM, X.at(c), t.at(c), step);
         double tnew = t.at(c) + step;

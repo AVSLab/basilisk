@@ -27,6 +27,7 @@
 #include "architecture/msgPayloadDefC/LambertSolutionMsgPayload.h"
 #include "architecture/msgPayloadDefC/LambertPerformanceMsgPayload.h"
 #include "architecture/msgPayloadDefC/DvBurnCmdMsgPayload.h"
+#include "architecture/msgPayloadDefC/LambertValidatorMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -50,18 +51,20 @@ public:
     ReadFunctor<LambertSolutionMsgPayload> lambertSolutionInMsg;            //!< lambert solution input message
     ReadFunctor<LambertPerformanceMsgPayload> lambertPerformanceInMsg;      //!< lambert performance input message
     Message<DvBurnCmdMsgPayload> dvBurnCmdOutMsg;                           //!< Delta-V burn command message
+    Message<LambertValidatorMsgPayload> lambertValidatorOutMsg;             //!< Lambert Validator results message
 
     BSKLogger bskLogger;                                                    //!< -- BSK Logging
 
-    double lambertSolutionSpecifier = 1; //!< [s] which Lambert solution (1 or 2), if applicable, should be used
+    double lambertSolutionSpecifier = 1; //!< [-] which Lambert solution (1 or 2), if applicable, should be used
     double finalTime{}; //!< [s] time at which target position should be reached
     double maneuverTime{}; //!< [s] time at which maneuver should be executed
     double maxDistanceTarget{}; //!< [m] maximum acceptable distance from target location at final time
     double minOrbitRadius{}; //!< [m] minimum acceptable orbit radius
     //!< 6x6 matrix square root of the covariance matrix to apply errors with, in Hill (Orbit) frame components
     Eigen::MatrixXd uncertaintyStates;
-    double uncertaintyDV = 1; //!< [%] uncertainty of the Delta-V magnitude
+    double uncertaintyDV = 0.1; //!< [m/s] uncertainty of the Delta-V magnitude
     double dvConvergenceTolerance = 1e-3; //!< [m/s] tolerance on difference between DeltaV solutions between time steps
+    bool ignoreConstraintViolations = false; //!< override flag to write DV message despite constraint violations
 
 private:
     void readMessages();
@@ -103,6 +106,9 @@ private:
     int violationsOrbitRadius = 0; //!< [-] number of violations of the minOrbitRadius constraint
     double timestep = 10.; //!< [s] time step used for RK4 propagation
     std::function<Eigen::VectorXd(double, Eigen::VectorXd)> EOM_2BP; //!< equations of motion to be used for RK4
+    int maxNumIterLambert = 6; //!< [-] maximum number of iterations for Lambert solver root finder to find x
+    double xToleranceLambert = 1e-8; //!< [-] tolerance for Lambert solver root finder to find x
+    double xConvergenceTolerance = 1e-2; //!< [-] tolerance on difference between x solutions between time steps
 };
 
 #endif

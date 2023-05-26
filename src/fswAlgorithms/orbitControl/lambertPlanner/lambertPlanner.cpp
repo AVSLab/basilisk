@@ -24,7 +24,10 @@
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-LambertPlanner::LambertPlanner() = default;
+LambertPlanner::LambertPlanner()
+{
+    this->useSolverIzzoMethod();
+}
 
 /*! Module Destructor */
 LambertPlanner::~LambertPlanner() = default;
@@ -47,9 +50,6 @@ void LambertPlanner::Reset(uint64_t currentSimNanos)
     if (this->finalTime - this->maneuverTime <= 0.0){
         bskLogger.bskLog(BSK_ERROR,
                          "lambertPlanner: Maneuver start time maneuverTime must be before final time finalTime.");
-    }
-    if (!(this->solverName == "Gooding" || this->solverName == "Izzo")){
-        bskLogger.bskLog(BSK_ERROR, "lambertPlanner: solverName must be either 'Gooding' or 'Izzo'.");
     }
 }
 
@@ -92,6 +92,22 @@ void LambertPlanner::UpdateState(uint64_t currentSimNanos)
     this->writeMessages(currentSimNanos);
 }
 
+/*! This method sets the lambert solver algorithm that should be used to the method by Izzo.
+    @return void
+*/
+void LambertPlanner::useSolverIzzoMethod()
+{
+    this->solverMethod = IZZO;
+}
+
+/*! This method sets the lambert solver algorithm that should be used to the method by Gooding.
+    @return void
+*/
+void LambertPlanner::useSolverGoodingMethod()
+{
+    this->solverMethod = GOODING;
+}
+
 /*! This method reads the input messages each call of updateState.
     It also checks if the message contents are valid for this module.
     @return void
@@ -120,7 +136,7 @@ void LambertPlanner::writeMessages(uint64_t currentSimNanos)
     lambertProblemOutMsgBuffer = this->lambertProblemOutMsg.zeroMsgPayload;
 
     // Write message content
-    std::strcpy(lambertProblemOutMsgBuffer.solverName, this->solverName.c_str());
+    lambertProblemOutMsgBuffer.solverMethod = this->solverMethod;
     eigenVector3d2CArray(this->rm_N, lambertProblemOutMsgBuffer.r1vec);
     eigenVector3d2CArray(this->r_TN_N, lambertProblemOutMsgBuffer.r2vec);
     lambertProblemOutMsgBuffer.transferTime = this->finalTime - this->maneuverTime;
@@ -152,9 +168,13 @@ std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertPlanner::pro
     std::vector<Eigen::VectorXd> X = {X0};
 
     // propagate forward to tf
-    double N = ceil((tf-t0)/dt);
+    double N = ceil(abs(tf-t0)/dt);
     for (int c=0; c < N; c++) {
-        double step = std::min(dt,tf-t.at(c)); // for last time step, step size might be smaller than dt
+        double step = std::min(dt,abs(tf-t.at(c))); // for last time step, step size might be smaller than dt
+        // special case for backwards propagation
+        if (tf < t0) {
+            step = -step;
+        }
 
         Eigen::VectorXd Xnew = this->RK4(EOM, X.at(c), t.at(c), step);
         double tnew = t.at(c) + step;

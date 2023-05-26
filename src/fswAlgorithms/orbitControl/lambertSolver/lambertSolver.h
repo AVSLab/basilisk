@@ -39,8 +39,8 @@ public:
     LambertSolver();
     ~LambertSolver();
 
-    void Reset(uint64_t CurrentSimNanos) override;
-    void UpdateState(uint64_t CurrentSimNanos) override;
+    void Reset(uint64_t currentSimNanos) override;
+    void UpdateState(uint64_t currentSimNanos) override;
 
     ReadFunctor<LambertProblemMsgPayload> lambertProblemInMsg;          //!< lambert problem input message
     Message<LambertSolutionMsgPayload> lambertSolutionOutMsg;           //!< lambert solution output message
@@ -48,11 +48,12 @@ public:
 
     BSKLogger bskLogger;                                                //!< -- BSK Logging
 
-    double alignmentThreshold = 1.0;                                    //!< [deg] minimum angle between position vectors such that they are not considered too aligned.
+    //!< [deg] minimum angle between position vectors such that they are not considered too aligned.
+    double alignmentThreshold = 1.0;
 
 private:
     void readMessages();
-    void writeMessages(uint64_t CurrentSimNanos);
+    void writeMessages(uint64_t currentSimNanos);
     void problemGeometry();
     std::array<double, 2> goodingInitialGuess(double lambda, double T);
     std::array<double, 2> izzoInitialGuess(double lambda, double T);
@@ -65,26 +66,26 @@ private:
     double getTmin(double T0M, int N);
     double hypergeometricF(double z);
 
-    std::string solverName;         //!< name of lambert algorithm
-    Eigen::Vector3d r1vec;          //!< position vector at t0
-    Eigen::Vector3d r2vec;          //!< position vector at t1
-    double transferTime{};          //!< time of flight between r1vec and r2vec (t1-t0)
-    double mu{};                    //!< gravitational parameter
-    int numberOfRevolutions{};      //!< number of revolutions
-    double TOF{};                   //!< non-dimensional time-of-flight constraint
-    double lambda{};                //!< parameter of Lambert"s problem that defines problem geometry
-    bool multiRevSolution{};        //!< boolean flag if multi-revolution solutions exist or not
-    bool noSolution{};              //!< boolean flag if no solution should be returned (in case of 180 deg transfer angle)
-    std::array<Eigen::Vector3d, 3> Oframe1;    //!< array containing the orbit frame unit vectors at t0
-    std::array<Eigen::Vector3d, 3> Oframe2;    //!< array containing the orbit frame unit vectors at t1
-    std::array<Eigen::Vector3d, 2> vvecs;      //!< array containing the velocity vector solutions at t0 and t1
-    std::array<Eigen::Vector3d, 2> vvecsSol2;  //!< array containing the velocity vector solutions at t0 and t1 (solution 2)
-    double X{};                     //!< solution for free variable of Lambert's problem
-    double XSol2{};                 //!< second solution for free variable of Lambert's problem
-    int numIter{};                  //!< number of root finder iterations to find X
-    int numIterSol2{};              //!< number of root finder iterations to find X_sol2
-    double errX{};                  //!< difference in X between last and second-to-last iteration
-    double errXSol2{};              //!< difference in X between last and second-to-last iteration (for X_sol2)
+    SolverMethod solverMethod; //!< lambert solver algorithm (GOODING or IZZO)
+    Eigen::Vector3d r1vec; //!< position vector at t0
+    Eigen::Vector3d r2vec; //!< position vector at t1
+    double transferTime{}; //!< time of flight between r1vec and r2vec (t1-t0)
+    double mu{}; //!< gravitational parameter
+    int numberOfRevolutions{}; //!< number of revolutions
+    double TOF{}; //!< non-dimensional time-of-flight constraint
+    double lambda{}; //!< parameter of Lambert"s problem that defines problem geometry
+    bool multiRevSolution{}; //!< boolean flag if multi-revolution solutions exist or not
+    bool noSolution{}; //!< boolean flag if no solution should be returned (in case of 180 deg transfer angle)
+    std::array<Eigen::Vector3d, 3> Oframe1; //!< array containing the orbit frame unit vectors at t0
+    std::array<Eigen::Vector3d, 3> Oframe2; //!< array containing the orbit frame unit vectors at t1
+    std::array<Eigen::Vector3d, 2> vvecs; //!< array containing the velocity vector solutions at t0 and t1
+    std::array<Eigen::Vector3d, 2> vvecsSol2; //!< array containing the velocity vector solutions at t0 and t1 (sol 2)
+    double X{}; //!< solution for free variable of Lambert's problem
+    double XSol2{}; //!< second solution for free variable of Lambert's problem
+    int numIter{}; //!< number of root finder iterations to find X
+    int numIterSol2{}; //!< number of root finder iterations to find X_sol2
+    double errX{}; //!< difference in X between last and second-to-last iteration
+    double errXSol2{}; //!< difference in X between last and second-to-last iteration (for X_sol2)
 };
 
 #endif

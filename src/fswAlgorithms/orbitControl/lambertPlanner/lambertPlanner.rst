@@ -35,12 +35,13 @@ Module Assumptions and Limitations
 ----------------------------------
 The equations of motion used inside the module to propagate the state assume simple two body point mass gravity, and the
 motion is propagated using a 4th order Runge-Kutta (RK4). Additionally, this module assumes that
-:math:`t_{final} > t_{maneuver} \ge t`, with final time :math:`t_{final}`, maneuver time :math:`t_{maneuver}` and current
-time :math:`t`.
+:math:`t_{final} > t_{maneuver} \ge t`, with final time :math:`t_{final}`, maneuver time :math:`t_{maneuver}` and
+current time :math:`t`.
 
 Algorithm
 ---------
-Equations of motion (two body point mass gravity) with gravitational parameter :math:`\mu` and spacecraft position vector :math:`\mathbf{r}`:
+Equations of motion (two body point mass gravity) with gravitational parameter :math:`\mu` and spacecraft position
+vector :math:`\mathbf{r}`:
 
 .. math::
     :label: eq:EOM
@@ -55,12 +56,12 @@ The module is first initialized as follows:
 
     module = lambertPlanner.LambertPlanner()
     module.ModelTag = "lambertPlanner"
-    module.solverName = "Izzo"
     module.r_TN_N = np.array([0., 8000. * 1000,0.])
     module.finalTime = 2000.
     module.maneuverTime = 1000.
     module.mu = 3.986004418e14
     module.numRevolutions = 0 # module defaults this value to 0 if not specified
+    module.useSolverIzzoMethod() # module uses Izzo by default if not specified
     unitTestSim.AddModelToTask(unitTaskName, module)
 
 The navigation translation message is then connected:

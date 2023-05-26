@@ -17,17 +17,16 @@
 # 
 #
 import copy
+import itertools
+import math
 
 import numpy as np
-import math
-import itertools
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import lambertValidator
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
 
 # parameters
 DVs = np.array([[1., 3., 4.], [500., -100., 200.]])
@@ -187,13 +186,10 @@ def countViolations(initialStates, muBody, tm, tf, r_TN_N, maxDistanceTarget, mi
         if rmin < minOrbitRadius:
             violationsOrbitRadius += 1
 
-        return violationsDistanceTarget, violationsOrbitRadius
+    return violationsDistanceTarget, violationsOrbitRadius
 
 
 def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_errX, accuracy):
-    testFailCount = 0
-    testMessages = []
-
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -202,7 +198,7 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    solver = "Izzo"
+    solverMethod = messaging.IZZO
     muBody = 3.986004418e14
     t0 = 0.
     tm = p2_tm
@@ -314,7 +310,7 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
     navTransInMsg = messaging.NavTransMsg().write(navTransInMsgData)
 
     lambertProblemInMsgData = messaging.LambertProblemMsgPayload()
-    lambertProblemInMsgData.solverName = solver
+    lambertProblemInMsgData.solverMethod = solverMethod
     lambertProblemInMsgData.r1vec = r1_BN_N
     lambertProblemInMsgData.r2vec = r3_BN_N
     lambertProblemInMsgData.transferTime = tf-tm
@@ -349,17 +345,23 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
     # setup output message recorder objects
     dvBurnCmdOutMsgRec = module.dvBurnCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dvBurnCmdOutMsgRec)
+    lambertValidatorOutMsgRec = module.lambertValidatorOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, lambertValidatorOutMsgRec)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(0.)
-    unitTestSim.ExecuteSimulation()
 
     # run simulation for 3 time steps (excluding initial time step at 0 ns), scale DV vector each time step
     # returned dV vector should only be non-zero if dV solution has converged
     # (simulated by using scaler of 1.0 twice in a row)
-    scaler = np.array([1.5, 1.0, 1.0])
-    dvTrue = np.array([[0., 0., 0.]])
-    burnStartTimeTrue = np.array([0.])
+    scaler = np.array([1.0, 1.5, 1.0, 1.0])
+    dvTrue = np.zeros([len(scaler), 3])
+    burnStartTimeTrue = np.zeros([len(scaler)])
+    failedNumIterationsLambertTrue = np.zeros([len(scaler)])
+    failedXToleranceLambertTrue = np.zeros([len(scaler)])
+    failedDistanceTargetConstraintTrue = np.zeros([len(scaler)])
+    failedOrbitRadiusConstraintTrue = np.zeros([len(scaler)])
+    failedDvSolutionConvergenceTrue = np.array([1, 1, 1, 0])
+    dvTheoryTrue = np.zeros([len(scaler), 3])
     for i in range(0, len(scaler)):
         lambertSolutionInMsgData.v1 = v1_BN_N + dv_N * scaler[i]
         lambertSolutionInMsgData.v2 = v3_BN_N
@@ -369,23 +371,43 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
         lambertSolutionInMsgData.validSol2 = 0
         lambertSolutionInMsg.write(lambertSolutionInMsgData, unitTestSim.TotalSim.CurrentNanos)
 
-        unitTestSim.ConfigureStopTime((i + 1) * testProcessRate)
+        unitTestSim.ConfigureStopTime(i * testProcessRate)
         unitTestSim.ExecuteSimulation()
 
         initialStates = getInitialStates(r1_BN_N, v1_BN_N, dv_N * scaler[i], errStates, errDV)
-        violationsDistanceTarget, violationsOrbitRadius = countViolations(initialStates, muBody, tm, tf, r3_BN_N, maxDistanceTarget, minOrbitRadius)
+        violationsDistanceTarget, violationsOrbitRadius = countViolations(initialStates, muBody, tm, tf, r3_BN_N,
+                                                                                  maxDistanceTarget, minOrbitRadius)
 
         # true values
-        if violationsDistanceTarget == 0 and violationsOrbitRadius == 0 and scaler[i] == scaler[i-1] and tm <= tf and numIter < 6 and errX < 1.e-8:
-            dvTrue = np.append(dvTrue, [dv_N * scaler[i]], axis=0)
-            burnStartTimeTrue = np.append(burnStartTimeTrue, macros.sec2nano(tm))
+        if violationsDistanceTarget == 0 and \
+                violationsOrbitRadius == 0 and \
+                failedDvSolutionConvergenceTrue[i] == 0 and \
+                numIter < 6 and \
+                errX < 1.e-8:
+            dvTrue[i, :] = dv_N * scaler[i]
+            burnStartTimeTrue[i] = macros.sec2nano(tm)
         else:
-            dvTrue = np.append(dvTrue, [np.array([0., 0., 0.])], axis=0)
-            burnStartTimeTrue = np.append(burnStartTimeTrue, macros.sec2nano(0.))
+            dvTrue[i, :] = np.array([0., 0., 0.])
+            burnStartTimeTrue[i] = macros.sec2nano(0.)
+        if numIter >= 6:
+            failedNumIterationsLambertTrue[i] = 1
+        if errX >= 1.e-8:
+            failedXToleranceLambertTrue[i] = 1
+        if violationsDistanceTarget != 0:
+            failedDistanceTargetConstraintTrue[i] = 1
+        if violationsOrbitRadius != 0:
+            failedOrbitRadiusConstraintTrue[i] = 1
+        dvTheoryTrue[i, :] = dv_N * scaler[i]
 
     # pull module data
-    dv = dvBurnCmdOutMsgRec.dvInrtlCmd
+    dv = dvBurnCmdOutMsgRec.dvInrtlCmd  # commanded Delta-V
     burnStartTime = dvBurnCmdOutMsgRec.burnStartTime
+    failedNumIterationsLambert = lambertValidatorOutMsgRec.failedNumIterationsLambert
+    failedXToleranceLambert = lambertValidatorOutMsgRec.failedXToleranceLambert
+    failedDvSolutionConvergence = lambertValidatorOutMsgRec.failedDvSolutionConvergence
+    failedDistanceTargetConstraint = lambertValidatorOutMsgRec.failedDistanceTargetConstraint
+    failedOrbitRadiusConstraint = lambertValidatorOutMsgRec.failedOrbitRadiusConstraint
+    dvTheory = lambertValidatorOutMsgRec.dv  # Delta-V that would be returned if all tests were passed
 
     # make sure module output data is correct
     paramsString = ' for DV={}, maneuver time={}, final time={}, iterations={}, errorsX={}, accuracy={}'.format(
@@ -408,6 +430,48 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
                                rtol=0,
                                atol=accuracy,
                                err_msg=('Variable: burnStartTime,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(failedNumIterationsLambert,
+                               failedNumIterationsLambertTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: failedNumIterationsLambert,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(failedXToleranceLambert,
+                               failedXToleranceLambertTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: failedXToleranceLambert,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(failedDvSolutionConvergence,
+                               failedDvSolutionConvergenceTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: failedDvSolutionConvergence,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(failedDistanceTargetConstraint,
+                               failedDistanceTargetConstraintTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: failedDistanceTargetConstraint,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(failedOrbitRadiusConstraint,
+                               failedOrbitRadiusConstraintTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: failedOrbitRadiusConstraint,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(dvTheory,
+                               dvTheoryTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: dvTheory,' + paramsString),
                                verbose=True)
 
 

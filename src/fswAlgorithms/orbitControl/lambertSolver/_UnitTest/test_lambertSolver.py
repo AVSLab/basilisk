@@ -17,16 +17,14 @@
 # 
 #
 import copy
-
-import numpy as np
 import itertools
+
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import lambertSolver
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
 
 from fswAlgorithms.orbitControl.lambertSolver._UnitTest.Support.IzzoLambert import *
 
@@ -56,7 +54,11 @@ def test_lambertSolver(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_ang
     r"""
     **Validation Test Description**
 
-    This test checks if the Lambert solver module works correctly for different Lambert solver algorithms, number of revolutions, time of flight, transfer orbit eccentricities, transfer angles, and position vector alignment threshold. The Lambert solver module is tested using the orbitalMotion libraries (for zero revolution scenarios), and using an external python implementation of the Izzo algorithm (for multi-revolution scenarios).
+    This test checks if the Lambert solver module works correctly for different Lambert solver algorithms,
+    number of revolutions, time of flight, transfer orbit eccentricities, transfer angles, and position vector
+    alignment threshold. The Lambert solver module is tested using the orbitalMotion libraries
+    (for zero revolution scenarios), and using an external python implementation of the Izzo algorithm
+    (for multi-revolution scenarios).
 
     **Test Parameters**
 
@@ -71,19 +73,19 @@ def test_lambertSolver(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_ang
 
     **Description of Variables Being Tested**
 
-    The computed velocity vectors at position 1 and position 2 are compared to the true velocity vectors. For the zero-revolution case, the eccentricity and transfer angle parameters are used to determine the time-of-flight input for the Lambert solver, and the corresponding orbit elements are used to determine the true velocity vectors for the given position vectors. For the multi-revolution case, the time-of-flight parameter is used as the input for the Lambert solver, and the true velocity vectors are computed using an external Python script that uses Izzo's algorithm to solve Lambert's problem.
+    The computed velocity vectors at position 1 and position 2 are compared to the true velocity vectors.
+    For the zero-revolution case, the eccentricity and transfer angle parameters are used to determine the
+    time-of-flight input for the Lambert solver, and the corresponding orbit elements are used to determine the true
+    velocity vectors for the given position vectors. For the multi-revolution case, the time-of-flight parameter is
+    used as the input for the Lambert solver, and the true velocity vectors are computed using an external
+    Python script that uses Izzo's algorithm to solve Lambert's problem.
 
     For the multi-revolution case, the solution for the free variable x is also tested.
     """
-    [testResults, testMessages] = lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy)
-    assert testResults < 1, testMessages
+    lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy)
 
 
 def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy):
-    """This test checks for a large force return when far away from the waypoint"""
-    testFailCount = 0
-    testMessages = []
-
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -154,9 +156,14 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
     r2vec = r2_N
     revs = p2_revs
 
+    if solverName == "Gooding":
+        solverMethod = messaging.GOODING
+    elif solverName == "Izzo":
+        solverMethod = messaging.IZZO
+
     # Configure input messages
     lambertProblemInMsgData = messaging.LambertProblemMsgPayload()
-    lambertProblemInMsgData.solverName = solverName
+    lambertProblemInMsgData.solverMethod = solverMethod
     lambertProblemInMsgData.r1vec = r1vec
     lambertProblemInMsgData.r2vec = r2vec
     lambertProblemInMsgData.transferTime = time
@@ -193,7 +200,8 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
     idx = 2 * revs - 1
     idxSol2 = idx + 1
 
-    # if the transfer angle is smaller than alignmentThreshold, the two position vectors are too aligned. They might not define a plane, so no solution should be returned.
+    # if the transfer angle is smaller than alignmentThreshold, the two position vectors are too aligned.
+    # They might not define a plane, so no solution should be returned.
     if abs(np.sin(p5_angles*macros.D2R)) < abs(np.sin(p6_align*macros.D2R)):
         alignmentFlag = True
     else:
@@ -201,7 +209,9 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
 
     if alignmentFlag or (revs > 0 and idx+1 > numSolutions):
         # 1. if transfer angle is smaller than alignmentThreshold, no solution should be returned
-        # 2. external Lambert solver does not compute solution if requested transfer time is less than minimum time-of-flight for multi-revolution solution. In this case set all true outputs to zero (so does the lambert module as well, since no solution exists for the requested time-of-flight)
+        # 2. external Lambert solver does not compute solution if requested transfer time is less than minimum
+        # time-of-flight for multi-revolution solution. In this case set all true outputs to zero
+        # (so does the lambert module as well, since no solution exists for the requested time-of-flight)
         v1True = np.array([0., 0., 0.])
         v2True = np.array([0., 0., 0.])
         validFlagTrue = 0
@@ -225,7 +235,8 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
         v2TrueSol2 = Izzo.v2[idxSol2]
         validFlagTrueSol2 = 1
 
-    # only compare solution for free variable x for multi-revolution case (for 0 revolution case, external lambert solver is not called so no true value is available)
+    # only compare solution for free variable x for multi-revolution case (for 0 revolution case,
+    # external lambert solver is not called so no true value is available)
     if (alignmentFlag == False and revs > 0 and idx < numSolutions):
         x = lambertPerformanceOutMsgRec.x[0]
         xSol2 = lambertPerformanceOutMsgRec.xSol2[0]
@@ -238,40 +249,73 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
         xTrueSol2 = 0.
 
     # make sure module output data is correct
-    ParamsString = ' for solver=' + p1_solver + ', rev=' + str(p2_revs) + ', time=' + str(p3_times) + ', eccentricity=' + str(p4_eccs) + ', angle=' + str(p5_angles) + ', alignmentThreshold=' + str(p6_align) + ', accuracy=' + str(accuracy)
+    paramsString = ' for solver={}, rev={}, time={}, eccentricity={}, angle={}, alignmentThreshold={}, ' \
+                   'accuracy={}'.format(
+                    str(p1_solver),
+                    str(p2_revs),
+                    str(p3_times),
+                    str(p4_eccs),
+                    str(p5_angles),
+                    str(p6_align),
+                    str(accuracy))
 
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        v1True, v1, accuracy, ('Variable: v1,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        v2True, v2, accuracy, ('Variable: v2,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        np.array([validFlagTrue]), np.array([validFlag]), accuracy, ('Variable: validFlag,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        v1TrueSol2, v1Sol2, accuracy, ('Variable: v1Sol2,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        v2TrueSol2, v2Sol2, accuracy, ('Variable: v2Sol2,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        np.array([validFlagTrueSol2]), np.array([validFlagSol2]), accuracy, ('Variable: validFlagSol2,' + ParamsString),
-        testFailCount, testMessages)
+    np.testing.assert_allclose(v1,
+                               v1True,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: v1,' + paramsString),
+                               verbose=True)
 
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        np.array([xTrue]), np.array([x]), accuracy, ('Variable: x,' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        np.array([xTrueSol2]), np.array([xSol2]), accuracy, ('Variable: xSol2,' + ParamsString),
-        testFailCount, testMessages)
+    np.testing.assert_allclose(v2,
+                               v2True,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: v2,' + paramsString),
+                               verbose=True)
 
-    if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
-    else:
-        print(testMessages)
+    np.testing.assert_allclose(validFlag,
+                               validFlagTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: validFlag,' + paramsString),
+                               verbose=True)
 
-    return [testFailCount, "".join(testMessages)]
+    np.testing.assert_allclose(v1Sol2,
+                               v1TrueSol2,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: v1Sol2,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(v2Sol2,
+                               v2TrueSol2,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: v2Sol2,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(validFlagSol2,
+                               validFlagTrueSol2,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: validFlagSol2,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(x,
+                               xTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: x,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(xSol2,
+                               xTrueSol2,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: xSol2,' + paramsString),
+                               verbose=True)
+
 
 if __name__ == "__main__":
-    test_lambertSolver(False, solver[1], revs[0], times[1], eccentricities[1], transferAngle[0], alignmentThreshold[0], 1e-2)
+    test_lambertSolver(False, solver[1], revs[0],
+                       times[1], eccentricities[1], transferAngle[0], alignmentThreshold[0], 1e-2)

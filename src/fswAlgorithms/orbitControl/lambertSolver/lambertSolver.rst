@@ -1,8 +1,21 @@
 Executive Summary
 -----------------
-This module solves Lambert's problem using either the `algorithm by R.H. Gooding <https://doi.org/10.1007/BF00049511>`__ (longer, extensive report available `here <https://apps.dtic.mil/sti/citations/ADA200383>`__ ) or the `algorithm by D. Izzo <https://doi.org/10.1007/s10569-014-9587-y>`__. Given two position vectors :math:`\mathbf{r}_{1}` and :math:`\mathbf{r}_{2}` as well as a requested time-of-flight :math:`t`, the solution to Lambert's problem provides the corresponding velocity vectors v1 and v2 of the transfer orbit. The information about the type of algorithm (Gooding or Izzo), the position vectors, the time-of-flight as well as the number of complete revolutions around the central body, is provided by the :ref:`lambertProblemMsgPayload` input message. The velocity vectors are computed in the same frame as the input position vectors.
+This module solves Lambert's problem using either the `algorithm by R.H. Gooding <https://doi.org/10.1007/BF00049511>`__
+(longer, extensive report available `here <https://apps.dtic.mil/sti/citations/ADA200383>`__ ) or the
+`algorithm by D. Izzo <https://doi.org/10.1007/s10569-014-9587-y>`__. Given two position vectors :math:`\mathbf{r}_{1}`
+and :math:`\mathbf{r}_{2}` as well as a requested time-of-flight :math:`t`, the solution to Lambert's problem provides
+the corresponding velocity vectors v1 and v2 of the transfer orbit. The information about the type of algorithm
+(Gooding or Izzo), the position vectors, the time-of-flight as well as the number of complete revolutions around the
+central body, is provided by the :ref:`lambertProblemMsgPayload` input message. The velocity vectors are computed in the
+same frame as the input position vectors.
 
-The algorithms by Gooding and Izzo provide solutions for elliptic, parabolic and hyperbolic transfer orbits. In the zero-revolution case, exactly one solution exists. In the multi-revolution case (meaning that the transfer orbit completes at least one complete revolution about the central body), either two or zero solutions exist, depending on whether the requested transfer time is greater or less than the minimum time-of-flight for the given number of revolutions. The :ref:`LambertSolutionMsgPayload` output message includes two solutions. If a solution does not exist, the corresponding velocity vectors in the message are equal to the zero vector, and the "validity" flag is equal to zero. Otherwise, the "validity" flag is set to 1.
+The algorithms by Gooding and Izzo provide solutions for elliptic, parabolic and hyperbolic transfer orbits.
+In the zero-revolution case, exactly one solution exists. In the multi-revolution case (meaning that the transfer orbit
+completes at least one complete revolution about the central body), either two or zero solutions exist, depending on
+whether the requested transfer time is greater or less than the minimum time-of-flight for the given number of
+revolutions. The :ref:`LambertSolutionMsgPayload` output message includes two solutions. If a solution does not exist,
+the corresponding velocity vectors in the message are equal to the zero vector, and the "validity" flag is equal to
+zero. Otherwise, the "validity" flag is set to 1.
 
 Message Connection Descriptions
 -------------------------------
@@ -30,11 +43,16 @@ provides information on what this message is used for.
 
 Module Assumptions and Limitations
 ----------------------------------
-The algorithms only compute solutions for a positive time-of-flight, and for positive transfer angles (meaning that the true anomaly of :math:`\mathbf{r}_{2}` is greater than the true anomaly of :math:`\mathbf{r}_{1}`.
+The algorithms only compute solutions for a positive time-of-flight, and for positive transfer angles (meaning that the
+true anomaly of :math:`\mathbf{r}_{2}` is greater than the true anomaly of :math:`\mathbf{r}_{1}`.
 
-An edge case exists for a transfer angle of 0 or 180 degrees, as the two position vectors do not define a plane, so an infinite number of solutions exist. The module checks if the angle between the two position vectors is smaller than the threshold "alignmentThreshold". In this case, the computed velocity vectors are set equal to the zero vector and the validity flag of the solution is set to zero.
+An edge case exists for a transfer angle of 0 or 180 degrees, as the two position vectors do not define a plane, so an
+infinite number of solutions exist. The module checks if the angle between the two position vectors is smaller than the
+threshold "alignmentThreshold". In this case, the computed velocity vectors are set equal to the zero vector and the
+validity flag of the solution is set to zero.
 
-While the module also works for parabolic transfer orbits, the solutions for orbits that are very close to - but not exactly - parabolic, may not be as accurate.
+While the module also works for parabolic transfer orbits, the solutions for orbits that are very close to - but not
+exactly - parabolic, may not be as accurate.
 
 User Guide
 ----------
@@ -52,7 +70,7 @@ The lambert problem input message is either created as a standalone message in p
 .. code-block:: python
 
     lambertProblemInMsgData = messaging.LambertProblemMsgPayload()
-    lambertProblemInMsgData.solverName = "Izzo"
+    lambertProblemInMsgData.solverMethod = messaging.IZZO
     lambertProblemInMsgData.r1vec = np.array([10000. * 1000, 0. ,0.])
     lambertProblemInMsgData.r2vec = np.array([0., 8000. * 1000,0.])
     lambertProblemInMsgData.transferTime = 10000.

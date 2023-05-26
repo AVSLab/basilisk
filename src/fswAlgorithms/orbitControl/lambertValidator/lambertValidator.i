@@ -43,6 +43,8 @@ struct LambertSolutionMsg_C;
 struct LambertPerformanceMsg_C;
 %include "architecture/msgPayloadDefC/DvBurnCmdMsgPayload.h"
 struct DvBurnCmdMsg_C;
+%include "architecture/msgPayloadDefC/LambertValidatorMsgPayload.h"
+struct LambertValidatorMsg_C;
 
 %pythoncode %{
 import sys
