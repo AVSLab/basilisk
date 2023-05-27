@@ -54,6 +54,7 @@ Version |release|
 - Created :ref:`lambertValidator` module to check if the solution from the :ref:`lambertSolver` module violates any
   constraints before a Delta-V is commanded.
 - Added :ref:`scenarioLambertSolver` scenario to illustrate the Lambert solver module package
+- Created :ref:`flybyPoint` to provide hill point reference during a flyby, and a related :ref:`scenarioFlybyPoint`.
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------
