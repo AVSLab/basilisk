@@ -62,6 +62,7 @@ Version |release|
   [cm^-2 s^-1 sr^-2 eV^-1] to [m^-2 s^-1 sr^-2 eV^-1], because m^-2 is used more frequently in computations
 - Fixed a bug in eclipse that caused potentially occluding bodies to be skipped if a prior body was closer to the sun than
   the spacecraft
+- fixed the time evaluation in :ref:`msisAtmosphere`
 
 
 Version 2.1.7 (March 24, 2023)
