@@ -224,7 +224,7 @@ void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double cu
     localDateTime = this->epochDateTime;
     localDateTime.tm_sec += (int) round(currentTime);   // sets the current seconds
     mktime(&localDateTime);
-    this->msisInput.year = localDateTime.tm_yday;
+    this->msisInput.year = localDateTime.tm_year + 1900;
     this->msisInput.doy = localDateTime.tm_yday + 1;    // Jan 1 is the 1st day of year, not 0th
     this->msisInput.sec = localDateTime.tm_sec;
 
