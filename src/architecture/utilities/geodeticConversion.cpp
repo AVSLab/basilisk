@@ -28,11 +28,11 @@
 @return pcpfPosition: [m] Position vector in PCPF coordinates
 */
 Eigen::Vector3d PCI2PCPF(Eigen::Vector3d pciPosition, double J20002Pfix[3][3]){
+    // cArray2EigenMatrixd expects a column major input, thus the result is transposed
+    Eigen::MatrixXd dcm_PN = cArray2EigenMatrixXd(*J20002Pfix,3,3).transpose();
+    Eigen::Vector3d pcpfPosition = dcm_PN * pciPosition;
 
-  Eigen::MatrixXd attMat = cArray2EigenMatrixXd(*J20002Pfix,3,3);
-  Eigen::Vector3d pcpfPosition = attMat * pciPosition;
-
-  return pcpfPosition;
+    return pcpfPosition;
 }
 
 /*! Converts from a planet-centered, planet-fixed coordinates to latitude/longitude/altitude (LLA) coordinates given a planet radius.
@@ -94,11 +94,11 @@ Eigen::Vector3d LLA2PCPF(Eigen::Vector3d llaPosition, double planetRad){
 */
 Eigen::Vector3d PCPF2PCI(Eigen::Vector3d pcpfPosition, double J20002Pfix[3][3])
 {
+    // cArray2EigenMatrixd expects a column major input, thus the result is transposed
+    Eigen::MatrixXd dcm_NP = cArray2EigenMatrixXd(*J20002Pfix,3,3);
+    Eigen::Vector3d pciPosition = dcm_NP * pcpfPosition;
 
-  Eigen::MatrixXd attMat = cArray2EigenMatrixXd(*J20002Pfix,3,3);
-  Eigen::Vector3d pciPosition = attMat.transpose() * pcpfPosition;
-
-  return pciPosition;
+    return pciPosition;
 }
 
 /*! Converts from a planet-centered inertial coordinates to latitutde/longitude/altitude (LLA) coordinates given a planet radius and rotation matrix.
