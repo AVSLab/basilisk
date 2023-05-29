@@ -347,7 +347,6 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                 /* check if RW states are provided */
                 if (this->rwScOutMsgs.size() > 0) {
                     if (this->rwScOutMsgs[scCounter].size() > 0) {
-                        std::vector<std::string>::iterator rwDevice;
                         for (long unsigned int rwCounter = 0; rwCounter < this->rwScOutMsgs[scCounter].size(); rwCounter++) {
 
                             RWConfigLogMsgPayload rwOutMsg;
