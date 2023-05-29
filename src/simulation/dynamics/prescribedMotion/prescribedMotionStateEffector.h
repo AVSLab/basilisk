@@ -52,7 +52,7 @@ public:
     void updateEnergyMomContributions(double integTime,
                                       Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr,
-                                      Eigen::Vector3d omega_BN_B); //!< Method for computing the energy and momentum of the effector
+                                      Eigen::Vector3d omega_BN_B) override; //!< Method for computing the energy and momentum of the effector
     void computePrescribedMotionInertialStates(); //!< Method for computing the effector's states relative to the inertial frame
 
     double mass;                                        //!< [kg] Effector mass

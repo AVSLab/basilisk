@@ -47,8 +47,8 @@ class FacetSRPDynamicEffector: public SysModel, public DynamicEffector
 public:                                                             
     FacetSRPDynamicEffector();                                      //!< The module constructor
     ~FacetSRPDynamicEffector();                                     //!< The module destructor
-    void linkInStates(DynParamManager& states);                     //!< Method for giving the effector access to the hub states
-    void computeForceTorque(double integTime, double timeStep);     //!< Method for computing the SRP force and torque about point B
+    void linkInStates(DynParamManager& states) override;            //!< Method for giving the effector access to the hub states
+    void computeForceTorque(double integTime, double timeStep) override;  //!< Method for computing the SRP force and torque about point B
     void Reset(uint64_t currentSimNanos) override;                  //!< Reset method
     void UpdateState(uint64_t currentSimNanos) override;            //!< Method for updating the effector states
     void writeOutputMessages(uint64_t currentClock);                //!< Method for writing the output messages
