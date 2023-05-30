@@ -143,4 +143,4 @@ jobs:
         shell: pwsh
         run: |
           cd dist3
-          (Get-ChildItem -Directory).FullName | ForEach-Object { ctest --gtest_output "json:../ctest/ctest-results-windows-${{ matrix.python-version }}.json"; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}}
+          ctest --gtest_output "json:../ctest/ctest-results-windows-${{ matrix.python-version }}.json"; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
