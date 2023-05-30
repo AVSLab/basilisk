@@ -20,25 +20,16 @@
 #include "simulation/environment/dentonFluxModel/dentonFluxModel.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/astroConstants.h"
-
 #include <iostream>
-#include <cstring>
 #include <fstream>
-#include <cmath> // trig
+#include <cmath>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-
- // Final Desired Constructor
-DentonFluxModel::DentonFluxModel()
-{
-}
+DentonFluxModel::DentonFluxModel() = default;
 
 /*! Module Destructor */
-DentonFluxModel::~DentonFluxModel()
-{
-    
-}
+DentonFluxModel::~DentonFluxModel() = default;
 
 /*! This method is used to reset the module and checks that required input messages are connect.
     @param CurrentSimNanos current simulation time in nano-seconds
@@ -82,7 +73,8 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     // Check that the Kp index is a string of length 2
     if (!(this->kpIndex.length() == 2))
     {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.kpIndex must be a string of length 2, such as '1-', '3o', '4+' etc.");
+        bskLogger.bskLog(BSK_ERROR,
+                         "DentonFluxModel.kpIndex must be a string of length 2, such as '1-', '3o', '4+' etc.");
     }
     // Convert Kp index (such as '0o', '1-', '5+' etc.) to Kp index counter (int 0-27)
     char kpMain = this->kpIndex[0]; // main Kp index, between 0 and 9
@@ -106,7 +98,8 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     // Check that Kp index is between 0o and 9o (corresponding to Kp index counter 0-27)
     if (this->kpIndexCounter < 0 || this->kpIndexCounter > MAX_NUM_KPS - 1)
     {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Kp index must be between 0o and 9o. Indices 0- and 9+ do not exist.");
+        bskLogger.bskLog(BSK_ERROR,
+                         "DentonFluxModel: Kp index must be between 0o and 9o. Indices 0- and 9+ do not exist.");
     }
     
     // convert energies to log10 values
@@ -119,7 +112,9 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     // Define Energy Array
     double step = (40000 - 1)/this->numOutputEnergies;
     
-    // start at 100eV (fluxes of smaller energies are unreliable due to contamination with secondary electrons and photoelectrons, according to Denton)
+    // start at 100eV
+    // (fluxes of smaller energies are unreliable due to contamination with secondary electrons and photoelectrons,
+    // according to Denton)
     this->inputEnergies[0] = 100;
     for (int i = 1; i < numOutputEnergies; i++)
     {
@@ -131,7 +126,6 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     readDentonDataFile(this->iDataFileName, this->mean_i_flux);
 
 }
-
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @param CurrentSimNanos current simulation time in nano-seconds
@@ -168,7 +162,8 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     double tol = 4000e3; // tolerance how far spacecraft can be away from GEO
     if (v2Norm(r_BE_N) < r_GEO - tol || v2Norm(r_BE_N) > r_GEO + tol || abs(r_BE_N[2]) > tol)
     {
-        bskLogger.bskLog(BSK_WARNING, "DentonFluxModel: Spacecraft not in GEO regime. Denton Model not valid outside of GEO.");
+        bskLogger.bskLog(BSK_WARNING,
+                         "DentonFluxModel: Spacecraft not in GEO regime. Denton Model not valid outside of GEO.");
     }
 
     // Find local lime from spacecraft and Earth state messages
@@ -201,9 +196,6 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
                 eLowerIndex = k-1;
                 break;
             }
-            else
-            {
-            }
         }
         
         // IONS: Find nearest neighbors in energy
@@ -227,9 +219,6 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
                 iLowerIndex = k-1;
                 break;
             }
-            else
-            {
-            }
         }
         
         int localTimeFloor = floor(this->localTime);
@@ -246,9 +235,10 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         flux12 = this->mean_e_flux[this->kpIndexCounter][eHigherIndex][localTimeFloor];
         flux13 = this->mean_e_flux[this->kpIndexCounter][eLowerIndex][localTimeCeil];
         flux14 = this->mean_e_flux[this->kpIndexCounter][eHigherIndex][localTimeCeil];
-        
-        // ELECTRON: Find flux
-        finalElec = bilinear(localTimeFloor, localTimeCeil, logEnElec[eLowerIndex], logEnElec[eHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);
+
+        // ELECTRON: Find flux (differential flux in units of [cm^-2 s^-1 sr^-2 eV^-1])
+        finalElec = bilinear(localTimeFloor, localTimeCeil, logEnElec[eLowerIndex], logEnElec[eHigherIndex],
+                             logInputEnergy, flux11, flux12, flux13, flux14);
         finalElec = pow(10.0, finalElec);
         
         // ION: Gather four nearest *MEAN* flux values
@@ -256,14 +246,15 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         flux12 = this->mean_i_flux[this->kpIndexCounter][iHigherIndex][localTimeFloor];
         flux13 = this->mean_i_flux[this->kpIndexCounter][iLowerIndex][localTimeCeil];
         flux14 = this->mean_i_flux[this->kpIndexCounter][iHigherIndex][localTimeCeil];
-        
-        // ION: Find flux
-        finalIon = bilinear(localTimeFloor, localTimeCeil, logEnProt[iLowerIndex], logEnProt[iHigherIndex], logInputEnergy, flux11, flux12, flux13, flux14);
+
+        // ION: Find flux (differential flux in units of [cm^-2 s^-1 sr^-2 eV^-1])
+        finalIon = bilinear(localTimeFloor, localTimeCeil, logEnProt[iLowerIndex], logEnProt[iHigherIndex],
+                            logInputEnergy, flux11, flux12, flux13, flux14);
         finalIon = pow(10.0, finalIon);
         
-        // Store the output message
-        fluxOutMsgBuffer.meanElectronFlux[i] = finalElec;
-        fluxOutMsgBuffer.meanIonFlux[i] = finalIon;
+        // Store the output message (differential flux in units of [m^-2 s^-1 sr^-2 eV^-1])
+        fluxOutMsgBuffer.meanElectronFlux[i] = finalElec * 1e4;
+        fluxOutMsgBuffer.meanIonFlux[i] = finalIon * 1e4;
         fluxOutMsgBuffer.energies[i] = inputEnergies[i];
     }
     
@@ -278,7 +269,8 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
 */
 void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
 {
-    // r_SE_N and r_BE_N are projected onto the equatorial plane to compute angle, thus only x and y components are used (z component is perpendicular to equator)
+    // r_SE_N and r_BE_N are projected onto the equatorial plane to compute angle,
+    // thus only x and y components are used (z component is perpendicular to equator)
     double r_BE_N_hat[2];       /* unit vector from Earth to spacecraft */
     double r_SE_N_hat[2];       /* unit vector from Earth to Sun */
     v2Normalize(r_BE_N, r_BE_N_hat);
@@ -305,7 +297,8 @@ void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
 /*! Bilinear interpolation method
     @return void
 */
-double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double y, double f11, double f12, double f13, double f14)
+double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double y, double f11, double f12, double f13,
+                                 double f14)
 {
     // Define variables
     double R1, R2, bilinear = 0.0;
@@ -325,13 +318,13 @@ double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double y,
 
 }
 
-
 /*! Read in the Denton data file
     @param fileName data file name
     @param data data array pointer
     @return void
 */
-void DentonFluxModel::readDentonDataFile(std::string fileName, double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES])
+void DentonFluxModel::readDentonDataFile(std::string fileName,
+                                         double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES])
 {
     double temp = 0.0;
     
@@ -341,7 +334,8 @@ void DentonFluxModel::readDentonDataFile(std::string fileName, double data[MAX_N
     // Read data from file:
     inputFile.open(this->dataPath + fileName);
     
-    // Read information into array: Data includes information about mean, standard deviation, median and percentiles (7 types of values in total). Only mean is relevant for this module
+    // Read information into array: Data includes information about mean, standard deviation,
+    // median and percentiles (7 types of values in total). Only mean is relevant for this module
     if (inputFile.is_open()) {
         for (int i = 0; i < MAX_NUM_KPS*MAX_NUM_VALUE_TYPES; i++)
         {   for (int j = 0; j < MAX_NUM_ENERGIES; j++)
@@ -367,4 +361,3 @@ void DentonFluxModel::readDentonDataFile(std::string fileName, double data[MAX_N
     
     return;
 }
-
