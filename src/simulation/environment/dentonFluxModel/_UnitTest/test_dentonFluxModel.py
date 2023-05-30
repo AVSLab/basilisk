@@ -36,7 +36,6 @@ path = os.path.dirname(os.path.abspath(filename))
 bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.simulation import dentonFluxModel
@@ -46,7 +45,7 @@ LTs = [0.00, 14.73]
 z_offsets = [0., 3500e3]
 r_EN_Ns = np.array([[0., 0., 0.], [400e3, 300e3, -200e3]])
 
-@pytest.mark.parametrize("accuracy", [1e-2])
+@pytest.mark.parametrize("accuracy", [1e2])
 @pytest.mark.parametrize("param1_Kp, param2_LT, param3_z, param4_r_EN", [
     (Kps[0], LTs[0], z_offsets[0], r_EN_Ns[0]),
     (Kps[1], LTs[1], z_offsets[1], r_EN_Ns[0]),
@@ -78,15 +77,12 @@ def test_dentonFluxModel(show_plots, param1_Kp, param2_LT, param3_z, param4_r_EN
     The electron and ion energies are compared to make sure the flux data is computed for the same energy. The main
     part of the unitTest is to compare the electron and ion flux.
     """
-    [testResults, testMessage] = dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, param4_r_EN,
+    dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, param4_r_EN,
                                                              accuracy)
-    assert testResults < 1, testMessage
 
 
 def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, param4_r_EN, accuracy):
     """Test method"""
-    testFailCount = 0
-    testMessages = []
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -173,25 +169,31 @@ def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, para
         trueIonFluxData[0:module.numOutputEnergies] = 10.**(rows[2]) * 1e4
 
     # make sure module output data is correct
-    ParamsString = ' for Kp-Index=' + param1_Kp + ', LT=' + str(param2_LT)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        trueEnergyData, energyData, accuracy * 1e4, ('particle energies' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        trueElectronFluxData, electronFluxData, accuracy * 1e4, ('electron flux' + ParamsString),
-        testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        trueIonFluxData, ionFluxData, accuracy * 1e4, ('ion flux' + ParamsString),
-        testFailCount, testMessages)
+    paramsString = ' for Kp-Index={}, LT={}, accuracy={}'.format(
+        str(param1_Kp),
+        str(param2_LT),
+        str(accuracy))
 
-    # print out success or failure message
-    if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
-        print("This test uses an accuracy value of " + str(accuracy * 1e4) +
-              " (true values don't have higher precision)")
-    else:
-        print("FAILED " + module.ModelTag)
-        print(testMessages)
+    np.testing.assert_allclose(energyData,
+                               trueEnergyData,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: energyData,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(electronFluxData,
+                               trueElectronFluxData,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: electronFluxData,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(ionFluxData,
+                               trueIonFluxData,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: ionFluxData,' + paramsString),
+                               verbose=True)
 
     plt.figure(1)
     fig = plt.gcf()
@@ -203,8 +205,6 @@ def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, para
     if show_plots:
         plt.show()
 
-    return [testFailCount, ''.join(testMessages)]
-
 
 if __name__ == "__main__":
-    test_dentonFluxModel(False, '4-', LTs[1], z_offsets[1], r_EN_Ns[1], 1e-2)
+    test_dentonFluxModel(False, '4-', LTs[1], z_offsets[1], r_EN_Ns[1], 1e2)
