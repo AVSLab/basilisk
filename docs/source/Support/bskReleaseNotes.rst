@@ -60,6 +60,8 @@ Version |release|
 - Added a deprecation system for Basilisk. For developers, see :ref:`deprecatingCode`.
 - Changed the units of plasma flux in :ref:`dentonFluxModel` and :ref:`PlasmaFluxMsgPayload` from
   [cm^-2 s^-1 sr^-2 eV^-1] to [m^-2 s^-1 sr^-2 eV^-1], because m^-2 is used more frequently in computations
+- Fixed a bug in eclipse that caused potentially occluding bodies to be skipped if a prior body was closer to the sun than
+  the spacecraft
 
 
 Version 2.1.7 (March 24, 2023)
