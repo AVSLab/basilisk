@@ -222,14 +222,14 @@ void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double cu
     //! Update time.
     struct tm localDateTime;                            // []       date/time structure
     localDateTime = this->epochDateTime;
-    localDateTime.tm_sec += (int) round(currentTime);   // sets the current seconds
+    localDateTime.tm_sec += (int) currentTime;   // sets the current seconds
     mktime(&localDateTime);
-    this->msisInput.year = localDateTime.tm_yday;
+    this->msisInput.year = localDateTime.tm_year + 1900;
     this->msisInput.doy = localDateTime.tm_yday + 1;    // Jan 1 is the 1st day of year, not 0th
-    this->msisInput.sec = localDateTime.tm_sec;
+    double fracSecond = currentTime - (int) currentTime;
+    this->msisInput.sec = localDateTime.tm_hour * 3600.0 + localDateTime.tm_min * 60.0 + localDateTime.tm_sec + fracSecond;
 
-
-    //WIP - need to actually figure out how to pull in these values.
+    // WIP - need to actually figure out how to pull in these values.
     this->msisInput.lst = this->msisInput.sec/3600.0 + this->msisInput.g_long/15.0;
 
     //!  NRLMSISE-00 uses different models depending on the altitude.
