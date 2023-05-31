@@ -116,6 +116,7 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
     # Create the input messages.
     inputImage = messaging.CameraImageMsgPayload()
     inputAtt = messaging.NavAttMsgPayload()
+    inputEphem = messaging.EphemerisMsgPayload()
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -128,6 +129,11 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
     inputAtt.sigma_BN = sigma_BN
     attInMsg = messaging.NavAttMsg().write(inputAtt)
     moduleConfig.attitudeMsg.subscribeTo(attInMsg)
+
+    # Set target attitude relative to inertial
+    inputEphem.sigma_BN = (-np.array(sigma_BN)).tolist()
+    ephemInMsg = messaging.EphemerisMsg().write(inputEphem)
+    moduleConfig.ephemerisMsg.subscribeTo(ephemInMsg)
 
     dataLog = moduleConfig.keyPointsMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
@@ -145,19 +151,23 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
             moduleConfig.filename = path + '/' + image + "-" + str(i-5) + ".jpg"
             attitudeUpdate += np.random.normal(0, 1E-2, 3)
             inputAtt.sigma_BN = attitudeUpdate.tolist()
+            inputEphem.sigma_BN = (-attitudeUpdate).tolist()
             attitudes.append(attitudeUpdate.tolist())
             attInMsg.write(inputAtt, unitTestSim.TotalSim.CurrentNanos)
+            ephemInMsg.write(inputEphem, unitTestSim.TotalSim.CurrentNanos)
         unitTestSim.ConfigureStopTime(macros.sec2nano(i * dt))
         unitTestSim.ExecuteSimulation()
 
     deltaT += 2
-    timeOld = dataLog.timeTagImageOld[deltaT]
-    timeNew = dataLog.timeTagImageNew[deltaT]
+    timeOld = dataLog.timeTag_firstImage[deltaT]
+    timeNew = dataLog.timeTag_secondImage[deltaT]
     numPoints = int(dataLog.keyPointsFound[deltaT])
-    pointsOld = dataLog.keyPointsImageOld
-    pointsNew = dataLog.keyPointsImageNew
-    oldAtt = dataLog.sigmaBNImageOld[deltaT]
-    newAtt = dataLog.sigmaBNImageNew[deltaT]
+    pointsOld = dataLog.keyPoints_firstImage
+    pointsNew = dataLog.keyPoints_secondImage
+    oldAtt = dataLog.sigma_BN_firstImage[deltaT]
+    newAtt = dataLog.sigma_BN_secondImage[deltaT]
+    oldEphem = dataLog.sigma_TN_firstImage[deltaT]
+    newEphem = dataLog.sigma_TN_secondImage[deltaT]
 
     newFeatures = pointsNew[deltaT][:2*numPoints].reshape([numPoints, 2])
     oldFeatures = pointsOld[deltaT][:2*numPoints].reshape([numPoints, 2])
@@ -186,10 +196,16 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
                                   err_msg='Attitude Msg Error',
                                   verbose=True)
 
+    np.testing.assert_allclose(np.array(newEphem),
+                               -np.array(attitudes[1]),
+                               atol=1e-10,
+                               err_msg='New Ephemeris Attitude Msg Error',
+                               verbose=True)
+
     np.testing.assert_allclose(timeOld,
                                   1E9,
                                   atol=1e-10,
-                                  err_msg='Time Tag Error',
+                                  err_msg='Old Time Tag Error',
                                   verbose=True)
 
     np.testing.assert_allclose(timeNew,
@@ -203,6 +219,12 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
                                   atol=1e-10,
                                   err_msg='New Attitude Msg Error',
                                   verbose=True)
+
+    np.testing.assert_allclose(np.array(oldEphem),
+                               -np.array(attitudes[0]),
+                               atol=1e-10,
+                               err_msg='Old Ephemeris Attitude Msg Error',
+                               verbose=True)
 
     np.testing.assert_array_less(np.linalg.norm(avg[1]/avg[0]),
                                   1,
