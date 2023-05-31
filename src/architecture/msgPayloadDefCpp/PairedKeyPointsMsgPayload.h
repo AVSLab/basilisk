@@ -33,13 +33,15 @@ PairedKeyPointsMsgPayload
 {
     bool valid; //!< --  Quality of measurement
     int64_t cameraID; //!< -- [-]   ID of the camera that took the images
-    uint64_t timeTagImageOld; //!< --[ns]   Current vehicle time-tag associated with old image
-    uint64_t timeTagImageNew; //!< --[ns]   Current vehicle time-tag associated with new image
-    double keyPointsImageOld[MAX_KEY_POINTS]; //!< -- [-]   Paired features in old image
-    double keyPointsImageNew[MAX_KEY_POINTS]; //!< -- [-]   Paired features in new image
-    double sigmaBNImageOld[3]; //!< -- [-]   Attitude associated with old image
-    double sigmaBNImageNew[3]; //!< -- [-]  Attitude associated with new image
-    double keyPointsFound; //!< -- [-] Number of paired features
+    uint64_t timeTag_firstImage; //!< --[ns]   Current vehicle time-tag associated with first image
+    uint64_t timeTag_secondImage; //!< --[ns]   Current vehicle time-tag associated with second image
+    double keyPoints_firstImage[2*MAX_KEY_POINTS]; //!< -- [-]   Paired features in first image
+    double keyPoints_secondImage[2*MAX_KEY_POINTS]; //!< -- [-]   Paired features in second image
+    double sigma_BN_firstImage[3]; //!< -- [-]   Spacecraft body frame attitude associated with first image
+    double sigma_BN_secondImage[3]; //!< -- [-]  Spacecraft body frame attitude associated with second image
+    double sigma_TN_firstImage[3]; //!< -- [-]   Target frame wrt inertial at time of first image
+    double sigma_TN_secondImage[3]; //!< -- [-]  Target frame wrt inertial at time of second image
+    int keyPointsFound; //!< -- [-] Number of paired features
 }PairedKeyPointsMsgPayload;
 
 #endif /* KEYPOINTSMSG_H */
