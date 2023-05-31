@@ -30,6 +30,7 @@
 
 #include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/PairedKeyPointsMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
@@ -50,14 +51,15 @@ public:
     void makeMask(cv::Mat const & inputBWImage, cv::Mat mask) const;
 
 private:
-    cv::Mat oldImage;
-    cv::Mat newImage;
-    bool oldImagePresent = false;
-    bool newImagePresent = false;
-    double oldAttitude[3];
-    uint64_t oldTimeTag;
-    std::vector<cv::Vec2f> newFeatures;
-    std::vector<cv::Vec2f> oldFeatures;
+    cv::Mat firstImage;
+    cv::Mat secondImage;
+    bool firstImagePresent = false;
+    bool secondImagePresent = false;
+    double firstSpacecraftAttitude[3];
+    double firstTargetEphemAttitude[3];
+    uint64_t firstTimeTag;
+    std::vector<cv::Vec2f> secondFeatures;
+    std::vector<cv::Vec2f> firstFeatures;
 
 public:
     std::string filename = "";  //!< Filename for module to read an image directly
@@ -65,6 +67,7 @@ public:
     Message<PairedKeyPointsMsgPayload> keyPointsMsg;  //!< The name of the output message containing key points
     ReadFunctor<CameraImageMsgPayload> imageInMsg;  //!< The name of the camera output message containing images
     ReadFunctor<NavAttMsgPayload> attitudeMsg;  //!< The name of the input attitude information
+    ReadFunctor<EphemerisMsgPayload> ephemerisMsg;  //!< The name of the input central target ephemeris data
     uint64_t sensorTimeTag; //!< [ns] Current time tag for sensor out
 
     double minTimeBetweenPairs = 1; //!< [s] Minimum time between pairs of images
