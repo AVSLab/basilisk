@@ -62,6 +62,38 @@ void Reset_thrusterPlatformState(thrusterPlatformStateConfig *configData, uint64
 */
 void Update_thrusterPlatformState(thrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    /*! - Create and assign message buffers */
+    THRConfigMsgPayload        thrusterConfigFIn   = THRConfigMsg_C_read(&configData->thrusterConfigFInMsg);
+    HingedRigidBodyMsgPayload  hingedRigidBody1In = HingedRigidBodyMsg_C_read(&configData->hingedRigidBody1InMsg);
+    HingedRigidBodyMsgPayload  hingedRigidBody2In = HingedRigidBodyMsg_C_read(&configData->hingedRigidBody2InMsg);
+    THRConfigMsgPayload        thrusterConfigBOut  = THRConfigMsg_C_zeroMsgPayload();
 
+    /*! compute CM position w.r.t. M frame origin, in M coordinates */
+    double MB[3][3];
+    MRP2C(configData->sigma_MB, MB);                                 // B to M DCM
+    double r_TM_F[3];
+    v3Add(configData->r_FM_F, thrusterConfigFIn.rThrust_B, r_TM_F);   // position of T w.r.t. M in F-frame coordinates
+    double T_F[3];
+    v3Copy(thrusterConfigFIn.tHatThrust_B, T_F);
+    v3Scale(thrusterConfigFIn.maxThrust, T_F, T_F);
+
+    /*! extract theta1 and theta2 angles and compute FB DCM */
+    double EulerAngles123[3] = {hingedRigidBody1In.theta, hingedRigidBody2In.theta, 0.0};
+    double FM[3][3];
+    Euler1232C(EulerAngles123, FM);
+    double FB[3][3];
+    m33MultM33(FM, MB, FB);
+
+    /*! populate output msg */
+    double r_TM_B[3];
+    m33tMultV3(FB, r_TM_F, r_TM_B);
+    double r_BM_B[3];
+    m33tMultV3(MB, configData->r_BM_M, r_BM_B);
+    v3Subtract(r_TM_B, r_BM_B, thrusterConfigBOut.rThrust_B);
+    m33tMultV3(FB, thrusterConfigFIn.tHatThrust_B, thrusterConfigBOut.tHatThrust_B);
+    thrusterConfigBOut.maxThrust = thrusterConfigFIn.maxThrust;
+
+    /*! write output thruster config msg */
+    THRConfigMsg_C_write(&thrusterConfigBOut, &configData->thrusterConfigBOutMsg, moduleID, callTime);
 }
 
