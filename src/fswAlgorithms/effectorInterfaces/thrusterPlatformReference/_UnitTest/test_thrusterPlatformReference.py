@@ -16,14 +16,6 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-
-#
-#   Unit Test Script
-#   Module Name:        thrusterPlatformReference
-#   Author:             Riccardo Calaon
-#   Creation Date:      February 15, 2023
-#
-
 import pytest
 import os, inspect, random
 import numpy as np
@@ -34,10 +26,8 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 
-
-# Import all of the modules that we are going to be called in this simulation
+# Import all the modules that are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport 
 from Basilisk.fswAlgorithms import thrusterPlatformReference
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -45,11 +35,6 @@ from Basilisk.architecture import messaging
 from Basilisk.architecture import bskLogging
 
 
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.  Note that the order in that you add the parametrize method
 # matters for the documentation in that it impacts the order in which the test arguments are shown.
@@ -57,10 +42,10 @@ from Basilisk.architecture import bskLogging
 @pytest.mark.parametrize("seed", list(np.linspace(1,10,10)))
 @pytest.mark.parametrize("delta_CM", [0.1, 0.2, 0.3])
 @pytest.mark.parametrize("K", [0,1,5,10])
+@pytest.mark.parametrize("thetaMax", [-1, np.pi/36])
 @pytest.mark.parametrize("accuracy", [1e-10])
-
 # update "module" in this function name to reflect the module name
-def test_platformRotation(show_plots, delta_CM, K, seed, accuracy):
+def test_platformRotation(show_plots, delta_CM, K, thetaMax, seed, accuracy):
     r"""
     **Validation Test Description**
 
@@ -86,7 +71,8 @@ def test_platformRotation(show_plots, delta_CM, K, seed, accuracy):
     For :math:`\kappa = 0`, the correctness of the result is assessed based on the norm of the
     cross product between the thrust direction vector :math:`{}^\mathcal{F}\boldsymbol{t}` and the relative position
     of the center of mass with respect to the thruster application point :math:`T`. For :math:`\kappa \neq 0` this 
-    test is not performed, as the thruster is not aligned with the center of mass.
+    test is not performed, as the thruster is not aligned with the center of mass. This script does not test the
+    integral feedback term, which would require running a simulation for an extended period of time.
 
     The python code also computes equivalently the thrust direction in body frame coordinates :math:`{}^\mathcal{B}\boldsymbol{t}`
     and the net torque on the system :math:`{}^\mathcal{B}\boldsymbol{L}`, and compares them to the respective output
@@ -98,11 +84,10 @@ def test_platformRotation(show_plots, delta_CM, K, seed, accuracy):
     assess the alignment of the thruster. This is, in general, not guaranteed.
     """
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy)
-    assert testResults < 1, testMessage
+    platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accuracy)
 
 
-def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
+def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accuracy):
 
     random.seed(seed)
 
@@ -115,8 +100,6 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     r_CB_B = np.array([0,0,0]) + np.random.rand(3)
     r_CB_B = r_CB_B / np.linalg.norm(r_CB_B) * delta_CM
 
-    testFailCount = 0                        # zero unit test result counter
-    testMessages = []                        # create empty array to store test log messages
     unitTaskName = "unitTask"                # arbitrary name (don't change)
     unitProcessName = "TestProcess"          # arbitrary name (don't change)
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
@@ -140,15 +123,24 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     platform.sigma_MB = sigma_MB
     platform.r_BM_M = r_BM_M
     platform.r_FM_F = r_FM_F
-    platform.r_TF_F = r_TF_F
-    platform.T_F    = T_F
-    platform.K      = K
+    platform.K = K
+    platform.Ki = 0
+    platform.theta1Max = thetaMax
+    platform.theta2Max = thetaMax
 
     # Create input vehicle configuration msg
     inputVehConfigMsgData = messaging.VehicleConfigMsgPayload()
     inputVehConfigMsgData.CoM_B = r_CB_B
     inputVehConfigMsg = messaging.VehicleConfigMsg().write(inputVehConfigMsgData)
     platform.vehConfigInMsg.subscribeTo(inputVehConfigMsg)
+
+    # Create input THR Config Msg
+    THRConfig = messaging.THRConfigMsgPayload()
+    THRConfig.rThrust_B = r_TF_F
+    THRConfig.maxThrust = np.linalg.norm(T_F)
+    THRConfig.tHatThrust_B = T_F / THRConfig.maxThrust
+    thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
+    platform.thrusterConfigFInMsg.subscribeTo(thrConfigFMsg)
 
     # Create input RW configuration msg
     inputRWConfigMsgData = messaging.RWArrayConfigMsgPayload()
@@ -174,6 +166,8 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     unitTestSim.AddModelToTask(unitTaskName, bodyHeadingLog)
     thrusterTorqueLog = platform.thrusterTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, thrusterTorqueLog)
+    thrConfigBLog = platform.thrusterConfigBOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, thrConfigBLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -190,10 +184,7 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     theta1 = ref1Log.theta[0]
     theta2 = ref2Log.theta[0]
 
-    FM = [[np.cos(theta2),  np.sin(theta1)*np.sin(theta2), -np.cos(theta1)*np.sin(theta2)],
-          [       0      ,          np.cos(theta1)       ,         np.sin(theta1)        ],
-          [np.sin(theta2), -np.sin(theta1)*np.cos(theta2),  np.cos(theta1)*np.cos(theta2)]]
-
+    FM = rbk.euler1232C([theta1, theta2, 0.0])
     MB = rbk.MRP2C(sigma_MB)
 
     r_CB_M = np.matmul(MB, r_CB_B)
@@ -204,10 +195,8 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     offset = np.linalg.norm(np.cross(r_CT_F,T_F) / np.linalg.norm(np.array(r_CT_F)) / np.linalg.norm(np.array(T_F)))
 
     # check if the CM offset is zero if control gain K is also 0
-    if K == 0:
-        if not unitTestSupport.isDoubleEqual(offset, 0.0, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + platform.ModelTag + "thrusterPlatformReference module failed unit test on zero offset \n")
+    if K == 0 and thetaMax < 0:
+        np.testing.assert_allclose(offset, 0.0, rtol=0, atol=accuracy, verbose=True)
 
     T_B_hat_sim = bodyHeadingLog.rHat_XB_B[0]               # simulation result
     FB = np.matmul(FM, MB)
@@ -215,22 +204,30 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     T_B_hat = T_B / np.linalg.norm(T_B)                     # truth value
 
     # compare the module results to the python computation for body-frame thruster direction
-    if not unitTestSupport.isVectorEqual(T_B_hat_sim, T_B_hat, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + platform.ModelTag + "thrusterPlatformReference module failed unit test on body frame thruster direction \n")
+    np.testing.assert_allclose(T_B_hat_sim, T_B_hat, rtol=0, atol=accuracy, verbose=True)
 
     L_B_sim = thrusterTorqueLog.torqueRequestBody[0]        # simulation result
     L_F = np.cross(r_CT_F, T_F)
     L_B = np.matmul(FB.transpose(),L_F)
 
     # compare the module results to the python computation for body-frame cmd torque
-    if not unitTestSupport.isVectorEqual(L_B_sim, L_B, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + platform.ModelTag + "thrusterPlatformReference module failed unit test on thruster torque \n")
+    np.testing.assert_allclose(L_B_sim, L_B, rtol=0, atol=accuracy, verbose=True)
 
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    # compare the module results to the python computation for thruster configuration in B frame
+    r_TB_B = r_CB_B - np.matmul(FB.transpose(), r_CT_F)
+    r_TB_B_sim = thrConfigBLog.rThrust_B[0]
+    tHat_B_sim = thrConfigBLog.tHatThrust_B[0]
+    tMax_sim = thrConfigBLog.maxThrust[0]
+    np.testing.assert_allclose(r_TB_B_sim, r_TB_B, rtol=0, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(tHat_B_sim, T_B_hat, rtol=0, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(tMax_sim, np.linalg.norm(T_B), rtol=0, atol=accuracy, verbose=True)
+
+    # compare the output reference angle
+    if thetaMax > 0:
+        np.testing.assert_array_less(theta1, thetaMax + accuracy, verbose=True)
+        np.testing.assert_array_less(theta2, thetaMax + accuracy, verbose=True)
+
+    return
 
 
 #
@@ -241,7 +238,8 @@ if __name__ == "__main__":
     test_platformRotation(
                  False,                   # show_plots
                  0.1,                     # delta_CM
-                 0,                       # k
+                 0,                       # K
+                 -1,                      # thetaMax
                  np.random.rand(1)[0],    # seed
                  1e-10                    # accuracy
                )
