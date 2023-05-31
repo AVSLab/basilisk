@@ -42,7 +42,15 @@ void SelfInit_thrusterPlatformState(thrusterPlatformStateConfig *configData, int
 */
 void Reset_thrusterPlatformState(thrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-
+    if (!THRConfigMsg_C_isLinked(&configData->thrusterConfigFInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, " thrusterPlatformState.thrusterConfigFInMsg wasn't connected.");
+    }
+    if (!HingedRigidBodyMsg_C_isLinked(&configData->hingedRigidBody1InMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, " thrusterPlatformState.hingedRigidBody1InMsg wasn't connected.");
+    }
+    if (!HingedRigidBodyMsg_C_isLinked(&configData->hingedRigidBody2InMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, " thrusterPlatformState.hingedRigidBody2InMsg wasn't connected.");
+    }
 }
 
 
