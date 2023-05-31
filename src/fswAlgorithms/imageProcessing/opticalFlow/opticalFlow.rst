@@ -38,6 +38,9 @@ provides information on what this message is used for.
     * - attitudeMsg
       - :ref:`NavAttMsgPayload`
       - Input Spacecraft body to inertial attitude
+    * - ephemerisMsg
+      - :ref:`EphemerisMsgPayload`
+      - Input Target body to inertial attitude
 
 Module Description
 -------------------------------
@@ -98,4 +101,5 @@ feature tracking. For example::
 
     module.imageInMsg.subscribeTo(imageInMsg)
     module.attitudeMsg.subscribeTo(attInMsg)
+    module.ephemerisMsg.subscribeTo(ephemInMsg)
 

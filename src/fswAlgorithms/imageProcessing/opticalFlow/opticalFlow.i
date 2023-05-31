@@ -39,6 +39,8 @@ from Basilisk.architecture.swig_common_model import *
 struct CameraImageMsg_C;
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct OpNavLimbMsg_C;
+%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+struct EphemerisMsg_C;
 
 %include "architecture/msgPayloadDefCpp/PairedKeyPointsMsgPayload.h"
 
