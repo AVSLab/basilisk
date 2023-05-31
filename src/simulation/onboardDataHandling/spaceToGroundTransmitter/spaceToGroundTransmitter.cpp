@@ -90,7 +90,6 @@ bool SpaceToGroundTransmitter::customReadMessages(){
     }
     if(this->groundLocationAccessInMsgs.size() > 0)
     {
-        std::vector<int64_t>::iterator it;
         for(long unsigned int c=0; c<this->groundLocationAccessInMsgs.size(); c++)
         {
             tmpDataRead = this->groundLocationAccessInMsgs.at(c).isWritten();
