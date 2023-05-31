@@ -62,6 +62,41 @@ void Reset_thrusterPlatformState(ThrusterPlatformStateConfig *configData, uint64
 */
 void Update_thrusterPlatformState(ThrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    /*! - Create and assign message buffers */
+    THRConfigMsgPayload        thrusterConfigFIn   = THRConfigMsg_C_read(&configData->thrusterConfigFInMsg);
+    HingedRigidBodyMsgPayload  hingedRigidBody1In = HingedRigidBodyMsg_C_read(&configData->hingedRigidBody1InMsg);
+    HingedRigidBodyMsgPayload  hingedRigidBody2In = HingedRigidBodyMsg_C_read(&configData->hingedRigidBody2InMsg);
+    THRConfigMsgPayload        thrusterConfigBOut  = THRConfigMsg_C_zeroMsgPayload();
 
+    /*! compute CM position w.r.t. M frame origin, in M coordinates */
+    double MB[3][3];
+    MRP2C(configData->sigma_MB, MB);                                 // B to M DCM
+    double r_TM_F[3];
+    v3Add(configData->r_FM_F, thrusterConfigFIn.rThrust_B, r_TM_F);   // position of T w.r.t. M in F-frame coordinates
+    double T_F[3];
+    v3Copy(thrusterConfigFIn.tHatThrust_B, T_F);
+    v3Scale(thrusterConfigFIn.maxThrust, T_F, T_F);
+
+    /*! extract theta1 and theta2 angles and compute FB DCM */
+    double theta1 = hingedRigidBody1In.theta;
+    double theta2 = hingedRigidBody2In.theta;
+    double FM[3][3];
+    FM[0][0] = cos(theta2);     FM[0][1] = sin(theta1)*sin(theta2);     FM[0][2] = -cos(theta1)*sin(theta2);
+    FM[1][0] = 0;               FM[1][1] = cos(theta1);                 FM[1][2] = sin(theta1);
+    FM[2][0] = sin(theta2);     FM[2][1] = -sin(theta1)*cos(theta2);    FM[2][2] = cos(theta1)*cos(theta2);
+    double FB[3][3];
+    m33MultM33(FM, MB, FB);
+
+    /*! populate output msg */
+    double r_TM_B[3];
+    m33tMultV3(FB, r_TM_F, r_TM_B);
+    double r_BM_B[3];
+    m33tMultV3(MB, configData->r_BM_M, r_BM_B);
+    v3Subtract(r_TM_B, r_BM_B, thrusterConfigBOut.rThrust_B);
+    m33tMultV3(FB, thrusterConfigFIn.tHatThrust_B, thrusterConfigBOut.tHatThrust_B);
+    thrusterConfigBOut.maxThrust = thrusterConfigFIn.maxThrust;
+
+    /*! write output thruster config msg */
+    THRConfigMsg_C_write(&thrusterConfigBOut, &configData->thrusterConfigBOutMsg, moduleID, callTime);
 }
 
