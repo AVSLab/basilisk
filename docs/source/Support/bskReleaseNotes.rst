@@ -63,6 +63,8 @@ Version |release|
 - Fixed a bug in eclipse that caused potentially occluding bodies to be skipped if a prior body was closer to the sun than
   the spacecraft
 - fixed the time evaluation in :ref:`msisAtmosphere`
+- Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the :ref:`simpleInstrumentController` to 
+  match the functionality of the corresponding data and power modules
 
 
 Version 2.1.7 (March 24, 2023)
