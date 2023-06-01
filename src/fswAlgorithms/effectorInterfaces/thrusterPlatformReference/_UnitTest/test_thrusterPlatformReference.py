@@ -34,10 +34,8 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 
-
-# Import all of the modules that we are going to be called in this simulation
+# Import all the modules that are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport 
 from Basilisk.fswAlgorithms import thrusterPlatformReference
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -58,7 +56,6 @@ from Basilisk.architecture import bskLogging
 @pytest.mark.parametrize("delta_CM", [0.1, 0.2, 0.3])
 @pytest.mark.parametrize("K", [0,1,5,10])
 @pytest.mark.parametrize("accuracy", [1e-10])
-
 # update "module" in this function name to reflect the module name
 def test_platformRotation(show_plots, delta_CM, K, seed, accuracy):
     r"""
@@ -98,8 +95,7 @@ def test_platformRotation(show_plots, delta_CM, K, seed, accuracy):
     assess the alignment of the thruster. This is, in general, not guaranteed.
     """
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy)
-    assert testResults < 1, testMessage
+    platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy)
 
 
 def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
@@ -115,8 +111,6 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     r_CB_B = np.array([0,0,0]) + np.random.rand(3)
     r_CB_B = r_CB_B / np.linalg.norm(r_CB_B) * delta_CM
 
-    testFailCount = 0                        # zero unit test result counter
-    testMessages = []                        # create empty array to store test log messages
     unitTaskName = "unitTask"                # arbitrary name (don't change)
     unitProcessName = "TestProcess"          # arbitrary name (don't change)
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
@@ -141,8 +135,6 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     platformConfig.sigma_MB = sigma_MB
     platformConfig.r_BM_M = r_BM_M
     platformConfig.r_FM_F = r_FM_F
-    platformConfig.r_TF_F = r_TF_F
-    platformConfig.T_F    = T_F
     platformConfig.K      = K
 
     # Create input vehicle configuration msg
@@ -150,6 +142,14 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     inputVehConfigMsgData.CoM_B = r_CB_B
     inputVehConfigMsg = messaging.VehicleConfigMsg().write(inputVehConfigMsgData)
     platformConfig.vehConfigInMsg.subscribeTo(inputVehConfigMsg)
+
+    # Create input THR Config Msg
+    THRConfig = messaging.THRConfigMsgPayload()
+    THRConfig.rThrust_B = r_TF_F
+    THRConfig.maxThrust = np.linalg.norm(T_F)
+    THRConfig.tHatThrust_B = T_F / THRConfig.maxThrust
+    thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
+    platformConfig.thrusterConfigFInMsg.subscribeTo(thrConfigFMsg)
 
     # Create input RW configuration msg
     inputRWConfigMsgData = messaging.RWArrayConfigMsgPayload()
@@ -175,6 +175,8 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     unitTestSim.AddModelToTask(unitTaskName, bodyHeadingLog)
     thrusterTorqueLog = platformConfig.thrusterTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, thrusterTorqueLog)
+    thrConfigBLog = platformConfig.thrusterConfigBOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, thrConfigBLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -206,9 +208,7 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
 
     # check if the CM offset is zero if control gain K is also 0
     if K == 0:
-        if not unitTestSupport.isDoubleEqual(offset, 0.0, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + platformWrap.ModelTag + "thrusterPlatformReference module failed unit test on zero offset \n")
+        np.testing.assert_allclose(offset, 0.0, rtol=0, atol=accuracy, verbose=True)
 
     T_B_hat_sim = bodyHeadingLog.rHat_XB_B[0]               # simulation result
     FB = np.matmul(FM, MB)
@@ -216,22 +216,25 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     T_B_hat = T_B / np.linalg.norm(T_B)                     # truth value
 
     # compare the module results to the python computation for body-frame thruster direction
-    if not unitTestSupport.isVectorEqual(T_B_hat_sim, T_B_hat, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + platformWrap.ModelTag + "thrusterPlatformReference module failed unit test on body frame thruster direction \n")
+    np.testing.assert_allclose(T_B_hat_sim, T_B_hat, rtol=0, atol=accuracy, verbose=True)
 
     L_B_sim = thrusterTorqueLog.torqueRequestBody[0]        # simulation result
     L_F = np.cross(r_CT_F, T_F)
     L_B = np.matmul(FB.transpose(),L_F)
 
     # compare the module results to the python computation for body-frame cmd torque
-    if not unitTestSupport.isVectorEqual(L_B_sim, L_B, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + platformWrap.ModelTag + "thrusterPlatformReference module failed unit test on thruster torque \n")
+    np.testing.assert_allclose(L_B_sim, L_B, rtol=0, atol=accuracy, verbose=True)
 
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    # compare the module results to the python computation for thruster configuration in B frame
+    r_TB_B = r_CB_B - np.matmul(FB.transpose(), r_CT_F)
+    r_TB_B_sim = thrConfigBLog.rThrust_B[0]
+    tHat_B_sim = thrConfigBLog.tHatThrust_B[0]
+    tMax_sim = thrConfigBLog.maxThrust[0]
+    np.testing.assert_allclose(r_TB_B_sim, r_TB_B, rtol=0, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(tHat_B_sim, T_B_hat, rtol=0, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(tMax_sim, np.linalg.norm(T_B), rtol=0, atol=accuracy, verbose=True)
+
+    return
 
 
 #

@@ -18,7 +18,6 @@
  */
 
 #include "thrusterPlatformReference.h"
-#include "string.h"
 #include <math.h>
 
 #include "architecture/utilities/linearAlgebra.h"
@@ -38,6 +37,7 @@ void SelfInit_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configD
     HingedRigidBodyMsg_C_init(&configData->hingedRigidBodyRef2OutMsg);
     BodyHeadingMsg_C_init(&configData->bodyHeadingOutMsg);
     CmdTorqueBodyMsg_C_init(&configData->thrusterTorqueOutMsg);
+    THRConfigMsg_C_init(&configData->thrusterConfigBOutMsg);
 }
 
 
@@ -52,6 +52,9 @@ void Reset_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configData
 {
     if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, " thrusterPlatformReference.vehConfigInMsg wasn't connected.");
+    }
+    if (!THRConfigMsg_C_isLinked(&configData->thrusterConfigFInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, " thrusterPlatformReference.thrusterConfigFInMsg wasn't connected.");
     }
     if (RWArrayConfigMsg_C_isLinked(&configData->rwConfigDataInMsg) && RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
         configData->momentumDumping = Yes;
@@ -75,11 +78,13 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
 {
     /*! - Create and assign message buffers */
     VehicleConfigMsgPayload    vehConfigMsgIn = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
+    THRConfigMsgPayload        thrusterConfigFIn = THRConfigMsg_C_read(&configData->thrusterConfigFInMsg);
     RWSpeedMsgPayload          rwSpeedMsgIn = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
     HingedRigidBodyMsgPayload  hingedRigidBodyRef1Out = HingedRigidBodyMsg_C_zeroMsgPayload();
     HingedRigidBodyMsgPayload  hingedRigidBodyRef2Out = HingedRigidBodyMsg_C_zeroMsgPayload();
     BodyHeadingMsgPayload      bodyHeadingOut = BodyHeadingMsg_C_zeroMsgPayload();
     CmdTorqueBodyMsgPayload    thrusterTorqueOut = CmdTorqueBodyMsg_C_zeroMsgPayload();
+    THRConfigMsgPayload        thrusterConfigOut = THRConfigMsg_C_zeroMsgPayload();
 
     /*! compute CM position w.r.t. M frame origin, in M coordinates */
     double MB[3][3];
@@ -91,10 +96,13 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
     double r_CM_M[3];
     v3Add(r_CB_M, configData->r_BM_M, r_CM_M);               // position of C w.r.t. M in M-frame coordinates
     double r_TM_F[3];
-    v3Add(configData->r_FM_F, configData->r_TF_F, r_TM_F);   // position of T w.r.t. M in F-frame coordinates
+    v3Add(configData->r_FM_F, thrusterConfigFIn.rThrust_B, r_TM_F);   // position of T w.r.t. M in F-frame coordinates
+    double T_F[3];
+    v3Copy(thrusterConfigFIn.tHatThrust_B, T_F);
+    v3Scale(thrusterConfigFIn.maxThrust, T_F, T_F);
     
     double FM[3][3];
-    tprComputeFinalRotation(r_CM_M, r_TM_F, configData->T_F, FM);
+    tprComputeFinalRotation(r_CM_M, r_TM_F, T_F, FM);
 
     /*! compute net RW momentum */
     double vec3[3], hs_B[3], hs_M[3];
@@ -107,7 +115,7 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
 
     /*! compute offset vector */
     double T_M[3];
-    m33tMultV3(FM, configData->T_F, T_M);
+    m33tMultV3(FM, T_F, T_M);
     double d_M[3];
     v3Cross(T_M, hs_M, d_M);
     v3Scale(-configData->K/v3Dot(T_M, T_M), d_M, d_M);
@@ -115,7 +123,7 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
     /*! recompute thrust direction and FM matrix based on offset */
     double r_CMd_M[3];
     v3Add(r_CM_M, d_M, r_CMd_M);
-    tprComputeFinalRotation(r_CMd_M, r_TM_F, configData->T_F, FM);
+    tprComputeFinalRotation(r_CMd_M, r_TM_F, T_F, FM);
 
     /*! extract theta1 and theta2 angles */
     hingedRigidBodyRef1Out.theta = atan2(FM[1][2], FM[1][1]);
@@ -132,23 +140,34 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
     m33MultM33(FM, MB, FB);
 
     /*! compute thruster direction in body frame coordinates */
-    m33tMultV3(FB, configData->T_F, bodyHeadingOut.rHat_XB_B);
+    m33tMultV3(FB, T_F, bodyHeadingOut.rHat_XB_B);
     v3Normalize(bodyHeadingOut.rHat_XB_B, bodyHeadingOut.rHat_XB_B);
 
-    /* write output body heading message */
+    /*! write output body heading message */
     BodyHeadingMsg_C_write(&bodyHeadingOut, &configData->bodyHeadingOutMsg, moduleID, callTime);
 
-    /* compute thruster torque on the system in body frame coordinates */
+    /*! compute thruster torque on the system in body frame coordinates */
     double r_CM_F[3];
     m33MultV3(FM, r_CM_M, r_CM_F);
     double r_TC_F[3];
     v3Subtract(r_TM_F, r_CM_F, r_TC_F);
     double Torque_F[3];
-    v3Cross(configData->T_F, r_TC_F, Torque_F);    // compute the opposite of torque to compensate with the RWs
+    v3Cross(T_F, r_TC_F, Torque_F);    // compute the opposite of torque to compensate with the RWs
     m33tMultV3(FB, Torque_F, thrusterTorqueOut.torqueRequestBody);
 
-    /* write output commanded torque message */
+    /*! write output commanded torque message */
     CmdTorqueBodyMsg_C_write(&thrusterTorqueOut, &configData->thrusterTorqueOutMsg, moduleID, callTime);
+
+    /*! populate thrusterConfigOut */
+    double r_TC_B[3];
+    m33tMultV3(FB, r_TC_F, r_TC_B);
+    v3Add(r_CB_B, r_TC_B, thrusterConfigOut.rThrust_B);
+    m33tMultV3(FB, T_F, thrusterConfigOut.tHatThrust_B);
+    v3Normalize(thrusterConfigOut.tHatThrust_B, thrusterConfigOut.tHatThrust_B);
+    thrusterConfigOut.maxThrust = v3Norm(T_F);
+
+    /*! write output thruster config msg */
+    THRConfigMsg_C_write(&thrusterConfigOut, &configData->thrusterConfigBOutMsg, moduleID, callTime);
 }
 
 void tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3])

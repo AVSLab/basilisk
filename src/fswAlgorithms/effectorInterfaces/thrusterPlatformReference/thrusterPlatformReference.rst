@@ -18,6 +18,9 @@ provides information on what this message is used for.
     * - vehConfigInMsg
       - :ref:`VehicleConfigMsgPayload`
       - Input vehicle configuration message containing the position of the center of mass of the system.
+    * - thrusterConfigFInMsg
+      - :ref:`THRConfigMsgPayload`
+      - Input thruster configuration message containing the thrust direction vector and magnitude in **platform frame coordinates**. The entry ``rThrust_B`` here is the position of the thrust application point, with respect to the origin of the platform frame, in platform-frame coordinates (:math:`{}^\mathcal{F}\boldsymbol{r}_{T/F}`).
     * - rwConfigDataInMsg
       - :ref:`RWArrayConfigMsgPayload`
       - Input message containing the number of reaction wheels, relative inertias and orientations with respect to the body frame.
@@ -36,6 +39,9 @@ provides information on what this message is used for.
     * - thrusterTorqueOutMsg
       - :ref:`CmdTorqueBodyMsgPayload`
       - Output message containing the opposite of the net torque produced by the thruster on the system.
+    * - thrusterConfigBOutMsg
+      - :ref:`THRConfigMsgPayload`
+      - Output thruster configuration message containing the thrust direction vector and magnitude in **reference body frame coordinates**. The entry ``rThrust_B`` here is the position of the thrust application point, with respect to the origin of the body frame, in body-frame coordinates (:math:`{}^\mathcal{B}\boldsymbol{r}_{T/B}`).
 
 
 Detailed Module Description
@@ -75,8 +81,6 @@ The required module configuration is::
     platformConfig.sigma_MB = sigma_MB
     platformConfig.r_BM_M = r_BM_M
     platformConfig.r_FM_F = r_FM_F
-    platformConfig.r_TF_F = r_TF_F
-    platformConfig.T_F    = T_F
     platformConfig.K      = K
     scSim.AddModelToTaskAddModelToTask(simTaskName, platformWrap, platformConfig)
  	
@@ -98,12 +102,6 @@ The module is configurable with the following parameters:
     * - ``r_FM_F``
       - [0, 0, 0]
       - relative position of point :math:`F` with respect to point :math:`M`, in :math:`\mathcal{F}`-frame coordinates
-    * - ``r_TF_F``
-      - [0, 0, 0]
-      - relative position of point :math:`T` with respect to point :math:`F`, in :math:`\mathcal{F}`-frame coordinates
-    * - ``T_F``
-      - [0, 0, 0]
-      - thrust vector in :math:`\mathcal{F}`-frame coordinates
     * - ``K``
       - 0
       - proportional gain of the momentum dumping control loop
