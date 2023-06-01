@@ -207,7 +207,7 @@ def run(show_plots):
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject)
+    scSim.AddModelToTask(simTaskName, scObject, ModelPriority=100)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -245,13 +245,13 @@ def run(show_plots):
     # Note that all variables are initialized to zero.  Thus, not setting this
     # vector would leave it's components all zero for the simulation.
     scObject.addDynamicEffector(extFTObject)
-    scSim.AddModelToTask(simTaskName, extFTObject)
+    scSim.AddModelToTask(simTaskName, extFTObject, ModelPriority=90)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
-    scSim.AddModelToTask(simTaskName, sNavObject)
+    scSim.AddModelToTask(simTaskName, sNavObject, ModelPriority=100)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # Create the initial imaging target
@@ -262,7 +262,7 @@ def run(show_plots):
     imagingTarget.minimumElevation = np.radians(10.)
     imagingTarget.maximumRange = 1e9
     imagingTarget.addSpacecraftToModel(scObject.scStateOutMsg)
-    scSim.AddModelToTask(simTaskName, imagingTarget, ModelPriority=1000)
+    scSim.AddModelToTask(simTaskName, imagingTarget, ModelPriority=100)
 
     # Create a ground station in Singapore
     singaporeStation = groundLocation.GroundLocation()
@@ -272,7 +272,7 @@ def run(show_plots):
     singaporeStation.minimumElevation = np.radians(5.)
     singaporeStation.maximumRange = 1e9
     singaporeStation.addSpacecraftToModel(scObject.scStateOutMsg)
-    scSim.AddModelToTask(simTaskName, singaporeStation, ModelPriority=1000)
+    scSim.AddModelToTask(simTaskName, singaporeStation, ModelPriority=100)
 
     # Create a "transmitter"
     transmitter = spaceToGroundTransmitter.SpaceToGroundTransmitter()
@@ -281,14 +281,14 @@ def run(show_plots):
     transmitter.packetSize = -8E6   # bits
     transmitter.numBuffers = 2
     transmitter.addAccessMsgToTransmitter(singaporeStation.accessOutMsgs[-1])
-    scSim.AddModelToTask(simTaskName, transmitter, ModelPriority=102)
+    scSim.AddModelToTask(simTaskName, transmitter, ModelPriority=99)
 
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
     instrument.ModelTag = "instrument1"
     instrument.nodeBaudRate = 8E6  # baud, assumes the instantaneous writing of a single image
     instrument.nodeDataName = "boulder"
-    scSim.AddModelToTask(simTaskName, instrument, ModelPriority=101)
+    scSim.AddModelToTask(simTaskName, instrument, ModelPriority=90)
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
@@ -298,7 +298,7 @@ def run(show_plots):
     dataMonitor.addDataNodeToModel(transmitter.nodeDataOutMsg)
     dataMonitor.addPartition("boulder")
     dataMonitor.addPartition("santiago")
-    scSim.AddModelToTask(simTaskName, dataMonitor, ModelPriority=100)
+    scSim.AddModelToTask(simTaskName, dataMonitor, ModelPriority=89)
     transmitter.addStorageUnitToTransmitter(dataMonitor.storageUnitDataOutMsg)
 
     #
@@ -319,7 +319,7 @@ def run(show_plots):
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig, ModelPriority=901)
+    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig, ModelPriority=98)
     mrpControlConfig.guidInMsg.subscribeTo(locPointConfig.attGuidOutMsg)
     mrpControlConfig.K = 5.5
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
@@ -336,7 +336,7 @@ def run(show_plots):
     simpleInsControlWrap.ModelTag = "instrumentController"
     simpleInsControlConfig.attGuidInMsg.subscribeTo(locPointConfig.attGuidOutMsg)
     simpleInsControlConfig.locationAccessInMsg.subscribeTo(imagingTarget.accessOutMsgs[-1])
-    scSim.AddModelToTask(simTaskName, simpleInsControlWrap, simpleInsControlConfig, ModelPriority=900)
+    scSim.AddModelToTask(simTaskName, simpleInsControlWrap, simpleInsControlConfig, ModelPriority=97)
     instrument.nodeStatusInMsg.subscribeTo(simpleInsControlConfig.deviceCmdOutMsg)
 
     #
