@@ -26,6 +26,9 @@ provides information on what this message is used for.
     * - planetInMsg
       - :ref:`SpicePlanetStateMsgPayload`
       - (optional) Planet state input message
+    * - sunInMsg
+      - :ref:`SpicePlanetStateMsgPayload`
+      - (optional) Sun state input message
     * - scStateInMsg
       - :ref:`SCStatesMsgPayload`
       - Spacecraft state input message
@@ -46,6 +49,20 @@ The ``groundMapping`` module loops through a number of mapping points defined in
 Range and Elevation
 ~~~~~~~~~~~~~~~~~~~
 The range and elevation check follows the same logic as the :ref:`groundLocation` module.
+
+Local Solar Time
+~~~~~~~~~~~~~~~~
+An optional local solar time, in radians, for the spacecraft may also be specified. A diagram of the local solar times, 
+their angles in degrees, and the position of the spacecraft may be found below.
+
+.. figure:: /../../src/simulation/environment/groundMapping/_Documentation/Images/solar_longitude.svg
+   :align: center
+   :width: 500px
+
+   Figure 1: Diagram of the local solar times
+
+The local solar time is computed by finding the angle between the spacecraft's position vector and the sun vector in the x-y plane. For
+convenience, the calculations are all performed in the mapping body's Hill frame about the sun. 
 
 FOV Checking
 ~~~~~~~~~~~~
@@ -90,6 +107,13 @@ parameter. Finally, the ``halfFieldOfView`` is a required parameter and defaults
     groundMap.cameraPos_B = [0, 0, 0]
     groundMap.nHat_B = [0, 0, 1]
     groundMap.halfFieldOfView = np.radians(22.5)
+
+If a local solar time is desired, the user must set the ``solarLongitude`` and ``solarLongitudeTolerance`` variables.
+
+.. code-block:: python
+
+    groundMap.solarLongitude = np.radians(0.)
+    groundMap.solarLongitudeTolerance = np.radians(0.1)
 
 The mapping points should then be added to the module one at a time. This is done as follows:
 

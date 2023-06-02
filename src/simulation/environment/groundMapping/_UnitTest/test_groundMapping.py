@@ -18,6 +18,7 @@
 # 
 
 import math
+import pytest
 
 import numpy as np
 from Basilisk.architecture import messaging
@@ -26,11 +27,18 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
 
-
-def test_groundMapping():
+tests = [None, # No solar longitude test
+         90, # 90 degree solar longitude test (should pass)
+         -90, # -90 degree solar longitude test (should fail)
+        ]
+@pytest.mark.parametrize('solar_longitude', tests)
+def test_groundMapping(solar_longitude):
     r"""
-    This test checks two points to determine if they are accessible for mapping or not. One point should be mapped,
-    and one point should not be mapped.
+    This test checks two points to determine if they are accessible for mapping or not. Three cases are tested:
+    
+    1. A case in which no solar longitude requirement is used. One point should be mapped, and one point should not be mapped.
+    2. A case in which a solar longitude requirement of 90 degrees is used. One point should be mapped, and one point should not be mapped.
+    3. A case in which a solar longitude requirement of -90 degrees is used. No points should be mapped.
 
     The inertial, planet-fixed planet-centered, and spacecraft body frames are all aligned.
     The spacecraft is in the -y direction of the inertial frame. The first point is along the line from the spacecraft
@@ -39,11 +47,11 @@ def test_groundMapping():
     not accessible because the spacecraft is not within the point's visibility cone and the point is not within the
     spacecraft's visibility cone.
     """
-    [testResults, testMessage] = groundMappingTestFunction()
+    [testResults, testMessage] = groundMappingTestFunction(solar_longitude)
     assert testResults < 1, testMessage
 
 
-def groundMappingTestFunction():
+def groundMappingTestFunction(solar_longitude=None):
     """Test method"""
     testFailCount = 0
     testMessages = []
@@ -59,10 +67,14 @@ def groundMappingTestFunction():
     planetInMsgData = messaging.SpicePlanetStateMsgPayload()
     planetInMsgData.J20002Pfix = [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]]
     planetInMsgData.PositionVector = [0., 0., 0.]
+    planetInMsgData.VelocityVector = [0., 1., 0.]
     planetInMsg = messaging.SpicePlanetStateMsg().write(planetInMsgData)
 
     scStateInMsgData = messaging.SCStatesMsgPayload()
     scStateInMsgData.r_BN_N = [0., -1., 0.]
+    scStateInMsgData.v_BN_N = [np.sqrt(1/np.sqrt(2))*np.cos(np.radians(45)), 
+                               np.sqrt(1/np.sqrt(2))*np.sin(np.radians(45)), 
+                               0.]
     scStateInMsgData.sigma_BN = [0., 0., 0.]
     scStateInMsg = messaging.SCStatesMsg().write(scStateInMsgData)
 
@@ -79,6 +91,18 @@ def groundMappingTestFunction():
     groundMap.scStateInMsg.subscribeTo(scStateInMsg)
     groundMap.planetInMsg.subscribeTo(planetInMsg)
     unitTestSim.AddModelToTask(unitTaskName, groundMap)
+
+    # Set the solar longitude if it is not None
+    if solar_longitude is not None:
+        # Create a blank sun position message
+        sunInMsgData = messaging.SpicePlanetStateMsgPayload()
+        sunInMsgData.J20002Pfix = [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]]
+        sunInMsgData.PositionVector = [-1., 0., 0.]
+        sunInMsg = messaging.SpicePlanetStateMsg().write(sunInMsgData)
+        
+        groundMap.sunInMsg.subscribeTo(sunInMsg)
+        groundMap.solarLongitude = np.radians(solar_longitude)
+        groundMap.solarLongitudeTolerance = np.radians(1.)
 
     # Setup the logging for the mapping locations
     mapLog = []
@@ -119,4 +143,4 @@ def groundMappingTestFunction():
 
 
 if __name__ == "__main__":
-    test_groundMapping()
+    test_groundMapping(solar_longitude=90)

@@ -179,6 +179,12 @@ void GroundMapping::computeAccess(uint64_t c){
             longitude = -longitude;
         }
 
+        // print out the lat and long, rho, and rd_H
+        std::cout << "Rho: " << rho << std::endl;
+        std::cout << "rd_H: " << rd_H[0] << " " << rd_H[1] << " " << rd_H[2] << std::endl;
+        std::cout << "Latitude: " << latitude << std::endl;
+        std::cout << "Longitude: " << longitude << std::endl;
+
         // Check the solar longitude is within requirements
         if ((longitude >= (this->solarLongitude - this->solarLongitudeTolerance)) && (longitude <= (this->solarLongitude + this->solarLongitudeTolerance))){
             solarLongitudeRequirement = true;
