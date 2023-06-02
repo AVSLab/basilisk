@@ -132,8 +132,12 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
                                (int32_t) configData->numStates, configData->sQnoise);
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
-
-    configData->cssSensorInBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);
+    
+    if (CSSArraySensorMsg_C_isWritten(&configData->cssDataInMsg)){
+        configData->cssSensorInBuffer = CSSArraySensorMsg_C_read(&configData->cssDataInMsg);
+    } else {
+        configData->cssSensorInBuffer = CSSArraySensorMsg_C_zeroMsgPayload();
+    }
 
     if (badUpdate <0){
         _bskLog(configData->bskLogger, BSK_WARNING, "Reset method contained bad update");

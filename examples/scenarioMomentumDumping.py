@@ -118,8 +118,8 @@ def run(show_plots):
     simulationTime = macros.min2nano(5)
     simulationTimeStepFsw = macros.sec2nano(1)
     simulationTimeStepDyn = macros.sec2nano(0.1)
-    dynProcess.addTask(scSim.CreateNewTask(fswTask, simulationTimeStepFsw))
     dynProcess.addTask(scSim.CreateNewTask(dynTask, simulationTimeStepDyn))
+    dynProcess.addTask(scSim.CreateNewTask(fswTask, simulationTimeStepFsw))
     
     #
     # setup the simulation tasks/objects
