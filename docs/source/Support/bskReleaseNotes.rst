@@ -86,6 +86,7 @@ Version |release|
 - Reworked how integrators are implemented. New Runge-Kutta integrators may
   now be added simply by specifying the relevant coefficients.
 - Added a scenario that showcases differences between integrators. See :ref:`scenarioIntegratorsComparison`
+- Created :ref:`thrusterPlatformState` to map the thruster configuration information to body frame given the time-varying platform states.
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------
