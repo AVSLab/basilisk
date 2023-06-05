@@ -36,6 +36,7 @@
 void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig *configData, int64_t moduleID)
 {
     configData->imaged = 0;
+    configData->controllerStatus = 1;
     DeviceCmdMsg_C_init(&configData->deviceCmdOutMsg);
 }
 
@@ -74,6 +75,7 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configD
     /* Local copies of the msg buffers*/
     AccessMsgPayload accessInMsgBuffer;  //!< local copy of input message buffer
     AttGuidMsgPayload attGuidInMsgBuffer;  //!< local copy of output message buffer
+    DeviceStatusMsgPayload deviceStatusInMsgBuffer; //!< local copy of input message buffer
     DeviceCmdMsgPayload deviceCmdOutMsgBuffer;  //!< local copy of output message buffer
 
     // zero output buffer
@@ -83,27 +85,31 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configD
     accessInMsgBuffer = AccessMsg_C_read(&configData->locationAccessInMsg);
     attGuidInMsgBuffer = AttGuidMsg_C_read(&configData->attGuidInMsg);
 
+    // read in the device cmd message if it is connected
+    if (DeviceStatusMsg_C_isLinked(&configData->deviceStatusInMsg)) {
+        deviceStatusInMsgBuffer = DeviceStatusMsg_C_read(&configData->deviceStatusInMsg);
+        configData->controllerStatus = deviceStatusInMsgBuffer.deviceStatus;
+    }
+
     // Compute the norms of the attitude and rate errors
     sigma_BR_norm = v3Norm(attGuidInMsgBuffer.sigma_BR);
     omega_BR_norm = v3Norm(attGuidInMsgBuffer.omega_BR_B);
 
-    // If the target has not been imaged
-    if (!configData->imaged) {
-        /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the rate
-        error is less than the tolerance, turn on the instrument and set the imaged indicator to 1*/
-        if ((sigma_BR_norm <= configData->attErrTolerance)
-            && (!configData->useRateTolerance || (omega_BR_norm <= configData->rateErrTolerance)) // Check rate tolerance if useRateTolerance enabled
-            && (accessInMsgBuffer.hasAccess))
-        {
-            deviceCmdOutMsgBuffer.deviceCmd = 1;
-            configData->imaged = 1;
-            // Otherwise, turn off the instrument
-        } else {
-            deviceCmdOutMsgBuffer.deviceCmd = 0;
+    // If the controller is active
+    if (configData->controllerStatus) {
+        // If the target has not been imaged
+        if (!configData->imaged) {
+            /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the rate
+            error is less than the tolerance, turn on the instrument and set the imaged indicator to 1*/
+            if ((sigma_BR_norm <= configData->attErrTolerance)
+                && (!configData->useRateTolerance || (omega_BR_norm <= configData->rateErrTolerance)) // Check rate tolerance if useRateTolerance enabled
+                && (accessInMsgBuffer.hasAccess))
+            {
+                deviceCmdOutMsgBuffer.deviceCmd = 1;
+                configData->imaged = 1;
+                // Otherwise, turn off the instrument
+            }
         }
-    }
-    else {
-        deviceCmdOutMsgBuffer.deviceCmd = 0;
     }
 
     // write to the output messages

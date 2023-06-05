@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,12 +17,21 @@
 
  */
 
+#include "architecture/utilities/saturate.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include <gtest/gtest.h>
 
-#ifndef GAUSS_MARKOV_CHECK_
-#define GAUSS_MARKOV_CHECK_
 
-#include <Eigen/Dense>
-
-uint64_t testGaussMarkov();
-Eigen::Vector2d calculateSD(Eigen::MatrixXd, int64_t numPts);
-#endif
+TEST(Saturate, testSaturate) {
+    Eigen::Vector3d states;
+    states << -555, 1.27, 5000000.;
+    auto saturator = Saturate(3);
+    Eigen::MatrixXd bounds;
+    bounds.resize(3,2);
+    bounds << -400., 0, 5, 10, -1, 5000001;
+    saturator.setBounds(bounds);
+    states = saturator.saturate(states);
+    Eigen::Vector3d expected;
+    expected << -400, 5, 5000000;
+    EXPECT_TRUE(states == expected);
+}

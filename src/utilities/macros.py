@@ -49,7 +49,7 @@ NANO2HOUR = (1./60./60.*1E-9)
 #   variable to convert degrees to radians
 D2R = (math.pi/180.)
 
-#   variable to convert degrees to radians
+#   variable to convert radians to degrees
 R2D = (180./math.pi)
 
 #   variable to convert RPM to radians per second

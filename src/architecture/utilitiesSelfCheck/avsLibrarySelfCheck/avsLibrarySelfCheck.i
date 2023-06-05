@@ -17,20 +17,26 @@
 
  */
 
-%module saturateCheck
+%module avsLibrarySelfCheck
 %{
-    #include "saturateCheck.h"
+    #include "avsLibrarySelfCheck.h"
 %}
 
 %include "swig_conly_data.i"
 
 %pythoncallback;
-int testSaturate();
+int testRigidBodyKinematics(double);
+int testLinearAlgebra(double);
+int testOrbitalAnomalies(double);
+int testOrbitalHill(double);
 %nopythoncallback;
 
-%ignore testSaturate;
+%ignore testRigidBodyKinematics;
+%ignore testLinearAlgebra;
+%ignore testOrbitalAnomalies;
+%ignore testOrbitalHill;
 
-%include "saturateCheck.h"
+%include "avsLibrarySelfCheck.h"
 
 
 %pythoncode %{

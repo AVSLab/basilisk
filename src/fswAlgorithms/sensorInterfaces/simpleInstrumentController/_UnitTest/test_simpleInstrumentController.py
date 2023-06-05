@@ -48,13 +48,16 @@ from matplotlib import pyplot as plt
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 
-tests = [(0, 0, 0, True), # rate disabled
-         (0, 0.01, 0.1, True), # rate disabled, rate noncompliant
-         (1, 0.01, 0.001, True), # rate enabled, rate compliant
-         (1, 0.01, 0.1, False) # rate enabled, rate noncompliant
+tests = [(0, 0, 0, None, None, [1,0,0,1,0]), # rate disabled, device status not written, no controller status
+         (0, 0.01, 0.1, None, None, [1,0,0,1,0]), # rate disabled, rate noncompliant, device status not written, no controller status
+         (1, 0.01, 0.001, None, None, [1,0,0,1,0]), # rate enabled, rate compliant, device status not written, no controller status
+         (1, 0.01, 0.1, None, None, [0, 0, 0, 0, 0]), # rate enabled, rate noncompliant, device status not written, no controller status
+         (0, 0, 0, 1, 0, [1,0,0,1,0]), # rate disabled, device status of 1, controller status of 0
+         (0, 0, 0, 0, 1, [0, 0, 0, 0, 0]), # rate disabled, device status of 0, controller status of 1
+         (0, 0, 0, None, 1, [1,0,0,1,0]) # rate disabled, device status not written, controller status of 1
         ]
-@pytest.mark.parametrize('use_rate_limit,rate_limit,omega_mag,expected_success', tests)
-def test_simple_instrument_controller(show_plots, use_rate_limit, rate_limit, omega_mag, expected_success):
+@pytest.mark.parametrize('use_rate_limit,rate_limit,omega_mag,deviceStatus,controlStatus,expected_result', tests)
+def test_simple_instrument_controller(show_plots, use_rate_limit, rate_limit, omega_mag, deviceStatus, controlStatus, expected_result):
     r"""
     **Validation Test Description**
 
@@ -67,17 +70,21 @@ def test_simple_instrument_controller(show_plots, use_rate_limit, rate_limit, om
     3. If the controller sends an image command again after the imaged variable has been reset to 0
 
     4. If the rate tolerance limit only effects operation when enabled, and effects operation in the expected manner.
+
+    5. If the controller sends an image command when deviceStatusInMsg is set to 1 and the instrumentStatus is set to 0
+
+    6. If the controller does not send an image command when deviceStatusInMsg is set to 0 and the instrumentStatus is set to 1
+
+    7. If the controller does send an image command when deviceStatusInMsg is not written and the instrumentStatus is set to 1
     """
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
-    [testResults, testMessage] = simpleInstrumentControllerTestFunction(show_plots, use_rate_limit, rate_limit, omega_mag)
-    if expected_success:
-        assert testResults < 1, testMessage
-    else:
-        assert testResults != 0, testMessage
+    [testResults, testMessage] = simpleInstrumentControllerTestFunction(show_plots, use_rate_limit, rate_limit, omega_mag, deviceStatus, controlStatus, expected_result)
+    
+    assert testResults < 1, testMessage
 
 
-def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_limit=0.01, omega_mag=0.001):
+def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_limit=0.01, omega_mag=0.001, deviceStatus=None, controlStatus=None, expected_result=None):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"
@@ -91,7 +98,6 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
     testProcessRate = macros.sec2nano(1.0)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     # Construct algorithm and associated C++ container
     moduleConfig = simpleInstrumentController.simpleInstrumentControllerConfig()
@@ -116,6 +122,17 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
     inputAttGuidMsgData.sigma_BR = [0.01, 0.01, 0.01]
     inputAttGuidMsgData.omega_BR_B = [omega_mag, 0.0, 0.0]
     inputAttGuidMsg = messaging.AttGuidMsg().write(inputAttGuidMsgData)
+
+    # Create and write the device status message
+    if deviceStatus is not None:
+        inputDeviceStatusMsgData = messaging.DeviceStatusMsgPayload()
+        inputDeviceStatusMsgData.deviceStatus = deviceStatus
+        inputDeviceStatusMsg = messaging.DeviceStatusMsg().write(inputDeviceStatusMsgData)
+        moduleConfig.deviceStatusInMsg.subscribeTo(inputDeviceStatusMsg)
+    
+    # Set the controllerStatus variable
+    if controlStatus is not None:
+        moduleConfig.controllerStatus = controlStatus
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = moduleConfig.deviceCmdOutMsg.recorder()
@@ -146,10 +163,7 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
     unitTestSim.ConfigureStopTime(macros.sec2nano(4.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    # set the filtered output truth states
-    trueVector = [1, 0, 0, 1, 0]
-
-    if not unitTestSupport.isArrayEqual(dataLog.deviceCmd, trueVector, 3, 1e-12):
+    if not unitTestSupport.isArrayEqual(dataLog.deviceCmd, expected_result, len(expected_result), 1e-12):
         testFailCount += 1
         testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed dataVector" + " unit test at t=" + str(dataLog.times()[0]*macros.NANO2SEC) + "sec\n")
 

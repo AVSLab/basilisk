@@ -479,9 +479,6 @@ void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNano
  */
 void ReactionWheelStateEffector::ReadInputs()
 {
-//
-	std::vector<double>::iterator CmdIt;
-	uint64_t i;
 
 	//! read the incoming command array, or zero if not connected
     if (this->rwMotorCmdInMsg.isLinked()) {
@@ -493,6 +490,7 @@ void ReactionWheelStateEffector::ReadInputs()
 
 	//! - Set the NewRWCmds vector.  Using the data() method for raw speed
 	RWCmdMsgPayload *CmdPtr;
+    uint64_t i;
 	for(i=0, CmdPtr = NewRWCmds.data(); i<ReactionWheelData.size(); CmdPtr++, i++)
 	{
 		CmdPtr->u_cmd = this->incomingCmdBuffer.motorTorque[i];

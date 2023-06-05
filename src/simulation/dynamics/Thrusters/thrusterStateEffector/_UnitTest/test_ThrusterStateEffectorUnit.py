@@ -25,9 +25,10 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk, simulationArchTypes
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraft, thrusterStateEffector
 from Basilisk.architecture import messaging
+from Basilisk.architecture import sysModel
 import matplotlib.pyplot as plt
 
 
@@ -144,12 +145,16 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     # Create the process and task
     unitTaskName1 = "unitTask1"  # arbitrary name (don't change)
     unitTaskName2 = "unitTask2"  # arbitrary name (don't change)
+    unitTaskName3 = "unitTask3"  # arbitrary name (don't change)
     unitProcessName1 = "TestProcess1"  # arbitrary name (don't change)
     unitProcessName2 = "TestProcess2"  # arbitrary name (don't change)
+    unitProcessName3 = "TestProcess3"  # arbitrary name (don't change)
     testProc1 = TotalSim.CreateNewProcess(unitProcessName1, 10)
     testProc1.addTask(TotalSim.CreateNewTask(unitTaskName1, testRate))
     testProc2 = TotalSim.CreateNewProcess(unitProcessName2, 0)
     testProc2.addTask(TotalSim.CreateNewTask(unitTaskName2, testRate))
+    testProc3 = TotalSim.CreateNewProcess(unitProcessName3, 5)
+    testProc3.addTask(TotalSim.CreateNewTask(unitTaskName3, testRate))
 
     # Create the spacecraft object
     scObject = spacecraft.Spacecraft()
@@ -208,19 +213,14 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
         dir2 = np.array([thruster2.thrDir_B[0][0], thruster2.thrDir_B[1][0], thruster2.thrDir_B[2][0]])
 
         if attachBody == "ON":
-            # Create the process and task that contains the Python modules
-            pyTaskName = "pyTask"
-            pyProcessName = "pyProcess"
-            pyModulesProcess = TotalSim.CreateNewPythonProcess(pyProcessName, 5)
-            pyModulesProcess.createPythonTask(pyTaskName, testRate, True, 1)
-
             # Set up the dcm and location
             dcm_BF = np.array([[-1, 0, 0], [0, 1, 0], [0, 0, -1]])
             r_FB_B = [0, 0, 1]
 
             # Create the module
-            pyModule = attachedBodyModule("attachedBody", dcm_BF, r_FB_B, True, 100)
-            pyModulesProcess.addModelToTask(pyTaskName, pyModule)
+            pyModule = attachedBodyModule(dcm_BF, r_FB_B, True, 100)
+            pyModule.ModelTag = "attachedBody"
+            TotalSim.AddModelToTask(unitTaskName3, pyModule)
 
             # Attach messages
             pyModule.scInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -364,9 +364,9 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     return [testFailCount, ''.join(testMessages)]
 
 
-class attachedBodyModule(simulationArchTypes.PythonModelClass):
-    def __init__(self, modelName, dcm_BF, r_FB_B, modelActive=True, modelPriority=-1):
-        super(attachedBodyModule, self).__init__(modelName, modelActive, modelPriority)
+class attachedBodyModule(sysModel.SysModel):
+    def __init__(self, dcm_BF, r_FB_B, modelActive=True, modelPriority=-1):
+        super(attachedBodyModule, self).__init__()
 
         # Input spacecraft state structure message
         self.scInMsg = messaging.SCStatesMsgReader()
@@ -379,20 +379,14 @@ class attachedBodyModule(simulationArchTypes.PythonModelClass):
         self.dcm_BF = dcm_BF
         self.r_FB_B = r_FB_B
 
-    def reset(self, currentTime):
-
-        return
-
-    def updateState(self, currentTime):
+    def UpdateState(self, CurrentSimNanos):
         # Read input message
         self.scMsgBuffer = self.scInMsg()
 
         # Write output message
-        self.writeOutputMsg(currentTime)
+        self.writeOutputMsg(CurrentSimNanos)
 
-        return
-
-    def writeOutputMsg(self, currentTime):
+    def writeOutputMsg(self, CurrentSimNanos):
         # Create output message buffer
         bodyOutMsgBuffer = messaging.SCStatesMsgPayload()
 
@@ -413,7 +407,7 @@ class attachedBodyModule(simulationArchTypes.PythonModelClass):
         bodyOutMsgBuffer.sigma_BN = sigma_FN
         bodyOutMsgBuffer.omega_BN_B = omega_FB_F
         bodyOutMsgBuffer.r_BN_N = r_FN_N
-        self.bodyOutMsg.write(bodyOutMsgBuffer, currentTime, self.moduleID)
+        self.bodyOutMsg.write(bodyOutMsgBuffer, CurrentSimNanos, self.moduleID)
 
 
 if __name__ == "__main__":

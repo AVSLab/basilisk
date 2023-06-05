@@ -17,35 +17,24 @@
 
  */
 
-%module avsLibrarySelfCheck
-%{
-    #include "avsLibrarySelfCheck.h"
-%}
-
-%include "swig_conly_data.i"
-
-%pythoncallback;
-int testRigidBodyKinematics(double);
-int testLinearAlgebra(double);
-int testOrbitalAnomalies(double);
-int testOrbitalElements(double);
-int testOrbitalHill(double);
-int testOrbitalEnvironment(double);
-%nopythoncallback;
-
-%ignore testRigidBodyKinematics;
-%ignore testLinearAlgebra;
-%ignore testOrbitalAnomalies;
-%ignore testOrbitalElements;
-%ignore testOrbitalEnvironment;
-%ignore testOrbitalHill;
-
-%include "avsLibrarySelfCheck.h"
+#ifndef _AVS_LIBRARY_SELF_CHECK_
+#define _AVS_LIBRARY_SELF_CHECK_
 
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int testLinearAlgebra(double accuracy);
+int testOrbitalAnomalies(double accuracy);
+int testOrbitalHill(double accuracy);
+int testRigidBodyKinematics(double accuracy);
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#endif

@@ -25,6 +25,7 @@
 
 Eclipse::Eclipse()
 {
+    rEqCustom = -1.0;
     return;
 }
 
@@ -134,18 +135,17 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
             // If spacecraft is closer to sun than planet
             // then eclipse not possible
             if (r_HB_N.norm() < s_HP_N.norm()) {
-                break;
+                idx++;
+                continue;
+            } 
+            else{
+                // Find the closest planet and save its distance and vector index slot
+                if (s_BP_N.norm() < eclipsePlanetDistance || eclipsePlanetKey < 0) {
+                    eclipsePlanetDistance = s_BP_N.norm();
+                    eclipsePlanetKey = idx;
+                }
+                idx++;
             }
-            
-            // Find the closest planet and save its distance and vector index slot
-            if (idx == 0) {
-                eclipsePlanetDistance = s_BP_N.norm();
-                eclipsePlanetKey = idx;
-            } else if (s_BP_N.norm() < eclipsePlanetDistance) {
-                eclipsePlanetDistance = s_BP_N.norm();
-                eclipsePlanetKey = idx;
-            }
-            idx++;
         }
         
         // If planetkey is not -1 then we have a planet for which
@@ -283,6 +283,13 @@ double Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName)
         return REQ_URANUS*1000.0;
     } else if (planetSpiceName == "neptune") {
         return REQ_NEPTUNE*1000.0;
+    } else if (planetSpiceName == "custom") {
+        if (rEqCustom <= 0.0) {
+            bskLogger.bskLog(BSK_ERROR, "Eclipse: Invalid rEqCustom set.");
+            return 1.0;
+        } else {
+            return rEqCustom;
+        }
     } else {
         bskLogger.bskLog(BSK_ERROR, "Eclipse: unrecognized planetSpiceName.");
         return 1.0;

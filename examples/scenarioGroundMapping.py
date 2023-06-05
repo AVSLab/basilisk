@@ -171,7 +171,7 @@ def run(show_plots, useCentral):
 
     Args:
         show_plots (bool): Determines if the script should display plots
-
+        useCentral (bool): Flag if the Earth is the central body or not
     """
 
     # Create simulation variable names
@@ -212,7 +212,7 @@ def run(show_plots, useCentral):
 
     timeInitString = '2020 MAY 21 18:28:03 (UTC)'
     gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', timeInitString)
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, ModelPriority=100)
 
     # Attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
@@ -244,13 +244,13 @@ def run(show_plots, useCentral):
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     scObject.addDynamicEffector(extFTObject)
-    scSim.AddModelToTask(simTaskName, extFTObject)
+    scSim.AddModelToTask(simTaskName, extFTObject, ModelPriority=95)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
-    scSim.AddModelToTask(simTaskName, sNavObject)
+    scSim.AddModelToTask(simTaskName, sNavObject, ModelPriority=99)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # Generate the mapping points
@@ -261,7 +261,7 @@ def run(show_plots, useCentral):
     groundMap = groundMapping.GroundMapping()
     groundMap.ModelTag = "groundMapping"
     for map_idx in range(N):
-        groundMap.addPointToModel(unitTestSupport.np2EigenVectorXd(mapping_points[map_idx,:]))
+        groundMap.addPointToModel(mapping_points[map_idx,:])
     groundMap.minimumElevation = np.radians(45.)
     groundMap.maximumRange = 1e9
     groundMap.cameraPos_B = [0, 0, 0]
@@ -291,13 +291,13 @@ def run(show_plots, useCentral):
     ephemConverter = ephemerisConverter.EphemerisConverter()
     ephemConverter.ModelTag = "ephemConverter"
     ephemConverter.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[0])
-    scSim.AddModelToTask(simTaskName, ephemConverter)
+    scSim.AddModelToTask(simTaskName, ephemConverter, ModelPriority=98)
 
     # Setup nadir pointing guidance module
     locPointConfig = locationPointing.locationPointingConfig()
     locPointWrap = scSim.setModelDataWrap(locPointConfig)
     locPointWrap.ModelTag = "locPoint"
-    scSim.AddModelToTask(simTaskName, locPointWrap, locPointConfig, ModelPriority=99)
+    scSim.AddModelToTask(simTaskName, locPointWrap, locPointConfig, ModelPriority=97)
     locPointConfig.pHat_B = [0, 0, 1]
     locPointConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
     locPointConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
@@ -307,7 +307,7 @@ def run(show_plots, useCentral):
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig, ModelPriority=901)
+    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig, ModelPriority=96)
     mrpControlConfig.guidInMsg.subscribeTo(locPointConfig.attGuidOutMsg)
     mrpControlConfig.K = 5.5
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback

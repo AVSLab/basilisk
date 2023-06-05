@@ -92,7 +92,6 @@ void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos)
 bool ThrusterStateEffector::ReadInputs()
 {
     // Initialize local variables
-    std::vector<double>::iterator CmdIt;
     uint64_t i;
     bool dataGood;
     

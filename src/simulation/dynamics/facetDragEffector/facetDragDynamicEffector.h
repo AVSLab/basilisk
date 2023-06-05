@@ -68,7 +68,6 @@ private:
 public:
     uint64_t numFacets;                             //!< number of facets
     ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg; //!< atmospheric density input message
-    //std::string atmoDensInMsgName;                  //!< -- message used to read command inputs
     StateData *hubSigma;                            //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                         //!< m/s Hub inertial velocity vector
     Eigen::Vector3d v_B;                            //!< m/s local variable to hold the inertial velocity

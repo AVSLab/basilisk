@@ -46,21 +46,21 @@ support folder will be created::
     pytest --html report/report.html
 
 
-Running ``pytest`` in a multi-threaded manner
----------------------------------------------
+Multi-proccesing ``pytest``
+---------------------------
 
-While Basilisk is a single threaded simulation, it is possible to run
-``pytest`` in a multi-threaded manner. Install the ``pytest-xdist``
+One can distribute python tests across multiple processes. This is achieved with the ``pytest-xdist``
 package using::
 
    pip3 install pytest-xdist
 
-After installing this utility you now run the multi-threaded version of
-``pytest`` for 8 threads using::
+After installing this package you can now pytest such that it distribute tests across multi-processes.
+``pytest`` for the same number of processes as processors on the host machine using::
 
-   python3 -m pytest -n 8
+   python3 -m pytest -n auto
 
-or replace 8 with the number of cores your computer has available
+or replace `auto` with the number of processors (virtual or otherwise) you'd like to dedicate as test executions
+proccesses.
 
 
 Creating the Sphinx Basilisk Documentation

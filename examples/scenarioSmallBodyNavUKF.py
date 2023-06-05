@@ -460,7 +460,7 @@ def run(show_plots):
     x_0 = np.zeros(9)
     x_0[0:3] = r_CA_A
     x_0[3:6] = v_CA_A - np.cross(omega_AN_A,r_CA_A)
-    smallBodyNav.x_hat_k = unitTestSupport.np2EigenVectorXd(x_0)
+    smallBodyNav.x_hat_k = x_0
 
     # set the initial state covariance
     P_k_pos = 1e4

@@ -496,7 +496,7 @@ def run(show_plots):
         rho_Prime_H[0] = 0.0
         rho_Prime_H[1] = -1.5*n*xOff
         unusedPos, vd = orbitalMotion.hill2rv(rc, vc, rho_H, rho_Prime_H)
-        servicerVel.setState(unitTestSupport.np2EigenVectorXd(vd))
+        servicerVel.setState(vd)
 
     def relativeEllipse(A0, xOff, B0=-1):
         rd = unitTestSupport.EigenVector3d2np(servicerPos.getState())
@@ -516,7 +516,7 @@ def run(show_plots):
         if B0 >= 0.0:
             rho_Prime_H[2] = -B0*n*np.sin(beta)
         unusedPos, vd = orbitalMotion.hill2rv(rc, vc, rho_H, rho_Prime_H)
-        servicerVel.setState(unitTestSupport.np2EigenVectorXd(vd))
+        servicerVel.setState(vd)
 
     #
     #   configure a simulation stop time and execute the simulation run

@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,26 +17,25 @@
 
  */
 
-#ifndef _AVS_LIBRARY_SELF_CHECK_
-#define _AVS_LIBRARY_SELF_CHECK_
+#ifndef UNITTESTCOMPARATORS_H
+#define UNITTESTCOMPARATORS_H
 
+#include <math.h>
 
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-int testLinearAlgebra(double accuracy);
-int testOrbitalAnomalies(double accuracy);
-int testOrbitalElements(double accuracy);
-int testOrbitalEnvironment(double accuracy);
-int testOrbitalHill(double accuracy);
-int testRigidBodyKinematics(double accuracy);
-
-#ifdef __cplusplus
+int isEqual(double a, double b, double accuracy)
+{
+    if(fabs(a - b) > accuracy) {
+        return 0;
+    }
+    return 1;
 }
-#endif
 
+int isEqualRel(double a, double b, double accuracy)
+{
+    if(fabs(a - b)/fabs(a) > accuracy) {
+        return 0;
+    }
+    return 1;
+}
 
-#endif
+#endif //UNITTESTCOMPARATORS_H

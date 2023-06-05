@@ -594,8 +594,6 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
  */
 void VSCMGStateEffector::ReadInputs()
 {
-//
-	std::vector<double>::iterator CmdIt;
 	uint64_t i;
 
     /* zero the incoming commands */

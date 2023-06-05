@@ -104,8 +104,6 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
  */
 bool ThrusterDynamicEffector::ReadInputs()
 {
-    
-    std::vector<double>::iterator CmdIt;
     uint64_t i;
     bool dataGood;
     
@@ -147,7 +145,6 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 {
     std::vector<THRSimConfig>::iterator it;
     std::vector<double>::iterator CmdIt;
-    std::vector<THRTimePair>::iterator PairIt;
     //! - Iterate through the list of thruster commands that we read in.
     for(CmdIt = NewThrustCmds.begin(), it = this->thrusterData.begin();
         it != this->thrusterData.end(); it++, CmdIt++)

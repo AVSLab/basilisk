@@ -47,7 +47,7 @@ Version |release|
   format, with_quirc QR code lib. Users that have Basilisk control the build of these modules through the External
   Modules CMake integration will need to manual toggle these OpenCV build options.
 - Updated :ref:`SmallBodyNavEKF` with several bug fixes. Removed spacecraft attitude estimation component.
-- Bug fix made to :ref:`eclipse`: Saturn, Jupiter, Uranus, and Neptune radii were incorrectly being assigned the 
+- Bug fix made to :ref:`eclipse`: Saturn, Jupiter, Uranus, and Neptune radii were incorrectly being assigned the
   radius of Mars.
 - Created :ref:`lambertSolver` module to solve Lambert's problem
 - Created :ref:`lambertPlanner` module to write the :ref:`lambertProblemMsgPayload` Lambert problem setup message
@@ -55,6 +55,23 @@ Version |release|
   constraints before a Delta-V is commanded.
 - Added :ref:`scenarioLambertSolver` scenario to illustrate the Lambert solver module package
 - Created :ref:`flybyPoint` to provide hill point reference during a flyby, and a related :ref:`scenarioFlybyPoint`.
+- Added custom planet name to :ref:`eclipse` in case the user wants to use a body not contained within the module.
+- Removed all instances of using ``unitTestSupport.np2EigenVectorXd()``, as this function is now unneeded.
+- Created a :ref:`facetSRPDynamicEffector` dynamics module to calculate the B frame SRP force and torque acting on a static spacecraft.
+- Google Test C/C++ testing framework added
+- Created a :ref:`prescribedRot2DOF` fsw module to profile a prescribed 2 DOF rotational maneuver for a secondary rigid
+  body connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+  :ref:`prescribedMotionStateEffector` dynamics module.
+- Corrected default value of ``accuracyNanos`` in :ref:`simSynch` to be 0.01 seconds.
+- Added a deprecation system for Basilisk. For developers, see :ref:`deprecatingCode`.
+- Changed the units of plasma flux in :ref:`dentonFluxModel` and :ref:`PlasmaFluxMsgPayload` from
+  [cm^-2 s^-1 sr^-2 eV^-1] to [m^-2 s^-1 sr^-2 eV^-1], because m^-2 is used more frequently in computations
+- Fixed a bug in eclipse that caused potentially occluding bodies to be skipped if a prior body was closer to the sun than
+  the spacecraft
+- fixed the time evaluation in :ref:`msisAtmosphere`
+- Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the :ref:`simpleInstrumentController` to 
+  match the functionality of the corresponding data and power modules
+- Corrected tasks priorities in several scenarios and added checks in two modules to ensure that C MSG read errors are not thrown
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------

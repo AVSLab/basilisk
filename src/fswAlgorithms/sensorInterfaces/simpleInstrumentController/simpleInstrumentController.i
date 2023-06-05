@@ -38,6 +38,8 @@ struct AttGuidMsg_C;
 struct AccessMsg_C;
 %include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
 struct DeviceCmdMsg_C;
+%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
+struct DeviceStatusMsg_C;
 
 %pythoncode %{
 import sys

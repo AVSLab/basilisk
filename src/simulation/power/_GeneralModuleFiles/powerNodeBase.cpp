@@ -58,7 +58,6 @@ void PowerNodeBase::Reset(uint64_t CurrentSimNanos)
  */
 void PowerNodeBase::writeMessages(uint64_t CurrentClock)
 {
-    std::vector<int64_t>::iterator it;
     //! - write power output message
     this->nodePowerOutMsg.write(&this->nodePowerMsg, this->moduleID, CurrentClock);
 
