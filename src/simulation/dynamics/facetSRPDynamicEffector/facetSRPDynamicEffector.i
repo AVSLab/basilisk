@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,25 +17,30 @@
 
  */
 
-%module gaussMarkovCheck
+
+%module facetSRPDynamicEffector
 %{
-    #include "gaussMarkovCheck.h"
+   #include "facetSRPDynamicEffector.h"
 %}
 
+%pythoncode %{
+from Basilisk.architecture.swig_common_model import *
+%}
+%include "std_string.i"
+%include "swig_eigen.i"
 %include "swig_conly_data.i"
 
-%pythoncallback;
-int testGaussMarkov();
-%nopythoncallback;
+// Instantiate templates used by example
+%include "sys_model.h"
+%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+%include "facetSRPDynamicEffector.h"
 
-%ignore testGaussMarkov;
-
-%include "gaussMarkovCheck.h"
-
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
 
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-
-

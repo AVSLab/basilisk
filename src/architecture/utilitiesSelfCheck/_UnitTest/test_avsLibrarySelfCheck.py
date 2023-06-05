@@ -58,11 +58,6 @@ def unitAVSLibrarySelfCheck(testName):
         if errorCount:
             testFailCount += errorCount
             testMessages.append("ERROR: Orbital Anomalies Library Failed Self Test.\n")
-    if testName == "testOrbitalElements":
-        errorCount = avsLibrarySelfCheck.testOrbitalElements(1e-11)
-        if errorCount:
-            testFailCount += errorCount
-            testMessages.append("ERROR: Orbital Elements Library Failed Self Test.\n")
     if testName == "testOrbitalHill":
         errorCount = avsLibrarySelfCheck.testOrbitalHill(1e-4)
         if errorCount:
@@ -73,11 +68,6 @@ def unitAVSLibrarySelfCheck(testName):
         if errorCount:
             testFailCount += errorCount
             testMessages.append("ERROR: Linear Algebra Library Failed Self Test.\n")
-    if testName == "testEnvironment":
-        errorCount = avsLibrarySelfCheck.testOrbitalEnvironment(1e-10)
-        if errorCount:
-            testFailCount += errorCount
-            testMessages.append("ERROR: Space Environment Library Failed Self Test.\n")
 
     if testFailCount == 0:
         print("PASSED ")

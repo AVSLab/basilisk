@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -94,7 +94,9 @@ import numpy as np
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import simulationArchTypes
@@ -115,12 +117,22 @@ from Basilisk.architecture import messaging
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
+# Used to deprecate the entire scenario or ignore certain deprecation warnings
+from Basilisk.utilities import deprecated
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
+
+@deprecated.deprecated(
+    "2024/04/01",
+    "The functionality showcased in this Scenario is deprecated."
+    " See 'scenarioAttitudePointingPy.py'",
+)
 def run(show_plots):
     """
     The scenarios can be run with the followings setups parameters:
@@ -145,7 +157,7 @@ def run(show_plots):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
 
     #
     #  create the simulation process
@@ -153,21 +165,15 @@ def run(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName, 10)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(.1)
+    simulationTimeStep = macros.sec2nano(0.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # create the process and task that contains the Python modules
-    # The following line will trigger a deprecation warning
-    pyModulesProcess = scSim.CreateNewPythonProcess(pyProcessName, 9)
+    # This context manager is used to hide the deprecate warning,
+    # as we were expecting it
+    with deprecated.ignore("CreateNewPythonProcess"):
+        pyModulesProcess = scSim.CreateNewPythonProcess(pyProcessName, 9)
     pyModulesProcess.createPythonTask(pyTaskName, simulationTimeStep, True, -1)
-
-    # In order to hide the deprecation warning, you may use
-    # the python "warnings" module:
-    # import warnings
-    # with warnings.catch_warnings():
-    #     warnings.filterwarnings("ignore", message="PythonProcess*", category=DeprecationWarning)
-    #     pyModulesProcess = scSim.CreateNewPythonProcess(pyProcessName, 9)
-    #     pyModulesProcess.createPythonTask(pyTaskName, simulationTimeStep, True, -1)
 
     #
     #   setup the simulation tasks/objects
@@ -177,11 +183,13 @@ def run(show_plots):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
@@ -211,7 +219,7 @@ def run(show_plots):
     inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DConfig.sigma_R0N = [0.0, 0.0, 0.0]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.attTrackingErrorConfig()
@@ -229,7 +237,9 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 50
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
     mrpLog = pyMRPPD.cmdTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, attErrorLog)
@@ -245,9 +255,12 @@ def run(show_plots):
     extFTObject.cmdTorqueInMsg.subscribeTo(pyMRPPD.cmdTorqueOutMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject
+        # , saveFile=fileName
+    )
 
     #
     #   initialize Simulation
@@ -275,35 +288,44 @@ def run(show_plots):
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            dataSigmaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Control Torque $L_r$ [Nm]')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            dataLr[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$L_{r," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Control Torque $L_r$ [Nm]")
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error [rad/s] ")
 
     if show_plots:
         plt.show()
@@ -338,6 +360,7 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
     can complete any other computations you need (``Numpy``, ``matplotlib``, vision processing
     AI, whatever).
     """
+
     def __init__(self, modelName, modelActive=True, modelPriority=-1):
         super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
 
@@ -378,14 +401,17 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
         torqueOutMsgBuffer = messaging.CmdTorqueBodyMsgPayload()
 
         # compute control solution
-        lrCmd = np.array(guidMsgBuffer.sigma_BR) * self.K + np.array(guidMsgBuffer.omega_BR_B) * self.P
+        lrCmd = (
+            np.array(guidMsgBuffer.sigma_BR) * self.K
+            + np.array(guidMsgBuffer.omega_BR_B) * self.P
+        )
         torqueOutMsgBuffer.torqueRequestBody = (-lrCmd).tolist()
 
         self.cmdTorqueOutMsg.write(torqueOutMsgBuffer, currentTime, self.moduleID)
 
         def print_output():
             """Sample Python module method"""
-            print(currentTime * 1.0E-9)
+            print(currentTime * 1.0e-9)
             print(torqueOutMsgBuffer.torqueRequestBody)
             print(guidMsgBuffer.sigma_BR)
             print(guidMsgBuffer.omega_BR_B)
@@ -398,6 +424,4 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(
-        True  # show_plots
-    )
+    run(True)  # show_plots

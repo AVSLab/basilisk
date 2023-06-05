@@ -156,7 +156,7 @@ def run(show_plots):
     scLocation.primaryScStateInMsg.subscribeTo(scObject.scStateOutMsg)
     scLocation.rEquator = earth.radEquator
     scLocation.rPolar = earth.radEquator*0.98
-    scLocation.aHat_B = unitTestSupport.np2EigenVectorXd([0, 1, 0])
+    scLocation.aHat_B = [0, 1, 0]
     scLocation.theta = np.radians(10.)
     scLocation.maximumRange = 55.
     scSim.AddModelToTask(simTaskName, scLocation)

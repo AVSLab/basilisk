@@ -26,13 +26,21 @@ The sample simulation script creates both a C and C++ module which have their in
 
 .. warning::
 
-    Basilisk C modules contain C wrapped message objects and thus can only write to a stand-alone C wrapped message interface.  Similarly, a C++ module contains C++ message objects and can only write to a C++ stand-alone message.  You can't have a C module write to a C++ stand-alone message.
+    Basilisk C modules contain C wrapped message objects and thus can only write to a stand-alone C wrapped
+    message interface.  Similarly, a C++ module contains C++ message objects and can only write to a C++
+    stand-alone message.  You can't have a C module write to a C++ stand-alone message.
 
-In the following sample code, a C and C++ Basilisk module are created.  To create a C wrapped stand-alone message the ``messaging`` package must be imported from ``Basilisk.architecture``.  Next, assume a message of type ``SomeMsg`` needs to be created.  This is done using::
+In the following sample code, a C and C++ Basilisk module are created.  To create a C wrapped stand-alone
+message the ``messaging`` package must be imported from ``Basilisk.architecture``.  Next, assume a message
+of type ``SomeMsg`` needs to be created.  This is done using::
 
     cStandAloneMsg = messaging.SomeMsg_C()
+    cStandAloneMsg.write(messaging.SomeMsgPayload())
 
-To enable a C module ``someCModule`` to redirect its output message ``dataOutMsg`` writing to this stand-alone message use::
+Be sure to provide an empty payload structure to the C-wrapped message object.  Otherwise a ``read()``
+operation on this stand-alone msg object will cause a segmentation fault.
+To enable a C module ``someCModule`` to redirect its output message ``dataOutMsg`` writing to this stand-alone
+message use::
 
     messaging.SomeMsg_C_addAuthor(someCModule.dataOutMsg, cStandAloneMsg)
 
@@ -55,11 +63,18 @@ To redirect the output of a C++ module ``someCppModule`` to this stand-alone mes
 .. note::
 
     If you want to record the output of ``someCModule`` be sure to record ``cStandAloneMsg``
-    instead of ``someCModule.dataOutMsg``.  The later is no longer being written to.  In C++
+    instead of ``someCModule.dataOutMsg``.  The later is no longer being written to
+    unless you use the ``.read()`` method which sync's up the payload content.  In C++
     we are setting ``cppStandAloneMsg`` equal to ``someCppModule.dataOutMsg``.  Here recording either
     will give the same result.
 
-To see the message states of both the module internal message objects and the stand-alone messages, the sample script shows how to use ``.read()`` to read the current state of the message object.  This will return a copy of the message payload structure.  The same method can be used to access both C and C++ wrapped messages.  After executing the script you should see the following terminal output:
+To see the message states of both the module internal message objects and the stand-alone messages,
+the sample script shows how to use ``.read()`` to read the current state of the message object.
+This will return a copy of the message payload structure.  The same method can be used to access both
+C and C++ wrapped messages. For the C-wrapped message object, the ``.read()`` command will also copy
+the content from the stand-alone message to the module message.  This is why the ``.read()`` command
+below on the module output message returns the correct value.
+After executing the script you should see the following terminal output:
 
 .. code-block::
 
@@ -71,7 +86,7 @@ To see the message states of both the module internal message objects and the st
     BSK_INFORMATION: C Module ID 1 ran Update at 1.000000s
     BSK_INFORMATION: C++ Module ID 2 ran Update at 1.000000s
     mod1.dataOutMsg:
-    [0.0, 0.0, 0.0]
+    [2.0, 0.0, 0.0]
     cMsg:
     [2.0, 0.0, 0.0]
     mod2.dataOutMsg:

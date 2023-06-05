@@ -80,3 +80,16 @@ void DynamicObject::integrateState(double integrateToThisTime)
         dynPtr->postIntegration(integrateToThisTime);
     }
 }
+
+/*! Initializes the dynamics and variables
+ */
+void DynamicObject::initializeDynamics()
+{
+}
+
+/*! Method to compute energy and momentum of the system
+ */
+void DynamicObject::computeEnergyMomentum(double t)
+{
+}
+

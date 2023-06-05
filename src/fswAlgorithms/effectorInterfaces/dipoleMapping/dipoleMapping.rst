@@ -44,4 +44,4 @@ User Guide
 See the example script :ref:`scenarioMtbMomentumManagementSimple` for an illustration on how to use this module.
 
 Note that user must set the torque rod alignment matrix ``GtMatrix_B`` and the ``steeringMatrix`` in row major format.
-Also not that ``steeringMatrix`` is simply the psuedoinverse of the torque rod alignment matrix
+Also note that ``steeringMatrix`` is simply the psuedoinverse of the torque rod alignment matrix

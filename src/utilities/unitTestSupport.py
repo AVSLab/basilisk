@@ -452,11 +452,9 @@ def np2EigenVectorXd(vec):
 
 def npList2EigenXdVector(list):
     """Conver a list of arrays to a list of eigen values"""
-    eigenList = bskUtilities.Eigen3dVector(len(list))
-    c = 0
+    eigenList = bskUtilities.Eigen3dVector()
     for pos in list:
-        eigenList[c] = np2EigenVectorXd(pos)
-        c += 1
+        eigenList.push_back(pos)
     return eigenList
 
 def EigenVector3d2np(eig):

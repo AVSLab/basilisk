@@ -64,6 +64,15 @@ def test_RecordingInputMessages():
     # Create recorders tied to IO messages
     dataInRec = mod1.dataInMsg.recorder()
     scSim.AddModelToTask("dynamicsTask", dataInRec)
+    dataOutRec = mod1.dataOutMsg.recorder()
+    scSim.AddModelToTask("dynamicsTask", dataOutRec)
+
+    attGuidMsg = messaging.CModuleTemplateMsg_C()
+    attGuidMsgPayload = messaging.CModuleTemplateMsgPayload()
+    attGuidMsg.write(attGuidMsgPayload)
+    messaging.CModuleTemplateMsg_C_addAuthor(mod1.dataOutMsg, attGuidMsg)
+    dataOut2Rec = attGuidMsg.recorder()
+    scSim.AddModelToTask("dynamicsTask", dataOut2Rec)
 
     #  initialize Simulation:
     scSim.InitializeSimulation()
@@ -72,12 +81,54 @@ def test_RecordingInputMessages():
     scSim.ConfigureStopTime(macros.sec2nano(1.0))
     scSim.ExecuteSimulation()
 
-    testFailCount, testMessages = uts.compareArray([inputData.dataVector]*2
+    # reading the module output message show not change the earlier redirection
+    # further, we are testing that the read() command copies the payload from
+    # the stand alone msg to the module output module
+    tempSet = mod1.dataOutMsg.read().dataVector
+    scSim.ConfigureStopTime(macros.sec2nano(2.0))
+    scSim.ExecuteSimulation()
+
+    # print(dataInRec.dataVector)
+    # print(dataOutRec.dataVector)
+    # print(dataOut2Rec.dataVector)
+
+    testFailCount, testMessages = uts.compareArray([inputData.dataVector]*3
                                                    , dataInRec.dataVector
                                                    , 0.01
                                                    , "recorded input message was not correct."
                                                    , testFailCount
                                                    , testMessages)
+
+    testFailCount, testMessages = uts.compareArray([[0, 0, 0], [0, 0, 0], [3, 2, 3]]
+                                                   , dataOutRec.dataVector
+                                                   , 0.01
+                                                   , "recorded module output message was not correct."
+                                                   , testFailCount
+                                                   , testMessages)
+
+    testFailCount, testMessages = uts.compareArray([[2, 2, 3], [3, 2, 3], [4, 2, 3]]
+                                                   , dataOut2Rec.dataVector
+                                                   , 0.01
+                                                   , "recorded redirected module output message was not correct."
+                                                   , testFailCount
+                                                   , testMessages)
+
+    testFailCount, testMessages = uts.compareArray([[4., 2., 3.]]
+                                                   , [mod1.dataOutMsg.read().dataVector]
+                                                   , 0.01
+                                                   , "read of module output message was not correct."
+                                                   , testFailCount
+                                                   , testMessages)
+
+    testFailCount, testMessages = uts.compareArray([[4, 2, 3]]
+                                                   , [attGuidMsg.read().dataVector]
+                                                   , 0.01
+                                                   , "read of module redirected output message was not correct."
+                                                   , testFailCount
+                                                   , testMessages)
+
+    if testFailCount:
+        print(testMessages)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

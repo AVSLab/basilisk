@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,26 +16,28 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-
-%module discretizeCheck
+%module prescribedRot2DOF
 %{
-    #include "discretizeCheck.h"
+   #include "prescribedRot2DOF.h"
 %}
 
 %include "swig_conly_data.i"
+%constant void SelfInit_prescribedRot2DOF(void*, uint64_t);
+%ignore SelfInit_prescribedRot2DOF;
+%constant void Reset_prescribedRot2DOF(void*, uint64_t, uint64_t);
+%ignore Reset_prescribedRot2DOF;
+%constant void Update_prescribedRot2DOF(void*, uint64_t, uint64_t);
+%ignore Update_prescribedRot2DOF;
 
-%pythoncallback;
-int testDiscretize();
-%nopythoncallback;
+%include "prescribedRot2DOF.h"
 
-%ignore testDiscretize;
+%include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+struct HingedRigidBodyMsg_C;
 
-%include "discretizeCheck.h"
-
+%include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
+struct PrescribedMotionMsg_C;
 
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-
-

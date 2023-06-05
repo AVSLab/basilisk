@@ -300,8 +300,6 @@ void Albedo::readMessages() {
 void Albedo::writeMessages(uint64_t CurrentSimNanos) {
     AlbedoMsgPayload localMessage;
     memset(&localMessage, 0x0, sizeof(localMessage));
-    std::vector<int64_t>::iterator it;
-    std::vector<AlbedoMsgPayload>::iterator albedoIt;
 
     //! - Write albedo output messages for each instrument
     for (long unsigned int idx=0; idx<this->albOutMsgs.size(); idx++) {
@@ -563,7 +561,7 @@ void Albedo::computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload plan
         Eigen::Vector3d gdlla;
         Eigen::Vector3d r_dAP_N, r_SdA_N, r_IdA_N;
         Eigen::Vector3d rHat_dAP_N, sHat_SdA_N, rHat_IdA_N;
-        int ilat = 0, ilon = 0, ImaxIdx = 0, IIdx = 0;  // index
+        int ilat = 0, ilon = 0, IIdx = 0;  // index
         double lon1 = 0.0, lon2 = 0.0, lat1 = 0.0, lat2 = 0.0, tempmax = 0.0, tempfov = 0.0;
         double f1 = 0.0, f2 = 0.0, f3 = 0.0;
         double dArea = 0.0, alb_I = 0.0, alb_Imax = 0.0;
@@ -610,7 +608,7 @@ void Albedo::computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload plan
                         tempmax = this->ALB[idx][ilat][ilon] * tempmax;
                     }
                     alb_Imax = alb_Imax + tempmax * shadowFactorAtdA;
-                    ImaxIdx++;
+
                     if (f3 >= cos(fov)) {
                         //! - Sunlit portion of the planet seen by the instrument (fov)
                         //! - Albedo flux ratio at instrument's position [-]

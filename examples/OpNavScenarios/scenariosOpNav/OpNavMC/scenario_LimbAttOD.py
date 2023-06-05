@@ -83,8 +83,8 @@ class scenario_OpNav(BSKSim):
 
         MRP= [0,-0.3,0]
         self.get_FswModel().relativeODData.stateInit = (rN+rError).tolist() + (vN+vError).tolist()
-        self.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-        self.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+        self.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
+        self.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
         self.get_DynModel().scObject.hub.sigma_BNInit = [[MRP[0]], [MRP[1]], [MRP[2]]]  # sigma_BN_B
         self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
         qNoiseIn = np.identity(6)
