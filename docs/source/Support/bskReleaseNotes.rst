@@ -53,6 +53,7 @@ Version |release|
 - Removed all instances of using ``unitTestSupport.np2EigenVectorXd()``, as this function is now unneeded.
 - Created a :ref:`facetSRPDynamicEffector` dynamics module to calculate the B frame SRP force and torque acting on a static spacecraft.
 - fixed ``PCI2PCPF()`` and ``PCPF2PCI`` methods in :ref:`geodeticConversion` to use the correct DCM
+- updated :ref:`geodeticConversion` to be able to account for planet ellipsoidal shape if polar radius is provided
 - Google Test C/C++ testing framework added
 - Created a :ref:`prescribedRot2DOF` fsw module to profile a prescribed 2 DOF rotational maneuver for a secondary rigid
   body connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
