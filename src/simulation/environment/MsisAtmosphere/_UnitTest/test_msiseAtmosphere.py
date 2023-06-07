@@ -219,17 +219,17 @@ def run(show_plots, orbitCase, setEpoch):
     #   Test atmospheric density calculation; note that refAtmoData is in g/cm^3,
     #   and must be adjusted by a factor of 1e-3 to match kg/m^3
     print(densData[-1])
-    print(refAtmoData[5])
+    print(refAtmoData[5]*1000)
     if not unitTestSupport.isDoubleEqualRelative(densData[-1], refAtmoData[5]*1000., accuracy):
         testFailCount += 1
-        testMessages.append("FAILED:  NRLMSISE-00 failed density unit test with a value difference of "+str(densData[0]-refAtmoData[5]))
+        testMessages.append("FAILED:  NRLMSISE-00 failed density unit test with a value difference of "+str(densData[0]-refAtmoData[5]*1000))
 
     print(tempData[-1])
     print(refAtmoData[-1])
     if not unitTestSupport.isDoubleEqualRelative(tempData[-1], refAtmoData[-1], accuracy):
         testFailCount += 1
         testMessages.append(
-        "FAILED:  NRLMSISE-00 failed temperature unit test with a value difference of "+str(tempData[0]-refAtmoData[-1]))
+        "FAILED:  NRLMSISE-00 failed temperature unit test with a value difference of "+str(tempData[-1]-refAtmoData[-1]))
 
     snippentName = "unitTestPassFail" + str(orbitCase) + str(setEpoch)
     if testFailCount == 0:
