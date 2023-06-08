@@ -220,13 +220,13 @@ def run(show_plots, orbitCase, setEpoch):
     #   and must be adjusted by a factor of 1e-3 to match kg/m^3
     print(densData[-1])
     print(refAtmoData[5]*1000)
-    if not unitTestSupport.isDoubleEqualRelative(densData[-1], refAtmoData[5]*1000., accuracy):
+    if np.testing.assert_allclose(densData[-1], refAtmoData[5]*1000., atol=accuracy):
         testFailCount += 1
         testMessages.append("FAILED:  NRLMSISE-00 failed density unit test with a value difference of "+str(densData[0]-refAtmoData[5]*1000))
 
     print(tempData[-1])
     print(refAtmoData[-1])
-    if not unitTestSupport.isDoubleEqualRelative(tempData[-1], refAtmoData[-1], accuracy):
+    if np.testing.assert_allclose(tempData[-1], refAtmoData[-1], atol=accuracy):
         testFailCount += 1
         testMessages.append(
         "FAILED:  NRLMSISE-00 failed temperature unit test with a value difference of "+str(tempData[-1]-refAtmoData[-1]))
