@@ -41,6 +41,7 @@ typedef struct {
     double ppFocalLength;       //!< [m] (Optional) Valid setting range: 0.001m to 0.3m. Value of 0 to turn off this parameter entirely.
     int ppMaxBlurSize;          //!< (Optional) Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to turn off this parameter entirely.
     int updateCameraParameters; //!< If true, commands camera to update Instrument Camera to current message's parameters
+    int renderMode; //!< (Optional) Value of 0 to render visual image (default), value of 1 to render depth buffer to image
 }CameraConfigMsgPayload;
 
 #endif

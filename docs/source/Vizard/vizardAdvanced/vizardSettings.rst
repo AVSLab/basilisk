@@ -662,6 +662,11 @@ The following table illustrates the possible variables for the
       -
       - No
       - If true, commands camera to update Instrument Camera to current message's parameters
+    * - ``renderMode``
+      - int
+      -
+      - No
+      - Value of 0 to render visual image (default), value of 1 to render depth buffer to image
 
 
 

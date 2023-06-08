@@ -986,6 +986,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             camera->set_ppfocallength(this->cameraConfigBuffers[camCounter].ppFocalLength*1000.); // Unity expects mm
             camera->set_ppmaxblursize(this->cameraConfigBuffers[camCounter].ppMaxBlurSize);
             camera->set_updatecameraparameters(this->cameraConfigBuffers[camCounter].updateCameraParameters);
+            camera->set_rendermode(this->cameraConfigBuffers[camCounter].renderMode);
         }
     }
 

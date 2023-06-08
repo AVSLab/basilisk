@@ -895,7 +895,9 @@ def createCameraConfigMsg(viz, **kwargs):
         return
     global firstSpacecraftName
     unitTestSupport.checkMethodKeyword(
-        ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'cameraPos_B', 'sigma_CB', 'skyBox', 'postProcessingOn', 'ppFocusDistance', 'ppAperture', 'ppFocalLength', 'ppMaxBlurSize', 'updateCameraParameters'],
+        ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'cameraPos_B',
+         'sigma_CB', 'skyBox', 'postProcessingOn', 'ppFocusDistance', 'ppAperture', 'ppFocalLength',
+         'ppMaxBlurSize', 'updateCameraParameters', 'renderMode'],
         kwargs)
 
     cameraConfigMsgPayload = messaging.CameraConfigMsgPayload()
@@ -1036,6 +1038,15 @@ def createCameraConfigMsg(viz, **kwargs):
         cameraConfigMsgPayload.cameraID = val
     else:
         cameraConfigMsgPayload.cameraID = 0
+
+    if 'renderMode' in kwargs:
+        val = kwargs['renderMode']
+        if not isinstance(val, int) or val < 0:
+            print('ERROR: vizSupport: renderMode must be 0 or 1.')
+            exit(1)
+        cameraConfigMsgPayload.renderMode = val
+    else:
+        cameraConfigMsgPayload.renderMode = 0
 
     cameraConfigMsg = messaging.CameraConfigMsg().write(cameraConfigMsgPayload)
     cameraConfigMsg.this.disown()
