@@ -252,7 +252,9 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
   find_package(SWIG REQUIRED)
   include(UseSWIG REQUIRED)
-  find_package(PythonLibs 3 REQUIRED)
+#  set(Python3_FIND_REGISTRY "LAST")
+#  set(Python3_FIND_VIRTUALENV "FIRST")
+#  find_package(PythonLibs 3 REQUIRED)
 
   if(TARGET_LIST)
     string(REPLACE "/" ";" DirList "${TARGET_LIST}")
@@ -384,6 +386,9 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 endfunction(generate_package_targets)
 
 # Start of main projection configuration
+set(Python3_FIND_REGISTRY "LAST")
+set(Python3_FIND_VIRTUALENV "FIRST")
+
 find_package(PythonInterp 3 REQUIRED)
 find_package(PythonLibs 3 REQUIRED)
 
