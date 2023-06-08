@@ -22,8 +22,8 @@
 
 
 /*! Converts from a planet-centered inertial position (i.e., J2000 ECI) to a planet-centered, planet-fixed position given a rotation matrix.
-@param pciPosition : [m] Position vector in PCI coordinates
-@param J20002Pfix : [-] 3x3 rotation matrix representing the rotation between PCPF and ECI frames
+@param pciPosition: [m] Position vector in PCI coordinates
+@param J20002Pfix: [-] 3x3 rotation matrix representing the rotation between PCPF and ECI frames
 @return pcpfPosition: [m] Position vector in PCPF coordinates
 */
 Eigen::Vector3d PCI2PCPF(Eigen::Vector3d pciPosition, double J20002Pfix[3][3]){
@@ -35,8 +35,8 @@ Eigen::Vector3d PCI2PCPF(Eigen::Vector3d pciPosition, double J20002Pfix[3][3]){
 }
 
 /*! Converts from a planet-centered, planet-fixed coordinates to latitude/longitude/altitude (LLA) coordinates given a planet radius.
-@param pcpfPosition : [m] Position vector in PCPF coordinates
-@param planetRad : [m] Planetary radius, assumed to be constant (i.e., spherical)
+@param pcpfPosition: [m] Position vector in PCPF coordinates
+@param planetEqRad: [m] Planetary radius, assumed to be constant (i.e., spherical)
 @param planetPoRad: [m] Planetary polar used for elliptical surfaces if provided, otherwise spherical,
 @return llaPosition: Final position in latitude/longitude/altitude coordinates
   [0] : [rad] latitude above planetary equator
@@ -85,9 +85,9 @@ Eigen::Vector3d PCPF2LLA(Eigen::Vector3d pcpfPosition, double planetEqRad, doubl
 }
 
 /*! Converts from a planet-centered inertial coordinates to latitutde/longitude/altitude (LLA) coordinates given a planet radius and rotation matrix.
-@param pciPosition : [m] Position vector in PCPF coordinates
-@param J20002Pfix : planet DCM
-@param planetRad : [m] Planetary radius, assumed to be constant (i.e., spherical)
+@param pciPosition: [m] Position vector in PCPF coordinates
+@param J20002Pfix: planet DCM
+@param planetEqRad: [m] Planetary radius, assumed to be constant (i.e., spherical)
 @param planetPoRad: [m] Planetary polar used for elliptical surfaces if provided, otherwise spherical,
 @return llaPosition: Final position in latitude/longitude/altitude coordinates
   [0] : [rad] latitude above planetary equator
@@ -102,8 +102,8 @@ Eigen::Vector3d PCI2LLA(Eigen::Vector3d pciPosition, double J20002Pfix[3][3], do
 }
 
 /*! Converts from a Lat/Long/Altitude coordinates to planet-centered,planet-fixed coordinates given a planet radius.
-@param llaPosition : [m] Position vector in PCPF coordinates
-@param planetEqRad : [m] Planetary equatorial radius, assumed to be constant (i.e., spherical)
+@param llaPosition: [m] Position vector in PCPF coordinates
+@param planetEqRad: [m] Planetary equatorial radius, assumed to be constant (i.e., spherical)
 @param planetPoRad: [m] Planetary polar used for elliptical surfaces if provided, otherwise spherical,
 @return pcpfPosition: [m] Final position in the planet-centered, planet-fixed frame.
 */
@@ -125,8 +125,8 @@ Eigen::Vector3d LLA2PCPF(Eigen::Vector3d llaPosition, double planetEqRad, double
 }
 
 /*! Converts from a Lat/Long/Altitude coordinates to planet-centered inertialcoordinates given a planet radius and rotation matrix.
-@param pcpfPosition : [m] Position vector in planet centered, planet fixed coordinates
-@param J20002Pfix : [-] Rotation between inertial and pcf coordinates.
+@param pcpfPosition: [m] Position vector in planet centered, planet fixed coordinates
+@param J20002Pfix: [-] Rotation between inertial and pcf coordinates.
 @return pciPosition: [m] Final position in the planet-centered inertial frame.
 */
 Eigen::Vector3d PCPF2PCI(Eigen::Vector3d pcpfPosition, double J20002Pfix[3][3])
@@ -143,8 +143,8 @@ Eigen::Vector3d PCPF2PCI(Eigen::Vector3d pcpfPosition, double J20002Pfix[3][3])
   [0] : [rad] latitude above planetary equator
   [1] : [rad] longitude across planetary meridian
   [2] : [alt] altitude above planet radius
-@param J20002Pfix : rotation matrix between inertial and PCPF frames
-@param planetRad : [m] Planetary radius, assumed to be constant (i.e., spherical)
+@param J20002Pfix: rotation matrix between inertial and PCPF frames
+@param planetEqRad: [m] Planetary radius, assumed to be constant (i.e., spherical)
 @param planetPoRad: [m] Planetary polar used for elliptical surfaces if provided, otherwise spherical,
 @return pciPosition : [m] Position in inertial coordinates.
 */
