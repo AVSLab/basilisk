@@ -40,14 +40,19 @@ On Window, install the bundle contents in::
 
     C:/Users/your_user_name/AppData/LocalLow/Vizard/Vizard/Resources/CustomModels
 
+Download the platform specific bundles file, unzip it, and move the contents to the ``CustomModels`` folder.
 
+.. note::
 
-.. list-table:: Unity 2020 Asset Download
-    :widths: 25 30 15 15 15
+    Vizard does not support sub-folders in the ``CustomModels`` folder.  All Unity asset files should
+    be directly installed in the ``CustomModels`` folder.
+
+.. list-table:: Unity 2020 Asset Download (Vizard 2.1.1 - 2.1.5)
+    :widths: 15 40 15 15 15
     :header-rows: 1
 
     * - Asset Name
-      - Description
+      - Summary
       -
       -
       -
