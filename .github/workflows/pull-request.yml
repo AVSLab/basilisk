@@ -39,7 +39,7 @@ jobs:
           cache-name: cache-pip-modules
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/docs/source/bskPkgRequired.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
       - name: "Install swig and cmake"
