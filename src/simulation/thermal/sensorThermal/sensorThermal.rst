@@ -122,6 +122,9 @@ section below. These default parameters are as follows:
     * - sensorPowerDraw
       - Optional parameter. Power draw of the sensor.
       - 0.0 W.
+    * - sensorPowerStatus
+      - Optional parameter. Whether the sensor is powered on (1) or off (0). Overwritten by sensorStatusInMsg (if connected).
+      - 1
 
 
 Module Setup

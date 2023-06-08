@@ -11,10 +11,25 @@ import pkg_resources
 sys.path.insert(1, './src/utilities/')
 import makeDraftModule
 
+# define the print color codes
+statusColor = '\033[92m'
+failColor = '\033[91m'
+warningColor = '\033[93m'
+endColor = '\033[0m'
+
 try:
-    from conans import ConanFile, CMake, tools
-    from conans.tools import Version
     from conans import __version__ as conan_version
+    # check conan version
+    if conan_version < "1.40.1":
+        print(failColor + "conan version " + conan_version + " is not compatible with Basilisk.")
+        print("use version 1.40.1+ to work with the conan repo changes from 2021." + endColor)
+        exit(0)
+    if conan_version > "1.59.0":
+        print(failColor + "conan version " + conan_version + " is not compatible with Basilisk.")
+        print("use version 1.40.1 to 1.59.0 to work with the conan repo changes." + endColor)
+        exit(0)
+    from conans.tools import Version
+    from conans import ConanFile, CMake, tools
 except ModuleNotFoundError:
     print("Please make sure you install python conan package\nRun command `pip install conan` "
           "for Windows\nRun command `pip3 install conan` for Linux/MacOS")
@@ -39,13 +54,6 @@ bskModuleOptionsFlag = {
 # see https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python/3332860#3332860
 os.system("")
 
-
-# define the print color codes
-statusColor = '\033[92m'
-failColor = '\033[91m'
-warningColor = '\033[93m'
-endColor = '\033[0m'
-
 def is_running_virtual_env():
     return sys.prefix != sys.base_prefix
 
@@ -64,12 +72,6 @@ class BasiliskConan(ConanFile):
     options = {"generator": "ANY"}
     default_options = {"generator": ""}
 
-    # check conan version
-    if conan_version < Version("1.40.1"):
-        print(failColor + "conan version " + conan_version + " is not compatible with Basilisk.")
-        print("use version 1.40.1+ to work with the conan repo changes from 2021." + endColor)
-        exit(0)
-
     # ensure latest pip is installed
     if is_running_virtual_env() or platform.system() == "Windows":
         cmakeCmdString = 'python -m pip install --upgrade pip'
@@ -78,7 +80,6 @@ class BasiliskConan(ConanFile):
     print(statusColor + "Updating pip:" + endColor)
     print(cmakeCmdString)
     os.system(cmakeCmdString)
-
 
     for opt, value in bskModuleOptionsBool.items():
         options.update({opt: [True, False]})
@@ -174,7 +175,13 @@ class BasiliskConan(ConanFile):
         if self.options.opNav:
             self.requires.add("pcre/8.45")
             self.requires.add("opencv/4.1.2")
+            self.options['opencv'].with_ffmpeg = False  # video frame encoding lib
+            self.options['opencv'].with_ade = False  # graph manipulations framework
+            self.options['opencv'].with_tiff = False  # generate image in TIFF format
+            self.options['opencv'].with_openexr = False  # generate image in EXR format
+            self.options['opencv'].with_quirc = False  # QR code lib
             self.requires.add("zlib/1.2.13")
+            self.requires.add("xz_utils/5.4.0")
 
         if self.options.vizInterface or self.options.opNav:
             self.requires.add("libsodium/1.0.18")

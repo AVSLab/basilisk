@@ -438,6 +438,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		tmpRW.U_s = it->U_s;
 		tmpRW.U_d = it->U_d;
 		tmpRW.RWModel = it->RWModel;
+        tmpRW.P_max = it->P_max;
         eigenVector3d2CArray(it->gsHat_B, tmpRW.gsHat_B);
         eigenVector3d2CArray(it->rWB_B, tmpRW.rWB_B);
 		// Write out config data for eachreaction wheel
@@ -478,9 +479,6 @@ void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNano
  */
 void ReactionWheelStateEffector::ReadInputs()
 {
-//
-	std::vector<double>::iterator CmdIt;
-	uint64_t i;
 
 	//! read the incoming command array, or zero if not connected
     if (this->rwMotorCmdInMsg.isLinked()) {
@@ -492,6 +490,7 @@ void ReactionWheelStateEffector::ReadInputs()
 
 	//! - Set the NewRWCmds vector.  Using the data() method for raw speed
 	RWCmdMsgPayload *CmdPtr;
+    uint64_t i;
 	for(i=0, CmdPtr = NewRWCmds.data(); i<ReactionWheelData.size(); CmdPtr++, i++)
 	{
 		CmdPtr->u_cmd = this->incomingCmdBuffer.motorTorque[i];
@@ -522,9 +521,16 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 		}
 
 		// minimum torque
-		if( std::abs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter]->u_min) {
+		if (std::abs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter]->u_min) {
 			CmdIt->u_cmd = 0.0;
 		}
+
+        // Power saturation
+        if (this->ReactionWheelData[RWIter]->P_max > 0) {
+            if (std::abs(CmdIt->u_cmd * this->ReactionWheelData[RWIter]->Omega) >= this->ReactionWheelData[RWIter]->P_max) {
+                CmdIt->u_cmd = std::copysign(this->ReactionWheelData[RWIter]->P_max / this->ReactionWheelData[RWIter]->Omega, CmdIt->u_cmd);
+            }
+        }
 
         // Speed saturation
         if (std::abs(this->ReactionWheelData[RWIter]->Omega) >= this->ReactionWheelData[RWIter]->Omega_max

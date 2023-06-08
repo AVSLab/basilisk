@@ -19,37 +19,77 @@
 
 #include "dynamicObject.h"
 
-/*! This is the constructor, just setting the variables to zero */
-DynamicObject::DynamicObject()
-{
-    return;
-}
-
-/*! This is the destructor, nothing to report here */
-DynamicObject::~DynamicObject()
-{
-    return;
-}
-
-/*! This method initializes the stateEffectors and dynamicEffectors and links the necessarry components together */
-void DynamicObject::initializeDynamics()
-{
-    return;
-}
-
-/*! This method allows a dynamicObject to compute energy and momentum. Great for sim validation purposes */
-void DynamicObject::computeEnergyMomentum(double t)
-{
-    return;
-}
-
 /*! This method changes the integrator in use (Default integrator: RK4) */
 void DynamicObject::setIntegrator(StateVecIntegrator *newIntegrator)
 {
-    if (newIntegrator != nullptr) {
-        delete integrator;
-        integrator = newIntegrator;
+    if (this->isDynamicsSynced)
+    {
+        bskLogger.bskLog(BSK_WARNING, 
+            "You cannot set the integrator of a DynamicObject with synced integration. "
+            "If you want to change the integrator, change the integrator of the primary DynamicObject.");
+        return;
     }
 
-    return;
+    if (!newIntegrator)
+    {
+        bskLogger.bskLog(BSK_ERROR, "New integrator cannot be a null pointer");
+        return;
+    }
+    
+    if (newIntegrator->dynPtrs.at(0) != this)
+    {
+        bskLogger.bskLog(BSK_ERROR, "New integrator must have been created using this DynamicObject");
+        return;
+    }
+
+    // If there was already an integrator set, then whatever dynPtrs that the
+    // original integrator had take priority over the dynPtrs of newIntegrator
+    if (this->integrator)
+    {
+        newIntegrator->dynPtrs = std::move(this->integrator->dynPtrs);
+    }
+
+    delete this->integrator;
+
+    this->integrator = newIntegrator;
 }
+
+
+/*! This method is used to connect the integration of another DynamicObject
+    to the integration of this DynamicObject */
+void DynamicObject::syncDynamicsIntegration(DynamicObject *dynPtr)
+{
+    this->integrator->dynPtrs.push_back(dynPtr);
+    dynPtr->isDynamicsSynced = true;
+}
+
+/*! This method is used to prepare the dynamic object to be integrate, integrate the states forward in time, and
+    finally perform the post-integration steps.  This is only done if the DynamicObject integration is
+    not sync'd to another DynamicObject */
+void DynamicObject::integrateState(double integrateToThisTime)
+{
+    if (this->isDynamicsSynced) return;
+
+    for (const auto& dynPtr : this->integrator->dynPtrs) {
+        dynPtr->preIntegration(integrateToThisTime);
+    }
+
+    this->integrator->integrate(this->timeBefore, this->timeStep);
+
+    for (const auto& dynPtr : this->integrator->dynPtrs) {
+        dynPtr->postIntegration(integrateToThisTime);
+    }
+}
+
+/*! Initializes the dynamics and variables
+ */
+void DynamicObject::initializeDynamics()
+{
+}
+
+/*! Method to compute energy and momentum of the system
+ */
+void DynamicObject::computeEnergyMomentum(double t)
+{
+}
+

@@ -26,16 +26,19 @@
 #
 
 import os
+import numpy as np
 
 import pytest
 from Basilisk import __path__
 from Basilisk.simulation import eclipse
 from Basilisk.simulation import spacecraft
+from Basilisk.simulation import planetEphemeris
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport
+from Basilisk.architecture import messaging
 
 bskPath = __path__[0]
 
@@ -46,7 +49,6 @@ path = os.path.dirname(os.path.abspath(__file__))
 @pytest.mark.parametrize("eclipseCondition, planet", [
 ("partial", "earth"), ("full", "earth"), ("none", "earth"), ("annular", "earth"),
 ("partial", "mars"), ("full", "mars"), ("none", "mars"), ("annular", "mars")])
-
 def test_unitEclipse(show_plots, eclipseCondition, planet):
     """
 **Test Description and Success Criteria**
@@ -95,6 +97,32 @@ is pulled from the log data and compared to expected truth values.
 
     """
     [testResults, testMessage] = unitEclipse(show_plots, eclipseCondition, planet)
+    assert testResults < 1, testMessage
+
+
+def test_unitEclipseCustom(show_plots):
+    """
+**Test Description and Success Criteria**
+
+The unit test validates the internal aspects of the Basilisk eclipse module by comparing simulated output with \
+expected output. It validates the computation of a shadow factor for total eclipse using a custom gravity body.
+
+This unit test sets up a custom gravity body, the asteroid Bennu, using the planetEphemeris module (i.e. Spice \
+is not used for this test.) An empty spice planet message is created for the sun. The spacecraft is set 500 m \
+on the side of the asteroid opposite of the sun.
+
+The shadow factor obtained through the module is compared to the expected result, which is trivial to compute.
+
+**Description of Variables Being Tested**
+
+In this test scenario the shadow eclipse variable
+
+    ``shadowFactor``
+
+is pulled from the log data and compared to the expected truth value.
+
+    """
+    [testResults, testMessage] = unitEclipseCustom(show_plots)
     assert testResults < 1, testMessage
 
 
@@ -186,7 +214,6 @@ def unitEclipse(show_plots, eclipseCondition, planet):
             gravFactory.spiceObject.zeroBase = "mars barycenter"
             scObject_0.hub.r_CN_NInit = [-2930233.55919119, 2567609.100747609, 41384.23366372246] # meters
         elif eclipseCondition == "partial":
-            print("partial mars")
             gravFactory.spiceObject.zeroBase = "mars barycenter"
             scObject_0.hub.r_CN_NInit = [-6050166.454829555, 2813822.447404055, 571725.5651779658] # meters
         elif eclipseCondition == "none":
@@ -209,9 +236,9 @@ def unitEclipse(show_plots, eclipseCondition, planet):
 
     eclipseObject = eclipse.Eclipse()
     eclipseObject.addSpacecraftToModel(scObject_0.scStateOutMsg)
-    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[0])   # earth
-    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[1])   # mars
     eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[3])   # venus
+    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[1])   # mars
+    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[0])   # earth
     eclipseObject.sunInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[2])   # sun
 
     unitTestSim.AddModelToTask(testTaskName, eclipseObject)
@@ -274,7 +301,6 @@ def unitEclipse(show_plots, eclipseCondition, planet):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Mars annular eclipse condition")
 
-
     if testFailCount == 0:
         print("PASSED: " + planet + "-" + eclipseCondition)
         # return fail count and join into a single string all messages in the list
@@ -291,5 +317,97 @@ def unitEclipse(show_plots, eclipseCondition, planet):
 
     return [testFailCount, ''.join(testMessages)]
 
+def unitEclipseCustom(show_plots):
+    __tracebackhide__ = True
+
+    testFailCount = 0
+    testMessages = []
+    testTaskName = "unitTestTask"
+    testProcessName = "unitTestProcess"
+    testTaskRate = macros.sec2nano(1)
+
+    # Create a simulation container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    testProc = unitTestSim.CreateNewProcess(testProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
+
+    # Set up first spacecraft
+    scObject_0 = spacecraft.Spacecraft()
+    scObject_0.ModelTag = "spacecraft"
+    unitTestSim.AddModelToTask(testTaskName, scObject_0)
+
+    # setup Gravity Bodies
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    mu_bennu = 4.892
+    custom = gravFactory.createCustomGravObject("custom", mu_bennu) # creates a custom grav object (bennu)
+    scObject_0.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+
+    # Create the ephemeris data for the bodies
+    # setup celestial object ephemeris module
+    gravBodyEphem = planetEphemeris.PlanetEphemeris()
+    gravBodyEphem.ModelTag = 'planetEphemeris'
+    gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["custom"]))
+
+    # Specify bennu orbit
+    oeAsteroid = planetEphemeris.ClassicElementsMsgPayload()
+    oeAsteroid.a = 1.1259 * orbitalMotion.AU * 1000. # m
+    oeAsteroid.e = 0.20373
+    oeAsteroid.i = 6.0343 * macros.D2R
+    oeAsteroid.Omega = 2.01820 * macros.D2R
+    oeAsteroid.omega = 66.304 * macros.D2R
+    oeAsteroid.f = 120.0 * macros.D2R
+
+    gravBodyEphem.planetElements = planetEphemeris.classicElementVector([oeAsteroid])
+    custom.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])
+
+    # Create an empty sun spice object
+    sunPlanetStateMsgData = messaging.SpicePlanetStateMsgPayload()
+    sunPlanetStateMsg = messaging.SpicePlanetStateMsg()
+    sunPlanetStateMsg.write(sunPlanetStateMsgData)
+
+    r_ast_N = np.array([-177862743954.6422, -25907896415.157013, -2074871174.236055])
+    r_sc_N = r_ast_N + 500 * r_ast_N / np.linalg.norm(r_ast_N)
+    scObject_0.hub.r_CN_NInit = r_sc_N
+
+    unitTestSim.AddModelToTask(testTaskName, gravBodyEphem, None, -1)
+
+    eclipseObject = eclipse.Eclipse()
+    eclipseObject.addSpacecraftToModel(scObject_0.scStateOutMsg)
+    eclipseObject.addPlanetToModel(gravBodyEphem.planetOutMsgs[0])  # custom
+    eclipseObject.sunInMsg.subscribeTo(sunPlanetStateMsg)   # sun
+    eclipseObject.rEqCustom = 282. # m
+
+    unitTestSim.AddModelToTask(testTaskName, eclipseObject)
+
+    dataLog = eclipseObject.eclipseOutMsgs[0].recorder()
+    unitTestSim.AddModelToTask(testTaskName, dataLog)
+
+    unitTestSim.InitializeSimulation()
+
+    # Execute the simulation for one time step
+    unitTestSim.TotalSim.SingleStepProcesses()
+
+    eclipseData_0 = dataLog.shadowFactor
+    # Obtain body position vectors to check with MATLAB
+
+    errTol = 1E-12
+    truthShadowFactor = 0.0
+    if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+        testFailCount += 1
+        testMessages.append("Shadow Factor failed for custom full eclipse condition")
+
+    if testFailCount == 0:
+        print("PASSED: custom-full")
+        # return fail count and join into a single string all messages in the list
+        # testMessage
+    else:
+        print(testMessages)
+
+    print('The error tolerance for all tests is ' + str(errTol))
+
+    return [testFailCount, ''.join(testMessages)]
+
 if __name__ == "__main__":
     unitEclipse(False, "annular", "mars")
+    unitEclipseCustom(False)

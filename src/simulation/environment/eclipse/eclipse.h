@@ -51,6 +51,7 @@ public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> positionInMsgs;  //!< vector of msgs for each spacecraft position state for which to evaluate eclipse conditions.
     std::vector<Message<EclipseMsgPayload>*> eclipseOutMsgs;//!< vector of eclispe output msg names
     BSKLogger bskLogger;                        //!< BSK Logging
+    double rEqCustom;  //!< [m] Custom radius
 
 private:
     std::vector<float> planetRadii; //!< [m] A vector of planet radii ordered by the sequence in which planet names are added to the module

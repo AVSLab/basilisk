@@ -17,7 +17,6 @@
 
 */
 
-
 #ifndef DENTONFLUXMODEL_H
 #define DENTONFLUXMODEL_H
 
@@ -28,56 +27,56 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 
-
 #define MAX_NUM_KPS             28
 #define MAX_NUM_ENERGIES        40
 #define MAX_NUM_LOCAL_TIMES     24
 #define MAX_NUM_VALUE_TYPES     7
 
-
 /*! @brief This module provides the 10-year averaged GEO elecon and ion flux as discussed in the paper by Denton.
  */
 class DentonFluxModel: public SysModel {
 public:
-    
     // Constructor And Destructor
     DentonFluxModel();
     ~DentonFluxModel();
 
     // Methods
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void Reset(uint64_t CurrentSimNanos) override;
+    void UpdateState(uint64_t CurrentSimNanos) override;
     
     /* public variables */
-    int numOutputEnergies = -1;               //!< number of energy bins used in the output message
-    std::string kpIndex = "";                   //!< Kp index
-    std::string dataPath = "";          //!< -- String with the path to the Denton GEO data
-    std::string eDataFileName = "model_e_array_all.txt";   //!< file name of the electron data file 
-    std::string iDataFileName = "model_i_array_all.txt";   //!< file name of the ion data file
+    int numOutputEnergies = -1; //!< number of energy bins used in the output message
+    std::string kpIndex = ""; //!< Kp index
+    std::string dataPath = ""; //!< -- String with the path to the Denton GEO data
+    std::string eDataFileName = "model_e_array_all.txt"; //!< file name of the electron data file
+    std::string iDataFileName = "model_i_array_all.txt"; //!< file name of the ion data file
 
-    ReadFunctor<SCStatesMsgPayload> scStateInMsg;  //!<  spacecraft state input message
-    ReadFunctor<SpicePlanetStateMsgPayload> earthStateInMsg;  //!< Earth planet state input message
-    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg;  //!< sun state input message
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg; //!<  spacecraft state input message
+    ReadFunctor<SpicePlanetStateMsgPayload> earthStateInMsg; //!< Earth planet state input message
+    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg; //!< sun state input message
 
-    Message<PlasmaFluxMsgPayload> fluxOutMsg;  //!< output message with ion and electron fluxes
+    Message<PlasmaFluxMsgPayload> fluxOutMsg; //!< output message with ion and electron fluxes
 
-    BSKLogger bskLogger;              //!< -- BSK Logging
+    BSKLogger bskLogger; //!< -- BSK Logging
 
 private:
+    void calcLocalTime(double v1[3], double v2[3]);
+    double bilinear(int, int, double, double, double, double, double, double, double);
+    void readDentonDataFile(std::string fileName, double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES]);
 
-    int kpIndexCounter;                   //!< Kp index counter (betweeen 0 and 27)
-    double localTime;               /* spacecraft location time relative to sun heading at GEO */
-    double logEnElec[MAX_NUM_ENERGIES];     /* log of the electron energies */
-    double logEnProt[MAX_NUM_ENERGIES];     /* log of the proton energies */
-    double inputEnergies[MAX_NUM_ENERGIES];     /* input energies considered in this module */
+    int kpIndexCounter; //!< Kp index counter (betweeen 0 and 27)
+    double localTime; //!< spacecraft location time relative to sun heading at GEO
+    double logEnElec[MAX_NUM_ENERGIES]; //!< log of the electron energies
+    double logEnProt[MAX_NUM_ENERGIES]; //!< log of the proton energies
+    double inputEnergies[MAX_NUM_ENERGIES]; //!< input energies considered in this module
 
-    // Electron Flux:
+    //!< Electron Flux:
     double mean_e_flux[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
     
-    // Ion Flux:
+    //!< Ion Flux:
     double mean_i_flux[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
         
-    // Fill average centre energies, normalized by satellite
+    //!< Fill average centre energies, normalized by satellite
     double enElec[40] = {1.034126,     1.346516,     1.817463,     2.399564,
     3.161048,     4.153217,     5.539430,     7.464148,
     9.836741,    12.543499,    16.062061,    20.876962,
@@ -99,13 +98,6 @@ private:
     2170.886474,  2829.989013,  3691.509765,  4822.499023,
     6300.260742,  8217.569335, 10726.390625, 14001.280273,
     18276.244140, 23856.085937, 31140.962890, 40649.562500};
-
-    
-    void calcLocalTime(double v1[3], double v2[3]);     //!< calculate the local time
-    double bilinear(int, int, double, double, double, double, double, double, double);
-    void readDentonDataFile(std::string fileName, double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES]);
-
 };
-
 
 #endif

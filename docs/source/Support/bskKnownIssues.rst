@@ -12,6 +12,14 @@ Version |release|
 -----------------
 - text here
 
+Version 2.1.7
+-------------
+- The way to include effector bodies in Vizard has changed in this release.
+- The streaming between ``vizInterface`` and Vizard was not reliable because of a ZMQ compatibility
+  issue between the two code bases.  BSK is reverting to using ZMQ 4.3.0 for now to avoid this issue.
+- Building Basilisk with ``opNav`` mode was no longer working as a conan package dependency issue came up.
+  This has been corrected in the new version by specifying ``xz_utils/5.4.0`` in ``conanfile.py``.  Note
+  that building with ``opNav`` now also appears to require ``conan==1.59.0``.
 
 Version 2.1.6
 -------------

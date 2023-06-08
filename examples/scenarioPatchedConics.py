@@ -253,7 +253,7 @@ def run(show_plots):
     v_S_E = v_S_E + vHat * deltaV1
 
     vN = v_S_E + vel_N_Earth
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))
+    velRef.setState(vN)
 
     # run simulation for 2nd chunk
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000))
@@ -291,8 +291,8 @@ def run(show_plots):
     depVel_N_Earth = [29.7859 * 1000, 0, 0]
     rN = rN + pos_N_Earth
     vN = vN + depVel_N_Earth
-    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))
+    posRef.setState(rN)
+    velRef.setState(vN)
 
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2 - oneWeek*1)
     scSim.ExecuteSimulation()
@@ -348,8 +348,8 @@ def run(show_plots):
     rN = rN - pos_N_Jup
     vN = vN - vel_N_Jup
 
-    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))
+    posRef.setState(rN)
+    velRef.setState(vN)
 
     # Setup data logging before the simulation is initialized
 

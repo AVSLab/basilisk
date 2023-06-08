@@ -38,36 +38,54 @@ class rwFactory(object):
 
     def create(self, rwType, gsHat_B, **kwargs):
         """
-            This function is called to setup a RW device in python, and adds it to the RW factory
-            list rwList{}.  The function returns a copy of the device that can be changed if needed.
-            The first 2 arguments are required, the remaining arguments are optional with:
+        This function is called to setup a RW device in python, and adds it to the RW factory
+        list rwList{}.  The function returns a copy of the device that can be changed if needed.
+        The first 2 arguments are required, the remaining arguments are optional with:
 
-            Parameters
-            ----------
-            rwType : string
-                RW manufacturing name.
-            gsHat_B : list
-                Spin axis unit vector gsHat in B-frame components
-            kwargs :
-                Omega : initial RW speed in RPM
-                Omega_max : maximum RW speed in RPM
-                rWB_B : 3x1 list of RW center of mass position coordinates
-                RWModel : RW model type such as BalancedWheels, JitterSimple and JitterFullyCoupled
-                useRWfriction : BOOL to turn on RW internal wheel friction
-                useMinTorque : BOOL to clip any torque below a minimum torque value
-                useMaxTorque : BOOL to clip any torque value above a maximum torque value
-                u_max: double with the maximum RW motor torque
-                maxMomentum : maximum RW wheel momentum in Nms.  This is a required variable for some wheels.
-                label : string with the unique device name, must be 5 characters or less
-                fCoulomb: double for the Coulomb friction torque model
-                fStatic: double for Static friction torque magnitude
-                betaStatic: double for Stribeck friction coefficient, positive turns Stribeck friction on, negative turns this friction off
-                cViscous: double for Viscous friction coefficient
-                Js: double for RW inertia about spin axis
-            Returns
-            -------
-            RWConfigSimMsg : message structure
-                A handle to the RW configuration message
+        Parameters
+        ----------
+        rwType : string
+            RW manufacturing name.
+        gsHat_B : list
+            Spin axis unit vector gsHat in B-frame components
+        kwargs:
+            Omega: float
+                initial RW speed in RPM
+            Omega_max: float
+                maximum RW speed in RPM
+            rWB_B: list
+                3x1 list of RW center of mass position coordinates
+            RWModel: integer
+                RW model type such as BalancedWheels, JitterSimple and JitterFullyCoupled
+            useRWfriction: BOOL
+                conditional to turn on RW internal wheel friction
+            useMinTorque: BOOL
+                conditional to clip any torque below a minimum torque value
+            useMaxTorque: BOOL
+                conditional to clip any torque value above a maximum torque value
+            u_max: float
+                the maximum RW motor torque
+            maxMomentum: float
+                maximum RW wheel momentum in Nms.  This is a required variable for some wheels.
+            P_max: float
+                the maximum allowed wheel power for changing wheel speed (does not include a base power requirement)
+            label: string
+                with the unique device name, must be 5 characters or less
+            fCoulomb: float
+                Coulomb friction torque model coefficient
+            fStatic: float
+                Static friction torque magnitude
+            betaStatic: float
+                Stribeck friction coefficient, positive turns Stribeck friction on, negative turns this friction off
+            cViscous: float
+                Viscous friction coefficient
+            Js: float
+                RW inertia about spin axis
+        
+        Returns
+        -------
+        RWConfigSimMsg : message structure
+            A handle to the RW configuration message
         """
 
         # create the blank RW object
@@ -114,6 +132,15 @@ class rwFactory(object):
         else:
             varMaxMomentum = 0.0              # default value
         self.maxMomentum = varMaxMomentum
+
+        if 'P_max' in kwargs:
+            varMaxPower = kwargs['P_max']
+            if not isinstance(varMaxPower, float):
+                print('ERROR: P_max must be a FLOAT argument')
+                exit(1)
+        else:
+            varMaxPower = -1.0              # default value turns off max power limit
+        RW.P_max = varMaxPower
 
         if 'fCoulomb' in kwargs:
             varfCoulomb = kwargs['fCoulomb']

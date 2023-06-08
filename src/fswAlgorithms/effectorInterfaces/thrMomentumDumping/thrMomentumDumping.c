@@ -84,8 +84,8 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
     mSetZero(configData->thrOnTimeRemaining, 1, MAX_EFF_CNT);
 
     /*! - set the time tag of the last Delta_p message */
-    DeltaHInMsg = CmdTorqueBodyMsg_C_read(&configData->deltaHInMsg);
     if (CmdTorqueBodyMsg_C_isWritten(&configData->deltaHInMsg)) {
+        DeltaHInMsg = CmdTorqueBodyMsg_C_read(&configData->deltaHInMsg);
         /* prior message has been written, copy its time tag as the last prior message */
         configData->lastDeltaHInMsgTime = CmdTorqueBodyMsg_C_timeWritten(&configData->deltaHInMsg);
     } else {

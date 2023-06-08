@@ -51,6 +51,7 @@ typedef struct {
 class StateEffector {
 public:
     std::string nameOfSpacecraftAttachedTo="";//!< class variable
+    std::string parentSpacecraftName="";   //!< -- name of the spacecraft the state effector is attached to
     EffectorMassProps effProps;            //!< -- stateEffectors instantiation of effector mass props
     Eigen::VectorXd stateDerivContribution; //!< -- stateEffector contribution to another stateEffector to prevent double-counting
     Eigen::Vector3d forceOnBody_B;         //!< [N] Force that the state effector applies to the s/c

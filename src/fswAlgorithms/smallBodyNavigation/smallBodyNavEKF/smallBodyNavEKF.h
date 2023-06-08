@@ -25,9 +25,8 @@
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/NavAttMsg_C.h"
 #include "cMsgCInterface/EphemerisMsg_C.h"
-#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 #include "cMsgCInterface/SmallBodyNavMsg_C.h"
-#include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+#include "cMsgCInterface/CmdForceBodyMsg_C.h"
 #include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
@@ -35,7 +34,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 
-/*! @brief This module estimates relative spacecraft position and velocity with respect to the body, attitude and attitude rate of the body wrt. the inertial frame, and the attitude and attitude rate of the spacecraft with respect to the inertial frame
+/*! @brief This module estimates relative spacecraft position and velocity with respect to the body and attitude and attitude rate of the body wrt. the inertial frame
  */
 class SmallBodyNavEKF: public SysModel {
 public:
@@ -46,33 +45,31 @@ public:
     void Reset(uint64_t CurrentSimNanos);  //!< Resets module
     void UpdateState(uint64_t CurrentSimNanos);  //!< Updates state
     void addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrusterMsg);  //!< Adds thruster message
-    void addRWToFilter(Message<RWConfigLogMsgPayload> *tmpRWMsg);   //!< Adds rw message
 
 private:
-    void readMessages();  //!< Reads input messages
+    void readMessages(uint64_t CurrentSimNanos);  //!< Reads input messages
     void writeMessages(uint64_t CurrentSimNanos);  //!< Writes output messages
     void predict(uint64_t CurrentSimNanos);  //!< Prediction step of Kalman filter
     void aprioriState(uint64_t CurrentSimNanos);  //!< Computes the apriori state
     void aprioriCovar(uint64_t CurrentSimNanos);  //!< Computes the apriori covariance
     void checkMRPSwitching();  //!< Checks the MRPs for switching
-    void computeDynamicsMatrix();  //!< Computes the new dynamics matrix, A_k
+    void computeDynamicsMatrix(Eigen::VectorXd x_hat);  //!< Computes the new dynamics matrix, A_k
     void measurementUpdate();  //!< Computes the measurement update for the EKF
+    void computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::MatrixXd Phi); //!< Computes the EOMs of the state and state transition matrix
 
 public:
     ReadFunctor<NavTransMsgPayload> navTransInMsg;  //!< Translational nav input message
     ReadFunctor<NavAttMsgPayload> navAttInMsg;  //!< Attitude nav input message
     ReadFunctor<EphemerisMsgPayload> asteroidEphemerisInMsg;  //!< Small body ephemeris input message
     ReadFunctor<EphemerisMsgPayload> sunEphemerisInMsg;  //!< Sun ephemeris input message
-    std::vector<ReadFunctor<RWConfigLogMsgPayload>> rwInMsgs;  //!< Reaction wheel speed and torque input messages
+    ReadFunctor<CmdForceBodyMsgPayload> cmdForceBodyInMsg;  //!< Command force body in message
     std::vector<ReadFunctor<THROutputMsgPayload>> thrusterInMsgs;  //!< thruster input msg vector
 
     Message<NavTransMsgPayload> navTransOutMsg;  //!< Translational nav output message
-    Message<NavAttMsgPayload> navAttOutMsg;  //!< Attitude nav output message
     Message<SmallBodyNavMsgPayload> smallBodyNavOutMsg;  //!< Small body nav output msg - states and covariances
     Message<EphemerisMsgPayload> asteroidEphemerisOutMsg;  //!< Small body ephemeris output message
 
     NavTransMsg_C navTransOutMsgC = {};  //!< C-wrapped Translational nav output message
-    NavAttMsg_C navAttOutMsgC = {};  //!< C-wrapped Attitude nav output message
     SmallBodyNavMsg_C smallBodyNavOutMsgC = {};  //!< C-wrapped Small body nav output msg - states and covariances
     EphemerisMsg_C asteroidEphemerisOutMsgC = {};  //!< C-wrapped Small body ephemeris output message
 
@@ -83,8 +80,6 @@ public:
     double rho;  //!< Surface reflectivity
     double A_sc;  //!< Surface area of the spacecraft
     double M_sc;  //!< Mass of the spacecraft
-    Eigen::Matrix3d IHubPntC_B;  //!< sc inertia
-    Eigen::Matrix3d IWheelPntC_B;  //!< wheel inertia
     double mu_ast;  //!< Gravitational constant of the asteroid
     Eigen::MatrixXd Q;  //!< Process Noise
     Eigen::MatrixXd R;  //!< Measurement Noise
@@ -97,13 +92,13 @@ private:
     NavAttMsgPayload navAttInMsgBuffer;  //!< Message buffer for input attitude nav message
     EphemerisMsgPayload asteroidEphemerisInMsgBuffer;  //!< Message buffer for asteroid ephemeris
     EphemerisMsgPayload sunEphemerisInMsgBuffer;  //!< Message buffer for sun ephemeris
-    std::vector<RWConfigLogMsgPayload> rwConfigLogInMsgBuffer; //!< Buffer for rw speed messages
     std::vector<THROutputMsgPayload> thrusterInMsgBuffer; //!< Buffer for thruster force and torques
+    CmdForceBodyMsgPayload cmdForceBodyInMsgBuffer; //!< Buffer for the commanded force input
 
     uint64_t prevTime;  //!< Previous time, ns
     uint64_t numStates;  //!< Number of states
     Eigen::Vector3d thrust_B;  //!< Thrust expressed in body-frame components
-    Eigen::Vector3d torque_B;  //!< Torque expressed in body-frame components
+    Eigen::Vector3d cmdForce_B;  //!< External force expressed in body-frame components
     Eigen::VectorXd x_hat_dot_k;  //!< Rate of change of state estimate
     Eigen::VectorXd x_hat_k1_;  //!< Apriori state estimate for time k+1
     Eigen::VectorXd x_hat_k1;  //!< Update state estimate for time k+1
@@ -111,11 +106,21 @@ private:
     Eigen::MatrixXd P_k1_;  //!< Apriori estimation error covariance
     Eigen::MatrixXd P_k1;  //!< Updated estimation error covariance
     Eigen::MatrixXd A_k;  //!< State dynamics matrix
+    Eigen::MatrixXd Phi_k;  //!< State transition matrix
+    Eigen::MatrixXd Phi_dot_k;  //!< Rate of change of STM
     Eigen::MatrixXd L;  //!<
     Eigen::MatrixXd M;  //!<
     Eigen::MatrixXd H_k1;  //!< Jacobian of measurement model
     Eigen::MatrixXd I_full;  //!< numStates x numStates identity matrix
-
+    Eigen::VectorXd k1;  //!< k1 constant for RK4 integration
+    Eigen::VectorXd k2;  //!< k2 constant for RK4 integration
+    Eigen::VectorXd k3;  //!< k3 constant for RK4 integration
+    Eigen::VectorXd k4;  //!< k4 constant for RK4 integration
+    Eigen::MatrixXd k1_phi;  //!< k1 STM constant for RK4 integration
+    Eigen::MatrixXd k2_phi;  //!< k2 STM constant for RK4 integration
+    Eigen::MatrixXd k3_phi;  //!< k3 STM constant for RK4 integration
+    Eigen::MatrixXd k4_phi;  //!< k4 STM constant for RK4 integration
+    bool newMeasurements;  //! Keeps track of whether or not new measurements have been written
 
     double mu_sun;  //!< Gravitational parameter of the sun
     Eigen::Matrix3d o_hat_3_tilde;  //!< Tilde matrix of the third asteroid orbit frame base vector
@@ -126,8 +131,6 @@ private:
     double F_ddot;  //!< Second time derivative of true anomaly
     Eigen::Matrix3d dcm_ON;  //!< DCM from the inertial frame to the small-body's hill frame
     Eigen::Vector3d r_SO_O;  //!< Vector from the small body's origin to the inertial frame origin in small-body hill frame components
-    Eigen::Vector3d Omega_B;  //!< Speed of the reaction wheels in the spacecraft body frame
-    Eigen::Vector3d Omega_dot_B;  //!< Accleration of the reaction wheels in the spacecraft body frame
 };
 
 

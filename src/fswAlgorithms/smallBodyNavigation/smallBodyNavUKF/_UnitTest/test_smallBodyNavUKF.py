@@ -71,7 +71,7 @@ def smallBodyNavUKFTestFunction(show_plots):
     vesta_velocity = np.sqrt(orbitalMotion.MU_SUN*(1000.**3)/vesta_radius) # m/s, assumes circular orbit
 
     x_0 = [2010., 1510., 1010., 0., 2., 0., 0.14, 0., 0.]
-    module.x_hat_k = unitTestSupport.np2EigenVectorXd(x_0)
+    module.x_hat_k = x_0
     module.P_k = [[1000., 0., 0., 0., 0., 0., 0., 0., 0.],
                [0., 1000., 0., 0., 0., 0., 0., 0., 0.],
                [0., 0., 1000., 0., 0., 0., 0., 0., 0.],
@@ -181,5 +181,3 @@ def smallBodyNavUKFTestFunction(show_plots):
 
 if __name__ == "__main__":
     test_smallBodyNavUKF(True)
-
-

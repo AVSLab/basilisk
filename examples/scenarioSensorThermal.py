@@ -157,7 +157,7 @@ def run(show_plots):
     gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
                                      , '2021 MAY 04 07:47:48.965 (UTC)'
                                      )
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, ModelPriority=100)
 
     # Set up the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -179,12 +179,12 @@ def run(show_plots):
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     scObject.addDynamicEffector(extFTObject)
-    scSim.AddModelToTask(simTaskName, extFTObject)
+    scSim.AddModelToTask(simTaskName, extFTObject, 97)
 
     # Add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
-    scSim.AddModelToTask(simTaskName, sNavObject)
+    scSim.AddModelToTask(simTaskName, sNavObject, ModelPriority=101)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # Create the ephemeris converter
@@ -192,7 +192,7 @@ def run(show_plots):
     ephemConverter.ModelTag = "ephemConverter"
     ephemConverter.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[0])
     ephemConverter.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[1])
-    scSim.AddModelToTask(simTaskName, ephemConverter)
+    scSim.AddModelToTask(simTaskName, ephemConverter, ModelPriority=100)
 
     # Set up sun pointing guidance module
     locPointConfig = locationPointing.locationPointingConfig()
@@ -208,7 +208,7 @@ def run(show_plots):
     mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig, ModelPriority=901)
+    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig, ModelPriority=98)
     mrpControlConfig.guidInMsg.subscribeTo(locPointConfig.attGuidOutMsg)
     mrpControlConfig.K = 5.5
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback

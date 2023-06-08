@@ -163,7 +163,7 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
 
     Args:
         show_plots (bool): Determines if the script should display plots.
-		albedoData (bool): Flag indicating if the albedo data based model should be used.
+        albedoData (bool): Flag indicating if the albedo data based model should be used.
         multipleInstrument (bool): Flag indicating if multiple instrument should be used.
         multiplePlanet (bool): Flag specifying if multiple planets should be used.
         useEclipse (bool): Flag indicating if the partial eclipse at the incremental area is considered.
@@ -367,14 +367,14 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         T2 = macros.sec2nano(1000.)
         # Set second spacecraft states for decrease in altitude
         vVt = vVt + [0.0, 375300, 0.0]  # m - v_CN_N
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        velRef.setState(vVt)
         scSim.ConfigureStopTime(T1 + T2)
         scSim.ExecuteSimulation()
         # get the current spacecraft states
         T3 = macros.sec2nano(500.)
         # Set second spacecraft states for decrease in altitude
         vVt = [0.0, 0.0, 0.0]  # m - v_CN_N
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        velRef.setState(vVt)
         scSim.ConfigureStopTime(T1 + T2 + T3)
         scSim.ExecuteSimulation()
         simulationTime = T1 + T2 + T3
@@ -385,7 +385,7 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     #
     # Retrieve the logged data
     #
-    n = int(simulationTime/simulationTimeStep + 1)
+    n = int(simulationTime / simulationTimeStep + 1)
     if multipleInstrument:
         dataCSS = np.zeros(shape=(n, 3))
         dataAlb = np.zeros(shape=(n, 3))
@@ -405,18 +405,18 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     #
     # Plot the results
     #
-    plt.close("all")        # clears out plots from earlier test runs
+    plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     timeAxis = dataLog.times()
     if multipleInstrument:
         for idx in range(3):
             plt.plot(timeAxis * macros.NANO2SEC, dataAlb[:, idx],
                      linewidth=2, alpha=0.7, color=unitTestSupport.getLineColor(idx, 3),
-                     label='Albedo$_{'+str(idx)+'}$')
+                     label='Albedo$_{' + str(idx) + '}$')
             if not multiplePlanet:
-                plt.plot(timeAxis*macros.NANO2SEC, dataCSS[:, idx],
+                plt.plot(timeAxis * macros.NANO2SEC, dataCSS[:, idx],
                          '--', linewidth=1.5, color=unitTestSupport.getLineColor(idx, 3),
-                         label='CSS$_{'+str(idx)+'}$')
+                         label='CSS$_{' + str(idx) + '}$')
     else:
         plt.plot(timeAxis * macros.NANO2SEC, dataAlb,
                  linewidth=2, alpha=0.7, color=unitTestSupport.getLineColor(0, 2),
@@ -432,7 +432,8 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     plt.xlabel('Time [s]')
     plt.ylabel('Instrument\'s signal')
     figureList = {}
-    pltName = fileNameString + str(1) + str(int(albedoData)) + str(int(multipleInstrument)) + str(int(multiplePlanet)) + str(
+    pltName = fileNameString + str(1) + str(int(albedoData)) + str(int(multipleInstrument)) + str(
+        int(multiplePlanet)) + str(
         int(useEclipse))
     figureList[pltName] = plt.figure(1)
     if multiplePlanet:
@@ -445,7 +446,8 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         plt.plot(timeAxis * macros.NANO2SEC, rData, color='#aa0000')
         plt.xlabel('Time [s]')
         plt.ylabel('Radius [km]')
-        pltName = fileNameString + str(2) + str(int(albedoData)) + str(int(multipleInstrument)) + str(int(multiplePlanet)) + str(
+        pltName = fileNameString + str(2) + str(int(albedoData)) + str(int(multipleInstrument)) + str(
+            int(multiplePlanet)) + str(
             int(useEclipse))
         figureList[pltName] = plt.figure(2)
 
@@ -460,7 +462,8 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         plt.imshow(ALB1, cmap='Reds', interpolation='none', extent=[-180, 180, 90, -90])
         plt.colorbar(orientation='vertical')
         ax.set_ylim(ax.get_ylim()[::-1])
-        pltName = fileNameString + str(2) + str(int(albedoData)) + str(int(multipleInstrument)) + str(int(multiplePlanet)) + str(
+        pltName = fileNameString + str(2) + str(int(albedoData)) + str(int(multipleInstrument)) + str(
+            int(multiplePlanet)) + str(
             int(useEclipse))
         figureList[pltName] = plt.figure(2)
 
@@ -469,16 +472,18 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
     return figureList
+
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
     run(
-        True,   # show_plots
+        True,  # show_plots
         False,  # albedoData
-        True,   # multipleInstrument
+        True,  # multipleInstrument
         False,  # multiplePlanet
-        True,   # useEclipse
-        None    # simTimeStep
-       )
+        True,  # useEclipse
+        None  # simTimeStep
+    )

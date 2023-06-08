@@ -70,7 +70,7 @@ Note that the message recorder will continuously add message data to its interna
 
 Reading the Current Value of a Message
 --------------------------------------
-If you have a message `msg` and want to pull a current copy of the message data or payload, you can use
+If you have a message ``msg`` and want to pull a current copy of the message data or payload, you can use
 this method on both C and C++ wrapped message objects::
 
     msgCopy = msg.read()

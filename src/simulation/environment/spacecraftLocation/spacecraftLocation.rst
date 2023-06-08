@@ -136,7 +136,7 @@ It this message is not connected, then zero planet position and attitude orienta
 
 To set a primary spacecraft body fixed sensor or communication axis :math:`\hat{\bf a}` and half-cone angle :math:`\theta`, use::
 
-    module.aHat_B = unitTestSupport.np2EigenVectorXd([xxx, xxx, xxx])
+    module.aHat_B = [xxx, xxx, xxx]
     module.theta = xxx * macros.D2R
 
 

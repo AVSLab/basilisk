@@ -20,7 +20,7 @@
 #ifndef AVS_SMALLBODYNAVMSGPAYLOAD_H
 #define AVS_SMALLBODYNAVMSGPAYLOAD_H
 
-#define SMALL_BODY_NAV_N_STATES 18
+#define SMALL_BODY_NAV_N_STATES 12
 
 //! @brief Full states and covariances associated with spacecraft navigation about a small body
 typedef struct{

@@ -271,6 +271,18 @@ void VizInterface::ReadBSKMessages()
         }
         }
 
+        /* read in true trajectory line color if connected */
+        if (scIt->trueTrajectoryLineColorInMsg.isLinked()) {
+            if (scIt->trueTrajectoryLineColorInMsg.isWritten()) {
+                ColorMsgPayload colorMsg;
+                colorMsg = scIt->trueTrajectoryLineColorInMsg();
+                scIt->trueTrajectoryLineColor.clear();
+                for (int i=0; i<4; i++) {
+                    scIt->trueTrajectoryLineColor.push_back(colorMsg.colorRGBA[i]);
+                }
+            }
+        }
+
         /* read in generic sensor cmd value */
         {
             for (size_t idx=0;idx< (size_t) scIt->genericSensorList.size(); idx++) {
@@ -740,6 +752,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         if (scIt->scStateInMsg.isLinked() && scIt->scStateInMsgStatus.dataFresh){
             vizProtobufferMessage::VizMessage::Spacecraft* scp = message->add_spacecraft();
             scp->set_spacecraftname(scIt->spacecraftName);
+            scp->set_parentspacecraftname(scIt->parentSpacecraftName);
             for (int i=0; i<3; i++){
                 scp->add_position(scIt->scStateMsgBuffer.r_BN_N[i]);
                 scp->add_velocity(scIt->scStateMsgBuffer.v_BN_N[i]);

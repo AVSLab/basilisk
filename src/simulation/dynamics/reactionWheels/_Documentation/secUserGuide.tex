@@ -15,6 +15,7 @@ This section is to outline the steps needed to setup a reaction wheel state effe
 		\textit{,maxMomentum = varMaxMomentum} \newline
 		\textit{,RWModel= varRWModel})
 	\item To include stribeck friction effects, include \textit{ betaStatic } within the rwFactory.create() and assign it a non-zero value. By default, betaStatic is set to -1 and stribeck friction is ignored. 
+	\item To limit reaction wheel power, include \textit{maxPower} within the rwFactory.create() and assign it to a non-zero value. By default, power limiting is ignored.
 	\item Create an instantiation of a reaction wheel state effector: \newline \textit{rws = reactionWheelStateEffector.ReactionWheelStateEffector()}
 	\item Create an instantiation of a spacecraft: \newline
 	\textit{scObject = spacecraft.Spacecraft()}

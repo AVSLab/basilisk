@@ -81,7 +81,8 @@ def asEigen(v):
 @pytest.mark.parametrize("useFlag, testCase", [
     (False, 'saturation'),
     (False, 'minimum'),
-    (False, 'speedSaturation')
+    (False, 'speedSaturation'),
+    (False, 'powerSaturation')
 ])
 
 
@@ -145,6 +146,19 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 
         expOut['u_current'] = [1.5, 0.0, 1.5]
 
+    elif testCase == 'powerSaturation':
+        RWs.append(defaultReactionWheel())
+        RWs[0].P_max = 1.
+        RWs[1].P_max = 1.
+        RWs[2].P_max = 1.
+        RWs[0].Omega = 50.
+        RWs[1].Omega = 50.
+        RWs[2].Omega = 50.
+        u_cmd = [0.01, -0.04, 0.04]
+        writeNewRWCmds(ReactionWheel, u_cmd, len(RWs))
+
+        expOut['u_current'] = [0.01, -0.02, 0.02]
+
     else:
         raise Exception('invalid test case')
 
@@ -192,7 +206,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 
 
 # This statement below ensures that the unit test script can be run as a
-# stand-along python script
+# standalone python script
 if __name__ == "__main__":
     test_unitSimReactionWheel(
         False,  # show_plots

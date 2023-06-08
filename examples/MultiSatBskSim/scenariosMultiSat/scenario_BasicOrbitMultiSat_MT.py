@@ -77,6 +77,7 @@ import BSK_EnvironmentEarth, BSK_EnvironmentMercury, BSK_MultiSatDynamics
 # Import plotting files for your scenario
 import BSK_MultiSatPlotting as plt
 
+
 # Create your own scenario child class
 class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
     def __init__(self, numberSpacecraft, environment):
@@ -91,7 +92,7 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
         # Here we are setting the list of spacecraft dynamics to be a homogenous formation.
         # To use a heterogeneous spacecraft formation, this list can contain different classes
         # of type BSKDynamicModels
-        self.set_DynModel([BSK_MultiSatDynamics]*numberSpacecraft)
+        self.set_DynModel([BSK_MultiSatDynamics] * numberSpacecraft)
 
         # declare empty class variables
         self.samplingTime = []
@@ -117,7 +118,8 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
             batteryPanel = vizSupport.vizInterface.GenericStorage()
             batteryPanel.label = "Battery"
             batteryPanel.units = "Ws"
-            batteryPanel.color = vizSupport.vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("green"))
+            batteryPanel.color = vizSupport.vizInterface.IntVector(
+                vizSupport.toRGBA255("red") + vizSupport.toRGBA255("green"))
             batteryPanel.thresholds = vizSupport.vizInterface.IntVector([20])
             batteryInMsg = messaging.PowerStorageStatusMsgReader()
             batteryInMsg.subscribeTo(self.DynModels[0].powerMonitor.batPowerOutMsg)
@@ -133,7 +135,7 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
             tankPanel.fuelTankStateInMsg = tankInMsg
             tankPanel.this.disown()
 
-            storageList = [None]*self.numberSpacecraft
+            storageList = [None] * self.numberSpacecraft
             storageList[0] = [batteryPanel, tankPanel]
 
             viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
@@ -150,10 +152,10 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
         # Configure Dynamics initial conditions
         for i in range(self.numberSpacecraft):
             self.oe.append(orbitalMotion.ClassicElements())
-            self.oe[i].a = 1.1 * EnvModel.planetRadius + 1E5*(i+1)  # meters
-            self.oe[i].e = 0.01 + 0.001* (i)
+            self.oe[i].a = 1.1 * EnvModel.planetRadius + 1E5 * (i + 1)  # meters
+            self.oe[i].e = 0.01 + 0.001 * (i)
             self.oe[i].i = 45.0 * macros.D2R
-            self.oe[i].Omega = (48.2 + 5.0*i) * macros.D2R 
+            self.oe[i].Omega = (48.2 + 5.0 * i) * macros.D2R
             self.oe[i].omega = 347.8 * macros.D2R
             self.oe[i].f = 85.3 * macros.D2R
             rN, vN = orbitalMotion.elem2rv(EnvModel.mu, self.oe[i])
@@ -238,17 +240,17 @@ def run(show_plots, numberSpacecraft, environment, numThreads):
     Args:
         show_plots (bool): Determines if the script should display plots
         numberSpacecraft (int): Number of spacecraft in the simulation
-        environment ("Earth", "Mercury"): Chooses which environment to set the simulation in
-        number of threads
+        environment (string): Chooses which environment to set the simulation in. Options are "Earth" or "Mercury"
+        numThreads (int): number of threads
     """
 
     # Configure a scenario in the base simulation
     TheScenario = scenario_BasicOrbitFormationFlying(numberSpacecraft, environment)
-    #This call allocates out the requested number of threads into the simulation
-    #Note that unless the user does something further, processes will be assigned 
-    #in a round-robin fashion to the allocated threads.  If you desire to specify
-    #which processes execute on a given thread, then the addProcessToThread in 
-    #the SimModel (TotalSim in SimulationBaseClass) should be used.
+    # This call allocates out the requested number of threads into the simulation
+    # Note that unless the user does something further, processes will be assigned
+    # in a round-robin fashion to the allocated threads.  If you desire to specify
+    # which processes execute on a given thread, then the addProcessToThread in
+    # the SimModel (TotalSim in SimulationBaseClass) should be used.
     TheScenario.TotalSim.resetThreads(numThreads)
     runScenario(TheScenario)
     figureList = TheScenario.pull_outputs(show_plots)

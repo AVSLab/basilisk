@@ -54,7 +54,6 @@ typedef struct {type};
 
     def read(self):
         """read the message payload."""
-        self.subscribeTo(self)
         return {type}_C_read(self)
     %}}
 }};

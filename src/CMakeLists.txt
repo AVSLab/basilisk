@@ -387,6 +387,17 @@ endfunction(generate_package_targets)
 find_package(PythonInterp 3 REQUIRED)
 find_package(PythonLibs 3 REQUIRED)
 
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+include(GoogleTest)
+enable_testing()
+
 # TODO: Remove the global link-libraries call
 find_package(Eigen3 CONFIG REQUIRED)
 # The following lines are necessary to prevent Xcode from issuing a warning about Eigen not being within the search
@@ -427,6 +438,7 @@ endif()
 
 # Add platform specific compiler flags
 if(MSVC)
+  set(CMAKE_CXX_STANDARD 17)
   add_definitions(/MP)
   add_definitions(/D _CRT_SECURE_NO_WARNINGS)
   add_definitions(/D _WINSOCK_DEPRECATED_NO_WARNINGS)
@@ -447,8 +459,9 @@ if(MSVC)
     set("${flag}" "${${flag}} /EHsc")
   endforeach()
 elseif(APPLE)
+  set(CMAKE_CXX_STANDARD 17)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -gdwarf-3")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -gdwarf-3 -std=c++11 -stdlib=libc++")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -gdwarf-3 -stdlib=libc++")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -gdwarf-3")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -Wall")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -Wall")
@@ -456,15 +469,16 @@ elseif(APPLE)
     set(CMAKE_XCODE_GENERATE_SCHEME YES)
   endif()
 else()
+  set(CMAKE_CXX_STANDARD 17)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -gdwarf-3")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -gdwarf-3 -std=c++11 -fPIC")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -gdwarf-3 -fPIC")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -gdwarf-3")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -Wall")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -Wall")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register -std=c++11")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
 endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -678,3 +692,6 @@ if(TARGET _thrusterDynamicEffector)
 elseif(TARGET thrusterDynamicEffector)
   add_dependencies(OverwriteSwig thrusterDynamicEffector vscmgStateEffector reactionWheelStateEffector)
 endif()
+
+# Tests targets
+add_subdirectory("architecture/utilities/tests")

@@ -94,6 +94,7 @@ def run(show_plots, useClassicElem, numOrbits):
     Args:
         show_plots (bool): Determines if the script should display plots
         useClassicElem (bool): Determines if classic orbital element is used
+        numOrbits (float): Number of orbits the simulation should run
     """
     scSim = SimulationBaseClass.SimBaseClass()
     scSim.SetProgressBar(True)

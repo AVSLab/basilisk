@@ -27,12 +27,53 @@ Basilisk Release Notes
     - spacecraft charging related modules
     - ability to integrate dynamics of multiple spacecraft simultaneously
     - support a way to do thread-safe messaging
+    - ability to integrate Python Basilisk modules in the same task and process as C/C++ modules
+    - automated documentation build system when code is pushed to the repo
 
 
 
 Version |release|
 -----------------
-- Created fsw :ref:`hingedRigidBodyPIDMotor` to compute the commanded torque to :ref:`spinningBodyStateEffector` using a propotional-integral-derivative controller.
+- Created new way to define Python modules by inheriting from ``Basilisk.architecture.sysModel.SysModel``.
+  See :ref:`pyModules` for details.
+- Added the ability to integrate the ODE's of two or more Basilisk modules that are ``DynamicObject`` class
+  member at the same time.  See :ref:`bskPrinciples-9`
+- updated ZMQ version to 4.5.0.  For 2-way communication with ``opNav`` modules talking to Vizard
+  then Vizard 2.1.5 or newer should be used.  This also removes the need for the legacy bincrafters code repo.
+  Delete ``~/.conan`` folder if you run into ``conan`` issues.
+- The Basilisk project C++ version is advanced from C++11 to C++17
+- Disabled the following build options in the conan included OpenCV dependency; with_ffmpeg video frame encoding lib,
+  with_ade graph manipulations framework, with_tiff generate image in TIFF format, with_openexr generate image in EXR
+  format, with_quirc QR code lib. Users that have Basilisk control the build of these modules through the External
+  Modules CMake integration will need to manual toggle these OpenCV build options.
+- Updated :ref:`SmallBodyNavEKF` with several bug fixes. Removed spacecraft attitude estimation component.
+- Bug fix made to :ref:`eclipse`: Saturn, Jupiter, Uranus, and Neptune radii were incorrectly being assigned the 
+  radius of Mars. 
+- Added custom planet name to :ref:`eclipse` in case the user wants to use a body not contained within the module.
+- Removed all instances of using ``unitTestSupport.np2EigenVectorXd()``, as this function is now unneeded.
+- Created a :ref:`facetSRPDynamicEffector` dynamics module to calculate the B frame SRP force and torque acting on a static spacecraft.
+- fixed ``PCI2PCPF()`` and ``PCPF2PCI`` methods in :ref:`geodeticConversion` to use the correct DCM
+- updated :ref:`geodeticConversion` to be able to account for planet ellipsoidal shape if polar radius is provided
+- Google Test C/C++ testing framework added
+- Created a :ref:`prescribedRot2DOF` fsw module to profile a prescribed 2 DOF rotational maneuver for a secondary rigid
+  body connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+  :ref:`prescribedMotionStateEffector` dynamics module.
+- Corrected default value of ``accuracyNanos`` in :ref:`simSynch` to be 0.01 seconds.
+- Added a deprecation system for Basilisk. For developers, see :ref:`deprecatingCode`.
+- Changed the units of plasma flux in :ref:`dentonFluxModel` and :ref:`PlasmaFluxMsgPayload` from
+  [cm^-2 s^-1 sr^-2 eV^-1] to [m^-2 s^-1 sr^-2 eV^-1], because m^-2 is used more frequently in computations
+- Fixed a bug in eclipse that caused potentially occluding bodies to be skipped if a prior body was closer to the sun than
+  the spacecraft
+- fixed the time evaluation in :ref:`msisAtmosphere`
+- Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the :ref:`simpleInstrumentController` to 
+  match the functionality of the corresponding data and power modules
+- Corrected tasks priorities in several scenarios and added checks in two modules to ensure that C MSG read errors are not thrown
+
+
+Version 2.1.7 (March 24, 2023)
+------------------------------
+- Fixed ``CMake/conan`` case sensitivty issue when compiling Basilisk with ``opNav`` flag set to ``True`` on Linux platforms
+- Created fsw :ref:`hingedRigidBodyPIDMotor` to compute the commanded torque to :ref:`spinningBodyOneDOFStateEffector` using a proportional-integral-derivative controller.
 - Added :ref:`torqueScheduler` to combine two :ref:`ArrayMotorTorqueMsgPayload` into one and implement effector locking logic.
 - Refactored how ``Custom.cmake`` files are included and how they are to be constructed. ``Custom.cmake`` files
   should no longer include an include guard (e.g. ``if(BUILD_OPNAV) ... endif(BUILD_OPNAV)`` ). Rather, to add
@@ -43,6 +84,32 @@ Version |release|
   and after of the ``src/cmake/usingOpenCV.cmake`` file.
 - updated :ref:`unitTestSupport` to create the file path in a platform agnostic manner
 - Created a :ref:`sensorThermal` module to model the temperature of a sensor using radiative heat transfer
+- Created a :ref:`tempMeasurement` module to add sensor noise/bias and fault capabilities to temperature readings
+- Added a ``terminal`` flag to the event handlers that cause the simulation to terminate when triggered; demonstrated
+  use of flag in update to :ref:`scenarioDragDeorbit`.
+- Created a :ref:`prescribedMotionStateEffector` dynamics module for appending rigid bodies with prescribed motion
+  to the spacecraft hub.
+- Created a :ref:`prescribedRot1DOF` fsw module to profile a prescribed rotational maneuver for a secondary rigid body
+  connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+  :ref:`prescribedMotionStateEffector` dynamics module.
+- Created a :ref:`prescribedTrans` fsw module to profile a prescribed translational maneuver for a secondary rigid body
+  connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+  :ref:`prescribedMotionStateEffector` dynamics module.
+- Added :ref:`solarArrayReference` to compute the reference angle and angle rate for a rotating solar array.
+- Update python dependency documentation and check to not use ``conan`` version 2.0.0 for now
+- Changed the ``SpinningBodyStateEffector`` module name to :ref:`spinningBodyOneDOFStateEffector`.
+- Added the ability to lock the axis on the :ref:`spinningBodyOneDOFStateEffector` module.
+- Added two new unit tests to :ref:`spinningBodyOneDOFStateEffector`.
+- Updated :ref:`magneticFieldWMM` to use the latest WMM coefficient file and evaluation software
+- Added a :ref:`spinningBodyTwoDOFStateEffector` module that simulates a two-axis rotating rigid component.
+- Created :ref:`oneAxisSolarArrayPoint` to generate the reference attitude for a spacecraft that needs to point a body-fixed
+  axis along an inertial direction while ensuring maximum power generation on the solar arrays
+- Added a maximum power parameter ``maxPower`` to :ref:`reactionWheelStateEffector` for limiting supplied
+  power, independent of the modules in simulation/power.
+- Added :ref:`thrusterPlatformReference` to align the dual-gimballed thruster with the system's center of mass, or at an offset thereof to perform momentum dumping.
+- Improved reliability of opNav scenario communication between :ref:`vizInterface` and Vizard
+- provide support or Vizard 2.1.4 features
+
 
 Version 2.1.6 (Jan. 21, 2023)
 -----------------------------
@@ -68,7 +135,7 @@ Version 2.1.6 (Jan. 21, 2023)
 - Updated :ref:`scenarioGroundLocationImaging` to properly save off the ground location
   information for Vizard
 - Added a new helper function to convert C arrays to ``Eigen::MRPd`` and vice-versa inside ``avsEigenSupport``.
-- Updated :ref:`spinningBodyStateEffector` to use the :ref:`HingedRigidBodyMsgPayload` output message type for compatibility with other modules
+- Updated ``SpinningBodyStateEffector`` to use the :ref:`HingedRigidBodyMsgPayload` output message type for compatibility with other modules
 - Added the ability to set an inertial heading in the :ref:`boreAngCalc` module. Changed the internal module logic to use ``Eigen`` library variables and functions instead of C-style arrays and methods.
 - Added support for Vizard v2.1.3
 - Updated :ref:`simpleInstrumentController` to provide the option to consider the angular velocity tracking error norm
@@ -83,7 +150,7 @@ Version 2.1.5 (Dec. 13, 2022)
 - provide support for the swig 4.1 software
 - Added the ability in both :ref:`thrusterDynamicEffector` and :ref:`thrusterStateEffector` to connect a thruster to a moving body different than the hub.
 - The thrusters now have an additional variable called ``MaxSwirlTorque``. Useful for ion thrusters, it adds a torque about the thrust axis proportional to the current thrust factor.
-- Added a torsional spring and damper to the :ref:`SpinningBodyStateEffector` module.
+- Added a torsional spring and damper to the ``SpinningBodyStateEffector`` module.
 - Added support for having multiple Vizard instrument cameras setup in :ref:`vizInterface`
 
 .. warning::
@@ -153,7 +220,7 @@ Version 2.1.4 (Oct. 1, 2022)
 - added new attitude pointing scenario :ref:`scenarioAttitudeFeedback2T_stateEffTH` that uses
   the new :ref:`thrusterStateEffector`
 - added ability to simulate faults within :ref:`coarseSunSensor` module
-- created a 1-DoF rotating rigid body class :ref:`SpinningBodyStateEffector`. It is built in a general way to simulate 
+- created a 1-DoF rotating rigid body class ``SpinningBodyStateEffector``. It is built in a general way to simulate 
   any effector with a single spinning axis.
 
 

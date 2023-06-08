@@ -26,12 +26,9 @@ Bennu is used. However, any small body could be selected as long as the appropri
 In this scenario, :ref:`simpleNav` and :ref:`planetEphemeris` provide measurements to the EKF in the form of :ref:`navTransMsgPayload`,
 :ref:`navAttMsgPayload`, and :ref:`ephemerisMsgPayload` input messages. The EKF takes in these measurements at each timestep
 and updates the state estimate, outputting this state estimate in its own standalone message, a :ref:`smallBodyNavMsgPayload`,
-as well as navigation output messages - :ref:`navTransMsgPayload`, :ref:`navAttMsgPayload`, and :ref:`ephemerisMsgPayload`.
+as well as navigation output messages - :ref:`navTransMsgPayload` and :ref:`ephemerisMsgPayload`.
 
-Furthermore, an :ref:`mrpFeedback` module is also created to demonstrate using the filter output as
-an input into an attitude control algorithm.
-
-.. note:: This module is only meant to provide a somewhat representative autonomous small body proximity operations navigation solution for attitude control modules or POMDP solvers. Therefore, realistic measurement modules do not exist to support this module, and not every source of uncertainty in the problem is an estimated parameter.
+.. note:: This module is only meant to provide a somewhat representative autonomous small body proximity operations navigation solution for POMDP solvers. Therefore, realistic measurement modules do not exist to support this module, and not every source of uncertainty in the problem is an estimated parameter.
 
 .. attention::
 
@@ -54,7 +51,8 @@ Likewise, the relative velocity estimate and the estimation error and covariance
 .. image:: /_images/Scenarios/scenarioSmallBodyNav4.svg
    :align: center
 
-In the next four plots, the attitude and rate estimates of both the spacecraft and small body with respect to the inertial frame are displayed.
+In the next four plots, the attitude and rate estimates and error plots of the small body frame with respect to the
+ inertial frame are displayed.
 
 .. image:: /_images/Scenarios/scenarioSmallBodyNav5.svg
    :align: center
@@ -94,9 +92,11 @@ from Basilisk.fswAlgorithms import hillPoint
 from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.fswAlgorithms import smallBodyNavEKF
+from Basilisk.fswAlgorithms import smallBodyWaypointFeedback
 from Basilisk.simulation import ephemerisConverter
 from Basilisk.simulation import planetEphemeris
 from Basilisk.simulation import planetNav
+from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import radiationPressure
 from Basilisk.simulation import reactionWheelStateEffector
 from Basilisk.simulation import simpleNav
@@ -118,16 +118,16 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 # Plotting functions
-def plot_position(time, r_BO_O_truth, r_BO_O_est, r_BO_O_meas):
+def plot_position(time, meas_time, r_BO_O_truth, r_BO_O_est, r_BO_O_meas):
     """Plot the relative position result."""
     #plt.gcf()
     fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
     fig.add_subplot(111, frameon=False)
     plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, r_BO_O_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(time, r_BO_O_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(time, r_BO_O_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(meas_time, r_BO_O_meas[:, 0], 'k*', label='measurement', markersize=1)
+    ax[1].plot(meas_time, r_BO_O_meas[:, 1], 'k*', markersize=1)
+    ax[2].plot(meas_time, r_BO_O_meas[:, 2], 'k*', markersize=1)
 
     ax[0].plot(time, r_BO_O_truth[:, 0], label='${}^Or_{BO_{1}}$')
     ax[1].plot(time, r_BO_O_truth[:, 1], label='${}^Or_{BO_{2}}$')
@@ -149,16 +149,16 @@ def plot_position(time, r_BO_O_truth, r_BO_O_est, r_BO_O_meas):
     return
 
 
-def plot_velocity(time, v_BO_O_truth, v_BO_O_est, v_BO_O_meas):
+def plot_velocity(time, meas_time, v_BO_O_truth, v_BO_O_est, v_BO_O_meas):
     """Plot the relative velocity result."""
     plt.gcf()
     fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
     fig.add_subplot(111, frameon=False)
     plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, v_BO_O_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(time, v_BO_O_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(time, v_BO_O_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(meas_time, v_BO_O_meas[:, 0], 'k*', label='measurement', markersize=1)
+    ax[1].plot(meas_time, v_BO_O_meas[:, 1], 'k*', markersize=1)
+    ax[2].plot(meas_time, v_BO_O_meas[:, 2], 'k*', markersize=1)
 
     ax[0].plot(time, v_BO_O_truth[:, 0], label='truth')
     ax[1].plot(time, v_BO_O_truth[:, 1])
@@ -203,9 +203,9 @@ def plot_pos_error(time, r_err, P):
     plt.xlabel('Time [sec]')
     plt.title('Position Error and Covariance')
 
-    ax[0].set_ylabel('${}^Or_{BO_1}$ [m]')
-    ax[1].set_ylabel('${}^Or_{BO_2}}$ [m]')
-    ax[2].set_ylabel('${}^Or_{BO_3}$ [m]')
+    ax[0].set_ylabel('${}^Or_{BO_1}$ Error [m]')
+    ax[1].set_ylabel('${}^Or_{BO_2}}$ Error [m]')
+    ax[2].set_ylabel('${}^Or_{BO_3}$ Error [m]')
 
     ax[0].legend()
 
@@ -235,24 +235,24 @@ def plot_vel_error(time, v_err, P):
     plt.xlabel('Time [sec]')
     plt.title('Velocity Error and Covariance')
 
-    ax[0].set_ylabel('${}^Ov_{BO_1}$ [m/s]')
-    ax[1].set_ylabel('${}^Ov_{BO_2}}$ [m/s]')
-    ax[2].set_ylabel('${}^Ov_{BO_3}$ [m/s]')
+    ax[0].set_ylabel('${}^Ov_{BO_1}$ Error [m/s]')
+    ax[1].set_ylabel('${}^Ov_{BO_2}}$ Error [m/s]')
+    ax[2].set_ylabel('${}^Ov_{BO_3}$ Error [m/s]')
 
     ax[0].legend()
 
     return
 
 
-def plot_sc_att(time, sigma_BN_truth, sigma_BN_est, sigma_BN_meas):
+def plot_sc_att(time, meas_time, sigma_BN_truth, sigma_BN_est, sigma_BN_meas):
     plt.gcf()
     fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12,6))
     fig.add_subplot(111, frameon=False)
     plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, sigma_BN_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(time, sigma_BN_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(time, sigma_BN_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(meas_time, sigma_BN_meas[:, 0], 'k*', label='measurement', markersize=1)
+    ax[1].plot(meas_time, sigma_BN_meas[:, 1], 'k*', markersize=1)
+    ax[2].plot(meas_time, sigma_BN_meas[:, 2], 'k*', markersize=1)
 
     ax[0].plot(time, sigma_BN_truth[:, 0], label='truth')
     ax[1].plot(time, sigma_BN_truth[:, 1])
@@ -273,15 +273,15 @@ def plot_sc_att(time, sigma_BN_truth, sigma_BN_est, sigma_BN_meas):
     return
 
 
-def plot_sc_rate(time, omega_BN_B_truth, omega_BN_B_est, omega_BN_B_meas):
+def plot_sc_rate(time, meas_time, omega_BN_B_truth, omega_BN_B_est, omega_BN_B_meas):
     plt.gcf()
     fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12,6))
     fig.add_subplot(111, frameon=False)
     plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, omega_BN_B_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(time, omega_BN_B_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(time, omega_BN_B_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(meas_time, omega_BN_B_meas[:, 0], 'k*', label='measurement', markersize=1)
+    ax[1].plot(meas_time, omega_BN_B_meas[:, 1], 'k*', markersize=1)
+    ax[2].plot(meas_time, omega_BN_B_meas[:, 2], 'k*', markersize=1)
 
     ax[0].plot(time, omega_BN_B_truth[:, 0], label='truth')
     ax[1].plot(time, omega_BN_B_truth[:, 1])
@@ -302,15 +302,15 @@ def plot_sc_rate(time, omega_BN_B_truth, omega_BN_B_est, omega_BN_B_meas):
     return
 
 
-def plot_ast_att(time, sigma_AN_truth, sigma_AN_est, sigma_AN_meas):
+def plot_ast_att(time, meas_time, sigma_AN_truth, sigma_AN_est, sigma_AN_meas):
     plt.gcf()
     fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12,6))
     fig.add_subplot(111, frameon=False)
     plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, sigma_AN_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(time, sigma_AN_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(time, sigma_AN_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(meas_time, sigma_AN_meas[:, 0], 'k*', label='measurement', markersize=1)
+    ax[1].plot(meas_time, sigma_AN_meas[:, 1], 'k*', markersize=1)
+    ax[2].plot(meas_time, sigma_AN_meas[:, 2], 'k*', markersize=1)
 
     ax[0].plot(time, sigma_AN_truth[:, 0], label='truth')
     ax[1].plot(time, sigma_AN_truth[:, 1])
@@ -331,15 +331,15 @@ def plot_ast_att(time, sigma_AN_truth, sigma_AN_est, sigma_AN_meas):
     return
 
 
-def plot_ast_rate(time, omega_AN_A_truth, omega_AN_A_est, omega_AN_A_meas):
+def plot_ast_rate(time, meas_time, omega_AN_A_truth, omega_AN_A_est, omega_AN_A_meas):
     plt.gcf()
     fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
     fig.add_subplot(111, frameon=False)
     plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, omega_AN_A_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(time, omega_AN_A_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(time, omega_AN_A_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(meas_time, omega_AN_A_meas[:, 0], 'k*', label='measurement', markersize=1)
+    ax[1].plot(meas_time, omega_AN_A_meas[:, 1], 'k*', markersize=1)
+    ax[2].plot(meas_time, omega_AN_A_meas[:, 2], 'k*', markersize=1)
 
     ax[0].plot(time, omega_AN_A_truth[:, 0], label='truth')
     ax[1].plot(time, omega_AN_A_truth[:, 1])
@@ -360,6 +360,68 @@ def plot_ast_rate(time, omega_AN_A_truth, omega_AN_A_est, omega_AN_A_meas):
     return
 
 
+def plot_ast_attitude_error(time, sigma_err, P):
+    """Plot the asteroid attitude estimation error and associated covariance."""
+    plt.gcf()
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig.add_subplot(111, frameon=False)
+    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+
+    ax[0].plot(time, sigma_err[:, 0], label='error')
+    ax[0].plot(time, 2*np.sqrt(P[:, 6, 6]), 'k--', label=r'$2\sigma$')
+    ax[0].plot(time, -2*np.sqrt(P[:, 6, 6]), 'k--')
+
+    ax[1].plot(time, sigma_err[:, 1])
+    ax[1].plot(time, 2*np.sqrt(P[:, 7, 7]), 'k--')
+    ax[1].plot(time, -2*np.sqrt(P[:, 7, 7]), 'k--')
+
+    ax[2].plot(time, sigma_err[:, 2])
+    ax[2].plot(time, 2*np.sqrt(P[:, 8, 8]), 'k--')
+    ax[2].plot(time, -2*np.sqrt(P[:, 8, 8]), 'k--')
+
+    plt.xlabel('Time [sec]')
+    plt.title('Attitude Error and Covariance')
+
+    ax[0].set_ylabel(r'$\sigma_{AN_{1}}$ Error [rad]')
+    ax[1].set_ylabel(r'$\sigma_{AN_{2}}$ Error [rad]')
+    ax[2].set_ylabel(r'$\sigma_{AN_{3}}$ Error [rad]')
+
+    ax[0].legend()
+
+    return
+
+
+def plot_ast_rate_error(time, omega_err, P):
+    """Plot the asteroid rate estimation error and associated covariance."""
+    plt.gcf()
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig.add_subplot(111, frameon=False)
+    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+
+    ax[0].plot(time, omega_err[:, 0], label='error')
+    ax[0].plot(time, 2*np.sqrt(P[:, 9, 9]), 'k--', label=r'$2\sigma$')
+    ax[0].plot(time, -2*np.sqrt(P[:, 9, 9]), 'k--')
+
+    ax[1].plot(time, omega_err[:, 1])
+    ax[1].plot(time, 2*np.sqrt(P[:, 10, 10]), 'k--')
+    ax[1].plot(time, -2*np.sqrt(P[:, 10, 10]), 'k--')
+
+    ax[2].plot(time, omega_err[:, 2])
+    ax[2].plot(time, 2*np.sqrt(P[:, 11, 11]), 'k--')
+    ax[2].plot(time, -2*np.sqrt(P[:, 11, 11]), 'k--')
+
+    plt.xlabel('Time [sec]')
+    plt.title('Position Error and Covariance')
+
+    ax[0].set_ylabel(r'${}^A\omega_{AN_{1}}$ Error [rad/s]')
+    ax[1].set_ylabel(r'${}^A\omega_{AN_{2}}$ Error [rad/s]')
+    ax[2].set_ylabel(r'${}^A\omega_{AN_{3}}$ Error [rad/s]')
+
+    ax[0].legend()
+
+    return
+
+
 def run(show_plots):
     """
     The scenarios can be run with the followings setups parameters:
@@ -373,6 +435,8 @@ def run(show_plots):
 
     # Create simulation variable names
     simTaskName = "simTask"
+    measTaskName = "measTask"
+    fswTaskName = "fswTask"
     simProcessName = "simProcess"
 
     #  Create a sim module as an empty container
@@ -384,9 +448,10 @@ def run(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the simulation time step information
-    simulationTimeStep = macros.sec2nano(2.0)
-    simulationTime = macros.sec2nano(2000.0)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    simulationTimeStep = macros.sec2nano(1.0)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep, 3))
+    dynProcess.addTask(scSim.CreateNewTask(measTaskName, simulationTimeStep, 2))
+    dynProcess.addTask(scSim.CreateNewTask(fswTaskName, simulationTimeStep, 1))
 
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
@@ -485,7 +550,7 @@ def run(show_plots):
 
     # Create an SRP model
     srp = radiationPressure.RadiationPressure()  # default model is the SRP_CANNONBALL_MODEL
-    srp.area = 1.1  # m^3
+    srp.area = 3.  # m^3
     srp.coefficientReflection = 0.9
     scObject.addDynamicEffector(srp)
     srp.sunEphmInMsg.subscribeTo(sunPlanetStateMsg)
@@ -500,32 +565,38 @@ def run(show_plots):
     simpleNavMeas.ModelTag = 'SimpleNav'
     simpleNavMeas.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     pos_sigma_sc = 40.0
-    vel_sigma_sc = 0.1
-    att_sigma_sc = 2.0 * math.pi / 180.0
-    rate_sigma_sc = 0.3 * math.pi / 180.0
+    vel_sigma_sc = 0.05
+    att_sigma_sc = 0. * math.pi / 180.0
+    rate_sigma_sc = 0. * math.pi / 180.0
     sun_sigma_sc = 0.0
     dv_sigma_sc = 0.0
     p_matrix_sc = [[pos_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., pos_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., pos_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., vel_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., vel_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., vel_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., att_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., att_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., att_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_sc, 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_sc, 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sun_sigma_sc, 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sun_sigma_sc, 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sun_sigma_sc, 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc, 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc, 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc]]
-    walk_bounds_sc = [[10.], [10.], [10.], [0.1], [0.1], [0.1], [0.005], [0.005], [0.005], [0.002], [0.002], [0.002], [0.], [0.], [0.], [0.], [0.], [0.]]
+                   [0., pos_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                   [0., 0., pos_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                   [0., 0., 0., vel_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., vel_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 0., vel_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 0., 0., att_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 0., 0., 0., att_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 0., 0., 0., 0., att_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_sc, 0., 0., 0., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_sc, 0., 0., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sun_sigma_sc, 0., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sun_sigma_sc, 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sun_sigma_sc, 0., 0., 0.],
+                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc, 0., 0.],
+                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc, 0.],
+                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc]]
+    walk_bounds_sc = [[10.], [10.], [10.], [0.01], [0.01], [0.01], [0.005], [0.005], [0.005], [0.002], [0.002], [0.002], [0.], [0.], [0.], [0.], [0.], [0.]]
     simpleNavMeas.PMatrix = p_matrix_sc
     simpleNavMeas.walkBounds = walk_bounds_sc
+
+    simpleNavMeas2 = simpleNav.SimpleNav()
+    simpleNavMeas2.ModelTag = 'SimpleNav2'
+    simpleNavMeas2.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    simpleNavMeas2.PMatrix = p_matrix_sc
+    simpleNavMeas2.walkBounds = walk_bounds_sc
 
     # Set up planetNav for Bennu "measurements"
     planetNavMeas = planetNav.PlanetNav()
@@ -533,20 +604,20 @@ def run(show_plots):
     # Define the Pmatrix for planetNav, no uncertainty on position and velocity of the body
     pos_sigma_p = 0.0
     vel_sigma_p = 0.0
-    att_sigma_p = 2.0 * math.pi / 180.0
-    rate_sigma_p = 0.3 * math.pi / 180.0
+    att_sigma_p = 1.0 * math.pi / 180.0
+    rate_sigma_p = 0.1 * math.pi / 180.0
     p_matrix_p = [[pos_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., pos_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., pos_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., vel_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., vel_sigma_p, 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., vel_sigma_p, 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., att_sigma_p, 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., att_sigma_p, 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., att_sigma_p, 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_p, 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_p, 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_p]]
+                  [0., pos_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., pos_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., vel_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., vel_sigma_p, 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., vel_sigma_p, 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., att_sigma_p, 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., att_sigma_p, 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., att_sigma_p, 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_p, 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_p, 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_p]]
     walk_bounds_p = [[0.], [0.], [0.], [0.], [0.], [0.], [0.005], [0.005], [0.005], [0.002], [0.002], [0.002]]
     planetNavMeas.PMatrix = p_matrix_p
     planetNavMeas.walkBounds = walk_bounds_p
@@ -589,6 +660,22 @@ def run(show_plots):
     rwMotorTorqueConfig.controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
 
+    # Create the Lyapunov feedback controller
+    waypointFeedback = smallBodyWaypointFeedback.SmallBodyWaypointFeedback()
+    waypointFeedback.asteroidEphemerisInMsg.subscribeTo(planetNavMeas.ephemerisOutMsg)
+    waypointFeedback.sunEphemerisInMsg.subscribeTo(sunEphemerisMsg)
+    waypointFeedback.navAttInMsg.subscribeTo(simpleNavMeas2.attOutMsg)
+    waypointFeedback.A_sc = 1.  # Surface area of the spacecraft, m^2
+    waypointFeedback.M_sc = mass  # Mass of the spacecraft, kg
+    waypointFeedback.IHubPntC_B = unitTestSupport.np2EigenMatrix3d(I)  # sc inertia
+    waypointFeedback.mu_ast = mu  # Gravitational constant of the asteroid
+    waypointFeedback.x1_ref = [-2000., 0., 0.]
+    waypointFeedback.x2_ref = [0.0, 0.0, 0.0]
+
+    extForceTorqueModule = extForceTorque.ExtForceTorque()
+    extForceTorqueModule.cmdForceBodyInMsg.subscribeTo(waypointFeedback.forceOutMsg)
+    scObject.addDynamicEffector(extForceTorqueModule)
+
     # Set up the small body EKF
     smallBodyNav = smallBodyNavEKF.SmallBodyNavEKF()
     smallBodyNav.ModelTag = "smallBodyNavEKF"
@@ -596,62 +683,69 @@ def run(show_plots):
     # Set the filter parameters (sc area, mass, gravitational constants, etc.)
     smallBodyNav.A_sc = 1.  # Surface area of the spacecraft, m^2
     smallBodyNav.M_sc = mass  # Mass of the spacecraft, kg
-    smallBodyNav.IHubPntC_B = unitTestSupport.np2EigenMatrix3d(I)  # sc inertia
-    smallBodyNav.IWheelPntC_B = (RW1.Js*np.identity(3)).tolist()  # wheel inertia
     smallBodyNav.mu_ast = mu  # Gravitational constant of the asteroid
 
     # Set the process noise
-    Q = np.identity(18)
-    Q[0,0] = Q[1,1] = Q[2,2] = 5.
-    Q[3,3] = Q[4,4] = Q[5,5] = 0.0001
-    Q[0:3,3:6] = Q[3:6,0:3] = 0.0001   # Cross position and velocity
+    Q = np.zeros((12,12))
+    Q[0,0] = Q[1,1] = Q[2,2] = 0.0000001
+    Q[3,3] = Q[4,4] = Q[5,5] = 0.000001
+    Q[6,6] = Q[7,7] = Q[8,8] = 0.000001
+    Q[9,9] = Q[10,10] = Q[11,11] = 0.0000001
     smallBodyNav.Q = Q.tolist()
 
     # Set the measurement noise
-    R = np.identity(18)
-    R[0,0] = 45.  # position sigmas
-    R[1,1] = R[2,2] = 20.
-    R[3,3] = R[4,4] = R[5,5] = 0.1   # velocity sigmas
-    R[0:3,3:6] = R[3:6,0:3] = 0.001   # Cross position and velocity
-    smallBodyNav.R = R.tolist()  # Measurement Noise
+    R = np.zeros((12,12))
+    R[0,0] = R[1,1] = R[2,2] = pos_sigma_sc  # position sigmas
+    R[3,3] = R[4,4] = R[5,5] = vel_sigma_sc   # velocity sigmas
+    R[6,6] = R[7,7] = R[8,8] = att_sigma_p
+    R[9,9] = R[10,10] = R[11,11] = rate_sigma_p
+    smallBodyNav.R = np.multiply(R, R).tolist()  # Measurement Noise
 
     # Set the initial guess, x_0
     x_0 = np.zeros(18)
-    # x_0[0:3] = np.array([2500., -750., 810.])
-    x_0[0:3] = np.array([3000., -1000., 1000.])
-    x_0[3:6] = v_BO_N
-    x_0[6] = 0.2
-    x_0[13] = 0.1
-    smallBodyNav.x_hat_k = unitTestSupport.np2EigenVectorXd(x_0)
+    x_0[0:3] = np.array([2458., -704.08, 844.275])
+    x_0[3:6] = np.array([1.475, -0.176, 0.894])
+    x_0[6:9] = np.array([-0.58, 0.615, 0.125])
+    x_0[11] = 0.0004
+    smallBodyNav.x_hat_k = x_0
     # Set the covariance to something large
-    smallBodyNav.P_k = (1E9*np.identity(18)).tolist()
+    smallBodyNav.P_k = (0.1*np.identity(12)).tolist()
 
     # Connect the relevant modules to the smallBodyEKF input messages
     smallBodyNav.navTransInMsg.subscribeTo(simpleNavMeas.transOutMsg)
-    smallBodyNav.navAttInMsg.subscribeTo(simpleNavMeas.attOutMsg)
+    smallBodyNav.navAttInMsg.subscribeTo(simpleNavMeas2.attOutMsg)
     smallBodyNav.asteroidEphemerisInMsg.subscribeTo(planetNavMeas.ephemerisOutMsg)
     smallBodyNav.sunEphemerisInMsg.subscribeTo(sunEphemerisMsg)
-    for i in range(3):
-        smallBodyNav.addRWToFilter(rwStateEffector.rwOutMsgs[i])
+    smallBodyNav.cmdForceBodyInMsg.subscribeTo(waypointFeedback.forceOutMsg)
     smallBodyNav.addThrusterToFilter(thrusterMsg)
 
     # Connect the smallBodyEKF output messages to the relevant modules
-    trackingErrorData.attNavInMsg.subscribeTo(simpleNavMeas.attOutMsg)
-    sunPointData.transNavInMsg.subscribeTo(simpleNavMeas.transOutMsg)
+    trackingErrorData.attNavInMsg.subscribeTo(simpleNavMeas2.attOutMsg)
+    sunPointData.transNavInMsg.subscribeTo(simpleNavMeas2.transOutMsg)
+    waypointFeedback.navTransInMsg.subscribeTo(smallBodyNav.navTransOutMsg)
+
+    # Set the waypoint feedback gains
+    waypointFeedback.K1 = unitTestSupport.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
+    waypointFeedback.K2 = unitTestSupport.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
 
     # Add all models to the task
     scSim.AddModelToTask(simTaskName, scObject, ModelPriority=100)
     scSim.AddModelToTask(simTaskName, srp, ModelPriority=99)
     scSim.AddModelToTask(simTaskName, gravBodyEphem, ModelPriority=99)
-    scSim.AddModelToTask(simTaskName, ephemConverter, ModelPriority=98)
-    scSim.AddModelToTask(simTaskName, simpleNavMeas, ModelPriority=97)
-    scSim.AddModelToTask(simTaskName, planetNavMeas, ModelPriority=96)
-    scSim.AddModelToTask(simTaskName, sunPointWrap, sunPointData, ModelPriority=95)
-    scSim.AddModelToTask(simTaskName, trackingErrorWrap, trackingErrorData, ModelPriority=94)
-    scSim.AddModelToTask(simTaskName, mrpFeedbackControlWrap, mrpFeedbackControlData, ModelPriority=93)
-    scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig, ModelPriority=92)
     scSim.AddModelToTask(simTaskName, rwStateEffector, ModelPriority=91)
-    scSim.AddModelToTask(simTaskName, smallBodyNav, ModelPriority=90)
+    scSim.AddModelToTask(simTaskName, extForceTorqueModule, ModelPriority=91)
+    scSim.AddModelToTask(simTaskName, simpleNavMeas2, ModelPriority=90)
+    scSim.AddModelToTask(simTaskName, ephemConverter, ModelPriority=98)
+
+    scSim.AddModelToTask(measTaskName, simpleNavMeas, ModelPriority=97)
+    scSim.AddModelToTask(measTaskName, planetNavMeas, ModelPriority=96)
+
+    scSim.AddModelToTask(fswTaskName, smallBodyNav, ModelPriority=90)
+    scSim.AddModelToTask(fswTaskName, waypointFeedback, ModelPriority=89)
+    scSim.AddModelToTask(fswTaskName, sunPointWrap, sunPointData, ModelPriority=95)
+    scSim.AddModelToTask(fswTaskName, trackingErrorWrap, trackingErrorData, ModelPriority=94)
+    scSim.AddModelToTask(fswTaskName, mrpFeedbackControlWrap, mrpFeedbackControlData, ModelPriority=93)
+    scSim.AddModelToTask(fswTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig, ModelPriority=92)
 
     #   Setup data logging before the simulation is initialized
     sc_truth_recorder = scObject.scStateOutMsg.recorder()
@@ -663,11 +757,11 @@ def run(show_plots):
     sc_att_meas_recorder = simpleNavMeas.attOutMsg.recorder()
     scSim.AddModelToTask(simTaskName, sc_truth_recorder)
     scSim.AddModelToTask(simTaskName, ast_truth_recorder)
-    scSim.AddModelToTask(simTaskName, state_recorder)
-    scSim.AddModelToTask(simTaskName, sc_meas_recorder)
-    scSim.AddModelToTask(simTaskName, sc_att_meas_recorder)
+    scSim.AddModelToTask(fswTaskName, state_recorder)
+    scSim.AddModelToTask(measTaskName, sc_meas_recorder)
+    scSim.AddModelToTask(measTaskName, sc_att_meas_recorder)
     scSim.AddModelToTask(simTaskName, ast_ephemeris_recorder)
-    scSim.AddModelToTask(simTaskName, ast_ephemeris_meas_recorder)
+    scSim.AddModelToTask(measTaskName, ast_ephemeris_meas_recorder)
 
     if vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
@@ -679,7 +773,24 @@ def run(show_plots):
     scSim.InitializeSimulation()
 
     #   configure a simulation stop time and execute the simulation run
+    simulationTime = macros.sec2nano(1000.0)
     scSim.ConfigureStopTime(simulationTime)
+    scSim.ExecuteSimulation()
+
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(1000.))
+    scSim.disableTask(measTaskName)
+    scSim.ExecuteSimulation()
+
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(2000.))
+    scSim.enableTask(measTaskName)
+    scSim.ExecuteSimulation()
+
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(3000.))
+    scSim.disableTask(measTaskName)
+    scSim.ExecuteSimulation()
+
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(4000.))
+    scSim.enableTask(measTaskName)
     scSim.ExecuteSimulation()
 
     # retrieve logged spacecraft position relative to asteroid
@@ -687,10 +798,6 @@ def run(show_plots):
     r_BN_N_meas = sc_meas_recorder.r_BN_N
     v_BN_N_truth = sc_truth_recorder.v_BN_N
     v_BN_N_meas = sc_meas_recorder.v_BN_N
-    sigma_BN_truth = sc_truth_recorder.sigma_BN
-    sigma_BN_meas = sc_att_meas_recorder.sigma_BN
-    omega_BN_B_truth = sc_truth_recorder.omega_BN_B
-    omega_BN_B_meas = sc_att_meas_recorder.omega_BN_B
     r_AN_N = ast_truth_recorder.PositionVector
     v_AN_N = ast_truth_recorder.VelocityVector
     sigma_AN_truth = ast_ephemeris_recorder.sigma_BN
@@ -700,16 +807,29 @@ def run(show_plots):
     x_hat = state_recorder.state
     P = state_recorder.covar
 
+    time = sc_truth_recorder.times() * macros.NANO2SEC
+    meas_time = sc_meas_recorder.times() * macros.NANO2SEC
+
     # Compute the relative position and velocity of the s/c in the small body hill frame
     r_BO_O_truth = []
     v_BO_O_truth = []
     r_BO_O_meas = []
     v_BO_O_meas = []
-    for rd_N, vd_N, rc_N, vc_N, rd_N_meas, vd_N_meas in zip(r_BN_N_truth, v_BN_N_truth, r_AN_N, v_AN_N, r_BN_N_meas, v_BN_N_meas):
+    for rd_N, vd_N, rc_N, vc_N in zip(r_BN_N_truth, v_BN_N_truth, r_AN_N, v_AN_N):
         dcm_ON = orbitalMotion.hillFrame(rc_N, vc_N)
 
         r_BO_O_truth.append(np.matmul(dcm_ON, rd_N-rc_N))
         v_BO_O_truth.append(np.matmul(dcm_ON, vd_N-vc_N))
+
+    for idx, t in enumerate(meas_time):
+        truth_idx = np.where(time == t)[0][0]
+
+        rc_N = r_AN_N[truth_idx, :]
+        vc_N = v_AN_N[truth_idx, :]
+        rd_N_meas = r_BN_N_meas[idx, :]
+        vd_N_meas = v_BN_N_meas[idx, :]
+
+        dcm_ON = orbitalMotion.hillFrame(rc_N, vc_N)
 
         r_BO_O_meas.append(np.matmul(dcm_ON, rd_N_meas-rc_N))
         v_BO_O_meas.append(np.matmul(dcm_ON, vd_N_meas-vc_N))
@@ -717,13 +837,12 @@ def run(show_plots):
     #
     #   plot the results
     #
-    time = sc_truth_recorder.times() * macros.NANO2SEC
-    plot_position(time, np.array(r_BO_O_truth), x_hat[:,0:3], np.array(r_BO_O_meas))
+    plot_position(time, meas_time, np.array(r_BO_O_truth), x_hat[:,0:3], np.array(r_BO_O_meas))
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
 
-    plot_velocity(time, np.array(v_BO_O_truth), x_hat[:,3:6], np.array(v_BO_O_meas))
+    plot_velocity(time, meas_time, np.array(v_BO_O_truth), x_hat[:,3:6], np.array(v_BO_O_meas))
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
@@ -735,19 +854,19 @@ def run(show_plots):
     pltName = fileName + "4"
     figureList[pltName] = plt.figure(4)
 
-    plot_sc_att(time, np.array(sigma_BN_truth), x_hat[:,12:15], np.array(sigma_BN_meas))
+    plot_ast_att(time, meas_time, np.array(sigma_AN_truth), x_hat[:,6:9], np.array(sigma_AN_meas))
     pltName = fileName + "5"
     figureList[pltName] = plt.figure(5)
 
-    plot_sc_rate(time, np.array(omega_BN_B_truth), x_hat[:,15:], np.array(omega_BN_B_meas))
+    plot_ast_rate(time, meas_time, np.array(omega_AN_A_truth), x_hat[:,9:12], np.array(omega_AN_A_meas))
     pltName = fileName + "6"
     figureList[pltName] = plt.figure(6)
 
-    plot_ast_att(time, np.array(sigma_AN_truth), x_hat[:,6:9], np.array(sigma_AN_meas))
+    plot_ast_attitude_error(time, np.subtract(sigma_AN_truth, x_hat[:,6:9]), P)
     pltName = fileName + "7"
     figureList[pltName] = plt.figure(7)
 
-    plot_ast_rate(time, np.array(omega_AN_A_truth), x_hat[:,9:12], np.array(omega_AN_A_meas))
+    plot_ast_rate_error(time, np.subtract(omega_AN_A_truth, x_hat[:,9:12]), P)
     pltName = fileName + "8"
     figureList[pltName] = plt.figure(8)
 

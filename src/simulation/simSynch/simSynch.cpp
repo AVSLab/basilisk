@@ -28,7 +28,7 @@ ClockSynch::ClockSynch()
 {
 	this->timeInitialized = false;
 	this->startSimTimeNano = 0;
-	this->accuracyNanos = (int64_t) (0.01*NANO2SEC);
+	this->accuracyNanos = (int64_t) (0.01*SEC2NANO);
 	this->accelFactor = 1.0;
 	this->displayTime = false;
     return;

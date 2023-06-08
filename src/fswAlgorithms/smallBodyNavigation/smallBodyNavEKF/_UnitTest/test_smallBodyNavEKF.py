@@ -31,7 +31,7 @@ def test_smallBodyNavEKF(show_plots):
     **Validation Test Description**
 
     This unit test checks that the filter converges to a constant state estimate under the presence of static measurements.
-    No reaction wheels or thrusters are used, but a message for each is created and connected to avoid warnings.
+    No thrusters are used, but a message for each is created and connected to avoid warnings.
 
     **Test Parameters**
 
@@ -62,24 +62,21 @@ def smallBodyNavEKFTestFunction(show_plots):
     # Set the filter parameters (sc area, mass, gravitational constants, etc.)
     module.A_sc = 1.  # Surface area of the spacecraft, m^2
     module.M_sc = 100.  # Mass of the spacecraft, kg
-    I = [82.12, 0.0, 0.0, 0.0, 98.40, 0.0, 0.0, 0.0, 121.0]
-    module.IHubPntC_B = unitTestSupport.np2EigenMatrix3d(I)  # sc inertia
-    module.IWheelPntC_B = ((50./6000.0*macros.RPM)*np.identity(3)).tolist()  # wheel inertia
     module.mu_ast = 5.2  # Gravitational constant of the asteroid
-    module.Q = (0.1*np.identity(18)).tolist()  # Process Noise
-    module.R = (0.1*np.identity(18)).tolist()  # Measurement Noise
+    module.Q = (0.1*np.identity(12)).tolist()  # Process Noise
+    module.R = (0.1*np.identity(12)).tolist()  # Measurement Noise
 
     bennu_radius = 1.355887692*orbitalMotion.AU*1000.0  # meters
     bennu_velocity = np.sqrt(orbitalMotion.MU_SUN*(1000.**3)/bennu_radius) # m/s, assumes circular orbit
 
-    x_0 = [2010., 1510., 1010., 0., 2., 0., 0.14, 0., 0., 0., 0., 0., 0.13, 0., 0., 0., 0., 0.]
-    module.x_hat_k = unitTestSupport.np2EigenVectorXd(x_0)
-    module.P_k = (1000.*np.identity(18)).tolist()
+    x_0 = [2010., 1510., 1010., 0., 2., 0., 0.14, 0., 0., 0., 0., 0.]
+    module.x_hat_k = x_0
+    module.P_k = (0.1*np.identity(12)).tolist()
 
     # Configure blank module input messages
     navTransInMsgData = messaging.NavTransMsgPayload()
     navTransInMsgData.r_BN_N = [bennu_radius + 1000., 1000., 1000.]
-    navTransInMsgData.v_BN_N = [0., bennu_velocity+1., 0.]
+    navTransInMsgData.v_BN_N = [0., bennu_velocity + 1., 0.]
     navTransInMsg = messaging.NavTransMsg().write(navTransInMsgData)
 
     navAttInMsgData = messaging.NavAttMsgPayload()
@@ -97,26 +94,23 @@ def smallBodyNavEKFTestFunction(show_plots):
     sunEphemerisInMsgData = messaging.EphemerisMsgPayload()
     sunEphemerisInMsg = messaging.EphemerisMsg().write(sunEphemerisInMsgData)
 
-    rwConfigLogInMsgData = messaging.RWConfigLogMsgPayload()
-    rwConfigLogInMsgData.Js = 50./6000.0*macros.RPM
-    rwConfigLogInMsg = messaging.RWConfigLogMsg().write(rwConfigLogInMsgData)
-
     THROutputInMsgData = messaging.THROutputMsgPayload()
     THROutputInMsg = messaging.THROutputMsg().write(THROutputInMsgData)
+
+    cmdForceInMsgData = messaging.CmdForceBodyMsgPayload()
+    cmdForceInMsg = messaging.CmdForceBodyMsg().write(cmdForceInMsgData)
 
     # subscribe input messages to module
     module.navTransInMsg.subscribeTo(navTransInMsg)
     module.navAttInMsg.subscribeTo(navAttInMsg)
     module.asteroidEphemerisInMsg.subscribeTo(asteroidEphemerisInMsg)
     module.sunEphemerisInMsg.subscribeTo(sunEphemerisInMsg)
-    module.addRWToFilter(rwConfigLogInMsg)
     module.addThrusterToFilter(THROutputInMsg)
+    module.cmdForceBodyInMsg.subscribeTo(cmdForceInMsg)
 
     # setup output message recorder objects
     navTransOutMsgRec = module.navTransOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, navTransOutMsgRec)
-    navAttOutMsgRec = module.navAttOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, navAttOutMsgRec)
     smallBodyNavOutMsgRec = module.smallBodyNavOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, smallBodyNavOutMsgRec)
     smallBodyNavOutMsgRecC = module.smallBodyNavOutMsgC.recorder()
@@ -124,25 +118,22 @@ def smallBodyNavEKFTestFunction(show_plots):
     asteroidEphemerisOutMsgRec = module.asteroidEphemerisOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, asteroidEphemerisOutMsgRec)
 
-
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(10.5))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(10.))
     unitTestSim.ExecuteSimulation()
 
     x_hat = smallBodyNavOutMsgRec.state
     x_hat_c_wrapped = smallBodyNavOutMsgRecC.state
-    covar = smallBodyNavOutMsgRec.covar
-    true_x_hat = np.array([[1000.1, 1000., 1000., 0., 1.0, 0., 0.1, 0., 0., 0., 0., 0., 0.1, 0., 0., 0., 0., 0.]])
-
-    # print(x_hat[0,:])
-    # print(x_hat_c_wrapped)
+    true_x_hat = np.array([[1.33666664e+03,  1.18333330e+03,  1.00333330e+03, -4.77594532e-06,
+                            1.33332617,     -6.10976335e-06,  1.13333333e-01,  0.00000000,
+                            0.00000000,      0.00000000,      0.00000000,      0.00000000]])
 
     testFailCount, testMessages = unitTestSupport.compareArray(
-        true_x_hat, np.array([x_hat[0,:]]), 0.1, "x_hat",
+        true_x_hat, np.array([x_hat[-1,:]]), 0.1, "x_hat",
         testFailCount, testMessages)
 
     testFailCount, testMessages = unitTestSupport.compareArray(
-        true_x_hat, np.array([x_hat_c_wrapped[0,:]]), 0.1, "x_hat_c_wrapped",
+        true_x_hat, np.array([x_hat_c_wrapped[-1,:]]), 0.1, "x_hat_c_wrapped",
         testFailCount, testMessages)
 
     plt.figure(1)
@@ -167,28 +158,6 @@ def smallBodyNavEKFTestFunction(show_plots):
     plt.xlabel('Time (s)')
     plt.ylabel('v_BO_O (m/s)')
     plt.title('Estimated Spacecraft Velocity')
-
-    plt.figure(3)
-    plt.clf()
-    plt.figure(3, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,12], label='s1')
-    plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,13], label='s2')
-    plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,14], label='s3')
-    plt.legend(loc='upper left')
-    plt.xlabel('Time (s)')
-    plt.ylabel('sigma_BN (rad)')
-    plt.title('Estimated Spacecraft Attitude')
-
-    plt.figure(4)
-    plt.clf()
-    plt.figure(4, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,15], label='omega1')
-    plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,16], label='omega2')
-    plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,17], label='omega3')
-    plt.legend(loc='upper left')
-    plt.xlabel('Time (s)')
-    plt.ylabel('omega_BN_B (rad/s)')
-    plt.title('Estimated Spacecraft Rate')
 
     plt.figure(5)
     plt.clf()
@@ -215,8 +184,6 @@ def smallBodyNavEKFTestFunction(show_plots):
     if show_plots:
         plt.show()
 
-
-
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)
     else:
@@ -227,5 +194,3 @@ def smallBodyNavEKFTestFunction(show_plots):
 
 if __name__ == "__main__":
     test_smallBodyNavEKF(True)
-
-
