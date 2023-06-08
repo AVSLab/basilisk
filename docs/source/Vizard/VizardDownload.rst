@@ -47,7 +47,7 @@ Download the platform specific bundles file, unzip it, and move the contents to 
     Vizard does not support sub-folders in the ``CustomModels`` folder.  All Unity asset files should
     be directly installed in the ``CustomModels`` folder.
 
-.. list-table:: Unity 2020 Asset Download (Vizard 2.1.1 - 2.1.5)
+.. list-table:: Unity 2020 Asset Download (Vizard 2.1.1 - current)
     :widths: 15 40 15 15 15
     :header-rows: 1
 
@@ -56,14 +56,20 @@ Download the platform specific bundles file, unzip it, and move the contents to 
       -
       -
       -
-    * - Asteroids
+    * - :ref:`assetAsteroids`
       - Asteroid model package including high fidelity models of Bennu, Ryugu, Itokawa, as well as some
         generic asteroid models
       - :download:`macOS<https://hanspeterschaub.info/bskFiles/Assets/asteroids_macOS.zip>`
       - :download:`Linux<https://hanspeterschaub.info/bskFiles/Assets/asteroids_Linux.zip>`
       - :download:`Windows<https://hanspeterschaub.info/bskFiles/Assets/asteroids_Windows.zip>`
-    * - Martian Moons
+    * - :ref:`assetMartianMoons`
       - Package including models for Phobos and Deimos
       - :download:`macOS<https://hanspeterschaub.info/bskFiles/Assets/martianmoons_macOS.zip>`
       - :download:`Linux<https://hanspeterschaub.info/bskFiles/Assets/martianmoons_Linux.zip>`
       - :download:`Windows<https://hanspeterschaub.info/bskFiles/Assets/martianmoons_Windows.zip>`
+
+.. toctree::
+   :hidden:
+
+   assetAsteroids
+   assetMartianMoons
