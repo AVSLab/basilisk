@@ -32,16 +32,16 @@ jobs:
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
-#      - name: Cache pip modules
-#        id: cache-pip
-#        uses: actions/cache@v3
-#        env:
-#          cache-name: cache-pip-modules
-#        with:
-#          path: ~/.cache/pip
-#          key: ${{ runner.os }}-pip-${{ hashFiles('**/docs/source/bskPkgRequired.txt') }}
-#          restore-keys: |
-#            ${{ runner.os }}-pip-
+      - name: Cache pip modules
+        id: cache-pip
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-pip-modules
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/docs/source/bskPkgRequired.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
       - name: "Install swig and cmake"
         run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
       - name: "Install python packages"
@@ -102,16 +102,16 @@ jobs:
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
-      - name: Cache pip modules
-        id: cache-pip
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-pip-modules
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/bskPkgRequired.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+#      - name: Cache pip modules
+#        id: cache-pip
+#        uses: actions/cache@v3
+#        env:
+#          cache-name: cache-pip-modules
+#        with:
+#          path: ~/.cache/pip
+#          key: ${{ runner.os }}-pip-${{ hashFiles('**/bskPkgRequired.txt') }}
+#          restore-keys: |
+#            ${{ runner.os }}-pip-
       - name: "Install swig and cmake"
         run: brew update
       - name: "Install swig and cmake"
