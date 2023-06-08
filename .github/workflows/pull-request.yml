@@ -112,15 +112,13 @@ jobs:
 #          key: ${{ runner.os }}-pip-${{ hashFiles('**/bskPkgRequired.txt') }}
 #          restore-keys: |
 #            ${{ runner.os }}-pip-
-      - name: "Install python packages"
-        run: pip install wheel conan pytest-xdist
       - name: "Install swig and cmake"
         run: brew update
       - name: "Install swig and cmake"
         run: brew install swig cmake && brew link cmake
       - name: "Create python virtual env"
         run: python3 -m venv .venv
-      - name: "Install wheel and conan package"
+      - name: "Install python packages"
         run: source .venv/bin/activate && pip3 install wheel conan==1.59.0 pytest datashader holoviews pytest-xdist
       - name: "Build basilisk"
         run: source .venv/bin/activate && python3 conanfile.py
