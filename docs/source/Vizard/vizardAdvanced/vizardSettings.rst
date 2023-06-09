@@ -667,6 +667,13 @@ The following table illustrates the possible variables for the
       -
       - No
       - Value of 0 to render visual image (default), value of 1 to render depth buffer to image
+    * - ``depthMapClippingPlanes``
+      - double(2)
+      - m
+      - No
+      - Set the bounds of rendered depth map by setting the near and far clipping planes when
+        in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
+
 
 
 

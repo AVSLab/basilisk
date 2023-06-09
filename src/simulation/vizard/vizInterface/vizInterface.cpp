@@ -974,7 +974,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     camera->add_resolution(this->cameraConfigBuffers[camCounter].resolution[j]);
                 }
                 camera->add_cameradir_b(unityCameraMRP[j]);
-                camera->add_camerapos_b(this->cameraConfigBuffers[camCounter].cameraPos_B[j]);            }
+                camera->add_camerapos_b(this->cameraConfigBuffers[camCounter].cameraPos_B[j]);
+            }
             camera->set_renderrate(this->cameraConfigBuffers[camCounter].renderRate);        // Unity expects nano-seconds between images
             camera->set_cameraid(this->cameraConfigBuffers[camCounter].cameraID);
             camera->set_fieldofview(this->cameraConfigBuffers[camCounter].fieldOfView*R2D);  // Unity expects degrees
@@ -987,6 +988,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             camera->set_ppmaxblursize(this->cameraConfigBuffers[camCounter].ppMaxBlurSize);
             camera->set_updatecameraparameters(this->cameraConfigBuffers[camCounter].updateCameraParameters);
             camera->set_rendermode(this->cameraConfigBuffers[camCounter].renderMode);
+            if (this->cameraConfigBuffers[camCounter].depthMapClippingPlanes[0] > 0.0) {
+                for (int j=0; j<2; j++) {
+                    camera->add_depthmapclippingplanes(this->cameraConfigBuffers[camCounter].depthMapClippingPlanes[j]);
+                }
+            }
         }
     }
 

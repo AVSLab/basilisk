@@ -181,6 +181,7 @@ message VizMessage{
         double ppFocalLength = 14; // [mm] (Optional) Value of -1 to calculate the focal length automatically from the field-of-view value set on the camera, otherwise provide positive non-zero value in range. Valid setting range: 1mm to 300mm. Value of 0 to leave this option off.
         int64 ppMaxBlurSize = 15; //(Optional) Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to leave this option off.
         int64 renderMode = 16; //(Optional) Value of 0 to render visual image (default), value of 1 to render depth buffer to image
+        repeated double depthMapClippingPlanes = 17; //(Optional) [m] Set the bounds of rendered depth map by setting the near and far clipping planes when in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
         
     }
 

@@ -897,7 +897,7 @@ def createCameraConfigMsg(viz, **kwargs):
     unitTestSupport.checkMethodKeyword(
         ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'cameraPos_B',
          'sigma_CB', 'skyBox', 'postProcessingOn', 'ppFocusDistance', 'ppAperture', 'ppFocalLength',
-         'ppMaxBlurSize', 'updateCameraParameters', 'renderMode'],
+         'ppMaxBlurSize', 'updateCameraParameters', 'renderMode', 'depthMapClippingPlanes'],
         kwargs)
 
     cameraConfigMsgPayload = messaging.CameraConfigMsgPayload()
@@ -1047,6 +1047,25 @@ def createCameraConfigMsg(viz, **kwargs):
         cameraConfigMsgPayload.renderMode = val
     else:
         cameraConfigMsgPayload.renderMode = 0
+
+    if 'depthMapClippingPlanes' in kwargs:
+        if cameraConfigMsgPayload.renderMode != 1:
+            print('WARNING: vizSupport: depthMapClippingPlanes only works with renderMode set to 1 (depthMap).')
+            exit(1)
+        val = kwargs['depthMapClippingPlanes']
+        if not isinstance(val, list):
+            print('ERROR: vizSupport: depthMapClippingPlanes must be a list of two doubles.')
+            exit(1)
+        if len(val) != 2:
+            print('ERROR: vizSupport: depthMapClippingPlanes list ' + str(val) + 'must be of length 2')
+            exit(1)
+        if not isinstance(val[0], float) or not isinstance(val[1], float):
+            print('ERROR: vizSupport: depthMapClippingPlanes list ' + str(val) + ' must contain floats')
+            exit(1)
+        print(val)
+        cameraConfigMsgPayload.depthMapClippingPlanes = val
+    else:
+        cameraConfigMsgPayload.depthMapClippingPlanes = [-1.0, -1.0]
 
     cameraConfigMsg = messaging.CameraConfigMsg().write(cameraConfigMsgPayload)
     cameraConfigMsg.this.disown()
