@@ -23,6 +23,10 @@ if(POLICY CMP0046)
   cmake_policy(SET CMP0046 NEW)
 endif()
 
+if(POLICY CMP0094)  # https://cmake.org/cmake/help/latest/policy/CMP0094.html
+  cmake_policy(SET CMP0094 NEW)  # FindPython should return the first matching Python
+endif()
+
 project("basilisk")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -388,6 +392,7 @@ endfunction(generate_package_targets)
 # Start of main projection configuration
 set(Python3_FIND_REGISTRY "LAST")
 set(Python3_FIND_VIRTUALENV "FIRST")
+set(Python3_FIND_FRAMEWORK "LAST")
 
 find_package(PythonInterp 3 REQUIRED)
 find_package(PythonLibs 3 REQUIRED)
