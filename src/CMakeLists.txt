@@ -390,9 +390,15 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 endfunction(generate_package_targets)
 
 # Start of main projection configuration
-set(Python3_FIND_REGISTRY "LAST")
-set(Python3_FIND_VIRTUALENV "FIRST")
-set(Python3_FIND_FRAMEWORK "LAST")
+#set(Python3_FIND_REGISTRY "LAST")
+set(Python_FIND_VIRTUALENV "FIRST")
+#set(Python3_FIND_FRAMEWORK "LAST")
+if (NOT DEFINED Python_FIND_REGISTRY)
+  set(Python3_FIND_REGISTRY "LAST")
+endif ()
+if (NOT DEFINED Python_FIND_FRAMEWORK)
+  set(Python3_FIND_FRAMEWORK "LAST")
+endif ()
 
 find_package(PythonInterp 3 REQUIRED)
 find_package(PythonLibs 3 REQUIRED)

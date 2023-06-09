@@ -1,6 +1,13 @@
 cmake_policy(SET CMP0078 NEW)
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
+set(Python_FIND_VIRTUALENV "FIRST")
+if (NOT DEFINED Python_FIND_REGISTRY)
+  set(Python3_FIND_REGISTRY "LAST")
+endif ()
+if (NOT DEFINED Python_FIND_FRAMEWORK)
+  set(Python3_FIND_FRAMEWORK "LAST")
+endif ()
 find_package(PythonLibs 3 REQUIRED)
 find_package(PythonInterp 3 REQUIRED)
 
