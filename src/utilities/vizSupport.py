@@ -976,7 +976,7 @@ def createCameraConfigMsg(viz, **kwargs):
             print('ERROR: vizSupport: sigma_CB must be a list')
             exit(1)
         if len(val) != 3:
-            print('ERROR: vizSupport: camersigma_CBaPos_B list ' + str(val) + 'must be of length 3')
+            print('ERROR: vizSupport: sigma_CB list ' + str(val) + 'must be of length 3')
             exit(1)
         if not isinstance(val[0], float) or not isinstance(val[1], float) or not isinstance(val[2], float):
             print('ERROR: vizSupport: sigma_CB list ' + str(val) + ' must contain floats')
