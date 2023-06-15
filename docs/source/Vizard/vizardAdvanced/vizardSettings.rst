@@ -184,6 +184,11 @@ default setting for that behavior.
     * - ``showLocationLabels``
       - int
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``useSimpleLocationMarkers``
+      - int
+      - Value of 0 (protobuffer default) to use simplified Location markers when number
+        of locations is greater than 100, -1 to force use of full-featured Location, 1 to
+        force use of simplified Location (no cones, range, or communication lines)
     * - ``atmospheresOff``
       - int
       - Toggle to disable the atmosphere effect on celestial bodies, Value of 0 (protobuffer default to use

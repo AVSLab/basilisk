@@ -602,6 +602,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_spacecraftsizemultiplier(this->settings.spacecraftSizeMultiplier);
         vizSettings->set_spacecrafthelioviewsizemultiplier(this->settings.spacecraftHelioViewSizeMultiplier);
         vizSettings->set_forcestartatspacecraftlocalview(this->settings.forceStartAtSpacecraftLocalView);
+        vizSettings->set_usesimplelocationmarkers(this->settings.useSimpleLocationMarkers);
         vizSettings->set_showlocationcommlines(this->settings.showLocationCommLines);
         vizSettings->set_showlocationcones(this->settings.showLocationCones);
         vizSettings->set_showlocationlabels(this->settings.showLocationLabels);
