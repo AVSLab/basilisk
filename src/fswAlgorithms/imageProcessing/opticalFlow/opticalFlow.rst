@@ -56,11 +56,10 @@ attitudes when the images were taken, features, cameraID, and number of features
 A mask is applied to the images when used for Shi-Tomasi feature detection in order to constrain the
 feature detection to the disk, and avoid sharp edges at the limb. This done using the following steps:
 
- * First the contours are found and drawn on an image.
- * Second the main contour is filled with black
- * Third the image is blured and thresholded to remove roughness on the limb
- * Finally the edge is dilated to increase the margin off the limb
- * The bitwise_not version of this final image is the mask to be placed on the image
+ * First the distance transform of the input is computed providing the distance of each point to the dark background
+ * Second the image is thresholded
+ * Third the image is eroded by a masking value (eroding away N pixels from the edge of the limb)
+ * Finally the mask is converted to the correct type
 
 The module outputs a message containing the key point pairs between two sets of images and the
 relevant information for each image.
