@@ -62,7 +62,7 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
     this->sensorTimeTag = 0;
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
-        this->secondImage = cv::imread(this->filename, cv::IMREAD_COLOR);
+        this->secondImage = cv::imread(this->filename, cv::IMREAD_GRAYSCALE);
         this->sensorTimeTag = CurrentSimNanos;
         this->secondImagePresent = true;
         this->filename = "";
@@ -71,7 +71,7 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
                                                 (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
-        this->secondImage = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
+        this->secondImage = cv::imdecode(vectorBuffer, cv::IMREAD_GRAYSCALE);
 
         this->sensorTimeTag = imageBuffer.timeTag;
         this->secondImagePresent = true;
@@ -85,8 +85,6 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
     dtBetweenImagesSeconds = (double)(this->sensorTimeTag - this->firstTimeTag)*NANO2SEC;
     /*! - If there is a second image and an first image, write the paired features message */
     if (this->firstImagePresent && this->secondImagePresent && dtBetweenImagesSeconds >= this->minTimeBetweenPairs){
-        cv::cvtColor(this->secondImage, this->secondImage, cv::COLOR_BGR2GRAY);
-
         std::vector<uchar> status;
         std::vector<float> err;
         auto criteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS,
@@ -140,12 +138,12 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
     }
     /*! - If there is a second image but also a first image, populate the first image buffers */
     else if(this->secondImagePresent){
-        cv::cvtColor(this->secondImage, this->firstImage, cv::COLOR_BGR2GRAY);
+        this->firstImage = this->secondImage.clone();
         cv::Mat mask(this->firstImage.size(), CV_8UC1, cv::Scalar(255));
 
         OpticalFlow::makeMask(this->firstImage, mask);
         cv::goodFeaturesToTrack(this->firstImage,
-                                this->secondFeatures,
+                                this->firstFeatures,
                                 this->maxNumberFeatures,
                                 this->qualityLevel,
                                 this->minumumFeatureDistance,
