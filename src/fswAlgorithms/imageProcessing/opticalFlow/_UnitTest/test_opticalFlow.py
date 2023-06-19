@@ -46,6 +46,7 @@ PIL = pytest.importorskip("PIL")
 @pytest.mark.parametrize("image, sigma_BN, maxFeatures, searchSize, maskSize, slidingWindow, saveImage", [
     ("itokawa",  [1., 0.3, 0.1], 200, 10, 20, False, False), #Itokawa image
     ("itokawa",  [0., 0.5, 0.8], 100, 20, 10, False, False), #Itokawa image
+    ("ryugu",  [0., 0.5, 0.8], 100, 20, 50, False, False), #Itokawa image
     ("mars",  [0., 0., 0.], 250, 20, 20, False, False), #Mars image
     ])
 
@@ -111,7 +112,7 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
 
     # OpenCV specific arguments needed for masking */
     moduleConfig.thresholdMask = maskSize
-    moduleConfig.dilutionMask = maskSize
+    moduleConfig.limbMask = maskSize
 
     # Create the input messages.
     inputImage = messaging.CameraImageMsgPayload()
@@ -236,4 +237,4 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
 if __name__ == "__main__":
-    opticalFlowTest(True, "mars", [0., 0., 0.],  200, 20, 10, False, True) # Mars images
+    opticalFlowTest(True, "ryugu", [0., 0., 0.],  1000, 30, 50, False, True) # Mars images
