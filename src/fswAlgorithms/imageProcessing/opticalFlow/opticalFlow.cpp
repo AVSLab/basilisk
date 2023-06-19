@@ -170,33 +170,26 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! This method reads an black and white image and makes a mask in order to remove the limb of the target.
- * First the contours are found and drawn on an image.
- * Second the main contour is filled with black
- * Third the image is blured and thresholded to remove roughness on the limb
- * Finally the edge is dilated to increase the margin off the limb
+ * First the distance transform is computed from the input Image to get the distance of each point from the
+ * dark (zero) pixel background.
+ * Second the image is thresholded
+ * Third the image is eroded by a masking value (eroding away N pixels from the edge of the limb)
+ * Finally the mask is converted to the correct type
  @return void
  @param inputBWImage cv::Mat of the input image
  @param mask cv::Mat of the output mask (binary black and white image)
  */
-void OpticalFlow::makeMask (cv::Mat const & inputBWImage, cv::Mat mask) const {
+void OpticalFlow::makeMask (cv::Mat const &inputBWImage, cv::Mat &mask) const {
 
-    std::vector<std::vector<cv::Point> > contours;
-    std::vector<cv::Vec4i> hierarchy;
+    cv::Mat distanceImage(inputBWImage.size(), CV_8UC1);
+    cv::distanceTransform(inputBWImage, distanceImage, cv::DIST_L2, cv::DIST_MASK_PRECISE);
 
-    cv::findContours(inputBWImage, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_NONE);
-    cv::drawContours(mask, contours, -1, 1);
+    cv::Mat thresholded(inputBWImage.size(), CV_8UC1);
+    cv::threshold(distanceImage, thresholded, this->thresholdMask, 255, cv::THRESH_BINARY);
 
-    for(auto const &contour: contours){
-        cv::fillConvexPoly(mask, contour, 0);
-    }
-
-    cv::Mat kernel;
-    kernel = cv::Mat::ones(cv::Size(this->dilutionMask, this->dilutionMask), CV_8UC1);
-
-    cv::Mat blur;
-    cv::blur(mask, blur, cv::Size(this->dilutionMask,this->dilutionMask));
-    cv::Mat thresh;
-    cv::threshold(blur, thresh, this->thresholdMask, 255, cv::THRESH_BINARY);
-    cv::dilate(thresh, blur, kernel, cv::Point(-1,-1), 2);
-    cv::bitwise_not(blur, mask);
+    cv::Mat erosionKernel = cv::Mat::ones(this->limbMask, this->limbMask, CV_8U);
+    cv::erode(thresholded, thresholded, erosionKernel);
+    thresholded.convertTo(mask, CV_8UC1);
+    assert(mask.type() == CV_8UC1);
+    assert(mask.size() == inputBWImage.size());
 }
