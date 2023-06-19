@@ -152,12 +152,20 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
                                 false,
                                 0.04);
 
-        v3Copy(navAttBuffer.sigma_BN, this->firstSpacecraftAttitude);
-        v3Copy(ephemMsgBuffer.sigma_BN, this->firstTargetEphemAttitude);
-        this->firstTimeTag = this->sensorTimeTag;
-        this->firstFeatures = this->secondFeatures;
-        this->firstImagePresent = true;
-        this->secondImagePresent = false;
+        if (this->firstFeatures.size() > 0) {
+            v3Copy(navAttBuffer.sigma_BN, this->firstSpacecraftAttitude);
+            v3Copy(ephemMsgBuffer.sigma_BN, this->firstTargetEphemAttitude);
+            this->firstTimeTag = this->sensorTimeTag;
+            this->firstImagePresent = true;
+            this->secondImagePresent = false;
+        }
+        else{
+            this->firstImagePresent = false;
+            this->secondImagePresent = false;
+        }
+        /*! -Write a zero message if only one image was processed*/
+        featurePayload.valid = false;
+        this->keyPointsMsg.write(&featurePayload, this->moduleID, CurrentSimNanos);
     }
     /*! - If no second image is present, write zeros in message and set valid to false*/
     else{
