@@ -94,7 +94,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
             return np.array(self.__timeWritten_vector())
 
         def explore_and_find_subattr(self,attr,attr_name,content):
-            if "method" in str(type(attr)) or "bool" in str(type(attr)):
+            if "method" in str(type(attr)):
                 # The attribute is a method, nothing to do here
                 pass
             elif isinstance(attr,list):
