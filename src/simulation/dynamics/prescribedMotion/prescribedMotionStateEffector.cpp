@@ -19,6 +19,7 @@
 
 #include "prescribedMotionStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <string>
 
 /*! This is the constructor, setting variables to default values. */
@@ -47,6 +48,15 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->omega_MB_B.setZero();
     this->omegaPrime_MB_B.setZero();
     this->sigma_MB.setIdentity();
+    this->currentSimTimeSec = 0.0;
+    
+    // Initialize prescribed states at epoch
+    this->rEpoch_FM_M.setZero();
+    this->rPrimeEpoch_FM_M.setZero();
+    this->omegaEpoch_FM_F.setZero();
+
+    // Set the sigma_FM state name
+    this->nameOfsigma_FMState = "prescribedMotionsigma_FM" + std::to_string(this->effectorID);
 
     PrescribedMotionStateEffector::effectorID++;
 }
@@ -61,18 +71,17 @@ PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
 
 /*! This method is used to reset the module.
  @return void
- @param CurrentClock [ns] Time the method is called
+ @param currentClock [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::Reset(uint64_t CurrentClock)
+void PrescribedMotionStateEffector::Reset(uint64_t currentClock)
 {
-    // This method is empty because the modules doesn't have any state to reset
 }
 
 /*! This method takes the computed states and outputs them to the messaging system.
  @return void
- @param CurrentClock [ns] Time the method is called
+ @param currentClock [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
+void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClock)
 {
     // Write the prescribed motion output message if it is linked
     if (this->prescribedMotionOutMsg.isLinked())
@@ -86,7 +95,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t CurrentClo
 
         Eigen::Vector3d sigma_FM_loc = eigenMRPd2Vector3d(this->sigma_FM);
         eigenVector3d2CArray(sigma_FM_loc, prescribedMotionBuffer.sigma_FM);
-        this->prescribedMotionOutMsg.write(&prescribedMotionBuffer, this->moduleID, CurrentClock);
+        this->prescribedMotionOutMsg.write(&prescribedMotionBuffer, this->moduleID, currentClock);
     }
 
     // Write the config log message if it is linked
@@ -99,7 +108,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t CurrentClo
         eigenVector3d2CArray(this->v_FcN_N, configLogMsg.v_BN_N);
         eigenVector3d2CArray(this->sigma_FN, configLogMsg.sigma_BN);
         eigenVector3d2CArray(this->omega_FN_F, configLogMsg.omega_BN_B);
-        this->prescribedMotionConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
+        this->prescribedMotionConfigLogOutMsg.write(&configLogMsg, this->moduleID, currentClock);
     }
 }
 
@@ -116,13 +125,19 @@ void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
     this->inertialVelocityProperty = statesIn.getPropertyReference("v_BN_N");
 }
 
-/*! This method allows the state effector to register its states with the dynamic parameter manager. (unused)
+/*! This method allows the state effector to register its states with the dynamic parameter manager.
  @return void
  @param states Pointer to give the state effector access the hub states
 */
 void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
 {
-    // This method is empty because this module does not register any states
+        this->sigma_FMState = states.registerState(3, 1, this->nameOfsigma_FMState);
+        Eigen::Vector3d sigma_FM_loc = eigenMRPd2Vector3d(this->sigma_FM);
+        Eigen::Vector3d sigma_FMInitMatrix;
+        sigma_FMInitMatrix(0) = sigma_FM_loc[0];
+        sigma_FMInitMatrix(1) = sigma_FM_loc[1];
+        sigma_FMInitMatrix(2) = sigma_FM_loc[2];
+        this->sigma_FMState->setState(sigma_FMInitMatrix);
 }
 
 /*! This method allows the state effector to provide its contributions to the mass props and mass prop rates of the
@@ -132,6 +147,13 @@ void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
 */
 void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 {
+    // Update the prescribed states
+    double dt = integTime - this->currentSimTimeSec;
+    this->r_FM_M = this->rEpoch_FM_M + (this->rPrimeEpoch_FM_M * dt) + (0.5 * this->rPrimePrime_FM_M * dt * dt);
+    this->rPrime_FM_M = this->rPrimeEpoch_FM_M + (this->rPrimePrime_FM_M * dt);
+    this->omega_FM_F = this->omegaEpoch_FM_F + (this->omegaPrime_FM_F * dt);
+    this->sigma_FM = (Eigen::Vector3d)this->sigma_FMState->getState();
+
     // Give the mass of the prescribed body to the effProps mass
     this->effProps.mEff = this->mass;
 
@@ -223,7 +245,7 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
                           - this->mass * this->omegaTilde_BN_B * rTilde_FcB_B * this->rPrime_FcB_B;
 }
 
-/*!
+/*! This method is for defining the state effector's MRP state derivative
  @return void
  @param integTime [s] Time the method is called
  @param rDDot_BN_N [m/s^2] Acceleration of the vector pointing from the inertial frame origin to the B frame origin,
@@ -237,7 +259,9 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime,
                                                        Eigen::Vector3d omegaDot_BN_B,
                                                        Eigen::Vector3d sigma_BN)
 {
-    // This method is empty because the equations of motion of the effector are prescribed.
+    Eigen::MRPd sigma_FM_loc;
+    sigma_FM_loc = (Eigen::Vector3d)this->sigma_FMState->getState();
+    this->sigma_FMState->setDerivative(0.25*sigma_FM_loc.Bmat()*this->omega_FM_F);
 }
 
 /*! This method is for calculating the contributions of the effector to the energy and momentum of the spacecraft.
@@ -287,10 +311,13 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 
 /*! This method updates the effector state at the dynamics frequency.
  @return void
- @param CurrentSimNanos [ns] Time the method is called
+ @param currentSimNanos [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
 {
+    // Store the current simulation time
+    this->currentSimTimeSec = currentSimNanos * NANO2SEC;
+
     // Read the input message if it is linked and written
     if (this->prescribedMotionInMsg.isLinked() && this->prescribedMotionInMsg.isWritten())
     {
@@ -301,11 +328,18 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t CurrentSimNanos)
         this->omega_FM_F = cArray2EigenVector3d(incomingPrescribedStates.omega_FM_F);
         this->omegaPrime_FM_F = cArray2EigenVector3d(incomingPrescribedStates.omegaPrime_FM_F);
         this->sigma_FM = cArray2EigenVector3d(incomingPrescribedStates.sigma_FM);
+
+        // Save off the prescribed states at each dynamics time step
+        this->rEpoch_FM_M = cArray2EigenVector3d(incomingPrescribedStates.r_FM_M);
+        this->rPrimeEpoch_FM_M = cArray2EigenVector3d(incomingPrescribedStates.rPrime_FM_M);
+        this->omegaEpoch_FM_F = cArray2EigenVector3d(incomingPrescribedStates.omega_FM_F);
+        Eigen::Vector3d sigma_FM_loc = cArray2EigenVector3d(incomingPrescribedStates.sigma_FM);
+        this->sigma_FMState->setState(sigma_FM_loc);
     }
 
     // Call the method to compute the effector's inertial states
     this->computePrescribedMotionInertialStates();
 
     // Call the method to write the output messages
-    this->writeOutputStateMessages(CurrentSimNanos);
+    this->writeOutputStateMessages(currentSimNanos);
 }

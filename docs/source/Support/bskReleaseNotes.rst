@@ -69,6 +69,8 @@ Version |release|
   match the functionality of the corresponding data and power modules
 - Corrected tasks priorities in several scenarios and added checks in two modules to ensure that C MSG read errors are not thrown
 - Fixed bug where message struct members of bool python types are returned as empty dicts instead of array of bools
+- Refactored the :ref:`prescribedMotionStateEffector` dynamics module to vary the prescribed states across the dynamics
+  integration time step.
 
 
 Version 2.1.7 (March 24, 2023)

@@ -34,27 +34,28 @@ class PrescribedMotionStateEffector: public StateEffector, public SysModel {
 public:
     PrescribedMotionStateEffector();
     ~PrescribedMotionStateEffector();
-    void Reset(uint64_t CurrentClock) override;                      //!< Method for reset
-    void writeOutputStateMessages(uint64_t CurrentClock) override;   //!< Method for writing the output messages
-	void UpdateState(uint64_t CurrentSimNanos) override;             //!< Method for updating the effector states
+    void Reset(uint64_t currentClock) override;                      //!< Method for reset
+    void writeOutputStateMessages(uint64_t currentClock) override;   //!< Method for writing the output messages
+	void UpdateState(uint64_t currentSimNanos) override;             //!< Method for updating the effector states
     void registerStates(DynParamManager& statesIn) override;         //!< Method for registering the effector's states
     void linkInStates(DynParamManager& states) override;             //!< Method for giving the effector access to hub states
     void updateContributions(double integTime,
                              BackSubMatrices & backSubContr,
                              Eigen::Vector3d sigma_BN,
                              Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N) override; //!< Method for computing the effector's back-substitution contributions
+                             Eigen::Vector3d g_N) override;          //!< Method for computing the effector's back-substitution contributions
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN) override; //!< Method for effector to compute its state derivatives
-    void updateEffectorMassProps(double integTime) override; //!< Method for calculating the effector mass props and prop rates
+                            Eigen::Vector3d sigma_BN) override;      //!< Method for effector to compute its state derivatives
+    void updateEffectorMassProps(double integTime) override;         //!< Method for calculating the effector mass props and prop rates
     void updateEnergyMomContributions(double integTime,
                                       Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr,
-                                      Eigen::Vector3d omega_BN_B) override; //!< Method for computing the energy and momentum of the effector
-    void computePrescribedMotionInertialStates(); //!< Method for computing the effector's states relative to the inertial frame
+                                      Eigen::Vector3d omega_BN_B) override;    //!< Method for computing the energy and momentum of the effector
+    void computePrescribedMotionInertialStates();       //!< Method for computing the effector's states relative to the inertial frame
 
+    double currentSimTimeSec;                           //!< [s] Current simulation time, updated at the dynamics frequency
     double mass;                                        //!< [kg] Effector mass
     Eigen::Matrix3d IPntFc_F;                           //!< [kg-m^2] Inertia of the effector about its center of mass in F frame components
     Eigen::Vector3d r_MB_B;                             //!< [m] Position of point M relative to point B in B frame components
@@ -70,6 +71,7 @@ public:
     Eigen::Vector3d omega_FM_F;                         //!< [rad/s] Angular velocity of frame F relative to frame M in F frame components
     Eigen::Vector3d omegaPrime_FM_F;                    //!< [rad/s^2] B frame time derivative of omega_FM_F in F frame components
     Eigen::MRPd sigma_FM;                               //!< MRP attitude of frame F relative to frame M
+    std::string nameOfsigma_FMState;                    //!< Identifier for the sigma_FM state data container
 
     ReadFunctor<PrescribedMotionMsgPayload> prescribedMotionInMsg;      //!< Input message for the effector's prescribed states
     Message<PrescribedMotionMsgPayload> prescribedMotionOutMsg;         //!< Output message for the effector's prescribed states
@@ -125,6 +127,13 @@ private:
     StateData *hubOmega;                                //!< [rad/s] Hub angular velocity in B frame components relative to the inertial frame
     Eigen::MatrixXd* inertialPositionProperty;          //!< [m] r_N Inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty;          //!< [m] v_N Inertial velocity relative to system spice zeroBase/refBase
+
+    // Prescribed states at epoch (Dynamics time step)
+    Eigen::Vector3d rEpoch_FM_M;                        //!< [m] Position of point F relative to point M in M frame components
+    Eigen::Vector3d rPrimeEpoch_FM_M;                   //!< [m/s] B frame time derivative of r_FM_M in M frame components
+    Eigen::Vector3d omegaEpoch_FM_F;                    //!< [rad/s] Angular velocity of frame F relative to frame M in F frame components
+    StateData *sigma_FMState;                           //!< MRP attitude of frame F relative to frame M
+
 };
 
 #endif /* PRESCRIBED_MOTION_STATE_EFFECTOR_H */
