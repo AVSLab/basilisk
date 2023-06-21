@@ -68,6 +68,7 @@ Version |release|
 - Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the :ref:`simpleInstrumentController` to 
   match the functionality of the corresponding data and power modules
 - Corrected tasks priorities in several scenarios and added checks in two modules to ensure that C MSG read errors are not thrown
+- Fixed bug where message struct members of bool python types are returned as empty dicts instead of array of bools
 
 
 Version 2.1.7 (March 24, 2023)
