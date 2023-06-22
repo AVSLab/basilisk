@@ -88,9 +88,14 @@ The estimate for the relative truncation error is
 \end{equation}
 The updated time step is calculated through the following equation
 \begin{equation}
-	h_{\text{new}}=0.9h\left(\frac{\bm \epsilon}{\bm \delta}\right)^{1/5}, \label{eq:h_RKF45}
+	h_{\text{new}}^*=0.9h\left(\frac{\bm \epsilon_{\text{rel}}||\bm x_{n+1}|| + \bm \epsilon_{\text{abs}}}{\bm \delta}\right)^{1/5}, \label{eq:h_RKF45}
 \end{equation}
-where $\bm \epsilon$ corresponds to the relative tolerance and its default value is $10^{-4}$. If the norm of the state is smaller than the absolute tolerance (default value of $10^{-8}$), the relative error is calculated with respect to that absolute tolerance instead of the true vector norm. The time step is scaled by $0.9$ for robustness, so that the integrator will not use values that barely pass through the relative tolerance.\\
+where $\bm \epsilon_{\text{rel}}$ corresponds to the relative tolerance (with default value of $10^{-4}$), $\bm \epsilon_{\text{abs}}$ is the absolute tolerance (with default value of $10^{-8}$), and $||\bm x_{n+1}||$ is the norm of the state. The time step is scaled by $0.9$ for robustness, so that the integrator will not use values that barely pass through the tolerance.\\
+Additional constraints are put on the time step:
+\begin{equation}
+	h_{\text{new}} = \text{min}\left( t_f - t_{n+1}, \text{max}\left(h\Delta_{\text{min}}, \text{min}\left(h_{\text{new}}^*, h\Delta_{\text{max}}\right) \right) \right)
+\end{equation}
+The equation above ensures that integration is done only up to $t_f$. Moreover, it clamps the new time step so that it does not change too abruptly compared to its previous value (by default $\Delta_{\text{min}}$ and $\Delta_{\text{max}}$ are $0.1$ and $4$ respectively) .\\
 The algorithm for the variable time step integrator works as follows:
 \begin{enumerate}
 	\item For every state vector, compute the $\bm k_i$ integration weights through equations \ref{eq:k1_RKF45}-\ref{eq:k6_RKF45}.
