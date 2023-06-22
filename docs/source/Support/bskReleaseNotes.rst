@@ -74,6 +74,12 @@ Version |release|
 - Refactored the :ref:`prescribedMotionStateEffector` dynamics module to vary the prescribed states across the dynamics
   integration time step.
 - The encryption build option for the project's conan zmq dependency is disabled because it is uneeded.
+- Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the :ref:`simpleInstrumentController` to 
+  match the functionality of the corresponding data and power modules
+- Corrected tasks priorities in several scenarios and added checks in two modules to ensure that C MSG read errors are not thrown
+- Reworked how integrators are implemented. New Runge-Kutta integrators may
+  now be added simply by specifying the relevant coefficients.
+- Added a scenario that showcases differences between integrators. See :ref:`scenarioIntegratorsComparison`
 
 
 Version 2.1.7 (March 24, 2023)
