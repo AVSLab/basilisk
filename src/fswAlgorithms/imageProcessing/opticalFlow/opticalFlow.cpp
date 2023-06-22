@@ -152,7 +152,7 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
                                 false,
                                 0.04);
 
-        if (this->firstFeatures.size() > 0) {
+        if (!this->firstFeatures.empty()) {
             v3Copy(navAttBuffer.sigma_BN, this->firstSpacecraftAttitude);
             v3Copy(ephemMsgBuffer.sigma_BN, this->firstTargetEphemAttitude);
             this->firstTimeTag = this->sensorTimeTag;
