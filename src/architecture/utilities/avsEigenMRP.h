@@ -75,7 +75,10 @@ namespace Eigen {
         /** the equivalent angle-axis type */
         typedef AngleAxis<Scalar> AngleAxisType;
 
-
+        /** default constructor */
+        MRPBase() = default;
+        /** copy constructor */
+        MRPBase(const MRPBase<Derived> &/*rhs*/) = default;
 
         /** \returns the \c x coefficient */
         inline Scalar x() const { return this->derived().coeffs().coeff(0); }
