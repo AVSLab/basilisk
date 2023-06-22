@@ -51,6 +51,10 @@ The same simulation setup is run for each of the integration methods:
 
 \item the 5th test uses Heun's integration method.
 
+\item the 6th test uses the RK3 integration method, whose coefficients are specified through Python.
+
+\item the 7th test uses the (adaptive) Bogacki-Shampine integration method, whose coefficients are specified through Python.
+
 \end{enumerate}
 
 \begin{figure}[t]
@@ -63,9 +67,9 @@ The same simulation setup is run for each of the integration methods:
 The resulting data points are illustrated in Figure~\ref{fig:intResults}.  The large 120 second time step causes all the integration methods to significantly deviate from the truth locations (shown in black).  The integrated validation test ensures that the BSK integrations yield the same integration corruptions to validate the mathematical implementation.
 
 \subsection{Test success criteria}
-The integrated position states are checked at 5 even data points along the simulation time again pre-computed truth answers.  These truth answers were generated in Mathematica implementing the same initial conditions, and replicating the integration math.    The accuracy threshold is set to 1 meter, a small value compared to the 7,000,000 meter near-circular orbit radius.
+For the fixed-step integrators, the integrated position states are checked at 5 even data points along the simulation time againt pre-computed truth answers.  These truth answers were generated in Mathematica implementing the same initial conditions, and replicating the integration math.    The accuracy threshold is set to 1 meter, a small value compared to the 7,000,000 meter near-circular orbit radius.
 
-
+For the variable-step (adaptive) integrators, only the final position is checked. This position is compared to the analytical 2-body solution, and the error is constrained to be lower than one meter. This guarantees that the adaptive integrators can achieve very high accuracy irrespective of the user-provided step size.
 
 \section{Test Parameters}
 Three tests are run controlled through a single test parameter called {\tt integratorCase}.  The possible values are shown in Table~\ref{tbl:intCases}.
@@ -82,6 +86,8 @@ Three tests are run controlled through a single test parameter called {\tt integ
 		``rkf78"                           & 1 meter	  \\
 		``euler"                           & 1 meter	  \\
 		``rk2"                           & 1 meter	  \\
+		``rk3"                           & 1 meter	  \\
+		``bogackiShampine"                           & 1 meter	  \\
 		\hline\hline
 	\end{tabular}
 \end{table}
@@ -119,6 +125,16 @@ All integration checks within the integrated test {\tt scenarios/test\_scenarioI
 		\input{AutoTex/IntegratorsTestMsg-rk2}
 		&
 		\input{AutoTex/IntegratorsMsg-rk2}
+		\\ \hline
+		``rk3''      	&
+		\input{AutoTex/IntegratorsTestMsg-rk3}
+		&
+		\input{AutoTex/IntegratorsMsg-rk3}
+		\\ \hline
+		``bogackiShampine''      	&
+		\input{AutoTex/IntegratorsTestMsg-bogackiShampine}
+		&
+		\input{AutoTex/IntegratorsMsg-bogackiShampine}
 		\\
 		\hline\hline
 	\end{tabular}

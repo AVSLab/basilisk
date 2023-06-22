@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -19,33 +19,31 @@
 
 #include "dynamicObject.h"
 
-/*! This method changes the integrator in use (Default integrator: RK4) */
-void DynamicObject::setIntegrator(StateVecIntegrator *newIntegrator)
+void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
 {
-    if (this->isDynamicsSynced)
-    {
-        bskLogger.bskLog(BSK_WARNING, 
+    if (this->isDynamicsSynced) {
+        bskLogger.bskLog(
+            BSK_WARNING,
             "You cannot set the integrator of a DynamicObject with synced integration. "
-            "If you want to change the integrator, change the integrator of the primary DynamicObject.");
+            "If you want to change the integrator, change the integrator of the primary "
+            "DynamicObject.");
         return;
     }
 
-    if (!newIntegrator)
-    {
+    if (!newIntegrator) {
         bskLogger.bskLog(BSK_ERROR, "New integrator cannot be a null pointer");
         return;
     }
-    
-    if (newIntegrator->dynPtrs.at(0) != this)
-    {
-        bskLogger.bskLog(BSK_ERROR, "New integrator must have been created using this DynamicObject");
+
+    if (newIntegrator->dynPtrs.at(0) != this) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "New integrator must have been created using this DynamicObject");
         return;
     }
 
     // If there was already an integrator set, then whatever dynPtrs that the
     // original integrator had take priority over the dynPtrs of newIntegrator
-    if (this->integrator)
-    {
+    if (this->integrator) {
         newIntegrator->dynPtrs = std::move(this->integrator->dynPtrs);
     }
 
@@ -54,18 +52,12 @@ void DynamicObject::setIntegrator(StateVecIntegrator *newIntegrator)
     this->integrator = newIntegrator;
 }
 
-
-/*! This method is used to connect the integration of another DynamicObject
-    to the integration of this DynamicObject */
-void DynamicObject::syncDynamicsIntegration(DynamicObject *dynPtr)
+void DynamicObject::syncDynamicsIntegration(DynamicObject* dynPtr)
 {
     this->integrator->dynPtrs.push_back(dynPtr);
     dynPtr->isDynamicsSynced = true;
 }
 
-/*! This method is used to prepare the dynamic object to be integrate, integrate the states forward in time, and
-    finally perform the post-integration steps.  This is only done if the DynamicObject integration is
-    not sync'd to another DynamicObject */
 void DynamicObject::integrateState(double integrateToThisTime)
 {
     if (this->isDynamicsSynced) return;
@@ -80,16 +72,3 @@ void DynamicObject::integrateState(double integrateToThisTime)
         dynPtr->postIntegration(integrateToThisTime);
     }
 }
-
-/*! Initializes the dynamics and variables
- */
-void DynamicObject::initializeDynamics()
-{
-}
-
-/*! Method to compute energy and momentum of the system
- */
-void DynamicObject::computeEnergyMomentum(double t)
-{
-}
-
