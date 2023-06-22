@@ -62,7 +62,7 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
     this->sensorTimeTag = 0;
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
-        this->secondImage = cv::imread(this->filename, cv::IMREAD_COLOR);
+        this->secondImage = cv::imread(this->filename, cv::IMREAD_GRAYSCALE);
         this->sensorTimeTag = CurrentSimNanos;
         this->secondImagePresent = true;
         this->filename = "";
@@ -71,7 +71,7 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
                                                 (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
-        this->secondImage = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
+        this->secondImage = cv::imdecode(vectorBuffer, cv::IMREAD_GRAYSCALE);
 
         this->sensorTimeTag = imageBuffer.timeTag;
         this->secondImagePresent = true;
@@ -85,8 +85,6 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
     dtBetweenImagesSeconds = (double)(this->sensorTimeTag - this->firstTimeTag)*NANO2SEC;
     /*! - If there is a second image and an first image, write the paired features message */
     if (this->firstImagePresent && this->secondImagePresent && dtBetweenImagesSeconds >= this->minTimeBetweenPairs){
-        cv::cvtColor(this->secondImage, this->secondImage, cv::COLOR_BGR2GRAY);
-
         std::vector<uchar> status;
         std::vector<float> err;
         auto criteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS,
@@ -140,12 +138,12 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
     }
     /*! - If there is a second image but also a first image, populate the first image buffers */
     else if(this->secondImagePresent){
-        cv::cvtColor(this->secondImage, this->firstImage, cv::COLOR_BGR2GRAY);
+        this->firstImage = this->secondImage.clone();
         cv::Mat mask(this->firstImage.size(), CV_8UC1, cv::Scalar(255));
 
         OpticalFlow::makeMask(this->firstImage, mask);
         cv::goodFeaturesToTrack(this->firstImage,
-                                this->secondFeatures,
+                                this->firstFeatures,
                                 this->maxNumberFeatures,
                                 this->qualityLevel,
                                 this->minumumFeatureDistance,
@@ -154,12 +152,20 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
                                 false,
                                 0.04);
 
-        v3Copy(navAttBuffer.sigma_BN, this->firstSpacecraftAttitude);
-        v3Copy(ephemMsgBuffer.sigma_BN, this->firstTargetEphemAttitude);
-        this->firstTimeTag = this->sensorTimeTag;
-        this->firstFeatures = this->secondFeatures;
-        this->firstImagePresent = true;
-        this->secondImagePresent = false;
+        if (!this->firstFeatures.empty()) {
+            v3Copy(navAttBuffer.sigma_BN, this->firstSpacecraftAttitude);
+            v3Copy(ephemMsgBuffer.sigma_BN, this->firstTargetEphemAttitude);
+            this->firstTimeTag = this->sensorTimeTag;
+            this->firstImagePresent = true;
+            this->secondImagePresent = false;
+        }
+        else{
+            this->firstImagePresent = false;
+            this->secondImagePresent = false;
+        }
+        /*! -Write a zero message if only one image was processed*/
+        featurePayload.valid = false;
+        this->keyPointsMsg.write(&featurePayload, this->moduleID, CurrentSimNanos);
     }
     /*! - If no second image is present, write zeros in message and set valid to false*/
     else{
@@ -170,33 +176,26 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! This method reads an black and white image and makes a mask in order to remove the limb of the target.
- * First the contours are found and drawn on an image.
- * Second the main contour is filled with black
- * Third the image is blured and thresholded to remove roughness on the limb
- * Finally the edge is dilated to increase the margin off the limb
+ * First the distance transform is computed from the input Image to get the distance of each point from the
+ * dark (zero) pixel background.
+ * Second the image is thresholded
+ * Third the image is eroded by a masking value (eroding away N pixels from the edge of the limb)
+ * Finally the mask is converted to the correct type
  @return void
  @param inputBWImage cv::Mat of the input image
  @param mask cv::Mat of the output mask (binary black and white image)
  */
-void OpticalFlow::makeMask (cv::Mat const & inputBWImage, cv::Mat mask) const {
+void OpticalFlow::makeMask (cv::Mat const &inputBWImage, cv::Mat &mask) const {
 
-    std::vector<std::vector<cv::Point> > contours;
-    std::vector<cv::Vec4i> hierarchy;
+    cv::Mat distanceImage(inputBWImage.size(), CV_8UC1);
+    cv::distanceTransform(inputBWImage, distanceImage, cv::DIST_L2, cv::DIST_MASK_PRECISE);
 
-    cv::findContours(inputBWImage, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_NONE);
-    cv::drawContours(mask, contours, -1, 1);
+    cv::Mat thresholded(inputBWImage.size(), CV_8UC1);
+    cv::threshold(distanceImage, thresholded, this->thresholdMask, 255, cv::THRESH_BINARY);
 
-    for(auto const &contour: contours){
-        cv::fillConvexPoly(mask, contour, 0);
-    }
-
-    cv::Mat kernel;
-    kernel = cv::Mat::ones(cv::Size(this->dilutionMask, this->dilutionMask), CV_8UC1);
-
-    cv::Mat blur;
-    cv::blur(mask, blur, cv::Size(this->dilutionMask,this->dilutionMask));
-    cv::Mat thresh;
-    cv::threshold(blur, thresh, this->thresholdMask, 255, cv::THRESH_BINARY);
-    cv::dilate(thresh, blur, kernel, cv::Point(-1,-1), 2);
-    cv::bitwise_not(blur, mask);
+    cv::Mat erosionKernel = cv::Mat::ones(this->limbMask, this->limbMask, CV_8U);
+    cv::erode(thresholded, thresholded, erosionKernel);
+    thresholded.convertTo(mask, CV_8UC1);
+    assert(mask.type() == CV_8UC1);
+    assert(mask.size() == inputBWImage.size());
 }

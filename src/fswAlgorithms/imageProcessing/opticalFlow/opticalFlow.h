@@ -48,7 +48,7 @@ public:
     
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
-    void makeMask(cv::Mat const & inputBWImage, cv::Mat mask) const;
+    void makeMask(cv::Mat const & inputBWImage, cv::Mat & mask) const;
 
 private:
     cv::Mat firstImage;
@@ -87,7 +87,7 @@ public:
 
     /*! OpenCV specific arguments needed for masking */
     int32_t thresholdMask = 20;
-    int32_t dilutionMask = 20;
+    int32_t limbMask = 20;
 
     BSKLogger bskLogger;
 };
