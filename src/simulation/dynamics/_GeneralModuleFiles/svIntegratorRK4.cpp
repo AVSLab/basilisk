@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,84 +17,23 @@
 
  */
 
-
 #include "svIntegratorRK4.h"
-#include "dynamicObject.h"
-#include <stdio.h>
 
-svIntegratorRK4::svIntegratorRK4(DynamicObject* dyn) : StateVecIntegrator(dyn)
+svIntegratorRK4::svIntegratorRK4(DynamicObject* dyn)
+    : svIntegratorRungeKutta(dyn, svIntegratorRK4::getCoefficients())
 {
-
 }
 
-svIntegratorRK4::~svIntegratorRK4()
+RKCoefficients<4> svIntegratorRK4::getCoefficients()
 {
+    RKCoefficients<4> coefficients;
+    coefficients.aMatrix.at(1).at(0) = 0.5;
+    coefficients.aMatrix.at(2).at(1) = 0.5;
+    coefficients.aMatrix.at(3).at(2) = 1.0;
 
-}
+    coefficients.bArray = {1. / 6., 1. / 3., 1. / 3., 1. / 6.};
 
-void svIntegratorRK4::integrate(double currentTime, double timeStep)
-{
-    std::vector<StateVector> stateOut;
-    std::vector<StateVector> stateInit;
-    std::map<std::string, StateData>::iterator it;
-    std::map<std::string, StateData>::iterator itOut;
-    std::map<std::string, StateData>::iterator itInit;
-    size_t i;              // dynamic object loop counter
+    coefficients.cArray = {0., 1. / 2., 1. / 2., 1.};
 
-    for (const auto& dynPtr : this->dynPtrs) {
-        stateOut.push_back(dynPtr->dynManager.getStateVector());
-        stateInit.push_back(dynPtr->dynManager.getStateVector());
-        dynPtr->equationsOfMotion(currentTime, timeStep);
-    }
-    for (i=0; i<dynPtrs.size(); i++) {
-        for (it = dynPtrs.at(i)->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.at(i).stateMap.begin(), itInit = stateInit.at(i).stateMap.begin(); it != dynPtrs.at(i)->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
-        {
-            itOut->second.setDerivative(it->second.getStateDeriv());
-            itOut->second.propagateState(timeStep / 6.0);
-            it->second.state = itInit->second.state + 0.5*timeStep*it->second.stateDeriv;
-        }
-    }
-
-    for (const auto& dynPtr : this->dynPtrs) {
-        dynPtr->equationsOfMotion(currentTime + timeStep * 0.5, timeStep);
-    }
-    for (i=0; i<dynPtrs.size(); i++) {
-        for (it = dynPtrs.at(i)->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.at(i).stateMap.begin(), itInit = stateInit.at(i).stateMap.begin(); it != dynPtrs.at(i)->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
-        {
-            itOut->second.setDerivative(it->second.getStateDeriv());
-            itOut->second.propagateState(2.0*timeStep / 6.0);
-            it->second.state = itInit->second.state + 0.5*timeStep*it->second.stateDeriv;
-        }
-    }
-
-    for (const auto& dynPtr : this->dynPtrs) {
-        dynPtr->equationsOfMotion(currentTime + timeStep * 0.5, timeStep);
-    }
-    for (i=0; i<dynPtrs.size(); i++) {
-        for (it = dynPtrs.at(i)->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.at(i).stateMap.begin(), itInit = stateInit.at(i).stateMap.begin(); it != dynPtrs.at(i)->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
-        {
-            itOut->second.setDerivative(it->second.getStateDeriv());
-            itOut->second.propagateState(2.0*timeStep / 6.0);
-            it->second.state = itInit->second.state + timeStep*it->second.stateDeriv;
-
-        }
-    }
-
-    for (const auto& dynPtr : this->dynPtrs) {
-        dynPtr->equationsOfMotion(currentTime + timeStep, timeStep);
-    }
-    for (i=0; i<dynPtrs.size(); i++) {
-        for (it = dynPtrs.at(i)->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.at(i).stateMap.begin(), itInit = stateInit.at(i).stateMap.begin(); it != dynPtrs.at(i)->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
-        {
-            itOut->second.setDerivative(it->second.getStateDeriv());
-            itOut->second.propagateState(timeStep / 6.0);
-
-        }
-    }
-
-    for (i=0; i<dynPtrs.size(); i++) {
-        dynPtrs.at(i)->dynManager.updateStateVector(stateOut.at(i));
-    }
-
-    return;
+    return coefficients;
 }

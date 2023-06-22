@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -20,20 +20,14 @@
 #ifndef svIntegratorRK4_h
 #define svIntegratorRK4_h
 
-#include "stateVecIntegrator.h"
-#include "dynParamManager.h"
-#include <stdint.h>
+#include "svIntegratorRungeKutta.h"
 
 /*! @brief 4th order Runge-Kutta integrator */
-class svIntegratorRK4 : public StateVecIntegrator
-{
-public:
-    svIntegratorRK4(DynamicObject* dyn);            //!< class method
-    virtual ~svIntegratorRK4();
-    virtual void integrate(double currentTime, double timeStep); //!< class method
-    
+class svIntegratorRK4 : public svIntegratorRungeKutta<4> {
+  public:
+    svIntegratorRK4(DynamicObject* dyn); //!< class method
+  private:
+    static RKCoefficients<4> getCoefficients();
 };
-
-
 
 #endif /* svIntegratorRK4_h */
