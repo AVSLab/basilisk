@@ -37,11 +37,11 @@ No support is provided for non-spherical bodies. Transformations are scripted fr
  */
 
 Eigen::Vector3d PCI2PCPF(Eigen::Vector3d pciPosition, double J20002Pfix[3][3]);
-Eigen::Vector3d PCPF2LLA(Eigen::Vector3d pciPosition, double planetRadius);
-Eigen::Vector3d PCI2LLA(Eigen::Vector3d pciPosition, double J20002Pfix[3][3], double planetRad);
-Eigen::Vector3d LLA2PCPF(Eigen::Vector3d llaPosition, double planetRad);
+Eigen::Vector3d PCPF2LLA(Eigen::Vector3d pciPosition, double planetEqRadius, double planetPoRad=-1.0);
+Eigen::Vector3d PCI2LLA(Eigen::Vector3d pciPosition, double J20002Pfix[3][3], double planetEqRad, double planetPoRad=-1.0);
+Eigen::Vector3d LLA2PCPF(Eigen::Vector3d llaPosition, double planetEqRad, double planetPoRad=-1.0);
 Eigen::Vector3d PCPF2PCI(Eigen::Vector3d pcpfPosition, double J20002Pfix[3][3]);
-Eigen::Vector3d LLA2PCI(Eigen::Vector3d llaPosition, double J20002Pfix[3][3], double planetRad);
+Eigen::Vector3d LLA2PCI(Eigen::Vector3d llaPosition, double J20002Pfix[3][3], double planetEqRad, double planetPoRad=-1.0);
 Eigen::Matrix3d C_PCPF2SEZ(double lat, double longitude);
 
 #endif

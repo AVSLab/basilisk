@@ -196,7 +196,6 @@ class BasiliskConan(ConanFile):
             self.requires.add("xz_utils/5.4.0")
 
         if self.options.vizInterface or self.options.opNav:
-            self.requires.add("libsodium/1.0.18")
             self.requires.add("protobuf/3.17.1")
             self.requires.add("cppzmq/4.3.0@bincrafters/stable")
 

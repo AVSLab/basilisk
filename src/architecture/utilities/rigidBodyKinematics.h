@@ -117,7 +117,7 @@ extern "C" {
     void   EP2Euler212(double *q, double *e);
     void   EP2Euler213(double *q, double *e);
     void   EP2Euler231(double *q, double *e);
-    void   EP2Euler232(double *q, double *e);;
+    void   EP2Euler232(double *q, double *e);
     void   EP2Euler312(double *q, double *e);
     void   EP2Euler313(double *q, double *e);
     void   EP2Euler321(double *q, double *e);

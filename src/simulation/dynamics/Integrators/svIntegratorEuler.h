@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -20,19 +20,14 @@
 #ifndef svIntegratorEuler_h
 #define svIntegratorEuler_h
 
-#include "../_GeneralModuleFiles/stateVecIntegrator.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
-#include <stdint.h>
+#include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"
 
 /*! @brief Euler integrator */
-class svIntegratorEuler : public StateVecIntegrator
-{
-public:
+class svIntegratorEuler : public svIntegratorRungeKutta<1> {
+  public:
     svIntegratorEuler(DynamicObject* dyn); //!< class method
-    virtual ~svIntegratorEuler();
-    virtual void integrate(double currentTime, double timeStep);
-    
+  private:
+    static RKCoefficients<1> getCoefficients();
 };
-
 
 #endif /* svIntegratorEuler_h */
