@@ -57,7 +57,10 @@ Version |release|
 - Created :ref:`flybyPoint` to provide hill point reference during a flyby, and a related :ref:`scenarioFlybyPoint`.
 - Added custom planet name to :ref:`eclipse` in case the user wants to use a body not contained within the module.
 - Removed all instances of using ``unitTestSupport.np2EigenVectorXd()``, as this function is now unneeded.
-- Created a :ref:`facetSRPDynamicEffector` dynamics module to calculate the B frame SRP force and torque acting on a static spacecraft.
+- Created a :ref:`facetSRPDynamicEffector` dynamics module to calculate the B frame SRP force and torque acting on a
+  static spacecraft.
+- fixed ``PCI2PCPF()`` and ``PCPF2PCI`` methods in :ref:`geodeticConversion` to use the correct DCM
+- updated :ref:`geodeticConversion` to be able to account for planet ellipsoidal shape if polar radius is provided
 - Google Test C/C++ testing framework added
 - Created a :ref:`prescribedRot2DOF` fsw module to profile a prescribed 2 DOF rotational maneuver for a secondary rigid
   body connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
@@ -66,12 +69,23 @@ Version |release|
 - Added a deprecation system for Basilisk. For developers, see :ref:`deprecatingCode`.
 - Changed the units of plasma flux in :ref:`dentonFluxModel` and :ref:`PlasmaFluxMsgPayload` from
   [cm^-2 s^-1 sr^-2 eV^-1] to [m^-2 s^-1 sr^-2 eV^-1], because m^-2 is used more frequently in computations
-- Fixed a bug in eclipse that caused potentially occluding bodies to be skipped if a prior body was closer to the sun than
-  the spacecraft
+- Fixed a bug in eclipse that caused potentially occluding bodies to be skipped if a prior body was closer to the sun
+  than the spacecraft
 - fixed the time evaluation in :ref:`msisAtmosphere`
+- Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the
+  :ref:`simpleInstrumentController` to match the functionality of the corresponding data and power modules
+- Corrected tasks priorities in several scenarios and added checks in two modules to ensure that C MSG read errors are
+  not thrown
+- Fixed bug where message struct members of bool python types are returned as empty dicts instead of array of boolsgit
+- Refactored the :ref:`prescribedMotionStateEffector` dynamics module to vary the prescribed states across the dynamics
+  integration time step.
+- The encryption build option for the project's conan zmq dependency is disabled because it is uneeded.
 - Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the :ref:`simpleInstrumentController` to 
   match the functionality of the corresponding data and power modules
 - Corrected tasks priorities in several scenarios and added checks in two modules to ensure that C MSG read errors are not thrown
+- Reworked how integrators are implemented. New Runge-Kutta integrators may
+  now be added simply by specifying the relevant coefficients.
+- Added a scenario that showcases differences between integrators. See :ref:`scenarioIntegratorsComparison`
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------

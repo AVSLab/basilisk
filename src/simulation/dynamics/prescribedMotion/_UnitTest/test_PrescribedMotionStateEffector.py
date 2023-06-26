@@ -111,7 +111,7 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testIncrement = 0.5
+    testIncrement = 0.1  # [s]
     testProcessRate = macros.sec2nano(testIncrement)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
@@ -178,7 +178,7 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         unitTestSim.AddModelToTask(unitTaskName, PrescribedRot1DOFWrap, PrescribedRot1DOFConfig)
 
         # Initialize the prescribedRot1DOF test module configuration data
-        accelMax = 0.01 # [rad/s^2]
+        accelMax = 0.01  # [rad/s^2]
         #accelMax = np.pi / 180  # [rad/s^2]
         PrescribedRot1DOFConfig.r_FM_M = r_FM_M
         PrescribedRot1DOFConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
@@ -269,9 +269,9 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         thetaInit_plotting = np.ones(len(timespan)) * thetaInit
         plt.figure()
         plt.clf()
-        plt.plot(timespan * 1e-9, theta_FM, label=r'$\Phi$')
-        plt.plot(timespan * 1e-9, (180 / np.pi) * theta_Ref_plotting, '--', label=r'$\Phi_{Ref}$')
-        plt.plot(timespan * 1e-9, (180 / np.pi) * thetaInit_plotting, '--', label=r'$\Phi_{0}$')
+        plt.plot(timespan * macros.NANO2SEC, theta_FM, label=r'$\Phi$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * theta_Ref_plotting, '--', label=r'$\Phi_{Ref}$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * thetaInit_plotting, '--', label=r'$\Phi_{0}$')
         plt.title(r'$\Phi_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
         plt.ylabel('(deg)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
@@ -280,9 +280,9 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Plot omega_FM_F
         plt.figure()
         plt.clf()
-        plt.plot(timespan * 1e-9, (180 / np.pi) * omega_FM_F[:, 0], label=r'$\omega_{1}$')
-        plt.plot(timespan * 1e-9, (180 / np.pi) * omega_FM_F[:, 1], label=r'$\omega_{2}$')
-        plt.plot(timespan * 1e-9, (180 / np.pi) * omega_FM_F[:, 2], label=r'$\omega_{3}$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_FM_F[:, 0], label=r'$\omega_{1}$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_FM_F[:, 1], label=r'$\omega_{2}$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_FM_F[:, 2], label=r'$\omega_{3}$')
         plt.title(r'${}^\mathcal{F} \omega_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
         plt.ylabel('(deg/s)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
@@ -291,10 +291,10 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Plotting omegaPrime_FM_F
         plt.figure()
         plt.clf()
-        plt.plot(timespan * 1e-9, (180 / np.pi) * omegaPrime_FM_F[:, 0], label=r'$\omega \'_{1}$')
-        plt.plot(timespan * 1e-9, (180 / np.pi) * omegaPrime_FM_F[:, 1], label=r'$\omega \'_{2}$')
-        plt.plot(timespan * 1e-9, (180 / np.pi) * omegaPrime_FM_F[:, 2], label=r'$\omega \'_{3}$')
-        plt.title(r'${}^\mathcal{F} \omega \'_{\mathcal{F}/\mathcal{M}}$ Profiled Angular Acceleration', fontsize=14)
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_FM_F[:, 0], label='1')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_FM_F[:, 1], label='2')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_FM_F[:, 2], label='3')
+        plt.title(r'${}^\mathcal{F} \omega Prime_{\mathcal{F}/\mathcal{M}}$ Profiled Angular Acceleration', fontsize=14)
         plt.ylabel(r'(deg/$s^2$)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
         plt.legend(loc='upper right', prop={'size': 16})
@@ -302,9 +302,9 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Plot r_BN_N
         plt.figure()
         plt.clf()
-        plt.plot(timespan * 1e-9, r_BN_N[:, 0], label=r'$r_{1}$')
-        plt.plot(timespan * 1e-9, r_BN_N[:, 1], label=r'$r_{2}$')
-        plt.plot(timespan * 1e-9, r_BN_N[:, 2], label=r'$r_{3}$')
+        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 0], label=r'$r_{1}$')
+        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 1], label=r'$r_{2}$')
+        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 2], label=r'$r_{3}$')
         plt.title(r'${}^\mathcal{N} r_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial Trajectory', fontsize=14)
         plt.ylabel('(m)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
@@ -313,9 +313,9 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Plot sigma_BN
         plt.figure()
         plt.clf()
-        plt.plot(timespan * 1e-9, sigma_BN[:, 0], label=r'$\sigma_{1}$')
-        plt.plot(timespan * 1e-9, sigma_BN[:, 1], label=r'$\sigma_{2}$')
-        plt.plot(timespan * 1e-9, sigma_BN[:, 2], label=r'$\sigma_{3}$')
+        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 0], label=r'$\sigma_{1}$')
+        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 1], label=r'$\sigma_{2}$')
+        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 2], label=r'$\sigma_{3}$')
         plt.title(r'$\sigma_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial MRP Attitude', fontsize=14)
         plt.ylabel('', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
@@ -324,9 +324,9 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Plot omega_BN_B
         plt.figure()
         plt.clf()
-        plt.plot(timespan * 1e-9, (180 / np.pi) * omega_BN_B[:, 0], label=r'$\omega_{1}$')
-        plt.plot(timespan * 1e-9, (180 / np.pi) * omega_BN_B[:, 1], label=r'$\omega_{2}$')
-        plt.plot(timespan * 1e-9, (180 / np.pi) * omega_BN_B[:, 2], label=r'$\omega_{3}$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_BN_B[:, 0], label=r'$\omega_{1}$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_BN_B[:, 1], label=r'$\omega_{2}$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_BN_B[:, 2], label=r'$\omega_{3}$')
         plt.title(r'Spacecraft Hub Angular Velocity ${}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}$', fontsize=14)
         plt.xlabel('Time (s)', fontsize=16)
         plt.ylabel('(deg/s)', fontsize=16)
@@ -335,41 +335,41 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Plotting: Conservation quantities
         plt.figure()
         plt.clf()
-        plt.plot(orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
-                 orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 2] - orbAngMom_N[0, 2]) / orbAngMom_N[0, 2],
-                 orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3])
+        plt.plot(orbAngMom_N[:, 0] * macros.NANO2SEC, (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
+                 orbAngMom_N[:, 0] * macros.NANO2SEC, (orbAngMom_N[:, 2] - orbAngMom_N[0, 2]) / orbAngMom_N[0, 2],
+                 orbAngMom_N[:, 0] * macros.NANO2SEC, (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3])
         plt.title('Orbital Angular Momentum Relative Difference', fontsize=14)
         plt.ylabel('(Nms)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
 
         plt.figure()
         plt.clf()
-        plt.plot(orbEnergy[:, 0] * 1e-9, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1])
+        plt.plot(orbEnergy[:, 0] * macros.NANO2SEC, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1])
         plt.title('Orbital Energy Relative Difference', fontsize=14)
-        plt.ylabel('(Nm)', fontsize=16)
+        plt.ylabel('Energy (J)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
 
         plt.figure()
         plt.clf()
-        plt.plot(rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]),
-                 rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]),
-                 rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]))
+        plt.plot(rotAngMom_N[:, 0] * macros.NANO2SEC, (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]),
+                 rotAngMom_N[:, 0] * macros.NANO2SEC, (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]),
+                 rotAngMom_N[:, 0] * macros.NANO2SEC, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]))
         plt.title('Rotational Angular Momentum Difference', fontsize=14)
         plt.ylabel('(Nms)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
 
         plt.figure()
         plt.clf()
-        plt.plot(rotEnergy[:, 0] * 1e-9, (rotEnergy[:, 1] - rotEnergy[0, 1]))
-        plt.title('Rotational Energy Difference', fontsize=14)
-        plt.ylabel('(Nm)', fontsize=16)
+        plt.plot(rotEnergy[:, 0] * macros.NANO2SEC, (rotEnergy[:, 1] - rotEnergy[0, 1]))
+        plt.title('Total Energy Difference', fontsize=14)
+        plt.ylabel('Energy (J)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
 
         if show_plots:
             plt.show()
         plt.close("all")
 
-        # Begin the the test analysis
+        # Begin the test analysis
         finalOrbAngMom = np.delete(finalOrbAngMom, 0, axis=1)  # remove the time column
         finalRotAngMom = np.delete(finalRotAngMom, 0, axis=1)  # remove the time column
         finalOrbEnergy = np.delete(finalOrbEnergy, 0, axis=1)  # remove the time column
@@ -418,8 +418,7 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         unitTestSim.AddModelToTask(unitTaskName, PrescribedTransWrap, PrescribedTransConfig)
 
         # Initialize the prescribedTrans test module configuration data
-        accelMax = 0.005 # [m/s^2]
-        #accelMax = 0.25/1000  # [m/s^2]
+        accelMax = 0.005  # [m/s^2]
         PrescribedTransConfig.r_FM_M = r_FM_M
         PrescribedTransConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
         PrescribedTransConfig.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
@@ -505,12 +504,12 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
 
         plt.figure()
         plt.clf()
-        plt.plot(timespan * 1e-9, r_FM_M[:, 0], label='$r_{1}$')
-        plt.plot(timespan * 1e-9, r_FM_M[:, 1], label='$r_{2}$')
-        plt.plot(timespan * 1e-9, r_FM_M[:, 2], label='$r_{3}$')
-        plt.plot(timespan * 1e-9, r_FM_M_1_Ref, '--', label='$r_{1 Ref}$')
-        plt.plot(timespan * 1e-9, r_FM_M_2_Ref, '--', label='$r_{2 Ref}$')
-        plt.plot(timespan * 1e-9, r_FM_M_3_Ref, '--', label='$r_{3 Ref}$')
+        plt.plot(timespan * macros.NANO2SEC, r_FM_M[:, 0], label=r'$r_{1}$')
+        plt.plot(timespan * macros.NANO2SEC, r_FM_M[:, 1], label=r'$r_{2}$')
+        plt.plot(timespan * macros.NANO2SEC, r_FM_M[:, 2], label=r'$r_{3}$')
+        plt.plot(timespan * macros.NANO2SEC, r_FM_M_1_Ref, '--', label=r'$r_{1 Ref}$')
+        plt.plot(timespan * macros.NANO2SEC, r_FM_M_2_Ref, '--', label=r'$r_{2 Ref}$')
+        plt.plot(timespan * macros.NANO2SEC, r_FM_M_3_Ref, '--', label=r'$r_{3 Ref}$')
         plt.title(r'${}^\mathcal{M} r_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
         plt.ylabel('(m)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
@@ -519,10 +518,10 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Plot rPrime_FM_F
         plt.figure()
         plt.clf()
-        plt.plot(timespan * 1e-9, rPrime_FM_M[:, 0], label='$r\'_{1}$')
-        plt.plot(timespan * 1e-9, rPrime_FM_M[:, 1], label='$r\'_{2}$')
-        plt.plot(timespan * 1e-9, rPrime_FM_M[:, 2], label='$r\'_{3}$')
-        plt.title(r'${}^\mathcal{M} r\'_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+        plt.plot(timespan * macros.NANO2SEC, rPrime_FM_M[:, 0], label='1')
+        plt.plot(timespan * macros.NANO2SEC, rPrime_FM_M[:, 1], label='2')
+        plt.plot(timespan * macros.NANO2SEC, rPrime_FM_M[:, 2], label='3')
+        plt.title(r'${}^\mathcal{M} rPrime_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
         plt.ylabel('(m/s)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
         plt.legend(loc='upper left', prop={'size': 16})
@@ -530,20 +529,20 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Plotting rPrimePrime_FM_M
         plt.figure()
         plt.clf()
-        plt.plot(timespan * 1e-9, (180 / np.pi) * rPrimePrime_FM_M[:, 0], label='$r\'\'_{1}$')
-        plt.plot(timespan * 1e-9, (180 / np.pi) * rPrimePrime_FM_M[:, 1], label='$r\'\'_{2}$')
-        plt.plot(timespan * 1e-9, (180 / np.pi) * rPrimePrime_FM_M[:, 2], label='$r\'\'_{3}$')
-        plt.title(r'${}^\mathcal{M} r\'\'_{\mathcal{F}/\mathcal{M}}$ Profiled Acceleration', fontsize=14)
-        plt.ylabel('(m/s$^2$)', fontsize=16)
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * rPrimePrime_FM_M[:, 0], label='1')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * rPrimePrime_FM_M[:, 1], label='2')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * rPrimePrime_FM_M[:, 2], label='3')
+        plt.title(r'${}^\mathcal{M} rPrimePrime_{\mathcal{F}/\mathcal{M}}$ Profiled Acceleration', fontsize=14)
+        plt.ylabel(r'(m/s$^2$)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
         plt.legend(loc='lower left', prop={'size': 16})
 
         # Plot r_BN_N
         plt.figure()
         plt.clf()
-        plt.plot(timespan * 1e-9, r_BN_N[:, 0], label='$r_{1}$')
-        plt.plot(timespan * 1e-9, r_BN_N[:, 1], label='$r_{2}$')
-        plt.plot(timespan * 1e-9, r_BN_N[:, 2], label='$r_{3}$')
+        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 0], label=r'$r_{1}$')
+        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 1], label=r'$r_{2}$')
+        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 2], label=r'$r_{3}$')
         plt.title(r'${}^\mathcal{N} r_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial Trajectory', fontsize=14)
         plt.ylabel('(m)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
@@ -552,9 +551,9 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Plot sigma_BN
         plt.figure()
         plt.clf()
-        plt.plot(timespan * 1e-9, sigma_BN[:, 0], label=r'$\sigma_{1}$')
-        plt.plot(timespan * 1e-9, sigma_BN[:, 1], label=r'$\sigma_{2}$')
-        plt.plot(timespan * 1e-9, sigma_BN[:, 2], label=r'$\sigma_{3}$')
+        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 0], label=r'$\sigma_{1}$')
+        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 1], label=r'$\sigma_{2}$')
+        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 2], label=r'$\sigma_{3}$')
         plt.title(r'$\sigma_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial MRP Attitude', fontsize=14)
         plt.ylabel('', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
@@ -563,9 +562,9 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Plot omega_BN_B
         plt.figure()
         plt.clf()
-        plt.plot(timespan * 1e-9, (180 / np.pi) * omega_BN_B[:, 0], label=r'$\omega_{1}$')
-        plt.plot(timespan * 1e-9, (180 / np.pi) * omega_BN_B[:, 1], label=r'$\omega_{2}$')
-        plt.plot(timespan * 1e-9, (180 / np.pi) * omega_BN_B[:, 2], label=r'$\omega_{3}$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_BN_B[:, 0], label=r'$\omega_{1}$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_BN_B[:, 1], label=r'$\omega_{2}$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_BN_B[:, 2], label=r'$\omega_{3}$')
         plt.title(r'Spacecraft Hub Angular Velocity ${}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}$', fontsize=14)
         plt.ylabel('(deg/s)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
@@ -574,41 +573,41 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Plotting: Conservation quantities
         plt.figure()
         plt.clf()
-        plt.plot(orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
-                 orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 2] - orbAngMom_N[0, 2]) / orbAngMom_N[0, 2],
-                 orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3])
+        plt.plot(orbAngMom_N[:, 0] * macros.NANO2SEC, (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
+                 orbAngMom_N[:, 0] * macros.NANO2SEC, (orbAngMom_N[:, 2] - orbAngMom_N[0, 2]) / orbAngMom_N[0, 2],
+                 orbAngMom_N[:, 0] * macros.NANO2SEC, (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3])
         plt.title('Orbital Angular Momentum Relative Difference', fontsize=14)
         plt.ylabel('(Nms)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
 
         plt.figure()
         plt.clf()
-        plt.plot(orbEnergy[:, 0] * 1e-9, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1])
+        plt.plot(orbEnergy[:, 0] * macros.NANO2SEC, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1])
         plt.title('Orbital Energy Relative Difference', fontsize=14)
-        plt.ylabel('(Nm)', fontsize=16)
+        plt.ylabel('Energy (J)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
 
         plt.figure()
         plt.clf()
-        plt.plot(rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]),
-                 rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]),
-                 rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]))
+        plt.plot(rotAngMom_N[:, 0] * macros.NANO2SEC, (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]),
+                 rotAngMom_N[:, 0] * macros.NANO2SEC, (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]),
+                 rotAngMom_N[:, 0] * macros.NANO2SEC, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]))
         plt.title('Rotational Angular Momentum Difference', fontsize=14)
         plt.ylabel('(Nms)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
 
         plt.figure()
         plt.clf()
-        plt.plot(rotEnergy[:, 0] * 1e-9, (rotEnergy[:, 1] - rotEnergy[0, 1]))
-        plt.title('Rotational Energy Difference', fontsize=14)
-        plt.ylabel('(Nm)', fontsize=16)
+        plt.plot(rotEnergy[:, 0] * macros.NANO2SEC, (rotEnergy[:, 1] - rotEnergy[0, 1]))
+        plt.title('Total Energy Difference', fontsize=14)
+        plt.ylabel('Energy (J)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
 
         if show_plots:
             plt.show()
         plt.close("all")
 
-        # Begin the the test analysis
+        # Begin the test analysis
         finalOrbAngMom = np.delete(finalOrbAngMom, 0, axis=1)  # remove the time column
         finalRotAngMom = np.delete(finalRotAngMom, 0, axis=1)  # remove the time column
         finalOrbEnergy = np.delete(finalOrbEnergy, 0, axis=1)  # remove the time column
@@ -656,10 +655,10 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
 if __name__ == "__main__":
     PrescribedMotionTestFunction(
         True,        # show_plots
-        True,        # rotTest, (True: prescribedRot1DOF integrated test,
+        False,       # rotTest, (True: prescribedRot1DOF integrated test,
                      #           False: prescribedTrans integrated test)
          0.0,        # thetaInit [rad]
-         np.pi/6,    # theta_Ref [rad]
+         np.pi / 12,    # theta_Ref [rad]
          0.0,        # posInit [m]
          0.5,        # posRef [m]
          1e-8        # accuracy

@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -20,26 +20,14 @@
 #ifndef svIntegratorRKF45_h
 #define svIntegratorRKF45_h
 
-#include "../_GeneralModuleFiles/stateVecIntegrator.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
-#include <stdint.h>
+#include "../_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
 
 /*! @brief 4th order Runge-Kutta-Fehlberg variable time step integrator */
-class svIntegratorRKF45 : public StateVecIntegrator
-{
-public:
+class svIntegratorRKF45 : public svIntegratorAdaptiveRungeKutta<6> {
+  public:
     svIntegratorRKF45(DynamicObject* dyn); //!< class method
-    virtual ~svIntegratorRKF45();
-    virtual void integrate(double currentTime, double timeStep); //!< class method
-    double alphaMatrix[6];      //!< matrix of coefficients for time steps
-    double betaMatrix[6][5];   //!< matrix of coefficients for state steps
-    double chMatrix[6];      //!< matrix of coefficients for the result
-    double ctMatrix[6];      //!< matrix of coefficients for the error
-    double kMatrix[6];      //!< matrix of the k coefficients
-
-    double absTol;      //!< absolute tolerance
-    double relTol;      //!< relative tolerance
+  private:
+    static RKAdaptiveCoefficients<6> getCoefficients();
 };
-
 
 #endif /* svIntegratorRKF45_h */

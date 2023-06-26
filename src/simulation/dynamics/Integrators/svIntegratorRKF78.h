@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -20,27 +20,14 @@
 #ifndef svIntegratorRKF78_h
 #define svIntegratorRKF78_h
 
-#include "../_GeneralModuleFiles/stateVecIntegrator.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
-#include <stdint.h>
+#include "../_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
 
 /*! @brief 7/8 order Runge-Kutta integrator */
-class svIntegratorRKF78 : public StateVecIntegrator
-{
-public:
-    svIntegratorRKF78(DynamicObject* dyn);            //!< class method
-    virtual ~svIntegratorRKF78();
-    virtual void integrate(double currentTime, double timeStep); //!< class method
-    double alphaMatrix[13];         //!< matrix of coefficients for time steps
-    double betaMatrix[13][12];      //!< matrix of coefficients for state steps
-    double chMatrix[13];            //!< matrix of coefficients for the result
-    double ctMatrix[13];            //!< matrix of coefficients for the error
-    double kMatrix[13];             //!< matrix of the k coefficients
-
-    double absTol;      //!< absolute tolerance
-    double relTol;      //!< relative tolerance
+class svIntegratorRKF78 : public svIntegratorAdaptiveRungeKutta<13> {
+  public:
+    svIntegratorRKF78(DynamicObject* dyn); //!< class method
+  private:
+    static RKAdaptiveCoefficients<13> getCoefficients();
 };
-
-
 
 #endif /* svIntegratorRKF78_h */
