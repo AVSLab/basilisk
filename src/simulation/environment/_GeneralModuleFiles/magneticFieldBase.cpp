@@ -45,6 +45,7 @@ MagneticFieldBase::MagneticFieldBase()
     this->epochDateTime.tm_hour = EPOCH_HOUR;
     this->epochDateTime.tm_min = EPOCH_MIN;
     this->epochDateTime.tm_sec = (int) round(EPOCH_SEC);
+    this->epochDateTime.tm_isdst = -1;
 
 
     //! - zero the planet message, and set the DCM to an identity matrix
@@ -106,7 +107,6 @@ void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
         this->epochDateTime.tm_hour = epochMsg.hours;
         this->epochDateTime.tm_min = epochMsg.minutes;
         this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
-        this->epochDateTime.tm_isdst = 0;
         mktime(&this->epochDateTime);
     } else {
         customSetEpochFromVariable();

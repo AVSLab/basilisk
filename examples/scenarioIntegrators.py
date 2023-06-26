@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -53,6 +53,45 @@ done.
 The integrator scenario script is setup to evaluate the default integration method (RK4), a fourth-order variable time
 step integrator (RKF45), a first order Euler integration method, as well as a second order RK2 method.
 
+Moreover, this scenario illustrates how to set-up your own explicit Runge-Kutta
+methods simply by providing the coefficients in their Butcher table. The 3rd order
+Runge-Kutta and the (adaptive) Bogacki-Shampine methods are implemented in this way
+to illustrate how to create custom integrators:
+
+.. code-block:: python
+
+    # 3rd order Runge-Kutta method
+    integratorObject = svIntegrators.svIntegratorRungeKutta(
+        scObject,
+        a_coefficients=[
+            [0,   0, 0],
+            [1/2, 0, 0],
+            [-1,  2, 0]
+        ],
+        b_coefficients=[1/6, 2/3, 1/6],
+        c_coefficients=[0, 0.5, 1]
+    )
+    scObject.setIntegrator(integratorObject)
+
+.. code-block:: python
+
+    # Bogacki-Shampine method
+    integratorObject = svIntegrators.svIntegratorAdaptiveRungeKutta(
+        scObject,
+        largest_order=3,
+        a_coefficients=[
+            [0,   0,   0,   0],
+            [1/2, 0,   0,   0],
+            [0  , 3/4, 0,   0],
+            [2/9, 1/3, 4/9, 0]
+        ],
+        b_coefficients=[7/24, 1/4, 1/3, 1/8],
+        b_star_coefficients=[2/9, 1/3, 4/9, 0],
+        c_coefficients=[0, 1/2, 3/4, 1]
+    )
+    scObject.setIntegrator(integratorObject)
+
+
 When the simulation completes a plot is shown for illustrating both the true and the numerically
 evaluated orbit.
 
@@ -99,18 +138,24 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import svIntegrators
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -126,15 +171,17 @@ def run(show_plots, integratorCase):
         show_plots (bool): Determines if the script should display plots
         integratorCase (bool): Specify what type of integrator to use in the simulation
 
-            =======  ============================
-            String   Definition
-            =======  ============================
-            'rk4'    RK4 - default
-            'rkf45'  RKF45
-            'rkf78'  RKF78
-            'rk2'    RK2
-            'euler'  Euler or RK1
-            =======  ============================
+            =======           ============================
+            String            Definition
+            =======           ============================
+            'rk4'             RK4 - default
+            'rkf45'           RKF45
+            'rkf78'           RKF78
+            'rk2'             RK2
+            'euler'           Euler or RK1
+            'rk3'             RK3
+            'bogackiShampine' Bogacki-Shampine adaptive
+            =======           ============================
 
     """
 
@@ -151,7 +198,7 @@ def run(show_plots, integratorCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(120.)
+    simulationTimeStep = macros.sec2nano(120.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -174,6 +221,29 @@ def run(show_plots, integratorCase):
     elif integratorCase == "rk2":
         integratorObject = svIntegrators.svIntegratorRK2(scObject)
         scObject.setIntegrator(integratorObject)
+    elif integratorCase == "rk3":
+        integratorObject = svIntegrators.svIntegratorRungeKutta(
+            scObject,
+            a_coefficients=[[0, 0, 0], [1 / 2, 0, 0], [-1, 2, 0]],
+            b_coefficients=[1 / 6, 2 / 3, 1 / 6],
+            c_coefficients=[0, 0.5, 1],
+        )
+        scObject.setIntegrator(integratorObject)
+    elif integratorCase == "bogackiShampine":
+        integratorObject = svIntegrators.svIntegratorAdaptiveRungeKutta(
+            scObject,
+            largest_order=3,
+            a_coefficients=[
+                [0, 0, 0, 0],
+                [1 / 2, 0, 0, 0],
+                [0, 3 / 4, 0, 0],
+                [2 / 9, 1 / 3, 4 / 9, 0],
+            ],
+            b_coefficients=[7 / 24, 1 / 4, 1 / 3, 1 / 8],
+            b_star_coefficients=[2 / 9, 1 / 3, 4 / 9, 0],
+            c_coefficients=[0, 1 / 2, 3 / 4, 1],
+        )
+        scObject.setIntegrator(integratorObject)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -186,14 +256,16 @@ def run(show_plots, integratorCase):
     mu = earth.mu
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
+        list(gravFactory.gravBodies.values())
+    )
 
     #
     #   setup orbit and simulation time
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000. * 1000  # meters
+    rLEO = 7000.0 * 1000  # meters
     oe.a = rLEO
     oe.e = 0.0001
     oe.i = 33.3 * macros.D2R
@@ -210,21 +282,26 @@ def run(show_plots, integratorCase):
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
+    P = 2.0 * np.pi / n
     simulationTime = macros.sec2nano(0.75 * P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject
+        # , saveFile=fileName
+    )
 
     #
     #   initialize Simulation
@@ -258,34 +335,39 @@ def run(show_plots, integratorCase):
     # draw the planet
     fig = plt.gcf()
     ax = fig.gca()
-    planetColor = '#008800'
+    planetColor = "#008800"
     planetRadius = earth.radEquator / 1000
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
     # draw the actual orbit
     rData = []
     fData = []
-    labelStrings = ("rk4", "rkf45", "rkf78", "euler", "rk2")
+    labelStrings = ("rk4", "rkf45", "rkf78", "euler", "rk2", "rk3", "bogackiShampine")
     for idx in range(0, len(posData)):
         oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000
-             # , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase), len(labelStrings))
-             , label=integratorCase
-             , linewidth=3.0
-             )
+    plt.plot(
+        rData * np.cos(fData) / 1000,
+        rData * np.sin(fData) / 1000
+        # , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase), len(labelStrings))
+        ,
+        label=integratorCase,
+        linewidth=3.0,
+    )
     # draw the full osculating orbit from the initial conditions
     fData = np.linspace(0, 2 * np.pi, 100)
     rData = []
     for idx in range(0, len(fData)):
         rData.append(p / (1 + oe.e * np.cos(fData[idx])))
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000
-             , '--'
-             , color='#555555'
-             )
-    plt.xlabel('$i_e$ Cord. [km]')
-    plt.ylabel('$i_p$ Cord. [km]')
-    plt.legend(loc='lower right')
+    plt.plot(
+        rData * np.cos(fData) / 1000,
+        rData * np.sin(fData) / 1000,
+        "--",
+        color="#555555",
+    )
+    plt.xlabel("$i_e$ Cord. [km]")
+    plt.ylabel("$i_p$ Cord. [km]")
+    plt.legend(loc="lower right")
     plt.grid()
     figureList = {}
     pltName = fileName
@@ -297,7 +379,7 @@ def run(show_plots, integratorCase):
     # # close the plots being saved off to avoid over-writing old and new figures
     # plt.close("all")
 
-    if integratorCase == "rk2":
+    if integratorCase == "bogackiShampine":
         plt.close("all")
 
     # each test method requires a single assert method to be called
@@ -311,5 +393,5 @@ def run(show_plots, integratorCase):
 #
 if __name__ == "__main__":
     run(
-        True,  # show_plots
-        'rk4')  # integrator case(0 - rk4, 1 - rkf45, 2 - rkf78, 3 - euler, 4 - rk2)
+        True, "rk4"  # show_plots
+    )  # integrator case(0 - rk4, 1 - rkf45, 2 - rkf78, 3 - euler, 4 - rk2, 5 - rk3, 6 - bogackiShampine)

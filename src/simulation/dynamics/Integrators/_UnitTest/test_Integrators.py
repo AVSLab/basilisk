@@ -1,6 +1,6 @@
 # ISC License
 #
-# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -52,7 +52,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # @pytest.mark.xfail(True, reason="Scott's brain no-worky\n")
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("integratorCase", ["rk4", "rkf45", "rkf78", "euler", "rk2"])
+@pytest.mark.parametrize("integratorCase", ["rk4", "rkf45", "rkf78", "euler", "rk2", "rk3", "bogackiShampine"])
 def test_scenarioIntegrators(show_plots, integratorCase):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
@@ -95,15 +95,48 @@ def run(doUnitTests, show_plots, integratorCase):
     # default case, RK4 is automatically setup, no extra code is needed
     if integratorCase == "rkf45":
         integratorObject = svIntegrators.svIntegratorRKF45(scObject)
+        integratorObject.setRelativeTolerance(0)
+        integratorObject.setAbsoluteTolerance(0.01)
         scObject.setIntegrator(integratorObject)
     if integratorCase == "rkf78":
         integratorObject = svIntegrators.svIntegratorRKF78(scObject)
+        integratorObject.setRelativeTolerance(0)
+        integratorObject.setAbsoluteTolerance(0.01)
         scObject.setIntegrator(integratorObject)
     elif integratorCase == "euler":
         integratorObject = svIntegrators.svIntegratorEuler(scObject)
         scObject.setIntegrator(integratorObject)
     elif integratorCase == "rk2":
         integratorObject = svIntegrators.svIntegratorRK2(scObject)
+        scObject.setIntegrator(integratorObject)
+    elif integratorCase == "rk3":
+        integratorObject = svIntegrators.svIntegratorRungeKutta(
+            scObject,
+            a_coefficients=[
+                [0,   0, 0],
+                [0.5, 0, 0],
+                [-1,  2, 0]
+            ],
+            b_coefficients=[1/6, 2/3, 1/6],
+            c_coefficients=[0, 0.5, 1]
+        )
+        scObject.setIntegrator(integratorObject)
+    elif integratorCase == "bogackiShampine":
+        integratorObject = svIntegrators.svIntegratorAdaptiveRungeKutta(
+            scObject,
+            largest_order=3,
+            a_coefficients=[
+                [0,   0,   0,   0],
+                [1/2, 0,   0,   0],
+                [0  , 3/4, 0,   0],
+                [2/9, 1/3, 4/9, 0]
+            ],
+            b_coefficients=[7/24, 1/4, 1/3, 1/8],
+            b_star_coefficients=[2/9, 1/3, 4/9, 0],
+            c_coefficients=[0, 1/2, 3/4, 1]
+        )
+        integratorObject.setRelativeTolerance(0)
+        integratorObject.setAbsoluteTolerance(0.0001)
         scObject.setIntegrator(integratorObject)
 
     # add spacecraft object to the simulation process
@@ -254,22 +287,9 @@ def run(doUnitTests, show_plots, integratorCase):
                 , [4.614900659014343e6, -3.60224207689023e6, -3.837022825958977e6]
                 , [5.879095186201691e6, 3.561495655367985e6, -1.3195821703218794e6]
             ]
-        if integratorCase == "rkf45":
-            truePos = [
-                [-2816801.601023492, 5248174.846916147, 3677157.2646772973]
-                , [-6379400.583189211, -1468867.3527969904, 2480790.265929521]
-                , [-2230167.3300352595, -6410467.341067661, -1714612.7269653515]
-                , [4614825.371384772, -3602446.1553066857, -3837075.3102980503]
-                , [5879278.326923609, 3561255.294074021, -1319777.089191588]
-            ]
-        if integratorCase == "rkf78":
-            truePos = [
-                [-2816801.601023492, 5248174.846916147, 3677157.2646772973]
-                , [-6379401.371832086, -1468864.3054097842, 2480791.9863545913]
-                , [-2230174.317580403, -6410466.966948945, -1714609.1414605032]
-                , [4614818.45321768, -3602456.431072683, -3837076.4216056713]
-                , [5879286.370365726, 3561242.507948514, -1319786.6261035257]
-            ]
+        if integratorCase in {"rkf45", "rkf78", "bogackiShampine"}:
+            truePos = [[ 5879286.370258273, 3561242.50810664, -1319786.625981673]]
+            dataPosRed = dataPosRed[-1,:][np.newaxis]
         if integratorCase == "euler":
             truePos = [
                 [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
@@ -285,6 +305,14 @@ def run(doUnitTests, show_plots, integratorCase):
                 , [-2.466642497083674e6, -6.509473992136429e6, -1.6421621818735446e6]
                 , [4.342561337924192e6, -4.1593822658140697e6, -3.947594705237753e6]
                 , [6.279757158711852e6, 2.8527385905952943e6, -1.8260959147806289e6]
+            ]
+        if integratorCase == "rk3":
+            truePos = [
+                [-2816801.601023492 ,  5248174.846916147 ,  3677157.2646772973],
+                [-6380014.419169294 , -1467304.5024778044,  2481775.1156921615],
+                [-2231193.424069216 , -6407257.277104054 , -1712704.800575082 ],
+                [ 4613563.820461048 , -3590442.718508557 , -3831202.081509318 ],
+                [ 5853794.060191272 ,  3579538.889746918 , -1299292.6887013493]
             ]
 
         # compare the results to the truth values
@@ -329,4 +357,4 @@ def run(doUnitTests, show_plots, integratorCase):
 if __name__ == "__main__":
     run(True,  # do unit tests
         True,  # show_plots
-        'rkf78')  # integrator case(0 - RK4, 1 - RKF45, 2 - Euler, 3 - RK2)
+        'bogackiShampine')  # integrator case(0 - RK4, 1 - RKF45, 2 - Euler, 3 - RK2, 4 - RK3)

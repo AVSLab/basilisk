@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,69 +17,22 @@
 
  */
 
-
 #include "svIntegratorRK2.h"
-#include "../_GeneralModuleFiles/dynamicObject.h"
-#include <stdio.h>
 
-svIntegratorRK2::svIntegratorRK2(DynamicObject* dyn) : StateVecIntegrator(dyn)
+svIntegratorRK2::svIntegratorRK2(DynamicObject* dyn)
+    : svIntegratorRungeKutta(dyn, svIntegratorRK2::getCoefficients())
 {
 }
 
-svIntegratorRK2::~svIntegratorRK2()
+RKCoefficients<2> svIntegratorRK2::getCoefficients()
 {
-}
+    RKCoefficients<2> coefficients;
+    coefficients.aMatrix.at(1).at(0) = 1;
+    coefficients.aMatrix.at(1).at(1) = 1;
 
-/*<!
- Implements a 2nd order Runge Kutta integration method called Heun's method
- see [Wiki Page on Heun's Method](https://en.wikipedia.org/wiki/Heun%27s_method#Runge.E2.80.93Kutta_method)
- */
-void svIntegratorRK2::integrate(double currentTime, double timeStep)
-{
-    std::vector<StateVector> stateOut;
-    std::vector<StateVector> stateInit;
-    std::map<std::string, StateData>::iterator it;
-    std::map<std::string, StateData>::iterator itOut;
-    std::map<std::string, StateData>::iterator itInit;
+    coefficients.bArray = {0.5, 0.5};
 
-    for (const auto& dynPtr : dynPtrs) {
-        stateOut.push_back(dynPtr->dynManager.getStateVector());
-        stateInit.push_back(dynPtr->dynManager.getStateVector());
-        dynPtr->equationsOfMotion(currentTime, timeStep);
-    }
-    for (size_t i=0; i<dynPtrs.size(); i++) {
-        for (it = dynPtrs.at(i)->dynManager.stateContainer.stateMap.begin(),
-             itOut = stateOut.at(i).stateMap.begin(),
-             itInit = stateInit.at(i).stateMap.begin();
-             it != dynPtrs.at(i)->dynManager.stateContainer.stateMap.end();
-             it++,
-             itOut++,
-             itInit++)
-        {
-            itOut->second.setDerivative(it->second.getStateDeriv());
-            itOut->second.propagateState(timeStep / 2.0);
-            it->second.state = itInit->second.state + timeStep*it->second.stateDeriv;
-        }
-    }
-    
-    for (const auto& dynPtr : dynPtrs) {
-        dynPtr->equationsOfMotion(currentTime + timeStep, timeStep);
-    }
-    for (size_t i=0; i<dynPtrs.size(); i++) {
-        for (it = dynPtrs.at(i)->dynManager.stateContainer.stateMap.begin(),
-             itOut = stateOut.at(i).stateMap.begin(),
-             itInit = stateInit.at(i).stateMap.begin();
-             it != dynPtrs.at(i)->dynManager.stateContainer.stateMap.end();
-             it++,
-             itOut++,
-             itInit++)
-        {
-            itOut->second.setDerivative(it->second.getStateDeriv());
-            itOut->second.propagateState(timeStep / 2.0);
-        }
-    }
+    coefficients.cArray = {0., 1.};
 
-    for (size_t i=0; i<dynPtrs.size(); i++) {
-        dynPtrs.at(i)->dynManager.updateStateVector(stateOut.at(i));
-    }
+    return coefficients;
 }
