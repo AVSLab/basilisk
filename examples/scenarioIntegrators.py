@@ -171,9 +171,9 @@ def run(show_plots, integratorCase):
         show_plots (bool): Determines if the script should display plots
         integratorCase (bool): Specify what type of integrator to use in the simulation
 
-            =======           ============================
+            ================= ============================
             String            Definition
-            =======           ============================
+            ================= ============================
             'rk4'             RK4 - default
             'rkf45'           RKF45
             'rkf78'           RKF78
@@ -181,7 +181,7 @@ def run(show_plots, integratorCase):
             'euler'           Euler or RK1
             'rk3'             RK3
             'bogackiShampine' Bogacki-Shampine adaptive
-            =======           ============================
+            ================= ============================
 
     """
 
