@@ -19,6 +19,11 @@ The latest Vizard application binaries binaries can be directly downloaded using
 
     The custom Unity asset loading requires Vizard v2.1.1 or later.
 
+.. warning::
+
+    The newer version of Linux use a new GUI library that is not supported by the
+    Vizard File Browser plug-in currently.  If you can't select files to open in the GUI
+    then use the ``loadFile`` command line option discussed in :ref:`vizardCommandLine`
 
 The following optional downloads contain models for a range space objects that are too large to
 include in the main Vizard binary. You download the desired binaries for the platform you are using
