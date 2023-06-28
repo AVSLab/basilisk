@@ -31,8 +31,12 @@ Basilisk Release Notes
 
 
 
-Version |release| (June 28, 2023)
----------------------------------
+Version |release|
+-----------------
+- text here
+
+Version 2.2.0 (June 28, 2023)
+-----------------------------
 - Created new way to define Python modules by inheriting from ``Basilisk.architecture.sysModel.SysModel``.
   See :ref:`pyModules` for details.
 - Added the ability to integrate the ODE's of two or more Basilisk modules that are ``DynamicObject`` class
