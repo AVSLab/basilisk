@@ -25,15 +25,14 @@ Basilisk Release Notes
     - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
       CAD asteroid or lunar surface terrain.
     - spacecraft charging related modules
-    - ability to integrate dynamics of multiple spacecraft simultaneously
     - support a way to do thread-safe messaging
     - ability to integrate Python Basilisk modules in the same task and process as C/C++ modules
     - automated documentation build system when code is pushed to the repo
 
 
 
-Version |release|
------------------
+Version |release| (June 28, 2023)
+---------------------------------
 - Created new way to define Python modules by inheriting from ``Basilisk.architecture.sysModel.SysModel``.
   See :ref:`pyModules` for details.
 - Added the ability to integrate the ODE's of two or more Basilisk modules that are ``DynamicObject`` class
