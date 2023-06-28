@@ -480,21 +480,21 @@ def setActuatorGuiSetting(viz, **kwargs):
     if 'viewRWHUD' in kwargs:
         setting = kwargs['viewRWHUD']
         if not isinstance(setting, bool):
-            print('ERROR: vizSupport: viewRWHUD must be an integer value')
+            print('ERROR: vizSupport: viewRWHUD must be True or False')
             exit(1)
         vizElement.viewRWHUD = setting
 
     if 'showThrusterLabels' in kwargs:
         setting = kwargs['showThrusterLabels']
         if not isinstance(setting, bool):
-            print('ERROR: vizSupport: showThrusterLabels must be an integer value')
+            print('ERROR: vizSupport: showThrusterLabels must be True or False')
             exit(1)
         vizElement.showThrusterLabels = setting
 
     if 'showRWLabels' in kwargs:
         setting = kwargs['showRWLabels']
         if not isinstance(setting, bool):
-            print('ERROR: vizSupport: showRWLabels must be an integer value')
+            print('ERROR: vizSupport: showRWLabels must be an True or False')
             exit(1)
         vizElement.showRWLabels = setting
 
@@ -574,11 +574,11 @@ def setInstrumentGuiSetting(viz, **kwargs):
         if not isinstance(setting, int):
             print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting is False:
+            setting = -1
         if setting*setting > 1:
             print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
-        if setting is False:
-            setting = -1
         vizElement.viewCSSPanel = setting
         print(vizElement.viewCSSPanel)
 
@@ -587,11 +587,11 @@ def setInstrumentGuiSetting(viz, **kwargs):
         if not isinstance(setting, int):
             print('ERROR: vizSupport: viewCSSCoverage must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting is False:
+            setting = -1
         if setting*setting > 1:
             print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
-        if setting is False:
-            setting = -1
         vizElement.viewCSSCoverage = setting
 
     if 'viewCSSBoresight' in kwargs:
@@ -599,11 +599,11 @@ def setInstrumentGuiSetting(viz, **kwargs):
         if not isinstance(setting, int):
             print('ERROR: vizSupport: viewCSSBoresight must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting is False:
+            setting = -1
         if setting*setting > 1:
             print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
-        if setting is False:
-            setting = -1
         vizElement.viewCSSBoresight = setting
 
     if 'showCSSLabels' in kwargs:
@@ -611,11 +611,11 @@ def setInstrumentGuiSetting(viz, **kwargs):
         if not isinstance(setting, int):
             print('ERROR: vizSupport: showCSSLabels must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting is False:
+            setting = -1
         if setting*setting > 1:
             print('ERROR: vizSupport: viewCSSPanel must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
-        if setting is False:
-            setting = -1
         vizElement.showCSSLabels = setting
 
     if 'showGenericSensorLabels' in kwargs:
@@ -623,11 +623,11 @@ def setInstrumentGuiSetting(viz, **kwargs):
         if not isinstance(setting, int):
             print('ERROR: vizSupport: showGenericSensorLabels must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting is False:
+            setting = -1
         if setting*setting > 1:
             print('ERROR: vizSupport: showGenericSensorLabels must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
-        if setting is False:
-            setting = -1
         vizElement.showGenericSensorLabels = setting
 
     if 'showTransceiverLabels' in kwargs:
@@ -635,11 +635,11 @@ def setInstrumentGuiSetting(viz, **kwargs):
         if not isinstance(setting, int):
             print('ERROR: vizSupport: showTransceiverLabels must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting is False:
+            setting = -1
         if setting*setting > 1:
             print('ERROR: vizSupport: showTransceiverLabels must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
-        if setting is False:
-            setting = -1
         vizElement.showTransceiverLabels = setting
 
     if 'showTransceiverFrustrum' in kwargs:
@@ -647,11 +647,11 @@ def setInstrumentGuiSetting(viz, **kwargs):
         if not isinstance(setting, int):
             print('ERROR: vizSupport: showTransceiverFrustrum must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting is False:
+            setting = -1
         if setting*setting > 1:
             print('ERROR: vizSupport: showTransceiverFrustrum must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
-        if setting is False:
-            setting = -1
         vizElement.showTransceiverFrustrum = setting
 
     if 'showGenericStoragePanel' in kwargs:
@@ -659,11 +659,11 @@ def setInstrumentGuiSetting(viz, **kwargs):
         if not isinstance(setting, int):
             print('ERROR: vizSupport: showGenericStoragePanel must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting is False:
+            setting = -1
         if setting*setting > 1:
             print('ERROR: vizSupport: showGenericStoragePanel must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
-        if setting is False:
-            setting = -1
         vizElement.showGenericStoragePanel = setting
 
     if 'showMultiSphereLabels' in kwargs:
@@ -671,11 +671,11 @@ def setInstrumentGuiSetting(viz, **kwargs):
         if not isinstance(setting, int):
             print('ERROR: vizSupport: showMultiSphereLabels must be  -1 (Off), 0 (default) or 1 (On)')
             exit(1)
+        if setting is False:
+            setting = -1
         if setting*setting > 1:
             print('ERROR: vizSupport: showMultiSphereLabels must be -1 (Off), 0 (default) or 1 (On)')
             exit(1)
-        if setting is False:
-            setting = -1
         vizElement.showMultiSphereLabels = setting
 
     instrumentGuiSettingList.append(vizElement)
@@ -826,7 +826,7 @@ def createStandardCamera(viz, **kwargs):
         if not isinstance(setView, int):
             print('ERROR: vizSupport: setView must be an integer')
             exit(1)
-        if setView < 0 or setView > 5:
+        if setView < 0 or setView > 2:
             print('ERROR: vizSupport: setView must be a number of [0,2]')
             print('0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). '
                   'This is a setting for body targeting mode.')
@@ -1032,7 +1032,7 @@ def createCameraConfigMsg(viz, **kwargs):
 
     if 'updateCameraParameters' in kwargs:
         val = kwargs['updateCameraParameters']
-        if not isinstance(val, int) or val < 0:
+        if not isinstance(val, int) or val < 0 or val > 1:
             print('ERROR: vizSupport: updateCameraParameters must be 0 or 1.')
             exit(1)
         cameraConfigMsgPayload.cameraID = val
@@ -1041,7 +1041,7 @@ def createCameraConfigMsg(viz, **kwargs):
 
     if 'renderMode' in kwargs:
         val = kwargs['renderMode']
-        if not isinstance(val, int) or val < 0:
+        if not isinstance(val, int) or val < 0 or val > 1:
             print('ERROR: vizSupport: renderMode must be 0 or 1.')
             exit(1)
         cameraConfigMsgPayload.renderMode = val
@@ -1308,7 +1308,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                           'must provide 4 integers values from 0 to 255 ')
                     exit(1)
                 for color in elem:
-                    if color < 0:
+                    if color < 0 or color > 255:
                         print('ERROR: vizSupport:  oscOrbitColorList color contained negative value ')
                         exit(1)
 
@@ -1326,7 +1326,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                           'must provide 4 integers values from 0 to 255 ')
                     exit(1)
                 for color in elem:
-                    if color < 0:
+                    if color < 0 or color > 255:
                         print('ERROR: vizSupport:  trueOrbitColorList color contained negative value ')
                         exit(1)
 
