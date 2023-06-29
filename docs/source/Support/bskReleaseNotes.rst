@@ -33,7 +33,10 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Created a new :ref:`pinholeCamera` module to support generation of landmarks-based measurements around a
+  small body.
+- A new integrated example script :ref:`scenarioSmallBodyLandmarks` demonstrates the use of the pinhole camera module
+
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------
