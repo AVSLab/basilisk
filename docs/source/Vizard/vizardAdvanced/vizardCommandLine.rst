@@ -13,6 +13,11 @@ To launch an instance of the `Vizard <vizard>`_ application from the command lin
 
 The `Vizard <vizard>`_ application supports the following command line arguments:
 
+#. To launch `Vizard <vizard>`_ application and automatically load a playback binary Vizard data file,
+   use the ``-loadFile`` argument followed by the filepath::
+
+	open /Applications/Vizard.app --args -loadFile ~/filepath/filename.bin
+
 #. To launch `Vizard <vizard>`_ application in opNav mode, use the ``-opNav`` argument followed
    by the TCP address `Vizard <vizard>`_ should connect to::
 

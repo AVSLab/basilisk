@@ -388,6 +388,7 @@ VizSettings
     double spacecraftSizeMultiplier = -1; //!< Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0, use negative value to use viz default
     double spacecraftHelioViewSizeMultiplier = -1; //!< Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
     int forceStartAtSpacecraftLocalView = -1; //!< Require Vizard to start up in spacecraft-view on start up
+    int useSimpleLocationMarkers = 0;  //!< Value of 0 (protobuffer default) to use simplified Location markers when number of locations is greater than 100, -1 to force use of full-featured Location, 1 to force use of simplified Location (no cones, range, or communication lines)
 
     int32_t showLocationCommLines = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int32_t showLocationCones = 0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true

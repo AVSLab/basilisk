@@ -180,6 +180,8 @@ message VizMessage{
         double ppAperture = 13; //  (Optional) Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to leave this option off.
         double ppFocalLength = 14; // [mm] (Optional) Value of -1 to calculate the focal length automatically from the field-of-view value set on the camera, otherwise provide positive non-zero value in range. Valid setting range: 1mm to 300mm. Value of 0 to leave this option off.
         int64 ppMaxBlurSize = 15; //(Optional) Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to leave this option off.
+        int64 renderMode = 16; //(Optional) Value of 0 to render visual image (default), value of 1 to render depth buffer to image
+        repeated double depthMapClippingPlanes = 17; //(Optional) [m] Set the bounds of rendered depth map by setting the near and far clipping planes when in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
         
     }
 
@@ -192,7 +194,7 @@ message VizMessage{
         repeated int32 lineColor = 3; //Send desired RGBA as values between 0 and 255
     }
     
-    message KeepOutInCone{//ONLY NEEDED IF KEEP OUT CONE DESIRED
+    message KeepOutInCone{//ONLY NEEDED IF KEEP OUT OR KEEP IN CONE DESIRED
         // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE
         bool isKeepIn = 1; //True -> keep in cone created, False -> keep out cone created
         repeated double position = 2; //relative to from body coordinate frame
@@ -316,6 +318,7 @@ message VizMessage{
         int32 showMissionTime = 48; //Toggle to show Mission Time instead of Sim Elapsed Time, -1 for false, 0 for viz default, 1 for true
         double spacecraftHelioViewSizeMultiplier = 49; // Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
         int32 forceStartAtSpacecraftLocalView = 50; // Require Vizard to start up in spacecraft-view on start up
+        int32 useSimpleLocationMarkers = 51; // Value of 0 (protobuffer default) to use simplified Location markers when number of locations is greater than 100, -1 to force use of full-featured Location, 1 to force use of simplified Location (no cones, range, or communication lines)
     }
     
     message MultiSphere{ //ONLY NEEDED IF MSM DESIRED
@@ -356,7 +359,7 @@ message VizMessage{
     TimeStamp currentTime = 1; //CHECKED EVERY MESSAGE
     repeated CelestialBody celestialBodies = 2; //CHECKED EVERY MESSAGE
     repeated Spacecraft spacecraft = 3; //CHECKED EVERY MESSAGE
-    repeated CameraConfig cameras = 4; //CHECKED FIRST MESSAGE ONLY
+    repeated CameraConfig cameras = 4; //CHECKED EVERY MESSAGE
     //repeated cameraImage cameraImages = 5;
     //repeated ImageRequest imageRequests = 6;
     VizSettingsPb settings = 7; //CHECKED FIRST MESSAGE ONLY

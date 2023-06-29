@@ -184,6 +184,11 @@ default setting for that behavior.
     * - ``showLocationLabels``
       - int
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``useSimpleLocationMarkers``
+      - int
+      - Value of 0 (protobuffer default) to use simplified Location markers when number
+        of locations is greater than 100, -1 to force use of full-featured Location, 1 to
+        force use of simplified Location (no cones, range, or communication lines)
     * - ``atmospheresOff``
       - int
       - Toggle to disable the atmosphere effect on celestial bodies, Value of 0 (protobuffer default to use
@@ -662,6 +667,42 @@ The following table illustrates the possible variables for the
       -
       - No
       - If true, commands camera to update Instrument Camera to current message's parameters
+    * - ``renderMode``
+      - int
+      -
+      - No
+      - Value of 0 to render visual image (default), value of 1 to render depth buffer to image
+    * - ``depthMapClippingPlanes``
+      - double(2)
+      - m
+      - No
+      - Set the bounds of rendered depth map by setting the near and far clipping planes when
+        in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
+
+
+If the ``renderMode`` is set to 1 the camera outputs a depth map.
+Depth maps rendered by an Instrument Camera utilize Unity’s ``Linear01Depth`` shader helper macro inside
+Vizard’s DepthMap shader. The macro linearizes the non-linear internal depth texture whose precision
+is configuration and platform dependent to return a value between 0 and 1 where 1 is the maximum depth.
+Vizard’s DepthMap shader takes the value returned and encodes it as an RGB color. The far clipping plane
+of the Instrument Camera determines the maximum depth of the rendered texture and can be set as part of
+the camera configuration.
+
+.. warning::
+
+    The internal depth texture values are more accurate for objects closer to the camera. Error in
+    the calculated depth increases with distance from the camera.
+
+
+To decode the depth for a specific pixel, sample its RGB color values :math:`(r,g,b)` and calculate the depth as as:
+
+.. math::
+
+    depth = (farClippingPlane)(\frac{\frac{\frac{b} {256} +g} {256} + r} {256})
+
+If the depth is equal to or greater than the far clipping plane of the instrument camera,
+the pixel color will be white (255, 255, 255).
+
 
 
 
