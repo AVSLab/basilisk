@@ -43,6 +43,20 @@ void eigenMatrixXd2CArray(Eigen::MatrixXd inMat, double *outArray)
 	memcpy(outArray, tempMat.data(), inMat.rows()*inMat.cols()*sizeof(double));
 }
 
+/*! This function provides a general conversion between an Eigen matrix and
+an output C array. Note that this routine would convert an inbound type
+to a MatrixXd and then transpose the matrix which would be inefficient
+in a lot of cases.
+@return void
+@param inMat The source Eigen matrix that we are converting
+@param outArray The destination array (sized by the user!) we copy into
+*/
+void eigenMatrixXi2CArray(Eigen::MatrixXi inMat, int *outArray)
+{
+    Eigen::MatrixXi tempMat = inMat.transpose();
+    memcpy(outArray, tempMat.data(), inMat.rows()*inMat.cols()*sizeof(int));
+}
+
 /*! This function provides a direct conversion between a 3-vector and an
 output C array. We are providing this function to save on the  inline conversion
 and the transpose that would have been performed by the general case.
