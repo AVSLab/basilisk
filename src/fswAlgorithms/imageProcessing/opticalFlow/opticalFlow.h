@@ -57,7 +57,7 @@ private:
     bool secondImagePresent = false;
     double firstSpacecraftAttitude[3];
     double firstTargetEphemAttitude[3];
-    uint64_t firstTimeTag;
+    uint64_t firstTimeTag = 0;
     std::vector<cv::Vec2f> secondFeatures;
     std::vector<cv::Vec2f> firstFeatures;
 
