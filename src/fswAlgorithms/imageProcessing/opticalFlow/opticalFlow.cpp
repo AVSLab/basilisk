@@ -49,7 +49,6 @@ void OpticalFlow::Reset(uint64_t CurrentSimNanos)
  */
 void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
 {
-    std::string dirName;
     CameraImageMsgPayload imageBuffer;
     PairedKeyPointsMsgPayload featurePayload;
 
@@ -60,12 +59,15 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
     imageBuffer = this->imageInMsg();
 
     this->sensorTimeTag = 0;
-    /* Added for debugging purposes*/
-    if (!this->filename.empty()){
-        this->secondImage = cv::imread(this->filename, cv::IMREAD_GRAYSCALE);
-        this->sensorTimeTag = CurrentSimNanos;
-        this->secondImagePresent = true;
-        this->filename = "";
+    /*! - Read option which reads images from files*/
+    if (!this->directoryName.empty()){
+        std::string filename = this->directoryName + std::to_string(CurrentSimNanos) + this->imageFileExtension;
+        std::ifstream imageFile(filename);
+        if (imageFile.good()){
+            this->secondImage = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+            this->sensorTimeTag = CurrentSimNanos;
+            this->secondImagePresent = true;
+        }
     }
     else if(imageBuffer.valid == 1 && imageBuffer.timeTag > this->firstTimeTag){
         /*! - Recast image pointer to CV type*/

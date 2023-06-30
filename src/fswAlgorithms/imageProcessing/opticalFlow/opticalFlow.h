@@ -62,7 +62,8 @@ private:
     std::vector<cv::Vec2f> firstFeatures;
 
 public:
-    std::string filename = "";  //!< Filename for module to read an image directly
+    std::string directoryName = "";  //!< Directory name for module to read an image directly
+    std::string imageFileExtension = ".png";  //!< Directory name for module to read an image directly
 
     Message<PairedKeyPointsMsgPayload> keyPointsMsg;  //!< The name of the output message containing key points
     ReadFunctor<CameraImageMsgPayload> imageInMsg;  //!< The name of the camera output message containing images
