@@ -72,8 +72,8 @@ def test_module(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSize, 
 
 def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSize, slidingWindow, saveImage):
     # Truth values from python
-    imagePath1 = path + '/' + image + "-0.jpg"
-    imagePath2 = path + '/' + image + "-60.jpg"
+    imagePath1 = path + '/' + image + "/1000000000.jpg"
+    imagePath2 = path + '/' + image + "/60000000000.jpg"
     input_image1 = PIL.Image.open(imagePath1)
     input_image2 = PIL.Image.open(imagePath2)
     input_image1.load()
@@ -109,6 +109,8 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
     moduleConfig.criteriaEpsilon = 0.01
     moduleConfig.flowSearchSize = searchSize
     moduleConfig.flowMaxLevel = 2
+    moduleConfig.directoryName = path + '/' + image + "/"
+    moduleConfig.imageFileExtension = ".jpg"
 
     # OpenCV specific arguments needed for masking */
     moduleConfig.thresholdMask = maskSize
@@ -143,23 +145,21 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
     t1 = 100
     deltaT = 60
     attitudeUpdate = np.array(sigma_BN)
-    moduleConfig.filename = ""
     attitudes = []
 
     unitTestSim.InitializeSimulation()
     for i in range(0, t1, 5):
-        if i % deltaT == 5:
-            moduleConfig.filename = path + '/' + image + "-" + str(i-5) + ".jpg"
+        if i % deltaT == 0:
             attitudeUpdate += np.random.normal(0, 1E-2, 3)
-            inputAtt.sigma_BN = attitudeUpdate.tolist()
-            inputEphem.sigma_BN = (-attitudeUpdate).tolist()
+            inputAtt.sigma_BN = np.copy(attitudeUpdate).tolist()
+            inputEphem.sigma_BN = np.copy(-attitudeUpdate).tolist()
             attitudes.append(attitudeUpdate.tolist())
             attInMsg.write(inputAtt, unitTestSim.TotalSim.CurrentNanos)
             ephemInMsg.write(inputEphem, unitTestSim.TotalSim.CurrentNanos)
         unitTestSim.ConfigureStopTime(macros.sec2nano(i * dt))
         unitTestSim.ExecuteSimulation()
 
-    deltaT += 2
+    deltaT += 1
     timeOld = dataLog.timeTag_firstImage[deltaT]
     timeNew = dataLog.timeTag_secondImage[deltaT]
     numPoints = int(dataLog.keyPointsFound[deltaT])
@@ -186,7 +186,7 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
 
     #Save output image
     if saveImage:
-        output_image.save(path + '/' + "result_"+ image + "-" + str(maxFeatures) + ".jpg")
+        output_image.save(path + '/' + image + "/result_" + "-" + str(numPoints) + ".jpg")
         output_image.show()
     if show_plots:
         output_image.show()
