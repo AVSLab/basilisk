@@ -209,6 +209,34 @@ void OpticalFlow::makeMask (cv::Mat const &inputBWImage, cv::Mat &mask) const {
     cv::Mat erosionKernel = cv::Mat::ones(this->limbMask, this->limbMask, CV_8U);
     cv::erode(thresholded, thresholded, erosionKernel);
     thresholded.convertTo(mask, CV_8UC1);
+
+    /*! Mask the edges of the camera FOV in order to avoid effects of camera distortions.
+     * Point in opencv is column, row */
+    /*! - Left edge removal */
+    cv::rectangle(mask,
+                  cv::Point(0,0),
+                  cv::Point(this->limbMask, mask.size().height),
+                  cv::Scalar(0),
+                  -1);
+    /*! - Right edge removal */
+    cv::rectangle(mask,
+                  cv::Point(mask.size().width - this->limbMask, 0 ),
+                  cv::Point(mask.size().width, mask.size().height),
+                  cv::Scalar(0),
+                  -1);
+    /*! - Top edge removal */
+    cv::rectangle(mask,
+                  cv::Point(this->limbMask, 0),
+                  cv::Point(mask.size().width - this->limbMask, this->limbMask),
+                  cv::Scalar(0),
+                  -1);
+    /*! - Bottom edge removal */
+    cv::rectangle(mask,
+                  cv::Point(this->limbMask, mask.size().height - this->limbMask),
+                  cv::Point(mask.size().width - this->limbMask, mask.size().height),
+                  cv::Scalar(0),
+                  -1);
+
     assert(mask.type() == CV_8UC1);
     assert(mask.size() == inputBWImage.size());
 }
