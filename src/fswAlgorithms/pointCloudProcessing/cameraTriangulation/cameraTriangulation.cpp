@@ -43,6 +43,8 @@ void CameraTriangulation::Reset(uint64_t currentSimNanos)
     if (!this->cameraConfigInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "cameraTriangulation.cameraConfigInMsg was not linked.");
     }
+
+    this->Ru = pow(this->uncertaintyImageMeasurement,2) * Eigen::Matrix2d::Identity();
 }
 
 /*! This is the main method that gets called every time the module is updated.
@@ -55,12 +57,14 @@ void CameraTriangulation::UpdateState(uint64_t currentSimNanos)
     this->readMessages();
 
     if (this->validInputs == 1) {
-        this->estimatedCameraLocation = this->triangulation(
+        std::pair<Eigen::Vector3d, Eigen::Matrix3d> triangulationResult = this->triangulation(
                 this->pointCloud,
                 this->keyPoints,
                 this->cameraCalibrationMatrixInverse,
                 std::vector<Eigen::Matrix3d>{this->dcm_CN}
         );
+        this->estimatedCameraLocation = triangulationResult.first;
+        this->triangulationCovariance = triangulationResult.second;
     }
 
     // write messages
@@ -81,8 +85,6 @@ void CameraTriangulation::readMessages()
     bool validPointCloud = pointCloudInMsgBuffer.valid;
     int pointCloudSize = pointCloudInMsgBuffer.numberOfPoints;
     this->pointCloud = cArray2EigenMatrixXd(pointCloudInMsgBuffer.points, POINT_DIM, pointCloudSize);
-    // convert to std vector that includes all point cloud feature locations
-
     uint64_t timeTagPointCloud = pointCloudInMsgBuffer.timeTag;
 
     /* key points message */
@@ -120,9 +122,15 @@ void CameraTriangulation::readMessages()
     double up = resolutionX/2;
     double vp = resolutionY/2;
     // build inverse K^-1 of camera calibration matrix K
-    this->cameraCalibrationMatrixInverse << 1./dX, -alpha/(dX*dY), (alpha*vp - dY*up)/(dX*dY),
+    Eigen::Matrix3d Kinv;
+    Kinv << 1./dX, -alpha/(dX*dY), (alpha*vp - dY*up)/(dX*dY),
                                             0., 1./dY, -vp/dY,
                                             0., 0., 1.;
+    this->cameraCalibrationMatrixInverse = Kinv;
+
+    Eigen::MatrixXd S(2,3);
+    S << Eigen::Matrix2d::Identity(), Eigen::MatrixXd::Zero(2, 1);
+    this->Rx = Kinv*S.transpose()*this->Ru*S*Kinv.transpose();
 
     // dcm from inertial frame N to camera frame C
     this->dcm_CN = dcm_CB*dcm_BN;
@@ -170,21 +178,24 @@ void CameraTriangulation::writeMessages(uint64_t currentSimNanos)
     Eigen::Vector3d sig_BN = eigenMRPd2Vector3d(this->sigma_BN);
     eigenVector3d2CArray(sig_BN, cameraLocationOutMsgBuffer.sigma_BN);
     eigenVector3d2CArray(this->estimatedCameraLocation, cameraLocationOutMsgBuffer.cameraPos_N);
+    eigenMatrix3d2CArray(this->triangulationCovariance, cameraLocationOutMsgBuffer.covariance_N);
 
     this->cameraLocationOutMsg.write(&cameraLocationOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
-/*! This method performs the triangulation to estimate the unknown location given the known locations and images
+/*! This method performs the triangulation to estimate the unknown location given the known locations and images.
+    The covariance matrix of the estimated unknown location is also computed.
     @param knownLocations known positions (point cloud points)
     @param imagePoints location of key points in pixel space
     @param cameraCalibrationInverse inverse of camera calibration matrix K
     @param dcmCamera dcm from frame of interest F to camera frame C
-    @return Eigen::Vector3d
+    @return std::pair<Eigen::Vector3d, Eigen::Matrix3d>
 */
-Eigen::Vector3d CameraTriangulation::triangulation(Eigen::MatrixXd knownLocations,
-                                                       std::vector<Eigen::Vector2d> imagePoints,
-                                                       const Eigen::Matrix3d& cameraCalibrationInverse,
-                                                       std::vector<Eigen::Matrix3d> dcmCamera) const
+std::pair<Eigen::Vector3d, Eigen::Matrix3d> CameraTriangulation::triangulation(
+                                                                        Eigen::MatrixXd knownLocations,
+                                                                        std::vector<Eigen::Vector2d> imagePoints,
+                                                                        const Eigen::Matrix3d& cameraCalibrationInverse,
+                                                                        std::vector<Eigen::Matrix3d> dcmCamera) const
 {
     unsigned long numLocations = knownLocations.cols();
     unsigned long numImagePoints = imagePoints.size();
@@ -195,14 +206,17 @@ Eigen::Vector3d CameraTriangulation::triangulation(Eigen::MatrixXd knownLocation
     assert(numLocations == numImagePoints && (numDCM == 1 || numDCM == numImagePoints));
 
     Eigen::Matrix3d dcm_CF = dcmCamera.at(0); // dcm from frame of interest F to camera frame C
+    Eigen::Matrix3d dcm_FC = dcm_CF.transpose(); // dcm from camera frame C to frame of interest F
 
     Eigen::MatrixXd A(3*numLocations, 3);
     Eigen::VectorXd y(3*numLocations);
+    Eigen::Matrix3d covarianceSumTerm = Eigen::Matrix3d::Zero();
 
     for (int c = 0; c < numLocations; ++c) {
         // update dcm in case they are different for each image point
         if (dcmCamera.size() != 1) {
             dcm_CF = dcmCamera.at(c);
+            dcm_FC = dcm_CF.transpose();
         }
 
         // 2D pixel location
@@ -218,9 +232,51 @@ Eigen::Vector3d CameraTriangulation::triangulation(Eigen::MatrixXd knownLocation
         // fill in A matrix and measurements y
         A.block(3*c, 0, 3, 3) = eigenTilde(xBar)*dcm_CF;
         y.segment(3*c, 3) = eigenTilde(xBar)*dcm_CF*p;
+
+        // covariance computation (perform only if image noise is non-zero for more efficiency)
+        if (this->uncertaintyImageMeasurement != 0.) {
+            // Choose index for "companion measurement"
+            // According to https://doi.org/10.2514/1.G006989, this can be done arbitrarily, so simply choose next index
+            int c2 = c + 1;
+            if (c2 > numLocations - 1) {
+                // if c is already the last measurement, choose c2 = 0
+                c2 = 0;
+            }
+
+            // dcm for measurement j
+            // (only equal to the dcm for measurement i if only a single dcm is provided to function)
+            Eigen::Matrix3d dcm_FCj = dcm_FC;
+            if (dcmCamera.size() != 1) {
+                dcm_FCj = dcmCamera.at(c2).transpose();
+            }
+            Eigen::Vector2d uj = imagePoints.at(c2);
+            Eigen::Vector3d ujBar;
+            ujBar << uj,
+                    1.;
+            Eigen::Vector3d pj = knownLocations.col(c2);
+            Eigen::Vector3d d = pj - p;
+            Eigen::Vector3d a = dcm_FC * cameraCalibrationInverse * uBar;
+            Eigen::Vector3d aj = dcm_FCj * cameraCalibrationInverse * ujBar;
+            double gamma = (d.cross(aj)).norm() / (a.cross(aj)).norm();
+            if ((a.cross(aj)).norm() < 1e-10) {
+                // if keypoint i and j are almost identical, gamma could be inf, resulting in a NaN covariance matrix
+                // set gamma = 0 if divisor is close to 0
+                gamma = 0.;
+            }
+            Eigen::Matrix3d Re = -pow(gamma, 2) * eigenTilde(xBar) * this->Rx * eigenTilde(xBar);
+            covarianceSumTerm += dcm_FC * eigenTilde(xBar) * Re * eigenTilde(xBar) * dcm_CF;
+        }
     }
     // solve linear least squares to find unknown location r
     Eigen::Vector3d r = A.colPivHouseholderQr().solve(y);
+    // compute corresponding covariance matrix
+    Eigen::Matrix3d P = Eigen::Matrix3d::Zero();
+    if (this->uncertaintyImageMeasurement != 0.) {
+        Eigen::Matrix3d AAinv = (A.transpose()*A).inverse();
+        P = -AAinv*covarianceSumTerm*AAinv;
+    }
 
-    return r;
+    std::pair<Eigen::Vector3d, Eigen::Matrix3d> triangulationResult = {r, P};
+
+    return triangulationResult;
 }
