@@ -18,6 +18,10 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
+The ephemeris message emulates the fsw process that would read a spice file for trajectory or attitude.
+It can contain stochastic errors although it represents the best understanding of the spacecraft states and does
+not come from a noisy sensor but from a ground-based estimation process.
+
 .. list-table:: Module I/O Messages
     :widths: 25 25 50
     :header-rows: 1
@@ -31,6 +35,9 @@ provides information on what this message is used for.
     * - transOutMsg
       - :ref:`NavTransMsgPayload`
       - translation navigation output msg
+    * - scEphemOutMsg
+      - :ref:`EphemerisMsgPayload`
+      - spacecraft ephemeris output msg
     * - scStateInMsg
       - :ref:`SCStatesMsgPayload`
       - spacecraft state input msg
