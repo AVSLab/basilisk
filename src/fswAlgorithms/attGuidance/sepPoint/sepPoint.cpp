@@ -44,7 +44,16 @@ void SepPoint::SelfInit(){
  */
 void SepPoint::Reset(uint64_t CurrentSimNanos)
 {
-
+    if (!this->attNavInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected.");
+    }
+    if (!this->bodyHeadingInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, ".bodyHeadingInMsg wasn't connected.");
+    }
+    if (!this->inertialHeadingInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, ".inertialHeadingInMsg wasn't connected.");
+    }
+    this->callCount = 0;
 }
 
 
@@ -56,6 +65,6 @@ void SepPoint::Reset(uint64_t CurrentSimNanos)
  */
 void SepPoint::UpdateState(uint64_t CurrentSimNanos)
 {
-    
+
 }
 
