@@ -1,7 +1,6 @@
-
 # ISC License
 #
-# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, CU Boulder
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -16,286 +15,307 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-
-
 import math
-import os
-
+import numpy as np
 import matplotlib.pyplot as plt
-import numpy
 from Basilisk.architecture import messaging
 from Basilisk.simulation import simpleNav
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import RigidBodyKinematics as rbk
 
 
-def listNorm(inputList):
-   normValue = 0.0
-   for elem in inputList:
-      normValue += elem*elem
-   normValue = math.sqrt(normValue)
-   i=0
-   while i<len(inputList):
-      inputList[i] = inputList[i]/normValue
-      i += 1
-
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
-
-def test_unitSimpleNav(show_plots):
-    """Module Unit Test"""
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimpleNav(show_plots)
-    assert testResults < 1, testMessage
+def test_long_sim(show_plots):
+    """This unit test integrates the spacecraft motion (changing attutide/rate and postition/velocity)
+    and ensures that the simple navigation output is consistent with the noise inputs"""
+    simple_nav_sim(show_plots, noise=True, number_steps=1000)
 
 
-def unitSimpleNav(show_plots):
-    path = os.path.dirname(os.path.abspath(__file__))
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
-    # Create a sim module as an empty container
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+def test_no_noise(show_plots):
+    """This unit test reads a single spacecraft message and checks the output in the case
+     where no noise is added"""
+    simple_nav_sim(show_plots, noise=False)
 
-    # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    unitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
-    # create the task and specify the integration update time
-    unitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1E8)))
+def test_include_noise(show_plots):
+    """This unit test reads a single spacecraft message and checks the output in the case
+     where noise is added.
+     The output is ensured to be within 3-sigma of the input, where sigma is the standard deviation
+     input into the simple nav Gauss-Markov process"""
+    simple_nav_sim(show_plots, noise=True)
 
-    #Now initialize the modules that we are using.  I got a little better as I went along
-    sNavObject = simpleNav.SimpleNav()
-    unitTestSim.AddModelToTask(unitTaskName, sNavObject)
 
-    spiceMessage = messaging.SpicePlanetStateMsgPayload()
-    stateMessage = messaging.SCStatesMsgPayload()
-    vehPosition = [10000.0, 0.0, 0.0]
-    sunPosition = [10000.0, 1000.0, 0.0]
+def test_errors_present(show_plots):
+    """This unit ensures that the errors are added by checking the number of excursions due to the
+    white and brown noise added by the Gauss Markov model"""
+    simple_nav_sim(show_plots, noise=True, number_steps=1000, sigma_test=0)
 
-    stateMessage.r_BN_N = vehPosition 
-    spiceMessage.PositionVector = sunPosition
-    spiceMessage.PlanetName = "sun"
+
+def simple_nav_sim(show_plots, noise=False, number_steps=1, sigma_test=3):
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
+
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    unit_test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    unit_test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, int(1E8)))
+
+    simple_nav_object = simpleNav.SimpleNav()
+    unit_test_sim.AddModelToTask(unit_task_name, simple_nav_object)
+
+    spice_message = messaging.SpicePlanetStateMsgPayload()
+    state_message = messaging.SCStatesMsgPayload()
+    sun_position = [1e10, 1e6, 1e2]
+    vehicle_position = [-3e6, 1e3, -2e1]
+    vehicle_velocity = [2.0, 3.0, 1.0]
+    vehicle_attitude = [0.3, 0.1, 0.1]
+    vehicle_rate = [0.01, 0.02, 0.03]
+    sun_heading_B = np.array(sun_position) - np.array(vehicle_position)
+    sun_heading_B = np.dot(rbk.MRP2C(vehicle_attitude), sun_heading_B / np.linalg.norm(sun_heading_B))
+
+    state_message.r_BN_N = vehicle_position
+    state_message.v_BN_N = vehicle_velocity
+    state_message.sigma_BN = vehicle_attitude
+    state_message.omega_BN_B = vehicle_rate
+    spice_message.PositionVector = sun_position
+    spice_message.PlanetName = "sun"
 
     # Inertial State output Message
-    scStateMsg = messaging.SCStatesMsg().write(stateMessage)
-    sNavObject.scStateInMsg.subscribeTo(scStateMsg)
+    spacecraft_state_message = messaging.SCStatesMsg().write(state_message)
+    simple_nav_object.scStateInMsg.subscribeTo(spacecraft_state_message)
 
     # Sun Planet Data Message
-    sunStateMsg = messaging.SpicePlanetStateMsg().write(spiceMessage)
-    sNavObject.sunStateInMsg.subscribeTo(sunStateMsg)
+    sun_state_message = messaging.SpicePlanetStateMsg().write(spice_message)
+    simple_nav_object.sunStateInMsg.subscribeTo(sun_state_message)
 
-    sNavObject.ModelTag = "SimpleNavigation"
-    posBound = numpy.array([1000.0] * 3)
-    velBound = numpy.array([1.0] * 3)
-    attBound = numpy.array([5E-3] * 3)
-    rateBound = numpy.array([0.02] * 3)
-    sunBound = numpy.array([5.0 * math.pi / 180.0] * 3)
-    dvBound = numpy.array([0.053] * 3)
+    simple_nav_object.ModelTag = "SimpleNavigation"
 
-    posSigma = 5.0
-    velSigma = 0.035
-    attSigma = 1.0 / 360.0 * math.pi / 180.0
-    rateSigma = 0.05 * math.pi / 180.0
-    sunSigma = math.pi / 180.0
-    dvSigma = 0.1 * math.pi / 180.0
+    # Set bounds for noise parameters
+    position_bounds = 1000.0
+    velocity_bounds = 1.0
+    attitude_bounds = 5E-3
+    rate_bounds = 0.02
+    sun_bounds = 5.0 * math.pi / 180.0
+    dv_bounds = 0.053
 
-    pMatrix = [[posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sunSigma, 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sunSigma, 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sunSigma, 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dvSigma, 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dvSigma, 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dvSigma],
-               ]
-    errorBounds = [[1000.], [1000.], [1000.], [1.], [1.], [1.], [0.005], [0.005], [0.005], [0.02], [0.02], [0.02],
-                   [5.0 * math.pi / 180.0], [5.0 * math.pi / 180.0], [5.0 * math.pi / 180.0], [0.053], [0.053], [0.053]]
+    position_sigma = 5.0
+    velocity_sigma = 0.035
+    attitude_sigma = 1.0 / 360.0 * math.pi / 180.0
+    rate_sigma = 0.05 * math.pi / 180.0
+    sun_sigma = math.pi / 180.0
+    dv_sigma = 0.1 * math.pi / 180.0
 
-    sNavObject.walkBounds = errorBounds
-    sNavObject.PMatrix = pMatrix
-    sNavObject.crossTrans = True
-    sNavObject.crossAtt = False
+    p_matrix = np.diag([position_sigma] * 3 + [velocity_sigma] * 3 + [attitude_sigma] * 3 +
+                       [rate_sigma] * 3 + [sun_sigma] * 3 + [dv_sigma] * 3)
+    error_bounds = [position_bounds] * 3 + [velocity_bounds] * 3 + [attitude_bounds] * 3 + \
+                   [rate_bounds] * 3 + [sun_bounds] * 3 + [dv_bounds] * 3
+
+    if noise and number_steps == 1:
+        # Zero error bounds in order to just test against the standard deviation variation
+        position_bounds = 0
+        velocity_bounds = 0
+        attitude_bounds = 0
+        rate_bounds = 0
+        sun_bounds = 0
+        dv_bounds = 0
+    elif not noise:
+        # If no noise is present, set the bounds such that the numpy test have low absolute tolerance
+        position_sigma = np.finfo(float).eps
+        velocity_sigma = np.finfo(float).eps
+        attitude_sigma = np.finfo(float).eps
+        rate_sigma = np.finfo(float).eps
+        sun_sigma = np.finfo(float).eps
+        dv_sigma = np.finfo(float).eps
+        p_matrix = np.diag([position_sigma] * 3 + [velocity_sigma] * 3 + [attitude_sigma] * 3 +
+                           [rate_sigma] * 3 + [sun_sigma] * 3 + [dv_sigma] * 3)
+        error_bounds = [position_sigma] * 3 + [velocity_sigma] * 3 + [attitude_sigma] * 3 + \
+                       [rate_sigma] * 3 + [sun_sigma] * 3 + [dv_sigma] * 3
+
+    simple_nav_object.walkBounds = error_bounds
+    simple_nav_object.PMatrix = p_matrix.tolist()
+    simple_nav_object.crossTrans = True
+    simple_nav_object.crossAtt = False
 
     # setup logging
-    dataAttLog = sNavObject.attOutMsg.recorder()
-    dataTransLog = sNavObject.transOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataAttLog)
-    unitTestSim.AddModelToTask(unitTaskName, dataTransLog)
+    rotational_data_log = simple_nav_object.attOutMsg.recorder()
+    translational_data_log = simple_nav_object.transOutMsg.recorder()
+    ephemeris_data_log = simple_nav_object.scEphemOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, rotational_data_log)
+    unit_test_sim.AddModelToTask(unit_task_name, translational_data_log)
+    unit_test_sim.AddModelToTask(unit_task_name, ephemeris_data_log)
 
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(int(60 * 144.0 * 1E9))
-    unitTestSim.ExecuteSimulation()
-
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(int(number_steps * 1E8))
+    unit_test_sim.ExecuteSimulation()
 
     # pull simulation data
-    posNav = dataTransLog.r_BN_N
-    velNav = dataTransLog.v_BN_N
-    attNav = dataAttLog.sigma_BN
-    rateNav = dataAttLog.omega_BN_B
-    dvNav = dataTransLog.vehAccumDV
-    sunNav = dataAttLog.vehSunPntBdy
+    position_output = translational_data_log.r_BN_N
+    velocity_output = translational_data_log.v_BN_N
+    dv_output = translational_data_log.vehAccumDV
 
-    sunHatPred = numpy.array(sunPosition)-numpy.array(vehPosition)
-    listNorm(sunHatPred)
+    attitude_output = rotational_data_log.sigma_BN
+    rate_output = rotational_data_log.omega_BN_B
+    sun_output = rotational_data_log.vehSunPntBdy
 
-    countAllow = posNav.shape[0] * 0.3/100.
+    ephemeris_position_output = ephemeris_data_log.r_BdyZero_N
+    ephemeris_velocity_output = ephemeris_data_log.v_BdyZero_N
+    ephemeris_attitude_output = ephemeris_data_log.sigma_BN
+    ephemeris_rate_output = ephemeris_data_log.omega_BN_B
 
-    posDiffCount = 0
-    velDiffCount = 0
-    attDiffCount = 0
-    rateDiffCount = 0
-    dvDiffCount = 0
-    sunDiffCount = 0
-    i=0
-    while i< posNav.shape[0]:
-        posVecDiff = posNav[i,0:] - vehPosition
-        velVecDiff = velNav[i,0:]
-        attVecDiff = attNav[i,0:]
-        rateVecDiff = rateNav[i,0:]
-        dvVecDiff = dvNav[i,0:]
-        sunVecDiff = math.acos(numpy.dot(sunNav[i, 0:], sunHatPred))
-        j=0
-        while j<3:
-            if(abs(posVecDiff[j]) > posBound[j]):
-                posDiffCount += 1
-            if(abs(velVecDiff[j]) > velBound[j]):
-                velDiffCount += 1
-            if(abs(attVecDiff[j]) > attBound[j]):
-                attDiffCount += 1
-            if(abs(rateVecDiff[j]) > rateBound[j]):
-                rateDiffCount += 1
-            if(abs(dvVecDiff[j]) > dvBound[j]):
-                dvDiffCount += 1
-            j+=1
-        if(abs(sunVecDiff) > 4.0*math.sqrt(3.0)*sunBound[0]):
-            sunDiffCount += 1
-        i+= 1
+    # If the sigma is non-zero ensure errors are below the expected bounds, if not ensure errors are large enough
+    if sigma_test != 0:
+        np.testing.assert_allclose(ephemeris_position_output[number_steps, :],
+                                   vehicle_position,
+                                   atol=position_bounds + sigma_test * position_sigma,
+                                   equal_nan=False,
+                                   err_msg="Ephem position and true translational navigation message must be equal",
+                                   verbose=True)
+        np.testing.assert_allclose(ephemeris_velocity_output[number_steps, :],
+                                   vehicle_velocity,
+                                   rtol=velocity_bounds + sigma_test * velocity_sigma,
+                                   equal_nan=False,
+                                   err_msg="Ephem velocity and true translational navigation message must be equal",
+                                   verbose=True)
+        np.testing.assert_allclose(ephemeris_attitude_output[number_steps, :],
+                                   vehicle_attitude,
+                                   atol=attitude_bounds + sigma_test * attitude_sigma,
+                                   equal_nan=False,
+                                   err_msg="Ephem attitude and true translational navigation message must be equal",
+                                   verbose=True)
+        np.testing.assert_allclose(ephemeris_rate_output[number_steps, :],
+                                   vehicle_rate,
+                                   atol=rate_bounds + sigma_test * rate_sigma,
+                                   equal_nan=False,
+                                   err_msg="Ephem body rate and true translational navigation message must be equal",
+                                   verbose=True)
 
-    errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
-        dvDiffCount, sunDiffCount]
+        np.testing.assert_allclose(position_output[number_steps, :],
+                                   vehicle_position,
+                                   atol=position_bounds + sigma_test * position_sigma,
+                                   equal_nan=False,
+                                   err_msg="Output position must be within error bounds",
+                                   verbose=True)
+        np.testing.assert_allclose(velocity_output[number_steps, :],
+                                   vehicle_velocity,
+                                   atol=velocity_bounds + sigma_test * velocity_sigma,
+                                   equal_nan=False,
+                                   err_msg="Output velocity must be within error bounds",
+                                   verbose=True)
+        np.testing.assert_allclose(attitude_output[number_steps, :],
+                                   vehicle_attitude,
+                                   atol=attitude_bounds + sigma_test * attitude_sigma,
+                                   equal_nan=False,
+                                   err_msg="Output attitude must be within error bounds",
+                                   verbose=True)
+        np.testing.assert_allclose(rate_output[number_steps, :],
+                                   vehicle_rate,
+                                   atol=rate_bounds + sigma_test * rate_sigma,
+                                   equal_nan=False,
+                                   err_msg="Output rates must be within error bounds",
+                                   verbose=True)
+        # simple nav perturbs the sun heading by creating an MRP with the random values of Gauss Markov
+        # and rotating the heading about that rotation. Therefore, check that the dot product of the output
+        # and test is within 4*atan(|sigma|) = Phi
+        dot_product = np.dot(sun_output[number_steps, :] / np.linalg.norm(sun_output[number_steps, :]), sun_heading_B)
+        clipped_product = np.clip(dot_product, -1, 1)
+        np.testing.assert_array_less(np.arccos(clipped_product),
+                                     4 * np.arctan(sun_bounds + sigma_test * sun_sigma),
+                                     err_msg="Output sun heading must be within error bounds",
+                                     verbose=True)
+        np.testing.assert_allclose(dv_output[number_steps, :],
+                                   np.zeros(3),
+                                   atol=dv_bounds + sigma_test * dv_sigma,
+                                   equal_nan=False,
+                                   err_msg="Output dv must be within error bounds",
+                                   verbose=True)
+    else:
+        bound_fraction = 0.1
+        excursion_fraction = 0.25
+        ephem_position_excursion = np.where(np.linalg.norm(ephemeris_position_output -
+                                                           vehicle_position,
+                                                           axis=1) > position_bounds * bound_fraction)[0]
+        np.testing.assert_array_less(len(ephemeris_position_output) * excursion_fraction,
+                                     len(ephem_position_excursion),
+                                     err_msg="Ephemeris position errors were not added as expected",
+                                     verbose=True)
+        ephem_velocity_excursion = np.where(np.linalg.norm(ephemeris_velocity_output -
+                                                           vehicle_velocity,
+                                                           axis=1) > velocity_bounds * bound_fraction)[0]
+        np.testing.assert_array_less(len(ephemeris_velocity_output) * excursion_fraction,
+                                     len(ephem_velocity_excursion),
+                                     err_msg="Ephemeris velocity errors were not added as expected",
+                                     verbose=True)
+        ephem_attitude_excursion = np.where(np.linalg.norm(ephemeris_attitude_output -
+                                                           vehicle_attitude,
+                                                           axis=1) > attitude_bounds * bound_fraction)[0]
+        np.testing.assert_array_less(len(ephemeris_attitude_output) * excursion_fraction,
+                                     len(ephem_attitude_excursion),
+                                     err_msg="Ephemeris attitude errors were not added as expected",
+                                     verbose=True)
+        ephem_rate_excursion = np.where(np.linalg.norm(ephemeris_rate_output -
+                                                       vehicle_rate, axis=1) > rate_bounds * bound_fraction)[0]
+        np.testing.assert_array_less(len(ephemeris_rate_output) * excursion_fraction,
+                                     len(ephem_rate_excursion),
+                                     err_msg="Ephemeris rate errors were not added as expected",
+                                     verbose=True)
+        position_excursion = np.where(np.linalg.norm(position_output -
+                                                     vehicle_position, axis=1) > position_bounds * bound_fraction)[0]
+        np.testing.assert_array_less(len(position_output) * excursion_fraction,
+                                     len(position_excursion),
+                                     err_msg="Position errors were not added as expected",
+                                     verbose=True)
+        velocity_excursion = np.where(np.linalg.norm(velocity_output -
+                                                     vehicle_velocity, axis=1) > velocity_bounds * bound_fraction)[0]
+        np.testing.assert_array_less(len(velocity_output) * excursion_fraction,
+                                     len(velocity_excursion),
+                                     err_msg="Velocity errors were not added as expected",
+                                     verbose=True)
+        attitude_excursion = np.where(np.linalg.norm(attitude_output -
+                                                     vehicle_attitude, axis=1) > attitude_bounds * bound_fraction)[0]
+        np.testing.assert_array_less(len(attitude_output) * excursion_fraction,
+                                     len(attitude_excursion),
+                                     err_msg="Attitude errors were not added as expected",
+                                     verbose=True)
+        rate_excursion = np.where(np.linalg.norm(rate_output -
+                                                 vehicle_rate, axis=1) > rate_bounds * bound_fraction)[0]
+        np.testing.assert_array_less(len(rate_output) * excursion_fraction,
+                                     len(rate_excursion),
+                                     err_msg="Attitude errors were not added as expected",
+                                     verbose=True)
+        dv_excursion = np.where(np.linalg.norm(dv_output, axis=1) > 0)[0]
+        np.testing.assert_array_less(len(dv_output) * excursion_fraction,
+                                     len(dv_excursion),
+                                     err_msg="DV errors were not added as expected",
+                                     verbose=True)
 
-    for count in errorCounts:
-        if count > countAllow:
-            testFailCount += 1
-            testMessages.append("FAILED: Too many error counts  -" + str(count))
+    if show_plots and number_steps > 1:
+        plt.clf()
+        plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+        plt.subplot(3, 1, 1)
+        plt.plot(translational_data_log.times() * 1.0E-9, position_output[:, 0])
+        plt.ylabel('X-Position (m)')
+        plt.subplot(3, 1, 2)
+        plt.plot(translational_data_log.times() * 1.0E-9, position_output[:, 1])
+        plt.ylabel('Y-Position (m)')
+        plt.subplot(3, 1, 3)
+        plt.plot(translational_data_log.times() * 1.0E-9, position_output[:, 2])
+        plt.xlabel('Time (s)')
+        plt.ylabel('Z-Position (m)')
 
-    sigmaThreshold = 0.8
-    posDiffCount = 0
-    velDiffCount = 0
-    attDiffCount = 0
-    rateDiffCount = 0
-    dvDiffCount = 0
-    sunDiffCount = 0
-    i=0
-    while i< posNav.shape[0]:
-        posVecDiff = posNav[i,0:] - vehPosition
-        velVecDiff = velNav[i,0:]
-        attVecDiff = attNav[i,0:]
-        rateVecDiff = rateNav[i,0:]
-        dvVecDiff = dvNav[i,0:]
-        sunVecDiff = math.acos(numpy.dot(sunNav[i, 0:], sunHatPred))
-        j=0
-        while j<3:
-            if(abs(posVecDiff[j]) > posBound[j]*sigmaThreshold):
-                posDiffCount += 1
-            if(abs(velVecDiff[j]) > velBound[j]*sigmaThreshold):
-                velDiffCount += 1
-            if(abs(attVecDiff[j]) > attBound[j]*sigmaThreshold):
-                attDiffCount += 1
-            if(abs(rateVecDiff[j]) > rateBound[j]*sigmaThreshold):
-                rateDiffCount += 1
-            if(abs(dvVecDiff[j]) > dvBound[j]*sigmaThreshold):
-                dvDiffCount += 1
-            j+=1
-        if(abs(sunVecDiff) > 4.0*math.sqrt(3.0)*sunBound[0]*sigmaThreshold):
-            sunDiffCount += 1
-        i+= 1
-
-    errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
-        dvDiffCount, sunDiffCount]
-
-    for count in errorCounts:
-        if count < 1:
-            testFailCount += 1
-            testMessages.append("FAILED: Too few error counts -" + str(count))
-
-    plt.figure(1)
-    plt.clf()
-    plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(dataTransLog.times() * 1.0E-9, posNav[:,0], label='x-position')
-    plt.plot(dataTransLog.times() * 1.0E-9, posNav[:,1], label='y-position')
-    plt.plot(dataTransLog.times() * 1.0E-9, posNav[:,2], label='z-position')
-
-    plt.legend(loc='upper left')
-    plt.xlabel('Time (s)')
-    plt.ylabel('Position (m)')
-    unitTestSupport.writeFigureLaTeX('SimpleNavPos', 'Simple Navigation Position Signal', plt, r'height=0.4\textwidth, keepaspectratio', path)
-    if show_plots:
+        plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+        plt.subplot(3, 1, 1)
+        plt.plot(rotational_data_log.times() * 1.0E-9, attitude_output[:, 0])
+        plt.ylabel('X-rotation (-)')
+        plt.subplot(3, 1, 2)
+        plt.plot(rotational_data_log.times() * 1.0E-9, attitude_output[:, 1])
+        plt.ylabel('Y-rotation (-)')
+        plt.subplot(3, 1, 3)
+        plt.plot(rotational_data_log.times() * 1.0E-9, attitude_output[:, 2])
+        plt.ylabel('Z-rotation (-)')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Attitude MRP')
         plt.show()
         plt.close('all')
+    return
 
-    plt.figure(2)
-    plt.clf()
-    plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(dataAttLog.times() * 1.0E-9, attNav[:, 0], label='x-rotation')
-    plt.plot(dataAttLog.times() * 1.0E-9, attNav[:, 1], label='y-rotation')
-    plt.plot(dataAttLog.times() * 1.0E-9, attNav[:, 2], label='z-rotation')
 
-    plt.legend(loc='upper left')
-    plt.xlabel('Time (s)')
-    plt.ylabel('Attitude (rad)')
-    unitTestSupport.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, r'height=0.4\textwidth, keepaspectratio', path)
-    if show_plots:
-        plt.show()
-        plt.close('all')
-
-    # Corner case usage
-    pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]
-    # stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
-    stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
-    sNavObject.walkBounds = stateBoundsBad
-    sNavObject.PMatrix = pMatrixBad
-
-    # sNavObject.inputStateName = "random_name"
-    # sNavObject.inputSunName = "weirdly_not_the_sun"
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(int(1E8))
-    unitTestSim.ExecuteSimulation()
-
-    # print out success message if no error were found
-    if testFailCount == 0:
-        print("PASSED")
-
-    assert testFailCount < 1, testMessages
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
-
-# This statement below ensures that the unit test scrip can be run as a
-# stand-along python script
 if __name__ == "__main__":
-    unitSimpleNav(True)
+    simple_nav_sim(True, True, number_steps=1000)
