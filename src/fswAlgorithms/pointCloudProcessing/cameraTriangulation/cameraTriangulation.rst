@@ -3,7 +3,8 @@ Executive Summary
 This module estimates the position of a camera using triangulation. Given a point cloud of feature locations (such as
 boulders on an asteroid), and the pixel coordinates of these features (key points) obtained from an image that the
 camera took, the camera location is estimated by triangulation. The triangulation algorithm is based on
-`this paper by S. Henry and J. A. Christian <https://doi.org/10.2514/1.G006989>`__ (Equation 20).
+`this paper by S. Henry and J. A. Christian <https://doi.org/10.2514/1.G006989>`__ (Equation 20). The covariance matrix
+of the estimated camera location is also computed according to Equation A5 in the appendix of the paper.
 
 Message Connection Descriptions
 -------------------------------
@@ -36,8 +37,7 @@ Module Assumptions and Limitations
 ----------------------------------
 The module assumes the number of features in the provided point cloud and the number of key points from the camera
 image are equal, and that the features and corresponding key points are in the same order. The module also assumes that
-all key points come from a single camera, so the camera calibration matrix :math:`[K]` and the direction cosine matrix
-(DCM) :math:`[CN]` that maps from the inertial frame N to the camera frame C is the same for all key points.
+all key points come from a single camera, so the camera calibration matrix :math:`[K]` is the same for all key points.
 
 Algorithm
 ---------
@@ -73,6 +73,7 @@ The module is first initialized as follows:
 
     module = cameraTriangulation.CameraTriangulation()
     module.ModelTag = "cameraTriangulation"
+    module.uncertaintyImageMeasurement = 0.25   # optional, default = 0.
     unitTestSim.AddModelToTask(unitTaskName, module)
 
 The input messages are then connected:
