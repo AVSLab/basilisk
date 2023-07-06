@@ -142,6 +142,7 @@ void SimpleNav::applyErrors()
         double dcm_OT[3][3];       /* dcm, body T to body O */
         MRP2C(&(this->navErrors.data()[12]), dcm_OT);
         m33MultV3(dcm_OT, this->trueAttState.vehSunPntBdy, this->estAttState.vehSunPntBdy);
+        v3Normalize(this->estAttState.vehSunPntBdy, this->estAttState.vehSunPntBdy);
     } else {
         v3SetZero(this->estAttState.vehSunPntBdy);
     }
@@ -176,6 +177,7 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
         v3Normalize(sc2SunInrtl, sc2SunInrtl);
         MRP2C(this->inertialState.sigma_BN, dcm_BN);
         m33MultV3(dcm_BN, sc2SunInrtl, this->trueAttState.vehSunPntBdy);
+        v3Normalize(this->trueAttState.vehSunPntBdy, this->trueAttState.vehSunPntBdy);
     } else {
         v3SetZero(this->trueAttState.vehSunPntBdy);
     }
