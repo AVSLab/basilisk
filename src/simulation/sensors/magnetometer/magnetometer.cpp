@@ -124,12 +124,15 @@ void Magnetometer::computeTrueOutput()
 void Magnetometer::applySensorErrors()
 {
     //! - If any of the standard deviation vector elements is not positive, do not use noise error from RNG.
-    double n0 = 0.0;
-    for (unsigned i = 0; i < this->senNoiseStd.size(); i++){
-        if ((this->senNoiseStd(i) <= 0.0)) {n0++;}
-    }    
-    if (n0 == this->senNoiseStd.size()) {this->tamSensed_S = this->tamTrue_S;}
-    else {
+    bool anyNoiseComponentUninitialized = false;
+    for (unsigned i = 0; i < this->senNoiseStd.size(); i++) {
+        if ((this->senNoiseStd(i) <= 0.0)) {
+            anyNoiseComponentUninitialized = true;
+        }
+    }
+    if (anyNoiseComponentUninitialized) {
+        this->tamSensed_S = this->tamTrue_S;
+    } else {
         //! - Get current error from random number generator
         this->noiseModel.computeNextState();
         Eigen::Vector3d currentError = this->noiseModel.getCurrentState();
