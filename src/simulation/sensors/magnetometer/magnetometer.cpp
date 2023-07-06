@@ -37,7 +37,6 @@ Magnetometer::Magnetometer()
     this->senNoiseStd.fill(-1.0); // Tesla
     this->walkBounds.fill(0.0);
     this->noiseModel = GaussMarkov(this->numStates);
-    this->noiseModel.setRNGSeed(this->RNGSeed);
     this->scaleFactor = 1.0;
     this->maxOutput = 1e200; // Tesla
     this->minOutput = -1e200; // Tesla
@@ -77,6 +76,7 @@ void Magnetometer::Reset(uint64_t CurrentSimNanos)
     this->noiseModel.setUpperBounds(this->walkBounds);
     auto nMatrix = (this->senNoiseStd * 1.5).asDiagonal();
     this->noiseModel.setNoiseMatrix(nMatrix);
+    this->noiseModel.setRNGSeed(this->RNGSeed);
     Eigen::MatrixXd satBounds;
     satBounds.resize(this->numStates, 2);
     satBounds(0, 0) = this->minOutput;
