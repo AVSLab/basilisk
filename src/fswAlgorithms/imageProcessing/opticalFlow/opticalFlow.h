@@ -57,12 +57,13 @@ private:
     bool secondImagePresent = false;
     double firstSpacecraftAttitude[3];
     double firstTargetEphemAttitude[3];
-    uint64_t firstTimeTag;
+    uint64_t firstTimeTag = 0;
     std::vector<cv::Vec2f> secondFeatures;
     std::vector<cv::Vec2f> firstFeatures;
 
 public:
-    std::string filename = "";  //!< Filename for module to read an image directly
+    std::string directoryName = "";  //!< Directory name for module to read an image directly
+    std::string imageFileExtension = ".png";  //!< Directory name for module to read an image directly
 
     Message<PairedKeyPointsMsgPayload> keyPointsMsg;  //!< The name of the output message containing key points
     ReadFunctor<CameraImageMsgPayload> imageInMsg;  //!< The name of the camera output message containing images
