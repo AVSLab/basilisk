@@ -35,6 +35,7 @@ SimpleNav::SimpleNav()
     this->trueAttState = this->attOutMsg.zeroMsgPayload;
     this->estTransState = this->transOutMsg.zeroMsgPayload;
     this->trueTransState = this->transOutMsg.zeroMsgPayload;
+    this->spacecraftEphemerisState = this->scEphemOutMsg.zeroMsgPayload;
     this->PMatrix.resize(18,18);
     this->PMatrix.fill(0.0);
     this->walkBounds.resize(18);
@@ -113,9 +114,11 @@ void SimpleNav::writeOutputMessages(uint64_t Clock)
     /* time tage the output message */
     this->estAttState.timeTag = (double) Clock * NANO2SEC;
     this->estTransState.timeTag = (double) Clock * NANO2SEC;
-    
+    this->spacecraftEphemerisState.timeTag = (double) Clock * NANO2SEC;
+
     this->attOutMsg.write(&this->estAttState, this->moduleID, Clock);
     this->transOutMsg.write(&this->estTransState, this->moduleID, Clock);
+    this->scEphemOutMsg.write(&this->spacecraftEphemerisState, this->moduleID, Clock);
 }
 
 void SimpleNav::applyErrors()
@@ -125,12 +128,21 @@ void SimpleNav::applyErrors()
     v3Add(this->trueTransState.v_BN_N, &(this->navErrors.data()[3]), this->estTransState.v_BN_N);
     addMRP(this->trueAttState.sigma_BN, &(this->navErrors.data()[6]), this->estAttState.sigma_BN);
     v3Add(this->trueAttState.omega_BN_B, &(this->navErrors.data()[9]), this->estAttState.omega_BN_B);
+    v3Add(this->spacecraftEphemerisState.r_BdyZero_N, &(this->navErrors.data()[0]),
+          this->spacecraftEphemerisState.r_BdyZero_N);
+    v3Add(this->spacecraftEphemerisState.v_BdyZero_N, &(this->navErrors.data()[3]),
+          this->spacecraftEphemerisState.v_BdyZero_N);
+    addMRP(this->spacecraftEphemerisState.sigma_BN, &(this->navErrors.data()[6]),
+           this->spacecraftEphemerisState.sigma_BN);
+    v3Add(this->spacecraftEphemerisState.omega_BN_B, &(this->navErrors.data()[9]),
+          this->spacecraftEphemerisState.omega_BN_B);
     v3Add(this->trueTransState.vehAccumDV, &(this->navErrors.data()[15]), this->estTransState.vehAccumDV);
     //! - Add errors to  sun-pointing
     if(this->sunStateInMsg.isLinked()){
         double dcm_OT[3][3];       /* dcm, body T to body O */
         MRP2C(&(this->navErrors.data()[12]), dcm_OT);
         m33MultV3(dcm_OT, this->trueAttState.vehSunPntBdy, this->estAttState.vehSunPntBdy);
+        v3Normalize(this->estAttState.vehSunPntBdy, this->estAttState.vehSunPntBdy);
     } else {
         v3SetZero(this->estAttState.vehSunPntBdy);
     }
@@ -151,6 +163,12 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
     v3Copy(this->inertialState.omega_BN_B, this->trueAttState.omega_BN_B);
     v3Copy(this->inertialState.TotalAccumDVBdy, this->trueTransState.vehAccumDV);
 
+    //! - Set ephemeris state to truth data
+    v3Copy(this->inertialState.r_BN_N, this->spacecraftEphemerisState.r_BdyZero_N);
+    v3Copy(this->inertialState.v_BN_N, this->spacecraftEphemerisState.v_BdyZero_N);
+    v3Copy(this->inertialState.sigma_BN, this->spacecraftEphemerisState.sigma_BN);
+    v3Copy(this->inertialState.omega_BN_B, this->spacecraftEphemerisState.omega_BN_B);
+
     //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
     if(this->sunStateInMsg.isLinked()){
         double sc2SunInrtl[3];
@@ -159,6 +177,7 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
         v3Normalize(sc2SunInrtl, sc2SunInrtl);
         MRP2C(this->inertialState.sigma_BN, dcm_BN);
         m33MultV3(dcm_BN, sc2SunInrtl, this->trueAttState.vehSunPntBdy);
+        v3Normalize(this->trueAttState.vehSunPntBdy, this->trueAttState.vehSunPntBdy);
     } else {
         v3SetZero(this->trueAttState.vehSunPntBdy);
     }

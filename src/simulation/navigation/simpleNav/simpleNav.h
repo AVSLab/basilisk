@@ -27,6 +27,7 @@
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include "architecture/messaging/messaging.h"
@@ -51,12 +52,14 @@ public:
     Eigen::VectorXd navErrors;        //!< -- Current navigation errors applied to truth
     Message<NavAttMsgPayload> attOutMsg;        //!< attitude navigation output msg
     Message<NavTransMsgPayload> transOutMsg;    //!< translation navigation output msg
+    Message<EphemerisMsgPayload> scEphemOutMsg;    //!< translation navigation output msg
     bool crossTrans;                  //!< -- Have position error depend on velocity
     bool crossAtt;                    //!< -- Have attitude depend on attitude rate
     NavAttMsgPayload trueAttState;        //!< -- attitude nav state without errors
     NavAttMsgPayload estAttState;         //!< -- attitude nav state including errors
     NavTransMsgPayload trueTransState;    //!< -- translation nav state without errors
     NavTransMsgPayload estTransState;     //!< -- translation nav state including errors
+    EphemerisMsgPayload spacecraftEphemerisState;    //!< -- full spacecraft ephemeris state without errors
     SCStatesMsgPayload inertialState; //!< -- input inertial state from Star Tracker
     SpicePlanetStateMsgPayload sunState;  //!< -- input Sun state
     BSKLogger bskLogger;              //!< -- BSK Logging
