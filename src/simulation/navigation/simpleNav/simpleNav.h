@@ -59,7 +59,7 @@ public:
     NavAttMsgPayload estAttState;         //!< -- attitude nav state including errors
     NavTransMsgPayload trueTransState;    //!< -- translation nav state without errors
     NavTransMsgPayload estTransState;     //!< -- translation nav state including errors
-    EphemerisMsgPayload spacecraftEphemerisState;    //!< -- full spacecraft ephemeris state without errors
+    EphemerisMsgPayload spacecraftEphemerisState;    //!< -- full spacecraft ephemeris state with errors
     SCStatesMsgPayload inertialState; //!< -- input inertial state from Star Tracker
     SpicePlanetStateMsgPayload sunState;  //!< -- input Sun state
     BSKLogger bskLogger;              //!< -- BSK Logging
