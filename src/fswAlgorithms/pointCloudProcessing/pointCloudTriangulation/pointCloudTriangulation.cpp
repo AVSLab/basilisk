@@ -68,7 +68,6 @@ void PointCloudTriangulation::UpdateState(uint64_t currentSimNanos)
         Eigen::Vector3d p2_C1 = this->vScaleFactor*dt*this->v_C1_hat;
 
         std::vector<Eigen::Vector3d> cameraLocations = {p1_C1, p2_C1};
-
         std::vector<Eigen::Matrix3d> dcmCamera = {Eigen::Matrix3d::Identity(), this->dcm_C2C1};
 
         this->measuredPointCloud.clear();
@@ -83,12 +82,11 @@ void PointCloudTriangulation::UpdateState(uint64_t currentSimNanos)
             this->measuredPointCloud.emplace_back(featureLocation);
         }
         this->pointCloudSize = this->numberKeyPoints;
+        this->numberTimesCalled += 1;
     }
 
     // write messages
     this->writeMessages(currentSimNanos);
-
-    this->numberTimesCalled += 1;
 }
 
 /*! This method reads the input messages each call of updateState.
