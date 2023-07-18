@@ -23,7 +23,8 @@ from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, mrpFeedback,
                                     rwMotorTorque,
                                     velocityPoint, mrpSteering, rateServoFullNonlinear,
-                                    sunSafePoint, cssWlsEst)
+                                    sunSafePoint, cssWlsEst, lambertPlanner, lambertSolver, lambertValidator,
+                                    lambertSurfaceRelativeVelocity, lambertSecondDV)
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW
 from Basilisk.utilities import deprecated
@@ -80,6 +81,21 @@ class BSKFswModels:
         self.rwMotorTorque = rwMotorTorque.rwMotorTorque()
         self.rwMotorTorque.ModelTag = "rwMotorTorque"
 
+        self.lambertPlannerObject = lambertPlanner.LambertPlanner()
+        self.lambertPlannerObject.ModelTag = "LambertPlanner"
+
+        self.lambertSolverObject = lambertSolver.LambertSolver()
+        self.lambertSolverObject.ModelTag = "LambertSolver"
+
+        self.lambertValidatorObject = lambertValidator.LambertValidator()
+        self.lambertValidatorObject.ModelTag = "LambertValidator"
+
+        self.lambertSurfaceRelativeVelocityObject = lambertSurfaceRelativeVelocity.LambertSurfaceRelativeVelocity()
+        self.lambertSurfaceRelativeVelocityObject.ModelTag = "LambertSurfaceRelativeVelocity"
+
+        self.lambertSecondDvObject = lambertSecondDV.LambertSecondDV()
+        self.lambertSecondDvObject.ModelTag = "LambertSecondDV"
+
         # create the FSW module gateway messages
         self.setupGatewayMsgs(SimBase)
 
@@ -94,6 +110,8 @@ class BSKFswModels:
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackTask", self.processTasksTimeStep), 10)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpSteeringRWsTask", self.processTasksTimeStep), 10)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 10)
+        SimBase.fswProc.addTask(SimBase.CreateNewTask("lambertGuidanceFirstDV", self.processTasksTimeStep), 20)
+        SimBase.fswProc.addTask(SimBase.CreateNewTask("lambertGuidanceSecondDV", self.processTasksTimeStep), 20)
 
         # Assign initialized modules to tasks
         SimBase.AddModelToTask("inertial3DPointTask", self.inertial3D, 10)
@@ -116,6 +134,13 @@ class BSKFswModels:
 
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWs, 9)
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorque, 8)
+
+        SimBase.AddModelToTask("lambertGuidanceFirstDV", self.lambertPlannerObject, None, 10)
+        SimBase.AddModelToTask("lambertGuidanceFirstDV", self.lambertSolverObject, None, 9)
+        SimBase.AddModelToTask("lambertGuidanceFirstDV", self.lambertValidatorObject, None, 8)
+
+        SimBase.AddModelToTask("lambertGuidanceSecondDV", self.lambertSurfaceRelativeVelocityObject, None, 10)
+        SimBase.AddModelToTask("lambertGuidanceSecondDV", self.lambertSecondDvObject, None, 9)
 
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
@@ -178,6 +203,24 @@ class BSKFswModels:
                                 "self.enableTask('hillPointTask')",
                                 "self.enableTask('mrpSteeringRWsTask')",
                                 "self.setAllButCurrentEventActivity('initiateSteeringRW', True)"])
+
+        SimBase.createNewEvent("initiateLambertGuidanceFirstDV", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'lambertFirstDV'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('hillPointTask')",
+                                "self.enableTask('mrpSteeringRWsTask')",
+                                "self.enableTask('lambertGuidanceFirstDV')",
+                                "self.setAllButCurrentEventActivity('initiateLambertGuidanceFirstDV', True)"])
+
+        SimBase.createNewEvent("initiateLambertGuidanceSecondDV", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'lambertSecondDV'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.FSWModels.zeroGateWayMsgs()",
+                                "self.enableTask('hillPointTask')",
+                                "self.enableTask('mrpSteeringRWsTask')",
+                                "self.enableTask('lambertGuidanceSecondDV')",
+                                "self.setAllButCurrentEventActivity('initiateLambertGuidanceSecondDV', True)"])
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -320,6 +363,41 @@ class BSKFswModels:
         messaging.ArrayMotorTorqueMsg_C_addAuthor(self.rwMotorTorque.rwMotorTorqueOutMsg, self.cmdRwMotorMsg)
         self.rwMotorTorque.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
+
+    def SetLambertPlannerObject(self, SimBase):
+        """Set the lambert planner object."""
+        self.lambertPlannerObject.navTransInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.transOutMsg)
+
+
+    def SetLambertSolverObject(self):
+        """Set the lambert solver object."""
+        self.lambertSolverObject.lambertProblemInMsg.subscribeTo(self.lambertPlannerObject.lambertProblemOutMsg)
+
+
+    def SetLambertValidatorObject(self, SimBase):
+        """Set the lambert validator object."""
+        self.lambertValidatorObject.navTransInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.transOutMsg)
+        self.lambertValidatorObject.lambertProblemInMsg.subscribeTo(self.lambertPlannerObject.lambertProblemOutMsg)
+        self.lambertValidatorObject.lambertPerformanceInMsg.subscribeTo(
+            self.lambertSolverObject.lambertPerformanceOutMsg)
+        self.lambertValidatorObject.lambertSolutionInMsg.subscribeTo(self.lambertSolverObject.lambertSolutionOutMsg)
+
+
+    def SetLambertSurfaceRelativeVelocityObject(self, SimBase):
+        """Set the lambert surface relative velocity object."""
+        self.lambertSurfaceRelativeVelocityObject.lambertProblemInMsg.subscribeTo(
+            self.lambertPlannerObject.lambertProblemOutMsg)
+        self.lambertSurfaceRelativeVelocityObject.ephemerisInMsg.subscribeTo(
+            SimBase.DynModels.EarthEphemObject.ephemOutMsgs[0])
+
+
+    def SetLambertSecondDvObject(self):
+        """Set the lambert second DV object."""
+        self.lambertSecondDvObject.lambertSolutionInMsg.subscribeTo(self.lambertSolverObject.lambertSolutionOutMsg)
+        self.lambertSecondDvObject.desiredVelocityInMsg.subscribeTo(
+            self.lambertSurfaceRelativeVelocityObject.desiredVelocityOutMsg)
+
+
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
         """Initialize all the FSW objects"""
@@ -339,6 +417,11 @@ class BSKFswModels:
         self.SetMRPSteering()
         self.SetRateServo(SimBase)
         self.SetRWMotorTorque()
+        self.SetLambertPlannerObject(SimBase)
+        self.SetLambertSolverObject()
+        self.SetLambertValidatorObject(SimBase)
+        self.SetLambertSurfaceRelativeVelocityObject(SimBase)
+        self.SetLambertSecondDvObject()
 
     def setupGatewayMsgs(self, SimBase):
         """create C-wrapped gateway messages such that different modules can write to this message
