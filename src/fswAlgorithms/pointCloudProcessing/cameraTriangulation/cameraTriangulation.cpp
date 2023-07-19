@@ -141,19 +141,19 @@ void CameraTriangulation::readMessages()
     // check if cameraIDs, time tags, and number of features are equal
     if (cameraIDkeyPoints == cameraIDconfig) {
         this->cameraID = cameraIDkeyPoints;
-    } else {
+    } else if(this->validInputs) {
         bskLogger.bskLog(BSK_ERROR, "cameraTriangulation: camera IDs from keyPointsInMsg and "
                                     "cameraConfigInMsg are different, but should be equal.");
         this->validInputs = false;
     }
     if (timeTagPointCloud == timeTagKeyPoints) {
         this->timeTag = timeTagPointCloud;
-    } else {
+    }  else if(this->validInputs) {
         bskLogger.bskLog(BSK_ERROR, "cameraTriangulation: time tags from pointCloudInMsg and "
                                     "keyPointsInMsg (timeTag_secondImage) are different, but should be equal.");
         this->validInputs = false;
     }
-    if (pointCloudSize != numberKeyPoints) {
+    if (pointCloudSize != numberKeyPoints && this->validInputs) {
         bskLogger.bskLog(BSK_ERROR, "cameraTriangulation: number of features from pointCloudInMsg "
                                     "(pointCloudSize) and keyPointsInMsg (numberKeyPoints) are different, "
                                     "but should be equal.");

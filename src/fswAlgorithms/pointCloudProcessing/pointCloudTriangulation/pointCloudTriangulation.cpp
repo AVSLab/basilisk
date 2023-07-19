@@ -185,12 +185,12 @@ void PointCloudTriangulation::readMessages()
     }
 
     // check if cameraIDs and time tags are equal
-    if (cameraIDkeyPoints != cameraIDconfig) {
+    if (cameraIDkeyPoints != cameraIDconfig && this->valid) {
         bskLogger.bskLog(BSK_ERROR, "pointCloudTriangulation: camera IDs from keyPointsInMsg and "
                                     "cameraConfigInMsg are different, but should be equal.");
         this->valid = false;
     }
-    if (!(timeTagVelocityInfo == timeTagDOM && timeTagDOM == this->timeTag1)) {
+    if (!(timeTagDOM == this->timeTag2) && this->valid) {
         bskLogger.bskLog(BSK_ERROR, "pointCloudTriangulation: time tags from ephemerisInMsg, "
                                     "navTransInMsg, directionOfMotionInMsg and the time tag of the first image from "
                                     "keyPointsInMsg (timeTag_firstImage) are different, but should be equal.");

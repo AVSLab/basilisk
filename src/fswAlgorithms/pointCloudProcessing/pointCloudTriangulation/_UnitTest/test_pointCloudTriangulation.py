@@ -219,7 +219,7 @@ def pointCloudTriangulationTestFunction(show_plots, p1_n, p2_cam, p3_scRot, accu
 
         directionOfMotionInMsgData.valid = True
         directionOfMotionInMsgData.cameraID = ID
-        directionOfMotionInMsgData.timeOfDirectionEstimate = time1
+        directionOfMotionInMsgData.timeOfDirectionEstimate = time2
         directionOfMotionInMsgData.v_C_hat = v_C_hat
         directionOfMotionInMsg.write(directionOfMotionInMsgData, unitTestSim.TotalSim.CurrentNanos)
 
