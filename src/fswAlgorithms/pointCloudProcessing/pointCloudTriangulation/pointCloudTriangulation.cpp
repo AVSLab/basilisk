@@ -70,7 +70,7 @@ void PointCloudTriangulation::UpdateState(uint64_t currentSimNanos)
         std::vector<Eigen::Vector3d> cameraLocations = {p1_C1, p2_C1};
         std::vector<Eigen::Matrix3d> dcmCamera = {Eigen::Matrix3d::Identity(), this->dcm_C2C1};
 
-        this->measuredPointCloud.clear();
+        this->measuredPointCloud = Eigen::MatrixXd::Zero(POINT_DIM,  this->numberKeyPoints);
         for (int c = 0; c < this->numberKeyPoints; ++c) {
             std::vector<Eigen::Vector2d> imagePoints = {this->keyPoints1.at(c), this->keyPoints2.at(c)};
             Eigen::Vector3d featureLocation = this->triangulation(
@@ -79,7 +79,7 @@ void PointCloudTriangulation::UpdateState(uint64_t currentSimNanos)
                     this->cameraCalibrationMatrixInverse,
                     dcmCamera
             );
-            this->measuredPointCloud.emplace_back(featureLocation);
+            this->measuredPointCloud.col(c) = featureLocation;
         }
         this->pointCloudSize = this->numberKeyPoints;
         this->numberTimesCalled += 1;
@@ -211,13 +211,7 @@ void PointCloudTriangulation::writeMessages(uint64_t currentSimNanos)
     pointCloudOutMsgBuffer.valid = this->valid;
     pointCloudOutMsgBuffer.numberOfPoints = this->pointCloudSize;
 
-    // stacked vector with all feature locations of point cloud
-    Eigen::VectorXd pointCloudStacked(POINT_DIM*this->pointCloudSize);
-    for (int c=0; c < this->pointCloudSize; c++) {
-        pointCloudStacked.segment(POINT_DIM*c, POINT_DIM) = this->measuredPointCloud.at(c);
-    }
-    eigenMatrixXd2CArray(pointCloudStacked, pointCloudOutMsgBuffer.points);
-
+    eigenMatrixXd2CArray(this->measuredPointCloud.transpose(), pointCloudOutMsgBuffer.points);
     this->pointCloudOutMsg.write(&pointCloudOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 

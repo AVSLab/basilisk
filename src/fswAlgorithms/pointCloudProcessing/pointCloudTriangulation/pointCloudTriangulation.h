@@ -66,20 +66,20 @@ private:
                                   const Eigen::Matrix3d& cameraCalibrationInverse,
                                   std::vector<Eigen::Matrix3d> dcmCamera) const;
 
-    int numberTimesCalled{}; //!< number of times (time steps) the module has been called
+    int numberTimesCalled{}; //!< number of times (time steps) the module has been called with valid input data
     bool initialPhase{}; //!< indicates if the module is still in the initial phase (using ephemeris message)
     double vScaleFactor{}; //!< velocity scale factor to be applied to direction of motion
-    Eigen::Vector3d v_C1_hat; //!< [-] camera direction of motion
+    Eigen::Vector3d v_C1_hat{}; //!< [-] camera direction of motion
     int numberKeyPoints{}; //!< [-] number of key points (features)
-    std::vector<Eigen::Vector2d> keyPoints1; //!< [-] key point pixel coordinates for 1st camera position
+    std::vector<Eigen::Vector2d> keyPoints1{}; //!< [-] key point pixel coordinates for 1st camera position
     uint64_t timeTag1{}; //!< [ns] vehicle time-tag associated with images for 1st camera position
-    std::vector<Eigen::Vector2d> keyPoints2; //!< [-] key point pixel coordinates for 2nd camera position
+    std::vector<Eigen::Vector2d> keyPoints2{}; //!< [-] key point pixel coordinates for 2nd camera position
     uint64_t timeTag2{}; //!< [ns] vehicle time-tag associated with images for 2nd camera position
-    Eigen::Matrix3d cameraCalibrationMatrixInverse; //!< [-] inverse of camera calibration matrix
-    Eigen::Matrix3d dcm_C2C1; //!< [-] direction cosine matrix (DCM) from camera frame C1 to camera frame C2
+    Eigen::Matrix3d cameraCalibrationMatrixInverse{}; //!< [-] inverse of camera calibration matrix
+    Eigen::Matrix3d dcm_C2C1{}; //!< [-] direction cosine matrix (DCM) from camera frame C1 to camera frame C2
     bool valid; //!< [-] validity flag for point cloud triangulation
     int pointCloudSize{}; //!< [-] number of points in point cloud
-    std::vector<Eigen::Vector3d> measuredPointCloud{}; //!< [-] measured point cloud
+    Eigen::MatrixXd measuredPointCloud{}; //!< [-] measured point cloud
 };
 
 #endif
