@@ -24,9 +24,11 @@ from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, mrp
                                     rwMotorTorque,
                                     velocityPoint, mrpSteering, rateServoFullNonlinear,
                                     sunSafePoint, cssWlsEst, lambertPlanner, lambertSolver, lambertValidator,
-                                    lambertSurfaceRelativeVelocity, lambertSecondDV)
+                                    lambertSurfaceRelativeVelocity, lambertSecondDV,
+                                    dvGuidance, thrForceMapping, thrFiringRemainder,
+                                    attRefCorrection, dvExecuteGuidance)
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import fswSetupRW
+from Basilisk.utilities import (fswSetupRW, fswSetupThrusters)
 from Basilisk.utilities import deprecated
 from Basilisk.utilities import macros as mc
 
@@ -42,6 +44,12 @@ class BSKFswModels:
         self.attRefMsg = None
         self.attGuidMsg = None
         self.cmdRwMotorMsg = None
+        self.dvBurnCmdMsg = None
+        self.acsOnTimeCmdMsg = None
+        self.dvOnTimeCmdMsg = None
+
+        # by default, use ACS thrusters if attitude is controlled with thrusters
+        self.useDvThrusters = False
 
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = SimBase.FSWProcessName
@@ -60,8 +68,14 @@ class BSKFswModels:
         self.velocityPoint = velocityPoint.velocityPoint()
         self.velocityPoint.ModelTag  = "velocityPoint"
 
+        self.dvPoint = dvGuidance.dvGuidance()
+        self.dvPoint.ModelTag = "dvPoint"
+
         self.cssWlsEst = cssWlsEst.cssWlsEst()
         self.cssWlsEst.ModelTag = "cssWlsEst"
+
+        self.attRefCorrection = attRefCorrection.attRefCorrection()
+        self.attRefCorrection.ModelTag = "attRefCorrection"
 
         self.trackingError = attTrackingError.attTrackingError()
         self.trackingError.ModelTag = "trackingError"
@@ -72,6 +86,9 @@ class BSKFswModels:
         self.mrpFeedbackRWs = mrpFeedback.mrpFeedback()
         self.mrpFeedbackRWs.ModelTag = "mrpFeedbackRWs"
 
+        self.mrpFeedbackTHs = mrpFeedback.mrpFeedback()
+        self.mrpFeedbackTHs.ModelTag = "mrpFeedbackTHs"
+
         self.mrpSteering = mrpSteering.mrpSteering()
         self.mrpSteering.ModelTag = "MRP_Steering"
 
@@ -80,6 +97,15 @@ class BSKFswModels:
 
         self.rwMotorTorque = rwMotorTorque.rwMotorTorque()
         self.rwMotorTorque.ModelTag = "rwMotorTorque"
+
+        self.thrForceMapping = thrForceMapping.thrForceMapping()
+        self.thrForceMapping.ModelTag = "thrForceMapping"
+
+        self.thrFiringRemainder = thrFiringRemainder.thrFiringRemainder()
+        self.thrFiringRemainder.ModelTag = "thrFiringRemainder"
+
+        self.dvManeuver = dvExecuteGuidance.dvExecuteGuidance()
+        self.dvManeuver.ModelTag = "dvManeuver"
 
         self.lambertPlannerObject = lambertPlanner.LambertPlanner()
         self.lambertPlannerObject.ModelTag = "LambertPlanner"
@@ -107,9 +133,12 @@ class BSKFswModels:
         SimBase.fswProc.addTask(SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("sunSafePointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("velocityPointTask", self.processTasksTimeStep), 20)
+        SimBase.fswProc.addTask(SimBase.CreateNewTask("dvPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackTask", self.processTasksTimeStep), 10)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpSteeringRWsTask", self.processTasksTimeStep), 10)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 10)
+        SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackTHsTask", self.processTasksTimeStep), 10)
+        SimBase.fswProc.addTask(SimBase.CreateNewTask("dvBurnTask", int(self.processTasksTimeStep/2)), 9)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("lambertGuidanceFirstDV", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("lambertGuidanceSecondDV", self.processTasksTimeStep), 20)
 
@@ -126,6 +155,10 @@ class BSKFswModels:
         SimBase.AddModelToTask("velocityPointTask", self.velocityPoint, 10)
         SimBase.AddModelToTask("velocityPointTask", self.trackingError, 9)
 
+        SimBase.AddModelToTask("dvPointTask", self.dvPoint, 10)
+        SimBase.AddModelToTask("dvPointTask", self.attRefCorrection, 9)
+        SimBase.AddModelToTask("dvPointTask", self.trackingError, 8)
+
         SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControl, 10)
 
         SimBase.AddModelToTask("mrpSteeringRWsTask", self.mrpSteering, 10)
@@ -134,6 +167,12 @@ class BSKFswModels:
 
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWs, 9)
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorque, 8)
+
+        SimBase.AddModelToTask("mrpFeedbackTHsTask", self.mrpFeedbackTHs, 9)
+        SimBase.AddModelToTask("mrpFeedbackTHsTask", self.thrForceMapping, 8)
+        SimBase.AddModelToTask("mrpFeedbackTHsTask", self.thrFiringRemainder, 7)
+
+        SimBase.AddModelToTask("dvBurnTask", self.dvManeuver, 10)
 
         SimBase.AddModelToTask("lambertGuidanceFirstDV", self.lambertPlannerObject, None, 10)
         SimBase.AddModelToTask("lambertGuidanceFirstDV", self.lambertSolverObject, None, 9)
@@ -222,6 +261,25 @@ class BSKFswModels:
                                 "self.enableTask('lambertGuidanceSecondDV')",
                                 "self.setAllButCurrentEventActivity('initiateLambertGuidanceSecondDV', True)"])
 
+        SimBase.createNewEvent("initiateDvPoint", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'dvPoint'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.enableTask('dvPointTask')",
+                                "self.enableTask('mrpFeedbackRWsTask')",
+                                "self.setAllButCurrentEventActivity('initiateDvPoint', True)"
+                                ])
+
+        SimBase.createNewEvent("initiateDvBurn", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'dvBurn'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "from Basilisk.architecture import messaging",
+                                "self.FSWModels.cmdRwMotorMsg.write(messaging.ArrayMotorTorqueMsgPayload())",
+                                "self.enableTask('dvPointTask')",
+                                "self.enableTask('mrpFeedbackTHsTask')",
+                                "self.enableTask('dvBurnTask')",
+                                "self.setAllButCurrentEventActivity('initiateDvBurn', True)"
+                                ])
+
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
     def SetInertial3DPointGuidance(self):
@@ -248,6 +306,17 @@ class BSKFswModels:
         self.velocityPoint.celBodyInMsg.subscribeTo(SimBase.DynModels.EarthEphemObject.ephemOutMsgs[0])
         self.velocityPoint.mu = SimBase.DynModels.gravFactory.gravBodies['earth'].mu
         messaging.AttRefMsg_C_addAuthor(self.velocityPoint.attRefOutMsg, self.attRefMsg)
+
+    def SetDvPointGuidance(self):
+        """Define the Delta-V pointing guidance module"""
+        self.dvPoint.burnDataInMsg.subscribeTo(self.dvBurnCmdMsg)
+        messaging.AttRefMsg_C_addAuthor(self.dvPoint.attRefOutMsg, self.attRefMsg)
+
+    def SetAttRefCorrection(self):
+        """Define the attitude reference correction module"""
+        self.attRefCorrection.sigma_BcB = [0., 0., 0.]
+        self.attRefCorrection.attRefInMsg.subscribeTo(self.attRefMsg)
+        messaging.AttRefMsg_C_addAuthor(self.attRefCorrection.attRefOutMsg, self.attRefMsg)
 
     def SetAttitudeTrackingError(self, SimBase):
         """Define the attitude tracking error module"""
@@ -306,6 +375,17 @@ class BSKFswModels:
         self.mrpFeedbackRWs.guidInMsg.subscribeTo(self.attGuidMsg)
         messaging.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackRWs.cmdTorqueOutMsg, self.cmdTorqueMsg)
 
+    def SetMRPFeedbackTH(self, SimBase):
+        """Set the MRP feedback information if Thrusters are considered"""
+        self.mrpFeedbackTHs.K = 3.5*10
+        self.mrpFeedbackTHs.Ki = 0.0002  # Note: make value negative to turn off integral feedback
+        self.mrpFeedbackTHs.P = 30.0*10
+        self.mrpFeedbackTHs.integralLimit = 2. / self.mrpFeedbackTHs.Ki * 0.1
+
+        self.mrpFeedbackTHs.vehConfigInMsg.subscribeTo(self.vcMsg)
+        self.mrpFeedbackTHs.guidInMsg.subscribeTo(self.attGuidMsg)
+        messaging.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackTHs.cmdTorqueOutMsg, self.cmdTorqueMsg)
+
     def SetMRPSteering(self):
         """Set the MRP Steering module"""
         self.mrpSteering.K1 = 0.05
@@ -363,6 +443,87 @@ class BSKFswModels:
         messaging.ArrayMotorTorqueMsg_C_addAuthor(self.rwMotorTorque.rwMotorTorqueOutMsg, self.cmdRwMotorMsg)
         self.rwMotorTorque.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
+    def SetThrConfigMsg(self):
+        """Set the Thruster information"""
+
+        if self.useDvThrusters:
+            # 6 DV thrusters
+            thPos = [[0, 0.95, -1.1],
+                     [0.8227241335952166, 0.4750000000000003, -1.1],
+                     [0.8227241335952168, -0.47499999999999976, -1.1],
+                     [0, -0.95, -1.1],
+                     [-0.8227241335952165, -0.4750000000000004, -1.1],
+                     [-0.822724133595217, 0.4749999999999993, -1.1]]
+            thDir = [[0.0, 0.0, 1.0],
+                     [0.0, 0.0, 1.0],
+                     [0.0, 0.0, 1.0],
+                     [0.0, 0.0, 1.0],
+                     [0.0, 0.0, 1.0],
+                     [0.0, 0.0, 1.0]]
+            maxThrust = 22
+        else:
+            # 8 thrusters are modeled that act in pairs to provide the desired torque
+            thPos = [[825.5/1000.0, 880.3/1000.0, 1765.3/1000.0],
+                     [825.5/1000.0, 880.3/1000.0, 260.4/1000.0],
+                     [880.3/1000.0, 825.5/1000.0, 1765.3/1000.0],
+                     [880.3/1000.0, 825.5/1000.0, 260.4/1000.0],
+                     [-825.5/1000.0, -880.3/1000.0, 1765.3/1000.0],
+                     [-825.5/1000.0, -880.3/1000.0, 260.4/1000.0],
+                     [-880.3/1000.0, -825.5/1000.0, 1765.3/1000.0],
+                     [-880.3/1000.0, -825.5/1000.0, 260.4/1000.0]]
+            thDir = [[0.0, -1.0, 0.0],
+                     [0.0, -1.0, 0.0],
+                     [-1.0, 0.0, 0.0],
+                     [-1.0, 0.0, 0.0],
+                     [0.0, 1.0, 0.0],
+                     [0.0, 1.0, 0.0],
+                     [1.0, 0.0, 0.0],
+                     [1.0, 0.0, 0.0]]
+            maxThrust = 1
+
+        fswSetupThrusters.clearSetup()
+        for pos_B, dir_B in zip(thPos, thDir):
+            fswSetupThrusters.create(pos_B, dir_B, maxThrust)
+
+        self.fswThrConfigMsg = fswSetupThrusters.writeConfigMessage()
+
+    def SetThrForceMapping(self):
+        """Set the Thrust Force Mapping information"""
+        if self.useDvThrusters:
+            controlAxes_B = [1, 0, 0,
+                             0, 1, 0]
+            thrForceSign = -1
+        else:
+            controlAxes_B = [1, 0, 0,
+                             0, 1, 0,
+                             0, 0, 1]
+            thrForceSign = +1
+
+        self.thrForceMapping.thrForceSign = thrForceSign
+        self.thrForceMapping.controlAxes_B = controlAxes_B
+
+        self.thrForceMapping.cmdTorqueInMsg.subscribeTo(self.cmdTorqueMsg)
+        self.thrForceMapping.thrConfigInMsg.subscribeTo(self.fswThrConfigMsg)
+        self.thrForceMapping.vehConfigInMsg.subscribeTo(self.vcMsg)
+
+    def SetThrFiringRemainder(self):
+        """Set the Thrust Firing Remainder information"""
+        self.thrFiringRemainder.thrMinFireTime = 0.002
+        if self.useDvThrusters:
+            self.thrFiringRemainder.baseThrustState = 1
+
+        self.thrFiringRemainder.thrConfInMsg.subscribeTo(self.fswThrConfigMsg)
+        self.thrFiringRemainder.thrForceInMsg.subscribeTo(self.thrForceMapping.thrForceCmdOutMsg)
+        if self.useDvThrusters:
+            messaging.THRArrayOnTimeCmdMsg_C_addAuthor(self.thrFiringRemainder.onTimeOutMsg, self.dvOnTimeCmdMsg)
+        else:
+            messaging.THRArrayOnTimeCmdMsg_C_addAuthor(self.thrFiringRemainder.onTimeOutMsg, self.acsOnTimeCmdMsg)
+
+    def SetDvManeuver(self, SimBase):
+        """Set the Dv Burn Maneuver information"""
+        self.dvManeuver.navDataInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.transOutMsg)
+        self.dvManeuver.burnDataInMsg.subscribeTo(self.dvBurnCmdMsg)
+        messaging.THRArrayOnTimeCmdMsg_C_addAuthor(self.dvManeuver.thrCmdOutMsg, self.dvOnTimeCmdMsg)
 
     def SetLambertPlannerObject(self, SimBase):
         """Set the lambert planner object."""
@@ -381,6 +542,7 @@ class BSKFswModels:
         self.lambertValidatorObject.lambertPerformanceInMsg.subscribeTo(
             self.lambertSolverObject.lambertPerformanceOutMsg)
         self.lambertValidatorObject.lambertSolutionInMsg.subscribeTo(self.lambertSolverObject.lambertSolutionOutMsg)
+        self.lambertValidatorObject.dvBurnCmdOutMsg = self.dvBurnCmdMsg
 
 
     def SetLambertSurfaceRelativeVelocityObject(self, SimBase):
@@ -396,7 +558,7 @@ class BSKFswModels:
         self.lambertSecondDvObject.lambertSolutionInMsg.subscribeTo(self.lambertSolverObject.lambertSolutionOutMsg)
         self.lambertSecondDvObject.desiredVelocityInMsg.subscribeTo(
             self.lambertSurfaceRelativeVelocityObject.desiredVelocityOutMsg)
-
+        self.lambertSecondDvObject.dvBurnCmdOutMsg = self.dvBurnCmdMsg
 
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
@@ -411,12 +573,19 @@ class BSKFswModels:
         self.SetCSSWlsEst(SimBase)
         self.SetSunSafePointGuidance(SimBase)
         self.SetVelocityPointGuidance(SimBase)
+        self.SetDvPointGuidance()
+        self.SetAttRefCorrection()
         self.SetAttitudeTrackingError(SimBase)
         self.SetMRPFeedbackControl(SimBase)
         self.SetMRPFeedbackRWA(SimBase)
+        self.SetMRPFeedbackTH(SimBase)
         self.SetMRPSteering()
         self.SetRateServo(SimBase)
         self.SetRWMotorTorque()
+        self.SetThrConfigMsg()
+        self.SetThrForceMapping()
+        self.SetThrFiringRemainder()
+        self.SetDvManeuver(SimBase)
         self.SetLambertPlannerObject(SimBase)
         self.SetLambertSolverObject()
         self.SetLambertValidatorObject(SimBase)
@@ -431,12 +600,19 @@ class BSKFswModels:
         self.attRefMsg = messaging.AttRefMsg_C()
         self.attGuidMsg = messaging.AttGuidMsg_C()
         self.cmdRwMotorMsg = messaging.ArrayMotorTorqueMsg_C()
+        self.acsOnTimeCmdMsg = messaging.THRArrayOnTimeCmdMsg_C()
+        self.dvOnTimeCmdMsg = messaging.THRArrayOnTimeCmdMsg_C()
+
+        # C++ wrapped gateway messages
+        self.dvBurnCmdMsg = messaging.DvBurnCmdMsg()
 
         self.zeroGateWayMsgs()
 
         # connect gateway FSW effector command msgs with the dynamics
         SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsg.subscribeTo(self.cmdTorqueDirectMsg)
         SimBase.DynModels.rwStateEffector.rwMotorCmdInMsg.subscribeTo(self.cmdRwMotorMsg)
+        SimBase.DynModels.thrustersDynamicEffectorACS.cmdsInMsg.subscribeTo(self.acsOnTimeCmdMsg)
+        SimBase.DynModels.thrustersDynamicEffectorDV.cmdsInMsg.subscribeTo(self.dvOnTimeCmdMsg)
 
     def zeroGateWayMsgs(self):
         """Zero all the FSW gateway message payloads"""
@@ -445,6 +621,16 @@ class BSKFswModels:
         self.attRefMsg.write(messaging.AttRefMsgPayload())
         self.attGuidMsg.write(messaging.AttGuidMsgPayload())
         self.cmdRwMotorMsg.write(messaging.ArrayMotorTorqueMsgPayload())
+        self.acsOnTimeCmdMsg.write(messaging.THRArrayOnTimeCmdMsgPayload())
+        self.dvOnTimeCmdMsg.write(messaging.THRArrayOnTimeCmdMsgPayload())
+        self.dvBurnCmdMsg.write(messaging.DvBurnCmdMsgPayload())
+
+    def SetAttThrusters(self, useDvThrusters):
+        """Change thruster type used for attitude control (ACS or DV)"""
+        self.useDvThrusters = useDvThrusters
+        self.SetThrConfigMsg()
+        self.SetThrForceMapping()
+        self.SetThrFiringRemainder()
 
     @property
     def inertial3DData(self):
