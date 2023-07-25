@@ -62,6 +62,7 @@ Version |release|
 - Created :ref:`thrustCMEstimation` to perform online estimation of the CM using gimbaled thruster torque measurements.
 - Resolved a crash, induced by uninitialized memory, in the Camera module. The crash was first seen on Ubuntu 22 with
   gcc 9.5
+- Added :ref:`scenario_LambertGuidance` BSK-Sim scenario to illustrate the Lambert modules in different flight modes
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------
