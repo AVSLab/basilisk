@@ -44,10 +44,10 @@ void LambertPlanner::Reset(uint64_t currentSimNanos)
     }
 
     // check that the provided input module parameters are valid
-    if (this->mu <= 0.0){
+    if (this->mu < 0.0){
         bskLogger.bskLog(BSK_ERROR, "lambertPlanner: mu must be positive.");
     }
-    if (this->finalTime - this->maneuverTime <= 0.0){
+    if (this->finalTime - this->maneuverTime < 0.0){
         bskLogger.bskLog(BSK_ERROR,
                          "lambertPlanner: Maneuver start time maneuverTime must be before final time finalTime.");
     }
