@@ -64,7 +64,8 @@ class BSKDynamicModels():
         self.eclipseObject = eclipse.Eclipse()
         self.CSSConstellationObject = coarseSunSensor.CSSConstellation()
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-        self.thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+        self.thrustersDynamicEffectorACS = thrusterDynamicEffector.ThrusterDynamicEffector()
+        self.thrustersDynamicEffectorDV = thrusterDynamicEffector.ThrusterDynamicEffector()
         self.EarthEphemObject = ephemerisConverter.EphemerisConverter()
 
         # Initialize all modules and write init one-time messages
@@ -78,6 +79,8 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, 108)
         SimBase.AddModelToTask(self.taskName, self.eclipseObject, 204)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, 301)
+        SimBase.AddModelToTask(self.taskName, self.thrustersDynamicEffectorACS, 302)
+        SimBase.AddModelToTask(self.taskName, self.thrustersDynamicEffectorDV, 303)
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, 300)
         
         SimBase.createNewEvent("addOneTimeRWFault", self.processTasksTimeStep, True,
@@ -188,7 +191,7 @@ class BSKDynamicModels():
 
         self.rwFactory.addToSpacecraft("RWA", self.rwStateEffector, self.scObject)
 
-    def SetThrusterStateEffector(self):
+    def SetACSThrusterStateEffector(self):
         """Set the 8 ACS thrusters."""
         # Make a fresh TH factory instance, this is critical to run multiple times
         thFactory = simIncludeThruster.thrusterFactory()
@@ -213,7 +216,7 @@ class BSKDynamicModels():
             [0.0, 1.0, 0.0],
             [1.0, 0.0, 0.0],
             [1.0, 0.0, 0.0]
-        ]
+                ]
         for pos_B, dir_B in zip(thPos, thDir):
             thFactory.create(
                 'MOOG_Monarc_1'
@@ -222,8 +225,38 @@ class BSKDynamicModels():
             )
         # create thruster object container and tie to spacecraft object
         thFactory.addToSpacecraft("ACS Thrusters",
-                                  self.thrustersDynamicEffector,
+                                  self.thrustersDynamicEffectorACS,
                                   self.scObject)
+
+    def SetDVThrusterStateEffector(self):
+        """Set the DV thrusters."""
+        # Make a fresh TH factory instance, this is critical to run multiple times
+        thFactory = simIncludeThruster.thrusterFactory()
+
+        # 6 DV thrusters
+        thPos = [[0, 0.95, -1.1],
+                 [0.8227241335952166, 0.4750000000000003, -1.1],
+                 [0.8227241335952168, -0.47499999999999976, -1.1],
+                 [0, -0.95, -1.1],
+                 [-0.8227241335952165, -0.4750000000000004, -1.1],
+                 [-0.822724133595217, 0.4749999999999993, -1.1]]
+        thDir = [[0.0, 0.0, 1.0],
+                 [0.0, 0.0, 1.0],
+                 [0.0, 0.0, 1.0],
+                 [0.0, 0.0, 1.0],
+                 [0.0, 0.0, 1.0],
+                 [0.0, 0.0, 1.0]]
+        for pos_B, dir_B in zip(thPos, thDir):
+            thFactory.create(
+                'MOOG_Monarc_22_6'
+                , pos_B
+                , dir_B
+            )
+        # create thruster object container and tie to spacecraft object
+        thFactory.addToSpacecraft("DV Thrusters",
+                                  self.thrustersDynamicEffectorDV,
+                                  self.scObject)
+
 
     def SetCSSConstellation(self):
         """Set the 8 CSS sensors"""
@@ -302,5 +335,6 @@ class BSKDynamicModels():
         self.SetCSSConstellation()
 
         self.SetReactionWheelDynEffector()
-        self.SetThrusterStateEffector()
+        self.SetACSThrusterStateEffector()
+        self.SetDVThrusterStateEffector()
 
