@@ -61,12 +61,13 @@ void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
     this->sensorTimeTag = 0;
     /*! - Read option which reads images from files*/
     if (!this->directoryName.empty()){
-        std::string filename = this->directoryName + std::to_string(CurrentSimNanos) + this->imageFileExtension;
+        std::string filename = this->directoryName + std::to_string(CurrentSimNanos*1E-9) + this->imageFileExtension;
         std::ifstream imageFile(filename);
         if (imageFile.good()){
             this->secondImage = cv::imread(filename, cv::IMREAD_GRAYSCALE);
             this->sensorTimeTag = CurrentSimNanos;
             this->secondImagePresent = true;
+            imageBuffer.cameraID = 1;
         }
     }
     else if(imageBuffer.valid == 1 && imageBuffer.timeTag > this->firstTimeTag){
