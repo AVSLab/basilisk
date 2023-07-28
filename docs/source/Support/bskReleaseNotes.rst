@@ -63,6 +63,8 @@ Version |release|
 - Resolved a crash, induced by uninitialized memory, in the Camera module. The crash was first seen on Ubuntu 22 with
   gcc 9.5
 - Added :ref:`scenario_LambertGuidance` BSK-Sim scenario to illustrate the Lambert modules in different flight modes
+- Added :ref:`scenario_ClosedLoopManeuver` BSK-Sim scenario to illustrate how a Delta-V maneuver can be performed using
+  thrusters
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------
