@@ -36,6 +36,8 @@ Version |release|
 - Created a new :ref:`pinholeCamera` module to support generation of landmarks-based measurements around a
   small body.
 - A new integrated example script :ref:`scenarioSmallBodyLandmarks` demonstrates the use of the pinhole camera module
+- Created a new example scenario :ref:`scenarioSpinningBodiesTwoDOF` that showcases the different capabilities of the
+  :ref:`spinningBodyTwoDOFStateEffector` module.
 
 
 Version 2.2.0 (June 28, 2023)
