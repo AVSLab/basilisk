@@ -34,6 +34,11 @@ DynParamManager::~DynParamManager()
 StateData* DynParamManager::registerState(uint32_t nRow, uint32_t nCol,
     std::string stateName)
 {
+    if (stateName == "") {
+        bskLogger.bskLog(BSK_ERROR, "Your state name can't be an empty string.  Come on.  You get null.");
+        return nullptr;
+    }
+
     std::map<std::string, StateData>::iterator it;
     it = stateContainer.stateMap.find(stateName);
     if(it != stateContainer.stateMap.end())
