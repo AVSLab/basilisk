@@ -38,6 +38,8 @@ Version |release|
 - A new integrated example script :ref:`scenarioSmallBodyLandmarks` demonstrates the use of the pinhole camera module
 - Created a new example scenario :ref:`scenarioSpinningBodiesTwoDOF` that showcases the different capabilities of the
   :ref:`spinningBodyTwoDOFStateEffector` module.
+- Corrected an error with :ref:`thrusterStateEffector` where if there are multiple instances of the
+  thruster state effector then the last effector will over-write all the state of the earlier thrusters.
 
 
 Version 2.2.0 (June 28, 2023)
