@@ -96,23 +96,15 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t ca
     /*! - zero the output message */
     thrOnTimeOut = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
 
-    /*! - the first time update() is called there is no information on the time step.  Here
-     return either all thrusters off or on depending on the baseThrustState state */
+    /*! - The first time update() is called there is no information on the time step.
+     *    Pick 2 seconds for the control period */
 	if(configData->prevCallTime == 0) {
-		configData->prevCallTime = callTime;
+        controlPeriod = 2.;
+	} else {
+        /*! - compute control time period Delta_t */
+        controlPeriod = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;
+    }
 
-		for(i = 0; i < configData->numThrusters; i++) {
-            /*! - If on-pulsing is used, then the OnTimeRequest is set to zero.
-             If off-pulsing is used, then the OnTimeRequest is set to 2 seconds */
-			thrOnTimeOut.OnTimeRequest[i] = (double)(configData->baseThrustState) * 2.0;
-		}
-
-        THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, moduleID, callTime);
-		return;
-	}
-
-    /*! - compute control time period Delta_t */
-	controlPeriod = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;
 	configData->prevCallTime = callTime;
 
 	/*! - Read the input thruster force message */
