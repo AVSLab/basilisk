@@ -67,6 +67,8 @@ public:
     double M_sc;  //!< Mass of the spacecraft
     Eigen::Matrix3d IHubPntC_B;  //!< sc inertia
     double mu_ast;  //!< Gravitational constant of the asteroid
+    double pos_deadband; //!< Position deadband around final states
+    double vel_deadband; //!< Velocity deadband around final states
 
     Eigen::Vector3d x1_ref;  //!< Desired Hill-frame position
     Eigen::Vector3d x2_ref;  //!< Desired Hill-frame velocity

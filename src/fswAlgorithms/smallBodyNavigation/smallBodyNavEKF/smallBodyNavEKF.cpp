@@ -215,6 +215,18 @@ void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
     /* Perform the RK4 integration on the dynamics and STM */
     x_hat_k1_ = x_hat_k + (k1 + 2*k2 + 2*k3 + k4)/6;
     Phi_k = Phi_k + (k1_phi + 2*k2_phi + 2*k3_phi + k4_phi)/6;
+
+    // Check if Phi_k is not invertible by taking the absolute value of the determinant
+    if (fabs(Phi_k.determinant()) < 1e-3) {
+        // Print an error and the CurrenSimNanos
+        std::cout << "Phi_k is not invertible at " << CurrentSimNanos << std::endl;
+    } else {
+        // print out Phi_k
+        std::cout << "Phi_k is " << std::endl << Phi_k << std::endl;
+        
+        // print the determinant
+        std::cout << "Determinant of Phi_k is " << Phi_k.determinant() << std::endl;
+    }
 }
 
 /*! This method calculates the EOMs of the state vector and state transition matrix
@@ -378,7 +390,7 @@ void SmallBodyNavEKF::computeDynamicsMatrix(Eigen::VectorXd x_hat){
     /* x_2 partial */
     A_k.block(3, 0, 3, 3) =
             - F_ddot*o_hat_3_tilde
-            - pow(F_dot, 2)*o_hat_3_tilde*o_hat_3_tilde
+            - 2*pow(F_dot, 2)*o_hat_3_tilde*o_hat_3_tilde
             - mu_ast/pow(x_1.norm(), 3)*I
             + 3*mu_ast*x_1*x_1.transpose()/pow(x_1.norm(), 5)
             + mu_sun*(3*(r_SO_O*r_SO_O.transpose())/pow(r_SO_O.norm(), 2) - I)/pow(r_SO_O.norm(), 3);

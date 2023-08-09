@@ -38,6 +38,9 @@ SmallBodyWaypointFeedback::SmallBodyWaypointFeedback()
     this->P_0 = 4.56e-6;
     this->rho = 0.4;
     this->prevTime = 0.0;
+    this->pos_deadband = 0.0;
+    this->vel_deadband = 0.0;
+
     return;
 }
 
@@ -124,6 +127,10 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
     dx1 = x1 - x1_ref;
     dx2 = x2 - x2_ref;
 
+    /* Check whether or not both of the states are within the deadband */
+    double dx1_norm = dx1.norm();
+    double dx2_norm = dx2.norm();
+
     /* Now compute current f */
     f_curr =
             -F_ddot * o_hat_3_tilde * x1 - 2 * F_dot * o_hat_3_tilde * x2 -
@@ -142,11 +149,19 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
               pow(r_SO_O.norm(), 3)
             + C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * pow(AU*1000.,2) * o_hat_1 / pow(r_SO_O.norm(), 2);
 
-    /* Compute the thrust in the small body's hill frame */
-    thrust_O = -(f_curr - f_ref) - K1 * dx1 - K2 * dx2;
+    if (dx1_norm <= this->pos_deadband && dx2_norm <= this->vel_deadband) {
+        /* Set both thrusts to zero */
+        thrust_O = Eigen::Vector3d::Zero();
+        thrust_B = Eigen::Vector3d::Zero();
+    } else {
+        /* Compute the thrust in the small body's hill frame */
+        thrust_O = -(f_curr - f_ref) - K1 * dx1 - K2 * dx2;
 
-    /* Compute the thrust in the s/c body frame */
-    thrust_B = (dcm_OB.transpose()) * thrust_O;
+        /* Compute the thrust in the s/c body frame */
+        thrust_B = (dcm_OB.transpose()) * thrust_O;
+    }
+
+    
 }
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.

@@ -209,6 +209,9 @@ def plot_pos_error(time, r_err, P):
 
     ax[0].legend()
 
+    # Set the y limits
+    ax[0].set_ylim([-100, 100])
+
     return
 
 
@@ -240,6 +243,9 @@ def plot_vel_error(time, v_err, P):
     ax[2].set_ylabel('${}^Ov_{BO_3}$ Error [m/s]')
 
     ax[0].legend()
+
+    # Set the y limits
+    ax[0].set_ylim([-0.1, 0.1])
 
     return
 
@@ -441,6 +447,7 @@ def run(show_plots):
 
     #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
+    scSim.SetProgressBar(True)
 
     #
     #  create the simulation process
@@ -671,6 +678,8 @@ def run(show_plots):
     waypointFeedback.mu_ast = mu  # Gravitational constant of the asteroid
     waypointFeedback.x1_ref = [-2000., 0., 0.]
     waypointFeedback.x2_ref = [0.0, 0.0, 0.0]
+    waypointFeedback.pos_deadband = 20.0
+    waypointFeedback.vel_deadband = 0.01
 
     extForceTorqueModule = extForceTorque.ExtForceTorque()
     extForceTorqueModule.cmdForceBodyInMsg.subscribeTo(waypointFeedback.forceOutMsg)
@@ -778,20 +787,36 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(1000.))
-    scSim.disableTask(measTaskName)
+    #scSim.disableTask(measTaskName)
     scSim.ExecuteSimulation()
 
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(2000.))
-    scSim.enableTask(measTaskName)
+    #scSim.enableTask(measTaskName)
     scSim.ExecuteSimulation()
 
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(3000.))
-    scSim.disableTask(measTaskName)
+    #scSim.disableTask(measTaskName)
     scSim.ExecuteSimulation()
 
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(4000.))
-    scSim.enableTask(measTaskName)
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(405000.))
+    #scSim.enableTask(measTaskName)
     scSim.ExecuteSimulation()
+
+    # # Get the diagonals of the current covariances
+    # current_covariances = np.array(smallBodyNav.P_k).diagonal()
+
+    # # Create a numpy array of the covariances
+    # covariances = np.diagflat(current_covariances)
+
+    # # Reset the covariances
+    # smallBodyNav.P_k = (0.1*np.identity(12)).tolist()
+
+    # # Reset phi
+    # smallBodyNav.Phi_k = np.identity(12).tolist()
+
+    # scSim.ConfigureStopTime(simulationTime + macros.sec2nano(600000.))
+    # scSim.enableTask(measTaskName)
+    # scSim.ExecuteSimulation()
 
     # retrieve logged spacecraft position relative to asteroid
     r_BN_N_truth = sc_truth_recorder.r_BN_N
@@ -807,32 +832,100 @@ def run(show_plots):
     x_hat = state_recorder.state
     P = state_recorder.covar
 
+    # time = sc_truth_recorder.times() * macros.NANO2SEC
+    # meas_time = sc_meas_recorder.times() * macros.NANO2SEC
+
+    # # Compute the relative position and velocity of the s/c in the small body hill frame
+    # r_BO_O_truth = []
+    # v_BO_O_truth = []
+    # r_BO_O_meas = []
+    # v_BO_O_meas = []
+    # for rd_N, vd_N, rc_N, vc_N in zip(r_BN_N_truth, v_BN_N_truth, r_AN_N, v_AN_N):
+    #     dcm_ON = orbitalMotion.hillFrame(rc_N, vc_N)
+
+    #     r_BO_O_truth.append(np.matmul(dcm_ON, rd_N-rc_N))
+    #     v_BO_O_truth.append(np.matmul(dcm_ON, vd_N-vc_N))
+
+    # for idx, t in enumerate(meas_time):
+    #     truth_idx = np.where(time == t)[0][0]
+
+    #     rc_N = r_AN_N[truth_idx, :]
+    #     vc_N = v_AN_N[truth_idx, :]
+    #     rd_N_meas = r_BN_N_meas[idx, :]
+    #     vd_N_meas = v_BN_N_meas[idx, :]
+
+    #     dcm_ON = orbitalMotion.hillFrame(rc_N, vc_N)
+
+    #     r_BO_O_meas.append(np.matmul(dcm_ON, rd_N_meas-rc_N))
+    #     v_BO_O_meas.append(np.matmul(dcm_ON, vd_N_meas-vc_N))
+
+    print(x_hat[0, :])
+    print(x_hat[-1, :])
+
+    N = 20  # Replace this with the desired value of N
+
     time = sc_truth_recorder.times() * macros.NANO2SEC
     meas_time = sc_meas_recorder.times() * macros.NANO2SEC
 
-    # Compute the relative position and velocity of the s/c in the small body hill frame
+    print(time)
+    print(meas_time)
+
     r_BO_O_truth = []
     v_BO_O_truth = []
     r_BO_O_meas = []
     v_BO_O_meas = []
-    for rd_N, vd_N, rc_N, vc_N in zip(r_BN_N_truth, v_BN_N_truth, r_AN_N, v_AN_N):
-        dcm_ON = orbitalMotion.hillFrame(rc_N, vc_N)
 
-        r_BO_O_truth.append(np.matmul(dcm_ON, rd_N-rc_N))
-        v_BO_O_truth.append(np.matmul(dcm_ON, vd_N-vc_N))
+    for idx, (rd_N, vd_N, rc_N, vc_N) in enumerate(zip(r_BN_N_truth, v_BN_N_truth, r_AN_N, v_AN_N)):
+        if idx % N == 0:
+            dcm_ON = orbitalMotion.hillFrame(rc_N, vc_N)
+            r_BO_O_truth.append(np.matmul(dcm_ON, rd_N - rc_N))
+            v_BO_O_truth.append(np.matmul(dcm_ON, vd_N - vc_N))
 
     for idx, t in enumerate(meas_time):
-        truth_idx = np.where(time == t)[0][0]
+        if idx % N == 0:
+            truth_idx = np.where(time == t)[0][0]
+            rc_N = r_AN_N[truth_idx, :]
+            vc_N = v_AN_N[truth_idx, :]
+            rd_N_meas = r_BN_N_meas[idx, :]
+            vd_N_meas = v_BN_N_meas[idx, :]
+            dcm_ON = orbitalMotion.hillFrame(rc_N, vc_N)
+            r_BO_O_meas.append(np.matmul(dcm_ON, rd_N_meas - rc_N))
+            v_BO_O_meas.append(np.matmul(dcm_ON, vd_N_meas - vc_N))
 
-        rc_N = r_AN_N[truth_idx, :]
-        vc_N = v_AN_N[truth_idx, :]
-        rd_N_meas = r_BN_N_meas[idx, :]
-        vd_N_meas = v_BN_N_meas[idx, :]
+    filtered_time_indices = [idx for idx in range(len(time)) if idx % N == 0]
+    filtered_time = time[filtered_time_indices]
+    time = filtered_time
 
-        dcm_ON = orbitalMotion.hillFrame(rc_N, vc_N)
+    filtered_meas_time_indices = [idx for idx in range(len(meas_time)) if idx % N == 0]
+    filtered_meas_time = meas_time[filtered_meas_time_indices]
+    meas_time = filtered_meas_time
 
-        r_BO_O_meas.append(np.matmul(dcm_ON, rd_N_meas-rc_N))
-        v_BO_O_meas.append(np.matmul(dcm_ON, vd_N_meas-vc_N))
+    print(time)
+    print(meas_time)
+
+    filtered_P_indices = [idx for idx in range(len(P)) if idx % N == 0]
+    filtered_P = P[filtered_P_indices, :, :]
+    P = filtered_P
+
+    filtered_x_hat_indices = [idx for idx in range(len(x_hat)) if idx % N == 0]
+    filtered_x_hat = x_hat[filtered_x_hat_indices, :]
+    x_hat = filtered_x_hat
+
+    filtered_sigma_AN_truth_indices = [idx for idx in range(len(sigma_AN_truth)) if idx % N == 0]
+    filtered_sigma_AN_truth = sigma_AN_truth[filtered_sigma_AN_truth_indices, :]
+    sigma_AN_truth = filtered_sigma_AN_truth
+
+    filtered_sigma_AN_meas_indices = [idx for idx in range(len(sigma_AN_meas)) if idx % N == 0]
+    filtered_sigma_AN_meas = sigma_AN_meas[filtered_sigma_AN_meas_indices, :]
+    sigma_AN_meas = filtered_sigma_AN_meas
+
+    filtered_omega_AN_A_truth_indices = [idx for idx in range(len(omega_AN_A_truth)) if idx % N == 0]
+    filtered_omega_AN_A_truth = omega_AN_A_truth[filtered_omega_AN_A_truth_indices, :]
+    omega_AN_A_truth = filtered_omega_AN_A_truth
+
+    filtered_omega_AN_A_meas_indices = [idx for idx in range(len(omega_AN_A_meas)) if idx % N == 0]
+    filtered_omega_AN_A_meas = omega_AN_A_meas[filtered_omega_AN_A_meas_indices, :]
+    omega_AN_A_meas = filtered_omega_AN_A_meas
 
     #
     #   plot the results
