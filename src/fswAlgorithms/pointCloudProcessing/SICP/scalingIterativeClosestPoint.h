@@ -79,7 +79,7 @@ private:
     Eigen::MatrixXd n;
 
     int Np = 0; //!< Number of detected points
-    int maxInteralIterations = 10; //!< Maximum iterations in the inner loop for scale factor and rotation
+    int maxInternalIterations = 10; //!< Maximum iterations in the inner loop for scale factor and rotation
 
 };
 

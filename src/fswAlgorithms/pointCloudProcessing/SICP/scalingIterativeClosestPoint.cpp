@@ -254,7 +254,7 @@ void ScalingIterativeClosestPoint::UpdateState(uint64_t CurrentSimNanos)
             //! - Center point clouds about average point
             this->centerCloud(measuredPoints);
 
-            for (int iterRS = 0; iterRS < this->maxInteralIterations; iterRS++) {
+            for (int iterRS = 0; iterRS < this->maxInternalIterations; iterRS++) {
                 //! - Eq 14-17 to find R
                 R_k = this->computeRk(s_kmin1, R_kmin1);
 
