@@ -39,11 +39,12 @@ public:
     ScalingIterativeClosestPoint();
     ~ScalingIterativeClosestPoint();
     
-    void UpdateState(uint64_t CurrentSimNanos);
-    void Reset(uint64_t CurrentSimNanos);
+    void UpdateState(uint64_t CurrentSimNanos) override;
+    void Reset(uint64_t CurrentSimNanos) override;
 
     Message<PointCloudMsgPayload> outputPointCloud;  //!< The output fitted point cloud
     Message<SICPMsgPayload> outputSICPData;  //!< The output algorithm data
+    ReadFunctor<SICPMsgPayload> initialCondition;          //!< The input measured data
     ReadFunctor<PointCloudMsgPayload> measuredPointCloud;          //!< The input measured data
     ReadFunctor<PointCloudMsgPayload> referencePointCloud;          //!< The input reference data
     BSKLogger bskLogger;                //!< -- BSK Logging
@@ -70,6 +71,7 @@ private:
     PointCloudMsgPayload outputCloudBuffer;
     PointCloudMsgPayload measuredCloudBuffer;
     PointCloudMsgPayload referenceCloudBuffer;
+    SICPMsgPayload initialConditionBuffer;
     SICPMsgPayload sicpBuffer;
 
     Eigen::MatrixXd correspondingPoints;

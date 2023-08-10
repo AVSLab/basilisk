@@ -36,6 +36,9 @@ void ScalingIterativeClosestPoint::Reset(uint64_t CurrentSimNanos)
     if (!this->referencePointCloud.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected.");
     }
+    if (!this->initialCondition.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "Initial condition message wasn't connected.");
+    }
 }
 
 /*! Compute the closest reference point to each measured point
@@ -196,6 +199,27 @@ void ScalingIterativeClosestPoint::UpdateState(uint64_t CurrentSimNanos)
 
     this->measuredCloudBuffer = this->measuredPointCloud();
     this->referenceCloudBuffer = this->referencePointCloud();
+    bool initicalConditionValidity = false;
+    if (this->initialCondition.isLinked()) {
+        this->initialConditionBuffer = this->initialCondition();
+        initicalConditionValidity = this->initialConditionBuffer.valid;
+    }
+
+    //! - If initial condition message exists populate the initial conditions, otherwise use defaults
+    if (initicalConditionValidity) {
+        this->R_init = cArray2EigenMatrixXd(this->initialConditionBuffer.rotationMatrix,
+                                            POINT_DIM,
+                                            POINT_DIM);
+        this->t_init = Eigen::Map<Eigen::VectorXd>(this->initialConditionBuffer.translation,
+                                                   POINT_DIM,
+                                                   1);
+        this->s_init = this->initialConditionBuffer.scaleFactor[0];
+    }
+    else {
+        this->R_init = Eigen::MatrixXd::Identity(POINT_DIM, POINT_DIM);
+        this->t_init = Eigen::VectorXd::Zero(POINT_DIM);
+        this->s_init = 1;
+    }
 
     //! - Check for data validity
     if (!this->measuredCloudBuffer.valid) {
@@ -266,6 +290,8 @@ void ScalingIterativeClosestPoint::UpdateState(uint64_t CurrentSimNanos)
 
         //! - Save the algorithm output data if the measurement was valid
         this->outputCloudBuffer.valid = true;
+        this->sicpBuffer.valid = true;
+        this->sicpBuffer.timeTag = CurrentSimNanos;
         Eigen::MatrixXd newPoints = Eigen::MatrixXd::Zero(measuredPoints.rows(), measuredPoints.cols());
         for (int i = 0; i < this->Np; i++) {
             newPoints.col(i) = s_k * (R_k * measuredPoints.col(i)) + t_k;
