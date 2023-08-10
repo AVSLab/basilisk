@@ -19,4 +19,4 @@
 
 #define MAX_POINTS 5000
 #define POINT_DIM 3
-#define MAX_ITERATIONS 100
+#define MAX_ITERATIONS 250
