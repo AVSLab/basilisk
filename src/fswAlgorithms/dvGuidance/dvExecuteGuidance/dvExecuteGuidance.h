@@ -39,10 +39,10 @@ typedef struct {
     double dvInit[3];        /*!< [m/s] DV reading off the accelerometers at burn start*/
     uint32_t burnExecuting;  /*!< [-] Flag indicating whether the burn is in progress or not*/
     uint32_t burnComplete;   /*!< [-] Flag indicating that burn has completed successfully*/
-    float burnTime;          /*!< [s] Burn time to be used for telemetry*/
+    double burnTime;          /*!< [s] Burn time to be used for telemetry*/
     uint64_t prevCallTime;   /*!< [-] Call time register for computing total burn time*/
-    float minTime;           /*!< [s] Minimum count of burn time allowed to elapse*/
-    float maxTime;           /*!< [s] Maximum count of burn time allowed to elapse*/
+    double minTime;           /*!< [s] Minimum count of burn time allowed to elapse*/
+    double maxTime;           /*!< [s] Maximum count of burn time allowed to elapse*/
 
     BSKLogger *bskLogger;   //!< BSK Logging
 }dvExecuteGuidanceConfig;

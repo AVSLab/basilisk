@@ -98,7 +98,7 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
 
     if(configData->burnExecuting)
     {
-        configData->burnTime += (float) burnDt;
+        configData->burnTime += burnDt;
     }
 
     v3Subtract(navData.vehAccumDV, configData->dvInit, burnAccum);
@@ -107,7 +107,7 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
     dvExecuteMag = v3Norm(burnAccum);
     configData->burnComplete = configData->burnComplete == 1 || dvExecuteMag > dvMag;
     configData->burnComplete &= configData->burnTime > configData->minTime;
-    configData->burnComplete |= (configData->maxTime != 0.0f && configData->burnTime > configData->maxTime);
+    configData->burnComplete |= (configData->maxTime != 0.0 && configData->burnTime > configData->maxTime);
     configData->burnExecuting = configData->burnComplete != 1 && configData->burnExecuting == 1;
 
     if(configData->burnComplete)
