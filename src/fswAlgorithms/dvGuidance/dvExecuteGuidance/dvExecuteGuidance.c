@@ -105,7 +105,7 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
 
     dvMag = v3Norm(localBurnData.dvInrtlCmd);
     dvExecuteMag = v3Norm(burnAccum);
-    configData->burnComplete = configData->burnComplete == 1 || dvExecuteMag > dvMag;
+    configData->burnComplete = configData->burnComplete == 1 || dvExecuteMag >= dvMag;
     configData->burnComplete &= configData->burnTime > configData->minTime;
     configData->burnComplete |= (configData->maxTime != 0.0 && configData->burnTime > configData->maxTime);
     configData->burnExecuting = configData->burnComplete != 1 && configData->burnExecuting == 1;
