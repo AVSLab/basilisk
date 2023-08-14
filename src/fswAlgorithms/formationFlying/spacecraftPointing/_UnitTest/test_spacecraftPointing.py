@@ -77,17 +77,16 @@ def spacecraftPointingTestFunction(show_plots, case):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = spacecraftPointing.spacecraftPointingConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "spacecraftPointing"
+    module = spacecraftPointing.spacecraftPointing()
+    module.ModelTag = "spacecraftPointing"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    moduleConfig.alignmentVector_B = [1.0, 0.0, 0.0]
+    module.alignmentVector_B = [1.0, 0.0, 0.0]
     if (case == 2):
-        moduleConfig.alignmentVector_B = [0.0, 0.0, 1.0]
+        module.alignmentVector_B = [0.0, 0.0, 1.0]
 
     r_BN_N = [[np.cos(0.0), np.sin(0.0), 0.0],
               [np.cos(0.001), np.sin(0.001), 0.0],
@@ -119,12 +118,12 @@ def spacecraftPointingTestFunction(show_plots, case):
     deputyInMsg = messaging.NavTransMsg().write(deputyInputData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attReferenceOutMsg.recorder()
+    dataLog = module.attReferenceOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.chiefPositionInMsg.subscribeTo(chiefInMsg)
-    moduleConfig.deputyPositionInMsg.subscribeTo(deputyInMsg)
+    module.chiefPositionInMsg.subscribeTo(chiefInMsg)
+    module.deputyPositionInMsg.subscribeTo(deputyInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -204,7 +203,7 @@ def spacecraftPointingTestFunction(show_plots, case):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_RN unit test at t=" +
+                testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
                                     str(dataLog.times()[i]*macros.NANO2SEC) +
                                     "sec\n")
 
@@ -231,7 +230,7 @@ def spacecraftPointingTestFunction(show_plots, case):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_N unit test at t=" +
+                testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" +
                                     str(dataLog.times()[i]*macros.NANO2SEC) +
                                     "sec\n")
 
@@ -257,7 +256,7 @@ def spacecraftPointingTestFunction(show_plots, case):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed domega_RN_N unit test at t=" +
+                testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_N unit test at t=" +
                                     str(dataLog.times()[i]*macros.NANO2SEC) +
                                     "sec\n")
     elif (case == 2):
@@ -266,19 +265,19 @@ def spacecraftPointingTestFunction(show_plots, case):
         accuracy = 1e-12
         unitTestSupport.writeTeXSnippet("toleranceValue4", str(accuracy), path)
         # check a vector values
-        if not unitTestSupport.isVectorEqual(np.array(moduleConfig.sigma_BA), np.array(trueVector), accuracy):
+        if not unitTestSupport.isVectorEqual(np.array(module.sigma_BA), np.array(trueVector), accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed, sigma_BA is calculated incorrectly\n")
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed, sigma_BA is calculated incorrectly\n")
 
     #   print out success message if no error were found
     snippentName = "passFail" + str(case)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("FAILED: " + moduleWrap.ModelTag)
+        print("FAILED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

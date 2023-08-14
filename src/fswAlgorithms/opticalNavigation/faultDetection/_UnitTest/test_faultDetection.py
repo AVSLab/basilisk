@@ -95,17 +95,16 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
 
     # Construct the ephemNavConverter module
     # Set the names for the input messages
-    faults = faultDetection.FaultDetectionData()  # Create a config struct
+    faults = faultDetection.faultDetection()
     faults.sigmaFault = 3
     faults.faultMode = faultMode
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, update, and reset
-    faultsWrap = unitTestSim.setModelDataWrap(faults)
-    faultsWrap.ModelTag = "faultDet"
+    faults.ModelTag = "faultDet"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, faultsWrap, faults)
+    unitTestSim.AddModelToTask(unitTaskName, faults)
 
     # Create the input messages.
     inputPrimary = messaging.OpNavMsgPayload()
@@ -231,10 +230,10 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     #   print out success message if no error were found
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + faultsWrap.ModelTag)
+        print("PASSED: " + faults.ModelTag)
     else:
         colorText = 'Red'
-        print("Failed: " + faultsWrap.ModelTag)
+        print("Failed: " + faults.ModelTag)
 
 
     return [testFailCount, ''.join(testMessages)]

@@ -58,17 +58,16 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
 
     # Construct the rwNullSpace module
     # Set the names for the input messages
-    moduleConfig = rwNullSpace.rwNullSpaceConfig()  # Create a config struct
+    module = rwNullSpace.rwNullSpace()
 
     # Set the necessary data in the module. NOTE: This information is more or less random
-    moduleConfig.OmegaGain = .5 # The feedback gain value applied for the RW despin control law
+    module.OmegaGain = .5 # The feedback gain value applied for the RW despin control law
 
     # This calls the algContain to setup the selfInit, update, and reset
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "rwNullSpace"
+    module.ModelTag = "rwNullSpace"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     numRW = numWheels
 
@@ -122,16 +121,16 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
     rwConfigMsg = messaging.RWConstellationMsg().write(inputRWConstellationMsg)
     rwCmdMsg = messaging.ArrayMotorTorqueMsg().write(inputRWCmdMsg)
 
-    dataLog = moduleConfig.rwMotorTorqueOutMsg.recorder()
+    dataLog = module.rwMotorTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.rwMotorTorqueInMsg.subscribeTo(rwCmdMsg)
-    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedMsg)
-    moduleConfig.rwConfigInMsg.subscribeTo(rwConfigMsg)
+    module.rwMotorTorqueInMsg.subscribeTo(rwCmdMsg)
+    module.rwSpeedsInMsg.subscribeTo(rwSpeedMsg)
+    module.rwConfigInMsg.subscribeTo(rwConfigMsg)
     if not defaultDesired:
         rwDesiredMsg = messaging.RWSpeedMsg().write(inputDesiredSpeedMsg)
-        moduleConfig.rwDesiredSpeedsInMsg.subscribeTo(rwDesiredMsg)
+        module.rwDesiredSpeedsInMsg.subscribeTo(rwDesiredMsg)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -158,7 +157,7 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
         tmp = GsT.dot(inv(tmp))
         tmp = tmp.dot(Gs)
         tau = np.identity(numWheels) - tmp
-        d = - moduleConfig.OmegaGain * (np.array(rwSpeeds) - np.array(desiredOmega))
+        d = - module.OmegaGain * (np.array(rwSpeeds) - np.array(desiredOmega))
         uNull = tau.dot(d)
         trueTorque = np.array(usControl) + uNull
         trueVector = [
@@ -183,11 +182,11 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
     snippentName = "passFail" + str(numWheels)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

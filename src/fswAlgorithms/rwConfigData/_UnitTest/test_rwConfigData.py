@@ -37,7 +37,7 @@ def rwConfigDataTestFunction():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate)) # Add a new task to the process
 
     # Construct the cssComm module
-    moduleConfig = rwConfigData.rwConfigData_Config() # Create a config struct
+    module = rwConfigData.rwConfigData()
 
     # Create the messages
     rwConstellationFswMsg = messaging.RWConstellationMsgPayload()
@@ -63,16 +63,15 @@ def rwConfigDataTestFunction():
 
     # Set these messages
     rwConstInMsg = messaging.RWConstellationMsg().write(rwConstellationFswMsg)
-    moduleConfig.rwConstellationInMsg.subscribeTo(rwConstInMsg)
+    module.rwConstellationInMsg.subscribeTo(rwConstInMsg)
 
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "rwConfigData"
+    module.ModelTag = "rwConfigData"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Log the output message
-    dataLog = moduleConfig.rwParamsOutMsg.recorder()
+    dataLog = module.rwParamsOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation
@@ -99,7 +98,7 @@ def rwConfigDataTestFunction():
                                                                  3*numRW, testFailCount, testMessages)
 
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
 
     return [testFailCount, ''.join(testMessages)]
 

@@ -51,12 +51,11 @@ User Guide
 ----------
 The required module configuration is::
 
-    schedulerConfig = torqueScheduler.torqueSchedulerConfig()
-    schedulerWrap = unitTestSim.setModelDataWrap(schedulerConfig)
-    schedulerWrap.ModelTag = "torqueScheduler"
-    schedulerConfig.lockFlag = lockFlag
-    schedulerConfig.tSwitch = tSwitch
-    unitTestSim.AddModelToTask(unitTaskName, schedulerWrap, schedulerConfig)
+    scheduler = torqueScheduler.torqueScheduler()
+    scheduler.ModelTag = "torqueScheduler"
+    scheduler.lockFlag = lockFlag
+    scheduler.tSwitch = tSwitch
+    unitTestSim.AddModelToTask(unitTaskName, scheduler)
 	
 The module is configurable with the following parameters:
 

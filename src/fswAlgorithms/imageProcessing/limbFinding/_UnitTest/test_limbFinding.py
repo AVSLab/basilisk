@@ -107,16 +107,16 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = limbFinding.LimbFinding()
-    moduleConfig.ModelTag = "limbFind"
+    module = limbFinding.LimbFinding()
+    module.ModelTag = "limbFind"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    moduleConfig.filename = imagePath
-    moduleConfig.cannyThreshHigh = cannyHigh
-    moduleConfig.cannyThreshLow = cannyLow
-    moduleConfig.blurrSize = blur
+    module.filename = imagePath
+    module.cannyThreshHigh = cannyHigh
+    module.cannyThreshLow = cannyLow
+    module.blurrSize = blur
 
     reference = []
     refPoints = 0
@@ -135,10 +135,10 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
     imageInMsg = messaging.CameraImageMsg().write(inputMessageData)
-    moduleConfig.imageInMsg.subscribeTo(imageInMsg)
+    module.imageInMsg.subscribeTo(imageInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.opnavLimbOutMsg.recorder()
+    dataLog = module.opnavLimbOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
 

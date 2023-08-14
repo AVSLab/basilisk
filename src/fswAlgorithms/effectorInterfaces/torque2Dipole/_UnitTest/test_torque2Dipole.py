@@ -76,10 +76,9 @@ def torque2DipoleModuleTestFunction():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Initialize module under test's config message and add module to runtime call list
-    moduleConfig = torque2Dipole.torque2DipoleConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "mtbMomentumManagement"           # update python name of test module
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    module = torque2Dipole.torque2Dipole()
+    module.ModelTag = "mtbMomentumManagement"           # update python name of test module
+    unitTestSim.AddModelToTask(unitTaskName, module)
     
     # Initialize TAMSensorBodyMsg
     tamSensorBodyInMsgContainer = messaging.TAMSensorBodyMsgPayload()
@@ -92,12 +91,12 @@ def torque2DipoleModuleTestFunction():
     tauRequestInMsg = messaging.CmdTorqueBodyMsg().write(tauRequestInMsgContainer)
     
     # Setup logging on the test module output message so that we get all the writes to it
-    resultDipoleRequestOutMsg = moduleConfig.dipoleRequestOutMsg.recorder()
+    resultDipoleRequestOutMsg = module.dipoleRequestOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, resultDipoleRequestOutMsg)
     
     # connect the message interfaces
-    moduleConfig.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
-    moduleConfig.tauRequestInMsg.subscribeTo(tauRequestInMsg)
+    module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
+    module.tauRequestInMsg.subscribeTo(tauRequestInMsg)
     
     # Set the simulation time.
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))        # seconds to stop simulation
@@ -123,7 +122,7 @@ def torque2DipoleModuleTestFunction():
     '''
     tamSensorBodyInMsgContainer.tam_B = [0., 0., 0.]
     tamSensorBodyInMsg = messaging.TAMSensorBodyMsg().write(tamSensorBodyInMsgContainer)
-    moduleConfig.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
+    module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
     
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
@@ -141,11 +140,11 @@ def torque2DipoleModuleTestFunction():
     '''
     tamSensorBodyInMsgContainer.tam_B = [1E-5, 0.0, 0.0]
     tamSensorBodyInMsg = messaging.TAMSensorBodyMsg().write(tamSensorBodyInMsgContainer)
-    moduleConfig.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
+    module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
     
     tauRequestInMsgContainer.torqueRequestBody = [0., 0., 0.]
     tauRequestInMsg = messaging.CmdTorqueBodyMsg().write(tauRequestInMsgContainer)
-    moduleConfig.tauRequestInMsg.subscribeTo(tauRequestInMsg)
+    module.tauRequestInMsg.subscribeTo(tauRequestInMsg)
     
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()

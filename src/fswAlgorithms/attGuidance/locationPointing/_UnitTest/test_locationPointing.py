@@ -88,15 +88,14 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
     r_LN_N = r_LS_N + r_SN_N
 
     # setup module to be tested
-    moduleConfig = locationPointing.locationPointingConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "locationPointingTag"
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    moduleConfig.pHat_B = pHat_B
+    module = locationPointing.locationPointing()
+    module.ModelTag = "locationPointingTag"
+    unitTestSim.AddModelToTask(unitTaskName, module)
+    module.pHat_B = pHat_B
     eps = 0.1 * macros.D2R
-    moduleConfig.smallAngle = eps
+    module.smallAngle = eps
     if use3DRate:
-        moduleConfig.useBoresightRateDamping = 1
+        module.useBoresightRateDamping = 1
 
     # Configure input messages
     scTransInMsgData = messaging.NavTransMsgPayload()
@@ -111,26 +110,26 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
         locationInMsgData = messaging.GroundStateMsgPayload()
         locationInMsgData.r_LN_N = r_LN_N
         locationInMsg = messaging.GroundStateMsg().write(locationInMsgData)
-        moduleConfig.locationInMsg.subscribeTo(locationInMsg)
+        module.locationInMsg.subscribeTo(locationInMsg)
     elif locationType == 1:
         locationInMsgData = messaging.EphemerisMsgPayload()
         locationInMsgData.r_BdyZero_N = r_LN_N
         locationInMsg = messaging.EphemerisMsg().write(locationInMsgData)
-        moduleConfig.celBodyInMsg.subscribeTo(locationInMsg)
+        module.celBodyInMsg.subscribeTo(locationInMsg)
     elif locationType == 2:
         locationInMsgData = messaging.NavTransMsgPayload()
         locationInMsgData.r_BN_N = r_LN_N
         locationInMsg = messaging.NavTransMsg().write(locationInMsgData)
-        moduleConfig.scTargetInMsg.subscribeTo(locationInMsg)
+        module.scTargetInMsg.subscribeTo(locationInMsg)
 
     # subscribe input messages to module
-    moduleConfig.scTransInMsg.subscribeTo(scTransInMsg)
-    moduleConfig.scAttInMsg.subscribeTo(scAttInMsg)
+    module.scTransInMsg.subscribeTo(scTransInMsg)
+    module.scAttInMsg.subscribeTo(scAttInMsg)
 
     # setup output message recorder objects
-    attGuidOutMsgRec = moduleConfig.attGuidOutMsg.recorder()
+    attGuidOutMsgRec = module.attGuidOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, attGuidOutMsgRec)
-    attRefOutMsgRec = moduleConfig.attRefOutMsg.recorder()
+    attRefOutMsgRec = module.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, attRefOutMsgRec)
     scTransRec = scTransInMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, scTransRec)
@@ -156,7 +155,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
         # check a vector values
         if not unitTestSupport.isArrayEqual(attGuidOutMsgRec.sigma_BR[i], truthSigmaBR[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_BR unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_BR unit test at t=" +
                                 str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
@@ -164,7 +163,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
         # check a vector values
         if not unitTestSupport.isArrayEqual(attGuidOutMsgRec.omega_BR_B[i], truthOmegaBR[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_BR_B unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_BR_B unit test at t=" +
                                 str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
@@ -172,7 +171,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
         # check a vector values
         if not unitTestSupport.isArrayEqual(attRefOutMsgRec.sigma_RN[i], truthSigmaRN[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_RN unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
                                 str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
@@ -180,12 +179,12 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
         # check a vector values
         if not unitTestSupport.isArrayEqual(attRefOutMsgRec.omega_RN_N[i], truthOmegaRN[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" +
                                 str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
     else:
         print(testMessages)
 

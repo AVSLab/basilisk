@@ -84,26 +84,25 @@ def tamCommTestFunction(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = tamComm.tamConfigData()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "tamComm"
+    module = tamComm.tamComm()
+    module.ModelTag = "tamComm"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
     dcm3, _ = np.linalg.qr(np.random.normal(0, 1, (3, 3)))
-    moduleConfig.dcm_BS = dcm3.reshape(9, 1)
+    module.dcm_BS = dcm3.reshape(9, 1)
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = messaging.TAMSensorMsgPayload()
     inputMessageData.tam_S = [-1e-5, 2e-6, -3e-5]  # Tesla
     inMsg = messaging.TAMSensorMsg().write(inputMessageData)
-    moduleConfig.tamInMsg.subscribeTo(inMsg)
+    module.tamInMsg.subscribeTo(inMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.tamOutMsg.recorder()
+    dataLog = module.tamOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
@@ -138,10 +137,10 @@ def tamCommTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         print("This test uses an accuracy value of " + str(accuracy))
     else:
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

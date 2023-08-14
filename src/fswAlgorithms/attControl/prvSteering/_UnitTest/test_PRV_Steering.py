@@ -63,26 +63,24 @@ def subModuleTestFunction(show_plots, simCase):
 
 
     #   Construct algorithm and associated C++ container
-    moduleConfig = prvSteering.PrvSteeringConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "prvSteering"
+    module = prvSteering.prvSteering()
+    module.ModelTag = "prvSteering"
 
-    servoConfig = rateServoFullNonlinear.rateServoFullNonlinearConfig()
-    servoWrap = unitTestSim.setModelDataWrap(servoConfig)
-    servoWrap.ModelTag = "rate_servo"
+    servo = rateServoFullNonlinear.rateServoFullNonlinear()
+    servo.ModelTag = "rate_servo"
 
     #   Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    unitTestSim.AddModelToTask(unitTaskName, servoWrap, servoConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
+    unitTestSim.AddModelToTask(unitTaskName, servo)
 
     # configure BSK modules
-    moduleConfig.K1 = 0.15
-    moduleConfig.K3 = 1.0
-    moduleConfig.omega_max = 1.5*macros.D2R
-    servoConfig.Ki = 0.01
-    servoConfig.P = 150.0
-    servoConfig.integralLimit = 2./servoConfig.Ki * 0.1
-    servoConfig.knownTorquePntB_B = [0., 0., 0.]
+    module.K1 = 0.15
+    module.K3 = 1.0
+    module.omega_max = 1.5*macros.D2R
+    servo.Ki = 0.01
+    servo.P = 150.0
+    servo.integralLimit = 2./servo.Ki * 0.1
+    servo.knownTorquePntB_B = [0., 0., 0.]
 
 
     #   Create input message and size it because the regular creator of that message
@@ -148,17 +146,17 @@ def subModuleTestFunction(show_plots, simCase):
 
 
     #   Setup logging on the test module output message so that we get all the writes to it
-    dataLog = servoConfig.cmdTorqueOutMsg.recorder()
+    dataLog = servo.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     #   connect input and output messages
-    moduleConfig.guidInMsg.subscribeTo(guidInMsg)
-    servoConfig.vehConfigInMsg.subscribeTo(vcInMsg)
-    servoConfig.guidInMsg.subscribeTo(guidInMsg)
-    servoConfig.rwParamsInMsg.subscribeTo(rwParamInMsg)
-    servoConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
-    servoConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
-    servoConfig.rateSteeringInMsg.subscribeTo(moduleConfig.rateCmdOutMsg)
+    module.guidInMsg.subscribeTo(guidInMsg)
+    servo.vehConfigInMsg.subscribeTo(vcInMsg)
+    servo.guidInMsg.subscribeTo(guidInMsg)
+    servo.rwParamsInMsg.subscribeTo(rwParamInMsg)
+    servo.rwAvailInMsg.subscribeTo(rwAvailInMsg)
+    servo.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
+    servo.rateSteeringInMsg.subscribeTo(module.rateCmdOutMsg)
 
     #   Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -167,7 +165,7 @@ def subModuleTestFunction(show_plots, simCase):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    servoWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    servo.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
@@ -197,7 +195,7 @@ def subModuleTestFunction(show_plots, simCase):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed torqueRequestBody unit test at t="
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed torqueRequestBody unit test at t="
                                 + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
 
@@ -212,7 +210,7 @@ def subModuleTestFunction(show_plots, simCase):
           plt.show()
 
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

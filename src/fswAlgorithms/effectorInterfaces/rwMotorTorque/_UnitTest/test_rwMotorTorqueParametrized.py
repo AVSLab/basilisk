@@ -79,9 +79,8 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = rwMotorTorque.rwMotorTorqueConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "rwMotorTorque"
+    module = rwMotorTorque.rwMotorTorque()
+    module.ModelTag = "rwMotorTorque"
 
 
     # Initialize module variables
@@ -103,11 +102,11 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     else:
         controlAxes_B = []
 
-    moduleConfig.controlAxes_B = controlAxes_B
+    module.controlAxes_B = controlAxes_B
 
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
 
     # attControl message
@@ -186,23 +185,23 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
         rwAvailabilityMessage.wheelAvailability = avail
 
         rwAvailInMsg = messaging.RWAvailabilityMsg().write(rwAvailabilityMessage)
-        moduleConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
+        module.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     else:
         avail = [rwMotorTorque.AVAILABLE] * numWheels  # this is used purely for the python level solution
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.rwMotorTorqueOutMsg.recorder()
+    dataLog = module.rwMotorTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.vehControlInMsg.subscribeTo(cmdTorqueInMsg)
-    moduleConfig.rwParamsInMsg.subscribeTo(rwConfigInMsg)
+    module.vehControlInMsg.subscribeTo(cmdTorqueInMsg)
+    module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
-    moduleWrap.Reset(0)
+    module.Reset(0)
 
     # Set the simulation time.
     # NOTE: the total simulation time may be longer than this value. The
@@ -262,11 +261,11 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     snippentName = "passFail_"+str(numControlAxes) + str(numWheels) + RWAvailMsg
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

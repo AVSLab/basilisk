@@ -22,15 +22,10 @@
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_ephemDifference(void*, uint64_t, uint64_t);
-%ignore Update_ephemDifference;
-%constant void SelfInit_ephemDifference(void*, uint64_t);
-%ignore SelfInit_ephemDifference;
-%constant void Reset_ephemDifference(void*, uint64_t, uint64_t);
-%ignore Reset_ephemDifference;
-
 STRUCTASLIST(EphemChangeConfig)
-%include "ephemDifference.h"
+
+%include "swig_c_wrap.i"
+%c_wrap_2(ephemDifference, EphemDifferenceData);
 struct EphemChangeConfig;
 
 %include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"

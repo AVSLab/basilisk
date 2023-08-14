@@ -94,12 +94,11 @@ def sunlineEphemTestFunction(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    sunlineEphemConfig = sunlineEphem.sunlineEphemConfig() # update with current values
-    sunlineEphemWrap = unitTestSim.setModelDataWrap(sunlineEphemConfig)
-    sunlineEphemWrap.ModelTag = "sunlineEphem"           # update python name of test module
+    sunlineEphemObj = sunlineEphem.sunlineEphem()
+    sunlineEphemObj.ModelTag = "sunlineEphem"           # update python name of test module
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, sunlineEphemWrap, sunlineEphemConfig)
+    unitTestSim.AddModelToTask(unitTaskName, sunlineEphemObj)
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -127,11 +126,11 @@ def sunlineEphemTestFunction(show_plots):
 
     vehPosInMsg = messaging.NavTransMsg()
     sunDataInMsg = messaging.EphemerisMsg().write(sunData)
-    sunlineEphemConfig.sunPositionInMsg.subscribeTo(sunDataInMsg)
-    sunlineEphemConfig.scPositionInMsg.subscribeTo(vehPosInMsg)
-    sunlineEphemConfig.scAttitudeInMsg.subscribeTo(vehAttInMsg)
+    sunlineEphemObj.sunPositionInMsg.subscribeTo(sunDataInMsg)
+    sunlineEphemObj.scPositionInMsg.subscribeTo(vehPosInMsg)
+    sunlineEphemObj.scAttitudeInMsg.subscribeTo(vehAttInMsg)
 
-    dataLog = sunlineEphemConfig.navStateOutMsg.recorder()
+    dataLog = sunlineEphemObj.navStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     for i in range(len(TestVectors)):
@@ -146,7 +145,7 @@ def sunlineEphemTestFunction(show_plots):
         estVector[i] = dataLog.vehSunPntBdy[-1]
 
         # reset the module to test this functionality
-        sunlineEphemWrap.Reset(1)
+        sunlineEphemObj.Reset(1)
 
 
     # set the filtered output truth states
@@ -165,7 +164,7 @@ def sunlineEphemTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(estVector[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + sunlineEphemWrap.ModelTag + " Module failed sunlineEphem " +
+            testMessages.append("FAILED: " + sunlineEphemObj.ModelTag + " Module failed sunlineEphem " +
                                 " unit test at t=" + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
 
@@ -173,7 +172,7 @@ def sunlineEphemTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + sunlineEphemWrap.ModelTag)
+        print("PASSED: " + sunlineEphemObj.ModelTag)
     else:
         print(testMessages)
 

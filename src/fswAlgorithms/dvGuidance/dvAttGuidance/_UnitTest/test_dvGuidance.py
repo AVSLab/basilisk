@@ -45,14 +45,13 @@ def dvGuidanceTestFunction(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # Add a new task to the process
 
     # Construct the dvGuidance module
-    moduleConfig = dvGuidance.dvGuidanceConfig()  # Create a config struct
+    module = dvGuidance.dvGuidance()
 
     # This calls the algContain to setup the selfInit, and update
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "dvGuidance"
+    module.ModelTag = "dvGuidance"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # The dvGuidance module reads in from the dvBurnCmd, so create that message here
     dvBurnCmdMsg = messaging.DvBurnCmdMsgPayload()
@@ -65,12 +64,12 @@ def dvGuidanceTestFunction(show_plots):
     dvBurnInMsg = messaging.DvBurnCmdMsg().write(dvBurnCmdMsg)
 
     # Log the output message
-    # unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
-    dataLog = moduleConfig.attRefOutMsg.recorder()
+    # unitTestSim.TotalSim.logThisMessage(module.outputDataName, testProcessRate)
+    dataLog = module.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.burnDataInMsg.subscribeTo(dvBurnInMsg)
+    module.burnDataInMsg.subscribeTo(dvBurnInMsg)
 
 
     # Initialize the simulation
@@ -105,17 +104,17 @@ def dvGuidanceTestFunction(show_plots):
         if not unitTestSupport.isArrayEqual(outSigma[i], trueSigma[i], 3, accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED: " + moduleWrap.ModelTag + " Module failed sigma_RN unit test at t=" + str(
+                "FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" + str(
                     dataLog.times()[i] * macros.NANO2SEC) + "sec\n")
         if not unitTestSupport.isArrayEqual(outOmega[i], trueOmega[i], 3, accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_N unit test at t=" + str(
+                "FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" + str(
                     dataLog.times()[i] * macros.NANO2SEC) + "sec\n")
         if not unitTestSupport.isArrayEqual(outDOmega[i], trueDOmega[i], 3, accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED: " + moduleWrap.ModelTag + " Module failed domega_RN_N unit test at t=" + str(
+                "FAILED: " + module.ModelTag + " Module failed domega_RN_N unit test at t=" + str(
                     dataLog.times()[i] * macros.NANO2SEC) + "sec\n")
 
     # print(outSigma)
@@ -152,11 +151,11 @@ def dvGuidanceTestFunction(show_plots):
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

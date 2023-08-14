@@ -214,10 +214,9 @@ def forceTorqueThrForceMappingTestFunction(rcsLocation, rcsDirection, requested_
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # setup module to be tested
-    moduleConfig = forceTorqueThrForceMapping.forceTorqueThrForceMappingConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "forceTorqueThrForceMappingTag"
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    module = forceTorqueThrForceMapping.forceTorqueThrForceMapping()
+    module.ModelTag = "forceTorqueThrForceMappingTag"
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure blank module input messages
     cmdTorqueInMsgData = messaging.CmdTorqueBodyMsgPayload()
@@ -249,20 +248,20 @@ def forceTorqueThrForceMappingTestFunction(rcsLocation, rcsDirection, requested_
 
     # subscribe input messages to module
     if torqueInMsgFlag:
-        moduleConfig.cmdTorqueInMsg.subscribeTo(cmdTorqueInMsg)
-    moduleConfig.cmdForceInMsg.subscribeTo(cmdForceInMsg)
-    moduleConfig.thrConfigInMsg.subscribeTo(thrConfigInMsg)
-    moduleConfig.vehConfigInMsg.subscribeTo(vehConfigInMsg)
+        module.cmdTorqueInMsg.subscribeTo(cmdTorqueInMsg)
+    module.cmdForceInMsg.subscribeTo(cmdForceInMsg)
+    module.thrConfigInMsg.subscribeTo(thrConfigInMsg)
+    module.vehConfigInMsg.subscribeTo(vehConfigInMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))
     unitTestSim.ExecuteSimulation()
 
-    testFailCount, testMessages = unitTestSupport.compareArray(truth, np.array([moduleConfig.thrForceCmdOutMsg.read().thrForce[0:len(rcsLocation)]]), 1e-3,
+    testFailCount, testMessages = unitTestSupport.compareArray(truth, np.array([module.thrForceCmdOutMsg.read().thrForce[0:len(rcsLocation)]]), 1e-3,
                                                                  "CompareForces", testFailCount, testMessages)
 
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
     else:
         print(testMessages)
 

@@ -83,25 +83,23 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = mrpSteering.mrpSteeringConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "mrpSteering"
+    module = mrpSteering.mrpSteering()
+    module.ModelTag = "mrpSteering"
 
-    servoConfig = rateServoFullNonlinear.rateServoFullNonlinearConfig()
-    servoWrap = unitTestSim.setModelDataWrap(servoConfig)
-    servoWrap.ModelTag = "rate_servo"
+    servo = rateServoFullNonlinear.rateServoFullNonlinear()
+    servo.ModelTag = "rate_servo"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    unitTestSim.AddModelToTask(unitTaskName, servoWrap, servoConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
+    unitTestSim.AddModelToTask(unitTaskName, servo)
 
-    moduleConfig.K1 = K1
-    moduleConfig.K3 = K3
-    moduleConfig.omega_max = omegaMax
-    servoConfig.Ki = 0.01
-    servoConfig.P = 150.0
-    servoConfig.integralLimit = 2. / servoConfig.Ki * 0.1
-    servoConfig.knownTorquePntB_B = [0., 0., 0.]
+    module.K1 = K1
+    module.K3 = K3
+    module.omega_max = omegaMax
+    servo.Ki = 0.01
+    servo.P = 150.0
+    servo.integralLimit = 2. / servo.Ki * 0.1
+    servo.knownTorquePntB_B = [0., 0., 0.]
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -154,18 +152,18 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     rwAvailList.append(rwAvail)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = servoConfig.cmdTorqueOutMsg.recorder()
+    dataLog = servo.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.guidInMsg.subscribeTo(guidInMsg)
-    servoConfig.guidInMsg.subscribeTo(guidInMsg)
-    servoConfig.vehConfigInMsg.subscribeTo(vcInMsg)
-    servoConfig.rwParamsInMsg.subscribeTo(rwParamInMsg)
-    servoConfig.vehConfigInMsg.subscribeTo(vcInMsg)
-    servoConfig.rwSpeedsInMsg.subscribeTo(rwInMsg)
-    servoConfig.rateSteeringInMsg.subscribeTo(moduleConfig.rateCmdOutMsg)
-    servoConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
+    module.guidInMsg.subscribeTo(guidInMsg)
+    servo.guidInMsg.subscribeTo(guidInMsg)
+    servo.vehConfigInMsg.subscribeTo(vcInMsg)
+    servo.rwParamsInMsg.subscribeTo(rwParamInMsg)
+    servo.vehConfigInMsg.subscribeTo(vcInMsg)
+    servo.rwSpeedsInMsg.subscribeTo(rwInMsg)
+    servo.rateSteeringInMsg.subscribeTo(module.rateCmdOutMsg)
+    servo.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -174,13 +172,13 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    servoWrap.Reset(1)  # this module reset function needs a time input (in NanoSeconds)
+    servo.Reset(1)  # this module reset function needs a time input (in NanoSeconds)
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     # Compute true values
-    trueVals = findTrueTorques(moduleConfig, servoConfig, guidCmdData, rwSpeedMessage, vehicleConfigOut, rwAvailList)
+    trueVals = findTrueTorques(module, servo, guidCmdData, rwSpeedMessage, vehicleConfigOut, rwAvailList)
 
     # set the filtered output truth states
     # compare the module results to the truth values
@@ -189,7 +187,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], trueVals[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed torqueRequestBody unit test at t="
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed torqueRequestBody unit test at t="
                                 + str(dataLog.times[i] * macros.NANO2SEC) + "sec \n")
 
 
@@ -200,19 +198,19 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
 
-def findTrueValues(guidCmdData, moduleConfig):
+def findTrueValues(guidCmdData, module):
 
-    omegaMax = moduleConfig.omega_max
+    omegaMax = module.omega_max
     sigma = np.asarray(guidCmdData.sigma_BR)
-    K1 = np.asarray(moduleConfig.K1)
-    K3 = np.asarray(moduleConfig.K3)
+    K1 = np.asarray(module.K1)
+    K3 = np.asarray(module.K3)
     Bmat = RigidBodyKinematics.BmatMRP(sigma)
     omegaAst = []#np.asarray([0, 0, 0])
     omegaAst_P = []
@@ -223,7 +221,7 @@ def findTrueValues(guidCmdData, moduleConfig):
     #print omegaAst
 
 
-    if 1:#moduleConfig.ignoreOuterLoopFeedforward: #should be "if not"
+    if 1:#module.ignoreOuterLoopFeedforward: #should be "if not"
         sigmaP = 0.25*Bmat.dot(omegaAst)
         for i in range(len(sigma)):
             omegaAstRate = (K1+3*K3*sigma[i]**2)/(1+((K1*sigma[i]+K3*sigma[i]**3)**2)*(np.pi/(2*omegaMax))**2)*sigmaP[i]
@@ -233,12 +231,12 @@ def findTrueValues(guidCmdData, moduleConfig):
 
     return omegaAst, omegaAst_P
 
-def findTrueTorques(moduleConfig,servoConfig, guidCmdData,rwSpeedMessage,vehicleConfigOut, rwAvailMsg):
+def findTrueTorques(module,servo, guidCmdData,rwSpeedMessage,vehicleConfigOut, rwAvailMsg):
     Lr = []
 
     #Read in variables
-    numRW = servoConfig.rwConfigParams.numRW
-    L = np.asarray(servoConfig.knownTorquePntB_B)
+    numRW = servo.rwConfigParams.numRW
+    L = np.asarray(servo.knownTorquePntB_B)
     steps = [0, 0, .5, 0, .5]
     omega_BR_B = np.asarray(guidCmdData.omega_BR_B)
     omega_RN_B = np.asarray(guidCmdData.omega_RN_B)
@@ -246,18 +244,18 @@ def findTrueTorques(moduleConfig,servoConfig, guidCmdData,rwSpeedMessage,vehicle
     domega_RN_B = np.asarray(guidCmdData.domega_RN_B)
 
 
-    omega_BastR_B, omegap_BastR_B = findTrueValues(guidCmdData, moduleConfig)
+    omega_BastR_B, omegap_BastR_B = findTrueValues(guidCmdData, module)
 
     omega_BastN_B = omega_BastR_B+omega_RN_B
     omega_BBast_B = omega_BN_B - omega_BastN_B
 
     Isc = np.asarray(vehicleConfigOut.ISCPntB_B)
     Isc = np.reshape(Isc, (3, 3))
-    Ki = servoConfig.Ki
-    P = servoConfig.P
-    jsVec = servoConfig.rwConfigParams.JsList[0:numRW]
+    Ki = servo.Ki
+    P = servo.P
+    jsVec = servo.rwConfigParams.JsList[0:numRW]
     #GsMatrix_B_array = np.asarray(GsMatrix)
-    GsMatrix = (servoConfig.rwConfigParams.GsMatrix_B)
+    GsMatrix = (servo.rwConfigParams.GsMatrix_B)
     GsMatrix_B_array = np.reshape(GsMatrix[0:numRW * 3], (numRW, 3))
 
     #Compute toruqes
@@ -267,12 +265,12 @@ def findTrueTorques(moduleConfig,servoConfig, guidCmdData,rwSpeedMessage,vehicle
             zVec = np.asarray([0, 0, 0])
 
         #evaluate integral term
-        if Ki > 0 and abs(servoConfig.integralLimit) > 0: #if integral feedback is on
+        if Ki > 0 and abs(servo.integralLimit) > 0: #if integral feedback is on
             zVec = dt * omega_BBast_B + zVec  # z = integral(del_omega)
             # Make sure each component is less than the integral limit
             for i in range(3):
-                if zVec[i] > servoConfig.integralLimit:
-                        zVec[i] = zVec[i]/abs(zVec[i])*servoConfig.integralLimit
+                if zVec[i] > servo.integralLimit:
+                        zVec[i] = zVec[i]/abs(zVec[i])*servo.integralLimit
 
         else: #integral gain turned off/negative setting
             zVec = np.asarray([0, 0, 0])

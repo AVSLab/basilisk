@@ -100,17 +100,16 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = simpleInstrumentController.simpleInstrumentControllerConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "simpleInstrumentController"           # update python name of test module
+    module = simpleInstrumentController.simpleInstrumentController()
+    module.ModelTag = "simpleInstrumentController"           # update python name of test module
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    moduleConfig.attErrTolerance = 0.1                           # set the attitude error tolerance
-    moduleConfig.rateErrTolerance = rate_limit                   # set the attitude rate error tolerance
-    moduleConfig.useRateTolerance = use_rate_limit               # enable attitude rate error tolerance
+    module.attErrTolerance = 0.1                           # set the attitude error tolerance
+    module.rateErrTolerance = rate_limit                   # set the attitude rate error tolerance
+    module.useRateTolerance = use_rate_limit               # enable attitude rate error tolerance
 
     # Create and write the ground location access message
     inputAccessMsgData = messaging.AccessMsgPayload()
@@ -128,19 +127,19 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
         inputDeviceStatusMsgData = messaging.DeviceStatusMsgPayload()
         inputDeviceStatusMsgData.deviceStatus = deviceStatus
         inputDeviceStatusMsg = messaging.DeviceStatusMsg().write(inputDeviceStatusMsgData)
-        moduleConfig.deviceStatusInMsg.subscribeTo(inputDeviceStatusMsg)
+        module.deviceStatusInMsg.subscribeTo(inputDeviceStatusMsg)
     
     # Set the controllerStatus variable
     if controlStatus is not None:
-        moduleConfig.controllerStatus = controlStatus
+        module.controllerStatus = controlStatus
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.deviceCmdOutMsg.recorder()
+    dataLog = module.deviceCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect the message interfaces
-    moduleConfig.locationAccessInMsg.subscribeTo(inputAccessMsg)
-    moduleConfig.attGuidInMsg.subscribeTo(inputAttGuidMsg)
+    module.locationAccessInMsg.subscribeTo(inputAccessMsg)
+    module.attGuidInMsg.subscribeTo(inputAttGuidMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -159,13 +158,13 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
     unitTestSim.ExecuteSimulation()
 
     # Now change the imaged variable back to 0 and run again for another image
-    moduleConfig.imaged = 0
+    module.imaged = 0
     unitTestSim.ConfigureStopTime(macros.sec2nano(4.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     if not unitTestSupport.isArrayEqual(dataLog.deviceCmd, expected_result, len(expected_result), 1e-12):
         testFailCount += 1
-        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed dataVector" + " unit test at t=" + str(dataLog.times()[0]*macros.NANO2SEC) + "sec\n")
+        testMessages.append("FAILED: " + module.ModelTag + " Module failed dataVector" + " unit test at t=" + str(dataLog.times()[0]*macros.NANO2SEC) + "sec\n")
 
     # Plots
     plt.close("all")  # close all prior figures so we start with a clean slate

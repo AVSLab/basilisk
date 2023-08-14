@@ -21,21 +21,13 @@
    #include "hingedRigidBodyPIDMotor.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void SelfInit_hingedRigidBodyPIDMotor(void*, uint64_t);
-%ignore SelfInit_hingedRigidBodyPIDMotor;
-%constant void Reset_hingedRigidBodyPIDMotor(void*, uint64_t, uint64_t);
-%ignore Reset_hingedRigidBodyPIDMotor;
-%constant void Update_hingedRigidBodyPIDMotor(void*, uint64_t, uint64_t);
-%ignore Update_hingedRigidBodyPIDMotor;
-
-%include "hingedRigidBodyPIDMotor.h"
+%include "swig_c_wrap.i"
+%c_wrap(hingedRigidBodyPIDMotor);
 
 %include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 struct HingedRigidBodyMsg_C;
 %include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;
-
 
 %pythoncode %{
 import sys

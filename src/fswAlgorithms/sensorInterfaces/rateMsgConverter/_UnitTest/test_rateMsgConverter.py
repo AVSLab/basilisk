@@ -68,22 +68,21 @@ def rateMsgConvertFunction(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = rateMsgConverter.rateMsgConverterConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "rateMsgConverter"
+    module = rateMsgConverter.rateMsgConverter()
+    module.ModelTag = "rateMsgConverter"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = messaging.IMUSensorBodyMsgPayload()
     inputMessageData.AngVelBody = [-0.1, 0.2, -0.3]
     inMsg = messaging.IMUSensorBodyMsg().write(inputMessageData)
-    moduleConfig.imuRateInMsg.subscribeTo(inMsg)
+    module.imuRateInMsg.subscribeTo(inMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.navRateOutMsg.recorder()
+    dataLog = module.navRateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
@@ -140,9 +139,9 @@ def rateMsgConvertFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
     else:
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

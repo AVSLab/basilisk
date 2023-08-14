@@ -86,19 +86,18 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = thrFiringRemainder.thrFiringRemainderConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "thrFiringRemainder"
+    module = thrFiringRemainder.thrFiringRemainder()
+    module.ModelTag = "thrFiringRemainder"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    moduleConfig.thrMinFireTime = 0.2
+    module.thrMinFireTime = 0.2
     if dvOn == 1:
-        moduleConfig.baseThrustState = 1
+        module.baseThrustState = 1
     else:
-        moduleConfig.baseThrustState = 0
+        module.baseThrustState = 0
 
     # setup thruster cluster message
     fswSetupThrusters.clearSetup()
@@ -140,13 +139,13 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.onTimeOutMsg.recorder()
+    dataLog = module.onTimeOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
 
     # connect messages
-    moduleConfig.thrConfInMsg.subscribeTo(thrConfigMsg)
-    moduleConfig.thrForceInMsg.subscribeTo(thrForceMsg)
+    module.thrConfInMsg.subscribeTo(thrConfigMsg)
+    module.thrForceInMsg.subscribeTo(thrForceMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -160,7 +159,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
     if resetCheck:
         # reset the module to test this functionality
-        moduleWrap.Reset(macros.sec2nano(3.0))     # this module reset function needs a time input (in NanoSeconds)
+        module.Reset(macros.sec2nano(3.0))     # this module reset function needs a time input (in NanoSeconds)
 
         # run the module again for an additional 1.0 seconds
         unitTestSim.ConfigureStopTime(macros.sec2nano(5.5))        # seconds to stop simulation
@@ -233,11 +232,11 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
     snippentName = "passFail" + str(resetCheck) + str(dvOn)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

@@ -77,10 +77,9 @@ def mtbFeedforwardModuleTestFunction():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Initialize module under test's config message and add module to runtime call list
-    moduleConfig = mtbFeedforward.mtbFeedforwardConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "mrpFeedback"           # update python name of test module
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    module = mtbFeedforward.mtbFeedforward()
+    module.ModelTag = "mrpFeedback"           # update python name of test module
+    unitTestSim.AddModelToTask(unitTaskName, module)
     
     # Initialize CmdTorqueBodyMsg
     vehControlInMsgContainer = messaging.CmdTorqueBodyMsgPayload()
@@ -105,14 +104,14 @@ def mtbFeedforwardModuleTestFunction():
     mtbArrayConfigParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbArrayConfigParamsInMsgContainer)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    resultVehControlOutMsg = moduleConfig.vehControlOutMsg.recorder()
+    resultVehControlOutMsg = module.vehControlOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, resultVehControlOutMsg)
     
     # connect the message interfaces
-    moduleConfig.vehControlInMsg.subscribeTo(vehControlInMsg)
-    moduleConfig.dipoleRequestMtbInMsg.subscribeTo(dipoleRequestMtbInMsg)
-    moduleConfig.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
-    moduleConfig.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
+    module.vehControlInMsg.subscribeTo(vehControlInMsg)
+    module.dipoleRequestMtbInMsg.subscribeTo(dipoleRequestMtbInMsg)
+    module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
+    module.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
     
     # Set the simulation time.
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))        # seconds to stop simulation
@@ -138,7 +137,7 @@ def mtbFeedforwardModuleTestFunction():
     '''
     tamSensorBodyInMsgContainer.tam_B = [0., 0., 0.]
     tamSensorBodyInMsg = messaging.TAMSensorBodyMsg().write(tamSensorBodyInMsgContainer)
-    moduleConfig.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
+    module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
     
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
@@ -155,11 +154,11 @@ def mtbFeedforwardModuleTestFunction():
     '''
     tamSensorBodyInMsgContainer.tam_B = [1E-5, -3E-5, 5E-5]
     tamSensorBodyInMsg = messaging.TAMSensorBodyMsg().write(tamSensorBodyInMsgContainer)
-    moduleConfig.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
+    module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
     
     dipoleRequestMtbInMsgContainer.mtbDipoleCmds = [0., 0., 0.]
     dipoleRequestMtbInMsg = messaging.MTBCmdMsg().write(dipoleRequestMtbInMsgContainer) 
-    moduleConfig.dipoleRequestMtbInMsg.subscribeTo(dipoleRequestMtbInMsg)
+    module.dipoleRequestMtbInMsg.subscribeTo(dipoleRequestMtbInMsg)
     
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
@@ -177,7 +176,7 @@ def mtbFeedforwardModuleTestFunction():
     '''
     dipoleRequestMtbInMsgContainer.mtbDipoleCmds = [7., -3.]
     dipoleRequestMtbInMsg = messaging.MTBCmdMsg().write(dipoleRequestMtbInMsgContainer) 
-    moduleConfig.dipoleRequestMtbInMsg.subscribeTo(dipoleRequestMtbInMsg)
+    module.dipoleRequestMtbInMsg.subscribeTo(dipoleRequestMtbInMsg)
     
     beta = 45. * np.pi / 180.
     Gt = np.array([[np.cos(beta), -np.sin(beta)],[np.sin(beta),  np.cos(beta)], [0., 0.]])
@@ -186,7 +185,7 @@ def mtbFeedforwardModuleTestFunction():
                                                      Gt[1, 0], Gt[1, 1],
                                                      Gt[2, 0], Gt[2, 1]]  
     mtbArrayConfigParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbArrayConfigParamsInMsgContainer)
-    moduleConfig.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
+    module.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()

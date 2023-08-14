@@ -22,18 +22,12 @@
     #include "locationPointing.h"
 %}
 
+%include "swig_c_wrap.i"
+%c_wrap(locationPointing);
+
 %pythoncode %{
     from Basilisk.architecture.swig_common_model import *
 %}
-%include "swig_conly_data.i"
-%constant void Update_locationPointing(void*, uint64_t, uint64_t);
-%ignore Update_locationPointing;
-%constant void SelfInit_locationPointing(void*, uint64_t);
-%ignore SelfInit_locationPointing;
-%constant void Reset_locationPointing(void*, uint64_t, uint64_t);
-%ignore Reset_locationPointing;
-
-%include "locationPointing.h"
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavTransMsg_C;

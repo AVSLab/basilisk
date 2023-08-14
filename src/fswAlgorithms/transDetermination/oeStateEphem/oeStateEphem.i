@@ -22,15 +22,10 @@
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_oeStateEphem(void*, uint64_t, uint64_t);
-%ignore Update_oeStateEphem;
-%constant void SelfInit_oeStateEphem(void*, uint64_t);
-%ignore SelfInit_oeStateEphem;
-%constant void Reset_oeStateEphem(void*, uint64_t, uint64_t);
-%ignore Reset_oeStateEphem;
 STRUCTASLIST(ChebyOERecord)
 
-%include "oeStateEphem.h"
+%include "swig_c_wrap.i"
+%c_wrap_2(oeStateEphem, OEStateEphemData);
 
 %include "architecture/msgPayloadDefC/TDBVehicleClockCorrelationMsgPayload.h"
 struct TDBVehicleClockCorrelationMsg_C;

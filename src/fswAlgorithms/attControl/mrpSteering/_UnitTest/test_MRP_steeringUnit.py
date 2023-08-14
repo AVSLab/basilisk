@@ -81,18 +81,17 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = mrpSteering.mrpSteeringConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "mrpSteering"
+    module = mrpSteering.mrpSteering()
+    module.ModelTag = "mrpSteering"
 
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    moduleConfig.K1 = K1
-    moduleConfig.K3 = K3
-    moduleConfig.omega_max = omegaMax
+    module.K1 = K1
+    module.K3 = K3
+    module.omega_max = omegaMax
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -108,11 +107,11 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.rateCmdOutMsg.recorder()
+    dataLog = module.rateCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.guidInMsg.subscribeTo(guidInMsg)
+    module.guidInMsg.subscribeTo(guidInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -122,7 +121,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     unitTestSim.ExecuteSimulation()
 
     # Compute truth states
-    omegaAstTrue, omegaAstPTrue = findTrueValues(guidCmdData, moduleConfig)
+    omegaAstTrue, omegaAstPTrue = findTrueValues(guidCmdData, module)
 
     # compare the module results to the truth values
     accuracy = 1e-12
@@ -130,7 +129,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.omega_BastR_B[i], omegaAstTrue[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_BastR_B unit test at t="
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_BastR_B unit test at t="
                                 + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
 
     # compare the module results to the truth values
@@ -139,7 +138,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.omegap_BastR_B[i], omegaAstPTrue[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omegap_BastR_B unit test at t="
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed omegap_BastR_B unit test at t="
                                 + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
@@ -149,19 +148,19 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
 
-def findTrueValues(guidCmdData, moduleConfig):
+def findTrueValues(guidCmdData, module):
 
-    omegaMax = moduleConfig.omega_max
+    omegaMax = module.omega_max
     sigma = np.asarray(guidCmdData.sigma_BR)
-    K1 = np.asarray(moduleConfig.K1)
-    K3 = np.asarray(moduleConfig.K3)
+    K1 = np.asarray(module.K1)
+    K3 = np.asarray(module.K3)
     Bmat = RigidBodyKinematics.BmatMRP(sigma)
     omegaAst = []   #np.asarray([0, 0, 0])
     omegaAst_P = []
@@ -171,7 +170,7 @@ def findTrueValues(guidCmdData, moduleConfig):
         omegaAst.append(steerRate)
 
 
-    if 1:   #moduleConfig.ignoreOuterLoopFeedforward: #should be "if not"
+    if 1:   #module.ignoreOuterLoopFeedforward: #should be "if not"
         sigmaP = 0.25*Bmat.dot(omegaAst)
         for i in range(len(sigma)):
             omegaAstRate = (K1+3*K3*sigma[i]**2)/(1+((K1*sigma[i]+K3*sigma[i]**3)**2)*(np.pi/(2*omegaMax))**2)*sigmaP[i]

@@ -22,13 +22,8 @@
    #include "architecture/utilities/ukfUtilities.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_okeefeEKF(void*, uint64_t, uint64_t);
-%ignore Update_okeefeEKF;
-%constant void SelfInit_okeefeEKF(void*, uint64_t);
-%ignore SelfInit_okeefeEKF;
-%constant void Reset_okeefeEKF(void*, uint64_t, uint64_t);
-%ignore Reset_okeefeEKF;
+%include "swig_c_wrap.i"
+%c_wrap(okeefeEKF);
 
 %include "architecture/utilities/ukfUtilities.h"
 
@@ -40,8 +35,6 @@ struct CSSArraySensorMsg_C;
 struct SunlineFilterMsg_C;
 %include "architecture/msgPayloadDefC/CSSConfigMsgPayload.h"
 struct CSSConfigMsg_C;
-
-%include "okeefeEKF.h"
 
 %pythoncode %{
 import sys

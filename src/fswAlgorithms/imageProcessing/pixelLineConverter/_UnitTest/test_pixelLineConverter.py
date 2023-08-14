@@ -72,14 +72,13 @@ def pixelLineConverterTestFunction():
 
     # Construct the ephemNavConverter module
     # Set the names for the input messages
-    pixelLine = pixelLineConverter.PixelLineConvertData()  # Create a config struct
+    pixelLine = pixelLineConverter.pixelLineConverter()
 
     # This calls the algContain to setup the selfInit, update, and reset
-    pixelLineWrap = unitTestSim.setModelDataWrap(pixelLine)
-    pixelLineWrap.ModelTag = "pixelLineConverter"
+    pixelLine.ModelTag = "pixelLineConverter"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, pixelLineWrap, pixelLine)
+    unitTestSim.AddModelToTask(unitTaskName, pixelLine)
 
     # Create the input messages.
     inputCamera = messaging.CameraConfigMsgPayload()
@@ -166,11 +165,11 @@ def pixelLineConverterTestFunction():
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + pixelLineWrap.ModelTag)
+        print("PASSED: " + pixelLine.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + pixelLineWrap.ModelTag)
+        print("Failed: " + pixelLine.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

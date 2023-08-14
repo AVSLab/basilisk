@@ -67,14 +67,13 @@ The ETcontrol module is created using:
 .. code-block:: python
     :linenos:
 
-    etSphericalControlData = etSphericalControl.etSphericalControlConfig()
-    etSphericalControlWrap = scSim.setModelDataWrap(EetSphericalControlData)
-    etSphericalControlWrap.ModelTag = "etSphericalControl"
-    scSim.AddModelToTask(fswTaskName, etSphericalControlWrap, etSphericalControlData)
+    etSphericalControl = etSphericalControl.etSphericalControl()
+    etSphericalControl.ModelTag = "etSphericalControl"
+    scSim.AddModelToTask(fswTaskName, etSphericalControl, etSphericalControl)
 
 The reference position variables in the spherical frame :math:`L_r`, :math:`theta_r`, :math:`phi_r`,
 the feedback gains :math:`K` and :math:`P`, and the gravitational parameter mu must
-be added to etSphericalControlData.
+be added to etSphericalControl.
 
 The module computes the control force vector both with respect to the inertial and body frame as
 separate output messages.  Depending on the needs of the developer, the control force can be connected

@@ -61,9 +61,8 @@ def rwMotorTorqueTest(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = rwMotorTorque.rwMotorTorqueConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "rwMotorTorque"
+    module = rwMotorTorque.rwMotorTorque()
+    module.ModelTag = "rwMotorTorque"
 
     # Initialize module variables
     controlAxes_B = [
@@ -71,11 +70,11 @@ def rwMotorTorqueTest(show_plots):
             ,0,1,0
             ,0,0,1
     ]
-    moduleConfig.controlAxes_B = controlAxes_B
+    module.controlAxes_B = controlAxes_B
 
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
 
     # attControl message
@@ -103,18 +102,18 @@ def rwMotorTorqueTest(show_plots):
     rwAvailInMsg = messaging.RWAvailabilityMsg().write(rwAvailabilityMessage)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.rwMotorTorqueOutMsg.recorder()
+    dataLog = module.rwMotorTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.vehControlInMsg.subscribeTo(cmdTorqueInMsg)
-    moduleConfig.rwParamsInMsg.subscribeTo(rwConfigInMsg)
-    moduleConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
+    module.vehControlInMsg.subscribeTo(cmdTorqueInMsg)
+    module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
+    module.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
-    moduleWrap.Reset(0)
+    module.Reset(0)
 
     # Set the simulation time.
     # NOTE: the total simulation time may be longer than this value. The
@@ -144,13 +143,13 @@ def rwMotorTorqueTest(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], rwConfigParams.numRW, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed motorTorque unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed motorTorque unit test at t=" +
                                 str(dataLog.times()[i]*macros.NANO2SEC) +
                                 "sec\n")
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
     else:
         print(testMessages)
 

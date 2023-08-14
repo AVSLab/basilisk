@@ -21,13 +21,8 @@
    #include "mrpPD.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_mrpPD(void*, uint64_t, uint64_t);
-%ignore Update_mrpPD;
-%constant void SelfInit_mrpPD(void*, uint64_t);
-%ignore SelfInit_mrpPD;
-%constant void Reset_mrpPD(void*, uint64_t, uint64_t);
-%ignore Reset_mrpPD;
+%include "swig_c_wrap.i"
+%c_wrap_2(mrpPD, MrpPDConfig);
 
 %include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
@@ -36,7 +31,6 @@ struct VehicleConfigMsg_C;
 %include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;
 
-%include "mrpPD.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

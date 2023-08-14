@@ -82,16 +82,15 @@ def dvAccumulationTestFunction():
 
     # Construct the dvAccumulation module
     # Set the names for the input messages
-    moduleConfig = dvAccumulation.DVAccumulationData()  # Create a config struct
+    module = dvAccumulation.dvAccumulation()
 
     # This calls the algContain to setup the selfInit, update, and reset
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "dvAccumulation"
+    module.ModelTag = "dvAccumulation"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    dataLog = moduleConfig.dvAcumOutMsg.recorder()
+    dataLog = module.dvAcumOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Create the input message.
@@ -101,7 +100,7 @@ def dvAccumulationTestFunction():
     random.seed(12345)
     inputAccData.accPkts = generateAccData()
     inMsg = messaging.AccDataMsg()
-    moduleConfig.accPktInMsg.subscribeTo(inMsg)
+    module.accPktInMsg.subscribeTo(inMsg)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -152,11 +151,11 @@ def dvAccumulationTestFunction():
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

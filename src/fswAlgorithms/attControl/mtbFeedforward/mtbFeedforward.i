@@ -22,16 +22,12 @@
     #include "mtbFeedforward.h"
 %}
 
+%include "swig_c_wrap.i"
+%c_wrap(mtbFeedforward);
+
 %pythoncode %{
     from Basilisk.architecture.swig_common_model import *
 %}
-%include "swig_conly_data.i"
-%constant void Update_mtbFeedforward(void*, uint64_t, uint64_t);
-%ignore Update_mtbFeedforward;
-%constant void SelfInit_mtbFeedforward(void*, uint64_t);
-%ignore SelfInit_mtbFeedforward;
-%constant void Reset_mtbFeedforward(void*, uint64_t, uint64_t);
-%ignore Reset_mtbFeedforward;
 %include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;
 %include "architecture/msgPayloadDefC/MTBCmdMsgPayload.h"
@@ -40,7 +36,6 @@ struct MTBCmdMsg_C;
 struct TAMSensorBodyMsg_C;
 %include "architecture/msgPayloadDefC/MTBArrayConfigMsgPayload.h"
 struct MTBArrayConfigMsg_C;
-%include "mtbFeedforward.h"
 
 %pythoncode %{
 import sys

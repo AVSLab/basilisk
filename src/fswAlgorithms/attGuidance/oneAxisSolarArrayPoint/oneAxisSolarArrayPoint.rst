@@ -55,12 +55,11 @@ User Guide
 ----------
 The required module configuration is::
 
-    attReferenceCongfig = oneAxisSolarArrayPoint.oneAxisSolarArrayPointConfig()
-    attReferenceWrap = unitTestSim.setModelDataWrap(threeAxConfig)
-    attReferenceWrap.ModelTag = "threeAxesPoint"
-    attReferenceCongfig.a1Hat_B = a1_B
-    attReferenceCongfig.alignmentPriority = 0
-    scSim.AddModelToTaskAddModelToTask(simTaskName, attReferenceWrap, attReferenceCongfig)
+    attReference = oneAxisSolarArrayPoint.oneAxisSolarArrayPoint()
+    attReference.ModelTag = "threeAxesPoint"
+    attReference.a1Hat_B = a1_B
+    attReference.alignmentPriority = 0
+    scSim.AddModelToTaskAddModelToTask(simTaskName, attReference)
 	
 The module is configurable with the following parameters:
 

@@ -169,23 +169,22 @@ This section is to outline the steps needed to setup a prescribed 2 DOF rotation
 
 #. Create an instantiation of a prescribed rotational 2 DOF C module and the associated C++ container::
 
-    PrescribedRot2DOFConfig = prescribedRot2DOF.PrescribedRot2DOFConfig()
-    PrescribedRot2DOFWrap = unitTestSim.setModelDataWrap(PrescribedRot2DOFConfig)
-    PrescribedRot2DOFWrap.ModelTag = "PrescribedRot2DOF"
+    PrescribedRot2DOF = prescribedRot2DOF.prescribedRot2DOF()
+    PrescribedRot2DOF.ModelTag = "PrescribedRot2DOF"
 
 #. Define all of the configuration data associated with the module. For example::
 
     rotAxis1_M = np.array([0.0, 1.0, 0.0])                                      # Rotation axis for the first reference rotation angle, thetaRef1a
     rotAxis2_F1 = np.array([0.0, 0.0, 1.0])                                     # Rotation axis for the second reference rotation angle, thetaRef2a
-    PrescribedRot2DOFConfig.rotAxis1_M = rotAxis1_M
-    PrescribedRot2DOFConfig.rotAxis2_F1 = rotAxis2_F1
-    PrescribedRot2DOFConfig.phiDDotMax = phiDDotMax
-    PrescribedRot2DOFConfig.r_FM_M = np.array([1.0, 0.0, 0.0])                  # [m] Position of the F frame origin relative to the M frame origin in M frame components
-    PrescribedRot2DOFConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])             # [m/s] B frame time derivative of r_FM_M in M frame components
-    PrescribedRot2DOFConfig.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])        # [m/s^2] B frame time derivative of rPrime_FM_M in M frame components
-    PrescribedRot2DOFConfig.omega_FM_F = np.array([0.0, 0.0, 0.0])              # [rad/s] Angular velocity of frame F relative to frame M in F frame components
-    PrescribedRot2DOFConfig.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])         # [rad/s^2] B frame time derivative of omega_FB_F in F frame components
-    PrescribedRot2DOFConfig.sigma_FM = np.array([0.0, 0.0, 0.0])                # MRP attitude of frame F relative to frame M
+    PrescribedRot2DOF.rotAxis1_M = rotAxis1_M
+    PrescribedRot2DOF.rotAxis2_F1 = rotAxis2_F1
+    PrescribedRot2DOF.phiDDotMax = phiDDotMax
+    PrescribedRot2DOF.r_FM_M = np.array([1.0, 0.0, 0.0])                  # [m] Position of the F frame origin relative to the M frame origin in M frame components
+    PrescribedRot2DOF.rPrime_FM_M = np.array([0.0, 0.0, 0.0])             # [m/s] B frame time derivative of r_FM_M in M frame components
+    PrescribedRot2DOF.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])        # [m/s^2] B frame time derivative of rPrime_FM_M in M frame components
+    PrescribedRot2DOF.omega_FM_F = np.array([0.0, 0.0, 0.0])              # [rad/s] Angular velocity of frame F relative to frame M in F frame components
+    PrescribedRot2DOF.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])         # [rad/s^2] B frame time derivative of omega_FB_F in F frame components
+    PrescribedRot2DOF.sigma_FM = np.array([0.0, 0.0, 0.0])                # MRP attitude of frame F relative to frame M
 
 The user is required to set the above configuration data parameters, as they are not initialized in the module.
 
@@ -193,5 +192,5 @@ The user is required to set the above configuration data parameters, as they are
 
 #. Add the module to the task list::
 
-    unitTestSim.AddModelToTask(unitTaskName, PrescribedRot2DOFWrap, PrescribedRot2DOFConfig)
+    unitTestSim.AddModelToTask(unitTaskName, PrescribedRot2DOF)
 

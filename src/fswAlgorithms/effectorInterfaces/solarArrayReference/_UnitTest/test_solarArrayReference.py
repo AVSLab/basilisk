@@ -137,40 +137,39 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct tested module and associated C container
-    solarArrayConfig = solarArrayReference.solarArrayReferenceConfig()
-    solarArrayWrap = unitTestSim.setModelDataWrap(solarArrayConfig)
-    solarArrayWrap.ModelTag = "solarArrayReference"
+    solarArray = solarArrayReference.solarArrayReference()
+    solarArray.ModelTag = "solarArrayReference"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, solarArrayWrap, solarArrayConfig)
+    unitTestSim.AddModelToTask(unitTaskName, solarArray)
 
     # Initialize the test module configuration data
-    solarArrayConfig.a1Hat_B = a1Hat_B
-    solarArrayConfig.a2Hat_B = a2Hat_B
-    solarArrayConfig.attitudeFrame = attitudeFrame
+    solarArray.a1Hat_B = a1Hat_B
+    solarArray.a2Hat_B = a2Hat_B
+    solarArray.attitudeFrame = attitudeFrame
 
     # Create input attitude navigation message
     natAttInMsgData = messaging.NavAttMsgPayload()
     natAttInMsgData.sigma_BN = sigma_BN
     natAttInMsgData.vehSunPntBdy = rHat_SB_B
     natAttInMsg = messaging.NavAttMsg().write(natAttInMsgData)
-    solarArrayConfig.attNavInMsg.subscribeTo(natAttInMsg)
+    solarArray.attNavInMsg.subscribeTo(natAttInMsg)
 
     # Create input attitude reference message
     attRefInMsgData = messaging.AttRefMsgPayload()
     attRefInMsgData.sigma_RN = sigma_RN
     attRefInMsg = messaging.AttRefMsg().write(attRefInMsgData)
-    solarArrayConfig.attRefInMsg.subscribeTo(attRefInMsg)
+    solarArray.attRefInMsg.subscribeTo(attRefInMsg)
 
     # Create input hinged rigid body body message
     hingedRigidBodyInMsgData = messaging.HingedRigidBodyMsgPayload()
     hingedRigidBodyInMsgData.theta = thetaC
     hingedRigidBodyInMsgData.thetaDot = thetaDotC
     hingedRigidBodyInMsg = messaging.HingedRigidBodyMsg().write(hingedRigidBodyInMsgData)
-    solarArrayConfig.hingedRigidBodyInMsg.subscribeTo(hingedRigidBodyInMsg)
+    solarArray.hingedRigidBodyInMsg.subscribeTo(hingedRigidBodyInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = solarArrayConfig.hingedRigidBodyRefOutMsg.recorder()
+    dataLog = solarArray.hingedRigidBodyRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
@@ -197,14 +196,14 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
     if not unitTestSupport.isDoubleEqual(dataLog.theta[0], thetaR, accuracy):
         testFailCount += 1
         testMessages.append("FAILED: "
-                    + solarArrayWrap.ModelTag
+                    + solarArray.ModelTag
                     + "solarArrayRotation module failed unit test on thetaR for sigma_BN = [{},{},{}], "
                       "sigma_RN = [{},{},{}] and attitudeFrame = {} \n".format(
                         sigma_BN[0], sigma_BN[1], sigma_BN[2], sigma_RN[0], sigma_RN[1], sigma_RN[2], attitudeFrame))
     if not unitTestSupport.isDoubleEqual(dataLog.thetaDot[0], 0, accuracy):
         testFailCount += 1
         testMessages.append("FAILED: "
-                    + solarArrayWrap.ModelTag
+                    + solarArray.ModelTag
                     + "solarArrayRotation module failed unit test on thetaDotR for sigma_BN = [{},{},{}], "
                       "sigma_RN = [{},{},{}] and attitudeFrame = {} \n".format(
                         sigma_BN[0], sigma_BN[1], sigma_BN[2], sigma_RN[0], sigma_RN[1], sigma_RN[2], attitudeFrame))

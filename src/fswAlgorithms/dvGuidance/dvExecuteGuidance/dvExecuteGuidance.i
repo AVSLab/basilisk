@@ -21,13 +21,8 @@
    #include "dvExecuteGuidance.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_dvExecuteGuidance(void*, uint64_t, uint64_t);
-%ignore Update_dvExecuteGuidance;
-%constant void SelfInit_dvExecuteGuidance(void*, uint64_t);
-%ignore SelfInit_dvExecuteGuidance;
-
-%include "dvExecuteGuidance.h"
+%include "swig_c_wrap.i"
+%c_wrap(dvExecuteGuidance);
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;

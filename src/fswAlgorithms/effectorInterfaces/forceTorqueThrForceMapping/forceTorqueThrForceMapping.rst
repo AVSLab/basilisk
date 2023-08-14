@@ -115,10 +115,9 @@ User's Guide
 ------------
 To set up this module users must create the config data and module wrap::
 
-    moduleConfig = forceTorqueThrForceMapping.forceTorqueThrForceMappingConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "forceTorqueThrForceMappingTag"
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    module = forceTorqueThrForceMapping.forceTorqueThrForceMapping()
+    module.ModelTag = "forceTorqueThrForceMappingTag"
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
 The ``cmdForceInMsg`` and ``cmdTorqueInMsg`` are optional. However, the ``thrConfigInMsg`` and ``vehConfigInMsg`` are not. These
 can both be set up as follows, where ``rcsLocationData`` is a list of the thruster positions and ``rcsDirectionData`` is a
@@ -134,9 +133,9 @@ list of thruster directions. ``CoM_B`` is the center of mass of the spacecraft i
 
 Then, the relevant messages must be subscribed to by the module::
 
-    moduleConfig.cmdTorqueInMsg.subscribeTo(cmdTorqueInMsg)
-    moduleConfig.cmdForceInMsg.subscribeTo(cmdForceInMsg)
-    moduleConfig.thrConfigInMsg.subscribeTo(thrConfigInMsg)
-    moduleConfig.vehConfigInMsg.subscribeTo(vehConfigInMsg)
+    module.cmdTorqueInMsg.subscribeTo(cmdTorqueInMsg)
+    module.cmdForceInMsg.subscribeTo(cmdForceInMsg)
+    module.thrConfigInMsg.subscribeTo(thrConfigInMsg)
+    module.vehConfigInMsg.subscribeTo(vehConfigInMsg)
 
 For more information on how to set up and use this module, see the unit test.

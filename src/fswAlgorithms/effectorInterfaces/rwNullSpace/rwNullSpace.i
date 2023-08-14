@@ -21,15 +21,8 @@
    #include "rwNullSpace.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_rwNullSpace(void*, uint64_t, uint64_t);
-%ignore Update_rwNullSpace;
-%constant void SelfInit_rwNullSpace(void*, uint64_t);
-%ignore SelfInit_rwNullSpace;
-%constant void Reset_rwNullSpace(void*, uint64_t, uint64_t);
-%ignore Reset_rwNullSpace;
-
-%include "rwNullSpace.h"
+%include "swig_c_wrap.i"
+%c_wrap(rwNullSpace);
 
 %include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;

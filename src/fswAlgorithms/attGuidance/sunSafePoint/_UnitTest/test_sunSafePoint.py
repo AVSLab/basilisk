@@ -86,30 +86,29 @@ def sunSafePointTestFunction(show_plots, case):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunSafePoint.sunSafePointConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "sunSafePoint"
+    module = sunSafePoint.sunSafePoint()
+    module.ModelTag = "sunSafePoint"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
     sHat_Cmd_B = np.array([0.0, 0.0 ,1.0])
     if case == 5:
         sHat_Cmd_B = np.array([1.0, 0.0, 0.0])
-    moduleConfig.sHatBdyCmd = sHat_Cmd_B
-    moduleConfig.minUnitMag = 0.1
+    module.sHatBdyCmd = sHat_Cmd_B
+    module.minUnitMag = 0.1
     if case == 2:
         omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
-        moduleConfig.omega_RN_B = omega_RN_B_Search
-    moduleConfig.smallAngle = 0.01*mc.D2R
+        module.omega_RN_B = omega_RN_B_Search
+    module.smallAngle = 0.01*mc.D2R
 
     # Create input messages
     #
     inputSunVecData = messaging.NavAttMsgPayload()  # Create a structure for the input message
     sunVec_B = np.array([1.0, 1.0, 0.0])
     if (case == 2 or case == 6): # no sun visible, providing a near zero norm direction vector */
-        sunVec_B = [0.0, moduleConfig.minUnitMag/2, 0.0]
+        sunVec_B = [0.0, module.minUnitMag/2, 0.0]
     if (case == 3):
         sunVec_B = sHat_Cmd_B
     if (case == 4 or case == 5):
@@ -123,18 +122,18 @@ def sunSafePointTestFunction(show_plots, case):
     imuInMsg = messaging.NavAttMsg().write(inputIMUData)
 
     if case == 7:
-        moduleConfig.sunAxisSpinRate = 1.5*mc.D2R
-        omega_RN_B_Search = sunVec_B/np.linalg.norm(sunVec_B) * moduleConfig.sunAxisSpinRate
+        module.sunAxisSpinRate = 1.5*mc.D2R
+        omega_RN_B_Search = sunVec_B/np.linalg.norm(sunVec_B) * module.sunAxisSpinRate
 
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attGuidanceOutMsg.recorder()
+    dataLog = module.attGuidanceOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.sunDirectionInMsg.subscribeTo(sunInMsg)
-    moduleConfig.imuInMsg.subscribeTo(imuInMsg)
+    module.sunDirectionInMsg.subscribeTo(sunInMsg)
+    module.imuInMsg.subscribeTo(imuInMsg)
 
 
     # Need to call the self-init and cross-init methods
@@ -147,7 +146,7 @@ def sunSafePointTestFunction(show_plots, case):
     unitTestSim.ConfigureStopTime(mc.sec2nano(1.))  # seconds to stop simulation
 
     # run the Reset() routine
-    moduleWrap.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
+    module.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -203,7 +202,7 @@ def sunSafePointTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.sigma_BR[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_BR unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_BR unit test at t=" +
                                 str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -228,7 +227,7 @@ def sunSafePointTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.omega_BR_B[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_BR_B unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_BR_B unit test at t=" +
                                 str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -254,7 +253,7 @@ def sunSafePointTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.omega_RN_B[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_B unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_B unit test at t=" +
                                 str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -273,7 +272,7 @@ def sunSafePointTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.domega_RN_B[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed domega_RN_B unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_B unit test at t=" +
                                 str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -281,11 +280,11 @@ def sunSafePointTestFunction(show_plots, case):
     snippentName = "passFail" + str(case)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("FAILED: " + moduleWrap.ModelTag)
+        print("FAILED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
         print(testMessages)
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)

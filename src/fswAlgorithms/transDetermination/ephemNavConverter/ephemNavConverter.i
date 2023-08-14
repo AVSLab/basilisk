@@ -21,20 +21,13 @@
    #include "ephemNavConverter.h"   
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_ephemNavConverter(void*, uint64_t, uint64_t);
-%ignore Update_ephemNavConverter;
-%constant void SelfInit_ephemNavConverter(void*, uint64_t);
-%ignore SelfInit_ephemNavConverter;
-%constant void Reset_ephemNavConverter(void*, uint64_t, uint64_t);
-%ignore Reset_ephemNavConverter;
+%include "swig_c_wrap.i"
+%c_wrap_2(ephemNavConverter, EphemNavConverterData);
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
 %include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
-
-%include "ephemNavConverter.h"
 
 %pythoncode %{
 import sys

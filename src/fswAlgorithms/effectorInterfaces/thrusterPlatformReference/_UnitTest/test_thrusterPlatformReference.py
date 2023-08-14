@@ -130,26 +130,25 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    platformConfig = thrusterPlatformReference.ThrusterPlatformReferenceConfig()
-    platformWrap = unitTestSim.setModelDataWrap(platformConfig)
-    platformWrap.ModelTag = "platformReference"
+    platform = thrusterPlatformReference.thrusterPlatformReference()
+    platform.ModelTag = "platformReference"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, platformWrap, platformConfig)
+    unitTestSim.AddModelToTask(unitTaskName, platform)
 
     # Initialize the test module configuration data
-    platformConfig.sigma_MB = sigma_MB
-    platformConfig.r_BM_M = r_BM_M
-    platformConfig.r_FM_F = r_FM_F
-    platformConfig.r_TF_F = r_TF_F
-    platformConfig.T_F    = T_F
-    platformConfig.K      = K
+    platform.sigma_MB = sigma_MB
+    platform.r_BM_M = r_BM_M
+    platform.r_FM_F = r_FM_F
+    platform.r_TF_F = r_TF_F
+    platform.T_F    = T_F
+    platform.K      = K
 
     # Create input vehicle configuration msg
     inputVehConfigMsgData = messaging.VehicleConfigMsgPayload()
     inputVehConfigMsgData.CoM_B = r_CB_B
     inputVehConfigMsg = messaging.VehicleConfigMsg().write(inputVehConfigMsgData)
-    platformConfig.vehConfigInMsg.subscribeTo(inputVehConfigMsg)
+    platform.vehConfigInMsg.subscribeTo(inputVehConfigMsg)
 
     # Create input RW configuration msg
     inputRWConfigMsgData = messaging.RWArrayConfigMsgPayload()
@@ -158,22 +157,22 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     inputRWConfigMsgData.numRW = 3
     inputRWConfigMsgData.uMax = [0.001, 0.001, 0.001]
     inputRWConfigMsg = messaging.RWArrayConfigMsg().write(inputRWConfigMsgData)
-    platformConfig.rwConfigDataInMsg.subscribeTo(inputRWConfigMsg)
+    platform.rwConfigDataInMsg.subscribeTo(inputRWConfigMsg)
 
     # Create input RW speeds msg
     inputRWSpeedsMsgData = messaging.RWSpeedMsgPayload()
     inputRWSpeedsMsgData.wheelSpeeds = [100, 100, 100]
     inputRWSpeedsMsg = messaging.RWSpeedMsg().write(inputRWSpeedsMsgData)
-    platformConfig.rwSpeedsInMsg.subscribeTo(inputRWSpeedsMsg)
+    platform.rwSpeedsInMsg.subscribeTo(inputRWSpeedsMsg)
 
     # Setup logging on the test module output messages so that we get all the writes to it
-    ref1Log = platformConfig.hingedRigidBodyRef1OutMsg.recorder()
+    ref1Log = platform.hingedRigidBodyRef1OutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, ref1Log)
-    ref2Log = platformConfig.hingedRigidBodyRef2OutMsg.recorder()
+    ref2Log = platform.hingedRigidBodyRef2OutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, ref2Log)
-    bodyHeadingLog = platformConfig.bodyHeadingOutMsg.recorder()
+    bodyHeadingLog = platform.bodyHeadingOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, bodyHeadingLog)
-    thrusterTorqueLog = platformConfig.thrusterTorqueOutMsg.recorder()
+    thrusterTorqueLog = platform.thrusterTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, thrusterTorqueLog)
 
     # Need to call the self-init and cross-init methods
@@ -208,7 +207,7 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     if K == 0:
         if not unitTestSupport.isDoubleEqual(offset, 0.0, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + platformWrap.ModelTag + "thrusterPlatformReference module failed unit test on zero offset \n")
+            testMessages.append("FAILED: " + platform.ModelTag + "thrusterPlatformReference module failed unit test on zero offset \n")
 
     T_B_hat_sim = bodyHeadingLog.rHat_XB_B[0]               # simulation result
     FB = np.matmul(FM, MB)
@@ -218,7 +217,7 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     # compare the module results to the python computation for body-frame thruster direction
     if not unitTestSupport.isVectorEqual(T_B_hat_sim, T_B_hat, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + platformWrap.ModelTag + "thrusterPlatformReference module failed unit test on body frame thruster direction \n")
+        testMessages.append("FAILED: " + platform.ModelTag + "thrusterPlatformReference module failed unit test on body frame thruster direction \n")
 
     L_B_sim = thrusterTorqueLog.torqueRequestBody[0]        # simulation result
     L_F = np.cross(r_CT_F, T_F)
@@ -227,7 +226,7 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     # compare the module results to the python computation for body-frame cmd torque
     if not unitTestSupport.isVectorEqual(L_B_sim, L_B, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + platformWrap.ModelTag + "thrusterPlatformReference module failed unit test on thruster torque \n")
+        testMessages.append("FAILED: " + platform.ModelTag + "thrusterPlatformReference module failed unit test on thruster torque \n")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

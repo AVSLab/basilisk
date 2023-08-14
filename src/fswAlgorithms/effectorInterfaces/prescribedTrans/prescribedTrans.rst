@@ -146,20 +146,19 @@ This section is to outline the steps needed to setup a prescribed translational 
 
 #. Create an instantiation of a prescribed translational C module and the associated C++ container::
 
-    PrescribedTransConfig = prescribedTrans.PrescribedTransConfig()
-    PrescribedTransWrap = unitTestSim.setModelDataWrap(PrescribedTransConfig)
-    PrescribedTransWrap.ModelTag = "prescribedTrans"
+    PrescribedTrans = prescribedTrans.prescribedTrans()
+    PrescribedTrans.ModelTag = "prescribedTrans"
 
 #. Define all of the configuration data associated with the module. For example::
 
-    PrescribedTransConfig.transAxis_M = np.array([1.0, 0.0, 0.0])
-    PrescribedTransConfig.scalarAccelMax = 0.01  # [m/s^2]
-    PrescribedTransConfig.r_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedTransConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedTransConfig.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedTransConfig.omega_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedTransConfig.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedTransConfig.sigma_FM = np.array([0.0, 0.0, 0.0])
+    PrescribedTrans.transAxis_M = np.array([1.0, 0.0, 0.0])
+    PrescribedTrans.scalarAccelMax = 0.01  # [m/s^2]
+    PrescribedTrans.r_FM_M = np.array([0.0, 0.0, 0.0])
+    PrescribedTrans.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
+    PrescribedTrans.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
+    PrescribedTrans.omega_FM_F = np.array([0.0, 0.0, 0.0])
+    PrescribedTrans.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
+    PrescribedTrans.sigma_FM = np.array([0.0, 0.0, 0.0])
 
 The user is required to set the above configuration data parameters, as they are not initialized in the module.
 
@@ -167,5 +166,5 @@ The user is required to set the above configuration data parameters, as they are
 
 #. Add the module to the task list::
 
-    unitTestSim.AddModelToTask(unitTaskName, PrescribedTransWrap, PrescribedTransConfig)
+    unitTestSim.AddModelToTask(unitTaskName, PrescribedTrans)
 

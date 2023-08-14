@@ -105,25 +105,24 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create an instance of the =module that is being tested
-    prescribedRot2DOFConfig = prescribedRot2DOF.PrescribedRot2DOFConfig()
-    prescribedRot2DOFWrap = unitTestSim.setModelDataWrap(prescribedRot2DOFConfig)
-    prescribedRot2DOFWrap.ModelTag = "PrescribedRot2DOF"
+    prescribedRot2DOFObj = prescribedRot2DOF.prescribedRot2DOF()
+    prescribedRot2DOFObj.ModelTag = "PrescribedRot2DOF"
 
     # Initialize the test module configuration data
     rotAxis1_M = np.array([0.0, 1.0, 0.0])                                      # Rotation axis for the first reference rotation angle, thetaRef1a
     rotAxis2_F1 = np.array([0.0, 0.0, 1.0])                                     # Rotation axis for the second reference rotation angle, thetaRef2a
-    prescribedRot2DOFConfig.rotAxis1_M = rotAxis1_M
-    prescribedRot2DOFConfig.rotAxis2_F1 = rotAxis2_F1
-    prescribedRot2DOFConfig.phiDDotMax = phiDDotMax
-    prescribedRot2DOFConfig.r_FM_M = np.array([1.0, 0.0, 0.0])                  # [m] Position of the F frame origin relative to the M frame origin in M frame components
-    prescribedRot2DOFConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])             # [m/s] B frame time derivative of r_FM_M in M frame components
-    prescribedRot2DOFConfig.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])        # [m/s^2] B frame time derivative of rPrime_FM_M in M frame components
-    prescribedRot2DOFConfig.omega_FM_F = np.array([0.0, 0.0, 0.0])              # [rad/s] Angular velocity of frame F relative to frame M in F frame components
-    prescribedRot2DOFConfig.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])         # [rad/s^2] B frame time derivative of omega_FB_F in F frame components
-    prescribedRot2DOFConfig.sigma_FM = np.array([0.0, 0.0, 0.0])                # MRP attitude of frame F relative to frame M
+    prescribedRot2DOFObj.rotAxis1_M = rotAxis1_M
+    prescribedRot2DOFObj.rotAxis2_F1 = rotAxis2_F1
+    prescribedRot2DOFObj.phiDDotMax = phiDDotMax
+    prescribedRot2DOFObj.r_FM_M = np.array([1.0, 0.0, 0.0])                  # [m] Position of the F frame origin relative to the M frame origin in M frame components
+    prescribedRot2DOFObj.rPrime_FM_M = np.array([0.0, 0.0, 0.0])             # [m/s] B frame time derivative of r_FM_M in M frame components
+    prescribedRot2DOFObj.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])        # [m/s^2] B frame time derivative of rPrime_FM_M in M frame components
+    prescribedRot2DOFObj.omega_FM_F = np.array([0.0, 0.0, 0.0])              # [rad/s] Angular velocity of frame F relative to frame M in F frame components
+    prescribedRot2DOFObj.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])         # [rad/s^2] B frame time derivative of omega_FB_F in F frame components
+    prescribedRot2DOFObj.sigma_FM = np.array([0.0, 0.0, 0.0])                # MRP attitude of frame F relative to frame M
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, prescribedRot2DOFWrap, prescribedRot2DOFConfig)
+    unitTestSim.AddModelToTask(unitTaskName, prescribedRot2DOFObj)
 
     # Create the prescribedRot2DOF input message
     thetaDot_Ref = 0.0  # [rad/s]
@@ -135,16 +134,16 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     hingedRigidBodyMessageData2.thetaDot = thetaDot_Ref
     HingedRigidBodyMessage1 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData1)
     HingedRigidBodyMessage2 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData2)
-    prescribedRot2DOFConfig.spinningBodyRef1InMsg.subscribeTo(HingedRigidBodyMessage1)
-    prescribedRot2DOFConfig.spinningBodyRef2InMsg.subscribeTo(HingedRigidBodyMessage2)
+    prescribedRot2DOFObj.spinningBodyRef1InMsg.subscribeTo(HingedRigidBodyMessage1)
+    prescribedRot2DOFObj.spinningBodyRef2InMsg.subscribeTo(HingedRigidBodyMessage2)
 
     # Set up message data recording logging on the test module output message to get access to it
-    dataLog = prescribedRot2DOFConfig.prescribedMotionOutMsg.recorder()
+    dataLog = prescribedRot2DOFObj.prescribedMotionOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Set up module variable data recording
-    unitTestSim.AddVariableForLogging(prescribedRot2DOFWrap.ModelTag + ".phi", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(prescribedRot2DOFWrap.ModelTag + ".phiAccum", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(prescribedRot2DOFObj.ModelTag + ".phi", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(prescribedRot2DOFObj.ModelTag + ".phiAccum", testProcessRate, 0, 0, 'double')
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -203,8 +202,8 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     hingedRigidBodyMessageData2.thetaDot = thetaDot_Ref
     HingedRigidBodyMessage1 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData1, macros.sec2nano(simTime1))
     HingedRigidBodyMessage2 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData2, macros.sec2nano(simTime1))
-    prescribedRot2DOFConfig.spinningBodyRef1InMsg.subscribeTo(HingedRigidBodyMessage1)
-    prescribedRot2DOFConfig.spinningBodyRef2InMsg.subscribeTo(HingedRigidBodyMessage2)
+    prescribedRot2DOFObj.spinningBodyRef1InMsg.subscribeTo(HingedRigidBodyMessage1)
+    prescribedRot2DOFObj.spinningBodyRef2InMsg.subscribeTo(HingedRigidBodyMessage2)
 
     # Set the simulation time for the second maneuver
     simTime2 = np.sqrt(((0.5 * np.abs(phi_F3F1_b)) * 8) / phiDDotMax) + 10
@@ -219,9 +218,9 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     sigma_FM = dataLog.sigma_FM
 
     # Extract the logged module variables
-    phi = unitTestSim.GetLogVariableData(prescribedRot2DOFWrap.ModelTag + ".phi")
+    phi = unitTestSim.GetLogVariableData(prescribedRot2DOFObj.ModelTag + ".phi")
     phi = np.delete(phi, 0, axis=1)
-    phiAccum = unitTestSim.GetLogVariableData(prescribedRot2DOFWrap.ModelTag + ".phiAccum")
+    phiAccum = unitTestSim.GetLogVariableData(prescribedRot2DOFObj.ModelTag + ".phiAccum")
     phiAccum = np.delete(phiAccum, 0, axis=1)
 
     # Store the final angular velocity of the spinning body
@@ -277,7 +276,7 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     # Compare the reference and simulated data and output failure messages as necessary
     if not unitTestSupport.isDoubleEqual(thetaDot_Final, thetaDot_Ref, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + prescribedRot2DOFWrap.ModelTag + " thetaDot_Final and thetaDot_Ref do not match")
+        testMessages.append("FAILED: " + prescribedRot2DOFObj.ModelTag + " thetaDot_Final and thetaDot_Ref do not match")
         print("thetaDot_Final: ")
         print(thetaDot_Final)
         print("thetaDot_Ref: ")
@@ -285,7 +284,7 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
 
     if not unitTestSupport.isArrayEqual(sigma_FM_Final1, sigma_FM_Ref1, 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + prescribedRot2DOFWrap.ModelTag + " MRPs sigma_FM_Final1 and sigma_FM_Ref1 do not match")
+        testMessages.append("FAILED: " + prescribedRot2DOFObj.ModelTag + " MRPs sigma_FM_Final1 and sigma_FM_Ref1 do not match")
         print("sigma_FM_Final1: ")
         print(sigma_FM_Final1)
         print("sigma_FM_Ref1: ")
@@ -293,7 +292,7 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
 
     if not unitTestSupport.isArrayEqual(sigma_FM_Final2, sigma_FM_Ref2, 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + prescribedRot2DOFWrap.ModelTag + " MRPs sigma_FM_Final2 and sigma_FM_Ref2 do not match")
+        testMessages.append("FAILED: " + prescribedRot2DOFObj.ModelTag + " MRPs sigma_FM_Final2 and sigma_FM_Ref2 do not match")
         print("sigma_FM_Final2: ")
         print(sigma_FM_Final2)
         print("sigma_FM_Ref2: ")

@@ -21,15 +21,8 @@
    #include "rwMotorTorque.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_rwMotorTorque(void*, uint64_t, uint64_t);
-%ignore Update_rwMotorTorque;
-%constant void SelfInit_rwMotorTorque(void*, uint64_t);
-%ignore SelfInit_rwMotorTorque;
-%constant void Reset_rwMotorTorque(void*, uint64_t, uint64_t);
-%ignore Reset_rwMotorTorque;
-
-%include "rwMotorTorque.h"
+%include "swig_c_wrap.i"
+%c_wrap(rwMotorTorque);
 
 %include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;

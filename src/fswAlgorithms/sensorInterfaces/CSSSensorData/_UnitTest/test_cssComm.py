@@ -50,10 +50,10 @@ def cssCommTestFunction(numSensors, sensorData):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate)) # Add a new task to the process
 
     # Construct the cssComm module
-    moduleConfig = cssComm.CSSConfigData() # Create a config struct
+    module = cssComm.cssComm()
     # Populate the config
-    moduleConfig.numSensors = numSensors
-    moduleConfig.maxSensorValue = 500e-6
+    module.numSensors = numSensors
+    module.maxSensorValue = 500e-6
 
     ChebyList =  [-1.734963346951471e+06, 3.294117146099591e+06,
                      -2.816333294617512e+06, 2.163709942144332e+06,
@@ -62,14 +62,13 @@ def cssCommTestFunction(numSensors, sensorData):
                      -9.376105045529010e+04, 3.177536873430168e+04,
                      -8.704033370738143e+03, 1.816188108176300e+03,
                      -2.581556805090373e+02, 1.888418924282780e+01]
-    moduleConfig.chebyCount = len(ChebyList)
-    moduleConfig.kellyCheby = ChebyList
+    module.chebyCount = len(ChebyList)
+    module.kellyCheby = ChebyList
 
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "cssComm"
+    module.ModelTag = "cssComm"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # The cssComm module reads in from the sensor list, so create that message here
     cssArrayMsg = messaging.CSSArraySensorMsgPayload()
@@ -77,10 +76,10 @@ def cssCommTestFunction(numSensors, sensorData):
     # NOTE: This is nonsense. These are more or less random numbers
     cssArrayMsg.CosValue = sensorData
     cssInMsg = messaging.CSSArraySensorMsg().write(cssArrayMsg)
-    moduleConfig.sensorListInMsg.subscribeTo(cssInMsg)
+    module.sensorListInMsg.subscribeTo(cssInMsg)
 
     # Log the output message
-    dataLog = moduleConfig.cssArrayOutMsg.recorder()
+    dataLog = module.cssArrayOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation
@@ -116,11 +115,11 @@ def cssCommTestFunction(numSensors, sensorData):
     snippentName = "passFail_"+str(numSensors)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

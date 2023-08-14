@@ -21,14 +21,8 @@
    #include "celestialTwoBodyPoint.h"
 %}
 
-%include "swig_conly_data.i"
-
-%constant void Update_celestialTwoBodyPoint(void*, uint64_t, uint64_t);
-%ignore Update_celestialTwoBodyPoint;
-%constant void SelfInit_celestialTwoBodyPoint(void*, uint64_t);
-%ignore SelfInit_celestialTwoBodyPoint;
-%constant void Reset_celestialTwoBodyPoint(void*, uint64_t, uint64_t);
-%ignore Reset_celestialTwoBodyPoint;
+%include "swig_c_wrap.i"
+%c_wrap(celestialTwoBodyPoint);
 
 %include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
@@ -36,8 +30,6 @@ struct EphemerisMsg_C;
 struct NavTransMsg_C;
 %include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;
-
-%include "celestialTwoBodyPoint.h"
 
 %pythoncode %{
 import sys

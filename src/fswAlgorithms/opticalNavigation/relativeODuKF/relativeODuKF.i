@@ -22,15 +22,9 @@
    #include "architecture/utilities/ukfUtilities.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_relODuKF(void*, uint64_t, uint64_t);
-%ignore Update_relODuKF;
-%constant void SelfInit_relODuKF(void*, uint64_t);
-%ignore SelfInit_relODuKF;
-%constant void Reset_relODuKF(void*, uint64_t, uint64_t);
-%ignore Reset_relODuKF;
+%include "swig_c_wrap.i"
+%c_wrap_3(relativeODuKF, RelODuKFConfig, relODuKF);
 
-%include "relativeODuKF.h"
 %include "architecture/utilities/ukfUtilities.h"
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"

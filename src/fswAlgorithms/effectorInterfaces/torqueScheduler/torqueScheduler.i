@@ -21,21 +21,13 @@
    #include "torqueScheduler.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void SelfInit_torqueScheduler(void*, uint64_t);
-%ignore SelfInit_torqueScheduler;
-%constant void Reset_torqueScheduler(void*, uint64_t, uint64_t);
-%ignore Reset_torqueScheduler;
-%constant void Update_torqueScheduler(void*, uint64_t, uint64_t);
-%ignore Update_torqueScheduler;
-
-%include "torqueScheduler.h"
+%include "swig_c_wrap.i"
+%c_wrap(torqueScheduler);
 
 %include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;
 %include "architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.h"
 struct ArrayEffectorLockMsg_C;
-
 
 %pythoncode %{
 import sys
