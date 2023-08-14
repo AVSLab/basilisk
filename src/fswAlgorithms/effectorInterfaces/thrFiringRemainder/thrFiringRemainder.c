@@ -77,6 +77,11 @@ void Reset_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t cal
 		configData->pulseRemainder[i] = 0.0;
 	}
 
+    /*! - use default value of 2 seconds for control period of first call if not specified.
+     * Control period (FSW rate) is computed dynamically for any subsequent calls.
+     */
+    configData->defaultControlPeriod = (0.0 == configData->defaultControlPeriod) ?
+                                        2.0 : configData->defaultControlPeriod;
 }
 
 /*! This method maps the input thruster command forces into thruster on times using a remainder tracking logic.
@@ -99,7 +104,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t ca
     /*! - The first time update() is called there is no information on the time step.
      *    Pick 2 seconds for the control period */
 	if(configData->prevCallTime == 0) {
-        controlPeriod = 2.;
+        controlPeriod = configData->defaultControlPeriod;
 	} else {
         /*! - compute control time period Delta_t */
         controlPeriod = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;

@@ -39,6 +39,7 @@ typedef struct {
 	int      			numThrusters;							//!< [-] The number of thrusters available on vehicle
 	double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust
 	int					baseThrustState;						//!< [-] Indicates on-pulsing (0) or off-pusling (1)
+	double              defaultControlPeriod;                   //!< [s] Default control period used for first call
 
 	uint64_t			prevCallTime;							//!< callTime from previous function call
 	
