@@ -21,15 +21,8 @@
    #include "cModuleTemplate.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_cModuleTemplate(void*, uint64_t, uint64_t);
-%ignore Update_cModuleTemplate;
-%constant void SelfInit_cModuleTemplate(void*, uint64_t);
-%ignore SelfInit_cModuleTemplate;
-%constant void Reset_cModuleTemplate(void*, uint64_t, uint64_t);
-%ignore Reset_cModuleTemplate;
-
-%include "cModuleTemplate.h"
+%include "swig_c_wrap.i"
+%c_wrap(cModuleTemplate);
 
 %include "architecture/msgPayloadDefC/CModuleTemplateMsgPayload.h"
 struct CModuleTemplateMsg_C;
