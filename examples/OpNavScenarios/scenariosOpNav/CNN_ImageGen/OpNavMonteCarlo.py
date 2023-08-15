@@ -96,7 +96,7 @@ def run(show_plots):
 
         disp1Name = 'get_DynModel().scObject.hub.r_CN_NInit'
         disp2Name = 'get_DynModel().scObject.hub.v_CN_NInit'
-        disp3Name = 'get_FswModel().trackingErrorCamData.sigma_R0R'
+        disp3Name = 'get_FswModel().trackingErrorCam.sigma_R0R'
         dispGauss = 'get_DynModel().cameraMod.gaussian'
         dispDC = 'get_DynModel().cameraMod.darkCurrent'
         dispSP = 'get_DynModel().cameraMod.saltPepper'

@@ -95,17 +95,17 @@ class BSKDynamicModels():
         self.InitAllDynObjects(SimBase)
 
         # Assign initialized modules to tasks
-        SimBase.AddModelToTask(self.taskName, self.scObject, None, 201)
-        SimBase.AddModelToTask(self.taskName, self.SimpleNavObject, None, 109)
-        SimBase.AddModelToTask(self.taskName, self.gravFactory.spiceObject, None, 200)
+        SimBase.AddModelToTask(self.taskName, self.scObject, 201)
+        SimBase.AddModelToTask(self.taskName, self.SimpleNavObject, 109)
+        SimBase.AddModelToTask(self.taskName, self.gravFactory.spiceObject, 200)
         SimBase.AddModelToTask(self.taskName, self.ephemObject, 199)
-        SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, None, 299)
-        SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
-        SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
-        SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, None, 300)
-        SimBase.AddModelToTask(self.taskName, self.vizInterface, None, 100)
-        SimBase.AddModelToTask(self.taskCamera, self.cameraMod, None, 99)
-        SimBase.AddModelToTask(self.taskCamera, self.cameraMod2, None, 99)
+        SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, 299)
+        SimBase.AddModelToTask(self.taskName, self.eclipseObject, 204)
+        SimBase.AddModelToTask(self.taskName, self.rwStateEffector, 301)
+        SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, 300)
+        SimBase.AddModelToTask(self.taskName, self.vizInterface, 100)
+        SimBase.AddModelToTask(self.taskCamera, self.cameraMod, 99)
+        SimBase.AddModelToTask(self.taskCamera, self.cameraMod2, 99)
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods

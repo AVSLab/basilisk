@@ -71,14 +71,14 @@ class BSKDynamicModels():
         self.InitAllDynObjects()
 
         # Assign initialized modules to tasks
-        SimBase.AddModelToTask(self.taskName, self.scObject, None, 201)
-        SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 109)
+        SimBase.AddModelToTask(self.taskName, self.scObject, 201)
+        SimBase.AddModelToTask(self.taskName, self.simpleNavObject, 109)
         SimBase.AddModelToTask(self.taskName, self.gravFactory.spiceObject, 200)
         SimBase.AddModelToTask(self.taskName, self.EarthEphemObject, 199)
-        SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, None, 108)
-        SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
-        SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
-        SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, None, 300)
+        SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, 108)
+        SimBase.AddModelToTask(self.taskName, self.eclipseObject, 204)
+        SimBase.AddModelToTask(self.taskName, self.rwStateEffector, 301)
+        SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, 300)
         
         SimBase.createNewEvent("addOneTimeRWFault", self.processTasksTimeStep, True,
             ["self.TotalSim.CurrentNanos>=self.oneTimeFaultTime and self.oneTimeRWFaultFlag==1"],
