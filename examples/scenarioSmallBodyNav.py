@@ -209,9 +209,6 @@ def plot_pos_error(time, r_err, P):
 
     ax[0].legend()
 
-    # Set the y limits
-    ax[0].set_ylim([-100, 100])
-
     return
 
 
@@ -695,30 +692,30 @@ def run(show_plots):
     smallBodyNav.mu_ast = mu  # Gravitational constant of the asteroid
 
     # Set the process noise
-    Q = np.zeros((12,12))
+    Q = np.zeros((6,6))
     Q[0,0] = Q[1,1] = Q[2,2] = 0.0000001
     Q[3,3] = Q[4,4] = Q[5,5] = 0.000001
-    Q[6,6] = Q[7,7] = Q[8,8] = 0.000001
-    Q[9,9] = Q[10,10] = Q[11,11] = 0.0000001
-    smallBodyNav.Q = Q.tolist()
+    # Q[6,6] = Q[7,7] = Q[8,8] = 0.000001
+    # Q[9,9] = Q[10,10] = Q[11,11] = 0.0000001
+    smallBodyNav.Q = (Q/10).tolist()
 
     # Set the measurement noise
-    R = np.zeros((12,12))
+    R = np.zeros((6,6))
     R[0,0] = R[1,1] = R[2,2] = pos_sigma_sc  # position sigmas
     R[3,3] = R[4,4] = R[5,5] = vel_sigma_sc   # velocity sigmas
-    R[6,6] = R[7,7] = R[8,8] = att_sigma_p
-    R[9,9] = R[10,10] = R[11,11] = rate_sigma_p
+    # R[6,6] = R[7,7] = R[8,8] = att_sigma_p
+    # R[9,9] = R[10,10] = R[11,11] = rate_sigma_p
     smallBodyNav.R = np.multiply(R, R).tolist()  # Measurement Noise
 
     # Set the initial guess, x_0
-    x_0 = np.zeros(18)
+    x_0 = np.zeros(6)
     x_0[0:3] = np.array([2458., -704.08, 844.275])
     x_0[3:6] = np.array([1.475, -0.176, 0.894])
-    x_0[6:9] = np.array([-0.58, 0.615, 0.125])
-    x_0[11] = 0.0004
+    # x_0[6:9] = np.array([-0.58, 0.615, 0.125])
+    # x_0[11] = 0.0004
     smallBodyNav.x_hat_k = x_0
     # Set the covariance to something large
-    smallBodyNav.P_k = (0.1*np.identity(12)).tolist()
+    smallBodyNav.P_k = (0.1*np.identity(6)).tolist()
 
     # Connect the relevant modules to the smallBodyEKF input messages
     smallBodyNav.navTransInMsg.subscribeTo(simpleNavMeas.transOutMsg)
@@ -787,19 +784,19 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(1000.))
-    #scSim.disableTask(measTaskName)
+    scSim.disableTask(measTaskName)
     scSim.ExecuteSimulation()
 
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(2000.))
-    #scSim.enableTask(measTaskName)
+    scSim.enableTask(measTaskName)
     scSim.ExecuteSimulation()
 
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(3000.))
-    #scSim.disableTask(measTaskName)
+    scSim.disableTask(measTaskName)
     scSim.ExecuteSimulation()
 
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(405000.))
-    #scSim.enableTask(measTaskName)
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(1200000.))
+    scSim.enableTask(measTaskName)
     scSim.ExecuteSimulation()
 
     # # Get the diagonals of the current covariances
@@ -825,10 +822,10 @@ def run(show_plots):
     v_BN_N_meas = sc_meas_recorder.v_BN_N
     r_AN_N = ast_truth_recorder.PositionVector
     v_AN_N = ast_truth_recorder.VelocityVector
-    sigma_AN_truth = ast_ephemeris_recorder.sigma_BN
-    omega_AN_A_truth = ast_ephemeris_recorder.omega_BN_B
-    sigma_AN_meas = ast_ephemeris_meas_recorder.sigma_BN
-    omega_AN_A_meas = ast_ephemeris_meas_recorder.omega_BN_B
+    # sigma_AN_truth = ast_ephemeris_recorder.sigma_BN
+    # omega_AN_A_truth = ast_ephemeris_recorder.omega_BN_B
+    # sigma_AN_meas = ast_ephemeris_meas_recorder.sigma_BN
+    # omega_AN_A_meas = ast_ephemeris_meas_recorder.omega_BN_B
     x_hat = state_recorder.state
     P = state_recorder.covar
 
@@ -862,7 +859,7 @@ def run(show_plots):
     print(x_hat[0, :])
     print(x_hat[-1, :])
 
-    N = 20  # Replace this with the desired value of N
+    N = 100  # Replace this with the desired value of N
 
     time = sc_truth_recorder.times() * macros.NANO2SEC
     meas_time = sc_meas_recorder.times() * macros.NANO2SEC
@@ -911,21 +908,21 @@ def run(show_plots):
     filtered_x_hat = x_hat[filtered_x_hat_indices, :]
     x_hat = filtered_x_hat
 
-    filtered_sigma_AN_truth_indices = [idx for idx in range(len(sigma_AN_truth)) if idx % N == 0]
-    filtered_sigma_AN_truth = sigma_AN_truth[filtered_sigma_AN_truth_indices, :]
-    sigma_AN_truth = filtered_sigma_AN_truth
+    # filtered_sigma_AN_truth_indices = [idx for idx in range(len(sigma_AN_truth)) if idx % N == 0]
+    # filtered_sigma_AN_truth = sigma_AN_truth[filtered_sigma_AN_truth_indices, :]
+    # sigma_AN_truth = filtered_sigma_AN_truth
 
-    filtered_sigma_AN_meas_indices = [idx for idx in range(len(sigma_AN_meas)) if idx % N == 0]
-    filtered_sigma_AN_meas = sigma_AN_meas[filtered_sigma_AN_meas_indices, :]
-    sigma_AN_meas = filtered_sigma_AN_meas
+    # filtered_sigma_AN_meas_indices = [idx for idx in range(len(sigma_AN_meas)) if idx % N == 0]
+    # filtered_sigma_AN_meas = sigma_AN_meas[filtered_sigma_AN_meas_indices, :]
+    # sigma_AN_meas = filtered_sigma_AN_meas
 
-    filtered_omega_AN_A_truth_indices = [idx for idx in range(len(omega_AN_A_truth)) if idx % N == 0]
-    filtered_omega_AN_A_truth = omega_AN_A_truth[filtered_omega_AN_A_truth_indices, :]
-    omega_AN_A_truth = filtered_omega_AN_A_truth
+    # filtered_omega_AN_A_truth_indices = [idx for idx in range(len(omega_AN_A_truth)) if idx % N == 0]
+    # filtered_omega_AN_A_truth = omega_AN_A_truth[filtered_omega_AN_A_truth_indices, :]
+    # omega_AN_A_truth = filtered_omega_AN_A_truth
 
-    filtered_omega_AN_A_meas_indices = [idx for idx in range(len(omega_AN_A_meas)) if idx % N == 0]
-    filtered_omega_AN_A_meas = omega_AN_A_meas[filtered_omega_AN_A_meas_indices, :]
-    omega_AN_A_meas = filtered_omega_AN_A_meas
+    # filtered_omega_AN_A_meas_indices = [idx for idx in range(len(omega_AN_A_meas)) if idx % N == 0]
+    # filtered_omega_AN_A_meas = omega_AN_A_meas[filtered_omega_AN_A_meas_indices, :]
+    # omega_AN_A_meas = filtered_omega_AN_A_meas
 
     #
     #   plot the results
@@ -947,21 +944,21 @@ def run(show_plots):
     pltName = fileName + "4"
     figureList[pltName] = plt.figure(4)
 
-    plot_ast_att(time, meas_time, np.array(sigma_AN_truth), x_hat[:,6:9], np.array(sigma_AN_meas))
-    pltName = fileName + "5"
-    figureList[pltName] = plt.figure(5)
+    # plot_ast_att(time, meas_time, np.array(sigma_AN_truth), x_hat[:,6:9], np.array(sigma_AN_meas))
+    # pltName = fileName + "5"
+    # figureList[pltName] = plt.figure(5)
 
-    plot_ast_rate(time, meas_time, np.array(omega_AN_A_truth), x_hat[:,9:12], np.array(omega_AN_A_meas))
-    pltName = fileName + "6"
-    figureList[pltName] = plt.figure(6)
+    # plot_ast_rate(time, meas_time, np.array(omega_AN_A_truth), x_hat[:,9:12], np.array(omega_AN_A_meas))
+    # pltName = fileName + "6"
+    # figureList[pltName] = plt.figure(6)
 
-    plot_ast_attitude_error(time, np.subtract(sigma_AN_truth, x_hat[:,6:9]), P)
-    pltName = fileName + "7"
-    figureList[pltName] = plt.figure(7)
+    # plot_ast_attitude_error(time, np.subtract(sigma_AN_truth, x_hat[:,6:9]), P)
+    # pltName = fileName + "7"
+    # figureList[pltName] = plt.figure(7)
 
-    plot_ast_rate_error(time, np.subtract(omega_AN_A_truth, x_hat[:,9:12]), P)
-    pltName = fileName + "8"
-    figureList[pltName] = plt.figure(8)
+    # plot_ast_rate_error(time, np.subtract(omega_AN_A_truth, x_hat[:,9:12]), P)
+    # pltName = fileName + "8"
+    # figureList[pltName] = plt.figure(8)
 
     if show_plots:
         plt.show()

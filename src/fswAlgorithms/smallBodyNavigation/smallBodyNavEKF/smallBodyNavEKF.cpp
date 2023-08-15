@@ -29,7 +29,7 @@
     values and initializes the various parts of the model */
 SmallBodyNavEKF::SmallBodyNavEKF()
 {
-    this->numStates = 12;
+    this->numStates = 6;
     this->mu_sun = 1.327124e20;
     this->o_hat_3_tilde.setZero();
     this->o_hat_3_tilde(0, 1) = -1;
@@ -192,6 +192,11 @@ void SmallBodyNavEKF::predict(uint64_t CurrentSimNanos){
     @return void
 */
 void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
+    /* Set Phi_k to identity if new measurements are available */
+    if (this->newMeasurements){
+        this->Phi_k.setIdentity(this->numStates, this->numStates);
+    }
+
     /* First RK4 step */
     computeEquationsOfMotion(x_hat_k, Phi_k);
     k1 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
@@ -217,16 +222,16 @@ void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
     Phi_k = Phi_k + (k1_phi + 2*k2_phi + 2*k3_phi + k4_phi)/6;
 
     // Check if Phi_k is not invertible by taking the absolute value of the determinant
-    if (fabs(Phi_k.determinant()) < 1e-3) {
-        // Print an error and the CurrenSimNanos
-        std::cout << "Phi_k is not invertible at " << CurrentSimNanos << std::endl;
-    } else {
-        // print out Phi_k
-        std::cout << "Phi_k is " << std::endl << Phi_k << std::endl;
+    // if (fabs(Phi_k.determinant()) < 1e-3) {
+    //     // Print an error and the CurrenSimNanos
+    //     std::cout << "Phi_k is not invertible at " << CurrentSimNanos << std::endl;
+    // } else {
+    //     // print out Phi_k
+    //     std::cout << "Phi_k is " << std::endl << Phi_k << std::endl;
         
-        // print the determinant
-        std::cout << "Determinant of Phi_k is " << Phi_k.determinant() << std::endl;
-    }
+    //     // print the determinant
+    //     std::cout << "Determinant of Phi_k is " << Phi_k.determinant() << std::endl;
+    // }
 }
 
 /*! This method calculates the EOMs of the state vector and state transition matrix
@@ -238,13 +243,13 @@ void SmallBodyNavEKF::computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::Mat
     /* Create temporary state vectors for readability */
     Eigen::Vector3d x_1;
     Eigen::Vector3d x_2;
-    Eigen::Vector3d x_3;
-    Eigen::Vector3d x_4;
+    //Eigen::Vector3d x_3;
+    //Eigen::Vector3d x_4;
 
     x_1 << x_hat.segment(0,3);
     x_2 << x_hat.segment(3,3);
-    x_3 << x_hat.segment(6,3);
-    x_4 << x_hat.segment(9,3);
+    //x_3 << x_hat.segment(6,3);
+    //x_4 << x_hat.segment(9,3);
 
     /* x1_dot */
     x_hat_dot_k.segment(0,3) = x_2;
@@ -265,10 +270,10 @@ void SmallBodyNavEKF::computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::Mat
             + dcm_OB*cmdForce_B/M_sc;
 
     /* x3_dot */
-    x_hat_dot_k.segment(6,3) = 0.25*((1-pow(x_3.norm(),2))*I + 2*eigenTilde(x_3) + 2*x_3*x_3.transpose())*x_4;
+    // x_hat_dot_k.segment(6,3) = 0.25*((1-pow(x_3.norm(),2))*I + 2*eigenTilde(x_3) + 2*x_3*x_3.transpose())*x_4;
 
     /* x4_dot */
-    x_hat_dot_k.segment(9,3) << 0, 0, 0;
+    // x_hat_dot_k.segment(9,3) << 0, 0, 0;
 
     /* Re-compute the dynamics matrix and compute Phi_dot */
     computeDynamicsMatrix(x_hat);
@@ -339,21 +344,22 @@ void SmallBodyNavEKF::measurementUpdate(){
     y_k1.segment(3, 3) = dcm_ON*(cArray2EigenVector3d(navTransInMsgBuffer.v_BN_N)
             - cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.v_BdyZero_N));
 
-    /* Small body attitude from the ephemeris msg */
-    y_k1.segment(6, 3) =  cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.sigma_BN);
 
-    /* Check if the shadow set measurement must be considered, i.e. |sigma| > 1/3 */
-    if (y_k1.segment(6, 3).norm() > 1.0/3.0) {
-        /* Create a temporary shadow-set MRP representation */
-        Eigen::Vector3d sigma_AN_s = -y_k1.segment(6, 3)/pow(y_k1.segment(6, 3).norm(), 2);
-        /* Check to see if the shadow set gives a smaller residual */
-        if ((sigma_AN_s - x_hat_k1_.segment(6, 3)).norm() < (y_k1.segment(6, 3) - x_hat_k1_.segment(6, 3)).norm()){
-            y_k1.segment(6, 3) = sigma_AN_s;
-        }
-    }
+    // /* Small body attitude from the ephemeris msg */
+    // y_k1.segment(6, 3) =  cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.sigma_BN);
 
-    /* Small body attitude rate from the ephemeris msg */
-    y_k1.segment(9, 3) = cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.omega_BN_B);
+    // /* Check if the shadow set measurement must be considered, i.e. |sigma| > 1/3 */
+    // if (y_k1.segment(6, 3).norm() > 1.0/3.0) {
+    //     /* Create a temporary shadow-set MRP representation */
+    //     Eigen::Vector3d sigma_AN_s = -y_k1.segment(6, 3)/pow(y_k1.segment(6, 3).norm(), 2);
+    //     /* Check to see if the shadow set gives a smaller residual */
+    //     if ((sigma_AN_s - x_hat_k1_.segment(6, 3)).norm() < (y_k1.segment(6, 3) - x_hat_k1_.segment(6, 3)).norm()){
+    //         y_k1.segment(6, 3) = sigma_AN_s;
+    //     }
+    // }
+
+    // /* Small body attitude rate from the ephemeris msg */
+    // y_k1.segment(9, 3) = cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.omega_BN_B);
 
     /* Update the state estimate */
     x_hat_k1 = x_hat_k1_ + K_k1*(y_k1 - x_hat_k1_);
@@ -378,8 +384,8 @@ void SmallBodyNavEKF::computeDynamicsMatrix(Eigen::VectorXd x_hat){
 
     x_1 << x_hat.segment(0,3);
     x_2 << x_hat.segment(3,3);
-    x_3 << x_hat.segment(6,3);
-    x_4 << x_hat.segment(9,3);
+    //x_3 << x_hat.segment(6,3);
+    //x_4 << x_hat.segment(9,3);
 
     /* First set the matrix to zero (many indices are zero) */
     A_k.setZero(this->numStates, this->numStates);
@@ -398,8 +404,8 @@ void SmallBodyNavEKF::computeDynamicsMatrix(Eigen::VectorXd x_hat){
     A_k.block(3, 3, 3, 3) = -2*F_dot*o_hat_3_tilde;
 
     /* x_3 partial */
-    A_k.block(6, 6, 3, 3) = 0.5*(x_3*x_4.transpose() - x_4*x_3.transpose() - eigenTilde(x_4) + (x_4.transpose()*x_3)*I);
-    A_k.block(6, 9, 3, 3) = 0.25*((1-pow(x_3.norm(), 2))*I + 2*eigenTilde(x_3) + 3*x_3*x_3.transpose());
+    //A_k.block(6, 6, 3, 3) = 0.5*(x_3*x_4.transpose() - x_4*x_3.transpose() - eigenTilde(x_4) + (x_4.transpose()*x_3)*I);
+    //A_k.block(6, 9, 3, 3) = 0.25*((1-pow(x_3.norm(), 2))*I + 2*eigenTilde(x_3) + 3*x_3*x_3.transpose());
 }
 
 /*! This is the main method that gets called every time the module is updated.
@@ -409,7 +415,7 @@ void SmallBodyNavEKF::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages(CurrentSimNanos);
     this->predict(CurrentSimNanos);
-    this->checkMRPSwitching();
+    // this->checkMRPSwitching();
     if (this->newMeasurements){
         /* Run the measurement update */
         this->measurementUpdate();
@@ -445,16 +451,33 @@ void SmallBodyNavEKF::writeMessages(uint64_t CurrentSimNanos){
     /* Assign values to the asteroid ephemeris output message */
     v3Copy(asteroidEphemerisOutMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.r_BdyZero_N);  // Not an estimated parameter
     v3Copy(asteroidEphemerisOutMsgBuffer.v_BdyZero_N, asteroidEphemerisInMsgBuffer.v_BdyZero_N);  // Not an estimated parameter
-    eigenMatrixXd2CArray(x_hat_k.segment(6,3), asteroidEphemerisOutMsgBuffer.sigma_BN);
-    eigenMatrixXd2CArray(x_hat_k.segment(9,3), asteroidEphemerisOutMsgBuffer.omega_BN_B);
+    //eigenMatrixXd2CArray(x_hat_k.segment(6,3), asteroidEphemerisOutMsgBuffer.sigma_BN);
+    //eigenMatrixXd2CArray(x_hat_k.segment(9,3), asteroidEphemerisOutMsgBuffer.omega_BN_B);
     asteroidEphemerisOutMsgBuffer.timeTag = asteroidEphemerisInMsgBuffer.timeTag;
 
+    // Create a temporary eigen variable for x_hat that's 12 elements long
+    Eigen::VectorXd x_hat_temp(12);
+    // Zero out the temporary vector
+    x_hat_temp.setZero(12);
+    // Copy the 6 element x_hat_k vector into the temporary vector
+    x_hat_temp.segment(0,6) = x_hat_k;
+
+    // Do the same for the covariance matrix
+    Eigen::MatrixXd P_k_temp(12,12);
+    P_k_temp.setZero(12,12);
+    P_k_temp.block(0,0,6,6) = P_k;
+
+    // Do the same for the apriori covar
+    Eigen::MatrixXd P_k1_temp(12,12);
+    P_k1_temp.setZero(12,12);
+    P_k1_temp.block(0,0,6,6) = P_k1_;
+
     /* Assign values to the small body navigation output message */
-    eigenMatrixXd2CArray(x_hat_k, smallBodyNavOutMsgBuffer.state);
+    eigenMatrixXd2CArray(x_hat_temp, smallBodyNavOutMsgBuffer.state);
     if (this->newMeasurements) {
-        eigenMatrixXd2CArray(P_k, *smallBodyNavOutMsgBuffer.covar);
+        eigenMatrixXd2CArray(P_k_temp, *smallBodyNavOutMsgBuffer.covar);
     } else {
-        eigenMatrixXd2CArray(P_k1_, *smallBodyNavOutMsgBuffer.covar);
+        eigenMatrixXd2CArray(P_k1_temp, *smallBodyNavOutMsgBuffer.covar);
     }
 
     /* Write to the C++-wrapped output messages */
