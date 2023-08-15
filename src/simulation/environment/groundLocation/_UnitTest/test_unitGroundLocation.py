@@ -228,7 +228,7 @@ def test_AzElR_rates():
                                      , timeInitString
                                      )
     gravFactory.spiceObject.zeroBase = 'Earth'
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, -1)
 
     scObject = spacecraft.Spacecraft()
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
