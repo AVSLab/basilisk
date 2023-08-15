@@ -329,6 +329,11 @@ class SimBaseClass:
         :param ModelPriority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return:
         """
+        # Supports calling AddModelToTask(TaskName, NewModel, ModelPriority)
+        if isinstance(ModelData, int):
+            ModelPriority = ModelData
+            ModelData = None
+
         i = 0
         for Task in self.TaskList:
             if Task.Name == TaskName:
