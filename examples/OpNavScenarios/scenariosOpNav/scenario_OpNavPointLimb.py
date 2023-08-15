@@ -79,15 +79,15 @@ class scenario_OpNav(BSKScenario):
 
         MRP= [0,0,0]
         if self.filterUse =="relOD":
-            self.masterSim.get_FswModel().relativeODData.stateInit = rN.tolist() + vN.tolist()
+            self.masterSim.get_FswModel().relativeOD.stateInit = rN.tolist() + vN.tolist()
         if self.filterUse == "bias":
-            self.masterSim.get_FswModel().pixelLineFilterData.stateInit = rN.tolist() + vN.tolist() + bias
+            self.masterSim.get_FswModel().pixelLineFilter.stateInit = rN.tolist() + vN.tolist() + bias
         self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = rN
         self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = vN
         self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[MRP[0]], [MRP[1]], [MRP[2]]]  # sigma_BN_B
         self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
         # Search
-        self.masterSim.get_FswModel().opNavPointData.omega_RN_B = [0.001, 0.0, -0.001]
+        self.masterSim.get_FswModel().opNavPoint.omega_RN_B = [0.001, 0.0, -0.001]
 
     def log_outputs(self):
         # Dynamics process outputs: log messages below if desired.
@@ -98,7 +98,7 @@ class scenario_OpNav(BSKScenario):
         samplingTime = self.masterSim.get_FswModel().processTasksTimeStep
 
         self.attGuidRec = FswModel.attGuidMsg.recorder(samplingTime)
-        self.rwMotorRec = FswModel.rwMotorTorqueData.rwMotorTorqueOutMsg.recorder(samplingTime)
+        self.rwMotorRec = FswModel.rwMotorTorque.rwMotorTorqueOutMsg.recorder(samplingTime)
         self.masterSim.AddModelToTask(DynModel.taskName, self.attGuidRec)
         self.masterSim.AddModelToTask(DynModel.taskName, self.rwMotorRec)
 

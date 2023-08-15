@@ -91,7 +91,7 @@ class scenario_OpNav(BSKScenario):
         vError= np.array([100, -10, 10])
 
         MRP= [0,-0.3,0]
-        self.masterSim.get_FswModel().relativeODData.stateInit = (rN+rError).tolist() +  (vN+vError).tolist()
+        self.masterSim.get_FswModel().relativeOD.stateInit = (rN+rError).tolist() +  (vN+vError).tolist()
         self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = rN
         self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = vN
         self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[MRP[0]], [MRP[1]], [MRP[2]]]  # sigma_BN_B
@@ -99,9 +99,9 @@ class scenario_OpNav(BSKScenario):
         qNoiseIn = np.identity(6)
         qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-3 * 1E-3
         qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1E-4 * 1E-4
-        self.masterSim.get_FswModel().relativeODData.qNoise = qNoiseIn.reshape(36).tolist()
-        self.masterSim.get_FswModel().horizonNavData.noiseSF = 70
-        self.masterSim.get_FswModel().relativeODData.noiseSF = 5
+        self.masterSim.get_FswModel().relativeOD.qNoise = qNoiseIn.reshape(36).tolist()
+        self.masterSim.get_FswModel().horizonNav.noiseSF = 70
+        self.masterSim.get_FswModel().relativeOD.noiseSF = 5
 
         self.masterSim.get_DynModel().cameraMod.cameraIsOn = 1
         # Camera noise params
@@ -120,7 +120,7 @@ class scenario_OpNav(BSKScenario):
         # FSW process outputs
         samplingTime = self.masterSim.get_FswModel().processTasksTimeStep
 
-        self.filtRec = FswModel.relativeODData.filtDataOutMsg.recorder(samplingTime)
+        self.filtRec = FswModel.relativeOD.filtDataOutMsg.recorder(samplingTime)
         self.opNavRec = FswModel.opnavMsg.recorder(samplingTime)
         self.limbRec = FswModel.limbFinding.opnavLimbOutMsg.recorder(samplingTime)
         self.scRec = DynModel.scObject.scStateOutMsg.recorder(samplingTime)

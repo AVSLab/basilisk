@@ -103,20 +103,20 @@ class scenario_OpNav(BSKScenario):
 
         MRP= [0,0,0]
         if self.filterUse =="relOD":
-            self.masterSim.get_FswModel().relativeODData.stateInit = rN.tolist() + vN.tolist()
+            self.masterSim.get_FswModel().relativeOD.stateInit = rN.tolist() + vN.tolist()
         if self.filterUse == "bias":
-            self.masterSim.get_FswModel().pixelLineFilterData.stateInit = rN.tolist() + vN.tolist() + bias
+            self.masterSim.get_FswModel().pixelLineFilter.stateInit = rN.tolist() + vN.tolist() + bias
         self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
         self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[MRP[0]], [MRP[1]], [MRP[2]]]  # sigma_BN_B
         self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
         # Search
-        self.masterSim.get_FswModel().opNavPointData.omega_RN_B = [0.001, 0.0, -0.001]
-        # self.masterSim.get_FswModel().opNavPointData.opnavDataInMsgName = "heading_filtered"
+        self.masterSim.get_FswModel().opNavPoint.omega_RN_B = [0.001, 0.0, -0.001]
+        # self.masterSim.get_FswModel().opNavPoint.opnavDataInMsgName = "heading_filtered"
         self.masterSim.get_FswModel().imageProcessing.noiseSF = 0.5
-        self.masterSim.get_FswModel().headingUKFData.noiseSF = 1.001
-        self.masterSim.get_FswModel().opNavPointData.opnavDataInMsg.subscribeTo(
-            self.masterSim.get_FswModel().headingUKFData.opnavDataOutMsg)
+        self.masterSim.get_FswModel().headingUKF.noiseSF = 1.001
+        self.masterSim.get_FswModel().opNavPoint.opnavDataInMsg.subscribeTo(
+            self.masterSim.get_FswModel().headingUKF.opnavDataOutMsg)
 
     def log_outputs(self):
         # Dynamics process outputs: log messages below if desired.
@@ -128,7 +128,7 @@ class scenario_OpNav(BSKScenario):
 
         self.opNavRec = FswModel.opnavMsg.recorder(samplingTime)
         self.attGuidRec = FswModel.attGuidMsg.recorder(samplingTime)
-        self.rwMotorRec = FswModel.rwMotorTorqueData.rwMotorTorqueOutMsg.recorder(samplingTime)
+        self.rwMotorRec = FswModel.rwMotorTorque.rwMotorTorqueOutMsg.recorder(samplingTime)
         self.circlesRec = FswModel.opnavCirclesMsg.recorder(samplingTime)
         self.scRec = DynModel.scObject.scStateOutMsg.recorder(samplingTime)
 
@@ -145,8 +145,8 @@ class scenario_OpNav(BSKScenario):
 
         self.masterSim.AddVariableForLogging('headingUKF.bVec_B', samplingTime, 0, 2)
 
-        self.filtRec = FswModel.headingUKFData.filtDataOutMsg.recorder(samplingTime)
-        self.opNavFiltRec = FswModel.headingUKFData.opnavDataOutMsg.recorder(samplingTime)
+        self.filtRec = FswModel.headingUKF.filtDataOutMsg.recorder(samplingTime)
+        self.opNavFiltRec = FswModel.headingUKF.opnavDataOutMsg.recorder(samplingTime)
         self.masterSim.AddModelToTask(DynModel.taskName, self.filtRec)
         self.masterSim.AddModelToTask(DynModel.taskName, self.opNavFiltRec)
 
