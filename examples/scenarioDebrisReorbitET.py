@@ -229,38 +229,37 @@ def run(show_plots):
     fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
     # setup ET Relative Motion Control module
-    etSphericalControlData = etSphericalControl.etSphericalControlConfig()
-    etSphericalControlWrap = scSim.setModelDataWrap(etSphericalControlData)
-    etSphericalControlWrap.ModelTag = "ETcontrol"
+    etSphericalControlObj = etSphericalControl.etSphericalControl()
+    etSphericalControlObj.ModelTag = "ETcontrol"
 
     # connect required messages
-    etSphericalControlData.servicerTransInMsg.subscribeTo(sNavObjectServicer.transOutMsg)  # servicer translation
-    etSphericalControlData.debrisTransInMsg.subscribeTo(sNavObjectDebris.transOutMsg)  # debris translation
-    etSphericalControlData.servicerAttInMsg.subscribeTo(sNavObjectServicer.attOutMsg)  # servicer attitude
-    etSphericalControlData.servicerVehicleConfigInMsg.subscribeTo(servicerVehicleConfigMsg)  # servicer mass
-    etSphericalControlData.debrisVehicleConfigInMsg.subscribeTo(debrisVehicleConfigMsg)  # debris mass
-    etSphericalControlData.eForceInMsg.subscribeTo(MSMmodule.eForceOutMsgs[0])  # eForce on servicer (for feed-forward)
+    etSphericalControlObj.servicerTransInMsg.subscribeTo(sNavObjectServicer.transOutMsg)  # servicer translation
+    etSphericalControlObj.debrisTransInMsg.subscribeTo(sNavObjectDebris.transOutMsg)  # debris translation
+    etSphericalControlObj.servicerAttInMsg.subscribeTo(sNavObjectServicer.attOutMsg)  # servicer attitude
+    etSphericalControlObj.servicerVehicleConfigInMsg.subscribeTo(servicerVehicleConfigMsg)  # servicer mass
+    etSphericalControlObj.debrisVehicleConfigInMsg.subscribeTo(debrisVehicleConfigMsg)  # debris mass
+    etSphericalControlObj.eForceInMsg.subscribeTo(MSMmodule.eForceOutMsgs[0])  # eForce on servicer (for feed-forward)
 
     # set module parameters
     # feedback gain matrices
     Ki = 4e-7
     Pi = 1.85 * Ki ** 0.5
-    etSphericalControlData.K = [Ki, 0.0, 0.0,
+    etSphericalControlObj.K = [Ki, 0.0, 0.0,
                                 0.0, Ki, 0.0,
                                 0.0, 0.0, Ki]
-    etSphericalControlData.P = [Pi, 0.0, 0.0,
+    etSphericalControlObj.P = [Pi, 0.0, 0.0,
                                 0.0, Pi, 0.0,
                                 0.0, 0.0, Pi]
     # desired relative position in spherical coordinates (reference state)
-    etSphericalControlData.L_r = 30.0  # separation distance
-    etSphericalControlData.theta_r = 0.  # in-plane rotation angle
-    etSphericalControlData.phi_r = 0.  # out-of-plane rotation angle
-    etSphericalControlData.mu = mu  # gravitational parameter
+    etSphericalControlObj.L_r = 30.0  # separation distance
+    etSphericalControlObj.theta_r = 0.  # in-plane rotation angle
+    etSphericalControlObj.phi_r = 0.  # out-of-plane rotation angle
+    etSphericalControlObj.mu = mu  # gravitational parameter
 
     # add module to fsw task
-    scSim.AddModelToTask(fswTaskName, etSphericalControlWrap, etSphericalControlData)
+    scSim.AddModelToTask(fswTaskName, etSphericalControlObj)
     # connect output control thrust force with external force on servicer
-    extFTObjectServicerControl.cmdForceInertialInMsg.subscribeTo(etSphericalControlData.forceInertialOutMsg)
+    extFTObjectServicerControl.cmdForceInertialInMsg.subscribeTo(etSphericalControlObj.forceInertialOutMsg)
 
     #
     #   set initial Spacecraft States

@@ -122,8 +122,8 @@ def run(show_plots, useClassicElem, numOrbits):
     scObject2.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
-    scSim.AddModelToTask(dynTaskName, scObject, None, 2)
-    scSim.AddModelToTask(dynTaskName, scObject2, None, 2)
+    scSim.AddModelToTask(dynTaskName, scObject, 2)
+    scSim.AddModelToTask(dynTaskName, scObject2, 2)
 
     # grav
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -141,15 +141,15 @@ def run(show_plots, useClassicElem, numOrbits):
     extFTObject2 = extForceTorque.ExtForceTorque()
     extFTObject2.ModelTag = "externalDisturbance2"
     scObject2.addDynamicEffector(extFTObject2)
-    scSim.AddModelToTask(dynTaskName, extFTObject2, None, 3)
+    scSim.AddModelToTask(dynTaskName, extFTObject2, 3)
 
     # simple nav
     simpleNavObject = simpleNav.SimpleNav()
     simpleNavObject2 = simpleNav.SimpleNav()
     simpleNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     simpleNavObject2.scStateInMsg.subscribeTo(scObject2.scStateOutMsg)
-    scSim.AddModelToTask(dynTaskName, simpleNavObject, None, 1)
-    scSim.AddModelToTask(dynTaskName, simpleNavObject2, None, 1)
+    scSim.AddModelToTask(dynTaskName, simpleNavObject, 1)
+    scSim.AddModelToTask(dynTaskName, simpleNavObject2, 1)
 
     # ----- fsw ----- #
     fswProcessName = "fswProcess"
@@ -159,27 +159,26 @@ def run(show_plots, useClassicElem, numOrbits):
     fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
     # meanOEFeedback
-    meanOEFeedbackData = meanOEFeedback.meanOEFeedbackConfig()
-    meanOEFeedbackWrap = scSim.setModelDataWrap(meanOEFeedbackData)
-    meanOEFeedbackWrap.ModelTag = "meanOEFeedback"
-    meanOEFeedbackData.chiefTransInMsg.subscribeTo(simpleNavObject.transOutMsg)
-    meanOEFeedbackData.deputyTransInMsg.subscribeTo(simpleNavObject2.transOutMsg)
-    extFTObject2.cmdForceInertialInMsg.subscribeTo(meanOEFeedbackData.forceOutMsg)
-    meanOEFeedbackData.K = [1e7, 0.0, 0.0, 0.0, 0.0, 0.0,
+    meanOEFeedbackObj = meanOEFeedback.meanOEFeedback()
+    meanOEFeedbackObj.ModelTag = "meanOEFeedback"
+    meanOEFeedbackObj.chiefTransInMsg.subscribeTo(simpleNavObject.transOutMsg)
+    meanOEFeedbackObj.deputyTransInMsg.subscribeTo(simpleNavObject2.transOutMsg)
+    extFTObject2.cmdForceInertialInMsg.subscribeTo(meanOEFeedbackObj.forceOutMsg)
+    meanOEFeedbackObj.K = [1e7, 0.0, 0.0, 0.0, 0.0, 0.0,
                             0.0, 1e7, 0.0, 0.0, 0.0, 0.0,
                             0.0, 0.0, 1e7, 0.0, 0.0, 0.0,
                             0.0, 0.0, 0.0, 1e7, 0.0, 0.0,
                             0.0, 0.0, 0.0, 0.0, 1e7, 0.0,
                             0.0, 0.0, 0.0, 0.0, 0.0, 1e7]
-    meanOEFeedbackData.targetDiffOeMean = [0.000, 0.000, 0.000, 0.0003, 0.0002, 0.0001]
+    meanOEFeedbackObj.targetDiffOeMean = [0.000, 0.000, 0.000, 0.0003, 0.0002, 0.0001]
     if useClassicElem:
-        meanOEFeedbackData.oeType = 0  # 0: classic
+        meanOEFeedbackObj.oeType = 0  # 0: classic
     else:
-        meanOEFeedbackData.oeType = 1  # 1: equinoctial
-    meanOEFeedbackData.mu = orbitalMotion.MU_EARTH*1e9  # [m^3/s^2]
-    meanOEFeedbackData.req = orbitalMotion.REQ_EARTH*1e3  # [m]
-    meanOEFeedbackData.J2 = orbitalMotion.J2_EARTH      # []
-    scSim.AddModelToTask(fswTaskName, meanOEFeedbackWrap, meanOEFeedbackData, 1)
+        meanOEFeedbackObj.oeType = 1  # 1: equinoctial
+    meanOEFeedbackObj.mu = orbitalMotion.MU_EARTH*1e9  # [m^3/s^2]
+    meanOEFeedbackObj.req = orbitalMotion.REQ_EARTH*1e3  # [m]
+    meanOEFeedbackObj.J2 = orbitalMotion.J2_EARTH      # []
+    scSim.AddModelToTask(fswTaskName, meanOEFeedbackObj, 1)
 
     # ----- Setup spacecraft initial states ----- #
     mu = gravFactory.gravBodies['earth'].mu

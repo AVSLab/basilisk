@@ -171,7 +171,7 @@ def run(show_plots, scCase):
     # very end of the execution frame.  They will get executed in the order in which they were added.
     # For this scenario scripts, it is critical that the Spice object task is evaluated
     # before the spacecraft() model.  Thus, below the Spice object is added with a higher priority task.
-    scSim.AddModelToTask(simTaskName, scObject, None, 1)
+    scSim.AddModelToTask(simTaskName, scObject, 1)
 
     # The first step to create a fresh gravity body factor class through
     gravFactory = simIncludeGravBody.gravBodyFactory()

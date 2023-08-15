@@ -311,7 +311,7 @@ def run(show_plots):
     rwFactory.addToSpacecraft("chiefRW", rwStateEffector, scObject)
 
     # add RW object array to the simulation process
-    scSim.AddModelToTask(simTaskName, rwStateEffector, None, 4)
+    scSim.AddModelToTask(simTaskName, rwStateEffector, 4)
 
     # add free-spinning RWs to the debris object
     rwFactory2 = simIncludeRW.rwFactory()
@@ -320,7 +320,7 @@ def run(show_plots):
     numRW2 = rwFactory2.getNumOfDevices()
     rwStateEffector2 = reactionWheelStateEffector.ReactionWheelStateEffector()
     rwFactory2.addToSpacecraft("debrisRW", rwStateEffector2, scObject2)
-    scSim.AddModelToTask(simTaskName, rwStateEffector2, None, 5)
+    scSim.AddModelToTask(simTaskName, rwStateEffector2, 5)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
@@ -334,20 +334,18 @@ def run(show_plots):
     #
 
     # setup hillPoint guidance module
-    attGuidanceConfig = hillPoint.hillPointConfig()
-    attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
-    attGuidanceWrap.ModelTag = "hillPoint"
-    attGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
+    attGuidance = hillPoint.hillPoint()
+    attGuidance.ModelTag = "hillPoint"
+    attGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    scSim.AddModelToTask(simTaskName, attGuidance)
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    attErrorConfig.sigma_R0R = [0.414214, 0.0, 0.0]     # point the 3rd body axis in the along-track direction
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    attError.sigma_R0R = [0.414214, 0.0, 0.0]     # point the 3rd body axis in the along-track direction
+    scSim.AddModelToTask(simTaskName, attError)
+    attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
@@ -358,41 +356,39 @@ def run(show_plots):
     fswRwMsg = rwFactory.getConfigMessage()
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControlConfig.rwParamsInMsg.subscribeTo(fswRwMsg)
-    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    mrpControlConfig.K = 3.5
-    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControl.rwParamsInMsg.subscribeTo(fswRwMsg)
+    mrpControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    mrpControl.K = 3.5
+    mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     # add module that maps the Lr control torque into the RW motor torques
-    rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
-    rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
-    rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
-    scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
+    rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
+    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
     # Initialize the test module msg names
-    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
-    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwMsg)
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
+    rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
+    rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwMsg)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
     # Make the RW control all three body axes
     controlAxes_B = [
         1, 0, 0, 0, 1, 0, 0, 0, 1
     ]
-    rwMotorTorqueConfig.controlAxes_B = controlAxes_B
+    rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
-    rwCmdLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
-    attErrLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    rwCmdLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
+    attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     sNavLog = sNavObject.transOutMsg.recorder(samplingTime)
     rwSpeedLog = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, rwCmdLog)

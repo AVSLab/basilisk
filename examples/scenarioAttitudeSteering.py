@@ -339,9 +339,9 @@ def run(show_plots, simCase):
     rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process
-    scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
+    scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
     # add spacecraft object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject, None, 1)
+    scSim.AddModelToTask(simTaskName, scObject, 1)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
@@ -361,56 +361,51 @@ def run(show_plots, simCase):
     #
 
     # setup guidance module
-    attGuidanceConfig = hillPoint.hillPointConfig()
-    attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
-    attGuidanceWrap.ModelTag = "hillPoint"
-    scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
+    attGuidance = hillPoint.hillPoint()
+    attGuidance.ModelTag = "hillPoint"
+    scSim.AddModelToTask(simTaskName, attGuidance)
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
 
     # setup the MRP steering control module
-    mrpControlConfig = mrpSteering.mrpSteeringConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "MRP_Steering"
+    mrpControl = mrpSteering.mrpSteering()
+    mrpControl.ModelTag = "MRP_Steering"
 
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
+    scSim.AddModelToTask(simTaskName, mrpControl)
 
     if simCase < 2:
-        mrpControlConfig.K1 = 0.05
-        mrpControlConfig.ignoreOuterLoopFeedforward = False
+        mrpControl.K1 = 0.05
+        mrpControl.ignoreOuterLoopFeedforward = False
     else:
-        mrpControlConfig.K1 = 2.2
+        mrpControl.K1 = 2.2
         if simCase == 2:
-            mrpControlConfig.ignoreOuterLoopFeedforward = False
+            mrpControl.ignoreOuterLoopFeedforward = False
         else:
-            mrpControlConfig.ignoreOuterLoopFeedforward = True
-    mrpControlConfig.K3 = 0.75
-    mrpControlConfig.omega_max = 1. * macros.D2R
+            mrpControl.ignoreOuterLoopFeedforward = True
+    mrpControl.K3 = 0.75
+    mrpControl.omega_max = 1. * macros.D2R
 
     # setup Rate servo module
-    servoConfig = rateServoFullNonlinear.rateServoFullNonlinearConfig()
-    servoWrap = scSim.setModelDataWrap(servoConfig)
-    servoWrap.ModelTag = "rate_servo"
+    servo = rateServoFullNonlinear.rateServoFullNonlinear()
+    servo.ModelTag = "rate_servo"
 
     if simCase == 1:
-        servoConfig.Ki = -1
+        servo.Ki = -1
     else:
-        servoConfig.Ki = 5.
-    servoConfig.P = 150.0
-    servoConfig.integralLimit = 2. / servoConfig.Ki * 0.1
-    servoConfig.knownTorquePntB_B = [0., 0., 0.]
+        servo.Ki = 5.
+    servo.P = 150.0
+    servo.integralLimit = 2. / servo.Ki * 0.1
+    servo.knownTorquePntB_B = [0., 0., 0.]
 
-    scSim.AddModelToTask(simTaskName, servoWrap, servoConfig)
+    scSim.AddModelToTask(simTaskName, servo)
 
     # add module that maps the Lr control torque into the RW motor torques
-    rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
-    rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
-    rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
-    scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
+    rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
+    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
 
     # Make the RW control all three body axes
     controlAxes_B = [
@@ -418,7 +413,7 @@ def run(show_plots, simCase):
         0, 1, 0,
         0, 0, 1
     ]
-    rwMotorTorqueConfig.controlAxes_B = controlAxes_B
+    rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
@@ -434,29 +429,29 @@ def run(show_plots, simCase):
 
     # setup message connections
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    attGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    servoConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    servoConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    servoConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    servoConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    servoConfig.rateSteeringInMsg.subscribeTo(mrpControlConfig.rateCmdOutMsg)
-    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(servoConfig.cmdTorqueOutMsg)
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
+    attGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    servo.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    servo.vehConfigInMsg.subscribeTo(vcMsg)
+    servo.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    servo.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    servo.rateSteeringInMsg.subscribeTo(mrpControl.rateCmdOutMsg)
+    rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    rwMotorTorqueObj.vehControlInMsg.subscribeTo(servo.cmdTorqueOutMsg)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 200
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
-    rwMotorLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
-    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
+    attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
     rwStateLog = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
-    mrpLog = mrpControlConfig.rateCmdOutMsg.recorder(samplingTime)
+    mrpLog = mrpControl.rateCmdOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, rwMotorLog)
     scSim.AddModelToTask(simTaskName, attErrorLog)
     scSim.AddModelToTask(simTaskName, snTransLog)

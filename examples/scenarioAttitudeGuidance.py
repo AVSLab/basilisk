@@ -100,7 +100,7 @@ the Earth.  Thus, we define the corrected body frame orientation as a 180 deg ro
 :math:`\hat b_2`.  This flips the orientation of the final first and third body axis.  This is achieved
 through::
 
-  attErrorConfig.sigma_R0R = [0,1,0]
+  attError.sigma_R0R = [0,1,0]
 
 The DCM :math:`[R_0R]` is the same as the body to corrected body DCM :math:`[B_cB]`.
 The resulting attitude and control torque histories are shown below.  Note that the projections
@@ -321,49 +321,46 @@ def run(show_plots, useAltBodyFrame):
     #
 
     # setup hillPoint guidance module
-    attGuidanceConfig = hillPoint.hillPointConfig()
-    attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
-    attGuidanceWrap.ModelTag = "hillPoint"
-    attGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    # if you want to connect attGuidanceConfig.celBodyInMsg, then you need a planet ephemeris message of
+    attGuidance = hillPoint.hillPoint()
+    attGuidance.ModelTag = "hillPoint"
+    attGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    # if you want to connect attGuidance.celBodyInMsg, then you need a planet ephemeris message of
     # type EphemerisMsgPayload.  In this simulation the input message is not connected to create an empty planet
     # ephemeris message which puts the earth at (0,0,0) origin with zero speed.
     CelBodyData = messaging.EphemerisMsgPayload() # make zero'd planet ephemeris message
     celBodyInMsg = messaging.EphemerisMsg().write(CelBodyData)
-    attGuidanceConfig.celBodyInMsg.subscribeTo(celBodyInMsg)
-    scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
+    attGuidance.celBodyInMsg.subscribeTo(celBodyInMsg)
+    scSim.AddModelToTask(simTaskName, attGuidance)
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
     if useAltBodyFrame:
-        attErrorConfig.sigma_R0R = [0, 1, 0]
-    attErrorConfig.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+        attError.sigma_R0R = [0, 1, 0]
+    attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.K = 3.5
-    mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.K = 3.5
+    mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     # connect torque command to external torque effector
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
-    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
-    attErrLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
+    attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
     snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, mrpLog)
@@ -379,7 +376,7 @@ def run(show_plots, useAltBodyFrame):
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
     configDataMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject

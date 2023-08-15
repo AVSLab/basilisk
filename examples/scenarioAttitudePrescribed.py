@@ -194,26 +194,24 @@ def run(show_plots, useAltBodyFrame):
     #
 
     # setup hillPoint guidance module
-    attGuidanceConfig = hillPoint.hillPointConfig()
-    attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
-    attGuidanceWrap.ModelTag = "hillPoint"
-    attGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    # if you want to connect attGuidanceConfig.celBodyInMsg, then you need a planet ephemeris message of
+    attGuidance = hillPoint.hillPoint()
+    attGuidance.ModelTag = "hillPoint"
+    attGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    # if you want to connect attGuidance.celBodyInMsg, then you need a planet ephemeris message of
     # type EphemerisMsgPayload.  In this simulation the input message is not connected to create an empty planet
     # ephemeris message which puts the earth at (0,0,0) origin with zero speed.
-    scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
+    scSim.AddModelToTask(simTaskName, attGuidance)
 
     # connect torque command to external torque effector
     if useAltBodyFrame:
-        attRefCorConfig = attRefCorrection.attRefCorrectionConfig()
-        attRefCorWrap = scSim.setModelDataWrap(attRefCorConfig)
-        attRefCorWrap.ModelTag = "attRefCor"
-        scSim.AddModelToTask(simTaskName, attRefCorWrap, attRefCorConfig)
-        attRefCorConfig.sigma_BcB = [0.0, 0.0, math.tan(math.pi/8)]
-        attRefCorConfig.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
-        scObject.attRefInMsg.subscribeTo(attRefCorConfig.attRefOutMsg)
+        attRefCor = attRefCorrection.attRefCorrection()
+        attRefCor.ModelTag = "attRefCor"
+        scSim.AddModelToTask(simTaskName, attRefCor)
+        attRefCor.sigma_BcB = [0.0, 0.0, math.tan(math.pi/8)]
+        attRefCor.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
+        scObject.attRefInMsg.subscribeTo(attRefCor.attRefOutMsg)
     else:
-        scObject.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
+        scObject.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
 
     #
     #   Setup data logging before the simulation is initialized

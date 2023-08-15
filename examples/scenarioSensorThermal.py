@@ -63,7 +63,9 @@ import numpy as np
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -85,8 +87,10 @@ from Basilisk.architecture import messaging
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
+
 try:
     from Basilisk.simulation import vizInterface
+
     vizFound = True
 except ImportError:
     vizFound = False
@@ -94,6 +98,7 @@ except ImportError:
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -115,7 +120,7 @@ def run(show_plots):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # Set the simulation time variable used later on
-    simulationTime = macros.min2nano(20.)
+    simulationTime = macros.min2nano(20.0)
 
     # Create the simulation process
     dynProcess = scSim.CreateNewProcess(simProcessName)
@@ -129,11 +134,13 @@ def run(show_plots):
     scObject.ModelTag = "bsk-Sat"
 
     # Define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # Add spacecraft object to the simulation process
@@ -151,25 +158,27 @@ def run(show_plots):
     mu = earth.mu
 
     # Attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
+        list(gravFactory.gravBodies.values())
+    )
 
     # Create the spice interface
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
-                                     , '2021 MAY 04 07:47:48.965 (UTC)'
-                                     )
+    gravFactory.createSpiceInterface(
+        bskPath + "/supportData/EphemerisData/", "2021 MAY 04 07:47:48.965 (UTC)"
+    )
     scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, ModelPriority=100)
 
     # Set up the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = (6378 + 600)*1000.  # meters
+    oe.a = (6378 + 600) * 1000.0  # meters
     oe.e = 0.01
     oe.i = 63.3 * macros.D2R
     oe.Omega = 88.2 * macros.D2R
     oe.omega = 347.8 * macros.D2R
     oe.f = 135.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    n = np.sqrt(mu/oe.a/oe.a/oe.a)
-    P = 2.*np.pi/n
+    n = np.sqrt(mu / oe.a / oe.a / oe.a)
+    P = 2.0 * np.pi / n
     scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
@@ -195,28 +204,26 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, ephemConverter, ModelPriority=100)
 
     # Set up sun pointing guidance module
-    locPointConfig = locationPointing.locationPointingConfig()
-    locPointWrap = scSim.setModelDataWrap(locPointConfig)
-    locPointWrap.ModelTag = "locPoint"
-    scSim.AddModelToTask(simTaskName, locPointWrap, locPointConfig, ModelPriority=99)
-    locPointConfig.pHat_B = [0, 0, 1]
-    locPointConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
-    locPointConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    locPointConfig.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[0])
+    locPoint = locationPointing.locationPointing()
+    locPoint.ModelTag = "locPoint"
+    scSim.AddModelToTask(simTaskName, locPoint, 99)
+    locPoint.pHat_B = [0, 0, 1]
+    locPoint.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    locPoint.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    locPoint.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[0])
 
     # Set up the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig, ModelPriority=98)
-    mrpControlConfig.guidInMsg.subscribeTo(locPointConfig.attGuidOutMsg)
-    mrpControlConfig.K = 5.5
-    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl, 98)
+    mrpControl.guidInMsg.subscribeTo(locPoint.attGuidOutMsg)
+    mrpControl.K = 5.5
+    mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # Connect torque command to external torque effector
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     # Now add the thermal sensor module
     thermalSensor = sensorThermal.SensorThermal()
@@ -238,9 +245,11 @@ def run(show_plots):
 
     # Create the FSW vehicle configuration message
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    vehicleConfigOut.ISCPntB_B = (
+        I  # use the same inertia in the FSW algorithm as in the simulation
+    )
     configDataMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
 
     # Initialize the simulation
     scSim.InitializeSimulation()
@@ -249,14 +258,14 @@ def run(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    scSim.ConfigureStopTime(macros.sec2nano(int(P)))        # seconds to stop simulation
+    scSim.ConfigureStopTime(macros.sec2nano(int(P)))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     scSim.ExecuteSimulation()
 
     # Change the location pointing vector and run the sim for another period
-    locPointConfig.pHat_B = [0, 0, -1]
-    scSim.ConfigureStopTime(macros.sec2nano(int(2*P)))        # seconds to stop simulation
+    locPoint.pHat_B = [0, 0, -1]
+    scSim.ConfigureStopTime(macros.sec2nano(int(2 * P)))  # seconds to stop simulation
     scSim.ExecuteSimulation()
 
     # Pull the temperature data
@@ -269,9 +278,9 @@ def run(show_plots):
     figureList = {}
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
-    plt.plot(tvec*60., tempData)
-    plt.xlabel('Time (min)')
-    plt.ylabel('Temperature (deg C)')
+    plt.plot(tvec * 60.0, tempData)
+    plt.xlabel("Time (min)")
+    plt.ylabel("Temperature (deg C)")
     plt.grid(True)
 
     pltName = "scenario_thermalSensor"
@@ -283,11 +292,9 @@ def run(show_plots):
 
     return figureList
 
+
 # This statement below ensures that the unitTestScript can be run as a
 # stand-alone python script
 #
 if __name__ == "__main__":
-    run(
-        True  # show_plots
-    )
-
+    run(True)  # show_plots

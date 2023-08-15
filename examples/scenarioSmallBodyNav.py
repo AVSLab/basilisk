@@ -623,16 +623,14 @@ def run(show_plots):
     planetNavMeas.walkBounds = walk_bounds_p
 
     # Sun pointing configuration
-    sunPointData = hillPoint.hillPointConfig()
-    sunPointWrap = scSim.setModelDataWrap(sunPointData)
-    sunPointWrap.ModelTag = "sunPoint"
-    sunPointData.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[0])
+    sunPoint = hillPoint.hillPoint()
+    sunPoint.ModelTag = "sunPoint"
+    sunPoint.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[0])
 
     # Attitude error configuration
-    trackingErrorData = attTrackingError.attTrackingErrorConfig()
-    trackingErrorWrap = scSim.setModelDataWrap(trackingErrorData)
-    trackingErrorWrap.ModelTag = "trackingError"
-    trackingErrorData.attRefInMsg.subscribeTo(sunPointData.attRefOutMsg)
+    trackingError = attTrackingError.attTrackingError()
+    trackingError.ModelTag = "trackingError"
+    trackingError.attRefInMsg.subscribeTo(sunPoint.attRefOutMsg)
 
     # Specify the vehicle configuration message to tell things what the vehicle inertia is
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
@@ -640,25 +638,23 @@ def run(show_plots):
     vcConfigMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     #   Attitude controller configuration
-    mrpFeedbackControlData = mrpFeedback.mrpFeedbackConfig()
-    mrpFeedbackControlWrap = scSim.setModelDataWrap(mrpFeedbackControlData)
-    mrpFeedbackControlWrap.ModelTag = "mrpFeedbackControl"
-    mrpFeedbackControlData.guidInMsg.subscribeTo(trackingErrorData.attGuidOutMsg)
-    mrpFeedbackControlData.vehConfigInMsg.subscribeTo(vcConfigMsg)
-    mrpFeedbackControlData.K = 7.
-    mrpFeedbackControlData.Ki = -1.0
-    mrpFeedbackControlData.P = 35.
-    mrpFeedbackControlData.integralLimit = 2. / mrpFeedbackControlData.Ki * 0.1
+    mrpFeedbackControl = mrpFeedback.mrpFeedback()
+    mrpFeedbackControl.ModelTag = "mrpFeedbackControl"
+    mrpFeedbackControl.guidInMsg.subscribeTo(trackingError.attGuidOutMsg)
+    mrpFeedbackControl.vehConfigInMsg.subscribeTo(vcConfigMsg)
+    mrpFeedbackControl.K = 7.
+    mrpFeedbackControl.Ki = -1.0
+    mrpFeedbackControl.P = 35.
+    mrpFeedbackControl.integralLimit = 2. / mrpFeedbackControl.Ki * 0.1
 
     # add module that maps the Lr control torque into the RW motor torques
-    rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
-    rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
-    rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
-    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(rwConfigMsg)
-    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mrpFeedbackControlData.cmdTorqueOutMsg)
-    rwMotorTorqueConfig.controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
+    rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
+    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
+    rwMotorTorqueObj.rwParamsInMsg.subscribeTo(rwConfigMsg)
+    rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpFeedbackControl.cmdTorqueOutMsg)
+    rwMotorTorqueObj.controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
 
     # Create the Lyapunov feedback controller
     waypointFeedback = smallBodyWaypointFeedback.SmallBodyWaypointFeedback()
@@ -720,8 +716,8 @@ def run(show_plots):
     smallBodyNav.addThrusterToFilter(thrusterMsg)
 
     # Connect the smallBodyEKF output messages to the relevant modules
-    trackingErrorData.attNavInMsg.subscribeTo(simpleNavMeas2.attOutMsg)
-    sunPointData.transNavInMsg.subscribeTo(simpleNavMeas2.transOutMsg)
+    trackingError.attNavInMsg.subscribeTo(simpleNavMeas2.attOutMsg)
+    sunPoint.transNavInMsg.subscribeTo(simpleNavMeas2.transOutMsg)
     waypointFeedback.navTransInMsg.subscribeTo(smallBodyNav.navTransOutMsg)
 
     # Set the waypoint feedback gains
@@ -729,23 +725,23 @@ def run(show_plots):
     waypointFeedback.K2 = unitTestSupport.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
 
     # Add all models to the task
-    scSim.AddModelToTask(simTaskName, scObject, ModelPriority=100)
-    scSim.AddModelToTask(simTaskName, srp, ModelPriority=99)
-    scSim.AddModelToTask(simTaskName, gravBodyEphem, ModelPriority=99)
-    scSim.AddModelToTask(simTaskName, rwStateEffector, ModelPriority=91)
-    scSim.AddModelToTask(simTaskName, extForceTorqueModule, ModelPriority=91)
-    scSim.AddModelToTask(simTaskName, simpleNavMeas2, ModelPriority=90)
-    scSim.AddModelToTask(simTaskName, ephemConverter, ModelPriority=98)
+    scSim.AddModelToTask(simTaskName, scObject, 100)
+    scSim.AddModelToTask(simTaskName, srp, 99)
+    scSim.AddModelToTask(simTaskName, gravBodyEphem, 99)
+    scSim.AddModelToTask(simTaskName, rwStateEffector, 91)
+    scSim.AddModelToTask(simTaskName, extForceTorqueModule, 91)
+    scSim.AddModelToTask(simTaskName, simpleNavMeas2, 90)
+    scSim.AddModelToTask(simTaskName, ephemConverter, 98)
 
-    scSim.AddModelToTask(measTaskName, simpleNavMeas, ModelPriority=97)
-    scSim.AddModelToTask(measTaskName, planetNavMeas, ModelPriority=96)
+    scSim.AddModelToTask(measTaskName, simpleNavMeas, 97)
+    scSim.AddModelToTask(measTaskName, planetNavMeas, 96)
 
-    scSim.AddModelToTask(fswTaskName, smallBodyNav, ModelPriority=90)
-    scSim.AddModelToTask(fswTaskName, waypointFeedback, ModelPriority=89)
-    scSim.AddModelToTask(fswTaskName, sunPointWrap, sunPointData, ModelPriority=95)
-    scSim.AddModelToTask(fswTaskName, trackingErrorWrap, trackingErrorData, ModelPriority=94)
-    scSim.AddModelToTask(fswTaskName, mrpFeedbackControlWrap, mrpFeedbackControlData, ModelPriority=93)
-    scSim.AddModelToTask(fswTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig, ModelPriority=92)
+    scSim.AddModelToTask(fswTaskName, smallBodyNav, 90)
+    scSim.AddModelToTask(fswTaskName, waypointFeedback, 89)
+    scSim.AddModelToTask(fswTaskName, sunPoint, 95)
+    scSim.AddModelToTask(fswTaskName, trackingError, 94)
+    scSim.AddModelToTask(fswTaskName, mrpFeedbackControl, 93)
+    scSim.AddModelToTask(fswTaskName, rwMotorTorqueObj, 92)
 
     #   Setup data logging before the simulation is initialized
     sc_truth_recorder = scObject.scStateOutMsg.recorder()

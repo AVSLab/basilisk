@@ -360,32 +360,29 @@ def run(show_plots, useBatch):
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # Set hillPoint guidance module
-    attGuidanceConfig = hillPoint.hillPointConfig()
-    attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
-    attGuidanceWrap.ModelTag = "hillPoint"
-    attGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    attGuidanceConfig.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[0])
+    attGuidance = hillPoint.hillPoint()
+    attGuidance.ModelTag = "hillPoint"
+    attGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    attGuidance.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[0])
 
     # Set the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    attErrorConfig.sigma_R0R = [0, 1, 0]
-    attErrorConfig.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    attError.sigma_R0R = [0, 1, 0]
+    attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # Set the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.K = 3.5
-    mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.K = 3.5
+    mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     # Connect torque command to external torque effector
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     # Prepare 100 landmarks distribution
     polyFile = bskPath + '/supportData/LocalGravData/eros007790.tab'
@@ -414,9 +411,9 @@ def run(show_plots, useBatch):
     scSim.AddModelToTask(simTaskName, scObject, ModelPriority=98)
     scSim.AddModelToTask(simTaskName, extFTObject, ModelPriority=97)
     scSim.AddModelToTask(simTaskName, sNavObject, ModelPriority=96)
-    scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig, ModelPriority=95)
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig, ModelPriority=94)
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig, ModelPriority=93)
+    scSim.AddModelToTask(simTaskName, attGuidance, ModelPriority=95)
+    scSim.AddModelToTask(simTaskName, attError, ModelPriority=94)
+    scSim.AddModelToTask(simTaskName, mrpControl, ModelPriority=93)
     scSim.AddModelToTask(simTaskName, camera, ModelPriority=92)
 
     # Add data logging to task
@@ -434,7 +431,7 @@ def run(show_plots, useBatch):
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
     configDataMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
 
     # Initialize Simulation
     scSim.InitializeSimulation()

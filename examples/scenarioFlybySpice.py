@@ -100,21 +100,20 @@ Both modules are added to the simulation task::
 Next the ``velocityPoint`` module is configured for each planet case. This module fixes the spacecraft attitude in the
 orbit velocity frame. See :ref:`velocityPoint` for a more detailed description of this module. The Mars velocity-pointing case is shown below::
 
-    velMarsGuidanceConfig = velocityPoint.velocityPointConfig()
-    velMarsGuidanceWrap = scSim.setModelDataWrap(velMarsGuidanceConfig)
-    velMarsGuidanceWrap.ModelTag = "velocityPointMars"
-    velMarsGuidanceConfig.mu = marsMu
+    velMarsGuidance = velocityPoint.velocityPoint()
+    velMarsGuidance.ModelTag = "velocityPointMars"
+    velMarsGuidance.mu = marsMu
 
 The velocity pointing module has two input messages that must be connected. First, the module's
 ``transNavInMsg`` message is subscribed to the simple navigation module's ``transOutMsg`` message. The module's
 ``celBodyInMsg`` message must be connected to the flyby planet's ephemeris output message::
 
-    velMarsGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    velMarsGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[marsIdx])
+    velMarsGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    velMarsGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[marsIdx])
 
 Finally, add the module to the simulation task list::
 
-    scSim.AddModelToTask(simTaskName, velMarsGuidanceWrap, velMarsGuidanceConfig)
+    scSim.AddModelToTask(simTaskName, velMarsGuidance)
 
 The other attitude guidance modules used in this simulation are implemented in similar manner. The ``locationPointing``
 module points a body-fixed spacecraft axis towards a particular location of interest. Modes for Earth- and Sun-pointing
@@ -123,37 +122,34 @@ message. The module's ``pHat_B`` vector is set according to which body-fixed vec
 of interest. See :ref:`locationPointing` for a more detailed description of this module.
 The Earth-pointing guidance module setup is shown below::
 
-    earthPointGuidanceConfig = locationPointing.locationPointingConfig()
-    earthPointGuidanceWrap = scSim.setModelDataWrap(earthPointGuidanceConfig)
-    earthPointGuidanceWrap.ModelTag = "antennaEarthPoint"
-    earthPointGuidanceConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    earthPointGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
-    earthPointGuidanceConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    earthPointGuidanceConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
-    earthPointGuidanceConfig.pHat_B = [0.0, 0.0, 1.0]
-    earthPointGuidanceConfig.useBoresightRateDamping = 1
-    scSim.AddModelToTask(simTaskName, earthPointGuidanceWrap, earthPointGuidanceConfig)
+    earthPointGuidance = locationPointing.locationPointing()
+    earthPointGuidance.ModelTag = "antennaEarthPoint"
+    earthPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    earthPointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
+    earthPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    earthPointGuidance.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    earthPointGuidance.pHat_B = [0.0, 0.0, 1.0]
+    earthPointGuidance.useBoresightRateDamping = 1
+    scSim.AddModelToTask(simTaskName, earthPointGuidance)
 
 Next, a science-pointing mode is implemented using the ``hillPoint`` module. This module points a body-fixed location
 on the spacecraft designated as a camera towards the flyby planet of interest. See :ref:`hillPoint` for a more
 detailed description of this module::
 
     cameraLocation = [0.0, 1.5, 0.0]
-    sciencePointGuidanceConfig = hillPoint.hillPointConfig()
-    sciencePointGuidanceWrap = scSim.setModelDataWrap(sciencePointGuidanceConfig)
-    sciencePointGuidanceWrap.ModelTag = "sciencePointAsteroid"
-    sciencePointGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    sciencePointGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[planetIdx])
-    scSim.AddModelToTask(simTaskName, sciencePointGuidanceWrap, sciencePointGuidanceConfig)
+    sciencePointGuidance = hillPoint.hillPoint()
+    sciencePointGuidance.ModelTag = "sciencePointAsteroid"
+    sciencePointGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    sciencePointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[planetIdx])
+    scSim.AddModelToTask(simTaskName, sciencePointGuidance)
 
 Next, the attitude tracking error module must be configured with the initial flight mode::
 
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.attRefInMsg.subscribeTo(velEarthGuidanceConfig.attRefOutMsg)  # initial flight mode
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
+    attError.attRefInMsg.subscribeTo(velEarthGuidance.attRefOutMsg)  # initial flight mode
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
 Then, the flight software vehicle configuration message is configured::
 
@@ -163,21 +159,20 @@ Then, the flight software vehicle configuration message is configured::
 
 The MRP Feedback control module is configured next for attitude control::
 
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControlConfig.K = 3.5
-    mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControl.K = 3.5
+    mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
 To complete the feedback loop, the MRP feedback module's ``cmdTorqueOutMsg`` output message is connected to the
 external torque module's ``cmdTorqueInMsg``::
 
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
 Additional Visualization Features
 ------------------------------------
@@ -206,16 +201,16 @@ desired guidance configuration module::
 
     def runVelocityPointing(simTime, planetMsg):
         nonlocal simulationTime
-        attErrorConfig.attRefInMsg.subscribeTo(planetMsg)
+        attError.attRefInMsg.subscribeTo(planetMsg)
         transceiverHUD.transceiverState = 0  # antenna off
-        attErrorConfig.sigma_R0R = [np.tan(90.*macros.D2R/4), 0, 0]
+        attError.sigma_R0R = [np.tan(90.*macros.D2R/4), 0, 0]
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
 
 To execute the desired attitude-pointing mode, the ``run`` function must be called with the desired simulation time::
 
-    runVelocityPointing(4*hour, velPlantConfig.attRefOutMsg)
+    runVelocityPointing(4*hour, velPlant.attRefOutMsg)
 
 Ensure to unload the Spice kernel at the end of each simulation::
 
@@ -391,84 +386,77 @@ def run(planetCase):
     #
 
     # Set up Venus relative velocityPoint guidance module
-    velVenusGuidanceConfig = velocityPoint.velocityPointConfig()
-    velVenusGuidanceWrap = scSim.setModelDataWrap(velVenusGuidanceConfig)
-    velVenusGuidanceWrap.ModelTag = "velocityPointVenus"
-    velVenusGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    velVenusGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[venusIdx])
-    velVenusGuidanceConfig.mu = venusMu
-    scSim.AddModelToTask(simTaskName, velVenusGuidanceWrap, velVenusGuidanceConfig)
+    velVenusGuidance = velocityPoint.velocityPoint()
+    velVenusGuidance.ModelTag = "velocityPointVenus"
+    velVenusGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    velVenusGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[venusIdx])
+    velVenusGuidance.mu = venusMu
+    scSim.AddModelToTask(simTaskName, velVenusGuidance)
 
     # Set up Earth relative velocityPoint guidance module
-    velEarthGuidanceConfig = velocityPoint.velocityPointConfig()
-    velEarthGuidanceWrap = scSim.setModelDataWrap(velEarthGuidanceConfig)
-    velEarthGuidanceWrap.ModelTag = "velocityPointEarth"
-    velEarthGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    velEarthGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
-    velEarthGuidanceConfig.mu = earthMu
-    scSim.AddModelToTask(simTaskName, velEarthGuidanceWrap, velEarthGuidanceConfig)
+    velEarthGuidance = velocityPoint.velocityPoint()
+    velEarthGuidance.ModelTag = "velocityPointEarth"
+    velEarthGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    velEarthGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
+    velEarthGuidance.mu = earthMu
+    scSim.AddModelToTask(simTaskName, velEarthGuidance)
 
     # Set up Mars relative velocityPoint guidance module
-    velMarsGuidanceConfig = velocityPoint.velocityPointConfig()
-    velMarsGuidanceWrap = scSim.setModelDataWrap(velMarsGuidanceConfig)
-    velMarsGuidanceWrap.ModelTag = "velocityPointMars"
-    velMarsGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    velMarsGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[marsIdx])
-    velMarsGuidanceConfig.mu = marsMu
-    scSim.AddModelToTask(simTaskName, velMarsGuidanceWrap, velMarsGuidanceConfig)
+    velMarsGuidance = velocityPoint.velocityPoint()
+    velMarsGuidance.ModelTag = "velocityPointMars"
+    velMarsGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    velMarsGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[marsIdx])
+    velMarsGuidance.mu = marsMu
+    scSim.AddModelToTask(simTaskName, velMarsGuidance)
 
     if planetCase == "venus":
-        velPlantConfig = velVenusGuidanceConfig
+        velPlant = velVenusGuidance
         planetIdx = venusIdx
     elif planetCase == "earth":
-        velPlantConfig = velEarthGuidanceConfig
+        velPlant = velEarthGuidance
         planetIdx = earthIdx
     elif planetCase == "mars":
-        velPlantConfig = velMarsGuidanceConfig
+        velPlant = velMarsGuidance
         planetIdx = marsIdx
     else:
         print("flyby target not implemented.")
         exit(1)
 
     # Set up the Earth antenna-pointing guidance module
-    earthPointGuidanceConfig = locationPointing.locationPointingConfig()
-    earthPointGuidanceWrap = scSim.setModelDataWrap(earthPointGuidanceConfig)
-    earthPointGuidanceWrap.ModelTag = "antennaEarthPoint"
-    earthPointGuidanceConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    earthPointGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
-    earthPointGuidanceConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    earthPointGuidanceConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
-    earthPointGuidanceConfig.pHat_B = [0.0, 0.0, 1.0]
-    earthPointGuidanceConfig.useBoresightRateDamping = 1
-    scSim.AddModelToTask(simTaskName, earthPointGuidanceWrap, earthPointGuidanceConfig)
+    earthPointGuidance = locationPointing.locationPointing()
+    earthPointGuidance.ModelTag = "antennaEarthPoint"
+    earthPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    earthPointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
+    earthPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    earthPointGuidance.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    earthPointGuidance.pHat_B = [0.0, 0.0, 1.0]
+    earthPointGuidance.useBoresightRateDamping = 1
+    scSim.AddModelToTask(simTaskName, earthPointGuidance)
 
     # Set up the solar panel Sun-pointing guidance module
-    sunPointGuidanceConfig = locationPointing.locationPointingConfig()
-    sunPointGuidanceWrap = scSim.setModelDataWrap(sunPointGuidanceConfig)
-    sunPointGuidanceWrap.ModelTag = "panelSunPoint"
-    sunPointGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[sunIdx])
-    sunPointGuidanceConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    sunPointGuidanceConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
-    sunPointGuidanceConfig.pHat_B = [0.0, 0.0, 1.0]
-    sunPointGuidanceConfig.useBoresightRateDamping = 1
-    scSim.AddModelToTask(simTaskName, sunPointGuidanceWrap, sunPointGuidanceConfig)
+    sunPointGuidance = locationPointing.locationPointing()
+    sunPointGuidance.ModelTag = "panelSunPoint"
+    sunPointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[sunIdx])
+    sunPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    sunPointGuidance.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    sunPointGuidance.pHat_B = [0.0, 0.0, 1.0]
+    sunPointGuidance.useBoresightRateDamping = 1
+    scSim.AddModelToTask(simTaskName, sunPointGuidance)
 
     # Set up the sensor science-pointing guidance module
     cameraLocation = [0.0, 1.5, 0.0]
-    sciencePointGuidanceConfig = hillPoint.hillPointConfig()
-    sciencePointGuidanceWrap = scSim.setModelDataWrap(sciencePointGuidanceConfig)
-    sciencePointGuidanceWrap.ModelTag = "sciencePointAsteroid"
-    sciencePointGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    sciencePointGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[planetIdx])
-    scSim.AddModelToTask(simTaskName, sciencePointGuidanceWrap, sciencePointGuidanceConfig)
+    sciencePointGuidance = hillPoint.hillPoint()
+    sciencePointGuidance.ModelTag = "sciencePointAsteroid"
+    sciencePointGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    sciencePointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[planetIdx])
+    scSim.AddModelToTask(simTaskName, sciencePointGuidance)
 
     # Set up the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.attRefInMsg.subscribeTo(velEarthGuidanceConfig.attRefOutMsg)  # initial flight mode
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
+    attError.attRefInMsg.subscribeTo(velEarthGuidance.attRefOutMsg)  # initial flight mode
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # Create the FSW vehicle configuration message
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
@@ -476,20 +464,19 @@ def run(planetCase):
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # Set up the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
     II = 900.
-    mrpControlConfig.P = 2*II/(3*60)
-    mrpControlConfig.K = mrpControlConfig.P*mrpControlConfig.P/II
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl.P = 2*II/(3*60)
+    mrpControl.K = mrpControl.P*mrpControl.P/II
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     # Connect torque command to external torque effector
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     # Set the initial simulation time
     simulationTime = macros.sec2nano(0)
@@ -525,40 +512,40 @@ def run(planetCase):
     # Set up flight modes
     def runVelocityPointing(simTime, planetMsg):
         nonlocal simulationTime
-        attErrorConfig.attRefInMsg.subscribeTo(planetMsg)
+        attError.attRefInMsg.subscribeTo(planetMsg)
         if vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
-        attErrorConfig.sigma_R0R = [np.tan(90.*macros.D2R/4), 0, 0]
+        attError.sigma_R0R = [np.tan(90.*macros.D2R/4), 0, 0]
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
 
     def runAntennaEarthPointing(simTime):
         nonlocal simulationTime
-        attErrorConfig.attRefInMsg.subscribeTo(earthPointGuidanceConfig.attRefOutMsg)
+        attError.attRefInMsg.subscribeTo(earthPointGuidance.attRefOutMsg)
         if vizFound:
             transceiverHUD.transceiverState = 3  # antenna in send and receive mode
-        attErrorConfig.sigma_R0R = [0, 0, 0]
+        attError.sigma_R0R = [0, 0, 0]
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
 
     def runPanelSunPointing(simTime):
         nonlocal simulationTime
-        attErrorConfig.attRefInMsg.subscribeTo(sunPointGuidanceConfig.attRefOutMsg)
+        attError.attRefInMsg.subscribeTo(sunPointGuidance.attRefOutMsg)
         if vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
-        attErrorConfig.sigma_R0R = [0, 0, 0]
+        attError.sigma_R0R = [0, 0, 0]
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
 
     def runSensorSciencePointing(simTime):
         nonlocal simulationTime
-        attErrorConfig.attRefInMsg.subscribeTo(sciencePointGuidanceConfig.attRefOutMsg)
+        attError.attRefInMsg.subscribeTo(sciencePointGuidance.attRefOutMsg)
         if vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
-        attErrorConfig.sigma_R0R = [-1./3., 1./3., -1./3.]
+        attError.sigma_R0R = [-1./3., 1./3., -1./3.]
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -566,7 +553,7 @@ def run(planetCase):
     hour = 60*60
 
     # Execute desired attitude flight modes
-    runVelocityPointing(4*hour, velPlantConfig.attRefOutMsg)
+    runVelocityPointing(4*hour, velPlant.attRefOutMsg)
 
     runAntennaEarthPointing(4*hour)
 

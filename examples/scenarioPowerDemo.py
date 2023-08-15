@@ -138,7 +138,7 @@ def run(show_plots):
     timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
     gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
                                      timeInitString)
-    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
+    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, -1)
 
     # store planet and sun msgs
     plMsg = gravFactory.spiceObject.planetStateOutMsgs[0]

@@ -131,8 +131,8 @@ def run(show_plots, useRefAttitude):
     scObject2.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
-    scSim.AddModelToTask(dynTaskName, scObject, None, 2)
-    scSim.AddModelToTask(dynTaskName, scObject2, None, 2)
+    scSim.AddModelToTask(dynTaskName, scObject, 2)
+    scSim.AddModelToTask(dynTaskName, scObject2, 2)
 
     # grav
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -145,7 +145,7 @@ def run(show_plots, useRefAttitude):
 
     # thruster
     thrusterEffector2 = thrusterDynamicEffector.ThrusterDynamicEffector()
-    scSim.AddModelToTask(dynTaskName, thrusterEffector2, None, 3)
+    scSim.AddModelToTask(dynTaskName, thrusterEffector2, 3)
     thFactory2 = simIncludeThruster.thrusterFactory()
     location = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
     direction = [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]  # get thrust in +z direction
@@ -157,15 +157,15 @@ def run(show_plots, useRefAttitude):
     extFTObject2 = extForceTorque.ExtForceTorque()
     extFTObject2.ModelTag = "externalDisturbance2"
     scObject2.addDynamicEffector(extFTObject2)
-    scSim.AddModelToTask(dynTaskName, extFTObject2, None, 3)
+    scSim.AddModelToTask(dynTaskName, extFTObject2, 3)
 
     # simple nav
     simpleNavObject = simpleNav.SimpleNav()
     simpleNavObject2 = simpleNav.SimpleNav()
     simpleNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     simpleNavObject2.scStateInMsg.subscribeTo(scObject2.scStateOutMsg)
-    scSim.AddModelToTask(dynTaskName, simpleNavObject, None, 1)
-    scSim.AddModelToTask(dynTaskName, simpleNavObject2, None, 1)
+    scSim.AddModelToTask(dynTaskName, simpleNavObject, 1)
+    scSim.AddModelToTask(dynTaskName, simpleNavObject2, 1)
 
     # ----- fsw ----- #
     fswProcessName = "fswProcess"
@@ -181,11 +181,10 @@ def run(show_plots, useRefAttitude):
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut2)
 
     # inertial 3D target attitude
-    inertial3DData = inertial3D.inertial3DConfig()
-    inertial3DWrap = scSim.setModelDataWrap(inertial3DData)
-    inertial3DWrap.ModelTag = "inertial_3D2"
-    inertial3DData.sigma_R0N = [1.0, 0.0, 0.0]
-    scSim.AddModelToTask(fswTaskName, inertial3DWrap, inertial3DData, 11)
+    inertial3DObj = inertial3D.inertial3D()
+    inertial3DObj.ModelTag = "inertial_3D2"
+    inertial3DObj.sigma_R0N = [1.0, 0.0, 0.0]
+    scSim.AddModelToTask(fswTaskName, inertial3DObj, 11)
 
     # thrusterConfigMsg
     fswSetupThrusters.clearSetup()
@@ -196,41 +195,38 @@ def run(show_plots, useRefAttitude):
     fswThrConfMsg = fswSetupThrusters.writeConfigMessage()
 
     # spacecraftReconfig
-    spacecraftReconfigData = spacecraftReconfig.spacecraftReconfigConfig()
-    spacecraftReconfigWrap = scSim.setModelDataWrap(spacecraftReconfigData)
-    spacecraftReconfigWrap.ModelTag = "spacecraftReconfig"
-    spacecraftReconfigData.chiefTransInMsg.subscribeTo(simpleNavObject.transOutMsg)
-    spacecraftReconfigData.deputyTransInMsg.subscribeTo(simpleNavObject2.transOutMsg)
+    spacecraftReconfigModule = spacecraftReconfig.spacecraftReconfig()
+    spacecraftReconfigModule.ModelTag = "spacecraftReconfig"
+    spacecraftReconfigModule.chiefTransInMsg.subscribeTo(simpleNavObject.transOutMsg)
+    spacecraftReconfigModule.deputyTransInMsg.subscribeTo(simpleNavObject2.transOutMsg)
     if useRefAttitude:
-        spacecraftReconfigData.attRefInMsg.subscribeTo(inertial3DData.attRefOutMsg)
-    spacecraftReconfigData.thrustConfigInMsg.subscribeTo(fswThrConfMsg)
-    spacecraftReconfigData.vehicleConfigInMsg.subscribeTo(vcMsg)
-    thrusterEffector2.cmdsInMsg.subscribeTo(spacecraftReconfigData.onTimeOutMsg)
-    spacecraftReconfigData.mu = orbitalMotion.MU_EARTH*1e9  # [m^3/s^2]
-    spacecraftReconfigData.attControlTime = 400  # [s]
-    spacecraftReconfigData.targetClassicOED = [0.0000, 0.0001, 0.0002, -0.0001, -0.0002, -0.0003]
-    scSim.AddModelToTask(fswTaskName, spacecraftReconfigWrap, spacecraftReconfigData, 10)
+        spacecraftReconfigModule.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
+    spacecraftReconfigModule.thrustConfigInMsg.subscribeTo(fswThrConfMsg)
+    spacecraftReconfigModule.vehicleConfigInMsg.subscribeTo(vcMsg)
+    thrusterEffector2.cmdsInMsg.subscribeTo(spacecraftReconfigModule.onTimeOutMsg)
+    spacecraftReconfigModule.mu = orbitalMotion.MU_EARTH*1e9  # [m^3/s^2]
+    spacecraftReconfigModule.attControlTime = 400  # [s]
+    spacecraftReconfigModule.targetClassicOED = [0.0000, 0.0001, 0.0002, -0.0001, -0.0002, -0.0003]
+    scSim.AddModelToTask(fswTaskName, spacecraftReconfigModule, 10)
 
     # att_Error
-    attErrorData = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorData)
-    attErrorWrap.ModelTag = "attError"
-    scSim.AddModelToTask(fswTaskName, attErrorWrap, attErrorData, 9)
-    attErrorData.attRefInMsg.subscribeTo(spacecraftReconfigData.attRefOutMsg)
-    attErrorData.attNavInMsg.subscribeTo(simpleNavObject2.attOutMsg)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attError"
+    scSim.AddModelToTask(fswTaskName, attError, 9)
+    attError.attRefInMsg.subscribeTo(spacecraftReconfigModule.attRefOutMsg)
+    attError.attNavInMsg.subscribeTo(simpleNavObject2.attOutMsg)
 
     # MRP_FeedBack
-    mrpControlData = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlData)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(fswTaskName, mrpControlWrap, mrpControlData, 8)
-    mrpControlData.guidInMsg.subscribeTo(attErrorData.attGuidOutMsg)
-    mrpControlData.vehConfigInMsg.subscribeTo(vcMsg)
-    extFTObject2.cmdTorqueInMsg.subscribeTo(mrpControlData.cmdTorqueOutMsg)
-    mrpControlData.K = 10
-    mrpControlData.Ki = 0.0002
-    mrpControlData.P = 50.0
-    mrpControlData.integralLimit = 2. / mrpControlData.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(fswTaskName, mrpControl, 8)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    extFTObject2.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
+    mrpControl.K = 10
+    mrpControl.Ki = 0.0002
+    mrpControl.P = 50.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     # ----- Setup spacecraft initial states ----- #
     mu = gravFactory.gravBodies['earth'].mu
@@ -273,9 +269,9 @@ def run(show_plots, useRefAttitude):
     samplingTime = unitTestSupport.samplingTime(simulationTime, dynTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     dataLog2 = scObject2.scStateOutMsg.recorder(samplingTime)
-    attRefLog = spacecraftReconfigData.attRefOutMsg.recorder(samplingTime)
-    thrCmdLog = spacecraftReconfigData.onTimeOutMsg.recorder(samplingTime)
-    attErrLog = attErrorData.attGuidOutMsg.recorder(samplingTime)
+    attRefLog = spacecraftReconfigModule.attRefOutMsg.recorder(samplingTime)
+    thrCmdLog = spacecraftReconfigModule.onTimeOutMsg.recorder(samplingTime)
+    attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTaskName, dataLog)
     scSim.AddModelToTask(dynTaskName, dataLog2)
     scSim.AddModelToTask(dynTaskName, attRefLog)

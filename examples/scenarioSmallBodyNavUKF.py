@@ -487,12 +487,12 @@ def run(show_plots):
     smallBodyNav.asteroidEphemerisInMsg.subscribeTo(planetNavMeas.ephemerisOutMsg)
 
     # add all models to the task
-    scSim.AddModelToTask(simTaskName, gravBodyEphem, ModelPriority=100)
-    scSim.AddModelToTask(simTaskName, ephemConverter, ModelPriority=99)
-    scSim.AddModelToTask(simTaskName, scObject, ModelPriority=98)
-    scSim.AddModelToTask(simTaskName, simpleNavMeas, ModelPriority=97)
-    scSim.AddModelToTask(simTaskName, planetNavMeas, ModelPriority=96)
-    scSim.AddModelToTask(simTaskName, smallBodyNav, ModelPriority=95)
+    scSim.AddModelToTask(simTaskName, gravBodyEphem, 100)
+    scSim.AddModelToTask(simTaskName, ephemConverter, 99)
+    scSim.AddModelToTask(simTaskName, scObject, 98)
+    scSim.AddModelToTask(simTaskName, simpleNavMeas, 97)
+    scSim.AddModelToTask(simTaskName, planetNavMeas, 96)
+    scSim.AddModelToTask(simTaskName, smallBodyNav, 95)
 
     # setup data logging before the simulation is initialized
     ast_ephem_recorder = gravBodyEphem.planetOutMsgs[0].recorder()
