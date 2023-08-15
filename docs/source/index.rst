@@ -200,7 +200,6 @@ Related Publications
    Learn
    Support
    Documentation/index
-   externalTools/index
    Forum
 
 .. toctree::
