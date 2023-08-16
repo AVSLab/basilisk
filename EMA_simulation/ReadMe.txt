@@ -1,0 +1,1 @@
+Use this folder to store maxSim setup and simulation scripts.
