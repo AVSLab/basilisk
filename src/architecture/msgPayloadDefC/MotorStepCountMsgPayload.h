@@ -23,7 +23,7 @@
 
  /*! @brief Structure containing number of stepper motor step counts */
 typedef struct {
-    double numSteps;    //!< Number of stepper motor steps
+    int numSteps;    //!< Number of stepper motor steps
 }MotorStepCountMsgPayload;
 
 
