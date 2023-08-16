@@ -22,6 +22,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "architecture/utilities/bskLogging.h"
+#include "cMsgCInterface/MotorStepCountMsg_C.h"
 #include "cMsgCInterface/HingedRigidBodyMsg_C.h"
 #include "cMsgCInterface/PrescribedMotionMsg_C.h"
 
@@ -50,10 +51,17 @@ typedef struct {
     double a;                                                   //!< Parabolic constant for the first half of the maneuver
     double b;                                                   //!< Parabolic constant for the second half of the maneuver
 
+    double stepAngle;                                           //!< [rad] Step angle
+    double stepTime;                                            //!< [s] Time for a single step
+    int numSteps;                                               //!< Number of commanded steps
+    int stepCount;                                              //!< Current number of steps taken
+    double intermediateThetaInit;
+    double intermediateThetaRef;
+
     BSKLogger *bskLogger;                                       //!< BSK Logging
 
     /* Messages */
-    HingedRigidBodyMsg_C    spinningBodyInMsg;                  //!< Input msg for the spinning body reference angle and angle rate
+    MotorStepCountMsg_C    motorStepCountInMsg;                 //!< Input msg for the number of commanded motor step counts
     HingedRigidBodyMsg_C    spinningBodyOutMsg;                 //!< Output msg for the spinning body angle and angle rate
     PrescribedMotionMsg_C prescribedMotionOutMsg;               //!< Output msg for the spinning body prescribed states
 
