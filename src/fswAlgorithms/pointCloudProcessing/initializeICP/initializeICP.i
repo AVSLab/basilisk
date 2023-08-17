@@ -17,6 +17,31 @@
 
 */
 
-#define MAX_POINTS 5000
-#define POINT_DIM 3
-#define MAX_ITERATIONS 250
+%module initializeICP
+%{
+   #include "initializeICP.h"
+%}
+
+%pythoncode %{
+from Basilisk.architecture.swig_common_model import *
+%}
+
+%include "stdint.i"
+%include "sys_model.h"
+%include "std_array.i"
+%include "std_string.i"
+%include "swig_conly_data.i"
+
+%include "initializeICP.h"
+
+%include "architecture/msgPayloadDefCpp/SICPMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/PointCloudMsgPayload.h"
+%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+struct EphemerisMsg_C;
+%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+struct CameraConfigMsg_C;
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

@@ -183,6 +183,7 @@ def runModule(data, reference, numberPoints, iters = 100):
     # Create the input messages.
     inputPointCloud = messaging.PointCloudMsgPayload()
     referencePointCloud = messaging.PointCloudMsgPayload()
+    icpInitialCondition = messaging.SICPMsgPayload()
 
     inputPointCloud.points = data.flatten().tolist()
     inputPointCloud.numberOfPoints = numberPoints
@@ -190,6 +191,10 @@ def runModule(data, reference, numberPoints, iters = 100):
     inputPointCloud.valid = True
     inputPointCloudMsg = messaging.PointCloudMsg().write(inputPointCloud)
     sicp.measuredPointCloud.subscribeTo(inputPointCloudMsg)
+
+    icpInitialCondition.valid = False
+    initialConditionMsg = messaging.SICPMsg().write(icpInitialCondition)
+    sicp.initialCondition.subscribeTo(initialConditionMsg)
 
     referencePointCloud.points = reference.flatten().tolist()
     referencePointCloud.numberOfPoints = numberPoints
