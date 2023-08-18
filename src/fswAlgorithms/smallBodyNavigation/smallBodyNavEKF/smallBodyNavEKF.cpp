@@ -117,17 +117,22 @@ void SmallBodyNavEKF::readMessages(uint64_t CurrentSimNanos){
     } else {
         this->newMeasurements = false;
     }
+
     this->navTransInMsgBuffer = this->navTransInMsg();
     this->navAttInMsgBuffer = this->navAttInMsg();
     this->asteroidEphemerisInMsgBuffer = this->asteroidEphemerisInMsg();
     this->sunEphemerisInMsgBuffer = this->sunEphemerisInMsg();
+
+    // Check that r_BN_N is not zero
+    if (this->navTransInMsg().r_BN_N[0] == 0 && this->navTransInMsg().r_BN_N[1] == 0 && this->navTransInMsg().r_BN_N[2] == 0){
+        this->newMeasurements = false;
+    }
 
     if (this->cmdForceBodyInMsg.isLinked()){
         this->cmdForceBodyInMsgBuffer= this->cmdForceBodyInMsg();
     } else{
         this->cmdForceBodyInMsgBuffer = this->cmdForceBodyInMsg.zeroMsgPayload;
     }
-
 
     /* Read the thruster messages */
     THROutputMsgPayload thrusterMsg;
@@ -221,17 +226,6 @@ void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
     x_hat_k1_ = x_hat_k + (k1 + 2*k2 + 2*k3 + k4)/6;
     Phi_k = Phi_k + (k1_phi + 2*k2_phi + 2*k3_phi + k4_phi)/6;
 
-    // Check if Phi_k is not invertible by taking the absolute value of the determinant
-    // if (fabs(Phi_k.determinant()) < 1e-3) {
-    //     // Print an error and the CurrenSimNanos
-    //     std::cout << "Phi_k is not invertible at " << CurrentSimNanos << std::endl;
-    // } else {
-    //     // print out Phi_k
-    //     std::cout << "Phi_k is " << std::endl << Phi_k << std::endl;
-        
-    //     // print the determinant
-    //     std::cout << "Determinant of Phi_k is " << Phi_k.determinant() << std::endl;
-    // }
 }
 
 /*! This method calculates the EOMs of the state vector and state transition matrix
@@ -337,13 +331,18 @@ void SmallBodyNavEKF::measurementUpdate(){
     /* Subtract the asteroid position from the spacecraft position and rotate it into the small body's hill frame*/
     Eigen::VectorXd y_k1;
     y_k1.setZero(this->numStates);
-    y_k1.segment(0, 3) = dcm_ON*(cArray2EigenVector3d(navTransInMsgBuffer.r_BN_N)
-            - cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
+    // y_k1.segment(0, 3) = dcm_ON*(cArray2EigenVector3d(navTransInMsgBuffer.r_BN_N)
+    //         - cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
 
-    /* Perform a similar operation for the relative velocity */
-    y_k1.segment(3, 3) = dcm_ON*(cArray2EigenVector3d(navTransInMsgBuffer.v_BN_N)
-            - cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.v_BdyZero_N));
+    // /* Perform a similar operation for the relative velocity */
+    // y_k1.segment(3, 3) = dcm_ON*(cArray2EigenVector3d(navTransInMsgBuffer.v_BN_N)
+    //         - cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.v_BdyZero_N));
 
+    double r_BO_O_meas[3];
+    double v_BO_O_meas[3];
+    rv2hill(asteroidEphemerisInMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.v_BdyZero_N, navTransInMsgBuffer.r_BN_N, navTransInMsgBuffer.v_BN_N, r_BO_O_meas, v_BO_O_meas);
+    y_k1.segment(0, 3) = cArray2EigenVector3d(r_BO_O_meas);
+    y_k1.segment(3, 3) = cArray2EigenVector3d(v_BO_O_meas);
 
     // /* Small body attitude from the ephemeris msg */
     // y_k1.segment(6, 3) =  cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.sigma_BN);
@@ -365,7 +364,8 @@ void SmallBodyNavEKF::measurementUpdate(){
     x_hat_k1 = x_hat_k1_ + K_k1*(y_k1 - x_hat_k1_);
 
     /* Update the covariance */
-    P_k1 = (I_full - K_k1*H_k1)*P_k1_*(I_full - K_k1*H_k1).transpose() + K_k1*M*R*M.transpose()*K_k1.transpose();
+    // P_k1 = (I_full - K_k1*H_k1)*P_k1_*(I_full - K_k1*H_k1).transpose() + K_k1*M*R*M.transpose()*K_k1.transpose();
+    P_k1 = (I_full - K_k1*H_k1)*P_k1_*(I_full - K_k1*H_k1).transpose() + M*R*M.transpose();
 
     /* Assign the state estimate and covariance to k for the next iteration */
     x_hat_k = x_hat_k1;
