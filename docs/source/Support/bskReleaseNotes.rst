@@ -40,6 +40,7 @@ Version |release|
   :ref:`spinningBodyTwoDOFStateEffector` module.
 - Corrected an error with :ref:`thrusterStateEffector` where if there are multiple instances of the
   thruster state effector then the last effector will over-write all the state of the earlier thrusters.
+- Corrected an error with :ref:`magnetometer` where the RNG seed was passed to the Gauss-Markov noise model within the constructor and could therefore not be modified after creating the object. Furthermore, the noise model is now only used if all three components of the standard deviation parameter are initialized to a positive value.
 
 
 Version 2.2.0 (June 28, 2023)
