@@ -31,7 +31,7 @@ The :ref:`SimulationBaseClass` method to record a module variable is::
 
     scSim.AddVariableForLogging( variableString, recordingTime, indexStart==0, indexStop==0)
 
-Here ``variableString`` must be composed of the module tag string, a period and the variable name.  The examples above illustrate how to apply this method for a C or C++ module variable.  Remember that with a C module the ``ModelTag`` variable is defined with the module wrapper, while the C++ module has this ``ModelTag`` variable defined within its class.
+Here ``variableString`` must be composed of the module tag string, a period and the variable name.  The examples above illustrate how to apply this method for a C or C++ module variable. 
 
 The ``recordingTime`` variable is the minimum time that must pass, in nano-seconds again, before the module variable is recorded.
 

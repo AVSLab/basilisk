@@ -240,40 +240,38 @@ def run(show_plots):
     #
 
     # setup Boulder pointing guidance module
-    locPointConfig = locationPointing.locationPointingConfig()
-    locPointWrap = scSim.setModelDataWrap(locPointConfig)
-    locPointWrap.ModelTag = "locPoint"
-    scSim.AddModelToTask(simTaskName, locPointWrap, locPointConfig)
-    locPointConfig.pHat_B = [0, 0, 1]
-    locPointConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
-    locPointConfig.useBoresightRateDamping = 1
-    locPointConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    locPointConfig.locationInMsg.subscribeTo(groundStation.currentGroundStateOutMsg)
+    locPoint = locationPointing.locationPointing()
+    locPoint.ModelTag = "locPoint"
+    scSim.AddModelToTask(simTaskName, locPoint)
+    locPoint.pHat_B = [0, 0, 1]
+    locPoint.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    locPoint.useBoresightRateDamping = 1
+    locPoint.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    locPoint.locationInMsg.subscribeTo(groundStation.currentGroundStateOutMsg)
     # grMsgData = messaging.GroundStateMsgPayload()
     # grMsg = messaging.GroundStateMsg().write(grMsgData)
-    # locPointConfig.locationInMsg.subscribeTo(grMsg)
+    # locPoint.locationInMsg.subscribeTo(grMsg)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.guidInMsg.subscribeTo(locPointConfig.attGuidOutMsg)
-    mrpControlConfig.K = 5.5
-    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.guidInMsg.subscribeTo(locPoint.attGuidOutMsg)
+    mrpControl.K = 5.5
+    mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     # connect torque command to external torque effector
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
-    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
-    attErrLog = locPointConfig.attGuidOutMsg.recorder(samplingTime)
+    mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
+    attErrLog = locPoint.attGuidOutMsg.recorder(samplingTime)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
     snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, mrpLog)
@@ -289,7 +287,7 @@ def run(show_plots):
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
     configDataMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     if vizSupport.vizFound:

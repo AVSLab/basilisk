@@ -66,13 +66,12 @@ User Guide
 ----------
 The required module configuration is::
 
-    solarArrayConfig = solarArrayRotation.solarArrayRotationConfig()
-    solarArrayWrap = unitTestSim.setModelDataWrap(solarArrayConfig)
-    solarArrayWrap.ModelTag = "solarArrayRotation"  
-    solarArrayConfig.a1Hat_B = [1, 0, 0]
-    solarArrayConfig.a2Hat_B = [0, 0, 1]
-    solarArrayConfig.attitudeFrame = 0
-    unitTestSim.AddModelToTask(unitTaskName, solarArrayWrap, solarArrayConfig)
+    solarArray = solarArrayRotation.solarArrayRotation()
+    solarArray.ModelTag = "solarArrayRotation"  
+    solarArray.a1Hat_B = [1, 0, 0]
+    solarArray.a2Hat_B = [0, 0, 1]
+    solarArray.attitudeFrame = 0
+    unitTestSim.AddModelToTask(unitTaskName, solarArray)
 	
 The module is configurable with the following parameters:
 

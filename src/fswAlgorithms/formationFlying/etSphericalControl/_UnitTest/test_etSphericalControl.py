@@ -87,12 +87,11 @@ def etSphericalControlTestFunction(show_plots, accuracy):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = etSphericalControl.etSphericalControlConfig()  # update with current values
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "ETcontrol"           # update python name of test module
+    module = etSphericalControl.etSphericalControl()
+    module.ModelTag = "ETcontrol"           # update python name of test module
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
     mu = 3.986004418e14  # [m^3/s^2] Earth's gravitational parameter
@@ -100,16 +99,16 @@ def etSphericalControlTestFunction(show_plots, accuracy):
     L0 = 20.
     Ki = 4e-7
     Pi = 1.85 * Ki ** 0.5
-    moduleConfig.K = [Ki, 0.0, 0.0,
+    module.K = [Ki, 0.0, 0.0,
                       0.0, Ki, 0.0,
                       0.0, 0.0, Ki]
-    moduleConfig.P = [Pi, 0.0, 0.0,
+    module.P = [Pi, 0.0, 0.0,
                       0.0, Pi, 0.0,
                       0.0, 0.0, Pi]
-    moduleConfig.L_r = 30.
-    moduleConfig.theta_r = 0.
-    moduleConfig.phi_r = 0.
-    moduleConfig.mu = mu
+    module.L_r = 30.
+    module.theta_r = 0.
+    module.phi_r = 0.
+    module.mu = mu
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -165,18 +164,18 @@ def etSphericalControlTestFunction(show_plots, accuracy):
     eForceMsg = messaging.CmdForceInertialMsg().write(eForceOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLogInertial = moduleConfig.forceInertialOutMsg.recorder()
+    dataLogInertial = module.forceInertialOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLogInertial)
-    dataLogBody = moduleConfig.forceBodyOutMsg.recorder()
+    dataLogBody = module.forceBodyOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLogBody)
 
     # connect the message interfaces
-    moduleConfig.servicerTransInMsg.subscribeTo(servicerTransMsg)
-    moduleConfig.debrisTransInMsg.subscribeTo(debrisTransMsg)
-    moduleConfig.servicerAttInMsg.subscribeTo(servicerAttMsg)
-    moduleConfig.servicerVehicleConfigInMsg.subscribeTo(servicerVehicleConfigMsg)
-    moduleConfig.debrisVehicleConfigInMsg.subscribeTo(debrisVehicleConfigMsg)
-    moduleConfig.eForceInMsg.subscribeTo(eForceMsg)
+    module.servicerTransInMsg.subscribeTo(servicerTransMsg)
+    module.debrisTransInMsg.subscribeTo(debrisTransMsg)
+    module.servicerAttInMsg.subscribeTo(servicerAttMsg)
+    module.servicerVehicleConfigInMsg.subscribeTo(servicerVehicleConfigMsg)
+    module.debrisVehicleConfigInMsg.subscribeTo(debrisVehicleConfigMsg)
+    module.eForceInMsg.subscribeTo(eForceMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -200,22 +199,22 @@ def etSphericalControlTestFunction(show_plots, accuracy):
         if not unitTestSupport.isArrayEqual(forceInertialOutput[i], trueInertialVector[i], 3, accuracy):
             testFailCount += 1
             print(forceInertialOutput[i])
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed "
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed "
                                 + "Inertial Force Output" + " unit test at t="
                                 + str(forceInertialOutput[i, 0] * macros.NANO2SEC) + "sec\n")
         if not unitTestSupport.isArrayEqual(forceBodyOutput[i], trueBodyVector[i], 3, accuracy):
             testFailCount += 1
             print(forceBodyOutput[i])
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed "
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed "
                                 + "Body Force Output" + " unit test at t="
                                 + str(forceBodyOutput[i, 0] * macros.NANO2SEC) + "sec\n")
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         print("This test uses an accuracy value of " + str(accuracy))
     else:
-        print("FAILED " + moduleWrap.ModelTag)
+        print("FAILED " + module.ModelTag)
         print(testMessages)
 
     # each test method requires a single assert method to be called

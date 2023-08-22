@@ -242,14 +242,13 @@ def StateUpdateSunLine(show_plots, kellyOn):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunlineSuKF.SunlineSuKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "sunlineSuKF"
+    module = sunlineSuKF.sunlineSuKF()
+    module.ModelTag = "sunlineSuKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig, False)
+    setupFilterData(module, False)
     cssConstelation = messaging.CSSConfigMsgPayload()
 
     CSSOrientationList = [
@@ -272,7 +271,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
     cssConstelation.cssVals = totalCSSList
     cssConstInMsg = messaging.CSSConfigMsg().write(cssConstelation)
 
-    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Add the kelly curve coefficients
@@ -284,7 +283,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
             kellyData.cssKellPow = 2.
             kellyData.cssRelScale = 1.
             kellList.append(kellyData)
-        moduleConfig.kellFits = kellList
+        module.kellFits = kellList
 
     testVector = numpy.array([-0.7, 0.7, 0.0])
     testVector/=numpy.linalg.norm(testVector)
@@ -299,13 +298,13 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 1.])
-    # moduleConfig.stateInit = [0.7, 0.7, 0.0, 0.01, 0.001, 1.]
+    # module.stateInit = [0.7, 0.7, 0.0, 0.01, 0.001, 1.]
 
     # connect messages
-    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
-    moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
+    module.cssDataInMsg.subscribeTo(cssDataInMsg)
+    module.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
-    numStates = len(moduleConfig.stateInit)
+    numStates = len(module.stateInit)
     unitTestSim.InitializeSimulation()
     if kellyOn:
         time = 1000
@@ -381,11 +380,11 @@ def StateUpdateSunLine(show_plots, kellyOn):
         testMessages.append("Sun Intensity update failure")
 
     FilterPlots.StateCovarPlot(stateLog, covarLog, show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, module.qObsVal, show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag + " state update")
+        print("PASSED: " + module.ModelTag + " state update")
     else:
         print(testMessages)
 
@@ -414,24 +413,23 @@ def StatePropSunLine(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunlineSuKF.SunlineSuKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "sunlineSuKF"
+    module = sunlineSuKF.sunlineSuKF()
+    module.ModelTag = "sunlineSuKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig, True)
+    setupFilterData(module, True)
     numStates = 6
-    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     cssConstInMsg = messaging.CSSConfigMsg()
     cssDataInMsg = messaging.CSSArraySensorMsg()
 
     # connect messages
-    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
-    moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
+    module.cssDataInMsg.subscribeTo(cssDataInMsg)
+    module.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
@@ -442,7 +440,7 @@ def StatePropSunLine(show_plots):
     covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     FilterPlots.StateCovarPlot(stateLog, covarLog, show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, module.qObsVal, show_plots)
 
     for i in range(numStates):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
@@ -454,7 +452,7 @@ def StatePropSunLine(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag + " state propagation")
+        print("PASSED: " + module.ModelTag + " state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -481,45 +479,45 @@ def FaultScenarios():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Clean methods for Measurement and Time Updates
-    moduleConfigClean1 = sunlineSuKF.SunlineSuKFConfig()
-    moduleConfigClean1.numStates = 6
-    moduleConfigClean1.countHalfSPs = moduleConfigClean1.numStates
-    moduleConfigClean1.state = [0., 0., 0., 0., 0., 0.]
-    moduleConfigClean1.statePrev = [0., 0., 0., 0., 0., 0.]
-    moduleConfigClean1.sBar = [0., 0., 0., 0., 0., 0.,
+    moduleClean1 = sunlineSuKF.SunlineSuKFConfig()
+    moduleClean1.numStates = 6
+    moduleClean1.countHalfSPs = moduleClean1.numStates
+    moduleClean1.state = [0., 0., 0., 0., 0., 0.]
+    moduleClean1.statePrev = [0., 0., 0., 0., 0., 0.]
+    moduleClean1.sBar = [0., 0., 0., 0., 0., 0.,
                                0., 0., 0., 0., 0., 0.,
                                0., 0., 0., 0., 0., 0.,
                                0., 0., 0., 0., 0., 0.,
                                0., 0., 0., 0., 0., 0.,
                                0., 0., 0., 0., 0., 0.]
-    moduleConfigClean1.sBarPrev = [1., 0., 0., 0., 0., 0.,
+    moduleClean1.sBarPrev = [1., 0., 0., 0., 0., 0.,
                                    0., 1., 0., 0., 0., 0.,
                                    0., 0., 1., 0., 0., 0.,
                                    0., 0., 0., 1., 0., 0.,
                                    0., 0., 0., 0., 1., 0.,
                                    0., 0., 0., 0., 0., 1.]
-    moduleConfigClean1.covar = [0., 0., 0., 0., 0., 0.,
+    moduleClean1.covar = [0., 0., 0., 0., 0., 0.,
                                 0., 0., 0., 0., 0., 0.,
                                 0., 0., 0., 0., 0., 0.,
                                 0., 0., 0., 0., 0., 0.,
                                 0., 0., 0., 0., 0., 0.,
                                 0., 0., 0., 0., 0., 0.]
-    moduleConfigClean1.covarPrev = [2., 0., 0., 0., 0., 0.,
+    moduleClean1.covarPrev = [2., 0., 0., 0., 0., 0.,
                                     0., 2., 0., 0., 0., 0.,
                                     0., 0., 2., 0., 0., 0.,
                                     0., 0., 0., 2., 0., 0.,
                                     0., 0., 0., 0., 2., 0.,
                                     0., 0., 0., 0., 0., 2.]
 
-    sunlineSuKF.sunlineSuKFCleanUpdate(moduleConfigClean1)
+    sunlineSuKF.sunlineSuKFCleanUpdate(moduleClean1)
 
-    if numpy.linalg.norm(numpy.array(moduleConfigClean1.covarPrev) - numpy.array(moduleConfigClean1.covar)) > 1E10:
+    if numpy.linalg.norm(numpy.array(moduleClean1.covarPrev) - numpy.array(moduleClean1.covar)) > 1E10:
         testFailCount += 1
         testMessages.append("sunlineSuKFClean Covar failed")
-    if numpy.linalg.norm(numpy.array(moduleConfigClean1.statePrev) - numpy.array(moduleConfigClean1.state)) > 1E10:
+    if numpy.linalg.norm(numpy.array(moduleClean1.statePrev) - numpy.array(moduleClean1.state)) > 1E10:
         testFailCount += 1
         testMessages.append("sunlineSuKFClean States failed")
-    if numpy.linalg.norm(numpy.array(moduleConfigClean1.sBar) - numpy.array(moduleConfigClean1.sBarPrev)) > 1E10:
+    if numpy.linalg.norm(numpy.array(moduleClean1.sBar) - numpy.array(moduleClean1.sBarPrev)) > 1E10:
         testFailCount += 1
         testMessages.append("sunlineSuKFClean sBar failed")
 
@@ -527,17 +525,17 @@ def FaultScenarios():
     cssDataInMsg = messaging.CSSArraySensorMsg()
 
     # connect messages
-    moduleConfigClean1.cssDataInMsg.subscribeTo(cssDataInMsg)
-    moduleConfigClean1.cssConfigInMsg.subscribeTo(cssConstInMsg)
+    moduleClean1.cssDataInMsg.subscribeTo(cssDataInMsg)
+    moduleClean1.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
-    moduleConfigClean1.alpha = 0.02
-    moduleConfigClean1.beta = 2.0
-    moduleConfigClean1.kappa = 0.0
+    moduleClean1.alpha = 0.02
+    moduleClean1.beta = 2.0
+    moduleClean1.kappa = 0.0
 
-    moduleConfigClean1.wC = [-1] * (moduleConfigClean1.numStates * 2 + 1)
-    moduleConfigClean1.wM = [-1] * (moduleConfigClean1.numStates * 2 + 1)
-    retTime = sunlineSuKF.sunlineSuKFTimeUpdate(moduleConfigClean1, 1)
-    retMease = sunlineSuKF.sunlineSuKFMeasUpdate(moduleConfigClean1, 1)
+    moduleClean1.wC = [-1] * (moduleClean1.numStates * 2 + 1)
+    moduleClean1.wM = [-1] * (moduleClean1.numStates * 2 + 1)
+    retTime = sunlineSuKF.sunlineSuKFTimeUpdate(moduleClean1, 1)
+    retMease = sunlineSuKF.sunlineSuKFMeasUpdate(moduleClean1, 1)
     if retTime == 0:
         testFailCount += 1
         testMessages.append("Failed to catch bad Update and clean in Time update")

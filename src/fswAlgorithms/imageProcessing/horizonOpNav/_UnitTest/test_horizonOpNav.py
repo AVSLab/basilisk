@@ -163,16 +163,15 @@ def horizonOpNav_update():
 
     # Construct the ephemNavConverter module
     # Set the names for the input messages
-    opNav = horizonOpNav.HorizonOpNavData()  # Create a config struct
+    opNav = horizonOpNav.horizonOpNav()
     opNav.noiseSF = 2
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, update, and reset
-    opNavWrap = unitTestSim.setModelDataWrap(opNav)
-    opNavWrap.ModelTag = "limbNav"
+    opNav.ModelTag = "limbNav"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, opNavWrap, opNav)
+    unitTestSim.AddModelToTask(unitTaskName, opNav)
 
     # These are example points for fitting used from an image processing algorithm
     inputPoints = [226., 113., 227., 113., 223., 114., 224., 114., 225., 114., 219.,
@@ -388,11 +387,11 @@ def horizonOpNav_update():
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + opNavWrap.ModelTag)
+        print("PASSED: " + opNav.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + opNavWrap.ModelTag)
+        print("Failed: " + opNav.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
         print(testMessages)
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)

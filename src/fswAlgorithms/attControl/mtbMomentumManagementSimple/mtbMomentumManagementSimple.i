@@ -22,18 +22,12 @@
     #include "mtbMomentumManagementSimple.h"
 %}
 
+%include "swig_c_wrap.i"
+%c_wrap(mtbMomentumManagementSimple);
+
 %pythoncode %{
     from Basilisk.architecture.swig_common_model import *
 %}
-%include "swig_conly_data.i"
-%constant void Update_mtbMomentumManagementSimple(void*, uint64_t, uint64_t);
-%ignore Update_mtbMomentumManagementSimple;
-%constant void SelfInit_mtbMomentumManagementSimple(void*, uint64_t);
-%ignore SelfInit_mtbMomentumManagementSimple;
-%constant void Reset_mtbMomentumManagementSimple(void*, uint64_t, uint64_t);
-%ignore Reset_mtbMomentumManagementSimple;
-
-%include "mtbMomentumManagementSimple.h"
 
 %include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;

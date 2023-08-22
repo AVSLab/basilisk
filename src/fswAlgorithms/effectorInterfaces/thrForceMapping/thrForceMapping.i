@@ -21,15 +21,8 @@
    #include "thrForceMapping.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_thrForceMapping(void*, uint64_t, uint64_t);
-%ignore Update_thrForceMapping;
-%constant void SelfInit_thrForceMapping(void*, uint64_t);
-%ignore SelfInit_thrForceMapping;
-%constant void Reset_thrForceMapping(void*, uint64_t, uint64_t);
-%ignore Reset_thrForceMapping;
-
-%include "thrForceMapping.h"
+%include "swig_c_wrap.i"
+%c_wrap(thrForceMapping);
 
 %include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
 struct THRArrayCmdForceMsg_C;

@@ -48,10 +48,9 @@ def test_RecordingInputMessages():
     dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.)))
 
     # create modules
-    mod1 = cModuleTemplate.cModuleTemplateConfig()
-    mod1Wrap = scSim.setModelDataWrap(mod1)
-    mod1Wrap.ModelTag = "cModule1"
-    scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1)
+    mod1 = cModuleTemplate.cModuleTemplate()
+    mod1.ModelTag = "cModule1"
+    scSim.AddModelToTask("dynamicsTask", mod1)
 
     # Write input data
     inputData = messaging.CModuleTemplateMsgPayload()

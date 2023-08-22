@@ -21,15 +21,8 @@
    #include "rateServoFullNonlinear.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_rateServoFullNonlinear(void*, uint64_t, uint64_t);
-%ignore Update_rateServoFullNonlinear;
-%constant void SelfInit_rateServoFullNonlinear(void*, uint64_t);
-%ignore SelfInit_rateServoFullNonlinear;
-%constant void Reset_rateServoFullNonlinear(void*, uint64_t, uint64_t);
-%ignore Reset_rateServoFullNonlinear;
-
-%include "rateServoFullNonlinear.h"
+%include "swig_c_wrap.i"
+%c_wrap(rateServoFullNonlinear);
 
 %include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
@@ -45,7 +38,6 @@ struct RWSpeedMsg_C;
 struct RWAvailabilityMsg_C;
 %include "architecture/msgPayloadDefC/RateCmdMsgPayload.h"
 struct RateCmdMsg_C;
-
 
 %pythoncode %{
 import sys

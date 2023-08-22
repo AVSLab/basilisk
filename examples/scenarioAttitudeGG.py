@@ -199,36 +199,33 @@ def run(show_plots):
     #
 
     # setup hillPoint guidance module
-    attGuidanceConfig = hillPoint.hillPointConfig()
-    attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
-    attGuidanceWrap.ModelTag = "hillPoint"
-    scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
+    attGuidance = hillPoint.hillPoint()
+    attGuidance.ModelTag = "hillPoint"
+    scSim.AddModelToTask(simTaskName, attGuidance)
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
 
-    attErrorConfig.sigma_R0R = [0, 0.2, 0]
+    attError.sigma_R0R = [0, 0.2, 0]
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.K = 3.5
-    mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.K = 3.5
+    mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
-    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
-    attErrLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
+    attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     ggLog = ggEff.gravityGradientOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, mrpLog)
     scSim.AddModelToTask(simTaskName, attErrLog)
@@ -245,13 +242,13 @@ def run(show_plots):
 
     # connect messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    attGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.attRefInMsg.subscribeTo(attGuidanceConfig.attRefOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    attGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     vizSupport.enableUnityVisualization(scSim, simTaskName, scObject

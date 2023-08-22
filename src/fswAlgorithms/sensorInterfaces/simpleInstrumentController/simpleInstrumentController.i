@@ -7,7 +7,6 @@
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
 
-
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -22,15 +21,8 @@
 #include "simpleInstrumentController.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_simpleInstrumentController(void*, uint64_t, uint64_t);
-%ignore Update_simpleInstrumentController;
-%constant void SelfInit_simpleInstrumentController(void*, uint64_t);
-%ignore SelfInit_simpleInstrumentController;
-%constant void Reset_simpleInstrumentController(void*, uint64_t, uint64_t);
-%ignore Reset_simpleInstrumentController;
-
-%include "simpleInstrumentController.h"
+%include "swig_c_wrap.i"
+%c_wrap(simpleInstrumentController);
 
 %include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;

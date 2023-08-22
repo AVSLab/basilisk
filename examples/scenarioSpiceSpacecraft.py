@@ -197,27 +197,24 @@ def run(show_plots):
     #
 
     # setup inertial3D guidance module
-    inertial3DConfig = inertial3D.inertial3DConfig()
-    inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
-    inertial3DWrap.ModelTag = "inertial3D"
-    scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj = inertial3D.inertial3D()
+    inertial3DObj.ModelTag = "inertial3D"
+    scSim.AddModelToTask(simTaskName, inertial3DObj)
+    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.K = 3.5
-    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.K = 3.5
+    mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     #
     # create simulation messages
@@ -233,11 +230,11 @@ def run(show_plots):
     # connect the messages to the modules
     #
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
     scObject.transRefInMsg.subscribeTo(gravFactory.spiceObject.transRefStateOutMsgs[0])
 
     #
@@ -246,8 +243,8 @@ def run(show_plots):
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     snLog = sNavObject.scStateInMsg.recorder(samplingTime)
-    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
-    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
+    attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
+    mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, snLog)
     scSim.AddModelToTask(simTaskName, attErrorLog)
     scSim.AddModelToTask(simTaskName, mrpLog)

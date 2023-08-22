@@ -436,55 +436,50 @@ def run(show_plots, useDVThrusters):
     #
 
     # setup inertial3D guidance module
-    inertial3DConfig = inertial3D.inertial3DConfig()
-    inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
-    inertial3DWrap.ModelTag = "inertial3D"
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
-    scSim.AddModelToTask(fswTaskName, inertial3DWrap, inertial3DConfig)
+    inertial3DObj = inertial3D.inertial3D()
+    inertial3DObj.ModelTag = "inertial3D"
+    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    scSim.AddModelToTask(fswTaskName, inertial3DObj)
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(fswTaskName, attErrorWrap, attErrorConfig)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(fswTaskName, attError)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(fswTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.K = 3.5 * 10.0
-    mrpControlConfig.Ki = 0.0002  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0 * 10.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(fswTaskName, mrpControl)
+    mrpControl.K = 3.5 * 10.0
+    mrpControl.Ki = 0.0002  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0 * 10.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     # setup the thruster force mapping module
-    thrForceMappingConfig = thrForceMapping.thrForceMappingConfig()
-    thrForceMappingWrap = scSim.setModelDataWrap(thrForceMappingConfig)
-    thrForceMappingWrap.ModelTag = "thrForceMapping"
-    scSim.AddModelToTask(fswTaskName, thrForceMappingWrap, thrForceMappingConfig)
+    thrForceMappingObj = thrForceMapping.thrForceMapping()
+    thrForceMappingObj.ModelTag = "thrForceMapping"
+    scSim.AddModelToTask(fswTaskName, thrForceMappingObj)
 
     if useDVThrusters:
         controlAxes_B = [1, 0, 0,
                          0, 1, 0]
-        thrForceMappingConfig.thrForceSign = -1
+        thrForceMappingObj.thrForceSign = -1
     else:
         controlAxes_B = [1, 0, 0,
                          0, 1, 0,
                          0, 0, 1]
-        thrForceMappingConfig.thrForceSign = +1
-    thrForceMappingConfig.controlAxes_B = controlAxes_B
+        thrForceMappingObj.thrForceSign = +1
+    thrForceMappingObj.controlAxes_B = controlAxes_B
 
     # setup the Schmitt trigger thruster firing logic module
-    thrFiringSchmittConfig = thrFiringSchmitt.thrFiringSchmittConfig()
-    thrFiringSchmittWrap = scSim.setModelDataWrap(thrFiringSchmittConfig)
-    thrFiringSchmittWrap.ModelTag = "thrFiringSchmitt"
-    scSim.AddModelToTask(fswTaskName, thrFiringSchmittWrap, thrFiringSchmittConfig)
-    thrFiringSchmittConfig.thrMinFireTime = 0.002
-    thrFiringSchmittConfig.level_on = .75
-    thrFiringSchmittConfig.level_off = .25
+    thrFiringSchmittObj = thrFiringSchmitt.thrFiringSchmitt()
+    thrFiringSchmittObj.ModelTag = "thrFiringSchmitt"
+    scSim.AddModelToTask(fswTaskName, thrFiringSchmittObj)
+    thrFiringSchmittObj.thrMinFireTime = 0.002
+    thrFiringSchmittObj.level_on = .75
+    thrFiringSchmittObj.level_off = .25
     if useDVThrusters:
-        thrFiringSchmittConfig.baseThrustState = 1
+        thrFiringSchmittObj.baseThrustState = 1
 
     #
     #   Setup data logging before the simulation is initialized
@@ -492,12 +487,12 @@ def run(show_plots, useDVThrusters):
 
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, fswTimeStep, numDataPoints)
-    mrpTorqueLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
-    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    mrpTorqueLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
+    attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
-    thrMapLog = thrForceMappingConfig.thrForceCmdOutMsg.recorder(samplingTime)
-    thrTrigLog = thrFiringSchmittConfig.onTimeOutMsg.recorder(samplingTime)
+    thrMapLog = thrForceMappingObj.thrForceCmdOutMsg.recorder(samplingTime)
+    thrTrigLog = thrFiringSchmittObj.onTimeOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(fswTaskName, mrpTorqueLog)
     scSim.AddModelToTask(fswTaskName, attErrorLog)
     scSim.AddModelToTask(fswTaskName, snTransLog)
@@ -556,16 +551,16 @@ def run(show_plots, useDVThrusters):
 
     # connect messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    thrForceMappingConfig.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
-    thrForceMappingConfig.thrConfigInMsg.subscribeTo(fswThrConfigMsg)
-    thrForceMappingConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    thrFiringSchmittConfig.thrConfInMsg.subscribeTo(fswThrConfigMsg)
-    thrFiringSchmittConfig.thrForceInMsg.subscribeTo(thrForceMappingConfig.thrForceCmdOutMsg)
-    thrusterSet.cmdsInMsg.subscribeTo(thrFiringSchmittConfig.onTimeOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    thrForceMappingObj.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
+    thrForceMappingObj.thrConfigInMsg.subscribeTo(fswThrConfigMsg)
+    thrForceMappingObj.vehConfigInMsg.subscribeTo(vcMsg)
+    thrFiringSchmittObj.thrConfInMsg.subscribeTo(fswThrConfigMsg)
+    thrFiringSchmittObj.thrForceInMsg.subscribeTo(thrForceMappingObj.thrForceCmdOutMsg)
+    thrusterSet.cmdsInMsg.subscribeTo(thrFiringSchmittObj.onTimeOutMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     viz = vizSupport.enableUnityVisualization(scSim, dynTaskName,  scObject

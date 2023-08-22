@@ -21,15 +21,8 @@
    #include "rateMsgConverter.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_rateMsgConverter(void*, uint64_t, uint64_t);
-%ignore Update_rateMsgConverter;
-%constant void SelfInit_rateMsgConverter(void*, uint64_t);
-%ignore SelfInit_rateMsgConverter;
-%constant void Reset_rateMsgConverter(void*, uint64_t, uint64_t);
-%ignore Reset_rateMsgConverter;
-
-%include "rateMsgConverter.h"
+%include "swig_c_wrap.i"
+%c_wrap(rateMsgConverter);
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;

@@ -33,25 +33,24 @@ def vehicleConfigDataTestFunction():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate)) # Add a new task to the process
 
     # Construct the cssComm module
-    moduleConfig = vehicleConfigData.VehConfigInputData()  # Create a config struct
+    module = vehicleConfigData.vehicleConfigData()
     # Populate the config
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
-    moduleConfig.ISCPntB_B = I
+    module.ISCPntB_B = I
     initialCoM = [1, 1, 1]
-    moduleConfig.CoM_B = initialCoM
+    module.CoM_B = initialCoM
     mass = 300.
-    moduleConfig.massSC = mass
+    module.massSC = mass
 
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "vehicleConfigData"
+    module.ModelTag = "vehicleConfigData"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Log the output message
-    dataLog = moduleConfig.vecConfigOutMsg.recorder()
+    dataLog = module.vecConfigOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation
@@ -79,7 +78,7 @@ def vehicleConfigDataTestFunction():
                                                                  testFailCount, testMessages)
 
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
     else:
         print(testMessages)
 

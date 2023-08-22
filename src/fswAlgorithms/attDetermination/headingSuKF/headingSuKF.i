@@ -22,15 +22,9 @@
    #include "architecture/utilities/ukfUtilities.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_headingSuKF(void*, uint64_t, uint64_t);
-%ignore Update_headingSuKF;
-%constant void SelfInit_headingSuKF(void*, uint64_t);
-%ignore SelfInit_headingSuKF;
-%constant void Reset_headingSuKF(void*, uint64_t, uint64_t);
-%ignore Reset_headingSuKF;
+%include "swig_c_wrap.i"
+%c_wrap_2(headingSuKF, HeadingSuKFConfig);
 
-%include "headingSuKF.h"
 %include "architecture/utilities/ukfUtilities.h"
 
 %include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"

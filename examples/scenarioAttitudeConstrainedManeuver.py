@@ -137,7 +137,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     scObject.ModelTag = "Bevo2-Sat"
 
     # add spacecraft object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject, None, 1)
+    scSim.AddModelToTask(simTaskName, scObject, 1)
 
     # setup Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -163,7 +163,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     gravFactory.spiceObject.zeroBase = 'Earth'
 
     # The SPICE object is added to the simulation task list.
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, 2)
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, 2)
 
     # The gravitational body is connected to the spacecraft object
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
@@ -234,7 +234,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process
-    scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
+    scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
 
     # add the simple Navigation sensor module
     sNavObject = simpleNav.SimpleNav()
@@ -264,32 +264,29 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     scSim.AddModelToTask(simTaskName, CAM)
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
     decayTime = 10.0
     xi = 1.0
-    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 3*np.max(I)/decayTime
-    mrpControlConfig.K = (mrpControlConfig.P/xi)*(mrpControlConfig.P/xi)/np.max(I)
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.P = 3*np.max(I)/decayTime
+    mrpControl.K = (mrpControl.P/xi)*(mrpControl.P/xi)/np.max(I)
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     # add module that maps the Lr control torque into the RW motor torques
-    rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
-    rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
-    rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
-    scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
+    rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
+    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
 
     # Make the RW control all three body axes
     controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
-    rwMotorTorqueConfig.controlAxes_B = controlAxes_B
+    rwMotorTorqueObj.controlAxes_B = controlAxes_B
     
     # Boresight vector modules.
     stBACObject = boreAngCalc.BoreAngCalc()
@@ -320,9 +317,9 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     scSim.AddModelToTask(simTaskName, CAMRec)
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataRec)
-    rwMotorLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
+    rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, rwMotorLog)
-    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, attErrorLog)
     stBACOLog = stBACObject.angOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, stBACOLog)
@@ -355,21 +352,21 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     fswRwParamMsg = rwFactory.getConfigMessage()
 
     # link messages
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     CAM.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     CAM.vehicleConfigInMsg.subscribeTo(vcMsg)
     CAM.keepOutCelBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
     CAM.keepInCelBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.attRefInMsg.subscribeTo(CAM.attRefOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControlConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attRefInMsg.subscribeTo(CAM.attRefOutMsg)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControl.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    mrpControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
     
     # Boresight modules
     stBACObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)

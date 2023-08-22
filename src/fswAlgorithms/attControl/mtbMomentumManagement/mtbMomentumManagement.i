@@ -21,15 +21,8 @@
    #include "mtbMomentumManagement.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_mtbMomentumManagement(void*, uint64_t, uint64_t);
-%ignore Update_mtbMomentumManagement;
-%constant void SelfInit_mtbMomentumManagement(void*, uint64_t);
-%ignore SelfInit_mtbMomentumManagement;
-%constant void Reset_mtbMomentumManagement(void*, uint64_t, uint64_t);
-%ignore Reset_mtbMomentumManagement;
-
-%include "mtbMomentumManagement.h"
+%include "swig_c_wrap.i"
+%c_wrap(mtbMomentumManagement);
 
 // sample Module support file to be included in this sub-module
 %include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"

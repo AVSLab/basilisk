@@ -72,18 +72,17 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = rateServoFullNonlinear.rateServoFullNonlinearConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "rate_servo"
+    module = rateServoFullNonlinear.rateServoFullNonlinear()
+    module.ModelTag = "rate_servo"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # configure module parameters
-    moduleConfig.Ki = intGain
-    moduleConfig.P = 150.0
-    moduleConfig.integralLimit = integralLimit
-    moduleConfig.knownTorquePntB_B = (1,1,1)
+    module.Ki = intGain
+    module.P = 150.0
+    module.integralLimit = integralLimit
+    module.knownTorquePntB_B = (1,1,1)
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -156,18 +155,18 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     rateCmdInMsg = messaging.RateCmdMsg().write(rateSteeringMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.cmdTorqueOutMsg.recorder()
+    dataLog = module.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the test module configuration data
-    moduleConfig.guidInMsg.subscribeTo(guidInMsg)
-    moduleConfig.vehConfigInMsg.subscribeTo(vcInMsg)
-    moduleConfig.rwParamsInMsg.subscribeTo(rwParamInMsg)
-    moduleConfig.vehConfigInMsg.subscribeTo(vcInMsg)
-    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
-    moduleConfig.rateSteeringInMsg.subscribeTo(rateCmdInMsg)
+    module.guidInMsg.subscribeTo(guidInMsg)
+    module.vehConfigInMsg.subscribeTo(vcInMsg)
+    module.rwParamsInMsg.subscribeTo(rwParamInMsg)
+    module.vehConfigInMsg.subscribeTo(vcInMsg)
+    module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
+    module.rateSteeringInMsg.subscribeTo(rateCmdInMsg)
     if useRwAvailability != "NO":
-        moduleConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
+        module.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -176,13 +175,13 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    moduleWrap.Reset(1)  # this module reset function needs a time input (in NanoSeconds)
+    module.Reset(1)  # this module reset function needs a time input (in NanoSeconds)
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     # set the filtered output truth states
-    LrTrue = findTrueTorques(moduleConfig, guidCmdData, rwSpeedMessage, vehicleConfigOut, jsList,
+    LrTrue = findTrueTorques(module, guidCmdData, rwSpeedMessage, vehicleConfigOut, jsList,
                              rwNum, GsMatrix_B, rwAvailabilityMessage,rateSteeringMsg)
 
 
@@ -192,7 +191,7 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], LrTrue[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed torqueRequestBody unit test at t="
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed torqueRequestBody unit test at t="
                                 + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
@@ -202,7 +201,7 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -213,11 +212,11 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
 
 
 
-def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,numRW,GsMatrix_B,rwAvailMsg,rateSteeringMsg ):
+def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,numRW,GsMatrix_B,rwAvailMsg,rateSteeringMsg ):
     Lr = []
 
     #Read in variables
-    L = np.asarray(moduleConfig.knownTorquePntB_B)
+    L = np.asarray(module.knownTorquePntB_B)
     steps = [0, 0, .5, 0, .5]
     omega_BR_B = np.asarray(guidCmdData.omega_BR_B)
     omega_RN_B = np.asarray(guidCmdData.omega_RN_B)
@@ -230,8 +229,8 @@ def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsL
 
     Isc = np.asarray(vehicleConfigOut.ISCPntB_B)
     Isc = np.reshape(Isc, (3, 3))
-    Ki = moduleConfig.Ki
-    P = moduleConfig.P
+    Ki = module.Ki
+    P = module.P
     jsVec = jsList
     GsMatrix_B_array = np.asarray(GsMatrix_B)
     GsMatrix_B_array = np.reshape(GsMatrix_B_array[0:numRW * 3], (numRW, 3))
@@ -243,12 +242,12 @@ def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsL
             zVec = np.asarray([0, 0, 0])
 
         #evaluate integral term
-        if Ki > 0 and abs(moduleConfig.integralLimit) > 0: #if integral feedback is on
+        if Ki > 0 and abs(module.integralLimit) > 0: #if integral feedback is on
             zVec = dt * omega_BBast_B + zVec  # z = integral(del_omega)
             # Make sure each component is less than the integral limit
             for i in range(3):
-                if zVec[i] > moduleConfig.integralLimit:
-                        zVec[i] = zVec[i]/abs(zVec[i])*moduleConfig.integralLimit
+                if zVec[i] > module.integralLimit:
+                        zVec[i] = zVec[i]/abs(zVec[i])*module.integralLimit
 
         else: #integral gain turned off/negative setting
             zVec = np.asarray([0, 0, 0])

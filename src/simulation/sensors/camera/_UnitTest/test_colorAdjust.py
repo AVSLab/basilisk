@@ -134,15 +134,15 @@ def cameraColorTest(image, HSV, BGR):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = camera.Camera()
-    moduleConfig.ModelTag = "cameras"
+    module = camera.Camera()
+    module.ModelTag = "cameras"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
-    moduleConfig.filename = imagePath
-    moduleConfig.saveImages = True
+    unitTestSim.AddModelToTask(unitTaskName, module)
+    module.filename = imagePath
+    module.saveImages = True
     # make each image saved have a unique name for this test case
-    moduleConfig.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/hsv' + str(HSV) + 'bgr' + str(BGR)
+    module.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/hsv' + str(HSV) + 'bgr' + str(BGR)
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -150,23 +150,23 @@ def cameraColorTest(image, HSV, BGR):
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
     inCamMsg = messaging.CameraImageMsg().write(inputMessageData)
-    moduleConfig.imageInMsg.subscribeTo(inCamMsg)
-    moduleConfig.cameraIsOn = 1
-    moduleConfig.sigma_CB = [0, 0, 1]
+    module.imageInMsg.subscribeTo(inCamMsg)
+    module.cameraIsOn = 1
+    module.sigma_CB = [0, 0, 1]
 
     # Noise parameters
     # BGR and HSV are python lists of the form [0, 0, 0]
-    moduleConfig.bgrPercent = camera.IntVector(BGR)
-    moduleConfig.hsv = camera.DoubleVector(HSV)
+    module.bgrPercent = camera.IntVector(BGR)
+    module.hsv = camera.DoubleVector(HSV)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.cameraConfigOutMsg.recorder()
+    dataLog = module.cameraConfigOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.TotalSim.SingleStepProcesses()
 
-    corruptedPath = moduleConfig.saveDir + '0.000000.png'
+    corruptedPath = module.saveDir + '0.000000.png'
 
     #   print out error message if test failed
     if not trueColorAdjust(imagePath, corruptedPath, HSV, BGR):

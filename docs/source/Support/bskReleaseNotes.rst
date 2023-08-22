@@ -41,6 +41,11 @@ Version |release|
 - Corrected an error with :ref:`thrusterStateEffector` where if there are multiple instances of the
   thruster state effector then the last effector will over-write all the state of the earlier thrusters.
 - Corrected an error with :ref:`magnetometer` where the RNG seed was passed to the Gauss-Markov noise model within the constructor and could therefore not be modified after creating the object. Furthermore, the noise model is now only used if all three components of the standard deviation parameter are initialized to a positive value.
+- Removed fswAuto and associated documenation, as the tool was outdated.
+- Changed how C modules are wrapped as C++ classes. This makes handling C modules the same as C++ modules,
+  removing the need for "Config" and "Wrap" objects. Updated all scenarios and test files for this new syntax.
+  To convert prior script to use the new syntax, see :ref:`bskPrinciples-2` for the simple new
+  syntaxt to add C-modules.
 
 
 Version 2.2.0 (June 28, 2023)
@@ -91,7 +96,6 @@ Version 2.2.0 (June 28, 2023)
 - Reworked how integrators are implemented. New Runge-Kutta integrators may
   now be added simply by specifying the relevant coefficients.
 - Added a scenario that showcases differences between integrators. See :ref:`scenarioIntegratorsComparison`
-
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------
@@ -681,7 +685,7 @@ Version 2.0.0
 
 **Version 1.8.1**
 
-- Added a new folder ``externalTools/fswAuto`` that contains :ref:`Folder_externalTools` to migrate BSK simulations and modules to C-code
+- Added a new folder ``externalTools/fswAuto`` that contains external tools to migrate BSK simulations and modules to C-code
 - Added a new :ref:`albedo` which can simulate the average or data driven albedo of a single planet.  This works
   also if multiple celestial bodies are setup.
 - New :ref:`scenarioAlbedo` to illustrate the use of :ref:`albedo`

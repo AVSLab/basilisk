@@ -96,10 +96,9 @@ def sineCosine(show_plots):
     # create the dynamics task and specify the integration update time
     FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(8640.0)))
 
-    chebyFitModel = chebyPosEphem.ChebyPosEphemData()
-    chebyFitModelWrap = TotalSim.setModelDataWrap(chebyFitModel)
-    chebyFitModelWrap.ModelTag = "chebyFitModel"
-    TotalSim.AddModelToTask(unitTaskName, chebyFitModelWrap, chebyFitModel)
+    chebyFitModel = chebyPosEphem.chebyPosEphem()
+    chebyFitModel.ModelTag = "chebyFitModel"
+    TotalSim.AddModelToTask(unitTaskName, chebyFitModel)
 
     totalList = numpy.array(chebCosCoeff).tolist()
     totalList.extend(numpy.array(chebSinCoeff).tolist())
@@ -201,10 +200,9 @@ def earthOrbitFit(show_plots):
     # create the dynamics task and specify the integration update time
     FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(curveDurationSeconds/(numCurvePoints-1))))
 
-    chebyFitModel = chebyPosEphem.ChebyPosEphemData()
-    chebyFitModelWrap = TotalSim.setModelDataWrap(chebyFitModel)
-    chebyFitModelWrap.ModelTag = "chebyFitModel"
-    TotalSim.AddModelToTask(unitTaskName, chebyFitModelWrap, chebyFitModel)
+    chebyFitModel = chebyPosEphem.chebyPosEphem()
+    chebyFitModel.ModelTag = "chebyFitModel"
+    TotalSim.AddModelToTask(unitTaskName, chebyFitModel)
 
     totalList = chebCoeff[:,0].tolist()
     totalList.extend(chebCoeff[:,1].tolist())

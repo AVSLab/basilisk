@@ -38,14 +38,13 @@ def ephemNavConverterTestFunction():
 
     # Construct the ephemNavConverter module
     # Set the names for the input messages
-    ephemNavConfig = ephemNavConverter.EphemNavConverterData()  # Create a config struct
+    ephemNav = ephemNavConverter.ephemNavConverter()
 
     # This calls the algContain to setup the selfInit, update, and reset
-    ephemNavWrap = unitTestSim.setModelDataWrap(ephemNavConfig)
-    ephemNavWrap.ModelTag = "ephemNavConverter"
+    ephemNav.ModelTag = "ephemNavConverter"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, ephemNavWrap, ephemNavConfig)
+    unitTestSim.AddModelToTask(unitTaskName, ephemNav)
 
     # Create the input message.
     inputEphem = messaging.EphemerisMsgPayload()
@@ -56,9 +55,9 @@ def ephemNavConverterTestFunction():
     inputEphem.v_BdyZero_N = velocity
     inputEphem.timeTag = 1.0  # sec
     inMsg = messaging.EphemerisMsg().write(inputEphem)
-    ephemNavConfig.ephInMsg.subscribeTo(inMsg)
+    ephemNav.ephInMsg.subscribeTo(inMsg)
 
-    dataLog = ephemNavConfig.stateOutMsg.recorder()
+    dataLog = ephemNav.stateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation
@@ -97,11 +96,11 @@ def ephemNavConverterTestFunction():
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + ephemNavWrap.ModelTag)
+        print("PASSED: " + ephemNav.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + ephemNavWrap.ModelTag)
+        print("Failed: " + ephemNav.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

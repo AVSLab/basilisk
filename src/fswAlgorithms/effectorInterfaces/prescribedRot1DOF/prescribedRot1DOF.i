@@ -21,15 +21,8 @@
    #include "prescribedRot1DOF.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void SelfInit_prescribedRot1DOF(void*, uint64_t);
-%ignore SelfInit_prescribedRot1DOF;
-%constant void Reset_prescribedRot1DOF(void*, uint64_t, uint64_t);
-%ignore Reset_prescribedRot1DOF;
-%constant void Update_prescribedRot1DOF(void*, uint64_t, uint64_t);
-%ignore Update_prescribedRot1DOF;
-
-%include "prescribedRot1DOF.h"
+%include "swig_c_wrap.i"
+%c_wrap_2(prescribedRot1DOF, PrescribedRot1DOFConfig);
 
 %include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 struct HingedRigidBodyMsg_C;

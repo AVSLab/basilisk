@@ -35,20 +35,19 @@ def thrustRWDesatTestFunction():
 
     # Construct the thrustRWDesat module
     # Set the names for the input messages
-    moduleConfig = thrustRWDesat.thrustRWDesatConfig()  # Create a config struct
+    module = thrustRWDesat.thrustRWDesat()
 
     # Set the necessary data in the module. NOTE: This information is more or less random
-    moduleConfig.thrFiringPeriod = .5 # The amount of time to rest between thruster firings [s]
-    moduleConfig.DMThresh = 20 # The point at which to stop decrementing momentum [r/s]
-    moduleConfig.currDMDir = [1, 0, 0] # The current direction of momentum reduction
-    moduleConfig.maxFiring = 5 # Maximum time to fire a jet for [s]
+    module.thrFiringPeriod = .5 # The amount of time to rest between thruster firings [s]
+    module.DMThresh = 20 # The point at which to stop decrementing momentum [r/s]
+    module.currDMDir = [1, 0, 0] # The current direction of momentum reduction
+    module.maxFiring = 5 # Maximum time to fire a jet for [s]
 
     # This calls the algContain to setup the selfInit, update, and reset
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "thrustRWDesat"
+    module.ModelTag = "thrustRWDesat"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     numRW = 3
 
@@ -114,13 +113,13 @@ def thrustRWDesatTestFunction():
     rwConstInMsg = messaging.RWConstellationMsg().write(inputRWConstellationMsg)
     vcConfigInMsg = messaging.VehicleConfigMsg().write(inputVehicleMsg)
 
-    dataLog = moduleConfig.thrCmdOutMsg.recorder()
+    dataLog = module.thrCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    moduleConfig.rwSpeedInMsg.subscribeTo(rwSpeedInMsg)
-    moduleConfig.rwConfigInMsg.subscribeTo(rwConstInMsg)
-    moduleConfig.vecConfigInMsg.subscribeTo(vcConfigInMsg)
-    moduleConfig.thrConfigInMsg.subscribeTo(thrConfigInMsg)
+    module.rwSpeedInMsg.subscribeTo(rwSpeedInMsg)
+    module.rwConfigInMsg.subscribeTo(rwConstInMsg)
+    module.vecConfigInMsg.subscribeTo(vcConfigInMsg)
+    module.thrConfigInMsg.subscribeTo(thrConfigInMsg)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()

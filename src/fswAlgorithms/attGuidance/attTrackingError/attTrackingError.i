@@ -21,14 +21,8 @@
    #include "attTrackingError.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_attTrackingError(void*, uint64_t, uint64_t);
-%ignore Update_attTrackingError;
-%constant void SelfInit_attTrackingError(void*, uint64_t);
-%ignore SelfInit_attTrackingError;
-%constant void Reset_attTrackingError(void*, uint64_t, uint64_t);
-%ignore Reset_attTrackingError;
-%include "attTrackingError.h"
+%include "swig_c_wrap.i"
+%c_wrap(attTrackingError);
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;

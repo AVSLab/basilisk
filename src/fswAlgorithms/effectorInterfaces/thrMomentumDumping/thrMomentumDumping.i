@@ -21,15 +21,8 @@
    #include "thrMomentumDumping.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_thrMomentumDumping(void*, uint64_t, uint64_t);
-%ignore Update_thrMomentumDumping;
-%constant void SelfInit_thrMomentumDumping(void*, uint64_t);
-%ignore SelfInit_thrMomentumDumping;
-%constant void Reset_thrMomentumDumping(void*, uint64_t, uint64_t);
-%ignore Reset_thrMomentumDumping;
-
-%include "thrMomentumDumping.h"
+%include "swig_c_wrap.i"
+%c_wrap(thrMomentumDumping);
 
 %include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
 struct THRArrayCmdForceMsg_C;

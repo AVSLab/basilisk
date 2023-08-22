@@ -443,15 +443,14 @@ def StatePropStatic():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = okeefeEKF.okeefeEKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "okeefeEKF"
+    module = okeefeEKF.okeefeEKF()
+    module.ModelTag = "okeefeEKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
-    moduleConfig.omega = [0.,0.,0.]
+    setupFilterData(module)
+    module.omega = [0.,0.,0.]
 
     unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate * 10, 0, 8)
     unitTestSim.AddVariableForLogging('okeefeEKF.state', testProcessRate * 10, 0, 2)
@@ -459,8 +458,8 @@ def StatePropStatic():
     # connect messages
     cssDataInMsg = messaging.CSSArraySensorMsg()
     cssConfigInMsg = messaging.CSSConfigMsg()
-    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
-    moduleConfig.cssConfigInMsg.subscribeTo(cssConfigInMsg)
+    module.cssDataInMsg.subscribeTo(cssDataInMsg)
+    module.cssConfigInMsg.subscribeTo(cssConfigInMsg)
 
 
     unitTestSim.InitializeSimulation()
@@ -511,21 +510,20 @@ def StatePropVariable(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = okeefeEKF.okeefeEKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "okeefeEKF"
+    module = okeefeEKF.okeefeEKF()
+    module.ModelTag = "okeefeEKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
+    setupFilterData(module)
 
-    InitialState = moduleConfig.state
-    Initialx = moduleConfig.x
-    InitialCovar = moduleConfig.covar
-    InitOmega = moduleConfig.omega
+    InitialState = module.state
+    Initialx = module.x
+    InitialCovar = module.covar
+    InitOmega = module.omega
 
-    moduleConfig.state = InitialState
+    module.state = InitialState
     unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate, 0, 8)
     unitTestSim.AddVariableForLogging('okeefeEKF.stateTransition', testProcessRate, 0, 8)
     unitTestSim.AddVariableForLogging('okeefeEKF.state', testProcessRate , 0, 2)
@@ -535,8 +533,8 @@ def StatePropVariable(show_plots):
     # connect messages
     cssDataInMsg = messaging.CSSArraySensorMsg()
     cssConfigInMsg = messaging.CSSConfigMsg()
-    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
-    moduleConfig.cssConfigInMsg.subscribeTo(cssConfigInMsg)
+    module.cssDataInMsg.subscribeTo(cssDataInMsg)
+    module.cssConfigInMsg.subscribeTo(cssConfigInMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1000.0))
@@ -567,7 +565,7 @@ def StatePropVariable(show_plots):
 
     expDynMat = np.zeros([2001,NUMSTATES,NUMSTATES])
     Gamma = dt ** 2. / 2. * np.eye(3)
-    ProcNoiseCovar = np.dot(Gamma, np.dot(moduleConfig.qProcVal*np.eye(3),Gamma.T))
+    ProcNoiseCovar = np.dot(Gamma, np.dot(module.qProcVal*np.eye(3),Gamma.T))
 
     for i in range(1,2001):
         expectedStateArray[i,0] = dt*i*1E9
@@ -663,14 +661,13 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = okeefeEKF.okeefeEKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "okeefeEKF"
+    module = okeefeEKF.okeefeEKF()
+    module.ModelTag = "okeefeEKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    setupFilterData(moduleConfig)
-    moduleConfig.omega = [0.,0.,0.]
+    unitTestSim.AddModelToTask(unitTaskName, module)
+    setupFilterData(module)
+    module.omega = [0.,0.,0.]
 
     # Set up some test parameters
 
@@ -703,15 +700,15 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     cssDataInMsg = messaging.CSSArraySensorMsg()
 
     # connect messages
-    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
-    moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
+    module.cssDataInMsg.subscribeTo(cssDataInMsg)
+    module.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
     dt =0.5
     stateTarget1 = testVector1
-    moduleConfig.state = stateGuess
-    moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
+    module.state = stateGuess
+    module.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
     unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 2, 'double')
-    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
@@ -723,7 +720,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
             dotList = []
             for element in CSSOrientationList:
                 if AddMeasNoise:
-                    dotProd = np.dot(np.array(element), np.array(testVector1)[0:3]) + np.random.normal(0., moduleConfig.qObsVal)
+                    dotProd = np.dot(np.array(element), np.array(testVector1)[0:3]) + np.random.normal(0., module.qObsVal)
                 else:
                     dotProd = np.dot(np.array(element), np.array(testVector1)[0:3])
                 dotList.append(dotProd)
@@ -762,7 +759,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
             dotList = []
             for element in CSSOrientationList:
                 if AddMeasNoise:
-                    dotProd = np.dot(np.array(element), np.array(testVector2)[0:3]) + np.random.normal(0., moduleConfig.qObsVal)
+                    dotProd = np.dot(np.array(element), np.array(testVector2)[0:3]) + np.random.normal(0., module.qObsVal)
                 else:
                     dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])
                 dotList.append(dotProd)
@@ -800,7 +797,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     target2 = np.array(testVector2)
     FilterPlots.StatesPlot(dataLog.times(), stateErrorLog, covarLog, show_plots)
     FilterPlots.StatesVsTargets(dataLog.times(), target1, target2, stateLog, show_plots)
-    FilterPlots.PostFitResiduals(dataLog.times(), postFitLog, moduleConfig.qObsVal, show_plots)
+    FilterPlots.PostFitResiduals(dataLog.times(), postFitLog, module.qObsVal, show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:

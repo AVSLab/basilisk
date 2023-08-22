@@ -21,16 +21,8 @@
    #include "rasterManager.h"
 %}
 
-%include "swig_conly_data.i"
-
-%constant void Update_rasterManager(void*, uint64_t, uint64_t);
-%ignore Update_rasterManager;
-%constant void SelfInit_rasterManager(void*, uint64_t);
-%ignore SelfInit_rasterManager;
-%constant void Reset_rasterManager(void*, uint64_t, uint64_t);
-%ignore Reset_rasterManager;
-
-%include "rasterManager.h"
+%include "swig_c_wrap.i"
+%c_wrap(rasterManager);
 
 %include "architecture/msgPayloadDefC/AttStateMsgPayload.h"
 struct AttStateMsg_C;

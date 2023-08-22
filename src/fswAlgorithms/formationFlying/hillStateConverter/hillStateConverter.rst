@@ -73,9 +73,8 @@ A simple example of this module's initialization alongside a recorder to store t
 
     .. code-block:: python
         :linenos:
-        hillStateNavData = hillStateConverter.HillStateConverterConfig()
-        hillStateNavWrap = sim.setModelDataWrap(hillStateNavData)
-        hillStateNavWrap.ModelTag = "dep_hillStateNav"
+        hillStateNavData = hillStateConverter.hillStateConverter()
+        hillStateNavData.ModelTag = "dep_hillStateNav"
         hillStateNavData.chiefStateInMsg.subscribeTo(chiefNavMsg)
         hillStateNavData.depStateInMsg.subscribeTo(depNavMsg)
         hillRecorder = hillStateNavData.hillStateOutMsg.recorder()

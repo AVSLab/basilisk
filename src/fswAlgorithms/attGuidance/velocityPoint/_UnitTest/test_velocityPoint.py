@@ -61,15 +61,14 @@ def velocityPointTestFunction(show_plots):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = velocityPoint.velocityPointConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "velocityPoint"
+    module = velocityPoint.velocityPoint()
+    module.ModelTag = "velocityPoint"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    moduleConfig.mu = af.mu_E
+    module.mu = af.mu_E
 
     a = af.E_radius * 2.8
     e = 0.0
@@ -102,12 +101,12 @@ def velocityPointTestFunction(show_plots):
     celBodyInMsg = messaging.EphemerisMsg().write(CelBodyData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attRefOutMsg.recorder()
+    dataLog = module.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect Messages
-    moduleConfig.transNavInMsg.subscribeTo(navInMsg)
-    moduleConfig.celBodyInMsg.subscribeTo(celBodyInMsg)
+    module.transNavInMsg.subscribeTo(navInMsg)
+    module.celBodyInMsg.subscribeTo(celBodyInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()

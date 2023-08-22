@@ -21,16 +21,8 @@
    #include "vehicleConfigData.h"
 %}
 
-%include "swig_conly_data.i"
-
-%constant void Update_vehicleConfigData(void*, uint64_t, uint64_t);
-%ignore Update_vehicleConfigData;
-%constant void SelfInit_vehicleConfigData(void*, uint64_t);
-%ignore SelfInit_vehicleConfigData;
-%constant void Reset_vehicleConfigData(void*, uint64_t, uint64_t);
-%ignore Reset_vehicleConfigData;
-
-%include "vehicleConfigData.h"
+%include "swig_c_wrap.i"
+%c_wrap_2(vehicleConfigData, VehConfigInputData);
 
 %include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;

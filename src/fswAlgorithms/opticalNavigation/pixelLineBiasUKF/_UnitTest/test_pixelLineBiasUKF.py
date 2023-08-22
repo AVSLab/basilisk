@@ -257,13 +257,12 @@ def StatePropRelOD(show_plots, dt):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = pixelLineBiasUKF.PixelLineBiasUKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "relodSuKF"
+    module = pixelLineBiasUKF.pixelLineBiasUKF()
+    module.ModelTag = "relodSuKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    setupFilterData(moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
+    setupFilterData(module)
 
     # Create the input messages.
     inputCamera = messaging.CameraConfigMsgPayload()
@@ -274,17 +273,17 @@ def StatePropRelOD(show_plots, dt):
     inputCamera.resolution = [512, 512]
     inputCamera.sigma_CB = [1., 0.3, 0.1]
     camInMsg = messaging.CameraConfigMsg().write(inputCamera)
-    moduleConfig.cameraConfigInMsg.subscribeTo(camInMsg)
+    module.cameraConfigInMsg.subscribeTo(camInMsg)
 
     # Set attitude
     inputAtt.sigma_BN = [0.6, 1., 0.1]
     attInMsg = messaging.NavAttMsg().write(inputAtt)
-    moduleConfig.attInMsg.subscribeTo(attInMsg)
+    module.attInMsg.subscribeTo(attInMsg)
 
     circlesInMsg = messaging.OpNavCirclesMsg()
-    moduleConfig.circlesInMsg.subscribeTo(circlesInMsg)
+    module.circlesInMsg.subscribeTo(circlesInMsg)
 
-    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     timeSim = 60
@@ -293,13 +292,13 @@ def StatePropRelOD(show_plots, dt):
     unitTestSim.ExecuteSimulation()
 
     time = np.linspace(0, timeSim*60, (int) (timeSim*60/dt+1))
-    dydt = np.zeros(len(moduleConfig.stateInit))
+    dydt = np.zeros(len(module.stateInit))
     energy = np.zeros(len(time))
-    expected=np.zeros([len(time), len(moduleConfig.stateInit)+1])
-    expected[0,1:] = moduleConfig.stateInit
+    expected=np.zeros([len(time), len(module.stateInit)+1])
+    expected[0,1:] = module.stateInit
     mu = 42828.314*1E9
     energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:7]).a)
-    expected = rk4(twoBodyGrav, time, moduleConfig.stateInit)
+    expected = rk4(twoBodyGrav, time, module.stateInit)
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:7]).a)
 
@@ -323,7 +322,7 @@ def StatePropRelOD(show_plots, dt):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag + " state propagation")
+        print("PASSED: " + module.ModelTag + " state propagation")
     else:
         print(testMessages)
 

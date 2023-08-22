@@ -21,13 +21,8 @@
     #include "sunlineEphem.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_sunlineEphem(void*, uint64_t, uint64_t);
-%ignore Update_sunlineEphem;
-%constant void SelfInit_sunlineEphem(void*, uint64_t);
-%ignore SelfInit_sunlineEphem;
-%constant void Reset_sunlineEphem(void*, uint64_t, uint64_t);
-%ignore Reset_sunlineEphem;
+%include "swig_c_wrap.i"
+%c_wrap(sunlineEphem);
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
@@ -35,8 +30,6 @@ struct NavAttMsg_C;
 struct NavTransMsg_C;
 %include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
-
-%include "sunlineEphem.h"
 
 %pythoncode %{
 import sys

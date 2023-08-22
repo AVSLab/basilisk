@@ -42,28 +42,26 @@ def run():
     dynProcess.addTask(scSim.CreateNewTask("dynamicsTask3", macros.sec2nano(10.)))
 
     # create modules
-    mod1 = cModuleTemplate.cModuleTemplateConfig()
-    mod1Wrap = scSim.setModelDataWrap(mod1)
-    mod1Wrap.ModelTag = "cModule1"
+    mod1 = cModuleTemplate.cModuleTemplate()
+    mod1.ModelTag = "cModule1"
 
-    mod2 = cModuleTemplate.cModuleTemplateConfig()
-    mod2Wrap = scSim.setModelDataWrap(mod2)
-    mod2Wrap.ModelTag = "cModule2"
+    mod2 = cModuleTemplate.cModuleTemplate()
+    mod2.ModelTag = "cModule2"
 
     # add modules to various task lists
-    scSim.AddModelToTask("dynamicsTask1", mod1Wrap, mod1, 4)
-    scSim.AddModelToTask("dynamicsTask1", mod2Wrap, mod2, 5)
-    scSim.AddModelToTask("dynamicsTask2", mod2Wrap, mod2)
-    scSim.AddModelToTask("dynamicsTask2", mod1Wrap, mod1)
-    scSim.AddModelToTask("dynamicsTask3", mod1Wrap, mod1)
-    scSim.AddModelToTask("dynamicsTask3", mod2Wrap, mod2)
+    scSim.AddModelToTask("dynamicsTask1", mod1, 4)
+    scSim.AddModelToTask("dynamicsTask1", mod2, 5)
+    scSim.AddModelToTask("dynamicsTask2", mod2)
+    scSim.AddModelToTask("dynamicsTask2", mod1)
+    scSim.AddModelToTask("dynamicsTask3", mod1)
+    scSim.AddModelToTask("dynamicsTask3", mod2)
 
-    scSim.AddModelToTask("fswTask1", mod1Wrap, mod1)
-    scSim.AddModelToTask("fswTask1", mod2Wrap, mod2, 2)
-    scSim.AddModelToTask("fswTask2", mod2Wrap, mod2)
-    scSim.AddModelToTask("fswTask2", mod1Wrap, mod1)
-    scSim.AddModelToTask("fswTask3", mod1Wrap, mod1)
-    scSim.AddModelToTask("fswTask3", mod2Wrap, mod2)
+    scSim.AddModelToTask("fswTask1", mod1)
+    scSim.AddModelToTask("fswTask1", mod2, 2)
+    scSim.AddModelToTask("fswTask2", mod2)
+    scSim.AddModelToTask("fswTask2", mod1)
+    scSim.AddModelToTask("fswTask3", mod1)
+    scSim.AddModelToTask("fswTask3", mod2)
 
     # print to the terminal window the execution order of the processes, task lists and modules
     scSim.ShowExecutionOrder()

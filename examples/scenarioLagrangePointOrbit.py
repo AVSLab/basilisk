@@ -177,7 +177,7 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
 
     # Add spacecraft object to the simulation process
     # Make this model a lower priority than the SPICE object task
-    scSim.AddModelToTask(simTaskName, scObject, None, 0)
+    scSim.AddModelToTask(simTaskName, scObject, 0)
 
     # Setup gravity factory and gravity bodies
     # Include bodies as a list of SPICE names
@@ -199,7 +199,7 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     gravFactory.spiceObject.zeroBase = 'Earth'
 
     # Add SPICE object to the simulation task list
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, ModelPriority=1)
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, 1)
 
     # Import SPICE ephemeris data into the python environment
     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies

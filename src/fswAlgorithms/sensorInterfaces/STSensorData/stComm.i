@@ -21,18 +21,13 @@
    #include "stComm.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_stProcessTelem(void*, uint64_t, uint64_t);
-%ignore Update_stProcessTelem;
-%constant void SelfInit_stProcessTelem(void*, uint64_t);
-%ignore SelfInit_stProcessTelem;
+%include "swig_c_wrap.i"
+%c_wrap_3(stComm, STConfigData, stProcessTelem);
 
 %include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
 struct STSensorMsg_C;
 %include "architecture/msgPayloadDefC/STAttMsgPayload.h"
 struct STAttMsg_C;
-
-%include "stComm.h"
 
 %pythoncode %{
 import sys

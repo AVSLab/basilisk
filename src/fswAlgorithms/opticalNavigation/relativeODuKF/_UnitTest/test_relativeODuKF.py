@@ -188,41 +188,42 @@ def StateUpdateRelOD(show_plots):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    # Construct algorithm and associated C++ container
-    moduleConfig = relativeODuKF.RelODuKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "relodSuKF"
+    # Construct algorithm
+    module = relativeODuKF.relativeODuKF()
+    module.ModelTag = "relodSuKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
-    moduleConfig.noiseSF = 1
+    setupFilterData(module)
+    module.noiseSF = 1
 
-    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     time = np.linspace(0, int(multT1*t1), int(multT1*t1//dt)+1)
     dydt = np.zeros(6)
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
-    expected[0,1:] = moduleConfig.stateInit
+    expected[0,1:] = module.stateInit
     mu = 42828.314*1E9
     energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:]).a)
 
     kick = np.array([0., 0., 0., -0.01, 0.01, 0.02]) * 10 *1E3
 
-    expected[0:t1,:] = rk4(twoBodyGrav, time[0:t1], moduleConfig.stateInit)
+    expected[0:t1,:] = rk4(twoBodyGrav, time[0:t1], module.stateInit)
     expected[t1:multT1*t1+1, :] = rk4(twoBodyGrav, time[t1:len(time)], expected[t1-1, 1:] + kick)
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
     inputData = messaging.OpNavMsgPayload()
     opnavInMsg = messaging.OpNavMsg()
-    moduleConfig.opNavInMsg.subscribeTo(opnavInMsg)
+    module.opNavInMsg.subscribeTo(opnavInMsg)
 
     inputData.planetID = 2
     inputData.r_BN_B = expected[0, 1:4]
+
+    opnavInMsg.write(inputData, 0)
 
     unitTestSim.InitializeSimulation()
     for i in range(t1):
@@ -281,7 +282,7 @@ def StateUpdateRelOD(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag + " state update")
+        print("PASSED: " + module.ModelTag + " state update")
     else:
         print(testMessages)
 
@@ -311,21 +312,23 @@ def StatePropRelOD(show_plots, dt):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = relativeODuKF.RelODuKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "relodSuKF"
+    module = relativeODuKF.relativeODuKF()
+    module.ModelTag = "relodSuKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
-    moduleConfig.noiseSF = 1
+    setupFilterData(module)
+    module.noiseSF = 1
 
-    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
+    inputData = messaging.OpNavMsgPayload()
     opnavInMsg = messaging.OpNavMsg()
-    moduleConfig.opNavInMsg.subscribeTo(opnavInMsg)
+    module.opNavInMsg.subscribeTo(opnavInMsg)
+
+    opnavInMsg.write(inputData, 0)
 
     timeSim = 60
     unitTestSim.InitializeSimulation()
@@ -336,10 +339,10 @@ def StatePropRelOD(show_plots, dt):
     dydt = np.zeros(6)
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
-    expected[0,1:] = moduleConfig.stateInit
+    expected[0,1:] = module.stateInit
     mu = 42828.314*1E9
     energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:]).a)
-    expected = rk4(twoBodyGrav, time, moduleConfig.stateInit)
+    expected = rk4(twoBodyGrav, time, module.stateInit)
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
@@ -363,7 +366,7 @@ def StatePropRelOD(show_plots, dt):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag + " state propagation")
+        print("PASSED: " + module.ModelTag + " state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -372,5 +375,5 @@ def StatePropRelOD(show_plots, dt):
 
 if __name__ == "__main__":
     # relOD_method_test(True)
-    StatePropRelOD(True, 1.0)
-    # StateUpdateRelOD(False)
+    # StatePropRelOD(True, 1.0)
+    StateUpdateRelOD(False)

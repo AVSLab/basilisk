@@ -80,19 +80,18 @@ def opNavPointTestFunction(show_plots, case):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = opNavPoint.OpNavPointConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "opNavPoint"
+    module = opNavPoint.opNavPoint()
+    module.ModelTag = "opNavPoint"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
     camera_Z = [0.,0.,1.]
-    moduleConfig.alignAxis_C = camera_Z
-    moduleConfig.minUnitMag = 0.01
-    moduleConfig.smallAngle = 0.01*mc.D2R
-    moduleConfig.timeOut = 100
+    module.alignAxis_C = camera_Z
+    module.minUnitMag = 0.01
+    module.smallAngle = 0.01*mc.D2R
+    module.timeOut = 100
 
     # Create input messages
     #
@@ -114,7 +113,7 @@ def opNavPointTestFunction(show_plots, case):
     imuInMsg = messaging.NavAttMsg().write(inputIMUData)
     omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
     if (case ==2 or case==4):
-        moduleConfig.omega_RN_B = omega_RN_B_Search
+        module.omega_RN_B = omega_RN_B_Search
 
     cam = messaging.CameraConfigMsgPayload()  # Create a structure for the input message
     cam.sigma_CB = [0.,0.,0]
@@ -122,13 +121,13 @@ def opNavPointTestFunction(show_plots, case):
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attGuidanceOutMsg.recorder()
+    dataLog = module.attGuidanceOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.opnavDataInMsg.subscribeTo(opnavInMsg)
-    moduleConfig.imuInMsg.subscribeTo(imuInMsg)
-    moduleConfig.cameraConfigInMsg.subscribeTo(camInMsg)
+    module.opnavDataInMsg.subscribeTo(opnavInMsg)
+    module.imuInMsg.subscribeTo(imuInMsg)
+    module.cameraConfigInMsg.subscribeTo(camInMsg)
 
 
     # Need to call the self-init and cross-init methods
@@ -166,7 +165,7 @@ def opNavPointTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.sigma_BR[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_BR unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_BR unit test at t=" +
                                 str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -190,7 +189,7 @@ def opNavPointTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.omega_BR_B[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_BR_B unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_BR_B unit test at t=" +
                                 str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
     #
@@ -213,7 +212,7 @@ def opNavPointTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.omega_RN_B[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_B unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_B unit test at t=" +
                                 str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -232,7 +231,7 @@ def opNavPointTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.domega_RN_B[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed domega_RN_B unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_B unit test at t=" +
                                 str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -240,11 +239,11 @@ def opNavPointTestFunction(show_plots, case):
     snippentName = "passFail" + str(case)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("FAILED: " + moduleWrap.ModelTag)
+        print("FAILED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

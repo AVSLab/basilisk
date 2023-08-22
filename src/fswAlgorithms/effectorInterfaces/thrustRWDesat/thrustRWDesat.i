@@ -21,14 +21,8 @@
    #include "thrustRWDesat.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_thrustRWDesat(void*, uint64_t, uint64_t);
-%ignore Update_thrustRWDesat;
-%constant void SelfInit_thrustRWDesat(void*, uint64_t);
-%ignore SelfInit_thrustRWDesat;
-%constant void Reset_thrustRWDesat(void*, uint64_t, uint64_t);
-%ignore Reset_thrustRWDesat;
-
+%include "swig_c_wrap.i"
+%c_wrap(thrustRWDesat);
 
 %include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 struct RWSpeedMsg_C;
@@ -41,12 +35,8 @@ struct VehicleConfigMsg_C;
 %include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
 
-%include "thrustRWDesat.h"
-
-
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-
 

@@ -5,13 +5,13 @@ This section contains information directed specifically to users. It contains cl
 
 \begin{itemize}
 \item Construct algorithm and associated C++ container:\\
-\texttt{moduleConfig = limbFinding.LimbFinding()()}\\
-\texttt{moduleConfig.ModelTag = "limb"}\\
+\texttt{module = limbFinding.LimbFinding()()}\\
+\texttt{module.ModelTag = "limb"}\\
 \item Add test module to runtime call list: \\
-\texttt{unitTestSim.AddModelToTask(unitTaskName, moduleConfig)}\\
+\texttt{unitTestSim.AddModelToTask(unitTaskName, module)}\\
 \item Image processing parameters: \\
-\texttt{moduleConfig.filename = imagePath}\\
-\texttt{moduleConfig.cannyThreshHigh = cannyHigh}\\
-\texttt{moduleConfig.cannyThreshLow = cannyLow}\\
-\texttt{moduleConfig.blurrSize = blur}\\
+\texttt{module.filename = imagePath}\\
+\texttt{module.cannyThreshHigh = cannyHigh}\\
+\texttt{module.cannyThreshLow = cannyLow}\\
+\texttt{module.blurrSize = blur}\\
 \end{itemize}

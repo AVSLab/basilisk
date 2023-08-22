@@ -298,16 +298,16 @@ be setup first, you can include python formatted code block using::
     .. code-block:: python
         :linenos:
 
-        moduleConfig.dummy = 1
-        moduleConfig.dumVector = [1., 2., 3.]
+        module.dummy = 1
+        module.dumVector = [1., 2., 3.]
 
 to show:
 
 .. code-block:: python
     :linenos:
 
-    moduleConfig.dummy = 1
-    moduleConfig.dumVector = [1., 2., 3.]
+    module.dummy = 1
+    module.dumVector = [1., 2., 3.]
 
 More information of including code blocks can be found `here <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-code-block>`_.
 

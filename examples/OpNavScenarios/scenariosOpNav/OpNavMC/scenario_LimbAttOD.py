@@ -82,7 +82,7 @@ class scenario_OpNav(BSKSim):
         vError= np.array([100, -10, 10])
 
         MRP= [0,-0.3,0]
-        self.get_FswModel().relativeODData.stateInit = (rN+rError).tolist() + (vN+vError).tolist()
+        self.get_FswModel().relativeOD.stateInit = (rN+rError).tolist() + (vN+vError).tolist()
         self.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         self.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
         self.get_DynModel().scObject.hub.sigma_BNInit = [[MRP[0]], [MRP[1]], [MRP[2]]]  # sigma_BN_B
@@ -90,8 +90,8 @@ class scenario_OpNav(BSKSim):
         qNoiseIn = np.identity(6)
         qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-3 * 1E-3
         qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1E-4 * 1E-4
-        self.get_FswModel().relativeODData.qNoise = qNoiseIn.reshape(36).tolist()
-        self.get_FswModel().horizonNavData.noiseSF = 20
+        self.get_FswModel().relativeOD.qNoise = qNoiseIn.reshape(36).tolist()
+        self.get_FswModel().horizonNav.noiseSF = 20
 
     def log_outputs(self):
         # Dynamics process outputs: log messages below if desired.
@@ -104,7 +104,7 @@ class scenario_OpNav(BSKSim):
         self.msgRecList[self.retainedMessageNameSc] = DynModel.scObject.scStateOutMsg.recorder(samplingTime)
         self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageNameSc])
 
-        self.msgRecList[self.retainedMessageNameFilt] = FswModel.relativeODData.filtDataOutMsg.recorder(samplingTime)
+        self.msgRecList[self.retainedMessageNameFilt] = FswModel.relativeOD.filtDataOutMsg.recorder(samplingTime)
         self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageNameFilt])
 
         self.msgRecList[self.retainedMessageNameOpNav] = FswModel.opnavMsg.recorder(samplingTime)

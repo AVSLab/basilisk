@@ -5,18 +5,18 @@ This section contains information directed specifically to users. It contains cl
 
 \begin{itemize}
 \item Construct algorithm and associated C++ container:\\
-\texttt{moduleConfig = houghCircles.HoughCircles()}\\
-\texttt{moduleConfig.ModelTag = "houghCircles"}\\
+\texttt{module = houghCircles.HoughCircles()}\\
+\texttt{module.ModelTag = "houghCircles"}\\
 \item Add test module to runtime call list: \\
-\texttt{unitTestSim.AddModelToTask(unitTaskName, moduleConfig)}\\
+\texttt{unitTestSim.AddModelToTask(unitTaskName, module)}\\
 \item Image processing parameters: \\
-\texttt{moduleConfig.filename = imagePath}\\
-\texttt{moduleConfig.expectedCircles = maxCircles}\\
-\texttt{moduleConfig.cannyThresh1 = cannyHigh}\\
-\texttt{moduleConfig.cannyThresh2 = cannyLow}\\
-\texttt{moduleConfig.houghMinDist = minDist}\\
-\texttt{moduleConfig.houghMinRadius = minRad}\\
-\texttt{moduleConfig.blurrSize = blur}\\
-\texttt{moduleConfig.dpValue = dp}\\
-\texttt{moduleConfig.houghMaxRadius = 0}
+\texttt{module.filename = imagePath}\\
+\texttt{module.expectedCircles = maxCircles}\\
+\texttt{module.cannyThresh1 = cannyHigh}\\
+\texttt{module.cannyThresh2 = cannyLow}\\
+\texttt{module.houghMinDist = minDist}\\
+\texttt{module.houghMinRadius = minRad}\\
+\texttt{module.blurrSize = blur}\\
+\texttt{module.dpValue = dp}\\
+\texttt{module.houghMaxRadius = 0}
 \end{itemize}

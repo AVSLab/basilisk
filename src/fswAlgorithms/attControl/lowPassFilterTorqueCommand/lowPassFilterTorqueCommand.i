@@ -21,15 +21,8 @@
    #include "lowPassFilterTorqueCommand.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_lowPassFilterTorqueCommand(void*, uint64_t, uint64_t);
-%ignore Update_lowPassFilterTorqueCommand;
-%constant void SelfInit_lowPassFilterTorqueCommand(void*, uint64_t);
-%ignore SelfInit_lowPassFilterTorqueCommand;
-%constant void Reset_lowPassFilterTorqueCommand(void*, uint64_t, uint64_t);
-%ignore Reset_lowPassFilterTorqueCommand;
-
-%include "lowPassFilterTorqueCommand.h"
+%include "swig_c_wrap.i"
+%c_wrap(lowPassFilterTorqueCommand);
 
 // sample Module support file to be included in this sub-module
 %include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"

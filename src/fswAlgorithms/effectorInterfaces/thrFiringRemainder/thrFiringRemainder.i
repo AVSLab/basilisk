@@ -21,15 +21,8 @@
    #include "thrFiringRemainder.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_thrFiringRemainder(void*, uint64_t, uint64_t);
-%ignore Update_thrFiringRemainder;
-%constant void SelfInit_thrFiringRemainder(void*, uint64_t);
-%ignore SelfInit_thrFiringRemainder;
-%constant void Reset_thrFiringRemainder(void*, uint64_t, uint64_t);
-%ignore Reset_thrFiringRemainder;
-
-%include "thrFiringRemainder.h"
+%include "swig_c_wrap.i"
+%c_wrap(thrFiringRemainder);
 
 %include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
 struct THRArrayConfigMsg_C;

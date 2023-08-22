@@ -21,16 +21,8 @@
    #include "spacecraftPointing.h"
 %}
 
-%include "swig_conly_data.i"
-
-%constant void Update_spacecraftPointing(void*, uint64_t, uint64_t);
-%ignore Update_spacecraftPointing;
-%constant void SelfInit_spacecraftPointing(void*, uint64_t);
-%ignore SelfInit_spacecraftPointing;
-%constant void Reset_spacecraftPointing(void*, uint64_t, uint64_t);
-%ignore Reset_spacecraftPointing;
-
-%include "spacecraftPointing.h"
+%include "swig_c_wrap.i"
+%c_wrap(spacecraftPointing);
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;

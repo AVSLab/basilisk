@@ -88,16 +88,15 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = thrForceMapping.thrForceMappingConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "thrForceMapping"
+    module = thrForceMapping.thrForceMapping()
+    module.ModelTag = "thrForceMapping"
 
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    moduleConfig.use2ndLoop = use2ndLoop
+    module.use2ndLoop = use2ndLoop
 
     # write vehicle configuration message
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
@@ -115,14 +114,14 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     if saturateThrusters>0:        # default angErrThresh is 0, thus this should trigger scaling
         requestedTorque = [10.0, -5.0, 7.0]
     if saturateThrusters==2:        # angle is set and small enough to trigger scaling
-        moduleConfig.angErrThresh = 10.0*macros.D2R
+        module.angErrThresh = 10.0*macros.D2R
     if saturateThrusters==3:        # angle is too large enough to trigger scaling
-        moduleConfig.angErrThresh = 40.0*macros.D2R
+        module.angErrThresh = 40.0*macros.D2R
 
     inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
     cmdTorqueInMsg = messaging.CmdTorqueBodyMsg().write(inputMessageData)
 
-    moduleConfig.epsilon = 0.0005
+    module.epsilon = 0.0005
     fswSetupThrusters.clearSetup()
     MAX_EFF_CNT = messaging.MAX_EFF_CNT
     rcsLocationData = np.zeros((MAX_EFF_CNT, 3))
@@ -139,11 +138,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         controlAxes_B = np.array([[]])
 
     controlAxes_B = np.reshape(controlAxes_B, (1, 3 * numControlAxis))
-    moduleConfig.controlAxes_B = controlAxes_B[0].tolist()
+    module.controlAxes_B = controlAxes_B[0].tolist()
 
     if useDVThruster:
         # DV thruster setup
-        moduleConfig.thrForceSign = -1
+        module.thrForceSign = -1
         numThrusters = 6
         rcsLocationData[0:6] = [ \
             [0, 0.413, -0.1671],
@@ -163,7 +162,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
             ]
     else:
         # RCS thruster setup
-        moduleConfig.thrForceSign = +1
+        module.thrForceSign = +1
         numThrusters = 8
         rcsLocationData[0:8] = [ \
                 [-0.86360, -0.82550, 1.79070],
@@ -232,13 +231,13 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     thrConfigInMsg = fswSetupThrusters.writeConfigMessage()
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.thrForceCmdOutMsg.recorder()
+    dataLog = module.thrForceCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.cmdTorqueInMsg.subscribeTo(cmdTorqueInMsg)
-    moduleConfig.thrConfigInMsg.subscribeTo(thrConfigInMsg)
-    moduleConfig.vehConfigInMsg.subscribeTo(vcInMsg)
+    module.cmdTorqueInMsg.subscribeTo(cmdTorqueInMsg)
+    module.thrConfigInMsg.subscribeTo(thrConfigInMsg)
+    module.vehConfigInMsg.subscribeTo(vcInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -261,11 +260,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     if useDVThruster and numControlAxis == 3:
         return [testFailCount, ''.join(testMessages)] # 3 control axes doesn't work for dv thrusters (only two axes controllable)
 
-    results = thrForceMapping.Results_thrForceMapping(requestedTorque, moduleConfig.controlAxes_B,
+    results = thrForceMapping.Results_thrForceMapping(requestedTorque, module.controlAxes_B,
                                          vehicleConfigOut.CoM_B, rcsLocationData,
-                                         rcsDirectionData, moduleConfig.thrForceSign,
-                                         moduleConfig.thrForcMag, moduleConfig.angErrThresh,
-                                         numThrusters, moduleConfig.epsilon, use2ndLoop)
+                                         rcsDirectionData, module.thrForceSign,
+                                         module.thrForcMag, module.angErrThresh,
+                                         numThrusters, module.epsilon, use2ndLoop)
 
     F, DNew = results.results_thrForceMapping()
 
@@ -282,8 +281,8 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     Lr_offset = np.array([0.0, 0.0, 0.0])
     Lr_B = np.array([0.0, 0.0, 0.0])
     for i in range(0,numThrusters):
-        if moduleConfig.thrForceSign < 0 and moduleConfig.thrForcMag[i] >= 0:
-            Lr_offset -= moduleConfig.thrForcMag[i]*np.cross(rcsLocationData[i,:]-CoM_B,rcsDirectionData[i,:]) # off pulsing
+        if module.thrForceSign < 0 and module.thrForcMag[i] >= 0:
+            Lr_offset -= module.thrForcMag[i]*np.cross(rcsLocationData[i,:]-CoM_B,rcsDirectionData[i,:]) # off pulsing
 
     Lr_B = requestedTorque + Lr_offset
 
@@ -362,13 +361,13 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
     if testFailCount > 0:
         unitTestSupport.writeTeXSnippet(directory+"Failed/"+snippetName, snippetTex, path)
-        print("FAILED: " + moduleWrap.ModelTag)
-        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed  unit test at t=" +
+        print("FAILED: " + module.ModelTag)
+        testMessages.append("FAILED: " + module.ModelTag + " Module failed  unit test at t=" +
                             str(dataLog.times()[0] * macros.NANO2SEC) +
                             "sec\n")
     else:
         unitTestSupport.writeTeXSnippet(directory+"/Passed/" + snippetName, snippetTex, path)
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
 
 
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
@@ -377,11 +376,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         numControlAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

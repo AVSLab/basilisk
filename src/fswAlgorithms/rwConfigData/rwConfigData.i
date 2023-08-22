@@ -21,15 +21,8 @@
    #include "rwConfigData.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_rwConfigData(void*, uint64_t, uint64_t);
-%ignore Update_rwConfigData;
-%constant void SelfInit_rwConfigData(void*, uint64_t);
-%ignore SelfInit_rwConfigData;
-%constant void Reset_rwConfigData(void*, uint64_t, uint64_t);
-%ignore Reset_rwConfigData;
-
-%include "rwConfigData.h"
+%include "swig_c_wrap.i"
+%c_wrap_2(rwConfigData, rwConfigData_Config);
 
 %include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;

@@ -141,7 +141,7 @@ class scenario_AttitudeSteeringRW(BSKSim, BSKScenario):
         self.rwSpeedRec = self.get_DynModel().rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
         # FSW process outputs
         self.attErrRec = self.get_FswModel().attGuidMsg.recorder(samplingTime)
-        self.rateCmdRec = self.get_FswModel().mrpSteeringData.rateCmdOutMsg.recorder(samplingTime)
+        self.rateCmdRec = self.get_FswModel().mrpSteering.rateCmdOutMsg.recorder(samplingTime)
         self.rwMotorRec = self.get_FswModel().cmdRwMotorMsg.recorder(samplingTime)
 
         self.AddModelToTask(self.get_DynModel().taskName, self.rwSpeedRec)

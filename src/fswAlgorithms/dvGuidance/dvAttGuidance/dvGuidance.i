@@ -21,15 +21,8 @@
    #include "dvGuidance.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_dvGuidance(void*, uint64_t, uint64_t);
-%ignore Update_dvGuidance;
-%constant void SelfInit_dvGuidance(void*, uint64_t);
-%ignore SelfInit_dvGuidance;
-%constant void Reset_dvGuidance(void*, uint64_t, uint64_t);
-%ignore Reset_dvGuidance;
-
-%include "dvGuidance.h"
+%include "swig_c_wrap.i"
+%c_wrap(dvGuidance);
 
 %include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;

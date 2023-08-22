@@ -21,15 +21,8 @@
    #include "cssComm.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_cssProcessTelem(void*, uint64_t, uint64_t);
-%ignore Update_cssProcessTelem;
-%constant void SelfInit_cssProcessTelem(void*, uint64_t);
-%ignore SelfInit_cssProcessTelem;
-%constant void Reset_cssProcessTelem(void*, uint64_t, uint64_t);
-%ignore Reset_cssProcessTelem;
-
-%include "cssComm.h"
+%include "swig_c_wrap.i"
+%c_wrap_3(cssComm, CSSConfigData, cssProcessTelem);
 
 %include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
 struct CSSArraySensorMsg_C;

@@ -171,16 +171,15 @@ def cssWlsEstTestFunction(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1E8)))
 
     # Construct algorithm and associated C++ container
-    CSSWlsEstFSWConfig = cssWlsEst.CSSWLSConfig()
-    CSSWlsWrap = unitTestSim.setModelDataWrap(CSSWlsEstFSWConfig)
-    CSSWlsWrap.ModelTag = "CSSWlsEst"
+    CSSWlsEstFSW = cssWlsEst.cssWlsEst()
+    CSSWlsEstFSW.ModelTag = "CSSWlsEst"
 
     # Add module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, CSSWlsWrap, CSSWlsEstFSWConfig)
+    unitTestSim.AddModelToTask(unitTaskName, CSSWlsEstFSW)
 
     # Initialize the WLS estimator configuration data
-    CSSWlsEstFSWConfig.useWeights = False
-    CSSWlsEstFSWConfig.sensorUseThresh = 0.15
+    CSSWlsEstFSW.useWeights = False
+    CSSWlsEstFSW.sensorUseThresh = 0.15
 
     CSSOrientationList = [
         [0.70710678118654746, -0.5, 0.5],
@@ -215,15 +214,15 @@ def cssWlsEstTestFunction(show_plots):
     residFailCriteria = 1.0E-12  # Essentially numerically "small"
 
     # Log the output message as well as the internal numACtiveCss variables
-    navData = CSSWlsEstFSWConfig.navStateOutMsg.recorder()
-    filterData = CSSWlsEstFSWConfig.cssWLSFiltResOutMsg.recorder()
+    navData = CSSWlsEstFSW.navStateOutMsg.recorder()
+    filterData = CSSWlsEstFSW.cssWLSFiltResOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, navData)
     unitTestSim.AddModelToTask(unitTaskName, filterData)
     unitTestSim.AddVariableForLogging("CSSWlsEst.numActiveCss", int(1E8))
 
     # connect the messages
-    CSSWlsEstFSWConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
-    CSSWlsEstFSWConfig.cssConfigInMsg.subscribeTo(cssConfigDataInMsg)
+    CSSWlsEstFSW.cssDataInMsg.subscribeTo(cssDataInMsg)
+    CSSWlsEstFSW.cssConfigInMsg.subscribeTo(cssConfigDataInMsg)
 
     # Initial test is all of the principal body axes
     TestVectors = [[-1.0, 0.0, 0.0],
@@ -235,7 +234,7 @@ def cssWlsEstTestFunction(show_plots):
 
     # Initialize test and then step through all of the test vectors in a loop
     unitTestSim.InitializeSimulation()
-    CSSWlsWrap.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
+    CSSWlsEstFSW.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
 
     stepCount = 0
     logLengthPrev = 0
@@ -243,7 +242,7 @@ def cssWlsEstTestFunction(show_plots):
     truthData = []
     for testVec in TestVectors:
         if stepCount > 1:  # Doing this to test permutations and get code coverage
-            CSSWlsEstFSWConfig.useWeights = True
+            CSSWlsEstFSW.useWeights = True
 
         # Get observation data based on sun pointing and CSS orientation data
         cssDataMsg.CosValue = createCosList(testVec, CSSOrientationList)
@@ -268,7 +267,7 @@ def cssWlsEstTestFunction(show_plots):
         testFailCount += checksHatAccuracy(testVec, sHatEstUse, angleFailCriteria,
                                            unitTestSim)
         testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
-                                                numActiveFailCriteria, CSSWlsEstFSWConfig.sensorUseThresh)
+                                                numActiveFailCriteria, CSSWlsEstFSW.sensorUseThresh)
 
         filtRes = filterData.postFitRes
         testFailCount += checkResidAccuracy(testVec, filtRes, residFailCriteria,
@@ -312,7 +311,7 @@ def cssWlsEstTestFunction(show_plots):
     testFailCount += checksHatAccuracy(doubleTestVec, sHatEstUse, angleFailCriteria,
                                        unitTestSim)
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
-                                            numActiveFailCriteria, CSSWlsEstFSWConfig.sensorUseThresh)
+                                            numActiveFailCriteria, CSSWlsEstFSW.sensorUseThresh)
 
     # Same test as above, but zero first element to get to a single coverage case
     cssDataMsg.CosValue[0] = 0.0
@@ -327,7 +326,7 @@ def cssWlsEstTestFunction(show_plots):
     sHatEstUse = sHatEst[logLengthPrev + 1:, :]
     logLengthPrev = sHatEst.shape[0]
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
-                                            numActiveFailCriteria, CSSWlsEstFSWConfig.sensorUseThresh)
+                                            numActiveFailCriteria, CSSWlsEstFSW.sensorUseThresh)
     currentRow = [sHatEstUse[0, 0]]
     currentRow.extend(doubleTestVec)
     truthData.append(currentRow)
@@ -346,7 +345,7 @@ def cssWlsEstTestFunction(show_plots):
     numActiveUse = numActive[logLengthPrev:, :]
     logLengthPrev = numActive.shape[0]
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
-                                            numActiveFailCriteria, CSSWlsEstFSWConfig.sensorUseThresh)
+                                            numActiveFailCriteria, CSSWlsEstFSW.sensorUseThresh)
 
     # Format data for plotting
     truthData = numpy.array(truthData)
@@ -369,7 +368,7 @@ def cssWlsEstTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(sHatEstZeroUse[i], trueVector[i], 3, 1e-12):
             testFailCount += 1
-            testMessages.append("FAILED: " + CSSWlsWrap.ModelTag + " Module failed  unit test at t=" +
+            testMessages.append("FAILED: " + CSSWlsEstFSW.ModelTag + " Module failed  unit test at t=" +
                                 str(navData.times()[i] * macros.NANO2SEC) + "sec\n")
 
 
@@ -410,7 +409,7 @@ def cssWlsEstTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + CSSWlsWrap.ModelTag)
+        print("PASSED: " + CSSWlsEstFSW.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -432,16 +431,15 @@ def cssRateTestFunction(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = cssWlsEst.CSSWLSConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "CSSWlsEst"
+    module = cssWlsEst.cssWlsEst()
+    module.ModelTag = "CSSWlsEst"
 
     # Add module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the WLS estimator configuration data
-    moduleConfig.useWeights = False
-    moduleConfig.sensorUseThresh = 0.15
+    module.useWeights = False
+    module.sensorUseThresh = 0.15
 
     CSSOrientationList = [
         [0.70710678118654746, -0.5, 0.5],
@@ -468,7 +466,7 @@ def cssRateTestFunction(show_plots):
     cssConfigDataInMsg = messaging.CSSConfigMsg().write(cssConfigData)
 
     # Log the output message as well as the internal numACtiveCss variables
-    dataLog = moduleConfig.navStateOutMsg.recorder()
+    dataLog = module.navStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Get observation data based on sun pointing and CSS orientation data
@@ -477,8 +475,8 @@ def cssRateTestFunction(show_plots):
     cssDataInMsg = messaging.CSSArraySensorMsg().write(cssDataMsg)
 
     # connect messages
-    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
-    moduleConfig.cssConfigInMsg.subscribeTo(cssConfigDataInMsg)
+    module.cssDataInMsg.subscribeTo(cssDataInMsg)
+    module.cssConfigInMsg.subscribeTo(cssConfigDataInMsg)
 
     # Initialize test and then step through all of the test vectors in a loop
     unitTestSim.InitializeSimulation()
@@ -494,7 +492,7 @@ def cssRateTestFunction(show_plots):
     unitTestSim.ExecuteSimulation()
 
     # test the module reset function
-    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.5))
     unitTestSim.ExecuteSimulation()
     cssDataMsg.CosValue = createCosList([1.0, 0.0, 0.0], CSSOrientationList)
@@ -520,11 +518,11 @@ def cssRateTestFunction(show_plots):
     snippentName = "passFailRate"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

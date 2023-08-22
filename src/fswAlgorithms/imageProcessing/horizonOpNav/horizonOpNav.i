@@ -22,13 +22,10 @@
 %}
 
 %include "swig_conly_data.i"
-%constant void SelfInit_horizonOpNav(void*, uint64_t);
-%ignore SelfInit_horizonOpNav;
-%constant void Reset_horizonOpNav(void*, uint64_t, uint64_t);
-%ignore Reset_horizonOpNav;
-%constant void Update_horizonOpNav(void*, uint64_t, uint64_t);
-%ignore Update_horizonOpNav;
 STRUCTASLIST(HorizonOpNavData)
+
+%include "swig_c_wrap.i"
+%c_wrap_2(horizonOpNav, HorizonOpNavData);
 
 %include "architecture/msgPayloadDefC/OpNavLimbMsgPayload.h"
 struct OpNavLimbMsg_C;
@@ -39,11 +36,7 @@ struct NavAttMsg_C;
 %include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
 struct OpNavMsg_C;
 
-%include "horizonOpNav.h"
-
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-
-

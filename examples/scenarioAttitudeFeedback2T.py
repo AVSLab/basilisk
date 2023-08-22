@@ -236,30 +236,27 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     #
 
     # setup inertial3D guidance module
-    inertial3DConfig = inertial3D.inertial3DConfig()
-    inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
-    inertial3DWrap.ModelTag = "inertial3D"
-    scSim.AddModelToTask(fswTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj = inertial3D.inertial3D()
+    inertial3DObj.ModelTag = "inertial3D"
+    scSim.AddModelToTask(fswTaskName, inertial3DObj)
+    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(fswTaskName, attErrorWrap, attErrorConfig)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(fswTaskName, attError)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(fswTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.K = 3.5
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(fswTaskName, mrpControl)
+    mrpControl.K = 3.5
     if useIntGain:
-        mrpControlConfig.Ki = 0.0002  # make value negative to turn off integral feedback
+        mrpControl.Ki = 0.0002  # make value negative to turn off integral feedback
     else:
-        mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+        mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     #
     #   Setup data logging before the simulation is initialized
@@ -267,9 +264,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     #   Add logging object to a task group, this controls the logging rate
     numDataPoints = 100
     dataLog = scObject.scStateOutMsg.recorder(unitTestSupport.samplingTime(simulationTime, simTimeStep, numDataPoints))
-    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(unitTestSupport.samplingTime(simulationTime,
+    attErrorLog = attError.attGuidOutMsg.recorder(unitTestSupport.samplingTime(simulationTime,
                                                                                      fswTimeStep, numDataPoints))
-    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(unitTestSupport.samplingTime(simulationTime,
+    mrpLog = mrpControl.cmdTorqueOutMsg.recorder(unitTestSupport.samplingTime(simulationTime,
                                                                                     fswTimeStep, numDataPoints))
 
     scSim.AddModelToTask(dynTaskName, dataLog)
@@ -306,11 +303,11 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     # connect the messages to the modules
     #
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     vizSupport.enableUnityVisualization(scSim, dynTaskName, scObject

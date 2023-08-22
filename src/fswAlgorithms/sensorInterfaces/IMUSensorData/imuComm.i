@@ -21,13 +21,8 @@
    #include "imuComm.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_imuProcessTelem(void*, uint64_t, uint64_t);
-%ignore Update_imuProcessTelem;
-%constant void SelfInit_imuProcessTelem(void*, uint64_t);
-%ignore SelfInit_imuProcessTelem;
-
-%include "imuComm.h"
+%include "swig_c_wrap.i"
+%c_wrap_3(imuComm, IMUConfigData, imuProcessTelem);
 
 %include "architecture/msgPayloadDefC/IMUSensorBodyMsgPayload.h"
 struct IMUSensorBodyMsg_C;

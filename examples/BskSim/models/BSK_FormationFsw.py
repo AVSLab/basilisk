@@ -25,6 +25,7 @@ from Basilisk.fswAlgorithms import (inertial3D, attTrackingError, mrpFeedback,
                                     spacecraftPointing)
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW
+from Basilisk.utilities import deprecated
 from Basilisk.utilities import macros as mc
 
 
@@ -58,46 +59,36 @@ class BSKFswModels():
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackTask", self.processTasksTimeStep), 10)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("spacecraftPointingTask", self.processTasksTimeStep))
 
-        # Create module data and module wraps
-        self.inertial3DData = inertial3D.inertial3DConfig()
-        self.inertial3DWrap = SimBase.setModelDataWrap(self.inertial3DData)
-        self.inertial3DWrap.ModelTag = "inertial3D"
+        # Create modules
+        self.inertial3D = inertial3D.inertial3D()
+        self.inertial3D.ModelTag = "inertial3D"
 
-        self.trackingErrorData = attTrackingError.attTrackingErrorConfig()
-        self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
-        self.trackingErrorWrap.ModelTag = "trackingError"
+        self.trackingError = attTrackingError.attTrackingError()
+        self.trackingError.ModelTag = "trackingError"
 
-        self.mrpFeedbackRWsData = mrpFeedback.mrpFeedbackConfig()
-        self.mrpFeedbackRWsWrap = SimBase.setModelDataWrap(self.mrpFeedbackRWsData)
-        self.mrpFeedbackRWsWrap.ModelTag = "mrpFeedbackRWs"
+        self.mrpFeedbackRWs = mrpFeedback.mrpFeedback()
+        self.mrpFeedbackRWs.ModelTag = "mrpFeedbackRWs"
 
-        self.rwMotorTorqueData = rwMotorTorque.rwMotorTorqueConfig()
-        self.rwMotorTorqueWrap = SimBase.setModelDataWrap(self.rwMotorTorqueData)
-        self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
+        self.rwMotorTorque = rwMotorTorque.rwMotorTorque()
+        self.rwMotorTorque.ModelTag = "rwMotorTorque"
 
-        self.inertial3DData2 = inertial3D.inertial3DConfig()
-        self.inertial3DWrap2 = SimBase.setModelDataWrap(self.inertial3DData2)
-        self.inertial3DWrap2.ModelTag = "inertial3D2"
+        self.inertial3D2 = inertial3D.inertial3D()
+        self.inertial3D2.ModelTag = "inertial3D2"
 
-        self.trackingErrorData2 = attTrackingError.attTrackingErrorConfig()
-        self.trackingErrorWrap2 = SimBase.setModelDataWrap(self.trackingErrorData2)
-        self.trackingErrorWrap2.ModelTag = "trackingError2"
+        self.trackingError2 = attTrackingError.attTrackingError()
+        self.trackingError2.ModelTag = "trackingError2"
 
-        self.mrpFeedbackRWsData2 = mrpFeedback.mrpFeedbackConfig()
-        self.mrpFeedbackRWsWrap2 = SimBase.setModelDataWrap(self.mrpFeedbackRWsData2)
-        self.mrpFeedbackRWsWrap2.ModelTag = "mrpFeedbackRWs2"
+        self.mrpFeedbackRWs2 = mrpFeedback.mrpFeedback()
+        self.mrpFeedbackRWs2.ModelTag = "mrpFeedbackRWs2"
 
-        self.rwMotorTorqueData2 = rwMotorTorque.rwMotorTorqueConfig()
-        self.rwMotorTorqueWrap2 = SimBase.setModelDataWrap(self.rwMotorTorqueData2)
-        self.rwMotorTorqueWrap2.ModelTag = "rwMotorTorque2"
+        self.rwMotorTorque2 = rwMotorTorque.rwMotorTorque()
+        self.rwMotorTorque2.ModelTag = "rwMotorTorque2"
 
-        self.spacecraftPointing = spacecraftPointing.spacecraftPointingConfig()
-        self.spacecraftPointingWrap = SimBase.setModelDataWrap(self.spacecraftPointing)
-        self.spacecraftPointingWrap.ModelTag = "spacecraftPointing"
+        self.spacecraftPointing = spacecraftPointing.spacecraftPointing()
+        self.spacecraftPointing.ModelTag = "spacecraftPointing"
 
-        self.mrpFeedbackControlData = mrpFeedback.mrpFeedbackConfig()
-        self.mrpFeedbackControlWrap = SimBase.setModelDataWrap(self.mrpFeedbackControlData)
-        self.mrpFeedbackControlWrap.ModelTag = "mrpFeedbackControl"
+        self.mrpFeedbackControl = mrpFeedback.mrpFeedback()
+        self.mrpFeedbackControl.ModelTag = "mrpFeedbackControl"
 
         # create the FSW module gateway messages
         self.setupGatewayMsgs(SimBase)
@@ -106,23 +97,23 @@ class BSKFswModels():
         self.InitAllFSWObjects(SimBase)
 
         # Assign initialized modules to tasks
-        SimBase.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 10)
-        SimBase.AddModelToTask("inertial3DPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
+        SimBase.AddModelToTask("inertial3DPointTask", self.inertial3D, 10)
+        SimBase.AddModelToTask("inertial3DPointTask", self.trackingError, 9)
 
-        SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWsWrap, self.mrpFeedbackRWsData, 9)
-        SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
+        SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWs, 9)
+        SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorque, 8)
 
 
-        SimBase.AddModelToTask("inertial3DPointTask2", self.inertial3DWrap2, self.inertial3DData2, 10)
-        SimBase.AddModelToTask("inertial3DPointTask2", self.trackingErrorWrap2, self.trackingErrorData2, 9)
+        SimBase.AddModelToTask("inertial3DPointTask2", self.inertial3D2, 10)
+        SimBase.AddModelToTask("inertial3DPointTask2", self.trackingError2, 9)
 
-        SimBase.AddModelToTask("mrpFeedbackRWsTask2", self.mrpFeedbackRWsWrap2, self.mrpFeedbackRWsData2, 9)
-        SimBase.AddModelToTask("mrpFeedbackRWsTask2", self.rwMotorTorqueWrap2, self.rwMotorTorqueData2, 8)
+        SimBase.AddModelToTask("mrpFeedbackRWsTask2", self.mrpFeedbackRWs2, 9)
+        SimBase.AddModelToTask("mrpFeedbackRWsTask2", self.rwMotorTorque2,8)
 
-        SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControlWrap, self.mrpFeedbackControlData, 10)
+        SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControl, 10)
 
-        SimBase.AddModelToTask("spacecraftPointingTask", self.spacecraftPointingWrap, self.spacecraftPointing, 8)
-        SimBase.AddModelToTask("spacecraftPointingTask", self.trackingErrorWrap2, self.trackingErrorData2, 7)
+        SimBase.AddModelToTask("spacecraftPointingTask", self.spacecraftPointing, 8)
+        SimBase.AddModelToTask("spacecraftPointingTask", self.trackingError2, 7)
 
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
@@ -152,41 +143,41 @@ class BSKFswModels():
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
     def SetInertial3DPointGuidance(self):
-        self.inertial3DData.sigma_R0N = [0.2, 0.4, 0.6]
-        messaging.AttRefMsg_C_addAuthor(self.inertial3DData.attRefOutMsg, self.attRefMsg)
+        self.inertial3D.sigma_R0N = [0.2, 0.4, 0.6]
+        messaging.AttRefMsg_C_addAuthor(self.inertial3D.attRefOutMsg, self.attRefMsg)
 
-        self.inertial3DData2.sigma_R0N = [0.2, 0.4, 0.6]
-        messaging.AttRefMsg_C_addAuthor(self.inertial3DData2.attRefOutMsg, self.attRef2Msg)
+        self.inertial3D2.sigma_R0N = [0.2, 0.4, 0.6]
+        messaging.AttRefMsg_C_addAuthor(self.inertial3D2.attRefOutMsg, self.attRef2Msg)
 
     def SetAttitudeTrackingError(self, SimBase):
-        self.trackingErrorData.attNavInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.attOutMsg)
-        self.trackingErrorData.attRefInMsg.subscribeTo(self.attRefMsg)
-        messaging.AttGuidMsg_C_addAuthor(self.trackingErrorData.attGuidOutMsg, self.attGuidMsg)
+        self.trackingError.attNavInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.attOutMsg)
+        self.trackingError.attRefInMsg.subscribeTo(self.attRefMsg)
+        messaging.AttGuidMsg_C_addAuthor(self.trackingError.attGuidOutMsg, self.attGuidMsg)
 
-        self.trackingErrorData2.attNavInMsg.subscribeTo(SimBase.DynModels.simpleNavObject2.attOutMsg)
-        self.trackingErrorData2.attRefInMsg.subscribeTo(self.attRef2Msg)
-        messaging.AttGuidMsg_C_addAuthor(self.trackingErrorData2.attGuidOutMsg, self.attGuid2Msg)
+        self.trackingError2.attNavInMsg.subscribeTo(SimBase.DynModels.simpleNavObject2.attOutMsg)
+        self.trackingError2.attRefInMsg.subscribeTo(self.attRef2Msg)
+        messaging.AttGuidMsg_C_addAuthor(self.trackingError2.attGuidOutMsg, self.attGuid2Msg)
 
     def SetMRPFeedbackRWA(self, SimBase):
-        self.mrpFeedbackRWsData.K = 3.5
-        self.mrpFeedbackRWsData.Ki = -1
-        self.mrpFeedbackRWsData.P = 30.0
-        self.mrpFeedbackRWsData.integralLimit = 2. / self.mrpFeedbackRWsData.Ki * 0.1
-        self.mrpFeedbackRWsData.vehConfigInMsg.subscribeTo(self.vcMsg)
-        self.mrpFeedbackRWsData.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
-        self.mrpFeedbackRWsData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
-        self.mrpFeedbackRWsData.guidInMsg.subscribeTo(self.attGuidMsg)
-        messaging.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackRWsData.cmdTorqueOutMsg, self.cmdTorqueMsg)
+        self.mrpFeedbackRWs.K = 3.5
+        self.mrpFeedbackRWs.Ki = -1
+        self.mrpFeedbackRWs.P = 30.0
+        self.mrpFeedbackRWs.integralLimit = 2. / self.mrpFeedbackRWs.Ki * 0.1
+        self.mrpFeedbackRWs.vehConfigInMsg.subscribeTo(self.vcMsg)
+        self.mrpFeedbackRWs.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
+        self.mrpFeedbackRWs.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
+        self.mrpFeedbackRWs.guidInMsg.subscribeTo(self.attGuidMsg)
+        messaging.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackRWs.cmdTorqueOutMsg, self.cmdTorqueMsg)
 
-        self.mrpFeedbackRWsData2.K = 3.5
-        self.mrpFeedbackRWsData2.Ki = -1  # TURN OFF IN CASE OF RUNNING Inertial3D!!!
-        self.mrpFeedbackRWsData2.P = 30.0
-        self.mrpFeedbackRWsData2.integralLimit = 2. / self.mrpFeedbackRWsData2.Ki * 0.1
-        self.mrpFeedbackRWsData2.vehConfigInMsg.subscribeTo(self.vcMsg)
-        self.mrpFeedbackRWsData2.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector2.rwSpeedOutMsg)
-        self.mrpFeedbackRWsData2.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
-        self.mrpFeedbackRWsData2.guidInMsg.subscribeTo(self.attGuid2Msg)
-        messaging.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackRWsData2.cmdTorqueOutMsg, self.cmdTorque2Msg)
+        self.mrpFeedbackRWs2.K = 3.5
+        self.mrpFeedbackRWs2.Ki = -1  # TURN OFF IN CASE OF RUNNING Inertial3D!!!
+        self.mrpFeedbackRWs2.P = 30.0
+        self.mrpFeedbackRWs2.integralLimit = 2. / self.mrpFeedbackRWs2.Ki * 0.1
+        self.mrpFeedbackRWs2.vehConfigInMsg.subscribeTo(self.vcMsg)
+        self.mrpFeedbackRWs2.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector2.rwSpeedOutMsg)
+        self.mrpFeedbackRWs2.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
+        self.mrpFeedbackRWs2.guidInMsg.subscribeTo(self.attGuid2Msg)
+        messaging.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackRWs2.cmdTorqueOutMsg, self.cmdTorque2Msg)
 
     def SetRWConfigMsg(self):
         # Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)
@@ -209,15 +200,15 @@ class BSKFswModels():
           0.0, 1.0, 0.0,
           0.0, 0.0, 1.0]
 
-        self.rwMotorTorqueData.controlAxes_B = controlAxes_B
-        self.rwMotorTorqueData.vehControlInMsg.subscribeTo(self.cmdTorqueMsg)
-        messaging.ArrayMotorTorqueMsg_C_addAuthor(self.rwMotorTorqueData.rwMotorTorqueOutMsg, self.cmdRwMotorMsg)
-        self.rwMotorTorqueData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
+        self.rwMotorTorque.controlAxes_B = controlAxes_B
+        self.rwMotorTorque.vehControlInMsg.subscribeTo(self.cmdTorqueMsg)
+        messaging.ArrayMotorTorqueMsg_C_addAuthor(self.rwMotorTorque.rwMotorTorqueOutMsg, self.cmdRwMotorMsg)
+        self.rwMotorTorque.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
-        self.rwMotorTorqueData2.controlAxes_B = controlAxes_B
-        self.rwMotorTorqueData2.vehControlInMsg.subscribeTo(self.cmdTorque2Msg)
-        messaging.ArrayMotorTorqueMsg_C_addAuthor(self.rwMotorTorqueData2.rwMotorTorqueOutMsg, self.cmdRwMotor2Msg)
-        self.rwMotorTorqueData2.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
+        self.rwMotorTorque2.controlAxes_B = controlAxes_B
+        self.rwMotorTorque2.vehControlInMsg.subscribeTo(self.cmdTorque2Msg)
+        messaging.ArrayMotorTorqueMsg_C_addAuthor(self.rwMotorTorque2.rwMotorTorqueOutMsg, self.cmdRwMotor2Msg)
+        self.rwMotorTorque2.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
     def SetSpacecraftPointing(self, SimBase):
         self.spacecraftPointing.chiefPositionInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.transOutMsg)
@@ -232,14 +223,14 @@ class BSKFswModels():
         self.vcMsg = messaging.VehicleConfigMsg().write(vcData)
 
     def SetMRPFeedbackControl(self):
-        self.mrpFeedbackControlData.guidInMsg.subscribeTo(self.attGuid2Msg)
-        self.mrpFeedbackControlData.vehConfigInMsg.subscribeTo(self.vcMsg)
-        messaging.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackControlData.cmdTorqueOutMsg, self.cmdTorqueDirectMsg)
+        self.mrpFeedbackControl.guidInMsg.subscribeTo(self.attGuid2Msg)
+        self.mrpFeedbackControl.vehConfigInMsg.subscribeTo(self.vcMsg)
+        messaging.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackControl.cmdTorqueOutMsg, self.cmdTorqueDirectMsg)
 
-        self.mrpFeedbackControlData.K = 10.0
-        self.mrpFeedbackControlData.Ki = 0.0001  # Note: make value negative to turn off integral feedback
-        self.mrpFeedbackControlData.P = 30.0
-        self.mrpFeedbackControlData.integralLimit = 2. / self.mrpFeedbackControlData.Ki * 0.1
+        self.mrpFeedbackControl.K = 10.0
+        self.mrpFeedbackControl.Ki = 0.0001  # Note: make value negative to turn off integral feedback
+        self.mrpFeedbackControl.P = 30.0
+        self.mrpFeedbackControl.integralLimit = 2. / self.mrpFeedbackControl.Ki * 0.1
 
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
@@ -285,3 +276,179 @@ class BSKFswModels():
         self.cmdRwMotor2Msg.write(messaging.ArrayMotorTorqueMsgPayload())
 
 
+    @property
+    def inertial3DData(self):
+        return self.inertial3D
+
+    inertial3DData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to inertial3DData as inertial3D",
+        inertial3DData)
+
+    @property
+    def inertial3DWrap(self):
+        return self.inertial3D
+
+    inertial3DWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to inertial3DWrap as inertial3D",
+        inertial3DWrap)
+
+
+    @property
+    def trackingErrorData(self):
+        return self.trackingError
+
+    trackingErrorData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to trackingErrorData as trackingError",
+        trackingErrorData)
+
+    @property
+    def trackingErrorWrap(self):
+        return self.trackingError
+
+    trackingErrorWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to trackingErrorWrap as trackingError",
+        trackingErrorWrap)
+
+
+    @property
+    def mrpFeedbackRWsData(self):
+        return self.mrpFeedbackRWs
+
+    mrpFeedbackRWsData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to mrpFeedbackRWsData as mrpFeedbackRWs",
+        mrpFeedbackRWsData)
+
+    @property
+    def mrpFeedbackRWsWrap(self):
+        return self.mrpFeedbackRWs
+
+    mrpFeedbackRWsWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to mrpFeedbackRWsWrap as mrpFeedbackRWs",
+        mrpFeedbackRWsWrap)
+
+
+    @property
+    def rwMotorTorqueData(self):
+        return self.rwMotorTorque
+
+    rwMotorTorqueData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to rwMotorTorqueData as rwMotorTorque",
+        rwMotorTorqueData)
+
+    @property
+    def rwMotorTorqueWrap(self):
+        return self.rwMotorTorque
+
+    rwMotorTorqueWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to rwMotorTorqueWrap as rwMotorTorque",
+        rwMotorTorqueWrap)
+
+    @property
+    def inertial3DData2(self):
+        return self.inertial3D2
+
+    inertial3DData2 = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to inertial3DData2 as inertial3D2",
+        inertial3DData2)
+
+    @property
+    def inertial3DWrap2(self):
+        return self.inertial3D2
+
+    inertial3DWrap2 = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to inertial3DWrap2 as inertial3D2",
+        inertial3DWrap2)
+
+
+    @property
+    def trackingErrorData2(self):
+        return self.trackingError2
+
+    trackingErrorData2 = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to trackingErrorData2 as trackingError2",
+        trackingErrorData2)
+
+    @property
+    def trackingErrorWrap2(self):
+        return self.trackingError2
+
+    trackingErrorWrap2 = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to trackingErrorWrap2 as trackingError2",
+        trackingErrorWrap2)
+
+
+    @property
+    def mrpFeedbackRWsData2(self):
+        return self.mrpFeedbackRWs2
+
+    mrpFeedbackRWsData2 = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to mrpFeedbackRWsData2 as mrpFeedbackRWs2",
+        mrpFeedbackRWsData2)
+
+    @property
+    def mrpFeedbackRWsWrap2(self):
+        return self.mrpFeedbackRWs2
+
+    mrpFeedbackRWsWrap2 = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to mrpFeedbackRWsWrap2 as mrpFeedbackRWs2",
+        mrpFeedbackRWsWrap2)
+
+
+    @property
+    def rwMotorTorqueData2(self):
+        return self.rwMotorTorque2
+
+    rwMotorTorqueData2 = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to rwMotorTorqueData2 as rwMotorTorque2",
+        rwMotorTorqueData2)
+
+    @property
+    def rwMotorTorqueWrap2(self):
+        return self.rwMotorTorque2
+
+    rwMotorTorqueWrap2 = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to rwMotorTorqueWrap2 as rwMotorTorque2",
+        rwMotorTorqueWrap2)
+    
+    @property
+    def mrpFeedbackControlData(self):
+        return self.mrpFeedbackControl
+
+    mrpFeedbackControlData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to mrpFeedbackControlData as mrpFeedbackControl",
+        mrpFeedbackControlData)
+
+    @property
+    def mrpFeedbackControlWrap(self):
+        return self.mrpFeedbackControl
+
+    mrpFeedbackControlWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to mrpFeedbackControlWrap as mrpFeedbackControl",
+        mrpFeedbackControlWrap)
+
+    @property
+    def spacecraftPointingWrap(self):
+        return self.spacecraftPointing
+
+    spacecraftPointingWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to spacecraftPointingWrap as spacecraftPointing",
+        spacecraftPointingWrap)

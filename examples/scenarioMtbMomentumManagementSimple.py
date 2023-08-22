@@ -279,7 +279,7 @@ def run(show_plots):
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject, None, 1)
+    scSim.AddModelToTask(simTaskName, scObject, 1)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -335,7 +335,7 @@ def run(show_plots):
 
     # add RW object array to the simulation process.  This is required for the UpdateState() method
     # to be called which logs the RW states
-    scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
+    scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
 
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
@@ -365,28 +365,25 @@ def run(show_plots):
     #
 
     # setup inertial3D guidance module
-    inertial3DConfig = inertial3D.inertial3DConfig()
-    inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
-    inertial3DWrap.ModelTag = "inertial3D"
-    scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj = inertial3D.inertial3D()
+    inertial3DObj.ModelTag = "inertial3D"
+    scSim.AddModelToTask(simTaskName, inertial3DObj)
+    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
     
-    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.K = 0.0001
-    mrpControlConfig.P = 0.002
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.K = 0.0001
+    mrpControl.P = 0.002
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     
     # create the minimal TAM module
@@ -398,24 +395,21 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, TAM)
     
     # setup tamComm module
-    tamCommConfig = tamComm.tamConfigData()
-    tamCommConfig.dcm_BS = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
-    tamCommWrap = scSim.setModelDataWrap(tamCommConfig)
-    tamCommWrap.ModelTag = "tamComm"
-    scSim.AddModelToTask(simTaskName, tamCommWrap, tamCommConfig)
+    tamCommObj = tamComm.tamComm()
+    tamCommObj.dcm_BS = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
+    tamCommObj.ModelTag = "tamComm"
+    scSim.AddModelToTask(simTaskName, tamCommObj)
     
     # setup mtbMomentumManagement module
-    mtbMomentumManagementSimpleConfig = mtbMomentumManagementSimple.mtbMomentumManagementSimpleConfig()
-    mtbMomentumManagementSimpleConfig.Kp = 0.003
-    mtbMomentumManagementSimpleWrap = scSim.setModelDataWrap(mtbMomentumManagementSimpleConfig)
-    mtbMomentumManagementSimpleWrap.ModelTag = "mtbMomentumManagementSimple"          
-    scSim.AddModelToTask(simTaskName, mtbMomentumManagementSimpleWrap, mtbMomentumManagementSimpleConfig)
+    mtbMomentumManagementSimpleObj = mtbMomentumManagementSimple.mtbMomentumManagementSimple()
+    mtbMomentumManagementSimpleObj.Kp = 0.003
+    mtbMomentumManagementSimpleObj.ModelTag = "mtbMomentumManagementSimple"          
+    scSim.AddModelToTask(simTaskName, mtbMomentumManagementSimpleObj)
     
     # setup torque2Dipole module
-    torque2DipoleConfig = torque2Dipole.torque2DipoleConfig()
-    torque2DipoleWrap = scSim.setModelDataWrap(torque2DipoleConfig)
-    torque2DipoleWrap.ModelTag = "torque2Dipole"
-    scSim.AddModelToTask(simTaskName, torque2DipoleWrap, torque2DipoleConfig)
+    torque2DipoleObj = torque2Dipole.torque2Dipole()
+    torque2DipoleObj.ModelTag = "torque2Dipole"
+    scSim.AddModelToTask(simTaskName, torque2DipoleObj)
     
     # mtbConfigData message
     mtbConfigParams = messaging.MTBArrayConfigMsgPayload()
@@ -431,41 +425,37 @@ def run(show_plots):
     mtbParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbConfigParams)
     
     # setup dipoleMapping module
-    dipoleMappingConfig = dipoleMapping.dipoleMappingConfig()
+    dipoleMappingObj = dipoleMapping.dipoleMapping()
     
     # row major toque bar alignment inverse
-    dipoleMappingConfig.steeringMatrix = [0.75, -0.25, 0.,
+    dipoleMappingObj.steeringMatrix = [0.75, -0.25, 0.,
                                           -0.25, 0.75, 0.,
                                            0., 0., 1.,
                                            0.35355339, 0.35355339, 0.]
-    dipoleMappingWrap = scSim.setModelDataWrap(dipoleMappingConfig)
-    dipoleMappingWrap.ModelTag = "dipoelMapping"
-    scSim.AddModelToTask(simTaskName, dipoleMappingWrap, dipoleMappingConfig)
+    dipoleMappingObj.ModelTag = "dipoelMapping"
+    scSim.AddModelToTask(simTaskName, dipoleMappingObj)
     
     # setup mtbFeedforward module
-    mtbFeedforwardConfig = mtbFeedforward.mtbFeedforwardConfig()
-    mtbFeedforwardWrap = scSim.setModelDataWrap(mtbFeedforwardConfig)
-    mtbFeedforwardWrap.ModelTag = "mtbFeedforward"
-    scSim.AddModelToTask(simTaskName, mtbFeedforwardWrap, mtbFeedforwardConfig)
+    mtbFeedforwardObj = mtbFeedforward.mtbFeedforward()
+    mtbFeedforwardObj.ModelTag = "mtbFeedforward"
+    scSim.AddModelToTask(simTaskName, mtbFeedforwardObj)
     
     # add module that maps the Lr control torque into the RW motor torques
-    rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
-    rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
-    rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
-    scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
+    rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
+    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
 
     # Make the RW control all three body axes
     controlAxes_B = [
         1, 0, 0, 0, 1, 0, 0, 0, 1
     ]
-    rwMotorTorqueConfig.controlAxes_B = controlAxes_B
+    rwMotorTorqueObj.controlAxes_B = controlAxes_B
     
     # setup rwNullSpace module
-    rwNullSpaceConfig = rwNullSpace.rwNullSpaceConfig()
-    rwNullSpaceConfig.OmegaGain = 0.0000003
-    rwNullSpaceWrap = scSim.setModelDataWrap(rwNullSpaceConfig)
-    rwNullSpaceWrap.ModelTag = "rwNullSpace"
-    scSim.AddModelToTask(simTaskName, rwNullSpaceWrap, rwNullSpaceConfig)
+    rwNullSpaceObj = rwNullSpace.rwNullSpace()
+    rwNullSpaceObj.OmegaGain = 0.0000003
+    rwNullSpaceObj.ModelTag = "rwNullSpace"
+    scSim.AddModelToTask(simTaskName, rwNullSpaceObj)
     
     # setup RWConstellationMsgPayload
     rwConstellationConfig = messaging.RWConstellationMsgPayload()
@@ -505,12 +495,12 @@ def run(show_plots):
     #
     numDataPoints = 200
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
-    rwMotorLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
-    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
+    attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     magLog = magModule.envOutMsgs[0].recorder(samplingTime)
     tamLog = TAM.tamDataOutMsg.recorder(samplingTime)
-    tamCommLog = tamCommConfig.tamOutMsg.recorder(samplingTime)
-    mtbDipoleCmdsLog = dipoleMappingConfig.dipoleRequestMtbOutMsg.recorder(samplingTime)
+    tamCommLog = tamCommObj.tamOutMsg.recorder(samplingTime)
+    mtbDipoleCmdsLog = dipoleMappingObj.dipoleRequestMtbOutMsg.recorder(samplingTime)
     
     scSim.AddModelToTask(simTaskName, rwMotorLog)
     scSim.AddModelToTask(simTaskName, attErrorLog)
@@ -569,42 +559,42 @@ def run(show_plots):
 
     # link messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControlConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControl.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    mrpControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
 
     TAM.stateInMsg.subscribeTo(scObject.scStateOutMsg)
     TAM.magInMsg.subscribeTo(magModule.envOutMsgs[0])
-    tamCommConfig.tamInMsg.subscribeTo(TAM.tamDataOutMsg)
+    tamCommObj.tamInMsg.subscribeTo(TAM.tamDataOutMsg)
     
-    mtbMomentumManagementSimpleConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    mtbMomentumManagementSimpleConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    mtbMomentumManagementSimpleObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    mtbMomentumManagementSimpleObj.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
     
-    torque2DipoleConfig.tauRequestInMsg.subscribeTo(mtbMomentumManagementSimpleConfig.tauMtbRequestOutMsg)
-    torque2DipoleConfig.tamSensorBodyInMsg.subscribeTo(tamCommConfig.tamOutMsg)
+    torque2DipoleObj.tauRequestInMsg.subscribeTo(mtbMomentumManagementSimpleObj.tauMtbRequestOutMsg)
+    torque2DipoleObj.tamSensorBodyInMsg.subscribeTo(tamCommObj.tamOutMsg)
     
-    dipoleMappingConfig.dipoleRequestBodyInMsg.subscribeTo(torque2DipoleConfig.dipoleRequestOutMsg)
-    dipoleMappingConfig.mtbArrayConfigParamsInMsg.subscribeTo(mtbParamsInMsg)
+    dipoleMappingObj.dipoleRequestBodyInMsg.subscribeTo(torque2DipoleObj.dipoleRequestOutMsg)
+    dipoleMappingObj.mtbArrayConfigParamsInMsg.subscribeTo(mtbParamsInMsg)
     
-    mtbFeedforwardConfig.vehControlInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
-    mtbFeedforwardConfig.dipoleRequestMtbInMsg.subscribeTo(dipoleMappingConfig.dipoleRequestMtbOutMsg)
-    mtbFeedforwardConfig.tamSensorBodyInMsg.subscribeTo(tamCommConfig.tamOutMsg)
-    mtbFeedforwardConfig.mtbArrayConfigParamsInMsg.subscribeTo(mtbParamsInMsg)
+    mtbFeedforwardObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
+    mtbFeedforwardObj.dipoleRequestMtbInMsg.subscribeTo(dipoleMappingObj.dipoleRequestMtbOutMsg)
+    mtbFeedforwardObj.tamSensorBodyInMsg.subscribeTo(tamCommObj.tamOutMsg)
+    mtbFeedforwardObj.mtbArrayConfigParamsInMsg.subscribeTo(mtbParamsInMsg)
     
-    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mtbFeedforwardConfig.vehControlOutMsg)
+    rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    rwMotorTorqueObj.vehControlInMsg.subscribeTo(mtbFeedforwardObj.vehControlOutMsg)
     
-    rwNullSpaceConfig.rwMotorTorqueInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
-    rwNullSpaceConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    rwNullSpaceConfig.rwConfigInMsg.subscribeTo(rwConstellationConfigInMsg)
-    rwNullSpaceConfig.rwDesiredSpeedsInMsg.subscribeTo(rwNullSpaceWheelSpeedBiasInMsg)
+    rwNullSpaceObj.rwMotorTorqueInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
+    rwNullSpaceObj.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    rwNullSpaceObj.rwConfigInMsg.subscribeTo(rwConstellationConfigInMsg)
+    rwNullSpaceObj.rwDesiredSpeedsInMsg.subscribeTo(rwNullSpaceWheelSpeedBiasInMsg)
     
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwNullSpaceConfig.rwMotorTorqueOutMsg)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwNullSpaceObj.rwMotorTorqueOutMsg)
     
-    mtbEff.mtbCmdInMsg.subscribeTo(dipoleMappingConfig.dipoleRequestMtbOutMsg)
+    mtbEff.mtbCmdInMsg.subscribeTo(dipoleMappingObj.dipoleRequestMtbOutMsg)
     mtbEff.mtbParamsInMsg.subscribeTo(mtbParamsInMsg)
     mtbEff.magInMsg.subscribeTo(magModule.envOutMsgs[0])
     

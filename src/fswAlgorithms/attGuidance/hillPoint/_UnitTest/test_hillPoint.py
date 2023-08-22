@@ -63,12 +63,11 @@ def hillPointTestFunction(show_plots, celMsgSet):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = hillPoint.hillPointConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "hillPoint"
+    module = hillPoint.hillPoint()
+    module.ModelTag = "hillPoint"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
 
@@ -93,7 +92,7 @@ def hillPointTestFunction(show_plots, celMsgSet):
     NavStateOutData.r_BN_N = r_BN_N
     NavStateOutData.v_BN_N = v_BN_N
     navMsg = messaging.NavTransMsg().write(NavStateOutData)
-    moduleConfig.transNavInMsg.subscribeTo(navMsg)
+    module.transNavInMsg.subscribeTo(navMsg)
 
     #
     #   Spice Input Message
@@ -103,10 +102,10 @@ def hillPointTestFunction(show_plots, celMsgSet):
         CelBodyData.r_BdyZero_N = planetPos
         CelBodyData.v_BdyZero_N = planetVel
         celBodyMsg = messaging.EphemerisMsg().write(CelBodyData)
-        moduleConfig.celBodyInMsg.subscribeTo(celBodyMsg)
+        module.celBodyInMsg.subscribeTo(celBodyMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attRefOutMsg.recorder()
+    dataLog = module.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
@@ -142,7 +141,7 @@ def hillPointTestFunction(show_plots, celMsgSet):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_RN unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
     #
@@ -162,7 +161,7 @@ def hillPointTestFunction(show_plots, celMsgSet):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" +
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
     #
@@ -181,7 +180,7 @@ def hillPointTestFunction(show_plots, celMsgSet):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed domega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_N unit test at t=" +
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
 

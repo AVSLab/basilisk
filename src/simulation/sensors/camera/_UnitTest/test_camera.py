@@ -139,15 +139,15 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = camera.Camera()
-    moduleConfig.ModelTag = "cameras"
+    module = camera.Camera()
+    module.ModelTag = "cameras"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
-    moduleConfig.filename = imagePath
-    moduleConfig.saveImages = True
+    unitTestSim.AddModelToTask(unitTaskName, module)
+    module.filename = imagePath
+    module.saveImages = True
     # make each image saved have a unique name for this test case
-    moduleConfig.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(gauss) + str(darkCurrent) \
+    module.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(gauss) + str(darkCurrent) \
                            + str(saltPepper) + str(cosmic) + str(blurSize)
 
     # Create input message and size it because the regular creator of that message
@@ -156,20 +156,20 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
     inCamMsg = messaging.CameraImageMsg().write(inputMessageData)
-    moduleConfig.imageInMsg.subscribeTo(inCamMsg)
+    module.imageInMsg.subscribeTo(inCamMsg)
 
-    moduleConfig.cameraIsOn = 1
-    moduleConfig.sigma_CB = [0, 0, 1]
+    module.cameraIsOn = 1
+    module.sigma_CB = [0, 0, 1]
 
     # Noise parameters
-    moduleConfig.gaussian = gauss
-    moduleConfig.darkCurrent = darkCurrent
-    moduleConfig.saltPepper = saltPepper
-    moduleConfig.cosmicRays = cosmic
-    moduleConfig.blurParam = blurSize
+    module.gaussian = gauss
+    module.darkCurrent = darkCurrent
+    module.saltPepper = saltPepper
+    module.cosmicRays = cosmic
+    module.blurParam = blurSize
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.cameraConfigOutMsg.recorder()
+    dataLog = module.cameraConfigOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
@@ -186,9 +186,9 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
 
     # Truth values from python
     if corrupted:
-        corruptedPath = moduleConfig.saveDir + '0.000000.png'
+        corruptedPath = module.saveDir + '0.000000.png'
     else:
-        corruptedPath = moduleConfig.saveDir + '0.500000.png'
+        corruptedPath = module.saveDir + '0.500000.png'
     output_image = Image.open(corruptedPath)
 
     isOnValues = dataLog.isOn
@@ -208,11 +208,11 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
 
     #   print out success message if no error were found
     for i in range(3):
-        if np.abs(pos[-1, i] - moduleConfig.sigma_CB[i]) > 1E-10:
+        if np.abs(pos[-1, i] - module.sigma_CB[i]) > 1E-10:
             testFailCount += 1
             testMessages.append("Test failed position " + image)
 
-    if np.abs(isOnValues[-1] - moduleConfig.cameraIsOn) > 1E-10:
+    if np.abs(isOnValues[-1] - module.cameraIsOn) > 1E-10:
         testFailCount += 1
         testMessages.append("Test failed isOn " + image)
 

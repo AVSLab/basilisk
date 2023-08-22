@@ -51,10 +51,10 @@ class BSKEnvironmentModel:
         self.InitAllEnvObjects()
 
         # Add modules to environment task
-        SimBase.AddModelToTask(self.envTaskName, self.gravFactory.spiceObject, None, 200)
-        SimBase.AddModelToTask(self.envTaskName, self.ephemObject, None, 200)
-        SimBase.AddModelToTask(self.envTaskName, self.eclipseObject, None, 200)
-        SimBase.AddModelToTask(self.envTaskName, self.groundStation, None, 200)
+        SimBase.AddModelToTask(self.envTaskName, self.gravFactory.spiceObject, 200)
+        SimBase.AddModelToTask(self.envTaskName, self.ephemObject, 200)
+        SimBase.AddModelToTask(self.envTaskName, self.eclipseObject, 200)
+        SimBase.AddModelToTask(self.envTaskName, self.groundStation, 200)
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods

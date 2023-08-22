@@ -113,12 +113,11 @@ def filterMethods():
 
     accuracy = 1E-10
     # Construct algorithm and associated C++ container
-    moduleConfig = inertialUKF.InertialUKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "inertialUKF"
+    module = inertialUKF.inertialUKF()
+    module.ModelTag = "inertialUKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     st1 = messaging.STAttMsgPayload()
     st1.timeTag = macros.sec2nano(1.25)
@@ -145,7 +144,7 @@ def filterMethods():
     angAccel = -0.5 * (wheelAccel[0] + wheelAccel[1]) * numpy.array([1., 0., 0])
     expectedRate = numpy.array(stateInput[3:]) + angAccel
 
-    inertialUKF.inertialStateProp(moduleConfig, state, 0.5)
+    inertialUKF.inertialStateProp(module.getConfig(), state, 0.5)
     stateOut = []
     for j in range(6):
         stateOut.append(inertialUKF.doubleArray_getitem(state, j))
@@ -154,7 +153,7 @@ def filterMethods():
         testFailCount += 1
         testMessages.append("Failed to capture wheel acceleration in inertialStateProp")
 
-    setupFilterData(moduleConfig)
+    setupFilterData(module)
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
      0., 800., 0.,
@@ -162,8 +161,8 @@ def filterMethods():
     vehicleConfigOut.ISCPntB_B = I
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
-    moduleConfig.STDatasStruct.STMessages = STList
-    moduleConfig.STDatasStruct.numST = len(STList)
+    module.STDatasStruct.STMessages = STList
+    module.STDatasStruct.numST = len(STList)
     unitTestSim.AddVariableForLogging('inertialUKF.stSensorOrder', testProcessRate, 0, 3, 'double')
 
     # create ST input messages
@@ -177,13 +176,13 @@ def filterMethods():
     gyroInMsg = messaging.AccDataMsg()
 
     # connect messages
-    moduleConfig.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
-    moduleConfig.STDatasStruct.STMessages[1].stInMsg.subscribeTo(st2InMsg)
-    moduleConfig.STDatasStruct.STMessages[2].stInMsg.subscribeTo(st3InMsg)
-    moduleConfig.massPropsInMsg.subscribeTo(vcInMsg)
-    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
-    moduleConfig.rwParamsInMsg.subscribeTo(rwConfigInMsg)
-    moduleConfig.gyrBuffInMsgName.subscribeTo(gyroInMsg)
+    module.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
+    module.STDatasStruct.STMessages[1].stInMsg.subscribeTo(st2InMsg)
+    module.STDatasStruct.STMessages[2].stInMsg.subscribeTo(st3InMsg)
+    module.massPropsInMsg.subscribeTo(vcInMsg)
+    module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
+    module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
+    module.gyrBuffInMsgName.subscribeTo(gyroInMsg)
 
     # Star Tracker Read Message and Order method
     unitTestSim.InitializeSimulation()
@@ -230,15 +229,14 @@ def stateUpdateInertialAttitude(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = inertialUKF.InertialUKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "InertialUKF"
+    module = inertialUKF.inertialUKF()
+    module.ModelTag = "InertialUKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
-    moduleConfig.maxTimeJump = 10
+    setupFilterData(module)
+    module.maxTimeJump = 10
 
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
@@ -257,7 +255,7 @@ def stateUpdateInertialAttitude(show_plots):
 
 #    stateTarget = testVector.tolist()
 #    stateTarget.extend([0.0, 0.0, 0.0])
-#    moduleConfig.state = [0.7, 0.7, 0.0]
+#    module.state = [0.7, 0.7, 0.0]
     unitTestSim.AddVariableForLogging('InertialUKF.covar', testProcessRate*10, 0, 35, 'double')
     unitTestSim.AddVariableForLogging('InertialUKF.state', testProcessRate*10, 0, 5, 'double')
 
@@ -267,12 +265,12 @@ def stateUpdateInertialAttitude(show_plots):
     gyroInMsg = messaging.AccDataMsg()
 
     # connect messages
-    moduleConfig.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
-    moduleConfig.STDatasStruct.STMessages[1].stInMsg.subscribeTo(st2InMsg)
-    moduleConfig.massPropsInMsg.subscribeTo(vcInMsg)
-    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
-    moduleConfig.rwParamsInMsg.subscribeTo(rwConfigInMsg)
-    moduleConfig.gyrBuffInMsgName.subscribeTo(gyroInMsg)
+    module.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
+    module.STDatasStruct.STMessages[1].stInMsg.subscribeTo(st2InMsg)
+    module.massPropsInMsg.subscribeTo(vcInMsg)
+    module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
+    module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
+    module.gyrBuffInMsgName.subscribeTo(gyroInMsg)
 
     unitTestSim.InitializeSimulation()
 
@@ -327,15 +325,15 @@ def stateUpdateInertialAttitude(show_plots):
         else:
             unitTestSupport.writeTeXSnippet('passFail11', textSnippetPassed, path)
     plt.figure()
-    for i in range(moduleConfig.numStates):
+    for i in range(module.numStates):
         plt.plot(stateLog[:,0]*1.0E-9, stateLog[:,i+1], label='State_' +str(i))
         plt.legend()
         plt.ylim([-1, 1])
 
     unitTestSupport.writeFigureLaTeX('Test11', 'Test 1 State convergence', plt, 'width=0.9\\textwidth, keepaspectratio', path)
     plt.figure()
-    for i in range(moduleConfig.numStates):
-        plt.plot(covarLog[:,0]*1.0E-9, covarLog[:,i*moduleConfig.numStates+i+1], label='Covar_' +str(i))
+    for i in range(module.numStates):
+        plt.plot(covarLog[:,0]*1.0E-9, covarLog[:,i*module.numStates+i+1], label='Covar_' +str(i))
         plt.legend()
         plt.ylim([0, 2.E-7])
 
@@ -380,14 +378,13 @@ def statePropInertialAttitude(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = inertialUKF.InertialUKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "InertialUKF"
+    module = inertialUKF.inertialUKF()
+    module.ModelTag = "InertialUKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
+    setupFilterData(module)
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
@@ -407,12 +404,12 @@ def statePropInertialAttitude(show_plots):
     st2InMsg = messaging.STAttMsg()
 
     # connect messages
-    moduleConfig.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
-    moduleConfig.STDatasStruct.STMessages[1].stInMsg.subscribeTo(st2InMsg)
-    moduleConfig.massPropsInMsg.subscribeTo(vcInMsg)
-    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
-    moduleConfig.rwParamsInMsg.subscribeTo(rwConfigInMsg)
-    moduleConfig.gyrBuffInMsgName.subscribeTo(gyroInMsg)
+    module.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
+    module.STDatasStruct.STMessages[1].stInMsg.subscribeTo(st2InMsg)
+    module.massPropsInMsg.subscribeTo(vcInMsg)
+    module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
+    module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
+    module.gyrBuffInMsgName.subscribeTo(gyroInMsg)
 
 
     unitTestSim.InitializeSimulation()
@@ -439,7 +436,7 @@ def statePropInertialAttitude(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag + " state propagation")
+        print("PASSED: " + module.ModelTag + " state propagation")
     else:
         print('Failed: test_StatePropInertialAttitude')
         print(testMessages)
@@ -473,14 +470,13 @@ def stateUpdateRWInertialAttitude(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = inertialUKF.InertialUKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "InertialUKF"
+    module = inertialUKF.inertialUKF()
+    module.ModelTag = "InertialUKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
+    setupFilterData(module)
 
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
@@ -509,7 +505,7 @@ def stateUpdateRWInertialAttitude(show_plots):
 
     #    stateTarget = testVector.tolist()
     #    stateTarget.extend([0.0, 0.0, 0.0])
-    #    moduleConfig.state = [0.7, 0.7, 0.0]
+    #    module.state = [0.7, 0.7, 0.0]
     unitTestSim.AddVariableForLogging('InertialUKF.covar', testProcessRate * 10, 0, 35, 'double')
     unitTestSim.AddVariableForLogging('InertialUKF.state', testProcessRate * 10, 0, 5, 'double')
 
@@ -517,12 +513,12 @@ def stateUpdateRWInertialAttitude(show_plots):
     gyroInMsg = messaging.AccDataMsg()
 
     # connect messages
-    moduleConfig.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
-    moduleConfig.STDatasStruct.STMessages[1].stInMsg.subscribeTo(st2InMsg)
-    moduleConfig.massPropsInMsg.subscribeTo(vcInMsg)
-    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
-    moduleConfig.rwParamsInMsg.subscribeTo(rwConfigInMsg)
-    moduleConfig.gyrBuffInMsgName.subscribeTo(gyroInMsg)
+    module.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
+    module.STDatasStruct.STMessages[1].stInMsg.subscribeTo(st2InMsg)
+    module.massPropsInMsg.subscribeTo(vcInMsg)
+    module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
+    module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
+    module.gyrBuffInMsgName.subscribeTo(gyroInMsg)
 
     unitTestSim.InitializeSimulation()
 
@@ -579,15 +575,15 @@ def stateUpdateRWInertialAttitude(show_plots):
         else:
             unitTestSupport.writeTeXSnippet('passFail33', textSnippetPassed, path)
     plt.figure()
-    for i in range(moduleConfig.numStates):
+    for i in range(module.numStates):
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, i + 1], label='State_' +str(i))
         plt.legend()
         plt.ylim([-1, 1])
 
     unitTestSupport.writeFigureLaTeX('Test31', 'Test 3 State convergence', plt, 'width=0.7\\textwidth, keepaspectratio', path)
     plt.figure()
-    for i in range(moduleConfig.numStates):
-        plt.plot(covarLog[:, 0] * 1.0E-9, covarLog[:, i * moduleConfig.numStates + i + 1], label='Covar_' +str(i))
+    for i in range(module.numStates):
+        plt.plot(covarLog[:, 0] * 1.0E-9, covarLog[:, i * module.numStates + i + 1], label='Covar_' +str(i))
         plt.legend()
         plt.ylim([0., 2E-7])
 
@@ -598,7 +594,7 @@ def stateUpdateRWInertialAttitude(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag + " state update with RW")
+        print("PASSED: " + module.ModelTag + " state update with RW")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -630,20 +626,19 @@ def statePropRateInertialAttitude(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = inertialUKF.InertialUKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "InertialUKF"
+    module = inertialUKF.inertialUKF()
+    module.ModelTag = "InertialUKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    moduleConfig.alpha = 0.02
-    moduleConfig.beta = 2.0
-    moduleConfig.kappa = 0.0
-    moduleConfig.switchMag = 1.2
+    module.alpha = 0.02
+    module.beta = 2.0
+    module.kappa = 0.0
+    module.switchMag = 1.2
 
-    moduleConfig.stateInit = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    moduleConfig.covarInit = [0.04, 0.0, 0.0, 0.0, 0.0, 0.0,
+    module.stateInit = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    module.covarInit = [0.04, 0.0, 0.0, 0.0, 0.0, 0.0,
                               0.0, 0.04, 0.0, 0.0, 0.0, 0.0,
                               0.0, 0.0, 0.04, 0.0, 0.0, 0.0,
                               0.0, 0.0, 0.0, 0.004, 0.0, 0.0,
@@ -652,20 +647,20 @@ def statePropRateInertialAttitude(show_plots):
     qNoiseIn = numpy.identity(6)
     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 0.0017 * 0.0017
     qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 0.00017 * 0.00017
-    moduleConfig.qNoise = qNoiseIn.reshape(36).tolist()
+    module.qNoise = qNoiseIn.reshape(36).tolist()
 
     ST1Data = inertialUKF.STMessage()
     ST1Data.noise = [0.00017 * 0.00017, 0.0, 0.0,
                          0.0, 0.00017 * 0.00017, 0.0,
                          0.0, 0.0, 0.00017 * 0.00017]
     STList = [ST1Data]
-    moduleConfig.STDatasStruct.STMessages = STList
-    moduleConfig.STDatasStruct.numST = len(STList)
+    module.STDatasStruct.STMessages = STList
+    module.STDatasStruct.numST = len(STList)
 
     lpDataUse = inertialUKF.LowPassFilterData()
     lpDataUse.hStep = 0.5
     lpDataUse.omegCutoff = 15.0 / (2.0 * math.pi)
-    moduleConfig.gyroFilt = [lpDataUse, lpDataUse, lpDataUse]
+    module.gyroFilt = [lpDataUse, lpDataUse, lpDataUse]
 
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
@@ -675,7 +670,7 @@ def statePropRateInertialAttitude(show_plots):
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     stateInit = [0.0, 0.0, 0.0, math.pi/18.0, 0.0, 0.0]
-    moduleConfig.stateInit = stateInit
+    module.stateInit = stateInit
     unitTestSim.AddVariableForLogging('InertialUKF.covar', testProcessRate*10, 0, 35)
     unitTestSim.AddVariableForLogging('InertialUKF.sigma_BNOut', testProcessRate*10, 0, 2)
     unitTestSim.AddVariableForLogging('InertialUKF.omega_BN_BOut', testProcessRate*10, 0, 2)
@@ -691,11 +686,11 @@ def statePropRateInertialAttitude(show_plots):
     gyroInMsg = messaging.AccDataMsg()
 
     # connect messages
-    moduleConfig.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
-    moduleConfig.massPropsInMsg.subscribeTo(vcInMsg)
-    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
-    moduleConfig.rwParamsInMsg.subscribeTo(rwConfigInMsg)
-    moduleConfig.gyrBuffInMsgName.subscribeTo(gyroInMsg)
+    module.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
+    module.massPropsInMsg.subscribeTo(vcInMsg)
+    module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
+    module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
+    module.gyrBuffInMsgName.subscribeTo(gyroInMsg)
 
     unitTestSim.InitializeSimulation()
     st1InMsg.write(stMessage1, int(1 * 1E9))
@@ -730,7 +725,7 @@ def statePropRateInertialAttitude(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag + " state rate propagation")
+        print("PASSED: " + module.ModelTag + " state rate propagation")
     else:
         print("Failed: " + testMessages[0])
 

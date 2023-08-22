@@ -117,30 +117,29 @@ def hingedRigidBodyPIDMotorTestFunction(show_plots, thetaR, thetaDotR, theta, th
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    motorConfig = hingedRigidBodyPIDMotor.hingedRigidBodyPIDMotorConfig()
-    motorWrap = unitTestSim.setModelDataWrap(motorConfig)
-    motorWrap.ModelTag = "hingedRigidBodyPIDMotor"  
-    motorConfig.K = K
-    motorConfig.P = P
-    motorConfig.I = I
-    unitTestSim.AddModelToTask(unitTaskName, motorWrap, motorConfig)
+    motor = hingedRigidBodyPIDMotor.hingedRigidBodyPIDMotor()
+    motor.ModelTag = "hingedRigidBodyPIDMotor"  
+    motor.K = K
+    motor.P = P
+    motor.I = I
+    unitTestSim.AddModelToTask(unitTaskName, motor)
 
     # Create input spinning body reference message
     refInMsgData = messaging.HingedRigidBodyMsgPayload()
     refInMsgData.theta = thetaR
     refInMsgData.thetaDot = thetaDotR
     refInMsg = messaging.HingedRigidBodyMsg().write(refInMsgData)
-    motorConfig.hingedRigidBodyRefInMsg.subscribeTo(refInMsg)
+    motor.hingedRigidBodyRefInMsg.subscribeTo(refInMsg)
 
     # Create input spinning body message
     stateInMsgData = messaging.HingedRigidBodyMsgPayload()
     stateInMsgData.theta = theta
     stateInMsgData.thetaDot = thetaDot
     stateInMsg = messaging.HingedRigidBodyMsg().write(stateInMsgData)
-    motorConfig.hingedRigidBodyInMsg.subscribeTo(stateInMsg)
+    motor.hingedRigidBodyInMsg.subscribeTo(stateInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = motorConfig.motorTorqueOutMsg.recorder()
+    dataLog = motor.motorTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
@@ -160,7 +159,7 @@ def hingedRigidBodyPIDMotorTestFunction(show_plots, thetaR, thetaDotR, theta, th
     # compare the module results to the truth values
     if not unitTestSupport.isDoubleEqual(dataLog.motorTorque[0][0], T, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + motorWrap.ModelTag + " module failed unit test for thetaR = {}, thetaDotR  = {}, theta = {}, thetaDot = {}, K = {}, P = {} \n".format(thetaR, thetaDotR, theta, thetaDot, K, P))
+        testMessages.append("FAILED: " + motor.ModelTag + " module failed unit test for thetaR = {}, thetaDotR  = {}, theta = {}, thetaDot = {}, K = {}, P = {} \n".format(thetaR, thetaDotR, theta, thetaDot, K, P))
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

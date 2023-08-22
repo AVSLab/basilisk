@@ -63,14 +63,13 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)  # create new process
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # create new task
     # Construct algorithm and associated C++ container
-    moduleConfig = spacecraftReconfig.spacecraftReconfigConfig()  # update with current values
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "spacecraftReconfig"  # update python name of test spacecraftReconfig
-    moduleConfig.targetClassicOED = [0.0000, 0.0000, 0.0000, 0.0001, 0.0002, 0.0003]
-    moduleConfig.attControlTime = 400  # [s]
-    moduleConfig.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
+    module = spacecraftReconfig.spacecraftReconfig()
+    module.ModelTag = "spacecraftReconfig"  # update python name of test spacecraftReconfig
+    module.targetClassicOED = [0.0000, 0.0000, 0.0000, 0.0001, 0.0002, 0.0003]
+    module.attControlTime = 400  # [s]
+    module.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
     # Add test spacecraftReconfig to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     #
@@ -90,7 +89,7 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     chiefNavStateOutData.v_BN_N = v_BN_N
     chiefNavStateOutData.vehAccumDV = [0, 0, 0]
     chiefInMsg = messaging.NavTransMsg().write(chiefNavStateOutData)
-    moduleConfig.chiefTransInMsg.subscribeTo(chiefInMsg)
+    module.chiefTransInMsg.subscribeTo(chiefInMsg)
     #
     # Deputy Navigation Message
     #
@@ -108,7 +107,7 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     deputyNavStateOutData.v_BN_N = v_BN_N2
     deputyNavStateOutData.vehAccumDV = [0, 0, 0]
     deputyInMsg = messaging.NavTransMsg().write(deputyNavStateOutData)
-    moduleConfig.deputyTransInMsg.subscribeTo(deputyInMsg)
+    module.deputyTransInMsg.subscribeTo(deputyInMsg)
 
     #
     # Deputy Vehicle Config Message
@@ -116,7 +115,7 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     vehicleConfigInData = messaging.VehicleConfigMsgPayload()
     vehicleConfigInData.massSC = 500
     vehicleConfigMsg = messaging.VehicleConfigMsg().write(vehicleConfigInData)
-    moduleConfig.vehicleConfigInMsg.subscribeTo(vehicleConfigMsg)
+    module.vehicleConfigInMsg.subscribeTo(vehicleConfigMsg)
 
     #
     # reference attitude message
@@ -127,7 +126,7 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
         attRefInData.omega_RN_N = [0.0, 0.0, 0.0]
         attRefInData.domega_RN_N = [0.0, 0.0, 0.0]
         attRefInMsg = messaging.AttRefMsg().write(attRefInData)
-        moduleConfig.attRefInMsg.subscribeTo(attRefInMsg)
+        module.attRefInMsg.subscribeTo(attRefInMsg)
 
     #
     # thruster configuration message
@@ -138,12 +137,12 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     for i in range(len(location)):
         fswSetupThrusters.create(location[i], direction[i], 22.6)
     thrConfMsg = fswSetupThrusters.writeConfigMessage()
-    moduleConfig.thrustConfigInMsg.subscribeTo(thrConfMsg)
+    module.thrustConfigInMsg.subscribeTo(thrConfMsg)
 
     # Setup logging on the test spacecraftReconfig output message so that we get all the writes to it
-    dataLog = moduleConfig.attRefOutMsg.recorder()
+    dataLog = module.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
-    unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + ".resetPeriod", testProcessRate)
+    unitTestSim.AddVariableForLogging(module.ModelTag + ".resetPeriod", testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -159,7 +158,7 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
 
     # This pulls the actual data log from the simulation run.
     attOutput = dataLog.sigma_RN
-    resetPeriod = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + ".resetPeriod")
+    resetPeriod = unitTestSim.GetLogVariableData(module.ModelTag + ".resetPeriod")
     # set the filtered output truth states
     if useRefAttitude:
         trueVector = [[1.0,0.0,0.0]]
@@ -173,15 +172,15 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
         # check a vector values
         if not unitTestSupport.isArrayEqual(attOutput[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_RN" + " unit test at t="
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN" + " unit test at t="
                                 + str(attOutput[i, 0]*macros.NANO2SEC) + "sec\n")
 
     if (not unitTestSupport.isDoubleEqualRelative(resetPeriod[0,1], trueResetPeriod, accuracy)):
         testFailCount += 1
-        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + "resetPeriod")
+        testMessages.append("FAILED: " + module.ModelTag + " Module failed " + "resetPeriod")
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         print("This test uses an accuracy value of " + str(accuracy))
 
     # each test method requires a single assert method to be called

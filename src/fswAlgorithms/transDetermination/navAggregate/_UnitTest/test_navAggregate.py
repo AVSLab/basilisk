@@ -105,12 +105,11 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct an instance of the module being tested
-    moduleConfig = navAggregate.NavAggregateData()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "navAggregate"
+    module = navAggregate.navAggregate()
+    module.ModelTag = "navAggregate"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Create input messages
     navAtt1Msg = messaging.NavAttMsgPayload()
@@ -145,41 +144,41 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     navTrans1 = navAggregate.AggregateTransInput()
     navTrans2 = navAggregate.AggregateTransInput()
 
-    moduleConfig.attMsgCount = numAttNav
+    module.attMsgCount = numAttNav
     if numAttNav == 3:       # here the index asks to read from an empty (zero) message
-        moduleConfig.attMsgCount = 2
+        module.attMsgCount = 2
 
-    moduleConfig.transMsgCount = numTransNav
+    module.transMsgCount = numTransNav
     if numTransNav == 3:     # here the index asks to read from an empty (zero) message
-        moduleConfig.transMsgCount = 2
+        module.transMsgCount = 2
 
     if numAttNav <= navAggregate.MAX_AGG_NAV_MSG:
-        moduleConfig.attMsgs = [navAtt1, navAtt2]
-        moduleConfig.attMsgs[0].navAttInMsg.subscribeTo(navAtt1InMsg)
-        moduleConfig.attMsgs[1].navAttInMsg.subscribeTo(navAtt2InMsg)
+        module.attMsgs = [navAtt1, navAtt2]
+        module.attMsgs[0].navAttInMsg.subscribeTo(navAtt1InMsg)
+        module.attMsgs[1].navAttInMsg.subscribeTo(navAtt2InMsg)
     else:
-        moduleConfig.attMsgs = [navAtt1] * navAggregate.MAX_AGG_NAV_MSG
+        module.attMsgs = [navAtt1] * navAggregate.MAX_AGG_NAV_MSG
         for i in range(navAggregate.MAX_AGG_NAV_MSG):
-            moduleConfig.attMsgs[i].navAttInMsg.subscribeTo(navAtt1InMsg)
+            module.attMsgs[i].navAttInMsg.subscribeTo(navAtt1InMsg)
     if numTransNav <= navAggregate.MAX_AGG_NAV_MSG:
-        moduleConfig.transMsgs = [navTrans1, navTrans2]
-        moduleConfig.transMsgs[0].navTransInMsg.subscribeTo(navTrans1InMsg)
-        moduleConfig.transMsgs[1].navTransInMsg.subscribeTo(navTrans2InMsg)
+        module.transMsgs = [navTrans1, navTrans2]
+        module.transMsgs[0].navTransInMsg.subscribeTo(navTrans1InMsg)
+        module.transMsgs[1].navTransInMsg.subscribeTo(navTrans2InMsg)
     else:
-        moduleConfig.transMsgs = [navTrans1] * navAggregate.MAX_AGG_NAV_MSG
+        module.transMsgs = [navTrans1] * navAggregate.MAX_AGG_NAV_MSG
         for i in range(navAggregate.MAX_AGG_NAV_MSG):
-            moduleConfig.transMsgs[i].navTransInMsg.subscribeTo(navTrans1InMsg)
+            module.transMsgs[i].navTransInMsg.subscribeTo(navTrans1InMsg)
 
     if numAttNav > 1:       # always read from the last message counter
-        moduleConfig.attTimeIdx = numAttNav - 1
-        moduleConfig.attIdx = numAttNav - 1
-        moduleConfig.rateIdx = numAttNav - 1
-        moduleConfig.sunIdx = numAttNav - 1
+        module.attTimeIdx = numAttNav - 1
+        module.attIdx = numAttNav - 1
+        module.rateIdx = numAttNav - 1
+        module.sunIdx = numAttNav - 1
     if numTransNav > 1:     # always read from the last message counter
-        moduleConfig.transTimeIdx = numTransNav-1
-        moduleConfig.posIdx = numTransNav-1
-        moduleConfig.velIdx = numTransNav-1
-        moduleConfig.dvIdx = numTransNav-1
+        module.transTimeIdx = numTransNav-1
+        module.posIdx = numTransNav-1
+        module.velIdx = numTransNav-1
+        module.dvIdx = numTransNav-1
 
     # write TeX snippets for the message values
     unitTestSupport.writeTeXSnippet("navAtt1Msg.timeTag", str(navAtt1Msg.timeTag), path)
@@ -200,8 +199,8 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     unitTestSupport.writeTeXSnippet("navTrans2Msg.vehAccumDV", str(navTrans2Msg.vehAccumDV), path)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataAttLog = moduleConfig.navAttOutMsg.recorder()
-    dataTransLog = moduleConfig.navTransOutMsg.recorder()
+    dataAttLog = module.navAttOutMsg.recorder()
+    dataTransLog = module.navTransOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataAttLog)
     unitTestSim.AddModelToTask(unitTaskName, dataTransLog)
 
@@ -297,33 +296,33 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
                                                                testFailCount, testMessages)
 
     if numAttNav == 11:
-        if moduleConfig.attMsgCount != navAggregate.MAX_AGG_NAV_MSG:
+        if module.attMsgCount != navAggregate.MAX_AGG_NAV_MSG:
             testFailCount += 1
             testMessages.append("FAILED numAttNav too large test")
-        if moduleConfig.attTimeIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+        if module.attTimeIdx != navAggregate.MAX_AGG_NAV_MSG-1:
             testFailCount += 1
             testMessages.append("FAILED attTimeIdx too large test")
-        if moduleConfig.attIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+        if module.attIdx != navAggregate.MAX_AGG_NAV_MSG-1:
             testFailCount += 1
             testMessages.append("FAILED attIdx too large test")
-        if moduleConfig.rateIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+        if module.rateIdx != navAggregate.MAX_AGG_NAV_MSG-1:
             testFailCount += 1
             testMessages.append("FAILED rateIdx too large test")
-        if moduleConfig.sunIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+        if module.sunIdx != navAggregate.MAX_AGG_NAV_MSG-1:
             testFailCount += 1
             testMessages.append("FAILED sunIdx too large test")
 
     if numTransNav == 11:
-        if moduleConfig.transMsgCount != navAggregate.MAX_AGG_NAV_MSG:
+        if module.transMsgCount != navAggregate.MAX_AGG_NAV_MSG:
             testFailCount += 1
             testMessages.append("FAILED numTransNav too large test")
-        if moduleConfig.posIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+        if module.posIdx != navAggregate.MAX_AGG_NAV_MSG-1:
             testFailCount += 1
             testMessages.append("FAILED posIdx too large test")
-        if moduleConfig.velIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+        if module.velIdx != navAggregate.MAX_AGG_NAV_MSG-1:
             testFailCount += 1
             testMessages.append("FAILED velIdx too large test")
-        if moduleConfig.dvIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+        if module.dvIdx != navAggregate.MAX_AGG_NAV_MSG-1:
             testFailCount += 1
             testMessages.append("FAILED dvIdx too large test")
 
@@ -331,11 +330,11 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     snippentName = "passFail" + str(numAttNav) + str(numTransNav)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

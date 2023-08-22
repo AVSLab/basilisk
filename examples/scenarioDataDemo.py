@@ -119,7 +119,7 @@ def run(show_plots):
     gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
                                      , timeInitString
                                      )
-    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
+    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, -1)
 
     #   setup orbit using orbitalMotion library
     oe = orbitalMotion.ClassicElements()

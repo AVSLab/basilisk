@@ -26,6 +26,7 @@ from Basilisk.architecture import messaging
 
 import numpy as np
 
+
 def run():
     """
     Illustration of adding Basilisk Python modules to a task
@@ -38,22 +39,20 @@ def run():
     dynProcess = scSim.CreateNewProcess("dynamicsProcess")
 
     # create the dynamics task and specify the integration update time
-    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(5.)))
+    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(5.0)))
 
     # create copies of the Basilisk modules
-    mod1 = cModuleTemplate.cModuleTemplateConfig()
-    mod1Wrap = scSim.setModelDataWrap(mod1)
-    mod1Wrap.ModelTag = "cModule1"
-    scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1, 0)
+    mod1 = cModuleTemplate.cModuleTemplate()
+    mod1.ModelTag = "cModule1"
+    scSim.AddModelToTask("dynamicsTask", mod1, 0)
 
     mod2 = cppModuleTemplate.CppModuleTemplate()
     mod2.ModelTag = "cppModule2"
-    scSim.AddModelToTask("dynamicsTask", mod2, None, 5)
+    scSim.AddModelToTask("dynamicsTask", mod2, 5)
 
-    mod3 = cModuleTemplate.cModuleTemplateConfig()
-    mod3Wrap = scSim.setModelDataWrap(mod3)
-    mod3Wrap.ModelTag = "cModule3"
-    scSim.AddModelToTask("dynamicsTask", mod3Wrap, mod3, 15)
+    mod3 = cModuleTemplate.cModuleTemplate()
+    mod3.ModelTag = "cModule3"
+    scSim.AddModelToTask("dynamicsTask", mod3, 15)
 
     # The following is a Python module, which has a higher priority
     # then some of the C++/C modules. Observe in the script output
@@ -61,7 +60,7 @@ def run():
     # its priority with respect to the rest of the modules.
     mod4 = TestPythonModule()
     mod4.ModelTag = "pythonModule4"
-    scSim.AddModelToTask("dynamicsTask", mod4, None, 10)
+    scSim.AddModelToTask("dynamicsTask", mod4, 10)
 
     mod2.dataInMsg.subscribeTo(mod4.dataOutMsg)
     mod4.dataInMsg.subscribeTo(mod3.dataOutMsg)
@@ -82,21 +81,23 @@ def run():
 
     return
 
-class TestPythonModule(sysModel.SysModel):
 
+class TestPythonModule(sysModel.SysModel):
     def __init__(self, *args):
         super().__init__(*args)
-        self.dataInMsg  = messaging.CModuleTemplateMsgReader()
+        self.dataInMsg = messaging.CModuleTemplateMsgReader()
         self.dataOutMsg = messaging.CModuleTemplateMsg()
 
     def Reset(self, CurrentSimNanos):
         # Ensure that self.dataInMsg is linked
         if not self.dataInMsg.isLinked():
-            self.bskLogger.bskLog(bskLogging.BSK_ERROR, "TestPythonModule.dataInMsg is not linked.")
+            self.bskLogger.bskLog(
+                bskLogging.BSK_ERROR, "TestPythonModule.dataInMsg is not linked."
+            )
 
         # Initialiazing self.dataOutMsg
         payload = self.dataOutMsg.zeroMsgPayload
-        payload.dataVector = np.array([0,0,0])
+        payload.dataVector = np.array([0, 0, 0])
         self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)
 
         self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, "Reset in TestPythonModule")
@@ -108,10 +109,16 @@ class TestPythonModule(sysModel.SysModel):
 
         # Set output message
         payload = self.dataOutMsg.zeroMsgPayload
-        payload.dataVector = self.dataOutMsg.read().dataVector + np.array([0,1,0]) + inputVector
+        payload.dataVector = (
+            self.dataOutMsg.read().dataVector + np.array([0, 1, 0]) + inputVector
+        )
         self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)
 
-        self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, f"Python Module ID {self.moduleID} ran Update at {CurrentSimNanos*1e-9}s")
+        self.bskLogger.bskLog(
+            bskLogging.BSK_INFORMATION,
+            f"Python Module ID {self.moduleID} ran Update at {CurrentSimNanos*1e-9}s",
+        )
+
 
 if __name__ == "__main__":
     run()
