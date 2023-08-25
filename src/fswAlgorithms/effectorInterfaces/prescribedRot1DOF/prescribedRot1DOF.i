@@ -26,6 +26,8 @@
 
 %include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 struct HingedRigidBodyMsg_C;
+%include "architecture/msgPayloadDefC/MotorStepCountMsgPayload.h"
+struct MotorStepCountMsg_C;
 %include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
 struct PrescribedMotionMsg_C;
 

@@ -44,8 +44,8 @@ splitPath = path.split(bskName)
 
 
 # Vary the initial angle, reference angle, and maximum angular acceleration for pytest
-@pytest.mark.parametrize("thetaInit", [0, 2*np.pi/3])
-@pytest.mark.parametrize("thetaRef", [0, 2*np.pi/3])
+@pytest.mark.parametrize("thetaInit", [0])
+@pytest.mark.parametrize("thetaRef", [10])
 @pytest.mark.parametrize("thetaDDotMax", [0.008, 0.1])
 @pytest.mark.parametrize("accuracy", [1e-12])
 def test_prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax, accuracy):
@@ -78,6 +78,8 @@ def test_prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDo
 
 
 def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax, accuracy):
+    numSteps = 10 #thetaRef - thetaInit
+    stepAngle = 1.0
     """Call this routine directly to run the unit test."""
     testFailCount = 0                                        # Zero the unit test result counter
     testMessages = []                                        # Create an empty array to store the test log messages
@@ -103,43 +105,56 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     # Initialize the prescribedRot1DOF test module configuration data
     rotAxisM = np.array([1.0, 0.0, 0.0])
     prvInit_FM = thetaInit * rotAxisM
-    PrescribedRot1DOF.r_FM_M = np.array([1.0, 0.0, 0.0])
-    PrescribedRot1DOF.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOF.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOF.rotAxis_M = rotAxisM
-    PrescribedRot1DOF.thetaDDotMax = thetaDDotMax
-    PrescribedRot1DOF.omega_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOF.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOF.sigma_FM = rbk.PRV2MRP(prvInit_FM)
+
+    PrescribedRot1DOFConfig.r_FM_M = np.array([1.0, 0.0, 0.0])
+    PrescribedRot1DOFConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
+    PrescribedRot1DOFConfig.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
+    PrescribedRot1DOFConfig.rotAxis_M = rotAxisM
+    PrescribedRot1DOFConfig.thetaDDotMax = thetaDDotMax
+    PrescribedRot1DOFConfig.omega_FM_F = np.array([0.0, 0.0, 0.0])
+    PrescribedRot1DOFConfig.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
+    PrescribedRot1DOFConfig.sigma_FM = rbk.PRV2MRP(prvInit_FM)
+    PrescribedRot1DOFConfig.stepAngle = stepAngle
+    PrescribedRot1DOFConfig.thetaDotRef = 0.0
 
     # Create the prescribedRot1DOF input message
-    thetaDotRef = 0.0  # [rad/s]
-    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    HingedRigidBodyMessageData.theta = thetaRef
-    HingedRigidBodyMessageData.thetaDot = thetaDotRef
-    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData)
-    PrescribedRot1DOF.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+    MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    MotorStepCountMessageData.numSteps = numSteps
+    MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData)
+    PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
 
     # Log the test module output message for data comparison
-    dataLog = PrescribedRot1DOF.prescribedMotionOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    prescribedDataLog = PrescribedRot1DOFConfig.prescribedMotionOutMsg.recorder()
+    spinningBodyDataLog = PrescribedRot1DOFConfig.spinningBodyOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, prescribedDataLog)
+    unitTestSim.AddModelToTask(unitTaskName, spinningBodyDataLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
     # Set the simulation time
-    simTime = np.sqrt(((0.5 * np.abs(thetaRef - thetaInit)) * 8) / thetaDDotMax) + 1
+    simTime = numSteps * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 20
     unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
 
     # Begin the simulation
     unitTestSim.ExecuteSimulation()
 
-    # Extract the logged data for plotting and data comparison
-    omega_FM_F = dataLog.omega_FM_F
-    sigma_FM = dataLog.sigma_FM
-    timespan = dataLog.times()
+    # Sim chunk 2
+    # Create the prescribedRot1DOF input message
+    MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    MotorStepCountMessageData.numSteps = 5
+    MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData)
+    PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    simTime = simTime + 5 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 20
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
+    unitTestSim.ExecuteSimulation()
 
-    thetaDot_Final = np.linalg.norm(omega_FM_F[-1, :])
+    # Extract the logged data for plotting and data comparison
+    omega_FM_F = prescribedDataLog.omega_FM_F
+    sigma_FM = prescribedDataLog.sigma_FM
+    timespan = prescribedDataLog.times()
+    theta = spinningBodyDataLog.theta
+
     sigma_FM_Final = sigma_FM[-1, :]
     theta_FM_Final = 4 * np.arctan(np.linalg.norm(sigma_FM_Final))
 
@@ -154,9 +169,20 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     thetaInit_plotting = np.ones(len(timespan)) * thetaInit
     plt.figure()
     plt.clf()
+    plt.plot(timespan * macros.NANO2SEC, theta, label=r"$\theta$")
+    plt.plot(timespan * macros.NANO2SEC, thetaRef_plotting, '--', label=r'$\theta_{Ref}$')
+    plt.plot(timespan * macros.NANO2SEC, thetaInit_plotting, '--', label=r'$\theta_{0}$')
+    plt.title(r'$\theta_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+    plt.ylabel('(deg)', fontsize=16)
+    plt.xlabel('Time (s)', fontsize=16)
+    plt.legend(loc='center right', prop={'size': 16})
+
+    # Plot phi_FM
+    plt.figure()
+    plt.clf()
     plt.plot(timespan * macros.NANO2SEC, theta_FM, label=r"$\Phi$")
-    plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * thetaRef_plotting, '--', label=r'$\Phi_{Ref}$')
-    plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * thetaInit_plotting, '--', label=r'$\Phi_{0}$')
+    plt.plot(timespan * macros.NANO2SEC, thetaRef_plotting, '--', label=r'$\Phi_{Ref}$')
+    plt.plot(timespan * macros.NANO2SEC, thetaInit_plotting, '--', label=r'$\Phi_{0}$')
     plt.title(r'$\Phi_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
     plt.ylabel('(deg)', fontsize=16)
     plt.xlabel('Time (s)', fontsize=16)
@@ -196,8 +222,8 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
 if __name__ == "__main__":
     prescribedRot1DOFTestFunction(
                  True,
-                 np.pi/6,     # thetaInit
-                 2*np.pi/3,     # thetaRef
+                 0,     # thetaInit
+                 10,     # thetaRef
                  0.008,       # thetaDDotMax
                  1e-12        # accuracy
                )
