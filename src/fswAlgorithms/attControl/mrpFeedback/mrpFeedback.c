@@ -194,7 +194,12 @@ void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
         }
     }
 
-    v3Add(guidCmd.omega_RN_B, v3_4, v3_8);
+    if (configData->controlLawType == 0) {
+        v3Add(guidCmd.omega_RN_B, v3_4, v3_8);      /* v3_8 = omega_RN_B + K_I * z */
+    }
+    else {
+        v3Copy(omega_BN_B, v3_8);                        /* v3_8 = omega_BN_B */
+    }
     v3Cross(v3_8, v3_6, v3_9);
     v3Subtract(Lr, v3_9, Lr);
 

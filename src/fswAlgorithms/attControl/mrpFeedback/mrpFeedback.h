@@ -37,6 +37,7 @@ typedef struct {
     double P;                           //!< [N*m*s]   Rate error feedback gain applied
     double Ki;                          //!< [N*m]     Integration feedback error on rate error
     double integralLimit;               //!< [N*m]     Integration limit to avoid wind-up issue
+    int    controlLawType;              //!<           Flag to choose between the two control laws available
     uint64_t priorTime;                 //!< [ns]      Last time the attitude control is called
     double z[3];                        //!< [rad]     integral state of delta_omega
     double int_sigma[3];                //!< [s]       integral of the MPR attitude error
