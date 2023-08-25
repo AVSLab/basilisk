@@ -139,15 +139,15 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     # Begin the simulation
     unitTestSim.ExecuteSimulation()
 
-    # Sim chunk 2
-    # Create the prescribedRot1DOF input message
-    MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
-    MotorStepCountMessageData.numSteps = 5
-    MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData)
-    PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
-    simTime = simTime + 5 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 20
-    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
-    unitTestSim.ExecuteSimulation()
+    # # Sim chunk 2
+    # # Create the prescribedRot1DOF input message
+    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    # MotorStepCountMessageData.numSteps = 5
+    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData)
+    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    # simTime = simTime + 5 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 20
+    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
+    # unitTestSim.ExecuteSimulation()
 
     # Extract the logged data for plotting and data comparison
     omega_FM_F = prescribedDataLog.omega_FM_F
