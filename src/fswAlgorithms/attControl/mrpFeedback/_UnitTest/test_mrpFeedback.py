@@ -43,9 +43,10 @@ from Basilisk.utilities import unitTestSupport
 @pytest.mark.parametrize("intGain", [0.01, -1])
 @pytest.mark.parametrize("rwNum", [4, 0])
 @pytest.mark.parametrize("integralLimit", [0, 20])
+@pytest.mark.parametrize("ctrlLaw", [0, 1])
 @pytest.mark.parametrize("useRwAvailability", ["NO", "ON", "OFF"])
 
-def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
+def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
     r"""
         **Validation Test Description**
 
@@ -74,18 +75,19 @@ def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, useRwAvailabili
             intGain (float): value of the integral gain :math:`K_i`
             rwNum (int): number of RW devices to simulate
             integralLimit (float): value of the integral limit
+            ctrlLaw (int): type of control law used
             useRwAvailability (string): Flag to not use RW availabillity (``NO``), use the availability
                message and turn on the RW devices (``ON``) and use the message and turn off the devices (``OFF``)
     """
 
     # each test method requires a single assert method to be called
 
-    [testResults, testMessage] = run(show_plots,intGain, rwNum, integralLimit, useRwAvailability)
+    [testResults, testMessage] = run(show_plots,intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability)
 
     assert testResults < 1, testMessage
 
 
-def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
+def run(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -113,6 +115,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     module.Ki = intGain
     module.P = 150.0
     module.integralLimit = integralLimit
+    module.controlLawType = ctrlLaw
     module.knownTorquePntB_B = [1., 1., 1.]
 
     # create input messages
@@ -180,7 +183,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
                                                    messaging.AVAILABLE, messaging.AVAILABLE]
 
     LrTrue = findTrueTorques(module, guidCmdData, rwSpeedMessage, vehicleConfig, jsList,
-                             rwNum, GsMatrix_B, rwAvailabilityMessage)
+                             rwNum, GsMatrix_B, rwAvailabilityMessage, ctrlLaw)
 
     #   Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.cmdTorqueOutMsg.recorder()
@@ -227,7 +230,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     return [testFailCount, ''.join(testMessages)]
 
 
-def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,numRW,GsMatrix_B,rwAvailMsg):
+def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,numRW,GsMatrix_B,rwAvailMsg,ctrlLaw):
     Lr = []
 
     #Read in variables
@@ -277,7 +280,10 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
                     GsHs = GsHs + np.dot(GsMatrix_B_array[i, :], jsVec[i]*(np.dot(omega_BN_B, GsMatrix_B_array[i, :])+rwSpeedMessage.wheelSpeeds[i]))
                     #J_s*(dot(omegaBN_B,Gs_vec)+Omega_wheel)
 
-        Lr3 = Lr2 - np.cross((omega_RN_B+Ki*zVec), (Isc.dot(omega_BN_B)+GsHs)) # -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s)
+        if ctrlLaw == 0:
+            Lr3 = Lr2 - np.cross((omega_RN_B+Ki*zVec), (Isc.dot(omega_BN_B)+GsHs)) # -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s)
+        else:
+            Lr3 = Lr2 - np.cross(omega_BN_B, (Isc.dot(omega_BN_B)+GsHs)) # -[v3Tilde(omega)]([I]omega + [Gs]h_s)
 
         Lr4 = Lr3 + Isc.dot(-domega_RN_B + np.cross(omega_BN_B, omega_RN_B)) #+[I](-d(omega_r)/dt + omega x omega_r)
         Lr5 = Lr4 + L
