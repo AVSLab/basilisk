@@ -46,6 +46,7 @@ Version |release|
   removing the need for "Config" and "Wrap" objects. Updated all scenarios and test files for this new syntax.
   To convert prior script to use the new syntax, see :ref:`bskPrinciples-2` for the simple new
   syntaxt to add C-modules.
+- Modified :ref:`mrpFeedback` to enable the use of a modified control law, and added the integral control torque feedback output message.
 
 
 Version 2.2.0 (June 28, 2023)

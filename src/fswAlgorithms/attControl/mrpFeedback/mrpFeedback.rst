@@ -17,27 +17,34 @@ provides information on what this message is used for.
 
     Figure 1: ``mrpFeedback()`` Module I/O Illustration
 
-.. table:: Module I/O Messages
-    :widths: 25 25 100
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | Msg Variable Name     | Msg Type                          | Description                                       |
-    +=======================+===================================+===================================================+
-    | cmdTorqueOutMsg       | :ref:`CmdTorqueBodyMsgPayload`    | Control torque output message                     |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | guidInMsg             | :ref:`AttGuidMsgPayload`          | The name of the attitude guidance input message   |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | vehConfigInMsg        | :ref:`VehicleConfigMsgPayload`    | Name of the vehicle configuration input message   |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | rwParamsInMsg         | :ref:`RWArrayConfigMsgPayload`    | (Optional) The name of the RW array configuration |
-    |                       |                                   | input message                                     |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | rwSpeedsInMsg         | :ref:`RWSpeedMsgPayload`          | (Optional) The name for the reaction wheel speeds |
-    |                       |                                   | message                                           |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | rwAvailInMsg          | :ref:`RWAvailabilityMsgPayload`   | (Optional) The name of the RWs availability       |
-    |                       |                                   | message                                           |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - cmdTorqueOutMsg
+      - :ref:`CmdTorqueBodyMsgPayload`
+      - Control torque output message
+    * - intFeedbackTorqueOutMsg
+      - :ref:`CmdTorqueBodyMsgPayload`
+      - Integral feedback control torque output message
+    * - guidInMsg
+      - :ref:`AttGuidMsgPayload`
+      - Attitude guidance input message
+    * - vehConfigInMsg
+      - :ref:`VehicleConfigMsgPayload`
+      - Vehicle configuration input message
+    * - rwParamsInMsg
+      - :ref:`RWArrayConfigMsgPayload`
+      - Reaction wheel array configuration input message
+    * - rwSpeedsInMsg
+      - :ref:`RWSpeedMsgPayload`
+      - Reaction wheel speeds message
+    * - rwAvailInMsg
+      - :ref:`RWAvailabilityMsgPayload`
+      - Reaction wheel availability message.
 
 
 Detailed Module Description
@@ -142,7 +149,7 @@ Because :math:`(\delta\pmb\omega + [K_{I}]{\bf z} )^{T}  ([\widetilde{\delta\pmb
 
 This proves the new control is globally stabilizing.  Asymptotic stability is shown following the same steps as for the  nonlinear integral feedback control in Eq. (8.104) in `Analytical Mechanics of Space Systems <http://doi.org/10.2514/4.105210>`__.
 
-One of the goals set forth at the beginning of the example was avoiding quadratic $\bm\omega$ feedback terms to reduce the odds of control saturation during periods with large :math:`\pmb\omega` values.  However, the control in Eq. :eq:`eq:GusRW` contains a product of :math:`\bf z` and :math:`\pmb\omega`.  Let us study this term in more detail.  The :math:`\pmb\omega` expression with this product terms is found to be
+One of the goals set forth at the beginning of the example was avoiding quadratic :math:`\pmb\omega` feedback terms to reduce the odds of control saturation during periods with large :math:`\pmb\omega` values.  However, the control in Eq. :eq:`eq:GusRW` contains a product of :math:`\bf z` and :math:`\pmb\omega`.  Let us study this term in more detail.  The :math:`\pmb\omega` expression with this product terms is found to be
 
 .. math::
     :label: eq:mrp:1
@@ -178,3 +185,14 @@ The gains :math:`K` and :math:`P` must be set to positive values.  The integral 
 If the ``rwParamsInMsg`` is specified, then the associated ``rwSpeedsInMsg`` is required as well.
 
 The ``rwAvailInMsg`` is optional and is used to selectively include RW devices in the control solution.
+
+The ``controlLawType`` is an input that enables the user to choose between two different control laws. When ``controlLawType = 0``, the control law is that specified in :eq:`eq:Lr`. Otherwise, the control law takes the form:
+
+.. math::
+
+    {\bf L}_{r} =  -K \pmb\sigma - [P] \delta\pmb\omega - [P][K_{I}] {\bf z}  - [I_{\text{RW}}](-\dot{\pmb\omega}_{r} + [\tilde{\pmb\omega}]\pmb\omega_{r}) - {\bf L}
+    \\
+    + [\tilde{\pmb \omega}]
+    \left([I_{\text{RW}}]\pmb\omega + [G_{s}]{\bf h}_{s} \right).
+
+This control law is also asymptotically stable. The advantage when compared to :eq:`eq:Lr` is that in this one, the integral control feedback, which may contain integration errors, only appears once. On the downside, this control law depends quadratically on the angular rates of the spacecraft, and could cause a large control torque when the spacecraft is tumbling at a high rate. When unspecified, this parameter defaults to ``controlLawType = 0``.

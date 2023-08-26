@@ -37,6 +37,7 @@ typedef struct {
     double P;                           //!< [N*m*s]   Rate error feedback gain applied
     double Ki;                          //!< [N*m]     Integration feedback error on rate error
     double integralLimit;               //!< [N*m]     Integration limit to avoid wind-up issue
+    int    controlLawType;              //!<           Flag to choose between the two control laws available
     uint64_t priorTime;                 //!< [ns]      Last time the attitude control is called
     double z[3];                        //!< [rad]     integral state of delta_omega
     double int_sigma[3];                //!< [s]       integral of the MPR attitude error
@@ -50,6 +51,7 @@ typedef struct {
     RWAvailabilityMsg_C rwAvailInMsg;                   //!< RW availability input message (Optional)
     RWArrayConfigMsg_C rwParamsInMsg;                   //!< RW parameter input message.  (Optional)
     CmdTorqueBodyMsg_C cmdTorqueOutMsg;                 //!< commanded spacecraft external control torque output message
+    CmdTorqueBodyMsg_C intFeedbackTorqueOutMsg;         //!< commanded integral feedback control torque output message
     AttGuidMsg_C guidInMsg;                             //!< attitude guidance input message
     VehicleConfigMsg_C vehConfigInMsg;                  //!< vehicle configuration input message
 
