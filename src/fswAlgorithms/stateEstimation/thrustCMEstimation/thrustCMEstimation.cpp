@@ -36,7 +36,33 @@ void ThrustCMEstimation::SelfInit(){
  */
 void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
 {
+    /*! - Check if the required message has not been connected */
+    if (!this->thrusterConfigBInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR,  " thrusterConfigInMsg wasn't connected.");
+    }
+    if (!this->intFeedbackTorqueInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR,  " intFeedbackTorqueInMsg wasn't connected.");
+    }
+    if (!this->attGuidInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR,  " attGuidInMsg wasn't connected.");
+    }
+    if (this->vehConfigInMsg.isLinked()) {
+        this->cmKnowledge = true;
+    }
+    else {
+        this->cmKnowledge = false;
+    }
 
+    /*! Initialize estimated state and covariances based on user inputs */
+    this->P.setZero();
+    this->R.setZero();
+    this->I.setZero();
+    for (int i=0; i<3; ++i) {
+        this->P(i,i) = this->P0[i];
+        this->R(i,i) = this->R0[i];
+        this->I(i,i) = 1;
+    }
+    this->r_CB_est = this->r_CB_B;
 }
 
 /*! Take the relative position measurements and outputs an estimate of the
@@ -46,5 +72,5 @@ void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
  */
 void ThrustCMEstimation::UpdateState(uint64_t CurrentSimNanos)
 {
-
+    
 }
