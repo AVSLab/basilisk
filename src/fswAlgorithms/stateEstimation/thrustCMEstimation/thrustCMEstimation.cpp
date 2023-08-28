@@ -72,5 +72,90 @@ void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
  */
 void ThrustCMEstimation::UpdateState(uint64_t CurrentSimNanos)
 {
-    
+    /*! create output message buffers */
+    VehicleConfigMsgPayload vehConfigOutBuffer = {};
+    CMEstDataMsgPayload cmEstDataBuffer = {};
+
+    /*! read and allocate the thrustConfigMsg */
+    THRConfigMsgPayload thrConfigBuffer = this->thrusterConfigBInMsg();
+
+    /*! compute thruster information in B-frame coordinates */
+    Eigen::Vector3d r_TB_B = cArray2EigenVector3d(thrConfigBuffer.rThrust_B);
+    Eigen::Vector3d T_B = thrConfigBuffer.maxThrust * cArray2EigenVector3d(thrConfigBuffer.tHatThrust_B);
+
+    /*! compute error w.r.t. target attitude */
+    AttGuidMsgPayload attGuidBuffer = this->attGuidInMsg();
+    Eigen::Vector3d sigma_BR   = cArray2EigenVector3d(attGuidBuffer.sigma_BR);
+    Eigen::Vector3d omega_BR_B = cArray2EigenVector3d(attGuidBuffer.omega_BR_B);
+    double attError = pow(sigma_BR.squaredNorm() + omega_BR_B.squaredNorm(), 0.5);
+
+    /*! read commanded torque msg */
+    CmdTorqueBodyMsgPayload cmdTorqueBuffer = this->intFeedbackTorqueInMsg();
+    Eigen::Vector3d L_B = -cArray2EigenVector3d(cmdTorqueBuffer.torqueRequestBody);
+
+    Eigen::Vector3d y;       // measurement
+    Eigen::Vector3d preFit;  // pre-fit residual
+    Eigen::Vector3d postFit; // post-fit residual
+    Eigen::Matrix3d H;       // linear model
+    Eigen::Matrix3d K;       // kalman gain
+    Eigen::Matrix3d S;
+
+    /*! assign preFit and postFit residuals to NaN, rewrite them in case of measurement update */
+    preFit  = {nan("1"), nan("1"), nan("1")};
+    postFit = {nan("1"), nan("1"), nan("1")};
+
+    if (attError < this->attitudeTol) {
+
+        /*! subtract torque about point B from measurement model */
+        y = L_B - r_TB_B.cross(T_B);
+        /*! H is the skew-symmetric matrix obtained from T_B */
+        H = eigenTilde(T_B);
+        /*! S is defined for convenience */
+        S = H * this->P * H.transpose() + this->R;
+        /*! Kalman gain */
+        K = this->P * H.transpose() * S.inverse();
+
+        /*! pre-fit residuals */
+        preFit = y - H * this->r_CB_est;
+
+        /*! measurement state update */
+        this->r_CB_est = this->r_CB_est + K * preFit;
+        /*! measurement covariance update  */
+        this->P = (this->I - K * H) * this->P;
+
+        /*! post-fit residuals */
+        postFit = y - H * this->r_CB_est;
+    }
+
+    /*! compute state 1-sigma covariance */
+    Eigen::Vector3d sigma;
+    for (int i=0; i<3; ++i) {
+        sigma[i] = pow(this->P(i,i), 0.5);
+    }
+
+    /*! write estimation data to msg buffer */
+    cmEstDataBuffer.attError = attError;
+    eigenVector3d2CArray(this->r_CB_est, cmEstDataBuffer.state);
+    eigenVector3d2CArray(sigma, cmEstDataBuffer.covariance);
+    eigenVector3d2CArray(preFit, cmEstDataBuffer.preFitRes);
+    eigenVector3d2CArray(postFit, cmEstDataBuffer.postFitRes);
+    Eigen::Vector3d r_CB_error;
+    if (this->cmKnowledge) {
+        VehicleConfigMsgPayload vehConfigBuffer = this->vehConfigInMsg();
+        Eigen::Vector3d r_CB_B_true = cArray2EigenVector3d(vehConfigBuffer.CoM_B);
+        r_CB_error = this->r_CB_est - r_CB_B_true;
+        eigenVector3d2CArray(r_CB_error, cmEstDataBuffer.stateError);
+    }
+    else {
+        r_CB_error = {nan("1"), nan("1"), nan("1")};
+    }
+    eigenVector3d2CArray(r_CB_error, cmEstDataBuffer.stateError);
+    /*! write output msg */
+    this->cmEstDataOutMsg.write(&cmEstDataBuffer, this->moduleID, CurrentSimNanos);
+
+    /*! write CM location to vehicle config buffer msg */
+    eigenVector3d2CArray(this->r_CB_est, vehConfigOutBuffer.CoM_B);
+    /*! write output msg */
+    this->vehConfigOutMsg.write(&vehConfigOutBuffer, this->moduleID, CurrentSimNanos);
+    VehicleConfigMsg_C_write(&vehConfigOutBuffer, &this->vehConfigOutMsgC, this->moduleID, CurrentSimNanos);
 }
