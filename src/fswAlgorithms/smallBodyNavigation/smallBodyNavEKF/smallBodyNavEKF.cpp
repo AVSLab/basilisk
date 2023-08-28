@@ -279,8 +279,29 @@ void SmallBodyNavEKF::computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::Mat
     @return void
 */
 void SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos){
+    uint64_t dt = (CurrentSimNanos-prevTime)*NANO2SEC;
+
+    /* Compute the process noise */
+    Eigen::MatrixXd Q_i;
+    Q_i.setZero(this->numStates, this->numStates);
+    // Set the first 3x3 block to identity times (1/3)dt^3
+    Q_i.block(0, 0, 3, 3) = (1.0/3.0)*pow(dt, 3)*I;
+    // Set the second 3x3 block to identity times (1/2)dt^2
+    Q_i.block(3, 0, 3, 3) = (1.0/2.0)*pow(dt, 2)*I;
+    // Set the third 3x3 block to identity times dt
+    Q_i.block(3, 3, 3, 3) = dt*I;
+    // Set the fourth 3x3 block to identity times (1/2)dt^2
+    Q_i.block(0, 3, 3, 3) = (1.0/2.0)*pow(dt, 2)*I;
+    // Multiply all of Q_i by the first element of Q
+    Q_i = Q_i*Q(0,0);
+
+    // cout the Q_i matrix
+    std::cout << "Q_i: " << std::endl;
+    std::cout << Q_i << std::endl;
+
     /* Compute the apriori covariance */
-    P_k1_ = Phi_k*P_k*Phi_k.transpose() + L*Q*L.transpose();
+    // P_k1_ = Phi_k*P_k*Phi_k.transpose() + L*Q*L.transpose();
+    P_k1_ = Phi_k*P_k*Phi_k.transpose() + Q_i;
 }
 
 /*! This method checks the propagated MRP states to see if they exceed a norm of 1. If they do, the appropriate

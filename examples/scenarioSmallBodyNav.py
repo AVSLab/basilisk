@@ -242,7 +242,7 @@ def plot_vel_error(time, v_err, P):
     ax[0].legend()
 
     # Set the y limits
-    ax[0].set_ylim([-0.1, 0.1])
+    #ax[0].set_ylim([-0.1, 0.1])
 
     return
 
@@ -452,7 +452,7 @@ def run(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the simulation time step information
-    simulationTimeStep = macros.sec2nano(1.0)
+    simulationTimeStep = macros.sec2nano(2.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep, 3))
     dynProcess.addTask(scSim.CreateNewTask(measTaskName, simulationTimeStep, 2))
     dynProcess.addTask(scSim.CreateNewTask(fswTaskName, simulationTimeStep, 1))
@@ -568,8 +568,8 @@ def run(show_plots):
     simpleNavMeas = simpleNav.SimpleNav()
     simpleNavMeas.ModelTag = 'SimpleNav'
     simpleNavMeas.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    pos_sigma_sc = 40.0
-    vel_sigma_sc = 0.05
+    pos_sigma_sc = 5.0
+    vel_sigma_sc = 0.001
     att_sigma_sc = 0. * math.pi / 180.0
     rate_sigma_sc = 0. * math.pi / 180.0
     sun_sigma_sc = 0.0
@@ -592,7 +592,7 @@ def run(show_plots):
                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc, 0., 0.],
                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc, 0.],
                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc]]
-    walk_bounds_sc = [[10.], [10.], [10.], [0.01], [0.01], [0.01], [0.005], [0.005], [0.005], [0.002], [0.002], [0.002], [0.], [0.], [0.], [0.], [0.], [0.]]
+    walk_bounds_sc = [[1.], [1.], [1.], [0.001], [0.001], [0.001], [0.005], [0.005], [0.005], [0.002], [0.002], [0.002], [0.], [0.], [0.], [0.], [0.], [0.]]
     simpleNavMeas.PMatrix = p_matrix_sc
     simpleNavMeas.walkBounds = walk_bounds_sc
 
@@ -693,11 +693,11 @@ def run(show_plots):
 
     # Set the process noise
     Q = np.zeros((6,6))
-    Q[0,0] = Q[1,1] = Q[2,2] = 0.0000001
+    Q[0,0] = Q[1,1] = Q[2,2] = 1e-18
     Q[3,3] = Q[4,4] = Q[5,5] = 0.000001
     # Q[6,6] = Q[7,7] = Q[8,8] = 0.000001
     # Q[9,9] = Q[10,10] = Q[11,11] = 0.0000001
-    smallBodyNav.Q = (Q/10).tolist()
+    smallBodyNav.Q = Q.tolist()
 
     # Set the measurement noise
     R = np.zeros((6,6))
@@ -705,7 +705,8 @@ def run(show_plots):
     R[3,3] = R[4,4] = R[5,5] = vel_sigma_sc   # velocity sigmas
     # R[6,6] = R[7,7] = R[8,8] = att_sigma_p
     # R[9,9] = R[10,10] = R[11,11] = rate_sigma_p
-    smallBodyNav.R = np.multiply(R, R).tolist()  # Measurement Noise
+    # smallBodyNav.R = np.multiply(R, R).tolist()  # Measurement Noise
+    smallBodyNav.R = R.tolist()
 
     # Set the initial guess, x_0
     x_0 = np.zeros(6)
@@ -795,7 +796,7 @@ def run(show_plots):
     scSim.disableTask(measTaskName)
     scSim.ExecuteSimulation()
 
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(1200000.))
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(4000.))
     scSim.enableTask(measTaskName)
     scSim.ExecuteSimulation()
 
@@ -903,6 +904,8 @@ def run(show_plots):
     filtered_P_indices = [idx for idx in range(len(P)) if idx % N == 0]
     filtered_P = P[filtered_P_indices, :, :]
     P = filtered_P
+
+    print("Covariances: ", P)
 
     filtered_x_hat_indices = [idx for idx in range(len(x_hat)) if idx % N == 0]
     filtered_x_hat = x_hat[filtered_x_hat_indices, :]
