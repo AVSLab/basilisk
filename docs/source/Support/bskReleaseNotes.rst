@@ -25,6 +25,7 @@ Basilisk Release Notes
     - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
       CAD asteroid or lunar surface terrain.
     - spacecraft charging related modules
+    - ability to integrate dynamics of multiple spacecraft simultaneously
     - support a way to do thread-safe messaging
     - ability to integrate Python Basilisk modules in the same task and process as C/C++ modules
     - automated documentation build system when code is pushed to the repo
@@ -47,6 +48,14 @@ Version |release|
   To convert prior script to use the new syntax, see :ref:`bskPrinciples-2` for the simple new
   syntaxt to add C-modules.
 - Modified :ref:`mrpFeedback` to enable the use of a modified control law, and added the integral control torque feedback output message.
+- Created :ref:`lambertSolver` module to solve Lambert's problem
+- Created :ref:`lambertPlanner` module to write the :ref:`lambertProblemMsgPayload` Lambert problem setup message
+- Created :ref:`lambertValidator` module to check if the solution from the :ref:`lambertSolver` module violates any
+constraints before a Delta-V is commanded.
+- Added :ref:`scenarioLambertSolver` scenario to illustrate the Lambert solver module package
+- Created :ref:`flybyPoint` to provide hill point reference during a flyby, and a related :ref:`scenarioFlybyPoint`.
+- Created :ref:`thrusterPlatformState` to map the thruster configuration information to body frame given the time-varying platform states.
+- Created :ref:`thrustCMEstimation` to perform online estimation of the CM using gimbaled thruster torque measurements.
 
 
 Version 2.2.0 (June 28, 2023)
@@ -66,12 +75,6 @@ Version 2.2.0 (June 28, 2023)
 - Updated :ref:`SmallBodyNavEKF` with several bug fixes. Removed spacecraft attitude estimation component.
 - Bug fix made to :ref:`eclipse`: Saturn, Jupiter, Uranus, and Neptune radii were incorrectly being assigned the
   radius of Mars.
-- Created :ref:`lambertSolver` module to solve Lambert's problem
-- Created :ref:`lambertPlanner` module to write the :ref:`lambertProblemMsgPayload` Lambert problem setup message
-- Created :ref:`lambertValidator` module to check if the solution from the :ref:`lambertSolver` module violates any
-  constraints before a Delta-V is commanded.
-- Added :ref:`scenarioLambertSolver` scenario to illustrate the Lambert solver module package
-- Created :ref:`flybyPoint` to provide hill point reference during a flyby, and a related :ref:`scenarioFlybyPoint`.
 - Added custom planet name to :ref:`eclipse` in case the user wants to use a body not contained within the module.
 - Removed all instances of using ``unitTestSupport.np2EigenVectorXd()``, as this function is now unneeded.
 - Created a :ref:`facetSRPDynamicEffector` dynamics module to calculate the B frame SRP force and torque acting on a
@@ -103,8 +106,7 @@ Version 2.2.0 (June 28, 2023)
 - Reworked how integrators are implemented. New Runge-Kutta integrators may
   now be added simply by specifying the relevant coefficients.
 - Added a scenario that showcases differences between integrators. See :ref:`scenarioIntegratorsComparison`
-- Created :ref:`thrusterPlatformState` to map the thruster configuration information to body frame given the
-  time-varying platform states.
+
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------
