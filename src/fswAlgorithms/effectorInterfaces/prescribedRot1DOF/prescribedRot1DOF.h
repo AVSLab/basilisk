@@ -40,11 +40,10 @@ typedef struct {
     double sigma_FM[3];                                         //!< MRP attitude of frame F with respect to frame M
 
     /* Private variables */
-    bool convergence;                                           //!< Boolean variable is true when the maneuver is complete
+    bool completion;                                            //!< Boolean variable is true when the maneuver is complete
     double tInit;                                               //!< [s] Simulation time at the beginning of the maneuver
     double thetaInit;                                           //!< [rad] Initial spinning body angle from frame M to frame F about rotAxis_M
     double thetaDotInit;                                        //!< [rad/s] Initial spinning body angle rate between frame M to frame F
-    double thetaRef;                                            //!< [rad] Reference angle from frame M to frame F about rotAxis_M
     double thetaDotRef;                                         //!< [rad/s] Reference angle rate between frame M to frame F
     double ts;                                                  //!< [s] The simulation time halfway through the maneuver (switch time for ang accel)
     double tf;                                                  //!< [s] Simulation time when the maneuver is finished
@@ -57,6 +56,10 @@ typedef struct {
     int stepCount;                                              //!< Current number of steps taken
     double intermediateThetaInit;
     double intermediateThetaRef;
+
+    double theta;
+    double thetaDot;
+    double thetaDDot;
 
     BSKLogger *bskLogger;                                       //!< BSK Logging
 

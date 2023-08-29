@@ -80,6 +80,7 @@ def test_prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDo
 def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax, accuracy):
     numSteps = 10 #thetaRef - thetaInit
     stepAngle = 1.0
+
     """Call this routine directly to run the unit test."""
     testFailCount = 0                                        # Zero the unit test result counter
     testMessages = []                                        # Create an empty array to store the test log messages
@@ -110,10 +111,11 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     PrescribedRot1DOFConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
     PrescribedRot1DOFConfig.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
     PrescribedRot1DOFConfig.rotAxis_M = rotAxisM
-    PrescribedRot1DOFConfig.thetaDDotMax = thetaDDotMax
     PrescribedRot1DOFConfig.omega_FM_F = np.array([0.0, 0.0, 0.0])
     PrescribedRot1DOFConfig.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
     PrescribedRot1DOFConfig.sigma_FM = rbk.PRV2MRP(prvInit_FM)
+    stepTime = 2 * np.sqrt(stepAngle / thetaDDotMax)
+    PrescribedRot1DOFConfig.stepTime = stepTime
     PrescribedRot1DOFConfig.stepAngle = stepAngle
     PrescribedRot1DOFConfig.thetaDotRef = 0.0
 
@@ -132,22 +134,106 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
-    # Set the simulation time
-    simTime = numSteps * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 20
-    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
-
-    # Begin the simulation
-    unitTestSim.ExecuteSimulation()
-
+    # NORMAL SIM
+    # # Sim chunk 1
+    # simTimeA = 0.05
+    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA))
+    # unitTestSim.ExecuteSimulation()
+    #
     # # Sim chunk 2
-    # # Create the prescribedRot1DOF input message
+    # simTimeB = numSteps * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 20
+    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    # MotorStepCountMessageData.numSteps = 0
+    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA))
+    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB))
+    # unitTestSim.ExecuteSimulation()
+    #
+    #
+    # # Sim chunk 2
+    # simTimeC = 0.1
     # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
     # MotorStepCountMessageData.numSteps = 5
-    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData)
+    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB))
     # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
-    # simTime = simTime + 5 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 20
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
+    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC))
     # unitTestSim.ExecuteSimulation()
+    #
+    # # Sim chunk 3
+    # simTimeD = 5 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 3
+    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    # MotorStepCountMessageData.numSteps = 0
+    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB + simTimeC))
+    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD))
+    # unitTestSim.ExecuteSimulation()
+
+    # # INTERRUPTED SIM
+    # # Sim chunk 1
+    # simTimeA = 0.05
+    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA))
+    # unitTestSim.ExecuteSimulation()
+    #
+    # # Sim chunk 2
+    # simTimeB = numSteps * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) - 100
+    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    # MotorStepCountMessageData.numSteps = 0
+    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA))
+    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB))
+    # unitTestSim.ExecuteSimulation()
+    #
+    # # Sim chunk 3
+    # simTimeC = 0.1
+    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    # MotorStepCountMessageData.numSteps = 5
+    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB))
+    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC))
+    # unitTestSim.ExecuteSimulation()
+    #
+    # # Sim chunk 4
+    # simTimeD = 5 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 3
+    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    # MotorStepCountMessageData.numSteps = 0
+    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB + simTimeC))
+    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD))
+    # unitTestSim.ExecuteSimulation()
+
+    # NEGATIVE STEPS
+    # Sim chunk 1
+    simTimeA = 0.05
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA))
+    unitTestSim.ExecuteSimulation()
+
+    # Sim chunk 2
+    simTimeB = numSteps * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 20
+    MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    MotorStepCountMessageData.numSteps = 0
+    MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA))
+    PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB))
+    unitTestSim.ExecuteSimulation()
+
+
+    # Sim chunk 2
+    simTimeC = 0.1
+    MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    MotorStepCountMessageData.numSteps = -5
+    MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB))
+    PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC))
+    unitTestSim.ExecuteSimulation()
+
+    # Sim chunk 3
+    simTimeD = 5 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 3
+    MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    MotorStepCountMessageData.numSteps = 0
+    MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB + simTimeC))
+    PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD))
+    unitTestSim.ExecuteSimulation()
 
     # Extract the logged data for plotting and data comparison
     omega_FM_F = prescribedDataLog.omega_FM_F
