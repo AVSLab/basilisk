@@ -326,8 +326,9 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     /*! - Update the camera config data no matter if an image is present*/
     this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, CurrentSimNanos);
     
-    cv::Mat imageCV, blurred;
-    if (this->saveDir !=""){
+    cv::Mat imageCV;
+    cv::Mat blurred;
+    if (this->saveDir != ""){
         localPath = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".png";
     }
     /*! - Read in the bitmap*/
