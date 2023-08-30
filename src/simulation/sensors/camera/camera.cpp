@@ -52,7 +52,6 @@ Camera::~Camera() = default;
  */
 void Camera::Reset(uint64_t CurrentSimNanos)
 {
-    return;
 }
 
 /*!
@@ -379,13 +378,11 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         imageOut.imagePointer = this->pointImageOut;
         
         this->imageOutMsg.write(&imageOut, this->moduleID, CurrentSimNanos);
-        
-        return;
     }
     else{
         /*! - If no image is present, write zeros in message */
         this->imageOutMsg.write(&imageOut, this->moduleID, CurrentSimNanos);
-        return;}
+    }
  
 }
 
