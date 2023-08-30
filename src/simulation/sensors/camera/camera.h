@@ -44,13 +44,13 @@ public:
     
     void UpdateState(uint64_t currentSimNanos) override;
     void Reset(uint64_t currentSimNanos) override;
-    void HSVAdjust(const cv::Mat&, cv::Mat &mDst);
-    void BGRAdjustPercent(const cv::Mat&, cv::Mat &mDst);
-    void AddGaussianNoise(const cv::Mat&, cv::Mat &mDst, double, double);
-    void AddSaltPepper(const cv::Mat&, cv::Mat &mDst, float, float);
-    void AddCosmicRay(const cv::Mat&, cv::Mat &mDst, float, double, int);
-    void AddCosmicRayBurst(const cv::Mat&, cv::Mat &mDst, double);
-    void ApplyFilters(cv::Mat &mSource,
+    void hsvAdjust(const cv::Mat&, cv::Mat &mDst);
+    void bgrAdjustPercent(const cv::Mat&, cv::Mat &mDst);
+    void addGaussianNoise(const cv::Mat&, cv::Mat &mDst, double, double);
+    void addSaltPepper(const cv::Mat&, cv::Mat &mDst, float, float);
+    void addCosmicRay(const cv::Mat&, cv::Mat &mDst, float, double, int);
+    void addCosmicRayBurst(const cv::Mat&, cv::Mat &mDst, double);
+    void applyFilters(cv::Mat &mSource,
                       cv::Mat &mDst,
                       double gaussian,
                       double darkCurrent,
