@@ -386,9 +386,9 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
             }
         }
         /*! If the permanent image buffer is not populated, it will be equal to null*/
-        if (this->pointImageOut != NULL) {
+        if (this->pointImageOut != nullptr) {
             free(this->pointImageOut);
-            this->pointImageOut = NULL;
+            this->pointImageOut = nullptr;
         }
         /*! - Encode the cv mat into a png for the future modules to decode it the same way */
         std::vector<unsigned char> buf;
