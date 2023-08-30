@@ -202,7 +202,7 @@ void Camera::AddSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float p
  */
 void Camera::AddCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
     /*! Uses the current sim time and the random offset to ensure a different ray every time.*/
-    uint64 initValue = CurrentSimNanos;
+    uint64 initValue = this->localCurrentSimNanos;
     cv::RNG rng((uint64) (initValue + time(0) + randOffset));
     
     float prob = (float) (rng.uniform(0.0, 1.0));
@@ -310,7 +310,7 @@ void Camera::ApplyFilters(cv::Mat &mSource,
  */
 void Camera::UpdateState(uint64_t CurrentSimNanos)
 {
-    this->CurrentSimNanos = CurrentSimNanos;
+    this->localCurrentSimNanos = CurrentSimNanos;
     std::string localPath;
     CameraImageMsgPayload imageBuffer = {};
     CameraImageMsgPayload imageOut;
