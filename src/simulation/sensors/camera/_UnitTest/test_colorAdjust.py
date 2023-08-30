@@ -178,10 +178,6 @@ def cameraColorTest(image, HSV, BGR):
     return [testFailCount, ''.join(testMessages)]
 
 
-# these points correspond to the included 'tv_test.png'
-testPoints = [(100, 300), (250, 300), (450, 300), (600, 300), (700, 300), (950, 300), (1100, 300), (300, 800),
-              (880, 780)]
-
 def rgb_to_hsv(rgb):
     hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
     return [hsv[0] * 180., hsv[1] * 255., hsv[2]]
@@ -195,6 +191,10 @@ def hsv_to_rgb(hsv):
 def trueColorAdjust(image, corrupted, HSV, BGR):
     input_rgb = Image.open(image).load()
     output = Image.open(corrupted).load()
+
+    # these points correspond to the included 'tv_test.png'
+    testPoints = [(100, 300), (250, 300), (450, 300), (600, 300), (700, 300), (950, 300), (1100, 300), (300, 800),
+                  (880, 780)]
 
     for point in testPoints:
         px = point[0]
