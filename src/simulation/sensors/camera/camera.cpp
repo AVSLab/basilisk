@@ -48,9 +48,9 @@ Camera::~Camera() = default;
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states
  * between function calls are reset to their default values.
  @return void
- @param CurrentSimNanos current time (ns)
+ @param currentSimNanos current time (ns)
  */
-void Camera::Reset(uint64_t CurrentSimNanos)
+void Camera::Reset(uint64_t currentSimNanos)
 {
 }
 
@@ -308,9 +308,9 @@ void Camera::ApplyFilters(cv::Mat &mSource,
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void Camera::UpdateState(uint64_t CurrentSimNanos)
+void Camera::UpdateState(uint64_t currentSimNanos)
 {
-    this->localCurrentSimNanos = CurrentSimNanos;
+    this->localCurrentSimNanos = currentSimNanos;
     std::string localPath;
     CameraImageMsgPayload imageBuffer = {};
     CameraImageMsgPayload imageOut;
@@ -338,12 +338,12 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     cameraMsg.ppMaxBlurSize = this->ppMaxBlurSize;
     
     /*! - Update the camera config data no matter if an image is present*/
-    this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, CurrentSimNanos);
+    this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, currentSimNanos);
     
     cv::Mat imageCV;
     cv::Mat blurred;
     if (this->saveDir != ""){
-        localPath = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".png";
+        localPath = this->saveDir + std::to_string(currentSimNanos*1E-9) + ".png";
     }
     /*! - Read in the bitmap*/
     if(this->imageInMsg.isLinked())
@@ -367,7 +367,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
             }
         }
     }
-    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos){
+    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos){
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
                                                 (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
@@ -405,10 +405,10 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength*sizeof(char));
         imageOut.imagePointer = this->pointImageOut;
         
-        this->imageOutMsg.write(&imageOut, this->moduleID, CurrentSimNanos);
+        this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);
     }
     else{
         /*! - If no image is present, write zeros in message */
-        this->imageOutMsg.write(&imageOut, this->moduleID, CurrentSimNanos);
+        this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);
     }
 }
