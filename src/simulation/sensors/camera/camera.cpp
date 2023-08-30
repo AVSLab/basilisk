@@ -62,7 +62,7 @@ void Camera::Reset(uint64_t CurrentSimNanos)
  * @param mDst destination of modified image
  * @return void
  */
-void Camera::HSVAdjust(const cv::Mat mSrc, cv::Mat &mDst){
+void Camera::HSVAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
     cv::Mat hsv;
     cvtColor(mSrc, hsv, cv::COLOR_BGR2HSV);
     
@@ -100,10 +100,10 @@ void Camera::HSVAdjust(const cv::Mat mSrc, cv::Mat &mDst){
  * @param mDst destination of modified image
  * @return void
  */
-void Camera::BGRAdjustPercent(const cv::Mat mSrc, cv::Mat &mDst){
+void Camera::BGRAdjustPercent(const cv::Mat& mSrc, cv::Mat &mDst){
     cv::Mat mBGR = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mBGR, mSrc.type());
-    
+
     // BGR values range [0, 255]
     // if value after adjustment is < 0 take 0
     // if value after is > 255 take 255
@@ -131,7 +131,7 @@ void Camera::BGRAdjustPercent(const cv::Mat mSrc, cv::Mat &mDst){
  * @param StdDev standard deviation of pixel value
  * @return void
  */
-void Camera::AddGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, double Mean, double StdDev)
+void Camera::AddGaussianNoise(const cv::Mat& mSrc, cv::Mat &mDst, double Mean, double StdDev)
 {
     cv::Mat mSrc_16SC;
     //CV_16SC3 means signed 16 bit shorts three channels
@@ -153,7 +153,7 @@ void Camera::AddGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, double Mean, do
  * @param pb probability of hot pixels
  * @return void
  */
-void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb){
+void Camera::AddSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float pb){
     /*! These lines will make the hot and dead pixels different every time.*/
     // uint64 initValue = time(0);
     // RNG rng(initValue);
@@ -199,7 +199,7 @@ void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb
  * @param maxSize max length of cosmic ray
  * @return void
  */
-void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
+void Camera::AddCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
     /*! Uses the current sim time and the random offset to ensure a different ray every time.*/
     uint64 initValue = CurrentSimNanos;
     cv::RNG rng((uint64) (initValue + time(0) + randOffset));
@@ -231,7 +231,7 @@ void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhol
  * @param num number of cosmic rays to be added
  * @return void
  */
-void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
+void Camera::AddCosmicRayBurst(const cv::Mat& mSrc, cv::Mat &mDst, double num){
     cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mCosmic, mSrc.type());
     for(int i = 0; i < std::round(num); i++){
@@ -254,7 +254,7 @@ void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
  * @param blurparam size of blur to apply
  * @return void
  */
-void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, double cosmicRays, double blurparam){
+void Camera::ApplyFilters(cv::Mat &mSource, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, double cosmicRays, double blurparam){
 
     cv::Mat mFilters(mSource.size(), mSource.type());
     mSource.convertTo(mFilters, mSource.type());
