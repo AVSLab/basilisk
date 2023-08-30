@@ -61,7 +61,7 @@ void Camera::Reset(uint64_t currentSimNanos)
  * @param mDst destination of modified image
  * @return void
  */
-void Camera::HSVAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
+void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
     cv::Mat hsv;
     cvtColor(mSrc, hsv, cv::COLOR_BGR2HSV);
     
@@ -99,7 +99,7 @@ void Camera::HSVAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
  * @param mDst destination of modified image
  * @return void
  */
-void Camera::BGRAdjustPercent(const cv::Mat& mSrc, cv::Mat &mDst){
+void Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat &mDst){
     cv::Mat mBGR = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mBGR, mSrc.type());
 
@@ -130,7 +130,7 @@ void Camera::BGRAdjustPercent(const cv::Mat& mSrc, cv::Mat &mDst){
  * @param StdDev standard deviation of pixel value
  * @return void
  */
-void Camera::AddGaussianNoise(const cv::Mat& mSrc, cv::Mat &mDst, double Mean, double StdDev)
+void Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat &mDst, double Mean, double StdDev)
 {
     cv::Mat mSrc_16SC;
     //CV_16SC3 means signed 16 bit shorts three channels
@@ -152,7 +152,7 @@ void Camera::AddGaussianNoise(const cv::Mat& mSrc, cv::Mat &mDst, double Mean, d
  * @param pb probability of hot pixels
  * @return void
  */
-void Camera::AddSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float pb){
+void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float pb){
     /*! These lines will make the hot and dead pixels different every time.*/
     // uint64 initValue = time(0);
     // RNG rng(initValue);
@@ -200,7 +200,7 @@ void Camera::AddSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float p
  * @param maxSize max length of cosmic ray
  * @return void
  */
-void Camera::AddCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
+void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
     /*! Uses the current sim time and the random offset to ensure a different ray every time.*/
     uint64 initValue = this->localCurrentSimNanos;
     cv::RNG rng((uint64) (initValue + time(0) + randOffset));
@@ -233,17 +233,17 @@ void Camera::AddCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshho
  * @param num number of cosmic rays to be added
  * @return void
  */
-void Camera::AddCosmicRayBurst(const cv::Mat& mSrc, cv::Mat &mDst, double num){
+void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat &mDst, double num){
     cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mCosmic, mSrc.type());
     for(int i = 0; i < std::round(num); i++){
         /*! Threshold defined such that 1 provides a 1/50 chance of getting a ray, and 10 will get about
          * 5 rays per image. Currently length is limited to 50 pixels*/
-        AddCosmicRay(mCosmic,
-                     mCosmic,
-                     (float) (1/(std::pow(num,2))),
-                     i+1,
-                     50);
+        this->addCosmicRay(mCosmic,
+                           mCosmic,
+                           (float) (1/(std::pow(num,2))),
+                           i+1,
+                           50);
     }
     mCosmic.convertTo(mDst, mSrc.type());
 }
@@ -261,7 +261,7 @@ void Camera::AddCosmicRayBurst(const cv::Mat& mSrc, cv::Mat &mDst, double num){
  * @param blurparam size of blur to apply
  * @return void
  */
-void Camera::ApplyFilters(cv::Mat &mSource,
+void Camera::applyFilters(cv::Mat &mSource,
                           cv::Mat &mDst,
                           double gaussian,
                           double darkCurrent,
@@ -274,7 +274,7 @@ void Camera::ApplyFilters(cv::Mat &mSource,
 
     if (gaussian > 0){
         float scale = 2;
-        AddGaussianNoise(mFilters, mFilters, 0, gaussian * scale);
+        this->addGaussianNoise(mFilters, mFilters, 0, gaussian * scale);
         cv::threshold(mFilters, mFilters, gaussian*6, 255, cv::THRESH_TOZERO);
     }
     if(blurparam > 0){
@@ -284,20 +284,23 @@ void Camera::ApplyFilters(cv::Mat &mSource,
     }
     if(darkCurrent > 0){
         float scale = 15;
-        AddGaussianNoise(mFilters, mFilters, darkCurrent * scale, 0.0);
+        this->addGaussianNoise(mFilters, mFilters, darkCurrent * scale, 0.0);
     }
     if (this->hsv.cwiseAbs().sum() > 0.00001) {
-        this->HSVAdjust(mFilters, mFilters);
+        this->hsvAdjust(mFilters, mFilters);
     }
     if (this->bgrPercent.cwiseAbs().sum() != 0) {
-        this->BGRAdjustPercent(mFilters, mFilters);
+        this->bgrAdjustPercent(mFilters, mFilters);
     }
     if (saltPepper > 0){
         float scale = 0.00002f;
-        AddSaltPepper(mFilters, mFilters, (float) (saltPepper * scale), (float) (saltPepper * scale));
+        this->addSaltPepper(mFilters,
+                            mFilters,
+                            (float) (saltPepper * scale),
+                            (float) (saltPepper * scale));
     }
     if(cosmicRays > 0){
-        AddCosmicRayBurst(mFilters, mFilters, std::round(cosmicRays));
+        this->addCosmicRayBurst(mFilters, mFilters, std::round(cosmicRays));
     }
     
     mFilters.convertTo(mDst, mSource.type());
@@ -354,13 +357,13 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
-        ApplyFilters(imageCV,
-                     blurred,
-                     this->gaussian,
-                     this->darkCurrent,
-                     this->saltPepper,
-                     this->cosmicRays,
-                     this->blurParam);
+        this->applyFilters(imageCV,
+                           blurred,
+                           this->gaussian,
+                           this->darkCurrent,
+                           this->saltPepper,
+                           this->cosmicRays,
+                           this->blurParam);
         if (this->saveImages == 1){
             if (!cv::imwrite(localPath, blurred)) {
                 bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
@@ -373,13 +376,13 @@ void Camera::UpdateState(uint64_t currentSimNanos)
                                                 (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
         
-        ApplyFilters(imageCV,
-                     blurred,
-                     this->gaussian,
-                     this->darkCurrent,
-                     this->saltPepper,
-                     this->cosmicRays,
-                     this->blurParam);
+        this->applyFilters(imageCV,
+                           blurred,
+                           this->gaussian,
+                           this->darkCurrent,
+                           this->saltPepper,
+                           this->cosmicRays,
+                           this->blurParam);
         if (this->saveImages == 1){
             if (!cv::imwrite(localPath, blurred)) {
                 bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
