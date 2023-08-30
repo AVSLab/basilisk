@@ -50,13 +50,7 @@ public:
     void addSaltPepper(const cv::Mat&, cv::Mat &mDst, float, float);
     void addCosmicRay(const cv::Mat&, cv::Mat &mDst, float, double, int);
     void addCosmicRayBurst(const cv::Mat&, cv::Mat &mDst, double);
-    void applyFilters(cv::Mat &mSource,
-                      cv::Mat &mDst,
-                      double gaussian,
-                      double darkCurrent,
-                      double saltPepper,
-                      double cosmicRays,
-                      double blurparam);
+    void applyFilters(cv::Mat &mSource, cv::Mat &mDst);
 
 public:
     std::string filename{};                //!< Filename for module to read an image directly

@@ -261,33 +261,27 @@ void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat &mDst, double num){
  * @param blurparam size of blur to apply
  * @return void
  */
-void Camera::applyFilters(cv::Mat &mSource,
-                          cv::Mat &mDst,
-                          double gaussian,
-                          double darkCurrent,
-                          double saltPepper,
-                          double cosmicRays,
-                          double blurparam){
+void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
 
     cv::Mat mFilters(mSource.size(), mSource.type());
     mSource.convertTo(mFilters, mSource.type());
 
-    if (gaussian > 0){
+    if (this->gaussian > 0){
         float scale = 2;
-        this->addGaussianNoise(mFilters, mFilters, 0, gaussian * scale);
-        cv::threshold(mFilters, mFilters, gaussian*6, 255, cv::THRESH_TOZERO);
+        this->addGaussianNoise(mFilters, mFilters, 0, this->gaussian * scale);
+        cv::threshold(mFilters, mFilters, this->gaussian*6, 255, cv::THRESH_TOZERO);
     }
-    if(blurparam > 0){
-        int blurSize = (int) std::round(blurparam);
+    if(this->blurParam > 0){
+        int blurSize = (int) std::round(this->blurParam);
         if (blurSize%2 == 0){ blurSize+=1; }
         cv::blur(mFilters,
                  mFilters,
                  cv::Size(blurSize, blurSize),
                  cv::Point(-1 , -1));
     }
-    if(darkCurrent > 0){
+    if(this->darkCurrent > 0){
         float scale = 15;
-        this->addGaussianNoise(mFilters, mFilters, darkCurrent * scale, 0.0);
+        this->addGaussianNoise(mFilters, mFilters, this->darkCurrent * scale, 0.0);
     }
     if (this->hsv.cwiseAbs().sum() > 0.00001) {
         this->hsvAdjust(mFilters, mFilters);
@@ -295,15 +289,15 @@ void Camera::applyFilters(cv::Mat &mSource,
     if (this->bgrPercent.cwiseAbs().sum() != 0) {
         this->bgrAdjustPercent(mFilters, mFilters);
     }
-    if (saltPepper > 0){
+    if (this->saltPepper > 0){
         float scale = 0.00002f;
         this->addSaltPepper(mFilters,
                             mFilters,
-                            (float) (saltPepper * scale),
-                            (float) (saltPepper * scale));
+                            (float) (this->saltPepper * scale),
+                            (float) (this->saltPepper * scale));
     }
-    if(cosmicRays > 0){
-        this->addCosmicRayBurst(mFilters, mFilters, std::round(cosmicRays));
+    if(this->cosmicRays > 0){
+        this->addCosmicRayBurst(mFilters, mFilters, std::round(this->cosmicRays));
     }
     
     mFilters.convertTo(mDst, mSource.type());
@@ -360,13 +354,7 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
-        this->applyFilters(imageCV,
-                           blurred,
-                           this->gaussian,
-                           this->darkCurrent,
-                           this->saltPepper,
-                           this->cosmicRays,
-                           this->blurParam);
+        this->applyFilters(imageCV, blurred);
         if (this->saveImages == 1){
             if (!cv::imwrite(localPath, blurred)) {
                 bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
@@ -379,13 +367,7 @@ void Camera::UpdateState(uint64_t currentSimNanos)
                                                 (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
         
-        this->applyFilters(imageCV,
-                           blurred,
-                           this->gaussian,
-                           this->darkCurrent,
-                           this->saltPepper,
-                           this->cosmicRays,
-                           this->blurParam);
+        this->applyFilters(imageCV, blurred);
         if (this->saveImages == 1){
             if (!cv::imwrite(localPath, blurred)) {
                 bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
