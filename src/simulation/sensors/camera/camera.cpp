@@ -279,8 +279,11 @@ void Camera::applyFilters(cv::Mat &mSource,
     }
     if(blurparam > 0){
         int blurSize = (int) std::round(blurparam);
-        if (blurSize%2 == 0){blurSize+=1;}
-        blur(mFilters, mFilters, cv::Size(blurSize, blurSize), cv::Point(-1 , -1));
+        if (blurSize%2 == 0){ blurSize+=1; }
+        cv::blur(mFilters,
+                 mFilters,
+                 cv::Size(blurSize, blurSize),
+                 cv::Point(-1 , -1));
     }
     if(darkCurrent > 0){
         float scale = 15;
