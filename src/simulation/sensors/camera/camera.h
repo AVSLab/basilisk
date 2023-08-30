@@ -50,7 +50,14 @@ public:
     void AddSaltPepper(const cv::Mat&, cv::Mat &mDst, float, float);
     void AddCosmicRay(const cv::Mat&, cv::Mat &mDst, float, double, int);
     void AddCosmicRayBurst(const cv::Mat&, cv::Mat &mDst, double);
-    void ApplyFilters(cv::Mat &mSource, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, double cosmicRays, double blurparam);
+    void ApplyFilters(cv::Mat &mSource,
+                      cv::Mat &mDst,
+                      double gaussian,
+                      double darkCurrent,
+                      double saltPepper,
+                      double cosmicRays,
+                      double blurparam);
+
 public:
     std::string filename{};                //!< Filename for module to read an image directly
     ReadFunctor<CameraImageMsgPayload> imageInMsg;      //!< camera image input message
@@ -86,12 +93,11 @@ public:
     Eigen::Vector3d bgrPercent{Eigen::Vector3d::Zero()}; //!< (int) BGR color correction values as percent
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
+
 private:
     uint64_t CurrentSimNanos{};
     void* pointImageOut{nullptr};      //!< void pointer for image memory passing
 };
 
 /* @} */
-
 #endif
-
