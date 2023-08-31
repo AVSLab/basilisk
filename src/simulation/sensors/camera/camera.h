@@ -61,7 +61,6 @@ public:
     int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
     
     /*! Camera parameters */
-    char parentName[MAX_STRING_LENGTH];  //!< [-] Name of the parent body to which the camera should be attached
     int cameraIsOn; //!< [-] Is the camera currently taking images
     int cameraID; //!< [-] Is the camera currently taking images
     int resolution[2];         //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels
@@ -76,6 +75,7 @@ public:
     double ppFocalLength;       //!< [m] Valid setting range: 0.001m to 0.3m. Value of 0 to turn off this parameter entirely.
     int ppMaxBlurSize;          //!< Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to turn off this parameter entirely.
 
+    char parentName[MAX_STRING_LENGTH]{};  //!< [-] Name of the parent body to which the camera should be attached
 
     /*! Noise paramters */
     double gaussian;        //!< Gaussian noise level
