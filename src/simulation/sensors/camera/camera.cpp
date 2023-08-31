@@ -276,11 +276,11 @@ void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, doubl
         float scale = 15;
         AddGaussianNoise(mFilters, mFilters, darkCurrent * scale, 0.0);
     }
-    if (abs(this->hsv[0])+abs(this->hsv[1])+abs(this->hsv[2]) > 0.00001) {
-        HSVAdjust(mFilters, mFilters);
+    if (this->hsv.cwiseAbs().sum() > 0.00001) {
+        this->HSVAdjust(mFilters, mFilters);
     }
-    if (abs(this->bgrPercent[0])+abs(this->bgrPercent[1])+abs(this->bgrPercent[2]) != 0) {
-        BGRAdjustPercent(mFilters, mFilters);
+    if (this->bgrPercent.cwiseAbs().sum() != 0) {
+        this->BGRAdjustPercent(mFilters, mFilters);
     }
     if (saltPepper > 0){
         float scale = 0.00002f;

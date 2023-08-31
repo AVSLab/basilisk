@@ -82,8 +82,8 @@ public:
     double saltPepper{};    //!< Stuck and Dark pixels probability
     double cosmicRays{};        //!< Random cosmic rays (number)
     double blurParam{};        //!< Blur over image in pixels
-    std::vector<double> hsv{};    //!< (double) HSV color correction, H (-pi/pi) hue shift, S and V are percent multipliers
-    std::vector<int> bgrPercent{}; //!< (int) BGR color correction values as percent
+    Eigen::Vector3d hsv{Eigen::Vector3d::Zero()};    //!< (double) HSV color correction, H (-pi/pi) hue shift, S and V are percent multipliers
+    Eigen::Vector3d bgrPercent{Eigen::Vector3d::Zero()}; //!< (int) BGR color correction values as percent
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
