@@ -62,8 +62,8 @@ void Camera::Reset(uint64_t currentSimNanos)
  * @return void
  */
 void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
-    cv::Mat hsv;
-    cvtColor(mSrc, hsv, cv::COLOR_BGR2HSV);
+    cv::Mat localHsv;
+    cvtColor(mSrc, localHsv, cv::COLOR_BGR2HSV);
     
     for (int j = 0; j < mSrc.rows; j++) {
         for (int i = 0; i < mSrc.cols; i++) {
@@ -73,23 +73,23 @@ void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
             // convert radians to degrees and multiply by 2
             // user assumes range hue range is 0-2pi and not 0-180
             int input_degrees = (int) (this->hsv[0] * R2D);
-            int h_360 = (hsv.at<cv::Vec3b>(j, i)[0] * 2) + input_degrees;
+            int h_360 = (localHsv.at<cv::Vec3b>(j, i)[0] * 2) + input_degrees;
             h_360 = (int) (h_360 -  360 * std::floor(h_360 * (1. / 360.)));
             h_360 = h_360/2;
             if(h_360 == 180){ h_360 = 0; }
-            hsv.at<cv::Vec3b>(j, i)[0] = (unsigned char) h_360;
+            localHsv.at<cv::Vec3b>(j, i)[0] = (unsigned char) h_360;
 
             int values[3];
             for(int k = 1; k < 3; k++){
-                values[k] = (int) (hsv.at<cv::Vec3b>(j, i)[k] * (this->hsv[k]/100. + 1.));
+                values[k] = (int) (localHsv.at<cv::Vec3b>(j, i)[k] * (this->hsv[k] / 100. + 1.));
                 // saturate S and V values to [0,255]
                 if(values[k] < 0){ values[k] = 0; }
                 if(values[k] > 255){ values[k] = 255; }
-                hsv.at<cv::Vec3b>(j, i)[k] = (unsigned char) values[k];
+                localHsv.at<cv::Vec3b>(j, i)[k] = (unsigned char) values[k];
             }
         }
     }
-    cvtColor(hsv, mDst, cv::COLOR_HSV2BGR);
+    cvtColor(localHsv, mDst, cv::COLOR_HSV2BGR);
 }
 
 /*!
