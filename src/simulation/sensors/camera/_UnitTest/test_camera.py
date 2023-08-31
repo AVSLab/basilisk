@@ -98,9 +98,9 @@ def test_module(show_plots, gauss, darkCurrent, saltPepper, cosmic, blurSize):
 
     # Clean up
     imagePath = path + '/' + image
-    savedImage1 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(gauss) + str(darkCurrent) \
+    savedImage1 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(darkCurrent) \
                   + str(saltPepper) + str(cosmic) + str(blurSize) + '0.000000.png'
-    savedImage2 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(gauss) + str(darkCurrent) \
+    savedImage2 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(darkCurrent) \
                   + str(saltPepper) + str(cosmic) + str(blurSize) + '0.500000.png'
     try:
         os.remove(savedImage1)
@@ -147,7 +147,7 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     module.filename = imagePath
     module.saveImages = True
     # make each image saved have a unique name for this test case
-    module.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(gauss) + str(darkCurrent) \
+    module.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(darkCurrent) \
                            + str(saltPepper) + str(cosmic) + str(blurSize)
 
     # Create input message and size it because the regular creator of that message
