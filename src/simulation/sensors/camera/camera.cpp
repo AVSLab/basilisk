@@ -36,37 +36,9 @@
 /*! The constructor for the Camera module. It also sets some default values at its creation.  */
 Camera::Camera()
 {
-    this->pointImageOut = NULL;
-    
-    /*! Default values for the camera.  */
-    this->cameraID = 1;
-    this->resolution[0] = 512;
-    this->resolution[1] = 512;
     this->renderRate = (uint64_t) (60*1E9);
     v3SetZero(this->cameraPos_B);
     v3SetZero(this->sigma_CB);
-    this->cameraIsOn = 0;
-    this->filename = "";
-    this->fieldOfView = 0.7;
-    strcpy(this->skyBox, "black");
-    this->saveImages = 0;
-    this->saveDir = "";
-    this->postProcessingOn = 0;
-    this->ppAperture = 0;
-    this->ppFocalLength = 0;
-    this->ppFocusDistance = 0;
-    this->ppMaxBlurSize = 0;
-
-    /*! Default values for the perturbations.  */
-    this->gaussian = 0;
-    this->darkCurrent = 0;
-    this->saltPepper = 0;
-    this->cosmicRays = 0;
-    this->blurParam = 0;
-    this->hsv = std::vector<double>{0., 0., 0.};
-    this->bgrPercent = std::vector<int>{0, 0, 0};
-    
-    return;
 }
 
 
