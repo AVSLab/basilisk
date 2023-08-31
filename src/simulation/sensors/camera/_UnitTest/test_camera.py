@@ -62,7 +62,6 @@ except ImportError:
     (0, 0, 0, 0, 0)
     , (2, 2, 2, 1, 3)
 ])
-# update "module" in this function name to reflect the module name
 def test_module(show_plots, gauss, darkCurrent, saltPepper, cosmic, blurSize):
     """
         **Validation Test Description**
