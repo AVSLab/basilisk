@@ -24,7 +24,6 @@ import colorsys
 import inspect
 import math
 import os
-
 import numpy as np
 import pytest
 
@@ -43,9 +42,9 @@ except ImportError:
     reasonErr = "python Pillow package not installed---can't test Cameras module"
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
+from Basilisk.utilities import macros
+from Basilisk.utilities import SimulationBaseClass
 
 try:
     from Basilisk.simulation import camera
@@ -62,15 +61,15 @@ except ImportError:
 @pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("HSV", [
     [0, 0, 0]
-    , [1.0, +20.0, -30.0]
-    , [-1.0, +20.0, -30.0]
-    , [3.14159, +100, -100]
+    , [1.0, 20.0, -30.0]
+    , [-1.0, 20.0, -30.0]
+    , [3.14159, 100, -100]
 ])
 @pytest.mark.parametrize("BGR", [
     [0, 0, 0]
     , [10, 20, 30]
-    , [-10, -30, +50]
-    , [-100, +200, +20]
+    , [-10, -30, 50]
+    , [-100, 200, 20]
 ])
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, HSV, BGR):
@@ -242,6 +241,6 @@ def trueColorAdjust(image, corrupted, HSV, BGR):
 # stand-along python script
 #
 if __name__ == "__main__":
-    hsvAdjust = [1.0, +20.0, -30.0]
+    hsvAdjust = [1.0, 20.0, -30.0]
     bgrAdjust = [-100, 0, 0]
     cameraColorTest("tv_test.png", hsvAdjust, bgrAdjust)
