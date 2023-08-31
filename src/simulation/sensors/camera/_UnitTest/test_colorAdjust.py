@@ -25,6 +25,7 @@ import inspect
 import math
 import os
 
+import numpy as np
 import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -155,9 +156,8 @@ def cameraColorTest(image, HSV, BGR):
     module.sigma_CB = [0, 0, 1]
 
     # Noise parameters
-    # BGR and HSV are python lists of the form [0, 0, 0]
-    module.bgrPercent = camera.IntVector(BGR)
-    module.hsv = camera.DoubleVector(HSV)
+    module.bgrPercent = np.array(BGR)
+    module.hsv = np.array(HSV)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.cameraConfigOutMsg.recorder()
