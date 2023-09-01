@@ -98,7 +98,7 @@ Also in this case, an instance of each task is initialized that corresponds to
 one of the two spacecraft. Furthermore, it is
 necessary to manually set the input- and output message names for the FSW
 modules. In order to make this tutorial work properly its
-is very important to set the ``self.mrpFeedbackRWsData.Ki`` and ``self.mrpFeedbackRWsData2.Ki``
+is very important to set the ``self.mrpFeedbackRWs.Ki`` and ``self.mrpFeedbackRWs2.Ki``
 variables in :ref:`BSK_FormationFsw` to -1. Otherwise
 the orientation and rates of both spacecraft will not converge!
 

@@ -75,15 +75,14 @@ def subModuleTestFunction(show_plots):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = attTrackingError.attTrackingErrorConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "attTrackingError"
+    module = attTrackingError.attTrackingError()
+    module.ModelTag = "attTrackingError"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     vector = [0.01, 0.05, -0.55]
-    moduleConfig.sigma_R0R = vector
+    module.sigma_R0R = vector
 
     #
     # Navigation Message
@@ -108,12 +107,12 @@ def subModuleTestFunction(show_plots):
     refInMsg = messaging.AttRefMsg().write(RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attGuidOutMsg.recorder()
+    dataLog = module.attGuidOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.attNavInMsg.subscribeTo(navStateInMsg)
-    moduleConfig.attRefInMsg.subscribeTo(refInMsg)
+    module.attNavInMsg.subscribeTo(navStateInMsg)
+    module.attRefInMsg.subscribeTo(refInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -143,7 +142,7 @@ def subModuleTestFunction(show_plots):
     accuracy = 1e-12
     if not unitTestSupport.isArrayEqual(moduleOutput, trueVector, 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_BR unit test\n")
+        testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_BR unit test\n")
         unitTestSupport.writeTeXSnippet("passFail_sigBR", "FAILED", path)
     else:
         unitTestSupport.writeTeXSnippet("passFail_sigBR", "PASSED", path)
@@ -159,7 +158,7 @@ def subModuleTestFunction(show_plots):
     # compare the module results to the truth values
     if not unitTestSupport.isArrayEqual(moduleOutput, trueVector, 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_BR_B unit test\n")
+        testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_BR_B unit test\n")
         unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "FAILED", path)
     else:
         unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "PASSED", path)
@@ -175,7 +174,7 @@ def subModuleTestFunction(show_plots):
     # compare the module results to the truth values
     if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_N unit test\n")
+        testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test\n")
         unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "FAILED", path)
     else:
         unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "PASSED", path)
@@ -191,7 +190,7 @@ def subModuleTestFunction(show_plots):
     # compare the module results to the truth values
     if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed domega_RN_B unit test\n")
+        testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_B unit test\n")
         unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "FAILED", path)
     else:
         unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "PASSED", path)

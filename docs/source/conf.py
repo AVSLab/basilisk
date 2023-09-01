@@ -31,6 +31,9 @@ author = u'AVS Lab'
 release = bskVersion
 version = u'version ' + release
 
+from Basilisk.utilities.deprecated import BSKDeprecationWarning
+import warnings
+warnings.filterwarnings("ignore", category=BSKDeprecationWarning)
 
 # -- General configuration ---------------------------------------------------
 
@@ -496,7 +499,7 @@ if rebuild:
     # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizard")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/architecture")
     breathe_projects_source = fileCrawler.run("../../examples")
-    breathe_projects_source = fileCrawler.run("../../externalTools")
+    # breathe_projects_source = fileCrawler.run("../../externalTools")
     with open("breathe.data", 'wb') as f:
         pickle.dump(breathe_projects_source, f)
 else:

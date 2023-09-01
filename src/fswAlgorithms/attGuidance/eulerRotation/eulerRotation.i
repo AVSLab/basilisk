@@ -21,16 +21,8 @@
    #include "eulerRotation.h"
 %}
 
-%include "swig_conly_data.i"
-
-%constant void Update_eulerRotation(void*, uint64_t, uint64_t);
-%ignore Update_eulerRotation;
-%constant void SelfInit_eulerRotation(void*, uint64_t);
-%ignore SelfInit_eulerRotation;
-%constant void Reset_eulerRotation(void*, uint64_t, uint64_t);
-%ignore Reset_eulerRotation;
-
-%include "eulerRotation.h"
+%include "swig_c_wrap.i"
+%c_wrap(eulerRotation);
 
 %include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;

@@ -78,7 +78,7 @@ the control loop.
 While the nominal simulation has set ``useCMsg`` flag to False, with it set to ``True`` it illustrates two things.
 First it shows how to create a C-wrapped C-message in Python and write to it.  This is done with the
 ``VehicleConfigMsg`` message.  Second, it illustrates how instead of writing to a module internal
-output message (see ``mrpControlConfig.cmdTorqueOutMsg``) we can re-direct the module to write to a
+output message (see ``mrpControl.cmdTorqueOutMsg``) we can re-direct the module to write to a
 stand-alone message ``cmdTorqueMsg`` instead.  This is useful if we need to have multiple module be writing
 to a single output message such as if several flight software stacks are being setup.
 
@@ -272,32 +272,29 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
     #
 
     # setup inertial3D guidance module
-    inertial3DConfig = inertial3D.inertial3DConfig()
-    inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
-    inertial3DWrap.ModelTag = "inertial3D"
-    scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj = inertial3D.inertial3D()
+    inertial3DObj.ModelTag = "inertial3D"
+    scSim.AddModelToTask(simTaskName, inertial3DObj)
+    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.K = 3.5
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.K = 3.5
     if useIntGain:
-        mrpControlConfig.Ki = 0.0002  # make value negative to turn off integral feedback
+        mrpControl.Ki = 0.0002  # make value negative to turn off integral feedback
     else:
-        mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+        mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
     if useKnownTorque:
-        mrpControlConfig.knownTorquePntB_B = [0.25, -0.25, 0.1]
+        mrpControl.knownTorquePntB_B = [0.25, -0.25, 0.1]
 
     #
     # create simulation messages
@@ -323,18 +320,18 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
     # connect the messages to the modules
     #
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
     if useCMsg:
         cmdTorqueMsg = messaging.CmdTorqueBodyMsg_C()
         # connect to external commanded torque msg
-        messaging.CmdTorqueBodyMsg_C_addAuthor(mrpControlConfig.cmdTorqueOutMsg, cmdTorqueMsg)
+        messaging.CmdTorqueBodyMsg_C_addAuthor(mrpControl.cmdTorqueOutMsg, cmdTorqueMsg)
         extFTObject.cmdTorqueInMsg.subscribeTo(cmdTorqueMsg)
     else:
         # connect to module-internal commanded torque msg
-        extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+        extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     #
     # Setup data logging before the simulation is initialized
@@ -347,12 +344,12 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
     # input message recorder after this input message has been subscribed to another message.
     # Otherwise, you are reading an uninitialized msg which leads to lovely segmentation faults.
     snLog = sNavObject.scStateInMsg.recorder(samplingTime)
-    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     if useCMsg:
         # create stand-along commanded torque msg and setup recorder()
         mrpLog = cmdTorqueMsg.recorder(samplingTime)
     else:
-        mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
+        mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, snLog)
     scSim.AddModelToTask(simTaskName, attErrorLog)
     scSim.AddModelToTask(simTaskName, mrpLog)

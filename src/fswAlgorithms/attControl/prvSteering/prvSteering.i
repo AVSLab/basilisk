@@ -21,15 +21,8 @@
    #include "prvSteering.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_prvSteering(void*, uint64_t, uint64_t);
-%ignore Update_prvSteering;
-%constant void SelfInit_prvSteering(void*, uint64_t);
-%ignore SelfInit_prvSteering;
-%constant void Reset_prvSteering(void*, uint64_t, uint64_t);
-%ignore Reset_prvSteering;
-
-%include "prvSteering.h"
+%include "swig_c_wrap.i"
+%c_wrap_2(prvSteering, PrvSteeringConfig);
 
 %include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;

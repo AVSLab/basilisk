@@ -590,14 +590,13 @@ def StatePropStatic():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunlineSEKF.sunlineSEKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "sunlineSEKF"
+    module = sunlineSEKF.sunlineSEKF()
+    module.ModelTag = "sunlineSEKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
+    setupFilterData(module)
 
     unitTestSim.AddVariableForLogging('sunlineSEKF.covar', testProcessRate * 10, 0, 24)
     unitTestSim.AddVariableForLogging('sunlineSEKF.state', testProcessRate * 10, 0, 4)
@@ -605,8 +604,8 @@ def StatePropStatic():
     # connect messages
     cssDataInMsg = messaging.CSSArraySensorMsg()
     cssConfigInMsg = messaging.CSSConfigMsg()
-    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
-    moduleConfig.cssConfigInMsg.subscribeTo(cssConfigInMsg)
+    module.cssDataInMsg.subscribeTo(cssDataInMsg)
+    module.cssConfigInMsg.subscribeTo(cssConfigInMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
@@ -652,19 +651,18 @@ def StatePropVariable(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunlineSEKF.sunlineSEKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "sunlineSEKF"
+    module = sunlineSEKF.sunlineSEKF()
+    module.ModelTag = "sunlineSEKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
+    setupFilterData(module)
 
-    InitialState =  (np.array(moduleConfig.state)+ +np.array([0.,0.,0.,0.0001,0.002])).tolist()
-    Initialx = moduleConfig.x
-    InitialCovar = moduleConfig.covar
-    moduleConfig.state = InitialState
+    InitialState =  (np.array(module.state)+ +np.array([0.,0.,0.,0.0001,0.002])).tolist()
+    Initialx = module.x
+    InitialCovar = module.covar
+    module.state = InitialState
 
     unitTestSim.AddVariableForLogging('sunlineSEKF.covar', testProcessRate, 0, 24)
     unitTestSim.AddVariableForLogging('sunlineSEKF.stateTransition', testProcessRate, 0, 24)
@@ -674,8 +672,8 @@ def StatePropVariable(show_plots):
     # connect messages
     cssDataInMsg = messaging.CSSArraySensorMsg()
     cssConfigInMsg = messaging.CSSConfigMsg()
-    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
-    moduleConfig.cssConfigInMsg.subscribeTo(cssConfigInMsg)
+    module.cssDataInMsg.subscribeTo(cssDataInMsg)
+    module.cssConfigInMsg.subscribeTo(cssConfigInMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1000.0))
@@ -748,7 +746,7 @@ def StatePropVariable(show_plots):
         s_BS = np.dot(s_skew, DCM_BS[i,:,:])
         Gamma[i, 0:3, 0:2] = dt ** 2. / 2. * s_BS[:,1:3]
         Gamma[i,3:numStates, 0:2] = dt * np.eye(2)
-        ProcNoiseCovar[i,:,:] = np.dot(Gamma[i,:,:], np.dot(moduleConfig.qProcVal*np.eye(2),Gamma[i,:,:].T))
+        ProcNoiseCovar[i,:,:] = np.dot(Gamma[i,:,:], np.dot(module.qProcVal*np.eye(2),Gamma[i,:,:].T))
     for i in range(1,2001):
         expectedCovar[i,0] =  dt*i*1E9
         expectedCovar[i,1:26] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:26],[numStates,numStates]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar[i,:,:]).flatten()
@@ -805,13 +803,12 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunlineSEKF.sunlineSEKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "sunlineSEKF"
+    module = sunlineSEKF.sunlineSEKF()
+    module.ModelTag = "sunlineSEKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    setupFilterData(moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
+    setupFilterData(module)
 
     # Set up some test parameters
 
@@ -848,16 +845,16 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     cssDataInMsg = messaging.CSSArraySensorMsg()
 
     # connect messages
-    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
-    moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
+    module.cssDataInMsg.subscribeTo(cssDataInMsg)
+    module.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
     stateTarget1 = testVector1
     stateTarget1 += [0.0, 0.0]
-    moduleConfig.state = stateGuess
-    moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
+    module.state = stateGuess
+    module.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
 
     unitTestSim.AddVariableForLogging('sunlineSEKF.x', testProcessRate , 0, 4, 'double')
-    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
@@ -867,7 +864,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
             dotList = []
             for element in CSSOrientationList:
                 if AddMeasNoise:
-                    dotProd = np.dot(np.array(element), np.array(testVector1)[0:3]) + np.random.normal(0., moduleConfig.qObsVal)
+                    dotProd = np.dot(np.array(element), np.array(testVector1)[0:3]) + np.random.normal(0., module.qObsVal)
                 else:
                     dotProd = np.dot(np.array(element), np.array(testVector1)[0:3])
                 dotList.append(dotProd)
@@ -899,7 +896,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
             dotList = []
             for element in CSSOrientationList:
                 if AddMeasNoise:
-                    dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])  + np.random.normal(0., moduleConfig.qObsVal)
+                    dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])  + np.random.normal(0., module.qObsVal)
                 else:
                     dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])
                 dotList.append(dotProd)
@@ -928,7 +925,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     target2 = np.array(testVector2+[0.,0.])
     FilterPlots.StatesPlot(stateErrorLog, covarLog, show_plots)
     FilterPlots.StatesVsTargets(target1, target2, stateLog, show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, module.qObsVal, show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:

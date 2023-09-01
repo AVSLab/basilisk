@@ -82,15 +82,15 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = planetEphemeris.PlanetEphemeris()
-    moduleConfig.ModelTag = 'planetEphemeris'
+    module = planetEphemeris.PlanetEphemeris()
+    module.ModelTag = 'planetEphemeris'
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
     planetNames = ["earth", "venus"]
-    moduleConfig.setPlanetNames(planetEphemeris.StringVector(planetNames))
+    module.setPlanetNames(planetEphemeris.StringVector(planetNames))
 
     # set gravitational constant of the sun
 
@@ -112,41 +112,41 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
     oeVenus.omega = 220.0*macros.D2R
     oeVenus.f = 180.0*macros.D2R
 
-    moduleConfig.planetElements = planetEphemeris.classicElementVector([oeEarth, oeVenus])
+    module.planetElements = planetEphemeris.classicElementVector([oeEarth, oeVenus])
 
     evalAttitude = 1
     if setRAN:
         # setup planet local right ascension angle at epoch
         RANlist = [0.*macros.D2R, 272.76*macros.D2R]
-        moduleConfig.rightAscension = planetEphemeris.DoubleVector(RANlist)
+        module.rightAscension = planetEphemeris.DoubleVector(RANlist)
     else:
         evalAttitude = 0
 
     if setDEC:
         # setup planet local declination angle at epoch
         DEClist = [90.*macros.D2R, 67.16*macros.D2R]
-        moduleConfig.declination = planetEphemeris.DoubleVector(DEClist)
+        module.declination = planetEphemeris.DoubleVector(DEClist)
     else:
         evalAttitude = 0
 
     if setLST:
         # setup planet local sidereal time at epoch
         lstList = [10.*macros.D2R, 30.*macros.D2R]
-        moduleConfig.lst0 = planetEphemeris.DoubleVector(lstList)
+        module.lst0 = planetEphemeris.DoubleVector(lstList)
     else:
         evalAttitude = 0
 
     if setRate:
         # setup planet rotation rate about polar axis
         omegaList = [planetEphemeris.OMEGA_EARTH, planetEphemeris.OMEGA_VENUS]
-        moduleConfig.rotRate = planetEphemeris.DoubleVector(omegaList)
+        module.rotRate = planetEphemeris.DoubleVector(omegaList)
     else:
         evalAttitude = 0
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = []
     for c in range(0, len(planetNames)):
-        dataLog.append(moduleConfig.planetOutMsgs[c].recorder())
+        dataLog.append(module.planetOutMsgs[c].recorder())
         unitTestSim.AddModelToTask(unitTaskName, dataLog[-1])
 
     # Need to call the self-init and cross-init methods
@@ -177,7 +177,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
         computeOrient = dataLog[c].computeOrient
 
         # check that the proper planet name string is set
-        FinalPlanetMessage = moduleConfig.planetOutMsgs[c].read()
+        FinalPlanetMessage = module.planetOutMsgs[c].read()
 
         if planet != FinalPlanetMessage.PlanetName:
             testFailCount += 1
@@ -251,11 +251,11 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
     snippentName = "passFail" + str(setRAN) + str(setDEC) + str(setLST) + str(setRate)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleConfig.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleConfig.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

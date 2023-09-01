@@ -70,7 +70,7 @@ def radiationPressureIntegratedTest(show_plots):
     srp = radiationPressure.RadiationPressure()  # default model is the SRP_CANNONBALL_MODEL
     srp.area = 1.0
     srp.coefficientReflection = 1.3
-    sim.AddModelToTask(simTaskName, srp, None, -1)
+    sim.AddModelToTask(simTaskName, srp, -1)
     scObject.addDynamicEffector(srp)
 
     # setup Gravity Body
@@ -82,7 +82,7 @@ def radiationPressureIntegratedTest(show_plots):
     spice_path = bskPath + '/supportData/EphemerisData/'
     gravFactory.createSpiceInterface(spice_path, '2021 MAY 04 07:47:49.965 (UTC)')
     gravFactory.spiceObject.zeroBase = 'Earth'
-    sim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
+    sim.AddModelToTask(simTaskName, gravFactory.spiceObject, -1)
     srp.sunEphmInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
 
     # attach gravity model to spacecraft

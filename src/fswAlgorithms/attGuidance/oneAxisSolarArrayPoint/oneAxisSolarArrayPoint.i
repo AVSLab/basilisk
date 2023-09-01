@@ -21,15 +21,8 @@
    #include "oneAxisSolarArrayPoint.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void SelfInit_oneAxisSolarArrayPoint(void*, uint64_t);
-%ignore SelfInit_oneAxisSolarArrayPoint;
-%constant void Reset_oneAxisSolarArrayPoint(void*, uint64_t, uint64_t);
-%ignore Reset_oneAxisSolarArrayPoint;
-%constant void Update_oneAxisSolarArrayPoint(void*, uint64_t, uint64_t);
-%ignore Update_oneAxisSolarArrayPoint;
-
-%include "oneAxisSolarArrayPoint.h"
+%include "swig_c_wrap.i"
+%c_wrap_2(oneAxisSolarArrayPoint, OneAxisSolarArrayPointConfig);
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;

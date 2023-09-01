@@ -22,16 +22,11 @@
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_aggregateNav(void*, uint64_t, uint64_t);
-%ignore Update_aggregateNav;
-%constant void SelfInit_aggregateNav(void*, uint64_t);
-%ignore SelfInit_aggregateNav;
-%constant void Reset_aggregateNav(void*, uint64_t, uint64_t);
-%ignore Reset_aggregateNav;
 STRUCTASLIST(AggregateAttInput)
 STRUCTASLIST(AggregateTransInput)
 
-%include "navAggregate.h"
+%include "swig_c_wrap.i"
+%c_wrap_3(navAggregate, NavAggregateData, aggregateNav);
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;

@@ -104,22 +104,22 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
 
-    # Construct algorithm and associated C++ container
-    moduleConfig = houghCircles.HoughCircles()
-    moduleConfig.ModelTag = "houghCircles"
+    # Construct algorithm
+    module = houghCircles.HoughCircles()
+    module.ModelTag = "houghCircles"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    moduleConfig.filename = imagePath
-    moduleConfig.expectedCircles = maxCircles
-    moduleConfig.cannyThresh = cannyHigh
-    moduleConfig.voteThresh = cannyLow
-    moduleConfig.houghMinDist = minDist
-    moduleConfig.houghMinRadius = minRad
-    moduleConfig.blurrSize = blur
-    moduleConfig.dpValue = dp
-    moduleConfig.houghMaxRadius = int(input_image.size[0]/1.25)
+    module.filename = imagePath
+    module.expectedCircles = maxCircles
+    module.cannyThresh = cannyHigh
+    module.voteThresh = cannyLow
+    module.houghMinDist = minDist
+    module.houghMinRadius = minRad
+    module.blurrSize = blur
+    module.dpValue = dp
+    module.houghMaxRadius = int(input_image.size[0]/1.25)
 
     circles = []
     if image == "mars.png":
@@ -132,10 +132,10 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
     imgInMsg = messaging.CameraImageMsg().write(inputMessageData)
-    moduleConfig.imageInMsg.subscribeTo(imgInMsg)
+    module.imageInMsg.subscribeTo(imgInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.opnavCirclesOutMsg.recorder()
+    dataLog = module.opnavCirclesOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods

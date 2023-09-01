@@ -21,19 +21,11 @@
    #include "inertial3D.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_inertial3D(void*, uint64_t, uint64_t);
-%ignore Update_inertial3D;
-%constant void SelfInit_inertial3D(void*, uint64_t);
-%ignore SelfInit_inertial3D;
-%constant void Reset_inertial3D(void*, uint64_t, uint64_t);
-%ignore Reset_inertial3D;
-GEN_SIZEOF(inertial3DConfig);
-GEN_SIZEOF(AttRefMsgPayload);
-struct AttRefMsg_C;
-%include "inertial3D.h"
-%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+%include "swig_c_wrap.i"
+%c_wrap(inertial3D);
 
+struct AttRefMsg_C;
+%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 
 %pythoncode %{
 import sys

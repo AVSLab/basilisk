@@ -160,12 +160,11 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    attReferenceCongfig = oneAxisSolarArrayPoint.OneAxisSolarArrayPointConfig()
-    attReferenceWrap = unitTestSim.setModelDataWrap(attReferenceCongfig)
-    attReferenceWrap.ModelTag = "oneAxisSolarArrayPoint"
+    attReferenceCongfig = oneAxisSolarArrayPoint.oneAxisSolarArrayPoint()
+    attReferenceCongfig.ModelTag = "oneAxisSolarArrayPoint"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, attReferenceWrap, attReferenceCongfig)
+    unitTestSim.AddModelToTask(unitTaskName, attReferenceCongfig)
 
     # Initialize the test module configuration data
     # These will eventually become input messages
@@ -238,13 +237,13 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
     if alignmentPriority == 0:
         if not unitTestSupport.isDoubleEqual(gamma_sim, gamma_true, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + attReferenceWrap.ModelTag + " Module failed incidence angle for " 
+            testMessages.append("FAILED: " + attReferenceCongfig.ModelTag + " Module failed incidence angle for " 
                 "bodyAxisInput = {}, inertialAxisInput = {} and priorityFlag = {}".format(
                     bodyAxisInput, inertialAxisInput, alignmentPriority))
     else:
         if not unitTestSupport.isDoubleEqual(gamma_sim, 0, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + attReferenceWrap.ModelTag + " Module failed incidence angle for " 
+            testMessages.append("FAILED: " + attReferenceCongfig.ModelTag + " Module failed incidence angle for " 
                 "bodyAxisInput = {}, inertialAxisInput = {} and priorityFlag = {}".format(
                     bodyAxisInput, inertialAxisInput, alignmentPriority))
 

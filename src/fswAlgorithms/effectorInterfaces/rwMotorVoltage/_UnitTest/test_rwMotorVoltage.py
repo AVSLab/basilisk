@@ -80,28 +80,27 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = rwMotorVoltage.rwMotorVoltageConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "rwMotorVoltage"
+    module = rwMotorVoltage.rwMotorVoltage()
+    module.ModelTag = "rwMotorVoltage"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    # moduleConfig.torqueInMsgName = "rw_torque_Lr"
-    # moduleConfig.rwParamsInMsgName = "rw_parameters"
-    # moduleConfig.voltageOutMsgName = "rw_volt_cmd"
+    # module.torqueInMsgName = "rw_torque_Lr"
+    # module.rwParamsInMsgName = "rw_parameters"
+    # module.voltageOutMsgName = "rw_volt_cmd"
 
     # set module parameters
-    moduleConfig.VMin = 1.0     # Volts
-    moduleConfig.VMax = 11.0    # Volts
+    module.VMin = 1.0     # Volts
+    module.VMax = 11.0    # Volts
 
     if useTorqueLoop:
-        moduleConfig.K = 1.5
+        module.K = 1.5
         rwSpeedMessage = messaging.RWSpeedMsgPayload()
         rwSpeedMessage.wheelSpeeds = [1.0, 2.0, 1.5, -3.0]      # rad/sec Omega's
         rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
-        moduleConfig.rwSpeedInMsg.subscribeTo(rwSpeedInMsg)
+        module.rwSpeedInMsg.subscribeTo(rwSpeedInMsg)
         unitTestSupport.writeTeXSnippet("Omega1", r"$\bm\Omega = " \
                                         + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
                                         , path)
@@ -122,7 +121,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
                           0.1,              # kg*m^2    J2
                           0.2)              # Nm        uMax
     rwConfigInMsg = fswSetupRW.writeConfigMessage()
-    moduleConfig.rwParamsInMsg.subscribeTo(rwConfigInMsg)
+    module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
     numRW = fswSetupRW.getNumOfDevices()
 
     # Create RW motor torque input message
@@ -132,7 +131,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     else:
         usMessageData.motorTorque = [0.05, 0.0, -0.15, -0.2]  # [Nm] RW motor torque cmds
     rwMotorTorqueInMsg = messaging.ArrayMotorTorqueMsg().write(usMessageData)
-    moduleConfig.torqueInMsg.subscribeTo(rwMotorTorqueInMsg)
+    module.torqueInMsg.subscribeTo(rwMotorTorqueInMsg)
 
     # create RW availability message
     if useAvailability:
@@ -142,10 +141,10 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
         rwAvailArray[2] = messaging.UNAVAILABLE        # make 3rd RW unavailable
         rwAvailabilityMessage.wheelAvailability = rwAvailArray
         rwAvailInMsg = messaging.RWAvailabilityMsg().write(rwAvailabilityMessage)
-        moduleConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
+        module.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.voltageOutMsg.recorder()
+    dataLog = module.voltageOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
@@ -170,7 +169,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     unitTestSim.ExecuteSimulation()
 
     # reset the module to test this functionality
-    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     # run the module again for an additional 1.0 seconds
     unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
@@ -252,7 +251,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     snippentName = "passFail" + testName
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'

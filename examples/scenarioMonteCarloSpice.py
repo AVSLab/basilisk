@@ -102,7 +102,7 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
         self.dynProcess.addTask(self.CreateNewTask(simTaskName, macros.sec2nano(10.)))
 
         scObject = spacecraft.Spacecraft()
-        self.AddModelToTask(simTaskName, scObject, None, 1)
+        self.AddModelToTask(simTaskName, scObject, 1)
         scObject.hub.r_CN_NInit = [7000000.0, 0.0, 0.0]     # m   - r_CN_N
         scObject.hub.v_CN_NInit = [0.0, 7500.0, 0.0]        # m/s - v_CN_N
 

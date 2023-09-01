@@ -64,14 +64,14 @@ class BSKDynamicModels():
         self.InitAllDynObjects()
 
         # Assign initialized modules to tasks
-        SimBase.AddModelToTask(self.taskName, self.scObject, None, 201)
-        SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 109)
-        SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
+        SimBase.AddModelToTask(self.taskName, self.scObject, 201)
+        SimBase.AddModelToTask(self.taskName, self.simpleNavObject, 109)
+        SimBase.AddModelToTask(self.taskName, self.rwStateEffector, 301)
 
-        SimBase.AddModelToTask(self.taskName2, self.scObject2, None, 201)
-        SimBase.AddModelToTask(self.taskName2, self.simpleNavObject2, None, 109)
-        SimBase.AddModelToTask(self.taskName2, self.rwStateEffector2, None, 301)
-        SimBase.AddModelToTask(self.taskName2, self.extForceTorqueObject2, None, 300)
+        SimBase.AddModelToTask(self.taskName2, self.scObject2, 201)
+        SimBase.AddModelToTask(self.taskName2, self.simpleNavObject2, 109)
+        SimBase.AddModelToTask(self.taskName2, self.rwStateEffector2, 301)
+        SimBase.AddModelToTask(self.taskName2, self.extForceTorqueObject2, 300)
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods

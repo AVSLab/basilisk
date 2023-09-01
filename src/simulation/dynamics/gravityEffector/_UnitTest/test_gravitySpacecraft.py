@@ -94,7 +94,7 @@ def singleGravityBody(show_plots):
 
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
-    unitTestSim.AddModelToTask(unitTaskName, gravFactory.spiceObject, None, 10)
+    unitTestSim.AddModelToTask(unitTaskName, gravFactory.spiceObject, 10)
 
     # Use the python spice utility to load in spacecraft SPICE ephemeris data
     # Note: this following SPICE data only lives in the Python environment, and is
@@ -107,8 +107,7 @@ def singleGravityBody(show_plots):
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/../_UnitTest/hst_edited.bsp')
 
-
-    unitTestSim.AddModelToTask(unitTaskName, scObject, None, 9)
+    unitTestSim.AddModelToTask(unitTaskName, scObject, 9)
 
     stateOut = spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
 
@@ -219,7 +218,7 @@ def multiBodyGravity(show_plots):
 
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
-    unitTestSim.AddModelToTask(unitTaskName, gravFactory.spiceObject, None, 10)
+    unitTestSim.AddModelToTask(unitTaskName, gravFactory.spiceObject, 10)
 
     # Use the python spice utility to load in spacecraft SPICE ephemeris data
     # Note: this following SPICE data only lives in the Python environment, and is
@@ -232,7 +231,7 @@ def multiBodyGravity(show_plots):
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/../_UnitTest/nh_pred_od077.bsp')
 
-    unitTestSim.AddModelToTask(unitTaskName, scObject, None, 9)
+    unitTestSim.AddModelToTask(unitTaskName, scObject, 9)
 
     stateOut = spkRead('NEW HORIZONS', stringCurrent, 'J2000', 'SUN')
 

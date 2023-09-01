@@ -21,15 +21,8 @@
    #include "dvAccumulation.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_dvAccumulation(void*, uint64_t, uint64_t);
-%ignore Update_dvAccumulation;
-%constant void SelfInit_dvAccumulation(void*, uint64_t);
-%ignore SelfInit_dvAccumulation;
-%constant void Reset_dvAccumulation(void*, uint64_t, uint64_t);
-%ignore Reset_dvAccumulation;
-
-%include "dvAccumulation.h"
+%include "swig_c_wrap.i"
+%c_wrap_2(dvAccumulation, DVAccumulationData);
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;

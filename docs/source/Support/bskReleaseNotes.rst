@@ -25,7 +25,6 @@ Basilisk Release Notes
     - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
       CAD asteroid or lunar surface terrain.
     - spacecraft charging related modules
-    - ability to integrate dynamics of multiple spacecraft simultaneously
     - support a way to do thread-safe messaging
     - ability to integrate Python Basilisk modules in the same task and process as C/C++ modules
     - automated documentation build system when code is pushed to the repo
@@ -34,6 +33,24 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Created a new :ref:`pinholeCamera` module to support generation of landmarks-based measurements around a
+  small body.
+- A new integrated example script :ref:`scenarioSmallBodyLandmarks` demonstrates the use of the pinhole camera module
+- Created a new example scenario :ref:`scenarioSpinningBodiesTwoDOF` that showcases the different capabilities of the
+  :ref:`spinningBodyTwoDOFStateEffector` module.
+- Corrected an error with :ref:`thrusterStateEffector` where if there are multiple instances of the
+  thruster state effector then the last effector will over-write all the state of the earlier thrusters.
+- Corrected an error with :ref:`magnetometer` where the RNG seed was passed to the Gauss-Markov noise model within the constructor and could therefore not be modified after creating the object. Furthermore, the noise model is now only used if all three components of the standard deviation parameter are initialized to a positive value.
+- Removed fswAuto and associated documenation, as the tool was outdated.
+- Changed how C modules are wrapped as C++ classes. This makes handling C modules the same as C++ modules,
+  removing the need for "Config" and "Wrap" objects. Updated all scenarios and test files for this new syntax.
+  To convert prior script to use the new syntax, see :ref:`bskPrinciples-2` for the simple new
+  syntaxt to add C-modules.
+- Modified :ref:`mrpFeedback` to enable the use of a modified control law, and added the integral control torque feedback output message.
+
+
+Version 2.2.0 (June 28, 2023)
+-----------------------------
 - Created new way to define Python modules by inheriting from ``Basilisk.architecture.sysModel.SysModel``.
   See :ref:`pyModules` for details.
 - Added the ability to integrate the ODE's of two or more Basilisk modules that are ``DynamicObject`` class
@@ -86,7 +103,8 @@ Version |release|
 - Reworked how integrators are implemented. New Runge-Kutta integrators may
   now be added simply by specifying the relevant coefficients.
 - Added a scenario that showcases differences between integrators. See :ref:`scenarioIntegratorsComparison`
-- Created :ref:`thrusterPlatformState` to map the thruster configuration information to body frame given the time-varying platform states.
+- Created :ref:`thrusterPlatformState` to map the thruster configuration information to body frame given the
+  time-varying platform states.
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------
@@ -676,7 +694,7 @@ Version 2.0.0
 
 **Version 1.8.1**
 
-- Added a new folder ``externalTools/fswAuto`` that contains :ref:`Folder_externalTools` to migrate BSK simulations and modules to C-code
+- Added a new folder ``externalTools/fswAuto`` that contains external tools to migrate BSK simulations and modules to C-code
 - Added a new :ref:`albedo` which can simulate the average or data driven albedo of a single planet.  This works
   also if multiple celestial bodies are setup.
 - New :ref:`scenarioAlbedo` to illustrate the use of :ref:`albedo`

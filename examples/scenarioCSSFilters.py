@@ -484,62 +484,57 @@ def run(saveFigures, show_plots, FilterType, simTime):
     #
     numStates = 6
     if FilterType == 'EKF':
-        moduleConfig = sunlineEKF.sunlineEKFConfig()
-        moduleWrap = scSim.setModelDataWrap(moduleConfig)
-        moduleWrap.ModelTag = "SunlineEKF"
-        setupEKFData(moduleConfig)
+        module = sunlineEKF.sunlineEKF()
+        module.ModelTag = "SunlineEKF"
+        setupEKFData(module)
 
         # Add test module to runtime call list
-        scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
+        scSim.AddModelToTask(simTaskName, module)
 
     if FilterType == 'OEKF':
         numStates = 3
 
-        moduleConfig = okeefeEKF.okeefeEKFConfig()
-        moduleWrap = scSim.setModelDataWrap(moduleConfig)
-        moduleWrap.ModelTag = "okeefeEKF"
-        setupOEKFData(moduleConfig)
+        module = okeefeEKF.okeefeEKF()
+        module.ModelTag = "okeefeEKF"
+        setupOEKFData(module)
 
         # Add test module to runtime call list
-        scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
+        scSim.AddModelToTask(simTaskName, module)
 
     if FilterType == 'uKF':
-        moduleConfig = sunlineUKF.SunlineUKFConfig()
-        moduleWrap = scSim.setModelDataWrap(moduleConfig)
-        moduleWrap.ModelTag = "SunlineUKF"
-        setupUKFData(moduleConfig)
+        module = sunlineUKF.sunlineUKF()
+        module.ModelTag = "SunlineUKF"
+        setupUKFData(module)
 
         # Add test module to runtime call list
-        scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
+        scSim.AddModelToTask(simTaskName, module)
 
     if FilterType == 'SEKF':
         numStates = 5
 
-        moduleConfig = sunlineSEKF.sunlineSEKFConfig()
-        moduleWrap = scSim.setModelDataWrap(moduleConfig)
-        moduleWrap.ModelTag = "SunlineSEKF"
-        setupSEKFData(moduleConfig)
+        module = sunlineSEKF.sunlineSEKF()
+        module.ModelTag = "SunlineSEKF"
+        setupSEKFData(module)
 
         # Add test module to runtime call list
-        scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
+        scSim.AddModelToTask(simTaskName, module)
         scSim.AddVariableForLogging('SunlineSEKF.bVec_B', simulationTimeStep, 0, 2)
 
     if FilterType == 'SuKF':
         numStates = 6
-        moduleConfig = sunlineSuKF.SunlineSuKFConfig()
-        moduleWrap = scSim.setModelDataWrap(moduleConfig)
-        moduleWrap.ModelTag = "SunlineSuKF"
-        setupSuKFData(moduleConfig)
+        module = sunlineSuKF.sunlineSuKF()
+        module.ModelTag = "SunlineSuKF"
+        setupSuKFData(module)
 
         # Add test module to runtime call list
-        scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
+        scSim.AddModelToTask(simTaskName, module)
         scSim.AddVariableForLogging('SunlineSuKF.bVec_B', simulationTimeStep, 0, 2)
 
-    moduleConfig.cssDataInMsg.subscribeTo(cssConstelation.constellationOutMsg)
-    moduleConfig.cssConfigInMsg.subscribeTo(cssConstMsg)
+    module.cssDataInMsg.subscribeTo(cssConstelation.constellationOutMsg)
+    module.cssConfigInMsg.subscribeTo(cssConstMsg)
 
-    navLog = moduleConfig.navStateOutMsg.recorder()
-    filtLog = moduleConfig.filtDataOutMsg.recorder()
+    navLog = module.navStateOutMsg.recorder()
+    filtLog = module.filtDataOutMsg.recorder()
     scSim.AddModelToTask(simTaskName, navLog)
     scSim.AddModelToTask(simTaskName, filtLog)
 
@@ -629,7 +624,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
 
     Fplot.StateErrorCovarPlot(errorVsTruth, covarLog, FilterType, show_plots, saveFigures)
     Fplot.StatesVsExpected(stateLog, covarLog, expected, FilterType, show_plots, saveFigures)
-    Fplot.PostFitResiduals(postFitLog, np.sqrt(moduleConfig.qObsVal), FilterType, show_plots, saveFigures)
+    Fplot.PostFitResiduals(postFitLog, np.sqrt(module.qObsVal), FilterType, show_plots, saveFigures)
     Fplot.numMeasurements(obsLog, FilterType, show_plots, saveFigures)
 
     if show_plots:

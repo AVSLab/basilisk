@@ -385,55 +385,50 @@ def run(show_plots):
     #   Set up the FSW algorithm tasks
     #
     # Set up solar panel Sun-pointing guidance module
-    sunPointGuidanceConfig = locationPointing.locationPointingConfig()
-    sunPointGuidanceWrap = scSim.setModelDataWrap(sunPointGuidanceConfig)
-    sunPointGuidanceWrap.ModelTag = "panelSunPoint"
-    sunPointGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[sunIdx])
-    sunPointGuidanceConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    sunPointGuidanceConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
-    sunPointGuidanceConfig.pHat_B = [0.0, 0.0, 1.0]
-    sunPointGuidanceConfig.useBoresightRateDamping = 1
-    scSim.AddModelToTask(simTaskName, sunPointGuidanceWrap, sunPointGuidanceConfig)
+    sunPointGuidance = locationPointing.locationPointing()
+    sunPointGuidance.ModelTag = "panelSunPoint"
+    sunPointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[sunIdx])
+    sunPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    sunPointGuidance.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    sunPointGuidance.pHat_B = [0.0, 0.0, 1.0]
+    sunPointGuidance.useBoresightRateDamping = 1
+    scSim.AddModelToTask(simTaskName, sunPointGuidance)
 
     # Set up asteroid-relative velocityPoint guidance module
-    velAsteroidGuidanceConfig = velocityPoint.velocityPointConfig()
-    velAsteroidGuidanceWrap = scSim.setModelDataWrap(velAsteroidGuidanceConfig)
-    velAsteroidGuidanceWrap.ModelTag = "velocityPointAsteroid"
-    velAsteroidGuidanceConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    velAsteroidGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[asteroidIdx])
-    velAsteroidGuidanceConfig.mu = mu
-    scSim.AddModelToTask(simTaskName, velAsteroidGuidanceWrap, velAsteroidGuidanceConfig)
+    velAsteroidGuidance = velocityPoint.velocityPoint()
+    velAsteroidGuidance.ModelTag = "velocityPointAsteroid"
+    velAsteroidGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    velAsteroidGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[asteroidIdx])
+    velAsteroidGuidance.mu = mu
+    scSim.AddModelToTask(simTaskName, velAsteroidGuidance)
 
     # Set up sensor science-pointing guidance module
     cameraLocation = [0.0, 1.5, 0.0]
-    sciencePointGuidanceConfig = locationPointing.locationPointingConfig()
-    sciencePointGuidanceWrap = scSim.setModelDataWrap(sciencePointGuidanceConfig)
-    sciencePointGuidanceWrap.ModelTag = "sciencePointAsteroid"
-    sciencePointGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[asteroidIdx])
-    sciencePointGuidanceConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    sciencePointGuidanceConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
-    sciencePointGuidanceConfig.pHat_B = cameraLocation  # y-axis set for science-pointing sensor
-    sciencePointGuidanceConfig.useBoresightRateDamping = 1
-    scSim.AddModelToTask(simTaskName, sciencePointGuidanceWrap, sciencePointGuidanceConfig)
+    sciencePointGuidance = locationPointing.locationPointing()
+    sciencePointGuidance.ModelTag = "sciencePointAsteroid"
+    sciencePointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[asteroidIdx])
+    sciencePointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    sciencePointGuidance.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    sciencePointGuidance.pHat_B = cameraLocation  # y-axis set for science-pointing sensor
+    sciencePointGuidance.useBoresightRateDamping = 1
+    scSim.AddModelToTask(simTaskName, sciencePointGuidance)
 
     # Set up an antenna pointing to Earth guidance module
-    earthPointGuidanceConfig = locationPointing.locationPointingConfig()
-    earthPointGuidanceWrap = scSim.setModelDataWrap(earthPointGuidanceConfig)
-    earthPointGuidanceWrap.ModelTag = "antennaEarthPoint"
-    earthPointGuidanceConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
-    earthPointGuidanceConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    earthPointGuidanceConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
-    earthPointGuidanceConfig.pHat_B = [0.0, 0.0, 1.0]
-    earthPointGuidanceConfig.useBoresightRateDamping = 1
-    scSim.AddModelToTask(simTaskName, earthPointGuidanceWrap, earthPointGuidanceConfig)
+    earthPointGuidance = locationPointing.locationPointing()
+    earthPointGuidance.ModelTag = "antennaEarthPoint"
+    earthPointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
+    earthPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    earthPointGuidance.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    earthPointGuidance.pHat_B = [0.0, 0.0, 1.0]
+    earthPointGuidance.useBoresightRateDamping = 1
+    scSim.AddModelToTask(simTaskName, earthPointGuidance)
 
     # Set up the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.attRefInMsg.subscribeTo(sunPointGuidanceConfig.attRefOutMsg)  # initial flight mode
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
+    attError.attRefInMsg.subscribeTo(sunPointGuidance.attRefOutMsg)  # initial flight mode
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # Create the FSW vehicle configuration message
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
@@ -441,20 +436,19 @@ def run(show_plots):
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # Set up the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
     II = 900.
-    mrpControlConfig.P = 2*II/(20*60)
-    mrpControlConfig.K = mrpControlConfig.P*mrpControlConfig.P/II
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl.P = 2*II/(20*60)
+    mrpControl.K = mrpControl.P*mrpControl.P/II
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     # Connect the torque command to external torque effector
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     # Set the simulation time
     # Set up data logging before the simulation is initialized
@@ -534,53 +528,53 @@ def run(show_plots):
     # Set up flight modes
     def runPanelSunPointing(simTime):
         nonlocal simulationTime
-        attErrorConfig.attRefInMsg.subscribeTo(sunPointGuidanceConfig.attRefOutMsg)
+        attError.attRefInMsg.subscribeTo(sunPointGuidance.attRefOutMsg)
         if vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
             genericSensor.isHidden = 1
             thrusterMsgInfo.thrustForce = 0
             thrMsg.write(thrusterMsgInfo, simulationTime)
-        attErrorConfig.sigma_R0R = [0, 0, 0]
+        attError.sigma_R0R = [0, 0, 0]
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
 
     def runSensorSciencePointing(simTime):
         nonlocal simulationTime
-        attErrorConfig.attRefInMsg.subscribeTo(sciencePointGuidanceConfig.attRefOutMsg)
+        attError.attRefInMsg.subscribeTo(sciencePointGuidance.attRefOutMsg)
         if vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
             genericSensor.isHidden = 0
             thrusterMsgInfo.thrustForce = 0
             thrMsg.write(thrusterMsgInfo, simulationTime)
-        attErrorConfig.sigma_R0R = [0, 0, 0]
+        attError.sigma_R0R = [0, 0, 0]
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
 
     def runAntennaEarthPointing(simTime):
         nonlocal simulationTime
-        attErrorConfig.attRefInMsg.subscribeTo(earthPointGuidanceConfig.attRefOutMsg)
+        attError.attRefInMsg.subscribeTo(earthPointGuidance.attRefOutMsg)
         if vizFound:
             transceiverHUD.transceiverState = 3  # antenna in send and receive mode
             genericSensor.isHidden = 1
             thrusterMsgInfo.thrustForce = 0
             thrMsg.write(thrusterMsgInfo, simulationTime)
-        attErrorConfig.sigma_R0R = [0, 0, 0]
+        attError.sigma_R0R = [0, 0, 0]
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
 
     def runDvBurn(simTime, burnSign, planetMsg):
         nonlocal simulationTime
-        attErrorConfig.attRefInMsg.subscribeTo(planetMsg)
+        attError.attRefInMsg.subscribeTo(planetMsg)
         if vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
             genericSensor.isHidden = 1
         if burnSign > 0:
-            attErrorConfig.sigma_R0R = [np.tan((np.pi/2)/4), 0, 0]
+            attError.sigma_R0R = [np.tan((np.pi/2)/4), 0, 0]
         else:
-            attErrorConfig.sigma_R0R = [-np.tan((np.pi / 2) / 4), 0, 0]
+            attError.sigma_R0R = [-np.tan((np.pi / 2) / 4), 0, 0]
         minTime = 40 * 60
         if simTime < minTime:
             print("ERROR: runPosDvBurn must have simTime larger than " + str(minTime) + " min")
@@ -601,7 +595,7 @@ def run(show_plots):
     burnTime = 200*60
 
     # Run thruster burn for arrival to the capture orbit with thrusters on
-    runDvBurn(T1, -1, velAsteroidGuidanceConfig.attRefOutMsg)
+    runDvBurn(T1, -1, velAsteroidGuidance.attRefOutMsg)
 
     # Get current spacecraft states
     velRef = scObject.dynManager.getStateObject("hubVelocity")
@@ -613,11 +607,11 @@ def run(show_plots):
     velRef.setState(vN)
 
     # Travel in a circular orbit at r0, incorporating several attitude pointing modes
-    runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
+    runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
     runSensorSciencePointing(P0/3.-burnTime)
     runPanelSunPointing(P0/3.)
     runAntennaEarthPointing(P0/3. - burnTime)
-    runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
+    runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
 
     # Get access to dynManager translational states for future access to the states
     velRef = scObject.dynManager.getStateObject("hubVelocity")
@@ -637,9 +631,9 @@ def run(show_plots):
     velRef.setState(vVt)
 
     # Run thruster burn mode along with sun-pointing during the transfer orbit
-    runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
+    runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
     runPanelSunPointing(P01/2. - burnTime*2)
-    runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
+    runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
 
     # Retrieve the latest relative position and velocity components
     rN = scRec.r_BN_N[-1] - astRec.PositionVector[-1]
@@ -655,10 +649,10 @@ def run(show_plots):
     velRef.setState(vVt2)
 
     # Run thruster burn visualization along with attitude pointing modes
-    runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
+    runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
     runSensorSciencePointing(P1/4-burnTime)
     runAntennaEarthPointing(P1/4-burnTime)
-    runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
+    runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
 
     # Retrieve the latest relative position and velocity components
     rN = scRec.r_BN_N[-1] - astRec.PositionVector[-1]
@@ -675,9 +669,9 @@ def run(show_plots):
     velRef.setState(vVt)
 
     # Run thruster burn section with science pointing mode
-    runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
+    runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
     runSensorSciencePointing(P12/2-burnTime*2)
-    runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
+    runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
 
     # Retrieve the latest relative position and velocity components
     rN = scRec.r_BN_N[-1] - astRec.PositionVector[-1]
@@ -693,7 +687,7 @@ def run(show_plots):
     velRef.setState(vVt)
 
     # Run thruster visualization with science pointing mode
-    runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
+    runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
     runSensorSciencePointing(P2-burnTime)
 
     # Retrieve the latest relative position and velocity components
@@ -711,7 +705,7 @@ def run(show_plots):
     velRef.setState(vVt)
 
     # Run thruster visualization with science-pointing mode
-    runDvBurn(burnTime, -1, velAsteroidGuidanceConfig.attRefOutMsg)
+    runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
     runSensorSciencePointing(3*P23-burnTime)
 
     # Retrieve logged spacecraft position relative to asteroid

@@ -16,9 +16,7 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 import csv
-
 from Basilisk.architecture import sim_model
-
 
 def loadGravFromFile(fileName, spherHarm, maxDeg=2):
 
@@ -88,23 +86,43 @@ def loadGravFromFileToList(fileName, maxDeg=2):
 def loadPolyFromFile(fileName, poly):
     with open(fileName) as polyFile:
         if fileName.endswith('.tab'):
-            nVertex, nFacet = [int(x) for x in next(polyFile).split()] # read first line
+            try:
+                nVertex, nFacet = [int(x) for x in next(polyFile).split()] # read first line
+                fileType = 'gaskell'
+            except:
+                polyFile.seek(0)
+                fileType = 'pds3'
+
             vertList = []
             faceList = []
+            if fileType == 'gaskell':
+                contLines = 0
+                for line in polyFile:
+                    arrtemp = []
 
-            contLines = 0
-            for line in polyFile:
-                arrtemp = []
+                    for x in line.split():
+                        arrtemp.append(float(x))
 
-                for x in line.split():
-                    arrtemp.append(float(x))
+                    if contLines < nVertex:
+                        vertList.append([float(arrtemp[1]*1e3),float(arrtemp[2]*1e3),float(arrtemp[3]*1e3)])
+                    else:
+                        faceList.append([int(arrtemp[1]),int(arrtemp[2]),int(arrtemp[3])])
 
-                if contLines < nVertex:
-                    vertList.append([float(arrtemp[1]*1e3),float(arrtemp[2]*1e3),float(arrtemp[3]*1e3)])
-                else:
-                    faceList.append([int(arrtemp[1]),int(arrtemp[2]),int(arrtemp[3])])
-
-                contLines += 1
+                    contLines += 1
+            elif fileType == 'pds3':
+                nVertex = 0
+                nFacet = 0
+                vertList = []
+                faceList = []
+                for line in polyFile:
+                    arrtemp = line.split()
+                    if arrtemp:
+                        if arrtemp[0] == 'v':
+                            nVertex += 1
+                            vertList.append([float(arrtemp[1])*1e3, float(arrtemp[2])*1e3, float(arrtemp[3])*1e3])
+                        elif arrtemp[0] == 'f':
+                            nFacet += 1
+                            faceList.append([int(arrtemp[1])+1, int(arrtemp[2])+1, int(arrtemp[3])+1])
         elif fileName.endswith('.obj'):
             nVertex = 0
             nFacet = 0
@@ -147,23 +165,44 @@ def loadPolyFromFile(fileName, poly):
 def loadPolyFromFileToList(fileName):
     with open(fileName) as polyFile:
         if fileName.endswith('.tab'):
-            nVertex, nFacet = [int(x) for x in next(polyFile).split()] # read first line
-            vertList = []
-            faceList = []
+            try:
+                nVertex, nFacet = [int(x) for x in next(polyFile).split()] # read first line
+                fileType = 'gaskell'
+            except:
+                polyFile.seek(0)
+                fileType = 'pds3'
 
-            contLines = 0
-            for line in polyFile:
-                arrtemp = []
+            if fileType == 'gaskell':
+                vertList = []
+                faceList = []
 
-                for x in line.split():
-                    arrtemp.append(float(x))
+                contLines = 0
+                for line in polyFile:
+                    arrtemp = []
 
-                if contLines < nVertex:
-                    vertList.append([float(arrtemp[1]*1e3),float(arrtemp[2]*1e3),float(arrtemp[3]*1e3)])
-                else:
-                    faceList.append([int(arrtemp[1]),int(arrtemp[2]),int(arrtemp[3])])
+                    for x in line.split():
+                        arrtemp.append(float(x))
 
-                contLines += 1
+                    if contLines < nVertex:
+                        vertList.append([float(arrtemp[1]*1e3),float(arrtemp[2]*1e3),float(arrtemp[3]*1e3)])
+                    else:
+                        faceList.append([int(arrtemp[1]),int(arrtemp[2]),int(arrtemp[3])])
+
+                    contLines += 1
+            elif fileType == 'pds3':
+                nVertex = 0
+                nFacet = 0
+                vertList = []
+                faceList = []
+                for line in polyFile:
+                    arrtemp = line.split()
+                    if arrtemp:
+                        if arrtemp[0] == 'v':
+                            nVertex += 1
+                            vertList.append([float(arrtemp[1])*1e3, float(arrtemp[2])*1e3, float(arrtemp[3])*1e3])
+                        elif arrtemp[0] == 'f':
+                            nFacet += 1
+                            faceList.append([int(arrtemp[1])+1, int(arrtemp[2])+1, int(arrtemp[3])+1])
         elif fileName.endswith('.obj'):
             nVertex = 0
             nFacet = 0

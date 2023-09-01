@@ -143,10 +143,9 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     # create the dynamics task and specify the integration update time
     FSWUnitTestProc.addTask(sim.CreateNewTask(unitTaskName, macros.sec2nano(logPeriod)))
 
-    oeStateModel = oeStateEphem.OEStateEphemData()
-    oeStateModelWrap = sim.setModelDataWrap(oeStateModel)
-    oeStateModelWrap.ModelTag = "oeStateModel"
-    sim.AddModelToTask(unitTaskName, oeStateModelWrap, oeStateModel)
+    oeStateModel = oeStateEphem.oeStateEphem()
+    oeStateModel.ModelTag = "oeStateModel"
+    sim.AddModelToTask(unitTaskName, oeStateModel)
 
     oeStateModel.muCentral = centralBodyMu
 
@@ -310,11 +309,11 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     snippentName = "passFail" + str(validChebyCurveTime)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + oeStateModelWrap.ModelTag)
+        print("PASSED: " + oeStateModel.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + oeStateModelWrap.ModelTag)
+        print("Failed: " + oeStateModel.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

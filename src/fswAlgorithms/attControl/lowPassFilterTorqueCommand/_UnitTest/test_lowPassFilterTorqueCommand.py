@@ -62,17 +62,16 @@ def subModuleTestFunction(show_plots):
 
 
     #   Construct algorithm and associated C++ container
-    moduleConfig = lowPassFilterTorqueCommand.lowPassFilterTorqueCommandConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "lowPassFilterTorqueCommand"      # python name of test module.
+    module = lowPassFilterTorqueCommand.lowPassFilterTorqueCommand()
+    module.ModelTag = "lowPassFilterTorqueCommand"      # python name of test module.
 
     #   Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     #   Initialize the test module configuration data
-    moduleConfig.wc = 0.1*math.pi*2                 #   [rad/s] continous time critical filter frequency
-    moduleConfig.h = 0.5                            #   [s]     filter time step
-    moduleConfig.reset = 1                          #           flag to initialize module states on first run
+    module.wc = 0.1*math.pi*2                 #   [rad/s] continous time critical filter frequency
+    module.h = 0.5                            #   [s]     filter time step
+    module.reset = 1                          #           flag to initialize module states on first run
 
 
     #   Create input message and size it because the regular creator of that message
@@ -82,10 +81,10 @@ def subModuleTestFunction(show_plots):
     inMsg = messaging.CmdTorqueBodyMsg().write(inputMessageData)
 
     # setup msg connection
-    moduleConfig.cmdTorqueInMsg.subscribeTo(inMsg)
+    module.cmdTorqueInMsg.subscribeTo(inMsg)
 
     #   Setup logging on the test module output message so that we get all the writes to it
-    outLog = moduleConfig.cmdTorqueOutMsg.recorder()
+    outLog = module.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, outLog)
 
     #   Need to call the self-init and cross-init methods
@@ -95,7 +94,7 @@ def subModuleTestFunction(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))    # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
@@ -115,7 +114,7 @@ def subModuleTestFunction(show_plots):
     for i in range(0,len(LrFtrue)):
         if not unitTestSupport.isArrayEqual(LrF[i], LrFtrue[i], 3, 1e-12):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed LrFtrue unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed LrFtrue unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
 
 
 
@@ -127,7 +126,7 @@ def subModuleTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
 
 
     # each test method requires a single assert method to be called

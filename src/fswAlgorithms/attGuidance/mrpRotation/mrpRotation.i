@@ -21,16 +21,8 @@
    #include "mrpRotation.h"
 %}
 
-%include "swig_conly_data.i"
-
-%constant void Update_mrpRotation(void*, uint64_t, uint64_t);
-%ignore Update_mrpRotation;
-%constant void SelfInit_mrpRotation(void*, uint64_t);
-%ignore SelfInit_mrpRotation;
-%constant void Reset_mrpRotation(void*, uint64_t, uint64_t);
-%ignore Reset_mrpRotation;
-
-%include "mrpRotation.h"
+%include "swig_c_wrap.i"
+%c_wrap(mrpRotation);
 
 %include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;

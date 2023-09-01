@@ -130,7 +130,7 @@ def run(show_plots):
     scObject.ModelTag = "Max-SC"
 
     # add spacecraft object to the simulation process
-    scSim.AddModelToTask(dynTask, scObject, None, 1)
+    scSim.AddModelToTask(dynTask, scObject, 1)
 
     # setup Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -156,7 +156,7 @@ def run(show_plots):
     gravFactory.spiceObject.zeroBase = 'Earth'
 
     # The SPICE object is added to the simulation task list.
-    scSim.AddModelToTask(fswTask, gravFactory.spiceObject, None, 2)
+    scSim.AddModelToTask(fswTask, gravFactory.spiceObject, 2)
 
     # The gravitational body is connected to the spacecraft object
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
@@ -214,7 +214,7 @@ def run(show_plots):
     rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process
-    scSim.AddModelToTask(dynTask, rwStateEffector, None, 2)
+    scSim.AddModelToTask(dynTask, rwStateEffector, 2)
 
     # Setup the FSW RW configuration message.
     fswRwParamMsg = rwFactory.getConfigMessage()
@@ -274,63 +274,56 @@ def run(show_plots):
     #
 
     # setup inertial3D guidance module
-    inertial3DConfig = inertial3D.inertial3DConfig()
-    inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
-    inertial3DWrap.ModelTag = "inertial3D"
-    scSim.AddModelToTask(fswTask, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj = inertial3D.inertial3D()
+    inertial3DObj.ModelTag = "inertial3D"
+    scSim.AddModelToTask(fswTask, inertial3DObj)
+    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(fswTask, attErrorWrap, attErrorConfig)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(fswTask, attError)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(fswTask, mrpControlWrap, mrpControlConfig)
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(fswTask, mrpControl)
     decayTime = 10.0
     xi = 1.0
-    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 3*np.max(I)/decayTime
-    mrpControlConfig.K = (mrpControlConfig.P/xi)*(mrpControlConfig.P/xi)/np.max(I)
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.P = 3*np.max(I)/decayTime
+    mrpControl.K = (mrpControl.P/xi)*(mrpControl.P/xi)/np.max(I)
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
 
     # add module that maps the Lr control torque into the RW motor torques
-    rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
-    rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
-    rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
-    scSim.AddModelToTask(fswTask, rwMotorTorqueWrap, rwMotorTorqueConfig)
+    rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
+    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    scSim.AddModelToTask(fswTask, rwMotorTorqueObj)
     # Make the RW control all three body axes
-    rwMotorTorqueConfig.controlAxes_B = controlAxes_B
+    rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     # Momentum dumping configuration
-    thrDesatControlConfig = thrMomentumManagement.thrMomentumManagementConfig()
-    thrDesatControlWrap = scSim.setModelDataWrap(thrDesatControlConfig)
-    thrDesatControlWrap.ModelTag = "thrMomentumManagement"
-    scSim.AddModelToTask(fswTask, thrDesatControlWrap, thrDesatControlConfig)
-    thrDesatControlConfig.hs_min = 80   # Nms  :  maximum wheel momentum 
+    thrDesatControl = thrMomentumManagement.thrMomentumManagement()
+    thrDesatControl.ModelTag = "thrMomentumManagement"
+    scSim.AddModelToTask(fswTask, thrDesatControl)
+    thrDesatControl.hs_min = 80   # Nms  :  maximum wheel momentum 
 
     # setup the thruster force mapping module
-    thrForceMappingConfig = thrForceMapping.thrForceMappingConfig()
-    thrForceMappingWrap = scSim.setModelDataWrap(thrForceMappingConfig)
-    thrForceMappingWrap.ModelTag = "thrForceMapping"
-    scSim.AddModelToTask(fswTask, thrForceMappingWrap, thrForceMappingConfig)
-    thrForceMappingConfig.controlAxes_B = controlAxes_B
-    thrForceMappingConfig.thrForceSign = 1
-    thrForceMappingConfig.angErrThresh = 3.15    # this needs to be larger than pi (180 deg) for the module to work in the momentum dumping scenario
+    thrForceMappingObj = thrForceMapping.thrForceMapping()
+    thrForceMappingObj.ModelTag = "thrForceMapping"
+    scSim.AddModelToTask(fswTask, thrForceMappingObj)
+    thrForceMappingObj.controlAxes_B = controlAxes_B
+    thrForceMappingObj.thrForceSign = 1
+    thrForceMappingObj.angErrThresh = 3.15    # this needs to be larger than pi (180 deg) for the module to work in the momentum dumping scenario
 
     # setup the thruster momentum dumping module
-    thrDumpConfig = thrMomentumDumping.thrMomentumDumpingConfig()
-    thrDumpWrap = scSim.setModelDataWrap(thrDumpConfig)
-    thrDumpWrap.ModelTag = "thrDump"
-    scSim.AddModelToTask(fswTask, thrDumpWrap, thrDumpConfig)
-    thrDumpConfig.maxCounterValue = 100          # number of control periods (simulationTimeStepFsw) to wait between two subsequent on-times
-    thrDumpConfig.thrMinFireTime = 0.02          # thruster firing resolution
+    thrDump = thrMomentumDumping.thrMomentumDumping()
+    thrDump.ModelTag = "thrDump"
+    scSim.AddModelToTask(fswTask, thrDump)
+    thrDump.maxCounterValue = 100          # number of control periods (simulationTimeStepFsw) to wait between two subsequent on-times
+    thrDump.thrMinFireTime = 0.02          # thruster firing resolution
 
     #
     # create simulation messages
@@ -354,26 +347,26 @@ def run(show_plots):
                                      )
 
     # link messages
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControlConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
-    thrDesatControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    thrDesatControlConfig.rwConfigDataInMsg.subscribeTo(fswRwParamMsg)
-    thrForceMappingConfig.cmdTorqueInMsg.subscribeTo(thrDesatControlConfig.deltaHOutMsg)
-    thrForceMappingConfig.thrConfigInMsg.subscribeTo(fswThrConfigMsg)
-    thrForceMappingConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    thrDumpConfig.thrusterConfInMsg.subscribeTo(fswThrConfigMsg)
-    thrDumpConfig.deltaHInMsg.subscribeTo(thrDesatControlConfig.deltaHOutMsg)
-    thrDumpConfig.thrusterImpulseInMsg.subscribeTo(thrForceMappingConfig.thrForceCmdOutMsg)
-    thrusterSet.cmdsInMsg.subscribeTo(thrDumpConfig.thrusterOnTimeOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControl.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    mrpControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
+    thrDesatControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    thrDesatControl.rwConfigDataInMsg.subscribeTo(fswRwParamMsg)
+    thrForceMappingObj.cmdTorqueInMsg.subscribeTo(thrDesatControl.deltaHOutMsg)
+    thrForceMappingObj.thrConfigInMsg.subscribeTo(fswThrConfigMsg)
+    thrForceMappingObj.vehConfigInMsg.subscribeTo(vcMsg)
+    thrDump.thrusterConfInMsg.subscribeTo(fswThrConfigMsg)
+    thrDump.deltaHInMsg.subscribeTo(thrDesatControl.deltaHOutMsg)
+    thrDump.thrusterImpulseInMsg.subscribeTo(thrForceMappingObj.thrForceCmdOutMsg)
+    thrusterSet.cmdsInMsg.subscribeTo(thrDump.thrusterOnTimeOutMsg)
 
 
     #
@@ -385,15 +378,15 @@ def run(show_plots):
     scSim.AddModelToTask(dynTask, sNavRec)
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, dataRec)
-    rwMotorLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
+    rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, rwMotorLog)
-    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, attErrorLog)
-    deltaHLog  = thrDesatControlConfig.deltaHOutMsg.recorder(samplingTime)
+    deltaHLog  = thrDesatControl.deltaHOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, deltaHLog)
-    thrMapLog = thrForceMappingConfig.thrForceCmdOutMsg.recorder(samplingTime)
+    thrMapLog = thrForceMappingObj.thrForceCmdOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, thrMapLog)
-    onTimeLog = thrDumpConfig.thrusterOnTimeOutMsg.recorder(samplingTime)
+    onTimeLog = thrDump.thrusterOnTimeOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, onTimeLog)
     # thrLog = fswThrConfigMsg.recorder(samplingTime)
     # scSim.AddModelToTask(simTaskName, thrLog)
@@ -423,7 +416,7 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     # reset thrDesat module after 10 seconds because momentum cannot be dumped at t = 0
-    thrDesatControlWrap.Reset(macros.sec2nano(10.0))
+    thrDesatControl.Reset(macros.sec2nano(10.0))
 
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()

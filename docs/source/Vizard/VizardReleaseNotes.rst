@@ -11,8 +11,20 @@ Release Notes
     - Add the rate gyro visualization
     - Alternate camera view points relative to non-spacecraft locations (lunar landing site, etc.)
     - Add magnetic torque bar visualization
-    - Add range to target information
     - Visualize aerobraking maneuvers
+
+**Version 2.1.5 (June 28, 2023)**
+
+- main camera range to target display (hot key = r, or toggle under Camera menu)
+- very far zoom-out of main camera in spacecraft local view when the ``forceStartAtSpacecraftLocalView``
+  setting is set to 1
+- depth map generation available on instrument camera - can only be turned on in ``CameraConfig`` message
+- command line start of Vizard with file load (use argument ``-loadFile`` followed by the filepath)
+- updated NetMQ plugins to be compatible with Basilisk ZMQ 3.5.0 libraries
+- fixed the cause of the effectors appearing to fly-in at start-up
+- support for nested toggles for effectors for all HUDS and devices under the Actuator and Devices menus
+- Add the ability to visualize ground locations using a simple colored sphere.  This allows 1000's of locations
+  to be visualized.  This is set through the ``useSimpleLocationMarkers`` flag.
 
 
 **Version 2.1.4 (March 24, 2023)**
@@ -50,7 +62,7 @@ Release Notes
 
 **Version 2.1.3 (Jan. 20, 2023)**
 
-- added support for Settings flag ``ForceStartAtSpacecraftLocalView``. If this flag is set to 1, the main camera will stay in the spacecraft local view and has been improved to allow zooming out to very large distances from the camera target spacecraft. Vizard will remain locked in spacecraft local view unless a non-spacecraft camera target is selected.
+- added support for Settings flag ``forceStartAtSpacecraftLocalView``. If this flag is set to 1, the main camera will stay in the spacecraft local view and has been improved to allow zooming out to very large distances from the camera target spacecraft. Vizard will remain locked in spacecraft local view unless a non-spacecraft camera target is selected.
 - added MultiSphere support to ``VizMessage.proto`` and support visualizing the MultiSpheres on a spacecraft.
 
 

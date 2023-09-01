@@ -52,25 +52,24 @@ def runner(show_plots, use_limits, msg_type):
     
 
     #   Set up the hillStateConverter
-    depAttRefData = hillToAttRef.HillToAttRefConfig()
-    depAttRefWrap = sim.setModelDataWrap(depAttRefData)
-    depAttRefWrap.ModelTag = "dep_hillControl"
-    depAttRefData.gainMatrix = hillToAttRef.MultiArray(lqr_gain_set)
-    depAttRefData.hillStateInMsg.subscribeTo(hillStateMsg)
+    depAttRef = hillToAttRef.hillToAttRef()
+    depAttRef.ModelTag = "dep_hillControl"
+    depAttRef.gainMatrix = hillToAttRef.MultiArray(lqr_gain_set)
+    depAttRef.hillStateInMsg.subscribeTo(hillStateMsg)
     if msg_type == 'NavAttMsg':
         attRefMsgData = messaging.NavAttMsgPayload()
         attRefMsgData.sigma_BN = [0.5, 0.5, 0.5]
         attRefMsg = messaging.NavAttMsg().write(attRefMsgData)
-        depAttRefData.attNavInMsg.subscribeTo(attRefMsg)
+        depAttRef.attNavInMsg.subscribeTo(attRefMsg)
     else:
         attRefMsgData = messaging.AttRefMsgPayload()
         attRefMsgData.sigma_RN = [0.2, 0.2, 0.2]
         attRefMsg = messaging.AttRefMsg().write(attRefMsgData)
-        depAttRefData.attRefInMsg.subscribeTo(attRefMsg)
+        depAttRef.attRefInMsg.subscribeTo(attRefMsg)
     
     if use_limits:
-        depAttRefData.relMRPMin = -0.2 #    Configure minimum MRP
-        depAttRefData.relMRPMax = 0.2  #    Configure maximum MRP
+        depAttRef.relMRPMin = -0.2 #    Configure minimum MRP
+        depAttRef.relMRPMax = 0.2  #    Configure maximum MRP
 
         # ref_vals = [0.2, -0.2, 0.2]
         if msg_type == 'NavAttMsg':
@@ -85,9 +84,9 @@ def runner(show_plots, use_limits, msg_type):
             ref_vals = [0.2, 0.2, 0.2]
     
     #   Store the output att ref message
-    depAttRecorder = depAttRefData.attRefOutMsg.recorder()
+    depAttRecorder = depAttRef.attRefOutMsg.recorder()
     
-    sim.AddModelToTask(taskName, depAttRefWrap, depAttRefData)
+    sim.AddModelToTask(taskName, depAttRef)
     sim.AddModelToTask(taskName, depAttRecorder)
 
     sim.ConfigureStopTime(macros.sec2nano(1.0))

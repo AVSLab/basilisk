@@ -130,7 +130,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         # Add the formationBarycenter module
         self.relativeNavigationModule = formationBarycenter.FormationBarycenter()
         self.relativeNavigationModule.ModelTag = "RelativeNavigation"
-        self.AddModelToTask(self.relativeNavigationTaskName, self.relativeNavigationModule, None, 0)
+        self.AddModelToTask(self.relativeNavigationTaskName, self.relativeNavigationModule, 0)
 
 class BSKScenario(object):
     def __init__(self):

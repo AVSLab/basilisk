@@ -64,16 +64,15 @@ def subModuleTestFunction(show_plots):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = inertial3DSpin.inertial3DSpinConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "inertial3DSpin"
+    module = inertial3DSpin.inertial3DSpin()
+    module.ModelTag = "inertial3DSpin"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
     omega_RR0_R0 = np.array([1., -1., 0.5]) * mc.D2R
-    moduleConfig.omega_RR0_R0 = omega_RR0_R0
+    module.omega_RR0_R0 = omega_RR0_R0
 
     #
     # Reference Frame Message
@@ -88,11 +87,11 @@ def subModuleTestFunction(show_plots):
     refStateMsg = messaging.AttRefMsg().write(RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    moduleLog = moduleConfig.attRefOutMsg.recorder()
+    moduleLog = module.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, moduleLog)
 
     # connect messages
-    moduleConfig.attRefInMsg.subscribeTo(refStateMsg)
+    module.attRefInMsg.subscribeTo(refStateMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -122,7 +121,7 @@ def subModuleTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleLog.sigma_RN[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_RN unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
                                 str(moduleLog.times()[i] * mc.NANO2SEC) + "sec\n")
 
 
@@ -141,7 +140,7 @@ def subModuleTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleLog.omega_RN_N[i], trueVector[i] , 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_N  unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N  unit test at t=" +
                                 str(moduleLog.times()[i] * mc.NANO2SEC) + "sec\n")
 
     #
@@ -160,7 +159,7 @@ def subModuleTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleLog.domega_RN_N[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed domega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_N unit test at t=" +
                                 str(moduleLog.times()[i] * mc.NANO2SEC) +"sec\n")
 
     # Note that we can continue to step the simulation however we feel like.
@@ -193,16 +192,15 @@ def subModuleTestFunction2(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = inertial3DSpin.inertial3DSpinConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "inertial3DSpin"
+    module = inertial3DSpin.inertial3DSpin()
+    module.ModelTag = "inertial3DSpin"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
     omega_RR0_R0 = np.array([1., -1., 0.5]) * mc.D2R
-    moduleConfig.omega_RR0_R0 = omega_RR0_R0
+    module.omega_RR0_R0 = omega_RR0_R0
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     #
@@ -219,11 +217,11 @@ def subModuleTestFunction2(show_plots):
     refStateMsg = messaging.AttRefMsg().write(RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    moduleLog = moduleConfig.attRefOutMsg.recorder()
+    moduleLog = module.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, moduleLog)
 
     # connect messages
-    moduleConfig.attRefInMsg.subscribeTo(refStateMsg)
+    module.attRefInMsg.subscribeTo(refStateMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -256,7 +254,7 @@ def subModuleTestFunction2(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleLog.sigma_RN[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_RN unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
                                 str(moduleLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -276,7 +274,7 @@ def subModuleTestFunction2(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleLog.omega_RN_N[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed omega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" +
                                 str(moduleLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -298,7 +296,7 @@ def subModuleTestFunction2(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleLog.domega_RN_N[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed domega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_N unit test at t=" +
                                 str(moduleLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 

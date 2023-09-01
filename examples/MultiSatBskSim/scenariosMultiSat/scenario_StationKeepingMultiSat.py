@@ -317,7 +317,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
 
             # log the RW torque messages
             self.rwMotorLog.append(
-                FswModels[spacecraft].rwMotorTorqueData.rwMotorTorqueOutMsg.recorder(self.samplingTime))
+                FswModels[spacecraft].rwMotorTorque.rwMotorTorqueOutMsg.recorder(self.samplingTime))
             self.AddModelToTask(DynModels[spacecraft].taskName, self.rwMotorLog[spacecraft])
 
             # log the RW wheel speed information
@@ -501,10 +501,10 @@ def runScenario(scenario, relativeNavigation):
             scenario.relativeNavigationModule.addSpacecraftToModel(
                 scenario.DynModels[spacecraft].simpleNavObject.transOutMsg,
                 scenario.DynModels[spacecraft].simpleMassPropsObject.vehicleConfigOutMsg)
-            scenario.FSWModels[spacecraft].spacecraftReconfigData.chiefTransInMsg.subscribeTo(
+            scenario.FSWModels[spacecraft].spacecraftReconfig.chiefTransInMsg.subscribeTo(
                 scenario.relativeNavigationModule.transOutMsg)
         else:
-            scenario.FSWModels[spacecraft].spacecraftReconfigData.chiefTransInMsg.subscribeTo(
+            scenario.FSWModels[spacecraft].spacecraftReconfig.chiefTransInMsg.subscribeTo(
                 scenario.DynModels[0].simpleNavObject.transOutMsg)
 
     # Configure the relative navigation module
@@ -515,11 +515,11 @@ def runScenario(scenario, relativeNavigation):
     # Set up the station keeping requirements
     if relativeNavigation:
         scenario.FSWModels[0].stationKeeping = "ON"
-        scenario.FSWModels[0].spacecraftReconfigData.targetClassicOED = [0.0000, -0.005, -0.001, 0.0000, 0.0000, 0.000]
+        scenario.FSWModels[0].spacecraftReconfig.targetClassicOED = [0.0000, -0.005, -0.001, 0.0000, 0.0000, 0.000]
     scenario.FSWModels[1].stationKeeping = "ON"
-    scenario.FSWModels[1].spacecraftReconfigData.targetClassicOED = [0.0000, 0.005, 0.0000, 0.0000, 0.0000, -0.003]
+    scenario.FSWModels[1].spacecraftReconfig.targetClassicOED = [0.0000, 0.005, 0.0000, 0.0000, 0.0000, -0.003]
     scenario.FSWModels[2].stationKeeping = "ON"
-    scenario.FSWModels[2].spacecraftReconfigData.targetClassicOED = [0.0000, 0.000, 0.001, 0.0000, 0.0000, 0.003]
+    scenario.FSWModels[2].spacecraftReconfig.targetClassicOED = [0.0000, 0.000, 0.001, 0.0000, 0.0000, 0.003]
 
     # Initialize simulation
     scenario.InitializeSimulation()

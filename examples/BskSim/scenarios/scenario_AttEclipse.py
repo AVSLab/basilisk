@@ -203,7 +203,7 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
         # FSW process outputs
         self.rwMotorRec = self.get_FswModel().cmdRwMotorMsg.recorder(samplingTime)
         self.sunSafeRec = self.get_FswModel().attGuidMsg.recorder(samplingTime)
-        self.cssEstRec = self.get_FswModel().cssWlsEstData.navStateOutMsg.recorder(samplingTime)
+        self.cssEstRec = self.get_FswModel().cssWlsEst.navStateOutMsg.recorder(samplingTime)
 
         self.AddModelToTask(self.get_DynModel().taskName, self.shadowRec)
         self.AddModelToTask(self.get_DynModel().taskName, self.rwSpeedRec)

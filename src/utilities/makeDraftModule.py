@@ -209,20 +209,13 @@ class moduleGenerator:
         testFile += '    # setup module to be tested\n'
         if type == "C++":
             testFile += '    module = ' + self.moduleName + '.' + self._className + '()\n'
-            testFile += '    module.ModelTag = "' + self.moduleName + 'Tag"\n'
-            testFile += '    unitTestSim.AddModelToTask(unitTaskName, module)\n'
-            moduleLabel1 = "module"
-            moduleLabel2 = "module"
         elif type == "C":
-            moduleLabel1 = "moduleConfig"
-            moduleLabel2 = "moduleWrap"
-            testFile += '    moduleConfig = ' + self.moduleName + '.' + self.moduleName + 'Config()\n'
-            testFile += '    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)\n'
-            testFile += '    moduleWrap.ModelTag = "' + self.moduleName + 'Tag"\n'
-            testFile += '    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)\n'
+            testFile += '    module = ' + self.moduleName + '.' + self.moduleName + '()\n'
         else:
             self.log(failColor + "ERROR: " + endColor + "Wrong module type provided to test file method.")
             exit(0)
+        testFile += '    module.ModelTag = "' + self.moduleName + 'Tag"\n'
+        testFile += '    unitTestSim.AddModelToTask(unitTaskName, module)\n'
         testFile += '\n'
         testFile += '    # Configure blank module input messages\n'
         for msg in self.inMsgList:
@@ -231,11 +224,11 @@ class moduleGenerator:
             testFile += '\n'
         testFile += '    # subscribe input messages to module\n'
         for msg in self.inMsgList:
-            testFile += '    ' + moduleLabel1 + '.' + msg['var'] + '.subscribeTo(' + msg['var'] + ')\n'
+            testFile += '    module.' + msg['var'] + '.subscribeTo(' + msg['var'] + ')\n'
         testFile += '\n'
         testFile += '    # setup output message recorder objects\n'
         for msg in self.outMsgList:
-            testFile += '    ' + msg['var'] + 'Rec = ' + moduleLabel1 + '.' + msg['var'] + '.recorder()\n'
+            testFile += '    ' + msg['var'] + 'Rec = module.' + msg['var'] + '.recorder()\n'
             testFile += '    unitTestSim.AddModelToTask(unitTaskName, ' + msg['var'] + 'Rec)\n'
         testFile += '\n'
         testFile += '    unitTestSim.InitializeSimulation()\n'
@@ -245,7 +238,7 @@ class moduleGenerator:
         testFile += '    # pull module data and make sure it is correct\n'
         testFile += '\n'
         testFile += '    if testFailCount == 0:\n'
-        testFile += '        print("PASSED: " + ' + moduleLabel2 + '.ModelTag)\n'
+        testFile += '        print("PASSED: " + module.ModelTag)\n'
         testFile += '    else:\n'
         testFile += '        print(testMessages)\n'
         testFile += '\n'
@@ -623,13 +616,8 @@ class moduleGenerator:
         swigFile += '%pythoncode %{\n'
         swigFile += '    from Basilisk.architecture.swig_common_model import *\n'
         swigFile += '%}\n'
-        swigFile += '%include "swig_conly_data.i"\n'
-        swigFile += '%constant void Update_' + name + '(void*, uint64_t, uint64_t);\n'
-        swigFile += '%ignore Update_' + name + ';\n'
-        swigFile += '%constant void SelfInit_' + name + '(void*, uint64_t);\n'
-        swigFile += '%ignore SelfInit_' + name + ';\n'
-        swigFile += '%constant void Reset_' + name + '(void*, uint64_t, uint64_t);\n'
-        swigFile += '%ignore Reset_' + name + ';\n'
+        swigFile += '%include "swig_c_wrap.i"\n'
+        swigFile += f'%c_wrap({name});\n'
         swigFile += '\n'
         swigFile += '%include "' + name + '.h"\n'
         swigFile += '\n'

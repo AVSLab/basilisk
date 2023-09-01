@@ -94,24 +94,23 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create an instance of the prescribedRot1DOF module to be tested
-    PrescribedRot1DOFConfig = prescribedRot1DOF.PrescribedRot1DOFConfig()
-    PrescribedWrap = unitTestSim.setModelDataWrap(PrescribedRot1DOFConfig)
-    PrescribedWrap.ModelTag = "prescribedRot1DOF"
+    PrescribedRot1DOF = prescribedRot1DOF.prescribedRot1DOF()
+    PrescribedRot1DOF.ModelTag = "prescribedRot1DOF"
 
     # Add the prescribedRot1DOF test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, PrescribedWrap, PrescribedRot1DOFConfig)
+    unitTestSim.AddModelToTask(unitTaskName, PrescribedRot1DOF)
 
     # Initialize the prescribedRot1DOF test module configuration data
     rotAxisM = np.array([1.0, 0.0, 0.0])
     prvInit_FM = thetaInit * rotAxisM
-    PrescribedRot1DOFConfig.r_FM_M = np.array([1.0, 0.0, 0.0])
-    PrescribedRot1DOFConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOFConfig.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOFConfig.rotAxis_M = rotAxisM
-    PrescribedRot1DOFConfig.thetaDDotMax = thetaDDotMax
-    PrescribedRot1DOFConfig.omega_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOFConfig.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOFConfig.sigma_FM = rbk.PRV2MRP(prvInit_FM)
+    PrescribedRot1DOF.r_FM_M = np.array([1.0, 0.0, 0.0])
+    PrescribedRot1DOF.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
+    PrescribedRot1DOF.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
+    PrescribedRot1DOF.rotAxis_M = rotAxisM
+    PrescribedRot1DOF.thetaDDotMax = thetaDDotMax
+    PrescribedRot1DOF.omega_FM_F = np.array([0.0, 0.0, 0.0])
+    PrescribedRot1DOF.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
+    PrescribedRot1DOF.sigma_FM = rbk.PRV2MRP(prvInit_FM)
 
     # Create the prescribedRot1DOF input message
     thetaDotRef = 0.0  # [rad/s]
@@ -119,10 +118,10 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     HingedRigidBodyMessageData.theta = thetaRef
     HingedRigidBodyMessageData.thetaDot = thetaDotRef
     HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData)
-    PrescribedRot1DOFConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+    PrescribedRot1DOF.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
 
     # Log the test module output message for data comparison
-    dataLog = PrescribedRot1DOFConfig.prescribedMotionOutMsg.recorder()
+    dataLog = PrescribedRot1DOF.prescribedMotionOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation
@@ -181,12 +180,12 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     # Check to ensure the initial angle rate converged to the reference angle rate
     if not unitTestSupport.isDoubleEqual(thetaDot_Final, thetaDotRef, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + PrescribedWrap.ModelTag + "thetaDot_Final and thetaDotRef do not match")
+        testMessages.append("FAILED: " + PrescribedRot1DOF.ModelTag + "thetaDot_Final and thetaDotRef do not match")
 
     # Check to ensure the initial angle converged to the reference angle
     if not unitTestSupport.isDoubleEqual(theta_FM_Final, thetaRef, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + PrescribedWrap.ModelTag + "theta_FM_Final and thetaRef do not match")
+        testMessages.append("FAILED: " + PrescribedRot1DOF.ModelTag + "theta_FM_Final and thetaRef do not match")
     return [testFailCount, ''.join(testMessages)]
 
 

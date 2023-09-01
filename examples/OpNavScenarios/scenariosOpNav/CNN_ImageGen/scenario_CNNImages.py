@@ -83,9 +83,9 @@ class scenario_OpNav(BSKSim):
 
         MRP= [0,0,0]
         if self.filterUse =="relOD":
-            self.get_FswModel().relativeODData.stateInit = rN.tolist() + vN.tolist()
+            self.get_FswModel().relativeOD.stateInit = rN.tolist() + vN.tolist()
         if self.filterUse == "bias":
-            self.get_FswModel().pixelLineFilterData.stateInit = rN.tolist() + vN.tolist() + bias
+            self.get_FswModel().pixelLineFilter.stateInit = rN.tolist() + vN.tolist() + bias
         # self.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         # self.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
         self.get_DynModel().scObject.hub.sigma_BNInit = [[MRP[0]], [MRP[1]], [MRP[2]]]  # sigma_BN_B

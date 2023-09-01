@@ -22,13 +22,10 @@
 %}
 
 %include "swig_conly_data.i"
-%constant void SelfInit_faultDetection(void*, uint64_t);
-%ignore SelfInit_faultDetection;
-%constant void Reset_faultDetection(void*, uint64_t, uint64_t);
-%ignore Reset_faultDetection;
-%constant void Update_faultDetection(void*, uint64_t, uint64_t);
-%ignore Update_faultDetection;
 STRUCTASLIST(FaultDetectionData)
+
+%include "swig_c_wrap.i"
+%c_wrap_2(faultDetection, FaultDetectionData);
 
 %include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
 struct CameraConfigMsg_C;
@@ -37,11 +34,7 @@ struct NavAttMsg_C;
 %include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
 struct OpNavMsg_C;
 
-%include "faultDetection.h"
-
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-
-

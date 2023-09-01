@@ -95,23 +95,22 @@ def prescribedTransTestFunction(show_plots, scalarPosInit, scalarPosRef, scalarA
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    PrescribedTransConfig = prescribedTrans.PrescribedTransConfig()
-    PrescribedTransWrap = unitTestSim.setModelDataWrap(PrescribedTransConfig)
-    PrescribedTransWrap.ModelTag = "prescribedTrans"                                 # update python name of test module
+    PrescribedTrans = prescribedTrans.prescribedTrans()
+    PrescribedTrans.ModelTag = "prescribedTrans"                                 # update python name of test module
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, PrescribedTransWrap, PrescribedTransConfig)
+    unitTestSim.AddModelToTask(unitTaskName, PrescribedTrans)
 
     # Initialize the test module configuration data
     transAxis_M = np.array([0.5, 0.0, 0.5 * np.sqrt(3)])
-    PrescribedTransConfig.transAxis_M = transAxis_M
-    PrescribedTransConfig.scalarAccelMax = scalarAccelMax  # [rad/s^2]
-    PrescribedTransConfig.r_FM_M = scalarPosInit * transAxis_M
-    PrescribedTransConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedTransConfig.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedTransConfig.omega_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedTransConfig.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedTransConfig.sigma_FM = np.array([0.0, 0.0, 0.0])
+    PrescribedTrans.transAxis_M = transAxis_M
+    PrescribedTrans.scalarAccelMax = scalarAccelMax  # [rad/s^2]
+    PrescribedTrans.r_FM_M = scalarPosInit * transAxis_M
+    PrescribedTrans.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
+    PrescribedTrans.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
+    PrescribedTrans.omega_FM_F = np.array([0.0, 0.0, 0.0])
+    PrescribedTrans.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
+    PrescribedTrans.sigma_FM = np.array([0.0, 0.0, 0.0])
 
     # Create input message
     scalarVelRef = 0.0  # [m/s]
@@ -119,10 +118,10 @@ def prescribedTransTestFunction(show_plots, scalarPosInit, scalarPosRef, scalarA
     PrescribedTransMessageData.scalarPos = scalarPosRef
     PrescribedTransMessageData.scalarVel = scalarVelRef
     PrescribedTransMessage = messaging.PrescribedTransMsg().write(PrescribedTransMessageData)
-    PrescribedTransConfig.prescribedTransInMsg.subscribeTo(PrescribedTransMessage)
+    PrescribedTrans.prescribedTransInMsg.subscribeTo(PrescribedTransMessage)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = PrescribedTransConfig.prescribedMotionOutMsg.recorder()
+    dataLog = PrescribedTrans.prescribedMotionOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
@@ -180,11 +179,11 @@ def prescribedTransTestFunction(show_plots, scalarPosInit, scalarPosRef, scalarA
     # set the filtered output truth states
     if not unitTestSupport.isDoubleEqual(scalarVel_Final, scalarVelRef, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + PrescribedTransWrap.ModelTag + "scalarVel_Final and scalarVelRef do not match")
+        testMessages.append("FAILED: " + PrescribedTrans.ModelTag + "scalarVel_Final and scalarVelRef do not match")
 
     if not unitTestSupport.isDoubleEqual(scalarPos_Final, scalarPosRef, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + PrescribedTransWrap.ModelTag + "scalarPos_Final and scalarPosRef do not match")
+        testMessages.append("FAILED: " + PrescribedTrans.ModelTag + "scalarPos_Final and scalarPosRef do not match")
 
     return [testFailCount, ''.join(testMessages)]
 

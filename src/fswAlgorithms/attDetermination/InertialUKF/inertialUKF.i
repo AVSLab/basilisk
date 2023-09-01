@@ -23,17 +23,11 @@
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_inertialUKF(void*, uint64_t, uint64_t);
-%ignore Update_inertialUKF;
-%constant void SelfInit_inertialUKF(void*, uint64_t);
-%ignore SelfInit_inertialUKF;
-%constant void Reset_inertialUKF(void*, uint64_t, uint64_t);
-%ignore Reset_inertialUKF;
-
 STRUCTASLIST(LowPassFilterData)
 STRUCTASLIST(STMessage)
 
-%include "inertialUKF.h"
+%include "swig_c_wrap.i"
+%c_wrap_2(inertialUKF, InertialUKFConfig);
 
 
 %include "architecture/utilities/ukfUtilities.h"
@@ -57,7 +51,6 @@ struct NavAttMsg_C;
 
 %include "architecture/utilities/signalCondition.h"
 struct LowPassFilterData;
-
 
 %pythoncode %{
 import sys

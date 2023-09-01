@@ -21,15 +21,8 @@
    #include "spacecraftReconfig.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_spacecraftReconfig(void*, uint64_t, uint64_t);
-%ignore Update_spacecraftReconfig;
-%constant void SelfInit_spacecraftReconfig(void*, uint64_t);
-%ignore SelfInit_spacecraftReconfig;
-%constant void Reset_spacecraftReconfig(void*, uint64_t, uint64_t);
-%ignore Reset_spacecraftReconfig;
-
-%include "spacecraftReconfig.h"
+%include "swig_c_wrap.i"
+%c_wrap(spacecraftReconfig);
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;

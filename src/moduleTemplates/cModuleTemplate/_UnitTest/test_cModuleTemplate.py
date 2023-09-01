@@ -93,16 +93,15 @@ def fswModuleTestFunction(show_plots):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = cModuleTemplate.cModuleTemplateConfig()  # update with current values
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "cModuleTemplate"           # update python name of test module
+    module = cModuleTemplate.cModuleTemplate()
+    module.ModelTag = "cModuleTemplate"           # update python name of test module
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    moduleConfig.dummy = 1                              # update module parameter with required values
-    moduleConfig.dumVector = [1., 2., 3.]
+    module.dummy = 1                              # update module parameter with required values
+    module.dumVector = [1., 2., 3.]
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -111,13 +110,13 @@ def fswModuleTestFunction(show_plots):
     inputMsg = messaging.CModuleTemplateMsg().write(inputMessageData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.dataOutMsg.recorder()
+    dataLog = module.dataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
     variableName = "dummy"                              # name the module variable to be logged
-    unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + "." + variableName, testProcessRate)
+    unitTestSim.AddVariableForLogging(module.ModelTag + "." + variableName, testProcessRate)
 
     # connect the message interfaces
-    moduleConfig.dataInMsg.subscribeTo(inputMsg)
+    module.dataInMsg.subscribeTo(inputMsg)
 
 
     # Need to call the self-init and cross-init methods
@@ -133,7 +132,7 @@ def fswModuleTestFunction(show_plots):
     unitTestSim.ExecuteSimulation()
 
     # reset the module to test this functionality
-    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     # run the module again for an additional 1.0 seconds
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
@@ -142,7 +141,7 @@ def fswModuleTestFunction(show_plots):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
+    variableState = unitTestSim.GetLogVariableData(module.ModelTag + "." + variableName)
 
     # set the filtered output truth states
     trueVector = [
@@ -161,7 +160,7 @@ def fswModuleTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.dataVector[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed dataVector" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed dataVector" +
                                 " unit test at t=" +
                                 str(dataLog.times()[i]*macros.NANO2SEC) +
                                 "sec\n")
@@ -169,7 +168,7 @@ def fswModuleTestFunction(show_plots):
         # check a scalar double value
         if not unitTestSupport.isDoubleEqual(variableStateNoTime[i], dummyTrue[i], accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed " +
                                 variableName + " unit test at t=" +
                                 str(variableState[i, 0]*macros.NANO2SEC) +
                                 "sec\n")
@@ -181,10 +180,10 @@ def fswModuleTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         print("This test uses an accuracy value of " + str(accuracy))
     else:
-        print("FAILED " + moduleWrap.ModelTag)
+        print("FAILED " + module.ModelTag)
         print(testMessages)
 
     plt.close("all")  # close all prior figures so we start with a clean slate

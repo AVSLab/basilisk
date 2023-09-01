@@ -89,16 +89,15 @@ def run(case):
     dataMsg = messaging.CModuleTemplateMsg().write(inputMessageData)
 
     # Construct algorithm and associated C++ container
-    moduleConfig = cModuleTemplate.cModuleTemplateConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "cModuleTemplate"
+    module = cModuleTemplate.cModuleTemplate()
+    module.ModelTag = "cModuleTemplate"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    moduleConfig.dataInMsg.subscribeTo(dataMsg)
-    moduleConfig.dummy = 1
+    module.dataInMsg.subscribeTo(dataMsg)
+    module.dummy = 1
 
     # setup the bskLog verbosity
     if case == 0:
@@ -117,7 +116,7 @@ def run(case):
         logger.setLogLevel(bskLogging.BSK_ERROR)
         print("The verbosity is only changed for this module.")
         logger.printLogLevel()
-        moduleConfig.bskLogger = logger
+        module.bskLogger = logger
         level = logger.getLogLevel()
 
     # Need to call the self-init and cross-init methods

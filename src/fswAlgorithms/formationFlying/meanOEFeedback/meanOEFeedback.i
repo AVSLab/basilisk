@@ -21,15 +21,8 @@
    #include "meanOEFeedback.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_meanOEFeedback(void*, uint64_t, uint64_t);
-%ignore Update_meanOEFeedback;
-%constant void SelfInit_meanOEFeedback(void*, uint64_t);
-%ignore SelfInit_meanOEFeedback;
-%constant void Reset_meanOEFeedback(void*, uint64_t, uint64_t);
-%ignore Reset_meanOEFeedback;
-
-%include "meanOEFeedback.h"
+%include "swig_c_wrap.i"
+%c_wrap(meanOEFeedback);
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;

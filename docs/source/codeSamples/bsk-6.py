@@ -37,10 +37,9 @@ def run():
     dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.)))
 
     # create modules
-    mod1 = cModuleTemplate.cModuleTemplateConfig()
-    mod1Wrap = scSim.setModelDataWrap(mod1)
-    mod1Wrap.ModelTag = "cModule1"
-    scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1)
+    mod1 = cModuleTemplate.cModuleTemplate()
+    mod1.ModelTag = "cModule1"
+    scSim.AddModelToTask("dynamicsTask", mod1)
 
     mod2 = cppModuleTemplate.CppModuleTemplate()
     mod2.ModelTag = "cppModule2"
@@ -53,8 +52,8 @@ def run():
     mod2.dumVector = [1., 2., 3.]
 
     # request these module variables to be recorded
-    scSim.AddVariableForLogging(mod1Wrap.ModelTag + ".dummy", macros.sec2nano(1.))
-    scSim.AddVariableForLogging(mod1Wrap.ModelTag + ".dumVector", macros.sec2nano(1.), 0, 2)
+    scSim.AddVariableForLogging(mod1.ModelTag + ".dummy", macros.sec2nano(1.))
+    scSim.AddVariableForLogging(mod1.ModelTag + ".dumVector", macros.sec2nano(1.), 0, 2)
     scSim.AddVariableForLogging(mod2.ModelTag + ".dummy", macros.sec2nano(1.))
     scSim.AddVariableForLogging(mod2.ModelTag + ".dumVector", macros.sec2nano(1.), 0, 2)
 
@@ -66,9 +65,9 @@ def run():
     scSim.ExecuteSimulation()
 
     print("mod1.dummy:")
-    print(scSim.GetLogVariableData(mod1Wrap.ModelTag + ".dummy"))
+    print(scSim.GetLogVariableData(mod1.ModelTag + ".dummy"))
     print("mod1.dumVector:")
-    print(scSim.GetLogVariableData(mod1Wrap.ModelTag + ".dumVector"))
+    print(scSim.GetLogVariableData(mod1.ModelTag + ".dumVector"))
     print("mod2.dummy:")
     print(scSim.GetLogVariableData(mod2.ModelTag + ".dummy"))
     print("mod2.dumVector:")

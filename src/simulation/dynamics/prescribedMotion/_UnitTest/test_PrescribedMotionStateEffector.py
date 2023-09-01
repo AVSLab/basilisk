@@ -170,24 +170,23 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # ** ** ** ** ** ROTATIONAL 1 DOF INTEGRATED TEST: ** ** ** ** **
 
         # Create an instance of the prescribedRot1DOF module to be tested
-        PrescribedRot1DOFConfig = prescribedRot1DOF.PrescribedRot1DOFConfig()
-        PrescribedRot1DOFWrap = unitTestSim.setModelDataWrap(PrescribedRot1DOFConfig)
-        PrescribedRot1DOFWrap.ModelTag = "prescribedRot1DOF"
+        PrescribedRot1DOF = prescribedRot1DOF.prescribedRot1DOF()
+        PrescribedRot1DOF.ModelTag = "prescribedRot1DOF"
 
         # Add the prescribedRot1DOF test module to runtime call list
-        unitTestSim.AddModelToTask(unitTaskName, PrescribedRot1DOFWrap, PrescribedRot1DOFConfig)
+        unitTestSim.AddModelToTask(unitTaskName, PrescribedRot1DOF)
 
         # Initialize the prescribedRot1DOF test module configuration data
         accelMax = 0.01  # [rad/s^2]
         #accelMax = np.pi / 180  # [rad/s^2]
-        PrescribedRot1DOFConfig.r_FM_M = r_FM_M
-        PrescribedRot1DOFConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-        PrescribedRot1DOFConfig.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-        PrescribedRot1DOFConfig.rotAxis_M = rotAxis_M
-        PrescribedRot1DOFConfig.thetaDDotMax = accelMax
-        PrescribedRot1DOFConfig.omega_FM_F = np.array([0.0, 0.0, 0.0])
-        PrescribedRot1DOFConfig.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-        PrescribedRot1DOFConfig.sigma_FM = sigma_FM
+        PrescribedRot1DOF.r_FM_M = r_FM_M
+        PrescribedRot1DOF.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
+        PrescribedRot1DOF.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
+        PrescribedRot1DOF.rotAxis_M = rotAxis_M
+        PrescribedRot1DOF.thetaDDotMax = accelMax
+        PrescribedRot1DOF.omega_FM_F = np.array([0.0, 0.0, 0.0])
+        PrescribedRot1DOF.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
+        PrescribedRot1DOF.sigma_FM = sigma_FM
 
         # Create the prescribedRot1DOF input message
         thetaDot_Ref = 0.0  # [rad/s]
@@ -195,10 +194,10 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         SpinningBodyMessageData.theta = theta_Ref
         SpinningBodyMessageData.thetaDot = thetaDot_Ref
         SpinningBodyMessage = messaging.HingedRigidBodyMsg().write(SpinningBodyMessageData)
-        PrescribedRot1DOFConfig.spinningBodyInMsg.subscribeTo(SpinningBodyMessage)
+        PrescribedRot1DOF.spinningBodyInMsg.subscribeTo(SpinningBodyMessage)
         
         # Connect the PrescribedRot1DOF module's prescribedMotion output message to the prescribedMotion module's prescribedMotion input message
-        platform.prescribedMotionInMsg.subscribeTo(PrescribedRot1DOFConfig.prescribedMotionOutMsg)
+        platform.prescribedMotionInMsg.subscribeTo(PrescribedRot1DOF.prescribedMotionOutMsg)
 
         # Add Earth gravity to the simulation
         earthGravBody = gravityEffector.GravBodyData()
@@ -217,7 +216,7 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Add other states to log
         scStateData = scObject.scStateOutMsg.recorder()
         prescribedStateData = platform.prescribedMotionOutMsg.recorder()
-        dataLog = PrescribedRot1DOFConfig.prescribedMotionOutMsg.recorder()
+        dataLog = PrescribedRot1DOF.prescribedMotionOutMsg.recorder()
         unitTestSim.AddModelToTask(unitTaskName, scStateData)
         unitTestSim.AddModelToTask(unitTaskName, prescribedStateData)
         unitTestSim.AddModelToTask(unitTaskName, dataLog)
@@ -394,12 +393,12 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Check to ensure the initial angle rate converged to the reference angle rate
         if not unitTestSupport.isDoubleEqual(thetaDot_Final, thetaDot_Ref, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + PrescribedRot1DOFWrap.ModelTag + "thetaDot_Final and thetaDot_Ref do not match")
+            testMessages.append("FAILED: " + PrescribedRot1DOF.ModelTag + "thetaDot_Final and thetaDot_Ref do not match")
 
         # Check to ensure the initial angle converged to the reference angle
         if not unitTestSupport.isDoubleEqual(theta_FM_Final, theta_Ref, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + PrescribedRot1DOFWrap.ModelTag + "theta_FM_Final and theta_Ref do not match")
+            testMessages.append("FAILED: " + PrescribedRot1DOF.ModelTag + "theta_FM_Final and theta_Ref do not match")
             # testMessages.append("theta_FM_Final: " + str(theta_FM_Final) + " theta_Ref: " + str(theta_Ref))
 
         if testFailCount == 0:
@@ -410,23 +409,22 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # ** ** ** ** ** TRANSLATIONAL INTEGRATED TEST ** ** ** ** **
 
         # Create an instance of the prescribedTrans module to be tested
-        PrescribedTransConfig = prescribedTrans.PrescribedTransConfig()
-        PrescribedTransWrap = unitTestSim.setModelDataWrap(PrescribedTransConfig)
-        PrescribedTransWrap.ModelTag = "prescribedTrans"
+        PrescribedTrans = prescribedTrans.prescribedTrans()
+        PrescribedTrans.ModelTag = "prescribedTrans"
 
         # Add the prescribedTrans test module to runtime call list
-        unitTestSim.AddModelToTask(unitTaskName, PrescribedTransWrap, PrescribedTransConfig)
+        unitTestSim.AddModelToTask(unitTaskName, PrescribedTrans)
 
         # Initialize the prescribedTrans test module configuration data
         accelMax = 0.005  # [m/s^2]
-        PrescribedTransConfig.r_FM_M = r_FM_M
-        PrescribedTransConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-        PrescribedTransConfig.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-        PrescribedTransConfig.transAxis_M = transAxis_M
-        PrescribedTransConfig.scalarAccelMax = accelMax
-        PrescribedTransConfig.omega_FM_F = np.array([0.0, 0.0, 0.0])
-        PrescribedTransConfig.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-        PrescribedTransConfig.sigma_FM = sigma_FM
+        PrescribedTrans.r_FM_M = r_FM_M
+        PrescribedTrans.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
+        PrescribedTrans.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
+        PrescribedTrans.transAxis_M = transAxis_M
+        PrescribedTrans.scalarAccelMax = accelMax
+        PrescribedTrans.omega_FM_F = np.array([0.0, 0.0, 0.0])
+        PrescribedTrans.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
+        PrescribedTrans.sigma_FM = sigma_FM
 
         # Create the prescribedTrans input message
         velRef = 0.0  # [m/s]
@@ -434,10 +432,10 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         PrescribedTransMessageData.scalarPos = posRef
         PrescribedTransMessageData.scalarVel = velRef
         PrescribedTransMessage = messaging.PrescribedTransMsg().write(PrescribedTransMessageData)
-        PrescribedTransConfig.prescribedTransInMsg.subscribeTo(PrescribedTransMessage)
+        PrescribedTrans.prescribedTransInMsg.subscribeTo(PrescribedTransMessage)
 
         # Connect the PrescribedTrans module's prescribedMotion output message to the prescribedMotion module's prescribedMotion input message
-        platform.prescribedMotionInMsg.subscribeTo(PrescribedTransConfig.prescribedMotionOutMsg)
+        platform.prescribedMotionInMsg.subscribeTo(PrescribedTrans.prescribedMotionOutMsg)
 
         # Add Earth gravity to the simulation
         earthGravBody = gravityEffector.GravBodyData()
@@ -456,7 +454,7 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Add other states to log
         scStateData = scObject.scStateOutMsg.recorder()
         prescribedStateData = platform.prescribedMotionOutMsg.recorder()
-        dataLog = PrescribedTransConfig.prescribedMotionOutMsg.recorder()
+        dataLog = PrescribedTrans.prescribedMotionOutMsg.recorder()
         unitTestSim.AddModelToTask(unitTaskName, scStateData)
         unitTestSim.AddModelToTask(unitTaskName, prescribedStateData)
         unitTestSim.AddModelToTask(unitTaskName, dataLog)
@@ -633,14 +631,14 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         rPrime_FM_M_Ref = np.array([0.0, 0.0, 0.0])
         if not unitTestSupport.isArrayEqual(rPrime_FM_M_Final, rPrime_FM_M_Ref, 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + PrescribedTransWrap.ModelTag + "rPrime_FM_M_Final and rPrime_FM_M_Ref do not match")
+            testMessages.append("FAILED: " + PrescribedTrans.ModelTag + "rPrime_FM_M_Final and rPrime_FM_M_Ref do not match")
             testMessages.append("rPrime_FM_M_Final: " + str(rPrime_FM_M_Final) + " rPrime_FM_M_Ref: " + str(rPrime_FM_M_Ref))
 
         # Check to ensure the initial position converged to the reference position
         r_FM_M_Ref = np.array([posRef, 0.0, 0.0])
         if not unitTestSupport.isArrayEqual(r_FM_M_Final, r_FM_M_Ref, 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + PrescribedTransWrap.ModelTag + "r_FM_M_Final and r_FM_M_Ref do not match")
+            testMessages.append("FAILED: " + PrescribedTrans.ModelTag + "r_FM_M_Final and r_FM_M_Ref do not match")
             testMessages.append("r_FM_M_Final: " + str(r_FM_M_Final) + " r_FM_M_Ref: " + str(r_FM_M_Ref))
 
         if testFailCount == 0:

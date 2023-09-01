@@ -82,18 +82,17 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = thrMomentumManagement.thrMomentumManagementConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "thrMomentumManagement"
+    module = thrMomentumManagement.thrMomentumManagement()
+    module.ModelTag = "thrMomentumManagement"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
     if hsMinCheck:
-        moduleConfig.hs_min = 1000./6000.*100.               # Nms
+        module.hs_min = 1000./6000.*100.               # Nms
     else:
-        moduleConfig.hs_min = 100./6000.*100.               # Nms
+        module.hs_min = 100./6000.*100.               # Nms
 
 
     # wheelSpeeds Message
@@ -114,12 +113,12 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.deltaHOutMsg.recorder()
+    dataLog = module.deltaHOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # setup message connections
-    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
-    moduleConfig.rwConfigDataInMsg.subscribeTo(rwConfigInMsg)
+    module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
+    module.rwConfigDataInMsg.subscribeTo(rwConfigInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -152,11 +151,11 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     snippetName = "passFail" + str(hsMinCheck)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 

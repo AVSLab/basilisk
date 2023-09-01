@@ -22,13 +22,8 @@
    #include "architecture/utilities/ukfUtilities.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_sunlineSEKF(void*, uint64_t, uint64_t);
-%ignore Update_sunlineSEKF;
-%constant void SelfInit_sunlineSEKF(void*, uint64_t);
-%ignore SelfInit_sunlineSEKF;
-%constant void Reset_sunlineSEKF(void*, uint64_t, uint64_t);
-%ignore Reset_sunlineSEKF;
+%include "swig_c_wrap.i"
+%c_wrap(sunlineSEKF);
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
@@ -38,8 +33,6 @@ struct CSSArraySensorMsg_C;
 struct SunlineFilterMsg_C;
 %include "architecture/msgPayloadDefC/CSSConfigMsgPayload.h"
 struct CSSConfigMsg_C;
-
-%include "sunlineSEKF.h"
 
 %pythoncode %{
 import sys

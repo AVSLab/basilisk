@@ -165,7 +165,7 @@ def run(show_plots):
         disp1Name = 'get_DynModel().scObject.hub.r_CN_NInit'
         disp2Name = 'get_DynModel().scObject.hub.v_CN_NInit'
         dispFOV = 'get_DynModel().cameraMod.fieldOfView'
-        dispNoise = 'get_FswModel().relativeODData.noiseSF'
+        dispNoise = 'get_FswModel().relativeOD.noiseSF'
         monteCarlo.addDispersion(UniformDispersion(dispNoise, [1, 10]))
         monteCarlo.addDispersion(UniformDispersion(dispFOV, [np.deg2rad(40) - np.deg2rad(0.001), np.deg2rad(40) + np.deg2rad(0.001)]))
         monteCarlo.addDispersion(OrbitalElementDispersion(disp1Name,disp2Name, dispDict))

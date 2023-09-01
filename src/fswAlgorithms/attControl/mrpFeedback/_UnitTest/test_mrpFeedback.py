@@ -43,9 +43,10 @@ from Basilisk.utilities import unitTestSupport
 @pytest.mark.parametrize("intGain", [0.01, -1])
 @pytest.mark.parametrize("rwNum", [4, 0])
 @pytest.mark.parametrize("integralLimit", [0, 20])
+@pytest.mark.parametrize("ctrlLaw", [0, 1])
 @pytest.mark.parametrize("useRwAvailability", ["NO", "ON", "OFF"])
 
-def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
+def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
     r"""
         **Validation Test Description**
 
@@ -74,18 +75,19 @@ def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, useRwAvailabili
             intGain (float): value of the integral gain :math:`K_i`
             rwNum (int): number of RW devices to simulate
             integralLimit (float): value of the integral limit
+            ctrlLaw (int): type of control law used
             useRwAvailability (string): Flag to not use RW availabillity (``NO``), use the availability
                message and turn on the RW devices (``ON``) and use the message and turn off the devices (``OFF``)
     """
 
     # each test method requires a single assert method to be called
 
-    [testResults, testMessage] = run(show_plots,intGain, rwNum, integralLimit, useRwAvailability)
+    [testResults, testMessage] = run(show_plots,intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability)
 
     assert testResults < 1, testMessage
 
 
-def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
+def run(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -102,19 +104,19 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
 
 
     #   Construct algorithm and associated C++ container
-    moduleConfig = mrpFeedback.mrpFeedbackConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "mrpFeedback"
+    module = mrpFeedback.mrpFeedback()
+    module.ModelTag = "mrpFeedback"
 
     #   Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     #   Initialize the test module configuration data
-    moduleConfig.K = 0.15
-    moduleConfig.Ki = intGain
-    moduleConfig.P = 150.0
-    moduleConfig.integralLimit = integralLimit
-    moduleConfig.knownTorquePntB_B = [1., 1., 1.]
+    module.K = 0.15
+    module.Ki = intGain
+    module.P = 150.0
+    module.integralLimit = integralLimit
+    module.controlLawType = ctrlLaw
+    module.knownTorquePntB_B = [1., 1., 1.]
 
     # create input messages
     #   AttGuidFswMsg Message:
@@ -180,21 +182,21 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
         rwAvailabilityMessage.wheelAvailability = [messaging.AVAILABLE, messaging.AVAILABLE,
                                                    messaging.AVAILABLE, messaging.AVAILABLE]
 
-    LrTrue = findTrueTorques(moduleConfig, guidCmdData, rwSpeedMessage, vehicleConfig, jsList,
-                             rwNum, GsMatrix_B, rwAvailabilityMessage)
+    LrTrue = findTrueTorques(module, guidCmdData, rwSpeedMessage, vehicleConfig, jsList,
+                             rwNum, GsMatrix_B, rwAvailabilityMessage, ctrlLaw)
 
     #   Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.cmdTorqueOutMsg.recorder()
+    dataLog = module.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.guidInMsg.subscribeTo(guidInMsg)
-    moduleConfig.vehConfigInMsg.subscribeTo(vcInMsg)
+    module.guidInMsg.subscribeTo(guidInMsg)
+    module.vehConfigInMsg.subscribeTo(vcInMsg)
     if rwNum > 0:
-        moduleConfig.rwParamsInMsg.subscribeTo(rwParamInMsg)
-        moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
+        module.rwParamsInMsg.subscribeTo(rwParamInMsg)
+        module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
     if useRwAvailability != "NO":
-        moduleConfig.rwAvailInMsg.subscribeTo(rwAvailInMsg)
+        module.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     #   Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -203,7 +205,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
@@ -214,25 +216,25 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
         # check vector values
         if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], LrTrue[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed mrpFeedback unit test at t="
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed mrpFeedback unit test at t="
                                 + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
     else:
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
 
-def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,numRW,GsMatrix_B,rwAvailMsg):
+def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,numRW,GsMatrix_B,rwAvailMsg,ctrlLaw):
     Lr = []
 
     #Read in variables
-    L = np.asarray(moduleConfig.knownTorquePntB_B)
+    L = np.asarray(module.knownTorquePntB_B)
     steps = [0, 0, .5, 0, .5]
     omega_BR_B = np.asarray(guidCmdData.omega_BR_B)
     omega_RN_B = np.asarray(guidCmdData.omega_RN_B)
@@ -241,9 +243,9 @@ def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsL
     sigma_BR = np.asarray(guidCmdData.sigma_BR)
     Isc = np.asarray(vehicleConfigOut.ISCPntB_B)
     Isc = np.reshape(Isc, (3, 3))
-    Ki = moduleConfig.Ki
-    K = moduleConfig.K
-    P = moduleConfig.P
+    Ki = module.Ki
+    K = module.K
+    P = module.P
     jsVec = jsList
     GsMatrix_B_array = np.asarray(GsMatrix_B)
     GsMatrix_B_array = np.reshape(GsMatrix_B_array[0:numRW * 3], (numRW, 3))
@@ -259,8 +261,8 @@ def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsL
         if Ki > 0: #if integral feedback is on
             sigmaInt = K * dt * sigma_BR + sigmaInt
             for n in range(3):
-                if abs(sigmaInt[n]) > moduleConfig.integralLimit:
-                    sigmaInt[n] *= moduleConfig.integralLimit/sigmaInt[n] #check elementwise if integral term is greater than limit; preserve direction (+/-)
+                if abs(sigmaInt[n]) > module.integralLimit:
+                    sigmaInt[n] *= module.integralLimit/sigmaInt[n] #check elementwise if integral term is greater than limit; preserve direction (+/-)
 
             zVec = sigmaInt + Isc.dot(omega_BR_B)
         else: #integral gain turned off/negative setting
@@ -278,7 +280,10 @@ def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsL
                     GsHs = GsHs + np.dot(GsMatrix_B_array[i, :], jsVec[i]*(np.dot(omega_BN_B, GsMatrix_B_array[i, :])+rwSpeedMessage.wheelSpeeds[i]))
                     #J_s*(dot(omegaBN_B,Gs_vec)+Omega_wheel)
 
-        Lr3 = Lr2 - np.cross((omega_RN_B+Ki*zVec), (Isc.dot(omega_BN_B)+GsHs)) # -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s)
+        if ctrlLaw == 0:
+            Lr3 = Lr2 - np.cross((omega_RN_B+Ki*zVec), (Isc.dot(omega_BN_B)+GsHs)) # -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s)
+        else:
+            Lr3 = Lr2 - np.cross(omega_BN_B, (Isc.dot(omega_BN_B)+GsHs)) # -[v3Tilde(omega)]([I]omega + [Gs]h_s)
 
         Lr4 = Lr3 + Isc.dot(-domega_RN_B + np.cross(omega_BN_B, omega_RN_B)) #+[I](-d(omega_r)/dt + omega x omega_r)
         Lr5 = Lr4 + L

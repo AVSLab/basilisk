@@ -21,15 +21,8 @@
    #include "rwMotorVoltage.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_rwMotorVoltage(void*, uint64_t, uint64_t);
-%ignore Update_rwMotorVoltage;
-%constant void SelfInit_rwMotorVoltage(void*, uint64_t);
-%ignore SelfInit_rwMotorVoltage;
-%constant void Reset_rwMotorVoltage(void*, uint64_t, uint64_t);
-%ignore Reset_rwMotorVoltage;
-
-%include "rwMotorVoltage.h"
+%include "swig_c_wrap.i"
+%c_wrap(rwMotorVoltage);
 
 %include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;

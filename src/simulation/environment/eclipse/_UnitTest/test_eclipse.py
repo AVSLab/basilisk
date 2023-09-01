@@ -232,7 +232,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
             gravFactory.spiceObject.zeroBase = "mars barycenter"
             scObject_0.hub.r_CN_NInit = [-427424601171.464, 541312532797.400, 259820030623.064]  # meters
 
-    unitTestSim.AddModelToTask(testTaskName, gravFactory.spiceObject, None, -1)
+    unitTestSim.AddModelToTask(testTaskName, gravFactory.spiceObject, -1)
 
     eclipseObject = eclipse.Eclipse()
     eclipseObject.addSpacecraftToModel(scObject_0.scStateOutMsg)
@@ -370,7 +370,7 @@ def unitEclipseCustom(show_plots):
     r_sc_N = r_ast_N + 500 * r_ast_N / np.linalg.norm(r_ast_N)
     scObject_0.hub.r_CN_NInit = r_sc_N
 
-    unitTestSim.AddModelToTask(testTaskName, gravBodyEphem, None, -1)
+    unitTestSim.AddModelToTask(testTaskName, gravBodyEphem, -1)
 
     eclipseObject = eclipse.Eclipse()
     eclipseObject.addSpacecraftToModel(scObject_0.scStateOutMsg)

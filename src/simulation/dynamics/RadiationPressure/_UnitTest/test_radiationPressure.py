@@ -130,8 +130,8 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         srpDynEffector.sunEclipseInMsg.subscribeTo(sunEclMsg)
         srpDynEffector2.sunEclipseInMsg.subscribeTo(sunEclMsg)
 
-    unitTestSim.AddModelToTask(testTaskName, srpDynEffector, None, 3)
-    unitTestSim.AddModelToTask(testTaskName, srpDynEffector2, None, 3)
+    unitTestSim.AddModelToTask(testTaskName, srpDynEffector, 3)
+    unitTestSim.AddModelToTask(testTaskName, srpDynEffector2, 3)
 
     scObject.hub.r_CN_NInit = r_N
     scObject.hub.sigma_BNInit = sigma_BN

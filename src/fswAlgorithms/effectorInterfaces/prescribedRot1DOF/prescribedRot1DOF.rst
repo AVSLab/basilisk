@@ -144,23 +144,22 @@ This section is to outline the steps needed to setup a prescribed 1 DOF rotation
 
 #. Create an instantiation of a prescribed rotational 1 DOF C module and the associated C++ container::
 
-    PrescribedRot1DOFConfig = prescribedRot1DOF.PrescribedRot1DOFConfig()
-    PrescribedWrap = unitTestSim.setModelDataWrap(PrescribedRot1DOFConfig)
-    PrescribedWrap.ModelTag = "prescribedRot1DOF"
+    PrescribedRot1DOF = prescribedRot1DOF.prescribedRot1DOF()
+    PrescribedRot1DOF.ModelTag = "prescribedRot1DOF"
 
 #. Define all of the configuration data associated with the module. For example::
 
     thetaInit = 0.0  # [rad]
     rotAxis_M = np.array([1.0, 0.0, 0.0])
     prvInit_FM = thetaInit * rotAxisM
-    PrescribedRot1DOFConfig.r_FM_M = np.array([1.0, 0.0, 0.0])
-    PrescribedRot1DOFConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOFConfig.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOFConfig.rotAxis_M = rotAxis_M
-    PrescribedRot1DOFConfig.thetaDDotMax = 0.01  # [rad/s^2]
-    PrescribedRot1DOFConfig.omega_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOFConfig.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOFConfig.sigma_FM = rbk.PRV2MRP(prvInit_FM)
+    PrescribedRot1DOF.r_FM_M = np.array([1.0, 0.0, 0.0])
+    PrescribedRot1DOF.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
+    PrescribedRot1DOF.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
+    PrescribedRot1DOF.rotAxis_M = rotAxis_M
+    PrescribedRot1DOF.thetaDDotMax = 0.01  # [rad/s^2]
+    PrescribedRot1DOF.omega_FM_F = np.array([0.0, 0.0, 0.0])
+    PrescribedRot1DOF.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
+    PrescribedRot1DOF.sigma_FM = rbk.PRV2MRP(prvInit_FM)
 
 The user is required to set the above configuration data parameters, as they are not initialized in the module.
 
@@ -168,5 +167,5 @@ The user is required to set the above configuration data parameters, as they are
 
 #. Add the module to the task list::
 
-    unitTestSim.AddModelToTask(unitTaskName, PrescribedWrap, PrescribedRot1DOFConfig)
+    unitTestSim.AddModelToTask(unitTaskName, PrescribedRot1DOF)
 
