@@ -138,7 +138,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
                                          timeInitString,
                                          epochInMsgName=True)
 
-        scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
+        scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, -1)
 
         if planetCase == 3:
             # orbit should be defined relative to Venus

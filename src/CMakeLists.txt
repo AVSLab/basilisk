@@ -205,57 +205,6 @@ function(find_package_targets PKG_DIR ALL_TARGET_LIST)
       PARENT_SCOPE)
 endfunction(find_package_targets)
 
-macro(is_cpp_module C_FILES RUN_CPP_MODE)
-  set(${RUN_CPP_MODE} 0)
-
-  # Check if there are C++ files
-  set(CPP_FILE_EXISTS 0)
-  foreach(C_FILE ${C_FILES})
-    get_filename_component(FILE_EXT ${C_FILE} EXT)
-    string(COMPARE EQUAL ${FILE_EXT} ".cpp" CPP_VAR)
-    if(${CPP_VAR})
-      set(CPP_FILE_EXISTS ${CPP_VAR})
-      break()
-    endif()
-  endforeach()
-
-  # If no C++ file found, check if there are any .c files
-  set(C_FILE_EXISTS 0)
-  if(NOT ${CPP_FILE_EXISTS})
-    foreach(C_FILE ${C_FILES})
-      get_filename_component(FILE_EXT ${C_FILE} EXT)
-      string(COMPARE EQUAL ${FILE_EXT} ".c" C_VAR_BOOL) # found .c files
-      if(C_VAR_BOOL)
-        set(C_FILE_EXISTS 1)
-        break()
-      endif()
-    endforeach()
-  endif()
-
-  # If no C or C++ files exist -- the directory only contains header files. Check if this directory exists within
-  # FSWAlgorithms or Simulation
-  set(HEADER_ONLY_IN_SIM 0)
-  if(NOT ${CPP_FILE_EXISTS} AND NOT ${C_FILE_EXISTS})
-    foreach(C_FILE ${C_FILES})
-      get_filename_component(DIRECTORY_VAR ${C_FILE} DIRECTORY)
-      string(FIND ${DIRECTORY_VAR} "fswAlgorithms" FSW_DIR_BOOL) # if the directory contains fswAlgorithms, value
-                                                                 # FSW_DIR_BOOL is 0
-      if(FSW_DIR_BOOL EQUAL -1)
-        set(HEADER_ONLY_IN_SIM 1)
-        break()
-      endif()
-    endforeach()
-  endif()
-
-  # If there are 1) C++ files, 2) header only files in simulation directory, or 3) no C type files at all: Run swig in
-  # C++ mode
-  if(${CPP_FILE_EXISTS}
-     OR ${HEADER_ONLY_IN_SIM}
-     OR NOT C_FILES)
-    set(${RUN_CPP_MODE} 1)
-  endif()
-endmacro(is_cpp_module)
-
 function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
   find_package(SWIG REQUIRED)
@@ -313,12 +262,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
     set_property(SOURCE ${TARGET_FILE} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE) # Allows for include paths in the
                                                                                      # .i files
-
-    is_cpp_module("${C_FILES}" RUN_CPP_MODE) # Modules that don't contain C++ files or message directories within the
-                                             # fswAgorithms directory shouldn't run C++ mode
-    if(${RUN_CPP_MODE})
-      set_property(SOURCE ${TARGET_FILE} PROPERTY CPLUSPLUS ON)
-    endif()
+    set_property(SOURCE ${TARGET_FILE} PROPERTY CPLUSPLUS ON)
 
     # Add Target To add dependency so that any change to source file will reswig the interface file
     # https://stackoverflow.com/questions/31007635/is-there-a-way-for-cmake-to-utilize-dependencies-generated-by-swig-mm

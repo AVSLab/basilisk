@@ -90,7 +90,7 @@ class scenario_OpNav(BSKScenario):
         bias = [0, 0, -2]
 
         MRP= [0,-0.3,0]
-        self.masterSim.get_FswModel().relativeODData.stateInit = rN.tolist() + vN.tolist()
+        self.masterSim.get_FswModel().relativeOD.stateInit = rN.tolist() + vN.tolist()
         self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
         self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[MRP[0]], [MRP[1]], [MRP[2]]]  # sigma_BN_B
@@ -98,11 +98,11 @@ class scenario_OpNav(BSKScenario):
 
         # primary_opnav, secondary_opnav
         FswModel = self.masterSim.get_FswModel()
-        messaging.OpNavMsg_C_addAuthor(FswModel.horizonNavData.opNavOutMsg, FswModel.opnavPrimaryMsg)
-        messaging.OpNavMsg_C_addAuthor(FswModel.pixelLineData.opNavOutMsg, FswModel.opnavSecondaryMsg)
+        messaging.OpNavMsg_C_addAuthor(FswModel.horizonNav.opNavOutMsg, FswModel.opnavPrimaryMsg)
+        messaging.OpNavMsg_C_addAuthor(FswModel.pixelLine.opNavOutMsg, FswModel.opnavSecondaryMsg)
 
         # Filter noise param
-        self.masterSim.get_FswModel().relativeODData.noiseSF = 5
+        self.masterSim.get_FswModel().relativeOD.noiseSF = 5
 
         # Camera noise params
         # self.masterSim.get_DynModel().cameraMod.gaussian = 2 #3 #
@@ -112,8 +112,8 @@ class scenario_OpNav(BSKScenario):
         # self.masterSim.get_DynModel().cameraMod.blurParam = 3 #4 #
 
         # Fault params
-        self.masterSim.get_FswModel().opNavFaultData.sigmaFault = 1
-        self.masterSim.get_FswModel().opNavFaultData.faultMode = 0
+        self.masterSim.get_FswModel().opNavFault.sigmaFault = 1
+        self.masterSim.get_FswModel().opNavFault.faultMode = 0
 
     def log_outputs(self):
         # Dynamics process outputs: log messages below if desired.
@@ -124,7 +124,7 @@ class scenario_OpNav(BSKScenario):
         samplingTimeFsw = self.masterSim.get_FswModel().processTasksTimeStep
         samplingTimeDyn = self.masterSim.get_DynModel().processTasksTimeStep
 
-        self.filtRec = FswModel.relativeODData.filtDataOutMsg.recorder(samplingTimeFsw)
+        self.filtRec = FswModel.relativeOD.filtDataOutMsg.recorder(samplingTimeFsw)
         self.opNavRec = FswModel.opnavMsg.recorder(samplingTimeFsw)
         self.scRec = DynModel.scObject.scStateOutMsg.recorder(samplingTimeDyn)
         self.opNavPrimRec = FswModel.opnavPrimaryMsg.recorder(samplingTimeFsw)

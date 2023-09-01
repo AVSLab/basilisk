@@ -21,14 +21,10 @@
    #include "sunSafeACS.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_sunSafeACS(void*, uint64_t, uint64_t);
-%ignore Update_sunSafeACS;
-%constant void SelfInit_sunSafeACS(void*, uint64_t);
-%ignore SelfInit_sunSafeACS;
-%include "dvAttEffect.h"
+%include "swig_c_wrap.i"
+%c_wrap(sunSafeACS);
 
-%include "sunSafeACS.h"
+%include "dvAttEffect.h"
 
 %include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
@@ -36,7 +32,6 @@ struct THRArrayOnTimeCmdMsg_C;
 struct CmdTorqueBodyMsg_C;
 
 struct ThrustGroupData;
-
 
 %pythoncode %{
 import sys

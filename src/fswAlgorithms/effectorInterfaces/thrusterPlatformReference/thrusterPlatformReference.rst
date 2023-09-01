@@ -75,14 +75,13 @@ User Guide
 ----------
 The required module configuration is::
 
-    platformConfig = thrusterPlatformReference.ThrusterPlatformReferenceConfig()
-    platformWrap = unitTestSim.setModelDataWrap(platformConfig)
-    platformWrap.ModelTag = "platformReference"
-    platformConfig.sigma_MB = sigma_MB
-    platformConfig.r_BM_M = r_BM_M
-    platformConfig.r_FM_F = r_FM_F
-    platformConfig.K      = K
-    scSim.AddModelToTaskAddModelToTask(simTaskName, platformWrap, platformConfig)
+    platform = thrusterPlatformReference.thrusterPlatformReference()
+    platform.ModelTag = "platformReference"
+    platform.sigma_MB = sigma_MB
+    platform.r_BM_M = r_BM_M
+    platform.r_FM_F = r_FM_F
+    platform.K      = K
+    scSim.AddModelToTaskAddModelToTask(simTaskName, platform)
  	
 The module is configurable with the following parameters:
 

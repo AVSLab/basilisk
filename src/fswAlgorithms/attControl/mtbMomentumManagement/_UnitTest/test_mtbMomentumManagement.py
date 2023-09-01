@@ -78,12 +78,11 @@ def mtbMomentumManagementModuleTestFunction():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = mtbMomentumManagement.mtbMomentumManagementConfig()  # update with current values
-    moduleConfig.cGain = 0.005
-    moduleConfig.wheelSpeedBiases = [0., 0., 0, 0.]
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "mtbMomentumManagement"           # update python name of test module
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    module = mtbMomentumManagement.mtbMomentumManagement()
+    module.cGain = 0.005
+    module.wheelSpeedBiases = [0., 0., 0, 0.]
+    module.ModelTag = "mtbMomentumManagement"           # update python name of test module
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # wheelConfigData message (array is ordered c11, c22, c33, c44, ...)
     rwConfigParams = messaging.RWArrayConfigMsgPayload()
@@ -121,17 +120,17 @@ def mtbMomentumManagementModuleTestFunction():
     rwMotorTorqueInMsg = messaging.ArrayMotorTorqueMsg().write(rwMotorTorqueInMsgContainer)
     
     # Setup logging on the test module output message so that we get all the writes to it
-    resultMtbCmdOutMsg = moduleConfig.mtbCmdOutMsg.recorder()
+    resultMtbCmdOutMsg = module.mtbCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, resultMtbCmdOutMsg)
-    resultRwMotorTorqueOutMsg = moduleConfig.rwMotorTorqueOutMsg.recorder()
+    resultRwMotorTorqueOutMsg = module.rwMotorTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, resultRwMotorTorqueOutMsg)
 
     # connect the message interfaces
-    moduleConfig.rwParamsInMsg.subscribeTo(rwParamsInMsg)
-    moduleConfig.mtbParamsInMsg.subscribeTo(mtbParamsInMsg)
-    moduleConfig.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
-    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
-    moduleConfig.rwMotorTorqueInMsg.subscribeTo(rwMotorTorqueInMsg)
+    module.rwParamsInMsg.subscribeTo(rwParamsInMsg)
+    module.mtbParamsInMsg.subscribeTo(mtbParamsInMsg)
+    module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
+    module.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
+    module.rwMotorTorqueInMsg.subscribeTo(rwMotorTorqueInMsg)
     
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -170,7 +169,7 @@ def mtbMomentumManagementModuleTestFunction():
     '''
     tamSensorBodyInMsgContainer.tam_B = [0., 0., 0.]
     tamSensorBodyInMsg = messaging.TAMSensorBodyMsg().write(tamSensorBodyInMsgContainer)
-    moduleConfig.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
+    module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
     
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
@@ -191,7 +190,7 @@ def mtbMomentumManagementModuleTestFunction():
 
 
     # reset the module to test this functionality
-    moduleWrap.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
+    module.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
 
 
     # each test method requires a single assert method to be called

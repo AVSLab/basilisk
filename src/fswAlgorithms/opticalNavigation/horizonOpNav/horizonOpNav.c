@@ -29,7 +29,7 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void SelfInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID)
+void SelfInit_horizonOpNav(HorizonOpNavData *configData, int64_t moduleID)
 {
     OpNavMsg_C_init(&configData->opNavOutMsg);
 }
@@ -41,7 +41,7 @@ void SelfInit_horizonOpNav(HorizonOpNavData *configData, uint64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Reset_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64_t moduleID)
+void Reset_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_t moduleID)
 {
     // check that the required message has not been connected
     if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
@@ -62,7 +62,7 @@ void Reset_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64_
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, uint64_t moduleID)
+void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_t moduleID)
 {
     double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3], Q[3][3], B[3][3];
     double planetRad_Eq, planetRad_Pol;

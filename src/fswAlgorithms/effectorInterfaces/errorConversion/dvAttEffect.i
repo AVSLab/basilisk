@@ -22,13 +22,10 @@
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_dvAttEffect(void*, uint64_t, uint64_t);
-%ignore Update_dvAttEffect;
-%constant void SelfInit_dvAttEffect(void*, uint64_t);
-%ignore SelfInit_dvAttEffect;
-%constant void Reset_dvAttEffect(void*, uint64_t, uint64_t);
-%ignore Reset_dvAttEffect;
 STRUCTASLIST(ThrustGroupData)
+
+%include "swig_c_wrap.i"
+%c_wrap(dvAttEffect);
 
 %include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
@@ -36,8 +33,6 @@ struct THRArrayOnTimeCmdMsg_C;
 struct CmdTorqueBodyMsg_C;
 struct ThrustGroupData;
 struct effPairs;
-
-%include "dvAttEffect.h"
 
 %pythoncode %{
 import sys

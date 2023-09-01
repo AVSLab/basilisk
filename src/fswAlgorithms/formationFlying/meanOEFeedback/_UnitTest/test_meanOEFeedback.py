@@ -62,25 +62,24 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)  # create new process
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # create new task
     # Construct algorithm and associated C++ container
-    moduleConfig = meanOEFeedback.meanOEFeedbackConfig()  # update with current values
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "meanOEFeedback"  # update python name of test meanOEFeedback
-    moduleConfig.targetDiffOeMean = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    moduleConfig.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
-    moduleConfig.req = orbitalMotion.REQ_EARTH * 1e3  # [m]
-    moduleConfig.J2 = orbitalMotion.J2_EARTH      # []
-    moduleConfig.K = [1e7, 0.0, 0.0, 0.0, 0.0, 0.0,
+    module = meanOEFeedback.meanOEFeedback()
+    module.ModelTag = "meanOEFeedback"  # update python name of test meanOEFeedback
+    module.targetDiffOeMean = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    module.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
+    module.req = orbitalMotion.REQ_EARTH * 1e3  # [m]
+    module.J2 = orbitalMotion.J2_EARTH      # []
+    module.K = [1e7, 0.0, 0.0, 0.0, 0.0, 0.0,
                       0.0, 1e7, 0.0, 0.0, 0.0, 0.0,
                       0.0, 0.0, 1e7, 0.0, 0.0, 0.0,
                       0.0, 0.0, 0.0, 1e7, 0.0, 0.0,
                       0.0, 0.0, 0.0, 0.0, 1e7, 0.0,
                       0.0, 0.0, 0.0, 0.0, 0.0, 1e7]
     if(useClassicElem):
-        moduleConfig.oeType = 0  # 0: classic
+        module.oeType = 0  # 0: classic
     else:
-        moduleConfig.oeType = 1  # 1: equinoctial
+        module.oeType = 1  # 1: equinoctial
     # Add test meanOEFeedback to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     #
@@ -120,12 +119,12 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     deputyInMsg = messaging.NavTransMsg().write(deputyNavStateOutData)
 
     # Setup logging on the test meanOEFeedback output message so that we get all the writes to it
-    dataLog = moduleConfig.forceOutMsg.recorder()
+    dataLog = module.forceOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.chiefTransInMsg.subscribeTo(chiefInMsg)
-    moduleConfig.deputyTransInMsg.subscribeTo(deputyInMsg)
+    module.chiefTransInMsg.subscribeTo(chiefInMsg)
+    module.deputyTransInMsg.subscribeTo(deputyInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -157,13 +156,13 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
         # check a vector values
         if not unitTestSupport.isArrayEqual(forceOutput[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed "
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed "
                                 + ".forceRequestInertial" + " unit test at t="
                                 + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         print("This test uses an accuracy value of " + str(accuracy))
 
     # each test method requires a single assert method to be called

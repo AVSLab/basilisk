@@ -113,7 +113,7 @@ def run(show_plots):
     gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
                                      , timeInitString
                                      )
-    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
+    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, -1)
 
 
     #   setup orbit using orbitalMotion library
@@ -135,7 +135,7 @@ def run(show_plots):
 
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.000], [-0.000], [0.000]]
-    scenarioSim.AddModelToTask(taskName, scObject, None, 1)
+    scenarioSim.AddModelToTask(taskName, scObject, 1)
 
     # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))

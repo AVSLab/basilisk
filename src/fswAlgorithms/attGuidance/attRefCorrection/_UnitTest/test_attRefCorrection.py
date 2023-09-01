@@ -61,11 +61,10 @@ def attRefCorrectionTestFunction(show_plots, accuracy):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # setup module to be tested
-    moduleConfig = attRefCorrection.attRefCorrectionConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "attRefCorrectionTag"
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    moduleConfig.sigma_BcB = [math.tan(math.pi/4), 0.0, 0.0]
+    module = attRefCorrection.attRefCorrection()
+    module.ModelTag = "attRefCorrectionTag"
+    unitTestSim.AddModelToTask(unitTaskName, module)
+    module.sigma_BcB = [math.tan(math.pi/4), 0.0, 0.0]
 
     # Configure blank module input messages
     attRefInMsgData = messaging.AttRefMsgPayload()
@@ -73,10 +72,10 @@ def attRefCorrectionTestFunction(show_plots, accuracy):
     attRefInMsg = messaging.AttRefMsg().write(attRefInMsgData)
 
     # subscribe input messages to module
-    moduleConfig.attRefInMsg.subscribeTo(attRefInMsg)
+    module.attRefInMsg.subscribeTo(attRefInMsg)
 
     # setup output message recorder objects
-    attRefOutMsgRec = moduleConfig.attRefOutMsg.recorder()
+    attRefOutMsgRec = module.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, attRefOutMsgRec)
 
     unitTestSim.InitializeSimulation()
@@ -94,12 +93,12 @@ def attRefCorrectionTestFunction(show_plots, accuracy):
         # check a vector values
         if not unitTestSupport.isArrayEqual(attRefOutMsgRec.sigma_RN[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed sigma_RN unit test at t=" +
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
                                 str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
     else:
         print(testMessages)
 

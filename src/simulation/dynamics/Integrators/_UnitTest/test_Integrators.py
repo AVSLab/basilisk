@@ -82,9 +82,6 @@ def run(doUnitTests, show_plots, integratorCase):
     simulationTimeStep = macros.sec2nano(120.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
-
     #
     #   setup the simulation tasks/objects
     #

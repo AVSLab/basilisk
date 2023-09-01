@@ -177,46 +177,41 @@ def run(show_plots):
     #
 
     # set up inertial3D guidance module
-    inertial3DConfig = inertial3D.inertial3DConfig()
-    inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
-    inertial3DWrap.ModelTag = "inertial3D"
-    scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj = inertial3D.inertial3D()
+    inertial3DObj.ModelTag = "inertial3D"
+    scSim.AddModelToTask(simTaskName, inertial3DObj)
+    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # we create 2 dynamic attitude reference modules as we want to do a 1-2 Euler angle rotation
     # and the modules provide a 3-2-1 sequence.  Thus, we do a 0-0-1 321-rotation and then a 0-1-0 321-rotation
     # get a 1-2 result.
-    attGuidanceConfigEuler1 = eulerRotation.eulerRotationConfig()
-    attGuidanceWrapEuler1 = scSim.setModelDataWrap(attGuidanceConfigEuler1)
-    attGuidanceWrapEuler1.ModelTag = "eulerRotation1"
-    attGuidanceConfigEuler1.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
-    scSim.AddModelToTask(simTaskName, attGuidanceWrapEuler1, attGuidanceConfigEuler1)
+    attGuidanceEuler1 = eulerRotation.eulerRotation()
+    attGuidanceEuler1.ModelTag = "eulerRotation1"
+    attGuidanceEuler1.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
+    scSim.AddModelToTask(simTaskName, attGuidanceEuler1)
     # Make rotation 1 be 0.02 rad/s about 1 axis
-    attGuidanceConfigEuler1.angleRates = [0.0, 0.0, 0.02]
+    attGuidanceEuler1.angleRates = [0.0, 0.0, 0.02]
 
-    attGuidanceConfigEuler2 = eulerRotation.eulerRotationConfig()
-    attGuidanceWrapEuler2 = scSim.setModelDataWrap(attGuidanceConfigEuler2)
-    attGuidanceWrapEuler2.ModelTag = "eulerRotation2"
-    attGuidanceConfigEuler2.attRefInMsg.subscribeTo(attGuidanceConfigEuler1.attRefOutMsg)
-    scSim.AddModelToTask(simTaskName, attGuidanceWrapEuler2, attGuidanceConfigEuler2)
+    attGuidanceEuler2 = eulerRotation.eulerRotation()
+    attGuidanceEuler2.ModelTag = "eulerRotation2"
+    attGuidanceEuler2.attRefInMsg.subscribeTo(attGuidanceEuler1.attRefOutMsg)
+    scSim.AddModelToTask(simTaskName, attGuidanceEuler2)
     # Make rotation 2 be 0.0001 rad/s about 2 axis
-    attGuidanceConfigEuler2.angleRates = [0.0, 0.0001, 0.0]
+    attGuidanceEuler2.angleRates = [0.0, 0.0001, 0.0]
     
     # set up the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attError"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attError"
+    scSim.AddModelToTask(simTaskName, attError)
 
     # set up the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.K = 3.5
-    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.K = 3.5
+    mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     #
     # create simulation messages
@@ -229,11 +224,11 @@ def run(show_plots):
     # connect the messages to the modules
     #
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.attRefInMsg.subscribeTo(attGuidanceConfigEuler2.attRefOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attRefInMsg.subscribeTo(attGuidanceEuler2.attRefOutMsg)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     #
     # Set up data logging before the simulation is initialized
@@ -242,8 +237,8 @@ def run(show_plots):
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
     snLog = sNavObject.scStateInMsg.recorder(samplingTime)
-    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
-    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder(samplingTime)
+    attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
+    mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, snLog)
     scSim.AddModelToTask(simTaskName, snAttLog)
     scSim.AddModelToTask(simTaskName, attErrorLog)

@@ -39,6 +39,7 @@ from Basilisk.fswAlgorithms import (hillPoint, attTrackingError, mrpFeedback,
                                     pixelLineConverter, faultDetection, pixelLineBiasUKF)
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW, orbitalMotion, macros
+from Basilisk.utilities import deprecated
 
 bskPath = __path__[0]
 
@@ -73,25 +74,20 @@ class BSKFswModels():
         self.processTasksTimeStep = macros.sec2nano(fswRate)
         
         # Create module data and module wraps
-        self.hillPointData = hillPoint.hillPointConfig()
-        self.hillPointWrap = SimBase.setModelDataWrap(self.hillPointData)
-        self.hillPointWrap.ModelTag = "hillPoint"
+        self.hillPoint = hillPoint.hillPoint()
+        self.hillPoint.ModelTag = "hillPoint"
 
-        self.opNavPointData = opNavPoint.OpNavPointConfig()
-        self.opNavPointWrap = SimBase.setModelDataWrap(self.opNavPointData)
-        self.opNavPointWrap.ModelTag = "opNavPoint"
+        self.opNavPoint = opNavPoint.opNavPoint()
+        self.opNavPoint.ModelTag = "opNavPoint"
 
-        self.trackingErrorCamData = attTrackingError.attTrackingErrorConfig()
-        self.trackingErrorCamWrap = SimBase.setModelDataWrap(self.trackingErrorCamData)
-        self.trackingErrorCamWrap.ModelTag = "trackingErrorCam"
+        self.trackingErrorCam = attTrackingError.attTrackingError()
+        self.trackingErrorCam.ModelTag = "trackingErrorCam"
 
-        self.mrpFeedbackRWsData = mrpFeedback.mrpFeedbackConfig()
-        self.mrpFeedbackRWsWrap = SimBase.setModelDataWrap(self.mrpFeedbackRWsData)
-        self.mrpFeedbackRWsWrap.ModelTag = "mrpFeedbackRWs"
+        self.mrpFeedbackRWs = mrpFeedback.mrpFeedback()
+        self.mrpFeedbackRWs.ModelTag = "mrpFeedbackRWs"
         
-        self.rwMotorTorqueData = rwMotorTorque.rwMotorTorqueConfig()
-        self.rwMotorTorqueWrap = SimBase.setModelDataWrap(self.rwMotorTorqueData)
-        self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
+        self.rwMotorTorque = rwMotorTorque.rwMotorTorque()
+        self.rwMotorTorque.ModelTag = "rwMotorTorque"
 
         self.imageProcessing = houghCircles.HoughCircles()
         self.imageProcessing.ModelTag = "houghCircles"
@@ -100,32 +96,26 @@ class BSKFswModels():
             self.opNavCNN = centerRadiusCNN.CenterRadiusCNN()
             self.opNavCNN.ModelTag = "opNavCNN"
 
-        self.pixelLineData = pixelLineConverter.PixelLineConvertData()
-        self.pixelLineWrap = SimBase.setModelDataWrap(self.pixelLineData)
-        self.pixelLineWrap.ModelTag = "pixelLine"
+        self.pixelLine = pixelLineConverter.pixelLineConverter()
+        self.pixelLine.ModelTag = "pixelLine"
 
-        self.opNavFaultData = faultDetection.FaultDetectionData()
-        self.opNavFaultWrap = SimBase.setModelDataWrap(self.opNavFaultData)
-        self.opNavFaultWrap.ModelTag = "OpNav_Fault"
+        self.opNavFault = faultDetection.faultDetection()
+        self.opNavFault.ModelTag = "OpNav_Fault"
 
         self.limbFinding = limbFinding.LimbFinding()
         self.limbFinding.ModelTag = "limbFind"
 
-        self.horizonNavData = horizonOpNav.HorizonOpNavData()
-        self.horizonNavWrap = SimBase.setModelDataWrap(self.horizonNavData)
-        self.horizonNavWrap.ModelTag = "limbNav"
+        self.horizonNav = horizonOpNav.horizonOpNav()
+        self.horizonNav.ModelTag = "limbNav"
 
-        self.relativeODData = relativeODuKF.RelODuKFConfig()
-        self.relativeODWrap = SimBase.setModelDataWrap(self.relativeODData)
-        self.relativeODWrap.ModelTag = "relativeOD"
+        self.relativeOD = relativeODuKF.relativeODuKF()
+        self.relativeOD.ModelTag = "relativeOD"
 
-        self.pixelLineFilterData = pixelLineBiasUKF.PixelLineBiasUKFConfig()
-        self.pixelLineFilterWrap = SimBase.setModelDataWrap(self.pixelLineFilterData)
-        self.pixelLineFilterWrap.ModelTag = "pixelLineFilter"
+        self.pixelLineFilter = pixelLineBiasUKF.pixelLineBiasUKF()
+        self.pixelLineFilter.ModelTag = "pixelLineFilter"
 
-        self.headingUKFData = headingSuKF.HeadingSuKFConfig()
-        self.headingUKFWrap = SimBase.setModelDataWrap(self.headingUKFData)
-        self.headingUKFWrap.ModelTag = "headingUKF"
+        self.headingUKF = headingSuKF.headingSuKF()
+        self.headingUKF.ModelTag = "headingUKF"
 
         # create the FSW module gateway messages
         self.setupGatewayMsgs()
@@ -150,77 +140,77 @@ class BSKFswModels():
         SimBase.fswProc.addTask(SimBase.CreateNewTask("attODFaultDet", self.processTasksTimeStep), 9)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("cnnFaultDet", self.processTasksTimeStep), 9)
 
-        SimBase.AddModelToTask("opNavPointTask", self.imageProcessing, None, 15)
-        SimBase.AddModelToTask("opNavPointTask", self.pixelLineWrap, self.pixelLineData, 12)
-        SimBase.AddModelToTask("opNavPointTask", self.opNavPointWrap, self.opNavPointData, 9)
+        SimBase.AddModelToTask("opNavPointTask", self.imageProcessing, 15)
+        SimBase.AddModelToTask("opNavPointTask", self.pixelLine, 12)
+        SimBase.AddModelToTask("opNavPointTask", self.opNavPoint, 9)
 
-        SimBase.AddModelToTask("headingPointTask", self.imageProcessing, None, 15)
-        SimBase.AddModelToTask("headingPointTask", self.pixelLineWrap, self.pixelLineData, 12)
-        SimBase.AddModelToTask("headingPointTask", self.headingUKFWrap, self.headingUKFData, 10)
-        SimBase.AddModelToTask("headingPointTask", self.opNavPointWrap, self.opNavPointData, 9)
+        SimBase.AddModelToTask("headingPointTask", self.imageProcessing, 15)
+        SimBase.AddModelToTask("headingPointTask", self.pixelLine, 12)
+        SimBase.AddModelToTask("headingPointTask", self.headingUKF, 10)
+        SimBase.AddModelToTask("headingPointTask", self.opNavPoint, 9)
 
-        SimBase.AddModelToTask("opNavPointLimbTask", self.limbFinding, None, 25)
-        SimBase.AddModelToTask("opNavPointLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
-        SimBase.AddModelToTask("opNavPointLimbTask", self.opNavPointWrap, self.opNavPointData, 10)
+        SimBase.AddModelToTask("opNavPointLimbTask", self.limbFinding, 25)
+        SimBase.AddModelToTask("opNavPointLimbTask", self.horizonNav, 12)
+        SimBase.AddModelToTask("opNavPointLimbTask", self.opNavPoint, 10)
 
-        SimBase.AddModelToTask("opNavAttODLimbTask", self.limbFinding, None, 25)
-        SimBase.AddModelToTask("opNavAttODLimbTask", self.horizonNavWrap, self.horizonNavData, 12)
-        SimBase.AddModelToTask("opNavAttODLimbTask", self.opNavPointWrap, self.opNavPointData, 10)
-        SimBase.AddModelToTask("opNavAttODLimbTask", self.relativeODWrap, self.relativeODData, 9)
+        SimBase.AddModelToTask("opNavAttODLimbTask", self.limbFinding, 25)
+        SimBase.AddModelToTask("opNavAttODLimbTask", self.horizonNav, 12)
+        SimBase.AddModelToTask("opNavAttODLimbTask", self.opNavPoint, 10)
+        SimBase.AddModelToTask("opNavAttODLimbTask", self.relativeOD, 9)
 
-        SimBase.AddModelToTask("opNavODTaskLimb", self.limbFinding, None, 25)
-        SimBase.AddModelToTask("opNavODTaskLimb", self.horizonNavWrap, self.horizonNavData, 22)
-        SimBase.AddModelToTask("opNavODTaskLimb", self.relativeODWrap, self.relativeODData, 20)
+        SimBase.AddModelToTask("opNavODTaskLimb", self.limbFinding, 25)
+        SimBase.AddModelToTask("opNavODTaskLimb", self.horizonNav, 22)
+        SimBase.AddModelToTask("opNavODTaskLimb", self.relativeOD, 20)
 
-        SimBase.AddModelToTask("opNavPointTaskCheat", self.hillPointWrap, self.hillPointData, 10)
-        SimBase.AddModelToTask("opNavPointTaskCheat", self.trackingErrorCamWrap, self.trackingErrorCamData, 9)
+        SimBase.AddModelToTask("opNavPointTaskCheat", self.hillPoint, 10)
+        SimBase.AddModelToTask("opNavPointTaskCheat", self.trackingErrorCam, 9)
 
-        SimBase.AddModelToTask("opNavODTask", self.imageProcessing, None, 15)
-        SimBase.AddModelToTask("opNavODTask", self.pixelLineWrap, self.pixelLineData, 14)
-        SimBase.AddModelToTask("opNavODTask", self.relativeODWrap, self.relativeODData, 13)
+        SimBase.AddModelToTask("opNavODTask", self.imageProcessing, 15)
+        SimBase.AddModelToTask("opNavODTask", self.pixelLine, 14)
+        SimBase.AddModelToTask("opNavODTask", self.relativeOD, 13)
 
-        SimBase.AddModelToTask("opNavODTaskB", self.imageProcessing, None, 15)
-        SimBase.AddModelToTask("opNavODTaskB", self.pixelLineFilterWrap, self.pixelLineFilterData, 13)
+        SimBase.AddModelToTask("opNavODTaskB", self.imageProcessing, 15)
+        SimBase.AddModelToTask("opNavODTaskB", self.pixelLineFilter, 13)
 
-        SimBase.AddModelToTask("imageProcTask", self.imageProcessing, None, 15)
+        SimBase.AddModelToTask("imageProcTask", self.imageProcessing, 15)
 
-        SimBase.AddModelToTask("opNavAttODTask", self.imageProcessing, None, 15)
-        SimBase.AddModelToTask("opNavAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
-        SimBase.AddModelToTask("opNavAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
-        SimBase.AddModelToTask("opNavAttODTask", self.relativeODWrap, self.relativeODData, 9)
-
-        if centerRadiusCNNIncluded:
-            SimBase.AddModelToTask("cnnAttODTask", self.opNavCNN, None, 15)
-        SimBase.AddModelToTask("cnnAttODTask", self.pixelLineWrap, self.pixelLineData, 14)
-        SimBase.AddModelToTask("cnnAttODTask", self.opNavPointWrap, self.opNavPointData, 10)
-        SimBase.AddModelToTask("cnnAttODTask", self.relativeODWrap, self.relativeODData, 9)
-
-        SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWsWrap, self.mrpFeedbackRWsData, 9)
-        SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
-
-        SimBase.AddModelToTask("attODFaultDet", self.limbFinding, None, 25)
-        SimBase.AddModelToTask("attODFaultDet", self.horizonNavWrap, self.horizonNavData, 20)
-        SimBase.AddModelToTask("attODFaultDet", self.imageProcessing, None, 18)
-        SimBase.AddModelToTask("attODFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
-        SimBase.AddModelToTask("attODFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
-        SimBase.AddModelToTask("attODFaultDet", self.opNavPointWrap, self.opNavPointData, 10)
-        SimBase.AddModelToTask("attODFaultDet", self.relativeODWrap, self.relativeODData, 9)
-
-        SimBase.AddModelToTask("opNavFaultDet", self.limbFinding, None, 25)
-        SimBase.AddModelToTask("opNavFaultDet", self.horizonNavWrap, self.horizonNavData, 20)
-        SimBase.AddModelToTask("opNavFaultDet", self.imageProcessing, None, 18)
-        SimBase.AddModelToTask("opNavFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
-        SimBase.AddModelToTask("opNavFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
-        SimBase.AddModelToTask("opNavFaultDet", self.relativeODWrap, self.relativeODData, 9)
+        SimBase.AddModelToTask("opNavAttODTask", self.imageProcessing, 15)
+        SimBase.AddModelToTask("opNavAttODTask", self.pixelLine, 14)
+        SimBase.AddModelToTask("opNavAttODTask", self.opNavPoint, 10)
+        SimBase.AddModelToTask("opNavAttODTask", self.relativeOD, 9)
 
         if centerRadiusCNNIncluded:
-            SimBase.AddModelToTask("cnnFaultDet", self.opNavCNN, None, 25)
-            SimBase.AddModelToTask("cnnFaultDet", self.pixelLineWrap, self.pixelLineData, 20)
-            SimBase.AddModelToTask("cnnFaultDet", self.imageProcessing, None, 18)
-            SimBase.AddModelToTask("cnnFaultDet", self.pixelLineWrap, self.pixelLineData, 16)
-            SimBase.AddModelToTask("cnnFaultDet", self.opNavFaultWrap, self.opNavFaultData, 14)
-            SimBase.AddModelToTask("cnnFaultDet", self.opNavPointWrap, self.opNavPointData, 10)
-            SimBase.AddModelToTask("cnnFaultDet", self.relativeODWrap, self.relativeODData, 9)
+            SimBase.AddModelToTask("cnnAttODTask", self.opNavCNN, 15)
+        SimBase.AddModelToTask("cnnAttODTask", self.pixelLine, 14)
+        SimBase.AddModelToTask("cnnAttODTask", self.opNavPoint, 10)
+        SimBase.AddModelToTask("cnnAttODTask", self.relativeOD, 9)
+
+        SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWs, 9)
+        SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorque, 8)
+
+        SimBase.AddModelToTask("attODFaultDet", self.limbFinding, 25)
+        SimBase.AddModelToTask("attODFaultDet", self.horizonNav, 20)
+        SimBase.AddModelToTask("attODFaultDet", self.imageProcessing, 18)
+        SimBase.AddModelToTask("attODFaultDet", self.pixelLine, 16)
+        SimBase.AddModelToTask("attODFaultDet", self.opNavFault, 14)
+        SimBase.AddModelToTask("attODFaultDet", self.opNavPoint, 10)
+        SimBase.AddModelToTask("attODFaultDet", self.relativeOD, 9)
+
+        SimBase.AddModelToTask("opNavFaultDet", self.limbFinding, 25)
+        SimBase.AddModelToTask("opNavFaultDet", self.horizonNav, 20)
+        SimBase.AddModelToTask("opNavFaultDet", self.imageProcessing, 18)
+        SimBase.AddModelToTask("opNavFaultDet", self.pixelLine, 16)
+        SimBase.AddModelToTask("opNavFaultDet", self.opNavFault, 14)
+        SimBase.AddModelToTask("opNavFaultDet", self.relativeOD, 9)
+
+        if centerRadiusCNNIncluded:
+            SimBase.AddModelToTask("cnnFaultDet", self.opNavCNN, 25)
+            SimBase.AddModelToTask("cnnFaultDet", self.pixelLine, 20)
+            SimBase.AddModelToTask("cnnFaultDet", self.imageProcessing, 18)
+            SimBase.AddModelToTask("cnnFaultDet", self.pixelLine, 16)
+            SimBase.AddModelToTask("cnnFaultDet", self.opNavFault, 14)
+            SimBase.AddModelToTask("cnnFaultDet", self.opNavPoint, 10)
+            SimBase.AddModelToTask("cnnFaultDet", self.relativeOD, 9)
 
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
@@ -337,31 +327,31 @@ class BSKFswModels():
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
     def SetHillPointGuidance(self, SimBase):
-        self.hillPointData.transNavInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.transOutMsg)
-        self.hillPointData.celBodyInMsg.subscribeTo(SimBase.DynModels.ephemObject.ephemOutMsgs[0])
+        self.hillPoint.transNavInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.transOutMsg)
+        self.hillPoint.celBodyInMsg.subscribeTo(SimBase.DynModels.ephemObject.ephemOutMsgs[0])
 
     def SetOpNavPointGuidance(self, SimBase):
-        messaging.AttGuidMsg_C_addAuthor(self.opNavPointData.attGuidanceOutMsg, self.attGuidMsg)
-        self.opNavPointData.imuInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
-        self.opNavPointData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
-        self.opNavPointData.opnavDataInMsg.subscribeTo(self.opnavMsg)
-        self.opNavPointData.smallAngle = 0.001*np.pi/180.
-        self.opNavPointData.timeOut = 1000  # Max time in sec between images before engaging search
+        messaging.AttGuidMsg_C_addAuthor(self.opNavPoint.attGuidanceOutMsg, self.attGuidMsg)
+        self.opNavPoint.imuInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
+        self.opNavPoint.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.opNavPoint.opnavDataInMsg.subscribeTo(self.opnavMsg)
+        self.opNavPoint.smallAngle = 0.001*np.pi/180.
+        self.opNavPoint.timeOut = 1000  # Max time in sec between images before engaging search
         # self.opNavPointData.opNavAxisSpinRate = 0.1*np.pi/180.
-        self.opNavPointData.omega_RN_B = [0.001, 0.0, -0.001]
-        self.opNavPointData.alignAxis_C = [0., 0., 1]
+        self.opNavPoint.omega_RN_B = [0.001, 0.0, -0.001]
+        self.opNavPoint.alignAxis_C = [0., 0., 1]
 
     def SetHeadingUKF(self, SimBase):
-        self.headingUKFData.opnavDataInMsg.subscribeTo(self.opnavMsg)
-        self.headingUKFData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.headingUKF.opnavDataInMsg.subscribeTo(self.opnavMsg)
+        self.headingUKF.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
 
-        self.headingUKFData.alpha = 0.02
-        self.headingUKFData.beta = 2.0
-        self.headingUKFData.kappa = 0.0
+        self.headingUKF.alpha = 0.02
+        self.headingUKF.beta = 2.0
+        self.headingUKF.kappa = 0.0
 
-        self.headingUKFData.state = [0.0, 0., 0., 0., 0.]
-        self.headingUKFData.stateInit = [0.0, 0.0, 1.0, 0.0, 0.0]
-        self.headingUKFData.covarInit = [0.2, 0.0, 0.0, 0.0, 0.0,
+        self.headingUKF.state = [0.0, 0., 0., 0., 0.]
+        self.headingUKF.stateInit = [0.0, 0.0, 1.0, 0.0, 0.0]
+        self.headingUKF.covarInit = [0.2, 0.0, 0.0, 0.0, 0.0,
                                       0.0, 0.2, 0.0, 0.0, 0.0,
                                       0.0, 0.0, 0.2, 0.0, 0.0,
                                       0.0, 0.0, 0.0, 0.005, 0.0,
@@ -370,32 +360,32 @@ class BSKFswModels():
         qNoiseIn = np.identity(5)
         qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-6 * 1E-6
         qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5] * 1E-6 * 1E-6
-        self.headingUKFData.qNoise = qNoiseIn.reshape(25).tolist()
-        self.headingUKFData.qObsVal = 0.001
+        self.headingUKF.qNoise = qNoiseIn.reshape(25).tolist()
+        self.headingUKF.qObsVal = 0.001
 
     def SetAttTrackingErrorCam(self, SimBase):
-        self.trackingErrorCamData.attRefInMsg.subscribeTo(self.hillPointData.attRefOutMsg)
-        self.trackingErrorCamData.attNavInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
-        messaging.AttGuidMsg_C_addAuthor(self.trackingErrorCamData.attGuidOutMsg, self.attGuidMsg)
+        self.trackingErrorCam.attRefInMsg.subscribeTo(self.hillPoint.attRefOutMsg)
+        self.trackingErrorCam.attNavInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
+        messaging.AttGuidMsg_C_addAuthor(self.trackingErrorCam.attGuidOutMsg, self.attGuidMsg)
 
         M2 =  rbk.euler2(90 * macros.D2R) #rbk.euler2(-90 * macros.D2R) #
         M3 =  rbk.euler1(90 * macros.D2R) #rbk.euler3(90 * macros.D2R) #
         M_cam = rbk.MRP2C(SimBase.DynModels.cameraMRP_CB)
 
         MRP = rbk.C2MRP(np.dot(np.dot(M3, M2), M_cam)) # This assures that the s/c does not control to the hill frame, but to a rotated frame such that the camera is pointing to the planet
-        self.trackingErrorCamData.sigma_R0R = MRP
+        self.trackingErrorCam.sigma_R0R = MRP
         # self.trackingErrorCamData.sigma_R0R = [1./3+0.1, 1./3-0.1, 0.1-1/3]
 
     def SetMRPFeedbackRWA(self, SimBase):
-        self.mrpFeedbackRWsData.K = 3.5
-        self.mrpFeedbackRWsData.Ki = -1  # Note: make value negative to turn off integral feedback
-        self.mrpFeedbackRWsData.P = 30.0
-        self.mrpFeedbackRWsData.integralLimit = 2. / self.mrpFeedbackRWsData.Ki * 0.1
+        self.mrpFeedbackRWs.K = 3.5
+        self.mrpFeedbackRWs.Ki = -1  # Note: make value negative to turn off integral feedback
+        self.mrpFeedbackRWs.P = 30.0
+        self.mrpFeedbackRWs.integralLimit = 2. / self.mrpFeedbackRWs.Ki * 0.1
 
-        self.mrpFeedbackRWsData.vehConfigInMsg.subscribeTo(self.vcMsg)
-        self.mrpFeedbackRWsData.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
-        self.mrpFeedbackRWsData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
-        self.mrpFeedbackRWsData.guidInMsg.subscribeTo(self.attGuidMsg)
+        self.mrpFeedbackRWs.vehConfigInMsg.subscribeTo(self.vcMsg)
+        self.mrpFeedbackRWs.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
+        self.mrpFeedbackRWs.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
+        self.mrpFeedbackRWs.guidInMsg.subscribeTo(self.attGuidMsg)
 
     def SetVehicleConfiguration(self):
         vehicleConfigOut = messaging.VehicleConfigMsgPayload()
@@ -424,10 +414,10 @@ class BSKFswModels():
                         , 0.0, 1.0, 0.0
                         , 0.0, 0.0, 1.0
                         ]
-        self.rwMotorTorqueData.controlAxes_B = controlAxes_B
-        self.rwMotorTorqueData.vehControlInMsg.subscribeTo(self.mrpFeedbackRWsData.cmdTorqueOutMsg)
-        SimBase.DynModels.rwStateEffector.rwMotorCmdInMsg.subscribeTo(self.rwMotorTorqueData.rwMotorTorqueOutMsg)
-        self.rwMotorTorqueData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
+        self.rwMotorTorque.controlAxes_B = controlAxes_B
+        self.rwMotorTorque.vehControlInMsg.subscribeTo(self.mrpFeedbackRWs.cmdTorqueOutMsg)
+        SimBase.DynModels.rwStateEffector.rwMotorCmdInMsg.subscribeTo(self.rwMotorTorque.rwMotorTorqueOutMsg)
+        self.rwMotorTorque.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
     def SetCNNOpNav(self, SimBase):
         self.opNavCNN.imageInMsg.subscribeTo(SimBase.DynModels.cameraMod.imageOutMsg)
@@ -452,11 +442,11 @@ class BSKFswModels():
         self.imageProcessing.houghMaxRadius = 0  # int(512 / 1.25)
 
     def SetPixelLineConversion(self, SimBase):
-        self.pixelLineData.circlesInMsg.subscribeTo(self.opnavCirclesMsg)
-        self.pixelLineData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
-        self.pixelLineData.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
-        self.pixelLineData.planetTarget = 2
-        messaging.OpNavMsg_C_addAuthor(self.pixelLineData.opNavOutMsg, self.opnavMsg)
+        self.pixelLine.circlesInMsg.subscribeTo(self.opnavCirclesMsg)
+        self.pixelLine.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.pixelLine.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
+        self.pixelLine.planetTarget = 2
+        messaging.OpNavMsg_C_addAuthor(self.pixelLine.opNavOutMsg, self.opnavMsg)
 
     def SetLimbFinding(self, SimBase):
         self.limbFinding.imageInMsg.subscribeTo(SimBase.DynModels.cameraMod.imageOutMsg)
@@ -468,21 +458,21 @@ class BSKFswModels():
         self.limbFinding.limbNumThresh = 0
 
     def SetHorizonNav(self, SimBase):
-        self.horizonNavData.limbInMsg.subscribeTo(self.limbFinding.opnavLimbOutMsg)
-        self.horizonNavData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
-        self.horizonNavData.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
-        self.horizonNavData.planetTarget = 2
-        self.horizonNavData.noiseSF = 1  # 2 should work though
-        messaging.OpNavMsg_C_addAuthor(self.horizonNavData.opNavOutMsg, self.opnavMsg)
+        self.horizonNav.limbInMsg.subscribeTo(self.limbFinding.opnavLimbOutMsg)
+        self.horizonNav.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.horizonNav.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
+        self.horizonNav.planetTarget = 2
+        self.horizonNav.noiseSF = 1  # 2 should work though
+        messaging.OpNavMsg_C_addAuthor(self.horizonNav.opNavOutMsg, self.opnavMsg)
 
     def SetRelativeODFilter(self):
-        self.relativeODData.opNavInMsg.subscribeTo(self.opnavMsg)
+        self.relativeOD.opNavInMsg.subscribeTo(self.opnavMsg)
 
-        self.relativeODData.planetIdInit = 2
-        self.relativeODData.alpha = 0.02
-        self.relativeODData.beta = 2.0
-        self.relativeODData.kappa = 0.0
-        self.relativeODData.noiseSF = 7.5
+        self.relativeOD.planetIdInit = 2
+        self.relativeOD.alpha = 0.02
+        self.relativeOD.beta = 2.0
+        self.relativeOD.kappa = 0.0
+        self.relativeOD.noiseSF = 7.5
 
         mu = 42828.314 * 1E9  # m^3/s^2
         elementsInit = orbitalMotion.ClassicElements()
@@ -494,8 +484,8 @@ class BSKFswModels():
         elementsInit.f = 40 * macros.D2R
         r, v = orbitalMotion.elem2rv(mu, elementsInit)
 
-        self.relativeODData.stateInit = r.tolist() + v.tolist()
-        self.relativeODData.covarInit = [1. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0,
+        self.relativeOD.stateInit = r.tolist() + v.tolist()
+        self.relativeOD.covarInit = [1. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0,
                                           0.0, 1. * 1E6, 0.0, 0.0, 0.0, 0.0,
                                           0.0, 0.0, 1. * 1E6, 0.0, 0.0, 0.0,
                                           0.0, 0.0, 0.0, 0.02 * 1E6, 0.0, 0.0,
@@ -505,27 +495,27 @@ class BSKFswModels():
         qNoiseIn = np.identity(6)
         qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-3 * 1E-3
         qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1E-4 * 1E-4
-        self.relativeODData.qNoise = qNoiseIn.reshape(36).tolist()
+        self.relativeOD.qNoise = qNoiseIn.reshape(36).tolist()
 
     def SetFaultDetection(self, SimBase):
-        self.opNavFaultData.navMeasPrimaryInMsg.subscribeTo(self.opnavPrimaryMsg)
-        self.opNavFaultData.navMeasSecondaryInMsg.subscribeTo(self.opnavSecondaryMsg)
-        self.opNavFaultData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
-        self.opNavFaultData.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
-        messaging.OpNavMsg_C_addAuthor(self.opNavFaultData.opNavOutMsg, self.opnavMsg)
-        self.opNavFaultData.sigmaFault = 0.3
-        self.opNavFaultData.faultMode = 0
+        self.opNavFault.navMeasPrimaryInMsg.subscribeTo(self.opnavPrimaryMsg)
+        self.opNavFault.navMeasSecondaryInMsg.subscribeTo(self.opnavSecondaryMsg)
+        self.opNavFault.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.opNavFault.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
+        messaging.OpNavMsg_C_addAuthor(self.opNavFault.opNavOutMsg, self.opnavMsg)
+        self.opNavFault.sigmaFault = 0.3
+        self.opNavFault.faultMode = 0
 
     def SetPixelLineFilter(self, SimBase):
-        self.pixelLineFilterData.circlesInMsg.subscribeTo(self.opnavCirclesMsg)
-        self.pixelLineFilterData.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
-        self.pixelLineFilterData.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
+        self.pixelLineFilter.circlesInMsg.subscribeTo(self.opnavCirclesMsg)
+        self.pixelLineFilter.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.pixelLineFilter.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
 
-        self.pixelLineFilterData.planetIdInit = 2
-        self.pixelLineFilterData.alpha = 0.02
-        self.pixelLineFilterData.beta = 2.0
-        self.pixelLineFilterData.kappa = 0.0
-        self.pixelLineFilterData.gamma = 0.9
+        self.pixelLineFilter.planetIdInit = 2
+        self.pixelLineFilter.alpha = 0.02
+        self.pixelLineFilter.beta = 2.0
+        self.pixelLineFilter.kappa = 0.0
+        self.pixelLineFilter.gamma = 0.9
 
         mu = 42828.314 * 1E9  # m^3/s^2
         elementsInit = orbitalMotion.ClassicElements()
@@ -538,8 +528,8 @@ class BSKFswModels():
         r, v = orbitalMotion.elem2rv(mu, elementsInit)
         bias = [1, 1, 2]
 
-        self.pixelLineFilterData.stateInit = r.tolist() + v.tolist() + bias
-        self.pixelLineFilterData.covarInit = [10. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        self.pixelLineFilter.stateInit = r.tolist() + v.tolist() + bias
+        self.pixelLineFilter.covarInit = [10. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                               0.0, 10. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                               0.0, 0.0, 10. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                               0.0, 0.0, 0.0, 0.01 * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -553,7 +543,7 @@ class BSKFswModels():
         qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-3 * 1E-3
         qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1E-4 * 1E-4
         qNoiseIn[6:9, 6:9] = qNoiseIn[6:9, 6:9] * 1E-8 * 1E-8
-        self.pixelLineFilterData.qNoise = qNoiseIn.reshape(9 * 9).tolist()
+        self.pixelLineFilter.qNoise = qNoiseIn.reshape(9 * 9).tolist()
 
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
@@ -602,4 +592,211 @@ class BSKFswModels():
 
         self.opnavCirclesMsg.write(messaging.OpNavCirclesMsgPayload())
 
+    @property
+    def hillPointData(self):
+        return self.hillPoint
+
+    hillPointData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to hillPointData as hillPoint",
+        hillPointData)
+
+    @property
+    def hillPointWrap(self):
+        return self.hillPoint
+
+    hillPointWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to hillPointWrap as hillPoint",
+        hillPointWrap)
+
+
+    @property
+    def opNavPointData(self):
+        return self.opNavPoint
+
+    opNavPointData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to opNavPointData as opNavPoint",
+        opNavPointData)
+
+    @property
+    def opNavPointWrap(self):
+        return self.opNavPoint
+
+    opNavPointWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to opNavPointWrap as opNavPoint",
+        opNavPointWrap)
+
+
+    @property
+    def trackingErrorCamData(self):
+        return self.trackingErrorCam
+
+    trackingErrorCamData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to trackingErrorCamData as trackingErrorCam",
+        trackingErrorCamData)
+
+    @property
+    def trackingErrorCamWrap(self):
+        return self.trackingErrorCam
+
+    trackingErrorCamWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to trackingErrorCamWrap as trackingErrorCam",
+        trackingErrorCamWrap)
+
+
+    @property
+    def mrpFeedbackRWsData(self):
+        return self.mrpFeedbackRWs
+
+    mrpFeedbackRWsData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to mrpFeedbackRWsData as mrpFeedbackRWs",
+        mrpFeedbackRWsData)
+
+    @property
+    def mrpFeedbackRWsWrap(self):
+        return self.mrpFeedbackRWs
+
+    mrpFeedbackRWsWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to mrpFeedbackRWsWrap as mrpFeedbackRWs",
+        mrpFeedbackRWsWrap)
+
+
+    @property
+    def rwMotorTorqueData(self):
+        return self.rwMotorTorque
+
+    rwMotorTorqueData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to rwMotorTorqueData as rwMotorTorque",
+        rwMotorTorqueData)
+
+    @property
+    def rwMotorTorqueWrap(self):
+        return self.rwMotorTorque
+
+    rwMotorTorqueWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to rwMotorTorqueWrap as rwMotorTorque",
+        rwMotorTorqueWrap)
+
+
+    @property
+    def pixelLineData(self):
+        return self.pixelLine
+
+    pixelLineData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to pixelLineData as pixelLine",
+        pixelLineData)
+
+    @property
+    def pixelLineWrap(self):
+        return self.pixelLine
+
+    pixelLineWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to pixelLineWrap as pixelLine",
+        pixelLineWrap)
+
+
+    @property
+    def opNavFaultData(self):
+        return self.opNavFault
+
+    opNavFaultData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to opNavFaultData as opNavFault",
+        opNavFaultData)
+
+    @property
+    def opNavFaultWrap(self):
+        return self.opNavFault
+
+    opNavFaultWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to opNavFaultWrap as opNavFault",
+        opNavFaultWrap)
+
+
+    @property
+    def horizonNavData(self):
+        return self.horizonNav
+
+    horizonNavData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to horizonNavData as horizonNav",
+        horizonNavData)
+
+    @property
+    def horizonNavWrap(self):
+        return self.horizonNav
+
+    horizonNavWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to horizonNavWrap as horizonNav",
+        horizonNavWrap)
+
+
+    @property
+    def relativeODData(self):
+        return self.relativeOD
+
+    relativeODData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to relativeODData as relativeOD",
+        relativeODData)
+
+    @property
+    def relativeODWrap(self):
+        return self.relativeOD
+
+    relativeODWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to relativeODWrap as relativeOD",
+        relativeODWrap)
+
+
+    @property
+    def pixelLineFilterData(self):
+        return self.pixelLineFilter
+
+    pixelLineFilterData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to pixelLineFilterData as pixelLineFilter",
+        pixelLineFilterData)
+
+    @property
+    def pixelLineFilterWrap(self):
+        return self.pixelLineFilter
+
+    pixelLineFilterWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to pixelLineFilterWrap as pixelLineFilter",
+        pixelLineFilterWrap)
+
+
+    @property
+    def headingUKFData(self):
+        return self.headingUKF
+
+    headingUKFData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to headingUKFData as headingUKF",
+        headingUKFData)
+
+    @property
+    def headingUKFWrap(self):
+        return self.headingUKF
+
+    headingUKFWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to headingUKFWrap as headingUKF",
+        headingUKFWrap)
 # BSKFswModels()

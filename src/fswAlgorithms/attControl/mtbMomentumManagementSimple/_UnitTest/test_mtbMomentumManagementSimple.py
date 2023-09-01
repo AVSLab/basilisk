@@ -74,11 +74,10 @@ def mtbMomentumManagementSimpleTestFunction():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = mtbMomentumManagementSimple.mtbMomentumManagementSimpleConfig()  # update with current values
-    moduleConfig.Kp = 0.003
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "mtbMomentumManagementSimple"           # update python name of test module
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    module = mtbMomentumManagementSimple.mtbMomentumManagementSimple()
+    module.Kp = 0.003
+    module.ModelTag = "mtbMomentumManagementSimple"           # update python name of test module
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # wheelConfigData message (column major format)
     rwConfigParams = messaging.RWArrayConfigMsgPayload()
@@ -94,12 +93,12 @@ def mtbMomentumManagementSimpleTestFunction():
     rwSpeedsInMsg = messaging.RWSpeedMsg().write(rwSpeedsInMsgContainer)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    resultTauMtbRequestOutMsg = moduleConfig.tauMtbRequestOutMsg.recorder()
+    resultTauMtbRequestOutMsg = module.tauMtbRequestOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, resultTauMtbRequestOutMsg)
 
     # connect the message interfaces
-    moduleConfig.rwParamsInMsg.subscribeTo(rwParamsInMsg)
-    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
+    module.rwParamsInMsg.subscribeTo(rwParamsInMsg)
+    module.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
     
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -125,7 +124,7 @@ def mtbMomentumManagementSimpleTestFunction():
     wheelSpeeds = np.array(rwSpeedsInMsgContainer.wheelSpeeds[0:4])
     hWheels_W = wheelSpeeds * rwConfigParams.JsList[0]
     hWheels_B  = Gs @ hWheels_W
-    tauExpected = - moduleConfig.Kp * hWheels_B
+    tauExpected = - module.Kp * hWheels_B
     
     testFailCount, testMessages = unitTestSupport.compareVector(tauExpected,
                                                             resultTauMtbRequestOutMsg.torqueRequestBody[0][0:3],
@@ -140,7 +139,7 @@ def mtbMomentumManagementSimpleTestFunction():
     '''
     rwSpeedsInMsgContainer.wheelSpeeds = [0., 0., 0., 0.]
     rwSpeedsInMsg = messaging.RWSpeedMsg().write(rwSpeedsInMsgContainer)
-    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
+    module.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
     
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
@@ -158,9 +157,9 @@ def mtbMomentumManagementSimpleTestFunction():
     '''
     rwSpeedsInMsgContainer.wheelSpeeds = [100., 200., 300., 400.]
     rwSpeedsInMsg = messaging.RWSpeedMsg().write(rwSpeedsInMsgContainer)
-    moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
+    module.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
     
-    moduleConfig.Kp = 0.
+    module.Kp = 0.
     
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
@@ -173,7 +172,7 @@ def mtbMomentumManagementSimpleTestFunction():
     
     
     # reset the module to test this functionality
-    moduleWrap.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
+    module.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
 
 
 

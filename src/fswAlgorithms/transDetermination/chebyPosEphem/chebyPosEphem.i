@@ -22,15 +22,10 @@
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_chebyPosEphem(void*, uint64_t, uint64_t);
-%ignore Update_chebyPosEphem;
-%constant void SelfInit_chebyPosEphem(void*, uint64_t);
-%ignore SelfInit_chebyPosEphem;
-%constant void Reset_chebyPosEphem(void*, uint64_t, uint64_t);
-%ignore Reset_chebyPosEphem;
 STRUCTASLIST(ChebyEphemRecord)
 
-%include "chebyPosEphem.h"
+%include "swig_c_wrap.i"
+%c_wrap_2(chebyPosEphem, ChebyPosEphemData);
 
 %include "architecture/msgPayloadDefC/TDBVehicleClockCorrelationMsgPayload.h"
 struct TDBVehicleClockCorrelationMsg_C;

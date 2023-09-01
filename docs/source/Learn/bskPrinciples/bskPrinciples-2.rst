@@ -1,7 +1,7 @@
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/JykP4zMAaBg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/onv0jUOhBNM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 .. _bskPrinciples-2:
 
@@ -25,57 +25,36 @@ The following simulation creates a single process called ``dynamicsProcess`` and
    :linenos:
    :lines: 18-
 
-The resulting demonstration code is shown above.  Note that the C-based :ref:`cModuleTemplate` must be imported from ``Basilisk.fswAlgorithm`` at the top of the file.
+The resulting demonstration code is shown above. Let us create some module ``someModule.someModule`` and give it a unique name.  This is done as::
 
-Next we create a copy of the C-based Basilisk module.  Let's discuss this process considering a generic module name ``someCModule``.  As C code doesn't know about class objects, in Basilisk we have to recreate some of the basic features of an object oriented language like C++.  Instead of having class variables, the data of the C module is stored in the ``someCModuleConfig`` data structure.  For :ref:`cModuleTemplate` you find this module configuration structure listed at the bottom of that web page, or you can see the structure definition in the ``someCModule.h`` header file.  Thus, to create a python copy of this module configuration structure use::
+    module = someModule.someModule()
+    module.ModelTag = "someModuleName"
 
-    moduleData = someCModule.someCModuleConfig()
+With BSK C-modules the module name is repeated.  With C++ modules the first variable is the module name, the second
+variable is the module class name which begins with a capital letter.  See the above script for examples of each.
 
-In the code example above this step is done on lines 22 and 29.
+The next step is to add this module to the task list, so that they are executed during simulation::
 
-Next, for Basilisk to be able to execute this module, we need to wrap this module data structure with a C++ interface.  These steps make it possible to have multiple C module copies be created that don't conflict with each other.  The module wrapped is done with::
+    scSim.AddModelToTask("taskName", module, priority)
 
-    moduleWrap = scSim.setModelDataWrap(moduleData)
-
-Each Basilisk module should have a unique name.  This is set using::
-
-    moduleWrap.ModelTag = "someModuleName"
-
-In the code above you see these steps repeated two times to create two distinct copies of :ref:`cModuleTemplate`.  The next step is to add these modules to the task list to execute them in the desired order.  The general command to add a C-based module to a task is::
-
-    scSim.AddModelToTask("taskName", moduleWrap, moduleData, priority)
-
-The first argument is the name of the task to which you are adding the module.  The 2nd and 3rd arguments are the module wrapper and module data variables.  The last argument is the optional integer priority argument.
+The first argument is the name of the task to which you are adding the module.  The 2nd argument is the module.  The last argument is the optional integer priority argument.
 
 .. warning::
 
     If ``priority`` argument is not provided, then the priority defaults to -1 and the modules are executed in the order that they are added, but after modules with priority have been executed.  This is the same behavior as what we saw with processes and tasks earlier.
 
-If the BSK module being added is a C++ module, then the above steps are simplified to the following.  Let the module be called ``someCppModule``.  As this is a C++ class, we don't need to create a data structure and wrap it as we do with a C module.  Rather, we can get an instance of the C++ module using::
-
-    mod = someCppModule.SomeCppModule()
-    mod.ModelTag = "moduleName"
-
-To add this to a task use::
-
-    scSim.AddModelToTask("taskName", mod, None, priority)
-
-The 3rd argument is ``None`` as the module data is already contained in the module class.  To add a module without specifying the priority you can use this shorter version as well::
-
-    scSim.AddModelToTask("taskName", mod)
-
-In the above python script, the tutorial C++ :ref:`cppModuleTemplate` is imported from ``Basilisk.simulation``. Next, while the 1st and 3rd module are instances of the C module, the 2nd module is an instance of the equivalent C++ module.
+In the above python script, the tutorial C++ :ref:`cppModuleTemplate` is imported from ``Basilisk.simulation``, while the C-based :ref:`cModuleTemplate` must be imported from ``Basilisk.fswAlgorithm``. Next, while the 1st and 3rd module are instances of the C module, the 2nd module is an instance of the equivalent C++ module.
 
 .. note::
 
-    Basilisk assigns unique positive ID numbers to C/C++ modules upon their creation.  Thus, in the above simulation code the modules 1, 2 and 3 will have the corresponding ID numbers 1, 2 and 3 because that is the order in which they are created.
+    Basilisk assigns unique positive ID numbers to C/C++/Python modules upon their creation.  Thus, in the above simulation code the modules 1, 2 and 3 will have the corresponding ID numbers 1, 2 and 3 because that is the order in which they are created.
 
 
 Looking at the above simulation code, note that ``Module1`` is added to the task list without any priority specified.  In contrasts, ``Module2`` and ``Module3`` have the priorities 10 and 5 assigned.  The higher the module priority, the earlier it is evaluated.
 
 .. note::
 
-    The task list can contain both C and C++ based Basilisk modules at the same time.
+    The task list can contain, C, C++ and even Python based Basilisk modules at the same time. Python modules are discussed in :ref:`pyModules`.
 
 If you execute this python code you should see the following terminal output:
 
@@ -97,5 +76,3 @@ If you execute this python code you should see the following terminal output:
 :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` log in the ``Reset()`` method that a variable has been set to 0.  As we have three such modules, notice that this reset statement is seen three times.  This reset step occurs when we run ``scSim.InitializeSimulation()``.
 
 After the initialization, Basilisk starts the time loop evaluating the modules at the specified rate.  The ``Update()`` routine in both :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` print out the module ID and the simulation time where the module is called.  Note that thanks to the module evaluation priorities we set, the desired module execution order is achieved.
-
-

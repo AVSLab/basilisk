@@ -430,7 +430,7 @@ def createScenarioAttitudeFeedbackRW():
     scSim.hubref = scObject.hub
 
     # add spacecraft object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject, None, 1)
+    scSim.AddModelToTask(simTaskName, scObject, 1)
 
     rwVoltageIO = motorVoltageInterface.MotorVoltageInterface()
     rwVoltageIO.ModelTag = "rwVoltageInterface"
@@ -493,7 +493,7 @@ def createScenarioAttitudeFeedbackRW():
     scSim.RW2 = RW2
     scSim.RW3 = RW3
     # add RW object array to the simulation process
-    scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
+    scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
@@ -519,64 +519,59 @@ def createScenarioAttitudeFeedbackRW():
     fswRwConfMsg = fswSetupRW.writeConfigMessage()
 
     # setup inertial3D guidance module
-    inertial3DConfig = inertial3D.inertial3DConfig()
-    inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
-    inertial3DWrap.ModelTag = "inertial3D"
-    scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
+    inertial3DObj = inertial3D.inertial3D()
+    inertial3DObj.ModelTag = "inertial3D"
+    scSim.AddModelToTask(simTaskName, inertial3DObj)
+    inertial3DObj.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
+    attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControlConfig.rwParamsInMsg.subscribeTo(fswRwConfMsg)
-    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    mrpControlConfig.K  =   3.5
-    mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
-    mrpControlConfig.P  = 30.0
-    mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControl.rwParamsInMsg.subscribeTo(fswRwConfMsg)
+    mrpControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    mrpControl.K  =   3.5
+    mrpControl.Ki =   -1          # make value negative to turn off integral feedback
+    mrpControl.P  = 30.0
+    mrpControl.integralLimit = 2./mrpControl.Ki * 0.1
 
     # add module that maps the Lr control torque into the RW motor torques
-    rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
-    rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
-    rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
-    scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
+    rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
+    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
     # Initialize the test module msg names
-    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
-    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwConfMsg)
+    rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
+    rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwConfMsg)
     # Make the RW control all three body axes
     controlAxes_B = [
              1,0,0
             ,0,1,0
             ,0,0,1
         ]
-    rwMotorTorqueConfig.controlAxes_B = controlAxes_B
+    rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
-    fswRWVoltageConfig = rwMotorVoltage.rwMotorVoltageConfig()
-    fswRWVoltageWrap = scSim.setModelDataWrap(fswRWVoltageConfig)
-    fswRWVoltageWrap.ModelTag = "rwMotorVoltage"
+    fswRWVoltage = rwMotorVoltage.rwMotorVoltage()
+    fswRWVoltage.ModelTag = "rwMotorVoltage"
 
     # Add test module to runtime call list
-    scSim.AddModelToTask(simTaskName, fswRWVoltageWrap, fswRWVoltageConfig)
+    scSim.AddModelToTask(simTaskName, fswRWVoltage)
 
     # Initialize the test module configuration data
-    fswRWVoltageConfig.torqueInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
-    fswRWVoltageConfig.rwParamsInMsg.subscribeTo(fswRwConfMsg)
-    rwVoltageIO.motorVoltageInMsg.subscribeTo(fswRWVoltageConfig.voltageOutMsg)
+    fswRWVoltage.torqueInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
+    fswRWVoltage.rwParamsInMsg.subscribeTo(fswRwConfMsg)
+    rwVoltageIO.motorVoltageInMsg.subscribeTo(fswRWVoltage.voltageOutMsg)
     # set module parameters
-    fswRWVoltageConfig.VMin = 0.0  # Volts
-    fswRWVoltageConfig.VMax = 10.0  # Volts
+    fswRWVoltage.VMin = 0.0  # Volts
+    fswRWVoltage.VMax = 10.0  # Volts
 
     #
     #   set initial Spacecraft States
@@ -599,10 +594,10 @@ def createScenarioAttitudeFeedbackRW():
     # when the simulation ends
     scSim.msgRecList = {}
 
-    scSim.msgRecList[rwMotorTorqueMsgName] = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
+    scSim.msgRecList[rwMotorTorqueMsgName] = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[rwMotorTorqueMsgName])
 
-    scSim.msgRecList[guidMsgName] = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    scSim.msgRecList[guidMsgName] = attError.attGuidOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[guidMsgName])
 
     scSim.msgRecList[transMsgName] = sNavObject.transOutMsg.recorder(samplingTime)
@@ -611,7 +606,7 @@ def createScenarioAttitudeFeedbackRW():
     scSim.msgRecList[rwSpeedMsgName] = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[rwSpeedMsgName])
 
-    scSim.msgRecList[voltMsgName] = fswRWVoltageConfig.voltageOutMsg.recorder(samplingTime)
+    scSim.msgRecList[voltMsgName] = fswRWVoltage.voltageOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[voltMsgName])
 
     c = 0
@@ -622,7 +617,7 @@ def createScenarioAttitudeFeedbackRW():
 
     # This is a hack because of a bug in Basilisk... leave this line it keeps
     # variables from going out of scope after this function returns
-    scSim.additionalReferences = [rwVoltageIO, fswRWVoltageWrap, scObject, earth, rwMotorTorqueWrap, mrpControlWrap, attErrorWrap, inertial3DWrap]
+    scSim.additionalReferences = [rwVoltageIO, fswRWVoltage, scObject, earth, rwMotorTorqueObj, mrpControl, attError, inertial3DObj]
 
     return scSim
 

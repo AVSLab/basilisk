@@ -23,13 +23,10 @@
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_sunlineSuKF(void*, uint64_t, uint64_t);
-%ignore Update_sunlineSuKF;
-%constant void SelfInit_sunlineSuKF(void*, uint64_t);
-%ignore SelfInit_sunlineSuKF;
-%constant void Reset_sunlineSuKF(void*, uint64_t, uint64_t);
-%ignore Reset_sunlineSuKF;
 STRUCTASLIST(SunlineSuKFCFit)
+
+%include "swig_c_wrap.i"
+%c_wrap_2(sunlineSuKF, SunlineSuKFConfig);
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
@@ -40,7 +37,6 @@ struct SunlineFilterMsg_C;
 %include "architecture/msgPayloadDefC/CSSConfigMsgPayload.h"
 struct CSSConfigMsg_C;
 
-%include "sunlineSuKF.h"
 %include "architecture/utilities/ukfUtilities.h"
 
 %pythoncode %{

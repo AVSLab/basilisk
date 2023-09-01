@@ -228,8 +228,8 @@ def run(show_plots):
     scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I2)
 
     # add spacecraft object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject, None, 1)
-    scSim.AddModelToTask(simTaskName, scObject2, None, 2)
+    scSim.AddModelToTask(simTaskName, scObject, 1)
+    scSim.AddModelToTask(simTaskName, scObject2, 2)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -284,7 +284,7 @@ def run(show_plots):
     rwFactory.addToSpacecraft("chiefRW", rwStateEffector, scObject)
 
     # add RW object array to the simulation process
-    scSim.AddModelToTask(simTaskName, rwStateEffector, None, 4)
+    scSim.AddModelToTask(simTaskName, rwStateEffector, 4)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
@@ -311,42 +311,38 @@ def run(show_plots):
     #
 
     # setup hillPoint guidance module
-    hillPointingConfig = hillPoint.hillPointConfig()
-    hillPointingWrap = scSim.setModelDataWrap(hillPointingConfig)
-    hillPointingWrap.ModelTag = "hillPoint"
-    hillPointingConfig.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
-    hillPointingConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
-    scSim.AddModelToTask(simTaskName, hillPointingWrap, hillPointingConfig)
+    hillPointing = hillPoint.hillPoint()
+    hillPointing.ModelTag = "hillPoint"
+    hillPointing.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
+    hillPointing.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
+    scSim.AddModelToTask(simTaskName, hillPointing)
 
     # setup spacecraftPointing guidance module
-    scPointingConfig = locationPointing.locationPointingConfig()
-    scPointingWrap = scSim.setModelDataWrap(scPointingConfig)
-    scPointingWrap.ModelTag = "scPointing"
-    scPointingConfig.pHat_B = [1, 0, 0]
-    scPointingConfig.useBoresightRateDamping = 1
-    scPointingConfig.scTargetInMsg.subscribeTo(sNavObject2.transOutMsg)
-    scPointingConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    scPointingConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
-    scSim.AddModelToTask(simTaskName, scPointingWrap, scPointingConfig)
+    scPointing = locationPointing.locationPointing()
+    scPointing.ModelTag = "scPointing"
+    scPointing.pHat_B = [1, 0, 0]
+    scPointing.useBoresightRateDamping = 1
+    scPointing.scTargetInMsg.subscribeTo(sNavObject2.transOutMsg)
+    scPointing.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    scPointing.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    scSim.AddModelToTask(simTaskName, scPointing)
 
     # setup sunPointing guidance module
-    sunPointingConfig = locationPointing.locationPointingConfig()
-    sunPointingWrap = scSim.setModelDataWrap(sunPointingConfig)
-    sunPointingWrap.ModelTag = "scPointing"
-    sunPointingConfig.pHat_B = [0, 0, 1]
-    sunPointingConfig.useBoresightRateDamping = 1
-    sunPointingConfig.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[sunIdx])
-    sunPointingConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    sunPointingConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
-    scSim.AddModelToTask(simTaskName, sunPointingWrap, sunPointingConfig)
+    sunPointing = locationPointing.locationPointing()
+    sunPointing.ModelTag = "scPointing"
+    sunPointing.pHat_B = [0, 0, 1]
+    sunPointing.useBoresightRateDamping = 1
+    sunPointing.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[sunIdx])
+    sunPointing.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    sunPointing.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    scSim.AddModelToTask(simTaskName, sunPointing)
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
-    attErrorConfig.attRefInMsg.subscribeTo(scPointingConfig.attRefOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
+    attError.attRefInMsg.subscribeTo(scPointing.attRefOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
@@ -357,41 +353,39 @@ def run(show_plots):
     fswRwMsg = rwFactory.getConfigMessage()
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControlConfig.rwParamsInMsg.subscribeTo(fswRwMsg)
-    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    mrpControlConfig.K = 3.5
-    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControl.rwParamsInMsg.subscribeTo(fswRwMsg)
+    mrpControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    mrpControl.K = 3.5
+    mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     # add module that maps the Lr control torque into the RW motor torques
-    rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
-    rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
-    rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
-    scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
+    rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
+    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
     # Initialize the test module msg names
-    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
-    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwMsg)
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
+    rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
+    rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwMsg)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
     # Make the RW control all three body axes
     controlAxes_B = [
         1, 0, 0, 0, 1, 0, 0, 0, 1
     ]
-    rwMotorTorqueConfig.controlAxes_B = controlAxes_B
+    rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
-    rwCmdLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
-    attErrLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    rwCmdLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
+    attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     sNavLog = sNavObject.transOutMsg.recorder(samplingTime)
     rwSpeedLog = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, rwCmdLog)
@@ -469,16 +463,16 @@ def run(show_plots):
 
     # Set up flight modes
     def fswTargetPointing():
-        attErrorConfig.attRefInMsg.subscribeTo(scPointingConfig.attRefOutMsg)
-        attErrorConfig.sigma_R0R = [0, 0, 0]
+        attError.attRefInMsg.subscribeTo(scPointing.attRefOutMsg)
+        attError.sigma_R0R = [0, 0, 0]
 
     def fswSunPointing():
-        attErrorConfig.attRefInMsg.subscribeTo(sunPointingConfig.attRefOutMsg)
-        attErrorConfig.sigma_R0R = [0, 0, 0]
+        attError.attRefInMsg.subscribeTo(sunPointing.attRefOutMsg)
+        attError.sigma_R0R = [0, 0, 0]
 
     def fswHillPointing():
-        attErrorConfig.attRefInMsg.subscribeTo(hillPointingConfig.attRefOutMsg)
-        attErrorConfig.sigma_R0R = [0.0, 0.0, -0.414214]
+        attError.attRefInMsg.subscribeTo(hillPointing.attRefOutMsg)
+        attError.sigma_R0R = [0.0, 0.0, -0.414214]
 
     def runSim(simTime):
         nonlocal simulationTime

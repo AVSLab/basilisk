@@ -12,5 +12,6 @@ This section covers how to write a C Basilisk Module.  A sample C Basilisk modul
    cModules/cModules-2
    cModules/cModules-3
    cModules/cModules-4
+   cModules/cModules-5
 
 

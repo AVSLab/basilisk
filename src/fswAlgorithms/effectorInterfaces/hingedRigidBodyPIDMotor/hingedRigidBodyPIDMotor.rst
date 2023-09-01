@@ -48,13 +48,12 @@ User Guide
 ----------
 The required module configuration is::
 
-    motorConfig = hingedRigidBodyPIDMotorConfig.hingedRigidBodyPIDMotorConfig()
-    motorWrap = unitTestSim.setModelDataWrap(motorConfig)
-    motorWrap.ModelTag = "solarArrayPDController"  
-    motorConfig.K = K
-    motorConfig.P = P
-    motorConfig.P = I
-    unitTestSim.AddModelToTask(unitTaskName, motorWrap, motorConfig)
+    motor = hingedRigidBodyPIDMotorConfig.hingedRigidBodyPIDMotorConfig()
+    motor.ModelTag = "solarArrayPDController"  
+    motor.K = K
+    motor.P = P
+    motor.P = I
+    unitTestSim.AddModelToTask(unitTaskName, motor)
 	
 The module is configurable with the following parameters:
 

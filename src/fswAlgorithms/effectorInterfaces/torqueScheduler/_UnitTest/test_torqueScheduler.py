@@ -94,29 +94,28 @@ def torqueSchedulerTestFunction(lockFlag, tSwitch, accuracy):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C container
-    schedulerConfig = torqueScheduler.torqueSchedulerConfig()
-    schedulerWrap = unitTestSim.setModelDataWrap(schedulerConfig)
-    schedulerWrap.ModelTag = "torqueScheduler"
-    schedulerConfig.lockFlag = lockFlag
-    schedulerConfig.tSwitch = tSwitch
-    unitTestSim.AddModelToTask(unitTaskName, schedulerWrap, schedulerConfig)
+    scheduler = torqueScheduler.torqueScheduler()
+    scheduler.ModelTag = "torqueScheduler"
+    scheduler.lockFlag = lockFlag
+    scheduler.tSwitch = tSwitch
+    unitTestSim.AddModelToTask(unitTaskName, scheduler)
 
     # Create input array motor torque msg #1
     motorTorque1InMsgData = messaging.ArrayMotorTorqueMsgPayload()
     motorTorque1InMsgData.motorTorque = [1]
     motorTorque1InMsg = messaging.ArrayMotorTorqueMsg().write(motorTorque1InMsgData)
-    schedulerConfig.motorTorque1InMsg.subscribeTo(motorTorque1InMsg)
+    scheduler.motorTorque1InMsg.subscribeTo(motorTorque1InMsg)
 
     # Create input array motor torque msg #2
     motorTorque2InMsgData = messaging.ArrayMotorTorqueMsgPayload()
     motorTorque2InMsgData.motorTorque = [3]
     motorTorque2InMsg = messaging.ArrayMotorTorqueMsg().write(motorTorque2InMsgData)
-    schedulerConfig.motorTorque2InMsg.subscribeTo(motorTorque2InMsg)
+    scheduler.motorTorque2InMsg.subscribeTo(motorTorque2InMsg)
 
     # Setup logging on the test module output messages so that we get all the writes to it
-    torqueLog = schedulerConfig.motorTorqueOutMsg.recorder()
+    torqueLog = scheduler.motorTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, torqueLog)
-    lockLog = schedulerConfig.effectorLockOutMsg.recorder()
+    lockLog = scheduler.effectorLockOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, lockLog)
 
     # Need to call the self-init and cross-init methods
@@ -137,55 +136,55 @@ def torqueSchedulerTestFunction(lockFlag, tSwitch, accuracy):
     for i in range(len(time)):
         if not unitTestSupport.isDoubleEqual(torqueLog.motorTorque[i][0], motorTorque1InMsgData.motorTorque[0], accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at passing motor torque #1 value")
+            testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at passing motor torque #1 value")
         if not unitTestSupport.isDoubleEqual(torqueLog.motorTorque[i][1], motorTorque2InMsgData.motorTorque[0], accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at passing motor torque #2 value")
+            testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at passing motor torque #2 value")
 
         if lockFlag == 0:
             if not unitTestSupport.isDoubleEqual(lockLog.effectorLockFlag[i][0], 0, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at outputting effector flag #1")
+                testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at outputting effector flag #1")
             if not unitTestSupport.isDoubleEqual(lockLog.effectorLockFlag[i][1], 0, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at outputting effector flag #2")
+                testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at outputting effector flag #2")
         elif lockFlag == 1:
             if time[i] > tSwitch:
                 if not unitTestSupport.isDoubleEqual(lockLog.effectorLockFlag[i][0], 1, accuracy):
                     testFailCount += 1
-                    testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at outputting effector flag #1")
+                    testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at outputting effector flag #1")
                 if not unitTestSupport.isDoubleEqual(lockLog.effectorLockFlag[i][1], 0, accuracy):
                     testFailCount += 1
-                    testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at outputting effector flag #2")
+                    testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at outputting effector flag #2")
             else:
                 if not unitTestSupport.isDoubleEqual(lockLog.effectorLockFlag[i][0], 0, accuracy):
                     testFailCount += 1
-                    testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at outputting effector flag #1")
+                    testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at outputting effector flag #1")
                 if not unitTestSupport.isDoubleEqual(lockLog.effectorLockFlag[i][1], 1, accuracy):
                     testFailCount += 1
-                    testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at outputting effector flag #2")
+                    testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at outputting effector flag #2")
         elif lockFlag == 2:
             if time[i] > tSwitch:
                 if not unitTestSupport.isDoubleEqual(lockLog.effectorLockFlag[i][0], 0, accuracy):
                     testFailCount += 1
-                    testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at outputting effector flag #1")
+                    testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at outputting effector flag #1")
                 if not unitTestSupport.isDoubleEqual(lockLog.effectorLockFlag[i][1], 1, accuracy):
                     testFailCount += 1
-                    testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at outputting effector flag #2")
+                    testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at outputting effector flag #2")
             else:
                 if not unitTestSupport.isDoubleEqual(lockLog.effectorLockFlag[i][0], 1, accuracy):
                     testFailCount += 1
-                    testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at outputting effector flag #1")
+                    testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at outputting effector flag #1")
                 if not unitTestSupport.isDoubleEqual(lockLog.effectorLockFlag[i][1], 0, accuracy):
                     testFailCount += 1
-                    testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at outputting effector flag #2")
+                    testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at outputting effector flag #2")
         else:
             if not unitTestSupport.isDoubleEqual(lockLog.effectorLockFlag[i][0], 1, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at outputting effector flag #1")
+                testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at outputting effector flag #1")
             if not unitTestSupport.isDoubleEqual(lockLog.effectorLockFlag[i][1], 1, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + schedulerWrap.ModelTag + " module failed at outputting effector flag #2")
+                testMessages.append("FAILED: " + scheduler.ModelTag + " module failed at outputting effector flag #2")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

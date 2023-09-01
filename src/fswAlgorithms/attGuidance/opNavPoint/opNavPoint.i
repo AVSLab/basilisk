@@ -21,14 +21,8 @@
    #include "opNavPoint.h"
 %}
 
-%include "swig_conly_data.i"
-
-%constant void Update_opNavPoint(void*, uint64_t, uint64_t);
-%ignore Update_opNavPoint;
-%constant void SelfInit_opNavPoint(void*, uint64_t);
-%ignore SelfInit_opNavPoint;
-%constant void Reset_opNavPoint(void*, uint64_t, uint64_t);
-%ignore Reset_opNavPoint;
+%include "swig_c_wrap.i"
+%c_wrap_2(opNavPoint, OpNavPointConfig);
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
@@ -38,8 +32,6 @@ struct CameraConfigMsg_C;
 struct AttGuidMsg_C;
 %include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
 struct OpNavMsg_C;
-
-%include "opNavPoint.h"
 
 %pythoncode %{
 import sys

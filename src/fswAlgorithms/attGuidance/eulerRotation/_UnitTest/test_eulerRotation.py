@@ -67,18 +67,17 @@ def run(show_plots):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = eulerRotation.eulerRotationConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "eulerRotation"
+    module = eulerRotation.eulerRotation()
+    module.ModelTag = "eulerRotation"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
     angleSet = np.array([0.0, 90.0, 0.0]) * mc.D2R
-    moduleConfig.angleSet = angleSet
+    module.angleSet = angleSet
     angleRates = np.array([0.1, 0.0, 0.0]) * mc.D2R
-    moduleConfig.angleRates = angleRates
+    module.angleRates = angleRates
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -96,11 +95,11 @@ def run(show_plots):
     attRefInMsg = messaging.AttRefMsg().write(RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attRefOutMsg.recorder()
+    dataLog = module.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.attRefInMsg.subscribeTo(attRefInMsg)
+    module.attRefInMsg.subscribeTo(attRefInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -198,18 +197,17 @@ def run2(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = eulerRotation.eulerRotationConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "eulerRotation"
+    module = eulerRotation.eulerRotation()
+    module.ModelTag = "eulerRotation"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
     angleSet = np.array([0.0, 90.0, 0.0]) * mc.D2R
-    moduleConfig.angleSet = angleSet
+    module.angleSet = angleSet
     angleRates = np.array([0.1, 0.0, 0.0]) * mc.D2R
-    moduleConfig.angleRates = angleRates
+    module.angleRates = angleRates
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -235,12 +233,12 @@ def run2(show_plots):
     desInMsg = messaging.AttStateMsg().write(desiredAtt)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attRefOutMsg.recorder()
+    dataLog = module.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.attRefInMsg.subscribeTo(attRefMsg)
-    moduleConfig.desiredAttInMsg.subscribeTo(desInMsg)
+    module.attRefInMsg.subscribeTo(attRefMsg)
+    module.desiredAttInMsg.subscribeTo(desInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()

@@ -76,11 +76,10 @@ def dipoleMappingModuleTestFunction():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Initialize module under test's config message and add module to runtime call list
-    moduleConfig = dipoleMapping.dipoleMappingConfig()
-    moduleConfig.steeringMatrix = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "dipoleMapping"           # update python name of test module
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    module = dipoleMapping.dipoleMapping()
+    module.steeringMatrix = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
+    module.ModelTag = "dipoleMapping"           # update python name of test module
+    unitTestSim.AddModelToTask(unitTaskName, module)
     
     # Initialize DipoleRequestBodyMsg
     dipoleRequestBodyInMsgContainer = messaging.DipoleRequestBodyMsgPayload()
@@ -95,12 +94,12 @@ def dipoleMappingModuleTestFunction():
     mtbArrayConfigParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbArrayConfigParamsInMsgContainer)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    resultDipoleRequestMtbOutMsg = moduleConfig.dipoleRequestMtbOutMsg.recorder()
+    resultDipoleRequestMtbOutMsg = module.dipoleRequestMtbOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, resultDipoleRequestMtbOutMsg)
     
     # connect the message interfaces
-    moduleConfig.dipoleRequestBodyInMsg.subscribeTo(dipoleRequestBodyInMsg)
-    moduleConfig.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
+    module.dipoleRequestBodyInMsg.subscribeTo(dipoleRequestBodyInMsg)
+    module.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
     
     # Set the simulation time.
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))        # seconds to stop simulation
@@ -131,9 +130,9 @@ def dipoleMappingModuleTestFunction():
                                                      Gt[1, 0], Gt[1, 1],
                                                      Gt[2, 0], Gt[2, 1]]  
     mtbArrayConfigParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbArrayConfigParamsInMsgContainer)
-    moduleConfig.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
+    module.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
     
-    moduleConfig.steeringMatrix = [GtInverse[0, 0], GtInverse[0, 1], GtInverse[0, 2],
+    module.steeringMatrix = [GtInverse[0, 0], GtInverse[0, 1], GtInverse[0, 2],
                                    GtInverse[1, 0], GtInverse[1, 1], GtInverse[1, 2]]
     
     unitTestSim.InitializeSimulation()
@@ -153,7 +152,7 @@ def dipoleMappingModuleTestFunction():
     '''
     dipoleRequestBodyInMsgContainer.dipole_B = [0., 0., 0.]
     dipoleRequestBodyInMsg = messaging.DipoleRequestBodyMsg().write(dipoleRequestBodyInMsgContainer)
-    moduleConfig.dipoleRequestBodyInMsg.subscribeTo(dipoleRequestBodyInMsg)
+    module.dipoleRequestBodyInMsg.subscribeTo(dipoleRequestBodyInMsg)
     
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()

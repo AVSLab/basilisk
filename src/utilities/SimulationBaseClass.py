@@ -329,6 +329,11 @@ class SimBaseClass:
         :param ModelPriority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return:
         """
+        # Supports calling AddModelToTask(TaskName, NewModel, ModelPriority)
+        if isinstance(ModelData, int):
+            ModelPriority = ModelData
+            ModelData = None
+
         i = 0
         for Task in self.TaskList:
             if Task.Name == TaskName:
@@ -675,6 +680,35 @@ class SimBaseClass:
         :param modelData: model to gather functions for
         :return: An alg_contain model that provides access to the original model's core functions
         """
+        deprecationId = f"{SimBaseClass.setModelDataWrap.__module__}.{SimBaseClass.setModelDataWrap.__qualname__}"
+        removalDate = "2024/07/30"
+
+        if hasattr(modelData, "createWrapper"):
+            deprecated.deprecationWarn(
+                deprecationId,
+                removalDate,
+                "C modules no longer require having separate 'Config' and 'Wrap' objects. "
+                "Treat C modules like C++ modules. For example, instead of:\n"
+                "\tinertial3DConfig = inertial3D.inertial3DConfig()\n"
+                "\tinertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)\n"
+                "\tinertial3DWrap.ModelTag = 'inertial3D'\n"
+                "\tscSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig, 10)\n"
+                "Do:\n"
+                "\tinertial3D = inertial3D.inertial3D()\n"
+                "\tinertial3D.ModelTag = 'inertial3D'\n"
+                "\tscSim.AddModelToTask(simTaskName, inertial3D, 10)\n"
+            )
+            return modelData.createWrapper()
+    
+        deprecated.deprecationWarn(
+            deprecationId, 
+            removalDate, 
+            "This C module has not been converted yet to the new way of defining C "
+            "modules, which makes using them more intuitive. Take the time to see how "
+            "the new C module '.i' file looks by checking out a default Basilisk module"
+            " and adapt your module to use a similar format."
+        )
+
         algDict = {}
         STR_SELFINIT = 'SelfInit'
         STR_UPDATE = 'Update'

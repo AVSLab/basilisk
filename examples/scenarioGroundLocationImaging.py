@@ -77,9 +77,11 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # import message declarations
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import locationPointing
+
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import simpleInstrumentController
@@ -89,20 +91,26 @@ from Basilisk.simulation import partitionedStorageUnit
 from Basilisk.simulation import simpleInstrument
 from Basilisk.simulation import simpleNav
 from Basilisk.simulation import spaceToGroundTransmitter
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import astroFunctions
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
 try:
     from Basilisk.simulation import vizInterface
+
     vizFound = True
 except ImportError:
     vizFound = False
@@ -110,6 +118,7 @@ except ImportError:
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -122,23 +131,27 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
     ax = fig.gca()
     vectorData = dataSigmaBR
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
-    plt.plot(timeLineSet, sNorm,
-             color=unitTestSupport.getLineColor(1, 3),
-             )
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
-    ax.set_yscale('log')
+    plt.plot(
+        timeLineSet,
+        sNorm,
+        color=unitTestSupport.getLineColor(1, 3),
+    )
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error Norm $|\sigma_{B/R}|$")
+    ax.set_yscale("log")
 
     return
 
 
 def plot_data_levels(timeLineSet, storageLevel, storedData):
     plt.figure(4)
-    plt.plot(timeLineSet, storageLevel / 8E3, label='Data Unit Total Storage Level (KB)')
-    plt.plot(timeLineSet, storedData[:, 0] / 8E3, label='Boulder Partition Level (KB)')
-    plt.plot(timeLineSet, storedData[:, 1] / 8E3, label='Santiago Partition Level (KB)')
-    plt.xlabel('Time (min)')
-    plt.ylabel('Data Stored (KB)')
+    plt.plot(
+        timeLineSet, storageLevel / 8e3, label="Data Unit Total Storage Level (KB)"
+    )
+    plt.plot(timeLineSet, storedData[:, 0] / 8e3, label="Boulder Partition Level (KB)")
+    plt.plot(timeLineSet, storedData[:, 1] / 8e3, label="Santiago Partition Level (KB)")
+    plt.xlabel("Time (min)")
+    plt.ylabel("Data Stored (KB)")
     plt.grid(True)
     plt.legend()
 
@@ -148,8 +161,8 @@ def plot_data_levels(timeLineSet, storageLevel, storedData):
 def plot_device_status(timeLineSet, deviceStatus):
     plt.figure(3)
     plt.plot(timeLineSet, deviceStatus)
-    plt.xlabel('Time [min]')
-    plt.ylabel('Device Status')
+    plt.xlabel("Time [min]")
+    plt.ylabel("Device Status")
 
     return
 
@@ -157,8 +170,8 @@ def plot_device_status(timeLineSet, deviceStatus):
 def plot_access(timeLineSet, hasAccess):
     plt.figure(2)
     plt.plot(timeLineSet, hasAccess)
-    plt.xlabel('Time [min]')
-    plt.ylabel('Imaging Target Access')
+    plt.xlabel("Time [min]")
+    plt.ylabel("Imaging Target Access")
 
     return
 
@@ -180,7 +193,7 @@ def run(show_plots):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(20.)
+    simulationTime = macros.min2nano(20.0)
 
     #
     #  create the simulation process
@@ -199,11 +212,13 @@ def run(show_plots):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
@@ -218,14 +233,16 @@ def run(show_plots):
     mu = earth.mu
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
+        list(gravFactory.gravBodies.values())
+    )
 
     #
     #   initialize Spacecraft States with initialization variables
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = (6378 + 600)*1000.  # meters
+    oe.a = (6378 + 600) * 1000.0  # meters
     oe.e = 0.01
     oe.i = 63.3 * macros.D2R
     oe.Omega = 88.2 * macros.D2R
@@ -257,9 +274,9 @@ def run(show_plots):
     # Create the initial imaging target
     imagingTarget = groundLocation.GroundLocation()
     imagingTarget.ModelTag = "ImagingTarget"
-    imagingTarget.planetRadius = astroFunctions.E_radius*1e3
+    imagingTarget.planetRadius = astroFunctions.E_radius * 1e3
     imagingTarget.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
-    imagingTarget.minimumElevation = np.radians(10.)
+    imagingTarget.minimumElevation = np.radians(10.0)
     imagingTarget.maximumRange = 1e9
     imagingTarget.addSpacecraftToModel(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, imagingTarget, ModelPriority=100)
@@ -267,9 +284,9 @@ def run(show_plots):
     # Create a ground station in Singapore
     singaporeStation = groundLocation.GroundLocation()
     singaporeStation.ModelTag = "SingaporeStation"
-    singaporeStation.planetRadius = astroFunctions.E_radius*1e3
+    singaporeStation.planetRadius = astroFunctions.E_radius * 1e3
     singaporeStation.specifyLocation(np.radians(1.3521), np.radians(103.8198), 15)
-    singaporeStation.minimumElevation = np.radians(5.)
+    singaporeStation.minimumElevation = np.radians(5.0)
     singaporeStation.maximumRange = 1e9
     singaporeStation.addSpacecraftToModel(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, singaporeStation, ModelPriority=100)
@@ -277,8 +294,8 @@ def run(show_plots):
     # Create a "transmitter"
     transmitter = spaceToGroundTransmitter.SpaceToGroundTransmitter()
     transmitter.ModelTag = "transmitter"
-    transmitter.nodeBaudRate = -1E5   # baud
-    transmitter.packetSize = -8E6   # bits
+    transmitter.nodeBaudRate = -1e5  # baud
+    transmitter.packetSize = -8e6  # bits
     transmitter.numBuffers = 2
     transmitter.addAccessMsgToTransmitter(singaporeStation.accessOutMsgs[-1])
     scSim.AddModelToTask(simTaskName, transmitter, ModelPriority=99)
@@ -286,14 +303,16 @@ def run(show_plots):
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
     instrument.ModelTag = "instrument1"
-    instrument.nodeBaudRate = 8E6  # baud, assumes the instantaneous writing of a single image
+    instrument.nodeBaudRate = (
+        8e6  # baud, assumes the instantaneous writing of a single image
+    )
     instrument.nodeDataName = "boulder"
     scSim.AddModelToTask(simTaskName, instrument, ModelPriority=90)
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
-    dataMonitor.storageCapacity = 0.25*8E7  # bits
+    dataMonitor.storageCapacity = 0.25 * 8e7  # bits
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(transmitter.nodeDataOutMsg)
     dataMonitor.addPartition("boulder")
@@ -306,45 +325,42 @@ def run(show_plots):
     #
 
     # setup Boulder pointing guidance module
-    locPointConfig = locationPointing.locationPointingConfig()
-    locPointWrap = scSim.setModelDataWrap(locPointConfig)
-    locPointWrap.ModelTag = "locPoint"
-    scSim.AddModelToTask(simTaskName, locPointWrap, locPointConfig, ModelPriority=99)
-    locPointConfig.pHat_B = [0, 0, 1]
-    locPointConfig.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
-    locPointConfig.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
-    locPointConfig.locationInMsg.subscribeTo(imagingTarget.currentGroundStateOutMsg)
+    locPoint = locationPointing.locationPointing()
+    locPoint.ModelTag = "locPoint"
+    scSim.AddModelToTask(simTaskName, locPoint, 99)
+    locPoint.pHat_B = [0, 0, 1]
+    locPoint.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
+    locPoint.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
+    locPoint.locationInMsg.subscribeTo(imagingTarget.currentGroundStateOutMsg)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig, ModelPriority=98)
-    mrpControlConfig.guidInMsg.subscribeTo(locPointConfig.attGuidOutMsg)
-    mrpControlConfig.K = 5.5
-    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl, ModelPriority=98)
+    mrpControl.guidInMsg.subscribeTo(locPoint.attGuidOutMsg)
+    mrpControl.K = 5.5
+    mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # connect torque command to external torque effector
-    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     # setup the simpleInstrumentController module
-    simpleInsControlConfig = simpleInstrumentController.simpleInstrumentControllerConfig()
-    simpleInsControlConfig.attErrTolerance = 0.1
-    simpleInsControlWrap = scSim.setModelDataWrap(simpleInsControlConfig)
-    simpleInsControlWrap.ModelTag = "instrumentController"
-    simpleInsControlConfig.attGuidInMsg.subscribeTo(locPointConfig.attGuidOutMsg)
-    simpleInsControlConfig.locationAccessInMsg.subscribeTo(imagingTarget.accessOutMsgs[-1])
-    scSim.AddModelToTask(simTaskName, simpleInsControlWrap, simpleInsControlConfig, ModelPriority=97)
-    instrument.nodeStatusInMsg.subscribeTo(simpleInsControlConfig.deviceCmdOutMsg)
+    simpleInsControl = simpleInstrumentController.simpleInstrumentController()
+    simpleInsControl.attErrTolerance = 0.1
+    simpleInsControl.ModelTag = "instrumentController"
+    simpleInsControl.attGuidInMsg.subscribeTo(locPoint.attGuidOutMsg)
+    simpleInsControl.locationAccessInMsg.subscribeTo(imagingTarget.accessOutMsgs[-1])
+    scSim.AddModelToTask(simTaskName, simpleInsControl, ModelPriority=97)
+    instrument.nodeStatusInMsg.subscribeTo(simpleInsControl.deviceCmdOutMsg)
 
     #
     #   Setup data logging before the simulation is initialized
     #
-    deviceLog = simpleInsControlConfig.deviceCmdOutMsg.recorder()
-    mrpLog = mrpControlConfig.cmdTorqueOutMsg.recorder()
-    attErrLog = locPointConfig.attGuidOutMsg.recorder()
+    deviceLog = simpleInsControl.deviceCmdOutMsg.recorder()
+    mrpLog = mrpControl.cmdTorqueOutMsg.recorder()
+    attErrLog = locPoint.attGuidOutMsg.recorder()
     snAttLog = sNavObject.attOutMsg.recorder()
     snTransLog = sNavObject.transOutMsg.recorder()
     dataMonLog = dataMonitor.storageUnitDataOutMsg.recorder()
@@ -366,28 +382,34 @@ def run(show_plots):
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    vehicleConfigOut.ISCPntB_B = (
+        I  # use the same inertia in the FSW algorithm as in the simulation
+    )
     configDataMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(configDataMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
 
     #
     # setup Vizard visualization elements
     #
     if vizFound:
         genericSensorHUD = vizInterface.GenericSensor()
-        genericSensorHUD.r_SB_B = [0., 1., 1.]
-        genericSensorHUD.fieldOfView.push_back(20.0 * macros.D2R)  # single value means a conic sensor
-        genericSensorHUD.normalVector = [0., 0., 1.]
-        genericSensorHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("red", alpha=0.25))
+        genericSensorHUD.r_SB_B = [0.0, 1.0, 1.0]
+        genericSensorHUD.fieldOfView.push_back(
+            20.0 * macros.D2R
+        )  # single value means a conic sensor
+        genericSensorHUD.normalVector = [0.0, 0.0, 1.0]
+        genericSensorHUD.color = vizInterface.IntVector(
+            vizSupport.toRGBA255("red", alpha=0.25)
+        )
         genericSensorHUD.label = "genSen1"
         cmdInMsg = messaging.DeviceCmdMsgReader()
-        cmdInMsg.subscribeTo(simpleInsControlConfig.deviceCmdOutMsg)
+        cmdInMsg.subscribeTo(simpleInsControl.deviceCmdOutMsg)
         genericSensorHUD.genericSensorCmdInMsg = cmdInMsg
 
         transceiverHUD = vizInterface.Transceiver()
-        transceiverHUD.r_SB_B = [0.23, 0., 1.38]
+        transceiverHUD.r_SB_B = [0.23, 0.0, 1.38]
         transceiverHUD.fieldOfView = 40.0 * macros.D2R
-        transceiverHUD.normalVector = [-1., 0., 1.]
+        transceiverHUD.normalVector = [-1.0, 0.0, 1.0]
         transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
         transceiverHUD.label = "antenna"
         trInMsg = messaging.DataNodeUsageMsgReader()
@@ -397,54 +419,67 @@ def run(show_plots):
         hdDevicePanel = vizInterface.GenericStorage()
         hdDevicePanel.label = "Main Disk"
         hdDevicePanel.units = "bits"
-        hdDevicePanel.color = vizInterface.IntVector(vizSupport.toRGBA255("blue") + vizSupport.toRGBA255("red"))
+        hdDevicePanel.color = vizInterface.IntVector(
+            vizSupport.toRGBA255("blue") + vizSupport.toRGBA255("red")
+        )
         hdDevicePanel.thresholds = vizInterface.IntVector([50])
         hdInMsg = messaging.DataStorageStatusMsgReader()
         hdInMsg.subscribeTo(dataMonitor.storageUnitDataOutMsg)
         hdDevicePanel.dataStorageStateInMsg = hdInMsg
         # if this scenario is to interface with the BSK Viz, uncomment the "saveFile" line
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                  # , saveFile=fileName
-                                                  , genericSensorList=genericSensorHUD
-                                                  , transceiverList=transceiverHUD
-                                                  , genericStorageList=hdDevicePanel
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scObject
+            # , saveFile=fileName
+            ,
+            genericSensorList=genericSensorHUD,
+            transceiverList=transceiverHUD,
+            genericStorageList=hdDevicePanel,
+        )
         # the following command sets Viz settings for the first spacecraft in the simulation
-        vizSupport.setInstrumentGuiSetting(viz,
-                                           showGenericSensorLabels=True,
-                                           showTransceiverLabels=True,
-                                           showGenericStoragePanel=True
-                                           )
+        vizSupport.setInstrumentGuiSetting(
+            viz,
+            showGenericSensorLabels=True,
+            showTransceiverLabels=True,
+            showGenericStoragePanel=True,
+        )
 
         # Add the Boulder target
-        vizSupport.addLocation(viz, stationName="Boulder Target"
-                               , parentBodyName=earth.displayName
-                               , r_GP_P=imagingTarget.r_LP_P_Init
-                               , fieldOfView=np.radians(160.)
-                               , color='pink'
-                               , range=2000.0*1000  # meters
-                               )
+        vizSupport.addLocation(
+            viz,
+            stationName="Boulder Target",
+            parentBodyName=earth.displayName,
+            r_GP_P=imagingTarget.r_LP_P_Init,
+            fieldOfView=np.radians(160.0),
+            color="pink",
+            range=2000.0 * 1000,  # meters
+        )
 
         # Add target line to first Boulder
         vizSupport.createTargetLine(viz, toBodyName="Boulder Target", lineColor="red")
 
         # Add the Santiago target
-        vizSupport.addLocation(viz, stationName="Santiago Target"
-                               , parentBodyName=earth.displayName
-                               , r_GP_P=[[1761771.6422437236], [-5022201.882030934], [-3515898.6046771165]]
-                               , fieldOfView=np.radians(160.)
-                               , color='pink'
-                               , range=2000.0*1000  # meters
-                               )
+        vizSupport.addLocation(
+            viz,
+            stationName="Santiago Target",
+            parentBodyName=earth.displayName,
+            r_GP_P=[[1761771.6422437236], [-5022201.882030934], [-3515898.6046771165]],
+            fieldOfView=np.radians(160.0),
+            color="pink",
+            range=2000.0 * 1000,  # meters
+        )
 
         # Add the Santiago target
-        vizSupport.addLocation(viz, stationName="Singapore Station"
-                               , parentBodyName=earth.displayName
-                               , r_GP_P=singaporeStation.r_LP_P_Init
-                               , fieldOfView=np.radians(160.)
-                               , color='green'
-                               , range=2000.0*1000  # meters
-                               )
+        vizSupport.addLocation(
+            viz,
+            stationName="Singapore Station",
+            parentBodyName=earth.displayName,
+            r_GP_P=singaporeStation.r_LP_P_Init,
+            fieldOfView=np.radians(160.0),
+            color="green",
+            range=2000.0 * 1000,  # meters
+        )
 
         viz.settings.spacecraftSizeMultiplier = 1.5
         viz.settings.showLocationCommLines = 1
@@ -466,18 +501,18 @@ def run(show_plots):
     #
     imagingTarget.specifyLocation(np.radians(-33.4489), np.radians(-70.6693), 570)
     instrument.nodeDataName = "santiago"
-    simpleInsControlConfig.imaged = 0
+    simpleInsControl.imaged = 0
 
     # update targeting line to point to Santiago and be blue
     if vizFound:
-        vizSupport.targetLineList[0].lineColor = vizSupport.toRGBA255('blue')
+        vizSupport.targetLineList[0].lineColor = vizSupport.toRGBA255("blue")
         vizSupport.targetLineList[0].toBodyName = "Santiago Target"
         vizSupport.updateTargetLineList(viz)
 
     #
     #   configure the new simulation stop time and execute sim
     #
-    scSim.ConfigureStopTime(simulationTime + 3*simulationTime)
+    scSim.ConfigureStopTime(simulationTime + 3 * simulationTime)
     scSim.ExecuteSimulation()
 
     #
@@ -523,11 +558,10 @@ def run(show_plots):
 
     return figureList
 
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(
-        True  # show_plots
-    )
+    run(True)  # show_plots

@@ -21,13 +21,8 @@
    #include "tamComm.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_tamProcessTelem(void*, uint64_t, uint64_t);
-%ignore Update_tamProcessTelem;
-%constant void SelfInit_tamProcessTelem(void*, uint64_t);
-%ignore SelfInit_tamProcessTelem;
-
-%include "tamComm.h"
+%include "swig_c_wrap.i"
+%c_wrap_3(tamComm, tamConfigData, tamProcessTelem);
 
 %include "architecture/msgPayloadDefC/TAMSensorBodyMsgPayload.h"
 struct TAMSensorBodyMsg_C;

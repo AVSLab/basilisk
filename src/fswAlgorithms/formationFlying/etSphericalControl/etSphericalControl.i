@@ -21,15 +21,8 @@
    #include "etSphericalControl.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_etSphericalControl(void*, uint64_t, uint64_t);
-%ignore Update_etSphericalControl;
-%constant void SelfInit_etSphericalControl(void*, uint64_t);
-%ignore SelfInit_etSphericalControl;
-%constant void Reset_etSphericalControl(void*, uint64_t, uint64_t);
-%ignore Reset_etSphericalControl;
-
-%include "etSphericalControl.h"
+%include "swig_c_wrap.i"
+%c_wrap(etSphericalControl);
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;

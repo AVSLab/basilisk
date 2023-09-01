@@ -124,24 +124,23 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    platformConfig = thrusterPlatformReference.ThrusterPlatformReferenceConfig()
-    platformWrap = unitTestSim.setModelDataWrap(platformConfig)
-    platformWrap.ModelTag = "platformReference"
+    platform = thrusterPlatformReference.thrusterPlatformReference()
+    platform.ModelTag = "platformReference"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, platformWrap, platformConfig)
+    unitTestSim.AddModelToTask(unitTaskName, platform)
 
     # Initialize the test module configuration data
-    platformConfig.sigma_MB = sigma_MB
-    platformConfig.r_BM_M = r_BM_M
-    platformConfig.r_FM_F = r_FM_F
-    platformConfig.K      = K
+    platform.sigma_MB = sigma_MB
+    platform.r_BM_M = r_BM_M
+    platform.r_FM_F = r_FM_F
+    platform.K      = K
 
     # Create input vehicle configuration msg
     inputVehConfigMsgData = messaging.VehicleConfigMsgPayload()
     inputVehConfigMsgData.CoM_B = r_CB_B
     inputVehConfigMsg = messaging.VehicleConfigMsg().write(inputVehConfigMsgData)
-    platformConfig.vehConfigInMsg.subscribeTo(inputVehConfigMsg)
+    platform.vehConfigInMsg.subscribeTo(inputVehConfigMsg)
 
     # Create input THR Config Msg
     THRConfig = messaging.THRConfigMsgPayload()
@@ -149,7 +148,7 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     THRConfig.maxThrust = np.linalg.norm(T_F)
     THRConfig.tHatThrust_B = T_F / THRConfig.maxThrust
     thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
-    platformConfig.thrusterConfigFInMsg.subscribeTo(thrConfigFMsg)
+    platform.thrusterConfigFInMsg.subscribeTo(thrConfigFMsg)
 
     # Create input RW configuration msg
     inputRWConfigMsgData = messaging.RWArrayConfigMsgPayload()
@@ -158,24 +157,24 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     inputRWConfigMsgData.numRW = 3
     inputRWConfigMsgData.uMax = [0.001, 0.001, 0.001]
     inputRWConfigMsg = messaging.RWArrayConfigMsg().write(inputRWConfigMsgData)
-    platformConfig.rwConfigDataInMsg.subscribeTo(inputRWConfigMsg)
+    platform.rwConfigDataInMsg.subscribeTo(inputRWConfigMsg)
 
     # Create input RW speeds msg
     inputRWSpeedsMsgData = messaging.RWSpeedMsgPayload()
     inputRWSpeedsMsgData.wheelSpeeds = [100, 100, 100]
     inputRWSpeedsMsg = messaging.RWSpeedMsg().write(inputRWSpeedsMsgData)
-    platformConfig.rwSpeedsInMsg.subscribeTo(inputRWSpeedsMsg)
+    platform.rwSpeedsInMsg.subscribeTo(inputRWSpeedsMsg)
 
     # Setup logging on the test module output messages so that we get all the writes to it
-    ref1Log = platformConfig.hingedRigidBodyRef1OutMsg.recorder()
+    ref1Log = platform.hingedRigidBodyRef1OutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, ref1Log)
-    ref2Log = platformConfig.hingedRigidBodyRef2OutMsg.recorder()
+    ref2Log = platform.hingedRigidBodyRef2OutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, ref2Log)
-    bodyHeadingLog = platformConfig.bodyHeadingOutMsg.recorder()
+    bodyHeadingLog = platform.bodyHeadingOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, bodyHeadingLog)
-    thrusterTorqueLog = platformConfig.thrusterTorqueOutMsg.recorder()
+    thrusterTorqueLog = platform.thrusterTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, thrusterTorqueLog)
-    thrConfigBLog = platformConfig.thrusterConfigBOutMsg.recorder()
+    thrConfigBLog = platform.thrusterConfigBOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, thrConfigBLog)
 
     # Need to call the self-init and cross-init methods

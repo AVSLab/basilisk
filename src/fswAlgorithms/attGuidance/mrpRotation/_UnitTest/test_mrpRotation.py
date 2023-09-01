@@ -85,18 +85,17 @@ def run(show_plots, cmdStateFlag, testReset):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = mrpRotation.mrpRotationConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "mrpRotation"
+    module = mrpRotation.mrpRotation()
+    module.ModelTag = "mrpRotation"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
     sigma_RR0 = np.array([0.3, .5, 0.0])
-    moduleConfig.mrpSet = sigma_RR0
+    module.mrpSet = sigma_RR0
     omega_RR0_R = np.array([0.1, 0.0, 0.0]) * mc.D2R
-    moduleConfig.omega_RR0_R = omega_RR0_R
+    module.omega_RR0_R = omega_RR0_R
     unitTestSupport.writeTeXSnippet("sigma_RR0", str(sigma_RR0), path)
     unitTestSupport.writeTeXSnippet("omega_RR0_R", str(omega_RR0_R*mc.R2D) + "deg/sec", path)
 
@@ -108,7 +107,7 @@ def run(show_plots, cmdStateFlag, testReset):
         omega_RR0_R = np.array([0.1, 1.0, 0.5]) * mc.D2R
         desiredAtt.rate = omega_RR0_R
         desInMsg = messaging.AttStateMsg().write(desiredAtt)
-        moduleConfig.desiredAttInMsg.subscribeTo(desInMsg)
+        module.desiredAttInMsg.subscribeTo(desInMsg)
 
         unitTestSupport.writeTeXSnippet("sigma_RR0Cmd", str(sigma_RR0), path)
         unitTestSupport.writeTeXSnippet("omega_RR0_RCmd", str(omega_RR0_R * mc.R2D) + "deg/sec", path)
@@ -125,10 +124,10 @@ def run(show_plots, cmdStateFlag, testReset):
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
     RefStateInData.domega_RN_N = domega_R0N_N
     attRefMsg = messaging.AttRefMsg().write(RefStateInData)
-    moduleConfig.attRefInMsg.subscribeTo(attRefMsg)
+    module.attRefInMsg.subscribeTo(attRefMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.attRefOutMsg.recorder()
+    dataLog = module.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods
@@ -144,7 +143,7 @@ def run(show_plots, cmdStateFlag, testReset):
     unitTestSim.ExecuteSimulation()
 
     if testReset:
-        moduleWrap.Reset(1)
+        module.Reset(1)
         unitTestSim.ConfigureStopTime(mc.sec2nano(totalTestSimTime+1.0))        # seconds to stop simulation
         unitTestSim.ExecuteSimulation()
 
@@ -180,11 +179,11 @@ def run(show_plots, cmdStateFlag, testReset):
     snippentName = "passFail" + str(cmdStateFlag) + str(testReset)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

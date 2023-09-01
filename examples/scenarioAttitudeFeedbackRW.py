@@ -149,8 +149,8 @@ tracking error states, and the :ref:`mrpFeedback` module to provide the desired 
 control torque vector.  In this simulation we want the MRP attitude control module to take
 advantage of the RW spin information.  This is achieved by adding the 2 extra lines::
 
-    mrpControlConfig.rwParamsInMsg.subscribeTo(rwParamMsg)
-    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwSpeedsMsg)
+    mrpControl.rwParamsInMsg.subscribeTo(rwParamMsg)
+    mrpControl.rwSpeedsInMsg.subscribeTo(rwSpeedsMsg)
 
 The first line specifies the RW configuration flight message name, and the second name
 connects the RW speed output message as an input message to this control module.  This simulates
@@ -413,7 +413,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject, None, 1)
+    scSim.AddModelToTask(simTaskName, scObject, 1)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -461,7 +461,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
 
     # add RW object array to the simulation process.  This is required for the UpdateState() method
     # to be called which logs the RW states
-    scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
+    scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
 
     if useRWVoltageIO:
         rwVoltageIO = motorVoltageInterface.MotorVoltageInterface()
@@ -484,59 +484,54 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     #
 
     # setup inertial3D guidance module
-    inertial3DConfig = inertial3D.inertial3DConfig()
-    inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
-    inertial3DWrap.ModelTag = "inertial3D"
-    scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj = inertial3D.inertial3D()
+    inertial3DObj.ModelTag = "inertial3D"
+    scSim.AddModelToTask(simTaskName, inertial3DObj)
+    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
-    attErrorConfig = attTrackingError.attTrackingErrorConfig()
-    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
+    attError = attTrackingError.attTrackingError()
+    attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attError)
 
     # setup the MRP Feedback control module
-    mrpControlConfig = mrpFeedback.mrpFeedbackConfig()
-    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.K = 3.5
-    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControl = mrpFeedback.mrpFeedback()
+    mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, mrpControl)
+    mrpControl.K = 3.5
+    mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    mrpControl.P = 30.0
+    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     # add module that maps the Lr control torque into the RW motor torques
-    rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
-    rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
-    rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
-    scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
+    rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
+    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
 
     # Make the RW control all three body axes
     controlAxes_B = [
         1, 0, 0, 0, 1, 0, 0, 0, 1
     ]
-    rwMotorTorqueConfig.controlAxes_B = controlAxes_B
+    rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     if useRWVoltageIO:
-        fswRWVoltageConfig = rwMotorVoltage.rwMotorVoltageConfig()
-        fswRWVoltageWrap = scSim.setModelDataWrap(fswRWVoltageConfig)
-        fswRWVoltageWrap.ModelTag = "rwMotorVoltage"
+        fswRWVoltage = rwMotorVoltage.rwMotorVoltage()
+        fswRWVoltage.ModelTag = "rwMotorVoltage"
 
         # Add test module to runtime call list
-        scSim.AddModelToTask(simTaskName, fswRWVoltageWrap, fswRWVoltageConfig)
+        scSim.AddModelToTask(simTaskName, fswRWVoltage)
 
         # set module parameters
-        fswRWVoltageConfig.VMin = 0.0  # Volts
-        fswRWVoltageConfig.VMax = 10.0  # Volts
+        fswRWVoltage.VMin = 0.0  # Volts
+        fswRWVoltage.VMax = 10.0  # Volts
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
-    rwMotorLog = rwMotorTorqueConfig.rwMotorTorqueOutMsg.recorder(samplingTime)
-    attErrorLog = attErrorConfig.attGuidOutMsg.recorder(samplingTime)
+    rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
+    attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, rwMotorLog)
     scSim.AddModelToTask(simTaskName, attErrorLog)
@@ -555,7 +550,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
         rwLogs.append(rwStateEffector.rwOutMsgs[item].recorder(samplingTime))
         scSim.AddModelToTask(simTaskName, rwLogs[item])
     if useRWVoltageIO:
-        rwVoltLog = fswRWVoltageConfig.voltageOutMsg.recorder(samplingTime)
+        rwVoltLog = fswRWVoltage.voltageOutMsg.recorder(samplingTime)
         scSim.AddModelToTask(simTaskName, rwVoltLog)
 
     #
@@ -609,21 +604,21 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
                                               )
     # link messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    attErrorConfig.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attErrorConfig.attRefInMsg.subscribeTo(inertial3DConfig.attRefOutMsg)
-    mrpControlConfig.guidInMsg.subscribeTo(attErrorConfig.attGuidOutMsg)
-    mrpControlConfig.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControlConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    mrpControlConfig.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    rwMotorTorqueConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    rwMotorTorqueConfig.vehControlInMsg.subscribeTo(mrpControlConfig.cmdTorqueOutMsg)
+    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
+    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
+    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    mrpControl.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    mrpControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
     if useRWVoltageIO:
-        fswRWVoltageConfig.torqueInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
-        fswRWVoltageConfig.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-        rwVoltageIO.motorVoltageInMsg.subscribeTo(fswRWVoltageConfig.voltageOutMsg)
+        fswRWVoltage.torqueInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
+        fswRWVoltage.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+        rwVoltageIO.motorVoltageInMsg.subscribeTo(fswRWVoltage.voltageOutMsg)
         rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwVoltageIO.motorTorqueOutMsg)
     else:
-        rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueConfig.rwMotorTorqueOutMsg)
+        rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
 
     #
     #   initialize Simulation

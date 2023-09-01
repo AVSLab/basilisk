@@ -10,7 +10,15 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
-- text here
+- There was an issue with :ref:`thrusterStateEffector` where if there are multiple instances of the
+  thruster state effector then the last effector will over-write all the state of the earlier thrusters.
+  This is corrected in the current release.
+- Doing a clean Basilisk build with `opNav` flag on fails building openCV.  The conan
+  install script is updated this is corrected in the current release.
+
+Version 2.2.0
+-------------
+- VizInterface has been updated to use 4.5.0 version of ZMQ library.  Be sure to use Vizard 2.1.5 or newer.
 
 Version 2.1.7
 -------------

@@ -67,15 +67,15 @@ class BSKDynamicModels:
         self.InitAllDynObjects(SimBase)
 
         # Assign initialized modules to tasks
-        SimBase.AddModelToTask(self.taskName, self.scObject, None, 100)
-        SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 100)
-        SimBase.AddModelToTask(self.taskName, self.simpleMassPropsObject, None, 99)
-        SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 100)
-        SimBase.AddModelToTask(self.taskName, self.thrusterDynamicEffector, None, 100)
-        SimBase.AddModelToTask(self.taskName, self.solarPanel, None, 100)
-        SimBase.AddModelToTask(self.taskName, self.powerSink, None, 100)
-        SimBase.AddModelToTask(self.taskName, self.powerMonitor, None, 100)
-        SimBase.AddModelToTask(self.taskName, self.fuelTankStateEffector, None, 100)
+        SimBase.AddModelToTask(self.taskName, self.scObject, 100)
+        SimBase.AddModelToTask(self.taskName, self.simpleNavObject, 100)
+        SimBase.AddModelToTask(self.taskName, self.simpleMassPropsObject, 99)
+        SimBase.AddModelToTask(self.taskName, self.rwStateEffector, 100)
+        SimBase.AddModelToTask(self.taskName, self.thrusterDynamicEffector, 100)
+        SimBase.AddModelToTask(self.taskName, self.solarPanel, 100)
+        SimBase.AddModelToTask(self.taskName, self.powerSink, 100)
+        SimBase.AddModelToTask(self.taskName, self.powerMonitor, 100)
+        SimBase.AddModelToTask(self.taskName, self.fuelTankStateEffector, 100)
 
         for item in range(self.numRW):
             SimBase.AddModelToTask(self.taskName, self.rwPowerList[item], 100)

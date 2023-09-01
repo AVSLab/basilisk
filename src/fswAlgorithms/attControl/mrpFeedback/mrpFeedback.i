@@ -21,15 +21,8 @@
    #include "mrpFeedback.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_mrpFeedback(void*, uint64_t, uint64_t);
-%ignore Update_mrpFeedback;
-%constant void SelfInit_mrpFeedback(void*, uint64_t);
-%ignore SelfInit_mrpFeedback;
-%constant void Reset_mrpFeedback(void*, uint64_t, uint64_t);
-%ignore Reset_mrpFeedback;
-
-%include "mrpFeedback.h"
+%include "swig_c_wrap.i"
+%c_wrap(mrpFeedback);
 
 %include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
@@ -43,8 +36,6 @@ struct RWArrayConfigMsg_C;
 struct RWSpeedMsg_C;
 %include "architecture/msgPayloadDefC/RWAvailabilityMsgPayload.h"
 struct RWAvailabilityMsg_C;
-
-
 
 %pythoncode %{
 import sys

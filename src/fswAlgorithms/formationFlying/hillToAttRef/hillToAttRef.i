@@ -21,18 +21,12 @@
    #include "hillToAttRef.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_hillToAttRef(void*, uint64_t, uint64_t);
-%ignore Update_hillToAttRef;
-%constant void SelfInit_hillToAttRef(void*, uint64_t);
-%ignore SelfInit_hillToAttRef;
-%constant void Reset_hillToAttRef(void*, uint64_t, uint64_t);
-%ignore Reset_hillToAttRef;
+%include "swig_c_wrap.i"
+%c_wrap_2(hillToAttRef, HillToAttRefConfig);
 
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
 %}
-
 
 %include "architecture/msgPayloadDefC/HillRelStateMsgPayload.h"
 struct HillRelStateMsg_C;
@@ -41,7 +35,6 @@ struct AttRefMsg_C;
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
 
-%include "hillToAttRef.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

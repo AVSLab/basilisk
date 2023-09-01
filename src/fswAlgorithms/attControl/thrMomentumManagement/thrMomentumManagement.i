@@ -21,15 +21,8 @@
    #include "thrMomentumManagement.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_thrMomentumManagement(void*, uint64_t, uint64_t);
-%ignore Update_thrMomentumManagement;
-%constant void SelfInit_thrMomentumManagement(void*, uint64_t);
-%ignore SelfInit_thrMomentumManagement;
-%constant void Reset_thrMomentumManagement(void*, uint64_t, uint64_t);
-%ignore Reset_thrMomentumManagement;
-
-%include "thrMomentumManagement.h"
+%include "swig_c_wrap.i"
+%c_wrap(thrMomentumManagement);
 
 %include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 struct RWArrayConfigMsg_C;

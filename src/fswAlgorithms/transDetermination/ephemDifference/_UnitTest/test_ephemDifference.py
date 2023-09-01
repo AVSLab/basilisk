@@ -40,14 +40,13 @@ def ephemDifferenceTestFunction(ephBdyCount):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # Add a new task to the process
 
-    ephemDiffConfig = ephemDifference.EphemDifferenceData()  # Create a config struct
+    ephemDiff = ephemDifference.ephemDifference()
 
     # This calls the algContain to setup the selfInit, update, and reset
-    ephemDiffWrap = unitTestSim.setModelDataWrap(ephemDiffConfig)
-    ephemDiffWrap.ModelTag = "ephemDifference"
+    ephemDiff.ModelTag = "ephemDifference"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, ephemDiffWrap, ephemDiffConfig)
+    unitTestSim.AddModelToTask(unitTaskName, ephemDiff)
 
     # Create the input message.
     inputEphemBase = messaging.EphemerisMsgPayload() # The clock correlation message ?
@@ -57,7 +56,7 @@ def ephemDifferenceTestFunction(ephBdyCount):
     inputEphemBase.v_BdyZero_N = velocity
     inputEphemBase.timeTag = 1234.0
     ephBaseInMsg = messaging.EphemerisMsg().write(inputEphemBase)
-    ephemDiffConfig.ephBaseInMsg.subscribeTo(ephBaseInMsg)
+    ephemDiff.ephBaseInMsg.subscribeTo(ephBaseInMsg)
     functions = [astroFunctions.Mars_RV, astroFunctions.Jupiter_RV, astroFunctions.Saturn_RV]
 
     changeBodyList = list()
@@ -80,14 +79,14 @@ def ephemDifferenceTestFunction(ephBdyCount):
             ephInMsgList.append(messaging.EphemerisMsg().write(inputMsg))
             changeBodyMsg.ephInMsg.subscribeTo(ephInMsgList[-1])
 
-    ephemDiffConfig.changeBodies = changeBodyList
+    ephemDiff.changeBodies = changeBodyList
 
-    # the logging setup must occur on the actual ephemDiffConfig.changeBodies[i].ephOutMsg as we are providing
+    # the logging setup must occur on the actual ephemDiff.changeBodies[i].ephOutMsg as we are providing
     # pointers to the message payload.  Logging changeBodyList.ephOutMsg won't work as this message has a
     # different location.
     dataLogList = list()
     for i in range(ephBdyCount):
-        dataLogList.append(ephemDiffConfig.changeBodies[i].ephOutMsg.recorder())
+        dataLogList.append(ephemDiff.changeBodies[i].ephOutMsg.recorder())
         unitTestSim.AddModelToTask(unitTaskName, dataLogList[i])
 
     # Initialize the simulation
@@ -133,18 +132,18 @@ def ephemDifferenceTestFunction(ephBdyCount):
                 testFailCount += 1
                 testMessages.append("ephemDifference timeTag output body " + str(i))
 
-    if ephemDiffConfig.ephBdyCount is not ephBdyCount:
+    if ephemDiff.ephBdyCount is not ephBdyCount:
         testFailCount += 1
         testMessages.append("input/output message count is wrong.")
 
     snippentName = "passFail" + str(ephBdyCount)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + ephemDiffWrap.ModelTag)
+        print("PASSED: " + ephemDiff.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + ephemDiffWrap.ModelTag)
+        print("Failed: " + ephemDiff.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

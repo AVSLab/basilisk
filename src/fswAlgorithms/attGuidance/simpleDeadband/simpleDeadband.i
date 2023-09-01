@@ -21,15 +21,8 @@
    #include "simpleDeadband.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_simpleDeadband(void*, uint64_t, uint64_t);
-%ignore Update_simpleDeadband;
-%constant void SelfInit_simpleDeadband(void*, uint64_t);
-%ignore SelfInit_simpleDeadband;
-%constant void Reset_simpleDeadband(void*, uint64_t, uint64_t);
-%ignore Reset_simpleDeadband;
-
-%include "simpleDeadband.h"
+%include "swig_c_wrap.i"
+%c_wrap(simpleDeadband);
 
 %include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;

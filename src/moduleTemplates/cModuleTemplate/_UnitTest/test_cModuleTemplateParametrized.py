@@ -138,30 +138,29 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = cModuleTemplate.cModuleTemplateConfig()                          # update with current values
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "cModuleTemplate"                                        # update python name of test module
+    module = cModuleTemplate.cModuleTemplate()
+    module.ModelTag = "cModuleTemplate"                                        # update python name of test module
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    moduleConfig.dummy = 1                              # update module parameter with required values
-    moduleConfig.dumVector = [1., 2., 3.]
+    module.dummy = 1                              # update module parameter with required values
+    module.dumVector = [1., 2., 3.]
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = messaging.CModuleTemplateMsgPayload() # Create a structure for the input message
     inputMessageData.dataVector = [param1, param2, 0.7]       # Set up a list as a 3-vector
     inputMsg = messaging.CModuleTemplateMsg().write(inputMessageData)
-    moduleConfig.dataInMsg.subscribeTo(inputMsg)
+    module.dataInMsg.subscribeTo(inputMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.dataOutMsg.recorder()
+    dataLog = module.dataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     variableName = "dummy"                              # name the module variable to be logged
-    unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + "." + variableName, testProcessRate)
+    unitTestSim.AddVariableForLogging(module.ModelTag + "." + variableName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -176,7 +175,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     unitTestSim.ExecuteSimulation()
 
     # reset the module to test this functionality
-    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     # run the module again for an additional 1.0 seconds
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
@@ -185,7 +184,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
 
     # This pulls the BSK module internal varialbe log from the simulation run.
     # Note, this should only be done for debugging as it is a slow process
-    variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
+    variableState = unitTestSim.GetLogVariableData(module.ModelTag + "." + variableName)
 
     # set the filtered output truth states
     trueVector = []
@@ -209,7 +208,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
                        ]
             else:
                 testFailCount += 1
-                testMessages.append("FAILED: " + moduleWrap.ModelTag
+                testMessages.append("FAILED: " + module.ModelTag
                                     + " Module failed with unsupported input parameters")
     else:
         if param1 == 2:
@@ -222,7 +221,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
                        ]
         else:
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
+            testMessages.append("FAILED: " + module.ModelTag + " Module failed with unsupported input parameters")
 
     # compare the module results to the truth values
     dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
@@ -266,7 +265,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

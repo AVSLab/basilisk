@@ -222,7 +222,7 @@ class scenario_AttGuidFormationFlying(BSKSim, BSKScenario):
 
             # log the RW torque messages
             self.rwMotorLog.append(
-                FswModels[spacecraft].rwMotorTorqueData.rwMotorTorqueOutMsg.recorder(self.samplingTime))
+                FswModels[spacecraft].rwMotorTorque.rwMotorTorqueOutMsg.recorder(self.samplingTime))
             self.AddModelToTask(DynModels[spacecraft].taskName, self.rwMotorLog[spacecraft])
 
             # log the RW wheel speed information

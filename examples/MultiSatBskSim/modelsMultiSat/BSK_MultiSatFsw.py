@@ -23,6 +23,7 @@ from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (inertial3D, locationPointing, attTrackingError, mrpFeedback,
                                     rwMotorTorque, spacecraftReconfig)
 from Basilisk.utilities import (macros as mc, fswSetupThrusters)
+from Basilisk.utilities import deprecated
 
 
 class BSKFswModels:
@@ -63,33 +64,26 @@ class BSKFswModels:
                                                                        self.processTasksTimeStep), 5)
 
         # Create module data and module wraps
-        self.inertial3DPointData = inertial3D.inertial3DConfig()
-        self.inertial3DPointWrap = SimBase.setModelDataWrap(self.inertial3DPointData)
-        self.inertial3DPointWrap.ModelTag = "inertial3D"
+        self.inertial3DPoint = inertial3D.inertial3D()
+        self.inertial3DPoint.ModelTag = "inertial3D"
 
-        self.sunPointData = locationPointing.locationPointingConfig()
-        self.sunPointWrap = SimBase.setModelDataWrap(self.sunPointData)
-        self.sunPointWrap.ModelTag = "sunPoint"
+        self.sunPoint = locationPointing.locationPointing()
+        self.sunPoint.ModelTag = "sunPoint"
 
-        self.locPointData = locationPointing.locationPointingConfig()
-        self.locPointWrap = SimBase.setModelDataWrap(self.locPointData)
-        self.locPointWrap.ModelTag = "locPoint"
+        self.locPoint = locationPointing.locationPointing()
+        self.locPoint.ModelTag = "locPoint"
 
-        self.spacecraftReconfigData = spacecraftReconfig.spacecraftReconfigConfig()
-        self.spacecraftReconfigWrap = SimBase.setModelDataWrap(self.spacecraftReconfigData)
-        self.spacecraftReconfigWrap.ModelTag = "spacecraftReconfig"
+        self.spacecraftReconfig = spacecraftReconfig.spacecraftReconfig()
+        self.spacecraftReconfig.ModelTag = "spacecraftReconfig"
 
-        self.trackingErrorData = attTrackingError.attTrackingErrorConfig()
-        self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
-        self.trackingErrorWrap.ModelTag = "trackingError"
+        self.trackingError = attTrackingError.attTrackingError()
+        self.trackingError.ModelTag = "trackingError"
 
-        self.mrpFeedbackRWsData = mrpFeedback.mrpFeedbackConfig()
-        self.mrpFeedbackRWsWrap = SimBase.setModelDataWrap(self.mrpFeedbackRWsData)
-        self.mrpFeedbackRWsWrap.ModelTag = "mrpFeedbackRWs"
+        self.mrpFeedbackRWs = mrpFeedback.mrpFeedback()
+        self.mrpFeedbackRWs.ModelTag = "mrpFeedbackRWs"
 
-        self.rwMotorTorqueData = rwMotorTorque.rwMotorTorqueConfig()
-        self.rwMotorTorqueWrap = SimBase.setModelDataWrap(self.rwMotorTorqueData)
-        self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
+        self.rwMotorTorque = rwMotorTorque.rwMotorTorque()
+        self.rwMotorTorque.ModelTag = "rwMotorTorque"
 
         # create the FSW module gateway messages
         self.setupGatewayMsgs(SimBase)
@@ -98,23 +92,18 @@ class BSKFswModels:
         self.InitAllFSWObjects(SimBase)
 
         # Assign initialized modules to tasks
-        SimBase.AddModelToTask("inertialPointTask" + str(spacecraftIndex), self.inertial3DPointWrap,
-                               self.inertial3DPointData, 10)
+        SimBase.AddModelToTask("inertialPointTask" + str(spacecraftIndex), self.inertial3DPoint, 10)
 
-        SimBase.AddModelToTask("sunPointTask" + str(spacecraftIndex), self.sunPointWrap, self.sunPointData, 10)
+        SimBase.AddModelToTask("sunPointTask" + str(spacecraftIndex), self.sunPoint, 10)
 
-        SimBase.AddModelToTask("locPointTask" + str(spacecraftIndex), self.locPointWrap, self.locPointData, 10)
+        SimBase.AddModelToTask("locPointTask" + str(spacecraftIndex), self.locPoint, 10)
 
-        SimBase.AddModelToTask("spacecraftReconfigTask" + str(spacecraftIndex), self.spacecraftReconfigWrap,
-                               self.spacecraftReconfigData, 10)
+        SimBase.AddModelToTask("spacecraftReconfigTask" + str(spacecraftIndex), self.spacecraftReconfig, 10)
 
-        SimBase.AddModelToTask("trackingErrorTask" + str(spacecraftIndex), self.trackingErrorWrap,
-                               self.trackingErrorData, 9)
+        SimBase.AddModelToTask("trackingErrorTask" + str(spacecraftIndex), self.trackingError, 9)
 
-        SimBase.AddModelToTask("mrpFeedbackRWsTask" + str(spacecraftIndex), self.mrpFeedbackRWsWrap,
-                               self.mrpFeedbackRWsData, 7)
-        SimBase.AddModelToTask("mrpFeedbackRWsTask" + str(spacecraftIndex), self.rwMotorTorqueWrap,
-                               self.rwMotorTorqueData, 6)
+        SimBase.AddModelToTask("mrpFeedbackRWsTask" + str(spacecraftIndex), self.mrpFeedbackRWs, 7)
+        SimBase.AddModelToTask("mrpFeedbackRWsTask" + str(spacecraftIndex), self.rwMotorTorque, 6)
 
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc[spacecraftIndex].disableAllTasks()
@@ -173,55 +162,55 @@ class BSKFswModels:
         """
         Defines the inertial pointing guidance module.
         """
-        self.inertial3DPointData.sigma_R0N = [0.1, 0.2, -0.3]
-        messaging.AttRefMsg_C_addAuthor(self.inertial3DPointData.attRefOutMsg, self.attRefMsg)
+        self.inertial3DPoint.sigma_R0N = [0.1, 0.2, -0.3]
+        messaging.AttRefMsg_C_addAuthor(self.inertial3DPoint.attRefOutMsg, self.attRefMsg)
 
     def SetSunPointGuidance(self, SimBase):
         """
         Defines the Sun pointing guidance module.
         """
-        self.sunPointData.pHat_B = SimBase.DynModels[self.spacecraftIndex].solarPanelAxis
-        self.sunPointData.scAttInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
-        self.sunPointData.scTransInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
-        self.sunPointData.celBodyInMsg.subscribeTo(SimBase.EnvModel.ephemObject.ephemOutMsgs[SimBase.EnvModel.sun])
-        messaging.AttRefMsg_C_addAuthor(self.sunPointData.attRefOutMsg, self.attRefMsg)
+        self.sunPoint.pHat_B = SimBase.DynModels[self.spacecraftIndex].solarPanelAxis
+        self.sunPoint.scAttInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
+        self.sunPoint.scTransInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
+        self.sunPoint.celBodyInMsg.subscribeTo(SimBase.EnvModel.ephemObject.ephemOutMsgs[SimBase.EnvModel.sun])
+        messaging.AttRefMsg_C_addAuthor(self.sunPoint.attRefOutMsg, self.attRefMsg)
 
     def SetLocationPointGuidance(self, SimBase):
         """
         Defines the Earth location pointing guidance module.
         """
-        self.locPointData.pHat_B = [1, 0, 0]
-        self.locPointData.scAttInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
-        self.locPointData.scTransInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
-        self.locPointData.locationInMsg.subscribeTo(SimBase.EnvModel.groundStation.currentGroundStateOutMsg)
-        messaging.AttRefMsg_C_addAuthor(self.locPointData.attRefOutMsg, self.attRefMsg)
+        self.locPoint.pHat_B = [1, 0, 0]
+        self.locPoint.scAttInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
+        self.locPoint.scTransInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
+        self.locPoint.locationInMsg.subscribeTo(SimBase.EnvModel.groundStation.currentGroundStateOutMsg)
+        messaging.AttRefMsg_C_addAuthor(self.locPoint.attRefOutMsg, self.attRefMsg)
 
     def SetSpacecraftOrbitReconfig(self, SimBase):
         """
         Defines the station keeping module.
         """
-        self.spacecraftReconfigData.deputyTransInMsg.subscribeTo(
+        self.spacecraftReconfig.deputyTransInMsg.subscribeTo(
             SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
-        self.spacecraftReconfigData.attRefInMsg.subscribeTo(self.attRefMsg)
-        self.spacecraftReconfigData.thrustConfigInMsg.subscribeTo(self.fswThrusterConfigMsg)
-        self.spacecraftReconfigData.vehicleConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
-        self.spacecraftReconfigData.mu = SimBase.EnvModel.mu  # [m^3/s^2]
-        self.spacecraftReconfigData.attControlTime = 400  # [s]
-        messaging.AttRefMsg_C_addAuthor(self.spacecraftReconfigData.attRefOutMsg, self.attRefMsg)
+        self.spacecraftReconfig.attRefInMsg.subscribeTo(self.attRefMsg)
+        self.spacecraftReconfig.thrustConfigInMsg.subscribeTo(self.fswThrusterConfigMsg)
+        self.spacecraftReconfig.vehicleConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
+        self.spacecraftReconfig.mu = SimBase.EnvModel.mu  # [m^3/s^2]
+        self.spacecraftReconfig.attControlTime = 400  # [s]
+        messaging.AttRefMsg_C_addAuthor(self.spacecraftReconfig.attRefOutMsg, self.attRefMsg)
 
         # connect a blank chief message
         chiefData = messaging.NavTransMsgPayload()
         chiefMsg = messaging.NavTransMsg().write(chiefData)
-        self.spacecraftReconfigData.chiefTransInMsg.subscribeTo(chiefMsg)
+        self.spacecraftReconfig.chiefTransInMsg.subscribeTo(chiefMsg)
 
     def SetAttitudeTrackingError(self, SimBase):
         """
         Defines the module that converts a reference message into a guidance message.
         """
-        self.trackingErrorData.attNavInMsg.subscribeTo(
+        self.trackingError.attNavInMsg.subscribeTo(
             SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
-        self.trackingErrorData.attRefInMsg.subscribeTo(self.attRefMsg)
-        messaging.AttGuidMsg_C_addAuthor(self.trackingErrorData.attGuidOutMsg, self.attGuidMsg)
+        self.trackingError.attRefInMsg.subscribeTo(self.attRefMsg)
+        messaging.AttGuidMsg_C_addAuthor(self.trackingError.attGuidOutMsg, self.attGuidMsg)
 
     def SetMRPFeedbackRWA(self, SimBase):
         """
@@ -229,18 +218,18 @@ class BSKFswModels:
         """
         self.decayTime = 50
         self.xi = 0.9
-        self.mrpFeedbackRWsData.Ki = -1  # make value negative to turn off integral feedback
-        self.mrpFeedbackRWsData.P = 2 * np.max(SimBase.DynModels[self.spacecraftIndex].I_sc) / self.decayTime
-        self.mrpFeedbackRWsData.K = (self.mrpFeedbackRWsData.P / self.xi) * \
-                                    (self.mrpFeedbackRWsData.P / self.xi) / np.max(
+        self.mrpFeedbackRWs.Ki = -1  # make value negative to turn off integral feedback
+        self.mrpFeedbackRWs.P = 2 * np.max(SimBase.DynModels[self.spacecraftIndex].I_sc) / self.decayTime
+        self.mrpFeedbackRWs.K = (self.mrpFeedbackRWs.P / self.xi) * \
+                                    (self.mrpFeedbackRWs.P / self.xi) / np.max(
             SimBase.DynModels[self.spacecraftIndex].I_sc)
-        self.mrpFeedbackRWsData.integralLimit = 2. / self.mrpFeedbackRWsData.Ki * 0.1
+        self.mrpFeedbackRWs.integralLimit = 2. / self.mrpFeedbackRWs.Ki * 0.1
 
-        self.mrpFeedbackRWsData.vehConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
-        self.mrpFeedbackRWsData.rwSpeedsInMsg.subscribeTo(
+        self.mrpFeedbackRWs.vehConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
+        self.mrpFeedbackRWs.rwSpeedsInMsg.subscribeTo(
             SimBase.DynModels[self.spacecraftIndex].rwStateEffector.rwSpeedOutMsg)
-        self.mrpFeedbackRWsData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
-        self.mrpFeedbackRWsData.guidInMsg.subscribeTo(self.attGuidMsg)
+        self.mrpFeedbackRWs.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
+        self.mrpFeedbackRWs.guidInMsg.subscribeTo(self.attGuidMsg)
 
     def SetRWConfigMsg(self, SimBase):
         """
@@ -269,9 +258,9 @@ class BSKFswModels:
                          0.0, 1.0, 0.0,
                          0.0, 0.0, 1.0]
 
-        self.rwMotorTorqueData.controlAxes_B = controlAxes_B
-        self.rwMotorTorqueData.vehControlInMsg.subscribeTo(self.mrpFeedbackRWsData.cmdTorqueOutMsg)
-        self.rwMotorTorqueData.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
+        self.rwMotorTorque.controlAxes_B = controlAxes_B
+        self.rwMotorTorque.vehControlInMsg.subscribeTo(self.mrpFeedbackRWs.cmdTorqueOutMsg)
+        self.rwMotorTorque.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
@@ -298,11 +287,144 @@ class BSKFswModels:
 
         # connect gateway FSW effector command msgs with the dynamics
         SimBase.DynModels[self.spacecraftIndex].rwStateEffector.rwMotorCmdInMsg.subscribeTo(
-            self.rwMotorTorqueData.rwMotorTorqueOutMsg)
+            self.rwMotorTorque.rwMotorTorqueOutMsg)
         SimBase.DynModels[self.spacecraftIndex].thrusterDynamicEffector.cmdsInMsg.subscribeTo(
-            self.spacecraftReconfigData.onTimeOutMsg)
+            self.spacecraftReconfig.onTimeOutMsg)
 
     def zeroGateWayMsgs(self):
         """Zero all the FSW gateway message payloads"""
         self.attRefMsg.write(messaging.AttRefMsgPayload())
         self.attGuidMsg.write(messaging.AttGuidMsgPayload())
+
+    @property
+    def inertial3DPointData(self):
+        return self.inertial3DPoint
+
+    inertial3DPointData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to inertial3DPointData as inertial3DPoint",
+        inertial3DPointData)
+
+    @property
+    def inertial3DPointWrap(self):
+        return self.inertial3DPoint
+
+    inertial3DPointWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to inertial3DPointWrap as inertial3DPoint",
+        inertial3DPointWrap)
+
+
+    @property
+    def sunPointData(self):
+        return self.sunPoint
+
+    sunPointData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to sunPointData as sunPoint",
+        sunPointData)
+
+    @property
+    def sunPointWrap(self):
+        return self.sunPoint
+
+    sunPointWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to sunPointWrap as sunPoint",
+        sunPointWrap)
+
+
+    @property
+    def locPointData(self):
+        return self.locPoint
+
+    locPointData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to locPointData as locPoint",
+        locPointData)
+
+    @property
+    def locPointWrap(self):
+        return self.locPoint
+
+    locPointWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to locPointWrap as locPoint",
+        locPointWrap)
+
+
+    @property
+    def spacecraftReconfigData(self):
+        return self.spacecraftReconfig
+
+    spacecraftReconfigData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to spacecraftReconfigData as spacecraftReconfig",
+        spacecraftReconfigData)
+
+    @property
+    def spacecraftReconfigWrap(self):
+        return self.spacecraftReconfig
+
+    spacecraftReconfigWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to spacecraftReconfigWrap as spacecraftReconfig",
+        spacecraftReconfigWrap)
+
+
+    @property
+    def trackingErrorData(self):
+        return self.trackingError
+
+    trackingErrorData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to trackingErrorData as trackingError",
+        trackingErrorData)
+
+    @property
+    def trackingErrorWrap(self):
+        return self.trackingError
+
+    trackingErrorWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to trackingErrorWrap as trackingError",
+        trackingErrorWrap)
+
+
+    @property
+    def mrpFeedbackRWsData(self):
+        return self.mrpFeedbackRWs
+
+    mrpFeedbackRWsData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to mrpFeedbackRWsData as mrpFeedbackRWs",
+        mrpFeedbackRWsData)
+
+    @property
+    def mrpFeedbackRWsWrap(self):
+        return self.mrpFeedbackRWs
+
+    mrpFeedbackRWsWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to mrpFeedbackRWsWrap as mrpFeedbackRWs",
+        mrpFeedbackRWsWrap)
+
+
+    @property
+    def rwMotorTorqueData(self):
+        return self.rwMotorTorque
+
+    rwMotorTorqueData = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to rwMotorTorqueData as rwMotorTorque",
+        rwMotorTorqueData)
+
+    @property
+    def rwMotorTorqueWrap(self):
+        return self.rwMotorTorque
+
+    rwMotorTorqueWrap = deprecated.DeprecatedProperty(
+        "2024/07/30",
+        "Due to the new C module syntax, refer to rwMotorTorqueWrap as rwMotorTorque",
+        rwMotorTorqueWrap)
+    

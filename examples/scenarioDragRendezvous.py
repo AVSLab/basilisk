@@ -246,14 +246,14 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     chiefDrag.atmoDensInMsg.subscribeTo(atmosphere.envOutMsgs[-1])
 
     #   Add all dynamics stuff to dynamics task
-    scSim.AddModelToTask(dynTaskName, atmosphere,ModelPriority=920)
+    scSim.AddModelToTask(dynTaskName, atmosphere,920)
     # scSim.AddModelToTask(dynTaskName, ephemConverter, 921)
-    scSim.AddModelToTask(dynTaskName, chiefDrag,ModelPriority=890)
-    scSim.AddModelToTask(dynTaskName, depDrag,ModelPriority=891)
-    scSim.AddModelToTask(dynTaskName, chiefSc,ModelPriority=810)
-    scSim.AddModelToTask(dynTaskName, depSc,ModelPriority=811)
-    scSim.AddModelToTask(dynTaskName, chiefNav,ModelPriority=800)
-    scSim.AddModelToTask(dynTaskName, depNav,ModelPriority=801)
+    scSim.AddModelToTask(dynTaskName, chiefDrag,890)
+    scSim.AddModelToTask(dynTaskName, depDrag,891)
+    scSim.AddModelToTask(dynTaskName, chiefSc,810)
+    scSim.AddModelToTask(dynTaskName, depSc,811)
+    scSim.AddModelToTask(dynTaskName, chiefNav,800)
+    scSim.AddModelToTask(dynTaskName, depNav,801)
     # scSim.AddModelToTask(dynTaskName, gravFactory.spiceObject, 999)
     scSim.AddVariableForLogging(chiefDrag.ModelTag + ".forceExternal_B",
                                       dynTimeStep, 0, 2, 'double')
@@ -263,46 +263,42 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     ##  FSW setup
     #   Chief S/C
     #   hillPoint - set such that the chief attitude follows its hill frame.
-    chiefAttRefData = hillPoint.hillPointConfig()
-    chiefAttRefWrap = scSim.setModelDataWrap(chiefAttRefData)
-    chiefAttRefWrap.ModelTag = 'chief_att_ref'
-    chiefAttRefData.transNavInMsg.subscribeTo(chiefNav.transOutMsg)
+    chiefAttRef = hillPoint.hillPoint()
+    chiefAttRef.ModelTag = 'chief_att_ref'
+    chiefAttRef.transNavInMsg.subscribeTo(chiefNav.transOutMsg)
     # chiefAttRefData.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[-1]) #   We shouldn't need this because the planet is the origin
-    chiefSc.attRefInMsg.subscribeTo(chiefAttRefData.attRefOutMsg) #  Force the chief spacecraft to follow the hill direction
+    chiefSc.attRefInMsg.subscribeTo(chiefAttRef.attRefOutMsg) #  Force the chief spacecraft to follow the hill direction
 
-    depHillRefData = hillPoint.hillPointConfig()
-    depHillRefWrap = scSim.setModelDataWrap(depHillRefData)
-    depHillRefWrap.ModelTag = 'dep_hill_ref'
-    depHillRefData.transNavInMsg.subscribeTo(depNav.transOutMsg)
+    depHillRef = hillPoint.hillPoint()
+    depHillRef.ModelTag = 'dep_hill_ref'
+    depHillRef.transNavInMsg.subscribeTo(depNav.transOutMsg)
     # chiefAttRefData.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[-1]) #   We shouldn't need this because the planet is the origin
     #chiefSc.attRefInMsg.subscribeTo(chiefAttRefData.attRefOutMsg) #  Force the chief spacecraft to follow the hill direction
 
     # hillStateConverter
-    hillStateNavData = hillStateConverter.HillStateConverterConfig()
-    hillStateNavWrap = scSim.setModelDataWrap(hillStateNavData)
-    hillStateNavWrap.ModelTag = "dep_hillStateNav"
-    hillStateNavData.depStateInMsg.subscribeTo(depNav.transOutMsg)
-    hillStateNavData.chiefStateInMsg.subscribeTo(chiefNav.transOutMsg)
+    hillStateNavObj = hillStateConverter.hillStateConverter()
+    hillStateNavObj.ModelTag = "dep_hillStateNav"
+    hillStateNavObj.depStateInMsg.subscribeTo(depNav.transOutMsg)
+    hillStateNavObj.chiefStateInMsg.subscribeTo(chiefNav.transOutMsg)
 
     # hillToAtt guidance law w/ static gain
-    depAttRefData = hillToAttRef.HillToAttRefConfig()
-    depAttRefWrap = scSim.setModelDataWrap(depAttRefData)
-    depAttRefData.ModelTag = 'dep_att_ref'
-    depAttRefData.gainMatrix = hillToAttRef.MultiArray(lqr_gain_set)
+    depAttRef = hillToAttRef.hillToAttRef()
+    depAttRef.ModelTag = 'dep_att_ref'
+    depAttRef.gainMatrix = hillToAttRef.MultiArray(lqr_gain_set)
     #   Configure parameters common to relative attitude guidance modules
-    depAttRefData.hillStateInMsg.subscribeTo(hillStateNavData.hillStateOutMsg)
+    depAttRef.hillStateInMsg.subscribeTo(hillStateNavObj.hillStateOutMsg)
     # depAttRef.attStateInMsg.subscribeTo(chiefNav.attOutMsg)
-    depAttRefData.attRefInMsg.subscribeTo(depHillRefData.attRefOutMsg)
-    depAttRefData.relMRPMin = -0.2
-    depAttRefData.relMRPMax = 0.2
+    depAttRef.attRefInMsg.subscribeTo(depHillRef.attRefOutMsg)
+    depAttRef.relMRPMin = -0.2
+    depAttRef.relMRPMax = 0.2
     #   Set the deputy spacecraft to directly follow the attRefMessage
-    depSc.attRefInMsg.subscribeTo(depAttRefData.attRefOutMsg)
+    depSc.attRefInMsg.subscribeTo(depAttRef.attRefOutMsg)
 
 
-    scSim.AddModelToTask(dynTaskName, chiefAttRefWrap, chiefAttRefData, 710)
-    scSim.AddModelToTask(dynTaskName, hillStateNavWrap, hillStateNavData,790)
-    scSim.AddModelToTask(dynTaskName, depHillRefWrap, depHillRefData,789)
-    scSim.AddModelToTask(dynTaskName, depAttRefWrap, depAttRefData, 700)
+    scSim.AddModelToTask(dynTaskName, chiefAttRef, 710)
+    scSim.AddModelToTask(dynTaskName, hillStateNavObj,790)
+    scSim.AddModelToTask(dynTaskName, depHillRef,789)
+    scSim.AddModelToTask(dynTaskName, depAttRef, 700)
     # ----- log ----- #
     orbit_period = 2*np.pi/np.sqrt(mu/chief_oe.a**3)
     simulationTime = 40*orbit_period#106920.14366466808 
@@ -313,19 +309,19 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     #   Set up recorders
     chiefStateRec = chiefSc.scStateOutMsg.recorder()
     depStateRec = depSc.scStateOutMsg.recorder()
-    hillStateRec = hillStateNavData.hillStateOutMsg.recorder()
-    depAttRec = depAttRefData.attRefOutMsg.recorder()
-    chiefAttRec = chiefAttRefData.attRefOutMsg.recorder()
+    hillStateRec = hillStateNavObj.hillStateOutMsg.recorder()
+    depAttRec = depAttRef.attRefOutMsg.recorder()
+    chiefAttRec = chiefAttRef.attRefOutMsg.recorder()
     atmoRecs = []
     for msg in atmosphere.envOutMsgs:
         atmoRec = msg.recorder()
         atmoRecs.append(atmoRec)
 
-    scSim.AddModelToTask(dynTaskName, chiefStateRec, ModelPriority=700)
-    scSim.AddModelToTask(dynTaskName, depStateRec, ModelPriority=701)
-    scSim.AddModelToTask(dynTaskName, hillStateRec, ModelPriority=702)
-    scSim.AddModelToTask(dynTaskName, depAttRec, ModelPriority=703)
-    scSim.AddModelToTask(dynTaskName, chiefAttRec, ModelPriority=704)
+    scSim.AddModelToTask(dynTaskName, chiefStateRec, 700)
+    scSim.AddModelToTask(dynTaskName, depStateRec, 701)
+    scSim.AddModelToTask(dynTaskName, hillStateRec, 702)
+    scSim.AddModelToTask(dynTaskName, depAttRec, 703)
+    scSim.AddModelToTask(dynTaskName, chiefAttRec, 704)
     for ind,rec in enumerate(atmoRecs):
         scSim.AddModelToTask(dynTaskName, rec, 705+ind)
 

@@ -100,15 +100,15 @@ def cnnTest(show_plots, image, saveImage):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = centerRadiusCNN.CenterRadiusCNN()
-    moduleConfig.ModelTag = "cnn"
+    module = centerRadiusCNN.CenterRadiusCNN()
+    module.ModelTag = "cnn"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    moduleConfig.pathToNetwork = path + "/../CAD.onnx"
-    moduleConfig.filename = imagePath
-    moduleConfig.pixelNoise = [5,5,5]
+    module.pathToNetwork = path + "/../CAD.onnx"
+    module.filename = imagePath
+    module.pixelNoise = [5,5,5]
 
     circles = []
     if image == "mars.jpg":
@@ -117,7 +117,7 @@ def cnnTest(show_plots, image, saveImage):
         circles = [(269.21127319, 231.63162231, 144.85394287)]
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.opnavCirclesOutMsg.recorder()
+    dataLog = module.opnavCirclesOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods

@@ -21,14 +21,8 @@
    #include "velocityPoint.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_velocityPoint(void*, uint64_t, uint64_t);
-%ignore Update_velocityPoint;
-%constant void SelfInit_velocityPoint(void*, uint64_t);
-%ignore SelfInit_velocityPoint;
-%constant void Reset_velocityPoint(void*, uint64_t, uint64_t);
-%ignore Reset_velocityPoint;
-%include "velocityPoint.h"
+%include "swig_c_wrap.i"
+%c_wrap(velocityPoint);
 
 %include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;

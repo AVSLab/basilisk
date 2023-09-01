@@ -87,18 +87,17 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = mrpPD.MrpPDConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "mrpPD"
+    module = mrpPD.mrpPD()
+    module.ModelTag = "mrpPD"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    moduleConfig.K = 0.15
-    moduleConfig.P = 150.0
+    module.K = 0.15
+    module.P = 150.0
     if setExtTorque:
-        moduleConfig.knownTorquePntB_B = [0.1, 0.2, 0.3]
+        module.knownTorquePntB_B = [0.1, 0.2, 0.3]
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -118,12 +117,12 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigIn)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.cmdTorqueOutMsg.recorder()
+    dataLog = module.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.vehConfigInMsg.subscribeTo(vcInMsg)
-    moduleConfig.guidInMsg.subscribeTo(guidInMsg)
+    module.vehConfigInMsg.subscribeTo(vcInMsg)
+    module.guidInMsg.subscribeTo(guidInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -132,7 +131,7 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    trueVector = [findTrueTorques(moduleConfig, guidCmdData, vehicleConfigIn)]*3
+    trueVector = [findTrueTorques(module, guidCmdData, vehicleConfigIn)]*3
     # print trueVector
 
     # compare the module results to the truth values
@@ -145,11 +144,11 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     snippentName = "passFail" + str(setExtTorque)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
 
     # return fail count and join into a single string all messages in the list
@@ -157,7 +156,7 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     return [testFailCount, ''.join(testMessages)]
 
 
-def findTrueTorques(moduleConfig, guidCmdData, vehicleConfigOut):
+def findTrueTorques(module, guidCmdData, vehicleConfigOut):
     sigma_BR = np.array(guidCmdData.sigma_BR)
     omega_BR_B = np.array(guidCmdData.omega_BR_B)
     omega_RN_B = np.array(guidCmdData.omega_RN_B)
@@ -168,9 +167,9 @@ def findTrueTorques(moduleConfig, guidCmdData, vehicleConfigOut):
     I[1][1] = vehicleConfigOut.ISCPntB_B[4]
     I[2][2] = vehicleConfigOut.ISCPntB_B[8]
 
-    K = moduleConfig.K
-    P = moduleConfig.P
-    L = np.array(moduleConfig.knownTorquePntB_B)
+    K = module.K
+    P = module.P
+    L = np.array(module.knownTorquePntB_B)
 
     # Begin Method
     omega_BN_B = omega_BR_B + omega_RN_B

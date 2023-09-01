@@ -21,15 +21,8 @@
    #include "mrpSteering.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_mrpSteering(void*, uint64_t, uint64_t);
-%ignore Update_mrpSteering;
-%constant void SelfInit_mrpSteering(void*, uint64_t);
-%ignore SelfInit_mrpSteering;
-%constant void Reset_mrpSteering(void*, uint64_t, uint64_t);
-%ignore Reset_mrpSteering;
-
-%include "mrpSteering.h"
+%include "swig_c_wrap.i"
+%c_wrap(mrpSteering);
 
 %include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;

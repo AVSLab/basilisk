@@ -22,18 +22,12 @@
     #include "forceTorqueThrForceMapping.h"
 %}
 
+%include "swig_c_wrap.i"
+%c_wrap(forceTorqueThrForceMapping);
+
 %pythoncode %{
     from Basilisk.architecture.swig_common_model import *
 %}
-%include "swig_conly_data.i"
-%constant void Update_forceTorqueThrForceMapping(void*, uint64_t, uint64_t);
-%ignore Update_forceTorqueThrForceMapping;
-%constant void SelfInit_forceTorqueThrForceMapping(void*, uint64_t);
-%ignore SelfInit_forceTorqueThrForceMapping;
-%constant void Reset_forceTorqueThrForceMapping(void*, uint64_t, uint64_t);
-%ignore Reset_forceTorqueThrForceMapping;
-
-%include "forceTorqueThrForceMapping.h"
 
 %include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 struct CmdTorqueBodyMsg_C;

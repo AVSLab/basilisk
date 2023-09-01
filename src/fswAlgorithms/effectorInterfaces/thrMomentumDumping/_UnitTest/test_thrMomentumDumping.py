@@ -76,19 +76,18 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = thrMomentumDumping.thrMomentumDumpingConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "thrMomentumDumping"
+    module = thrMomentumDumping.thrMomentumDumping()
+    module.ModelTag = "thrMomentumDumping"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    moduleConfig.maxCounterValue = 2
+    module.maxCounterValue = 2
     if largeMinFireTime:
-        moduleConfig.thrMinFireTime = 0.200         # seconds
+        module.thrMinFireTime = 0.200         # seconds
     else:
-        moduleConfig.thrMinFireTime = 0.020         # seconds
+        module.thrMinFireTime = 0.020         # seconds
 
     # setup thruster cluster message
     fswSetupThrusters.clearSetup()
@@ -129,13 +128,13 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     deltaHInMsg = messaging.CmdTorqueBodyMsg()
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = moduleConfig.thrusterOnTimeOutMsg.recorder()
+    dataLog = module.thrusterOnTimeOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.thrusterImpulseInMsg.subscribeTo(deltaPInMsg)
-    moduleConfig.thrusterConfInMsg.subscribeTo(thrConfInMsg)
-    moduleConfig.deltaHInMsg.subscribeTo(deltaHInMsg)
+    module.thrusterImpulseInMsg.subscribeTo(deltaPInMsg)
+    module.thrusterConfInMsg.subscribeTo(thrConfInMsg)
+    module.deltaHInMsg.subscribeTo(deltaHInMsg)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -157,7 +156,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 
     if resetCheck:
         # reset the module to test this functionality
-        moduleWrap.Reset(macros.sec2nano(3.0))     # this module reset function needs a time input (in NanoSeconds)
+        module.Reset(macros.sec2nano(3.0))     # this module reset function needs a time input (in NanoSeconds)
 
         # run the module again for an additional 1.0 seconds
         unitTestSim.ConfigureStopTime(macros.sec2nano(3.5))        # seconds to stop simulation
@@ -219,11 +218,11 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     snippentName = "passFail" + str(resetCheck) + str(largeMinFireTime)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + moduleWrap.ModelTag)
+        print("PASSED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + moduleWrap.ModelTag)
+        print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

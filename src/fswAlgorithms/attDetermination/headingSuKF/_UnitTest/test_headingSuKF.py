@@ -381,16 +381,15 @@ def StateUpdateSunLine(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = headingSuKF.HeadingSuKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "headingSuKF"
+    module = headingSuKF.headingSuKF()
+    module.ModelTag = "headingSuKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
+    setupFilterData(module)
 
-    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     testVector = np.array([0.9, 0.1, 0.02])
@@ -401,10 +400,10 @@ def StateUpdateSunLine(show_plots):
     stateTarget = testVector.tolist()
     inputData.r_BN_B = stateTarget
     stateTarget.extend([0.0, 0.0])
-    moduleConfig.stateInit = [1., 0.2, 0.1, 0.01, 0.001]
+    module.stateInit = [1., 0.2, 0.1, 0.01, 0.001]
 
     # setup message connections
-    moduleConfig.opnavDataInMsg.subscribeTo(opnavDataInMsg)
+    module.opnavDataInMsg.subscribeTo(opnavDataInMsg)
 
     unitTestSim.InitializeSimulation()
     t1 = 1000
@@ -470,7 +469,7 @@ def StateUpdateSunLine(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag + " state update")
+        print("PASSED: " + module.ModelTag + " state update")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -494,23 +493,22 @@ def StatePropSunLine(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = headingSuKF.HeadingSuKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "headingSuKF"
+    module = headingSuKF.headingSuKF()
+    module.ModelTag = "headingSuKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
+    setupFilterData(module)
 
-    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     inData = messaging.OpNavMsgPayload()
     inDataMsg = messaging.OpNavMsg().write(inData)
 
     # setup message connections
-    moduleConfig.opnavDataInMsg.subscribeTo(inDataMsg)
+    module.opnavDataInMsg.subscribeTo(inDataMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
@@ -521,7 +519,7 @@ def StatePropSunLine(show_plots):
     covarLog = dataLog.covar
 
     FilterPlots.StateCovarPlot(dataLog.times(), stateLog, covarLog, 'Prop', show_plots)
-    FilterPlots.PostFitResiduals(dataLog.times(), postFitLog, moduleConfig.qObsVal, 'Prop', show_plots)
+    FilterPlots.PostFitResiduals(dataLog.times(), postFitLog, module.qObsVal, 'Prop', show_plots)
 
     for i in range(5):
         if(abs(stateLog[-1, i] - stateLog[0, i]) > 1.0E-10):
@@ -533,7 +531,7 @@ def StatePropSunLine(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag + " state propagation")
+        print("PASSED: " + module.ModelTag + " state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

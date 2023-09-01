@@ -22,15 +22,9 @@
    #include "architecture/utilities/ukfUtilities.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_pixelLineBiasUKF(void*, uint64_t, uint64_t);
-%ignore Update_pixelLineBiasUKF;
-%constant void SelfInit_pixelLineBiasUKF(void*, uint64_t);
-%ignore SelfInit_pixelLineBiasUKF;
-%constant void Reset_pixelLineBiasUKF(void*, uint64_t, uint64_t);
-%ignore Reset_pixelLineBiasUKF;
+%include "swig_c_wrap.i"
+%c_wrap_2(pixelLineBiasUKF, PixelLineBiasUKFConfig);
 
-%include "pixelLineBiasUKF.h"
 %include "architecture/utilities/ukfUtilities.h"
 
 %include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"

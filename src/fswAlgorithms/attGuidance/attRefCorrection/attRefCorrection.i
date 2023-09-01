@@ -22,18 +22,12 @@
     #include "attRefCorrection.h"
 %}
 
+%include "swig_c_wrap.i"
+%c_wrap(attRefCorrection);
+
 %pythoncode %{
     from Basilisk.architecture.swig_common_model import *
 %}
-%include "swig_conly_data.i"
-%constant void Update_attRefCorrection(void*, uint64_t, uint64_t);
-%ignore Update_attRefCorrection;
-%constant void SelfInit_attRefCorrection(void*, uint64_t);
-%ignore SelfInit_attRefCorrection;
-%constant void Reset_attRefCorrection(void*, uint64_t, uint64_t);
-%ignore Reset_attRefCorrection;
-
-%include "attRefCorrection.h"
 
 %include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 struct AttRefMsg_C;

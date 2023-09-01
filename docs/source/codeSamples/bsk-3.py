@@ -38,15 +38,14 @@ def run():
     dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(5.)))
 
     # create modules
-    mod1 = cModuleTemplate.cModuleTemplateConfig()
-    mod1Wrap = scSim.setModelDataWrap(mod1)
-    mod1Wrap.ModelTag = "cModule1"
+    mod1 = cModuleTemplate.cModuleTemplate()
+    mod1.ModelTag = "cModule1"
 
     mod2 = cppModuleTemplate.CppModuleTemplate()
     mod2.ModelTag = "cppModule2"
 
     # add modules to task list
-    scSim.AddModelToTask("dynamicsTask", mod1Wrap, mod1)
+    scSim.AddModelToTask("dynamicsTask", mod1)
     scSim.AddModelToTask("dynamicsTask", mod2)
 
     # connect messages

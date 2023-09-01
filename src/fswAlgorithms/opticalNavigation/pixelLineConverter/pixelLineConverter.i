@@ -22,13 +22,10 @@
 %}
 
 %include "swig_conly_data.i"
-%constant void SelfInit_pixelLineConverter(void*, uint64_t);
-%ignore SelfInit_pixelLineConverter;
-%constant void Reset_pixelLineConverter(void*, uint64_t, uint64_t);
-%ignore Reset_pixelLineConverter;
-%constant void Update_pixelLineConverter(void*, uint64_t, uint64_t);
-%ignore Update_pixelLineConverter;
 STRUCTASLIST(PixelLineConvertData)
+
+%include "swig_c_wrap.i"
+%c_wrap_2(pixelLineConverter, PixelLineConvertData);
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
@@ -39,12 +36,8 @@ struct CameraConfigMsg_C;
 %include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
 struct OpNavMsg_C;
 
-%include "pixelLineConverter.h"
-
-
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-
 

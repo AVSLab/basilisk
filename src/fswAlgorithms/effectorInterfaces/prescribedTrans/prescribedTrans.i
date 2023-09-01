@@ -21,15 +21,8 @@
    #include "prescribedTrans.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void SelfInit_prescribedTrans(void*, uint64_t);
-%ignore SelfInit_prescribedTrans;
-%constant void Reset_prescribedTrans(void*, uint64_t, uint64_t);
-%ignore Reset_prescribedTrans;
-%constant void Update_prescribedTrans(void*, uint64_t, uint64_t);
-%ignore Update_prescribedTrans;
-
-%include "prescribedTrans.h"
+%include "swig_c_wrap.i"
+%c_wrap_2(prescribedTrans, PrescribedTransConfig);
 
 %include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
 struct PrescribedMotionMsg_C;

@@ -72,11 +72,11 @@ where each line contains information about only one intermediate point of the ma
 
 The required module configuration is::
 
-    waypointReferenceConfig = waypointReference.WaypointReference()
-    waypointReferenceConfig.ModelTag = "waypointReference"
-    waypointReferenceConfig.dataFileName = dataFileName
-    waypointReferenceConfig.attitudeType = 0
-    unitTestSim.AddModelToTask(unitTaskName, waypointReferenceConfig)
+    waypointReferenceModule = waypointReference.WaypointReference()
+    waypointReferenceModule.ModelTag = "waypointReference"
+    waypointReferenceModule.dataFileName = dataFileName
+    waypointReferenceModule.attitudeType = 0
+    unitTestSim.AddModelToTask(unitTaskName, waypointReferenceModule)
 	
 Note that for ``attitudeType``, a valid input must be provided by the user: 0 - MRP, 1 - EP or quaternions (q0, q1, q2, q3), 2 - EP or quaternions (q1, q2, q3, qs).
 No default attitude type is used by the module, therefore faliure to specify this parameter results in breaking the simulation.

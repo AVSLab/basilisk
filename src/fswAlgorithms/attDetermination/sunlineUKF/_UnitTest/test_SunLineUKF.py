@@ -352,14 +352,13 @@ def checkStateUpdateSunLine(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunlineUKF.SunlineUKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "SunlineUKF"
+    module = sunlineUKF.sunlineUKF()
+    module.ModelTag = "SunlineUKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
+    setupFilterData(module)
 
     cssConstelation = messaging.CSSConfigMsgPayload()
 
@@ -395,14 +394,14 @@ def checkStateUpdateSunLine(show_plots):
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
-    moduleConfig.state = [0.7, 0.7, 0.0]
+    module.state = [0.7, 0.7, 0.0]
 
-    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
-    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
-    moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
+    module.cssDataInMsg.subscribeTo(cssDataInMsg)
+    module.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
     unitTestSim.InitializeSimulation()
 
@@ -455,10 +454,10 @@ def checkStateUpdateSunLine(show_plots):
             testMessages.append("State update failure")
 
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'update', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'update', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, module.qObsVal, 'update', show_plots)
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag + " state update")
+        print("PASSED: " + module.ModelTag + " state update")
     else:
         print(testMessages)
 
@@ -489,23 +488,22 @@ def checkStatePropSunLine(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunlineUKF.SunlineUKFConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "SunlineUKF"
+    module = sunlineUKF.sunlineUKF()
+    module.ModelTag = "SunlineUKF"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    setupFilterData(moduleConfig)
+    setupFilterData(module)
 
-    dataLog = moduleConfig.filtDataOutMsg.recorder()
+    dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # connect messages
     cssConstInMsg = messaging.CSSConfigMsg()
     cssDataInMsg = messaging.CSSArraySensorMsg()
-    moduleConfig.cssDataInMsg.subscribeTo(cssDataInMsg)
-    moduleConfig.cssConfigInMsg.subscribeTo(cssConstInMsg)
+    module.cssDataInMsg.subscribeTo(cssDataInMsg)
+    module.cssConfigInMsg.subscribeTo(cssConstInMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
@@ -516,7 +514,7 @@ def checkStatePropSunLine(show_plots):
     covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'prop', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'prop', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, module.qObsVal, 'prop', show_plots)
 
     for i in range(6):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
@@ -528,7 +526,7 @@ def checkStatePropSunLine(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + moduleWrap.ModelTag + " state propagation")
+        print("PASSED: " + module.ModelTag + " state propagation")
     else:
         print(testMessages)
 

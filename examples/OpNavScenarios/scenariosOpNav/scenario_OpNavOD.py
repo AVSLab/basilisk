@@ -81,9 +81,9 @@ class scenario_OpNav(BSKScenario):
 
         MRP= [0,0,0]
         if self.filterUse =="relOD":
-            self.masterSim.get_FswModel().relativeODData.stateInit = rN.tolist() + vN.tolist()
+            self.masterSim.get_FswModel().relativeOD.stateInit = rN.tolist() + vN.tolist()
         if self.filterUse == "bias":
-            self.masterSim.get_FswModel().pixelLineFilterData.stateInit = rN.tolist() + vN.tolist() + bias
+            self.masterSim.get_FswModel().pixelLineFilter.stateInit = rN.tolist() + vN.tolist() + bias
         self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = rN
         self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = vN
         self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[MRP[0]], [MRP[1]], [MRP[2]]]  # sigma_BN_B
@@ -92,7 +92,7 @@ class scenario_OpNav(BSKScenario):
         qNoiseIn = np.identity(6)
         qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-3 * 1E-3
         qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1E-4 * 1E-4
-        self.masterSim.get_FswModel().relativeODData.qNoise = qNoiseIn.reshape(36).tolist()
+        self.masterSim.get_FswModel().relativeOD.qNoise = qNoiseIn.reshape(36).tolist()
         self.masterSim.get_FswModel().imageProcessing.noiseSF = 0.5
 
     def log_outputs(self):
@@ -104,12 +104,12 @@ class scenario_OpNav(BSKScenario):
         samplingTime = self.masterSim.get_FswModel().processTasksTimeStep
 
         if self.filterUse == "relOD":
-            self.filtRec = FswModel.relativeODData.filtDataOutMsg.recorder(samplingTime)
+            self.filtRec = FswModel.relativeOD.filtDataOutMsg.recorder(samplingTime)
             self.masterSim.AddModelToTask(DynModel.taskName, self.filtRec)
             self.opNavRec = FswModel.opnavMsg.recorder(samplingTime)
             self.masterSim.AddModelToTask(DynModel.taskName, self.opNavRec)
         if self.filterUse == "bias":
-            self.filtRec = FswModel.pixelLineFilterData.filtDataOutMsg.recorder(samplingTime)
+            self.filtRec = FswModel.pixelLineFilter.filtDataOutMsg.recorder(samplingTime)
             self.masterSim.AddModelToTask(DynModel.taskName, self.filtRec)
 
         self.scRec = DynModel.scObject.scStateOutMsg.recorder(samplingTime)

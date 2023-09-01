@@ -206,6 +206,7 @@ Complex Spacecraft Dynamics Simulations
    Sensors Attached to a Rotating Panel <scenarioRotatingPanel>
    Hinged Panel Deployment <scenarioDeployingPanel>
    MSM Simulation of Charged Spacecraft <scenarioTwoChargedSC>
+   Spacecraft with 1- or 2-DOF Panel using single effector <scenarioSpinningBodiesTwoDOF>
 
 Mission Simulations
 ---------------------------------------
@@ -261,6 +262,7 @@ Small Body Navigation Simulations
 
     Proximity Operations Hybrid EKF <scenarioSmallBodyNav>
     Non-Keplerian Acceleration Estimation using UKF <scenarioSmallBodyNavUKF>
+    Landmarks-based Navigation <scenarioSmallBodyLandmarks>
 
 Monte Carlo Simulations
 -----------------------

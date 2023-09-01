@@ -21,15 +21,8 @@
    #include "thrFiringSchmitt.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_thrFiringSchmitt(void*, uint64_t, uint64_t);
-%ignore Update_thrFiringSchmitt;
-%constant void SelfInit_thrFiringSchmitt(void*, uint64_t);
-%ignore SelfInit_thrFiringSchmitt;
-%constant void Reset_thrFiringSchmitt(void*, uint64_t, uint64_t);
-%ignore Reset_thrFiringSchmitt;
-
-%include "thrFiringSchmitt.h"
+%include "swig_c_wrap.i"
+%c_wrap(thrFiringSchmitt);
 
 %include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
 struct THRArrayConfigMsg_C;

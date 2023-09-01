@@ -41,14 +41,13 @@ def test_hillStateConverter(show_plots):
     depNavMsg = messaging.NavTransMsg().write(depNavMsgData)
 
     #   Set up the hillStateConverter
-    hillStateNavData = hillStateConverter.HillStateConverterConfig()
-    hillStateNavWrap = sim.setModelDataWrap(hillStateNavData)
-    hillStateNavWrap.ModelTag = "dep_hillStateNav"
-    hillStateNavData.chiefStateInMsg.subscribeTo(chiefNavMsg)
-    hillStateNavData.depStateInMsg.subscribeTo(depNavMsg)
-    hillRecorder = hillStateNavData.hillStateOutMsg.recorder()
+    hillStateNav = hillStateConverter.hillStateConverter()
+    hillStateNav.ModelTag = "dep_hillStateNav"
+    hillStateNav.chiefStateInMsg.subscribeTo(chiefNavMsg)
+    hillStateNav.depStateInMsg.subscribeTo(depNavMsg)
+    hillRecorder = hillStateNav.hillStateOutMsg.recorder()
     
-    sim.AddModelToTask(taskName, hillStateNavWrap, hillStateNavData)
+    sim.AddModelToTask(taskName, hillStateNav)
     sim.AddModelToTask(taskName, hillRecorder)
 
     sim.ConfigureStopTime(macros.sec2nano(1.0))

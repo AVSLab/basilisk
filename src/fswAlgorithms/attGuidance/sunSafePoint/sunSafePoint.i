@@ -21,21 +21,13 @@
    #include "sunSafePoint.h"
 %}
 
-%include "swig_conly_data.i"
-
-%constant void Update_sunSafePoint(void*, uint64_t, uint64_t);
-%ignore Update_sunSafePoint;
-%constant void SelfInit_sunSafePoint(void*, uint64_t);
-%ignore SelfInit_sunSafePoint;
-%constant void Reset_sunSafePoint(void*, uint64_t, uint64_t);
-%ignore Reset_sunSafePoint;
+%include "swig_c_wrap.i"
+%c_wrap(sunSafePoint);
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 struct NavAttMsg_C;
 %include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
-
-%include "sunSafePoint.h"
 
 %pythoncode %{
 import sys
