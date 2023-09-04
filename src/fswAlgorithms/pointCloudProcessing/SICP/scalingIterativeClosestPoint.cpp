@@ -296,7 +296,7 @@ void ScalingIterativeClosestPoint::UpdateState(uint64_t CurrentSimNanos)
         for (int i = 0; i < this->Np; i++) {
             newPoints.col(i) = s_k * (R_k * measuredPoints.col(i)) + t_k;
         }
-        eigenMatrixXd2CArray(newPoints, this->outputCloudBuffer.points);
+        eigenMatrixXd2CArray(newPoints.transpose(), this->outputCloudBuffer.points);
         this->outputCloudBuffer.numberOfPoints = this->Np;
         this->outputCloudBuffer.timeTag = CurrentSimNanos;
         //! - Write the algorithm output data with zeros are results

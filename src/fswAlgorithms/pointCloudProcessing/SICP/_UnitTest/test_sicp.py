@@ -143,7 +143,7 @@ def sicpTest(show_plots, mrp, scale, translations):
 
     if show_plots:
         testFunctions.saveImages(data_file, reference_file, module_Ss, module_Rs, module_Ts)
-        testFunctions.saveCostFunctions(costFunction, "Test")
+        testFunctions.saveCostFunctions(costFunction, "cloud")
 
     accuracy = 1E-2
     np.testing.assert_allclose(module_cloud,
@@ -178,4 +178,4 @@ def sicpTest(show_plots, mrp, scale, translations):
     return
 
 if __name__ == "__main__":
-    sicpTest(True, [0.01, -0.02, 0.01], 1.1, [0.02, 0.001, 0.005])
+    sicpTest(True, [0.025, -0.011, 0.04], 0.98, [-0.02, 0.005, -0.05])

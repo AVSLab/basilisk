@@ -54,20 +54,20 @@ public:
 private:
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
-    Eigen::Vector3d triangulation(std::vector<Eigen::Vector3d> knownLocations,
+    Eigen::Vector3d triangulation(Eigen::MatrixXd knownLocations,
                                   std::vector<Eigen::Vector2d> imagePoints,
                                   const Eigen::Matrix3d& cameraCalibrationInverse,
                                   std::vector<Eigen::Matrix3d> dcmCamera) const;
 
-    std::vector<Eigen::Vector3d> pointCloud{}; //!< [-] point cloud
-    std::vector<Eigen::Vector2d> keyPoints; //!< [-] key point pixel coordinates
-    Eigen::Matrix3d cameraCalibrationMatrixInverse; //!< [-] inverse of camera calibration matrix
-    Eigen::Matrix3d dcm_CN; //!< [-] direction cosine matrix (DCM) from inertial frame N to camera frame C
-    Eigen::MRPd sigma_BN; //!< [-] MRP orientation of spacecraft body B w.r.t. inertial frame N when images where taken
+    Eigen::MatrixXd pointCloud{}; //!< [-] point cloud
+    std::vector<Eigen::Vector2d> keyPoints{}; //!< [-] key point pixel coordinates
+    Eigen::Matrix3d cameraCalibrationMatrixInverse{}; //!< [-] inverse of camera calibration matrix
+    Eigen::Matrix3d dcm_CN{}; //!< [-] direction cosine matrix (DCM) from inertial frame N to camera frame C
+    Eigen::MRPd sigma_BN{}; //!< [-] MRP orientation of spacecraft body B w.r.t. inertial frame N when images where taken
     int64_t cameraID{}; //!< [-] ID of the camera that took the images
     uint64_t timeTag{}; //!< [ns] vehicle time-tag associated with images
     bool validInputs; //!< [-] validity flag for triangulation (true if information from input messages is as expected)
-    Eigen::Vector3d estimatedCameraLocation; //!< [m] triangulated camera location in inertial frame
+    Eigen::Vector3d estimatedCameraLocation{}; //!< [m] triangulated camera location in inertial frame
 };
 
 #endif

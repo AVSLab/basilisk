@@ -72,8 +72,8 @@ def test_module(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSize, 
 
 def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSize, slidingWindow, saveImage):
     # Truth values from python
-    imagePath1 = path + '/' + image + "/1000000000.jpg"
-    imagePath2 = path + '/' + image + "/60000000000.jpg"
+    imagePath1 = path + '/' + image + "/1.000000.jpg"
+    imagePath2 = path + '/' + image + "/6.000000.jpg"
     input_image1 = PIL.Image.open(imagePath1)
     input_image2 = PIL.Image.open(imagePath2)
     input_image1.load()
@@ -142,13 +142,13 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
 
-    t1 = 100
-    deltaT = 60
+    t1 = 10
+    deltaT = 6
     attitudeUpdate = np.array(sigma_BN)
     attitudes = []
 
     unitTestSim.InitializeSimulation()
-    for i in range(0, t1, 5):
+    for i in range(0, t1, 1):
         if i % deltaT == 0:
             attitudeUpdate += np.random.normal(0, 1E-2, 3)
             inputAtt.sigma_BN = np.copy(attitudeUpdate).tolist()
@@ -237,4 +237,4 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
 if __name__ == "__main__":
-    opticalFlowTest(True, "ryugu", [0., 0., 0.],  1000, 30, 50, False, True) # Mars images
+    opticalFlowTest(True,"itokawa",  [0., 0.5, 0.8], 100, 20, 10, False, True) # Mars images

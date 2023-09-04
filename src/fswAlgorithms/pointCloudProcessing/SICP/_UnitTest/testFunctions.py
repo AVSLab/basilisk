@@ -225,14 +225,11 @@ def runModule(data, reference, numberPoints, iters = 100):
     module_Rs = np.zeros([outputIterations, 3, 3])
     module_Ss = np.zeros([outputIterations])
     module_Ts = np.zeros([outputIterations, 3])
-    module_cloud = np.zeros([outputCloudNumberPoints, 3])
     for i in range(outputIterations):
         module_Rs[i, :, :] = outputRs[i*9:(i +1)*9].reshape([3,3])
         module_Ss[i] = outputSs[i]
         module_Ts[i, :] = outputTs[i*3:(i+1)*3]
-    for i in range(outputCloudNumberPoints):
-        module_cloud[i, 0] = outputCloud[i]
-        module_cloud[i, 1] = outputCloud[i + outputCloudNumberPoints]
-        module_cloud[i, 2] = outputCloud[i + 2*outputCloudNumberPoints]
+
+    module_cloud = outputCloud.reshape([outputCloudNumberPoints, 3])
 
     return module_Rs, module_Ts, module_Ss, module_cloud

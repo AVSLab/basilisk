@@ -80,15 +80,9 @@ void CameraTriangulation::readMessages()
     /* point cloud message */
     bool validPointCloud = pointCloudInMsgBuffer.valid;
     int pointCloudSize = pointCloudInMsgBuffer.numberOfPoints;
-    // stacked vector with all feature locations of point cloud
-    Eigen::VectorXd pointCloudStacked(POINT_DIM*pointCloudSize);
-    pointCloudStacked = cArray2EigenMatrixXd(pointCloudInMsgBuffer.points, POINT_DIM*pointCloudSize, 1);
+    this->pointCloud = cArray2EigenMatrixXd(pointCloudInMsgBuffer.points, POINT_DIM, pointCloudSize);
     // convert to std vector that includes all point cloud feature locations
-    this->pointCloud.clear();
-    for (int c=0; c < pointCloudSize; c++) {
-        // point of point cloud
-        this->pointCloud.emplace_back(pointCloudStacked.segment(POINT_DIM*c, POINT_DIM));
-    }
+
     uint64_t timeTagPointCloud = pointCloudInMsgBuffer.timeTag;
 
     /* key points message */
@@ -141,19 +135,19 @@ void CameraTriangulation::readMessages()
     // check if cameraIDs, time tags, and number of features are equal
     if (cameraIDkeyPoints == cameraIDconfig) {
         this->cameraID = cameraIDkeyPoints;
-    } else {
+    } else if(this->validInputs) {
         bskLogger.bskLog(BSK_ERROR, "cameraTriangulation: camera IDs from keyPointsInMsg and "
                                     "cameraConfigInMsg are different, but should be equal.");
         this->validInputs = false;
     }
     if (timeTagPointCloud == timeTagKeyPoints) {
         this->timeTag = timeTagPointCloud;
-    } else {
+    }  else if(this->validInputs) {
         bskLogger.bskLog(BSK_ERROR, "cameraTriangulation: time tags from pointCloudInMsg and "
                                     "keyPointsInMsg (timeTag_secondImage) are different, but should be equal.");
         this->validInputs = false;
     }
-    if (pointCloudSize != numberKeyPoints) {
+    if (pointCloudSize != numberKeyPoints && this->validInputs) {
         bskLogger.bskLog(BSK_ERROR, "cameraTriangulation: number of features from pointCloudInMsg "
                                     "(pointCloudSize) and keyPointsInMsg (numberKeyPoints) are different, "
                                     "but should be equal.");
@@ -187,12 +181,12 @@ void CameraTriangulation::writeMessages(uint64_t currentSimNanos)
     @param dcmCamera dcm from frame of interest F to camera frame C
     @return Eigen::Vector3d
 */
-Eigen::Vector3d CameraTriangulation::triangulation(std::vector<Eigen::Vector3d> knownLocations,
+Eigen::Vector3d CameraTriangulation::triangulation(Eigen::MatrixXd knownLocations,
                                                        std::vector<Eigen::Vector2d> imagePoints,
                                                        const Eigen::Matrix3d& cameraCalibrationInverse,
                                                        std::vector<Eigen::Matrix3d> dcmCamera) const
 {
-    unsigned long numLocations = knownLocations.size();
+    unsigned long numLocations = knownLocations.cols();
     unsigned long numImagePoints = imagePoints.size();
     unsigned long numDCM = dcmCamera.size();
 
@@ -220,7 +214,7 @@ Eigen::Vector3d CameraTriangulation::triangulation(std::vector<Eigen::Vector3d> 
         // transform from pixel space to [m] space
         Eigen::Vector3d xBar = cameraCalibrationInverse*uBar;
         // known point
-        Eigen::Vector3d p = knownLocations.at(c);
+        Eigen::Vector3d p = knownLocations.col(c);
         // fill in A matrix and measurements y
         A.block(3*c, 0, 3, 3) = eigenTilde(xBar)*dcm_CF;
         y.segment(3*c, 3) = eigenTilde(xBar)*dcm_CF*p;

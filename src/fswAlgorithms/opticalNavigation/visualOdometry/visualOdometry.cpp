@@ -326,7 +326,9 @@ void VisualOdometry::writeMessages(Eigen::Vector3d sprime, Eigen::Matrix3d covar
     this->dirMotionBuffer.valid = this->keyPointBuffer.valid;
     this->dirMotionBuffer.cameraID = this->cameraBuffer.cameraID;
     this->dirMotionBuffer.timeOfDirectionEstimate = this->keyPointBuffer.timeTag_secondImage;
-    eigenVector3d2CArray(sprime, this->dirMotionBuffer.v_C_hat );
+    Eigen::Vector3d sprime_hat;
+    sprime_hat = sprime/sprime.norm();
+    eigenVector3d2CArray(sprime_hat, this->dirMotionBuffer.v_C_hat );
     eigenMatrix3d2CArray(covar, this->dirMotionBuffer.covar_C);
     this->dirOfMotionMsgOutput.write(&this->dirMotionBuffer, this->moduleID, currentSimNanos);
 }
