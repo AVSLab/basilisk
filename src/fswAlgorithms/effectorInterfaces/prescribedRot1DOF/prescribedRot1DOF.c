@@ -23,7 +23,6 @@
 /* Other required files to import */
 #include <stdbool.h>
 #include <stdio.h>
-
 #include <math.h>
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
