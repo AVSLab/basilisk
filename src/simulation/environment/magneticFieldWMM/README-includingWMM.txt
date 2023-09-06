@@ -9,3 +9,6 @@ With
 - MAG_robustReadMagModels()
 - MAG_readMagneticModel_SHDF()
 - MAG_PrintSHDFFormat()
+
+========
+Append 'f' float suffix to each value in 'float GeoidHeightBuffer' in EGM9615.h
