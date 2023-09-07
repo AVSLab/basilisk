@@ -49,9 +49,8 @@ splitPath = path.split(bskName)
 # Vary the initial angle, reference angle, and maximum angular acceleration for pytest
 @pytest.mark.parametrize("thetaInit", [0])
 @pytest.mark.parametrize("thetaRef", [10])
-@pytest.mark.parametrize("thetaDDotMax", [0.008, 0.1])
 @pytest.mark.parametrize("accuracy", [1e-12])
-def test_stepperMotor(show_plots, thetaInit, thetaRef, thetaDDotMax, accuracy):
+def test_stepperMotor(show_plots, thetaInit, thetaRef, accuracy):
     r"""
     **Validation Test Description**
 
@@ -75,18 +74,15 @@ def test_stepperMotor(show_plots, thetaInit, thetaRef, thetaDDotMax, accuracy):
     and angular velocity magnitude ``thetaDot_Final`` are compared with the reference values ``theta_Ref`` and
     ``thetaDot_Ref``, respectively.
     """
-    [testResults, testMessage] = stepperMotorTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax, accuracy)
+    [testResults, testMessage] = stepperMotorTestFunction(show_plots, thetaInit, thetaRef, accuracy)
 
     assert testResults < 1, testMessage
 
 
-def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax, accuracy):
+def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, accuracy):
     numSteps = 10 #thetaRef - thetaInit
-    stepAngle = 1.0
-    """Call this routine directly to run the unit test."""
     testFailCount = 0                                        # Zero the unit test result counter
     testMessages = []                                        # Create an empty array to store the test log messages
-    unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
@@ -94,17 +90,25 @@ def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax, accu
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create the test thread
-    testProcessRate = macros.sec2nano(0.1)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    testProc.addTask(unitTestSim.CreateNewTask("fswTask1", macros.sec2nano(0.05)))
+    testProc.addTask(unitTestSim.CreateNewTask("fswTask2", macros.sec2nano(0.05)))
 
     # Create an instance of the stepperMotor module to be tested
     stepperMotorConfig = stepperMotor.StepperMotorConfig()
     StepperMotorWrap = unitTestSim.setModelDataWrap(stepperMotorConfig)
     StepperMotorWrap.ModelTag = "stepperMotor"
+    stepAngle = 1.0
+    stepperMotorConfig.stepAngle = stepAngle
+    motorRPM = 0.5
+    stepTime = 60 / ( motorRPM * (360 / stepAngle) )
+    print("Step Time:")
+    print(stepTime)
+    stepperMotorConfig.stepTime = stepTime
 
     # Add the stepperMotor test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, StepperMotorWrap, stepperMotorConfig)
+    unitTestSim.AddModelToTask("fswTask1", StepperMotorWrap, stepperMotorConfig)
 
     # Create the stepperMotor input message
     HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
@@ -118,7 +122,7 @@ def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax, accu
     PrescribedWrap.ModelTag = "prescribedRot1DOF"
 
     # Add the prescribedRot1DOF test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, PrescribedWrap, PrescribedRot1DOFConfig)
+    unitTestSim.AddModelToTask("fswTask2", PrescribedWrap, PrescribedRot1DOFConfig)
 
     # Initialize the prescribedRot1DOF test module configuration data
     rotAxisM = np.array([1.0, 0.0, 0.0])
@@ -127,7 +131,7 @@ def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax, accu
     PrescribedRot1DOFConfig.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
     PrescribedRot1DOFConfig.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
     PrescribedRot1DOFConfig.rotAxis_M = rotAxisM
-    PrescribedRot1DOFConfig.thetaDDotMax = thetaDDotMax
+    # PrescribedRot1DOFConfig.thetaDDotMax = thetaDDotMax
     PrescribedRot1DOFConfig.omega_FM_F = np.array([0.0, 0.0, 0.0])
     PrescribedRot1DOFConfig.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
     PrescribedRot1DOFConfig.sigma_FM = rbk.PRV2MRP(prvInit_FM)
@@ -138,17 +142,17 @@ def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax, accu
     # Log the test module output message for data comparison
     prescribedDataLog = PrescribedRot1DOFConfig.prescribedMotionOutMsg.recorder()
     spinningBodyDataLog = PrescribedRot1DOFConfig.spinningBodyOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, prescribedDataLog)
-    unitTestSim.AddModelToTask(unitTaskName, spinningBodyDataLog)
+    unitTestSim.AddModelToTask("fswTask2", prescribedDataLog)
+    unitTestSim.AddModelToTask("fswTask2", spinningBodyDataLog)
 
     dataLog = stepperMotorConfig.motorStepCountOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    unitTestSim.AddModelToTask("fswTask2", dataLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
     # Set the simulation time
-    simTime = numSteps * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 20
+    simTime = numSteps * stepTime + 1
     unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
 
     # Begin the simulation
@@ -238,6 +242,5 @@ if __name__ == "__main__":
                  True,
                  0,     # thetaInit
                  10,     # thetaRef
-                 0.008,       # thetaDDotMax
                  1e-12        # accuracy
                )
