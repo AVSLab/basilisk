@@ -53,12 +53,13 @@ def test_stepperMotorTestFunction(show_plots, desiredAngle, accuracy):
     **Validation Test Description**
 
     This unit test ensures that the stepper motor is properly computed, where the unput of deisred angle will give us the right number of motor steps. 
-
     **Test Parameters**
 
     Args:
         desiredAngle (float): [rad] desired angle value
-        accuracy (float): absolute accuracy value used in the validation tests
+        thetaInit (float): [rad] Initial PRV angle of the F frame with respect to the M frame
+        thetaRef (float): [rad] Reference PRV angle of the F frame with respect to the M frame
+        thetaDDotMax (float): [rad/s^2] Maximum angular acceleration for the attitude maneuver
 
     **Description of Variables Being Tested**
 
@@ -76,7 +77,6 @@ def test_stepperMotorTestFunction(show_plots, desiredAngle, accuracy):
 
 
 def stepperMotorTestFunction(show_plots, desiredAngle, accuracy):
-    """Call this routine directly to run the unit test."""
     testFailCount = 0                                        # Zero the unit test result counter
     testMessages = []                                        # Create an empty array to store the test log messages
     unitTaskName = "unitTask"
@@ -132,7 +132,7 @@ def stepperMotorTestFunction(show_plots, desiredAngle, accuracy):
     
     
     #compare truth to model output using py test 
-    
+   
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
 
