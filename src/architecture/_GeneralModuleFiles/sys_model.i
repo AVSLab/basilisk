@@ -1,5 +1,5 @@
 
-%module(directors="1") sysModel
+%module cSysModel
 %{
    #include "sys_model.h"
 %}
@@ -11,27 +11,32 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 %include "architecture/utilities/bskLogging.h"
 
-%feature("director") SysModel;
-%feature("pythonappend") SysModel::SysModel %{
-    self.__super_init_called__ = True%}
-%rename("_SysModel") SysModel;
 %include "sys_model.h"
 
-%pythoncode %{
-class SuperInitChecker(type):
-
-    def __call__(cls, *a, **kw):
-        rv = super(SuperInitChecker, cls).__call__(*a, **kw)
-        if not getattr(rv, "__super_init_called__", False):
-            error_msg = (
-               "Need to call parent __init__ in SysModel subclasses:\n"
-               f"class {cls.__name__}(sysModel.SysModel):\n"
-               "    def __init__(...):\n"
-               "        super().__init__()"
-            )
-            raise SyntaxError(error_msg)
-        return rv
-
-class SysModel(_SysModel, metaclass=SuperInitChecker):
-    bskLogger: BSKLogger = None
+%pythonbegin %{
+from typing import Union, Iterable
+from Basilisk.utilities import pythonVariableLogger
 %}
+
+%extend SysModel
+{
+    %pythoncode %{
+        def logger(self, variableNames: Union[str, Iterable[str]], recordingTime: int = 0):
+            if isinstance(variableNames, str):
+                variableNames = [variableNames]
+
+            logging_functions = {
+                variable_name: lambda _, vn=variable_name: getattr(self, vn)
+                for variable_name in variableNames
+            }
+
+            for variable_name, log_fun in logging_functions.items():
+                try:
+                    log_fun(0)
+                except AttributeError:
+                    raise ValueError(f"Cannot log {variable_name} as it is not a "
+                                    f"variable of {type(self).__name__}")
+
+            return pythonVariableLogger.PythonVariableLogger(logging_functions, recordingTime)
+    %}
+}
