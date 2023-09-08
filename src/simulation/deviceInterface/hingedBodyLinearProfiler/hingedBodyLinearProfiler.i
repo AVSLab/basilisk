@@ -28,7 +28,7 @@
 %include "std_string.i"
 %include "swig_conly_data.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "hingedBodyLinearProfiler.h"
 
 %include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
@@ -38,4 +38,3 @@ struct HingedRigidBodyMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

@@ -32,7 +32,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 %include "stdint.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"

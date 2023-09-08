@@ -28,7 +28,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "std_vector.i"
 
 // Instantiate templates used by example
@@ -77,4 +77,3 @@ struct EpochMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

@@ -28,7 +28,7 @@
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "std_vector.i"
-%include "sys_model.h"
+%include "sys_model.i"
 %include "mappingInstrument.h"
 
 %include "architecture/msgPayloadDefC/AccessMsgPayload.h"
@@ -39,4 +39,3 @@ struct AccessMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

@@ -24,7 +24,7 @@
 
 %include "swig_common_model.i"
 %include "carrays.i"
-%include "sys_model.h"
+%include "sys_model.i"
 %include "../_GeneralModuleFiles/dataNodeBase.h"
 %include "spaceToGroundTransmitter.h"
 
