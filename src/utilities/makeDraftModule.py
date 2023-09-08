@@ -413,7 +413,7 @@ class moduleGenerator:
         swigFile += '%include "std_string.i"\n'
         swigFile += '%include "swig_conly_data.i"\n'
         swigFile += '\n'
-        swigFile += '%include "sys_model.h"\n'
+        swigFile += '%include "sys_model.i"\n'
         swigFile += '%include "' + name + '.h"\n'
         swigFile += '\n'
         includedMsgs = []
