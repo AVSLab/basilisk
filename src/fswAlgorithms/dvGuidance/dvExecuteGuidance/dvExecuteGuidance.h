@@ -30,18 +30,23 @@
 
 
 
-/*! @brief Top level structure for the nominal delta-V guidance */
+/*! @brief Top level structure for the execution of a Delta-V maneuver */
 typedef struct {
-    DvExecutionDataMsg_C burnExecOutMsg; /*!< [-] The name of burn execution output message*/
-    NavTransMsg_C navDataInMsg; /*!< [-] The name of the incoming attitude command */
-    DvBurnCmdMsg_C burnDataInMsg;/*!< [-] Input message that configures the vehicle burn*/
-    THRArrayOnTimeCmdMsg_C thrCmdOutMsg; /*!< [-] Output thruster message name */
-    double dvInit[3];        /*!< (m/s) DV reading off the accelerometers at burn start*/
-    uint32_t burnExecuting;  /*!< (-) Flag indicating whether the burn is in progress or not*/
-    uint32_t burnComplete;   /*!< (-) Flag indicating that burn has completed successfully*/
+    NavTransMsg_C navDataInMsg; /*!< [-] navigation input message that includes dv accumulation info */
+    DvBurnCmdMsg_C burnDataInMsg;/*!< [-] commanded burn input message */
+    THRArrayOnTimeCmdMsg_C thrCmdOutMsg; /*!< [-] thruster command on time output message */
+    DvExecutionDataMsg_C burnExecOutMsg; /*!< [-] burn execution output message */
+    double dvInit[3];        /*!< [m/s] DV reading off the accelerometers at burn start*/
+    uint32_t burnExecuting;  /*!< [-] Flag indicating whether the burn is in progress or not*/
+    uint32_t burnComplete;   /*!< [-] Flag indicating that burn has completed successfully*/
+    double burnTime;          /*!< [s] Burn time to be used for telemetry*/
+    uint64_t prevCallTime;   /*!< [-] Call time register for computing total burn time*/
+    double minTime;           /*!< [s] Minimum count of burn time allowed to elapse*/
+    double maxTime;           /*!< [s] Maximum count of burn time allowed to elapse*/
 
     BSKLogger *bskLogger;   //!< BSK Logging
 }dvExecuteGuidanceConfig;
+
 
 #ifdef __cplusplus
 extern "C" {
