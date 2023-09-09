@@ -16,14 +16,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-#
-#   Unit Test Script
-#   Module Name:        thrFiringRemainder
-#   Author:             John Alcorn, modified code by Hanspeter Schaub
-#   Creation Date:      August 25, 2016
-#
-
-
 import inspect
 import os
 
@@ -33,12 +25,6 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 
-
-
-
-
-
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
@@ -46,6 +32,8 @@ from Basilisk.fswAlgorithms import thrFiringRemainder            # import the mo
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.architecture import messaging
+
+import numpy as np
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -80,10 +68,11 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    fswRate = 0.5
+    defaultControlPeriod = 3.0
+    testProcessRate = macros.sec2nano(fswRate)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     # Construct algorithm and associated C++ container
     module = thrFiringRemainder.thrFiringRemainder()
@@ -94,6 +83,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
     # Initialize the test module configuration data
     module.thrMinFireTime = 0.2
+    module.defaultControlPeriod = defaultControlPeriod
     if dvOn == 1:
         module.baseThrustState = 1
     else:
@@ -121,12 +111,12 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
         [0.0, 1.0, 0.0],
         [1.0, 0.0, 0.0]
         ]
+    maxThrust = 0.5
 
     for i in range(len(rcsLocationData)):
-        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 0.5)
+        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrust)
     thrConfigMsg = fswSetupThrusters.writeConfigMessage()
     numThrusters = fswSetupThrusters.getNumOfDevices()
-
 
     # setup thruster impulse request message
     thrMessageData = messaging.THRArrayCmdForceMsgPayload()
@@ -136,12 +126,9 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
         thrMessageData.thrForce = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]
     thrForceMsg = messaging.THRArrayCmdForceMsg().write(thrMessageData)
 
-
-
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.onTimeOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
-
 
     # connect messages
     module.thrConfInMsg.subscribeTo(thrConfigMsg)
@@ -154,73 +141,50 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
+    finalTime = 3.0
+    unitTestSim.ConfigureStopTime(macros.sec2nano(finalTime))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     if resetCheck:
         # reset the module to test this functionality
-        module.Reset(macros.sec2nano(3.0))     # this module reset function needs a time input (in NanoSeconds)
+        module.Reset(macros.sec2nano(finalTime))  # this module reset function needs a time input (in NanoSeconds)
 
-        # run the module again for an additional 1.0 seconds
-        unitTestSim.ConfigureStopTime(macros.sec2nano(5.5))        # seconds to stop simulation
+        # run the module again for an additional 2.5 seconds
+        unitTestSim.ConfigureStopTime(macros.sec2nano(5.5))  # seconds to stop simulation
         unitTestSim.ExecuteSimulation()
 
     moduleOutput = dataLog.OnTimeRequest[:, :numThrusters]
 
-    # set the filtered output truth states
-    if resetCheck==1:
-        if dvOn:
-            trueVector = [
-                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
-                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.32, 0.22, 0.0],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.32, 0.22, 0.24],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
-                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.32, 0.22, 0.0],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.32, 0.22, 0.24],
-                   ]
+    # compute true values
+    thrForce = thrMessageData.thrForce
+    pulseRemainder = np.zeros([numThrusters])
+    trueVector = np.empty([len(moduleOutput), numThrusters])
+    idxReset = finalTime / fswRate + 1
+    for idx in range(0, len(moduleOutput)):
+        onTimes = np.empty([numThrusters])
+        # reset at corresponding idx if resetCheck is true,
+        # or at idx 0 and 1 as output is the same for time 0 and first time step
+        if (resetCheck and idx == idxReset) or idx <= 1:
+            controlPeriod = defaultControlPeriod
+            pulseRemainder = np.zeros([numThrusters])  # reset pulse remainder
         else:
-            trueVector = [
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-                   [0.55, 0.0, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
-                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-                   [0.55, 0.2, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
-                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-                   [0.55, 0.0, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
-                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-                   [0.55, 0.2, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
-                   ]
+            controlPeriod = fswRate
 
-    else:
-        if dvOn:
-            trueVector = [
-                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
-                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.32, 0.22, 0.0],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.32, 0.22, 0.24],
-                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
-                   ]
-        else:
-            trueVector = [
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-                   [0.55, 0.0, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
-                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-                   [0.55, 0.2, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
-                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-                   ]
+        for thrIdx in range(0, numThrusters):
+            thrust = thrForce[thrIdx]
+            if dvOn:
+                thrust += maxThrust
+            thrust = max(thrust, 0.0)  # Do not allow thrust requests less than zero
+            onTime = thrust / maxThrust * controlPeriod
+            onTime += pulseRemainder[thrIdx] * module.thrMinFireTime
+            pulseRemainder[thrIdx] = 0.0
+            if onTime < module.thrMinFireTime:
+                pulseRemainder[thrIdx] = onTime / module.thrMinFireTime
+                onTime = 0.0
+            elif onTime >= controlPeriod:
+                onTime = 1.1 * controlPeriod
+            onTimes[thrIdx] = onTime
+        trueVector[idx] = onTimes
 
     # compare the module results to the truth values
     accuracy = 1e-12
