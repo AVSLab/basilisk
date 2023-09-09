@@ -24,10 +24,10 @@
 %include "swig_c_wrap.i"
 %c_wrap_2(prescribedRot1DOF, PrescribedRot1DOFConfig);
 
-%include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-struct HingedRigidBodyMsg_C;
 %include "architecture/msgPayloadDefC/MotorStepCountMsgPayload.h"
 struct MotorStepCountMsg_C;
+%include "architecture/msgPayloadDefC/StepperMotorMsgPayload.h"
+struct StepperMotorMsg_C;
 %include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
 struct PrescribedMotionMsg_C;
 

@@ -37,7 +37,7 @@ void SelfInit_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, int64_t mod
 {
     // Initialize the output messages
     PrescribedMotionMsg_C_init(&configData->prescribedMotionOutMsg);
-    HingedRigidBodyMsg_C_init(&configData->spinningBodyOutMsg);
+    StepperMotorMsg_C_init(&configData->stepperMotorOutMsg);
 }
 
 
@@ -68,12 +68,18 @@ void Reset_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t callT
 
     // Set the initial completion to true
     configData->completion = true;
+    configData->stepComplete = true;
+    configData->newMsg = false;
+
+    configData->previousWrittenTime = -1;
 
     // Calculate the current ange and angle rate
     double prv_FM_array[3];
     MRP2PRV(configData->sigma_FM, prv_FM_array);
     configData->thetaInit = v3Dot(prv_FM_array, configData->rotAxis_M);
     configData->thetaDotInit = v3Norm(configData->omega_FM_F);
+
+    configData->maneuverThetaInit = configData->thetaInit;
 
     configData->theta = configData->thetaInit;
     configData->thetaDot = configData->thetaDotInit;
@@ -92,95 +98,112 @@ void Update_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t call
 {
     // Create the buffer messages
     MotorStepCountMsgPayload motorStepCountIn;
-    HingedRigidBodyMsgPayload spinningBodyOut;
+    StepperMotorMsgPayload stepperMotorOut;
     PrescribedMotionMsgPayload prescribedMotionOut;
 
-    // Zero the output messages
-    spinningBodyOut = HingedRigidBodyMsg_C_zeroMsgPayload();
+    // Zero the buffer messages
+    stepperMotorOut = StepperMotorMsg_C_zeroMsgPayload();
     prescribedMotionOut = PrescribedMotionMsg_C_zeroMsgPayload();
+    motorStepCountIn = MotorStepCountMsg_C_zeroMsgPayload();
 
     // Read the input message
-    motorStepCountIn = MotorStepCountMsg_C_zeroMsgPayload();
     if (MotorStepCountMsg_C_isWritten(&configData->motorStepCountInMsg))
     {
         motorStepCountIn = MotorStepCountMsg_C_read(&configData->motorStepCountInMsg);
         // Store the number of commanded motor steps
-        if (motorStepCountIn.numSteps != 0) {
+        if ( (motorStepCountIn.numSteps != 0) && (configData->previousWrittenTime <  MotorStepCountMsg_C_timeWritten(&configData->motorStepCountInMsg)) ) {
+            configData->previousWrittenTime = MotorStepCountMsg_C_timeWritten(&configData->motorStepCountInMsg);
             configData->numSteps = motorStepCountIn.numSteps;
             configData->completion = false;
-//            printf("Steps: ");
-//            printf("%d \n", configData->numSteps);
-//            printf("Time Written: ");
-//            printf("%f \n", MotorStepCountMsg_C_timeWritten(&configData->motorStepCountInMsg));
+            configData->newMsg = true;
         }
     }
 
     if (!(configData->completion)) {
-        if (motorStepCountIn.numSteps != 0) {
+        if (configData->newMsg && configData->stepComplete) {
 
             // Update the step count to zero
             configData->stepCount = 0;
 
             // Calculate the current ange and angle rate
-            configData->thetaInit = configData->theta;
+            configData->maneuverThetaInit = configData->theta;
             configData->thetaDotInit = configData->thetaDot;
 
             // Store the initial time as the current simulation time
             configData->tInit = callTime * NANO2SEC;
-        }
 
-        // Find intermediate initial and reference angles
-        if (configData->numSteps > 0) {
-            configData->intermediateThetaInit = configData->thetaInit + (configData->stepCount * configData->stepAngle);
-            configData->intermediateThetaRef = configData->thetaInit + ((configData->stepCount + 1) * configData->stepAngle);
-            // Define the parabolic constants for the first and second half of the maneuver
-            configData->a = 0.5 * (configData->stepAngle) /
-                            ((configData->ts - configData->tInit) * (configData->ts - configData->tInit));
-            configData->b = -0.5 * (configData->stepAngle) /
-                            ((configData->ts - configData->tf) * (configData->ts - configData->tf));
-        }
-        else {
-            configData->intermediateThetaInit = configData->thetaInit - (configData->stepCount * configData->stepAngle);
-            configData->intermediateThetaRef = configData->thetaInit - ((configData->stepCount + 1) * configData->stepAngle);
-            // Define the parabolic constants for the first and second half of the maneuver
-            configData->a = 0.5 * (-configData->stepAngle) /
-                            ((configData->ts - configData->tInit) * (configData->ts - configData->tInit));
-            configData->b = -0.5 * (-configData->stepAngle) /
-                            ((configData->ts - configData->tf) * (configData->ts - configData->tf));
+            configData->newMsg = false;
         }
 
         // Define temporal information for the maneuver
         configData->tf = configData->tInit + configData->stepTime;
         configData->ts = configData->tInit + configData->stepTime / 2;
 
+        // Find intermediate initial and reference angles
+        if (configData->stepComplete) {
+            if (configData->numSteps > 0) {
+                configData->intermediateThetaInit = configData->maneuverThetaInit + (configData->stepCount * configData->stepAngle);
+                configData->intermediateThetaRef = configData->maneuverThetaInit + ((configData->stepCount + 1) * configData->stepAngle);
+                // Define the parabolic constants for the first and second half of the maneuver
+                configData->a = 0.5 * (configData->stepAngle) / ((configData->ts - configData->tInit) * (configData->ts - configData->tInit));
+                configData->b = -0.5 * (configData->stepAngle) / ((configData->ts - configData->tf) * (configData->ts - configData->tf));
+            }
+            else {
+                configData->intermediateThetaInit = configData->maneuverThetaInit + (configData->stepCount * configData->stepAngle);
+                configData->intermediateThetaRef = configData->maneuverThetaInit + ((configData->stepCount - 1) * configData->stepAngle);
+                // Define the parabolic constants for the first and second half of the maneuver
+                configData->a = 0.5 * (-configData->stepAngle) / ((configData->ts - configData->tInit) * (configData->ts - configData->tInit));
+                configData->b = -0.5 * (-configData->stepAngle) / ((configData->ts - configData->tf) * (configData->ts - configData->tf));
+            }
+        }
+
         // Store the current simulation time
         double t = callTime * NANO2SEC;
 
         // Compute the prescribed scalar states at the current simulation time
         if ((t < configData->ts || t == configData->ts) && configData->tf - configData->tInit != 0) { // Entered during the first half of the maneuver
-            configData->thetaDDot = configData->thetaDDotMax;
+            if (configData->numSteps > 0 && !configData->newMsg){
+                configData->thetaDDot = configData->thetaDDotMax;
+            }
+            else if (!configData->newMsg){
+                configData->thetaDDot = -configData->thetaDDotMax;
+            }
             configData->thetaDot = configData->thetaDDot * (t - configData->tInit) + configData->thetaDotInit;
             configData->theta = configData->a * (t - configData->tInit) * (t - configData->tInit) + configData->intermediateThetaInit;
-        } else if (t > configData->ts && t <= configData->tf &&
-                   configData->tf - configData->tInit != 0) { // Entered during the second half of the maneuver
-            configData->thetaDDot = -1 * configData->thetaDDotMax;
+            configData->stepComplete = false;
+        } else if (t > configData->ts && t <= configData->tf && configData->tf - configData->tInit != 0) { // Entered during the second half of the maneuver
+            if (configData->numSteps > 0 && !configData->newMsg){
+                configData->thetaDDot = -configData->thetaDDotMax;
+            }
+            else if (!configData->newMsg){
+                configData->thetaDDot = configData->thetaDDotMax;
+            }
             configData->thetaDot = configData->thetaDDot * (t - configData->tInit) + configData->thetaDotInit -
                     configData->thetaDDot * (configData->tf - configData->tInit);
             configData->theta = configData->b * (t - configData->tf) * (t - configData->tf) + configData->intermediateThetaRef;
+            configData->stepComplete = false;
         }
         else { // Entered when a step is complete
+            configData->stepComplete = true;
 
             configData->thetaDDot = 0.0;
             configData->thetaDot = configData->thetaDotRef;
             configData->theta = configData->intermediateThetaRef;
 
             // Increment the step count
-            configData->stepCount++;
+            if (!configData->newMsg){
+                if (configData->numSteps > 0){
+                    configData->stepCount++;
+                }
+                else{
+                    configData->stepCount--;
+                }
+            }
 
             // Store the initial time as the current simulation time
             configData->tInit = callTime * NANO2SEC;
 
-            if (configData->stepCount == configData->numSteps) {
+            if ( (configData->stepCount == configData->numSteps) && !configData->newMsg ){
                 configData->completion = true;
             }
         }
@@ -194,14 +217,14 @@ void Update_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t call
     // Determine dcm_FF0
     double dcm_FF0[3][3];
     double prv_FF0_array[3];
-    double theta_FF0 = configData->theta - configData->thetaInit;
+    double theta_FF0 = 3.1415 / 180 * (configData->theta - configData->thetaInit);
     v3Scale(theta_FF0, configData->rotAxis_M, prv_FF0_array);
     PRV2C(prv_FF0_array, dcm_FF0);
 
     // Determine dcm_F0M
     double dcm_F0M[3][3];
     double prv_F0M_array[3];
-    v3Scale(configData->thetaInit, configData->rotAxis_M, prv_F0M_array);
+    v3Scale(3.1415 / 180 * configData->thetaInit, configData->rotAxis_M, prv_F0M_array);
     PRV2C(prv_F0M_array, dcm_F0M);
 
     // Determine dcm_FM
@@ -219,11 +242,14 @@ void Update_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t call
     v3Copy(configData->omegaPrime_FM_F, prescribedMotionOut.omegaPrime_FM_F);
     v3Copy(configData->sigma_FM, prescribedMotionOut.sigma_FM);
 
-    // Copy the local scalar variables to the spinningBodyOut output message
-    spinningBodyOut.theta = configData->theta;
-    spinningBodyOut.thetaDot = configData->thetaDot;
+    // Copy motor information to the stepper motor message
+    stepperMotorOut.theta = configData->theta;
+    stepperMotorOut.thetaDot = configData->thetaDot;
+    stepperMotorOut.thetaDDot = configData->thetaDDot;
+    stepperMotorOut.numSteps = configData->numSteps;
+    stepperMotorOut.stepCount = configData->stepCount;
 
     // Write the output messages
-    HingedRigidBodyMsg_C_write(&spinningBodyOut, &configData->spinningBodyOutMsg, moduleID, callTime);
     PrescribedMotionMsg_C_write(&prescribedMotionOut, &configData->prescribedMotionOutMsg, moduleID, callTime);
+    StepperMotorMsg_C_write(&stepperMotorOut, &configData->stepperMotorOutMsg, moduleID, callTime);
 }

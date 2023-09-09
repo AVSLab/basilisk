@@ -23,7 +23,7 @@
 #include <stdbool.h>
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/MotorStepCountMsg_C.h"
-#include "cMsgCInterface/HingedRigidBodyMsg_C.h"
+#include "cMsgCInterface/StepperMotorMsg_C.h"
 #include "cMsgCInterface/PrescribedMotionMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
@@ -41,6 +41,8 @@ typedef struct {
 
     /* Private variables */
     bool completion;                                            //!< Boolean variable is true when the maneuver is complete
+    bool stepComplete;
+    bool newMsg;
     double tInit;                                               //!< [s] Simulation time at the beginning of the maneuver
     double thetaInit;                                           //!< [rad] Initial spinning body angle from frame M to frame F about rotAxis_M
     double thetaDotInit;                                        //!< [rad/s] Initial spinning body angle rate between frame M to frame F
@@ -54,6 +56,7 @@ typedef struct {
     double stepTime;                                            //!< [s] Time for a single step
     int numSteps;                                               //!< Number of commanded steps
     int stepCount;                                              //!< Current number of steps taken
+    double maneuverThetaInit;
     double intermediateThetaInit;
     double intermediateThetaRef;
 
@@ -61,11 +64,13 @@ typedef struct {
     double thetaDot;
     double thetaDDot;
 
+    double previousWrittenTime;
+
     BSKLogger *bskLogger;                                       //!< BSK Logging
 
     /* Messages */
     MotorStepCountMsg_C    motorStepCountInMsg;                 //!< Input msg for the number of commanded motor step counts
-    HingedRigidBodyMsg_C    spinningBodyOutMsg;                 //!< Output msg for the spinning body angle and angle rate
+    StepperMotorMsg_C    stepperMotorOutMsg;                    //!< Output msg for the stepper motor information
     PrescribedMotionMsg_C prescribedMotionOutMsg;               //!< Output msg for the spinning body prescribed states
 
 }PrescribedRot1DOFConfig;
