@@ -78,7 +78,7 @@ def test_prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDo
 
 
 def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax, accuracy):
-    numSteps = 10 #thetaRef - thetaInit
+    numSteps = 5
     stepAngle = 1.0
 
     """Call this routine directly to run the unit test."""
@@ -127,88 +127,20 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
 
     # Log the test module output message for data comparison
     prescribedDataLog = PrescribedRot1DOFConfig.prescribedMotionOutMsg.recorder()
-    spinningBodyDataLog = PrescribedRot1DOFConfig.spinningBodyOutMsg.recorder()
+    stepperMotorDataLog = PrescribedRot1DOFConfig.stepperMotorOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, prescribedDataLog)
-    unitTestSim.AddModelToTask(unitTaskName, spinningBodyDataLog)
+    unitTestSim.AddModelToTask(unitTaskName, stepperMotorDataLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
-    # NORMAL SIM
-    # # Sim chunk 1
-    # simTimeA = 0.05
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA))
-    # unitTestSim.ExecuteSimulation()
-    #
-    # # Sim chunk 2
-    # simTimeB = numSteps * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 20
-    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
-    # MotorStepCountMessageData.numSteps = 0
-    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA))
-    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB))
-    # unitTestSim.ExecuteSimulation()
-    #
-    #
-    # # Sim chunk 2
-    # simTimeC = 0.1
-    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
-    # MotorStepCountMessageData.numSteps = 5
-    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB))
-    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC))
-    # unitTestSim.ExecuteSimulation()
-    #
-    # # Sim chunk 3
-    # simTimeD = 5 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 3
-    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
-    # MotorStepCountMessageData.numSteps = 0
-    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB + simTimeC))
-    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD))
-    # unitTestSim.ExecuteSimulation()
-
-    # # INTERRUPTED SIM
-    # # Sim chunk 1
-    # simTimeA = 0.05
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA))
-    # unitTestSim.ExecuteSimulation()
-    #
-    # # Sim chunk 2
-    # simTimeB = numSteps * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) - 100
-    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
-    # MotorStepCountMessageData.numSteps = 0
-    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA))
-    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB))
-    # unitTestSim.ExecuteSimulation()
-    #
-    # # Sim chunk 3
-    # simTimeC = 0.1
-    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
-    # MotorStepCountMessageData.numSteps = 5
-    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB))
-    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC))
-    # unitTestSim.ExecuteSimulation()
-    #
-    # # Sim chunk 4
-    # simTimeD = 5 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 3
-    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
-    # MotorStepCountMessageData.numSteps = 0
-    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB + simTimeC))
-    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD))
-    # unitTestSim.ExecuteSimulation()
-
-    # NEGATIVE STEPS
     # Sim chunk 1
     simTimeA = 0.05
     unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA))
     unitTestSim.ExecuteSimulation()
 
     # Sim chunk 2
-    simTimeB = numSteps * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 20
+    simTimeB = numSteps * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 50
     MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
     MotorStepCountMessageData.numSteps = 0
     MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA))
@@ -216,8 +148,7 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB))
     unitTestSim.ExecuteSimulation()
 
-
-    # Sim chunk 2
+    # Sim chunk 3
     simTimeC = 0.1
     MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
     MotorStepCountMessageData.numSteps = -5
@@ -227,7 +158,7 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     unitTestSim.ExecuteSimulation()
 
     # Sim chunk 3
-    simTimeD = 5 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 3
+    simTimeD = 5 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 50
     MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
     MotorStepCountMessageData.numSteps = 0
     MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB + simTimeC))
@@ -235,55 +166,135 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD))
     unitTestSim.ExecuteSimulation()
 
-    # Extract the logged data for plotting and data comparison
-    omega_FM_F = prescribedDataLog.omega_FM_F
-    sigma_FM = prescribedDataLog.sigma_FM
-    timespan = prescribedDataLog.times()
-    theta = spinningBodyDataLog.theta
+    # Sim chunk 4
+    simTimeE = 0.1
+    MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    MotorStepCountMessageData.numSteps = 7
+    MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD))
+    PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD + simTimeE))
+    unitTestSim.ExecuteSimulation()
+    # print(simTimeA + simTimeB + simTimeC)
 
-    sigma_FM_Final = sigma_FM[-1, :]
-    theta_FM_Final = 4 * np.arctan(np.linalg.norm(sigma_FM_Final))
+    # Sim chunk 5
+    simTimeF = 7 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) - 75
+    MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    MotorStepCountMessageData.numSteps = 0
+    MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD + simTimeE))
+    PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD + simTimeE + simTimeF))
+    unitTestSim.ExecuteSimulation()
+
+    # Sim chunk 6
+    simTimeG = 0.1
+    MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    MotorStepCountMessageData.numSteps = -2
+    MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD + simTimeE + simTimeF))
+    PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD + simTimeE + simTimeF + simTimeG))
+    unitTestSim.ExecuteSimulation()
+    # print(simTimeA + simTimeB + simTimeC + simTimeD + simTimeE)
+
+    # Sim chunk 6
+    simTimeH = 2 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 50
+    MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
+    MotorStepCountMessageData.numSteps = 0
+    MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData, macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD + simTimeE + simTimeF + simTimeG))
+    PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTimeA + simTimeB + simTimeC + simTimeD + simTimeE + simTimeF + simTimeG + simTimeH))
+    unitTestSim.ExecuteSimulation()
+
+    # Extract the logged data for plotting and data comparison
+    timespan = prescribedDataLog.times()
+    theta = stepperMotorDataLog.theta
+    thetaDot = stepperMotorDataLog.thetaDot
+    thetaDDot = stepperMotorDataLog.thetaDDot
+    motorStepCount = stepperMotorDataLog.stepCount
+    motorCommandedSteps = stepperMotorDataLog.numSteps
+    sigma_FM = prescribedDataLog.sigma_FM
+    omega_FM_F = prescribedDataLog.omega_FM_F
+    omegaPrime_FM_F = prescribedDataLog.omegaPrime_FM_F
 
     # Convert the logged sigma_FM MRPs to a scalar theta_FM array
     n = len(timespan)
-    theta_FM = []
+    phi_FM = []
     for i in range(n):
-        theta_FM.append(4 * np.arctan(np.linalg.norm(sigma_FM[i, :])))
+        phi_FM.append((180 / np.pi) * 4 * np.arctan(np.linalg.norm(sigma_FM[i, :])))
 
-    # Plot theta_FM
-    thetaRef_plotting = np.ones(len(timespan)) * thetaRef
-    thetaInit_plotting = np.ones(len(timespan)) * thetaInit
+    # Plot motor theta
     plt.figure()
     plt.clf()
     plt.plot(timespan * macros.NANO2SEC, theta, label=r"$\theta$")
-    plt.plot(timespan * macros.NANO2SEC, thetaRef_plotting, '--', label=r'$\theta_{Ref}$')
-    plt.plot(timespan * macros.NANO2SEC, thetaInit_plotting, '--', label=r'$\theta_{0}$')
-    plt.title(r'$\theta_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-    plt.ylabel('(deg)', fontsize=16)
-    plt.xlabel('Time (s)', fontsize=16)
-    plt.legend(loc='center right', prop={'size': 16})
+    plt.title(r'Stepper Motor Angle $\theta_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+    plt.ylabel('(deg)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
+
+    # Plot motor thetaDot
+    plt.figure()
+    plt.clf()
+    plt.plot(timespan * macros.NANO2SEC, thetaDot, label=r"$\dot{\theta}$")
+    plt.title(r'Stepper Motor Angle Rate $\dot{\theta}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+    plt.ylabel('(deg/s)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
+
+    # Plot motor thetaDDot
+    plt.figure()
+    plt.clf()
+    plt.plot(timespan * macros.NANO2SEC, thetaDDot, label=r"$\ddot{\theta}$")
+    plt.title(r'Stepper Motor Angular Acceleration $\ddot{\theta}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
+    plt.ylabel('(deg/s$^2$)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
+
+    # Plot steps commanded and motor steps taken
+    plt.figure()
+    plt.clf()
+    plt.plot(timespan * macros.NANO2SEC, motorStepCount)
+    plt.plot(timespan * macros.NANO2SEC, motorCommandedSteps, '--', label='Commanded')
+    plt.title(r'Motor Step History', fontsize=14)
+    plt.ylabel('Steps', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
 
     # Plot phi_FM
     plt.figure()
     plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, theta_FM, label=r"$\Phi$")
-    plt.plot(timespan * macros.NANO2SEC, thetaRef_plotting, '--', label=r'$\Phi_{Ref}$')
-    plt.plot(timespan * macros.NANO2SEC, thetaInit_plotting, '--', label=r'$\Phi_{0}$')
+    plt.plot(timespan * macros.NANO2SEC, phi_FM, label=r"$\Phi$")
     plt.title(r'$\Phi_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-    plt.ylabel('(deg)', fontsize=16)
-    plt.xlabel('Time (s)', fontsize=16)
-    plt.legend(loc='center right', prop={'size': 16})
+    plt.ylabel('(deg)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
 
     # Plot omega_FM_F
     plt.figure()
     plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_FM_F[:, 0], label=r'$\omega_{1}$')
-    plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_FM_F[:, 1], label=r'$\omega_{2}$')
-    plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_FM_F[:, 2], label=r'$\omega_{3}$')
+    plt.plot(timespan * macros.NANO2SEC, omega_FM_F[:, 0], label=r'$\omega_{1}$')
+    plt.plot(timespan * macros.NANO2SEC, omega_FM_F[:, 1], label=r'$\omega_{2}$')
+    plt.plot(timespan * macros.NANO2SEC, omega_FM_F[:, 2], label=r'$\omega_{3}$')
     plt.title(r'${}^\mathcal{F} \omega_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-    plt.ylabel('(deg/s)', fontsize=16)
-    plt.xlabel('Time (s)', fontsize=16)
-    plt.legend(loc='upper right', prop={'size': 16})
+    plt.ylabel('(deg/s)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
+
+    # Plot omegaPrime_FM_F
+    plt.figure()
+    plt.clf()
+    plt.plot(timespan * macros.NANO2SEC, omegaPrime_FM_F[:, 0], label=r'1')
+    plt.plot(timespan * macros.NANO2SEC, omegaPrime_FM_F[:, 1], label=r'2')
+    plt.plot(timespan * macros.NANO2SEC, omegaPrime_FM_F[:, 2], label=r'3')
+    plt.title(r'${}^\mathcal{F} \omega Prime_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+    plt.ylabel('(deg/s$^2$)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
 
     if show_plots:
         plt.show()
