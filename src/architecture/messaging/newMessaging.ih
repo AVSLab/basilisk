@@ -39,23 +39,32 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                 if type(source) == messageType:
                     self.__subscribe_to(source)
                     return
-                from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
-                if type(source) == messageType ## _C:
-                    self.__subscribe_to_C(source)
-                else:
-                    raise Exception('tried to subscribe ReadFunctor<messageTypePayload> to output message type'
-                                    + str(type(source)))
+                
+                try:
+                    from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
+                    if type(source) == messageType ## _C:
+                        self.__subscribe_to_C(source)
+                        return
+                except ImportError:
+                    pass
+    
+                raise Exception('tried to subscribe ReadFunctor<messageTypePayload> to output message type'
+                                + str(type(source)))
 
 
             def isSubscribedTo(self, source):
                 if type(source) == messageType:
                     return self.__is_subscribed_to(source)
-                else:
+                
+                try:
                     from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
-                    if type(source) == messageType ## _C:
-                        return self.__is_subscribed_to_C(source)
-                    else:
-                        return 0
+                except ImportError:
+                    return 0
+                
+                if type(source) == messageType ## _C:
+                    return self.__is_subscribed_to_C(source)
+                else:
+                    return 0
         %}
 };
 
