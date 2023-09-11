@@ -24,7 +24,7 @@ import colorsys
 import inspect
 import math
 import os
-
+import numpy as np
 import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -42,9 +42,9 @@ except ImportError:
     reasonErr = "python Pillow package not installed---can't test Cameras module"
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
+from Basilisk.utilities import macros
+from Basilisk.utilities import SimulationBaseClass
 
 try:
     from Basilisk.simulation import camera
@@ -61,15 +61,15 @@ except ImportError:
 @pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("HSV", [
     [0, 0, 0]
-    , [1.0, +20.0, -30.0]
-    , [-1.0, +20.0, -30.0]
-    , [3.14159, +100, -100]
+    , [1.0, 20.0, -30.0]
+    , [-1.0, 20.0, -30.0]
+    , [3.14159, 100, -100]
 ])
 @pytest.mark.parametrize("BGR", [
     [0, 0, 0]
     , [10, 20, 30]
-    , [-10, -30, +50]
-    , [-100, +200, +20]
+    , [-10, -30, 50]
+    , [-100, 200, 20]
 ])
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, HSV, BGR):
@@ -155,9 +155,8 @@ def cameraColorTest(image, HSV, BGR):
     module.sigma_CB = [0, 0, 1]
 
     # Noise parameters
-    # BGR and HSV are python lists of the form [0, 0, 0]
-    module.bgrPercent = camera.IntVector(BGR)
-    module.hsv = camera.DoubleVector(HSV)
+    module.bgrPercent = np.array(BGR)
+    module.hsv = np.array(HSV)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.cameraConfigOutMsg.recorder()
@@ -178,10 +177,6 @@ def cameraColorTest(image, HSV, BGR):
     return [testFailCount, ''.join(testMessages)]
 
 
-# these points correspond to the included 'tv_test.png'
-testPoints = [(100, 300), (250, 300), (450, 300), (600, 300), (700, 300), (950, 300), (1100, 300), (300, 800),
-              (880, 780)]
-
 def rgb_to_hsv(rgb):
     hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
     return [hsv[0] * 180., hsv[1] * 255., hsv[2]]
@@ -195,6 +190,10 @@ def hsv_to_rgb(hsv):
 def trueColorAdjust(image, corrupted, HSV, BGR):
     input_rgb = Image.open(image).load()
     output = Image.open(corrupted).load()
+
+    # these points correspond to the included 'tv_test.png'
+    testPoints = [(100, 300), (250, 300), (450, 300), (600, 300), (700, 300), (950, 300), (1100, 300), (300, 800),
+                  (880, 780)]
 
     for point in testPoints:
         px = point[0]
@@ -242,6 +241,6 @@ def trueColorAdjust(image, corrupted, HSV, BGR):
 # stand-along python script
 #
 if __name__ == "__main__":
-    hsvAdjust = [1.0, +20.0, -30.0]
+    hsvAdjust = [1.0, 20.0, -30.0]
     bgrAdjust = [-100, 0, 0]
     cameraColorTest("tv_test.png", hsvAdjust, bgrAdjust)

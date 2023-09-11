@@ -82,7 +82,7 @@ ExtendedStateVector ExtendedStateVector::operator*(const double rhs) const
 
 void ExtendedStateVector::setStates(std::vector<DynamicObject*>& dynPtrs) const
 {
-    this->apply([this, &dynPtrs](const size_t& dynObjIndex,
+    this->apply([&dynPtrs](const size_t& dynObjIndex,
                                  const std::string& stateName,
                                  const Eigen::MatrixXd& thisState) {
         StateData& stateData =
