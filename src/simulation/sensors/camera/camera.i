@@ -25,7 +25,7 @@
 from Basilisk.architecture.swig_common_model import *
 %}
 %include "swig_conly_data.i"
-
+%include "swig_eigen.i"
 %include "stdint.i"
 %include "std_string.i"
 %include "std_vector.i"

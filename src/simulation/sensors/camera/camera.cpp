@@ -19,7 +19,8 @@
 /*
     Camera Module
 
-    Note:   This module simulates a camera. It writes a camera message with it's specs and image requests, as well as provides a template for image coruption
+    Note:   This module simulates a camera. It writes a camera message with its specs and image requests,
+    as well as provides a template for image corruption
     Author: Thibaud Teil
     Date:   October 03, 2019
  
@@ -36,54 +37,21 @@
 /*! The constructor for the Camera module. It also sets some default values at its creation.  */
 Camera::Camera()
 {
-    this->pointImageOut = NULL;
-    
-    /*! Default values for the camera.  */
-    this->cameraID = 1;
-    this->resolution[0] = 512;
-    this->resolution[1] = 512;
     this->renderRate = (uint64_t) (60*1E9);
     v3SetZero(this->cameraPos_B);
     v3SetZero(this->sigma_CB);
-    this->cameraIsOn = 0;
-    this->filename = "";
-    this->fieldOfView = 0.7;
-    strcpy(this->skyBox, "black");
-    this->saveImages = 0;
-    this->saveDir = "";
-    this->postProcessingOn = 0;
-    this->ppAperture = 0;
-    this->ppFocalLength = 0;
-    this->ppFocusDistance = 0;
-    this->ppMaxBlurSize = 0;
-
-    /*! Default values for the perturbations.  */
-    this->gaussian = 0;
-    this->darkCurrent = 0;
-    this->saltPepper = 0;
-    this->cosmicRays = 0;
-    this->blurParam = 0;
-    this->hsv = std::vector<double>{0., 0., 0.};
-    this->bgrPercent = std::vector<int>{0, 0, 0};
-    
-    return;
 }
-
 
 /*! This is the destructor */
-Camera::~Camera()
-{
-    return;
-}
+Camera::~Camera() = default;
 
-
-/*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
+/*! This method performs a complete reset of the module.  Local module variables that retain time varying states
+ * between function calls are reset to their default values.
  @return void
- @param CurrentSimNanos current time (ns)
+ @param currentSimNanos current time (ns)
  */
-void Camera::Reset(uint64_t CurrentSimNanos)
+void Camera::Reset(uint64_t currentSimNanos)
 {
-    return;
 }
 
 /*!
@@ -93,9 +61,9 @@ void Camera::Reset(uint64_t CurrentSimNanos)
  * @param mDst destination of modified image
  * @return void
  */
-void Camera::HSVAdjust(const cv::Mat mSrc, cv::Mat &mDst){
-    cv::Mat hsv;
-    cvtColor(mSrc, hsv, cv::COLOR_BGR2HSV);
+void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
+    cv::Mat localHsv;
+    cvtColor(mSrc, localHsv, cv::COLOR_BGR2HSV);
     
     for (int j = 0; j < mSrc.rows; j++) {
         for (int i = 0; i < mSrc.cols; i++) {
@@ -105,23 +73,23 @@ void Camera::HSVAdjust(const cv::Mat mSrc, cv::Mat &mDst){
             // convert radians to degrees and multiply by 2
             // user assumes range hue range is 0-2pi and not 0-180
             int input_degrees = (int) (this->hsv[0] * R2D);
-            int h_360 = (hsv.at<cv::Vec3b>(j, i)[0] * 2) + input_degrees;
+            int h_360 = (localHsv.at<cv::Vec3b>(j, i)[0] * 2) + input_degrees;
             h_360 = (int) (h_360 -  360 * std::floor(h_360 * (1. / 360.)));
             h_360 = h_360/2;
             if(h_360 == 180){ h_360 = 0; }
-            hsv.at<cv::Vec3b>(j, i)[0] = (unsigned char) h_360;
+            localHsv.at<cv::Vec3b>(j, i)[0] = (unsigned char) h_360;
 
             int values[3];
             for(int k = 1; k < 3; k++){
-                values[k] = (int) (hsv.at<cv::Vec3b>(j, i)[k] * (this->hsv[k]/100. + 1.));
+                values[k] = (int) (localHsv.at<cv::Vec3b>(j, i)[k] * (this->hsv[k] / 100. + 1.));
                 // saturate S and V values to [0,255]
                 if(values[k] < 0){ values[k] = 0; }
                 if(values[k] > 255){ values[k] = 255; }
-                hsv.at<cv::Vec3b>(j, i)[k] = (unsigned char) values[k];
+                localHsv.at<cv::Vec3b>(j, i)[k] = (unsigned char) values[k];
             }
         }
     }
-    cvtColor(hsv, mDst, cv::COLOR_HSV2BGR);
+    cvtColor(localHsv, mDst, cv::COLOR_HSV2BGR);
 }
 
 /*!
@@ -131,10 +99,10 @@ void Camera::HSVAdjust(const cv::Mat mSrc, cv::Mat &mDst){
  * @param mDst destination of modified image
  * @return void
  */
-void Camera::BGRAdjustPercent(const cv::Mat mSrc, cv::Mat &mDst){
+void Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat &mDst){
     cv::Mat mBGR = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mBGR, mSrc.type());
-    
+
     // BGR values range [0, 255]
     // if value after adjustment is < 0 take 0
     // if value after is > 255 take 255
@@ -162,7 +130,7 @@ void Camera::BGRAdjustPercent(const cv::Mat mSrc, cv::Mat &mDst){
  * @param StdDev standard deviation of pixel value
  * @return void
  */
-void Camera::AddGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, double Mean, double StdDev)
+void Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat &mDst, double Mean, double StdDev)
 {
     cv::Mat mSrc_16SC;
     //CV_16SC3 means signed 16 bit shorts three channels
@@ -184,7 +152,7 @@ void Camera::AddGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, double Mean, do
  * @param pb probability of hot pixels
  * @return void
  */
-void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb){
+void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float pb){
     /*! These lines will make the hot and dead pixels different every time.*/
     // uint64 initValue = time(0);
     // RNG rng(initValue);
@@ -211,11 +179,13 @@ void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb
     
     /*!  Chooses random pixels to be stuck or dead in the amount calculated previously.*/
     for(int counter = 0; counter < amount1; counter++){
-        mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows), rng.uniform(0, mSaltPepper.cols)) = black;
+        mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows),
+                                  rng.uniform(0, mSaltPepper.cols)) = black;
     }
     
     for(int counter = 0; counter < amount2; counter++){
-        mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows), rng.uniform(0, mSaltPepper.cols)) = white;
+        mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows),
+                                  rng.uniform(0, mSaltPepper.cols)) = white;
     }
     
     mSaltPepper.convertTo(mDst, mSrc.type());
@@ -230,9 +200,9 @@ void Camera::AddSaltPepper(const cv::Mat mSrc, cv::Mat &mDst, float pa, float pb
  * @param maxSize max length of cosmic ray
  * @return void
  */
-void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
+void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
     /*! Uses the current sim time and the random offset to ensure a different ray every time.*/
-    uint64 initValue = CurrentSimNanos;
+    uint64 initValue = this->localCurrentSimNanos;
     cv::RNG rng((uint64) (initValue + time(0) + randOffset));
     
     float prob = (float) (rng.uniform(0.0, 1.0));
@@ -240,7 +210,8 @@ void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhol
         cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
         mSrc.convertTo(mCosmic, mSrc.type());
     
-        /*!  Chooses a random point on the image. Then chooses a second random point within 50 pixels in either direction.*/
+        /*!  Chooses a random point on the image. Then chooses a second random point within 50 pixels
+         * in either direction.*/
         int x = rng.uniform(0, mCosmic.rows);
         int y = rng.uniform(0, mCosmic.cols);
         int deltax = rng.uniform(-maxSize/2, maxSize/2);
@@ -262,20 +233,25 @@ void Camera::AddCosmicRay(const cv::Mat mSrc, cv::Mat &mDst, float probThreshhol
  * @param num number of cosmic rays to be added
  * @return void
  */
-void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
+void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat &mDst, double num){
     cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mCosmic, mSrc.type());
     for(int i = 0; i < std::round(num); i++){
-        /*! Threshold defined such that 1 provides a 1/50 chance of getting a ray, and 10 will get about 5 rays per image*/
-        /*! Currently length is limited to 50 pixels*/
-        AddCosmicRay(mCosmic, mCosmic, (float) (1/(std::pow(num,2))), i+1, 50);
+        /*! Threshold defined such that 1 provides a 1/50 chance of getting a ray, and 10 will get about
+         * 5 rays per image. Currently length is limited to 50 pixels*/
+        this->addCosmicRay(mCosmic,
+                           mCosmic,
+                           (float) (1/(std::pow(num,2))),
+                           i+1,
+                           50);
     }
     mCosmic.convertTo(mDst, mSrc.type());
 }
 
 /*!
- * Applys all of the various pertubations to an image with user specified levels.
- * Each parameter is a double scaling actor. A parameter of 0 will result in the respective perturbation not being applied.
+ * Applies all of the various perturbations to an image with user specified levels.
+ * Each parameter is a double scaling actor. A parameter of 0 will result in the respective perturbation not
+ * being applied.
  * @param mSource source image
  * @param mDst destination of modified image
  * @param gaussian scaling factor for gaussian noise
@@ -285,49 +261,56 @@ void Camera::AddCosmicRayBurst(const cv::Mat mSrc, cv::Mat &mDst, double num){
  * @param blurparam size of blur to apply
  * @return void
  */
-void Camera::ApplyFilters(cv::Mat mSource, cv::Mat &mDst, double gaussian, double darkCurrent, double saltPepper, double cosmicRays, double blurparam){
+void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
 
     cv::Mat mFilters(mSource.size(), mSource.type());
     mSource.convertTo(mFilters, mSource.type());
 
-    if (gaussian > 0){
+    if (this->gaussian > 0){
         float scale = 2;
-        AddGaussianNoise(mFilters, mFilters, 0, gaussian * scale);
-        cv::threshold(mFilters, mFilters, gaussian*6, 255, cv::THRESH_TOZERO);
+        this->addGaussianNoise(mFilters, mFilters, 0, this->gaussian * scale);
+        cv::threshold(mFilters, mFilters, this->gaussian*6, 255, cv::THRESH_TOZERO);
     }
-    if(blurparam > 0){
-        int blurSize = (int) std::round(blurparam);
-        if (blurSize%2 == 0){blurSize+=1;}
-        blur(mFilters, mFilters, cv::Size(blurSize, blurSize), cv::Point(-1 , -1));
+    if(this->blurParam > 0){
+        int blurSize = (int) std::round(this->blurParam);
+        if (blurSize%2 == 0){ blurSize+=1; }
+        cv::blur(mFilters,
+                 mFilters,
+                 cv::Size(blurSize, blurSize),
+                 cv::Point(-1 , -1));
     }
-    if(darkCurrent > 0){
+    if(this->darkCurrent > 0){
         float scale = 15;
-        AddGaussianNoise(mFilters, mFilters, darkCurrent * scale, 0.0);
+        this->addGaussianNoise(mFilters, mFilters, this->darkCurrent * scale, 0.0);
     }
-    if (abs(this->hsv[0])+abs(this->hsv[1])+abs(this->hsv[2]) > 0.00001) {
-        HSVAdjust(mFilters, mFilters);
+    if (this->hsv.cwiseAbs().sum() > 0.00001) {
+        this->hsvAdjust(mFilters, mFilters);
     }
-    if (abs(this->bgrPercent[0])+abs(this->bgrPercent[1])+abs(this->bgrPercent[2]) != 0) {
-        BGRAdjustPercent(mFilters, mFilters);
+    if (this->bgrPercent.cwiseAbs().sum() != 0) {
+        this->bgrAdjustPercent(mFilters, mFilters);
     }
-    if (saltPepper > 0){
+    if (this->saltPepper > 0){
         float scale = 0.00002f;
-        AddSaltPepper(mFilters, mFilters, (float) (saltPepper * scale), (float) (saltPepper * scale));
+        this->addSaltPepper(mFilters,
+                            mFilters,
+                            (float) (this->saltPepper * scale),
+                            (float) (this->saltPepper * scale));
     }
-    if(cosmicRays > 0){
-        AddCosmicRayBurst(mFilters, mFilters, std::round(cosmicRays));
+    if(this->cosmicRays > 0){
+        this->addCosmicRayBurst(mFilters, mFilters, std::round(this->cosmicRays));
     }
     
     mFilters.convertTo(mDst, mSource.type());
 }
 
-/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding. 
+/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle
+ * Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding.
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void Camera::UpdateState(uint64_t CurrentSimNanos)
+void Camera::UpdateState(uint64_t currentSimNanos)
 {
-    this->CurrentSimNanos = CurrentSimNanos;
+    this->localCurrentSimNanos = currentSimNanos;
     std::string localPath;
     CameraImageMsgPayload imageBuffer = {};
     CameraImageMsgPayload imageOut;
@@ -336,7 +319,7 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     /* zero output messages */
     imageOut = this->imageOutMsg.zeroMsgPayload;
     cameraMsg = this->cameraConfigOutMsg.zeroMsgPayload;
-    
+
     /*! - Populate the camera message */
     cameraMsg.cameraID = this->cameraID;
     strcpy(cameraMsg.parentName, this->parentName);
@@ -355,11 +338,12 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     cameraMsg.ppMaxBlurSize = this->ppMaxBlurSize;
     
     /*! - Update the camera config data no matter if an image is present*/
-    this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, CurrentSimNanos);
+    this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, currentSimNanos);
     
-    cv::Mat imageCV, blurred;
-    if (this->saveDir !=""){
-        localPath = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".png";
+    cv::Mat imageCV;
+    cv::Mat blurred;
+    if (this->saveDir != ""){
+        localPath = this->saveDir + std::to_string(currentSimNanos*1E-9) + ".png";
     }
     /*! - Read in the bitmap*/
     if(this->imageInMsg.isLinked())
@@ -370,28 +354,29 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
     /* Added for debugging purposes*/
     if (!this->filename.empty()){
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
-        ApplyFilters(imageCV, blurred, this->gaussian, this->darkCurrent, this->saltPepper, this->cosmicRays, this->blurParam);
+        this->applyFilters(imageCV, blurred);
         if (this->saveImages == 1){
             if (!cv::imwrite(localPath, blurred)) {
                 bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
             }
         }
     }
-    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos){
+    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos){
         /*! - Recast image pointer to CV type*/
-        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
+        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
+                                                (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
         
-        ApplyFilters(imageCV, blurred, this->gaussian, this->darkCurrent, this->saltPepper, this->cosmicRays, this->blurParam);
+        this->applyFilters(imageCV, blurred);
         if (this->saveImages == 1){
             if (!cv::imwrite(localPath, blurred)) {
                 bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
             }
         }
         /*! If the permanent image buffer is not populated, it will be equal to null*/
-        if (this->pointImageOut != NULL) {
+        if (this->pointImageOut != nullptr) {
             free(this->pointImageOut);
-            this->pointImageOut = NULL;
+            this->pointImageOut = nullptr;
         }
         /*! - Encode the cv mat into a png for the future modules to decode it the same way */
         std::vector<unsigned char> buf;
@@ -408,14 +393,10 @@ void Camera::UpdateState(uint64_t CurrentSimNanos)
         memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength*sizeof(char));
         imageOut.imagePointer = this->pointImageOut;
         
-        this->imageOutMsg.write(&imageOut, this->moduleID, CurrentSimNanos);
-        
-        return;
+        this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);
     }
     else{
         /*! - If no image is present, write zeros in message */
-        this->imageOutMsg.write(&imageOut, this->moduleID, CurrentSimNanos);
-        return;}
- 
+        this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);
+    }
 }
-
