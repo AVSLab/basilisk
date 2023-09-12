@@ -16,6 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
 
 #include "fswAlgorithms/attGuidance/flybyPoint/flybyPoint.h"
 #include <cmath>
@@ -77,14 +80,40 @@ void FlybyPoint::UpdateState(uint64_t CurrentSimNanos)
         /*! read and allocate the attitude navigation message */
         NavTransMsgPayload relativeState = this->filterInMsg();
 
-        /*! compute radial (ur_N), along-track (ut_N) and out-of-plane (uh_N) unit direction vectors at time of read */
+        /*! compute velocity/radius ratio at time of read */
+        this->f0 = v3Norm(relativeState.v_BN_N) / v3Norm(relativeState.r_BN_N);
+
+        /*! compute radial (ur_N), velocity (uv_N), along-track (ut_N), and out-of-plane (uh_N) unit direction vectors */
         double ur_N[3];
         v3Normalize(relativeState.r_BN_N, ur_N);
+        double uv_N[3];
+        v3Normalize(relativeState.v_BN_N, uv_N);
         double uh_N[3];
-        v3Cross(relativeState.r_BN_N, relativeState.v_BN_N, uh_N);
-        v3Normalize(uh_N, uh_N);
         double ut_N[3];
-        v3Cross(uh_N, ur_N, ut_N);
+        if (1 - v3Dot(ur_N, uv_N) < this->epsilon) {
+            v3Perpendicular(ur_N, uh_N);
+            v3Normalize(uh_N, uh_N);
+            v3Cross(uh_N, ur_N, ut_N);
+            // compute flight path angle at the time of read
+            this->gamma0 = M_PI_2;
+            this->singularityFlag = plusInfinity;
+        }
+        else if (v3Dot(ur_N, uv_N) + 1 < this->epsilon) {
+            v3Perpendicular(ur_N, uh_N);
+            v3Normalize(uh_N, uh_N);
+            v3Cross(uh_N, ur_N, ut_N);
+            // compute flight path angle at the time of read
+            this->gamma0 = -M_PI_2;
+            this->singularityFlag = minusInfinity;
+        }
+        else {
+            v3Cross(ur_N, uv_N, uh_N);
+            v3Normalize(uh_N, uh_N);
+            v3Cross(uh_N, ur_N, ut_N);
+            // compute flight path angle at the time of read
+            this->gamma0 = atan(v3Dot(relativeState.v_BN_N, ur_N) / v3Dot(relativeState.v_BN_N, ut_N));
+            this->singularityFlag = nonSingular;
+        }
 
         /*! compute inertial-to-reference DCM at time of read */
         for (int i=0; i<3; i++) {
@@ -93,19 +122,19 @@ void FlybyPoint::UpdateState(uint64_t CurrentSimNanos)
             this->R0N[2][i] = uh_N[i];
         }
 
-        /*! compute velocity/radius ratio at time of read */
-        this->f0 = v3Norm(relativeState.v_BN_N) / v3Norm(relativeState.r_BN_N);
-
-        /*! compute flight path angle at time of read */
-        this->gamma0 = atan(v3Dot(relativeState.v_BN_N, ur_N) / v3Dot(relativeState.v_BN_N, ut_N));
-
         /*! update lastFilterReadTime to current time and dt to zero */
         this->lastFilterReadTime = CurrentSimNanos;
         dt = 0;
     }
 
     /*! compute rotation angle of reference frame from last read time */
-    double theta = atan(tan(this->gamma0) + this->f0 / cos(this->gamma0) * dt) -this->gamma0;
+    double theta;
+    if (this->singularityFlag == nonSingular) {
+        theta = atan(tan(this->gamma0) + this->f0 / cos(this->gamma0) * dt) - this->gamma0;
+    }
+    else {
+        theta = 0;
+    }
 
     /*! compute DCM (RtR0) of reference frame from last read time */
     double PRV_theta[3] = {0, 0, theta};
@@ -128,9 +157,9 @@ void FlybyPoint::UpdateState(uint64_t CurrentSimNanos)
     m33tMultV3(RtN, omega_RN_R, attMsgBuffer.omega_RN_N);
     m33tMultV3(RtN, omegaDot_RN_R, attMsgBuffer.domega_RN_N);
 
-    /* Write the output messages */
+    /*! Write the output messages */
     this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, CurrentSimNanos);
 
-    /* Write the C-wrapped output messages */
+    /*! Write the C-wrapped output messages */
     AttRefMsg_C_write(&attMsgBuffer, &this->attRefOutMsgC, this->moduleID, CurrentSimNanos);
 }
