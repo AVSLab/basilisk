@@ -235,6 +235,7 @@ bskSim()-Based Simulation
    Alternating FSW Attitude Pointing Modes <BskSim/scenarios/scenario_AttModes>
    Reaction Wheel Fault Scenario Simulation <BskSim/scenarios/scenario_AddRWFault>
    Lambert Guidance Scenario <BskSim/scenarios/scenario_LambertGuidance>
+   Closed-Loop Delta-V Maneuver Scenario <BskSim/scenarios/scenario_LambertGuidance>
    bskSim Scenarios Folder <BskSim/index>
 
 Optical Navigation Simulations
