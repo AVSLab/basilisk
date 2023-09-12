@@ -76,7 +76,7 @@ def test_stepperMotorTestFunction(show_plots, desiredAngle, accuracy):
     assert testResults < 1, testMessage
 
 
-def stepperMotorTestFunction(show_plots, desiredAngle, accuracy):
+def stepperMotorTestFunction(show_plots, desiredAngle1, desiredAngle2, desiredAngle3, accuracy):
     testFailCount = 0                                        # Zero the unit test result counter
     testMessages = []                                        # Create an empty array to store the test log messages
     unitTaskName = "unitTask"
@@ -87,7 +87,7 @@ def stepperMotorTestFunction(show_plots, desiredAngle, accuracy):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create the test thread
-    testProcessRate = macros.sec2nano(0.1)     # update process rate update time
+    testProcessRate = macros.sec2nano(1)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -106,39 +106,64 @@ def stepperMotorTestFunction(show_plots, desiredAngle, accuracy):
 
     # Create the stepperMotor input message
     HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    HingedRigidBodyMessageData.theta = desiredAngle
+    HingedRigidBodyMessageData.theta = desiredAngle1
     HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData)
     StepperMotorConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
 
     # Log the test module output message for data comparison
-    dataLog = StepperMotorConfig.motorStepCountOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    stepCountMsgLog = StepperMotorConfig.motorStepCountOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, stepCountMsgLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
     # Set the simulation time
-    unitTestSim.ConfigureStopTime(macros.sec2nano(60))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(10))
 
     # Begin the simulation
     unitTestSim.ExecuteSimulation()
 
-    # Extract the logged data for plotting and data comparison
-    numberOfSteps = dataLog.numSteps
-    print("Number of steps are")
-    print(numberOfSteps)
+    # Create the stepperMotor input message
+    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsg_C_zeroMsgPayload()
+    print("")
+    HingedRigidBodyMessageData.theta = desiredAngle2
+    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData, unitTestSim.TotalSim.CurrentNanos)
+    StepperMotorConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
 
-    #calculating the true number of steps
-    
-    
-    #compare truth to model output using py test 
-   
+    # Set the simulation time
+    unitTestSim.ConfigureStopTime(macros.sec2nano(10) + macros.sec2nano(10))
+
+    # Begin the simulation
+    unitTestSim.ExecuteSimulation()
+
+    # Create the stepperMotor input message
+    print("")
+    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
+    HingedRigidBodyMessageData.theta = desiredAngle3
+    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData, unitTestSim.TotalSim.CurrentNanos)
+    StepperMotorConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+
+    # Set the simulation time
+    unitTestSim.ConfigureStopTime(macros.sec2nano(10) + macros.sec2nano(10) +  macros.sec2nano(10))
+
+    # Begin the simulation
+    unitTestSim.ExecuteSimulation()
+
+
+    # Extract the logged data for plotting and data comparison
+    print("")
+    print("Number of steps are")
+    print(stepCountMsgLog.numSteps)
+    print(len(stepCountMsgLog.numSteps))
+
+
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
-
 if __name__ == "__main__":
     stepperMotorTestFunction(
                  True,
-                 10,     # desiredAngle
+                 10,     # desiredAngle1
+                 30,     # desiredAngle2
+                 40,     # desiredAngle3
                  1e-12   # accuracy
                )

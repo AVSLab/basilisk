@@ -19,6 +19,7 @@
 
 /* Import the module header file */
 #include "stepperMotor.h"
+#include <inttypes.h>
 
 /* Other required files to import */
 #include <stdbool.h>
@@ -66,13 +67,15 @@ void Reset_stepperMotor(StepperMotorConfig* configData, uint64_t callTime, int64
     configData->stepsCommanded = 0;
 
     // Set the initial time in second to know diference between the time we got a messsage to the current time we are in
-    configData->deltaSimTime = 0.0;     
+    configData->deltaSimTime = 0;     
 
     // Set the initial number of steps already achieved from the steps commanded
     configData->stepsTaken = 0;          
 
     // Set the initial time were desired theta message was given. It is assigned to be -1 because we don't want its condition to overlap with the call time as we can recieve a message at call time 0.0, where call time is an integer that can't be negative
-    configData->previousWrittenTime = -1.0;    
+    configData->previousWrittenTime = 0;  
+    configData->firstCall = true;
+
 }
 
 
@@ -97,46 +100,78 @@ void Update_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int6
     if (HingedRigidBodyMsg_C_isWritten(&configData->spinningBodyInMsg))
     {
         spinningBodyIn = HingedRigidBodyMsg_C_read(&configData->spinningBodyInMsg);
+        printf("\n spinningBodyIn.theta %f", spinningBodyIn.theta);
     }
 
+    uint64_t hingedRigidBodyMsgTimeWritten = HingedRigidBodyMsg_C_timeWritten(&configData->spinningBodyInMsg);
+    printf("\n timeWritten %" PRIu64, hingedRigidBodyMsgTimeWritten);
     // Check if we have a new message of desired angle to excute the number of steps commanded (no interaption) 
-    if ((configData->previousWrittenTime) <  HingedRigidBodyMsg_C_timeWritten(&configData->spinningBodyInMsg))
+    if (configData->previousWrittenTime <  hingedRigidBodyMsgTimeWritten || configData->firstCall)
     {   
+        configData->firstCall = false;
         // Assign the previous time to be the new written time
-        configData->previousWrittenTime = HingedRigidBodyMsg_C_timeWritten(&configData->spinningBodyInMsg);
+        configData->previousWrittenTime = hingedRigidBodyMsgTimeWritten;
 
         // Assign the input theta as the desired theta
         configData->desiredAngle = spinningBodyIn.theta;
+        printf("\n In loop: spinningBodyIn.theta %f", spinningBodyIn.theta);
 
-        // Calculate the delta angle
+        // Calculate the de,lta angle
         configData->deltaAngle = (configData->desiredAngle) - (configData->currentMotorAngle);
+        printf("\n delta angle %f", configData->deltaAngle);
 
         // Calculate the number of stepps commanded      
-        configData->stepsCommanded = (configData->deltaAngle) / (configData->stepAngle);
+        configData->stepsCommanded = (int32_t)(configData->deltaAngle / configData->stepAngle);
+        printf("\n stepsCommanded %" PRIi32, configData->stepsCommanded);
 
         // Output the stepps commanded message to excute the manuevere
-        motorStepCountOut.numSteps = configData->stepsCommanded; 
+        motorStepCountOut.numSteps = (int)configData->stepsCommanded; 
 
         // Zero steps taken in case of an interaption and start over 
-        configData->stepsTaken = 0.0; 
+        configData->stepsTaken = 0; 
     } 
         //while the stepps commanded are excuting we need to calculate the steps taken and the steps requested and the time it
         //took to reach steps taken in order to know how many steps are lift to complete the execution
 
     // Assure that the steps calculated are in the arthematic sequence of our step angle 
     if (configData->stepsCommanded - configData->stepsTaken != 0)
-    {
-        // Calculate the time taken from the start time of message given to the current time
-        configData->deltaSimTime = (callTime) - (configData->previousWrittenTime);     
-        
-        // Calculate the number of steps already achieved from the steps commanded: 
-        configData->stepsTaken = ceil(configData->deltaSimTime / configData->stepTime);                     
+{
+    // Calculate the time taken from the start time of the message given to the current time
+    configData->deltaSimTime = callTime - configData->previousWrittenTime;
+    printf("\n callTime %" PRIu64, callTime);
+    printf("\n configData->previousWrittenTime %" PRIu64, configData->previousWrittenTime);
+    printf("\n configData->deltaSimTime %" PRIu64, configData->deltaSimTime);
 
-        //Once steps commanded are achieved, we will update the step count
-        configData->stepCount = (configData->stepCount) + (configData->stepsTaken);
+    // Calculate the number of steps already achieved from the steps commanded:
+    int32_t localSteps = configData->deltaSimTime / (uint64_t)(configData->stepTime * 1E9);
+    printf("\n localSteps %" PRIi32, localSteps);
 
-        // Update the current angle with each step 
-        configData->currentMotorAngle = (configData->stepsTaken) * (configData->stepAngle);
+    // initialize the newStepsTakenSinceLastModuleCallTime to zero
+    int32_t newStepsTakenSinceLastModuleCallTime = 0;
+
+    // Update stepsTaken with the new steps, ensuring it doesn't exceed the commanded steps
+    //Here if the local step exceeded the steps commanded so we make sure the steps taken are assigned to teps comanded value and for new steps taken we take the diff between steps commanded and steps taken 
+    if (localSteps > abs(configData->stepsCommanded)) {
+        newStepsTakenSinceLastModuleCallTime = (configData->stepsCommanded - configData->stepsTaken);
+        configData->stepsTaken = abs(configData->stepsCommanded);
+    //in here we assume everything is fine and still didn't reach the steps commanded, so the steps taken will equal the local steps and the new steps aken will calculate the diff between the local steps and steps taken 
+    } else {
+        newStepsTakenSinceLastModuleCallTime = localSteps - configData->stepsTaken;
+        printf("\n newStepsTakenSinceLastModuleCallTime  %" PRIi32, newStepsTakenSinceLastModuleCallTime);
+        configData->stepsTaken = localSteps;
     }
+
+    printf("\n configData->stepsTime %f", configData->stepTime);
+    printf("\n configData->stepsTaken %" PRIi32, configData->stepsTaken);
+
+    // Update stepCount with the new steps taken since the last update
+    configData->stepCount += newStepsTakenSinceLastModuleCallTime;
+    printf("\n configData->stepcount %" PRIi32, configData->stepCount);
+
+    // Update the current angle with each step
+    configData->currentMotorAngle = configData->stepCount * configData->stepAngle;
+    printf("\n configData->currentMotorAngle %f", configData->currentMotorAngle);
+}
+
     MotorStepCountMsg_C_write(&motorStepCountOut, &configData->motorStepCountOutMsg, moduleID, callTime);
 }    

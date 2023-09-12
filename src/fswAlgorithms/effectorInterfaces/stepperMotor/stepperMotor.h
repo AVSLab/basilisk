@@ -27,32 +27,27 @@
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
-
     /* Private variables */
     double currentMotorAngle;                                   //!< [rad] Curretn motor angle
     double desiredAngle;                                        //!< [rad] Desired motor angle 
     double deltaAngle;                                          //!< [rad] Difference between desired and current angle
     double stepAngle;                                           //!< [rad] Angle it takes for a single step to move
     double stepTime;                                            //!< [s] Time it takes for a motor to achieve 1 Step
-
+    bool firstCall;
+    
     /* Steps variables */
-    int stepCount;                                              //!< [steps] Total number of steps taken
-    int stepsCommanded;                                         //!< [steps] Number of steps needed to reach the desired angle (output)
-    int stepsTaken;                                             //!< [steps] The number of steps already achieved from the steps commanded
-
-
-    // double Time;                                           
-    // double callTime ;                                        //!< [s] It's from basilisk itself and it's the current time of simulation
-    double previousWrittenTime ;                                //!< [s] Time the desired theta was given
-    double deltaSimTime ;                                       //!< [s] The time we took to get a new message 
-
+    int32_t stepCount;                                              //!< [steps] Total number of steps taken
+    int32_t stepsCommanded;                                         //!< [steps] Number of steps needed to reach the desired angle (output)
+    int32_t stepsTaken;                                             //!< [steps] The number of steps already achieved from the steps commanded
    
+    uint64_t previousWrittenTime;                                //!< [ns] Time the desired theta was given
+    uint64_t deltaSimTime;                                       //!< [ns] The time we took to get a new message 
+
     BSKLogger* bskLogger;                                        //!< BSK Logging
 
-
     /* Messages */
-    HingedRigidBodyMsg_C    spinningBodyInMsg;                   //!< Intput msg for the spinning body angle and angle rate
-    MotorStepCountMsg_C    motorStepCountOutMsg;                 //!< Output msg for the number of commanded motor step counts
+    HingedRigidBodyMsg_C spinningBodyInMsg;                   //!< Intput msg for the spinning body angle and angle rate
+    MotorStepCountMsg_C motorStepCountOutMsg;                 //!< Output msg for the number of commanded motor step counts
 
 }StepperMotorConfig;
 

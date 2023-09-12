@@ -236,7 +236,7 @@ def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, accuracy):
 
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
-#
+
 if __name__ == "__main__":
     stepperMotorTestFunction(
                  True,
