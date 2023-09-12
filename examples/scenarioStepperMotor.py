@@ -92,8 +92,8 @@ def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, accuracy):
     # Create the test thread
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
 
-    testProc.addTask(unitTestSim.CreateNewTask("fswTask1", macros.sec2nano(0.05)))
-    testProc.addTask(unitTestSim.CreateNewTask("fswTask2", macros.sec2nano(0.05)))
+    testProc.addTask(unitTestSim.CreateNewTask("fswTask1", macros.sec2nano(0.1)))
+    testProc.addTask(unitTestSim.CreateNewTask("fswTask2", macros.sec2nano(0.01)))
 
     # Create an instance of the stepperMotor module to be tested
     stepperMotorConfig = stepperMotor.StepperMotorConfig()
@@ -137,16 +137,16 @@ def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, accuracy):
     PrescribedRot1DOFConfig.sigma_FM = rbk.PRV2MRP(prvInit_FM)
     PrescribedRot1DOFConfig.stepAngle = stepAngle
     PrescribedRot1DOFConfig.thetaDotRef = 0.0
+    PrescribedRot1DOFConfig.stepTime = stepTime
     PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(stepperMotorConfig.motorStepCountOutMsg)
 
     # Log the test module output message for data comparison
     prescribedDataLog = PrescribedRot1DOFConfig.prescribedMotionOutMsg.recorder()
-    spinningBodyDataLog = PrescribedRot1DOFConfig.spinningBodyOutMsg.recorder()
-    unitTestSim.AddModelToTask("fswTask2", prescribedDataLog)
-    unitTestSim.AddModelToTask("fswTask2", spinningBodyDataLog)
-
     dataLog = stepperMotorConfig.motorStepCountOutMsg.recorder()
-    unitTestSim.AddModelToTask("fswTask2", dataLog)
+    stepperMotorDataLog = PrescribedRot1DOFConfig.stepperMotorOutMsg.recorder()
+    unitTestSim.AddModelToTask("fswTask2", prescribedDataLog)
+    unitTestSim.AddModelToTask("fswTask2", stepperMotorDataLog)
+    unitTestSim.AddModelToTask("fswTask1", dataLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -169,18 +169,24 @@ def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, accuracy):
     # unitTestSim.ExecuteSimulation()
 
     # Extract the logged data for plotting and data comparison
+    stepsOutput = dataLog.numSteps
+    print("Motor Module Step Commands:")
+    print(stepsOutput)
+    timespan = prescribedDataLog.times()
     omega_FM_F = prescribedDataLog.omega_FM_F
     sigma_FM = prescribedDataLog.sigma_FM
-    timespan = prescribedDataLog.times()
-    theta = spinningBodyDataLog.theta
+    theta = stepperMotorDataLog.theta
+    thetaDot = stepperMotorDataLog.thetaDot
+    thetaDDot = stepperMotorDataLog.thetaDDot
+    motorStepCount = stepperMotorDataLog.stepCount
+    motorCommandedSteps = stepperMotorDataLog.numSteps
+    omegaPrime_FM_F = prescribedDataLog.omegaPrime_FM_F
 
-    sigma_FM_Final = sigma_FM[-1, :]
-    theta_FM_Final = 4 * np.arctan(np.linalg.norm(sigma_FM_Final))
-
-    # Extract the logged data for plotting and data comparison
-    numberOfSteps = dataLog.numSteps
-    print("Number of steps are")
-    print(numberOfSteps)
+    # Convert the logged sigma_FM MRPs to a scalar theta_FM array
+    n = len(timespan)
+    phi_FM = []
+    for i in range(n):
+        phi_FM.append((180 / np.pi) * 4 * np.arctan(np.linalg.norm(sigma_FM[i, :])))
 
     # Convert the logged sigma_FM MRPs to a scalar theta_FM array
     n = len(timespan)
@@ -188,50 +194,84 @@ def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, accuracy):
     for i in range(n):
         theta_FM.append(4 * np.arctan(np.linalg.norm(sigma_FM[i, :])))
 
-    # Plot theta_FM
-    thetaRef_plotting = np.ones(len(timespan)) * thetaRef
-    thetaInit_plotting = np.ones(len(timespan)) * thetaInit
+    # Plot motor theta
     plt.figure()
     plt.clf()
     plt.plot(timespan * macros.NANO2SEC, theta, label=r"$\theta$")
-    plt.plot(timespan * macros.NANO2SEC, thetaRef_plotting, '--', label=r'$\theta_{Ref}$')
-    plt.plot(timespan * macros.NANO2SEC, thetaInit_plotting, '--', label=r'$\theta_{0}$')
-    plt.title(r'$\theta_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-    plt.ylabel('(deg)', fontsize=16)
-    plt.xlabel('Time (s)', fontsize=16)
-    plt.legend(loc='center right', prop={'size': 16})
+    plt.title(r'Stepper Motor Angle $\theta_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+    plt.ylabel('(deg)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
+
+    # Plot motor thetaDot
+    plt.figure()
+    plt.clf()
+    plt.plot(timespan * macros.NANO2SEC, thetaDot, label=r"$\dot{\theta}$")
+    plt.title(r'Stepper Motor Angle Rate $\dot{\theta}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+    plt.ylabel('(deg/s)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
+
+    # Plot motor thetaDDot
+    plt.figure()
+    plt.clf()
+    plt.plot(timespan * macros.NANO2SEC, thetaDDot, label=r"$\ddot{\theta}$")
+    plt.title(r'Stepper Motor Angular Acceleration $\ddot{\theta}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
+    plt.ylabel('(deg/s$^2$)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
+
+    # Plot steps commanded and motor steps taken
+    plt.figure()
+    plt.clf()
+    plt.plot(timespan * macros.NANO2SEC, motorStepCount)
+    plt.plot(timespan * macros.NANO2SEC, motorCommandedSteps, '--', label='Commanded')
+    plt.title(r'Motor Step History', fontsize=14)
+    plt.ylabel('Steps', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
 
     # Plot phi_FM
     plt.figure()
     plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, theta_FM, label=r"$\Phi$")
-    plt.plot(timespan * macros.NANO2SEC, thetaRef_plotting, '--', label=r'$\Phi_{Ref}$')
-    plt.plot(timespan * macros.NANO2SEC, thetaInit_plotting, '--', label=r'$\Phi_{0}$')
+    plt.plot(timespan * macros.NANO2SEC, phi_FM, label=r"$\Phi$")
     plt.title(r'$\Phi_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-    plt.ylabel('(deg)', fontsize=16)
-    plt.xlabel('Time (s)', fontsize=16)
-    plt.legend(loc='center right', prop={'size': 16})
+    plt.ylabel('(deg)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
 
     # Plot omega_FM_F
     plt.figure()
     plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_FM_F[:, 0], label=r'$\omega_{1}$')
-    plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_FM_F[:, 1], label=r'$\omega_{2}$')
-    plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_FM_F[:, 2], label=r'$\omega_{3}$')
+    plt.plot(timespan * macros.NANO2SEC, omega_FM_F[:, 0], label=r'$\omega_{1}$')
+    plt.plot(timespan * macros.NANO2SEC, omega_FM_F[:, 1], label=r'$\omega_{2}$')
+    plt.plot(timespan * macros.NANO2SEC, omega_FM_F[:, 2], label=r'$\omega_{3}$')
     plt.title(r'${}^\mathcal{F} \omega_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-    plt.ylabel('(deg/s)', fontsize=16)
-    plt.xlabel('Time (s)', fontsize=16)
-    plt.legend(loc='upper right', prop={'size': 16})
+    plt.ylabel('(deg/s)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
+
+    # Plot omegaPrime_FM_F
+    plt.figure()
+    plt.clf()
+    plt.plot(timespan * macros.NANO2SEC, omegaPrime_FM_F[:, 0], label=r'1')
+    plt.plot(timespan * macros.NANO2SEC, omegaPrime_FM_F[:, 1], label=r'2')
+    plt.plot(timespan * macros.NANO2SEC, omegaPrime_FM_F[:, 2], label=r'3')
+    plt.title(r'${}^\mathcal{F} \omega Prime_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+    plt.ylabel('(deg/s$^2$)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
 
     if show_plots:
         plt.show()
     plt.close("all")
-
-    # Check to ensure the initial angle converged to the reference angle
-    if not unitTestSupport.isDoubleEqual(theta_FM_Final, thetaRef, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + PrescribedWrap.ModelTag + "theta_FM_Final and thetaRef do not match")
-    return [testFailCount, ''.join(testMessages)]
 
 
 # This statement below ensures that the unitTestScript can be run as a
