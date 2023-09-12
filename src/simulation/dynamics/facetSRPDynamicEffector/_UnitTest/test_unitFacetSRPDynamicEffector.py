@@ -287,12 +287,12 @@ def TestfacetSRPDynamicEffector(show_plots):
     simTimeSec = 10.0  # [s]
     simulationTime = macros.sec2nano(simTimeSec)
 
+    # Add the data for logging
+    newSRPLog = newSRP.logger(["forceExternal_B", "torqueExternalPntB_B"])
+    scSim.AddModelToTask(simTaskName, newSRPLog)
+
     # Initialize the simulation
     scSim.InitializeSimulation()
-
-    # Add the data for logging
-    scSim.AddVariableForLogging(newSRP.ModelTag + ".forceExternal_B", simulationTimeStep_NS, 0, 2, 'double')
-    scSim.AddVariableForLogging(newSRP.ModelTag + ".torqueExternalPntB_B", simulationTimeStep_NS, 0, 2, 'double')
 
     # Configure the simulation stop time and execute the simulation run
     scSim.ConfigureStopTime(simulationTime)
@@ -303,8 +303,8 @@ def TestfacetSRPDynamicEffector(show_plots):
     r_BN_N = scPosDataLog.r_BN_N
     sigma_BN = scPosDataLog.sigma_BN
     r_SN_N = sunPosDataLog.PositionVector
-    SRPDataForce_B = scSim.GetLogVariableData(newSRP.ModelTag + ".forceExternal_B")
-    SRPDataTorque_B = scSim.GetLogVariableData(newSRP.ModelTag + ".torqueExternalPntB_B")
+    SRPDataForce_B = unitTestSupport.addTimeColumn(newSRPLog.times(), newSRPLog.forceExternal_B)
+    SRPDataTorque_B = unitTestSupport.addTimeColumn(newSRPLog.times(), newSRPLog.torqueExternalPntB_B)
 
     # Store the logged data for plotting
     srpForce_B_plotting = SRPDataForce_B

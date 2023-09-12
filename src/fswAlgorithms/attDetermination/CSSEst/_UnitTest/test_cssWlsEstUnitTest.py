@@ -216,9 +216,10 @@ def cssWlsEstTestFunction(show_plots):
     # Log the output message as well as the internal numACtiveCss variables
     navData = CSSWlsEstFSW.navStateOutMsg.recorder()
     filterData = CSSWlsEstFSW.cssWLSFiltResOutMsg.recorder()
+    numActiveData = CSSWlsEstFSW.logger("numActiveCss")
     unitTestSim.AddModelToTask(unitTaskName, navData)
     unitTestSim.AddModelToTask(unitTaskName, filterData)
-    unitTestSim.AddVariableForLogging("CSSWlsEst.numActiveCss", int(1E8))
+    unitTestSim.AddModelToTask(unitTaskName, numActiveData)
 
     # connect the messages
     CSSWlsEstFSW.cssDataInMsg.subscribeTo(cssDataInMsg)
@@ -259,7 +260,7 @@ def cssWlsEstTestFunction(show_plots):
         # Pull logged data out into workspace for analysis
         sHatEst = navData.vehSunPntBdy
 
-        numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
+        numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss) 
         sHatEstUse = sHatEst[logLengthPrev:, :]  # Only data for this subtest
         numActiveUse = numActive[logLengthPrev + 1:, :]  # Only data for this subtest
 
@@ -296,7 +297,7 @@ def cssWlsEstTestFunction(show_plots):
     unitTestSim.ExecuteSimulation()
     stepCount += 1
     sHatEst = navData.vehSunPntBdy
-    numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
+    numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
     sHatEstUse = sHatEst[logLengthPrev:, :]
     numActiveUse = numActive[logLengthPrev + 1:, :]
     logLengthPrev = sHatEst.shape[0]
@@ -320,7 +321,7 @@ def cssWlsEstTestFunction(show_plots):
     unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1E9))
     unitTestSim.ExecuteSimulation()
     stepCount += 1
-    numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
+    numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
     numActiveUse = numActive[logLengthPrev + 1:, :]
     sHatEst = navData.vehSunPntBdy
     sHatEstUse = sHatEst[logLengthPrev + 1:, :]
@@ -341,7 +342,7 @@ def cssWlsEstTestFunction(show_plots):
 
     unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1E9))
     unitTestSim.ExecuteSimulation()
-    numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
+    numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
     numActiveUse = numActive[logLengthPrev:, :]
     logLengthPrev = numActive.shape[0]
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
@@ -350,7 +351,7 @@ def cssWlsEstTestFunction(show_plots):
     # Format data for plotting
     truthData = numpy.array(truthData)
     sHatEst = navData.vehSunPntBdy
-    numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
+    numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
 
 
     #

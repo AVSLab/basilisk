@@ -46,36 +46,23 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    rhoj1Out, rhoj2Out, rhoj3Out, figureList = \
-        scenarioFuelSlosh.run(show_plots, damping_parameter, timeStep)
+    time, rhojOuts, figureList = scenarioFuelSlosh.run(
+        show_plots, damping_parameter, timeStep)
 
     if damping_parameter != 0:
-
-        zita1 = damping_parameter / (2 * np.sqrt(1500.0 * 1.0))
-        omegan1 = np.sqrt(1.0 / 1500.0)
-        settling_time1 = -1.0 / (zita1 * omegan1) * np.log(0.05 * np.sqrt(1 - zita1**2))
-        index_settling_time1 = np.argmax(rhoj1Out[:, 0] * 1e-9 > settling_time1)
-
-        zita2 = damping_parameter / (2 * np.sqrt(1400.0 * 1.0))
-        omegan2 = np.sqrt(1.0 / 1400.0)
-        settling_time2 = -1.0 / (zita2 * omegan2) * np.log(0.05 * np.sqrt(1 - zita2**2))
-        index_settling_time2 = np.argmax(rhoj2Out[:, 0] * 1e-9 > settling_time2)
-
-        zita3 = damping_parameter / (2 * np.sqrt(1300.0 * 1.0))
-        omegan3 = np.sqrt(1.0 / 1300.0)
-        settling_time3 = -1.0 / (zita3 * omegan3) * np.log(0.05 * np.sqrt(1 - zita3**2))
-        index_settling_time3 = np.argmax(rhoj3Out[:, 0] * 1e-9 > settling_time3)
-
         accuracy = 0.05
-        if abs(rhoj1Out[index_settling_time1, 1] - rhoj1Out[-1, 1]) > accuracy:
-            testFailCount = testFailCount + 1
-            testMessages = [testMessages, "Particle 1 settling time does not match second order systems theories"]
-        if abs(rhoj2Out[index_settling_time2, 1] - rhoj2Out[-1, 1]) > accuracy:
-            testFailCount = testFailCount + 1
-            testMessages = [testMessages, "Particle 1 settling time does not match second order systems theories"]
-        if abs(rhoj3Out[index_settling_time3, 1] - rhoj3Out[-1, 1]) > accuracy:
-            testFailCount = testFailCount + 1
-            testMessages = [testMessages, "Particle 1 settling time does not match second order systems theories"]
+        mass = (1500, 1400, 1300)
+
+        for i in range(3):
+            zita = damping_parameter / (2 * np.sqrt(mass[i] * 1.0))
+            omegan = np.sqrt(1.0 / mass[i])
+            settling_time = -1.0 / (zita * omegan) * np.log(0.05 * np.sqrt(1 - zita**2))
+            index_settling_time = np.argmax(time > settling_time)
+
+            if abs(rhojOuts[i][index_settling_time] - rhojOuts[i][-1]) > accuracy:
+                testFailCount = testFailCount + 1
+                testMessages = [testMessages, f"Particle {i+1} settling time does "
+                                "not match second order systems theories"]
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in list(figureList.items()):

@@ -44,6 +44,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport
 from Basilisk.architecture import messaging
+from Basilisk.utilities.pythonVariableLogger import PythonVariableLogger
 
 # Class in order to plot using data across the different parameterized scenarios
 class DataStore:
@@ -186,8 +187,8 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     orb_elemObject.mu = mu
 
     ###### ELEM2RV ######
-    TotalSim.AddVariableForLogging('OrbElemConvertData.r_N', testProcessRate, 0, 2, 'double')
-    TotalSim.AddVariableForLogging('OrbElemConvertData.v_N', testProcessRate, 0, 2, 'double')
+    orb_elemObjectLog = orb_elemObject.logger(["r_N", "v_N"])
+    TotalSim.AddModelToTask(unitTaskName, orb_elemObjectLog)
 
     # Create and write messages
     ElemMessage = messaging.ClassicElementsMsgPayload()
@@ -217,10 +218,8 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     TotalSim.ExecuteSimulation()
 
     # Get r and v from sim
-    vSim = TotalSim.GetLogVariableData('OrbElemConvertData.v_N')
-    vSim = numpy.delete(vSim[-1], 0, axis=0)
-    rSim = TotalSim.GetLogVariableData('OrbElemConvertData.r_N')
-    rSim = numpy.delete(rSim[-1], 0, axis=0)
+    vSim = orb_elemObjectLog.v_N[-1]
+    rSim = orb_elemObjectLog.r_N[-1]
 
     # Get r and v from message
     rMsgPlanet = dataLog.PositionVector[-1]
@@ -329,14 +328,18 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         TotalSim.AddModelToTask(unitTaskName, orb_elemObject)
 
         # Log Variables
-        TotalSim.AddVariableForLogging('OrbElemConvertData.CurrentElem.a')
-        TotalSim.AddVariableForLogging('OrbElemConvertData.CurrentElem.e')
-        TotalSim.AddVariableForLogging('OrbElemConvertData.CurrentElem.i')
-        TotalSim.AddVariableForLogging('OrbElemConvertData.CurrentElem.Omega')
-        TotalSim.AddVariableForLogging('OrbElemConvertData.CurrentElem.omega')
-        TotalSim.AddVariableForLogging('OrbElemConvertData.CurrentElem.f')
-        TotalSim.AddVariableForLogging('OrbElemConvertData.r_N', testProcessRate, 0, 2, 'double')
-        TotalSim.AddVariableForLogging('OrbElemConvertData.v_N', testProcessRate, 0, 2, 'double')
+        elemLog = PythonVariableLogger({
+            "a": lambda _: orb_elemObject.CurrentElem.a,
+            "e": lambda _: orb_elemObject.CurrentElem.e,
+            "i": lambda _: orb_elemObject.CurrentElem.i,
+            "Omega": lambda _: orb_elemObject.CurrentElem.Omega,
+            "omega": lambda _: orb_elemObject.CurrentElem.omega,
+            "f": lambda _: orb_elemObject.CurrentElem.f,
+        })
+        TotalSim.AddModelToTask(unitTaskName, elemLog)
+
+        orb_elemObjectLog = orb_elemObject.logger(["r_N", "v_N"])
+        TotalSim.AddModelToTask(unitTaskName, orb_elemObjectLog)
 
         orb_elemObject.mu = mu
 
@@ -361,18 +364,12 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         TotalSim.InitializeSimulation()
         TotalSim.ExecuteSimulation()
 
-        aOut = TotalSim.GetLogVariableData('OrbElemConvertData.CurrentElem.a')
-        aOut = numpy.delete(aOut[-1], 0, axis=0)
-        eOut = TotalSim.GetLogVariableData('OrbElemConvertData.CurrentElem.e')
-        eOut = numpy.delete(eOut[-1], 0, axis=0)
-        iOut = TotalSim.GetLogVariableData('OrbElemConvertData.CurrentElem.i')
-        iOut = numpy.delete(iOut[-1], 0, axis=0)
-        ANOut = TotalSim.GetLogVariableData('OrbElemConvertData.CurrentElem.Omega')
-        ANOut = numpy.delete(ANOut[-1], 0, axis=0)
-        APOut = TotalSim.GetLogVariableData('OrbElemConvertData.CurrentElem.omega')
-        APOut = numpy.delete(APOut[-1], 0, axis=0)
-        fOut = TotalSim.GetLogVariableData('OrbElemConvertData.CurrentElem.f')
-        fOut = numpy.delete(fOut[-1], 0, axis=0)
+        aOut = elemLog.a[-1]
+        eOut = elemLog.e[-1]
+        iOut = elemLog.i[-1]
+        ANOut = elemLog.Omega[-1]
+        APOut = elemLog.omega[-1]
+        fOut = elemLog.f[-1]
 
         # Element Diff Check
         ElemDiff = [(a - aOut), (e - eOut), (i - iOut), (AN - ANOut), (AP - APOut), (f - fOut)]

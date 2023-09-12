@@ -142,8 +142,8 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Set up module variable data recording
-    unitTestSim.AddVariableForLogging(prescribedRot2DOFObj.ModelTag + ".phi", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(prescribedRot2DOFObj.ModelTag + ".phiAccum", testProcessRate, 0, 0, 'double')
+    prescribedRot2DOFObjLog = prescribedRot2DOFObj.logger(["phi", "phiAccum"])
+    unitTestSim.AddModelToTask(unitTaskName, prescribedRot2DOFObjLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -218,10 +218,8 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     sigma_FM = dataLog.sigma_FM
 
     # Extract the logged module variables
-    phi = unitTestSim.GetLogVariableData(prescribedRot2DOFObj.ModelTag + ".phi")
-    phi = np.delete(phi, 0, axis=1)
-    phiAccum = unitTestSim.GetLogVariableData(prescribedRot2DOFObj.ModelTag + ".phiAccum")
-    phiAccum = np.delete(phiAccum, 0, axis=1)
+    phi = prescribedRot2DOFObjLog.phi
+    phiAccum = prescribedRot2DOFObjLog.phiAccum
 
     # Store the final angular velocity of the spinning body
     thetaDot_Final = np.linalg.norm(omega_FM_F[-1, :])
