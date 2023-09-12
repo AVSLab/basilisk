@@ -32,20 +32,21 @@ from Basilisk.utilities import orbitalMotion
 trueAnomalies = [0., 10., 350.]
 cameraPositions = np.array([[1., 3., 4.], [0., 0., 0.]])
 scRotation = [0., 5., 70.]
+imageNoise = [0., 0.25, 0.5]
 
-paramArray = [trueAnomalies, cameraPositions, scRotation]
+paramArray = [trueAnomalies, cameraPositions, scRotation, imageNoise]
 # create list with all combinations of parameters
 paramList = list(itertools.product(*paramArray))
 
 @pytest.mark.parametrize("accuracy", [1e-4])
-@pytest.mark.parametrize("p1_f, p2_cam, p3_scRot", paramList)
+@pytest.mark.parametrize("p1_f, p2_cam, p3_scRot, p4_noise", paramList)
 
-def test_cameraTriangulation(show_plots, p1_f, p2_cam, p3_scRot, accuracy):
+def test_cameraTriangulation(show_plots, p1_f, p2_cam, p3_scRot, p4_noise, accuracy):
     r"""
     **Validation Test Description**
 
     This test checks if the camera triangulation module works correctly for different spacecraft positions, camera
-    positions (w.r.t. the spacecraft) and spacecraft orientations.
+    positions (w.r.t. the spacecraft), spacecraft orientations, and image noise.
 
     **Test Parameters**
 
@@ -54,16 +55,17 @@ def test_cameraTriangulation(show_plots, p1_f, p2_cam, p3_scRot, accuracy):
         :param p1_f: spacecraft true anomaly
         :param p2_cam: camera position
         :param p3_scRot: spacecraft principal rotation angle, around a fixed vector
+        :param p4_noise: image noise in pixels
         :param accuracy: accuracy of the test
 
     **Description of Variables Being Tested**
 
     The content of the CameraLocalizationMsg output message is compared with the true values.
     """
-    cameraTriangulationTestFunction(show_plots, p1_f, p2_cam, p3_scRot, accuracy)
+    cameraTriangulationTestFunction(show_plots, p1_f, p2_cam, p3_scRot, p4_noise, accuracy)
 
 
-def cameraTriangulationTestFunction(show_plots, p1_f, p2_cam, p3_scRot, accuracy):
+def cameraTriangulationTestFunction(show_plots, p1_f, p2_cam, p3_scRot, p4_noise, accuracy):
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -113,6 +115,11 @@ def cameraTriangulationTestFunction(show_plots, p1_f, p2_cam, p3_scRot, accuracy
     vp = resY/2.
     # build camera calibration matrix (not the inverse of it)
     K = np.array([[dX, alpha, up], [0., dY, vp], [0., 0., 1.]])
+    # image measurement noise
+    Ru = p4_noise**2 * np.identity(2)
+    S = np.hstack((np.identity(2), np.zeros((2, 1))))
+    Kinv = np.linalg.inv(K)
+    Rx = Kinv.dot(S.transpose()).dot(Ru).dot(S).dot(Kinv.transpose())
 
     # generate point cloud
     pointCloud = createCircularPointCloud(1000. * 1.e3, numberOfPoints)
@@ -127,6 +134,7 @@ def cameraTriangulationTestFunction(show_plots, p1_f, p2_cam, p3_scRot, accuracy
     # setup module to be tested
     module = cameraTriangulation.CameraTriangulation()
     module.ModelTag = "cameraTriangulation"
+    module.uncertaintyImageMeasurement = p4_noise
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure input messages
@@ -168,10 +176,12 @@ def cameraTriangulationTestFunction(show_plots, p1_f, p2_cam, p3_scRot, accuracy
 
     # pull module data
     cameraLocation = cameraLocationOutMsgRec.cameraPos_N[0]
+    covariance = np.reshape(cameraLocationOutMsgRec.covariance_N[0], (3, 3))
     valid = cameraLocationOutMsgRec.valid[0]
 
     # true data
     cameraLocationTrue = r_CN_N
+    covarianceTrue = computeTriangulationCovariance(pointCloud, keyPoints, K, dcm_CN, Rx)
     if (pointCloudInMsgData.valid and
     keyPointsInMsgData.valid and
     keyPointsInMsgData.cameraID == cameraConfigInMsgData.cameraID and
@@ -182,10 +192,11 @@ def cameraTriangulationTestFunction(show_plots, p1_f, p2_cam, p3_scRot, accuracy
         validTrue = False
 
     # make sure module output data is correct
-    paramsString = ' for true anomaly={}, camera position={}, SC rotation={}, accuracy={}'.format(
+    paramsString = ' for true anomaly={}, camera position={}, SC rotation={}, noise={}, accuracy={}'.format(
         str(p1_f),
         str(p2_cam),
         str(p3_scRot),
+        str(p4_noise),
         str(accuracy))
 
     np.testing.assert_allclose(cameraLocation,
@@ -193,6 +204,13 @@ def cameraTriangulationTestFunction(show_plots, p1_f, p2_cam, p3_scRot, accuracy
                                rtol=0,
                                atol=accuracy,
                                err_msg=('Variable: cameraLocation,' + paramsString),
+                               verbose=True)
+
+    np.testing.assert_allclose(covariance,
+                               covarianceTrue,
+                               rtol=0,
+                               atol=accuracy,
+                               err_msg=('Variable: covariance,' + paramsString),
                                verbose=True)
 
     np.testing.assert_equal(valid,
@@ -228,5 +246,43 @@ def createImages(pointCloud, cameraLocation, dcm_CN, cameraCalibrationMatrix):
     return np.array(images)
 
 
+def computeTriangulationCovariance(pointCloud, imagePoints, cameraCalibrationMatrix, dcmCamera, Rx):
+    Kinv = np.linalg.inv(cameraCalibrationMatrix)
+    dcm_CF = dcmCamera
+    dcm_FC = dcm_CF.transpose()
+    covarianceSumTerm = np.zeros((3, 3))
+
+    H = np.zeros((3*len(pointCloud), 3))
+    for i in range(0, len(pointCloud)):
+        ui = imagePoints[i, :]
+        uiBar = np.hstack((ui, 1))
+        xiBar = np.dot(Kinv, uiBar)
+        xiBarTilde = np.array(RigidBodyKinematics.v3Tilde(xiBar))
+        pi = pointCloud[i, :]
+        H[i*3:(i+1)*3, :] = np.dot(xiBarTilde, dcm_CF)
+
+        j = i + 1
+        if j > len(pointCloud)-1:
+            j = 0
+
+        uj = imagePoints[j, :]
+        ujBar = np.hstack((uj, 1))
+        pj = pointCloud[j, :]
+        dcm_FCj = dcm_FC
+        dij = pj - pi
+        ai = dcm_FC.dot(Kinv).dot(uiBar)
+        aj = dcm_FCj.dot(Kinv).dot(ujBar)
+        gamma = np.linalg.norm(np.cross(dij, aj))/np.linalg.norm(np.cross(ai, aj))
+        if np.linalg.norm(np.cross(ai, aj)) < 1e-10:
+            gamma = 0
+        Re = -gamma**2 * xiBarTilde.dot(Rx).dot(xiBarTilde)
+        covarianceSumTerm += dcm_FC.dot(xiBarTilde).dot(Re).dot(xiBarTilde).dot(dcm_CF)
+
+    HHinv = np.linalg.inv(np.dot(H.transpose(), H))
+    P = -HHinv.dot(covarianceSumTerm).dot(HHinv)
+
+    return P
+
+
 if __name__ == "__main__":
-    test_cameraTriangulation(False, trueAnomalies[0], cameraPositions[0], scRotation[0], 1e-4)
+    test_cameraTriangulation(False, trueAnomalies[0], cameraPositions[0], scRotation[0], 0.25, 1e-4)
