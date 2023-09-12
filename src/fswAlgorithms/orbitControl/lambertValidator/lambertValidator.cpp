@@ -57,7 +57,7 @@ void LambertValidator::Reset(uint64_t currentSimNanos)
     }
 
     // check that the provided input module parameters are valid
-    if (this->finalTime - this->maneuverTime <= 0.0){
+    if (this->finalTime - this->maneuverTime < 0.0){
         bskLogger.bskLog(BSK_ERROR,
                          "lambertValidator: Maneuver start time maneuverTime must be before final time finalTime.");
     }
