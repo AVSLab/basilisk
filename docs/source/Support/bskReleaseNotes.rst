@@ -69,6 +69,8 @@ Version |release|
   first constraint, and interchangeable second and third constraint consisting in maximum sunlight incidence on the
   solar arrays, and keep-in constraint of a body-fixed direction around the Sun direction.
 - Implemented new syntax for variable logging. See :ref:`bskPrinciples-6`.
+- Added :ref:`scenarioMomentumDumpingZeroNetForce` scenario to illustrate momentum dumping without exerting a net force
+  on the spacecraft.
 
 .. warning::
 
