@@ -16,14 +16,6 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-
-#
-#   Unit Test Script
-#   Module Name:        thrusterPlatformReference
-#   Author:             Riccardo Calaon
-#   Creation Date:      February 15, 2023
-#
-
 import pytest
 import os, inspect, random
 import numpy as np
@@ -43,11 +35,6 @@ from Basilisk.architecture import messaging
 from Basilisk.architecture import bskLogging
 
 
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.  Note that the order in that you add the parametrize method
 # matters for the documentation in that it impacts the order in which the test arguments are shown.
@@ -55,9 +42,10 @@ from Basilisk.architecture import bskLogging
 @pytest.mark.parametrize("seed", list(np.linspace(1,10,10)))
 @pytest.mark.parametrize("delta_CM", [0.1, 0.2, 0.3])
 @pytest.mark.parametrize("K", [0,1,5,10])
+@pytest.mark.parametrize("thetaMax", [-1, np.pi/36])
 @pytest.mark.parametrize("accuracy", [1e-10])
 # update "module" in this function name to reflect the module name
-def test_platformRotation(show_plots, delta_CM, K, seed, accuracy):
+def test_platformRotation(show_plots, delta_CM, K, thetaMax, seed, accuracy):
     r"""
     **Validation Test Description**
 
@@ -83,7 +71,8 @@ def test_platformRotation(show_plots, delta_CM, K, seed, accuracy):
     For :math:`\kappa = 0`, the correctness of the result is assessed based on the norm of the
     cross product between the thrust direction vector :math:`{}^\mathcal{F}\boldsymbol{t}` and the relative position
     of the center of mass with respect to the thruster application point :math:`T`. For :math:`\kappa \neq 0` this 
-    test is not performed, as the thruster is not aligned with the center of mass.
+    test is not performed, as the thruster is not aligned with the center of mass. This script does not test the
+    integral feedback term, which would require running a simulation for an extended period of time.
 
     The python code also computes equivalently the thrust direction in body frame coordinates :math:`{}^\mathcal{B}\boldsymbol{t}`
     and the net torque on the system :math:`{}^\mathcal{B}\boldsymbol{L}`, and compares them to the respective output
@@ -95,10 +84,10 @@ def test_platformRotation(show_plots, delta_CM, K, seed, accuracy):
     assess the alignment of the thruster. This is, in general, not guaranteed.
     """
     # each test method requires a single assert method to be called
-    platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy)
+    platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accuracy)
 
 
-def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
+def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accuracy):
 
     random.seed(seed)
 
@@ -134,7 +123,10 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     platform.sigma_MB = sigma_MB
     platform.r_BM_M = r_BM_M
     platform.r_FM_F = r_FM_F
-    platform.K      = K
+    platform.K = K
+    platform.Ki = 0
+    platform.theta1Max = thetaMax
+    platform.theta2Max = thetaMax
 
     # Create input vehicle configuration msg
     inputVehConfigMsgData = messaging.VehicleConfigMsgPayload()
@@ -206,7 +198,7 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     offset = np.linalg.norm(np.cross(r_CT_F,T_F) / np.linalg.norm(np.array(r_CT_F)) / np.linalg.norm(np.array(T_F)))
 
     # check if the CM offset is zero if control gain K is also 0
-    if K == 0:
+    if K == 0 and thetaMax < 0:
         np.testing.assert_allclose(offset, 0.0, rtol=0, atol=accuracy, verbose=True)
 
     T_B_hat_sim = bodyHeadingLog.rHat_XB_B[0]               # simulation result
@@ -233,6 +225,11 @@ def platformRotationTestFunction(show_plots, delta_CM, K, seed, accuracy):
     np.testing.assert_allclose(tHat_B_sim, T_B_hat, rtol=0, atol=accuracy, verbose=True)
     np.testing.assert_allclose(tMax_sim, np.linalg.norm(T_B), rtol=0, atol=accuracy, verbose=True)
 
+    # compare the output reference angle
+    if thetaMax > 0:
+        np.testing.assert_array_less(theta1, thetaMax + accuracy, verbose=True)
+        np.testing.assert_array_less(theta2, thetaMax + accuracy, verbose=True)
+
     return
 
 
@@ -244,7 +241,8 @@ if __name__ == "__main__":
     test_platformRotation(
                  False,                   # show_plots
                  0.1,                     # delta_CM
-                 0,                       # k
+                 0,                       # K
+                 -1,                      # thetaMax
                  np.random.rand(1)[0],    # seed
                  1e-10                    # accuracy
                )
