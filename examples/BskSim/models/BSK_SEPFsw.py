@@ -319,7 +319,10 @@ class BSKFswModels:
         self.platform1ReferenceData.sigma_MB = np.array([1,0,0])*np.tan(15/4*mc.D2R)
         self.platform1ReferenceData.r_BM_M = [0, 0, 1.43/c]
         self.platform1ReferenceData.r_FM_F = [0, 0, 0]
+        self.platform1ReferenceData.theta1Max = np.pi/12
+        self.platform1ReferenceData.theta2Max = np.pi/12
         self.platform1ReferenceData.K = 1e-4
+        self.platform1ReferenceData.Ki = 1e-8
         if self.cmEstimation:
             self.platform1ReferenceData.vehConfigInMsg.subscribeTo(self.cmEstimationData.vehConfigOutMsg)
         else:
@@ -337,7 +340,10 @@ class BSKFswModels:
         self.platform2ReferenceData.sigma_MB = np.array([1,0,0])*np.tan(-15/4*mc.D2R)
         self.platform2ReferenceData.r_BM_M = [0, 0, 1.43/c]
         self.platform2ReferenceData.r_FM_F = [0, 0, 0]
+        self.platform2ReferenceData.theta1Max = np.pi/12
+        self.platform2ReferenceData.theta2Max = np.pi/12
         self.platform2ReferenceData.K = 1e-4
+        self.platform2ReferenceData.Ki = 1e-8
         if self.cmEstimation:
             self.platform2ReferenceData.vehConfigInMsg.subscribeTo(self.cmEstimationData.vehConfigOutMsg)
         else:
