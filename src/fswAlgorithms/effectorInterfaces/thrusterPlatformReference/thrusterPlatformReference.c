@@ -79,7 +79,6 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
     /*! - Create and assign message buffers */
     VehicleConfigMsgPayload    vehConfigMsgIn = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
     THRConfigMsgPayload        thrusterConfigFIn = THRConfigMsg_C_read(&configData->thrusterConfigFInMsg);
-    RWSpeedMsgPayload          rwSpeedMsgIn = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
     HingedRigidBodyMsgPayload  hingedRigidBodyRef1Out = HingedRigidBodyMsg_C_zeroMsgPayload();
     HingedRigidBodyMsgPayload  hingedRigidBodyRef2Out = HingedRigidBodyMsg_C_zeroMsgPayload();
     BodyHeadingMsgPayload      bodyHeadingOut = BodyHeadingMsg_C_zeroMsgPayload();
@@ -104,26 +103,33 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
     double FM[3][3];
     tprComputeFinalRotation(r_CM_M, r_TM_F, T_F, FM);
 
-    /*! compute net RW momentum */
-    double vec3[3], hs_B[3], hs_M[3];
-    v3SetZero(hs_B);
-    for (int i=0; i<configData->rwConfigParams.numRW; i++) {
-        v3Scale(configData->rwConfigParams.JsList[i]*rwSpeedMsgIn.wheelSpeeds[i], &configData->rwConfigParams.GsMatrix_B[i*3], vec3);
-        v3Add(hs_B, vec3, hs_B);
+    if (configData->momentumDumping == Yes) {
+        RWSpeedMsgPayload rwSpeedMsgIn = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
+
+        /*! compute net RW momentum */
+        double vec3[3];
+        double hs_B[3];
+        v3SetZero(hs_B);
+        for (int i = 0; i < configData->rwConfigParams.numRW; i++) {
+            v3Scale(configData->rwConfigParams.JsList[i] * rwSpeedMsgIn.wheelSpeeds[i],
+                    &configData->rwConfigParams.GsMatrix_B[i * 3], vec3);
+            v3Add(hs_B, vec3, hs_B);
+        }
+        double hs_M[3];
+        m33tMultV3(MB, hs_B, hs_M);
+
+        /*! compute offset vector */
+        double T_M[3];
+        m33tMultV3(FM, T_F, T_M);
+        double d_M[3];
+        v3Cross(T_M, hs_M, d_M);
+        v3Scale(-configData->K / v3Dot(T_M, T_M), d_M, d_M);
+
+        /*! recompute thrust direction and FM matrix based on offset */
+        double r_CMd_M[3];
+        v3Add(r_CM_M, d_M, r_CMd_M);
+        tprComputeFinalRotation(r_CMd_M, r_TM_F, T_F, FM);
     }
-    m33tMultV3(MB, hs_B, hs_M);
-
-    /*! compute offset vector */
-    double T_M[3];
-    m33tMultV3(FM, T_F, T_M);
-    double d_M[3];
-    v3Cross(T_M, hs_M, d_M);
-    v3Scale(-configData->K/v3Dot(T_M, T_M), d_M, d_M);
-
-    /*! recompute thrust direction and FM matrix based on offset */
-    double r_CMd_M[3];
-    v3Add(r_CM_M, d_M, r_CMd_M);
-    tprComputeFinalRotation(r_CMd_M, r_TM_F, T_F, FM);
 
     /*! extract theta1 and theta2 angles */
     hingedRigidBodyRef1Out.theta = atan2(FM[1][2], FM[1][1]);
