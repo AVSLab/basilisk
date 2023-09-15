@@ -30,7 +30,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "stdint.i"
 %include "std_string.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
 %include "ReactionWheelPower.h"
 

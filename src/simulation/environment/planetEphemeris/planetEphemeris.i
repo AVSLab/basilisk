@@ -33,7 +33,7 @@ namespace std {
     %template(classicElementVector) vector<ClassicElementsMsgPayload>;
 }
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "planetEphemeris.h"
 %include "architecture/utilities/orbitalMotion.h"
 %include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"

@@ -43,15 +43,22 @@ Version |release|
 - Corrected an error with :ref:`magnetometer` where the RNG seed was passed to the Gauss-Markov noise model within the
   constructor and could therefore not be modified after creating the object. Furthermore, the noise model is now only
   used if all three components of the standard deviation parameter are initialized to a positive value.
-- Removed fswAuto and associated documenation, as the tool was outdated.
+- Removed fswAuto and associated documentation, as the tool was outdated.
 - Changed how C modules are wrapped as C++ classes. This makes handling C modules the same as C++ modules,
   removing the need for "Config" and "Wrap" objects. Updated all scenarios and test files for this new syntax.
   To convert prior script to use the new syntax, see :ref:`bskPrinciples-2` for the simple new
   syntaxt to add C-modules.
-- Modified :ref:`mrpFeedback` to enable the use of a modified control law, and added the integral control torque
+- Modified :ref:`mrpFeedback` to enable the use of a modified control law, and added the integral control torque 
   feedback output message.
 - Resolved a crash, induced by uninitialized memory, in the Camera module. The crash was first seen on Ubuntu 22 with
   gcc 9.5
+- Implemented new syntax for variable logging. See :ref:`bskPrinciples-6`.
+
+.. warning::
+
+    SWIG files (``.i``) for modules should include ``%include "sys_model.i"`` instead of ``%include "sys_model.h"``
+    to take advantage of the new module variable logging feature.
+
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------

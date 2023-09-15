@@ -28,7 +28,7 @@
 %include "std_string.i"
 %include "swig_conly_data.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
@@ -47,4 +47,3 @@ struct MTBMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

@@ -28,7 +28,7 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "std_string.i"
 %include "swig_eigen.i"
-%include "sys_model.h"
+%include "sys_model.i"
 %include "imuSensor.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"

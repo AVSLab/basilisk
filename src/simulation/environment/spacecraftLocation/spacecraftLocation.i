@@ -31,7 +31,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 %include "std_vector.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "spacecraftLocation.h"
 
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"

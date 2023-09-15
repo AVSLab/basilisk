@@ -32,6 +32,7 @@ from Basilisk.simulation import spacecraft
 from Basilisk.simulation import linearSpringMassDamper
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
+from Basilisk.utilities import pythonVariableLogger
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.utilities import simIncludeThruster
@@ -186,20 +187,18 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    unitTestSim.InitializeSimulation()
+    scObjectLog = scObject.logger(["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"])
+    unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
     if testCase == 'MassDepletion':
-        unitTestSim.AddVariableForLogging(
-            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperMass1').getState()", testProcessRate, 0, 0, 'double')
-        unitTestSim.AddVariableForLogging(
-            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperMass2').getState()", testProcessRate, 0, 0, 'double')
-        unitTestSim.AddVariableForLogging(
-            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperMass3').getState()", testProcessRate, 0, 0, 'double')
+        stateLog = pythonVariableLogger.PythonVariableLogger({
+            "mass1": lambda _: scObject.dynManager.getStateObject('linearSpringMassDamperMass1').getState(),
+            "mass2": lambda _: scObject.dynManager.getStateObject('linearSpringMassDamperMass2').getState(),
+            "mass3": lambda _: scObject.dynManager.getStateObject('linearSpringMassDamperMass3').getState(),
+        })
+        unitTestSim.AddModelToTask(unitTaskName, stateLog)
 
+    unitTestSim.InitializeSimulation()
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
@@ -214,17 +213,14 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     if testCase == 'MassDepletion':
         fuelMass = dataTank.fuelMass
         fuelMassDot = dataTank.fuelMassDot
-        mass1Out = unitTestSim.GetLogVariableData(
-            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperMass1').getState()")
-        mass2Out = unitTestSim.GetLogVariableData(
-            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperMass2').getState()")
-        mass3Out = unitTestSim.GetLogVariableData(
-            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperMass3').getState()")
+        mass1Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.mass1)
+        mass2Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.mass2)
+        mass3Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.mass3)
 
-    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
 
     initialOrbAngMom_N = [
                 [orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]

@@ -35,6 +35,7 @@ from Basilisk.simulation import sphericalPendulum
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import macros
+from Basilisk.utilities import pythonVariableLogger
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.utilities import simIncludeThruster
@@ -199,21 +200,17 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
     #   then the all messages are auto-discovered that are shared across different BSK threads.
     #
-    scSim.InitializeSimulation()
+    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
+    scSim.AddModelToTask(simTaskName, scObjectLog)
 
-    scSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", simulationTimeStep, 0, 0, 'double')
-    scSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", simulationTimeStep, 0, 2, 'double')
-    scSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", simulationTimeStep, 0, 2, 'double')
-    scSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", simulationTimeStep, 0, 0, 'double')
-    scSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('sphericalPendulumPhi1').getState()", simulationTimeStep, 0, 0, 'double')
-    scSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('sphericalPendulumTheta1').getState()", simulationTimeStep, 0, 0, 'double')
-    scSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('sphericalPendulumThetaDot1').getState()", simulationTimeStep, 0, 0, 'double')
-    scSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('sphericalPendulumPhiDot1').getState()", simulationTimeStep, 0, 0, 'double')
     if testCase == 3:
-        scSim.AddVariableForLogging(
-            "spacecraftBody.dynManager.getStateObject('sphericalPendulumMass1').getState()", simulationTimeStep, 0, 0, 'double')
-        scSim.AddVariableForLogging(
-            "spacecraftBody.dynManager.getStateObject('sphericalPendulumMass2').getState()", simulationTimeStep, 0, 0, 'double')
+        stateLog = pythonVariableLogger.PythonVariableLogger({
+            "sphericalPendulumMass1": lambda _: scObject.dynManager.getStateObject("sphericalPendulumMass1").getState(),
+            "sphericalPendulumMass2": lambda _: scObject.dynManager.getStateObject("sphericalPendulumMass2").getState(),
+        })
+        scSim.AddModelToTask(simTaskName, stateLog)
+
+    scSim.InitializeSimulation()
 
     #
     #   configure a simulation stop time and execute the simulation run
@@ -224,16 +221,15 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     if testCase == 3:
         fuelMass = fuelLog.fuelMass
         fuelMassDot = fuelLog.fuelMassDot
-        mass1Out = scSim.GetLogVariableData(
-            "spacecraftBody.dynManager.getStateObject('sphericalPendulumMass1').getState()")
-        mass2Out = scSim.GetLogVariableData(
-            "spacecraftBody.dynManager.getStateObject('sphericalPendulumMass2').getState()")
+        mass1Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.sphericalPendulumMass1)
+        mass2Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.sphericalPendulumMass2)
+
 
     # request energy and momentum
-    orbEnergy = scSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
-    orbAngMom_N = scSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
-    rotAngMom_N = scSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
-    rotEnergy = scSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
 
     if timeStep == 0.01:
         testCaseName = "OneHundredth"

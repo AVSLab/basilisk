@@ -26,7 +26,7 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
-%include "sys_model.h"
+%include "sys_model.i"
 %include "eclipse.h"
 %include "swig_conly_data.i"
 %include "std_vector.i"

@@ -1,7 +1,3 @@
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/XuaSmG4wYlk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
 
 .. _bskPrinciples-6:
 
@@ -13,7 +9,7 @@ Setting and Recording Module Variables
 
     The python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/bsk-6.py>`.
 
-Sometimes it is convenient to record a Basilisk module variable, not just the input or output message.  This can be done via a python command as shown below.  However, note that such module variable recording will slow down the simulation as this is done in the python layer.
+Sometimes it is convenient to record a Basilisk module variable, not just the input or output message.  This can be done via a python command as shown below.  However, note that such module variable recording will slow down the simulation as this is done in the python layer.  
 
 The simulation setup is shown in the figure below.  Both a C and C++ module are created and added to the single task.  However, no messages are connected here.  Rather, this sample code illustrates how to record module internal variables.  The variables are either public C++ class variables, or they are variables with the C module configuration structure.  Both :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` have the exact same public variables for easy comparison.
 
@@ -27,21 +23,23 @@ The sample code is shown below.  The C and C++ modules are set up as before.  Th
    :linenos:
    :lines: 18-
 
-The :ref:`SimulationBaseClass` method to record a module variable is::
+Logging a variable from a module is similar to recording one from a message::
 
-    scSim.AddVariableForLogging( variableString, recordingTime, indexStart==0, indexStop==0)
+    moduleLogger = module.logger(variableName, recordingTime)
 
-Here ``variableString`` must be composed of the module tag string, a period and the variable name.  The examples above illustrate how to apply this method for a C or C++ module variable. 
+The ``variableName`` must be either a string or a list of strings. This establishes what module variables to log.
 
-The ``recordingTime`` variable is the minimum time that must pass, in nano-seconds again, before the module variable is recorded.
+The optional ``recordingTime`` variable is the minimum time that must pass, in nano-seconds again,
+before the module variable is recorded.  If this variable is not provided, then the logging occurs
+at the module update period.
 
-The optional integer arguments ``indexStart`` and ``indexStop`` are defaulted to zero, resulting in a single value being recorded.  As this example is also recording a 3-dimensional array ``dumVector``, it is recorded by setting the start and end index to 0 and 2 respectively.
+After executing the script, the recorded variables are retrieved using ``moduleLogger.variableName`` 
+where ``variableName`` is the the name of the module variable you seek to access. 
 
-After executing the script, the recorded variables are retrieved in general using the :ref:`SimulationBaseClass` method::
+To access the array of time values where the module variables were recorded use ``moduleLogger.times()``. 
+Note that these times are given in nanoseconds.
 
-    scSim.GetLogVariableData(variableString)
-
-Here ``variableString`` is again composed of the ``ModelTag`` and variable name as before.  Note that the returned array has a first column that represents the time where the variable is recorded in nano-seconds.  Executing the script you should thus see the following output:
+Executing the script you should thus see the following output:
 
 .. code-block::
 
@@ -52,17 +50,29 @@ Here ``variableString`` is again composed of the ``ModelTag`` and variable name 
     BSK_INFORMATION: C++ Module ID 2 ran Update at 0.000000s
     BSK_INFORMATION: C Module ID 1 ran Update at 1.000000s
     BSK_INFORMATION: C++ Module ID 2 ran Update at 1.000000s
+    Times:  [         0 1000000000]
     mod1.dummy:
-    [[0.e+00 1.e+00]
-     [1.e+09 2.e+00]]
-    mod1.dumVector:
-    [[0.e+00 1.e+00 2.e+00 3.e+00]
-     [1.e+09 1.e+00 2.e+00 3.e+00]]
+    [1. 2.]
     mod2.dummy:
-    [[0.e+00 1.e+00]
-     [1.e+09 2.e+00]]
+    [1. 2.]
     mod2.dumVector:
-    [[0.e+00 1.e+00 2.e+00 3.e+00]
-     [1.e+09 1.e+00 2.e+00 3.e+00]]
+    [[1. 2. 3.]
+    [1. 2. 3.]]
 
 Note that both the C and C++ module variables are correctly being recorded.
+
+Clearing the Data Log
+---------------------
+Similarly to message recorders, module loggers continuously add data to their internal data vectors. 
+If you start and stop the simulation, pull the data, resume the simulation and so on, 
+this data recording process is cumulative. If you stop the simulation and want to clear the data log 
+so that only new data is recorded, you can clear the logger using the ``.clear()`` method::
+
+    moduleLogger.clear()
+
+Advanced Data Logging
+---------------------
+The syntax ``module.logger(variableName)`` generates a simple logger for one or more module variables.
+However, loggers can retrieve data from many other sources, and do arbitrary operations on this data
+before it is stored. This is done using the class ``Basilisk.utilities.pythonVariableLogger``.
+See :ref:`scenarioFuelSlosh` for an example.

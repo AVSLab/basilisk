@@ -36,6 +36,7 @@ from Basilisk.simulation import spacecraft
 from Basilisk.simulation import nHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
+from Basilisk.utilities import pythonVariableLogger
 
 
 @pytest.mark.parametrize("testCase", [
@@ -170,27 +171,28 @@ def nHingedRigidBody(show_plots, testCase):
     dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
+    scObjectLog = scObject.logger(["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"])
+    unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
+
+    stateLog = pythonVariableLogger.PythonVariableLogger({
+        "theta1": lambda _: scObject.dynManager.getStateObject(f'nHingedRigidBody1Theta').getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject(f'nHingedRigidBody2Theta').getState(),
+    })
+    unitTestSim.AddModelToTask(unitTaskName, stateLog)
+
     unitTestSim.InitializeSimulation()
-
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('nHingedRigidBody1Theta').getState()", plottingRate, 0, 3, 'double')
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('nHingedRigidBody2Theta').getState()", plottingRate, 0, 2, 'double')
-
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", plottingRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", plottingRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", plottingRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", plottingRate, 0, 0, 'double')
 
     stopTime = 1.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    nHingedRigidBody1ThetasOut = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('nHingedRigidBody1Theta').getState()")
-    nHingedRigidBody2ThetasOut = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('nHingedRigidBody2Theta').getState()")
+    nHingedRigidBody1ThetasOut = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta1)
+    nHingedRigidBody2ThetasOut = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta2)
 
-    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
 
     initialOrbAngMom_N = [[orbAngMom_N[0, 1], orbAngMom_N[0, 2], orbAngMom_N[0, 3]]]
 

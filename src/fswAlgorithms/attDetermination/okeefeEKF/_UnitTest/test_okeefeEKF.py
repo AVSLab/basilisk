@@ -32,6 +32,7 @@ import SunLineOEKF_test_utilities as FilterPlots
 from Basilisk.fswAlgorithms import okeefeEKF
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.architecture import messaging
 
 
@@ -452,8 +453,8 @@ def StatePropStatic():
     setupFilterData(module)
     module.omega = [0.,0.,0.]
 
-    unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate * 10, 0, 8)
-    unitTestSim.AddVariableForLogging('okeefeEKF.state', testProcessRate * 10, 0, 2)
+    kfLog = module.logger(["covar", "state"], testProcessRate*10)
+    unitTestSim.AddModelToTask(unitTaskName, kfLog)
 
     # connect messages
     cssDataInMsg = messaging.CSSArraySensorMsg()
@@ -466,8 +467,7 @@ def StatePropStatic():
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.state')
-
+    stateLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.state)
 
     for i in range(NUMSTATES):
         if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
@@ -524,11 +524,8 @@ def StatePropVariable(show_plots):
     InitOmega = module.omega
 
     module.state = InitialState
-    unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate, 0, 8)
-    unitTestSim.AddVariableForLogging('okeefeEKF.stateTransition', testProcessRate, 0, 8)
-    unitTestSim.AddVariableForLogging('okeefeEKF.state', testProcessRate , 0, 2)
-    unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 2)
-    unitTestSim.AddVariableForLogging('okeefeEKF.omega', testProcessRate , 0, 2)
+    kfLog = module.logger(["covar", "state", "stateTransition", "x", "omega"], testProcessRate)
+    unitTestSim.AddModelToTask(unitTaskName, kfLog)
 
     # connect messages
     cssDataInMsg = messaging.CSSArraySensorMsg()
@@ -541,11 +538,11 @@ def StatePropVariable(show_plots):
     unitTestSim.ExecuteSimulation()
 
 
-    covarLog = unitTestSim.GetLogVariableData('okeefeEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.state')
-    stateErrorLog = unitTestSim.GetLogVariableData('okeefeEKF.x')
-    stmLog = unitTestSim.GetLogVariableData('okeefeEKF.stateTransition')
-    omegaLog = unitTestSim.GetLogVariableData('okeefeEKF.omega')
+    covarLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.covar)
+    stateLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.state)
+    stateErrorLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.x)
+    stmLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.stateTransition)
+    omegaLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.omega)
 
     dt = 0.5
     expectedOmega = np.zeros([2001, (NUMSTATES + 1)])
@@ -707,7 +704,8 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     stateTarget1 = testVector1
     module.state = stateGuess
     module.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
-    unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 2, 'double')
+    kfLog = module.logger("x", testProcessRate)
+    unitTestSim.AddModelToTask(unitTaskName, kfLog)
     dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
@@ -769,7 +767,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateErrorLog = unitTestSim.GetLogVariableData('okeefeEKF.x')
+    stateErrorLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.x)
     stateLog = dataLog.state
     postFitLog = dataLog.postFitRes
     covarLog = dataLog.covar

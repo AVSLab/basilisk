@@ -31,7 +31,7 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-%include "sys_model.h"
+%include "sys_model.i"
 #pragma SWIG nowarn=362
 %include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 
@@ -51,4 +51,3 @@ protectAllClasses(sys.modules[__name__])
 %}
 
 %pythoncode "gravCoeffOps.py"
-

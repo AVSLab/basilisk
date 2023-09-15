@@ -30,7 +30,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 %include "std_vector.i"
 %include "std_string.i"
-%include "sys_model.h"
+%include "sys_model.i"
 %include "simulation/environment/_GeneralModuleFiles/magneticFieldBase.h"
 %include "magneticFieldWMM.h"
 

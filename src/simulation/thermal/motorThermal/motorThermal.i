@@ -27,7 +27,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "swig_conly_data.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "motorThermal.h"
 
 %include "architecture/msgPayloadDefC/TemperatureMsgPayload.h"

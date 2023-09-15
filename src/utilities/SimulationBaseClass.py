@@ -34,6 +34,7 @@ from Basilisk.architecture import sim_model
 from Basilisk.utilities import simulationArchTypes
 from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
 from Basilisk.utilities import deprecated
+from Basilisk.utilities.pythonVariableLogger import PythonVariableLogger
 
 # Point the path to the module storage area
 
@@ -43,23 +44,6 @@ processColor = '\u001b[32m'
 taskColor = '\u001b[33m'
 moduleColor = '\u001b[36m'
 endColor = '\u001b[0m'
-
-class LogBaseClass:
-    """Logging Base class"""
-    def __init__(self, ReplaceName, LogPeriod, RefFunction, DataCols=1):
-        self.Period = LogPeriod
-        self.Name = ReplaceName
-        self.PrevLogTime = None
-        self.PrevValue = None
-        self.TimeValuePairs = array.array('d')
-        self.ArrayDim = DataCols + 1
-        self.CallableFunction = RefFunction
-
-    def clearItem(self):
-        self.TimeValuePairs = array.array('d')
-        self.PrevLogTime = None
-        self.PrevValue = None
-
 
 class EventHandlerClass:
     """Event Handler Class"""
@@ -189,10 +173,9 @@ class SimBaseClass:
         self.StopTime = 0
         self.nextEventTime = 0
         self.terminate = False
-        self.NameReplace = {}
-        self.VarLogList = {}
+        self.oldSyntaxVariableLog = {}
+        self.allModels = []
         self.eventMap = {}
-        self.simModules = set()
         self.simBasePath = os.path.dirname(os.path.realpath(__file__)) + '/../'
         self.dataStructIndex = self.simBasePath + '/xml/index.xml'
         self.indexParsed = False
@@ -334,31 +317,24 @@ class SimBaseClass:
             ModelPriority = ModelData
             ModelData = None
 
-        i = 0
         for Task in self.TaskList:
             if Task.Name == TaskName:
                 Task.TaskData.AddNewObject(NewModel, ModelPriority)
-                TaskReplaceTag = 'self.TaskList[' + str(i) + ']'
-                TaskReplaceTag += '.TaskModels[' + str(len(Task.TaskModels)) + ']'
-                self.NameReplace[TaskReplaceTag] = NewModel.ModelTag
+                self.allModels.append((NewModel, ModelData, Task) )
                 if ModelData is not None:
                     try:
                         ModelData.bskLogger = self.bskLogger
                     except:
                         pass
                     Task.TaskModels.append(ModelData)
-                    self.simModules.add(inspect.getmodule(ModelData))
                 else:
                     try:
                         NewModel.bskLogger = self.bskLogger
                     except:
                         pass
                     Task.TaskModels.append(NewModel)
-                    self.simModules.add(inspect.getmodule(NewModel))
                 return
-            i += 1
-        print("Could not find a Task with name: %(TaskName)s" % \
-              {"TaskName": TaskName})
+        raise ValueError(f"Could not find a Task with name: {TaskName}")
 
     def CreateNewProcess(self, procName, priority = -1):
         """
@@ -412,71 +388,54 @@ class SimBaseClass:
         self.TaskList.append(Task)
         return Task
 
-    def AddVariableForLogging(self, VarName, LogPeriod=0, StartIndex=0, StopIndex=0, VarType=None):
-        """
-        Informs the sim to log a particular variable within a message
+    # When this method is removed, remember to delete the 'oldSyntaxVariableLog' and
+    # 'allModels' attributes (as well as any mention of them) as they are not longer needed
+    @deprecated.deprecated("2024/09/06", 
+        "Use the 'logger' function or 'PythonVariableLogger' instead of 'AddVariableForLogging'."
+        " See 'http://hanspeterschaub.info/basilisk/Learn/bskPrinciples/bskPrinciples-6.html'"
+    )
+    def AddVariableForLogging(self, VarName: str, LogPeriod: int = 0, *_, **__):
+        """Generates a logger and adds it to the same task as the module
+        in `VarName`.
 
-        :param VarName:   must be module tag string + period + variable name
-        :param LogPeriod: update rate at which to record the variable [ns]
-        :param StartIndex: starting index if the variable is an array
-        :param StopIndex: end index if the variable is an idea
-        :param VarType:
-        :return:
-        """
-        SplitName = VarName.split('.')
-        Subname = '.'
-        Subname = Subname.join(SplitName[1:])
-        NoDotName = ''
-        NoDotName = NoDotName.join(SplitName)
-        tr = str.maketrans("","", "[]'()")
-        NoDotName = NoDotName.translate(tr)
-        #NoDotName = NoDotName.translate({ord(c): None for c in "[]'()"})
-        inv_map = {v: k for k, v in list(self.NameReplace.items())}
-        if SplitName[0] in inv_map:
-            LogName = inv_map[SplitName[0]] + '.' + Subname
-            if (LogName in self.VarLogList):
-                return
-            if (type(eval(LogName)).__name__ == 'SwigPyObject'):
-                RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-                RefFunctionString += '   return ['
-                LoopTerminate = False
-                i = 0
-                while not LoopTerminate:
-                    RefFunctionString += 'sim_model.' + VarType + 'Array_getitem('
-                    RefFunctionString += LogName + ', ' + str(StartIndex + i) + '),'
-                    i += 1
-                    if (i > StopIndex - StartIndex):
-                        LoopTerminate = True
-                RefFunctionString = RefFunctionString[:-1] + ']'
-                exec (RefFunctionString)
-                methodHandle = eval('Get' + NoDotName)
+        Args:
+            VarName (str): The variable to log in the format "<ModelTag>.<variable_name>"
+            LogPeriod (int, optional): The minimum time between logs. Defaults to 0.
+        """        
+        if "." not in VarName:
+            raise ValueError('The variable to log must be given in the format '
+                             '"<ModelTag>.<variable_name>"')
+        
+        modelTag = VarName.split('.')[0]
 
-            elif (type(eval(LogName)).__name__ == 'list'):
-                RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-                RefFunctionString += '   if isinstance(' + LogName + '[0], list):\n'
-                RefFunctionString += '      localList = sum(' + LogName + ',[])\n'
-                RefFunctionString += '   else:\n      localList = ' + LogName + '\n'
-                RefFunctionString += '   return ['
-                LoopTerminate = False
-                i = 0
-                while not LoopTerminate:
-                    RefFunctionString +=  'localList[' + str(StartIndex + i) + '],'
-                    i += 1
-                    if (i > StopIndex - StartIndex):
-                        LoopTerminate = True
-                RefFunctionString = RefFunctionString[:-1] + ']'
-                exec (RefFunctionString)
-                methodHandle = eval('Get' + NoDotName)
-            else:
-                RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-                RefFunctionString += '   return ' + LogName
-                exec (RefFunctionString)
-                methodHandle = eval('Get' + NoDotName)
-            self.VarLogList[VarName] = LogBaseClass(LogName, LogPeriod,
-                                                    methodHandle, StopIndex - StartIndex + 1)
-        else:
-            print("Could not find a structure that has the ModelTag: %(ModName)s" % \
-                  {"ModName": SplitName[0]})
+        # Calling eval on a pre-compiled string is faster than
+        # eval-ing the string (by a large factor)
+        compiledExpr = compile(VarName, "<logged-variable>", "eval")
+
+        # Find the model object that corresponds to the given tag, as well as the 
+        # task where this model was added
+        modelOrConfig = task = None
+        for model, modelData, task in self.allModels:
+            if model.ModelTag == modelTag:
+                modelOrConfig = modelData or model
+
+        if task is None or modelOrConfig is None:
+            raise ValueError(f"Could not find model with tag {modelTag}")
+
+        # The callback logging function 'fun' simply evaluates the given
+        # expression. We pass a dictionary '{modelTag: modelOrConfig}'
+        # that allows the expression to substitute the modelTag by the
+        # actual model object
+        def fun(_): 
+            val = eval(compiledExpr, globals(), {modelTag: modelOrConfig})
+            val = np.array(val).squeeze()
+            return val
+
+        logger = PythonVariableLogger({"variable": fun}, LogPeriod)
+        logger.ModelTag = f"Logger:{VarName}"
+        self.AddModelToTask(task.Name, logger)
+
+        self.oldSyntaxVariableLog[VarName] = logger
 
     def ResetTask(self, taskName):
         for Task in self.TaskList:
@@ -497,8 +456,6 @@ class SimBaseClass:
         self.TotalSim.resetInitSimulation()
         for proc in self.pyProcList:
             proc.resetProcess(0)
-        for LogItem, LogValue in self.VarLogList.items():
-            LogValue.clearItem()
         self.simulationInitialized = True
 
 
@@ -508,31 +465,11 @@ class SimBaseClass:
         """
         self.StopTime = TimeStop
 
+    @deprecated.deprecated("2024/09/06", 
+        "Calling 'RecordLogVars' is deprecated and unnecessary."
+    )
     def RecordLogVars(self):
-        CurrSimTime = self.TotalSim.CurrentNanos
-        minNextTime = -1
-        for LogItem, LogValue in self.VarLogList.items():
-            LocalPrev = LogValue.PrevLogTime
-            if (LocalPrev != None and (CurrSimTime -
-                                           LocalPrev) < LogValue.Period):
-                if(minNextTime < 0 or LocalPrev + LogValue.Period < minNextTime):
-                    minNextTime = LocalPrev + LogValue.Period
-                continue
-            CurrentVal = LogValue.CallableFunction(self)
-            LocalTimeVal = LogValue.TimeValuePairs
-            if (LocalPrev != CurrentVal):
-                LocalTimeVal.append(CurrSimTime)
-                try:
-                    temp = (len(CurrentVal))
-                    for Value in CurrentVal:
-                        LocalTimeVal.append(Value)
-                except TypeError:
-                    LocalTimeVal.append(CurrentVal)
-                LogValue.PrevLogTime = CurrSimTime
-                LogValue.PrevValue = CurrentVal
-                if(minNextTime < 0 or CurrSimTime + LogValue.Period < minNextTime):
-                    minNextTime = CurrSimTime + LogValue.Period
-        return minNextTime
+        pass
 
     def ExecuteSimulation(self):
         """
@@ -559,7 +496,6 @@ class SimBaseClass:
             progressBar.update(self.TotalSim.NextTaskTime)
             nextPriority = -1
             nextStopTime = self.StopTime
-            nextLogTime = self.RecordLogVars()
             procStopTimes = []
             for pyProc in self.pyProcList:
                 nextCallTime = pyProc.nextCallTime()
@@ -571,23 +507,25 @@ class SimBaseClass:
             if pyProcPresent and nextStopTime >= min(procStopTimes):
                 nextStopTime = min(procStopTimes)
                 nextPriority = self.pyProcList[procStopTimes.index(nextStopTime)].pyProcPriority
-            if 0 <= nextLogTime < nextStopTime:
-                nextStopTime = nextLogTime
-                nextPriority = -1
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
         self.terminate = False
         progressBar.markComplete()
         progressBar.close()
 
+    @deprecated.deprecated("2024/09/06", 
+        "Deprecated way to access logged variables."
+        " See 'http://hanspeterschaub.info/basilisk/Learn/bskPrinciples/bskPrinciples-6.html'"
+    )
     def GetLogVariableData(self, LogName):
         """
         Pull the recorded module recorded variable.  The first column is the variable recording time in
         nano-seconds, the additional column(s) are the message data columns.
-        """
-        TheArray = np.array(self.VarLogList[LogName].TimeValuePairs)
-        ArrayDim = self.VarLogList[LogName].ArrayDim
-        TheArray = np.reshape(TheArray, (TheArray.shape[0] // ArrayDim, ArrayDim))
-        return TheArray
+        """        
+        if LogName not in self.oldSyntaxVariableLog:
+            raise ValueError(f'"{LogName}" is not being logged. Check the spelling.')
+        
+        logger = self.oldSyntaxVariableLog[LogName]
+        return np.column_stack([logger.times(), logger.variable])
 
     def disableTask(self, TaskName):
         """

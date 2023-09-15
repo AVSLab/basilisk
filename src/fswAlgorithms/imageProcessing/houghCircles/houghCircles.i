@@ -27,7 +27,7 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "stdint.i"
 %include "std_string.i"
-%include "sys_model.h"
+%include "sys_model.i"
 %include "swig_conly_data.i"
 
 %include "houghCircles.h"
@@ -42,4 +42,3 @@ struct CameraImageMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-
