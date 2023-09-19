@@ -76,7 +76,7 @@ def test_stepperMotorTestFunction(show_plots, desiredAngle, accuracy):
     assert testResults < 1, testMessage
 
 
-def stepperMotorTestFunction(show_plots, desiredAngle1, desiredAngle2, desiredAngle3, accuracy):
+def stepperMotorTestFunction(show_plots, desiredAngle1, desiredAngle2, desiredAngle3, desiredAngle4,desiredAngle5, desiredAngle6, accuracy):
     testFailCount = 0                                        # Zero the unit test result counter
     testMessages = []                                        # Create an empty array to store the test log messages
     unitTaskName = "unitTask"
@@ -118,7 +118,7 @@ def stepperMotorTestFunction(show_plots, desiredAngle1, desiredAngle2, desiredAn
     unitTestSim.InitializeSimulation()
 
     # Set the simulation time
-    unitTestSim.ConfigureStopTime(macros.sec2nano(10))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(30))
 
     # Begin the simulation
     unitTestSim.ExecuteSimulation()
@@ -131,7 +131,7 @@ def stepperMotorTestFunction(show_plots, desiredAngle1, desiredAngle2, desiredAn
     StepperMotorConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
 
     # Set the simulation time
-    unitTestSim.ConfigureStopTime(macros.sec2nano(10) + macros.sec2nano(10))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(30) + macros.sec2nano(30))
 
     # Begin the simulation
     unitTestSim.ExecuteSimulation()
@@ -144,11 +144,45 @@ def stepperMotorTestFunction(show_plots, desiredAngle1, desiredAngle2, desiredAn
     StepperMotorConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
 
     # Set the simulation time
-    unitTestSim.ConfigureStopTime(macros.sec2nano(10) + macros.sec2nano(10) +  macros.sec2nano(10))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(30) + macros.sec2nano(30) +  macros.sec2nano(30))
 
     # Begin the simulation
     unitTestSim.ExecuteSimulation()
 
+    # Create the stepperMotor input message
+    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsg_C_zeroMsgPayload()
+    HingedRigidBodyMessageData.theta = desiredAngle4
+    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData, unitTestSim.TotalSim.CurrentNanos)
+    StepperMotorConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+
+    # Set the simulation time
+    unitTestSim.ConfigureStopTime(macros.sec2nano(30) + macros.sec2nano(30) + macros.sec2nano(30) + macros.sec2nano(30))
+
+    # Begin the simulation
+    unitTestSim.ExecuteSimulation()
+
+        # Create the stepperMotor input message
+    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsg_C_zeroMsgPayload()
+    HingedRigidBodyMessageData.theta = desiredAngle5
+    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData, unitTestSim.TotalSim.CurrentNanos)
+    StepperMotorConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+
+    # Set the simulation time
+    unitTestSim.ConfigureStopTime(macros.sec2nano(30) + macros.sec2nano(30) + macros.sec2nano(30) + macros.sec2nano(30)+ macros.sec2nano(30))
+
+    # Begin the simulation
+    unitTestSim.ExecuteSimulation()
+        # Create the stepperMotor input message
+    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsg_C_zeroMsgPayload()
+    HingedRigidBodyMessageData.theta = desiredAngle6
+    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData, unitTestSim.TotalSim.CurrentNanos)
+    StepperMotorConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+
+    # Set the simulation time
+    unitTestSim.ConfigureStopTime(macros.sec2nano(30) + macros.sec2nano(30) + macros.sec2nano(30) + macros.sec2nano(30)+ macros.sec2nano(30)+ macros.sec2nano(30))
+
+    # Begin the simulation
+    unitTestSim.ExecuteSimulation()
 
     # Extract the logged data for plotting and data comparison
     print("")
@@ -164,6 +198,9 @@ if __name__ == "__main__":
                  True,
                  10,     # desiredAngle1
                  30,     # desiredAngle2
-                 40,     # desiredAngle3
+                 70,     # desiredAngle3
+                 42,     # desiredAngle3
+                 32,
+                 52,
                  1e-12   # accuracy
                )
