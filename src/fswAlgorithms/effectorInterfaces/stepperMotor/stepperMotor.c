@@ -55,8 +55,7 @@ void Reset_stepperMotor(StepperMotorConfig* configData, uint64_t callTime, int64
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: stepperMotor.spinningBodyInMsg wasn't connected.");
     }
 
-    // Calculate the angle 
-    
+    //Initializa VAriables:
 
     // Set the initial step count to zero
     configData->stepCount = 0;
@@ -68,7 +67,7 @@ void Reset_stepperMotor(StepperMotorConfig* configData, uint64_t callTime, int64
     configData->stepsCommanded = 0;
 
     // Set the initial time in second to know diference between the time we got a messsage to the current time we are in
-    configData->deltaSimTime = 0;     
+    configData->deltaSimTime = 0;    
 
     // Set the initial number of steps already achieved from the steps commanded
     configData->stepsTaken = 0;          
@@ -117,7 +116,7 @@ void Update_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int6
         configData->desiredAngle = spinningBodyIn.theta;
         printf("\n In loop: spinningBodyIn.theta %f", spinningBodyIn.theta);
 
-        // Calculate the de,lta angle
+        // Calculate the delta angle
         configData->deltaAngle = (configData->desiredAngle) - (configData->currentMotorAngle);
         printf("\n delta angle %f", configData->deltaAngle);
 
@@ -145,6 +144,10 @@ void Update_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int6
 
     // Calculate the number of steps already achieved from the steps commanded:
     int32_t localSteps = configData->deltaSimTime / (uint64_t)(configData->stepTime * 1E9);
+    if (configData->stepsCommanded < 0) 
+    {
+    localSteps = -localSteps;
+    }
     printf("\n localSteps %" PRIi32, localSteps);
 
     // initialize the newStepsTakenSinceLastModuleCallTime to zero
@@ -152,15 +155,23 @@ void Update_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int6
 
     // Update stepsTaken with the new steps, ensuring it doesn't exceed the commanded steps
     //Here if the local step exceeded the steps commanded so we make sure the steps taken are assigned to teps comanded value and for new steps taken we take the diff between steps commanded and steps taken 
-    if (localSteps > abs(configData->stepsCommanded)) {
+    if (abs(localSteps) > abs(configData->stepsCommanded))
+    {
         newStepsTakenSinceLastModuleCallTime = (configData->stepsCommanded - configData->stepsTaken);
-        configData->stepsTaken = abs(configData->stepsCommanded);
+        configData->stepsTaken = (configData->stepsCommanded);
     //in here we assume everything is fine and still didn't reach the steps commanded, so the steps taken will equal the local steps and the new steps aken will calculate the diff between the local steps and steps taken 
-    } else {
+    } else 
+    {
         newStepsTakenSinceLastModuleCallTime = localSteps - configData->stepsTaken;
         printf("\n newStepsTakenSinceLastModuleCallTime  %" PRIi32, newStepsTakenSinceLastModuleCallTime);
+
+        // If stepsCommanded is negative, make newStepsTakenSinceLastModuleCallTime negative.
+            
         configData->stepsTaken = localSteps;
     }
+    // if (configData->stepsCommanded < 0) {
+    //     newStepsTakenSinceLastModuleCallTime = -newStepsTakenSinceLastModuleCallTime;
+    // }
 
     printf("\n configData->stepsTime %f", configData->stepTime);
     printf("\n configData->stepsTaken %" PRIi32, configData->stepsTaken);
