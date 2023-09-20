@@ -199,8 +199,8 @@ if __name__ == "__main__":
                  10,     # desiredAngle1
                  30,     # desiredAngle2
                  70,     # desiredAngle3
-                 42,     # desiredAngle3
-                 32,
-                 52,
+                 42,     # desiredAngle4
+                 32,     # desiredAngle5
+                 52,     # desiredAngle6
                  1e-12   # accuracy
                )
