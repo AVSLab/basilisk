@@ -80,7 +80,7 @@ def test_stepperMotor(show_plots, thetaInit, thetaRef, accuracy):
 
 
 def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, accuracy):
-    numSteps = 10 #thetaRef - thetaInit
+    numSteps = thetaRef - thetaInit
     testFailCount = 0                                        # Zero the unit test result counter
     testMessages = []                                        # Create an empty array to store the test log messages
     unitProcessName = "TestProcess"
@@ -152,21 +152,43 @@ def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, accuracy):
     unitTestSim.InitializeSimulation()
 
     # Set the simulation time
-    simTime = numSteps * stepTime + 1
-    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
+    simTime1 = (numSteps * stepTime) + 5
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime1))
 
     # Begin the simulation
     unitTestSim.ExecuteSimulation()
 
-    # # Sim chunk 2
-    # # Create the prescribedRot1DOF input message
-    # MotorStepCountMessageData = messaging.MotorStepCountMsgPayload()
-    # MotorStepCountMessageData.numSteps = 5
-    # MotorStepCountMessage = messaging.MotorStepCountMsg().write(MotorStepCountMessageData)
-    # PrescribedRot1DOFConfig.motorStepCountInMsg.subscribeTo(MotorStepCountMessage)
-    # simTime = simTime + 5 * np.sqrt(((0.5 * np.abs(stepAngle)) * 8) / thetaDDotMax) + 20
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
-    # unitTestSim.ExecuteSimulation()
+    thetaRef2 = 0.0 # Should take -5 steps
+    thetaRef3 = 7.0 # Should start taking 7 steps before interrupted
+    thetaRef4 = 0.0 # Should take -2 steps
+
+    # Sim chunk 2: Negative steps
+    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
+    HingedRigidBodyMessageData.theta = thetaRef2
+    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData, unitTestSim.TotalSim.CurrentNanos)
+    stepperMotorConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+    simTime2 = (5 * stepTime) + 5
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime1 + simTime2))
+    unitTestSim.ExecuteSimulation()
+
+    # Sim chunk 3: Positive steps (interrupted half-way)
+    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
+    HingedRigidBodyMessageData.theta = thetaRef3
+    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData, unitTestSim.TotalSim.CurrentNanos)
+    stepperMotorConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+    simTime3 = (7 * stepTime) - (3 * stepTime)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime1 + simTime2 + simTime3))
+    unitTestSim.ExecuteSimulation()
+
+    # Sim chunk 3: Negative steps (interrupted message)
+    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
+    HingedRigidBodyMessageData.theta = thetaRef4
+    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData, unitTestSim.TotalSim.CurrentNanos)
+    stepperMotorConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+    simTime4 = (2 * stepTime) + 10
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime1 + simTime2 + simTime3 + simTime4))
+    unitTestSim.ExecuteSimulation()
+
 
     # Extract the logged data for plotting and data comparison
     stepsOutput = dataLog.numSteps
@@ -190,9 +212,9 @@ def stepperMotorTestFunction(show_plots, thetaInit, thetaRef, accuracy):
 
     # Convert the logged sigma_FM MRPs to a scalar theta_FM array
     n = len(timespan)
-    theta_FM = []
+    phi_FM = []
     for i in range(n):
-        theta_FM.append(4 * np.arctan(np.linalg.norm(sigma_FM[i, :])))
+        phi_FM.append((180 / np.pi) * 4 * np.arctan(np.linalg.norm(sigma_FM[i, :])))
 
     # Plot motor theta
     plt.figure()
@@ -281,6 +303,6 @@ if __name__ == "__main__":
     stepperMotorTestFunction(
                  True,
                  0,     # thetaInit
-                 10,     # thetaRef
+                 1,     # thetaRef
                  1e-12        # accuracy
                )
