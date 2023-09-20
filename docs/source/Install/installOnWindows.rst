@@ -53,9 +53,13 @@ Add SWIG and Basilisk paths into environment variables using the following steps
   - Under the Advanced tab, Select Environment Variables
   - Under the User (or System, depending on your setup) Variables panel, Select Path, and Click Edit
 
-    - Add the ``swig.exe`` directory to your path
+    - Add the ``swig.exe`` directory to your path.  See this `site <https://stackoverflow.com/questions/48382254/cmake-error-could-not-find-swig-missing-swig-dir>`__
+      for more info on setting paths for swig.
     - add the path to ``CMake\bin``, such as ``C:\Program Files\CMake\bin``
-    - Add the Basilisk library directory (``path2bsk/dist3/Basilisk``) to your path. Here, ``path2bsk`` is replaced with the actual path to the Basilisk folder.
+    - Add the Basilisk library directory (``path2bsk/dist3/Basilisk``) to your path. Here,
+      ``path2bsk`` is replaced with the actual path to the Basilisk folder.  Note, the ``dist3`` folder does not
+      exist to begin with, but is created automatically when configuring Basilisk with ``python conanfile.py``
+      as discussed below.
 
 For more information on how to configure the path Variable on Windows see this
 `help <https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/>`__ link.
