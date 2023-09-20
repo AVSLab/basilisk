@@ -254,11 +254,6 @@ void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat &mDst, double num){
  * being applied.
  * @param mSource source image
  * @param mDst destination of modified image
- * @param gaussian scaling factor for gaussian noise
- * @param darkCurrent scaling factor for dark current
- * @param saltPepper scaling factor for hot and dead pixels
- * @param cosmicRays number of cosmic rays to add
- * @param blurparam size of blur to apply
  * @return void
  */
 void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
