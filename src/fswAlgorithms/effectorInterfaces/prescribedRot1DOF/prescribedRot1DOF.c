@@ -36,8 +36,9 @@
 void SelfInit_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, int64_t moduleID)
 {
     // Initialize the output messages
-    PrescribedMotionMsg_C_init(&configData->prescribedMotionOutMsg);
     StepperMotorMsg_C_init(&configData->stepperMotorOutMsg);
+    HingedRigidBodyMsg_C_init(&configData->hingedRigidBodyOutMsg);
+    PrescribedMotionMsg_C_init(&configData->prescribedMotionOutMsg);
 }
 
 
@@ -99,12 +100,14 @@ void Update_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t call
     // Create the buffer messages
     MotorStepCountMsgPayload motorStepCountIn;
     StepperMotorMsgPayload stepperMotorOut;
+    HingedRigidBodyMsgPayload hingedRigidBodyOut;
     PrescribedMotionMsgPayload prescribedMotionOut;
 
     // Zero the buffer messages
-    stepperMotorOut = StepperMotorMsg_C_zeroMsgPayload();
-    prescribedMotionOut = PrescribedMotionMsg_C_zeroMsgPayload();
     motorStepCountIn = MotorStepCountMsg_C_zeroMsgPayload();
+    stepperMotorOut = StepperMotorMsg_C_zeroMsgPayload();
+    hingedRigidBodyOut = HingedRigidBodyMsg_C_zeroMsgPayload();
+    prescribedMotionOut = PrescribedMotionMsg_C_zeroMsgPayload();
 
     // Read the input message
     if (MotorStepCountMsg_C_isWritten(&configData->motorStepCountInMsg))
@@ -234,6 +237,17 @@ void Update_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t call
     // Determine the prescribed parameter: sigma_FM
     C2MRP(dcm_FM, configData->sigma_FM);
 
+    // Copy motor information to the stepper motor message
+    stepperMotorOut.theta = configData->theta;
+    stepperMotorOut.thetaDot = configData->thetaDot;
+    stepperMotorOut.thetaDDot = configData->thetaDDot;
+    stepperMotorOut.numSteps = configData->numSteps;
+    stepperMotorOut.stepCount = configData->stepCount;
+
+    // Copy motor scalar states to the hinged rigid body message
+    hingedRigidBodyOut.theta = configData->theta;
+    hingedRigidBodyOut.thetaDot = configData->thetaDot;
+
     // Copy the module variables to the prescribedMotionOut output message
     v3Copy(configData->r_FM_M, prescribedMotionOut.r_FM_M);
     v3Copy(configData->rPrime_FM_M, prescribedMotionOut.rPrime_FM_M);
@@ -242,14 +256,8 @@ void Update_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t call
     v3Copy(configData->omegaPrime_FM_F, prescribedMotionOut.omegaPrime_FM_F);
     v3Copy(configData->sigma_FM, prescribedMotionOut.sigma_FM);
 
-    // Copy motor information to the stepper motor message
-    stepperMotorOut.theta = configData->theta;
-    stepperMotorOut.thetaDot = configData->thetaDot;
-    stepperMotorOut.thetaDDot = configData->thetaDDot;
-    stepperMotorOut.numSteps = configData->numSteps;
-    stepperMotorOut.stepCount = configData->stepCount;
-
     // Write the output messages
-    PrescribedMotionMsg_C_write(&prescribedMotionOut, &configData->prescribedMotionOutMsg, moduleID, callTime);
     StepperMotorMsg_C_write(&stepperMotorOut, &configData->stepperMotorOutMsg, moduleID, callTime);
+    HingedRigidBodyMsg_C_write(&hingedRigidBodyOut, &configData->hingedRigidBodyOutMsg, moduleID, callTime);
+    PrescribedMotionMsg_C_write(&prescribedMotionOut, &configData->prescribedMotionOutMsg, moduleID, callTime);
 }

@@ -28,6 +28,8 @@
 struct MotorStepCountMsg_C;
 %include "architecture/msgPayloadDefC/StepperMotorMsgPayload.h"
 struct StepperMotorMsg_C;
+%include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+struct HingedRigidBodyMsg_C;
 %include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
 struct PrescribedMotionMsg_C;
 
