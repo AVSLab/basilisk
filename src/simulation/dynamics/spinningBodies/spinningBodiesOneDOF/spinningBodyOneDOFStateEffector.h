@@ -38,22 +38,23 @@
 class SpinningBodyOneDOFStateEffector: public StateEffector, public SysModel {
 
 public:
-    double mass = 1.0;                                          //!< [kg] mass of spinning body
-    double k = 0.0;                                             //!< [N-m/rad] torsional spring constant
-    double c = 0.0;                                             //!< [N-m-s/rad] rotational damping coefficient
-    double thetaInit = 0.0;                                     //!< [rad] initial spinning body angle
-    double thetaDotInit = 0.0;                                  //!< [rad/s] initial spinning body angle rate
-    std::string nameOfThetaState;                               //!< -- identifier for the theta state data container
-    std::string nameOfThetaDotState;                            //!< -- identifier for the thetaDot state data container
-    Eigen::Vector3d r_SB_B;                                     //!< [m] vector pointing from body frame B origin to spinning frame S origin in B frame components
-    Eigen::Vector3d r_ScS_S;                                    //!< [m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in S frame components
-    Eigen::Vector3d sHat_S;                                     //!< -- spinning axis in S frame components.
-    Eigen::Matrix3d IPntSc_S;                                   //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
-    Eigen::Matrix3d dcm_S0B;                                    //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
-    Message<HingedRigidBodyMsgPayload> spinningBodyOutMsg;      //!< state output message
-    Message<SCStatesMsgPayload> spinningBodyConfigLogOutMsg;    //!< spinning body state config log message
-    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;   //!< -- (optional) motor torque input message
-    ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;    //!< -- (optional) motor lock flag input message
+    double mass = 1.0;                                               //!< [kg] mass of spinning body
+    double k = 0.0;                                                  //!< [N-m/rad] torsional spring constant
+    double c = 0.0;                                                  //!< [N-m-s/rad] rotational damping coefficient
+    double thetaInit = 0.0;                                          //!< [rad] initial spinning body angle
+    double thetaDotInit = 0.0;                                       //!< [rad/s] initial spinning body angle rate
+    std::string nameOfThetaState;                                    //!< -- identifier for the theta state data container
+    std::string nameOfThetaDotState;                                 //!< -- identifier for the thetaDot state data container
+    Eigen::Vector3d r_SB_B;                                          //!< [m] vector pointing from body frame B origin to spinning frame S origin in B frame components
+    Eigen::Vector3d r_ScS_S;                                         //!< [m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in S frame components
+    Eigen::Vector3d sHat_S;                                          //!< -- spinning axis in S frame components.
+    Eigen::Matrix3d IPntSc_S;                                        //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
+    Eigen::Matrix3d dcm_S0B;                                         //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
+    Message<HingedRigidBodyMsgPayload> spinningBodyOutMsg;           //!< state output message
+    Message<SCStatesMsgPayload> spinningBodyConfigLogOutMsg;         //!< spinning body state config log message
+    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;        //!< -- (optional) motor torque input message
+    ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;         //!< -- (optional) motor lock flag input message
+    ReadFunctor<HingedRigidBodyMsgPayload> spinningBodyRefInMsg;     //!< -- (optional) spinning body reference input message name
 
     SpinningBodyOneDOFStateEffector();  //!< -- Contructor
     ~SpinningBodyOneDOFStateEffector() override; //!< -- Destructor
@@ -73,6 +74,8 @@ private:
     static uint64_t effectorID;         //!< [] ID number of this panel
     double u = 0.0;                     //!< [N-m] optional motor torque
     int lockFlag = 0;                   //!< [] flag for locking the rotation axis
+    double thetaRef = 0.0;              //!< [rad] spinning body reference angle
+    double thetaDotRef = 0.0;           //!< [rad] spinning body reference angle rate
 
     // Terms needed for back substitution
     Eigen::Vector3d aTheta;             //!< -- rDDot_BN term for back substitution

@@ -222,7 +222,7 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
         // Define cTheta
         Eigen::Vector3d rDot_SB_B = this->omegaTilde_BN_B * this->r_SB_B;
         Eigen::Vector3d gravityTorquePntS_B = rTilde_ScS_B * this->mass * g_B;
-        this->cTheta = (this->u - this->k * this->theta - this->c * this->thetaDot
+        this->cTheta = (this->u - this->k * (this->theta - this->thetaRef) - this->c * (this->thetaDot - this->thetaDotRef)
                 + this->sHat_B.dot(gravityTorquePntS_B - omegaTilde_SN_B * IPntS_B * this->omega_SN_B
                 - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B
                 - this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * rDot_SB_B)) / this->mTheta;
@@ -293,7 +293,7 @@ void SpinningBodyOneDOFStateEffector::updateEnergyMomContributions(double integT
     // Find rotational energy contribution from the hub
     rotEnergyContr = 1.0 / 2.0 * this->omega_SN_B.dot(this->IPntSc_B * this->omega_SN_B)
             + 1.0 / 2.0 * this->mass * this->rDot_ScB_B.dot(this->rDot_ScB_B)
-            + 1.0 / 2.0 * this->k * this->theta * this->theta;
+            + 1.0 / 2.0 * this->k * (this->theta - this->thetaRef) * (this->theta - this->thetaRef);
 }
 
 /*! This method computes the spinning body states relative to the inertial frame */
@@ -326,6 +326,14 @@ void SpinningBodyOneDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
         ArrayEffectorLockMsgPayload incomingLockBuffer;
         incomingLockBuffer = this->motorLockInMsg();
         this->lockFlag = incomingLockBuffer.effectorLockFlag[0];
+    }
+
+    //! - Read the incoming angle command array
+    if (this->spinningBodyRefInMsg.isLinked() && this->spinningBodyRefInMsg.isWritten()) {
+        HingedRigidBodyMsgPayload incomingRefBuffer;
+        incomingRefBuffer = this->spinningBodyRefInMsg();
+        this->thetaRef = incomingRefBuffer.theta;
+        this->thetaDotRef = incomingRefBuffer.thetaDot;
     }
 
     /* Compute spinning body inertial states */
