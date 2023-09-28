@@ -27,29 +27,28 @@
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
-    /* Private variables */
-    double currentMotorAngle;                                   //!< [rad] Curretn motor angle
-    double desiredAngle;                                        //!< [rad] Desired motor angle 
-    double deltaAngle;                                          //!< [rad] Difference between desired and current angle
-    double stepAngle;                                           //!< [rad] Angle it takes for a single step to move
-    double stepTime;                                            //!< [s] Time it takes for a motor to achieve 1 Step
-    bool firstCall;
+    /* Motor angle parameters */
+    double initAngle;                                        //!< [rad] Initial motor angle
+    double currentMotorAngle;                                //!< [rad] Current motor angle
+    double desiredAngle;                                     //!< [rad] Motor reference angle
+    double deltaAngle;                                       //!< [rad] Difference between desired and current angle
+    double stepAngle;                                        //!< [rad] Angle the stepper motor moves through for a single step (constant)
 
-    double initAngle;
-    
-    /* Steps variables */
-    int32_t stepCount;                                              //!< [steps] Total number of steps taken
-    int32_t stepsCommanded;                                         //!< [steps] Number of steps needed to reach the desired angle (output)
-    int32_t stepsTaken;                                             //!< [steps] The number of steps already achieved from the steps commanded
-   
-    double previousWrittenTime;                                //!< [ns] Time the desired theta was given
-    double deltaSimTime;                                       //!< [ns] The time we took to get a new message
+    /* Step parameters */
+    int32_t stepsCommanded;                                  //!< [steps] Number of steps needed to reach the desired angle (output)
+    int32_t stepsTaken;                                      //!< [steps] Current motor step count
 
-    BSKLogger* bskLogger;                                        //!< BSK Logging
+    /* Temporal parameters */
+    double stepTime;                                         //!< [s] Time required for a single motor step (constant)
+    double previousWrittenTime;                              //!< [ns] Time the last input message was written
+    double deltaSimTime;                                     //!< [ns] The time elapsed since the last message was written
+    bool firstCall;                                          //!< Boolean used to capture a message written at time zero
+
+    BSKLogger* bskLogger;                                    //!< BSK Logging
 
     /* Messages */
-    HingedRigidBodyMsg_C spinningBodyInMsg;                   //!< Intput msg for the spinning body angle and angle rate
-    MotorStepCountMsg_C motorStepCountOutMsg;                 //!< Output msg for the number of commanded motor step counts
+    HingedRigidBodyMsg_C spinningBodyInMsg;                  //!< Intput msg for the stepper motor reference message
+    MotorStepCountMsg_C motorStepCountOutMsg;                //!< Output msg for the number of commanded motor step counts
 
 }StepperMotorConfig;
 

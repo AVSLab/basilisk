@@ -64,8 +64,8 @@ def test_stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorA
     **Test Parameters**
 
     Args:
-        stepAngle (float): [rad] Angle the stepper motor moves through for a single step
-        stepTime (float): [sec] Time required for a single motor step
+        stepAngle (float): [rad] Angle the stepper motor moves through for a single step (constant)
+        stepTime (float): [sec] Time required for a single motor step (constant)
         initialMotorAngle (float): [rad] Initial stepper motor angle
         desiredMotorAngle1 (float): [rad] Desired stepper motor angle 1
         desiredMotorAngle2 (float): [rad] Desired stepper motor angle 2

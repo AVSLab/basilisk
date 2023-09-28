@@ -17,15 +17,9 @@
 
  */
 
-/* Import the module header file */
 #include "stepperMotor.h"
-#include <inttypes.h>
-
-/* Other required files to import */
 #include <stdbool.h>
-#include  <stdlib.h>
 #include <math.h>
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
 
@@ -34,9 +28,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_stepperMotor(StepperMotorConfig* configData, int64_t moduleID)
-{
-    // Initialize the output messages
+void SelfInit_stepperMotor(StepperMotorConfig* configData, int64_t moduleID) {
     MotorStepCountMsg_C_init(&configData->motorStepCountOutMsg);
 }
 
@@ -47,40 +39,29 @@ void SelfInit_stepperMotor(StepperMotorConfig* configData, int64_t moduleID)
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
-void Reset_stepperMotor(StepperMotorConfig* configData, uint64_t callTime, int64_t moduleID)
-{
+void Reset_stepperMotor(StepperMotorConfig* configData, uint64_t callTime, int64_t moduleID) {
     // Check if the required input message is linked
     if (!HingedRigidBodyMsg_C_isLinked(&configData->spinningBodyInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: stepperMotor.spinningBodyInMsg wasn't connected.");
     }
 
-    // Set the initial step count to zero
-    configData->stepCount = 0;
-
-    // Set the initial delta theta by getting the differenc beetween desired and current angle
-    configData->deltaAngle = 0.0;
-
-    // Set the initial number of stepps commanded
+    // Set the initial module variables to zero
+    configData->stepsTaken = 0;
     configData->stepsCommanded = 0;
-
-    // Set the initial time in second to know diference between the time we got a messsage to the current time we are in
-    configData->deltaSimTime = 0.0;
-
-    // Set the initial number of steps already achieved from the steps commanded
-    configData->stepsTaken = 0;          
-
-    // Set the initial time were desired theta message was given. It is assigned to be -1 because we don't want its condition to overlap with the call time as we can recieve a message at call time 0.0, where call time is an integer that can't be negative
-    configData->previousWrittenTime = 0.0;
-    configData->firstCall = true;
-
     configData->initAngle = 0.0;
+    configData->deltaAngle = 0.0;
+    configData->deltaSimTime = 0.0;
+    configData->previousWrittenTime = 0.0;
+
+    // Set firstCall to true to capture a message written at time zero
+    configData->firstCall = true;
 }
 
-/*! This method profiles the prescribed trajectory and updates the prescribed states as a function of time.
-The prescribed states are then written to the output message.
+/*! This method computes the required number of motor steps given a desired motor angle message and follows the
+ * motor actuation in time.
  @return void
  @param configData The configuration data associated with the module
- @param callTime [ns] The current time of simulation
+ @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
 void Update_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int64_t moduleID) {
@@ -97,87 +78,64 @@ void Update_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int6
         spinningBodyIn = HingedRigidBodyMsg_C_read(&configData->spinningBodyInMsg);
     }
 
+    // Store the time the input message was written
     double hingedRigidBodyMsgTimeWritten = NANO2SEC * HingedRigidBodyMsg_C_timeWritten(&configData->spinningBodyInMsg);
-    // Check if we have a new message of desired angle to execute the number of steps commanded (no interruption)
-    if (configData->previousWrittenTime <  hingedRigidBodyMsgTimeWritten || configData->firstCall){
+
+    // The steps commanded are calculated and updated in this statement when a new message is written
+    if (configData->previousWrittenTime <  hingedRigidBodyMsgTimeWritten || configData->firstCall) {
         configData->firstCall = false;
 
-        // Assign the previous time to be the new written time
+        // Update the previous written time
         configData->previousWrittenTime = hingedRigidBodyMsgTimeWritten;
 
-        // Assign the input theta as the desired theta
+        // Read in the desired angle
         configData->desiredAngle = spinningBodyIn.theta;
 
-        // Calculate the delta angle
-        if (configData->currentMotorAngle > 0){
+        // Calculate the difference between the desired angle and the current motor angle, ensuring that the current
+        // motor angle is updated to the next multiple of the motor step angle if actuation is interrupted
+        if (configData->currentMotorAngle > 0) {
             configData->deltaAngle = configData->desiredAngle - (ceil(configData->currentMotorAngle / configData->stepAngle) * configData->stepAngle);
-        }
-        else{
+        } else {
             configData->deltaAngle = configData->desiredAngle - (floor(configData->currentMotorAngle / configData->stepAngle) * configData->stepAngle);
         }
 
-        // Calculate the integer number of steps commanded (Accounting for rounding to the nearest integer step)
+        // Calculate the integer number of steps commanded, ensuring to rounding to the nearest integer step
         double tempStepsCommanded = configData->deltaAngle / configData->stepAngle;
         if ((ceil(tempStepsCommanded) - tempStepsCommanded) > (tempStepsCommanded - floor(tempStepsCommanded))) {
             configData->stepsCommanded = floor(tempStepsCommanded);
-        }
-        else {
+        } else {
             configData->stepsCommanded = ceil(tempStepsCommanded);
         }
 
-        // Output the steps commanded message to execute the maneuver
+        // Update the output message buffer
         motorStepCountOut.numSteps = configData->stepsCommanded;
 
-        // Zero steps taken in case of an interruption and start over
+        // Reset the steps taken to zero
         configData->stepsTaken = 0; 
     }
-    //while the steps commanded are executing we need to calculate the steps taken and the steps requested and the time it
-    //took to reach steps taken in order to know how many steps are lift to complete the execution
-    // Assure that the steps calculated are in the arithmetic sequence of our step angle
-    // Calculate the time taken from the start time of the message given to the current time
+
+    // Calculate the time elapsed since the last message was written
     configData->deltaSimTime = (NANO2SEC * callTime) - configData->previousWrittenTime;
 
-     // Calculate the number of steps already achieved from the steps commanded:
-     int localSteps = floor(configData->deltaSimTime / configData->stepTime);
-     if (configData->stepsCommanded < 0) {
-         localSteps = -localSteps;
-     }
-
-    // initialize the newStepsTakenSinceLastModuleCallTime to zero
-    int32_t newStepsTakenSinceLastModuleCallTime = 0;
-
-    // Update stepsTaken with the new steps, ensuring it doesn't exceed the commanded steps
-    //Here if the local step exceeded the steps commanded so we make sure the steps taken are assigned to teps comanded value and for new steps taken we take the diff between steps commanded and steps taken 
-    if (abs(localSteps) > abs(configData->stepsCommanded)) {
-        newStepsTakenSinceLastModuleCallTime = configData->stepsCommanded - configData->stepsTaken;
-        configData->stepsTaken = configData->stepsCommanded;
-    //in here we assume everything is fine and still didn't reach the steps commanded, so the steps taken will equal the local steps and the new steps aken will calculate the diff between the local steps and steps taken 
-    } else {
-        newStepsTakenSinceLastModuleCallTime = localSteps - configData->stepsTaken;
-        configData->stepsTaken = localSteps;
-    }
-
-    if (configData->stepsTaken == configData->stepsCommanded) {
-        configData->initAngle = configData->desiredAngle;
-    }
-
-    // Update stepCount with the new steps taken since the last update
-    configData->stepCount += newStepsTakenSinceLastModuleCallTime;
-
-    // Update the current angle with each step
+    // Update the motor information
     if (configData->stepsCommanded > 0) {
+        configData->stepsTaken = floor(configData->deltaSimTime / configData->stepTime);
         configData->currentMotorAngle = configData->initAngle + configData->stepAngle * (configData->deltaSimTime / configData->stepTime);
-        if (configData->currentMotorAngle > configData->desiredAngle) {
+        if (configData->currentMotorAngle >= configData->desiredAngle) {
+            configData->stepsTaken = configData->stepsCommanded;
             configData->currentMotorAngle = configData->desiredAngle;
             configData->initAngle = configData->desiredAngle;
         }
-    }else {
+    } else {
+        configData->stepsTaken = -floor(configData->deltaSimTime / configData->stepTime);
         configData->currentMotorAngle =  configData->initAngle - configData->stepAngle * (configData->deltaSimTime / configData->stepTime);
-        if (configData->currentMotorAngle < configData->desiredAngle) {
+        if (configData->currentMotorAngle <= configData->desiredAngle) {
+            configData->stepsTaken = configData->stepsCommanded;
             configData->currentMotorAngle = configData->desiredAngle;
             configData->initAngle = configData->desiredAngle;
         }
     }
 
+    // Write the output message
     MotorStepCountMsg_C_write(&motorStepCountOut, &configData->motorStepCountOutMsg, moduleID, callTime);
 }    
