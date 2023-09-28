@@ -109,7 +109,12 @@ void Update_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int6
         configData->desiredAngle = spinningBodyIn.theta;
 
         // Calculate the delta angle
-        configData->deltaAngle = configData->desiredAngle - (ceil(configData->currentMotorAngle / configData->stepAngle) * configData->stepAngle);
+        if (configData->currentMotorAngle > 0){
+            configData->deltaAngle = configData->desiredAngle - (ceil(configData->currentMotorAngle / configData->stepAngle) * configData->stepAngle);
+        }
+        else{
+            configData->deltaAngle = configData->desiredAngle - (floor(configData->currentMotorAngle / configData->stepAngle) * configData->stepAngle);
+        }
 
         // Calculate the integer number of steps commanded (Accounting for rounding to the nearest integer step)
         double tempStepsCommanded = configData->deltaAngle / configData->stepAngle;
