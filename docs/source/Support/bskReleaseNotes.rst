@@ -60,6 +60,8 @@ Version |release|
     SWIG files (``.i``) for modules should include ``%include "sys_model.i"`` instead of ``%include "sys_model.h"``
     to take advantage of the new module variable logging feature.
 
+- Added prescribed angle and angle rates to :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyTwoDOFStateEffector`
+  modules.
 - Created a :ref:`scanningInstrumentController`, similar to :ref:`simpleInstrumentController`, but which constantly checks if the attitude error
   and angular rate (optional) are within the requirement limits and sends an imaging command to a :ref:`simpleInstrument`.
 
