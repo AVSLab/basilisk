@@ -20,15 +20,15 @@
 #
 #   Unit Test Script
 #   Module Name:        stepperMotor
-#   Author:             Shamsa SabekZaei
+#   Author:             Shamsa SabekZaei and Leah Kiner
 #   Creation Date:      Aug 25, 2023
 #
 
-import pytest
 import inspect
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import pytest
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import stepperMotor
@@ -44,29 +44,37 @@ splitPath = path.split(bskName)
 
 @pytest.mark.parametrize("stepAngle", [0.01 * (np.pi / 180), 0.5 * (np.pi / 180), 1.0 * (np.pi / 180)])
 @pytest.mark.parametrize("stepTime", [0.1, 0.5, 1])
-@pytest.mark.parametrize("initialMotorAngle", [0.0, 60.0 * (np.pi / 180)])
+@pytest.mark.parametrize("initialMotorAngle", [-5 * (np.pi / 180), 0.0, 60.0 * (np.pi / 180)])
 @pytest.mark.parametrize("desiredMotorAngle", [0.0, 10.6 * (np.pi / 180), 60.005 * (np.pi / 180)])
 
 def test_stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle, desiredMotorAngle):
     r"""
     **Validation Test Description**
 
-    This unit test ensures that the stepper motor is properly computed, where the unput of deisred angle will give us the right number of motor steps. 
+    This unit test ensures that the stepper motor module correctly determines the number of steps required to actuate
+    from an initial angle to a final reference angle. The initial and desired motor angles are varied so that both
+    positive and negative steps are taken. It should be noted that the motor angles are descretized by a constant
+    ``stepAngle``; therefore the motor cannot actuate to any desired angle. The desired motor angles are chosen in this
+    test so that several cases require the desired angle to be adjusted to the nearest multiple of the motor step angle.
+    In other words, this test introduces cases where the computed number of required steps is not an integer. For these
+    cases, the determined number of steps must be rounded to the nearest whole step.
+
     **Test Parameters**
 
     Args:
-        stepAngle (float): [rad] Initial PRV angle of the F frame with respect to the M frame
-        stepTime (float): [sec]
-        initialMotorAngle (float): [rad] Reference PRV angle of the F frame with respect to the M frame
-        desiredMotorAngle (float): [rad/s^2] Maximum angular acceleration for the attitude maneuver
-        accuracy (float):
+        stepAngle (float): [rad] Angle the stepper motor moves through for a single step
+        stepTime (float): [sec] Time required for a single motor step
+        initialMotorAngle (float): [rad] Initial stepper motor angle
+        desiredMotorAngle (float): [rad] Desired stepper motor angle
 
     **Description of Variables Being Tested**
 
-    This unit test ensures that the profiled 1 DOF rotational attitude maneuver is properly computed for a series of
-    initial and reference PRV angles and maximum angular accelerations. The final prescribed angle ``theta_FM_Final``
-    and angular velocity magnitude ``thetaDot_Final`` are compared with the reference values ``theta_Ref`` and
-    ``thetaDot_Ref``, respectively.
+    The module-computed number of required stepper motor steps is checked to match the true number of motor steps
+    computed in this script. The first element of the module ``motorStepCountOutMsg`` output message is checked to match
+    the number of steps determined in this script. Additionally, this unit test ensures that the module output message
+    is correctly written by checking that the number of nonzero elements of the output message is 1 (or 0 if the
+    desired motor angle is equal to the initial motor angle).
+
     """
     [testResults, testMessage] = stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle, desiredMotorAngle)
 
@@ -113,7 +121,10 @@ def stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle,
     unitTestSim.InitializeSimulation()
 
     # Calculate required number of steps for validation
-    trueNumSteps = (desiredMotorAngle - (np.ceil(initialMotorAngle/stepAngle)*stepAngle)) / stepAngle
+    if (initialMotorAngle > 0):
+        trueNumSteps = (desiredMotorAngle - (np.ceil(initialMotorAngle/stepAngle)*stepAngle)) / stepAngle
+    else:
+        trueNumSteps = (desiredMotorAngle - (np.floor(initialMotorAngle/stepAngle)*stepAngle)) / stepAngle
 
     # If the desired motor angle is not a multiple of the step angle, the number of steps calculated is not an integer
     # and it must be rounded to the nearest whole step
@@ -148,14 +159,10 @@ def stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle,
         if (np.count_nonzero(numSteps) != 1):
             testFailCount += 1
             testMessages.append("\nFAILED: " + StepperMotorWrap.ModelTag + " MotorStepCountMsg was incorrectly written \nNum nonzero: " + str(np.count_nonzero(numSteps)))
-        else:
-            pass
     else:
         if (np.count_nonzero(numSteps) != 0):
             testFailCount += 1
             testMessages.append("\nFAILED: " + StepperMotorWrap.ModelTag + " MotorStepCountMsg was incorrectly written")
-        else:
-            pass
 
     return [testFailCount, ''.join(testMessages)]
 
