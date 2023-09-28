@@ -99,7 +99,7 @@ void Update_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int6
 
     double hingedRigidBodyMsgTimeWritten = NANO2SEC * HingedRigidBodyMsg_C_timeWritten(&configData->spinningBodyInMsg);
     // Check if we have a new message of desired angle to execute the number of steps commanded (no interruption)
-    if ((configData->previousWrittenTime <  hingedRigidBodyMsgTimeWritten || configData->firstCall)  && (spinningBodyIn.theta != configData->initAngle)){
+    if ((configData->previousWrittenTime <  hingedRigidBodyMsgTimeWritten || configData->firstCall)  && (spinningBodyIn.theta != configData->currentMotorAngle)){
         configData->firstCall = false;
 
         // Assign the previous time to be the new written time

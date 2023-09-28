@@ -42,11 +42,10 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
-@pytest.mark.parametrize("stepAngle", [0.01 * (np.pi / 180), 0.5 * (np.pi / 180) , 1 * (np.pi / 180)])
+@pytest.mark.parametrize("stepAngle", [0.01 * (np.pi / 180), 0.5 * (np.pi / 180), 1.0 * (np.pi / 180)])
 @pytest.mark.parametrize("stepTime", [0.1, 0.5, 1])
-@pytest.mark.parametrize("initialMotorAngle", [0, 60 * (np.pi / 180)])
-@pytest.mark.parametrize("desiredMotorAngle", [0, 10.6 * (np.pi / 180), 60.005 * (np.pi / 180)])
-# @pytest.mark.parametrize("accuracy", [1e-12])
+@pytest.mark.parametrize("initialMotorAngle", [0.0, 60.0 * (np.pi / 180)])
+@pytest.mark.parametrize("desiredMotorAngle", [0.0, 10.6 * (np.pi / 180), 60.005 * (np.pi / 180)])
 
 def test_stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle, desiredMotorAngle):
     r"""
@@ -89,31 +88,32 @@ def stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle,
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create an instance of the stepperMotor module to be tested
-    StepperMotorConfig = stepperMotor.StepperMotorConfig()
-    StepperMotorWrap = unitTestSim.setModelDataWrap(StepperMotorConfig)
+    StepperMotor = stepperMotor.StepperMotorConfig()
+    StepperMotorWrap = unitTestSim.setModelDataWrap(StepperMotor)
     StepperMotorWrap.ModelTag = "stepperMotor"
-    StepperMotorConfig.stepAngle = stepAngle
-    StepperMotorConfig.stepTime = stepTime
-    StepperMotorConfig.initAngle = initialMotorAngle
+    StepperMotor.stepAngle = stepAngle
+    StepperMotor.stepTime = stepTime
+    StepperMotor.initAngle = initialMotorAngle
+    StepperMotor.currentMotorAngle = initialMotorAngle
 
     # Add the stepperMotor test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, StepperMotorWrap, StepperMotorConfig)
+    unitTestSim.AddModelToTask(unitTaskName, StepperMotorWrap, StepperMotor)
 
     # Create the stepperMotor input message
     HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
     HingedRigidBodyMessageData.theta = desiredMotorAngle
     HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData)
-    StepperMotorConfig.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+    StepperMotor.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
 
     # Log the test module output message for data comparison
-    motorStepCountLog = StepperMotorConfig.motorStepCountOutMsg.recorder()
+    motorStepCountLog = StepperMotor.motorStepCountOutMsg.recorder(testProcessRate)
     unitTestSim.AddModelToTask(unitTaskName, motorStepCountLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
     # Calculate required number of steps for validation
-    trueNumSteps = (desiredMotorAngle - initialMotorAngle) / stepAngle
+    trueNumSteps = (desiredMotorAngle - (np.ceil(initialMotorAngle/stepAngle)*stepAngle)) / stepAngle
 
     # If the desired motor angle is not a multiple of the step angle, the number of steps calculated is not an integer
     # and it must be rounded to the nearest whole step
@@ -128,7 +128,7 @@ def stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle,
     newMotorDesiredAngle = initialMotorAngle + (trueNumSteps * stepAngle)
 
     # Set the simulation time
-    actuateTime = stepTime * trueNumSteps  # [sec] Time for the motor to actuate to the desired angle
+    actuateTime = stepTime * np.abs(trueNumSteps)  # [sec] Time for the motor to actuate to the desired angle
     holdTime = 5  # [sec] Time the simulation will continue while holding the final angle
     unitTestSim.ConfigureStopTime(macros.sec2nano(actuateTime + holdTime))
 
@@ -140,18 +140,24 @@ def stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle,
 
     # Check that the correct number of steps was calculated
     if (numSteps[0] != trueNumSteps):
-            testFailCount += 1
-            testMessages.append("FAILED: " + StepperMotorWrap.ModelTag + " Number of required motor steps do not match")
+        testFailCount += 1
+        testMessages.append("\nFAILED: " + StepperMotorWrap.ModelTag + " Number of required motor steps do not match")
 
     # Check to make sure the message was written correctly
     if (trueNumSteps != 0):
         if (np.count_nonzero(numSteps) != 1):
             testFailCount += 1
-            testMessages.append("FAILED: " + StepperMotorWrap.ModelTag + " MotorStepCountMsg was incorrectly written")
+            testMessages.append("\nFAILED: " + StepperMotorWrap.ModelTag + " MotorStepCountMsg was incorrectly written \nNum nonzero: " + str(np.count_nonzero(numSteps)))
+        else:
+            pass
     else:
         if (np.count_nonzero(numSteps) != 0):
             testFailCount += 1
-            testMessages.append("FAILED: " + StepperMotorWrap.ModelTag + " MotorStepCountMsg was incorrectly written")
+            testMessages.append("\nFAILED: " + StepperMotorWrap.ModelTag + " MotorStepCountMsg was incorrectly written")
+        else:
+            pass
+
+    return [testFailCount, ''.join(testMessages)]
 
 
 # This statement below ensures that the unitTestScript can be run as a
