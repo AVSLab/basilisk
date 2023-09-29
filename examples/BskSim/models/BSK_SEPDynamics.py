@@ -40,6 +40,8 @@ class BSKDynamicModels:
         self.numThr = None
         self.numRSA = 2
         self.spacecraftIndex = spacecraftIndex
+        thrDir_F = np.array([0.02, -0.025, 1])
+        self.thrDir_F = thrDir_F / np.linalg.norm(thrDir_F)
 
         # Define process name, task name and task time-step
         self.taskName = "DynamicsTask" + str(spacecraftIndex)
@@ -219,14 +221,14 @@ class BSKDynamicModels:
         """Sets up the boresight calc module"""
         self.inertialBoresight1.ModelTag = "inertialBoresight1"
         self.inertialBoresight1.scStateInMsg.subscribeTo(self.platform1.spinningBodyConfigLogOutMsgs[1])
-        self.inertialBoresight1.boreVec_B = [0, 0, 1]
+        self.inertialBoresight1.boreVec_B = self.thrDir_F
         self.inertialBoresight1.inertialHeadingVec_N = [1, 0, 0]
 
     def SetInertialBoresight2(self, SimBase):
         """Sets up the boresight calc module"""
         self.inertialBoresight2.ModelTag = "inertialBoresight2"
         self.inertialBoresight2.scStateInMsg.subscribeTo(self.platform2.spinningBodyConfigLogOutMsgs[1])
-        self.inertialBoresight2.boreVec_B = [0, 0, 1]
+        self.inertialBoresight2.boreVec_B = self.thrDir_F
         self.inertialBoresight2.inertialHeadingVec_N = [1, 0, 0]
 
     def SetSensitiveBoresight(self, SimBase):
@@ -298,7 +300,7 @@ class BSKDynamicModels:
         """
         thruster = thrusterStateEffector.THRSimConfig()
         thruster.thrLoc_B = [0, 0, 0]  # Parametrized location for thruster
-        thruster.thrDir_B = [0, 0, 1]
+        thruster.thrDir_B = self.thrDir_F
         thruster.MaxThrust = 0.27
         thruster.steadyIsp = 1600
         thruster.MinOnTime = 0.006
