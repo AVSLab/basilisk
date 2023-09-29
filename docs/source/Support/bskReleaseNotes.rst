@@ -49,7 +49,7 @@ Version |release|
   removing the need for "Config" and "Wrap" objects. Updated all scenarios and test files for this new syntax.
   To convert prior script to use the new syntax, see :ref:`bskPrinciples-2` for the simple new
   syntaxt to add C-modules.
-- Modified :ref:`mrpFeedback` to enable the use of a modified control law, and added the integral control torque 
+- Modified :ref:`mrpFeedback` to enable the use of a modified control law, and added the integral control torque
   feedback output message.
 - Resolved a crash, induced by uninitialized memory, in the Camera module. The crash was first seen on Ubuntu 22 with
   gcc 9.5
@@ -64,6 +64,10 @@ Version |release|
   modules.
 - Created a :ref:`scanningInstrumentController`, similar to :ref:`simpleInstrumentController`, but which constantly checks if the attitude error
   and angular rate (optional) are within the requirement limits and sends an imaging command to a :ref:`simpleInstrument`.
+- Added a new scenario :ref:`scenarioHohmann` that performs a Hohmann transfer with attitude mode changes.
+  The basic attiude flight modes are implemented using the Basilisk event system.
+
+
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------
