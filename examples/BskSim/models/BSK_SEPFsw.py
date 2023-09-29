@@ -43,6 +43,7 @@ class BSKFswModels:
         self.platformTorqueMsg = None
         self.platformLockMsg = None
         self.thrusterFlag = 1
+        self.cmEstimation = True
 
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = SimBase.FSWProcessName[spacecraftIndex]
@@ -319,8 +320,11 @@ class BSKFswModels:
         self.platform1ReferenceData.r_BM_M = [0, 0, 1.43/c]
         self.platform1ReferenceData.r_FM_F = [0, 0, 0]
         self.platform1ReferenceData.K = 1e-4
-        # self.platform1ReferenceData.vehConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
-        self.platform1ReferenceData.vehConfigInMsg.subscribeTo(self.CoMLocationMsg)
+        if self.cmEstimation:
+            self.platform1ReferenceData.vehConfigInMsg.subscribeTo(self.cmEstimationData.vehConfigOutMsg)
+        else:
+            self.platform1ReferenceData.vehConfigInMsg.subscribeTo(self.fswVehConfigMsg)
+            # self.platform1ReferenceData.vehConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
         self.platform1ReferenceData.thrusterConfigFInMsg.subscribeTo(self.thrConfigFMsg)
         self.platform1ReferenceData.rwConfigDataInMsg.subscribeTo(self.fswRwConfigMsg)
         self.platform1ReferenceData.rwSpeedsInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].rwStateEffector.rwSpeedOutMsg)
@@ -334,8 +338,11 @@ class BSKFswModels:
         self.platform2ReferenceData.r_BM_M = [0, 0, 1.43/c]
         self.platform2ReferenceData.r_FM_F = [0, 0, 0]
         self.platform2ReferenceData.K = 1e-4
-        # self.platform2ReferenceData.vehConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
-        self.platform2ReferenceData.vehConfigInMsg.subscribeTo(self.CoMLocationMsg)
+        if self.cmEstimation:
+            self.platform2ReferenceData.vehConfigInMsg.subscribeTo(self.cmEstimationData.vehConfigOutMsg)
+        else:
+            self.platform2ReferenceData.vehConfigInMsg.subscribeTo(self.fswVehConfigMsg)
+            # self.platform2ReferenceData.vehConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
         self.platform2ReferenceData.thrusterConfigFInMsg.subscribeTo(self.thrConfigFMsg)
         self.platform2ReferenceData.rwConfigDataInMsg.subscribeTo(self.fswRwConfigMsg)
         self.platform2ReferenceData.rwSpeedsInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].rwStateEffector.rwSpeedOutMsg)
@@ -519,8 +526,7 @@ class BSKFswModels:
         self.cmEstimationData.intFeedbackTorqueInMsg.subscribeTo(self.mrpFeedbackRWsData.intFeedbackTorqueOutMsg)
         self.cmEstimationData.attGuidInMsg.subscribeTo(self.attGuidMsg)
         self.cmEstimationData.vehConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
-        messaging.VehicleConfigMsg_C_addAuthor(self.cmEstimationData.vehConfigOutMsgC, self.CoMLocationMsg)
-
+        
 
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
@@ -563,12 +569,11 @@ class BSKFswModels:
         self.platform2LockMsg = messaging.ArrayEffectorLockMsg_C()
         self.thrConfigFMsg = messaging.THRConfigMsg_C()
         self.fswVehConfigMsg = messaging.VehicleConfigMsg_C()
-        self.CoMLocationMsg = messaging.VehicleConfigMsg_C()
-
+       
         # Write fsw configuration message
         VehicleConfig = messaging.VehicleConfigMsgPayload()
         VehicleConfig.ISCPntB_B = [5720, -228, 134, -228, 11766, -203, 134, -203, 7570]
-        VehicleConfig.CoM_B = [0.01, -0.01, 1.15]
+        VehicleConfig.CoM_B = [0.1, 0.02, 1.23] # [0.01, -0.01, 1.15]
         VehicleConfig.massSC = 2215
         self.fswVehConfigMsg = messaging.VehicleConfigMsg().write(VehicleConfig)
 
