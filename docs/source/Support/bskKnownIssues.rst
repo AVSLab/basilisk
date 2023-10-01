@@ -15,6 +15,8 @@ Version |release|
   This is corrected in the current release.
 - Doing a clean Basilisk build with `opNav` flag on fails building openCV.  The conan
   install script is updated this is corrected in the current release.
+- We found a slow memory leak if messages with arrays or vectors were accessed from python.  The ``swig``
+  issue has now been fixed in the current release.
 
 Version 2.2.0
 -------------
