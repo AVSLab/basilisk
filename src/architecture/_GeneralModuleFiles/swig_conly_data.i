@@ -200,6 +200,7 @@ ARRAYINTASLIST(unsigned int)
             PyList_Append(locRow, outObject);
         }
         PyList_Append($result, locRow);
+        Py_DECREF(locRow);
     }
 }
 
