@@ -111,7 +111,10 @@ void Update_stepperMotorController(StepperMotorControllerConfig *configData, uin
         motorStepCommandOut.stepsCommanded = configData->stepsCommanded;
 
         // Reset the steps taken to zero
-        configData->stepCount = 0; 
+        configData->stepCount = 0;
+
+        // Write the output message
+        MotorStepCommandMsg_C_write(&motorStepCommandOut, &configData->motorStepCommandOutMsg, moduleID, callTime);
     }
 
     // Calculate the time elapsed since the last message was written
@@ -135,7 +138,4 @@ void Update_stepperMotorController(StepperMotorControllerConfig *configData, uin
             configData->initAngle = configData->desiredAngle;
         }
     }
-
-    // Write the output message
-    MotorStepCommandMsg_C_write(&motorStepCommandOut, &configData->motorStepCommandOutMsg, moduleID, callTime);
 }

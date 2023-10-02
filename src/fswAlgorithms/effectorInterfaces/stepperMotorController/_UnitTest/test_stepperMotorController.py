@@ -69,9 +69,7 @@ def test_stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, ini
 
     The module-computed number of required stepper motor steps is checked to match the true number of motor steps
     computed in this script. The first element of the module ``motorStepCommand`` output message is checked to match
-    the number of steps determined in this script. Additionally, this unit test ensures that the module output message
-    is correctly written by checking that the number of nonzero elements of the output message is 1 (or 0 if the
-    desired motor angle is equal to the initial motor angle).
+    the number of steps determined in this script.
 
     """
     [testResults, testMessage] = stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle, desiredMotorAngle)
@@ -151,16 +149,6 @@ def stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, initialM
         testFailCount += 1
         testMessages.append("\nFAILED: " + StepperMotorController.ModelTag + " Number of required motor steps do not match")
 
-    # Check to make sure the message was written correctly
-    if (trueNumSteps != 0):
-        if (np.count_nonzero(stepsCommanded) != 1):
-            testFailCount += 1
-            testMessages.append("\nFAILED: " + StepperMotorController.ModelTag + " MotorStepCountMsg was incorrectly written \nNum nonzero: " + str(np.count_nonzero(stepsCommanded)))
-    else:
-        if (np.count_nonzero(stepsCommanded) != 0):
-            testFailCount += 1
-            testMessages.append("\nFAILED: " + StepperMotorController.ModelTag + " MotorStepCountMsg was incorrectly written")
-
     return [testFailCount, ''.join(testMessages)]
 
 
@@ -170,7 +158,7 @@ if __name__ == "__main__":
     stepperMotorControllerTestFunction(
          False,
          1.0 * (np.pi / 180),     # stepAngle
-         1,                     # stepTime
+         1,                       # stepTime
          0.0,                     # initialAngle
          10.0 * (np.pi / 180),    # desiredAngle
     )

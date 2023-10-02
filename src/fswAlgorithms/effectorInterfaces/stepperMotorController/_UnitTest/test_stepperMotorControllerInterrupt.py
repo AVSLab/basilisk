@@ -178,7 +178,8 @@ def stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, initialM
     # Set the simulation time for chunk 2
     actuateTime2 = stepTime * np.abs(trueNumSteps2)  # [sec] Time for the motor to actuate to the desired angle
     holdTime = 5  # [sec] Time the simulation will continue while holding the final angle
-    unitTestSim.ConfigureStopTime(macros.sec2nano(actuateTime2 + holdTime))
+    simTime2 = actuateTime2 + holdTime
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime1 + simTime2))
 
     # Execute simulation chunk 2
     unitTestSim.ExecuteSimulation()
@@ -186,30 +187,22 @@ def stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, initialM
     # Pull the logged motor step data
     stepsCommanded = motorStepCommandLog.stepsCommanded
 
-    # Extract the module-calculated number of required steps from the logged output message
-    stepCounts = stepsCommanded[np.nonzero(stepsCommanded)]
-
     # Check that the correct number of steps were calculated
-    if (trueNumSteps2 != 0):
-        if ((stepCounts[0] != trueNumSteps1) or (stepCounts[1] != trueNumSteps2)):
-            testFailCount += 1
-            testMessages.append("\nFAILED: " + StepperMotorController.ModelTag + " Number of required motor steps do not match")
-            if (stepCounts[0] != trueNumSteps1):
-                print("STEP CALCULATION 1 INCORRECT")
-            if (stepCounts[1] != trueNumSteps2):
-                print("STEP CALCULATION 2 INCORRECT")
-    else:
-        if (stepCounts[0] != trueNumSteps1):
-            testFailCount += 1
-            testMessages.append("\nFAILED: " + StepperMotorController.ModelTag + " Number of required motor steps do not match")
+    if ((stepsCommanded[0] != trueNumSteps1) or (stepsCommanded[-1] != trueNumSteps2)):
+        testFailCount += 1
+        testMessages.append("\nFAILED: " + StepperMotorController.ModelTag + " Number of required motor steps do not match")
+        if (stepsCommanded[0] != trueNumSteps1):
             print("STEP CALCULATION 1 INCORRECT")
+        if (stepsCommanded[-1] != trueNumSteps2):
+            print("STEP CALCULATION 2 INCORRECT")
 
     # Manual check that module outputs match the expected true result
     print("True Steps:")
     print(trueNumSteps1)
     print(trueNumSteps2)
     print("Module Calculation:")
-    print(stepCounts)
+    print(stepsCommanded[0])
+    print(stepsCommanded[-1])
 
     return [testFailCount, ''.join(testMessages)]
 
@@ -222,7 +215,7 @@ if __name__ == "__main__":
                  1.0 * (np.pi / 180),     # stepAngle
                  1.0,                     # stepTime
                  0.0,                     # initialMotorAngle
-                 -10.0 * (np.pi / 180),   # desiredMotorAngle1,
-                 0.0 * (np.pi / 180),     # desiredMotorAngle2
-                 0.25                     # interruptFraction
+                 10.0 * (np.pi / 180),   # desiredMotorAngle1,
+                 5.0 * (np.pi / 180),     # desiredMotorAngle2
+                 0.0                     # interruptFraction
                )
