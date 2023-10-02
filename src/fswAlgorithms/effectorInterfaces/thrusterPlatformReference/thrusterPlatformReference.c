@@ -131,10 +131,32 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
         tprComputeFinalRotation(r_CMd_M, r_TM_F, T_F, FM);
     }
 
+    double theta1 = atan2(FM[1][2], FM[1][1]);
+    double theta2 = atan2(FM[2][0], FM[0][0]);
+
+    /*! bound reference angles between limits */
+    if ((configData->theta1Max > epsilon) && (theta1 > configData->theta1Max)) {
+        theta1 = configData->theta1Max;
+    }
+    else if ((configData->theta1Max > epsilon) && (theta1 < -configData->theta1Max)) {
+        theta1 = -configData->theta1Max;
+    }
+    if ((configData->theta2Max > epsilon) && (theta2 > configData->theta2Max)) {
+        theta2 = configData->theta2Max;
+    }
+    else if ((configData->theta2Max > epsilon) && (theta2 < -configData->theta2Max)) {
+        theta2 = -configData->theta2Max;
+    }
+
+    /*! rewrite DCM with updated angles */
+    FM[0][0] = cos(theta2);     FM[0][1] = sin(theta1)*sin(theta2);     FM[0][2] = -cos(theta1)*sin(theta2);
+    FM[1][0] = 0;               FM[1][1] = cos(theta1);                 FM[1][2] = sin(theta1);
+    FM[2][0] = sin(theta2);     FM[2][1] = -sin(theta1)*cos(theta2);    FM[2][2] = cos(theta1)*cos(theta2);
+
     /*! extract theta1 and theta2 angles */
-    hingedRigidBodyRef1Out.theta = atan2(FM[1][2], FM[1][1]);
+    hingedRigidBodyRef1Out.theta = theta1;
     hingedRigidBodyRef1Out.thetaDot = 0;
-    hingedRigidBodyRef2Out.theta = atan2(FM[2][0], FM[0][0]);
+    hingedRigidBodyRef2Out.theta = theta2;
     hingedRigidBodyRef2Out.thetaDot = 0;
 
     /*! write output spinning body messages */

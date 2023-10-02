@@ -46,7 +46,10 @@ typedef struct {
 
     double K;                                             //!< momentum dumping time constant [1/s]
 
-    /* declare variables for internal module calculations */
+    double theta1Max;                                     //!< absolute bound on tip angle [rad]
+    double theta2Max;                                     //!< absolute bound on tilt angle [rad]
+
+    /*! declare variables for internal module calculations */
     RWArrayConfigMsgPayload   rwConfigParams;             //!< struct to store message containing RW config parameters in body B frame
     int                       momentumDumping;            //!< flag that assesses whether RW information is provided to perform momentum dumping
 
