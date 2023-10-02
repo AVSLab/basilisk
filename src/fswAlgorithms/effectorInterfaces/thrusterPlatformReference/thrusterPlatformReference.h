@@ -39,12 +39,13 @@ enum momentumDumping{
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
 
-    /* declare these user-defined quantities */
+    /*! declare these user-defined quantities */
     double sigma_MB[3];                                   //!< orientation of the M frame w.r.t. the B frame
     double r_BM_M[3];                                     //!< position of B frame origin w.r.t. M frame origin, in M frame coordinates
     double r_FM_F[3];                                     //!< position of F frame origin w.r.t. M frame origin, in F frame coordinates
 
-    double K;                                             //!< momentum dumping time constant [1/s]
+    double K;                                             //!< momentum dumping proportional gain [1/s]
+    double Ki;                                            //!< momentum dumping integral gain [1]
 
     double theta1Max;                                     //!< absolute bound on tip angle [rad]
     double theta2Max;                                     //!< absolute bound on tilt angle [rad]
@@ -52,10 +53,13 @@ typedef struct {
     /*! declare variables for internal module calculations */
     RWArrayConfigMsgPayload   rwConfigParams;             //!< struct to store message containing RW config parameters in body B frame
     int                       momentumDumping;            //!< flag that assesses whether RW information is provided to perform momentum dumping
+    double                    hsInt_M[3];                 //!< integral of RW momentum
+    double                    priorHs_M[3];               //!< prior RW momentum
+    uint64_t                  priorTime;                  //!< prior call time
 
-    /* declare module IO interfaces */
-    VehicleConfigMsg_C        vehConfigInMsg;            //!< input msg vehicle configuration msg (needed for CM location)
-    THRConfigMsg_C            thrusterConfigFInMsg;        //!< input thruster configuration msg
+    /*! declare module IO interfaces */
+    VehicleConfigMsg_C        vehConfigInMsg;             //!< input msg vehicle configuration msg (needed for CM location)
+    THRConfigMsg_C            thrusterConfigFInMsg;       //!< input thruster configuration msg
     RWSpeedMsg_C              rwSpeedsInMsg;              //!< input reaction wheel speeds message
     RWArrayConfigMsg_C        rwConfigDataInMsg;          //!< input RWA configuration message
     HingedRigidBodyMsg_C      hingedRigidBodyRef1OutMsg;  //!< output msg containing theta1 reference and thetaDot1 reference

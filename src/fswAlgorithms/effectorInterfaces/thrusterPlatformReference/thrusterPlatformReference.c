@@ -65,6 +65,11 @@ void Reset_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configData
     else {
         configData->momentumDumping = No;
     }
+
+    /*! set the RW momentum integral to zero */
+    v3SetZero(configData->hsInt_M);
+    v3SetZero(configData->priorHs_M);
+    configData->priorTime = callTime;
 }
 
 
@@ -118,12 +123,28 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
         double hs_M[3];
         m33tMultV3(MB, hs_B, hs_M);
 
+        /*! update integral term */
+        double DeltaHsInt_M[3];
+        v3Add(configData->priorHs_M, hs_M, DeltaHsInt_M);
+        double dt = (callTime - configData->priorTime) * NANO2SEC;
+        v3Scale(0.5*dt, DeltaHsInt_M, DeltaHsInt_M);
+        v3Add(configData->hsInt_M, DeltaHsInt_M, configData->hsInt_M);
+        v3Copy(hs_M, configData->priorHs_M);
+        configData->priorTime = callTime;
+
         /*! compute offset vector */
         double T_M[3];
         m33tMultV3(FM, T_F, T_M);
+        double H[3];
+        v3Scale(configData->K, hs_M, H);
+        if (configData->Ki > 0) {
+            double Hint[3];
+            v3Scale(configData->Ki, configData->hsInt_M, Hint);
+            v3Add(H, Hint, H);
+        }
         double d_M[3];
-        v3Cross(T_M, hs_M, d_M);
-        v3Scale(-configData->K / v3Dot(T_M, T_M), d_M, d_M);
+        v3Cross(T_M, H, d_M);
+        v3Scale(-1/v3Dot(T_M, T_M), d_M, d_M);
 
         /*! recompute thrust direction and FM matrix based on offset */
         double r_CMd_M[3];
