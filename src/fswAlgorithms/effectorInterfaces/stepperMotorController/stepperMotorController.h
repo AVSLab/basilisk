@@ -16,13 +16,13 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _STEPPERMOTOR_
-#define _STEPPERMOTOR_
+#ifndef _STEPPERMOTORCONTROLLER_
+#define _STEPPERMOTORCONTROLLER_
 
 #include <stdint.h>
 #include <stdbool.h>
 #include "architecture/utilities/bskLogging.h"
-#include "cMsgCInterface/MotorStepCountMsg_C.h"
+#include "cMsgCInterface/MotorStepCommandMsg_C.h"
 #include "cMsgCInterface/HingedRigidBodyMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
@@ -48,16 +48,16 @@ typedef struct {
 
     /* Messages */
     HingedRigidBodyMsg_C spinningBodyInMsg;                  //!< Intput msg for the stepper motor reference message
-    MotorStepCountMsg_C motorStepCountOutMsg;                //!< Output msg for the number of commanded motor step counts
+    MotorStepCommandMsg_C motorStepCommandOutMsg;            //!< Output msg for the number of commanded motor step counts
 
-}StepperMotorConfig;
+}StepperMotorControllerConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    void SelfInit_stepperMotor(StepperMotorConfig *configData, int64_t moduleID);                     //!< Method for module initialization
-    void Reset_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int64_t moduleID);     //!< Method for module reset
-    void Update_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int64_t moduleID);    //!< Method for module time update
+    void SelfInit_stepperMotorController(StepperMotorControllerConfig *configData, int64_t moduleID);                     //!< Method for module initialization
+    void Reset_stepperMotorController(StepperMotorControllerConfig *configData, uint64_t callTime, int64_t moduleID);     //!< Method for module reset
+    void Update_stepperMotorController(StepperMotorControllerConfig *configData, uint64_t callTime, int64_t moduleID);    //!< Method for module time update
 #ifdef __cplusplus
 }
 #endif

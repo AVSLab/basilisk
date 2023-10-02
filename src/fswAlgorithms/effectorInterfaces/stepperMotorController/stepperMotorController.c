@@ -17,7 +17,7 @@
 
  */
 
-#include "stepperMotor.h"
+#include "stepperMotorController.h"
 #include <stdbool.h>
 #include <math.h>
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -28,8 +28,8 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_stepperMotor(StepperMotorConfig* configData, int64_t moduleID) {
-    MotorStepCountMsg_C_init(&configData->motorStepCountOutMsg);
+void SelfInit_stepperMotorController(StepperMotorControllerConfig* configData, int64_t moduleID) {
+    MotorStepCommandMsg_C_init(&configData->motorStepCommandOutMsg);
 }
 
 
@@ -39,10 +39,10 @@ void SelfInit_stepperMotor(StepperMotorConfig* configData, int64_t moduleID) {
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
-void Reset_stepperMotor(StepperMotorConfig* configData, uint64_t callTime, int64_t moduleID) {
+void Reset_stepperMotorController(StepperMotorControllerConfig* configData, uint64_t callTime, int64_t moduleID) {
     // Check if the required input message is linked
     if (!HingedRigidBodyMsg_C_isLinked(&configData->spinningBodyInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: stepperMotor.spinningBodyInMsg wasn't connected.");
+        _bskLog(configData->bskLogger, BSK_ERROR, "stepperMotor.spinningBodyInMsg wasn't connected.");
     }
 
     // Set the initial module variables to zero
@@ -64,13 +64,13 @@ void Reset_stepperMotor(StepperMotorConfig* configData, uint64_t callTime, int64
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
-void Update_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int64_t moduleID) {
+void Update_stepperMotorController(StepperMotorControllerConfig *configData, uint64_t callTime, int64_t moduleID) {
     // Create the buffer messages
-    MotorStepCountMsgPayload motorStepCountOut;
+    MotorStepCommandMsgPayload motorStepCommandOut;
     HingedRigidBodyMsgPayload spinningBodyIn;
 
     // Zero the output messages
-    motorStepCountOut = MotorStepCountMsg_C_zeroMsgPayload();
+    motorStepCommandOut = MotorStepCommandMsg_C_zeroMsgPayload();
 
     // Read the input message
     spinningBodyIn = HingedRigidBodyMsg_C_zeroMsgPayload();
@@ -108,7 +108,7 @@ void Update_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int6
         }
 
         // Update the output message buffer
-        motorStepCountOut.stepsCommanded = configData->stepsCommanded;
+        motorStepCommandOut.stepsCommanded = configData->stepsCommanded;
 
         // Reset the steps taken to zero
         configData->stepCount = 0; 
@@ -137,5 +137,5 @@ void Update_stepperMotor(StepperMotorConfig *configData, uint64_t callTime, int6
     }
 
     // Write the output message
-    MotorStepCountMsg_C_write(&motorStepCountOut, &configData->motorStepCountOutMsg, moduleID, callTime);
+    MotorStepCommandMsg_C_write(&motorStepCommandOut, &configData->motorStepCommandOutMsg, moduleID, callTime);
 }

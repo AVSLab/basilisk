@@ -16,27 +16,15 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module stepperMotor
-%{
-   #include "stepperMotor.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void SelfInit_stepperMotor(void*, uint64_t);
-%ignore SelfInit_stepperMotor;
-%constant void Reset_stepperMotor(void*, uint64_t, uint64_t);
-%ignore Reset_stepperMotor;
-%constant void Update_stepperMotor(void*, uint64_t, uint64_t);
-%ignore Update_stepperMotor;
+#ifndef motorStepCommandSimMsg_h
+#define motorStepCommandSimMsg_h
 
-%include "stepperMotor.h"
 
-%include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-struct HingedRigidBodyMsg_C;
-%include "architecture/msgPayloadDefC/MotorStepCountMsgPayload.h"
-struct MotorStepCountMsg_C;
+ /*! @brief Structure containing number of commanded stepper motor steps */
+typedef struct {
+    int stepsCommanded;        //!< Number of commanded stepper motor steps
+}MotorStepCommandMsgPayload;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+#endif /* motorStepCommandSimMsg_h */
