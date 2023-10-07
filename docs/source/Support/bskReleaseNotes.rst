@@ -64,9 +64,11 @@ Version |release|
 - Created a :ref:`scanningInstrumentController`, similar to :ref:`simpleInstrumentController`, but which constantly checks if the attitude error
   and angular rate (optional) are within the requirement limits and sends an imaging command to a :ref:`simpleInstrument`.
 - Added a new scenario :ref:`scenarioHohmann` that performs a Hohmann transfer with attitude mode changes.
-  The basic attiude flight modes are implemented using the Basilisk event system.
+  The basic attitude flight modes are implemented using the Basilisk event system.
 - updated conan support to latest `1.xx` version to provide support for macOS Sonoma
-
+- updated macOS `cspice` library to be compiled with Xcode 15.  This addresses some errors that appeared
+  when calling the prior pre-built `cspice` library.  The new library is backwards compatible with
+  prior versions of Xcode.
 
 
 Version 2.2.0 (June 28, 2023)
