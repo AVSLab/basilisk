@@ -267,10 +267,10 @@ def plot_requested_torque(timeDataFSW, dataLr):
     for idx in range(3):
         plt.plot(timeDataFSW, dataLr[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
+                 label=r'$L_{r,' + str(idx) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel('Control Torque $L_r$ [Nm]')
+    plt.ylabel(r'Control Torque $L_r$ [Nm]')
 
 def plot_thrForce(timeDataFSW, dataMap, numTh):
     """Plot the Thruster force values."""
@@ -278,7 +278,8 @@ def plot_thrForce(timeDataFSW, dataMap, numTh):
     for idx in range(numTh):
         plt.plot(timeDataFSW, dataMap[:, idx],
                  color=unitTestSupport.getLineColor(idx, numTh),
-                 label='$thrForce,' + str(idx) + '}$')
+                 label=r'$thrForce_{' + str(idx) + r'}$'
+                 )
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Force requested [N]')
@@ -289,7 +290,7 @@ def plot_OnTimeRequest(timeDataFSW, dataSchm, numTh):
     for idx in range(numTh):
         plt.plot(timeDataFSW, dataSchm[:, idx],
                  color=unitTestSupport.getLineColor(idx, numTh),
-                 label='$OnTimeRequest,' + str(idx) + '}$')
+                 label=r'$OnTimeRequest_{' + str(idx) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('OnTimeRequest [sec]')
