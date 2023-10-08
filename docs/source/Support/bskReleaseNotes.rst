@@ -65,6 +65,7 @@ Version |release|
   and angular rate (optional) are within the requirement limits and sends an imaging command to a :ref:`simpleInstrument`.
 - Added a new scenario :ref:`scenarioHohmann` that performs a Hohmann transfer with attitude mode changes.
   The basic attiude flight modes are implemented using the Basilisk event system.
+- updated conan support to latest `1.xx` version to provide support for macOS Sonoma
 
 
 
