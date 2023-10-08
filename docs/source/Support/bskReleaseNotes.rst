@@ -26,7 +26,6 @@ Basilisk Release Notes
       CAD asteroid or lunar surface terrain.
     - spacecraft charging related modules
     - support a way to do thread-safe messaging
-    - ability to integrate Python Basilisk modules in the same task and process as C/C++ modules
     - automated documentation build system when code is pushed to the repo
 
 
