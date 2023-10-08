@@ -461,6 +461,25 @@ def EigenVector3d2np(eig):
     """convert Eigen vector3d to numpy"""
     return np.array([eig[0][0], eig[1][0], eig[2][0]])
 
+def flattenList(matrix):
+    """
+    returns a flattened list
+    Args:
+        matrix: list of list
+
+    Returns: flattened list
+
+    """
+    flat_list = []
+    for row in matrix:
+        flat_list.extend(row)
+    return flat_list
+
+def EigenVector3d2list(eig):
+    """convert Eigen vector3d to list"""
+    return EigenVector3d2np(eig).tolist()
+
+
 
 def pullVectorSetFromData(inpMat):
     """extract the vector data set from a data matrix where the 1st column is the time information"""
@@ -554,3 +573,4 @@ def samplingTime(simTime, baseTimeStep, numDataPoints):
     if deltaTime < 1:
         deltaTime = 1
     return deltaTime
+
