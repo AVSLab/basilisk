@@ -450,7 +450,7 @@ def run(show_plots):
             viz,
             stationName="Boulder Target",
             parentBodyName=earth.displayName,
-            r_GP_P=imagingTarget.r_LP_P_Init,
+            r_GP_P=unitTestSupport.EigenVector3d2list(imagingTarget.r_LP_P_Init),
             fieldOfView=np.radians(160.0),
             color="pink",
             range=2000.0 * 1000,  # meters
@@ -464,7 +464,7 @@ def run(show_plots):
             viz,
             stationName="Santiago Target",
             parentBodyName=earth.displayName,
-            r_GP_P=[[1761771.6422437236], [-5022201.882030934], [-3515898.6046771165]],
+            r_GP_P=[1761771.6422437236, -5022201.882030934, -3515898.6046771165],
             fieldOfView=np.radians(160.0),
             color="pink",
             range=2000.0 * 1000,  # meters
@@ -475,7 +475,7 @@ def run(show_plots):
             viz,
             stationName="Singapore Station",
             parentBodyName=earth.displayName,
-            r_GP_P=singaporeStation.r_LP_P_Init,
+            r_GP_P=unitTestSupport.EigenVector3d2list(singaporeStation.r_LP_P_Init),
             fieldOfView=np.radians(160.0),
             color="green",
             range=2000.0 * 1000,  # meters
