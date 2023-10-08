@@ -310,10 +310,10 @@ T pyObjToEigenMatrix(PyObject *input)
                 return {};
             }
 
-            Py_DECREF(rowPyObj);
-
             result(row, col) = std::get<typename T::Scalar>(valueOrErrorMsg);
         }
+
+        Py_DECREF(rowPyObj);
     }
 
     return result;
