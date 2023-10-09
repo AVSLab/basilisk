@@ -70,6 +70,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import simpleInstrument, simpleStorageUnit, partitionedStorageUnit, spaceToGroundTransmitter
 from Basilisk.simulation import groundLocation
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import unitTestSupport
 
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
@@ -221,7 +222,7 @@ def run(show_plots):
                                                   )
         vizSupport.addLocation(viz, stationName="Boulder Station"
                                , parentBodyName=planet.planetName
-                               , r_GP_P=groundStation.r_LP_P_Init
+                               , r_GP_P=unitTestSupport.EigenVector3d2list(groundStation.r_LP_P_Init)
                                , fieldOfView=np.radians(160.)
                                , color='pink'
                                , range=1000.0*1000  # meters

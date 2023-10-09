@@ -184,7 +184,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
             testMessages.append("FAILED: planetEphemeris() didn't set the desired plane name " + planet)
 
         # check that the time information is correct
-        timeTrue = [[0.0], [0.5], [1.0]]
+        timeTrue = [0.0, 0.5, 1.0]
         testFailCount, testMessages = unitTestSupport.compareDoubleArray(
             timeTrue, J2000Current, accuracy, "J2000Current", testFailCount, testMessages)
 
@@ -199,7 +199,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
         rTrue = []
         vTrue = []
         for time in timeTrue:
-            Mt = M0 + np.sqrt(mu/oe.a/oe.a/oe.a)*time[0]
+            Mt = M0 + np.sqrt(mu/oe.a/oe.a/oe.a)*time
             Et = orbitalMotion.M2E(Mt, oe.e)
             oe.f = orbitalMotion.E2f(Et, oe.e)
 
@@ -223,7 +223,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
             omega_NP_P = np.array([0.0, 0.0, -omegaList[c]])
             tilde = rbk.v3Tilde(omega_NP_P)
             for time in timeTrue:
-                lst = lst0 + omegaList[c]*time[0]
+                lst = lst0 + omegaList[c]*time
                 DCM = rbk.euler3232C([RAN, np.pi/2.0 - DEC, lst])
                 dcmTrue.append(DCM)
                 dDCMdt = np.matmul(tilde, DCM)

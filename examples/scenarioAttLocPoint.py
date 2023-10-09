@@ -296,7 +296,7 @@ def run(show_plots):
                                                   )
         vizSupport.addLocation(viz, stationName="Boulder Station"
                                , parentBodyName=earth.displayName
-                               , r_GP_P=groundStation.r_LP_P_Init
+                               , r_GP_P=unitTestSupport.EigenVector3d2list(groundStation.r_LP_P_Init)
                                , fieldOfView=np.radians(160.)
                                , color='pink'
                                , range=2000.0*1000  # meters
