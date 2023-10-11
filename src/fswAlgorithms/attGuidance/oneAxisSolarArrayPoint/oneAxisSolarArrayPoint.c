@@ -304,61 +304,62 @@ void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], doubl
     double G = v3Dot(a2Hat_B, rHat_SB_R1);
 
     /*! compute exact solution or best solution depending on Delta */
-    double t, t1, t2, y, y1, y2, psi;
-    if (fabs(A) < epsilon) {
+    double psi;
+    double psi1;
+    double psi2;
+    double t1;
+    double t2;
+    double y1;
+    double y2;
+    if (Delta < -epsilon) {
         if (fabs(B) < epsilon) {
-            // zero-th order equation has no solution 
-            // the solution of the minimum problem is psi = MPI
-            psi = MPI;
+            psi1 = 0;
+            psi2 = MPI;
+            y1 = fabs(C);
+            y2 = fabs(A);
         }
         else {
-            // first order equation
-            t = - C / B;
-            psi = 2*atan(t);
+            double q = (A-C) / B;
+            t1 = (q + sqrt(q*q + 1));
+            t2 = (q - sqrt(q*q + 1));
+            psi1 = 2 * atan(t1);
+            psi2 = 2 * atan(t2);
+            y1 = (A*t1*t1 + B*t1 + C) / (1 + t1*t1);
+            y2 = (A*t2*t2 + B*t2 + C) / (1 + t2*t2);
+        }
+        // choose which returns a smaller fcn value between t1 and t2
+        psi = psi1;
+        if (fabs(y2) < fabs(y1)) {
+            psi = psi2;
+        }
+    }
+    else if (Delta > epsilon) {
+        if (fabs(A) < epsilon) {
+            t1 = -B/C;
+            psi1 = 2 * atan(t1);
+            y1 = (E*t1*t1 + F*t1 + G) / (1 + t1*t1);
+            psi2 = MPI;
+            y2 = E;
+        }
+        else {
+            t1 = (-B + sqrt(Delta)) / (2*A);
+            t2 = (-B - sqrt(Delta)) / (2*A);
+            psi1 = 2 * atan(t1);
+            psi2 = 2 * atan(t2);
+            y1 = (E*t1*t1 + F*t1 + G) / (1 + t1*t1);
+            y2 = (E*t2*t2 + F*t2 + G) / (1 + t2*t2);
+        }
+        psi = psi1;
+        if ((fabs(v3Dot(hRefHat_B, a2Hat_B)-1) > epsilon) && (y2 - y1 > epsilon)) {
+            psi = psi2;
         }
     }
     else {
-        if (Delta < 0) {
-            // second order equation has no solution 
-            // the solution of the minimum problem is found
-            if (fabs(B) < epsilon) {
-                t = 0.0;
-            }
-            else {
-                double q = (A-C) / B;
-                t1 = (q + sqrt(q*q + 1));
-                t2 = (q - sqrt(q*q + 1));
-                y1 = (A*t1*t1 + B*t1 + C) / (1 + t1*t1);
-                y2 = (A*t2*t2 + B*t2 + C) / (1 + t2*t2);
-
-                // choose which returns a smaller fcn value between t1 and t2
-                t = t1;
-                if (fabs(y2) < fabs(y1)) {
-                    t = t2;
-                }
-            }
-            psi = 2*atan(t);
-            y = (A*t*t + B*t + C) / (1 + t*t);
-            // check if the absolute fcn minimum is for psi = MPI
-            if (fabs(A) < fabs(y)) {
-                psi = MPI;
-            }
+        if (fabs(A) > epsilon) {
+            psi = 2 * atan(-B / (2 * A));
         }
         else {
-            // solution of the quadratic equation
-            t1 = (-B + sqrt(Delta)) / (2*A);
-            t2 = (-B - sqrt(Delta)) / (2*A);
-
-            // choose between t1 and t2 according to a2Hat
-            t = t1;            
-            if (fabs(v3Dot(hRefHat_B, a2Hat_B)-1) > epsilon) {
-                y1 = (E*t1*t1 + F*t1 + G) / (1 + t1*t1);
-                y2 = (E*t2*t2 + F*t2 + G) / (1 + t2*t2);
-                if (y2 - y1 > epsilon) {
-                    t = t2;
-                }
-            }
-            psi = 2*atan(t);
+            psi = MPI;
         }
     }
 
