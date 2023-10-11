@@ -46,20 +46,25 @@ typedef enum inertialAxisInput{
     inputEphemerisMsg = 2
 } InertialAxisInput;
 
+typedef enum refFrameSolution{
+    determinate = 0,
+    indeterminate = 1
+} RefFrameSolution;
+
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
 
-    /* declare these quantities that always must be specified as flight software parameters */
+    /*! declare these quantities that always must be specified as flight software parameters */
     double a1Hat_B[3];                           //!< arrays axis direction in B frame
     AlignmentPriority  alignmentPriority;        //!< flag to indicate which constraint must be prioritized
 
-    /* declare these optional quantities */
+    /*! declare these optional quantities */
     double h1Hat_B[3];                           //!< main heading in B frame coordinates
     double h2Hat_B[3];                           //!< secondary heading in B frame coordinates
     double hHat_N[3];                            //!< main heading in N frame coordinates
     double a2Hat_B[3];                           //!< body frame heading that should remain as close as possible to Sun heading
 
-    /* declare these internal variables that are used by the module and should not be declared by the user */
+    /*! declare these internal variables that are used by the module and should not be declared by the user */
     BodyAxisInput      bodyAxisInput;            //!< flag variable to determine how the body axis input is specified
     InertialAxisInput  inertialAxisInput;        //!< flag variable to determine how the inertial axis input is specified
     int      updateCallCount;                    //!< count variable used in the finite difference logic
@@ -87,7 +92,7 @@ extern "C" {
     void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint64_t callTime, int64_t moduleID);
 
     void oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3][3]);
-    void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1Hat_B[3], double a2Hat_B[3], double R2R1[3][3]);
+    void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1Hat_B[3], double a2Hat_B[3], double R2R1[3][3], RefFrameSolution *refFrameSolution);
     void oasapComputeThirdRotation(int alignmentPriority, double hRefHat_B[3], double rHat_SB_R2[3], double a1Hat_B[3], double R3R2[3][3]);
     void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3]);
 
