@@ -113,7 +113,8 @@ def fswModuleTestFunction(show_plots):
     dataLog = module.dataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
     variableName = "dummy"                              # name the module variable to be logged
-    unitTestSim.AddVariableForLogging(module.ModelTag + "." + variableName, testProcessRate)
+    moduleLog = module.logger(variableName)
+    unitTestSim.AddModelToTask(unitTaskName, moduleLog)
 
     # connect the message interfaces
     module.dataInMsg.subscribeTo(inputMsg)
@@ -141,7 +142,7 @@ def fswModuleTestFunction(show_plots):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    variableState = unitTestSim.GetLogVariableData(module.ModelTag + "." + variableName)
+    variableState = unitTestSupport.addTimeColumn(moduleLog.times(), getattr(moduleLog, variableName))
 
     # set the filtered output truth states
     trueVector = [

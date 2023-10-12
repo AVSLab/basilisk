@@ -224,7 +224,9 @@ def run(show_plots, orbitCase, planetCase):
     scSim.AddModelToTask(simTaskName, dataLog)
     scSim.AddModelToTask(simTaskName, dataNewAtmoLog)
 
-    scSim.AddVariableForLogging('DragEff.forceExternal_B', samplingTime, StartIndex=0, StopIndex=2)
+    dragEffectorLog = dragEffector.logger("forceExternal_B", samplingTime)
+    scSim.AddModelToTask(simTaskName, dragEffectorLog)
+
     #
     #   initialize Spacecraft States with initialization variables
     #
@@ -248,7 +250,7 @@ def run(show_plots, orbitCase, planetCase):
     posData = dataLog.r_BN_N
     velData = dataLog.v_BN_N
     attData = dataLog.sigma_BN
-    dragForce = scSim.GetLogVariableData('DragEff.forceExternal_B')
+    dragForce = dragEffectorLog.forceExternal_B
     densData = dataNewAtmoLog.neutralDensity
     np.set_printoptions(precision=16)
 
@@ -267,15 +269,15 @@ def run(show_plots, orbitCase, planetCase):
         # print "Density data:", densData[ind,1]
         refDragForce[ind] = cannonballDragComp(dragCoeff,densData[ind],projArea,velData[ind], attData[ind])
         # print "Reference drag data:", refDragForce[ind,:]
-        # print "Drag Data:", dragForce[ind,1:]
+        # print "Drag Data:", dragForce[ind,:]
         # print ""
         # check a vector values
     for ind in range(1,endInd-1):
-        if not unitTestSupport.isArrayEqual(dragForce[ind,1:4], refDragForce[ind],3,accuracy):
+        if not unitTestSupport.isArrayEqual(dragForce[ind,:], refDragForce[ind],3,accuracy):
             testFailCount += 1
             testMessages.append(
                 "FAILED:  DragEffector failed force unit test with a value difference of "
-                + str(np.linalg.norm(dragForce[ind,1:4]-refDragForce[ind])))
+                + str(np.linalg.norm(dragForce[ind,:]-refDragForce[ind])))
 
     #
     #   plot the results

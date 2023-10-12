@@ -51,11 +51,11 @@ def run():
     mod2.dummy = 1
     mod2.dumVector = [1., 2., 3.]
 
-    # request these module variables to be recorded
-    scSim.AddVariableForLogging(mod1.ModelTag + ".dummy", macros.sec2nano(1.))
-    scSim.AddVariableForLogging(mod1.ModelTag + ".dumVector", macros.sec2nano(1.), 0, 2)
-    scSim.AddVariableForLogging(mod2.ModelTag + ".dummy", macros.sec2nano(1.))
-    scSim.AddVariableForLogging(mod2.ModelTag + ".dumVector", macros.sec2nano(1.), 0, 2)
+    # request these module variables to be recorded    
+    mod1Logger = mod1.logger("dummy", macros.sec2nano(1.))
+    scSim.AddModelToTask("dynamicsTask", mod1Logger)
+    mod2WrapLogger = mod2.logger(["dummy", "dumVector"], macros.sec2nano(1.))
+    scSim.AddModelToTask("dynamicsTask", mod2WrapLogger)
 
     #  initialize Simulation:
     scSim.InitializeSimulation()
@@ -64,17 +64,16 @@ def run():
     scSim.ConfigureStopTime(macros.sec2nano(1.0))
     scSim.ExecuteSimulation()
 
+    # Print when were the variables logged (the same for every logged variable)
+    print("Times: ", mod1Logger.times())
+
+    # Print values logged
     print("mod1.dummy:")
-    print(scSim.GetLogVariableData(mod1.ModelTag + ".dummy"))
-    print("mod1.dumVector:")
-    print(scSim.GetLogVariableData(mod1.ModelTag + ".dumVector"))
+    print(mod1Logger.dummy)
     print("mod2.dummy:")
-    print(scSim.GetLogVariableData(mod2.ModelTag + ".dummy"))
+    print(mod2WrapLogger.dummy)
     print("mod2.dumVector:")
-    print(scSim.GetLogVariableData(mod2.ModelTag + ".dumVector"))
-
-    return
-
+    print(mod2WrapLogger.dumVector)
 
 if __name__ == "__main__":
     run()

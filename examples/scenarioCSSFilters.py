@@ -483,6 +483,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
     # Setup filter
     #
     numStates = 6
+    bVecLogger = None
     if FilterType == 'EKF':
         module = sunlineEKF.sunlineEKF()
         module.ModelTag = "SunlineEKF"
@@ -518,7 +519,8 @@ def run(saveFigures, show_plots, FilterType, simTime):
 
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, module)
-        scSim.AddVariableForLogging('SunlineSEKF.bVec_B', simulationTimeStep, 0, 2)
+        bVecLogger = module.logger('bVec_B', simulationTimeStep)
+        scSim.AddModelToTask(simTaskName, bVecLogger)
 
     if FilterType == 'SuKF':
         numStates = 6
@@ -528,7 +530,8 @@ def run(saveFigures, show_plots, FilterType, simTime):
 
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, module)
-        scSim.AddVariableForLogging('SunlineSuKF.bVec_B', simulationTimeStep, 0, 2)
+        bVecLogger = module.logger('bVec_B', simulationTimeStep)
+        scSim.AddModelToTask(simTaskName, bVecLogger)
 
     module.cssDataInMsg.subscribeTo(cssConstelation.constellationOutMsg)
     module.cssConfigInMsg.subscribeTo(cssConstMsg)
@@ -570,13 +573,15 @@ def run(saveFigures, show_plots, FilterType, simTime):
     covarLog = addTimeColumn(timeAxis, filtLog.covar[:, range(numStates*numStates)])
     obsLog = addTimeColumn(timeAxis, filtLog.numObs)
 
+    # Get bVec_B through the variable logger
+    bVecLog = None if bVecLogger is None else addTimeColumn(timeAxis, bVecLogger.bVec_B)
+
     dcmLog = np.zeros([len(stateLog[:,0]),3,3])
     omegaExp = np.zeros([len(stateLog[:,0]),3])
     if FilterType == 'SEKF':
         dcm = sunlineSEKF.new_doubleArray(3 * 3)
         for j in range(9):
             sunlineSEKF.doubleArray_setitem(dcm, j, 0)
-        bVecLog = scSim.GetLogVariableData('SunlineSEKF.bVec_B')
         for i in range(len(stateLog[:,0])):
             sunlineSEKF.sunlineSEKFComputeDCM_BS(stateLog[i,1:4].tolist(), bVecLog[i, 1:4].tolist(), dcm)
             dcmOut = []
@@ -588,7 +593,6 @@ def run(saveFigures, show_plots, FilterType, simTime):
         dcm = sunlineSuKF.new_doubleArray(3 * 3)
         for j in range(9):
             sunlineSuKF.doubleArray_setitem(dcm, j, 0)
-        bVecLog = scSim.GetLogVariableData('SunlineSuKF.bVec_B')
         for i in range(len(stateLog[:,0])):
             sunlineSuKF.sunlineSuKFComputeDCM_BS(stateLog[i,1:4].tolist(), bVecLog[i, 1:4].tolist(), dcm)
             dcmOut = []

@@ -26,6 +26,7 @@ from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import sunlineEKF
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 import SunLineEKF_test_utilities as FilterPlots
 
@@ -434,8 +435,8 @@ def StatePropStatic():
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     setupFilterData(module)
-    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate * 10, 0, 35)
-    unitTestSim.AddVariableForLogging('SunlineEKF.state', testProcessRate * 10, 0, 5)
+    kfLog = module.logger(["covar", "state"], testProcessRate*10)
+    unitTestSim.AddModelToTask(unitTaskName, kfLog)
 
     # connect messages
     cssDataInMsg = messaging.CSSArraySensorMsg()
@@ -447,7 +448,7 @@ def StatePropStatic():
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.state')
+    stateLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.state)
 
     for i in range(6):
         if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
@@ -505,10 +506,8 @@ def StatePropVariable(show_plots):
 
     module.state = InitialState
 
-    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate, 0, 35)
-    unitTestSim.AddVariableForLogging('SunlineEKF.stateTransition', testProcessRate, 0, 35)
-    unitTestSim.AddVariableForLogging('SunlineEKF.state', testProcessRate , 0, 5)
-    unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5)
+    kfLog = module.logger(["covar", "stateTransition", "state", "x"], testProcessRate)
+    unitTestSim.AddModelToTask(unitTaskName, kfLog)
 
     # connect messages
     cssDataInMsg = messaging.CSSArraySensorMsg()
@@ -521,10 +520,10 @@ def StatePropVariable(show_plots):
     unitTestSim.ExecuteSimulation()
 
 
-    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.state')
-    stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
-    stmLog = unitTestSim.GetLogVariableData('SunlineEKF.stateTransition')
+    covarLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.covar)
+    stateLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.state)
+    stateErrorLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.x)
+    stmLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.stateTransition)
 
 
     dt = 0.5
@@ -673,9 +672,10 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     stateTarget1 += [0.0, 0.0, 0.0]
     module.state = stateGuess
     module.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
-    unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5, 'double')
+    kfLog = module.logger("x", testProcessRate)
     dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    unitTestSim.AddModelToTask(unitTaskName, kfLog)
 
     unitTestSim.InitializeSimulation()
 
@@ -725,7 +725,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
+    stateErrorLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.x)
     stateLog = addTimeColumn(dataLog.times(), dataLog.state)
     postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
     covarLog = addTimeColumn(dataLog.times(), dataLog.covar)

@@ -30,8 +30,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
+%include <std_array.i>
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
@@ -44,7 +45,7 @@ struct ArrayMotorTorqueMsg_C;
 %include "architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.h"
 struct ArrayEffectorLockMsg_C;
 %include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-struct SpinningBodyMsg_C;
+struct HingedRigidBodyMsg_C;
 
 %pythoncode %{
 import sys

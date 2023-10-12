@@ -176,16 +176,13 @@ def TestDragCalculation():
     scSim.AddModelToTask(simTaskName, dataLog)
     atmoLog = newAtmo.envOutMsgs[0].recorder()
     scSim.AddModelToTask(simTaskName, atmoLog)
+    newDragLog = newDrag.logger(["forceExternal_B", "torqueExternalPntB_B"])
+    scSim.AddModelToTask(simTaskName, newDragLog)
 
     #
     #   initialize Simulation
     #
     scSim.InitializeSimulation()
-
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".forceExternal_B",
-                                      simulationTimeStep, 0, 2, 'double')
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".torqueExternalPntB_B",
-                                      simulationTimeStep, 0, 2, 'double')
 
     #   configure a simulation stop time and execute the simulation run
     #
@@ -193,8 +190,8 @@ def TestDragCalculation():
     scSim.ExecuteSimulation()
 
     #   Retrieve logged data
-    dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
-    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".torqueExternalPntB_B")
+    dragDataForce_B = unitTestSupport.addTimeColumn(newDragLog.times(), newDragLog.forceExternal_B)
+    dragTorqueData = unitTestSupport.addTimeColumn(newDragLog.times(), newDragLog.torqueExternalPntB_B)
     posData = dataLog.r_BN_N
     velData = dataLog.v_BN_N
     attData = dataLog.sigma_BN
@@ -331,16 +328,13 @@ def TestShadowCalculation():
     scSim.AddModelToTask(simTaskName, dataLog)
     atmoLog = newAtmo.envOutMsgs[0].recorder()
     scSim.AddModelToTask(simTaskName, atmoLog)
+    newDragLog = newDrag.logger(["forceExternal_B", "torqueExternalPntB_B"])
+    scSim.AddModelToTask(simTaskName, newDragLog)
 
     #
     #   initialize Simulation
     #
     scSim.InitializeSimulation()
-
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".forceExternal_B",
-                                simulationTimeStep, 0, 2, 'double')
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".torqueExternalPntB_B",
-                                simulationTimeStep, 0, 2, 'double')
 
     #   configure a simulation stop time and execute the simulation run
     #
@@ -348,9 +342,8 @@ def TestShadowCalculation():
     scSim.ExecuteSimulation()
 
     #   Retrieve logged data
-    #dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
-    dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
-    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".torqueExternalPntB_B")
+    dragDataForce_B = unitTestSupport.addTimeColumn(newDragLog.times(), newDragLog.forceExternal_B)
+    dragTorqueData = unitTestSupport.addTimeColumn(newDragLog.times(), newDragLog.torqueExternalPntB_B)
     posData = dataLog.r_BN_N
     velData = dataLog.v_BN_N
     attData = dataLog.sigma_BN

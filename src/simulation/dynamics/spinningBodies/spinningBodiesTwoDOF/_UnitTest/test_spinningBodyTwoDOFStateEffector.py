@@ -43,14 +43,16 @@ from Basilisk.architecture import messaging
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-@pytest.mark.parametrize("cmdTorque1, lock1, cmdTorque2, lock2", [
-    (0.0, False, 0.0, False)
-    , (0.0, True, 0.0, False)
-    , (0.0, False, 0.0, True)
-    , (0.0, True, 0.0, True)
-    , (1.0, False, -2.0, False)
+@pytest.mark.parametrize("cmdTorque1, lock1, theta1Ref, cmdTorque2, lock2, theta2Ref", [
+    (0.0, False, 0.0, 0.0, False, 0.0)
+    , (0.0, True, 0.0, 0.0, False, 0.0)
+    , (0.0, False, 0.0, 0.0, True, 0.0)
+    , (0.0, True, 0.0, 0.0, True, 0.0)
+    , (1.0, False, 0.0, -2.0, False, 0.0)
+    , (0.0, False, 10.0 * macros.D2R, 0.0, False, -5.0 * macros.D2R)
+    , (0.0, False, -5.0 * macros.D2R, 0.0, False, 10.0 * macros.D2R)
 ])
-def test_spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
+def test_spinningBody(show_plots, cmdTorque1, lock1, theta1Ref, cmdTorque2, lock2, theta2Ref):
     r"""
     **Validation Test Description**
 
@@ -71,11 +73,11 @@ def test_spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
 
     against their initial values.
     """
-    [testResults, testMessage] = spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2)
+    [testResults, testMessage] = spinningBody(show_plots, cmdTorque1, lock1, theta1Ref, cmdTorque2, lock2, theta2Ref)
     assert testResults < 1, testMessage
 
 
-def spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
+def spinningBody(show_plots, cmdTorque1, lock1, theta1Ref, cmdTorque2, lock2, theta2Ref):
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
@@ -91,7 +93,7 @@ def spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.0002)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -113,8 +115,11 @@ def spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
     spinningBody.s2Hat_S2 = [[0], [-1], [0]]
     spinningBody.theta1Init = 0 * macros.D2R
     spinningBody.theta2Init = 5 * macros.D2R
-    spinningBody.k1 = 1.0
-    spinningBody.k2 = 2.0
+    spinningBody.k1 = 1000.0
+    spinningBody.k2 = 500.0
+    if theta1Ref != 0.0 or theta2Ref != 0.0:
+        spinningBody.c1 = 500
+        spinningBody.c2 = 200
     if lock1:
         spinningBody.theta1DotInit = 0 * macros.D2R
     else:
@@ -145,6 +150,19 @@ def spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
     lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
     spinningBody.motorLockInMsg.subscribeTo(lockMsg)
 
+    # Create the reference messages
+    angle1Ref = messaging.HingedRigidBodyMsgPayload()
+    angle1Ref.theta = theta1Ref
+    angle1Ref.thetaDot = 0.0
+    angle1RefMsg = messaging.HingedRigidBodyMsg().write(angle1Ref)
+    spinningBody.spinningBodyRefInMsgs[0].subscribeTo(angle1RefMsg)
+
+    angle2Ref = messaging.HingedRigidBodyMsgPayload()
+    angle2Ref.theta = theta2Ref
+    angle2Ref.thetaDot = 0.0
+    angle2RefMsg = messaging.HingedRigidBodyMsg().write(angle2Ref)
+    spinningBody.spinningBodyRefInMsgs[1].subscribeTo(angle2RefMsg)
+
     # Define mass properties of the rigid hub of the spacecraft
     scObject.hub.mHub = 750.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
@@ -154,7 +172,7 @@ def spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
     scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
     scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    scObject.hub.omega_BN_BInit = [[0.01], [-0.01], [0.01]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, spinningBody)
@@ -172,14 +190,12 @@ def spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
     datLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
+    # Add energy and momentum variables to log
+    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
+    unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
+    
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
-
-    # Add energy and momentum variables to log
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
 
     # Add states to log
     theta1Data = spinningBody.spinningBodyOutMsgs[0].recorder()
@@ -193,10 +209,10 @@ def spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
     unitTestSim.ExecuteSimulation()
 
     # Extract the logged variables
-    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
     theta1 = theta1Data.theta
     theta1Dot = theta1Data.thetaDot
     theta2 = theta2Data.theta
@@ -295,7 +311,7 @@ def spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
             testMessages.append(
                 "FAILED: Spinning Body integrated test failed rotational angular momentum unit test")
 
-    if cmdTorque1 == 0 and cmdTorque2 == 0:
+    if cmdTorque1 == 0 and cmdTorque2 == 0 and theta1Ref == 0.0 and theta2Ref == 0.0:
         for i in range(0, len(initialRotEnergy)):
             # check a vector values
             if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i], initialRotEnergy[i], 1, accuracy):
@@ -308,6 +324,15 @@ def spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
             testFailCount += 1
             testMessages.append("FAILED: Spinning Body integrated test failed orbital energy unit test")
 
+    if theta1Ref != 0.0 or theta2Ref != 0.0:
+        if not unitTestSupport.isDoubleEqual(theta1[-1], theta1Ref, 0.01):
+            testFailCount += 1
+            testMessages.append("FAILED: Spinning Body integrated test failed angle 1 convergence unit test")
+
+        if not unitTestSupport.isDoubleEqual(theta2[-1], theta2Ref, 0.01):
+            testFailCount += 1
+            testMessages.append("FAILED: Spinning Body integrated test failed angle 2 convergence unit test")
+
     if testFailCount == 0:
         print("PASSED: " + " Spinning Body gravity integrated test")
 
@@ -318,4 +343,4 @@ def spinningBody(show_plots, cmdTorque1, lock1, cmdTorque2, lock2):
 
 
 if __name__ == "__main__":
-    spinningBody(True, 0.0, False, 0.0, False)
+    spinningBody(True, 0.0, False, 0.0 * macros.D2R, 0.0, False, 0.0 * macros.D2R)

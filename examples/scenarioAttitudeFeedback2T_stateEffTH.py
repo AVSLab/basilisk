@@ -132,7 +132,7 @@ def plot_attitude_error(timeDataFSW, dataSigmaBR):
     for idx in range(3):
         plt.plot(timeDataFSW, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
+                 label=r'$\sigma_' + str(idx) + r'$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
@@ -144,7 +144,7 @@ def plot_rate_error(timeDataFSW, dataOmegaBR):
     for idx in range(3):
         plt.plot(timeDataFSW, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
+                 label=r'$\omega_{BR,' + str(idx) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')
@@ -159,7 +159,7 @@ def plot_requested_torque(timeDataFSW, dataLr):
                  label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel('Control Torque $L_r$ [Nm]')
+    plt.ylabel(r'Control Torque $L_r$ [Nm]')
 
 
 def plot_thrForce(timeDataFSW, dataMap, numTh):
@@ -168,7 +168,7 @@ def plot_thrForce(timeDataFSW, dataMap, numTh):
     for idx in range(numTh):
         plt.plot(timeDataFSW, dataMap[:, idx],
                  color=unitTestSupport.getLineColor(idx, numTh),
-                 label='$thrForce,' + str(idx) + '}$')
+                 label=r'$thrForce_{' + str(idx) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Force requested [N]')
@@ -180,7 +180,7 @@ def plot_OnTimeRequest(timeDataFSW, dataSchm, numTh):
     for idx in range(numTh):
         plt.plot(timeDataFSW, dataSchm[:, idx],
                  color=unitTestSupport.getLineColor(idx, numTh),
-                 label='$OnTimeRequest,' + str(idx) + '}$')
+                 label=r'$OnTimeRequest_{' + str(idx) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('OnTimeRequest [sec]')
@@ -192,7 +192,7 @@ def plot_trueThrForce(timeDataFSW, dataMap, numTh):
     for idx in range(numTh):
         plt.plot(timeDataFSW, dataMap[:, idx],
                  color=unitTestSupport.getLineColor(idx, numTh),
-                 label='$thrForce,' + str(idx) + '}$')
+                 label=r'$thrForce_{' + str(idx) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Force implemented[N]')

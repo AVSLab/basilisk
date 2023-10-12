@@ -21,39 +21,11 @@
 #include "architecture/utilities/moduleIdGenerator/moduleIdGenerator.h"
 
 SysModel::SysModel()
-{
-    this->ModelTag = "";
-    this->RNGSeed = 0x1badcad1;
-    this->moduleID = ModuleIdGenerator::GetInstance()->checkoutModuleID();
-}
+    : moduleID(ModuleIdGenerator::GetInstance()->checkoutModuleID())
+{}
 
 SysModel::SysModel(const SysModel &obj)
-{
-    this->ModelTag = obj.ModelTag;
-    this->RNGSeed = obj.RNGSeed;
-    this->moduleID = ModuleIdGenerator::GetInstance()->checkoutModuleID();
-}
-
-SysModel::~SysModel()
-{
-}
-
-void SysModel :: SelfInit()
-{
-    return;
-}
-
-void SysModel :: IntegratedInit()
-{
-    return;
-}
-
-void SysModel :: UpdateState(uint64_t CurrentSimNanos)
-{
-    return;
-}
-
-void SysModel::Reset(uint64_t CurrentSimNanos)
-{
-	return;
-}
+    : ModelTag{obj.ModelTag},
+    RNGSeed{obj.RNGSeed},
+    moduleID{ModuleIdGenerator::GetInstance()->checkoutModuleID()}
+{}

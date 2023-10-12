@@ -33,6 +33,7 @@ from Basilisk.simulation import spacecraft
 from Basilisk.simulation import dualHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
+from Basilisk.utilities import pythonVariableLogger
 from Basilisk.simulation import spacecraftSystem
 from Basilisk.architecture import messaging
 
@@ -148,22 +149,20 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
     dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    unitTestSim.InitializeSimulation()
+    # Add energy and momentum s to log
+    scObjectLog = scObject.logger(["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"])
+    unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
-    # Add energy and momentum variables to log
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.InitializeSimulation()
 
     stopTime = 1.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
 
     initialOrbAngMom_N = [
                 [orbAngMom_N[0, 1], orbAngMom_N[0, 2], orbAngMom_N[0, 3]]
@@ -388,14 +387,15 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.AddModelToTask(unitTaskName, data10Log)
     unitTestSim.AddModelToTask(unitTaskName, data21Log)
 
+    if useScPlus:
+        scLog = scObject.logger("totRotAngMomPntC_N")
+    else:
+        scLog = pythonVariableLogger.PythonVariableLogger({
+            "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N
+        })
+    unitTestSim.AddModelToTask(unitTaskName, scLog)
+
     unitTestSim.InitializeSimulation()
-
-    variableLogTag = scObject.ModelTag
-    if not useScPlus:
-        variableLogTag += ".primaryCentralSpacecraft"
-
-    unitTestSim.AddVariableForLogging(variableLogTag + ".totRotAngMomPntC_N",
-                                      testProcessRate, 0, 2, 'double')
 
     stopTime = 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -417,8 +417,7 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     sB2N = data21Log.sigma_BN[0]
     oB2N = data21Log.omega_BN_B[0]
 
-    rotAngMom_N = unitTestSim.GetLogVariableData(
-        variableLogTag + ".totRotAngMomPntC_N")
+    rotAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
 
     # Get the last sigma and position
     dataPos = [rOut_CN_N[-1]]

@@ -143,10 +143,10 @@ class scenario_OpNav(BSKScenario):
             self.rwLogs.append(DynModel.rwStateEffector.rwOutMsgs[item].recorder(samplingTime))
             self.masterSim.AddModelToTask(DynModel.taskName, self.rwLogs[item])
 
-        self.masterSim.AddVariableForLogging('headingUKF.bVec_B', samplingTime, 0, 2)
-
+        self.headingBVecLog = FswModel.headingUKF.logger("bVec_B")
         self.filtRec = FswModel.headingUKF.filtDataOutMsg.recorder(samplingTime)
         self.opNavFiltRec = FswModel.headingUKF.opnavDataOutMsg.recorder(samplingTime)
+        self.masterSim.AddModelToTask(DynModel.taskName, self.headingBVecLog)
         self.masterSim.AddModelToTask(DynModel.taskName, self.filtRec)
         self.masterSim.AddModelToTask(DynModel.taskName, self.opNavFiltRec)
 
@@ -167,7 +167,7 @@ class scenario_OpNav(BSKScenario):
         circleRadii = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesRadii)
         validCircle = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.valid)
 
-        frame = self.masterSim.GetLogVariableData('headingUKF.bVec_B')
+        frame = unitTestSupport.addTimeColumn(self.headingBVecLog.times(), self.headingBVecLog.bVec_B) 
 
         numRW = 4
         dataRW = []

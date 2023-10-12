@@ -252,9 +252,8 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     thrDurationTime = macros.sec2nano(2.0)
 
     # Log variables of interest
-    TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceOnBody_B', testRate, 0, 2)
-    TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueOnBodyPntB_B', testRate, 0, 2)
-    TotalSim.AddVariableForLogging('ACSThrusterDynamics.mDotTotal', testRate, 0, 0)
+    thrusterSetLog = thrusterSet.logger(["forceOnBody_B", "torqueOnBodyPntB_B", "mDotTotal"])
+    TotalSim.AddModelToTask(unitTaskName2, thrusterSetLog)
 
     #  Configure a single thruster firing, create a message for it
     ThrustMessage = messaging.THRArrayOnTimeCmdMsgPayload()
@@ -285,9 +284,9 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
         plt.show()
 
     # Gather the Force, Torque and Mass Rate results
-    thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceOnBody_B')
-    thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueOnBodyPntB_B')
-    mDot = TotalSim.GetLogVariableData('ACSThrusterDynamics.mDotTotal')
+    thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceOnBody_B)
+    thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueOnBodyPntB_B)
+    mDot = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
 
     # Save the time vector
     timeSec = dataRec.times() * macros.NANO2SEC

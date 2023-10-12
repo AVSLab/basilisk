@@ -80,36 +80,31 @@ def run(show_plots, offCount):
     scSim.AddModelToTask(unitTaskName, testObject)
 
     #
+    #   Setup data logging
+    #
+    testObjectLog = testObject.logger("torqueExternalPntB_B")
+    scSim.AddModelToTask(unitTaskName, testObjectLog)
+
+    #
     #   initialize the simulation
     #
     scSim.InitializeSimulation()
 
     #
-    #   Setup data logging
+    #   run the simulation
     #
     DT = 0.1
     testProcessRate = macros.sec2nano(DT)
-    variableTorque = "torqueExternalPntB_B"       # name the module variable to be logged
-    scSim.AddVariableForLogging (testObject.ModelTag + "." + variableTorque, testProcessRate, 0, 2, 'double')
-
-    #
-    #   run the simulation
-    #
     for tStop in range(1, 11):
         scSim.ConfigureStopTime(macros.sec2nano(tStop*DT))
         scSim.ExecuteSimulation()
         testObject.computeForceTorque(scSim.TotalSim.CurrentNanos, testProcessRate)
         scSim.TotalSim.SingleStepProcesses()
-        scSim.RecordLogVars()
 
     # log the data
-    dataTorque = scSim.GetLogVariableData(testObject.ModelTag+"."+variableTorque)
+    dataTorque = testObjectLog.torqueExternalPntB_B[1:,:]
 
     np.set_printoptions(precision=16)
-
-    # Remove time zero from list
-    dataTorque = dataTorque[1:len(dataTorque),:]
-    dataTorque = np.delete(dataTorque, 0, axis=1)  # remove time column
 
     #
     #   set true position information

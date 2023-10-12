@@ -163,7 +163,9 @@ def filterMethods():
 
     module.STDatasStruct.STMessages = STList
     module.STDatasStruct.numST = len(STList)
-    unitTestSim.AddVariableForLogging('inertialUKF.stSensorOrder', testProcessRate, 0, 3, 'double')
+
+    inertialUKFLog = module.logger("stSensorOrder")
+    unitTestSim.AddModelToTask(unitTaskName, inertialUKFLog)
 
     # create ST input messages
     st1InMsg = messaging.STAttMsg().write(st1)
@@ -189,7 +191,7 @@ def filterMethods():
     unitTestSim.ConfigureStopTime(1E9)
     unitTestSim.ExecuteSimulation()
 
-    stOrdered = unitTestSim.GetLogVariableData('inertialUKF.stSensorOrder')
+    stOrdered = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.stSensorOrder)
     if numpy.linalg.norm(numpy.array(stOrdered[0]) - numpy.array([0., 2, 1, 0, 0])) > accuracy:
         testFailCount += 1
         testMessages.append("ST order test failed")
@@ -256,8 +258,8 @@ def stateUpdateInertialAttitude(show_plots):
 #    stateTarget = testVector.tolist()
 #    stateTarget.extend([0.0, 0.0, 0.0])
 #    module.state = [0.7, 0.7, 0.0]
-    unitTestSim.AddVariableForLogging('InertialUKF.covar', testProcessRate*10, 0, 35, 'double')
-    unitTestSim.AddVariableForLogging('InertialUKF.state', testProcessRate*10, 0, 5, 'double')
+    inertialUKFLog = module.logger(["covar", "state"], testProcessRate*10)
+    unitTestSim.AddModelToTask(unitTaskName, inertialUKFLog)
 
     # make input messages but don't write to them
     rwSpeedInMsg = messaging.RWSpeedMsg()
@@ -283,8 +285,8 @@ def stateUpdateInertialAttitude(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('InertialUKF.state')
+    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
+    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
     accuracy = 1.0E-5
     unitTestSupport.writeTeXSnippet("toleranceValue11", str(accuracy), path)
     for i in range(3):
@@ -315,8 +317,8 @@ def stateUpdateInertialAttitude(show_plots):
         unitTestSim.ExecuteSimulation()
 
 
-    covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('InertialUKF.state')
+    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
+    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
     for i in range(3):
         if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]):
             testFailCount += 1
@@ -393,8 +395,7 @@ def statePropInertialAttitude(show_plots):
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
 
-    unitTestSim.AddVariableForLogging('InertialUKF.covar', testProcessRate*10, 0, 35)
-    unitTestSim.AddVariableForLogging('InertialUKF.state', testProcessRate*10, 0, 5)
+    inertialUKFLog = module.logger(["covar", "state"], testProcessRate*10)
 
     # make input messages but don't write to them
     rwSpeedInMsg = messaging.RWSpeedMsg()
@@ -416,8 +417,8 @@ def statePropInertialAttitude(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('InertialUKF.state')
+    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
+    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
 
     accuracy = 1.0E-10
     unitTestSupport.writeTeXSnippet("toleranceValue22", str(accuracy), path)
@@ -506,8 +507,8 @@ def stateUpdateRWInertialAttitude(show_plots):
     #    stateTarget = testVector.tolist()
     #    stateTarget.extend([0.0, 0.0, 0.0])
     #    module.state = [0.7, 0.7, 0.0]
-    unitTestSim.AddVariableForLogging('InertialUKF.covar', testProcessRate * 10, 0, 35, 'double')
-    unitTestSim.AddVariableForLogging('InertialUKF.state', testProcessRate * 10, 0, 5, 'double')
+    inertialUKFLog = module.logger(["covar", "state"], testProcessRate*10)
+    unitTestSim.AddModelToTask(unitTaskName, inertialUKFLog)
 
     # make input messages but don't write to them
     gyroInMsg = messaging.AccDataMsg()
@@ -536,8 +537,10 @@ def stateUpdateRWInertialAttitude(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('InertialUKF.state')
+    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
+    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
+    print(inertialUKFLog.covar, covarLog)
+
     accuracy = 1.0E-5
     unitTestSupport.writeTeXSnippet("toleranceValue33", str(accuracy), path)
     for i in range(3):
@@ -565,8 +568,8 @@ def stateUpdateRWInertialAttitude(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 20000 + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('InertialUKF.state')
+    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
+    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
     for i in range(3):
         if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]):
             testFailCount += 1
@@ -671,9 +674,7 @@ def statePropRateInertialAttitude(show_plots):
 
     stateInit = [0.0, 0.0, 0.0, math.pi/18.0, 0.0, 0.0]
     module.stateInit = stateInit
-    unitTestSim.AddVariableForLogging('InertialUKF.covar', testProcessRate*10, 0, 35)
-    unitTestSim.AddVariableForLogging('InertialUKF.sigma_BNOut', testProcessRate*10, 0, 2)
-    unitTestSim.AddVariableForLogging('InertialUKF.omega_BN_BOut', testProcessRate*10, 0, 2)
+    inertialUKFLog = module.logger(["covar", "sigma_BNOut", "omega_BN_BOut"], testProcessRate*10)
 
     stMessage1 = messaging.STAttMsgPayload()
     stMessage1.MRP_BdyInrtl = [0., 0., 0.]
@@ -704,9 +705,9 @@ def statePropRateInertialAttitude(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
-    sigmaLog = unitTestSim.GetLogVariableData('InertialUKF.sigma_BNOut')
-    omegaLog = unitTestSim.GetLogVariableData('InertialUKF.omega_BN_BOut')
+    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
+    sigmaLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.sigma_BNOut)
+    omegaLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.omega_BN_BOut)
     accuracy = 1.0E-3
     unitTestSupport.writeTeXSnippet("toleranceValue44", str(accuracy), path)
     for i in range(3):

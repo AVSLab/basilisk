@@ -159,8 +159,8 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     testDurationTime = 2.0
 
     # Log variables of interest
-    TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceExternal_B', testRate, 0, 2)
-    TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
+    thrusterSetLog = thrusterSet.logger(["forceExternal_B", "torqueExternalPntB_B"])
+    TotalSim.AddModelToTask(unitTaskName2, thrusterSetLog)
 
     # Initialize the simulation
     TotalSim.InitializeSimulation()
@@ -180,8 +180,8 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     TotalSim.ExecuteSimulation()
 
     # Gather the Force, Torque and Mass Rate results
-    thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
-    thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
+    thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
+    thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
 
     # Generate the truth data (force, torque and mass rate)
     expectedThrustData = np.zeros([3, np.shape(thrForce)[0]])

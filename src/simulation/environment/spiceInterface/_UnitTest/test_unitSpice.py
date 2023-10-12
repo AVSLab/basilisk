@@ -192,20 +192,19 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
         # epoch message over-rules any info set in this variable.
         SpiceObject.UTCCalInit = "1990 February 10, 00:00:00.0 TDB"
 
+    spiceObjectLog = SpiceObject.logger(["GPSSeconds", "J2000Current", "julianDateCurrent", "GPSWeek"])
+    TotalSim.AddModelToTask(unitTaskName, spiceObjectLog)
+
     # Configure simulation
     TotalSim.ConfigureStopTime(int(60.0 * 1E9))
-    TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSSeconds')
-    TotalSim.AddVariableForLogging('SpiceInterfaceData.J2000Current')
-    TotalSim.AddVariableForLogging('SpiceInterfaceData.julianDateCurrent')
-    TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSWeek')
 
     # Execute simulation
     TotalSim.InitializeSimulation()
     TotalSim.ExecuteSimulation()
 
     # Get the logged variables (GPS seconds, Julian Date)
-    DataGPSSec = TotalSim.GetLogVariableData('SpiceInterfaceData.GPSSeconds')
-    DataJD = TotalSim.GetLogVariableData('SpiceInterfaceData.julianDateCurrent')
+    DataGPSSec = unitTestSupport.addTimeColumn(spiceObjectLog.times(), spiceObjectLog.GPSSeconds)
+    DataJD = unitTestSupport.addTimeColumn(spiceObjectLog.times(), spiceObjectLog.julianDateCurrent)
 
     # Get parametrized date from DatePlot
     year = "".join(("20", DatePlot[6:8]))

@@ -29,7 +29,7 @@
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "smallBodyWaypointFeedback.h"
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
@@ -45,4 +45,3 @@ struct CmdForceBodyMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

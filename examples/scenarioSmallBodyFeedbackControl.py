@@ -115,7 +115,7 @@ def plot_position(time, r_BO_O_truth, r_BO_O_meas):
     plt.title('Relative Spacecraft Position')
 
     ax[0].set_ylabel('${}^Or_{BO_1}$ [m]')
-    ax[1].set_ylabel('${}^Or_{BO_2}}$ [m]')
+    ax[1].set_ylabel('${}^Or_{BO_2}$ [m]')
     ax[2].set_ylabel('${}^Or_{BO_3}$ [m]')
 
     ax[0].legend()
@@ -142,7 +142,7 @@ def plot_velocity(time, v_BO_O_truth, v_BO_O_meas):
     plt.title('Relative Spacecraft Velocity')
 
     ax[0].set_ylabel('${}^Ov_{BO_1}$ [m/s]')
-    ax[1].set_ylabel('${}^Ov_{BO_2}}$ [m/s]')
+    ax[1].set_ylabel('${}^Ov_{BO_2}$ [m/s]')
     ax[2].set_ylabel('${}^Ov_{BO_3}$ [m/s]')
 
     ax[0].legend()

@@ -30,7 +30,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "groundLocation.h"
 %include "std_vector.i"
 

@@ -27,7 +27,7 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "std_string.i"
 %include "stdint.i"
-%include "sys_model.h"
+%include "sys_model.i"
 %include "simSynch.h"
 
 %include "architecture/msgPayloadDefC/SynchClockMsgPayload.h"

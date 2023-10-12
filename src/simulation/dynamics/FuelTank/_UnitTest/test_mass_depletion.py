@@ -138,11 +138,10 @@ def massDepletionTest(show_plots, thrusterType):
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
 
-    unitTestSim.InitializeSimulation()
+    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"])
+    unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.InitializeSimulation()
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
@@ -150,9 +149,9 @@ def massDepletionTest(show_plots, thrusterType):
     stopTime = 60.0 * 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
 
     thrust = thrLog.thrustForce_B
     thrustPercentage = thrLog.thrustFactor
@@ -305,11 +304,10 @@ def axisChangeHelper(r_BcB_B):
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
 
-    unitTestSim.InitializeSimulation()
+    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"])
+    unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.InitializeSimulation()
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
@@ -317,9 +315,9 @@ def axisChangeHelper(r_BcB_B):
     stopTime = 60.0 * 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()

@@ -92,7 +92,7 @@ def tamCommTestFunction(show_plots):
 
     # Initialize the test module configuration data
     dcm3, _ = np.linalg.qr(np.random.normal(0, 1, (3, 3)))
-    module.dcm_BS = dcm3.reshape(9, 1)
+    module.dcm_BS = unitTestSupport.flattenList(dcm3)
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.

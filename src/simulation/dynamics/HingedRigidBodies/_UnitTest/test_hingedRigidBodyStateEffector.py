@@ -34,6 +34,7 @@ import matplotlib.pyplot as plt
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.utilities import macros
+from Basilisk.utilities import pythonVariableLogger
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import spacecraftSystem
@@ -142,16 +143,21 @@ def hingedRigidBodyGravity(show_plots):
     datLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
+    # Add energy and momentum variables to log
+    panel1Log = unitTestSim.panel1.logger("forceOnBody_B")
+    panel2Log = unitTestSim.panel2.logger("forceOnBody_B")
+    scLog = pythonVariableLogger.PythonVariableLogger({
+        "totOrbEnergy": lambda _: scObject.primaryCentralSpacecraft.totOrbEnergy,
+        "totOrbAngMomPntN_N": lambda _: scObject.primaryCentralSpacecraft.totOrbAngMomPntN_N,
+        "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N,
+        "totRotEnergy": lambda _: scObject.primaryCentralSpacecraft.totRotEnergy,
+    })
+    unitTestSim.AddModelToTask(unitTaskName, panel1Log)
+    unitTestSim.AddModelToTask(unitTaskName, panel2Log)
+    unitTestSim.AddModelToTask(unitTaskName, scLog)
+
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
-
-    # Add energy and momentum variables to log
-    unitTestSim.AddVariableForLogging(unitTestSim.panel1.ModelTag + ".forceOnBody_B", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(unitTestSim.panel2.ModelTag + ".forceOnBody_B", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
     stopTime = 2.5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -159,12 +165,12 @@ def hingedRigidBodyGravity(show_plots):
 
     sigmaOut = datLog.sigma_BN
 
-    forcePanel1 = unitTestSim.GetLogVariableData(unitTestSim.panel1.ModelTag + ".forceOnBody_B")
-    forcePanel2 = unitTestSim.GetLogVariableData(unitTestSim.panel2.ModelTag + ".forceOnBody_B")
-    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy")
+    forcePanel1 = unitTestSupport.addTimeColumn(panel1Log.times(), panel1Log.forceOnBody_B)
+    forcePanel2 = unitTestSupport.addTimeColumn(panel2Log.times(), panel2Log.forceOnBody_B)
+    orbEnergy = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbEnergy)
+    orbAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbAngMomPntN_N)
+    rotAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
+    rotEnergy = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotEnergy)
 
     dataSigma = [sigmaOut[-1]]
 
@@ -356,12 +362,15 @@ def hingedRigidBodyNoGravity(show_plots):
     dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
     
-    unitTestSim.InitializeSimulation()
+    scLog = pythonVariableLogger.PythonVariableLogger({
+        "totOrbEnergy": lambda _: scObject.primaryCentralSpacecraft.totOrbEnergy,
+        "totOrbAngMomPntN_N": lambda _: scObject.primaryCentralSpacecraft.totOrbAngMomPntN_N,
+        "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N,
+        "totRotEnergy": lambda _: scObject.primaryCentralSpacecraft.totRotEnergy,
+    })
+    unitTestSim.AddModelToTask(unitTaskName, scLog)
 
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.InitializeSimulation()
 
     stopTime = 2.5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -371,10 +380,10 @@ def hingedRigidBodyNoGravity(show_plots):
     rOut_BN_N = dataLog.r_BN_N
     vOut_CN_N = dataLog.v_CN_N
 
-    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy")
+    orbEnergy = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbEnergy)
+    orbAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbAngMomPntN_N)
+    rotAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
+    rotEnergy = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotEnergy)
 
     # Get the last sigma and position
     dataSigma = [sigmaOut[-1]]
@@ -584,11 +593,14 @@ def hingedRigidBodyNoGravityDamping(show_plots):
     dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    unitTestSim.InitializeSimulation()
+    scLog = pythonVariableLogger.PythonVariableLogger({
+        "totOrbEnergy": lambda _: scObject.primaryCentralSpacecraft.totOrbEnergy,
+        "totOrbAngMomPntN_N": lambda _: scObject.primaryCentralSpacecraft.totOrbAngMomPntN_N,
+        "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N,
+    })
+    unitTestSim.AddModelToTask(unitTaskName, scLog)
 
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.InitializeSimulation()
 
     stopTime = 2.5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -596,9 +608,9 @@ def hingedRigidBodyNoGravityDamping(show_plots):
 
     vOut_CN_N = dataLog.v_CN_N
 
-    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N")
+    orbEnergy = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbEnergy)
+    orbAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbAngMomPntN_N)
+    rotAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
 
     initialOrbAngMom_N = [[orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]]
 
@@ -776,17 +788,20 @@ def hingedRigidBodyThetaSS(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    unitTestSim.InitializeSimulation()
+    stateLog = pythonVariableLogger.PythonVariableLogger({
+        "theta1": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState(),
+    })
+    unitTestSim.AddModelToTask(unitTaskName, stateLog)
 
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.InitializeSimulation()
 
     stopTime = 60.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
-    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()")
+    theta1Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta1)
+    theta2Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta2)
 
     # Developing the lagrangian result
     # Define initial values
@@ -969,10 +984,13 @@ def hingedRigidBodyFrequencyAmp(show_plots):
     dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    unitTestSim.InitializeSimulation()
+    stateLog = pythonVariableLogger.PythonVariableLogger({
+        "theta1": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState(),
+    })
+    unitTestSim.AddModelToTask(unitTaskName, stateLog)
 
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.InitializeSimulation()
 
     stopTime = 58
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime/2))
@@ -988,8 +1006,8 @@ def hingedRigidBodyFrequencyAmp(show_plots):
     sigmaOut_BN = dataLog.sigma_BN
     thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,2])
 
-    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
-    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()")
+    theta1Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta1)
+    theta2Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta2)
 
     # Developing the lagrangian result
     # Define initial values
@@ -1267,14 +1285,15 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.AddModelToTask(unitTaskName, dataPanel1Log)
     unitTestSim.AddModelToTask(unitTaskName, dataPanel2Log)
 
+    if useScPlus:
+        scLog = scObject.logger("totRotAngMomPntC_N")
+    else:
+        scLog = pythonVariableLogger.PythonVariableLogger({
+            "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N
+        })
+    unitTestSim.AddModelToTask(unitTaskName, scLog)
+
     unitTestSim.InitializeSimulation()
-
-    variableLogTag = scObject.ModelTag
-    if not useScPlus:
-        variableLogTag += ".primaryCentralSpacecraft"
-
-    unitTestSim.AddVariableForLogging(variableLogTag + ".totRotAngMomPntC_N",
-                                      testProcessRate, 0, 2, 'double')
 
     stopTime = 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -1295,8 +1314,7 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     sB2N = dataPanel2Log.sigma_BN[0]
     oB2N = dataPanel2Log.omega_BN_B[0]
 
-    rotAngMom_N = unitTestSim.GetLogVariableData(
-        variableLogTag + ".totRotAngMomPntC_N")
+    rotAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
 
     # Get the last sigma and position
     dataPos = [rOut_CN_N[-1]]
@@ -1495,10 +1513,13 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    unitTestSim.InitializeSimulation()
+    stateLog = pythonVariableLogger.PythonVariableLogger({
+        "theta1": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState(),
+    })
+    unitTestSim.AddModelToTask(unitTaskName, stateLog)
 
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.InitializeSimulation()
 
     # Define times that the new forces will be applies
     force1OffTime = 5.0
@@ -1529,8 +1550,8 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
-    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()")
+    theta1Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta1)
+    theta2Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta2)
 
     rOut_BN_N = dataLog.r_BN_N
     sigmaOut_BN = dataLog.sigma_BN
