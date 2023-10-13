@@ -29,7 +29,7 @@
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 %include "std_vector.i"
-%include "sys_model.h"
+%include "sys_model.i"
 %include "groundMapping.h"
 
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
@@ -45,4 +45,3 @@ struct GroundStateMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

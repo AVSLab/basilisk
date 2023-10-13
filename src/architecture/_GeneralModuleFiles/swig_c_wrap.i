@@ -26,8 +26,7 @@
 %}
 %include <std_string.i>
 
-%include "architecture/_GeneralModuleFiles/sys_model.h"
-%include "swig_conly_data.i"
+%include "sys_model.i"
 
 %inline %{
 

@@ -129,7 +129,7 @@ def run(show_plots, accuracy):
     testFailCount, testMessages = unitTestSupport.compareArray([[0., 0., 0.]], dataCSS1pos,
                                                                accuracy, "CSS1 pos",
                                                                testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArray([CSS1.nHat_B], dataCSS1nHat,
+    testFailCount, testMessages = unitTestSupport.compareArray([unitTestSupport.EigenVector3d2np(CSS1.nHat_B)], dataCSS1nHat,
                                                                accuracy, "CSS1 nHat_B",
                                                                testFailCount, testMessages)
     testFailCount, testMessages = unitTestSupport.compareDoubleArray([CSS1.fov], dataCSS1fov,
@@ -149,10 +149,10 @@ def run(show_plots, accuracy):
                                                                      testFailCount, testMessages)
 
     # check CSS 2 output
-    testFailCount, testMessages = unitTestSupport.compareArray([CSS2.r_B], dataCSS2pos,
+    testFailCount, testMessages = unitTestSupport.compareArray([unitTestSupport.EigenVector3d2np(CSS2.r_B)], dataCSS2pos,
                                                                accuracy, "CSS2 pos",
                                                                testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArray([CSS2.nHat_B], dataCSS2nHat,
+    testFailCount, testMessages = unitTestSupport.compareArray([unitTestSupport.EigenVector3d2np(CSS2.nHat_B)], dataCSS2nHat,
                                                                accuracy, "CSS2 nHat_B",
                                                                testFailCount, testMessages)
     testFailCount, testMessages = unitTestSupport.compareDoubleArray([CSS2.fov], dataCSS2fov,

@@ -27,7 +27,6 @@ Basilisk Release Notes
     - spacecraft charging related modules
     - ability to integrate dynamics of multiple spacecraft simultaneously
     - support a way to do thread-safe messaging
-    - ability to integrate Python Basilisk modules in the same task and process as C/C++ modules
     - automated documentation build system when code is pushed to the repo
 
 
@@ -36,6 +35,7 @@ Version |release|
 -----------------
 - Created a new :ref:`pinholeCamera` module to support generation of landmarks-based measurements around a
   small body.
+- Corrected a memory leak in the ``swig`` access to standard vectors inside messages.
 - A new integrated example script :ref:`scenarioSmallBodyLandmarks` demonstrates the use of the pinhole camera module
 - Created a new example scenario :ref:`scenarioSpinningBodiesTwoDOF` that showcases the different capabilities of the
   :ref:`spinningBodyTwoDOFStateEffector` module.
@@ -44,10 +44,7 @@ Version |release|
 - Corrected an error with :ref:`magnetometer` where the RNG seed was passed to the Gauss-Markov noise model within the
   constructor and could therefore not be modified after creating the object. Furthermore, the noise model is now only
   used if all three components of the standard deviation parameter are initialized to a positive value.
-- Corrected an error with :ref:`magnetometer` where the RNG seed was passed to the Gauss-Markov noise model within the
-  constructor and could therefore not be modified after creating the object. Furthermore, the noise model is now only
-  used if all three components of the standard deviation parameter are initialized to a positive value.
-- Removed fswAuto and associated documenation, as the tool was outdated.
+- Removed fswAuto and associated documentation, as the tool was outdated.
 - Changed how C modules are wrapped as C++ classes. This makes handling C modules the same as C++ modules,
   removing the need for "Config" and "Wrap" objects. Updated all scenarios and test files for this new syntax.
   To convert prior script to use the new syntax, see :ref:`bskPrinciples-2` for the simple new
@@ -71,6 +68,23 @@ Version |release|
 - Created :ref:`sepPoint` to compute the reference attitude during SEP Point thrusting, with thruster alignment as
   first constraint, and interchangeable second and third constraint consisting in maximum sunlight incidence on the
   solar arrays, and keep-in constraint of a body-fixed direction around the Sun direction.
+- Implemented new syntax for variable logging. See :ref:`bskPrinciples-6`.
+
+.. warning::
+
+    SWIG files (``.i``) for modules should include ``%include "sys_model.i"`` instead of ``%include "sys_model.h"``
+    to take advantage of the new module variable logging feature.
+
+- Added prescribed angle and angle rates to :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyTwoDOFStateEffector`
+  modules.
+- Created a :ref:`scanningInstrumentController`, similar to :ref:`simpleInstrumentController`, but which constantly checks if the attitude error
+  and angular rate (optional) are within the requirement limits and sends an imaging command to a :ref:`simpleInstrument`.
+- Added a new scenario :ref:`scenarioHohmann` that performs a Hohmann transfer with attitude mode changes.
+  The basic attitude flight modes are implemented using the Basilisk event system.
+- updated conan support to latest `1.xx` version to provide support for macOS Sonoma
+- updated macOS `cspice` library to be compiled with Xcode 15.  This addresses some errors that appeared
+  when calling the prior pre-built `cspice` library.  The new library is backwards compatible with
+  prior versions of Xcode.
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------

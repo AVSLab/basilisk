@@ -107,22 +107,16 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     scSim.AddModelToTask(unitTaskName, extFTObject)
 
     #
+    #   Setup data logging
+    #
+    extFTObjectLog = extFTObject.logger(["forceExternal_N", "forceExternal_B", "torqueExternalPntB_B"])
+    scSim.AddModelToTask(unitTaskName, extFTObjectLog)
+
+    #
     #   initialize the simulation
     #
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(0.001))
-
-
-    #
-    #   Setup data logging
-    #
-    testProcessRate = macros.sec2nano(0.1)
-    variableForceN = "forceExternal_N"            # name the module variable to be logged
-    scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableForceN, testProcessRate, 0, 2, 'double')
-    variableForceB = "forceExternal_B"            # name the module variable to be logged
-    scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableForceB, testProcessRate, 0, 2, 'double')
-    variableTorque = "torqueExternalPntB_B"       # name the module variable to be logged
-    scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableTorque, testProcessRate, 0, 2, 'double')
 
     #
     #   run the simulation
@@ -131,20 +125,13 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
 
     extFTObject.computeForceTorque(scSim.TotalSim.CurrentNanos, macros.sec2nano(0.1))
     scSim.TotalSim.SingleStepProcesses()
-    scSim.RecordLogVars()
-
 
     # log the data
-    dataForceN = (scSim.GetLogVariableData(extFTObject.ModelTag+"."+variableForceN))[-1]
-    dataForceB = (scSim.GetLogVariableData(extFTObject.ModelTag+"."+variableForceB))[-1]
-    dataTorque = (scSim.GetLogVariableData(extFTObject.ModelTag+"."+variableTorque))[-1]
+    dataForceN = [extFTObjectLog.forceExternal_N[-1]]
+    dataForceB = [extFTObjectLog.forceExternal_B[-1]]
+    dataTorque = [extFTObjectLog.torqueExternalPntB_B[-1]]
 
     np.set_printoptions(precision=16)
-
-    # Remove time zero from list
-    dataForceN = [dataForceN[1:len(dataForceN)]]
-    dataForceB = [dataForceB[1:len(dataForceB)]]
-    dataTorque = [dataTorque[1:len(dataTorque)]]
 
     #
     #   set true position information

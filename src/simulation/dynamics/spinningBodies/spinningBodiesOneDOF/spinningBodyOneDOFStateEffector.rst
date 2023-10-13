@@ -25,6 +25,9 @@ The following table lists all the module input and output messages.  The module 
     * - motorLockInMsg
       - :ref:`ArrayEffectorLockMsgPayload`
       - (Optional) Input message for locking the axis
+    * - spinningBodyRefInMsg
+      - :ref:`HingedRigidBodyMsgPayload`
+      - (Optional) Input message for prescribing the angle and angle rate
     * - spinningBodyConfigLogOutMsg
       - :ref:`SCStatesMsgPayload`
       - Output message containing the spinning body inertial position and attitude states
@@ -95,6 +98,14 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
     lockArray.motorTorque = [1]
     lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
     spinningBody.motorLockInMsg.subscribeTo(lockMsg)
+
+#. (Optional) Connect an angle and angle rate reference message::
+
+    angleRef = messaging.HingedRigidBodyMsgPayload()
+    angleRef.theta = thetaRef
+    angleRef.thetaDot = thetaDotRef
+    angleRefMsg = messaging.HingedRigidBodyMsg().write(angleRef)
+    spinningBody.spinningBodyRefInMsg.subscribeTo(angleRefMsg)
 
 #. The angular states of the body are created using an output message ``spinningBodyOutMsg``.
 

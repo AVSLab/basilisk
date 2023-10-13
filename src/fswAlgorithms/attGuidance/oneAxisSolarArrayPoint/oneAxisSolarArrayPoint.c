@@ -284,7 +284,7 @@ void oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double 
 }
 
 /*! This helper function computes the second rotation that achieves the best incidence on the solar arrays maintaining the heading alignment */
-void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1Hat_B[3], double a2Hat_B[3], double R2R1[3][3])
+void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1Hat_B[3], double a2Hat_B[3], double R2R1[3][3], RefFrameSolution *refFrameSolution)
 {
     /*! define second rotation vector to coincide with the thrust direction in B coordinates */
     double e_psi[3];
@@ -304,61 +304,65 @@ void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], doubl
     double G = v3Dot(a2Hat_B, rHat_SB_R1);
 
     /*! compute exact solution or best solution depending on Delta */
-    double t, t1, t2, y, y1, y2, psi;
-    if (fabs(A) < epsilon) {
+    double psi;
+    double psi1;
+    double psi2;
+    double t1;
+    double t2;
+    double y1;
+    double y2;
+    if (Delta < -epsilon) {
         if (fabs(B) < epsilon) {
-            // zero-th order equation has no solution 
-            // the solution of the minimum problem is psi = MPI
-            psi = MPI;
+            psi1 = 0;
+            psi2 = MPI;
+            y1 = fabs(C);
+            y2 = fabs(A);
         }
         else {
-            // first order equation
-            t = - C / B;
-            psi = 2*atan(t);
+            double q = (A-C) / B;
+            t1 = (q + sqrt(q*q + 1));
+            t2 = (q - sqrt(q*q + 1));
+            psi1 = 2 * atan(t1);
+            psi2 = 2 * atan(t2);
+            y1 = (A*t1*t1 + B*t1 + C) / (1 + t1*t1);
+            y2 = (A*t2*t2 + B*t2 + C) / (1 + t2*t2);
+        }
+        // choose which returns a smaller fcn value between t1 and t2
+        psi = psi1;
+        if (fabs(y2) < fabs(y1)) {
+            psi = psi2;
+        }
+    }
+    else if (Delta > epsilon) {
+        if (fabs(A) < epsilon) {
+            t1 = -B/C;
+            psi1 = 2 * atan(t1);
+            y1 = (E*t1*t1 + F*t1 + G) / (1 + t1*t1);
+            psi2 = MPI;
+            y2 = E;
+        }
+        else {
+            t1 = (-B + sqrt(Delta)) / (2*A);
+            t2 = (-B - sqrt(Delta)) / (2*A);
+            psi1 = 2 * atan(t1);
+            psi2 = 2 * atan(t2);
+            y1 = (E*t1*t1 + F*t1 + G) / (1 + t1*t1);
+            y2 = (E*t2*t2 + F*t2 + G) / (1 + t2*t2);
+        }
+        psi = psi1;
+        if ((fabs(v3Dot(hRefHat_B, a2Hat_B)-1) > epsilon) && (y2 - y1 > epsilon)) {
+            psi = psi2;
         }
     }
     else {
-        if (Delta < 0) {
-            // second order equation has no solution 
-            // the solution of the minimum problem is found
-            if (fabs(B) < epsilon) {
-                t = 0.0;
-            }
-            else {
-                double q = (A-C) / B;
-                t1 = (q + sqrt(q*q + 1));
-                t2 = (q - sqrt(q*q + 1));
-                y1 = (A*t1*t1 + B*t1 + C) / (1 + t1*t1);
-                y2 = (A*t2*t2 + B*t2 + C) / (1 + t2*t2);
-
-                // choose which returns a smaller fcn value between t1 and t2
-                t = t1;
-                if (fabs(y2) < fabs(y1)) {
-                    t = t2;
-                }
-            }
-            psi = 2*atan(t);
-            y = (A*t*t + B*t + C) / (1 + t*t);
-            // check if the absolute fcn minimum is for psi = MPI
-            if (fabs(A) < fabs(y)) {
-                psi = MPI;
-            }
+        if (fabs(A) > epsilon) {
+            psi = 2 * atan(-B / (2 * A));
         }
         else {
-            // solution of the quadratic equation
-            t1 = (-B + sqrt(Delta)) / (2*A);
-            t2 = (-B - sqrt(Delta)) / (2*A);
-
-            // choose between t1 and t2 according to a2Hat
-            t = t1;            
-            if (fabs(v3Dot(hRefHat_B, a2Hat_B)-1) > epsilon) {
-                y1 = (E*t1*t1 + F*t1 + G) / (1 + t1*t1);
-                y2 = (E*t2*t2 + F*t2 + G) / (1 + t2*t2);
-                if (y2 - y1 > epsilon) {
-                    t = t2;
-                }
+            psi = MPI;
+            if (fabs(C) < epsilon) {
+                *refFrameSolution = indeterminate;
             }
-            psi = 2*atan(t);
         }
     }
 
@@ -426,9 +430,10 @@ void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rH
 
     /*! compute the second rotation DCM */
     double R2R1[3][3];
-    oasapComputeSecondRotation(hRefHat_B, rHat_SB_R1, a1Hat_B, a2Hat_B, R2R1);
+    RefFrameSolution refFrameSolution = determinate;
+    oasapComputeSecondRotation(hRefHat_B, rHat_SB_R1, a1Hat_B, a2Hat_B, R2R1, &refFrameSolution);
 
-    /* compute Sun direction in R2 frame components */
+    /*! compute Sun direction in R2 frame components */
     double rHat_SB_R2[3];
     m33MultV3(R2R1, rHat_SB_R1, rHat_SB_R2);
 
@@ -437,9 +442,39 @@ void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rH
     oasapComputeThirdRotation(alignmentPriority, hRefHat_B, rHat_SB_R2, a1Hat_B, R3R2);
 
     /*! compute reference frames w.r.t inertial frame */
-    double R1N[3][3], R2N[3][3];
-    m33MultM33(R1B, BN, R1N);
-    m33MultM33(R2R1, R1N, R2N);
-    m33MultM33(R3R2, R2N, RN);
+    if (refFrameSolution == determinate) {
+        double R1N[3][3];
+        double R2N[3][3];
+        m33MultM33(R1B, BN, R1N);
+        m33MultM33(R2R1, R1N, R2N);
+        m33MultM33(R3R2, R2N, RN);
+    }
+    else {
+        double n1[3];
+        double n2[3];
+        double n3[3] = {0, 0, 1};       // J200 Z axis
+        double NT[3][3];
+        m33tMultV3(BN, hReqHat_B, n1);
+        v3Cross(n3, n1, n2);
+        v3Normalize(n2, n2);
+        v3Cross(n1, n2, n3);
+        double r1[3];
+        double r2[3];
+        double r3[3] = {0, 0, 1};
+        double RT[3][3];
+        v3Copy(hRefHat_B, r1);
+        v3Cross(a1Hat_B, r1, r2);
+        v3Normalize(r2, r2);
+        v3Cross(r1, r2, r3);
+        for (int i=0; i<3; ++i) {
+            NT[i][0] = n1[i];
+            NT[i][1] = n2[i];
+            NT[i][2] = n3[i];
+            RT[i][0] = r1[i];
+            RT[i][1] = r2[i];
+            RT[i][2] = r3[i];
+        }
+        m33MultM33t(RT, NT, RN);
+    }
 }
 

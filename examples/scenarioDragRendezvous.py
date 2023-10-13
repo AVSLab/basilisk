@@ -255,10 +255,6 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     scSim.AddModelToTask(dynTaskName, chiefNav,800)
     scSim.AddModelToTask(dynTaskName, depNav,801)
     # scSim.AddModelToTask(dynTaskName, gravFactory.spiceObject, 999)
-    scSim.AddVariableForLogging(chiefDrag.ModelTag + ".forceExternal_B",
-                                      dynTimeStep, 0, 2, 'double')
-    scSim.AddVariableForLogging(depDrag.ModelTag + ".forceExternal_B",
-                                      dynTimeStep, 0, 2, 'double')
 
     ##  FSW setup
     #   Chief S/C
@@ -306,12 +302,14 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     numDataPoints = 21384
     samplingTime = simulationTime // (numDataPoints - 1)
 
-    #   Set up recorders
+    #   Set up recorders and loggers
     chiefStateRec = chiefSc.scStateOutMsg.recorder()
     depStateRec = depSc.scStateOutMsg.recorder()
     hillStateRec = hillStateNavObj.hillStateOutMsg.recorder()
     depAttRec = depAttRef.attRefOutMsg.recorder()
     chiefAttRec = chiefAttRef.attRefOutMsg.recorder()
+    chiefDragForceLog = chiefDrag.logger("forceExternal_B")
+    depDragForceLog = depDrag.logger("forceExternal_B")
     atmoRecs = []
     for msg in atmosphere.envOutMsgs:
         atmoRec = msg.recorder()
@@ -322,8 +320,11 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     scSim.AddModelToTask(dynTaskName, hillStateRec, 702)
     scSim.AddModelToTask(dynTaskName, depAttRec, 703)
     scSim.AddModelToTask(dynTaskName, chiefAttRec, 704)
+    scSim.AddModelToTask(dynTaskName, chiefDragForceLog, 705)
+    scSim.AddModelToTask(dynTaskName, depDragForceLog, 706)
+    
     for ind,rec in enumerate(atmoRecs):
-        scSim.AddModelToTask(dynTaskName, rec, 705+ind)
+        scSim.AddModelToTask(dynTaskName, rec, 707+ind)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
@@ -345,8 +346,8 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     print(f"Sim complete in {execTime} seconds, pulling data...")
     # ----- pull ----- #
     results_dict = {}
-    results_dict['chiefDrag_B'] = scSim.GetLogVariableData(chiefDrag.ModelTag + ".forceExternal_B")
-    results_dict['depDrag_B'] = scSim.GetLogVariableData(depDrag.ModelTag + ".forceExternal_B")
+    results_dict['chiefDrag_B'] = chiefDragForceLog.forceExternal_B
+    results_dict['depDrag_B'] = depDragForceLog.forceExternal_B
     results_dict['dynTimeData'] = chiefStateRec.times()
     results_dict['fswTimeData'] = depAttRec.times()
     results_dict['wiggum.r_BN_N'] = chiefStateRec.r_BN_N 
@@ -453,27 +454,27 @@ def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', u
 
     #   Debug plots
     plt.figure()
-    plt.plot(timeData[1:], depDrag[1:,1]-chiefDrag[1:,1],label="delta a_1")
-    plt.plot(timeData[1:], depDrag[1:,2]-chiefDrag[1:,2],label="delta a_2")
-    plt.plot(timeData[1:], depDrag[1:,3]-chiefDrag[1:,3],label="delta a_3")
+    plt.plot(timeData[1:], depDrag[1:,0]-chiefDrag[1:,0],label="delta a_1")
+    plt.plot(timeData[1:], depDrag[1:,1]-chiefDrag[1:,1],label="delta a_2")
+    plt.plot(timeData[1:], depDrag[1:,2]-chiefDrag[1:,2],label="delta a_3")
     plt.grid()
     plt.legend()
     plt.xlabel('Time')   
     plt.ylabel('Relative acceleration due to drag, body frame (m/s)')
 
     plt.figure()
-    plt.plot(timeData[1:], chiefDrag[1:,1],label="chief a_1")
-    plt.plot(timeData[1:], chiefDrag[1:,2],label="chief a_2")
-    plt.plot(timeData[1:], chiefDrag[1:,3],label="chief a_3")
+    plt.plot(timeData[1:], chiefDrag[1:,0],label="chief a_1")
+    plt.plot(timeData[1:], chiefDrag[1:,1],label="chief a_2")
+    plt.plot(timeData[1:], chiefDrag[1:,2],label="chief a_3")
     plt.grid()
     plt.legend()
     plt.xlabel('Time')   
     plt.ylabel('Relative acceleration due to drag, body frame (m/s)')
 
     plt.figure()
-    plt.plot(timeData[1:], depDrag[1:,1],label="dep a_1")
-    plt.plot(timeData[1:], depDrag[1:,2],label="dep a_2")
-    plt.plot(timeData[1:], depDrag[1:,3],label="dep a_3")
+    plt.plot(timeData[1:], depDrag[1:,0],label="dep a_1")
+    plt.plot(timeData[1:], depDrag[1:,1],label="dep a_2")
+    plt.plot(timeData[1:], depDrag[1:,2],label="dep a_3")
     plt.grid()
     plt.legend()
     plt.xlabel('Time')   

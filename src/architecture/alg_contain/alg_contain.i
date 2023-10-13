@@ -29,7 +29,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 
 %feature("copyctor");
-%include "sys_model.h"
+%include "sys_model.i"
 %include "alg_contain.h"
 
 %pythoncode %{

@@ -30,7 +30,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-%include "sys_model.h"
+%include "sys_model.i"
 %include "radiationPressure.h"
 
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"

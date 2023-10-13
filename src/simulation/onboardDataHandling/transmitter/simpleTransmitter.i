@@ -27,7 +27,7 @@
 %include "std_string.i"
 %include "carrays.i"
 %include "std_vector.i"
-%include "sys_model.h"
+%include "sys_model.i"
 %include "stdint.i"
 
 %include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"

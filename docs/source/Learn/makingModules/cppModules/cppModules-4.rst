@@ -19,7 +19,7 @@ The basic swig interface file looks like this:
     from Basilisk.architecture.swig_common_model import *
     %}
 
-    %include "sys_model.h"
+    %include "sys_model.i"
     %include "swig_conly_data.i"
 
     %include "someModule.h"

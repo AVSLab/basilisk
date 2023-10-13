@@ -30,7 +30,7 @@
 %include "std_vector.i"
 %include "swig_eigen.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "msmForceTorque.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
@@ -50,4 +50,3 @@ struct CmdForceInertialMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

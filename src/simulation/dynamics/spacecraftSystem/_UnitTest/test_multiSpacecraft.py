@@ -30,6 +30,7 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 import matplotlib.pyplot as plt
 from Basilisk.simulation import spacecraftSystem
 from Basilisk.utilities import macros
+from Basilisk.utilities import pythonVariableLogger
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import hingedRigidBodyStateEffector
 
@@ -182,20 +183,24 @@ def SCConnected(show_plots):
     dataLog = scSystem.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
+    scLog = pythonVariableLogger.PythonVariableLogger({
+        "totOrbEnergy": lambda _: scSystem.primaryCentralSpacecraft.totOrbEnergy,
+        "totOrbAngMomPntN_N": lambda _: scSystem.primaryCentralSpacecraft.totOrbAngMomPntN_N,
+        "totRotAngMomPntC_N": lambda _: scSystem.primaryCentralSpacecraft.totRotAngMomPntC_N,
+        "totRotEnergy": lambda _: scSystem.primaryCentralSpacecraft.totRotEnergy,
+    })
+    unitTestSim.AddModelToTask(unitTaskName, scLog)
+
     unitTestSim.InitializeSimulation()
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
     stopTime = 1.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    orbEnergy = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy")
+    orbEnergy = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbEnergy)
+    orbAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbAngMomPntN_N)
+    rotAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
+    rotEnergy = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotEnergy)
 
     r_BN_NOutput = dataLog.r_BN_N
     sigma_BNOutput = dataLog.sigma_BN

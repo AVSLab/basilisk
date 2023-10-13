@@ -160,7 +160,8 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     variableName = "dummy"                              # name the module variable to be logged
-    unitTestSim.AddVariableForLogging(module.ModelTag + "." + variableName, testProcessRate)
+    moduleLog = module.logger(variableName)
+    unitTestSim.AddModelToTask(unitTaskName, moduleLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -184,7 +185,7 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
 
     # This pulls the BSK module internal varialbe log from the simulation run.
     # Note, this should only be done for debugging as it is a slow process
-    variableState = unitTestSim.GetLogVariableData(module.ModelTag + "." + variableName)
+    variableState = unitTestSupport.addTimeColumn(moduleLog.times(), getattr(moduleLog, variableName))
 
     # set the filtered output truth states
     trueVector = []

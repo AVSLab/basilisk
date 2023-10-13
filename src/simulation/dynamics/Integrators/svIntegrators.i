@@ -52,8 +52,7 @@ _rk_adaptive_base_classes = {}
     }
 }
 
-%include "sys_model.h"
-%include "../_GeneralModuleFiles/dynamicObject.h"
+%include "sys_model.i"
 %include "../_GeneralModuleFiles/stateVecIntegrator.h"
 
 %include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"

@@ -250,9 +250,11 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     # Setup data logging before the simulation is initialized
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
     dataAtmoLog = atmo.envOutMsgs[0].recorder(samplingTime)
+    forceLog = dragEffector.logger("forceExternal_B", samplingTime)
+
     scSim.AddModelToTask(simTaskName, dataRec)
     scSim.AddModelToTask(simTaskName, dataAtmoLog)
-    scSim.AddVariableForLogging('DragEff.forceExternal_B', samplingTime, StartIndex=0, StopIndex=2)
+    scSim.AddModelToTask(simTaskName, forceLog)
 
     # Event to terminate the simulation
     scSim.createNewEvent("Deorbited", simulationTimeStep, True,
@@ -282,7 +284,7 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     # retrieve the logged data
     posData = dataRec.r_BN_N
     velData = dataRec.v_BN_N
-    dragForce = scSim.GetLogVariableData('DragEff.forceExternal_B')
+    dragForce = forceLog.forceExternal_B
     denseData = dataAtmoLog.neutralDensity
 
     figureList = plotOrbits(dataRec.times(), posData, velData, dragForce, denseData, oe, mu, planet, model)
@@ -348,7 +350,7 @@ def plotOrbits(timeAxis, posData, velData, dragForce, denseData, oe, mu, planet,
 
     # draw drag as a function of time
     fig, ax = register_fig(4)
-    plt.semilogy(timeAxis * macros.NANO2HOUR, np.linalg.norm(dragForce[:, 1:], 2, 1))
+    plt.semilogy(timeAxis * macros.NANO2HOUR, np.linalg.norm(dragForce, 2, 1))
     plt.xlabel('$t$ [hr]')
     plt.ylabel('$|F_drag|$ [N]')
 

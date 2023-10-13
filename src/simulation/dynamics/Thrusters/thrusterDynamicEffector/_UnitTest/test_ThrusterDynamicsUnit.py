@@ -97,6 +97,16 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
             simContainer.TotalSim.CurrentNanos * macros.NANO2SEC + simRate * macros.NANO2SEC)
 
 
+def fixMDotData(mDotData):
+    """This test was written before a bug in variable logging was fixed.
+    
+    This bug made it so consecutive logged zeros would get removed, which
+    is why we need to remove all zero rows at the beginning of mDotData
+    but one.
+    """
+    firstNonZeroRow = np.nonzero(mDotData[:,1])[0][0]
+    return np.row_stack([[0,0], mDotData[firstNonZeroRow:, :]])
+
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 
@@ -197,9 +207,8 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     thrDurationTime=duration*1./macros.NANO2SEC # Parametrized thrust duration
 
     #Configure a single thruster firing, create a message for it
-    TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceExternal_B', testRate, 0, 2)
-    TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
-    TotalSim.AddVariableForLogging('ACSThrusterDynamics.mDotTotal', testRate, 0, 0)
+    thrusterSetLog = thrusterSet.logger(["forceExternal_B", "torqueExternalPntB_B", "mDotTotal"])
+    TotalSim.AddModelToTask(unitTaskName, thrusterSetLog)
 
     ThrustMessage = messaging.THRArrayOnTimeCmdMsgPayload()
     if thrustNumber==1:
@@ -228,9 +237,10 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+sparetime))
 
         # Gather the Force and Torque results
-        thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
-        thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
-        mDotData = TotalSim.GetLogVariableData('ACSThrusterDynamics.mDotTotal')
+        thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
+        thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
+        mDotData = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
+        mDotData = fixMDotData(mDotData)
 
         # Auto Generate LaTex Figures
         format = r"width=0.8\textwidth"
@@ -386,9 +396,10 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
                 executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+sparetime))
 
                 # Extract log variables and plot the results
-                thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
-                thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
-                mDotData = TotalSim.GetLogVariableData('ACSThrusterDynamics.mDotTotal')
+                thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
+                thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
+                mDotData = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
+                mDotData = fixMDotData(mDotData)
 
                 snippetName = "Snippet" + "Ramp_" + str(rampsteps) +"steps_" + str(int(duration)) + "s"+  "_Cutoff" + cutoff + "_Rate" + str(
                     int(1. / (testRate * macros.NANO2SEC))) + "_Cutoff" + cutoff
@@ -501,9 +512,10 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
                 executeSimRun(TotalSim, thrusterSet, testRate, int(COrestart * 1.0 / macros.NANO2SEC + sparetime))
 
                 # Extract log variables and plot the results
-                thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
-                thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
-                mDotData = TotalSim.GetLogVariableData('ACSThrusterDynamics.mDotTotal')
+                thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
+                thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
+                mDotData = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
+                mDotData = fixMDotData(mDotData)
 
                 PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff +"_" + str(int(duration)) + "s"+"_testRate" + str(
                 int(1. / (testRate * macros.NANO2SEC)))
@@ -605,9 +617,10 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
             executeSimRun(TotalSim, thrusterSet, testRate, int(RDlength * 1.0 / macros.NANO2SEC + sparetime))
 
             # Extract log variables and plot the results
-            thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
-            thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
-            mDotData = TotalSim.GetLogVariableData('ACSThrusterDynamics.mDotTotal')
+            thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
+            thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
+            mDotData = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
+            mDotData = fixMDotData(mDotData)
 
             PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "rampDown" + rampDown+"_testRate" + str(
                 int(1. / (testRate * macros.NANO2SEC)))

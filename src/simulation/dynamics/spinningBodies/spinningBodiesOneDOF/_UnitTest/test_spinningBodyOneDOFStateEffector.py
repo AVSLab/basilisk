@@ -26,6 +26,7 @@ import inspect
 import os
 import matplotlib.pyplot as plt
 import numpy
+import numpy as np
 import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -42,12 +43,13 @@ from Basilisk.architecture import messaging
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-@pytest.mark.parametrize("cmdTorque, lock", [
-    (0.0, False)
-    , (0.0, True)
-    , (1.0, False)
+@pytest.mark.parametrize("cmdTorque, lock, thetaRef", [
+    (0.0, False, 0.0)
+    , (0.0, True, 0.0)
+    , (1.0, False, 0.0)
+    , (0.0, False, 20.0 * macros.D2R)
 ])
-def test_spinningBody(show_plots, cmdTorque, lock):
+def test_spinningBody(show_plots, cmdTorque, lock, thetaRef):
     r"""
     **Validation Test Description**
 
@@ -68,11 +70,11 @@ def test_spinningBody(show_plots, cmdTorque, lock):
 
     against their initial values.
     """
-    [testResults, testMessage] = spinningBody(show_plots, cmdTorque, lock)
+    [testResults, testMessage] = spinningBody(show_plots, cmdTorque, lock, thetaRef)
     assert testResults < 1, testMessage
 
 
-def spinningBody(show_plots, cmdTorque, lock):
+def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
@@ -85,7 +87,7 @@ def spinningBody(show_plots, cmdTorque, lock):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -116,7 +118,9 @@ def spinningBody(show_plots, cmdTorque, lock):
     spinningBody.sHat_S = [[0], [-1], [0]]
     spinningBody.thetaInit = 5.0 * macros.D2R
     spinningBody.thetaDotInit = -1.0 * macros.D2R
-    spinningBody.k = 1.0
+    spinningBody.k = 100.0
+    if thetaRef != 0.0:
+        spinningBody.c = 50
     if lock:
         spinningBody.thetaDotInit = 0.0
     spinningBody.ModelTag = "SpinningBody"
@@ -137,6 +141,13 @@ def spinningBody(show_plots, cmdTorque, lock):
         lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
         spinningBody.motorLockInMsg.subscribeTo(lockMsg)
 
+    # Create the reference message
+    angleRef = messaging.HingedRigidBodyMsgPayload()
+    angleRef.theta = thetaRef
+    angleRef.thetaDot = 0.0
+    angleRefMsg = messaging.HingedRigidBodyMsg().write(angleRef)
+    spinningBody.spinningBodyRefInMsg.subscribeTo(angleRefMsg)
+
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, spinningBody)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
@@ -153,14 +164,12 @@ def spinningBody(show_plots, cmdTorque, lock):
     datLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
+    # Add energy and momentum variables to log
+    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
+    unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
+    
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
-
-    # Add energy and momentum variables to log
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
 
     # Add states to log
     thetaData = spinningBody.spinningBodyOutMsg.recorder()
@@ -172,10 +181,10 @@ def spinningBody(show_plots, cmdTorque, lock):
     unitTestSim.ExecuteSimulation()
 
     # Extract the logged variables
-    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
     theta = thetaData.theta
     thetaDot = thetaData.thetaDot
 
@@ -260,8 +269,8 @@ def spinningBody(show_plots, cmdTorque, lock):
             testMessages.append(
                 "FAILED: Spinning Body integrated test failed rotational angular momentum unit test")
 
-    # Only check rotational energy if no torques are applied
-    if cmdTorque == 0.0:
+    # Only check rotational energy if no torques and no damping are applied
+    if cmdTorque == 0.0 and thetaRef == 0.0:
         for i in range(0, len(initialRotEnergy)):
             # check a vector values
             if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i], initialRotEnergy[i], 1, accuracy):
@@ -274,6 +283,11 @@ def spinningBody(show_plots, cmdTorque, lock):
             testFailCount += 1
             testMessages.append("FAILED: Spinning Body integrated test failed orbital energy unit test")
 
+    if thetaRef != 0.0:
+        if not unitTestSupport.isDoubleEqual(theta[-1], thetaRef, 0.01):
+            testFailCount += 1
+            testMessages.append("FAILED: Spinning Body integrated test failed angle convergence unit test")
+
     if testFailCount == 0:
         print("PASSED: " + " Spinning Body gravity integrated test")
 
@@ -284,4 +298,4 @@ def spinningBody(show_plots, cmdTorque, lock):
 
 
 if __name__ == "__main__":
-    spinningBody(True, 0.0, False)
+    spinningBody(True, 0.0, False, 0.0 * macros.D2R)

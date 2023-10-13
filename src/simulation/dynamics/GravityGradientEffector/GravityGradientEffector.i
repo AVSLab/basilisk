@@ -32,7 +32,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 
 // Instantiate templates used by example
-%include "sys_model.h"
+%include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"

@@ -140,9 +140,11 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     dataLog = BACObject.angOutMsg.recorder()
     TotalSim.AddModelToTask(unitTaskName, dataLog)
 
+    BACObjectLog = BACObject.logger("boreVec_Po")
+    TotalSim.AddModelToTask(unitTaskName, BACObjectLog)
+
     # Execute simulation
     TotalSim.InitializeSimulation()
-    TotalSim.AddVariableForLogging(BACObject.ModelTag + ".boreVec_Po", 1, 0, 2, "double")
     TotalSim.ExecuteSimulation()
     ###################################################################################################################
     #
@@ -150,7 +152,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
 
     simMiss = dataLog.missAngle
     simAz = dataLog.azimuth
-    simBoreVecPt = TotalSim.GetLogVariableData(BACObject.ModelTag + ".boreVec_Po")
+    simBoreVecPt = BACObjectLog.boreVec_Po
 
     # Truth values
     dcm_BN = RigidBodyKinematics.MRP2C(stateMessage.sigma_BN)
@@ -193,7 +195,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     # Set tolersnce
     AllowTolerance = 1E-10
     boreVecPoint_final = [numpy.ndarray.tolist(boreVecPoint_1)]
-    simBoreVecPt_final = [numpy.delete([simBoreVecPt[0]],0)]
+    simBoreVecPt_final = [simBoreVecPt[0]]
 
     testFailCount, testMessages = unitTestSupport.compareArray(boreVecPoint_final, simBoreVecPt_final,
                                                                AllowTolerance,

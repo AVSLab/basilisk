@@ -28,7 +28,7 @@
 %include "std_string.i"
 %include "swig_conly_data.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "hingedRigidBodyMotor.h"
 
 %include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
@@ -40,4 +40,3 @@ struct ArrayMotorTorqueMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

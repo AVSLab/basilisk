@@ -254,11 +254,6 @@ void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat &mDst, double num){
  * being applied.
  * @param mSource source image
  * @param mDst destination of modified image
- * @param gaussian scaling factor for gaussian noise
- * @param darkCurrent scaling factor for dark current
- * @param saltPepper scaling factor for hot and dead pixels
- * @param cosmicRays number of cosmic rays to add
- * @param blurparam size of blur to apply
  * @return void
  */
 void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
@@ -306,7 +301,7 @@ void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
 /*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle
  * Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void Camera::UpdateState(uint64_t currentSimNanos)
 {

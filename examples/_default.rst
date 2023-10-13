@@ -50,6 +50,7 @@ Attitude Regulation Control
    Complex Attitude Pointing in Deep Space <scenarioAttitudeFeedbackNoEarth>
    Sun-Pointing Constraint Violation in Space <scenarioAttitudeConstraintViolation>
    Inertial Pointing with Spice prescribed translational motion <scenarioSpiceSpacecraft>
+   Basic attitude pointing flight mode with Hohmann transfer <scenarioHohmann>
 
 
 Attitude Guidance

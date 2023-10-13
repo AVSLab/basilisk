@@ -28,7 +28,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "stdint.i"
 %include "swig_eigen.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 %include "ExtPulsedTorque.h"
 

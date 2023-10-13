@@ -141,8 +141,9 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
 
     # Setup logging on the test spacecraftReconfig output message so that we get all the writes to it
     dataLog = module.attRefOutMsg.recorder()
+    moduleLog = module.logger("resetPeriod")
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
-    unitTestSim.AddVariableForLogging(module.ModelTag + ".resetPeriod", testProcessRate)
+    unitTestSim.AddModelToTask(unitTaskName, moduleLog)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -158,7 +159,7 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
 
     # This pulls the actual data log from the simulation run.
     attOutput = dataLog.sigma_RN
-    resetPeriod = unitTestSim.GetLogVariableData(module.ModelTag + ".resetPeriod")
+    resetPeriod = unitTestSupport.addTimeColumn(moduleLog.times(), moduleLog.resetPeriod)
     # set the filtered output truth states
     if useRefAttitude:
         trueVector = [[1.0,0.0,0.0]]

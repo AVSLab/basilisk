@@ -48,7 +48,7 @@ from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
 %include "swig_eigen.i"
-%include "sys_model.h"
+%include "sys_model.i"
 %include "../_GeneralModuleFiles/powerStorageBase.h"
 %include "simplePowerMonitor.h"
 %include "swig_conly_data.i"

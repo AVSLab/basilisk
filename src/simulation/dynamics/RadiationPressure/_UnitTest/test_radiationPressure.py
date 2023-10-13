@@ -143,18 +143,12 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     srpDynEffector.sunEphmInMsg.subscribeTo(sunMsg)
     srpDynEffector2.sunEphmInMsg.subscribeTo(sunMsg)
 
-    unitTestSim.AddVariableForLogging(srpDynEffector.ModelTag + ".forceExternal_B",
-                                      simulationTime, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(srpDynEffector.ModelTag + ".forceExternal_N",
-                                      simulationTime, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(srpDynEffector.ModelTag + ".torqueExternalPntB_B",
-                                      simulationTime, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(srpDynEffector2.ModelTag + ".forceExternal_B",
-                                      simulationTime, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(srpDynEffector2.ModelTag + ".forceExternal_N",
-                                      simulationTime, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(srpDynEffector2.ModelTag + ".torqueExternalPntB_B",
-                                      simulationTime, 0, 2, 'double')
+    srpDynEffectorLog = [
+        effector.logger(["forceExternal_B", "forceExternal_N", "torqueExternalPntB_B"])
+        for effector in [srpDynEffector, srpDynEffector2]
+    ]
+    for effLog in srpDynEffectorLog:
+        unitTestSim.AddModelToTask(testTaskName, effLog)
 
     unitTestSim.InitializeSimulation()
 
@@ -164,15 +158,14 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     srpDynEffector.computeForceTorque(unitTestSim.TotalSim.CurrentNanos, testTaskRate)
     srpDynEffector2.computeForceTorque(unitTestSim.TotalSim.CurrentNanos, testTaskRate)
     unitTestSim.TotalSim.SingleStepProcesses()
-    unitTestSim.RecordLogVars()
 
-    srpDataForce_B = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".forceExternal_B")
-    srpDataForce_N = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".forceExternal_N")
-    srpTorqueData = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".torqueExternalPntB_B")
+    srpDataForce_B = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_B)
+    srpDataForce_N = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_N)
+    srpTorqueData = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].torqueExternalPntB_B)
 
-    srp2DataForce_B = unitTestSim.GetLogVariableData(srpDynEffector2.ModelTag + ".forceExternal_B")
-    srp2DataForce_N = unitTestSim.GetLogVariableData(srpDynEffector2.ModelTag + ".forceExternal_N")
-    srp2TorqueData = unitTestSim.GetLogVariableData(srpDynEffector2.ModelTag + ".torqueExternalPntB_B")
+    srp2DataForce_B = unitTestSupport.addTimeColumn(srpDynEffectorLog[1].times(), srpDynEffectorLog[1].forceExternal_B)
+    srp2DataForce_N = unitTestSupport.addTimeColumn(srpDynEffectorLog[1].times(), srpDynEffectorLog[1].forceExternal_N)
+    srp2TorqueData = unitTestSupport.addTimeColumn(srpDynEffectorLog[1].times(), srpDynEffectorLog[1].torqueExternalPntB_B)
 
     errTol = 1E-12
     if modelType == "cannonball":
