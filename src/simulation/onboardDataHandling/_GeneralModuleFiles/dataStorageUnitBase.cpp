@@ -53,11 +53,6 @@ void DataStorageUnitBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousTime = 0;
 
-    //! - Zero out the partitions
-    for(uint64_t i = 0; i < this->storedData.size(); i++){
-        this->storedData[i].dataInstanceSum = 0.0;
-    }
-
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
 
