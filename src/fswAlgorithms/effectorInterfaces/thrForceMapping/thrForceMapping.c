@@ -180,8 +180,8 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     {
         substractMin(F, configData->numThrusters);
     }
-    
-    if (configData->thrForceSign<0 || configData->use2ndLoop)
+
+    if ((configData->thrForceSign<0 && configData->numControlAxes<3) || configData->use2ndLoop)
     {
         counterPosForces = 0;
         memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
