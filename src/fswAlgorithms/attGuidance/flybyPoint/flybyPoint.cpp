@@ -130,7 +130,7 @@ void FlybyPoint::UpdateState(uint64_t CurrentSimNanos)
     /*! compute rotation angle of reference frame from last read time */
     double theta;
     if (this->singularityFlag == nonSingular) {
-        theta = atan(tan(this->gamma0) + this->f0 / cos(this->gamma0) * dt) - this->gamma0;
+        theta = atan(tan(this->gamma0) +this->f0 / cos(this->gamma0) * dt) - this->gamma0;
     }
     else {
         theta = 0;
@@ -154,6 +154,10 @@ void FlybyPoint::UpdateState(uint64_t CurrentSimNanos)
 
     /*! populate attRefOut with reference frame information */
     C2MRP(RtN, attMsgBuffer.sigma_RN);
+    if (this->signOfOrbitNormalFrameVector == -1) {
+        double halfRotationX[3] = {1, 0, 0};
+        addMRP(attMsgBuffer.sigma_RN, halfRotationX, attMsgBuffer.sigma_RN);
+    }
     m33tMultV3(RtN, omega_RN_R, attMsgBuffer.omega_RN_N);
     m33tMultV3(RtN, omegaDot_RN_R, attMsgBuffer.domega_RN_N);
 
