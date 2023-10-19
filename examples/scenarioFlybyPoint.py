@@ -190,10 +190,11 @@ def run(show_plots, zeroEarthGravity, dtFilterData):
     flybyGuid = flybyPoint.FlybyPoint()
     flybyGuid.ModelTag = "flybyPoint"
     flybyGuid.dtFilterData = dtFilterData
+    flybyGuid.signOfOrbitNormalFrameVector = -1
     scSim.AddModelToTask(simTaskName, flybyGuid)
 
     cameraAxis_B = np.array([0, 1, 0])
-    outOfPlaneAxis_B = np.array([1, 0, 0])
+    outOfPlaneAxis_B = np.array([flybyGuid.signOfOrbitNormalFrameVector, 0, 0])
     crossProductAxis_B = np.cross(cameraAxis_B, outOfPlaneAxis_B)
     R0R = np.array([-cameraAxis_B,
                     crossProductAxis_B,
@@ -300,6 +301,9 @@ def run(show_plots, zeroEarthGravity, dtFilterData):
     for i in range(len(dataPos)):
         ur = dataPos[i] / np.linalg.norm(dataPos[i])
         uh = np.cross(dataPos[i], dataVel[i]) / np.linalg.norm(np.cross(dataPos[i], dataVel[i]))
+        ut = np.cross(uh, ur)
+        if flybyGuid.signOfOrbitNormalFrameVector == -1:
+            uh = np.cross(ut, ur)
         BN = rbk.MRP2C(att[i])
         NB = BN.transpose()
         cameraAxis_N.append(np.matmul(NB, cameraAxis_B))
