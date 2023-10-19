@@ -81,10 +81,12 @@ Version |release|
   and angular rate (optional) are within the requirement limits and sends an imaging command to a :ref:`simpleInstrument`.
 - Added a new scenario :ref:`scenarioHohmann` that performs a Hohmann transfer with attitude mode changes.
   The basic attitude flight modes are implemented using the Basilisk event system.
-- updated conan support to latest `1.xx` version to provide support for macOS Sonoma
-- updated macOS `cspice` library to be compiled with Xcode 15.  This addresses some errors that appeared
-  when calling the prior pre-built `cspice` library.  The new library is backwards compatible with
+- updated conan support to latest ``1.xx`` version to provide support for macOS Sonoma
+- updated macOS ``cspice`` library to be compiled with Xcode 15.  This addresses some errors that appeared
+  when calling the prior pre-built ``cspice`` library.  The new library is backwards compatible with
   prior versions of Xcode.
+- Fixed a bug in the conanfile where the ``stderr`` output from a ``subprocess.Popen`` call was being interpreted as an
+  error. Rather, the process return code (0 for success, and anything else for failure) indicates the success.
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------
