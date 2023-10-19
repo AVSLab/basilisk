@@ -136,7 +136,7 @@ Version 2.2.0 (June 28, 2023)
 - Reworked how integrators are implemented. New Runge-Kutta integrators may
   now be added simply by specifying the relevant coefficients.
 - Added a scenario that showcases differences between integrators. See :ref:`scenarioIntegratorsComparison`
-
+- Updated :ref:`thrusterPlatformReference` to add an integral feedback term which dumps steady-state momentum in case of uncertainties on the CM location.
 
 Version 2.1.7 (March 24, 2023)
 ------------------------------

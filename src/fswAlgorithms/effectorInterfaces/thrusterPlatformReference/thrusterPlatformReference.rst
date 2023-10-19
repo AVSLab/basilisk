@@ -53,10 +53,14 @@ This module computes a direction cosine matrix :math:`[\mathcal{FM}]` that descr
 When the optional input messages ``rwConfigDataInMsg`` and ``rwSpeedsInMsg`` the user can specify an input parameter ``K``, which is the proportional gain of a control gain that computes an offset with respect to the center of mass: this allows for the thruster to apply a torque on the system that dumps the momentum accumulated on the wheels. Such control law has the expression:
 
 .. math:: 
-    \boldsymbol{d} = \frac{\kappa}{t^2} (\boldsymbol{t} \times \boldsymbol{H}_w)
+    \boldsymbol{d} = -\frac{1}{t^2} \boldsymbol{t} \times(\kappa \boldsymbol{h}_w + \kappa_I \boldsymbol{H}_w)
 
-where :math:`\boldsymbol{H}_w` is the momentum on the wheels.
+where :math:`\boldsymbol{h}_w` is the momentum on the wheels and :math:`\boldsymbol{H}_w` the integral over time of the momentum:
 
+.. math::
+    \boldsymbol{H}_w = \int_{t_0}^t \boldsymbol{h}_w \text{d}t.
+
+The inputs ``theta1Max`` and ``theta2Max`` are used to set bounds on the output reference angles for the platform. If there are no mechanical bounds, setting these inputs to a negative value bypasses the routine that bounds these angles.
 
 Module Assumptions and Limitations
 ----------------------------------
@@ -76,11 +80,14 @@ User Guide
 The required module configuration is::
 
     platform = thrusterPlatformReference.thrusterPlatformReference()
-    platform.ModelTag = "platformReference"
-    platform.sigma_MB = sigma_MB
-    platform.r_BM_M = r_BM_M
-    platform.r_FM_F = r_FM_F
-    platform.K      = K
+    platform.ModelTag  = "platformReference"
+    platform.sigma_MB  = sigma_MB
+    platform.r_BM_M    = r_BM_M
+    platform.r_FM_F    = r_FM_F
+    platform.K         = K
+    platform.Ki        = Ki
+    platform.theta1Max = theta1Max
+    platform.theta2Max = theta2Max
     scSim.AddModelToTaskAddModelToTask(simTaskName, platform)
  	
 The module is configurable with the following parameters:
@@ -104,3 +111,12 @@ The module is configurable with the following parameters:
     * - ``K``
       - 0
       - proportional gain of the momentum dumping control loop
+    * - ``Ki``
+      - 0
+      - integral gain of the momentum dumping control loop
+    * - ``theta1Max``
+      - 0
+      - absolute bound on tip angle
+    * - ``theta2Max``
+      - 0
+      - absolute bound on tilt angle
