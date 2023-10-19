@@ -55,6 +55,12 @@ void Reset_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callT
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvExecuteGuidance.burnDataInMsg wasn't connected.");
     }
     configData->prevCallTime = 0;
+
+    /*! - use default value of 2 seconds for control period of first call if not specified.
+     * Control period (FSW rate) is computed dynamically for any subsequent calls.
+     */
+    configData->defaultControlPeriod = (0.0 == configData->defaultControlPeriod) ?
+                                        2.0 : configData->defaultControlPeriod;
 }
 
 
@@ -85,7 +91,14 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
     navData = NavTransMsg_C_read(&configData->navDataInMsg);
     localBurnData = DvBurnCmdMsg_C_read(&configData->burnDataInMsg);
 
-    burnDt = (double) ((int64_t) callTime - (int64_t) configData->prevCallTime)*NANO2SEC;
+    /*! - The first time update() is called there is no information on the time step.
+     *    Use control period (FSW time step) as burn time delta-t */
+	if(configData->prevCallTime == 0) {
+        burnDt = configData->defaultControlPeriod;
+	} else {
+        /*! - compute burn time delta-t (control time period) */
+        burnDt = (double) ((int64_t) callTime - (int64_t) configData->prevCallTime)*NANO2SEC;
+    }
     configData->prevCallTime = callTime;
     v3SetZero(burnAccum);
     if((configData->burnExecuting == 0 && callTime >= localBurnData.burnStartTime)

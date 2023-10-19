@@ -43,6 +43,7 @@ typedef struct {
     uint64_t prevCallTime;   /*!< [-] Call time register for computing total burn time*/
     double minTime;           /*!< [s] Minimum count of burn time allowed to elapse*/
     double maxTime;           /*!< [s] Maximum count of burn time allowed to elapse*/
+    double defaultControlPeriod; /*!< [s] Default control period used for first call*/
 
     BSKLogger *bskLogger;   //!< BSK Logging
 }dvExecuteGuidanceConfig;
