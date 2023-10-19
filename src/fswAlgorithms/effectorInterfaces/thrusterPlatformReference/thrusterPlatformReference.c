@@ -65,6 +65,11 @@ void Reset_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configData
     else {
         configData->momentumDumping = No;
     }
+
+    /*! set the RW momentum integral to zero */
+    v3SetZero(configData->hsInt_M);
+    v3SetZero(configData->priorHs_M);
+    configData->priorTime = callTime;
 }
 
 
@@ -79,7 +84,6 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
     /*! - Create and assign message buffers */
     VehicleConfigMsgPayload    vehConfigMsgIn = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
     THRConfigMsgPayload        thrusterConfigFIn = THRConfigMsg_C_read(&configData->thrusterConfigFInMsg);
-    RWSpeedMsgPayload          rwSpeedMsgIn = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
     HingedRigidBodyMsgPayload  hingedRigidBodyRef1Out = HingedRigidBodyMsg_C_zeroMsgPayload();
     HingedRigidBodyMsgPayload  hingedRigidBodyRef2Out = HingedRigidBodyMsg_C_zeroMsgPayload();
     BodyHeadingMsgPayload      bodyHeadingOut = BodyHeadingMsg_C_zeroMsgPayload();
@@ -104,31 +108,76 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
     double FM[3][3];
     tprComputeFinalRotation(r_CM_M, r_TM_F, T_F, FM);
 
-    /*! compute net RW momentum */
-    double vec3[3], hs_B[3], hs_M[3];
-    v3SetZero(hs_B);
-    for (int i=0; i<configData->rwConfigParams.numRW; i++) {
-        v3Scale(configData->rwConfigParams.JsList[i]*rwSpeedMsgIn.wheelSpeeds[i], &configData->rwConfigParams.GsMatrix_B[i*3], vec3);
-        v3Add(hs_B, vec3, hs_B);
+    if (configData->momentumDumping == Yes) {
+        RWSpeedMsgPayload rwSpeedMsgIn = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
+
+        /*! compute net RW momentum */
+        double vec3[3];
+        double hs_B[3];
+        v3SetZero(hs_B);
+        for (int i = 0; i < configData->rwConfigParams.numRW; i++) {
+            v3Scale(configData->rwConfigParams.JsList[i] * rwSpeedMsgIn.wheelSpeeds[i],
+                    &configData->rwConfigParams.GsMatrix_B[i * 3], vec3);
+            v3Add(hs_B, vec3, hs_B);
+        }
+        double hs_M[3];
+        m33tMultV3(MB, hs_B, hs_M);
+
+        /*! update integral term */
+        double DeltaHsInt_M[3];
+        v3Add(configData->priorHs_M, hs_M, DeltaHsInt_M);
+        double dt = (callTime - configData->priorTime) * NANO2SEC;
+        v3Scale(0.5*dt, DeltaHsInt_M, DeltaHsInt_M);
+        v3Add(configData->hsInt_M, DeltaHsInt_M, configData->hsInt_M);
+        v3Copy(hs_M, configData->priorHs_M);
+        configData->priorTime = callTime;
+
+        /*! compute offset vector */
+        double T_M[3];
+        m33tMultV3(FM, T_F, T_M);
+        double H[3];
+        v3Scale(configData->K, hs_M, H);
+        if (configData->Ki > 0) {
+            double Hint[3];
+            v3Scale(configData->Ki, configData->hsInt_M, Hint);
+            v3Add(H, Hint, H);
+        }
+        double d_M[3];
+        v3Cross(T_M, H, d_M);
+        v3Scale(-1/v3Dot(T_M, T_M), d_M, d_M);
+
+        /*! recompute thrust direction and FM matrix based on offset */
+        double r_CMd_M[3];
+        v3Add(r_CM_M, d_M, r_CMd_M);
+        tprComputeFinalRotation(r_CMd_M, r_TM_F, T_F, FM);
     }
-    m33tMultV3(MB, hs_B, hs_M);
 
-    /*! compute offset vector */
-    double T_M[3];
-    m33tMultV3(FM, T_F, T_M);
-    double d_M[3];
-    v3Cross(T_M, hs_M, d_M);
-    v3Scale(-configData->K/v3Dot(T_M, T_M), d_M, d_M);
+    double theta1 = atan2(FM[1][2], FM[1][1]);
+    double theta2 = atan2(FM[2][0], FM[0][0]);
 
-    /*! recompute thrust direction and FM matrix based on offset */
-    double r_CMd_M[3];
-    v3Add(r_CM_M, d_M, r_CMd_M);
-    tprComputeFinalRotation(r_CMd_M, r_TM_F, T_F, FM);
+    /*! bound reference angles between limits */
+    if ((configData->theta1Max > epsilon) && (theta1 > configData->theta1Max)) {
+        theta1 = configData->theta1Max;
+    }
+    else if ((configData->theta1Max > epsilon) && (theta1 < -configData->theta1Max)) {
+        theta1 = -configData->theta1Max;
+    }
+    if ((configData->theta2Max > epsilon) && (theta2 > configData->theta2Max)) {
+        theta2 = configData->theta2Max;
+    }
+    else if ((configData->theta2Max > epsilon) && (theta2 < -configData->theta2Max)) {
+        theta2 = -configData->theta2Max;
+    }
+
+    /*! rewrite DCM with updated angles */
+    FM[0][0] = cos(theta2);     FM[0][1] = sin(theta1)*sin(theta2);     FM[0][2] = -cos(theta1)*sin(theta2);
+    FM[1][0] = 0;               FM[1][1] = cos(theta1);                 FM[1][2] = sin(theta1);
+    FM[2][0] = sin(theta2);     FM[2][1] = -sin(theta1)*cos(theta2);    FM[2][2] = cos(theta1)*cos(theta2);
 
     /*! extract theta1 and theta2 angles */
-    hingedRigidBodyRef1Out.theta = atan2(FM[1][2], FM[1][1]);
+    hingedRigidBodyRef1Out.theta = theta1;
     hingedRigidBodyRef1Out.thetaDot = 0;
-    hingedRigidBodyRef2Out.theta = atan2(FM[2][0], FM[0][0]);
+    hingedRigidBodyRef2Out.theta = theta2;
     hingedRigidBodyRef2Out.thetaDot = 0;
 
     /*! write output spinning body messages */
