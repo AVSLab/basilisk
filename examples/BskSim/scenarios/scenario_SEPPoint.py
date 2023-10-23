@@ -169,13 +169,17 @@ class scenario_SEPPoint(BSKSim, BSKScenario):
         for sc in range(self.numberSpacecraft):
 
             thrusterFlag = FswModels[sc].thrusterFlag
+            cmEstimation = FswModels[sc].cmEstimation
 
             # log the vehicle configuration message
             self.vehConfigLog.append(DynModels[sc].simpleMassPropsObject.vehicleConfigOutMsg.recorder(self.samplingTime))
             self.AddModelToTask(DynModels[sc].taskName, self.vehConfigLog[sc])
 
             # log the fsw vehicle configuration message
-            self.fswVehConfigLog.append(FswModels[sc].fswVehConfigMsg.recorder(self.samplingTime))
+            if cmEstimation:
+                self.fswVehConfigLog.append(FswModels[sc].cmEstimationData.vehConfigOutMsg.recorder(self.samplingTime))
+            else:
+                self.fswVehConfigLog.append(FswModels[sc].fswVehConfigMsg.recorder(self.samplingTime))
             self.AddModelToTask(DynModels[sc].taskName, self.fswVehConfigLog[sc])
 
             # log the navigation messages
