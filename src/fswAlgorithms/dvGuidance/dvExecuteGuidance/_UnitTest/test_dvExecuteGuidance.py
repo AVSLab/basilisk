@@ -86,6 +86,7 @@ def dvExecuteGuidanceTestFunction(show_plots, p1_dv, p2_tmin, p3_tmax):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
+    module.defaultControlPeriod = updateRate
     module.minTime = p2_tmin
     module.maxTime = p3_tmax
 
@@ -137,8 +138,8 @@ def dvExecuteGuidanceTestFunction(show_plots, p1_dv, p2_tmin, p3_tmax):
         unitTestSim.ExecuteSimulation()
 
         if (np.linalg.norm(navTransMsgData.vehAccumDV) >= np.linalg.norm(dvBurnCmdMsgData.dvInrtlCmd)) and \
-                (updateRate * i > module.minTime) or \
-                (module.maxTime != 0.0 and updateRate * i > module.maxTime):
+                (updateRate * (i+1) > module.minTime) or \
+                (module.maxTime != 0.0 and updateRate * (i+1) > module.maxTime):
             onTimeTrue[i] = np.zeros(numThrusters)
             burnExecutingTrue[i] = 0
             burnCompleteTrue[i] = 1
