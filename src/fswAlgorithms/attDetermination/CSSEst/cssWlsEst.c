@@ -56,6 +56,10 @@ void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t module
     }
 
     configData->cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
+    if (configData->cssConfigInBuffer.nCSS > MAX_N_CSS_MEAS) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "cssWIsEst.cssDataInMsg.nCSS must not be greater than "
+                                                  "MAX_N_CSS_MEAS value.");
+    }
 
     configData->priorSignalAvailable = 0;
     v3SetZero(configData->dOld);
