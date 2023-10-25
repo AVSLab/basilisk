@@ -41,10 +41,10 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
-@pytest.mark.parametrize("stepAngle", [0.01 * (np.pi / 180), 0.5 * (np.pi / 180), 1.0 * (np.pi / 180)])
-@pytest.mark.parametrize("stepTime", [0.1, 0.5, 1])
+@pytest.mark.parametrize("stepAngle", [0.008 * (np.pi / 180), 0.01 * (np.pi / 180), 0.5 * (np.pi / 180)])
+@pytest.mark.parametrize("stepTime", [0.008, 0.1, 0.5])
 @pytest.mark.parametrize("initialMotorAngle", [-5 * (np.pi / 180), 0.0, 60.0 * (np.pi / 180)])
-@pytest.mark.parametrize("desiredMotorAngle", [0.0, 10.6 * (np.pi / 180), 60.005 * (np.pi / 180)])
+@pytest.mark.parametrize("desiredMotorAngle", [0.0, 10.6 * (np.pi / 180), 60.0051 * (np.pi / 180)])
 def test_stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle, desiredMotorAngle):
     r"""
     **Validation Test Description**
@@ -87,7 +87,7 @@ def stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, initialM
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create the test thread
-    testProcessRate = macros.sec2nano(0.1)     # update process rate update time
+    testProcessRate = macros.sec2nano(stepTime)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
