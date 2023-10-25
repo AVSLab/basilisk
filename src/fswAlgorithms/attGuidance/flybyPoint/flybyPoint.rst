@@ -62,6 +62,7 @@ The required module configuration is::
     flybyGuid = flybyPoint.FlybyPoint()
     flybyWrap.ModelTag = "flybyPoint"
     flybyGuid.dtFilterData = 60
+    flybyGuid.signOfOrbitNormalFrameVector = 1
     unitTestSim.AddModelToTask(unitTaskName, flybyGuid)
 	
 The module is configurable with the following parameters:
@@ -76,6 +77,9 @@ The module is configurable with the following parameters:
    * - ``dtFilterData``
      - 0
      - time between two consecutive filter reads. If defaulted to zero, the filter information is read at every update call
+   * - ``signOfOrbitNormalFrameVector``
+     - 1
+     - Sign of the orbit normal rxv vector used to build the frame. If equal to 1, the frame is a traditional Hill frame if -1, it flips the orbit normal axis to point "down" relative to the orbtial momentum
    * - ``flybyModel``
      - 0
      - 0 for rectilinear flyby model, 1 for Clohessy-Wiltshire model

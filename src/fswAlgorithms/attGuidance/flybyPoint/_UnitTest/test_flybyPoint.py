@@ -41,8 +41,9 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 @pytest.mark.parametrize("initVel", [[2e4, 0, 0]])  # m/s - v_CN_N
 @pytest.mark.parametrize("dTsim", [10, 100])  # s
 @pytest.mark.parametrize("dTfilter", [0, 60, 600])  # s
+@pytest.mark.parametrize("signOrbitNormal", [1, -1])
 @pytest.mark.parametrize("accuracy", [1e-12])
-def test_flybyPoint(show_plots, initPos, initVel, dTsim, dTfilter, accuracy):
+def test_flybyPoint(show_plots, initPos, initVel, dTsim, dTfilter, signOrbitNormal, accuracy):
     r"""
     **Validation Test Description**
 
@@ -62,6 +63,7 @@ def test_flybyPoint(show_plots, initPos, initVel, dTsim, dTfilter, accuracy):
         initVel[3] (m): initial velocity of the spacecraft w.r.t. the body/origin
         dTsim (s): simulation time step
         dTfilter (s): time between two consecutive reads of the input message
+        signOrbitNormal (-): sign of the reference frame "out of plane" vector (orbit normal or anti orbit normal)
         accuracy: tolerance on the result.
 
     **Description of Variables Being Tested**
@@ -74,10 +76,10 @@ def test_flybyPoint(show_plots, initPos, initVel, dTsim, dTfilter, accuracy):
     expressed in R-frame coordinates.
     """
     # each test method requires a single assert method to be called
-    flybyPointTestFunction(show_plots, initPos, initVel, dTsim, dTfilter, accuracy)
+    flybyPointTestFunction(show_plots, initPos, initVel, dTsim, dTfilter, signOrbitNormal, accuracy)
 
 
-def flybyPointTestFunction(show_plots, initPos, initVel, dTsim, dTfilter, accuracy):
+def flybyPointTestFunction(show_plots, initPos, initVel, dTsim, dTfilter, signOrbitNormal, accuracy):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -105,12 +107,11 @@ def flybyPointTestFunction(show_plots, initPos, initVel, dTsim, dTfilter, accura
     simulationTimeStep = macros.sec2nano(dTsim)
     testProcess.addTask(unitTestSim.CreateNewTask(unitTaskName, simulationTimeStep))
 
-    #   setup the FSW algorithm tasks
-
     # setup flybyPoint guidance module
     flybyGuid = flybyPoint.FlybyPoint()
     flybyGuid.ModelTag = "flybyPoint"
     flybyGuid.dtFilterData = dTfilter
+    flybyGuid.signOfOrbitNormalFrameVector = signOrbitNormal
     unitTestSim.AddModelToTask(unitTaskName, flybyGuid)
 
     inputData = messaging.NavTransMsgPayload()
@@ -156,6 +157,7 @@ def flybyPointTestFunction(show_plots, initPos, initVel, dTsim, dTfilter, accura
     ut = np.cross(uh, ur)
     f0 = np.linalg.norm(initVel) / np.linalg.norm(initPos)
     gamma0 = np.arctan(np.dot(initVel, ur) / np.dot(initVel, ut))
+
     for i in range(len(refAtt)):
         # check a vector values
         ur = dataPos[i] / np.linalg.norm(dataPos[i])
@@ -165,6 +167,9 @@ def flybyPointTestFunction(show_plots, initPos, initVel, dTsim, dTfilter, accura
         den = ((f0*dt)**2 + 2*f0*np.sin(gamma0)*dt + 1)
         omega = uh * f0 * np.cos(gamma0) / den
         omegaDot = uh * (-2*f0*f0 * np.cos(gamma0)) * (f0*dt + np.sin(gamma0)) / den / den
+        if signOrbitNormal == -1:
+            ut = np.cross(ur, uh)
+            uh = np.cross(ur, ut)
 
         # test correctness of frame, angular rate and acceleration
         np.testing.assert_allclose(ur_output[i], ur, rtol=0, atol=accuracy, verbose=True)
@@ -264,7 +269,8 @@ if __name__ == "__main__":
         True,                # show_plots
         [-5e7, 7.5e6, 5e5],  # initPos
         [2e4, 0, 0],         # initVel
-        60,                  # dTsim
-        60,                  # dTfilter
+        100,                  # dTsim
+        600,                  # dTfilter
+        1,                   # sign Orbit Normal
         1e-12                # accuracy
     )

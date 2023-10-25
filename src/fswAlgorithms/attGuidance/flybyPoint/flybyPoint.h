@@ -52,6 +52,7 @@ public:
     
     double     dtFilterData = 0;       //!< time between two subsequent reads of the filter information
     double     epsilon = 0;            //!< tolerance for singular conditions when position and velocity are collinear
+    int64_t    signOfOrbitNormalFrameVector = 1;  //!< Sign of orbit normal vector to complete reference frame
     FlybyModel flybyModel;             //!< flag to indicate which flyby model is being used
 
     ReadFunctor<NavTransMsgPayload>  filterInMsg;               //!< input msg relative position w.r.t. asteroid
