@@ -71,6 +71,7 @@ Version |release|
   prior versions of Xcode.
 - Fixed a bug in the conanfile where the ``stderr`` output from a ``subprocess.Popen`` call was being interpreted as an
   error. Rather, the process return code (0 for success, and anything else for failure) indicates the success.
+- The ``MAX_N_CSS_MEAS`` define is increased to 32 matching the maximum number of coarse sun sensors.
 
 
 Version 2.2.0 (June 28, 2023)
