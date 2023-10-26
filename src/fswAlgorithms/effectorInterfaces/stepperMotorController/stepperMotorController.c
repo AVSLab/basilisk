@@ -107,6 +107,9 @@ void Update_stepperMotorController(StepperMotorControllerConfig *configData, uin
             configData->stepsCommanded = ceil(tempStepsCommanded);
         }
 
+        // Update the desired motor angle
+        configData->desiredAngle = configData->currentAngle + (configData->stepsCommanded * configData->stepAngle);
+
         // Update the output message buffer
         motorStepCommandOut.stepsCommanded = configData->stepsCommanded;
 
