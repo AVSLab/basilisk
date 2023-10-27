@@ -27,6 +27,7 @@
             gnumake
             gnused
             python3
+            python3.pkgs.colorama
             python3.pkgs.pillow
             python3.pkgs.matplotlib
             python3.pkgs.numpy
@@ -34,8 +35,10 @@
             python3.pkgs.parse
             python3.pkgs.pip
             python3.pkgs.pytest
+            python3.pkgs.pytest-xdist
             python3.pkgs.setuptools
             python3.pkgs.tkinter
+            python3.pkgs.tqdm
             python3.pkgs.wheel
             python3.pkgs.virtualenv
             sourceHighlight
@@ -48,6 +51,8 @@
             export SHELL=$BASH
             export LANG=en_US.UTF-8
             export PS1="basilisk|$PS1"
+            virtualenv basilisk
+            source basilisk/bin/activate
           '';
         };
 
