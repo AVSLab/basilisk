@@ -61,11 +61,14 @@ public:
     Eigen::Matrix3d IS2PntSc2_S2;       //!< [kg-m^2] Inertia of upper spinning body about point Sc2 in S2 frame components
     Eigen::Matrix3d dcm_S10B;           //!< -- DCM from the body frame to the S10 frame (S1 frame for theta1=0)
     Eigen::Matrix3d dcm_S20S1;          //!< -- DCM from the S1 frame to the S20 frame (S2 frame for theta2=0)
-    std::vector<Message<HingedRigidBodyMsgPayload>*> spinningBodyOutMsgs {new Message<HingedRigidBodyMsgPayload>, new Message<HingedRigidBodyMsgPayload>};       //!< vector of state output messages
-    std::vector<Message<SCStatesMsgPayload>*> spinningBodyConfigLogOutMsgs {new Message<SCStatesMsgPayload>, new Message<SCStatesMsgPayload>};     //!< vector of spinning body state config log messages
+    std::vector<Message<HingedRigidBodyMsgPayload>*> spinningBodyOutMsgs {new Message<HingedRigidBodyMsgPayload>,
+            new Message<HingedRigidBodyMsgPayload>};       //!< vector of state output messages
+    std::vector<Message<SCStatesMsgPayload>*> spinningBodyConfigLogOutMsgs {new Message<SCStatesMsgPayload>,
+            new Message<SCStatesMsgPayload>};     //!< vector of spinning body state config log messages
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;                   //!< -- (optional) motor torque input message name
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;                    //!< -- (optional) motor lock input message name
-    std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> spinningBodyRefInMsgs {ReadFunctor<HingedRigidBodyMsgPayload>(), ReadFunctor<HingedRigidBodyMsgPayload>()};    //!< (optional) vector of spinning body reference input messages
+    std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> spinningBodyRefInMsgs {ReadFunctor<HingedRigidBodyMsgPayload>(),
+            ReadFunctor<HingedRigidBodyMsgPayload>()};    //!< (optional) vector of spinning body reference input messages
 
     SpinningBodyTwoDOFStateEffector();      //!< -- Contructor
     ~SpinningBodyTwoDOFStateEffector();     //!< -- Destructor
