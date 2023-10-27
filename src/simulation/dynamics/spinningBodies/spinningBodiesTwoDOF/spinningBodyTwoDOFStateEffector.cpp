@@ -37,10 +37,6 @@ SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector()
     this->IS2PntSc2_S2.setIdentity();
     this->dcm_S10B.setIdentity();
     this->dcm_S20S1.setIdentity();
-    this->r_S1B_B.setZero();
-    this->r_S2S1_S1.setZero();
-    this->s1Hat_S1.setZero();
-    this->s2Hat_S2.setZero();
     
     this->nameOfTheta1State = "spinningBodyTheta1" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
     this->nameOfTheta1DotState = "spinningBodyTheta1Dot" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
