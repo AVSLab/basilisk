@@ -159,7 +159,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
 
     /*! compute the total rotation DCM */
     double RN[3][3];
-    oasapComputeFinalRotation(configData->alignmentPriority, BN, rHat_SB_B, hRefHat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
+    oasapComputeFinalRotation(configData->celestialBodyInput, configData->alignmentPriority, BN, rHat_SB_B, hRefHat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
 
     /*! compute the relative rotation DCM and Sun direction in relative frame */
     double RB[3][3];
@@ -173,7 +173,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
 
     if (v3Norm(configData->h2Hat_B) > epsilon) {
         // compute second reference frame
-        oasapComputeFinalRotation(configData->alignmentPriority, BN, rHat_SB_B, configData->h2Hat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
+        oasapComputeFinalRotation(configData->celestialBodyInput, configData->alignmentPriority, BN, rHat_SB_B, configData->h2Hat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
         
         // compute the relative rotation DCM and Sun direction in relative frame
         m33MultM33t(RN, BN, RB);
@@ -418,7 +418,7 @@ void oasapComputeThirdRotation(int alignmentPriority, double hRefHat_B[3], doubl
 }
 
 /*! This helper function computes the final rotation as a product of the first three DCMs */
-void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3])
+void oasapComputeFinalRotation(CelestialBody celestialBody, int alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3])
 {
     /*! compute the first rotation DCM */
     double R1B[3][3];
@@ -431,7 +431,12 @@ void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rH
     /*! compute the second rotation DCM */
     double R2R1[3][3];
     RefFrameSolution refFrameSolution = determinate;
-    oasapComputeSecondRotation(hRefHat_B, rHat_SB_R1, a1Hat_B, a2Hat_B, R2R1, &refFrameSolution);
+    if (celestialBody == notSun) {
+        oasapComputeSecondRotation(hRefHat_B, rHat_SB_R1, a1Hat_B, a2Hat_B, R2R1, &refFrameSolution);
+    }
+    else {
+        m33SetIdentity(R2R1);
+    }
 
     /*! compute Sun direction in R2 frame components */
     double rHat_SB_R2[3];
@@ -442,14 +447,7 @@ void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rH
     oasapComputeThirdRotation(alignmentPriority, hRefHat_B, rHat_SB_R2, a1Hat_B, R3R2);
 
     /*! compute reference frames w.r.t inertial frame */
-    if (refFrameSolution == determinate) {
-        double R1N[3][3];
-        double R2N[3][3];
-        m33MultM33(R1B, BN, R1N);
-        m33MultM33(R2R1, R1N, R2N);
-        m33MultM33(R3R2, R2N, RN);
-    }
-    else {
+    if ((refFrameSolution == indeterminate) || (celestialBody == Sun)) {
         double n1[3];
         double n2[3];
         double n3[3] = {0, 0, 1};       // J200 Z axis
@@ -460,7 +458,7 @@ void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rH
         v3Cross(n1, n2, n3);
         double r1[3];
         double r2[3];
-        double r3[3] = {0, 0, 1};
+        double r3[3];
         double RT[3][3];
         v3Copy(hRefHat_B, r1);
         v3Cross(a1Hat_B, r1, r2);
@@ -475,6 +473,13 @@ void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rH
             RT[i][2] = r3[i];
         }
         m33MultM33t(RT, NT, RN);
+    }
+    else {
+        double R1N[3][3];
+        double R2N[3][3];
+        m33MultM33(R1B, BN, R1N);
+        m33MultM33(R2R1, R1N, R2N);
+        m33MultM33(R3R2, R2N, RN);
     }
 }
 
