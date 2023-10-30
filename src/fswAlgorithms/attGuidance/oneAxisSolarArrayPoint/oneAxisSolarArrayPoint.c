@@ -418,7 +418,7 @@ void oasapComputeThirdRotation(int alignmentPriority, double hRefHat_B[3], doubl
 }
 
 /*! This helper function computes the final rotation as a product of the first three DCMs */
-void oasapComputeFinalRotation(CelestialBody celestialBody, int alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3])
+void oasapComputeFinalRotation(CelestialBody celestialBody, AlignmentPriority alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3])
 {
     /*! compute the first rotation DCM */
     double R1B[3][3];
