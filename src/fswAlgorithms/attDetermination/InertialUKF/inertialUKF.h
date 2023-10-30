@@ -57,7 +57,7 @@ typedef struct {
     VehicleConfigMsg_C massPropsInMsg;              //!< [-] The name of the mass props message
     RWArrayConfigMsg_C rwParamsInMsg;               //!< The name of the RWConfigParams input message
     RWSpeedMsg_C rwSpeedsInMsg;                     //!< [-] The name of the input RW speeds message
-    AccDataMsg_C gyrBuffInMsgName;                  //!< [-] Input message buffer from MIRU
+    AccDataMsg_C gyrBuffInMsg;                      //!< [-] Input message buffer from MIRU
     
 
 	size_t numStates;             //!< [-] Number of states for this filter

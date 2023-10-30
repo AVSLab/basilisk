@@ -34,7 +34,7 @@ provides information on what this message is used for.
     * - rwSpeedsInMsg
       - :ref:`RWSpeedMsgPayload`
       - reaction wheel speed input message.  Can be an empty message if no RW are included.
-    * - gyrBuffInMsgName
+    * - gyrBuffInMsg
       - :ref:`AccDataMsgPayload`
       - rate gyro input message
 
