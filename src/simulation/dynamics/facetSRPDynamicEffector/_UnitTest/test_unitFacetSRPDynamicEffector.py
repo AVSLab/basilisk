@@ -107,12 +107,9 @@ def checkFacetSRPForce(index, area, specCoeff, diffCoeff, normal_B, sigma_BN, sc
 
     # Calculate the incidence angle theta between the facet normal vector and the Sun-direction vector
     cosTheta = np.dot(sHat, normal_B)
-    intermediate = np.cross(sHat, normal_B)
-    sinTheta = np.linalg.norm(intermediate)
-    theta = np.arctan2(sinTheta, cosTheta)
 
     # Calculate the facet projected area onto the plane whose normal vector is the Sun-direction vector
-    projArea = area * np.cos(theta)
+    projArea = area * cosTheta
 
     # Calculate the solar radiation pressure acting on the facet
     numAU = AstU / np.linalg.norm(r_SB_B)
@@ -120,7 +117,7 @@ def checkFacetSRPForce(index, area, specCoeff, diffCoeff, normal_B, sigma_BN, sc
 
     # Compute the SRP force acting on the facet only if the facet is illuminated by the Sun
     if projArea > 0:
-        srp_force = -SRPPressure * projArea * np.cos(theta) * ( (1-specCoeff) * sHat + 2 * ( (diffCoeff / 3) + specCoeff * np.cos(theta)) * normal_B )
+        srp_force = -SRPPressure * projArea * ( (1-specCoeff) * sHat + 2 * ( (diffCoeff / 3) + specCoeff * cosTheta) * normal_B )
     else:
         srp_force = np.zeros([3,])
 
@@ -146,12 +143,9 @@ def checkFacetSRPTorque(index, area, specCoeff, diffCoeff, normal_B, locationPnt
 
     # Calculate the incidence angle theta between the facet normal vector and the Sun-direction vector
     cosTheta = np.dot(sHat, normal_B)
-    intermediate = np.cross(sHat, normal_B)
-    sinTheta = np.linalg.norm(intermediate)
-    theta = np.arctan2(sinTheta, cosTheta)
 
     # Calculate the facet projected area onto the plane whose normal vector is the Sun-direction vector
-    projArea = area * np.cos(theta)
+    projArea = area * cosTheta
 
     # Calculate the solar radiation pressure acting on the facet
     numAU = AstU / np.linalg.norm(r_SB_B)
@@ -159,7 +153,7 @@ def checkFacetSRPTorque(index, area, specCoeff, diffCoeff, normal_B, locationPnt
 
     # Compute the SRP force contribution from the facet only if the facet is illuminated by the Sun
     if projArea > 0:
-        srp_force = -SRPPressure * projArea * np.cos(theta) * ( (1-specCoeff) * sHat + 2 * ( (diffCoeff / 3) + specCoeff * np.cos(theta)) * normal_B )
+        srp_force = -SRPPressure * projArea * ( (1-specCoeff) * sHat + 2 * ( (diffCoeff / 3) + specCoeff * cosTheta) * normal_B )
     else:
         srp_force = np.zeros([3, ])
 
