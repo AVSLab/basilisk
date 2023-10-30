@@ -29,6 +29,10 @@
 #include "cMsgCInterface/EphemerisMsg_C.h"
 #include "cMsgCInterface/NavAttMsg_C.h"
 
+typedef enum celestialBody{
+    notSun = 0,
+    Sun = 1
+} CelestialBody;
 
 typedef enum alignmentPriority{
     prioritizeAxisAlignment = 0,
@@ -63,6 +67,7 @@ typedef struct {
     double h2Hat_B[3];                           //!< secondary heading in B frame coordinates
     double hHat_N[3];                            //!< main heading in N frame coordinates
     double a2Hat_B[3];                           //!< body frame heading that should remain as close as possible to Sun heading
+    CelestialBody celestialBodyInput;
 
     /*! declare these internal variables that are used by the module and should not be declared by the user */
     BodyAxisInput      bodyAxisInput;            //!< flag variable to determine how the body axis input is specified
@@ -94,7 +99,7 @@ extern "C" {
     void oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3][3]);
     void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1Hat_B[3], double a2Hat_B[3], double R2R1[3][3], RefFrameSolution *refFrameSolution);
     void oasapComputeThirdRotation(int alignmentPriority, double hRefHat_B[3], double rHat_SB_R2[3], double a1Hat_B[3], double R3R2[3][3]);
-    void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3]);
+    void oasapComputeFinalRotation(CelestialBody celestialBody, AlignmentPriority alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3]);
 
 #ifdef __cplusplus
 }
