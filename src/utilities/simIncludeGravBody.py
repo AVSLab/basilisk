@@ -282,7 +282,7 @@ class gravBodyFactory(object):
     def createSpiceInterface(self, path, time, **kwargs):
         """
             A convenience function to configure a NAIF Spice module for the simulation.
-            It connect the gravBodyData objects to the spice planet state messages.  Thus,
+            It connects the gravBodyData objects to the spice planet state messages.  Thus,
             it must be run after the gravBodyData objects are created.
 
             Parameters
