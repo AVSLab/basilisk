@@ -40,14 +40,5 @@ In order for the filter to run, the user must set a few parameters:
  \texttt{   filterObject.gyroFilt = [lpDataUse, lpDataUse, lpDataUse] }\\
 \end{itemize}
 
-The messages must also be set as such:
 
-\begin{itemize}
-\item    \texttt{ filterObject.navStateOutMsgName = "inertial$\_$state$\_$estimate"}
-\item    \texttt{ filterObject.filtDataOutMsgName = "inertial$\_$filter$\_$data"}
-\item   \texttt{ filterObject.massPropsInMsgName = "adcs$\_$config$\_$data"}
-\item   \texttt{filterObject.rwSpeedsInMsgName = "reactionwheel$\_$output$\_$states"}
-\item   \texttt{ filterObject.rwParamsInMsgName = "rwa$\_$config$\_$data$\_$parsed"}
-\item   \texttt{  filterObject.gyrBuffInMsgName = "gyro$\_$buffer$\_$data"}
-\end{itemize}
 

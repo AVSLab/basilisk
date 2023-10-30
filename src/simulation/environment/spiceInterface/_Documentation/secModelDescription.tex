@@ -1,7 +1,7 @@
 \section{Model Description}
 
 
-Spice interfaces with the AVS Basilisk simulation. This is done through spice\_interface.cpp, which loads the proper kernels in External/EphemerisData. Given an epoch, it generates information on universal time (UTC/GPS...) as well as ephemeris information for the bodies of the Solar System. It writes this out in a spice output message for other modules to use.  The epoch time can be provided by providing the optional epoch input message of type {\tt EpochSimMsg}, or by specifying the module variable {\tt UTCCalInit} directly as a date/time string.  If a message is provided by specifying the message name variable {\tt epochInMsgName}, then this takes precedence over the {\tt UTCCalInit} variable.  
+Spice interfaces with the AVS Basilisk simulation. This is done through spice\_interface.cpp, which loads the proper kernels in External/EphemerisData. Given an epoch, it generates information on universal time (UTC/GPS...) as well as ephemeris information for the bodies of the Solar System. It writes this out in a spice output message for other modules to use.  The epoch time can be provided by providing the optional epoch input message of type {\tt EpochSimMsg}, or by specifying the module variable {\tt UTCCalInit} directly as a date/time string.  If a message is provided by specifying the message name variable {\tt epochInMsg}, then this takes precedence over the {\tt UTCCalInit} variable.
 
 \subsection{Output message}
 

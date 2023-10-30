@@ -120,7 +120,7 @@ The final equation that is needed is:
 
 
 \subsection{Panel State Configuration Log Message Information}
-The panel provides an output message {\tt hingedRigidBodyConfigLogOutMsgName} of type {\tt SCStatesMsg}.  This message contains the panel frame $S_i$ position and attitude states.  As this is a regular spacecraft state message, this output message can be piped to other modules such as the coarse sun sensor or solar panel power module spacecraft state input message.  This allows the CSS or solar power evaluation to be performed relative to the time-varying panel configuration.
+The panel provides an output message {\tt hingedRigidBodyConfigLogOutMsg} of type {\tt SCStatesMsg}.  This message contains the panel frame $S_i$ position and attitude states.  As this is a regular spacecraft state message, this output message can be piped to other modules such as the coarse sun sensor or solar panel power module spacecraft state input message.  This allows the CSS or solar power evaluation to be performed relative to the time-varying panel configuration.
 
 The configuration log records the following 4 message variables: {\tt r\_BN\_N}, {\tt r\_BN\_N}, {\tt sigma\_BN} and {\tt omega\_BN\_B}.  These states are evaluated using:
 \begin{align}

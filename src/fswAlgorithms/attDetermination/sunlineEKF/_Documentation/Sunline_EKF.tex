@@ -121,15 +121,6 @@ In order for the filter to run, the user must set a few parameters:
 \end{itemize}
 
 
-The messages must also be set as such:
-
-\begin{itemize}
-\item    \texttt{ filterObject.navStateOutMsgName = "sunline$\_$state$\_$estimate"}
-\item    \texttt{ filterObject.filtDataOutMsgName = "sunline$\_$filter$\_$data"}
-\item   \texttt{ filterObject.cssDataInMsgName = "css$\_$sensors$\_$data"}
-\item   \texttt{ filterObject.cssConfInMsgName = "css$\_$config$\_$data"}
-\end{itemize}
-
 \subsection{Inputs and Outputs}
 
 The EKF reads in the measurements from the coarse sun sensors. These are under the form of a list of cosine values. Knowing the normals to each of the sensors, we can therefore use them to estimate sun heading.
