@@ -90,3 +90,6 @@ The module is configurable with the following parameters:
    * - ``h2Hat_B`` (optional)
      - [0, 0, 0]
      - second body-frame heading
+   * - ``celestialBodyInput`` (optional)
+     - 0
+     - should be set to 1 when the celestial body pointed at is the Sun.
