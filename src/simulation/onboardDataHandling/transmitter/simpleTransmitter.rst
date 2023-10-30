@@ -51,9 +51,8 @@ The next step is to attach one or more :ref:`DataStorageStatusMsgPayload` instan
 
    transmitter.addStorageUnitToTransmitter("msg name")
 
-The final step is to specify the output message name and add the model to task::
+The final step is to add the model to task::
 
-    transmitter.nodeDataOutMsgName = "TransmitterMsg"
     scenarioSim.AddModelToTask(taskName, transmitter)
 
 Follow the :ref:`partitionedStorageUnit` or :ref:`simpleStorageUnit` instructions to add the transmitter to a storage unit.

@@ -51,7 +51,7 @@
       </g>
       <g id="Graphic_8">
         <text transform="translate(1324.5922 604.864)" fill="black">
-          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">nodePowerOutMsgName</tspan>
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">nodePowerOutMsg</tspan>
         </text>
       </g>
       <g id="Graphic_10">
@@ -61,7 +61,7 @@
       </g>
       <g id="Graphic_11">
         <text transform="translate(972.5116 593.0033)" fill="black">
-          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="51.877945" y="11">rwStateInMsgName</tspan>
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="51.877945" y="11">rwStateInMsg</tspan>
         </text>
       </g>
       <g id="Line_14">
@@ -74,7 +74,7 @@
       </g>
       <g id="Graphic_12">
         <text transform="translate(972.5116 631.0033)" fill="black">
-          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="31.84474" y="11">nodeStatusInMsgName</tspan>
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="31.84474" y="11">nodeStatusInMsg</tspan>
         </text>
       </g>
     </g>

@@ -50,7 +50,7 @@ typedef struct {
 
     /* declare module IO interfaces */
     THRArrayCmdForceMsg_C thrForceInMsg; //!< The name of the Input message
-    THRArrayOnTimeCmdMsg_C onTimeOutMsg;  //!< The name of the output message*, onTimeOutMsgName
+    THRArrayOnTimeCmdMsg_C onTimeOutMsg;  //!< The name of the output message*, onTimeOutMsg
     THRArrayConfigMsg_C thrConfInMsg;	//!< The name of the thruster cluster Input message
 
   BSKLogger *bskLogger;                             //!< BSK Logging

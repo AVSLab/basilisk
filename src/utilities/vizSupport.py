@@ -1554,7 +1554,5 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             print('ERROR: vizSupport: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
             exit(1)
         vizMessenger.opNavMode = val
-        if val > 0:
-            vizMessenger.opnavImageOutMsgName = "opnav_circles"
 
     return vizMessenger
