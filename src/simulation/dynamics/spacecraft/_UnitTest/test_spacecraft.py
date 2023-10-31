@@ -1075,9 +1075,11 @@ def scAccumDV():
 
     dataAccumDV_CN_B = dataLog.TotalAccumDVBdy
     dataAccumDV_BN_B = dataLog.TotalAccumDV_BN_B
+    dataAccumDV_CN_N = dataLog.TotalAccumDV_CN_N
 
     accuracy = 1e-10
     truth_dataAccumDV_CN_B = [0.0, 0.0, 0.0]
+    truth_dataAccumDV_CN_N = [0.0, 0.0, 0.0]
     v_r = numpy.cross(numpy.array(scObject.hub.omega_BN_BInit).T, -numpy.array(scObject.hub.r_BcB_B).T)[0]
     truth_dataAccumDV_BN_B = numpy.zeros(3)
     for i in range(len(dataLog.times())-1):
@@ -1092,6 +1094,10 @@ def scAccumDV():
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Point B Accumulated DV test failed pos unit test")
 
+        if not unitTestSupport.isArrayEqual(dataAccumDV_CN_N[i+1],truth_dataAccumDV_CN_N,3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Spacecraft Point C Accumulated DV in inertial frame test failed pos unit test")
+
     if testFailCount == 0:
         print("PASSED: Spacecraft Accumulated DV tests with offset CoM")
 
@@ -1105,3 +1111,4 @@ if __name__ == "__main__":
     # SCTransBOE(True)
     # SCPointBVsPointC(True)
     scOptionalRef(True, 0.001)
+    # scAccumDV()
