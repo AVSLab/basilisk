@@ -76,6 +76,21 @@ class UniformDispersion(SingleVariableDispersion):
         return dispValue
 
 
+class UniformDispersionSymmetricBounds(SingleVariableDispersion):
+    def __init__(self, varName, bounds=None):
+        SingleVariableDispersion.__init__(self, varName, bounds)
+        if self.bounds is None:
+             self.bounds = ([0.5, 1.0])  # defines a hard floor/ceiling
+
+    def generate(self, sim):
+        dispValue = random.uniform(self.bounds[0], self.bounds[1]) * random.choice([-1, 1])
+
+        mid = 0.0
+        scale = self.bounds[1] - mid
+        self.magnitude.append(str(round((dispValue - mid)/scale*100,2)) + " %")
+        return dispValue
+
+
 class NormalDispersion(SingleVariableDispersion):
     def __init__(self, varName, mean=0.0, stdDeviation=0.5, bounds=None):
         SingleVariableDispersion.__init__(self, varName, bounds)
