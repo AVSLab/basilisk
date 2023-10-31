@@ -64,6 +64,10 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
 
     /*! - Read coarse sun sensor configuration information.*/
     cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
+    if (cssConfigInBuffer.nCSS > MAX_N_CSS_MEAS) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "sunlineSEKF.cssConfigInMsg.nCSS must not be greater than "
+                                                  "MAX_N_CSS_MEAS value.");
+    }
 
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
     for(uint32_t i=0; i<cssConfigInBuffer.nCSS; i++)
