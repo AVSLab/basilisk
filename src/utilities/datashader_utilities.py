@@ -36,7 +36,7 @@ def curve_per_df_component(df):
         varIdx_df = df.loc[idx[:], idx[:, i]]
 
         # Inject NaNs at the end of the run so the curves don't wrap from t_f to t_0
-        varIdx_df = varIdx_df.append(pd.Series(name=np.nan, dtype='float'))
+        varIdx_df = pd.concat([varIdx_df, pd.DataFrame([np.nan] * varIdx_df.shape[1], index=varIdx_df.columns).T])
 
         # Flatten values by column order
         time = np.tile(varIdx_df.index, len(varIdx_df.columns.codes[0]))  # Repeat time by number of runs
@@ -123,7 +123,7 @@ class DS_Plot():
             if self.min > self.data[0].values.min() : self.min = self.data[0].values.min()
             if self.max < self.data[0].values.max() : self.max = self.data[0].values.max()
             self.data[i] = self.data[i] * self.macro_y
-            self.data[i].index = self.data[i].index * 1e-9
+            self.data[i].index = self.data[i].index * self.macro_x
 
             # Seperate dataframe by component
             curveList = self.plotFcn(self.data[i])  # Only one component so it will be a single curve
@@ -175,7 +175,7 @@ class DS_Plot():
 
         if not self.labels == []:
             color_key = [(name, color) for name, color in zip(self.labels, self.cmap)]
-            legend = hv.NdOverlay({n: hv.Points([np.nan, np.nan], label=str(n)).opts(style=dict(color=c)) for n, c in color_key})
+            legend = hv.NdOverlay({n: hv.Points([np.nan, np.nan], label=str(n)).opts(color=c) for n, c in color_key})
             image = image*legend
 
         return image, self.title
