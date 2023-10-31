@@ -123,7 +123,7 @@ class DS_Plot():
             if self.min > self.data[0].values.min() : self.min = self.data[0].values.min()
             if self.max < self.data[0].values.max() : self.max = self.data[0].values.max()
             self.data[i] = self.data[i] * self.macro_y
-            self.data[i].index = self.data[i].index * 1e-9
+            self.data[i].index = self.data[i].index * self.macro_x
 
             # Seperate dataframe by component
             curveList = self.plotFcn(self.data[i])  # Only one component so it will be a single curve
