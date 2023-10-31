@@ -57,7 +57,6 @@ private:
 public:
     std::vector<ReadFunctor<SwDataMsgPayload>> swDataInMsgs; //!< Vector of space weather input message names
     int epochDoy;                               //!< [day] Day-of-Year at epoch
-    std::string epochInMsgName;                 //!< epoch input msg name
     BSKLogger bskLogger;                        //!< -- BSK Logging
 
 

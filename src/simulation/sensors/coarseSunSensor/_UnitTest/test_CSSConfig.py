@@ -70,7 +70,6 @@ def run(show_plots, accuracy):
     CSS1.ModelTag = "CSS1"
     CSS1.fov = 80. * macros.D2R
     CSS1.maxOutput = 10.
-    # CSS1.cssConfigLogMsgName is not set to check default behavior
     CSS1.nHat_B = [1.0, 0.0, 0.0]
 
     CSS2 = coarseSunSensor.CoarseSunSensor()

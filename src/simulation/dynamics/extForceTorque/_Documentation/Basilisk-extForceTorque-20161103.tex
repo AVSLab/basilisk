@@ -55,34 +55,6 @@ This module allows a general force $\bm F$ or torque $\bm \tau$ to be applied on
 \section{Specifying the Forces/Torques through Messages}
 The module reads in a message that specifies  an external force or external torque.  Not that there essentially are  3 input options.  The torque vector is always provided in body frame vector components.  The external force can be provided as a vector with respect to the inertial or body frame.  {\bfseries Note, it is possible to set both types, but this applies 2 separate vectors to the rigid body.}
 
-\subsection{External Torque}
-The torque message $\leftexp{B}{\bm\tau}_{B}$ is stored in a message with default name 
-
-{\tt extTorquePntB\_B\_cmds}
-
-\noindent stored in the module variable 
-
-{\tt cmdTorqueInMsgName}
-
-\subsection{External Force in $\mathcal{N}$ Inertial Frame Vector Components}
-The inertial force message $\leftexp{N}{\bm F}$ is stored in a message with default name 
-
-{\tt extForce\_N\_cmds}
-
-\noindent stored in the module variable 
-
-{\tt cmdForceInertialInMsgName}
-
-
-\subsection{External Force in $\mathcal{B}$ Body Frame Vector Components}
-The inertial force message $\leftexp{B}{\bm F}$ is stored in a message with default name 
-
-{\tt extForce\_B\_cmds}
-
-\noindent stored in the module variable 
-
-{\tt cmdForceBodyInMsgName}
-
 
 
 

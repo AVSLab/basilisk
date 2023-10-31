@@ -22,7 +22,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include <iostream>
 
-/*! Customer constructor just sets the spacecraftSTateInMsgName by default*/
+/*! Customer constructor just sets the spacecraftSTateInMsg by default*/
 PlanetHeading::PlanetHeading()
 {
 

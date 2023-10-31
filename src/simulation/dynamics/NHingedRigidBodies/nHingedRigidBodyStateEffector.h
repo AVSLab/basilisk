@@ -59,7 +59,6 @@ struct HingedPanel {
 /*! @brief NHingedRigidBodyStateEffector class */
 class NHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
-    std::string NHingedRigidBodyOutMsgName; //!< -- state output message name
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to the first Hinge location
