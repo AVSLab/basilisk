@@ -330,6 +330,31 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
 
         return dispVec
 
+
+class UniformVectorSingleAngleDispersion(VectorVariableDispersion):
+    def __init__(self, varName, bounds=None):
+        super(UniformVectorSingleAngleDispersion, self).__init__(varName, None)
+
+        self.bounds = bounds
+
+        if bounds is None:
+            self.bounds = [-np.pi, np.pi]
+
+        self.magnitude = []
+
+    def generate(self, sim=None):
+        dirVec = eval('sim.' + self.varName)
+        angle = np.random.uniform(self.bounds[0], self.bounds[1])
+        angle = self.checkBounds(angle, self.bounds)
+        dirVec = np.array(dirVec).reshape(3).tolist()
+        dispVec = self.perturbVectorByAngle(dirVec, angle)
+        angleDisp = np.arccos(np.dot(dirVec, dispVec)/np.linalg.norm(dirVec)/np.linalg.norm(dispVec))
+        midAngle = (self.bounds[1] + self.bounds[0])/2.
+        scaleAngle = self.bounds[1] - midAngle
+        self.magnitude.append(str(round((angleDisp - midAngle)/scaleAngle*100, 2)) + " %")
+
+        return dispVec
+
 class UniformEulerAngleMRPDispersion(VectorVariableDispersion):
     def __init__(self, varName, bounds=None):
         """
