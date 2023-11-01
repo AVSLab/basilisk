@@ -20,61 +20,48 @@ r"""
 Overview
 --------
 
-This scenario demonstrates the capabilities of :ref:`spinningBodyTwoDOFStateEffector`, which represents an effector with
-two spin axis. The two-degree-of-freedom formulation allows the simulation of one rigid body attached to the hub through
-a universal joint, or a chain of two rigid bodies each attached through a single hinge. The spin axis and mass
-distribution of the rigid bodies are arbitrary.
+This scenario demonstrates the capabilities of :ref:`spinningBodyNDOFStateEffector`, which represents an effector with
+n spin axes. The n-degree-of-freedom formulation allows the simulation of any number of attached rigid bodies with
+rotation capable about any axis. The spin axes and mass distribution of the rigid bodies are arbitrary.
 
-The scenario can be run with either one or two rigid bodies. The one-panel formulation consists of a cylindrical flat
-panel that rotates about two axis in a universal-joint configuration. The panel has similar dimensions to the hub. The
-two-panel formulation uses two flat cuboid panels that rotate about perpendicular hinges. The first panel connects
-directly to the hub, whereas the second connects to the first.
+The scenario consists of a flat panel and a system of two cylindrical arms attached on opposite sides of the hub. The
+panel is free to rotate about one axis and has similar dimensions to the hub. The arms both rotate about two axes in a
+universal-joint configuration with one being attached to the hub and the other to the end of the first. One more body is
+attached to the end of the arms that is free to rotate along the arm's vertical axis.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
-    python3 scenarioSpinningBodiesTwoDOF.py
+    python3 scenarioSpinningBodiesNDOF.py
 
-The scenario outputs two plots: one for the time history of both angles, and another for the time history of both angle
-rates. the scenario also creates a comprehensive Vizard simulation which creates appropriate to-scale models for each
-simulation type.
+The scenario outputs two plots: one for the time history of all the angles, and another for the time history of the angle
+rates. the scenario also creates a comprehensive Vizard simulation which creates an appropriate to-scale model for the
+defined scenario.
 
 Illustration of Simulation Results
 ----------------------------------
 
 ::
 
-    show_plots = True, numberPanels = 1
+The single panel connects to the hub through a single axis of rotation while both of the arms connect through a dual
+axis joint. The panel attached to the end of the arms adds one more axis of rotation. Note that this angle settles
+relatively quickly since it is independent of every other axis.
 
-Here, only a single panel is simulated. The panel connects to the hub through a universal, dual-axis joint. The time
-history for both angles and angle rates is shown below. Note how decoupled the two angles are. This is because the
-module is simulating a universal joint, so each axis behaves independently from each other.
-
-.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFtheta1.svg
+.. image:: /_images/Scenarios/scenarioSpinningBodiesNDOFtheta.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFthetaDot1.svg
+.. image:: /_images/Scenarios/scenarioSpinningBodiesNDOFthetaDot.svg
    :align: center
 
 ::
 
-    show_plots = True, numberPanels = 2
 
-In this case, two panels are simulated. Each rotates about a one-degree-of-freedom hinge. The spin axis are perpendicular
-to each other to show how any spin axis can be chosen. Note that in this case, there is much more significant coupling
-between the two angles, with them being in-phase with each other.
-
-.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFtheta2.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFthetaDot2.svg
-   :align: center
 
 """
 
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Illustrates the different simulation capabilities of the 2DOF modules
+# Purpose:  Illustrates the different simulation capabilities of the NDOF modules
 # Author:   Peter Johnson
 # Creation Date:  October 23, 2023
 #
@@ -147,7 +134,7 @@ def run(show_plots):
     mu = earth.mu
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
-    # Set the spacecraft's initial conditions (didnt change any of this)
+    # Set the spacecraft's initial conditions
     oe = orbitalMotion.ClassicElements()
     oe.a = 8e6  # meters
     oe.e = 0.1
@@ -161,18 +148,20 @@ def run(show_plots):
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.05], [-0.05], [0.05]]
 
-    # Create two hinged rigid bodies
-    spinningBodyEffector = spinningBodyNDOFStateEffector.SpinningBodyNDOFStateEffector()
-    spinningBodyEffector.ModelTag = "spinningBodyEffector"
+    # Create first spinning body instance
+    spinningBodyEffector1 = spinningBodyNDOFStateEffector.SpinningBodyNDOFStateEffector()
+    spinningBodyEffector1.ModelTag = "spinningBodyEffector1"
 
     # Define spinning body dimensions
     heightArms = 10.0
     diameterArms = 1.0
-    lengthPanel = 5.0
-    widthPanel = 1.0
-    thicknessPanel = 1.0
+    lengthPanel2 = 5.0
+    widthPanel2 = 1.0
+    thicknessPanel2 = 1.0
 
     # Define properties of spinning bodies
+
+    # bodies 1 and 2 define the rotation of the first arm
     spinningBody1 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody1.mass = 0
     spinningBody1.ISPntSc_S = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
@@ -184,7 +173,7 @@ def run(show_plots):
     spinningBody1.thetaDotInit = 0 * macros.D2R
     spinningBody1.k = 100.0
     spinningBody1.c = 50.0
-    spinningBodyEffector.addSpinningBody(spinningBody1)
+    spinningBodyEffector1.addSpinningBody(spinningBody1)
 
     spinningBody2 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody2.mass = 50.0
@@ -200,8 +189,9 @@ def run(show_plots):
     spinningBody2.thetaDotInit = 0 * macros.D2R
     spinningBody2.k = 100.0
     spinningBody2.c = 50.0
-    spinningBodyEffector.addSpinningBody(spinningBody2)
+    spinningBodyEffector1.addSpinningBody(spinningBody2)
 
+    # bodies 3 and 4 establish the rotation of the second arm
     spinningBody3 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody3.mass = 0
     spinningBody3.ISPntSc_S = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
@@ -213,7 +203,7 @@ def run(show_plots):
     spinningBody3.thetaDotInit = 0 * macros.D2R
     spinningBody3.k = 100.0
     spinningBody3.c = 50.0
-    spinningBodyEffector.addSpinningBody(spinningBody3)
+    spinningBodyEffector1.addSpinningBody(spinningBody3)
 
     spinningBody4 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody4.mass = 50.0
@@ -229,25 +219,54 @@ def run(show_plots):
     spinningBody4.thetaDotInit = 0 * macros.D2R
     spinningBody4.k = 100.0
     spinningBody4.c = 50.0
-    spinningBodyEffector.addSpinningBody(spinningBody4)
+    spinningBodyEffector1.addSpinningBody(spinningBody4)
 
+    # rotating panel at the end of the two arms
     spinningBody5 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody5.mass = 10.0
-    spinningBody5.ISPntSc_S = [[spinningBody5.mass / 12 * (lengthPanel ** 2 + thicknessPanel ** 2), 0.0, 0.0],
-                               [0.0, spinningBody5.mass / 12 * (widthPanel ** 2 + thicknessPanel ** 2), 0.0],
-                               [0.0, 0.0, spinningBody5.mass / 12 * (widthPanel ** 2 + lengthPanel ** 2)]]
+    spinningBody5.ISPntSc_S = [[spinningBody5.mass / 12 * (lengthPanel2 ** 2 + thicknessPanel2 ** 2), 0.0, 0.0],
+                               [0.0, spinningBody5.mass / 12 * (widthPanel2 ** 2 + thicknessPanel2 ** 2), 0.0],
+                               [0.0, 0.0, spinningBody5.mass / 12 * (widthPanel2 ** 2 + lengthPanel2 ** 2)]]
     spinningBody5.dcm_S0P = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    spinningBody5.r_ScS_S = [[0.0], [lengthPanel / 2], [0.0]]
+    spinningBody5.r_ScS_S = [[0.0], [lengthPanel2 / 2], [0.0]]
     spinningBody5.r_SP_P = [[0.0], [heightArms], [0.0]]
     spinningBody5.sHat_S = [[0], [1], [0]]
     spinningBody5.thetaInit = 45 * macros.D2R
     spinningBody5.thetaDotInit = 60 * macros.D2R
     spinningBody5.k = 100.0
     spinningBody5.c = 1.0
-    spinningBodyEffector.addSpinningBody(spinningBody5)
+    spinningBodyEffector1.addSpinningBody(spinningBody5)
 
     # Add spinning body to spacecraft
-    scObject.addStateEffector(spinningBodyEffector)
+    scObject.addStateEffector(spinningBodyEffector1)
+
+    # create second spinning body instance
+    spinningBodyEffector2 = spinningBodyNDOFStateEffector.SpinningBodyNDOFStateEffector()
+    spinningBodyEffector2.ModelTag = "spinningBodyEffector2"
+
+    # Define spinning body dimensions
+    lengthPanel1 = 10.0
+    widthPanel1 = 5.0
+    thicknessPanel1= 0.1
+
+    # extra panel attached to opposite side of spacecraft
+    spinningBody6 = spinningBodyNDOFStateEffector.SpinningBody()
+    spinningBody6.mass = 50.0
+    spinningBody6.ISPntSc_S = [[spinningBody5.mass / 12 * (lengthPanel1 ** 2 + thicknessPanel1 ** 2), 0.0, 0.0],
+                               [0.0, spinningBody5.mass / 12 * (widthPanel1 ** 2 + thicknessPanel1 ** 2), 0.0],
+                               [0.0, 0.0, spinningBody5.mass / 12 * (widthPanel1 ** 2 + lengthPanel1 ** 2)]]
+    spinningBody6.dcm_S0P = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    spinningBody6.r_ScS_S = [[0.0], [-lengthPanel1 / 2], [0.0]]
+    spinningBody6.r_SP_P = [[0], [-lengthSC / 2], [heightSC / 2 - thicknessPanel1 / 2]]
+    spinningBody6.sHat_S = [[1], [0], [0]]
+    spinningBody6.thetaInit = 60 * macros.D2R
+    spinningBody6.thetaDotInit = 0 * macros.D2R
+    spinningBody6.k = 100.0
+    spinningBody6.c = 50.0
+    spinningBodyEffector2.addSpinningBody(spinningBody6)
+
+    # Add spinning body to spacecraft
+    scObject.addStateEffector(spinningBodyEffector2)
 
     # Add Earth gravity to the simulation
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -262,31 +281,36 @@ def run(show_plots):
 
     # Add modules to simulation process
     scSim.AddModelToTask(simTaskName, scObject)
-    scSim.AddModelToTask(simTaskName, spinningBodyEffector)
+    scSim.AddModelToTask(simTaskName, spinningBodyEffector1)
+    scSim.AddModelToTask(simTaskName, spinningBodyEffector2)
     scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
 
     # Set up the message recorders and add them to the task
     datLog = scObject.scStateOutMsg.recorder()
-    theta1Data = spinningBodyEffector.spinningBodyOutMsgs[0].recorder()
-    theta2Data = spinningBodyEffector.spinningBodyOutMsgs[1].recorder()
-    theta3Data = spinningBodyEffector.spinningBodyOutMsgs[2].recorder()
-    theta4Data = spinningBodyEffector.spinningBodyOutMsgs[3].recorder()
-    theta5Data = spinningBodyEffector.spinningBodyOutMsgs[4].recorder()
+    theta1Data = spinningBodyEffector1.spinningBodyOutMsgs[0].recorder()
+    theta2Data = spinningBodyEffector1.spinningBodyOutMsgs[1].recorder()
+    theta3Data = spinningBodyEffector1.spinningBodyOutMsgs[2].recorder()
+    theta4Data = spinningBodyEffector1.spinningBodyOutMsgs[3].recorder()
+    theta5Data = spinningBodyEffector1.spinningBodyOutMsgs[4].recorder()
+    theta6Data = spinningBodyEffector2.spinningBodyOutMsgs[0].recorder()
     scSim.AddModelToTask(simTaskName, datLog)
     scSim.AddModelToTask(simTaskName, theta1Data)
     scSim.AddModelToTask(simTaskName, theta2Data)
     scSim.AddModelToTask(simTaskName, theta3Data)
     scSim.AddModelToTask(simTaskName, theta4Data)
     scSim.AddModelToTask(simTaskName, theta5Data)
+    scSim.AddModelToTask(simTaskName, theta6Data)
 
     #
     # Set up Vizard visualization
     #
 
     scBodyList = [scObject,
-                  ["arm1", spinningBodyEffector.spinningBodyConfigLogOutMsgs[1]],
-                  ["arm2", spinningBodyEffector.spinningBodyConfigLogOutMsgs[3]],
-                  ["panel", spinningBodyEffector.spinningBodyConfigLogOutMsgs[4]]]
+                  ["arm1", spinningBodyEffector1.spinningBodyConfigLogOutMsgs[1]],
+                  ["arm2", spinningBodyEffector1.spinningBodyConfigLogOutMsgs[3]],
+                  ["panel1", spinningBodyEffector2.spinningBodyConfigLogOutMsgs[0]],
+                  ["panel2", spinningBodyEffector1.spinningBodyConfigLogOutMsgs[4]]]
+
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scBodyList
                                               , saveFile=fileName
@@ -310,9 +334,14 @@ def run(show_plots):
                                  , rotation=[np.pi / 2, 0, 0]
                                  , color=vizSupport.toRGBA255("yellow"))
     vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=["panel"]
+                                 , simBodiesToModify=["panel1"]
                                  , modelPath="CUBE"
-                                 , scale=[widthPanel, lengthPanel, thicknessPanel]
+                                 , scale=[widthPanel1, lengthPanel1, thicknessPanel1]
+                                 , color=vizSupport.toRGBA255("red"))
+    vizSupport.createCustomModel(viz
+                                 , simBodiesToModify=["panel2"]
+                                 , modelPath="CUBE"
+                                 , scale=[widthPanel2, lengthPanel2, thicknessPanel2]
                                  , color=vizSupport.toRGBA255("red"))
     viz.settings.orbitLinesOn = -1
 
@@ -336,6 +365,8 @@ def run(show_plots):
     theta4Dot = theta4Data.thetaDot
     theta5 = theta5Data.theta
     theta5Dot = theta5Data.thetaDot
+    theta6 = theta6Data.theta
+    theta6Dot = theta6Data.thetaDot
 
     #
     #   plot the results
@@ -350,6 +381,7 @@ def run(show_plots):
     plt.plot(theta3Data.times() * macros.NANO2SEC, macros.R2D * theta3, label=r'$\theta_3$')
     plt.plot(theta4Data.times() * macros.NANO2SEC, macros.R2D * theta4, label=r'$\theta_4$')
     plt.plot(theta5Data.times() * macros.NANO2SEC, macros.R2D * theta5, label=r'$\theta_5$')
+    plt.plot(theta6Data.times() * macros.NANO2SEC, macros.R2D * theta6, label=r'$\theta_6$')
     plt.title = 'Angles'
     plt.legend()
     plt.xlabel('time [s]')
@@ -364,6 +396,7 @@ def run(show_plots):
     plt.plot(theta3Data.times() * macros.NANO2SEC, macros.R2D * theta3Dot, label=r'$\dot{\theta}_3$')
     plt.plot(theta4Data.times() * macros.NANO2SEC, macros.R2D * theta4Dot, label=r'$\dot{\theta}_4$')
     plt.plot(theta5Data.times() * macros.NANO2SEC, macros.R2D * theta5Dot, label=r'$\dot{\theta}_5$')
+    plt.plot(theta6Data.times() * macros.NANO2SEC, macros.R2D * theta6Dot, label=r'$\dot{\theta}_6$')
     plt.title = 'Angle Rates'
     plt.legend()
     plt.xlabel('time [s]')
