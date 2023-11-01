@@ -491,7 +491,6 @@ class InertiaTensorDispersion:
                   + "()' dispersions will not be set for variable " + self.varName))
             return
         else:
-            vehDynObject = getattr(sim, self.varNameComponents[0])
             I = np.array(eval('sim.' + self.varName)).reshape(3, 3)
 
             # generate random values for the diagonals
