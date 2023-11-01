@@ -128,7 +128,6 @@ class VectorVariableDispersion(object):
             rndVec[0] *= -1
         eigenAxis = np.cross(vector, rndVec)
         thrusterMisalignDCM = self.eigAxisAndAngleToDCM(eigenAxis, angle)
-        self.magnitude.append(str(round(np.arccos(np.dot(rndVec, vector)/np.linalg.norm(rndVec)/np.linalg.norm(vector))*180./np.pi,2)) + " deg")
         return np.dot(thrusterMisalignDCM, vector)
 
     def perturbCartesianVectorUniform(self, vector):
