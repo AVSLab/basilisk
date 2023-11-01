@@ -313,8 +313,8 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
         meanPhi = vectorSphere[1] # Nominal phi
         meanTheta = vectorSphere[2] # Nominal theta
 
-        phiRnd = np.random.normal(meanPhi, self.phiStd, 1)
-        thetaRnd = np.random.normal(meanTheta, self.thetaStd, 1)
+        phiRnd = np.random.normal(meanPhi, self.phiStd)
+        thetaRnd = np.random.normal(meanTheta, self.thetaStd)
 
         self.phiBounds = [meanPhi + self.phiBoundsOffNom[0], meanPhi + self.phiBoundsOffNom[1]]
         self.thetaBounds = [meanTheta + self.thetaBoundsOffNom[0],  meanTheta + self.thetaBoundsOffNom[1]]
