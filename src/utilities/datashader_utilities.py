@@ -101,6 +101,25 @@ def transform_dataframe(df_in, transforming_function):
     return pd.DataFrame(data, index=newMultIndex).T
 
 
+def extract_effector_df(data_path, num_eff):
+    """
+    Extracts the effector (RW, thruster, etc.) information for only those effectors that are used.
+    E.g. the RW effector message consists by default of 36 RWs, but if only 4 are used, this function will return the
+    states of only 4 RWs. The data path specifies where the data from the MC is located, for example
+    '/mc_data/rw_speed_msg.wheelSpeeds.data'.
+    """
+    df_effector = pd.read_pickle(data_path)
+    num_runs = df_effector.columns.levshape[0]
+    num_eff_default = df_effector.columns.levshape[1]
+
+    effector_list = []
+    for runNum in range(num_runs):
+        for effNum in range(num_eff):  # Unpack the dataframe into series
+            effector_list.append(pd.Series(df_effector.iloc[:, num_eff_default * runNum + effNum]))
+    newMultIndex = pd.MultiIndex.from_product([list(range(num_runs)), list(range(num_eff))], names=['runNum', 'varIdx'])
+    return pd.DataFrame(effector_list, index=newMultIndex).T
+
+
 class DS_Plot():
     '''
     Object which stores data necessary to generate a bokeh image.
