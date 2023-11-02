@@ -76,6 +76,21 @@ class UniformDispersion(SingleVariableDispersion):
         return dispValue
 
 
+class UniformDispersionSymmetricBounds(SingleVariableDispersion):
+    def __init__(self, varName, bounds=None):
+        SingleVariableDispersion.__init__(self, varName, bounds)
+        if self.bounds is None:
+             self.bounds = ([0.5, 1.0])  # defines a hard floor/ceiling
+
+    def generate(self, sim):
+        dispValue = random.uniform(self.bounds[0], self.bounds[1]) * random.choice([-1, 1])
+
+        mid = 0.0
+        scale = self.bounds[1] - mid
+        self.magnitude.append(str(round((dispValue - mid)/scale*100,2)) + " %")
+        return dispValue
+
+
 class NormalDispersion(SingleVariableDispersion):
     def __init__(self, varName, mean=0.0, stdDeviation=0.5, bounds=None):
         SingleVariableDispersion.__init__(self, varName, bounds)
@@ -113,7 +128,6 @@ class VectorVariableDispersion(object):
             rndVec[0] *= -1
         eigenAxis = np.cross(vector, rndVec)
         thrusterMisalignDCM = self.eigAxisAndAngleToDCM(eigenAxis, angle)
-        self.magnitude.append(str(round(np.arccos(np.dot(rndVec, vector)/np.linalg.norm(rndVec)/np.linalg.norm(vector))*180./np.pi,2)) + " deg")
         return np.dot(thrusterMisalignDCM, vector)
 
     def perturbCartesianVectorUniform(self, vector):
@@ -298,8 +312,8 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
         meanPhi = vectorSphere[1] # Nominal phi
         meanTheta = vectorSphere[2] # Nominal theta
 
-        phiRnd = np.random.normal(meanPhi, self.phiStd, 1)
-        thetaRnd = np.random.normal(meanTheta, self.thetaStd, 1)
+        phiRnd = np.random.normal(meanPhi, self.phiStd)
+        thetaRnd = np.random.normal(meanTheta, self.thetaStd)
 
         self.phiBounds = [meanPhi + self.phiBoundsOffNom[0], meanPhi + self.phiBoundsOffNom[1]]
         self.thetaBounds = [meanTheta + self.thetaBoundsOffNom[0],  meanTheta + self.thetaBoundsOffNom[1]]
@@ -314,6 +328,56 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
         self.magnitude.append(str(round((thetaRnd - meanTheta) / self.thetaStd, 2)) + r" $\sigma$")
 
         return dispVec
+
+
+class UniformVectorSingleAngleDispersion(VectorVariableDispersion):
+    def __init__(self, varName, bounds=None):
+        super(UniformVectorSingleAngleDispersion, self).__init__(varName, None)
+
+        self.bounds = bounds
+
+        if bounds is None:
+            self.bounds = [-np.pi, np.pi]
+
+        self.magnitude = []
+
+    def generate(self, sim=None):
+        dirVec = eval('sim.' + self.varName)
+        angle = np.random.uniform(self.bounds[0], self.bounds[1])
+        angle = self.checkBounds(angle, self.bounds)
+        dirVec = np.array(dirVec).reshape(3).tolist()
+        dispVec = self.perturbVectorByAngle(dirVec, angle)
+        angleDisp = np.arccos(np.dot(dirVec, dispVec)/np.linalg.norm(dirVec)/np.linalg.norm(dispVec))
+        midAngle = (self.bounds[1] + self.bounds[0])/2.
+        scaleAngle = self.bounds[1] - midAngle
+        self.magnitude.append(str(round((angleDisp - midAngle)/scaleAngle*100, 2)) + " %")
+
+        return dispVec
+
+
+class NormalVectorSingleAngleDispersion(VectorVariableDispersion):
+    def __init__(self, varName, phiStd=np.pi/36.0, bounds=None):
+        super(NormalVectorSingleAngleDispersion, self).__init__(varName, None)
+
+        self.phiStd = phiStd
+        self.bounds = bounds
+
+        if bounds is None:
+            self.bounds = [-np.pi, np.pi]
+
+        self.magnitude = []
+
+    def generate(self, sim=None):
+        dirVec = eval('sim.' + self.varName)
+        angle = np.random.normal(0, self.phiStd)
+        angle = self.checkBounds(angle, self.bounds)
+        dirVec = np.array(dirVec).reshape(3).tolist()
+        dispVec = self.perturbVectorByAngle(dirVec, angle)
+        angleDisp = np.arccos(np.dot(dirVec, dispVec)/np.linalg.norm(dirVec)/np.linalg.norm(dispVec))
+        self.magnitude.append(str(round(angleDisp / self.phiStd, 2)) + " sigma")
+
+        return dispVec
+
 
 class UniformEulerAngleMRPDispersion(VectorVariableDispersion):
     def __init__(self, varName, bounds=None):
@@ -476,7 +540,6 @@ class InertiaTensorDispersion:
                   + "()' dispersions will not be set for variable " + self.varName))
             return
         else:
-            vehDynObject = getattr(sim, self.varNameComponents[0])
             I = np.array(eval('sim.' + self.varName)).reshape(3, 3)
 
             # generate random values for the diagonals
