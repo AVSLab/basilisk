@@ -671,3 +671,120 @@ class MRPDispersionPerAxis(VectorVariableDispersion):
             rndAngles[i] = (self.bounds[i][1] - self.bounds[i][0]) * np.random.random() + self.bounds[i][0]
         dispMRP = rndAngles.reshape(3)
         return dispMRP
+
+
+class SymmetricSolarArrayDispersion():
+    def __init__(self, angle1Dyn_str, angle2Dyn_str, angle1Controller_str, angle2Controller_str, angle1Profiler_str,
+                 angle2Profiler_str, bounds=None):
+        self.angle1Dyn_str = angle1Dyn_str
+        self.angle2Dyn_str = angle2Dyn_str
+        self.angle1Controller_str = angle1Controller_str
+        self.angle2Controller_str = angle2Controller_str
+        self.angle1Profiler_str = angle1Profiler_str
+        self.angle2Profiler_str = angle2Profiler_str
+        self.bounds = bounds
+        self.numberOfSubDisps = 6
+
+    def generate(self, sim=None):
+        dispValue = random.uniform(self.bounds[0], self.bounds[1])
+        self.angle1Dyn_val = dispValue
+        self.angle2Dyn_val = -dispValue
+        self.angle1Controller_val = dispValue
+        self.angle2Controller_val = -dispValue
+        self.angle1Profiler_val = dispValue
+        self.angle2Profiler_val = -dispValue
+
+    def generateString(self, index, sim=None):
+        if index == 1:
+            nextValue = self.angle1Dyn_val
+        if index == 2:
+            nextValue = self.angle2Dyn_val
+        if index == 3:
+            nextValue = self.angle1Controller_val
+        if index == 4:
+            nextValue = self.angle2Controller_val
+        if index == 5:
+            nextValue = self.angle1Profiler_val
+        if index == 6:
+            nextValue = self.angle2Profiler_val
+        val = str(nextValue)
+        return val
+
+    def getName(self, index):
+        if index == 1:
+            return self.angle1Dyn_str
+        if index == 2:
+            return self.angle2Dyn_str
+        if index == 3:
+            return self.angle1Controller_str
+        if index == 4:
+            return self.angle2Controller_str
+        if index == 5:
+            return self.angle1Profiler_str
+        if index == 6:
+            return self.angle2Profiler_str
+
+
+class SymmetricSolarArrayWithReferenceDispersion():
+    def __init__(self, angle1Dyn_str, angle2Dyn_str, angle1Controller_str, angle2Controller_str, angle1Profiler_str,
+                 angle2Profiler_str, refAngle1_str, refAngle2_str, bounds=None):
+        self.angle1Dyn_str = angle1Dyn_str
+        self.angle2Dyn_str = angle2Dyn_str
+        self.angle1Controller_str = angle1Controller_str
+        self.angle2Controller_str = angle2Controller_str
+        self.angle1Profiler_str = angle1Profiler_str
+        self.angle2Profiler_str = angle2Profiler_str
+        self.refAngle1_str = refAngle1_str
+        self.refAngle2_str = refAngle2_str
+        self.bounds = bounds
+        self.numberOfSubDisps = 8
+
+    def generate(self, sim=None):
+        dispValue = random.uniform(self.bounds[0], self.bounds[1])
+
+        self.angle1Dyn_val = dispValue
+        self.angle2Dyn_val = -dispValue
+        self.angle1Controller_val = dispValue
+        self.angle2Controller_val = -dispValue
+        self.angle1Profiler_val = dispValue
+        self.angle2Profiler_val = -dispValue
+        self.refAngle1_val = dispValue
+        self.refAngle2_val = -dispValue
+
+    def generateString(self, index, sim=None):
+        if index == 1:
+            nextValue = self.angle1Dyn_val
+        if index == 2:
+            nextValue = self.angle2Dyn_val
+        if index == 3:
+            nextValue = self.angle1Controller_val
+        if index == 4:
+            nextValue = self.angle2Controller_val
+        if index == 5:
+            nextValue = self.angle1Profiler_val
+        if index == 6:
+            nextValue = self.angle2Profiler_val
+        if index == 7:
+            nextValue = self.refAngle1_val
+        if index == 8:
+            nextValue = self.refAngle2_val
+        val = str(nextValue)
+        return val
+
+    def getName(self, index):
+        if index == 1:
+            return self.angle1Dyn_str
+        if index == 2:
+            return self.angle2Dyn_str
+        if index == 3:
+            return self.angle1Controller_str
+        if index == 4:
+            return self.angle2Controller_str
+        if index == 5:
+            return self.angle1Profiler_str
+        if index == 6:
+            return self.angle2Profiler_str
+        if index == 7:
+            return self.refAngle1_str
+        if index == 8:
+            return self.refAngle2_str
