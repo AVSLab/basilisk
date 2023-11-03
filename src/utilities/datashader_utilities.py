@@ -12,6 +12,7 @@ with warnings.catch_warnings():
     from datashader.colors import Sets1to3
 from Basilisk.utilities import macros
 
+
 def pull_and_format_df(path, varIdxLen):
     df = pd.read_pickle(path)
     if len(np.unique(df.columns.codes[1])) is not varIdxLen:
@@ -20,6 +21,7 @@ def pull_and_format_df(path, varIdxLen):
         indices = pd.Index([0,1]) # Need multiple rows for curves
         df = df.reindex(columns=newMultIndex, index=indices)
     return df
+
 
 def curve_per_df_component(df):
     """
@@ -47,6 +49,7 @@ def curve_per_df_component(df):
         df_list.append(curve_df)
 
     return df_list
+
 
 def curve_per_df_column(df):
     """
@@ -76,6 +79,45 @@ def curve_per_df_column(df):
     return df_list
 
 
+def transform_dataframe(df_in, transforming_function):
+    """
+    Transforms the data in 'df_in' using the function specified in 'transforming_function'.
+    E.g. if the data in 'df_in' are position vectors rvec and the 'transforming_function' is np.linalg.norm(rvec)
+    then a dataframe with the norm of each position vector is returned.
+    """
+    num_runs = df_in.columns.levshape[0]
+    num_comp = df_in.columns.levshape[1]
+    num_comp_out = np.size(transforming_function(df_in.iloc[0][0].values))
+
+    data = []
+    for runNum in range(num_runs):
+        result = df_in.iloc[:, num_comp * runNum:num_comp * runNum + num_comp].apply(transforming_function, axis=1, raw=True)
+        if num_comp_out == 1:  # The result is one-dimensional of type Series
+            data.append(result)
+        else:  # The result is multi-dimensional of type dataframe
+            for idx in range(num_comp_out):  # Unpack the dataframe into series
+                data.append(pd.Series(result.iloc[:,idx]))
+    newMultIndex = pd.MultiIndex.from_product([list(range(num_runs)), list(range(num_comp_out))], names=['runNum', 'varIdx'])
+    return pd.DataFrame(data, index=newMultIndex).T
+
+
+def extract_effector_df(data_path, num_eff):
+    """
+    Extracts the effector (RW, thruster, etc.) information for only those effectors that are used.
+    E.g. the RW effector message consists by default of 36 RWs, but if only 4 are used, this function will return the
+    states of only 4 RWs. The data path specifies where the data from the MC is located, for example
+    '/mc_data/rw_speed_msg.wheelSpeeds.data'.
+    """
+    df_effector = pd.read_pickle(data_path)
+    num_runs = df_effector.columns.levshape[0]
+    num_eff_default = df_effector.columns.levshape[1]
+
+    effector_list = []
+    for runNum in range(num_runs):
+        for effNum in range(num_eff):  # Unpack the dataframe into series
+            effector_list.append(pd.Series(df_effector.iloc[:, num_eff_default * runNum + effNum]))
+    newMultIndex = pd.MultiIndex.from_product([list(range(num_runs)), list(range(num_eff))], names=['runNum', 'varIdx'])
+    return pd.DataFrame(effector_list, index=newMultIndex).T
 
 
 class DS_Plot():
