@@ -255,9 +255,8 @@ from Basilisk.utilities import vizSupport
 # import general simulation support files
 try:
     from Basilisk.simulation import vizInterface
-    vizFound = True
 except ImportError:
-    vizFound = False
+    pass
 
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import hillPoint
@@ -481,7 +480,7 @@ def run(planetCase):
     # Set the initial simulation time
     simulationTime = macros.sec2nano(0)
 
-    if vizFound:
+    if vizSupport.vizFound:
         # Set up antenna transmission to Earth visualization
         transceiverHUD = vizInterface.Transceiver()
         transceiverHUD.r_SB_B = [0.23, 0., 1.38]
@@ -513,7 +512,7 @@ def run(planetCase):
     def runVelocityPointing(simTime, planetMsg):
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(planetMsg)
-        if vizFound:
+        if vizSupport.vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
         attError.sigma_R0R = [np.tan(90.*macros.D2R/4), 0, 0]
         simulationTime += macros.sec2nano(simTime)
@@ -523,7 +522,7 @@ def run(planetCase):
     def runAntennaEarthPointing(simTime):
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(earthPointGuidance.attRefOutMsg)
-        if vizFound:
+        if vizSupport.vizFound:
             transceiverHUD.transceiverState = 3  # antenna in send and receive mode
         attError.sigma_R0R = [0, 0, 0]
         simulationTime += macros.sec2nano(simTime)
@@ -533,7 +532,7 @@ def run(planetCase):
     def runPanelSunPointing(simTime):
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(sunPointGuidance.attRefOutMsg)
-        if vizFound:
+        if vizSupport.vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
         attError.sigma_R0R = [0, 0, 0]
         simulationTime += macros.sec2nano(simTime)
@@ -543,7 +542,7 @@ def run(planetCase):
     def runSensorSciencePointing(simTime):
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(sciencePointGuidance.attRefOutMsg)
-        if vizFound:
+        if vizSupport.vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
         attError.sigma_R0R = [-1./3., 1./3., -1./3.]
         simulationTime += macros.sec2nano(simTime)

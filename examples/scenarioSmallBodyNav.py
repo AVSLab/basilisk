@@ -106,11 +106,6 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeRW
 from Basilisk.utilities import unitTestSupport
 
-try:
-    from Basilisk.simulation import vizInterface
-    vizFound = True
-except ImportError:
-    vizFound = False
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -759,7 +754,7 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, ast_ephemeris_recorder)
     scSim.AddModelToTask(measTaskName, ast_ephemeris_meas_recorder)
 
-    if vizFound:
+    if vizSupport.vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                                   # , saveFile=fileName
                                                   )
