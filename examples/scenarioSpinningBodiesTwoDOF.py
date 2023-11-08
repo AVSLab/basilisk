@@ -254,33 +254,34 @@ def run(show_plots, numberPanels):
         scBodyList.append(["panel1", spinningBody.spinningBodyConfigLogOutMsgs[0]])
         scBodyList.append(["panel2", spinningBody.spinningBodyConfigLogOutMsgs[1]])
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scBodyList
-                                              # , saveFile=fileName + str(numberPanels)
-                                              )
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scBodyList
+                                                  # , saveFile=fileName + str(numberPanels)
+                                                  )
 
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=[scObject.ModelTag]
-                                 , modelPath="CYLINDER"
-                                 , scale=[diameter, diameter, height / 2]
-                                 , color=vizSupport.toRGBA255("blue"))
-    if numberPanels == 1:
         vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["panel"]
+                                     , simBodiesToModify=[scObject.ModelTag]
                                      , modelPath="CYLINDER"
-                                     , scale=[2 * radius, 2 * radius, thickness]
-                                     , color=vizSupport.toRGBA255("green"))
-    elif numberPanels == 2:
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["panel1"]
-                                     , modelPath="CUBE"
-                                     , scale=[width, length, thickness]
-                                     , color=vizSupport.toRGBA255("green"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["panel2"]
-                                     , modelPath="CUBE"
-                                     , scale=[width, length, thickness]
-                                     , color=vizSupport.toRGBA255("green"))
-    viz.settings.orbitLinesOn = -1
+                                     , scale=[diameter, diameter, height / 2]
+                                     , color=vizSupport.toRGBA255("blue"))
+        if numberPanels == 1:
+            vizSupport.createCustomModel(viz
+                                         , simBodiesToModify=["panel"]
+                                         , modelPath="CYLINDER"
+                                         , scale=[2 * radius, 2 * radius, thickness]
+                                         , color=vizSupport.toRGBA255("green"))
+        elif numberPanels == 2:
+            vizSupport.createCustomModel(viz
+                                         , simBodiesToModify=["panel1"]
+                                         , modelPath="CUBE"
+                                         , scale=[width, length, thickness]
+                                         , color=vizSupport.toRGBA255("green"))
+            vizSupport.createCustomModel(viz
+                                         , simBodiesToModify=["panel2"]
+                                         , modelPath="CUBE"
+                                         , scale=[width, length, thickness]
+                                         , color=vizSupport.toRGBA255("green"))
+        viz.settings.orbitLinesOn = -1
 
     # Initialize the simulation
     scSim.InitializeSimulation()

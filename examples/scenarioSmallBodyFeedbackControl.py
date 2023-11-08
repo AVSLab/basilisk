@@ -487,15 +487,16 @@ def run(show_plots):
 
     fileName = 'scenarioSmallBodyFeedbackControl'
 
-    vizInterface = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                            # , saveFile=fileName
-                                                            )
-    vizSupport.createStandardCamera(vizInterface, setMode=0, bodyTarget='bennu', setView=0)
+    if vizSupport.vizFound:
+        vizInterface = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                                # , saveFile=fileName
+                                                                )
+        vizSupport.createStandardCamera(vizInterface, setMode=0, bodyTarget='bennu', setView=0)
 
-    # vizInterface.settings.showSpacecraftLabels = 1
-    vizInterface.settings.showCSLabels = 1
-    vizInterface.settings.planetCSon = 1
-    vizInterface.settings.orbitLinesOn = -1
+        # vizInterface.settings.showSpacecraftLabels = 1
+        vizInterface.settings.showCSLabels = 1
+        vizInterface.settings.planetCSon = 1
+        vizInterface.settings.orbitLinesOn = -1
 
     # initialize Simulation
     scSim.InitializeSimulation()
