@@ -74,6 +74,8 @@ Version |release|
 - The ``MAX_N_CSS_MEAS`` define is increased to 32 matching the maximum number of coarse sun sensors.
 - mixed bug in time to nano-seconds conversions in ``macros.py`` support file
 - Created :ref:`thrusterPlatformState` to map the thruster configuration information to body frame given the time-varying platform states.
+- Updated :ref:`thrusterPlatformReference` to add an input and output thruster config msg, and integral feedback term
+  which dumps steady-state momentum in case of uncertainties on the CM location.
 
 
 Version 2.2.0 (June 28, 2023)
