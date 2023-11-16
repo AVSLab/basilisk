@@ -18,6 +18,9 @@ provides information on what this message is used for.
     * - vehConfigInMsg
       - :ref:`VehicleConfigMsgPayload`
       - Input vehicle configuration message containing the position of the center of mass of the system.
+    * - thrusterConfigFInMsg
+      - :ref:`THRConfigMsgPayload`
+      - Input thruster configuration message containing the thrust direction vector and magnitude in **platform frame coordinates**. The entry ``rThrust_B`` here is the position of the thrust application point, with respect to the origin of the platform frame, in platform-frame coordinates (:math:`{}^\mathcal{F}\boldsymbol{r}_{T/F}`).
     * - rwConfigDataInMsg
       - :ref:`RWArrayConfigMsgPayload`
       - Input message containing the number of reaction wheels, relative inertias and orientations with respect to the body frame.
@@ -36,6 +39,9 @@ provides information on what this message is used for.
     * - thrusterTorqueOutMsg
       - :ref:`CmdTorqueBodyMsgPayload`
       - Output message containing the opposite of the net torque produced by the thruster on the system.
+    * - thrusterConfigBOutMsg
+      - :ref:`THRConfigMsgPayload`
+      - Output thruster configuration message containing the thrust direction vector and magnitude in **reference body frame coordinates**. The entry ``rThrust_B`` here is the position of the thrust application point, with respect to the origin of the body frame, in body-frame coordinates (:math:`{}^\mathcal{B}\boldsymbol{r}_{T/B}`).
 
 
 Detailed Module Description
@@ -47,10 +53,14 @@ This module computes a direction cosine matrix :math:`[\mathcal{FM}]` that descr
 When the optional input messages ``rwConfigDataInMsg`` and ``rwSpeedsInMsg`` the user can specify an input parameter ``K``, which is the proportional gain of a control gain that computes an offset with respect to the center of mass: this allows for the thruster to apply a torque on the system that dumps the momentum accumulated on the wheels. Such control law has the expression:
 
 .. math:: 
-    \boldsymbol{d} = \frac{\kappa}{t^2} (\boldsymbol{t} \times \boldsymbol{H}_w)
+    \boldsymbol{d} = -\frac{1}{t^2} \boldsymbol{t} \times(\kappa \boldsymbol{h}_w + \kappa_I \boldsymbol{H}_w)
 
-where :math:`\boldsymbol{H}_w` is the momentum on the wheels.
+where :math:`\boldsymbol{h}_w` is the momentum on the wheels and :math:`\boldsymbol{H}_w` the integral over time of the momentum:
 
+.. math::
+    \boldsymbol{H}_w = \int_{t_0}^t \boldsymbol{h}_w \text{d}t.
+
+The inputs ``theta1Max`` and ``theta2Max`` are used to set bounds on the output reference angles for the platform. If there are no mechanical bounds, setting these inputs to a negative value bypasses the routine that bounds these angles.
 
 Module Assumptions and Limitations
 ----------------------------------
@@ -69,15 +79,16 @@ User Guide
 ----------
 The required module configuration is::
 
-    platform = thrusterPlatformReference.thrusterPlatformReference()
-    platform.ModelTag = "platformReference"
-    platform.sigma_MB = sigma_MB
-    platform.r_BM_M = r_BM_M
-    platform.r_FM_F = r_FM_F
-    platform.r_TF_F = r_TF_F
-    platform.T_F    = T_F
-    platform.K      = K
-    scSim.AddModelToTaskAddModelToTask(simTaskName, platform)
+    platformReference = thrusterPlatformReference.thrusterPlatformReference()
+    platformReference.ModelTag  = "platformReference"
+    platformReference.sigma_MB  = sigma_MB
+    platformReference.r_BM_M    = r_BM_M
+    platformReference.r_FM_F    = r_FM_F
+    platformReference.K         = K
+    platformReference.Ki        = Ki
+    platformReference.theta1Max = theta1Max
+    platformReference.theta2Max = theta2Max
+    scSim.AddModelToTaskAddModelToTask(simTaskName, platformReference)
  	
 The module is configurable with the following parameters:
 
@@ -97,12 +108,15 @@ The module is configurable with the following parameters:
     * - ``r_FM_F``
       - [0, 0, 0]
       - relative position of point :math:`F` with respect to point :math:`M`, in :math:`\mathcal{F}`-frame coordinates
-    * - ``r_TF_F``
-      - [0, 0, 0]
-      - relative position of point :math:`T` with respect to point :math:`F`, in :math:`\mathcal{F}`-frame coordinates
-    * - ``T_F``
-      - [0, 0, 0]
-      - thrust vector in :math:`\mathcal{F}`-frame coordinates
     * - ``K``
       - 0
       - proportional gain of the momentum dumping control loop
+    * - ``Ki`` (optional)
+      - 0
+      - integral gain of the momentum dumping control loop
+    * - ``theta1Max`` (optional)
+      - 0
+      - absolute bound on tip angle
+    * - ``theta2Max`` (optional)
+      - 0
+      - absolute bound on tilt angle
