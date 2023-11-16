@@ -73,6 +73,7 @@ Version |release|
   error. Rather, the process return code (0 for success, and anything else for failure) indicates the success.
 - The ``MAX_N_CSS_MEAS`` define is increased to 32 matching the maximum number of coarse sun sensors.
 - mixed bug in time to nano-seconds conversions in ``macros.py`` support file
+- Created :ref:`thrusterPlatformState` to map the thruster configuration information to body frame given the time-varying platform states.
 
 
 Version 2.2.0 (June 28, 2023)
