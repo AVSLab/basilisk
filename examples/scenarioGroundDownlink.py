@@ -104,10 +104,7 @@ def run(show_plots):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
     planet.isCentralBody = True  # ensure this is the central gravitational body
-
-    planet.useSphericalHarmParams = True
-    simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
-                                        planet.spherHarm, 2)
+    planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt', 2)
     mu = planet.mu
     # setup Spice interface for some solar system bodies
     timeInitString = '2020 MAY 21 18:28:03 (UTC)'

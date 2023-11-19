@@ -146,16 +146,13 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
         planet = gravFactory.createMarsBarycenter()
         planet.isCentralBody = True           # ensure this is the central gravitational body
         if useSphericalHarmonics:
-            planet.useSphericalHarmParams = True
-            simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM2BData.txt',
-                                                planet.spherHarm, 100)
+            planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM2BData.txt', 100)
+
     else:  # Earth
         planet = gravFactory.createEarth()
         planet.isCentralBody = True          # ensure this is the central gravitational body
         if useSphericalHarmonics:
-            planet.useSphericalHarmParams = True
-            simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
-                                                planet.spherHarm, 2)
+            planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt', 2)
     mu = planet.mu
 
     # attach gravity model to spacecraft

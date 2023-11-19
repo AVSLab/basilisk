@@ -186,11 +186,7 @@ def run(show_plots, scCase):
     # Other possible ways to access specific gravity bodies include the below
     #   earth = gravBodies['earth']
     #   earth = gravFactory.createEarth()
-    gravBodies['earth'].useSphericalHarmParams = True
-    simIncludeGravBody.loadGravFromFile(bskPath +'/supportData/LocalGravData/GGM03S.txt'
-                                     , gravBodies['earth'].spherHarm
-                                     , 100
-                                     )
+    gravBodies['earth'].useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S.txt', 100)
     # The configured gravitational bodies are added to the spacecraft dynamics with the usual command:
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 

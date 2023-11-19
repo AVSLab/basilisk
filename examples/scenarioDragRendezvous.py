@@ -192,9 +192,8 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravBodies = gravFactory.createBodies(['earth'])
     gravBodies['earth'].isCentralBody = True
-    simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S.txt', gravBodies['earth'].spherHarm, 2)
-
-    gravBodies['earth'].useSphericalHarmParams = useJ2
+    if useJ2:
+        gravBodies['earth'].useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S.txt', 2)
     # timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
     # gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
     #                                           , timeInitString
