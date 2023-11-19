@@ -492,7 +492,7 @@ def plot_attitude_error(timeData, dataSigmaBR):
     for idx in range(3):
         plt.plot(timeData, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
+                 label=r'$\sigma_' + str(idx) + r'$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
@@ -503,7 +503,7 @@ def plot_rate_error(timeData, dataOmegaBR):
     for idx in range(3):
         plt.plot(timeData, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx+1) + '}$')
+                 label=r'$\omega_{BR,' + str(idx+1) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (rad/s) ')
@@ -521,7 +521,7 @@ def plot_rw_momenta(timeData, dataOmegaRw, RW, numRW):
     for idx in range(numRW):
         plt.plot(timeData, dataOmegaRw[:, idx] * RW[idx].Js,
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$H_' + str(idx+1) + '}$')
+                 label=r'$H_{' + str(idx+1) + r'}$')
     plt.plot(timeData, totMomentumNorm, '--',
              label=r'$\|H\|$')
     plt.legend(loc='lower right')
@@ -534,7 +534,7 @@ def plot_DH(timeData, dataDH):
     for idx in range(3):
         plt.plot(timeData, dataDH[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\Delta H_' + str(idx+1) + '}$')
+                 label=r'$\Delta H_{' + str(idx+1) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Dumped momentum (Nms) ')
@@ -545,7 +545,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\Omega_{' + str(idx+1) + '}$')
+                 label=r'$\Omega_{' + str(idx+1) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
@@ -556,7 +556,7 @@ def plot_thrImpulse(timeDataFSW, dataMap, numTh):
     for idx in range(numTh):
         plt.plot(timeDataFSW, dataMap[:, idx],
                  color=unitTestSupport.getLineColor(idx, numTh),
-                 label='$thrImpulse,' + str(idx+1) + '}$')
+                 label=r'$thrImpulse_{' + str(idx+1) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Impulse requested [Ns]')
@@ -567,7 +567,7 @@ def plot_OnTimeRequest(timeData, dataOnTime, numTh):
     for idx in range(numTh):
         plt.plot(timeData, dataOnTime[:, idx],
                  color=unitTestSupport.getLineColor(idx, numTh),
-                 label='$OnTimeRequest,' + str(idx+1) + '}$')
+                 label=r'$OnTimeRequest_{' + str(idx+1) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('OnTimeRequest [sec]')
@@ -578,7 +578,7 @@ def plot_thrForce(timeDataFSW, dataThr, numTh):
     for idx in range(numTh):
         plt.plot(timeDataFSW, dataThr[idx],
                  color=unitTestSupport.getLineColor(idx, numTh),
-                 label='$thrForce,' + str(idx+1) + '}$')
+                 label=r'$thrForce_{' + str(idx+1) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Thruster force [N]')

@@ -129,9 +129,9 @@ def plot_position(time, meas_time, r_BO_O_truth, r_BO_O_est, r_BO_O_meas):
     ax[1].plot(meas_time, r_BO_O_meas[:, 1], 'k*', markersize=1)
     ax[2].plot(meas_time, r_BO_O_meas[:, 2], 'k*', markersize=1)
 
-    ax[0].plot(time, r_BO_O_truth[:, 0], label='${}^Or_{BO_{1}}$')
-    ax[1].plot(time, r_BO_O_truth[:, 1], label='${}^Or_{BO_{2}}$')
-    ax[2].plot(time, r_BO_O_truth[:, 2], label='${}^Or_{BO_{3}}$')
+    ax[0].plot(time, r_BO_O_truth[:, 0], label=r'${}^Or_{BO_{1}}$')
+    ax[1].plot(time, r_BO_O_truth[:, 1], label=r'${}^Or_{BO_{2}}$')
+    ax[2].plot(time, r_BO_O_truth[:, 2], label=r'${}^Or_{BO_{3}}$')
 
     ax[0].plot(time, r_BO_O_est[:, 0], label='estimate')
     ax[1].plot(time, r_BO_O_est[:, 1])
@@ -140,9 +140,9 @@ def plot_position(time, meas_time, r_BO_O_truth, r_BO_O_est, r_BO_O_meas):
     plt.xlabel('Time [sec]')
     plt.title('Relative Spacecraft Position')
 
-    ax[0].set_ylabel('${}^Or_{BO_1}$ [m]')
-    ax[1].set_ylabel('${}^Or_{BO_2}}$ [m]')
-    ax[2].set_ylabel('${}^Or_{BO_3}$ [m]')
+    ax[0].set_ylabel(r'${}^O r_{BO_{1}}$ [m]')
+    ax[1].set_ylabel(r'${}^O r_{BO_{2}}$ [m]')
+    ax[2].set_ylabel(r'${}^O r_{BO_{3}}$ [m]')
 
     ax[0].legend()
 
@@ -171,9 +171,9 @@ def plot_velocity(time, meas_time, v_BO_O_truth, v_BO_O_est, v_BO_O_meas):
     plt.xlabel('Time [sec]')
     plt.title('Relative Spacecraft Velocity')
 
-    ax[0].set_ylabel('${}^Ov_{BO_1}$ [m/s]')
-    ax[1].set_ylabel('${}^Ov_{BO_2}}$ [m/s]')
-    ax[2].set_ylabel('${}^Ov_{BO_3}$ [m/s]')
+    ax[0].set_ylabel(r'${}^Ov_{BO_1}$ [m/s]')
+    ax[1].set_ylabel(r'${}^Ov_{BO_2}$ [m/s]')
+    ax[2].set_ylabel(r'${}^Ov_{BO_3}$ [m/s]')
 
     ax[0].legend()
 
@@ -203,9 +203,9 @@ def plot_pos_error(time, r_err, P):
     plt.xlabel('Time [sec]')
     plt.title('Position Error and Covariance')
 
-    ax[0].set_ylabel('${}^Or_{BO_1}$ Error [m]')
-    ax[1].set_ylabel('${}^Or_{BO_2}}$ Error [m]')
-    ax[2].set_ylabel('${}^Or_{BO_3}$ Error [m]')
+    ax[0].set_ylabel(r'${}^Or_{BO_1}$ Error [m]')
+    ax[1].set_ylabel(r'${}^Or_{BO_2}$ Error [m]')
+    ax[2].set_ylabel(r'${}^Or_{BO_3}$ Error [m]')
 
     ax[0].legend()
 
@@ -236,7 +236,7 @@ def plot_vel_error(time, v_err, P):
     plt.title('Velocity Error and Covariance')
 
     ax[0].set_ylabel('${}^Ov_{BO_1}$ Error [m/s]')
-    ax[1].set_ylabel('${}^Ov_{BO_2}}$ Error [m/s]')
+    ax[1].set_ylabel('${}^Ov_{BO_2}$ Error [m/s]')
     ax[2].set_ylabel('${}^Ov_{BO_3}$ Error [m/s]')
 
     ax[0].legend()

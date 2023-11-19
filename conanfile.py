@@ -19,19 +19,19 @@ endColor = '\033[0m'
 
 try:
     from conans import __version__ as conan_version
-    # check conan version
-    if conan_version < "1.40.1":
+    if int(conan_version[0]) >= 2:
+        print(failColor + "conan version " + conan_version + " is not compatible with Basilisk.")
+        print("use version 1.40.1 to 1.xx.0 to work with the conan repo changes." + endColor)
+        exit(0)
+    from conans.tools import Version
+    # check conan version 1.xx
+    if conan_version < Version("1.40.1"):
         print(failColor + "conan version " + conan_version + " is not compatible with Basilisk.")
         print("use version 1.40.1+ to work with the conan repo changes from 2021." + endColor)
         exit(0)
-    if conan_version > "1.59.0":
-        print(failColor + "conan version " + conan_version + " is not compatible with Basilisk.")
-        print("use version 1.40.1 to 1.59.0 to work with the conan repo changes." + endColor)
-        exit(0)
-    from conans.tools import Version
     from conans import ConanFile, CMake, tools
 except ModuleNotFoundError:
-    print("Please make sure you install python conan package\nRun command `pip install conan` "
+    print("Please make sure you install python conan (version 1.xx, not 2.xx) package\nRun command `pip install conan` "
           "for Windows\nRun command `pip3 install conan` for Linux/MacOS")
     sys.exit(1)
 
@@ -299,11 +299,12 @@ class BasiliskConan(ConanFile):
 
         process = subprocess.Popen(add_basilisk_module_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = process.communicate()
-        if err:
+        if process.returncode:
             print("Error %s while running %s" % (err.decode(), add_basilisk_module_command))
             sys.exit(1)
         else:
-            print("This resulted in the output: \n%s" % output.decode())
+            print("This resulted in the stdout: \n%s" % output.decode())
+            print("This resulted in the stderr: \n%s" % err.decode())
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Configure the Basilisk framework.")

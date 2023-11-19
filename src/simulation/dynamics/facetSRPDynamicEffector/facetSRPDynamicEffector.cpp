@@ -126,7 +126,7 @@ void FacetSRPDynamicEffector::computeForceTorque(double integTime, double timeSt
 
     // Zero storage information
     double projectedArea = 0.0;
-    double projectionTerm = 0.0;
+    double cosTheta = 0.0;
     facetSRPForcePntB_B.setZero();
     facetSRPTorquePntB_B.setZero();
     totalSRPForcePntB_B.setZero();
@@ -141,22 +141,15 @@ void FacetSRPDynamicEffector::computeForceTorque(double integTime, double timeSt
     // Loop through the facets and calculate the SRP force and torque acting on point B
     for(int i = 0; i < this->numFacets; i++)
     {
-        projectionTerm = this->scGeometry.facetNormals_B[i].dot(sHat);
-        projectedArea = this->scGeometry.facetAreas[i] * projectionTerm;
+        cosTheta = this->scGeometry.facetNormals_B[i].dot(sHat);
+        projectedArea = this->scGeometry.facetAreas[i] * cosTheta;
 
         if(projectedArea > 0.0){
-
-            // Calculate the incidence angle theta between the facet normal vector and the Sun-direction vector
-            double cosTheta = projectionTerm;
-            Eigen::Vector3d intermediate = sHat.cross(this->scGeometry.facetNormals_B[i]);
-            double sinTheta = intermediate.norm();
-            double theta = atan2(sinTheta, cosTheta);
-
             // Compute the SRP force acting on the ith facet
-            facetSRPForcePntB_B = -SRPPressure * projectedArea * cos(theta)
+            facetSRPForcePntB_B = -SRPPressure * projectedArea
                                   * ( (1-this->scGeometry.facetSpecCoeffs[i])
                                   * sHat + 2 * ( (this->scGeometry.facetDiffCoeffs[i] / 3)
-                                  + this->scGeometry.facetSpecCoeffs[i] * cos(theta))
+                                  + this->scGeometry.facetSpecCoeffs[i] * cosTheta)
                                   * this->scGeometry.facetNormals_B[i] );
 
             // Compute the SRP torque acting on the ith facet

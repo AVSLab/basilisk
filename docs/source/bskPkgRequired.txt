@@ -3,5 +3,5 @@
 ``matplotlib``
 ``pytest``
 ``Pillow``
-``conan>=1.40.1, <=1.59.0``
+``conan>=1.40.1, <2.00.0``
 ``parse>=1.18.0``

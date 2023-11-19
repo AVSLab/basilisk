@@ -139,7 +139,7 @@ def simpleMassPropsTestFunction(show_plots, accuracy):
     unitTestSim.TotalSim.SingleStepProcesses()
 
     # set the filtered output truth states
-    trueMass = [[100], [500]]
+    trueMass = [100, 500]
     trueInertia = [[40, 0, 0, 0, 50, 0, 0, 0, 60],
                    [200, 0, 0, 0, 300, 0, 0, 0, 400]]
     trueCoM = [[0.0, 0.0, 0.0],

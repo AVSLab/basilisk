@@ -145,7 +145,7 @@ def runScenario(scenario):
     attitudeModeTime = macros.min2nano(10.)
     attitudeMode = ["hillPoint", "inertial3D"]
 
-    currentSimulationTime = 0.
+    currentSimulationTime = 0
     while currentSimulationTime < simulationTime:
 
         # Configure alternating FSW mode

@@ -444,7 +444,7 @@ def run(show_plots):
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
                                                   , rwEffectorList=[rwStateEffector, None]
                                                   , lightList=[[servicerLight], None]
-                                                  , saveFile=fileName
+                                                  # , saveFile=fileName
                                                   )
 
         viz.settings.trueTrajectoryLinesOn = -1

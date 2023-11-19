@@ -132,7 +132,7 @@ void FacetDragDynamicEffector::plateDrag(){
 		projectedArea = this->scGeometry.facetAreas[i] * projectionTerm;
 		if(projectedArea > 0.0){
 			facetDragForce = 0.5 * pow(this->v_B.norm(), 2.0) * this->scGeometry.facetCoeffs[i] * projectedArea * this->atmoInData.neutralDensity * (-1.0)*this->v_hat_B;
-			facetDragTorque = facetDragForce.cross(this->scGeometry.facetLocations_B[i]);
+			facetDragTorque = (-1)*facetDragForce.cross(this->scGeometry.facetLocations_B[i]);
 			totalDragForce = totalDragForce + facetDragForce;
 			totalDragTorque = totalDragTorque + facetDragTorque;
 		}

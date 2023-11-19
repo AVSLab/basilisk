@@ -26,7 +26,6 @@ Basilisk Release Notes
       CAD asteroid or lunar surface terrain.
     - spacecraft charging related modules
     - support a way to do thread-safe messaging
-    - ability to integrate Python Basilisk modules in the same task and process as C/C++ modules
     - automated documentation build system when code is pushed to the repo
 
 
@@ -49,7 +48,7 @@ Version |release|
   removing the need for "Config" and "Wrap" objects. Updated all scenarios and test files for this new syntax.
   To convert prior script to use the new syntax, see :ref:`bskPrinciples-2` for the simple new
   syntaxt to add C-modules.
-- Modified :ref:`mrpFeedback` to enable the use of a modified control law, and added the integral control torque 
+- Modified :ref:`mrpFeedback` to enable the use of a modified control law, and added the integral control torque
   feedback output message.
 - Resolved a crash, induced by uninitialized memory, in the Camera module. The crash was first seen on Ubuntu 22 with
   gcc 9.5
@@ -60,8 +59,25 @@ Version |release|
     SWIG files (``.i``) for modules should include ``%include "sys_model.i"`` instead of ``%include "sys_model.h"``
     to take advantage of the new module variable logging feature.
 
+- Added prescribed angle and angle rates to :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyTwoDOFStateEffector`
+  modules.
 - Created a :ref:`scanningInstrumentController`, similar to :ref:`simpleInstrumentController`, but which constantly checks if the attitude error
   and angular rate (optional) are within the requirement limits and sends an imaging command to a :ref:`simpleInstrument`.
+- Added a new scenario :ref:`scenarioHohmann` that performs a Hohmann transfer with attitude mode changes.
+  The basic attitude flight modes are implemented using the Basilisk event system.
+- updated conan support to latest ``1.xx`` version to provide support for macOS Sonoma
+- updated macOS ``cspice`` library to be compiled with Xcode 15.  This addresses some errors that appeared
+  when calling the prior pre-built ``cspice`` library.  The new library is backwards compatible with
+  prior versions of Xcode.
+- Fixed a bug in the conanfile where the ``stderr`` output from a ``subprocess.Popen`` call was being interpreted as an
+  error. Rather, the process return code (0 for success, and anything else for failure) indicates the success.
+- The ``MAX_N_CSS_MEAS`` define is increased to 32 matching the maximum number of coarse sun sensors.
+- mixed bug in time to nano-seconds conversions in ``macros.py`` support file
+- Created :ref:`thrusterPlatformState` to map the thruster configuration information to body frame given the time-varying platform states.
+- Updated :ref:`thrusterPlatformReference` to add an input and output thruster config msg, and integral feedback term
+  which dumps steady-state momentum in case of uncertainties on the CM location.
+- Created :ref:`thrustCMEstimation` to perform online estimation of the CM using gimbaled thruster torque measurements.
+
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------

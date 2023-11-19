@@ -30,6 +30,7 @@ import inspect
 import os
 
 import numpy as np
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -52,46 +53,16 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simIncludeGravBody
 
 
-#print dir(exponentialAtmosphere)
+test_drag = [([1.0, 1.0], np.array([2.0, 2.0]), [np.array([1, 0, 0]), np.array([0, 1, 0])], [np.array([0.1, 0, 0]), np.array([0, 0.1, 0])]),
+             ([1.0, 1.0], np.array([2.0, 2.0]), [np.array([1, 0, 0]), np.array([0, 1, 0])], [np.array([0.3, 0, 0]), np.array([0, 0.3, 0])]),
+             ([1.0, 2.0], np.array([2.0, 4.0]), [np.array([1, 0, 0]), np.array([0, 1, 0])], [np.array([0.1, 0, 0]), np.array([0, 0.1, 0])]),
+             ([1.0, 1.0], np.array([2.0, 2.0]), [np.array([1, 0, 0]), np.array([0, 1, 0])], [np.array([0.1, 0, 0]), np.array([0, 0, 0.1])]),
+             ([1.0, 1.0], np.array([2.0, 2.0]), [np.array([1, 0, 0]), np.array([0, 0, 1])], [np.array([0.1, 0, 0]), np.array([0, 0, 0.1])]),
+             ([1.0, 1.0], np.array([2.0, 2.0]), [np.array([0, 0, -1]), np.array([0, -1, 0])], [np.array([0, 0, 0.1]), np.array([0, 0.1, 0])]),
+]
 
-
-def test_unitFacetDrag():
-    """This function is called by the py.test environment."""
-    # each test method requires a single assert method to be called
-
-    testResults = []
-    testMessage = []
-
-    dragRes, dragMsg = TestDragCalculation()
-    testMessage.append(dragMsg)
-    testResults.append(dragRes)
-
-    shadowRes, shadowMsg = TestShadowCalculation()
-    testMessage.append(shadowMsg)
-    testResults.append(shadowRes)
-
-    testSum = sum(testResults)
-
-    snippetName = "unitTestPassFail"
-
-    if testSum == 0:
-        colorText = 'ForestGreen'
-        print("PASSED")
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("Failed")
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
-
-    assert testSum < 1, testMessage
-
-
-def TestDragCalculation():
-
-    #   Init test support variables
-    testFailCount = 0
-    testMessages = []
+@pytest.mark.parametrize("scAreas, scCoeff, B_normals, B_locations", test_drag)
+def test_DragCalculation(scAreas, scCoeff, B_normals, B_locations):
 
     ##   Simulation initialization
     simTaskName = "simTask"
@@ -118,17 +89,10 @@ def TestDragCalculation():
     scObject.addDynamicEffector(newDrag)
 
     try:
-        scAreas = [1.0, 1.0]
-        scCoeff = np.array([2.0, 2.0])
-        B_normals = [np.array([1, 0, 0]), np.array([0, 1, 0])]
-        B_locations = [np.array([0.1,0,0]), np.array([0,0.1,0])]
-
         for i in range(0,len(scAreas)):
             newDrag.addFacet(scAreas[i], scCoeff[i], B_normals[i], B_locations[i])
     except:
-        testFailCount += 1
-        testMessages.append("ERROR: FacetDrag unit test failed while setting facet parameters.")
-        return testFailCount, testMessages
+        pytest.fail("ERROR: FacetDrag unit test failed while setting facet parameters.")
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -211,35 +175,26 @@ def TestDragCalculation():
 
 
     #   Compare to expected values
-    accuracy = 1e-3
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
-    test_val = np.zeros([3,])
+    test_val_force = np.zeros([3,])
+    test_val_torque = np.zeros([3,])
     for i in range(len(scAreas)):
-        test_val += checkFacetDragForce(densData[i], scAreas[i], scCoeff[i], B_normals[i], attData[1], velData[1])
+        val_force_i = checkFacetDragForce(densData[i], scAreas[i], scCoeff[i], B_normals[i], attData[1], velData[1])
+        test_val_force += val_force_i
+        test_val_torque += np.cross(B_locations[i], val_force_i)
 
-    if len(densData) > 0:
-        if not unitTestSupport.isArrayEqualRelative(dragDataForce_B[1,1:4], test_val, 3,accuracy):
-            testFailCount += 1
-            testMessages.append(
-                "FAILED:  FacetDragEffector failed force unit test at t=" + str(dragDataForce_B[1,0]* macros.NANO2SEC) + "sec with a value difference of "+str(dragDataForce_B[1,1:]-test_val))
-    else:
-        testFailCount += 1
-        testMessages.append("FAILED:  ExpAtmo failed to pull any logged data")
-
-    if testFailCount:
-        print(testMessages)
-    else:
-        print("PASSED")
-
-    return testFailCount, testMessages
+    assert len(densData) > 0, "FAILED:  ExpAtmo failed to pull any logged data"
+    np.testing.assert_allclose(dragDataForce_B[1,1:4], test_val_force, atol = 1e-06)
+    np.testing.assert_allclose(dragTorqueData[1,1:4], test_val_torque, atol = 1e-06)
 
 
-def TestShadowCalculation():
+test_shadow = [([1.0, 1.0], np.array([2.0, 2.0]), [np.array([0, 0, -1]), np.array([0, -1, 0])], [np.array([0, 0, 0.1]), np.array([0, 0.1, 0])]),
+               ([1.0, 1.0], np.array([2.0, 4.0]), [np.array([0, 0, -1]), np.array([0, -1, 0])], [np.array([0, 0, 0.1]), np.array([0, 0.1, 0])]),
+               ([1.0, 1.0], np.array([2.0, 2.0]), [np.array([0, 0, -1]), np.array([0, -1, 0])], [np.array([0, 0, 0.4]), np.array([0, 0.4, 0])]),
+]
 
-    #   Init test support variables
-    testFailCount = 0
-    testMessages = []
+@pytest.mark.parametrize("scAreas, scCoeff, B_normals, B_locations", test_shadow)
+def test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations):
 
     ##   Simulation initialization
     simTaskName = "simTask"
@@ -269,17 +224,10 @@ def TestShadowCalculation():
     scObject.addDynamicEffector(newDrag)
 
     try:
-        scAreas = [1.0, 1.0]
-        scCoeff = np.array([2.0, 2.0])
-        B_normals = [np.array([0, 0, -1]), np.array([0, -1, 0])]
-        B_locations = [np.array([0,0,0.1]), np.array([0,0.1,0])]
-
         for ind in range(0,len(scAreas)):
             newDrag.addFacet(scAreas[ind], scCoeff[ind], B_normals[ind], B_locations[ind])
     except:
-        testFailCount += 1
-        testMessages.append("ERROR: FacetDrag unit test failed while setting facet parameters.")
-        return testFailCount, testMessages
+        pytest.fail("ERROR: FacetDrag unit test failed while setting facet parameters.")
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -350,29 +298,15 @@ def TestShadowCalculation():
     densData = atmoLog.neutralDensity
     np.set_printoptions(precision=16)
 
-    #   Compare to expected values
-    accuracy = 1e-9
-    #unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
-
-    if len(densData) > 0:
-        for ind in range(1,len(densData)):
-            if not unitTestSupport.isArrayZero(dragDataForce_B[ind, 1:], 3,accuracy):
-                testFailCount += 1
-                testMessages.append(
-                    "FAILED:  FacetDragEffector failed shadow unit test with a value difference of "
-                    + str(dragDataForce_B[ind,1:]))
-    else:
-        testFailCount += 1
-        testMessages.append("FAILED:  ExpAtmo failed to pull any logged data")
-
-    if testFailCount:
-        print(testMessages)
-    else:
-        print("PASSED")
-
-    return testFailCount, testMessages
+    assert len(densData) > 0, "FAILED:  ExpAtmo failed to pull any logged data"
+    for ind in range(1,len(densData)):
+        np.testing.assert_allclose(dragDataForce_B[ind,1:4], [0, 0, 0], atol = 1e-11)
+        np.testing.assert_allclose(dragTorqueData[ind,1:4], [0, 0, 0], atol = 1e-11)
 
 if __name__=="__main__":
-    # test_unitFacetDrag()
-    TestShadowCalculation()
-    # TestDragCalculation()
+    scAreas = [1.0, 1.0]
+    scCoeff = np.array([2.0, 2.0])
+    B_normals = [np.array([0, 0, -1]), np.array([0, -1, 0])]
+    B_locations = [np.array([0, 0, 0.1]), np.array([0, 0.1, 0])]
+    test_DragCalculation(scAreas, scCoeff, B_normals, B_locations)
+    test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations)
