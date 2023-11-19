@@ -83,9 +83,7 @@ def singleGravityBody(show_plots):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravBodies = gravFactory.createBodies(['earth', 'sun', 'moon', 'jupiter barycenter'])
     gravBodies['earth'].isCentralBody = True
-    gravBodies['earth'].useSphericalHarmParams = True
-    simIncludeGravBody.loadGravFromFile(path + '/../_UnitTest/GGM03S.txt'
-                                        , gravBodies['earth'].spherHarm
+    gravBodies['earth'].useSphericalHarmonicsGravityModel(path + '/../_UnitTest/GGM03S.txt'
                                         , 40
                                         )
     stringCurrent = "2016 MAY 1 00:32:30.0"
@@ -369,8 +367,7 @@ def polyGravityBody(show_plots):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     polyBody = gravFactory.createCustomGravObject('eros', mu=mu)
     polyBody.isCentralBody = True
-    polyBody.usePolyhedral = True
-    simIncludeGravBody.loadPolyFromFile(path + '/../_UnitTest/EROS856Vert1708Fac.txt', polyBody.poly)
+    polyBody.usePolyhedralGravityModel(path + '/../_UnitTest/EROS856Vert1708Fac.txt')
     polyBody.planetBodyInMsg.subscribeTo(polyBodyEphem.planetOutMsgs[0])
 
     # create an ephemeris converter

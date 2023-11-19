@@ -212,10 +212,8 @@ class BSKDynamicModels():
         self.mars = 2
         self.jupiter = 3
 
-        simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM2BData.txt'
-                                            , gravBodies['mars barycenter'].spherHarm
-                                            , 2
-                                            )
+        gravBodies['mars barycenter'].useSphericalHarmonicsGravityModel(
+            bskPath + '/supportData/LocalGravData/GGM2BData.txt', 2)
 
         self.scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(self.gravFactory.gravBodies.values()))
         self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
