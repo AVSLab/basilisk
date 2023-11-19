@@ -77,7 +77,10 @@ Version |release|
 - Updated :ref:`thrusterPlatformReference` to add an input and output thruster config msg, and integral feedback term
   which dumps steady-state momentum in case of uncertainties on the CM location.
 - Created :ref:`thrustCMEstimation` to perform online estimation of the CM using gimbaled thruster torque measurements.
-
+- Refactored ``GravityEffector``. Adding custom gravity models can now be done by subclassing ``GravityModel``. The
+  utility method ``useSphericalHarmonicsGravityModel`` has been added to planetary body objects, which makes the body
+  use spherical harmonics and loads them from a file with a single command. Similarly, the methods ``usePolyhedralGravityModel``
+  and ``usePointMassGravityModel`` have been added.
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------
