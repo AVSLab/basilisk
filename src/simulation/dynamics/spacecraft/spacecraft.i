@@ -25,15 +25,11 @@
 
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
+from Basilisk.simulation.gravityEffector import GravBodyVector
 %}
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
-%include "std_vector.i"
-
-namespace std {
-    %template(GravBodyVector) vector<GravBodyData *>;
-}
 
 %include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
@@ -41,7 +37,7 @@ namespace std {
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
-%include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
+%import  "simulation/dynamics/gravityEffector/gravityEffector.i"
 %include "spacecraft.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
