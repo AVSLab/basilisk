@@ -221,7 +221,6 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         unitTestSim.earthGravBody.planetName = "earth_planet_data"
         unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
         unitTestSim.earthGravBody.isCentralBody = True
-        unitTestSim.earthGravBody.useSphericalHarmParams = False
 
         scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
 
