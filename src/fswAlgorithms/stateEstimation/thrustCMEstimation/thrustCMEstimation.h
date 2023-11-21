@@ -53,13 +53,13 @@ public:
     /*! declare these user-defined quantities */
     double attitudeTol;
 
-    ReadFunctor<THRConfigMsgPayload>        thrusterConfigBInMsg;
-    ReadFunctor<CmdTorqueBodyMsgPayload>    intFeedbackTorqueInMsg;
-    ReadFunctor<AttGuidMsgPayload>          attGuidInMsg;
-    ReadFunctor<VehicleConfigMsgPayload>    vehConfigInMsg;
-    Message<CMEstDataMsgPayload>            cmEstDataOutMsg;
-    Message<VehicleConfigMsgPayload>        vehConfigOutMsg;
-    VehicleConfigMsg_C                      vehConfigOutMsgC = {};
+    ReadFunctor<THRConfigMsgPayload>        thrusterConfigBInMsg;     //!< thr config in msg in B-frame coordinates
+    ReadFunctor<CmdTorqueBodyMsgPayload>    intFeedbackTorqueInMsg;   //!< integral feedback torque input msg
+    ReadFunctor<AttGuidMsgPayload>          attGuidInMsg;             //!< attitude guidance input msg
+    ReadFunctor<VehicleConfigMsgPayload>    vehConfigInMsg;           //!< (optional) vehicle configuration input msg
+    Message<CMEstDataMsgPayload>            cmEstDataOutMsg;          //!< estimated CM output msg
+    Message<VehicleConfigMsgPayload>        vehConfigOutMsg;          //!< output C++ vehicle configuration msg
+    VehicleConfigMsg_C                      vehConfigOutMsgC = {};    //!< output C vehicle configuration msg
 
     Eigen::Vector3d r_CB_B;                 //!< initial CM estimate
     Eigen::Vector3d P0;                     //!< initial CM state covariance
@@ -71,7 +71,7 @@ private:
     Eigen::Matrix3d R;                      //!< measurement noise covariance
     Eigen::Vector3d r_CB_est;               //!< CM location estimate
 
-    bool cmKnowledge;
+    bool cmKnowledge;                       //!< boolean to assess if vehConfigInMsg is connected
 
     BSKLogger bskLogger; //!< -- BSK Logging
 };
