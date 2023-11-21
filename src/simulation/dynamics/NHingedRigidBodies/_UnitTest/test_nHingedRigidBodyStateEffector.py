@@ -163,7 +163,6 @@ def nHingedRigidBody(show_plots, testCase):
         unitTestSim.earthGravBody.planetName = "earth_planet_data"
         unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
         unitTestSim.earthGravBody.isCentralBody = True
-        unitTestSim.earthGravBody.useSphericalHarmParams = False
         scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
         scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
         scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]

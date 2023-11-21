@@ -25,22 +25,17 @@
 
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
+from Basilisk.simulation.gravityEffector import GravBodyVector
 %}
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
-%include "std_vector.i"
-
-namespace std {
-    %template(GravBodyVector) vector<GravBodyData *>;
-}
-
 %include "sys_model.i"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
-%include "../_GeneralModuleFiles/gravityEffector.h"
+%import  "simulation/dynamics/gravityEffector/gravityEffector.i"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "spacecraftSystem.h"

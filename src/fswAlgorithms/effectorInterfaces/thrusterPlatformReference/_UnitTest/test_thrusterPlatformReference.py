@@ -184,10 +184,7 @@ def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accura
     theta1 = ref1Log.theta[0]
     theta2 = ref2Log.theta[0]
 
-    FM = [[np.cos(theta2),  np.sin(theta1)*np.sin(theta2), -np.cos(theta1)*np.sin(theta2)],
-          [       0      ,          np.cos(theta1)       ,         np.sin(theta1)        ],
-          [np.sin(theta2), -np.sin(theta1)*np.cos(theta2),  np.cos(theta1)*np.cos(theta2)]]
-
+    FM = rbk.euler1232C([theta1, theta2, 0.0])
     MB = rbk.MRP2C(sigma_MB)
 
     r_CB_M = np.matmul(MB, r_CB_B)

@@ -19,6 +19,8 @@ Version |release|
   issue has now been fixed in the current release.
 - The :ref:`facetSRPDynamicEffector` module was double counting a cosine term in the SRP force calculation. This is
   corrected in the current release.
+- The :ref:`facetDragDynamicEffector` module was missing a negative sign in the drag torque calculation. This is
+  corrected in the current release.
 
 Version 2.2.0
 -------------

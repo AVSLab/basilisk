@@ -45,15 +45,15 @@ typedef struct {
 
     BSKLogger *bskLogger;                                 //!< BSK Logging
 
-}ThrusterPlatformStateConfig;
+}thrusterPlatformStateConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    void SelfInit_thrusterPlatformState(ThrusterPlatformStateConfig *configData, int64_t moduleID);
-    void Reset_thrusterPlatformState(ThrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Update_thrusterPlatformState(ThrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_thrusterPlatformState(thrusterPlatformStateConfig *configData, int64_t moduleID);
+    void Reset_thrusterPlatformState(thrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Update_thrusterPlatformState(thrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }

@@ -184,7 +184,7 @@ def filterMethods():
     module.massPropsInMsg.subscribeTo(vcInMsg)
     module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
     module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
-    module.gyrBuffInMsgName.subscribeTo(gyroInMsg)
+    module.gyrBuffInMsg.subscribeTo(gyroInMsg)
 
     # Star Tracker Read Message and Order method
     unitTestSim.InitializeSimulation()
@@ -272,7 +272,7 @@ def stateUpdateInertialAttitude(show_plots):
     module.massPropsInMsg.subscribeTo(vcInMsg)
     module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
     module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
-    module.gyrBuffInMsgName.subscribeTo(gyroInMsg)
+    module.gyrBuffInMsg.subscribeTo(gyroInMsg)
 
     unitTestSim.InitializeSimulation()
 
@@ -410,7 +410,7 @@ def statePropInertialAttitude(show_plots):
     module.massPropsInMsg.subscribeTo(vcInMsg)
     module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
     module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
-    module.gyrBuffInMsgName.subscribeTo(gyroInMsg)
+    module.gyrBuffInMsg.subscribeTo(gyroInMsg)
 
 
     unitTestSim.InitializeSimulation()
@@ -519,7 +519,7 @@ def stateUpdateRWInertialAttitude(show_plots):
     module.massPropsInMsg.subscribeTo(vcInMsg)
     module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
     module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
-    module.gyrBuffInMsgName.subscribeTo(gyroInMsg)
+    module.gyrBuffInMsg.subscribeTo(gyroInMsg)
 
     unitTestSim.InitializeSimulation()
 
@@ -691,7 +691,7 @@ def statePropRateInertialAttitude(show_plots):
     module.massPropsInMsg.subscribeTo(vcInMsg)
     module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
     module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
-    module.gyrBuffInMsgName.subscribeTo(gyroInMsg)
+    module.gyrBuffInMsg.subscribeTo(gyroInMsg)
 
     unitTestSim.InitializeSimulation()
     st1InMsg.write(stMessage1, int(1 * 1E9))
@@ -820,25 +820,6 @@ def faultScenarios(show_plots):
                      0., 0., 1.]
 
     STList = [ST1Data]
-
-    # make input messages but don't write to them
-    # rwSpeedInMsg = messaging.RWSpeedMsg()
-    # rwConfigInMsg = messaging.RWArrayConfigMsg()
-    # gyroInMsg = messaging.AccDataMsg()
-
-    # connect messages
-    # moduleConfig.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st1InMsg)
-    # moduleConfig.massPropsInMsg.subscribeTo(vcInMsg)
-    # moduleConfig.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
-    # moduleConfig.rwParamsInMsg.subscribeTo(rwConfigInMsg)
-    # moduleConfig.gyrBuffInMsgName.subscribeTo(gyroInMsg)
-    #
-    # moduleConfigClean1.navStateOutMsgName = "inertial_state_estimate"
-    # moduleConfigClean1.filtDataOutMsgName = "inertial_filter_data"
-    # moduleConfigClean1.massPropsInMsgName = "adcs_config_data"
-    # moduleConfigClean1.rwSpeedsInMsgName = "reactionwheel_output_states"
-    # moduleConfigClean1.rwParamsInMsgName = "rwa_config_data_parsed"
-    # moduleConfigClean1.gyrBuffInMsgName = "gyro_buffer_data"
 
     moduleConfigClean1.alpha = 0.02
     moduleConfigClean1.beta = 2.0

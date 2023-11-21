@@ -136,7 +136,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
         timeInitString = "2012 MAY 1 00:28:30.0"
         gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
                                          timeInitString,
-                                         epochInMsgName=True)
+                                         epochInMsg=True)
 
         scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, -1)
 

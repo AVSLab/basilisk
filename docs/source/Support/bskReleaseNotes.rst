@@ -90,6 +90,16 @@ Version |release|
 - Fixed a bug in the conanfile where the ``stderr`` output from a ``subprocess.Popen`` call was being interpreted as an
   error. Rather, the process return code (0 for success, and anything else for failure) indicates the success.
 - The ``MAX_N_CSS_MEAS`` define is increased to 32 matching the maximum number of coarse sun sensors.
+- Fixed bug in time to nano-seconds conversions in ``macros.py`` support file
+- Created :ref:`thrusterPlatformState` to map the thruster configuration information to body frame given the time-varying platform states.
+- Updated :ref:`thrusterPlatformReference` to add an input and output thruster config msg, and integral feedback term
+  which dumps steady-state momentum in case of uncertainties on the CM location.
+- Created :ref:`thrustCMEstimation` to perform online estimation of the CM using gimbaled thruster torque measurements.
+- Refactored ``GravityEffector``. Adding custom gravity models can now be done by subclassing ``GravityModel``. The
+  utility method ``useSphericalHarmonicsGravityModel`` has been added to planetary body objects, which makes the body
+  use spherical harmonics and loads them from a file with a single command. Similarly, the methods ``usePolyhedralGravityModel``
+  and ``usePointMassGravityModel`` have been added.
+- Fixed examples and tests to run even when Basilisk is built with ``--vizInterface False``.
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------

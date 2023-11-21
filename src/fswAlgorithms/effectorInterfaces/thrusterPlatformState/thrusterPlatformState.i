@@ -21,15 +21,8 @@
    #include "thrusterPlatformState.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void SelfInit_thrusterPlatformState(void*, uint64_t);
-%ignore SelfInit_thrusterPlatformState;
-%constant void Reset_thrusterPlatformState(void*, uint64_t, uint64_t);
-%ignore Reset_thrusterPlatformState;
-%constant void Update_thrusterPlatformState(void*, uint64_t, uint64_t);
-%ignore Update_thrusterPlatformState;
-
-%include "thrusterPlatformState.h"
+%include "swig_c_wrap.i"
+%c_wrap(thrusterPlatformState);
 
 %include "architecture/msgPayloadDefC/THRConfigMsgPayload.h"
 struct THRConfigMsg_C;

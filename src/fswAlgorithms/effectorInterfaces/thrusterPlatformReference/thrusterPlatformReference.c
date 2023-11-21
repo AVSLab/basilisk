@@ -170,9 +170,8 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
     }
 
     /*! rewrite DCM with updated angles */
-    FM[0][0] = cos(theta2);     FM[0][1] = sin(theta1)*sin(theta2);     FM[0][2] = -cos(theta1)*sin(theta2);
-    FM[1][0] = 0;               FM[1][1] = cos(theta1);                 FM[1][2] = sin(theta1);
-    FM[2][0] = sin(theta2);     FM[2][1] = -sin(theta1)*cos(theta2);    FM[2][2] = cos(theta1)*cos(theta2);
+    double EulerAngles123[3] = {theta1, theta2, 0.0};
+    Euler1232C(EulerAngles123, FM);
 
     /*! extract theta1 and theta2 angles */
     hingedRigidBodyRef1Out.theta = theta1;

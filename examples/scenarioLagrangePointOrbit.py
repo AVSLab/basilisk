@@ -184,7 +184,6 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravBodies = gravFactory.createBodies(['moon', 'earth'])
     gravBodies['earth'].isCentralBody = True
-    # Necessary to specify useSphericalHarmParams for Earth or Moon, and then load parameters from file?
 
     # Add gravity bodies to the spacecraft dynamics
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))

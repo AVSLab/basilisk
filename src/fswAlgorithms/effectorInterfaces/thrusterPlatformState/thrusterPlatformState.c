@@ -27,7 +27,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_thrusterPlatformState(ThrusterPlatformStateConfig *configData, int64_t moduleID)
+void SelfInit_thrusterPlatformState(thrusterPlatformStateConfig *configData, int64_t moduleID)
 {
     THRConfigMsg_C_init(&configData->thrusterConfigBOutMsg);
 }
@@ -40,7 +40,7 @@ void SelfInit_thrusterPlatformState(ThrusterPlatformStateConfig *configData, int
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_thrusterPlatformState(ThrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID)
+void Reset_thrusterPlatformState(thrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     if (!THRConfigMsg_C_isLinked(&configData->thrusterConfigFInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, " thrusterPlatformState.thrusterConfigFInMsg wasn't connected.");
@@ -60,7 +60,7 @@ void Reset_thrusterPlatformState(ThrusterPlatformStateConfig *configData, uint64
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_thrusterPlatformState(ThrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID)
+void Update_thrusterPlatformState(thrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Create and assign message buffers */
     THRConfigMsgPayload        thrusterConfigFIn   = THRConfigMsg_C_read(&configData->thrusterConfigFInMsg);
@@ -78,12 +78,9 @@ void Update_thrusterPlatformState(ThrusterPlatformStateConfig *configData, uint6
     v3Scale(thrusterConfigFIn.maxThrust, T_F, T_F);
 
     /*! extract theta1 and theta2 angles and compute FB DCM */
-    double theta1 = hingedRigidBody1In.theta;
-    double theta2 = hingedRigidBody2In.theta;
+    double EulerAngles123[3] = {hingedRigidBody1In.theta, hingedRigidBody2In.theta, 0.0};
     double FM[3][3];
-    FM[0][0] = cos(theta2);     FM[0][1] = sin(theta1)*sin(theta2);     FM[0][2] = -cos(theta1)*sin(theta2);
-    FM[1][0] = 0;               FM[1][1] = cos(theta1);                 FM[1][2] = sin(theta1);
-    FM[2][0] = sin(theta2);     FM[2][1] = -sin(theta1)*cos(theta2);    FM[2][2] = cos(theta1)*cos(theta2);
+    Euler1232C(EulerAngles123, FM);
     double FB[3][3];
     m33MultM33(FM, MB, FB);
 

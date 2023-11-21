@@ -92,7 +92,7 @@ void DataFileToViz::Reset(uint64_t CurrentSimNanos)
     if (this->rwScOutMsgs.size() > 0) {
 
         if (this->scStateOutMsgs.size() != this->rwScOutMsgs.size()) {
-            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: you set appendRwMsgNames %d times, but set number of spacecraft to %d", (int) this->rwScOutMsgs.size(), (int) this->scStateOutMsgs.size());
+            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: you set appendRwMsg %d times, but set number of spacecraft to %d", (int) this->rwScOutMsgs.size(), (int) this->scStateOutMsgs.size());
         }
 
         /* check vector dimensions */

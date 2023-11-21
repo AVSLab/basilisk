@@ -129,9 +129,7 @@ def run(show_plots, useClassicElem, numOrbits):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravBodies = gravFactory.createBodies(['earth'])
     gravBodies['earth'].isCentralBody = True
-    gravBodies['earth'].useSphericalHarmParams = True
-    simIncludeGravBody.loadGravFromFile(
-        bskPath + '/supportData/LocalGravData/GGM03S.txt', gravBodies['earth'].spherHarm, 2)
+    gravBodies['earth'].useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S.txt', 2)
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(
         list(gravFactory.gravBodies.values()))
     scObject2.gravField.gravBodies = spacecraft.GravBodyVector(

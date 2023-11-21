@@ -209,9 +209,8 @@ from Basilisk.architecture import messaging
 
 try:
     from Basilisk.simulation import vizInterface
-    vizFound = True
 except ImportError:
-    vizFound = False
+    pass
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -457,7 +456,7 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, scRec)
     scSim.AddModelToTask(simTaskName, astRec)
 
-    if vizFound:
+    if vizSupport.vizFound:
         # Set up the sensor for the science-pointing mode
         genericSensor = vizInterface.GenericSensor()
         genericSensor.r_SB_B = cameraLocation
@@ -529,7 +528,7 @@ def run(show_plots):
     def runPanelSunPointing(simTime):
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(sunPointGuidance.attRefOutMsg)
-        if vizFound:
+        if vizSupport.vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
             genericSensor.isHidden = 1
             thrusterMsgInfo.thrustForce = 0
@@ -542,7 +541,7 @@ def run(show_plots):
     def runSensorSciencePointing(simTime):
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(sciencePointGuidance.attRefOutMsg)
-        if vizFound:
+        if vizSupport.vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
             genericSensor.isHidden = 0
             thrusterMsgInfo.thrustForce = 0
@@ -555,7 +554,7 @@ def run(show_plots):
     def runAntennaEarthPointing(simTime):
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(earthPointGuidance.attRefOutMsg)
-        if vizFound:
+        if vizSupport.vizFound:
             transceiverHUD.transceiverState = 3  # antenna in send and receive mode
             genericSensor.isHidden = 1
             thrusterMsgInfo.thrustForce = 0
@@ -568,7 +567,7 @@ def run(show_plots):
     def runDvBurn(simTime, burnSign, planetMsg):
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(planetMsg)
-        if vizFound:
+        if vizSupport.vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
             genericSensor.isHidden = 1
         if burnSign > 0:
@@ -583,7 +582,7 @@ def run(show_plots):
             simulationTime += macros.sec2nano(minTime)
             scSim.ConfigureStopTime(simulationTime)
             scSim.ExecuteSimulation()
-            if vizFound:
+            if vizSupport.vizFound:
                 thrusterMsgInfo.thrustForce = thrusterMsgInfo.maxThrust
                 thrMsg.write(thrusterMsgInfo, simulationTime)
             simulationTime += macros.sec2nano(simTime - minTime)

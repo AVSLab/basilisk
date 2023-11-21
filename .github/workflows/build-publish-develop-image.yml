@@ -1,0 +1,69 @@
+name: "Publish Develop Basilisk"
+
+on:
+  push:
+    branches:
+      - develop
+    tags:
+      - v*
+
+env:
+  REGISTRY: ghcr.io
+  OWNER: lasp
+  IS_RELEASE: ${{ startsWith(github.ref, 'refs/tags/v') }}
+
+jobs:
+  init:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+
+  containers:
+    runs-on: ubuntu-latest
+    needs: init
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        components:
+          - image: lasp-basilisk
+            context: lasp-basilisk
+            file: .github/workflows/Dockerfile
+
+    name: ${{ matrix.components.image }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: linux/amd64,linux/arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to ${{ env.REGISTRY }}
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Extract metadata (tags, labels) for ${{ matrix.components.image }}
+        id: metadata-step
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ matrix.components.image }}
+
+      - name: Build and push ${{ matrix.components.image }}
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ matrix.components.context }}
+          file: ${{ matrix.components.file }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.metadata-step.outputs.tags }}
+          labels: ${{ steps.metadata-step.outputs.labels }}

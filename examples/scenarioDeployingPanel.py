@@ -281,25 +281,26 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, pwr1Log)
     scSim.AddModelToTask(simTaskName, pwr2Log)
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName,
-                                              [scObject
-                                                  , [panel1.ModelTag, panel1.hingedRigidBodyConfigLogOutMsg]
-                                                  , [panel2.ModelTag, panel2.hingedRigidBodyConfigLogOutMsg]
-                                               ]
-                                              # , saveFile=__file__
-                                              )
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName,
+                                                  [scObject
+                                                      , [panel1.ModelTag, panel1.hingedRigidBodyConfigLogOutMsg]
+                                                      , [panel2.ModelTag, panel2.hingedRigidBodyConfigLogOutMsg]
+                                                   ]
+                                                  # , saveFile=__file__
+                                                  )
 
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=[panel1.ModelTag]
-                                 , modelPath="CUBE"
-                                 , scale=[3, 1, 0.1]
-                                 , color=vizSupport.toRGBA255("blue"))
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=[panel2.ModelTag]
-                                 , modelPath="CUBE"
-                                 , scale=[3, 1, 0.1]
-                                 , color=vizSupport.toRGBA255("blue"))
-    viz.settings.orbitLinesOn = -1
+        vizSupport.createCustomModel(viz
+                                     , simBodiesToModify=[panel1.ModelTag]
+                                     , modelPath="CUBE"
+                                     , scale=[3, 1, 0.1]
+                                     , color=vizSupport.toRGBA255("blue"))
+        vizSupport.createCustomModel(viz
+                                     , simBodiesToModify=[panel2.ModelTag]
+                                     , modelPath="CUBE"
+                                     , scale=[3, 1, 0.1]
+                                     , color=vizSupport.toRGBA255("blue"))
+        viz.settings.orbitLinesOn = -1
 
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)

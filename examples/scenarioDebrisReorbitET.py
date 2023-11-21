@@ -80,9 +80,8 @@ from Basilisk.utilities import (SimulationBaseClass, macros,
 try:
     from Basilisk.simulation import vizInterface
 
-    vizFound = True
 except ImportError:
-    vizFound = False
+    pass
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -300,7 +299,7 @@ def run(show_plots):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    if vizFound:
+    if vizSupport.vizFound:
         # setup MSM information
         msmInfoServicer = vizInterface.MultiSphereInfo()
         msmInfoServicer.msmChargeInMsg.subscribeTo(MSMmodule.chargeMsmOutMsgs[0])

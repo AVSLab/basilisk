@@ -79,16 +79,16 @@ User Guide
 ----------
 The required module configuration is::
 
-    platform = thrusterPlatformReference.thrusterPlatformReference()
-    platform.ModelTag  = "platformReference"
-    platform.sigma_MB  = sigma_MB
-    platform.r_BM_M    = r_BM_M
-    platform.r_FM_F    = r_FM_F
-    platform.K         = K
-    platform.Ki        = Ki
-    platform.theta1Max = theta1Max
-    platform.theta2Max = theta2Max
-    scSim.AddModelToTaskAddModelToTask(simTaskName, platform)
+    platformReference = thrusterPlatformReference.thrusterPlatformReference()
+    platformReference.ModelTag  = "platformReference"
+    platformReference.sigma_MB  = sigma_MB
+    platformReference.r_BM_M    = r_BM_M
+    platformReference.r_FM_F    = r_FM_F
+    platformReference.K         = K
+    platformReference.Ki        = Ki
+    platformReference.theta1Max = theta1Max
+    platformReference.theta2Max = theta2Max
+    scSim.AddModelToTaskAddModelToTask(simTaskName, platformReference)
  	
 The module is configurable with the following parameters:
 
@@ -111,12 +111,12 @@ The module is configurable with the following parameters:
     * - ``K``
       - 0
       - proportional gain of the momentum dumping control loop
-    * - ``Ki``
+    * - ``Ki`` (optional)
       - 0
       - integral gain of the momentum dumping control loop
-    * - ``theta1Max``
+    * - ``theta1Max`` (optional)
       - 0
       - absolute bound on tip angle
-    * - ``theta2Max``
+    * - ``theta2Max`` (optional)
       - 0
       - absolute bound on tilt angle
