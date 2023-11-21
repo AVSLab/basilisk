@@ -88,11 +88,6 @@ from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody,
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport
 
-try:
-    from Basilisk.simulation import vizInterface
-    vizFound = True
-except ImportError:
-    vizFound = False
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -209,7 +204,7 @@ def run(show_plots):
     # to save the BSK data to a file, uncomment the saveFile line below
     # Note that the gravitational body information is pulled automatically from the spacecraft object(s)
     # Even if custom gravitational bodies are added, this information is pulled by the method below
-    if vizFound:
+    if vizSupport.vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                                   # , saveFile=fileName
                                                   )
