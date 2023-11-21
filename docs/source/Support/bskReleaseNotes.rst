@@ -81,6 +81,7 @@ Version |release|
   utility method ``useSphericalHarmonicsGravityModel`` has been added to planetary body objects, which makes the body
   use spherical harmonics and loads them from a file with a single command. Similarly, the methods ``usePolyhedralGravityModel``
   and ``usePointMassGravityModel`` have been added.
+- Fixed examples and tests to run even when Basilisk is built with ``--vizInterface False``.
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------
