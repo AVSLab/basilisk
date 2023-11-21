@@ -597,7 +597,7 @@ def plot_resForce(timeDataFSW, dataThr, numTh, dirThr):
     for idx in range(3):
         plt.plot(timeDataFSW, resForce[idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='${}^B F_' + str(idx+1) + '}$')
+                 label='${}^B F_' + str(idx+1) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Resulting Net Force [N]')

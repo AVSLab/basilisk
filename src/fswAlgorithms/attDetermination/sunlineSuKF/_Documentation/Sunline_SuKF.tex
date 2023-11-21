@@ -164,14 +164,6 @@ In order for the filter to run, the user must set a few parameters:
  \texttt{Filter.state =[0.0, 0.0, 1.0, 0.0, 0.0]}
 \end{itemize}
 
-The messages must also be set as such:
-
-\begin{itemize}
-\item    \texttt{ filterObject.navStateOutMsgName = "sunline$\_$state$\_$estimate"}
-\item    \texttt{ filterObject.filtDataOutMsgName = "sunline$\_$filter$\_$data"}
-\item   \texttt{ filterObject.cssDataInMsgName = "css$\_$sensors$\_$data"}
-\item   \texttt{ filterObject.cssConfInMsgName = "css$\_$config$\_$data"}
-\end{itemize}
 
 \subsection{Inputs and Outputs}
 
@@ -222,7 +214,7 @@ In each of these individual tests, random inputs are fed to the methods and thei
 \subsection{Static Propagation}
 
 
-\input{AutoTeX/StatesPlotprop.tex}
+%\input{AutoTeX/StatesPlotprop.tex}
 
 This test also takes no measurements in, and propagates with the expectation of no change. It then tests that the states and covariance are as expected throughout the time of simulation. Plotted results are seen in Figure \ref{fig:StatesPlotprop}. We indeed see that the state and covariance that evolve nominally and without bias .
 
@@ -241,8 +233,8 @@ Plotted results are seen in Figures \ref{fig:StatesPlotupdate}, and \ref{fig:Pos
 
 Figure \ref{fig:PostFitupdate} shows the post fit residuals for the filter, with no measurement noise. We see that the observations are read in well an that the residuals are brought back down to zero.
 
-\input{AutoTeX/StatesPlotupdate.tex}
-\input{AutoTeX/PostFitupdate.tex}
+%\input{AutoTeX/StatesPlotupdate.tex}
+%\input{AutoTeX/PostFitupdate.tex}
 
 
 \bibliographystyle{AAS_publication}   % Number the references.

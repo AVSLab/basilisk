@@ -79,10 +79,10 @@ To specify which planets must be considered for gravity gradient torques, use th
     ggEff.addPlanetName("name")
 
 where ``name`` should be the Spice planetary output name.  For example, for earth this is `earth_planet_data`.  If
-the ``gravBodyFactory`` class is used to setup planets, then the ``bodyInMsgName`` variable will contain this
+the ``gravBodyFactory`` class is used to setup planets, then the ``planetName`` message will contain this
 information::
 
-    ggEff.addPlanetName(earth.bodyInMsgName)
+    ggEff.addPlanetName(earth.planetName)
 
 .. warning::
     The effector requires at least one planet to be specified.

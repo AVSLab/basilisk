@@ -185,8 +185,9 @@ def run():
     scSim.ExecuteSimulation()
 
     # change true orbit line color
-    colorMsgContent.colorRGBA = vizSupport.toRGBA255("Cyan")
-    colorMsg.write(colorMsgContent)
+    if vizSupport.vizFound:
+        colorMsgContent.colorRGBA = vizSupport.toRGBA255("Cyan")
+        colorMsg.write(colorMsgContent)
     simulationTime = macros.sec2nano(4.5 * 365 * day)
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()

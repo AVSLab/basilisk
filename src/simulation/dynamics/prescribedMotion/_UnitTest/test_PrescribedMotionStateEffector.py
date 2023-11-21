@@ -204,7 +204,6 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         earthGravBody.planetName = "earth_planet_data"
         earthGravBody.mu = 0.3986004415E+15
         earthGravBody.isCentralBody = True
-        earthGravBody.useSphericalHarmParams = False
         scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
         # Add energy and momentum variables to log
@@ -440,7 +439,6 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         earthGravBody.planetName = "earth_planet_data"
         earthGravBody.mu = 0.3986004415E+15
         earthGravBody.isCentralBody = True
-        earthGravBody.useSphericalHarmParams = False
         scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
         # Add energy and momentum variables to log

@@ -92,17 +92,16 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    platformState = thrusterPlatformState.ThrusterPlatformStateConfig()
-    platformWrap = unitTestSim.setModelDataWrap(platformState)
-    platformWrap.ModelTag = "platformReference"
+    platform = thrusterPlatformState.thrusterPlatformState()
+    platform.ModelTag = "platformReference"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, platformWrap, platformState)
+    unitTestSim.AddModelToTask(unitTaskName, platform)
 
     # Initialize the test module configuration data
-    platformState.sigma_MB = sigma_MB
-    platformState.r_BM_M = r_BM_M
-    platformState.r_FM_F = r_FM_F
+    platform.sigma_MB = sigma_MB
+    platform.r_BM_M = r_BM_M
+    platform.r_FM_F = r_FM_F
 
     # Create input THR Config Msg
     THRConfig = messaging.THRConfigMsgPayload()
@@ -110,20 +109,20 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
     THRConfig.maxThrust = np.linalg.norm(T_F)
     THRConfig.tHatThrust_B = T_F / THRConfig.maxThrust
     thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
-    platformState.thrusterConfigFInMsg.subscribeTo(thrConfigFMsg)
+    platform.thrusterConfigFInMsg.subscribeTo(thrConfigFMsg)
 
     # Create input hinged rigid body messages
     hingedBodyMsg1 = messaging.HingedRigidBodyMsgPayload()
     hingedBodyMsg1.theta = theta1
     hingedBody1InMsg = messaging.HingedRigidBodyMsg().write(hingedBodyMsg1)
-    platformState.hingedRigidBody1InMsg.subscribeTo(hingedBody1InMsg)
+    platform.hingedRigidBody1InMsg.subscribeTo(hingedBody1InMsg)
     hingedBodyMsg2 = messaging.HingedRigidBodyMsgPayload()
     hingedBodyMsg2.theta = theta2
     hingedBody2InMsg = messaging.HingedRigidBodyMsg().write(hingedBodyMsg2)
-    platformState.hingedRigidBody2InMsg.subscribeTo(hingedBody2InMsg)
+    platform.hingedRigidBody2InMsg.subscribeTo(hingedBody2InMsg)
 
     # Setup logging on the test module output messages so that we get all the writes to it
-    thrConfigLog = platformState.thrusterConfigBOutMsg.recorder()
+    thrConfigLog = platform.thrusterConfigBOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, thrConfigLog)
 
     # Need to call the self-init and cross-init methods
@@ -142,10 +141,7 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
     tHatThrust_B = thrConfigLog.tHatThrust_B[0]
     tMax = thrConfigLog.maxThrust[0]
 
-    FM = [[np.cos(theta2),  np.sin(theta1)*np.sin(theta2), -np.cos(theta1)*np.sin(theta2)],
-          [       0      ,          np.cos(theta1)       ,         np.sin(theta1)        ],
-          [np.sin(theta2), -np.sin(theta1)*np.cos(theta2),  np.cos(theta1)*np.cos(theta2)]]
-
+    FM = rbk.euler1232C([theta1, theta2, 0.0])
     MB = rbk.MRP2C(sigma_MB)
     FB = np.matmul(FM, MB)
 

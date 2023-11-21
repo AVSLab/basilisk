@@ -9,8 +9,8 @@ is scheduled so that reconfiguration is completed in one orbit period.
 In addition to formation control algorithm described in the textbook, some extensions and improvements are included in
 this module.
 First, this module assumes that deputy spacecraft has one-axis thrusters. Therefore, attitude control is also necessary 
-along with burn at certain period. When burn timing is approaching, target attitude is output as ``attRefOutMsgName``.
-Otherwise, and if ``attRefInMsgName`` (which is optional) is set, the reference message is output as ``attRefOutMsgName``.
+along with burn at certain period. When burn timing is approaching, target attitude is output as ``attRefOutMsg``.
+Otherwise, and if ``attRefInMsg`` (which is optional) is set, the reference message is output as ``attRefOutMsg``.
 Second, if :math:`\delta a` is not zero, drift of :math:`\delta M` occurs. This module can take this drift into consideration
 . Therefore, this module can achieve formation reconfiguration in orbital period.
 Third, in general three-time burn is necessary for reconfiguration. Two of them occur at perigee and apogee each.

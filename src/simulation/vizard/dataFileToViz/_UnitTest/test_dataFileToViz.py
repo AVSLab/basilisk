@@ -43,9 +43,8 @@ from Basilisk.utilities import vizSupport
 
 try:
     from Basilisk.simulation import vizInterface
-    vizFound = True
 except ImportError:
-    vizFound = False
+    pass
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -287,7 +286,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, [scObject1, scObject2]
                                               # , saveFile=__file__
                                               )
-    if vizFound:
+    if vizSupport.vizFound:
         # over-ride the default to not read the SC states from scObjects, but set them directly
         # to read from the dataFileToFiz output message
         viz.scData.clear()

@@ -73,8 +73,8 @@ void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
 void ThrustCMEstimation::UpdateState(uint64_t CurrentSimNanos)
 {
     /*! create output message buffers */
-    VehicleConfigMsgPayload vehConfigOutBuffer;
-    CMEstDataMsgPayload cmEstDataBuffer;
+    VehicleConfigMsgPayload vehConfigOutBuffer = {};
+    CMEstDataMsgPayload cmEstDataBuffer = {};
 
     /*! read and allocate the thrustConfigMsg */
     THRConfigMsgPayload thrConfigBuffer = this->thrusterConfigBInMsg();

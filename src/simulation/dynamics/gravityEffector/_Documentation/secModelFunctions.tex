@@ -3,9 +3,12 @@ The mathematical description of gravity effects are implemented in gravityEffect
 \begin{itemize}
 	\item \textbf{GravBody Creation}: The code creates gravity bodies which are capable of affecting spacecraft. It does not effect a spacecraft unless that spacecraft explicitly adds the body as a gravity effector.
 	\item \textbf{Orbital Energy}: The code can calculate the total orbital energy as well as orbital kinetic and orbital potential energy of a spacecraft about a gravity body.
-	\item \textbf{Simple Gravity}: The code can compute a gravity acceleration between two bodies according to Newton's law of universal gravitation given $\mu$ and the distance between the bodies.
-	\item \textbf{Spherical Harmonics}: The code can compute gravity acceleration between two bodies using the more-complex method of spherical harmonics. To do this, it must be provided with the same inputs as for calculating simple gravity. In addition, it needs to be provided a "degree" of spherical harmonics to be used and spherical harmonics coefficients useful up to that degree.
-	\item \textbf{Polyhedral:} The code can compute gravity acceleration between two bodies using the polyhedral model. To do this, it must be provided with the same inputs as for calculating simple gravity. In addition, it needs to be provided with the vertexes positions and their assignment to faces. 
+	\item \textbf{Compute gravity}: The code can use different gravity models to compute the gravity of a body. The following models are implemented in Basilisk:
+	\begin{itemize}
+		\item \textbf{Simple Gravity}: The code can compute a gravity acceleration between two bodies according to Newton's law of universal gravitation given $\mu$ and the distance between the bodies.
+		\item \textbf{Spherical Harmonics}: The code can compute gravity acceleration between two bodies using the more-complex method of spherical harmonics. To do this, it must be provided with the same inputs as for calculating simple gravity. In addition, it needs to be provided a "degree" of spherical harmonics to be used and spherical harmonics coefficients useful up to that degree.
+		\item \textbf{Polyhedral:} The code can compute gravity acceleration between two bodies using the polyhedral model. To do this, it must be provided with the same inputs as for calculating simple gravity. In addition, it needs to be provided with the vertexes positions and their assignment to faces. 
+	\end{itemize}
 	\item \textbf{Multiple Body Effects}: The code can stack the effects of multiple gravity bodies on top of each other to determine the net effect on a spacecraft. The user must indicate in the spacecraft set-up which gravitational bodies should be taken into account.
 	\item \textbf{Interface: Spacecraft States}: The code sends and receives spacecraft state information via the DynParamManager.
 	\item \textbf{Interface: Energy Contributions}: The code sends spacecraft energy contributions via \\updateEnergyContributions() which is called by the spacecraft.

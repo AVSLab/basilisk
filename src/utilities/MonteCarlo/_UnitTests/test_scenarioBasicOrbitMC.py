@@ -78,9 +78,7 @@ def myCreationFunction():
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
     planet.isCentralBody = True
-    planet.useSphericalHarmParams = True
-    simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt'
-                                        , planet.spherHarm
+    planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt'
                                         , 2
                                         )
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([planet])
