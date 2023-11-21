@@ -51,8 +51,7 @@ import scenarioSpinningBodiesTwoDOF
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("numberPanels", [1, 2])
 @pytest.mark.scenarioTest
-
-def test_bskAttitudeFeedbackRW(show_plots, numberPanels):
+def test_scenarioSpinningBodiesTwoDOF(show_plots, numberPanels):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
 
