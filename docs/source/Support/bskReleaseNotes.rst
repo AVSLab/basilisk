@@ -82,6 +82,7 @@ Version |release|
   use spherical harmonics and loads them from a file with a single command. Similarly, the methods ``usePolyhedralGravityModel``
   and ``usePointMassGravityModel`` have been added.
 - Fixed examples and tests to run even when Basilisk is built with ``--vizInterface False``.
+- Added a new method ``setDataBuffer()`` to :ref:`simpleStorageUnit` and :ref:`partitionedStorageUnit` to add or remove data from specified partitions.
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------

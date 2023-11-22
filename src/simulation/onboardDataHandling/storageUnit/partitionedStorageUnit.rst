@@ -40,4 +40,8 @@ Then, the names of the partitions need to be added to the storageUnit using::
 
    storageUnit.addPartition("partitionName")
 
+The ``setDataBuffer()`` method can be used to add or remove a given amount of data from specified partitions::
+
+   storageUnit.setDataBuffer(["partitionName","anotherPartitionName"], [1E4, -1E4]) # Given in bits
+
 For more information on how to set up and use this module, see the simple data system example :ref:`scenarioDataDemo`.
