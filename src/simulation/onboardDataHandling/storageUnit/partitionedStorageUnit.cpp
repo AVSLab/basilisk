@@ -28,8 +28,8 @@
  @return void;
  */
 PartitionedStorageUnit::PartitionedStorageUnit(){
-    this->storageCapacity = -1.0;
-    this->storedDataSum = 0.0;
+    this->storageCapacity = 0;
+    this->storedDataSum = 0;
     return;
 }
 
@@ -45,7 +45,7 @@ PartitionedStorageUnit::~PartitionedStorageUnit(){
  @return void
  */
 void PartitionedStorageUnit::customReset(uint64_t currentClock){
-    if (this->storageCapacity <= 0.0) {
+    if (this->storageCapacity <= 0) {
         bskLogger.bskLog(BSK_INFORMATION, "The storageCapacity variable must be set to a positive value.");
     }
     return;
@@ -58,7 +58,20 @@ void PartitionedStorageUnit::customReset(uint64_t currentClock){
 void PartitionedStorageUnit::addPartition(std::string dataName){
     dataInstance tmpDataInstance;
     strncpy(tmpDataInstance.dataInstanceName, dataName.c_str(), sizeof(tmpDataInstance.dataInstanceName));
-    tmpDataInstance.dataInstanceSum = 0.0;
+    tmpDataInstance.dataInstanceSum = 0;
     this->storedData.push_back(tmpDataInstance);
     return;
+}
+
+/*! Adds a specific amount of data to the specified partitions once
+ @param partitionNames  //Vector of partition names
+ @param data            //Vector of data to be added to each partition in partitionNames
+ @return void
+ */
+void PartitionedStorageUnit::setDataBuffer(std::vector<std::string> partitionNames, std::vector<long long int> data){
+
+    for (int i = 0; i < partitionNames.size(); i++)
+    {
+        PartitionedStorageUnit::DataStorageUnitBase::setDataBuffer(partitionNames[i], data[i]);
+    }
 }

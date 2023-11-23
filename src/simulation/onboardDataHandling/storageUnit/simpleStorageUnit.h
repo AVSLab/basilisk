@@ -30,6 +30,7 @@ class SimpleStorageUnit: public DataStorageUnitBase {
 public:
     SimpleStorageUnit();
     ~SimpleStorageUnit();
+    void setDataBuffer(long long int data); //!< Method to add/remove data from the storage unit once
 
 private:
     void customReset(uint64_t CurrentClock); //!< Custom Reset method
