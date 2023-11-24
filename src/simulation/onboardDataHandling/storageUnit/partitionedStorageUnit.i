@@ -37,10 +37,10 @@ from Basilisk.architecture.swig_common_model import *
 
 //When using scientific notation in Python (1E9), it is interpreted as float
 // giving a type error when assigning storageCapacity or adding data through
-// setDataBuffer. This maps that float and vector of floats to long int in 
-// C++ in this module.
-%typemap(in) long long int {
-    $1 = static_cast<long long int>(PyFloat_AsDouble($input));
+// setDataBuffer. This maps that float and vector of floats to int64_t and 
+// long long int in C++ in this module.
+%typemap(in) int64_t {
+    $1 = static_cast<int64_t>(PyFloat_AsDouble($input));
 }
 %typemap(in) std::vector<long long int> (std::vector<long long int> temp) {
     size_t size = PyList_Size($input);

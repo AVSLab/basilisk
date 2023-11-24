@@ -171,8 +171,8 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
            //! - if a dataNode exists in storedData vector, integrate and add to current amount
            if (index != -1) {
                //! Only perform if this operation will not take the sum below zero
-               if ((this->storedData[(size_t) index].dataInstanceSum + it->baudRate * (this->currentTimestep)) >= 0) {
-                   this->storedData[(size_t) index].dataInstanceSum += round(it->baudRate * (this->currentTimestep));
+               if ((this->storedData[(size_t) index].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0) {
+                   this->storedData[(size_t) index].dataInstanceSum += round(it->baudRate * this->currentTimestep);
                }
                //! - if a dataNode does not exist in storedData, add it to storedData, integrate baud rate, and add amount
            }
@@ -213,7 +213,7 @@ int DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload *tmpNodeMsg
 /*! Sums all of the data in the storedData vector
  @return double
  */
-long long int DataStorageUnitBase::sumAllData(){
+int64_t DataStorageUnitBase::sumAllData(){
     double dataSum = 0;
 
     std::vector<dataInstance>::iterator it;
@@ -253,7 +253,7 @@ bool DataStorageUnitBase::customReadMessages()
  @param data          //Amount of data to add to the partition
  @return void
  */
-void DataStorageUnitBase::setDataBuffer(std::string partitionName, long long int data)
+void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
 {
     dataInstance tmpDataInstance;
 
