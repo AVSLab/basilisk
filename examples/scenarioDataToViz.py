@@ -140,7 +140,7 @@ def run(show_plots, attType):
     # to show up in Vizard
     scObject1 = spacecraft.Spacecraft()
     scObject1.ModelTag = "servicer"
-    scObject1.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject1)
     scObject2 = spacecraft.Spacecraft()
     scObject2.ModelTag = "target"
     scList = [scObject1, scObject2]

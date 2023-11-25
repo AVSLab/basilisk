@@ -184,7 +184,7 @@ def run(TheScenario, runLog):
 
     TheScenario.vizard.kill()
 
-    spice = TheScenario.get_DynModel().gravFactory.spiceObject
+    spice = TheScenario.get_DynModel().spiceObject
     spice.unloadSpiceKernel(spice.SPICEDataPath, 'de430.bsp')
     spice.unloadSpiceKernel(spice.SPICEDataPath, 'naif0012.tls')
     spice.unloadSpiceKernel(spice.SPICEDataPath, 'de-403-masses.tpc')

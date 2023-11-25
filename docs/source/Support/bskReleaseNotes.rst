@@ -83,6 +83,10 @@ Version |release|
   and ``usePointMassGravityModel`` have been added.
 - Fixed examples and tests to run even when Basilisk is built with ``--vizInterface False``.
 - Added a new method ``setDataBuffer()`` to :ref:`simpleStorageUnit` and :ref:`partitionedStorageUnit` to add or remove data from specified partitions.
+- Refactored ``simIncludeGravBody``. The most notable change for users is that the commonly used line
+  ``scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))``
+  can be replaced by ``gravFactory.addBodiesTo(scObject)`` (where ``scObject`` is a ``spacecraft.Spacecraft`` 
+  or  ``spacecraftSystem.SpacecraftSystem``, and ``gravFactory`` is a ``simIncludeGravBody.gravBodyFactory``)
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------

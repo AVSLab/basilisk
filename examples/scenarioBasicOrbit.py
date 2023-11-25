@@ -305,7 +305,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     mu = planet.mu
 
     # Finally, the gravitational body must be connected to the spacecraft object.  This is done with
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
     # Here the complete list of gravitational bodies is automatically assigned to the spacecraft, regardless if
     # it is only one body like Earth or Mars, or a list of multiple bodies.
 

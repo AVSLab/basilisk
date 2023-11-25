@@ -497,7 +497,7 @@ def run(show_plots):
     # create SC object
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Create the position and velocity of states of the s/c wrt the small body hill frame
     r_BO_N = np.array([2000., 1500., 1000.]) # Position of the spacecraft relative to the body

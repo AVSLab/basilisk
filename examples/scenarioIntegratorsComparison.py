@@ -303,9 +303,7 @@ def get_solution(integrator, time_step):
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
-        list(gravFactory.gravBodies.values())
-    )
+    gravFactory.addBodiesTo(scObject)
 
     rN, vN, _ = get_initial_conditions()
 

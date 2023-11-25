@@ -221,7 +221,7 @@ def run(show_plots, orbitCase, planetCase):
     req = planet.radEquator
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
 
     # create the magnetic field

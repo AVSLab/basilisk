@@ -342,8 +342,9 @@ def run(show_plots):
     mu = 17.2882449693*1e9 # m^3/s^2
     asteroid = gravFactory.createCustomGravObject("vesta", mu, radEquator=265*1000)
     asteroid.isCentralBody = True
+
     nSpherHarm = 14
-    asteroid.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/VESTA20H.txt', nSpherHarm)
+    asteroid.useSphericalHarmonicsGravityModel(bskPath + "/supportData/LocalGravData/VESTA20H.txt", nSpherHarm)
     asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])
 
     # create an ephemeris converter
@@ -354,7 +355,7 @@ def run(show_plots):
     # create SC object
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # setup orbit initial conditions of the sc
     oe = orbitalMotion.ClassicElements()

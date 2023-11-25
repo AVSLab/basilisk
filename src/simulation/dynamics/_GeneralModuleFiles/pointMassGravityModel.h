@@ -48,7 +48,7 @@ class PointMassGravityModel : public GravityModel {
      * The position is given relative to the body and in the inertial
      * reference frame.
      */
-    double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const;
+    double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const override;
 
   public:
     double muBody = 0; /**< [m^3/s^2] Gravitation parameter for the planet */

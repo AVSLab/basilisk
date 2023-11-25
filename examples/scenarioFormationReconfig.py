@@ -136,12 +136,11 @@ def run(show_plots, useRefAttitude):
 
     # grav
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    gravBodies = gravFactory.createBodies(['earth'])
-    gravBodies['earth'].isCentralBody = True
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
-        list(gravFactory.gravBodies.values()))
-    scObject2.gravField.gravBodies = spacecraft.GravBodyVector(
-        list(gravFactory.gravBodies.values()))
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True
+    mu = earth.mu
+    gravFactory.addBodiesTo(scObject)
+    gravFactory.addBodiesTo(scObject2)
 
     # thruster
     thrusterEffector2 = thrusterDynamicEffector.ThrusterDynamicEffector()
@@ -229,7 +228,6 @@ def run(show_plots, useRefAttitude):
     mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
     # ----- Setup spacecraft initial states ----- #
-    mu = gravFactory.gravBodies['earth'].mu
     oe = orbitalMotion.ClassicElements()
     oe.a = 11000*1e3  # meters
     oe.e = 0.4

@@ -262,7 +262,7 @@ def run(show_plots, useAltBodyFrame):
     mu = earth.mu
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     #
     #   initialize Spacecraft States with initialization variables

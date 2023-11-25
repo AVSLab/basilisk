@@ -38,22 +38,22 @@ string list containing the desired file names to upload. This script loads a sin
 Next, the ``loadSpiceKernel()`` method of class SpiceInterface should be called to load the custom Spice files.
 This method accepts a file name and the path to the desired file to load::
 
-    gravFactory.spiceObject.loadSpiceKernel(file, os.path.join(path, "dataForExamples", "Spice/"))
+    spiceObject.loadSpiceKernel(file, os.path.join(path, "dataForExamples", "Spice/"))
 
 Note that setting up the orbital elements and initial conditions using the ``orbitalMotion`` module is no longer needed.
 
 After the Spice files are loaded, the final step is to connect the configured Spice translational output message to
 the spacecraft object's ``transRefInMsg`` input message::
 
-    scObject.transRefInMsg.subscribeTo(gravFactory.spiceObject.transRefStateOutMsgs[0])
+    scObject.transRefInMsg.subscribeTo(spiceObject.transRefStateOutMsgs[0])
 
 Finally, add the Spice object to the simulation task list::
 
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+    scSim.AddModelToTask(simTaskName, spiceObject)
 
 Ensure to unload the Spice kernels at the end of each simulation::
 
-    gravFactory.spiceObject.unloadSpiceKernel(file, os.path.join(path, "dataForExamples", "Spice/"))
+    spiceObject.unloadSpiceKernel(file, os.path.join(path, "dataForExamples", "Spice/"))
 
 Simulation Visualization In Vizard
 ----------------------------------
@@ -119,31 +119,29 @@ def run():
 
     # Create gravitational bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    gravFactory.createBodies(["earth", "sun", "venus", "mars barycenter"])
-    scObject.gravField.setGravBodies(gravityEffector.GravBodyVector(list(gravFactory.gravBodies.values())))
+    gravFactory.createBodies("earth", "sun", "venus", "mars barycenter")
+    gravFactory.addBodiesTo(scObject)
 
     # Create and configure the default SPICE support module.
     timeInitString = "2028 February 24 5:30:30.0"  # Store the date and time of the start of the simulation.
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
 
     # Create a string list of all custom Spice files to upload
     customSpiceFiles = ["spacecraft_21T01.bsp"]
 
     # Load the custom Spice files using the SpiceInterface class loadSpiceKernel() method
     for file in customSpiceFiles:
-        gravFactory.spiceObject.loadSpiceKernel(file, os.path.join(path, "dataForExamples", "Spice/"))
+        spiceObject.loadSpiceKernel(file, os.path.join(path, "dataForExamples", "Spice/"))
 
     # Add spacecraft name
     scNames = ["-60000"]
-    gravFactory.spiceObject.addSpacecraftNames(messaging.StringVector(scNames))
+    spiceObject.addSpacecraftNames(messaging.StringVector(scNames))
 
     # Connect the configured Spice translational output message to spacecraft object's transRefInMsg input message
-    scObject.transRefInMsg.subscribeTo(gravFactory.spiceObject.transRefStateOutMsgs[0])
+    scObject.transRefInMsg.subscribeTo(spiceObject.transRefStateOutMsgs[0])
 
     # Add the Spice and spacecraft objects to the simulation task list.
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+    scSim.AddModelToTask(simTaskName, spiceObject)
     scSim.AddModelToTask(simTaskName, scObject)
 
     # define the spacecraft inertia and other parameters
@@ -195,7 +193,7 @@ def run():
     # Unload custom Spice kernels at the end of each simulation
     gravFactory.unloadSpiceKernels()
     for file in customSpiceFiles:
-        gravFactory.spiceObject.unloadSpiceKernel(file, os.path.join(path, "Data", "Spice/"))
+        spiceObject.unloadSpiceKernel(file, os.path.join(path, "Data", "Spice/"))
 
     return
 

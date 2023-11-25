@@ -156,7 +156,7 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
     mu = planet.mu
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     #
     #   setup orbit and simulation time
