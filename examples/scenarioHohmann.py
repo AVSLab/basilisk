@@ -214,7 +214,7 @@ def run(show_plots, rFirst, rSecond):
                                      timeInitString,
                                      epochInMsg=True)
     gravFactory.spiceObject.zeroBase = 'Earth'
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Add ephemeris for Hill frame
     ephemObject = ephemerisConverter.EphemerisConverter()

@@ -57,8 +57,8 @@ class BSKDynamicModels():
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
         planet = self.gravFactory.createEarth()
         planet.isCentralBody = True          # ensure this is the central gravitational body
-        self.scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(self.gravFactory.gravBodies.values()))
-        self.scObject2.gravField.gravBodies = spacecraft.GravBodyVector(list(self.gravFactory.gravBodies.values()))
+        self.gravFactory.addBodiesTo(self.scObject)
+        self.gravFactory.addBodiesTo(self.scObject2)
 
         # Initialize all modules and write init one-time messages
         self.InitAllDynObjects()

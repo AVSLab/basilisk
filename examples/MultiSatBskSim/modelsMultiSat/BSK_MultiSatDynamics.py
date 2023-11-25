@@ -100,7 +100,7 @@ class BSKDynamicModels:
         Specify what gravitational bodies to include in the simulation
         """
         # Attach the gravity body
-        self.scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(SimBase.EnvModel.gravFactory.gravBodies.values()))
+        SimBase.EnvModel.gravFactory.addBodiesTo(self.scObject)
 
     def SetGroundLocations(self, SimBase):
         """

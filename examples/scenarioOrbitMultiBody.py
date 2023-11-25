@@ -181,14 +181,15 @@ def run(show_plots, scCase):
     # Next a series of gravitational bodies are included.  Note that it is convenient to include them as a
     # list of SPICE names.  The Earth is included in this scenario with the
     # spherical harmonics turned on.  Note that this is true for both spacecraft simulations.
-    gravBodies = gravFactory.createBodies(['earth', 'mars barycenter', 'sun', 'moon', "jupiter barycenter"])
+    gravBodies = gravFactory.createBodies('earth', 'mars barycenter', 'sun', 'moon', "jupiter barycenter")
     gravBodies['earth'].isCentralBody = True
     # Other possible ways to access specific gravity bodies include the below
     #   earth = gravBodies['earth']
     #   earth = gravFactory.createEarth()
     gravBodies['earth'].useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S.txt', 100)
+
     # The configured gravitational bodies are added to the spacecraft dynamics with the usual command:
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Next, the default SPICE support module is created and configured.  The first step is to store
     # the date and time of the start of the simulation.
@@ -196,13 +197,11 @@ def run(show_plots, scCase):
     spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
     timeInit = datetime.strptime(timeInitString, spiceTimeStringFormat)
 
-    # The following is a support macro that creates a `gravFactory.spiceObject` instance, and fills in typical
+    # The following is a support macro that creates a `spiceObject` instance, and fills in typical
     # default parameters.  By setting the epochInMsg argument, this macro provides an epoch date/time
     # message as well.  The spiceObject is set to subscribe to this epoch message.  Using the epoch message
     # makes it trivial to synchronize the epoch information across multiple modules.
-    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
 
     # By default the SPICE object will use the solar system barycenter as the inertial origin
     # If the spacecraft() output is desired relative to another celestial object, the zeroBase string
@@ -213,10 +212,10 @@ def run(show_plots, scCase):
     # or SSB for short.  The spacecraft() state output message is relative to this SBB frame by default.  To change
     # this behavior, the zero based point must be redefined from SBB to another body.
     # In this simulation we use the Earth.
-    gravFactory.spiceObject.zeroBase = 'Earth'
+    spiceObject.zeroBase = 'Earth'
 
     # Finally, the SPICE object is added to the simulation task list.
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+    scSim.AddModelToTask(simTaskName, spiceObject)
 
     # Next we would like to import spacecraft specific SPICE ephemeris data into the python environment.  This is done
     # such that the BSK computed trajectories can be compared in python with the equivalent SPICE directories.
@@ -233,11 +232,11 @@ def run(show_plots, scCase):
     else:  # default case
         scEphemerisFileName = 'hst_edited.bsp'
         scSpiceName = 'HUBBLE SPACE TELESCOPE'
-    pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + scEphemerisFileName)  # Hubble Space Telescope data
-    pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + scEphemerisFileName)  # Hubble Space Telescope data
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
     #
     #   Setup spacecraft initial states
@@ -393,7 +392,7 @@ def run(show_plots, scCase):
 
     else:
         scState = 1000.0 * spkRead(scSpiceName,
-                                   gravFactory.spiceObject.getCurrentTimeString(),
+                                   spiceObject.getCurrentTimeString(),
                                    'J2000',
                                    'EARTH')
         rTrue = scState[0:3]
@@ -434,10 +433,10 @@ def run(show_plots, scCase):
     #
     gravFactory.unloadSpiceKernels()
     pyswice.unload_c(scEphemerisFileName)
-    pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

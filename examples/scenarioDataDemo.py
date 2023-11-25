@@ -112,14 +112,12 @@ def run(show_plots):
     mu = planet.mu
     sun = gravFactory.createSun()
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # setup Spice interface for some solar system bodies
     timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
-                                     , timeInitString
-                                     )
-    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, -1)
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString)
+    scenarioSim.AddModelToTask(taskName, spiceObject, -1)
 
     #   setup orbit using orbitalMotion library
     oe = orbitalMotion.ClassicElements()

@@ -173,7 +173,7 @@ def run(show_plots):
     # create SC object
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup orbit initial conditions about the asteroid
