@@ -65,8 +65,8 @@ void SimpleStorageUnit::integrateDataStatus(double currentTime){
         }
         else if ((this->storedDataSum + round(it->baudRate * this->currentTimestep) < this->storageCapacity) || (it->baudRate <= 0)){
             //! - Only perform the operation if it will not result in less than 0 data
-            if ((this->storedData[0].dataInstanceSum + it->baudRate * (this->currentTimestep)) >= 0){
-                this->storedData[0].dataInstanceSum += round(it->baudRate * (this->currentTimestep));
+            if ((this->storedData[0].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0){
+                this->storedData[0].dataInstanceSum += round(it->baudRate * this->currentTimestep);
             }
         }
         this->netBaud += it->baudRate;
@@ -84,7 +84,7 @@ void SimpleStorageUnit::integrateDataStatus(double currentTime){
  @param data //Data to be added to the "STORED DATA" partition
  @return void
  */
-void SimpleStorageUnit::setDataBuffer(long long int data){
+void SimpleStorageUnit::setDataBuffer(int64_t data){
     std::string partitionName = "STORED DATA";
     SimpleStorageUnit::DataStorageUnitBase::setDataBuffer(partitionName, data);
 }
