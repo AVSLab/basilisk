@@ -36,8 +36,6 @@ SpinningBodyOneDOFStateEffector::SpinningBodyOneDOFStateEffector()
     this->IPntSc_S.setIdentity();
     this->dcm_BS.setIdentity();
     this->dcm_S0B.setIdentity();
-    this->r_SB_B.setZero();
-    this->sHat_S.setZero();
 
     this->nameOfThetaState = "spinningBodyTheta" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
     this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
