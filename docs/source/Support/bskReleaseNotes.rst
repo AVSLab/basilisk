@@ -55,6 +55,8 @@ Version |release|
 - Implemented new syntax for variable logging. See :ref:`bskPrinciples-6`.
 - Basilisk minimum Python version is now formally 3.8.x (checked by build files). Previously, it was indicated to be
   3.7.x yet in practice it was 3.8.x.
+- Added a ``TotalAccumDV_CN_N`` field in :ref:`SCStatesMsgPayload` that saves the total accumulated velocity of the
+  spacecraft's center of mass in the inertial frame.
 
 .. warning::
 
