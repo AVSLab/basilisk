@@ -87,6 +87,7 @@ Version |release|
   ``scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))``
   can be replaced by ``gravFactory.addBodiesTo(scObject)`` (where ``scObject`` is a ``spacecraft.Spacecraft`` 
   or  ``spacecraftSystem.SpacecraftSystem``, and ``gravFactory`` is a ``simIncludeGravBody.gravBodyFactory``)
+- Added condition in :ref:`thrustCMEstimation` to avoid measurement updates when input ``attGuidInMsg`` has not been written.
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------
