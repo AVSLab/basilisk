@@ -65,7 +65,7 @@ Module Assumptions and Limitations
 ----------------------------------
 The correct functioning of this module can only be guaranteed as long as multiple, linearly independent torque measurements are being provided. One static measurement is not enough to resolve the CM location.
 
-When additional external disturbances act on the system, the estimated CM location can be affected. In the presence of a biased, unmodeled external torque such as SRP, the estimated location does not coincide with the CM location, but rather the point through which the thruster produces a torque that cancels the SRP effect. Despite the bias in the measurement, this result is still useful combined with :ref:`thrusterPlatformReference` because it guarantees to reach a steady-state equilibrium.
+When additional external disturbances act on the system, the estimated CM location can be affected. In the presence of a biased, unmodeled external torque such as SRP, the estimated location does not coincide with the CM location, but rather the point through which the thruster produces a torque that cancels the SRP effect. Despite the bias in the measurement, this result is still useful combined with :ref:`thrusterPlatformReference` because it guarantees to reach a steady-state equilibrium. See :ref:`scenarioSepMomentumManagement` for an integrated example scenario.
 
 The frequency at which the thruster is articulated needs to be chosen carefully, because holding the thruster fixed for too long can cause reaction wheel saturation, with consequent loss of attitude and inability to estimate the CM location.
 
