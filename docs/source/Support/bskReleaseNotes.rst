@@ -88,6 +88,8 @@ Version |release|
   can be replaced by ``gravFactory.addBodiesTo(scObject)`` (where ``scObject`` is a ``spacecraft.Spacecraft`` 
   or  ``spacecraftSystem.SpacecraftSystem``, and ``gravFactory`` is a ``simIncludeGravBody.gravBodyFactory``)
 - Added condition in :ref:`thrustCMEstimation` to avoid measurement updates when input ``attGuidInMsg`` has not been written.
+- Added :ref:`scenarioSepMomentumManagement` to show how to use a dual-gimbaled electric thruster to perform contunuous
+  momentum management.
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------

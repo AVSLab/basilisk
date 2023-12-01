@@ -78,6 +78,7 @@ Attitude Control with Actuators
    Pointing with Attitude State Effector Thrusters <scenarioAttitudeFeedback2T_stateEffTH>
    Pointing with Attitude Dynamic Effector Thrusters <scenarioAttitudeFeedback2T_TH>
    Reaction Wheel Momentum Dumping using Thrusters <scenarioMomentumDumping>
+   Continuous Momentum Management using Dual-Gimbaled Electric Thruster <scenarioSepMomentumManagement>
 
 
 Attitude Steering Control
