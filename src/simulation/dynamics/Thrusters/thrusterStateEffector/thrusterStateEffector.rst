@@ -29,6 +29,8 @@ provides information on what this message is used for.
 Detailed Module Description
 ---------------------------
 
+Thruster Modeling
+~~~~~~~~~~~~~~~~~
 The functionalities of this thruster implementation are identical to the ones seen in :ref:`thrusterDynamicEffector`. For a general description of the thruster implementation in Basilisk, namely how the forces and torques are computed, see that module's documentation.
 
 The main difference between the two thruster implementations comes from how the ``thrustFactor`` is computed and updated at each timestep. The ``thrustFactor`` is a parameter specific to each thruster and ranges from 0 to 1. It defines what the current magnitude of the thrust is: at 0 the thruster is off, and at 1 the thruster is at ``maxThrust``. While the previous thruster module computed the ``thrustFactor`` using on and off-ramps at the beginning and end of the thrusting maneuver, respectively, with a constant steady-state value of 1 in-between, this module updates that value through a first-order ordinary differential equation.
@@ -54,14 +56,37 @@ While the value of :math:`\kappa_i` for each thruster is computed numerically by
 
 where :math:`\kappa_{0,i}` corresponds to the initial conditions of the ``thrusterFactor`` variable for the i-th particular thruster.
 
-If the thruster is added to an auxiliary body :math:`F` connect to the main body :math:`B`, then this is accomplished
-using::
+
+Adding Thrusters to Auxiliary Bodies
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This thruster effector does not have to only be attached to the primary spacecraft body :math:`B`.
+Rather, it is possible to attach this to a rigid body sub-component of the spacecraft where
+now the thruster location and orientations vary with time with respect to the :math:`B` frame.
+However, note that currently attaching a thruster to a sub-component just determines where the
+thruster location and thrust direction are.  The thrust does not impact the dynamics of a hinged
+panel, for example.  Currently there is one-way coupling here where the sub-component states
+impact the location and orientation of the thruster, but firing the thruster does not impact
+the effector.
+
+Let :math:`F` be the body-fixed frame of the rigid body sub-component, such as
+:ref:`prescribedMotionStateEffector`.  With this effector case it is ok that the thruster
+does not impact the effector as the effector motion is prescribed.
+If the thruster is added to an auxiliary body :math:`F`
+which is connected to the main spacecraft body :math:`B`, then this is accomplished using::
 
     thrusterSet.addThruster(thruster1, bodyStatesMsg)
 
-where ``thruster1`` is the thruster being added, and ``bodyStatesMsg`` is the state output message of
+Here ``thruster1`` is the thruster being added, and ``bodyStatesMsg`` is the state output message of
 the platform :math:`F`.  In the ``Update()`` routine the position of the platform :math:`F` relative
-to math:`B` is recomputed each time step.  If the thruster is added
+to :math:`B` is recomputed each time step.
+
+The thruster state output message contains variables that end with ``_B``.  These vectors are always
+written with spacecraft body frame :math:`B` vector components.  However, the output message
+states ``thrusterDirection`` and ``thrusterLocation`` don't contain the ``_B`` suffix because
+they are written in either :math:`B` frame components if the thruster is attached to the body
+frame :math:`B`, and in the sub-component frame :math:`F` if attached to an auxiliary spacecraft
+component.
+
 
 
 Model Assumptions and Limitations
