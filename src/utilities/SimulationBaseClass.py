@@ -389,7 +389,7 @@ class SimBaseClass:
         return Task
 
     # When this method is removed, remember to delete the 'oldSyntaxVariableLog' and
-    # 'allModels' attributes (as well as any mention of them) as they are not longer needed
+    # 'allModels' attributes (as well as any mention of them) as they are no longer needed
     @deprecated.deprecated("2024/09/06", 
         "Use the 'logger' function or 'PythonVariableLogger' instead of 'AddVariableForLogging'."
         " See 'http://hanspeterschaub.info/basilisk/Learn/bskPrinciples/bskPrinciples-6.html'"
