@@ -53,6 +53,8 @@ Version |release|
 - Resolved a crash, induced by uninitialized memory, in the Camera module. The crash was first seen on Ubuntu 22 with
   gcc 9.5
 - Implemented new syntax for variable logging. See :ref:`bskPrinciples-6`.
+- Basilisk minimum Python version is now formally 3.8.x (checked by build files). Previously, it was indicated to be
+  3.7.x yet in practice it was 3.8.x.
 
 .. warning::
 

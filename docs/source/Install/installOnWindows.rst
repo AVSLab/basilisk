@@ -6,7 +6,7 @@
 Setup On Windows
 ================
 
-The following was developed using Windows 7 and Visual Studio Community 2017 or 2019. The preferred method is to use Python 3. For now support is also provided to use the built-in Python 2, but Python 2 support is now a depreciated functionality.
+The following was developed using Windows 7 and Visual Studio Community 2017 or 2019.
 
 Software setup
 --------------
@@ -15,7 +15,7 @@ In order to run Basilisk, the following software will be necessary:
 
 -  `Cmake <https://cmake.org/>`__ 3.14 or higher.  Make sure you can execute this
    program from the command line
--  `Python <https://www.python.org/downloads/windows/>`__ 3.7.x
+-  `Python <https://www.python.org/downloads/windows/>`__ 3.8.x or greater
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
 -  Visual Studios 15 or Greater
 -  `Swig <http://www.swig.org/download.html>`__ version 3 or 4
