@@ -6,7 +6,7 @@
 Setup On Windows
 ================
 
-The following was developed using Windows 7 and Visual Studio Community 2017 or 2019.
+The following was developed using Windows 7 and Visual Studio Community 15 2017 or 16 2019.
 
 Software setup
 --------------
@@ -17,10 +17,10 @@ In order to run Basilisk, the following software will be necessary:
    program from the command line
 -  `Python <https://www.python.org/downloads/windows/>`__ 3.8.x or greater
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
--  Visual Studios 15 or Greater
+-  Visual Studios 15 2017 or greater
 -  `Swig <http://www.swig.org/download.html>`__ version 3 or 4
--  (Optional) Get the `GitKraken <https://www.gitkraken.com>`__
-   application to be able to pull and manage a copy of Basilisk
+-  (Optional) A GiT GUI application such as `GitKraken <https://www.gitkraken.com>`__
+   to manage your copy of the Basilisk repository
 
 The following python package dependencies are automatically checked and installed in the steps below.
 
@@ -32,11 +32,24 @@ Configuration
 Strongly recommended to stick with default 64-bit installations.
 Decide whether target deployment is 32 (win32) or 64 (x64) bit. Which ever chosen you will need the matching python and software for that architecture.
 
-Configuring Python
+Installing Python
 ~~~~~~~~~~~~~~~~~~
 
 Python is installed using the Windows installer found on the Python website. Make sure to choose the correct
-installer for your architecture.
+installer for your architecture. When stepping through the installer there are two menus options menus. The 
+first is the optional features menu for which all options should be selected.
+
+   .. image:: /_images/static/windows-installer-python-optional-features-installer-menu.png
+      :align: center
+      :scale: 75%
+
+The second menu is the python advanced options menu where both "Download debugging symbols" and "Download debug binaries 
+(requires VS 2017 or later)" should be selected in order to build Basilisk with a Debug profile. A Debug profile is
+required to place accurate breakpoints/attach a debugger to C/C++ code.  
+ 
+   .. image:: /_images/static/windows-installer-python-advanced-options-installer-menu.png
+      :align: center
+      :scale: 75%
 
 Install Swig
 ~~~~~~~~~~~~
