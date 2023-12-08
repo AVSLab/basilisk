@@ -59,7 +59,7 @@ public:
     uint64_t NextPickupTime;  //!< [ns] Next time read Task outputs
     uint64_t TaskPeriod;  //!< [ns] Cycle rate for Task
     uint64_t PickupDelay;  //!< [ns] Time between dispatches
-    uint64_t FirstTaskTime;  //!< [ns] Time to start Task for first time
+    uint64_t FirstTaskTime;  //!< [ns] Time to start Task for first time.  After this time the normal periodic updates resume.
 	bool taskActive;  //!< -- Flag indicating whether the Task has been disabled
   BSKLogger bskLogger;                      //!< -- BSK Logging
 };

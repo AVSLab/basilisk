@@ -36,8 +36,8 @@ SysModelTask::SysModelTask()
 /*! A construction option that allows the user to set some task parameters.
  Note that the only required argument is InputPeriod.
  @param InputPeriod The amount of nanoseconds between calls to this Task.
- @param InputDelay How long to delay the input by in nanoseconds
- @param FirstStartTime The offset in nanoseconds in a given frame to start the Task with.
+ @param FirstStartTime The amount of time in nanoseconds to hold a task dormant before starting.
+        After this time the task is executed at integer amounts of InputPeriod again
  */
 SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t InputDelay,
                                  uint64_t FirstStartTime)
