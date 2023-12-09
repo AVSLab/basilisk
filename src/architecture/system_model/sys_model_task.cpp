@@ -29,7 +29,6 @@ SysModelTask::SysModelTask()
     this->TaskPeriod = 1000;
     this->NextStartTime = 0;
     this->NextPickupTime = 0;
-    this->PickupDelay = 0;
     this->FirstTaskTime = 0;
     this->taskActive = true;
 }
@@ -39,11 +38,9 @@ SysModelTask::SysModelTask()
  @param FirstStartTime The amount of time in nanoseconds to hold a task dormant before starting.
         After this time the task is executed at integer amounts of InputPeriod again
  */
-SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t InputDelay,
-                                 uint64_t FirstStartTime)
+SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime)
 {
     this->TaskPeriod = InputPeriod;
-    this->PickupDelay = InputDelay;
     this->NextStartTime = FirstStartTime;
     this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
     this->FirstTaskTime = FirstStartTime;
