@@ -377,11 +377,15 @@ class SimBaseClass:
         """
         Creates a simulation task on the C-level with a specific update-frequency (TaskRate), an optional delay, and
         an optional start time.
-        
-        :param TaskName (str): Name of Task
-        :param TaskRate (int): Number of nanoseconds to elapse before update() is called
-        :param FirstStart (int): Number of nanoseconds to elapse before task is officially enabled
-        :return: simulationArchTypes.TaskBaseClass object
+
+        Args:
+            TaskName (str): Name of Task
+            TaskRate (int): Number of nanoseconds to elapse before update() is called
+            InputDelay (int): (depreciated, unimplemented) Number of nanoseconds simulating a lag of the particular task
+            FirstStart (int): Number of nanoseconds to elapse before task is officially enabled
+
+        Returns:
+            simulationArchTypes.TaskBaseClass object
         """
 
         if InputDelay is not self.CreateNewTask.__defaults__[0]:
