@@ -1299,17 +1299,17 @@ The full list of required and optional generic storage parameters are provided i
         3 (sending and receiving).  Note that this value is replaced with the value from
         the transceiver state input message if such an input message is provided.
     * - ``batteryStateInMsg``
-      - vector<ReadFunctor<:ref:`PowerStorageStatusMsgPayload`>>
+      - ReadFunctor<:ref:`PowerStorageStatusMsgPayload`>
       -
       - No
       - incoming battery state msg, only connect one input message
     * - ``dataStorageStateInMsg``
-      - vector<ReadFunctor<:ref:`DataStorageStatusMsgPayload`>>
+      - ReadFunctor<:ref:`DataStorageStatusMsgPayload`>
       -
       - No
       - incoming data storage state msg, only connect one input message
     * - ``fuelTankStateInMsg``
-      - vector<ReadFunctor<:ref:`FuelTankMsgPayload`>>
+      - ReadFunctor<:ref:`FuelTankMsgPayload`>
       -
       - No
       - incoming fuel tank state msg, only connect one input message
