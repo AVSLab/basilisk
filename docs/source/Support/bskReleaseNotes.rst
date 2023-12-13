@@ -32,6 +32,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Created a new example scenario :ref:`scenarioSatelliteConstellation` demonstrating setup of a Walker-Delta constellation
 - Created a new :ref:`pinholeCamera` module to support generation of landmarks-based measurements around a
   small body.
 - Corrected a memory leak in the ``swig`` access to standard vectors inside messages.
