@@ -81,6 +81,12 @@ Example added path formats::
    PYTHON_INCLUDE = C:\Program Files\Python37\include
    PYTHON_LIB = C:\Program Files\Python37\libs\python37.lib
 
+.. note::
+
+    If any environment variables have been modified (``cmake``, ``swig``, ``path2bsk`` paths),
+    Command Prompt needs
+    to be closed and rebooted (and a machine reboot MAY be needed) for the change to take effect.
+
 
 Using A Python Virtual Environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -156,6 +162,19 @@ When all the prerequisite installations are complete, the project can be built a
    This process will verify that the minimum required Basilisk python packages are installed, and that
    the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
    folder.
+
+   .. note::
+
+        The default Window compiler is Visual Studio 16.  If you had VS 17 installed and downgraded to VS 16,
+        then the system might still find VS 17 and give an error when running the above command.
+        If you want to compile with latest VS 17, then use
+        ``python conanfile.py --generator "Visual Studio 17 2022"``.
+
+   .. note::
+
+        To build on Windows you need to run an account with admin privileges.
+
+
 
 #. To test your setup you can run one of the :ref:`examples`:
 
