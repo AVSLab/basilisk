@@ -18,8 +18,6 @@
  */
 
 #include "sys_model_task.h"
-#include <cstring>
-#include <iostream>
 
 /*! The task constructor.  */
 SysModelTask::SysModelTask()
