@@ -20,26 +20,24 @@
 #include "facetSRPDynamicEffector.h"
 #include <cmath>
 
-const double speedLight = 299792458.0; //  [m/s] Speed of light
-const double AstU = 149597870700.0; // [m] Astronomical unit
-const double solarRadFlux = 1368.0; // [W/m^2] Solar radiation flux at 1 AU
+const double speedLight = 299792458.0;  // [m/s] Speed of light
+const double AstU = 149597870700.0;  // [m] Astronomical unit
+const double solarRadFlux = 1368.0;  // [W/m^2] Solar radiation flux at 1 AU
 
-/*! The constructor initializes the member variables to zero. */
-FacetSRPDynamicEffector::FacetSRPDynamicEffector()
-{
+/*! The constructor */
+FacetSRPDynamicEffector::FacetSRPDynamicEffector() {
     this->forceExternal_B.fill(0.0);
     this->torqueExternalPntB_B.fill(0.0);
     this->numFacets = 0;
 }
 
-/*! The destructor. */
-FacetSRPDynamicEffector::~FacetSRPDynamicEffector()
-{
+/*! The destructor */
+FacetSRPDynamicEffector::~FacetSRPDynamicEffector() {
 }
 
-/*! The reset member function. This method checks to ensure the input message is linked.
+/*! The reset method
  @return void
- @param currentSimNanos [ns]  Time the method is called
+ @param callTime  [ns] Time the method is called
 */
 void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos)
 {
@@ -56,13 +54,13 @@ void FacetSRPDynamicEffector::writeOutputMessages(uint64_t currentClock)
 {
 }
 
-/*! This member function populates the spacecraft geometry structure with user-input facet information.
+/*! This method populates the spacecraft facet geometry structure with user-input facet information
  @return void
  @param area  [m^2] Facet area
  @param specCoeff  Facet spectral reflection optical coefficient
  @param diffCoeff  Facet diffuse reflection optical coefficient
  @param normal_B  Facet normal expressed in B frame components
- @param locationPntB_B  [m] Facet location wrt point B in B frame components
+ @param locationPntB_B  [m] Facet location wrt point B expressed in B frame components
 */
 void FacetSRPDynamicEffector::addFacet(double area,
                                        double specCoeff,
@@ -79,12 +77,11 @@ void FacetSRPDynamicEffector::addFacet(double area,
 }
 
 /*! This method is used to link the faceted SRP effector to the hub attitude and position,
-which are required for calculating SRP forces and torques.
+which are required for calculating SRP forces and torques
  @return void
  @param states  Dynamic parameter states
 */
-void FacetSRPDynamicEffector::linkInStates(DynParamManager& states)
-{
+void FacetSRPDynamicEffector::linkInStates(DynParamManager& states) {
     this->hubSigma = states.getStateObject("hubSigma");
     this->hubPosition = states.getStateObject("hubPosition");
 }
