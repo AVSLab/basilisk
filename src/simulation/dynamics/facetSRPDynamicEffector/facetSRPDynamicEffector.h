@@ -42,9 +42,7 @@ typedef struct {
 
 /*! @brief Faceted Solar Radiation Pressure Dynamic Effector */
 class FacetSRPDynamicEffector: public SysModel, public DynamicEffector {
-public:                                                             
-    void UpdateState(uint64_t currentSimNanos) override;            //!< Method for updating the effector states
-    void writeOutputMessages(uint64_t currentClock);                //!< Method for writing the output messages
+public:
     FacetSRPDynamicEffector();                                                           //!< The module constructor
     ~FacetSRPDynamicEffector();                                                          //!< The module destructor
     void linkInStates(DynParamManager& states) override;                                 //!< Method for giving the effector access to the hub states

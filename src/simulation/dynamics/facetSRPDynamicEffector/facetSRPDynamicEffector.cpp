@@ -45,13 +45,6 @@ void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
     }
 }
 
-/*! The SRP dynamic effector does not write any output messages.
- @return void
- @param currentClock  [ns] Time the method is called
-*/
-void FacetSRPDynamicEffector::writeOutputMessages(uint64_t currentClock) {
-}
-
 /*! This method populates the spacecraft facet geometry structure with user-input facet information
  @return void
  @param area  [m^2] Facet area
@@ -156,11 +149,4 @@ void FacetSRPDynamicEffector::computeForceTorque(double integTime, double timeSt
     // Write the total SRP force and torque local variables to the dynamic effector variables
     this->forceExternal_B = totalSRPForcePntB_B;
     this->torqueExternalPntB_B = totalSRPTorquePntB_B;
-}
-
-/*! This is the UpdateState() method
- @return void
- @param currentSimNanos  [ns] Time the method is called
-*/
-void FacetSRPDynamicEffector::UpdateState(uint64_t currentSimNanos) {
 }
