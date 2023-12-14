@@ -98,6 +98,7 @@ Version |release|
 - Clarified documentation of the input variable ``FirstStart`` of the method  ``CreateNewTask()``.
 - Marked the method ``CreateNewTask()`` input variable ``InputDelay`` as depreciated.  This variable
   was never implemented and did nothing.
+- Fixed terminal events to terminate at the time they are triggered instead of one timestep after.
 
 
 

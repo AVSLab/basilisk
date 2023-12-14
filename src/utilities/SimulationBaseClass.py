@@ -19,22 +19,20 @@
 
 import array
 import inspect
+
 # Import some architectural stuff that we will probably always use
 import os
 import sys
+import warnings
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
-import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.architecture import alg_contain
-from Basilisk.architecture import bskLogging
-from Basilisk.architecture import sim_model
-from Basilisk.utilities import simulationArchTypes
-from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
-from Basilisk.utilities import deprecated
+from Basilisk.architecture import alg_contain, bskLogging, sim_model
+from Basilisk.utilities import deprecated, simulationArchTypes
 from Basilisk.utilities.pythonVariableLogger import PythonVariableLogger
+from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
 
 # Point the path to the module storage area
 
@@ -500,6 +498,8 @@ class SimBaseClass:
             if 0 <= self.nextEventTime < nextStopTime:
                 nextStopTime = self.nextEventTime
                 nextPriority = -1
+            if self.terminate:
+                break
             self.TotalSim.StepUntilStop(nextStopTime, nextPriority)
             progressBar.update(self.TotalSim.NextTaskTime)
             nextPriority = -1
