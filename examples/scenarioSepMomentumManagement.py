@@ -170,7 +170,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     mu = gravBodies['sun'].mu
     
     # The configured gravitational bodies are added to the spacecraft dynamics with the usual command:
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Next, the default SPICE support module is created and configured.
     timeInitString = "2023 OCTOBER 22 00:00:00.0"
@@ -185,9 +185,6 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # The SPICE object is added to the simulation task list.
     scSim.AddModelToTask(fswTask, gravFactory.spiceObject, 2)
-
-    # The gravitational body is connected to the spacecraft object
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -347,10 +344,13 @@ def run(momentumManagement, cmEstimation, showPlots):
     
     # Set up the SRP dynamic effector
     SRP = facetSRPDynamicEffector.FacetSRPDynamicEffector()
+    SRP.numFacets = 10
+    SRP.numArticulatedFacets = 4
     scSim.AddModelToTask(dynTask, SRP)
+
     # Define the spacecraft geometry for populating the FacetedSRPSpacecraftGeometryData structure in the SRP module
     # Define the facet surface areas
-    lenXHub = 1.53  # [m]
+    lenXHub = 1.50  # [m]
     lenYHub = 1.8  # [m]
     lenZHub = 2.86  # [m]
     area2 = np.pi*(0.5 * 7.262)*(0.5 * 7.262)  # [m^2]
@@ -376,11 +376,24 @@ def run(momentumManagement, cmEstimation, showPlots):
     facetLoc4 = np.array([0.0, -0.5 * lenYHub, 0.5 * lenZHub])  # [m]
     facetLoc5 = np.array([0.0, 0.0, lenZHub])  # [m]
     facetLoc6 = np.array([0.0, 0.0, 0.0])  # [m]
-    facetLoc7 = np.array([3.75 + 0.5 * lenXHub, 0.544, 0.44])  # [m]
-    facetLoc8 = np.array([3.75 + 0.5 * lenXHub, 0.544, 0.44])  # [m]
-    facetLoc9 = np.array([-(3.75 + 0.5 * lenXHub), 0.544, 0.44])  # [m]
-    facetLoc10 = np.array([-(3.75 + 0.5 * lenXHub), 0.544, 0.44])  # [m]
+    facetLoc7 = np.array([3.75 + 0.5 * lenXHub, 0.0, 0.45])  # [m]
+    facetLoc8 = np.array([3.75 + 0.5 * lenXHub, 0.00, 0.45])  # [m]
+    facetLoc9 = np.array([-(3.75 + 0.5 * lenXHub), 0.0, 0.45])  # [m]
+    facetLoc10 = np.array([-(3.75 + 0.5 * lenXHub), 0.0, 0.45])  # [m]
+
     locationsPntB_B = [facetLoc1, facetLoc2, facetLoc3, facetLoc4, facetLoc5, facetLoc6, facetLoc7, facetLoc8, facetLoc9, facetLoc10]
+
+    # Define facet articulation axes in B frame components
+    rotAxes_B = [np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([1.0, 0.0, 0.0]),
+                 np.array([1.0, 0.0, 0.0]),
+                 np.array([-1.0, 0.0, 0.0]),
+                 np.array([-1.0, 0.0, 0.0])]
 
     # Define the facet optical coefficients
     specCoeff = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
@@ -388,9 +401,13 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # Populate the scGeometry structure with the facet information
     for i in range(len(facetAreas)):
-        SRP.addFacet(facetAreas[i], specCoeff[i], diffCoeff[i], normals_B[i], locationsPntB_B[i])
+        SRP.addFacet(facetAreas[i], specCoeff[i], diffCoeff[i], normals_B[i], locationsPntB_B[i], rotAxes_B[i])
 
     SRP.ModelTag = "FacetSRP"
+    SRP.addArticulatedFacet(RSAList[0].spinningBodyOutMsg)
+    SRP.addArticulatedFacet(RSAList[0].spinningBodyOutMsg)
+    SRP.addArticulatedFacet(RSAList[1].spinningBodyOutMsg)
+    SRP.addArticulatedFacet(RSAList[1].spinningBodyOutMsg)
     scObject.addDynamicEffector(SRP)
 
     #
