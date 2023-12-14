@@ -95,6 +95,11 @@ Version |release|
 - Added condition in :ref:`thrustCMEstimation` to avoid measurement updates when input ``attGuidInMsg`` has not been written.
 - Added :ref:`scenarioSepMomentumManagement` to show how to use a dual-gimbaled electric thruster to perform contunuous
   momentum management.
+- Clarified documentation of the input variable ``FirstStart`` of the method  ``CreateNewTask()``.
+- Marked the method ``CreateNewTask()`` input variable ``InputDelay`` as depreciated.  This variable
+  was never implemented and did nothing.
+
+
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------
