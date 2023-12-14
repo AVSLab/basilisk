@@ -57,6 +57,7 @@ Version |release|
   3.7.x yet in practice it was 3.8.x.
 - Added a ``TotalAccumDV_CN_N`` field in :ref:`SCStatesMsgPayload` that saves the total accumulated velocity of the
   spacecraft's center of mass in the inertial frame.
+- Added optional facet articulation to the :ref:`facetSRPDynamicEffector` module.
 
 .. warning::
 
