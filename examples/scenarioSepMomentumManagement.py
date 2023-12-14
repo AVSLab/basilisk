@@ -347,6 +347,8 @@ def run(momentumManagement, cmEstimation, showPlots):
     
     # Set up the SRP dynamic effector
     SRP = facetSRPDynamicEffector.FacetSRPDynamicEffector()
+    SRP.numFacets = 10
+    SRP.numArticulatedFacets = 0
     scSim.AddModelToTask(dynTask, SRP)
     # Define the spacecraft geometry for populating the FacetedSRPSpacecraftGeometryData structure in the SRP module
     # Define the facet surface areas
@@ -382,13 +384,25 @@ def run(momentumManagement, cmEstimation, showPlots):
     facetLoc10 = np.array([-(3.75 + 0.5 * lenXHub), 0.544, 0.44])  # [m]
     locationsPntB_B = [facetLoc1, facetLoc2, facetLoc3, facetLoc4, facetLoc5, facetLoc6, facetLoc7, facetLoc8, facetLoc9, facetLoc10]
 
+    # Define facet articulation axes in B frame components
+    rotAxes_B = [np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0]),
+                 np.array([0.0, 0.0, 0.0])]
+
     # Define the facet optical coefficients
     specCoeff = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
     diffCoeff = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
 
     # Populate the scGeometry structure with the facet information
     for i in range(len(facetAreas)):
-        SRP.addFacet(facetAreas[i], specCoeff[i], diffCoeff[i], normals_B[i], locationsPntB_B[i])
+        SRP.addFacet(facetAreas[i], specCoeff[i], diffCoeff[i], normals_B[i], locationsPntB_B[i], rotAxes_B[i])
 
     SRP.ModelTag = "FacetSRP"
     scObject.addDynamicEffector(SRP)

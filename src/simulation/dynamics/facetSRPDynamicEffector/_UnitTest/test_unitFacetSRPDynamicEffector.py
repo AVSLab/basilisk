@@ -20,6 +20,7 @@
 #   Module Name:        facetSRPDynamicEffector
 #   Author:             Leah Kiner
 #   Creation Date:      Dec 18 2022
+#   Last Updated:       Dec 13 2023
 #
 
 import os
@@ -42,26 +43,32 @@ from Basilisk.simulation import facetSRPDynamicEffector
 from Basilisk.simulation import spacecraft
 from Basilisk.architecture import messaging
 
-def test_facetSRPTestFunction(show_plots):
+# Vary the articulated facet initial angles
+@pytest.mark.parametrize("facetRotAngle1", [macros.D2R * -10.4, macros.D2R * 45.2, macros.D2R * 90.0, macros.D2R * 180.0])
+@pytest.mark.parametrize("facetRotAngle2", [macros.D2R * -28.0, macros.D2R * 45.2, macros.D2R * -90.0, macros.D2R * 180.0])
+def test_facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
     r"""
     **Validation Test Description**
 
     The unit test for this module ensures that the calculated Solar Radiation Pressure (SRP) force and torque acting
-    on the spacecraft about the body-fixed point B is properly computed for a static spacecraft. The spacecraft
-    geometry defined in this test consists of a cubic hub and two circular solar arrays. Six square facets represent
-    the cubic hub and four circular facets describe the solar arrays. The final SRP force simulation values are checked
-    with values computed in python.
+    on the spacecraft about the body-fixed point B is properly computed for either a static spacecraft or a spacecraft
+    with any number of articulating facets. The spacecraft geometry defined in this test consists of a cubic hub and
+    two circular solar arrays. Six static square facets represent the cubic hub and four articulated circular facets
+    describe the articulating solar arrays. To validate the module functionality, the final SRP force simulation value
+    is checked with the true value computed in python.
 
     **Test Parameters**
     Args:
         show_plots (bool): (True) Show plots, (False) Do not show plots
+        facetRotAngle1 (double): [rad] Articulation angle for facets 7 and 8 (solar panel 1)
+        facetRotAngle2 (double): [rad] Articulation angle for facets 9 and 10 (solar panel 2)
     """
     
-    [testResults, testMessage] = facetSRPTestFunction(show_plots)
+    [testResults, testMessage] = facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2)
 
     assert testResults < 1, testMessage
 
-def facetSRPTestFunction(show_plots):
+def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
     testFailCount = 0                                           # Zero the unit test result counter
     testMessages = []                                           # Create an empty array to store the test log messages
 
@@ -103,11 +110,29 @@ def facetSRPTestFunction(show_plots):
     sunMsg = messaging.SpicePlanetStateMsg().write(sunStateMsg)
     gravFactory.gravBodies['sun'].planetBodyInMsg.subscribeTo(sunMsg)
 
+    # Create the articulated facet angle messages
+    facetRotAngle1MessageData = messaging.HingedRigidBodyMsgPayload()
+    facetRotAngle1MessageData.theta = facetRotAngle1
+    facetRotAngle1MessageData.thetaDot = 0.0
+    facetRotAngle1Message = messaging.HingedRigidBodyMsg().write(facetRotAngle1MessageData)
+    
+    facetRotAngle2MessageData = messaging.HingedRigidBodyMsgPayload()
+    facetRotAngle2MessageData.theta = facetRotAngle2
+    facetRotAngle2MessageData.thetaDot = 0.0
+    facetRotAngle2Message = messaging.HingedRigidBodyMsg().write(facetRotAngle2MessageData)
+
     # Create an instance of the facetSRPDynamicEffector module to be tested
     srpEffector = facetSRPDynamicEffector.FacetSRPDynamicEffector()
     srpEffector.ModelTag = "srpEffector"
     numFacets = 10  # Total number of spacecraft facets
+    numArticulatedFacets = 4  # Number of articulated facets
+    srpEffector.numFacets = numFacets
+    srpEffector.numArticulatedFacets = numArticulatedFacets
     srpEffector.sunInMsg.subscribeTo(sunMsg)
+    srpEffector.addArticulatedFacet(facetRotAngle1Message)
+    srpEffector.addArticulatedFacet(facetRotAngle1Message)
+    srpEffector.addArticulatedFacet(facetRotAngle2Message)
+    srpEffector.addArticulatedFacet(facetRotAngle2Message)
     scObject.addDynamicEffector(srpEffector)
     unitTestSim.AddModelToTask(unitTaskName, srpEffector)
 
@@ -142,13 +167,25 @@ def facetSRPTestFunction(show_plots):
                        np.array([-4.5, 0.0, 0.75]),
                        np.array([-4.5, 0.0, 0.75])]
 
+        # Define facet articulation axes in B frame components
+        rotAxes_B = [np.array([0.0, 0.0, 0.0]),
+                     np.array([0.0, 0.0, 0.0]),
+                     np.array([0.0, 0.0, 0.0]),
+                     np.array([0.0, 0.0, 0.0]),
+                     np.array([0.0, 0.0, 0.0]),
+                     np.array([0.0, 0.0, 0.0]),
+                     np.array([1.0, 0.0, 0.0]),
+                     np.array([1.0, 0.0, 0.0]),
+                     np.array([-1.0, 0.0, 0.0]),
+                     np.array([-1.0, 0.0, 0.0])]
+
         # Define facet optical coefficients
         specCoeff = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
         diffCoeff = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
 
         # Populate the srpEffector spacecraft geometry structure with the facet information
         for i in range(numFacets):
-            srpEffector.addFacet(facetAreas[i], specCoeff[i], diffCoeff[i], facetNormals_B[i], locationsPntB_B[i])
+            srpEffector.addFacet(facetAreas[i], specCoeff[i], diffCoeff[i], facetNormals_B[i], locationsPntB_B[i], rotAxes_B[i])
     except:
         testFailCount += 1
         testMessages.append("ERROR: FacetSRP unit test failed while setting facet parameters.")
@@ -214,7 +251,7 @@ def facetSRPTestFunction(show_plots):
     accuracy = 1e-3
     test_val = np.zeros([3,])
     for i in range(len(facetAreas)):
-        test_val += checkFacetSRPForce(facetAreas[i], specCoeff[i], diffCoeff[i], facetNormals_B[i], articulationAxes_B[i], sigma_BN[-1], r_BN_N[-1], r_SN_N[-1])
+        test_val += checkFacetSRPForce(i, facetRotAngle1, facetRotAngle2, facetAreas[i], specCoeff[i], diffCoeff[i], facetNormals_B[i], rotAxes_B[i], sigma_BN[-1], r_BN_N[-1], r_SN_N[-1])
 
     if not unitTestSupport.isArrayEqual(srpForce_B[-1, :], test_val, 3, accuracy):
         testFailCount += 1
@@ -229,7 +266,7 @@ def facetSRPTestFunction(show_plots):
 
     return testFailCount, testMessages
 
-def checkFacetSRPForce(area, specCoeff, diffCoeff, facetNormal, sigma_BN, scPos, sunPos):
+def checkFacetSRPForce(index, facetRotAngle1, facetRotAngle2, area, specCoeff, diffCoeff, facetNormal, facetRotAxis, sigma_BN, scPos, sunPos):
     # Define required constants
     speedLight = 299792458.0  # [m/s] Speed of light
     AstU = 149597870700.0  # [m] Astronomical unit
@@ -245,6 +282,16 @@ def checkFacetSRPForce(area, specCoeff, diffCoeff, facetNormal, sigma_BN, scPos,
 
     # Determine unit direction vector pointing from sc to the Sun
     sHat = r_SB_B / np.linalg.norm(r_SB_B)
+
+    # Rotate the articulated facet normal vectors
+    if (index == 6 or index == 7):
+        prv_BB0 = facetRotAngle1 * facetRotAxis
+        dcm_BB0 = rbk.PRV2C(prv_BB0)
+        facetNormal = np.matmul(dcm_BB0, facetNormal)
+    if (index == 8 or index == 9):
+        prv_BB0 = facetRotAngle2 * facetRotAxis
+        dcm_BB0 = rbk.PRV2C(prv_BB0)
+        facetNormal = np.matmul(dcm_BB0, facetNormal)
 
     # Determine the facet projected area
     cosTheta = np.dot(sHat, facetNormal)
@@ -265,4 +312,6 @@ def checkFacetSRPForce(area, specCoeff, diffCoeff, facetNormal, sigma_BN, scPos,
 if __name__=="__main__":
     facetSRPTestFunction(
         False,  # show plots
+        macros.D2R * -10.0,  # facetRotAngle1
+        macros.D2R * 45.0,  # facetRotAngle2
     )
