@@ -294,6 +294,7 @@ Stand Alone Architecture
    Electrostatic Tractor Debris Reorbiting <scenarioDebrisReorbitET>
    Attitude-Driven differential drag control <scenarioDragRendezvous>
    Servicer approaching a debris object with 3 flight modes <scenarioRendezVous>
+   Walker-Delta Satellite Constellation <scenarioSatelliteConstellation>
 
 
 ``FormationBskSim`` Architecture
