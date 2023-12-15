@@ -10,6 +10,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- text here
+
+Version 2.2.1
+-------------
 - There was an issue with :ref:`thrusterStateEffector` where if there are multiple instances of the
   thruster state effector then the last effector will over-write all the state of the earlier thrusters.
   This is corrected in the current release.
