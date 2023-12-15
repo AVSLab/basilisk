@@ -348,7 +348,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     # Set up the SRP dynamic effector
     SRP = facetSRPDynamicEffector.FacetSRPDynamicEffector()
     SRP.numFacets = 10
-    SRP.numArticulatedFacets = 0
+    SRP.numArticulatedFacets = 4
     scSim.AddModelToTask(dynTask, SRP)
     # Define the spacecraft geometry for populating the FacetedSRPSpacecraftGeometryData structure in the SRP module
     # Define the facet surface areas
@@ -391,10 +391,10 @@ def run(momentumManagement, cmEstimation, showPlots):
                  np.array([0.0, 0.0, 0.0]),
                  np.array([0.0, 0.0, 0.0]),
                  np.array([0.0, 0.0, 0.0]),
-                 np.array([0.0, 0.0, 0.0]),
-                 np.array([0.0, 0.0, 0.0]),
-                 np.array([0.0, 0.0, 0.0]),
-                 np.array([0.0, 0.0, 0.0])]
+                 np.array([1.0, 0.0, 0.0]),
+                 np.array([1.0, 0.0, 0.0]),
+                 np.array([-1.0, 0.0, 0.0]),
+                 np.array([-1.0, 0.0, 0.0])]
 
     # Define the facet optical coefficients
     specCoeff = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
@@ -530,6 +530,11 @@ def run(momentumManagement, cmEstimation, showPlots):
     cMsgPy.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, vcMsg_CoM)
 
     # Connect messages
+    SRP.addArticulatedFacet(RSAList[0].spinningBodyOutMsg)
+    SRP.addArticulatedFacet(RSAList[0].spinningBodyOutMsg)
+    SRP.addArticulatedFacet(RSAList[1].spinningBodyOutMsg)
+    SRP.addArticulatedFacet(RSAList[1].spinningBodyOutMsg)
+    SRP.sunInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     sNavObject.sunStateInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
     simpleMassPropsObject.scMassPropsInMsg.subscribeTo(scObject.scMassOutMsg)
@@ -537,7 +542,6 @@ def run(momentumManagement, cmEstimation, showPlots):
     RSAList[1].motorTorqueInMsg.subscribeTo(saController[1].motorTorqueOutMsg)
     platform.motorTorqueInMsg.subscribeTo(pltTorqueScheduler.motorTorqueOutMsg)
     platform.motorLockInMsg.subscribeTo(pltTorqueScheduler.effectorLockOutMsg)
-    SRP.sunInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
     pltState.thrusterConfigFInMsg.subscribeTo(thrConfigFMsg)
     pltState.hingedRigidBody1InMsg.subscribeTo(platform.spinningBodyOutMsgs[0])
     pltState.hingedRigidBody2InMsg.subscribeTo(platform.spinningBodyOutMsgs[1])
