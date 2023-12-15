@@ -44,9 +44,20 @@ The integer priority defaults to -1 which means that this process is executed af
 
 The next steps create task lists that are contained in a process or task group.  The first argument is the string name that identifies the task being created.  The second argument is the task update rate in nano-seconds.  Here the ``macros.sec2nano()`` method is a convenient tool to convert seconds to nano-seconds.  When the BSK simulation increments its time variable, it does so in nano-second time steps, the smallest time unit in Basilisk.  It is chosen to be small enough such that no dynamics, sensor or algorithm module should require a smaller time step.  However, it is still large enough such that with a 64-bit unsigned integer we can simulate a mission lifetime of 584 years.
 
-As with the ``Process`` creation, the ``Task`` creation by default has a priority of -1. This means that the task lists are evaluated after any prioritized task lists within the process and in the order they are created.  To set a positive priority value to a task use::
+As with the ``Process`` creation, the ``Task`` creation by default has a priority of -1. This means that the task
+lists are evaluated after any prioritized task lists within the process and in the order they are created.
+To set a positive priority value to a task use::
 
     dynProcess.addTask(scSim.CreateNewTask("name", updateRate, priority))
+
+It is possible to hold a task initially dormant for a period of time by specifying the optional ``FirstStart``
+input parameter in units of nano-seconds.  The task will then be first executed at this time ``FirstStart``.
+But, afterwards the task execution resumes at the original ``updateRate`` interval.  For example, consider::
+
+    dynProcess.addTask(scSim.CreateNewTask("name", updateRate, priority, FirstStart=delayStartTime))
+
+For example, if the first task execution occurs at ``delayStartTime`` of 1s, and ``updateRate`` is set to 5s,
+then the task is exectuted at 1s, 5s, 10s, 15s, etc.
 
 To initialize processes and tasks, call the ``InitializeSimulation()`` method which ensures all Basilisk compute and initialized and the modules with a task are reset.
 

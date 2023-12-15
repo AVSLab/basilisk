@@ -373,23 +373,31 @@ class SimBaseClass:
         self.pyProcList.append(proc)
         return proc
 
-    def CreateNewTask(self, TaskName, TaskRate, InputDelay=0, FirstStart=0):
+    def CreateNewTask(self, TaskName, TaskRate, InputDelay=None, FirstStart=0):
         """
         Creates a simulation task on the C-level with a specific update-frequency (TaskRate), an optional delay, and
         an optional start time.
 
-        :param TaskName (str): Name of Task
-        :param TaskRate (int): Number of nanoseconds to elapse before update() is called
-        :param InputDelay (int): Number of nanoseconds simulating a lag of the particular task# TODO: Check that this is [ns]
-        :param FirstStart (int): Number of nanoseconds to elapse before task is officially enabled
-        :return: simulationArchTypes.TaskBaseClass object
+        Args:
+            TaskName (str): Name of Task
+            TaskRate (int): Number of nanoseconds to elapse before update() is called
+            InputDelay (int): (depreciated, unimplemented) Number of nanoseconds simulating a lag of the particular task
+            FirstStart (int): Number of nanoseconds to elapse before task is officially enabled
+
+        Returns:
+            simulationArchTypes.TaskBaseClass object
         """
-        Task = simulationArchTypes.TaskBaseClass(TaskName, TaskRate, InputDelay, FirstStart)
+
+        if InputDelay is not self.CreateNewTask.__defaults__[0]:
+            deprecated.deprecationWarn("InputDelay", "2024/12/13",
+                                       "This input variable is non-functional and now depreciated.")
+
+        Task = simulationArchTypes.TaskBaseClass(TaskName, TaskRate, FirstStart)
         self.TaskList.append(Task)
         return Task
 
     # When this method is removed, remember to delete the 'oldSyntaxVariableLog' and
-    # 'allModels' attributes (as well as any mention of them) as they are not longer needed
+    # 'allModels' attributes (as well as any mention of them) as they are no longer needed
     @deprecated.deprecated("2024/09/06", 
         "Use the 'logger' function or 'PythonVariableLogger' instead of 'AddVariableForLogging'."
         " See 'http://hanspeterschaub.info/basilisk/Learn/bskPrinciples/bskPrinciples-6.html'"

@@ -18,8 +18,6 @@
  */
 
 #include "sys_model_task.h"
-#include <cstring>
-#include <iostream>
 
 /*! The task constructor.  */
 SysModelTask::SysModelTask()
@@ -29,21 +27,18 @@ SysModelTask::SysModelTask()
     this->TaskPeriod = 1000;
     this->NextStartTime = 0;
     this->NextPickupTime = 0;
-    this->PickupDelay = 0;
     this->FirstTaskTime = 0;
     this->taskActive = true;
 }
 /*! A construction option that allows the user to set some task parameters.
  Note that the only required argument is InputPeriod.
  @param InputPeriod The amount of nanoseconds between calls to this Task.
- @param InputDelay How long to delay the input by in nanoseconds
- @param FirstStartTime The offset in nanoseconds in a given frame to start the Task with.
+ @param FirstStartTime The amount of time in nanoseconds to hold a task dormant before starting.
+        After this time the task is executed at integer amounts of InputPeriod again
  */
-SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t InputDelay,
-                                 uint64_t FirstStartTime)
+SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime)
 {
     this->TaskPeriod = InputPeriod;
-    this->PickupDelay = InputDelay;
     this->NextStartTime = FirstStartTime;
     this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
     this->FirstTaskTime = FirstStartTime;
@@ -152,7 +147,7 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
 void SysModelTask::updatePeriod(uint64_t newPeriod)
 {
     uint64_t newStartTime;
-    //! - If the requested time is above the min time, set the next time based on the previos time plus the new period
+    //! - If the requested time is above the min time, set the next time based on the previous time plus the new period
     if(this->NextStartTime > this->TaskPeriod)
     {
         newStartTime = (this->NextStartTime/newPeriod)*newPeriod;
@@ -170,5 +165,4 @@ void SysModelTask::updatePeriod(uint64_t newPeriod)
     //! - Change the period of the task so that future calls will be based on the new period
     this->TaskPeriod = newPeriod;
 
-    
 }
