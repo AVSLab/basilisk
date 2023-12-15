@@ -352,7 +352,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     scSim.AddModelToTask(dynTask, SRP)
     # Define the spacecraft geometry for populating the FacetedSRPSpacecraftGeometryData structure in the SRP module
     # Define the facet surface areas
-    lenXHub = 1.53  # [m]
+    lenXHub = 1.50  # [m]
     lenYHub = 1.8  # [m]
     lenZHub = 2.86  # [m]
     area2 = np.pi*(0.5 * 7.262)*(0.5 * 7.262)  # [m^2]
@@ -378,10 +378,10 @@ def run(momentumManagement, cmEstimation, showPlots):
     facetLoc4 = np.array([0.0, -0.5 * lenYHub, 0.5 * lenZHub])  # [m]
     facetLoc5 = np.array([0.0, 0.0, lenZHub])  # [m]
     facetLoc6 = np.array([0.0, 0.0, 0.0])  # [m]
-    facetLoc7 = np.array([3.75 + 0.5 * lenXHub, 0.544, 0.44])  # [m]
-    facetLoc8 = np.array([3.75 + 0.5 * lenXHub, 0.544, 0.44])  # [m]
-    facetLoc9 = np.array([-(3.75 + 0.5 * lenXHub), 0.544, 0.44])  # [m]
-    facetLoc10 = np.array([-(3.75 + 0.5 * lenXHub), 0.544, 0.44])  # [m]
+    facetLoc7 = np.array([3.75 + 0.5 * lenXHub, 0.0, 0.45])  # [m]
+    facetLoc8 = np.array([3.75 + 0.5 * lenXHub, 0.00, 0.45])  # [m]
+    facetLoc9 = np.array([-(3.75 + 0.5 * lenXHub), 0.0, 0.45])  # [m]
+    facetLoc10 = np.array([-(3.75 + 0.5 * lenXHub), 0.0, 0.45])  # [m]
     locationsPntB_B = [facetLoc1, facetLoc2, facetLoc3, facetLoc4, facetLoc5, facetLoc6, facetLoc7, facetLoc8, facetLoc9, facetLoc10]
 
     # Define facet articulation axes in B frame components
