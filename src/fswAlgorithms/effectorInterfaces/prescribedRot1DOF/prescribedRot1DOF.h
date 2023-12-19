@@ -28,15 +28,15 @@
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
 
-    /* User configurable variables */
-    double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of spinning body
-    double rotAxis_M[3];                                        //!< Rotation axis for the maneuver in M frame components
-    double r_FM_M[3];                                           //!< [m] Position of the F frame origin with respect to the M frame origin in M frame components (fixed)
-    double rPrime_FM_M[3];                                      //!< [m/s] B frame time derivative of r_FM_M in M frame components (fixed)
-    double rPrimePrime_FM_M[3];                                 //!< [m/s^2] B frame time derivative of rPrime_FM_M in M frame components (fixed)
-    double omega_FM_F[3];                                       //!< [rad/s] Angular velocity of frame F wrt frame M in F frame components
-    double omegaPrime_FM_F[3];                                  //!< [rad/s^2] B frame time derivative of omega_FM_F in F frame components
-    double sigma_FM[3];                                         //!< MRP attitude of frame F with respect to frame M
+    /* User-configurable module variables */
+    double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of the spinning body
+    double rotAxis_M[3];                                        //!< Spinning body rotation axis expressed in M frame components
+    double r_FM_M[3];                                           //!< [m] Spinning body position relative to the Mount frame expressed in M frame components (fixed)
+    double rPrime_FM_M[3];                                      //!< [m/s] B frame time derivative of r_FM_M expressed in M frame components (fixed)
+    double rPrimePrime_FM_M[3];                                 //!< [m/s^2] B frame time derivative of rPrime_FM_M expressed in M frame components (fixed)
+    double omega_FM_F[3];                                       //!< [rad/s] Spinning body angular velocity relative to the Mount frame expressed in F frame components
+    double omegaPrime_FM_F[3];                                  //!< [rad/s^2] B frame time derivative of omega_FM_F expressed in F frame components
+    double sigma_FM[3];                                         //!< Spinning body MRP attitude with respect to frame M
 
     /* Private variables */
     bool convergence;                                           //!< Boolean variable is true when the maneuver is complete
@@ -44,17 +44,19 @@ typedef struct {
     double thetaInit;                                           //!< [rad] Initial spinning body angle from frame M to frame F about rotAxis_M
     double thetaDotInit;                                        //!< [rad/s] Initial spinning body angle rate between frame M to frame F
     double thetaRef;                                            //!< [rad] Reference angle from frame M to frame F about rotAxis_M
-    double thetaDotRef;                                         //!< [rad/s] Reference angle rate between frame M to frame F
     double ts;                                                  //!< [s] The simulation time halfway through the maneuver (switch time for ang accel)
     double tf;                                                  //!< [s] Simulation time when the maneuver is finished
     double a;                                                   //!< Parabolic constant for the first half of the maneuver
     double b;                                                   //!< Parabolic constant for the second half of the maneuver
 
+    double theta;                                               //!< [rad] Current angle
+    double thetaDot;                                            //!< [rad/s] Current angle rate
+    double thetaDDot;                                           //!< [rad/s^2] Current angular acceleration
     BSKLogger *bskLogger;                                       //!< BSK Logging
 
     /* Messages */
-    HingedRigidBodyMsg_C    spinningBodyInMsg;                  //!< Input msg for the spinning body reference angle and angle rate
-    HingedRigidBodyMsg_C    spinningBodyOutMsg;                 //!< Output msg for the spinning body angle and angle rate
+    HingedRigidBodyMsg_C spinningBodyInMsg;                     //!< Input msg for the spinning body reference angle and angle rate
+    HingedRigidBodyMsg_C spinningBodyOutMsg;                    //!< Output msg for the spinning body angle and angle rate
     PrescribedMotionMsg_C prescribedMotionOutMsg;               //!< Output msg for the spinning body prescribed states
 
 }PrescribedRot1DOFConfig;
