@@ -238,6 +238,111 @@ void boresightAlignment(double hRefHat[3], double hReqHat[3], double tol, double
     PRV2C(PRV_phi, DB);
 }
 
+void computeReferenceFrame(double hRefHat_B[3], double hReqHat_N[3], double rHat_SB_B[3],
+                           double a1Hat_B[3], double a2Hat_B[3], double beta, double BN[3][3],
+                           AlignmentPriority alignmentPriority, double epsilon, double RN[3][3])
+{
+    /*! map requested heading into current B frame */
+    double hReqHat_B[3];
+    m33MultV3(BN, hReqHat_N, hReqHat_B);
+
+    /*! compute intermediate rotation DB to align the boresight */
+    double DB[3][3];
+    boresightAlignment(hRefHat_B, hReqHat_B, epsilon, DB);
+
+    /*! map Sun direction vector to intermediate frame */
+    double rHat_SB_D[3];
+    m33MultV3(DB, rHat_SB_B, rHat_SB_D);
+
+    /*! define the coefficients of the quadratic equation A, B, and C for the solar array drive axis */
+    double e_psi[3];
+    v3Copy(hRefHat_B, e_psi);
+    double b3[3];
+    v3Cross(rHat_SB_D, e_psi, b3);
+    double A = 2 * v3Dot(rHat_SB_D, e_psi) * v3Dot(e_psi, a1Hat_B) - v3Dot(a1Hat_B, rHat_SB_D);
+    double B = 2 * v3Dot(a1Hat_B, b3);
+    double C = v3Dot(a1Hat_B, rHat_SB_D);
+
+    /*! define the coefficients of the quadratic equation D, E, and F for the Sun-constrained axis */
+    double D = 2 * v3Dot(rHat_SB_D, e_psi) * v3Dot(e_psi, a2Hat_B) - v3Dot(a2Hat_B, rHat_SB_D);
+    double E = 2 * v3Dot(a2Hat_B, b3);
+    double F = v3Dot(a2Hat_B, rHat_SB_D);
+
+    /*! compute the solution(s) to the optimized solar array alignment problem */
+    SolutionSpace solarArraySolutions(A, B, C, epsilon);
+
+    double PRV_psi[3];
+    switch (alignmentPriority) {
+
+        case AlignmentPriority::SolarArrayAlign :
+            if (solarArraySolutions.numberOfZeros() == 2) {
+                double psi1 = solarArraySolutions.returnAbsMin(1);
+                double psi2 = solarArraySolutions.returnAbsMin(2);
+                double PRV_psi1[3];
+                v3Scale(psi1, e_psi, PRV_psi1);
+                double PRV_psi2[3];
+                v3Scale(psi2, e_psi, PRV_psi2);
+                double P1D[3][3];
+                PRV2C(PRV_psi1, P1D);
+                double P2D[3][3];
+                PRV2C(PRV_psi2, P2D);
+                double rHat_SB_P1[3];
+                m33MultV3(P1D, rHat_SB_D, rHat_SB_P1);
+                double rHat_SB_P2[3];
+                m33MultV3(P2D, rHat_SB_D, rHat_SB_P2);
+                if (v3Dot(a2Hat_B, rHat_SB_P2) - v3Dot(a2Hat_B, rHat_SB_P1) > epsilon) {
+                    v3Scale(psi2, e_psi, PRV_psi);
+                }
+                else {
+                    v3Scale(psi1, e_psi, PRV_psi);
+                }
+            }
+            else {
+                double psi = solarArraySolutions.returnAbsMin(1);
+                v3Scale(psi, e_psi, PRV_psi);
+            }
+            break;
+
+        case AlignmentPriority::SunConstrAxisAlign :
+            double k = cos(beta);
+            SolutionSpace sunConstAxisSolutions(D - k, E, F - k, epsilon);
+            if (bool empty = sunConstAxisSolutions.isEmpty(); empty) {
+                double psi = sunConstAxisSolutions.returnAbsMin(1);
+                v3Scale(psi, e_psi, PRV_psi);
+            }
+            else {
+                if (solarArraySolutions.numberOfZeros() == 2) {
+                    double psi1 = solarArraySolutions.returnAbsMin(1);
+                    double psi2 = solarArraySolutions.returnAbsMin(2);
+                    double deltaPsi1 = psi1 - sunConstAxisSolutions.passThrough(psi1);
+                    double deltaPsi2 = psi2 - sunConstAxisSolutions.passThrough(psi2);
+                    if (fabs(deltaPsi2) - fabs(deltaPsi1) > epsilon) {
+                        v3Scale(psi1, e_psi, PRV_psi);
+                    }
+                    else {
+                        v3Scale(psi2, e_psi, PRV_psi);
+                    }
+                }
+                else {
+                    double psi = solarArraySolutions.returnAbsMin(1);
+                    psi = sunConstAxisSolutions.passThrough(psi);
+                    v3Scale(psi, e_psi, PRV_psi);
+                }
+            }
+            break;
+    }
+
+    /*! map PRV to RD direction cosine matrix */
+    double RD[3][3];
+    PRV2C(PRV_psi, RD);
+    double RB[3][3];
+    m33MultM33(RD, DB, RB);
+
+    m33MultM33(RB, BN, RN);
+}
+
+
+
 /*! This function implements second-order finite differences to compute reference angular
     rates and accelerations */
 void finiteDifferencesRatesAndAcc(double sigma_RN[3], double sigma_RN_1[3], double sigma_RN_2[3],

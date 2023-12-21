@@ -21,6 +21,11 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include <stdint.h>
 
+enum class AlignmentPriority {
+    SolarArrayAlign = 0,
+    SunConstrAxisAlign = 1
+};
+
 //! @brief The SolutionSpace class contains the solutions of the nonlinear inequality
 //! |Ax^2 + Bx + C| / (1+x^2) >= 0
 class SolutionSpace {
@@ -47,6 +52,10 @@ private:
 };
 
 void boresightAlignment(double hRefHat[3], double hReqHat[3], double tol, double DB[3][3]);
+
+void computeReferenceFrame(double hRefHat_B[3], double hReqHat_N[3], double rHat_SB_B[3],
+                           double a1Hat_B[3], double a2Hat_B[3], double beta, double BN[3][3],
+                           AlignmentPriority alignmentPriority, double epsilon, double RN[3][3]);
 
 void finiteDifferencesRatesAndAcc(double sigma_RN[3],
                                   double sigma_RN_1[3],
