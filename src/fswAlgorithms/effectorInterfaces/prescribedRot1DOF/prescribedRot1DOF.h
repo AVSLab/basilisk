@@ -29,6 +29,8 @@
 typedef struct {
 
     /* User-configurable module variables */
+    bool coastOption;                                           //!< Boolean variable used for selecting an optional coast period during the rotation
+    double tRamp;                                               //!< [s] Ramp time used for the coast option maneuver
     double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of the spinning body
     double rotAxis_M[3];                                        //!< Spinning body rotation axis expressed in M frame components
     double r_FM_M[3];                                           //!< [m] Spinning body position relative to the Mount frame expressed in M frame components (fixed)
@@ -38,20 +40,29 @@ typedef struct {
     double omegaPrime_FM_F[3];                                  //!< [rad/s^2] B frame time derivative of omega_FM_F expressed in F frame components
     double sigma_FM[3];                                         //!< Spinning body MRP attitude with respect to frame M
 
-    /* Private variables */
-    bool convergence;                                           //!< Boolean variable is true when the maneuver is complete
-    double tInit;                                               //!< [s] Simulation time at the beginning of the maneuver
-    double thetaInit;                                           //!< [rad] Initial spinning body angle from frame M to frame F about rotAxis_M
-    double thetaDotInit;                                        //!< [rad/s] Initial spinning body angle rate between frame M to frame F
-    double thetaRef;                                            //!< [rad] Reference angle from frame M to frame F about rotAxis_M
-    double ts;                                                  //!< [s] The simulation time halfway through the maneuver (switch time for ang accel)
-    double tf;                                                  //!< [s] Simulation time when the maneuver is finished
-    double a;                                                   //!< Parabolic constant for the first half of the maneuver
-    double b;                                                   //!< Parabolic constant for the second half of the maneuver
+    /* Coast option variables */
+    double theta_tr;                                            //!< [rad] Angle at the end of the first ramp segment
+    double theta_tc;                                            //!< [rad] Angle at the end of the coast segment
+    double thetaDot_tr;                                         //!< [rad/s] Angle rate at the end of the first ramp segment
+    double thetaDot_tc;                                         //!< [rad/s] Angle rate at the end of the coast segment
+    double tr;                                                  //!< [s] The simulation time at the end of the first ramp segment
+    double tc;                                                  //!< [s] The simulation time at the end of the coast period
 
+    /* Non-coast option variables */
+    double ts;                                                  //!< [s] The simulation time halfway through the rotation
+
+    /* Shared module variables */
+    bool convergence;                                           //!< Boolean variable is true when the rotation is complete
+    double tInit;                                               //!< [s] Simulation time at the beginning of the rotation
+    double thetaInit;                                           //!< [rad] Initial spinning body rotation angle from M to F frame about rotAxis_M
+    double thetaDotInit;                                        //!< [rad/s] Initial spinning body angle rate
+    double thetaRef;                                            //!< [rad] Reference angle from frame M to frame F about rotAxis_M
     double theta;                                               //!< [rad] Current angle
     double thetaDot;                                            //!< [rad/s] Current angle rate
     double thetaDDot;                                           //!< [rad/s^2] Current angular acceleration
+    double tf;                                                  //!< [s] Simulation time when the rotation is finished
+    double a;                                                   //!< Parabolic constant for the first half of the rotation
+    double b;                                                   //!< Parabolic constant for the second half of the rotation
     BSKLogger *bskLogger;                                       //!< BSK Logging
 
     /* Messages */

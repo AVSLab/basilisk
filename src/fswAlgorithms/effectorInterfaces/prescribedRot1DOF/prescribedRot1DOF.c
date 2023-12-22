@@ -35,6 +35,7 @@ void SelfInit_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, int64_t mod
 }
 
 /*! This method performs a complete reset of the module. The input messages are checked to ensure they are linked.
+The method also checks that the coastOption and tRamp variables are correctly configured.
  @return void
  @param configData The configuration data associated with the module
  @param callTime [ns] Time the method is called
@@ -46,12 +47,27 @@ void Reset_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t callT
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: prescribedRot1DOF.spinningBodyInMsg wasn't connected.");
     }
 
+    // Check for nonzero tRamp if the coast option is chosen
+    if (configData->coastOption && configData->tRamp == 0.0) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: prescribedRot1DOF.tRamp was not configured for the coast "
+                                                  "option.");
+        // Set the coastOption boolean parameter to false if the user does not specify a ramp time
+        configData->coastOption = 0;
+    }
+
+    // Check for zero tRamp if the option with no coast period is chosen
+    if (!configData->coastOption && configData->tRamp != 0.0) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: prescribedRot1DOF.tRamp cannot be set when "
+                                                  "prescribedRot1DOF.coastOption is false.");
+    }
+
     // Set the initial time to zero
     configData->tInit = 0.0;
 
     // Set the module variables to the initial states set by the user
     configData->theta = configData->thetaInit;
-    configData->thetaDot = configData->thetaDotInit;
+    configData->thetaDotInit = 0.0;
+    configData->thetaDot = 0.0;
 
     // Set the initial convergence to true to enter the if statement in the Update method on the first pass
     configData->convergence = true;
@@ -89,48 +105,137 @@ void Update_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t call
         // Store the reference angle
         configData->thetaRef = spinningBodyIn.theta;
 
-        // Define temporal information for the maneuver
-        double convTime = sqrt(((0.5 * fabs(configData->thetaRef - configData->thetaInit)) * 8) / configData->thetaDDotMax);
-        configData->tf = configData->tInit + convTime;
-        configData->ts = configData->tInit + convTime / 2;
         // Update the initial spinning body angle
         configData->thetaInit = configData->theta;
 
-        // Define the parabolic constants for the first and second half of the maneuver
-        configData->a = 0.5 * (configData->thetaRef - configData->thetaInit) / ((configData->ts - configData->tInit) * (configData->ts - configData->tInit));
-        configData->b = -0.5 * (configData->thetaRef - configData->thetaInit) / ((configData->ts - configData->tf) * (configData->ts - configData->tf));
-
         // Set the convergence to false until the rotation is complete
         configData->convergence = false;
+
+        // Set the parameters required to profile the rotation
+        if (configData->coastOption) { // Set parameters for the coast option
+            if (configData->thetaInit != configData->thetaRef) {
+                // Determine the time at the end of the first ramp segment
+                configData->tr = configData->tInit + configData->tRamp;
+
+                // Determine the angle and angle rate at the end of the ramp segment/start of the coast segment
+                if (configData->thetaInit < configData->thetaRef) {
+                    configData->theta_tr = (0.5 * configData->thetaDDotMax * configData->tRamp * configData->tRamp)
+                                       + (configData->thetaDotInit * configData->tRamp) + configData->thetaInit;
+                    configData->thetaDot_tr = configData->thetaDDotMax * configData->tRamp + configData->thetaDotInit;
+                } else {
+                    configData->theta_tr = - ((0.5 * configData->thetaDDotMax * configData->tRamp * configData->tRamp)
+                                       + (configData->thetaDotInit * configData->tRamp)) + configData->thetaInit;
+                    configData->thetaDot_tr = - configData->thetaDDotMax * configData->tRamp + configData->thetaDotInit;
+                }
+
+                // Determine the angle traveled during the coast period
+                double deltaThetaCoast = configData->thetaRef - configData->thetaInit
+                                         - 2 * (configData->theta_tr - configData->thetaInit);
+
+                // Determine the time duration of the coast segment
+                double tCoast = fabs(deltaThetaCoast) / fabs(configData->thetaDot_tr);
+
+                // Determine the time at the end of the coast segment
+                configData->tc = configData->tr + tCoast;
+
+                // Determine the angle at the end of the coast segment
+                configData->theta_tc = configData->theta_tr + deltaThetaCoast;
+
+                // Determine the time at the end of the rotation
+                configData->tf = configData->tc + configData->tRamp;
+
+                // Define the parabolic constants for the first and second ramp segments of the rotation
+                configData->a = (configData->theta_tr - configData->thetaInit) /
+                                ((configData->tr - configData->tInit) * (configData->tr - configData->tInit));
+                configData->b = - (configData->thetaRef - configData->theta_tc) /
+                                 ((configData->tc - configData->tf) * (configData->tc - configData->tf));
+            } else { // If the initial angle equals the reference angle, no rotation is required. Setting the final time
+                // equal to the initial time ensures the correct statement is entered when the rotational states are
+                // profiled below
+                configData->tf = configData->tInit;
+            }
+        } else { // Set parameters for the no coast option
+            // Determine the total time required for the rotation
+            double totalRotTime = sqrt(((0.5 * fabs(configData->thetaRef - configData->thetaInit)) * 8) /
+                                         configData->thetaDDotMax);
+
+            // Determine the time at the end of the rotation
+            configData->tf = configData->tInit + totalRotTime;
+
+            // Determine the time halfway through the rotation
+            configData->ts = configData->tInit + (totalRotTime / 2);
+
+            // Define the parabolic constants for the first and second half of the rotation
+            configData->a = 0.5 * (configData->thetaRef - configData->thetaInit) /
+                            ((configData->ts - configData->tInit) * (configData->ts - configData->tInit));
+            configData->b = -0.5 * (configData->thetaRef - configData->thetaInit) /
+                            ((configData->ts - configData->tf) * (configData->ts - configData->tf));
+            }
     }
 
     // Store the current simulation time
     double t = callTime * NANO2SEC;
 
-    // Define the scalar prescribed states
-    double thetaDDot;
-    double thetaDot;
-    double theta;
-
-    // Compute the prescribed scalar states at the current simulation time
-    if ((t < configData->ts || t == configData->ts) && configData->tf - configData->tInit != 0) // Entered during the first half of the maneuver
-    {
-        thetaDDot = configData->thetaDDotMax;
-        thetaDot = thetaDDot * (t - configData->tInit) + configData->thetaDotInit;
-        theta = configData->a * (t - configData->tInit) * (t - configData->tInit) + configData->thetaInit;
-    }
-    else if ( t > configData->ts && t <= configData->tf && configData->tf - configData->tInit != 0) // Entered during the second half of the maneuver
-    {
-        thetaDDot = -1 * configData->thetaDDotMax;
-        thetaDot = thetaDDot * (t - configData->tInit) + configData->thetaDotInit - thetaDDot * (configData->tf - configData->tInit);
-        theta = configData->b * (t - configData->tf) * (t - configData->tf) + configData->thetaRef;
-    }
-    else // Entered when the maneuver is complete
-    {
-        thetaDDot = 0.0;
-        thetaDot = configData->thetaDotRef;
-        theta = configData->thetaRef;
-        configData->convergence = true;
+    // Compute the scalar rotational states at the current simulation time
+    if (configData->coastOption) {
+        if (t <= configData->tr && configData->tf - configData->tInit != 0) { // Entered during the first ramp segment
+            // The acceleration during the first ramp segment is positive if the reference angle is greater than
+            // the initial angle. The acceleration is negative during the first ramp segment if the reference angle
+            // is less than the initial angle
+            if (configData->thetaInit < configData->thetaRef) {
+                configData->thetaDDot = configData->thetaDDotMax;
+            } else {
+                configData->thetaDDot = - configData->thetaDDotMax;
+            }
+            configData->thetaDot = configData->thetaDDot * (t - configData->tInit) + configData->thetaDotInit;
+            configData->theta = configData->a * (t - configData->tInit) * (t - configData->tInit) + configData->thetaInit;
+        } else if (t > configData->tr && t <= configData->tc && configData->tf - configData->tInit != 0) { // Entered during the coast segment
+            configData->thetaDDot = 0.0;
+            configData->thetaDot = configData->thetaDot_tr;
+            configData->theta = configData->thetaDot_tr * (t - configData->tr) + configData->theta_tr;
+        } else if (t > configData->tc && t <= configData->tf && configData->tf - configData->tInit != 0) { // Entered during the second ramp segment
+            // The acceleration during the second ramp segment is negative if the reference angle is greater than
+            // the initial angle. The acceleration is positive during the second ramp segment if the reference angle
+            // is less than the initial angle
+            if (configData->thetaInit < configData->thetaRef) {
+                configData->thetaDDot = - configData->thetaDDotMax;
+            } else {
+                configData->thetaDDot = configData->thetaDDotMax;
+            }
+            configData->thetaDot = configData->thetaDDot * (t - configData->tInit) + configData->thetaDotInit
+                                 - configData->thetaDDot * (configData->tf - configData->tInit);
+            configData->theta = configData->b * (t - configData->tf) * (t - configData->tf) + configData->thetaRef;
+        } else { // Entered when the rotation is complete
+            configData->thetaDDot = 0.0;
+            configData->thetaDot = 0.0;
+            configData->theta = configData->thetaRef;
+            configData->convergence = true;
+        }
+    } else {
+        if (t <= configData->ts && configData->tf - configData->tInit != 0) { // Entered during the first half of the rotation
+            if (configData->thetaInit < configData->thetaRef) {
+                configData->thetaDDot = configData->thetaDDotMax;
+            } else {
+                configData->thetaDDot = - configData->thetaDDotMax;
+            }
+            configData->thetaDot = configData->thetaDDot * (t - configData->tInit) + configData->thetaDotInit;
+            configData->theta = configData->a * (t - configData->tInit) * (t - configData->tInit)
+                              + configData->thetaInit;
+        } else if (t > configData->ts && t <= configData->tf && configData->tf - configData->tInit != 0) { // Entered during the second half of the rotation
+            if (configData->thetaInit < configData->thetaRef) {
+                configData->thetaDDot = - configData->thetaDDotMax;
+            } else {
+                configData->thetaDDot = configData->thetaDDotMax;
+            }
+            configData->thetaDot = configData->thetaDDot * (t - configData->tInit) + configData->thetaDotInit
+                                 - configData->thetaDDot * (configData->tf - configData->tInit);
+            configData->theta = configData->b * (t - configData->tf) * (t - configData->tf) + configData->thetaRef;
+        } else { // Entered when the rotation is complete
+            configData->thetaDDot = 0.0;
+            configData->thetaDot = 0.0;
+            configData->theta = configData->thetaRef;
+            configData->convergence = true;
+        }
     }
 
     // Determine the prescribed parameters: omega_FM_F and omegaPrime_FM_F
