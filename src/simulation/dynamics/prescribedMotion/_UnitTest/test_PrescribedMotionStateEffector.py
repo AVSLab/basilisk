@@ -179,14 +179,13 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         # Initialize the prescribedRot1DOF test module configuration data
         accelMax = 0.01  # [rad/s^2]
         #accelMax = np.pi / 180  # [rad/s^2]
+        PrescribedRot1DOF.coastOption = False
+        PrescribedRot1DOF.rotAxis_M = rotAxis_M
+        PrescribedRot1DOF.thetaDDotMax = accelMax
+        PrescribedRot1DOF.thetaInit = thetaInit
         PrescribedRot1DOF.r_FM_M = r_FM_M
         PrescribedRot1DOF.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
         PrescribedRot1DOF.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-        PrescribedRot1DOF.rotAxis_M = rotAxis_M
-        PrescribedRot1DOF.thetaDDotMax = accelMax
-        PrescribedRot1DOF.omega_FM_F = np.array([0.0, 0.0, 0.0])
-        PrescribedRot1DOF.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-        PrescribedRot1DOF.sigma_FM = sigma_FM
 
         # Create the prescribedRot1DOF input message
         thetaDot_Ref = 0.0  # [rad/s]
