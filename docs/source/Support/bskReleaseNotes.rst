@@ -33,6 +33,8 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - Added optional facet articulation to the :ref:`facetSRPDynamicEffector` module.
+- Added a coast option to the :ref:`prescribedRot1DOF` module, where a period of zero acceleration is added between
+  the two acceleration segments.
 
 
 Version 2.2.1 (Dec. 22, 2023)
