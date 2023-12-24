@@ -209,7 +209,7 @@ def run(show_plots):
     mu = earth.mu
 
     # Attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Adding the HingedRigidBody State Effector
     scSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()

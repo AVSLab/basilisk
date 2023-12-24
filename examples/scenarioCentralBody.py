@@ -146,13 +146,11 @@ def run(show_plots, useCentral):
 
     #Set up spice with spice time
     UTCInit = "2012 MAY 1 00:28:30.0"
-    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
-                                     UTCInit,
-                                     epochInMsg=True)
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+    spiceObject = gravFactory.createSpiceInterface(time=UTCInit, epochInMsg=True)
+    scSim.AddModelToTask(simTaskName, spiceObject)
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     #
     #   setup orbit and simulation time
@@ -216,7 +214,7 @@ def run(show_plots, useCentral):
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
-    plLog = gravFactory.spiceObject.planetStateOutMsgs[0].recorder(samplingTime)
+    plLog = spiceObject.planetStateOutMsgs[0].recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
     scSim.AddModelToTask(simTaskName, plLog)
 

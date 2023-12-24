@@ -35,4 +35,8 @@ The next step is to attach one or more :ref:`DataNodeUsageMsgPayload` instances 
 
    storageUnit.addDataNodeToModel(dataMsg)
 
+The method ``setDataBuffer()`` can be used to add or remove a specific amount of data from the storage unit::
+
+   storageUnit.setDataBuffer(1E4) # Given in bits
+
 For more information on how to set up and use this module, see the simple data system example :ref:`scenarioDataDemo`.

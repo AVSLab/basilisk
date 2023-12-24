@@ -119,7 +119,6 @@ def massDepletionTest(show_plots, thrusterType):
     unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15  # meters!
     unitTestSim.earthGravBody.isCentralBody = True
-    unitTestSim.earthGravBody.useSphericalHarmParams = False
 
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
 
@@ -291,7 +290,6 @@ def axisChangeHelper(r_BcB_B):
     unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15  # meters!
     unitTestSim.earthGravBody.isCentralBody = True
-    unitTestSim.earthGravBody.useSphericalHarmParams = False
 
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
 

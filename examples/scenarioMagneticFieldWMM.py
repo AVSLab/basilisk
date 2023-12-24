@@ -56,7 +56,7 @@ file is loaded from the ``dataPath`` variable.
 The default planet's position vector is assumed to be the inertial
 frame origin and an identity orientation matrix.
 If a different planet state message is required this can be
-specified through the optional input message ``planetPosInMsgName``.
+specified through the optional input message ``planetPosInMsg``.
 
 As with :ref:`scenarioMagneticFieldCenteredDipole`, the magnetic
 field module can produce the magnetic field for a vector of spacecraft
@@ -66,7 +66,7 @@ The WMM module requires an epoch time to determine the magnetic field.
 If this is not set, then the BSK
 default epoch time is used.  To set a general epoch time, the module
 can read in an epoch message with a
-gregorian UTC date.  This is set using the the support method
+gregorian UTC date.  This is set using the support method
 ``timeStringToGregorianUTCMsg``.
 
 The WMM model is driven of a time variable that is a decimal year value.
@@ -76,7 +76,7 @@ specified, the message information is used instead of the
 ``epochDateFractionalYear`` variable.
 
 Every time a spacecraft is added to the magnetic field module, an
-automated output message name is created. For `magModule` is "WMM_0_data"
+extra output message is autmatically created. For `magModule` is "WMM_0_data"
 as the ModelTag string is ``WMM`` and the spacecraft number is 0.
 This output name is created in the  ``addSpacecraftToModel()``
 function.  However, if the default output name is used for the second
@@ -193,7 +193,7 @@ def run(show_plots, orbitCase):
     req = planet.radEquator
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # create the magnetic field
     magModule = magneticFieldWMM.MagneticFieldWMM()

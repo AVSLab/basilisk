@@ -47,12 +47,20 @@ Illustration of Simulation Results
 
 Here, only a single panel is simulated. The panel connects to the hub through a universal, dual-axis joint. The time
 history for both angles and angle rates is shown below. Note how decoupled the two angles are. This is because the
-module is simulating a universal joint, so each axis behaves independently from each other.
+module is simulating a universal joint, so each axis behaves independently from each other. The impact of the motion of
+the panel is also shown in the velocity and angular velocity plots. The initial transient in the time history of these
+two quantities matches the motion of the panel.
 
 .. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFtheta1.svg
    :align: center
 
 .. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFthetaDot1.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFvelocity1.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFangularVelocity1.svg
    :align: center
 
 ::
@@ -61,12 +69,19 @@ module is simulating a universal joint, so each axis behaves independently from 
 
 In this case, two panels are simulated. Each rotates about a one-degree-of-freedom hinge. The spin axis are perpendicular
 to each other to show how any spin axis can be chosen. Note that in this case, there is much more significant coupling
-between the two angles, with them being in-phase with each other.
+between the two angles, with them being in-phase with each other. As before, the transient motion of the velocity and
+angular velocity states match the motion of the panels.
 
 .. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFtheta2.svg
    :align: center
 
 .. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFthetaDot2.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFvelocity2.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFangularVelocity2.svg
    :align: center
 
 """
@@ -81,10 +96,11 @@ between the two angles, with them being in-phase with each other.
 
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 
 from Basilisk.utilities import SimulationBaseClass, vizSupport, simIncludeGravBody
 from Basilisk.simulation import spacecraft, spinningBodyTwoDOFStateEffector
-from Basilisk.utilities import macros, orbitalMotion
+from Basilisk.utilities import macros, orbitalMotion, unitTestSupport
 
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -100,11 +116,6 @@ def run(show_plots, numberPanels):
         numberPanels (int): Choose how many panels to simulate (1 or 2)
 
     """
-
-    #
-    #  From here on scenario python code is found.  Above this line the code is to setup a
-    #  unitTest environment.  The above code is not critical if learning how to code BSK.
-    #
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -138,24 +149,9 @@ def run(show_plots, numberPanels):
                                 [0.0, massSC / 16 * diameter ** 2 + massSC / 12 * height ** 2, 0.0],
                                 [0.0, 0.0, massSC / 8 * diameter ** 2]]
 
-    # Set up gravity
-    gravFactory = simIncludeGravBody.gravBodyFactory()
-    earth = gravFactory.createEarth()
-    earth.isCentralBody = True  # ensure this is the central gravitational body
-    mu = earth.mu
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-
     # Set the spacecraft's initial conditions
-    oe = orbitalMotion.ClassicElements()
-    oe.a = 8e6  # meters
-    oe.e = 0.1
-    oe.i = 0.0 * macros.D2R
-    oe.Omega = 0.0 * macros.D2R
-    oe.omega = 0.0 * macros.D2R
-    oe.f = 0.0 * macros.D2R
-    rN, vN = orbitalMotion.elem2rv(mu, oe)
-    scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
-    scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
+    scObject.hub.r_CN_NInit = np.array([0, 0, 0])  # m   - r_CN_N
+    scObject.hub.v_CN_NInit = np.array([0, 0, 0])  # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.05], [-0.05], [0.05]]
 
@@ -228,35 +224,25 @@ def run(show_plots, numberPanels):
         spinningBody.theta1DotInit = 0.0 * macros.D2R
         spinningBody.theta2DotInit = 0.0 * macros.D2R
     else:
-        print("Cannot simulate " + str(numberPanels) + " panels.")
+        print(f"Cannot simulate {numberPanels} panels.")
         return
 
     # Add spinning body to spacecraft
     scObject.addStateEffector(spinningBody)
 
-    # Add Earth gravity to the simulation
-    gravFactory = simIncludeGravBody.gravBodyFactory()
-    gravBodies = gravFactory.createBodies(['earth', 'sun'])
-    gravBodies['earth'].isCentralBody = True
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-    timeInitString = "2012 MAY 1 00:28:30.0"
-    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
-    gravFactory.spiceObject.zeroBase = 'earth'
-
     # Add modules to simulation process
     scSim.AddModelToTask(simTaskName, scObject)
     scSim.AddModelToTask(simTaskName, spinningBody)
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
 
     # Set up the message recorders and add them to the task
     datLog = scObject.scStateOutMsg.recorder()
     theta1Data = spinningBody.spinningBodyOutMsgs[0].recorder()
     theta2Data = spinningBody.spinningBodyOutMsgs[1].recorder()
+    scStateData = scObject.scStateOutMsg.recorder()
     scSim.AddModelToTask(simTaskName, datLog)
     scSim.AddModelToTask(simTaskName, theta1Data)
     scSim.AddModelToTask(simTaskName, theta2Data)
+    scSim.AddModelToTask(simTaskName, scStateData)
 
     #
     # Set up Vizard visualization
@@ -268,33 +254,34 @@ def run(show_plots, numberPanels):
         scBodyList.append(["panel1", spinningBody.spinningBodyConfigLogOutMsgs[0]])
         scBodyList.append(["panel2", spinningBody.spinningBodyConfigLogOutMsgs[1]])
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scBodyList
-                                              # , saveFile=fileName + str(numberPanels)
-                                              )
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scBodyList
+                                                  # , saveFile=fileName + str(numberPanels)
+                                                  )
 
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=[scObject.ModelTag]
-                                 , modelPath="CYLINDER"
-                                 , scale=[diameter, diameter, height / 2]
-                                 , color=vizSupport.toRGBA255("blue"))
-    if numberPanels == 1:
         vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["panel"]
+                                     , simBodiesToModify=[scObject.ModelTag]
                                      , modelPath="CYLINDER"
-                                     , scale=[2 * radius, 2 * radius, thickness]
-                                     , color=vizSupport.toRGBA255("green"))
-    elif numberPanels == 2:
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["panel1"]
-                                     , modelPath="CUBE"
-                                     , scale=[width, length, thickness]
-                                     , color=vizSupport.toRGBA255("green"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["panel2"]
-                                     , modelPath="CUBE"
-                                     , scale=[width, length, thickness]
-                                     , color=vizSupport.toRGBA255("green"))
-    viz.settings.orbitLinesOn = -1
+                                     , scale=[diameter, diameter, height / 2]
+                                     , color=vizSupport.toRGBA255("blue"))
+        if numberPanels == 1:
+            vizSupport.createCustomModel(viz
+                                         , simBodiesToModify=["panel"]
+                                         , modelPath="CYLINDER"
+                                         , scale=[2 * radius, 2 * radius, thickness]
+                                         , color=vizSupport.toRGBA255("green"))
+        elif numberPanels == 2:
+            vizSupport.createCustomModel(viz
+                                         , simBodiesToModify=["panel1"]
+                                         , modelPath="CUBE"
+                                         , scale=[width, length, thickness]
+                                         , color=vizSupport.toRGBA255("green"))
+            vizSupport.createCustomModel(viz
+                                         , simBodiesToModify=["panel2"]
+                                         , modelPath="CUBE"
+                                         , scale=[width, length, thickness]
+                                         , color=vizSupport.toRGBA255("green"))
+        viz.settings.orbitLinesOn = -1
 
     # Initialize the simulation
     scSim.InitializeSimulation()
@@ -310,6 +297,8 @@ def run(show_plots, numberPanels):
     theta1Dot = theta1Data.thetaDot
     theta2 = theta2Data.theta
     theta2Dot = theta2Data.thetaDot
+    v_BN_N = scStateData.v_BN_N
+    omega_BN_B = scStateData.omega_BN_B
 
     #
     #   plot the results
@@ -336,6 +325,30 @@ def run(show_plots, numberPanels):
     plt.ylabel(r'$\dot{\theta}$ [deg/s]')
     pltName = fileName + "thetaDot" + str(int(numberPanels))
     figureList[pltName] = plt.figure(2)
+
+    plt.figure(3)
+    plt.clf()
+    for idx in range(3):
+        plt.plot(theta1Data.times() * macros.NANO2SEC, v_BN_N[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$v_{BN,' + str(idx) + '}$')
+    plt.legend()
+    plt.xlabel('time [s]')
+    plt.ylabel(r'Velocity [m/s]')
+    pltName = fileName + "velocity" + str(int(numberPanels))
+    figureList[pltName] = plt.figure(3)
+
+    plt.figure(4)
+    plt.clf()
+    for idx in range(3):
+        plt.plot(theta1Data.times() * macros.NANO2SEC, omega_BN_B[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label=r'$\omega_{BN,' + str(idx) + '}$')
+    plt.legend()
+    plt.xlabel('time [s]')
+    plt.ylabel(r'Angular Velocity [rad/s]')
+    pltName = fileName + "angularVelocity" + str(int(numberPanels))
+    figureList[pltName] = plt.figure(4)
 
     if show_plots:
         plt.show()

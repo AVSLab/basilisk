@@ -176,7 +176,6 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
 }
 
 /*! This method does the UT to the a-priori state to compute the a-priori measurements
-    @param CurrentSimNanos
     @return void
 */
 void SmallBodyNavUKF::measurementUT(){
@@ -238,7 +237,6 @@ void SmallBodyNavUKF::measurementUT(){
 }
 
 /*! This method collects the measurements and updates the estimation
-    @param CurrentSimNanos
     @return void
 */
 void SmallBodyNavUKF::kalmanUpdate(){

@@ -190,21 +190,20 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     ##  Configure environmental parameters
     #   Gravity; includes 2-body plus J2.
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    gravBodies = gravFactory.createBodies(['earth'])
-    gravBodies['earth'].isCentralBody = True
-    simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S.txt', gravBodies['earth'].spherHarm, 2)
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True
+    mu = earth.mu
+    if useJ2:
+        earth.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S.txt', 2)
 
-    gravBodies['earth'].useSphericalHarmParams = useJ2
     # timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
-    # gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
-    #                                           , timeInitString
-    #                                           )
-    # gravFactory.spiceObject.zeroBase = 'earth'
+    # spiceObject = gravFactory.createSpiceInterface(time=timeInitString)
+    # spiceObject.zeroBase = 'earth'
 
     #   Density
     atmosphere = exponentialAtmosphere.ExponentialAtmosphere()
     atmosphere.ModelTag = 'atmosphere'
-    # atmosphere.planetPosInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
+    # atmosphere.planetPosInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
     atmosphere.planetRadius = orbitalMotion.REQ_EARTH*1e3 + 300e3 #   m
     atmosphere.envMinReach = -300e3
     atmosphere.envMaxReach = +300e3
@@ -212,7 +211,6 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     atmosphere.baseDensity =  2.022E-14 * 1000 *  densMultiplier #    kg/m^3
 
     ##   Set up chief, deputy orbits:
-    mu = gravFactory.gravBodies['earth'].mu
     chief_oe = orbitalMotion.ClassicElements()
     chief_oe.a = orbitalMotion.REQ_EARTH * 1e3 + 300e3 # meters
     chief_oe.e = 0.
@@ -237,9 +235,9 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     depSc, depDrag, depNav = setup_spacecraft_plant(dep_rN,dep_vN, 'lou')
 
     #   Connect s/c to environment (gravity, density)
-    chiefSc.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-    depSc.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-
+    gravFactory.addBodiesTo(chiefSc)
+    gravFactory.addBodiesTo(depSc)
+    
     atmosphere.addSpacecraftToModel(depSc.scStateOutMsg)
     depDrag.atmoDensInMsg.subscribeTo(atmosphere.envOutMsgs[-1])
     atmosphere.addSpacecraftToModel(chiefSc.scStateOutMsg)
@@ -248,13 +246,13 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     #   Add all dynamics stuff to dynamics task
     scSim.AddModelToTask(dynTaskName, atmosphere,920)
     # scSim.AddModelToTask(dynTaskName, ephemConverter, 921)
-    scSim.AddModelToTask(dynTaskName, chiefDrag,890)
-    scSim.AddModelToTask(dynTaskName, depDrag,891)
-    scSim.AddModelToTask(dynTaskName, chiefSc,810)
-    scSim.AddModelToTask(dynTaskName, depSc,811)
-    scSim.AddModelToTask(dynTaskName, chiefNav,800)
-    scSim.AddModelToTask(dynTaskName, depNav,801)
-    # scSim.AddModelToTask(dynTaskName, gravFactory.spiceObject, 999)
+    scSim.AddModelToTask(dynTaskName, chiefDrag, 890)
+    scSim.AddModelToTask(dynTaskName, depDrag, 891)
+    scSim.AddModelToTask(dynTaskName, chiefSc, 810)
+    scSim.AddModelToTask(dynTaskName, depSc, 811)
+    scSim.AddModelToTask(dynTaskName, chiefNav, 800)
+    scSim.AddModelToTask(dynTaskName, depNav, 801)
+    # scSim.AddModelToTask(dynTaskName, spiceObject, 999)
 
     ##  FSW setup
     #   Chief S/C

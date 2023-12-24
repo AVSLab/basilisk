@@ -50,18 +50,18 @@ done using the ``timeIntString`` variable::
 Next the custom Spice file must be loaded. The ``loadSpiceKernel()`` method of class ``SpiceInterface``
 is called to load the file. This method accepts the file name and the path to the desired file to load::
 
-    gravFactory.spiceObject.loadSpiceKernel("max_21T01.bsp", os.path.join(path, "dataForExamples", "Spice/"))
+    spiceObject.loadSpiceKernel("max_21T01.bsp", os.path.join(path, "dataForExamples", "Spice/"))
 
 Note that setting up the orbital elements and initial conditions using the ``orbitalMotion`` module is no longer needed.
 
 After the Spice file is loaded, connect the configured Spice translational output message to the spacecraft object's
 ``transRefInMsg`` input message::
 
-    scObject.transRefInMsg.subscribeTo(gravFactory.spiceObject.transRefStateOutMsgs[0])
+    scObject.transRefInMsg.subscribeTo(spiceObject.transRefStateOutMsgs[0])
 
 Finally, add the Spice object to the simulation task list::
 
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+    scSim.AddModelToTask(simTaskName, spiceObject)
 
 Implementing Attitude Pointing Modes
 ------------------------------------
@@ -74,11 +74,11 @@ to ephemeris messages of type ``ephemOutMsgs``. This converter is required for a
 
     ephemObject = ephemerisConverter.EphemerisConverter()
     ephemObject.ModelTag = 'EphemData'
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[earthIdx])
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[sunIdx])
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[moonIdx])
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[venusIdx])
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[marsIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[earthIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[sunIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[moonIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[venusIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[marsIdx])
     scSim.AddModelToTask(simTaskName, ephemObject)
 
 Next, the ``extForceTorque`` and ``simpleNav`` modules must be set configured::
@@ -214,7 +214,7 @@ To execute the desired attitude-pointing mode, the ``run`` function must be call
 
 Ensure to unload the Spice kernel at the end of each simulation::
 
-    gravFactory.spiceObject.unloadSpiceKernel("max_21T01.bsp", os.path.join(path, "Data", "Spice/"))
+    spiceObject.unloadSpiceKernel("max_21T01.bsp", os.path.join(path, "Data", "Spice/"))
 
 
 Simulation Visualization In Vizard
@@ -255,9 +255,8 @@ from Basilisk.utilities import vizSupport
 # import general simulation support files
 try:
     from Basilisk.simulation import vizInterface
-    vizFound = True
 except ImportError:
-    vizFound = False
+    pass
 
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import hillPoint
@@ -296,10 +295,10 @@ def run(planetCase):
 
     # Create gravitational bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    gravFactory.createBodies(["earth", "sun", "moon", "venus", "mars barycenter"])
+    gravFactory.createBodies("earth", "sun", "moon", "venus", "mars barycenter")
     earth = gravFactory.gravBodies["earth"]
     earth.isCentralBody = True
-    scObject.gravField.setGravBodies(gravityEffector.GravBodyVector(list(gravFactory.gravBodies.values())))
+    gravFactory.addBodiesTo(scObject)
 
     # Define planet gravitational parameters needed for the attitude pointing modes
     earthMu = earth.mu
@@ -326,34 +325,32 @@ def run(planetCase):
         exit(1)
 
     # Create the Spice interface and add the correct path to the ephemeris data
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
-    gravFactory.spiceObject.zeroBase = 'Earth'
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
+    spiceObject.zeroBase = 'Earth'
 
     # Specify Spice spacecraft name
     scNames = ["-60000"]
-    gravFactory.spiceObject.addSpacecraftNames(messaging.StringVector(scNames))
+    spiceObject.addSpacecraftNames(messaging.StringVector(scNames))
 
     # Load the custom spacecraft trajectory Spice file using the SpiceInterface class loadSpiceKernel() method
-    gravFactory.spiceObject.loadSpiceKernel("spacecraft_21T01.bsp", os.path.join(path, "dataForExamples", "Spice/"))
+    spiceObject.loadSpiceKernel("spacecraft_21T01.bsp", os.path.join(path, "dataForExamples", "Spice/"))
 
     # Connect the configured Spice translational output message to spacecraft object's transRefInMsg input message
-    scObject.transRefInMsg.subscribeTo(gravFactory.spiceObject.transRefStateOutMsgs[0])
+    scObject.transRefInMsg.subscribeTo(spiceObject.transRefStateOutMsgs[0])
 
     # Add the Spice and spacecraft objects to the simulation task list.
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+    scSim.AddModelToTask(simTaskName, spiceObject)
     scSim.AddModelToTask(simTaskName, scObject)
 
     # Create an ephemeris converter to convert Spice messages of type plantetStateOutMsgs to ephemeris messages
     # of type ephemOutMsgs. This converter is required for the velocityPoint and locationPointing modules.
     ephemObject = ephemerisConverter.EphemerisConverter()
     ephemObject.ModelTag = 'EphemData'
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[earthIdx])
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[sunIdx])
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[moonIdx])
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[venusIdx])
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[marsIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[earthIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[sunIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[moonIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[venusIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[marsIdx])
     scSim.AddModelToTask(simTaskName, ephemObject)
 
     # Define the simulation inertia
@@ -481,7 +478,7 @@ def run(planetCase):
     # Set the initial simulation time
     simulationTime = macros.sec2nano(0)
 
-    if vizFound:
+    if vizSupport.vizFound:
         # Set up antenna transmission to Earth visualization
         transceiverHUD = vizInterface.Transceiver()
         transceiverHUD.r_SB_B = [0.23, 0., 1.38]
@@ -513,7 +510,7 @@ def run(planetCase):
     def runVelocityPointing(simTime, planetMsg):
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(planetMsg)
-        if vizFound:
+        if vizSupport.vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
         attError.sigma_R0R = [np.tan(90.*macros.D2R/4), 0, 0]
         simulationTime += macros.sec2nano(simTime)
@@ -523,7 +520,7 @@ def run(planetCase):
     def runAntennaEarthPointing(simTime):
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(earthPointGuidance.attRefOutMsg)
-        if vizFound:
+        if vizSupport.vizFound:
             transceiverHUD.transceiverState = 3  # antenna in send and receive mode
         attError.sigma_R0R = [0, 0, 0]
         simulationTime += macros.sec2nano(simTime)
@@ -533,7 +530,7 @@ def run(planetCase):
     def runPanelSunPointing(simTime):
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(sunPointGuidance.attRefOutMsg)
-        if vizFound:
+        if vizSupport.vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
         attError.sigma_R0R = [0, 0, 0]
         simulationTime += macros.sec2nano(simTime)
@@ -543,7 +540,7 @@ def run(planetCase):
     def runSensorSciencePointing(simTime):
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(sciencePointGuidance.attRefOutMsg)
-        if vizFound:
+        if vizSupport.vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
         attError.sigma_R0R = [-1./3., 1./3., -1./3.]
         simulationTime += macros.sec2nano(simTime)
@@ -565,7 +562,7 @@ def run(planetCase):
 
     # Unload custom Spice kernel at the end of each simulation
     gravFactory.unloadSpiceKernels()
-    gravFactory.spiceObject.unloadSpiceKernel("spacecraft_21T01.bsp", os.path.join(path, "Data", "Spice/"))
+    spiceObject.unloadSpiceKernel("spacecraft_21T01.bsp", os.path.join(path, "Data", "Spice/"))
 
     return
 

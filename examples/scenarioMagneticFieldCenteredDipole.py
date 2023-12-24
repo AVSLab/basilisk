@@ -57,7 +57,7 @@ following code illustrates setting the Earth dipole parameters::
     magModule.planetRadius = 6371.2 * 1000  # meters
 
 The python support file ``simSetPlanetEnvironment.py`` provides helper
-functions to setup command magnetic field
+functions to use magnetic field
 environments including the centered dipole models for Mercury,
 Earth, Jupiter, Saturn, Uranus and Neptune.
 
@@ -221,7 +221,7 @@ def run(show_plots, orbitCase, planetCase):
     req = planet.radEquator
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
 
     # create the magnetic field

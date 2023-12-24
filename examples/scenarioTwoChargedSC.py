@@ -76,13 +76,6 @@ from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 unitTestSupport, RigidBodyKinematics, vizSupport, SpherePlot)
 
-try:
-    from Basilisk.simulation import vizInterface
-
-    vizFound = True
-except ImportError:
-    vizFound = False
-
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
@@ -141,8 +134,8 @@ def run(show_plots):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObjectLeader.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-    scObjectFollower.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObjectLeader)
+    gravFactory.addBodiesTo(scObjectFollower)
 
     # setup MSM module
     MSMmodule = msmForceTorque.MsmForceTorque()
@@ -256,7 +249,7 @@ def run(show_plots):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    if vizFound:
+    if vizSupport.vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObjectLeader, scObjectFollower]
                                                   # , saveFile=fileName,
                                                   )

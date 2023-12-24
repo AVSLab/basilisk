@@ -25,9 +25,11 @@ See :ref:`installOptionalPackages` to learn what python packages must be install
 
 Making the HTML Documentation Folder
 ------------------------------------
-To create the HTML documentation with all the associated scenario
-figures, be sure to run ``pytest`` first from within the ``/src``
-directory.
+First generate the test plots::
+
+    cd src
+
+    pytest
 
 Next, in a terminal window switch to the ``docs`` folder::
 
@@ -39,10 +41,11 @@ Finally, type the following command to build the HTML documenation::
 
 The final html documenation folder is stored in ``docs/build/html``.
 
+To open the HTML index file and view the documentation in the browser use::
+
+    make view
+
 To clean out the sphinx generated documents and folder use::
 
     make clean
 
-To open the HTML index file and view the documentation in the browser use::
-
-    make view

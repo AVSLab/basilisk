@@ -87,10 +87,6 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    # module.torqueInMsgName = "rw_torque_Lr"
-    # module.rwParamsInMsgName = "rw_parameters"
-    # module.voltageOutMsgName = "rw_volt_cmd"
-
     # set module parameters
     module.VMin = 1.0     # Volts
     module.VMax = 11.0    # Volts

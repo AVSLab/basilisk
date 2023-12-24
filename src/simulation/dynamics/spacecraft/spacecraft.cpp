@@ -37,6 +37,7 @@ Spacecraft::Spacecraft()
     this->simTimePrevious = 0;
     this->dvAccum_CN_B.setZero();
     this->dvAccum_BN_B.setZero();
+    this->dvAccum_CN_N.setZero();
 
     // - Set integrator as RK4 by default
     this->integrator = new svIntegratorRK4(this);
@@ -101,6 +102,7 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
     eigenMatrixXd2CArray(this->dvAccum_CN_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->hub.MRPSwitchCount;
     eigenMatrixXd2CArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
+    eigenMatrixXd2CArray(this->dvAccum_CN_N, stateOut.TotalAccumDV_CN_N);
     eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
     eigenVector3d2CArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
     this->scStateOutMsg.write(&stateOut, this->moduleID, clockTime);
@@ -486,6 +488,9 @@ void Spacecraft::postIntegration(double integrateToThisTime) {
     // - Find the accumulated DV of the body frame in the body frame
     this->dvAccum_BN_B += newDcm_NB.transpose()*(newV_BN_N -
                                                  this->hubGravVelocity->getState());
+
+    // - Find the accumulated DV of the center of mass in the inertial frame
+    this->dvAccum_CN_N += newV_CN_N - this->BcGravVelocity->getState();
 
     // - non-conservative acceleration of the body frame in the body frame
     this->nonConservativeAccelpntB_B = (newDcm_NB.transpose()*(newV_BN_N -

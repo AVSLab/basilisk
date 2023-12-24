@@ -57,11 +57,6 @@ from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 unitTestSupport, vizSupport)
 
-try:
-    from Basilisk.simulation import vizInterface
-    vizFound = True
-except ImportError:
-    vizFound = False
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -133,8 +128,8 @@ def run(show_plots):
     mu = earth.mu
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-    scObject2.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
+    gravFactory.addBodiesTo(scObject2)
 
     # add external control torque to scObject
     extFTObject = extForceTorque.ExtForceTorque()
@@ -230,7 +225,7 @@ def run(show_plots):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    if vizFound:
+    if vizSupport.vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
                                                   # , saveFile=fileName,
                                                   )

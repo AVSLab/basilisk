@@ -27,8 +27,8 @@
  @return void
  */
 SimpleStorageUnit::SimpleStorageUnit(){
-    this->storageCapacity = -1.0;
-    this->storedDataSum = 0.0;
+    this->storageCapacity = 0;
+    this->storedDataSum = 0;
     return;
 }
 
@@ -43,7 +43,7 @@ SimpleStorageUnit::~SimpleStorageUnit(){
  @param currentClock
  */
 void SimpleStorageUnit::customReset(uint64_t currentClock){
-    if (this->storageCapacity <= 0.0) {
+    if (this->storageCapacity <= 0) {
         bskLogger.bskLog(BSK_INFORMATION, "The storageCapacity variable must be set to a positive value.");
     }
     return;
@@ -63,10 +63,10 @@ void SimpleStorageUnit::integrateDataStatus(double currentTime){
         if (storedData.size() == 0){
             this->storedData.push_back({{'S','T','O','R','E','D',' ','D','A','T','A'}, 0});
         }
-        else if ((this->storedDataSum < this->storageCapacity) || (it->baudRate <= 0)){
+        else if ((this->storedDataSum + round(it->baudRate * this->currentTimestep) < this->storageCapacity) || (it->baudRate <= 0)){
             //! - Only perform the operation if it will not result in less than 0 data
-            if ((this->storedData[0].dataInstanceSum + it->baudRate * (this->currentTimestep)) >= 0){
-                this->storedData[0].dataInstanceSum += it->baudRate * (this->currentTimestep);
+            if ((this->storedData[0].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0){
+                this->storedData[0].dataInstanceSum += round(it->baudRate * this->currentTimestep);
             }
         }
         this->netBaud += it->baudRate;
@@ -78,4 +78,13 @@ void SimpleStorageUnit::integrateDataStatus(double currentTime){
     //!- Update previousTime
     this->previousTime = currentTime;
     return;
+}
+
+/*! Adds a specific amount of data to the storedData vector once
+ @param data //Data to be added to the "STORED DATA" partition
+ @return void
+ */
+void SimpleStorageUnit::setDataBuffer(int64_t data){
+    std::string partitionName = "STORED DATA";
+    SimpleStorageUnit::DataStorageUnitBase::setDataBuffer(partitionName, data);
 }

@@ -98,9 +98,8 @@ from Basilisk.utilities import (SimulationBaseClass, macros,
 
 try:
     from Basilisk.simulation import vizInterface
-    vizFound = True
 except ImportError:
-    vizFound = False
+    pass
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -237,23 +236,21 @@ def run(show_plots):
     # setup Earth Gravity Body
     # earth = gravFactory.createEarth()
     # earth.isCentralBody = True  # ensure this is the central gravitational body
-    gravBodies = gravFactory.createBodies(['sun', 'earth'])
+    gravBodies = gravFactory.createBodies('sun', 'earth')
     gravBodies['earth'].isCentralBody = True
     mu = gravBodies['earth'].mu
     sunIdx = 0
     earthIdx = 1
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-    scObject2.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
+    gravFactory.addBodiesTo(scObject2)
 
     # setup SPICE interface for celestial objects
     timeInitString = "2022 MAY 1 00:28:30.0"
-    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
-    gravFactory.spiceObject.zeroBase = 'Earth'
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
+    spiceObject.zeroBase = 'Earth'
+    scSim.AddModelToTask(simTaskName, spiceObject)
 
     #
     # add RW devices
@@ -302,8 +299,8 @@ def run(show_plots):
     # 'SpicePlanetStateMsgPayload' to 'EphemerisMsgPayload'
     ephemObject = ephemerisConverter.EphemerisConverter()
     ephemObject.ModelTag = 'EphemData'
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[sunIdx])
-    ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[earthIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[sunIdx])
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[earthIdx])
     scSim.AddModelToTask(simTaskName, ephemObject)
 
     #
@@ -431,7 +428,7 @@ def run(show_plots):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    if vizFound:
+    if vizSupport.vizFound:
         servicerLight = vizInterface.Light()
         servicerLight.label = "Main Light"
         servicerLight.position = [1.0, 0.0, 0.00]
@@ -444,7 +441,7 @@ def run(show_plots):
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
                                                   , rwEffectorList=[rwStateEffector, None]
                                                   , lightList=[[servicerLight], None]
-                                                  , saveFile=fileName
+                                                  # , saveFile=fileName
                                                   )
 
         viz.settings.trueTrajectoryLinesOn = -1

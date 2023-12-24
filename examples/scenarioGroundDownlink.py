@@ -105,16 +105,12 @@ def run(show_plots):
     planet = gravFactory.createEarth()
     planet.isCentralBody = True  # ensure this is the central gravitational body
 
-    planet.useSphericalHarmParams = True
-    simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
-                                        planet.spherHarm, 2)
+    planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt', 2)
     mu = planet.mu
     # setup Spice interface for some solar system bodies
     timeInitString = '2020 MAY 21 18:28:03 (UTC)'
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
-                                     , timeInitString
-                                     )
-    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, -1)
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString)
+    scenarioSim.AddModelToTask(taskName, spiceObject, -1)
 
 
     #   setup orbit using orbitalMotion library
@@ -139,14 +135,14 @@ def run(show_plots):
     scenarioSim.AddModelToTask(taskName, scObject, 1)
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Create the ground location
     groundStation = groundLocation.GroundLocation()
     groundStation.ModelTag = "BoulderGroundStation"
     groundStation.planetRadius = astroFunctions.E_radius*1e3
     groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
-    groundStation.planetInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
+    groundStation.planetInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
     groundStation.minimumElevation = np.radians(10.)
     groundStation.maximumRange = 1e9
     groundStation.addSpacecraftToModel(scObject.scStateOutMsg)
@@ -207,7 +203,7 @@ def run(show_plots):
 
     # Also log attitude/orbit parameters
     dataLog = scObject.scStateOutMsg.recorder()
-    plLog = gravFactory.spiceObject.planetStateOutMsgs[0].recorder()
+    plLog = spiceObject.planetStateOutMsgs[0].recorder()
     gsLog = groundStation.currentGroundStateOutMsg.recorder()
     gsAccessLog = groundStation.accessOutMsgs[-1].recorder()
     scenarioSim.AddModelToTask(taskName, dataLog)

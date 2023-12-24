@@ -182,30 +182,27 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     # Setup gravity factory and gravity bodies
     # Include bodies as a list of SPICE names
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    gravBodies = gravFactory.createBodies(['moon', 'earth'])
+    gravBodies = gravFactory.createBodies('moon', 'earth')
     gravBodies['earth'].isCentralBody = True
-    # Necessary to specify useSphericalHarmParams for Earth or Moon, and then load parameters from file?
 
     # Add gravity bodies to the spacecraft dynamics
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Create default SPICE module, specify start date/time.
     timeInitString = "2022 August 31 15:00:00.0"
     spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
     timeInit = datetime.strptime(timeInitString, spiceTimeStringFormat)
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
-    gravFactory.spiceObject.zeroBase = 'Earth'
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
+    spiceObject.zeroBase = 'Earth'
 
     # Add SPICE object to the simulation task list
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, 1)
+    scSim.AddModelToTask(simTaskName, spiceObject, 1)
 
     # Import SPICE ephemeris data into the python environment
-    pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
     # Set spacecraft ICs
     # Use Earth data
@@ -375,10 +372,10 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
 
     # Unload spice libraries
     gravFactory.unloadSpiceKernels()
-    pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
     return figureList
 

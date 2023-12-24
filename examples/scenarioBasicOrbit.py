@@ -289,9 +289,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
         planet = gravFactory.createMarsBarycenter()
         planet.isCentralBody = True           # ensure this is the central gravitational body
         if useSphericalHarmonics:
-            planet.useSphericalHarmParams = True
-            simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM2BData.txt',
-                                                planet.spherHarm, 100)
+            planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM2BData.txt', 100)
+
     else:  # Earth
         planet = gravFactory.createEarth()
         planet.isCentralBody = True          # ensure this is the central gravitational body
@@ -299,15 +298,14 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
             # If extra customization is required, see the createEarth() macro to change additional values.
             # For example, the spherical harmonics are turned off by default.  To engage them, the following code
             # is used
-            planet.useSphericalHarmParams = True
-            simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
-                                                planet.spherHarm, 2)
+            planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt', 2)
+
             # The value 2 indicates that the first two harmonics, excluding the 0th order harmonic,
             # are included.  This harmonics data file only includes a zeroth order and J2 term.
     mu = planet.mu
 
     # Finally, the gravitational body must be connected to the spacecraft object.  This is done with
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
     # Here the complete list of gravitational bodies is automatically assigned to the spacecraft, regardless if
     # it is only one body like Earth or Mars, or a list of multiple bodies.
 

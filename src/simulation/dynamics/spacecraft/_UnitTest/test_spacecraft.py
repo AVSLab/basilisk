@@ -21,6 +21,7 @@ import os
 
 import numpy
 import pytest
+from random import random
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -54,12 +55,13 @@ def addTimeColumn(time, data):
                                       , "SCPointBVsPointC"
                                       , "scOptionalRef"
                                       , "scAccumDV"
+                                      , "scAccumDVExtForce"
                                       ])
 def test_spacecraftAllTest(show_plots, function):
     """Module Unit Test"""
     if function == "scOptionalRef":
         [testResults, testMessage] = eval(function + '(show_plots, 1e-3)')
-    elif function == "scAccumDV":
+    elif function == "scAccumDV" or function == "scAccumDVExtForce":
         [testResults, testMessage] = eval(function + '()')
     else:
         [testResults, testMessage] = eval(function + '(show_plots)')
@@ -97,7 +99,6 @@ def SCTranslation(show_plots):
     unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
-    unitTestSim.earthGravBody.useSphericalHarmParams = False
 
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
 
@@ -230,7 +231,6 @@ def SCTransAndRotation(show_plots):
     unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15  # meters!
     unitTestSim.earthGravBody.isCentralBody = True
-    unitTestSim.earthGravBody.useSphericalHarmParams = False
 
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
 
@@ -1075,9 +1075,11 @@ def scAccumDV():
 
     dataAccumDV_CN_B = dataLog.TotalAccumDVBdy
     dataAccumDV_BN_B = dataLog.TotalAccumDV_BN_B
+    dataAccumDV_CN_N = dataLog.TotalAccumDV_CN_N
 
     accuracy = 1e-10
     truth_dataAccumDV_CN_B = [0.0, 0.0, 0.0]
+    truth_dataAccumDV_CN_N = [0.0, 0.0, 0.0]
     v_r = numpy.cross(numpy.array(scObject.hub.omega_BN_BInit).T, -numpy.array(scObject.hub.r_BcB_B).T)[0]
     truth_dataAccumDV_BN_B = numpy.zeros(3)
     for i in range(len(dataLog.times())-1):
@@ -1092,10 +1094,79 @@ def scAccumDV():
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Point B Accumulated DV test failed pos unit test")
 
+        if not unitTestSupport.isArrayEqual(dataAccumDV_CN_N[i+1],truth_dataAccumDV_CN_N,3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Spacecraft Point C Accumulated DV in inertial frame test failed pos unit test")
+
     if testFailCount == 0:
         print("PASSED: Spacecraft Accumulated DV tests with offset CoM")
 
     return [testFailCount, ''.join(testMessages)]
+
+
+def scAccumDVExtForce():
+    """Module Unit Test"""
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    timeStep = 0.1
+    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    # Add external force and torque
+    extFTObject = extForceTorque.ExtForceTorque()
+    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.extTorquePntB_B = [[0], [0], [0]]
+    extForce = numpy.array([random() for _ in range(3)])
+    extFTObject.extForce_B = [[item] for item in extForce]
+    scObject.addDynamicEffector(extFTObject)
+    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+
+    # Define initial conditions of the spacecraft
+    scObject.hub.mHub = 100
+
+    dataLog = scObject.scStateOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    unitTestSim.InitializeSimulation()
+    stopTime = 0.5
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    dataAccumDV_CN_N = dataLog.TotalAccumDV_CN_N
+    timeArraySec = dataLog.times() * macros.NANO2SEC
+
+    accuracy = 1e-10
+    for i in range(len(dataLog.times())):
+        truth_dataAccumDV_CN_N = extForce * timeArraySec[i] / scObject.hub.mHub
+        if not unitTestSupport.isArrayEqual(dataAccumDV_CN_N[i], truth_dataAccumDV_CN_N, 3, accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Spacecraft Point C Accumulated DV with external force test failed unit test")
+
+    if testFailCount == 0:
+        print("PASSED: Spacecraft Accumulated DV tests with offset CoM")
+
+    return [testFailCount, ''.join(testMessages)]
+
 
 if __name__ == "__main__":
     # scAttRef(True, 1e-3)
@@ -1104,4 +1175,6 @@ if __name__ == "__main__":
     # SCRotation(True)
     # SCTransBOE(True)
     # SCPointBVsPointC(True)
-    scOptionalRef(True, 0.001)
+    # scOptionalRef(True, 0.001)
+    # scAccumDV()
+    scAccumDVExtForce()

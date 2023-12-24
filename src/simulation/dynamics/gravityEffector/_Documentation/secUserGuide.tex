@@ -1,40 +1,6 @@
 \section{User Guide}
 This section contains descriptions of how the gravity effector code works and includes descriptions of and notes on variables. It should be helpful to users who wish to use the gravity effector module.
 
-\subsection{Code Diagram}
-The diagram in Fig. \ref{img:codeFlow} demonstrates the basic iterative logic of the gravity effector module. There is extensive additional code that deals with things from the messaging system to transforming the spacecraft position from one frame to another. In general, the inputs shown must be given for each gravity body to be considered. There are, however, convenience functions which add the standard values of these inputs for common celestial bodies. An example is simIncludeGravbody.createEarth() in the test\_scenarioOrbitManeuver.py tutorial.
-
-After the inputs are given for each gravity body, the computeGravityInertial() method calculates the $0^{\textrm{th}}$ degree gravity term for each body and its effects on the spacecraft. If useSphericalHarmParams is True for a given body, then computeField() is called to calculate and add the non-Keplerian term higher degree spherical harmonics terms for that body. If usePolyhedral is True for a given body, then computeField() is called to compute the polyhedron gravity acceleration which overrides the previous $0^{\textrm{th}}$ degree gravity term (as it is implicitly considered in the polyhedron gravity computation). 
-
-\begin{figure}[H]
-	\centering \includegraphics[height=1.0\textwidth, keepaspectratio]{Figures/codeFlow.pdf}
-	\caption{A pseudo-code diagram demonstrating the flow of inputs and outputs in the gravity effector module.}
-	\label{img:codeFlow}
-\end{figure}
-
-\subsection{Variable Definition and Code Description}
-The variables in Table \ref{tabular:vars} are available for user input. Variables used by the module but not available to the user are not mentioned here. Variables with default settings do not necessarily need to be changed by the user, but may be.
-\begin{table}[H]
-	\caption{Definition and Explanation of Variables Used.}
-	\label{tab:errortol}
-	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ | m{3cm}| m{3cm} | m{3cm} | m{6cm} |} % Column formatting, 
-		\hline
-		\textbf{Variable}   							& \textbf{LaTeX Equivalent} 	&		\textbf{Variable Type} & \textbf{Notes}			  \\ \hline
-		spherHarm.maxDeg					&$l_{\text{max}}$		 	  & double & Default setting: 0"inertial\_state number of degree to use when calculating gravity effects using sperical harmonics.\\ \hline
-		radEquator			   & $R_{\mathrm{ref}}^{l}$			& double & [m] Default setting: 0.0. 	This is the reference radius of the gravity body.\\ \hline
-		muBody					& $\mu$ 		& double & [m3/s2] Default setting: 0.0f. This is the gravitational parameter of the body. Required Input to get any non-zero values out of the code.\\ \hline
-		isCentralBody & N/A & bool & Default setting: False. Determines whether the body in question is the central body and if initial spacecraft position and velocity are determined as relative or inertial.\\ \hline
-		isDisplayBody & N/A & bool & Default setting: False. Determines whether the body in question is the focus of the visualization\\ \hline
-		ephemTime & N/A & double & [s] Default setting: 0. The ephemeris time for the body in question \\ \hline
-		ephIntTime & N/A & double & [s] Default setting: 0. Required Input. The integration time associated with the ephem data. \\ \hline
-		bodyInMsgName & N/A & string & Required Input. The name of the message with gravity body data in the body frame. \\ \hline
-		outputMsgName & N/A & string & Required Input. The name of the message containing ephemeris information in display frame \\ \hline
-		planetEphemName & N/A & string & Required Input. An ephemeris name for the planet (user-named). \\ \hline
-		\label{tabular:vars}
-	\end{tabular}
-\end{table}
-
 \subsection{Using Central Bodies and Relative Dynamics}
 \subsubsection{Using Central Bodies}
 In simulations with multiple planetary bodies, using dynamics relative to a central body can improve accuracy. Generally, this is the right thing to do rather than using an absolute coordinate set. If a user has a gravBody called \verb|earth|, the central body flag should be set to True.
@@ -76,8 +42,7 @@ The user has to load polyhedral files in a similar way as spherical harmonics on
 \verb|mu = 4.46275472004*1e5|\\
 \verb|gravFactory = simIncludeGravBody.gravBodyFactory()|\\
 \verb|polyBody = gravFactory.createCustomGravObject('eros', mu=mu)|\\
-\verb|polyBody.usePolyhedral = True|\\
-\verb|simIncludeGravBody.loadPolyFromFile('EROS856Vert1708Fac.txt', polyBody.poly)|\\
+\verb|polyBody.usePolyhedralGravityModel('EROS856Vert1708Fac.txt')|\\
 
 \subsubsection{Supported polyhedral shape files}
 

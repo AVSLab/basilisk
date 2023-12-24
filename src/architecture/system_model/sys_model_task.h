@@ -37,8 +37,7 @@ class SysModelTask
     
 public:
     SysModelTask();
-    SysModelTask(uint64_t InputPeriod, uint64_t InputDelay=0,
-                   uint64_t FirstStartTime=0); //!< class method
+    SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime=0); //!< class method
     ~SysModelTask();
     void AddNewObject(SysModel *NewModel, int32_t Priority = -1);
     void SelfInitTaskList();
@@ -58,8 +57,7 @@ public:
     uint64_t NextStartTime;  //!< [ns] Next time to start task
     uint64_t NextPickupTime;  //!< [ns] Next time read Task outputs
     uint64_t TaskPeriod;  //!< [ns] Cycle rate for Task
-    uint64_t PickupDelay;  //!< [ns] Time between dispatches
-    uint64_t FirstTaskTime;  //!< [ns] Time to start Task for first time
+    uint64_t FirstTaskTime;  //!< [ns] Time to start Task for first time.  After this time the normal periodic updates resume.
 	bool taskActive;  //!< -- Flag indicating whether the Task has been disabled
   BSKLogger bskLogger;                      //!< -- BSK Logging
 };

@@ -61,7 +61,6 @@ Each gravity body data object can be created using::
         earth.mu = 0.3986004415E+15  # meters^3/s^2
         earth.radEquator = 6378136.6  # meters
         earth.isCentralBody = False
-        earth.useSphericalHarmParams = False
 
 Note that the ``simIncludeGradBody.py`` helper file contains a gravity body factor class to facilitate
 setting up gravity bodies.

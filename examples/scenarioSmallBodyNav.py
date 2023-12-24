@@ -106,11 +106,6 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeRW
 from Basilisk.utilities import unitTestSupport
 
-try:
-    from Basilisk.simulation import vizInterface
-    vizFound = True
-except ImportError:
-    vizFound = False
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -449,9 +444,9 @@ def run(show_plots):
 
     # create the dynamics task and specify the simulation time step information
     simulationTimeStep = macros.sec2nano(1.0)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep, 3))
-    dynProcess.addTask(scSim.CreateNewTask(measTaskName, simulationTimeStep, 2))
-    dynProcess.addTask(scSim.CreateNewTask(fswTaskName, simulationTimeStep, 1))
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(scSim.CreateNewTask(measTaskName, simulationTimeStep))
+    dynProcess.addTask(scSim.CreateNewTask(fswTaskName, simulationTimeStep))
 
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
@@ -502,7 +497,7 @@ def run(show_plots):
     # create SC object
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Create the position and velocity of states of the s/c wrt the small body hill frame
     r_BO_N = np.array([2000., 1500., 1000.]) # Position of the spacecraft relative to the body
@@ -759,7 +754,7 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, ast_ephemeris_recorder)
     scSim.AddModelToTask(measTaskName, ast_ephemeris_meas_recorder)
 
-    if vizFound:
+    if vizSupport.vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                                   # , saveFile=fileName
                                                   )

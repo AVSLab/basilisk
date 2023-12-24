@@ -116,9 +116,8 @@ from Basilisk.utilities import (SimulationBaseClass, macros,
 
 try:
     from Basilisk.simulation import vizInterface
-    vizFound = True
 except ImportError:
-    vizFound = False
+    pass
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -278,9 +277,9 @@ def run(show_plots):
     mu = earth.mu
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-    scObject2.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-    scObject3.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
+    gravFactory.addBodiesTo(scObject2)
+    gravFactory.addBodiesTo(scObject3)
 
     #
     # add RW devices
@@ -442,7 +441,7 @@ def run(show_plots):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    if vizFound:
+    if vizSupport.vizFound:
         servicerLight = vizInterface.Light()
         servicerLight.label = "Main Light"
         servicerLight.position = [0.2, -1.0, 1.01]

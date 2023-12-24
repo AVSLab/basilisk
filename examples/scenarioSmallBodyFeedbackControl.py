@@ -289,7 +289,7 @@ def run(show_plots):
     # create SC object
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Create the position and velocity of states of the s/c wrt the small body hill frame origin
     r_BO_N = np.array([-2000., 1500., 1000.]) # Position of the spacecraft relative to the body
@@ -487,15 +487,16 @@ def run(show_plots):
 
     fileName = 'scenarioSmallBodyFeedbackControl'
 
-    vizInterface = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                            # , saveFile=fileName
-                                                            )
-    vizSupport.createStandardCamera(vizInterface, setMode=0, bodyTarget='bennu', setView=0)
+    if vizSupport.vizFound:
+        vizInterface = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                                # , saveFile=fileName
+                                                                )
+        vizSupport.createStandardCamera(vizInterface, setMode=0, bodyTarget='bennu', setView=0)
 
-    # vizInterface.settings.showSpacecraftLabels = 1
-    vizInterface.settings.showCSLabels = 1
-    vizInterface.settings.planetCSon = 1
-    vizInterface.settings.orbitLinesOn = -1
+        # vizInterface.settings.showSpacecraftLabels = 1
+        vizInterface.settings.showCSLabels = 1
+        vizInterface.settings.planetCSon = 1
+        vizInterface.settings.orbitLinesOn = -1
 
     # initialize Simulation
     scSim.InitializeSimulation()

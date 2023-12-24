@@ -127,18 +127,16 @@ def run(show_plots):
     # setup Earth Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
-    gravBodies = gravFactory.createBodies(['earth', 'sun'])
+    gravBodies = gravFactory.createBodies('earth', 'sun')
     gravBodies['earth'].isCentralBody = True
     mu = gravBodies['earth'].mu
     sun = 1
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     timeInitString = "2012 MAY 1 00:28:30.0"
-    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
-    gravFactory.spiceObject.zeroBase = 'earth'
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
+    spiceObject.zeroBase = 'earth'
+    scSim.AddModelToTask(simTaskName, spiceObject)
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -234,7 +232,7 @@ def run(show_plots):
     solarPanel1.panelArea = 2.0  # m^2
     solarPanel1.panelEfficiency = 0.9  # 90% efficiency in power generation
     solarPanel1.stateInMsg.subscribeTo(panel1.hingedRigidBodyConfigLogOutMsg)
-    solarPanel1.sunInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[sun])
+    solarPanel1.sunInMsg.subscribeTo(spiceObject.planetStateOutMsgs[sun])
 
     solarPanel2 = simpleSolarPanel.SimpleSolarPanel()
     solarPanel2.ModelTag = "pwr2"
@@ -242,7 +240,7 @@ def run(show_plots):
     solarPanel2.panelArea = 2.0  # m^2
     solarPanel2.panelEfficiency = 0.9  # 90% efficiency in power generation
     solarPanel2.stateInMsg.subscribeTo(panel2.hingedRigidBodyConfigLogOutMsg)
-    solarPanel2.sunInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[sun])
+    solarPanel2.sunInMsg.subscribeTo(spiceObject.planetStateOutMsgs[sun])
     #
     # add modules to simulation task list
     #
@@ -281,25 +279,26 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, pwr1Log)
     scSim.AddModelToTask(simTaskName, pwr2Log)
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName,
-                                              [scObject
-                                                  , [panel1.ModelTag, panel1.hingedRigidBodyConfigLogOutMsg]
-                                                  , [panel2.ModelTag, panel2.hingedRigidBodyConfigLogOutMsg]
-                                               ]
-                                              # , saveFile=__file__
-                                              )
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName,
+                                                  [scObject
+                                                      , [panel1.ModelTag, panel1.hingedRigidBodyConfigLogOutMsg]
+                                                      , [panel2.ModelTag, panel2.hingedRigidBodyConfigLogOutMsg]
+                                                   ]
+                                                  # , saveFile=__file__
+                                                  )
 
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=[panel1.ModelTag]
-                                 , modelPath="CUBE"
-                                 , scale=[3, 1, 0.1]
-                                 , color=vizSupport.toRGBA255("blue"))
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=[panel2.ModelTag]
-                                 , modelPath="CUBE"
-                                 , scale=[3, 1, 0.1]
-                                 , color=vizSupport.toRGBA255("blue"))
-    viz.settings.orbitLinesOn = -1
+        vizSupport.createCustomModel(viz
+                                     , simBodiesToModify=[panel1.ModelTag]
+                                     , modelPath="CUBE"
+                                     , scale=[3, 1, 0.1]
+                                     , color=vizSupport.toRGBA255("blue"))
+        vizSupport.createCustomModel(viz
+                                     , simBodiesToModify=[panel2.ModelTag]
+                                     , modelPath="CUBE"
+                                     , scale=[3, 1, 0.1]
+                                     , color=vizSupport.toRGBA255("blue"))
+        viz.settings.orbitLinesOn = -1
 
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)

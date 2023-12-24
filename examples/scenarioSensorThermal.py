@@ -88,13 +88,6 @@ from Basilisk.architecture import messaging
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
-try:
-    from Basilisk.simulation import vizInterface
-
-    vizFound = True
-except ImportError:
-    vizFound = False
-
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
@@ -158,15 +151,13 @@ def run(show_plots):
     mu = earth.mu
 
     # Attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
-        list(gravFactory.gravBodies.values())
-    )
+    gravFactory.addBodiesTo(scObject)
 
     # Create the spice interface
-    gravFactory.createSpiceInterface(
-        bskPath + "/supportData/EphemerisData/", "2021 MAY 04 07:47:48.965 (UTC)"
+    spiceObject = gravFactory.createSpiceInterface(
+        time="2021 MAY 04 07:47:48.965 (UTC)"
     )
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, ModelPriority=100)
+    scSim.AddModelToTask(simTaskName, spiceObject)
 
     # Set up the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -199,9 +190,9 @@ def run(show_plots):
     # Create the ephemeris converter
     ephemConverter = ephemerisConverter.EphemerisConverter()
     ephemConverter.ModelTag = "ephemConverter"
-    ephemConverter.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[0])
-    ephemConverter.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[1])
-    scSim.AddModelToTask(simTaskName, ephemConverter, ModelPriority=100)
+    ephemConverter.addSpiceInputMsg(spiceObject.planetStateOutMsgs[0])
+    ephemConverter.addSpiceInputMsg(spiceObject.planetStateOutMsgs[1])
+    scSim.AddModelToTask(simTaskName, ephemConverter)
 
     # Set up sun pointing guidance module
     locPoint = locationPointing.locationPointing()
@@ -235,7 +226,7 @@ def run(show_plots):
     thermalSensor.sensorMass = 2.0  # kg
     thermalSensor.sensorSpecificHeat = 890
     thermalSensor.sensorPowerDraw = 30.0  # W
-    thermalSensor.sunInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
+    thermalSensor.sunInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
     thermalSensor.stateInMsg.subscribeTo(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, thermalSensor)
 

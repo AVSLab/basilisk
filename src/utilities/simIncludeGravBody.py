@@ -1,7 +1,6 @@
-
 # ISC License
 #
-# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -15,399 +14,510 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+from typing import Optional
+from typing import Dict
+from typing import Iterable
+from typing import Union
+from typing import overload
+from typing import Sequence
+from typing import List
+from typing import Protocol
+from typing import runtime_checkable
+from typing import Any
+from dataclasses import dataclass
 
-
-from collections import OrderedDict
-
+from Basilisk import __path__
+from Basilisk.architecture import messaging
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spiceInterface
-from Basilisk.simulation.gravityEffector import loadGravFromFile as loadGravFromFile_python
-from Basilisk.simulation.gravityEffector import loadPolyFromFile as loadPolyFromFile_python
+from Basilisk.simulation.gravityEffector import (
+    loadGravFromFile as loadGravFromFile_python,
+)
+from Basilisk.simulation.gravityEffector import (
+    loadPolyFromFile as loadPolyFromFile_python,
+)
 from Basilisk.utilities import unitTestSupport
 
+from Basilisk.utilities.deprecated import deprecationWarn
 
-class gravBodyFactory(object):
-    """Factory cass to create gravitational bodies."""
-    def __init__(self, bodyNames=None):
-        self.spicePlanetNames = []
-        self.spicePlanetFrames = []
-        self.gravBodies = OrderedDict()
-        self.spiceObject = None
-        self.spiceKernelFileNames = []
-        self.epochMsg = None
+@dataclass
+class BodyData:
+    """A class that contains information about a body in the simulation.
+
+    Args:
+        identifier (str): The SPICE identifier of the body.
+        planetName (str): The name that identifies the body within the simulation.
+        displayName (str): The name for the body in the Vizard display.
+        modelDictionaryKey (str): Vizard model key name.
+        mu (float): Gravitational parameter in m^3/s^2.
+        radEquator (float): Equatorial radius of the body in meters.
+        spicePlanetFrame (str): The name of the SPICE frame (attitude provider).
+        radiusRatio (float, optional): Used to compute ellipticity. It is
+            provided for bodies in the basic Vizard body dictionary. Defaults to 1.
+    """
+
+    identifier: str
+    planetName: str
+    displayName: str
+    modelDictionaryKey: str
+    mu: float
+    radEquator: float
+    spicePlanetFrame: str
+    radiusRatio: float = 1
+
+
+BODY_DATA = {
+    "sun": BodyData(
+        identifier="sun",
+        planetName="sun_planet_data",
+        displayName="sun",
+        modelDictionaryKey="",
+        mu=1.32712440018e20,
+        radEquator=695508000.0,
+        spicePlanetFrame="IAU_sun",
+    ),
+    "mercury": BodyData(
+        identifier="mercury",
+        planetName="mercury_planet_data",
+        displayName="mercury",
+        modelDictionaryKey="",
+        mu=0.022032e15,
+        radEquator=2439700.0,
+        spicePlanetFrame="IAU_mercury",
+    ),
+    "venus": BodyData(
+        identifier="venus",
+        planetName="venus_planet_data",
+        displayName="venus",
+        modelDictionaryKey="",
+        mu=3.24858599e14,
+        radEquator=6051800.0,
+        spicePlanetFrame="IAU_venus",
+    ),
+    "earth": BodyData(
+        identifier="earth",
+        planetName="earth_planet_data",
+        displayName="earth",
+        modelDictionaryKey="",
+        mu=0.3986004415e15,
+        radEquator=6378136.6,
+        spicePlanetFrame="IAU_earth",
+    ),
+    "moon": BodyData(
+        identifier="moon",
+        planetName="moon_planet_data",
+        displayName="moon",
+        modelDictionaryKey="",
+        mu=4.902799e12,
+        radEquator=1738100.0,
+        spicePlanetFrame="IAU_moon",
+    ),
+    "mars": BodyData(
+        identifier="mars",
+        planetName="mars_planet_data",
+        displayName="mars",
+        modelDictionaryKey="",
+        mu=4.28283100e13,
+        radEquator=3396190.0,
+        spicePlanetFrame="IAU_mars",
+    ),
+    "mars barycenter": BodyData(
+        identifier="mars barycenter",
+        planetName="mars barycenter_planet_data",
+        displayName="mars barycenter",
+        modelDictionaryKey="",
+        mu=4.28283100e13,
+        radEquator=3396190.0,
+        spicePlanetFrame="IAU_mars",
+    ),
+    "jupiter barycenter": BodyData(
+        identifier="jupiter barycenter",
+        planetName="jupiter barycenter_planet_data",
+        displayName="jupiter",
+        modelDictionaryKey="",
+        mu=1.266865349093058e17,
+        radEquator=71492000.0,
+        spicePlanetFrame="IAU_jupiter",
+    ),
+    "saturn": BodyData(
+        identifier="saturn",
+        planetName="saturn barycenter_planet_data",
+        displayName="saturn",
+        modelDictionaryKey="",
+        mu=3.79395000e16,
+        radEquator=60268000.0,
+        spicePlanetFrame="IAU_saturn",
+    ),
+    "uranus": BodyData(
+        identifier="uranus",
+        planetName="uranus barycenter_planet_data",
+        displayName="uranus",
+        modelDictionaryKey="",
+        mu=5.79396566e15,
+        radEquator=25559000.0,
+        spicePlanetFrame="IAU_uranus",
+    ),
+    "neptune": BodyData(
+        identifier="neptune",
+        planetName="neptune barycenter_planet_data",
+        displayName="neptune",
+        modelDictionaryKey="",
+        mu=6.83509920e15,
+        radEquator=24764000.0,
+        spicePlanetFrame="IAU_neptune",
+    ),
+}
+
+
+@runtime_checkable
+class WithGravField(Protocol):
+    gravField: Any  # cannot be GravityEffector because SWIG classes dont give type info
+
+
+class gravBodyFactory:
+    """Class to create gravitational bodies."""
+
+    def __init__(self, bodyNames: Iterable[str] = []):
+        self.spicePlanetFrames: List[str] = []
+        self.gravBodies: Dict[str, gravityEffector.GravBodyData] = {}
+        self.spiceObject: Optional[spiceInterface.SpiceInterface] = None
+        self.spiceKernelFileNames: List[str] = []
+        self.epochMsg: Optional[messaging.EpochMsg] = None
         if bodyNames:
             self.createBodies(bodyNames)
 
-    def createBodies(self, bodyNames):
+    def addBodiesTo(
+        self,
+        objectToAddTheBodies: Union[gravityEffector.GravityEffector, WithGravField],
+    ):
+        """Can be called with a GravityEffector or an object that has a gravField
+        variable to set the gravity bodies used in the object.
         """
-            A convenience function to create multiple typical solar system bodies.
-
-            Parameters
-            ----------
-            bodyNames : array_like
-                Planet name strings. Each planet name must be a valid SPICE celestial body string.
-
-            Returns
-            -------
-            gravBodies : array_like
-                A list of gravity body objects held by the gravity factory.
-        """
-        for name in bodyNames:
-            if name == 'mercury':
-                self.createMercury()
-            elif name == 'venus':
-                self.createVenus()
-            elif name == "earth":
-                self.createEarth()
-            elif name == "moon":
-                self.createMoon()
-            elif name == "mars":
-                self.createMars()
-            elif name == "mars barycenter":
-                self.createMarsBarycenter()
-            elif name == "jupiter barycenter":
-                self.createJupiter()
-            elif name == "saturn":
-                self.createSaturn()
-            elif name == 'uranus':
-                self.createUranus()
-            elif name == 'neptune':
-                self.createNeptune()
-            elif name == "sun":
-                self.createSun()
-            else:
-                print("gravBody " + name + " not found in gravBodyUtilities.py")
-        return self.gravBodies
+        bodies = gravityEffector.GravBodyVector(list(self.gravBodies.values()))
+        if isinstance(objectToAddTheBodies, WithGravField):
+            objectToAddTheBodies = objectToAddTheBodies.gravField
+        objectToAddTheBodies.setGravBodies(bodies)  # type: ignore
 
     # Note, in the `create` functions below the `isCentralBody` and `useSphericalHarmParams` are
     # all set to False in the `GravGodyData()` constructor.
 
+    def createBody(
+        self, bodyData: Union[str, BodyData]
+    ) -> gravityEffector.GravBodyData:
+        """Convenience function to create a body given its name.
+
+        Args:
+            bodyData (Union[str, BodyData]):
+                A valid SPICE celestial body string or a BodyData class with
+                the relevant data.
+
+        Returns:
+            gravityEffector.GravBodyData: The body object with corresponding data.
+        """
+        if not isinstance(bodyData, BodyData):
+            key = bodyData.lower().replace("_", " ")
+            if key not in BODY_DATA:
+                raise ValueError(
+                    f"Body {bodyData} is unkown. "
+                    f"Valid options are: {', '.join(BODY_DATA)}"
+                )
+
+            bodyData = BODY_DATA[key]
+
+        body = gravityEffector.GravBodyData()
+        body.planetName = bodyData.planetName
+        body.displayName = bodyData.displayName
+        body.modelDictionaryKey = bodyData.modelDictionaryKey
+        body.mu = bodyData.mu
+        body.radEquator = bodyData.radEquator
+        body.radiusRatio = bodyData.radiusRatio
+        self.gravBodies[bodyData.identifier] = body
+        self.spicePlanetFrames.append(bodyData.spicePlanetFrame)
+        return body
+
+    def createBodies(
+        self, *bodyNames: Union[str, Iterable[str]]
+    ) -> Dict[str, gravityEffector.GravBodyData]:
+        """A convenience function to create multiple typical solar system bodies.
+
+        Args:
+            bodyNames (Union[str, Iterable[str]]):
+                Planet name strings. Each planet name must be a valid SPICE celestial body string.
+
+        Returns:
+            Dict[str, gravityEffector.GravBodyData]:
+                A dictionary of gravity body objects held by the gravity factory.
+        """
+        for nameOrIterableOfNames in bodyNames:
+            if isinstance(nameOrIterableOfNames, str):
+                self.createBody(nameOrIterableOfNames)
+            else:
+                for name in nameOrIterableOfNames:
+                    self.createBody(name)
+        return self.gravBodies
+
     def createSun(self):
-        """Create gravity body with sun mass properties."""
-        sun = gravityEffector.GravBodyData()
-        sun.planetName = "sun_planet_data"
-        sun.displayName = "sun"
-        sun.modelDictionaryKey = ""
-        sun.mu = 1.32712440018E20  # meters^3/s^2
-        sun.radEquator = 695508000.0  # meters
-        self.gravBodies['sun'] = sun
-        self.spicePlanetFrames.append("IAU_sun")
-        sun.this.disown()
-        return sun
+        return self.createBody("sun")
 
     def createMercury(self):
-        """Create gravity body with Mercury mass properties."""
-        mercury = gravityEffector.GravBodyData()
-        mercury.planetName = "mercury_planet_data"
-        mercury.displayName = "mercury"
-        mercury.modelDictionaryKey = ""
-        mercury.mu = 4.28283100e13  # meters^3/s^2
-        mercury.radEquator = 2439700.0  # meters
-        self.gravBodies['mercury'] = mercury
-        self.spicePlanetFrames.append("IAU_mercury")
-        mercury.this.disown()
-        return mercury
+        return self.createBody("mercury")
 
     def createVenus(self):
-        """Create gravity body with Venus mass properties."""
-        venus = gravityEffector.GravBodyData()
-        venus.planetName = "venus_planet_data"
-        venus.displayName = "venus"
-        venus.modelDictionaryKey = ""
-        venus.mu = 3.24858599e14  # meters^3/s^2
-        venus.radEquator = 6051800.0  # meters
-        self.gravBodies['venus'] = venus
-        self.spicePlanetFrames.append("IAU_venus")
-        venus.this.disown()
-        return venus
+        return self.createBody("venus")
 
     def createEarth(self):
-        """Create gravity body with Earth mass properties."""
-        earth = gravityEffector.GravBodyData()
-        earth.planetName = "earth_planet_data"
-        earth.displayName = "earth"
-        earth.modelDictionaryKey = ""
-        earth.mu = 0.3986004415E+15  # meters^3/s^2
-        earth.radEquator = 6378136.6  # meters
-        self.gravBodies['earth'] = earth
-        self.spicePlanetFrames.append("IAU_earth")
-        earth.this.disown()
-        return earth
+        return self.createBody("earth")
 
     def createMoon(self):
-        """Create gravity body with Moon mass properties."""
-        moon = gravityEffector.GravBodyData()
-        moon.planetName = "moon_planet_data"
-        moon.displayName = "moon"
-        moon.modelDictionaryKey = ""
-        moon.mu = 4.902799E12  # meters^3/s^2
-        moon.radEquator = 1738100.0  # meters
-        self.gravBodies['moon'] = moon
-        self.spicePlanetFrames.append("IAU_moon")
-        moon.this.disown()
-        return moon
+        return self.createBody("moon")
 
     def createMars(self):
-        """Create gravity body with Mars mass properties."""
-        mars = gravityEffector.GravBodyData()
-        mars.planetName = "mars_planet_data"
-        mars.displayName = "mars"
-        mars.modelDictionaryKey = ""
-        mars.mu = 4.28283100e13  # meters^3/s^2
-        mars.radEquator = 3396190  # meters
-        self.gravBodies['mars'] = mars
-        self.spicePlanetFrames.append("IAU_mars")
-        mars.this.disown()
-        return mars
+        return self.createBody("mars")
 
     def createMarsBarycenter(self):
-        """Create gravity body with Mars mass properties."""
-        mars_barycenter = gravityEffector.GravBodyData()
-        mars_barycenter.planetName = "mars barycenter_planet_data"
-        mars_barycenter.displayName = "mars"
-        mars_barycenter.modelDictionaryKey = ""
-        mars_barycenter.mu = 4.28283100e13  # meters^3/s^2
-        mars_barycenter.radEquator = 3396190  # meters
-        self.gravBodies['mars barycenter'] = mars_barycenter
-        self.spicePlanetFrames.append("IAU_mars")
-        mars_barycenter.this.disown()
-        return mars_barycenter
+        return self.createBody("mars barycenter")
 
     def createJupiter(self):
-        """Create gravity body with Jupiter mass properties."""
-        jupiter = gravityEffector.GravBodyData()
-        jupiter.planetName = "jupiter barycenter_planet_data"
-        jupiter.displayName = "jupiter"
-        jupiter.modelDictionaryKey = ""
-        jupiter.mu = 1.266865349093058E17  # meters^3/s^2
-        jupiter.radEquator = 71492000.0  # meters
-        self.gravBodies['jupiter barycenter'] = jupiter
-        self.spicePlanetFrames.append("IAU_jupiter")
-        jupiter.this.disown()
-        return jupiter
+        return self.createBody("jupiter barycenter")
 
     def createSaturn(self):
-        """Create gravity body with Saturn mass properties."""
-        saturn = gravityEffector.GravBodyData()
-        saturn.planetName = "saturn barycenter_planet_data"
-        saturn.displayName = "saturn"
-        saturn.modelDictionaryKey = ""
-        saturn.mu = 3.79395000E16  # meters^3/s^2
-        saturn.radEquator = 60268000.0  # meters
-        self.gravBodies['saturn'] = saturn
-        self.spicePlanetFrames.append("IAU_saturn")
-        saturn.this.disown()
-        return saturn
+        return self.createBody("saturn")
 
     def createUranus(self):
-        """Create gravity body with Uranus mass properties."""
-        uranus = gravityEffector.GravBodyData()
-        uranus.planetName = "uranus barycenter_planet_data"
-        uranus.displayName = "uranus"
-        uranus.modelDictionaryKey = ""
-        uranus.mu = 5.79396566E15  # meters^3/s^2
-        uranus.radEquator = 25559000.0  # meters
-        self.gravBodies['uranus'] = uranus
-        self.spicePlanetFrames.append("IAU_uranus")
-        uranus.this.disown()
-        return uranus
+        return self.createBody("uranus")
 
     def createNeptune(self):
-        """Create gravity body with Neptune mass properties."""
-        neptune = gravityEffector.GravBodyData()
-        neptune.planetName = "neptune barycenter_planet_data"
-        neptune.displayName = "neptune"
-        neptune.modelDictionaryKey = ""
-        neptune.mu = 6.83509920E15  # meters^3/s^2
-        neptune.radEquator = 24764000.0  # meters
-        self.gravBodies['neptune'] = neptune
-        self.spicePlanetFrames.append("IAU_neptune")
-        neptune.this.disown()
-        return neptune
+        return self.createBody("neptune")
 
-    def createCustomGravObject(self, label, mu, **kwargs):
+    def createCustomGravObject(
+        self,
+        label: str,
+        mu: float,
+        displayName: Optional[str] = None,
+        modelDictionaryKey: Optional[str] = None,
+        radEquator: Optional[float] = None,
+        radiusRatio: Optional[float] = None,
+        planetFrame: Optional[str] = None,
+    ) -> gravityEffector.GravBodyData:
+        """Create a custom gravity body object.
+
+        Args:
+            label (str): Gravity body name
+            mu (float): Gravity constant in m^3/s^2
+            displayName (Optional[str], optional): Vizard celestial body name, if not
+                provided then planetFrame becomes the Vizard name. Defaults to None.
+            modelDictionaryKey (Optional[str], optional): Vizard model key name.
+                If not set, then either the displayName or planetName is used to
+                set the model. Defaults to None.
+            radEquator (Optional[float], optional): Equatorial radius in meters.
+                Defaults to None.
+            radiusRatio (Optional[float], optional): Ratio of the polar radius to
+                the equatorial radius. Defaults to None.
+            planetFrame (Optional[str], optional): Name of the spice planet
+                frame. Defaults to None.
+
+        Returns:
+            gravityEffector.GravBodyData: The body object with the given data.
         """
-            Create a custom gravity body object.
-
-            Parameters
-            ----------
-            label : string
-                Gravity body name
-            mu : double
-                Gravity constant
-
-            Other Parameters
-            ----------------
-            kwargs :
-                radEquator : double
-                    Equatorial radius in meters
-                radiusRatio : double
-                    Ratio of the polar radius to the equatorial radius.
-                planetFrame : string
-                    Name of the spice planet frame
-                displayName: string
-                    Vizard celestial body name, if not provided then planetFrame becomes the Vizard name
-                modelDictionaryKey: string
-                    Vizard model key name.  if not set, then either the displayName or planetName is used to set the model
-
-        """
-        unitTestSupport.checkMethodKeyword(
-            ['radEquator', 'radiusRatio', 'planetFrame', 'displayName', 'modelDictionaryKey'],
-            kwargs)
-
-        if not isinstance(label, str):
-            print('ERROR: label must be a string')
-            exit(1)
-
         gravBody = gravityEffector.GravBodyData()
         gravBody.planetName = label
         gravBody.mu = mu
-        if 'radEquator' in kwargs:
-            gravBody.radEquator = kwargs['radEquator']
-        if 'radiusRatio' in kwargs:
-            gravBody.radiusRatio = kwargs['radiusRatio']
-        if 'displayName' in kwargs:
-            gravBody.displayName = kwargs['displayName']
-        gravBody.modelDictionaryKey = ""
-        if 'modelDictionaryKey' in kwargs:
-            gravBody.modelDictionaryKey = kwargs['modelDictionaryKey']
+        if radEquator is not None:
+            gravBody.radEquator = radEquator
+        if radiusRatio is not None:
+            gravBody.radiusRatio = radiusRatio
+        if displayName is not None:
+            gravBody.displayName = displayName
+        if modelDictionaryKey is None:
+            gravBody.modelDictionaryKey = ""
+        else:
+            gravBody.modelDictionaryKey = modelDictionaryKey
         self.gravBodies[label] = gravBody
-        planetFrame = ""
-        if 'planetFrame' in kwargs:
-            planetFrame = kwargs['planetFrame']
-        self.spicePlanetFrames.append(planetFrame)
-        gravBody.this.disown()
+        if planetFrame is not None:
+            self.spicePlanetFrames.append(planetFrame)
         return gravBody
 
-    def createSpiceInterface(self, path, time, **kwargs):
+    @overload
+    def createSpiceInterface(
+        self,
+        path: str,
+        time: str,
+        spiceKernelFileNames: Iterable[str] = [
+                                              "de430.bsp",
+                                              "naif0012.tls",
+                                              "de-403-masses.tpc",
+                                              "pck00010.tpc",
+                                              ],
+        spicePlanetNames: Optional[Sequence[str]] = None,
+        spicePlanetFrames: Optional[Sequence[str]] = None,
+        epochInMsg: bool = False,
+    ) -> spiceInterface.SpiceInterface:
+        """A convenience function to configure a NAIF Spice module for the simulation.
+        It connects the gravBodyData objects to the spice planet state messages.  Thus,
+        it must be run after the gravBodyData objects are created.
+
+        Args:
+            path (str): The absolute path to the folder that contains the
+                kernels to be loaded.
+            time (str): The time string in a format that SPICE recognizes.
+            spiceKernelFileNames (Iterable[str], optional): A list of spice kernel file
+                names including file extension. Defaults to
+                `['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc']`.
+            spicePlanetNames (Optional[Sequence[str]], optional): A list of planet names
+                whose Spice data is loaded. If this is not provided, Spice data is
+                loaded for the bodies created with this factory object. Defaults to None.
+            spicePlanetFrames (Optional[Sequence[str]], optional): A list of planet
+                frame names to load in Spice. If this is not provided, frames are loaded
+                for the bodies created with this factory function. Defaults to None.
+            epochInMsg (bool, optional): Flag to set an epoch input message for the
+                spice interface. Defaults to False.
+
+        Returns:
+            spiceInterface.SpiceInterface: The generated SpiceInterface, which is the
+            same as the stored `self.spiceObject`
         """
-            A convenience function to configure a NAIF Spice module for the simulation.
-            It connect the gravBodyData objects to the spice planet state messages.  Thus,
-            it must be run after the gravBodyData objects are created.
 
-            Parameters
-            ----------
-            path : string
-                The absolute path to the Basilisk source directory (default '').
-            time : string
-                The time string.
+    @overload
+    def createSpiceInterface(
+        self,
+        *,
+        path: str = "%BSK_PATH%/supportData/EphemerisData/",
+        time: str,
+        spiceKernelFileNames: Iterable[str] = [
+                                              "de430.bsp",
+                                              "naif0012.tls",
+                                              "de-403-masses.tpc",
+                                              "pck00010.tpc",
+                                              ],
+        spicePlanetNames: Optional[Sequence[str]] = None,
+        spicePlanetFrames: Optional[Sequence[str]] = None,
+        epochInMsg: bool = False,
+    ) -> spiceInterface.SpiceInterface:
+        """A convenience function to configure a NAIF Spice module for the simulation.
+        It connect the gravBodyData objects to the spice planet state messages.  Thus,
+        it must be run after the gravBodyData objects are created.
 
-            Other Parameters
-            ----------------
-            kwargs :
-                spiceKernalFileNames :
-                    A list of spice kernel file names including file extension.
-                spicePlanetNames :
-                    A list of planet names whose Spice data is loaded, overriding the gravBodies list.
-                spicePlanetFrames :
-                    A list of strings for the planet frame names.  If left empty for a planet, then
-                    ``IAU_`` + planetName is assumed for the planet frame.
-                epochInMsg: bool
-                    Flag to set an epoch input message for the spice interface
+        Unless the 'path' input is provided, the kernels are loaded from the folder:
+        `%BSK_PATH%/supportData/EphemerisData/`, where `%BSK_PATH%` is replaced by
+        the Basilisk directory.
 
+        Args:
+            path (str): The absolute path to the folder that contains the
+                kernels to be loaded.
+            time (str): The time string in a format that SPICE recognizes.
+            spiceKernelFileNames (Iterable[str], optional): A list of spice kernel file
+                names including file extension. Defaults to
+                `['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc']`.
+            spicePlanetNames (Optional[Sequence[str]], optional): A list of planet names
+                whose Spice data is loaded. If this is not provided, Spice data is
+                loaded for the bodies created with this factory object. Defaults to None.
+            spicePlanetFrames (Optional[Sequence[str]], optional): A list of planet
+                frame names to load in Spice. If this is not provided, frames are loaded
+                for the bodies created with this factory function. Defaults to None.
+            epochInMsg (bool, optional): Flag to set an epoch input message for the
+                spice interface. Defaults to False.
+
+        Returns:
+            spiceInterface.SpiceInterface: The generated SpiceInterface, which is the
+            same as the stored `self.spiceObject`
         """
 
-        if 'spiceKernalFileNames' in kwargs:
-            try:
-                for fileName in kwargs['spiceKernalFileNames']:
-                    self.spiceKernelFileNames.append(fileName)
-            except TypeError:
-                raise TypeError('spiceKernalFileNames expects a list')
-        else:
-            self.spiceKernelFileNames.extend(['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc'])
+    def createSpiceInterface(
+        self,
+        path: str = "%BSK_PATH%/supportData/EphemerisData/",
+        time: str = "",
+        spiceKernelFileNames: Iterable[str] = [
+                                              "de430.bsp",
+                                              "naif0012.tls",
+                                              "de-403-masses.tpc",
+                                              "pck00010.tpc",
+                                              ],
+        spicePlanetNames: Optional[Sequence[str]] = None,
+        spicePlanetFrames: Optional[Sequence[str]] = None,
+        epochInMsg: bool = False,
+        spiceKernalFileNames = None,
+    ) -> spiceInterface.SpiceInterface:
+        if time == "":
+            raise ValueError(
+                "'time' argument must be provided and a valid SPICE time string"
+            )
+        
+        if spiceKernalFileNames is not None:
+            spiceKernelFileNames = spiceKernalFileNames
+            deprecationWarn(
+                f"{gravBodyFactory.createSpiceInterface.__qualname__}.spiceKernalFileNames"
+                "2024/11/24",
+                "The argument 'spiceKernalFileNames' is deprecated, as it is a "
+                "misspelling of 'spiceKernelFileNames'"
+            )
 
-        self.spicePlanetNames = []
-        if 'spicePlanetNames' in kwargs:
-            try:
-                for planetName in kwargs['spicePlanetNames']:
-                    self.spicePlanetNames.append(planetName)
-            except TypeError:
-                raise TypeError('spicePlanetNames expects a list')
-        else:
-            self.spicePlanetNames = list(self.gravBodies.keys())
+        path = path.replace("%BSK_PATH%", list(__path__)[0])
 
-        if 'spicePlanetFrames' in kwargs:
-            try:
-                self.spicePlanetFrames = []
-                for planetFrame in kwargs['spicePlanetFrames']:
-                    self.spicePlanetFrames.append(planetFrame)
-            except TypeError:
-                raise TypeError('spicePlanetFrames expects a list')
+        self.spiceKernelFileNames.extend(spiceKernelFileNames)
+        self.spicePlanetNames = list(spicePlanetNames or self.gravBodies)
+        if spicePlanetFrames is not None:
+            self.spicePlanetFrames = list(spicePlanetFrames)
 
         self.spiceObject = spiceInterface.SpiceInterface()
         self.spiceObject.ModelTag = "SpiceInterfaceData"
         self.spiceObject.SPICEDataPath = path
-        self.spiceObject.addPlanetNames(spiceInterface.StringVector(self.spicePlanetNames))
+        self.spiceObject.addPlanetNames(self.spicePlanetNames)
         self.spiceObject.UTCCalInit = time
         if len(self.spicePlanetFrames) > 0:
-            self.spiceObject.planetFrames = spiceInterface.StringVector(self.spicePlanetFrames)
+            self.spiceObject.planetFrames = list(self.spicePlanetFrames)
 
-        for fileName in self.spiceKernelFileNames:
+        for fileName in set(self.spiceKernelFileNames):
             self.spiceObject.loadSpiceKernel(fileName, path)
         self.spiceObject.SPICELoaded = True
 
         # subscribe Grav Body data to the spice state message
-        c = 0
-        for key, gravBodyDataItem in self.gravBodies.items():
-            gravBodyDataItem.planetBodyInMsg.subscribeTo(self.spiceObject.planetStateOutMsgs[c])
-            c += 1
+        for c, gravBodyDataItem in enumerate(self.gravBodies.values()):
+            gravBodyDataItem.planetBodyInMsg.subscribeTo(
+                self.spiceObject.planetStateOutMsgs[c]
+            )
 
         # create and connect to an epoch input message
-        if 'epochInMsg' in kwargs:
-            if kwargs['epochInMsg']:
-                self.epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(time, dataPath=path)
-                self.spiceObject.epochInMsg.subscribeTo(self.epochMsg)
+        if epochInMsg:
+            self.epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(
+                time, dataPath=path
+            )
+            self.spiceObject.epochInMsg.subscribeTo(self.epochMsg)
 
-        return
+        return self.spiceObject
 
     def unloadSpiceKernels(self):
         """Method to unload spice kernals at the end of a simulation."""
-        for fileName in self.spiceKernelFileNames:
+        if self.spiceObject is None:
+            return
+        for fileName in set(self.spiceKernelFileNames):
             self.spiceObject.unloadSpiceKernel(fileName, self.spiceObject.SPICEDataPath)
-        return
 
 
+def loadGravFromFile(
+    fileName: str,
+    spherHarm: gravityEffector.SphericalHarmonicsGravityModel,
+    maxDeg: int = 2,
+):
+    """Load the gravitational body spherical harmonics coefficients from a file.
 
-def loadGravFromFile(fileName, spherHarm, maxDeg=2):
-    """
-            Load the gravitational body spherical harmonics coefficients from a file.
+    Note that this function calls the `gravityEffector` function `loadGravFromFile()`.
 
-            Parameters
-            ----------
-            fileName : string
-                The full path to the specified data file.
-            spherHarm:
-                The spherical harmonics container of the gravity body.
-            maxDeg : integer
-                maximum degree of spherical harmonics to load
-
-
-            Notes
-            -----
-            This function is a convenience utility for loading in the spherical harmonics
-            coefficients from a data file.  The default harmonic degree is 2 unless specified.
-            Note that this function calls the gravityEffector function loadGravFromFile().
+    Args:
+        fileName (str): The full path to the specified data file.
+        spherHarm (gravityEffector.SphericalHarmonicsGravityModel):
+            The spherical harmonics container of the gravity body.
+        maxDeg (int, optional): Maximum degree of spherical harmonics to load.
+            Defaults to 2.
     """
     loadGravFromFile_python(fileName, spherHarm, maxDeg)
 
-def loadPolyFromFile(fileName, poly):
-    """
-            Load the gravitational body spherical harmonics coefficients from a file.
 
-            Parameters
-            ----------
-            fileName : string
-                The full path to the specified data file.
-            spherHarm:
-                The spherical harmonics container of the gravity body.
-            maxDeg : integer
-                maximum degree of spherical harmonics to load
+def loadPolyFromFile(fileName: str, poly: gravityEffector.PolyhedralGravityModel):
+    """Load the gravitational body polyhedral coefficients from a file.
 
-
-            Notes
-            -----
-            This function is a convenience utility for loading in the spherical harmonics
-            coefficients from a data file.  The default harmonic degree is 2 unless specified.
-            Note that this function calls the gravityEffector function loadGravFromFile().
+    Args:
+        fileName (str): The full path to the specified data file.
+        poly (gravityEffector.PolyhedralGravityModel):
+            The polyhedarl gravity model container of the body.
     """
     loadPolyFromFile_python(fileName, poly)

@@ -111,9 +111,8 @@ from Basilisk.utilities import vizSupport
 try:
     from Basilisk.simulation import vizInterface
 
-    vizFound = True
 except ImportError:
-    vizFound = False
+    pass
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -233,9 +232,7 @@ def run(show_plots):
     mu = earth.mu
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
-        list(gravFactory.gravBodies.values())
-    )
+    gravFactory.addBodiesTo(scObject)
 
     #
     #   initialize Spacecraft States with initialization variables
@@ -391,7 +388,7 @@ def run(show_plots):
     #
     # setup Vizard visualization elements
     #
-    if vizFound:
+    if vizSupport.vizFound:
         genericSensorHUD = vizInterface.GenericSensor()
         genericSensorHUD.r_SB_B = [0.0, 1.0, 1.0]
         genericSensorHUD.fieldOfView.push_back(
@@ -504,7 +501,7 @@ def run(show_plots):
     simpleInsControl.imaged = 0
 
     # update targeting line to point to Santiago and be blue
-    if vizFound:
+    if vizSupport.vizFound:
         vizSupport.targetLineList[0].lineColor = vizSupport.toRGBA255("blue")
         vizSupport.targetLineList[0].toBodyName = "Santiago Target"
         vizSupport.updateTargetLineList(viz)

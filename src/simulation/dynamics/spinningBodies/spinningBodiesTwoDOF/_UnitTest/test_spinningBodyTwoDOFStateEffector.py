@@ -183,7 +183,6 @@ def spinningBody(show_plots, cmdTorque1, lock1, theta1Ref, cmdTorque2, lock2, th
     earthGravBody.planetName = "earth_planet_data"
     earthGravBody.mu = 0.3986004415E+15  # meters!
     earthGravBody.isCentralBody = True
-    earthGravBody.useSphericalHarmParams = False
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
     # Log the spacecraft state message

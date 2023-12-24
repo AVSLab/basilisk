@@ -129,11 +129,6 @@ Illustration of Simulation Results
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
-try:
-    from Basilisk.simulation import vizInterface
-    vizFound = True
-except ImportError:
-    vizFound = False
 
 # Get current file path
 import sys, os, inspect
@@ -174,7 +169,7 @@ class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        if vizFound:
+        if vizSupport.vizFound:
             viz = vizSupport.enableUnityVisualization(self, self.DynModels.taskName
                                                       , [self.get_DynModel().scObject, self.get_DynModel().scObject2]
                                                       , rwEffectorList=[self.DynModels.rwStateEffector, self.DynModels.rwStateEffector2]
