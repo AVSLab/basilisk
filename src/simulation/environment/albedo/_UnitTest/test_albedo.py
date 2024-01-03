@@ -34,6 +34,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport
+from Basilisk.architecture import bskLogging
 
 bskPath = __path__[0]
 
@@ -223,6 +224,8 @@ def test_albedo_invalid_file(tmp_path):
         message and not segfaulting.
     """
     albModule = albedo.Albedo()
+    # silence expected error message
+    albModule.bskLogger.setLogLevel(bskLogging.BSK_SILENT)
 
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravFactory.createEarth()
