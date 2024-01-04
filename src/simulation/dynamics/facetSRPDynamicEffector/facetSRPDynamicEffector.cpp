@@ -20,29 +20,26 @@
 #include "facetSRPDynamicEffector.h"
 #include <cmath>
 
-const double speedLight = 299792458.0; //  [m/s] Speed of light
-const double AstU = 149597870700.0; // [m] Astronomical unit
-const double solarRadFlux = 1368.0; // [W/m^2] Solar radiation flux at 1 AU
+const double speedLight = 299792458.0;  // [m/s] Speed of light
+const double AstU = 149597870700.0;  // [m] Astronomical unit
+const double solarRadFlux = 1368.0;  // [W/m^2] Solar radiation flux at 1 AU
 
-/*! The constructor initializes the member variables to zero. */
-FacetSRPDynamicEffector::FacetSRPDynamicEffector()
-{
+/*! The constructor */
+FacetSRPDynamicEffector::FacetSRPDynamicEffector() {
     this->forceExternal_B.fill(0.0);
     this->torqueExternalPntB_B.fill(0.0);
     this->numFacets = 0;
 }
 
-/*! The destructor. */
-FacetSRPDynamicEffector::~FacetSRPDynamicEffector()
-{
+/*! The destructor */
+FacetSRPDynamicEffector::~FacetSRPDynamicEffector() {
 }
 
-/*! The reset member function. This method checks to ensure the input message is linked.
+/*! The reset method
  @return void
- @param currentSimNanos [ns]  Time the method is called
+ @param currentSimNanos  [ns] Time the method is called
 */
-void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos)
-{
+void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "FacetSRPDynamicEffector.sunInMsg was not linked.");
     }
@@ -50,26 +47,24 @@ void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos)
 
 /*! The SRP dynamic effector does not write any output messages.
  @return void
- @param currentClock [ns] Time the method is called
+ @param currentClock  [ns] Time the method is called
 */
-void FacetSRPDynamicEffector::writeOutputMessages(uint64_t currentClock)
-{
+void FacetSRPDynamicEffector::writeOutputMessages(uint64_t currentClock) {
 }
 
-/*! This member function populates the spacecraft geometry structure with user-input facet information.
+/*! This method populates the spacecraft facet geometry structure with user-input facet information
  @return void
  @param area  [m^2] Facet area
  @param specCoeff  Facet spectral reflection optical coefficient
  @param diffCoeff  Facet diffuse reflection optical coefficient
  @param normal_B  Facet normal expressed in B frame components
- @param locationPntB_B  [m] Facet location wrt point B in B frame components
+ @param locationPntB_B  [m] Facet location wrt point B expressed in B frame components
 */
 void FacetSRPDynamicEffector::addFacet(double area,
                                        double specCoeff,
                                        double diffCoeff,
                                        Eigen::Vector3d normal_B,
-                                       Eigen::Vector3d locationPntB_B)
-{
+                                       Eigen::Vector3d locationPntB_B) {
     this->scGeometry.facetAreas.push_back(area);
     this->scGeometry.facetSpecCoeffs.push_back(specCoeff);
     this->scGeometry.facetDiffCoeffs.push_back(diffCoeff);
@@ -79,12 +74,11 @@ void FacetSRPDynamicEffector::addFacet(double area,
 }
 
 /*! This method is used to link the faceted SRP effector to the hub attitude and position,
-which are required for calculating SRP forces and torques.
+which are required for calculating SRP forces and torques
  @return void
  @param states  Dynamic parameter states
 */
-void FacetSRPDynamicEffector::linkInStates(DynParamManager& states)
-{
+void FacetSRPDynamicEffector::linkInStates(DynParamManager& states) {
     this->hubSigma = states.getStateObject("hubSigma");
     this->hubPosition = states.getStateObject("hubPosition");
 }
@@ -94,8 +88,7 @@ void FacetSRPDynamicEffector::linkInStates(DynParamManager& states)
  @param integTime  [s] Time the method is called
  @param timeStep  [s] Simulation time step
 */
-void FacetSRPDynamicEffector::computeForceTorque(double integTime, double timeStep)
-{
+void FacetSRPDynamicEffector::computeForceTorque(double integTime, double timeStep) {
     // Read the input message
     SpicePlanetStateMsgPayload sunMsgBuffer;
     sunMsgBuffer = sunInMsg.zeroMsgPayload;
@@ -139,12 +132,11 @@ void FacetSRPDynamicEffector::computeForceTorque(double integTime, double timeSt
     double SRPPressure = (solarRadFlux / speedLight) * numAU * numAU;
 
     // Loop through the facets and calculate the SRP force and torque acting on point B
-    for(int i = 0; i < this->numFacets; i++)
-    {
+    for(int i = 0; i < this->numFacets; i++) {
         cosTheta = this->scGeometry.facetNormals_B[i].dot(sHat);
         projectedArea = this->scGeometry.facetAreas[i] * cosTheta;
 
-        if(projectedArea > 0.0){
+        if(projectedArea > 0.0) {
             // Compute the SRP force acting on the ith facet
             facetSRPForcePntB_B = -SRPPressure * projectedArea
                                   * ( (1-this->scGeometry.facetSpecCoeffs[i])
@@ -168,8 +160,7 @@ void FacetSRPDynamicEffector::computeForceTorque(double integTime, double timeSt
 
 /*! This is the UpdateState() method
  @return void
- @param currentSimNanos [ns] Time the method is called
+ @param currentSimNanos  [ns] Time the method is called
 */
-void FacetSRPDynamicEffector::UpdateState(uint64_t currentSimNanos)
-{
+void FacetSRPDynamicEffector::UpdateState(uint64_t currentSimNanos) {
 }
