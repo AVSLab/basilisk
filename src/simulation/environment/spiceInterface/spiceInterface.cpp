@@ -480,6 +480,8 @@ int SpiceInterface::unloadSpiceKernel(char *kernelName, const char *dataPath)
     strcpy(fileName, dataPath);
     strcat(fileName, kernelName);
     unload_c(fileName);
+    delete[] fileName;
+    delete[] name;
     if(failed_c()) {
         return 1;
     }
