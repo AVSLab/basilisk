@@ -32,7 +32,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Added optional facet articulation to the :ref:`facetSRPDynamicEffector` module.
 
 
 Version 2.2.1 (Dec. 22, 2023)
