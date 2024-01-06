@@ -107,7 +107,7 @@ Dependencies
 
 #. Ensure ``wheel`` is installed and install ``conan`` using pip, an example is below::
 
-       (venv) $ pip3 install wheel conan
+       (venv) $ pip3 install wheel 'conan<2.0'
 
    The conan repositories information is automatically setup by ``conanfile.py``.
 
