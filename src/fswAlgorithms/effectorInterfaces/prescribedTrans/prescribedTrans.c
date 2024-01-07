@@ -34,6 +34,7 @@ void SelfInit_prescribedTrans(PrescribedTransConfig *configData, int64_t moduleI
 }
 
 /*! This method performs a complete reset of the module. The input messages are checked to ensure they are linked.
+The method also checks that the coastOption and tRamp variables are correctly configured.
  @return void
  @param configData The configuration data associated with the module
  @param callTime [ns] Time the method is called
@@ -43,6 +44,20 @@ void Reset_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime,
     // Check if the required input message is linked
     if (!PrescribedTransMsg_C_isLinked(&configData->prescribedTransInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: prescribedTrans.prescribedTransInMsg wasn't connected.");
+    }
+
+    // Check for nonzero tRamp if the coast option is chosen
+    if (configData->coastOption && configData->tRamp == 0.0) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: prescribedTrans.tRamp was not configured for the coast "
+                                                  "option.");
+        // Set the coastOption boolean parameter to false if the user does not specify a ramp time
+        configData->coastOption = 0;
+    }
+
+    // Check for zero tRamp if the option with no coast period is chosen
+    if (!configData->coastOption && configData->tRamp != 0.0) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: prescribedTrans.tRamp cannot be set when "
+                                                  "prescribedTrans.coastOption is false.");
     }
 
     // Set the initial time to zero
@@ -94,49 +109,135 @@ void Update_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime
         configData->convergence = false;
 
         // Set the parameters required to profile the translation
-        // Determine the total time required for the translation
-        double totalTransTime = sqrt(((0.5 * fabs(configData->transPosRef - configData->transPosInit)) * 8) / configData->transAccelMax);
+        if (configData->coastOption) { // Set parameters for the coast option
+            if (configData->transPosInit != configData->transPosRef) {
+                // Determine the time at the end of the first ramp segment
+                configData->tr = configData->tInit + configData->tRamp;
 
-        // Determine the time at the end of the translation
-        configData->tf = configData->tInit + totalTransTime;
+                // Determine the position and velocity at the end of the ramp segment/start of the coast segment
+                if (configData->transPosInit < configData->transPosRef) {
+                    configData->transPos_tr = (0.5 * configData->transAccelMax * configData->tRamp * configData->tRamp)
+                                              + (configData->transVelInit * configData->tRamp) +
+                                              configData->transPosInit;
+                    configData->transVel_tr = configData->transAccelMax * configData->tRamp + configData->transVelInit;
+                } else {
+                    configData->transPos_tr =
+                            -((0.5 * configData->transAccelMax * configData->tRamp * configData->tRamp)
+                              + (configData->transVelInit * configData->tRamp)) + configData->transPosInit;
+                    configData->transVel_tr = -configData->transAccelMax * configData->tRamp + configData->transVelInit;
+                }
 
-        // Determine the time halfway through the translation
-        configData->ts = configData->tInit + (totalTransTime / 2);
+                // Determine the distance traveled during the coast period
+                double deltaPosCoast = configData->transPosRef - configData->transPosInit
+                                       - 2 * (configData->transPos_tr - configData->transPosInit);
 
-        // Define the parabolic constants for the first and second half of the translation
-        configData->a = 0.5 * (configData->transPosRef - configData->transPosInit) /
-                        ((configData->ts - configData->tInit) * (configData->ts - configData->tInit));
-        configData->b = -0.5 * (configData->transPosRef - configData->transPosInit) /
-                        ((configData->ts - configData->tf) * (configData->ts - configData->tf));
+                // Determine the time duration of the coast segment
+                double tCoast = fabs(deltaPosCoast) / fabs(configData->transVel_tr);
+
+                // Determine the time at the end of the coast segment
+                configData->tc = configData->tr + tCoast;
+
+                // Determine the position at the end of the coast segment
+                configData->transPos_tc = configData->transPos_tr + deltaPosCoast;
+
+                // Determine the time at the end of the translation
+                configData->tf = configData->tc + configData->tRamp;
+
+                // Define the parabolic constants for the first and second ramp segments of the translation
+                configData->a = (configData->transPos_tr - configData->transPosInit) /
+                                ((configData->tr - configData->tInit) * (configData->tr - configData->tInit));
+                configData->b = -(configData->transPosRef - configData->transPos_tc) /
+                                ((configData->tc - configData->tf) * (configData->tc - configData->tf));
+            } else { // If the initial position equals the reference position, no translation is required. Setting the 
+                // final time equal to the initial time ensures the correct statement is entered when the translational 
+                // states are profiled below
+                configData->tf = configData->tInit;
+            }
+        } else { // Set parameters for the no coast option
+            // Determine the total time required for the translation
+            double totalTransTime = sqrt(((0.5 * fabs(configData->transPosRef - configData->transPosInit)) * 8) /
+                                         configData->transAccelMax);
+
+            // Determine the time at the end of the translation
+            configData->tf = configData->tInit + totalTransTime;
+
+            // Determine the time halfway through the translation
+            configData->ts = configData->tInit + (totalTransTime / 2);
+
+            // Define the parabolic constants for the first and second half of the translation
+            configData->a = 0.5 * (configData->transPosRef - configData->transPosInit) /
+                            ((configData->ts - configData->tInit) * (configData->ts - configData->tInit));
+            configData->b = -0.5 * (configData->transPosRef - configData->transPosInit) /
+                            ((configData->ts - configData->tf) * (configData->ts - configData->tf));
+        }
     }
 
     // Store the current simulation time
     double t = callTime * NANO2SEC;
 
-    // Compute the scalar translation states at the current simulation time
-    if (t <= configData->ts && configData->tf - configData->tInit != 0) { // Entered during the first half of the translation
-        if (configData->transPosInit < configData->transPosRef) {
-            configData->transAccel = configData->transAccelMax;
-        } else {
-            configData->transAccel = - configData->transAccelMax;
+    // Compute the scalar translational states at the current simulation time
+    if (configData->coastOption) {
+        if (t <= configData->tr && configData->tf - configData->tInit != 0) { // Entered during the first ramp segment
+            // The acceleration during the first ramp segment is positive if the reference position is greater than
+            // the initial position. The acceleration is negative during the first ramp segment if the reference position
+            // is less than the initial position
+            if (configData->transPosInit < configData->transPosRef) {
+                configData->transAccel = configData->transAccelMax;
+            } else {
+                configData->transAccel = - configData->transAccelMax;
+            }
+            configData->transVel = configData->transAccel * (t - configData->tInit) + configData->transVelInit;
+            configData->transPos = configData->a * (t - configData->tInit) * (t - configData->tInit) 
+                                   + configData->transPosInit;
+        } else if (t > configData->tr && t <= configData->tc && configData->tf - configData->tInit != 0) { // Entered during the coast segment
+            configData->transAccel = 0.0;
+            configData->transVel = configData->transVel_tr;
+            configData->transPos = configData->transVel_tr * (t - configData->tr) + configData->transPos_tr;
+        } else if (t > configData->tc && t <= configData->tf && configData->tf - configData->tInit != 0) { // Entered during the second ramp segment
+            // The acceleration during the second ramp segment is negative if the reference position is greater than
+            // the initial position. The acceleration is positive during the second ramp segment if the reference
+            // position is less than the initial position
+            if (configData->transPosInit < configData->transPosRef) {
+                configData->transAccel = - configData->transAccelMax;
+            } else {
+                configData->transAccel = configData->transAccelMax;
+            }
+            configData->transVel = configData->transAccel * (t - configData->tInit) + configData->transVelInit
+                                   - configData->transAccel * (configData->tf - configData->tInit);
+            configData->transPos = configData->b * (t - configData->tf) * (t - configData->tf) + configData->transPosRef;
+        } else { // Entered when the translation is complete
+            configData->transAccel = 0.0;
+            configData->transVel = 0.0;
+            configData->transPos = configData->transPosRef;
+            configData->convergence = true;
         }
-        configData->transVel = configData->transAccel * (t - configData->tInit) + configData->transVelInit;
-        configData->transPos = configData->a * (t - configData->tInit) * (t - configData->tInit)
-                             + configData->transPosInit;
-    } else if ( t > configData->ts && t <= configData->tf && configData->tf - configData->tInit != 0) { // Entered during the second half of the translation
-        if (configData->transPosInit < configData->transPosRef) {
-            configData->transAccel = - configData->transAccelMax;
-        } else {
-            configData->transAccel = configData->transAccelMax;
+    } else {
+        if (t <= configData->ts &&
+            configData->tf - configData->tInit != 0) { // Entered during the first half of the translation
+            if (configData->transPosInit < configData->transPosRef) {
+                configData->transAccel = configData->transAccelMax;
+            } else {
+                configData->transAccel = -configData->transAccelMax;
+            }
+            configData->transVel = configData->transAccel * (t - configData->tInit) + configData->transVelInit;
+            configData->transPos = configData->a * (t - configData->tInit) * (t - configData->tInit)
+                                   + configData->transPosInit;
+        } else if (t > configData->ts && t <= configData->tf &&
+                   configData->tf - configData->tInit != 0) { // Entered during the second half of the translation
+            if (configData->transPosInit < configData->transPosRef) {
+                configData->transAccel = -configData->transAccelMax;
+            } else {
+                configData->transAccel = configData->transAccelMax;
+            }
+            configData->transVel = configData->transAccel * (t - configData->tInit) + configData->transVelInit
+                                   - configData->transAccel * (configData->tf - configData->tInit);
+            configData->transPos = configData->b * (t - configData->tf) * (t - configData->tf) + configData->transPosRef;
+        } else { // Entered when the translation is complete
+            configData->transAccel = 0.0;
+            configData->transVel = 0.0;
+            configData->transPos = configData->transPosRef;
+            configData->convergence = true;
         }
-        configData->transVel = configData->transAccel * (t - configData->tInit) + configData->transVelInit
-                             - configData->transAccel * (configData->tf - configData->tInit);
-        configData->transPos = configData->b * (t - configData->tf) * (t - configData->tf) + configData->transPosRef;
-    } else { // Entered when the translation is complete
-        configData->transAccel = 0.0;
-        configData->transVel = 0.0;
-        configData->transPos = configData->transPosRef;
-        configData->convergence = true;
     }
 
     // Determine the prescribed parameters: r_FM_M, rPrime_FM_M and rPrimePrime_FM_M

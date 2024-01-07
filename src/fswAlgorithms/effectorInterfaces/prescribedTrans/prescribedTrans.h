@@ -29,6 +29,8 @@
 typedef struct {
 
     /* User-configurable module variables */
+    bool coastOption;                                           //!< Boolean variable used for selecting an optional coast period during the translation
+    double tRamp;                                               //!< [s] Ramp time used for the coast option
     double transAccelMax;                                       //!< [m/s^2] Maximum translational acceleration
     double transAxis_M[3];                                      //!< Axis along the direction of translation expressed in M frame components
     double r_FM_M[3];                                           //!< [m] Translational body position relative to the Mount frame expressed in M frame components
@@ -37,6 +39,17 @@ typedef struct {
     double omega_FM_F[3];                                       //!< [rad/s] Translational body angular velocity relative to the Mount frame expressed in F frame components (fixed)
     double omegaPrime_FM_F[3];                                  //!< [rad/s^2] B frame time derivative of omega_FM_F expressed in F frame components (fixed)
     double sigma_FM[3];                                         //!< Translational body MRP attitude with respect to frame M
+
+    /* Coast option variables */
+    double transPos_tr;                                         //!< [m] Position at the end of the first ramp segment
+    double transPos_tc;                                         //!< [m] Position at the end of the coast segment
+    double transVel_tr;                                         //!< [m/s] Velocity at the end of the first ramp segment
+    double transVel_tc;                                         //!< [m/s] Velocity at the end of the coast segment
+    double tr;                                                  //!< [s] The simulation time at the end of the first ramp segment
+    double tc;                                                  //!< [s] The simulation time at the end of the coast period
+
+    /* Non-coast option variables */
+    double ts;                                                  //!< [s] The simulation time halfway through the translation
 
     /* Private variables */
     bool convergence;                                           //!< Boolean variable is true when the rotation is complete
@@ -47,7 +60,6 @@ typedef struct {
     double transPos;                                            //!< [m] Current translational body position along transAxis_M
     double transVel;                                            //!< [m] Current translational body velocity along transAxis_M
     double transAccel;                                          //!< [m] Current translational body acceleration along transAxis_M
-    double ts;                                                  //!< [s] The simulation time halfway through the translation
     double tf;                                                  //!< [s] The simulation time when the rotation is complete
     double a;                                                   //!< Parabolic constant for the first half of the translation
     double b;                                                   //!< Parabolic constant for the second half of the translation
