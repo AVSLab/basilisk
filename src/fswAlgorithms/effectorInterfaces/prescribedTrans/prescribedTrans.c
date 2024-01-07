@@ -17,59 +17,54 @@
 
 */
 
-/*! Import the module header file */
 #include "prescribedTrans.h"
-
-/*! Import other required files */
-#include <math.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include <math.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 /*! This method initializes the output message for this module.
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_prescribedTrans(PrescribedTransConfig *configData, int64_t moduleID)
-{
-    // Initialize the module output message
+void SelfInit_prescribedTrans(PrescribedTransConfig *configData, int64_t moduleID) {
     PrescribedMotionMsg_C_init(&configData->prescribedMotionOutMsg);
 }
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values. This method also checks
- if the module input message is linked.
+/*! This method performs a complete reset of the module. The input messages are checked to ensure they are linked.
  @return void
  @param configData The configuration data associated with the module
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
-void Reset_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime, int64_t moduleID)
-{
-    // Check if the input message is connected
+void Reset_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime, int64_t moduleID) {
+    // Check if the required input message is linked
     if (!PrescribedTransMsg_C_isLinked(&configData->prescribedTransInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: prescribedTrans.prescribedTransInMsg wasn't connected.");
     }
 
-    // Set the initial time
+    // Set the initial time to zero
     configData->tInit = 0.0;
 
-    // Set the initial convergence to true to enter the correct loop in the Update() method on the first pass
+    // Set the module variables to the initial states set by the user
+    configData->transPos = configData->transPosInit;
+    configData->transVelInit = 0.0;
+    configData->transVel = 0.0;
+
+    // Set the initial convergence to true to enter the if statement in the Update method on the first pass
     configData->convergence = true;
 }
 
-/*! This method uses the given initial and reference attitudes to compute the required attitude maneuver as
-a function of time. The profiled translational trajectory is updated in time and written to the module's prescribed
-motion output message.
+/*! This method profiles the required translation and updates the prescribed states as a function of time.
+The prescribed states are then written to the output message.
  @return void
  @param configData The configuration data associated with the module
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
-void Update_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime, int64_t moduleID)
-{
+void Update_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime, int64_t moduleID) {
     // Create the buffer messages
     PrescribedTransMsgPayload prescribedTransIn;
     PrescribedMotionMsgPayload prescribedMotionOut;
@@ -79,71 +74,77 @@ void Update_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime
 
     // Read the input message
     prescribedTransIn = PrescribedTransMsg_C_zeroMsgPayload();
-    if (PrescribedTransMsg_C_isWritten(&configData->prescribedTransInMsg))
-    {
+    if (PrescribedTransMsg_C_isWritten(&configData->prescribedTransInMsg)) {
         prescribedTransIn = PrescribedTransMsg_C_read(&configData->prescribedTransInMsg);
     }
 
-    // This loop is entered when a new maneuver is requested after all previous maneuvers are completed
-    if (PrescribedTransMsg_C_timeWritten(&configData->prescribedTransInMsg) <= callTime && configData->convergence)
-    {
-        // Store the initial information
+    /* This loop is entered (a) initially and (b) when each translation is complete. The parameters used to profile the
+    translation are updated in this statement. */
+    if (PrescribedTransMsg_C_timeWritten(&configData->prescribedTransInMsg) <= callTime && configData->convergence) {
+        // Update the initial time as the current simulation time
         configData->tInit = callTime * NANO2SEC;
-        configData->scalarPosInit = v3Norm(configData->r_FM_M);
-        configData->scalarVelInit = v3Norm(configData->rPrime_FM_M);
 
-        // Store the reference information
-        configData->scalarPosRef = prescribedTransIn.scalarPos;
-        configData->scalarVelRef = 0.0;
+        // Store the reference scalar position
+        configData->transPosRef = prescribedTransIn.scalarPos;
 
-        // Define temporal information
-        double convTime = sqrt(((0.5 * fabs(configData->scalarPosRef - configData->scalarPosInit)) * 8) / configData->scalarAccelMax);
-        configData->tf = configData->tInit + convTime;
-        configData->ts = configData->tInit + convTime / 2;
+        // Update the initial scalar position
+        configData->transPosInit = configData->transPos;
 
-        // Define the parabolic constants for the maneuver
-        configData->a = 0.5 * (configData->scalarPosRef - configData->scalarPosInit) / ((configData->ts - configData->tInit) * (configData->ts - configData->tInit));
-        configData->b = -0.5 * (configData->scalarPosRef - configData->scalarPosInit) / ((configData->ts - configData->tf) * (configData->ts - configData->tf));
-
-        // Set the convergence to false to execute the maneuver
+        // Set the convergence to false until the translation is complete
         configData->convergence = false;
+
+        // Set the parameters required to profile the translation
+        // Determine the total time required for the translation
+        double totalTransTime = sqrt(((0.5 * fabs(configData->transPosRef - configData->transPosInit)) * 8) / configData->transAccelMax);
+
+        // Determine the time at the end of the translation
+        configData->tf = configData->tInit + totalTransTime;
+
+        // Determine the time halfway through the translation
+        configData->ts = configData->tInit + (totalTransTime / 2);
+
+        // Define the parabolic constants for the first and second half of the translation
+        configData->a = 0.5 * (configData->transPosRef - configData->transPosInit) /
+                        ((configData->ts - configData->tInit) * (configData->ts - configData->tInit));
+        configData->b = -0.5 * (configData->transPosRef - configData->transPosInit) /
+                        ((configData->ts - configData->tf) * (configData->ts - configData->tf));
     }
 
     // Store the current simulation time
     double t = callTime * NANO2SEC;
 
-    // Define scalar prescribed states
-    double scalarAccel;
-    double scalarVel;
-    double scalarPos;
-
-    // Compute the prescribed scalar states: scalarAccel, scalarVel, and scalarPos
-    if ((t < configData->ts || t == configData->ts) && configData->tf - configData->tInit != 0)  // Entered during the first half of the maneuver
-    {
-        scalarAccel = configData->scalarAccelMax;
-        scalarVel = scalarAccel * (t - configData->tInit) + configData->scalarVelInit;
-        scalarPos = configData->a * (t - configData->tInit) * (t - configData->tInit) + configData->scalarPosInit;
-    }
-    else if ( t > configData->ts && t <= configData->tf && configData->tf - configData->tInit != 0)  // Entered during the second half of the maneuver
-    {
-        scalarAccel = -1 * configData->scalarAccelMax;
-        scalarVel = scalarAccel * (t - configData->tInit) + configData->scalarVelInit - scalarAccel * (configData->tf - configData->tInit);
-        scalarPos = configData->b * (t - configData->tf) * (t - configData->tf) + configData->scalarPosRef;
-    }
-    else  // Entered when the maneuver is complete
-    {
-        scalarAccel = 0.0;
-        scalarVel = configData->scalarVelRef;
-        scalarPos = configData->scalarPosRef;
+    // Compute the scalar translation states at the current simulation time
+    if (t <= configData->ts && configData->tf - configData->tInit != 0) { // Entered during the first half of the translation
+        if (configData->transPosInit < configData->transPosRef) {
+            configData->transAccel = configData->transAccelMax;
+        } else {
+            configData->transAccel = - configData->transAccelMax;
+        }
+        configData->transVel = configData->transAccel * (t - configData->tInit) + configData->transVelInit;
+        configData->transPos = configData->a * (t - configData->tInit) * (t - configData->tInit)
+                             + configData->transPosInit;
+    } else if ( t > configData->ts && t <= configData->tf && configData->tf - configData->tInit != 0) { // Entered during the second half of the translation
+        if (configData->transPosInit < configData->transPosRef) {
+            configData->transAccel = - configData->transAccelMax;
+        } else {
+            configData->transAccel = configData->transAccelMax;
+        }
+        configData->transVel = configData->transAccel * (t - configData->tInit) + configData->transVelInit
+                             - configData->transAccel * (configData->tf - configData->tInit);
+        configData->transPos = configData->b * (t - configData->tf) * (t - configData->tf) + configData->transPosRef;
+    } else { // Entered when the translation is complete
+        configData->transAccel = 0.0;
+        configData->transVel = 0.0;
+        configData->transPos = configData->transPosRef;
         configData->convergence = true;
     }
 
-    // Convert the scalar variables to the prescribed parameters
-    v3Scale(scalarPos, configData->transAxis_M, configData->r_FM_M);
-    v3Scale(scalarVel, configData->transAxis_M, configData->rPrime_FM_M);
-    v3Scale(scalarAccel, configData->transAxis_M, configData->rPrimePrime_FM_M);
+    // Determine the prescribed parameters: r_FM_M, rPrime_FM_M and rPrimePrime_FM_M
+    v3Scale(configData->transPos, configData->transAxis_M, configData->r_FM_M);
+    v3Scale(configData->transVel, configData->transAxis_M, configData->rPrime_FM_M);
+    v3Scale(configData->transAccel, configData->transAxis_M, configData->rPrimePrime_FM_M);
 
-    // Copy the local variables to the output message
+    // Copy the required module variables to the prescribedMotionOut output message
     v3Copy(configData->r_FM_M, prescribedMotionOut.r_FM_M);
     v3Copy(configData->rPrime_FM_M, prescribedMotionOut.rPrime_FM_M);
     v3Copy(configData->rPrimePrime_FM_M, prescribedMotionOut.rPrimePrime_FM_M);
