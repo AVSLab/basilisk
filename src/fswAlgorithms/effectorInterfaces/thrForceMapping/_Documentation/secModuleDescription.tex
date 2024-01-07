@@ -191,11 +191,11 @@ The next step is to sum the individual $\bar{\bm F}$ thruster solutions to the y
 
 
 \subsection{DV Thruster Firing Strategy}
-With a DV thruster configuration the thruster force axes are parallel.  As such, this configuration cannot produce a torque along the DV thrust axis.  A slightly modified version of the above algorithm is used in this case.  With the DV configuration the attitude along the axes orthogonal to the thrust vector are controlled via off-pulsing.  As such, the thruster firing mapping must produce negative $F_{i}$ values and the {\tt thrForceSign} sign must be set to -1.  With this  {\tt thrForceSign} value the flag {\tt use2ndLoop} is ignored and the second loop is always engaged.
+With the DV configuration the attitude is controlled via off-pulsing.  As such, the thruster firing mapping must produce negative $F_{i}$ values and the {\tt thrForceSign} sign must be set to -1.
+
+In the case where the thruster force axes of the DV Thruster configuration are parallel, no torque along the DV thrust axis can be produced. With such a DV configuration the only attitude along the axes orthogonal to the thrust vector is controlled via off-pulsing. In this case {\tt thrForceSign} is -1 and the number of control axes is smaller than 3, and the second loop is always engaged.
 
 The modified algorithm still evaluates the first minimum norm inverse, but does not subtract out the $\text{min}(\bm F)$ value.  Rather, the 2nd stage is used to determine which DV thrusters produce the torque with a negative torque value to generate the corresponding $[\bar D]$ matrix.  After performing the 2nd minimum norm inverse with $[\bar D]$ the subtraction of  $\text{min}(\bm F)$ is not performed.  
-
-
 
 
 \subsection{Saturating the Thruster Capability}
