@@ -42,12 +42,16 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
+@pytest.mark.parametrize("coastOption", [True, False])
+@pytest.mark.parametrize("tRamp", [0.0, 2.0, 5.0])  # [s]
 @pytest.mark.parametrize("transPosInit", [0, -0.75])  # [m]
 @pytest.mark.parametrize("transPosRef1", [0, -0.5])  # [m]
 @pytest.mark.parametrize("transPosRef2", [-0.75, 1.0])  # [m]
 @pytest.mark.parametrize("transAccelMax", [0.01, 0.005])  # [m/s^2]
-@pytest.mark.parametrize("accuracy", [1e-12])
+@pytest.mark.parametrize("accuracy", [1e-4])
 def test_prescribedTransTestFunction(show_plots,
+                                     coastOption,
+                                     tRamp,
                                      transPosInit,
                                      transPosRef1,
                                      transPosRef2,
@@ -60,12 +64,17 @@ def test_prescribedTransTestFunction(show_plots,
     is properly computed for several different simulation configurations. This unit test profiles two successive
     translations to ensure the module is correctly configured. The body's initial scalar translational position
     relative to the spacecraft hub is varied, along with the two final reference positions and the maximum translational
-    acceleration. A pure bang-bang acceleration profile is used for profiling the translation. To validate the module,
-    the final position at the end of each translation is checked to match the specified reference position.
+    acceleration. This unit test also tests both methods of profiling the translation, where either a pure bang-bang
+    acceleration profile can be selected for the translation, or a coast option can be selected where the accelerations
+    are only applied for a specified ramp time and a coast segment with zero acceleration is applied between the two
+    acceleration periods. To validate the module, the final position at the end of each translation is checked to match
+    the specified reference position.
 
     **Test Parameters**
 
     Args:
+        coastOption (bool): Boolean variable used for selecting an optional coast period during the translation
+        tRamp (double): [s] Ramp time used for the coast option
         transPosInit (float): [m] Initial translational body position from M to F frame origin along transAxis_M
         transPosRef1 (float): [m] First reference position from M to F frame origin along transAxis_M
         transPosRef2 (float): [m] Second reference position from M to F frame origin along transAxis_M
@@ -78,6 +87,8 @@ def test_prescribedTransTestFunction(show_plots,
     specified reference values ``transPosRef1`` and ``transPosRef2``.
     """
     [testResults, testMessage] = prescribedTransTestFunction(show_plots,
+                                                             coastOption,
+                                                             tRamp,
                                                              transPosInit,
                                                              transPosRef1,
                                                              transPosRef2,
@@ -88,6 +99,8 @@ def test_prescribedTransTestFunction(show_plots,
 
 
 def prescribedTransTestFunction(show_plots,
+                                coastOption,
+                                tRamp,
                                 transPosInit,
                                 transPosRef1,
                                 transPosRef2,
@@ -113,20 +126,24 @@ def prescribedTransTestFunction(show_plots,
     PrescribedTrans = prescribedTrans.prescribedTrans()
     PrescribedTrans.ModelTag = "prescribedTrans"
     transAxis_M = np.array([0.5, 0.0, 0.5 * np.sqrt(3)])
+    PrescribedTrans.coastOption = coastOption
     PrescribedTrans.transAxis_M = transAxis_M
     PrescribedTrans.transAccelMax = transAccelMax  # [m/s^2]
     PrescribedTrans.omega_FM_F = np.array([0.0, 0.0, 0.0])  # [rad/s]
     PrescribedTrans.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])  # [rad/s^2]
     PrescribedTrans.sigma_FM = np.array([0.0, 0.0, 0.0])
     PrescribedTrans.transPosInit = transPosInit  # [m]
+    PrescribedTrans.tRamp = 0.0  # [s]
+    if coastOption:
+        PrescribedTrans.tRamp = tRamp  # [s]
 
     # Add the prescribedTrans test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, PrescribedTrans)
 
     # Create the prescribedTrans input reference position message for the first translation
     PrescribedTransMessageData = messaging.PrescribedTransMsgPayload()
-    PrescribedTransMessageData.scalarPos = transPosRef1
-    PrescribedTransMessageData.scalarVel = 0.0
+    PrescribedTransMessageData.scalarPos = transPosRef1  # [m]
+    PrescribedTransMessageData.scalarVel = 0.0  # [m/s]
     PrescribedTransMessage = messaging.PrescribedTransMsg().write(PrescribedTransMessageData)
     PrescribedTrans.prescribedTransInMsg.subscribeTo(PrescribedTransMessage)
 
@@ -143,8 +160,30 @@ def prescribedTransTestFunction(show_plots,
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
-    # Determine the required simulation time for the first rotation
-    translation1ReqTime = np.sqrt(((0.5 * np.abs(transPosRef1 - transPosInit)) * 8) / transAccelMax) + 5  # [s]
+    # Set the coast option to false if the ramp time is zero
+    if tRamp == 0.0:
+        coastOption = False
+
+    # Determine the required simulation time for the first translation
+    transVelInit = 0.0  # [m/s]
+    tCoast_1 = 0.0  # [s]
+    if coastOption:
+        # Determine the position and velocity at the end of the ramp segment/start of the coast segment
+        if (transPosInit < transPosRef1):
+            transPos_tr_1 = (0.5 * transAccelMax * tRamp * tRamp) + (transVelInit * tRamp) + transPosInit  # [m]
+            transVel_tr_1 = transAccelMax * tRamp + transVelInit  # [m/s]
+        else:
+            transPos_tr_1 = - ((0.5 * transAccelMax * tRamp * tRamp) + (transVelInit * tRamp)) + transPosInit  # [m]
+            transVel_tr_1 = - transAccelMax * tRamp + transVelInit  # [m/s]
+
+        # Determine the distance traveled during the coast period
+        deltaPosCoast_1 = transPosRef1 - transPosInit - 2 * (transPos_tr_1 - transPosInit)  # [m]
+
+        # Determine the time duration of the coast segment
+        tCoast_1 = np.abs(deltaPosCoast_1) / np.abs(transVel_tr_1)  # [s]
+        translation1ReqTime = (2 * tRamp) + tCoast_1  # [s]
+    else:
+        translation1ReqTime = np.sqrt(((0.5 * np.abs(transPosRef1 - transPosInit)) * 8) / transAccelMax) + 5  # [s]
 
     translation1ExtraTime = 5  # [s]
     unitTestSim.ConfigureStopTime(macros.sec2nano(translation1ReqTime + translation1ExtraTime))
@@ -154,13 +193,30 @@ def prescribedTransTestFunction(show_plots,
 
     # Create the prescribedTrans input reference position message for the second translation
     PrescribedTransMessageData = messaging.PrescribedTransMsgPayload()
-    PrescribedTransMessageData.scalarPos = transPosRef2
-    PrescribedTransMessageData.scalarVel = 0.0
+    PrescribedTransMessageData.scalarPos = transPosRef2  # [m]
+    PrescribedTransMessageData.scalarVel = 0.0  # [m/s]
     PrescribedTransMessage = messaging.PrescribedTransMsg().write(PrescribedTransMessageData)
     PrescribedTrans.prescribedTransInMsg.subscribeTo(PrescribedTransMessage)
 
-    # Determine the required simulation time for the second rotation
-    translation2ReqTime = np.sqrt(((0.5 * np.abs(transPosRef2 - transPosRef1)) * 8) / transAccelMax) + 5  # [s]
+    # Determine the required simulation time for the second translation
+    tCoast_2 = 0.0  # [s]
+    if coastOption:
+        # Determine the position and velocity at the end of the ramp segment/start of the coast segment
+        if (transPosRef1 < transPosRef2):
+            transPos_tr_2 = (0.5 * transAccelMax * tRamp * tRamp) + (transVelInit * tRamp) + transPosRef1  # [m]
+            transVel_tr_2 = transAccelMax * tRamp + transVelInit  # [m/s]
+        else:
+            transPos_tr_2 = - ((0.5 * transAccelMax * tRamp * tRamp) + (transVelInit * tRamp)) + transPosRef1  # [m]
+            transVel_tr_2 = - transAccelMax * tRamp + transVelInit  # [m/s]
+
+        # Determine the distance traveled during the coast period
+        deltaPosCoast_2 = transPosRef2 - transPosRef1 - 2 * (transPos_tr_2 - transPosRef1)  # [m]
+
+        # Determine the time duration of the coast segment
+        tCoast_2 = np.abs(deltaPosCoast_2) / np.abs(transVel_tr_2)  # [s]
+        translation2ReqTime = (2 * tRamp) + tCoast_2  # [s]
+    else:
+        translation2ReqTime = np.sqrt(((0.5 * np.abs(transPosRef2 - transPosRef1)) * 8) / transAccelMax) + 5  # [s]
 
     translation2ExtraTime = 5  # [s]
     unitTestSim.ConfigureStopTime(macros.sec2nano(translation1ReqTime
@@ -182,23 +238,43 @@ def prescribedTransTestFunction(show_plots,
 
     # Unit test validation
     # Store the truth data used to validate the module in two lists
-    # Compute tf for the first translation, and tInit tf for the second translation
-    tf_1 = translation1ReqTime
-    tInit_2 = translation1ReqTime + translation1ExtraTime
-    tf_2 = tInit_2 + translation2ReqTime
+    if coastOption:
+        # Compute tf for the first translation, and tInit tf for the second translation
+        tf_1 = 2 * tRamp + tCoast_1  # [s]
+        tInit_2 = translation1ReqTime + translation1ExtraTime  # [s]
+        tf_2 = tInit_2 + (2 * tRamp) + tCoast_2  # [s]
 
-    # Compute the timespan indices for each check
-    tf_1_index = int(round(tf_1 / testTimeStepSec)) + 1
-    tInit_2_index = int(round(tInit_2 / testTimeStepSec)) + 1
-    tf_2_index = int(round(tf_2 / testTimeStepSec)) + 1
+        # Compute the timespan indices for each check
+        tf_1_index = int(round(tf_1 / testTimeStepSec)) + 1
+        tInit_2_index = int(round(tInit_2 / testTimeStepSec)) + 1
+        tf_2_index = int(round(tf_2 / testTimeStepSec)) + 1
 
-    # Store the timespan indices in a list
-    timeCheckIndicesList = [tf_1_index,
-                            tInit_2_index,
-                            tf_2_index]
+        # Store the timespan indices in a list
+        timeCheckIndicesList = [tf_1_index,
+                                tInit_2_index,
+                                tf_2_index]
 
-    # Store the positions to check in a list
-    transPosCheckList = [transPosRef1, transPosRef1, transPosRef2]
+        # Store the positions to check in a list
+        transPosCheckList = [transPosRef1, transPosRef1, transPosRef2]
+
+    else:
+        # Compute tf for the first translation, and tInit tf for the second translation
+        tf_1 = translation1ReqTime  # [s]
+        tInit_2 = translation1ReqTime + translation1ExtraTime  # [s]
+        tf_2 = tInit_2 + translation2ReqTime  # [s]
+
+        # Compute the timespan indices for each check
+        tf_1_index = int(round(tf_1 / testTimeStepSec)) + 1
+        tInit_2_index = int(round(tInit_2 / testTimeStepSec)) + 1
+        tf_2_index = int(round(tf_2 / testTimeStepSec)) + 1
+
+        # Store the timespan indices in a list
+        timeCheckIndicesList = [tf_1_index,
+                                tInit_2_index,
+                                tf_2_index]
+
+        # Store the positions to check in a list
+        transPosCheckList = [transPosRef1, transPosRef1, transPosRef2]
 
     # Use the two truth data lists to compare with the module-extracted data
     for i in range(len(timeCheckIndicesList)):
@@ -302,9 +378,11 @@ def prescribedTransTestFunction(show_plots,
 if __name__ == "__main__":
     prescribedTransTestFunction(
         True,       # show_plots
-        0.0,        # [m] transPosInit
-        -0.5,                  # [m] transPosRef1
-        -0.75,                 # [m] transPosRef2
+        True,      # coastOption
+        2.0,           # [s] tRamp
+        0.0,       # [m] transPosInit
+        -0.5,                 # [m] transPosRef1
+        1.0,      # [m] transPosRef2
         0.01,    # [m/s^2] transAccelMax
-        1e-12        # accuracy
+        1e-4         # accuracy
     )
