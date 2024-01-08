@@ -414,11 +414,11 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
 
         # Initialize the prescribedTrans test module configuration data
         accelMax = 0.005  # [m/s^2]
-        PrescribedTrans.r_FM_M = r_FM_M
-        PrescribedTrans.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-        PrescribedTrans.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
+        PrescribedTrans.coastOption = False
         PrescribedTrans.transAxis_M = transAxis_M
-        PrescribedTrans.scalarAccelMax = accelMax
+        PrescribedTrans.transAccelMax = accelMax
+        PrescribedTrans.transPosInit = posInit  # [m]
+        PrescribedTrans.tRamp = 0.0  # [s]
         PrescribedTrans.omega_FM_F = np.array([0.0, 0.0, 0.0])
         PrescribedTrans.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
         PrescribedTrans.sigma_FM = sigma_FM
