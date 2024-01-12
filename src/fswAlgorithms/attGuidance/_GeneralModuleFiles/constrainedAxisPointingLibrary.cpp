@@ -142,13 +142,13 @@ SolutionSpace::SolutionSpace(double A, double B, double C, double tol)
 SolutionSpace::~SolutionSpace() = default;
 
 /*! Define this method that returns the number of zeros method */
-bool SolutionSpace::isEmpty() {return this->emptySet;}
+bool SolutionSpace::isEmpty() const {return this->emptySet;}
 
 /*! Define this method that returns the number of zeros method */
-int SolutionSpace::numberOfZeros() {return this->zeros;}
+int SolutionSpace::numberOfZeros() const {return this->zeros;}
 
 /*! Define this method that returns the absolute minimum of the function method */
-double SolutionSpace::returnAbsMin(int idx)
+double SolutionSpace::returnAbsMin(int idx) const
 {
     if ((idx < 1) || (idx > 2)) {
         return 0;
@@ -176,7 +176,7 @@ double SolutionSpace::returnAbsMin(int idx)
 }
 
 /*! Define this method that returns whether the input is contained in the solution space */
-bool SolutionSpace::contains(double psi)
+bool SolutionSpace::contains(double psi) const
 {
     if (this->emptySet) {
         return false;
@@ -191,7 +191,7 @@ bool SolutionSpace::contains(double psi)
 }
 
 /*! Define this method the closest value in the solution space to the input */
-double SolutionSpace::passThrough(double psi)
+double SolutionSpace::passThrough(double psi) const
 {
     if (!this->emptySet) {
         if (psi > this->sup) {

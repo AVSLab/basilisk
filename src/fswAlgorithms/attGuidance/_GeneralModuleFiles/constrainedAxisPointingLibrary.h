@@ -32,11 +32,11 @@ public:
     SolutionSpace(double A, double B, double C, double tol);
     ~SolutionSpace();
 
-    bool   isEmpty();                //!< returns whether the solution set is empty or not
-    int    numberOfZeros();          //!< returns the number of zeros of the associated equation
-    double returnAbsMin(int idx);    //!< return the minimum value of f(x) = |Ax^2 + Bx + C| / (1+x^2)
-    bool   contains(double psi);     //!< determines whether psi is contained in the solution space
-    double passThrough(double psi);  //!< "passes" psi through the solution space
+    bool   isEmpty() const;                //!< returns whether the solution set is empty or not
+    bool   hasZeros() const;               //!< returns the zeros class bool variable
+    double returnAbsMin(int idx) const;    //!< return the minimum value of f(x) = |Ax^2 + Bx + C| / (1+x^2)
+    bool   contains(double psi) const;     //!< determines whether psi is contained in the solution space
+    double passThrough(double psi) const;  //!< "passes" psi through the solution space
 
 private:
     bool   emptySet{};          //!< determines whether the solution space is empty
