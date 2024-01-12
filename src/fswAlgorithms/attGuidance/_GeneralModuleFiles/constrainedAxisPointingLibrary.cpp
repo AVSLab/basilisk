@@ -17,7 +17,7 @@
 
  */
 
-#include "attitudePointingLibrary.h"
+#include "constrainedAxisPointingLibrary.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"

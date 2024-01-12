@@ -28,7 +28,7 @@
 #include "architecture/msgPayloadDefC/InertialHeadingMsgPayload.h"
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
-#include "fswAlgorithms/attGuidance/_GeneralModuleFiles/attitudePointingLibrary.h"
+#include "fswAlgorithms/attGuidance/_GeneralModuleFiles/constrainedAxisPointingLibrary.h"
 
 
 /*! @brief A class to perform EMA SEP pointing */
