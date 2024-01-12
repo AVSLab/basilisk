@@ -26,7 +26,7 @@ enum class AlignmentPriority {
 };
 
 //! @brief The SolutionSpace class contains the solutions of the nonlinear inequality
-//! |Ax^2 + Bx + C| / (1+x^2) >= 0
+//! (Ax^2 + Bx + C) / (1+x^2) >= 0
 class SolutionSpace {
 public:
     SolutionSpace(double A, double B, double C, double tol);
@@ -39,11 +39,14 @@ public:
     double passThrough(double psi) const;  //!< "passes" psi through the solution space
 
 private:
+    void solveZerothOrder(double C);                        //!< solves C / (1+x^2) >= 0
+    void solveFirstOrder(double B, double C);               //!< solves (Bx + C) / (1+x^2) >= 0
+    void solveSecondOrder(double A, double B, double C);    //!< solves (Ax^2 + Bx + C) / (1+x^2) >= 0
     bool   emptySet{};          //!< determines whether the solution space is empty
     double inf{};               //!< inferior end of the solution space
     double sup{};               //!< superior end of the solution space
     double zero[2]{};           //!< zero(s) of the associated equation
-    int    zeros{};             //!< number of distinct solutions of the associated equation
+    bool   zeros{};             //!< bool that states whethet the associated equation has zeros
     double psiMin{};            //!< psi = 2*atan(x) for which y = |Ax^2 + Bx + C| / (1+x^2) is minimum
     double psiMax{};            //!< psi = 2*atan(x) for which y = |Ax^2 + Bx + C| / (1+x^2) is maximum
     double yMin{};              //!< minimum value of y = |Ax^2 + Bx + C| / (1+x^2)

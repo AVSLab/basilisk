@@ -30,79 +30,16 @@
     of the second order inequality (At^2+Bt+C)/(1+t^2) >= 0 */
 SolutionSpace::SolutionSpace(double A, double B, double C, double tol)
 {
-    double Delta = B*B - 4*A*C;
-    // A is nonzero
-    if (fabs(A) > tol) {
-        if ((Delta > 0) && (fabs(Delta) > tol)) {
-            this->emptySet = false;
-            double t1 = (-B - sqrt(Delta)) / (2*A);
-            double t2 = (-B + sqrt(Delta)) / (2*A);
-            if (A > 0) {
-                this->inf = 2 * atan(t2);
-                this->sup = 2 * (atan(t1) + MPI);
-            }
-            else {
-                this->inf = 2 * atan(t2);
-                this->sup = 2 * atan(t1);
-            }
-            this->zero[0] = this->inf;
-            this->zero[1] = this->sup;
-            this->zeros = 2;
-        }
-        else if ((Delta < 0) && (fabs(Delta) > tol)) {
-            if (A > 0) {
-                this->emptySet = false;
-                this->inf = -MPI;
-                this->sup =  MPI;
-            }
-            else {
-                this->emptySet = true;
-            }
-            this->zeros = 0;
+    if (fabs(A) < tol) {
+        if (fabs(B) < tol) {
+            solveZerothOrder(C);
         }
         else {
-            this->emptySet = false;
-            if (A > 0) {
-                this->inf = -MPI;
-                this->sup =  MPI;
-            }
-            else {
-                this->inf = 2 * atan(-B / (2*A));
-                this->sup = 2 * atan(-B / (2*A));
-            }
-            this->zero[0] = 2 * atan(-B / (2*A));
-            this->zero[1] = 2 * atan(-B / (2*A));
+            solveFirstOrder(B, C);
         }
     }
-    // A is zero
     else {
-        // B is nonzero
-        if (fabs(B) > tol) {
-            this->emptySet = false;
-            if (B > 0) {
-                this->inf = 2 * atan(-C / B);
-                this->sup = MPI;
-            }
-            else {
-                this->inf = -MPI;
-                this->sup = 2 * atan(-C / B);
-            }
-            this->zero[0] = this->inf;
-            this->zero[1] = this->sup;
-            this->zeros = 2;
-        }
-        // B is zero
-        else {
-            if (C > 0) {
-                this->emptySet = false;
-                this->inf = -MPI;
-                this->sup =  MPI;
-            }
-            else {
-                this->emptySet = true;
-            }
-            this->zeros = 0;
-        }
+        solveSecondOrder(A, B, C);
     }
     // compute max and min of the function
     double psi1;    // PRA #1
@@ -141,37 +78,92 @@ SolutionSpace::SolutionSpace(double A, double B, double C, double tol)
 /*! Generic destructor */
 SolutionSpace::~SolutionSpace() = default;
 
+/*! Solves C / (1+x^2) >= 0 */
+void SolutionSpace::solveZerothOrder(double C)
+{
+    this->zeros = false;
+    if (C < 0) {
+        this->emptySet = true;
+    }
+    else {
+        this->emptySet = false;
+        this->inf = -M_PI;
+        this->sup =  M_PI;
+    }
+}
+
+/*! Solves (Bx + C) / (1+x^2) >= 0 */
+void SolutionSpace::solveFirstOrder(double B, double C)
+{
+    this->zeros = true;
+    this->emptySet = false;
+    if (B > 0) {
+        this->inf = 2 * atan(-C / B);
+        this->sup = M_PI;
+    }
+    else {
+        this->inf = -M_PI;
+        this->sup = 2 * atan(-C / B);
+    }
+    this->zero[0] = this->inf;
+    this->zero[1] = this->sup;
+}
+
+/*! Solves (Ax^2 + Bx + C) / (1+x^2) >= 0 */
+void SolutionSpace::solveSecondOrder(double A, double B, double C)
+{
+    double Delta = B*B - 4*A*C;
+    if (Delta >= 0) {
+        this->emptySet = false;
+        this->zeros = true;
+        double t1 = (-B - sqrt(Delta)) / (2*A);
+        double t2 = (-B + sqrt(Delta)) / (2*A);
+        if (A > 0) {
+            this->inf = 2 * atan(t2);
+            this->sup = 2 * (atan(t1) + M_PI);
+        }
+        else {
+            this->inf = 2 * atan(t2);
+            this->sup = 2 * atan(t1);
+        }
+        this->zero[0] = this->inf;
+        this->zero[1] = this->sup;
+    }
+    else {
+        this->zeros = false;
+        if (A > 0) {
+            this->emptySet = false;
+            this->inf = -M_PI;
+            this->sup =  M_PI;
+        }
+        else {
+            this->emptySet = true;
+        }
+    }
+}
+
 /*! Define this method that returns the number of zeros method */
 bool SolutionSpace::isEmpty() const {return this->emptySet;}
 
-/*! Define this method that returns the number of zeros method */
-int SolutionSpace::numberOfZeros() const {return this->zeros;}
+/*! Define this method that returns the zeros bool class variable */
+bool SolutionSpace::hasZeros() const {return this->zeros;}
 
 /*! Define this method that returns the absolute minimum of the function method */
 double SolutionSpace::returnAbsMin(int idx) const
 {
-    if ((idx < 1) || (idx > 2)) {
-        return 0;
-    }
-
-    switch (this->zeros) {
-
-        case 2 :
-            return this->zero[idx-1];
-
-        case 1 :
+    if (this->zeros) {
+        if (idx < 2) {
             return this->zero[0];
-
-        case 0 :
-            if (fabs(this->yMin) < fabs(this->yMax)) {
-                return this->psiMin;
-            }
-            else {
-                return this->psiMax;
-            }
-
-        default :
-            return 0;
+        } else {
+            return this->zero[1];
+        }
+    }
+    else {
+        if (fabs(this->yMin) < fabs(this->yMax)) {
+            return this->psiMin;
+        } else {
+            return this->psiMax;
+        }
     }
 }
 
@@ -276,7 +268,7 @@ void computeReferenceFrame(double hRefHat_B[3], double hReqHat_N[3], double rHat
     switch (alignmentPriority) {
 
         case AlignmentPriority::SolarArrayAlign :
-            if (solarArraySolutions.numberOfZeros() == 2) {
+            if (solarArraySolutions.hasZeros()) {
                 double psi1 = solarArraySolutions.returnAbsMin(1);
                 double psi2 = solarArraySolutions.returnAbsMin(2);
                 double PRV_psi1[3];
@@ -312,7 +304,7 @@ void computeReferenceFrame(double hRefHat_B[3], double hReqHat_N[3], double rHat
                 v3Scale(psi, e_psi, PRV_psi);
             }
             else {
-                if (solarArraySolutions.numberOfZeros() == 2) {
+                if (solarArraySolutions.hasZeros()) {
                     double psi1 = solarArraySolutions.returnAbsMin(1);
                     double psi2 = solarArraySolutions.returnAbsMin(2);
                     double deltaPsi1 = psi1 - sunConstAxisSolutions.passThrough(psi1);
@@ -338,7 +330,6 @@ void computeReferenceFrame(double hRefHat_B[3], double hReqHat_N[3], double rHat
     PRV2C(PRV_psi, RD);
     double RB[3][3];
     m33MultM33(RD, DB, RB);
-
     m33MultM33(RB, BN, RN);
 }
 
