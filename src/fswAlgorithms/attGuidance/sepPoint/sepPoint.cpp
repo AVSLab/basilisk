@@ -17,7 +17,6 @@
 
  */
 
-
 #include "sepPoint.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -111,10 +110,10 @@ void SepPoint::UpdateState(uint64_t CurrentSimNanos)
     finiteDifferencesRatesAndAcc(sigma_RN,
                                  this->sigma_RN_1,
                                  this->sigma_RN_2,
-                                 CurrentSimNanos,
-                                 this->T1NanoSeconds,
-                                 this->T2NanoSeconds,
-                                 this->callCount,
+                                 &CurrentSimNanos,
+                                 &this->T1NanoSeconds,
+                                 &this->T2NanoSeconds,
+                                 &this->callCount,
                                  omega_RN_R,
                                  omegaDot_RN_R);
 

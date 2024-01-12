@@ -338,7 +338,7 @@ void computeReferenceFrame(double hRefHat_B[3], double hReqHat_N[3], double rHat
 /*! This function implements second-order finite differences to compute reference angular
     rates and accelerations */
 void finiteDifferencesRatesAndAcc(double sigma_RN[3], double sigma_RN_1[3], double sigma_RN_2[3],
-                                  uint64_t callTime, uint64_t T1Nanos, uint64_t T2Nanos, int callCount,
+                                  uint64_t *TNanos, uint64_t *T1Nanos, uint64_t *T2Nanos, int *callCount,
                                   double omega_RN_R[3], double omegaDot_RN_R[3])
 {
     // switch sigma_RN_1 and sigma_RN_2 if needed
@@ -356,39 +356,39 @@ void finiteDifferencesRatesAndAcc(double sigma_RN[3], double sigma_RN_1[3], doub
     double T2Seconds;
     double sigmaDot_RN[3];
     double sigmaDDot_RN[3];
-    if (callCount == 0) {
+    if (*callCount == 0) {
         v3SetZero(sigmaDot_RN);
         v3SetZero(sigmaDDot_RN);
         // store information for next time step
     }
     // if second update call, derivatives are computed with first order finite differences
-    else if (callCount == 1) {
-        T1Seconds = (T1Nanos - callTime) * NANO2SEC;
+    else if (*callCount == 1) {
+        T1Seconds = double (*T1Nanos - *TNanos) * NANO2SEC;
         for (int j = 0; j < 3; j++) {
             sigmaDot_RN[j] = (sigma_RN_1[j] - sigma_RN[j]) / T1Seconds;
         }
         v3SetZero(sigmaDDot_RN);
         // store information for next time step
-        T2Nanos = T1Nanos;
-        T1Nanos = callTime;
+        *T2Nanos = *T1Nanos;
+        *T1Nanos = *TNanos;
         v3Copy(sigma_RN_1, sigma_RN_2);
         v3Copy(sigma_RN, sigma_RN_1);
     }
     // if third update call or higher, derivatives are computed with second order finite differences
     else {
-        T1Seconds = (T1Nanos - callTime) * NANO2SEC;
-        T2Seconds = (T2Nanos - callTime) * NANO2SEC;
+        T1Seconds = double (*T1Nanos - *TNanos) * NANO2SEC;
+        T2Seconds = double (*T2Nanos - *TNanos) * NANO2SEC;
         for (int j = 0; j < 3; j++) {
             sigmaDot_RN[j] = ((sigma_RN_1[j]*T2Seconds*T2Seconds - sigma_RN_2[j]*T1Seconds*T1Seconds) / (T2Seconds - T1Seconds) - sigma_RN[j] * (T2Seconds + T1Seconds)) / T1Seconds / T2Seconds;
             sigmaDDot_RN[j] = 2 * ((sigma_RN_1[j]*T2Seconds - sigma_RN_2[j]*T1Seconds) / (T1Seconds - T2Seconds) + sigma_RN[j]) / T1Seconds / T2Seconds;
         }
         // store information for next time step
-        T2Nanos = T1Nanos;
-        T1Nanos = callTime;
+        *T2Nanos = *T1Nanos;
+        *T1Nanos = *TNanos;
         v3Copy(sigma_RN_1, sigma_RN_2);
         v3Copy(sigma_RN, sigma_RN_1);
     }
-    callCount += 1;
+    *callCount += 1;
     dMRP2Omega(sigma_RN, sigmaDot_RN, omega_RN_R);
     ddMRP2dOmega(sigma_RN, sigmaDot_RN, sigmaDDot_RN, omegaDot_RN_R);
 }

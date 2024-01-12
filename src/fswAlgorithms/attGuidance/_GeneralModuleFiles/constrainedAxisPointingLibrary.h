@@ -62,9 +62,9 @@ void computeReferenceFrame(double hRefHat_B[3], double hReqHat_N[3], double rHat
 void finiteDifferencesRatesAndAcc(double sigma_RN[3],
                                   double sigma_RN_1[3],
                                   double sigma_RN_2[3],
-                                  uint64_t TNanos,
-                                  uint64_t T1Nanos,
-                                  uint64_t T2Nanos,
-                                  int callCount,
+                                  uint64_t *TNanos,
+                                  uint64_t *T1Nanos,
+                                  uint64_t *T2Nanos,
+                                  int *callCount,
                                   double omega_RN_R[3],
                                   double omegaDot_RN_R[3]);
