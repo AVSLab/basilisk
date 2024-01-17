@@ -424,6 +424,7 @@ class SimBaseClass:
         for model, modelData, task in self.allModels:
             if model.ModelTag == modelTag:
                 modelOrConfig = modelData or model
+                break
 
         if task is None or modelOrConfig is None:
             raise ValueError(f"Could not find model with tag {modelTag}")
