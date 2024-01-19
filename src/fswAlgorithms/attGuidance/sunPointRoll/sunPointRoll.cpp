@@ -42,7 +42,10 @@ void SunPointRoll::SelfInit(){
  */
 void SunPointRoll::Reset(uint64_t CurrentSimNanos)
 {
-
+    if (!this->attNavInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected.");
+    }
+    this->resetTime = CurrentSimNanos;
 }
 
 
