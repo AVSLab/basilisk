@@ -18,12 +18,13 @@
  */
 
 #include "attitudePointingLibrary.h"
+#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
 #endif
-#include <math.h>
 
 /*! This constructor initializes an SolutionSpace class for the solution
     of the second order inequality (At^2+Bt+C)/(1+t^2) >= 0 */
@@ -38,7 +39,7 @@ SolutionSpace::SolutionSpace(double A, double B, double C, double tol)
             double t2 = (-B + sqrt(Delta)) / (2*A);
             if (A > 0) {
                 this->inf = 2 * atan(t2);
-                this->sup = 2 * (atan(t1) + M_PI);
+                this->sup = 2 * (atan(t1) + MPI);
             }
             else {
                 this->inf = 2 * atan(t2);
@@ -51,8 +52,8 @@ SolutionSpace::SolutionSpace(double A, double B, double C, double tol)
         else if ((Delta < 0) && (fabs(Delta) > tol)) {
             if (A > 0) {
                 this->emptySet = false;
-                this->inf = -M_PI;
-                this->sup =  M_PI;
+                this->inf = -MPI;
+                this->sup =  MPI;
             }
             else {
                 this->emptySet = true;
@@ -62,8 +63,8 @@ SolutionSpace::SolutionSpace(double A, double B, double C, double tol)
         else {
             this->emptySet = false;
             if (A > 0) {
-                this->inf = -M_PI;
-                this->sup =  M_PI;
+                this->inf = -MPI;
+                this->sup =  MPI;
             }
             else {
                 this->inf = 2 * atan(-B / (2*A));
@@ -80,10 +81,10 @@ SolutionSpace::SolutionSpace(double A, double B, double C, double tol)
             this->emptySet = false;
             if (B > 0) {
                 this->inf = 2 * atan(-C / B);
-                this->sup = M_PI;
+                this->sup = MPI;
             }
             else {
-                this->inf = -M_PI;
+                this->inf = -MPI;
                 this->sup = 2 * atan(-C / B);
             }
             this->zero[0] = this->inf;
@@ -94,8 +95,8 @@ SolutionSpace::SolutionSpace(double A, double B, double C, double tol)
         else {
             if (C > 0) {
                 this->emptySet = false;
-                this->inf = -M_PI;
-                this->sup =  M_PI;
+                this->inf = -MPI;
+                this->sup =  MPI;
             }
             else {
                 this->emptySet = true;
@@ -119,7 +120,7 @@ SolutionSpace::SolutionSpace(double A, double B, double C, double tol)
     }
     else {
         psi1 = 0;
-        psi2 = M_PI;
+        psi2 = MPI;
         y1 = C;
         y2 = A;
     }
@@ -180,7 +181,7 @@ bool SolutionSpace::contains(double psi)
     if (this->emptySet) {
         return false;
     }
-    if (psi < this->inf && psi+2*M_PI > this->sup) {
+    if (psi < this->inf && psi+2*MPI > this->sup) {
         return false;
     }
     if (psi > this->sup) {
@@ -196,9 +197,9 @@ double SolutionSpace::passThrough(double psi)
         if (psi > this->sup) {
             return this->sup;
         }
-        else if (psi < this->inf && psi + 2 * M_PI > this->sup) {
+        else if (psi < this->inf && psi + 2 * MPI > this->sup) {
             double dt1 = this->inf - psi;
-            double dt2 = psi + 2 * M_PI - this->sup;
+            double dt2 = psi + 2 * MPI - this->sup;
             if (dt1 < dt2) {
                 return this->inf;
             } else {
@@ -222,8 +223,8 @@ void boresightAlignment(double hRefHat[3], double hReqHat[3], double tol, double
     double e_phi[3];
     v3Cross(hRefHat, hReqHat, e_phi);
     // If phi = PI, e_phi can be any vector perpendicular to hRefHat_B
-    if (fabs(phi-M_PI) < tol) {
-        phi = M_PI;
+    if (fabs(phi-MPI) < tol) {
+        phi = MPI;
         v3Perpendicular(hRefHat, e_phi);
     }
     else if (fabs(phi) < tol) {

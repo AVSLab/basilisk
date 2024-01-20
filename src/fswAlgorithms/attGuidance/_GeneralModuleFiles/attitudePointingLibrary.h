@@ -18,8 +18,7 @@
  */
 
 
-#include "architecture/utilities/macroDefinitions.h"
-#include <stdint.h>
+#include <cstdint>
 
 enum class AlignmentPriority {
     SolarArrayAlign = 0,
