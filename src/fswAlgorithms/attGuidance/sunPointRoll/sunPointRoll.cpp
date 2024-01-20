@@ -57,6 +57,81 @@ void SunPointRoll::Reset(uint64_t CurrentSimNanos)
  */
 void SunPointRoll::UpdateState(uint64_t CurrentSimNanos)
 {
+    /*! create and zero the output message */
+    AttRefMsgPayload attRefOut = this->attRefOutMsg.zeroMsgPayload;
 
+    /*! read and allocate the input attitude navigation message */
+    NavAttMsgPayload attNavIn = this->attNavInMsg();
+
+    /*! define the body frame orientation DCM BN */
+    double BN[3][3];
+    MRP2C(attNavIn.sigma_BN, BN);
+
+    /*! get the solar array drive direction in body frame coordinates */
+    double a1Hat_B[3];
+    v3Normalize(this->a1Hat_B, a1Hat_B);
+
+    /*! read Sun direction in N frame from the attNav message */
+    double rHat_SB_N[3];
+    m33tMultV3(BN, attNavIn.vehSunPntBdy, rHat_SB_N);
+
+    /*! compute intermediate reference frame DN to align vector with Sun */
+    double d1[3];
+    double d2[3];
+    double d3[3];
+    v3Normalize(this->hRefHat_B, d1);
+    v3Cross(d1, a1Hat_B, d2);
+    v3Normalize(d2, d2);
+    v3Cross(d1, d2, d3);
+
+    double n1[3];
+    double n2[3] = {0, 0, 1};
+    double n3[3];
+    v3Copy(rHat_SB_N, n1);
+    v3Cross(n1, n2, n3);
+    v3Normalize(n3, n3);
+    v3Cross(n3, n1, n2);
+
+    double DT[3][3];
+    double NT[3][3];
+    for (int i=0; i<3; ++i) {
+        DT[i][0] = d1[i];
+        DT[i][1] = d2[i];
+        DT[i][2] = d3[i];
+        NT[i][0] = n1[i];
+        NT[i][1] = n2[i];
+        NT[i][2] = n3[i];
+    }
+
+    double DN[3][3];
+    m33MultM33t(DT, NT, DN);
+
+    /*! compute intermediate reference RD that accounts for the roll about the sunline */
+    double pra = this->omegaRoll * (double (CurrentSimNanos - this->resetTime));
+    double prv_RD[3];
+    v3Scale(pra, a1Hat_B, prv_RD);
+
+    double RD[3][3];
+    PRV2C(prv_RD, RD);
+
+    /*! compute final reference frame RN */
+    double RN[3][3];
+    m33MultM33(RD, DN, RN);
+
+    /*! compute reference MRP */
+    double sigma_RN[3];
+    C2MRP(RN, sigma_RN);
+    v3Copy(sigma_RN, attRefOut.sigma_RN);
+
+    /*! write omega roll into the reference message */
+    double omega_RN_R[3];
+    v3Scale(this->omegaRoll, this->hRefHat_B, omega_RN_R);
+    m33tMultV3(RN, omega_RN_R, attRefOut.omega_RN_N);
+
+    /*! Write the output messages */
+    this->attRefOutMsg.write(&attRefOut, this->moduleID, CurrentSimNanos);
+
+    /*! Write the C-wrapped output messages */
+    AttRefMsg_C_write(&attRefOut, &this->attRefOutMsgC, this->moduleID, CurrentSimNanos);
 }
 
