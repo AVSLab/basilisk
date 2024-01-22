@@ -216,7 +216,6 @@ void SpiceInterface::computeGPSData()
  */
 void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 {
-    std::vector<Message<SpicePlanetStateMsgPayload>*>::iterator planMsgit;
     SpiceTimeMsgPayload OutputData;
 
     //! - Set the members of the time output message structure and write
