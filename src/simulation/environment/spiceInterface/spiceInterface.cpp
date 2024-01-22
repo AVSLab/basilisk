@@ -52,7 +52,7 @@ SpiceInterface::SpiceInterface()
 
     //! - set default epoch time information
     char string[255];
-    sprintf(string, "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)", EPOCH_YEAR, EPOCH_MONTH, EPOCH_DAY, EPOCH_HOUR, EPOCH_MIN, EPOCH_SEC);
+    snprintf(string, 255, "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)", EPOCH_YEAR, EPOCH_MONTH, EPOCH_DAY, EPOCH_HOUR, EPOCH_MIN, EPOCH_SEC);
     this->UTCCalInit = string;
 
     return;
@@ -173,7 +173,7 @@ void SpiceInterface::initTimeData()
         } else {
             // Set the epoch information from the input message
             char string[255];
-            sprintf(string, "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)", epochMsg.year, epochMsg.month, epochMsg.day, epochMsg.hours, epochMsg.minutes, epochMsg.seconds);
+            snprintf(string, 255, "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)", epochMsg.year, epochMsg.month, epochMsg.day, epochMsg.hours, epochMsg.minutes, epochMsg.seconds);
             this->UTCCalInit = string;
         }
     }
