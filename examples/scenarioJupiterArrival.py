@@ -123,7 +123,7 @@ def run(show_plots):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     jupiter = gravFactory.createJupiter()
     jupiter.isCentralBody = True
-    scObject.gravField.setGravBodies(gravityEffector.GravBodyVector(list(gravFactory.gravBodies.values())))
+    gravFactory.addBodiesTo(scObject)
     scSim.AddModelToTask(simTaskName, scObject)
 
     #

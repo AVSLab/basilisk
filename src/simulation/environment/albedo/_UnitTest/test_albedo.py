@@ -34,6 +34,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport
+from Basilisk.architecture import bskLogging
 
 bskPath = __path__[0]
 
@@ -210,6 +211,45 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     print("This test uses a relative accuracy value of " + str(errTol * 100) + " percent")
 
     return [testFailCount, ''.join(testMessages)]
+
+def test_albedo_invalid_file(tmp_path):
+    """Verify that Albedo model returns gracefully when file cannot be loaded.
+    
+    Regression test for BSK-428 where model would segfault when invalid file
+    was specified.
+
+    .. note:: The model is not in a usable state if this initialization fails.
+        Ideally an exception would be thrown, but the SWIG infrastructure doesn't
+        appear to be setup to handle C++ exceptions, so we settle for printing a
+        message and not segfaulting.
+    """
+    albModule = albedo.Albedo()
+    # silence expected error message
+    albModule.bskLogger.setLogLevel(bskLogging.BSK_SILENT)
+
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    gravFactory.createEarth()
+    planetPositionMsg = messaging.SpicePlanetStateMsgPayload()
+    planetPositionMsg.PlanetName = "earth"
+    planetInMsg = messaging.SpicePlanetStateMsg().write(planetPositionMsg)
+
+    sunPositionMsg = messaging.SpicePlanetStateMsgPayload()
+    sunInMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsg)
+    albModule.sunPositionInMsg.subscribeTo(sunInMsg)
+
+    scStateMsg = messaging.SCStatesMsgPayload()
+    scInMsg = messaging.SCStatesMsg().write(scStateMsg)
+    albModule.spacecraftStateInMsg.subscribeTo(scInMsg)
+
+    albModule.addPlanetandAlbedoDataModel(planetInMsg, str(tmp_path), "does_not_exit.file")
+    
+    # this call would previously segfault
+    albModule.Reset(0)
+
+    # the fact that we got here without segfaulting means the test
+    # passed
+    assert True
+
 if __name__ == "__main__":
     # unitAlbedo(False, 'earth', 'ALBEDO_AVG_EXPLICIT', True)
     unitAlbedo(False, 'mars', 'ALBEDO_AVG_IMPLICIT', False)

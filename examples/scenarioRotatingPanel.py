@@ -145,7 +145,7 @@ def run(show_plots):
     planet = gravFactory.createEarth()
     planet.isCentralBody = True
     mu = planet.mu
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # create sun position message
     sunMessage = messaging.SpicePlanetStateMsgPayload()

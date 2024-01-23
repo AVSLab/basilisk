@@ -52,10 +52,9 @@ class ProcessBaseClass(object):
 
 
 class TaskBaseClass(object):
-    def __init__(self, TaskName, TaskRate, InputDelay=0, FirstStart=0):
+    def __init__(self, TaskName, TaskRate, FirstStart=0):
         self.Name = TaskName
-        self.TaskData = sys_model_task.SysModelTask(TaskRate, InputDelay,
-                                                    FirstStart)
+        self.TaskData = sys_model_task.SysModelTask(TaskRate, FirstStart)
         self.TaskData.TaskName = TaskName
         self.TaskModels = []
 

@@ -30,6 +30,7 @@ public:
     PartitionedStorageUnit();
     ~PartitionedStorageUnit();
     void addPartition(std::string dataName);
+    void setDataBuffer(std::vector<std::string> partitionNames, std::vector<long long int> data); //!< Adds/removes the data from the partitionNames partitions
 
 private:
     void customReset(uint64_t CurrentClock) override;

@@ -144,7 +144,7 @@ def run(show_plots):
     # In order to specify which body the spacecraft position and velocities are integrated relative to, the `isCentralBody`
     # flag is used.
     earth.isCentralBody = True
-    scObject.gravField.setGravBodies(gravityEffector.GravBodyVector(list(gravFactory.gravBodies.values())))
+    gravFactory.addBodiesTo(scObject)
     scSim.AddModelToTask(simTaskName, scObject)
 
     #

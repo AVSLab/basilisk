@@ -176,14 +176,12 @@ def run(show_plots, missionType, saveVizardFile):
     if missionType ==  'dscovr':
         # setup Grav Bodies and Spice messages
         gravFactory = simIncludeGravBody.gravBodyFactory()
-        bodies = gravFactory.createBodies(['earth', 'sun'])
+        bodies = gravFactory.createBodies('earth', 'sun')
         bodies['earth'].isCentralBody = True  # ensure this is the central gravitational body
-        gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                         '2018 OCT 23 04:35:25.000 (UTC)',
-                                         epochInMsg=True)
+        spiceObject = gravFactory.createSpiceInterface(time='2018 OCT 23 04:35:25.000 (UTC)', epochInMsg=True)
 
-        gravFactory.spiceObject.zeroBase = 'earth'
-        scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+        spiceObject.zeroBase = 'earth'
+        scSim.AddModelToTask(simTaskName, spiceObject)
         # Setup Camera.
         cameraConfig = messaging.CameraConfigMsgPayload()
         cameraConfig.cameraID = 1
@@ -222,7 +220,7 @@ def run(show_plots, missionType, saveVizardFile):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)

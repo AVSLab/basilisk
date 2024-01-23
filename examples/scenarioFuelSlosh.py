@@ -290,7 +290,7 @@ def run(show_plots, damping_parameter, timeStep):
     mu = planet.mu
 
     # attach gravity to the spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # initialize orbital elements
     oe = orbitalMotion.ClassicElements()

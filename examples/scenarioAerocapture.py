@@ -233,15 +233,12 @@ def run(show_plots, planetCase):
 
     # setup Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    if planetCase == 'Earth':
-        planet = gravFactory.createEarth()
-    else:
-        planet = gravFactory.createMars()
+    planet = gravFactory.createBody(planetCase)
     planet.isCentralBody = True  # ensure this is the central gravitational body
     mu = planet.mu
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     if planetCase == 'Earth':
         r = 6503 * 1000

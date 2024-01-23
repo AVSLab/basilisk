@@ -134,8 +134,8 @@ def run(show_plots):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObjectLeader.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-    scObjectFollower.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObjectLeader)
+    gravFactory.addBodiesTo(scObjectFollower)
 
     # setup MSM module
     MSMmodule = msmForceTorque.MsmForceTorque()

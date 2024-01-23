@@ -143,30 +143,28 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
     # Next a series of gravitational bodies are included
-    gravBodies = gravFactory.createBodies(['earth', 'sun'])
+    gravBodies = gravFactory.createBodies('earth', 'sun')
     planet = gravBodies['earth']
     planet.isCentralBody = True
 
     mu = planet.mu
     # The configured gravitational bodies are added to the spacecraft dynamics with the usual command:
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Next, the default SPICE support module is created and configured.
     timeInitString = "2021 JANUARY 15 00:28:30.0"
 
-    # The following is a support macro that creates a `gravFactory.spiceObject` instance
-    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
+    # The following is a support macro that creates a `spiceObject` instance
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
 
     # Earth is gravity center
-    gravFactory.spiceObject.zeroBase = 'Earth'
+    spiceObject.zeroBase = 'Earth'
 
     # The SPICE object is added to the simulation task list.
     scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, 2)
 
     # The gravitational body is connected to the spacecraft object
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -356,8 +354,8 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     CAM.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     CAM.vehicleConfigInMsg.subscribeTo(vcMsg)
-    CAM.keepOutCelBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
-    CAM.keepInCelBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
+    CAM.keepOutCelBodyInMsg.subscribeTo(spiceObject.planetStateOutMsgs[1])
+    CAM.keepInCelBodyInMsg.subscribeTo(spiceObject.planetStateOutMsgs[1])
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
     attError.attRefInMsg.subscribeTo(CAM.attRefOutMsg)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
@@ -370,12 +368,12 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     
     # Boresight modules
     stBACObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    stBACObject.celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
+    stBACObject.celBodyInMsg.subscribeTo(spiceObject.planetStateOutMsgs[1])
     ssyBACObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    ssyBACObject.celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
+    ssyBACObject.celBodyInMsg.subscribeTo(spiceObject.planetStateOutMsgs[1])
     if use2SunSensors:
         sszBACObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-        sszBACObject.celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
+        sszBACObject.celBodyInMsg.subscribeTo(spiceObject.planetStateOutMsgs[1])
 
     # Vizard Visualization Option
     # ---------------------------

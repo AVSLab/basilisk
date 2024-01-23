@@ -104,7 +104,7 @@ void ThrustCMEstimation::UpdateState(uint64_t CurrentSimNanos)
     preFit  = {nan("1"), nan("1"), nan("1")};
     postFit = {nan("1"), nan("1"), nan("1")};
 
-    if (attError < this->attitudeTol) {
+    if ((this->attGuidInMsg.isWritten()) && (attError < this->attitudeTol)) {
 
         /*! subtract torque about point B from measurement model */
         y = L_B - r_TB_B.cross(T_B);

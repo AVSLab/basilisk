@@ -6,7 +6,7 @@
 Setup On Windows
 ================
 
-The following was developed using Windows 7 and Visual Studio Community 2017 or 2019. The preferred method is to use Python 3. For now support is also provided to use the built-in Python 2, but Python 2 support is now a depreciated functionality.
+The following was developed using Windows 7 and Visual Studio Community 15 2017 or 16 2019.
 
 Software setup
 --------------
@@ -15,12 +15,12 @@ In order to run Basilisk, the following software will be necessary:
 
 -  `Cmake <https://cmake.org/>`__ 3.14 or higher.  Make sure you can execute this
    program from the command line
--  `Python <https://www.python.org/downloads/windows/>`__ 3.7.x
+-  `Python <https://www.python.org/downloads/windows/>`__ 3.8.x or greater
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
--  Visual Studios 15 or Greater
+-  Visual Studios 15 2017 or greater
 -  `Swig <http://www.swig.org/download.html>`__ version 3 or 4
--  (Optional) Get the `GitKraken <https://www.gitkraken.com>`__
-   application to be able to pull and manage a copy of Basilisk
+-  (Optional) A GiT GUI application such as `GitKraken <https://www.gitkraken.com>`__
+   to manage your copy of the Basilisk repository
 
 The following python package dependencies are automatically checked and installed in the steps below.
 
@@ -32,11 +32,24 @@ Configuration
 Strongly recommended to stick with default 64-bit installations.
 Decide whether target deployment is 32 (win32) or 64 (x64) bit. Which ever chosen you will need the matching python and software for that architecture.
 
-Configuring Python
+Installing Python
 ~~~~~~~~~~~~~~~~~~
 
 Python is installed using the Windows installer found on the Python website. Make sure to choose the correct
-installer for your architecture.
+installer for your architecture. When stepping through the installer there are two menus options menus. The 
+first is the optional features menu for which all options should be selected.
+
+   .. image:: /_images/static/windows-installer-python-optional-features-installer-menu.png
+      :align: center
+      :scale: 75%
+
+The second menu is the python advanced options menu where both "Download debugging symbols" and "Download debug binaries 
+(requires VS 2017 or later)" should be selected in order to build Basilisk with a Debug profile. A Debug profile is
+required to place accurate breakpoints/attach a debugger to C/C++ code.  
+ 
+   .. image:: /_images/static/windows-installer-python-advanced-options-installer-menu.png
+      :align: center
+      :scale: 75%
 
 Install Swig
 ~~~~~~~~~~~~
@@ -53,9 +66,13 @@ Add SWIG and Basilisk paths into environment variables using the following steps
   - Under the Advanced tab, Select Environment Variables
   - Under the User (or System, depending on your setup) Variables panel, Select Path, and Click Edit
 
-    - Add the ``swig.exe`` directory to your path
+    - Add the ``swig.exe`` directory to your path.  See this `site <https://stackoverflow.com/questions/48382254/cmake-error-could-not-find-swig-missing-swig-dir>`__
+      for more info on setting paths for swig.
     - add the path to ``CMake\bin``, such as ``C:\Program Files\CMake\bin``
-    - Add the Basilisk library directory (``path2bsk/dist3/Basilisk``) to your path. Here, ``path2bsk`` is replaced with the actual path to the Basilisk folder.
+    - Add the Basilisk library directory (``path2bsk/dist3/Basilisk``) to your path. Here,
+      ``path2bsk`` is replaced with the actual path to the Basilisk folder.  Note, the ``dist3`` folder does not
+      exist to begin with, but is created automatically when configuring Basilisk with ``python conanfile.py``
+      as discussed below.
 
 For more information on how to configure the path Variable on Windows see this
 `help <https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/>`__ link.
@@ -63,6 +80,12 @@ Example added path formats::
 
    PYTHON_INCLUDE = C:\Program Files\Python37\include
    PYTHON_LIB = C:\Program Files\Python37\libs\python37.lib
+
+.. note::
+
+    If any environment variables have been modified (``cmake``, ``swig``, ``path2bsk`` paths),
+    Command Prompt needs
+    to be closed and rebooted (and a machine reboot MAY be needed) for the change to take effect.
 
 
 Using A Python Virtual Environment
@@ -102,7 +125,7 @@ Installing required python support packages
 - Basilisk uses conan for package managing. In order to do so, users
   must ensure ``wheel`` is installed and install ``conan``::
 
-       (venv) $ pip install wheel conan
+       (venv) $ pip install wheel 'conan<2.0'
 
   The conan repositories information is automatically setup by ``conanfile.py``.
 
@@ -139,6 +162,19 @@ When all the prerequisite installations are complete, the project can be built a
    This process will verify that the minimum required Basilisk python packages are installed, and that
    the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
    folder.
+
+   .. note::
+
+        The default Window compiler is Visual Studio 16.  If you had VS 17 installed and downgraded to VS 16,
+        then the system might still find VS 17 and give an error when running the above command.
+        If you want to compile with latest VS 17, then use
+        ``python conanfile.py --generator "Visual Studio 17 2022"``.
+
+   .. note::
+
+        To build on Windows you need to run an account with admin privileges.
+
+
 
 #. To test your setup you can run one of the :ref:`examples`:
 

@@ -33,6 +33,13 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Added optional facet articulation to the :ref:`facetSRPDynamicEffector` module.
+- Fixed a bug where the legacy variable logging API would either, not log at all or log at a rate different to the
+  requested rate.
+
+Version 2.2.1 (Dec. 22, 2023)
+-----------------------------
+- Created a new example scenario :ref:`scenarioSatelliteConstellation` demonstrating setup of a Walker-Delta constellation
 - Created a new :ref:`pinholeCamera` module to support generation of landmarks-based measurements around a
   small body.
 - Corrected a memory leak in the ``swig`` access to standard vectors inside messages.
@@ -71,6 +78,10 @@ Version |release|
 - Implemented new syntax for variable logging. See :ref:`bskPrinciples-6`.
 - Added :ref:`scenarioMomentumDumpingZeroNetForce` scenario to illustrate momentum dumping without exerting a net force
   on the spacecraft.
+- Basilisk minimum Python version is now formally 3.8.x (checked by build files). Previously, it was indicated to be
+  3.7.x yet in practice it was 3.8.x.
+- Added a ``TotalAccumDV_CN_N`` field in :ref:`SCStatesMsgPayload` that saves the total accumulated velocity of the
+  spacecraft's center of mass in the inertial frame.
 
 .. warning::
 
@@ -100,6 +111,20 @@ Version |release|
   use spherical harmonics and loads them from a file with a single command. Similarly, the methods ``usePolyhedralGravityModel``
   and ``usePointMassGravityModel`` have been added.
 - Fixed examples and tests to run even when Basilisk is built with ``--vizInterface False``.
+- Added a new method ``setDataBuffer()`` to :ref:`simpleStorageUnit` and :ref:`partitionedStorageUnit` to add or remove data from specified partitions.
+- Refactored ``simIncludeGravBody``. The most notable change for users is that the commonly used line
+  ``scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))``
+  can be replaced by ``gravFactory.addBodiesTo(scObject)`` (where ``scObject`` is a ``spacecraft.Spacecraft`` 
+  or  ``spacecraftSystem.SpacecraftSystem``, and ``gravFactory`` is a ``simIncludeGravBody.gravBodyFactory``)
+- Added condition in :ref:`thrustCMEstimation` to avoid measurement updates when input ``attGuidInMsg`` has not been written.
+- Added :ref:`scenarioSepMomentumManagement` to show how to use a dual-gimbaled electric thruster to perform contunuous
+  momentum management.
+- Clarified documentation of the input variable ``FirstStart`` of the method  ``CreateNewTask()``.
+- Marked the method ``CreateNewTask()`` input variable ``InputDelay`` as depreciated.  This variable
+  was never implemented and did nothing.
+- Fixed terminal events to terminate at the time they are triggered instead of one timestep after.
+
+
 
 Version 2.2.0 (June 28, 2023)
 -----------------------------

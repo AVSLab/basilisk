@@ -37,7 +37,7 @@ The default verbosity is set to the lowest level ``BSK_DEBUG`` such that any ``b
 
 If the verbosity level is to be changed for a particular Basilisk script, then the following instructions explain how this can be done.  At the top of the Basilisk python scrip be sure to include the ``bskLogging`` support package::
 
-    from Basilisk.simulation import bskLogging
+    from Basilisk.architecture import bskLogging
 
 Setting Verbosity Globally for all BSK Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
