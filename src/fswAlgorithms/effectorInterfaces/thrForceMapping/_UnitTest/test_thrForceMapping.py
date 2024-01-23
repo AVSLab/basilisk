@@ -258,7 +258,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         return [testFailCount, ''.join(testMessages)] # We don't handle cases where a thruster is configured incorrectly.
 
     if useDVThruster and numControlAxis == 3:
-        return [testFailCount, ''.join(testMessages)] # 3 control axes doesn't work for dv thrusters (only two axes controllable)
+        return [testFailCount, ''.join(testMessages)] # 3 control axes doesn't work for the dv thruster setup used in this test (only two axes controllable)
 
     results = thrForceMapping.Results_thrForceMapping(requestedTorque, module.controlAxes_B,
                                          vehicleConfigOut.CoM_B, rcsLocationData,
