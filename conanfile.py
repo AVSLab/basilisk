@@ -172,8 +172,8 @@ class BasiliskConan(ConanFile):
 
         # check the version of Python
         print("\nChecking Python version:")
-        if not (sys.version_info.major == 3 and sys.version_info.minor >= 7):
-            print(warningColor + "Python 3.7 or newer should be used with Basilisk." + endColor)
+        if not (sys.version_info.major == 3 and sys.version_info.minor >= 8):
+            print(warningColor + "Python 3.8 or newer should be used with Basilisk." + endColor)
             print("You are using Python {}.{}.{}".format(sys.version_info.major,
                                                          sys.version_info.minor, sys.version_info.micro))
         else:
@@ -273,7 +273,7 @@ class BasiliskConan(ConanFile):
         cmake.definitions["BUILD_OPNAV"] = self.options.opNav
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
         cmake.definitions["EXTERNAL_MODULES_PATH"] = self.options.pathToExternalModules
-        cmake.definitions["PYTHON_VERSION"] = sys.version_info.major + 0.1*sys.version_info.minor
+        cmake.definitions["PYTHON_VERSION"] = f"{sys.version_info.major}.{sys.version_info.minor}"
         cmake.parallel = True
         print(statusColor + "Configuring cmake..." + endColor)
         cmake.configure()

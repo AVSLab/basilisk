@@ -20,6 +20,7 @@ Install
    Install/buildExtModules
    Install/installOptionalPackages
    Install/customPython
+   Install/installBuildConan
 
 
 

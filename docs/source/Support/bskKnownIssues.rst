@@ -10,6 +10,14 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- A bug was introduced at 2.2.1 (2dc0a35) to the :ref:`SimulationBaseClass` `AddModelToTask` function when it was
+  refactored to use the updated module variable logging. The bug manifests as no data being logged for a variable when
+  there are more than one task, a module in each task, and the variable being logged is from a module assigned to a
+  task added to a process after the first task has been added to a process.
+
+
+Version 2.2.1
+-------------
 - There was an issue with :ref:`thrusterStateEffector` where if there are multiple instances of the
   thruster state effector then the last effector will over-write all the state of the earlier thrusters.
   This is corrected in the current release.

@@ -136,30 +136,28 @@ def run(show_plots):
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
     # Next a series of gravitational bodies are included
-    gravBodies = gravFactory.createBodies(['earth', 'sun'])
+    gravBodies = gravFactory.createBodies('earth', 'sun')
     planet = gravBodies['earth']
     planet.isCentralBody = True
 
     mu = planet.mu
     # The configured gravitational bodies are added to the spacecraft dynamics with the usual command:
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Next, the default SPICE support module is created and configured.
     timeInitString = "2022 JUNE 27 00:00:00.0"
 
-    # The following is a support macro that creates a `gravFactory.spiceObject` instance
-    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
+    # The following is a support macro that creates a `spiceObject` instance
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
 
     # Earth is gravity center
-    gravFactory.spiceObject.zeroBase = 'Earth'
+    spiceObject.zeroBase = 'Earth'
 
     # The SPICE object is added to the simulation task list.
-    scSim.AddModelToTask(fswTask, gravFactory.spiceObject, 2)
+    scSim.AddModelToTask(fswTask, spiceObject, 2)
 
     # The gravitational body is connected to the spacecraft object
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()

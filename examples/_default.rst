@@ -80,6 +80,7 @@ Attitude Control with Actuators
    Pointing with Attitude Dynamic Effector Thrusters <scenarioAttitudeFeedback2T_TH>
    Reaction Wheel Momentum Dumping using Thrusters <scenarioMomentumDumping>
    Reaction Wheel Momentum Dumping using Thrusters with Zero Net Force exerted <scenarioMomentumDumpingZeroNetForce>
+   Continuous Momentum Management using Dual-Gimbaled Electric Thruster <scenarioSepMomentumManagement>
 
 
 Attitude Steering Control
@@ -298,6 +299,7 @@ Stand Alone Architecture
    Electrostatic Tractor Debris Reorbiting <scenarioDebrisReorbitET>
    Attitude-Driven differential drag control <scenarioDragRendezvous>
    Servicer approaching a debris object with 3 flight modes <scenarioRendezVous>
+   Walker-Delta Satellite Constellation <scenarioSatelliteConstellation>
 
 
 ``FormationBskSim`` Architecture

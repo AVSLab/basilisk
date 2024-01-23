@@ -404,10 +404,14 @@ if(MSVC)
   # Make sure we are using Multi-Threaded run time library
   foreach(flag CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG
                CMAKE_CXX_FLAGS_RELEASE)
-    string(REPLACE "/D_DEBUG" "" "${flag}" "${${flag}}")
-    string(REPLACE "/MD" "${CONAN_LINK_RUNTIME_MULTI}" "${flag}" "${${flag}}")
-    string(REPLACE "/MDd" "${CONAN_LINK_RUNTIME_MULTI}" "${flag}" "${${flag}}")
-    string(REPLACE "/MTd" "${CONAN_LINK_RUNTIME_MULTI}" "${flag}" "${${flag}}")
+    if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+      string(REPLACE "/D_DEBUG" "" "${flag}" "${${flag}}")
+      string(REPLACE "/MDd" "${CONAN_LINK_RUNTIME_MULTI}" "${flag}" "${${flag}}")
+      string(REPLACE "/MTd" "${CONAN_LINK_RUNTIME_MULTI}" "${flag}" "${${flag}}")
+    else()
+      string(REPLACE "/MD" "${CONAN_LINK_RUNTIME_MULTI}" "${flag}" "${${flag}}")
+      string(REPLACE "/MT" "${CONAN_LINK_RUNTIME_MULTI}" "${flag}" "${${flag}}")
+    endif()
     set("${flag}" "${${flag}} /EHsc")
   endforeach()
 elseif(APPLE)
@@ -594,7 +598,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/simulation")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
 
-if(WIN32 AND (PYTHON_VERSION GREATER 3.7))
+if(WIN32 AND (PYTHON_VERSION GREATER 3.8))
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
        "#init file written by the build\n" "import sys, os\n" "from Basilisk import __path__\n"
        "bskPath = __path__[0]\n" "os.add_dll_directory(bskPath)\n")

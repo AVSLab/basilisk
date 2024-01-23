@@ -215,7 +215,7 @@ class BSKDynamicModels():
         gravBodies['mars barycenter'].useSphericalHarmonicsGravityModel(
             bskPath + '/supportData/LocalGravData/GGM2BData.txt', 2)
 
-        self.scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(self.gravFactory.gravBodies.values()))
+        self.gravFactory.addBodiesTo(self.scObject)
         self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
                                               timeInitString,
                                               epochInMsg=True)
@@ -369,8 +369,8 @@ class BSKDynamicModels():
     def SetSimpleGrav(self):
         planet = self.gravFactory.createMarsBarycenter()
         planet.isCentralBody = True
-        self.scObject.gravField.gravBodies = \
-            spacecraft.GravBodyVector(list(self.gravFactory.gravBodies.values()))
+        
+        self.gravFactory.addBodiesTo(self.scObject)
 
     # Global call to initialize every module
     def InitAllDynObjects(self, SimBase):

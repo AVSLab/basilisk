@@ -163,20 +163,18 @@ def run(show_plots):
     mu = earth.mu
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # setup spice library for Earth ephemeris and Hubble states
     timeInitString = "2015 February 10, 00:00:00.0 TDB"
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
-    gravFactory.spiceObject.zeroBase = 'Earth'
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
+    spiceObject.zeroBase = 'Earth'
     scNames = ["HUBBLE SPACE TELESCOPE"]
-    gravFactory.spiceObject.addSpacecraftNames(messaging.StringVector(scNames))
-    gravFactory.spiceObject.loadSpiceKernel("hst_edited.bsp", bskPath + '/supportData/EphemerisData/')
+    spiceObject.addSpacecraftNames(messaging.StringVector(scNames))
+    spiceObject.loadSpiceKernel("hst_edited.bsp", bskPath + '/supportData/EphemerisData/')
 
     # need spice to run before spacecraft module as it provides the spacecraft translational states
-    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject)
+    scSim.AddModelToTask(simTaskName, spiceObject)
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup extForceTorque module
@@ -235,7 +233,7 @@ def run(show_plots):
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
-    scObject.transRefInMsg.subscribeTo(gravFactory.spiceObject.transRefStateOutMsgs[0])
+    scObject.transRefInMsg.subscribeTo(spiceObject.transRefStateOutMsgs[0])
 
     #
     # Setup data logging before the simulation is initialized
@@ -273,7 +271,7 @@ def run(show_plots):
 
     # unload custom Spice kernel
     gravFactory.unloadSpiceKernels()
-    gravFactory.spiceObject.unloadSpiceKernel("hst_edited.bsp", bskPath + '/supportData/EphemerisData/')
+    spiceObject.unloadSpiceKernel("hst_edited.bsp", bskPath + '/supportData/EphemerisData/')
 
     #
     #   plot the results

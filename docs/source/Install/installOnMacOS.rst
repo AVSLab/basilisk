@@ -8,7 +8,7 @@ Setup On macOS
 ==============
 
 These instruction outline how to install Basilisk (BSK) on a clean version of macOS.
-Basilisk requires the use of Python 3.  Don't use the Python 2 system that comes with macOS.
+Basilisk requires the use of Python 3.8.x or greater.
 
 The following python package dependencies are automatically checked and installed in the steps below.
 
@@ -120,7 +120,7 @@ Installing required python support packages
 -  Basilisk uses ``conan`` for package managing. In order to do so, users
    must ensure ``wheel`` is installed and install ``conan``::
 
-       (.venv) $ pip3 install wheel conan
+       (.venv) $ pip3 install wheel 'conan<2.0'
 
    The conan repositories information is automatically setup by ``conanfile.py``.
 

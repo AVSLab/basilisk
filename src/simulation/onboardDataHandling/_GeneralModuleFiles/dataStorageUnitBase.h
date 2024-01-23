@@ -34,7 +34,7 @@
 
 struct dataInstance {
     char dataInstanceName[128];     //!< data instance name
-    double dataInstanceSum;         //!< data instance sum value, bits
+    int64_t dataInstanceSum;         //!< data instance sum value, bits
 }; //!< Struct for instances of data stored in a buffer. Includes names and amounts.
 
 /*! @brief on-board data handling base class */
@@ -45,6 +45,7 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void addDataNodeToModel(Message<DataNodeUsageMsgPayload> *tmpNodeMsg); //!< Adds dataNode to the storageUnit
     void UpdateState(uint64_t CurrentSimNanos);
+    void setDataBuffer(std::string partitionName, int64_t data); //!< Adds/removes the data from the partitionName partition once
 
 protected:
     void writeMessages(uint64_t CurrentClock);
@@ -54,18 +55,18 @@ protected:
     virtual void customWriteMessages(uint64_t CurrentClock); //!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.
     int messageInStoredData(DataNodeUsageMsgPayload *tmpNodeMsg); //!< Returns index of the dataName if it's already in storedData
-    double sumAllData(); //!< Sums all of the data in the storedData vector
+    int64_t sumAllData(); //!< Sums all of the data in the storedData vector
 
 public:
     std::vector<ReadFunctor<DataNodeUsageMsgPayload>> nodeDataUseInMsgs; //!< Vector of data node input message names
     Message<DataStorageStatusMsgPayload> storageUnitDataOutMsg; //!< Vector of message names to be written out by the storage unit
-    double storageCapacity; //!< Storage capacity of the storage unit
+    int64_t storageCapacity; //!< Storage capacity of the storage unit
     BSKLogger bskLogger;    //!< logging variable
 
 protected:
     DataStorageStatusMsgPayload storageStatusMsg; //!< class variable
     std::vector<DataNodeUsageMsgPayload> nodeBaudMsgs; //!< class variable
-    double storedDataSum; //!< [bits] Stored data in bits.
+    int64_t storedDataSum; //!< [bits] Stored data in bits.
     std::vector<dataInstance> storedData; //!< Vector of data. Represents the makeup of the data buffer.
     double previousTime; //!< Previous time used for integration
     double currentTimestep;//!< [s] Timestep duration in seconds.

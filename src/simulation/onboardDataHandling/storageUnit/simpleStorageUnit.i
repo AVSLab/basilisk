@@ -33,6 +33,13 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "stdint.i"
 
+//When using scientific notation in Python (1E9), it is interpreted as float
+// giving a type error when assigning storageCapacity or using setDataBuffer.
+// This maps that float to int64_t in C++ in this module.
+%typemap(in) int64_t {
+    $1 = static_cast<int64_t>(PyFloat_AsDouble($input));
+}
+
 %include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
 %include "simpleStorageUnit.h"
 %include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"

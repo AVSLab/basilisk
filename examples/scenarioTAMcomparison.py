@@ -184,7 +184,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     req = planet.radEquator
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     #
     # create the centered dipole magnetic field

@@ -444,6 +444,8 @@ void Albedo::evaluateAlbedoModel(int idx)
         std::ifstream input(fileName);
         if (!input) {
             bskLogger.bskLog(BSK_ERROR, "Albedo Module (evaluateAlbedoModel): Albedo module is unable to load file %s", fileName.c_str());
+            // return to avoid reading/attempting to process the invalid file below
+            return;
         }
         //! - Read the albedo coefficients
         std::string line, field;

@@ -127,13 +127,12 @@ def run(show_plots, useClassicElem, numOrbits):
 
     # grav
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    gravBodies = gravFactory.createBodies(['earth'])
-    gravBodies['earth'].isCentralBody = True
-    gravBodies['earth'].useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S.txt', 2)
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
-        list(gravFactory.gravBodies.values()))
-    scObject2.gravField.gravBodies = spacecraft.GravBodyVector(
-        list(gravFactory.gravBodies.values()))
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True
+    mu = earth.mu
+    earth.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S.txt', 2)
+    gravFactory.addBodiesTo(scObject)
+    gravFactory.addBodiesTo(scObject2)
 
     # extObj
     extFTObject2 = extForceTorque.ExtForceTorque()
@@ -179,7 +178,6 @@ def run(show_plots, useClassicElem, numOrbits):
     scSim.AddModelToTask(fswTaskName, meanOEFeedbackObj, 1)
 
     # ----- Setup spacecraft initial states ----- #
-    mu = gravFactory.gravBodies['earth'].mu
     oe = orbitalMotion.ClassicElements()
     oe.a = 11000 * 1e3  # meters
     oe.e = 0.4

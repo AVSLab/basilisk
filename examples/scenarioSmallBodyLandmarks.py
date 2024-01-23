@@ -345,7 +345,7 @@ def run(show_plots, useBatch):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
 
     # Attach gravity to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    gravFactory.addBodiesTo(scObject)
 
     # Set extForceTorque module
     # The control torque is read in through the messaging system

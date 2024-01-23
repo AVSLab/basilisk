@@ -28,6 +28,18 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "std_vector.i"
 
+%template() std::vector<std::string>;
+
+// Declaring planetFrames %naturalvar removes the need for the StringVector wrapper:
+//    mySpiceInterface.planetFrames = ["a", "b", "c"]
+// is allowed, which is more pythonic than:
+//    mySpiceInterface.planetFrames = spiceInterface.StringVector(["a", "b", "c"])
+// (which is also allowed)
+// However, modifiying in place is forbidden:
+//    mySpiceInterface.planetFrames[2] = "bb"
+// this raises an error because mySpiceInterface.planetFrames is returned by value
+%naturalvar SpiceInterface::planetFrames; 
+
 %include "sys_model.i"
 
 %include "spiceInterface.h"
