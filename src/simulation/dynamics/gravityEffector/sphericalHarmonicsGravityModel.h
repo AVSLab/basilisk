@@ -69,7 +69,7 @@ class SphericalHarmonicsGravityModel : public GravityModel {
      * If include_zero_degree is false the degree that corresponds to the spherical
      * term (point-mass) of the gravity is ignored.
      */
-    Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed, unsigned int degree,
+    Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed, size_t degree,
                                  bool include_zero_degree) const;
 
     /** Returns the gravitational potential energy at a position around this body.
