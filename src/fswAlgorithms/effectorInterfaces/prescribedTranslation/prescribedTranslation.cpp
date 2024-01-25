@@ -142,3 +142,93 @@ void PrescribedTranslation::UpdateState(uint64_t callTime)
     // Write the output message
     this->prescribedTranslationOutMsg.write(&prescribedTranslationMsgOut, moduleID, callTime);
 }
+
+/*! Setter method for the translating body hub-relative position vector.
+ @return void
+ @param r_FM_M Translating body hub-relative position vector
+*/
+void PrescribedTranslation::setR_FM_M(const Eigen::Vector3d &r_FM_M) {
+    this->r_FM_M = r_FM_M;
+}
+
+/*! Setter method for the translating body hub-relative velocity vector.
+ @return void
+ @param rPrime_FM_M Translating body hub-relative velocity vector
+*/
+void PrescribedTranslation::setRPrime_FM_M(const Eigen::Vector3d &rPrime_FM_M) {
+    this->rPrime_FM_M = rPrime_FM_M;
+}
+
+/*! Setter method for the translating body hub-relative acceleration vector.
+ @return void
+ @param rPrimePrime_FM_M Translating body hub-relative acceleration vector
+*/
+void PrescribedTranslation::setRPrimePrime_FM_M(const Eigen::Vector3d &rPrimePrime_FM_M) {
+    this->rPrimePrime_FM_M = rPrimePrime_FM_M;
+}
+
+/*! Setter method for the ramp segment scalar linear acceleration.
+ @return void
+ @param transAccelMax [m/s^2] Ramp segment linear angular acceleration
+*/
+void PrescribedTranslation::setTransAccelMax(double transAccelMax) {
+    this->transAccelMax = transAccelMax;
+}
+
+/*! Setter method for the translating body axis of translation.
+ @return void
+ @param transAxis_M Translating body axis of translation (unit vector)
+*/
+void PrescribedTranslation::setTransAxis_M(const Eigen::Vector3d &transAxis_M) {
+    this->transAxis_M = transAxis_M;
+}
+
+/*! Setter method for the initial translating body hub-relative position.
+ @return void
+ @param transPosInit [m] Initial translating body position relative to the hub
+*/
+void PrescribedTranslation::setTransPosInit(double transPosInit) {
+    this->transPosInit = transPosInit;
+}
+
+/*! Getter method for the translating body's hub-relative position vector.
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d &PrescribedTranslation::getR_FM_M() const {
+    return this->r_FM_M;
+}
+
+/*! Getter method for the translating body's hub-relative linear velocity vector.
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d &PrescribedTranslation::getRPrime_FM_M() const {
+    return this->rPrime_FM_M;
+}
+
+/*! Getter method for the translating body's hub-relative linear acceleration vector.
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d &PrescribedTranslation::getRPrimePrime_FM_M() const {
+    return this->rPrimePrime_FM_M;
+}
+
+/*! Getter method for the ramp segment scalar linear acceleration.
+ @return double
+*/
+double PrescribedTranslation::getTransAccelMax() const {
+    return this->transAccelMax;
+}
+
+/*! Getter method for the translating body axis of translation.
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d &PrescribedTranslation::getTransAxis_M() const {
+    return this->transAxis_M;
+}
+
+/*! Getter method for the initial translating body position.
+ @return double
+*/
+double PrescribedTranslation::getTransPosInit() const {
+    return this->transPosInit;
+}

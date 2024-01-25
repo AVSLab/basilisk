@@ -95,9 +95,9 @@ def test_prescribedTranslation(show_plots,
     prescribedTrans = prescribedTranslation.PrescribedTranslation()
     prescribedTrans.ModelTag = "prescribedTrans"
     transAxis_M = np.array([0.5, 0.0, 0.5 * np.sqrt(3)])
-    prescribedTrans.transAxis_M = transAxis_M
-    prescribedTrans.transAccelMax = transAccelMax  # [m/s^2]
-    prescribedTrans.transPosInit = transPosInit  # [m]
+    prescribedTrans.setTransAxis_M(transAxis_M)
+    prescribedTrans.setTransAccelMax(transAccelMax)  # [m/s^2]
+    prescribedTrans.setTransPosInit(transPosInit)  # [m]
 
     # Add the prescribedTranslation test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, prescribedTrans)
