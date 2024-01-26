@@ -123,7 +123,7 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
     configData->burnComplete |= (configData->maxTime != 0.0 && configData->burnTime > configData->maxTime);
     configData->burnExecuting = configData->burnComplete != 1 && configData->burnExecuting == 1;
 
-    if(configData->burnComplete)
+    if(configData->burnComplete || configData->burnExecuting != 1)
     {
         effCmd = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
         THRArrayOnTimeCmdMsg_C_write(&effCmd, &configData->thrCmdOutMsg, moduleID, callTime);
