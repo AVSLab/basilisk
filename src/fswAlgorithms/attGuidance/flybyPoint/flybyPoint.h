@@ -46,7 +46,7 @@ class FlybyPoint: public SysModel {
 public:
     FlybyPoint();
     ~FlybyPoint();
-    void SelfInit();                   //!< Self initialization for C-wrapped messages
+    void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 

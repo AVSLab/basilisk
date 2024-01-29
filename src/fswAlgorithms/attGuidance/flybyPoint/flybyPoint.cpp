@@ -26,19 +26,14 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
 
-/*! Module constructor */
 FlybyPoint::FlybyPoint() = default;
 
-
-/*! Module destructor */
 FlybyPoint::~FlybyPoint() = default;
-
 
 /*! Initialize C-wrapped output messages */
 void FlybyPoint::SelfInit(){
     AttRefMsg_C_init(&this->attRefOutMsgC);
 }
-
 
 /*! This method is used to reset the module.
  @return void
@@ -116,18 +111,15 @@ void FlybyPoint::UpdateState(uint64_t CurrentSimNanos)
         }
 
         /*! compute inertial-to-reference DCM at time of read */
-        for (int i=0; i<3; i++) {
-            this->R0N[0][i] = ur_N[i];
-            this->R0N[1][i] = ut_N[i];
-            this->R0N[2][i] = uh_N[i];
-        }
+        this->R0N.row(0) = ur_N;
+        this->R0N.row(1) = ut_N;
+        this->R0N.row(2) = uh_N;
 
         /*! update lastFilterReadTime to current time and dt to zero */
         this->lastFilterReadTime = CurrentSimNanos;
         dt = 0;
     }
 
-    /*! compute rotation angle of reference frame from last read time */
     double theta;
     if (this->singularityFlag == nonSingular) {
         theta = atan(tan(this->gamma0) +this->f0 / cos(this->gamma0) * dt) - this->gamma0;
@@ -163,7 +155,6 @@ void FlybyPoint::UpdateState(uint64_t CurrentSimNanos)
 
     /*! Write the output messages */
     this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, CurrentSimNanos);
-
     /*! Write the C-wrapped output messages */
     AttRefMsg_C_write(&attMsgBuffer, &this->attRefOutMsgC, this->moduleID, CurrentSimNanos);
 }
