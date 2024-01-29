@@ -49,11 +49,6 @@ public:
     void SelfInit();                   //!< Self initialization for C-wrapped messages
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
-    
-    double     dtFilterData = 0;       //!< time between two subsequent reads of the filter information
-    double     epsilon = 0;            //!< tolerance for singular conditions when position and velocity are collinear
-    int64_t    signOfOrbitNormalFrameVector = 1;  //!< Sign of orbit normal vector to complete reference frame
-    FlybyModel flybyModel;             //!< flag to indicate which flyby model is being used
 
     ReadFunctor<NavTransMsgPayload>  filterInMsg;               //!< input msg relative position w.r.t. asteroid
     ReadFunctor<EphemerisMsgPayload> asteroidEphemerisInMsg;    //!< input asteroid ephemeris msg
@@ -61,6 +56,11 @@ public:
     AttRefMsg_C attRefOutMsgC = {};                             //!< C-wrapped attitude reference output message
 
 private:
+    double     timeBetweenFilterData = 0;       //!< time between two subsequent reads of the filter information
+    double     toleranceForCollinearity = 0;            //!< tolerance for singular conditions when position and velocity are collinear
+    int64_t    signOfOrbitNormalFrameVector = 1;  //!< Sign of orbit normal vector to complete reference frame
+    FlybyModel chosenFlybyModel = rectilinear;              //!< enum to indicate which flyby model is being used
+
     bool            firstRead;           //!< variable to attest if this is the first read after a Reset
     double          f0;                  //!< ratio between relative velocity and position norms at time of read [Hz]
     double          gamma0;              //!< flight path angle of the spacecraft at time of read [rad]

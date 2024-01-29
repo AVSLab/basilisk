@@ -48,7 +48,7 @@ void FlybyPoint::Reset(uint64_t CurrentSimNanos)
     if (!this->filterInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, ".filterInMsg wasn't connected.");
     }
-    if (this->flybyModel == cwEquations && !this->asteroidEphemerisInMsg.isLinked()) {
+    if (this->chosenFlybyModel == cwEquations && !this->asteroidEphemerisInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, ".asteroidEphemerisInMsg wasn't connected.");
     }
 
@@ -71,7 +71,7 @@ void FlybyPoint::UpdateState(uint64_t CurrentSimNanos)
     /*! compute dt from current time and last filter read time [s] */
     double dt = (CurrentSimNanos - this->lastFilterReadTime)*NANO2SEC;
 
-    if ((dt >= this->dtFilterData) || this->firstRead) {
+    if ((dt >= this->timeBetweenFilterData) || this->firstRead) {
         /*! set firstRead to false if this was the first read after a reset */
         if (this->firstRead) {
             this->firstRead = false;
