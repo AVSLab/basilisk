@@ -64,9 +64,12 @@ private:
     bool            firstRead;           //!< variable to attest if this is the first read after a Reset
     double          f0;                  //!< ratio between relative velocity and position norms at time of read [Hz]
     double          gamma0;              //!< flight path angle of the spacecraft at time of read [rad]
-    double          R0N[3][3];           //!< inertial-to-reference DCM at time of read
+    Eigen::Matrix3d R0N;           //!< inertial-to-reference DCM at time of read
+    Eigen::Vector3d r_BN_N;           //!< filter spacecraft position estimate in inertial coordinates
+    Eigen::Vector3d v_BN_N;           //!< filter spacecraft velocity estimate in inertial coordinates
     SingularityFlag singularityFlag;     //!< +1 or -1 during singular configurations, 0 otherwise
     uint64_t        lastFilterReadTime;  //!< time of last filter read
+
 
     BSKLogger bskLogger;               //!< BSK Logging
 };
