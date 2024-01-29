@@ -18,10 +18,10 @@ class GenerateMessages:
                 path to add messages for external module (default empty string)
 
     """
-    def __init__(self, pathToExternalModules):
+    def __init__(self, pathToExternalModules, build_folder="../../../../dist3/"):
         self.messageTemplate = ""
         self.headerTemplate = ""
-        self.autoSourceDestDir = '../../../../dist3/autoSource/'
+        self.autoSourceDestDir = os.path.join(build_folder, 'autoSource/')
         self.destinationDir = os.path.join(self.autoSourceDestDir, 'cMsgCInterface/')
         self.pathToExternalModules = pathToExternalModules
         with open('./cMsgCInterfacePy.i.in', 'r') as f:
@@ -57,7 +57,6 @@ class GenerateMessages:
         except OSError as exc:  # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise
-        print(self.destinationDir)
         os.makedirs(os.path.dirname(self.destinationDir))
 
     def __generateMessagingHeaderInterface(self):

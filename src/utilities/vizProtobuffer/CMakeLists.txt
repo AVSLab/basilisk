@@ -1,18 +1,14 @@
 cmake_minimum_required(VERSION 3.14)
 
 if(BUILD_VIZINTERFACE)
-    find_package(protobuf CONFIG REQUIRED)
-    message(STATUS "Scanning ${CMAKE_CURRENT_SOURCE_DIR} for protobuf interface definitions")
-
-     find_program(PROTOC_EXE
-         NAMES protoc
-         PATHS ENV
-         PATH NO_DEFAULT_PATH
-     )
+     find_package(Protobuf REQUIRED)
+     message(STATUS "Scanning ${CMAKE_CURRENT_SOURCE_DIR} for protobuf interface definitions")
 
      add_custom_target(GeneratedProtobufMessages
-        DEPENDS "${PROTOC_EXE}"
+        DEPENDS protobuf::protoc
      )
+
+     get_property(PROTOC_EXE TARGET protobuf::protoc PROPERTY LOCATION)
 
      file(GLOB PROTO_DEFS "${CMAKE_CURRENT_SOURCE_DIR}/*.proto")
 

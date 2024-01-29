@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.18)
+# cmake>=3.18 is required for FindPython3 to work. See https://github.com/pypa/manylinux/issues/613
+
 if(POLICY CMP0078)
   cmake_policy(SET CMP0078 NEW)
 endif()
@@ -41,6 +43,8 @@ list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/conan")
 
 include(bskTargetExcludeBuildOptions)
 
+# Find necessary packages
+find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development.Module)
 
 # ! create_symlinks : create symlinks to support files in source rather than keeping them in dist The function takes one
 # required argument and N optional arguments. \argn: a list of supporting file paths
@@ -122,7 +126,7 @@ function(sub_dir_list result curdir)
 endfunction(sub_dir_list)
 
 # add header search directories
-include_directories("${CMAKE_SOURCE_DIR}/../dist3/autoSource")
+include_directories("${CMAKE_BINARY_DIR}/autoSource")
 include_directories("${CMAKE_SOURCE_DIR}")
 
 function(generate_package_libraries INIT_DIRECTORY AllLibs)
@@ -162,7 +166,7 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     target_link_libraries(${LIB_NAME} PUBLIC ArchitectureUtilities)
     target_link_libraries(${LIB_NAME} PRIVATE ModuleIdGenerator)
     target_link_libraries(${LIB_NAME} PUBLIC cMsgCInterface)
-    target_link_libraries(${LIB_NAME} PRIVATE ${PYTHON_LIBRARIES})
+    target_link_libraries(${LIB_NAME} PRIVATE Python3::Module)
     target_link_libraries(${LIB_NAME} PRIVATE Eigen3::Eigen3)
 
     # define build location, IDE generation specifications
@@ -201,7 +205,6 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
   find_package(SWIG REQUIRED)
   include(UseSWIG REQUIRED)
-  find_package(PythonLibs 3 REQUIRED)
 
   if(TARGET_LIST)
     string(REPLACE "/" ";" DirList "${TARGET_LIST}")
@@ -280,7 +283,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       include("${PARENT_DIR}/Custom.cmake")
     endif()
 
-    target_include_directories(${TARGET_NAME} PRIVATE ${PYTHON_INCLUDE_PATH}) # Exposes python.h to wrap.c(xx) file
+    target_include_directories(${TARGET_NAME} PRIVATE ${Python3_INCLUDE_DIRS}) # Exposes python.h to wrap.c(xx) file
     target_include_directories(
       ${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/${PARENT_DIR}) # Exposes module .h files to the PYTHON_wrap.c(xx) file
                                                                 # (not located in src)
@@ -328,8 +331,6 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 endfunction(generate_package_targets)
 
 # Start of main projection configuration
-find_package(PythonInterp 3 REQUIRED)
-find_package(PythonLibs 3 REQUIRED)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -587,8 +588,10 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/simulation")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/moduleTemplates")
 
-if(WIN32 AND (PYTHON_VERSION VERSION_GREATER 3.8))
+if(WIN32 AND (Python3_VERSION VERSION_GREATER 3.8))
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
        "#init file written by the build\n" "import sys, os\n" "from Basilisk import __path__\n"
        "bskPath = __path__[0]\n" "os.add_dll_directory(bskPath)\n")
@@ -596,10 +599,10 @@ else()
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#empty init file written by the build")
 endif()
 
-# TODO: Iterate through all dist directories and add __init__.py's where they don't exist
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")
+# Iterate through all dist directories and add __init__.py's where they don't exist
 file(
   GLOB_RECURSE DIST_DIRECTORIES
+  FOLLOW_SYMLINKS
   LIST_DIRECTORIES true
   "${CMAKE_BINARY_DIR}/Basilisk/*")
 
@@ -625,17 +628,15 @@ endforeach()
 file(GLOB pythonModules "${CMAKE_SOURCE_DIR}/utilities/*.py" "${CMAKE_SOURCE_DIR}/utilities/**")
 create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/utilities" ${pythonModules})
 
-# symlink into package the supportData files to keep
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/supportData")
-file(GLOB dataFiles "${CMAKE_SOURCE_DIR}/../supportData/*")
-create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/supportData" ${dataFiles})
+# Link to the supportData so that it is included with any installations (NOTE: CMake 3.14+)
+create_symlinks(${CMAKE_BINARY_DIR}/Basilisk ${CMAKE_SOURCE_DIR}/supportData)
 
 # run python script to modify swig gen code
 add_custom_target(OverwriteSwig ALL)
 set(ARG utilities/overwriteSwig.py ${CMAKE_BINARY_DIR} ${SWIG_VERSION})
 add_custom_command(
   TARGET OverwriteSwig
-  COMMAND ${PYTHON_EXECUTABLE} ${ARG}
+  COMMAND ${Python3_EXECUTABLE} ${ARG}
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/../src/)
 if(TARGET _thrusterDynamicEffector)
   add_dependencies(OverwriteSwig _thrusterDynamicEffector _vscmgStateEffector _reactionWheelStateEffector)

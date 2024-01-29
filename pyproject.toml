@@ -1,0 +1,44 @@
+[build-system]
+# Requirements for calling setuptools
+requires = [
+    "setuptools>=64",  # For PEP 660 (Allow editable installs from pyproject.toml)
+
+    # Requirements for building Basilisk through setuptools and conanfile
+    "conan>=2.0.5",
+    "cmake>=3.18",
+    "parse>=1.18.0",
+]
+
+# Use setuptools to build everything.
+build-backend = "setuptools.build_meta"
+
+[project]
+name        = 'Basilisk'
+dynamic     = ["version"]
+requires-python = ">=3.8"
+
+readme      = "README.md"
+license     = {file = "LICENSE"}
+description = "Basilisk: an Astrodynamics Simulation Framework"
+
+dependencies = [
+    # Requirements for Basilisk
+    "pandas",
+    "numpy",
+    "matplotlib",
+    "Pillow",
+    "colorama",
+    'tqdm',
+]
+
+[project.urls]
+homepage = 'https://hanspeterschaub.info/basilisk/'
+
+[project.optional-dependencies]
+test = [
+    'pytest',
+    'flake8',
+    'pytest-cov',
+    'hypothesis',
+    'pytest-random-order'
+]
