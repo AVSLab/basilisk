@@ -14,6 +14,9 @@ Version |release|
   refactored to use the updated module variable logging. The bug manifests as no data being logged for a variable when
   there are more than one task, a module in each task, and the variable being logged is from a module assigned to a
   task added to a process after the first task has been added to a process.
+- Doing a clean build on Windows appeared to complete, but when running python simulation scripts,
+  errors came up about not finding Basilisk packages.  The python version number checking on Windows
+  had an issue that is now corrected in the current build.
 
 
 Version 2.2.1
