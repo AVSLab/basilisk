@@ -1,0 +1,24 @@
+on:
+    pull_request:
+        types:
+            - closed
+        branches:
+            - develop
+
+jobs:
+    if_merged:
+        if: github.event.pull_request.merged == true
+        runs-on: ubuntu-latest
+        steps:
+        - name: Pull repo
+          uses: actions/checkout@v2
+          with:
+            ref: develop
+        - name: Bump version
+          run: ./.github/workflows/version-bumper.sh ./docs/source/bskVersion.txt
+        - name: Commit and push
+          run: |
+              git config user.name github-actions
+              git config user.email github-actions@github.com
+              git commit -a -m "[AUTO] Bump version number"
+              git push
