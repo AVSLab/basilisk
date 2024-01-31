@@ -96,41 +96,36 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
     // Store the current simulation time
     double t = callTime * NANO2SEC;
 
-    // Define the scalar prescribed states
-    double thetaDDot;
-    double thetaDot;
-    double theta;
-
     // Compute the prescribed scalar states at the current simulation time
     if ((t < this->ts || t == this->ts) && this->tf - this->tInit != 0) // Entered during the first half of the maneuver
     {
-        thetaDDot = this->thetaDDotMax;
-        thetaDot = thetaDDot * (t - this->tInit) + this->thetaDotInit;
-        theta = this->a * (t - this->tInit) * (t - this->tInit) + this->thetaInit;
+        this->thetaDDot = this->thetaDDotMax;
+        this->thetaDot = this->thetaDDot * (t - this->tInit) + this->thetaDotInit;
+        this->theta = this->a * (t - this->tInit) * (t - this->tInit) + this->thetaInit;
     }
     else if ( t > this->ts && t <= this->tf && this->tf - this->tInit != 0) // Entered during the second half of the maneuver
     {
-        thetaDDot = -1 * this->thetaDDotMax;
-        thetaDot = thetaDDot * (t - this->tInit) + this->thetaDotInit - thetaDDot * (this->tf - this->tInit);
-        theta = this->b * (t - this->tf) * (t - this->tf) + this->thetaRef;
+        this->thetaDDot = -1 * this->thetaDDotMax;
+        this->thetaDot = this->thetaDDot * (t - this->tInit) + this->thetaDotInit - this->thetaDDot * (this->tf - this->tInit);
+        this->theta = this->b * (t - this->tf) * (t - this->tf) + this->thetaRef;
     }
     else // Entered when the maneuver is complete
     {
-        thetaDDot = 0.0;
-        theta = this->thetaRef;
-        thetaDot = 0.0;
+        this->thetaDDot = 0.0;
+        this->thetaDot = 0.0;
+        this->theta = this->thetaRef;
         this->convergence = true;
     }
 
     // Determine the prescribed parameters: omega_FM_F and omegaPrime_FM_F
     v3Normalize(this->rotAxis_M, this->rotAxis_M);
-    v3Scale(thetaDot, this->rotAxis_M, this->omega_FM_F);
-    v3Scale(thetaDDot, this->rotAxis_M, this->omegaPrime_FM_F);
+    v3Scale(this->thetaDot, this->rotAxis_M, this->omega_FM_F);
+    v3Scale(this->thetaDDot, this->rotAxis_M, this->omegaPrime_FM_F);
 
     // Determine dcm_FF0
     double dcm_FF0[3][3];
     double prv_FF0_array[3];
-    double theta_FF0 = theta - this->thetaInit;
+    double theta_FF0 = this->theta - this->thetaInit;
     v3Scale(theta_FF0, this->rotAxis_M, prv_FF0_array);
     PRV2C(prv_FF0_array, dcm_FF0);
 
@@ -153,8 +148,8 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
     v3Copy(this->sigma_FM, prescribedRotationOut.sigma_FM);
 
     // Copy the local scalar variables to the spinningBodyOut output message
-    spinningBodyOut.theta = theta;
-    spinningBodyOut.thetaDot = thetaDot;
+    spinningBodyOut.theta = this->theta;
+    spinningBodyOut.thetaDot = this->thetaDot;
 
     // Write the output messages
     this->spinningBodyOutMsg.write(&spinningBodyOut, moduleID, callTime);

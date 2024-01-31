@@ -48,6 +48,9 @@ public:
     double thetaInit;                                           //!< [rad] Initial spinning body angle from frame M to frame F about rotAxis_M
     double thetaDotInit;                                        //!< [rad/s] Initial spinning body angle rate between frame M to frame F
     double thetaRef;                                            //!< [rad] Reference angle from frame M to frame F about rotAxis_M
+    double theta;                                               //!< [rad] Current angle
+    double thetaDot;                                            //!< [rad/s] Current angle rate
+    double thetaDDot;                                           //!< [rad/s^2] Current angular acceleration
     double ts;                                                  //!< [s] The simulation time halfway through the maneuver (switch time for ang accel)
     double tf;                                                  //!< [s] Simulation time when the maneuver is finished
     double a;                                                   //!< Parabolic constant for the first half of the maneuver
