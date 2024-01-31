@@ -91,12 +91,9 @@ def test_prescribedRotation(show_plots, thetaInit, thetaRef, thetaDDotMax, accur
 
     # Initialize the PrescribedRotation1DOF test module configuration data
     rotAxisM = np.array([1.0, 0.0, 0.0])
-    prvInit_FM = thetaInit * rotAxisM
     PrescribedRotation1DOF.rotAxis_M = rotAxisM
+    PrescribedRotation1DOF.thetaInit = thetaInit
     PrescribedRotation1DOF.thetaDDotMax = thetaDDotMax
-    PrescribedRotation1DOF.omega_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedRotation1DOF.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedRotation1DOF.sigma_FM = rbk.PRV2MRP(prvInit_FM)
 
     # Create the PrescribedRotation1DOF input message
     HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()

@@ -38,6 +38,10 @@ void PrescribedRotation1DOF::Reset(uint64_t callTime)
     // Set the initial time
     this->tInit = 0.0;
 
+    this->theta = this->thetaInit;
+    this->thetaDotInit = 0.0;
+    this->thetaDot = 0.0;
+
     // Set the initial convergence to true to enter the required loop in Update() method on the first pass
     this->convergence = true;
 }
@@ -71,11 +75,8 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
         // Store the initial time as the current simulation time
         this->tInit = callTime * NANO2SEC;
 
-        // Calculate the current ange and angle rate
-        double prv_FM_array[3];
-        MRP2PRV(this->sigma_FM, prv_FM_array);
-        this->thetaInit = v3Dot(prv_FM_array, this->rotAxis_M);
-        this->thetaDotInit = v3Norm(this->omega_FM_F);
+        // Update the initial angle
+        this->thetaInit = this->theta;
 
         // Store the reference angle
         this->thetaRef = spinningBodyIn.theta;
