@@ -77,9 +77,8 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
         this->thetaInit = v3Dot(prv_FM_array, this->rotAxis_M);
         this->thetaDotInit = v3Norm(this->omega_FM_F);
 
-        // Store the reference angle and reference angle rate
+        // Store the reference angle
         this->thetaRef = spinningBodyIn.theta;
-        this->thetaDotRef = spinningBodyIn.thetaDot;
 
         // Define temporal information for the maneuver
         double convTime = sqrt(((0.5 * fabs(this->thetaRef - this->thetaInit)) * 8) / this->thetaDDotMax);
@@ -118,8 +117,8 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
     else // Entered when the maneuver is complete
     {
         thetaDDot = 0.0;
-        thetaDot = this->thetaDotRef;
         theta = this->thetaRef;
+        thetaDot = 0.0;
         this->convergence = true;
     }
 
