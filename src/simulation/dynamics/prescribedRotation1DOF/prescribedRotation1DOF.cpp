@@ -160,3 +160,48 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
     this->spinningBodyOutMsg.write(&spinningBodyOut, moduleID, callTime);
     this->prescribedRotationOutMsg.write(&prescribedRotationOut, moduleID, callTime);
 }
+
+/*! Setter method for the spinning body rotation axis.
+ @return void
+ @param rotAxis_M Spinning body rotation axis (unit vector)
+*/
+void PrescribedRotation1DOF::setRotAxis_M(const Eigen::Vector3d &rotAxis_M) {
+    this->rotAxis_M = rotAxis_M / rotAxis_M.norm();
+}
+
+/*! Setter method for the ramp segment scalar angular acceleration.
+ @return void
+ @param thetaDDotMax [rad/s^2] Ramp segment scalar angular acceleration
+*/
+void PrescribedRotation1DOF::setThetaDDotMax(double thetaDDotMax) {
+    this->thetaDDotMax = thetaDDotMax;
+}
+
+/*! Setter method for the initial spinning body angle.
+ @return void
+ @param thetaInit [rad] Initial spinning body angle
+*/
+void PrescribedRotation1DOF::setThetaInit(double thetaInit) {
+    this->thetaInit = thetaInit;
+}
+
+/*! Getter method for the spinning body rotation axis.
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d &PrescribedRotation1DOF::getRotAxis_M() const {
+    return this->rotAxis_M;
+}
+
+/*! Getter method for the ramp segment scalar angular acceleration.
+ @return double
+*/
+double PrescribedRotation1DOF::getThetaDDotMax() const {
+    return this->thetaDDotMax;
+}
+
+/*! Getter method for the initial spinning body angle.
+ @return double
+*/
+double PrescribedRotation1DOF::getThetaInit() const {
+    return this->thetaInit;
+}

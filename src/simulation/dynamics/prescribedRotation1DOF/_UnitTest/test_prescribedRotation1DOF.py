@@ -91,9 +91,9 @@ def test_prescribedRotation(show_plots, thetaInit, thetaRef, thetaDDotMax, accur
 
     # Initialize the PrescribedRotation1DOF test module configuration data
     rotAxisM = np.array([1.0, 0.0, 0.0])
-    PrescribedRotation1DOF.rotAxis_M = rotAxisM
-    PrescribedRotation1DOF.thetaInit = thetaInit
-    PrescribedRotation1DOF.thetaDDotMax = thetaDDotMax
+    PrescribedRotation1DOF.setRotAxis_M(rotAxisM)
+    PrescribedRotation1DOF.setThetaDDotMax(thetaDDotMax)
+    PrescribedRotation1DOF.setThetaInit(thetaInit)
 
     # Create the PrescribedRotation1DOF input message
     HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
