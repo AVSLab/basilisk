@@ -55,6 +55,25 @@ public:
     BSKLogger *bskLogger;                                                  //!< BSK Logging
 
 private:
+
+    /* Coast option member functions */
+    bool isInFirstRampSegment(double time) const;               //!< Method for determining if the current time is within the first ramp segment for the coast option
+    bool isInCoastSegment(double time) const;                   //!< Method for determining if the current time is within the coast segment for the coast option
+    bool isInSecondRampSegment(double time) const;              //!< Method for determining if the current time is within the second ramp segment for the coast option
+    void computeCoastParameters();                              //!< Method for computing the required parameters for the rotation with a coast period
+    void computeCoastSegment(double time);                      //!< Method for computing the scalar rotational states for the coast option coast period
+
+    /* Non-coast option member functions */
+    bool isInFirstRampSegmentNoCoast(double time) const;        //!< Method for determining if the current time is within the first ramp segment for the no coast option
+    bool isInSecondRampSegmentNoCoast(double time) const;       //!< Method for determining if the current time is within the second ramp segment for the no coast option
+    void computeParametersNoCoast();                            //!< Method for computing the required parameters for the rotation with no coast period
+
+    /* Shared member functions */
+    void computeFirstRampSegment(double time);                  //!< Method for computing the scalar rotational states for the first ramp segment
+    void computeSecondRampSegment(double time);                 //!< Method for computing the scalar rotational states for the second ramp segment
+    void computeRotationComplete();                             //!< Method for computing the scalar rotational states when the rotation is complete
+    void computeSigma_FM();                                     //!< Method for computing the current spinning body MRP attitude relative to the mount frame: sigma_FM
+
     /* User-configurable variables */
     double coastOptionRampDuration;                             //!< [s] Ramp time used for the coast option
     double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of spinning body
