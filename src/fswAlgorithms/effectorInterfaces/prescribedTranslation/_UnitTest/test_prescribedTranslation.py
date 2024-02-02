@@ -118,13 +118,7 @@ def test_prescribedTranslation(show_plots,
 
     # Log module data for module unit test validation
     prescribedStatesDataLog = prescribedTrans.prescribedTranslationOutMsg.recorder()
-    transPosLog = prescribedTrans.logger("transPos", testProcessRate)
-    transVelLog = prescribedTrans.logger("transVel", testProcessRate)
-    transAccelLog = prescribedTrans.logger("transAccel", testProcessRate)
     unitTestSim.AddModelToTask(unitTaskName, prescribedStatesDataLog)
-    unitTestSim.AddModelToTask(unitTaskName, transPosLog)
-    unitTestSim.AddModelToTask(unitTaskName, transVelLog)
-    unitTestSim.AddModelToTask(unitTaskName, transAccelLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -200,9 +194,6 @@ def test_prescribedTranslation(show_plots,
 
     # Extract the logged data for plotting and data comparison
     timespan = macros.NANO2SEC * prescribedStatesDataLog.times()  # [s]
-    transPos = transPosLog.transPos  # [m]
-    transVel = transVelLog.transVel  # [m/s]
-    transAccel = transAccelLog.transAccel  # [m/s^2]
     r_FM_M = prescribedStatesDataLog.r_FM_M  # [m]
     rPrime_FM_M = prescribedStatesDataLog.rPrime_FM_M  # [m/s]
     rPrimePrime_FM_M = prescribedStatesDataLog.rPrimePrime_FM_M  # [m/s^2]
@@ -249,7 +240,7 @@ def test_prescribedTranslation(show_plots,
 
 
     # Use the two truth data lists to compare with the module-extracted data
-    np.testing.assert_allclose(transPos[timeCheckIndicesList],
+    np.testing.assert_allclose(r_FM_M.dot(transHat_M)[timeCheckIndicesList],
                                transPosCheckList,
                                atol=accuracy,
                                verbose=True)
@@ -261,7 +252,7 @@ def test_prescribedTranslation(show_plots,
     transPosRef2_plotting = np.ones(len(timespan)) * transPosRef2
     plt.figure()
     plt.clf()
-    plt.plot(timespan, transPos, label=r"$l$")
+    plt.plot(timespan, r_FM_M.dot(transHat_M), label=r"$l$")
     plt.plot(timespan, transPosInit_plotting, '--', label=r'$l_{0}$')
     plt.plot(timespan, transPosRef1_plotting, '--', label=r'$l_{Ref_1}$')
     plt.plot(timespan, transPosRef2_plotting, '--', label=r'$l_{Ref_2}$')
@@ -274,7 +265,7 @@ def test_prescribedTranslation(show_plots,
     # 1B. Plot transVel
     plt.figure()
     plt.clf()
-    plt.plot(timespan, transVel, label=r"$\dot{l}$")
+    plt.plot(timespan, rPrime_FM_M.dot(transHat_M), label=r"$\dot{l}$")
     plt.title(r'Translational Velocity $\dot{l}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
     plt.ylabel('(m/s)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
@@ -284,7 +275,7 @@ def test_prescribedTranslation(show_plots,
     # 1C. Plot transAccel
     plt.figure()
     plt.clf()
-    plt.plot(timespan, transAccel, label=r"$\ddot{l}$")
+    plt.plot(timespan, rPrimePrime_FM_M.dot(transHat_M), label=r"$\ddot{l}$")
     plt.title(r'Translational Acceleration $\ddot{l}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
     plt.ylabel('(m/s$^2$)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)

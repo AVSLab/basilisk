@@ -49,11 +49,7 @@ public:
     double getTransAccelMax() const;                                        //!< Getter method for the ramp segment scalar linear acceleration
     const Eigen::Vector3d &getTransHat_M() const;                           //!< Getter method for the translating body axis of translation
     double getTransPosInit() const;                                         //!< Getter method for the initial translating body position
-
-    double transPos;                                                        //!< [m] Current translational body position along transHat_M
-    double transVel;                                                        //!< [m] Current translational body velocity along transHat_M
-    double transAccel;                                                      //!< [m] Current translational body acceleration along transHat_M
-
+    
     ReadFunctor<LinearTranslationRigidBodyMsgPayload> linearTranslationRigidBodyInMsg;    //!< Input msg for the translational reference position and velocity
     Message<PrescribedTranslationMsgPayload> prescribedTranslationOutMsg;                 //!< Output msg for the translational body prescribed states
 
@@ -98,6 +94,9 @@ private:
     double ts;                                                  //!< [s] The simulation time halfway through the translation
 
     /* Shared module variables */
+    double transPos;                                            //!< [m] Current translational body position along transHat_M
+    double transVel;                                            //!< [m] Current translational body velocity along transHat_M
+    double transAccel;                                          //!< [m] Current translational body acceleration along transHat_M
     bool convergence;                                           //!< Boolean variable is true when the translation is complete
     double tInit;                                               //!< [s] Simulation time at the beginning of the translation
     double transPosInit;                                        //!< [m] Initial translational body position from M to F frame origin along transHat_M
