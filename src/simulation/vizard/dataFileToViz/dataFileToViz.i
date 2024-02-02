@@ -42,16 +42,16 @@ struct RWConfigLogMsg_C;
 
 // Instantiate templates used by example
 namespace std {
-    %template(VizThrConfig) vector<ThrClusterMap>;
-    %template(ThrClusterMapVectorVector) std::vector <std::vector <ThrClusterMap>>;
-    %template(THROutputMsgOutMsgsVector) std::vector<Message<THROutputMsgPayload>>;
-    %template(THROutputMsgOutMsgsPtrVector) std::vector<Message<THROutputMsgPayload>*>;
-    %template(THROutputMsgInMsgsVector) std::vector<ReadFunctor<THROutputMsgPayload>>;
-    %template(THROutputOutMsgsVectorVector) std::vector <std::vector <Message<THROutputMsgPayload>*>>;
-    %template(RWConfigLogMsgOutMsgsVector) std::vector<Message<RWConfigLogMsgPayload>>;
-    %template(RWConfigLogMsgOutMsgsPtrVector) std::vector<Message<RWConfigLogMsgPayload>*>;
-    %template(RWConfigLogMsgInMsgsVector) std::vector<ReadFunctor<RWConfigLogMsgPayload>>;
-    %template(RWConfigLogMsgInMsgsVectorVector) std::vector <std::vector <Message<RWConfigLogMsgPayload>*>>;
+    %template(VizThrConfig) vector<ThrClusterMap, std::allocator<ThrClusterMap> >;
+    %template(ThrClusterMapVectorVector) vector <vector <ThrClusterMap, allocator<ThrClusterMap> >, allocator<vector<ThrClusterMap>> >;
+    %template(THROutputMsgOutMsgsVector) vector<Message<THROutputMsgPayload>, allocator<Message<THROutputMsgPayload>> >;
+    %template(THROutputMsgOutMsgsPtrVector) vector<Message<THROutputMsgPayload>*, allocator<Message<THROutputMsgPayload>*> >;
+    %template(THROutputMsgInMsgsVector) vector<ReadFunctor<THROutputMsgPayload>, allocator<ReadFunctor<THROutputMsgPayload>> >;
+    %template(THROutputOutMsgsVectorVector) vector <vector <Message<THROutputMsgPayload>*, allocator<Message<THROutputMsgPayload>*> >, allocator<vector <Message<THROutputMsgPayload>*>> >;
+    %template(RWConfigLogMsgOutMsgsVector) vector<Message<RWConfigLogMsgPayload>, allocator<Message<RWConfigLogMsgPayload>> >;
+    %template(RWConfigLogMsgOutMsgsPtrVector) vector<Message<RWConfigLogMsgPayload>*, allocator<Message<RWConfigLogMsgPayload>*> >;
+    %template(RWConfigLogMsgInMsgsVector) vector<ReadFunctor<RWConfigLogMsgPayload>, allocator<ReadFunctor<RWConfigLogMsgPayload>> >;
+    %template(RWConfigLogMsgInMsgsVectorVector) vector <vector <Message<RWConfigLogMsgPayload>*, allocator<Message<RWConfigLogMsgPayload>*> >, allocator<vector <Message<RWConfigLogMsgPayload>*>> >;
 
 }
 

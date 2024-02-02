@@ -151,8 +151,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 typedef struct messageType;
 
-%template(messageType ## PayloadVector) std::vector<messageType ## Payload>;
-%extend std::vector<messageType ## Payload>{
+%template(messageType ## PayloadVector) std::vector<messageType ## Payload, std::allocator<messageType ## Payload>>;
+%extend std::vector<messageType ## Payload, std::allocator<messageType ## Payload>>{
     %pythoncode %{
         # This __getattr__ is written in message.i.
         # It lets us return message struct attribute record as lists for plotting, etc.
