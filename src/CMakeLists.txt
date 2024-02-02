@@ -602,10 +602,8 @@ endif()
 # Iterate through all dist directories and add __init__.py's where they don't exist
 file(
   GLOB_RECURSE DIST_DIRECTORIES
-  FOLLOW_SYMLINKS
   LIST_DIRECTORIES true
   "${CMAKE_BINARY_DIR}/Basilisk/*")
-
 foreach(DIR ${DIST_DIRECTORIES})
   if(IS_DIRECTORY ${DIR})
     file(
@@ -628,7 +626,7 @@ endforeach()
 file(GLOB pythonModules "${CMAKE_SOURCE_DIR}/utilities/*.py" "${CMAKE_SOURCE_DIR}/utilities/**")
 create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/utilities" ${pythonModules})
 
-# Link to the supportData so that it is included with any installations (NOTE: CMake 3.14+)
+# Link to the supportData so that it is included with any installations
 create_symlinks(${CMAKE_BINARY_DIR}/Basilisk ${CMAKE_SOURCE_DIR}/supportData)
 
 # run python script to modify swig gen code

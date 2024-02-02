@@ -29,6 +29,7 @@ import os
 import numpy as np
 import pytest
 
+from Basilisk import __path__
 from Basilisk.architecture import messaging
 from Basilisk.simulation import magneticFieldWMM
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -37,9 +38,8 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskPath = path.split('src')[0]
+path = os.path.dirname(os.path.abspath(__file__))
+bskPath = __path__[0]
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.

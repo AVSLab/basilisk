@@ -31,7 +31,6 @@ import pytest
 from Basilisk import __path__
 
 bskPath = __path__[0]
-fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
@@ -105,7 +104,7 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
     
     # define constants & load data
     r_eq = 6378136.6
-    filename = bskPath + '/../../supportData/AtmosphereData/EarthGRAMNominal.txt'
+    filename = bskPath + '/supportData/AtmosphereData/EarthGRAMNominal.txt'
     altList, rhoList, tempList = readAtmTable(filename,'EarthGRAM')
         
     # assign constants & ref. data to module

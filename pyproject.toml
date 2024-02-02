@@ -40,5 +40,5 @@ test = [
     'flake8',
     'pytest-cov',
     'hypothesis',
-    'pytest-random-order'
+    'pytest-random-order',
 ]
