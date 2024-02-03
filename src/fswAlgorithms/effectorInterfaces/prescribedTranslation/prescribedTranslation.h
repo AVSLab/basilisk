@@ -36,16 +36,10 @@ public:
     void Reset(uint64_t CurrentSimNanos) override;                          //!< Reset member function
     void UpdateState(uint64_t CurrentSimNanos) override;                    //!< Update member function
     void setCoastOptionRampDuration(double rampDuration);                   //!< Setter method for the coast option ramp duration
-    void setR_FM_M(const Eigen::Vector3d &r_FM_M);                          //!< Setter method for the translating body hub-relative position vector
-    void setRPrime_FM_M(const Eigen::Vector3d &rPrime_FM_M);                //!< Setter method for the translating body hub-relative velocity vector
-    void setRPrimePrime_FM_M(const Eigen::Vector3d &rPrimePrime_FM_M);      //!< Setter method for the translating body hub-relative acceleration vector
     void setTransAccelMax(double transAccelMax);                            //!< Setter method for the ramp segment scalar linear acceleration
     void setTransHat_M(const Eigen::Vector3d &transHat_M);                  //!< Setter method for the translating body axis of translation
     void setTransPosInit(double transPosInit);                              //!< Setter method for the initial translating body hub-relative position
     double getCoastOptionRampDuration() const;                              //!< Getter method for the coast option ramp duration
-    const Eigen::Vector3d &getR_FM_M() const;                               //!< Getter method for the translating body's hub-relative position vector
-    const Eigen::Vector3d &getRPrime_FM_M() const;                          //!< Getter method for the translating body's hub-relative linear velocity vector
-    const Eigen::Vector3d &getRPrimePrime_FM_M() const;                     //!< Getter method for the translating body's hub-relative linear acceleration vector
     double getTransAccelMax() const;                                        //!< Getter method for the ramp segment scalar linear acceleration
     const Eigen::Vector3d &getTransHat_M() const;                           //!< Getter method for the translating body axis of translation
     double getTransPosInit() const;                                         //!< Getter method for the initial translating body position
@@ -78,13 +72,9 @@ private:
     double coastOptionRampDuration;                             //!< [s] Ramp time used for the coast option
     double transAccelMax;                                       //!< [m/s^2] Maximum acceleration magnitude
     Eigen::Vector3d transHat_M;                                 //!< Axis along the direction of translation expressed in M frame components
-    Eigen::Vector3d r_FM_M;                                     //!< [m] Translational body position relative to the Mount frame expressed in M frame components
-    Eigen::Vector3d rPrime_FM_M;                                //!< [m/s] B frame time derivative of r_FM_M expressed in M frame components
-    Eigen::Vector3d rPrimePrime_FM_M;                           //!< [m/s^2] B frame time derivative of rPrime_FM_M expressed in M frame components
 
     /* Coast option variables */
     double transPos_tr;                                         //!< [m] Position at the end of the first ramp segment
-    double transPos_tc;                                         //!< [m] Position at the end of the coast segment
     double transVel_tr;                                         //!< [m/s] Velocity at the end of the first ramp segment
     double tr;                                                  //!< [s] The simulation time at the end of the first ramp segment
     double tc;                                                  //!< [s] The simulation time at the end of the coast period

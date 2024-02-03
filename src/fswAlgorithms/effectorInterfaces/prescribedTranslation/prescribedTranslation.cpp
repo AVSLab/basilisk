@@ -106,16 +106,20 @@ void PrescribedTranslation::UpdateState(uint64_t callTime)
         }
     }
 
-    // Determine the prescribed parameters
-    this->r_FM_M = this->transPos*this->transHat_M;
-    this->rPrime_FM_M = this->transVel*this->transHat_M;
-    this->rPrimePrime_FM_M = this->transAccel*this->transHat_M;
+    // [m] Translational body position relative to the Mount frame expressed in M frame components
+    Eigen::Vector3d r_FM_M = this->transPos*this->transHat_M;
 
-    eigenVector3d2CArray(this->r_FM_M, prescribedTranslationMsgOut.r_FM_M);
-    eigenVector3d2CArray(this->rPrime_FM_M, prescribedTranslationMsgOut.rPrime_FM_M);
-    eigenVector3d2CArray(this->rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
+    // [m/s] B frame time derivative of r_FM_M expressed in M frame components
+    Eigen::Vector3d rPrime_FM_M = this->transVel*this->transHat_M;
+
+    // [m/s^2] B frame time derivative of rPrime_FM_M expressed in M frame components
+    Eigen::Vector3d rPrimePrime_FM_M = this->transAccel*this->transHat_M;
 
     // Write the output message
+    eigenVector3d2CArray(r_FM_M, prescribedTranslationMsgOut.r_FM_M);
+    eigenVector3d2CArray(rPrime_FM_M, prescribedTranslationMsgOut.rPrime_FM_M);
+    eigenVector3d2CArray(rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
+
     this->prescribedTranslationOutMsg.write(&prescribedTranslationMsgOut, this->moduleID, callTime);
 }
 
@@ -172,15 +176,15 @@ void PrescribedTranslation::computeCoastParameters() {
         // Determine the time at the end of the coast segment
         this->tc = this->tr + tCoast;
 
-        // Determine the position at the end of the coast segment
-        this->transPos_tc = this->transPos_tr + deltaPosCoast;
+        // Determine the position [m] at the end of the coast segment
+        double transPos_tc = this->transPos_tr + deltaPosCoast;
 
         // Determine the time at the end of the translation
         this->tf = this->tc + this->coastOptionRampDuration;
 
         // Define the parabolic constants for the first and second ramp segments of the translation
         this->a = (this->transPos_tr - this->transPosInit) / ((this->tr - this->tInit) * (this->tr - this->tInit));
-        this->b = -(this->transPosRef - this->transPos_tc) / ((this->tc - this->tf) * (this->tc - this->tf));
+        this->b = -(this->transPosRef - transPos_tc) / ((this->tc - this->tf) * (this->tc - this->tf));
     } else {
         // If the initial position equals the reference position, no translation is required.
         this->tf = this->tInit;
@@ -281,30 +285,6 @@ void PrescribedTranslation::setCoastOptionRampDuration(double rampDuration) {
     this->coastOptionRampDuration = rampDuration;
 }
 
-/*! Setter method for the translating body hub-relative position vector.
- @return void
- @param r_FM_M Translating body hub-relative position vector
-*/
-void PrescribedTranslation::setR_FM_M(const Eigen::Vector3d &r_FM_M) {
-    this->r_FM_M = r_FM_M;
-}
-
-/*! Setter method for the translating body hub-relative velocity vector.
- @return void
- @param rPrime_FM_M Translating body hub-relative velocity vector
-*/
-void PrescribedTranslation::setRPrime_FM_M(const Eigen::Vector3d &rPrime_FM_M) {
-    this->rPrime_FM_M = rPrime_FM_M;
-}
-
-/*! Setter method for the translating body hub-relative acceleration vector.
- @return void
- @param rPrimePrime_FM_M Translating body hub-relative acceleration vector
-*/
-void PrescribedTranslation::setRPrimePrime_FM_M(const Eigen::Vector3d &rPrimePrime_FM_M) {
-    this->rPrimePrime_FM_M = rPrimePrime_FM_M;
-}
-
 /*! Setter method for the ramp segment scalar linear acceleration.
  @return void
  @param transAccelMax [m/s^2] Ramp segment linear angular acceleration
@@ -334,27 +314,6 @@ void PrescribedTranslation::setTransPosInit(double transPosInit) {
 */
 double PrescribedTranslation::getCoastOptionRampDuration() const {
     return this->coastOptionRampDuration;
-}
-
-/*! Getter method for the translating body's hub-relative position vector.
- @return const Eigen::Vector3d
-*/
-const Eigen::Vector3d &PrescribedTranslation::getR_FM_M() const {
-    return this->r_FM_M;
-}
-
-/*! Getter method for the translating body's hub-relative linear velocity vector.
- @return const Eigen::Vector3d
-*/
-const Eigen::Vector3d &PrescribedTranslation::getRPrime_FM_M() const {
-    return this->rPrime_FM_M;
-}
-
-/*! Getter method for the translating body's hub-relative linear acceleration vector.
- @return const Eigen::Vector3d
-*/
-const Eigen::Vector3d &PrescribedTranslation::getRPrimePrime_FM_M() const {
-    return this->rPrimePrime_FM_M;
 }
 
 /*! Getter method for the ramp segment scalar linear acceleration.
