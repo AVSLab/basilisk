@@ -83,50 +83,135 @@ void PrescribedTranslation::UpdateState(uint64_t callTime)
         this->convergence = false;
 
         // Set the parameters required to profile the translation
-        // Determine the total time required for the translation
-        double totalTransTime = sqrt(((0.5 * fabs(this->transPosRef - this->transPosInit)) * 8) / this->transAccelMax);
+        if (this->coastOptionRampDuration > 0.0) { // Set parameters for the coast option
+            if (this->transPosInit != this->transPosRef) {
+                // Determine the time at the end of the first ramp segment
+                this->tr = this->tInit + this->coastOptionRampDuration;
 
-        // Determine the time at the end of the translation
-        this->tf = this->tInit + totalTransTime;
+                // Determine the position and velocity at the end of the ramp segment/start of the coast segment
+                if (this->transPosInit < this->transPosRef) {
+                    this->transPos_tr = (0.5 * this->transAccelMax * this->coastOptionRampDuration * this->coastOptionRampDuration)
+                                              + (this->transVelInit * this->coastOptionRampDuration) +
+                                              this->transPosInit;
+                    this->transVel_tr = this->transAccelMax * this->coastOptionRampDuration + this->transVelInit;
+                } else {
+                    this->transPos_tr =
+                            -((0.5 * this->transAccelMax * this->coastOptionRampDuration * this->coastOptionRampDuration)
+                              + (this->transVelInit * this->coastOptionRampDuration)) + this->transPosInit;
+                    this->transVel_tr = -this->transAccelMax * this->coastOptionRampDuration + this->transVelInit;
+                }
 
-        // Determine the time halfway through the translation
-        this->ts = this->tInit + (totalTransTime / 2);
+                // Determine the distance traveled during the coast period
+                double deltaPosCoast = this->transPosRef - this->transPosInit
+                                       - 2 * (this->transPos_tr - this->transPosInit);
 
-        // Define the parabolic constants for the first and second half of the translation
-        this->a = 0.5 * (this->transPosRef - this->transPosInit) /
-                        ((this->ts - this->tInit) * (this->ts - this->tInit));
-        this->b = -0.5 * (this->transPosRef - this->transPosInit) /
-                        ((this->ts - this->tf) * (this->ts - this->tf));
+                // Determine the time duration of the coast segment
+                double tCoast = fabs(deltaPosCoast) / fabs(this->transVel_tr);
 
+                // Determine the time at the end of the coast segment
+                this->tc = this->tr + tCoast;
+
+                // Determine the position at the end of the coast segment
+                this->transPos_tc = this->transPos_tr + deltaPosCoast;
+
+                // Determine the time at the end of the translation
+                this->tf = this->tc + this->coastOptionRampDuration;
+
+                // Define the parabolic constants for the first and second ramp segments of the translation
+                this->a = (this->transPos_tr - this->transPosInit) /
+                                ((this->tr - this->tInit) * (this->tr - this->tInit));
+                this->b = -(this->transPosRef - this->transPos_tc) /
+                                ((this->tc - this->tf) * (this->tc - this->tf));
+            } else { // If the initial position equals the reference position, no translation is required. Setting the
+                // final time equal to the initial time ensures the correct statement is entered when the translational
+                // states are profiled below
+                this->tf = this->tInit;
+            }
+        } else { // Set parameters for the no coast option
+            // Determine the total time required for the translation
+            double totalTransTime = sqrt(((0.5 * fabs(this->transPosRef - this->transPosInit)) * 8) /
+                                         this->transAccelMax);
+
+            // Determine the time at the end of the translation
+            this->tf = this->tInit + totalTransTime;
+
+            // Determine the time halfway through the translation
+            this->ts = this->tInit + (totalTransTime / 2);
+
+            // Define the parabolic constants for the first and second half of the translation
+            this->a = 0.5 * (this->transPosRef - this->transPosInit) /
+                            ((this->ts - this->tInit) * (this->ts - this->tInit));
+            this->b = -0.5 * (this->transPosRef - this->transPosInit) /
+                            ((this->ts - this->tf) * (this->ts - this->tf));
+        }
     }
 
     // Store the current simulation time
     double t = callTime * NANO2SEC;
 
-    // Compute the scalar translation states at the current simulation time
-    if (t <= this->ts && this->tf - this->tInit != 0) { // Entered during the first half of the translation
-        if (this->transPosInit < this->transPosRef) {
-            this->transAccel = this->transAccelMax;
-        } else {
-            this->transAccel = - this->transAccelMax;
+    // Compute the scalar translational states at the current simulation time
+    if (this->coastOptionRampDuration > 0.0) {
+        if (t <= this->tr && this->tf - this->tInit != 0) { // Entered during the first ramp segment
+            // The acceleration during the first ramp segment is positive if the reference position is greater than
+            // the initial position. The acceleration is negative during the first ramp segment if the reference position
+            // is less than the initial position
+            if (this->transPosInit < this->transPosRef) {
+                this->transAccel = this->transAccelMax;
+            } else {
+                this->transAccel = - this->transAccelMax;
+            }
+            this->transVel = this->transAccel * (t - this->tInit) + this->transVelInit;
+            this->transPos = this->a * (t - this->tInit) * (t - this->tInit)
+                                   + this->transPosInit;
+        } else if (t > this->tr && t <= this->tc && this->tf - this->tInit != 0) { // Entered during the coast segment
+            this->transAccel = 0.0;
+            this->transVel = this->transVel_tr;
+            this->transPos = this->transVel_tr * (t - this->tr) + this->transPos_tr;
+        } else if (t > this->tc && t <= this->tf && this->tf - this->tInit != 0) { // Entered during the second ramp segment
+            // The acceleration during the second ramp segment is negative if the reference position is greater than
+            // the initial position. The acceleration is positive during the second ramp segment if the reference
+            // position is less than the initial position
+            if (this->transPosInit < this->transPosRef) {
+                this->transAccel = - this->transAccelMax;
+            } else {
+                this->transAccel = this->transAccelMax;
+            }
+            this->transVel = this->transAccel * (t - this->tInit) + this->transVelInit
+                                   - this->transAccel * (this->tf - this->tInit);
+            this->transPos = this->b * (t - this->tf) * (t - this->tf) + this->transPosRef;
+        } else { // Entered when the translation is complete
+            this->transAccel = 0.0;
+            this->transVel = 0.0;
+            this->transPos = this->transPosRef;
+            this->convergence = true;
         }
-        this->transVel = this->transAccel * (t - this->tInit) + this->transVelInit;
-        this->transPos = this->a * (t - this->tInit) * (t - this->tInit)
-                             + this->transPosInit;
-    } else if ( t > this->ts && t <= this->tf && this->tf - this->tInit != 0) { // Entered during the second half of the translation
-        if (this->transPosInit < this->transPosRef) {
-            this->transAccel = - this->transAccelMax;
-        } else {
-            this->transAccel = this->transAccelMax;
+    } else {
+        if (t <= this->ts &&
+            this->tf - this->tInit != 0) { // Entered during the first half of the translation
+            if (this->transPosInit < this->transPosRef) {
+                this->transAccel = this->transAccelMax;
+            } else {
+                this->transAccel = -this->transAccelMax;
+            }
+            this->transVel = this->transAccel * (t - this->tInit) + this->transVelInit;
+            this->transPos = this->a * (t - this->tInit) * (t - this->tInit)
+                                   + this->transPosInit;
+        } else if (t > this->ts && t <= this->tf &&
+                   this->tf - this->tInit != 0) { // Entered during the second half of the translation
+            if (this->transPosInit < this->transPosRef) {
+                this->transAccel = -this->transAccelMax;
+            } else {
+                this->transAccel = this->transAccelMax;
+            }
+            this->transVel = this->transAccel * (t - this->tInit) + this->transVelInit
+                                   - this->transAccel * (this->tf - this->tInit);
+            this->transPos = this->b * (t - this->tf) * (t - this->tf) + this->transPosRef;
+        } else { // Entered when the translation is complete
+            this->transAccel = 0.0;
+            this->transVel = 0.0;
+            this->transPos = this->transPosRef;
+            this->convergence = true;
         }
-        this->transVel = this->transAccel * (t - this->tInit) + this->transVelInit
-                             - this->transAccel * (this->tf - this->tInit);
-        this->transPos = this->b * (t - this->tf) * (t - this->tf) + this->transPosRef;
-    } else { // Entered when the translation is complete
-        this->transAccel = 0.0;
-        this->transVel = 0.0;
-        this->transPos = this->transPosRef;
-        this->convergence = true;
     }
 
     // Determine the prescribed parameters: r_FM_M, rPrime_FM_M and rPrimePrime_FM_M
@@ -141,6 +226,14 @@ void PrescribedTranslation::UpdateState(uint64_t callTime)
 
     // Write the output message
     this->prescribedTranslationOutMsg.write(&prescribedTranslationMsgOut, moduleID, callTime);
+}
+
+/*! Setter method for the coast option ramp duration.
+ @return void
+ @param rampDuration [s] Ramp segment time duration
+*/
+void PrescribedTranslation::setCoastOptionRampDuration(double rampDuration) {
+    this->coastOptionRampDuration = rampDuration;
 }
 
 /*! Setter method for the translating body hub-relative position vector.
@@ -189,6 +282,13 @@ void PrescribedTranslation::setTransAxis_M(const Eigen::Vector3d &transAxis_M) {
 */
 void PrescribedTranslation::setTransPosInit(double transPosInit) {
     this->transPosInit = transPosInit;
+}
+
+/*! Getter method for the coast option ramp duration.
+ @return double
+*/
+double PrescribedTranslation::getCoastOptionRampDuration() const {
+    return this->coastOptionRampDuration;
 }
 
 /*! Getter method for the translating body's hub-relative position vector.
