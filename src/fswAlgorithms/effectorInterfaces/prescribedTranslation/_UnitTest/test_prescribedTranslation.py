@@ -106,7 +106,7 @@ def test_prescribedTranslation(show_plots,
     prescribedTrans.setTransAccelMax(transAccelMax)  # [m/s^2]
     prescribedTrans.setTransPosInit(transPosInit)  # [m]
 
-    # Add the prescribedTranslation test module to runtime call list
+    # Add the prescribedTrans test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, prescribedTrans)
 
     # Create the input reference position message for the first translation
@@ -123,19 +123,20 @@ def test_prescribedTranslation(show_plots,
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
-
     # Determine the required simulation time for the first translation
     transVelInit = 0.0  # [m/s]
     tCoast_1 = 0.0  # [s]
     if coastOptionRampDuration > 0.0:
         # Determine the position and velocity at the end of the ramp segment/start of the coast segment
-        if (transPosInit < transPosRef1):
+        if transPosInit < transPosRef1:
             transPos_tr_1 = ((0.5 * transAccelMax * coastOptionRampDuration * coastOptionRampDuration)
-                            + (transVelInit * coastOptionRampDuration) + transPosInit)  # [m]
+                             + (transVelInit * coastOptionRampDuration)
+                             + transPosInit)  # [m]
             transVel_tr_1 = transAccelMax * coastOptionRampDuration + transVelInit  # [m/s]
         else:
             transPos_tr_1 = (- ((0.5 * transAccelMax * coastOptionRampDuration * coastOptionRampDuration)
-                            + (transVelInit * coastOptionRampDuration)) + transPosInit)  # [m]
+                                + (transVelInit * coastOptionRampDuration))
+                             + transPosInit)  # [m]
             transVel_tr_1 = - transAccelMax * coastOptionRampDuration + transVelInit  # [m/s]
 
         # Determine the distance traveled during the coast period
@@ -164,13 +165,15 @@ def test_prescribedTranslation(show_plots,
     tCoast_2 = 0.0  # [s]
     if coastOptionRampDuration > 0.0:
         # Determine the position and velocity at the end of the ramp segment/start of the coast segment
-        if (transPosRef1 < transPosRef2):
+        if transPosRef1 < transPosRef2:
             transPos_tr_2 = ((0.5 * transAccelMax * coastOptionRampDuration * coastOptionRampDuration)
-                            + (transVelInit * coastOptionRampDuration) + transPosRef1)  # [m]
+                             + (transVelInit * coastOptionRampDuration)
+                             + transPosRef1)  # [m]
             transVel_tr_2 = transAccelMax * coastOptionRampDuration + transVelInit  # [m/s]
         else:
-            transPos_tr_2 = - ((0.5 * transAccelMax * coastOptionRampDuration * coastOptionRampDuration)
-                            + (transVelInit * coastOptionRampDuration)) + transPosRef1  # [m]
+            transPos_tr_2 = (- ((0.5 * transAccelMax * coastOptionRampDuration * coastOptionRampDuration)
+                             + (transVelInit * coastOptionRampDuration))
+                             + transPosRef1)  # [m]
             transVel_tr_2 = - transAccelMax * coastOptionRampDuration + transVelInit  # [m/s]
 
         # Determine the distance traveled during the coast period
@@ -181,7 +184,6 @@ def test_prescribedTranslation(show_plots,
         translation2ReqTime = (2 * coastOptionRampDuration) + tCoast_2  # [s]
     else:
         translation2ReqTime = np.sqrt(((0.5 * np.abs(transPosRef2 - transPosRef1)) * 8) / transAccelMax) + 5  # [s]
-
 
     translation2ExtraTime = 5  # [s]
     unitTestSim.ConfigureStopTime(macros.sec2nano(translation1ReqTime
@@ -212,9 +214,7 @@ def test_prescribedTranslation(show_plots,
         tf_2_index = int(round(tf_2 / testTimeStepSec)) + 1
 
         # Store the timespan indices in a list
-        timeCheckIndicesList = [tf_1_index,
-                                tInit_2_index,
-                                tf_2_index]
+        timeCheckIndicesList = [tf_1_index, tInit_2_index, tf_2_index]
 
         # Store the positions to check in a list
         transPosCheckList = [transPosRef1, transPosRef1, transPosRef2]
@@ -231,13 +231,10 @@ def test_prescribedTranslation(show_plots,
         tf_2_index = int(round(tf_2 / testTimeStepSec)) + 1
 
         # Store the timespan indices in a list
-        timeCheckIndicesList = [tf_1_index,
-                                tInit_2_index,
-                                tf_2_index]
+        timeCheckIndicesList = [tf_1_index, tInit_2_index, tf_2_index]
 
         # Store the positions to check in a list
         transPosCheckList = [transPosRef1, transPosRef1, transPosRef2]
-
 
     # Use the two truth data lists to compare with the module-extracted data
     np.testing.assert_allclose(r_FM_M.dot(transHat_M)[timeCheckIndicesList],
@@ -247,16 +244,16 @@ def test_prescribedTranslation(show_plots,
 
     # 1. Plot the scalar translational states
     # 1A. Plot transPos
-    transPosInit_plotting = np.ones(len(timespan)) * transPosInit
-    transPosRef1_plotting = np.ones(len(timespan)) * transPosRef1
-    transPosRef2_plotting = np.ones(len(timespan)) * transPosRef2
+    transPosInitPlotting = np.ones(len(timespan)) * transPosInit
+    transPosRef1Plotting = np.ones(len(timespan)) * transPosRef1
+    transPosRef2Plotting = np.ones(len(timespan)) * transPosRef2
     plt.figure()
     plt.clf()
     plt.plot(timespan, r_FM_M.dot(transHat_M), label=r"$l$")
-    plt.plot(timespan, transPosInit_plotting, '--', label=r'$l_{0}$')
-    plt.plot(timespan, transPosRef1_plotting, '--', label=r'$l_{Ref_1}$')
-    plt.plot(timespan, transPosRef2_plotting, '--', label=r'$l_{Ref_2}$')
-    plt.title(r'Translational Position $l_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+    plt.plot(timespan, transPosInitPlotting, '--', label=r'$\rho_{0}$')
+    plt.plot(timespan, transPosRef1Plotting, '--', label=r'$\rho_{Ref_1}$')
+    plt.plot(timespan, transPosRef2Plotting, '--', label=r'$\rho_{Ref_2}$')
+    plt.title(r'Translational Position $\rho_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
     plt.ylabel('(m)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
     plt.legend(loc='upper right', prop={'size': 12})
@@ -265,8 +262,8 @@ def test_prescribedTranslation(show_plots,
     # 1B. Plot transVel
     plt.figure()
     plt.clf()
-    plt.plot(timespan, rPrime_FM_M.dot(transHat_M), label=r"$\dot{l}$")
-    plt.title(r'Translational Velocity $\dot{l}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+    plt.plot(timespan, rPrime_FM_M.dot(transHat_M), label=r"$\dot{\rho}$")
+    plt.title(r'Translational Velocity $\dot{\rho}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
     plt.ylabel('(m/s)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
     plt.legend(loc='upper right', prop={'size': 12})
@@ -275,8 +272,8 @@ def test_prescribedTranslation(show_plots,
     # 1C. Plot transAccel
     plt.figure()
     plt.clf()
-    plt.plot(timespan, rPrimePrime_FM_M.dot(transHat_M), label=r"$\ddot{l}$")
-    plt.title(r'Translational Acceleration $\ddot{l}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
+    plt.plot(timespan, rPrimePrime_FM_M.dot(transHat_M), label=r"$\ddot{\rho}$")
+    plt.title(r'Translational Acceleration $\ddot{\rho}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
     plt.ylabel('(m/s$^2$)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
     plt.legend(loc='upper right', prop={'size': 12})
