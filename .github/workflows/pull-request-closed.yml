@@ -15,7 +15,7 @@ jobs:
           with:
             ref: develop
             fetch-depth: 0 
-            token: $ff secrets. BOT_ACCESS_TOKEN 3}
+            token: ${{ secrets.BOT_ACCESS_TOKEN }}
         - name: Bump version
           run: ./.github/workflows/version-bumper.sh ./docs/source/bskVersion.txt
         - name: Commit and push
