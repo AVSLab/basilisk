@@ -78,6 +78,10 @@ else()
     VERBATIM)
 endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
+# Copy the cMsgCInterfacePy wrapper module to support backwards-compatibility.
+# TODO: Deprecate this!
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cMsgCInterfacePy.py ${CMAKE_BINARY_DIR}/Basilisk/architecture/cMsgCInterfacePy.py COPYONLY)
+
 # Custom target for establishing dependency
 add_custom_target(swigtrick DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py)
 
