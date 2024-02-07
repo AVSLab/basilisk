@@ -40,6 +40,7 @@ Version |release|
   ``MAJOR.MINOR.PATCH``. Releases will increment the minor version number, while pull requests into develop will 
   automatically increment the patch number. This allows users to reference/require specific versions of Basilisk 
   outside of the release cycle.
+- updated plotting of ``opNav`` example scenarios to work again with latest version of ``matplotlib``
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------
