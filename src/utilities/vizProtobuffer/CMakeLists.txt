@@ -15,8 +15,11 @@ if(BUILD_VIZINTERFACE)
      foreach(PROTO_DEF ${PROTO_DEFS})
          get_filename_component(PROTO_TARGET "${PROTO_DEF}" NAME_WE)
 
+         # XXX: In some cases on Windows, protoc does not work if paths are absolute, so make them relative!
+         file(RELATIVE_PATH PROTO_DEF ${CMAKE_CURRENT_SOURCE_DIR} ${PROTO_DEF})
+
          add_custom_command(TARGET GeneratedProtobufMessages PRE_BUILD
-             COMMAND "${PROTOC_EXE}" "--proto_path=${CMAKE_CURRENT_SOURCE_DIR}" "--cpp_out=${CMAKE_CURRENT_SOURCE_DIR}" "${PROTO_DEF}"
+             COMMAND "${PROTOC_EXE}" "--proto_path=." "--cpp_out=." "${PROTO_DEF}"
              BYPRODUCTS "${CMAKE_CURRENT_SOURCE_DIR}/${PROTO_TARGET}.pb.cc" "${CMAKE_CURRENT_SOURCE_DIR}/${PROTO_TARGET}.pb.h"
              WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
              COMMENT "Generating protobuf (C++): ${PROTO_TARGET}"
