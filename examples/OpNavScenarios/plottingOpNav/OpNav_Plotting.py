@@ -743,7 +743,6 @@ def imgProcVsExp(true, centers, radii, size):
         pass
     plt.ylabel('X (px)')
     plt.xlabel('Time (min)')
-    plt.grid(b=None, which='major', axis='y')
     #plt.savefig('Xpix.pdf')
 
     plt.figure(302, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
@@ -758,7 +757,6 @@ def imgProcVsExp(true, centers, radii, size):
         pass
     plt.ylabel('Y (px)')
     plt.xlabel('Time (min)')
-    plt.grid(b=None, which='major', axis='y')
     #plt.savefig('Ypix.pdf')
 
     plt.figure(312, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
@@ -768,7 +766,6 @@ def imgProcVsExp(true, centers, radii, size):
     plt.legend(loc='best')
     plt.ylabel(r'$\rho$ (px)')
     plt.xlabel('Time (min)')
-    plt.grid(b=None, which='minor', axis='y')
     #plt.savefig('Rhopix.pdf')
 
 
