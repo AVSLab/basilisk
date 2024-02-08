@@ -103,9 +103,9 @@ def test_prescribedRotation1DOF(show_plots,
     unitTestSim.AddModelToTask(unitTaskName, PrescribedRotation1DOF)
 
     # Initialize the PrescribedRotation1DOF test module configuration data
-    rotAxisM = np.array([1.0, 0.0, 0.0])
+    rotAxis_M = np.array([1.0, 0.0, 0.0])
     PrescribedRotation1DOF.setCoastOptionRampDuration(coastOptionRampDuration)
-    PrescribedRotation1DOF.setRotAxis_M(rotAxisM)
+    PrescribedRotation1DOF.setRotHat_M(rotAxis_M)
     PrescribedRotation1DOF.setThetaDDotMax(thetaDDotMax)
     PrescribedRotation1DOF.setThetaInit(thetaInit)
 

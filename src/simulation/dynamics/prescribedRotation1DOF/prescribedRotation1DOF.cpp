@@ -114,8 +114,8 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
     }
 
     // Determine the prescribed parameters omega_FM_F, omegaPrime_FM_F, and sigma_FM
-    this->omega_FM_F = this->thetaDot * this->rotAxis_M;
-    this->omegaPrime_FM_F = this->thetaDDot * this->rotAxis_M;
+    this->omega_FM_F = this->thetaDot * this->rotHat_M;
+    this->omegaPrime_FM_F = this->thetaDDot * this->rotHat_M;
     this->computeSigma_FM();
 
     // Copy the module variables to the prescribedRotationOut output message
@@ -297,14 +297,14 @@ void PrescribedRotation1DOF::computeSigma_FM() {
     double dcm_FF0[3][3];
     double prv_FF0_array[3];
     double theta_FF0 = this->theta - this->thetaInit;
-    Eigen::Vector3d prv_FF0 = theta_FF0 * this->rotAxis_M;
+    Eigen::Vector3d prv_FF0 = theta_FF0 * this->rotHat_M;
     eigenVector3d2CArray(prv_FF0, prv_FF0_array);
     PRV2C(prv_FF0_array, dcm_FF0);
 
     // Determine dcm_F0M for the initial spinning body attitude relative to the mount frame
     double dcm_F0M[3][3];
     double prv_F0M_array[3];
-    Eigen::Vector3d prv_F0M = this->thetaInit * this->rotAxis_M;
+    Eigen::Vector3d prv_F0M = this->thetaInit * this->rotHat_M;
     eigenVector3d2CArray(prv_F0M, prv_F0M_array);
     PRV2C(prv_F0M_array, dcm_F0M);
 
@@ -328,10 +328,10 @@ void PrescribedRotation1DOF::setCoastOptionRampDuration(double rampDuration) {
 
 /*! Setter method for the spinning body rotation axis.
  @return void
- @param rotAxis_M Spinning body rotation axis (unit vector)
+ @param rotHat_M Spinning body rotation axis (unit vector)
 */
-void PrescribedRotation1DOF::setRotAxis_M(const Eigen::Vector3d &rotAxis_M) {
-    this->rotAxis_M = rotAxis_M / rotAxis_M.norm();
+void PrescribedRotation1DOF::setRotHat_M(const Eigen::Vector3d &rotHat_M) {
+    this->rotHat_M = rotHat_M / rotHat_M.norm();
 }
 
 /*! Setter method for the ramp segment scalar angular acceleration.
@@ -360,8 +360,8 @@ double PrescribedRotation1DOF::getCoastOptionRampDuration() const {
 /*! Getter method for the spinning body rotation axis.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d &PrescribedRotation1DOF::getRotAxis_M() const {
-    return this->rotAxis_M;
+const Eigen::Vector3d &PrescribedRotation1DOF::getRotHat_M() const {
+    return this->rotHat_M;
 }
 
 /*! Getter method for the ramp segment scalar angular acceleration.

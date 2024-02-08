@@ -36,11 +36,11 @@ public:
     void Reset(uint64_t CurrentSimNanos) override;                         //!< Reset member function
     void UpdateState(uint64_t CurrentSimNanos) override;                   //!< Update member function
     void setCoastOptionRampDuration(double rampDuration);                  //!< Setter for the coast option ramp duration
-    void setRotAxis_M(const Eigen::Vector3d &rotAxis_M);                   //!< Setter for the spinning body rotation axis
+    void setRotHat_M(const Eigen::Vector3d &rotHat_M);                     //!< Setter for the spinning body rotation axis
     void setThetaDDotMax(double thetaDDotMax);                             //!< Setter for the ramp segment scalar angular acceleration
     void setThetaInit(double thetaInit);                                   //!< Setter for the initial spinning body angle
     double getCoastOptionRampDuration() const;                             //!< Getter for the coast option ramp duration
-    const Eigen::Vector3d &getRotAxis_M() const;                           //!< Getter for the spinning body rotation axis
+    const Eigen::Vector3d &getRotHat_M() const;                            //!< Getter for the spinning body rotation axis
     double getThetaDDotMax() const;                                        //!< Getter for the ramp segment scalar angular acceleration
     double getThetaInit() const;                                           //!< Getter for the initial spinning body angle
 
@@ -77,7 +77,7 @@ private:
     /* User-configurable variables */
     double coastOptionRampDuration;                             //!< [s] Ramp time used for the coast option
     double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of spinning body used in the ramp segments
-    Eigen::Vector3d rotAxis_M;                                  //!< Spinning body rotation axis in M frame components
+    Eigen::Vector3d rotHat_M;                                   //!< Spinning body rotation axis in M frame components
 
     /* Coast option variables */
     double theta_tr;                                            //!< [rad] Angle at the end of the first ramp segment
@@ -95,9 +95,9 @@ private:
     Eigen::Vector3d sigma_FM;                                   //!< MRP attitude of spinning body frame F with respect to frame M
     bool convergence;                                           //!< Boolean variable is true when the rotation is complete
     double tInit;                                               //!< [s] Simulation time at the beginning of the rotation
-    double thetaInit;                                           //!< [rad] Initial spinning body angle from frame M to frame F about rotAxis_M
+    double thetaInit;                                           //!< [rad] Initial spinning body angle from frame M to frame F about rotHat_M
     double thetaDotInit;                                        //!< [rad/s] Initial spinning body angle rate between frame M to frame F
-    double thetaRef;                                            //!< [rad] Spinning body reference angle from frame M to frame F about rotAxis_M
+    double thetaRef;                                            //!< [rad] Spinning body reference angle from frame M to frame F about rotHat_M
     double tf;                                                  //!< [s] Simulation time when the rotation is complete
     double a;                                                   //!< Parabolic constant for the first acceleration segment
     double b;                                                   //!< Parabolic constant for the second acceleration segment
