@@ -97,28 +97,28 @@ def test_prescribedRotation1DOF(show_plots,
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create an instance of the prescribedRotation1DOF module to be tested
-    PrescribedRotation1DOF = prescribedRotation1DOF.PrescribedRotation1DOF()
-    PrescribedRotation1DOF.ModelTag = "PrescribedRotation1DOF"
+    prescribedRot1DOF = prescribedRotation1DOF.PrescribedRotation1DOF()
+    prescribedRot1DOF.ModelTag = "prescribedRotation1DOF"
 
-    unitTestSim.AddModelToTask(unitTaskName, PrescribedRotation1DOF)
+    unitTestSim.AddModelToTask(unitTaskName, prescribedRot1DOF)
 
-    # Initialize the PrescribedRotation1DOF test module configuration data
+    # Initialize the prescribedRotation1DOF test module configuration data
     rotAxis_M = np.array([1.0, 0.0, 0.0])
-    PrescribedRotation1DOF.setCoastOptionRampDuration(coastOptionRampDuration)
-    PrescribedRotation1DOF.setRotHat_M(rotAxis_M)
-    PrescribedRotation1DOF.setThetaDDotMax(thetaDDotMax)
-    PrescribedRotation1DOF.setThetaInit(thetaInit)
+    prescribedRot1DOF.setCoastOptionRampDuration(coastOptionRampDuration)
+    prescribedRot1DOF.setRotHat_M(rotAxis_M)
+    prescribedRot1DOF.setThetaDDotMax(thetaDDotMax)
+    prescribedRot1DOF.setThetaInit(thetaInit)
 
     # Create the prescribedRotation1DOF input reference angle message for the first spinning body rotation
-    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    HingedRigidBodyMessageData.theta = thetaRef1
-    HingedRigidBodyMessageData.thetaDot = 0.0
-    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData)
-    PrescribedRotation1DOF.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+    hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
+    hingedRigidBodyMessageData.theta = thetaRef1
+    hingedRigidBodyMessageData.thetaDot = 0.0
+    hingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
+    prescribedRot1DOF.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage)
 
     # Log module data for module unit test validation
-    prescribedRotStatesDataLog = PrescribedRotation1DOF.prescribedRotationOutMsg.recorder()
-    scalarAngleDataLog = PrescribedRotation1DOF.spinningBodyOutMsg.recorder()
+    prescribedRotStatesDataLog = prescribedRot1DOF.prescribedRotationOutMsg.recorder()
+    scalarAngleDataLog = prescribedRot1DOF.spinningBodyOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, prescribedRotStatesDataLog)
     unitTestSim.AddModelToTask(unitTaskName, scalarAngleDataLog)
 
@@ -155,11 +155,11 @@ def test_prescribedRotation1DOF(show_plots,
     unitTestSim.ExecuteSimulation()
 
     # Create the hingedRigidBody reference angle input message for the second rotation
-    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    HingedRigidBodyMessageData.theta = thetaRef2  # [rad]
-    HingedRigidBodyMessageData.thetaDot = 0.0  # [rad/s]
-    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData)
-    PrescribedRotation1DOF.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+    hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
+    hingedRigidBodyMessageData.theta = thetaRef2  # [rad]
+    hingedRigidBodyMessageData.thetaDot = 0.0  # [rad/s]
+    hingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
+    prescribedRot1DOF.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage)
 
     # Determine the required simulation time for the second rotation
     tCoast_2 = 0.0  # [s]
@@ -215,14 +215,10 @@ def test_prescribedRotation1DOF(show_plots,
         tf_2_index = int(round(tf_2 / testTimeStepSec)) + 1
     
         # Store the timespan indices in a list
-        timeCheckIndicesList = [tf_1_index,
-                                tInit_2_index,
-                                tf_2_index]
+        timeCheckIndicesList = [tf_1_index, tInit_2_index, tf_2_index]
     
         # Store the angles to check in a list
-        thetaCheckList = [macros.R2D * thetaRef1,
-                          macros.R2D * thetaRef1,
-                          macros.R2D * thetaRef2]  # [deg]
+        thetaCheckList = [macros.R2D * thetaRef1, macros.R2D * thetaRef1, macros.R2D * thetaRef2]  # [deg]
     
     else:
         # Compute tf for the first rotation, and tInit tf for the second rotation
@@ -236,14 +232,10 @@ def test_prescribedRotation1DOF(show_plots,
         tf_2_index = int(round(tf_2 / testTimeStepSec)) + 1
     
         # Store the timespan indices in a list
-        timeCheckIndicesList = [tf_1_index,
-                                tInit_2_index,
-                                tf_2_index]
+        timeCheckIndicesList = [tf_1_index, tInit_2_index, tf_2_index]
     
         # Store the angles to check in a list
-        thetaCheckList = [macros.R2D * thetaRef1,
-                          macros.R2D * thetaRef1,
-                          macros.R2D * thetaRef2]  # [deg]
+        thetaCheckList = [macros.R2D * thetaRef1, macros.R2D * thetaRef1, macros.R2D * thetaRef2]  # [deg]
 
     # Use the two truth data lists to compare with the module-extracted data
     np.testing.assert_allclose(theta[timeCheckIndicesList],
@@ -253,15 +245,15 @@ def test_prescribedRotation1DOF(show_plots,
 
     # 1. Plot the scalar spinning body rotational states
     # 1A. Plot theta
-    thetaInit_plotting = np.ones(len(timespan)) * macros.R2D * thetaInit  # [deg]
-    thetaRef1_plotting = np.ones(len(timespan)) * macros.R2D * thetaRef1  # [deg]
-    thetaRef2_plotting = np.ones(len(timespan)) * macros.R2D * thetaRef2  # [deg]
+    thetaInitPlotting = np.ones(len(timespan)) * macros.R2D * thetaInit  # [deg]
+    thetaRef1Plotting = np.ones(len(timespan)) * macros.R2D * thetaRef1  # [deg]
+    thetaRef2Plotting = np.ones(len(timespan)) * macros.R2D * thetaRef2  # [deg]
     plt.figure()
     plt.clf()
     plt.plot(timespan, theta, label=r"$\theta$")
-    plt.plot(timespan, thetaInit_plotting, '--', label=r'$\theta_{0}$')
-    plt.plot(timespan, thetaRef1_plotting, '--', label=r'$\theta_{Ref_1}$')
-    plt.plot(timespan, thetaRef2_plotting, '--', label=r'$\theta_{Ref_2}$')
+    plt.plot(timespan, thetaInitPlotting, '--', label=r'$\theta_{0}$')
+    plt.plot(timespan, thetaRef1Plotting, '--', label=r'$\theta_{Ref_1}$')
+    plt.plot(timespan, thetaRef2Plotting, '--', label=r'$\theta_{Ref_2}$')
     plt.title(r'Spinning Body Angle $\theta_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
     plt.ylabel('(deg)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
