@@ -52,7 +52,7 @@ def test_prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDo
     r"""
     **Validation Test Description**
 
-    This unit test ensures that the profiled 1 DOF attitude maneuver for a secondary rigid body connected
+    This unit test ensures that the profiled 1 DOF rotation for a secondary rigid body connected
     to the spacecraft hub is properly computed for a series of initial and reference PRV angles and maximum
     angular accelerations. The final prescribed attitude and angular velocity magnitude are compared with
     the reference values.
@@ -67,8 +67,8 @@ def test_prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDo
 
     **Description of Variables Being Tested**
 
-    This unit test ensures that the profiled 1 DOF rotational attitude maneuver is properly computed for a series of
-    initial and reference PRV angles and maximum angular accelerations. The final prescribed angle ``theta_FM_Final``
+    This unit test ensures that the profiled 1 DOF rotation is properly computed for a series of initial and
+    reference PRV angles and maximum angular accelerations. The final prescribed angle ``theta_FM_Final``
     and angular velocity magnitude ``thetaDot_Final`` are compared with the reference values ``theta_Ref`` and
     ``thetaDot_Ref``, respectively.
     """
@@ -79,8 +79,8 @@ def test_prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDo
 
 def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax, accuracy):
     """Call this routine directly to run the unit test."""
-    testFailCount = 0                                        # Zero the unit test result counter
-    testMessages = []                                        # Create an empty array to store the test log messages
+    testFailCount = 0
+    testMessages = []
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
@@ -89,7 +89,7 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create the test thread
-    testProcessRate = macros.sec2nano(0.1)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.1)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -103,9 +103,6 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     # Initialize the prescribedRot1DOF test module configuration data
     rotAxisM = np.array([1.0, 0.0, 0.0])
     prvInit_FM = thetaInit * rotAxisM
-    PrescribedRot1DOF.r_FM_M = np.array([1.0, 0.0, 0.0])
-    PrescribedRot1DOF.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedRot1DOF.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
     PrescribedRot1DOF.rotAxis_M = rotAxisM
     PrescribedRot1DOF.thetaDDotMax = thetaDDotMax
     PrescribedRot1DOF.omega_FM_F = np.array([0.0, 0.0, 0.0])
@@ -121,7 +118,7 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     PrescribedRot1DOF.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
 
     # Log the test module output message for data comparison
-    dataLog = PrescribedRot1DOF.prescribedMotionOutMsg.recorder()
+    dataLog = PrescribedRot1DOF.prescribedRotationOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Initialize the simulation

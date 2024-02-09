@@ -35,7 +35,7 @@
 void SelfInit_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, int64_t moduleID)
 {
     // Initialize the output messages
-    PrescribedMotionMsg_C_init(&configData->prescribedMotionOutMsg);
+    PrescribedRotationMsg_C_init(&configData->prescribedRotationOutMsg);
     HingedRigidBodyMsg_C_init(&configData->spinningBodyOutMsg);
 }
 
@@ -74,11 +74,11 @@ void Update_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t call
     // Create the buffer messages
     HingedRigidBodyMsgPayload spinningBodyIn;
     HingedRigidBodyMsgPayload spinningBodyOut;
-    PrescribedMotionMsgPayload prescribedMotionOut;
+    PrescribedRotationMsgPayload prescribedRotationOut;
 
     // Zero the output messages
     spinningBodyOut = HingedRigidBodyMsg_C_zeroMsgPayload();
-    prescribedMotionOut = PrescribedMotionMsg_C_zeroMsgPayload();
+    prescribedRotationOut = PrescribedRotationMsg_C_zeroMsgPayload();
 
     // Read the input message
     spinningBodyIn = HingedRigidBodyMsg_C_zeroMsgPayload();
@@ -146,11 +146,6 @@ void Update_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t call
         configData->convergence = true;
     }
 
-    // Determine the prescribed parameters: omega_FM_F and omegaPrime_FM_F
-    v3Normalize(configData->rotAxis_M, configData->rotAxis_M);
-    v3Scale(thetaDot, configData->rotAxis_M, configData->omega_FM_F);
-    v3Scale(thetaDDot, configData->rotAxis_M, configData->omegaPrime_FM_F);
-
     // Determine dcm_FF0
     double dcm_FF0[3][3];
     double prv_FF0_array[3];
@@ -171,13 +166,10 @@ void Update_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t call
     // Determine the prescribed parameter: sigma_FM
     C2MRP(dcm_FM, configData->sigma_FM);
 
-    // Copy the module variables to the prescribedMotionOut output message
-    v3Copy(configData->r_FM_M, prescribedMotionOut.r_FM_M);
-    v3Copy(configData->rPrime_FM_M, prescribedMotionOut.rPrime_FM_M);
-    v3Copy(configData->rPrimePrime_FM_M, prescribedMotionOut.rPrimePrime_FM_M);
-    v3Copy(configData->omega_FM_F, prescribedMotionOut.omega_FM_F);
-    v3Copy(configData->omegaPrime_FM_F, prescribedMotionOut.omegaPrime_FM_F);
-    v3Copy(configData->sigma_FM, prescribedMotionOut.sigma_FM);
+    // Copy the module variables to the prescribedRotationOut output message
+    v3Copy(configData->omega_FM_F, prescribedRotationOut.omega_FM_F);
+    v3Copy(configData->omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
+    v3Copy(configData->sigma_FM, prescribedRotationOut.sigma_FM);
 
     // Copy the local scalar variables to the spinningBodyOut output message
     spinningBodyOut.theta = theta;
@@ -185,5 +177,5 @@ void Update_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t call
 
     // Write the output messages
     HingedRigidBodyMsg_C_write(&spinningBodyOut, &configData->spinningBodyOutMsg, moduleID, callTime);
-    PrescribedMotionMsg_C_write(&prescribedMotionOut, &configData->prescribedMotionOutMsg, moduleID, callTime);
+    PrescribedRotationMsg_C_write(&prescribedRotationOut, &configData->prescribedRotationOutMsg, moduleID, callTime);
 }
