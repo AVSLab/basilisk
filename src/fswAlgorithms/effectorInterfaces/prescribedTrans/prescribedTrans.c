@@ -35,7 +35,7 @@
 void SelfInit_prescribedTrans(PrescribedTransConfig *configData, int64_t moduleID)
 {
     // Initialize the module output message
-    PrescribedMotionMsg_C_init(&configData->prescribedMotionOutMsg);
+    PrescribedTranslationMsg_C_init(&configData->prescribedTranslationOutMsg);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -72,10 +72,10 @@ void Update_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime
 {
     // Create the buffer messages
     LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn;
-    PrescribedMotionMsgPayload prescribedMotionOut;
+    PrescribedTranslationMsgPayload prescribedTranslationOut;
 
     // Zero the output message
-    prescribedMotionOut = PrescribedMotionMsg_C_zeroMsgPayload();
+    prescribedTranslationOut = PrescribedTranslationMsg_C_zeroMsgPayload();
 
     // Read the input message
     linearTranslationRigidBodyIn = LinearTranslationRigidBodyMsg_C_zeroMsgPayload();
@@ -144,13 +144,10 @@ void Update_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime
     v3Scale(scalarAccel, configData->transAxis_M, configData->rPrimePrime_FM_M);
 
     // Copy the local variables to the output message
-    v3Copy(configData->r_FM_M, prescribedMotionOut.r_FM_M);
-    v3Copy(configData->rPrime_FM_M, prescribedMotionOut.rPrime_FM_M);
-    v3Copy(configData->rPrimePrime_FM_M, prescribedMotionOut.rPrimePrime_FM_M);
-    v3Copy(configData->omega_FM_F, prescribedMotionOut.omega_FM_F);
-    v3Copy(configData->omegaPrime_FM_F, prescribedMotionOut.omegaPrime_FM_F);
-    v3Copy(configData->sigma_FM, prescribedMotionOut.sigma_FM);
+    v3Copy(configData->r_FM_M, prescribedTranslationOut.r_FM_M);
+    v3Copy(configData->rPrime_FM_M, prescribedTranslationOut.rPrime_FM_M);
+    v3Copy(configData->rPrimePrime_FM_M, prescribedTranslationOut.rPrimePrime_FM_M);
 
     // Write the prescribed motion output message
-    PrescribedMotionMsg_C_write(&prescribedMotionOut, &configData->prescribedMotionOutMsg, moduleID, callTime);
+    PrescribedTranslationMsg_C_write(&prescribedTranslationOut, &configData->prescribedTranslationOutMsg, moduleID, callTime);
 }
