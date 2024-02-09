@@ -119,10 +119,8 @@ def test_prescribedRotation1DOF(show_plots,
     # Log module data for module unit test validation
     prescribedRotStatesDataLog = PrescribedRotation1DOF.prescribedRotationOutMsg.recorder()
     scalarAngleDataLog = PrescribedRotation1DOF.spinningBodyOutMsg.recorder()
-    thetaDDotLog = PrescribedRotation1DOF.logger("thetaDDot", testProcessRate)
     unitTestSim.AddModelToTask(unitTaskName, prescribedRotStatesDataLog)
     unitTestSim.AddModelToTask(unitTaskName, scalarAngleDataLog)
-    unitTestSim.AddModelToTask(unitTaskName, thetaDDotLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -196,12 +194,12 @@ def test_prescribedRotation1DOF(show_plots,
 
     # Extract logged data
     timespan = macros.NANO2SEC * scalarAngleDataLog.times()  # [s]
-    theta = macros.R2D * scalarAngleDataLog.theta  # [deg]
-    thetaDot = macros.R2D * scalarAngleDataLog.thetaDot  # [deg/s]
-    thetaDDot = macros.R2D * thetaDDotLog.thetaDDot  # [deg/s^2]
-    sigma_FM = prescribedRotStatesDataLog.sigma_FM
     omega_FM_F = macros.R2D * prescribedRotStatesDataLog.omega_FM_F  # [deg/s]
     omegaPrime_FM_F = macros.R2D * prescribedRotStatesDataLog.omegaPrime_FM_F  # [deg/s^2]
+    sigma_FM = prescribedRotStatesDataLog.sigma_FM
+    theta = macros.R2D * scalarAngleDataLog.theta  # [deg]
+    thetaDot = macros.R2D * scalarAngleDataLog.thetaDot  # [deg/s]
+    thetaDDot = omegaPrime_FM_F.dot(rotAxis_M)  # [deg/s^2]
 
     # Unit test validation
     # Store the truth data used to validate the module in two lists

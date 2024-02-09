@@ -44,10 +44,6 @@ public:
     double getThetaDDotMax() const;                                        //!< Getter for the ramp segment scalar angular acceleration
     double getThetaInit() const;                                           //!< Getter for the initial spinning body angle
 
-    double theta;                                                          //!< [rad] Current angle
-    double thetaDot;                                                       //!< [rad/s] Current angle rate
-    double thetaDDot;                                                      //!< [rad/s^2] Current angular acceleration
-
     ReadFunctor<HingedRigidBodyMsgPayload> spinningBodyInMsg;              //!< Input msg for the spinning body reference angle and angle rate
     Message<HingedRigidBodyMsgPayload> spinningBodyOutMsg;                 //!< Output msg for the spinning body angle and angle rate
     Message<PrescribedRotationMsgPayload> prescribedRotationOutMsg;        //!< Output msg for the spinning body prescribed rotational states
@@ -93,6 +89,9 @@ private:
     Eigen::Vector3d omega_FM_F;                                 //!< [rad/s] Angular velocity of frame F wrt frame M in F frame components
     Eigen::Vector3d omegaPrime_FM_F;                            //!< [rad/s^2] B frame time derivative of omega_FM_F in F frame components
     Eigen::Vector3d sigma_FM;                                   //!< MRP attitude of spinning body frame F with respect to frame M
+    double theta;                                               //!< [rad] Current angle
+    double thetaDot;                                            //!< [rad/s] Current angle rate
+    double thetaDDot;                                           //!< [rad/s^2] Current angular acceleration
     bool convergence;                                           //!< Boolean variable is true when the rotation is complete
     double tInit;                                               //!< [s] Simulation time at the beginning of the rotation
     double thetaInit;                                           //!< [rad] Initial spinning body angle from frame M to frame F about rotHat_M
