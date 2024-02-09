@@ -27,8 +27,8 @@
 %include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 struct HingedRigidBodyMsg_C;
 
-%include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
-struct PrescribedMotionMsg_C;
+%include "architecture/msgPayloadDefC/PrescribedRotationMsgPayload.h"
+struct PrescribedRotationMsg_C;
 
 %pythoncode %{
 import sys

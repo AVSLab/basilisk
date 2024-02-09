@@ -24,7 +24,7 @@
 #include <stdbool.h>
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/HingedRigidBodyMsg_C.h"
-#include "cMsgCInterface/PrescribedMotionMsg_C.h"
+#include "cMsgCInterface/PrescribedRotationMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct
@@ -35,9 +35,6 @@ typedef struct
     double rotAxis2_F1[3];                                     //!< F1 frame intermediate rotation axis for the second rotation
 
     /* Private variables */
-    double r_FM_M[3];                                          //!< [m] Position of the F frame origin relative to the M frame origin in M frame components
-    double rPrime_FM_M[3];                                     //!< [m/s] B frame time derivative of r_FM_M in M frame components
-    double rPrimePrime_FM_M[3];                                //!< [m/s^2] B frame time derivative of rPrime_FM_M in M frame components
     double omega_FM_F[3];                                      //!< [rad/s] angular velocity of frame F relative to frame M in F frame components
     double omegaPrime_FM_F[3];                                 //!< [rad/s^2] B frame time derivative of omega_FB_F in F frame components
     double sigma_FM[3];                                        //!< MRP attitude of frame F relative to frame M
@@ -56,9 +53,9 @@ typedef struct
     double dcm_F0M[3][3];                                      //!< DCM from the M frame to the spinning body body frame at the beginning of the maneuver
 
     /* Declare the module input-output messages */
-    HingedRigidBodyMsg_C    spinningBodyRef1InMsg;                //!< Input msg for the first reference angle and angle rate
-    HingedRigidBodyMsg_C    spinningBodyRef2InMsg;                //!< Input msg for the second reference angles and angle rate
-    PrescribedMotionMsg_C prescribedMotionOutMsg;              //!< Output msg for the profiled prescribed states
+    HingedRigidBodyMsg_C spinningBodyRef1InMsg;                //!< Input msg for the first reference angle and angle rate
+    HingedRigidBodyMsg_C spinningBodyRef2InMsg;                //!< Input msg for the second reference angles and angle rate
+    PrescribedRotationMsg_C prescribedRotationOutMsg;          //!< Output msg for the profiled prescribed rotational states
 
     BSKLogger *bskLogger;                                      //!< BSK Logging
 

@@ -33,7 +33,7 @@
  */
 void SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, int64_t moduleID)
 {
-    PrescribedMotionMsg_C_init(&configData->prescribedMotionOutMsg);
+    PrescribedRotationMsg_C_init(&configData->prescribedRotationOutMsg);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -93,11 +93,11 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t call
     HingedRigidBodyMsgPayload spinningBodyRef1In;
     HingedRigidBodyMsgPayload spinningBodyRef2In;
     HingedRigidBodyMsgPayload spinningBodyOut;
-    PrescribedMotionMsgPayload prescribedMotionOut;
+    PrescribedRotationMsgPayload prescribedRotationOut;
 
     // Zero the output messages
     spinningBodyOut = HingedRigidBodyMsg_C_zeroMsgPayload();
-    prescribedMotionOut = PrescribedMotionMsg_C_zeroMsgPayload();
+    prescribedRotationOut = PrescribedRotationMsg_C_zeroMsgPayload();
 
     // Read the input messages
     spinningBodyRef1In = HingedRigidBodyMsg_C_zeroMsgPayload();
@@ -230,14 +230,11 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t call
     // Determine the prescribed spinning body state: sigma_FM
     C2MRP(dcm_FM, configData->sigma_FM);
 
-    // Copy the module prescribed variables to the prescribed motion output message
-    v3Copy(configData->r_FM_M, prescribedMotionOut.r_FM_M);
-    v3Copy(configData->rPrime_FM_M, prescribedMotionOut.rPrime_FM_M);
-    v3Copy(configData->rPrimePrime_FM_M, prescribedMotionOut.rPrimePrime_FM_M);
-    v3Copy(configData->omega_FM_F, prescribedMotionOut.omega_FM_F);
-    v3Copy(configData->omegaPrime_FM_F, prescribedMotionOut.omegaPrime_FM_F);
-    v3Copy(configData->sigma_FM, prescribedMotionOut.sigma_FM);
+    // Copy the module prescribed variables to the prescribed rotational motion output message
+    v3Copy(configData->omega_FM_F, prescribedRotationOut.omega_FM_F);
+    v3Copy(configData->omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
+    v3Copy(configData->sigma_FM, prescribedRotationOut.sigma_FM);
 
-    // Write the prescribed motion output message
-    PrescribedMotionMsg_C_write(&prescribedMotionOut, &configData->prescribedMotionOutMsg, moduleID, callTime);
+    // Write the prescribed rotational motion output message
+    PrescribedRotationMsg_C_write(&prescribedRotationOut, &configData->prescribedRotationOutMsg, moduleID, callTime);
 }
