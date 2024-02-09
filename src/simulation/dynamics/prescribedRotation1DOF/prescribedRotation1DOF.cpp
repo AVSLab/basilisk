@@ -113,15 +113,19 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
         }
     }
 
-    // Determine the prescribed parameters omega_FM_F, omegaPrime_FM_F, and sigma_FM
-    this->omega_FM_F = this->thetaDot * this->rotHat_M;
-    this->omegaPrime_FM_F = this->thetaDDot * this->rotHat_M;
-    this->computeSigma_FM();
+    // [rad/s] Angular velocity of frame F wrt frame M in F frame components
+    Eigen::Vector3d omega_FM_F = this->thetaDot * this->rotHat_M;
+
+    // [rad/s^2] B frame time derivative of omega_FM_F in F frame components
+    Eigen::Vector3d omegaPrime_FM_F = this->thetaDDot * this->rotHat_M;
+
+    // MRP attitude of spinning body frame F with respect to frame M
+    Eigen::Vector3d sigma_FM = this->computeSigma_FM();
 
     // Copy the module variables to the prescribedRotationOut output message
-    eigenVector3d2CArray(this->omega_FM_F, prescribedRotationOut.omega_FM_F);
-    eigenVector3d2CArray(this->omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
-    eigenVector3d2CArray(this->sigma_FM, prescribedRotationOut.sigma_FM);
+    eigenVector3d2CArray(omega_FM_F, prescribedRotationOut.omega_FM_F);
+    eigenVector3d2CArray(omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
+    eigenVector3d2CArray(sigma_FM, prescribedRotationOut.sigma_FM);
 
     // Copy the scalar variables to the spinningBodyOut output message
     spinningBodyOut.theta = this->theta;
@@ -292,7 +296,7 @@ void PrescribedRotation1DOF::computeRotationComplete() {
 /*! This method computes the current spinning body MRP attitude relative to the mount frame: sigma_FM
  @return void
 */
-void PrescribedRotation1DOF::computeSigma_FM() {
+Eigen::Vector3d PrescribedRotation1DOF::computeSigma_FM() {
     // Determine dcm_FF0 for the current spinning body attitude relative to the initial attitude
     double dcm_FF0[3][3];
     double prv_FF0_array[3];
@@ -315,7 +319,7 @@ void PrescribedRotation1DOF::computeSigma_FM() {
     // Compute the MRP sigma_FM representing the current spinning body attitude relative to the mount frame
     double sigma_FM_array[3];
     C2MRP(dcm_FM, sigma_FM_array);
-    this->sigma_FM = cArray2EigenVector3d(sigma_FM_array);
+    return cArray2EigenVector3d(sigma_FM_array);
 }
 
 /*! Setter method for the coast option ramp duration.

@@ -68,7 +68,7 @@ private:
     void computeFirstRampSegment(double time);                  //!< Method for computing the scalar rotational states for the first ramp segment
     void computeSecondRampSegment(double time);                 //!< Method for computing the scalar rotational states for the second ramp segment
     void computeRotationComplete();                             //!< Method for computing the scalar rotational states when the rotation is complete
-    void computeSigma_FM();                                     //!< Method for computing the current spinning body MRP attitude relative to the mount frame: sigma_FM
+    Eigen::Vector3d computeSigma_FM();                          //!< Method for computing the current spinning body MRP attitude relative to the mount frame: sigma_FM
 
     /* User-configurable variables */
     double coastOptionRampDuration;                             //!< [s] Ramp time used for the coast option
@@ -86,9 +86,6 @@ private:
     double ts;                                                  //!< [s] The simulation time halfway through the rotation
 
     /* Shared module variables */
-    Eigen::Vector3d omega_FM_F;                                 //!< [rad/s] Angular velocity of frame F wrt frame M in F frame components
-    Eigen::Vector3d omegaPrime_FM_F;                            //!< [rad/s^2] B frame time derivative of omega_FM_F in F frame components
-    Eigen::Vector3d sigma_FM;                                   //!< MRP attitude of spinning body frame F with respect to frame M
     double theta;                                               //!< [rad] Current angle
     double thetaDot;                                            //!< [rad/s] Current angle rate
     double thetaDDot;                                           //!< [rad/s^2] Current angular acceleration
