@@ -178,10 +178,6 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
 
         # Initialize the prescribedRot1DOF test module configuration data
         accelMax = 0.01  # [rad/s^2]
-        #accelMax = np.pi / 180  # [rad/s^2]
-        PrescribedRot1DOF.r_FM_M = r_FM_M
-        PrescribedRot1DOF.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-        PrescribedRot1DOF.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
         PrescribedRot1DOF.rotAxis_M = rotAxis_M
         PrescribedRot1DOF.thetaDDotMax = accelMax
         PrescribedRot1DOF.omega_FM_F = np.array([0.0, 0.0, 0.0])
@@ -196,8 +192,8 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         SpinningBodyMessage = messaging.HingedRigidBodyMsg().write(SpinningBodyMessageData)
         PrescribedRot1DOF.spinningBodyInMsg.subscribeTo(SpinningBodyMessage)
         
-        # Connect the PrescribedRot1DOF module's prescribedMotion output message to the prescribedMotion module's prescribedMotion input message
-        platform.prescribedMotionInMsg.subscribeTo(PrescribedRot1DOF.prescribedMotionOutMsg)
+        # Connect the PrescribedRot1DOF module's prescribedRotation output message to the prescribedMotion module's prescribedRotation input message
+        platform.prescribedRotationInMsg.subscribeTo(PrescribedRot1DOF.prescribedRotationOutMsg)
 
         # Add Earth gravity to the simulation
         earthGravBody = gravityEffector.GravBodyData()
@@ -212,11 +208,9 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
 
         # Add other states to log
         scStateData = scObject.scStateOutMsg.recorder()
-        prescribedStateData = platform.prescribedMotionOutMsg.recorder()
-        dataLog = PrescribedRot1DOF.prescribedMotionOutMsg.recorder()
+        prescribedRotStateData = platform.prescribedRotationOutMsg.recorder()
         unitTestSim.AddModelToTask(unitTaskName, scStateData)
-        unitTestSim.AddModelToTask(unitTaskName, prescribedStateData)
-        unitTestSim.AddModelToTask(unitTaskName, dataLog)
+        unitTestSim.AddModelToTask(unitTaskName, prescribedRotStateData)
 
         # Initialize the simulation
         unitTestSim.InitializeSimulation()
@@ -236,10 +230,10 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         omega_BN_B = scStateData.omega_BN_B
         r_BN_N = scStateData.r_BN_N
         sigma_BN = scStateData.sigma_BN
-        omega_FM_F = dataLog.omega_FM_F
-        omegaPrime_FM_F = dataLog.omegaPrime_FM_F
-        sigma_FM = dataLog.sigma_FM
-        timespan = dataLog.times()
+        omega_FM_F = prescribedRotStateData.omega_FM_F
+        omegaPrime_FM_F = prescribedRotStateData.omegaPrime_FM_F
+        sigma_FM = prescribedRotStateData.sigma_FM
+        timespan = prescribedRotStateData.times()
         thetaDot_Final = np.linalg.norm(omega_FM_F[-1, :])
         sigma_FM_Final = sigma_FM[-1, :]
         theta_FM_Final = 4 * np.arctan(np.linalg.norm(sigma_FM_Final))
@@ -419,9 +413,6 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         PrescribedTrans.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
         PrescribedTrans.transAxis_M = transAxis_M
         PrescribedTrans.scalarAccelMax = accelMax
-        PrescribedTrans.omega_FM_F = np.array([0.0, 0.0, 0.0])
-        PrescribedTrans.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-        PrescribedTrans.sigma_FM = sigma_FM
 
         # Create the prescribedTrans input message
         velRef = 0.0  # [m/s]
@@ -431,8 +422,8 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         linearTranslationRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTranslationRigidBodyMessageData)
         PrescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTranslationRigidBodyMessage)
 
-        # Connect the PrescribedTrans module's prescribedMotion output message to the prescribedMotion module's prescribedMotion input message
-        platform.prescribedMotionInMsg.subscribeTo(PrescribedTrans.prescribedMotionOutMsg)
+        # Connect the PrescribedTrans module's prescribedTranslation output message to the prescribedMotion module's prescribedTranslation input message
+        platform.prescribedTranslationInMsg.subscribeTo(PrescribedTrans.prescribedTranslationOutMsg)
 
         # Add Earth gravity to the simulation
         earthGravBody = gravityEffector.GravBodyData()
@@ -447,11 +438,9 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
 
         # Add other states to log
         scStateData = scObject.scStateOutMsg.recorder()
-        prescribedStateData = platform.prescribedMotionOutMsg.recorder()
-        dataLog = PrescribedTrans.prescribedMotionOutMsg.recorder()
+        prescribedTransStateData = platform.prescribedTranslationOutMsg.recorder()
         unitTestSim.AddModelToTask(unitTaskName, scStateData)
-        unitTestSim.AddModelToTask(unitTaskName, prescribedStateData)
-        unitTestSim.AddModelToTask(unitTaskName, dataLog)
+        unitTestSim.AddModelToTask(unitTaskName, prescribedTransStateData)
 
         # Initialize the simulation
         unitTestSim.InitializeSimulation()
@@ -471,10 +460,10 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         r_BN_N = scStateData.r_BN_N
         sigma_BN = scStateData.sigma_BN
         omega_BN_B = scStateData.omega_BN_B
-        r_FM_M = dataLog.r_FM_M
-        rPrime_FM_M = dataLog.rPrime_FM_M
-        rPrimePrime_FM_M = dataLog.rPrimePrime_FM_M
-        timespan = dataLog.times()
+        r_FM_M = prescribedTransStateData.r_FM_M
+        rPrime_FM_M = prescribedTransStateData.rPrime_FM_M
+        rPrimePrime_FM_M = prescribedTransStateData.rPrimePrime_FM_M
+        timespan = prescribedTransStateData.times()
         r_FM_M_Final = r_FM_M[-1, :]
         rPrime_FM_M_Final = rPrime_FM_M[-1, :]
 

@@ -39,8 +39,10 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsg_C;
-%include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
-struct PrescribedMotionMsg_C;
+%include "architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.h"
+struct PrescribedTranslationMsg_C;
+%include "architecture/msgPayloadDefC/PrescribedRotationMsgPayload.h"
+struct PrescribedRotationMsg_C;
 
 %pythoncode %{
 import sys
