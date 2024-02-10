@@ -38,9 +38,6 @@ provides information on what this message is used for.
     * - linearTranslationRigidBodyInMsg
       - :ref:`LinearTranslationRigidBodyMsgPayload`
       - input msg with the prescribed body reference states
-    * - prescribedTransOutMsg
-      - :ref:`PrescribedTransMsgPayload`
-      - output message with the scalar prescribed body states
     * - prescribedMotionOutMsg
       - :ref:`PrescribedMotionMsgPayload`
       - output message with the prescribed body states
@@ -132,11 +129,8 @@ the mount frame axis for the translational motion, the prescribed body's initial
 the mount frame :math:`\boldsymbol{r}_{F/M}(t_0)`, and the reference position vector of the prescribed body with respect
 to the mount frame :math:`\boldsymbol{r}_{F/M} (\text{ref})`.
 
-This module provides two output messages in the form of :ref:`PrescribedTransMsgPayload` and
-:ref:`PrescribedMotionMsgPayload`. The first guidance message, describing the prescribed body's scalar states relative to
-the hub-fixed mount frame can be directly connected to a feedback control module. The second prescribed
-motion output message can be connected to the :ref:`PrescribedMotionStateEffector` dynamics module to directly profile
-a state effector's translational motion.
+This module provides a :ref:`PrescribedMotionMsgPayload` output message that can be connected to the
+:ref:`PrescribedMotionStateEffector` dynamics module to directly profile a state effector's translational motion.
 
 This section is to outline the steps needed to setup a prescribed translational module in python using Basilisk.
 
