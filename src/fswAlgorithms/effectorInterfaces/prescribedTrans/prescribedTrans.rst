@@ -35,8 +35,8 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - prescribedTransInMsg
-      - :ref:`PrescribedTransMsgPayload`
+    * - linearTranslationRigidBodyInMsg
+      - :ref:`LinearTranslationRigidBodyMsgPayload`
       - input msg with the prescribed body reference states
     * - prescribedTransOutMsg
       - :ref:`PrescribedTransMsgPayload`
