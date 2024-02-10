@@ -425,11 +425,11 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
 
         # Create the prescribedTrans input message
         velRef = 0.0  # [m/s]
-        PrescribedTransMessageData = messaging.PrescribedTransMsgPayload()
-        PrescribedTransMessageData.scalarPos = posRef
-        PrescribedTransMessageData.scalarVel = velRef
-        PrescribedTransMessage = messaging.PrescribedTransMsg().write(PrescribedTransMessageData)
-        PrescribedTrans.prescribedTransInMsg.subscribeTo(PrescribedTransMessage)
+        linearTranslationRigidBodyMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
+        linearTranslationRigidBodyMessageData.rho = posRef
+        linearTranslationRigidBodyMessageData.rhoDot = velRef
+        linearTranslationRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTranslationRigidBodyMessageData)
+        PrescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTranslationRigidBodyMessage)
 
         # Connect the PrescribedTrans module's prescribedMotion output message to the prescribedMotion module's prescribedMotion input message
         platform.prescribedMotionInMsg.subscribeTo(PrescribedTrans.prescribedMotionOutMsg)
