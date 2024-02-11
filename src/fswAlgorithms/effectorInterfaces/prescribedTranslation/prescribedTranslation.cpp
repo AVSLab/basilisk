@@ -18,6 +18,7 @@
 */
 
 #include "prescribedTranslation.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <cmath>
@@ -129,14 +130,14 @@ void PrescribedTranslation::UpdateState(uint64_t callTime)
     }
 
     // Determine the prescribed parameters: r_FM_M, rPrime_FM_M and rPrimePrime_FM_M
-    v3Scale(this->transPos, this->transAxis_M, this->r_FM_M);
-    v3Scale(this->transVel, this->transAxis_M, this->rPrime_FM_M);
-    v3Scale(this->transAccel, this->transAxis_M, this->rPrimePrime_FM_M);
+    this->r_FM_M = this->transPos*this->transAxis_M;
+    this->rPrime_FM_M = this->transVel*this->transAxis_M;
+    this->rPrimePrime_FM_M = this->transAccel*this->transAxis_M;
 
     // Copy the required module variables to the prescribedTranslation output message
-    v3Copy(this->r_FM_M, prescribedTranslationMsgOut.r_FM_M);
-    v3Copy(this->rPrime_FM_M, prescribedTranslationMsgOut.rPrime_FM_M);
-    v3Copy(this->rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
+    eigenVector3d2CArray(this->r_FM_M, prescribedTranslationMsgOut.r_FM_M);
+    eigenVector3d2CArray(this->rPrime_FM_M, prescribedTranslationMsgOut.rPrime_FM_M);
+    eigenVector3d2CArray(this->rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
 
     // Write the output message
     this->prescribedTranslationOutMsg.write(&prescribedTranslationMsgOut, moduleID, callTime);

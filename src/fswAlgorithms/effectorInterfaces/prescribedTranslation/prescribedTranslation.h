@@ -24,6 +24,7 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.h"
 #include "architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.h"
+#include <Eigen/Dense>
 #include <cstdint>
 
 /*! @brief Prescribed Linear Translation Profiler Class */
@@ -35,12 +36,11 @@ public:
     void Reset(uint64_t CurrentSimNanos) override;                          //!< Reset member function
     void UpdateState(uint64_t CurrentSimNanos) override;                    //!< Update member function
 
-    /* User-configurable variables */
-    double transAccelMax;                                          //!< [m/s^2] Maximum acceleration magnitude
-    double transAxis_M[3];                                          //!< Axis along the direction of translation
-    double r_FM_M[3];                                               //!< [m] Position of the frame F origin with respect to the M frame origin expressed in M frame components
-    double rPrime_FM_M[3];                                          //!< [m/s] B frame time derivative of r_FM_M expressed in M frame components
-    double rPrimePrime_FM_M[3];                                     //!< [m/s^] B frame time derivative of rPrime_FM_M expressed in M frame components
+    double transAccelMax;                                           //!< [m/s^2] Maximum acceleration magnitude
+    Eigen::Vector3d transAxis_M;                                    //!< Axis along the direction of translation expressed in M frame components
+    Eigen::Vector3d r_FM_M;                                         //!< [m] Translational body position relative to the Mount frame expressed in M frame components
+    Eigen::Vector3d rPrime_FM_M;                                    //!< [m/s] B frame time derivative of r_FM_M expressed in M frame components
+    Eigen::Vector3d rPrimePrime_FM_M;                               //!< [m/s^2] B frame time derivative of rPrime_FM_M expressed in M frame components
 
     /* Private variables */
     bool convergence;                                           //!< Boolean variable is true when the translation is complete
