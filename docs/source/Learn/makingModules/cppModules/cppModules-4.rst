@@ -59,7 +59,7 @@ The line ``%include "swig_conly_data.i"`` enables the python interface to read a
 If you have to interact with a standard vector of input or output messages, running ``python conanfile.py`` will
 auto-create the required python interfaces to vectors of output messages, vector of output message pointers,
 as well as vectors of input messages. Assume the message is of type ``SomeMsg``. After running
-``python conanfile.py`` the folling swig interfaces are defined:
+``python conanfile.py`` the following swig interfaces are defined:
 
 .. code:: cpp
 

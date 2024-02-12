@@ -23,7 +23,7 @@
 
 namespace {
 // Computes the term (2 - d_l), where d_l is the kronecker delta.
-inline double getK(const unsigned int degree)
+inline double getK(const size_t degree)
 {
     return (degree == 0) ? 1.0 : 2.0;
 }
@@ -92,7 +92,7 @@ SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_pla
 
 Eigen::Vector3d
 SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_planetFixed,
-                                             unsigned int degree, bool include_zero_degree) const
+                                             size_t degree, bool include_zero_degree) const
 {
     if (degree > this->maxDeg) {
         auto errorMsg =

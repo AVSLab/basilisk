@@ -41,6 +41,7 @@ Version |release|
   automatically increment the patch number. This allows users to reference/require specific versions of Basilisk 
   outside of the release cycle.
 - updated plotting of ``opNav`` example scenarios to work again with latest version of ``matplotlib``
+- fixed a slew of compiler warnings when compiling with Xcode 15
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------
