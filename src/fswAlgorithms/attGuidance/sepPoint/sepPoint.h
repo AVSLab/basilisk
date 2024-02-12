@@ -28,12 +28,7 @@
 #include "architecture/msgPayloadDefC/InertialHeadingMsgPayload.h"
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
-
-
-typedef enum alignmentPriority{
-    solarArrayAlign = 0,
-    sunConstrAxisAlign = 1
-} AlignmentPriority;
+#include "fswAlgorithms/attGuidance/_GeneralModuleFiles/constrainedAxisPointingLibrary.h"
 
 
 /*! @brief A class to perform EMA SEP pointing */

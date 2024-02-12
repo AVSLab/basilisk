@@ -17,12 +17,9 @@
 
  */
 
-
 #include "sepPoint.h"
-#include <math.h>
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "fswAlgorithms/attGuidance/_GeneralModuleFiles/attitudePointingLibrary.h"
 
 const double epsilon = 1e-12;                           // module tolerance for zero
 
@@ -97,100 +94,10 @@ void SepPoint::UpdateState(uint64_t CurrentSimNanos)
     double rHat_SB_B[3];
     v3Copy(attNavIn.vehSunPntBdy, rHat_SB_B);
 
-    /*! map requested heading into B frame */
-    double hReqHat_B[3];
-    m33MultV3(BN, hReqHat_N, hReqHat_B);
-
-    /*! compute intermediate rotation DB to align the boresight */
-    double DB[3][3];
-    boresightAlignment(hRefHat_B, hReqHat_B, epsilon, DB);
-
-    /*! map Sun direction vector to intermediate frame */
-    double rHat_SB_D[3];
-    m33MultV3(DB, rHat_SB_B, rHat_SB_D);
-
-    /*! define the coefficients of the quadratic equation A, B, and C for the solar array drive axis */
-    double e_psi[3];
-    v3Copy(hRefHat_B, e_psi);
-    double b3[3];
-    v3Cross(rHat_SB_D, e_psi, b3);
-    double A = 2 * v3Dot(rHat_SB_D, e_psi) * v3Dot(e_psi, a1Hat_B) - v3Dot(a1Hat_B, rHat_SB_D);
-    double B = 2 * v3Dot(a1Hat_B, b3);
-    double C = v3Dot(a1Hat_B, rHat_SB_D);
-
-    /*! define the coefficients of the quadratic equation D, E, and F for the Sun-constrained axis */
-    double D = 2 * v3Dot(rHat_SB_D, e_psi) * v3Dot(e_psi, a2Hat_B) - v3Dot(a2Hat_B, rHat_SB_D);
-    double E = 2 * v3Dot(a2Hat_B, b3);
-    double F = v3Dot(a2Hat_B, rHat_SB_D);
-
-    /*! compute the solution(s) to the optimized solar array alignment problem */
-    SolutionSpace solarArraySolutions(A, B, C, epsilon);
-
-    double PRV_psi[3];
-    switch (this->alignmentPriority) {
-
-        case solarArrayAlign :
-            if (solarArraySolutions.numberOfZeros() == 2) {
-                double psi1 = solarArraySolutions.returnAbsMin(1);
-                double psi2 = solarArraySolutions.returnAbsMin(2);
-                double PRV_psi1[3];
-                v3Scale(psi1, e_psi, PRV_psi1);
-                double PRV_psi2[3];
-                v3Scale(psi2, e_psi, PRV_psi2);
-                double P1D[3][3];
-                PRV2C(PRV_psi1, P1D);
-                double P2D[3][3];
-                PRV2C(PRV_psi2, P2D);
-                double rHat_SB_P1[3];
-                m33MultV3(P1D, rHat_SB_D, rHat_SB_P1);
-                double rHat_SB_P2[3];
-                m33MultV3(P2D, rHat_SB_D, rHat_SB_P2);
-                if (fabs(v3Dot(a2Hat_B, rHat_SB_P2) - v3Dot(a2Hat_B, rHat_SB_P1)) > 0) {
-                    v3Scale(psi2, e_psi, PRV_psi);
-                }
-                else {
-                    v3Scale(psi1, e_psi, PRV_psi);
-                }
-            }
-            else {
-                double psi = solarArraySolutions.returnAbsMin(1);
-                v3Scale(psi, e_psi, PRV_psi);
-            }
-            break;
-
-        case sunConstrAxisAlign :
-            double k = cos(this->beta);
-            SolutionSpace sunConstAxisSolutions(D-k, E, F-k, epsilon);
-            if (sunConstAxisSolutions.isEmpty()) {
-                double psi = sunConstAxisSolutions.returnAbsMin(1);
-                v3Scale(psi, e_psi, PRV_psi);
-            }
-            else if (solarArraySolutions.numberOfZeros() == 2) {
-                double psi1 = solarArraySolutions.returnAbsMin(1);
-                double psi2 = solarArraySolutions.returnAbsMin(2);
-                double deltaPsi1 = psi1 - sunConstAxisSolutions.passThrough(psi1);
-                double deltaPsi2 = psi2 - sunConstAxisSolutions.passThrough(psi2);
-                if (fabs(deltaPsi2 - deltaPsi1) > 0) {
-                    v3Scale(psi1, e_psi, PRV_psi);
-                } else {
-                    v3Scale(psi2, e_psi, PRV_psi);
-                }
-            }
-            else {
-                double psi = solarArraySolutions.returnAbsMin(1);
-                psi = sunConstAxisSolutions.passThrough(psi);
-                v3Scale(psi, e_psi, PRV_psi);
-            }
-            break;
-    }
-
-    /*! map PRV to RD direction cosine matrix */
-    double RD[3][3];
-    PRV2C(PRV_psi, RD);
-    double RB[3][3];
-    m33MultM33(RD, DB, RB);
+    /*! compute reference frame RN */
     double RN[3][3];
-    m33MultM33(RB, BN, RN);
+    computeReferenceFrame(hRefHat_B, hReqHat_N, rHat_SB_B, a1Hat_B, a2Hat_B, this->beta, BN,
+                          this->alignmentPriority, epsilon, RN);
 
     /*! compute reference MRP */
     double sigma_RN[3];
@@ -203,10 +110,10 @@ void SepPoint::UpdateState(uint64_t CurrentSimNanos)
     finiteDifferencesRatesAndAcc(sigma_RN,
                                  this->sigma_RN_1,
                                  this->sigma_RN_2,
-                                 CurrentSimNanos,
-                                 this->T1NanoSeconds,
-                                 this->T2NanoSeconds,
-                                 this->callCount,
+                                 &CurrentSimNanos,
+                                 &this->T1NanoSeconds,
+                                 &this->T2NanoSeconds,
+                                 &this->callCount,
                                  omega_RN_R,
                                  omegaDot_RN_R);
 
