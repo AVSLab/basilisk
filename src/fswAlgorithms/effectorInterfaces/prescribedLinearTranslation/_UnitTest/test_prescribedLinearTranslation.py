@@ -18,7 +18,7 @@
 
 #
 #   Unit Test Script
-#   Module Name:        prescribedTranslation
+#   Module Name:        prescribedLinearTranslation
 #   Author:             Patrick Kenneally and Leah Kiner
 #   Creation Date:      Feb 12, 2024
 #
@@ -31,7 +31,7 @@ import numpy as np
 import pytest
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import prescribedTranslation
+from Basilisk.fswAlgorithms import prescribedLinearTranslation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 
@@ -47,13 +47,13 @@ splitPath = path.split(bskName)
 @pytest.mark.parametrize("transPosRef2", [-0.75, 1.0])  # [m]
 @pytest.mark.parametrize("transAccelMax", [0.01, 0.005])  # [m/s^2]
 @pytest.mark.parametrize("accuracy", [1e-4])
-def test_prescribedTranslation(show_plots,
-                               coastOptionRampDuration,
-                               transPosInit,
-                               transPosRef1,
-                               transPosRef2,
-                               transAccelMax,
-                               accuracy):
+def test_prescribedLinearTranslation(show_plots,
+                                     coastOptionRampDuration,
+                                     transPosInit,
+                                     transPosRef1,
+                                     transPosRef2,
+                                     transAccelMax,
+                                     accuracy):
     r"""
     **Validation Test Description**
 
@@ -97,8 +97,8 @@ def test_prescribedTranslation(show_plots,
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    # Create an instance of the prescribedTranslation module to be tested
-    prescribedTrans = prescribedTranslation.PrescribedTranslation()
+    # Create an instance of the prescribedLinearTranslation module to be tested
+    prescribedTrans = prescribedLinearTranslation.PrescribedLinearTranslation()
     prescribedTrans.ModelTag = "prescribedTrans"
     transHat_M = np.array([0.5, 0.0, 0.5 * np.sqrt(3)])
     prescribedTrans.setCoastOptionRampDuration(coastOptionRampDuration)
@@ -320,7 +320,7 @@ def test_prescribedTranslation(show_plots,
 
 
 if __name__ == "__main__":
-    test_prescribedTranslation(True,  # show_plots
+    test_prescribedLinearTranslation(True,  # show_plots
                                2.0,
                                0.0,  # [m] transPosInit
                                -0.5,  # [m] transPosRef1

@@ -17,7 +17,7 @@
 
 */
 
-#include "prescribedTranslation.h"
+#include "prescribedLinearTranslation.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
@@ -28,10 +28,10 @@
  @return void
  @param callTime [ns] Simulation time the method is called
 */
-void PrescribedTranslation::Reset(uint64_t callTime)
+void PrescribedLinearTranslation::Reset(uint64_t callTime)
 {
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {
-        _bskLog(this->bskLogger, BSK_ERROR, "Error: prescribedTrans.linearTranslationRigidBodyInMsg wasn't connected.");
+        _bskLog(this->bskLogger, BSK_ERROR, "Error: prescribedLinearTranslation.linearTranslationRigidBodyInMsg wasn't connected.");
     }
 
     // Set the initial time
@@ -49,7 +49,7 @@ The prescribed states are then written to the output message.
  @return void
  @param callTime [ns] Simulation time the method is called
 */
-void PrescribedTranslation::UpdateState(uint64_t callTime)
+void PrescribedLinearTranslation::UpdateState(uint64_t callTime)
 {
     LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn;
     PrescribedTranslationMsgPayload prescribedTranslationMsgOut;
@@ -127,7 +127,7 @@ void PrescribedTranslation::UpdateState(uint64_t callTime)
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedTranslation::isInFirstRampSegment(double t) const {
+bool PrescribedLinearTranslation::isInFirstRampSegment(double t) const {
     return (t <= this->tr && this->tf - this->tInit != 0);
 }
 
@@ -135,7 +135,7 @@ bool PrescribedTranslation::isInFirstRampSegment(double t) const {
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedTranslation::isInCoastSegment(double t) const {
+bool PrescribedLinearTranslation::isInCoastSegment(double t) const {
     return (t > this->tr && t <= this->tc && this->tf - this->tInit != 0);
 }
 
@@ -143,14 +143,14 @@ bool PrescribedTranslation::isInCoastSegment(double t) const {
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedTranslation::isInSecondRampSegment(double t) const {
+bool PrescribedLinearTranslation::isInSecondRampSegment(double t) const {
     return (t > this->tc && t <= this->tf && this->tf - this->tInit != 0);
 }
 
 /*! This method computes the required parameters for the translation with a coast period.
  @return void
 */
-void PrescribedTranslation::computeCoastParameters() {
+void PrescribedLinearTranslation::computeCoastParameters() {
     if (this->transPosInit != this->transPosRef) {
         // Determine the time at the end of the first ramp segment
         this->tr = this->tInit + this->coastOptionRampDuration;
@@ -195,7 +195,7 @@ void PrescribedTranslation::computeCoastParameters() {
  @return void
  @param t [s] Current simulation time
 */
-void PrescribedTranslation::computeCoastSegment(double t) {
+void PrescribedLinearTranslation::computeCoastSegment(double t) {
     this->transAccel = 0.0;
     this->transVel = this->transVel_tr;
     this->transPos = this->transVel_tr * (t - this->tr) + this->transPos_tr;
@@ -205,7 +205,7 @@ void PrescribedTranslation::computeCoastSegment(double t) {
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedTranslation::isInFirstRampSegmentNoCoast(double t) const {
+bool PrescribedLinearTranslation::isInFirstRampSegmentNoCoast(double t) const {
     return (t <= this->ts && this->tf - this->tInit != 0);
 }
 
@@ -213,14 +213,14 @@ bool PrescribedTranslation::isInFirstRampSegmentNoCoast(double t) const {
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedTranslation::isInSecondRampSegmentNoCoast(double t) const {
+bool PrescribedLinearTranslation::isInSecondRampSegmentNoCoast(double t) const {
     return (t > this->ts && t <= this->tf && this->tf - this->tInit != 0);
 }
 
 /*! This method computes the required parameters for the translation with no coast period.
  @return void
 */
-void PrescribedTranslation::computeParametersNoCoast() {
+void PrescribedLinearTranslation::computeParametersNoCoast() {
     // Determine the total time required for the translation
     double totalTransTime = sqrt(((0.5 * fabs(this->transPosRef - this->transPosInit)) * 8) / this->transAccelMax);
 
@@ -241,7 +241,7 @@ void PrescribedTranslation::computeParametersNoCoast() {
  @return void
  @param t [s] Current simulation time
 */
-void PrescribedTranslation::computeFirstRampSegment(double t) {
+void PrescribedLinearTranslation::computeFirstRampSegment(double t) {
     if (this->transPosInit < this->transPosRef) {
         this->transAccel = this->transAccelMax;
     } else {
@@ -257,7 +257,7 @@ void PrescribedTranslation::computeFirstRampSegment(double t) {
  @return void
  @param t [s] Current simulation time
 */
-void PrescribedTranslation::computeSecondRampSegment(double t) {
+void PrescribedLinearTranslation::computeSecondRampSegment(double t) {
     if (this->transPosInit < this->transPosRef) {
         this->transAccel = -this->transAccelMax;
     } else {
@@ -270,7 +270,7 @@ void PrescribedTranslation::computeSecondRampSegment(double t) {
 /*! This method computes the scalar translational states when the translation is complete.
  @return void
 */
-void PrescribedTranslation::computeTranslationComplete() {
+void PrescribedLinearTranslation::computeTranslationComplete() {
     this->transAccel = 0.0;
     this->transVel = 0.0;
     this->transPos = this->transPosRef;
@@ -281,7 +281,7 @@ void PrescribedTranslation::computeTranslationComplete() {
  @return void
  @param rampDuration [s] Ramp segment time duration
 */
-void PrescribedTranslation::setCoastOptionRampDuration(double rampDuration) {
+void PrescribedLinearTranslation::setCoastOptionRampDuration(double rampDuration) {
     this->coastOptionRampDuration = rampDuration;
 }
 
@@ -289,7 +289,7 @@ void PrescribedTranslation::setCoastOptionRampDuration(double rampDuration) {
  @return void
  @param transAccelMax [m/s^2] Ramp segment linear angular acceleration
 */
-void PrescribedTranslation::setTransAccelMax(double transAccelMax) {
+void PrescribedLinearTranslation::setTransAccelMax(double transAccelMax) {
     this->transAccelMax = transAccelMax;
 }
 
@@ -297,7 +297,7 @@ void PrescribedTranslation::setTransAccelMax(double transAccelMax) {
  @return void
  @param transHat_M Translating body axis of translation (unit vector)
 */
-void PrescribedTranslation::setTransHat_M(const Eigen::Vector3d &transHat_M) {
+void PrescribedLinearTranslation::setTransHat_M(const Eigen::Vector3d &transHat_M) {
     this->transHat_M = transHat_M;
 }
 
@@ -305,34 +305,34 @@ void PrescribedTranslation::setTransHat_M(const Eigen::Vector3d &transHat_M) {
  @return void
  @param transPosInit [m] Initial translating body position relative to the hub
 */
-void PrescribedTranslation::setTransPosInit(double transPosInit) {
+void PrescribedLinearTranslation::setTransPosInit(double transPosInit) {
     this->transPosInit = transPosInit;
 }
 
 /*! Getter method for the coast option ramp duration.
  @return double
 */
-double PrescribedTranslation::getCoastOptionRampDuration() const {
+double PrescribedLinearTranslation::getCoastOptionRampDuration() const {
     return this->coastOptionRampDuration;
 }
 
 /*! Getter method for the ramp segment scalar linear acceleration.
  @return double
 */
-double PrescribedTranslation::getTransAccelMax() const {
+double PrescribedLinearTranslation::getTransAccelMax() const {
     return this->transAccelMax;
 }
 
 /*! Getter method for the translating body axis of translation.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d &PrescribedTranslation::getTransHat_M() const {
+const Eigen::Vector3d &PrescribedLinearTranslation::getTransHat_M() const {
     return this->transHat_M;
 }
 
 /*! Getter method for the initial translating body position.
  @return double
 */
-double PrescribedTranslation::getTransPosInit() const {
+double PrescribedLinearTranslation::getTransPosInit() const {
     return this->transPosInit;
 }

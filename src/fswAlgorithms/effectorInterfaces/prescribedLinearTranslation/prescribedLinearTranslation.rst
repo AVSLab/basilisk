@@ -221,11 +221,11 @@ This section is to outline the steps needed to setup the prescribed linear trans
 
 #. Create an instantiation of the module::
 
-    prescribedLinearTrans = prescribedTranslation.PrescribedTranslation()
+    prescribedLinearTrans = prescribedLinearTranslation.PrescribedLinearTranslation()
 
 #. Define all of the configuration data associated with the module. For example, to configure the coast option::
 
-    prescribedLinearTrans.ModelTag = "prescribedTranslation"
+    prescribedLinearTrans.ModelTag = "prescribedLinearTranslation"
     prescribedLinearTrans.setTransHat_M(np.array([0.5, 0.0, 0.5 * np.sqrt(3)]))
     prescribedLinearTrans.setTransAccelMax(0.01)  # [m/s^2]
     prescribedLinearTrans.setTransPosInit(0.5)  # [m]

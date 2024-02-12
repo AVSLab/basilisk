@@ -28,10 +28,11 @@
 #include <cstdint>
 
 /*! @brief Prescribed Linear Translation Profiler Class */
-class PrescribedTranslation: public SysModel {
+class PrescribedLinearTranslation: public SysModel {
 public:
-    PrescribedTranslation() = default;                                      //!< Constructor
-    ~PrescribedTranslation() = default;                                     //!< Destructor
+
+    PrescribedLinearTranslation() = default;                                //!< Constructor
+    ~PrescribedLinearTranslation() = default;                               //!< Destructor
 
     void Reset(uint64_t CurrentSimNanos) override;                          //!< Reset member function
     void UpdateState(uint64_t CurrentSimNanos) override;                    //!< Update member function

@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module prescribedTranslation
+%module prescribedLinearTranslation
 %{
-   #include "prescribedTranslation.h"
+   #include "prescribedLinearTranslation.h"
 %}
 
 %pythoncode %{
@@ -29,7 +29,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 
 %include "sys_model.i"
-%include "prescribedTranslation.h"
+%include "prescribedLinearTranslation.h"
 
 %include "architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.h"
 struct PrescribedTranslationMsg_C;
