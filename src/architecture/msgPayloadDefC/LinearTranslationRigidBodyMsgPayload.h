@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2024, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,15 +17,15 @@
 
  */
 
-#ifndef prescribedTransSimMsg_h
-#define prescribedTransSimMsg_h
+#ifndef linearTranslationRigidBodySimMsg_h
+#define linearTranslationRigidBodySimMsg_h
 
 
- /*! @brief Structure used to define the data message*/
+ /*! @brief Structure used to define the translating rigid body data message*/
 typedef struct {
-    double scalarPos;                   //!< [m], spinning body translational displacement
-    double scalarVel;                   //!< [m/s], spinning body translational displacement rate
-}PrescribedTransMsgPayload;
+    double rho;                      //!< [m], body linear displacement
+    double rhoDot;                   //!< [m/s], body linear displacement rate
+}LinearTranslationRigidBodyMsgPayload;
 
 
-#endif /* prescribedTransSimMsg_h */
+#endif /* linearTranslationRigidBodySimMsg_h */

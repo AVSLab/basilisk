@@ -114,11 +114,11 @@ def prescribedTransTestFunction(show_plots, scalarPosInit, scalarPosRef, scalarA
 
     # Create input message
     scalarVelRef = 0.0  # [m/s]
-    PrescribedTransMessageData = messaging.PrescribedTransMsgPayload()
-    PrescribedTransMessageData.scalarPos = scalarPosRef
-    PrescribedTransMessageData.scalarVel = scalarVelRef
-    PrescribedTransMessage = messaging.PrescribedTransMsg().write(PrescribedTransMessageData)
-    PrescribedTrans.prescribedTransInMsg.subscribeTo(PrescribedTransMessage)
+    linearTranslationRigidBodyMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
+    linearTranslationRigidBodyMessageData.rho = scalarPosRef
+    linearTranslationRigidBodyMessageData.rhoDot = scalarVelRef
+    linearTranslationRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTranslationRigidBodyMessageData)
+    PrescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTranslationRigidBodyMessage)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = PrescribedTrans.prescribedMotionOutMsg.recorder()

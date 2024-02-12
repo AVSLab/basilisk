@@ -23,7 +23,7 @@
 #include <stdbool.h>
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/PrescribedMotionMsg_C.h"
-#include "cMsgCInterface/PrescribedTransMsg_C.h"
+#include "cMsgCInterface/LinearTranslationRigidBodyMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
@@ -51,10 +51,10 @@ typedef struct {
     double b;                                                       //!< Parabolic constant for the second half of the maneuver
 
     // Messages
-    PrescribedTransMsg_C prescribedTransInMsg;                      //!< Input message for the reference states
-    PrescribedMotionMsg_C prescribedMotionOutMsg;                   //!< Output message for the prescribed states
+    LinearTranslationRigidBodyMsg_C linearTranslationRigidBodyInMsg;  //!< Input message for the reference states
+    PrescribedMotionMsg_C prescribedMotionOutMsg;                     //!< Output message for the prescribed states
 
-    BSKLogger *bskLogger;                                           //!< BSK Logging
+    BSKLogger *bskLogger;                                             //!< BSK Logging
 
 }PrescribedTransConfig;
 

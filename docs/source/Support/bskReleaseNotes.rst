@@ -42,6 +42,9 @@ Version |release|
   outside of the release cycle.
 - updated plotting of ``opNav`` example scenarios to work again with latest version of ``matplotlib``
 - fixed a slew of compiler warnings when compiling with Xcode 15
+- Refactored the :ref:`PrescribedTransMsgPayload` message by renaming the message to
+  :ref:`LinearTranslationRigidBodyMsgPayload` and renaming the message variables from ``scalarPos`` and ``scalarVel`` to
+  ``rho`` and ``rhoDot``
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------
