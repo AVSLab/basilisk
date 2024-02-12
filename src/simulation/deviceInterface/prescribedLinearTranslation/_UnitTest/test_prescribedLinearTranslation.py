@@ -31,7 +31,7 @@ import numpy as np
 import pytest
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import prescribedLinearTranslation
+from Basilisk.simulation import prescribedLinearTranslation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 

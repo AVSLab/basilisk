@@ -217,7 +217,7 @@ This section is to outline the steps needed to setup the prescribed linear trans
 
 #. Import the prescribedTranslation class::
 
-    from Basilisk.fswAlgorithms import prescribedTranslation
+    from Basilisk.simulation import prescribedTranslation
 
 #. Create an instantiation of the module::
 
