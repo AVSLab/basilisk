@@ -52,7 +52,10 @@ Version |release|
 - updated the Windows build to compile properly with ``opNav`` flag set to true.  A
   ``opencv`` related flag had to be updated.
 - added supoport for Vizard 2.1.6
-
+- Created a :ref:`prescribedLinearTranslation` dynamics module to profile prescribed linear translation for a
+  secondary rigid body connected to the spacecraft hub. This new module deprecates the :ref:`prescribedTrans` module.
+  To simulate the translation, this module must be connected to the :ref:`prescribedMotionStateEffector`
+  dynamics module.
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------
