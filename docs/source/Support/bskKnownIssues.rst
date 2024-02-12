@@ -17,6 +17,8 @@ Version |release|
 - Doing a clean build on Windows appeared to complete, but when running python simulation scripts,
   errors came up about not finding Basilisk packages.  The python version number checking on Windows
   had an issue that is now corrected in the current build.
+- ``swig`` 4.2 was causing run-time errors with Basilisk.  The latest version of Basilisk now added
+  support for this version of swig.
 
 
 Version 2.2.1

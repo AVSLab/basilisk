@@ -48,6 +48,9 @@ Version |release|
   ``rho`` and ``rhoDot``
 - Deprecated the :ref:`prescribedMotionMsgPayload` message and replaced with two separate
   :ref:`prescribedTranslationMsgPayload` and :ref:`prescribedRotationMsgPayload` messages.
+- added support for the new ``swig`` 4.2 version
+
+>>>>>>> c996337e2 (update release notes and known issues)
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------
