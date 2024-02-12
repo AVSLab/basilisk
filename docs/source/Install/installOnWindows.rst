@@ -18,7 +18,7 @@ In order to run Basilisk, the following software will be necessary:
 -  `Python <https://www.python.org/downloads/windows/>`__ 3.8.x or greater
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
 -  Visual Studios 15 2017 or greater
--  `Swig <http://www.swig.org/download.html>`__ version 3 or 4
+-  `Swig <http://www.swig.org/download.html>`__ version 4.X
 -  (Optional) A GiT GUI application such as `GitKraken <https://www.gitkraken.com>`__
    to manage your copy of the Basilisk repository
 
@@ -53,7 +53,7 @@ required to place accurate breakpoints/attach a debugger to C/C++ code.
 
 Install Swig
 ~~~~~~~~~~~~
-The standard windows swig version 3 or 4 is suitable for Basilisk (see `Configuration
+The standard windows swig version 4 is suitable for Basilisk (see `Configuration
 Instructions <http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe>`__).
 Download the swig zip file, which includes ``swig.exe`` file, and unzip it into somewhere like ``C:/Program Files/Swig``
 
