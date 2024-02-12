@@ -18,6 +18,7 @@
  */
 
 #include "prescribedRotation1DOF.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -119,21 +120,22 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
     }
 
     // Determine the prescribed parameters: omega_FM_F and omegaPrime_FM_F
-    v3Normalize(this->rotAxis_M, this->rotAxis_M);
-    v3Scale(this->thetaDot, this->rotAxis_M, this->omega_FM_F);
-    v3Scale(this->thetaDDot, this->rotAxis_M, this->omegaPrime_FM_F);
+    this->omega_FM_F = this->thetaDot * this->rotAxis_M;
+    this->omegaPrime_FM_F = this->thetaDDot * this->rotAxis_M;
 
     // Determine dcm_FF0
     double dcm_FF0[3][3];
     double prv_FF0_array[3];
     double theta_FF0 = this->theta - this->thetaInit;
-    v3Scale(theta_FF0, this->rotAxis_M, prv_FF0_array);
+    Eigen::Vector3d prv_FF0 = theta_FF0 * this->rotAxis_M;
+    eigenVector3d2CArray(prv_FF0, prv_FF0_array);
     PRV2C(prv_FF0_array, dcm_FF0);
 
     // Determine dcm_F0M
     double dcm_F0M[3][3];
     double prv_F0M_array[3];
-    v3Scale(this->thetaInit, this->rotAxis_M, prv_F0M_array);
+    Eigen::Vector3d prv_F0M = this->thetaInit * this->rotAxis_M;
+    eigenVector3d2CArray(prv_F0M, prv_F0M_array);
     PRV2C(prv_F0M_array, dcm_F0M);
 
     // Determine dcm_FM
@@ -141,12 +143,14 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
     m33MultM33(dcm_FF0, dcm_F0M, dcm_FM);
 
     // Determine the prescribed parameter: sigma_FM
-    C2MRP(dcm_FM, this->sigma_FM);
+    double sigma_FM_array[3];
+    C2MRP(dcm_FM, sigma_FM_array);
+    this->sigma_FM = cArray2EigenVector3d(sigma_FM_array);
 
     // Copy the module variables to the prescribedRotationOut output message
-    v3Copy(this->omega_FM_F, prescribedRotationOut.omega_FM_F);
-    v3Copy(this->omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
-    v3Copy(this->sigma_FM, prescribedRotationOut.sigma_FM);
+    eigenVector3d2CArray(this->omega_FM_F, prescribedRotationOut.omega_FM_F);
+    eigenVector3d2CArray(this->omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
+    eigenVector3d2CArray(this->sigma_FM, prescribedRotationOut.sigma_FM);
 
     // Copy the local scalar variables to the spinningBodyOut output message
     spinningBodyOut.theta = this->theta;

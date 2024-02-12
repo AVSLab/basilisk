@@ -24,6 +24,7 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/PrescribedRotationMsgPayload.h"
+#include <Eigen/Dense>
 #include <cstdint>
 
 /*! @brief Prescribed 1 DOF Rotation Profiler Class */
@@ -37,10 +38,10 @@ public:
 
     /* User-configurable variables */
     double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of spinning body
-    double rotAxis_M[3];                                        //!< Rotation axis for the maneuver in M frame components
-    double omega_FM_F[3];                                       //!< [rad/s] Angular velocity of frame F wrt frame M in F frame components
-    double omegaPrime_FM_F[3];                                  //!< [rad/s^2] B frame time derivative of omega_FM_F in F frame components
-    double sigma_FM[3];                                         //!< MRP attitude of frame F with respect to frame M
+    Eigen::Vector3d rotAxis_M;                                  //!< Rotation axis for the maneuver in M frame components
+    Eigen::Vector3d omega_FM_F;                                 //!< [rad/s] Angular velocity of frame F wrt frame M in F frame components
+    Eigen::Vector3d omegaPrime_FM_F;                            //!< [rad/s^2] B frame time derivative of omega_FM_F in F frame components
+    Eigen::Vector3d sigma_FM;                                   //!< MRP attitude of frame F with respect to frame M
 
     /* Private variables */
     bool convergence;                                           //!< Boolean variable is true when the maneuver is complete
