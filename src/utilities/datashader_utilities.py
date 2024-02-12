@@ -120,6 +120,29 @@ def extract_effector_df(data_path, num_eff):
     return pd.DataFrame(effector_list, index=newMultIndex).T
 
 
+def combine_dataframes(df1, df2):
+    """
+    Combines two dataframes by augmenting the vectors within the dataframe.
+    E.g. it combines the 3x1 position vector rvec and 3x1 velocity vector vvec to one 6x1 state vector.
+    By combining the dataframes, the transform_dataframe function can be used to transform multiple dataframes.
+    """
+    num_runs = df1.columns.levshape[0]
+    num_comp1 = df1.columns.levshape[1]
+    num_comp2 = df2.columns.levshape[1]
+    num_comp_out = num_comp1 + num_comp2
+
+    data = []
+    for runNum in range(num_runs):
+        result1 = df1.iloc[:, num_comp1 * runNum:num_comp1 * runNum + num_comp1]
+        result2 = df2.iloc[:, num_comp2 * runNum:num_comp2 * runNum + num_comp2]
+        result_combined = pd.concat([result1, result2], ignore_index=True, axis=1)
+        for idx in range(num_comp_out):  # Unpack the dataframe into series
+            data.append(pd.Series(result_combined.iloc[:, idx]))
+    newMultIndex = pd.MultiIndex.from_product([list(range(num_runs)),
+                                               list(range(num_comp_out))], names=['runNum', 'varIdx'])
+    return pd.DataFrame(data, index=newMultIndex).T
+
+
 class DS_Plot():
     '''
     Object which stores data necessary to generate a bokeh image.
