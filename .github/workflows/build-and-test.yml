@@ -1,0 +1,68 @@
+name: Build & test
+
+on: [push, pull_request]
+
+env:
+  # Build with opNav and automatically install requirements (libgtk)
+  CONAN_ARGS: -o opNav=True -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
+  MPLBACKEND: agg
+
+jobs:
+  build-ubuntu-mac:
+    name: Build (${{matrix.os}}, py${{matrix.python}})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # TODO: Update to windows-latest (currently crashes on test_forceTorqueThrForceMapping tests).
+        os: [ubuntu-latest, macos-latest, windows-2019]
+        python: ["3.8", "3.9", "3.10", "3.11"] # TODO: Add "3.12" (it segfaults on some pytests.)
+    
+    permissions:
+      contents: read
+      actions: read
+      checks: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Build wheel
+        run: python -m pip wheel -w ./wheelhouse --verbose .[test]
+
+      - name: Install wheel
+        run: python -m pip install --no-index --find-links=./wheelhouse Basilisk[test]
+
+      # XXX: Run all the pytests using `-n auto` to split up the tests across
+      # different processes. Besides hopefully making things faster, this also
+      # seemingly avoids some crashes potentially due to running out of memory.
+
+      - name: Run unit tests
+        run: python -m pytest src -v -n auto -m "not scenarioTest" --junitxml=./reports/pytest-unit-results-${{matrix.os}}-py${{matrix.python}}.xml
+
+      - name: Run scenario tests
+        run: python -m pytest src -v -n auto -m "scenarioTest" --junitxml=./reports/pytest-scenario-results-${{matrix.os}}-py${{matrix.python}}.xml
+
+      - name: Run ctest
+        run: ctest -C Release --test-dir dist3
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-py${{ matrix.python }}
+          path: ./wheelhouse/Basilisk-*.whl
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Test Results (${{matrix.os}}, py${{matrix.python}})
+          path: reports/*.xml
+          reporter: java-junit
+          list-tests: failed
+          only-summary: true

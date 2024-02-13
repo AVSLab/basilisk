@@ -66,15 +66,7 @@ from conan.errors import ConanException
 from typing import List
 from pathlib import Path
 
-
-# Read data from files
 THIS_DIR = Path(__file__).parent.resolve()
-with (THIS_DIR/'docs/source/bskVersion.txt').open('r') as f:
-    bskVersion = f.read().strip()
-with (THIS_DIR/'LICENSE').open('r') as f:
-    license = f.read()
-with (THIS_DIR/'README.md').open('r') as f:
-    long_description = f.read()
 
 # Override build commands to add the ConanExtension builder.
 # (These must run first, before `build_py`.)
@@ -129,6 +121,7 @@ class BuildConanExtCommand(Command, SubCommand):
                 "--build", "missing",  # Build any packages that can't be downloaded.
                 "-s", f"build_type={ext.build_type}",
                 "-o", f"buildFolder={ext.dest.as_posix()}",
+                "-o", f"clean=True", # XXX: Clean build by default, to avoid various issues!
                 *ext.args])
 
             # Find packages built by this extension and add them to Distribution.
@@ -143,7 +136,6 @@ class BuildConanExtCommand(Command, SubCommand):
             self.reinitialize_command("build_py")
 
 setup(
-    version = bskVersion,
     packages = [],  # XXX: Leave empty! (Automatically set by ConanExtension)
 
     include_package_data = True,

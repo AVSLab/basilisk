@@ -1,18 +1,4 @@
 cmake_policy(SET CMP0078 NEW)
-find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development.Module)
-
-# TODO: Install an appropriate SWIG version in the Conanfile directly. I think it
-# is not supported in ConanCenter yet [as of Feb 2024].
-
-# TODO: Move these find_package() to main CMakeLists.txt?
-
-if((${Python3_VERSION} VERSION_GREATER_EQUAL 3.12))
-  message(WARNING "Basilisk on Python 3.12+ (found version ${Python3_VERSION}) requires SWIG 4.2.0+.")
-  find_package(SWIG 4.2...<5 REQUIRED)  # TODO: Add appropriate upper range.
-else()
-  find_package(SWIG 4.0...<4.2 REQUIRED)  # TODO: Change to "4.0...4.2" once SWIG 4.2.0 support is available.
-endif()
-include(${SWIG_USE_FILE})
 
 function(generate_messages searchDir generateCCode)
   file(

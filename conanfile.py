@@ -59,11 +59,6 @@ class BasiliskRecipe(ConanFile):
     # Requirements
     requires = [
         "eigen/3.4.0",
-
-        # TODO: swig/4.1.0 has a bug in CMake when finding the library, see
-        # https://github.com/conan-io/conan-center-index/issues/15324 .
-        # Change to 4.1.1 when released, and install swig manually for now.
-        #"swig/4.1.0",
     ]
 
     # Binary configuration
@@ -216,21 +211,13 @@ class BasiliskRecipe(ConanFile):
         tc.cache_variables["BUILD_VIZINTERFACE"] = bool(self.options.vizInterface)
         if self.options.get_safe("pathToExternalModules"):
             tc.cache_variables["EXTERNAL_MODULES_PATH"] = self.externalModulesPath.resolve().as_posix()
-        tc.cache_variables["PYTHON_VERSION"] = f"{sys.version_info.major}.{sys.version_info.minor}"
+        tc.cache_variables["PYTHON_VERSION"] = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
         # Set the build rpath, since we don't install the targets, so that the
         # shared libraries can find each other using relative paths.
         tc.cache_variables["CMAKE_BUILD_RPATH_USE_ORIGIN"] = True
         # Set the minimum buildable MacOS version.
         tc.cache_variables["CMAKE_OSX_DEPLOYMENT_TARGET"] = "10.13"
         tc.parallel = True
-
-        # TODO: Set the Python API to limited mode, to provide wider ABI
-        # compatibility (basically, we can build a single Python wheel to
-        # support all future Python versions). 
-        # See https://docs.python.org/3/c-api/stable.html
-        # NOTE: Swig 4.2.0 is required, see https://github.com/swig/swig/pull/2727
-        # if self.options.compatiblePythonAPI:
-        #     tc.preprocessor_definitions["Py_LIMITED_API"] = "0x030800f0"  # Python 3.8+
 
         # Generate!
         tc.generate()

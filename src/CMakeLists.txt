@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.18)
 # cmake>=3.18 is required for FindPython3 to work. See https://github.com/pypa/manylinux/issues/613
+# XXX: setting this minimum version to 3.21+ ends up crashing CMake on Windows. Reason is still TBD.
 
 if(POLICY CMP0078)
   cmake_policy(SET CMP0078 NEW)
@@ -45,6 +46,14 @@ include(bskTargetExcludeBuildOptions)
 
 # Find necessary packages
 find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development.Module)
+
+if((${Python3_VERSION} VERSION_GREATER_EQUAL 3.12))
+  message(WARNING "Basilisk on Python 3.12+ (found version ${Python3_VERSION}) requires SWIG 4.2.0+.")
+  find_package(SWIG 4.2...<5 REQUIRED COMPONENTS python)
+else()
+  find_package(SWIG 4.0...<5 REQUIRED COMPONENTS python)
+endif()
+include(${SWIG_USE_FILE})
 
 # ! create_symlinks : create symlinks to support files in source rather than keeping them in dist The function takes one
 # required argument and N optional arguments. \argn: a list of supporting file paths
@@ -202,9 +211,6 @@ function(find_package_targets PKG_DIR ALL_TARGET_LIST)
 endfunction(find_package_targets)
 
 function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
-
-  find_package(SWIG REQUIRED)
-  include(UseSWIG REQUIRED)
 
   if(TARGET_LIST)
     string(REPLACE "/" ";" DirList "${TARGET_LIST}")
