@@ -41,32 +41,41 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 
-@pytest.mark.parametrize("scalarPosInit", [0, 2*np.pi/3])
-@pytest.mark.parametrize("scalarPosRef", [0, 2*np.pi/3])
-@pytest.mark.parametrize("scalarAccelMax", [0.0005, 0.002])
+@pytest.mark.parametrize("transPosInit", [0, -0.75])  # [m]
+@pytest.mark.parametrize("transPosRef1", [0, -0.5])  # [m]
+@pytest.mark.parametrize("transPosRef2", [-0.75, 1.0])  # [m]
+@pytest.mark.parametrize("transAccelMax", [0.01, 0.005])  # [m/s^2]
 @pytest.mark.parametrize("accuracy", [1e-12])
-def test_prescribedTranslation(show_plots, scalarPosInit, scalarPosRef, scalarAccelMax, accuracy):
+def test_prescribedTranslation(show_plots,
+                               transPosInit,
+                               transPosRef1,
+                               transPosRef2,
+                               transAccelMax,
+                               accuracy):
     r"""
     **Validation Test Description**
 
-    This unit test ensures that the profiled translational maneuver for a secondary rigid body connected
-    to the spacecraft hub is properly computed for a series of initial and reference positions and maximum
-    accelerations. The final prescribed position and velocity magnitudes are compared with the reference values.
+    This unit test ensures that a profiled 1 DOF translation for a secondary rigid body connected to a spacecraft hub
+    is properly computed for several different simulation configurations. This unit test profiles two successive
+    translations to ensure the module is correctly configured. The body's initial scalar translational position
+    relative to the spacecraft hub is varied, along with the two final reference positions and the maximum translational
+    acceleration. A pure bang-bang acceleration profile is used for profiling the translation. To validate the module,
+    the final position at the end of each translation is checked to match the specified reference position.
 
     **Test Parameters**
 
     Args:
-        scalarPosInit (float): [m] Initial scalar position of the F frame with respect to the M frame
-        scalarPosRef (float): [m] Reference scalar position of the F frame with respect to the M frame
-        scalarAccelMax (float): [m/s^2] Maximum acceleration for the translational maneuver
-        accuracy (float): absolute accuracy value used in the validation tests
+        show_plots (bool):
+        transPosInit (float): [m] Initial translational body position from M to F frame origin along transAxis_M
+        transPosRef1 (float): [m] First reference position from M to F frame origin along transAxis_M
+        transPosRef2 (float): [m] Second reference position from M to F frame origin along transAxis_M
+        transAccelMax (float): [m/s^2] Maximum translational acceleration
+        accuracy (float): Absolute accuracy value used in the validation tests
 
     **Description of Variables Being Tested**
 
-    This unit test ensures that the profiled translational maneuver is properly computed for a series of initial and
-    reference positions and maximum accelerations. The final prescribed position magnitude ``r_FM_M_Final`` and
-    velocity magnitude ``rPrime_FM_M_Final`` are compared with the reference values ``r_FM_M_Ref`` and
-    ``rPrime_FM_M_Ref``, respectively.
+    This unit test checks that the final translational body position at the end of each translation converge to the
+    specified reference values ``transPosRef1`` and ``transPosRef2``.
     """
 
     unitTaskName = "unitTask"
@@ -76,98 +85,188 @@ def test_prescribedTranslation(show_plots, scalarPosInit, scalarPosRef, scalarAc
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    testProcessRate = macros.sec2nano(0.1)
+    # Create the test thread
+    testTimeStepSec = 0.01  # [s]
+    testProcessRate = macros.sec2nano(testTimeStepSec)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
+    # Create an instance of the prescribedTranslation module to be tested
     prescribedTrans = prescribedTranslation.PrescribedTranslation()
-    prescribedTrans.ModelTag = "prescribedTranslation"
-
-    unitTestSim.AddModelToTask(unitTaskName, prescribedTrans)
-
+    prescribedTrans.ModelTag = "prescribedTrans"
     transAxis_M = np.array([0.5, 0.0, 0.5 * np.sqrt(3)])
     prescribedTrans.transAxis_M = transAxis_M
-    prescribedTrans.scalarAccelMax = scalarAccelMax  # [rad/s^2]
-    prescribedTrans.r_FM_M = scalarPosInit * transAxis_M
-    prescribedTrans.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-    prescribedTrans.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
+    prescribedTrans.transAccelMax = transAccelMax  # [m/s^2]
+    prescribedTrans.transPosInit = transPosInit  # [m]
 
-    # Create input message
-    scalarVelRef = 0.0  # [m/s]
+    # Add the prescribedTranslation test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, prescribedTrans)
+
+    # Create the input reference position message for the first translation
     linearTranslationRigidBodyMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
-    linearTranslationRigidBodyMessageData.rho = scalarPosRef
-    linearTranslationRigidBodyMessageData.rhoDot = scalarVelRef
+    linearTranslationRigidBodyMessageData.rho = transPosRef1
+    linearTranslationRigidBodyMessageData.rhoDot = 0.0
     linearTranslationRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTranslationRigidBodyMessageData)
     prescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTranslationRigidBodyMessage)
 
-    dataLog = prescribedTrans.prescribedTranslationOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    # Log module data for module unit test validation
+    prescribedStatesDataLog = prescribedTrans.prescribedTranslationOutMsg.recorder()
+    transPosLog = prescribedTrans.logger("transPos", testProcessRate)
+    transVelLog = prescribedTrans.logger("transVel", testProcessRate)
+    transAccelLog = prescribedTrans.logger("transAccel", testProcessRate)
+    unitTestSim.AddModelToTask(unitTaskName, prescribedStatesDataLog)
+    unitTestSim.AddModelToTask(unitTaskName, transPosLog)
+    unitTestSim.AddModelToTask(unitTaskName, transVelLog)
+    unitTestSim.AddModelToTask(unitTaskName, transAccelLog)
 
-    simTime = np.sqrt(((0.5 * np.abs(scalarPosRef - scalarPosInit)) * 8) / scalarAccelMax) + 5
-    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
+    # Initialize the simulation
     unitTestSim.InitializeSimulation()
+
+    # Determine the required simulation time for the first rotation
+    translation1ReqTime = np.sqrt(((0.5 * np.abs(transPosRef1 - transPosInit)) * 8) / transAccelMax) + 5  # [s]
+
+    translation1ExtraTime = 5  # [s]
+    unitTestSim.ConfigureStopTime(macros.sec2nano(translation1ReqTime + translation1ExtraTime))
+
+    # Execute the first translation
     unitTestSim.ExecuteSimulation()
 
-    # Extract logged data
-    r_FM_M = dataLog.r_FM_M
-    rPrime_FM_M = dataLog.rPrime_FM_M
-    timespan = dataLog.times()
+    # Create the input reference position message for the second translation
+    linearTranslationRigidBodyMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
+    linearTranslationRigidBodyMessageData.rho = transPosRef2
+    linearTranslationRigidBodyMessageData.rhoDot = 0.0
+    linearTranslationRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTranslationRigidBodyMessageData)
+    prescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTranslationRigidBodyMessage)
 
-    scalarVel_Final = np.linalg.norm(rPrime_FM_M[-1, :])
-    scalarPos_Final = np.linalg.norm(r_FM_M[-1, :])
+    # Determine the required simulation time for the second rotation
+    translation2ReqTime = np.sqrt(((0.5 * np.abs(transPosRef2 - transPosRef1)) * 8) / transAccelMax) + 5  # [s]
 
-    # Plot r_FM_F
-    r_FM_M_Ref = scalarPosRef * transAxis_M
-    r_FM_M_1_Ref = np.ones(len(timespan)) * r_FM_M_Ref[0]
-    r_FM_M_2_Ref = np.ones(len(timespan)) * r_FM_M_Ref[1]
-    r_FM_M_3_Ref = np.ones(len(timespan)) * r_FM_M_Ref[2]
+    translation2ExtraTime = 5  # [s]
+    unitTestSim.ConfigureStopTime(macros.sec2nano(translation1ReqTime
+                                                  + translation1ExtraTime
+                                                  + translation2ReqTime
+                                                  + translation2ExtraTime))
 
+    # Execute the second translation
+    unitTestSim.ExecuteSimulation()
+
+    # Extract the logged data for plotting and data comparison
+    timespan = macros.NANO2SEC * prescribedStatesDataLog.times()  # [s]
+    transPos = transPosLog.transPos  # [m]
+    transVel = transVelLog.transVel  # [m/s]
+    transAccel = transAccelLog.transAccel  # [m/s^2]
+    r_FM_M = prescribedStatesDataLog.r_FM_M  # [m]
+    rPrime_FM_M = prescribedStatesDataLog.rPrime_FM_M  # [m/s]
+    rPrimePrime_FM_M = prescribedStatesDataLog.rPrimePrime_FM_M  # [m/s^2]
+
+    # Unit test validation
+    # Store the truth data used to validate the module in two lists
+    # Compute tf for the first translation, and tInit tf for the second translation
+    tf_1 = translation1ReqTime
+    tInit_2 = translation1ReqTime + translation1ExtraTime
+    tf_2 = tInit_2 + translation2ReqTime
+
+    # Compute the timespan indices for each check
+    tf_1_index = int(round(tf_1 / testTimeStepSec)) + 1
+    tInit_2_index = int(round(tInit_2 / testTimeStepSec)) + 1
+    tf_2_index = int(round(tf_2 / testTimeStepSec)) + 1
+
+    # Store the timespan indices in a list
+    timeCheckIndicesList = [tf_1_index,
+                            tInit_2_index,
+                            tf_2_index]
+
+    # Store the positions to check in a list
+    transPosCheckList = [transPosRef1, transPosRef1, transPosRef2]
+
+    # Use the two truth data lists to compare with the module-extracted data
+    np.testing.assert_allclose(transPos[timeCheckIndicesList],
+                               transPosCheckList,
+                               atol=accuracy,
+                               verbose=True)
+
+    # 1. Plot the scalar translational states
+    # 1A. Plot transPos
+    transPosInit_plotting = np.ones(len(timespan)) * transPosInit
+    transPosRef1_plotting = np.ones(len(timespan)) * transPosRef1
+    transPosRef2_plotting = np.ones(len(timespan)) * transPosRef2
     plt.figure()
     plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, r_FM_M[:, 0], label=r'$r_{1}$')
-    plt.plot(timespan * macros.NANO2SEC, r_FM_M[:, 1], label=r'$r_{2}$')
-    plt.plot(timespan * macros.NANO2SEC, r_FM_M[:, 2], label=r'$r_{3}$')
-    plt.plot(timespan * macros.NANO2SEC, r_FM_M_1_Ref, '--', label=r'$r_{1 Ref}$')
-    plt.plot(timespan * macros.NANO2SEC, r_FM_M_2_Ref, '--', label=r'$r_{2 Ref}$')
-    plt.plot(timespan * macros.NANO2SEC, r_FM_M_3_Ref, '--', label=r'$r_{3 Ref}$')
+    plt.plot(timespan, transPos, label=r"$l$")
+    plt.plot(timespan, transPosInit_plotting, '--', label=r'$l_{0}$')
+    plt.plot(timespan, transPosRef1_plotting, '--', label=r'$l_{Ref_1}$')
+    plt.plot(timespan, transPosRef2_plotting, '--', label=r'$l_{Ref_2}$')
+    plt.title(r'Translational Position $l_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+    plt.ylabel('(m)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
+
+    # 1B. Plot transVel
+    plt.figure()
+    plt.clf()
+    plt.plot(timespan, transVel, label=r"$\dot{l}$")
+    plt.title(r'Translational Velocity $\dot{l}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+    plt.ylabel('(m/s)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
+
+    # 1C. Plot transAccel
+    plt.figure()
+    plt.clf()
+    plt.plot(timespan, transAccel, label=r"$\ddot{l}$")
+    plt.title(r'Translational Acceleration $\ddot{l}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
+    plt.ylabel('(m/s$^2$)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper right', prop={'size': 12})
+    plt.grid(True)
+
+    # 2. Plot the prescribed translational states
+    # 2A. Plot r_FM_M
+    r_FM_M_Ref1 = transPosRef1 * transAxis_M
+    r_FM_M_1_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[0]
+    r_FM_M_2_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[1]
+    r_FM_M_3_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[2]
+    r_FM_M_Ref2 = transPosRef2 * transAxis_M
+    r_FM_M_1_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[0]
+    r_FM_M_2_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[1]
+    r_FM_M_3_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[2]
+    plt.figure()
+    plt.clf()
+    plt.plot(timespan, r_FM_M[:, 0], label=r'$r_{1}$')
+    plt.plot(timespan, r_FM_M[:, 1], label=r'$r_{2}$')
+    plt.plot(timespan, r_FM_M[:, 2], label=r'$r_{3}$')
+    plt.plot(timespan[0:timeCheckIndicesList[0]], r_FM_M_1_Ref1, '--', label=r'$r_{1 Ref_{1}}$')
+    plt.plot(timespan[0:timeCheckIndicesList[0]], r_FM_M_2_Ref1, '--', label=r'$r_{2 Ref_{1}}$')
+    plt.plot(timespan[0:timeCheckIndicesList[0]], r_FM_M_3_Ref1, '--', label=r'$r_{3 Ref_{1}}$')
+    plt.plot(timespan[timeCheckIndicesList[0]:-1], r_FM_M_1_Ref2, '--', label=r'$r_{1 Ref_{2}}$')
+    plt.plot(timespan[timeCheckIndicesList[0]:-1], r_FM_M_2_Ref2, '--', label=r'$r_{2 Ref_{2}}$')
+    plt.plot(timespan[timeCheckIndicesList[0]:-1], r_FM_M_3_Ref2, '--', label=r'$r_{3 Ref_{2}}$')
     plt.title(r'${}^\mathcal{M} r_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-    plt.ylabel('(m)', fontsize=16)
-    plt.xlabel('Time (s)', fontsize=16)
-    plt.legend(loc='center left', prop={'size': 16})
+    plt.ylabel('(m)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='center left', prop={'size': 12})
+    plt.grid(True)
 
     # Plot rPrime_FM_F
     plt.figure()
     plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, rPrime_FM_M[:, 0], label='$r\'_{1}$')
-    plt.plot(timespan * macros.NANO2SEC, rPrime_FM_M[:, 1], label='$r\'_{2}$')
-    plt.plot(timespan * macros.NANO2SEC, rPrime_FM_M[:, 2], label='$r\'_{3}$')
-    plt.title(r'${}^\mathcal{M} r\'_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-    plt.ylabel('(m/s)', fontsize=16)
-    plt.xlabel('Time (s)', fontsize=16)
-    plt.legend(loc='upper left', prop={'size': 16})
-
-    if show_plots:
-        plt.show()
-    plt.close("all")
-
-    np.testing.assert_allclose(scalarVelRef,
-                               scalarVel_Final,
-                               atol=accuracy,
-                               err_msg="scalarVel_Final and scalarVelRef do not match",
-                               verbose=True)
-
-    np.testing.assert_allclose(scalarPosRef,
-                               scalarPos_Final,
-                               atol=accuracy,
-                               err_msg="scalarPos_Final and scalarPosRef do not match",
-                               verbose=True)
+    plt.plot(timespan, rPrime_FM_M[:, 0], label='1')
+    plt.plot(timespan, rPrime_FM_M[:, 1], label='2')
+    plt.plot(timespan, rPrime_FM_M[:, 2], label='3')
+    plt.title(r'${}^\mathcal{M} r$Prime$_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+    plt.ylabel('(m/s)', fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.legend(loc='upper left', prop={'size': 12})
+    plt.grid(True)
 
 
 if __name__ == "__main__":
-    test_prescribedTranslation(
-                 True,
-                 0.0,         # scalarPosInit
-                 0.25,        # scalarPosRef
-                 0.001,       # scalarAccelMax
-                 1e-12        # accuracy
-               )
+    test_prescribedTranslation(True,  # show_plots
+                               0.0,  # [m] transPosInit
+                               -0.5,  # [m] transPosRef1
+                               -0.75,  # [m] transPosRef2
+                               0.01,  # [m/s^2] transAccelMax
+                               1e-12  # accuracy
+                               )
