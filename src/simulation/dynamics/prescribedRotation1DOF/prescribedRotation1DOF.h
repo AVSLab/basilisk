@@ -76,8 +76,8 @@ private:
 
     /* User-configurable variables */
     double coastOptionRampDuration;                             //!< [s] Ramp time used for the coast option
-    double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of spinning body
-    Eigen::Vector3d rotAxis_M;                                  //!< Rotation axis for the maneuver in M frame components
+    double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of spinning body used in the ramp segments
+    Eigen::Vector3d rotAxis_M;                                  //!< Spinning body rotation axis in M frame components
 
     /* Coast option variables */
     double theta_tr;                                            //!< [rad] Angle at the end of the first ramp segment
@@ -92,13 +92,13 @@ private:
     /* Shared module variables */
     Eigen::Vector3d omega_FM_F;                                 //!< [rad/s] Angular velocity of frame F wrt frame M in F frame components
     Eigen::Vector3d omegaPrime_FM_F;                            //!< [rad/s^2] B frame time derivative of omega_FM_F in F frame components
-    Eigen::Vector3d sigma_FM;                                   //!< MRP attitude of frame F with respect to frame M
-    bool convergence;                                           //!< Boolean variable is true when the maneuver is complete
-    double tInit;                                               //!< [s] Simulation time at the beginning of the maneuver
+    Eigen::Vector3d sigma_FM;                                   //!< MRP attitude of spinning body frame F with respect to frame M
+    bool convergence;                                           //!< Boolean variable is true when the rotation is complete
+    double tInit;                                               //!< [s] Simulation time at the beginning of the rotation
     double thetaInit;                                           //!< [rad] Initial spinning body angle from frame M to frame F about rotAxis_M
     double thetaDotInit;                                        //!< [rad/s] Initial spinning body angle rate between frame M to frame F
-    double thetaRef;                                            //!< [rad] Reference angle from frame M to frame F about rotAxis_M
-    double tf;                                                  //!< [s] Simulation time when the maneuver is finished
+    double thetaRef;                                            //!< [rad] Spinning body reference angle from frame M to frame F about rotAxis_M
+    double tf;                                                  //!< [s] Simulation time when the rotation is complete
     double a;                                                   //!< Parabolic constant for the first acceleration segment
     double b;                                                   //!< Parabolic constant for the second acceleration segment
 

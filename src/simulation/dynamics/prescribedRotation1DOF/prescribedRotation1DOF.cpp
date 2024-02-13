@@ -25,20 +25,17 @@
 #include <cmath>
 
 
-/*! This method performs a complete reset of the module. The input messages are checked to ensure they are linked.
+/*! This method resets required module variables and checks the input messages to ensure they are linked.
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedRotation1DOF::Reset(uint64_t callTime)
-{
+void PrescribedRotation1DOF::Reset(uint64_t callTime) {
     // Check if the required input message is linked
     if (!this->spinningBodyInMsg.isLinked()) {
         _bskLog(this->bskLogger, BSK_ERROR, "Error: prescribedRot.spinningBodyInMsg wasn't connected.");
     }
 
-    // Set the initial time
     this->tInit = 0.0;
-
     this->theta = this->thetaInit;
     this->thetaDotInit = 0.0;
     this->thetaDot = 0.0;
@@ -47,13 +44,12 @@ void PrescribedRotation1DOF::Reset(uint64_t callTime)
     this->convergence = true;
 }
 
-/*! This method profiles the prescribed trajectory and updates the prescribed states as a function of time.
-The prescribed states are then written to the output message.
+/*! This method profiles the spinning body rotation and updates the prescribed rotational states as a function of time.
+ The spinning body rotational states are then written to the output message.
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
-{
+void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
     // Create the buffer messages
     HingedRigidBodyMsgPayload spinningBodyIn;
     HingedRigidBodyMsgPayload spinningBodyOut;
@@ -69,11 +65,11 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
         spinningBodyIn = this->spinningBodyInMsg();
     }
 
-    /* This loop is entered (a) initially and (b) when each attitude maneuver is complete. The reference angle is updated
-    even if a new message is not written */
+    /* This loop is entered (a) initially and (b) when each rotation is complete. The parameters used to profile the
+    spinning body rotation are updated in this statement. */
     if (this->spinningBodyInMsg.timeWritten() <= callTime && this->convergence)
     {
-        // Store the initial time as the current simulation time
+        // Update the initial time as the current simulation time
         this->tInit = callTime * NANO2SEC;
 
         // Update the initial angle
@@ -82,13 +78,13 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
         // Store the reference angle
         this->thetaRef = spinningBodyIn.theta;
 
-        // Set the convergence to false until the attitude maneuver is complete
+        // Set the convergence to false until the rotation is complete
         this->convergence = false;
 
         // Set the parameters required to profile the rotation
-        if (this->coastOptionRampDuration > 0.0) { // Set parameters for the coast option
+        if (this->coastOptionRampDuration > 0.0) {
             this->computeCoastParameters();
-        } else { // Set parameters for the no coast option
+        } else {
             this->computeParametersNoCoast();
         }
     }
@@ -97,22 +93,22 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
     double t = callTime * NANO2SEC;
 
     // Compute the scalar rotational states at the current simulation time
-    if (this->coastOptionRampDuration > 0.0) { // Entered for the coast option
-        if (this->isInFirstRampSegment(t)) { // Entered during the first ramp segment
+    if (this->coastOptionRampDuration > 0.0) {
+        if (this->isInFirstRampSegment(t)) {
             this->computeFirstRampSegment(t);
-        } else if (this->isInCoastSegment(t)) { // Entered during the coast segment
+        } else if (this->isInCoastSegment(t)) {
             this->computeCoastSegment(t);
-        } else if (this->isInSecondRampSegment(t)) { // Entered during the second ramp segment
+        } else if (this->isInSecondRampSegment(t)) {
             this->computeSecondRampSegment(t);
-        } else { // Entered when the rotation is complete
+        } else {
             this->computeRotationComplete();
         }
-    } else { // Entered for the no coast option
-        if (this->isInFirstRampSegmentNoCoast(t)) { // Entered during the first half of the rotation
+    } else {
+        if (this->isInFirstRampSegmentNoCoast(t)) {
             this->computeFirstRampSegment(t);
-        } else if (this->isInSecondRampSegmentNoCoast(t)) { // Entered during the second half of the rotation
+        } else if (this->isInSecondRampSegmentNoCoast(t)) {
             this->computeSecondRampSegment(t);
-        } else { // Entered when the rotation is complete
+        } else {
             this->computeRotationComplete();
         }
     }
@@ -127,7 +123,7 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
     eigenVector3d2CArray(this->omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
     eigenVector3d2CArray(this->sigma_FM, prescribedRotationOut.sigma_FM);
 
-    // Copy the local scalar variables to the spinningBodyOut output message
+    // Copy the scalar variables to the spinningBodyOut output message
     spinningBodyOut.theta = this->theta;
     spinningBodyOut.thetaDot = this->thetaDot;
 

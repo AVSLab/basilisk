@@ -33,7 +33,6 @@ import pytest
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 from Basilisk.simulation import prescribedRotation1DOF
-from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 
@@ -59,19 +58,19 @@ def test_prescribedRotation1DOF(show_plots,
     r"""
     **Validation Test Description**
 
-    This unit test ensures that a profiled 1 DOF rotation for a secondary rigid body connected to a spacecraft hub
-    is properly computed for several different simulation configurations. This unit test profiles two successive
-    rotations for the spinning body to ensure the module is correctly configured. The initial spinning body angle
-    relative to the spacecraft hub is varied, along with the two final reference angles and the maximum angular
-    acceleration for the rotation. This unit test also tests both methods of profiling the rotation, where either
-    a pure bang-bang acceleration profile can be selected for the rotation, or a coast option can be selected
-    where the accelerations are only applied for a specified ramp time and a coast segment with zero acceleration
-    is applied between the two acceleration periods. To validate the module, the final spinning body angles at the
-    end of each rotation are checked to match the specified reference angles.
+    The unit test for this module ensures that the 1 DOF rotation is properly profiled for several different
+    simulation configurations. The unit test profiles two successive rotations for the spinning body to ensure the
+    module is correctly configured. The initial spinning body angle relative to the spacecraft hub is varied,
+    along with the two final reference angles and the maximum angular acceleration for the rotation.
+    The unit test also tests both methods of profiling the rotation, where either a pure bang-bang acceleration
+    profile can be selected for the rotation, or a bang-off-bang option can be selected where a coast period with zero
+    acceleration is added between the acceleration ramp segments. To validate the module, the final spinning body angle
+    at the end of each rotation are checked to match the specified reference angles.
 
     **Test Parameters**
 
     Args:
+        show_plots (bool): Variable for choosing whether plots should be displayed
         coastOptionRampDuration (double): [s] Ramp duration used for the coast option
         thetaInit (float): [rad] Initial spinning body angle relative to the mount frame
         thetaRef1 (float): [rad] First spinning body reference angle relative to the mount frame
@@ -81,7 +80,7 @@ def test_prescribedRotation1DOF(show_plots,
 
     **Description of Variables Being Tested**
 
-    This unit test checks that the final spinning body angles at the end of each rotation converge to the specified
+    This unit test checks that the final spinning body angle at the end of each rotation converge to the specified
     reference values ``thetaRef1`` and ``thetaRef2``.
     """
 
@@ -225,7 +224,7 @@ def test_prescribedRotation1DOF(show_plots,
         # Store the angles to check in a list
         thetaCheckList = [macros.R2D * thetaRef1,
                           macros.R2D * thetaRef1,
-                          macros.R2D * thetaRef2]
+                          macros.R2D * thetaRef2]  # [deg]
     
     else:
         # Compute tf for the first rotation, and tInit tf for the second rotation
@@ -246,7 +245,7 @@ def test_prescribedRotation1DOF(show_plots,
         # Store the angles to check in a list
         thetaCheckList = [macros.R2D * thetaRef1,
                           macros.R2D * thetaRef1,
-                          macros.R2D * thetaRef2]
+                          macros.R2D * thetaRef2]  # [deg]
 
     # Use the two truth data lists to compare with the module-extracted data
     np.testing.assert_allclose(theta[timeCheckIndicesList],
@@ -256,9 +255,9 @@ def test_prescribedRotation1DOF(show_plots,
 
     # 1. Plot the scalar spinning body rotational states
     # 1A. Plot theta
-    thetaInit_plotting = np.ones(len(timespan)) * macros.R2D * thetaInit
-    thetaRef1_plotting = np.ones(len(timespan)) * macros.R2D * thetaRef1
-    thetaRef2_plotting = np.ones(len(timespan)) * macros.R2D * thetaRef2
+    thetaInit_plotting = np.ones(len(timespan)) * macros.R2D * thetaInit  # [deg]
+    thetaRef1_plotting = np.ones(len(timespan)) * macros.R2D * thetaRef1  # [deg]
+    thetaRef2_plotting = np.ones(len(timespan)) * macros.R2D * thetaRef2  # [deg]
     plt.figure()
     plt.clf()
     plt.plot(timespan, theta, label=r"$\theta$")
@@ -295,7 +294,7 @@ def test_prescribedRotation1DOF(show_plots,
     # 2A. Plot PRV angle from sigma_FM
     phi_FM = []
     for i in range(len(timespan)):
-        phi_FM.append(macros.R2D * 4 * np.arctan(np.linalg.norm(sigma_FM[i, :])))
+        phi_FM.append(macros.R2D * 4 * np.arctan(np.linalg.norm(sigma_FM[i, :])))  # [deg]
 
     plt.figure()
     plt.clf()
