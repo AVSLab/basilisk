@@ -23,6 +23,14 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include <cmath>
 
+/*! This method self initializes the C-wrapped output message.
+ @return void
+*/
+void PrescribedLinearTranslation::SelfInit()
+{
+    PrescribedTranslationMsg_C_init(&this->prescribedTranslationOutMsgC);
+}
+
 
 /*! This method performs a complete reset of the module. The input messages are checked to ensure they are linked.
  @return void
@@ -121,6 +129,7 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime)
     eigenVector3d2CArray(rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
 
     this->prescribedTranslationOutMsg.write(&prescribedTranslationMsgOut, this->moduleID, callTime);
+    PrescribedTranslationMsg_C_write(&prescribedTranslationMsgOut, &prescribedTranslationOutMsgC, this->moduleID, callTime);
 }
 
 /*! This method determines if the current time is within the first ramp segment for the coast option.

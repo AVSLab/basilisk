@@ -46,6 +46,9 @@ provides information on what this message is used for.
     * - prescribedTranslationOutMsg
       - :ref:`PrescribedTranslationMsgPayload`
       - output message with the prescribed body translational states
+    * - prescribedTranslationOutMsgC
+      - :ref:`PrescribedTranslationMsgPayload`
+      - C-wrapped output message with the prescribed body translational states
 
 Detailed Module Description
 ---------------------------
