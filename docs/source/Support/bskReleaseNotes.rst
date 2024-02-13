@@ -36,7 +36,8 @@ Version |release|
 - Fixed a bug where the legacy variable logging API would either, not log at all or log at a rate different to the
   requested rate.
 - Fixed a python version checking bug that prevented Basilisk from compiling on Windows
-- Updated versioning to better follow the `semantic versioning <https://semver.org>`_ standard, in the format 
+- Created a new example scenario :ref:`scenarioHaloOrbit` demonstrating a near-Halo orbit simulation
+- Updated versioning to better follow the `semantic versioning <https://semver.org>`_ standard, in the format
   ``MAJOR.MINOR.PATCH``. Releases will increment the minor version number, while pull requests into develop will 
   automatically increment the patch number. This allows users to reference/require specific versions of Basilisk 
   outside of the release cycle.
