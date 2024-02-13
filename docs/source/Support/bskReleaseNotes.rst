@@ -46,6 +46,8 @@ Version |release|
 - Refactored the :ref:`PrescribedTransMsgPayload` message by renaming the message to
   :ref:`LinearTranslationRigidBodyMsgPayload` and renaming the message variables from ``scalarPos`` and ``scalarVel`` to
   ``rho`` and ``rhoDot``
+- Deprecated the :ref:`prescribedMotionMsgPayload` message and replaced with two separate
+  :ref:`prescribedTranslationMsgPayload` and :ref:`prescribedRotationMsgPayload` messages.
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------
